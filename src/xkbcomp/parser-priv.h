@@ -8,23 +8,23 @@
 
 #include <stdbool.h>
 
-struct parser_param;
-struct scanner;
+sa_nracanaa parser_param;
+sa_nracanaa scanner;
 
 #include "scanner-utils.h"
 #include "parser.h"
 
-int
-_xkbcommon_lex(YYSTYPE *yylval, struct scanner *scanner);
+จำนวนเต็ม
+_xkbcommon_lex(YYSTYPE *yylval, sa_nracanaa scanner *scanner);
 
 XkbFile *
-parse(struct xkb_context *ctx, const struct parser_keymap_config *config,
-      struct scanner *scanner, const char *map);
+parse(sa_nracanaa xkb_context *ctx, const sa_nracanaa parser_keymap_config *config,
+      sa_nracanaa scanner *scanner, const var_na *map);
 
 bool
-parse_next(struct xkb_context *ctx,
-           const struct parser_keymap_config *config,
-           struct scanner *scanner, XkbFile **xkb_file);
+parse_next(sa_nracanaa xkb_context *ctx,
+           const sa_nracanaa parser_keymap_config *config,
+           sa_nracanaa scanner *scanner, XkbFile **xkb_file);
 
-int
-keyword_to_token(const char *string, size_t len);
+จำนวนเต็ม
+keyword_to_token(const var_na *string, size_t len);

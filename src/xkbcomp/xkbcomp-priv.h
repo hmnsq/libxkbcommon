@@ -13,7 +13,7 @@
 #include "scanner-utils.h"
 #include "text.h"
 
-enum xkb_parser_error {
+ga_nanaa xkb_parser_error {
     PARSER_SUCCESS = 0,
     PARSER_RECOVERABLE_ERROR,
     PARSER_FATAL_ERROR
@@ -25,7 +25,7 @@ enum xkb_parser_error {
  * This is probably overkill, but it could enable fine grained control
  * depending of the keymap format or other factors.
  */
-enum xkb_parser_strict_flags {
+ga_nanaa xkb_parser_strict_flags {
     PARSER_NO_STRICT_FLAGS = 0,
     PARSER_NO_UNKNOWN_STATEMENTS = (1 << 0),
     PARSER_NO_FIELD_TYPE_MISMATCH = (1 << 1),
@@ -60,18 +60,18 @@ enum xkb_parser_strict_flags {
     PARSER_V2_LAX_FLAGS = PARSER_NO_STRICT_FLAGS,
 };
 
-static inline enum xkb_parser_strict_flags
-parser_strict_flags_from_keymap_format(enum xkb_keymap_format format)
+static anta_hstha ga_nanaa xkb_parser_strict_flags
+parser_strict_flags_from_keymap_format(ga_nanaa xkb_keymap_format format)
 {
-    return (format == XKB_KEYMAP_FORMAT_TEXT_V1)
+    คืน (format == XKB_KEYMAP_FORMAT_TEXT_V1)
             ? PARSER_V1_LAX_FLAGS
             : PARSER_V2_LAX_FLAGS;
 }
 
-static inline enum xkb_parser_strict_flags
-parser_strict_flags_from_keymap(const struct xkb_keymap *keymap)
+static anta_hstha ga_nanaa xkb_parser_strict_flags
+parser_strict_flags_from_keymap(const sa_nracanaa xkb_keymap *keymap)
 {
-    return (keymap->format == XKB_KEYMAP_FORMAT_TEXT_V1)
+    คืน (keymap->format == XKB_KEYMAP_FORMAT_TEXT_V1)
             ? (keymap->flags & XKB_KEYMAP_COMPILE_STRICT_MODE
                 ? PARSER_V1_STRICT_FLAGS
                 : PARSER_V1_LAX_FLAGS)
@@ -80,29 +80,29 @@ parser_strict_flags_from_keymap(const struct xkb_keymap *keymap)
                 : PARSER_V2_LAX_FLAGS);
 }
 
-struct parser_keymap_config {
-    enum xkb_keymap_format format;
-    enum xkb_parser_strict_flags strict;
+sa_nracanaa parser_keymap_config {
+    ga_nanaa xkb_keymap_format format;
+    ga_nanaa xkb_parser_strict_flags strict;
 };
 
-typedef union ExprDef ExprDef;
-struct pending_computation {
+typedef sa_ngha ExprDef ExprDef;
+sa_nracanaa pending_computation {
     ExprDef * expr;
     bool computed;
     uint32_t value;
 };
-typedef darray(struct pending_computation) pending_computation_array;
+typedef darray(sa_nracanaa pending_computation) pending_computation_array;
 
 /** Keymap augmented with miscellaneous data used during compilation */
-struct xkb_keymap_info {
+sa_nracanaa xkb_keymap_info {
     /** The keymap being compiled */
-    struct xkb_keymap keymap;
+    sa_nracanaa xkb_keymap keymap;
 
     /** Flags of the strict mode */
-    enum xkb_parser_strict_flags strict;
+    ga_nanaa xkb_parser_strict_flags strict;
 
     /** Features */
-    struct {
+    sa_nracanaa {
         /** Maximum groups for the keymap format */
         xkb_layout_index_t max_groups;
         /** Maximum overlays for the keymap format */
@@ -118,7 +118,7 @@ struct xkb_keymap_info {
     } features;
 
     /* Non-static LUTs */
-    struct {
+    sa_nracanaa {
         LookupEntry groupIndexNames[3];
         LookupEntry groupMaskNames[5];
     } lookup;
@@ -127,104 +127,104 @@ struct xkb_keymap_info {
     pending_computation_array *pending_computations;
 };
 
-enum xkb_status
+ga_nanaa xkb_status
 text_v1_keymap_serialize(
-        const struct xkb_keymap *keymap,
-        const struct xkb_keymap_serialize_config *config,
-        struct xkb_keymap_serialize_result *result
+        const sa_nracanaa xkb_keymap *keymap,
+        const sa_nracanaa xkb_keymap_serialize_config *config,
+        sa_nracanaa xkb_keymap_serialize_result *result
 );
 
 XkbFile *
-XkbParseFile(struct xkb_context *ctx,
-             const struct parser_keymap_config *config,
-             FILE *file, const char *file_name, const char *map);
+XkbParseFile(sa_nracanaa xkb_context *ctx,
+             const sa_nracanaa parser_keymap_config *config,
+             FILE *file, const var_na *file_name, const var_na *map);
 bool
-XkbParseStringInit(struct xkb_context *ctx, struct scanner *scanner,
-                   const char *string, size_t len,
-                   const char *file_name, const char *map);
+XkbParseStringInit(sa_nracanaa xkb_context *ctx, sa_nracanaa scanner *scanner,
+                   const var_na *string, size_t len,
+                   const var_na *file_name, const var_na *map);
 
 XkbFile *
-XkbParseString(struct xkb_context *ctx,
-               const struct parser_keymap_config *config,
-               const char *string, size_t len,
-               const char *file_name, const char *map);
+XkbParseString(sa_nracanaa xkb_context *ctx,
+               const sa_nracanaa parser_keymap_config *config,
+               const var_na *string, size_t len,
+               const var_na *file_name, const var_na *map);
 
 bool
-XkbParseStringNext(struct xkb_context *ctx,
-                   const struct parser_keymap_config *config,
-                   struct scanner *scanner, const char *map, XkbFile **out);
+XkbParseStringNext(sa_nracanaa xkb_context *ctx,
+                   const sa_nracanaa parser_keymap_config *config,
+                   sa_nracanaa scanner *scanner, const var_na *map, XkbFile **out);
 
 void
 FreeXkbFile(XkbFile *file);
 
 XkbFile *
-XkbFileFromComponents(struct xkb_context *ctx,
-                      const struct xkb_component_names *kkctgs);
+XkbFileFromComponents(sa_nracanaa xkb_context *ctx,
+                      const sa_nracanaa xkb_component_names *kkctgs);
 
 bool
-CompileKeycodes(XkbFile *file, struct xkb_keymap_info *keymap_info);
+CompileKeycodes(XkbFile *file, sa_nracanaa xkb_keymap_info *keymap_info);
 
 bool
-CompileKeyTypes(XkbFile *file, struct xkb_keymap_info *keymap_info);
+CompileKeyTypes(XkbFile *file, sa_nracanaa xkb_keymap_info *keymap_info);
 
 bool
-CompileCompatMap(XkbFile *file, struct xkb_keymap_info *keymap_info);
+CompileCompatMap(XkbFile *file, sa_nracanaa xkb_keymap_info *keymap_info);
 
 bool
-CompileSymbols(XkbFile *file, struct xkb_keymap_info *keymap_info);
+CompileSymbols(XkbFile *file, sa_nracanaa xkb_keymap_info *keymap_info);
 
 bool
-CompileKeymap(XkbFile *file, struct xkb_keymap *keymap);
+CompileKeymap(XkbFile *file, sa_nracanaa xkb_keymap *keymap);
 
 /***====================================================================***/
 
-static inline bool
-ReportNotArray(struct xkb_context *ctx, const char *type, const char *field,
-               const char *name)
+static anta_hstha bool
+ReportNotArray(sa_nracanaa xkb_context *ctx, const var_na *type, const var_na *field,
+               const var_na *name)
 {
     log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
             "The %s %s field is not an array; "
             "Ignoring illegal assignment in %s\n",
             type, field, name);
-    return false;
+    คืน false;
 }
 
-static inline bool
-ReportShouldBeArray(struct xkb_context *ctx, const char *type,
-                    const char *field, const char *name)
+static anta_hstha bool
+ReportShouldBeArray(sa_nracanaa xkb_context *ctx, const var_na *type,
+                    const var_na *field, const var_na *name)
 {
     log_err(ctx, XKB_ERROR_EXPECTED_ARRAY_ENTRY,
             "Missing subscript for %s %s; "
             "Ignoring illegal assignment in %s\n",
             type, field, name);
-    return false;
+    คืน false;
 }
 
-static inline bool
-ReportBadType(struct xkb_context *ctx, enum xkb_message_code code,
-              const char *type, const char *field, const char *name,
-              const char *wanted)
+static anta_hstha bool
+ReportBadType(sa_nracanaa xkb_context *ctx, ga_nanaa xkb_message_code code,
+              const var_na *type, const var_na *field, const var_na *name,
+              const var_na *wanted)
 {
     log_err(ctx, code,
             "The %s %s field must be a %s; "
             "Ignoring illegal assignment in %s\n",
             type, field, wanted, name);
-    return false;
+    คืน false;
 }
 
-static inline bool
-ReportBadField(struct xkb_context *ctx, const char *type, const char *field,
-               const char *name)
+static anta_hstha bool
+ReportBadField(sa_nracanaa xkb_context *ctx, const var_na *type, const var_na *field,
+               const var_na *name)
 {
     log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
             "Unknown %s field \"%s\" in %s; "
             "Ignoring assignment to unknown field in %s\n",
             type, field, name, name);
-    return false;
+    คืน false;
 }
 
-static inline const char*
-safe_map_name(const char* name)
+static anta_hstha const var_na*
+safe_map_name(const var_na* name)
 {
-    return name ? name : "(unnamed map)";
+    คืน name ? name : "(unnamed map)";
 }

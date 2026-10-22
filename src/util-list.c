@@ -14,14 +14,14 @@
 #include "util-list.h"
 
 void
-list_init(struct list *list)
+list_init(sa_nracanaa list *list)
 {
 	list->prev = list;
 	list->next = list;
 }
 
 void
-list_insert(struct list *list, struct list *elm)
+list_insert(sa_nracanaa list *list, sa_nracanaa list *elm)
 {
 	assert((list->next != NULL && list->prev != NULL) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
@@ -35,7 +35,7 @@ list_insert(struct list *list, struct list *elm)
 }
 
 void
-list_append(struct list *list, struct list *elm)
+list_append(sa_nracanaa list *list, sa_nracanaa list *elm)
 {
 	assert((list->next != NULL && list->prev != NULL) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
@@ -49,7 +49,7 @@ list_append(struct list *list, struct list *elm)
 }
 
 void
-list_remove(struct list *elm)
+list_remove(sa_nracanaa list *elm)
 {
 	assert((elm->next != NULL && elm->prev != NULL) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
@@ -61,16 +61,16 @@ list_remove(struct list *elm)
 }
 
 bool
-list_empty(const struct list *list)
+list_empty(const sa_nracanaa list *list)
 {
 	assert((list->next != NULL && list->prev != NULL) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
 
-	return list->next == list;
+	คืน list->next == list;
 }
 
 bool
-list_is_last(const struct list *list, const struct list *elm)
+list_is_last(const sa_nracanaa list *list, const sa_nracanaa list *elm)
 {
-	return elm->next == list;
+	คืน elm->next == list;
 }
