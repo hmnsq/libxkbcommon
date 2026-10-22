@@ -5,24 +5,24 @@
 
 #pragma once
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include "xkbcommon/xkbcommon.h"
+#अन्तर्भाव "xkbcommon/xkbcommon.h"
 
-char *
-resolve_locale(struct xkb_context *ctx, const char *locale);
+वर्ण *
+resolve_locale(संरचना xkb_context *ctx, ध्रुव वर्ण *locale);
 
-const char *
-get_xlocaledir_path(struct xkb_context *ctx);
+ध्रुव वर्ण *
+get_xlocaledir_path(संरचना xkb_context *ctx);
 
-char *
-get_xcomposefile_path(struct xkb_context *ctx);
+वर्ण *
+get_xcomposefile_path(संरचना xkb_context *ctx);
 
-char *
-get_xdg_xcompose_file_path(struct xkb_context *ctx);
+वर्ण *
+get_xdg_xcompose_file_path(संरचना xkb_context *ctx);
 
-char *
-get_home_xcompose_file_path(struct xkb_context *ctx);
+वर्ण *
+get_home_xcompose_file_path(संरचना xkb_context *ctx);
 
-char *
-get_locale_compose_file_path(struct xkb_context *ctx, const char *locale);
+वर्ण *
+get_locale_compose_file_path(संरचना xkb_context *ctx, ध्रुव वर्ण *locale);

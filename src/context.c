@@ -6,194 +6,194 @@
  * Author: Daniel Stone <daniel@fooishbar.org>
  */
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include <assert.h>
-#include <errno.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+#अन्तर्भाव <assert.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <sys/stat.h>
 
-#if HAVE_XKB_EXTENSIONS_DIRECTORIES
-    #include <limits.h>
-    #if HAVE_UNISTD_H && HAVE_DIRENT_H
-        #include <dirent.h>
-        #include <unistd.h>
+#यदि HAVE_XKB_EXTENSIONS_DIRECTORIES
+    #अन्तर्भाव <limits.h>
+    #यदि HAVE_UNISTD_H && HAVE_DIRENT_H
+        #अन्तर्भाव <dirent.h>
+        #अन्तर्भाव <unistd.h>
     #endif
 #endif
 
-#include "xkbcommon/xkbcommon.h"
-#include "context.h"
-#include "darray.h"
-#include "features/enums.h"
-#include "messages-codes.h"
-#include "utils.h"
+#अन्तर्भाव "xkbcommon/xkbcommon.h"
+#अन्तर्भाव "context.h"
+#अन्तर्भाव "darray.h"
+#अन्तर्भाव "features/enums.h"
+#अन्तर्भाव "messages-codes.h"
+#अन्तर्भाव "utils.h"
 
 
 /**
  * Append one directory to the context’s include path.
  */
-static int
-context_include_path_append(struct xkb_context *ctx, const char *path)
+स्थिर पूर्णाङ्क
+context_include_path_append(संरचना xkb_context *ctx, ध्रुव वर्ण *path)
 {
-    int err = ENOMEM;
+    पूर्णाङ्क err = ENOMEM;
 
-    char *tmp = strdup(path);
-    if (!tmp)
-        goto err;
+    वर्ण *tmp = strdup(path);
+    यदि (!tmp)
+        गच्छ err;
 
-    struct stat stat_buf;
+    संरचना stat stat_buf;
     err = stat(path, &stat_buf);
-    if (err != 0) {
-        err = errno;
-        goto err;
+    यदि (err != 0) {
+        err = त्रुटि_सं;
+        गच्छ err;
     }
-    if (!S_ISDIR(stat_buf.st_mode)) {
+    यदि (!S_ISDIR(stat_buf.st_mode)) {
         err = ENOTDIR;
-        goto err;
+        गच्छ err;
     }
 
-    if (!check_eaccess(path, R_OK | X_OK)) {
+    यदि (!check_eaccess(path, R_OK | X_OK)) {
         err = EACCES;
-        goto err;
+        गच्छ err;
     }
 
     darray_append(ctx->includes, tmp);
     /* Use “info” log level to facilitate bug reporting. */
     log_info(ctx, XKB_LOG_MESSAGE_NO_ID, "Include path added: %s\n", tmp);
 
-    return 1;
+    प्रत्यागम 1;
 
 err:
-    if (tmp)
+    यदि (tmp)
         darray_append(ctx->failed_includes, tmp);
     /*
      * This error is not fatal because some valid paths may still be defined.
      * Use “info” log level to facilitate bug reporting.
      */
     log_info(ctx, XKB_LOG_MESSAGE_NO_ID,
-             "Include path failed: \"%s\" (%s)\n", path, strerror(err));
-    return 0;
+             "Include path failed: \"%s\" (%s)\n", path, म_त्रुटि(err));
+    प्रत्यागम 0;
 }
 
 /**
  * Append one directory to the context’s include path.
  */
-int
-xkb_context_include_path_append(struct xkb_context *ctx, const char *path)
+पूर्णाङ्क
+xkb_context_include_path_append(संरचना xkb_context *ctx, ध्रुव वर्ण *path)
 {
-    return (xkb_context_init_includes(ctx))
+    प्रत्यागम (xkb_context_init_includes(ctx))
         ? context_include_path_append(ctx, path)
         : 0;
 }
 
-const char *
-xkb_context_include_path_get_extra_path(struct xkb_context *ctx)
+ध्रुव वर्ण *
+xkb_context_include_path_get_extra_path(संरचना xkb_context *ctx)
 {
-    const char * const extra = xkb_context_getenv(ctx, "XKB_CONFIG_EXTRA_PATH");
+    ध्रुव वर्ण * ध्रुव extra = xkb_context_getenv(ctx, "XKB_CONFIG_EXTRA_PATH");
     /*
      * Only use default if path is undefined, but accept empty string, which may
      * be unintentional and should be reported.
      */
-    return extra ? extra : DFLT_XKB_CONFIG_EXTRA_PATH;
+    प्रत्यागम extra ? extra : DFLT_XKB_CONFIG_EXTRA_PATH;
 }
 
-#if HAVE_XKB_EXTENSIONS_DIRECTORIES
-const char *
-xkb_context_include_path_get_unversioned_extensions_path(struct xkb_context *ctx)
+#यदि HAVE_XKB_EXTENSIONS_DIRECTORIES
+ध्रुव वर्ण *
+xkb_context_include_path_get_unversioned_extensions_path(संरचना xkb_context *ctx)
 {
-    const char *ext =
+    ध्रुव वर्ण *ext =
         xkb_context_getenv(ctx, "XKB_CONFIG_UNVERSIONED_EXTENSIONS_PATH");
-    return ext
+    प्रत्यागम ext
         ? ext
 #ifdef DFLT_XKB_CONFIG_UNVERSIONED_EXTENSIONS_PATH
         : DFLT_XKB_CONFIG_UNVERSIONED_EXTENSIONS_PATH;
-#else
-        : NULL;
+#अन्यथा
+        : रिक्त;
 #endif
 }
 
-const char *
-xkb_context_include_path_get_versioned_extensions_path(struct xkb_context *ctx)
+ध्रुव वर्ण *
+xkb_context_include_path_get_versioned_extensions_path(संरचना xkb_context *ctx)
 {
-    const char *ext =
+    ध्रुव वर्ण *ext =
         xkb_context_getenv(ctx, "XKB_CONFIG_VERSIONED_EXTENSIONS_PATH");
-    return ext
+    प्रत्यागम ext
         ? ext
 #ifdef DFLT_XKB_CONFIG_VERSIONED_EXTENSIONS_PATH
         : DFLT_XKB_CONFIG_VERSIONED_EXTENSIONS_PATH;
-#else
-        : NULL;
+#अन्यथा
+        : रिक्त;
 #endif
 }
 
-static int
-compare_str(const void *a, const void *b)
+स्थिर पूर्णाङ्क
+compare_str(ध्रुव शून्य *a, ध्रुव शून्य *b)
 {
-    return strcmp(*(char **)a, *(char **) b);
+    प्रत्यागम म_भेद(*(वर्ण **)a, *(वर्ण **) b);
 }
 
-static int
-add_direct_subdirectories(struct xkb_context *ctx, const char *path,
+स्थिर पूर्णाङ्क
+add_direct_subdirectories(संरचना xkb_context *ctx, ध्रुव वर्ण *path,
                           darray_string *extensions,
-                          darray_size_t versioned_count,
-                          size_t versioned_path_length)
+                          darray_size_t versioned_गिनती,
+                          माप_प्रकार versioned_path_length)
 {
-    int ret = 0;
-    int err = ENOMEM;
-    DIR *dir = NULL;
+    पूर्णाङ्क ret = 0;
+    पूर्णाङ्क err = ENOMEM;
+    सूची *dir = रिक्त;
 
     /* Check extensions parent directory */
-    struct stat stat_buf;
+    संरचना stat stat_buf;
     err = stat(path, &stat_buf);
-    if (err != 0) {
-        err = errno;
-        goto err;
+    यदि (err != 0) {
+        err = त्रुटि_सं;
+        गच्छ err;
     }
-    if (!S_ISDIR(stat_buf.st_mode)) {
+    यदि (!S_ISDIR(stat_buf.st_mode)) {
         err = ENOTDIR;
-        goto err;
+        गच्छ err;
     }
-    if (!check_eaccess(path, R_OK | X_OK)) {
+    यदि (!check_eaccess(path, R_OK | X_OK)) {
         err = EACCES;
-        goto err;
+        गच्छ err;
     }
 
-    dir = opendir(path);
-    if (dir == NULL) {
+    dir = सूची_खोलो(path);
+    यदि (dir == रिक्त) {
         err = EACCES;
-        goto err;
+        गच्छ err;
     }
 
-    struct dirent *entry;
-    char path_buf[PATH_MAX] = "";
+    संरचना dirent *entry;
+    वर्ण path_buf[PATH_MAX] = "";
     versioned_path_length++; /* Additional final ‘/’ */
-    while ((entry = readdir(dir)) != NULL) {
-        const char *name = entry->d_name;
+    यावत् ((entry = सूची_पढ़ो(dir)) != रिक्त) {
+        ध्रुव वर्ण *name = entry->d_name;
 
         /* Skip special entries */
-        if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
-            continue;
+        यदि (म_भेद(name, ".") == 0 || म_भेद(name, "..") == 0)
+            अनुवर्त;
 
-        if (!snprintf_safe(path_buf, sizeof(path_buf), "%s/%s", path, name)) {
+        यदि (!snprintf_safe(path_buf, परिमाण(path_buf), "%s/%s", path, name)) {
             err = ENOMEM;
-            goto err;
+            गच्छ err;
         }
-        if (stat(path_buf, &stat_buf) != 0 || !S_ISDIR(stat_buf.st_mode))
-            continue;
+        यदि (stat(path_buf, &stat_buf) != 0 || !S_ISDIR(stat_buf.st_mode))
+            अनुवर्त;
 
         /* Skip if the corresponding versioned directory is already included */
-        for (darray_size_t i = 0; i < versioned_count; i++) {
-            const char * const prev_name = darray_item(*extensions, i)
+        प्रति (darray_size_t i = 0; i < versioned_गिनती; i++) {
+            ध्रुव वर्ण * ध्रुव prev_name = darray_item(*extensions, i)
                                          + versioned_path_length;
-            if (strcmp(name, prev_name) == 0)
-                goto next;
+            यदि (म_भेद(name, prev_name) == 0)
+                गच्छ next;
         }
 
-        char *ext_path = strdup_safe(path_buf);
-        if (!ext_path) {
+        वर्ण *ext_path = strdup_safe(path_buf);
+        यदि (!ext_path) {
             err = ENOMEM;
-            goto err;
+            गच्छ err;
         }
 
         darray_append(*extensions, ext_path);
@@ -201,103 +201,103 @@ next:
     {} /* Label at end of compound statement is a C23 extension */
     }
 
-    closedir(dir);
+    बंद_सूची(dir);
 
-    if (darray_size(*extensions) > versioned_count) {
+    यदि (darray_size(*extensions) > versioned_गिनती) {
         /* Sort the entries, so that they are appended in lexicographic order */
-        qsort(darray_items(*extensions) + versioned_count,
-              darray_size(*extensions) - versioned_count,
-              sizeof(*darray_items(*extensions)), &compare_str);
-        char **ext_path;
-        darray_foreach_from(ext_path, *extensions, versioned_count) {
+        क्विक(darray_वस्तुएँ(*extensions) + versioned_गिनती,
+              darray_size(*extensions) - versioned_गिनती,
+              परिमाण(*darray_वस्तुएँ(*extensions)), &compare_str);
+        वर्ण **ext_path;
+        darray_foreach_from(ext_path, *extensions, versioned_गिनती) {
             ret |= context_include_path_append(ctx, *ext_path);
         }
     }
 
-    return ret;
+    प्रत्यागम ret;
 
 err:
     log_dbg(ctx, XKB_LOG_MESSAGE_NO_ID,
-            "Include extensions path failed: %s (%s)\n", path, strerror(err));
-    if (dir)
-        closedir(dir);
+            "Include extensions path failed: %s (%s)\n", path, म_त्रुटि(err));
+    यदि (dir)
+        बंद_सूची(dir);
 
-    return ret;
+    प्रत्यागम ret;
 }
 #endif
 
-const char *
-xkb_context_include_path_get_system_path(struct xkb_context *ctx)
+ध्रुव वर्ण *
+xkb_context_include_path_get_system_path(संरचना xkb_context *ctx)
 {
-    const char * const root = xkb_context_getenv(ctx, "XKB_CONFIG_ROOT");
+    ध्रुव वर्ण * ध्रुव मूल = xkb_context_getenv(ctx, "XKB_CONFIG_ROOT");
     /*
      * Only use default if path is undefined, but accept empty string, which may
      * be unintentional and should be reported.
      */
-    return root ? root : DFLT_XKB_CONFIG_ROOT;
+    प्रत्यागम मूल ? मूल : DFLT_XKB_CONFIG_मूल;
 }
 
 /**
  * Append the default include directories to the context.
  */
-int
-xkb_context_include_path_append_default(struct xkb_context *ctx)
+पूर्णाङ्क
+xkb_context_include_path_append_default(संरचना xkb_context *ctx)
 {
     /*
      * We do not call `xkb_context_init_includes()` here, because either
      * we already initialized the includes paths or we are doing it now.
      */
 
-    char *user_path;
-    int ret = 0;
+    वर्ण *user_path;
+    पूर्णाङ्क ret = 0;
 
-    const char * const home = xkb_context_getenv(ctx, "HOME");
-    const char * const xdg = xkb_context_getenv(ctx, "XDG_CONFIG_HOME");
+    ध्रुव वर्ण * ध्रुव home = xkb_context_getenv(ctx, "HOME");
+    ध्रुव वर्ण * ध्रुव xdg = xkb_context_getenv(ctx, "XDG_CONFIG_HOME");
     /* Accept empty string, which may be unintentional and should be reported */
-    if (xdg != NULL) {
+    यदि (xdg != रिक्त) {
         user_path = asprintf_safe("%s/xkb", xdg);
-        if (user_path) {
+        यदि (user_path) {
             ret |= context_include_path_append(ctx, user_path);
-            free(user_path);
+            मुक्त(user_path);
         }
-    } else if (home != NULL) {
+    } अन्यथा यदि (home != रिक्त) {
         /* XDG_CONFIG_HOME fallback is $HOME/.config/ */
         user_path = asprintf_safe("%s/.config/xkb", home);
-        if (user_path) {
+        यदि (user_path) {
             ret |= context_include_path_append(ctx, user_path);
-            free(user_path);
+            मुक्त(user_path);
         }
     }
 
-    if (home != NULL) {
+    यदि (home != रिक्त) {
         user_path = asprintf_safe("%s/.xkb", home);
-        if (user_path) {
+        यदि (user_path) {
             ret |= context_include_path_append(ctx, user_path);
-            free(user_path);
+            मुक्त(user_path);
         }
     }
 
-    const char * const extra = xkb_context_include_path_get_extra_path(ctx);
+    ध्रुव वर्ण * ध्रुव extra = xkb_context_include_path_get_extra_path(ctx);
     ret |= context_include_path_append(ctx, extra);
 
-#if HAVE_XKB_EXTENSIONS_DIRECTORIES
+#यदि HAVE_XKB_EXTENSIONS_DIRECTORIES
     darray_string extensions = darray_new();
 
     /* Versioned extensions directory */
-    const char *extensions_path =
+    ध्रुव वर्ण *extensions_path =
         xkb_context_include_path_get_versioned_extensions_path(ctx);
-    size_t versioned_path_length = 0;
-    if (extensions_path) {
+    माप_प्रकार versioned_path_length = 0;
+    यदि (extensions_path) {
         /* Add direct subdirectories */
         ret |= add_direct_subdirectories(ctx, extensions_path,
                                          &extensions, 0, 0);
-        versioned_path_length = strlen(extensions_path);
+        versioned_path_length = म_माप(extensions_path);
     }
 
     /* Unversioned extensions directory */
     extensions_path =
         xkb_context_include_path_get_unversioned_extensions_path(ctx);
-    if (extensions_path) {
+    यदि (extensions_path) {
         /*
          * Add direct subdirectories, except those already added from the
          * *versioned* extensions path hereinabove.
@@ -307,17 +307,17 @@ xkb_context_include_path_append_default(struct xkb_context *ctx)
                                          versioned_path_length);
     }
 
-    char **ext_path;
+    वर्ण **ext_path;
     darray_foreach(ext_path, extensions) {
-        free(*ext_path);
+        मुक्त(*ext_path);
     }
     darray_free(extensions);
 #endif
 
     /* Canonical XKB root */
-    const char * const root = xkb_context_include_path_get_system_path(ctx);
-    const bool has_root = context_include_path_append(ctx, root);
-    ret |= has_root;
+    ध्रुव वर्ण * ध्रुव मूल = xkb_context_include_path_get_system_path(ctx);
+    ध्रुव bool has_मूल = context_include_path_append(ctx, मूल);
+    ret |= has_मूल;
 
     /*
      * Fallback for misconfigured setups.
@@ -328,32 +328,32 @@ xkb_context_include_path_append_default(struct xkb_context *ctx)
      * This fallback can still be skipped if deliberately using an empty string
      * for the canonical XKB root hereinabove.
      */
-    if (!has_root && root[0] != '\0') {
+    यदि (!has_मूल && मूल[0] != '\0') {
         log_warn(ctx, XKB_LOG_MESSAGE_NO_ID,
                  "Root include path failed; fallback to \"%s\". "
                  "The setup is probably misconfigured. "
                  "Please ensure that \"%s\" is available in the environment.\n",
-                 DFLT_XKB_LEGACY_ROOT, root);
-        ret |= context_include_path_append(ctx, DFLT_XKB_LEGACY_ROOT);
+                 DFLT_XKB_LEGACY_मूल, मूल);
+        ret |= context_include_path_append(ctx, DFLT_XKB_LEGACY_मूल);
     }
 
-    return ret;
+    प्रत्यागम ret;
 }
 
 /**
  * Remove all entries in the context's include path.
  */
-void
-xkb_context_include_path_clear(struct xkb_context *ctx)
+शून्य
+xkb_context_include_path_clear(संरचना xkb_context *ctx)
 {
-    char **path;
+    वर्ण **path;
 
     darray_foreach(path, ctx->includes)
-        free(*path);
+        मुक्त(*path);
     darray_free(ctx->includes);
 
     darray_foreach(path, ctx->failed_includes)
-        free(*path);
+        मुक्त(*path);
     darray_free(ctx->failed_includes);
 
     /* It does not make sense to keep the pending defaults */
@@ -363,20 +363,20 @@ xkb_context_include_path_clear(struct xkb_context *ctx)
 /**
  * xkb_context_include_path_clear() + xkb_context_include_path_append_default()
  */
-int
-xkb_context_include_path_reset_defaults(struct xkb_context *ctx)
+पूर्णाङ्क
+xkb_context_include_path_reset_defaults(संरचना xkb_context *ctx)
 {
     xkb_context_include_path_clear(ctx);
-    return xkb_context_include_path_append_default(ctx);
+    प्रत्यागम xkb_context_include_path_append_default(ctx);
 }
 
 /**
  * Returns the number of entries in the context's include path.
  */
-unsigned int
-xkb_context_num_include_paths(struct xkb_context *ctx)
+अचिन्हित पूर्णाङ्क
+xkb_context_अंक_include_paths(संरचना xkb_context *ctx)
 {
-    return (xkb_context_init_includes(ctx))
+    प्रत्यागम (xkb_context_init_includes(ctx))
         ? darray_size(ctx->includes)
         : 0;
 }
@@ -385,130 +385,130 @@ xkb_context_num_include_paths(struct xkb_context *ctx)
  * Returns the given entry in the context's include path, or NULL if an
  * invalid index is passed.
  */
-const char *
-xkb_context_include_path_get(struct xkb_context *ctx, unsigned int idx)
+ध्रुव वर्ण *
+xkb_context_include_path_get(संरचना xkb_context *ctx, अचिन्हित पूर्णाङ्क idx)
 {
-    if (idx >= xkb_context_num_include_paths(ctx))
-        return NULL;
+    यदि (idx >= xkb_context_अंक_include_paths(ctx))
+        प्रत्यागम रिक्त;
 
-    return darray_item(ctx->includes, idx);
+    प्रत्यागम darray_item(ctx->includes, idx);
 }
 
 /**
  * Take a new reference on the context.
  */
-struct xkb_context *
-xkb_context_ref(struct xkb_context *ctx)
+संरचना xkb_context *
+xkb_context_ref(संरचना xkb_context *ctx)
 {
-    assert(ctx->refcnt > 0);
+    प्रतिज्ञा(ctx->refcnt > 0);
     ctx->refcnt++;
-    return ctx;
+    प्रत्यागम ctx;
 }
 
 /**
  * Drop an existing reference on the context, and free it if the refcnt is
  * now 0.
  */
-void
-xkb_context_unref(struct xkb_context *ctx)
+शून्य
+xkb_context_unref(संरचना xkb_context *ctx)
 {
-    assert(!ctx || ctx->refcnt > 0);
-    if (!ctx || --ctx->refcnt > 0)
-        return;
+    प्रतिज्ञा(!ctx || ctx->refcnt > 0);
+    यदि (!ctx || --ctx->refcnt > 0)
+        प्रत्यागम;
 
-    free(ctx->x11_atom_cache);
+    मुक्त(ctx->x11_atom_cache);
     xkb_context_include_path_clear(ctx);
     atom_table_free(ctx->atom_table);
-    free(ctx);
+    मुक्त(ctx);
 }
 
-static const char *
-log_level_to_prefix(enum xkb_log_level level)
+स्थिर ध्रुव वर्ण *
+log_level_to_prefix(गणना xkb_log_level level)
 {
-    switch (level) {
-    case XKB_LOG_LEVEL_DEBUG:
-        return "xkbcommon: DEBUG: ";
-    case XKB_LOG_LEVEL_INFO:
-        return "xkbcommon: INFO: ";
-    case XKB_LOG_LEVEL_WARNING:
-        return "xkbcommon: WARNING: ";
-    case XKB_LOG_LEVEL_ERROR:
-        return "xkbcommon: ERROR: ";
-    case XKB_LOG_LEVEL_CRITICAL:
-        return "xkbcommon: CRITICAL: ";
-    default:
-        return NULL;
+    विकल्प (level) {
+    पक्ष XKB_LOG_LEVEL_DEBUG:
+        प्रत्यागम "xkbcommon: DEBUG: ";
+    पक्ष XKB_LOG_LEVEL_INFO:
+        प्रत्यागम "xkbcommon: INFO: ";
+    पक्ष XKB_LOG_LEVEL_WARNING:
+        प्रत्यागम "xkbcommon: WARNING: ";
+    पक्ष XKB_LOG_LEVEL_ERROR:
+        प्रत्यागम "xkbcommon: ERROR: ";
+    पक्ष XKB_LOG_LEVEL_CRITICAL:
+        प्रत्यागम "xkbcommon: CRITICAL: ";
+    स्वभाव:
+        प्रत्यागम रिक्त;
     }
 }
 
-ATTR_PRINTF(3, 0) static void
-default_log_fn(struct xkb_context *ctx, enum xkb_log_level level,
-               const char *fmt, va_list args)
+ATTR_PRINTF(3, 0) स्थिर शून्य
+default_log_fn(संरचना xkb_context *ctx, गणना xkb_log_level level,
+               ध्रुव वर्ण *fmt, बहु_सूची args)
 {
-    const char *prefix = log_level_to_prefix(level);
+    ध्रुव वर्ण *prefix = log_level_to_prefix(level);
 
-    if (prefix)
-        fprintf(stderr, "%s", prefix);
-    vfprintf(stderr, fmt, args);
+    यदि (prefix)
+        ख_लिखो(मानक_त्रुटि, "%s", prefix);
+    भख_लिखो(मानक_त्रुटि, fmt, args);
 }
 
-static enum xkb_log_level
-log_level(const char *level) {
-    errno = 0;
-    char *endptr = NULL;
-    const long lvl = strtol(level, &endptr, 10);
-    if (errno == 0 && (endptr[0] == '\0' || is_space(endptr[0])))
-        return (enum xkb_log_level)lvl;
-    if (istreq_prefix("crit", level))
-        return XKB_LOG_LEVEL_CRITICAL;
-    if (istreq_prefix("err", level))
-        return XKB_LOG_LEVEL_ERROR;
-    if (istreq_prefix("warn", level))
-        return XKB_LOG_LEVEL_WARNING;
-    if (istreq_prefix("info", level))
-        return XKB_LOG_LEVEL_INFO;
-    if (istreq_prefix("debug", level) || istreq_prefix("dbg", level))
-        return XKB_LOG_LEVEL_DEBUG;
+स्थिर गणना xkb_log_level
+log_level(ध्रुव वर्ण *level) {
+    त्रुटि_सं = 0;
+    वर्ण *endptr = रिक्त;
+    ध्रुव दीर्घ lvl = म_से_दीर्घ(level, &endptr, 10);
+    यदि (त्रुटि_सं == 0 && (endptr[0] == '\0' || is_space(endptr[0])))
+        प्रत्यागम (गणना xkb_log_level)lvl;
+    यदि (istreq_prefix("crit", level))
+        प्रत्यागम XKB_LOG_LEVEL_CRITICAL;
+    यदि (istreq_prefix("err", level))
+        प्रत्यागम XKB_LOG_LEVEL_ERROR;
+    यदि (istreq_prefix("warn", level))
+        प्रत्यागम XKB_LOG_LEVEL_WARNING;
+    यदि (istreq_prefix("info", level))
+        प्रत्यागम XKB_LOG_LEVEL_INFO;
+    यदि (istreq_prefix("debug", level) || istreq_prefix("dbg", level))
+        प्रत्यागम XKB_LOG_LEVEL_DEBUG;
 
-    return XKB_LOG_LEVEL_ERROR;
+    प्रत्यागम XKB_LOG_LEVEL_ERROR;
 }
 
-static int
-log_verbosity(const char *verbosity) {
-    errno = 0;
-    const long int v = strtol(verbosity, NULL, 10);
-    if (errno == 0) {
+स्थिर पूर्णाङ्क
+log_verbosity(ध्रुव वर्ण *verbosity) {
+    त्रुटि_सं = 0;
+    ध्रुव दीर्घ पूर्णाङ्क v = म_से_दीर्घ(verbosity, रिक्त, 10);
+    यदि (त्रुटि_सं == 0) {
         /* Truncate */
-        return (int) v;
+        प्रत्यागम (पूर्णाङ्क) v;
     }
 
-    return XKB_LOG_VERBOSITY_DEFAULT;
+    प्रत्यागम XKB_LOG_VERBOSITY_DEFAULT;
 }
 
 /**
  * Create a new context.
  */
-struct xkb_context *
-xkb_context_new(enum xkb_context_flags flags)
+संरचना xkb_context *
+xkb_context_new(गणना xkb_context_flags flags)
 {
-    const char *env;
-    struct xkb_context *ctx = calloc(1, sizeof(*ctx));
+    ध्रुव वर्ण *env;
+    संरचना xkb_context *ctx = सुस्मृति(1, परिमाण(*ctx));
 
-    if (!ctx)
-        return NULL;
+    यदि (!ctx)
+        प्रत्यागम रिक्त;
 
     ctx->refcnt = 1;
     ctx->log_fn = default_log_fn;
     ctx->log_level = XKB_LOG_LEVEL_ERROR;
     ctx->log_verbosity = XKB_LOG_VERBOSITY_DEFAULT;
 
-    const enum xkb_context_flags invalid_flags =
-        (flags & ~(enum xkb_context_flags)XKB_CONTEXT_FLAGS_VALUES);
-    if (invalid_flags) {
+    ध्रुव गणना xkb_context_flags invalid_flags =
+        (flags & ~(गणना xkb_context_flags)XKB_CONTEXT_FLAGS_मूल्यावली);
+    यदि (invalid_flags) {
         log_err_func(ctx, XKB_LOG_MESSAGE_NO_ID,
                      "Invalid context flags: 0x%x\n", invalid_flags);
-        free(ctx);
-        return NULL;
+        मुक्त(ctx);
+        प्रत्यागम रिक्त;
     }
 
     ctx->use_environment_names = !(flags & XKB_CONTEXT_NO_ENVIRONMENT_NAMES);
@@ -535,67 +535,67 @@ xkb_context_new(enum xkb_context_flags flags)
 
     /* Environment overwrites defaults. */
     env = xkb_context_getenv(ctx, "XKB_LOG_LEVEL");
-    if (env)
+    यदि (env)
         xkb_context_set_log_level(ctx, log_level(env));
 
     env = xkb_context_getenv(ctx, "XKB_LOG_VERBOSITY");
-    if (env)
+    यदि (env)
         xkb_context_set_log_verbosity(ctx, log_verbosity(env));
 
     ctx->atom_table = atom_table_new();
-    if (!ctx->atom_table) {
+    यदि (!ctx->atom_table) {
         xkb_context_unref(ctx);
-        return NULL;
+        प्रत्यागम रिक्त;
     }
 
-    ctx->x11_atom_cache = NULL;
+    ctx->x11_atom_cache = रिक्त;
 
-    return ctx;
+    प्रत्यागम ctx;
 }
 
-void
-xkb_context_set_log_fn(struct xkb_context *ctx,
-                       void (*log_fn)(struct xkb_context *ctx,
-                                      enum xkb_log_level level,
-                                      const char *fmt, va_list args))
+शून्य
+xkb_context_set_log_fn(संरचना xkb_context *ctx,
+                       शून्य (*log_fn)(संरचना xkb_context *ctx,
+                                      गणना xkb_log_level level,
+                                      ध्रुव वर्ण *fmt, बहु_सूची args))
 {
     ctx->log_fn = (log_fn ? log_fn : default_log_fn);
 }
 
-enum xkb_log_level
-xkb_context_get_log_level(struct xkb_context *ctx)
+गणना xkb_log_level
+xkb_context_get_log_level(संरचना xkb_context *ctx)
 {
-    return ctx->log_level;
+    प्रत्यागम ctx->log_level;
 }
 
-void
-xkb_context_set_log_level(struct xkb_context *ctx, enum xkb_log_level level)
+शून्य
+xkb_context_set_log_level(संरचना xkb_context *ctx, गणना xkb_log_level level)
 {
     ctx->log_level = level;
 }
 
-int
-xkb_context_get_log_verbosity(struct xkb_context *ctx)
+पूर्णाङ्क
+xkb_context_get_log_verbosity(संरचना xkb_context *ctx)
 {
-    return ctx->log_verbosity;
+    प्रत्यागम ctx->log_verbosity;
 }
 
-void
-xkb_context_set_log_verbosity(struct xkb_context *ctx, int verbosity)
+शून्य
+xkb_context_set_log_verbosity(संरचना xkb_context *ctx, पूर्णाङ्क verbosity)
 {
     ctx->log_verbosity = verbosity;
 }
 
-void *
-xkb_context_get_user_data(struct xkb_context *ctx)
+शून्य *
+xkb_context_get_user_data(संरचना xkb_context *ctx)
 {
-    if (ctx)
-        return ctx->user_data;
-    return NULL;
+    यदि (ctx)
+        प्रत्यागम ctx->user_data;
+    प्रत्यागम रिक्त;
 }
 
-void
-xkb_context_set_user_data(struct xkb_context *ctx, void *user_data)
+शून्य
+xkb_context_set_user_data(संरचना xkb_context *ctx, शून्य *user_data)
 {
     ctx->user_data = user_data;
 }
