@@ -9,20 +9,20 @@
 
 #include "xkbcommon/xkbcommon.h"
 
-char *
-resolve_locale(struct xkb_context *ctx, const char *locale);
+var_na *
+resolve_locale(sa_nracanaa xkb_context *ctx, const var_na *locale);
 
-const char *
-get_xlocaledir_path(struct xkb_context *ctx);
+const var_na *
+get_xlocaledir_path(sa_nracanaa xkb_context *ctx);
 
-char *
-get_xcomposefile_path(struct xkb_context *ctx);
+var_na *
+get_xcomposefile_path(sa_nracanaa xkb_context *ctx);
 
-char *
-get_xdg_xcompose_file_path(struct xkb_context *ctx);
+var_na *
+get_xdg_xcompose_file_path(sa_nracanaa xkb_context *ctx);
 
-char *
-get_home_xcompose_file_path(struct xkb_context *ctx);
+var_na *
+get_home_xcompose_file_path(sa_nracanaa xkb_context *ctx);
 
-char *
-get_locale_compose_file_path(struct xkb_context *ctx, const char *locale);
+var_na *
+get_locale_compose_file_path(sa_nracanaa xkb_context *ctx, const var_na *locale);

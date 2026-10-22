@@ -48,8 +48,8 @@
 #ifndef YYDEBUG
 # define YYDEBUG 0
 #endif
-#if YYDEBUG
-extern int _xkbcommon_debug;
+#ပေႃး YYDEBUG
+extern puur_naa_nka _xkbcommon_debug;
 #endif
 /* "%code requires" blocks.  */
 #line 14 "src/xkbcomp/parser.y"
@@ -65,7 +65,7 @@ extern int _xkbcommon_debug;
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
-  enum yytokentype
+  ga_nanaa yytokentype
   {
     YYEMPTY = -2,
     END_OF_FILE = 0,               /* "end of file"  */
@@ -136,32 +136,32 @@ extern int _xkbcommon_debug;
     ALTERNATE_GROUP = 77,          /* "alternate_group"  */
     DEPRECATED = 78                /* "deprecated"  */
   };
-  typedef enum yytokentype yytoken_kind_t;
+  typedef ga_nanaa yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */
-#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-union YYSTYPE
+#ပေႃး ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
+sa_ngha YYSTYPE
 {
 #line 177 "src/xkbcomp/parser.y"
 
         int64_t          num;
-        enum xkb_file_type file_type;
-        char            *str;
-        struct sval     sval;
+        ga_nanaa xkb_file_type file_type;
+        var_na            *str;
+        sa_nracanaa sval     sval;
         xkb_atom_t      atom;
-        enum merge_mode merge;
-        enum xkb_map_flags mapFlags;
+        ga_nanaa merge_mode merge;
+        ga_nanaa xkb_map_flags mapFlags;
         xkb_keysym_t    keysym;
         ParseCommon     *any;
-        struct { ParseCommon *head; ParseCommon *last; } anyList;
+        sa_nracanaa { ParseCommon *head; ParseCommon *last; } anyList;
         uint32_t        noSymbolOrActionList;
         ExprDef         *expr;
-        struct { ExprDef *head; ExprDef *last; } exprList;
+        sa_nracanaa { ExprDef *head; ExprDef *last; } exprList;
         VarDef          *var;
-        struct { VarDef *head; VarDef *last; } varList;
+        sa_nracanaa { VarDef *head; VarDef *last; } varList;
         VModDef         *vmod;
-        struct { VModDef *head; VModDef *last; } vmodList;
+        sa_nracanaa { VModDef *head; VModDef *last; } vmodList;
         InterpDef       *interp;
         KeyTypeDef      *keyType;
         SymbolsDef      *syms;
@@ -174,12 +174,12 @@ union YYSTYPE
         UnknownStatement *unknown;
         void            *geom;
         XkbFile         *file;
-        struct { XkbFile *head; XkbFile *last; } fileList;
+        sa_nracanaa { XkbFile *head; XkbFile *last; } fileList;
 
 #line 173 "src/xkbcomp/parser.h"
 
 };
-typedef union YYSTYPE YYSTYPE;
+typedef sa_ngha YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
@@ -187,7 +187,7 @@ typedef union YYSTYPE YYSTYPE;
 
 
 
-int _xkbcommon_parse (struct parser_param *param);
+puur_naa_nka _xkbcommon_parse (sa_nracanaa parser_param *param);
 
 
 #endif /* !YY__XKBCOMMON_SRC_XKBCOMP_PARSER_H_INCLUDED  */

@@ -13,10 +13,10 @@
 #include "table.h"
 #include "utils.h"
 
-struct xkb_compose_state {
-    int refcnt;
-    enum xkb_compose_state_flags flags;
-    struct xkb_compose_table *table;
+sa_nracanaa xkb_compose_state {
+    puur_naa_nka refcnt;
+    ga_nanaa xkb_compose_state_flags flags;
+    sa_nracanaa xkb_compose_table *table;
 
     /*
      * Offsets into xkb_compose_table::nodes.
@@ -31,22 +31,22 @@ struct xkb_compose_state {
     uint32_t context;
 };
 
-struct xkb_compose_state *
-xkb_compose_state_new(struct xkb_compose_table *table,
-                      enum xkb_compose_state_flags flags)
+sa_nracanaa xkb_compose_state *
+xkb_compose_state_new(sa_nracanaa xkb_compose_table *table,
+                      ga_nanaa xkb_compose_state_flags flags)
 {
-    const enum xkb_compose_state_flags invalid_flags =
-        (flags & ~(enum xkb_compose_state_flags)XKB_COMPOSE_STATE_FLAGS_VALUES);
-    if (invalid_flags) {
+    const ga_nanaa xkb_compose_state_flags invalid_flags =
+        (flags & ~(ga_nanaa xkb_compose_state_flags)XKB_COMPOSE_STATE_FLAGS_VALUES);
+    ပေႃး (invalid_flags) {
         log_err_func(table->ctx, XKB_LOG_MESSAGE_NO_ID,
                      "Unsupported compose state flags: %#x\n",
                      invalid_flags);
-        return NULL;
+        ပွၵ်ႈ NULL;
     }
 
-    struct xkb_compose_state * const state = calloc(1, sizeof(*state));
-    if (!state)
-        return NULL;
+    sa_nracanaa xkb_compose_state * const state = calloc(1, parimaa_na(*state));
+    ပေႃး (!state)
+        ပွၵ်ႈ NULL;
 
     state->refcnt = 1;
     state->table = xkb_compose_table_ref(table);
@@ -55,39 +55,39 @@ xkb_compose_state_new(struct xkb_compose_table *table,
     state->prev_context = 0;
     state->context = 0;
 
-    return state;
+    ပွၵ်ႈ state;
 }
 
-struct xkb_compose_state *
-xkb_compose_state_ref(struct xkb_compose_state *state)
+sa_nracanaa xkb_compose_state *
+xkb_compose_state_ref(sa_nracanaa xkb_compose_state *state)
 {
     assert(state->refcnt > 0);
     state->refcnt++;
-    return state;
+    ပွၵ်ႈ state;
 }
 
 void
-xkb_compose_state_unref(struct xkb_compose_state *state)
+xkb_compose_state_unref(sa_nracanaa xkb_compose_state *state)
 {
     assert(!state || state->refcnt > 0);
-    if (!state || --state->refcnt > 0)
-        return;
+    ပေႃး (!state || --state->refcnt > 0)
+        ပွၵ်ႈ;
 
     xkb_compose_table_unref(state->table);
     free(state);
 }
 
-struct xkb_compose_table *
-xkb_compose_state_get_compose_table(struct xkb_compose_state *state)
+sa_nracanaa xkb_compose_table *
+xkb_compose_state_get_compose_table(sa_nracanaa xkb_compose_state *state)
 {
-    return state->table;
+    ပွၵ်ႈ state->table;
 }
 
-enum xkb_compose_feed_result
-xkb_compose_state_feed(struct xkb_compose_state *state, xkb_keysym_t keysym)
+ga_nanaa xkb_compose_feed_result
+xkb_compose_state_feed(sa_nracanaa xkb_compose_state *state, xkb_keysym_t keysym)
 {
     uint32_t context;
-    const struct compose_node *node;
+    const sa_nracanaa compose_node *node;
 
     /*
      * Modifiers do not affect the sequence directly.  In particular,
@@ -99,98 +99,98 @@ xkb_compose_state_feed(struct xkb_compose_state *state, xkb_keysym_t keysym)
      * have it here.  However, this is (approximately) what libX11 does
      * as well.
      */
-    if (xkb_keysym_is_modifier(keysym))
-        return XKB_COMPOSE_FEED_IGNORED;
+    ပေႃး (xkb_keysym_is_modifier(keysym))
+        ပွၵ်ႈ XKB_COMPOSE_FEED_IGNORED;
 
     node = &darray_item(state->table->nodes, state->context);
 
     context = (node->is_leaf ? 1 : node->internal.eqkid);
-    if (context == 1 && darray_size(state->table->nodes) == 1)
+    ပေႃး (context == 1 && darray_size(state->table->nodes) == 1)
         context = 0;
 
-    while (context != 0) {
+    ၶၢဝ်း (context != 0) {
         node = &darray_item(state->table->nodes, context);
-        if (keysym < node->keysym)
+        ပေႃး (keysym < node->keysym)
             context = node->lokid;
-        else if (keysym > node->keysym)
+        ပေႃးဢမ်ႇ ပေႃး (keysym > node->keysym)
             context = node->hikid;
-        else
-            break;
+        ပေႃးဢမ်ႇ
+            bha_nga;
     }
 
     state->prev_context = state->context;
     state->context = context;
-    return XKB_COMPOSE_FEED_ACCEPTED;
+    ပွၵ်ႈ XKB_COMPOSE_FEED_ACCEPTED;
 }
 
 void
-xkb_compose_state_reset(struct xkb_compose_state *state)
+xkb_compose_state_reset(sa_nracanaa xkb_compose_state *state)
 {
     state->prev_context = 0;
     state->context = 0;
 }
 
-enum xkb_compose_status
-xkb_compose_state_get_status(struct xkb_compose_state *state)
+ga_nanaa xkb_compose_status
+xkb_compose_state_get_status(sa_nracanaa xkb_compose_state *state)
 {
-    const struct compose_node *prev_node, *node;
+    const sa_nracanaa compose_node *prev_node, *node;
 
     prev_node = &darray_item(state->table->nodes, state->prev_context);
     node = &darray_item(state->table->nodes, state->context);
 
-    if (state->context == 0 && !prev_node->is_leaf)
-        return XKB_COMPOSE_CANCELLED;
+    ပေႃး (state->context == 0 && !prev_node->is_leaf)
+        ပွၵ်ႈ XKB_COMPOSE_CANCELLED;
 
-    if (state->context == 0)
-        return XKB_COMPOSE_NOTHING;
+    ပေႃး (state->context == 0)
+        ပွၵ်ႈ XKB_COMPOSE_NOTHING;
 
-    if (!node->is_leaf)
-        return XKB_COMPOSE_COMPOSING;
+    ပေႃး (!node->is_leaf)
+        ပွၵ်ႈ XKB_COMPOSE_COMPOSING;
 
-    return XKB_COMPOSE_COMPOSED;
+    ပွၵ်ႈ XKB_COMPOSE_COMPOSED;
 }
 
-int
-xkb_compose_state_get_utf8(struct xkb_compose_state *state,
-                           char *buffer, size_t size)
+puur_naa_nka
+xkb_compose_state_get_utf8(sa_nracanaa xkb_compose_state *state,
+                           var_na *buffer, size_t size)
 {
-    const struct compose_node *node =
+    const sa_nracanaa compose_node *node =
         &darray_item(state->table->nodes, state->context);
 
-    if (!node->is_leaf)
+    ပေႃး (!node->is_leaf)
         goto fail;
 
     /* If there's no string specified, but only a keysym, try to do the
      * most helpful thing. */
-    if (node->leaf.utf8 == 0 && node->leaf.keysym != XKB_KEY_NoSymbol) {
-        char utf8[XKB_KEYSYM_UTF8_MAX_SIZE];
-        int ret;
+    ပေႃး (node->leaf.utf8 == 0 && node->leaf.keysym != XKB_KEY_NoSymbol) {
+        var_na utf8[XKB_KEYSYM_UTF8_MAX_SIZE];
+        puur_naa_nka ret;
 
-        ret = xkb_keysym_to_utf8(node->leaf.keysym, utf8, sizeof(utf8));
-        if (ret < 0 || ret == 0) {
+        ret = xkb_keysym_to_utf8(node->leaf.keysym, utf8, parimaa_na(utf8));
+        ပေႃး (ret < 0 || ret == 0) {
             /* ret < 0 is impossible.
              * ret == 0 means the keysym has no string representation. */
             goto fail;
         }
 
-        return snprintf(buffer, size, "%s", utf8);
+        ပွၵ်ႈ snprintf(buffer, size, "%s", utf8);
     }
 
-    return snprintf(buffer, size, "%s",
+    ပွၵ်ႈ snprintf(buffer, size, "%s",
                     &darray_item(state->table->utf8, node->leaf.utf8));
 
 fail:
-    if (size > 0)
+    ပေႃး (size > 0)
         buffer[0] = '\0';
-    return 0;
+    ပွၵ်ႈ 0;
 }
 
 xkb_keysym_t
-xkb_compose_state_get_one_sym(struct xkb_compose_state *state)
+xkb_compose_state_get_one_sym(sa_nracanaa xkb_compose_state *state)
 {
-    const struct compose_node *node =
+    const sa_nracanaa compose_node *node =
         &darray_item(state->table->nodes, state->context);
-    if (!node->is_leaf)
-        return XKB_KEY_NoSymbol;
-    return node->leaf.keysym;
+    ပေႃး (!node->is_leaf)
+        ပွၵ်ႈ XKB_KEY_NoSymbol;
+    ပွၵ်ႈ node->leaf.keysym;
 }

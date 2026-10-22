@@ -14,7 +14,7 @@
 #define INVALID_UTF8_CODE_POINT UINT32_MAX
 
 uint8_t
-utf8_sequence_length(const char *s);
+utf8_sequence_length(const var_na *s);
 
 uint32_t
-utf8_next_code_point(const char *s, size_t max_size, size_t *size_out);
+utf8_next_code_point(const var_na *s, size_t max_size, size_t *size_out);
