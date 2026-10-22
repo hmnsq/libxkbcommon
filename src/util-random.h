@@ -2,34 +2,34 @@
  * Copyright © 2026 Pierre Le Marre
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#निर्देशः once
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include <stdlib.h>
+#अन्तर्भाव <stdlib.h>
 
-#if !HAVE_RANDOM
+#यदि !HAVE_RANDOM
 
 /* Simple random() fallback based on rand() */
 
-#include <stdint.h>
+#अन्तर्भाव <stdint.h>
 
-static inline void
-srandom(unsigned int seed)
+स्थिर अन्तःस्थ शून्य
+srandom(अचिह्नित पूर्णाङ्क बीजम्)
 {
-    srand(seed);
+    बीजं_रोपय(बीजम्);
 }
 
-static inline long
-random(void)
+स्थिर अन्तःस्थ दीर्घ
+random(शून्य)
 {
     /* rand() is only guaranteed to cover [0, 32767] (15 bits), so
      * combine three calls to safely fill 31 bits regardless of the
      * platform's actual RAND_MAX. */
-    const long r = ((long)rand() & 0x7fffU)
-                 | (((long)rand() & 0x7fffU) << 15)
-                 | (((long)rand() & 0x7fffU) << 30);
+    ध्रुव दीर्घ r = ((दीर्घ)यादृच्छिकम्() & 0x7fffU)
+                 | (((दीर्घ)यादृच्छिकम्() & 0x7fffU) << 15)
+                 | (((दीर्घ)यादृच्छिकम्() & 0x7fffU) << 30);
 
-    return r & 0x7fffffffL;
+    प्रत्यागम r & 0x7fffffffL;
 }
-#endif
+#यदि_अन्तः

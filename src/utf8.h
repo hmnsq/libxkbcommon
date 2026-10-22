@@ -5,18 +5,18 @@
  *
  * Author: Rob Bradford <rob@linux.intel.com>
  */
-#pragma once
+#निर्देशः once
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
+#अन्तर्भाव <stdbool.h>
+#अन्तर्भाव <stddef.h>
+#अन्तर्भाव <stdint.h>
 
-#include "utils.h"
+#अन्तर्भाव "utils.h"
 
-XKB_EXPORT_PRIVATE uint8_t
-utf32_to_utf8(uint32_t unichar, char *buffer);
+XKB_EXPORT_वैयक्तिकम् uint8_t
+utf32_गन्तव्यम्_utf8(uint32_t unichar, वर्ण *बफर);
 
-XKB_EXPORT_PRIVATE bool
-is_valid_utf8(const char *ss, size_t len);
+XKB_EXPORT_वैयक्तिकम् bool
+is_valid_utf8(ध्रुव वर्ण *ss, आकार_t len);

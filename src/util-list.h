@@ -5,49 +5,49 @@
  * SPDX-License-Identifier: MIT
  */
 
-#pragma once
+#निर्देशः once
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include <stdbool.h>
-#include <stddef.h>
+#अन्तर्भाव <stdbool.h>
+#अन्तर्भाव <stddef.h>
 
 /*
  * This list data structure is a verbatim copy from wayland-util.h from the
  * Wayland project; except that wl_ prefix has been removed.
  */
 
-struct list {
-	struct list *prev;
-	struct list *next;
+संरचना list {
+	संरचना list *पूर्व;
+	संरचना list *अग्र;
 };
 
-void list_init(struct list *list);
-void list_insert(struct list *list, struct list *elm);
-void list_append(struct list *list, struct list *elm);
-void list_remove(struct list *elm);
-bool list_empty(const struct list *list);
-bool list_is_last(const struct list *list, const struct list *elm);
+शून्य list_init(संरचना list *list);
+शून्य list_निवेशय(संरचना list *list, संरचना list *elm);
+शून्य list_append(संरचना list *list, संरचना list *elm);
+शून्य list_remove(संरचना list *elm);
+bool list_रिक्तानि(ध्रुव संरचना list *list);
+bool list_is_चरमः(ध्रुव संरचना list *list, ध्रुव संरचना list *elm);
 
-#define container_of(ptr, type, member)					\
-	(__typeof__(type) *)((char *)(ptr) -				\
+#परिभाषय container_सम्बन्धि(ptr, type, member)					\
+	(__typeof__(type) *)((वर्ण *)(ptr) -				\
 		 offsetof(__typeof__(type), member))
 
-#define list_first_entry(head, pos, member)				\
-	container_of((head)->next, __typeof__(*(pos)), member)
+#परिभाषय list_first_प्रविष्टिः(शीर्ष, pos, member)				\
+	container_सम्बन्धि((शीर्ष)->अग्र, __typeof__(*(pos)), member)
 
-#define list_last_entry(head, pos, member)				\
-	container_of((head)->prev, __typeof__(*(pos)), member)
+#परिभाषय list_चरमः_प्रविष्टिः(शीर्ष, pos, member)				\
+	container_सम्बन्धि((शीर्ष)->पूर्व, __typeof__(*(pos)), member)
 
-#define list_for_each(pos, head, member)				\
-	for ((pos) = 0, (pos) = list_first_entry(head, pos, member);	\
-	     &(pos)->member != (head);					\
-	     (pos) = list_first_entry(&(pos)->member, pos, member))
+#परिभाषय list_for_each(pos, शीर्ष, member)				\
+	प्रति ((pos) = 0, (pos) = list_first_प्रविष्टिः(शीर्ष, pos, member);	\
+	     &(pos)->member != (शीर्ष);					\
+	     (pos) = list_first_प्रविष्टिः(&(pos)->member, pos, member))
 
-#define list_for_each_safe(pos, tmp, head, member)			\
-	for ((pos) = 0, (tmp) = 0,						\
-	     (pos) = list_first_entry(head, pos, member),			\
-	     (tmp) = list_first_entry(&(pos)->member, tmp, member);		\
-	     &(pos)->member != (head);					\
+#परिभाषय list_for_each_safe(pos, tmp, शीर्ष, member)			\
+	प्रति ((pos) = 0, (tmp) = 0,						\
+	     (pos) = list_first_प्रविष्टिः(शीर्ष, pos, member),			\
+	     (tmp) = list_first_प्रविष्टिः(&(pos)->member, tmp, member);		\
+	     &(pos)->member != (शीर्ष);					\
 	     (pos) = (tmp),							\
-	     (tmp) = list_first_entry(&(pos)->member, tmp, member))
+	     (tmp) = list_first_प्रविष्टिः(&(pos)->member, tmp, member))

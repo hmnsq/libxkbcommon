@@ -9,91 +9,91 @@
  * Author: Ran Benita <ran234@gmail.com>
  */
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include <string.h>
-#include <stdbool.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <stdbool.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "ast-build.h"
-#include "darray.h"
-#include "expr.h"
-#include "keymap.h"
-#include "text.h"
-#include "utils.h"
-#include "xkbcomp-priv.h"
+#अन्तर्भाव "xkbcommon/xkbcommon.h"
+#अन्तर्भाव "ast-build.h"
+#अन्तर्भाव "darray.h"
+#अन्तर्भाव "expr.h"
+#अन्तर्भाव "keymap.h"
+#अन्तर्भाव "text.h"
+#अन्तर्भाव "utils.h"
+#अन्तर्भाव "xkbcomp-priv.h"
 
-static bool
-has_unbound_vmods(struct xkb_keymap *keymap, xkb_mod_mask_t mask)
+स्थिर bool
+has_unbound_vmods(संरचना xkb_keymap *keymap, xkb_mod_आवरणम्_t आवरणम्)
 {
-    xkb_mod_index_t k;
-    struct xkb_mod *mod;
+    xkb_mod_सूचकांक_t k;
+    संरचना xkb_mod *mod;
     xkb_vmods_enumerate(k, mod, &keymap->mods)
-        if ((mask & (UINT32_C(1) << k)) && mod->mapping == 0)
-            return true;
-    return false;
+        यदि ((आवरणम् & (UINT32_C(1) << k)) && mod->mapping == 0)
+            प्रत्यागम true;
+    प्रत्यागम false;
 }
 
-static inline void
-ComputeEffectiveMask(struct xkb_keymap *keymap, struct xkb_mods *mods)
+स्थिर अन्तःस्थ शून्य
+Compute_Effective_आवरणम्(संरचना xkb_keymap *keymap, संरचना xkb_mods *mods)
 {
     /*
      * Since we accept numeric values for the vmod mask in the keymap, we may
      * have extra bits set that encode no real/virtual modifier. Keep them
      * unchanged for consistency.
      */
-    const xkb_mod_mask_t unknown_mods = ~(xkb_mod_mask_t)
-        ((UINT64_C(1) << keymap->mods.num_mods) - UINT64_C(1));
-    mods->mask = mod_mask_get_effective(keymap, mods->mods)
+    ध्रुव xkb_mod_आवरणम्_t unknown_mods = ~(xkb_mod_आवरणम्_t)
+        ((UINT64_C(1) << keymap->mods.अङ्कः_mods) - UINT64_C(1));
+    mods->आवरणम् = mod_आवरणम्_get_effective(keymap, mods->mods)
                | (mods->mods & unknown_mods);
 }
 
-static void
-UpdateActionMods(struct xkb_keymap *keymap, union xkb_action *act,
-                 xkb_mod_mask_t modmap)
+स्थिर शून्य
+UpdateActionMods(संरचना xkb_keymap *keymap, सङ्घ xkb_action *act,
+                 xkb_mod_आवरणम्_t modmap)
 {
-    switch (act->type) {
-    case ACTION_TYPE_MOD_SET:
-    case ACTION_TYPE_MOD_LATCH:
-    case ACTION_TYPE_MOD_LOCK:
-        if (act->mods.flags & ACTION_MODS_LOOKUP_MODMAP)
+    विकल्प (act->type) {
+    पक्ष ACTION_TYPE_MOD_समुच्चयः:
+    पक्ष ACTION_TYPE_MOD_LATCH:
+    पक्ष ACTION_TYPE_MOD_तालकम्:
+        यदि (act->mods.flags & ACTION_MODS_LOOKUP_MODMAP)
             act->mods.mods.mods = modmap;
-        ComputeEffectiveMask(keymap, &act->mods.mods);
-        break;
-    default:
-        break;
+        Compute_Effective_आवरणम्(keymap, &act->mods.mods);
+        भङ्ग;
+    स्वभाव:
+        भङ्ग;
     }
 }
 
-static const struct xkb_sym_interpret default_interpret = {
-    .sym = XKB_KEY_NoSymbol /* unused */,
-    .match = MATCH_ANY_OR_NONE,
+स्थिर ध्रुव संरचना xkb_sym_interpret default_interpret = {
+    .sym = XKB_कुञ्चिका_No_चिह्नम् /* unused */,
+    .मेलनम् = मेलनम्_ANY_OR_NONE,
     .mods = 0,
-    .repeat = DEFAULT_INTERPRET_KEY_REPEAT,
-    .virtual_mod = (xkb_mod_index_t) DEFAULT_INTERPRET_VMOD,
-    .num_actions = 0,
+    .repeat = DEFAULT_INTERPRET_कुञ्चिका_REPEAT,
+    .virtual_mod = (xkb_mod_सूचकांक_t) DEFAULT_INTERPRET_VMOD,
+    .अङ्कः_actions = 0,
     .a = { .action = { .type = ACTION_TYPE_NONE } },
 };
 
-typedef darray(const struct xkb_sym_interpret*) xkb_sym_interprets;
+प्रकारनिर्देश darray(ध्रुव संरचना xkb_sym_interpret*) xkb_sym_interprets;
 
 /**
  * Find an interpretation which applies to this particular level, either by
  * finding an exact match for the symbol and modifier combination, or a
  * generic XKB_KEY_NoSymbol match.
  */
-static bool
-FindInterpForKey(struct xkb_keymap *keymap, const struct xkb_key *key,
-                 xkb_layout_index_t group, xkb_level_index_t level,
+स्थिर bool
+Find_Interp_For_कुञ्चिका(संरचना xkb_keymap *keymap, ध्रुव संरचना xkb_कुञ्चिका *कुञ्चिका,
+                 xkb_layout_सूचकांक_t गणः, xkb_level_सूचकांक_t level,
                  xkb_sym_interprets *interprets)
 {
-    const xkb_keysym_t *syms;
-    int num_syms;
+    ध्रुव xkb_keysym_t *syms;
+    पूर्णाङ्क अङ्कः_syms;
 
-    num_syms = xkb_keymap_key_get_syms_by_level(keymap, key->keycode, group,
+    अङ्कः_syms = xkb_keymap_कुञ्चिका_get_syms_by_level(keymap, कुञ्चिका->keycode, गणः,
                                                 level, &syms);
-    if (num_syms <= 0)
-        return false;
+    यदि (अङ्कः_syms <= 0)
+        प्रत्यागम false;
 
     /*
      * There may be multiple matchings interprets; we should always return
@@ -101,41 +101,41 @@ FindInterpForKey(struct xkb_keymap *keymap, const struct xkb_key *key,
      * sym_interprets array from the most specific to the least specific,
      * such that when we find a match we return immediately.
      */
-    for (int s = 0; s < num_syms; s++) {
-        bool found = false;
-        for (darray_size_t i = 0; i < keymap->num_sym_interprets; i++) {
-            struct xkb_sym_interpret * const interp = &keymap->sym_interprets[i];
-            xkb_mod_mask_t mods;
+    प्रति (पूर्णाङ्क s = 0; s < अङ्कः_syms; s++) {
+        bool प्राप्तम् = false;
+        प्रति (darray_आकार_t i = 0; i < keymap->अङ्कः_sym_interprets; i++) {
+            संरचना xkb_sym_interpret * ध्रुव interp = &keymap->sym_interprets[i];
+            xkb_mod_आवरणम्_t mods;
 
-            found = false;
+            प्राप्तम् = false;
 
-            if (interp->sym != syms[s] && interp->sym != XKB_KEY_NoSymbol)
-                continue;
+            यदि (interp->sym != syms[s] && interp->sym != XKB_कुञ्चिका_No_चिह्नम्)
+                अनुवर्त;
 
-            if (interp->level_one_only && level != 0)
+            यदि (interp->level_one_only && level != 0)
                 mods = 0;
-            else
-                mods = key->modmap;
+            अन्यथा
+                mods = कुञ्चिका->modmap;
 
-            switch (interp->match) {
-            case MATCH_NONE:
-                found = !(interp->mods & mods);
-                break;
-            case MATCH_ANY_OR_NONE:
-                found = (!mods || (interp->mods & mods));
-                break;
-            case MATCH_ANY:
-                found = (interp->mods & mods);
-                break;
-            case MATCH_ALL:
-                found = ((interp->mods & mods) == interp->mods);
-                break;
-            case MATCH_EXACTLY:
-                found = (interp->mods == mods);
-                break;
+            विकल्प (interp->मेलनम्) {
+            पक्ष मेलनम्_NONE:
+                प्राप्तम् = !(interp->mods & mods);
+                भङ्ग;
+            पक्ष मेलनम्_ANY_OR_NONE:
+                प्राप्तम् = (!mods || (interp->mods & mods));
+                भङ्ग;
+            पक्ष मेलनम्_ANY:
+                प्राप्तम् = (interp->mods & mods);
+                भङ्ग;
+            पक्ष मेलनम्_ALL:
+                प्राप्तम् = ((interp->mods & mods) == interp->mods);
+                भङ्ग;
+            पक्ष मेलनम्_EXACTLY:
+                प्राप्तम् = (interp->mods == mods);
+                भङ्ग;
             }
 
-            if (found && i > 0 && interp->sym == XKB_KEY_NoSymbol) {
+            यदि (प्राप्तम् && i > 0 && interp->sym == XKB_कुञ्चिका_No_चिह्नम्) {
                 /*
                  * For an interpretation matching Any keysym, we may get the
                  * same interpretation for multiple keysyms. This may result in
@@ -143,197 +143,197 @@ FindInterpForKey(struct xkb_keymap *keymap, const struct xkb_key *key,
                  * if no previous keysym was matched with this interpret at this
                  * level, else set the default interpretation.
                  */
-                struct xkb_sym_interpret const **previous_interp;
+                संरचना xkb_sym_interpret ध्रुव **previous_interp;
                 darray_foreach(previous_interp, *interprets) {
-                    if (*previous_interp == interp) {
+                    यदि (*previous_interp == interp) {
                         /* Keep as a safeguard against refactoring
                          * NOLINTNEXTLINE(clang-analyzer-deadcode.DeadStores) */
-                        found = false;
-                        log_warn(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
+                        प्राप्तम् = false;
+                        log_warn(keymap->ctx, XKB_LOG_सन्देशः_NO_ID,
                                  "Repeated interpretation ignored for keysym "
                                  "#%d \"%s\" at level %"PRIu32"/group %"PRIu32" "
                                  "on key %s.\n",
                                  s + 1, KeysymText(keymap->ctx, syms[s]),
-                                 level + 1, group + 1,
-                                 KeyNameText(keymap->ctx, key->name));
-                        goto not_found;
+                                 level + 1, गणः + 1,
+                                 कुञ्चिका_Name_Text(keymap->ctx, कुञ्चिका->name));
+                        गच्छ not_प्राप्तम्;
                     }
                 }
             }
-            if (found) {
+            यदि (प्राप्तम्) {
                 darray_append(*interprets, interp);
                 interp->required = true;
-                break;
+                भङ्ग;
             }
         }
-        if (!found)
-not_found:
+        यदि (!प्राप्तम्)
+not_प्राप्तम्:
             darray_append(*interprets, &default_interpret);
     }
-    return true;
+    प्रत्यागम true;
 }
 
-static bool
-ApplyInterpsToKey(struct xkb_keymap *keymap, struct xkb_key *key)
+स्थिर bool
+Apply_Interps_गन्तव्यम्_कुञ्चिका(संरचना xkb_keymap *keymap, संरचना xkb_कुञ्चिका *कुञ्चिका)
 {
-    xkb_mod_mask_t vmodmap = 0;
-    xkb_level_index_t level;
+    xkb_mod_आवरणम्_t vmodmap = 0;
+    xkb_level_सूचकांक_t level;
     // FIXME: do not use darray, add actions directly in FindInterpForKey
     xkb_sym_interprets interprets = darray_new();
-    darray(union xkb_action) actions = darray_new();
+    darray(सङ्घ xkb_action) actions = darray_new();
 
-    for (xkb_layout_index_t group = 0; group < key->num_groups; group++) {
+    प्रति (xkb_layout_सूचकांक_t गणः = 0; गणः < कुञ्चिका->अङ्कः_groups; गणः++) {
         /* Skip any interpretation for this group if it has explicit actions */
-        if (key->groups[group].explicit_actions)
-            continue;
+        यदि (कुञ्चिका->groups[गणः].explicit_actions)
+            अनुवर्त;
 
-        for (level = 0; level < XkbKeyNumLevels(key, group); level++) {
-            assert(key->groups[group].levels[level].num_actions == 0);
+        प्रति (level = 0; level < Xkb_कुञ्चिका_अङ्कः_स्तराः(कुञ्चिका, गणः); level++) {
+            प्रतिज्ञा(कुञ्चिका->groups[गणः].स्तराः[level].अङ्कः_actions == 0);
 
-            const struct xkb_sym_interpret **interp_iter;
-            const struct xkb_sym_interpret *interp;
-            size_t k;
+            ध्रुव संरचना xkb_sym_interpret **interp_iter;
+            ध्रुव संरचना xkb_sym_interpret *interp;
+            आकार_t k;
             darray_resize(interprets, 0);
 
-            const bool found = FindInterpForKey(keymap, key, group, level, &interprets);
-            if (!found)
-                continue;
+            ध्रुव bool प्राप्तम् = Find_Interp_For_कुञ्चिका(keymap, कुञ्चिका, गणः, level, &interprets);
+            यदि (!प्राप्तम्)
+                अनुवर्त;
 
             darray_enumerate(k, interp_iter, interprets) {
                 interp = *interp_iter;
                 /* Infer default key behaviours from the base level. */
-                if (group == 0 && level == 0 &&
-                    !(key->explicit & EXPLICIT_REPEAT) && interp->repeat)
+                यदि (गणः == 0 && level == 0 &&
+                    !(कुञ्चिका->explicit & EXPLICIT_REPEAT) && interp->repeat)
                 {
-                    key->repeats = true;
+                    कुञ्चिका->repeats = true;
                 }
 
-                if ((group == 0 && level == 0) || !interp->level_one_only) {
+                यदि ((गणः == 0 && level == 0) || !interp->level_one_only) {
                     static_assert((uint32_t)DEFAULT_INTERPRET_VMOD ==
                                   (uint32_t)XKB_MOD_INVALID, "");
                     static_assert(!DEFAULT_INTERPRET_VMODMAP, "");
-                    if (interp->virtual_mod != XKB_MOD_INVALID)
+                    यदि (interp->virtual_mod != XKB_MOD_INVALID)
                         vmodmap |= (UINT32_C(1) << interp->virtual_mod);
                 }
 
-                switch (interp->num_actions) {
-                case 0:
-                    break;
-                case 1:
+                विकल्प (interp->अङ्कः_actions) {
+                पक्ष 0:
+                    भङ्ग;
+                पक्ष 1:
                     darray_append(actions, interp->a.action);
-                    break;
-                default:
-                    darray_append_items(actions, interp->a.actions,
-                                        interp->num_actions);
+                    भङ्ग;
+                स्वभाव:
+                    darray_append_वस्तूनि(actions, interp->a.actions,
+                                        interp->अङ्कः_actions);
                 }
             }
 
             /* Copy the actions */
-            if (unlikely(darray_size(actions)) > MAX_ACTIONS_PER_LEVEL) {
-                log_warn(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
+            यदि (unlikely(darray_आकार(actions)) > MAX_ACTIONS_प्रत्येकम्_LEVEL) {
+                log_warn(keymap->ctx, XKB_LOG_सन्देशः_NO_ID,
                          "Could not append interpret actions to key %s: "
                          "maximum is %u, got: %u. Dropping excessive actions\n",
-                         KeyNameText(keymap->ctx, key->name),
-                         MAX_ACTIONS_PER_LEVEL, darray_size(actions));
-                key->groups[group].levels[level].num_actions =
-                    MAX_ACTIONS_PER_LEVEL;
-            } else {
-                key->groups[group].levels[level].num_actions =
-                    (xkb_action_count_t) darray_size(actions);
+                         कुञ्चिका_Name_Text(keymap->ctx, कुञ्चिका->name),
+                         MAX_ACTIONS_प्रत्येकम्_LEVEL, darray_आकार(actions));
+                कुञ्चिका->groups[गणः].स्तराः[level].अङ्कः_actions =
+                    MAX_ACTIONS_प्रत्येकम्_LEVEL;
+            } अन्यथा {
+                कुञ्चिका->groups[गणः].स्तराः[level].अङ्कः_actions =
+                    (xkb_action_गणनम्_t) darray_आकार(actions);
             }
-            switch (darray_size(actions)) {
-                case 0:
-                    key->groups[group].levels[level].a.action =
-                        (union xkb_action) { .type = ACTION_TYPE_NONE };
-                    break;
-                case 1:
-                    key->groups[group].levels[level].a.action =
+            विकल्प (darray_आकार(actions)) {
+                पक्ष 0:
+                    कुञ्चिका->groups[गणः].स्तराः[level].a.action =
+                        (सङ्घ xkb_action) { .type = ACTION_TYPE_NONE };
+                    भङ्ग;
+                पक्ष 1:
+                    कुञ्चिका->groups[गणः].स्तराः[level].a.action =
                         darray_item(actions, 0);
-                    break;
-                default:
-                    key->groups[group].levels[level].a.actions =
-                        memdup(darray_items(actions),
-                               key->groups[group].levels[level].num_actions,
-                               sizeof(*darray_items(actions)));
-                    if (!key->groups[group].levels[level].a.actions) {
-                        log_err(keymap->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
+                    भङ्ग;
+                स्वभाव:
+                    कुञ्चिका->groups[गणः].स्तराः[level].a.actions =
+                        memdup(darray_वस्तूनि(actions),
+                               कुञ्चिका->groups[गणः].स्तराः[level].अङ्कः_actions,
+                               परिमाण(*darray_वस्तूनि(actions)));
+                    यदि (!कुञ्चिका->groups[गणः].स्तराः[level].a.actions) {
+                        log_err(keymap->ctx, XKB_ERROR_आवण्टनम्_FAILURE_2,
                                 "Could not allocate interpret actions\n");
                         darray_free(actions);
                         darray_free(interprets);
-                        return false;
+                        प्रत्यागम false;
                     }
             }
 
-            if (!darray_empty(actions))
-                key->groups[group].implicit_actions = true;
+            यदि (!darray_रिक्तानि(actions))
+                कुञ्चिका->groups[गणः].implicit_actions = true;
 
             /* Do not free here */
             darray_resize(actions, 0);
         }
 
-        if (key->groups[group].implicit_actions)
-            key->implicit_actions = true;
+        यदि (कुञ्चिका->groups[गणः].implicit_actions)
+            कुञ्चिका->implicit_actions = true;
     }
     darray_free(actions);
     darray_free(interprets);
 
-    if (!(key->explicit & EXPLICIT_VMODMAP))
-        key->vmodmap = vmodmap;
+    यदि (!(कुञ्चिका->explicit & EXPLICIT_VMODMAP))
+        कुञ्चिका->vmodmap = vmodmap;
 
-    return true;
+    प्रत्यागम true;
 }
 
-static inline bool
-is_mod_action(union xkb_action *action)
+स्थिर अन्तःस्थ bool
+is_mod_action(सङ्घ xkb_action *action)
 {
-    return action->type == ACTION_TYPE_MOD_SET ||
+    प्रत्यागम action->type == ACTION_TYPE_MOD_समुच्चयः ||
            action->type == ACTION_TYPE_MOD_LATCH ||
-           action->type == ACTION_TYPE_MOD_LOCK;
+           action->type == ACTION_TYPE_MOD_तालकम्;
 }
 
-static inline bool
-is_group_action(union xkb_action *action)
+स्थिर अन्तःस्थ bool
+is_गणः_action(सङ्घ xkb_action *action)
 {
-    return action->type == ACTION_TYPE_GROUP_SET ||
-           action->type == ACTION_TYPE_GROUP_LATCH ||
-           action->type == ACTION_TYPE_GROUP_LOCK;
+    प्रत्यागम action->type == ACTION_TYPE_गणः_समुच्चयः ||
+           action->type == ACTION_TYPE_गणः_LATCH ||
+           action->type == ACTION_TYPE_गणः_तालकम्;
 }
 
 /* Check for mixing actions of the same category.
  * We do not support that yet, because it needs a careful refactor of the state
  * handling. See: `xkb_filter_apply_all`. */
-static void
-CheckMultipleActionsCategories(struct xkb_keymap *keymap, struct xkb_key *key)
+स्थिर शून्य
+Check_गुणजः_Actions_Categories(संरचना xkb_keymap *keymap, संरचना xkb_कुञ्चिका *कुञ्चिका)
 {
-    for (xkb_layout_index_t g = 0; g < key->num_groups; g++) {
-        for (xkb_level_index_t l = 0; l < XkbKeyNumLevels(key, g); l++) {
-            struct xkb_level *level = &key->groups[g].levels[l];
-            if (level->num_actions <= 1)
-                continue;
-            for (xkb_action_count_t i = 0; i < level->num_actions; i++) {
-                union xkb_action *action1 = &level->a.actions[i];
+    प्रति (xkb_layout_सूचकांक_t g = 0; g < कुञ्चिका->अङ्कः_groups; g++) {
+        प्रति (xkb_level_सूचकांक_t l = 0; l < Xkb_कुञ्चिका_अङ्कः_स्तराः(कुञ्चिका, g); l++) {
+            संरचना xkb_level *level = &कुञ्चिका->groups[g].स्तराः[l];
+            यदि (level->अङ्कः_actions <= 1)
+                अनुवर्त;
+            प्रति (xkb_action_गणनम्_t i = 0; i < level->अङ्कः_actions; i++) {
+                सङ्घ xkb_action *action1 = &level->a.actions[i];
                 bool mod_action = is_mod_action(action1);
-                bool group_action = is_group_action(action1);
-                if (!(mod_action || group_action ||
-                      action1->type == ACTION_TYPE_REDIRECT_KEY))
-                    continue;
-                for (xkb_action_count_t j = i + 1; j < level->num_actions; j++) {
-                    union xkb_action *action2 = &level->a.actions[j];
-                    if (action1->type == action2->type ||
+                bool गणः_action = is_गणः_action(action1);
+                यदि (!(mod_action || गणः_action ||
+                      action1->type == ACTION_TYPE_REDIRECT_कुञ्चिका))
+                    अनुवर्त;
+                प्रति (xkb_action_गणनम्_t j = i + 1; j < level->अङ्कः_actions; j++) {
+                    सङ्घ xkb_action *action2 = &level->a.actions[j];
+                    यदि (action1->type == action2->type ||
                         (mod_action && is_mod_action(action2)) ||
-                        (group_action && is_group_action(action2)))
+                        (गणः_action && is_गणः_action(action2)))
                     {
-                        const char * const type = (mod_action)
+                        ध्रुव वर्ण * ध्रुव type = (mod_action)
                             ? "modifiers"
-                            : (group_action
+                            : (गणः_action
                                 ? "group"
                                 : ActionTypeText(action1->type));
-                        log_err(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
+                        log_err(keymap->ctx, XKB_LOG_सन्देशः_NO_ID,
                                 "Cannot use multiple %s actions "
                                 "in the same level. Action #%u "
                                 "for key %s in group %"PRIu32"/level %"PRIu32" "
                                 "ignored.\n", type,
-                                j + 1, KeyNameText(keymap->ctx, key->name),
+                                j + 1, कुञ्चिका_Name_Text(keymap->ctx, कुञ्चिका->name),
                                 g + 1, l + 1);
                         action2->type = ACTION_TYPE_NONE;
                     }
@@ -343,159 +343,159 @@ CheckMultipleActionsCategories(struct xkb_keymap *keymap, struct xkb_key *key)
     }
 }
 
-static void
-add_key_aliases(struct xkb_keymap *keymap, darray_size_t min, darray_size_t max,
-                struct xkb_key_alias *aliases)
+स्थिर शून्य
+सङ्कलय_कुञ्चिका_aliases(संरचना xkb_keymap *keymap, darray_आकार_t min, darray_आकार_t max,
+                संरचना xkb_कुञ्चिका_alias *aliases)
 {
-    for (darray_size_t alias = min; alias <= max; alias++) {
-        const KeycodeMatch entry = keymap->key_names[alias];
-        if (entry.is_alias && entry.found) {
-            *aliases = (struct xkb_key_alias) {
+    प्रति (darray_आकार_t alias = min; alias <= max; alias++) {
+        ध्रुव Keycode_मेलनम् प्रविष्टिः = keymap->कुञ्चिका_नामानि[alias];
+        यदि (प्रविष्टिः.is_alias && प्रविष्टिः.प्राप्तम्) {
+            *aliases = (संरचना xkb_कुञ्चिका_alias) {
                 .alias = alias,
-                .real = entry.alias.real
+                .real = प्रविष्टिः.alias.real
             };
             aliases++;
         }
     }
 }
 
-static bool
-update_pending_key_fields(struct xkb_keymap_info *info, struct xkb_key *key)
+स्थिर bool
+update_pending_कुञ्चिका_fields(संरचना xkb_keymap_info *info, संरचना xkb_कुञ्चिका *कुञ्चिका)
 {
-    if (key->out_of_range_pending_group) {
-        struct pending_computation * const pc = &darray_item(
-            *info->pending_computations, key->out_of_range_group_number
+    यदि (कुञ्चिका->बहिर्गमनम्_सम्बन्धि_range_pending_गणः) {
+        संरचना pending_computation * ध्रुव pc = &darray_item(
+            *info->pending_computations, कुञ्चिका->बहिर्गमनम्_सम्बन्धि_range_गणः_सङ्ख्या
         );
-        if (!pc->computed) {
-            xkb_layout_index_t group = 0;
-            switch (ExprResolveGroup(info, pc->expr, true, &group, NULL)) {
-            case PARSER_SUCCESS:
+        यदि (!pc->computed) {
+            xkb_layout_सूचकांक_t गणः = 0;
+            विकल्प (व्यञ्जकम्_Resolve_गणः(info, pc->व्यञ्जकम्, true, &गणः, रिक्त)) {
+            पक्ष PARSER_SUCCESS:
                 pc->computed = true;
-                pc->value = group - 1;
-                break;
-            case PARSER_FATAL_ERROR:
-                log_err(info->keymap.ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
+                pc->मानम् = गणः - 1;
+                भङ्ग;
+            पक्ष PARSER_FATAL_ERROR:
+                log_err(info->keymap.ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_सूचकांक_2,
                         "Invalid key redirect group index\n");
-                return (info->strict & PARSER_NO_FIELD_TYPE_MISMATCH);
-            default:
+                प्रत्यागम (info->strict & PARSER_NO_क्षेत्रम्_TYPE_MISMATCH);
+            स्वभाव:
                 /* Recover from error: ignore */;
             }
         }
-        key->out_of_range_pending_group = false;
-        key->out_of_range_group_number = pc->value;
+        कुञ्चिका->बहिर्गमनम्_सम्बन्धि_range_pending_गणः = false;
+        कुञ्चिका->बहिर्गमनम्_सम्बन्धि_range_गणः_सङ्ख्या = pc->मानम्;
     }
-    return true;
+    प्रत्यागम true;
 }
 
-static bool
-update_pending_action_fields(struct xkb_keymap_info *info,
-                             xkb_keycode_t keycode, union xkb_action *act)
+स्थिर bool
+update_pending_action_fields(संरचना xkb_keymap_info *info,
+                             xkb_keycode_t keycode, सङ्घ xkb_action *act)
 {
-    switch (act->type) {
-    case ACTION_TYPE_GROUP_SET:
-    case ACTION_TYPE_GROUP_LATCH:
-    case ACTION_TYPE_GROUP_LOCK:
-        if (act->group.flags & ACTION_PENDING_COMPUTATION) {
-            struct pending_computation * const pc =
-                &darray_item(*info->pending_computations, act->group.group);
-            if (!pc->computed) {
-                xkb_layout_index_t group = 0;
-                const bool absolute =
-                    (act->group.flags & ACTION_ABSOLUTE_SWITCH);
-                switch (ExprResolveGroup(info, pc->expr, absolute, &group, NULL)) {
-                case PARSER_FATAL_ERROR:
-                    log_err(info->keymap.ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
+    विकल्प (act->type) {
+    पक्ष ACTION_TYPE_गणः_समुच्चयः:
+    पक्ष ACTION_TYPE_गणः_LATCH:
+    पक्ष ACTION_TYPE_गणः_तालकम्:
+        यदि (act->गणः.flags & ACTION_PENDING_COMPUTATION) {
+            संरचना pending_computation * ध्रुव pc =
+                &darray_item(*info->pending_computations, act->गणः.गणः);
+            यदि (!pc->computed) {
+                xkb_layout_सूचकांक_t गणः = 0;
+                ध्रुव bool absolute =
+                    (act->गणः.flags & ACTION_ABSOLUTE_SWITCH);
+                विकल्प (व्यञ्जकम्_Resolve_गणः(info, pc->व्यञ्जकम्, absolute, &गणः, रिक्त)) {
+                पक्ष PARSER_FATAL_ERROR:
+                    log_err(info->keymap.ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_सूचकांक_2,
                             "Invalid action group index\n");
-                    return false;
-                case PARSER_RECOVERABLE_ERROR:
+                    प्रत्यागम false;
+                पक्ष PARSER_RECOVERABLE_ERROR:
                     /* ignore */
-                    break;
-                default:
+                    भङ्ग;
+                स्वभाव:
                     pc->computed = true;
-                    if (absolute) {
-                        pc->value = group - 1;
-                    } else {
-                        pc->value = group;
-                        if (pc->expr->common.type == STMT_EXPR_NEGATE)
-                            pc->value = (uint32_t) (-(int32_t) pc->value);
+                    यदि (absolute) {
+                        pc->मानम् = गणः - 1;
+                    } अन्यथा {
+                        pc->मानम् = गणः;
+                        यदि (pc->व्यञ्जकम्->common.type == STMT_व्यञ्जकम्_NEGATE)
+                            pc->मानम् = (uint32_t) (-(int32_t) pc->मानम्);
                     }
                 }
             }
-            act->group.group = (int32_t) pc->value;
-            act->group.flags &= ~ACTION_PENDING_COMPUTATION;
+            act->गणः.गणः = (int32_t) pc->मानम्;
+            act->गणः.flags &= ~ACTION_PENDING_COMPUTATION;
         }
-        return true;
-    case ACTION_TYPE_REDIRECT_KEY: {
-        if (keycode == XKB_KEYCODE_INVALID ||
-            act->redirect.keycode != info->keymap.redirect_key_auto) {
+        प्रत्यागम true;
+    पक्ष ACTION_TYPE_REDIRECT_कुञ्चिका: {
+        यदि (keycode == XKB_KEYCODE_INVALID ||
+            act->redirect.keycode != info->keymap.redirect_कुञ्चिका_auto) {
             /* No auto value to set */
-            return true;
-        } else {
+            प्रत्यागम true;
+        } अन्यथा {
             /*
              * Auto value: use the provided keycode to redirect to the key
              * where the action is defined
              */
             act->redirect.keycode = keycode;
         }
-        return true;
+        प्रत्यागम true;
     }
-    default:
-        return true;
+    स्वभाव:
+        प्रत्यागम true;
     }
 }
 
-static bool
-update_pending_led_fields(struct xkb_keymap_info *info, struct xkb_led *led)
+स्थिर bool
+update_pending_led_fields(संरचना xkb_keymap_info *info, संरचना xkb_led *led)
 {
-    if (led->pending_groups) {
-        struct pending_computation * const pc =
+    यदि (led->pending_groups) {
+        संरचना pending_computation * ध्रुव pc =
             &darray_item(*info->pending_computations, led->groups);
-        if (!pc->computed) {
-            xkb_layout_mask_t mask = 0;
-            if (!ExprResolveGroupMask(info, pc->expr, &mask, NULL)) {
-                log_err(info->keymap.ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
+        यदि (!pc->computed) {
+            xkb_layout_आवरणम्_t आवरणम् = 0;
+            यदि (!व्यञ्जकम्_Resolve_गणः_आवरणम्(info, pc->व्यञ्जकम्, &आवरणम्, रिक्त)) {
+                log_err(info->keymap.ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_सूचकांक_2,
                         "Invalid LED group mask\n");
-                return false;
+                प्रत्यागम false;
             }
             pc->computed = true;
-            pc->value = mask;
+            pc->मानम् = आवरणम्;
         }
         led->pending_groups = false;
-        led->groups = pc->value;
+        led->groups = pc->मानम्;
     }
-    return true;
+    प्रत्यागम true;
 }
 
 /** Indices for the array "groupIndexNames" */
-enum {
-    GROUP_INDEX_NAME_LAST = 1,
+गणना {
+    गणः_सूचकांक_NAME_चरमः = 1,
 };
 
 /** Indices for the array "groupMaskNames" */
-enum {
-    GROUP_MASK_NAME_LAST = 3,
+गणना {
+    गणः_आवरणम्_NAME_चरमः = 3,
 };
 
-static void
-update_auto_group_lock_on_modifier_release(struct xkb_level * restrict level0,
-                                           xkb_level_index_t l,
-                                           union xkb_action * restrict action)
+स्थिर शून्य
+update_auto_गणः_तालकम्_on_modifier_release(संरचना xkb_level * सीमित level0,
+                                           xkb_level_सूचकांक_t l,
+                                           सङ्घ xkb_action * सीमित action)
 {
-    if (!(/* Must be level index 1+ */
+    यदि (!(/* Must be level index 1+ */
         l > 0 &&
         /* level has a single action: LockGroup() */
-        level0[l].num_actions == 1 &&
-        action->type == ACTION_TYPE_GROUP_LOCK &&
+        level0[l].अङ्कः_actions == 1 &&
+        action->type == ACTION_TYPE_गणः_तालकम् &&
         /* lockOnRelease not set explicitly */
-        !(action->group.flags & ACTION_EXPLICIT_LOCK_ON_RELEASE) &&
+        !(action->गणः.flags & ACTION_EXPLICIT_तालकम्_ON_RELEASE) &&
         /* level 0 has a single action: SetMods() */
-        level0->num_actions == 1 &&
-        level0->a.action.type ==  ACTION_TYPE_MOD_SET))
+        level0->अङ्कः_actions == 1 &&
+        level0->a.action.type ==  ACTION_TYPE_MOD_समुच्चयः))
     {
-        return;
+        प्रत्यागम;
     }
 
-    action->group.flags |= ACTION_AUTO_GROUP_LOCK_ON_MODIFIER_RELEASE;
+    action->गणः.flags |= ACTION_AUTO_गणः_तालकम्_ON_MODIFIER_RELEASE;
 }
 
 /**
@@ -504,10 +504,10 @@ update_auto_group_lock_on_modifier_release(struct xkb_level * restrict level0,
  * your actions and types are a lot more useful when any of your modifiers
  * other than Shift actually do something ...
  */
-static bool
-UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
+स्थिर bool
+UpdateDerivedKeymapFields(संरचना xkb_keymap_info *info)
 {
-    struct xkb_keymap * restrict const keymap = &info->keymap;
+    संरचना xkb_keymap * सीमित ध्रुव keymap = &info->keymap;
 
     /**
      * Create the key alias list
@@ -521,25 +521,25 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
      *   key entries without overlap with the alias entries.
      * - In the unlikely event that this is not the case, we need to realloc.
      */
-#ifdef _WIN32
+#यदि_परिभाषितम् _WIN32
     /* Bit fields are not packed on Windows as efficiently as other platforms */
-    static_assert(sizeof(struct xkb_key_alias) == sizeof(KeycodeMatch), "");
-#else
-    static_assert(sizeof(struct xkb_key_alias) == 2 * sizeof(KeycodeMatch), "");
-#endif
-    darray_size_t num_key_aliases = 0;
-    darray_size_t min_alias = 0;
-    darray_size_t max_alias = 0;
-    for (xkb_atom_t alias = 0; alias < keymap->num_key_names; alias++) {
-        const KeycodeMatch entry = keymap->key_names[alias];
-        if (entry.is_alias && entry.found) {
-            if (!num_key_aliases)
+    static_assert(परिमाण(संरचना xkb_कुञ्चिका_alias) == परिमाण(Keycode_मेलनम्), "");
+#अन्यथा
+    static_assert(परिमाण(संरचना xkb_कुञ्चिका_alias) == 2 * परिमाण(Keycode_मेलनम्), "");
+#यदि_अन्तः
+    darray_आकार_t अङ्कः_कुञ्चिका_aliases = 0;
+    darray_आकार_t min_alias = 0;
+    darray_आकार_t max_alias = 0;
+    प्रति (xkb_atom_t alias = 0; alias < keymap->अङ्कः_कुञ्चिका_नामानि; alias++) {
+        ध्रुव Keycode_मेलनम् प्रविष्टिः = keymap->कुञ्चिका_नामानि[alias];
+        यदि (प्रविष्टिः.is_alias && प्रविष्टिः.प्राप्तम्) {
+            यदि (!अङ्कः_कुञ्चिका_aliases)
                 min_alias = alias;
             max_alias = alias;
-            num_key_aliases++;
+            अङ्कः_कुञ्चिका_aliases++;
         }
     }
-    if (num_key_aliases) {
+    यदि (अङ्कः_कुञ्चिका_aliases) {
         /*
          * No fancy algorithm used here: either we can trivially write the whole
          * range of `xkb_key_aliases` without overlapping with the `KeycodeMatch`
@@ -547,110 +547,110 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
          * In practice no new allocation is needed and it performs better than
          * using a buffer to handle overlaps.
          */
-        const darray_size_t required_space = sizeof(struct xkb_key_alias)
-                                           / sizeof(KeycodeMatch)
-                                           * num_key_aliases;
-        assert(num_key_aliases <= keymap->num_key_names);
-        if (min_alias >= required_space) {
+        ध्रुव darray_आकार_t required_space = परिमाण(संरचना xkb_कुञ्चिका_alias)
+                                           / परिमाण(Keycode_मेलनम्)
+                                           * अङ्कः_कुञ्चिका_aliases;
+        प्रतिज्ञा(अङ्कः_कुञ्चिका_aliases <= keymap->अङ्कः_कुञ्चिका_नामानि);
+        यदि (min_alias >= required_space) {
             /* Overwrite before the *first* alias entry */
-            add_key_aliases(keymap, min_alias, max_alias, keymap->key_aliases);
+            सङ्कलय_कुञ्चिका_aliases(keymap, min_alias, max_alias, keymap->कुञ्चिका_aliases);
             /* Shrink */
-            struct xkb_key_alias * const r =
-                realloc(keymap->key_aliases,
-                        num_key_aliases * sizeof(*keymap->key_aliases));
-            if (!r)
-                return false;
-            keymap->key_aliases = r;
-        } else if (keymap->num_key_names - max_alias - 1 > required_space) {
+            संरचना xkb_कुञ्चिका_alias * ध्रुव r =
+                realloc(keymap->कुञ्चिका_aliases,
+                        अङ्कः_कुञ्चिका_aliases * परिमाण(*keymap->कुञ्चिका_aliases));
+            यदि (!r)
+                प्रत्यागम false;
+            keymap->कुञ्चिका_aliases = r;
+        } अन्यथा यदि (keymap->अङ्कः_कुञ्चिका_नामानि - max_alias - 1 > required_space) {
             /* Overwrite after the *last* alias entry */
-            struct xkb_key_alias * const aliases = (struct xkb_key_alias *) (
-                keymap->key_names + max_alias + 1 +
-                !is_aligned(keymap->key_names + max_alias + 1, sizeof(*aliases))
+            संरचना xkb_कुञ्चिका_alias * ध्रुव aliases = (संरचना xkb_कुञ्चिका_alias *) (
+                keymap->कुञ्चिका_नामानि + max_alias + 1 +
+                !is_aligned(keymap->कुञ्चिका_नामानि + max_alias + 1, परिमाण(*aliases))
             );
-            add_key_aliases(keymap, min_alias, max_alias, aliases);
+            सङ्कलय_कुञ्चिका_aliases(keymap, min_alias, max_alias, aliases);
             /* Move to the start */
-            memcpy(keymap->key_aliases, aliases,
-                   num_key_aliases * sizeof(*keymap->key_aliases));
+            स्मृतिं_प्रतिलिख(keymap->कुञ्चिका_aliases, aliases,
+                   अङ्कः_कुञ्चिका_aliases * परिमाण(*keymap->कुञ्चिका_aliases));
             /* Shrink */
-            struct xkb_key_alias * const r =
-                realloc(keymap->key_aliases,
-                        num_key_aliases * sizeof(*keymap->key_aliases));
-            if (!r)
-                return false;
-            keymap->key_aliases = r;
-        } else {
+            संरचना xkb_कुञ्चिका_alias * ध्रुव r =
+                realloc(keymap->कुञ्चिका_aliases,
+                        अङ्कः_कुञ्चिका_aliases * परिमाण(*keymap->कुञ्चिका_aliases));
+            यदि (!r)
+                प्रत्यागम false;
+            keymap->कुञ्चिका_aliases = r;
+        } अन्यथा {
             /*
              * No space trivially available: instead of processing the LUT with
              * a buffer to handle overlaps, we simply allocate a dedicated array
              */
-            struct xkb_key_alias * const aliases = calloc(num_key_aliases,
-                                                          sizeof(*aliases));
-            if (!aliases)
-                return false;
-            add_key_aliases(keymap, min_alias, max_alias, aliases);
-            free(keymap->key_names);
-            keymap->key_aliases = aliases;
+            संरचना xkb_कुञ्चिका_alias * ध्रुव aliases = शून्यस्मृतिं_देहि(अङ्कः_कुञ्चिका_aliases,
+                                                          परिमाण(*aliases));
+            यदि (!aliases)
+                प्रत्यागम false;
+            सङ्कलय_कुञ्चिका_aliases(keymap, min_alias, max_alias, aliases);
+            मुक्त(keymap->कुञ्चिका_नामानि);
+            keymap->कुञ्चिका_aliases = aliases;
         }
     }
-    keymap->num_key_aliases = num_key_aliases;
+    keymap->अङ्कः_कुञ्चिका_aliases = अङ्कः_कुञ्चिका_aliases;
 
     /* Find maximum number of groups out of all keys in the keymap. */
-    struct xkb_key *key;
-    xkb_keys_foreach(key, keymap)
-        keymap->num_groups = MAX(keymap->num_groups, key->num_groups);
+    संरचना xkb_कुञ्चिका *कुञ्चिका;
+    xkb_कुञ्चिकाः_foreach(कुञ्चिका, keymap)
+        keymap->अङ्कः_groups = MAX(keymap->अङ्कः_groups, कुञ्चिका->अङ्कः_groups);
 
-    const bool pending_computations = !darray_empty(*info->pending_computations);
+    ध्रुव bool pending_computations = !darray_रिक्तानि(*info->pending_computations);
 
-    if (pending_computations) {
+    यदि (pending_computations) {
         /*
          * Update non-static LUTs for pending computations:
          * - enable entry by setting a non-null name
          * - update the corresponding value
          */
-        const xkb_layout_index_t num_groups
-            = (keymap->num_groups)
-            ? keymap->num_groups
+        ध्रुव xkb_layout_सूचकांक_t अङ्कः_groups
+            = (keymap->अङ्कः_groups)
+            ? keymap->अङ्कः_groups
             : 1; /* default to the “first” layout */
-        info->lookup.groupIndexNames[GROUP_INDEX_NAME_LAST] =
-            (LookupEntry) {
-                .name = GROUP_LAST_INDEX_NAME,
-                .value = num_groups
+        info->lookup.गणः_सूचकांक_नामानि[गणः_सूचकांक_NAME_चरमः] =
+            (Lookup_प्रविष्टिः) {
+                .name = गणः_चरमः_सूचकांक_NAME,
+                .मानम् = अङ्कः_groups
             };
         static_assert(XKB_MAX_GROUPS == 32, "Guard left shift");
-        info->lookup.groupMaskNames[GROUP_MASK_NAME_LAST] =
-            (LookupEntry) {
-                .name = GROUP_LAST_INDEX_NAME,
-                .value = UINT32_C(1) << (num_groups - 1)
+        info->lookup.गणः_आवरणम्_नामानि[गणः_आवरणम्_NAME_चरमः] =
+            (Lookup_प्रविष्टिः) {
+                .name = गणः_चरमः_सूचकांक_NAME,
+                .मानम् = UINT32_C(1) << (अङ्कः_groups - 1)
             };
 
         /* Update interpret fields with pending computations */
-        for (darray_size_t i = 0; i < keymap->num_sym_interprets; i++) {
-            struct xkb_sym_interpret * restrict const interp =
+        प्रति (darray_आकार_t i = 0; i < keymap->अङ्कः_sym_interprets; i++) {
+            संरचना xkb_sym_interpret * सीमित ध्रुव interp =
                 &keymap->sym_interprets[i];
             xkb_level_foreach_action(act, interp) {
-                if (!update_pending_action_fields(info, XKB_KEYCODE_INVALID, act))
-                    return false;
+                यदि (!update_pending_action_fields(info, XKB_KEYCODE_INVALID, act))
+                    प्रत्यागम false;
             }
         }
     }
 
     /* Find all the interprets for the key and bind them to actions,
      * which will also update the vmodmap. */
-    xkb_keys_foreach(key, keymap) {
-        if (!ApplyInterpsToKey(keymap, key))
-            return false;
-        CheckMultipleActionsCategories(keymap, key);
+    xkb_कुञ्चिकाः_foreach(कुञ्चिका, keymap) {
+        यदि (!Apply_Interps_गन्तव्यम्_कुञ्चिका(keymap, कुञ्चिका))
+            प्रत्यागम false;
+        Check_गुणजः_Actions_Categories(keymap, कुञ्चिका);
     }
 
     /* Update keymap->mods, the virtual -> real mod mapping. */
-    xkb_mod_index_t idx;
-    struct xkb_mod *mod;
-    xkb_keys_foreach(key, keymap)
+    xkb_mod_सूचकांक_t idx;
+    संरचना xkb_mod *mod;
+    xkb_कुञ्चिकाः_foreach(कुञ्चिका, keymap)
         xkb_vmods_enumerate(idx, mod, &keymap->mods)
-            if (key->vmodmap & (UINT32_C(1) << idx))
-                mod->mapping |= key->modmap;
+            यदि (कुञ्चिका->vmodmap & (UINT32_C(1) << idx))
+                mod->mapping |= कुञ्चिका->modmap;
 
-    if (keymap->format >= XKB_KEYMAP_FORMAT_TEXT_V2) {
+    यदि (keymap->format >= XKB_KEYMAP_FORMAT_TEXT_V2) {
         /*
          * XKB extension: canonical virtual modifiers (incompatible with X11)
          *
@@ -663,33 +663,33 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
          *   usual X11 way used in xkeyboard-config.
          */
         xkb_vmods_enumerate(idx, mod, &keymap->mods) {
-            const xkb_mod_mask_t mask = UINT32_C(1) << idx;
-            if (mod->mapping == 0 && !(keymap->mods.explicit_vmods & mask)) {
-                mod->mapping = mask;
+            ध्रुव xkb_mod_आवरणम्_t आवरणम् = UINT32_C(1) << idx;
+            यदि (mod->mapping == 0 && !(keymap->mods.explicit_vmods & आवरणम्)) {
+                mod->mapping = आवरणम्;
                 /*
                  * Make the mapping explicit, so that it is interoperable
                  * without relying on the implementation-specific virtual
                  * modifiers indices.
                  */
-                keymap->mods.explicit_vmods |= mask;
+                keymap->mods.explicit_vmods |= आवरणम्;
             }
         }
     }
 
     /* Update the canonical modifiers state mask */
-    assert(keymap->canonical_state_mask == MOD_REAL_MASK_ALL);
-    xkb_mod_mask_t extra_canonical_mods = 0;
+    प्रतिज्ञा(keymap->canonical_state_आवरणम् == MOD_REAL_आवरणम्_ALL);
+    xkb_mod_आवरणम्_t extra_canonical_mods = 0;
     xkb_vmods_enumerate(idx, mod, &keymap->mods) {
         extra_canonical_mods |= mod->mapping;
     }
-    keymap->canonical_state_mask |= extra_canonical_mods;
+    keymap->canonical_state_आवरणम् |= extra_canonical_mods;
 
     /* Now update the level masks for all the types to reflect the vmods. */
-    for (darray_size_t i = 0; i < keymap->num_types; i++) {
-        ComputeEffectiveMask(keymap, &keymap->types[i].mods);
+    प्रति (darray_आकार_t i = 0; i < keymap->अङ्कः_types; i++) {
+        Compute_Effective_आवरणम्(keymap, &keymap->types[i].mods);
 
-        for (darray_size_t j = 0; j < keymap->types[i].num_entries; j++) {
-            if (has_unbound_vmods(keymap,
+        प्रति (darray_आकार_t j = 0; j < keymap->types[i].अङ्कः_entries; j++) {
+            यदि (has_unbound_vmods(keymap,
                                   keymap->types[i].entries[j].mods.mods)) {
                 /*
                  * Map entries which specify unbound virtual modifiers are not
@@ -701,31 +701,31 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
                  *
                  * See also: `entry_is_active`.
                  */
-                keymap->types[i].entries[j].mods.mask = 0;
-                continue;
+                keymap->types[i].entries[j].mods.आवरणम् = 0;
+                अनुवर्त;
             }
-            ComputeEffectiveMask(keymap, &keymap->types[i].entries[j].mods);
-            ComputeEffectiveMask(keymap, &keymap->types[i].entries[j].preserve);
+            Compute_Effective_आवरणम्(keymap, &keymap->types[i].entries[j].mods);
+            Compute_Effective_आवरणम्(keymap, &keymap->types[i].entries[j].preserve);
         }
     }
 
     /* Update action modifiers and fields with pending computations. */
-    xkb_keys_foreach(key, keymap) {
-        if (!update_pending_key_fields(info, key))
-            return false;
-        for (xkb_layout_index_t i = 0; i < key->num_groups; i++) {
-            for (xkb_level_index_t j = 0; j < XkbKeyNumLevels(key, i); j++) {
-                struct xkb_level * const level = &key->groups[i].levels[j];
+    xkb_कुञ्चिकाः_foreach(कुञ्चिका, keymap) {
+        यदि (!update_pending_कुञ्चिका_fields(info, कुञ्चिका))
+            प्रत्यागम false;
+        प्रति (xkb_layout_सूचकांक_t i = 0; i < कुञ्चिका->अङ्कः_groups; i++) {
+            प्रति (xkb_level_सूचकांक_t j = 0; j < Xkb_कुञ्चिका_अङ्कः_स्तराः(कुञ्चिका, i); j++) {
+                संरचना xkb_level * ध्रुव level = &कुञ्चिका->groups[i].स्तराः[j];
                 xkb_level_foreach_action(act, level) {
-                    UpdateActionMods(keymap, act, key->modmap);
-                    if ((pending_computations ||
-                         act->type == ACTION_TYPE_REDIRECT_KEY) &&
-                        !update_pending_action_fields(info, key->keycode, act))
+                    UpdateActionMods(keymap, act, कुञ्चिका->modmap);
+                    यदि ((pending_computations ||
+                         act->type == ACTION_TYPE_REDIRECT_कुञ्चिका) &&
+                        !update_pending_action_fields(info, कुञ्चिका->keycode, act))
                     {
-                        return false;
+                        प्रत्यागम false;
                     }
-                    update_auto_group_lock_on_modifier_release(
-                        key->groups[i].levels, j, act
+                    update_auto_गणः_तालकम्_on_modifier_release(
+                        कुञ्चिका->groups[i].स्तराः, j, act
                     );
                 }
             }
@@ -733,65 +733,65 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
     }
 
     /* Update LEDs */
-    struct xkb_led *led;
+    संरचना xkb_led *led;
     xkb_leds_foreach(led, keymap) {
-        ComputeEffectiveMask(keymap, &led->mods); /* vmod -> led maps */
-        if (pending_computations &&
+        Compute_Effective_आवरणम्(keymap, &led->mods); /* vmod -> led maps */
+        यदि (pending_computations &&
             !update_pending_led_fields(info, led))
-            return false;
+            प्रत्यागम false;
     }
 
-    return true;
+    प्रत्यागम true;
 }
 
-typedef bool (*compile_file_fn)(XkbFile *file, struct xkb_keymap_info *info);
+प्रकारनिर्देश bool (*compile_file_fn)(XkbFile *file, संरचना xkb_keymap_info *info);
 
-static const compile_file_fn compile_file_fns[LAST_KEYMAP_FILE_TYPE + 1] = {
+स्थिर ध्रुव compile_file_fn compile_file_fns[चरमः_KEYMAP_FILE_TYPE + 1] = {
     [FILE_TYPE_KEYCODES] = CompileKeycodes,
-    [FILE_TYPE_TYPES] = CompileKeyTypes,
+    [FILE_TYPE_TYPES] = Compile_कुञ्चिका_Types,
     [FILE_TYPE_COMPAT] = CompileCompatMap,
     [FILE_TYPE_SYMBOLS] = CompileSymbols,
 };
 
-static void
+स्थिर शून्य
 pending_computations_array_free(pending_computation_array *p)
 {
-    struct pending_computation *pc;
+    संरचना pending_computation *pc;
     darray_foreach(pc, *p)
-        FreeStmt((ParseCommon*) pc->expr);
+        FreeStmt((ParseCommon*) pc->व्यञ्जकम्);
     darray_free(*p);
 }
 
 bool
-CompileKeymap(XkbFile *file, struct xkb_keymap *keymap)
+CompileKeymap(XkbFile *file, संरचना xkb_keymap *keymap)
 {
-    XkbFile *files[LAST_KEYMAP_FILE_TYPE + 1] = { NULL };
-    enum xkb_file_type type;
-    struct xkb_context *ctx = keymap->ctx;
+    XkbFile *files[चरमः_KEYMAP_FILE_TYPE + 1] = { रिक्त };
+    गणना xkb_file_type type;
+    संरचना xkb_context *ctx = keymap->ctx;
 
     /* Collect section files and check for duplicates. */
-    for (file = (XkbFile *) file->defs; file;
-         file = (XkbFile *) file->common.next) {
-        if (file->file_type < FIRST_KEYMAP_FILE_TYPE ||
-            file->file_type > LAST_KEYMAP_FILE_TYPE) {
-            if (file->file_type == FILE_TYPE_GEOMETRY) {
+    प्रति (file = (XkbFile *) file->defs; file;
+         file = (XkbFile *) file->common.अग्र) {
+        यदि (file->file_type < FIRST_KEYMAP_FILE_TYPE ||
+            file->file_type > चरमः_KEYMAP_FILE_TYPE) {
+            यदि (file->file_type == FILE_TYPE_GEOMETRY) {
                 log_vrb(ctx, XKB_LOG_VERBOSITY_BRIEF,
                         XKB_WARNING_UNSUPPORTED_GEOMETRY_SECTION,
                         "Geometry sections are not supported; ignoring\n");
-            } else {
-                log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+            } अन्यथा {
+                log_err(ctx, XKB_LOG_सन्देशः_NO_ID,
                         "Cannot define %s in a keymap file\n",
-                        xkb_file_type_to_string(file->file_type));
+                        xkb_file_type_गन्तव्यम्_string(file->file_type));
             }
-            continue;
+            अनुवर्त;
         }
 
-        if (files[file->file_type]) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        यदि (files[file->file_type]) {
+            log_err(ctx, XKB_LOG_सन्देशः_NO_ID,
                     "More than one %s section in keymap file; "
                     "All sections after the first ignored\n",
-                    xkb_file_type_to_string(file->file_type));
-            continue;
+                    xkb_file_type_गन्तव्यम्_string(file->file_type));
+            अनुवर्त;
         }
 
         files[file->file_type] = file;
@@ -801,18 +801,18 @@ CompileKeymap(XkbFile *file, struct xkb_keymap *keymap)
      * Keymap augmented with compilation-specific data
      */
     pending_computation_array pending_computations = darray_new();
-    struct xkb_keymap_info info = {
+    संरचना xkb_keymap_info info = {
         /* Copy the keymap */
         .keymap = *keymap,
         .strict = parser_strict_flags_from_keymap(keymap),
         .features = {
             .max_groups = format_max_groups(keymap->format),
             .max_overlays = format_max_overlays(keymap->format),
-            .controls_name_offset = format_control_names_offset(keymap->format),
-            .group_lock_on_release =
-                isGroupLockOnReleaseSupported(keymap->format),
+            .controls_name_विस्थापनम् = format_control_नामानि_विस्थापनम्(keymap->format),
+            .गणः_तालकम्_on_release =
+                is_गणः_तालकम्_On_Release_Supported(keymap->format),
             .mods_unlock_on_press =
-                isModsUnLockOnPressSupported(keymap->format),
+                is_Mods_Un_तालकम्_On_Press_Supported(keymap->format),
             .mods_latch_on_press =
                 isModsLatchOnPressSupported(keymap->format),
             .overlapping_overlays =
@@ -824,7 +824,7 @@ CompileKeymap(XkbFile *file, struct xkb_keymap *keymap)
          *       xkbcomp and older xkbcommon versions.
          */
         .lookup = {
-            .groupIndexNames = {
+            .गणः_सूचकांक_नामानि = {
                 { "first", 1 },
                 /*
                  * The entry “last” is initially active only if using the RMLVO
@@ -834,13 +834,13 @@ CompileKeymap(XkbFile *file, struct xkb_keymap *keymap)
                  * NOTE: The RMLVO case is valid as long as multiple groups per
                  * key is disallowed in an xkb_symbols section.
                  */
-                [GROUP_INDEX_NAME_LAST] = {
-                    keymap->num_groups ? GROUP_LAST_INDEX_NAME : NULL,
-                    keymap->num_groups /* 1-indexed */
+                [गणः_सूचकांक_NAME_चरमः] = {
+                    keymap->अङ्कः_groups ? गणः_चरमः_सूचकांक_NAME : रिक्त,
+                    keymap->अङ्कः_groups /* 1-indexed */
                 },
-                { NULL, 0 }
+                { रिक्त, 0 }
             },
-            .groupMaskNames = {
+            .गणः_आवरणम्_नामानि = {
                 { "none", 0x00 },
                 { "first", 0x01 },
                 { "all", XKB_ALL_GROUPS },
@@ -852,14 +852,14 @@ CompileKeymap(XkbFile *file, struct xkb_keymap *keymap)
                  * NOTE: The RMLVO case is valid as long as multiple groups per
                  * key is disallowed in an xkb_symbols section.
                  */
-                [GROUP_MASK_NAME_LAST] = {
-                    keymap->num_groups ? GROUP_LAST_INDEX_NAME : NULL,
+                [गणः_आवरणम्_NAME_चरमः] = {
+                    keymap->अङ्कः_groups ? गणः_चरमः_सूचकांक_NAME : रिक्त,
                     /* Be extra cautious */
-                    keymap->num_groups && keymap->num_groups <= XKB_MAX_GROUPS
-                        ? (UINT32_C(1) << (keymap->num_groups - 1))
+                    keymap->अङ्कः_groups && keymap->अङ्कः_groups <= XKB_MAX_GROUPS
+                        ? (UINT32_C(1) << (keymap->अङ्कः_groups - 1))
                         : 0
                 },
-                { NULL, 0 }
+                { रिक्त, 0 }
             },
         },
         .pending_computations = &pending_computations,
@@ -870,36 +870,36 @@ CompileKeymap(XkbFile *file, struct xkb_keymap *keymap)
      *
      * NOTE: Any component is optional.
      */
-    for (type = FIRST_KEYMAP_FILE_TYPE;
-         type <= LAST_KEYMAP_FILE_TYPE;
+    प्रति (type = FIRST_KEYMAP_FILE_TYPE;
+         type <= चरमः_KEYMAP_FILE_TYPE;
          type++) {
-        if (files[type] == NULL) {
-            log_dbg(ctx, XKB_LOG_MESSAGE_NO_ID,
+        यदि (files[type] == रिक्त) {
+            log_dbg(ctx, XKB_LOG_सन्देशः_NO_ID,
                     "Component %s not provided in keymap\n",
-                    xkb_file_type_to_string(type));
-        } else {
-            log_dbg(ctx, XKB_LOG_MESSAGE_NO_ID,
+                    xkb_file_type_गन्तव्यम्_string(type));
+        } अन्यथा {
+            log_dbg(ctx, XKB_LOG_सन्देशः_NO_ID,
                     "Compiling %s \"%s\"\n",
-                    xkb_file_type_to_string(type),
+                    xkb_file_type_गन्तव्यम्_string(type),
                     safe_map_name(files[type]->name));
         }
 
         /* Missing components are initialized with defaults */
-        const bool ok = compile_file_fns[type](files[type], &info);
-        if (!ok) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        ध्रुव bool ok = compile_file_fns[type](files[type], &info);
+        यदि (!ok) {
+            log_err(ctx, XKB_LOG_सन्देशः_NO_ID,
                     "Failed to compile %s\n",
-                    xkb_file_type_to_string(type));
+                    xkb_file_type_गन्तव्यम्_string(type));
             /* Copy back to the keymap, so that all can be properly freed */
             *keymap = info.keymap;
             pending_computations_array_free(&pending_computations);
-            return false;
+            प्रत्यागम false;
         }
     }
 
-    const bool ok = UpdateDerivedKeymapFields(&info);
+    ध्रुव bool ok = UpdateDerivedKeymapFields(&info);
     /* Copy back the keymap */
     *keymap = info.keymap;
     pending_computations_array_free(&pending_computations);
-    return ok;
+    प्रत्यागम ok;
 }

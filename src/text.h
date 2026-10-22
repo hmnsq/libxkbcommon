@@ -2,76 +2,76 @@
  * Copyright © 2009 Dan Nicholson
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#निर्देशः once
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include <stdbool.h>
+#अन्तर्भाव <stdbool.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "atom.h"
-#include "keymap.h"
+#अन्तर्भाव "xkbcommon/xkbcommon.h"
+#अन्तर्भाव "atom.h"
+#अन्तर्भाव "keymap.h"
 
 /** LUT entry */
-typedef struct {
-    const char *name;
-    uint32_t value;
-} LookupEntry;
+प्रकारनिर्देश संरचना {
+    ध्रुव वर्ण *name;
+    uint32_t मानम्;
+} Lookup_प्रविष्टिः;
 
 bool
-LookupString(const LookupEntry tab[], const char *string,
-              unsigned int *value_rtrn);
+LookupString(ध्रुव Lookup_प्रविष्टिः tab[], ध्रुव वर्ण *string,
+              अचिह्नित पूर्णाङ्क *मानम्_rtrn);
 
-const char *
-LookupValue(const LookupEntry tab[], unsigned int value);
+ध्रुव वर्ण *
+Lookup_मानम्(ध्रुव Lookup_प्रविष्टिः tab[], अचिह्नित पूर्णाङ्क मानम्);
 
-#define GROUP_LAST_INDEX_NAME "last"
-enum {
-    CONTROL_NAMES_MIN_V1_INDEX = 7,
-    CONTROL_NAMES_MIN_V2_INDEX = 0,
+#परिभाषय गणः_चरमः_सूचकांक_NAME "last"
+गणना {
+    CONTROL_नामानि_MIN_V1_सूचकांक = 7,
+    CONTROL_नामानि_MIN_V2_सूचकांक = 0,
 };
 
-static inline uint8_t
-format_control_names_offset(enum xkb_keymap_format format)
+स्थिर अन्तःस्थ uint8_t
+format_control_नामानि_विस्थापनम्(गणना xkb_keymap_format format)
 {
-    return (format == XKB_KEYMAP_FORMAT_TEXT_V1)
-        ? CONTROL_NAMES_MIN_V1_INDEX
-        : CONTROL_NAMES_MIN_V2_INDEX;
+    प्रत्यागम (format == XKB_KEYMAP_FORMAT_TEXT_V1)
+        ? CONTROL_नामानि_MIN_V1_सूचकांक
+        : CONTROL_नामानि_MIN_V2_सूचकांक;
 }
 
-extern const LookupEntry ctrlMaskNames[];
-extern const LookupEntry modComponentMaskNames[];
-extern const LookupEntry groupComponentMaskNames[];
-extern const LookupEntry groupMaskNames[];
-extern const LookupEntry buttonNames[];
-extern const LookupEntry useModMapValueNames[];
-extern const LookupEntry actionTypeNames[];
-extern const LookupEntry symInterpretMatchMaskNames[];
+बाह्य ध्रुव Lookup_प्रविष्टिः ctrl_आवरणम्_नामानि[];
+बाह्य ध्रुव Lookup_प्रविष्टिः mod_Component_आवरणम्_नामानि[];
+बाह्य ध्रुव Lookup_प्रविष्टिः गणः_Component_आवरणम्_नामानि[];
+बाह्य ध्रुव Lookup_प्रविष्टिः गणः_आवरणम्_नामानि[];
+बाह्य ध्रुव Lookup_प्रविष्टिः button_नामानि[];
+बाह्य ध्रुव Lookup_प्रविष्टिः use_Mod_Map_मानम्_नामानि[];
+बाह्य ध्रुव Lookup_प्रविष्टिः action_Type_नामानि[];
+बाह्य ध्रुव Lookup_प्रविष्टिः sym_Interpret_मेलनम्_आवरणम्_नामानि[];
 
-const char *
-ModMaskText(struct xkb_context *ctx, enum mod_type type,
-            const struct xkb_mod_set *mods, xkb_mod_mask_t mask);
+ध्रुव वर्ण *
+Mod_आवरणम्_Text(संरचना xkb_context *ctx, गणना mod_type type,
+            ध्रुव संरचना xkb_mod_समुच्चयः *mods, xkb_mod_आवरणम्_t आवरणम्);
 
-const char *
-ModIndexText(struct xkb_context *ctx, const struct xkb_mod_set *mods,
-             xkb_mod_index_t ndx);
+ध्रुव वर्ण *
+Mod_सूचकांक_Text(संरचना xkb_context *ctx, ध्रुव संरचना xkb_mod_समुच्चयः *mods,
+             xkb_mod_सूचकांक_t ndx);
 
-const char *
-ActionTypeText(enum xkb_action_type type);
+ध्रुव वर्ण *
+ActionTypeText(गणना xkb_action_type type);
 
-const char *
-KeysymText(struct xkb_context *ctx, xkb_keysym_t sym);
+ध्रुव वर्ण *
+KeysymText(संरचना xkb_context *ctx, xkb_keysym_t sym);
 
-const char *
-KeyNameText(struct xkb_context *ctx, xkb_atom_t name);
+ध्रुव वर्ण *
+कुञ्चिका_Name_Text(संरचना xkb_context *ctx, xkb_atom_t name);
 
-const char *
-SIMatchText(enum xkb_match_operation type);
+ध्रुव वर्ण *
+SIMatchText(गणना xkb_मेलनम्_operation type);
 
-const char *
-LedStateMaskText(struct xkb_context *ctx, const LookupEntry *lookup,
-                 enum xkb_state_component mask);
+ध्रुव वर्ण *
+Led_State_आवरणम्_Text(संरचना xkb_context *ctx, ध्रुव Lookup_प्रविष्टिः *lookup,
+                 गणना xkb_state_component आवरणम्);
 
-const char *
-ControlMaskText(struct xkb_context *ctx, enum xkb_keymap_format format,
-                enum xkb_action_controls mask);
+ध्रुव वर्ण *
+Control_आवरणम्_Text(संरचना xkb_context *ctx, गणना xkb_keymap_format format,
+                गणना xkb_action_controls आवरणम्);

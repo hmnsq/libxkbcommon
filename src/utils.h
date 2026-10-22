@@ -2,29 +2,29 @@
  * Copyright © 2012 Ran Benita <ran234@gmail.com>
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#निर्देशः once
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include <assert.h>
-#include <errno.h>
-#include <inttypes.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#if HAVE_UNISTD_H
+#अन्तर्भाव <assert.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <inttypes.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <stdbool.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
+#यदि HAVE_UNISTD_H
 # include <unistd.h>
-#else
+#अन्यथा
 /* Required on Windows where unistd.h doesn't exist */
 # define R_OK    4               /* Test for read permission.  */
 # define W_OK    2               /* Test for write permission.  */
 # define X_OK    1               /* Test for execute permission.  */
 # define F_OK    0               /* Test for existence.  */
-#endif
+#यदि_अन्तः
 
-#ifdef _WIN32
+#यदि_परिभाषितम् _WIN32
 # include <direct.h>
 # include <io.h>
 # include <BaseTsd.h>
@@ -37,205 +37,205 @@
 # ifndef STDIN_FILENO
 #  define STDIN_FILENO 0
 # endif
-#ifdef _MSC_VER
-typedef SSIZE_T ssize_t;
-#endif
-#endif
+#यदि_परिभाषितम् _MSC_VER
+प्रकारनिर्देश SSIZE_T ssize_t;
+#यदि_अन्तः
+#यदि_अन्तः
 
-static inline bool
-is_aligned(const void *restrict pointer, size_t byte_count)
+स्थिर अन्तःस्थ bool
+is_aligned(ध्रुव शून्य *सीमित pointer, आकार_t byte_गणनम्)
 {
-    return (uintptr_t) pointer % byte_count == 0;
+    प्रत्यागम (uintptr_t) pointer % byte_गणनम् == 0;
 }
 
 
-#define ARRAY_SIZE(arr) ((sizeof(arr) / sizeof(*(arr))))
+#परिभाषय ARRAY_आकार(arr) ((परिमाण(arr) / परिमाण(*(arr))))
 
-#define MIN(a, b) ((a) < (b) ? (a) : (b))
-#define MAX(a, b) ((a) > (b) ? (a) : (b))
+#परिभाषय MIN(a, b) ((a) < (b) ? (a) : (b))
+#परिभाषय MAX(a, b) ((a) > (b) ? (a) : (b))
 
 /* Round up @a so it's divisible by @b. */
-#define ROUNDUP(a, b) (((a) + (b) - 1) / (b) * (b))
+#परिभाषय ROUNDUP(a, b) (((a) + (b) - 1) / (b) * (b))
 
-#define STRINGIFY(x) #x
-#define STRINGIFY2(x) STRINGIFY(x)
-#define CONCAT(x,y) x ## y
-#define CONCAT2(x,y) CONCAT(x,y)
+#परिभाषय STRINGIFY(x) #x
+#परिभाषय STRINGIFY2(x) STRINGIFY(x)
+#परिभाषय CONCAT(x,y) x ## y
+#परिभाषय CONCAT2(x,y) CONCAT(x,y)
 
 /* Check if a Unicode code point is valid in a string literal */
-static inline bool
+स्थिर अन्तःस्थ bool
 is_valid_char(uint32_t cp)
 {
     /* Currently we only check for NULL character, but this could be extended
      * in the future to further ASCII control characters. */
-    return cp != 0;
+    प्रत्यागम cp != 0;
 }
 
 /* Check if a Unicode code point is a surrogate.
  * Those code points are used only in UTF-16 encodings. */
-static inline bool
+स्थिर अन्तःस्थ bool
 is_surrogate(uint32_t cp)
 {
-    return (cp >= 0xd800 && cp <= 0xdfff);
+    प्रत्यागम (cp >= 0xd800 && cp <= 0xdfff);
 }
 
-char
-to_lower(char c);
+वर्ण
+गन्तव्यम्_अधस्तनम्(वर्ण c);
 
-int
-istrcmp(const char *a, const char *b);
+पूर्णाङ्क
+istrcmp(ध्रुव वर्ण *a, ध्रुव वर्ण *b);
 
-int
-istrncmp(const char *a, const char *b, size_t n);
+पूर्णाङ्क
+istrncmp(ध्रुव वर्ण *a, ध्रुव वर्ण *b, आकार_t n);
 
-static inline bool
-streq(const char *s1, const char *s2)
+स्थिर अन्तःस्थ bool
+streq(ध्रुव वर्ण *s1, ध्रुव वर्ण *s2)
 {
-    assert(s1 && s2);
-    return strcmp(s1, s2) == 0;
+    प्रतिज्ञा(s1 && s2);
+    प्रत्यागम वाक्यं_तुलय(s1, s2) == 0;
 }
 
-static inline bool
-streq_null(const char *s1, const char *s2)
+स्थिर अन्तःस्थ bool
+streq_null(ध्रुव वर्ण *s1, ध्रुव वर्ण *s2)
 {
-    if (s1 == NULL || s2 == NULL)
-        return s1 == s2;
-    return streq(s1, s2);
+    यदि (s1 == रिक्त || s2 == रिक्त)
+        प्रत्यागम s1 == s2;
+    प्रत्यागम streq(s1, s2);
 }
 
-static inline bool
-streq_not_null(const char *s1, const char *s2)
+स्थिर अन्तःस्थ bool
+streq_not_null(ध्रुव वर्ण *s1, ध्रुव वर्ण *s2)
 {
-    if (!s1 || !s2)
-        return false;
-    return streq(s1, s2);
+    यदि (!s1 || !s2)
+        प्रत्यागम false;
+    प्रत्यागम streq(s1, s2);
 }
 
-static inline bool
-istreq(const char *s1, const char *s2)
+स्थिर अन्तःस्थ bool
+istreq(ध्रुव वर्ण *s1, ध्रुव वर्ण *s2)
 {
-    return istrcmp(s1, s2) == 0;
+    प्रत्यागम istrcmp(s1, s2) == 0;
 }
 
-static inline bool
-istrneq(const char *s1, const char *s2, size_t len)
+स्थिर अन्तःस्थ bool
+istrneq(ध्रुव वर्ण *s1, ध्रुव वर्ण *s2, आकार_t len)
 {
-    return istrncmp(s1, s2, len) == 0;
+    प्रत्यागम istrncmp(s1, s2, len) == 0;
 }
 
-#define istreq_prefix(s1, s2) istrneq(s1, s2, sizeof(s1) - 1)
+#परिभाषय istreq_उपसर्गः(s1, s2) istrneq(s1, s2, परिमाण(s1) - 1)
 
-static inline char *
-strcpy_safe(char *dest, size_t size, const char *src) {
-    if (!dest || !size || !src)
-        return NULL;
-    const char * const limit = dest + size - 1;
-    while (dest < limit && *src) {
+स्थिर अन्तःस्थ वर्ण *
+strcpy_safe(वर्ण *dest, आकार_t आकार, ध्रुव वर्ण *src) {
+    यदि (!dest || !आकार || !src)
+        प्रत्यागम रिक्त;
+    ध्रुव वर्ण * ध्रुव सीमा = dest + आकार - 1;
+    यावत् (dest < सीमा && *src) {
         *dest++ = *src++;
     }
     *dest = '\0';
-    return *src ? NULL : dest;
+    प्रत्यागम *src ? रिक्त : dest;
 }
 
-static inline char *
-strdup_safe(const char *s)
+स्थिर अन्तःस्थ वर्ण *
+strdup_safe(ध्रुव वर्ण *s)
 {
-    return s ? strdup(s) : NULL;
+    प्रत्यागम s ? strdup(s) : रिक्त;
 }
 
-static inline size_t
-strlen_safe(const char *s)
+स्थिर अन्तःस्थ आकार_t
+strlen_safe(ध्रुव वर्ण *s)
 {
-    return s ? strlen(s) : 0;
+    प्रत्यागम s ? वाक्यदैर्घ्यम्(s) : 0;
 }
 
-static inline bool
-isempty(const char *s)
+स्थिर अन्तःस्थ bool
+isempty(ध्रुव वर्ण *s)
 {
-    return s == NULL || s[0] == '\0';
+    प्रत्यागम s == रिक्त || s[0] == '\0';
 }
 
-static inline const char *
-strnull(const char *s)
+स्थिर अन्तःस्थ ध्रुव वर्ण *
+strnull(ध्रुव वर्ण *s)
 {
-    return s ? s : "(null)";
+    प्रत्यागम s ? s : "(null)";
 }
 
-static inline const char *
-strempty(const char *s)
+स्थिर अन्तःस्थ ध्रुव वर्ण *
+strempty(ध्रुव वर्ण *s)
 {
-    return s ? s : "";
+    प्रत्यागम s ? s : "";
 }
 
-static inline void *
-memdup(const void *mem, size_t nmemb, size_t size)
+स्थिर अन्तःस्थ शून्य *
+memdup(ध्रुव शून्य *mem, आकार_t nmemb, आकार_t आकार)
 {
-    void *p = calloc(nmemb, size);
-    if (p)
-        memcpy(p, mem, nmemb * size);
-    return p;
+    शून्य *p = शून्यस्मृतिं_देहि(nmemb, आकार);
+    यदि (p)
+        स्मृतिं_प्रतिलिख(p, mem, nmemb * आकार);
+    प्रत्यागम p;
 }
 
-#if !(defined(HAVE_STRNDUP) && HAVE_STRNDUP)
-static inline char *
-strndup(const char *s, size_t n)
+#यदि !(defined(HAVE_STRNDUP) && HAVE_STRNDUP)
+स्थिर अन्तःस्थ वर्ण *
+strndup(ध्रुव वर्ण *s, आकार_t n)
 {
-    size_t slen = strlen(s);
-    size_t len = MIN(slen, n);
-    char *p = malloc(len + 1);
-    if (!p)
-        return NULL;
-    memcpy(p, s, len);
+    आकार_t slen = वाक्यदैर्घ्यम्(s);
+    आकार_t len = MIN(slen, n);
+    वर्ण *p = स्मृतिं_देहि(len + 1);
+    यदि (!p)
+        प्रत्यागम रिक्त;
+    स्मृतिं_प्रतिलिख(p, s, len);
     p[len] = '\0';
-    return p;
+    प्रत्यागम p;
 }
-#endif
+#यदि_अन्तः
 
 /* ctype.h is locale-dependent and has other oddities. */
-static inline bool
-is_ascii(char ch)
+स्थिर अन्तःस्थ bool
+is_ascii(वर्ण ch)
 {
-    return (ch & ~0x7f) == 0;
+    प्रत्यागम (ch & ~0x7f) == 0;
 }
 
-static inline bool
-is_space(char ch)
+स्थिर अन्तःस्थ bool
+is_space(वर्ण ch)
 {
-    return ch == ' ' || (ch >= '\t' && ch <= '\r');
+    प्रत्यागम ch == ' ' || (ch >= '\t' && ch <= '\r');
 }
 
-static inline bool
-is_alpha(char ch)
+स्थिर अन्तःस्थ bool
+is_alpha(वर्ण ch)
 {
-    return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
+    प्रत्यागम (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
 }
 
-static inline bool
-is_digit(char ch)
+स्थिर अन्तःस्थ bool
+is_digit(वर्ण ch)
 {
-    return ch >= '0' && ch <= '9';
+    प्रत्यागम ch >= '0' && ch <= '9';
 }
 
-static inline bool
-is_alnum(char ch)
+स्थिर अन्तःस्थ bool
+is_alnum(वर्ण ch)
 {
-    return is_alpha(ch) || is_digit(ch);
+    प्रत्यागम is_alpha(ch) || is_digit(ch);
 }
 
-static inline bool
-is_xdigit(char ch)
+स्थिर अन्तःस्थ bool
+is_xdigit(वर्ण ch)
 {
-    return
+    प्रत्यागम
         (ch >= '0' && ch <= '9') ||
         (ch >= 'a' && ch <= 'f') ||
         (ch >= 'A' && ch <= 'F');
 }
 
-static inline bool
-is_graph(char ch)
+स्थिर अन्तःस्थ bool
+is_graph(वर्ण ch)
 {
     /* See table in ascii(7). */
-    return ch >= '!' && ch <= '~';
+    प्रत्यागम ch >= '!' && ch <= '~';
 }
 
 /*
@@ -243,191 +243,191 @@ is_graph(char ch)
  * Note: this is 1-based! It's more useful this way, and returns 0 when
  * mask is all 0s.
  */
-static inline unsigned int
-msb_pos(uint32_t mask)
+स्थिर अन्तःस्थ अचिह्नित पूर्णाङ्क
+msb_pos(uint32_t आवरणम्)
 {
-    unsigned int pos = 0;
-    while (mask) {
+    अचिह्नित पूर्णाङ्क pos = 0;
+    यावत् (आवरणम्) {
         pos++;
-        mask >>= 1u;
+        आवरणम् >>= 1u;
     }
-    return pos;
+    प्रत्यागम pos;
 }
 
-static inline int
-one_bit_set(uint32_t x)
+स्थिर अन्तःस्थ पूर्णाङ्क
+one_bit_समुच्चयः(uint32_t x)
 {
-    return x && (x & (x - 1)) == 0;
+    प्रत्यागम x && (x & (x - 1)) == 0;
 }
 
 bool
-map_file(FILE *file, char **string_out, size_t *size_out);
+map_file(FILE *file, वर्ण **string_बहिर्गमनम्, आकार_t *आकार_बहिर्गमनम्);
 
-void
-unmap_file(char *string, size_t size);
+शून्य
+unmap_file(वर्ण *string, आकार_t आकार);
 
-static inline bool
-check_eaccess(const char *path, int mode)
+स्थिर अन्तःस्थ bool
+check_eaccess(ध्रुव वर्ण *मार्गः, पूर्णाङ्क बहुलकम्)
 {
-#if defined(HAVE_EACCESS)
-    if (eaccess(path, mode) != 0)
-        return false;
-#elif defined(HAVE_EUIDACCESS)
-    if (euidaccess(path, mode) != 0)
-        return false;
-#endif
+#यदि defined(HAVE_EACCESS)
+    यदि (eaccess(मार्गः, बहुलकम्) != 0)
+        प्रत्यागम false;
+#नोचेद्यदि defined(HAVE_EUIDACCESS)
+    यदि (euidaccess(मार्गः, बहुलकम्) != 0)
+        प्रत्यागम false;
+#यदि_अन्तः
 
-    return true;
+    प्रत्यागम true;
 }
 
 FILE*
-open_file(const char *path);
+open_file(ध्रुव वर्ण *मार्गः);
 
-#if defined(HAVE_SECURE_GETENV)
+#यदि defined(HAVE_SECURE_GETENV)
 # define secure_getenv secure_getenv
-#elif defined(HAVE___SECURE_GETENV)
+#नोचेद्यदि defined(HAVE___SECURE_GETENV)
 # define secure_getenv __secure_getenv
-#else
+#अन्यथा
 # define secure_getenv getenv
-#endif
+#यदि_अन्तः
 
-#if defined(HAVE___BUILTIN_EXPECT)
+#यदि defined(HAVE___BUILTIN_EXPECT)
 # define likely(x)   __builtin_expect(!!(x), 1)
 # define unlikely(x) __builtin_expect(!!(x), 0)
-#else
+#अन्यथा
 # define likely(x)   (x)
 # define unlikely(x) (x)
-#endif
+#यदि_अन्तः
 
 /* Compiler Attributes */
 
 /* Private functions only exposed in tests. */
-#ifdef ENABLE_PRIVATE_APIS
-# if defined(__GNUC__) && !defined(__CYGWIN__)
-#  define XKB_EXPORT_PRIVATE __attribute__((visibility("default")))
+#यदि_परिभाषितम् ENABLE_वैयक्तिकम्_APIS
+# यदि defined(__GNUC__) && !defined(__CYGWIN__)
+#  define XKB_EXPORT_वैयक्तिकम् __attribute__((visibility("default")))
 # elif defined(_WIN32)
-#  define XKB_EXPORT_PRIVATE __declspec(dllexport)
-# else
-#  define XKB_EXPORT_PRIVATE
+#  define XKB_EXPORT_वैयक्तिकम् __declspec(dllexport)
+# अन्यथा
+#  define XKB_EXPORT_वैयक्तिकम्
 # endif
-#else
-# define XKB_EXPORT_PRIVATE
-#endif
+#अन्यथा
+# define XKB_EXPORT_वैयक्तिकम्
+#यदि_अन्तः
 
-#if defined(__MINGW32__)
+#यदि defined(__MINGW32__)
 # define ATTR_PRINTF(x,y) __attribute__((__format__(__MINGW_PRINTF_FORMAT, x, y)))
-#elif defined(__GNUC__)
+#नोचेद्यदि defined(__GNUC__)
 # define ATTR_PRINTF(x,y) __attribute__((__format__(__printf__, x, y)))
-#else
+#अन्यथा
 # define ATTR_PRINTF(x,y)
-#endif
+#यदि_अन्तः
 
-#if defined(__GNUC__)
+#यदि defined(__GNUC__)
 # define ATTR_NORETURN __attribute__((__noreturn__))
-#else
+#अन्यथा
 # define ATTR_NORETURN
-#endif /* GNUC  */
+#यदि_अन्तः /* GNUC  */
 
-#if defined(__GNUC__)
-#define ATTR_MALLOC  __attribute__((__malloc__))
-#else
-#define ATTR_MALLOC
-#endif
+#यदि defined(__GNUC__)
+#परिभाषय ATTR_MALLOC  __attribute__((__malloc__))
+#अन्यथा
+#परिभाषय ATTR_MALLOC
+#यदि_अन्तः
 
-#if defined(__GNUC__)
+#यदि defined(__GNUC__)
 # define ATTR_NULL_SENTINEL __attribute__((__sentinel__))
-#else
+#अन्यथा
 # define ATTR_NULL_SENTINEL
-#endif
+#यदि_अन्तः
 
-#if defined(__GNUC__)
-#define ATTR_PACKED  __attribute__((__packed__))
-#else
-#define ATTR_PACKED
-#endif
+#यदि defined(__GNUC__)
+#परिभाषय ATTR_PACKED  __attribute__((__packed__))
+#अन्यथा
+#परिभाषय ATTR_PACKED
+#यदि_अन्तः
 
-#if defined(HAVE_ATTR_COUNTED_BY) && HAVE_ATTR_COUNTED_BY
-# define ATTR_COUNTED_BY(count) __attribute__((counted_by(count)))
-#else
-# define ATTR_COUNTED_BY(count)
-#endif
+#यदि defined(HAVE_ATTR_COUNTED_BY) && HAVE_ATTR_COUNTED_BY
+# define ATTR_COUNTED_BY(गणनम्) __attribute__((counted_by(गणनम्)))
+#अन्यथा
+# define ATTR_COUNTED_BY(गणनम्)
+#यदि_अन्तः
 
-#if !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
-XKB_EXPORT_PRIVATE int asprintf(char **strp, const char *fmt, ...) ATTR_PRINTF(2, 3);
-# if !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
+#यदि !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
+XKB_EXPORT_वैयक्तिकम् पूर्णाङ्क asprintf(वर्ण **strp, ध्रुव वर्ण *fmt, ...) ATTR_PRINTF(2, 3);
+# यदि !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
 #  include <stdarg.h>
-XKB_EXPORT_PRIVATE int vasprintf(char **strp, const char *fmt, va_list ap);
+XKB_EXPORT_वैयक्तिकम् पूर्णाङ्क vasprintf(वर्ण **strp, ध्रुव वर्ण *fmt, va_list ap);
 # endif /* !HAVE_VASPRINTF */
-#endif /* !HAVE_ASPRINTF */
+#यदि_अन्तः /* !HAVE_ASPRINTF */
 
-static inline bool
+स्थिर अन्तःस्थ bool
 ATTR_PRINTF(3, 4)
-snprintf_safe(char *buf, size_t sz, const char *format, ...)
+snprintf_safe(वर्ण *buf, आकार_t sz, ध्रुव वर्ण *format, ...)
 {
     va_list ap;
-    int rc;
+    पूर्णाङ्क rc;
 
     va_start(ap, format);
     rc = vsnprintf(buf, sz, format, ap);
-    va_end(ap);
+    va_अन्तः(ap);
 
-    return rc >= 0 && (size_t)rc < sz;
+    प्रत्यागम rc >= 0 && (आकार_t)rc < sz;
 }
 
-static inline char *
+स्थिर अन्तःस्थ वर्ण *
 ATTR_PRINTF(1, 0)
-vasprintf_safe(const char *fmt, va_list args)
+vasprintf_safe(ध्रुव वर्ण *fmt, va_list तर्काः)
 {
-    char *str;
-    int len;
+    वर्ण *str;
+    पूर्णाङ्क len;
 
-    len = vasprintf(&str, fmt, args);
+    len = vasprintf(&str, fmt, तर्काः);
 
-    if (len == -1)
-        return NULL;
+    यदि (len == -1)
+        प्रत्यागम रिक्त;
 
-    return str;
+    प्रत्यागम str;
 }
 
 /**
  * A version of asprintf that returns the allocated string or NULL on error.
  */
-static inline char *
+स्थिर अन्तःस्थ वर्ण *
 ATTR_PRINTF(1, 2)
-asprintf_safe(const char *fmt, ...)
+asprintf_safe(ध्रुव वर्ण *fmt, ...)
 {
-    va_list args;
-    char *str;
+    va_list तर्काः;
+    वर्ण *str;
 
-    va_start(args, fmt);
-    str = vasprintf_safe(fmt, args);
-    va_end(args);
+    va_start(तर्काः, fmt);
+    str = vasprintf_safe(fmt, तर्काः);
+    va_अन्तः(तर्काः);
 
-    return str;
+    प्रत्यागम str;
 }
 
-#ifdef NDEBUG
-    #if defined(__GNUC__) || defined(__clang__)
-        #define PANIC_UNREACHABLE() __builtin_unreachable()
-    #elif defined(_MSC_VER)
-        #define PANIC_UNREACHABLE() __assume(0)
-    #else
-        #define PANIC_UNREACHABLE() abort()
-    #endif
-#else
-    #define PANIC_UNREACHABLE() \
-        do { \
+#यदि_परिभाषितम् NDEBUG
+    #यदि defined(__GNUC__) || defined(__clang__)
+        #परिभाषय PANIC_UNREACHABLE() __builtin_unreachable()
+    #नोचेद्यदि defined(_MSC_VER)
+        #परिभाषय PANIC_UNREACHABLE() __assume(0)
+    #अन्यथा
+        #परिभाषय PANIC_UNREACHABLE() abort()
+    #यदि_अन्तः
+#अन्यथा
+    #परिभाषय PANIC_UNREACHABLE() \
+        कुरु { \
             fprintf(stderr, "Critical Error: Reached unreachable line in %s at %d\n", __FILE__, __LINE__); \
             abort(); \
-        } while (0)
-#endif
+        } यावत् (0)
+#यदि_अन्तः
 
-#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
+#यदि defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
 #  define NOINLINE [[noinline]]
-#elif defined(__GNUC__) || defined(__clang__)
+#नोचेद्यदि defined(__GNUC__) || defined(__clang__)
 #  define NOINLINE __attribute__((noinline))
-#elif defined(_MSC_VER)
+#नोचेद्यदि defined(_MSC_VER)
 #  define NOINLINE __declspec(noinline)
-#else
+#अन्यथा
 #  define NOINLINE
-#endif
+#यदि_अन्तः

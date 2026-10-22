@@ -2,29 +2,29 @@
  * Copyright (c) 1994 by Silicon Graphics Computer Systems, Inc.
  * SPDX-License-Identifier: HPND
  */
-#pragma once
+#निर्देशः once
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include <stdbool.h>
+#अन्तर्भाव <stdbool.h>
 
-struct parser_param;
-struct scanner;
+संरचना parser_param;
+संरचना scanner;
 
-#include "scanner-utils.h"
-#include "parser.h"
+#अन्तर्भाव "scanner-utils.h"
+#अन्तर्भाव "parser.h"
 
-int
-_xkbcommon_lex(YYSTYPE *yylval, struct scanner *scanner);
+पूर्णाङ्क
+_xkbcommon_lex(YYSTYPE *yylval, संरचना scanner *scanner);
 
 XkbFile *
-parse(struct xkb_context *ctx, const struct parser_keymap_config *config,
-      struct scanner *scanner, const char *map);
+parse(संरचना xkb_context *ctx, ध्रुव संरचना parser_keymap_config *config,
+      संरचना scanner *scanner, ध्रुव वर्ण *map);
 
 bool
-parse_next(struct xkb_context *ctx,
-           const struct parser_keymap_config *config,
-           struct scanner *scanner, XkbFile **xkb_file);
+parse_अग्र(संरचना xkb_context *ctx,
+           ध्रुव संरचना parser_keymap_config *config,
+           संरचना scanner *scanner, XkbFile **xkb_file);
 
-int
-keyword_to_token(const char *string, size_t len);
+पूर्णाङ्क
+keyword_गन्तव्यम्_token(ध्रुव वर्ण *string, आकार_t len);

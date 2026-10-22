@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include "scanner-utils.h"
+#अन्तर्भाव "scanner-utils.h"
 
-struct scanner_loc
-scanner_token_location(struct scanner *s)
+संरचना scanner_loc
+scanner_token_location(संरचना scanner *s)
 {
     /*
      * The following article and accompying code compares some algorithms:
@@ -20,27 +20,27 @@ scanner_token_location(struct scanner *s)
      * and start from that on the next call. This is effective as long as the
      * tokens go forward.
      */
-    size_t line, column;
-    size_t line_pos = 0;
-    if (s->cached_pos > s->token_pos) {
+    आकार_t पङ्क्तिः, column;
+    आकार_t पङ्क्तिः_pos = 0;
+    यदि (s->cached_pos > s->token_pos) {
         s->cached_pos = 0;
-        s->cached_loc.line = s->cached_loc.column = 1;
+        s->cached_loc.पङ्क्तिः = s->cached_loc.column = 1;
     }
-    line = s->cached_loc.line;
-    const char *ptr = s->s + s->cached_pos;
-    const char *last = s->s + s->token_pos;
-    while ((ptr = memchr(ptr, '\n', (size_t)(last - ptr)))) {
-        line++;
+    पङ्क्तिः = s->cached_loc.पङ्क्तिः;
+    ध्रुव वर्ण *ptr = s->s + s->cached_pos;
+    ध्रुव वर्ण *चरमः = s->s + s->token_pos;
+    यावत् ((ptr = memchr(ptr, '\n', (आकार_t)(चरमः - ptr)))) {
+        पङ्क्तिः++;
         ptr++;
-        line_pos = (size_t)(ptr - s->s);
+        पङ्क्तिः_pos = (आकार_t)(ptr - s->s);
     }
-    if (line == s->cached_loc.line) {
+    यदि (पङ्क्तिः == s->cached_loc.पङ्क्तिः) {
         column = s->cached_loc.column + (s->token_pos - s->cached_pos);
-    } else {
-        column = s->token_pos - line_pos + 1;
+    } अन्यथा {
+        column = s->token_pos - पङ्क्तिः_pos + 1;
     }
-    struct scanner_loc loc = {.line = line, .column = column};
+    संरचना scanner_loc loc = {.पङ्क्तिः = पङ्क्तिः, .column = column};
     s->cached_pos = s->token_pos;
     s->cached_loc = loc;
-    return loc;
+    प्रत्यागम loc;
 }

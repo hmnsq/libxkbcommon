@@ -2,13 +2,13 @@
  * Copyright © 2013,2021 Ran Benita <ran234@gmail.com>
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#निर्देशः once
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include "xkbcommon/xkbcommon-compose.h"
-#include "src/utils.h"
-#include "src/context.h"
+#अन्तर्भाव "xkbcommon/xkbcommon-compose.h"
+#अन्तर्भाव "src/utils.h"
+#अन्तर्भाव "src/context.h"
 
 /*
  * The compose table data structure is a ternary search tree.
@@ -59,10 +59,10 @@
 
 /* 7 nodes for every potential Unicode character and then some should be
  * enough for all purposes. */
-#define MAX_COMPOSE_NODES_LOG2 23
-#define MAX_COMPOSE_NODES (1u << MAX_COMPOSE_NODES_LOG2)
+#परिभाषय MAX_COMPOSE_NODES_LOG2 23
+#परिभाषय MAX_COMPOSE_NODES (1u << MAX_COMPOSE_NODES_LOG2)
 
-struct compose_node {
+संरचना compose_ग्रन्थिः {
     xkb_keysym_t keysym;
 
     /* Offset into xkb_compose_table::nodes or 0. */
@@ -70,41 +70,41 @@ struct compose_node {
     /* Offset into xkb_compose_table::nodes or 0. */
     uint32_t hikid;
 
-    union {
-        struct {
+    सङ्घ {
+        संरचना {
             uint32_t _pad:31;
-            bool is_leaf:1;
+            bool is_पर्णम्:1;
         };
-        struct {
+        संरचना {
             uint32_t _pad:31;
-            bool is_leaf:1;
+            bool is_पर्णम्:1;
             /* Offset into xkb_compose_table::nodes or 0. */
             uint32_t eqkid;
-        } internal;
-        struct {
+        } आन्तरिकम्;
+        संरचना {
             /* Offset into xkb_compose_table::utf8. */
             uint32_t utf8:31;
-            bool is_leaf:1;
+            bool is_पर्णम्:1;
             xkb_keysym_t keysym;
-        } leaf;
+        } पर्णम्;
     };
 };
 
-struct xkb_compose_table {
-    int refcnt;
-    enum xkb_compose_format format;
-    enum xkb_compose_compile_flags flags;
-    struct xkb_context *ctx;
+संरचना xkb_compose_सारणी {
+    पूर्णाङ्क refcnt;
+    गणना xkb_compose_format format;
+    गणना xkb_compose_compile_flags flags;
+    संरचना xkb_context *ctx;
 
-    char *locale;
+    वर्ण *locale;
 
     darray_char utf8;
-    darray(struct compose_node) nodes;
+    darray(संरचना compose_ग्रन्थिः) nodes;
 };
 
-struct xkb_compose_table_entry {
-    size_t sequence_length;
-    xkb_keysym_t *sequence ATTR_COUNTED_BY(sequence_length);
+संरचना xkb_compose_सारणी_प्रविष्टिः {
+    आकार_t sequence_दीर्घता;
+    xkb_keysym_t *sequence ATTR_COUNTED_BY(sequence_दीर्घता);
     xkb_keysym_t keysym;
-    const char *utf8;
+    ध्रुव वर्ण *utf8;
 };

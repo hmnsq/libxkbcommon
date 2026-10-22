@@ -2,25 +2,25 @@
  * Copyright © 2009 Dan Nicholson
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#निर्देशः once
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include <stdbool.h>
+#अन्तर्भाव <stdbool.h>
 
-#include "xkbcomp-priv.h"
-#include "rmlvo.h"
+#अन्तर्भाव "xkbcomp-priv.h"
+#अन्तर्भाव "rmlvo.h"
 
-XKB_EXPORT_PRIVATE bool
-xkb_components_from_rmlvo_builder(const struct xkb_rmlvo_builder *rmlvo,
-                                  struct xkb_component_names *out,
-                                  xkb_layout_index_t *explicit_layouts);
+XKB_EXPORT_वैयक्तिकम् bool
+xkb_components_from_rmlvo_builder(ध्रुव संरचना xkb_rmlvo_builder *rmlvo,
+                                  संरचना xkb_component_नामानि *बहिर्गमनम्,
+                                  xkb_layout_सूचकांक_t *explicit_layouts);
 
-XKB_EXPORT_PRIVATE bool
-xkb_components_from_rules_names(struct xkb_context *ctx,
-                                const struct xkb_rule_names *rmlvo,
-                                struct xkb_component_names *out,
-                                xkb_layout_index_t *explicit_layouts);
+XKB_EXPORT_वैयक्तिकम् bool
+xkb_components_from_नियमाः_नामानि(संरचना xkb_context *ctx,
+                                ध्रुव संरचना xkb_नियमः_नामानि *rmlvo,
+                                संरचना xkb_component_नामानि *बहिर्गमनम्,
+                                xkb_layout_सूचकांक_t *explicit_layouts);
 
 /* Maximum length of a layout index string:
  *
@@ -28,8 +28,8 @@ xkb_components_from_rules_names(struct xkb_context *ctx,
  *        < ceiling (bitsize(xkb_layout_index_t) * 5 / 16)
  *        < 1 + floor (bitsize(xkb_layout_index_t) * 5 / 16)
  */
-#define MAX_LAYOUT_INDEX_STR_LENGTH \
-        (1 + ((sizeof(xkb_layout_index_t) * CHAR_BIT * 5) >> 4))
-static_assert(MAX_LAYOUT_INDEX_STR_LENGTH == sizeof("4294967295"), "");
+#परिभाषय MAX_LAYOUT_सूचकांक_STR_दीर्घता \
+        (1 + ((परिमाण(xkb_layout_सूचकांक_t) * CHAR_BIT * 5) >> 4))
+static_assert(MAX_LAYOUT_सूचकांक_STR_दीर्घता == परिमाण("4294967295"), "");
 
-#define OPTIONS_GROUP_SPECIFIER_PREFIX '!'
+#परिभाषय OPTIONS_गणः_SPECIFIER_उपसर्गः '!'
