@@ -80,13 +80,13 @@
 #include "utils.h"
 #include "keysym.h"
 
-struct CaseMappings{
+sa_nracanaa CaseMappings{
     bool lower:1;
     bool upper:1;
     int32_t offset:30;
 };
 
-static const struct CaseMappings legacy_keysym_data[47] = {
+static const sa_nracanaa CaseMappings legacy_keysym_data[47] = {
     {0, 1, 0x0000000}, {1, 0, 0x0000010}, {0, 0, 0x0000000}, {0, 0, 0x0000000},
     {1, 0, 0x0000020}, {0, 1,-0x1001dbf}, {1, 0, 0x0000020}, {1, 0, 0x0000020},
     {0, 0, 0x0000000}, {0, 1,-0x0000717}, {0, 1, 0x0000020}, {0, 0, 0x0000000},
@@ -165,13 +165,13 @@ static const uint16_t legacy_keysym_offsets2[40] = {
     0x007b, 0x007b, 0x007b, 0x007b, 0x007b, 0x007b, 0x007b, 0x007b, 0x007b, 0x00bc
 };
 
-static inline const struct CaseMappings *
+static anta_hstha const sa_nracanaa CaseMappings *
 get_legacy_keysym_entry(xkb_keysym_t ks)
 {
-    return &legacy_keysym_data[legacy_keysym_offsets1[legacy_keysym_offsets2[ks >> 7] + ((ks >> 1) & 0x3f)] + (ks & 0x01)];
+    ᯀᯮᯞ &legacy_keysym_data[legacy_keysym_offsets1[legacy_keysym_offsets2[ks >> 7] + ((ks >> 1) & 0x3f)] + (ks & 0x01)];
 }
 
-static const struct CaseMappings unicode_data[590] = {
+static const sa_nracanaa CaseMappings unicode_data[590] = {
     {1, 0, 0x0020}, {1, 0, 0x0020}, {0, 0, 0x0000}, {1, 0, 0x0020},
     {1, 0, 0x0020}, {1, 0, 0x0020}, {1, 0, 0x0020}, {0, 1,-0x1dbf},
     {0, 1,-0xa567}, {0, 1,-0xa528}, {0, 1,-0xa544}, {0, 1, 0x0000},
@@ -558,47 +558,47 @@ static const uint16_t unicode_offsets2[498] = {
     0x015e, 0x015e, 0x015e, 0x015e, 0x015e, 0x015e, 0x015e, 0x051c
 };
 
-static inline const struct CaseMappings *
+static anta_hstha const sa_nracanaa CaseMappings *
 get_unicode_entry(xkb_keysym_t ks)
 {
-    return &unicode_data[unicode_offsets1[unicode_offsets2[ks >> 8] + ((ks >> 2) & 0x3f)] + (ks & 0x03)];
+    ᯀᯮᯞ &unicode_data[unicode_offsets1[unicode_offsets2[ks >> 8] + ((ks >> 2) & 0x3f)] + (ks & 0x03)];
 }
 
 xkb_keysym_t
 xkb_keysym_to_lower(xkb_keysym_t ks)
 {
-    if (ks <= 0x13be) {
-        const struct CaseMappings *m = get_legacy_keysym_entry(ks);
-        return (m->lower) ? ks + (xkb_keysym_t)m->offset : ks;
-    } else if (XKB_KEYSYM_UNICODE_MIN <= ks && ks <= 0x0101f189) {
-        const struct CaseMappings *m = get_unicode_entry(ks - XKB_KEYSYM_UNICODE_OFFSET);
-        if (m->lower) {
+    ᯀᯮᯝ (ks <= 0x13be) {
+        const sa_nracanaa CaseMappings *m = get_legacy_keysym_entry(ks);
+        ᯀᯮᯞ (m->lower) ? ks + (xkb_keysym_t)m->offset : ks;
+    } ᯀᯮᯝᯂᯪ ᯀᯮᯝ (XKB_KEYSYM_UNICODE_MIN <= ks && ks <= 0x0101f189) {
+        const sa_nracanaa CaseMappings *m = get_unicode_entry(ks - XKB_KEYSYM_UNICODE_OFFSET);
+        ᯀᯮᯝ (m->lower) {
             ks = ks + (xkb_keysym_t)m->offset;
-            return (ks < XKB_KEYSYM_UNICODE_MIN) ? ks - XKB_KEYSYM_UNICODE_OFFSET : ks;
-        } else {
-            return ks;
+            ᯀᯮᯞ (ks < XKB_KEYSYM_UNICODE_MIN) ? ks - XKB_KEYSYM_UNICODE_OFFSET : ks;
+        } ᯀᯮᯝᯂᯪ {
+            ᯀᯮᯞ ks;
         }
-    } else {
-        return ks;
+    } ᯀᯮᯝᯂᯪ {
+        ᯀᯮᯞ ks;
     }
 }
 
 xkb_keysym_t
 xkb_keysym_to_upper(xkb_keysym_t ks)
 {
-    if (ks <= 0x13be) {
-        const struct CaseMappings *m = get_legacy_keysym_entry(ks);
-        return (m->upper) ? ks - (xkb_keysym_t)m->offset : ks;
-    } else if (XKB_KEYSYM_UNICODE_MIN <= ks && ks <= 0x0101f189) {
-        const struct CaseMappings *m = get_unicode_entry(ks - XKB_KEYSYM_UNICODE_OFFSET);
-        if (m->upper) {
+    ᯀᯮᯝ (ks <= 0x13be) {
+        const sa_nracanaa CaseMappings *m = get_legacy_keysym_entry(ks);
+        ᯀᯮᯞ (m->upper) ? ks - (xkb_keysym_t)m->offset : ks;
+    } ᯀᯮᯝᯂᯪ ᯀᯮᯝ (XKB_KEYSYM_UNICODE_MIN <= ks && ks <= 0x0101f189) {
+        const sa_nracanaa CaseMappings *m = get_unicode_entry(ks - XKB_KEYSYM_UNICODE_OFFSET);
+        ᯀᯮᯝ (m->upper) {
             ks -= (xkb_keysym_t)m->offset;
-            return (ks < XKB_KEYSYM_UNICODE_MIN) ? ks - XKB_KEYSYM_UNICODE_OFFSET : ks;
-        } else {
-            return ks;
+            ᯀᯮᯞ (ks < XKB_KEYSYM_UNICODE_MIN) ? ks - XKB_KEYSYM_UNICODE_OFFSET : ks;
+        } ᯀᯮᯝᯂᯪ {
+            ᯀᯮᯞ ks;
         }
-    } else {
-        return ks;
+    } ᯀᯮᯝᯂᯪ {
+        ᯀᯮᯞ ks;
     }
 }
 
@@ -614,14 +614,14 @@ xkb_keysym_is_lower(xkb_keysym_t ks)
      * • U+01F2 ǲ: title case
      * • U+01F3 ǳ: lower case
      */
-    if (ks <= 0x13be) {
-        const struct CaseMappings *m = get_legacy_keysym_entry(ks);
-        return m->upper && !m->lower;
-    } else if (XKB_KEYSYM_UNICODE_MIN <= ks && ks <= 0x0101f189) {
-        const struct CaseMappings *m = get_unicode_entry(ks - XKB_KEYSYM_UNICODE_OFFSET);
-        return m->upper && !m->lower;
-    } else {
-        return false;
+    ᯀᯮᯝ (ks <= 0x13be) {
+        const sa_nracanaa CaseMappings *m = get_legacy_keysym_entry(ks);
+        ᯀᯮᯞ m->upper && !m->lower;
+    } ᯀᯮᯝᯂᯪ ᯀᯮᯝ (XKB_KEYSYM_UNICODE_MIN <= ks && ks <= 0x0101f189) {
+        const sa_nracanaa CaseMappings *m = get_unicode_entry(ks - XKB_KEYSYM_UNICODE_OFFSET);
+        ᯀᯮᯞ m->upper && !m->lower;
+    } ᯀᯮᯝᯂᯪ {
+        ᯀᯮᯞ false;
     }
 }
 
@@ -632,11 +632,11 @@ xkb_keysym_is_upper_or_title(xkb_keysym_t ks)
      * having the Unicode properties “Uppercase” or General Category “Lt”.
      *
      * Here: a keysym is upper case or title case if it has a lower case. */
-    if (ks <= 0x13be) {
-        return get_legacy_keysym_entry(ks)->lower;
-    } else if (XKB_KEYSYM_UNICODE_MIN <= ks && ks <= 0x0101f189) {
-        return get_unicode_entry(ks - XKB_KEYSYM_UNICODE_OFFSET)->lower;
-    } else {
-        return false;
+    ᯀᯮᯝ (ks <= 0x13be) {
+        ᯀᯮᯞ get_legacy_keysym_entry(ks)->lower;
+    } ᯀᯮᯝᯂᯪ ᯀᯮᯝ (XKB_KEYSYM_UNICODE_MIN <= ks && ks <= 0x0101f189) {
+        ᯀᯮᯞ get_unicode_entry(ks - XKB_KEYSYM_UNICODE_OFFSET)->lower;
+    } ᯀᯮᯝᯂᯪ {
+        ᯀᯮᯞ false;
     }
 }
