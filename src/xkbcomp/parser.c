@@ -81,25 +81,25 @@
 /* First part of user prologue.  */
 #line 22 "src/xkbcomp/parser.y"
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include <assert.h>
+#ಅನ್ತರ್ಭಾವ <assert.h>
 
-#include "keysym.h"
-#include "xkbcomp/xkbcomp-priv.h"
-#include "xkbcomp/parser-priv.h"
-#include "xkbcomp/ast-build.h"
+#ಅನ್ತರ್ಭಾವ "keysym.h"
+#ಅನ್ತರ್ಭಾವ "xkbcomp/xkbcomp-priv.h"
+#ಅನ್ತರ್ಭಾವ "xkbcomp/parser-priv.h"
+#ಅನ್ತರ್ಭಾವ "xkbcomp/ast-build.h"
 
-struct parser_param {
-    struct xkb_context *ctx;
-    struct scanner *scanner;
+ಸಂರಚನಾ parser_param {
+    ಸಂರಚನಾ xkb_context *ctx;
+    ಸಂರಚನಾ scanner *scanner;
     XkbFile *rtrn;
-    struct parser_keymap_config config;
+    ಸಂರಚನಾ parser_keymap_config config;
     bool more_maps;
 };
 
-#define parser_log_with_code(param, level, verbosity, log_msg_id, fmt, ...)   \
-    scanner_log_with_code((param)->scanner, level, verbosity, log_msg_id, fmt,\
+#define parser_log_with_code(param, level, verbosity, log_ಸಂದೇಶ_id, fmt, ...)   \
+    scanner_log_with_code((param)->scanner, level, verbosity, log_ಸಂದೇಶ_id, fmt,\
                           ##__VA_ARGS__)
 
 #define parser_err(param, error_id, fmt, ...) \
@@ -111,44 +111,44 @@ struct parser_param {
 #define parser_vrb(param, verbosity, warning_id, fmt, ...) \
     scanner_vrb((param)->scanner, verbosity, warning_id, fmt, ##__VA_ARGS__)
 
-static void
-_xkbcommon_error(struct parser_param *param, const char *msg)
+ಸ್ಥಿರ ಶೂನ್ಯ
+_xkbcommon_error(ಸಂರಚನಾ parser_param *param, ಧ್ರುವ ವರ್ಣ *ಸಂದೇಶ)
 {
-    parser_err(param, XKB_ERROR_INVALID_XKB_SYNTAX, "%s", msg);
+    parser_err(param, XKB_ERROR_INVALID_XKB_SYNTAX, "%s", ಸಂದೇಶ);
 }
 
-static bool
-resolve_keysym(struct parser_param *param, struct sval name, xkb_keysym_t *sym_rtrn)
+ಸ್ಥಿರ bool
+resolve_keysym(ಸಂರಚನಾ parser_param *param, ಸಂರಚನಾ sval name, xkb_keysym_t *sym_rtrn)
 {
     xkb_keysym_t sym;
 
-    if (isvaleq(name, SVAL_LIT("any")) || isvaleq(name, SVAL_LIT("nosymbol"))) {
-        *sym_rtrn = XKB_KEY_NoSymbol;
-        return true;
+    ಯದಿ (isvaleq(name, SVAL_LIT("any")) || isvaleq(name, SVAL_LIT("nosymbol"))) {
+        *sym_rtrn = XKB_ಕೀಲಿ_No_ಚಿಹ್ನೆ;
+        ಪ್ರತ್ಯಾಗಮ true;
     }
 
-    if (isvaleq(name, SVAL_LIT("none")) || isvaleq(name, SVAL_LIT("voidsymbol"))) {
-        *sym_rtrn = XKB_KEY_VoidSymbol;
-        return true;
+    ಯದಿ (isvaleq(name, SVAL_LIT("none")) || isvaleq(name, SVAL_LIT("voidsymbol"))) {
+        *sym_rtrn = XKB_ಕೀಲಿ_Void_ಚಿಹ್ನೆ;
+        ಪ್ರತ್ಯಾಗಮ true;
     }
 
     /* xkb_keysym_from_name needs a C string. */
-    char buf[XKB_KEYSYM_NAME_MAX_SIZE];
-    if (name.len >= sizeof(buf)) {
-        return false;
+    ವರ್ಣ buf[XKB_KEYSYM_NAME_MAX_SIZE];
+    ಯದಿ (name.len >= ಪರಿಮಾಣ(buf)) {
+        ಪ್ರತ್ಯಾಗಮ false;
     }
     memcpy(buf, name.start, name.len);
     buf[name.len] = '\0';
 
     sym = xkb_keysym_from_name(buf, XKB_KEYSYM_NO_FLAGS);
-    if (sym != XKB_KEY_NoSymbol) {
+    ಯದಿ (sym != XKB_ಕೀಲಿ_No_ಚಿಹ್ನೆ) {
         *sym_rtrn = sym;
         check_deprecated_keysyms(parser_warn, param, param->ctx,
                                  sym, buf, buf, "%s", "");
-        return true;
+        ಪ್ರತ್ಯಾಗಮ true;
     }
 
-    return false;
+    ಪ್ರತ್ಯಾಗಮ false;
 }
 
 #define param_scanner param->scanner
@@ -159,26 +159,26 @@ resolve_keysym(struct parser_param *param, struct sval name, xkb_keysym_t *sym_r
 #  ifdef __cplusplus
 #   define YY_CAST(Type, Val) static_cast<Type> (Val)
 #   define YY_REINTERPRET_CAST(Type, Val) reinterpret_cast<Type> (Val)
-#  else
+#  ಅನ್ಯಥಾ
 #   define YY_CAST(Type, Val) ((Type) (Val))
 #   define YY_REINTERPRET_CAST(Type, Val) ((Type) (Val))
 #  endif
 # endif
 # ifndef YY_NULLPTR
-#  if defined __cplusplus
-#   if 201103L <= __cplusplus
+#  ಯದಿ defined __cplusplus
+#   ಯದಿ 201103L <= __cplusplus
 #    define YY_NULLPTR nullptr
-#   else
+#   ಅನ್ಯಥಾ
 #    define YY_NULLPTR 0
 #   endif
-#  else
-#   define YY_NULLPTR ((void*)0)
+#  ಅನ್ಯಥಾ
+#   define YY_NULLPTR ((ಶೂನ್ಯ*)0)
 #  endif
 # endif
 
-#include "parser.h"
+#ಅನ್ತರ್ಭಾವ "parser.h"
 /* Symbol kind.  */
-enum yysymbol_kind_t
+ಗಣನಾ yysymbol_kind_t
 {
   YYSYMBOL_YYEMPTY = -2,
   YYSYMBOL_YYEOF = 0,                      /* "end of file"  */
@@ -202,13 +202,13 @@ enum yysymbol_kind_t
   YYSYMBOL_TYPE = 18,                      /* "type"  */
   YYSYMBOL_INTERPRET = 19,                 /* "interpret"  */
   YYSYMBOL_ACTION_TOK = 20,                /* "action"  */
-  YYSYMBOL_KEY = 21,                       /* "key"  */
+  YYSYMBOL_ಕೀಲಿ = 21,                       /* "key"  */
   YYSYMBOL_ALIAS = 22,                     /* "alias"  */
   YYSYMBOL_GROUP = 23,                     /* "group"  */
   YYSYMBOL_MODIFIER_MAP = 24,              /* "modifier_map"  */
   YYSYMBOL_INDICATOR = 25,                 /* "indicator"  */
   YYSYMBOL_SHAPE = 26,                     /* "shape"  */
-  YYSYMBOL_KEYS = 27,                      /* "keys"  */
+  YYSYMBOL_ಕೀಲಿಗಳು = 27,                      /* "keys"  */
   YYSYMBOL_ROW = 28,                       /* "row"  */
   YYSYMBOL_SECTION = 29,                   /* "section"  */
   YYSYMBOL_OVERLAY = 30,                   /* "overlay"  */
@@ -242,10 +242,10 @@ enum yysymbol_kind_t
   YYSYMBOL_PARTIAL = 58,                   /* "partial"  */
   YYSYMBOL_DEFAULT = 59,                   /* "default"  */
   YYSYMBOL_HIDDEN = 60,                    /* "hidden"  */
-  YYSYMBOL_ALPHANUMERIC_KEYS = 61,         /* "alphanumeric_keys"  */
-  YYSYMBOL_MODIFIER_KEYS = 62,             /* "modifier_keys"  */
-  YYSYMBOL_KEYPAD_KEYS = 63,               /* "keypad_keys"  */
-  YYSYMBOL_FUNCTION_KEYS = 64,             /* "function_keys"  */
+  YYSYMBOL_ALPHANUMERIC_ಕೀಲಿಗಳು = 61,         /* "alphanumeric_keys"  */
+  YYSYMBOL_MODIFIER_ಕೀಲಿಗಳು = 62,             /* "modifier_keys"  */
+  YYSYMBOL_KEYPAD_ಕೀಲಿಗಳು = 63,               /* "keypad_keys"  */
+  YYSYMBOL_FUNCTION_ಕೀಲಿಗಳು = 64,             /* "function_keys"  */
   YYSYMBOL_ALTERNATE_GROUP = 65,           /* "alternate_group"  */
   YYSYMBOL_DEPRECATED = 66,                /* "deprecated"  */
   YYSYMBOL_YYACCEPT = 67,                  /* $accept  */
@@ -261,25 +261,25 @@ enum yysymbol_kind_t
   YYSYMBOL_DeclList = 77,                  /* DeclList  */
   YYSYMBOL_Decl = 78,                      /* Decl  */
   YYSYMBOL_VarDecl = 79,                   /* VarDecl  */
-  YYSYMBOL_KeyNameDecl = 80,               /* KeyNameDecl  */
-  YYSYMBOL_KeyAliasDecl = 81,              /* KeyAliasDecl  */
+  YYSYMBOL_ಕೀಲಿ_Name_Decl = 80,               /* KeyNameDecl  */
+  YYSYMBOL_ಕೀಲಿ_Alias_Decl = 81,              /* KeyAliasDecl  */
   YYSYMBOL_VModDecl = 82,                  /* VModDecl  */
   YYSYMBOL_VModDefList = 83,               /* VModDefList  */
   YYSYMBOL_VModDef = 84,                   /* VModDef  */
   YYSYMBOL_InterpretDecl = 85,             /* InterpretDecl  */
   YYSYMBOL_InterpretMatch = 86,            /* InterpretMatch  */
   YYSYMBOL_VarDeclList = 87,               /* VarDeclList  */
-  YYSYMBOL_KeyTypeDecl = 88,               /* KeyTypeDecl  */
+  YYSYMBOL_ಕೀಲಿ_Type_Decl = 88,               /* KeyTypeDecl  */
   YYSYMBOL_SymbolsDecl = 89,               /* SymbolsDecl  */
   YYSYMBOL_OptSymbolsBody = 90,            /* OptSymbolsBody  */
   YYSYMBOL_SymbolsBody = 91,               /* SymbolsBody  */
   YYSYMBOL_SymbolsVarDecl = 92,            /* SymbolsVarDecl  */
-  YYSYMBOL_MultiKeySymOrActionList = 93,   /* MultiKeySymOrActionList  */
-  YYSYMBOL_NoSymbolOrActionList = 94,      /* NoSymbolOrActionList  */
+  YYSYMBOL_Multi_ಕೀಲಿ_Sym_Or_Action_List = 93,   /* MultiKeySymOrActionList  */
+  YYSYMBOL_No_ಚಿಹ್ನೆ_Or_Action_List = 94,      /* NoSymbolOrActionList  */
   YYSYMBOL_GroupCompatDecl = 95,           /* GroupCompatDecl  */
   YYSYMBOL_ModMapDecl = 96,                /* ModMapDecl  */
-  YYSYMBOL_KeyOrKeySymList = 97,           /* KeyOrKeySymList  */
-  YYSYMBOL_KeyOrKeySym = 98,               /* KeyOrKeySym  */
+  YYSYMBOL_ಕೀಲಿ_Or_ಕೀಲಿ_Sym_List = 97,           /* KeyOrKeySymList  */
+  YYSYMBOL_ಕೀಲಿ_Or_ಕೀಲಿ_Sym = 98,               /* KeyOrKeySym  */
   YYSYMBOL_LedMapDecl = 99,                /* LedMapDecl  */
   YYSYMBOL_LedNameDecl = 100,              /* LedNameDecl  */
   YYSYMBOL_UnknownDecl = 101,              /* UnknownDecl  */
@@ -290,11 +290,11 @@ enum yysymbol_kind_t
   YYSYMBOL_SectionBodyItem = 106,          /* SectionBodyItem  */
   YYSYMBOL_RowBody = 107,                  /* RowBody  */
   YYSYMBOL_RowBodyItem = 108,              /* RowBodyItem  */
-  YYSYMBOL_Keys = 109,                     /* Keys  */
-  YYSYMBOL_Key = 110,                      /* Key  */
+  YYSYMBOL_ಕೀಲಿಗಳು_2 = 109,                     /*ಕೀಲಿಗಳು*/
+  YYSYMBOL_ಕೀಲಿ_2 = 110,                      /*ಕೀಲಿ*/
   YYSYMBOL_OverlayDecl = 111,              /* OverlayDecl  */
-  YYSYMBOL_OverlayKeyList = 112,           /* OverlayKeyList  */
-  YYSYMBOL_OverlayKey = 113,               /* OverlayKey  */
+  YYSYMBOL_Overlay_ಕೀಲಿ_List = 112,           /* OverlayKeyList  */
+  YYSYMBOL_Overlay_ಕೀಲಿ = 113,               /* OverlayKey  */
   YYSYMBOL_OutlineList = 114,              /* OutlineList  */
   YYSYMBOL_OutlineInList = 115,            /* OutlineInList  */
   YYSYMBOL_CoordList = 116,                /* CoordList  */
@@ -305,8 +305,8 @@ enum yysymbol_kind_t
   YYSYMBOL_Element = 121,                  /* Element  */
   YYSYMBOL_OptMergeMode = 122,             /* OptMergeMode  */
   YYSYMBOL_MergeMode = 123,                /* MergeMode  */
-  YYSYMBOL_ExprList = 124,                 /* ExprList  */
-  YYSYMBOL_Expr = 125,                     /* Expr  */
+  YYSYMBOL_ಅಭಿವ್ಯಕ್ತಿ_List = 124,                 /* ExprList  */
+  YYSYMBOL_ಅಭಿವ್ಯಕ್ತಿ = 125,                     /*ಅಭಿವ್ಯಕ್ತಿ*/
   YYSYMBOL_Term = 126,                     /* Term  */
   YYSYMBOL_MultiActionList = 127,          /* MultiActionList  */
   YYSYMBOL_ActionList = 128,               /* ActionList  */
@@ -316,23 +316,23 @@ enum yysymbol_kind_t
   YYSYMBOL_Lhs = 132,                      /* Lhs  */
   YYSYMBOL_OptTerminal = 133,              /* OptTerminal  */
   YYSYMBOL_Terminal = 134,                 /* Terminal  */
-  YYSYMBOL_MultiKeySymList = 135,          /* MultiKeySymList  */
-  YYSYMBOL_KeySymList = 136,               /* KeySymList  */
-  YYSYMBOL_NonEmptyKeySyms = 137,          /* NonEmptyKeySyms  */
-  YYSYMBOL_KeySyms = 138,                  /* KeySyms  */
-  YYSYMBOL_KeySym = 139,                   /* KeySym  */
-  YYSYMBOL_KeySymLit = 140,                /* KeySymLit  */
-  YYSYMBOL_SignedNumber = 141,             /* SignedNumber  */
-  YYSYMBOL_Number = 142,                   /* Number  */
+  YYSYMBOL_Multi_ಕೀಲಿ_Sym_List = 135,          /* MultiKeySymList  */
+  YYSYMBOL_ಕೀಲಿ_Sym_List = 136,               /* KeySymList  */
+  YYSYMBOL_Non_Empty_ಕೀಲಿ_Syms = 137,          /* NonEmptyKeySyms  */
+  YYSYMBOL_ಕೀಲಿ_Syms = 138,                  /* KeySyms  */
+  YYSYMBOL_ಕೀಲಿ_Sym = 139,                   /* KeySym  */
+  YYSYMBOL_ಕೀಲಿ_Sym_Lit = 140,                /* KeySymLit  */
+  YYSYMBOL_Signed_ಸಂಖ್ಯೆ = 141,             /* SignedNumber  */
+  YYSYMBOL_ಸಂಖ್ಯೆ = 142,                   /*ಸಂಖ್ಯೆ*/
   YYSYMBOL_Float = 143,                    /* Float  */
   YYSYMBOL_Integer = 144,                  /* Integer  */
-  YYSYMBOL_KeyCode = 145,                  /* KeyCode  */
+  YYSYMBOL_ಕೀಲಿ_Code = 145,                  /* KeyCode  */
   YYSYMBOL_Ident = 146,                    /* Ident  */
   YYSYMBOL_String = 147,                   /* String  */
   YYSYMBOL_OptMapName = 148,               /* OptMapName  */
   YYSYMBOL_MapName = 149                   /* MapName  */
 };
-typedef enum yysymbol_kind_t yysymbol_kind_t;
+ಪ್ರಕಾರನಿರ್ದೇಶ ಗಣನಾ yysymbol_kind_t yysymbol_kind_t;
 
 
 
@@ -347,7 +347,7 @@ typedef enum yysymbol_kind_t yysymbol_kind_t;
 
 #ifndef __PTRDIFF_MAX__
 # include <limits.h> /* INFRINGES ON USER NAME SPACE */
-# if defined __STDC_VERSION__ && 199901 <= __STDC_VERSION__
+# ಯದಿ defined __STDC_VERSION__ && 199901 <= __STDC_VERSION__
 #  include <stdint.h> /* INFRINGES ON USER NAME SPACE */
 #  define YY_STDINT_H
 # endif
@@ -359,19 +359,19 @@ typedef enum yysymbol_kind_t yysymbol_kind_t;
    helps avoid bugs in integer arithmetic.  */
 
 #ifdef __INT_LEAST8_MAX__
-typedef __INT_LEAST8_TYPE__ yytype_int8;
-#elif defined YY_STDINT_H
-typedef int_least8_t yytype_int8;
-#else
-typedef signed char yytype_int8;
+ಪ್ರಕಾರನಿರ್ದೇಶ __INT_LEAST8_TYPE__ yytype_int8;
+#ನೋಚೇದ್ಯದಿ defined YY_STDINT_H
+ಪ್ರಕಾರನಿರ್ದೇಶ int_least8_t yytype_int8;
+#ಅನ್ಯಥಾ
+ಪ್ರಕಾರನಿರ್ದೇಶ signed ವರ್ಣ yytype_int8;
 #endif
 
 #ifdef __INT_LEAST16_MAX__
-typedef __INT_LEAST16_TYPE__ yytype_int16;
-#elif defined YY_STDINT_H
-typedef int_least16_t yytype_int16;
-#else
-typedef short yytype_int16;
+ಪ್ರಕಾರನಿರ್ದೇಶ __INT_LEAST16_TYPE__ yytype_int16;
+#ನೋಚೇದ್ಯದಿ defined YY_STDINT_H
+ಪ್ರಕಾರನಿರ್ದೇಶ int_least16_t yytype_int16;
+#ಅನ್ಯಥಾ
+ಪ್ರಕಾರನಿರ್ದೇಶ short yytype_int16;
 #endif
 
 /* Work around bug in HP-UX 11.23, which defines these macros
@@ -386,30 +386,30 @@ typedef short yytype_int16;
 # define UINT_LEAST16_MAX 65535
 #endif
 
-#if defined __UINT_LEAST8_MAX__ && __UINT_LEAST8_MAX__ <= __INT_MAX__
-typedef __UINT_LEAST8_TYPE__ yytype_uint8;
-#elif (!defined __UINT_LEAST8_MAX__ && defined YY_STDINT_H \
+#ಯದಿ defined __UINT_LEAST8_MAX__ && __UINT_LEAST8_MAX__ <= __INT_MAX__
+ಪ್ರಕಾರನಿರ್ದೇಶ __UINT_LEAST8_TYPE__ yytype_uint8;
+#ನೋಚೇದ್ಯದಿ (!defined __UINT_LEAST8_MAX__ && defined YY_STDINT_H \
        && UINT_LEAST8_MAX <= INT_MAX)
-typedef uint_least8_t yytype_uint8;
-#elif !defined __UINT_LEAST8_MAX__ && UCHAR_MAX <= INT_MAX
-typedef unsigned char yytype_uint8;
-#else
-typedef short yytype_uint8;
+ಪ್ರಕಾರನಿರ್ದೇಶ uint_least8_t yytype_uint8;
+#ನೋಚೇದ್ಯದಿ !defined __UINT_LEAST8_MAX__ && UCHAR_MAX <= INT_MAX
+ಪ್ರಕಾರನಿರ್ದೇಶ unsigned ವರ್ಣ yytype_uint8;
+#ಅನ್ಯಥಾ
+ಪ್ರಕಾರನಿರ್ದೇಶ short yytype_uint8;
 #endif
 
-#if defined __UINT_LEAST16_MAX__ && __UINT_LEAST16_MAX__ <= __INT_MAX__
-typedef __UINT_LEAST16_TYPE__ yytype_uint16;
-#elif (!defined __UINT_LEAST16_MAX__ && defined YY_STDINT_H \
+#ಯದಿ defined __UINT_LEAST16_MAX__ && __UINT_LEAST16_MAX__ <= __INT_MAX__
+ಪ್ರಕಾರನಿರ್ದೇಶ __UINT_LEAST16_TYPE__ yytype_uint16;
+#ನೋಚೇದ್ಯದಿ (!defined __UINT_LEAST16_MAX__ && defined YY_STDINT_H \
        && UINT_LEAST16_MAX <= INT_MAX)
-typedef uint_least16_t yytype_uint16;
-#elif !defined __UINT_LEAST16_MAX__ && USHRT_MAX <= INT_MAX
-typedef unsigned short yytype_uint16;
-#else
-typedef int yytype_uint16;
+ಪ್ರಕಾರನಿರ್ದೇಶ uint_least16_t yytype_uint16;
+#ನೋಚೇದ್ಯದಿ !defined __UINT_LEAST16_MAX__ && USHRT_MAX <= INT_MAX
+ಪ್ರಕಾರನಿರ್ದೇಶ unsigned short yytype_uint16;
+#ಅನ್ಯಥಾ
+ಪ್ರಕಾರನಿರ್ದೇಶ ಪೂರ್ಣಾಙ್ಕ yytype_uint16;
 #endif
 
 #ifndef YYPTRDIFF_T
-# if defined __PTRDIFF_TYPE__ && defined __PTRDIFF_MAX__
+# ಯದಿ defined __PTRDIFF_TYPE__ && defined __PTRDIFF_MAX__
 #  define YYPTRDIFF_T __PTRDIFF_TYPE__
 #  define YYPTRDIFF_MAXIMUM __PTRDIFF_MAX__
 # elif defined PTRDIFF_MAX
@@ -418,7 +418,7 @@ typedef int yytype_uint16;
 #  endif
 #  define YYPTRDIFF_T ptrdiff_t
 #  define YYPTRDIFF_MAXIMUM PTRDIFF_MAX
-# else
+# ಅನ್ಯಥಾ
 #  define YYPTRDIFF_T long
 #  define YYPTRDIFF_MAXIMUM LONG_MAX
 # endif
@@ -432,7 +432,7 @@ typedef int yytype_uint16;
 # elif defined __STDC_VERSION__ && 199901 <= __STDC_VERSION__
 #  include <stddef.h> /* INFRINGES ON USER NAME SPACE */
 #  define YYSIZE_T size_t
-# else
+# ಅನ್ಯಥಾ
 #  define YYSIZE_T unsigned
 # endif
 #endif
@@ -443,18 +443,18 @@ typedef int yytype_uint16;
             ? YYPTRDIFF_MAXIMUM                         \
             : YY_CAST (YYSIZE_T, -1)))
 
-#define YYSIZEOF(X) YY_CAST (YYPTRDIFF_T, sizeof (X))
+#define YYSIZEOF(X) YY_CAST (YYPTRDIFF_T, ಪರಿಮಾಣ (X))
 
 
 /* Stored state numbers (used for stacks). */
-typedef yytype_int16 yy_state_t;
+ಪ್ರಕಾರನಿರ್ದೇಶ yytype_int16 yy_state_t;
 
 /* State numbers in computations.  */
-typedef int yy_state_fast_t;
+ಪ್ರಕಾರನಿರ್ದೇಶ ಪೂರ್ಣಾಙ್ಕ yy_state_fast_t;
 
 #ifndef YY_
-# if defined YYENABLE_NLS && YYENABLE_NLS
-#  if ENABLE_NLS
+# ಯದಿ defined YYENABLE_NLS && YYENABLE_NLS
+#  ಯದಿ ENABLE_NLS
 #   include <libintl.h> /* INFRINGES ON USER NAME SPACE */
 #   define YY_(Msgid) dgettext ("bison-runtime", Msgid)
 #  endif
@@ -466,35 +466,35 @@ typedef int yy_state_fast_t;
 
 
 #ifndef YY_ATTRIBUTE_PURE
-# if defined __GNUC__ && 2 < __GNUC__ + (96 <= __GNUC_MINOR__)
+# ಯದಿ defined __GNUC__ && 2 < __GNUC__ + (96 <= __GNUC_MINOR__)
 #  define YY_ATTRIBUTE_PURE __attribute__ ((__pure__))
-# else
+# ಅನ್ಯಥಾ
 #  define YY_ATTRIBUTE_PURE
 # endif
 #endif
 
 #ifndef YY_ATTRIBUTE_UNUSED
-# if defined __GNUC__ && 2 < __GNUC__ + (7 <= __GNUC_MINOR__)
+# ಯದಿ defined __GNUC__ && 2 < __GNUC__ + (7 <= __GNUC_MINOR__)
 #  define YY_ATTRIBUTE_UNUSED __attribute__ ((__unused__))
-# else
+# ಅನ್ಯಥಾ
 #  define YY_ATTRIBUTE_UNUSED
 # endif
 #endif
 
 /* Suppress unused-variable warnings by "using" E.  */
-#if ! defined lint || defined __GNUC__
-# define YY_USE(E) ((void) (E))
-#else
+#ಯದಿ ! defined lint || defined __GNUC__
+# define YY_USE(E) ((ಶೂನ್ಯ) (E))
+#ಅನ್ಯಥಾ
 # define YY_USE(E) /* empty */
 #endif
 
 /* Suppress an incorrect diagnostic about yylval being uninitialized.  */
-#if defined __GNUC__ && ! defined __ICC && 406 <= __GNUC__ * 100 + __GNUC_MINOR__
-# if __GNUC__ * 100 + __GNUC_MINOR__ < 407
+#ಯದಿ defined __GNUC__ && ! defined __ICC && 406 <= __GNUC__ * 100 + __GNUC_MINOR__
+# ಯದಿ __GNUC__ * 100 + __GNUC_MINOR__ < 407
 #  define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN                           \
     _Pragma ("GCC diagnostic push")                                     \
     _Pragma ("GCC diagnostic ignored \"-Wuninitialized\"")
-# else
+# ಅನ್ಯಥಾ
 #  define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN                           \
     _Pragma ("GCC diagnostic push")                                     \
     _Pragma ("GCC diagnostic ignored \"-Wuninitialized\"")              \
@@ -502,18 +502,18 @@ typedef int yy_state_fast_t;
 # endif
 # define YY_IGNORE_MAYBE_UNINITIALIZED_END      \
     _Pragma ("GCC diagnostic pop")
-#else
-# define YY_INITIAL_VALUE(Value) Value
+#ಅನ್ಯಥಾ
+# define YY_INITIAL_ಮೌಲ್ಯ(ಮೌಲ್ಯ_2) ಮೌಲ್ಯ_2
 #endif
 #ifndef YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
 # define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
 # define YY_IGNORE_MAYBE_UNINITIALIZED_END
 #endif
-#ifndef YY_INITIAL_VALUE
-# define YY_INITIAL_VALUE(Value) /* Nothing. */
+#ifndef YY_INITIAL_ಮೌಲ್ಯ
+# define YY_INITIAL_ಮೌಲ್ಯ(ಮೌಲ್ಯ_2) /* Nothing. */
 #endif
 
-#if defined __cplusplus && defined __GNUC__ && ! defined __ICC && 6 <= __GNUC__
+#ಯದಿ defined __cplusplus && defined __GNUC__ && ! defined __ICC && 6 <= __GNUC__
 # define YY_IGNORE_USELESS_CAST_BEGIN                          \
     _Pragma ("GCC diagnostic push")                            \
     _Pragma ("GCC diagnostic ignored \"-Wuseless-cast\"")
@@ -526,14 +526,14 @@ typedef int yy_state_fast_t;
 #endif
 
 
-#define YY_ASSERT(E) ((void) (0 && (E)))
+#define YY_ASSERT(E) ((ಶೂನ್ಯ) (0 && (E)))
 
-#if 1
+#ಯದಿ 1
 
 /* The parser invokes alloca or malloc; define the necessary symbols.  */
 
 # ifdef YYSTACK_USE_ALLOCA
-#  if YYSTACK_USE_ALLOCA
+#  ಯದಿ YYSTACK_USE_ALLOCA
 #   ifdef __GNUC__
 #    define YYSTACK_ALLOC __builtin_alloca
 #   elif defined __BUILTIN_VA_ARG_INCR
@@ -543,9 +543,9 @@ typedef int yy_state_fast_t;
 #   elif defined _MSC_VER
 #    include <malloc.h> /* INFRINGES ON USER NAME SPACE */
 #    define alloca _alloca
-#   else
+#   ಅನ್ಯಥಾ
 #    define YYSTACK_ALLOC alloca
-#    if ! defined _ALLOCA_H && ! defined EXIT_SUCCESS
+#    ಯದಿ ! defined _ALLOCA_H && ! defined EXIT_SUCCESS
 #     include <stdlib.h> /* INFRINGES ON USER NAME SPACE */
       /* Use EXIT_SUCCESS as a witness for stdlib.h.  */
 #     ifndef EXIT_SUCCESS
@@ -558,7 +558,7 @@ typedef int yy_state_fast_t;
 
 # ifdef YYSTACK_ALLOC
    /* Pacify GCC's 'empty if-body' warning.  */
-#  define YYSTACK_FREE(Ptr) do { /* empty */; } while (0)
+#  define YYSTACK_FREE(Ptr) ಕುರು { /* empty */; } ಯಾವತ್ (0)
 #  ifndef YYSTACK_ALLOC_MAXIMUM
     /* The OS might guarantee only one guard page at the bottom of the stack,
        and a page size can be as small as 4096 bytes.  So we cannot safely
@@ -566,15 +566,15 @@ typedef int yy_state_fast_t;
        to allow for a few compiler-allocated temporary stack slots.  */
 #   define YYSTACK_ALLOC_MAXIMUM 4032 /* reasonable circa 2006 */
 #  endif
-# else
+# ಅನ್ಯಥಾ
 #  define YYSTACK_ALLOC YYMALLOC
 #  define YYSTACK_FREE YYFREE
 #  ifndef YYSTACK_ALLOC_MAXIMUM
 #   define YYSTACK_ALLOC_MAXIMUM YYSIZE_MAXIMUM
 #  endif
-#  if (defined __cplusplus && ! defined EXIT_SUCCESS \
+#  ಯದಿ (defined __cplusplus && ! defined EXIT_SUCCESS \
        && ! ((defined YYMALLOC || defined malloc) \
-             && (defined YYFREE || defined free)))
+             && (defined YYFREE || defined ಮುಕ್ತ)))
 #   include <stdlib.h> /* INFRINGES ON USER NAME SPACE */
 #   ifndef EXIT_SUCCESS
 #    define EXIT_SUCCESS 0
@@ -582,32 +582,32 @@ typedef int yy_state_fast_t;
 #  endif
 #  ifndef YYMALLOC
 #   define YYMALLOC malloc
-#   if ! defined malloc && ! defined EXIT_SUCCESS
-void *malloc (YYSIZE_T); /* INFRINGES ON USER NAME SPACE */
+#   ಯದಿ ! defined malloc && ! defined EXIT_SUCCESS
+ಶೂನ್ಯ *malloc (YYSIZE_T); /* INFRINGES ON USER NAME SPACE */
 #   endif
 #  endif
 #  ifndef YYFREE
-#   define YYFREE free
-#   if ! defined free && ! defined EXIT_SUCCESS
-void free (void *); /* INFRINGES ON USER NAME SPACE */
+#   define YYFREE ಮುಕ್ತ
+#   ಯದಿ ! defined ಮುಕ್ತ && ! defined EXIT_SUCCESS
+ಶೂನ್ಯ ಮುಕ್ತ (ಶೂನ್ಯ *); /* INFRINGES ON USER NAME SPACE */
 #   endif
 #  endif
 # endif
 #endif /* 1 */
 
-#if (! defined yyoverflow \
+#ಯದಿ (! defined yyoverflow \
      && (! defined __cplusplus \
          || (defined YYSTYPE_IS_TRIVIAL && YYSTYPE_IS_TRIVIAL)))
 
 /* A type that is properly aligned for any stack member.  */
-union yyalloc
+ಸಙ್ಘ yyalloc
 {
   yy_state_t yyss_alloc;
   YYSTYPE yyvs_alloc;
 };
 
 /* The size of the maximum gap between one aligned stack and the next.  */
-# define YYSTACK_GAP_MAXIMUM (YYSIZEOF (union yyalloc) - 1)
+# define YYSTACK_GAP_MAXIMUM (YYSIZEOF (ಸಙ್ಘ yyalloc) - 1)
 
 /* The size of an array large to enough to hold all stacks, each with
    N elements.  */
@@ -622,35 +622,35 @@ union yyalloc
    elements in the stack, and YYPTR gives the new location of the
    stack.  Advance YYPTR to a properly aligned location for the next
    stack.  */
-# define YYSTACK_RELOCATE(Stack_alloc, Stack)                           \
-    do                                                                  \
+# define YYSTACK_RELOCATE(ರಾಶಿ_alloc, ರಾಶಿ_2)                           \
+    ಕುರು                                                                  \
       {                                                                 \
         YYPTRDIFF_T yynewbytes;                                         \
-        YYCOPY (&yyptr->Stack_alloc, Stack, yysize);                    \
-        Stack = &yyptr->Stack_alloc;                                    \
-        yynewbytes = yystacksize * YYSIZEOF (*Stack) + YYSTACK_GAP_MAXIMUM; \
+        YYCOPY (&yyptr->ರಾಶಿ_alloc, ರಾಶಿ_2, yysize);                    \
+        ರಾಶಿ_2 = &yyptr->ರಾಶಿ_alloc;                                    \
+        yynewbytes = yystacksize * YYSIZEOF (*ರಾಶಿ_2) + YYSTACK_GAP_MAXIMUM; \
         yyptr += yynewbytes / YYSIZEOF (*yyptr);                        \
       }                                                                 \
-    while (0)
+    ಯಾವತ್ (0)
 
 #endif
 
-#if defined YYCOPY_NEEDED && YYCOPY_NEEDED
+#ಯದಿ defined YYCOPY_NEEDED && YYCOPY_NEEDED
 /* Copy COUNT objects from SRC to DST.  The source and destination do
    not overlap.  */
 # ifndef YYCOPY
-#  if defined __GNUC__ && 1 < __GNUC__
-#   define YYCOPY(Dst, Src, Count) \
-      __builtin_memcpy (Dst, Src, YY_CAST (YYSIZE_T, (Count)) * sizeof (*(Src)))
-#  else
-#   define YYCOPY(Dst, Src, Count)              \
-      do                                        \
+#  ಯದಿ defined __GNUC__ && 1 < __GNUC__
+#   define YYCOPY(Dst, Src, ಎಣಿಕೆ_2) \
+      __builtin_memcpy (Dst, Src, YY_CAST (YYSIZE_T, (ಎಣಿಕೆ_2)) * ಪರಿಮಾಣ (*(Src)))
+#  ಅನ್ಯಥಾ
+#   define YYCOPY(Dst, Src, ಎಣಿಕೆ_2)              \
+      ಕುರು                                        \
         {                                       \
           YYPTRDIFF_T yyi;                      \
-          for (yyi = 0; yyi < (Count); yyi++)   \
+          ಪ್ರತಿ (yyi = 0; yyi < (ಎಣಿಕೆ_2); yyi++)   \
             (Dst)[yyi] = (Src)[yyi];            \
         }                                       \
-      while (0)
+      ಯಾವತ್ (0)
 #  endif
 # endif
 #endif /* !YYCOPY_NEEDED */
@@ -682,7 +682,7 @@ union yyalloc
 
 /* YYTRANSLATE[TOKEN-NUM] -- Symbol number corresponding to TOKEN-NUM
    as returned by yylex.  */
-static const yytype_int8 yytranslate[] =
+ಸ್ಥಿರ ಧ್ರುವ yytype_int8 yytranslate[] =
 {
        0,     4,     5,     6,     7,     8,     9,    10,    11,     2,
       12,    13,    14,    15,    16,     2,     2,     2,     2,     2,
@@ -712,9 +712,9 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     3,     1,     2
 };
 
-#if YYDEBUG
+#ಯದಿ YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_int16 yyrline[] =
+ಸ್ಥಿರ ಧ್ರುವ yytype_int16 yyrline[] =
 {
        0,   275,   275,   277,   279,   283,   289,   290,   291,   297,
      309,   312,   325,   326,   327,   328,   329,   332,   333,   336,
@@ -743,17 +743,17 @@ static const yytype_int16 yyrline[] =
 #endif
 
 /** Accessing symbol of state STATE.  */
-#define YY_ACCESSING_SYMBOL(State) YY_CAST (yysymbol_kind_t, yystos[State])
+#define YY_ACCESSING_ಚಿಹ್ನೆ(State) YY_CAST (yysymbol_kind_t, yystos[State])
 
-#if 1
+#ಯದಿ 1
 /* The user-facing name of the symbol whose (internal) number is
    YYSYMBOL.  No bounds checking.  */
-static const char *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
+ಸ್ಥಿರ ಧ್ರುವ ವರ್ಣ *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
 
-static const char *
+ಸ್ಥಿರ ಧ್ರುವ ವರ್ಣ *
 yysymbol_name (yysymbol_kind_t yysymbol)
 {
-  static const char *const yy_sname[] =
+  ಸ್ಥಿರ ಧ್ರುವ ವರ್ಣ *ಧ್ರುವ yy_sname[] =
   {
   "end of file", "error", "invalid token", "invalid token", "xkb_keymap",
   "xkb_keycodes", "xkb_types", "xkb_symbols", "xkb_compatibility",
@@ -785,23 +785,23 @@ yysymbol_name (yysymbol_kind_t yysymbol)
   "KeySymLit", "SignedNumber", "Number", "Float", "Integer", "KeyCode",
   "Ident", "String", "OptMapName", "MapName", YY_NULLPTR
   };
-  return yy_sname[yysymbol];
+  ಪ್ರತ್ಯಾಗಮ yy_sname[yysymbol];
 }
 #endif
 
 #define YYPACT_NINF (-225)
 
-#define yypact_value_is_default(Yyn) \
+#define yypact_ಮೌಲ್ಯ_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
 
 #define YYTABLE_NINF (-217)
 
-#define yytable_value_is_error(Yyn) \
+#define yytable_ಮೌಲ್ಯ_is_error(Yyn) \
   0
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-static const yytype_int16 yypact[] =
+ಸ್ಥಿರ ಧ್ರುವ yytype_int16 yypact[] =
 {
      113,  -225,  -225,  -225,  -225,  -225,  -225,  -225,  -225,  -225,
     -225,  -225,    26,  -225,  -225,   530,   537,  -225,  -225,  -225,
@@ -847,7 +847,7 @@ static const yytype_int16 yypact[] =
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
    Performed when YYTABLE does not specify something else to do.  Zero
    means the default is an error.  */
-static const yytype_uint8 yydefact[] =
+ಸ್ಥಿರ ಧ್ರುವ yytype_uint8 yydefact[] =
 {
       18,     4,    30,    21,    22,    23,    24,    25,    26,    27,
       28,    29,     0,     2,     3,     0,    17,    20,     1,     6,
@@ -891,7 +891,7 @@ static const yytype_uint8 yydefact[] =
 };
 
 /* YYPGOTO[NTERM-NUM].  */
-static const yytype_int16 yypgoto[] =
+ಸ್ಥಿರ ಧ್ರುವ yytype_int16 yypgoto[] =
 {
     -225,  -225,  -225,  -225,  -225,   453,  -225,   477,  -225,   502,
     -225,  -225,   -47,  -225,  -225,  -225,  -225,   365,  -225,  -225,
@@ -905,7 +905,7 @@ static const yytype_int16 yypgoto[] =
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
-static const yytype_int16 yydefgoto[] =
+ಸ್ಥಿರ ಧ್ರುವ yytype_int16 yydefgoto[] =
 {
        0,    12,    13,    27,    36,    14,    28,    15,    16,    17,
       37,    47,   254,    74,    75,    76,    96,    97,    77,   106,
@@ -921,7 +921,7 @@ static const yytype_int16 yydefgoto[] =
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
    positive, shift that token.  If negative, reduce the rule whose
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
-static const yytype_int16 yytable[] =
+ಸ್ಥಿರ ಧ್ರುವ yytype_int16 yytable[] =
 {
       90,    73,   263,   262,   229,   281,   273,    93,   113,    92,
      142,    98,   156,   157,   274,   176,   177,   178,   179,    95,
@@ -1020,7 +1020,7 @@ static const yytype_int16 yytable[] =
        0,     0,    95,     0,     0,    72
 };
 
-static const yytype_int16 yycheck[] =
+ಸ್ಥಿರ ಧ್ರುವ yytype_int16 yycheck[] =
 {
       48,    48,   202,   202,    41,   229,   212,    48,    58,    48,
       60,    52,    48,    49,   214,    37,    38,    39,    40,    56,
@@ -1121,7 +1121,7 @@ static const yytype_int16 yycheck[] =
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
-static const yytype_uint8 yystos[] =
+ಸ್ಥಿರ ಧ್ರುವ yytype_uint8 yystos[] =
 {
        0,     0,    56,    58,    59,    60,    61,    62,    63,    64,
       65,    66,    68,    69,    72,    74,    75,    76,     0,     4,
@@ -1165,7 +1165,7 @@ static const yytype_uint8 yystos[] =
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
-static const yytype_uint8 yyr1[] =
+ಸ್ಥಿರ ಧ್ರುವ yytype_uint8 yyr1[] =
 {
        0,    67,    68,    68,    68,    69,    70,    70,    70,    71,
       71,    72,    73,    73,    73,    73,    73,    74,    74,    75,
@@ -1193,7 +1193,7 @@ static const yytype_uint8 yyr1[] =
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
-static const yytype_int8 yyr2[] =
+ಸ್ಥಿರ ಧ್ರುವ yytype_int8 yyr2[] =
 {
        0,     2,     1,     1,     1,     7,     1,     1,     1,     2,
        0,     7,     1,     1,     1,     1,     1,     1,     0,     2,
@@ -1221,35 +1221,35 @@ static const yytype_int8 yyr2[] =
 };
 
 
-enum { YYENOMEM = -2 };
+ಗಣನಾ { YYENOMEM = -2 };
 
 #define yyerrok         (yyerrstatus = 0)
 #define yyclearin       (yychar = YYEMPTY)
 
-#define YYACCEPT        goto yyacceptlab
-#define YYABORT         goto yyabortlab
-#define YYERROR         goto yyerrorlab
-#define YYNOMEM         goto yyexhaustedlab
+#define YYACCEPT        ಗಚ್ಛ yyacceptlab
+#define YYABORT         ಗಚ್ಛ yyabortlab
+#define YYERROR         ಗಚ್ಛ yyerrorlab
+#define YYNOMEM         ಗಚ್ಛ yyexhaustedlab
 
 
 #define YYRECOVERING()  (!!yyerrstatus)
 
-#define YYBACKUP(Token, Value)                                    \
-  do                                                              \
-    if (yychar == YYEMPTY)                                        \
+#define YYBACKUP(Token, ಮೌಲ್ಯ_2)                                    \
+  ಕುರು                                                              \
+    ಯದಿ (yychar == YYEMPTY)                                        \
       {                                                           \
         yychar = (Token);                                         \
-        yylval = (Value);                                         \
+        yylval = (ಮೌಲ್ಯ_2);                                         \
         YYPOPSTACK (yylen);                                       \
         yystate = *yyssp;                                         \
-        goto yybackup;                                            \
+        ಗಚ್ಛ yybackup;                                            \
       }                                                           \
-    else                                                          \
+    ಅನ್ಯಥಾ                                                          \
       {                                                           \
         yyerror (param, YY_("syntax error: cannot back up")); \
         YYERROR;                                                  \
       }                                                           \
-  while (0)
+  ಯಾವತ್ (0)
 
 /* Backward compatibility with an undocumented macro.
    Use YYerror or YYUNDEF. */
@@ -1257,7 +1257,7 @@ enum { YYENOMEM = -2 };
 
 
 /* Enable debugging if requested.  */
-#if YYDEBUG
+#ಯದಿ YYDEBUG
 
 # ifndef YYFPRINTF
 #  include <stdio.h> /* INFRINGES ON USER NAME SPACE */
@@ -1265,39 +1265,39 @@ enum { YYENOMEM = -2 };
 # endif
 
 # define YYDPRINTF(Args)                        \
-do {                                            \
-  if (yydebug)                                  \
+ಕುರು {                                            \
+  ಯದಿ (yydebug)                                  \
     YYFPRINTF Args;                             \
-} while (0)
+} ಯಾವತ್ (0)
 
 
 
 
-# define YY_SYMBOL_PRINT(Title, Kind, Value, Location)                    \
-do {                                                                      \
-  if (yydebug)                                                            \
+# define YY_ಚಿಹ್ನೆ_PRINT(Title, Kind, ಮೌಲ್ಯ_2, Location)                    \
+ಕುರು {                                                                      \
+  ಯದಿ (yydebug)                                                            \
     {                                                                     \
       YYFPRINTF (stderr, "%s ", Title);                                   \
-      yy_symbol_print (stderr,                                            \
-                  Kind, Value, param); \
+      yy_ಚಿಹ್ನೆ_print (stderr,                                            \
+                  Kind, ಮೌಲ್ಯ_2, param); \
       YYFPRINTF (stderr, "\n");                                           \
     }                                                                     \
-} while (0)
+} ಯಾವತ್ (0)
 
 
 /*-----------------------------------.
 | Print this symbol's value on YYO.  |
 `-----------------------------------*/
 
-static void
-yy_symbol_value_print (FILE *yyo,
-                       yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep, struct parser_param *param)
+ಸ್ಥಿರ ಶೂನ್ಯ
+yy_ಚಿಹ್ನೆ_ಮೌಲ್ಯ_print (FILE *yyo,
+                       yysymbol_kind_t yykind, YYSTYPE ಧ್ರುವ * ಧ್ರುವ yyvaluep, ಸಂರಚನಾ parser_param *param)
 {
   FILE *yyoutput = yyo;
   YY_USE (yyoutput);
   YY_USE (param);
-  if (!yyvaluep)
-    return;
+  ಯದಿ (!yyvaluep)
+    ಪ್ರತ್ಯಾಗಮ;
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
   YY_USE (yykind);
   YY_IGNORE_MAYBE_UNINITIALIZED_END
@@ -1308,14 +1308,14 @@ yy_symbol_value_print (FILE *yyo,
 | Print this symbol on YYO.  |
 `---------------------------*/
 
-static void
-yy_symbol_print (FILE *yyo,
-                 yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep, struct parser_param *param)
+ಸ್ಥಿರ ಶೂನ್ಯ
+yy_ಚಿಹ್ನೆ_print (FILE *yyo,
+                 yysymbol_kind_t yykind, YYSTYPE ಧ್ರುವ * ಧ್ರುವ yyvaluep, ಸಂರಚನಾ parser_param *param)
 {
   YYFPRINTF (yyo, "%s %s (",
              yykind < YYNTOKENS ? "token" : "nterm", yysymbol_name (yykind));
 
-  yy_symbol_value_print (yyo, yykind, yyvaluep, param);
+  yy_ಚಿಹ್ನೆ_ಮೌಲ್ಯ_print (yyo, yykind, yyvaluep, param);
   YYFPRINTF (yyo, ")");
 }
 
@@ -1324,62 +1324,62 @@ yy_symbol_print (FILE *yyo,
 | TOP (included).                                                   |
 `------------------------------------------------------------------*/
 
-static void
-yy_stack_print (yy_state_t *yybottom, yy_state_t *yytop)
+ಸ್ಥಿರ ಶೂನ್ಯ
+yy_ರಾಶಿ_print (yy_state_t *yybottom, yy_state_t *yytop)
 {
   YYFPRINTF (stderr, "Stack now");
-  for (; yybottom <= yytop; yybottom++)
+  ಪ್ರತಿ (; yybottom <= yytop; yybottom++)
     {
-      int yybot = *yybottom;
+      ಪೂರ್ಣಾಙ್ಕ yybot = *yybottom;
       YYFPRINTF (stderr, " %d", yybot);
     }
   YYFPRINTF (stderr, "\n");
 }
 
-# define YY_STACK_PRINT(Bottom, Top)                            \
-do {                                                            \
-  if (yydebug)                                                  \
-    yy_stack_print ((Bottom), (Top));                           \
-} while (0)
+# define YY_ರಾಶಿ_PRINT(Bottom, ತುದಿ)                            \
+ಕುರು {                                                            \
+  ಯದಿ (yydebug)                                                  \
+    yy_ರಾಶಿ_print ((Bottom), (ತುದಿ));                           \
+} ಯಾವತ್ (0)
 
 
 /*------------------------------------------------.
 | Report that the YYRULE is going to be reduced.  |
 `------------------------------------------------*/
 
-static void
+ಸ್ಥಿರ ಶೂನ್ಯ
 yy_reduce_print (yy_state_t *yyssp, YYSTYPE *yyvsp,
-                 int yyrule, struct parser_param *param)
+                 ಪೂರ್ಣಾಙ್ಕ yyrule, ಸಂರಚನಾ parser_param *param)
 {
-  int yylno = yyrline[yyrule];
-  int yynrhs = yyr2[yyrule];
-  int yyi;
+  ಪೂರ್ಣಾಙ್ಕ yylno = yyrline[yyrule];
+  ಪೂರ್ಣಾಙ್ಕ yynrhs = yyr2[yyrule];
+  ಪೂರ್ಣಾಙ್ಕ yyi;
   YYFPRINTF (stderr, "Reducing stack by rule %d (line %d):\n",
              yyrule - 1, yylno);
   /* The symbols being reduced.  */
-  for (yyi = 0; yyi < yynrhs; yyi++)
+  ಪ್ರತಿ (yyi = 0; yyi < yynrhs; yyi++)
     {
       YYFPRINTF (stderr, "   $%d = ", yyi + 1);
-      yy_symbol_print (stderr,
-                       YY_ACCESSING_SYMBOL (+yyssp[yyi + 1 - yynrhs]),
+      yy_ಚಿಹ್ನೆ_print (stderr,
+                       YY_ACCESSING_ಚಿಹ್ನೆ (+yyssp[yyi + 1 - yynrhs]),
                        &yyvsp[(yyi + 1) - (yynrhs)], param);
       YYFPRINTF (stderr, "\n");
     }
 }
 
 # define YY_REDUCE_PRINT(Rule)          \
-do {                                    \
-  if (yydebug)                          \
+ಕುರು {                                    \
+  ಯದಿ (yydebug)                          \
     yy_reduce_print (yyssp, yyvsp, Rule, param); \
-} while (0)
+} ಯಾವತ್ (0)
 
 /* Nonzero means print parse trace.  It is left uninitialized so that
    multiple parsers can coexist.  */
-int yydebug;
-#else /* !YYDEBUG */
-# define YYDPRINTF(Args) ((void) 0)
-# define YY_SYMBOL_PRINT(Title, Kind, Value, Location)
-# define YY_STACK_PRINT(Bottom, Top)
+ಪೂರ್ಣಾಙ್ಕ yydebug;
+#ಅನ್ಯಥಾ /* !YYDEBUG */
+# define YYDPRINTF(Args) ((ಶೂನ್ಯ) 0)
+# define YY_ಚಿಹ್ನೆ_PRINT(Title, Kind, ಮೌಲ್ಯ_2, Location)
+# define YY_ರಾಶಿ_PRINT(Bottom, ತುದಿ)
 # define YY_REDUCE_PRINT(Rule)
 #endif /* !YYDEBUG */
 
@@ -1402,7 +1402,7 @@ int yydebug;
 
 
 /* Context of a parse error.  */
-typedef struct
+ಪ್ರಕಾರನಿರ್ದೇಶ ಸಂರಚನಾ
 {
   yy_state_t *yyssp;
   yysymbol_kind_t yytoken;
@@ -1414,87 +1414,87 @@ typedef struct
    be less than YYNTOKENS).  Return YYENOMEM on memory exhaustion.
    Return 0 if there are more than YYARGN expected tokens, yet fill
    YYARG up to YYARGN. */
-static int
-yypcontext_expected_tokens (const yypcontext_t *yyctx,
-                            yysymbol_kind_t yyarg[], int yyargn)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+yypcontext_expected_tokens (ಧ್ರುವ yypcontext_t *yyctx,
+                            yysymbol_kind_t yyarg[], ಪೂರ್ಣಾಙ್ಕ yyargn)
 {
   /* Actual size of YYARG. */
-  int yycount = 0;
-  int yyn = yypact[+*yyctx->yyssp];
-  if (!yypact_value_is_default (yyn))
+  ಪೂರ್ಣಾಙ್ಕ yycount = 0;
+  ಪೂರ್ಣಾಙ್ಕ yyn = yypact[+*yyctx->yyssp];
+  ಯದಿ (!yypact_ಮೌಲ್ಯ_is_default (yyn))
     {
       /* Start YYX at -YYN if negative to avoid negative indexes in
          YYCHECK.  In other words, skip the first -YYN actions for
          this state because they are default actions.  */
-      int yyxbegin = yyn < 0 ? -yyn : 0;
+      ಪೂರ್ಣಾಙ್ಕ yyxbegin = yyn < 0 ? -yyn : 0;
       /* Stay within bounds of both yycheck and yytname.  */
-      int yychecklim = YYLAST - yyn + 1;
-      int yyxend = yychecklim < YYNTOKENS ? yychecklim : YYNTOKENS;
-      int yyx;
-      for (yyx = yyxbegin; yyx < yyxend; ++yyx)
-        if (yycheck[yyx + yyn] == yyx && yyx != YYSYMBOL_YYerror
-            && !yytable_value_is_error (yytable[yyx + yyn]))
+      ಪೂರ್ಣಾಙ್ಕ yychecklim = YYLAST - yyn + 1;
+      ಪೂರ್ಣಾಙ್ಕ yyxend = yychecklim < YYNTOKENS ? yychecklim : YYNTOKENS;
+      ಪೂರ್ಣಾಙ್ಕ yyx;
+      ಪ್ರತಿ (yyx = yyxbegin; yyx < yyxend; ++yyx)
+        ಯದಿ (yycheck[yyx + yyn] == yyx && yyx != YYSYMBOL_YYerror
+            && !yytable_ಮೌಲ್ಯ_is_error (yytable[yyx + yyn]))
           {
-            if (!yyarg)
+            ಯದಿ (!yyarg)
               ++yycount;
-            else if (yycount == yyargn)
-              return 0;
-            else
+            ಅನ್ಯಥಾ ಯದಿ (yycount == yyargn)
+              ಪ್ರತ್ಯಾಗಮ 0;
+            ಅನ್ಯಥಾ
               yyarg[yycount++] = YY_CAST (yysymbol_kind_t, yyx);
           }
     }
-  if (yyarg && yycount == 0 && 0 < yyargn)
+  ಯದಿ (yyarg && yycount == 0 && 0 < yyargn)
     yyarg[0] = YYSYMBOL_YYEMPTY;
-  return yycount;
+  ಪ್ರತ್ಯಾಗಮ yycount;
 }
 
 
 
 
 #ifndef yystrlen
-# if defined __GLIBC__ && defined _STRING_H
+# ಯದಿ defined __GLIBC__ && defined _STRING_H
 #  define yystrlen(S) (YY_CAST (YYPTRDIFF_T, strlen (S)))
-# else
+# ಅನ್ಯಥಾ
 /* Return the length of YYSTR.  */
-static YYPTRDIFF_T
-yystrlen (const char *yystr)
+ಸ್ಥಿರ YYPTRDIFF_T
+yystrlen (ಧ್ರುವ ವರ್ಣ *yystr)
 {
   YYPTRDIFF_T yylen;
-  for (yylen = 0; yystr[yylen]; yylen++)
-    continue;
-  return yylen;
+  ಪ್ರತಿ (yylen = 0; yystr[yylen]; yylen++)
+    ಅನುವರ್ತ;
+  ಪ್ರತ್ಯಾಗಮ yylen;
 }
 # endif
 #endif
 
 #ifndef yystpcpy
-# if defined __GLIBC__ && defined _STRING_H && defined _GNU_SOURCE
+# ಯದಿ defined __GLIBC__ && defined _STRING_H && defined _GNU_SOURCE
 #  define yystpcpy stpcpy
-# else
+# ಅನ್ಯಥಾ
 /* Copy YYSRC to YYDEST, returning the address of the terminating '\0' in
    YYDEST.  */
-static char *
-yystpcpy (char *yydest, const char *yysrc)
+ಸ್ಥಿರ ವರ್ಣ *
+yystpcpy (ವರ್ಣ *yydest, ಧ್ರುವ ವರ್ಣ *yysrc)
 {
-  char *yyd = yydest;
-  const char *yys = yysrc;
+  ವರ್ಣ *yyd = yydest;
+  ಧ್ರುವ ವರ್ಣ *yys = yysrc;
 
-  while ((*yyd++ = *yys++) != '\0')
-    continue;
+  ಯಾವತ್ ((*yyd++ = *yys++) != '\0')
+    ಅನುವರ್ತ;
 
-  return yyd - 1;
+  ಪ್ರತ್ಯಾಗಮ yyd - 1;
 }
 # endif
 #endif
 
 
 
-static int
-yy_syntax_error_arguments (const yypcontext_t *yyctx,
-                           yysymbol_kind_t yyarg[], int yyargn)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+yy_syntax_error_arguments (ಧ್ರುವ yypcontext_t *yyctx,
+                           yysymbol_kind_t yyarg[], ಪೂರ್ಣಾಙ್ಕ yyargn)
 {
   /* Actual size of YYARG. */
-  int yycount = 0;
+  ಪೂರ್ಣಾಙ್ಕ yycount = 0;
   /* There are many possibilities here to consider:
      - If this state is a consistent state with a default action, then
        the only way this function was invoked is if the default action
@@ -1518,20 +1518,20 @@ yy_syntax_error_arguments (const yypcontext_t *yyctx,
        one exception: it will still contain any token that will not be
        accepted due to an error action in a later state.
   */
-  if (yyctx->yytoken != YYSYMBOL_YYEMPTY)
+  ಯದಿ (yyctx->yytoken != YYSYMBOL_YYEMPTY)
     {
-      int yyn;
-      if (yyarg)
+      ಪೂರ್ಣಾಙ್ಕ yyn;
+      ಯದಿ (yyarg)
         yyarg[yycount] = yyctx->yytoken;
       ++yycount;
       yyn = yypcontext_expected_tokens (yyctx,
                                         yyarg ? yyarg + 1 : yyarg, yyargn - 1);
-      if (yyn == YYENOMEM)
-        return YYENOMEM;
-      else
+      ಯದಿ (yyn == YYENOMEM)
+        ಪ್ರತ್ಯಾಗಮ YYENOMEM;
+      ಅನ್ಯಥಾ
         yycount += yyn;
     }
-  return yycount;
+  ಪ್ರತ್ಯಾಗಮ yycount;
 }
 
 /* Copy into *YYMSG, which is of size *YYMSG_ALLOC, an error message
@@ -1542,13 +1542,13 @@ yy_syntax_error_arguments (const yypcontext_t *yyctx,
    not large enough to hold the message.  In that case, also set
    *YYMSG_ALLOC to the required number of bytes.  Return YYENOMEM if the
    required number of bytes is too large to store.  */
-static int
-yysyntax_error (YYPTRDIFF_T *yymsg_alloc, char **yymsg,
-                const yypcontext_t *yyctx)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+yysyntax_error (YYPTRDIFF_T *yymsg_alloc, ವರ್ಣ **yymsg,
+                ಧ್ರುವ yypcontext_t *yyctx)
 {
-  enum { YYARGS_MAX = 5 };
+  ಗಣನಾ { YYARGS_MAX = 5 };
   /* Internationalized format string. */
-  const char *yyformat = YY_NULLPTR;
+  ಧ್ರುವ ವರ್ಣ *yyformat = YY_NULLPTR;
   /* Arguments of yyformat: reported tokens (one for the "unexpected",
      one per "expected"). */
   yysymbol_kind_t yyarg[YYARGS_MAX];
@@ -1556,17 +1556,17 @@ yysyntax_error (YYPTRDIFF_T *yymsg_alloc, char **yymsg,
   YYPTRDIFF_T yysize = 0;
 
   /* Actual size of YYARG. */
-  int yycount = yy_syntax_error_arguments (yyctx, yyarg, YYARGS_MAX);
-  if (yycount == YYENOMEM)
-    return YYENOMEM;
+  ಪೂರ್ಣಾಙ್ಕ yycount = yy_syntax_error_arguments (yyctx, yyarg, YYARGS_MAX);
+  ಯದಿ (yycount == YYENOMEM)
+    ಪ್ರತ್ಯಾಗಮ YYENOMEM;
 
-  switch (yycount)
+  ವಿಕಲ್ಪ (yycount)
     {
 #define YYCASE_(N, S)                       \
-      case N:                               \
+      ಪಕ್ಷ N:                               \
         yyformat = S;                       \
-        break
-    default: /* Avoid compiler warnings. */
+        ಭಙ್ಗ
+    ಸ್ವಭಾವ: /* Avoid compiler warnings. */
       YYCASE_(0, YY_("syntax error"));
       YYCASE_(1, YY_("syntax error, unexpected %s"));
       YYCASE_(2, YY_("syntax error, unexpected %s, expecting %s"));
@@ -1580,46 +1580,46 @@ yysyntax_error (YYPTRDIFF_T *yymsg_alloc, char **yymsg,
      room for the terminator.  */
   yysize = yystrlen (yyformat) - 2 * yycount + 1;
   {
-    int yyi;
-    for (yyi = 0; yyi < yycount; ++yyi)
+    ಪೂರ್ಣಾಙ್ಕ yyi;
+    ಪ್ರತಿ (yyi = 0; yyi < yycount; ++yyi)
       {
         YYPTRDIFF_T yysize1
           = yysize + yystrlen (yysymbol_name (yyarg[yyi]));
-        if (yysize <= yysize1 && yysize1 <= YYSTACK_ALLOC_MAXIMUM)
+        ಯದಿ (yysize <= yysize1 && yysize1 <= YYSTACK_ALLOC_MAXIMUM)
           yysize = yysize1;
-        else
-          return YYENOMEM;
+        ಅನ್ಯಥಾ
+          ಪ್ರತ್ಯಾಗಮ YYENOMEM;
       }
   }
 
-  if (*yymsg_alloc < yysize)
+  ಯದಿ (*yymsg_alloc < yysize)
     {
       *yymsg_alloc = 2 * yysize;
-      if (! (yysize <= *yymsg_alloc
+      ಯದಿ (! (yysize <= *yymsg_alloc
              && *yymsg_alloc <= YYSTACK_ALLOC_MAXIMUM))
         *yymsg_alloc = YYSTACK_ALLOC_MAXIMUM;
-      return -1;
+      ಪ್ರತ್ಯಾಗಮ -1;
     }
 
   /* Avoid sprintf, as that infringes on the user's name space.
      Don't have undefined behavior even if the translation
      produced a string with the wrong number of "%s"s.  */
   {
-    char *yyp = *yymsg;
-    int yyi = 0;
-    while ((*yyp = *yyformat) != '\0')
-      if (*yyp == '%' && yyformat[1] == 's' && yyi < yycount)
+    ವರ್ಣ *yyp = *yymsg;
+    ಪೂರ್ಣಾಙ್ಕ yyi = 0;
+    ಯಾವತ್ ((*yyp = *yyformat) != '\0')
+      ಯದಿ (*yyp == '%' && yyformat[1] == 's' && yyi < yycount)
         {
           yyp = yystpcpy (yyp, yysymbol_name (yyarg[yyi++]));
           yyformat += 2;
         }
-      else
+      ಅನ್ಯಥಾ
         {
           ++yyp;
           ++yyformat;
         }
   }
-  return 0;
+  ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 
@@ -1627,303 +1627,303 @@ yysyntax_error (YYPTRDIFF_T *yymsg_alloc, char **yymsg,
 | Release the memory associated to this symbol.  |
 `-----------------------------------------------*/
 
-static void
-yydestruct (const char *yymsg,
-            yysymbol_kind_t yykind, YYSTYPE *yyvaluep, struct parser_param *param)
+ಸ್ಥಿರ ಶೂನ್ಯ
+yydestruct (ಧ್ರುವ ವರ್ಣ *yymsg,
+            yysymbol_kind_t yykind, YYSTYPE *yyvaluep, ಸಂರಚನಾ parser_param *param)
 {
   YY_USE (yyvaluep);
   YY_USE (param);
-  if (!yymsg)
+  ಯದಿ (!yymsg)
     yymsg = "Deleting";
-  YY_SYMBOL_PRINT (yymsg, yykind, yyvaluep, yylocationp);
+  YY_ಚಿಹ್ನೆ_PRINT (yymsg, yykind, yyvaluep, yylocationp);
 
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
-  switch (yykind)
+  ವಿಕಲ್ಪ (yykind)
     {
-    case YYSYMBOL_STRING: /* "string literal"  */
+    ಪಕ್ಷ YYSYMBOL_STRING: /* "string literal"  */
 #line 259 "src/xkbcomp/parser.y"
-            { free(((*yyvaluep).str)); }
+            { ಮುಕ್ತ(((*yyvaluep).str)); }
 #line 1640 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_XkbFile: /* XkbFile  */
+    ಪಕ್ಷ YYSYMBOL_XkbFile: /* XkbFile  */
 #line 257 "src/xkbcomp/parser.y"
-            { if (!param->rtrn) FreeXkbFile(((*yyvaluep).file)); }
+            { ಯದಿ (!param->rtrn) FreeXkbFile(((*yyvaluep).file)); }
 #line 1646 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_XkbCompositeMap: /* XkbCompositeMap  */
+    ಪಕ್ಷ YYSYMBOL_XkbCompositeMap: /* XkbCompositeMap  */
 #line 257 "src/xkbcomp/parser.y"
-            { if (!param->rtrn) FreeXkbFile(((*yyvaluep).file)); }
+            { ಯದಿ (!param->rtrn) FreeXkbFile(((*yyvaluep).file)); }
 #line 1652 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_XkbMapConfigList: /* XkbMapConfigList  */
+    ಪಕ್ಷ YYSYMBOL_XkbMapConfigList: /* XkbMapConfigList  */
 #line 258 "src/xkbcomp/parser.y"
             { FreeXkbFile(((*yyvaluep).fileList).head); }
 #line 1658 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_XkbMapConfig: /* XkbMapConfig  */
+    ಪಕ್ಷ YYSYMBOL_XkbMapConfig: /* XkbMapConfig  */
 #line 257 "src/xkbcomp/parser.y"
-            { if (!param->rtrn) FreeXkbFile(((*yyvaluep).file)); }
+            { ಯದಿ (!param->rtrn) FreeXkbFile(((*yyvaluep).file)); }
 #line 1664 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_DeclList: /* DeclList  */
+    ಪಕ್ಷ YYSYMBOL_DeclList: /* DeclList  */
 #line 253 "src/xkbcomp/parser.y"
             { FreeStmt((ParseCommon *) ((*yyvaluep).anyList).head); }
 #line 1670 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_Decl: /* Decl  */
+    ಪಕ್ಷ YYSYMBOL_Decl: /* Decl  */
 #line 250 "src/xkbcomp/parser.y"
             { FreeStmt((ParseCommon *) ((*yyvaluep).any)); }
 #line 1676 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_VarDecl: /* VarDecl  */
+    ಪಕ್ಷ YYSYMBOL_VarDecl: /* VarDecl  */
 #line 250 "src/xkbcomp/parser.y"
             { FreeStmt((ParseCommon *) ((*yyvaluep).var)); }
 #line 1682 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_KeyNameDecl: /* KeyNameDecl  */
+    ಪಕ್ಷ YYSYMBOL_ಕೀಲಿ_Name_Decl: /* KeyNameDecl  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).keyCode)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).ಕೀಲಿ_Code)); }
 #line 1688 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_KeyAliasDecl: /* KeyAliasDecl  */
+    ಪಕ್ಷ YYSYMBOL_ಕೀಲಿ_Alias_Decl: /* KeyAliasDecl  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).keyAlias)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).ಕೀಲಿ_Alias)); }
 #line 1694 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_VModDecl: /* VModDecl  */
+    ಪಕ್ಷ YYSYMBOL_VModDecl: /* VModDecl  */
 #line 253 "src/xkbcomp/parser.y"
             { FreeStmt((ParseCommon *) ((*yyvaluep).vmodList).head); }
 #line 1700 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_VModDefList: /* VModDefList  */
+    ಪಕ್ಷ YYSYMBOL_VModDefList: /* VModDefList  */
 #line 253 "src/xkbcomp/parser.y"
             { FreeStmt((ParseCommon *) ((*yyvaluep).vmodList).head); }
 #line 1706 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_VModDef: /* VModDef  */
+    ಪಕ್ಷ YYSYMBOL_VModDef: /* VModDef  */
 #line 250 "src/xkbcomp/parser.y"
             { FreeStmt((ParseCommon *) ((*yyvaluep).vmod)); }
 #line 1712 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_InterpretDecl: /* InterpretDecl  */
+    ಪಕ್ಷ YYSYMBOL_InterpretDecl: /* InterpretDecl  */
 #line 250 "src/xkbcomp/parser.y"
             { FreeStmt((ParseCommon *) ((*yyvaluep).interp)); }
 #line 1718 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_InterpretMatch: /* InterpretMatch  */
+    ಪಕ್ಷ YYSYMBOL_InterpretMatch: /* InterpretMatch  */
 #line 250 "src/xkbcomp/parser.y"
             { FreeStmt((ParseCommon *) ((*yyvaluep).interp)); }
 #line 1724 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_VarDeclList: /* VarDeclList  */
+    ಪಕ್ಷ YYSYMBOL_VarDeclList: /* VarDeclList  */
 #line 253 "src/xkbcomp/parser.y"
             { FreeStmt((ParseCommon *) ((*yyvaluep).varList).head); }
 #line 1730 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_KeyTypeDecl: /* KeyTypeDecl  */
+    ಪಕ್ಷ YYSYMBOL_ಕೀಲಿ_Type_Decl: /* KeyTypeDecl  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).keyType)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).ಕೀಲಿ_Type)); }
 #line 1736 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_SymbolsDecl: /* SymbolsDecl  */
+    ಪಕ್ಷ YYSYMBOL_SymbolsDecl: /* SymbolsDecl  */
 #line 250 "src/xkbcomp/parser.y"
             { FreeStmt((ParseCommon *) ((*yyvaluep).syms)); }
 #line 1742 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_OptSymbolsBody: /* OptSymbolsBody  */
+    ಪಕ್ಷ YYSYMBOL_OptSymbolsBody: /* OptSymbolsBody  */
 #line 253 "src/xkbcomp/parser.y"
             { FreeStmt((ParseCommon *) ((*yyvaluep).varList).head); }
 #line 1748 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_SymbolsBody: /* SymbolsBody  */
+    ಪಕ್ಷ YYSYMBOL_SymbolsBody: /* SymbolsBody  */
 #line 253 "src/xkbcomp/parser.y"
             { FreeStmt((ParseCommon *) ((*yyvaluep).varList).head); }
 #line 1754 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_SymbolsVarDecl: /* SymbolsVarDecl  */
+    ಪಕ್ಷ YYSYMBOL_SymbolsVarDecl: /* SymbolsVarDecl  */
 #line 250 "src/xkbcomp/parser.y"
             { FreeStmt((ParseCommon *) ((*yyvaluep).var)); }
 #line 1760 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_MultiKeySymOrActionList: /* MultiKeySymOrActionList  */
+    ಪಕ್ಷ YYSYMBOL_Multi_ಕೀಲಿ_Sym_Or_Action_List: /* MultiKeySymOrActionList  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 1766 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_GroupCompatDecl: /* GroupCompatDecl  */
+    ಪಕ್ಷ YYSYMBOL_GroupCompatDecl: /* GroupCompatDecl  */
 #line 250 "src/xkbcomp/parser.y"
             { FreeStmt((ParseCommon *) ((*yyvaluep).groupCompat)); }
 #line 1772 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_ModMapDecl: /* ModMapDecl  */
+    ಪಕ್ಷ YYSYMBOL_ModMapDecl: /* ModMapDecl  */
 #line 250 "src/xkbcomp/parser.y"
             { FreeStmt((ParseCommon *) ((*yyvaluep).modMask)); }
 #line 1778 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_KeyOrKeySymList: /* KeyOrKeySymList  */
+    ಪಕ್ಷ YYSYMBOL_ಕೀಲಿ_Or_ಕೀಲಿ_Sym_List: /* KeyOrKeySymList  */
 #line 253 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).exprList).head); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).ಅಭಿವ್ಯಕ್ತಿ_List).head); }
 #line 1784 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_KeyOrKeySym: /* KeyOrKeySym  */
+    ಪಕ್ಷ YYSYMBOL_ಕೀಲಿ_Or_ಕೀಲಿ_Sym: /* KeyOrKeySym  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 1790 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_LedMapDecl: /* LedMapDecl  */
+    ಪಕ್ಷ YYSYMBOL_LedMapDecl: /* LedMapDecl  */
 #line 250 "src/xkbcomp/parser.y"
             { FreeStmt((ParseCommon *) ((*yyvaluep).ledMap)); }
 #line 1796 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_LedNameDecl: /* LedNameDecl  */
+    ಪಕ್ಷ YYSYMBOL_LedNameDecl: /* LedNameDecl  */
 #line 250 "src/xkbcomp/parser.y"
             { FreeStmt((ParseCommon *) ((*yyvaluep).ledName)); }
 #line 1802 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_CoordList: /* CoordList  */
+    ಪಕ್ಷ YYSYMBOL_CoordList: /* CoordList  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 1808 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_Coord: /* Coord  */
+    ಪಕ್ಷ YYSYMBOL_Coord: /* Coord  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 1814 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_ExprList: /* ExprList  */
+    ಪಕ್ಷ YYSYMBOL_ಅಭಿವ್ಯಕ್ತಿ_List: /* ExprList  */
 #line 253 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).exprList).head); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).ಅಭಿವ್ಯಕ್ತಿ_List).head); }
 #line 1820 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_Expr: /* Expr  */
+    ಪಕ್ಷ YYSYMBOL_ಅಭಿವ್ಯಕ್ತಿ: /*ಅಭಿವ್ಯಕ್ತಿ*/
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 1826 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_Term: /* Term  */
+    ಪಕ್ಷ YYSYMBOL_Term: /* Term  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 1832 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_MultiActionList: /* MultiActionList  */
+    ಪಕ್ಷ YYSYMBOL_MultiActionList: /* MultiActionList  */
 #line 253 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).exprList).head); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).ಅಭಿವ್ಯಕ್ತಿ_List).head); }
 #line 1838 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_ActionList: /* ActionList  */
+    ಪಕ್ಷ YYSYMBOL_ActionList: /* ActionList  */
 #line 253 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).exprList).head); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).ಅಭಿವ್ಯಕ್ತಿ_List).head); }
 #line 1844 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_NonEmptyActions: /* NonEmptyActions  */
+    ಪಕ್ಷ YYSYMBOL_NonEmptyActions: /* NonEmptyActions  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 1850 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_Actions: /* Actions  */
+    ಪಕ್ಷ YYSYMBOL_Actions: /* Actions  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 1856 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_Action: /* Action  */
+    ಪಕ್ಷ YYSYMBOL_Action: /* Action  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 1862 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_Lhs: /* Lhs  */
+    ಪಕ್ಷ YYSYMBOL_Lhs: /* Lhs  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 1868 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_OptTerminal: /* OptTerminal  */
+    ಪಕ್ಷ YYSYMBOL_OptTerminal: /* OptTerminal  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 1874 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_Terminal: /* Terminal  */
+    ಪಕ್ಷ YYSYMBOL_Terminal: /* Terminal  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 1880 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_MultiKeySymList: /* MultiKeySymList  */
+    ಪಕ್ಷ YYSYMBOL_Multi_ಕೀಲಿ_Sym_List: /* MultiKeySymList  */
 #line 253 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).exprList).head); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).ಅಭಿವ್ಯಕ್ತಿ_List).head); }
 #line 1886 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_KeySymList: /* KeySymList  */
+    ಪಕ್ಷ YYSYMBOL_ಕೀಲಿ_Sym_List: /* KeySymList  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 1892 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_NonEmptyKeySyms: /* NonEmptyKeySyms  */
+    ಪಕ್ಷ YYSYMBOL_Non_Empty_ಕೀಲಿ_Syms: /* NonEmptyKeySyms  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 1898 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_KeySyms: /* KeySyms  */
+    ಪಕ್ಷ YYSYMBOL_ಕೀಲಿ_Syms: /* KeySyms  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 1904 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_OptMapName: /* OptMapName  */
+    ಪಕ್ಷ YYSYMBOL_OptMapName: /* OptMapName  */
 #line 259 "src/xkbcomp/parser.y"
-            { free(((*yyvaluep).str)); }
+            { ಮುಕ್ತ(((*yyvaluep).str)); }
 #line 1910 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-    case YYSYMBOL_MapName: /* MapName  */
+    ಪಕ್ಷ YYSYMBOL_MapName: /* MapName  */
 #line 259 "src/xkbcomp/parser.y"
-            { free(((*yyvaluep).str)); }
+            { ಮುಕ್ತ(((*yyvaluep).str)); }
 #line 1916 "src/xkbcomp/parser.c"
-        break;
+        ಭಙ್ಗ;
 
-      default:
-        break;
+      ಸ್ವಭಾವ:
+        ಭಙ್ಗ;
     }
   YY_IGNORE_MAYBE_UNINITIALIZED_END
 }
@@ -1937,25 +1937,25 @@ yydestruct (const char *yymsg,
 | yyparse.  |
 `----------*/
 
-int
-yyparse (struct parser_param *param)
+ಪೂರ್ಣಾಙ್ಕ
+yyparse (ಸಂರಚನಾ parser_param *param)
 {
 /* Lookahead token kind.  */
-int yychar;
+ಪೂರ್ಣಾಙ್ಕ yychar;
 
 
 /* The semantic value of the lookahead symbol.  */
 /* Default value used for initialization, for pacifying older GCCs
    or non-GCC compilers.  */
-YY_INITIAL_VALUE (static YYSTYPE yyval_default;)
-YYSTYPE yylval YY_INITIAL_VALUE (= yyval_default);
+YY_INITIAL_ಮೌಲ್ಯ (ಸ್ಥಿರ YYSTYPE yyval_default;)
+YYSTYPE yylval YY_INITIAL_ಮೌಲ್ಯ (= yyval_default);
 
     /* Number of syntax errors so far.  */
-    int yynerrs = 0;
+    ಪೂರ್ಣಾಙ್ಕ yynerrs = 0;
 
     yy_state_fast_t yystate = 0;
     /* Number of tokens to shift before error messages enabled.  */
-    int yyerrstatus = 0;
+    ಪೂರ್ಣಾಙ್ಕ yyerrstatus = 0;
 
     /* Refer to the stacks through separate pointers, to allow yyoverflow
        to reallocate them elsewhere.  */
@@ -1973,9 +1973,9 @@ YYSTYPE yylval YY_INITIAL_VALUE (= yyval_default);
     YYSTYPE *yyvs = yyvsa;
     YYSTYPE *yyvsp = yyvs;
 
-  int yyn;
+  ಪೂರ್ಣಾಙ್ಕ yyn;
   /* The return value of yyparse.  */
-  int yyresult;
+  ಪೂರ್ಣಾಙ್ಕ yyresult;
   /* Lookahead symbol kind.  */
   yysymbol_kind_t yytoken = YYSYMBOL_YYEMPTY;
   /* The variables used to return semantic value and location from the
@@ -1983,21 +1983,21 @@ YYSTYPE yylval YY_INITIAL_VALUE (= yyval_default);
   YYSTYPE yyval;
 
   /* Buffer for error messages, and its allocated size.  */
-  char yymsgbuf[128];
-  char *yymsg = yymsgbuf;
-  YYPTRDIFF_T yymsg_alloc = sizeof yymsgbuf;
+  ವರ್ಣ yymsgbuf[128];
+  ವರ್ಣ *yymsg = yymsgbuf;
+  YYPTRDIFF_T yymsg_alloc = ಪರಿಮಾಣ yymsgbuf;
 
 #define YYPOPSTACK(N)   (yyvsp -= (N), yyssp -= (N))
 
   /* The number of symbols on the RHS of the reduced rule.
      Keep to zero when no symbol should be popped.  */
-  int yylen = 0;
+  ಪೂರ್ಣಾಙ್ಕ yylen = 0;
 
   YYDPRINTF ((stderr, "Starting parse\n"));
 
   yychar = YYEMPTY; /* Cause a token to be read.  */
 
-  goto yysetstate;
+  ಗಚ್ಛ yysetstate;
 
 
 /*------------------------------------------------------------.
@@ -2018,17 +2018,17 @@ yysetstate:
   YY_IGNORE_USELESS_CAST_BEGIN
   *yyssp = YY_CAST (yy_state_t, yystate);
   YY_IGNORE_USELESS_CAST_END
-  YY_STACK_PRINT (yyss, yyssp);
+  YY_ರಾಶಿ_PRINT (yyss, yyssp);
 
-  if (yyss + yystacksize - 1 <= yyssp)
-#if !defined yyoverflow && !defined YYSTACK_RELOCATE
+  ಯದಿ (yyss + yystacksize - 1 <= yyssp)
+#ಯದಿ !defined yyoverflow && !defined YYSTACK_RELOCATE
     YYNOMEM;
-#else
+#ಅನ್ಯಥಾ
     {
       /* Get the current used size of the three stacks, in elements.  */
       YYPTRDIFF_T yysize = yyssp - yyss + 1;
 
-# if defined yyoverflow
+# ಯದಿ defined yyoverflow
       {
         /* Give user a chance to reallocate the stack.  Use copies of
            these so that the &'s don't force the real ones into
@@ -2047,25 +2047,25 @@ yysetstate:
         yyss = yyss1;
         yyvs = yyvs1;
       }
-# else /* defined YYSTACK_RELOCATE */
+# ಅನ್ಯಥಾ /* defined YYSTACK_RELOCATE */
       /* Extend the stack our own way.  */
-      if (YYMAXDEPTH <= yystacksize)
+      ಯದಿ (YYMAXDEPTH <= yystacksize)
         YYNOMEM;
       yystacksize *= 2;
-      if (YYMAXDEPTH < yystacksize)
+      ಯದಿ (YYMAXDEPTH < yystacksize)
         yystacksize = YYMAXDEPTH;
 
       {
         yy_state_t *yyss1 = yyss;
-        union yyalloc *yyptr =
-          YY_CAST (union yyalloc *,
+        ಸಙ್ಘ yyalloc *yyptr =
+          YY_CAST (ಸಙ್ಘ yyalloc *,
                    YYSTACK_ALLOC (YY_CAST (YYSIZE_T, YYSTACK_BYTES (yystacksize))));
-        if (! yyptr)
+        ಯದಿ (! yyptr)
           YYNOMEM;
         YYSTACK_RELOCATE (yyss_alloc, yyss);
         YYSTACK_RELOCATE (yyvs_alloc, yyvs);
 #  undef YYSTACK_RELOCATE
-        if (yyss1 != yyssa)
+        ಯದಿ (yyss1 != yyssa)
           YYSTACK_FREE (yyss1);
       }
 # endif
@@ -2078,16 +2078,16 @@ yysetstate:
                   YY_CAST (long, yystacksize)));
       YY_IGNORE_USELESS_CAST_END
 
-      if (yyss + yystacksize - 1 <= yyssp)
+      ಯದಿ (yyss + yystacksize - 1 <= yyssp)
         YYABORT;
     }
 #endif /* !defined yyoverflow && !defined YYSTACK_RELOCATE */
 
 
-  if (yystate == YYFINAL)
+  ಯದಿ (yystate == YYFINAL)
     YYACCEPT;
 
-  goto yybackup;
+  ಗಚ್ಛ yybackup;
 
 
 /*-----------.
@@ -2099,25 +2099,25 @@ yybackup:
 
   /* First try to decide what to do without reference to lookahead token.  */
   yyn = yypact[yystate];
-  if (yypact_value_is_default (yyn))
-    goto yydefault;
+  ಯದಿ (yypact_ಮೌಲ್ಯ_is_default (yyn))
+    ಗಚ್ಛ yydefault;
 
   /* Not known => get a lookahead token if don't already have one.  */
 
   /* YYCHAR is either empty, or end-of-input, or a valid lookahead.  */
-  if (yychar == YYEMPTY)
+  ಯದಿ (yychar == YYEMPTY)
     {
       YYDPRINTF ((stderr, "Reading a token\n"));
       yychar = yylex (&yylval, param_scanner);
     }
 
-  if (yychar <= END_OF_FILE)
+  ಯದಿ (yychar <= END_OF_FILE)
     {
       yychar = END_OF_FILE;
       yytoken = YYSYMBOL_YYEOF;
       YYDPRINTF ((stderr, "Now at end of input.\n"));
     }
-  else if (yychar == YYerror)
+  ಅನ್ಯಥಾ ಯದಿ (yychar == YYerror)
     {
       /* The scanner already issued an error message, process directly
          to error recovery.  But do not keep the error token as
@@ -2125,35 +2125,35 @@ yybackup:
          loop in error recovery. */
       yychar = YYUNDEF;
       yytoken = YYSYMBOL_YYerror;
-      goto yyerrlab1;
+      ಗಚ್ಛ yyerrlab1;
     }
-  else
+  ಅನ್ಯಥಾ
     {
       yytoken = YYTRANSLATE (yychar);
-      YY_SYMBOL_PRINT ("Next token is", yytoken, &yylval, &yylloc);
+      YY_ಚಿಹ್ನೆ_PRINT ("Next token is", yytoken, &yylval, &yylloc);
     }
 
   /* If the proper action on seeing token YYTOKEN is to reduce or to
      detect an error, take that action.  */
   yyn += yytoken;
-  if (yyn < 0 || YYLAST < yyn || yycheck[yyn] != yytoken)
-    goto yydefault;
+  ಯದಿ (yyn < 0 || YYLAST < yyn || yycheck[yyn] != yytoken)
+    ಗಚ್ಛ yydefault;
   yyn = yytable[yyn];
-  if (yyn <= 0)
+  ಯದಿ (yyn <= 0)
     {
-      if (yytable_value_is_error (yyn))
-        goto yyerrlab;
+      ಯದಿ (yytable_ಮೌಲ್ಯ_is_error (yyn))
+        ಗಚ್ಛ yyerrlab;
       yyn = -yyn;
-      goto yyreduce;
+      ಗಚ್ಛ yyreduce;
     }
 
   /* Count tokens shifted since error; after three, turn off error
      status.  */
-  if (yyerrstatus)
+  ಯದಿ (yyerrstatus)
     yyerrstatus--;
 
   /* Shift the lookahead token.  */
-  YY_SYMBOL_PRINT ("Shifting", yytoken, &yylval, &yylloc);
+  YY_ಚಿಹ್ನೆ_PRINT ("Shifting", yytoken, &yylval, &yylloc);
   yystate = yyn;
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
   *++yyvsp = yylval;
@@ -2161,7 +2161,7 @@ yybackup:
 
   /* Discard the shifted token.  */
   yychar = YYEMPTY;
-  goto yynewstate;
+  ಗಚ್ಛ yynewstate;
 
 
 /*-----------------------------------------------------------.
@@ -2169,9 +2169,9 @@ yybackup:
 `-----------------------------------------------------------*/
 yydefault:
   yyn = yydefact[yystate];
-  if (yyn == 0)
-    goto yyerrlab;
-  goto yyreduce;
+  ಯದಿ (yyn == 0)
+    ಗಚ್ಛ yyerrlab;
+  ಗಚ್ಛ yyreduce;
 
 
 /*-----------------------------.
@@ -2193,76 +2193,76 @@ yyreduce:
 
 
   YY_REDUCE_PRINT (yyn);
-  switch (yyn)
+  ವಿಕಲ್ಪ (yyn)
     {
-  case 2: /* XkbFile: XkbCompositeMap  */
+  ಪಕ್ಷ 2: /* XkbFile: XkbCompositeMap  */
 #line 276 "src/xkbcomp/parser.y"
-                        { (yyval.file) = param->rtrn = (yyvsp[0].file); param->more_maps = !!param->rtrn; (void) yynerrs; }
+                        { (yyval.file) = param->rtrn = (yyvsp[0].file); param->more_maps = !!param->rtrn; (ಶೂನ್ಯ) yynerrs; }
 #line 2195 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 3: /* XkbFile: XkbMapConfig  */
+  ಪಕ್ಷ 3: /* XkbFile: XkbMapConfig  */
 #line 278 "src/xkbcomp/parser.y"
                         { (yyval.file) = param->rtrn = (yyvsp[0].file); param->more_maps = !!param->rtrn; YYACCEPT; }
 #line 2201 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 4: /* XkbFile: "end of file"  */
+  ಪಕ್ಷ 4: /* XkbFile: "end of file"  */
 #line 280 "src/xkbcomp/parser.y"
-                        { (yyval.file) = param->rtrn = NULL; param->more_maps = false; }
+                        { (yyval.file) = param->rtrn = ರಿಕ್ತ; param->more_maps = false; }
 #line 2207 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 5: /* XkbCompositeMap: OptFlags XkbCompositeType OptMapName "{" XkbMapConfigList "}" ";"  */
+  ಪಕ್ಷ 5: /* XkbCompositeMap: OptFlags XkbCompositeType OptMapName "{" XkbMapConfigList "}" ";"  */
 #line 286 "src/xkbcomp/parser.y"
                         { (yyval.file) = XkbFileCreate((yyvsp[-5].file_type), (yyvsp[-4].str), (ParseCommon *) (yyvsp[-2].fileList).head, (yyvsp[-6].mapFlags)); }
 #line 2213 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 6: /* XkbCompositeType: "xkb_keymap"  */
+  ಪಕ್ಷ 6: /* XkbCompositeType: "xkb_keymap"  */
 #line 289 "src/xkbcomp/parser.y"
                                         { (yyval.file_type) = FILE_TYPE_KEYMAP; }
 #line 2219 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 7: /* XkbCompositeType: "xkb_semantics"  */
+  ಪಕ್ಷ 7: /* XkbCompositeType: "xkb_semantics"  */
 #line 290 "src/xkbcomp/parser.y"
                                         { (yyval.file_type) = FILE_TYPE_KEYMAP; }
 #line 2225 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 8: /* XkbCompositeType: "xkb_layout"  */
+  ಪಕ್ಷ 8: /* XkbCompositeType: "xkb_layout"  */
 #line 291 "src/xkbcomp/parser.y"
                                         { (yyval.file_type) = FILE_TYPE_KEYMAP; }
 #line 2231 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 9: /* XkbMapConfigList: XkbMapConfigList XkbMapConfig  */
+  ಪಕ್ಷ 9: /* XkbMapConfigList: XkbMapConfigList XkbMapConfig  */
 #line 298 "src/xkbcomp/parser.y"
                         {
-                            if ((yyvsp[0].file)) {
-                                if ((yyvsp[-1].fileList).head) {
+                            ಯದಿ ((yyvsp[0].file)) {
+                                ಯದಿ ((yyvsp[-1].fileList).head) {
                                     (yyval.fileList).head = (yyvsp[-1].fileList).head;
                                     (yyval.fileList).last->common.next = &(yyvsp[0].file)->common;
                                     (yyval.fileList).last = (yyvsp[0].file);
-                                } else {
+                                } ಅನ್ಯಥಾ {
                                     (yyval.fileList).head = (yyval.fileList).last = (yyvsp[0].file);
                                 }
                             }
                         }
 #line 2247 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 10: /* XkbMapConfigList: %empty  */
+  ಪಕ್ಷ 10: /* XkbMapConfigList: %empty  */
 #line 309 "src/xkbcomp/parser.y"
-                        { (yyval.fileList).head = (yyval.fileList).last = NULL; }
+                        { (yyval.fileList).head = (yyval.fileList).last = ರಿಕ್ತ; }
 #line 2253 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 11: /* XkbMapConfig: OptFlags FileType OptMapName "{" DeclList "}" ";"  */
+  ಪಕ್ಷ 11: /* XkbMapConfig: OptFlags FileType OptMapName "{" DeclList "}" ";"  */
 #line 315 "src/xkbcomp/parser.y"
                         {
-                            if ((yyvsp[-6].mapFlags) & MAP_IS_DEPRECATED) {
+                            ಯದಿ ((yyvsp[-6].mapFlags) & MAP_IS_DEPRECATED) {
                                 parser_warn(param, XKB_WARNING_DEPRECATED_SECTION,
                                             "deprecated section: \"%s\"",
                                             safe_map_name((yyvsp[-4].str)));
@@ -2270,120 +2270,120 @@ yyreduce:
                             (yyval.file) = XkbFileCreate((yyvsp[-5].file_type), (yyvsp[-4].str), (yyvsp[-2].anyList).head, (yyvsp[-6].mapFlags));
                         }
 #line 2266 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 12: /* FileType: "xkb_keycodes"  */
+  ಪಕ್ಷ 12: /* FileType: "xkb_keycodes"  */
 #line 325 "src/xkbcomp/parser.y"
                                                 { (yyval.file_type) = FILE_TYPE_KEYCODES; }
 #line 2272 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 13: /* FileType: "xkb_types"  */
+  ಪಕ್ಷ 13: /* FileType: "xkb_types"  */
 #line 326 "src/xkbcomp/parser.y"
                                                 { (yyval.file_type) = FILE_TYPE_TYPES; }
 #line 2278 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 14: /* FileType: "xkb_compatibility"  */
+  ಪಕ್ಷ 14: /* FileType: "xkb_compatibility"  */
 #line 327 "src/xkbcomp/parser.y"
                                                 { (yyval.file_type) = FILE_TYPE_COMPAT; }
 #line 2284 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 15: /* FileType: "xkb_symbols"  */
+  ಪಕ್ಷ 15: /* FileType: "xkb_symbols"  */
 #line 328 "src/xkbcomp/parser.y"
                                                 { (yyval.file_type) = FILE_TYPE_SYMBOLS; }
 #line 2290 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 16: /* FileType: "xkb_geometry"  */
+  ಪಕ್ಷ 16: /* FileType: "xkb_geometry"  */
 #line 329 "src/xkbcomp/parser.y"
                                                 { (yyval.file_type) = FILE_TYPE_GEOMETRY; }
 #line 2296 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 17: /* OptFlags: Flags  */
+  ಪಕ್ಷ 17: /* OptFlags: Flags  */
 #line 332 "src/xkbcomp/parser.y"
                                                 { (yyval.mapFlags) = (yyvsp[0].mapFlags); }
 #line 2302 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 18: /* OptFlags: %empty  */
+  ಪಕ್ಷ 18: /* OptFlags: %empty  */
 #line 333 "src/xkbcomp/parser.y"
                                                 { (yyval.mapFlags) = 0; }
 #line 2308 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 19: /* Flags: Flags Flag  */
+  ಪಕ್ಷ 19: /* Flags: Flags Flag  */
 #line 336 "src/xkbcomp/parser.y"
                                                 { (yyval.mapFlags) = ((yyvsp[-1].mapFlags) | (yyvsp[0].mapFlags)); }
 #line 2314 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 20: /* Flags: Flag  */
+  ಪಕ್ಷ 20: /* Flags: Flag  */
 #line 337 "src/xkbcomp/parser.y"
                                                 { (yyval.mapFlags) = (yyvsp[0].mapFlags); }
 #line 2320 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 21: /* Flag: "partial"  */
+  ಪಕ್ಷ 21: /* Flag: "partial"  */
 #line 340 "src/xkbcomp/parser.y"
                                                 { (yyval.mapFlags) = MAP_IS_PARTIAL; }
 #line 2326 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 22: /* Flag: "default"  */
+  ಪಕ್ಷ 22: /* Flag: "default"  */
 #line 341 "src/xkbcomp/parser.y"
                                                 { (yyval.mapFlags) = MAP_IS_DEFAULT; }
 #line 2332 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 23: /* Flag: "hidden"  */
+  ಪಕ್ಷ 23: /* Flag: "hidden"  */
 #line 342 "src/xkbcomp/parser.y"
                                                 { (yyval.mapFlags) = MAP_IS_HIDDEN; }
 #line 2338 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 24: /* Flag: "alphanumeric_keys"  */
+  ಪಕ್ಷ 24: /* Flag: "alphanumeric_keys"  */
 #line 343 "src/xkbcomp/parser.y"
                                                 { (yyval.mapFlags) = MAP_HAS_ALPHANUMERIC; }
 #line 2344 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 25: /* Flag: "modifier_keys"  */
+  ಪಕ್ಷ 25: /* Flag: "modifier_keys"  */
 #line 344 "src/xkbcomp/parser.y"
                                                 { (yyval.mapFlags) = MAP_HAS_MODIFIER; }
 #line 2350 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 26: /* Flag: "keypad_keys"  */
+  ಪಕ್ಷ 26: /* Flag: "keypad_keys"  */
 #line 345 "src/xkbcomp/parser.y"
                                                 { (yyval.mapFlags) = MAP_HAS_KEYPAD; }
 #line 2356 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 27: /* Flag: "function_keys"  */
+  ಪಕ್ಷ 27: /* Flag: "function_keys"  */
 #line 346 "src/xkbcomp/parser.y"
                                                 { (yyval.mapFlags) = MAP_HAS_FN; }
 #line 2362 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 28: /* Flag: "alternate_group"  */
+  ಪಕ್ಷ 28: /* Flag: "alternate_group"  */
 #line 347 "src/xkbcomp/parser.y"
                                                 { (yyval.mapFlags) = MAP_IS_ALTGR; }
 #line 2368 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 29: /* Flag: "deprecated"  */
+  ಪಕ್ಷ 29: /* Flag: "deprecated"  */
 #line 348 "src/xkbcomp/parser.y"
                                                 { (yyval.mapFlags) = MAP_IS_DEPRECATED; }
 #line 2374 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 30: /* Flag: "identifier"  */
+  ಪಕ್ಷ 30: /* Flag: "identifier"  */
 #line 350 "src/xkbcomp/parser.y"
                         {
-                            const bool error = (param->config.strict & PARSER_NO_UNKNOWN_SECTION_FLAGS);
+                            ಧ್ರುವ bool error = (param->config.strict & PARSER_NO_UNKNOWN_SECTION_FLAGS);
                             parser_log_with_code(
                                 param, (error ? XKB_LOG_LEVEL_ERROR : XKB_LOG_LEVEL_WARNING),
                                 XKB_LOG_VERBOSITY_MINIMAL,
@@ -2392,833 +2392,833 @@ yyreduce:
                                 (unsigned)(yyvsp[0].sval).len, (yyvsp[0].sval).start,
                                 (error ? "" : "; ignored")
                             );
-                            if (error)
+                            ಯದಿ (error)
                                 YYABORT;
                             (yyval.mapFlags) = 0;
                         }
 #line 2393 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 31: /* DeclList: DeclList Decl  */
+  ಪಕ್ಷ 31: /* DeclList: DeclList Decl  */
 #line 367 "src/xkbcomp/parser.y"
                         {
-                            if ((yyvsp[0].any)) {
-                                if ((yyvsp[-1].anyList).head) {
+                            ಯದಿ ((yyvsp[0].any)) {
+                                ಯದಿ ((yyvsp[-1].anyList).head) {
                                     (yyval.anyList).head = (yyvsp[-1].anyList).head; (yyvsp[-1].anyList).last->next = (yyvsp[0].any); (yyval.anyList).last = (yyvsp[0].any);
-                                } else {
+                                } ಅನ್ಯಥಾ {
                                     (yyval.anyList).head = (yyval.anyList).last = (yyvsp[0].any);
                                 }
                             }
                         }
 #line 2407 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 32: /* DeclList: DeclList OptMergeMode VModDecl  */
+  ಪಕ್ಷ 32: /* DeclList: DeclList OptMergeMode VModDecl  */
 #line 382 "src/xkbcomp/parser.y"
                         {
-                            for (VModDef *vmod = (yyvsp[0].vmodList).head; vmod; vmod = (VModDef *) vmod->common.next)
+                            ಪ್ರತಿ (VModDef *vmod = (yyvsp[0].vmodList).head; vmod; vmod = (VModDef *) vmod->common.next)
                                 vmod->merge = (yyvsp[-1].merge);
-                            if ((yyvsp[-2].anyList).head) {
+                            ಯದಿ ((yyvsp[-2].anyList).head) {
                                 (yyval.anyList).head = (yyvsp[-2].anyList).head; (yyvsp[-2].anyList).last->next = &(yyvsp[0].vmodList).head->common; (yyval.anyList).last = &(yyvsp[0].vmodList).last->common;
-                            } else {
+                            } ಅನ್ಯಥಾ {
                                 (yyval.anyList).head = &(yyvsp[0].vmodList).head->common; (yyval.anyList).last = &(yyvsp[0].vmodList).last->common;
                             }
                         }
 #line 2421 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 33: /* DeclList: %empty  */
+  ಪಕ್ಷ 33: /* DeclList: %empty  */
 #line 391 "src/xkbcomp/parser.y"
-                        { (yyval.anyList).head = (yyval.anyList).last = NULL; }
+                        { (yyval.anyList).head = (yyval.anyList).last = ರಿಕ್ತ; }
 #line 2427 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 34: /* Decl: OptMergeMode VarDecl  */
+  ಪಕ್ಷ 34: /* Decl: OptMergeMode VarDecl  */
 #line 395 "src/xkbcomp/parser.y"
                         {
                             (yyvsp[0].var)->merge = (yyvsp[-1].merge);
                             (yyval.any) = (ParseCommon *) (yyvsp[0].var);
                         }
 #line 2436 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 35: /* Decl: OptMergeMode InterpretDecl  */
+  ಪಕ್ಷ 35: /* Decl: OptMergeMode InterpretDecl  */
 #line 401 "src/xkbcomp/parser.y"
                         {
                             (yyvsp[0].interp)->merge = (yyvsp[-1].merge);
                             (yyval.any) = (ParseCommon *) (yyvsp[0].interp);
                         }
 #line 2445 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 36: /* Decl: OptMergeMode KeyNameDecl  */
+  ಪಕ್ಷ 36: /* Decl: OptMergeMode KeyNameDecl  */
 #line 406 "src/xkbcomp/parser.y"
                         {
-                            (yyvsp[0].keyCode)->merge = (yyvsp[-1].merge);
-                            (yyval.any) = (ParseCommon *) (yyvsp[0].keyCode);
+                            (yyvsp[0].ಕೀಲಿ_Code)->merge = (yyvsp[-1].merge);
+                            (yyval.any) = (ParseCommon *) (yyvsp[0].ಕೀಲಿ_Code);
                         }
 #line 2454 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 37: /* Decl: OptMergeMode KeyAliasDecl  */
+  ಪಕ್ಷ 37: /* Decl: OptMergeMode KeyAliasDecl  */
 #line 411 "src/xkbcomp/parser.y"
                         {
-                            (yyvsp[0].keyAlias)->merge = (yyvsp[-1].merge);
-                            (yyval.any) = (ParseCommon *) (yyvsp[0].keyAlias);
+                            (yyvsp[0].ಕೀಲಿ_Alias)->merge = (yyvsp[-1].merge);
+                            (yyval.any) = (ParseCommon *) (yyvsp[0].ಕೀಲಿ_Alias);
                         }
 #line 2463 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 38: /* Decl: OptMergeMode KeyTypeDecl  */
+  ಪಕ್ಷ 38: /* Decl: OptMergeMode KeyTypeDecl  */
 #line 416 "src/xkbcomp/parser.y"
                         {
-                            (yyvsp[0].keyType)->merge = (yyvsp[-1].merge);
-                            (yyval.any) = (ParseCommon *) (yyvsp[0].keyType);
+                            (yyvsp[0].ಕೀಲಿ_Type)->merge = (yyvsp[-1].merge);
+                            (yyval.any) = (ParseCommon *) (yyvsp[0].ಕೀಲಿ_Type);
                         }
 #line 2472 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 39: /* Decl: OptMergeMode SymbolsDecl  */
+  ಪಕ್ಷ 39: /* Decl: OptMergeMode SymbolsDecl  */
 #line 421 "src/xkbcomp/parser.y"
                         {
                             (yyvsp[0].syms)->merge = (yyvsp[-1].merge);
                             (yyval.any) = (ParseCommon *) (yyvsp[0].syms);
                         }
 #line 2481 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 40: /* Decl: OptMergeMode ModMapDecl  */
+  ಪಕ್ಷ 40: /* Decl: OptMergeMode ModMapDecl  */
 #line 426 "src/xkbcomp/parser.y"
                         {
                             (yyvsp[0].modMask)->merge = (yyvsp[-1].merge);
                             (yyval.any) = (ParseCommon *) (yyvsp[0].modMask);
                         }
 #line 2490 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 41: /* Decl: OptMergeMode GroupCompatDecl  */
+  ಪಕ್ಷ 41: /* Decl: OptMergeMode GroupCompatDecl  */
 #line 431 "src/xkbcomp/parser.y"
                         {
                             (yyvsp[0].groupCompat)->merge = (yyvsp[-1].merge);
                             (yyval.any) = (ParseCommon *) (yyvsp[0].groupCompat);
                         }
 #line 2499 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 42: /* Decl: OptMergeMode LedMapDecl  */
+  ಪಕ್ಷ 42: /* Decl: OptMergeMode LedMapDecl  */
 #line 436 "src/xkbcomp/parser.y"
                         {
                             (yyvsp[0].ledMap)->merge = (yyvsp[-1].merge);
                             (yyval.any) = (ParseCommon *) (yyvsp[0].ledMap);
                         }
 #line 2508 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 43: /* Decl: OptMergeMode LedNameDecl  */
+  ಪಕ್ಷ 43: /* Decl: OptMergeMode LedNameDecl  */
 #line 441 "src/xkbcomp/parser.y"
                         {
                             (yyvsp[0].ledName)->merge = (yyvsp[-1].merge);
                             (yyval.any) = (ParseCommon *) (yyvsp[0].ledName);
                         }
 #line 2517 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 44: /* Decl: OptMergeMode ShapeDecl  */
+  ಪಕ್ಷ 44: /* Decl: OptMergeMode ShapeDecl  */
 #line 445 "src/xkbcomp/parser.y"
-                                                        { (yyval.any) = NULL; }
+                                                        { (yyval.any) = ರಿಕ್ತ; }
 #line 2523 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 45: /* Decl: OptMergeMode SectionDecl  */
+  ಪಕ್ಷ 45: /* Decl: OptMergeMode SectionDecl  */
 #line 446 "src/xkbcomp/parser.y"
-                                                        { (yyval.any) = NULL; }
+                                                        { (yyval.any) = ರಿಕ್ತ; }
 #line 2529 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 46: /* Decl: OptMergeMode DoodadDecl  */
+  ಪಕ್ಷ 46: /* Decl: OptMergeMode DoodadDecl  */
 #line 447 "src/xkbcomp/parser.y"
-                                                        { (yyval.any) = NULL; }
+                                                        { (yyval.any) = ರಿಕ್ತ; }
 #line 2535 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 47: /* Decl: OptMergeMode UnknownDecl  */
+  ಪಕ್ಷ 47: /* Decl: OptMergeMode UnknownDecl  */
 #line 449 "src/xkbcomp/parser.y"
                             { (yyval.any) = (ParseCommon *) (yyvsp[0].unknown); }
 #line 2541 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 48: /* Decl: OptMergeMode UnknownCompoundStatementDecl  */
+  ಪಕ್ಷ 48: /* Decl: OptMergeMode UnknownCompoundStatementDecl  */
 #line 451 "src/xkbcomp/parser.y"
                             { (yyval.any) = (ParseCommon *) (yyvsp[0].unknown); }
 #line 2547 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 49: /* Decl: MergeMode "string literal"  */
+  ಪಕ್ಷ 49: /* Decl: MergeMode "string literal"  */
 #line 453 "src/xkbcomp/parser.y"
                         {
                             (yyval.any) = (ParseCommon *) IncludeCreate(param->ctx, (yyvsp[0].str), (yyvsp[-1].merge));
-                            free((yyvsp[0].str));
+                            ಮುಕ್ತ((yyvsp[0].str));
                         }
 #line 2556 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 50: /* VarDecl: Lhs "=" Expr ";"  */
+  ಪಕ್ಷ 50: /* VarDecl: Lhs "=" Expr ";"  */
 #line 460 "src/xkbcomp/parser.y"
-                        { (yyval.var) = VarCreate((yyvsp[-3].expr), (yyvsp[-1].expr)); }
+                        { (yyval.var) = VarCreate((yyvsp[-3].ಅಭಿವ್ಯಕ್ತಿ), (yyvsp[-1].ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 2562 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 51: /* VarDecl: Ident ";"  */
+  ಪಕ್ಷ 51: /* VarDecl: Ident ";"  */
 #line 462 "src/xkbcomp/parser.y"
                         { (yyval.var) = BoolVarCreate((yyvsp[-1].atom), true); }
 #line 2568 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 52: /* VarDecl: "!" Ident ";"  */
+  ಪಕ್ಷ 52: /* VarDecl: "!" Ident ";"  */
 #line 464 "src/xkbcomp/parser.y"
                         { (yyval.var) = BoolVarCreate((yyvsp[-1].atom), false); }
 #line 2574 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 53: /* KeyNameDecl: "key name" "=" KeyCode ";"  */
+  ಪಕ್ಷ 53: /* KeyNameDecl: "key name" "=" KeyCode ";"  */
 #line 468 "src/xkbcomp/parser.y"
-                        { (yyval.keyCode) = KeycodeCreate((yyvsp[-3].atom), (yyvsp[-1].num)); }
+                        { (yyval.ಕೀಲಿ_Code) = KeycodeCreate((yyvsp[-3].atom), (yyvsp[-1].ಅಂಕೆ)); }
 #line 2580 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 54: /* KeyAliasDecl: "alias" "key name" "=" "key name" ";"  */
+  ಪಕ್ಷ 54: /* KeyAliasDecl: "alias" "key name" "=" "key name" ";"  */
 #line 472 "src/xkbcomp/parser.y"
-                        { (yyval.keyAlias) = KeyAliasCreate((yyvsp[-3].atom), (yyvsp[-1].atom)); }
+                        { (yyval.ಕೀಲಿ_Alias) = ಕೀಲಿ_Alias_Create((yyvsp[-3].atom), (yyvsp[-1].atom)); }
 #line 2586 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 55: /* VModDecl: "virtual_modifiers" VModDefList ";"  */
+  ಪಕ್ಷ 55: /* VModDecl: "virtual_modifiers" VModDefList ";"  */
 #line 476 "src/xkbcomp/parser.y"
                         { (yyval.vmodList) = (yyvsp[-1].vmodList); }
 #line 2592 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 56: /* VModDefList: VModDefList "," VModDef  */
+  ಪಕ್ಷ 56: /* VModDefList: VModDefList "," VModDef  */
 #line 480 "src/xkbcomp/parser.y"
                         { (yyval.vmodList).head = (yyvsp[-2].vmodList).head; (yyval.vmodList).last->common.next = &(yyvsp[0].vmod)->common; (yyval.vmodList).last = (yyvsp[0].vmod); }
 #line 2598 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 57: /* VModDefList: VModDef  */
+  ಪಕ್ಷ 57: /* VModDefList: VModDef  */
 #line 482 "src/xkbcomp/parser.y"
                         { (yyval.vmodList).head = (yyval.vmodList).last = (yyvsp[0].vmod); }
 #line 2604 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 58: /* VModDef: Ident  */
+  ಪಕ್ಷ 58: /* VModDef: Ident  */
 #line 486 "src/xkbcomp/parser.y"
-                        { (yyval.vmod) = VModCreate((yyvsp[0].atom), NULL); }
+                        { (yyval.vmod) = VModCreate((yyvsp[0].atom), ರಿಕ್ತ); }
 #line 2610 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 59: /* VModDef: Ident "=" Expr  */
+  ಪಕ್ಷ 59: /* VModDef: Ident "=" Expr  */
 #line 488 "src/xkbcomp/parser.y"
-                        { (yyval.vmod) = VModCreate((yyvsp[-2].atom), (yyvsp[0].expr)); }
+                        { (yyval.vmod) = VModCreate((yyvsp[-2].atom), (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 2616 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 60: /* InterpretDecl: "interpret" InterpretMatch "{" VarDeclList "}" ";"  */
+  ಪಕ್ಷ 60: /* InterpretDecl: "interpret" InterpretMatch "{" VarDeclList "}" ";"  */
 #line 494 "src/xkbcomp/parser.y"
                         { (yyvsp[-4].interp)->def = (yyvsp[-2].varList).head; (yyval.interp) = (yyvsp[-4].interp); }
 #line 2622 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 61: /* InterpretMatch: KeySym "+" Expr  */
+  ಪಕ್ಷ 61: /* InterpretMatch: KeySym "+" Expr  */
 #line 498 "src/xkbcomp/parser.y"
-                        { (yyval.interp) = InterpCreate((yyvsp[-2].keysym), (yyvsp[0].expr)); }
+                        { (yyval.interp) = InterpCreate((yyvsp[-2].keysym), (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 2628 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 62: /* InterpretMatch: KeySym  */
+  ಪಕ್ಷ 62: /* InterpretMatch: KeySym  */
 #line 500 "src/xkbcomp/parser.y"
-                        { (yyval.interp) = InterpCreate((yyvsp[0].keysym), NULL); }
+                        { (yyval.interp) = InterpCreate((yyvsp[0].keysym), ರಿಕ್ತ); }
 #line 2634 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 63: /* VarDeclList: VarDeclList VarDecl  */
+  ಪಕ್ಷ 63: /* VarDeclList: VarDeclList VarDecl  */
 #line 504 "src/xkbcomp/parser.y"
                         {
-                            if ((yyvsp[0].var)) {
-                                if ((yyvsp[-1].varList).head) {
+                            ಯದಿ ((yyvsp[0].var)) {
+                                ಯದಿ ((yyvsp[-1].varList).head) {
                                     (yyval.varList).head = (yyvsp[-1].varList).head;
                                     (yyval.varList).last->common.next = &(yyvsp[0].var)->common;
                                     (yyval.varList).last = (yyvsp[0].var);
-                                } else {
+                                } ಅನ್ಯಥಾ {
                                     (yyval.varList).head = (yyval.varList).last = (yyvsp[0].var);
                                 }
                             }
                         }
 #line 2650 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 64: /* VarDeclList: %empty  */
+  ಪಕ್ಷ 64: /* VarDeclList: %empty  */
 #line 515 "src/xkbcomp/parser.y"
-                        { (yyval.varList).head = (yyval.varList).last = NULL; }
+                        { (yyval.varList).head = (yyval.varList).last = ರಿಕ್ತ; }
 #line 2656 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 65: /* KeyTypeDecl: "type" String "{" VarDeclList "}" ";"  */
+  ಪಕ್ಷ 65: /* KeyTypeDecl: "type" String "{" VarDeclList "}" ";"  */
 #line 521 "src/xkbcomp/parser.y"
-                        { (yyval.keyType) = KeyTypeCreate((yyvsp[-4].atom), (yyvsp[-2].varList).head); }
+                        { (yyval.ಕೀಲಿ_Type) = ಕೀಲಿ_Type_Create((yyvsp[-4].atom), (yyvsp[-2].varList).head); }
 #line 2662 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 66: /* SymbolsDecl: "key" "key name" "{" OptSymbolsBody "}" ";"  */
+  ಪಕ್ಷ 66: /* SymbolsDecl: "key" "key name" "{" OptSymbolsBody "}" ";"  */
 #line 527 "src/xkbcomp/parser.y"
                         { (yyval.syms) = SymbolsCreate((yyvsp[-4].atom), (yyvsp[-2].varList).head); }
 #line 2668 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 67: /* OptSymbolsBody: SymbolsBody  */
+  ಪಕ್ಷ 67: /* OptSymbolsBody: SymbolsBody  */
 #line 530 "src/xkbcomp/parser.y"
                                     { (yyval.varList) = (yyvsp[0].varList); }
 #line 2674 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 68: /* OptSymbolsBody: %empty  */
+  ಪಕ್ಷ 68: /* OptSymbolsBody: %empty  */
 #line 531 "src/xkbcomp/parser.y"
-                                    { (yyval.varList).head = (yyval.varList).last = NULL; }
+                                    { (yyval.varList).head = (yyval.varList).last = ರಿಕ್ತ; }
 #line 2680 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 69: /* SymbolsBody: SymbolsBody "," SymbolsVarDecl  */
+  ಪಕ್ಷ 69: /* SymbolsBody: SymbolsBody "," SymbolsVarDecl  */
 #line 535 "src/xkbcomp/parser.y"
                         { (yyval.varList).head = (yyvsp[-2].varList).head; (yyval.varList).last->common.next = &(yyvsp[0].var)->common; (yyval.varList).last = (yyvsp[0].var); }
 #line 2686 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 70: /* SymbolsBody: SymbolsVarDecl  */
+  ಪಕ್ಷ 70: /* SymbolsBody: SymbolsVarDecl  */
 #line 537 "src/xkbcomp/parser.y"
                         { (yyval.varList).head = (yyval.varList).last = (yyvsp[0].var); }
 #line 2692 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 71: /* SymbolsVarDecl: Lhs "=" Expr  */
+  ಪಕ್ಷ 71: /* SymbolsVarDecl: Lhs "=" Expr  */
 #line 540 "src/xkbcomp/parser.y"
-                                                { (yyval.var) = VarCreate((yyvsp[-2].expr), (yyvsp[0].expr)); }
+                                                { (yyval.var) = VarCreate((yyvsp[-2].ಅಭಿವ್ಯಕ್ತಿ), (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 2698 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 72: /* SymbolsVarDecl: Lhs "=" MultiKeySymOrActionList  */
+  ಪಕ್ಷ 72: /* SymbolsVarDecl: Lhs "=" MultiKeySymOrActionList  */
 #line 541 "src/xkbcomp/parser.y"
-                                                           { (yyval.var) = VarCreate((yyvsp[-2].expr), (yyvsp[0].expr)); }
+                                                           { (yyval.var) = VarCreate((yyvsp[-2].ಅಭಿವ್ಯಕ್ತಿ), (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 2704 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 73: /* SymbolsVarDecl: Ident  */
+  ಪಕ್ಷ 73: /* SymbolsVarDecl: Ident  */
 #line 542 "src/xkbcomp/parser.y"
                                                 { (yyval.var) = BoolVarCreate((yyvsp[0].atom), true); }
 #line 2710 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 74: /* SymbolsVarDecl: "!" Ident  */
+  ಪಕ್ಷ 74: /* SymbolsVarDecl: "!" Ident  */
 #line 543 "src/xkbcomp/parser.y"
                                                 { (yyval.var) = BoolVarCreate((yyvsp[0].atom), false); }
 #line 2716 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 75: /* SymbolsVarDecl: MultiKeySymOrActionList  */
+  ಪಕ್ಷ 75: /* SymbolsVarDecl: MultiKeySymOrActionList  */
 #line 544 "src/xkbcomp/parser.y"
-                                                { (yyval.var) = VarCreate(NULL, (yyvsp[0].expr)); }
+                                                { (yyval.var) = VarCreate(ರಿಕ್ತ, (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 2722 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 76: /* MultiKeySymOrActionList: "[" MultiKeySymList "]"  */
+  ಪಕ್ಷ 76: /* MultiKeySymOrActionList: "[" MultiKeySymList "]"  */
 #line 560 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[-1].exprList).head; }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = (yyvsp[-1].ಅಭಿವ್ಯಕ್ತಿ_List).head; }
 #line 2728 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 77: /* MultiKeySymOrActionList: "[" NoSymbolOrActionList "," MultiKeySymList "]"  */
+  ಪಕ್ಷ 77: /* MultiKeySymOrActionList: "[" NoSymbolOrActionList "," MultiKeySymList "]"  */
 #line 562 "src/xkbcomp/parser.y"
                         {
                             /* Prepend n times NoSymbol */
-                            struct {ExprDef *head; ExprDef *last;} list = {
-                                .head = (yyvsp[-1].exprList).head, .last = (yyvsp[-1].exprList).last
+                            ಸಂರಚನಾ {ಅಭಿವ್ಯಕ್ತಿ_Def *head; ಅಭಿವ್ಯಕ್ತಿ_Def *last;} list = {
+                                .head = (yyvsp[-1].ಅಭಿವ್ಯಕ್ತಿ_List).head, .last = (yyvsp[-1].ಅಭಿವ್ಯಕ್ತಿ_List).last
                             };
-                            for (uint32_t k = 0; k < (yyvsp[-3].noSymbolOrActionList); k++) {
-                                ExprDef* const syms =
-                                    ExprCreateKeySymList(XKB_KEY_NoSymbol);
-                                if (!syms) {
+                            ಪ್ರತಿ (uint32_t k = 0; k < (yyvsp[-3].no_ಚಿಹ್ನೆ_Or_Action_List); k++) {
+                                ಅಭಿವ್ಯಕ್ತಿ_Def* ಧ್ರುವ syms =
+                                    ಅಭಿವ್ಯಕ್ತಿ_Create_ಕೀಲಿ_Sym_List(XKB_ಕೀಲಿ_No_ಚಿಹ್ನೆ);
+                                ಯದಿ (!syms) {
                                     /* TODO: Use Bison’s more appropriate YYNOMEM */
                                     YYABORT;
                                 }
                                 syms->common.next = &list.head->common;
                                 list.head = syms;
                             }
-                            (yyval.expr) = list.head;
+                            (yyval.ಅಭಿವ್ಯಕ್ತಿ) = list.head;
                         }
 #line 2750 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 78: /* MultiKeySymOrActionList: "[" MultiActionList "]"  */
+  ಪಕ್ಷ 78: /* MultiKeySymOrActionList: "[" MultiActionList "]"  */
 #line 580 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[-1].exprList).head; }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = (yyvsp[-1].ಅಭಿವ್ಯಕ್ತಿ_List).head; }
 #line 2756 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 79: /* MultiKeySymOrActionList: "[" NoSymbolOrActionList "," MultiActionList "]"  */
+  ಪಕ್ಷ 79: /* MultiKeySymOrActionList: "[" NoSymbolOrActionList "," MultiActionList "]"  */
 #line 582 "src/xkbcomp/parser.y"
                         {
                             /* Prepend n times NoAction() */
-                            struct {ExprDef *head; ExprDef *last;} list = {
-                                .head = (yyvsp[-1].exprList).head, .last = (yyvsp[-1].exprList).last
+                            ಸಂರಚನಾ {ಅಭಿವ್ಯಕ್ತಿ_Def *head; ಅಭಿವ್ಯಕ್ತಿ_Def *last;} list = {
+                                .head = (yyvsp[-1].ಅಭಿವ್ಯಕ್ತಿ_List).head, .last = (yyvsp[-1].ಅಭಿವ್ಯಕ್ತಿ_List).last
                             };
-                            for (uint32_t k = 0; k < (yyvsp[-3].noSymbolOrActionList); k++) {
-                                ExprDef* const acts = ExprCreateActionList(NULL);
-                                if (!acts) {
+                            ಪ್ರತಿ (uint32_t k = 0; k < (yyvsp[-3].no_ಚಿಹ್ನೆ_Or_Action_List); k++) {
+                                ಅಭಿವ್ಯಕ್ತಿ_Def* ಧ್ರುವ acts = ಅಭಿವ್ಯಕ್ತಿ_Create_Action_List(ರಿಕ್ತ);
+                                ಯದಿ (!acts) {
                                     /* TODO: Use Bison’s more appropriate YYNOMEM */
                                     YYABORT;
                                 }
                                 acts->common.next = &list.head->common;
                                 list.head = acts;
                             }
-                            (yyval.expr) = list.head;
+                            (yyval.ಅಭಿವ್ಯಕ್ತಿ) = list.head;
                         }
 #line 2777 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 80: /* MultiKeySymOrActionList: "[" NoSymbolOrActionList "]"  */
+  ಪಕ್ಷ 80: /* MultiKeySymOrActionList: "[" NoSymbolOrActionList "]"  */
 #line 604 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprEmptyList(); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Empty_List(); }
 #line 2783 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 81: /* NoSymbolOrActionList: NoSymbolOrActionList "," "{" "}"  */
+  ಪಕ್ಷ 81: /* NoSymbolOrActionList: NoSymbolOrActionList "," "{" "}"  */
 #line 610 "src/xkbcomp/parser.y"
-                        { (yyval.noSymbolOrActionList) = (yyvsp[-3].noSymbolOrActionList) + 1; }
+                        { (yyval.no_ಚಿಹ್ನೆ_Or_Action_List) = (yyvsp[-3].no_ಚಿಹ್ನೆ_Or_Action_List) + 1; }
 #line 2789 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 82: /* NoSymbolOrActionList: "{" "}"  */
+  ಪಕ್ಷ 82: /* NoSymbolOrActionList: "{" "}"  */
 #line 612 "src/xkbcomp/parser.y"
-                        { (yyval.noSymbolOrActionList) = 1; }
+                        { (yyval.no_ಚಿಹ್ನೆ_Or_Action_List) = 1; }
 #line 2795 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 83: /* NoSymbolOrActionList: %empty  */
+  ಪಕ್ಷ 83: /* NoSymbolOrActionList: %empty  */
 #line 613 "src/xkbcomp/parser.y"
-                        { (yyval.noSymbolOrActionList) = 0; }
+                        { (yyval.no_ಚಿಹ್ನೆ_Or_Action_List) = 0; }
 #line 2801 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 84: /* GroupCompatDecl: "group" Integer "=" Expr ";"  */
+  ಪಕ್ಷ 84: /* GroupCompatDecl: "group" Integer "=" Expr ";"  */
 #line 617 "src/xkbcomp/parser.y"
-                        { (yyval.groupCompat) = GroupCompatCreate((yyvsp[-3].num), (yyvsp[-1].expr)); }
+                        { (yyval.groupCompat) = GroupCompatCreate((yyvsp[-3].ಅಂಕೆ), (yyvsp[-1].ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 2807 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 85: /* ModMapDecl: "modifier_map" Expr "{" KeyOrKeySymList "}" ";"  */
+  ಪಕ್ಷ 85: /* ModMapDecl: "modifier_map" Expr "{" KeyOrKeySymList "}" ";"  */
 #line 621 "src/xkbcomp/parser.y"
                         {
-                            if (param->config.format == XKB_KEYMAP_FORMAT_TEXT_V1 &&
-                                (yyvsp[-4].expr)->common.type != STMT_EXPR_IDENT) {
+                            ಯದಿ (param->config.format == XKB_KEYMAP_FORMAT_TEXT_V1 &&
+                                (yyvsp[-4].ಅಭಿವ್ಯಕ್ತಿ)->common.type != STMT_ಅಭಿವ್ಯಕ್ತಿ_IDENT) {
                                     parser_err(
                                         param, XKB_ERROR_INVALID_MODIFIER_MAP_MASK,
                                         "Invalid real modifier mask in modifier "
                                         "map definition: expected identifier"
                                     );
-                                    FreeStmt((ParseCommon *) (yyvsp[-4].expr));
-                                    FreeStmt((ParseCommon *) (yyvsp[-2].exprList).head);
+                                    FreeStmt((ParseCommon *) (yyvsp[-4].ಅಭಿವ್ಯಕ್ತಿ));
+                                    FreeStmt((ParseCommon *) (yyvsp[-2].ಅಭಿವ್ಯಕ್ತಿ_List).head);
                                     YYERROR;
                             }
-                            (yyval.modMask) = ModMapCreate((yyvsp[-4].expr), (yyvsp[-2].exprList).head);
+                            (yyval.modMask) = ModMapCreate((yyvsp[-4].ಅಭಿವ್ಯಕ್ತಿ), (yyvsp[-2].ಅಭಿವ್ಯಕ್ತಿ_List).head);
                         }
 #line 2826 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 86: /* KeyOrKeySymList: KeyOrKeySymList "," KeyOrKeySym  */
+  ಪಕ್ಷ 86: /* KeyOrKeySymList: KeyOrKeySymList "," KeyOrKeySym  */
 #line 638 "src/xkbcomp/parser.y"
-                        { (yyval.exprList).head = (yyvsp[-2].exprList).head; (yyval.exprList).last->common.next = &(yyvsp[0].expr)->common; (yyval.exprList).last = (yyvsp[0].expr); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).head = (yyvsp[-2].ಅಭಿವ್ಯಕ್ತಿ_List).head; (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).last->common.next = &(yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ)->common; (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).last = (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ); }
 #line 2832 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 87: /* KeyOrKeySymList: KeyOrKeySym  */
+  ಪಕ್ಷ 87: /* KeyOrKeySymList: KeyOrKeySym  */
 #line 640 "src/xkbcomp/parser.y"
-                        { (yyval.exprList).head = (yyval.exprList).last = (yyvsp[0].expr); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).head = (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).last = (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ); }
 #line 2838 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 88: /* KeyOrKeySym: "key name"  */
+  ಪಕ್ಷ 88: /* KeyOrKeySym: "key name"  */
 #line 644 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateKeyName((yyvsp[0].atom)); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Create_ಕೀಲಿ_Name((yyvsp[0].atom)); }
 #line 2844 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 89: /* KeyOrKeySym: KeySym  */
+  ಪಕ್ಷ 89: /* KeyOrKeySym: KeySym  */
 #line 646 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateKeySym((yyvsp[0].keysym)); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Create_ಕೀಲಿ_Sym((yyvsp[0].keysym)); }
 #line 2850 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 90: /* LedMapDecl: "indicator" String "{" VarDeclList "}" ";"  */
+  ಪಕ್ಷ 90: /* LedMapDecl: "indicator" String "{" VarDeclList "}" ";"  */
 #line 650 "src/xkbcomp/parser.y"
                         { (yyval.ledMap) = LedMapCreate((yyvsp[-4].atom), (yyvsp[-2].varList).head); }
 #line 2856 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 91: /* LedNameDecl: "indicator" Integer "=" Expr ";"  */
+  ಪಕ್ಷ 91: /* LedNameDecl: "indicator" Integer "=" Expr ";"  */
 #line 654 "src/xkbcomp/parser.y"
-                        { (yyval.ledName) = LedNameCreate((yyvsp[-3].num), (yyvsp[-1].expr), false); }
+                        { (yyval.ledName) = LedNameCreate((yyvsp[-3].ಅಂಕೆ), (yyvsp[-1].ಅಭಿವ್ಯಕ್ತಿ), false); }
 #line 2862 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 92: /* LedNameDecl: "virtual" "indicator" Integer "=" Expr ";"  */
+  ಪಕ್ಷ 92: /* LedNameDecl: "virtual" "indicator" Integer "=" Expr ";"  */
 #line 656 "src/xkbcomp/parser.y"
-                        { (yyval.ledName) = LedNameCreate((yyvsp[-3].num), (yyvsp[-1].expr), true); }
+                        { (yyval.ledName) = LedNameCreate((yyvsp[-3].ಅಂಕೆ), (yyvsp[-1].ಅಭಿವ್ಯಕ್ತಿ), true); }
 #line 2868 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 93: /* UnknownDecl: "identifier" Terminal "=" Expr ";"  */
+  ಪಕ್ಷ 93: /* UnknownDecl: "identifier" Terminal "=" Expr ";"  */
 #line 660 "src/xkbcomp/parser.y"
                         {
-                            FreeStmt((ParseCommon *) (yyvsp[-3].expr));
-                            FreeStmt((ParseCommon *) (yyvsp[-1].expr));
+                            FreeStmt((ParseCommon *) (yyvsp[-3].ಅಭಿವ್ಯಕ್ತಿ));
+                            FreeStmt((ParseCommon *) (yyvsp[-1].ಅಭಿವ್ಯಕ್ತಿ));
                             (yyval.unknown) = UnknownStatementCreate(STMT_UNKNOWN_DECLARATION, (yyvsp[-4].sval));
                         }
 #line 2878 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 94: /* UnknownCompoundStatementDecl: "identifier" OptTerminal "{" VarDeclList "}" ";"  */
+  ಪಕ್ಷ 94: /* UnknownCompoundStatementDecl: "identifier" OptTerminal "{" VarDeclList "}" ";"  */
 #line 669 "src/xkbcomp/parser.y"
                         {
-                            FreeStmt((ParseCommon *) (yyvsp[-4].expr));
+                            FreeStmt((ParseCommon *) (yyvsp[-4].ಅಭಿವ್ಯಕ್ತಿ));
                             FreeStmt((ParseCommon *) (yyvsp[-2].varList).head);
                             (yyval.unknown) = UnknownStatementCreate(STMT_UNKNOWN_COMPOUND, (yyvsp[-5].sval));
                         }
 #line 2888 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 95: /* ShapeDecl: "shape" String "{" OutlineList "}" ";"  */
+  ಪಕ್ಷ 95: /* ShapeDecl: "shape" String "{" OutlineList "}" ";"  */
 #line 677 "src/xkbcomp/parser.y"
-                        { (yyval.geom) = NULL; }
+                        { (yyval.geom) = ರಿಕ್ತ; }
 #line 2894 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 96: /* ShapeDecl: "shape" String "{" CoordList "}" ";"  */
+  ಪಕ್ಷ 96: /* ShapeDecl: "shape" String "{" CoordList "}" ";"  */
 #line 679 "src/xkbcomp/parser.y"
-                        { (void) (yyvsp[-2].expr); (yyval.geom) = NULL; }
+                        { (ಶೂನ್ಯ) (yyvsp[-2].ಅಭಿವ್ಯಕ್ತಿ); (yyval.geom) = ರಿಕ್ತ; }
 #line 2900 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 97: /* SectionDecl: "section" String "{" SectionBody "}" ";"  */
+  ಪಕ್ಷ 97: /* SectionDecl: "section" String "{" SectionBody "}" ";"  */
 #line 683 "src/xkbcomp/parser.y"
-                        { (yyval.geom) = NULL; }
+                        { (yyval.geom) = ರಿಕ್ತ; }
 #line 2906 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 98: /* SectionBody: SectionBody SectionBodyItem  */
+  ಪಕ್ಷ 98: /* SectionBody: SectionBody SectionBodyItem  */
 #line 686 "src/xkbcomp/parser.y"
-                                                        { (yyval.geom) = NULL;}
+                                                        { (yyval.geom) = ರಿಕ್ತ;}
 #line 2912 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 99: /* SectionBody: SectionBodyItem  */
+  ಪಕ್ಷ 99: /* SectionBody: SectionBodyItem  */
 #line 687 "src/xkbcomp/parser.y"
-                                                        { (yyval.geom) = NULL; }
+                                                        { (yyval.geom) = ರಿಕ್ತ; }
 #line 2918 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 100: /* SectionBodyItem: "row" "{" RowBody "}" ";"  */
+  ಪಕ್ಷ 100: /* SectionBodyItem: "row" "{" RowBody "}" ";"  */
 #line 691 "src/xkbcomp/parser.y"
-                        { (yyval.geom) = NULL; }
+                        { (yyval.geom) = ರಿಕ್ತ; }
 #line 2924 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 101: /* SectionBodyItem: VarDecl  */
+  ಪಕ್ಷ 101: /* SectionBodyItem: VarDecl  */
 #line 693 "src/xkbcomp/parser.y"
-                        { FreeStmt((ParseCommon *) (yyvsp[0].var)); (yyval.geom) = NULL; }
+                        { FreeStmt((ParseCommon *) (yyvsp[0].var)); (yyval.geom) = ರಿಕ್ತ; }
 #line 2930 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 102: /* SectionBodyItem: DoodadDecl  */
+  ಪಕ್ಷ 102: /* SectionBodyItem: DoodadDecl  */
 #line 695 "src/xkbcomp/parser.y"
-                        { (yyval.geom) = NULL; }
+                        { (yyval.geom) = ರಿಕ್ತ; }
 #line 2936 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 103: /* SectionBodyItem: LedMapDecl  */
+  ಪಕ್ಷ 103: /* SectionBodyItem: LedMapDecl  */
 #line 697 "src/xkbcomp/parser.y"
-                        { FreeStmt((ParseCommon *) (yyvsp[0].ledMap)); (yyval.geom) = NULL; }
+                        { FreeStmt((ParseCommon *) (yyvsp[0].ledMap)); (yyval.geom) = ರಿಕ್ತ; }
 #line 2942 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 104: /* SectionBodyItem: OverlayDecl  */
+  ಪಕ್ಷ 104: /* SectionBodyItem: OverlayDecl  */
 #line 699 "src/xkbcomp/parser.y"
-                        { (yyval.geom) = NULL; }
+                        { (yyval.geom) = ರಿಕ್ತ; }
 #line 2948 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 105: /* RowBody: RowBody RowBodyItem  */
+  ಪಕ್ಷ 105: /* RowBody: RowBody RowBodyItem  */
 #line 702 "src/xkbcomp/parser.y"
-                                                { (yyval.geom) = NULL;}
+                                                { (yyval.geom) = ರಿಕ್ತ;}
 #line 2954 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 106: /* RowBody: RowBodyItem  */
+  ಪಕ್ಷ 106: /* RowBody: RowBodyItem  */
 #line 703 "src/xkbcomp/parser.y"
-                                                { (yyval.geom) = NULL; }
+                                                { (yyval.geom) = ರಿಕ್ತ; }
 #line 2960 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 107: /* RowBodyItem: "keys" "{" Keys "}" ";"  */
+  ಪಕ್ಷ 107: /* RowBodyItem: "keys" "{" Keys "}" ";"  */
 #line 706 "src/xkbcomp/parser.y"
-                                                     { (yyval.geom) = NULL; }
+                                                     { (yyval.geom) = ರಿಕ್ತ; }
 #line 2966 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 108: /* RowBodyItem: VarDecl  */
+  ಪಕ್ಷ 108: /* RowBodyItem: VarDecl  */
 #line 708 "src/xkbcomp/parser.y"
-                        { FreeStmt((ParseCommon *) (yyvsp[0].var)); (yyval.geom) = NULL; }
+                        { FreeStmt((ParseCommon *) (yyvsp[0].var)); (yyval.geom) = ರಿಕ್ತ; }
 #line 2972 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 109: /* Keys: Keys "," Key  */
+  ಪಕ್ಷ 109: /* Keys: Keys "," Key  */
 #line 711 "src/xkbcomp/parser.y"
-                                                { (yyval.geom) = NULL; }
+                                                { (yyval.geom) = ರಿಕ್ತ; }
 #line 2978 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 110: /* Keys: Key  */
+  ಪಕ್ಷ 110: /* Keys: Key  */
 #line 712 "src/xkbcomp/parser.y"
-                                                { (yyval.geom) = NULL; }
+                                                { (yyval.geom) = ರಿಕ್ತ; }
 #line 2984 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 111: /* Key: "key name"  */
+  ಪಕ್ಷ 111: /* Key: "key name"  */
 #line 716 "src/xkbcomp/parser.y"
-                        { (yyval.geom) = NULL; }
+                        { (yyval.geom) = ರಿಕ್ತ; }
 #line 2990 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 112: /* Key: "{" ExprList "}"  */
+  ಪಕ್ಷ 112: /* Key: "{" ExprList "}"  */
 #line 718 "src/xkbcomp/parser.y"
-                        { FreeStmt((ParseCommon *) (yyvsp[-1].exprList).head); (yyval.geom) = NULL; }
+                        { FreeStmt((ParseCommon *) (yyvsp[-1].ಅಭಿವ್ಯಕ್ತಿ_List).head); (yyval.geom) = ರಿಕ್ತ; }
 #line 2996 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 113: /* OverlayDecl: "overlay" String "{" OverlayKeyList "}" ";"  */
+  ಪಕ್ಷ 113: /* OverlayDecl: "overlay" String "{" OverlayKeyList "}" ";"  */
 #line 722 "src/xkbcomp/parser.y"
-                        { (yyval.geom) = NULL; }
+                        { (yyval.geom) = ರಿಕ್ತ; }
 #line 3002 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 114: /* OverlayKeyList: OverlayKeyList "," OverlayKey  */
+  ಪಕ್ಷ 114: /* OverlayKeyList: OverlayKeyList "," OverlayKey  */
 #line 725 "src/xkbcomp/parser.y"
-                                                        { (yyval.geom) = NULL; }
+                                                        { (yyval.geom) = ರಿಕ್ತ; }
 #line 3008 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 115: /* OverlayKeyList: OverlayKey  */
+  ಪಕ್ಷ 115: /* OverlayKeyList: OverlayKey  */
 #line 726 "src/xkbcomp/parser.y"
-                                                        { (yyval.geom) = NULL; }
+                                                        { (yyval.geom) = ರಿಕ್ತ; }
 #line 3014 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 116: /* OverlayKey: "key name" "=" "key name"  */
+  ಪಕ್ಷ 116: /* OverlayKey: "key name" "=" "key name"  */
 #line 729 "src/xkbcomp/parser.y"
-                                                        { (yyval.geom) = NULL; }
+                                                        { (yyval.geom) = ರಿಕ್ತ; }
 #line 3020 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 117: /* OutlineList: OutlineList "," OutlineInList  */
+  ಪಕ್ಷ 117: /* OutlineList: OutlineList "," OutlineInList  */
 #line 733 "src/xkbcomp/parser.y"
-                        { (yyval.geom) = NULL;}
+                        { (yyval.geom) = ರಿಕ್ತ;}
 #line 3026 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 118: /* OutlineList: OutlineInList  */
+  ಪಕ್ಷ 118: /* OutlineList: OutlineInList  */
 #line 735 "src/xkbcomp/parser.y"
-                        { (yyval.geom) = NULL; }
+                        { (yyval.geom) = ರಿಕ್ತ; }
 #line 3032 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 119: /* OutlineInList: "{" CoordList "}"  */
+  ಪಕ್ಷ 119: /* OutlineInList: "{" CoordList "}"  */
 #line 739 "src/xkbcomp/parser.y"
-                        { (void) (yyvsp[-1].expr); (yyval.geom) = NULL; }
+                        { (ಶೂನ್ಯ) (yyvsp[-1].ಅಭಿವ್ಯಕ್ತಿ); (yyval.geom) = ರಿಕ್ತ; }
 #line 3038 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 120: /* OutlineInList: Ident "=" "{" CoordList "}"  */
+  ಪಕ್ಷ 120: /* OutlineInList: Ident "=" "{" CoordList "}"  */
 #line 741 "src/xkbcomp/parser.y"
-                        { (void) (yyvsp[-1].expr); (yyval.geom) = NULL; }
+                        { (ಶೂನ್ಯ) (yyvsp[-1].ಅಭಿವ್ಯಕ್ತಿ); (yyval.geom) = ರಿಕ್ತ; }
 #line 3044 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 121: /* OutlineInList: Ident "=" Expr  */
+  ಪಕ್ಷ 121: /* OutlineInList: Ident "=" Expr  */
 #line 743 "src/xkbcomp/parser.y"
-                        { FreeStmt((ParseCommon *) (yyvsp[0].expr)); (yyval.geom) = NULL; }
+                        { FreeStmt((ParseCommon *) (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ)); (yyval.geom) = ರಿಕ್ತ; }
 #line 3050 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 122: /* CoordList: CoordList "," Coord  */
+  ಪಕ್ಷ 122: /* CoordList: CoordList "," Coord  */
 #line 747 "src/xkbcomp/parser.y"
-                        { (void) (yyvsp[-2].expr); (void) (yyvsp[0].expr); (yyval.expr) = NULL; }
+                        { (ಶೂನ್ಯ) (yyvsp[-2].ಅಭಿವ್ಯಕ್ತಿ); (ಶೂನ್ಯ) (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ); (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ರಿಕ್ತ; }
 #line 3056 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 123: /* CoordList: Coord  */
+  ಪಕ್ಷ 123: /* CoordList: Coord  */
 #line 749 "src/xkbcomp/parser.y"
-                        { (void) (yyvsp[0].expr); (yyval.expr) = NULL; }
+                        { (ಶೂನ್ಯ) (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ); (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ರಿಕ್ತ; }
 #line 3062 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 124: /* Coord: "[" SignedNumber "," SignedNumber "]"  */
+  ಪಕ್ಷ 124: /* Coord: "[" SignedNumber "," SignedNumber "]"  */
 #line 753 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = NULL; }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ರಿಕ್ತ; }
 #line 3068 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 125: /* DoodadDecl: DoodadType String "{" VarDeclList "}" ";"  */
+  ಪಕ್ಷ 125: /* DoodadDecl: DoodadType String "{" VarDeclList "}" ";"  */
 #line 757 "src/xkbcomp/parser.y"
-                        { FreeStmt((ParseCommon *) (yyvsp[-2].varList).head); (yyval.geom) = NULL; }
+                        { FreeStmt((ParseCommon *) (yyvsp[-2].varList).head); (yyval.geom) = ರಿಕ್ತ; }
 #line 3074 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 126: /* DoodadType: "text"  */
+  ಪಕ್ಷ 126: /* DoodadType: "text"  */
 #line 760 "src/xkbcomp/parser.y"
-                                { (yyval.num) = 0; }
+                                { (yyval.ಅಂಕೆ) = 0; }
 #line 3080 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 127: /* DoodadType: "outline"  */
+  ಪಕ್ಷ 127: /* DoodadType: "outline"  */
 #line 761 "src/xkbcomp/parser.y"
-                                { (yyval.num) = 0; }
+                                { (yyval.ಅಂಕೆ) = 0; }
 #line 3086 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 128: /* DoodadType: "solid"  */
+  ಪಕ್ಷ 128: /* DoodadType: "solid"  */
 #line 762 "src/xkbcomp/parser.y"
-                                { (yyval.num) = 0; }
+                                { (yyval.ಅಂಕೆ) = 0; }
 #line 3092 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 129: /* DoodadType: "logo"  */
+  ಪಕ್ಷ 129: /* DoodadType: "logo"  */
 #line 763 "src/xkbcomp/parser.y"
-                                { (yyval.num) = 0; }
+                                { (yyval.ಅಂಕೆ) = 0; }
 #line 3098 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 130: /* FieldSpec: Ident  */
+  ಪಕ್ಷ 130: /* FieldSpec: Ident  */
 #line 766 "src/xkbcomp/parser.y"
                                 { (yyval.atom) = (yyvsp[0].atom); }
 #line 3104 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 131: /* FieldSpec: Element  */
+  ಪಕ್ಷ 131: /* FieldSpec: Element  */
 #line 767 "src/xkbcomp/parser.y"
                                 { (yyval.atom) = (yyvsp[0].atom); }
 #line 3110 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 132: /* Element: "action"  */
+  ಪಕ್ಷ 132: /* Element: "action"  */
 #line 771 "src/xkbcomp/parser.y"
                         { (yyval.atom) = xkb_atom_intern_literal(param->ctx, "action"); }
 #line 3116 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 133: /* Element: "interpret"  */
+  ಪಕ್ಷ 133: /* Element: "interpret"  */
 #line 773 "src/xkbcomp/parser.y"
                         { (yyval.atom) = xkb_atom_intern_literal(param->ctx, "interpret"); }
 #line 3122 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 134: /* Element: "type"  */
+  ಪಕ್ಷ 134: /* Element: "type"  */
 #line 775 "src/xkbcomp/parser.y"
                         { (yyval.atom) = xkb_atom_intern_literal(param->ctx, "type"); }
 #line 3128 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 135: /* Element: "key"  */
+  ಪಕ್ಷ 135: /* Element: "key"  */
 #line 777 "src/xkbcomp/parser.y"
                         { (yyval.atom) = xkb_atom_intern_literal(param->ctx, "key"); }
 #line 3134 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 136: /* Element: "group"  */
+  ಪಕ್ಷ 136: /* Element: "group"  */
 #line 779 "src/xkbcomp/parser.y"
                         { (yyval.atom) = xkb_atom_intern_literal(param->ctx, "group"); }
 #line 3140 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 137: /* Element: "modifier_map"  */
+  ಪಕ್ಷ 137: /* Element: "modifier_map"  */
 #line 781 "src/xkbcomp/parser.y"
                         {(yyval.atom) = xkb_atom_intern_literal(param->ctx, "modifier_map");}
 #line 3146 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 138: /* Element: "indicator"  */
+  ಪಕ್ಷ 138: /* Element: "indicator"  */
 #line 783 "src/xkbcomp/parser.y"
                         { (yyval.atom) = xkb_atom_intern_literal(param->ctx, "indicator"); }
 #line 3152 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 139: /* Element: "shape"  */
+  ಪಕ್ಷ 139: /* Element: "shape"  */
 #line 785 "src/xkbcomp/parser.y"
                         { (yyval.atom) = xkb_atom_intern_literal(param->ctx, "shape"); }
 #line 3158 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 140: /* Element: "row"  */
+  ಪಕ್ಷ 140: /* Element: "row"  */
 #line 787 "src/xkbcomp/parser.y"
                         { (yyval.atom) = xkb_atom_intern_literal(param->ctx, "row"); }
 #line 3164 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 141: /* Element: "section"  */
+  ಪಕ್ಷ 141: /* Element: "section"  */
 #line 789 "src/xkbcomp/parser.y"
                         { (yyval.atom) = xkb_atom_intern_literal(param->ctx, "section"); }
 #line 3170 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 142: /* Element: "text"  */
+  ಪಕ್ಷ 142: /* Element: "text"  */
 #line 791 "src/xkbcomp/parser.y"
                         { (yyval.atom) = xkb_atom_intern_literal(param->ctx, "text"); }
 #line 3176 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 143: /* OptMergeMode: MergeMode  */
+  ಪಕ್ಷ 143: /* OptMergeMode: MergeMode  */
 #line 794 "src/xkbcomp/parser.y"
                                         { (yyval.merge) = (yyvsp[0].merge); }
 #line 3182 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 144: /* OptMergeMode: %empty  */
+  ಪಕ್ಷ 144: /* OptMergeMode: %empty  */
 #line 795 "src/xkbcomp/parser.y"
                                         { (yyval.merge) = MERGE_DEFAULT; }
 #line 3188 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 145: /* MergeMode: "include"  */
+  ಪಕ್ಷ 145: /* MergeMode: "include"  */
 #line 798 "src/xkbcomp/parser.y"
                                         { (yyval.merge) = MERGE_DEFAULT; }
 #line 3194 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 146: /* MergeMode: "augment"  */
+  ಪಕ್ಷ 146: /* MergeMode: "augment"  */
 #line 799 "src/xkbcomp/parser.y"
                                         { (yyval.merge) = MERGE_AUGMENT; }
 #line 3200 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 147: /* MergeMode: "override"  */
+  ಪಕ್ಷ 147: /* MergeMode: "override"  */
 #line 800 "src/xkbcomp/parser.y"
                                         { (yyval.merge) = MERGE_OVERRIDE; }
 #line 3206 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 148: /* MergeMode: "replace"  */
+  ಪಕ್ಷ 148: /* MergeMode: "replace"  */
 #line 801 "src/xkbcomp/parser.y"
                                         { (yyval.merge) = MERGE_REPLACE; }
 #line 3212 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 149: /* MergeMode: "alternate"  */
+  ಪಕ್ಷ 149: /* MergeMode: "alternate"  */
 #line 803 "src/xkbcomp/parser.y"
                 {
                     /*
@@ -3230,391 +3230,391 @@ yyreduce:
                     (yyval.merge) = MERGE_DEFAULT;
                 }
 #line 3226 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 150: /* ExprList: ExprList "," Expr  */
+  ಪಕ್ಷ 150: /* ExprList: ExprList "," Expr  */
 #line 815 "src/xkbcomp/parser.y"
                         {
-                            if ((yyvsp[0].expr)) {
-                                if ((yyvsp[-2].exprList).head) {
-                                    (yyval.exprList).head = (yyvsp[-2].exprList).head;
-                                    (yyval.exprList).last->common.next = &(yyvsp[0].expr)->common;
-                                    (yyval.exprList).last = (yyvsp[0].expr);
-                                } else {
-                                    (yyval.exprList).head = (yyval.exprList).last = (yyvsp[0].expr);
+                            ಯದಿ ((yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ)) {
+                                ಯದಿ ((yyvsp[-2].ಅಭಿವ್ಯಕ್ತಿ_List).head) {
+                                    (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).head = (yyvsp[-2].ಅಭಿವ್ಯಕ್ತಿ_List).head;
+                                    (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).last->common.next = &(yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ)->common;
+                                    (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).last = (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ);
+                                } ಅನ್ಯಥಾ {
+                                    (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).head = (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).last = (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ);
                                 }
                             }
                         }
 #line 3242 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 151: /* ExprList: Expr  */
+  ಪಕ್ಷ 151: /* ExprList: Expr  */
 #line 827 "src/xkbcomp/parser.y"
-                        { (yyval.exprList).head = (yyval.exprList).last = (yyvsp[0].expr); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).head = (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).last = (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ); }
 #line 3248 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 152: /* ExprList: %empty  */
+  ಪಕ್ಷ 152: /* ExprList: %empty  */
 #line 828 "src/xkbcomp/parser.y"
-                        { (yyval.exprList).head = (yyval.exprList).last = NULL; }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).head = (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).last = ರಿಕ್ತ; }
 #line 3254 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 153: /* Expr: Expr "/" Expr  */
+  ಪಕ್ಷ 153: /* Expr: Expr "/" Expr  */
 #line 832 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateBinary(STMT_EXPR_DIVIDE, (yyvsp[-2].expr), (yyvsp[0].expr)); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Create_ದ್ವಿಮಾನ(STMT_ಅಭಿವ್ಯಕ್ತಿ_DIVIDE, (yyvsp[-2].ಅಭಿವ್ಯಕ್ತಿ), (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 3260 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 154: /* Expr: Expr "+" Expr  */
+  ಪಕ್ಷ 154: /* Expr: Expr "+" Expr  */
 #line 834 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateBinary(STMT_EXPR_ADD, (yyvsp[-2].expr), (yyvsp[0].expr)); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Create_ದ್ವಿಮಾನ(STMT_ಅಭಿವ್ಯಕ್ತಿ_ADD, (yyvsp[-2].ಅಭಿವ್ಯಕ್ತಿ), (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 3266 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 155: /* Expr: Expr "-" Expr  */
+  ಪಕ್ಷ 155: /* Expr: Expr "-" Expr  */
 #line 836 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateBinary(STMT_EXPR_SUBTRACT, (yyvsp[-2].expr), (yyvsp[0].expr)); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Create_ದ್ವಿಮಾನ(STMT_ಅಭಿವ್ಯಕ್ತಿ_SUBTRACT, (yyvsp[-2].ಅಭಿವ್ಯಕ್ತಿ), (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 3272 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 156: /* Expr: Expr "*" Expr  */
+  ಪಕ್ಷ 156: /* Expr: Expr "*" Expr  */
 #line 838 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateBinary(STMT_EXPR_MULTIPLY, (yyvsp[-2].expr), (yyvsp[0].expr)); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Create_ದ್ವಿಮಾನ(STMT_ಅಭಿವ್ಯಕ್ತಿ_MULTIPLY, (yyvsp[-2].ಅಭಿವ್ಯಕ್ತಿ), (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 3278 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 157: /* Expr: Lhs "=" Expr  */
+  ಪಕ್ಷ 157: /* Expr: Lhs "=" Expr  */
 #line 840 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateBinary(STMT_EXPR_ASSIGN, (yyvsp[-2].expr), (yyvsp[0].expr)); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Create_ದ್ವಿಮಾನ(STMT_ಅಭಿವ್ಯಕ್ತಿ_ASSIGN, (yyvsp[-2].ಅಭಿವ್ಯಕ್ತಿ), (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 3284 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 158: /* Expr: Term  */
+  ಪಕ್ಷ 158: /* Expr: Term  */
 #line 842 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[0].expr); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ); }
 #line 3290 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 159: /* Term: "-" Term  */
+  ಪಕ್ಷ 159: /* Term: "-" Term  */
 #line 846 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateUnary(STMT_EXPR_NEGATE, (yyvsp[0].expr)); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Create_Unary(STMT_ಅಭಿವ್ಯಕ್ತಿ_NEGATE, (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 3296 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 160: /* Term: "+" Term  */
+  ಪಕ್ಷ 160: /* Term: "+" Term  */
 #line 848 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateUnary(STMT_EXPR_UNARY_PLUS, (yyvsp[0].expr)); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Create_Unary(STMT_ಅಭಿವ್ಯಕ್ತಿ_UNARY_PLUS, (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 3302 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 161: /* Term: "!" Term  */
+  ಪಕ್ಷ 161: /* Term: "!" Term  */
 #line 850 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateUnary(STMT_EXPR_NOT, (yyvsp[0].expr)); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Create_Unary(STMT_ಅಭಿವ್ಯಕ್ತಿ_NOT, (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 3308 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 162: /* Term: "~" Term  */
+  ಪಕ್ಷ 162: /* Term: "~" Term  */
 #line 852 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateUnary(STMT_EXPR_INVERT, (yyvsp[0].expr)); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Create_Unary(STMT_ಅಭಿವ್ಯಕ್ತಿ_INVERT, (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 3314 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 163: /* Term: Lhs  */
+  ಪಕ್ಷ 163: /* Term: Lhs  */
 #line 854 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[0].expr); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ); }
 #line 3320 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 164: /* Term: FieldSpec "(" ExprList ")"  */
+  ಪಕ್ಷ 164: /* Term: FieldSpec "(" ExprList ")"  */
 #line 856 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateAction((yyvsp[-3].atom), (yyvsp[-1].exprList).head); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Create_Action((yyvsp[-3].atom), (yyvsp[-1].ಅಭಿವ್ಯಕ್ತಿ_List).head); }
 #line 3326 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 165: /* Term: Actions  */
+  ಪಕ್ಷ 165: /* Term: Actions  */
 #line 858 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[0].expr); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ); }
 #line 3332 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 166: /* Term: Terminal  */
+  ಪಕ್ಷ 166: /* Term: Terminal  */
 #line 860 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[0].expr); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ); }
 #line 3338 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 167: /* Term: "(" Expr ")"  */
+  ಪಕ್ಷ 167: /* Term: "(" Expr ")"  */
 #line 862 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[-1].expr); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = (yyvsp[-1].ಅಭಿವ್ಯಕ್ತಿ); }
 #line 3344 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 168: /* MultiActionList: MultiActionList "," Action  */
+  ಪಕ್ಷ 168: /* MultiActionList: MultiActionList "," Action  */
 #line 866 "src/xkbcomp/parser.y"
                         {
-                            ExprDef *expr = ExprCreateActionList((yyvsp[0].expr));
-                            (yyval.exprList) = (yyvsp[-2].exprList);
-                            (yyval.exprList).last->common.next = &expr->common; (yyval.exprList).last = expr;
+                            ಅಭಿವ್ಯಕ್ತಿ_Def *ಅಭಿವ್ಯಕ್ತಿ = ಅಭಿವ್ಯಕ್ತಿ_Create_Action_List((yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ));
+                            (yyval.ಅಭಿವ್ಯಕ್ತಿ_List) = (yyvsp[-2].ಅಭಿವ್ಯಕ್ತಿ_List);
+                            (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).last->common.next = &ಅಭಿವ್ಯಕ್ತಿ->common; (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).last = ಅಭಿವ್ಯಕ್ತಿ;
                         }
 #line 3354 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 169: /* MultiActionList: MultiActionList "," Actions  */
+  ಪಕ್ಷ 169: /* MultiActionList: MultiActionList "," Actions  */
 #line 872 "src/xkbcomp/parser.y"
-                        { (yyval.exprList) = (yyvsp[-2].exprList); (yyval.exprList).last->common.next = &(yyvsp[0].expr)->common; (yyval.exprList).last = (yyvsp[0].expr); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ_List) = (yyvsp[-2].ಅಭಿವ್ಯಕ್ತಿ_List); (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).last->common.next = &(yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ)->common; (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).last = (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ); }
 #line 3360 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 170: /* MultiActionList: Action  */
+  ಪಕ್ಷ 170: /* MultiActionList: Action  */
 #line 874 "src/xkbcomp/parser.y"
-                        { (yyval.exprList).head = (yyval.exprList).last = ExprCreateActionList((yyvsp[0].expr)); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).head = (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).last = ಅಭಿವ್ಯಕ್ತಿ_Create_Action_List((yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 3366 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 171: /* MultiActionList: NonEmptyActions  */
+  ಪಕ್ಷ 171: /* MultiActionList: NonEmptyActions  */
 #line 876 "src/xkbcomp/parser.y"
-                        { (yyval.exprList).head = (yyval.exprList).last = (yyvsp[0].expr); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).head = (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).last = (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ); }
 #line 3372 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 172: /* ActionList: ActionList "," Action  */
+  ಪಕ್ಷ 172: /* ActionList: ActionList "," Action  */
 #line 880 "src/xkbcomp/parser.y"
-                        { (yyval.exprList) = (yyvsp[-2].exprList); (yyval.exprList).last->common.next = &(yyvsp[0].expr)->common; (yyval.exprList).last = (yyvsp[0].expr); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ_List) = (yyvsp[-2].ಅಭಿವ್ಯಕ್ತಿ_List); (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).last->common.next = &(yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ)->common; (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).last = (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ); }
 #line 3378 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 173: /* ActionList: Action  */
+  ಪಕ್ಷ 173: /* ActionList: Action  */
 #line 882 "src/xkbcomp/parser.y"
-                        { (yyval.exprList).head = (yyval.exprList).last = (yyvsp[0].expr); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).head = (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).last = (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ); }
 #line 3384 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 174: /* NonEmptyActions: "{" ActionList "}"  */
+  ಪಕ್ಷ 174: /* NonEmptyActions: "{" ActionList "}"  */
 #line 886 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateActionList((yyvsp[-1].exprList).head); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Create_Action_List((yyvsp[-1].ಅಭಿವ್ಯಕ್ತಿ_List).head); }
 #line 3390 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 175: /* Actions: NonEmptyActions  */
+  ಪಕ್ಷ 175: /* Actions: NonEmptyActions  */
 #line 890 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[0].expr); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ); }
 #line 3396 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 176: /* Actions: "{" "}"  */
+  ಪಕ್ಷ 176: /* Actions: "{" "}"  */
 #line 892 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateActionList(NULL); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Create_Action_List(ರಿಕ್ತ); }
 #line 3402 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 177: /* Action: FieldSpec "(" ExprList ")"  */
+  ಪಕ್ಷ 177: /* Action: FieldSpec "(" ExprList ")"  */
 #line 896 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateAction((yyvsp[-3].atom), (yyvsp[-1].exprList).head); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Create_Action((yyvsp[-3].atom), (yyvsp[-1].ಅಭಿವ್ಯಕ್ತಿ_List).head); }
 #line 3408 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 178: /* Lhs: FieldSpec  */
+  ಪಕ್ಷ 178: /* Lhs: FieldSpec  */
 #line 900 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateIdent((yyvsp[0].atom)); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Create_Ident((yyvsp[0].atom)); }
 #line 3414 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 179: /* Lhs: FieldSpec "." FieldSpec  */
+  ಪಕ್ಷ 179: /* Lhs: FieldSpec "." FieldSpec  */
 #line 902 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateFieldRef((yyvsp[-2].atom), (yyvsp[0].atom)); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Create_Field_Ref((yyvsp[-2].atom), (yyvsp[0].atom)); }
 #line 3420 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 180: /* Lhs: FieldSpec "[" Expr "]"  */
+  ಪಕ್ಷ 180: /* Lhs: FieldSpec "[" Expr "]"  */
 #line 904 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateArrayRef(XKB_ATOM_NONE, (yyvsp[-3].atom), (yyvsp[-1].expr)); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Create_Array_Ref(XKB_ATOM_NONE, (yyvsp[-3].atom), (yyvsp[-1].ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 3426 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 181: /* Lhs: FieldSpec "." FieldSpec "[" Expr "]"  */
+  ಪಕ್ಷ 181: /* Lhs: FieldSpec "." FieldSpec "[" Expr "]"  */
 #line 906 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateArrayRef((yyvsp[-5].atom), (yyvsp[-3].atom), (yyvsp[-1].expr)); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Create_Array_Ref((yyvsp[-5].atom), (yyvsp[-3].atom), (yyvsp[-1].ಅಭಿವ್ಯಕ್ತಿ)); }
 #line 3432 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 182: /* OptTerminal: Terminal  */
+  ಪಕ್ಷ 182: /* OptTerminal: Terminal  */
 #line 910 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[0].expr); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ); }
 #line 3438 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 183: /* OptTerminal: %empty  */
+  ಪಕ್ಷ 183: /* OptTerminal: %empty  */
 #line 911 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = NULL; }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ರಿಕ್ತ; }
 #line 3444 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 184: /* Terminal: String  */
+  ಪಕ್ಷ 184: /* Terminal: String  */
 #line 915 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateString((yyvsp[0].atom)); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Create_String((yyvsp[0].atom)); }
 #line 3450 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 185: /* Terminal: Integer  */
+  ಪಕ್ಷ 185: /* Terminal: Integer  */
 #line 917 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateInteger((yyvsp[0].num)); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Create_Integer((yyvsp[0].ಅಂಕೆ)); }
 #line 3456 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 186: /* Terminal: Float  */
+  ಪಕ್ಷ 186: /* Terminal: Float  */
 #line 919 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateFloat(/* Discard $1 */); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Create_Float(/* Discard $1 */); }
 #line 3462 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 187: /* Terminal: "key name"  */
+  ಪಕ್ಷ 187: /* Terminal: "key name"  */
 #line 921 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateKeyName((yyvsp[0].atom)); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Create_ಕೀಲಿ_Name((yyvsp[0].atom)); }
 #line 3468 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 188: /* MultiKeySymList: MultiKeySymList "," KeySymLit  */
+  ಪಕ್ಷ 188: /* MultiKeySymList: MultiKeySymList "," KeySymLit  */
 #line 925 "src/xkbcomp/parser.y"
                         {
-                            ExprDef *expr = ExprCreateKeySymList((yyvsp[0].keysym));
-                            (yyval.exprList) = (yyvsp[-2].exprList);
-                            (yyval.exprList).last->common.next = &expr->common; (yyval.exprList).last = expr;
+                            ಅಭಿವ್ಯಕ್ತಿ_Def *ಅಭಿವ್ಯಕ್ತಿ = ಅಭಿವ್ಯಕ್ತಿ_Create_ಕೀಲಿ_Sym_List((yyvsp[0].keysym));
+                            (yyval.ಅಭಿವ್ಯಕ್ತಿ_List) = (yyvsp[-2].ಅಭಿವ್ಯಕ್ತಿ_List);
+                            (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).last->common.next = &ಅಭಿವ್ಯಕ್ತಿ->common; (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).last = ಅಭಿವ್ಯಕ್ತಿ;
                         }
 #line 3478 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 189: /* MultiKeySymList: MultiKeySymList "," KeySyms  */
+  ಪಕ್ಷ 189: /* MultiKeySymList: MultiKeySymList "," KeySyms  */
 #line 931 "src/xkbcomp/parser.y"
-                        { (yyval.exprList) = (yyvsp[-2].exprList); (yyval.exprList).last->common.next = &(yyvsp[0].expr)->common; (yyval.exprList).last = (yyvsp[0].expr); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ_List) = (yyvsp[-2].ಅಭಿವ್ಯಕ್ತಿ_List); (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).last->common.next = &(yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ)->common; (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).last = (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ); }
 #line 3484 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 190: /* MultiKeySymList: KeySymLit  */
+  ಪಕ್ಷ 190: /* MultiKeySymList: KeySymLit  */
 #line 933 "src/xkbcomp/parser.y"
-                        { (yyval.exprList).head = (yyval.exprList).last = ExprCreateKeySymList((yyvsp[0].keysym)); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).head = (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).last = ಅಭಿವ್ಯಕ್ತಿ_Create_ಕೀಲಿ_Sym_List((yyvsp[0].keysym)); }
 #line 3490 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 191: /* MultiKeySymList: NonEmptyKeySyms  */
+  ಪಕ್ಷ 191: /* MultiKeySymList: NonEmptyKeySyms  */
 #line 935 "src/xkbcomp/parser.y"
-                        { (yyval.exprList).head = (yyval.exprList).last = (yyvsp[0].expr); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).head = (yyval.ಅಭಿವ್ಯಕ್ತಿ_List).last = (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ); }
 #line 3496 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 192: /* KeySymList: KeySymList "," KeySymLit  */
+  ಪಕ್ಷ 192: /* KeySymList: KeySymList "," KeySymLit  */
 #line 939 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprAppendKeySymList((yyvsp[-2].expr), (yyvsp[0].keysym)); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Append_ಕೀಲಿ_Sym_List((yyvsp[-2].ಅಭಿವ್ಯಕ್ತಿ), (yyvsp[0].keysym)); }
 #line 3502 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 193: /* KeySymList: KeySymList "," "string literal"  */
+  ಪಕ್ಷ 193: /* KeySymList: KeySymList "," "string literal"  */
 #line 941 "src/xkbcomp/parser.y"
                         {
-                            (yyval.expr) = ExprKeySymListAppendString(param->scanner, (yyvsp[-2].expr), (yyvsp[0].str));
-                            free((yyvsp[0].str));
-                            if (!(yyval.expr))
+                            (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_ಕೀಲಿ_Sym_List_Append_String(param->scanner, (yyvsp[-2].ಅಭಿವ್ಯಕ್ತಿ), (yyvsp[0].str));
+                            ಮುಕ್ತ((yyvsp[0].str));
+                            ಯದಿ (!(yyval.ಅಭಿವ್ಯಕ್ತಿ))
                                 YYERROR;
                         }
 #line 3513 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 194: /* KeySymList: KeySymLit  */
+  ಪಕ್ಷ 194: /* KeySymList: KeySymLit  */
 #line 948 "src/xkbcomp/parser.y"
                         {
-                            (yyval.expr) = ExprCreateKeySymList((yyvsp[0].keysym));
-                            if (!(yyval.expr))
+                            (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Create_ಕೀಲಿ_Sym_List((yyvsp[0].keysym));
+                            ಯದಿ (!(yyval.ಅಭಿವ್ಯಕ್ತಿ))
                                 YYERROR;
                         }
 #line 3523 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 195: /* KeySymList: "string literal"  */
+  ಪಕ್ಷ 195: /* KeySymList: "string literal"  */
 #line 954 "src/xkbcomp/parser.y"
                         {
-                            (yyval.expr) = ExprCreateKeySymList(XKB_KEY_NoSymbol);
-                            if (!(yyval.expr))
+                            (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Create_ಕೀಲಿ_Sym_List(XKB_ಕೀಲಿ_No_ಚಿಹ್ನೆ);
+                            ಯದಿ (!(yyval.ಅಭಿವ್ಯಕ್ತಿ))
                                 YYERROR;
-                            (yyval.expr) = ExprKeySymListAppendString(param->scanner, (yyval.expr), (yyvsp[0].str));
-                            free((yyvsp[0].str));
-                            if (!(yyval.expr))
+                            (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_ಕೀಲಿ_Sym_List_Append_String(param->scanner, (yyval.ಅಭಿವ್ಯಕ್ತಿ), (yyvsp[0].str));
+                            ಮುಕ್ತ((yyvsp[0].str));
+                            ಯದಿ (!(yyval.ಅಭಿವ್ಯಕ್ತಿ))
                                 YYERROR;
                         }
 #line 3537 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 196: /* NonEmptyKeySyms: "{" KeySymList "}"  */
+  ಪಕ್ಷ 196: /* NonEmptyKeySyms: "{" KeySymList "}"  */
 #line 966 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[-1].expr); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = (yyvsp[-1].ಅಭಿವ್ಯಕ್ತಿ); }
 #line 3543 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 197: /* NonEmptyKeySyms: "string literal"  */
+  ಪಕ್ಷ 197: /* NonEmptyKeySyms: "string literal"  */
 #line 968 "src/xkbcomp/parser.y"
                         {
-                            (yyval.expr) = ExprCreateKeySymList(XKB_KEY_NoSymbol);
-                            if (!(yyval.expr))
+                            (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Create_ಕೀಲಿ_Sym_List(XKB_ಕೀಲಿ_No_ಚಿಹ್ನೆ);
+                            ಯದಿ (!(yyval.ಅಭಿವ್ಯಕ್ತಿ))
                                 YYERROR;
-                            (yyval.expr) = ExprKeySymListAppendString(param->scanner, (yyval.expr), (yyvsp[0].str));
-                            free((yyvsp[0].str));
-                            if (!(yyval.expr))
+                            (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_ಕೀಲಿ_Sym_List_Append_String(param->scanner, (yyval.ಅಭಿವ್ಯಕ್ತಿ), (yyvsp[0].str));
+                            ಮುಕ್ತ((yyvsp[0].str));
+                            ಯದಿ (!(yyval.ಅಭಿವ್ಯಕ್ತಿ))
                                 YYERROR;
                         }
 #line 3557 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 198: /* KeySyms: NonEmptyKeySyms  */
+  ಪಕ್ಷ 198: /* KeySyms: NonEmptyKeySyms  */
 #line 980 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[0].expr); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = (yyvsp[0].ಅಭಿವ್ಯಕ್ತಿ); }
 #line 3563 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 199: /* KeySyms: "{" "}"  */
+  ಪಕ್ಷ 199: /* KeySyms: "{" "}"  */
 #line 982 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateKeySymList(XKB_KEY_NoSymbol); }
+                        { (yyval.ಅಭಿವ್ಯಕ್ತಿ) = ಅಭಿವ್ಯಕ್ತಿ_Create_ಕೀಲಿ_Sym_List(XKB_ಕೀಲಿ_No_ಚಿಹ್ನೆ); }
 #line 3569 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 200: /* KeySym: KeySymLit  */
+  ಪಕ್ಷ 200: /* KeySym: KeySymLit  */
 #line 986 "src/xkbcomp/parser.y"
                         { (yyval.keysym) = (yyvsp[0].keysym); }
 #line 3575 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 201: /* KeySym: "string literal"  */
+  ಪಕ್ಷ 201: /* KeySym: "string literal"  */
 #line 988 "src/xkbcomp/parser.y"
                         {
                             (yyval.keysym) = KeysymParseString(param->scanner, (yyvsp[0].str));
-                            free((yyvsp[0].str));
-                            if ((yyval.keysym) == XKB_KEY_NoSymbol)
+                            ಮುಕ್ತ((yyvsp[0].str));
+                            ಯದಿ ((yyval.keysym) == XKB_ಕೀಲಿ_No_ಚಿಹ್ನೆ)
                                 YYERROR;
                         }
 #line 3586 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 202: /* KeySymLit: "identifier"  */
+  ಪಕ್ಷ 202: /* KeySymLit: "identifier"  */
 #line 997 "src/xkbcomp/parser.y"
                         {
-                            if (!resolve_keysym(param, (yyvsp[0].sval), &(yyval.keysym))) {
+                            ಯದಿ (!resolve_keysym(param, (yyvsp[0].sval), &(yyval.keysym))) {
                                 parser_warn(
                                     param,
                                     XKB_WARNING_UNRECOGNIZED_KEYSYM,
                                     "unrecognized keysym \"%.*s\"",
-                                    (unsigned int) (yyvsp[0].sval).len, (yyvsp[0].sval).start
+                                    (unsigned ಪೂರ್ಣಾಙ್ಕ) (yyvsp[0].sval).len, (yyvsp[0].sval).start
                                 );
-                                (yyval.keysym) = XKB_KEY_NoSymbol;
+                                (yyval.keysym) = XKB_ಕೀಲಿ_No_ಚಿಹ್ನೆ;
                             }
                         }
 #line 3602 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 203: /* KeySymLit: "section"  */
+  ಪಕ್ಷ 203: /* KeySymLit: "section"  */
 #line 1009 "src/xkbcomp/parser.y"
-                                { (yyval.keysym) = XKB_KEY_section; }
+                                { (yyval.keysym) = XKB_ಕೀಲಿ_section; }
 #line 3608 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 204: /* KeySymLit: "decimal digit"  */
+  ಪಕ್ಷ 204: /* KeySymLit: "decimal digit"  */
 #line 1011 "src/xkbcomp/parser.y"
                         {
                             /*
@@ -3622,15 +3622,15 @@ yyreduce:
                              * map to XKB_KEY_0 .. XKB_KEY_9, consistent with
                              * other keysym names: <name> → XKB_KEY_<name>.
                              */
-                            (yyval.keysym) = XKB_KEY_0 + (xkb_keysym_t) (yyvsp[0].num);
+                            (yyval.keysym) = XKB_ಕೀಲಿ_0 + (xkb_keysym_t) (yyvsp[0].ಅಂಕೆ);
                         }
 #line 3621 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 205: /* KeySymLit: "integer literal"  */
+  ಪಕ್ಷ 205: /* KeySymLit: "integer literal"  */
 #line 1020 "src/xkbcomp/parser.y"
                         {
-                            if ((yyvsp[0].num) < XKB_KEYSYM_MIN) {
+                            ಯದಿ ((yyvsp[0].ಅಂಕೆ) < XKB_KEYSYM_MIN) {
                                 /* Negative value */
                                 static_assert(XKB_KEYSYM_MIN == 0,
                                               "Keysyms are positive");
@@ -3639,9 +3639,9 @@ yyreduce:
                                     XKB_ERROR_INVALID_NUMERIC_KEYSYM,
                                     "unrecognized keysym \"-%#06"PRIx64"\""
                                     " (%"PRId64")",
-                                    -(yyvsp[0].num), (yyvsp[0].num)
+                                    -(yyvsp[0].ಅಂಕೆ), (yyvsp[0].ಅಂಕೆ)
                                 );
-                                (yyval.keysym) = XKB_KEY_NoSymbol;
+                                (yyval.keysym) = XKB_ಕೀಲಿ_No_ಚಿಹ್ನೆ;
                             }
                             /*
                              * Integers 0..9 are handled with DECIMAL_DIGIT if
@@ -3651,26 +3651,26 @@ yyreduce:
                              * the keysym 0x0001, while `1` is interpreted as
                              * XKB_KEY_1.
                              */
-                            else {
+                            ಅನ್ಯಥಾ {
                                 /* Any other numeric value */
-                                if ((yyvsp[0].num) <= XKB_KEYSYM_MAX) {
+                                ಯದಿ ((yyvsp[0].ಅಂಕೆ) <= XKB_KEYSYM_MAX) {
                                     /*
                                      * Valid keysym
                                      * No normalization is performed and value
                                      * is used as is.
                                      */
-                                    (yyval.keysym) = (xkb_keysym_t) (yyvsp[0].num);
+                                    (yyval.keysym) = (xkb_keysym_t) (yyvsp[0].ಅಂಕೆ);
                                     check_deprecated_keysyms(
                                         parser_warn, param, param->ctx,
-                                        (yyval.keysym), NULL, (yyval.keysym), "%#06"PRIx32, "");
-                                } else {
+                                        (yyval.keysym), ರಿಕ್ತ, (yyval.keysym), "%#06"PRIx32, "");
+                                } ಅನ್ಯಥಾ {
                                     /* Invalid keysym */
                                     parser_warn(
                                         param, XKB_ERROR_INVALID_NUMERIC_KEYSYM,
                                         "unrecognized keysym \"%#06"PRIx64"\" "
-                                        "(%"PRId64")", (yyvsp[0].num), (yyvsp[0].num)
+                                        "(%"PRId64")", (yyvsp[0].ಅಂಕೆ), (yyvsp[0].ಅಂಕೆ)
                                     );
-                                    (yyval.keysym) = XKB_KEY_NoSymbol;
+                                    (yyval.keysym) = XKB_ಕೀಲಿ_No_ಚಿಹ್ನೆ;
                                 }
                                 parser_vrb(
                                     /*
@@ -3682,113 +3682,113 @@ yyreduce:
                                     param, XKB_LOG_VERBOSITY_COMPREHENSIVE,
                                     XKB_WARNING_NUMERIC_KEYSYM,
                                     "numeric keysym \"%#06"PRIx64"\" (%"PRId64")",
-                                    (yyvsp[0].num), (yyvsp[0].num)
+                                    (yyvsp[0].ಅಂಕೆ), (yyvsp[0].ಅಂಕೆ)
                                 );
                             }
                         }
 #line 3683 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 206: /* SignedNumber: "-" Number  */
+  ಪಕ್ಷ 206: /* SignedNumber: "-" Number  */
 #line 1079 "src/xkbcomp/parser.y"
-                                        { (yyval.num) = -(yyvsp[0].num); }
+                                        { (yyval.ಅಂಕೆ) = -(yyvsp[0].ಅಂಕೆ); }
 #line 3689 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 207: /* SignedNumber: Number  */
+  ಪಕ್ಷ 207: /* SignedNumber: Number  */
 #line 1080 "src/xkbcomp/parser.y"
-                                        { (yyval.num) = (yyvsp[0].num); }
+                                        { (yyval.ಅಂಕೆ) = (yyvsp[0].ಅಂಕೆ); }
 #line 3695 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 208: /* Number: "float literal"  */
+  ಪಕ್ಷ 208: /* Number: "float literal"  */
 #line 1083 "src/xkbcomp/parser.y"
-                                      { (yyval.num) = (yyvsp[0].num); }
+                                      { (yyval.ಅಂಕೆ) = (yyvsp[0].ಅಂಕೆ); }
 #line 3701 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 209: /* Number: "decimal digit"  */
+  ಪಕ್ಷ 209: /* Number: "decimal digit"  */
 #line 1084 "src/xkbcomp/parser.y"
-                                      { (yyval.num) = (yyvsp[0].num); }
+                                      { (yyval.ಅಂಕೆ) = (yyvsp[0].ಅಂಕೆ); }
 #line 3707 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 210: /* Number: "integer literal"  */
+  ಪಕ್ಷ 210: /* Number: "integer literal"  */
 #line 1085 "src/xkbcomp/parser.y"
-                                      { (yyval.num) = (yyvsp[0].num); }
+                                      { (yyval.ಅಂಕೆ) = (yyvsp[0].ಅಂಕೆ); }
 #line 3713 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 211: /* Float: "float literal"  */
+  ಪಕ್ಷ 211: /* Float: "float literal"  */
 #line 1088 "src/xkbcomp/parser.y"
-                                { (yyval.num) = 0; }
+                                { (yyval.ಅಂಕೆ) = 0; }
 #line 3719 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 212: /* Integer: "integer literal"  */
+  ಪಕ್ಷ 212: /* Integer: "integer literal"  */
 #line 1091 "src/xkbcomp/parser.y"
-                                      { (yyval.num) = (yyvsp[0].num); }
+                                      { (yyval.ಅಂಕೆ) = (yyvsp[0].ಅಂಕೆ); }
 #line 3725 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 213: /* Integer: "decimal digit"  */
+  ಪಕ್ಷ 213: /* Integer: "decimal digit"  */
 #line 1092 "src/xkbcomp/parser.y"
-                                      { (yyval.num) = (yyvsp[0].num); }
+                                      { (yyval.ಅಂಕೆ) = (yyvsp[0].ಅಂಕೆ); }
 #line 3731 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 214: /* KeyCode: "integer literal"  */
+  ಪಕ್ಷ 214: /* KeyCode: "integer literal"  */
 #line 1095 "src/xkbcomp/parser.y"
-                                      { (yyval.num) = (yyvsp[0].num); }
+                                      { (yyval.ಅಂಕೆ) = (yyvsp[0].ಅಂಕೆ); }
 #line 3737 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 215: /* KeyCode: "decimal digit"  */
+  ಪಕ್ಷ 215: /* KeyCode: "decimal digit"  */
 #line 1096 "src/xkbcomp/parser.y"
-                                      { (yyval.num) = (yyvsp[0].num); }
+                                      { (yyval.ಅಂಕೆ) = (yyvsp[0].ಅಂಕೆ); }
 #line 3743 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 216: /* Ident: "identifier"  */
+  ಪಕ್ಷ 216: /* Ident: "identifier"  */
 #line 1099 "src/xkbcomp/parser.y"
                                 { (yyval.atom) = xkb_atom_intern(param->ctx, (yyvsp[0].sval).start, (yyvsp[0].sval).len); }
 #line 3749 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 217: /* Ident: "default"  */
+  ಪಕ್ಷ 217: /* Ident: "default"  */
 #line 1100 "src/xkbcomp/parser.y"
                                 { (yyval.atom) = xkb_atom_intern_literal(param->ctx, "default"); }
 #line 3755 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 218: /* String: "string literal"  */
+  ಪಕ್ಷ 218: /* String: "string literal"  */
 #line 1103 "src/xkbcomp/parser.y"
-                                { (yyval.atom) = xkb_atom_intern(param->ctx, (yyvsp[0].str), strlen((yyvsp[0].str))); free((yyvsp[0].str)); }
+                                { (yyval.atom) = xkb_atom_intern(param->ctx, (yyvsp[0].str), strlen((yyvsp[0].str))); ಮುಕ್ತ((yyvsp[0].str)); }
 #line 3761 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 219: /* OptMapName: MapName  */
+  ಪಕ್ಷ 219: /* OptMapName: MapName  */
 #line 1106 "src/xkbcomp/parser.y"
                                 { (yyval.str) = (yyvsp[0].str); }
 #line 3767 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 220: /* OptMapName: %empty  */
+  ಪಕ್ಷ 220: /* OptMapName: %empty  */
 #line 1107 "src/xkbcomp/parser.y"
-                                { (yyval.str) = NULL; }
+                                { (yyval.str) = ರಿಕ್ತ; }
 #line 3773 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
-  case 221: /* MapName: "string literal"  */
+  ಪಕ್ಷ 221: /* MapName: "string literal"  */
 #line 1110 "src/xkbcomp/parser.y"
                                 { (yyval.str) = (yyvsp[0].str); }
 #line 3779 "src/xkbcomp/parser.c"
-    break;
+    ಭಙ್ಗ;
 
 
 #line 3783 "src/xkbcomp/parser.c"
 
-      default: break;
+      ಸ್ವಭಾವ: ಭಙ್ಗ;
     }
   /* User semantic actions sometimes alter yychar, and that requires
      that yytoken be updated with the new translation.  We take the
@@ -3801,7 +3801,7 @@ yyreduce:
      case of YYERROR or YYBACKUP, subsequent parser actions might lead
      to an incorrect destructor call or verbose syntax error message
      before the lookahead is translated.  */
-  YY_SYMBOL_PRINT ("-> $$ =", YY_CAST (yysymbol_kind_t, yyr1[yyn]), &yyval, &yyloc);
+  YY_ಚಿಹ್ನೆ_PRINT ("-> $$ =", YY_CAST (yysymbol_kind_t, yyr1[yyn]), &yyval, &yyloc);
 
   YYPOPSTACK (yylen);
   yylen = 0;
@@ -3812,14 +3812,14 @@ yyreduce:
      that goes to, based on the state we popped back to and the rule
      number reduced by.  */
   {
-    const int yylhs = yyr1[yyn] - YYNTOKENS;
-    const int yyi = yypgoto[yylhs] + *yyssp;
+    ಧ್ರುವ ಪೂರ್ಣಾಙ್ಕ yylhs = yyr1[yyn] - YYNTOKENS;
+    ಧ್ರುವ ಪೂರ್ಣಾಙ್ಕ yyi = yypgoto[yylhs] + *yyssp;
     yystate = (0 <= yyi && yyi <= YYLAST && yycheck[yyi] == *yyssp
                ? yytable[yyi]
                : yydefgoto[yylhs]);
   }
 
-  goto yynewstate;
+  ಗಚ್ಛ yynewstate;
 
 
 /*--------------------------------------.
@@ -3830,54 +3830,54 @@ yyerrlab:
      user semantic actions for why this is necessary.  */
   yytoken = yychar == YYEMPTY ? YYSYMBOL_YYEMPTY : YYTRANSLATE (yychar);
   /* If not already recovering from an error, report this error.  */
-  if (!yyerrstatus)
+  ಯದಿ (!yyerrstatus)
     {
       ++yynerrs;
       {
         yypcontext_t yyctx
           = {yyssp, yytoken};
-        char const *yymsgp = YY_("syntax error");
-        int yysyntax_error_status;
+        ವರ್ಣ ಧ್ರುವ *yymsgp = YY_("syntax error");
+        ಪೂರ್ಣಾಙ್ಕ yysyntax_error_status;
         yysyntax_error_status = yysyntax_error (&yymsg_alloc, &yymsg, &yyctx);
-        if (yysyntax_error_status == 0)
+        ಯದಿ (yysyntax_error_status == 0)
           yymsgp = yymsg;
-        else if (yysyntax_error_status == -1)
+        ಅನ್ಯಥಾ ಯದಿ (yysyntax_error_status == -1)
           {
-            if (yymsg != yymsgbuf)
+            ಯದಿ (yymsg != yymsgbuf)
               YYSTACK_FREE (yymsg);
-            yymsg = YY_CAST (char *,
+            yymsg = YY_CAST (ವರ್ಣ *,
                              YYSTACK_ALLOC (YY_CAST (YYSIZE_T, yymsg_alloc)));
-            if (yymsg)
+            ಯದಿ (yymsg)
               {
                 yysyntax_error_status
                   = yysyntax_error (&yymsg_alloc, &yymsg, &yyctx);
                 yymsgp = yymsg;
               }
-            else
+            ಅನ್ಯಥಾ
               {
                 yymsg = yymsgbuf;
-                yymsg_alloc = sizeof yymsgbuf;
+                yymsg_alloc = ಪರಿಮಾಣ yymsgbuf;
                 yysyntax_error_status = YYENOMEM;
               }
           }
         yyerror (param, yymsgp);
-        if (yysyntax_error_status == YYENOMEM)
+        ಯದಿ (yysyntax_error_status == YYENOMEM)
           YYNOMEM;
       }
     }
 
-  if (yyerrstatus == 3)
+  ಯದಿ (yyerrstatus == 3)
     {
       /* If just tried and failed to reuse lookahead token after an
          error, discard it.  */
 
-      if (yychar <= END_OF_FILE)
+      ಯದಿ (yychar <= END_OF_FILE)
         {
           /* Return failure if at end of input.  */
-          if (yychar == END_OF_FILE)
+          ಯದಿ (yychar == END_OF_FILE)
             YYABORT;
         }
-      else
+      ಅನ್ಯಥಾ
         {
           yydestruct ("Error: discarding",
                       yytoken, &yylval, param);
@@ -3887,7 +3887,7 @@ yyerrlab:
 
   /* Else will try to reuse lookahead token after shifting the error
      token.  */
-  goto yyerrlab1;
+  ಗಚ್ಛ yyerrlab1;
 
 
 /*---------------------------------------------------.
@@ -3896,7 +3896,7 @@ yyerrlab:
 yyerrorlab:
   /* Pacify compilers when the user code never invokes YYERROR and the
      label yyerrorlab therefore never appears in user code.  */
-  if (0)
+  ಯದಿ (0)
     YYERROR;
   ++yynerrs;
 
@@ -3904,9 +3904,9 @@ yyerrorlab:
      this YYERROR.  */
   YYPOPSTACK (yylen);
   yylen = 0;
-  YY_STACK_PRINT (yyss, yyssp);
+  YY_ರಾಶಿ_PRINT (yyss, yyssp);
   yystate = *yyssp;
-  goto yyerrlab1;
+  ಗಚ್ಛ yyerrlab1;
 
 
 /*-------------------------------------------------------------.
@@ -3916,30 +3916,30 @@ yyerrlab1:
   yyerrstatus = 3;      /* Each real token shifted decrements this.  */
 
   /* Pop stack until we find a state that shifts the error token.  */
-  for (;;)
+  ಪ್ರತಿ (;;)
     {
       yyn = yypact[yystate];
-      if (!yypact_value_is_default (yyn))
+      ಯದಿ (!yypact_ಮೌಲ್ಯ_is_default (yyn))
         {
           yyn += YYSYMBOL_YYerror;
-          if (0 <= yyn && yyn <= YYLAST && yycheck[yyn] == YYSYMBOL_YYerror)
+          ಯದಿ (0 <= yyn && yyn <= YYLAST && yycheck[yyn] == YYSYMBOL_YYerror)
             {
               yyn = yytable[yyn];
-              if (0 < yyn)
-                break;
+              ಯದಿ (0 < yyn)
+                ಭಙ್ಗ;
             }
         }
 
       /* Pop the current state because it cannot handle the error token.  */
-      if (yyssp == yyss)
+      ಯದಿ (yyssp == yyss)
         YYABORT;
 
 
       yydestruct ("Error: popping",
-                  YY_ACCESSING_SYMBOL (yystate), yyvsp, param);
+                  YY_ACCESSING_ಚಿಹ್ನೆ (yystate), yyvsp, param);
       YYPOPSTACK (1);
       yystate = *yyssp;
-      YY_STACK_PRINT (yyss, yyssp);
+      YY_ರಾಶಿ_PRINT (yyss, yyssp);
     }
 
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
@@ -3948,10 +3948,10 @@ yyerrlab1:
 
 
   /* Shift the error token.  */
-  YY_SYMBOL_PRINT ("Shifting", YY_ACCESSING_SYMBOL (yyn), yyvsp, yylsp);
+  YY_ಚಿಹ್ನೆ_PRINT ("Shifting", YY_ACCESSING_ಚಿಹ್ನೆ (yyn), yyvsp, yylsp);
 
   yystate = yyn;
-  goto yynewstate;
+  ಗಚ್ಛ yynewstate;
 
 
 /*-------------------------------------.
@@ -3959,7 +3959,7 @@ yyerrlab1:
 `-------------------------------------*/
 yyacceptlab:
   yyresult = 0;
-  goto yyreturnlab;
+  ಗಚ್ಛ yyreturnlab;
 
 
 /*-----------------------------------.
@@ -3967,7 +3967,7 @@ yyacceptlab:
 `-----------------------------------*/
 yyabortlab:
   yyresult = 1;
-  goto yyreturnlab;
+  ಗಚ್ಛ yyreturnlab;
 
 
 /*-----------------------------------------------------------.
@@ -3976,14 +3976,14 @@ yyabortlab:
 yyexhaustedlab:
   yyerror (param, YY_("memory exhausted"));
   yyresult = 2;
-  goto yyreturnlab;
+  ಗಚ್ಛ yyreturnlab;
 
 
 /*----------------------------------------------------------.
 | yyreturnlab -- parsing is finished, clean up and return.  |
 `----------------------------------------------------------*/
 yyreturnlab:
-  if (yychar != YYEMPTY)
+  ಯದಿ (yychar != YYEMPTY)
     {
       /* Make sure we have latest lookahead translation.  See comments at
          user semantic actions for why this is necessary.  */
@@ -3994,20 +3994,20 @@ yyreturnlab:
   /* Do not reclaim the symbols of the rule whose action triggered
      this YYABORT or YYACCEPT.  */
   YYPOPSTACK (yylen);
-  YY_STACK_PRINT (yyss, yyssp);
-  while (yyssp != yyss)
+  YY_ರಾಶಿ_PRINT (yyss, yyssp);
+  ಯಾವತ್ (yyssp != yyss)
     {
       yydestruct ("Cleanup: popping",
-                  YY_ACCESSING_SYMBOL (+*yyssp), yyvsp, param);
+                  YY_ACCESSING_ಚಿಹ್ನೆ (+*yyssp), yyvsp, param);
       YYPOPSTACK (1);
     }
 #ifndef yyoverflow
-  if (yyss != yyssa)
+  ಯದಿ (yyss != yyssa)
     YYSTACK_FREE (yyss);
 #endif
-  if (yymsg != yymsgbuf)
+  ಯದಿ (yymsg != yymsgbuf)
     YYSTACK_FREE (yymsg);
-  return yyresult;
+  ಪ್ರತ್ಯಾಗಮ yyresult;
 }
 
 #line 1113 "src/xkbcomp/parser.y"
@@ -4015,15 +4015,15 @@ yyreturnlab:
 
 /* Parse a specific section */
 XkbFile *
-parse(struct xkb_context *ctx, const struct parser_keymap_config *config,
-      struct scanner *scanner, const char *map)
+parse(ಸಂರಚನಾ xkb_context *ctx, ಧ್ರುವ ಸಂರಚನಾ parser_keymap_config *config,
+      ಸಂರಚನಾ scanner *scanner, ಧ್ರುವ ವರ್ಣ *map)
 {
-    int ret;
-    XkbFile *first = NULL;
-    struct parser_param param = {
+    ಪೂರ್ಣಾಙ್ಕ ret;
+    XkbFile *first = ರಿಕ್ತ;
+    ಸಂರಚನಾ parser_param param = {
         .scanner = scanner,
         .ctx = ctx,
-        .rtrn = NULL,
+        .rtrn = ರಿಕ್ತ,
         .config = *config,
         .more_maps = false,
     };
@@ -4036,70 +4036,70 @@ parse(struct xkb_context *ctx, const struct parser_keymap_config *config,
      * the first map in the file.
      */
 
-    while ((ret = yyparse(&param)) == 0 && param.more_maps) {
-        if (map) {
-            if (streq_not_null(map, param.rtrn->name))
-                return param.rtrn;
-            else
+    ಯಾವತ್ ((ret = yyparse(&param)) == 0 && param.more_maps) {
+        ಯದಿ (map) {
+            ಯದಿ (streq_not_null(map, param.rtrn->name))
+                ಪ್ರತ್ಯಾಗಮ param.rtrn;
+            ಅನ್ಯಥಾ
                 FreeXkbFile(param.rtrn);
         }
-        else {
-            if (param.rtrn->flags & MAP_IS_DEFAULT) {
+        ಅನ್ಯಥಾ {
+            ಯದಿ (param.rtrn->flags & MAP_IS_DEFAULT) {
                 FreeXkbFile(first);
-                return param.rtrn;
+                ಪ್ರತ್ಯಾಗಮ param.rtrn;
             }
-            else if (!first) {
+            ಅನ್ಯಥಾ ಯದಿ (!first) {
                 first = param.rtrn;
             }
-            else {
+            ಅನ್ಯಥಾ {
                 FreeXkbFile(param.rtrn);
             }
         }
-        param.rtrn = NULL;
+        param.rtrn = ರಿಕ್ತ;
     }
 
-    if (ret != 0) {
+    ಯದಿ (ret != 0) {
         /* Some error happend; clear the Xkbfiles parsed so far */
         FreeXkbFile(first);
         FreeXkbFile(param.rtrn);
-        return NULL;
+        ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
     }
 
     /*
      * Warn about implicit default section,
      * but only if not a keymap: multiple keymaps per file not supported
      */
-    if (first && first->file_type != FILE_TYPE_KEYMAP)
+    ಯದಿ (first && first->file_type != FILE_TYPE_KEYMAP)
         log_vrb(ctx, XKB_LOG_VERBOSITY_DETAILED,
                 XKB_WARNING_MISSING_DEFAULT_SECTION,
                 "No section name in include statement, but \"%s\" contains several; "
                 "Using first defined section, \"%s\"\n",
                 scanner->file_name, safe_map_name(first->name));
 
-    return first;
+    ಪ್ರತ್ಯಾಗಮ first;
 }
 
 /* Parse the next section */
 bool
-parse_next(struct xkb_context *ctx,
-           const struct parser_keymap_config *config,
-           struct scanner *scanner, XkbFile **xkb_file)
+parse_next(ಸಂರಚನಾ xkb_context *ctx,
+           ಧ್ರುವ ಸಂರಚನಾ parser_keymap_config *config,
+           ಸಂರಚನಾ scanner *scanner, XkbFile **xkb_file)
 {
-    int ret;
-    struct parser_param param = {
+    ಪೂರ್ಣಾಙ್ಕ ret;
+    ಸಂರಚನಾ parser_param param = {
         .scanner = scanner,
         .ctx = ctx,
-        .rtrn = NULL,
+        .rtrn = ರಿಕ್ತ,
         .config = *config,
         .more_maps = false,
     };
 
-    if ((ret = yyparse(&param)) == 0 && param.more_maps) {
+    ಯದಿ ((ret = yyparse(&param)) == 0 && param.more_maps) {
         *xkb_file = param.rtrn;
-        return true;
-    } else {
+        ಪ್ರತ್ಯಾಗಮ true;
+    } ಅನ್ಯಥಾ {
         FreeXkbFile(param.rtrn);
-        *xkb_file = NULL;
-        return (ret == 0);
+        *xkb_file = ರಿಕ್ತ;
+        ಪ್ರತ್ಯಾಗಮ (ret == 0);
     }
 }

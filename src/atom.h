@@ -4,33 +4,33 @@
  */
 #pragma once
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <stddef.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
 
-#include "darray.h"
-#include "utils.h"
+#ಅನ್ತರ್ಭಾವ "darray.h"
+#ಅನ್ತರ್ಭಾವ "utils.h"
 
 /** Atoms are indexes into a `darray` */
-typedef darray_size_t xkb_atom_t;
+ಪ್ರಕಾರನಿರ್ದೇಶ darray_size_t xkb_atom_t;
 
 #define XKB_ATOM_NONE 0
 
-struct atom_table;
+ಸಂರಚನಾ atom_table;
 
-XKB_EXPORT_PRIVATE struct atom_table *
-atom_table_new(void);
+XKB_EXPORT_PRIVATE ಸಂರಚನಾ atom_table *
+atom_table_new(ಶೂನ್ಯ);
 
-XKB_EXPORT_PRIVATE void
-atom_table_free(struct atom_table *table);
+XKB_EXPORT_PRIVATE ಶೂನ್ಯ
+atom_table_free(ಸಂರಚನಾ atom_table *table);
 
 XKB_EXPORT_PRIVATE darray_size_t
-atom_table_size(struct atom_table *table);
+atom_table_size(ಸಂರಚನಾ atom_table *table);
 
 XKB_EXPORT_PRIVATE xkb_atom_t
-atom_intern(struct atom_table *table, const char *string, size_t len, bool add);
+atom_intern(ಸಂರಚನಾ atom_table *table, ಧ್ರುವ ವರ್ಣ *string, size_t len, bool add);
 
-XKB_EXPORT_PRIVATE const char *
-atom_text(struct atom_table *table, xkb_atom_t atom);
+XKB_EXPORT_PRIVATE ಧ್ರುವ ವರ್ಣ *
+atom_text(ಸಂರಚನಾ atom_table *table, xkb_atom_t atom);

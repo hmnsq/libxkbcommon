@@ -5,27 +5,27 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include <assert.h>
-#include <stddef.h>
-#include <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <assert.h>
+#ಅನ್ತರ್ಭಾವ <stddef.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
 
-#include "util-list.h"
+#ಅನ್ತರ್ಭಾವ "util-list.h"
 
-void
-list_init(struct list *list)
+ಶೂನ್ಯ
+list_init(ಸಂರಚನಾ list *list)
 {
 	list->prev = list;
 	list->next = list;
 }
 
-void
-list_insert(struct list *list, struct list *elm)
+ಶೂನ್ಯ
+list_ಸೇರಿಸು(ಸಂರಚನಾ list *list, ಸಂರಚನಾ list *elm)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	ಪ್ರತಿಜ್ಞಾ((list->next != ರಿಕ್ತ && list->prev != ರಿಕ್ತ) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
-	assert(((elm->next == NULL && elm->prev == NULL) || list_empty(elm)) ||
+	ಪ್ರತಿಜ್ಞಾ(((elm->next == ರಿಕ್ತ && elm->prev == ರಿಕ್ತ) || list_empty(elm)) ||
 	       !"elm->next|prev is not NULL, list node used twice?");
 
 	elm->prev = list;
@@ -34,12 +34,12 @@ list_insert(struct list *list, struct list *elm)
 	elm->next->prev = elm;
 }
 
-void
-list_append(struct list *list, struct list *elm)
+ಶೂನ್ಯ
+list_append(ಸಂರಚನಾ list *list, ಸಂರಚನಾ list *elm)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	ಪ್ರತಿಜ್ಞಾ((list->next != ರಿಕ್ತ && list->prev != ರಿಕ್ತ) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
-	assert(((elm->next == NULL && elm->prev == NULL) || list_empty(elm)) ||
+	ಪ್ರತಿಜ್ಞಾ(((elm->next == ರಿಕ್ತ && elm->prev == ರಿಕ್ತ) || list_empty(elm)) ||
 	       !"elm->next|prev is not NULL, list node used twice?");
 
 	elm->next = list;
@@ -48,29 +48,29 @@ list_append(struct list *list, struct list *elm)
 	elm->prev->next = elm;
 }
 
-void
-list_remove(struct list *elm)
+ಶೂನ್ಯ
+list_remove(ಸಂರಚನಾ list *elm)
 {
-	assert((elm->next != NULL && elm->prev != NULL) ||
+	ಪ್ರತಿಜ್ಞಾ((elm->next != ರಿಕ್ತ && elm->prev != ರಿಕ್ತ) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
 
 	elm->prev->next = elm->next;
 	elm->next->prev = elm->prev;
-	elm->next = NULL;
-	elm->prev = NULL;
+	elm->next = ರಿಕ್ತ;
+	elm->prev = ರಿಕ್ತ;
 }
 
 bool
-list_empty(const struct list *list)
+list_empty(ಧ್ರುವ ಸಂರಚನಾ list *list)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	ಪ್ರತಿಜ್ಞಾ((list->next != ರಿಕ್ತ && list->prev != ರಿಕ್ತ) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
 
-	return list->next == list;
+	ಪ್ರತ್ಯಾಗಮ list->next == list;
 }
 
 bool
-list_is_last(const struct list *list, const struct list *elm)
+list_is_last(ಧ್ರುವ ಸಂರಚನಾ list *list, ಧ್ರುವ ಸಂರಚನಾ list *elm)
 {
-	return elm->next == list;
+	ಪ್ರತ್ಯಾಗಮ elm->next == list;
 }

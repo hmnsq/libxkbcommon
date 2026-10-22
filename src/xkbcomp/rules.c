@@ -8,38 +8,38 @@
  * SPDX-License-Identifier: HPND AND MIT
  */
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include <assert.h>
-#include <limits.h>
-#include <stdint.h>
+#ಅನ್ತರ್ಭಾವ <assert.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcomp-priv.h"
-#include "context.h"
-#include "keymap.h"
-#include "messages-codes.h"
-#include "rules.h"
-#include "rmlvo.h"
-#include "include.h"
-#include "scanner-utils.h"
-#include "darray.h"
-#include "utils.h"
-#include "util-numbers.h"
-#include "util-paths.h"
+#ಅನ್ತರ್ಭಾವ "xkbcommon/xkbcommon.h"
+#ಅನ್ತರ್ಭಾವ "xkbcomp-priv.h"
+#ಅನ್ತರ್ಭಾವ "context.h"
+#ಅನ್ತರ್ಭಾವ "keymap.h"
+#ಅನ್ತರ್ಭಾವ "messages-codes.h"
+#ಅನ್ತರ್ಭಾವ "rules.h"
+#ಅನ್ತರ್ಭಾವ "rmlvo.h"
+#ಅನ್ತರ್ಭಾವ "include.h"
+#ಅನ್ತರ್ಭಾವ "scanner-utils.h"
+#ಅನ್ತರ್ಭಾವ "darray.h"
+#ಅನ್ತರ್ಭಾವ "utils.h"
+#ಅನ್ತರ್ಭಾವ "util-numbers.h"
+#ಅನ್ತರ್ಭಾವ "util-paths.h"
 
 #define MAX_INCLUDE_DEPTH 5
 
 /* Scanner / Lexer */
 
 /* Values returned with some tokens, like yylval. */
-union lvalue {
-    struct sval string;
+ಸಙ್ಘ lvalue {
+    ಸಂರಚನಾ sval string;
 };
 
-enum rules_token {
+ಗಣನಾ rules_token {
     TOK_END_OF_FILE = 0,
-    TOK_END_OF_LINE,
+    TOK_END_OF_ಸಾಲು,
     TOK_IDENTIFIER,
     TOK_GROUP_NAME,
     TOK_BANG,
@@ -52,93 +52,93 @@ enum rules_token {
     TOK_ERROR
 };
 
-static enum rules_token
-lex(struct scanner *s, union lvalue *val)
+ಸ್ಥಿರ ಗಣನಾ rules_token
+lex(ಸಂರಚನಾ scanner *s, ಸಙ್ಘ lvalue *val)
 {
 skip_more_whitespace_and_comments:
     /* Skip spaces */
-    while (scanner_chr(s, ' ') || scanner_chr(s, '\t') || scanner_chr(s, '\r'));
+    ಯಾವತ್ (scanner_chr(s, ' ') || scanner_chr(s, '\t') || scanner_chr(s, '\r'));
 
     /* Skip comments */
-    if (scanner_lit(s, "//")) {
+    ಯದಿ (scanner_lit(s, "//")) {
         scanner_skip_to_eol(s);
     }
 
     /* New line */
-    if (scanner_eol(s)) {
-        while (scanner_eol(s)) scanner_next(s);
-        return TOK_END_OF_LINE;
+    ಯದಿ (scanner_eol(s)) {
+        ಯಾವತ್ (scanner_eol(s)) scanner_next(s);
+        ಪ್ರತ್ಯಾಗಮ TOK_END_OF_ಸಾಲು;
     }
 
     /* Escaped line continuation */
-    if (scanner_chr(s, '\\')) {
+    ಯದಿ (scanner_chr(s, '\\')) {
         /* Optional \r. */
         scanner_chr(s, '\r');
-        if (!scanner_eol(s)) {
+        ಯದಿ (!scanner_eol(s)) {
             scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                         "illegal new line escape; must appear at end of line");
-            return TOK_ERROR;
+            ಪ್ರತ್ಯಾಗಮ TOK_ERROR;
         }
         scanner_next(s);
-        goto skip_more_whitespace_and_comments;
+        ಗಚ್ಛ skip_more_whitespace_and_comments;
     }
 
     /* See if we're done */
-    if (scanner_eof(s)) return TOK_END_OF_FILE;
+    ಯದಿ (scanner_eof(s)) ಪ್ರತ್ಯಾಗಮ TOK_END_OF_FILE;
 
     /* New token */
     s->token_pos = s->pos;
-    enum rules_token token = TOK_IDENTIFIER;
+    ಗಣನಾ rules_token token = TOK_IDENTIFIER;
 
-    const char next = scanner_next(s);
-    switch (next) {
-    case '!':
-        return TOK_BANG;
-    case '$':
+    ಧ್ರುವ ವರ್ಣ next = scanner_next(s);
+    ವಿಕಲ್ಪ (next) {
+    ಪಕ್ಷ '!':
+        ಪ್ರತ್ಯಾಗಮ TOK_BANG;
+    ಪಕ್ಷ '$':
         /* Group */
         token = TOK_GROUP_NAME;
         val->string.len = 0;
-        break;
-    case '*':
-        if (scanner_rules_is_ident(scanner_peek(s))) {
+        ಭಙ್ಗ;
+    ಪಕ್ಷ '*':
+        ಯದಿ (scanner_rules_is_ident(scanner_peek(s))) {
             /* Backtrack */
             s->pos--;
-            break;
-        } else {
+            ಭಙ್ಗ;
+        } ಅನ್ಯಥಾ {
             /* Legacy wild card */
-            return TOK_WILD_CARD_STAR;
+            ಪ್ರತ್ಯಾಗಮ TOK_WILD_CARD_STAR;
         }
-    case '<':
+    ಪಕ್ಷ '<':
         /* Extended wild cards */
-        if (scanner_rules_lit_token(s, "none>")) return TOK_WILD_CARD_NONE;
-        if (scanner_rules_lit_token(s, "some>")) return TOK_WILD_CARD_SOME;
-        if (scanner_rules_lit_token(s, "any>")) return TOK_WILD_CARD_ANY;
+        ಯದಿ (scanner_rules_lit_token(s, "none>")) ಪ್ರತ್ಯಾಗಮ TOK_WILD_CARD_NONE;
+        ಯದಿ (scanner_rules_lit_token(s, "some>")) ಪ್ರತ್ಯಾಗಮ TOK_WILD_CARD_SOME;
+        ಯದಿ (scanner_rules_lit_token(s, "any>")) ಪ್ರತ್ಯಾಗಮ TOK_WILD_CARD_ANY;
         /* No match: continue lax parsing */
-        assert(scanner_rules_is_ident('<'));
+        ಪ್ರತಿಜ್ಞಾ(scanner_rules_is_ident('<'));
         val->string.len = 1;
-        break;
-    case '=':
-        if (scanner_rules_is_ident(scanner_peek(s))) {
+        ಭಙ್ಗ;
+    ಪಕ್ಷ '=':
+        ಯದಿ (scanner_rules_is_ident(scanner_peek(s))) {
             /* Backtrack */
             s->pos--;
-            break;
-        } else {
-            return TOK_EQUALS;
+            ಭಙ್ಗ;
+        } ಅನ್ಯಥಾ {
+            ಪ್ರತ್ಯಾಗಮ TOK_EQUALS;
         }
-    case 'i':
-        if (scanner_rules_lit_token(s, "nclude")) {
+    ಪಕ್ಷ 'i':
+        ಯದಿ (scanner_rules_lit_token(s, "nclude")) {
             /* Include statement */
-            return TOK_INCLUDE;
+            ಪ್ರತ್ಯಾಗಮ TOK_INCLUDE;
         }
         /* Identifier */
-        assert(scanner_rules_is_ident('i'));
+        ಪ್ರತಿಜ್ಞಾ(scanner_rules_is_ident('i'));
         val->string.len = 1;
-        break;
-    default:
-        if (likely(scanner_rules_is_ident(next))) {
+        ಭಙ್ಗ;
+    ಸ್ವಭಾವ:
+        ಯದಿ (likely(scanner_rules_is_ident(next))) {
             /* Identifier */
             val->string.len = 1;
-        } else {
+        } ಅನ್ಯಥಾ {
             /* Invalid */
             s->pos--;
             val->string.len = 0;
@@ -148,65 +148,65 @@ skip_more_whitespace_and_comments:
     /* Identifier */
     val->string.start = s->s + s->pos - val->string.len;
     /* Ensure that we can parse KcCGST values with merge modes */
-    assert(scanner_rules_is_ident(MERGE_OVERRIDE_PREFIX));
-    assert(scanner_rules_is_ident(MERGE_AUGMENT_PREFIX));
-    assert(scanner_rules_is_ident(MERGE_REPLACE_PREFIX));
-    assert(scanner_rules_is_ident('('));
-    assert(scanner_rules_is_ident(')'));
+    ಪ್ರತಿಜ್ಞಾ(scanner_rules_is_ident(MERGE_OVERRIDE_PREFIX));
+    ಪ್ರತಿಜ್ಞಾ(scanner_rules_is_ident(MERGE_AUGMENT_PREFIX));
+    ಪ್ರತಿಜ್ಞಾ(scanner_rules_is_ident(MERGE_REPLACE_PREFIX));
+    ಪ್ರತಿಜ್ಞಾ(scanner_rules_is_ident('('));
+    ಪ್ರತಿಜ್ಞಾ(scanner_rules_is_ident(')'));
     val->string.len += scanner_rules_ident_token(s);
 
-    if (unlikely(val->string.len == 0)) {
-        if (token == TOK_GROUP_NAME) {
+    ಯದಿ (unlikely(val->string.len == 0)) {
+        ಯದಿ (token == TOK_GROUP_NAME) {
             scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                         "unexpected character after \'$\'; expected name");
-        } else {
+        } ಅನ್ಯಥಾ {
             scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                         "unrecognized token");
         }
-        return TOK_ERROR;
+        ಪ್ರತ್ಯಾಗಮ TOK_ERROR;
     }
 
-    return token;
+    ಪ್ರತ್ಯಾಗಮ token;
 }
 
 /***====================================================================***/
 
-enum rules_mlvo {
+ಗಣನಾ rules_mlvo {
     MLVO_MODEL,
     MLVO_LAYOUT,
     MLVO_VARIANT,
     MLVO_OPTION,
-    _MLVO_NUM_ENTRIES
+    MLVO_ಅಂಕೆ_ENTRIES
 };
 
-enum {
+ಗಣನಾ {
     MLVO_LAYOUT_AND_VARIANT = ((1 << MLVO_LAYOUT) | (1 << MLVO_VARIANT))
 };
 
-typedef uint8_t mlvo_index_t;
-typedef uint8_t mlvo_mask_t;
+ಪ್ರಕಾರನಿರ್ದೇಶ uint8_t mlvo_index_t;
+ಪ್ರಕಾರನಿರ್ದೇಶ uint8_t mlvo_mask_t;
 
 
-static const struct sval rules_mlvo_svals[_MLVO_NUM_ENTRIES] = {
+ಸ್ಥಿರ ಧ್ರುವ ಸಂರಚನಾ sval rules_mlvo_svals[MLVO_ಅಂಕೆ_ENTRIES] = {
     [MLVO_MODEL] = SVAL_INIT("model"),
     [MLVO_LAYOUT] = SVAL_INIT("layout"),
     [MLVO_VARIANT] = SVAL_INIT("variant"),
     [MLVO_OPTION] = SVAL_INIT("option"),
 };
 
-enum rules_kccgst {
+ಗಣನಾ rules_kccgst {
     KCCGST_KEYCODES,
     KCCGST_TYPES,
     KCCGST_COMPAT,
     KCCGST_SYMBOLS,
     KCCGST_GEOMETRY,
-    _KCCGST_NUM_ENTRIES
+    KCCGST_ಅಂಕೆ_ENTRIES
 };
 
-typedef uint8_t kccgst_index_t;
-typedef uint8_t kccgst_mask_t;
+ಪ್ರಕಾರನಿರ್ದೇಶ uint8_t kccgst_index_t;
+ಪ್ರಕಾರನಿರ್ದೇಶ uint8_t kccgst_mask_t;
 
-static const struct sval rules_kccgst_svals[_KCCGST_NUM_ENTRIES] = {
+ಸ್ಥಿರ ಧ್ರುವ ಸಂರಚನಾ sval rules_kccgst_svals[KCCGST_ಅಂಕೆ_ENTRIES] = {
     [KCCGST_KEYCODES] = SVAL_INIT("keycodes"),
     [KCCGST_TYPES] = SVAL_INIT("types"),
     [KCCGST_COMPAT] = SVAL_INIT("compat"),
@@ -214,7 +214,7 @@ static const struct sval rules_kccgst_svals[_KCCGST_NUM_ENTRIES] = {
     [KCCGST_GEOMETRY] = SVAL_INIT("geometry"),
 };
 
-enum {
+ಗಣನಾ {
     /** Value of the matched layout mask for layout-independent MLVO fields */
     GLOBAL_MATCHED_LAYOUTS = XKB_ALL_GROUPS,
 };
@@ -225,33 +225,33 @@ static_assert(~(xkb_layout_mask_t)XKB_OPTION_LAYOUT_MASK_GLOBAL ==
 
 /* We use this to keep score whether an mlvo was matched or not; if not,
  * we warn the user that their preference was ignored. */
-struct matched_sval {
-    struct sval sval;
+ಸಂರಚನಾ matched_sval {
+    ಸಂರಚನಾ sval sval;
     /** Used for layout-specific options */
     xkb_layout_mask_t layouts;
     xkb_layout_mask_t matched;
 };
-typedef darray(struct matched_sval) darray_matched_sval;
+ಪ್ರಕಾರನಿರ್ದೇಶ darray(ಸಂರಚನಾ matched_sval) darray_matched_sval;
 
 /*
  * A broken-down version of xkb_rule_names (without the rules,
  * obviously).
  */
-struct rule_names {
-    struct matched_sval model;
+ಸಂರಚನಾ rule_names {
+    ಸಂರಚನಾ matched_sval model;
     darray_matched_sval layouts;
     darray_matched_sval variants;
     darray_matched_sval options;
 };
 
-struct group {
-    struct sval name;
+ಸಂರಚನಾ group {
+    ಸಂರಚನಾ sval name;
     darray_sval elements;
 };
 
-struct mapping {
-    enum rules_mlvo mlvo_at_pos[_MLVO_NUM_ENTRIES];
-    mlvo_index_t num_mlvo;
+ಸಂರಚನಾ mapping {
+    ಗಣನಾ rules_mlvo mlvo_at_pos[MLVO_ಅಂಕೆ_ENTRIES];
+    mlvo_index_t ಅಂಕೆ_mlvo;
     mlvo_mask_t defined_mlvo_mask;
     bool has_layout_idx_range;
     bool has_multiple_layouts;
@@ -259,24 +259,24 @@ struct mapping {
      * • Keep track of layout and variant indices while parsing MLVO headers.
      * • Store layout/variant range afterwards.
      * Thus provide 2 structs to reflect these semantics in the code. */
-    union {
-        struct { xkb_layout_index_t layout_idx, variant_idx; };
-        struct { xkb_layout_index_t layout_idx_min, layout_idx_max; };
+    ಸಙ್ಘ {
+        ಸಂರಚನಾ { xkb_layout_index_t layout_idx, variant_idx; };
+        ಸಂರಚನಾ { xkb_layout_index_t layout_idx_min, layout_idx_max; };
     };
     /* This member has 2 uses:
      * • Check if the mapping is active by interpreting the value as a boolean.
      * • Keep track of the remaining layout indices to match.
      * Thus provide 2 names to reflect these semantics in the code. */
-    union {
+    ಸಙ್ಘ {
         xkb_layout_mask_t active;
         xkb_layout_mask_t layouts_candidates_mask;
     };
-    enum rules_kccgst kccgst_at_pos[_KCCGST_NUM_ENTRIES];
-    kccgst_index_t num_kccgst;
+    ಗಣನಾ rules_kccgst kccgst_at_pos[KCCGST_ಅಂಕೆ_ENTRIES];
+    kccgst_index_t ಅಂಕೆ_kccgst;
     kccgst_mask_t defined_kccgst_mask;
 };
 
-enum mlvo_match_type {
+ಗಣನಾ mlvo_match_type {
     /** Match the given plain value */
     MLVO_MATCH_NORMAL = 0,
     /** Match depending on the value of `wildcard_match_type` */
@@ -291,37 +291,37 @@ enum mlvo_match_type {
     MLVO_MATCH_GROUP,
 };
 
-enum wildcard_match_type {
+ಗಣನಾ wildcard_match_type {
     /** ‘*’ matches only non-empty strings */
     WILDCARD_MATCH_NONEMPTY = 0,
     /** ‘*’ matches all strings */
     WILDCARD_MATCH_ALL,
 };
 
-struct rule {
-    struct sval mlvo_value_at_pos[_MLVO_NUM_ENTRIES];
-    enum mlvo_match_type match_type_at_pos[_MLVO_NUM_ENTRIES];
-    struct sval kccgst_value_at_pos[_KCCGST_NUM_ENTRIES];
-    mlvo_index_t num_mlvo_values;
-    kccgst_index_t num_kccgst_values;
+ಸಂರಚನಾ rule {
+    ಸಂರಚನಾ sval mlvo_ಮೌಲ್ಯ_at_pos[MLVO_ಅಂಕೆ_ENTRIES];
+    ಗಣನಾ mlvo_match_type match_type_at_pos[MLVO_ಅಂಕೆ_ENTRIES];
+    ಸಂರಚನಾ sval kccgst_ಮೌಲ್ಯ_at_pos[KCCGST_ಅಂಕೆ_ENTRIES];
+    mlvo_index_t ಅಂಕೆ_mlvo_ಮೌಲ್ಯಗಳು;
+    kccgst_index_t ಅಂಕೆ_kccgst_ಮೌಲ್ಯಗಳು;
     bool skip;
 };
 
 #define SLICE_KCCGST_BIT_FIELD_SIZE 4
 static_assert(!((1u << (SLICE_KCCGST_BIT_FIELD_SIZE - 1)) &
-                (_KCCGST_NUM_ENTRIES - 1)),
+                (KCCGST_ಅಂಕೆ_ENTRIES - 1)),
               "Cannot encode KcCGST enum safely (need space for the sign)");
-struct kccgst_buffer_slice {
+ಸಂರಚನಾ kccgst_buffer_slice {
     uint32_t length:(32 - SLICE_KCCGST_BIT_FIELD_SIZE);
-    enum rules_kccgst kccgst:SLICE_KCCGST_BIT_FIELD_SIZE;
+    ಗಣನಾ rules_kccgst kccgst:SLICE_KCCGST_BIT_FIELD_SIZE;
     xkb_layout_index_t layout;
 };
 
 /* Buffer for pending KcCGST values */
-struct kccgst_buffer {
+ಸಂರಚನಾ kccgst_buffer {
     darray_char buffer;
     /* Slice corresponding to each value in the buffer */
-    darray(struct kccgst_buffer_slice) slices;
+    darray(ಸಂರಚನಾ kccgst_buffer_slice) slices;
 };
 
 /*
@@ -330,37 +330,37 @@ struct kccgst_buffer {
  * matching state machine, with tokens as transitions (see
  * matcher_match()).
  */
-struct matcher {
-    struct xkb_context *ctx;
+ಸಂರಚನಾ matcher {
+    ಸಂರಚನಾ xkb_context *ctx;
     /* Input.*/
-    struct rule_names rmlvo;
-    union lvalue val;
-    darray(struct group) groups;
+    ಸಂರಚನಾ rule_names rmlvo;
+    ಸಙ್ಘ lvalue val;
+    darray(ಸಂರಚನಾ group) groups;
     /* Current mapping. */
-    struct mapping mapping;
+    ಸಂರಚನಾ mapping mapping;
     /* Current rule. */
-    struct rule rule;
+    ಸಂರಚನಾ rule rule;
     /*
      * Buffers for pending KcCGST values. Required in case of using layout
      * index ranges, to ensure that the values are merged in the expected order.
      * See the note: “Layout index ranges and merging KcCGST values”.
      */
-    struct kccgst_buffer pending_kccgst;
+    ಸಂರಚನಾ kccgst_buffer pending_kccgst;
     /* Output. */
-    darray_char kccgst[_KCCGST_NUM_ENTRIES];
+    darray_char kccgst[KCCGST_ಅಂಕೆ_ENTRIES];
 };
 
-static struct sval
-strip_spaces(struct sval v)
+ಸ್ಥಿರ ಸಂರಚನಾ sval
+strip_spaces(ಸಂರಚನಾ sval v)
 {
-    while (v.len > 0 && is_space(v.start[0])) { v.len--; v.start++; }
-    while (v.len > 0 && is_space(v.start[v.len - 1])) v.len--;
-    return v;
+    ಯಾವತ್ (v.len > 0 && is_space(v.start[0])) { v.len--; v.start++; }
+    ಯಾವತ್ (v.len > 0 && is_space(v.start[v.len - 1])) v.len--;
+    ಪ್ರತ್ಯಾಗಮ v;
 }
 
-static darray_matched_sval
-split_comma_separated_mlvo(struct xkb_context *ctx,
-                           enum rules_mlvo mlvo, const char *s)
+ಸ್ಥಿರ darray_matched_sval
+split_comma_separated_mlvo(ಸಂರಚನಾ xkb_context *ctx,
+                           ಗಣನಾ rules_mlvo mlvo, ಧ್ರುವ ವರ್ಣ *s)
 {
     darray_matched_sval arr = darray_new();
 
@@ -369,155 +369,155 @@ split_comma_separated_mlvo(struct xkb_context *ctx,
      * least one value, e.g. "" -> { "" } and "," -> { "", "" }.
      */
 
-    if (!s) {
-        ensure_at_least_one_value:
+    ಯದಿ (!s) {
+        ensure_at_least_one_ಮೌಲ್ಯ:
         /* Label followed by a declaration is a C23 extension */ ;
 
-        struct matched_sval val = {
-            .sval = SVAL(NULL, 0),
+        ಸಂರಚನಾ matched_sval val = {
+            .sval = SVAL(ರಿಕ್ತ, 0),
             .layouts = (xkb_layout_mask_t)XKB_OPTION_LAYOUT_MASK_GLOBAL,
             .matched = 0
         };
         darray_append(arr, val);
-        return arr;
+        ಪ್ರತ್ಯಾಗಮ arr;
     }
 
-    while (true) {
-        struct matched_sval val = {
+    ಯಾವತ್ (true) {
+        ಸಂರಚನಾ matched_sval val = {
             .sval = SVAL(s, 0),
             .layouts = (xkb_layout_mask_t)XKB_OPTION_LAYOUT_MASK_GLOBAL,
             .matched = 0,
         };
-        while (*s != '\0' && *s != ',' && *s != OPTIONS_GROUP_SPECIFIER_PREFIX) {
+        ಯಾವತ್ (*s != '\0' && *s != ',' && *s != OPTIONS_GROUP_SPECIFIER_PREFIX) {
             s++;
             val.sval.len++;
         }
         val.sval = strip_spaces(val.sval);
 
-        if (*s == OPTIONS_GROUP_SPECIFIER_PREFIX) {
+        ಯದಿ (*s == OPTIONS_GROUP_SPECIFIER_PREFIX) {
             /* Handle numeric layout index */
             s++;
-            const char* const layout_start = s;
+            ಧ್ರುವ ವರ್ಣ* ಧ್ರುವ layout_start = s;
             xkb_layout_index_t layout = XKB_LAYOUT_INVALID;
 
-            int count = parse_dec_to_uint32_t(s, SIZE_MAX, &layout);
-            if (count > 0) {
+            ಪೂರ್ಣಾಙ್ಕ ಎಣಿಕೆ = parse_dec_to_uint32_t(s, SIZE_MAX, &layout);
+            ಯದಿ (ಎಣಿಕೆ > 0) {
                 /* Note: 1-indexed layout */
-                s += count;
+                s += ಎಣಿಕೆ;
                 static_assert(XKB_MAX_GROUPS == 32, "Invalid shift");
-                if (layout == 0 || layout > XKB_MAX_GROUPS) {
+                ಯದಿ (layout == 0 || layout > XKB_MAX_GROUPS) {
                     log_err(ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                             "Invalid layout index %"PRIu32" "
                             "for the RMVLO component: \"%.*s\"\n", layout,
-                            (unsigned int) val.sval.len, val.sval.start);
-                } else if (mlvo != MLVO_OPTION) {
+                            (unsigned ಪೂರ್ಣಾಙ್ಕ) val.sval.len, val.sval.start);
+                } ಅನ್ಯಥಾ ಯದಿ (mlvo != MLVO_OPTION) {
                     log_warn(ctx, XKB_LOG_MESSAGE_NO_ID,
                              "Layout index %"PRIu32" is not supported for "
                              "the RMLVO component: \"%.*s\"\n", layout,
-                             (unsigned int) val.sval.len, val.sval.start);
-                } else {
+                             (unsigned ಪೂರ್ಣಾಙ್ಕ) val.sval.len, val.sval.start);
+                } ಅನ್ಯಥಾ {
                     val.layouts = (UINT32_C(1) << (layout - 1));
                 }
             }
 
             /* Consume until reaching next item or end of string */
-            const char* const layout_index_end = s;
-            while (*s != '\0' && *s != ',') { s++; }
-            if (count <= 0 || layout_index_end != s) {
+            ಧ್ರುವ ವರ್ಣ* ಧ್ರುವ layout_index_end = s;
+            ಯಾವತ್ (*s != '\0' && *s != ',') { s++; }
+            ಯದಿ (ಎಣಿಕೆ <= 0 || layout_index_end != s) {
                 log_err(ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                         "Invalid layout index \"%.*s\" for the RMLVO "
                         "component \"%.*s\"; discarding specifier.\n",
-                        (unsigned int) (s - layout_start), layout_start,
-                        (unsigned int) val.sval.len, val.sval.start);
+                        (unsigned ಪೂರ್ಣಾಙ್ಕ) (s - layout_start), layout_start,
+                        (unsigned ಪೂರ್ಣಾಙ್ಕ) val.sval.len, val.sval.start);
             }
         }
 
-        if (val.sval.len || mlvo != MLVO_OPTION) {
-            if (mlvo == MLVO_OPTION) {
+        ಯದಿ (val.sval.len || mlvo != MLVO_OPTION) {
+            ಯದಿ (mlvo == MLVO_OPTION) {
                 /* Check for previous entry */
-                struct matched_sval *prev;
+                ಸಂರಚನಾ matched_sval *prev;
                 darray_foreach(prev, arr) {
-                    if (svaleq(prev->sval, val.sval)) {
+                    ಯದಿ (svaleq(prev->sval, val.sval)) {
                         /* Merge options */
-                        if (val.layouts ==
+                        ಯದಿ (val.layouts ==
                             (xkb_layout_mask_t)XKB_OPTION_LAYOUT_MASK_GLOBAL) {
                             /* Global option overrides layout-specific ones */
                             prev->layouts = val.layouts;
-                        } else if (prev->layouts != (xkb_layout_mask_t)
+                        } ಅನ್ಯಥಾ ಯದಿ (prev->layouts != (xkb_layout_mask_t)
                                    XKB_OPTION_LAYOUT_MASK_GLOBAL) {
                             /* Layout-specific option cannot override global */
                             prev->layouts |= val.layouts;
                         }
-                        goto next_value;
+                        ಗಚ್ಛ next_ಮೌಲ್ಯ;
                     }
                 }
             }
             darray_append(arr, val);
         }
 
-next_value:
-        if (*s == '\0') break;
-        if (*s == ',') s++;
+next_ಮೌಲ್ಯ:
+        ಯದಿ (*s == '\0') ಭಙ್ಗ;
+        ಯದಿ (*s == ',') s++;
     }
 
-    if (darray_empty(arr))
-        goto ensure_at_least_one_value;
+    ಯದಿ (darray_empty(arr))
+        ಗಚ್ಛ ensure_at_least_one_ಮೌಲ್ಯ;
 
-    return arr;
+    ಪ್ರತ್ಯಾಗಮ arr;
 }
 
-static struct matcher *
-matcher_new_from_rmlvo(const struct xkb_rmlvo_builder *rmlvo, const char **rules)
+ಸ್ಥಿರ ಸಂರಚನಾ matcher *
+matcher_new_from_rmlvo(ಧ್ರುವ ಸಂರಚನಾ xkb_rmlvo_builder *rmlvo, ಧ್ರುವ ವರ್ಣ **rules)
 {
-    struct matcher *m = calloc(1, sizeof(*m));
-    if (!m)
-        return NULL;
+    ಸಂರಚನಾ matcher *m = calloc(1, ಪರಿಮಾಣ(*m));
+    ಯದಿ (!m)
+        ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 
     m->ctx = rmlvo->ctx;
 
     /* Sanitize */
-    struct xkb_rule_names names = {
+    ಸಂರಚನಾ xkb_rule_names names = {
         .rules = rmlvo->rules,
         .model = rmlvo->model,
         /* Initial values only used to detect missing entries */
-        .layout = (darray_empty(rmlvo->layouts)) ? NULL : "x",
-        .variant = (darray_empty(rmlvo->layouts)) ? NULL : "x",
-        .options = (darray_empty(rmlvo->options)) ? NULL : "x",
+        .layout = (darray_empty(rmlvo->layouts)) ? ರಿಕ್ತ : "x",
+        .variant = (darray_empty(rmlvo->layouts)) ? ರಿಕ್ತ : "x",
+        .options = (darray_empty(rmlvo->options)) ? ರಿಕ್ತ : "x",
     };
-    const enum RMLVO changed = xkb_context_sanitize_rule_names(rmlvo->ctx,
+    ಧ್ರುವ ಗಣನಾ RMLVO changed = xkb_context_sanitize_rule_names(rmlvo->ctx,
                                                                &names);
 
     /* Initialize matcher with sanitized names, if relevant */
-    if (changed & RMLVO_RULES) {
+    ಯದಿ (changed & RMLVO_RULES) {
         *rules = names.rules;
-    } else {
+    } ಅನ್ಯಥಾ {
         *rules = rmlvo->rules;
     }
 
-    if (changed & RMLVO_MODEL) {
+    ಯದಿ (changed & RMLVO_MODEL) {
         m->rmlvo.model.sval.start = names.model;
-    } else {
+    } ಅನ್ಯಥಾ {
         m->rmlvo.model.sval.start = rmlvo->model;
     }
     m->rmlvo.model.sval.len = strlen_safe(rmlvo->model);
     m->rmlvo.model.layouts = (xkb_layout_mask_t)XKB_OPTION_LAYOUT_MASK_GLOBAL;
 
-    assert((changed & RMLVO_LAYOUT) || !(changed & RMLVO_VARIANT));
-    if (changed & RMLVO_LAYOUT) {
+    ಪ್ರತಿಜ್ಞಾ((changed & RMLVO_LAYOUT) || !(changed & RMLVO_VARIANT));
+    ಯದಿ (changed & RMLVO_LAYOUT) {
         /* Layout and variant are tied together */
         m->rmlvo.layouts = split_comma_separated_mlvo(rmlvo->ctx, MLVO_LAYOUT,
                                                       names.layout);
         m->rmlvo.variants = split_comma_separated_mlvo(rmlvo->ctx, MLVO_VARIANT,
                                                        names.variant);
-        if (darray_size(m->rmlvo.layouts) > darray_size(m->rmlvo.variants)) {
+        ಯದಿ (darray_size(m->rmlvo.layouts) > darray_size(m->rmlvo.variants)) {
             /* Do not warn if no variants was provided */
-            if (!isempty(names.variant))
+            ಯದಿ (!isempty(names.variant))
                 log_warn(m->ctx, XKB_LOG_MESSAGE_NO_ID,
                          "More layouts than variants: \"%s\" vs. \"%s\".\n",
                          names.layout ? names.layout : "(none)",
                          names.variant ? names.variant : "(none)");
             darray_resize0(m->rmlvo.variants, darray_size(m->rmlvo.layouts));
-        } else if (darray_size(m->rmlvo.layouts) < darray_size(m->rmlvo.variants)) {
+        } ಅನ್ಯಥಾ ಯದಿ (darray_size(m->rmlvo.layouts) < darray_size(m->rmlvo.variants)) {
             log_err(m->ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Less layouts than variants: \"%s\" vs. \"%s\".\n",
                     names.layout ? names.layout : "(none)",
@@ -525,10 +525,10 @@ matcher_new_from_rmlvo(const struct xkb_rmlvo_builder *rmlvo, const char **rules
             darray_resize(m->rmlvo.variants, darray_size(m->rmlvo.layouts));
             darray_shrink(m->rmlvo.variants);
         }
-    } else {
-        struct xkb_rmlvo_builder_layout *layout;
+    } ಅನ್ಯಥಾ {
+        ಸಂರಚನಾ xkb_rmlvo_builder_layout *layout;
         darray_foreach(layout, rmlvo->layouts) {
-            struct matched_sval val = {
+            ಸಂರಚನಾ matched_sval val = {
                 .sval = SVAL(layout->layout, strlen_safe(layout->layout)),
                 .layouts = (xkb_layout_mask_t)XKB_OPTION_LAYOUT_MASK_GLOBAL,
                 .matched = 0
@@ -540,13 +540,13 @@ matcher_new_from_rmlvo(const struct xkb_rmlvo_builder *rmlvo, const char **rules
         }
     }
 
-    if (changed & RMLVO_OPTIONS) {
+    ಯದಿ (changed & RMLVO_OPTIONS) {
         m->rmlvo.options = split_comma_separated_mlvo(rmlvo->ctx, MLVO_OPTION,
                                                       names.options);
-    } else {
-        struct xkb_rmlvo_builder_option *option;
+    } ಅನ್ಯಥಾ {
+        ಸಂರಚನಾ xkb_rmlvo_builder_option *option;
         darray_foreach(option, rmlvo->options) {
-            struct matched_sval val = {
+            ಸಂರಚನಾ matched_sval val = {
                 .sval = SVAL(option->option, strlen_safe(option->option)),
                 .layouts = option->layouts,
                 .matched = 0
@@ -555,16 +555,16 @@ matcher_new_from_rmlvo(const struct xkb_rmlvo_builder *rmlvo, const char **rules
         }
     }
 
-    return m;
+    ಪ್ರತ್ಯಾಗಮ m;
 }
 
-static struct matcher *
-matcher_new_from_names(struct xkb_context *ctx,
-            const struct xkb_rule_names *rmlvo)
+ಸ್ಥಿರ ಸಂರಚನಾ matcher *
+matcher_new_from_names(ಸಂರಚನಾ xkb_context *ctx,
+            ಧ್ರುವ ಸಂರಚನಾ xkb_rule_names *rmlvo)
 {
-    struct matcher *m = calloc(1, sizeof(*m));
-    if (!m)
-        return NULL;
+    ಸಂರಚನಾ matcher *m = calloc(1, ಪರಿಮಾಣ(*m));
+    ಯದಿ (!m)
+        ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 
     m->ctx = ctx;
     m->rmlvo.model.sval.start = rmlvo->model;
@@ -574,15 +574,15 @@ matcher_new_from_names(struct xkb_context *ctx,
     m->rmlvo.variants = split_comma_separated_mlvo(ctx, MLVO_VARIANT, rmlvo->variant);
     m->rmlvo.options = split_comma_separated_mlvo(ctx, MLVO_OPTION, rmlvo->options);
 
-    if (darray_size(m->rmlvo.layouts) > darray_size(m->rmlvo.variants)) {
+    ಯದಿ (darray_size(m->rmlvo.layouts) > darray_size(m->rmlvo.variants)) {
         /* Do not warn if no variants was provided */
-        if (!isempty(rmlvo->variant))
+        ಯದಿ (!isempty(rmlvo->variant))
             log_warn(ctx, XKB_LOG_MESSAGE_NO_ID,
                      "More layouts than variants: \"%s\" vs. \"%s\".\n",
                      rmlvo->layout ? rmlvo->layout : "(none)",
                      rmlvo->variant ? rmlvo->variant : "(none)");
         darray_resize0(m->rmlvo.variants, darray_size(m->rmlvo.layouts));
-    } else if (darray_size(m->rmlvo.layouts) < darray_size(m->rmlvo.variants)) {
+    } ಅನ್ಯಥಾ ಯದಿ (darray_size(m->rmlvo.layouts) < darray_size(m->rmlvo.variants)) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "Less layouts than variants: \"%s\" vs. \"%s\".\n",
                 rmlvo->layout ? rmlvo->layout : "(none)",
@@ -591,109 +591,109 @@ matcher_new_from_names(struct xkb_context *ctx,
         darray_shrink(m->rmlvo.variants);
     }
 
-    return m;
+    ಪ್ರತ್ಯಾಗಮ m;
 }
 
-static void
-matcher_free(struct matcher *m)
+ಸ್ಥಿರ ಶೂನ್ಯ
+matcher_free(ಸಂರಚನಾ matcher *m)
 {
-    if (!m)
-        return;
+    ಯದಿ (!m)
+        ಪ್ರತ್ಯಾಗಮ;
     darray_free(m->rmlvo.layouts);
     darray_free(m->rmlvo.variants);
     darray_free(m->rmlvo.options);
-    struct group *group;
+    ಸಂರಚನಾ group *group;
     darray_foreach(group, m->groups)
         darray_free(group->elements);
     darray_free(m->pending_kccgst.buffer);
     darray_free(m->pending_kccgst.slices);
-    for (kccgst_index_t i = 0; i < (kccgst_index_t) _KCCGST_NUM_ENTRIES; i++)
+    ಪ್ರತಿ (kccgst_index_t i = 0; i < (kccgst_index_t) KCCGST_ಅಂಕೆ_ENTRIES; i++)
         darray_free(m->kccgst[i]);
     darray_free(m->groups);
-    free(m);
+    ಮುಕ್ತ(m);
 }
 
-static void
-matcher_group_start_new(struct matcher *m, struct sval name)
+ಸ್ಥಿರ ಶೂನ್ಯ
+matcher_group_start_new(ಸಂರಚನಾ matcher *m, ಸಂರಚನಾ sval name)
 {
-    struct group group = { .name = name, .elements = darray_new() };
+    ಸಂರಚನಾ group group = { .name = name, .elements = darray_new() };
     darray_append(m->groups, group);
 }
 
-static void
-matcher_group_add_element(struct matcher *m, struct scanner *s,
-                          struct sval element)
+ಸ್ಥಿರ ಶೂನ್ಯ
+matcher_group_add_element(ಸಂರಚನಾ matcher *m, ಸಂರಚನಾ scanner *s,
+                          ಸಂರಚನಾ sval element)
 {
     darray_append(darray_item(m->groups, darray_size(m->groups) - 1).elements,
                   element);
 }
 
-static bool
-read_rules_file(struct xkb_context *ctx,
-                struct matcher *matcher,
-                unsigned int include_depth,
+ಸ್ಥಿರ bool
+read_rules_file(ಸಂರಚನಾ xkb_context *ctx,
+                ಸಂರಚನಾ matcher *matcher,
+                unsigned ಪೂರ್ಣಾಙ್ಕ include_depth,
                 FILE *file,
-                const char *path);
+                ಧ್ರುವ ವರ್ಣ *path);
 
-static void
-matcher_include(struct matcher *m, struct scanner *parent_scanner,
-                unsigned int include_depth,
-                struct sval inc)
+ಸ್ಥಿರ ಶೂನ್ಯ
+matcher_include(ಸಂರಚನಾ matcher *m, ಸಂರಚನಾ scanner *parent_scanner,
+                unsigned ಪೂರ್ಣಾಙ್ಕ include_depth,
+                ಸಂರಚನಾ sval inc)
 {
-    if (include_depth >= MAX_INCLUDE_DEPTH) {
+    ಯದಿ (include_depth >= MAX_INCLUDE_DEPTH) {
         scanner_err(parent_scanner, XKB_LOG_MESSAGE_NO_ID,
                     "maximum include depth (%u) exceeded; "
                     "maybe there is an include loop?",
                     MAX_INCLUDE_DEPTH);
-        return;
+        ಪ್ರತ್ಯಾಗಮ;
     }
 
-    const char *stmt_file = inc.start;
+    ಧ್ರುವ ವರ್ಣ *stmt_file = inc.start;
     size_t stmt_file_len = inc.len;
 
     /* Process %-expansion, if any */
-    char buf[PATH_MAX] = {0};
-    const ssize_t expanded = expand_path(m->ctx, parent_scanner->file_name,
+    ವರ್ಣ buf[PATH_MAX] = {0};
+    ಧ್ರುವ ssize_t expanded = expand_path(m->ctx, parent_scanner->file_name,
                                          stmt_file, stmt_file_len,
                                          FILE_TYPE_RULES,
-                                         buf, sizeof(buf));
-    if (expanded < 0) {
+                                         buf, ಪರಿಮಾಣ(buf));
+    ಯದಿ (expanded < 0) {
         /* Error */
-        return;
-    } else if (expanded > 0) {
+        ಪ್ರತ್ಯಾಗಮ;
+    } ಅನ್ಯಥಾ ಯದಿ (expanded > 0) {
         /* %-expanded */
         stmt_file = buf;
         stmt_file_len = (size_t) expanded;
-        assert(stmt_file[stmt_file_len] == '\0');
+        ಪ್ರತಿಜ್ಞಾ(stmt_file[stmt_file_len] == '\0');
     }
 
     /* Lookup the first candidate */
     FILE* file;
-    unsigned int offset = 0;
-    const bool absolute_path = is_absolute_path(stmt_file);
-    if (absolute_path) {
+    unsigned ಪೂರ್ಣಾಙ್ಕ offset = 0;
+    ಧ್ರುವ bool absolute_path = is_absolute_path(stmt_file);
+    ಯದಿ (absolute_path) {
         /* Absolute path: no need for lookup in XKB paths */
-        if (!expanded) {
+        ಯದಿ (!expanded) {
             /* No %expansion: ensure it’s NULL-terminated */
-            if (stmt_file_len < sizeof(buf)) {
+            ಯದಿ (stmt_file_len < ಪರಿಮಾಣ(buf)) {
                 memcpy(buf, stmt_file, stmt_file_len);
                 buf[stmt_file_len] = '\0';
                 stmt_file = buf;
-            } else {
+            } ಅನ್ಯಥಾ {
                 log_err(m->ctx, XKB_ERROR_INVALID_PATH,
                         "Path is too long: %zu > %zu, got raw path: %.*s\n",
-                        stmt_file_len, sizeof(buf),
-                        (unsigned int) stmt_file_len, stmt_file);
-                return;
+                        stmt_file_len, ಪರಿಮಾಣ(buf),
+                        (unsigned ಪೂರ್ಣಾಙ್ಕ) stmt_file_len, stmt_file);
+                ಪ್ರತ್ಯಾಗಮ;
             }
-        } else {
+        } ಅನ್ಯಥಾ {
             /* %-expansion is always NULL-terminated */
-            assert(stmt_file[stmt_file_len] == '\0');
+            ಪ್ರತಿಜ್ಞಾ(stmt_file[stmt_file_len] == '\0');
         }
         file = fopen(stmt_file, "rb");
-    } else {
+    } ಅನ್ಯಥಾ {
         /* Relative path: lookup the first XKB path */
-        if (unlikely(expanded)) {
+        ಯದಿ (unlikely(expanded)) {
             /*
              * Relative path after expansion
              *
@@ -706,97 +706,97 @@ matcher_include(struct matcher *m, struct scanner *parent_scanner,
              * - this is an edge case;
              * we simply make the lookup fail.
              */
-            file = NULL;
-        } else {
+            file = ರಿಕ್ತ;
+        } ಅನ್ಯಥಾ {
             file = FindFileInXkbPath(m->ctx, parent_scanner->file_name,
                                      stmt_file, stmt_file_len, FILE_TYPE_RULES,
-                                     buf, sizeof(buf), &offset, true);
+                                     buf, ಪರಿಮಾಣ(buf), &offset, true);
         }
     }
 
-    while (file) {
-        assert(strlen_safe(buf) < sizeof(buf));
+    ಯಾವತ್ (file) {
+        ಪ್ರತಿಜ್ಞಾ(strlen_safe(buf) < ಪರಿಮಾಣ(buf));
         bool ret = read_rules_file(m->ctx, m, include_depth + 1, file, buf);
         fclose(file);
-        if (ret)
-            return;
+        ಯದಿ (ret)
+            ಪ್ರತ್ಯಾಗಮ;
         /* Failed to parse rules or get all the components */
         log_err(m->ctx, XKB_LOG_MESSAGE_NO_ID,
                 "No components returned from included XKB rules \"%s\"\n",
                 buf);
 
-        if (absolute_path) {
+        ಯದಿ (absolute_path) {
             /* There is no point to search further if the path is absolute */
-            break;
+            ಭಙ್ಗ;
         }
 
         /* Try next XKB path */
         offset++;
         file = FindFileInXkbPath(m->ctx, parent_scanner->file_name,
                                  stmt_file, stmt_file_len, FILE_TYPE_RULES,
-                                 buf, sizeof(buf), &offset, true);
+                                 buf, ಪರಿಮಾಣ(buf), &offset, true);
     }
 
     log_err(m->ctx, XKB_LOG_MESSAGE_NO_ID,
             "Failed to open included XKB rules \"%.*s\"\n",
-            (unsigned int) stmt_file_len, stmt_file);
+            (unsigned ಪೂರ್ಣಾಙ್ಕ) stmt_file_len, stmt_file);
 }
 
-static void
-matcher_mapping_start_new(struct matcher *m)
+ಸ್ಥಿರ ಶೂನ್ಯ
+matcher_mapping_start_new(ಸಂರಚನಾ matcher *m)
 {
-    for (mlvo_index_t i = 0; i < (mlvo_index_t) _MLVO_NUM_ENTRIES; i++)
-        m->mapping.mlvo_at_pos[i] = _MLVO_NUM_ENTRIES;
-    for (kccgst_index_t i = 0; i < (kccgst_index_t) _KCCGST_NUM_ENTRIES; i++)
-        m->mapping.kccgst_at_pos[i] = _KCCGST_NUM_ENTRIES;
+    ಪ್ರತಿ (mlvo_index_t i = 0; i < (mlvo_index_t) MLVO_ಅಂಕೆ_ENTRIES; i++)
+        m->mapping.mlvo_at_pos[i] = MLVO_ಅಂಕೆ_ENTRIES;
+    ಪ್ರತಿ (kccgst_index_t i = 0; i < (kccgst_index_t) KCCGST_ಅಂಕೆ_ENTRIES; i++)
+        m->mapping.kccgst_at_pos[i] = KCCGST_ಅಂಕೆ_ENTRIES;
     m->mapping.has_multiple_layouts = false;
     m->mapping.layout_idx = m->mapping.variant_idx = XKB_LAYOUT_INVALID;
-    m->mapping.num_mlvo = m->mapping.num_kccgst = 0;
+    m->mapping.ಅಂಕೆ_mlvo = m->mapping.ಅಂಕೆ_kccgst = 0;
     m->mapping.defined_mlvo_mask = 0;
     m->mapping.defined_kccgst_mask = 0;
     m->mapping.active = true;
 }
 
 /** Caller must check prefix `[` and initialize `out` to XKB_LAYOUT_INVALID */
-static int
-parse_layout_int_index_tail(const char *s, size_t max_len,
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+parse_layout_int_index_tail(ಧ್ರುವ ವರ್ಣ *s, size_t max_len,
                             xkb_layout_index_t *out)
 {
-    if (max_len < 3)
-        return -1;
+    ಯದಿ (max_len < 3)
+        ಪ್ರತ್ಯಾಗಮ -1;
     uint32_t val = 0;
-    const int count = parse_dec_to_uint32_t(&s[1], max_len - 2, &val);
-    if (count <= 0 || s[1 + count] != ']' || val == 0 || val > XKB_MAX_GROUPS)
-        return -1;
+    ಧ್ರುವ ಪೂರ್ಣಾಙ್ಕ ಎಣಿಕೆ = parse_dec_to_uint32_t(&s[1], max_len - 2, &val);
+    ಯದಿ (ಎಣಿಕೆ <= 0 || s[1 + ಎಣಿಕೆ] != ']' || val == 0 || val > XKB_MAX_GROUPS)
+        ಪ್ರತ್ಯಾಗಮ -1;
     /* To zero-based index. */
     *out = val - 1;
-    return count + 2; /* == length "[index]" */
+    ಪ್ರತ್ಯಾಗಮ ಎಣಿಕೆ + 2; /* == length "[index]" */
 }
 
 /* Parse Kccgst layout index:
  * "[%i]" or "[n]", where "n" is a decimal number */
-static int
-extract_layout_index(const char *s, size_t max_len, xkb_layout_index_t *out)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+extract_layout_index(ಧ್ರುವ ವರ್ಣ *s, size_t max_len, xkb_layout_index_t *out)
 {
     /* This function is pretty stupid, but works for now. */
     *out = XKB_LAYOUT_INVALID;
-    if (max_len < 3 || s[0] != '[')
-        return -1;
-    if (s[2] == ']' && s[1] >= '1' && s[1] <= '9') {
+    ಯದಿ (max_len < 3 || s[0] != '[')
+        ಪ್ರತ್ಯಾಗಮ -1;
+    ಯದಿ (s[2] == ']' && s[1] >= '1' && s[1] <= '9') {
         /* Small numeric index */
         *out = (xkb_layout_index_t)(s[1] - '1');
-        return 3;
+        ಪ್ರತ್ಯಾಗಮ 3;
     }
-    if (max_len > 3 && s[1] == '%' && s[2] == 'i' && s[3] == ']') {
+    ಯದಿ (max_len > 3 && s[1] == '%' && s[2] == 'i' && s[3] == ']') {
         /* Special index: %i */
-        return 4; /* == length "[%i]" */
+        ಪ್ರತ್ಯಾಗಮ 4; /* == length "[%i]" */
     }
     /* Fallback: any numeric index (unlikely) */
-    return parse_layout_int_index_tail(s, max_len, out);
+    ಪ್ರತ್ಯಾಗಮ parse_layout_int_index_tail(s, max_len, out);
 }
 
 /* Special layout indices */
-enum layout_index_ranges {
+ಗಣನಾ layout_index_ranges {
     LAYOUT_INDEX_SINGLE = XKB_LAYOUT_INVALID - 5,
     LAYOUT_INDEX_FIRST,
     LAYOUT_INDEX_LATER,
@@ -820,30 +820,30 @@ static_assert((xkb_layout_index_t) LAYOUT_INDEX_SINGLE <
               "Special indices must respect certain order");
 
 /* Parse index of layout/variant in MLVO mapping */
-static bool
-extract_mapping_layout_index(const char *s, size_t max_len,
+ಸ್ಥಿರ bool
+extract_mapping_layout_index(ಧ್ರುವ ವರ್ಣ *s, size_t max_len,
                              xkb_layout_index_t *out)
 {
     /* Check for minimal `[` + index + `]` */
-    if (max_len < 3 || s[0] != '[') {
+    ಯದಿ (max_len < 3 || s[0] != '[') {
         *out = XKB_LAYOUT_INVALID;
-        return false;
+        ಪ್ರತ್ಯಾಗಮ false;
     }
 
     /* Small numeric index */
-    if (max_len == 3 && s[2] == ']' && s[1] >= '1' && s[1] <= '9') {
+    ಯದಿ (max_len == 3 && s[2] == ']' && s[1] >= '1' && s[1] <= '9') {
         *out = (xkb_layout_index_t)(s[1] - '1');
-        return true;
+        ಪ್ರತ್ಯಾಗಮ true;
     }
 
     /* Named indices ranges */
-    static const struct {
-        const char* name;
+    ಸ್ಥಿರ ಧ್ರುವ ಸಂರಚನಾ {
+        ಧ್ರುವ ವರ್ಣ* name;
         size_t size;
-        xkb_layout_index_t value;
+        xkb_layout_index_t ಮೌಲ್ಯ;
     } names[] = {
-        #define INDEX_RANGE(tail, value) \
-            { (tail), sizeof(tail), (xkb_layout_index_t)(value) }
+        #define INDEX_RANGE(tail, ಮೌಲ್ಯ) \
+            { (tail), ಪರಿಮಾಣ(tail), (xkb_layout_index_t)(ಮೌಲ್ಯ) }
         INDEX_RANGE("single]",   LAYOUT_INDEX_SINGLE),
         INDEX_RANGE("first]",    LAYOUT_INDEX_FIRST),
         INDEX_RANGE("later]",    LAYOUT_INDEX_LATER),
@@ -852,125 +852,125 @@ extract_mapping_layout_index(const char *s, size_t max_len,
         #undef INDEX_RANGE
     };
 
-    for (size_t k = 0; k < ARRAY_SIZE(names); k++) {
-        if (max_len == names[k].size &&
+    ಪ್ರತಿ (size_t k = 0; k < ARRAY_SIZE(names); k++) {
+        ಯದಿ (max_len == names[k].size &&
             memcmp(&s[1], names[k].name, names[k].size - 1) == 0) {
-            *out = names[k].value;
-            return true;
+            *out = names[k].ಮೌಲ್ಯ;
+            ಪ್ರತ್ಯಾಗಮ true;
         }
     }
 
     /* Fallback: any numeric index (unlikely) */
     *out = XKB_LAYOUT_INVALID;
-    const int count = parse_layout_int_index_tail(s, max_len, out);
-    return count > 0 && (size_t)count == max_len;
+    ಧ್ರುವ ಪೂರ್ಣಾಙ್ಕ ಎಣಿಕೆ = parse_layout_int_index_tail(s, max_len, out);
+    ಪ್ರತ್ಯಾಗಮ ಎಣಿಕೆ > 0 && (size_t)ಎಣಿಕೆ == max_len;
 }
 
-static inline bool
-is_mlvo_mask_defined(struct matcher *m, enum rules_mlvo mlvo)
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ bool
+is_mlvo_mask_defined(ಸಂರಚನಾ matcher *m, ಗಣನಾ rules_mlvo mlvo)
 {
-    return m->mapping.defined_mlvo_mask & (1u << mlvo);
+    ಪ್ರತ್ಯಾಗಮ m->mapping.defined_mlvo_mask & (1u << mlvo);
 }
 
-static void
-matcher_mapping_set_mlvo(struct matcher *m, struct scanner *s,
-                         struct sval ident)
+ಸ್ಥಿರ ಶೂನ್ಯ
+matcher_mapping_set_mlvo(ಸಂರಚನಾ matcher *m, ಸಂರಚನಾ scanner *s,
+                         ಸಂರಚನಾ sval ident)
 {
-    enum rules_mlvo mlvo;
-    struct sval mlvo_sval;
+    ಗಣನಾ rules_mlvo mlvo;
+    ಸಂರಚನಾ sval mlvo_sval;
 
-    for (mlvo = 0; mlvo < _MLVO_NUM_ENTRIES; mlvo++) {
+    ಪ್ರತಿ (mlvo = 0; mlvo < MLVO_ಅಂಕೆ_ENTRIES; mlvo++) {
         mlvo_sval = rules_mlvo_svals[mlvo];
 
-        if (svaleq_prefix(mlvo_sval, ident))
-            break;
+        ಯದಿ (svaleq_prefix(mlvo_sval, ident))
+            ಭಙ್ಗ;
     }
 
     /* Not found. */
-    if (mlvo >= _MLVO_NUM_ENTRIES) {
+    ಯದಿ (mlvo >= MLVO_ಅಂಕೆ_ENTRIES) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid mapping: \"%.*s\" is not a valid value here; "
                     "ignoring rule set",
-                    (unsigned int) ident.len, ident.start);
+                    (unsigned ಪೂರ್ಣಾಙ್ಕ) ident.len, ident.start);
         m->mapping.active = false;
-        return;
+        ಪ್ರತ್ಯಾಗಮ;
     }
 
-    if (is_mlvo_mask_defined(m, mlvo)) {
+    ಯದಿ (is_mlvo_mask_defined(m, mlvo)) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid mapping: \"%.*s\" appears twice on the same line; "
                     "ignoring rule set",
-                    (unsigned int) mlvo_sval.len, mlvo_sval.start);
+                    (unsigned ಪೂರ್ಣಾಙ್ಕ) mlvo_sval.len, mlvo_sval.start);
         m->mapping.active = false;
-        return;
+        ಪ್ರತ್ಯಾಗಮ;
     }
 
     /* If there are leftovers still, it must be an index. */
-    if (mlvo_sval.len < ident.len) {
+    ಯದಿ (mlvo_sval.len < ident.len) {
         xkb_layout_index_t idx;
-        if (!extract_mapping_layout_index(ident.start + mlvo_sval.len,
+        ಯದಿ (!extract_mapping_layout_index(ident.start + mlvo_sval.len,
                                           ident.len - mlvo_sval.len, &idx)) {
             scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                         "invalid mapping: \"%.*s\" may only be followed by a "
                         "valid group index; ignoring rule set",
-                        (unsigned int) mlvo_sval.len, mlvo_sval.start);
+                        (unsigned ಪೂರ್ಣಾಙ್ಕ) mlvo_sval.len, mlvo_sval.start);
             m->mapping.active = false;
-            return;
+            ಪ್ರತ್ಯಾಗಮ;
         }
 
-        if (mlvo == MLVO_LAYOUT) {
+        ಯದಿ (mlvo == MLVO_LAYOUT) {
             m->mapping.layout_idx = idx;
         }
-        else if (mlvo == MLVO_VARIANT) {
+        ಅನ್ಯಥಾ ಯದಿ (mlvo == MLVO_VARIANT) {
             m->mapping.variant_idx = idx;
         }
-        else {
+        ಅನ್ಯಥಾ {
             scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                         "invalid mapping: \"%.*s\" cannot be followed by a group "
                         "index; ignoring rule set",
-                        (unsigned int) mlvo_sval.len, mlvo_sval.start);
+                        (unsigned ಪೂರ್ಣಾಙ್ಕ) mlvo_sval.len, mlvo_sval.start);
             m->mapping.active = false;
-            return;
+            ಪ್ರತ್ಯಾಗಮ;
         }
-    } else if (mlvo == MLVO_LAYOUT) {
+    } ಅನ್ಯಥಾ ಯದಿ (mlvo == MLVO_LAYOUT) {
         m->mapping.layout_idx = (xkb_layout_index_t) LAYOUT_INDEX_SINGLE;
-    } else if (mlvo == MLVO_VARIANT) {
+    } ಅನ್ಯಥಾ ಯದಿ (mlvo == MLVO_VARIANT) {
         m->mapping.variant_idx = (xkb_layout_index_t) LAYOUT_INDEX_SINGLE;
     }
 
     /* Check that if both layout and variant are defined, then they must have
      * the same index */
-    if (((mlvo == MLVO_LAYOUT && is_mlvo_mask_defined(m, MLVO_VARIANT)) ||
+    ಯದಿ (((mlvo == MLVO_LAYOUT && is_mlvo_mask_defined(m, MLVO_VARIANT)) ||
          (mlvo == MLVO_VARIANT && is_mlvo_mask_defined(m, MLVO_LAYOUT))) &&
         m->mapping.layout_idx != m->mapping.variant_idx) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid mapping: \"layout\" index must be the same as the "
                     "\"variant\" index");
         m->mapping.active = false;
-        return;
+        ಪ್ರತ್ಯಾಗಮ;
     }
 
-    m->mapping.mlvo_at_pos[m->mapping.num_mlvo] = mlvo;
+    m->mapping.mlvo_at_pos[m->mapping.ಅಂಕೆ_mlvo] = mlvo;
     m->mapping.defined_mlvo_mask |= (mlvo_mask_t) 1u << mlvo;
-    m->mapping.num_mlvo++;
+    m->mapping.ಅಂಕೆ_mlvo++;
 }
 
-static void
-matcher_mapping_set_layout_bounds(struct matcher *m)
+ಸ್ಥಿರ ಶೂನ್ಯ
+matcher_mapping_set_layout_bounds(ಸಂರಚನಾ matcher *m)
 {
     /* Handle case where one of the index is XKB_LAYOUT_INVALID */
     xkb_layout_index_t idx = MIN(m->mapping.layout_idx, m->mapping.variant_idx);
-    switch (idx) {
-        case XKB_LAYOUT_INVALID:
+    ವಿಕಲ್ಪ (idx) {
+        ಪಕ್ಷ XKB_LAYOUT_INVALID:
             /* No layout nor variant */
-            assert(!is_mlvo_mask_defined(m, MLVO_LAYOUT) &&
+            ಪ್ರತಿಜ್ಞಾ(!is_mlvo_mask_defined(m, MLVO_LAYOUT) &&
                    !is_mlvo_mask_defined(m, MLVO_VARIANT));
             m->mapping.has_layout_idx_range = false;
             m->mapping.layout_idx_min = XKB_LAYOUT_INVALID;
             m->mapping.layout_idx_max = m->mapping.layout_idx_min;
             m->mapping.layouts_candidates_mask = 0x1; /* active = true */
-            break;
-        case LAYOUT_INDEX_LATER:
+            ಭಙ್ಗ;
+        ಪಕ್ಷ LAYOUT_INDEX_LATER:
             m->mapping.has_layout_idx_range = true;
             m->mapping.layout_idx_min = 1;
             m->mapping.layout_idx_max = MIN(XKB_MAX_GROUPS,
@@ -979,9 +979,9 @@ matcher_mapping_set_layout_bounds(struct matcher *m)
                 /* All but the first layout */
                 ((UINT64_C(1) << m->mapping.layout_idx_max) - UINT64_C(1)) &
                 ~UINT64_C(1);
-            break;
-        case LAYOUT_INDEX_MULTIPLE:
-        case LAYOUT_INDEX_ANY:
+            ಭಙ್ಗ;
+        ಪಕ್ಷ LAYOUT_INDEX_MULTIPLE:
+        ಪಕ್ಷ LAYOUT_INDEX_ANY:
             m->mapping.has_layout_idx_range = true;
             m->mapping.layout_idx_min = 0;
             m->mapping.layout_idx_max = MIN(XKB_MAX_GROUPS,
@@ -989,13 +989,13 @@ matcher_mapping_set_layout_bounds(struct matcher *m)
             m->mapping.layouts_candidates_mask = (xkb_layout_mask_t)
                 /* All layouts */
                 (UINT64_C(1) << m->mapping.layout_idx_max) - UINT64_C(1);
-            break;
-        case LAYOUT_INDEX_SINGLE:
-        case LAYOUT_INDEX_FIRST:
+            ಭಙ್ಗ;
+        ಪಕ್ಷ LAYOUT_INDEX_SINGLE:
+        ಪಕ್ಷ LAYOUT_INDEX_FIRST:
             /* No index or first index */
             idx = 0;
             /* fallthrough */
-        default:
+        ಸ್ವಭಾವ:
             /* Mere layout index */
             m->mapping.has_layout_idx_range = false;
             m->mapping.layout_idx_min = idx;
@@ -1008,58 +1008,58 @@ matcher_mapping_set_layout_bounds(struct matcher *m)
     );
 }
 
-static void
-matcher_mapping_set_kccgst(struct matcher *m, struct scanner *s, struct sval ident)
+ಸ್ಥಿರ ಶೂನ್ಯ
+matcher_mapping_set_kccgst(ಸಂರಚನಾ matcher *m, ಸಂರಚನಾ scanner *s, ಸಂರಚನಾ sval ident)
 {
-    enum rules_kccgst kccgst;
-    struct sval kccgst_sval;
+    ಗಣನಾ rules_kccgst kccgst;
+    ಸಂರಚನಾ sval kccgst_sval;
 
-    for (kccgst = 0; kccgst < _KCCGST_NUM_ENTRIES; kccgst++) {
+    ಪ್ರತಿ (kccgst = 0; kccgst < KCCGST_ಅಂಕೆ_ENTRIES; kccgst++) {
         kccgst_sval = rules_kccgst_svals[kccgst];
 
-        if (svaleq(rules_kccgst_svals[kccgst], ident))
-            break;
+        ಯದಿ (svaleq(rules_kccgst_svals[kccgst], ident))
+            ಭಙ್ಗ;
     }
 
     /* Not found. */
-    if (kccgst >= _KCCGST_NUM_ENTRIES) {
+    ಯದಿ (kccgst >= KCCGST_ಅಂಕೆ_ENTRIES) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid mapping: \"%.*s\" is not a valid value here; "
                     "ignoring rule set",
-                    (unsigned int) ident.len, ident.start);
+                    (unsigned ಪೂರ್ಣಾಙ್ಕ) ident.len, ident.start);
         m->mapping.active = false;
-        return;
+        ಪ್ರತ್ಯಾಗಮ;
     }
 
-    if (m->mapping.defined_kccgst_mask & (1u << kccgst)) {
+    ಯದಿ (m->mapping.defined_kccgst_mask & (1u << kccgst)) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid mapping: \"%.*s\" appears twice on the same line; "
                     "ignoring rule set",
-                    (unsigned int) kccgst_sval.len, kccgst_sval.start);
+                    (unsigned ಪೂರ್ಣಾಙ್ಕ) kccgst_sval.len, kccgst_sval.start);
         m->mapping.active = false;
-        return;
+        ಪ್ರತ್ಯಾಗಮ;
     }
 
-    m->mapping.kccgst_at_pos[m->mapping.num_kccgst] = kccgst;
+    m->mapping.kccgst_at_pos[m->mapping.ಅಂಕೆ_kccgst] = kccgst;
     m->mapping.defined_kccgst_mask |= (kccgst_mask_t) 1u << kccgst;
-    m->mapping.num_kccgst++;
+    m->mapping.ಅಂಕೆ_kccgst++;
 }
 
-static bool
-matcher_mapping_verify(struct matcher *m, struct scanner *s)
+ಸ್ಥಿರ bool
+matcher_mapping_verify(ಸಂರಚನಾ matcher *m, ಸಂರಚನಾ scanner *s)
 {
-    if (m->mapping.num_mlvo == 0) {
+    ಯದಿ (m->mapping.ಅಂಕೆ_mlvo == 0) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid mapping: must have at least one value on the left "
                     "hand side; ignoring rule set");
-        goto skip;
+        ಗಚ್ಛ skip;
     }
 
-    if (m->mapping.num_kccgst == 0) {
+    ಯದಿ (m->mapping.ಅಂಕೆ_kccgst == 0) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid mapping: must have at least one value on the right "
                     "hand side; ignoring rule set");
-        goto skip;
+        ಗಚ್ಛ skip;
     }
 
     /*
@@ -1067,267 +1067,267 @@ matcher_mapping_verify(struct matcher *m, struct scanner *s)
      * See the "Notes" section in the overview above.
      */
 
-    if (is_mlvo_mask_defined(m, MLVO_LAYOUT)) {
-        assert(m->mapping.layout_idx != XKB_LAYOUT_INVALID);
-        switch (m->mapping.layout_idx) {
-            case LAYOUT_INDEX_SINGLE:
+    ಯದಿ (is_mlvo_mask_defined(m, MLVO_LAYOUT)) {
+        ಪ್ರತಿಜ್ಞಾ(m->mapping.layout_idx != XKB_LAYOUT_INVALID);
+        ವಿಕಲ್ಪ (m->mapping.layout_idx) {
+            ಪಕ್ಷ LAYOUT_INDEX_SINGLE:
                 /* Layout rule without index matches when
                  * exactly 1 layout is specified */
-                if (darray_size(m->rmlvo.layouts) > 1)
-                    goto skip;
-                break;
-            case LAYOUT_INDEX_MULTIPLE:
-            case LAYOUT_INDEX_LATER:
+                ಯದಿ (darray_size(m->rmlvo.layouts) > 1)
+                    ಗಚ್ಛ skip;
+                ಭಙ್ಗ;
+            ಪಕ್ಷ LAYOUT_INDEX_MULTIPLE:
+            ಪಕ್ಷ LAYOUT_INDEX_LATER:
                 /* Layout rule matches when at least 2 layouts are specified */
-                if (darray_size(m->rmlvo.layouts) < 2)
-                    goto skip;
-                break;
-            case LAYOUT_INDEX_ANY:
-            case LAYOUT_INDEX_FIRST:
+                ಯದಿ (darray_size(m->rmlvo.layouts) < 2)
+                    ಗಚ್ಛ skip;
+                ಭಙ್ಗ;
+            ಪಕ್ಷ LAYOUT_INDEX_ANY:
+            ಪಕ್ಷ LAYOUT_INDEX_FIRST:
                 /* No restrictions */
-                break;
-            default:
+                ಭಙ್ಗ;
+            ಸ್ವಭಾವ:
                 /* Layout rule with index matches when at least 2 layouts are
                  * specified. Index must be in valid range. */
-                if (darray_size(m->rmlvo.layouts) < 2 ||
+                ಯದಿ (darray_size(m->rmlvo.layouts) < 2 ||
                     m->mapping.layout_idx >= darray_size(m->rmlvo.layouts))
-                    goto skip;
+                    ಗಚ್ಛ skip;
         }
     }
 
-    if (is_mlvo_mask_defined(m, MLVO_VARIANT)) {
-        assert(m->mapping.variant_idx != XKB_LAYOUT_INVALID);
-        switch (m->mapping.variant_idx) {
-            case LAYOUT_INDEX_SINGLE:
+    ಯದಿ (is_mlvo_mask_defined(m, MLVO_VARIANT)) {
+        ಪ್ರತಿಜ್ಞಾ(m->mapping.variant_idx != XKB_LAYOUT_INVALID);
+        ವಿಕಲ್ಪ (m->mapping.variant_idx) {
+            ಪಕ್ಷ LAYOUT_INDEX_SINGLE:
                 /* Variant rule without index matches
                  * when exactly 1 variant is specified */
-                if (darray_size(m->rmlvo.variants) > 1)
-                    goto skip;
-                break;
-            case LAYOUT_INDEX_ANY:
-            case LAYOUT_INDEX_LATER:
-            case LAYOUT_INDEX_FIRST:
+                ಯದಿ (darray_size(m->rmlvo.variants) > 1)
+                    ಗಚ್ಛ skip;
+                ಭಙ್ಗ;
+            ಪಕ್ಷ LAYOUT_INDEX_ANY:
+            ಪಕ್ಷ LAYOUT_INDEX_LATER:
+            ಪಕ್ಷ LAYOUT_INDEX_FIRST:
                 /* No restriction */
-                break;
-            default:
+                ಭಙ್ಗ;
+            ಸ್ವಭಾವ:
                 /* Variant rule with index matches when at least 2 variants are
                  * specified. Index must be in valid range. */
-                if (darray_size(m->rmlvo.variants) < 2 ||
+                ಯದಿ (darray_size(m->rmlvo.variants) < 2 ||
                     m->mapping.variant_idx >= darray_size(m->rmlvo.variants))
-                    goto skip;
+                    ಗಚ್ಛ skip;
         }
     }
 
-    return true;
+    ಪ್ರತ್ಯಾಗಮ true;
 
 skip:
     m->mapping.active = false;
-    return false;
+    ಪ್ರತ್ಯಾಗಮ false;
 }
 
-static void
-matcher_rule_start_new(struct matcher *m)
+ಸ್ಥಿರ ಶೂನ್ಯ
+matcher_rule_start_new(ಸಂರಚನಾ matcher *m)
 {
-    memset(&m->rule, 0, sizeof(m->rule));
+    memset(&m->rule, 0, ಪರಿಮಾಣ(m->rule));
     m->rule.skip = !m->mapping.active;
 }
 
-static void
-matcher_rule_set_mlvo_common(struct matcher *m, struct scanner *s,
-                             struct sval ident,
-                             enum mlvo_match_type match_type)
+ಸ್ಥಿರ ಶೂನ್ಯ
+matcher_rule_set_mlvo_common(ಸಂರಚನಾ matcher *m, ಸಂರಚನಾ scanner *s,
+                             ಸಂರಚನಾ sval ident,
+                             ಗಣನಾ mlvo_match_type match_type)
 {
-    if (m->rule.num_mlvo_values >= m->mapping.num_mlvo) {
+    ಯದಿ (m->rule.ಅಂಕೆ_mlvo_ಮೌಲ್ಯಗಳು >= m->mapping.ಅಂಕೆ_mlvo) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid rule: has more values than the mapping line; "
                     "ignoring rule");
         m->rule.skip = true;
-        return;
+        ಪ್ರತ್ಯಾಗಮ;
     }
-    m->rule.match_type_at_pos[m->rule.num_mlvo_values] = match_type;
-    m->rule.mlvo_value_at_pos[m->rule.num_mlvo_values] = ident;
-    m->rule.num_mlvo_values++;
+    m->rule.match_type_at_pos[m->rule.ಅಂಕೆ_mlvo_ಮೌಲ್ಯಗಳು] = match_type;
+    m->rule.mlvo_ಮೌಲ್ಯ_at_pos[m->rule.ಅಂಕೆ_mlvo_ಮೌಲ್ಯಗಳು] = ident;
+    m->rule.ಅಂಕೆ_mlvo_ಮೌಲ್ಯಗಳು++;
 }
 
-static void
-matcher_rule_set_mlvo_wildcard(struct matcher *m, struct scanner *s,
-                               enum mlvo_match_type match_type)
+ಸ್ಥಿರ ಶೂನ್ಯ
+matcher_rule_set_mlvo_wildcard(ಸಂರಚನಾ matcher *m, ಸಂರಚನಾ scanner *s,
+                               ಗಣನಾ mlvo_match_type match_type)
 {
-    struct sval dummy = SVAL(NULL, 0);
+    ಸಂರಚನಾ sval dummy = SVAL(ರಿಕ್ತ, 0);
     matcher_rule_set_mlvo_common(m, s, dummy, match_type);
 }
 
-static void
-matcher_rule_set_mlvo_group(struct matcher *m, struct scanner *s,
-                            struct sval ident)
+ಸ್ಥಿರ ಶೂನ್ಯ
+matcher_rule_set_mlvo_group(ಸಂರಚನಾ matcher *m, ಸಂರಚನಾ scanner *s,
+                            ಸಂರಚನಾ sval ident)
 {
     matcher_rule_set_mlvo_common(m, s, ident, MLVO_MATCH_GROUP);
 }
 
-static void
-matcher_rule_set_mlvo(struct matcher *m, struct scanner *s,
-                      struct sval ident)
+ಸ್ಥಿರ ಶೂನ್ಯ
+matcher_rule_set_mlvo(ಸಂರಚನಾ matcher *m, ಸಂರಚನಾ scanner *s,
+                      ಸಂರಚನಾ sval ident)
 {
     matcher_rule_set_mlvo_common(m, s, ident, MLVO_MATCH_NORMAL);
 }
 
-static void
-matcher_rule_set_kccgst(struct matcher *m, struct scanner *s,
-                        struct sval ident)
+ಸ್ಥಿರ ಶೂನ್ಯ
+matcher_rule_set_kccgst(ಸಂರಚನಾ matcher *m, ಸಂರಚನಾ scanner *s,
+                        ಸಂರಚನಾ sval ident)
 {
-    if (m->rule.num_kccgst_values >= m->mapping.num_kccgst) {
+    ಯದಿ (m->rule.ಅಂಕೆ_kccgst_ಮೌಲ್ಯಗಳು >= m->mapping.ಅಂಕೆ_kccgst) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid rule: has more values than the mapping line; "
                     "ignoring rule");
         m->rule.skip = true;
-        return;
+        ಪ್ರತ್ಯಾಗಮ;
     }
-    m->rule.kccgst_value_at_pos[m->rule.num_kccgst_values] = ident;
-    m->rule.num_kccgst_values++;
+    m->rule.kccgst_ಮೌಲ್ಯ_at_pos[m->rule.ಅಂಕೆ_kccgst_ಮೌಲ್ಯಗಳು] = ident;
+    m->rule.ಅಂಕೆ_kccgst_ಮೌಲ್ಯಗಳು++;
 }
 
-static bool
-match_group(struct matcher *m, struct sval group_name, struct sval to)
+ಸ್ಥಿರ bool
+match_group(ಸಂರಚನಾ matcher *m, ಸಂರಚನಾ sval group_name, ಸಂರಚನಾ sval to)
 {
-    struct group *group = NULL;
-    struct sval *element;
+    ಸಂರಚನಾ group *group = ರಿಕ್ತ;
+    ಸಂರಚನಾ sval *element;
     bool found = false;
 
     darray_foreach(group, m->groups) {
-        if (svaleq(group->name, group_name)) {
+        ಯದಿ (svaleq(group->name, group_name)) {
             found = true;
-            break;
+            ಭಙ್ಗ;
         }
     }
 
-    if (!found) {
+    ಯದಿ (!found) {
         /*
          * rules/evdev intentionally uses some undeclared group names
          * in rules (e.g. commented group definitions which may be
          * uncommented if needed). So we continue silently.
          */
-        return false;
+        ಪ್ರತ್ಯಾಗಮ false;
     }
 
     darray_foreach(element, group->elements)
-        if (svaleq(to, *element))
-            return true;
+        ಯದಿ (svaleq(to, *element))
+            ಪ್ರತ್ಯಾಗಮ true;
 
-    return false;
+    ಪ್ರತ್ಯಾಗಮ false;
 }
 
-static bool
-match_value(struct matcher *m, const struct sval val, const struct sval to,
-            enum mlvo_match_type match_type,
-            enum wildcard_match_type wildcard_type)
+ಸ್ಥಿರ bool
+match_ಮೌಲ್ಯ(ಸಂರಚನಾ matcher *m, ಧ್ರುವ ಸಂರಚನಾ sval val, ಧ್ರುವ ಸಂರಚನಾ sval to,
+            ಗಣನಾ mlvo_match_type match_type,
+            ಗಣನಾ wildcard_match_type wildcard_type)
 {
-    switch (match_type) {
-        case MLVO_MATCH_WILDCARD_LEGACY:
+    ವಿಕಲ್ಪ (match_type) {
+        ಪಕ್ಷ MLVO_MATCH_WILDCARD_LEGACY:
             /* Match empty values only if explicitly required */
-            return wildcard_type == WILDCARD_MATCH_ALL || !!to.len;
-        case MLVO_MATCH_WILDCARD_NONE:
-            return !to.len;
-        case MLVO_MATCH_WILDCARD_SOME:
-            return !!to.len;
-        case MLVO_MATCH_WILDCARD_ANY:
+            ಪ್ರತ್ಯಾಗಮ wildcard_type == WILDCARD_MATCH_ALL || !!to.len;
+        ಪಕ್ಷ MLVO_MATCH_WILDCARD_NONE:
+            ಪ್ರತ್ಯಾಗಮ !to.len;
+        ಪಕ್ಷ MLVO_MATCH_WILDCARD_SOME:
+            ಪ್ರತ್ಯಾಗಮ !!to.len;
+        ಪಕ್ಷ MLVO_MATCH_WILDCARD_ANY:
             /* Contrary to the legacy ‘*’, this wild card *always* matches */
-            return true;
-        case MLVO_MATCH_GROUP:
-            return match_group(m, val, to);
-        default:
-            assert(match_type == MLVO_MATCH_NORMAL);
-            return svaleq(val, to);
+            ಪ್ರತ್ಯಾಗಮ true;
+        ಪಕ್ಷ MLVO_MATCH_GROUP:
+            ಪ್ರತ್ಯಾಗಮ match_group(m, val, to);
+        ಸ್ವಭಾವ:
+            ಪ್ರತಿಜ್ಞಾ(match_type == MLVO_MATCH_NORMAL);
+            ಪ್ರತ್ಯಾಗಮ svaleq(val, to);
     }
 }
 
-static bool
-match_value_and_mark(struct matcher *m, const struct sval val,
-                     struct matched_sval *to, enum mlvo_match_type match_type,
-                     enum wildcard_match_type wildcard_type,
+ಸ್ಥಿರ bool
+match_ಮೌಲ್ಯ_and_mark(ಸಂರಚನಾ matcher *m, ಧ್ರುವ ಸಂರಚನಾ sval val,
+                     ಸಂರಚನಾ matched_sval *to, ಗಣನಾ mlvo_match_type match_type,
+                     ಗಣನಾ wildcard_match_type wildcard_type,
                      xkb_layout_mask_t layouts)
 {
-    bool matched = match_value(m, val, to->sval, match_type, wildcard_type);
-    if (matched)
+    bool matched = match_ಮೌಲ್ಯ(m, val, to->sval, match_type, wildcard_type);
+    ಯದಿ (matched)
         to->matched |= layouts;
-    return matched;
+    ಪ್ರತ್ಯಾಗಮ matched;
 }
 
 /*
  * This function performs %-expansion on @value (see overview above),
  * and appends the result to @expanded.
  */
-static bool
-expand_rmlvo_in_kccgst_value(struct matcher *m, struct scanner *s,
-                             struct sval value, xkb_layout_index_t layout_idx,
+ಸ್ಥಿರ bool
+expand_rmlvo_in_kccgst_ಮೌಲ್ಯ(ಸಂರಚನಾ matcher *m, ಸಂರಚನಾ scanner *s,
+                             ಸಂರಚನಾ sval ಮೌಲ್ಯ, xkb_layout_index_t layout_idx,
                              darray_char *expanded, size_t *i)
 {
-    const char *str = value.start;
+    ಧ್ರುವ ವರ್ಣ *str = ಮೌಲ್ಯ.start;
 
     /*
      * Some ugly hand-lexing here, but going through the scanner is more
      * trouble than it's worth, and the format is ugly on its own merit.
      */
-    enum rules_mlvo mlv;
+    ಗಣನಾ rules_mlvo mlv;
     xkb_layout_index_t idx;
-    char pfx, sfx;
-    struct matched_sval *expanded_value;
+    ವರ್ಣ pfx, sfx;
+    ಸಂರಚನಾ matched_sval *expanded_ಮೌಲ್ಯ;
 
     /* %i not as layout/variant index "%l[%i]" but as qualifier ":%i" */
-    if (str[*i] == 'i' &&
-        (*i + 1 == value.len || is_merge_mode_prefix(str[*i + 1])))
+    ಯದಿ (str[*i] == 'i' &&
+        (*i + 1 == ಮೌಲ್ಯ.len || is_merge_mode_prefix(str[*i + 1])))
     {
-        if (layout_idx == XKB_LAYOUT_INVALID) {
+        ಯದಿ (layout_idx == XKB_LAYOUT_INVALID) {
             scanner_err(
                 s, XKB_ERROR_RULES_INVALID_LAYOUT_INDEX_PERCENT_EXPANSION,
                 "Invalid %%i in %%-expansion: there is no corresponding "
                 "layout nor variant in the MLVO fields of the rules header."
             );
-            goto error;
+            ಗಚ್ಛ error;
         }
         (*i)++;
-        char index_str[MAX_LAYOUT_INDEX_STR_LENGTH + 1];
-        const int count = snprintf(index_str, sizeof(index_str), "%"PRIu32,
+        ವರ್ಣ index_str[MAX_LAYOUT_INDEX_STR_LENGTH + 1];
+        ಧ್ರುವ ಪೂರ್ಣಾಙ್ಕ ಎಣಿಕೆ = snprintf(index_str, ಪರಿಮಾಣ(index_str), "%"PRIu32,
                                    layout_idx + 1);
-        assert(count > 0); /* See MAX_LAYOUT_INDEX_STR_LENGTH */
-        darray_appends_nullterminate(*expanded, index_str, (darray_size_t)count);
-        return true;
+        ಪ್ರತಿಜ್ಞಾ(ಎಣಿಕೆ > 0); /* See MAX_LAYOUT_INDEX_STR_LENGTH */
+        darray_appends_nullterminate(*expanded, index_str, (darray_size_t)ಎಣಿಕೆ);
+        ಪ್ರತ್ಯಾಗಮ true;
     }
 
     pfx = sfx = 0;
 
     /* Check for prefix. */
-    if (str[*i] == '(' ||
+    ಯದಿ (str[*i] == '(' ||
         is_merge_mode_prefix(str[*i]) ||
         str[*i] == '_' || str[*i] == '-') {
         pfx = str[*i];
-        if (str[*i] == '(') sfx = ')';
-        if (++(*i) >= value.len) goto error;
+        ಯದಿ (str[*i] == '(') sfx = ')';
+        ಯದಿ (++(*i) >= ಮೌಲ್ಯ.len) ಗಚ್ಛ error;
     }
 
     /* Mandatory model/layout/variant specifier. */
-    switch (str[(*i)++]) {
-    case 'm': mlv = MLVO_MODEL; break;
-    case 'l': mlv = MLVO_LAYOUT; break;
-    case 'v': mlv = MLVO_VARIANT; break;
-    default: goto error;
+    ವಿಕಲ್ಪ (str[(*i)++]) {
+    ಪಕ್ಷ 'm': mlv = MLVO_MODEL; ಭಙ್ಗ;
+    ಪಕ್ಷ 'l': mlv = MLVO_LAYOUT; ಭಙ್ಗ;
+    ಪಕ್ಷ 'v': mlv = MLVO_VARIANT; ಭಙ್ಗ;
+    ಸ್ವಭಾವ: ಗಚ್ಛ error;
     }
 
     /* Check for index. */
     idx = XKB_LAYOUT_INVALID;
     bool variable_index = false;
-    if (*i < value.len && str[*i] == '[') {
-        if (mlv != MLVO_LAYOUT && mlv != MLVO_VARIANT) {
+    ಯದಿ (*i < ಮೌಲ್ಯ.len && str[*i] == '[') {
+        ಯದಿ (mlv != MLVO_LAYOUT && mlv != MLVO_VARIANT) {
             scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                         "invalid index in %%-expansion; "
                         "may only index layout or variant");
-            goto error;
+            ಗಚ್ಛ error;
         }
 
-        int consumed = extract_layout_index(str + (*i), value.len - (*i), &idx);
-        if (consumed <= 0) goto error;
-        if (idx == XKB_LAYOUT_INVALID) {
+        ಪೂರ್ಣಾಙ್ಕ consumed = extract_layout_index(str + (*i), ಮೌಲ್ಯ.len - (*i), &idx);
+        ಯದಿ (consumed <= 0) ಗಚ್ಛ error;
+        ಯದಿ (idx == XKB_LAYOUT_INVALID) {
             /* %i encountered */
-            assert(layout_idx != XKB_LAYOUT_INVALID);
+            ಪ್ರತಿಜ್ಞಾ(layout_idx != XKB_LAYOUT_INVALID);
             idx = layout_idx;
             variable_index = true;
         }
@@ -1335,130 +1335,130 @@ expand_rmlvo_in_kccgst_value(struct matcher *m, struct scanner *s,
     }
 
     /* Check for suffix, if there supposed to be one. */
-    if (sfx != 0) {
-        if (*i >= value.len) goto error;
-        if (str[(*i)++] != sfx) goto error;
+    ಯದಿ (sfx != 0) {
+        ಯದಿ (*i >= ಮೌಲ್ಯ.len) ಗಚ್ಛ error;
+        ಯದಿ (str[(*i)++] != sfx) ಗಚ್ಛ error;
     }
 
     /* Get the expanded value. */
-    expanded_value = NULL;
+    expanded_ಮೌಲ್ಯ = ರಿಕ್ತ;
 
-    if (mlv == MLVO_LAYOUT) {
-        if (idx == XKB_LAYOUT_INVALID) {
+    ಯದಿ (mlv == MLVO_LAYOUT) {
+        ಯದಿ (idx == XKB_LAYOUT_INVALID) {
             /* No index provided: match only if single layout */
-            if (darray_size(m->rmlvo.layouts) == 1)
-                expanded_value = &darray_item(m->rmlvo.layouts, 0);
+            ಯದಿ (darray_size(m->rmlvo.layouts) == 1)
+                expanded_ಮೌಲ್ಯ = &darray_item(m->rmlvo.layouts, 0);
         /* Some index provided: expand only if it is %i or
          * if there are multiple layouts */
-        } else if (idx < darray_size(m->rmlvo.layouts) &&
+        } ಅನ್ಯಥಾ ಯದಿ (idx < darray_size(m->rmlvo.layouts) &&
                    (variable_index || darray_size(m->rmlvo.layouts) > 1)) {
-                expanded_value = &darray_item(m->rmlvo.layouts, idx);
+                expanded_ಮೌಲ್ಯ = &darray_item(m->rmlvo.layouts, idx);
         }
     }
-    else if (mlv == MLVO_VARIANT) {
-        if (idx == XKB_LAYOUT_INVALID) {
+    ಅನ್ಯಥಾ ಯದಿ (mlv == MLVO_VARIANT) {
+        ಯದಿ (idx == XKB_LAYOUT_INVALID) {
             /* No index provided: match only if single variant */
-            if (darray_size(m->rmlvo.variants) == 1)
-                expanded_value = &darray_item(m->rmlvo.variants, 0);
+            ಯದಿ (darray_size(m->rmlvo.variants) == 1)
+                expanded_ಮೌಲ್ಯ = &darray_item(m->rmlvo.variants, 0);
         /* Some index provided: expand only if it is %i or
          * if there are multiple variants */
-        } else if (idx < darray_size(m->rmlvo.variants) &&
+        } ಅನ್ಯಥಾ ಯದಿ (idx < darray_size(m->rmlvo.variants) &&
                    (variable_index || darray_size(m->rmlvo.variants) > 1)) {
-                expanded_value = &darray_item(m->rmlvo.variants, idx);
+                expanded_ಮೌಲ್ಯ = &darray_item(m->rmlvo.variants, idx);
         }
     }
-    else if (mlv == MLVO_MODEL) {
-        expanded_value = &m->rmlvo.model;
+    ಅನ್ಯಥಾ ಯದಿ (mlv == MLVO_MODEL) {
+        expanded_ಮೌಲ್ಯ = &m->rmlvo.model;
     }
 
     /* If we didn't get one, skip silently. */
-    if (!expanded_value || expanded_value->sval.len == 0) {
-        return true;
+    ಯದಿ (!expanded_ಮೌಲ್ಯ || expanded_ಮೌಲ್ಯ->sval.len == 0) {
+        ಪ್ರತ್ಯಾಗಮ true;
     }
 
-    if (pfx != 0)
+    ಯದಿ (pfx != 0)
         darray_appends_nullterminate(*expanded, &pfx, 1);
     darray_appends_nullterminate(*expanded,
-                                 expanded_value->sval.start,
-                                 (darray_size_t) expanded_value->sval.len);
-    if (sfx != 0)
+                                 expanded_ಮೌಲ್ಯ->sval.start,
+                                 (darray_size_t) expanded_ಮೌಲ್ಯ->sval.len);
+    ಯದಿ (sfx != 0)
         darray_appends_nullterminate(*expanded, &sfx, 1);
 
-    if (mlv != MLVO_LAYOUT && mlv != MLVO_VARIANT) {
+    ಯದಿ (mlv != MLVO_LAYOUT && mlv != MLVO_VARIANT) {
         static_assert(XKB_MAX_GROUPS == 32 &&
                       XKB_MAX_GROUPS < XKB_LAYOUT_INVALID,
                       "Invalid shift");
-        const xkb_layout_mask_t layouts = (idx == XKB_LAYOUT_INVALID)
+        ಧ್ರುವ xkb_layout_mask_t layouts = (idx == XKB_LAYOUT_INVALID)
             ? 0x1 /* default to first layout */
             : (UINT32_C(1) << idx);
-        expanded_value->matched |= layouts;
-    } else {
-        expanded_value->matched |= (xkb_layout_mask_t)GLOBAL_MATCHED_LAYOUTS;
+        expanded_ಮೌಲ್ಯ->matched |= layouts;
+    } ಅನ್ಯಥಾ {
+        expanded_ಮೌಲ್ಯ->matched |= (xkb_layout_mask_t)GLOBAL_MATCHED_LAYOUTS;
     }
 
-    return true;
+    ಪ್ರತ್ಯಾಗಮ true;
 
 error:
     scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                 "invalid %%-expansion in value; not used");
-    return false;
+    ಪ್ರತ್ಯಾಗಮ false;
 }
 
 /*
  * This function performs :all replacement on @value (see overview above),
  * and appends the result to @expanded.
  */
-static void
-expand_qualifier_in_kccgst_value(
-    struct matcher *m, struct scanner *s,
-    struct sval value, darray_char *expanded,
+ಸ್ಥಿರ ಶೂನ್ಯ
+expand_qualifier_in_kccgst_ಮೌಲ್ಯ(
+    ಸಂರಚನಾ matcher *m, ಸಂರಚನಾ scanner *s,
+    ಸಂರಚನಾ sval ಮೌಲ್ಯ, darray_char *expanded,
     bool has_layout_idx_range, bool has_separator,
     darray_size_t prefix_idx, size_t *i)
 {
-    const char *str = value.start;
+    ಧ್ರುವ ವರ್ಣ *str = ಮೌಲ್ಯ.start;
 
     /* “all” followed by nothing or by a layout separator */
-    if (*i + 2 < value.len &&
+    ಯದಿ (*i + 2 < ಮೌಲ್ಯ.len &&
         str[*i] == 'a' && str[*i + 1] == 'l' && str[*i + 2] == 'l' &&
-        (*i + 3 == value.len || is_merge_mode_prefix(str[*i + 3]))) {
-        if (has_layout_idx_range)
+        (*i + 3 == ಮೌಲ್ಯ.len || is_merge_mode_prefix(str[*i + 3]))) {
+        ಯದಿ (has_layout_idx_range)
             scanner_vrb(s, XKB_LOG_VERBOSITY_DETAILED, XKB_LOG_MESSAGE_NO_ID,
                         "Using :all qualifier with indices range "
                         "is not recommended.");
         /* Add at least one layout */
         darray_appends_nullterminate(*expanded, "1", 1);
         /* Check for more layouts (slow path) */
-        if (darray_size(m->rmlvo.layouts) > 1) {
-            char layout_index[MAX_LAYOUT_INDEX_STR_LENGTH + 1];
-            const darray_size_t prefix_length =
+        ಯದಿ (darray_size(m->rmlvo.layouts) > 1) {
+            ವರ್ಣ layout_index[MAX_LAYOUT_INDEX_STR_LENGTH + 1];
+            ಧ್ರುವ darray_size_t prefix_length =
                 darray_size(*expanded) - prefix_idx - 1;
-            for (xkb_layout_index_t l = 1;
+            ಪ್ರತಿ (xkb_layout_index_t l = 1;
                  l < MIN(XKB_MAX_GROUPS, darray_size(m->rmlvo.layouts));
                  l++)
             {
-                if (!has_separator)
+                ಯದಿ (!has_separator)
                     darray_append(*expanded, MERGE_DEFAULT_PREFIX);
                 /* Append prefix */
                 darray_appends_nullterminate(*expanded,
                                              &darray_item(*expanded, prefix_idx),
                                              prefix_length);
                 /* Append index */
-                const int count = snprintf(layout_index, sizeof(layout_index),
+                ಧ್ರುವ ಪೂರ್ಣಾಙ್ಕ ಎಣಿಕೆ = snprintf(layout_index, ಪರಿಮಾಣ(layout_index),
                                            "%"PRIu32, l + 1);
-                assert(count > 0); /* See MAX_LAYOUT_INDEX_STR_LENGTH */
+                ಪ್ರತಿಜ್ಞಾ(ಎಣಿಕೆ > 0); /* See MAX_LAYOUT_INDEX_STR_LENGTH */
                 darray_appends_nullterminate(*expanded, layout_index,
-                                             (darray_size_t)count);
+                                             (darray_size_t)ಎಣಿಕೆ);
             }
         }
         *i += 3;
     }
 }
 
-static inline void
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಶೂನ್ಯ
 #ifdef _MSC_VER
-concat_kccgst(darray_char *into, darray_size_t size, _In_reads_(size) const char* from)
-#else
-concat_kccgst(darray_char *into, darray_size_t size, const char from[static size])
+concat_kccgst(darray_char *into, darray_size_t size, _In_reads_(size) ಧ್ರುವ ವರ್ಣ* from)
+#ಅನ್ಯಥಾ
+concat_kccgst(darray_char *into, darray_size_t size, ಧ್ರುವ ವರ್ಣ from[ಸ್ಥಿರ size])
 #endif
 {
     /*
@@ -1467,14 +1467,14 @@ concat_kccgst(darray_char *into, darray_size_t size, const char from[static size
      * Appending  bar to +foo ->  bar+foo
      * Appending +bar to +foo -> +foo+bar
      */
-    const bool from_plus = is_merge_mode_prefix(from[0]);
-    if (from_plus || darray_empty(*into)) {
+    ಧ್ರುವ bool from_plus = is_merge_mode_prefix(from[0]);
+    ಯದಿ (from_plus || darray_empty(*into)) {
         darray_appends_nullterminate(*into, from, size);
-    } else {
-        const char ch =
-            (char) (darray_empty(*into) ? '\0' : darray_item(*into, 0));
-        const bool into_plus = is_merge_mode_prefix(ch);
-        if (into_plus)
+    } ಅನ್ಯಥಾ {
+        ಧ್ರುವ ವರ್ಣ ch =
+            (ವರ್ಣ) (darray_empty(*into) ? '\0' : darray_item(*into, 0));
+        ಧ್ರುವ bool into_plus = is_merge_mode_prefix(ch);
+        ಯದಿ (into_plus)
             darray_prepends_nullterminate(*into, from, size);
     }
 }
@@ -1483,105 +1483,105 @@ concat_kccgst(darray_char *into, darray_size_t size, const char from[static size
  * This function performs %-expansion and :all-expansion on @value
  * (see overview above), and appends the result to @to.
  */
-static bool
-append_expanded_kccgst_value(struct matcher *m, struct scanner *s,
-                             bool merge, darray_char *to, struct sval value,
+ಸ್ಥಿರ bool
+append_expanded_kccgst_ಮೌಲ್ಯ(ಸಂರಚನಾ matcher *m, ಸಂರಚನಾ scanner *s,
+                             bool merge, darray_char *to, ಸಂರಚನಾ sval ಮೌಲ್ಯ,
                              xkb_layout_index_t layout_idx)
 {
-    const char *str = value.start;
+    ಧ್ರುವ ವರ್ಣ *str = ಮೌಲ್ಯ.start;
     darray_char expanded = darray_new();
     darray_size_t last_item_idx = 0;
     bool has_separator = false;
 
-    for (size_t i = 0; i < value.len; ) {
+    ಪ್ರತಿ (size_t i = 0; i < ಮೌಲ್ಯ.len; ) {
         /* Check if that's a start of an expansion or qualifier */
-        switch (str[i]) {
+        ವಿಕಲ್ಪ (str[i]) {
             /* Qualifier */
-            case ':':
+            ಪಕ್ಷ ':':
                 darray_appends_nullterminate(expanded, &str[i++], 1);
-                expand_qualifier_in_kccgst_value(m, s, value, &expanded,
+                expand_qualifier_in_kccgst_ಮೌಲ್ಯ(m, s, ಮೌಲ್ಯ, &expanded,
                                                  m->mapping.has_layout_idx_range,
                                                  has_separator,
                                                  last_item_idx, &i);
-                break;
+                ಭಙ್ಗ;
             /* Expansion */
-            case '%':
+            ಪಕ್ಷ '%':
                 i++;
-                if (i >= value.len ||
-                    !expand_rmlvo_in_kccgst_value(m, s, value, layout_idx,
+                ಯದಿ (i >= ಮೌಲ್ಯ.len ||
+                    !expand_rmlvo_in_kccgst_ಮೌಲ್ಯ(m, s, ಮೌಲ್ಯ, layout_idx,
                                                   &expanded, &i))
-                        goto error;
-                break;
+                        ಗಚ್ಛ error;
+                ಭಙ್ಗ;
             /* New item */
-            case MERGE_OVERRIDE_PREFIX:
-            case MERGE_AUGMENT_PREFIX:
-            case MERGE_REPLACE_PREFIX:
+            ಪಕ್ಷ MERGE_OVERRIDE_PREFIX:
+            ಪಕ್ಷ MERGE_AUGMENT_PREFIX:
+            ಪಕ್ಷ MERGE_REPLACE_PREFIX:
                 darray_appends_nullterminate(expanded, &str[i++], 1);
                 last_item_idx = darray_size(expanded) - 1;
                 has_separator = true;
-                break;
+                ಭಙ್ಗ;
             /* Just a normal character. */
-            default:
+            ಸ್ವಭಾವ:
                 darray_appends_nullterminate(expanded, &str[i++], 1);
         }
     }
 
     /* See note: “Layout index ranges and merging KcCGST values” */
-    if (merge) {
-        if (!darray_empty(expanded))
-            concat_kccgst(to, darray_size(expanded), darray_items(expanded));
-    } else {
+    ಯದಿ (merge) {
+        ಯದಿ (!darray_empty(expanded))
+            concat_kccgst(to, darray_size(expanded), darray_ವಸ್ತುಗಳು(expanded));
+    } ಅನ್ಯಥಾ {
         darray_concat(*to, expanded);
     }
     darray_free(expanded);
-    return true;
+    ಪ್ರತ್ಯಾಗಮ true;
 
 error:
     darray_free(expanded);
-    return false;
+    ಪ್ರತ್ಯಾಗಮ false;
 }
 
-static bool
-matcher_append_pending_kccgst(struct matcher *m)
+ಸ್ಥಿರ bool
+matcher_append_pending_kccgst(ಸಂರಚನಾ matcher *m)
 {
-    if (!m->mapping.has_multiple_layouts)
-        return true;
+    ಯದಿ (!m->mapping.has_multiple_layouts)
+        ಪ್ರತ್ಯಾಗಮ true;
     /*
      * Handle pending KcCGST values
      * See note: “Layout index ranges and merging KcCGST values”
      */
-    for (kccgst_index_t i = 0; i < m->mapping.num_kccgst; i++) {
-        const enum rules_kccgst kccgst = m->mapping.kccgst_at_pos[i];
+    ಪ್ರತಿ (kccgst_index_t i = 0; i < m->mapping.ಅಂಕೆ_kccgst; i++) {
+        ಧ್ರುವ ಗಣನಾ rules_kccgst kccgst = m->mapping.kccgst_at_pos[i];
         /* For each relevant layout, append the relevant KcCGST values to
          * the output. */
-        for (xkb_layout_index_t layout = m->mapping.layout_idx_min;
+        ಪ್ರತಿ (xkb_layout_index_t layout = m->mapping.layout_idx_min;
              layout < m->mapping.layout_idx_max;
              layout++) {
             /* There may be multiple values to add if the rule set involved
              * options. Process them sequentially. */
-            register const struct kccgst_buffer* const buf = &m->pending_kccgst;
+            ಪಞ್ಜಿಕಾ ಧ್ರುವ ಸಂರಚನಾ kccgst_buffer* ಧ್ರುವ buf = &m->pending_kccgst;
             size_t offset = 0;
-            for (darray_size_t k = 0; k < darray_size(buf->slices); k++) {
-                register const struct kccgst_buffer_slice * const slice =
+            ಪ್ರತಿ (darray_size_t k = 0; k < darray_size(buf->slices); k++) {
+                ಪಞ್ಜಿಕಾ ಧ್ರುವ ಸಂರಚನಾ kccgst_buffer_slice * ಧ್ರುವ slice =
                     &darray_item(buf->slices, k);
-                if (slice->kccgst == kccgst && slice->layout == layout &&
+                ಯದಿ (slice->kccgst == kccgst && slice->layout == layout &&
                     slice->length)
                     concat_kccgst(&m->kccgst[kccgst], slice->length,
-                                  darray_items(buf->buffer) + offset);
+                                  darray_ವಸ್ತುಗಳು(buf->buffer) + offset);
                 offset += slice->length;
             }
         }
     }
     /* Ensure we won’t come here before the next relevant rule set */
     m->mapping.has_multiple_layouts = false;
-    return true;
+    ಪ್ರತ್ಯಾಗಮ true;
 }
 
-static void
-matcher_rule_verify(struct matcher *m, struct scanner *s)
+ಸ್ಥಿರ ಶೂನ್ಯ
+matcher_rule_verify(ಸಂರಚನಾ matcher *m, ಸಂರಚನಾ scanner *s)
 {
-    if (m->rule.num_mlvo_values != m->mapping.num_mlvo ||
-        m->rule.num_kccgst_values != m->mapping.num_kccgst) {
+    ಯದಿ (m->rule.ಅಂಕೆ_mlvo_ಮೌಲ್ಯಗಳು != m->mapping.ಅಂಕೆ_mlvo ||
+        m->rule.ಅಂಕೆ_kccgst_ಮೌಲ್ಯಗಳು != m->mapping.ಅಂಕೆ_kccgst) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid rule: must have same number of values "
                     "as mapping line; ignoring rule");
@@ -1618,12 +1618,12 @@ matcher_rule_verify(struct matcher *m, struct scanner *s)
  *
  * `model` input is a single value.
  */
-static bool
-matcher_rule_match_model(struct matcher *m, const struct sval value,
-                         enum mlvo_match_type match_type)
+ಸ್ಥಿರ bool
+matcher_rule_match_model(ಸಂರಚನಾ matcher *m, ಧ್ರುವ ಸಂರಚನಾ sval ಮೌಲ್ಯ,
+                         ಗಣನಾ mlvo_match_type match_type)
 {
-    return match_value_and_mark(
-        m, value, &m->rmlvo.model, match_type, WILDCARD_MATCH_ALL,
+    ಪ್ರತ್ಯಾಗಮ match_ಮೌಲ್ಯ_and_mark(
+        m, ಮೌಲ್ಯ, &m->rmlvo.model, match_type, WILDCARD_MATCH_ALL,
         /* layout-independent */
         (xkb_layout_mask_t)GLOBAL_MATCHED_LAYOUTS
     );
@@ -1668,13 +1668,13 @@ matcher_rule_match_model(struct matcher *m, const struct sval value,
  * | `option`   | list of values (not layout-indexed) | many-to-many            |
  *
  */
-static bool
-matcher_rule_match_option(struct matcher *m, const struct sval value,
-                          enum mlvo_match_type match_type,
+ಸ್ಥಿರ bool
+matcher_rule_match_option(ಸಂರಚನಾ matcher *m, ಧ್ರುವ ಸಂರಚನಾ sval ಮೌಲ್ಯ,
+                          ಗಣನಾ mlvo_match_type match_type,
                           xkb_layout_mask_t *candidates)
 {
     /* There is always at least one value */
-    assert(!darray_empty(m->rmlvo.options));
+    ಪ್ರತಿಜ್ಞಾ(!darray_empty(m->rmlvo.options));
 
     /* Remaining layout indices to match if MLVO has a layout/variant field */
     xkb_layout_mask_t unmatched =
@@ -1683,9 +1683,9 @@ matcher_rule_match_option(struct matcher *m, const struct sval value,
             : 0;
 
     bool matched = false;
-    struct matched_sval *option;
+    ಸಂರಚನಾ matched_sval *option;
     darray_foreach(option, m->rmlvo.options) {
-        const xkb_layout_mask_t matchable = option->layouts
+        ಧ್ರುವ xkb_layout_mask_t matchable = option->layouts
             /*
              * Layout-specific option; may match only if:
              * - there is a layout or variant field, and
@@ -1694,19 +1694,19 @@ matcher_rule_match_option(struct matcher *m, const struct sval value,
             ? (unmatched & option->layouts)
             /* Layout-generic option: no restriction */
             : (xkb_layout_mask_t)GLOBAL_MATCHED_LAYOUTS;
-        if (matchable && match_value_and_mark(m, value, option, match_type,
+        ಯದಿ (matchable && match_ಮೌಲ್ಯ_and_mark(m, ಮೌಲ್ಯ, option, match_type,
                                               WILDCARD_MATCH_ALL, matchable)) {
             matched = true;
             unmatched &= ~matchable;
-            if (!unmatched)
-                break;
+            ಯದಿ (!unmatched)
+                ಭಙ್ಗ;
         }
     }
-    if (unmatched) {
+    ಯದಿ (unmatched) {
         /* Remove unmatched layout indices */
         *candidates &= ~unmatched;
     }
-    return matched;
+    ಪ್ರತ್ಯಾಗಮ matched;
 }
 
 /**
@@ -1723,37 +1723,37 @@ matcher_rule_match_option(struct matcher *m, const struct sval value,
  * - An index that matches remains a candidate. Evaluation stops as soon as no
  *   candidates remain, since nothing left can satisfy the rule.
  */
-static bool
-matcher_rule_match_layout_or_variant(struct matcher *m,
-                                     darray_matched_sval *input,
-                                     const struct sval value,
-                                     enum mlvo_match_type match_type,
+ಸ್ಥಿರ bool
+matcher_rule_match_layout_or_variant(ಸಂರಚನಾ matcher *m,
+                                     darray_matched_sval *ಒಳಹರಿವು,
+                                     ಧ್ರುವ ಸಂರಚನಾ sval ಮೌಲ್ಯ,
+                                     ಗಣನಾ mlvo_match_type match_type,
                                      xkb_layout_mask_t *candidates)
 {
     /* There is always at least one value */
-    assert(!darray_empty(*input));
+    ಪ್ರತಿಜ್ಞಾ(!darray_empty(*ಒಳಹರಿವು));
 
     bool matched = false;
     /* Loop over the layout index range */
-    for (xkb_layout_index_t idx = m->mapping.layout_idx_min;
+    ಪ್ರತಿ (xkb_layout_index_t idx = m->mapping.layout_idx_min;
          idx < m->mapping.layout_idx_max && *candidates;
          idx++)
     {
         /* Process only if layout index is enabled */
-        const xkb_layout_mask_t layout = (UINT32_C(1) << idx);
-        if (layout & *candidates) {
-            struct matched_sval *to = &darray_item(*input, idx);
-            if (match_value_and_mark(m, value, to, match_type,
+        ಧ್ರುವ xkb_layout_mask_t layout = (UINT32_C(1) << idx);
+        ಯದಿ (layout & *candidates) {
+            ಸಂರಚನಾ matched_sval *to = &darray_item(*ಒಳಹರಿವು, idx);
+            ಯದಿ (match_ಮೌಲ್ಯ_and_mark(m, ಮೌಲ್ಯ, to, match_type,
                                      WILDCARD_MATCH_NONEMPTY, layout)) {
                 /* Matched, keep index */
                 matched = true;
-            } else {
+            } ಅನ್ಯಥಾ {
                 /* Not matched, remove index */
                 *candidates &= ~layout;
             }
         }
     }
-    return matched;
+    ಪ್ರತ್ಯಾಗಮ matched;
 }
 
 /**
@@ -1793,60 +1793,60 @@ matcher_rule_match_layout_or_variant(struct matcher *m,
  * The only exception is rules containing an `option` field, which do not
  * terminate the set so that additional matching options may contribute.
  */
-static void
-matcher_rule_apply_if_matches(struct matcher *m, struct scanner *s)
+ಸ್ಥಿರ ಶೂನ್ಯ
+matcher_rule_apply_if_matches(ಸಂರಚನಾ matcher *m, ಸಂರಚನಾ scanner *s)
 {
     /* Initial candidates (used if MLVO has a layout or variant field) */
     xkb_layout_mask_t candidate_layouts = m->mapping.layouts_candidates_mask;
 
     /* Loop over MLVO pattern components */
-    for (mlvo_index_t i = 0; i < m->mapping.num_mlvo; i++) {
-        const enum rules_mlvo mlvo = m->mapping.mlvo_at_pos[i];
-        const struct sval value = m->rule.mlvo_value_at_pos[i];
-        const enum mlvo_match_type match_type = m->rule.match_type_at_pos[i];
+    ಪ್ರತಿ (mlvo_index_t i = 0; i < m->mapping.ಅಂಕೆ_mlvo; i++) {
+        ಧ್ರುವ ಗಣನಾ rules_mlvo mlvo = m->mapping.mlvo_at_pos[i];
+        ಧ್ರುವ ಸಂರಚನಾ sval ಮೌಲ್ಯ = m->rule.mlvo_ಮೌಲ್ಯ_at_pos[i];
+        ಧ್ರುವ ಗಣನಾ mlvo_match_type match_type = m->rule.match_type_at_pos[i];
         bool matched = false;
 
-        switch (mlvo) {
-        case MLVO_MODEL:
-            matched = matcher_rule_match_model(m, value, match_type);
-            break;
-        case MLVO_LAYOUT:
+        ವಿಕಲ್ಪ (mlvo) {
+        ಪಕ್ಷ MLVO_MODEL:
+            matched = matcher_rule_match_model(m, ಮೌಲ್ಯ, match_type);
+            ಭಙ್ಗ;
+        ಪಕ್ಷ MLVO_LAYOUT:
             matched = matcher_rule_match_layout_or_variant(
-                m, &m->rmlvo.layouts, value, match_type, &candidate_layouts
+                m, &m->rmlvo.layouts, ಮೌಲ್ಯ, match_type, &candidate_layouts
             );
-            break;
-        case MLVO_VARIANT:
+            ಭಙ್ಗ;
+        ಪಕ್ಷ MLVO_VARIANT:
             matched = matcher_rule_match_layout_or_variant(
-                m, &m->rmlvo.variants, value, match_type, &candidate_layouts
+                m, &m->rmlvo.variants, ಮೌಲ್ಯ, match_type, &candidate_layouts
             );
-            break;
-        case MLVO_OPTION:
+            ಭಙ್ಗ;
+        ಪಕ್ಷ MLVO_OPTION:
             matched = matcher_rule_match_option(
-                m, value, match_type, &candidate_layouts
+                m, ಮೌಲ್ಯ, match_type, &candidate_layouts
             );
-            break;
-        default: {
+            ಭಙ್ಗ;
+        ಸ್ವಭಾವ: {
             static_assert(MLVO_OPTION == 3 &&
-                          MLVO_OPTION == _MLVO_NUM_ENTRIES - 1,
+                          MLVO_OPTION == MLVO_ಅಂಕೆ_ENTRIES - 1,
                           "Unexpected MLVO field");
-            assert(!"Unreachable");
+            ಪ್ರತಿಜ್ಞಾ(!"Unreachable");
         }
         }
 
-        if (!matched)
-            return;
+        ಯದಿ (!matched)
+            ಪ್ರತ್ಯಾಗಮ;
     }
 
-    if (m->mapping.has_multiple_layouts) {
+    ಯದಿ (m->mapping.has_multiple_layouts) {
         /* Special index: loop over the index range */
-        for (xkb_layout_index_t idx = m->mapping.layout_idx_min;
+        ಪ್ರತಿ (xkb_layout_index_t idx = m->mapping.layout_idx_min;
              idx < m->mapping.layout_idx_max;
              idx++)
         {
-            if (candidate_layouts & (UINT32_C(1) << idx)) {
-                for (kccgst_index_t i = 0; i < m->mapping.num_kccgst; i++) {
-                    const enum rules_kccgst kccgst = m->mapping.kccgst_at_pos[i];
-                    const struct sval value = m->rule.kccgst_value_at_pos[i];
+            ಯದಿ (candidate_layouts & (UINT32_C(1) << idx)) {
+                ಪ್ರತಿ (kccgst_index_t i = 0; i < m->mapping.ಅಂಕೆ_kccgst; i++) {
+                    ಧ್ರುವ ಗಣನಾ rules_kccgst kccgst = m->mapping.kccgst_at_pos[i];
+                    ಧ್ರುವ ಸಂರಚನಾ sval ಮೌಲ್ಯ = m->rule.kccgst_ಮೌಲ್ಯ_at_pos[i];
                     /*
                      * [NOTE] Layout index ranges and merging KcCGST values
                      *
@@ -1884,14 +1884,14 @@ matcher_rule_apply_if_matches(struct matcher *m, struct scanner *s)
                      * - the relative order of the options for layout C follows
                      *   the order within the rule set, not the order of RMLVO.
                      */
-                    struct kccgst_buffer * const buf = &m->pending_kccgst;
-                    const darray_size_t prev_buffer_length =
+                    ಸಂರಚನಾ kccgst_buffer * ಧ್ರುವ buf = &m->pending_kccgst;
+                    ಧ್ರುವ darray_size_t prev_buffer_length =
                         darray_size(buf->buffer);
-                    append_expanded_kccgst_value(m, s, false, &buf->buffer,
-                                                 value, idx);
-                    const uint32_t length = (uint32_t) (darray_size(buf->buffer)
+                    append_expanded_kccgst_ಮೌಲ್ಯ(m, s, false, &buf->buffer,
+                                                 ಮೌಲ್ಯ, idx);
+                    ಧ್ರುವ uint32_t length = (uint32_t) (darray_size(buf->buffer)
                                           - prev_buffer_length);
-                    const struct kccgst_buffer_slice slice = {
+                    ಧ್ರುವ ಸಂರಚನಾ kccgst_buffer_slice slice = {
                         .length = length,
                         .kccgst = kccgst,
                         .layout = idx
@@ -1900,12 +1900,12 @@ matcher_rule_apply_if_matches(struct matcher *m, struct scanner *s)
                 }
             }
         }
-    } else {
+    } ಅನ್ಯಥಾ {
         /* Numeric index or no index */
-        for (kccgst_index_t i = 0; i < m->mapping.num_kccgst; i++) {
-            enum rules_kccgst kccgst = m->mapping.kccgst_at_pos[i];
-            struct sval value = m->rule.kccgst_value_at_pos[i];
-            append_expanded_kccgst_value(m, s, true, &m->kccgst[kccgst], value,
+        ಪ್ರತಿ (kccgst_index_t i = 0; i < m->mapping.ಅಂಕೆ_kccgst; i++) {
+            ಗಣನಾ rules_kccgst kccgst = m->mapping.kccgst_at_pos[i];
+            ಸಂರಚನಾ sval ಮೌಲ್ಯ = m->rule.kccgst_ಮೌಲ್ಯ_at_pos[i];
+            append_expanded_kccgst_ಮೌಲ್ಯ(m, s, true, &m->kccgst[kccgst], ಮೌಲ್ಯ,
                                          m->mapping.layout_idx_min);
         }
     }
@@ -1915,234 +1915,234 @@ matcher_rule_apply_if_matches(struct matcher *m, struct scanner *s)
      * skipped. However, rule sets matching against options may contain
      * several legitimate rules, so they are processed entirely.
      */
-    if (!(is_mlvo_mask_defined(m, MLVO_OPTION))) {
+    ಯದಿ (!(is_mlvo_mask_defined(m, MLVO_OPTION))) {
         m->mapping.layouts_candidates_mask &= ~candidate_layouts;
     }
 }
 
-static enum rules_token
-gettok(struct matcher *m, struct scanner *s)
+ಸ್ಥಿರ ಗಣನಾ rules_token
+gettok(ಸಂರಚನಾ matcher *m, ಸಂರಚನಾ scanner *s)
 {
-    return lex(s, &m->val);
+    ಪ್ರತ್ಯಾಗಮ lex(s, &m->val);
 }
 
 // NOLINTBEGIN(readability-trivial-switch)
-static bool
-matcher_match(struct matcher *m, struct scanner *s,
-              unsigned int include_depth,
-              const char *string, size_t len,
-              const char *file_name)
+ಸ್ಥಿರ bool
+matcher_match(ಸಂರಚನಾ matcher *m, ಸಂರಚನಾ scanner *s,
+              unsigned ಪೂರ್ಣಾಙ್ಕ include_depth,
+              ಧ್ರುವ ವರ್ಣ *string, size_t len,
+              ಧ್ರುವ ವರ್ಣ *file_name)
 {
-    enum rules_token tok;
+    ಗಣನಾ rules_token tok;
 
-    if (!m)
-        return false;
+    ಯದಿ (!m)
+        ಪ್ರತ್ಯಾಗಮ false;
 
 initial:
-    switch (tok = gettok(m, s)) {
-    case TOK_BANG:
-        goto bang;
-    case TOK_END_OF_LINE:
-        goto initial;
-    case TOK_END_OF_FILE:
-        goto finish;
-    default:
-        goto unexpected;
+    ವಿಕಲ್ಪ (tok = gettok(m, s)) {
+    ಪಕ್ಷ TOK_BANG:
+        ಗಚ್ಛ bang;
+    ಪಕ್ಷ TOK_END_OF_ಸಾಲು:
+        ಗಚ್ಛ initial;
+    ಪಕ್ಷ TOK_END_OF_FILE:
+        ಗಚ್ಛ finish;
+    ಸ್ವಭಾವ:
+        ಗಚ್ಛ unexpected;
     }
 
 bang:
-    switch (tok = gettok(m, s)) {
-    case TOK_GROUP_NAME:
+    ವಿಕಲ್ಪ (tok = gettok(m, s)) {
+    ಪಕ್ಷ TOK_GROUP_NAME:
         matcher_group_start_new(m, m->val.string);
-        goto group_name;
-    case TOK_INCLUDE:
-        goto include_statement;
-    case TOK_IDENTIFIER:
+        ಗಚ್ಛ group_name;
+    ಪಕ್ಷ TOK_INCLUDE:
+        ಗಚ್ಛ include_statement;
+    ಪಕ್ಷ TOK_IDENTIFIER:
         matcher_mapping_start_new(m);
         matcher_mapping_set_mlvo(m, s, m->val.string);
-        goto mapping_mlvo;
-    default:
-        goto unexpected;
+        ಗಚ್ಛ mapping_mlvo;
+    ಸ್ವಭಾವ:
+        ಗಚ್ಛ unexpected;
     }
 
 group_name:
-    switch (tok = gettok(m, s)) {
-    case TOK_EQUALS:
-        goto group_element;
-    default:
-        goto unexpected;
+    ವಿಕಲ್ಪ (tok = gettok(m, s)) {
+    ಪಕ್ಷ TOK_EQUALS:
+        ಗಚ್ಛ group_element;
+    ಸ್ವಭಾವ:
+        ಗಚ್ಛ unexpected;
     }
 
 group_element:
-    switch (tok = gettok(m, s)) {
-    case TOK_IDENTIFIER:
+    ವಿಕಲ್ಪ (tok = gettok(m, s)) {
+    ಪಕ್ಷ TOK_IDENTIFIER:
         matcher_group_add_element(m, s, m->val.string);
-        goto group_element;
-    case TOK_END_OF_LINE:
-        goto initial;
-    default:
-        goto unexpected;
+        ಗಚ್ಛ group_element;
+    ಪಕ್ಷ TOK_END_OF_ಸಾಲು:
+        ಗಚ್ಛ initial;
+    ಸ್ವಭಾವ:
+        ಗಚ್ಛ unexpected;
     }
 
 include_statement:
-    switch (tok = gettok(m, s)) {
-    case TOK_IDENTIFIER:
+    ವಿಕಲ್ಪ (tok = gettok(m, s)) {
+    ಪಕ್ಷ TOK_IDENTIFIER:
         matcher_include(m, s, include_depth, m->val.string);
-        goto include_statement_end;
-    default:
-        goto unexpected;
+        ಗಚ್ಛ include_statement_end;
+    ಸ್ವಭಾವ:
+        ಗಚ್ಛ unexpected;
     }
 
 include_statement_end:
-    switch (tok = gettok(m, s)) {
-    case TOK_END_OF_LINE:
-        goto initial;
-    default:
-        goto unexpected;
+    ವಿಕಲ್ಪ (tok = gettok(m, s)) {
+    ಪಕ್ಷ TOK_END_OF_ಸಾಲು:
+        ಗಚ್ಛ initial;
+    ಸ್ವಭಾವ:
+        ಗಚ್ಛ unexpected;
     }
 
 mapping_mlvo:
-    switch (tok = gettok(m, s)) {
-    case TOK_IDENTIFIER:
-        if (m->mapping.active)
+    ವಿಕಲ್ಪ (tok = gettok(m, s)) {
+    ಪಕ್ಷ TOK_IDENTIFIER:
+        ಯದಿ (m->mapping.active)
             matcher_mapping_set_mlvo(m, s, m->val.string);
-        goto mapping_mlvo;
-    case TOK_EQUALS:
-        goto mapping_kccgst;
-    default:
-        goto unexpected;
+        ಗಚ್ಛ mapping_mlvo;
+    ಪಕ್ಷ TOK_EQUALS:
+        ಗಚ್ಛ mapping_kccgst;
+    ಸ್ವಭಾವ:
+        ಗಚ್ಛ unexpected;
     }
 
 mapping_kccgst:
-    switch (tok = gettok(m, s)) {
-    case TOK_IDENTIFIER:
-        if (m->mapping.active)
+    ವಿಕಲ್ಪ (tok = gettok(m, s)) {
+    ಪಕ್ಷ TOK_IDENTIFIER:
+        ಯದಿ (m->mapping.active)
             matcher_mapping_set_kccgst(m, s, m->val.string);
-        goto mapping_kccgst;
-    case TOK_END_OF_LINE:
-        if (m->mapping.active && matcher_mapping_verify(m, s)) {
+        ಗಚ್ಛ mapping_kccgst;
+    ಪಕ್ಷ TOK_END_OF_ಸಾಲು:
+        ಯದಿ (m->mapping.active && matcher_mapping_verify(m, s)) {
             matcher_mapping_set_layout_bounds(m);
-            if (m->mapping.has_multiple_layouts) {
+            ಯದಿ (m->mapping.has_multiple_layouts) {
                 /* Lazily reset buffers for layout index ranges.
                  * We’ll reuse the allocations. */
                 darray_size(m->pending_kccgst.buffer) = 0;
                 darray_size(m->pending_kccgst.slices) = 0;
             }
         }
-        goto rule_mlvo_first;
-    default:
-        goto unexpected;
+        ಗಚ್ಛ rule_mlvo_first;
+    ಸ್ವಭಾವ:
+        ಗಚ್ಛ unexpected;
     }
 
 rule_mlvo_first:
-    switch (tok = gettok(m, s)) {
-    case TOK_BANG:
+    ವಿಕಲ್ಪ (tok = gettok(m, s)) {
+    ಪಕ್ಷ TOK_BANG:
         matcher_append_pending_kccgst(m);
-        goto bang;
-    case TOK_END_OF_LINE:
-        goto rule_mlvo_first;
-    case TOK_END_OF_FILE:
+        ಗಚ್ಛ bang;
+    ಪಕ್ಷ TOK_END_OF_ಸಾಲು:
+        ಗಚ್ಛ rule_mlvo_first;
+    ಪಕ್ಷ TOK_END_OF_FILE:
         matcher_append_pending_kccgst(m);
-        goto finish;
-    default:
+        ಗಚ್ಛ finish;
+    ಸ್ವಭಾವ:
         matcher_rule_start_new(m);
-        goto rule_mlvo_no_tok;
+        ಗಚ್ಛ rule_mlvo_no_tok;
     }
 
 rule_mlvo:
     tok = gettok(m, s);
 rule_mlvo_no_tok:
-    switch (tok) {
-    case TOK_IDENTIFIER:
-        if (!m->rule.skip)
+    ವಿಕಲ್ಪ (tok) {
+    ಪಕ್ಷ TOK_IDENTIFIER:
+        ಯದಿ (!m->rule.skip)
             matcher_rule_set_mlvo(m, s, m->val.string);
-        goto rule_mlvo;
-    case TOK_WILD_CARD_STAR:
-        if (!m->rule.skip)
+        ಗಚ್ಛ rule_mlvo;
+    ಪಕ್ಷ TOK_WILD_CARD_STAR:
+        ಯದಿ (!m->rule.skip)
             matcher_rule_set_mlvo_wildcard(m, s, MLVO_MATCH_WILDCARD_LEGACY);
-        goto rule_mlvo;
-    case TOK_WILD_CARD_NONE:
-        if (!m->rule.skip)
+        ಗಚ್ಛ rule_mlvo;
+    ಪಕ್ಷ TOK_WILD_CARD_NONE:
+        ಯದಿ (!m->rule.skip)
             matcher_rule_set_mlvo_wildcard(m, s, MLVO_MATCH_WILDCARD_NONE);
-        goto rule_mlvo;
-    case TOK_WILD_CARD_SOME:
-        if (!m->rule.skip)
+        ಗಚ್ಛ rule_mlvo;
+    ಪಕ್ಷ TOK_WILD_CARD_SOME:
+        ಯದಿ (!m->rule.skip)
             matcher_rule_set_mlvo_wildcard(m, s, MLVO_MATCH_WILDCARD_SOME);
-        goto rule_mlvo;
-    case TOK_WILD_CARD_ANY:
-        if (!m->rule.skip)
+        ಗಚ್ಛ rule_mlvo;
+    ಪಕ್ಷ TOK_WILD_CARD_ANY:
+        ಯದಿ (!m->rule.skip)
             matcher_rule_set_mlvo_wildcard(m, s, MLVO_MATCH_WILDCARD_ANY);
-        goto rule_mlvo;
-    case TOK_GROUP_NAME:
-        if (!m->rule.skip)
+        ಗಚ್ಛ rule_mlvo;
+    ಪಕ್ಷ TOK_GROUP_NAME:
+        ಯದಿ (!m->rule.skip)
             matcher_rule_set_mlvo_group(m, s, m->val.string);
-        goto rule_mlvo;
-    case TOK_EQUALS:
-        goto rule_kccgst;
-    default:
-        goto unexpected;
+        ಗಚ್ಛ rule_mlvo;
+    ಪಕ್ಷ TOK_EQUALS:
+        ಗಚ್ಛ rule_kccgst;
+    ಸ್ವಭಾವ:
+        ಗಚ್ಛ unexpected;
     }
 
 rule_kccgst:
-    switch (tok = gettok(m, s)) {
-    case TOK_IDENTIFIER:
-        if (!m->rule.skip)
+    ವಿಕಲ್ಪ (tok = gettok(m, s)) {
+    ಪಕ್ಷ TOK_IDENTIFIER:
+        ಯದಿ (!m->rule.skip)
             matcher_rule_set_kccgst(m, s, m->val.string);
-        goto rule_kccgst;
-    case TOK_END_OF_LINE:
-        if (!m->rule.skip)
+        ಗಚ್ಛ rule_kccgst;
+    ಪಕ್ಷ TOK_END_OF_ಸಾಲು:
+        ಯದಿ (!m->rule.skip)
             matcher_rule_verify(m, s);
-        if (!m->rule.skip)
+        ಯದಿ (!m->rule.skip)
             matcher_rule_apply_if_matches(m, s);
-        goto rule_mlvo_first;
-    default:
-        goto unexpected;
+        ಗಚ್ಛ rule_mlvo_first;
+    ಸ್ವಭಾವ:
+        ಗಚ್ಛ unexpected;
     }
 
 unexpected:
-    switch (tok) {
-    case TOK_ERROR:
-        goto error;
-    default:
-        goto state_error;
+    ವಿಕಲ್ಪ (tok) {
+    ಪಕ್ಷ TOK_ERROR:
+        ಗಚ್ಛ error;
+    ಸ್ವಭಾವ:
+        ಗಚ್ಛ state_error;
     }
 
 finish:
-    return true;
+    ಪ್ರತ್ಯಾಗಮ true;
 
 state_error:
     scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                 "unexpected token (0x%x)", tok);
 error:
-    return false;
+    ಪ್ರತ್ಯಾಗಮ false;
 }
 // NOLINTEND(readability-trivial-switch)
 
-static bool
-read_rules_file(struct xkb_context *ctx,
-                struct matcher *matcher,
-                unsigned int include_depth,
+ಸ್ಥಿರ bool
+read_rules_file(ಸಂರಚನಾ xkb_context *ctx,
+                ಸಂರಚನಾ matcher *matcher,
+                unsigned ಪೂರ್ಣಾಙ್ಕ include_depth,
                 FILE *file,
-                const char *path)
+                ಧ್ರುವ ವರ್ಣ *path)
 {
     bool ret;
-    char *string;
+    ವರ್ಣ *string;
     size_t size;
-    struct scanner scanner;
+    ಸಂರಚನಾ scanner scanner;
 
-    if (!map_file(file, &string, &size)) {
+    ಯದಿ (!map_file(file, &string, &size)) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "Couldn't read rules file \"%s\": %s\n",
                 path, strerror(errno));
-        return false;
+        ಪ್ರತ್ಯಾಗಮ false;
     }
 
-    scanner_init(&scanner, matcher->ctx, string, size, path, NULL);
+    scanner_init(&scanner, matcher->ctx, string, size, path, ರಿಕ್ತ);
 
     /* Basic detection of wrong character encoding.
        The first character relevant to the grammar must be ASCII:
        whitespace, !, / (for comment) */
-    if (!scanner_check_supported_char_encoding(&scanner)) {
+    ಯದಿ (!scanner_check_supported_char_encoding(&scanner)) {
         scanner_err(&scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                     "This could be a file encoding issue. "
                     "Supported encodings must be backward compatible with ASCII.");
@@ -2150,12 +2150,12 @@ read_rules_file(struct xkb_context *ctx,
                     "E.g. ISO/CEI 8859 and UTF-8 are supported "
                     "but UTF-16, UTF-32 and CP1026 are not.");
         unmap_file(string, size);
-        return false;
+        ಪ್ರತ್ಯಾಗಮ false;
     }
 
     ret = matcher_match(matcher, &scanner, include_depth, string, size, path);
     unmap_file(string, size);
-    return ret;
+    ಪ್ರತ್ಯಾಗಮ ret;
 }
 
 /**
@@ -2164,61 +2164,61 @@ read_rules_file(struct xkb_context *ctx,
  * composition: rules files are just processed sequentially using the matcher
  * resulting from the previous file.
  */
-static bool
-xkb_resolve_partial_rules(struct xkb_context *ctx, char *path, size_t path_size,
-                          const char* rules, const char* suffix,
-                          struct matcher *matcher)
+ಸ್ಥಿರ bool
+xkb_resolve_partial_rules(ಸಂರಚನಾ xkb_context *ctx, ವರ್ಣ *path, size_t path_size,
+                          ಧ್ರುವ ವರ್ಣ* rules, ಧ್ರುವ ವರ್ಣ* suffix,
+                          ಸಂರಚನಾ matcher *matcher)
 {
     /* Set partial rules filename: canonical rules filename + suffix */
-    char partial_rules[60]; /* Arbitrary, but we do not expect long names */
-    if (unlikely(!snprintf_safe(partial_rules, sizeof(partial_rules),
+    ವರ್ಣ partial_rules[60]; /* Arbitrary, but we do not expect long names */
+    ಯದಿ (unlikely(!snprintf_safe(partial_rules, ಪರಿಮಾಣ(partial_rules),
                                 "%s%s", rules, suffix))) {
         log_err(ctx, XKB_ERROR_CANNOT_RESOLVE_RMLVO,
                 "Cannot load XKB rules \"%s%s\"\n", rules, suffix);
-        return false;
+        ಪ್ರತ್ಯಾಗಮ false;
     }
 
     /*
      * Traverse all include paths and resolve all corresponding partial rules.
      * These files are optional, but required to be valid if present.
      */
-    unsigned int offset = 0;
-    FILE *file = NULL;
-    const size_t len = strlen(partial_rules);
-    while ((file = FindFileInXkbPath(ctx, "(unknown)",
+    unsigned ಪೂರ್ಣಾಙ್ಕ offset = 0;
+    FILE *file = ರಿಕ್ತ;
+    ಧ್ರುವ size_t len = strlen(partial_rules);
+    ಯಾವತ್ ((file = FindFileInXkbPath(ctx, "(unknown)",
                                      partial_rules, len, FILE_TYPE_RULES,
-                                     path, path_size, &offset, false)) != NULL) {
-        const bool ok = read_rules_file(ctx, matcher, 0, file, path);
+                                     path, path_size, &offset, false)) != ರಿಕ್ತ) {
+        ಧ್ರುವ bool ok = read_rules_file(ctx, matcher, 0, file, path);
         fclose(file);
-        if (!ok) {
+        ಯದಿ (!ok) {
             log_err(ctx, XKB_ERROR_CANNOT_RESOLVE_RMLVO,
                     "Error while parsing XKB rules \"%s\"\n", path);
-            return false;
+            ಪ್ರತ್ಯಾಗಮ false;
         }
         offset++;
     }
 
-    return true;
+    ಪ್ರತ್ಯಾಗಮ true;
 }
 
-static bool
-xkb_resolve_rules(struct xkb_context *ctx,
-                  const char* rules, struct matcher *matcher,
-                  struct xkb_component_names *out,
+ಸ್ಥಿರ bool
+xkb_resolve_rules(ಸಂರಚನಾ xkb_context *ctx,
+                  ಧ್ರುವ ವರ್ಣ* rules, ಸಂರಚನಾ matcher *matcher,
+                  ಸಂರಚನಾ xkb_component_names *out,
                   xkb_layout_index_t *explicit_layouts)
 {
     bool ret = false;
 
     /* First check if the main rules file exists or error early */
-    unsigned int offset = 0;
-    char path[PATH_MAX];
-    FILE * const file = FindFileInXkbPath(ctx, "(unknown)",
+    unsigned ಪೂರ್ಣಾಙ್ಕ offset = 0;
+    ವರ್ಣ path[PATH_MAX];
+    FILE * ಧ್ರುವ file = FindFileInXkbPath(ctx, "(unknown)",
                                           rules, strlen(rules), FILE_TYPE_RULES,
-                                          path, sizeof(path), &offset, true);
-    if (!file) {
+                                          path, ಪರಿಮಾಣ(path), &offset, true);
+    ಯದಿ (!file) {
         log_err(ctx, XKB_ERROR_CANNOT_RESOLVE_RMLVO,
                 "Cannot load XKB rules \"%s\"\n", rules);
-        goto err_out;
+        ಗಚ್ಛ err_out;
     }
 
     /*
@@ -2234,27 +2234,27 @@ xkb_resolve_rules(struct xkb_context *ctx,
      */
 
     /* XKB extension: resolve optional <rules>.pre files */
-    ret = xkb_resolve_partial_rules(ctx, path, sizeof(path),
+    ret = xkb_resolve_partial_rules(ctx, path, ಪರಿಮಾಣ(path),
                                     rules, ".pre", matcher);
-    if (!ret)
-        goto err_out;
+    ಯದಿ (!ret)
+        ಗಚ್ಛ err_out;
 
     /* Resolve main <rules> file */
     ret = read_rules_file(ctx, matcher, 0, file, path);
-    if (!ret) {
+    ಯದಿ (!ret) {
         log_err(ctx, XKB_ERROR_CANNOT_RESOLVE_RMLVO,
                 "Error while parsing XKB rules \"%s\"\n", path);
-        goto err_out;
+        ಗಚ್ಛ err_out;
     }
 
     /* XKB extension: resolve optional <rules>.post files */
-    ret = xkb_resolve_partial_rules(ctx, path, sizeof(path),
+    ret = xkb_resolve_partial_rules(ctx, path, ಪರಿಮಾಣ(path),
                                     rules, ".post", matcher);
-    if (!ret)
-        goto err_out;
+    ಯದಿ (!ret)
+        ಗಚ್ಛ err_out;
 
     /* Check we got required components */
-    if (darray_empty(matcher->kccgst[KCCGST_KEYCODES]) ||
+    ಯದಿ (darray_empty(matcher->kccgst[KCCGST_KEYCODES]) ||
         darray_empty(matcher->kccgst[KCCGST_TYPES]) ||
         darray_empty(matcher->kccgst[KCCGST_COMPAT]) ||
         /* darray_empty(matcher->kccgst[KCCGST_GEOMETRY]) || */
@@ -2262,112 +2262,112 @@ xkb_resolve_rules(struct xkb_context *ctx,
         log_err(ctx, XKB_ERROR_CANNOT_RESOLVE_RMLVO,
                 "No components returned from XKB rules \"%s\"\n", rules);
         ret = false;
-        goto err_out;
+        ಗಚ್ಛ err_out;
     }
 
-    darray_steal(matcher->kccgst[KCCGST_KEYCODES], &out->keycodes, NULL);
-    darray_steal(matcher->kccgst[KCCGST_TYPES], &out->types, NULL);
-    darray_steal(matcher->kccgst[KCCGST_COMPAT], &out->compatibility, NULL);
-    darray_steal(matcher->kccgst[KCCGST_SYMBOLS], &out->symbols, NULL);
-    darray_steal(matcher->kccgst[KCCGST_GEOMETRY], &out->geometry, NULL);
+    darray_steal(matcher->kccgst[KCCGST_KEYCODES], &out->keycodes, ರಿಕ್ತ);
+    darray_steal(matcher->kccgst[KCCGST_TYPES], &out->types, ರಿಕ್ತ);
+    darray_steal(matcher->kccgst[KCCGST_COMPAT], &out->compatibility, ರಿಕ್ತ);
+    darray_steal(matcher->kccgst[KCCGST_SYMBOLS], &out->symbols, ರಿಕ್ತ);
+    darray_steal(matcher->kccgst[KCCGST_GEOMETRY], &out->geometry, ರಿಕ್ತ);
 
-    struct matched_sval *mval = &matcher->rmlvo.model;
-    if (!mval->matched && mval->sval.len > 0)
-        log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_VALUE,
+    ಸಂರಚನಾ matched_sval *mval = &matcher->rmlvo.model;
+    ಯದಿ (!mval->matched && mval->sval.len > 0)
+        log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_ಮೌಲ್ಯ,
                 "RMLVO mismatch: unrecognized model \"%.*s\" "
                 "was ignored in rules \"%s\"\n",
-                (unsigned int) mval->sval.len, mval->sval.start, rules);
+                (unsigned ಪೂರ್ಣಾಙ್ಕ) mval->sval.len, mval->sval.start, rules);
     darray_foreach(mval, matcher->rmlvo.layouts)
-        if (!mval->matched && mval->sval.len > 0)
-            log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_VALUE,
+        ಯದಿ (!mval->matched && mval->sval.len > 0)
+            log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_ಮೌಲ್ಯ,
                     "RMLVO mismatch: unrecognized layout \"%.*s\" "
                     "was ignored in rules \"%s\"\n",
-                    (unsigned int) mval->sval.len, mval->sval.start, rules);
+                    (unsigned ಪೂರ್ಣಾಙ್ಕ) mval->sval.len, mval->sval.start, rules);
     darray_foreach(mval, matcher->rmlvo.variants)
-        if (!mval->matched && mval->sval.len > 0)
-            log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_VALUE,
+        ಯದಿ (!mval->matched && mval->sval.len > 0)
+            log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_ಮೌಲ್ಯ,
                     "RMLVO mismatch: unrecognized variant \"%.*s\" "
                     "was ignored in rules \"%s\"\n",
-                    (unsigned int) mval->sval.len, mval->sval.start, rules);
+                    (unsigned ಪೂರ್ಣಾಙ್ಕ) mval->sval.len, mval->sval.start, rules);
     darray_foreach(mval, matcher->rmlvo.options) {
-        if (!mval->sval.len)
-            continue;
+        ಯದಿ (!mval->sval.len)
+            ಅನುವರ್ತ;
 
-        if (!mval->matched) {
+        ಯದಿ (!mval->matched) {
             /* No match (either layout-specific or layout-independent) */
-            log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_VALUE,
+            log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_ಮೌಲ್ಯ,
                     "RMLVO mismatch: unrecognized option \"%.*s\" "
                     "was ignored in rules \"%s\"\n",
-                    (unsigned int) mval->sval.len, mval->sval.start, rules);
-        } else if (mval->layouts && mval->layouts != mval->matched) {
+                    (unsigned ಪೂರ್ಣಾಙ್ಕ) mval->sval.len, mval->sval.start, rules);
+        } ಅನ್ಯಥಾ ಯದಿ (mval->layouts && mval->layouts != mval->matched) {
             /* Partial match (layout-specific) */
-            const xkb_layout_mask_t unmatched = (mval->layouts & ~mval->matched);
-            assert(unmatched);
-            log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_VALUE,
+            ಧ್ರುವ xkb_layout_mask_t unmatched = (mval->layouts & ~mval->matched);
+            ಪ್ರತಿಜ್ಞಾ(unmatched);
+            log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_ಮೌಲ್ಯ,
                     "RMLVO mismatch: option \"%.*s\" with layout mask "
                     "0x%"PRIx32" was ignored in rules \"%s\"\n",
-                    (unsigned int)mval->sval.len, mval->sval.start,
+                    (unsigned ಪೂರ್ಣಾಙ್ಕ)mval->sval.len, mval->sval.start,
                     unmatched, rules);
         }
     }
 
     /* Set the number of explicit layouts */
-    if (out->symbols != NULL && explicit_layouts != NULL) {
+    ಯದಿ (out->symbols != ರಿಕ್ತ && explicit_layouts != ರಿಕ್ತ) {
         *explicit_layouts = 1; /* at least one group */
-        const char *symbols = out->symbols;
+        ಧ್ರುವ ವರ್ಣ *symbols = out->symbols;
         /* Take the highest modifier */
-        while ((symbols = strchr(symbols, ':')) != NULL && symbols[1] != '\0') {
+        ಯಾವತ್ ((symbols = strchr(symbols, ':')) != ರಿಕ್ತ && symbols[1] != '\0') {
             xkb_layout_index_t group = 0;
-            const int count = parse_dec_to_uint32_t(++symbols, SIZE_MAX, &group);
+            ಧ್ರುವ ಪೂರ್ಣಾಙ್ಕ ಎಣಿಕೆ = parse_dec_to_uint32_t(++symbols, SIZE_MAX, &group);
             /* Update only when valid group index, but continue parsing
              * even on invalid ones, as we do not handle them here. */
-            if (count > 0 && (symbols[count] == '\0' ||
-                is_merge_mode_prefix(symbols[count])) &&
+            ಯದಿ (ಎಣಿಕೆ > 0 && (symbols[ಎಣಿಕೆ] == '\0' ||
+                is_merge_mode_prefix(symbols[ಎಣಿಕೆ])) &&
                 group > 0 && group <= XKB_MAX_GROUPS) {
                 *explicit_layouts = MAX(*explicit_layouts, group);
-                symbols += count;
+                symbols += ಎಣಿಕೆ;
             }
         }
     }
 
 err_out:
-    if (file)
+    ಯದಿ (file)
         fclose(file);
 
-    return ret;
+    ಪ್ರತ್ಯಾಗಮ ret;
 }
 
 bool
-xkb_components_from_rmlvo_builder(const struct xkb_rmlvo_builder *rmlvo,
-                                  struct xkb_component_names *out,
+xkb_components_from_rmlvo_builder(ಧ್ರುವ ಸಂರಚನಾ xkb_rmlvo_builder *rmlvo,
+                                  ಸಂರಚನಾ xkb_component_names *out,
                                   xkb_layout_index_t *explicit_layouts)
 {
-    const char *rules = rmlvo->rules;
-    struct matcher *matcher = matcher_new_from_rmlvo(rmlvo, &rules);
-    if (!matcher)
-        return false;
+    ಧ್ರುವ ವರ್ಣ *rules = rmlvo->rules;
+    ಸಂರಚನಾ matcher *matcher = matcher_new_from_rmlvo(rmlvo, &rules);
+    ಯದಿ (!matcher)
+        ಪ್ರತ್ಯಾಗಮ false;
 
-    const bool ret = xkb_resolve_rules(rmlvo->ctx, rules, matcher,
+    ಧ್ರುವ bool ret = xkb_resolve_rules(rmlvo->ctx, rules, matcher,
                                        out, explicit_layouts);
 
     matcher_free(matcher);
-    return ret;
+    ಪ್ರತ್ಯಾಗಮ ret;
 }
 
 
 bool
-xkb_components_from_rules_names(struct xkb_context *ctx,
-                                const struct xkb_rule_names *rmlvo,
-                                struct xkb_component_names *out,
+xkb_components_from_rules_names(ಸಂರಚನಾ xkb_context *ctx,
+                                ಧ್ರುವ ಸಂರಚನಾ xkb_rule_names *rmlvo,
+                                ಸಂರಚನಾ xkb_component_names *out,
                                 xkb_layout_index_t *explicit_layouts)
 {
-    struct matcher *matcher = matcher_new_from_names(ctx, rmlvo);
-    if (!matcher)
-        return false;
+    ಸಂರಚನಾ matcher *matcher = matcher_new_from_names(ctx, rmlvo);
+    ಯದಿ (!matcher)
+        ಪ್ರತ್ಯಾಗಮ false;
 
-    const bool ret = xkb_resolve_rules(ctx, rmlvo->rules, matcher,
+    ಧ್ರುವ bool ret = xkb_resolve_rules(ctx, rmlvo->rules, matcher,
                                        out, explicit_layouts);
 
     matcher_free(matcher);
-    return ret;
+    ಪ್ರತ್ಯಾಗಮ ret;
 }

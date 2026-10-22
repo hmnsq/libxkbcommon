@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include "utils.h"
-#include "util-paths.h"
+#ಅನ್ತರ್ಭಾವ "utils.h"
+#ಅನ್ತರ್ಭಾವ "util-paths.h"
 
 
 /* Caller must ensure that the input is not NULL or empty */
 bool
-is_absolute_path(const char *path)
+is_absolute_path(ಧ್ರುವ ವರ್ಣ *path)
 {
 #ifdef _WIN32
     /*
@@ -22,9 +22,9 @@ is_absolute_path(const char *path)
      * - A single backslash, for example, "\directory" or "\file.txt".
      * See: https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file
      */
-    return is_path_separator(path[0]) ||
+    ಪ್ರತ್ಯಾಗಮ is_path_separator(path[0]) ||
            (strlen_safe(path) >= 3 && path[1] == ':' && is_path_separator(path[2]));
-#else
-    return is_path_separator(path[0]);
+#ಅನ್ಯಥಾ
+    ಪ್ರತ್ಯಾಗಮ is_path_separator(path[0]);
 #endif
 }

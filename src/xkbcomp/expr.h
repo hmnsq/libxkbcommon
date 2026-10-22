@@ -4,64 +4,64 @@
  */
 #pragma once
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include "xkbcommon/xkbcommon.h"
+#ಅನ್ತರ್ಭಾವ "xkbcommon/xkbcommon.h"
 
-#include "ast.h"
-#include "keymap.h"
-#include "text.h"
-#include "xkbcomp-priv.h"
-
-bool
-ExprResolveLhs(struct xkb_context *ctx, const ExprDef *expr,
-               const char **elem_rtrn, const char **field_rtrn,
-               ExprDef **index_rtrn);
+#ಅನ್ತರ್ಭಾವ "ast.h"
+#ಅನ್ತರ್ಭಾವ "keymap.h"
+#ಅನ್ತರ್ಭಾವ "text.h"
+#ಅನ್ತರ್ಭಾವ "xkbcomp-priv.h"
 
 bool
-ExprResolveModMask(struct xkb_context *ctx, const ExprDef *expr,
-                   enum mod_type mod_type, const struct xkb_mod_set *mods,
+ಅಭಿವ್ಯಕ್ತಿ_Resolve_Lhs(ಸಂರಚನಾ xkb_context *ctx, ಧ್ರುವ ಅಭಿವ್ಯಕ್ತಿ_Def *ಅಭಿವ್ಯಕ್ತಿ,
+               ಧ್ರುವ ವರ್ಣ **elem_rtrn, ಧ್ರುವ ವರ್ಣ **field_rtrn,
+               ಅಭಿವ್ಯಕ್ತಿ_Def **index_rtrn);
+
+bool
+ಅಭಿವ್ಯಕ್ತಿ_Resolve_Mod_Mask(ಸಂರಚನಾ xkb_context *ctx, ಧ್ರುವ ಅಭಿವ್ಯಕ್ತಿ_Def *ಅಭಿವ್ಯಕ್ತಿ,
+                   ಗಣನಾ mod_type mod_type, ಧ್ರುವ ಸಂರಚನಾ xkb_mod_set *mods,
                    xkb_mod_mask_t *mask_rtrn);
 
 bool
-ExprResolveMod(struct xkb_context *ctx, const ExprDef *def,
-               enum mod_type mod_type, const struct xkb_mod_set *mods,
+ಅಭಿವ್ಯಕ್ತಿ_Resolve_Mod(ಸಂರಚನಾ xkb_context *ctx, ಧ್ರುವ ಅಭಿವ್ಯಕ್ತಿ_Def *def,
+               ಗಣನಾ mod_type mod_type, ಧ್ರುವ ಸಂರಚನಾ xkb_mod_set *mods,
                xkb_mod_index_t *ndx_rtrn);
 
 bool
-ExprResolveBoolean(struct xkb_context *ctx, const ExprDef *expr,
+ಅಭಿವ್ಯಕ್ತಿ_Resolve_Boolean(ಸಂರಚನಾ xkb_context *ctx, ಧ್ರುವ ಅಭಿವ್ಯಕ್ತಿ_Def *ಅಭಿವ್ಯಕ್ತಿ,
                    bool *set_rtrn);
 
 bool
-ExprResolveInteger(struct xkb_context *ctx, const ExprDef *expr,
+ಅಭಿವ್ಯಕ್ತಿ_Resolve_Integer(ಸಂರಚನಾ xkb_context *ctx, ಧ್ರುವ ಅಭಿವ್ಯಕ್ತಿ_Def *ಅಭಿವ್ಯಕ್ತಿ,
                    int64_t *val_rtrn);
 
 bool
-ExprResolveLevel(struct xkb_context *ctx, const ExprDef *expr,
+ಅಭಿವ್ಯಕ್ತಿ_Resolve_Level(ಸಂರಚನಾ xkb_context *ctx, ಧ್ರುವ ಅಭಿವ್ಯಕ್ತಿ_Def *ಅಭಿವ್ಯಕ್ತಿ,
                  xkb_level_index_t *level_rtrn);
 
-enum xkb_parser_error
-ExprResolveGroup(const struct xkb_keymap_info *keymap_info,
-                 const ExprDef *expr, bool absolute,
+ಗಣನಾ xkb_parser_error
+ಅಭಿವ್ಯಕ್ತಿ_Resolve_Group(ಧ್ರುವ ಸಂರಚನಾ xkb_keymap_info *keymap_info,
+                 ಧ್ರುವ ಅಭಿವ್ಯಕ್ತಿ_Def *ಅಭಿವ್ಯಕ್ತಿ, bool absolute,
                  xkb_layout_index_t *group_rtrn, bool *pending_rtrn);
 
 bool
-ExprResolveGroupMask(const struct xkb_keymap_info *keymap_info,
-                     const ExprDef *expr, xkb_layout_mask_t *group_rtrn,
+ಅಭಿವ್ಯಕ್ತಿ_Resolve_Group_Mask(ಧ್ರುವ ಸಂರಚನಾ xkb_keymap_info *keymap_info,
+                     ಧ್ರುವ ಅಭಿವ್ಯಕ್ತಿ_Def *ಅಭಿವ್ಯಕ್ತಿ, xkb_layout_mask_t *group_rtrn,
                      bool *pending_rtrn);
 
 bool
-ExprResolveButton(struct xkb_context *ctx, const ExprDef *expr,
+ಅಭಿವ್ಯಕ್ತಿ_Resolve_Button(ಸಂರಚನಾ xkb_context *ctx, ಧ್ರುವ ಅಭಿವ್ಯಕ್ತಿ_Def *ಅಭಿವ್ಯಕ್ತಿ,
                   int64_t *btn_rtrn);
 
 bool
-ExprResolveString(struct xkb_context *ctx, const ExprDef *expr,
+ಅಭಿವ್ಯಕ್ತಿ_Resolve_String(ಸಂರಚನಾ xkb_context *ctx, ಧ್ರುವ ಅಭಿವ್ಯಕ್ತಿ_Def *ಅಭಿವ್ಯಕ್ತಿ,
                   xkb_atom_t *val_rtrn);
 
 bool
-ExprResolveEnum(struct xkb_context *ctx, const ExprDef *expr,
-                uint32_t *val_rtrn, const LookupEntry *values);
+ಅಭಿವ್ಯಕ್ತಿ_Resolve_Enum(ಸಂರಚನಾ xkb_context *ctx, ಧ್ರುವ ಅಭಿವ್ಯಕ್ತಿ_Def *ಅಭಿವ್ಯಕ್ತಿ,
+                uint32_t *val_rtrn, ಧ್ರುವ LookupEntry *ಮೌಲ್ಯಗಳು);
 
 bool
-ExprResolveMask(struct xkb_context *ctx, const ExprDef *expr,
-                uint32_t *mask_rtrn, const LookupEntry *values);
+ಅಭಿವ್ಯಕ್ತಿ_Resolve_Mask(ಸಂರಚನಾ xkb_context *ctx, ಧ್ರುವ ಅಭಿವ್ಯಕ್ತಿ_Def *ಅಭಿವ್ಯಕ್ತಿ,
+                uint32_t *mask_rtrn, ಧ್ರುವ LookupEntry *ಮೌಲ್ಯಗಳು);

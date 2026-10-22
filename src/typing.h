@@ -5,16 +5,16 @@
 
 #pragma once
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include <stddef.h>
-#include <stdint.h>
+#ಅನ್ತರ್ಭಾವ <stddef.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-status.h"
-#include "darray.h"
+#ಅನ್ತರ್ಭಾವ "xkbcommon/xkbcommon.h"
+#ಅನ್ತರ್ಭಾವ "xkbcommon/xkbcommon-status.h"
+#ಅನ್ತರ್ಭಾವ "darray.h"
 
-enum xkb_modifier_kind {
+ಗಣನಾ xkb_modifier_kind {
     /** Shift, Ctrl, Alt: press — other key(s) — release */
     XKB_MOD_SET,
     /** sticky-keys tap: press — release — exactly one other key */
@@ -23,79 +23,79 @@ enum xkb_modifier_kind {
     XKB_MOD_LOCK,
 };
 
-enum xkb_key_kind {
-    XKB_KEY_PRINTABLE,
-    XKB_KEY_MODIFIER,
-    XKB_KEY_MISC,
-    _NUM_XKB_KEY_KIND,
+ಗಣನಾ xkb_ಕೀಲಿ_kind {
+    XKB_ಕೀಲಿ_PRINTABLE,
+    XKB_ಕೀಲಿ_MODIFIER,
+    XKB_ಕೀಲಿ_MISC,
+    ಅಂಕೆ_XKB_ಕೀಲಿ_KIND,
 };
 
-struct xkb_modifier_key {
+ಸಂರಚನಾ xkb_modifier_ಕೀಲಿ {
     xkb_keycode_t keycode;
     xkb_mod_mask_t mods;
-    enum xkb_modifier_kind kind;
+    ಗಣನಾ xkb_modifier_kind kind;
 };
 
-typedef darray(xkb_keycode_t) xkb_keycodes_t;
+ಪ್ರಕಾರನಿರ್ದೇಶ darray(xkb_keycode_t) xkb_keycodes_t;
 
 /** Keys classified by category */
-struct xkb_key_set {
+ಸಂರಚನಾ xkb_ಕೀಲಿ_set {
     /** Printable keys: alphanum, punctuation, symbols, etc. */
     xkb_keycodes_t printable;
     /** Modifier keys */
-    darray(struct xkb_modifier_key) modifiers;
+    darray(ಸಂರಚನಾ xkb_modifier_ಕೀಲಿ) modifiers;
     /** Miscellaneous: arrows, editing, functions, system, etc. */
     xkb_keycodes_t misc;
 };
 
-struct xkb_key_set_config {
+ಸಂರಚನಾ xkb_ಕೀಲಿ_set_config {
     xkb_keycode_t min;
     xkb_keycode_t max;
 };
 
-enum xkb_status
-xkb_key_set_init(struct xkb_key_set *set,
-                 struct xkb_keymap *keymap,
-                 const struct xkb_key_set_config *config);
+ಗಣನಾ xkb_status
+xkb_ಕೀಲಿ_set_init(ಸಂರಚನಾ xkb_ಕೀಲಿ_set *set,
+                 ಸಂರಚನಾ xkb_keymap *keymap,
+                 ಧ್ರುವ ಸಂರಚನಾ xkb_ಕೀಲಿ_set_config *config);
 
-void
-xkb_key_set_destroy(struct xkb_key_set *set);
+ಶೂನ್ಯ
+xkb_ಕೀಲಿ_set_destroy(ಸಂರಚನಾ xkb_ಕೀಲಿ_set *set);
 
-struct xkb_typing_event {
+ಸಂರಚನಾ xkb_typing_event {
     xkb_keycode_t keycode;
-    enum xkb_key_direction direction;
+    ಗಣನಾ xkb_ಕೀಲಿ_direction direction;
 };
 
-typedef darray(struct xkb_typing_event) xkb_typing_events;
+ಪ್ರಕಾರನಿರ್ದೇಶ darray(ಸಂರಚನಾ xkb_typing_event) xkb_typing_events;
 
-struct xkb_pending_typing_event {
-    struct xkb_typing_event event;
+ಸಂರಚನಾ xkb_pending_typing_event {
+    ಸಂರಚನಾ xkb_typing_event event;
     xkb_mod_mask_t mods;
     uint8_t counter;
 };
 
 /** PRNG: return values must be between 0 and 2^31 - 1 (see random()) */
-typedef long (*xkb_prng_t)(void *);
+ಪ್ರಕಾರನಿರ್ದೇಶ long (*xkb_prng_t)(ಶೂನ್ಯ *);
 
-struct xkb_typing_state {
+ಸಂರಚನಾ xkb_typing_state {
     /** Keys used for typing, classified by category. Borrowed */
-    const struct xkb_key_set *keys;
+    ಧ್ರುವ ಸಂರಚನಾ xkb_ಕೀಲಿ_set *ಕೀಲಿಗಳು;
     /** Keys state: pressed (1) or released (0) */
-    uintptr_t *keys_state;
+    uintptr_t *ಕೀಲಿಗಳು_state;
     xkb_prng_t prng;
     /** Borrowed */
-    void *prng_state;
-    size_t num_events;
+    ಶೂನ್ಯ *prng_state;
+    size_t ಅಂಕೆ_events;
     /** Realistic typing events */
-    struct xkb_typing_event *events ATTR_COUNTED_BY(num_events);
+    ಸಂರಚನಾ xkb_typing_event *events ATTR_COUNTED_BY(ಅಂಕೆ_events);
     /** Pending events */
-    darray(struct xkb_pending_typing_event) pending;
-    darray_size_t num_pending;
+    darray(ಸಂರಚನಾ xkb_pending_typing_event) pending;
+    darray_size_t ಅಂಕೆ_pending;
     /** Effective mods */
     xkb_mod_mask_t mods;
 };
 
-enum {
+ಗಣನಾ {
     XKB_TYPING_EVENT_PRINTABLE_IMMEDIATE_RELEASE_PERCENT = 75,
     XKB_TYPING_EVENT_PRINTABLE_MAX_PENDING_TURNS = 1,
     XKB_TYPING_EVENT_MODIFIER_MIN_PENDING_TURNS = 2,
@@ -104,21 +104,21 @@ enum {
     XKB_TYPING_EVENT_MISC_MAX_PENDING_TURNS = 0,
 };
 
-struct xkb_typing_input {
-    struct xkb_typing_event *events;
-    size_t num_events;
+ಸಂರಚನಾ xkb_typing_ಒಳಹರಿವು {
+    ಸಂರಚನಾ xkb_typing_event *events;
+    size_t ಅಂಕೆ_events;
 };
 
-struct xkb_typing_input_config {
+ಸಂರಚನಾ xkb_typing_ಒಳಹರಿವು_config {
     xkb_prng_t prng;
-    void *prng_state;
-    size_t input_length;
+    ಶೂನ್ಯ *prng_state;
+    size_t ಒಳಹರಿವು_length;
 };
 
-enum xkb_status
-xkb_typing_input_init(struct xkb_typing_input *typing,
-                      const struct xkb_key_set *keys,
-                      const struct xkb_typing_input_config *config);
+ಗಣನಾ xkb_status
+xkb_typing_ಒಳಹರಿವು_init(ಸಂರಚನಾ xkb_typing_ಒಳಹರಿವು *typing,
+                      ಧ್ರುವ ಸಂರಚನಾ xkb_ಕೀಲಿ_set *ಕೀಲಿಗಳು,
+                      ಧ್ರುವ ಸಂರಚನಾ xkb_typing_ಒಳಹರಿವು_config *config);
 
-void
-xkb_typing_input_destroy(struct xkb_typing_input *typing);
+ಶೂನ್ಯ
+xkb_typing_ಒಳಹರಿವು_destroy(ಸಂರಚನಾ xkb_typing_ಒಳಹರಿವು *typing);

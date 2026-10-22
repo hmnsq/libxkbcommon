@@ -3,27 +3,27 @@
  * SPDX-License-Identifier: HPND
  */
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include <stdint.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "atom.h"
-#include "keymap.h"
-#include "text.h"
-#include "expr.h"
-#include "xkbcomp/ast.h"
-#include "vmod.h"
+#ಅನ್ತರ್ಭಾವ "xkbcommon/xkbcommon.h"
+#ಅನ್ತರ್ಭಾವ "atom.h"
+#ಅನ್ತರ್ಭಾವ "keymap.h"
+#ಅನ್ತರ್ಭಾವ "text.h"
+#ಅನ್ತರ್ಭಾವ "expr.h"
+#ಅನ್ತರ್ಭಾವ "xkbcomp/ast.h"
+#ಅನ್ತರ್ಭಾವ "vmod.h"
 
-void
-InitVMods(struct xkb_mod_set *info, const struct xkb_mod_set *mods, bool reset)
+ಶೂನ್ಯ
+InitVMods(ಸಂರಚನಾ xkb_mod_set *info, ಧ್ರುವ ಸಂರಚನಾ xkb_mod_set *mods, bool reset)
 {
     *info = *mods;
 
-    if (!reset)
-        return;
+    ಯದಿ (!reset)
+        ಪ್ರತ್ಯಾಗಮ;
 
-    struct xkb_mod *mod;
+    ಸಂರಚನಾ xkb_mod *mod;
     xkb_mod_index_t vmod = 0;
     xkb_mods_enumerate(vmod, mod, info) {
         mod->mapping = 0;
@@ -31,55 +31,55 @@ InitVMods(struct xkb_mod_set *info, const struct xkb_mod_set *mods, bool reset)
     info->explicit_vmods = 0;
 }
 
-void
-MergeModSets(struct xkb_context *ctx, struct xkb_mod_set *into,
-             const struct xkb_mod_set *from, enum merge_mode merge) {
-    const bool clobber = (merge != MERGE_AUGMENT);
+ಶೂನ್ಯ
+MergeModSets(ಸಂರಚನಾ xkb_context *ctx, ಸಂರಚನಾ xkb_mod_set *into,
+             ಧ್ರುವ ಸಂರಚನಾ xkb_mod_set *from, ಗಣನಾ merge_mode merge) {
+    ಧ್ರುವ bool clobber = (merge != MERGE_AUGMENT);
     xkb_mod_index_t vmod;
-    const struct xkb_mod *mod;
-    assert(into->num_mods <= from->num_mods);
+    ಧ್ರುವ ಸಂರಚನಾ xkb_mod *mod;
+    ಪ್ರತಿಜ್ಞಾ(into->ಅಂಕೆ_mods <= from->ಅಂಕೆ_mods);
     xkb_mods_enumerate(vmod, mod, from) {
-        const xkb_mod_mask_t mask = UINT32_C(1) << vmod;
+        ಧ್ರುವ xkb_mod_mask_t mask = UINT32_C(1) << vmod;
 
-        if ((mod->type != MOD_VIRT)) {
+        ಯದಿ ((mod->type != MOD_VIRT)) {
             /* No modifier in `from` or real modifier: nothing to do */
-            assert((mod->type == 0 &&
+            ಪ್ರತಿಜ್ಞಾ((mod->type == 0 &&
                     mod->name == XKB_ATOM_NONE) ||
                    ((mod->type & MOD_REAL) &&
                     into->mods[vmod].type == mod->type &&
                     mod->name != XKB_ATOM_NONE &&
                     into->mods[vmod].name == mod->name));
-            continue;
-        } else if (into->mods[vmod].type == 0) {
+            ಅನುವರ್ತ;
+        } ಅನ್ಯಥಾ ಯದಿ (into->mods[vmod].type == 0) {
             /* No modifier in `into`: copy the whole modifier definition */
-            assert(into->mods[vmod].name == XKB_ATOM_NONE);
-            assert(mod->type == MOD_VIRT);
-            assert(mod->name != XKB_ATOM_NONE);
-            assert(vmod >= into->num_mods);
+            ಪ್ರತಿಜ್ಞಾ(into->mods[vmod].name == XKB_ATOM_NONE);
+            ಪ್ರತಿಜ್ಞಾ(mod->type == MOD_VIRT);
+            ಪ್ರತಿಜ್ಞಾ(mod->name != XKB_ATOM_NONE);
+            ಪ್ರತಿಜ್ಞಾ(vmod >= into->ಅಂಕೆ_mods);
             into->mods[vmod] = *mod;
-            if (from->explicit_vmods & mask)
+            ಯದಿ (from->explicit_vmods & mask)
                 into->explicit_vmods |= mask;
-        } else {
+        } ಅನ್ಯಥಾ {
             /* Modifier exists in both */
-            assert(mod->type == MOD_VIRT);
-            assert(mod->name != XKB_ATOM_NONE);
-            assert(into->mods[vmod].type == mod->type);
-            assert(into->mods[vmod].name == mod->name);
+            ಪ್ರತಿಜ್ಞಾ(mod->type == MOD_VIRT);
+            ಪ್ರತಿಜ್ಞಾ(mod->name != XKB_ATOM_NONE);
+            ಪ್ರತಿಜ್ಞಾ(into->mods[vmod].type == mod->type);
+            ಪ್ರತಿಜ್ಞಾ(into->mods[vmod].name == mod->name);
 
-            if (!(from->explicit_vmods & mask)) {
+            ಯದಿ (!(from->explicit_vmods & mask)) {
                 /* Implicit mapping in `from`: do nothing */
-                assert(mod->mapping == 0);
-            } else if (!(into->explicit_vmods & mask)) {
+                ಪ್ರತಿಜ್ಞಾ(mod->mapping == 0);
+            } ಅನ್ಯಥಾ ಯದಿ (!(into->explicit_vmods & mask)) {
                 /* Implicit mapping in `into`: replace */
-                assert(into->mods[vmod].mapping == 0);
+                ಪ್ರತಿಜ್ಞಾ(into->mods[vmod].mapping == 0);
                 into->mods[vmod].mapping = mod->mapping;
                 into->explicit_vmods |= mask;
-            } else if (mod->mapping != into->mods[vmod].mapping) {
+            } ಅನ್ಯಥಾ ಯದಿ (mod->mapping != into->mods[vmod].mapping) {
                 /* Handle conflicting mappings */
-                const xkb_mod_mask_t use = (clobber)
+                ಧ್ರುವ xkb_mod_mask_t use = (clobber)
                     ? mod->mapping
                     : into->mods[vmod].mapping;
-                const xkb_mod_mask_t ignore = (clobber)
+                ಧ್ರುವ xkb_mod_mask_t ignore = (clobber)
                     ? into->mods[vmod].mapping
                     : mod->mapping;
 
@@ -94,54 +94,54 @@ MergeModSets(struct xkb_context *ctx, struct xkb_mod_set *into,
             }
         }
     }
-    into->num_mods = from->num_mods;
+    into->ಅಂಕೆ_mods = from->ಅಂಕೆ_mods;
 }
 
 bool
-HandleVModDef(struct xkb_context *ctx, struct xkb_mod_set *mods, VModDef *stmt)
+HandleVModDef(ಸಂರಚನಾ xkb_context *ctx, ಸಂರಚನಾ xkb_mod_set *mods, VModDef *stmt)
 {
     xkb_mod_mask_t mapping = 0;
-    if (stmt->value &&
+    ಯದಿ (stmt->ಮೌಲ್ಯ &&
         /*
          * This is a statement such as 'virtualModifiers NumLock = Mod1';
          * it initialize the vmod-to-real-mod[s] mapping before going
          * through modifier_map.
          */
-        !ExprResolveModMask(ctx, stmt->value, MOD_REAL, mods, &mapping))
+        !ಅಭಿವ್ಯಕ್ತಿ_Resolve_Mod_Mask(ctx, stmt->ಮೌಲ್ಯ, MOD_REAL, mods, &mapping))
     {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "Declaration of %s ignored\n",
                 xkb_atom_text(ctx, stmt->name));
-        return false;
+        ಪ್ರತ್ಯಾಗಮ false;
     }
 
     xkb_mod_index_t vmod;
-    struct xkb_mod *mod;
+    ಸಂರಚನಾ xkb_mod *mod;
     xkb_mods_enumerate(vmod, mod, mods) {
-        if (mod->name == stmt->name) {
-            if (mod->type != MOD_VIRT) {
+        ಯದಿ (mod->name == stmt->name) {
+            ಯದಿ (mod->type != MOD_VIRT) {
                 log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                         "Can't add a virtual modifier named \"%s\"; there is "
                         "already a non-virtual modifier with this name! "
                         "Ignored\n",
                         xkb_atom_text(ctx, mod->name));
-                return false;
+                ಪ್ರತ್ಯಾಗಮ false;
             }
 
-            const xkb_mod_mask_t mask = UINT32_C(1) << vmod;
+            ಧ್ರುವ xkb_mod_mask_t mask = UINT32_C(1) << vmod;
 
-            if (!stmt->value) {
+            ಯದಿ (!stmt->ಮೌಲ್ಯ) {
                 /* No new explicit mapping: do nothing */
-                return true;
-            } else if (!(mods->explicit_vmods & mask)) {
+                ಪ್ರತ್ಯಾಗಮ true;
+            } ಅನ್ಯಥಾ ಯದಿ (!(mods->explicit_vmods & mask)) {
                 /* No previous explicit mapping: add mapping */
                 mod->mapping = mapping;
-            } else if (mod->mapping != mapping) {
+            } ಅನ್ಯಥಾ ಯದಿ (mod->mapping != mapping) {
                 /* Handle conflicting mappings */
-                const bool clobber = (stmt->merge != MERGE_AUGMENT);
-                const xkb_mod_mask_t use =
+                ಧ್ರುವ bool clobber = (stmt->merge != MERGE_AUGMENT);
+                ಧ್ರುವ xkb_mod_mask_t use =
                     (clobber ? mapping : mod->mapping);
-                const xkb_mod_mask_t ignore =
+                ಧ್ರುವ xkb_mod_mask_t ignore =
                     (clobber ? mod->mapping : mapping);
 
                 log_warn(ctx, XKB_LOG_MESSAGE_NO_ID,
@@ -156,25 +156,25 @@ HandleVModDef(struct xkb_context *ctx, struct xkb_mod_set *mods, VModDef *stmt)
 
             mods->explicit_vmods |= mask;
 
-            return true;
+            ಪ್ರತ್ಯಾಗಮ true;
         }
     }
 
-    if (mods->num_mods >= XKB_MAX_MODS) {
+    ಯದಿ (mods->ಅಂಕೆ_mods >= XKB_MAX_MODS) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "Cannot define virtual modifier %s: "
                 "too many modifiers defined (maximum %"PRIu32")\n",
                 xkb_atom_text(ctx, stmt->name), XKB_MAX_MODS);
-        return false;
+        ಪ್ರತ್ಯಾಗಮ false;
     }
 
-    mods->mods[mods->num_mods].name = stmt->name;
-    mods->mods[mods->num_mods].type = MOD_VIRT;
-    mods->mods[mods->num_mods].mapping = mapping;
-    if (stmt->value) {
-        const xkb_mod_mask_t mask = UINT32_C(1) << mods->num_mods;
+    mods->mods[mods->ಅಂಕೆ_mods].name = stmt->name;
+    mods->mods[mods->ಅಂಕೆ_mods].type = MOD_VIRT;
+    mods->mods[mods->ಅಂಕೆ_mods].mapping = mapping;
+    ಯದಿ (stmt->ಮೌಲ್ಯ) {
+        ಧ್ರುವ xkb_mod_mask_t mask = UINT32_C(1) << mods->ಅಂಕೆ_mods;
         mods->explicit_vmods |= mask;
     }
-    mods->num_mods++;
-    return true;
+    mods->ಅಂಕೆ_mods++;
+    ಪ್ರತ್ಯಾಗಮ true;
 }

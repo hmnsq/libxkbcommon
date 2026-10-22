@@ -4,21 +4,21 @@
  */
 #pragma once
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include "xkbcommon/xkbcommon.h"
+#ಅನ್ತರ್ಭಾವ "xkbcommon/xkbcommon.h"
 
-#include <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
 
-#include "ast.h"
-#include "keymap.h"
+#ಅನ್ತರ್ಭಾವ "ast.h"
+#ಅನ್ತರ್ಭಾವ "keymap.h"
 
-void
-InitVMods(struct xkb_mod_set *info, const struct xkb_mod_set *mods, bool reset);
+ಶೂನ್ಯ
+InitVMods(ಸಂರಚನಾ xkb_mod_set *info, ಧ್ರುವ ಸಂರಚನಾ xkb_mod_set *mods, bool reset);
 
-void
-MergeModSets(struct xkb_context *ctx, struct xkb_mod_set *into,
-             const struct xkb_mod_set *from, enum merge_mode merge);
+ಶೂನ್ಯ
+MergeModSets(ಸಂರಚನಾ xkb_context *ctx, ಸಂರಚನಾ xkb_mod_set *into,
+             ಧ್ರುವ ಸಂರಚನಾ xkb_mod_set *from, ಗಣನಾ merge_mode merge);
 
 bool
-HandleVModDef(struct xkb_context *ctx, struct xkb_mod_set *mods, VModDef *stmt);
+HandleVModDef(ಸಂರಚನಾ xkb_context *ctx, ಸಂರಚನಾ xkb_mod_set *mods, VModDef *stmt);
