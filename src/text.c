@@ -14,29 +14,29 @@
 
 bool
 LookupString(const LookupEntry tab[], const char *string,
-              unsigned int *value_rtrn)
+              unsigned số_nguyên *value_rtrn)
 {
-    if (!string)
-        return false;
+    nếu (!string)
+        trả_về false;
 
-    for (const LookupEntry *entry = tab; entry->name; entry++) {
-        if (istreq(entry->name, string)) {
+    cho (const LookupEntry *entry = tab; entry->name; entry++) {
+        nếu (istreq(entry->name, string)) {
             *value_rtrn = entry->value;
-            return true;
+            trả_về true;
         }
     }
 
-    return false;
+    trả_về false;
 }
 
 const char *
-LookupValue(const LookupEntry tab[], unsigned int value)
+LookupValue(const LookupEntry tab[], unsigned số_nguyên value)
 {
-    for (const LookupEntry *entry = tab; entry->name; entry++)
-        if (entry->value == value)
-            return entry->name;
+    cho (const LookupEntry *entry = tab; entry->name; entry++)
+        nếu (entry->value == value)
+            trả_về entry->name;
 
-    return NULL;
+    trả_về NULL;
 }
 
 const LookupEntry ctrlMaskNames[25] = {
@@ -175,23 +175,23 @@ const char *
 ModIndexText(struct xkb_context *ctx, const struct xkb_mod_set *mods,
              xkb_mod_index_t ndx)
 {
-    if (ndx == XKB_MOD_INVALID)
-        return "none";
+    nếu (ndx == XKB_MOD_INVALID)
+        trả_về "none";
 
-    if (ndx == XKB_MOD_NONE)
-        return "None";
+    nếu (ndx == XKB_MOD_NONE)
+        trả_về "None";
 
-    if (ndx >= mods->num_mods)
-        return NULL;
+    nếu (ndx >= mods->num_mods)
+        trả_về NULL;
 
-    return xkb_atom_text(ctx, mods->mods[ndx].name);
+    trả_về xkb_atom_text(ctx, mods->mods[ndx].name);
 }
 
 const char *
 ActionTypeText(enum xkb_action_type type)
 {
     const char *name = LookupValue(actionTypeNames, type);
-    return name ? name : "Private";
+    trả_về name ? name : "Private";
 }
 
 const char *
@@ -199,7 +199,7 @@ KeysymText(struct xkb_context *ctx, xkb_keysym_t sym)
 {
     char *buffer = xkb_context_get_buffer(ctx, XKB_KEYSYM_NAME_MAX_SIZE);
     xkb_keysym_get_name(sym, buffer, XKB_KEYSYM_NAME_MAX_SIZE);
-    return buffer;
+    trả_về buffer;
 }
 
 const char *
@@ -209,13 +209,13 @@ KeyNameText(struct xkb_context *ctx, xkb_atom_t name)
     size_t len = strlen_safe(sname) + 3;
     char *buf = xkb_context_get_buffer(ctx, len);
     snprintf(buf, len, "<%s>", strempty(sname));
-    return buf;
+    trả_về buf;
 }
 
 const char *
 SIMatchText(enum xkb_match_operation type)
 {
-    return LookupValue(symInterpretMatchMaskNames, type);
+    trả_về LookupValue(symInterpretMatchMaskNames, type);
 }
 
 const char *
@@ -229,36 +229,36 @@ ModMaskText(struct xkb_context *ctx, enum mod_type type,
     /* We want to avoid boolean blindness, but we expected only 2 values */
     assert(type == MOD_REAL || type == MOD_BOTH);
 
-    if (mask == 0)
-        return "none";
+    nếu (mask == 0)
+        trả_về "none";
 
-    if (mask == MOD_REAL_MASK_ALL)
-        return "all";
+    nếu (mask == MOD_REAL_MASK_ALL)
+        trả_về "all";
 
-    if ((type == MOD_REAL && (mask & ~MOD_REAL_MASK_ALL)) ||
+    nếu ((type == MOD_REAL && (mask & ~MOD_REAL_MASK_ALL)) ||
         unlikely(mask & ~((UINT64_C(1) << mods->num_mods) - 1))) {
         /* If we get a mask that cannot be expressed with the known modifiers
          * of the given type, print it as hexadecimal */
-        const int ret = snprintf(buf, sizeof(buf), "0x%"PRIx32, mask);
+        const số_nguyên ret = snprintf(buf, sizeof(buf), "0x%"PRIx32, mask);
         static_assert(sizeof(mask) == 4 && sizeof(buf) >= sizeof("0xffffffff"),
                       "Buffer too small");
         assert(ret >= 0 && (size_t) ret < sizeof(buf));
         pos = (size_t) ret;
-    } else {
+    } không_thì {
         /* Print known mods */
         xkb_mods_mask_foreach(mask, mod, mods) {
-            int ret = snprintf(buf + pos, sizeof(buf) - pos, "%s%s",
+            số_nguyên ret = snprintf(buf + pos, sizeof(buf) - pos, "%s%s",
                                pos == 0 ? "" : "+",
                                xkb_atom_text(ctx, mod->name));
-            if (ret <= 0 || pos + (size_t)ret >= sizeof(buf))
+            nếu (ret <= 0 || pos + (size_t)ret >= sizeof(buf))
                 break;
-            else
+            không_thì
                 pos += (size_t)ret;
         }
     }
     pos++;
 
-    return memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
+    trả_về memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
 }
 
 const char *
@@ -268,13 +268,13 @@ LedStateMaskText(struct xkb_context *ctx, const LookupEntry *lookup,
     char buf[1024];
     size_t pos = 0;
 
-    if (mask == 0)
-        return "0";
+    nếu (mask == 0)
+        trả_về "0";
 
-    for (unsigned int i = 0; mask; i++) {
-        int ret;
+    cho (unsigned số_nguyên i = 0; mask; i++) {
+        số_nguyên ret;
 
-        if (!(mask & (1u << i)))
+        nếu (!(mask & (1u << i)))
             continue;
 
         mask &= ~(1u << i);
@@ -283,14 +283,14 @@ LedStateMaskText(struct xkb_context *ctx, const LookupEntry *lookup,
         assert(maskText != NULL);
         ret = snprintf(buf + pos, sizeof(buf) - pos, "%s%s",
                        pos == 0 ? "" : "+", maskText);
-        if (ret <= 0 || pos + (size_t)ret >= sizeof(buf))
+        nếu (ret <= 0 || pos + (size_t)ret >= sizeof(buf))
             break;
-        else
+        không_thì
             pos += (size_t)ret;
     }
     pos++;
 
-    return memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
+    trả_về memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
 }
 
 const char *
@@ -303,17 +303,17 @@ ControlMaskText(struct xkb_context *ctx, enum xkb_keymap_format format,
     const enum xkb_action_controls all_ctrls = format_boolean_controls(format);
     mask &= all_ctrls;
 
-    if (mask == 0)
-        return "none";
+    nếu (mask == 0)
+        trả_về "none";
 
-    if (mask == all_ctrls)
-        return "all";
+    nếu (mask == all_ctrls)
+        trả_về "all";
 
     const uint8_t control_names_offset = format_control_names_offset(format);
-    for (unsigned int i = 0; mask; i++) {
-        int ret;
+    cho (unsigned số_nguyên i = 0; mask; i++) {
+        số_nguyên ret;
 
-        if (!(mask & (1u << i)))
+        nếu (!(mask & (1u << i)))
             continue;
 
         mask &= ~(1u << i);
@@ -323,12 +323,12 @@ ControlMaskText(struct xkb_context *ctx, enum xkb_keymap_format format,
         assert(maskText);
         ret = snprintf(buf + pos, sizeof(buf) - pos, "%s%s",
                        pos == 0 ? "" : "+", maskText);
-        if (ret <= 0 || pos + (size_t)ret >= sizeof(buf))
+        nếu (ret <= 0 || pos + (size_t)ret >= sizeof(buf))
             break;
-        else
+        không_thì
             pos += (size_t)ret;
     }
     pos++;
 
-    return memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
+    trả_về memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
 }

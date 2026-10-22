@@ -20,10 +20,10 @@ typedef struct {
 
 bool
 LookupString(const LookupEntry tab[], const char *string,
-              unsigned int *value_rtrn);
+              unsigned số_nguyên *value_rtrn);
 
 const char *
-LookupValue(const LookupEntry tab[], unsigned int value);
+LookupValue(const LookupEntry tab[], unsigned số_nguyên value);
 
 #define GROUP_LAST_INDEX_NAME "last"
 enum {
@@ -34,7 +34,7 @@ enum {
 static inline uint8_t
 format_control_names_offset(enum xkb_keymap_format format)
 {
-    return (format == XKB_KEYMAP_FORMAT_TEXT_V1)
+    trả_về (format == XKB_KEYMAP_FORMAT_TEXT_V1)
         ? CONTROL_NAMES_MIN_V1_INDEX
         : CONTROL_NAMES_MIN_V2_INDEX;
 }

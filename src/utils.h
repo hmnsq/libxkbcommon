@@ -14,9 +14,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#nếu HAVE_UNISTD_H
 # include <unistd.h>
-#else
+#không_thì
 /* Required on Windows where unistd.h doesn't exist */
 # define R_OK    4               /* Test for read permission.  */
 # define W_OK    2               /* Test for write permission.  */
@@ -45,7 +45,7 @@ typedef SSIZE_T ssize_t;
 static inline bool
 is_aligned(const void *restrict pointer, size_t byte_count)
 {
-    return (uintptr_t) pointer % byte_count == 0;
+    trả_về (uintptr_t) pointer % byte_count == 0;
 }
 
 
@@ -68,7 +68,7 @@ is_valid_char(uint32_t cp)
 {
     /* Currently we only check for NULL character, but this could be extended
      * in the future to further ASCII control characters. */
-    return cp != 0;
+    trả_về cp != 0;
 }
 
 /* Check if a Unicode code point is a surrogate.
@@ -76,118 +76,118 @@ is_valid_char(uint32_t cp)
 static inline bool
 is_surrogate(uint32_t cp)
 {
-    return (cp >= 0xd800 && cp <= 0xdfff);
+    trả_về (cp >= 0xd800 && cp <= 0xdfff);
 }
 
 char
 to_lower(char c);
 
-int
+số_nguyên
 istrcmp(const char *a, const char *b);
 
-int
+số_nguyên
 istrncmp(const char *a, const char *b, size_t n);
 
 static inline bool
 streq(const char *s1, const char *s2)
 {
     assert(s1 && s2);
-    return strcmp(s1, s2) == 0;
+    trả_về strcmp(s1, s2) == 0;
 }
 
 static inline bool
 streq_null(const char *s1, const char *s2)
 {
-    if (s1 == NULL || s2 == NULL)
-        return s1 == s2;
-    return streq(s1, s2);
+    nếu (s1 == NULL || s2 == NULL)
+        trả_về s1 == s2;
+    trả_về streq(s1, s2);
 }
 
 static inline bool
 streq_not_null(const char *s1, const char *s2)
 {
-    if (!s1 || !s2)
-        return false;
-    return streq(s1, s2);
+    nếu (!s1 || !s2)
+        trả_về false;
+    trả_về streq(s1, s2);
 }
 
 static inline bool
 istreq(const char *s1, const char *s2)
 {
-    return istrcmp(s1, s2) == 0;
+    trả_về istrcmp(s1, s2) == 0;
 }
 
 static inline bool
 istrneq(const char *s1, const char *s2, size_t len)
 {
-    return istrncmp(s1, s2, len) == 0;
+    trả_về istrncmp(s1, s2, len) == 0;
 }
 
 #define istreq_prefix(s1, s2) istrneq(s1, s2, sizeof(s1) - 1)
 
 static inline char *
 strcpy_safe(char *dest, size_t size, const char *src) {
-    if (!dest || !size || !src)
-        return NULL;
+    nếu (!dest || !size || !src)
+        trả_về NULL;
     const char * const limit = dest + size - 1;
-    while (dest < limit && *src) {
+    trong_khi (dest < limit && *src) {
         *dest++ = *src++;
     }
     *dest = '\0';
-    return *src ? NULL : dest;
+    trả_về *src ? NULL : dest;
 }
 
 static inline char *
 strdup_safe(const char *s)
 {
-    return s ? strdup(s) : NULL;
+    trả_về s ? strdup(s) : NULL;
 }
 
 static inline size_t
 strlen_safe(const char *s)
 {
-    return s ? strlen(s) : 0;
+    trả_về s ? strlen(s) : 0;
 }
 
 static inline bool
 isempty(const char *s)
 {
-    return s == NULL || s[0] == '\0';
+    trả_về s == NULL || s[0] == '\0';
 }
 
 static inline const char *
 strnull(const char *s)
 {
-    return s ? s : "(null)";
+    trả_về s ? s : "(null)";
 }
 
 static inline const char *
 strempty(const char *s)
 {
-    return s ? s : "";
+    trả_về s ? s : "";
 }
 
 static inline void *
 memdup(const void *mem, size_t nmemb, size_t size)
 {
     void *p = calloc(nmemb, size);
-    if (p)
+    nếu (p)
         memcpy(p, mem, nmemb * size);
-    return p;
+    trả_về p;
 }
 
-#if !(defined(HAVE_STRNDUP) && HAVE_STRNDUP)
+#nếu !(defined(HAVE_STRNDUP) && HAVE_STRNDUP)
 static inline char *
 strndup(const char *s, size_t n)
 {
     size_t slen = strlen(s);
     size_t len = MIN(slen, n);
     char *p = malloc(len + 1);
-    if (!p)
-        return NULL;
+    nếu (!p)
+        trả_về NULL;
     memcpy(p, s, len);
     p[len] = '\0';
-    return p;
+    trả_về p;
 }
 #endif
 
@@ -195,37 +195,37 @@ strndup(const char *s, size_t n)
 static inline bool
 is_ascii(char ch)
 {
-    return (ch & ~0x7f) == 0;
+    trả_về (ch & ~0x7f) == 0;
 }
 
 static inline bool
 is_space(char ch)
 {
-    return ch == ' ' || (ch >= '\t' && ch <= '\r');
+    trả_về ch == ' ' || (ch >= '\t' && ch <= '\r');
 }
 
 static inline bool
 is_alpha(char ch)
 {
-    return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
+    trả_về (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
 }
 
 static inline bool
 is_digit(char ch)
 {
-    return ch >= '0' && ch <= '9';
+    trả_về ch >= '0' && ch <= '9';
 }
 
 static inline bool
 is_alnum(char ch)
 {
-    return is_alpha(ch) || is_digit(ch);
+    trả_về is_alpha(ch) || is_digit(ch);
 }
 
 static inline bool
 is_xdigit(char ch)
 {
-    return
+    trả_về
         (ch >= '0' && ch <= '9') ||
         (ch >= 'a' && ch <= 'f') ||
         (ch >= 'A' && ch <= 'F');
@@ -235,7 +235,7 @@ static inline bool
 is_graph(char ch)
 {
     /* See table in ascii(7). */
-    return ch >= '!' && ch <= '~';
+    trả_về ch >= '!' && ch <= '~';
 }
 
 /*
@@ -243,21 +243,21 @@ is_graph(char ch)
  * Note: this is 1-based! It's more useful this way, and returns 0 when
  * mask is all 0s.
  */
-static inline unsigned int
+static inline unsigned số_nguyên
 msb_pos(uint32_t mask)
 {
-    unsigned int pos = 0;
-    while (mask) {
+    unsigned số_nguyên pos = 0;
+    trong_khi (mask) {
         pos++;
         mask >>= 1u;
     }
-    return pos;
+    trả_về pos;
 }
 
-static inline int
+static inline số_nguyên
 one_bit_set(uint32_t x)
 {
-    return x && (x & (x - 1)) == 0;
+    trả_về x && (x & (x - 1)) == 0;
 }
 
 bool
@@ -267,34 +267,34 @@ void
 unmap_file(char *string, size_t size);
 
 static inline bool
-check_eaccess(const char *path, int mode)
+check_eaccess(const char *path, số_nguyên mode)
 {
-#if defined(HAVE_EACCESS)
-    if (eaccess(path, mode) != 0)
-        return false;
+#nếu defined(HAVE_EACCESS)
+    nếu (eaccess(path, mode) != 0)
+        trả_về false;
 #elif defined(HAVE_EUIDACCESS)
-    if (euidaccess(path, mode) != 0)
-        return false;
+    nếu (euidaccess(path, mode) != 0)
+        trả_về false;
 #endif
 
-    return true;
+    trả_về true;
 }
 
 FILE*
 open_file(const char *path);
 
-#if defined(HAVE_SECURE_GETENV)
+#nếu defined(HAVE_SECURE_GETENV)
 # define secure_getenv secure_getenv
 #elif defined(HAVE___SECURE_GETENV)
 # define secure_getenv __secure_getenv
-#else
+#không_thì
 # define secure_getenv getenv
 #endif
 
-#if defined(HAVE___BUILTIN_EXPECT)
+#nếu defined(HAVE___BUILTIN_EXPECT)
 # define likely(x)   __builtin_expect(!!(x), 1)
 # define unlikely(x) __builtin_expect(!!(x), 0)
-#else
+#không_thì
 # define likely(x)   (x)
 # define unlikely(x) (x)
 #endif
@@ -303,60 +303,60 @@ open_file(const char *path);
 
 /* Private functions only exposed in tests. */
 #ifdef ENABLE_PRIVATE_APIS
-# if defined(__GNUC__) && !defined(__CYGWIN__)
+# nếu defined(__GNUC__) && !defined(__CYGWIN__)
 #  define XKB_EXPORT_PRIVATE __attribute__((visibility("default")))
 # elif defined(_WIN32)
 #  define XKB_EXPORT_PRIVATE __declspec(dllexport)
-# else
+# không_thì
 #  define XKB_EXPORT_PRIVATE
 # endif
-#else
+#không_thì
 # define XKB_EXPORT_PRIVATE
 #endif
 
-#if defined(__MINGW32__)
+#nếu defined(__MINGW32__)
 # define ATTR_PRINTF(x,y) __attribute__((__format__(__MINGW_PRINTF_FORMAT, x, y)))
 #elif defined(__GNUC__)
 # define ATTR_PRINTF(x,y) __attribute__((__format__(__printf__, x, y)))
-#else
+#không_thì
 # define ATTR_PRINTF(x,y)
 #endif
 
-#if defined(__GNUC__)
+#nếu defined(__GNUC__)
 # define ATTR_NORETURN __attribute__((__noreturn__))
-#else
+#không_thì
 # define ATTR_NORETURN
 #endif /* GNUC  */
 
-#if defined(__GNUC__)
+#nếu defined(__GNUC__)
 #define ATTR_MALLOC  __attribute__((__malloc__))
-#else
+#không_thì
 #define ATTR_MALLOC
 #endif
 
-#if defined(__GNUC__)
+#nếu defined(__GNUC__)
 # define ATTR_NULL_SENTINEL __attribute__((__sentinel__))
-#else
+#không_thì
 # define ATTR_NULL_SENTINEL
 #endif
 
-#if defined(__GNUC__)
+#nếu defined(__GNUC__)
 #define ATTR_PACKED  __attribute__((__packed__))
-#else
+#không_thì
 #define ATTR_PACKED
 #endif
 
-#if defined(HAVE_ATTR_COUNTED_BY) && HAVE_ATTR_COUNTED_BY
+#nếu defined(HAVE_ATTR_COUNTED_BY) && HAVE_ATTR_COUNTED_BY
 # define ATTR_COUNTED_BY(count) __attribute__((counted_by(count)))
-#else
+#không_thì
 # define ATTR_COUNTED_BY(count)
 #endif
 
-#if !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
-XKB_EXPORT_PRIVATE int asprintf(char **strp, const char *fmt, ...) ATTR_PRINTF(2, 3);
-# if !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
+#nếu !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
+XKB_EXPORT_PRIVATE số_nguyên asprintf(char **strp, const char *fmt, ...) ATTR_PRINTF(2, 3);
+# nếu !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
 #  include <stdarg.h>
-XKB_EXPORT_PRIVATE int vasprintf(char **strp, const char *fmt, va_list ap);
+XKB_EXPORT_PRIVATE số_nguyên vasprintf(char **strp, const char *fmt, va_list ap);
 # endif /* !HAVE_VASPRINTF */
 #endif /* !HAVE_ASPRINTF */
 
@@ -365,13 +365,13 @@ ATTR_PRINTF(3, 4)
 snprintf_safe(char *buf, size_t sz, const char *format, ...)
 {
     va_list ap;
-    int rc;
+    số_nguyên rc;
 
     va_start(ap, format);
     rc = vsnprintf(buf, sz, format, ap);
     va_end(ap);
 
-    return rc >= 0 && (size_t)rc < sz;
+    trả_về rc >= 0 && (size_t)rc < sz;
 }
 
 static inline char *
@@ -379,14 +379,14 @@ ATTR_PRINTF(1, 0)
 vasprintf_safe(const char *fmt, va_list args)
 {
     char *str;
-    int len;
+    số_nguyên len;
 
     len = vasprintf(&str, fmt, args);
 
-    if (len == -1)
-        return NULL;
+    nếu (len == -1)
+        trả_về NULL;
 
-    return str;
+    trả_về str;
 }
 
 /**
@@ -403,31 +403,31 @@ asprintf_safe(const char *fmt, ...)
     str = vasprintf_safe(fmt, args);
     va_end(args);
 
-    return str;
+    trả_về str;
 }
 
 #ifdef NDEBUG
-    #if defined(__GNUC__) || defined(__clang__)
+    #nếu defined(__GNUC__) || defined(__clang__)
         #define PANIC_UNREACHABLE() __builtin_unreachable()
     #elif defined(_MSC_VER)
         #define PANIC_UNREACHABLE() __assume(0)
-    #else
+    #không_thì
         #define PANIC_UNREACHABLE() abort()
     #endif
-#else
+#không_thì
     #define PANIC_UNREACHABLE() \
         do { \
             fprintf(stderr, "Critical Error: Reached unreachable line in %s at %d\n", __FILE__, __LINE__); \
             abort(); \
-        } while (0)
+        } trong_khi (0)
 #endif
 
-#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
+#nếu defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
 #  define NOINLINE [[noinline]]
 #elif defined(__GNUC__) || defined(__clang__)
 #  define NOINLINE __attribute__((noinline))
 #elif defined(_MSC_VER)
 #  define NOINLINE __declspec(noinline)
-#else
+#không_thì
 #  define NOINLINE
 #endif

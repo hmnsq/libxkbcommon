@@ -61,33 +61,33 @@ resolve_keysym(struct parser_param *param, struct sval name, xkb_keysym_t *sym_r
 {
     xkb_keysym_t sym;
 
-    if (isvaleq(name, SVAL_LIT("any")) || isvaleq(name, SVAL_LIT("nosymbol"))) {
+    nếu (isvaleq(name, SVAL_LIT("any")) || isvaleq(name, SVAL_LIT("nosymbol"))) {
         *sym_rtrn = XKB_KEY_NoSymbol;
-        return true;
+        trả_về true;
     }
 
-    if (isvaleq(name, SVAL_LIT("none")) || isvaleq(name, SVAL_LIT("voidsymbol"))) {
+    nếu (isvaleq(name, SVAL_LIT("none")) || isvaleq(name, SVAL_LIT("voidsymbol"))) {
         *sym_rtrn = XKB_KEY_VoidSymbol;
-        return true;
+        trả_về true;
     }
 
     /* xkb_keysym_from_name needs a C string. */
     char buf[XKB_KEYSYM_NAME_MAX_SIZE];
-    if (name.len >= sizeof(buf)) {
-        return false;
+    nếu (name.len >= sizeof(buf)) {
+        trả_về false;
     }
     memcpy(buf, name.start, name.len);
     buf[name.len] = '\0';
 
     sym = xkb_keysym_from_name(buf, XKB_KEYSYM_NO_FLAGS);
-    if (sym != XKB_KEY_NoSymbol) {
+    nếu (sym != XKB_KEY_NoSymbol) {
         *sym_rtrn = sym;
         check_deprecated_keysyms(parser_warn, param, param->ctx,
                                  sym, buf, buf, "%s", "");
-        return true;
+        trả_về true;
     }
 
-    return false;
+    trả_về false;
 }
 
 #define param_scanner param->scanner
@@ -254,7 +254,7 @@ resolve_keysym(struct parser_param *param, struct sval name, xkb_keysym_t *sym_r
     <anyList> <exprList> <varList> <vmodList>
 /* The destructor also runs on the start symbol when the parser *succeeds*.
  * The `if` here catches this case. */
-%destructor { if (!param->rtrn) FreeXkbFile($$); } <file>
+%destructor { nếu (!param->rtrn) FreeXkbFile($$); } <file>
 %destructor { FreeXkbFile($$.head); } <fileList>
 %destructor { free($$); } <str>
 
@@ -296,12 +296,12 @@ XkbCompositeType:       XKB_KEYMAP      { $$ = FILE_TYPE_KEYMAP; }
  */
 XkbMapConfigList :      XkbMapConfigList XkbMapConfig
                         {
-                            if ($2) {
-                                if ($1.head) {
+                            nếu ($2) {
+                                nếu ($1.head) {
                                     $$.head = $1.head;
                                     $$.last->common.next = &$2->common;
                                     $$.last = $2;
-                                } else {
+                                } không_thì {
                                     $$.head = $$.last = $2;
                                 }
                             }
@@ -313,7 +313,7 @@ XkbMapConfig    :       OptFlags FileType OptMapName OBRACE
                             DeclList
                         CBRACE SEMI
                         {
-                            if ($1 & MAP_IS_DEPRECATED) {
+                            nếu ($1 & MAP_IS_DEPRECATED) {
                                 parser_warn(param, XKB_WARNING_DEPRECATED_SECTION,
                                             "deprecated section: \"%s\"",
                                             safe_map_name($3));
@@ -357,7 +357,7 @@ Flag            :       PARTIAL                 { $$ = MAP_IS_PARTIAL; }
                                 (unsigned)$1.len, $1.start,
                                 (error ? "" : "; ignored")
                             );
-                            if (error)
+                            nếu (error)
                                 YYABORT;
                             $$ = 0;
                         }
@@ -365,10 +365,10 @@ Flag            :       PARTIAL                 { $$ = MAP_IS_PARTIAL; }
 
 DeclList        :       DeclList Decl
                         {
-                            if ($2) {
-                                if ($1.head) {
+                            nếu ($2) {
+                                nếu ($1.head) {
                                     $$.head = $1.head; $1.last->next = $2; $$.last = $2;
-                                } else {
+                                } không_thì {
                                     $$.head = $$.last = $2;
                                 }
                             }
@@ -380,11 +380,11 @@ DeclList        :       DeclList Decl
                          */
                 |       DeclList OptMergeMode VModDecl
                         {
-                            for (VModDef *vmod = $3.head; vmod; vmod = (VModDef *) vmod->common.next)
+                            cho (VModDef *vmod = $3.head; vmod; vmod = (VModDef *) vmod->common.next)
                                 vmod->merge = $2;
-                            if ($1.head) {
+                            nếu ($1.head) {
                                 $$.head = $1.head; $1.last->next = &$3.head->common; $$.last = &$3.last->common;
-                            } else {
+                            } không_thì {
                                 $$.head = &$3.head->common; $$.last = &$3.last->common;
                             }
                         }
@@ -502,12 +502,12 @@ InterpretMatch  :       KeySym PLUS Expr
 
 VarDeclList     :       VarDeclList VarDecl
                         {
-                            if ($2) {
-                                if ($1.head) {
+                            nếu ($2) {
+                                nếu ($1.head) {
                                     $$.head = $1.head;
                                     $$.last->common.next = &$2->common;
                                     $$.last = $2;
-                                } else {
+                                } không_thì {
                                     $$.head = $$.last = $2;
                                 }
                             }
@@ -564,10 +564,10 @@ MultiKeySymOrActionList
                             struct {ExprDef *head; ExprDef *last;} list = {
                                 .head = $4.head, .last = $4.last
                             };
-                            for (uint32_t k = 0; k < $2; k++) {
+                            cho (uint32_t k = 0; k < $2; k++) {
                                 ExprDef* const syms =
                                     ExprCreateKeySymList(XKB_KEY_NoSymbol);
-                                if (!syms) {
+                                nếu (!syms) {
                                     /* TODO: Use Bison’s more appropriate YYNOMEM */
                                     YYABORT;
                                 }
@@ -584,9 +584,9 @@ MultiKeySymOrActionList
                             struct {ExprDef *head; ExprDef *last;} list = {
                                 .head = $4.head, .last = $4.last
                             };
-                            for (uint32_t k = 0; k < $2; k++) {
+                            cho (uint32_t k = 0; k < $2; k++) {
                                 ExprDef* const acts = ExprCreateActionList(NULL);
-                                if (!acts) {
+                                nếu (!acts) {
                                     /* TODO: Use Bison’s more appropriate YYNOMEM */
                                     YYABORT;
                                 }
@@ -619,7 +619,7 @@ GroupCompatDecl :       GROUP Integer EQUALS Expr SEMI
 
 ModMapDecl      :       MODIFIER_MAP Expr OBRACE KeyOrKeySymList CBRACE SEMI
                         {
-                            if (param->config.format == XKB_KEYMAP_FORMAT_TEXT_V1 &&
+                            nếu (param->config.format == XKB_KEYMAP_FORMAT_TEXT_V1 &&
                                 $2->common.type != STMT_EXPR_IDENT) {
                                     parser_err(
                                         param, XKB_ERROR_INVALID_MODIFIER_MAP_MASK,
@@ -813,12 +813,12 @@ MergeMode       :       INCLUDE         { $$ = MERGE_DEFAULT; }
 
 ExprList        :       ExprList COMMA Expr
                         {
-                            if ($3) {
-                                if ($1.head) {
+                            nếu ($3) {
+                                nếu ($1.head) {
                                     $$.head = $1.head;
                                     $$.last->common.next = &$3->common;
                                     $$.last = $3;
-                                } else {
+                                } không_thì {
                                     $$.head = $$.last = $3;
                                 }
                             }
@@ -941,23 +941,23 @@ KeySymList      :       KeySymList COMMA KeySymLit
                         {
                             $$ = ExprKeySymListAppendString(param->scanner, $1, $3);
                             free($3);
-                            if (!$$)
+                            nếu (!$$)
                                 YYERROR;
                         }
                 |       KeySymLit
                         {
                             $$ = ExprCreateKeySymList($1);
-                            if (!$$)
+                            nếu (!$$)
                                 YYERROR;
                         }
                 |       STRING
                         {
                             $$ = ExprCreateKeySymList(XKB_KEY_NoSymbol);
-                            if (!$$)
+                            nếu (!$$)
                                 YYERROR;
                             $$ = ExprKeySymListAppendString(param->scanner, $$, $1);
                             free($1);
-                            if (!$$)
+                            nếu (!$$)
                                 YYERROR;
                         }
                 ;
@@ -967,11 +967,11 @@ NonEmptyKeySyms :       OBRACE KeySymList CBRACE
                 |       STRING
                         {
                             $$ = ExprCreateKeySymList(XKB_KEY_NoSymbol);
-                            if (!$$)
+                            nếu (!$$)
                                 YYERROR;
                             $$ = ExprKeySymListAppendString(param->scanner, $$, $1);
                             free($1);
-                            if (!$$)
+                            nếu (!$$)
                                 YYERROR;
                         }
                 ;
@@ -988,19 +988,19 @@ KeySym          :       KeySymLit
                         {
                             $$ = KeysymParseString(param->scanner, $1);
                             free($1);
-                            if ($$ == XKB_KEY_NoSymbol)
+                            nếu ($$ == XKB_KEY_NoSymbol)
                                 YYERROR;
                         }
                 ;
 
 KeySymLit       :       IDENT
                         {
-                            if (!resolve_keysym(param, $1, &$$)) {
+                            nếu (!resolve_keysym(param, $1, &$$)) {
                                 parser_warn(
                                     param,
                                     XKB_WARNING_UNRECOGNIZED_KEYSYM,
                                     "unrecognized keysym \"%.*s\"",
-                                    (unsigned int) $1.len, $1.start
+                                    (unsigned số_nguyên) $1.len, $1.start
                                 );
                                 $$ = XKB_KEY_NoSymbol;
                             }
@@ -1018,7 +1018,7 @@ KeySymLit       :       IDENT
                         }
                 |       INTEGER
                         {
-                            if ($1 < XKB_KEYSYM_MIN) {
+                            nếu ($1 < XKB_KEYSYM_MIN) {
                                 /* Negative value */
                                 static_assert(XKB_KEYSYM_MIN == 0,
                                               "Keysyms are positive");
@@ -1039,9 +1039,9 @@ KeySymLit       :       IDENT
                              * the keysym 0x0001, while `1` is interpreted as
                              * XKB_KEY_1.
                              */
-                            else {
+                            không_thì {
                                 /* Any other numeric value */
-                                if ($1 <= XKB_KEYSYM_MAX) {
+                                nếu ($1 <= XKB_KEYSYM_MAX) {
                                     /*
                                      * Valid keysym
                                      * No normalization is performed and value
@@ -1051,7 +1051,7 @@ KeySymLit       :       IDENT
                                     check_deprecated_keysyms(
                                         parser_warn, param, param->ctx,
                                         $$, NULL, $$, "%#06"PRIx32, "");
-                                } else {
+                                } không_thì {
                                     /* Invalid keysym */
                                     parser_warn(
                                         param, XKB_ERROR_INVALID_NUMERIC_KEYSYM,
@@ -1117,7 +1117,7 @@ XkbFile *
 parse(struct xkb_context *ctx, const struct parser_keymap_config *config,
       struct scanner *scanner, const char *map)
 {
-    int ret;
+    số_nguyên ret;
     XkbFile *first = NULL;
     struct parser_param param = {
         .scanner = scanner,
@@ -1135,47 +1135,47 @@ parse(struct xkb_context *ctx, const struct parser_keymap_config *config,
      * the first map in the file.
      */
 
-    while ((ret = yyparse(&param)) == 0 && param.more_maps) {
-        if (map) {
-            if (streq_not_null(map, param.rtrn->name))
-                return param.rtrn;
-            else
+    trong_khi ((ret = yyparse(&param)) == 0 && param.more_maps) {
+        nếu (map) {
+            nếu (streq_not_null(map, param.rtrn->name))
+                trả_về param.rtrn;
+            không_thì
                 FreeXkbFile(param.rtrn);
         }
-        else {
-            if (param.rtrn->flags & MAP_IS_DEFAULT) {
+        không_thì {
+            nếu (param.rtrn->flags & MAP_IS_DEFAULT) {
                 FreeXkbFile(first);
-                return param.rtrn;
+                trả_về param.rtrn;
             }
-            else if (!first) {
+            không_thì nếu (!first) {
                 first = param.rtrn;
             }
-            else {
+            không_thì {
                 FreeXkbFile(param.rtrn);
             }
         }
         param.rtrn = NULL;
     }
 
-    if (ret != 0) {
+    nếu (ret != 0) {
         /* Some error happend; clear the Xkbfiles parsed so far */
         FreeXkbFile(first);
         FreeXkbFile(param.rtrn);
-        return NULL;
+        trả_về NULL;
     }
 
     /*
      * Warn about implicit default section,
      * but only if not a keymap: multiple keymaps per file not supported
      */
-    if (first && first->file_type != FILE_TYPE_KEYMAP)
+    nếu (first && first->file_type != FILE_TYPE_KEYMAP)
         log_vrb(ctx, XKB_LOG_VERBOSITY_DETAILED,
                 XKB_WARNING_MISSING_DEFAULT_SECTION,
                 "No section name in include statement, but \"%s\" contains several; "
                 "Using first defined section, \"%s\"\n",
                 scanner->file_name, safe_map_name(first->name));
 
-    return first;
+    trả_về first;
 }
 
 /* Parse the next section */
@@ -1184,7 +1184,7 @@ parse_next(struct xkb_context *ctx,
            const struct parser_keymap_config *config,
            struct scanner *scanner, XkbFile **xkb_file)
 {
-    int ret;
+    số_nguyên ret;
     struct parser_param param = {
         .scanner = scanner,
         .ctx = ctx,
@@ -1193,12 +1193,12 @@ parse_next(struct xkb_context *ctx,
         .more_maps = false,
     };
 
-    if ((ret = yyparse(&param)) == 0 && param.more_maps) {
+    nếu ((ret = yyparse(&param)) == 0 && param.more_maps) {
         *xkb_file = param.rtrn;
-        return true;
-    } else {
+        trả_về true;
+    } không_thì {
         FreeXkbFile(param.rtrn);
         *xkb_file = NULL;
-        return (ret == 0);
+        trả_về (ret == 0);
     }
 }

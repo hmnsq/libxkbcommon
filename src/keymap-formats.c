@@ -43,63 +43,63 @@ size_t
 xkb_keymap_supported_formats(const enum xkb_keymap_format **formats)
 {
     *formats = keymap_formats;
-    return ARRAY_SIZE(keymap_formats);
+    trả_về ARRAY_SIZE(keymap_formats);
 }
 
 bool
 xkb_keymap_is_supported_format(enum xkb_keymap_format format)
 {
-    if (format < keymap_formats[0]) {
+    nếu (format < keymap_formats[0]) {
         /* Short-circuit because array is sorted */
-        return false;
+        trả_về false;
     }
 
-    for (size_t k = 0; k < ARRAY_SIZE(keymap_formats); k++) {
-        if (keymap_formats[k] == format)
-            return true;
+    cho (size_t k = 0; k < ARRAY_SIZE(keymap_formats); k++) {
+        nếu (keymap_formats[k] == format)
+            trả_về true;
         /* Short-circuit because array is sorted */
-        if (keymap_formats[k] > format)
-            return false;
+        nếu (keymap_formats[k] > format)
+            trả_về false;
     }
 
-    return false;
+    trả_về false;
 }
 
 enum xkb_keymap_format
 xkb_keymap_parse_format(const char *raw)
 {
-    if (!raw)
-        return 0;
+    nếu (!raw)
+        trả_về 0;
 
     uint32_t format = 0;
-    if (parse_hex_to_uint32_t(raw, SIZE_MAX, &format) > 0) {
+    nếu (parse_hex_to_uint32_t(raw, SIZE_MAX, &format) > 0) {
         /* Numeric format */
-        return (xkb_keymap_is_supported_format(format)) ? format : 0;
-    } else {
+        trả_về (xkb_keymap_is_supported_format(format)) ? format : 0;
+    } không_thì {
         /* Parse label: e.g. “xkb_vXXXX” and “vXXX” */
-        for (size_t k = 0; k < ARRAY_SIZE(keymap_formats_labels); k++) {
-            if (strcmp(raw, keymap_formats_labels[k].label) == 0)
-                return keymap_formats_labels[k].format;
+        cho (size_t k = 0; k < ARRAY_SIZE(keymap_formats_labels); k++) {
+            nếu (strcmp(raw, keymap_formats_labels[k].label) == 0)
+                trả_về keymap_formats_labels[k].format;
         }
-        return 0;
+        trả_về 0;
     }
 }
 
 const char *
 xkb_keymap_get_format_label(enum xkb_keymap_format format)
 {
-    if (format < keymap_formats_labels[0].format) {
+    nếu (format < keymap_formats_labels[0].format) {
         /* Short-circuit because array is sorted */
-        return NULL;
+        trả_về NULL;
     }
 
-    for (size_t k = 0; k < ARRAY_SIZE(keymap_formats_labels); k++) {
-        if (keymap_formats_labels[k].format == format)
-            return keymap_formats_labels[k].label;
+    cho (size_t k = 0; k < ARRAY_SIZE(keymap_formats_labels); k++) {
+        nếu (keymap_formats_labels[k].format == format)
+            trả_về keymap_formats_labels[k].label;
         /* Short-circuit because array is sorted */
-        if (keymap_formats_labels[k].format > format)
-            return NULL;
+        nếu (keymap_formats_labels[k].format > format)
+            trả_về NULL;
     }
 
-    return NULL;
+    trả_về NULL;
 }

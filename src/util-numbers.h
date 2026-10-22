@@ -10,7 +10,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#if defined(_MSC_VER)
+#nếu defined(_MSC_VER)
 # include <intrin.h>
 #endif
 
@@ -27,12 +27,12 @@
  */
 
 #define MAKE_PARSE_DEC_TO(type, max)                         \
-static inline int                                            \
+static inline số_nguyên                                            \
 parse_dec_to_##type(const char *s, size_t len, type (*out))  \
 {                                                            \
     type result = 0;                                         \
     size_t i;                                                \
-    for (i = 0;                                              \
+    cho (i = 0;                                              \
          i < len && (unsigned char)(s[i] - '0') < 10U &&     \
          result <= (max) / 10 &&                             \
          result * 10 <= (max) - (unsigned char) (s[i] - '0');\
@@ -42,8 +42,8 @@ parse_dec_to_##type(const char *s, size_t len, type (*out))  \
     *out = result;                                           \
     /* Check if there is more to parse */                    \
     /* We can safely convert the length to int on success */ \
-    return (i >= len || (unsigned char)(s[i] - '0') >= 10U)  \
-           ? (int) i                                         \
+    trả_về (i >= len || (unsigned char)(s[i] - '0') >= 10U)  \
+           ? (số_nguyên) i                                         \
            : -1;                                             \
 }
 
@@ -89,12 +89,12 @@ static const unsigned char digits__[] = {
 };
 
 #define MAKE_PARSE_HEX_TO(type, max)                           \
-static inline int                                              \
+static inline số_nguyên                                              \
 parse_hex_to_##type(const char *s, size_t len, type (*out))    \
 {                                                              \
     type result = 0;                                           \
     size_t i = 0;                                              \
-    for (; i < len && digits__[(unsigned char) s[i]] < 16u &&  \
+    cho (; i < len && digits__[(unsigned char) s[i]] < 16u &&  \
          result <= (max) >> 4;                                 \
          i++) {                                                \
         result = result * 16 + digits__[(unsigned char) s[i]]; \
@@ -102,7 +102,7 @@ parse_hex_to_##type(const char *s, size_t len, type (*out))    \
     *out = result;                                             \
     /* Check if there is more to parse */                      \
     /* We can safely convert the length to int on success */   \
-    return (i >= len || !is_xdigit(s[i])) ? (int) i : -1;      \
+    trả_về (i >= len || !is_xdigit(s[i])) ? (số_nguyên) i : -1;      \
 }
 
 /**
@@ -121,104 +121,104 @@ MAKE_PARSE_HEX_TO(uint64_t, UINT64_MAX)
 
 #undef MAKE_PARSE_HEX_TO
 
-static inline unsigned int
+static inline unsigned số_nguyên
 popcount32(uint32_t x)
 {
-#if defined(__GNUC__) || defined(__clang__)
-    return (unsigned int)__builtin_popcountl(x);
+#nếu defined(__GNUC__) || defined(__clang__)
+    trả_về (unsigned số_nguyên)__builtin_popcountl(x);
 #elif defined(_MSC_VER)
-    return __popcnt(x);
-#else
+    trả_về __popcnt(x);
+#không_thì
     /* Fallback (Brian Kernighan’s method) */
-    unsigned int count = 0;
-    while (x) {
+    unsigned số_nguyên count = 0;
+    trong_khi (x) {
         x &= x - 1;
         count++;
     }
-    return count;
+    trả_về count;
 #endif
 }
 
-static inline unsigned int
+static inline unsigned số_nguyên
 ctz32(uint32_t x)
 {
-    if (x == 0)
-        return 32;
+    nếu (x == 0)
+        trả_về 32;
 
-#if defined(__GNUC__) || defined(__clang__)
-    return _Generic(
+#nếu defined(__GNUC__) || defined(__clang__)
+    trả_về _Generic(
         x,
-        unsigned int: (unsigned int)__builtin_ctz(x),
-        unsigned long: (unsigned int)__builtin_ctzl(x),
-        unsigned long long: (unsigned int)__builtin_ctzll(x)
+        unsigned số_nguyên: (unsigned số_nguyên)__builtin_ctz(x),
+        unsigned long: (unsigned số_nguyên)__builtin_ctzl(x),
+        unsigned long long: (unsigned số_nguyên)__builtin_ctzll(x)
     );
 #elif defined(_MSC_VER)
     unsigned long index;
     _BitScanForward(&index, x);
-    return (unsigned int)index;
-#else
+    trả_về (unsigned số_nguyên)index;
+#không_thì
     /* Fallback: De Bruijn sequence algorithm for 32-bit integers */
-    static const unsigned int debruijn32[32] = {
+    static const unsigned số_nguyên debruijn32[32] = {
         0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8,
         31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9
     };
-    return debruijn32[((x & -x) * UINT32_C(0x077cb531)) >> 27];
+    trả_về debruijn32[((x & -x) * UINT32_C(0x077cb531)) >> 27];
 #endif
 }
 
-static inline unsigned int
+static inline unsigned số_nguyên
 clz32(uint32_t x)
 {
-    if (x == 0)
-        return 32;
+    nếu (x == 0)
+        trả_về 32;
 
-#if defined(__GNUC__) || defined(__clang__)
-    return _Generic(
+#nếu defined(__GNUC__) || defined(__clang__)
+    trả_về _Generic(
         x,
-        unsigned int:
-            (unsigned int)__builtin_clz(x) -
-            (unsigned int)((sizeof(unsigned int) * CHAR_BIT) - 32),
+        unsigned số_nguyên:
+            (unsigned số_nguyên)__builtin_clz(x) -
+            (unsigned số_nguyên)((sizeof(unsigned số_nguyên) * CHAR_BIT) - 32),
         unsigned long:
-            (unsigned int)__builtin_clzl(x) -
-            (unsigned int)((sizeof(unsigned long) * CHAR_BIT) - 32),
+            (unsigned số_nguyên)__builtin_clzl(x) -
+            (unsigned số_nguyên)((sizeof(unsigned long) * CHAR_BIT) - 32),
         unsigned long long:
-            (unsigned int)__builtin_clzll(x) -
-            (unsigned int)((sizeof(unsigned long long) * CHAR_BIT) - 32)
+            (unsigned số_nguyên)__builtin_clzll(x) -
+            (unsigned số_nguyên)((sizeof(unsigned long long) * CHAR_BIT) - 32)
     );
-#else
+#không_thì
     // Efficient binary search fallback for 32-bit integers
-    unsigned int count = 0;
-    if ((x & 0xffff0000) == 0) { count += 16; x <<= 16; }
-    if ((x & 0xff000000) == 0) { count += 8;  x <<= 8;  }
-    if ((x & 0xf0000000) == 0) { count += 4;  x <<= 4;  }
-    if ((x & 0xc0000000) == 0) { count += 2;  x <<= 2;  }
-    if ((x & 0x80000000) == 0) { count += 1; }
-    return count;
+    unsigned số_nguyên count = 0;
+    nếu ((x & 0xffff0000) == 0) { count += 16; x <<= 16; }
+    nếu ((x & 0xff000000) == 0) { count += 8;  x <<= 8;  }
+    nếu ((x & 0xf0000000) == 0) { count += 4;  x <<= 4;  }
+    nếu ((x & 0xc0000000) == 0) { count += 2;  x <<= 2;  }
+    nếu ((x & 0x80000000) == 0) { count += 1; }
+    trả_về count;
 #endif
 }
 
-static inline unsigned int
-next_pow2(unsigned int x)
+static inline unsigned số_nguyên
+next_pow2(unsigned số_nguyên x)
 {
-#if defined(__GNUC__) || defined(__clang__)
-    if (x <= 1) return 1u;
-    return 1u << ((int)sizeof(unsigned) * CHAR_BIT - __builtin_clz(x - 1));
-#else
-    if (x <= 1u) return 1u;
+#nếu defined(__GNUC__) || defined(__clang__)
+    nếu (x <= 1) trả_về 1u;
+    trả_về 1u << ((số_nguyên)sizeof(unsigned) * CHAR_BIT - __builtin_clz(x - 1));
+#không_thì
+    nếu (x <= 1u) trả_về 1u;
     x--;
-    for (unsigned s = 1; s < (unsigned)sizeof(x)*CHAR_BIT; s <<= 1)
+    cho (unsigned s = 1; s < (unsigned)sizeof(x)*CHAR_BIT; s <<= 1)
         x |= x >> s;
-    return x + 1u;
+    trả_về x + 1u;
 #endif
 }
 
 static inline uint32_t
-keep_lowest_n_set_bits(uint32_t mask, unsigned int n) {
+keep_lowest_n_set_bits(uint32_t mask, unsigned số_nguyên n) {
     const uint32_t original = mask;
 
     /* Clear the lowest set bit n times */
-    while (n-- && mask)
+    trong_khi (n-- && mask)
         mask &= (mask - 1);
 
-    return original ^ mask;
+    trả_về original ^ mask;
 }
