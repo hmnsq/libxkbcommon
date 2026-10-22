@@ -6,63 +6,63 @@
  * Author: Daniel Stone <daniel@fooishbar.org>
  */
 
-#include "config.h"
+#समावेश "config.h"
 
-#include <assert.h>
-#include <stdint.h>
-#include <string.h>
+#समावेश <assert.h>
+#समावेश <stdint.h>
+#समावेश <string.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-names.h"
-#include "features/enums.h"
-#include "keymap.h"
-#include "messages-codes.h"
+#समावेश "xkbcommon/xkbcommon.h"
+#समावेश "xkbcommon/xkbcommon-names.h"
+#समावेश "features/enums.h"
+#समावेश "keymap.h"
+#समावेश "messages-codes.h"
 
-static void
-update_builtin_keymap_fields(struct xkb_keymap *keymap)
+अटल व्योम
+update_builtin_keymap_fields(काष्ठा xkb_keymap *keymap)
 {
     /* Predefined (AKA real, core, X11) modifiers. The order is important! */
-    static const char *const builtin_mods[] = {
-        [XKB_MOD_INDEX_SHIFT] = XKB_MOD_NAME_SHIFT,
-        [XKB_MOD_INDEX_CAPS]  = XKB_MOD_NAME_CAPS,
-        [XKB_MOD_INDEX_CTRL]  = XKB_MOD_NAME_CTRL,
-        [XKB_MOD_INDEX_MOD1]  = XKB_MOD_NAME_MOD1,
-        [XKB_MOD_INDEX_MOD2]  = XKB_MOD_NAME_MOD2,
-        [XKB_MOD_INDEX_MOD3]  = XKB_MOD_NAME_MOD3,
-        [XKB_MOD_INDEX_MOD4]  = XKB_MOD_NAME_MOD4,
-        [XKB_MOD_INDEX_MOD5]  = XKB_MOD_NAME_MOD5
+    अटल स्थिर अक्षर *स्थिर builtin_mods[] = {
+        [XKB_MOD_सूचकांक_SHIFT] = XKB_MOD_NAME_SHIFT,
+        [XKB_MOD_सूचकांक_CAPS]  = XKB_MOD_NAME_CAPS,
+        [XKB_MOD_सूचकांक_CTRL]  = XKB_MOD_NAME_CTRL,
+        [XKB_MOD_सूचकांक_MOD1]  = XKB_MOD_NAME_MOD1,
+        [XKB_MOD_सूचकांक_MOD2]  = XKB_MOD_NAME_MOD2,
+        [XKB_MOD_सूचकांक_MOD3]  = XKB_MOD_NAME_MOD3,
+        [XKB_MOD_सूचकांक_MOD4]  = XKB_MOD_NAME_MOD4,
+        [XKB_MOD_सूचकांक_MOD5]  = XKB_MOD_NAME_MOD5
     };
 
-    for (xkb_mod_index_t i = 0; i < ARRAY_SIZE(builtin_mods); i++) {
+    क्रम (xkb_mod_सूचकांक_t i = 0; i < ARRAY_आकार(builtin_mods); i++) {
         keymap->mods.mods[i].name = xkb_atom_intern(keymap->ctx,
                                                     builtin_mods[i],
-                                                    strlen(builtin_mods[i]));
+                                                    म_माप(builtin_mods[i]));
         keymap->mods.mods[i].type = MOD_REAL;
         /* Real modifiers have a canonical mapping */
         keymap->mods.mods[i].mapping = UINT32_C(1) << i;
     }
-    keymap->mods.num_mods = ARRAY_SIZE(builtin_mods);
+    keymap->mods.अंक_mods = ARRAY_आकार(builtin_mods);
     keymap->canonical_state_mask = MOD_REAL_MASK_ALL;
 }
 
-struct xkb_keymap *
-xkb_keymap_new(struct xkb_context *ctx, const char *func,
-               enum xkb_keymap_format format,
-               enum xkb_keymap_compile_flags flags)
+काष्ठा xkb_keymap *
+xkb_keymap_new(काष्ठा xkb_context *ctx, स्थिर अक्षर *func,
+               क्रमागत xkb_keymap_format format,
+               क्रमागत xkb_keymap_compile_flags flags)
 {
-    const enum xkb_keymap_compile_flags invalid_flags = (
-        flags & ~(enum xkb_keymap_compile_flags)XKB_KEYMAP_COMPILE_FLAGS_VALUES
+    स्थिर क्रमागत xkb_keymap_compile_flags invalid_flags = (
+        flags & ~(क्रमागत xkb_keymap_compile_flags)XKB_KEYMAP_COMPILE_FLAGS_मूल्यावली
     );
-    if (invalid_flags) {
+    अगर (invalid_flags) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "%s: unrecognized keymap compilation flags: 0x%x\n",
                 func, invalid_flags);
-        return NULL;
+        वापस शून्य;
     }
 
-    struct xkb_keymap * const keymap = calloc(1, sizeof(*keymap));
-    if (!keymap)
-        return NULL;
+    काष्ठा xkb_keymap * स्थिर keymap = सुस्मृति(1, माप(*keymap));
+    अगर (!keymap)
+        वापस शून्य;
 
     keymap->refcnt = 1;
     keymap->ctx = xkb_context_ref(ctx);
@@ -72,163 +72,163 @@ xkb_keymap_new(struct xkb_context *ctx, const char *func,
 
     update_builtin_keymap_fields(keymap);
 
-    return keymap;
+    वापस keymap;
 }
 
-void
-XkbEscapeMapName(char *name)
+व्योम
+XkbEscapeMapName(अक्षर *name)
 {
     /*
      * All latin-1 alphanumerics, plus parens, slash, minus, underscore and
      * wildcards.
      */
-    static const unsigned char legal[] = {
+    अटल स्थिर अचिन्हित अक्षर legal[] = {
         0x00, 0x00, 0x00, 0x00, 0x00, 0xa7, 0xff, 0x83,
         0xfe, 0xff, 0xff, 0x87, 0xfe, 0xff, 0xff, 0x07,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0xff, 0xff, 0x7f, 0xff, 0xff, 0xff, 0x7f, 0xff
     };
 
-    if (!name)
-        return;
+    अगर (!name)
+        वापस;
 
-    while (*name) {
-        unsigned char c = (unsigned char)*name;
-        if (!(legal[c / 8] & (1u << (c % 8))))
+    जबतक (*name) {
+        अचिन्हित अक्षर c = (अचिन्हित अक्षर)*name;
+        अगर (!(legal[c / 8] & (1u << (c % 8))))
             *name = '_';
         name++;
     }
 }
 
-xkb_mod_index_t
-XkbModNameToIndex(const struct xkb_mod_set *mods, xkb_atom_t name,
-                  enum mod_type type)
+xkb_mod_सूचकांक_t
+Xkb_Mod_Name_To_सूचकांक(स्थिर काष्ठा xkb_mod_set *mods, xkb_atom_t name,
+                  क्रमागत mod_type type)
 {
-    xkb_mod_index_t i;
-    const struct xkb_mod *mod;
+    xkb_mod_सूचकांक_t i;
+    स्थिर काष्ठा xkb_mod *mod;
 
     xkb_mods_enumerate(i, mod, mods)
-        if ((mod->type & type) && name == mod->name)
-            return i;
+        अगर ((mod->type & type) && name == mod->name)
+            वापस i;
 
-    return XKB_MOD_INVALID;
+    वापस XKB_MOD_INVALID;
 }
 
 bool
-XkbLevelsSameSyms(const struct xkb_level *a, const struct xkb_level *b)
+XkbLevelsSameSyms(स्थिर काष्ठा xkb_level *a, स्थिर काष्ठा xkb_level *b)
 {
-    if (a->num_syms != b->num_syms)
-        return false;
-    if (a->num_syms <= 1)
-        return a->s.sym == b->s.sym;
-    return memcmp(a->s.syms, b->s.syms, sizeof(*a->s.syms) * a->num_syms) == 0;
+    अगर (a->अंक_syms != b->अंक_syms)
+        वापस false;
+    अगर (a->अंक_syms <= 1)
+        वापस a->s.sym == b->s.sym;
+    वापस स_भेद(a->s.syms, b->s.syms, माप(*a->s.syms) * a->अंक_syms) == 0;
 }
 
 bool
-action_equal(const union xkb_action *a, const union xkb_action *b)
+action_equal(स्थिर जोड़ xkb_action *a, स्थिर जोड़ xkb_action *b)
 {
-    if (a->type != b->type)
-        return false;
+    अगर (a->type != b->type)
+        वापस false;
 
-    switch (a->type) {
-    case ACTION_TYPE_NONE:
-    case ACTION_TYPE_VOID:
-        return true;
-    case ACTION_TYPE_MOD_SET:
-    case ACTION_TYPE_MOD_LATCH:
-    case ACTION_TYPE_MOD_LOCK:
-        return (a->mods.flags == b->mods.flags &&
+    चयन (a->type) {
+    हाल ACTION_TYPE_NONE:
+    हाल ACTION_TYPE_VOID:
+        वापस true;
+    हाल ACTION_TYPE_MOD_SET:
+    हाल ACTION_TYPE_MOD_LATCH:
+    हाल ACTION_TYPE_MOD_LOCK:
+        वापस (a->mods.flags == b->mods.flags &&
                 a->mods.mods.mask == b->mods.mods.mask &&
                 a->mods.mods.mods == b->mods.mods.mods);
-    case ACTION_TYPE_GROUP_SET:
-    case ACTION_TYPE_GROUP_LATCH:
-    case ACTION_TYPE_GROUP_LOCK:
-        return (a->group.flags == b->group.flags &&
+    हाल ACTION_TYPE_GROUP_SET:
+    हाल ACTION_TYPE_GROUP_LATCH:
+    हाल ACTION_TYPE_GROUP_LOCK:
+        वापस (a->group.flags == b->group.flags &&
                 a->group.group == b->group.group);
-    case ACTION_TYPE_PTR_MOVE:
-        return (a->ptr.flags == b->ptr.flags &&
+    हाल ACTION_TYPE_PTR_MOVE:
+        वापस (a->ptr.flags == b->ptr.flags &&
                 a->ptr.x == b->ptr.x &&
                 a->ptr.y == b->ptr.y);
-    case ACTION_TYPE_PTR_BUTTON:
-    case ACTION_TYPE_PTR_LOCK:
-        return (a->btn.flags == b->btn.flags &&
+    हाल ACTION_TYPE_PTR_BUTTON:
+    हाल ACTION_TYPE_PTR_LOCK:
+        वापस (a->btn.flags == b->btn.flags &&
                 a->btn.button == b->btn.button &&
-                a->btn.count == b->btn.count);
-    case ACTION_TYPE_PTR_DEFAULT:
-        return (a->dflt.flags == b->dflt.flags &&
-                a->dflt.value == b->dflt.value);
-    case ACTION_TYPE_TERMINATE:
-        return true;
-    case ACTION_TYPE_SWITCH_VT:
-        return (a->screen.flags == b->screen.flags &&
+                a->btn.गिनती == b->btn.गिनती);
+    हाल ACTION_TYPE_PTR_DEFAULT:
+        वापस (a->dflt.flags == b->dflt.flags &&
+                a->dflt.मूल्य == b->dflt.मूल्य);
+    हाल ACTION_TYPE_TERMINATE:
+        वापस true;
+    हाल ACTION_TYPE_SWITCH_VT:
+        वापस (a->screen.flags == b->screen.flags &&
                 a->screen.screen == b->screen.screen);
-    case ACTION_TYPE_CTRL_SET:
-    case ACTION_TYPE_CTRL_LOCK:
-        return (a->ctrls.flags == b->ctrls.flags &&
+    हाल ACTION_TYPE_CTRL_SET:
+    हाल ACTION_TYPE_CTRL_LOCK:
+        वापस (a->ctrls.flags == b->ctrls.flags &&
                 a->ctrls.ctrls == b->ctrls.ctrls);
-    case ACTION_TYPE_REDIRECT_KEY:
-        return (a->redirect.keycode == b->redirect.keycode &&
+    हाल ACTION_TYPE_REDIRECT_कुंजी:
+        वापस (a->redirect.keycode == b->redirect.keycode &&
                 a->redirect.affect_mods == b->redirect.affect_mods &&
                 a->redirect.mods == b->redirect.mods);
-    case ACTION_TYPE_UNSUPPORTED_LEGACY:
-    case ACTION_TYPE_UNKNOWN:
-        return true;
+    हाल ACTION_TYPE_UNSUPPORTED_LEGACY:
+    हाल ACTION_TYPE_UNKNOWN:
+        वापस true;
     /* ACTION_TYPE_PRIVATE processed in the default case */
-    case ACTION_TYPE_INTERNAL:
-        return (a->internal.flags == b->internal.flags) &&
+    हाल ACTION_TYPE_INTERNAL:
+        वापस (a->internal.flags == b->internal.flags) &&
                (a->internal.clear_latched_mods == b->internal.clear_latched_mods);
-    default:
+    शेष:
         {} /* Label followed by declaration requires C23 */
         /* Ensure to not miss `xkb_action_type` updates */
         static_assert(ACTION_TYPE_INTERNAL == 20 &&
-                      ACTION_TYPE_INTERNAL + 1 == _ACTION_TYPE_NUM_ENTRIES,
+                      ACTION_TYPE_INTERNAL + 1 == ACTION_TYPE_अंक_ENTRIES,
                       "Missing action type");
         /* Private/custom action */
-        return memcmp(a->priv.data, b->priv.data, sizeof(a->priv.data)) == 0;
+        वापस स_भेद(a->priv.तथ्य, b->priv.तथ्य, माप(a->priv.तथ्य)) == 0;
     }
 }
 
 bool
-XkbLevelsSameActions(const struct xkb_level *a, const struct xkb_level *b)
+XkbLevelsSameActions(स्थिर काष्ठा xkb_level *a, स्थिर काष्ठा xkb_level *b)
 {
-    if (a->num_actions != b->num_actions)
-        return false;
-    if (a->num_actions <= 1)
-        return action_equal(&a->a.action, &b->a.action);
-    for (xkb_action_count_t k = 0; k < a->num_actions; k++) {
-        if (!action_equal(&a->a.actions[k], &b->a.actions[k]))
-            return false;
+    अगर (a->अंक_actions != b->अंक_actions)
+        वापस false;
+    अगर (a->अंक_actions <= 1)
+        वापस action_equal(&a->a.action, &b->a.action);
+    क्रम (xkb_action_गिनती_t k = 0; k < a->अंक_actions; k++) {
+        अगर (!action_equal(&a->a.actions[k], &b->a.actions[k]))
+            वापस false;
     }
-    return true;
+    वापस true;
 }
 
 /* See: XkbAdjustGroup in Xorg xserver */
-xkb_layout_index_t
+xkb_layout_सूचकांक_t
 XkbWrapGroupIntoRange(int32_t group,
-                      xkb_layout_index_t num_groups,
-                      enum xkb_layout_out_of_range_policy out_of_range_group_policy,
-                      xkb_layout_index_t out_of_range_group_number)
+                      xkb_layout_सूचकांक_t अंक_groups,
+                      क्रमागत xkb_layout_out_of_range_policy out_of_range_group_policy,
+                      xkb_layout_सूचकांक_t out_of_range_group_संख्या)
 {
-    if (num_groups == 0)
-        return XKB_LAYOUT_INVALID;
+    अगर (अंक_groups == 0)
+        वापस XKB_LAYOUT_INVALID;
 
-    if (group >= 0 && (xkb_layout_index_t)group < num_groups)
-        return (xkb_layout_index_t)group;
+    अगर (group >= 0 && (xkb_layout_सूचकांक_t)group < अंक_groups)
+        वापस (xkb_layout_सूचकांक_t)group;
 
-    switch (out_of_range_group_policy) {
-    case XKB_LAYOUT_OUT_OF_RANGE_REDIRECT:
-        if (out_of_range_group_number >= num_groups)
-            return 0;
-        return out_of_range_group_number;
+    चयन (out_of_range_group_policy) {
+    हाल XKB_LAYOUT_OUT_OF_RANGE_REDIRECT:
+        अगर (out_of_range_group_संख्या >= अंक_groups)
+            वापस 0;
+        वापस out_of_range_group_संख्या;
 
-    case XKB_LAYOUT_OUT_OF_RANGE_CLAMP:
-        if (group < 0)
-            return 0;
-        else
-            return num_groups - 1;
+    हाल XKB_LAYOUT_OUT_OF_RANGE_CLAMP:
+        अगर (group < 0)
+            वापस 0;
+        अन्यथा
+            वापस अंक_groups - 1;
 
-    case XKB_LAYOUT_OUT_OF_RANGE_WRAP:
-    default: {
+    हाल XKB_LAYOUT_OUT_OF_RANGE_WRAP:
+    शेष: {
         /*
          * Ensure conversion xkb_layout_index_t → int32_t is lossless.
          *
@@ -245,45 +245,45 @@ XkbWrapGroupIntoRange(int32_t group,
          * positive. So if the remainder is negative, we must add `num_groups`
          * to get the modulus.
          */
-        const int32_t rem = group % (int32_t) num_groups;
-        return (rem >= 0)
-            ? (xkb_layout_index_t)rem
-            : (xkb_layout_index_t)(rem + (int32_t)num_groups);
+        स्थिर int32_t rem = group % (int32_t) अंक_groups;
+        वापस (rem >= 0)
+            ? (xkb_layout_सूचकांक_t)rem
+            : (xkb_layout_सूचकांक_t)(rem + (int32_t)अंक_groups);
     }
     }
 }
 
-xkb_action_count_t
-xkb_keymap_key_get_actions_by_level(const struct xkb_keymap *keymap,
-                                    const struct xkb_key *key,
-                                    xkb_layout_index_t layout,
-                                    xkb_level_index_t level,
-                                    const union xkb_action **actions)
+xkb_action_गिनती_t
+xkb_keymap_कुंजी_get_actions_by_level(स्थिर काष्ठा xkb_keymap *keymap,
+                                    स्थिर काष्ठा xkb_कुंजी *कुंजी,
+                                    xkb_layout_सूचकांक_t layout,
+                                    xkb_level_सूचकांक_t level,
+                                    स्थिर जोड़ xkb_action **actions)
 {
-    if (!key)
-        goto err;
+    अगर (!कुंजी)
+        जाओ err;
 
-    layout = xkb_keymap_key_effective_layout(key, layout);
-    if (layout == XKB_LAYOUT_INVALID)
-        goto err;
+    layout = xkb_keymap_कुंजी_effective_layout(कुंजी, layout);
+    अगर (layout == XKB_LAYOUT_INVALID)
+        जाओ err;
 
-    if (level >= XkbKeyNumLevels(key, layout))
-        goto err;
+    अगर (level >= Xkb_कुंजी_अंक_Levels(कुंजी, layout))
+        जाओ err;
 
-    const xkb_action_count_t count =
-        key->groups[layout].levels[level].num_actions;
-    switch (count) {
-        case 0:
-            goto err;
-        case 1:
-            *actions = &key->groups[layout].levels[level].a.action;
-            break;
-        default:
-            *actions = key->groups[layout].levels[level].a.actions;
+    स्थिर xkb_action_गिनती_t गिनती =
+        कुंजी->groups[layout].levels[level].अंक_actions;
+    चयन (गिनती) {
+        हाल 0:
+            जाओ err;
+        हाल 1:
+            *actions = &कुंजी->groups[layout].levels[level].a.action;
+            अवरोध;
+        शेष:
+            *actions = कुंजी->groups[layout].levels[level].a.actions;
     }
-    return count;
+    वापस गिनती;
 
 err:
-    *actions = NULL;
-    return 0;
+    *actions = शून्य;
+    वापस 0;
 }

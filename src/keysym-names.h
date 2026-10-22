@@ -4,21 +4,21 @@
  * You can always fetch the latest version from:
  * https://raw.github.com/xkbcommon/libxkbcommon/master/src/keysym-names.h
  */
-#pragma once
+#आशय once
 
-#include "config.h"
+#समावेश "config.h"
 
-#include <stddef.h>
-#include <stdint.h>
+#समावेश <stddef.h>
+#समावेश <stdint.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "utils.h"
+#समावेश "xkbcommon/xkbcommon.h"
+#समावेश "utils.h"
 
-#ifdef __GNUC__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Woverlength-strings"
-#endif
-static const char *keysym_names =
+#अगर_घोषित __GNUC__
+#आशय GCC diagnostic धकेलो
+#आशय GCC diagnostic ignored "-Woverlength-strings"
+#पूर्ण_अगर
+अटल स्थिर अक्षर *keysym_names =
     "0\0"
     "1\0"
     "2\0"
@@ -2658,11 +2658,11 @@ static const char *keysym_names =
     "Zstroke\0"
     "zstroke\0"
 ;
-#ifdef __GNUC__
-#pragma GCC diagnostic pop
-#endif
+#अगर_घोषित __GNUC__
+#आशय GCC diagnostic निकालो
+#पूर्ण_अगर
 
-static const uint16_t keysym_name_G[] = {
+अटल स्थिर uint16_t keysym_name_G[] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2508,
     0, 0, 0, 0, 0, 0, 3350, 0, 0, 0, 0, 0, 0, 0, 2987, 2941, 0, 0, 0, 1606,
     2880, 0, 170, 0, 0, 2634, 0, 0, 0, 0, 1265, 0, 2777, 0, 0, 0, 0, 0, 0,
@@ -2970,27 +2970,27 @@ static const uint16_t keysym_name_G[] = {
     600, 2354, 277, 2185, 0
 };
 
-static inline size_t
-keysym_name_perfect_hash(const char *key)
+अटल अंतरभूत माप_प्रकार
+keysym_name_perfect_hash(स्थिर अक्षर *कुंजी)
 {
-    const char *T1 = "mGfOhSKH0Is7uINY8QVfaJ9N0Fe0yHYu";
-    const char *T2 = "nXsEsvAWpmIhmalLNlkBZssDXdmoTYKy";
-    size_t h1 = 0;
-    size_t h2 = 0;
-    for (size_t i = 0; key[i] != '\0'; i++) {
-        h1 += (size_t) (T1[i % 32] * key[i]);
-        h2 += (size_t) (T2[i % 32] * key[i]);
+    स्थिर अक्षर *T1 = "mGfOhSKH0Is7uINY8QVfaJ9N0Fe0yHYu";
+    स्थिर अक्षर *T2 = "nXsEsvAWpmIhmalLNlkBZssDXdmoTYKy";
+    माप_प्रकार h1 = 0;
+    माप_प्रकार h2 = 0;
+    क्रम (माप_प्रकार i = 0; कुंजी[i] != '\0'; i++) {
+        h1 += (माप_प्रकार) (T1[i % 32] * कुंजी[i]);
+        h2 += (माप_प्रकार) (T2[i % 32] * कुंजी[i]);
     }
-    return (keysym_name_G[h1 % 4731] + keysym_name_G[h2 % 4731]) % 4731;
+    वापस (keysym_name_G[h1 % 4731] + keysym_name_G[h2 % 4731]) % 4731;
 }
 
 
-struct name_keysym {
+काष्ठा name_keysym {
     xkb_keysym_t keysym;
     uint16_t offset;
 };
 
-static const struct name_keysym name_to_keysym[] = {
+अटल स्थिर काष्ठा name_keysym name_to_keysym[] = {
     { 0x00000030, 0 }, /* 0 */
     { 0x00000031, 2 }, /* 1 */
     { 0x00000032, 4 }, /* 2 */
@@ -4306,7 +4306,7 @@ static const struct name_keysym name_to_keysym[] = {
     { 0x000008da, 17415 }, /* includedin */
     { 0x000008db, 17426 }, /* includes */
     { 0x000008c2, 17435 }, /* infinity */
-    { 0x0000ff63, 17444 }, /* Insert */
+    { 0x0000ff63, 17444 }, /*जोड़ो*/
     { 0x1000ff72, 17451 }, /* InsertChar */
     { 0x1000ff70, 17462 }, /* InsertLine */
     { 0x000008bf, 17473 }, /* integral */
@@ -4499,7 +4499,7 @@ static const struct name_keysym name_to_keysym[] = {
     { 0x000001b5, 19379 }, /* lcaron */
     { 0x000003a6, 19386 }, /* Lcedilla */
     { 0x000003b6, 19395 }, /* lcedilla */
-    { 0x0000ff51, 19404 }, /* Left */
+    { 0x0000ff51, 19404 }, /*बायाँ*/
     { 0x00000abc, 19409 }, /* leftanglebracket */
     { 0x000008fb, 19426 }, /* leftarrow */
     { 0x00000ba3, 19436 }, /* leftcaret */
@@ -4575,7 +4575,7 @@ static const struct name_keysym name_to_keysym[] = {
     { 0x000003d1, 20176 }, /* Ncedilla */
     { 0x000003f1, 20185 }, /* ncedilla */
     { 0x010020aa, 20194 }, /* NewSheqelSign */
-    { 0x0000ff56, 20208 }, /* Next */
+    { 0x0000ff56, 20208 }, /*अग्र*/
     { 0x0000fed2, 20213 }, /* Next_Virtual_Screen */
     { 0x01002089, 20233 }, /* ninesubscript */
     { 0x01002079, 20247 }, /* ninesuperior */
@@ -4797,7 +4797,7 @@ static const struct name_keysym name_to_keysym[] = {
     { 0x0000fe72, 22540 }, /* RepeatKeys_Enable */
     { 0x1000ff6c, 22558 }, /* Reset */
     { 0x0000ff0d, 22564 }, /* Return */
-    { 0x0000ff53, 22571 }, /* Right */
+    { 0x0000ff53, 22571 }, /*दायाँ*/
     { 0x00000abe, 22577 }, /* rightanglebracket */
     { 0x000008fd, 22595 }, /* rightarrow */
     { 0x00000ba6, 22606 }, /* rightcaret */
@@ -5631,7 +5631,7 @@ static const struct name_keysym name_to_keysym[] = {
     { 0x010001b6, 32872 }, /* zstroke */
 };
 
-static const struct name_keysym keysym_to_name[] = {
+अटल स्थिर काष्ठा name_keysym keysym_to_name[] = {
     { 0x00000000, 20276 }, /* NoSymbol */
     { 0x00000020, 24027 }, /* space */
     { 0x00000021, 12230 }, /* exclam */
@@ -6813,18 +6813,18 @@ static const struct name_keysym keysym_to_name[] = {
     { 0x0000ff3e, 22298 }, /* PreviousCandidate */
     { 0x0000ff3f, 15834 }, /* Hangul_Special */
     { 0x0000ff50, 16822 }, /* Home */
-    { 0x0000ff51, 19404 }, /* Left */
+    { 0x0000ff51, 19404 }, /*बायाँ*/
     { 0x0000ff52, 26615 }, /* Up */
-    { 0x0000ff53, 22571 }, /* Right */
+    { 0x0000ff53, 22571 }, /*दायाँ*/
     { 0x0000ff54, 11458 }, /* Down */
     { 0x0000ff55, 22322 }, /* Prior */
-    { 0x0000ff56, 20208 }, /* Next */
+    { 0x0000ff56, 20208 }, /*अग्र*/
     { 0x0000ff57, 12067 }, /* End */
     { 0x0000ff58, 3404 }, /* Begin */
     { 0x0000ff60, 22951 }, /* Select */
     { 0x0000ff61, 22316 }, /* Print */
     { 0x0000ff62, 12248 }, /* Execute */
-    { 0x0000ff63, 17444 }, /* Insert */
+    { 0x0000ff63, 17444 }, /*जोड़ो*/
     { 0x0000ff65, 26588 }, /* Undo */
     { 0x0000ff66, 22524 }, /* Redo */
     { 0x0000ff67, 19890 }, /* Menu */
@@ -8139,18 +8139,18 @@ static const struct name_keysym keysym_to_name[] = {
     { 0x1008ffb8, 28756 }, /* XF86FullScreen */
 };
 
-#define UNICODE_KEYSYM    0xfffe
-#define DEPRECATED_KEYSYM 0xffff
+#घोषणा UNICODE_KEYSYM    0xfffe
+#घोषणा DEPRECATED_KEYSYM 0xffff
 
-struct deprecated_keysym {
+काष्ठा deprecated_keysym {
     xkb_keysym_t keysym;
     uint16_t offset;
     /* Explicit deprecated aliases start index & count */
-    uint8_t explicit_index;
-    uint8_t explicit_count;
+    uint8_t explicit_सूचकांक;
+    uint8_t explicit_गिनती;
 };
 
-static const struct deprecated_keysym deprecated_keysyms[] = {
+अटल स्थिर काष्ठा deprecated_keysym deprecated_keysyms[] = {
     { 0x00000027, 934              , 0, 0 }, /* Reference: apostrophe. Deprecated: quoteright */
     { 0x00000060, 13397            , 0, 0 }, /* Reference: grave. Deprecated: quoteleft */
     { 0x000000ab, 14480            , 0, 0 }, /* Reference: guillemetleft. Deprecated: guillemotleft */
@@ -8310,9 +8310,9 @@ static const struct deprecated_keysym deprecated_keysyms[] = {
     { 0x100810f4, 30581            , 0, 0 }, /* Reference: XF86MonBrightnessAuto. Deprecated: XF86BrightnessAuto */
 };
 
-static const uint32_t explicit_deprecated_aliases[] = {
+अटल स्थिर uint32_t explicit_deprecated_aliases[] = {
     24103,
 };
 
-static_assert(ARRAY_SIZE(explicit_deprecated_aliases) < UINT8_MAX,
+static_assert(ARRAY_आकार(explicit_deprecated_aliases) < UINT8_MAX,
               "Cannot encode index and count in deprecated_keysym::explicit_*");

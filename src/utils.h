@@ -2,29 +2,29 @@
  * Copyright © 2012 Ran Benita <ran234@gmail.com>
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#आशय once
 
-#include "config.h"
+#समावेश "config.h"
 
-#include <assert.h>
-#include <errno.h>
-#include <inttypes.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#if HAVE_UNISTD_H
+#समावेश <assert.h>
+#समावेश <errno.h>
+#समावेश <inttypes.h>
+#समावेश <stdarg.h>
+#समावेश <stdbool.h>
+#समावेश <stdio.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
+#अगर HAVE_UNISTD_H
 # include <unistd.h>
-#else
+#अन्यथा
 /* Required on Windows where unistd.h doesn't exist */
 # define R_OK    4               /* Test for read permission.  */
 # define W_OK    2               /* Test for write permission.  */
 # define X_OK    1               /* Test for execute permission.  */
 # define F_OK    0               /* Test for existence.  */
-#endif
+#पूर्ण_अगर
 
-#ifdef _WIN32
+#अगर_घोषित _WIN32
 # include <direct.h>
 # include <io.h>
 # include <BaseTsd.h>
@@ -37,205 +37,205 @@
 # ifndef STDIN_FILENO
 #  define STDIN_FILENO 0
 # endif
-#ifdef _MSC_VER
-typedef SSIZE_T ssize_t;
-#endif
-#endif
+#अगर_घोषित _MSC_VER
+प्रकार SSIZE_T ssize_t;
+#पूर्ण_अगर
+#पूर्ण_अगर
 
-static inline bool
-is_aligned(const void *restrict pointer, size_t byte_count)
+अटल अंतरभूत bool
+is_aligned(स्थिर व्योम *restrict pointer, माप_प्रकार byte_गिनती)
 {
-    return (uintptr_t) pointer % byte_count == 0;
+    वापस (uintptr_t) pointer % byte_गिनती == 0;
 }
 
 
-#define ARRAY_SIZE(arr) ((sizeof(arr) / sizeof(*(arr))))
+#घोषणा ARRAY_आकार(arr) ((माप(arr) / माप(*(arr))))
 
-#define MIN(a, b) ((a) < (b) ? (a) : (b))
-#define MAX(a, b) ((a) > (b) ? (a) : (b))
+#घोषणा MIN(a, b) ((a) < (b) ? (a) : (b))
+#घोषणा MAX(a, b) ((a) > (b) ? (a) : (b))
 
 /* Round up @a so it's divisible by @b. */
-#define ROUNDUP(a, b) (((a) + (b) - 1) / (b) * (b))
+#घोषणा ROUNDUP(a, b) (((a) + (b) - 1) / (b) * (b))
 
-#define STRINGIFY(x) #x
-#define STRINGIFY2(x) STRINGIFY(x)
-#define CONCAT(x,y) x ## y
-#define CONCAT2(x,y) CONCAT(x,y)
+#घोषणा STRINGIFY(x) #x
+#घोषणा STRINGIFY2(x) STRINGIFY(x)
+#घोषणा CONCAT(x,y) x ## y
+#घोषणा CONCAT2(x,y) CONCAT(x,y)
 
 /* Check if a Unicode code point is valid in a string literal */
-static inline bool
+अटल अंतरभूत bool
 is_valid_char(uint32_t cp)
 {
     /* Currently we only check for NULL character, but this could be extended
      * in the future to further ASCII control characters. */
-    return cp != 0;
+    वापस cp != 0;
 }
 
 /* Check if a Unicode code point is a surrogate.
  * Those code points are used only in UTF-16 encodings. */
-static inline bool
+अटल अंतरभूत bool
 is_surrogate(uint32_t cp)
 {
-    return (cp >= 0xd800 && cp <= 0xdfff);
+    वापस (cp >= 0xd800 && cp <= 0xdfff);
 }
 
-char
-to_lower(char c);
+अक्षर
+to_lower(अक्षर c);
 
-int
-istrcmp(const char *a, const char *b);
+पूर्णांक
+istrcmp(स्थिर अक्षर *a, स्थिर अक्षर *b);
 
-int
-istrncmp(const char *a, const char *b, size_t n);
+पूर्णांक
+istrncmp(स्थिर अक्षर *a, स्थिर अक्षर *b, माप_प्रकार n);
 
-static inline bool
-streq(const char *s1, const char *s2)
+अटल अंतरभूत bool
+streq(स्थिर अक्षर *s1, स्थिर अक्षर *s2)
 {
-    assert(s1 && s2);
-    return strcmp(s1, s2) == 0;
+    निश्चित(s1 && s2);
+    वापस म_भेद(s1, s2) == 0;
 }
 
-static inline bool
-streq_null(const char *s1, const char *s2)
+अटल अंतरभूत bool
+streq_null(स्थिर अक्षर *s1, स्थिर अक्षर *s2)
 {
-    if (s1 == NULL || s2 == NULL)
-        return s1 == s2;
-    return streq(s1, s2);
+    अगर (s1 == शून्य || s2 == शून्य)
+        वापस s1 == s2;
+    वापस streq(s1, s2);
 }
 
-static inline bool
-streq_not_null(const char *s1, const char *s2)
+अटल अंतरभूत bool
+streq_not_null(स्थिर अक्षर *s1, स्थिर अक्षर *s2)
 {
-    if (!s1 || !s2)
-        return false;
-    return streq(s1, s2);
+    अगर (!s1 || !s2)
+        वापस false;
+    वापस streq(s1, s2);
 }
 
-static inline bool
-istreq(const char *s1, const char *s2)
+अटल अंतरभूत bool
+istreq(स्थिर अक्षर *s1, स्थिर अक्षर *s2)
 {
-    return istrcmp(s1, s2) == 0;
+    वापस istrcmp(s1, s2) == 0;
 }
 
-static inline bool
-istrneq(const char *s1, const char *s2, size_t len)
+अटल अंतरभूत bool
+istrneq(स्थिर अक्षर *s1, स्थिर अक्षर *s2, माप_प्रकार len)
 {
-    return istrncmp(s1, s2, len) == 0;
+    वापस istrncmp(s1, s2, len) == 0;
 }
 
-#define istreq_prefix(s1, s2) istrneq(s1, s2, sizeof(s1) - 1)
+#घोषणा istreq_prefix(s1, s2) istrneq(s1, s2, माप(s1) - 1)
 
-static inline char *
-strcpy_safe(char *dest, size_t size, const char *src) {
-    if (!dest || !size || !src)
-        return NULL;
-    const char * const limit = dest + size - 1;
-    while (dest < limit && *src) {
+अटल अंतरभूत अक्षर *
+strcpy_safe(अक्षर *dest, माप_प्रकार आकार, स्थिर अक्षर *src) {
+    अगर (!dest || !आकार || !src)
+        वापस शून्य;
+    स्थिर अक्षर * स्थिर limit = dest + आकार - 1;
+    जबतक (dest < limit && *src) {
         *dest++ = *src++;
     }
     *dest = '\0';
-    return *src ? NULL : dest;
+    वापस *src ? शून्य : dest;
 }
 
-static inline char *
-strdup_safe(const char *s)
+अटल अंतरभूत अक्षर *
+strdup_safe(स्थिर अक्षर *s)
 {
-    return s ? strdup(s) : NULL;
+    वापस s ? strdup(s) : शून्य;
 }
 
-static inline size_t
-strlen_safe(const char *s)
+अटल अंतरभूत माप_प्रकार
+strlen_safe(स्थिर अक्षर *s)
 {
-    return s ? strlen(s) : 0;
+    वापस s ? म_माप(s) : 0;
 }
 
-static inline bool
-isempty(const char *s)
+अटल अंतरभूत bool
+isempty(स्थिर अक्षर *s)
 {
-    return s == NULL || s[0] == '\0';
+    वापस s == शून्य || s[0] == '\0';
 }
 
-static inline const char *
-strnull(const char *s)
+अटल अंतरभूत स्थिर अक्षर *
+strnull(स्थिर अक्षर *s)
 {
-    return s ? s : "(null)";
+    वापस s ? s : "(null)";
 }
 
-static inline const char *
-strempty(const char *s)
+अटल अंतरभूत स्थिर अक्षर *
+strempty(स्थिर अक्षर *s)
 {
-    return s ? s : "";
+    वापस s ? s : "";
 }
 
-static inline void *
-memdup(const void *mem, size_t nmemb, size_t size)
+अटल अंतरभूत व्योम *
+memdup(स्थिर व्योम *mem, माप_प्रकार nmemb, माप_प्रकार आकार)
 {
-    void *p = calloc(nmemb, size);
-    if (p)
-        memcpy(p, mem, nmemb * size);
-    return p;
+    व्योम *p = सुस्मृति(nmemb, आकार);
+    अगर (p)
+        स_नकल(p, mem, nmemb * आकार);
+    वापस p;
 }
 
-#if !(defined(HAVE_STRNDUP) && HAVE_STRNDUP)
-static inline char *
-strndup(const char *s, size_t n)
+#अगर !(defined(HAVE_STRNDUP) && HAVE_STRNDUP)
+अटल अंतरभूत अक्षर *
+strndup(स्थिर अक्षर *s, माप_प्रकार n)
 {
-    size_t slen = strlen(s);
-    size_t len = MIN(slen, n);
-    char *p = malloc(len + 1);
-    if (!p)
-        return NULL;
-    memcpy(p, s, len);
+    माप_प्रकार slen = म_माप(s);
+    माप_प्रकार len = MIN(slen, n);
+    अक्षर *p = दो_स्मृति(len + 1);
+    अगर (!p)
+        वापस शून्य;
+    स_नकल(p, s, len);
     p[len] = '\0';
-    return p;
+    वापस p;
 }
-#endif
+#पूर्ण_अगर
 
 /* ctype.h is locale-dependent and has other oddities. */
-static inline bool
-is_ascii(char ch)
+अटल अंतरभूत bool
+is_ascii(अक्षर ch)
 {
-    return (ch & ~0x7f) == 0;
+    वापस (ch & ~0x7f) == 0;
 }
 
-static inline bool
-is_space(char ch)
+अटल अंतरभूत bool
+is_space(अक्षर ch)
 {
-    return ch == ' ' || (ch >= '\t' && ch <= '\r');
+    वापस ch == ' ' || (ch >= '\t' && ch <= '\r');
 }
 
-static inline bool
-is_alpha(char ch)
+अटल अंतरभूत bool
+is_alpha(अक्षर ch)
 {
-    return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
+    वापस (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
 }
 
-static inline bool
-is_digit(char ch)
+अटल अंतरभूत bool
+is_digit(अक्षर ch)
 {
-    return ch >= '0' && ch <= '9';
+    वापस ch >= '0' && ch <= '9';
 }
 
-static inline bool
-is_alnum(char ch)
+अटल अंतरभूत bool
+is_alnum(अक्षर ch)
 {
-    return is_alpha(ch) || is_digit(ch);
+    वापस is_alpha(ch) || is_digit(ch);
 }
 
-static inline bool
-is_xdigit(char ch)
+अटल अंतरभूत bool
+is_xdigit(अक्षर ch)
 {
-    return
+    वापस
         (ch >= '0' && ch <= '9') ||
         (ch >= 'a' && ch <= 'f') ||
         (ch >= 'A' && ch <= 'F');
 }
 
-static inline bool
-is_graph(char ch)
+अटल अंतरभूत bool
+is_graph(अक्षर ch)
 {
     /* See table in ascii(7). */
-    return ch >= '!' && ch <= '~';
+    वापस ch >= '!' && ch <= '~';
 }
 
 /*
@@ -243,191 +243,191 @@ is_graph(char ch)
  * Note: this is 1-based! It's more useful this way, and returns 0 when
  * mask is all 0s.
  */
-static inline unsigned int
+अटल अंतरभूत अचिन्हित पूर्णांक
 msb_pos(uint32_t mask)
 {
-    unsigned int pos = 0;
-    while (mask) {
+    अचिन्हित पूर्णांक pos = 0;
+    जबतक (mask) {
         pos++;
         mask >>= 1u;
     }
-    return pos;
+    वापस pos;
 }
 
-static inline int
+अटल अंतरभूत पूर्णांक
 one_bit_set(uint32_t x)
 {
-    return x && (x & (x - 1)) == 0;
+    वापस x && (x & (x - 1)) == 0;
 }
 
 bool
-map_file(FILE *file, char **string_out, size_t *size_out);
+map_file(खाता *file, अक्षर **string_out, माप_प्रकार *आकार_out);
 
-void
-unmap_file(char *string, size_t size);
+व्योम
+unmap_file(अक्षर *string, माप_प्रकार आकार);
 
-static inline bool
-check_eaccess(const char *path, int mode)
+अटल अंतरभूत bool
+check_eaccess(स्थिर अक्षर *path, पूर्णांक mode)
 {
-#if defined(HAVE_EACCESS)
-    if (eaccess(path, mode) != 0)
-        return false;
-#elif defined(HAVE_EUIDACCESS)
-    if (euidaccess(path, mode) != 0)
-        return false;
-#endif
+#अगर defined(HAVE_EACCESS)
+    अगर (eaccess(path, mode) != 0)
+        वापस false;
+#या_अगर defined(HAVE_EUIDACCESS)
+    अगर (euidaccess(path, mode) != 0)
+        वापस false;
+#पूर्ण_अगर
 
-    return true;
+    वापस true;
 }
 
-FILE*
-open_file(const char *path);
+खाता*
+open_file(स्थिर अक्षर *path);
 
-#if defined(HAVE_SECURE_GETENV)
+#अगर defined(HAVE_SECURE_GETENV)
 # define secure_getenv secure_getenv
-#elif defined(HAVE___SECURE_GETENV)
+#या_अगर defined(HAVE___SECURE_GETENV)
 # define secure_getenv __secure_getenv
-#else
-# define secure_getenv getenv
-#endif
+#अन्यथा
+# define secure_getenv दो_पर्या
+#पूर्ण_अगर
 
-#if defined(HAVE___BUILTIN_EXPECT)
+#अगर defined(HAVE___BUILTIN_EXPECT)
 # define likely(x)   __builtin_expect(!!(x), 1)
 # define unlikely(x) __builtin_expect(!!(x), 0)
-#else
+#अन्यथा
 # define likely(x)   (x)
 # define unlikely(x) (x)
-#endif
+#पूर्ण_अगर
 
 /* Compiler Attributes */
 
 /* Private functions only exposed in tests. */
-#ifdef ENABLE_PRIVATE_APIS
-# if defined(__GNUC__) && !defined(__CYGWIN__)
+#अगर_घोषित ENABLE_PRIVATE_APIS
+# अगर defined(__GNUC__) && !defined(__CYGWIN__)
 #  define XKB_EXPORT_PRIVATE __attribute__((visibility("default")))
 # elif defined(_WIN32)
 #  define XKB_EXPORT_PRIVATE __declspec(dllexport)
-# else
+# अन्यथा
 #  define XKB_EXPORT_PRIVATE
 # endif
-#else
+#अन्यथा
 # define XKB_EXPORT_PRIVATE
-#endif
+#पूर्ण_अगर
 
-#if defined(__MINGW32__)
+#अगर defined(__MINGW32__)
 # define ATTR_PRINTF(x,y) __attribute__((__format__(__MINGW_PRINTF_FORMAT, x, y)))
-#elif defined(__GNUC__)
+#या_अगर defined(__GNUC__)
 # define ATTR_PRINTF(x,y) __attribute__((__format__(__printf__, x, y)))
-#else
+#अन्यथा
 # define ATTR_PRINTF(x,y)
-#endif
+#पूर्ण_अगर
 
-#if defined(__GNUC__)
+#अगर defined(__GNUC__)
 # define ATTR_NORETURN __attribute__((__noreturn__))
-#else
+#अन्यथा
 # define ATTR_NORETURN
-#endif /* GNUC  */
+#पूर्ण_अगर /* GNUC  */
 
-#if defined(__GNUC__)
-#define ATTR_MALLOC  __attribute__((__malloc__))
-#else
-#define ATTR_MALLOC
-#endif
+#अगर defined(__GNUC__)
+#घोषणा ATTR_MALLOC  __attribute__((__malloc__))
+#अन्यथा
+#घोषणा ATTR_MALLOC
+#पूर्ण_अगर
 
-#if defined(__GNUC__)
+#अगर defined(__GNUC__)
 # define ATTR_NULL_SENTINEL __attribute__((__sentinel__))
-#else
+#अन्यथा
 # define ATTR_NULL_SENTINEL
-#endif
+#पूर्ण_अगर
 
-#if defined(__GNUC__)
-#define ATTR_PACKED  __attribute__((__packed__))
-#else
-#define ATTR_PACKED
-#endif
+#अगर defined(__GNUC__)
+#घोषणा ATTR_PACKED  __attribute__((__packed__))
+#अन्यथा
+#घोषणा ATTR_PACKED
+#पूर्ण_अगर
 
-#if defined(HAVE_ATTR_COUNTED_BY) && HAVE_ATTR_COUNTED_BY
-# define ATTR_COUNTED_BY(count) __attribute__((counted_by(count)))
-#else
-# define ATTR_COUNTED_BY(count)
-#endif
+#अगर defined(HAVE_ATTR_COUNTED_BY) && HAVE_ATTR_COUNTED_BY
+# define ATTR_COUNTED_BY(गिनती) __attribute__((counted_by(गिनती)))
+#अन्यथा
+# define ATTR_COUNTED_BY(गिनती)
+#पूर्ण_अगर
 
-#if !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
-XKB_EXPORT_PRIVATE int asprintf(char **strp, const char *fmt, ...) ATTR_PRINTF(2, 3);
-# if !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
+#अगर !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
+XKB_EXPORT_PRIVATE पूर्णांक asprintf(अक्षर **strp, स्थिर अक्षर *fmt, ...) ATTR_PRINTF(2, 3);
+# अगर !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
 #  include <stdarg.h>
-XKB_EXPORT_PRIVATE int vasprintf(char **strp, const char *fmt, va_list ap);
+XKB_EXPORT_PRIVATE पूर्णांक vasprintf(अक्षर **strp, स्थिर अक्षर *fmt, बहु_सूची ap);
 # endif /* !HAVE_VASPRINTF */
-#endif /* !HAVE_ASPRINTF */
+#पूर्ण_अगर /* !HAVE_ASPRINTF */
 
-static inline bool
+अटल अंतरभूत bool
 ATTR_PRINTF(3, 4)
-snprintf_safe(char *buf, size_t sz, const char *format, ...)
+snprintf_safe(अक्षर *buf, माप_प्रकार sz, स्थिर अक्षर *format, ...)
 {
-    va_list ap;
-    int rc;
+    बहु_सूची ap;
+    पूर्णांक rc;
 
-    va_start(ap, format);
+    बहु_शुरू(ap, format);
     rc = vsnprintf(buf, sz, format, ap);
-    va_end(ap);
+    बहु_पूर्ण(ap);
 
-    return rc >= 0 && (size_t)rc < sz;
+    वापस rc >= 0 && (माप_प्रकार)rc < sz;
 }
 
-static inline char *
+अटल अंतरभूत अक्षर *
 ATTR_PRINTF(1, 0)
-vasprintf_safe(const char *fmt, va_list args)
+vasprintf_safe(स्थिर अक्षर *fmt, बहु_सूची args)
 {
-    char *str;
-    int len;
+    अक्षर *str;
+    पूर्णांक len;
 
     len = vasprintf(&str, fmt, args);
 
-    if (len == -1)
-        return NULL;
+    अगर (len == -1)
+        वापस शून्य;
 
-    return str;
+    वापस str;
 }
 
 /**
  * A version of asprintf that returns the allocated string or NULL on error.
  */
-static inline char *
+अटल अंतरभूत अक्षर *
 ATTR_PRINTF(1, 2)
-asprintf_safe(const char *fmt, ...)
+asprintf_safe(स्थिर अक्षर *fmt, ...)
 {
-    va_list args;
-    char *str;
+    बहु_सूची args;
+    अक्षर *str;
 
-    va_start(args, fmt);
+    बहु_शुरू(args, fmt);
     str = vasprintf_safe(fmt, args);
-    va_end(args);
+    बहु_पूर्ण(args);
 
-    return str;
+    वापस str;
 }
 
-#ifdef NDEBUG
-    #if defined(__GNUC__) || defined(__clang__)
-        #define PANIC_UNREACHABLE() __builtin_unreachable()
-    #elif defined(_MSC_VER)
-        #define PANIC_UNREACHABLE() __assume(0)
-    #else
-        #define PANIC_UNREACHABLE() abort()
-    #endif
-#else
-    #define PANIC_UNREACHABLE() \
-        do { \
-            fprintf(stderr, "Critical Error: Reached unreachable line in %s at %d\n", __FILE__, __LINE__); \
-            abort(); \
-        } while (0)
-#endif
+#अगर_घोषित न_संशोधन
+    #अगर defined(__GNUC__) || defined(__clang__)
+        #घोषणा PANIC_UNREACHABLE() __builtin_unreachable()
+    #या_अगर defined(_MSC_VER)
+        #घोषणा PANIC_UNREACHABLE() __assume(0)
+    #अन्यथा
+        #घोषणा PANIC_UNREACHABLE() पात()
+    #पूर्ण_अगर
+#अन्यथा
+    #घोषणा PANIC_UNREACHABLE() \
+        करो { \
+            ख_लिखो(मानक_त्रुटि, "Critical Error: Reached unreachable line in %s at %d\n", __खाता__, __LINE__); \
+            पात(); \
+        } जबतक (0)
+#पूर्ण_अगर
 
-#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
+#अगर defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
 #  define NOINLINE [[noinline]]
-#elif defined(__GNUC__) || defined(__clang__)
+#या_अगर defined(__GNUC__) || defined(__clang__)
 #  define NOINLINE __attribute__((noinline))
-#elif defined(_MSC_VER)
+#या_अगर defined(_MSC_VER)
 #  define NOINLINE __declspec(noinline)
-#else
+#अन्यथा
 #  define NOINLINE
-#endif
+#पूर्ण_अगर

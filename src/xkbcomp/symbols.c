@@ -12,70 +12,70 @@
  * Author: Ran Benita <ran234@gmail.com>
  */
 
-#include "config.h"
+#समावेश "config.h"
 
-#include <limits.h>
-#include <stdint.h>
-#include <string.h>
+#समावेश <limits.h>
+#समावेश <stdint.h>
+#समावेश <string.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-status.h"
-#include "xkbcommon/xkbcommon-keysyms.h"
+#समावेश "xkbcommon/xkbcommon.h"
+#समावेश "xkbcommon/xkbcommon-status.h"
+#समावेश "xkbcommon/xkbcommon-keysyms.h"
 
-#include "action.h"
-#include "context.h"
-#include "darray.h"
-#include "expr.h"
-#include "include.h"
-#include "keymap.h"
-#include "keysym.h"
-#include "messages-codes.h"
-#include "text.h"
-#include "utils.h"
-#include "util-numbers.h"
-#include "util-mem.h"
-#include "vmod.h"
-#include "xkbcomp-priv.h"
-#include "xkbcomp/ast.h"
+#समावेश "action.h"
+#समावेश "context.h"
+#समावेश "darray.h"
+#समावेश "expr.h"
+#समावेश "include.h"
+#समावेश "keymap.h"
+#समावेश "keysym.h"
+#समावेश "messages-codes.h"
+#समावेश "text.h"
+#समावेश "utils.h"
+#समावेश "util-numbers.h"
+#समावेश "util-mem.h"
+#समावेश "vmod.h"
+#समावेश "xkbcomp-priv.h"
+#समावेश "xkbcomp/ast.h"
 
-enum key_repeat {
-    KEY_REPEAT_UNDEFINED = 0,
-    KEY_REPEAT_YES,
-    KEY_REPEAT_NO,
-    _KEY_REPEAT_NUM_ENTRIES,
+क्रमागत कुंजी_repeat {
+    कुंजी_REPEAT_UNDEFINED = 0,
+    कुंजी_REPEAT_YES,
+    कुंजी_REPEAT_NO,
+    कुंजी_REPEAT_अंक_ENTRIES,
 };
-enum { KEY_REPEAT_MIN_WIDTH = 3 /* 2 bits + sign */ };
-static_assert(_KEY_REPEAT_NUM_ENTRIES - 1 <=
-              (1 << (KEY_REPEAT_MIN_WIDTH - 1)) - 1,
+क्रमागत { कुंजी_REPEAT_MIN_WIDTH = 3 /* 2 bits + sign */ };
+static_assert(कुंजी_REPEAT_अंक_ENTRIES - 1 <=
+              (1 << (कुंजी_REPEAT_MIN_WIDTH - 1)) - 1,
               "Cannot encode key repeat");
 
-enum group_field {
+क्रमागत group_field {
     GROUP_FIELD_SYMS = (1 << 0),
     GROUP_FIELD_ACTS = (1 << 1),
     GROUP_FIELD_TYPE = (1 << 2),
 };
 
-enum key_field {
-    KEY_FIELD_NONE = 0,
-    KEY_FIELD_REPEAT = (1 << 0),
-    KEY_FIELD_DEFAULT_TYPE = (1 << 1),
-    KEY_FIELD_GROUPINFO = (1 << 2),
-    KEY_FIELD_VMODMAP = (1 << 3),
-    KEY_FIELD_OVERLAY = (1 << 4),
-    KEY_FIELD_ALL = KEY_FIELD_REPEAT | KEY_FIELD_DEFAULT_TYPE
-                  | KEY_FIELD_GROUPINFO | KEY_FIELD_VMODMAP | KEY_FIELD_OVERLAY,
+क्रमागत कुंजी_field {
+    कुंजी_FIELD_NONE = 0,
+    कुंजी_FIELD_REPEAT = (1 << 0),
+    कुंजी_FIELD_DEFAULT_TYPE = (1 << 1),
+    कुंजी_FIELD_GROUPINFO = (1 << 2),
+    कुंजी_FIELD_VMODMAP = (1 << 3),
+    कुंजी_FIELD_OVERLAY = (1 << 4),
+    कुंजी_FIELD_ALL = कुंजी_FIELD_REPEAT | कुंजी_FIELD_DEFAULT_TYPE
+                  | कुंजी_FIELD_GROUPINFO | कुंजी_FIELD_VMODMAP | कुंजी_FIELD_OVERLAY,
 };
-enum { KEY_FIELD_MIN_WIDTH = 6 /* 5 bits + sign */ };
-static_assert(KEY_FIELD_ALL <= (1 << (KEY_FIELD_MIN_WIDTH - 1)) - 1,
+क्रमागत { कुंजी_FIELD_MIN_WIDTH = 6 /* 5 bits + sign */ };
+static_assert(कुंजी_FIELD_ALL <= (1 << (कुंजी_FIELD_MIN_WIDTH - 1)) - 1,
               "Cannot encode key field");
 
-typedef struct {
-    darray(struct xkb_level) levels;
-    enum group_field defined;
+प्रकार काष्ठा {
+    darray(काष्ठा xkb_level) levels;
+    क्रमागत group_field defined;
     xkb_atom_t type;
 } GroupInfo;
 
-enum {
+क्रमागत {
     XKB_LAYOUT_OUT_OF_RANGE_POLICY_MIN_WIDTH = 4 /* 3 bits + sign */,
     KEYINFO_OUT_OF_RANGE_GROUP_POLICY_BIT_FIELD = 8,
     KEYINFO_DEFINED_BIT_FIELD = 16,
@@ -92,35 +92,35 @@ static_assert(XKB_LAYOUT_OUT_OF_RANGE_REDIRECT <=
               "Cannot encode out of range redirect");
 static_assert(KEYINFO_OUT_OF_RANGE_GROUP_POLICY_BIT_FIELD >=
               XKB_LAYOUT_OUT_OF_RANGE_POLICY_MIN_WIDTH, "");
-static_assert((unsigned)KEYINFO_DEFINED_BIT_FIELD >=
-              (unsigned)KEY_FIELD_MIN_WIDTH, "Cannot encode KeyInfo field");
-static_assert((unsigned)KEYINFO_MERGE_BIT_FIELD >=
-              (unsigned)MERGE_MODE_MIN_WIDTH, "Cannot encode KeyInfo field");
-static_assert((unsigned)KEYINFO_REPEAT_BIT_FIELD >=
-              (unsigned)KEY_REPEAT_MIN_WIDTH, "Cannot encode KeyInfo field");
+static_assert((अचिन्हित)KEYINFO_DEFINED_BIT_FIELD >=
+              (अचिन्हित)कुंजी_FIELD_MIN_WIDTH, "Cannot encode KeyInfo field");
+static_assert((अचिन्हित)KEYINFO_MERGE_BIT_FIELD >=
+              (अचिन्हित)MERGE_MODE_MIN_WIDTH, "Cannot encode KeyInfo field");
+static_assert((अचिन्हित)KEYINFO_REPEAT_BIT_FIELD >=
+              (अचिन्हित)कुंजी_REPEAT_MIN_WIDTH, "Cannot encode KeyInfo field");
 
-typedef struct {
+प्रकार काष्ठा {
     xkb_atom_t name;
 
     xkb_mod_mask_t vmodmap;
     xkb_atom_t default_type;
 
-    xkb_layout_index_t out_of_range_group_number;
+    xkb_layout_सूचकांक_t out_of_range_group_संख्या;
     darray(GroupInfo) groups;
-    enum xkb_layout_out_of_range_policy
+    क्रमागत xkb_layout_out_of_range_policy
         out_of_range_group_policy:KEYINFO_OUT_OF_RANGE_GROUP_POLICY_BIT_FIELD;
 
     /* NOTE: this bitfield could be reduce to 1 byte, should we need it */
-    enum key_field defined:KEYINFO_DEFINED_BIT_FIELD;
-    enum merge_mode merge:KEYINFO_MERGE_BIT_FIELD;
-    enum key_repeat repeat:KEYINFO_REPEAT_BIT_FIELD;
+    क्रमागत कुंजी_field defined:KEYINFO_DEFINED_BIT_FIELD;
+    क्रमागत merge_mode merge:KEYINFO_MERGE_BIT_FIELD;
+    क्रमागत कुंजी_repeat repeat:KEYINFO_REPEAT_BIT_FIELD;
 
     bool out_of_range_pending_group:1;
 
     /** If true, overlays in the mask are explicitly cleared */
     bool overlays_clear:1;
     /** Track the count of allocated slots of overlays_keys */
-    xkb_overlay_index_t overlays_alloc;
+    xkb_overlay_सूचकांक_t overlays_alloc;
     /** Overlays indices */
     xkb_overlay_mask_t overlays;
     /**
@@ -129,9 +129,9 @@ typedef struct {
      * For 0 or 1 elements storage is inline in the struct; for 2 or more a
      * heap sparse array is used.
      */
-    union {
+    जोड़ {
         /** Inlined if at most one overlay is defined (overlays_alloc = 0) */
-        const struct xkb_key *overlay_key;
+        स्थिर काष्ठा xkb_कुंजी *overlay_कुंजी;
         /**
          * Allocated if 2 or more overlays are defined (overlays_alloc > 0).
          *
@@ -140,168 +140,168 @@ typedef struct {
          * ascending overlay order, and a value’s position in storage equals the
          * popcount of all mask bits strictly below its overlay — its rank.
          */
-        const struct xkb_key **overlays_keys;
+        स्थिर काष्ठा xkb_कुंजी **overlays_कुंजियाँ;
     };
-} KeyInfo;
+} कुंजी_Info;
 
-static void
-StealLevelInfo(struct xkb_level *into, struct xkb_level *from)
+अटल व्योम
+StealLevelInfo(काष्ठा xkb_level *into, काष्ठा xkb_level *from)
 {
     clear_level(into);
-    if (from->num_syms > 1) {
+    अगर (from->अंक_syms > 1) {
         /* Steal */
         into->s.syms = steal(&from->s.syms);
-    } else {
+    } अन्यथा {
         into->s.sym = from->s.sym;
     }
-    into->num_syms = from->num_syms;
-    from->num_syms = 0;
+    into->अंक_syms = from->अंक_syms;
+    from->अंक_syms = 0;
 
-    if (from->num_actions > 1) {
+    अगर (from->अंक_actions > 1) {
         into->a.actions = steal(&from->a.actions);
-    } else {
+    } अन्यथा {
         into->a.action = from->a.action;
     }
-    into->num_actions = from->num_actions;
-    from->num_actions = 0;
+    into->अंक_actions = from->अंक_actions;
+    from->अंक_actions = 0;
 }
 
-static void
+अटल व्योम
 InitGroupInfo(GroupInfo *groupi)
 {
-    memset(groupi, 0, sizeof(*groupi));
+    स_रखो(groupi, 0, माप(*groupi));
 }
 
-static void
+अटल व्योम
 ClearGroupInfo(GroupInfo *groupi)
 {
-    struct xkb_level *leveli;
+    काष्ठा xkb_level *leveli;
     darray_foreach(leveli, groupi->levels)
         clear_level(leveli);
     darray_free(groupi->levels);
 }
 
-static void
-CopyGroupInfo(GroupInfo *to, const GroupInfo *from)
+अटल व्योम
+CopyGroupInfo(GroupInfo *to, स्थिर GroupInfo *from)
 {
     to->defined = from->defined;
     to->type = from->type;
     darray_init(to->levels);
     darray_copy(to->levels, from->levels);
-    for (xkb_level_index_t j = 0; j < darray_size(to->levels); j++) {
-        if (darray_item(from->levels, j).num_syms > 1) {
+    क्रम (xkb_level_सूचकांक_t j = 0; j < darray_आकार(to->levels); j++) {
+        अगर (darray_item(from->levels, j).अंक_syms > 1) {
             darray_item(to->levels, j).s.syms =
                 memdup(darray_item(from->levels, j).s.syms,
-                       darray_item(from->levels, j).num_syms,
-                       sizeof(xkb_keysym_t));
+                       darray_item(from->levels, j).अंक_syms,
+                       माप(xkb_keysym_t));
         }
-        if (darray_item(from->levels, j).num_actions > 1) {
+        अगर (darray_item(from->levels, j).अंक_actions > 1) {
             darray_item(to->levels, j).a.actions =
                 memdup(darray_item(from->levels, j).a.actions,
-                       darray_item(from->levels, j).num_actions,
-                       sizeof(union xkb_action));
+                       darray_item(from->levels, j).अंक_actions,
+                       माप(जोड़ xkb_action));
         }
     }
 }
 
-static void
-InitKeyInfo(struct xkb_context *ctx, KeyInfo *keyi)
+अटल व्योम
+Init_कुंजी_Info(काष्ठा xkb_context *ctx, कुंजी_Info *keyi)
 {
-    memset(keyi, 0, sizeof(*keyi));
-    static_assert(!DEFAULT_KEY_REPEAT, "key repeat not initialized properly");
-    static_assert(!DEFAULT_KEY_VMODMAP, "key vmodmap not initialized properly");
+    स_रखो(keyi, 0, माप(*keyi));
+    static_assert(!DEFAULT_कुंजी_REPEAT, "key repeat not initialized properly");
+    static_assert(!DEFAULT_कुंजी_VMODMAP, "key vmodmap not initialized properly");
     keyi->name = xkb_atom_intern_literal(ctx, "*");
     keyi->out_of_range_group_policy = XKB_LAYOUT_OUT_OF_RANGE_WRAP;
     darray_init(keyi->groups);
-    keyi->overlay_key = NULL;
+    keyi->overlay_कुंजी = शून्य;
 }
 
-static void
-ClearKeyInfo(KeyInfo *keyi)
+अटल व्योम
+Clear_कुंजी_Info(कुंजी_Info *keyi)
 {
     GroupInfo *groupi;
     darray_foreach(groupi, keyi->groups)
         ClearGroupInfo(groupi);
     darray_free(keyi->groups);
-    if (keyi->overlays_alloc)
-        free(keyi->overlays_keys);
+    अगर (keyi->overlays_alloc)
+        मुक्त(keyi->overlays_कुंजियाँ);
 }
 
 /***====================================================================***/
 
-typedef struct {
-    char *name;         /* e.g. pc+us+inet(evdev) */
-    int errorCount;
-    unsigned int include_depth;
-    xkb_layout_index_t explicit_group;
-    xkb_layout_index_t max_groups;
-    darray(KeyInfo) keys;
-    KeyInfo default_key;
+प्रकार काष्ठा {
+    अक्षर *name;         /* e.g. pc+us+inet(evdev) */
+    पूर्णांक error_गिनती;
+    अचिन्हित पूर्णांक include_depth;
+    xkb_layout_सूचकांक_t explicit_group;
+    xkb_layout_सूचकांक_t max_groups;
+    darray(कुंजी_Info) कुंजियाँ;
+    कुंजी_Info default_कुंजी;
     ActionsInfo default_actions;
     darray(xkb_atom_t) group_names;
     darray(ModMapEntry) modmaps;
-    struct xkb_mod_set mods;
+    काष्ठा xkb_mod_set mods;
 
-    struct xkb_context *ctx;
+    काष्ठा xkb_context *ctx;
     /* Needed for AddKeySymbols and parsing actions */
-    const struct xkb_keymap_info *keymap_info;
+    स्थिर काष्ठा xkb_keymap_info *keymap_info;
 } SymbolsInfo;
 
-static void
-InitSymbolsInfo(SymbolsInfo *info, const struct xkb_keymap_info *keymap_info,
-                unsigned int include_depth, const struct xkb_mod_set *mods)
+अटल व्योम
+InitSymbolsInfo(SymbolsInfo *info, स्थिर काष्ठा xkb_keymap_info *keymap_info,
+                अचिन्हित पूर्णांक include_depth, स्थिर काष्ठा xkb_mod_set *mods)
 {
-    memset(info, 0, sizeof(*info));
+    स_रखो(info, 0, माप(*info));
     info->ctx = keymap_info->keymap.ctx;
     info->include_depth = include_depth;
     info->keymap_info = keymap_info;
     info->max_groups = keymap_info->features.max_groups;
-    InitKeyInfo(keymap_info->keymap.ctx, &info->default_key);
+    Init_कुंजी_Info(keymap_info->keymap.ctx, &info->default_कुंजी);
     InitActionsInfo(&keymap_info->keymap, &info->default_actions);
     InitVMods(&info->mods, mods, include_depth > 0);
     info->explicit_group = XKB_LAYOUT_INVALID;
 }
 
-static void
+अटल व्योम
 ClearSymbolsInfo(SymbolsInfo *info)
 {
-    KeyInfo *keyi;
-    free(info->name);
-    darray_foreach(keyi, info->keys)
-        ClearKeyInfo(keyi);
-    darray_free(info->keys);
+    कुंजी_Info *keyi;
+    मुक्त(info->name);
+    darray_foreach(keyi, info->कुंजियाँ)
+        Clear_कुंजी_Info(keyi);
+    darray_free(info->कुंजियाँ);
     darray_free(info->group_names);
     darray_free(info->modmaps);
-    ClearKeyInfo(&info->default_key);
+    Clear_कुंजी_Info(&info->default_कुंजी);
 }
 
-static const char *
-KeyInfoText(SymbolsInfo *info, KeyInfo *keyi)
+अटल स्थिर अक्षर *
+कुंजी_Info_Text(SymbolsInfo *info, कुंजी_Info *keyi)
 {
-    return KeyNameText(info->ctx, keyi->name);
+    वापस कुंजी_Name_Text(info->ctx, keyi->name);
 }
 
-static bool
+अटल bool
 MergeGroups(SymbolsInfo *info, GroupInfo *into, GroupInfo *from, bool clobber,
-            bool report, xkb_layout_index_t group, xkb_atom_t key_name)
+            bool report, xkb_layout_सूचकांक_t group, xkb_atom_t कुंजी_name)
 {
     /* First find the type of the merged group. */
-    if (into->type != from->type) {
-        if (from->type == XKB_ATOM_NONE) {
+    अगर (into->type != from->type) {
+        अगर (from->type == XKB_ATOM_NONE) {
             /* it's empty for consistency with other comparisons */
         }
-        else if (into->type == XKB_ATOM_NONE) {
+        अन्यथा अगर (into->type == XKB_ATOM_NONE) {
             into->type = from->type;
         }
-        else {
+        अन्यथा {
             xkb_atom_t use = (clobber ? from->type : into->type);
             xkb_atom_t ignore = (clobber ? into->type : from->type);
 
-            if (report) {
-                log_warn(info->ctx, XKB_WARNING_CONFLICTING_KEY_TYPE_MERGING_GROUPS,
+            अगर (report) {
+                log_warn(info->ctx, XKB_WARNING_CONFLICTING_कुंजी_TYPE_MERGING_GROUPS,
                          "Multiple definitions for group %"PRIu32" type of key %s; "
                          "Using %s, ignoring %s\n",
-                         group + 1, KeyNameText(info->ctx, key_name),
+                         group + 1, कुंजी_Name_Text(info->ctx, कुंजी_name),
                          xkb_atom_text(info->ctx, use),
                          xkb_atom_text(info->ctx, ignore));
             }
@@ -313,115 +313,115 @@ MergeGroups(SymbolsInfo *info, GroupInfo *into, GroupInfo *from, bool clobber,
 
     /* Now look at the levels. */
 
-    if (darray_empty(from->levels)) {
+    अगर (darray_empty(from->levels)) {
         InitGroupInfo(from);
-        return true;
+        वापस true;
     }
 
-    if (darray_empty(into->levels)) {
+    अगर (darray_empty(into->levels)) {
         from->type = into->type;
         *into = *from;
         InitGroupInfo(from);
-        return true;
+        वापस true;
     }
 
     /* Merge the actions and syms. */
-    const darray_size_t levels_in_both =
-        MIN(darray_size(into->levels), darray_size(from->levels));
-    darray_size_t fromKeysymsCount = 0;
-    darray_size_t fromActionsCount = 0;
-    for (darray_size_t i = 0; i < levels_in_both; i++) {
-        struct xkb_level* const intoLevel = &darray_item(into->levels, i);
-        struct xkb_level* const fromLevel = &darray_item(from->levels, i);
+    स्थिर darray_आकार_t levels_in_both =
+        MIN(darray_आकार(into->levels), darray_आकार(from->levels));
+    darray_आकार_t from_Keysyms_गिनती = 0;
+    darray_आकार_t from_Actions_गिनती = 0;
+    क्रम (darray_आकार_t i = 0; i < levels_in_both; i++) {
+        काष्ठा xkb_level* स्थिर intoLevel = &darray_item(into->levels, i);
+        काष्ठा xkb_level* स्थिर fromLevel = &darray_item(from->levels, i);
 
-        const bool fromHasNoKeysym = fromLevel->num_syms == 0;
-        const bool fromHasNoAction = fromLevel->num_actions == 0;
-        if (fromHasNoKeysym && fromHasNoAction) {
+        स्थिर bool fromHasNoKeysym = fromLevel->अंक_syms == 0;
+        स्थिर bool fromHasNoAction = fromLevel->अंक_actions == 0;
+        अगर (fromHasNoKeysym && fromHasNoAction) {
             /* Empty `from`: do nothing */
-            continue;
+            जारी;
         }
 
-        const bool intoHasNoKeysym = intoLevel->num_syms == 0;
-        const bool intoHasNoAction = intoLevel->num_actions == 0;
-        if (intoHasNoKeysym && intoHasNoAction) {
+        स्थिर bool intoHasNoKeysym = intoLevel->अंक_syms == 0;
+        स्थिर bool intoHasNoAction = intoLevel->अंक_actions == 0;
+        अगर (intoHasNoKeysym && intoHasNoAction) {
             /* Empty `into`: use `from` keysyms and actions */
             StealLevelInfo(intoLevel, fromLevel);
-            fromKeysymsCount++;
-            fromActionsCount++;
-            continue;
+            from_Keysyms_गिनती++;
+            from_Actions_गिनती++;
+            जारी;
         }
 
         /* Possible level conflict */
-        assert(intoLevel->num_syms > 0 || intoLevel->num_actions > 0);
-        assert(fromLevel->num_syms > 0 || fromLevel->num_actions > 0);
+        निश्चित(intoLevel->अंक_syms > 0 || intoLevel->अंक_actions > 0);
+        निश्चित(fromLevel->अंक_syms > 0 || fromLevel->अंक_actions > 0);
 
         /* Handle keysyms */
-        if (!XkbLevelsSameSyms(fromLevel, intoLevel)) {
+        अगर (!XkbLevelsSameSyms(fromLevel, intoLevel)) {
             /* Incompatible keysyms */
-            if (report && !(intoHasNoKeysym || fromHasNoKeysym)) {
-                log_warn(info->ctx, XKB_WARNING_CONFLICTING_KEY_SYMBOL,
+            अगर (report && !(intoHasNoKeysym || fromHasNoKeysym)) {
+                log_warn(info->ctx, XKB_WARNING_CONFLICTING_कुंजी_प्रतीक,
                             "Multiple symbols for level %u/group "
                             "%"PRIu32" on key %s; Using %s, ignoring %s\n",
-                            i + 1, group + 1, KeyNameText(info->ctx, key_name),
+                            i + 1, group + 1, कुंजी_Name_Text(info->ctx, कुंजी_name),
                             (clobber ? "from" : "to"),
                             (clobber ? "to" : "from"));
             }
-            if (fromHasNoKeysym) {
+            अगर (fromHasNoKeysym) {
                 /* No keysym to copy */
-            } else if (clobber) {
+            } अन्यथा अगर (clobber) {
                 /* Override: copy any defined keysym from `from` */
-                if (unlikely(fromLevel->num_syms > 1)) {
+                अगर (unlikely(fromLevel->अंक_syms > 1)) {
                     /* Multiple keysyms: always replace, all syms are defined */
-                    if (unlikely(intoLevel->num_syms > 1))
-                        free(intoLevel->s.syms);
+                    अगर (unlikely(intoLevel->अंक_syms > 1))
+                        मुक्त(intoLevel->s.syms);
                     /* Steal */
                     intoLevel->s.syms = fromLevel->s.syms;
-                    intoLevel->num_syms = fromLevel->num_syms;
-                    fromLevel->num_syms = 0;
-                    fromKeysymsCount++;
-                } else if (fromLevel->s.sym != XKB_KEY_NoSymbol) {
+                    intoLevel->अंक_syms = fromLevel->अंक_syms;
+                    fromLevel->अंक_syms = 0;
+                    from_Keysyms_गिनती++;
+                } अन्यथा अगर (fromLevel->s.sym != XKB_कुंजी_No_प्रतीक) {
                     /* Single defined keysym */
-                    if (unlikely(intoLevel->num_syms > 1))
-                        free(intoLevel->s.syms);
+                    अगर (unlikely(intoLevel->अंक_syms > 1))
+                        मुक्त(intoLevel->s.syms);
                     intoLevel->s.sym = fromLevel->s.sym;
-                    intoLevel->num_syms = 1;
-                    fromKeysymsCount++;
+                    intoLevel->अंक_syms = 1;
+                    from_Keysyms_गिनती++;
                 }
-            } else {
+            } अन्यथा {
                 /* Augment: copy only the keysyms from `from` that are
                  * undefined in `into` */
-                if (unlikely(intoLevel->num_syms > 1)) {
+                अगर (unlikely(intoLevel->अंक_syms > 1)) {
                     /* Multiple keysyms: always ignore, all syms are defined */
-                } else if (intoLevel->s.sym == XKB_KEY_NoSymbol) {
+                } अन्यथा अगर (intoLevel->s.sym == XKB_कुंजी_No_प्रतीक) {
                     /* Single undefined keysym */
-                    if (unlikely(fromLevel->num_syms > 1)) {
+                    अगर (unlikely(fromLevel->अंक_syms > 1)) {
                         /* Steal */
                         intoLevel->s.syms = fromLevel->s.syms;
-                        intoLevel->num_syms = fromLevel->num_syms;
-                        fromLevel->num_syms = 0;
-                    } else {
+                        intoLevel->अंक_syms = fromLevel->अंक_syms;
+                        fromLevel->अंक_syms = 0;
+                    } अन्यथा {
                         intoLevel->s.sym = fromLevel->s.sym;
-                        intoLevel->num_syms = 1;
+                        intoLevel->अंक_syms = 1;
                     }
-                    fromKeysymsCount++;
+                    from_Keysyms_गिनती++;
                 }
             }
         }
 
         /* Handle actions */
-        if (!XkbLevelsSameActions(intoLevel, fromLevel)) {
+        अगर (!XkbLevelsSameActions(intoLevel, fromLevel)) {
             /* Incompatible actions */
-            if (report && !(intoHasNoAction || fromHasNoAction)) {
-                if (unlikely(intoLevel->num_actions > 1)) {
+            अगर (report && !(intoHasNoAction || fromHasNoAction)) {
+                अगर (unlikely(intoLevel->अंक_actions > 1)) {
                     log_warn(
-                        info->ctx, XKB_WARNING_CONFLICTING_KEY_ACTION,
+                        info->ctx, XKB_WARNING_CONFLICTING_कुंजी_ACTION,
                         "Multiple actions for level %u/group %"PRIu32" "
                         "on key %s; %s\n",
-                        i + 1, group + 1, KeyNameText(info->ctx, key_name),
+                        i + 1, group + 1, कुंजी_Name_Text(info->ctx, कुंजी_name),
                         clobber ? "Using from, ignoring to"
                                 : "Using to, ignoring from");
-                } else {
-                    union xkb_action *use, *ignore;
+                } अन्यथा {
+                    जोड़ xkb_action *use, *ignore;
                     use = clobber
                         ? &fromLevel->a.action
                         : &intoLevel->a.action;
@@ -429,259 +429,259 @@ MergeGroups(SymbolsInfo *info, GroupInfo *into, GroupInfo *from, bool clobber,
                         ? &intoLevel->a.action
                         : &fromLevel->a.action;
 
-                    log_warn(info->ctx, XKB_WARNING_CONFLICTING_KEY_ACTION,
+                    log_warn(info->ctx, XKB_WARNING_CONFLICTING_कुंजी_ACTION,
                                 "Multiple actions for level %u/group "
                                 "%"PRIu32" on key %s; Using %s, ignoring %s\n",
                                 i + 1, group + 1,
-                                KeyNameText(info->ctx, key_name),
+                                कुंजी_Name_Text(info->ctx, कुंजी_name),
                                 ActionTypeText(use->type),
                                 ActionTypeText(ignore->type));
                 }
             }
-            if (fromHasNoAction) {
+            अगर (fromHasNoAction) {
                 /* No action to copy */
-            } else if (clobber) {
+            } अन्यथा अगर (clobber) {
                 /* Override: copy any defined action from `from` */
-                if (unlikely(fromLevel->num_actions > 1)) {
+                अगर (unlikely(fromLevel->अंक_actions > 1)) {
                     /* Multiple actions: always replace, all syms are defined */
-                    if (unlikely(intoLevel->num_actions > 1))
-                        free(intoLevel->a.actions);
+                    अगर (unlikely(intoLevel->अंक_actions > 1))
+                        मुक्त(intoLevel->a.actions);
                     /* Steal */
                     intoLevel->a.actions = fromLevel->a.actions;
-                    intoLevel->num_actions = fromLevel->num_actions;
-                    fromLevel->num_actions = 0;
-                    fromActionsCount++;
-                } else if (fromLevel->a.action.type != ACTION_TYPE_NONE) {
+                    intoLevel->अंक_actions = fromLevel->अंक_actions;
+                    fromLevel->अंक_actions = 0;
+                    from_Actions_गिनती++;
+                } अन्यथा अगर (fromLevel->a.action.type != ACTION_TYPE_NONE) {
                     /* Single defined action */
-                    if (unlikely(intoLevel->num_actions > 1))
-                        free(intoLevel->a.actions);
+                    अगर (unlikely(intoLevel->अंक_actions > 1))
+                        मुक्त(intoLevel->a.actions);
                     intoLevel->a.action = fromLevel->a.action;
-                    intoLevel->num_actions = 1;
-                    fromActionsCount++;
+                    intoLevel->अंक_actions = 1;
+                    from_Actions_गिनती++;
                 }
-            } else {
+            } अन्यथा {
                 /* Augment: copy only the actions from `from` that are
                  * undefined in `into` */
-                if (unlikely(intoLevel->num_actions > 1)) {
+                अगर (unlikely(intoLevel->अंक_actions > 1)) {
                     /* Multiple keysyms: always ignore, all syms are defined */
-                } else if (intoLevel->a.action.type == ACTION_TYPE_NONE) {
+                } अन्यथा अगर (intoLevel->a.action.type == ACTION_TYPE_NONE) {
                     /* Single undefined keysym */
-                    if (unlikely(fromLevel->num_actions > 1)) {
+                    अगर (unlikely(fromLevel->अंक_actions > 1)) {
                         /* Steal */
                         intoLevel->a.actions = fromLevel->a.actions;
-                        intoLevel->num_actions = fromLevel->num_actions;
-                        fromLevel->num_actions = 0;
-                    } else {
+                        intoLevel->अंक_actions = fromLevel->अंक_actions;
+                        fromLevel->अंक_actions = 0;
+                    } अन्यथा {
                         intoLevel->a.action = fromLevel->a.action;
-                        intoLevel->num_actions = 1;
+                        intoLevel->अंक_actions = 1;
                     }
-                    fromActionsCount++;
+                    from_Actions_गिनती++;
                 }
             }
         }
     }
     /* If @from has extra levels, get them as well. */
-    struct xkb_level *level;
+    काष्ठा xkb_level *level;
     darray_foreach_from(level, from->levels, levels_in_both) {
         darray_append(into->levels, *level);
         /* We may have stolen keysyms or actions arrays:
          * do not free them when clearing `from` */
-        level->num_syms = 0;
-        level->num_actions = 0;
-        fromKeysymsCount++;
-        fromActionsCount++;
+        level->अंक_syms = 0;
+        level->अंक_actions = 0;
+        from_Keysyms_गिनती++;
+        from_Actions_गिनती++;
     }
-    if (fromKeysymsCount) {
+    अगर (from_Keysyms_गिनती) {
         /* Reset defined keysyms field if we used no keysym from `into` */
-        if (fromKeysymsCount == darray_size(into->levels))
+        अगर (from_Keysyms_गिनती == darray_आकार(into->levels))
             into->defined &= ~GROUP_FIELD_SYMS;
         into->defined |= (from->defined & GROUP_FIELD_SYMS);
     }
-    if (fromActionsCount) {
+    अगर (from_Actions_गिनती) {
         /* Reset defined actions field if we used no action from `into` */
-        if (fromActionsCount == darray_size(into->levels))
+        अगर (from_Actions_गिनती == darray_आकार(into->levels))
             into->defined &= ~GROUP_FIELD_ACTS;
         into->defined |= (from->defined & GROUP_FIELD_ACTS);
     }
 
-    return true;
+    वापस true;
 }
 
-static bool
-UseNewKeyField(enum key_field field, enum key_field old, enum key_field new,
-               bool clobber, bool report, enum key_field *collide)
+अटल bool
+Use_New_कुंजी_Field(क्रमागत कुंजी_field field, क्रमागत कुंजी_field old, क्रमागत कुंजी_field new,
+               bool clobber, bool report, क्रमागत कुंजी_field *collide)
 {
-    if (!(old & field))
-        return (new & field);
+    अगर (!(old & field))
+        वापस (new & field);
 
-    if (new & field) {
-        if (report)
+    अगर (new & field) {
+        अगर (report)
             *collide |= field;
 
-        return clobber;
+        वापस clobber;
     }
 
-    return false;
+    वापस false;
 }
 
-static bool
-overlays_get(const KeyInfo *info, xkb_overlay_index_t bit,
-             const struct xkb_key **key_out)
+अटल bool
+overlays_get(स्थिर कुंजी_Info *info, xkb_overlay_सूचकांक_t bit,
+             स्थिर काष्ठा xkb_कुंजी **कुंजी_out)
 {
-    if (bit >= (xkb_overlay_index_t)(sizeof(xkb_overlay_mask_t) * CHAR_BIT))
-        return false;
-    const xkb_overlay_mask_t mask = (xkb_overlay_mask_t)(1u << bit);
-    if (!(info->overlays & mask)) return false;
-    if (key_out) {
-        if (!info->overlays_alloc) {
+    अगर (bit >= (xkb_overlay_सूचकांक_t)(माप(xkb_overlay_mask_t) * अक्षर_बिट))
+        वापस false;
+    स्थिर xkb_overlay_mask_t mask = (xkb_overlay_mask_t)(1u << bit);
+    अगर (!(info->overlays & mask)) वापस false;
+    अगर (कुंजी_out) {
+        अगर (!info->overlays_alloc) {
             /* Stored inline */
-            *key_out = info->overlay_key;
-        } else {
+            *कुंजी_out = info->overlay_कुंजी;
+        } अन्यथा {
             /* Stored in sparse array */
-            const xkb_overlay_mask_t low = (xkb_overlay_mask_t)(
+            स्थिर xkb_overlay_mask_t निचला = (xkb_overlay_mask_t)(
                 info->overlays & (mask - 1u)
             );
-            const xkb_overlay_index_t index = (xkb_overlay_index_t)popcount32(low);
-            *key_out = info->overlays_keys[index];
+            स्थिर xkb_overlay_सूचकांक_t सूचकांक = (xkb_overlay_सूचकांक_t)popcount32(निचला);
+            *कुंजी_out = info->overlays_कुंजियाँ[सूचकांक];
         }
     }
-    return true;
+    वापस true;
 }
 
-static bool
-overlays_insert(KeyInfo *keyi, xkb_overlay_index_t bit,
-                const struct xkb_key *key)
+अटल bool
+overlays_जोड़ो(कुंजी_Info *keyi, xkb_overlay_सूचकांक_t bit,
+                स्थिर काष्ठा xkb_कुंजी *कुंजी)
 {
-    if (bit >= (xkb_overlay_index_t)(sizeof(xkb_overlay_mask_t) * CHAR_BIT))
-        return false;
+    अगर (bit >= (xkb_overlay_सूचकांक_t)(माप(xkb_overlay_mask_t) * अक्षर_बिट))
+        वापस false;
 
-    const xkb_overlay_mask_t mask = (xkb_overlay_mask_t)(1u << bit);
+    स्थिर xkb_overlay_mask_t mask = (xkb_overlay_mask_t)(1u << bit);
 
-    if ((keyi->overlays & mask) && !keyi->overlays_clear) {
+    अगर ((keyi->overlays & mask) && !keyi->overlays_clear) {
         /* Overwrite existing slot */
-        if (!keyi->overlays_alloc) {
+        अगर (!keyi->overlays_alloc) {
             /* Stored inline */
-            keyi->overlay_key = key;
-            if (!key)
+            keyi->overlay_कुंजी = कुंजी;
+            अगर (!कुंजी)
                 keyi->overlays_clear = true;
-        } else {
+        } अन्यथा {
             /* Stored in sparse array */
-            const xkb_overlay_mask_t low = (xkb_overlay_mask_t)(
+            स्थिर xkb_overlay_mask_t निचला = (xkb_overlay_mask_t)(
                 keyi->overlays & (xkb_overlay_mask_t)(mask - 1u)
             );
             /* index = number of set bits strictly below bit */
-            const xkb_overlay_index_t index =
-                (xkb_overlay_index_t)popcount32(low);
-            keyi->overlays_keys[index] = key;
+            स्थिर xkb_overlay_सूचकांक_t सूचकांक =
+                (xkb_overlay_सूचकांक_t)popcount32(निचला);
+            keyi->overlays_कुंजियाँ[सूचकांक] = कुंजी;
         }
-        return true;
+        वापस true;
     }
 
     /* Insert new element */
-    if (!keyi->overlays || (keyi->overlays_clear && !key)) {
+    अगर (!keyi->overlays || (keyi->overlays_clear && !कुंजी)) {
         /* No previous overlay or only cleared overlays: use inline storage */
-        keyi->overlay_key = key;
+        keyi->overlay_कुंजी = कुंजी;
         keyi->overlays |= mask;
-        keyi->overlays_clear = !key;
-    } else if (!keyi->overlays_alloc) {
+        keyi->overlays_clear = !कुंजी;
+    } अन्यथा अगर (!keyi->overlays_alloc) {
         /* Promote inline element to heap */
-        const xkb_overlay_mask_t overlays = keyi->overlays | mask;
-        const xkb_overlay_index_t alloc =
-            (xkb_overlay_index_t)popcount32(overlays);
+        स्थिर xkb_overlay_mask_t overlays = keyi->overlays | mask;
+        स्थिर xkb_overlay_सूचकांक_t alloc =
+            (xkb_overlay_सूचकांक_t)popcount32(overlays);
 
         /* Alloc sparse array */
-        const struct xkb_key ** const tmp = calloc(alloc, sizeof(*tmp));
-        if (!tmp) return false;
+        स्थिर काष्ठा xkb_कुंजी ** स्थिर tmp = सुस्मृति(alloc, माप(*tmp));
+        अगर (!tmp) वापस false;
 
         /* Copy previous entries to the buffer */
-        if (!keyi->overlays_clear) {
+        अगर (!keyi->overlays_clear) {
             /* A previous single overlay was set */
-            const xkb_overlay_mask_t low = (xkb_overlay_mask_t)(
+            स्थिर xkb_overlay_mask_t निचला = (xkb_overlay_mask_t)(
                 overlays & (xkb_overlay_mask_t)(keyi->overlays - 1u)
             );
-            const xkb_overlay_index_t idx = (xkb_overlay_index_t)popcount32(low);
-            tmp[idx] = keyi->overlay_key;
-        } else {
+            स्थिर xkb_overlay_सूचकांक_t idx = (xkb_overlay_सूचकांक_t)popcount32(निचला);
+            tmp[idx] = keyi->overlay_कुंजी;
+        } अन्यथा {
             /* All previous overlays were set to none: set thanks to calloc */
         }
 
         /* Insert new entry into the buffer */
-        const xkb_overlay_mask_t low = (xkb_overlay_mask_t)(
+        स्थिर xkb_overlay_mask_t निचला = (xkb_overlay_mask_t)(
             overlays & (xkb_overlay_mask_t)(mask - 1u)
         );
-        const xkb_overlay_index_t idx = (xkb_overlay_index_t)popcount32(low);
-        tmp[idx] = key;
+        स्थिर xkb_overlay_सूचकांक_t idx = (xkb_overlay_सूचकांक_t)popcount32(निचला);
+        tmp[idx] = कुंजी;
 
-        keyi->overlays_keys = tmp;
+        keyi->overlays_कुंजियाँ = tmp;
         keyi->overlays_alloc = alloc;
         keyi->overlays = overlays;
         keyi->overlays_clear = false;
-    } else {
+    } अन्यथा {
         /* Allocated items: grow heap and shift if relevant */
-        const xkb_overlay_mask_t overlays =
+        स्थिर xkb_overlay_mask_t overlays =
             (xkb_overlay_mask_t)(keyi->overlays | mask);
-        const xkb_overlay_index_t count =
-            (xkb_overlay_index_t)popcount32(overlays);
-        if (count > keyi->overlays_alloc) {
-            const xkb_overlay_index_t alloc =
-                (xkb_overlay_index_t)next_pow2(count);
-            assert(alloc >= count);
-            const struct xkb_key ** const tmp = realloc(
-                keyi->overlays_keys,
-                (size_t)alloc * sizeof(*keyi->overlays_keys)
+        स्थिर xkb_overlay_सूचकांक_t गिनती =
+            (xkb_overlay_सूचकांक_t)popcount32(overlays);
+        अगर (गिनती > keyi->overlays_alloc) {
+            स्थिर xkb_overlay_सूचकांक_t alloc =
+                (xkb_overlay_सूचकांक_t)अग्र_pow2(गिनती);
+            निश्चित(alloc >= गिनती);
+            स्थिर काष्ठा xkb_कुंजी ** स्थिर tmp = पुनः_स्मृति(
+                keyi->overlays_कुंजियाँ,
+                (माप_प्रकार)alloc * माप(*keyi->overlays_कुंजियाँ)
             );
-            if (!tmp) return false;
-            keyi->overlays_keys = tmp;
+            अगर (!tmp) वापस false;
+            keyi->overlays_कुंजियाँ = tmp;
             keyi->overlays_alloc = alloc;
         }
         /* Get new entry index in sparse array */
-        const xkb_overlay_mask_t low = (xkb_overlay_mask_t)(
+        स्थिर xkb_overlay_mask_t निचला = (xkb_overlay_mask_t)(
             overlays & (xkb_overlay_mask_t)(mask - 1u)
         );
-        const xkb_overlay_index_t index = (xkb_overlay_index_t)popcount32(low);
-        if (index >= keyi->overlays_alloc)
+        स्थिर xkb_overlay_सूचकांक_t सूचकांक = (xkb_overlay_सूचकांक_t)popcount32(निचला);
+        अगर (सूचकांक >= keyi->overlays_alloc)
             PANIC_UNREACHABLE();
-        if (index < count - 1u /* previous count */) {
+        अगर (सूचकांक < गिनती - 1u /* previous count */) {
             /* insert between 2 previous items: move items from greater bits */
-            assert(index + 1 < keyi->overlays_alloc);
-            memmove(keyi->overlays_keys + index + 1, keyi->overlays_keys + index,
-                    (size_t)(count - 1u - index) * sizeof(const struct xkb_key *));
+            निश्चित(सूचकांक + 1 < keyi->overlays_alloc);
+            स_हटाओ(keyi->overlays_कुंजियाँ + सूचकांक + 1, keyi->overlays_कुंजियाँ + सूचकांक,
+                    (माप_प्रकार)(गिनती - 1u - सूचकांक) * माप(स्थिर काष्ठा xkb_कुंजी *));
         }
-        keyi->overlays_keys[index] = key;
+        keyi->overlays_कुंजियाँ[सूचकांक] = कुंजी;
         keyi->overlays = overlays;
     }
 
-    return true;
+    वापस true;
 }
 
 /** Merge keyboard overlays. At most one can be defined (X11 limitation) */
-static bool
-merge_overlays(SymbolsInfo *info, KeyInfo *into, KeyInfo *from,
-               bool clobber, bool report, enum key_field *collide)
+अटल bool
+merge_overlays(SymbolsInfo *info, कुंजी_Info *into, कुंजी_Info *from,
+               bool clobber, bool report, क्रमागत कुंजी_field *collide)
 {
-    if (!(from->defined & KEY_FIELD_OVERLAY)) {
+    अगर (!(from->defined & कुंजी_FIELD_OVERLAY)) {
         /* `from` is empty: do nothing */
-    } else if (!(into->defined & KEY_FIELD_OVERLAY)) {
+    } अन्यथा अगर (!(into->defined & कुंजी_FIELD_OVERLAY)) {
         /* `into` is empty: steal `from` */
         into->overlays = from->overlays;
-        into->overlays_keys = from->overlays_keys;
-        from->overlays_keys = NULL;
+        into->overlays_कुंजियाँ = from->overlays_कुंजियाँ;
+        from->overlays_कुंजियाँ = शून्य;
         into->overlays_alloc = from->overlays_alloc;
         from->overlays_alloc = 0;
-        into->defined |= KEY_FIELD_OVERLAY;
-    } else if (into->overlays_clear && from->overlays_clear) {
+        into->defined |= कुंजी_FIELD_OVERLAY;
+    } अन्यथा अगर (into->overlays_clear && from->overlays_clear) {
         /* Only cleared overlays: combine them */
         into->overlays |= from->overlays;
-    } else {
-        if (info->keymap_info->features.overlapping_overlays) {
+    } अन्यथा {
+        अगर (info->keymap_info->features.overlapping_overlays) {
             /* Overlapping overlays */
 
-            const xkb_overlay_mask_t result_mask =
+            स्थिर xkb_overlay_mask_t परिणाम_mask =
                 (into->overlays | from->overlays);
-            const xkb_overlay_index_t count =
-                (xkb_overlay_index_t)popcount32(result_mask);
+            स्थिर xkb_overlay_सूचकांक_t गिनती =
+                (xkb_overlay_सूचकांक_t)popcount32(परिणाम_mask);
 
-            if (count == 0)
+            अगर (गिनती == 0)
                 PANIC_UNREACHABLE();
 
             /*
@@ -690,215 +690,215 @@ merge_overlays(SymbolsInfo *info, KeyInfo *into, KeyInfo *from,
              * buffer may be freed.
              */
 
-            KeyInfo *dest = into;
-            KeyInfo *src = from;
-            if (into->overlays_alloc >= count &&
+            कुंजी_Info *dest = into;
+            कुंजी_Info *src = from;
+            अगर (into->overlays_alloc >= गिनती &&
                 into->overlays_alloc >= from->overlays_alloc) {
                 /* Do nothing */
-            } else if (from->overlays_alloc >= count) {
+            } अन्यथा अगर (from->overlays_alloc >= गिनती) {
                 dest = from;
                 src = into;
                 clobber = !clobber;
-            } else if (count > 1) {
+            } अन्यथा अगर (गिनती > 1) {
                 /* Neither is sufficient: realloc the larger one if possible */
-                if (into->overlays_alloc < from->overlays_alloc) {
+                अगर (into->overlays_alloc < from->overlays_alloc) {
                     dest = from;
                     src = into;
                     clobber = !clobber;
                 }
 
-                if (!dest->overlays_alloc) {
-                    const struct xkb_key **tmp = calloc(count, sizeof(*tmp));
-                    if (!tmp)
-                        return false;
-                    if (dest->overlay_key)
-                        tmp[0] = dest->overlay_key;
-                    dest->overlays_keys = tmp;
-                    dest->overlays_alloc = count;
-                } else {
-                    const struct xkb_key **tmp =
-                        realloc(dest->overlays_keys,
-                                count * sizeof(*dest->overlays_keys));
-                    if (!tmp)
-                        return false;
-                    dest->overlays_keys = tmp;
-                    dest->overlays_alloc = count;
+                अगर (!dest->overlays_alloc) {
+                    स्थिर काष्ठा xkb_कुंजी **tmp = सुस्मृति(गिनती, माप(*tmp));
+                    अगर (!tmp)
+                        वापस false;
+                    अगर (dest->overlay_कुंजी)
+                        tmp[0] = dest->overlay_कुंजी;
+                    dest->overlays_कुंजियाँ = tmp;
+                    dest->overlays_alloc = गिनती;
+                } अन्यथा {
+                    स्थिर काष्ठा xkb_कुंजी **tmp =
+                        पुनः_स्मृति(dest->overlays_कुंजियाँ,
+                                गिनती * माप(*dest->overlays_कुंजियाँ));
+                    अगर (!tmp)
+                        वापस false;
+                    dest->overlays_कुंजियाँ = tmp;
+                    dest->overlays_alloc = गिनती;
                 }
             }
 
             xkb_overlay_mask_t remaining = src->overlays;
-            const struct xkb_key **src_keys = (src->overlays_clear)
-                ? NULL
+            स्थिर काष्ठा xkb_कुंजी **src_कुंजियाँ = (src->overlays_clear)
+                ? शून्य
                 : (src->overlays_alloc)
-                    ? src->overlays_keys
-                    : &src->overlay_key;
-            while (remaining) {
+                    ? src->overlays_कुंजियाँ
+                    : &src->overlay_कुंजी;
+            जबतक (remaining) {
                 /* isolate lowest set bit */
-                const xkb_overlay_mask_t lsb = (xkb_overlay_mask_t)(
+                स्थिर xkb_overlay_mask_t lsb = (xkb_overlay_mask_t)(
                     remaining &
-                    (xkb_overlay_mask_t)((unsigned)~remaining + 1u)
+                    (xkb_overlay_mask_t)((अचिन्हित)~remaining + 1u)
                 );
                 /* get its index */
-                const xkb_overlay_index_t bit =
-                    (xkb_overlay_index_t)popcount32(lsb - 1u);
+                स्थिर xkb_overlay_सूचकांक_t bit =
+                    (xkb_overlay_सूचकांक_t)popcount32(lsb - 1u);
                 remaining = (remaining & ~lsb);
 
                 /* pop current value */
-                if (!src->overlays_clear && !src->overlays_alloc && remaining)
+                अगर (!src->overlays_clear && !src->overlays_alloc && remaining)
                     PANIC_UNREACHABLE();
-                const struct xkb_key *src_key = (src_keys)
-                    ? *(src_keys++)
-                    : NULL;
+                स्थिर काष्ठा xkb_कुंजी *src_कुंजी = (src_कुंजियाँ)
+                    ? *(src_कुंजियाँ++)
+                    : शून्य;
 
                 /* check dest */
-                const struct xkb_key *dest_key = NULL;
-                const bool conflict = overlays_get(dest, bit, &dest_key);
-                if (conflict) {
-                    if (dest_key == src_key)
-                       continue;
-                    else if (report)
-                        *collide |= KEY_FIELD_OVERLAY;
+                स्थिर काष्ठा xkb_कुंजी *dest_कुंजी = शून्य;
+                स्थिर bool conflict = overlays_get(dest, bit, &dest_कुंजी);
+                अगर (conflict) {
+                    अगर (dest_कुंजी == src_कुंजी)
+                       जारी;
+                    अन्यथा अगर (report)
+                        *collide |= कुंजी_FIELD_OVERLAY;
                 }
 
-                if ((!conflict || clobber) && !overlays_insert(dest, bit, src_key))
-                    return false;
+                अगर ((!conflict || clobber) && !overlays_जोड़ो(dest, bit, src_कुंजी))
+                    वापस false;
             }
 
-            if (dest == from) {
+            अगर (dest == from) {
                 /* `from` buffer was used; clone it into `into` then clear it */
-                if (into->overlays_alloc)
-                    free(into->overlays_keys);
+                अगर (into->overlays_alloc)
+                    मुक्त(into->overlays_कुंजियाँ);
                 into->overlays = from->overlays;
                 into->overlays_clear = from->overlays_clear;
                 into->overlays_alloc = from->overlays_alloc;
-                if (from->overlays_alloc) {
+                अगर (from->overlays_alloc) {
                     /* Steal */
-                    into->overlays_keys = from->overlays_keys;
-                    from->overlays_keys = NULL;
+                    into->overlays_कुंजियाँ = from->overlays_कुंजियाँ;
+                    from->overlays_कुंजियाँ = शून्य;
                     from->overlays_alloc = 0;
-                } else {
-                    into->overlay_key = from->overlay_key;
+                } अन्यथा {
+                    into->overlay_कुंजी = from->overlay_कुंजी;
                 }
             }
-        } else {
+        } अन्यथा {
             /* Disjoint overlays */
 
-            if (into->overlays == from->overlays &&
+            अगर (into->overlays == from->overlays &&
                 into->overlays_clear == from->overlays_clear &&
-                into->overlay_key == from->overlay_key) {
+                into->overlay_कुंजी == from->overlay_कुंजी) {
                 /* Indentical: do nothing */
-                return true;
+                वापस true;
             }
-            if (!(into->overlays & from->overlays)) {
-                if (into->overlays_clear) {
+            अगर (!(into->overlays & from->overlays)) {
+                अगर (into->overlays_clear) {
                     /* `into` clears and `from` sets distinct overlays: use `from` */
                     into->overlays = from->overlays;
                     into->overlays_clear = from->overlays_clear;
                     into->overlays_alloc = from->overlays_alloc;
-                    into->overlay_key = from->overlay_key;
-                    return true;
-                } else if (from->overlays_clear) {
+                    into->overlay_कुंजी = from->overlay_कुंजी;
+                    वापस true;
+                } अन्यथा अगर (from->overlays_clear) {
                     /* `into` sets and `from` clears distinct overlays: use `into` */
-                    return true;
+                    वापस true;
                 }
             }
             /* Conflict */
-            if (report)
-                *collide |= KEY_FIELD_OVERLAY;
-            if (clobber) {
+            अगर (report)
+                *collide |= कुंजी_FIELD_OVERLAY;
+            अगर (clobber) {
                 into->overlays = from->overlays;
                 into->overlays_clear = from->overlays_clear;
                 into->overlays_alloc = from->overlays_alloc;
-                into->overlay_key = from->overlay_key;
+                into->overlay_कुंजी = from->overlay_कुंजी;
             }
         }
     }
-    return true;
+    वापस true;
 }
 
-static bool
-MergeKeys(SymbolsInfo *info, KeyInfo *into, KeyInfo *from, bool same_file)
+अटल bool
+Merge_कुंजियाँ(SymbolsInfo *info, कुंजी_Info *into, कुंजी_Info *from, bool same_file)
 {
-    xkb_layout_index_t i;
-    xkb_layout_index_t groups_in_both;
-    enum key_field collide = 0;
-    const int verbosity = xkb_context_get_log_verbosity(info->ctx);
-    const bool clobber = (from->merge != MERGE_AUGMENT);
-    const bool report = (same_file && verbosity > 0) || verbosity > 9;
+    xkb_layout_सूचकांक_t i;
+    xkb_layout_सूचकांक_t groups_in_both;
+    क्रमागत कुंजी_field collide = 0;
+    स्थिर पूर्णांक verbosity = xkb_context_get_log_verbosity(info->ctx);
+    स्थिर bool clobber = (from->merge != MERGE_AUGMENT);
+    स्थिर bool report = (same_file && verbosity > 0) || verbosity > 9;
 
-    if (from->merge == MERGE_REPLACE) {
-        ClearKeyInfo(into);
+    अगर (from->merge == MERGE_REPLACE) {
+        Clear_कुंजी_Info(into);
         *into = *from;
-        InitKeyInfo(info->ctx, from);
-        return true;
+        Init_कुंजी_Info(info->ctx, from);
+        वापस true;
     }
 
-    groups_in_both = MIN(darray_size(into->groups), darray_size(from->groups));
-    for (i = 0; i < groups_in_both; i++)
+    groups_in_both = MIN(darray_आकार(into->groups), darray_आकार(from->groups));
+    क्रम (i = 0; i < groups_in_both; i++)
         MergeGroups(info,
                     &darray_item(into->groups, i),
                     &darray_item(from->groups, i),
                     clobber, report, i, into->name);
     /* If @from has extra groups, just move them to @into. */
-    for (i = groups_in_both; i < darray_size(from->groups); i++) {
+    क्रम (i = groups_in_both; i < darray_आकार(from->groups); i++) {
         darray_append(into->groups, darray_item(from->groups, i));
         InitGroupInfo(&darray_item(from->groups, i));
     }
 
-    if (UseNewKeyField(KEY_FIELD_VMODMAP, into->defined, from->defined,
+    अगर (Use_New_कुंजी_Field(कुंजी_FIELD_VMODMAP, into->defined, from->defined,
                        clobber, report, &collide)) {
         into->vmodmap = from->vmodmap;
-        into->defined |= KEY_FIELD_VMODMAP;
+        into->defined |= कुंजी_FIELD_VMODMAP;
     }
-    if (UseNewKeyField(KEY_FIELD_REPEAT, into->defined, from->defined,
+    अगर (Use_New_कुंजी_Field(कुंजी_FIELD_REPEAT, into->defined, from->defined,
                        clobber, report, &collide)) {
         into->repeat = from->repeat;
-        into->defined |= KEY_FIELD_REPEAT;
+        into->defined |= कुंजी_FIELD_REPEAT;
     }
-    if (UseNewKeyField(KEY_FIELD_DEFAULT_TYPE, into->defined, from->defined,
+    अगर (Use_New_कुंजी_Field(कुंजी_FIELD_DEFAULT_TYPE, into->defined, from->defined,
                        clobber, report, &collide)) {
         into->default_type = from->default_type;
-        into->defined |= KEY_FIELD_DEFAULT_TYPE;
+        into->defined |= कुंजी_FIELD_DEFAULT_TYPE;
     }
-    if (UseNewKeyField(KEY_FIELD_GROUPINFO, into->defined, from->defined,
+    अगर (Use_New_कुंजी_Field(कुंजी_FIELD_GROUPINFO, into->defined, from->defined,
                        clobber, report, &collide)) {
         into->out_of_range_pending_group = from->out_of_range_pending_group;
         into->out_of_range_group_policy = from->out_of_range_group_policy;
-        into->out_of_range_group_number = from->out_of_range_group_number;
-        into->defined |= KEY_FIELD_GROUPINFO;
+        into->out_of_range_group_संख्या = from->out_of_range_group_संख्या;
+        into->defined |= कुंजी_FIELD_GROUPINFO;
     }
 
-    if (!merge_overlays(info, into, from, clobber, report, &collide))
-        return false;
+    अगर (!merge_overlays(info, into, from, clobber, report, &collide))
+        वापस false;
 
-    if (collide) {
-        log_warn(info->ctx, XKB_WARNING_CONFLICTING_KEY_FIELDS,
+    अगर (collide) {
+        log_warn(info->ctx, XKB_WARNING_CONFLICTING_कुंजी_FIELDS,
                  "Symbol map for key %s redefined; "
                  "Using %s definition for conflicting fields\n",
-                 KeyNameText(info->ctx, into->name),
+                 कुंजी_Name_Text(info->ctx, into->name),
                  (clobber ? "first" : "last"));
     }
 
-    ClearKeyInfo(from);
-    InitKeyInfo(info->ctx, from);
-    return true;
+    Clear_कुंजी_Info(from);
+    Init_कुंजी_Info(info->ctx, from);
+    वापस true;
 }
 
-static xkb_atom_t
-XkbResolveKeyAlias(const struct xkb_keymap *keymap, xkb_atom_t name)
+अटल xkb_atom_t
+Xkb_Resolve_कुंजी_Alias(स्थिर काष्ठा xkb_keymap *keymap, xkb_atom_t name)
 {
-    if (name < keymap->num_key_names) {
-        const KeycodeMatch match = keymap->key_names[name];
-        if (match.found && match.is_alias) {
-            return match.alias.real;
+    अगर (name < keymap->अंक_कुंजी_names) {
+        स्थिर KeycodeMatch match = keymap->कुंजी_names[name];
+        अगर (match.found && match.is_alias) {
+            वापस match.alias.real;
         }
     }
-    return name;
+    वापस name;
 }
 
 /* TODO: Make it so this function doesn't need the entire keymap. */
-static bool
-AddKeySymbols(SymbolsInfo *info, KeyInfo *keyi, bool same_file)
+अटल bool
+Add_कुंजी_Symbols(SymbolsInfo *info, कुंजी_Info *keyi, bool same_file)
 {
     /*
      * Don't keep aliases in the keys array; this guarantees that
@@ -906,88 +906,88 @@ AddKeySymbols(SymbolsInfo *info, KeyInfo *keyi, bool same_file)
      * following loop) is enough, and we won't get multiple KeyInfo's
      * for the same key because of aliases.
      */
-    keyi->name = XkbResolveKeyAlias(&info->keymap_info->keymap, keyi->name);
+    keyi->name = Xkb_Resolve_कुंजी_Alias(&info->keymap_info->keymap, keyi->name);
 
-    KeyInfo *iter;
-    darray_foreach(iter, info->keys)
-        if (iter->name == keyi->name)
-            return MergeKeys(info, iter, keyi, same_file);
+    कुंजी_Info *iter;
+    darray_foreach(iter, info->कुंजियाँ)
+        अगर (iter->name == keyi->name)
+            वापस Merge_कुंजियाँ(info, iter, keyi, same_file);
 
-    darray_append(info->keys, *keyi);
-    InitKeyInfo(info->ctx, keyi);
-    return true;
+    darray_append(info->कुंजियाँ, *keyi);
+    Init_कुंजी_Info(info->ctx, keyi);
+    वापस true;
 }
 
-static bool
-AddModMapEntry(SymbolsInfo *info, const ModMapEntry *new)
+अटल bool
+AddModMapEntry(SymbolsInfo *info, स्थिर ModMapEntry *new)
 {
-    const bool clobber = (new->merge != MERGE_AUGMENT);
+    स्थिर bool clobber = (new->merge != MERGE_AUGMENT);
 
     ModMapEntry *old;
     darray_foreach(old, info->modmaps) {
-        if ((new->haveSymbol != old->haveSymbol) ||
-            (new->haveSymbol && new->u.keySym != old->u.keySym) ||
-            (!new->haveSymbol && new->u.keyName != old->u.keyName))
-            continue;
+        अगर ((new->have_प्रतीक != old->have_प्रतीक) ||
+            (new->have_प्रतीक && new->u.कुंजी_Sym != old->u.कुंजी_Sym) ||
+            (!new->have_प्रतीक && new->u.कुंजी_Name != old->u.कुंजी_Name))
+            जारी;
 
-        if (new->mods == old->mods)
-            return true;
+        अगर (new->mods == old->mods)
+            वापस true;
 
-        const xkb_mod_mask_t use = (clobber ? new->mods : old->mods);
-        const xkb_mod_mask_t ignore = (clobber ? old->mods : new->mods);
+        स्थिर xkb_mod_mask_t use = (clobber ? new->mods : old->mods);
+        स्थिर xkb_mod_mask_t ignore = (clobber ? old->mods : new->mods);
 
-        if (new->haveSymbol) {
+        अगर (new->have_प्रतीक) {
             log_warn(info->ctx, XKB_WARNING_CONFLICTING_MODMAP,
                     "Symbol \"%s\" added to modifier map "
                     "for distinct modifiers mask; Using %s, ignoring %s\n",
-                    KeysymText(info->ctx, new->u.keySym),
+                    KeysymText(info->ctx, new->u.कुंजी_Sym),
                     ModMaskText(info->ctx, MOD_REAL, &info->mods, use),
                     ModMaskText(info->ctx, MOD_REAL, &info->mods, ignore));
-        } else {
+        } अन्यथा {
             log_warn(info->ctx, XKB_WARNING_CONFLICTING_MODMAP,
                     "Key \"%s\" added to modifier map "
                     "for distinct modifiers mask; Using %s, ignoring %s\n",
-                    KeyNameText(info->ctx, new->u.keyName),
+                    कुंजी_Name_Text(info->ctx, new->u.कुंजी_Name),
                     ModMaskText(info->ctx, MOD_REAL, &info->mods, use),
                     ModMaskText(info->ctx, MOD_REAL, &info->mods, ignore));
         }
         old->mods = use;
-        return true;
+        वापस true;
     }
 
     darray_append(info->modmaps, *new);
 
-    return true;
+    वापस true;
 }
 
 /***====================================================================***/
 
-static void
+अटल व्योम
 MergeIncludedSymbols(SymbolsInfo *into, SymbolsInfo *from,
-                     enum merge_mode merge)
+                     क्रमागत merge_mode merge)
 {
     xkb_atom_t *group_name;
-    xkb_layout_index_t group_names_in_both;
+    xkb_layout_सूचकांक_t group_names_in_both;
 
-    if (from->errorCount > 0) {
-        into->errorCount += from->errorCount;
-        return;
+    अगर (from->error_गिनती > 0) {
+        into->error_गिनती += from->error_गिनती;
+        वापस;
     }
 
     MergeModSets(into->ctx, &into->mods, &from->mods, merge);
 
-    if (into->name == NULL) {
+    अगर (into->name == शून्य) {
         into->name = steal(&from->name);
     }
 
-    group_names_in_both = MIN(darray_size(into->group_names),
-                              darray_size(from->group_names));
-    for (xkb_layout_index_t i = 0; i < group_names_in_both; i++) {
-        if (!darray_item(from->group_names, i))
-            continue;
+    group_names_in_both = MIN(darray_आकार(into->group_names),
+                              darray_आकार(from->group_names));
+    क्रम (xkb_layout_सूचकांक_t i = 0; i < group_names_in_both; i++) {
+        अगर (!darray_item(from->group_names, i))
+            जारी;
 
-        if (merge == MERGE_AUGMENT && darray_item(into->group_names, i))
-            continue;
+        अगर (merge == MERGE_AUGMENT && darray_item(into->group_names, i))
+            जारी;
 
         darray_item(into->group_names, i) = darray_item(from->group_names, i);
     }
@@ -995,87 +995,87 @@ MergeIncludedSymbols(SymbolsInfo *into, SymbolsInfo *from,
     darray_foreach_from(group_name, from->group_names, group_names_in_both)
         darray_append(into->group_names, *group_name);
 
-    if (darray_empty(into->keys)) {
-        into->keys = from->keys;
-        darray_init(from->keys);
+    अगर (darray_empty(into->कुंजियाँ)) {
+        into->कुंजियाँ = from->कुंजियाँ;
+        darray_init(from->कुंजियाँ);
     }
-    else {
-        KeyInfo *keyi;
-        darray_foreach(keyi, from->keys) {
+    अन्यथा {
+        कुंजी_Info *keyi;
+        darray_foreach(keyi, from->कुंजियाँ) {
             keyi->merge = merge;
-            if (!AddKeySymbols(into, keyi, false))
-                into->errorCount++;
+            अगर (!Add_कुंजी_Symbols(into, keyi, false))
+                into->error_गिनती++;
         }
     }
 
-    if (darray_empty(into->modmaps)) {
+    अगर (darray_empty(into->modmaps)) {
         into->modmaps = from->modmaps;
         darray_init(from->modmaps);
     }
-    else {
+    अन्यथा {
         ModMapEntry *mm;
         darray_foreach(mm, from->modmaps) {
             mm->merge = merge;
-            if (!AddModMapEntry(into, mm))
-                into->errorCount++;
+            अगर (!AddModMapEntry(into, mm))
+                into->error_गिनती++;
         }
     }
 }
 
-static void
+अटल व्योम
 HandleSymbolsFile(SymbolsInfo *info, XkbFile *file);
 
-static bool
+अटल bool
 HandleIncludeSymbols(SymbolsInfo *info, IncludeStmt *include)
 {
     SymbolsInfo included;
 
-    if (ExceedsIncludeMaxDepth(info->ctx, info->include_depth)) {
-        info->errorCount += 10;
-        return false;
+    अगर (ExceedsIncludeMaxDepth(info->ctx, info->include_depth)) {
+        info->error_गिनती += 10;
+        वापस false;
     }
 
     InitSymbolsInfo(&included, info->keymap_info, info->include_depth + 1,
                     &info->mods);
     included.name = steal(&include->stmt);
 
-    const struct parser_keymap_config config = {
+    स्थिर काष्ठा parser_keymap_config config = {
         .format = info->keymap_info->keymap.format,
         .strict = info->keymap_info->strict
     };
 
-    for (IncludeStmt *stmt = include; stmt; stmt = stmt->next_incl) {
-        SymbolsInfo next_incl;
+    क्रम (IncludeStmt *stmt = include; stmt; stmt = stmt->अग्र_incl) {
+        SymbolsInfo अग्र_incl;
         XkbFile *file;
 
-        char path[PATH_MAX];
+        अक्षर path[PATH_MAX];
         file = ProcessIncludeFile(info->ctx, &config, stmt, FILE_TYPE_SYMBOLS,
-                                  path, sizeof(path));
-        if (!file) {
-            info->errorCount += 10;
+                                  path, माप(path));
+        अगर (!file) {
+            info->error_गिनती += 10;
             ClearSymbolsInfo(&included);
-            return false;
+            वापस false;
         }
 
-        InitSymbolsInfo(&next_incl, info->keymap_info, info->include_depth + 1,
+        InitSymbolsInfo(&अग्र_incl, info->keymap_info, info->include_depth + 1,
                         &included.mods);
-        if (stmt->modifier) {
-            const int count = parse_dec_to_uint32_t(stmt->modifier, SIZE_MAX,
-                                                    &next_incl.explicit_group);
-            if (count <= 0 || *(stmt->modifier + count) != '\0' ||
-                next_incl.explicit_group == 0 ||
-                next_incl.explicit_group > info->max_groups) {
-                log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
+        अगर (stmt->modifier) {
+            स्थिर पूर्णांक गिनती = parse_dec_to_uint32_t(stmt->modifier, SIZE_MAX,
+                                                    &अग्र_incl.explicit_group);
+            अगर (गिनती <= 0 || *(stmt->modifier + गिनती) != '\0' ||
+                अग्र_incl.explicit_group == 0 ||
+                अग्र_incl.explicit_group > info->max_groups) {
+                log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_सूचकांक_2,
                         "Cannot set explicit group to \"%s\": "
                         "must be between 1..%"PRIu32"; Ignoring group number\n",
                         stmt->modifier, info->max_groups);
-                next_incl.explicit_group = info->explicit_group;
-            } else {
-                next_incl.explicit_group--;
+                अग्र_incl.explicit_group = info->explicit_group;
+            } अन्यथा {
+                अग्र_incl.explicit_group--;
             }
         }
-        else if (info->keymap_info->keymap.num_groups != 0 &&
-                 next_incl.include_depth == 1) {
+        अन्यथा अगर (info->keymap_info->keymap.अंक_groups != 0 &&
+                 अग्र_incl.include_depth == 1) {
             /*
              * If keymap is the result of RMLVO resolution and we are at the
              * first include depth, transform e.g. `pc` into `pc:1` in order to
@@ -1087,469 +1087,469 @@ HandleIncludeSymbols(SymbolsInfo *info, IncludeStmt *include)
              * the `groupIndexNames` and `groupMaskNames` LUT should initially
              * be inactive.
              */
-            next_incl.explicit_group = 0;
+            अग्र_incl.explicit_group = 0;
         }
-        else {
+        अन्यथा {
             /* The keymap was not generated from rules or this is not the first
              * level of include: take the parent’s explicit group. */
-            next_incl.explicit_group = info->explicit_group;
+            अग्र_incl.explicit_group = info->explicit_group;
         }
 
-        HandleSymbolsFile(&next_incl, file);
+        HandleSymbolsFile(&अग्र_incl, file);
 
-        MergeIncludedSymbols(&included, &next_incl, stmt->merge);
+        MergeIncludedSymbols(&included, &अग्र_incl, stmt->merge);
 
-        ClearSymbolsInfo(&next_incl);
+        ClearSymbolsInfo(&अग्र_incl);
         FreeXkbFile(file);
     }
 
     MergeIncludedSymbols(info, &included, include->merge);
     ClearSymbolsInfo(&included);
 
-    return (info->errorCount == 0);
+    वापस (info->error_गिनती == 0);
 }
 
-static bool
-GetGroupIndex(SymbolsInfo *info, KeyInfo *keyi, ExprDef *arrayNdx,
-              enum group_field field, xkb_layout_index_t *ndx_rtrn)
+अटल bool
+Get_Group_सूचकांक(SymbolsInfo *info, कुंजी_Info *keyi, व्यंजक_Def *arrayNdx,
+              क्रमागत group_field field, xkb_layout_सूचकांक_t *ndx_rtrn)
 {
-    assert (field == GROUP_FIELD_SYMS || field == GROUP_FIELD_ACTS);
-    const char *name = (field == GROUP_FIELD_SYMS ? "symbols" : "actions");
+    निश्चित (field == GROUP_FIELD_SYMS || field == GROUP_FIELD_ACTS);
+    स्थिर अक्षर *name = (field == GROUP_FIELD_SYMS ? "symbols" : "actions");
 
-    if (arrayNdx == NULL) {
-        xkb_layout_index_t i = 0;
+    अगर (arrayNdx == शून्य) {
+        xkb_layout_सूचकांक_t i = 0;
         GroupInfo *groupi;
 
         darray_enumerate(i, groupi, keyi->groups) {
-            if (!(groupi->defined & field)) {
+            अगर (!(groupi->defined & field)) {
                 *ndx_rtrn = i;
-                return true;
+                वापस true;
             }
         }
 
-        if (i >= info->max_groups) {
-            log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
+        अगर (i >= info->max_groups) {
+            log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_सूचकांक_2,
                     "Too many groups of %s for key %s (max %"PRIu32"); "
                     "Ignoring %s defined for extra groups\n",
-                    name, KeyInfoText(info, keyi), info->max_groups, name);
-            return false;
+                    name, कुंजी_Info_Text(info, keyi), info->max_groups, name);
+            वापस false;
         }
 
-        darray_resize0(keyi->groups, darray_size(keyi->groups) + 1);
-        *ndx_rtrn = darray_size(keyi->groups) - 1;
-        return true;
+        darray_resize0(keyi->groups, darray_आकार(keyi->groups) + 1);
+        *ndx_rtrn = darray_आकार(keyi->groups) - 1;
+        वापस true;
     }
 
-    if (ExprResolveGroup(info->keymap_info, arrayNdx, false, ndx_rtrn, NULL) !=
+    अगर (व्यंजक_Resolve_Group(info->keymap_info, arrayNdx, false, ndx_rtrn, शून्य) !=
         PARSER_SUCCESS) {
-        log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
+        log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_सूचकांक_2,
                 "Illegal group index for %s of key %s\n"
                 "Definition with non-integer array index ignored\n",
-                name, KeyInfoText(info, keyi));
-        return false;
+                name, कुंजी_Info_Text(info, keyi));
+        वापस false;
     }
 
     (*ndx_rtrn)--;
-    if (*ndx_rtrn >= darray_size(keyi->groups))
+    अगर (*ndx_rtrn >= darray_आकार(keyi->groups))
         darray_resize0(keyi->groups, *ndx_rtrn + 1);
 
-    return true;
+    वापस true;
 }
 
-static bool
-AddSymbolsToKey(SymbolsInfo *info, KeyInfo *keyi, ExprDef *arrayNdx,
-                ExprDef *value)
+अटल bool
+Add_Symbols_To_कुंजी(SymbolsInfo *info, कुंजी_Info *keyi, व्यंजक_Def *arrayNdx,
+                व्यंजक_Def *मूल्य)
 {
-    xkb_layout_index_t ndx = 0;
+    xkb_layout_सूचकांक_t ndx = 0;
 
-    if (!GetGroupIndex(info, keyi, arrayNdx, GROUP_FIELD_SYMS, &ndx))
-        return false;
+    अगर (!Get_Group_सूचकांक(info, keyi, arrayNdx, GROUP_FIELD_SYMS, &ndx))
+        वापस false;
 
     GroupInfo *groupi = &darray_item(keyi->groups, ndx);
 
-    if (value->common.type == STMT_EXPR_EMPTY_LIST) {
+    अगर (मूल्य->common.type == STMT_व्यंजक_EMPTY_LIST) {
         groupi->defined |= GROUP_FIELD_SYMS;
-        return true;
+        वापस true;
     }
 
-    if (value->common.type != STMT_EXPR_KEYSYM_LIST) {
+    अगर (मूल्य->common.type != STMT_व्यंजक_KEYSYM_LIST) {
         log_err(info->ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Expected a list of symbols, found %s; "
                 "Ignoring symbols for group %"PRIu32" of %s\n",
-                stmt_type_to_string(value->common.type), ndx + 1,
-                KeyInfoText(info, keyi));
-        return false;
+                stmt_type_to_string(मूल्य->common.type), ndx + 1,
+                कुंजी_Info_Text(info, keyi));
+        वापस false;
     }
 
-    if (groupi->defined & GROUP_FIELD_SYMS) {
-        log_err(info->ctx, XKB_ERROR_CONFLICTING_KEY_SYMBOLS_ENTRY,
+    अगर (groupi->defined & GROUP_FIELD_SYMS) {
+        log_err(info->ctx, XKB_ERROR_CONFLICTING_कुंजी_SYMBOLS_ENTRY,
                 "Symbols for key %s, group %"PRIu32" already defined; "
                 "Ignoring duplicate definition\n",
-                KeyInfoText(info, keyi), ndx + 1);
-        return false;
+                कुंजी_Info_Text(info, keyi), ndx + 1);
+        वापस false;
     }
 
-    xkb_level_index_t nLevels = 0;
-    xkb_level_index_t nonEmptyLevels = 0;
+    xkb_level_सूचकांक_t nLevels = 0;
+    xkb_level_सूचकांक_t nonEmptyLevels = 0;
     /* Contrary to actions, keysyms are already parsed at this point so we drop
      * trailing symbols by not adding them in the first place. */
-    for (ExprKeysymList *keysymList = (ExprKeysymList *) value;
+    क्रम (व्यंजक_Keysym_List *keysymList = (व्यंजक_Keysym_List *) मूल्य;
          keysymList;
-         keysymList = (ExprKeysymList *) keysymList->common.next) {
+         keysymList = (व्यंजक_Keysym_List *) keysymList->common.अग्र) {
         nLevels++;
         /* Drop trailing NoSymbol */
-        if (darray_size(keysymList->syms) > 0)
+        अगर (darray_आकार(keysymList->syms) > 0)
             nonEmptyLevels = nLevels;
     }
-    if (nonEmptyLevels < nLevels)
+    अगर (nonEmptyLevels < nLevels)
         nLevels = nonEmptyLevels;
-    if (darray_size(groupi->levels) < nLevels)
+    अगर (darray_आकार(groupi->levels) < nLevels)
         darray_resize0(groupi->levels, nLevels);
 
     groupi->defined |= GROUP_FIELD_SYMS;
 
-    xkb_level_index_t level = 0;
-    for (ExprKeysymList *keysymList = (ExprKeysymList *) value;
+    xkb_level_सूचकांक_t level = 0;
+    क्रम (व्यंजक_Keysym_List *keysymList = (व्यंजक_Keysym_List *) मूल्य;
          keysymList && level < nLevels;
-         keysymList = (ExprKeysymList *) keysymList->common.next, level++) {
-        struct xkb_level *leveli = &darray_item(groupi->levels, level);
-        assert(leveli->num_syms == 0);
+         keysymList = (व्यंजक_Keysym_List *) keysymList->common.अग्र, level++) {
+        काष्ठा xkb_level *leveli = &darray_item(groupi->levels, level);
+        निश्चित(leveli->अंक_syms == 0);
 
-        if (unlikely(darray_size(keysymList->syms) > MAX_KEYSYMS_PER_LEVEL)) {
+        अगर (unlikely(darray_आकार(keysymList->syms) > MAX_KEYSYMS_PER_LEVEL)) {
             log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Key %s has too many keysyms for group %"PRIu32", "
                     "level %"PRIu32"; expected max %u, got: %u\n",
-                    KeyInfoText(info, keyi), ndx + 1, level + 1,
-                    MAX_KEYSYMS_PER_LEVEL, darray_size(keysymList->syms));
-            return false;
+                    कुंजी_Info_Text(info, keyi), ndx + 1, level + 1,
+                    MAX_KEYSYMS_PER_LEVEL, darray_आकार(keysymList->syms));
+            वापस false;
         }
 
-        leveli->num_syms = (xkb_keysym_count_t) darray_size(keysymList->syms);
-        switch (leveli->num_syms) {
-        case 0:
-            leveli->s.sym = XKB_KEY_NoSymbol;
-            break;
-        case 1:
+        leveli->अंक_syms = (xkb_keysym_गिनती_t) darray_आकार(keysymList->syms);
+        चयन (leveli->अंक_syms) {
+        हाल 0:
+            leveli->s.sym = XKB_कुंजी_No_प्रतीक;
+            अवरोध;
+        हाल 1:
             leveli->s.sym = darray_item(keysymList->syms, 0);
-            assert(leveli->s.sym != XKB_KEY_NoSymbol);
-            break;
-        default:
+            निश्चित(leveli->s.sym != XKB_कुंजी_No_प्रतीक);
+            अवरोध;
+        शेष:
             darray_shrink(keysymList->syms);
-            darray_steal(keysymList->syms, &leveli->s.syms, NULL);
-#ifndef NDEBUG
+            darray_steal(keysymList->syms, &leveli->s.syms, शून्य);
+#अगर_अघोषित न_संशोधन
             /* Canonical list: all NoSymbol were dropped */
-            for (xkb_keysym_count_t k = 0; k < leveli->num_syms; k++)
-                assert(leveli->s.syms[k] != XKB_KEY_NoSymbol);
-#endif
+            क्रम (xkb_keysym_गिनती_t k = 0; k < leveli->अंक_syms; k++)
+                निश्चित(leveli->s.syms[k] != XKB_कुंजी_No_प्रतीक);
+#पूर्ण_अगर
         }
     }
 
-    return true;
+    वापस true;
 }
 
-static bool
-AddActionsToKey(SymbolsInfo *info, KeyInfo *keyi, ExprDef *arrayNdx,
-                ExprDef *value)
+अटल bool
+Add_Actions_To_कुंजी(SymbolsInfo *info, कुंजी_Info *keyi, व्यंजक_Def *arrayNdx,
+                व्यंजक_Def *मूल्य)
 {
-    xkb_layout_index_t ndx = 0;
+    xkb_layout_सूचकांक_t ndx = 0;
 
-    if (!GetGroupIndex(info, keyi, arrayNdx, GROUP_FIELD_ACTS, &ndx))
-        return false;
+    अगर (!Get_Group_सूचकांक(info, keyi, arrayNdx, GROUP_FIELD_ACTS, &ndx))
+        वापस false;
 
     GroupInfo *groupi = &darray_item(keyi->groups, ndx);
 
-    if (value->common.type == STMT_EXPR_EMPTY_LIST) {
+    अगर (मूल्य->common.type == STMT_व्यंजक_EMPTY_LIST) {
         groupi->defined |= GROUP_FIELD_ACTS;
-        return true;
+        वापस true;
     }
 
-    if (value->common.type != STMT_EXPR_ACTION_LIST) {
+    अगर (मूल्य->common.type != STMT_व्यंजक_ACTION_LIST) {
         log_wsgo(info->ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
                  "Bad expression type (%d) for action list value; "
                  "Ignoring actions for group %"PRIu32" of %s\n",
-                 value->common.type, ndx, KeyInfoText(info, keyi));
-        return false;
+                 मूल्य->common.type, ndx, कुंजी_Info_Text(info, keyi));
+        वापस false;
     }
 
-    if (groupi->defined & GROUP_FIELD_ACTS) {
-        log_wsgo(info->ctx, XKB_WARNING_CONFLICTING_KEY_ACTION,
+    अगर (groupi->defined & GROUP_FIELD_ACTS) {
+        log_wsgo(info->ctx, XKB_WARNING_CONFLICTING_कुंजी_ACTION,
                  "Actions for key %s, group %"PRIu32" already defined\n",
-                 KeyInfoText(info, keyi), ndx);
-        return false;
+                 कुंजी_Info_Text(info, keyi), ndx);
+        वापस false;
     }
 
-    xkb_level_index_t nLevels = 0;
+    xkb_level_सूचकांक_t nLevels = 0;
     /* Contrary to keysyms with trailing `NoSymbol`, we cannot detect trailing
      * `NoAction()` now, because we need to parse the actions first. Jusr count
      * explicit actions for now. */
-    for (ParseCommon *p = &value->common; p; p = p->next)
+    क्रम (ParseCommon *p = &मूल्य->common; p; p = p->अग्र)
         nLevels++;
-    if (darray_size(groupi->levels) < nLevels)
+    अगर (darray_आकार(groupi->levels) < nLevels)
         darray_resize0(groupi->levels, nLevels);
 
     groupi->defined |= GROUP_FIELD_ACTS;
 
-    xkb_level_index_t level = 0;
-    xkb_level_index_t nonEmptyLevels = 0;
-    for (ExprActionList *actionList = (ExprActionList *) value;
+    xkb_level_सूचकांक_t level = 0;
+    xkb_level_सूचकांक_t nonEmptyLevels = 0;
+    क्रम (व्यंजक_Action_List *actionList = (व्यंजक_Action_List *) मूल्य;
          actionList;
-         actionList = (ExprActionList *) actionList->common.next, level++) {
-        struct xkb_level *leveli = &darray_item(groupi->levels, level);
-        assert(leveli->num_actions == 0);
+         actionList = (व्यंजक_Action_List *) actionList->common.अग्र, level++) {
+        काष्ठा xkb_level *leveli = &darray_item(groupi->levels, level);
+        निश्चित(leveli->अंक_actions == 0);
 
-        unsigned int num_actions = 0;
-        for (ExprDef *act = actionList->actions;
-             act; act = (ExprDef *) act->common.next)
-            num_actions++;
+        अचिन्हित पूर्णांक अंक_actions = 0;
+        क्रम (व्यंजक_Def *act = actionList->actions;
+             act; act = (व्यंजक_Def *) act->common.अग्र)
+            अंक_actions++;
 
-        if (unlikely(num_actions > MAX_ACTIONS_PER_LEVEL)) {
+        अगर (unlikely(अंक_actions > MAX_ACTIONS_PER_LEVEL)) {
             log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Key %s has too many actions for group %"PRIu32", "
                     "level %"PRIu32"; expected max %u, got: %u\n",
-                    KeyInfoText(info, keyi), ndx + 1, level + 1,
-                    MAX_ACTIONS_PER_LEVEL, num_actions);
-            return false;
+                    कुंजी_Info_Text(info, keyi), ndx + 1, level + 1,
+                    MAX_ACTIONS_PER_LEVEL, अंक_actions);
+            वापस false;
         }
 
         /* Parse actions and add only defined actions */
-        darray(union xkb_action) actions = darray_new();
-        for (ExprDef *act = actionList->actions;
-             act; act = (ExprDef *) act->common.next) {
-            union xkb_action toAct = { 0 };
-            const enum xkb_parser_error r =
+        darray(जोड़ xkb_action) actions = darray_new();
+        क्रम (व्यंजक_Def *act = actionList->actions;
+             act; act = (व्यंजक_Def *) act->common.अग्र) {
+            जोड़ xkb_action toAct = { 0 };
+            स्थिर क्रमागत xkb_parser_error r =
                 HandleActionDef(info->keymap_info, &info->default_actions,
                                 &info->mods, act, &toAct);
-            if (r != PARSER_SUCCESS) {
-                log_err(info->ctx, XKB_ERROR_INVALID_VALUE,
+            अगर (r != PARSER_SUCCESS) {
+                log_err(info->ctx, XKB_ERROR_INVALID_मूल्य,
                         "Illegal action definition for %s; "
                         "Action for group %"PRIu32"/level %"PRIu32" ignored\n",
-                        KeyInfoText(info, keyi), ndx + 1, level + 1);
-                if (r == PARSER_FATAL_ERROR) {
+                        कुंजी_Info_Text(info, keyi), ndx + 1, level + 1);
+                अगर (r == PARSER_FATAL_ERROR) {
                     darray_free(actions);
-                    return false;
-                } else {
+                    वापस false;
+                } अन्यथा {
                     /* Ensure action type is reset */
                     toAct.type = ACTION_TYPE_NONE;
                 }
             }
-            if (toAct.type == ACTION_TYPE_NONE) {
+            अगर (toAct.type == ACTION_TYPE_NONE) {
                 /* Drop action */
-            } else if (likely(num_actions == 1)) {
+            } अन्यथा अगर (likely(अंक_actions == 1)) {
                 /* Only one action: do not allocate */
-                leveli->num_actions = 1;
+                leveli->अंक_actions = 1;
                 leveli->a.action = toAct;
-                goto next_level;
-            } else {
+                जाओ अग्र_level;
+            } अन्यथा {
                 darray_append(actions, toAct);
             }
         }
-        if (darray_empty(actions)) {
-            leveli->num_actions = 0;
-        } else if (likely(darray_size(actions) > 1)) {
-            leveli->num_actions = (xkb_action_count_t) darray_size(actions);
+        अगर (darray_empty(actions)) {
+            leveli->अंक_actions = 0;
+        } अन्यथा अगर (likely(darray_आकार(actions) > 1)) {
+            leveli->अंक_actions = (xkb_action_गिनती_t) darray_आकार(actions);
             darray_shrink(actions);
-            darray_steal(actions, &leveli->a.actions, NULL);
-#ifndef NDEBUG
+            darray_steal(actions, &leveli->a.actions, शून्य);
+#अगर_अघोषित न_संशोधन
             /* Canonical list: all NoAction() were dropped */
-            for (xkb_action_count_t k = 0; k < leveli->num_actions; k++)
-                assert(leveli->a.actions[k].type != ACTION_TYPE_NONE);
-#endif
-        } else {
+            क्रम (xkb_action_गिनती_t k = 0; k < leveli->अंक_actions; k++)
+                निश्चित(leveli->a.actions[k].type != ACTION_TYPE_NONE);
+#पूर्ण_अगर
+        } अन्यथा {
             /* Unlikely: some actions were dropped and only one remains */
-            assert(num_actions > darray_size(actions));
-            leveli->num_actions = 1;
+            निश्चित(अंक_actions > darray_आकार(actions));
+            leveli->अंक_actions = 1;
             leveli->a.action = darray_item(actions, 0);
-            assert(leveli->a.action.type != ACTION_TYPE_NONE);
+            निश्चित(leveli->a.action.type != ACTION_TYPE_NONE);
             darray_free(actions);
         }
-next_level:
+अग्र_level:
         /*
          * Check trailing `NoAction()`, but count as empty level only if there
          * is no corresponding keysym.
          */
-        if (leveli->num_actions > 0 || leveli->num_syms > 0)
+        अगर (leveli->अंक_actions > 0 || leveli->अंक_syms > 0)
             nonEmptyLevels = level + 1;
     }
 
-    if (nonEmptyLevels < nLevels) {
+    अगर (nonEmptyLevels < nLevels) {
         /* Drop trailing `NoAction()`.
          * No need to clear dropped levels: there are no keysyms nor actions */
-        darray_size(groupi->levels) = nonEmptyLevels;
-        if (nonEmptyLevels > 0)
+        darray_आकार(groupi->levels) = nonEmptyLevels;
+        अगर (nonEmptyLevels > 0)
             darray_shrink(groupi->levels);
-        else
+        अन्यथा
             darray_free(groupi->levels);
     }
 
-    return true;
+    वापस true;
 }
 
-static const LookupEntry repeatEntries[] = {
-    { "true", KEY_REPEAT_YES },
-    { "yes", KEY_REPEAT_YES },
-    { "on", KEY_REPEAT_YES },
-    { "false", KEY_REPEAT_NO },
-    { "no", KEY_REPEAT_NO },
-    { "off", KEY_REPEAT_NO },
-    { "default", KEY_REPEAT_UNDEFINED },
-    { NULL, 0 }
+अटल स्थिर LookupEntry repeatEntries[] = {
+    { "true", कुंजी_REPEAT_YES },
+    { "yes", कुंजी_REPEAT_YES },
+    { "on", कुंजी_REPEAT_YES },
+    { "false", कुंजी_REPEAT_NO },
+    { "no", कुंजी_REPEAT_NO },
+    { "off", कुंजी_REPEAT_NO },
+    { "default", कुंजी_REPEAT_UNDEFINED },
+    { शून्य, 0 }
 };
 
 /** Handle overlay<N> = <key> entry */
-static bool
-ExprResolveOverlayEntry(const struct xkb_keymap_info *keymap_info,
-                        const char *field, const ExprDef *arrayNdx,
-                        const ExprDef *expr, KeyInfo *keyi,
-                        xkb_overlay_index_t *overlay_rtrn,
-                        const struct xkb_key **key_rtrn)
+अटल bool
+व्यंजक_Resolve_Overlay_Entry(स्थिर काष्ठा xkb_keymap_info *keymap_info,
+                        स्थिर अक्षर *field, स्थिर व्यंजक_Def *arrayNdx,
+                        स्थिर व्यंजक_Def *व्यंजक, कुंजी_Info *keyi,
+                        xkb_overlay_सूचकांक_t *overlay_rtrn,
+                        स्थिर काष्ठा xkb_कुंजी **कुंजी_rtrn)
 {
     /* Overlay index */
-    if (arrayNdx) {
+    अगर (arrayNdx) {
         log_err(keymap_info->keymap.ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Overlay field \"%s\" in %s does not support array index; "
                 "ignored\n",
-                field, KeyNameText(keymap_info->keymap.ctx, keyi->name));
-        return false;
+                field, कुंजी_Name_Text(keymap_info->keymap.ctx, keyi->name));
+        वापस false;
     }
-    static_assert(sizeof(xkb_overlay_index_t) == sizeof(uint8_t), "");
-    const size_t prefix = sizeof("overlay") - 1;
-    const size_t len = strlen(field + prefix);
+    static_assert(माप(xkb_overlay_सूचकांक_t) == माप(uint8_t), "");
+    स्थिर माप_प्रकार prefix = माप("overlay") - 1;
+    स्थिर माप_प्रकार len = म_माप(field + prefix);
     int64_t raw_overlay = XKB_OVERLAY_INVALID;
-    if (parse_dec_to_uint64_t(field + prefix, len, (uint64_t *)&raw_overlay)
-        != (int)len || raw_overlay < 1 ||
+    अगर (parse_dec_to_uint64_t(field + prefix, len, (uint64_t *)&raw_overlay)
+        != (पूर्णांक)len || raw_overlay < 1 ||
         raw_overlay > (int64_t)keymap_info->features.max_overlays) {
-        log_err(keymap_info->keymap.ctx, XKB_ERROR_UNSUPPORTED_OVERLAY_INDEX,
+        log_err(keymap_info->keymap.ctx, XKB_ERROR_UNSUPPORTED_OVERLAY_सूचकांक,
                 "Unsupported overlay index \"%s\" field for %s: "
                 "expected 1..%u, got: %"PRId64"; ignored\n",
-                field, KeyNameText(keymap_info->keymap.ctx, keyi->name),
+                field, कुंजी_Name_Text(keymap_info->keymap.ctx, keyi->name),
                 keymap_info->features.max_overlays, raw_overlay);
-        return false;
+        वापस false;
     }
-    *overlay_rtrn = (xkb_overlay_index_t)raw_overlay - 1;
+    *overlay_rtrn = (xkb_overlay_सूचकांक_t)raw_overlay - 1;
 
     /* Overlay key */
-    switch (expr->common.type) {
-    case STMT_EXPR_KEYNAME_LITERAL:
-        *key_rtrn = XkbKeyByName(&keymap_info->keymap, expr->key_name.key_name,
+    चयन (व्यंजक->common.type) {
+    हाल STMT_व्यंजक_KEYNAME_LITERAL:
+        *कुंजी_rtrn = Xkb_कुंजी_By_Name(&keymap_info->keymap, व्यंजक->कुंजी_name.कुंजी_name,
                                  false);
-        if (!*key_rtrn) {
+        अगर (!*कुंजी_rtrn) {
             log_err(keymap_info->keymap.ctx, XKB_WARNING_UNDEFINED_KEYCODE,
                     "Unknown key \"%s\" for field %s in %s\n",
-                    xkb_atom_text(keymap_info->keymap.ctx, expr->key_name.key_name),
-                    field, KeyNameText(keymap_info->keymap.ctx, keyi->name));
-            return false;
+                    xkb_atom_text(keymap_info->keymap.ctx, व्यंजक->कुंजी_name.कुंजी_name),
+                    field, कुंजी_Name_Text(keymap_info->keymap.ctx, keyi->name));
+            वापस false;
         }
-        return true;
-    case STMT_EXPR_IDENT: {
-        const char * const id =
-            xkb_atom_text(keymap_info->keymap.ctx, expr->ident.ident);
-        if (id && istreq(id, "none")) {
+        वापस true;
+    हाल STMT_व्यंजक_IDENT: {
+        स्थिर अक्षर * स्थिर id =
+            xkb_atom_text(keymap_info->keymap.ctx, व्यंजक->ident.ident);
+        अगर (id && istreq(id, "none")) {
             /* Explicitly no overlay (clear) */
-            *key_rtrn = NULL;
-            return true;
-        } else if (id && istreq(id, "any")) {
+            *कुंजी_rtrn = शून्य;
+            वापस true;
+        } अन्यथा अगर (id && istreq(id, "any")) {
             /* Implicitly no overlay */
-            *key_rtrn = NULL;
+            *कुंजी_rtrn = शून्य;
             *overlay_rtrn = XKB_OVERLAY_INVALID;
-            return true;
+            वापस true;
         }
-        log_err(keymap_info->keymap.ctx, XKB_ERROR_INVALID_VALUE,
+        log_err(keymap_info->keymap.ctx, XKB_ERROR_INVALID_मूल्य,
                 "Unsupported overlay value \"%s\" for field %s in %s\n",
-                id, field, KeyNameText(keymap_info->keymap.ctx, keyi->name));
-        return false;
+                id, field, कुंजी_Name_Text(keymap_info->keymap.ctx, keyi->name));
+        वापस false;
     }
-    default:
-        log_err(keymap_info->keymap.ctx, XKB_ERROR_INVALID_VALUE,
+    शेष:
+        log_err(keymap_info->keymap.ctx, XKB_ERROR_INVALID_मूल्य,
                 "Expected %s for field \"%s\" in %s, got: %s\n",
-                stmt_type_to_string(STMT_EXPR_KEYNAME_LITERAL),
-                field, KeyNameText(keymap_info->keymap.ctx, keyi->name),
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_to_string(STMT_व्यंजक_KEYNAME_LITERAL),
+                field, कुंजी_Name_Text(keymap_info->keymap.ctx, keyi->name),
+                stmt_type_to_string(व्यंजक->common.type));
+        वापस false;
     }
 }
 
-static bool
-SetSymbolsField(SymbolsInfo *info, KeyInfo *keyi, const char *field,
-                ExprDef *arrayNdx, ExprDef **value_ptr)
+अटल bool
+SetSymbolsField(SymbolsInfo *info, कुंजी_Info *keyi, स्थिर अक्षर *field,
+                व्यंजक_Def *arrayNdx, व्यंजक_Def **मूल्य_ptr)
 {
-    ExprDef * restrict const value = *value_ptr;
-    if (istreq(field, "type")) {
-        xkb_layout_index_t ndx = 0;
+    व्यंजक_Def * restrict स्थिर मूल्य = *मूल्य_ptr;
+    अगर (istreq(field, "type")) {
+        xkb_layout_सूचकांक_t ndx = 0;
         xkb_atom_t val = XKB_ATOM_NONE;
 
-        if (!ExprResolveString(info->ctx, value, &val)) {
+        अगर (!व्यंजक_Resolve_String(info->ctx, मूल्य, &val)) {
             log_err(info->ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                     "The type field of a key symbol map must be a string; "
                     "Ignoring illegal type definition\n");
-            return false;
+            वापस false;
         }
 
-        if (!arrayNdx) {
+        अगर (!arrayNdx) {
             keyi->default_type = val;
-            keyi->defined |= KEY_FIELD_DEFAULT_TYPE;
+            keyi->defined |= कुंजी_FIELD_DEFAULT_TYPE;
         }
-        else if (ExprResolveGroup(info->keymap_info, arrayNdx, false,
-                                  &ndx, NULL) != PARSER_SUCCESS) {
-            log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
+        अन्यथा अगर (व्यंजक_Resolve_Group(info->keymap_info, arrayNdx, false,
+                                  &ndx, शून्य) != PARSER_SUCCESS) {
+            log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_सूचकांक_2,
                     "Illegal group index for type of key %s; "
                     "Definition with non-integer array index ignored\n",
-                    KeyInfoText(info, keyi));
-            return false;
+                    कुंजी_Info_Text(info, keyi));
+            वापस false;
         }
-        else {
+        अन्यथा {
             ndx--;
-            if (ndx >= darray_size(keyi->groups)) {
+            अगर (ndx >= darray_आकार(keyi->groups)) {
                 /* Avoid clang-tidy false positive */
-                assert(darray_size(keyi->groups) < ndx + 1);
+                निश्चित(darray_आकार(keyi->groups) < ndx + 1);
                 darray_resize0(keyi->groups, ndx + 1);
             }
             darray_item(keyi->groups, ndx).type = val;
             darray_item(keyi->groups, ndx).defined |= GROUP_FIELD_TYPE;
         }
     }
-    else if (istreq(field, "symbols")) {
-        return AddSymbolsToKey(info, keyi, arrayNdx, value);
+    अन्यथा अगर (istreq(field, "symbols")) {
+        वापस Add_Symbols_To_कुंजी(info, keyi, arrayNdx, मूल्य);
     }
-    else if (istreq(field, "actions")) {
-        return AddActionsToKey(info, keyi, arrayNdx, value);
+    अन्यथा अगर (istreq(field, "actions")) {
+        वापस Add_Actions_To_कुंजी(info, keyi, arrayNdx, मूल्य);
     }
-    else if (istreq(field, "vmods") ||
+    अन्यथा अगर (istreq(field, "vmods") ||
              istreq(field, "virtualmods") ||
              istreq(field, "virtualmodifiers")) {
         xkb_mod_mask_t mask = 0;
 
-        if (!ExprResolveModMask(info->ctx, value, MOD_VIRT, &info->mods,
+        अगर (!व्यंजक_Resolve_Mod_Mask(info->ctx, मूल्य, MOD_VIRT, &info->mods,
                                 &mask)) {
             log_err(info->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK,
                     "Expected a virtual modifier mask, found %s; "
                     "Ignoring virtual modifiers definition for key %s\n",
-                    stmt_type_to_string(value->common.type),
-                    KeyInfoText(info, keyi));
-            return false;
+                    stmt_type_to_string(मूल्य->common.type),
+                    कुंजी_Info_Text(info, keyi));
+            वापस false;
         }
 
         keyi->vmodmap = mask;
-        keyi->defined |= KEY_FIELD_VMODMAP;
+        keyi->defined |= कुंजी_FIELD_VMODMAP;
     }
-    else if (istreq(field, "locking") ||
+    अन्यथा अगर (istreq(field, "locking") ||
              istreq(field, "lock") ||
              istreq(field, "locks")) {
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
                 XKB_WARNING_UNSUPPORTED_SYMBOLS_FIELD,
                 "Key behaviors not supported; "
                 "Ignoring locking specification for key %s\n",
-                KeyInfoText(info, keyi));
+                कुंजी_Info_Text(info, keyi));
     }
-    else if (istreq(field, "radiogroup") ||
+    अन्यथा अगर (istreq(field, "radiogroup") ||
              istreq(field, "permanentradiogroup") ||
              istreq(field, "allownone")) {
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
                 XKB_WARNING_UNSUPPORTED_SYMBOLS_FIELD,
                 "Radio groups not supported; "
                 "Ignoring radio group specification for key %s\n",
-                KeyInfoText(info, keyi));
+                कुंजी_Info_Text(info, keyi));
     }
-    else if (istreq_prefix("permanentoverlay", field)) {
+    अन्यथा अगर (istreq_prefix("permanentoverlay", field)) {
         /*
          * Permanent overlay is ineffectual and serves as documentation of the
          * hardware, so skip it entirely.
@@ -1558,236 +1558,236 @@ SetSymbolsField(SymbolsInfo *info, KeyInfo *keyi, const char *field,
                 XKB_WARNING_UNSUPPORTED_SYMBOLS_FIELD,
                 "Permanent overlays not supported; "
                 "Ignoring overlay specification for key %s\n",
-                KeyInfoText(info, keyi));
+                कुंजी_Info_Text(info, keyi));
     }
-    else if (istreq_prefix("overlay", field)) {
-        xkb_overlay_index_t overlay = XKB_OVERLAY_INVALID;
-        const struct xkb_key *key = NULL;
-        if (!ExprResolveOverlayEntry(info->keymap_info, field, arrayNdx,
-                                     *value_ptr, keyi, &overlay, &key))
-            return false;
-        if (overlay == XKB_OVERLAY_INVALID) {
+    अन्यथा अगर (istreq_prefix("overlay", field)) {
+        xkb_overlay_सूचकांक_t overlay = XKB_OVERLAY_INVALID;
+        स्थिर काष्ठा xkb_कुंजी *कुंजी = शून्य;
+        अगर (!व्यंजक_Resolve_Overlay_Entry(info->keymap_info, field, arrayNdx,
+                                     *मूल्य_ptr, keyi, &overlay, &कुंजी))
+            वापस false;
+        अगर (overlay == XKB_OVERLAY_INVALID) {
             /* Overlay has not explicit value: skip */
-            return true;
-        } else if (key && key->name == keyi->name) {
+            वापस true;
+        } अन्यथा अगर (कुंजी && कुंजी->name == keyi->name) {
             /* Do not overlay to the same key! */
             log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
                     XKB_LOG_MESSAGE_NO_ID,
                     "Cannot overlay a key to itself; "
                     "Ignoring overlay %u specification for key %s\n",
-                    overlay + 1, KeyInfoText(info, keyi));
-        } else {
-            const struct xkb_key *prev;
-            if (overlays_get(keyi, overlay, &prev)) {
+                    overlay + 1, कुंजी_Info_Text(info, keyi));
+        } अन्यथा {
+            स्थिर काष्ठा xkb_कुंजी *पूर्व;
+            अगर (overlays_get(keyi, overlay, &पूर्व)) {
                 /* Duplicate entry */
-                if (key != prev) {
+                अगर (कुंजी != पूर्व) {
                     /* Conflicting fields */
-                    log_warn(info->ctx, XKB_WARNING_CONFLICTING_KEY_FIELDS,
+                    log_warn(info->ctx, XKB_WARNING_CONFLICTING_कुंजी_FIELDS,
                              "Conflicting overlays defined in key %s; "
                              "use overlay%d=%s, ignore overlay%u=%s\n",
-                             KeyInfoText(info, keyi), overlay + 1,
-                             (prev
-                                 ? KeyNameText(info->ctx, prev->name)
+                             कुंजी_Info_Text(info, keyi), overlay + 1,
+                             (पूर्व
+                                 ? कुंजी_Name_Text(info->ctx, पूर्व->name)
                                  : "none"),
                              overlay + 1,
-                             (key
-                                 ? KeyNameText(info->ctx, key->name)
+                             (कुंजी
+                                 ? कुंजी_Name_Text(info->ctx, कुंजी->name)
                                  : "none"));
                 }
-            } else if (info->keymap_info->features.overlapping_overlays) {
+            } अन्यथा अगर (info->keymap_info->features.overlapping_overlays) {
                 /* Handle overlapping overlays mode */
-                if (!overlays_insert(keyi, overlay, key))
-                    return false;
-                keyi->defined |= KEY_FIELD_OVERLAY;
-            } else {
+                अगर (!overlays_जोड़ो(keyi, overlay, कुंजी))
+                    वापस false;
+                keyi->defined |= कुंजी_FIELD_OVERLAY;
+            } अन्यथा {
                 /* Handle disjoint overlays mode */
-                const xkb_overlay_mask_t mask = (xkb_overlay_mask_t)(1u << overlay);
-                if (!keyi->overlays || keyi->overlays_clear) {
+                स्थिर xkb_overlay_mask_t mask = (xkb_overlay_mask_t)(1u << overlay);
+                अगर (!keyi->overlays || keyi->overlays_clear) {
                     /* No overlay previously defined or different overlay cleared */
-                    if (key) {
+                    अगर (कुंजी) {
                         /* Replace any explicitly cleared overlay */
                         keyi->overlays = mask;
                         keyi->overlays_clear = false;
-                        keyi->overlay_key = key;
-                    } else {
+                        keyi->overlay_कुंजी = कुंजी;
+                    } अन्यथा {
                         /* Explicitly no overlay (clear) */
                         keyi->overlays |= mask;
                         keyi->overlays_clear = true;
                     }
-                    keyi->defined |= KEY_FIELD_OVERLAY;
-                } else if (keyi->overlays) {
-                    if (key) {
+                    keyi->defined |= कुंजी_FIELD_OVERLAY;
+                } अन्यथा अगर (keyi->overlays) {
+                    अगर (कुंजी) {
                         log_err(info->ctx, XKB_ERROR_OVERLAPPING_OVERLAY,
                                 "Overlapping overlays are not allowed in %s; "
                                 "use overlay%d=%s, ignore overlay%u=%s\n",
-                                KeyInfoText(info, keyi), keyi->overlays,
-                                KeyNameText(info->ctx, keyi->overlay_key->name),
-                                overlay + 1, KeyNameText(info->ctx, key->name));
-                        return !(info->keymap_info->strict &
-                                 PARSER_NO_FIELD_VALUE_MISMATCH);
-                    } else {
+                                कुंजी_Info_Text(info, keyi), keyi->overlays,
+                                कुंजी_Name_Text(info->ctx, keyi->overlay_कुंजी->name),
+                                overlay + 1, कुंजी_Name_Text(info->ctx, कुंजी->name));
+                        वापस !(info->keymap_info->strict &
+                                 PARSER_NO_FIELD_मूल्य_MISMATCH);
+                    } अन्यथा {
                         /* Ignore: the previous overlay is explicitly defined */
                     }
                 }
             }
         }
     }
-    else if (istreq(field, "repeating") ||
+    अन्यथा अगर (istreq(field, "repeating") ||
              istreq(field, "repeats") ||
              istreq(field, "repeat")) {
         uint32_t val = 0;
 
-        if (!ExprResolveEnum(info->ctx, value, &val, repeatEntries)) {
-            log_err(info->ctx, XKB_ERROR_INVALID_VALUE,
+        अगर (!व्यंजक_Resolve_Enum(info->ctx, मूल्य, &val, repeatEntries)) {
+            log_err(info->ctx, XKB_ERROR_INVALID_मूल्य,
                     "Illegal repeat setting for %s; "
                     "Non-boolean repeat setting ignored\n",
-                    KeyInfoText(info, keyi));
-            return false;
+                    कुंजी_Info_Text(info, keyi));
+            वापस false;
         }
 
-        keyi->repeat = (enum key_repeat) val;
-        keyi->defined |= KEY_FIELD_REPEAT;
+        keyi->repeat = (क्रमागत कुंजी_repeat) val;
+        keyi->defined |= कुंजी_FIELD_REPEAT;
     }
-    else if (istreq(field, "groupswrap") ||
+    अन्यथा अगर (istreq(field, "groupswrap") ||
              istreq(field, "wrapgroups")) {
         bool set = false;
 
-        if (!ExprResolveBoolean(info->ctx, value, &set)) {
-            log_err(info->ctx, XKB_ERROR_INVALID_VALUE,
+        अगर (!व्यंजक_Resolve_Boolean(info->ctx, मूल्य, &set)) {
+            log_err(info->ctx, XKB_ERROR_INVALID_मूल्य,
                     "Illegal groupsWrap setting for %s; "
                     "Non-boolean value ignored\n",
-                    KeyInfoText(info, keyi));
-            return false;
+                    कुंजी_Info_Text(info, keyi));
+            वापस false;
         }
 
         keyi->out_of_range_group_policy = (set)
             ? XKB_LAYOUT_OUT_OF_RANGE_WRAP
             : XKB_LAYOUT_OUT_OF_RANGE_CLAMP;
-        keyi->defined |= KEY_FIELD_GROUPINFO;
+        keyi->defined |= कुंजी_FIELD_GROUPINFO;
     }
-    else if (istreq(field, "groupsclamp") ||
+    अन्यथा अगर (istreq(field, "groupsclamp") ||
              istreq(field, "clampgroups")) {
         bool set = false;
 
-        if (!ExprResolveBoolean(info->ctx, value, &set)) {
-            log_err(info->ctx, XKB_ERROR_INVALID_VALUE,
+        अगर (!व्यंजक_Resolve_Boolean(info->ctx, मूल्य, &set)) {
+            log_err(info->ctx, XKB_ERROR_INVALID_मूल्य,
                     "Illegal groupsClamp setting for %s; "
                     "Non-boolean value ignored\n",
-                    KeyInfoText(info, keyi));
-            return false;
+                    कुंजी_Info_Text(info, keyi));
+            वापस false;
         }
 
         keyi->out_of_range_group_policy = (set)
             ? XKB_LAYOUT_OUT_OF_RANGE_CLAMP
             : XKB_LAYOUT_OUT_OF_RANGE_WRAP;
-        keyi->defined |= KEY_FIELD_GROUPINFO;
+        keyi->defined |= कुंजी_FIELD_GROUPINFO;
     }
-    else if (istreq(field, "groupsredirect") ||
+    अन्यथा अगर (istreq(field, "groupsredirect") ||
              istreq(field, "redirectgroups")) {
-        xkb_layout_index_t grp = 0;
+        xkb_layout_सूचकांक_t grp = 0;
         bool pending = false;
 
         // TODO: recover?
-        if (ExprResolveGroup(info->keymap_info, value, false, &grp, &pending) !=
+        अगर (व्यंजक_Resolve_Group(info->keymap_info, मूल्य, false, &grp, &pending) !=
             PARSER_SUCCESS && !pending) {
-            log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
+            log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_सूचकांक_2,
                     "Illegal group index for redirect of key %s; "
                     "Definition with non-integer group ignored\n",
-                    KeyInfoText(info, keyi));
-            return false;
+                    कुंजी_Info_Text(info, keyi));
+            वापस false;
         }
 
-        if (pending) {
+        अगर (pending) {
             keyi->out_of_range_pending_group = true;
-            const darray_size_t pending_index =
-                darray_size(*info->keymap_info->pending_computations);
+            स्थिर darray_आकार_t pending_सूचकांक =
+                darray_आकार(*info->keymap_info->pending_computations);
             darray_append(
                 *info->keymap_info->pending_computations,
-                (struct pending_computation) {
-                    .expr = *value_ptr,
+                (काष्ठा pending_computation) {
+                    .व्यंजक = *मूल्य_ptr,
                     .computed = false,
-                    .value = 0,
+                    .मूल्य = 0,
                 }
             );
-            *value_ptr = NULL;
-            static_assert(sizeof(keyi->out_of_range_group_number) ==
-                          sizeof(pending_index),
+            *मूल्य_ptr = शून्य;
+            static_assert(माप(keyi->out_of_range_group_संख्या) ==
+                          माप(pending_सूचकांक),
                           "Cannot save pending computation");
-            keyi->out_of_range_group_number = pending_index;
-        } else {
+            keyi->out_of_range_group_संख्या = pending_सूचकांक;
+        } अन्यथा {
             keyi->out_of_range_pending_group = false;
-            keyi->out_of_range_group_number = grp - 1;
+            keyi->out_of_range_group_संख्या = grp - 1;
         }
 
         keyi->out_of_range_group_policy = XKB_LAYOUT_OUT_OF_RANGE_REDIRECT;
-        keyi->defined |= KEY_FIELD_GROUPINFO;
+        keyi->defined |= कुंजी_FIELD_GROUPINFO;
     }
-    else {
+    अन्यथा {
         log_err(info->ctx, XKB_ERROR_UNKNOWN_FIELD,
                 "Unknown field \"%s\" in a key; definition ignored\n",
                 field);
-        return !(info->keymap_info->strict & PARSER_NO_UNKNOWN_KEY_FIELDS);
+        वापस !(info->keymap_info->strict & PARSER_NO_UNKNOWN_कुंजी_FIELDS);
     }
 
-    return true;
+    वापस true;
 }
 
-static bool
-SetGroupName(SymbolsInfo *info, ExprDef *arrayNdx, ExprDef *value,
-             enum merge_mode merge)
+अटल bool
+SetGroupName(SymbolsInfo *info, व्यंजक_Def *arrayNdx, व्यंजक_Def *मूल्य,
+             क्रमागत merge_mode merge)
 {
-    if (!arrayNdx) {
+    अगर (!arrayNdx) {
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
-                XKB_WARNING_MISSING_SYMBOLS_GROUP_NAME_INDEX,
+                XKB_WARNING_MISSING_SYMBOLS_GROUP_NAME_सूचकांक,
                 "You must specify an index when specifying a group name; "
                 "Group name definition without array subscript ignored\n");
-        return false;
+        वापस false;
     }
 
-    xkb_layout_index_t group = 0;
-    if (ExprResolveGroup(info->keymap_info, arrayNdx, false, &group, NULL) !=
+    xkb_layout_सूचकांक_t group = 0;
+    अगर (व्यंजक_Resolve_Group(info->keymap_info, arrayNdx, false, &group, शून्य) !=
         PARSER_SUCCESS) {
-        log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
+        log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_सूचकांक_2,
                 "Illegal index in group name definition; "
                 "Definition with non-integer array index ignored\n");
-        return false;
+        वापस false;
     }
 
     xkb_atom_t name = XKB_ATOM_NONE;
-    if (!ExprResolveString(info->ctx, value, &name)) {
+    अगर (!व्यंजक_Resolve_String(info->ctx, मूल्य, &name)) {
         log_err(info->ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Group name must be a string; "
                 "Illegal name for group %"PRIu32" ignored\n", group);
-        return false;
+        वापस false;
     }
 
-    xkb_layout_index_t group_to_use;
-    if (info->explicit_group == XKB_LAYOUT_INVALID) {
+    xkb_layout_सूचकांक_t group_to_use;
+    अगर (info->explicit_group == XKB_LAYOUT_INVALID) {
         group_to_use = group - 1;
     }
-    else if (group - 1 == 0) {
+    अन्यथा अगर (group - 1 == 0) {
         group_to_use = info->explicit_group;
     }
-    else {
+    अन्यथा {
         log_warn(info->ctx, XKB_WARNING_NON_BASE_GROUP_NAME,
                  "An explicit group was specified for the '%s' map, "
                  "but it provides a name for a group other than Group1 "
                  "(%"PRIu32"); Ignoring group name '%s'\n",
                  info->name, group,
                  xkb_atom_text(info->ctx, name));
-        return false;
+        वापस false;
     }
 
-    if (group_to_use >= darray_size(info->group_names)) {
+    अगर (group_to_use >= darray_आकार(info->group_names)) {
         /* Avoid clang-tidy false positive */
-        assert(darray_size(info->group_names) < group_to_use + 1);
+        निश्चित(darray_आकार(info->group_names) < group_to_use + 1);
         darray_resize0(info->group_names, group_to_use + 1);
-    } else {
-        const xkb_atom_t old_name = darray_item(info->group_names, group_to_use);
-        if (old_name != XKB_ATOM_NONE && old_name != name) {
-            const bool replace = (merge != MERGE_AUGMENT);
-            const xkb_atom_t use    = (replace ? name : old_name);
-            const xkb_atom_t ignore = (replace ? old_name : name);
+    } अन्यथा {
+        स्थिर xkb_atom_t old_name = darray_item(info->group_names, group_to_use);
+        अगर (old_name != XKB_ATOM_NONE && old_name != name) {
+            स्थिर bool replace = (merge != MERGE_AUGMENT);
+            स्थिर xkb_atom_t use    = (replace ? name : old_name);
+            स्थिर xkb_atom_t ignore = (replace ? old_name : name);
             log_warn(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                      "Multiple definitions of group %"PRIu32" name "
                      "in map '%s'; Using '%s', ignoring '%s'\n",
@@ -1799,95 +1799,95 @@ SetGroupName(SymbolsInfo *info, ExprDef *arrayNdx, ExprDef *value,
     }
     darray_item(info->group_names, group_to_use) = name;
 
-    return true;
+    वापस true;
 }
 
-static bool
+अटल bool
 HandleGlobalVar(SymbolsInfo *info, VarDef *stmt)
 {
-    const char *elem, *field;
-    ExprDef *arrayNdx;
+    स्थिर अक्षर *elem, *field;
+    व्यंजक_Def *arrayNdx;
     bool ret;
 
-    if (!ExprResolveLhs(info->ctx, stmt->name, &elem, &field, &arrayNdx))
-        return false;
+    अगर (!व्यंजक_Resolve_Lhs(info->ctx, stmt->name, &elem, &field, &arrayNdx))
+        वापस false;
 
-    if (elem && istreq(elem, "key")) {
-        KeyInfo temp = {0};
-        InitKeyInfo(info->ctx, &temp);
+    अगर (elem && istreq(elem, "key")) {
+        कुंजी_Info अस्थायी = {0};
+        Init_कुंजी_Info(info->ctx, &अस्थायी);
         /* Do not replace the whole key, only the current field */
-        temp.merge = (temp.merge == MERGE_REPLACE)
+        अस्थायी.merge = (अस्थायी.merge == MERGE_REPLACE)
             ? MERGE_OVERRIDE
             : stmt->merge;
-        ret = SetSymbolsField(info, &temp, field, arrayNdx, &stmt->value) &&
-              MergeKeys(info, &info->default_key, &temp, true);
-        ClearKeyInfo(&temp);
+        ret = SetSymbolsField(info, &अस्थायी, field, arrayNdx, &stmt->मूल्य) &&
+              Merge_कुंजियाँ(info, &info->default_कुंजी, &अस्थायी, true);
+        Clear_कुंजी_Info(&अस्थायी);
     }
-    else if (!elem && (istreq(field, "name") ||
+    अन्यथा अगर (!elem && (istreq(field, "name") ||
                        istreq(field, "groupname"))) {
-        ret = SetGroupName(info, arrayNdx, stmt->value, stmt->merge);
+        ret = SetGroupName(info, arrayNdx, stmt->मूल्य, stmt->merge);
     }
-    else if (!elem && (istreq(field, "groupswrap") ||
+    अन्यथा अगर (!elem && (istreq(field, "groupswrap") ||
                        istreq(field, "wrapgroups"))) {
         log_err(info->ctx, XKB_WARNING_UNSUPPORTED_SYMBOLS_FIELD,
                 "Global \"groupswrap\" not supported; Ignored\n");
         ret = true;
     }
-    else if (!elem && (istreq(field, "groupsclamp") ||
+    अन्यथा अगर (!elem && (istreq(field, "groupsclamp") ||
                        istreq(field, "clampgroups"))) {
         log_err(info->ctx, XKB_WARNING_UNSUPPORTED_SYMBOLS_FIELD,
                 "Global \"groupsclamp\" not supported; Ignored\n");
         ret = true;
     }
-    else if (!elem && (istreq(field, "groupsredirect") ||
+    अन्यथा अगर (!elem && (istreq(field, "groupsredirect") ||
                        istreq(field, "redirectgroups"))) {
         log_err(info->ctx, XKB_WARNING_UNSUPPORTED_SYMBOLS_FIELD,
                 "Global \"groupsredirect\" not supported; Ignored\n");
         ret = true;
     }
-    else if (!elem && istreq(field, "allownone")) {
+    अन्यथा अगर (!elem && istreq(field, "allownone")) {
         log_err(info->ctx, XKB_WARNING_UNSUPPORTED_SYMBOLS_FIELD,
                 "Radio groups not supported; "
                 "Ignoring \"allownone\" specification\n");
         ret = true;
     }
-    else if (elem) {
+    अन्यथा अगर (elem) {
         ret = (SetDefaultActionField(info->keymap_info, &info->default_actions,
                                      &info->mods, elem, field, arrayNdx,
-                                     &stmt->value, stmt->merge) !=
+                                     &stmt->मूल्य, stmt->merge) !=
                PARSER_FATAL_ERROR);
-    } else {
+    } अन्यथा {
         log_err(info->ctx, XKB_ERROR_UNKNOWN_DEFAULT_FIELD,
                 "Default defined for unknown field \"%s\"; Ignored\n", field);
-        return !(info->keymap_info->strict &
+        वापस !(info->keymap_info->strict &
                  PARSER_NO_UNKNOWN_SYMBOLS_GLOBAL_FIELDS);
     }
 
-    return ret;
+    वापस ret;
 }
 
-static bool
-HandleSymbolsBody(SymbolsInfo *info, VarDef *def, KeyInfo *keyi)
+अटल bool
+HandleSymbolsBody(SymbolsInfo *info, VarDef *def, कुंजी_Info *keyi)
 {
     bool all_valid_entries = true;
 
-    for (; def; def = (VarDef *) def->common.next) {
-        const char *field;
-        ExprDef *arrayNdx;
+    क्रम (; def; def = (VarDef *) def->common.अग्र) {
+        स्थिर अक्षर *field;
+        व्यंजक_Def *arrayNdx;
         bool ok = true;
 
-        if (!def->name) {
-            if (unlikely(!def->value) || def->value->common.type != STMT_EXPR_ACTION_LIST)
+        अगर (!def->name) {
+            अगर (unlikely(!def->मूल्य) || def->मूल्य->common.type != STMT_व्यंजक_ACTION_LIST)
                 field = "symbols"; /* Default to symbols field */
-            else
+            अन्यथा
                 field = "actions";
-            arrayNdx = NULL;
+            arrayNdx = शून्य;
         }
-        else {
-            const char *elem;
-            ok = ExprResolveLhs(info->ctx, def->name, &elem, &field,
+        अन्यथा {
+            स्थिर अक्षर *elem;
+            ok = व्यंजक_Resolve_Lhs(info->ctx, def->name, &elem, &field,
                                 &arrayNdx);
-            if (ok && elem) {
+            अगर (ok && elem) {
                 log_err(info->ctx, XKB_ERROR_GLOBAL_DEFAULTS_WRONG_SCOPE,
                         "Cannot set global defaults for \"%s\" element within "
                         "a key statement: move statements to the global file "
@@ -1897,180 +1897,180 @@ HandleSymbolsBody(SymbolsInfo *info, VarDef *def, KeyInfo *keyi)
             }
         }
 
-        if (unlikely(!def->value)) {
+        अगर (unlikely(!def->मूल्य)) {
             log_err(info->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
                     "Could not allocate the value of field \"%s\". "
                     "Statement ignored.\n", field);
             ok = false;
         }
 
-        if (!ok || !SetSymbolsField(info, keyi, field, arrayNdx, &def->value))
+        अगर (!ok || !SetSymbolsField(info, keyi, field, arrayNdx, &def->मूल्य))
             all_valid_entries = false;
     }
 
-    return all_valid_entries;
+    वापस all_valid_entries;
 }
 
-static bool
-SetExplicitGroup(SymbolsInfo *info, KeyInfo *keyi)
+अटल bool
+SetExplicitGroup(SymbolsInfo *info, कुंजी_Info *keyi)
 {
-    xkb_layout_index_t i;
+    xkb_layout_सूचकांक_t i;
     GroupInfo *groupi;
     bool warn = false;
 
-    if (info->explicit_group == XKB_LAYOUT_INVALID)
-        return true;
+    अगर (info->explicit_group == XKB_LAYOUT_INVALID)
+        वापस true;
 
     darray_enumerate_from(i, groupi, keyi->groups, 1) {
-        if (groupi->defined) {
+        अगर (groupi->defined) {
             warn = true;
             ClearGroupInfo(groupi);
             InitGroupInfo(groupi);
         }
     }
 
-    if (warn) {
+    अगर (warn) {
         log_warn(info->ctx, XKB_WARNING_MULTIPLE_GROUPS_AT_ONCE,
                  "For the map %s the explicit group %"PRIu32" is specified, "
                  "but key %s has more than one group defined; "
                  "All groups except first one will be ignored\n",
-                 info->name, info->explicit_group + 1, KeyInfoText(info, keyi));
+                 info->name, info->explicit_group + 1, कुंजी_Info_Text(info, keyi));
     }
 
     darray_resize0(keyi->groups, info->explicit_group + 1);
-    if (info->explicit_group > 0) {
+    अगर (info->explicit_group > 0) {
         darray_item(keyi->groups, info->explicit_group) =
             darray_item(keyi->groups, 0);
         InitGroupInfo(&darray_item(keyi->groups, 0));
     }
 
-    return true;
+    वापस true;
 }
 
-static bool
+अटल bool
 HandleSymbolsDef(SymbolsInfo *info, SymbolsDef *stmt)
 {
-    KeyInfo keyi;
+    कुंजी_Info keyi;
 
-    keyi = info->default_key;
+    keyi = info->default_कुंजी;
     darray_init(keyi.groups);
-    darray_copy(keyi.groups, info->default_key.groups);
-    for (xkb_layout_index_t i = 0; i < darray_size(keyi.groups); i++)
+    darray_copy(keyi.groups, info->default_कुंजी.groups);
+    क्रम (xkb_layout_सूचकांक_t i = 0; i < darray_आकार(keyi.groups); i++)
         CopyGroupInfo(&darray_item(keyi.groups, i),
-                      &darray_item(info->default_key.groups, i));
+                      &darray_item(info->default_कुंजी.groups, i));
     keyi.merge = stmt->merge;
-    keyi.name = stmt->keyName;
+    keyi.name = stmt->कुंजी_Name;
 
-    if (HandleSymbolsBody(info, stmt->symbols, &keyi) &&
+    अगर (HandleSymbolsBody(info, stmt->symbols, &keyi) &&
         SetExplicitGroup(info, &keyi) &&
-        AddKeySymbols(info, &keyi, true)) {
-        return true;
+        Add_कुंजी_Symbols(info, &keyi, true)) {
+        वापस true;
     }
 
-    ClearKeyInfo(&keyi);
-    info->errorCount++;
-    return false;
+    Clear_कुंजी_Info(&keyi);
+    info->error_गिनती++;
+    वापस false;
 }
 
-static bool
+अटल bool
 HandleModMapDef(SymbolsInfo *info, ModMapDef *def)
 {
     ModMapEntry tmp;
-    struct xkb_context *ctx = info->ctx;
+    काष्ठा xkb_context *ctx = info->ctx;
 
-    if (!ExprResolveModMask(ctx, def->modifiers, MOD_REAL, &info->mods, &tmp.mods)) {
+    अगर (!व्यंजक_Resolve_Mod_Mask(ctx, def->modifiers, MOD_REAL, &info->mods, &tmp.mods)) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "Illegal modifier map definition: invalid modifier mask\n");
-        return false;
+        वापस false;
     }
 
     /*
      * NOTE: parser.y accepts only identifiers for v1 keymap format,
      * so no further check is needed (e.g. no operation nor numeric values).
      */
-    assert(info->keymap_info->keymap.format != XKB_KEYMAP_FORMAT_TEXT_V1 ||
-           def->modifiers->common.type == STMT_EXPR_IDENT);
+    निश्चित(info->keymap_info->keymap.format != XKB_KEYMAP_FORMAT_TEXT_V1 ||
+           def->modifiers->common.type == STMT_व्यंजक_IDENT);
 
     bool ok = true;
     tmp.merge = def->merge;
 
-    for (ExprDef *key = def->keys; key; key = (ExprDef *) key->common.next) {
-        if (key->common.type == STMT_EXPR_KEYNAME_LITERAL) {
-            tmp.haveSymbol = false;
-            tmp.u.keyName = key->key_name.key_name;
+    क्रम (व्यंजक_Def *कुंजी = def->कुंजियाँ; कुंजी; कुंजी = (व्यंजक_Def *) कुंजी->common.अग्र) {
+        अगर (कुंजी->common.type == STMT_व्यंजक_KEYNAME_LITERAL) {
+            tmp.have_प्रतीक = false;
+            tmp.u.कुंजी_Name = कुंजी->कुंजी_name.कुंजी_name;
         }
-        else if (key->common.type == STMT_EXPR_KEYSYM_LITERAL) {
-            if (key->keysym.keysym == XKB_KEY_NoSymbol) {
+        अन्यथा अगर (कुंजी->common.type == STMT_व्यंजक_KEYSYM_LITERAL) {
+            अगर (कुंजी->keysym.keysym == XKB_कुंजी_No_प्रतीक) {
                 /* Invalid keysym: ignore. Error message already printed */
-                continue;
-            } else {
-                tmp.haveSymbol = true;
-                tmp.u.keySym = key->keysym.keysym;
+                जारी;
+            } अन्यथा {
+                tmp.have_प्रतीक = true;
+                tmp.u.कुंजी_Sym = कुंजी->keysym.keysym;
             }
         }
-        else {
+        अन्यथा {
             log_err(info->ctx, XKB_ERROR_INVALID_MODMAP_ENTRY,
                     "Modmap entries may contain only key names or keysyms; "
                     "Illegal definition for %s modifier mask ignored\n",
                     ModMaskText(info->ctx, MOD_REAL, &info->mods, tmp.mods));
-            continue;
+            जारी;
         }
 
         ok = AddModMapEntry(info, &tmp) && ok;
     }
-    return ok;
+    वापस ok;
 }
 
-static void
+अटल व्योम
 HandleSymbolsFile(SymbolsInfo *info, XkbFile *file)
 {
     bool ok;
 
-    free(info->name);
+    मुक्त(info->name);
     info->name = strdup_safe(file->name);
 
-    for (ParseCommon *stmt = file->defs; stmt; stmt = stmt->next) {
-        switch (stmt->type) {
-        case STMT_INCLUDE:
+    क्रम (ParseCommon *stmt = file->defs; stmt; stmt = stmt->अग्र) {
+        चयन (stmt->type) {
+        हाल STMT_INCLUDE:
             ok = HandleIncludeSymbols(info, (IncludeStmt *) stmt);
-            break;
-        case STMT_SYMBOLS:
+            अवरोध;
+        हाल STMT_SYMBOLS:
             ok = HandleSymbolsDef(info, (SymbolsDef *) stmt);
-            break;
-        case STMT_VAR:
+            अवरोध;
+        हाल STMT_VAR:
             ok = HandleGlobalVar(info, (VarDef *) stmt);
-            break;
-        case STMT_VMOD:
+            अवरोध;
+        हाल STMT_VMOD:
             ok = HandleVModDef(info->ctx, &info->mods, (VModDef *) stmt);
-            break;
-        case STMT_MODMAP:
+            अवरोध;
+        हाल STMT_MODMAP:
             ok = HandleModMapDef(info, (ModMapDef *) stmt);
-            break;
-        case STMT_UNKNOWN_DECLARATION:
-        case STMT_UNKNOWN_COMPOUND:
+            अवरोध;
+        हाल STMT_UNKNOWN_DECLARATION:
+        हाल STMT_UNKNOWN_COMPOUND:
             log_err(info->ctx, XKB_ERROR_UNKNOWN_STATEMENT,
                     "Unsupported symbols %s statement \"%s\"; Ignoring\n",
                     (stmt->type == STMT_UNKNOWN_COMPOUND
                         ? "compound" : "declaration"),
                     ((UnknownStatement *)stmt)->name);
             ok = !(info->keymap_info->strict & PARSER_NO_UNKNOWN_STATEMENTS);
-            break;
-        default:
+            अवरोध;
+        शेष:
             log_err(info->ctx, XKB_ERROR_WRONG_STATEMENT_TYPE,
                     "Symbols files may not include other types; "
                     "Ignoring %s\n", stmt_type_to_string(stmt->type));
             ok = false;
-            break;
+            अवरोध;
         }
 
-        if (!ok)
-            info->errorCount++;
+        अगर (!ok)
+            info->error_गिनती++;
 
-        if (info->errorCount > 10) {
+        अगर (info->error_गिनती > 10) {
             log_err(info->ctx, XKB_ERROR_INVALID_XKB_SYNTAX,
                     "Abandoning symbols file \"%s\"\n",
                     safe_map_name(file->name));
-            break;
+            अवरोध;
         }
     }
 }
@@ -2085,41 +2085,41 @@ HandleSymbolsFile(SymbolsInfo *info, XkbFile *file)
  * is chosen first by lowest group in which the keysym appears, than
  * by lowest level and than by lowest key code.
  */
-static struct xkb_key *
-FindKeyForSymbol(struct xkb_keymap *keymap, xkb_keysym_t sym)
+अटल काष्ठा xkb_कुंजी *
+Find_कुंजी_For_प्रतीक(काष्ठा xkb_keymap *keymap, xkb_keysym_t sym)
 {
     bool got_one_group;
-    xkb_layout_index_t group = 0;
-    do {
-        xkb_level_index_t level = 0;
+    xkb_layout_सूचकांक_t group = 0;
+    करो {
+        xkb_level_सूचकांक_t level = 0;
         got_one_group = false;
         bool got_one_level;
-        do {
+        करो {
             got_one_level = false;
-            struct xkb_key *key;
-            xkb_keys_foreach(key, keymap) {
-                if (group < key->num_groups &&
-                    level < XkbKeyNumLevels(key, group)) {
+            काष्ठा xkb_कुंजी *कुंजी;
+            xkb_कुंजियाँ_foreach(कुंजी, keymap) {
+                अगर (group < कुंजी->अंक_groups &&
+                    level < Xkb_कुंजी_अंक_Levels(कुंजी, group)) {
                     got_one_group = got_one_level = true;
-                    const xkb_keysym_count_t num_syms =
-                        key->groups[group].levels[level].num_syms;
-                    if (num_syms > 1) {
-                        for (xkb_keysym_count_t k = 0; k < num_syms; k++) {
-                            if (key->groups[group].levels[level].s.syms[k] == sym)
-                                return key;
+                    स्थिर xkb_keysym_गिनती_t अंक_syms =
+                        कुंजी->groups[group].levels[level].अंक_syms;
+                    अगर (अंक_syms > 1) {
+                        क्रम (xkb_keysym_गिनती_t k = 0; k < अंक_syms; k++) {
+                            अगर (कुंजी->groups[group].levels[level].s.syms[k] == sym)
+                                वापस कुंजी;
                         }
-                    } else if (num_syms &&
-                               key->groups[group].levels[level].s.sym == sym) {
-                        return key;
+                    } अन्यथा अगर (अंक_syms &&
+                               कुंजी->groups[group].levels[level].s.sym == sym) {
+                        वापस कुंजी;
                     }
                 }
             }
             level++;
-        } while (got_one_level);
+        } जबतक (got_one_level);
         group++;
-    } while (got_one_group);
+    } जबतक (got_one_group);
 
-    return NULL;
+    वापस शून्य;
 }
 
 /*
@@ -2134,104 +2134,104 @@ FindKeyForSymbol(struct xkb_keymap *keymap, xkb_keysym_t sym)
  *
  * FIXME: Decide how to handle multiple-syms-per-level, and do it.
  */
-static xkb_atom_t
-FindAutomaticType(struct xkb_context *ctx, GroupInfo *groupi)
+अटल xkb_atom_t
+FindAutomaticType(काष्ठा xkb_context *ctx, GroupInfo *groupi)
 {
     xkb_keysym_t sym0, sym1;
-    const xkb_level_index_t width = darray_size(groupi->levels);
+    स्थिर xkb_level_सूचकांक_t width = darray_आकार(groupi->levels);
 
-#define GET_SYM(level) \
-    (darray_item(groupi->levels, level).num_syms == 0 ? \
-        XKB_KEY_NoSymbol : \
-     darray_item(groupi->levels, level).num_syms == 1 ? \
+#घोषणा GET_SYM(level) \
+    (darray_item(groupi->levels, level).अंक_syms == 0 ? \
+        XKB_कुंजी_No_प्रतीक : \
+     darray_item(groupi->levels, level).अंक_syms == 1 ? \
         darray_item(groupi->levels, level).s.sym : \
      /* num_syms > 1 */ \
         darray_item(groupi->levels, level).s.syms[0])
 
-    if (width == 1 || width <= 0)
-        return xkb_atom_intern_literal(ctx, "ONE_LEVEL");
+    अगर (width == 1 || width <= 0)
+        वापस xkb_atom_intern_literal(ctx, "ONE_LEVEL");
 
     sym0 = GET_SYM(0);
     sym1 = GET_SYM(1);
 
-    if (width == 2) {
-        if (xkb_keysym_is_lower(sym0) && xkb_keysym_is_upper_or_title(sym1))
-            return xkb_atom_intern_literal(ctx, "ALPHABETIC");
+    अगर (width == 2) {
+        अगर (xkb_keysym_is_lower(sym0) && xkb_keysym_is_upper_or_title(sym1))
+            वापस xkb_atom_intern_literal(ctx, "ALPHABETIC");
 
-        if (xkb_keysym_is_keypad(sym0) || xkb_keysym_is_keypad(sym1))
-            return xkb_atom_intern_literal(ctx, "KEYPAD");
+        अगर (xkb_keysym_is_keypad(sym0) || xkb_keysym_is_keypad(sym1))
+            वापस xkb_atom_intern_literal(ctx, "KEYPAD");
 
-        return xkb_atom_intern_literal(ctx, "TWO_LEVEL");
+        वापस xkb_atom_intern_literal(ctx, "TWO_LEVEL");
     }
 
-    if (width <= 4) {
-        if (xkb_keysym_is_lower(sym0) && xkb_keysym_is_upper_or_title(sym1)) {
+    अगर (width <= 4) {
+        अगर (xkb_keysym_is_lower(sym0) && xkb_keysym_is_upper_or_title(sym1)) {
             xkb_keysym_t sym2, sym3;
             sym2 = GET_SYM(2);
-            sym3 = (width == 4 ? GET_SYM(3) : XKB_KEY_NoSymbol);
+            sym3 = (width == 4 ? GET_SYM(3) : XKB_कुंजी_No_प्रतीक);
 
-            if (xkb_keysym_is_lower(sym2) && xkb_keysym_is_upper_or_title(sym3))
-                return xkb_atom_intern_literal(ctx, "FOUR_LEVEL_ALPHABETIC");
+            अगर (xkb_keysym_is_lower(sym2) && xkb_keysym_is_upper_or_title(sym3))
+                वापस xkb_atom_intern_literal(ctx, "FOUR_LEVEL_ALPHABETIC");
 
-            return xkb_atom_intern_literal(ctx, "FOUR_LEVEL_SEMIALPHABETIC");
+            वापस xkb_atom_intern_literal(ctx, "FOUR_LEVEL_SEMIALPHABETIC");
         }
 
-        if (xkb_keysym_is_keypad(sym0) || xkb_keysym_is_keypad(sym1))
-            return xkb_atom_intern_literal(ctx, "FOUR_LEVEL_KEYPAD");
+        अगर (xkb_keysym_is_keypad(sym0) || xkb_keysym_is_keypad(sym1))
+            वापस xkb_atom_intern_literal(ctx, "FOUR_LEVEL_KEYPAD");
 
-        return xkb_atom_intern_literal(ctx, "FOUR_LEVEL");
+        वापस xkb_atom_intern_literal(ctx, "FOUR_LEVEL");
     }
 
-    return XKB_ATOM_NONE;
+    वापस XKB_ATOM_NONE;
 
-#undef GET_SYM
+#अघोषित GET_SYM
 }
 
-static const struct xkb_key_type *
-FindTypeForGroup(struct xkb_keymap *keymap, KeyInfo *keyi,
-                 xkb_layout_index_t group, bool *explicit_type)
+अटल स्थिर काष्ठा xkb_कुंजी_type *
+FindTypeForGroup(काष्ठा xkb_keymap *keymap, कुंजी_Info *keyi,
+                 xkb_layout_सूचकांक_t group, bool *explicit_type)
 {
     GroupInfo *groupi = &darray_item(keyi->groups, group);
     xkb_atom_t type_name = groupi->type;
 
     *explicit_type = true;
 
-    if (type_name == XKB_ATOM_NONE) {
-        if (keyi->default_type != XKB_ATOM_NONE) {
+    अगर (type_name == XKB_ATOM_NONE) {
+        अगर (keyi->default_type != XKB_ATOM_NONE) {
             type_name = keyi->default_type;
         }
-        else {
+        अन्यथा {
             type_name = FindAutomaticType(keymap->ctx, groupi);
-            if (type_name != XKB_ATOM_NONE)
+            अगर (type_name != XKB_ATOM_NONE)
                 *explicit_type = false;
         }
     }
 
-    if (type_name == XKB_ATOM_NONE) {
-        log_warn(keymap->ctx, XKB_WARNING_CANNOT_INFER_KEY_TYPE,
+    अगर (type_name == XKB_ATOM_NONE) {
+        log_warn(keymap->ctx, XKB_WARNING_CANNOT_INFER_कुंजी_TYPE,
                  "Couldn't find an automatic type for key '%s' "
                  "group %"PRIu32" with %u levels; Using the default type\n",
-                 KeyNameText(keymap->ctx, keyi->name), group + 1,
-                 darray_size(groupi->levels));
-        goto use_default;
+                 कुंजी_Name_Text(keymap->ctx, keyi->name), group + 1,
+                 darray_आकार(groupi->levels));
+        जाओ use_default;
     }
 
-    darray_size_t i;
-    for (i = 0; i < keymap->num_types; i++)
-        if (keymap->types[i].name == type_name)
-            break;
+    darray_आकार_t i;
+    क्रम (i = 0; i < keymap->अंक_types; i++)
+        अगर (keymap->types[i].name == type_name)
+            अवरोध;
 
-    if (i >= keymap->num_types) {
-        log_warn(keymap->ctx, XKB_WARNING_UNDEFINED_KEY_TYPE,
+    अगर (i >= keymap->अंक_types) {
+        log_warn(keymap->ctx, XKB_WARNING_UNDEFINED_कुंजी_TYPE,
                  "The type \"%s\" for key '%s' group %"PRIu32" "
                  "was not previously defined; Using the default type\n",
                  xkb_atom_text(keymap->ctx, type_name),
-                 KeyNameText(keymap->ctx, keyi->name), group + 1);
-        goto use_default;
+                 कुंजी_Name_Text(keymap->ctx, keyi->name), group + 1);
+        जाओ use_default;
     }
 
     keymap->types[i].required = true;
-    return &keymap->types[i];
+    वापस &keymap->types[i];
 
 use_default:
     /*
@@ -2239,53 +2239,53 @@ use_default:
      * ONE_LEVEL or at least some default one-level type.
      */
     keymap->types[0].required = true;
-    return &keymap->types[0];
+    वापस &keymap->types[0];
 }
 
-static bool
-CopySymbolsDefToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info,
-                       KeyInfo *keyi)
+अटल bool
+CopySymbolsDefToKeymap(काष्ठा xkb_keymap *keymap, SymbolsInfo *info,
+                       कुंजी_Info *keyi)
 {
-    struct xkb_key *key;
+    काष्ठा xkb_कुंजी *कुंजी;
     GroupInfo *groupi;
-    const GroupInfo *group0;
-    xkb_layout_index_t i;
+    स्थिर GroupInfo *group0;
+    xkb_layout_सूचकांक_t i;
 
     /*
      * The name is guaranteed to be real and not an alias (see
      * AddKeySymbols), so 'false' is safe here.
      */
-    key = XkbKeyByName(keymap, keyi->name, false);
-    if (!key) {
+    कुंजी = Xkb_कुंजी_By_Name(keymap, keyi->name, false);
+    अगर (!कुंजी) {
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_DETAILED,
                 XKB_WARNING_UNDEFINED_KEYCODE,
                 "Key %s not found in keycodes; Symbols ignored\n",
-                KeyInfoText(info, keyi));
-        return false;
+                कुंजी_Info_Text(info, keyi));
+        वापस false;
     }
 
     /* Find the range of groups we need. */
-    key->num_groups = 0;
+    कुंजी->अंक_groups = 0;
     darray_enumerate(i, groupi, keyi->groups) {
         /* Skip groups that have no levels and no explicit type.
          * Such group would be filled with `NoSymbol` anyway. */
-        const bool has_explicit_type = (keyi->defined & KEY_FIELD_DEFAULT_TYPE)
+        स्थिर bool has_explicit_type = (keyi->defined & कुंजी_FIELD_DEFAULT_TYPE)
                                     || (groupi->defined & GROUP_FIELD_TYPE);
-        if (darray_size(groupi->levels) > 0 || has_explicit_type)
-            key->num_groups = i + 1;
-        if (has_explicit_type)
-            key->explicit |= EXPLICIT_TYPES;
+        अगर (darray_आकार(groupi->levels) > 0 || has_explicit_type)
+            कुंजी->अंक_groups = i + 1;
+        अगर (has_explicit_type)
+            कुंजी->explicit |= EXPLICIT_TYPES;
     }
 
-    if (key->num_groups <= 0) {
+    अगर (कुंजी->अंक_groups <= 0) {
         /* A key with no group may still have other fields defined */
-        if (keyi->defined)
-            goto key_fields;
-        else
-            return false;
+        अगर (keyi->defined)
+            जाओ कुंजी_fields;
+        अन्यथा
+            वापस false;
     }
 
-    darray_resize(keyi->groups, key->num_groups);
+    darray_resize(keyi->groups, कुंजी->अंक_groups);
 
     /*
      * If there are empty groups between non-empty ones, fill them with data
@@ -2294,44 +2294,44 @@ CopySymbolsDefToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info,
      */
     group0 = &darray_item(keyi->groups, 0);
     darray_foreach_from(groupi, keyi->groups, 1) {
-        if (groupi->defined)
-            continue;
+        अगर (groupi->defined)
+            जारी;
 
         CopyGroupInfo(groupi, group0);
     }
 
-    key->groups = calloc(key->num_groups, sizeof(*key->groups));
-    assert(darray_size(keyi->groups) == key->num_groups);
+    कुंजी->groups = सुस्मृति(कुंजी->अंक_groups, माप(*कुंजी->groups));
+    निश्चित(darray_आकार(keyi->groups) == कुंजी->अंक_groups);
 
     /* Find and assign the groups' types in the keymap. */
     darray_enumerate(i, groupi, keyi->groups) {
-        #ifdef __clang__
+        #अगर_घोषित __clang__
         /* Make clang-tidy happy */
-        __builtin_assume(i < key->num_groups);
-        #endif
+        __builtin_assume(i < कुंजी->अंक_groups);
+        #पूर्ण_अगर
         bool explicit_type = false;
-        const struct xkb_key_type * const type =
+        स्थिर काष्ठा xkb_कुंजी_type * स्थिर type =
             FindTypeForGroup(keymap, keyi, i, &explicit_type);
 
         /* Always have as many levels as the type specifies. */
-        if (type->num_levels < darray_size(groupi->levels)) {
-            struct xkb_level *leveli;
+        अगर (type->अंक_levels < darray_आकार(groupi->levels)) {
+            काष्ठा xkb_level *leveli;
 
             log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
                     XKB_WARNING_EXTRA_SYMBOLS_IGNORED,
                     "Type \"%s\" has %"PRIu32" levels, but %s has %u levels; "
                     "Ignoring extra symbols\n",
-                    xkb_atom_text(keymap->ctx, type->name), type->num_levels,
-                    KeyInfoText(info, keyi),
-                    darray_size(groupi->levels));
+                    xkb_atom_text(keymap->ctx, type->name), type->अंक_levels,
+                    कुंजी_Info_Text(info, keyi),
+                    darray_आकार(groupi->levels));
 
-            darray_foreach_from(leveli, groupi->levels, type->num_levels)
+            darray_foreach_from(leveli, groupi->levels, type->अंक_levels)
                 clear_level(leveli);
         }
-        darray_resize0(groupi->levels, type->num_levels);
+        darray_resize0(groupi->levels, type->अंक_levels);
 
-        key->groups[i].explicit_type = explicit_type;
-        key->groups[i].type = type;
+        कुंजी->groups[i].explicit_type = explicit_type;
+        कुंजी->groups[i].type = type;
     }
 
     /* Copy levels. */
@@ -2343,38 +2343,38 @@ CopySymbolsDefToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info,
          * We apply only simple capitalization rules, so the keysyms count is
          * unchanged.
          */
-        struct xkb_level *leveli;
+        काष्ठा xkb_level *leveli;
         darray_foreach(leveli, groupi->levels) {
-            switch (leveli->num_syms) {
-            case 0:
-                leveli->upper = XKB_KEY_NoSymbol;
-                break;
-            case 1:
+            चयन (leveli->अंक_syms) {
+            हाल 0:
+                leveli->upper = XKB_कुंजी_No_प्रतीक;
+                अवरोध;
+            हाल 1:
                 leveli->upper = xkb_keysym_to_upper(leveli->s.sym);
-                break;
-            default:
+                अवरोध;
+            शेष:
                 /* Multiple keysyms: check if there is any cased keysym */
                 leveli->has_upper = false;
-                for (xkb_keysym_count_t k = 0; k < leveli->num_syms; k++) {
-                    const xkb_keysym_t upper =
+                क्रम (xkb_keysym_गिनती_t k = 0; k < leveli->अंक_syms; k++) {
+                    स्थिर xkb_keysym_t upper =
                         xkb_keysym_to_upper(leveli->s.syms[k]);
-                    if (upper != leveli->s.syms[k]) {
+                    अगर (upper != leveli->s.syms[k]) {
                         leveli->has_upper = true;
-                        break;
+                        अवरोध;
                     }
                 }
-                if (leveli->has_upper) {
+                अगर (leveli->has_upper) {
                     /*
                      * Some cased keysyms: store the transformation result in
                      * the same array, right after the original keysyms.
                      */
-                    leveli->s.syms = realloc(leveli->s.syms,
-                                             (size_t) 2 * leveli->num_syms *
-                                             sizeof(*leveli->s.syms));
-                    if (!leveli->s.syms)
-                        return false; /* FIXME: better handling? */
-                    for (xkb_keysym_count_t k = 0; k < leveli->num_syms; k++) {
-                        leveli->s.syms[leveli->num_syms + k] =
+                    leveli->s.syms = पुनः_स्मृति(leveli->s.syms,
+                                             (माप_प्रकार) 2 * leveli->अंक_syms *
+                                             माप(*leveli->s.syms));
+                    अगर (!leveli->s.syms)
+                        वापस false; /* FIXME: better handling? */
+                    क्रम (xkb_keysym_गिनती_t k = 0; k < leveli->अंक_syms; k++) {
+                        leveli->s.syms[leveli->अंक_syms + k] =
                             xkb_keysym_to_upper(leveli->s.syms[k]);
                     }
                 }
@@ -2382,183 +2382,183 @@ CopySymbolsDefToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info,
         }
 
         /* Copy the level */
-        darray_steal(groupi->levels, &key->groups[i].levels, NULL);
-        if (key->groups[i].type->num_levels > 1 ||
-            key->groups[i].levels[0].num_syms > 0) {
-            key->groups[i].explicit_symbols = true;
-            key->explicit |= EXPLICIT_SYMBOLS;
+        darray_steal(groupi->levels, &कुंजी->groups[i].levels, शून्य);
+        अगर (कुंजी->groups[i].type->अंक_levels > 1 ||
+            कुंजी->groups[i].levels[0].अंक_syms > 0) {
+            कुंजी->groups[i].explicit_symbols = true;
+            कुंजी->explicit |= EXPLICIT_SYMBOLS;
         }
-        if (groupi->defined & GROUP_FIELD_ACTS) { // FIXME
-            key->groups[i].explicit_actions = true;
-            key->explicit |= EXPLICIT_INTERP;
+        अगर (groupi->defined & GROUP_FIELD_ACTS) { // FIXME
+            कुंजी->groups[i].explicit_actions = true;
+            कुंजी->explicit |= EXPLICIT_INTERP;
         }
-        if (key->groups[i].explicit_type)
-            key->explicit |= EXPLICIT_TYPES;
+        अगर (कुंजी->groups[i].explicit_type)
+            कुंजी->explicit |= EXPLICIT_TYPES;
     }
 
-    key->out_of_range_pending_group = keyi->out_of_range_pending_group;
-    key->out_of_range_group_number = keyi->out_of_range_group_number;
-    key->out_of_range_group_policy = keyi->out_of_range_group_policy;
+    कुंजी->out_of_range_pending_group = keyi->out_of_range_pending_group;
+    कुंजी->out_of_range_group_संख्या = keyi->out_of_range_group_संख्या;
+    कुंजी->out_of_range_group_policy = keyi->out_of_range_group_policy;
 
-key_fields:
-    if (keyi->defined & KEY_FIELD_VMODMAP) {
-        key->vmodmap = keyi->vmodmap;
-        key->explicit |= EXPLICIT_VMODMAP;
+कुंजी_fields:
+    अगर (keyi->defined & कुंजी_FIELD_VMODMAP) {
+        कुंजी->vmodmap = keyi->vmodmap;
+        कुंजी->explicit |= EXPLICIT_VMODMAP;
     }
 
-    if (keyi->repeat != KEY_REPEAT_UNDEFINED) {
-        key->repeats = (keyi->repeat == KEY_REPEAT_YES);
-        key->explicit |= EXPLICIT_REPEAT;
+    अगर (keyi->repeat != कुंजी_REPEAT_UNDEFINED) {
+        कुंजी->repeats = (keyi->repeat == कुंजी_REPEAT_YES);
+        कुंजी->explicit |= EXPLICIT_REPEAT;
     }
 
-    if ((keyi->defined & KEY_FIELD_OVERLAY) &&
+    अगर ((keyi->defined & कुंजी_FIELD_OVERLAY) &&
         keyi->overlays && !keyi->overlays_clear) {
-        key->overlays = keyi->overlays;
-        if (keyi->overlays_alloc) {
+        कुंजी->overlays = keyi->overlays;
+        अगर (keyi->overlays_alloc) {
             /* Remove empty entries */
 
-            xkb_overlay_mask_t remaining = key->overlays;
-            const struct xkb_key **overlays_keys = keyi->overlays_keys;
-            while (remaining) {
+            xkb_overlay_mask_t remaining = कुंजी->overlays;
+            स्थिर काष्ठा xkb_कुंजी **overlays_कुंजियाँ = keyi->overlays_कुंजियाँ;
+            जबतक (remaining) {
                 /* isolate lowest set bit */
-                const xkb_overlay_mask_t lsb = (xkb_overlay_mask_t)(
+                स्थिर xkb_overlay_mask_t lsb = (xkb_overlay_mask_t)(
                     remaining &
-                    (xkb_overlay_mask_t)((unsigned)~remaining + 1u)
+                    (xkb_overlay_mask_t)((अचिन्हित)~remaining + 1u)
                 );
                 remaining = (remaining & ~lsb);
-                if (*overlays_keys) {
-                    overlays_keys++;
-                } else {
+                अगर (*overlays_कुंजियाँ) {
+                    overlays_कुंजियाँ++;
+                } अन्यथा {
                     /* drop current null value (overlayN=none) */
-                    key->overlays &= ~lsb;
+                    कुंजी->overlays &= ~lsb;
                 }
             }
 
-            if (key->overlays) {
+            अगर (कुंजी->overlays) {
                 /* Steal */
-                key->overlays_keys = keyi->overlays_keys;
-                keyi->overlays_keys = NULL;
+                कुंजी->overlays_कुंजियाँ = keyi->overlays_कुंजियाँ;
+                keyi->overlays_कुंजियाँ = शून्य;
                 keyi->overlays_alloc = 0;
 
-                key->overlays_inline = false;
-                key->explicit |= EXPLICIT_OVERLAY;
+                कुंजी->overlays_inline = false;
+                कुंजी->explicit |= EXPLICIT_OVERLAY;
             }
-        } else {
-            key->overlay_key = keyi->overlay_key;
-            key->overlays_inline = true;
-            key->explicit |= EXPLICIT_OVERLAY;
+        } अन्यथा {
+            कुंजी->overlay_कुंजी = keyi->overlay_कुंजी;
+            कुंजी->overlays_inline = true;
+            कुंजी->explicit |= EXPLICIT_OVERLAY;
         }
     }
 
-    return true;
+    वापस true;
 }
 
-static bool
-CopyModMapDefToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info,
+अटल bool
+CopyModMapDefToKeymap(काष्ठा xkb_keymap *keymap, SymbolsInfo *info,
                       ModMapEntry *entry)
 {
-    struct xkb_key *key;
+    काष्ठा xkb_कुंजी *कुंजी;
 
-    if (!entry->haveSymbol) {
-        key = XkbKeyByName(keymap, entry->u.keyName, true);
-        if (!key) {
+    अगर (!entry->have_प्रतीक) {
+        कुंजी = Xkb_कुंजी_By_Name(keymap, entry->u.कुंजी_Name, true);
+        अगर (!कुंजी) {
             log_vrb(info->ctx, XKB_LOG_VERBOSITY_DETAILED,
                     XKB_WARNING_UNDEFINED_KEYCODE,
                     "Key %s not found in keycodes; "
                     "Modifier map entry for %s not updated\n",
-                    KeyNameText(info->ctx, entry->u.keyName),
+                    कुंजी_Name_Text(info->ctx, entry->u.कुंजी_Name),
                     ModMaskText(info->ctx, MOD_REAL, &info->mods, entry->mods));
             entry->mods = 0; /* disable */
-            return false;
+            वापस false;
         }
     }
-    else {
-        key = FindKeyForSymbol(keymap, entry->u.keySym);
-        if (!key) {
+    अन्यथा {
+        कुंजी = Find_कुंजी_For_प्रतीक(keymap, entry->u.कुंजी_Sym);
+        अगर (!कुंजी) {
             log_vrb(info->ctx, XKB_LOG_VERBOSITY_DETAILED,
-                    XKB_WARNING_UNRESOLVED_KEYMAP_SYMBOL,
+                    XKB_WARNING_UNRESOLVED_KEYMAP_प्रतीक,
                     "Key \"%s\" not found in symbol map; "
                     "Modifier map entry for %s not updated\n",
-                    KeysymText(info->ctx, entry->u.keySym),
+                    KeysymText(info->ctx, entry->u.कुंजी_Sym),
                     ModMaskText(info->ctx, MOD_REAL, &info->mods, entry->mods));
             entry->mods = 0; /* disable */
-            return false;
+            वापस false;
         }
     }
 
     /* Skip modMap None */
-    if (entry->mods) {
-        key->modmap |= entry->mods;
-        entry->keyCode = key->keycode;
+    अगर (entry->mods) {
+        कुंजी->modmap |= entry->mods;
+        entry->कुंजी_Code = कुंजी->keycode;
     }
 
-    return true;
+    वापस true;
 }
 
-static bool
-CopySymbolsToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info)
+अटल bool
+CopySymbolsToKeymap(काष्ठा xkb_keymap *keymap, SymbolsInfo *info)
 {
-    KeyInfo *keyi;
+    कुंजी_Info *keyi;
 
     keymap->symbols_section_name = strdup_safe(info->name);
     XkbEscapeMapName(keymap->symbols_section_name);
 
     keymap->mods = info->mods;
 
-    keymap->num_group_names = (xkb_layout_index_t)darray_size(info->group_names);
-    darray_steal(info->group_names, &keymap->group_names, NULL);
+    keymap->अंक_group_names = (xkb_layout_सूचकांक_t)darray_आकार(info->group_names);
+    darray_steal(info->group_names, &keymap->group_names, शून्य);
 
-    darray_foreach(keyi, info->keys)
-        if (!CopySymbolsDefToKeymap(keymap, info, keyi))
-            info->errorCount++;
+    darray_foreach(keyi, info->कुंजियाँ)
+        अगर (!CopySymbolsDefToKeymap(keymap, info, keyi))
+            info->error_गिनती++;
 
-    if (xkb_context_get_log_verbosity(keymap->ctx) > 3) {
-        struct xkb_key *key;
+    अगर (xkb_context_get_log_verbosity(keymap->ctx) > 3) {
+        काष्ठा xkb_कुंजी *कुंजी;
 
-        xkb_keys_foreach(key, keymap) {
-            if (key->name == XKB_ATOM_NONE)
-                continue;
+        xkb_कुंजियाँ_foreach(कुंजी, keymap) {
+            अगर (कुंजी->name == XKB_ATOM_NONE)
+                जारी;
 
-            if (key->num_groups < 1)
+            अगर (कुंजी->अंक_groups < 1)
                 log_info(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                          "No symbols defined for %s\n",
-                         KeyNameText(info->ctx, key->name));
+                         कुंजी_Name_Text(info->ctx, कुंजी->name));
         }
     }
 
     /* Resolve modmaps */
     ModMapEntry *mm;
     darray_foreach(mm, info->modmaps)
-        if (!CopyModMapDefToKeymap(keymap, info, mm))
-            info->errorCount++;
+        अगर (!CopyModMapDefToKeymap(keymap, info, mm))
+            info->error_गिनती++;
 
     /* Copy detailed modmap */
-    darray_steal(info->modmaps, &keymap->modmaps, &keymap->num_modmaps);
+    darray_steal(info->modmaps, &keymap->modmaps, &keymap->अंक_modmaps);
 
     /* XXX: If we don't ignore errorCount, things break. */
-    return true;
+    वापस true;
 }
 
 bool
-CompileSymbols(XkbFile *file, struct xkb_keymap_info *keymap_info)
+CompileSymbols(XkbFile *file, काष्ठा xkb_keymap_info *keymap_info)
 {
     SymbolsInfo info;
 
     InitSymbolsInfo(&info, keymap_info, 0, &keymap_info->keymap.mods);
 
-    if (file !=NULL)
+    अगर (file !=शून्य)
         HandleSymbolsFile(&info, file);
 
-    if (info.errorCount != 0)
-        goto err_info;
+    अगर (info.error_गिनती != 0)
+        जाओ err_info;
 
-    if (!CopySymbolsToKeymap(&keymap_info->keymap, &info))
-        goto err_info;
+    अगर (!CopySymbolsToKeymap(&keymap_info->keymap, &info))
+        जाओ err_info;
 
     ClearSymbolsInfo(&info);
-    return true;
+    वापस true;
 
 err_info:
     ClearSymbolsInfo(&info);
-    return false;
+    वापस false;
 }

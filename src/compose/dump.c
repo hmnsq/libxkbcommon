@@ -4,70 +4,70 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#समावेश "config.h"
 
-#include <stdio.h>
-#include <stdbool.h>
-#include <string.h>
+#समावेश <stdio.h>
+#समावेश <stdbool.h>
+#समावेश <string.h>
 
-#include "xkbcommon/xkbcommon-compose.h"
-#include "darray.h"
-#include "parser.h"
-#include "escape.h"
-#include "dump.h"
-#include "src/keysym.h"
+#समावेश "xkbcommon/xkbcommon-compose.h"
+#समावेश "darray.h"
+#समावेश "parser.h"
+#समावेश "escape.h"
+#समावेश "dump.h"
+#समावेश "src/keysym.h"
 
 bool
-print_compose_table_entry(FILE *file, struct xkb_compose_table_entry *entry)
+print_compose_table_entry(खाता *file, काष्ठा xkb_compose_table_entry *entry)
 {
-    size_t nsyms;
-    const xkb_keysym_t *syms = xkb_compose_table_entry_sequence(entry, &nsyms);
-    char buf[XKB_KEYSYM_NAME_MAX_SIZE];
-    for (size_t i = 0; i < nsyms; i++) {
-        xkb_keysym_get_name(syms[i], buf, sizeof(buf));
-        fprintf(file, "<%s>", buf);
-        if (i + 1 < nsyms) {
-            fprintf(file, " ");
+    माप_प्रकार nsyms;
+    स्थिर xkb_keysym_t *syms = xkb_compose_table_entry_sequence(entry, &nsyms);
+    अक्षर buf[XKB_KEYSYM_NAME_MAX_आकार];
+    क्रम (माप_प्रकार i = 0; i < nsyms; i++) {
+        xkb_keysym_get_name(syms[i], buf, माप(buf));
+        ख_लिखो(file, "<%s>", buf);
+        अगर (i + 1 < nsyms) {
+            ख_लिखो(file, " ");
         }
     }
-    fprintf(file, " : ");
-    const char *utf8 = xkb_compose_table_entry_utf8(entry);
-    if (*utf8 != '\0') {
-        char *escaped = escape_utf8_string_literal(utf8);
-        if (!escaped) {
-            fprintf(stderr, "ERROR: Cannot escape the string: allocation error\n");
-            return false;
-        } else {
-            fprintf(file, " \"%s\"", escaped);
-            free(escaped);
+    ख_लिखो(file, " : ");
+    स्थिर अक्षर *utf8 = xkb_compose_table_entry_utf8(entry);
+    अगर (*utf8 != '\0') {
+        अक्षर *escaped = escape_utf8_string_literal(utf8);
+        अगर (!escaped) {
+            ख_लिखो(मानक_त्रुटि, "ERROR: Cannot escape the string: allocation error\n");
+            वापस false;
+        } अन्यथा {
+            ख_लिखो(file, " \"%s\"", escaped);
+            मुक्त(escaped);
         }
     }
-    const xkb_keysym_t keysym = xkb_compose_table_entry_keysym(entry);
-    if (keysym != XKB_KEY_NoSymbol) {
-        xkb_keysym_get_name(keysym, buf, sizeof(buf));
-        fprintf(file, " %s", buf);
+    स्थिर xkb_keysym_t keysym = xkb_compose_table_entry_keysym(entry);
+    अगर (keysym != XKB_कुंजी_No_प्रतीक) {
+        xkb_keysym_get_name(keysym, buf, माप(buf));
+        ख_लिखो(file, " %s", buf);
     }
-    fprintf(file, "\n");
-    return true;
+    ख_लिखो(file, "\n");
+    वापस true;
 }
 
 bool
-xkb_compose_table_dump(FILE *file, struct xkb_compose_table *table)
+xkb_compose_table_dump(खाता *file, काष्ठा xkb_compose_table *table)
 {
-    struct xkb_compose_table_entry *entry;
-    struct xkb_compose_table_iterator *iter = xkb_compose_table_iterator_new(table);
+    काष्ठा xkb_compose_table_entry *entry;
+    काष्ठा xkb_compose_table_iterator *iter = xkb_compose_table_iterator_new(table);
 
-    if (!iter)
-        return false;
+    अगर (!iter)
+        वापस false;
 
     bool ok = true;
-    while ((entry = xkb_compose_table_iterator_next(iter))) {
-        if (!print_compose_table_entry(file, entry)) {
+    जबतक ((entry = xkb_compose_table_iterator_अग्र(iter))) {
+        अगर (!print_compose_table_entry(file, entry)) {
             ok = false;
-            break;
+            अवरोध;
         }
     }
 
     xkb_compose_table_iterator_free(iter);
-    return ok;
+    वापस ok;
 }

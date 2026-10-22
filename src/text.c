@@ -3,43 +3,43 @@
  * SPDX-License-Identifier: HPND
  */
 
-#include "config.h"
+#समावेश "config.h"
 
-#include <assert.h>
+#समावेश <assert.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "keymap.h"
-#include "keysym.h"
-#include "text.h"
+#समावेश "xkbcommon/xkbcommon.h"
+#समावेश "keymap.h"
+#समावेश "keysym.h"
+#समावेश "text.h"
 
 bool
-LookupString(const LookupEntry tab[], const char *string,
-              unsigned int *value_rtrn)
+LookupString(स्थिर LookupEntry tab[], स्थिर अक्षर *string,
+              अचिन्हित पूर्णांक *मूल्य_rtrn)
 {
-    if (!string)
-        return false;
+    अगर (!string)
+        वापस false;
 
-    for (const LookupEntry *entry = tab; entry->name; entry++) {
-        if (istreq(entry->name, string)) {
-            *value_rtrn = entry->value;
-            return true;
+    क्रम (स्थिर LookupEntry *entry = tab; entry->name; entry++) {
+        अगर (istreq(entry->name, string)) {
+            *मूल्य_rtrn = entry->मूल्य;
+            वापस true;
         }
     }
 
-    return false;
+    वापस false;
 }
 
-const char *
-LookupValue(const LookupEntry tab[], unsigned int value)
+स्थिर अक्षर *
+Lookup_मूल्य(स्थिर LookupEntry tab[], अचिन्हित पूर्णांक मूल्य)
 {
-    for (const LookupEntry *entry = tab; entry->name; entry++)
-        if (entry->value == value)
-            return entry->name;
+    क्रम (स्थिर LookupEntry *entry = tab; entry->name; entry++)
+        अगर (entry->मूल्य == मूल्य)
+            वापस entry->name;
 
-    return NULL;
+    वापस शून्य;
 }
 
-const LookupEntry ctrlMaskNames[25] = {
+स्थिर LookupEntry ctrlMaskNames[25] = {
     /* v2 keymap format only */
     { "Overlay3", CONTROL_OVERLAY3 },
     { "Overlay4", CONTROL_OVERLAY4 },
@@ -49,14 +49,14 @@ const LookupEntry ctrlMaskNames[25] = {
     { "Overlay8", CONTROL_OVERLAY8 },
     { "all", CONTROL_ALL_BOOLEAN },
     /* v1 + v2 keymap formats */
-    [CONTROL_NAMES_MIN_V1_INDEX] = { "RepeatKeys", CONTROL_REPEAT },
+    [CONTROL_NAMES_MIN_V1_सूचकांक] = { "RepeatKeys", CONTROL_REPEAT },
     { "Repeat", CONTROL_REPEAT },
     { "AutoRepeat", CONTROL_REPEAT },
     { "SlowKeys", CONTROL_SLOW },
     { "BounceKeys", CONTROL_DEBOUNCE },
-    { "StickyKeys", CONTROL_STICKY_KEYS },
-    { "MouseKeys", CONTROL_MOUSE_KEYS },
-    { "MouseKeysAccel", CONTROL_MOUSE_KEYS_ACCEL },
+    { "StickyKeys", CONTROL_STICKY_कुंजियाँ },
+    { "MouseKeys", CONTROL_MOUSE_कुंजियाँ },
+    { "MouseKeysAccel", CONTROL_MOUSE_कुंजियाँ_ACCEL },
     { "AccessXKeys", CONTROL_AX },
     { "AccessXTimeout", CONTROL_AX_TIMEOUT },
     { "AccessXFeedback", CONTROL_AX_FEEDBACK },
@@ -66,10 +66,10 @@ const LookupEntry ctrlMaskNames[25] = {
     { "Overlay2", CONTROL_OVERLAY2 },
     { "all", CONTROL_ALL_BOOLEAN_V1 }, /* duplicate, matches only v1 */
     { "none", 0 },
-    { NULL, 0 }
+    { शून्य, 0 }
 };
 
-const LookupEntry modComponentMaskNames[] = {
+स्थिर LookupEntry modComponentMaskNames[] = {
     { "base", XKB_STATE_MODS_DEPRESSED },
     { "latched", XKB_STATE_MODS_LATCHED },
     { "locked", XKB_STATE_MODS_LOCKED },
@@ -77,45 +77,45 @@ const LookupEntry modComponentMaskNames[] = {
     { "compat", XKB_STATE_MODS_EFFECTIVE },
     { "any", XKB_STATE_MODS_EFFECTIVE },
     { "none", 0 },
-    { NULL, 0 }
+    { शून्य, 0 }
 };
 
-const LookupEntry groupComponentMaskNames[] = {
+स्थिर LookupEntry groupComponentMaskNames[] = {
     { "base", XKB_STATE_LAYOUT_DEPRESSED },
     { "latched", XKB_STATE_LAYOUT_LATCHED },
     { "locked", XKB_STATE_LAYOUT_LOCKED },
     { "effective", XKB_STATE_LAYOUT_EFFECTIVE },
     { "any", XKB_STATE_LAYOUT_EFFECTIVE },
     { "none", 0 },
-    { NULL, 0 }
+    { शून्य, 0 }
 };
 
-const LookupEntry groupMaskNames[] = {
+स्थिर LookupEntry groupMaskNames[] = {
     { "none", 0x00 },
     /* "first" is omitted for compatibility reasons */
     { "all", XKB_ALL_GROUPS },
-    { NULL, 0 }
+    { शून्य, 0 }
 };
 
-const LookupEntry buttonNames[] = {
+स्थिर LookupEntry buttonNames[] = {
     { "Button1", 1 },
     { "Button2", 2 },
     { "Button3", 3 },
     { "Button4", 4 },
     { "Button5", 5 },
     { "default", 0 },
-    { NULL, 0 }
+    { शून्य, 0 }
 };
 
-const LookupEntry useModMapValueNames[] = {
+स्थिर LookupEntry use_Mod_Map_मूल्य_Names[] = {
     { "LevelOne", 1 },
     { "Level1", 1 },
     { "AnyLevel", 0 },
     { "any", 0 },
-    { NULL, 0 }
+    { शून्य, 0 }
 };
 
-const LookupEntry actionTypeNames[] = {
+स्थिर LookupEntry actionTypeNames[] = {
     { "NoAction", ACTION_TYPE_NONE },
     { "VoidAction", ACTION_TYPE_VOID },
     { "SetMods", ACTION_TYPE_MOD_SET },
@@ -139,8 +139,8 @@ const LookupEntry actionTypeNames[] = {
     { "SwitchScreen", ACTION_TYPE_SWITCH_VT },
     { "SetControls", ACTION_TYPE_CTRL_SET },
     { "LockControls", ACTION_TYPE_CTRL_LOCK },
-    { "RedirectKey", ACTION_TYPE_REDIRECT_KEY },
-    { "Redirect", ACTION_TYPE_REDIRECT_KEY },
+    { "RedirectKey", ACTION_TYPE_REDIRECT_कुंजी },
+    { "Redirect", ACTION_TYPE_REDIRECT_कुंजी },
     { "Private", ACTION_TYPE_PRIVATE },
     /* deprecated actions below here - unused */
     { "ISOLock", ACTION_TYPE_UNSUPPORTED_LEGACY },
@@ -159,176 +159,176 @@ const LookupEntry actionTypeNames[] = {
     { "DevVal", ACTION_TYPE_UNSUPPORTED_LEGACY },
     { "DeviceVal", ACTION_TYPE_UNSUPPORTED_LEGACY },
     { "DevValuator", ACTION_TYPE_UNSUPPORTED_LEGACY },
-    { NULL, 0 },
+    { शून्य, 0 },
 };
 
-const LookupEntry symInterpretMatchMaskNames[] = {
+स्थिर LookupEntry symInterpretMatchMaskNames[] = {
     { "NoneOf", MATCH_NONE },
     { "AnyOfOrNone", MATCH_ANY_OR_NONE },
     { "AnyOf", MATCH_ANY },
     { "AllOf", MATCH_ALL },
     { "Exactly", MATCH_EXACTLY },
-    { NULL, 0 },
+    { शून्य, 0 },
 };
 
-const char *
-ModIndexText(struct xkb_context *ctx, const struct xkb_mod_set *mods,
-             xkb_mod_index_t ndx)
+स्थिर अक्षर *
+Mod_सूचकांक_Text(काष्ठा xkb_context *ctx, स्थिर काष्ठा xkb_mod_set *mods,
+             xkb_mod_सूचकांक_t ndx)
 {
-    if (ndx == XKB_MOD_INVALID)
-        return "none";
+    अगर (ndx == XKB_MOD_INVALID)
+        वापस "none";
 
-    if (ndx == XKB_MOD_NONE)
-        return "None";
+    अगर (ndx == XKB_MOD_NONE)
+        वापस "None";
 
-    if (ndx >= mods->num_mods)
-        return NULL;
+    अगर (ndx >= mods->अंक_mods)
+        वापस शून्य;
 
-    return xkb_atom_text(ctx, mods->mods[ndx].name);
+    वापस xkb_atom_text(ctx, mods->mods[ndx].name);
 }
 
-const char *
-ActionTypeText(enum xkb_action_type type)
+स्थिर अक्षर *
+ActionTypeText(क्रमागत xkb_action_type type)
 {
-    const char *name = LookupValue(actionTypeNames, type);
-    return name ? name : "Private";
+    स्थिर अक्षर *name = Lookup_मूल्य(actionTypeNames, type);
+    वापस name ? name : "Private";
 }
 
-const char *
-KeysymText(struct xkb_context *ctx, xkb_keysym_t sym)
+स्थिर अक्षर *
+KeysymText(काष्ठा xkb_context *ctx, xkb_keysym_t sym)
 {
-    char *buffer = xkb_context_get_buffer(ctx, XKB_KEYSYM_NAME_MAX_SIZE);
-    xkb_keysym_get_name(sym, buffer, XKB_KEYSYM_NAME_MAX_SIZE);
-    return buffer;
+    अक्षर *बफर = xkb_context_get_बफर(ctx, XKB_KEYSYM_NAME_MAX_आकार);
+    xkb_keysym_get_name(sym, बफर, XKB_KEYSYM_NAME_MAX_आकार);
+    वापस बफर;
 }
 
-const char *
-KeyNameText(struct xkb_context *ctx, xkb_atom_t name)
+स्थिर अक्षर *
+कुंजी_Name_Text(काष्ठा xkb_context *ctx, xkb_atom_t name)
 {
-    const char *sname = xkb_atom_text(ctx, name);
-    size_t len = strlen_safe(sname) + 3;
-    char *buf = xkb_context_get_buffer(ctx, len);
+    स्थिर अक्षर *sname = xkb_atom_text(ctx, name);
+    माप_प्रकार len = strlen_safe(sname) + 3;
+    अक्षर *buf = xkb_context_get_बफर(ctx, len);
     snprintf(buf, len, "<%s>", strempty(sname));
-    return buf;
+    वापस buf;
 }
 
-const char *
-SIMatchText(enum xkb_match_operation type)
+स्थिर अक्षर *
+SIMatchText(क्रमागत xkb_match_operation type)
 {
-    return LookupValue(symInterpretMatchMaskNames, type);
+    वापस Lookup_मूल्य(symInterpretMatchMaskNames, type);
 }
 
-const char *
-ModMaskText(struct xkb_context *ctx, enum mod_type type,
-            const struct xkb_mod_set *mods, xkb_mod_mask_t mask)
+स्थिर अक्षर *
+ModMaskText(काष्ठा xkb_context *ctx, क्रमागत mod_type type,
+            स्थिर काष्ठा xkb_mod_set *mods, xkb_mod_mask_t mask)
 {
-    char buf[1024] = {0};
-    size_t pos = 0;
-    const struct xkb_mod *mod;
+    अक्षर buf[1024] = {0};
+    माप_प्रकार pos = 0;
+    स्थिर काष्ठा xkb_mod *mod;
 
     /* We want to avoid boolean blindness, but we expected only 2 values */
-    assert(type == MOD_REAL || type == MOD_BOTH);
+    निश्चित(type == MOD_REAL || type == MOD_BOTH);
 
-    if (mask == 0)
-        return "none";
+    अगर (mask == 0)
+        वापस "none";
 
-    if (mask == MOD_REAL_MASK_ALL)
-        return "all";
+    अगर (mask == MOD_REAL_MASK_ALL)
+        वापस "all";
 
-    if ((type == MOD_REAL && (mask & ~MOD_REAL_MASK_ALL)) ||
-        unlikely(mask & ~((UINT64_C(1) << mods->num_mods) - 1))) {
+    अगर ((type == MOD_REAL && (mask & ~MOD_REAL_MASK_ALL)) ||
+        unlikely(mask & ~((UINT64_C(1) << mods->अंक_mods) - 1))) {
         /* If we get a mask that cannot be expressed with the known modifiers
          * of the given type, print it as hexadecimal */
-        const int ret = snprintf(buf, sizeof(buf), "0x%"PRIx32, mask);
-        static_assert(sizeof(mask) == 4 && sizeof(buf) >= sizeof("0xffffffff"),
+        स्थिर पूर्णांक ret = snprintf(buf, माप(buf), "0x%"PRIx32, mask);
+        static_assert(माप(mask) == 4 && माप(buf) >= माप("0xffffffff"),
                       "Buffer too small");
-        assert(ret >= 0 && (size_t) ret < sizeof(buf));
-        pos = (size_t) ret;
-    } else {
+        निश्चित(ret >= 0 && (माप_प्रकार) ret < माप(buf));
+        pos = (माप_प्रकार) ret;
+    } अन्यथा {
         /* Print known mods */
         xkb_mods_mask_foreach(mask, mod, mods) {
-            int ret = snprintf(buf + pos, sizeof(buf) - pos, "%s%s",
+            पूर्णांक ret = snprintf(buf + pos, माप(buf) - pos, "%s%s",
                                pos == 0 ? "" : "+",
                                xkb_atom_text(ctx, mod->name));
-            if (ret <= 0 || pos + (size_t)ret >= sizeof(buf))
-                break;
-            else
-                pos += (size_t)ret;
+            अगर (ret <= 0 || pos + (माप_प्रकार)ret >= माप(buf))
+                अवरोध;
+            अन्यथा
+                pos += (माप_प्रकार)ret;
         }
     }
     pos++;
 
-    return memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
+    वापस स_नकल(xkb_context_get_बफर(ctx, pos), buf, pos);
 }
 
-const char *
-LedStateMaskText(struct xkb_context *ctx, const LookupEntry *lookup,
-                 enum xkb_state_component mask)
+स्थिर अक्षर *
+LedStateMaskText(काष्ठा xkb_context *ctx, स्थिर LookupEntry *lookup,
+                 क्रमागत xkb_state_component mask)
 {
-    char buf[1024];
-    size_t pos = 0;
+    अक्षर buf[1024];
+    माप_प्रकार pos = 0;
 
-    if (mask == 0)
-        return "0";
+    अगर (mask == 0)
+        वापस "0";
 
-    for (unsigned int i = 0; mask; i++) {
-        int ret;
+    क्रम (अचिन्हित पूर्णांक i = 0; mask; i++) {
+        पूर्णांक ret;
 
-        if (!(mask & (1u << i)))
-            continue;
+        अगर (!(mask & (1u << i)))
+            जारी;
 
         mask &= ~(1u << i);
 
-        const char* const maskText = LookupValue(lookup, 1u << i);
-        assert(maskText != NULL);
-        ret = snprintf(buf + pos, sizeof(buf) - pos, "%s%s",
+        स्थिर अक्षर* स्थिर maskText = Lookup_मूल्य(lookup, 1u << i);
+        निश्चित(maskText != शून्य);
+        ret = snprintf(buf + pos, माप(buf) - pos, "%s%s",
                        pos == 0 ? "" : "+", maskText);
-        if (ret <= 0 || pos + (size_t)ret >= sizeof(buf))
-            break;
-        else
-            pos += (size_t)ret;
+        अगर (ret <= 0 || pos + (माप_प्रकार)ret >= माप(buf))
+            अवरोध;
+        अन्यथा
+            pos += (माप_प्रकार)ret;
     }
     pos++;
 
-    return memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
+    वापस स_नकल(xkb_context_get_बफर(ctx, pos), buf, pos);
 }
 
-const char *
-ControlMaskText(struct xkb_context *ctx, enum xkb_keymap_format format,
-                enum xkb_action_controls mask)
+स्थिर अक्षर *
+ControlMaskText(काष्ठा xkb_context *ctx, क्रमागत xkb_keymap_format format,
+                क्रमागत xkb_action_controls mask)
 {
-    char buf[1024];
-    size_t pos = 0;
+    अक्षर buf[1024];
+    माप_प्रकार pos = 0;
 
-    const enum xkb_action_controls all_ctrls = format_boolean_controls(format);
+    स्थिर क्रमागत xkb_action_controls all_ctrls = format_boolean_controls(format);
     mask &= all_ctrls;
 
-    if (mask == 0)
-        return "none";
+    अगर (mask == 0)
+        वापस "none";
 
-    if (mask == all_ctrls)
-        return "all";
+    अगर (mask == all_ctrls)
+        वापस "all";
 
-    const uint8_t control_names_offset = format_control_names_offset(format);
-    for (unsigned int i = 0; mask; i++) {
-        int ret;
+    स्थिर uint8_t control_names_offset = format_control_names_offset(format);
+    क्रम (अचिन्हित पूर्णांक i = 0; mask; i++) {
+        पूर्णांक ret;
 
-        if (!(mask & (1u << i)))
-            continue;
+        अगर (!(mask & (1u << i)))
+            जारी;
 
         mask &= ~(1u << i);
 
-        const char* const maskText =
-            LookupValue(ctrlMaskNames + control_names_offset, 1u << i);
-        assert(maskText);
-        ret = snprintf(buf + pos, sizeof(buf) - pos, "%s%s",
+        स्थिर अक्षर* स्थिर maskText =
+            Lookup_मूल्य(ctrlMaskNames + control_names_offset, 1u << i);
+        निश्चित(maskText);
+        ret = snprintf(buf + pos, माप(buf) - pos, "%s%s",
                        pos == 0 ? "" : "+", maskText);
-        if (ret <= 0 || pos + (size_t)ret >= sizeof(buf))
-            break;
-        else
-            pos += (size_t)ret;
+        अगर (ret <= 0 || pos + (माप_प्रकार)ret >= माप(buf))
+            अवरोध;
+        अन्यथा
+            pos += (माप_प्रकार)ret;
     }
     pos++;
 
-    return memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
+    वापस स_नकल(xkb_context_get_बफर(ctx, pos), buf, pos);
 }

@@ -3,7 +3,7 @@
 /* Command-line: gperf src/xkbcomp/keywords.gperf  */
 /* Computed positions: -k'5,$' */
 
-#if !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
+#अगर !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
       && ('%' == 37) && ('&' == 38) && ('\'' == 39) && ('(' == 40) \
       && (')' == 41) && ('*' == 42) && ('+' == 43) && (',' == 44) \
       && ('-' == 45) && ('.' == 46) && ('/' == 47) && ('0' == 48) \
@@ -27,26 +27,26 @@
       && ('w' == 119) && ('x' == 120) && ('y' == 121) && ('z' == 122) \
       && ('{' == 123) && ('|' == 124) && ('}' == 125) && ('~' == 126))
 /* The character set is not based on ISO-646.  */
-#error "gperf generated tables don't work with this execution character set. Please report a bug to <bug-gperf@gnu.org>."
-#endif
+#त्रुटि "gperf generated tables don't work with this execution character set. Please report a bug to <bug-gperf@gnu.org>."
+#पूर्ण_अगर
 
-#line 1 "src/xkbcomp/keywords.gperf"
+#पंक्ति 1 "src/xkbcomp/keywords.gperf"
 
-#include "config.h"
+#समावेश "config.h"
 
-#include "xkbcomp-priv.h"
-#include "parser-priv.h"
+#समावेश "xkbcomp-priv.h"
+#समावेश "parser-priv.h"
 
-static const struct keyword_tok *
-keyword_gperf_lookup (register const char *str, register size_t len);
-#line 11 "src/xkbcomp/keywords.gperf"
-struct keyword_tok { int name; int tok; };
-#include <string.h>
+अटल स्थिर काष्ठा keyword_tok *
+keyword_gperf_lookup (रेजिस्टर स्थिर अक्षर *str, रेजिस्टर माप_प्रकार len);
+#पंक्ति 11 "src/xkbcomp/keywords.gperf"
+काष्ठा keyword_tok { पूर्णांक name; पूर्णांक tok; };
+#समावेश <string.h>
 /* maximum key range = 85, duplicates = 0 */
 
-#ifndef GPERF_DOWNCASE
-#define GPERF_DOWNCASE 1
-static const unsigned char gperf_downcase[256] =
+#अगर_अघोषित GPERF_DOWNCASE
+#घोषणा GPERF_DOWNCASE 1
+अटल स्थिर अचिन्हित अक्षर gperf_downcase[256] =
   {
       0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14,
      15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  26,  27,  28,  29,
@@ -67,39 +67,39 @@ static const unsigned char gperf_downcase[256] =
     240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254,
     255
   };
-#endif
+#पूर्ण_अगर
 
-#ifndef GPERF_CASE_MEMCMP
-#define GPERF_CASE_MEMCMP 1
-static int
-gperf_case_memcmp (register const char *s1, register const char *s2, register size_t n)
+#अगर_अघोषित GPERF_CASE_MEMCMP
+#घोषणा GPERF_CASE_MEMCMP 1
+अटल पूर्णांक
+gperf_case_memcmp (रेजिस्टर स्थिर अक्षर *s1, रेजिस्टर स्थिर अक्षर *s2, रेजिस्टर माप_प्रकार n)
 {
-  for (; n > 0;)
+  क्रम (; n > 0;)
     {
-      unsigned char c1 = gperf_downcase[(unsigned char)*s1++];
-      unsigned char c2 = gperf_downcase[(unsigned char)*s2++];
-      if (c1 == c2)
+      अचिन्हित अक्षर c1 = gperf_downcase[(अचिन्हित अक्षर)*s1++];
+      अचिन्हित अक्षर c2 = gperf_downcase[(अचिन्हित अक्षर)*s2++];
+      अगर (c1 == c2)
         {
           n--;
-          continue;
+          जारी;
         }
-      return (int)c1 - (int)c2;
+      वापस (पूर्णांक)c1 - (पूर्णांक)c2;
     }
-  return 0;
+  वापस 0;
 }
-#endif
+#पूर्ण_अगर
 
-#ifdef __GNUC__
+#अगर_घोषित __GNUC__
 __inline
-#else
-#ifdef __cplusplus
-inline
-#endif
-#endif
-static unsigned int
-keyword_gperf_hash (register const char *str, register size_t len)
+#अन्यथा
+#अगर_घोषित __cplusplus
+अंतरभूत
+#पूर्ण_अगर
+#पूर्ण_अगर
+अटल अचिन्हित पूर्णांक
+keyword_gperf_hash (रेजिस्टर स्थिर अक्षर *str, रेजिस्टर माप_प्रकार len)
 {
-  static const unsigned char asso_values[] =
+  अटल स्थिर अचिन्हित अक्षर asso_मूल्यावली[] =
     {
       88, 88, 88, 88, 88, 88, 88, 88, 88, 88,
       88, 88, 88, 88, 88, 88, 88, 88, 88, 88,
@@ -128,75 +128,75 @@ keyword_gperf_hash (register const char *str, register size_t len)
       88, 88, 88, 88, 88, 88, 88, 88, 88, 88,
       88, 88, 88, 88, 88, 88
     };
-  register unsigned int hval = len;
+  रेजिस्टर अचिन्हित पूर्णांक hval = len;
 
-  switch (hval)
+  चयन (hval)
     {
-      default:
-        hval += asso_values[(unsigned char)str[4]];
-#if (defined __cplusplus && (__cplusplus >= 201703L || (__cplusplus >= 201103L && defined __clang__ && __clang_major__ + (__clang_minor__ >= 9) > 3))) || (defined __STDC_VERSION__ && __STDC_VERSION__ >= 202000L && ((defined __GNUC__ && __GNUC__ >= 10) || (defined __clang__ && __clang_major__ >= 9)))
+      शेष:
+        hval += asso_मूल्यावली[(अचिन्हित अक्षर)str[4]];
+#अगर (defined __cplusplus && (__cplusplus >= 201703L || (__cplusplus >= 201103L && defined __clang__ && __clang_major__ + (__clang_minor__ >= 9) > 3))) || (defined __STDC_VERSION__ && __STDC_VERSION__ >= 202000L && ((defined __GNUC__ && __GNUC__ >= 10) || (defined __clang__ && __clang_major__ >= 9)))
       [[fallthrough]];
-#elif (defined __GNUC__ && __GNUC__ >= 7) || (defined __clang__ && __clang_major__ >= 10)
+#या_अगर (defined __GNUC__ && __GNUC__ >= 7) || (defined __clang__ && __clang_major__ >= 10)
       __attribute__ ((__fallthrough__));
-#endif
+#पूर्ण_अगर
       /*FALLTHROUGH*/
-      case 4:
-      case 3:
-        break;
+      हाल 4:
+      हाल 3:
+        अवरोध;
     }
-  return hval + asso_values[(unsigned char)str[len - 1]];
+  वापस hval + asso_मूल्यावली[(अचिन्हित अक्षर)str[len - 1]];
 }
 
-struct stringpool_t
+काष्ठा stringpool_t
   {
-    char stringpool_str3[sizeof("row")];
-    char stringpool_str4[sizeof("keys")];
-    char stringpool_str5[sizeof("alias")];
-    char stringpool_str9[sizeof("type")];
-    char stringpool_str11[sizeof("xkb_symbols")];
-    char stringpool_str12[sizeof("xkb_keycodes")];
-    char stringpool_str13[sizeof("xkb_semantics")];
-    char stringpool_str14[sizeof("logo")];
-    char stringpool_str15[sizeof("shape")];
-    char stringpool_str16[sizeof("keypad_keys")];
-    char stringpool_str17[sizeof("replace")];
-    char stringpool_str19[sizeof("text")];
-    char stringpool_str20[sizeof("xkb_keymap")];
-    char stringpool_str21[sizeof("modmap")];
-    char stringpool_str22[sizeof("alphanumeric_keys")];
-    char stringpool_str24[sizeof("xkb_types")];
-    char stringpool_str25[sizeof("group")];
-    char stringpool_str27[sizeof("augment")];
-    char stringpool_str28[sizeof("function_keys")];
-    char stringpool_str30[sizeof("deprecated")];
-    char stringpool_str32[sizeof("include")];
-    char stringpool_str33[sizeof("override")];
-    char stringpool_str34[sizeof("alternate")];
-    char stringpool_str35[sizeof("solid")];
-    char stringpool_str36[sizeof("hidden")];
-    char stringpool_str37[sizeof("virtual_modifiers")];
-    char stringpool_str38[sizeof("key")];
-    char stringpool_str41[sizeof("action")];
-    char stringpool_str42[sizeof("default")];
-    char stringpool_str43[sizeof("modifier_keys")];
-    char stringpool_str44[sizeof("interpret")];
-    char stringpool_str45[sizeof("alternate_group")];
-    char stringpool_str47[sizeof("mod_map")];
-    char stringpool_str49[sizeof("xkb_compat_map")];
-    char stringpool_str50[sizeof("xkb_compat")];
-    char stringpool_str52[sizeof("modifier_map")];
-    char stringpool_str54[sizeof("indicator")];
-    char stringpool_str55[sizeof("xkb_layout")];
-    char stringpool_str56[sizeof("xkb_compatibility_map")];
-    char stringpool_str57[sizeof("virtual")];
-    char stringpool_str62[sizeof("outline")];
-    char stringpool_str67[sizeof("xkb_geometry")];
-    char stringpool_str72[sizeof("overlay")];
-    char stringpool_str77[sizeof("xkb_compatibility")];
-    char stringpool_str82[sizeof("section")];
-    char stringpool_str87[sizeof("partial")];
+    अक्षर stringpool_str3[माप("row")];
+    अक्षर stringpool_str4[माप("keys")];
+    अक्षर stringpool_str5[माप("alias")];
+    अक्षर stringpool_str9[माप("type")];
+    अक्षर stringpool_str11[माप("xkb_symbols")];
+    अक्षर stringpool_str12[माप("xkb_keycodes")];
+    अक्षर stringpool_str13[माप("xkb_semantics")];
+    अक्षर stringpool_str14[माप("logo")];
+    अक्षर stringpool_str15[माप("shape")];
+    अक्षर stringpool_str16[माप("keypad_keys")];
+    अक्षर stringpool_str17[माप("replace")];
+    अक्षर stringpool_str19[माप("text")];
+    अक्षर stringpool_str20[माप("xkb_keymap")];
+    अक्षर stringpool_str21[माप("modmap")];
+    अक्षर stringpool_str22[माप("alphanumeric_keys")];
+    अक्षर stringpool_str24[माप("xkb_types")];
+    अक्षर stringpool_str25[माप("group")];
+    अक्षर stringpool_str27[माप("augment")];
+    अक्षर stringpool_str28[माप("function_keys")];
+    अक्षर stringpool_str30[माप("deprecated")];
+    अक्षर stringpool_str32[माप("include")];
+    अक्षर stringpool_str33[माप("override")];
+    अक्षर stringpool_str34[माप("alternate")];
+    अक्षर stringpool_str35[माप("solid")];
+    अक्षर stringpool_str36[माप("hidden")];
+    अक्षर stringpool_str37[माप("virtual_modifiers")];
+    अक्षर stringpool_str38[माप("key")];
+    अक्षर stringpool_str41[माप("action")];
+    अक्षर stringpool_str42[माप("default")];
+    अक्षर stringpool_str43[माप("modifier_keys")];
+    अक्षर stringpool_str44[माप("interpret")];
+    अक्षर stringpool_str45[माप("alternate_group")];
+    अक्षर stringpool_str47[माप("mod_map")];
+    अक्षर stringpool_str49[माप("xkb_compat_map")];
+    अक्षर stringpool_str50[माप("xkb_compat")];
+    अक्षर stringpool_str52[माप("modifier_map")];
+    अक्षर stringpool_str54[माप("indicator")];
+    अक्षर stringpool_str55[माप("xkb_layout")];
+    अक्षर stringpool_str56[माप("xkb_compatibility_map")];
+    अक्षर stringpool_str57[माप("virtual")];
+    अक्षर stringpool_str62[माप("outline")];
+    अक्षर stringpool_str67[माप("xkb_geometry")];
+    अक्षर stringpool_str72[माप("overlay")];
+    अक्षर stringpool_str77[माप("xkb_compatibility")];
+    अक्षर stringpool_str82[माप("section")];
+    अक्षर stringpool_str87[माप("partial")];
   };
-static const struct stringpool_t stringpool_contents =
+अटल स्थिर काष्ठा stringpool_t stringpool_contents =
   {
     "row",
     "keys",
@@ -245,20 +245,20 @@ static const struct stringpool_t stringpool_contents =
     "section",
     "partial"
   };
-#define stringpool ((const char *) &stringpool_contents)
-const struct keyword_tok *
-keyword_gperf_lookup (register const char *str, register size_t len)
+#घोषणा stringpool ((स्थिर अक्षर *) &stringpool_contents)
+स्थिर काष्ठा keyword_tok *
+keyword_gperf_lookup (रेजिस्टर स्थिर अक्षर *str, रेजिस्टर माप_प्रकार len)
 {
-  enum
+  क्रमागत
     {
-      TOTAL_KEYWORDS = 46,
-      MIN_WORD_LENGTH = 3,
-      MAX_WORD_LENGTH = 21,
-      MIN_HASH_VALUE = 3,
-      MAX_HASH_VALUE = 87
+      योग_KEYWORDS = 46,
+      MIN_WORD_लंबाई = 3,
+      MAX_WORD_लंबाई = 21,
+      MIN_HASH_मूल्य = 3,
+      MAX_HASH_मूल्य = 87
     };
 
-  static const unsigned char lengthtable[] =
+  अटल स्थिर अचिन्हित अक्षर lengthtable[] =
     {
        0,  0,  0,  3,  4,  5,  0,  0,  0,  4,  0, 11, 12, 13,
        4,  5, 11,  7,  0,  4, 10,  6, 17,  0,  9,  5,  0,  7,
@@ -268,152 +268,152 @@ keyword_gperf_lookup (register const char *str, register size_t len)
        0,  0,  7,  0,  0,  0,  0, 17,  0,  0,  0,  0,  7,  0,
        0,  0,  0,  7
     };
-#if (defined __GNUC__ && __GNUC__ + (__GNUC_MINOR__ >= 6) > 4) || (defined __clang__ && __clang_major__ >= 3)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
-#endif
-  static const struct keyword_tok wordlist[] =
+#अगर (defined __GNUC__ && __GNUC__ + (__GNUC_MINOR__ >= 6) > 4) || (defined __clang__ && __clang_major__ >= 3)
+#आशय GCC diagnostic धकेलो
+#आशय GCC diagnostic ignored "-Wmissing-field-initializers"
+#पूर्ण_अगर
+  अटल स्थिर काष्ठा keyword_tok wordlist[] =
     {
       {-1}, {-1}, {-1},
-#line 51 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str3,                    ROW},
-#line 40 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str4,                   KEYS},
-#line 25 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str5,                  ALIAS},
+#पंक्ति 51 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str3,                    ROW},
+#पंक्ति 40 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str4,                   कुंजियाँ_2},
+#पंक्ति 25 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str5,                  ALIAS},
       {-1}, {-1}, {-1},
-#line 56 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str9,                   TYPE},
+#पंक्ति 56 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str9,                   TYPE},
       {-1},
-#line 68 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str11,            XKB_SYMBOLS},
-#line 64 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str12,           XKB_KEYCODES},
-#line 67 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str13,          XKB_SEMANTICS},
-#line 41 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str14,                   LOGO},
-#line 53 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str15,                  SHAPE},
-#line 38 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str16,            KEYPAD_KEYS},
-#line 50 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str17,                REPLACE},
+#पंक्ति 68 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str11,            XKB_SYMBOLS},
+#पंक्ति 64 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str12,           XKB_KEYCODES},
+#पंक्ति 67 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str13,          XKB_SEMANTICS},
+#पंक्ति 41 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str14,                   LOGO},
+#पंक्ति 53 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str15,                  SHAPE},
+#पंक्ति 38 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str16,            KEYPAD_कुंजियाँ},
+#पंक्ति 50 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str17,                REPLACE},
       {-1},
-#line 55 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str19,                   TEXT},
-#line 65 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str20,             XKB_KEYMAP},
-#line 45 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str21,                 MODIFIER_MAP},
-#line 26 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str22,      ALPHANUMERIC_KEYS},
+#पंक्ति 55 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str19,                   TEXT},
+#पंक्ति 65 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str20,             XKB_KEYMAP},
+#पंक्ति 45 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str21,                 MODIFIER_MAP},
+#पंक्ति 26 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str22,      ALPHANUMERIC_कुंजियाँ},
       {-1},
-#line 69 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str24,              XKB_TYPES},
-#line 33 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str25,                  GROUP},
+#पंक्ति 69 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str24,              XKB_TYPES},
+#पंक्ति 33 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str25,                  GROUP},
       {-1},
-#line 29 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str27,                AUGMENT},
-#line 32 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str28,          FUNCTION_KEYS},
+#पंक्ति 29 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str27,                AUGMENT},
+#पंक्ति 32 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str28,          FUNCTION_कुंजियाँ},
       {-1},
-#line 31 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str30,             DEPRECATED},
+#पंक्ति 31 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str30,             DEPRECATED},
       {-1},
-#line 35 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str32,                INCLUDE},
-#line 48 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str33,               OVERRIDE},
-#line 28 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str34,              ALTERNATE},
-#line 54 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str35,                  SOLID},
-#line 34 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str36,                 HIDDEN},
-#line 57 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str37,      VIRTUAL_MODS},
-#line 39 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str38,                    KEY},
+#पंक्ति 35 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str32,                INCLUDE},
+#पंक्ति 48 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str33,               OVERRIDE},
+#पंक्ति 28 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str34,              ALTERNATE},
+#पंक्ति 54 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str35,                  SOLID},
+#पंक्ति 34 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str36,                 HIDDEN},
+#पंक्ति 57 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str37,      VIRTUAL_MODS},
+#पंक्ति 39 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str38,                    कुंजी_3},
       {-1}, {-1},
-#line 24 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str41,                 ACTION_TOK},
-#line 30 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str42,                DEFAULT},
-#line 42 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str43,          MODIFIER_KEYS},
-#line 37 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str44,              INTERPRET},
-#line 27 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str45,        ALTERNATE_GROUP},
+#पंक्ति 24 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str41,                 ACTION_TOK},
+#पंक्ति 30 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str42,                DEFAULT},
+#पंक्ति 42 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str43,          MODIFIER_कुंजियाँ},
+#पंक्ति 37 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str44,              INTERPRET},
+#पंक्ति 27 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str45,        ALTERNATE_GROUP},
       {-1},
-#line 44 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str47,                MODIFIER_MAP},
+#पंक्ति 44 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str47,                MODIFIER_MAP},
       {-1},
-#line 61 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str49,         XKB_COMPATMAP},
-#line 62 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str50,             XKB_COMPATMAP},
+#पंक्ति 61 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str49,         XKB_COMPATMAP},
+#पंक्ति 62 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str50,             XKB_COMPATMAP},
       {-1},
-#line 43 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str52,           MODIFIER_MAP},
+#पंक्ति 43 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str52,           MODIFIER_MAP},
       {-1},
-#line 36 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str54,              INDICATOR},
-#line 66 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str55,             XKB_LAYOUT},
-#line 59 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str56,  XKB_COMPATMAP},
-#line 58 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str57,                VIRTUAL},
+#पंक्ति 36 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str54,              INDICATOR},
+#पंक्ति 66 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str55,             XKB_LAYOUT},
+#पंक्ति 59 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str56,  XKB_COMPATMAP},
+#पंक्ति 58 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str57,                VIRTUAL},
       {-1}, {-1}, {-1}, {-1},
-#line 46 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str62,                OUTLINE},
+#पंक्ति 46 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str62,                OUTLINE},
       {-1}, {-1}, {-1}, {-1},
-#line 63 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str67,           XKB_GEOMETRY},
+#पंक्ति 63 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str67,           XKB_GEOMETRY},
       {-1}, {-1}, {-1}, {-1},
-#line 47 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str72,                OVERLAY},
+#पंक्ति 47 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str72,                OVERLAY},
       {-1}, {-1}, {-1}, {-1},
-#line 60 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str77,      XKB_COMPATMAP},
+#पंक्ति 60 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str77,      XKB_COMPATMAP},
       {-1}, {-1}, {-1}, {-1},
-#line 52 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str82,                SECTION},
+#पंक्ति 52 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str82,                SECTION},
       {-1}, {-1}, {-1}, {-1},
-#line 49 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str87,                PARTIAL}
+#पंक्ति 49 "src/xkbcomp/keywords.gperf"
+      {(पूर्णांक)(माप_प्रकार)&((काष्ठा stringpool_t *)0)->stringpool_str87,                PARTIAL}
     };
-#if (defined __GNUC__ && __GNUC__ + (__GNUC_MINOR__ >= 6) > 4) || (defined __clang__ && __clang_major__ >= 3)
-#pragma GCC diagnostic pop
-#endif
+#अगर (defined __GNUC__ && __GNUC__ + (__GNUC_MINOR__ >= 6) > 4) || (defined __clang__ && __clang_major__ >= 3)
+#आशय GCC diagnostic निकालो
+#पूर्ण_अगर
 
-  if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
+  अगर (len <= MAX_WORD_लंबाई && len >= MIN_WORD_लंबाई)
     {
-      register unsigned int key = keyword_gperf_hash (str, len);
+      रेजिस्टर अचिन्हित पूर्णांक कुंजी = keyword_gperf_hash (str, len);
 
-      if (key <= MAX_HASH_VALUE)
-        if (len == lengthtable[key])
+      अगर (कुंजी <= MAX_HASH_मूल्य)
+        अगर (len == lengthtable[कुंजी])
           {
-            register const char *s = wordlist[key].name + stringpool;
+            रेजिस्टर स्थिर अक्षर *s = wordlist[कुंजी].name + stringpool;
 
-            if ((((unsigned char)*str ^ (unsigned char)*s) & ~32) == 0 && !gperf_case_memcmp (str, s, len))
-              return &wordlist[key];
+            अगर ((((अचिन्हित अक्षर)*str ^ (अचिन्हित अक्षर)*s) & ~32) == 0 && !gperf_case_memcmp (str, s, len))
+              वापस &wordlist[कुंजी];
           }
     }
-  return (struct keyword_tok *) 0;
+  वापस (काष्ठा keyword_tok *) 0;
 }
-#line 70 "src/xkbcomp/keywords.gperf"
+#पंक्ति 70 "src/xkbcomp/keywords.gperf"
 
 
-int
-keyword_to_token(const char *string, size_t len)
+पूर्णांक
+keyword_to_token(स्थिर अक्षर *string, माप_प्रकार len)
 {
-    const struct keyword_tok *kt = keyword_gperf_lookup(string, len);
-    if (!kt)
-        return -1;
-    return kt->tok;
+    स्थिर काष्ठा keyword_tok *kt = keyword_gperf_lookup(string, len);
+    अगर (!kt)
+        वापस -1;
+    वापस kt->tok;
 }
 // NOLINTEND

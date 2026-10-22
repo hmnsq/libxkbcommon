@@ -9,27 +9,27 @@
  * SPDX-License-Identifier: MIT-open-group AND HPND
  */
 
-#include "config.h"
+#समावेश "config.h"
 
-#include <assert.h>
-#include <string.h>
+#समावेश <assert.h>
+#समावेश <string.h>
 
-#include "atom.h"
-#include "darray.h"
-#include "utils.h"
+#समावेश "atom.h"
+#समावेश "darray.h"
+#समावेश "utils.h"
 
 /* FNV-1a (http://www.isthe.com/chongo/tech/comp/fnv/). */
-static inline uint32_t
-hash_buf(const char *string, size_t len)
+अटल अंतरभूत uint32_t
+hash_buf(स्थिर अक्षर *string, माप_प्रकार len)
 {
     uint32_t hash = UINT32_C(2166136261);
-    for (size_t i = 0; i < (len + 1) / 2; i++) {
+    क्रम (माप_प्रकार i = 0; i < (len + 1) / 2; i++) {
         hash ^= (uint8_t) string[i];
         hash *= 0x01000193;
         hash ^= (uint8_t) string[len - 1 - i];
         hash *= 0x01000193;
     }
-    return hash;
+    वापस hash;
 }
 
 /*
@@ -37,109 +37,109 @@ hash_buf(const char *string, size_t len)
  * mapping strings to atoms. Another array maps the atoms to
  * strings. The atom value is the position in the strings array.
  */
-struct atom_table {
-    xkb_atom_t *index;
-    size_t index_size;
-    darray(char *) strings;
+काष्ठा atom_table {
+    xkb_atom_t *सूचकांक;
+    माप_प्रकार सूचकांक_आकार;
+    darray(अक्षर *) strings;
 };
 
-struct atom_table *
-atom_table_new(void)
+काष्ठा atom_table *
+atom_table_new(व्योम)
 {
-    struct atom_table *table = calloc(1, sizeof(*table));
-    if (!table)
-        return NULL;
+    काष्ठा atom_table *table = सुस्मृति(1, माप(*table));
+    अगर (!table)
+        वापस शून्य;
 
     darray_init(table->strings);
-    darray_append(table->strings, NULL);
-    table->index_size = 4;
-    table->index = calloc(table->index_size, sizeof(*table->index));
+    darray_append(table->strings, शून्य);
+    table->सूचकांक_आकार = 4;
+    table->सूचकांक = सुस्मृति(table->सूचकांक_आकार, माप(*table->सूचकांक));
 
-    return table;
+    वापस table;
 }
 
-void
-atom_table_free(struct atom_table *table)
+व्योम
+atom_table_free(काष्ठा atom_table *table)
 {
-    if (!table)
-        return;
+    अगर (!table)
+        वापस;
 
-    char **string;
+    अक्षर **string;
     darray_foreach(string, table->strings)
-        free(*string);
+        मुक्त(*string);
     darray_free(table->strings);
-    free(table->index);
-    free(table);
+    मुक्त(table->सूचकांक);
+    मुक्त(table);
 }
 
-darray_size_t
-atom_table_size(struct atom_table *table)
+darray_आकार_t
+atom_table_आकार(काष्ठा atom_table *table)
 {
-    return darray_size(table->strings);
+    वापस darray_आकार(table->strings);
 }
 
-const char *
-atom_text(struct atom_table *table, xkb_atom_t atom)
+स्थिर अक्षर *
+atom_text(काष्ठा atom_table *table, xkb_atom_t atom)
 {
-    assert(atom < darray_size(table->strings));
-    return darray_item(table->strings, atom);
+    निश्चित(atom < darray_आकार(table->strings));
+    वापस darray_item(table->strings, atom);
 }
 
 xkb_atom_t
-atom_intern(struct atom_table *table, const char *string, size_t len, bool add)
+atom_intern(काष्ठा atom_table *table, स्थिर अक्षर *string, माप_प्रकार len, bool add)
 {
     /* len(string) > 0.8 * index_size */
-    if (darray_size(table->strings) > (table->index_size / 5) * 4) {
-        table->index_size *= 2;
-        xkb_atom_t *tmp = realloc(table->index,
-                                  table->index_size * sizeof(*table->index));
-        if (!tmp)
-            return XKB_ATOM_NONE;
-        table->index = tmp;
-        memset(table->index, 0, table->index_size * sizeof(*table->index));
-        for (darray_size_t j = 1; j < darray_size(table->strings); j++) {
-            const char *s = darray_item(table->strings, j);
-            uint32_t hash = hash_buf(s, strlen(s));
-            for (size_t i = 0; i < table->index_size; i++) {
-                size_t index_pos = (hash + i) & (table->index_size - 1);
-                if (index_pos == 0)
-                    continue;
+    अगर (darray_आकार(table->strings) > (table->सूचकांक_आकार / 5) * 4) {
+        table->सूचकांक_आकार *= 2;
+        xkb_atom_t *tmp = पुनः_स्मृति(table->सूचकांक,
+                                  table->सूचकांक_आकार * माप(*table->सूचकांक));
+        अगर (!tmp)
+            वापस XKB_ATOM_NONE;
+        table->सूचकांक = tmp;
+        स_रखो(table->सूचकांक, 0, table->सूचकांक_आकार * माप(*table->सूचकांक));
+        क्रम (darray_आकार_t j = 1; j < darray_आकार(table->strings); j++) {
+            स्थिर अक्षर *s = darray_item(table->strings, j);
+            uint32_t hash = hash_buf(s, म_माप(s));
+            क्रम (माप_प्रकार i = 0; i < table->सूचकांक_आकार; i++) {
+                माप_प्रकार सूचकांक_pos = (hash + i) & (table->सूचकांक_आकार - 1);
+                अगर (सूचकांक_pos == 0)
+                    जारी;
 
-                xkb_atom_t atom = table->index[index_pos];
-                if (atom == XKB_ATOM_NONE) {
-                    table->index[index_pos] = j;
-                    break;
+                xkb_atom_t atom = table->सूचकांक[सूचकांक_pos];
+                अगर (atom == XKB_ATOM_NONE) {
+                    table->सूचकांक[सूचकांक_pos] = j;
+                    अवरोध;
                 }
             }
         }
     }
 
     uint32_t hash = hash_buf(string, len);
-    for (size_t i = 0; i < table->index_size; i++) {
-        size_t index_pos = (hash + i) & (table->index_size - 1);
-        if (index_pos == 0)
-            continue;
+    क्रम (माप_प्रकार i = 0; i < table->सूचकांक_आकार; i++) {
+        माप_प्रकार सूचकांक_pos = (hash + i) & (table->सूचकांक_आकार - 1);
+        अगर (सूचकांक_pos == 0)
+            जारी;
 
-        xkb_atom_t existing_atom = table->index[index_pos];
-        if (existing_atom == XKB_ATOM_NONE) {
-            if (add) {
-                xkb_atom_t new_atom = darray_size(table->strings);
-                char *s = strndup(string, len);
-                if (!s)
-                    return XKB_ATOM_NONE;
+        xkb_atom_t existing_atom = table->सूचकांक[सूचकांक_pos];
+        अगर (existing_atom == XKB_ATOM_NONE) {
+            अगर (add) {
+                xkb_atom_t new_atom = darray_आकार(table->strings);
+                अक्षर *s = strndup(string, len);
+                अगर (!s)
+                    वापस XKB_ATOM_NONE;
                 darray_append(table->strings, s);
-                table->index[index_pos] = new_atom;
-                return new_atom;
-            } else {
-                return XKB_ATOM_NONE;
+                table->सूचकांक[सूचकांक_pos] = new_atom;
+                वापस new_atom;
+            } अन्यथा {
+                वापस XKB_ATOM_NONE;
             }
         }
 
-        const char *existing_value = darray_item(table->strings, existing_atom);
-        if (strncmp(existing_value, string, len) == 0 && existing_value[len] == '\0')
-            return existing_atom;
+        स्थिर अक्षर *existing_मूल्य = darray_item(table->strings, existing_atom);
+        अगर (म_भेदन(existing_मूल्य, string, len) == 0 && existing_मूल्य[len] == '\0')
+            वापस existing_atom;
     }
 
-    assert(!"couldn't find an empty slot during probing");
-    return XKB_ATOM_NONE;
+    निश्चित(!"couldn't find an empty slot during probing");
+    वापस XKB_ATOM_NONE;
 }

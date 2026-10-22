@@ -2,113 +2,113 @@
  * Copyright (c) 1994 by Silicon Graphics Computer Systems, Inc.
  * SPDX-License-Identifier: HPND
  */
-#pragma once
+#आशय once
 
-#include "config.h"
+#समावेश "config.h"
 
-#include "ast.h"
-#include "scanner-utils.h"
+#समावेश "ast.h"
+#समावेश "scanner-utils.h"
 
-ExprDef *
-ExprCreateString(xkb_atom_t str);
+व्यंजक_Def *
+व्यंजक_Create_String(xkb_atom_t str);
 
-ExprDef *
-ExprCreateInteger(int64_t ival);
+व्यंजक_Def *
+व्यंजक_Create_Integer(int64_t ival);
 
-ExprDef *
-ExprCreateFloat(void);
+व्यंजक_Def *
+व्यंजक_Create_Float(व्योम);
 
-ExprDef *
-ExprCreateBoolean(bool set);
+व्यंजक_Def *
+व्यंजक_Create_Boolean(bool set);
 
-ExprDef *
-ExprCreateKeyName(xkb_atom_t key_name);
+व्यंजक_Def *
+व्यंजक_Create_कुंजी_Name(xkb_atom_t कुंजी_name);
 
-ExprDef *
-ExprCreateKeySym(xkb_keysym_t keysym);
+व्यंजक_Def *
+व्यंजक_Create_कुंजी_Sym(xkb_keysym_t keysym);
 
-ExprDef *
-ExprCreateIdent(xkb_atom_t ident);
+व्यंजक_Def *
+व्यंजक_Create_Ident(xkb_atom_t ident);
 
-ExprDef *
-ExprCreateUnary(enum stmt_type op, ExprDef *child);
+व्यंजक_Def *
+व्यंजक_Create_Unary(क्रमागत stmt_type op, व्यंजक_Def *child);
 
-ExprDef *
-ExprCreateBinary(enum stmt_type op, ExprDef *left, ExprDef *right);
+व्यंजक_Def *
+व्यंजक_Create_द्विआधारी(क्रमागत stmt_type op, व्यंजक_Def *बायाँ, व्यंजक_Def *दायाँ);
 
-ExprDef *
-ExprCreateFieldRef(xkb_atom_t element, xkb_atom_t field);
+व्यंजक_Def *
+व्यंजक_Create_Field_Ref(xkb_atom_t element, xkb_atom_t field);
 
-ExprDef *
-ExprCreateArrayRef(xkb_atom_t element, xkb_atom_t field, ExprDef *entry);
+व्यंजक_Def *
+व्यंजक_Create_Array_Ref(xkb_atom_t element, xkb_atom_t field, व्यंजक_Def *entry);
 
-ExprDef *
-ExprEmptyList(void);
+व्यंजक_Def *
+व्यंजक_Empty_List(व्योम);
 
-ExprDef *
-ExprCreateAction(xkb_atom_t name, ExprDef *args);
+व्यंजक_Def *
+व्यंजक_Create_Action(xkb_atom_t name, व्यंजक_Def *args);
 
-ExprDef *
-ExprCreateActionList(ExprDef *actions);
+व्यंजक_Def *
+व्यंजक_Create_Action_List(व्यंजक_Def *actions);
 
-ExprDef *
-ExprCreateKeySymList(xkb_keysym_t sym);
+व्यंजक_Def *
+व्यंजक_Create_कुंजी_Sym_List(xkb_keysym_t sym);
 
-ExprDef *
-ExprAppendKeySymList(ExprDef *list, xkb_keysym_t sym);
+व्यंजक_Def *
+व्यंजक_Append_कुंजी_Sym_List(व्यंजक_Def *list, xkb_keysym_t sym);
 
-ExprDef *
-ExprKeySymListAppendString(struct scanner *param,
-                           ExprDef *expr, const char *string);
+व्यंजक_Def *
+व्यंजक_कुंजी_Sym_List_Append_String(काष्ठा scanner *param,
+                           व्यंजक_Def *व्यंजक, स्थिर अक्षर *string);
 
 xkb_keysym_t
-KeysymParseString(struct scanner *scanner, const char *string);
+KeysymParseString(काष्ठा scanner *scanner, स्थिर अक्षर *string);
 
 KeycodeDef *
-KeycodeCreate(xkb_atom_t name, int64_t value);
+KeycodeCreate(xkb_atom_t name, int64_t मूल्य);
 
-KeyAliasDef *
-KeyAliasCreate(xkb_atom_t alias, xkb_atom_t real);
+कुंजी_Alias_Def *
+कुंजी_Alias_Create(xkb_atom_t alias, xkb_atom_t real);
 
 VModDef *
-VModCreate(xkb_atom_t name, ExprDef *value);
+VModCreate(xkb_atom_t name, व्यंजक_Def *मूल्य);
 
 VarDef *
-VarCreate(ExprDef *name, ExprDef *value);
+VarCreate(व्यंजक_Def *name, व्यंजक_Def *मूल्य);
 
 VarDef *
 BoolVarCreate(xkb_atom_t ident, bool set);
 
 InterpDef *
-InterpCreate(xkb_keysym_t sym, ExprDef *match);
+InterpCreate(xkb_keysym_t sym, व्यंजक_Def *match);
 
-KeyTypeDef *
-KeyTypeCreate(xkb_atom_t name, VarDef *body);
+कुंजी_Type_Def *
+कुंजी_Type_Create(xkb_atom_t name, VarDef *body);
 
 SymbolsDef *
-SymbolsCreate(xkb_atom_t keyName, VarDef *symbols);
+SymbolsCreate(xkb_atom_t कुंजी_Name, VarDef *symbols);
 
 GroupCompatDef *
-GroupCompatCreate(int64_t group, ExprDef *def);
+GroupCompatCreate(int64_t group, व्यंजक_Def *def);
 
 ModMapDef *
-ModMapCreate(ExprDef *modifiers, ExprDef *keys);
+ModMapCreate(व्यंजक_Def *modifiers, व्यंजक_Def *कुंजियाँ);
 
 LedMapDef *
 LedMapCreate(xkb_atom_t name, VarDef *body);
 
 LedNameDef *
-LedNameCreate(int64_t ndx, ExprDef *name, bool virtual);
+LedNameCreate(int64_t ndx, व्यंजक_Def *name, bool भव);
 
 UnknownStatement *
-UnknownStatementCreate(enum stmt_type, struct sval name);
+UnknownStatementCreate(क्रमागत stmt_type, काष्ठा sval name);
 
 IncludeStmt *
-IncludeCreate(struct xkb_context *ctx, char *str, enum merge_mode merge);
+IncludeCreate(काष्ठा xkb_context *ctx, अक्षर *str, क्रमागत merge_mode merge);
 
 XkbFile *
-XkbFileCreate(enum xkb_file_type type, char *name, ParseCommon *defs,
-              enum xkb_map_flags flags);
+XkbFileCreate(क्रमागत xkb_file_type type, अक्षर *name, ParseCommon *defs,
+              क्रमागत xkb_map_flags flags);
 
-void
+व्योम
 FreeStmt(ParseCommon *stmt);

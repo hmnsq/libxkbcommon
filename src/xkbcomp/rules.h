@@ -2,25 +2,25 @@
  * Copyright © 2009 Dan Nicholson
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#आशय once
 
-#include "config.h"
+#समावेश "config.h"
 
-#include <stdbool.h>
+#समावेश <stdbool.h>
 
-#include "xkbcomp-priv.h"
-#include "rmlvo.h"
-
-XKB_EXPORT_PRIVATE bool
-xkb_components_from_rmlvo_builder(const struct xkb_rmlvo_builder *rmlvo,
-                                  struct xkb_component_names *out,
-                                  xkb_layout_index_t *explicit_layouts);
+#समावेश "xkbcomp-priv.h"
+#समावेश "rmlvo.h"
 
 XKB_EXPORT_PRIVATE bool
-xkb_components_from_rules_names(struct xkb_context *ctx,
-                                const struct xkb_rule_names *rmlvo,
-                                struct xkb_component_names *out,
-                                xkb_layout_index_t *explicit_layouts);
+xkb_components_from_rmlvo_builder(स्थिर काष्ठा xkb_rmlvo_builder *rmlvo,
+                                  काष्ठा xkb_component_names *out,
+                                  xkb_layout_सूचकांक_t *explicit_layouts);
+
+XKB_EXPORT_PRIVATE bool
+xkb_components_from_rules_names(काष्ठा xkb_context *ctx,
+                                स्थिर काष्ठा xkb_rule_names *rmlvo,
+                                काष्ठा xkb_component_names *out,
+                                xkb_layout_सूचकांक_t *explicit_layouts);
 
 /* Maximum length of a layout index string:
  *
@@ -28,8 +28,8 @@ xkb_components_from_rules_names(struct xkb_context *ctx,
  *        < ceiling (bitsize(xkb_layout_index_t) * 5 / 16)
  *        < 1 + floor (bitsize(xkb_layout_index_t) * 5 / 16)
  */
-#define MAX_LAYOUT_INDEX_STR_LENGTH \
-        (1 + ((sizeof(xkb_layout_index_t) * CHAR_BIT * 5) >> 4))
-static_assert(MAX_LAYOUT_INDEX_STR_LENGTH == sizeof("4294967295"), "");
+#घोषणा MAX_LAYOUT_सूचकांक_STR_लंबाई \
+        (1 + ((माप(xkb_layout_सूचकांक_t) * अक्षर_बिट * 5) >> 4))
+static_assert(MAX_LAYOUT_सूचकांक_STR_लंबाई == माप("4294967295"), "");
 
-#define OPTIONS_GROUP_SPECIFIER_PREFIX '!'
+#घोषणा OPTIONS_GROUP_SPECIFIER_PREFIX '!'

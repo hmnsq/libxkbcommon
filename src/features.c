@@ -9,140 +9,140 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#समावेश "config.h"
 
-#include <stdint.h>
+#समावेश <stdint.h>
 
-#include "xkbcommon/xkbcommon-features.h"
-#include "features/enums.h"
-#include "utils.h"
+#समावेश "xkbcommon/xkbcommon-features.h"
+#समावेश "features/enums.h"
+#समावेश "utils.h"
 
-static bool
-is_supported_enum_value_mask(enum xkb_enumerations_values values, uint32_t value)
+अटल bool
+is_supported_enum_मूल्य_mask(क्रमागत xkb_enumerations_मूल्यावली मूल्यावली, uint32_t मूल्य)
 {
-    return (value < UINT32_WIDTH && (values & (UINT32_C(1) << value)));
+    वापस (मूल्य < UINT32_WIDTH && (मूल्यावली & (UINT32_C(1) << मूल्य)));
 }
 
-static bool
-is_supported_enum_value_array(const uint32_t *values, size_t size, uint32_t value)
+अटल bool
+is_supported_enum_मूल्य_array(स्थिर uint32_t *मूल्यावली, माप_प्रकार आकार, uint32_t मूल्य)
 {
-    for (size_t v = 0; v < size; v++) {
-        if (values[v] == value) {
-            return true;
+    क्रम (माप_प्रकार v = 0; v < आकार; v++) {
+        अगर (मूल्यावली[v] == मूल्य) {
+            वापस true;
         }
     }
-    return false;
+    वापस false;
 }
 
-static inline bool
-is_supported_flag_value(enum xkb_enumerations_values values,
-                        bool accept_zero, uint32_t value)
+अटल अंतरभूत bool
+is_supported_flag_मूल्य(क्रमागत xkb_enumerations_मूल्यावली मूल्यावली,
+                        bool accept_zero, uint32_t मूल्य)
 {
-    return (accept_zero || value) && ((uint32_t) values & value) == value;
+    वापस (accept_zero || मूल्य) && ((uint32_t) मूल्यावली & मूल्य) == मूल्य;
 }
 
 bool
-xkb_feature_supported(enum xkb_feature feature, uint32_t value)
+xkb_feature_supported(क्रमागत xkb_feature feature, uint32_t मूल्य)
 {
-    switch (feature) {
-    case XKB_FEATURE_ENUM_FEATURE:
-        return is_supported_enum_value_array(
-            xkb_feature_values, ARRAY_SIZE(xkb_feature_values), value
+    चयन (feature) {
+    हाल XKB_FEATURE_ENUM_FEATURE:
+        वापस is_supported_enum_मूल्य_array(
+            xkb_feature_मूल्यावली, ARRAY_आकार(xkb_feature_मूल्यावली), मूल्य
         );
-    case XKB_FEATURE_ENUM_STATUS:
-        return is_supported_enum_value_array(
-            xkb_status_values, ARRAY_SIZE(xkb_status_values), value
+    हाल XKB_FEATURE_ENUM_STATUS:
+        वापस is_supported_enum_मूल्य_array(
+            xkb_status_मूल्यावली, ARRAY_आकार(xkb_status_मूल्यावली), मूल्य
         );
-    case XKB_FEATURE_ENUM_CONTEXT_FLAGS:
-        return is_supported_flag_value(
-            XKB_CONTEXT_FLAGS_VALUES, true, value
+    हाल XKB_FEATURE_ENUM_CONTEXT_FLAGS:
+        वापस is_supported_flag_मूल्य(
+            XKB_CONTEXT_FLAGS_मूल्यावली, true, मूल्य
         );
-    case XKB_FEATURE_ENUM_LOG_LEVEL:
-        return is_supported_enum_value_array(
-            xkb_log_level_values, ARRAY_SIZE(xkb_log_level_values), value
+    हाल XKB_FEATURE_ENUM_LOG_LEVEL:
+        वापस is_supported_enum_मूल्य_array(
+            xkb_log_level_मूल्यावली, ARRAY_आकार(xkb_log_level_मूल्यावली), मूल्य
         );
-    case XKB_FEATURE_ENUM_KEYSYM_FLAGS:
-        return is_supported_flag_value(
-            XKB_KEYSYM_FLAGS_VALUES, true, value
+    हाल XKB_FEATURE_ENUM_KEYSYM_FLAGS:
+        वापस is_supported_flag_मूल्य(
+            XKB_KEYSYM_FLAGS_मूल्यावली, true, मूल्य
         );
-    case XKB_FEATURE_ENUM_RMLVO_BUILDER_FLAGS:
-        return is_supported_flag_value(
-            XKB_RMLVO_BUILDER_FLAGS_VALUES, true, value
+    हाल XKB_FEATURE_ENUM_RMLVO_BUILDER_FLAGS:
+        वापस is_supported_flag_मूल्य(
+            XKB_RMLVO_BUILDER_FLAGS_मूल्यावली, true, मूल्य
         );
-    case XKB_FEATURE_ENUM_KEYMAP_FORMAT:
-        return is_supported_enum_value_mask(XKB_KEYMAP_FORMAT_VALUES, value);
-    case XKB_FEATURE_ENUM_KEYMAP_COMPILE_FLAGS:
-        return is_supported_flag_value(
-            XKB_KEYMAP_COMPILE_FLAGS_VALUES, true, value
+    हाल XKB_FEATURE_ENUM_KEYMAP_FORMAT:
+        वापस is_supported_enum_मूल्य_mask(XKB_KEYMAP_FORMAT_मूल्यावली, मूल्य);
+    हाल XKB_FEATURE_ENUM_KEYMAP_COMPILE_FLAGS:
+        वापस is_supported_flag_मूल्य(
+            XKB_KEYMAP_COMPILE_FLAGS_मूल्यावली, true, मूल्य
         );
-    case XKB_FEATURE_ENUM_KEYMAP_SERIALIZE_FLAGS:
-        return is_supported_flag_value(
-            XKB_KEYMAP_SERIALIZE_FLAGS_VALUES, true, value
+    हाल XKB_FEATURE_ENUM_KEYMAP_SERIALIZE_FLAGS:
+        वापस is_supported_flag_मूल्य(
+            XKB_KEYMAP_SERIALIZE_FLAGS_मूल्यावली, true, मूल्य
         );
-    case XKB_FEATURE_ENUM_KEYMAP_KEY_ITERATOR_FLAGS:
-        return is_supported_flag_value(
-            XKB_KEYMAP_KEY_ITERATOR_FLAGS_VALUES, true, value
+    हाल XKB_FEATURE_ENUM_KEYMAP_कुंजी_ITERATOR_FLAGS:
+        वापस is_supported_flag_मूल्य(
+            XKB_KEYMAP_कुंजी_ITERATOR_FLAGS_मूल्यावली, true, मूल्य
         );
-    case XKB_FEATURE_ENUM_STATE_COMPONENT:
-        return is_supported_flag_value(
-            XKB_STATE_COMPONENT_VALUES, true, value
+    हाल XKB_FEATURE_ENUM_STATE_COMPONENT:
+        वापस is_supported_flag_मूल्य(
+            XKB_STATE_COMPONENT_मूल्यावली, true, मूल्य
         );
-    case XKB_FEATURE_ENUM_LAYOUT_OUT_OF_RANGE_POLICY:
-        return is_supported_enum_value_mask(XKB_LAYOUT_OUT_OF_RANGE_POLICY_VALUES, value);
-    case XKB_FEATURE_ENUM_A11Y_FLAGS:
-        return is_supported_flag_value(
-            XKB_A11Y_FLAGS_VALUES, true, value
+    हाल XKB_FEATURE_ENUM_LAYOUT_OUT_OF_RANGE_POLICY:
+        वापस is_supported_enum_मूल्य_mask(XKB_LAYOUT_OUT_OF_RANGE_POLICY_मूल्यावली, मूल्य);
+    हाल XKB_FEATURE_ENUM_A11Y_FLAGS:
+        वापस is_supported_flag_मूल्य(
+            XKB_A11_Y_FLAGS_मूल्यावली, true, मूल्य
         );
-    case XKB_FEATURE_ENUM_KEYBOARD_CONTROL_FLAGS:
-        return is_supported_flag_value(
-            XKB_KEYBOARD_CONTROL_FLAGS_VALUES, true, value
+    हाल XKB_FEATURE_ENUM_KEYBOARD_CONTROL_FLAGS:
+        वापस is_supported_flag_मूल्य(
+            XKB_KEYBOARD_CONTROL_FLAGS_मूल्यावली, true, मूल्य
         );
-    case XKB_FEATURE_ENUM_STATE_MODE:
-        return is_supported_enum_value_mask(XKB_STATE_MODE_VALUES, value);
-    case XKB_FEATURE_ENUM_STATE_MATCH:
-        return is_supported_flag_value(
-            XKB_STATE_MATCH_VALUES, false, value
+    हाल XKB_FEATURE_ENUM_STATE_MODE:
+        वापस is_supported_enum_मूल्य_mask(XKB_STATE_MODE_मूल्यावली, मूल्य);
+    हाल XKB_FEATURE_ENUM_STATE_MATCH:
+        वापस is_supported_flag_मूल्य(
+            XKB_STATE_MATCH_मूल्यावली, false, मूल्य
         );
-    case XKB_FEATURE_ENUM_CONSUMED_MODE:
-        return is_supported_enum_value_mask(XKB_CONSUMED_MODE_VALUES, value);
-    case XKB_FEATURE_ENUM_MACHINE_BUILDER_FLAGS:
-        return is_supported_flag_value(
-            XKB_MACHINE_BUILDER_FLAGS_VALUES, true, value
+    हाल XKB_FEATURE_ENUM_CONSUMED_MODE:
+        वापस is_supported_enum_मूल्य_mask(XKB_CONSUMED_MODE_मूल्यावली, मूल्य);
+    हाल XKB_FEATURE_ENUM_MACHINE_BUILDER_FLAGS:
+        वापस is_supported_flag_मूल्य(
+            XKB_MACHINE_BUILDER_FLAGS_मूल्यावली, true, मूल्य
         );
-    case XKB_FEATURE_ENUM_MACHINE_FLAGS:
-        return is_supported_flag_value(
-            XKB_MACHINE_FLAGS_VALUES, true, value
+    हाल XKB_FEATURE_ENUM_MACHINE_FLAGS:
+        वापस is_supported_flag_मूल्य(
+            XKB_MACHINE_FLAGS_मूल्यावली, true, मूल्य
         );
-    case XKB_FEATURE_ENUM_EVENT_TYPE:
-        return is_supported_enum_value_mask(XKB_EVENT_TYPE_VALUES, value);
-    case XKB_FEATURE_ENUM_KEY_DIRECTION:
-        return is_supported_enum_value_mask(XKB_KEY_DIRECTION_VALUES, value);
-    case XKB_FEATURE_ENUM_POINTER_MOTION_FLAGS:
-        return is_supported_flag_value(
-            XKB_POINTER_MOTION_FLAGS_VALUES, true, value
+    हाल XKB_FEATURE_ENUM_EVENT_TYPE:
+        वापस is_supported_enum_मूल्य_mask(XKB_EVENT_TYPE_मूल्यावली, मूल्य);
+    हाल XKB_FEATURE_ENUM_कुंजी_DIRECTION:
+        वापस is_supported_enum_मूल्य_mask(XKB_कुंजी_DIRECTION_मूल्यावली, मूल्य);
+    हाल XKB_FEATURE_ENUM_POINTER_MOTION_FLAGS:
+        वापस is_supported_flag_मूल्य(
+            XKB_POINTER_MOTION_FLAGS_मूल्यावली, true, मूल्य
         );
-    case XKB_FEATURE_ENUM_POINTER_BUTTON_STATE:
-        return is_supported_enum_value_mask(XKB_POINTER_BUTTON_STATE_VALUES, value);
-    case XKB_FEATURE_ENUM_EVENTS_FLAGS:
-        return is_supported_flag_value(
-            XKB_EVENTS_FLAGS_VALUES, true, value
+    हाल XKB_FEATURE_ENUM_POINTER_BUTTON_STATE:
+        वापस is_supported_enum_मूल्य_mask(XKB_POINTER_BUTTON_STATE_मूल्यावली, मूल्य);
+    हाल XKB_FEATURE_ENUM_EVENTS_FLAGS:
+        वापस is_supported_flag_मूल्य(
+            XKB_EVENTS_FLAGS_मूल्यावली, true, मूल्य
         );
-    case XKB_FEATURE_ENUM_COMPOSE_FORMAT:
-        return is_supported_enum_value_mask(XKB_COMPOSE_FORMAT_VALUES, value);
-    case XKB_FEATURE_ENUM_COMPOSE_COMPILE_FLAGS:
-        return is_supported_flag_value(
-            XKB_COMPOSE_COMPILE_FLAGS_VALUES, true, value
+    हाल XKB_FEATURE_ENUM_COMPOSE_FORMAT:
+        वापस is_supported_enum_मूल्य_mask(XKB_COMPOSE_FORMAT_मूल्यावली, मूल्य);
+    हाल XKB_FEATURE_ENUM_COMPOSE_COMPILE_FLAGS:
+        वापस is_supported_flag_मूल्य(
+            XKB_COMPOSE_COMPILE_FLAGS_मूल्यावली, true, मूल्य
         );
-    case XKB_FEATURE_ENUM_COMPOSE_STATUS:
-        return is_supported_enum_value_mask(XKB_COMPOSE_STATUS_VALUES, value);
-    case XKB_FEATURE_ENUM_COMPOSE_STATE_FLAGS:
-        return is_supported_flag_value(
-            XKB_COMPOSE_STATE_FLAGS_VALUES, true, value
+    हाल XKB_FEATURE_ENUM_COMPOSE_STATUS:
+        वापस is_supported_enum_मूल्य_mask(XKB_COMPOSE_STATUS_मूल्यावली, मूल्य);
+    हाल XKB_FEATURE_ENUM_COMPOSE_STATE_FLAGS:
+        वापस is_supported_flag_मूल्य(
+            XKB_COMPOSE_STATE_FLAGS_मूल्यावली, true, मूल्य
         );
-    case XKB_FEATURE_ENUM_COMPOSE_FEED_RESULT:
-        return is_supported_enum_value_mask(XKB_COMPOSE_FEED_RESULT_VALUES, value);
-    default:
+    हाल XKB_FEATURE_ENUM_COMPOSE_FEED_परिणाम:
+        वापस is_supported_enum_मूल्य_mask(XKB_COMPOSE_FEED_परिणाम_मूल्यावली, मूल्य);
+    शेष:
         /* Invalid feature */
-        return false;
+        वापस false;
     }
 }

@@ -3,52 +3,52 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#समावेश "config.h"
 
-#include <assert.h>
+#समावेश <assert.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "features/enums.h"
-#include "constants.h"
-#include "messages-codes.h"
-#include "parser.h"
-#include "paths.h"
-#include "table.h"
-#include "utils.h"
+#समावेश "xkbcommon/xkbcommon.h"
+#समावेश "features/enums.h"
+#समावेश "constants.h"
+#समावेश "messages-codes.h"
+#समावेश "parser.h"
+#समावेश "paths.h"
+#समावेश "table.h"
+#समावेश "utils.h"
 
-static struct xkb_compose_table *
-xkb_compose_table_new(struct xkb_context *ctx, const char *func,
-                      const char *locale,
-                      enum xkb_compose_format format,
-                      enum xkb_compose_compile_flags flags)
+अटल काष्ठा xkb_compose_table *
+xkb_compose_table_new(काष्ठा xkb_context *ctx, स्थिर अक्षर *func,
+                      स्थिर अक्षर *locale,
+                      क्रमागत xkb_compose_format format,
+                      क्रमागत xkb_compose_compile_flags flags)
 {
-    const enum xkb_compose_compile_flags invalid_flags = (
-        flags & ~(enum xkb_compose_compile_flags)XKB_COMPOSE_COMPILE_FLAGS_VALUES
+    स्थिर क्रमागत xkb_compose_compile_flags invalid_flags = (
+        flags & ~(क्रमागत xkb_compose_compile_flags)XKB_COMPOSE_COMPILE_FLAGS_मूल्यावली
     );
-    if (invalid_flags) {
+    अगर (invalid_flags) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "%s: unrecognized flags: %#x\n", func, invalid_flags);
-        return NULL;
+        वापस शून्य;
     }
 
-    if (format != XKB_COMPOSE_FORMAT_TEXT_V1) {
+    अगर (format != XKB_COMPOSE_FORMAT_TEXT_V1) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "%s: unsupported compose format: %d\n", func, format);
-        return NULL;
+        वापस शून्य;
     }
 
-    char *resolved_locale;
-    struct xkb_compose_table *table;
-    struct compose_node dummy = {0};
+    अक्षर *resolved_locale;
+    काष्ठा xkb_compose_table *table;
+    काष्ठा compose_गाँठ dummy = {0};
 
     resolved_locale = resolve_locale(ctx, locale);
-    if (!resolved_locale)
-        return NULL;
+    अगर (!resolved_locale)
+        वापस शून्य;
 
-    table = calloc(1, sizeof(*table));
-    if (!table) {
-        free(resolved_locale);
-        return NULL;
+    table = सुस्मृति(1, माप(*table));
+    अगर (!table) {
+        मुक्त(resolved_locale);
+        वापस शून्य;
     }
 
     table->refcnt = 1;
@@ -61,228 +61,228 @@ xkb_compose_table_new(struct xkb_context *ctx, const char *func,
     darray_init(table->nodes);
     darray_init(table->utf8);
 
-    dummy.keysym = XKB_KEY_NoSymbol;
+    dummy.keysym = XKB_कुंजी_No_प्रतीक;
     dummy.leaf.is_leaf = true;
     dummy.leaf.utf8 = 0;
-    dummy.leaf.keysym = XKB_KEY_NoSymbol;
+    dummy.leaf.keysym = XKB_कुंजी_No_प्रतीक;
     darray_append(table->nodes, dummy);
 
     darray_append(table->utf8, '\0');
 
-    return table;
+    वापस table;
 }
 
-struct xkb_compose_table *
-xkb_compose_table_ref(struct xkb_compose_table *table)
+काष्ठा xkb_compose_table *
+xkb_compose_table_ref(काष्ठा xkb_compose_table *table)
 {
-    assert(table->refcnt > 0);
+    निश्चित(table->refcnt > 0);
     table->refcnt++;
-    return table;
+    वापस table;
 }
 
-void
-xkb_compose_table_unref(struct xkb_compose_table *table)
+व्योम
+xkb_compose_table_unref(काष्ठा xkb_compose_table *table)
 {
-    assert(!table || table->refcnt > 0);
-    if (!table || --table->refcnt > 0)
-        return;
-    free(table->locale);
+    निश्चित(!table || table->refcnt > 0);
+    अगर (!table || --table->refcnt > 0)
+        वापस;
+    मुक्त(table->locale);
     darray_free(table->nodes);
     darray_free(table->utf8);
     xkb_context_unref(table->ctx);
-    free(table);
+    मुक्त(table);
 }
 
-struct xkb_compose_table *
-xkb_compose_table_new_from_file(struct xkb_context *ctx,
-                                FILE *file,
-                                const char *locale,
-                                enum xkb_compose_format format,
-                                enum xkb_compose_compile_flags flags)
+काष्ठा xkb_compose_table *
+xkb_compose_table_new_from_file(काष्ठा xkb_context *ctx,
+                                खाता *file,
+                                स्थिर अक्षर *locale,
+                                क्रमागत xkb_compose_format format,
+                                क्रमागत xkb_compose_compile_flags flags)
 {
-    struct xkb_compose_table * const table =
+    काष्ठा xkb_compose_table * स्थिर table =
         xkb_compose_table_new(ctx, __func__, locale, format, flags);
-    if (!table)
-        return NULL;
+    अगर (!table)
+        वापस शून्य;
 
-    if (!parse_file(table, file, "(unknown file)")) {
+    अगर (!parse_file(table, file, "(unknown file)")) {
         xkb_compose_table_unref(table);
-        return NULL;
+        वापस शून्य;
     }
 
-    return table;
+    वापस table;
 }
 
-struct xkb_compose_table *
-xkb_compose_table_new_from_buffer(struct xkb_context *ctx,
-                                  const char *buffer, size_t length,
-                                  const char *locale,
-                                  enum xkb_compose_format format,
-                                  enum xkb_compose_compile_flags flags)
+काष्ठा xkb_compose_table *
+xkb_compose_table_new_from_बफर(काष्ठा xkb_context *ctx,
+                                  स्थिर अक्षर *बफर, माप_प्रकार लंबाई,
+                                  स्थिर अक्षर *locale,
+                                  क्रमागत xkb_compose_format format,
+                                  क्रमागत xkb_compose_compile_flags flags)
 {
-    struct xkb_compose_table * const table =
+    काष्ठा xkb_compose_table * स्थिर table =
         xkb_compose_table_new(ctx, __func__, locale, format, flags);
-    if (!table)
-        return NULL;
+    अगर (!table)
+        वापस शून्य;
 
-    if (!parse_string(table, buffer, length, "(input string)")) {
+    अगर (!parse_string(table, बफर, लंबाई, "(input string)")) {
         xkb_compose_table_unref(table);
-        return NULL;
+        वापस शून्य;
     }
 
-    return table;
+    वापस table;
 }
 
-struct xkb_compose_table *
-xkb_compose_table_new_from_locale(struct xkb_context *ctx,
-                                  const char *locale,
-                                  enum xkb_compose_compile_flags flags)
+काष्ठा xkb_compose_table *
+xkb_compose_table_new_from_locale(काष्ठा xkb_context *ctx,
+                                  स्थिर अक्षर *locale,
+                                  क्रमागत xkb_compose_compile_flags flags)
 {
-    static const enum xkb_compose_format format = XKB_COMPOSE_FORMAT_TEXT_V1;
-    struct xkb_compose_table * const table =
+    अटल स्थिर क्रमागत xkb_compose_format format = XKB_COMPOSE_FORMAT_TEXT_V1;
+    काष्ठा xkb_compose_table * स्थिर table =
         xkb_compose_table_new(ctx, __func__, locale, format, flags);
-    if (!table)
-        return NULL;
+    अगर (!table)
+        वापस शून्य;
 
-    char *path = get_xcomposefile_path(ctx);
-    FILE *file = open_file(path);
-    if (file)
-        goto found_path;
-    free(path);
+    अक्षर *path = get_xcomposefile_path(ctx);
+    खाता *file = open_file(path);
+    अगर (file)
+        जाओ found_path;
+    मुक्त(path);
 
     path = get_xdg_xcompose_file_path(ctx);
     file = open_file(path);
-    if (file)
-        goto found_path;
-    free(path);
+    अगर (file)
+        जाओ found_path;
+    मुक्त(path);
 
     path = get_home_xcompose_file_path(ctx);
     file = open_file(path);
-    if (file)
-        goto found_path;
-    free(path);
+    अगर (file)
+        जाओ found_path;
+    मुक्त(path);
 
     path = get_locale_compose_file_path(ctx, table->locale);
     file = open_file(path);
-    if (file)
-        goto found_path;
-    free(path);
+    अगर (file)
+        जाओ found_path;
+    मुक्त(path);
 
     log_err(ctx, XKB_ERROR_INVALID_COMPOSE_LOCALE,
             "couldn't find a Compose file for locale \"%s\" (mapped to \"%s\")\n",
             locale, table->locale);
     xkb_compose_table_unref(table);
-    return NULL;
+    वापस शून्य;
 
 found_path:
     {} /* Label followed by a declaration is a C23 extension */
-    const bool ok = parse_file(table, file, path);
-    fclose(file);
-    if (!ok) {
-        free(path);
+    स्थिर bool ok = parse_file(table, file, path);
+    ख_बंद(file);
+    अगर (!ok) {
+        मुक्त(path);
         xkb_compose_table_unref(table);
-        return NULL;
+        वापस शून्य;
     }
 
     log_dbg(ctx, XKB_LOG_MESSAGE_NO_ID,
             "created compose table from locale %s with path %s\n",
             table->locale, path);
 
-    free(path);
-    return table;
+    मुक्त(path);
+    वापस table;
 }
 
-const xkb_keysym_t *
-xkb_compose_table_entry_sequence(struct xkb_compose_table_entry *entry,
-                                 size_t *sequence_length)
+स्थिर xkb_keysym_t *
+xkb_compose_table_entry_sequence(काष्ठा xkb_compose_table_entry *entry,
+                                 माप_प्रकार *sequence_लंबाई)
 {
-    *sequence_length = entry->sequence_length;
-    return entry->sequence;
+    *sequence_लंबाई = entry->sequence_लंबाई;
+    वापस entry->sequence;
 }
 
 xkb_keysym_t
-xkb_compose_table_entry_keysym(struct xkb_compose_table_entry *entry)
+xkb_compose_table_entry_keysym(काष्ठा xkb_compose_table_entry *entry)
 {
-    return entry->keysym;
+    वापस entry->keysym;
 }
 
-const char *
-xkb_compose_table_entry_utf8(struct xkb_compose_table_entry *entry)
+स्थिर अक्षर *
+xkb_compose_table_entry_utf8(काष्ठा xkb_compose_table_entry *entry)
 {
-    return entry->utf8;
+    वापस entry->utf8;
 }
 
-#if MAX_COMPOSE_NODES_LOG2 > 31
-#error "Cannot implement bit field xkb_compose_table_iterator_pending_node.offset"
-#endif
+#अगर MAX_COMPOSE_NODES_LOG2 > 31
+#त्रुटि "Cannot implement bit field xkb_compose_table_iterator_pending_node.offset"
+#पूर्ण_अगर
 
-struct xkb_compose_table_iterator_pending_node {
+काष्ठा xkb_compose_table_iterator_pending_गाँठ {
     uint32_t offset:31;
     bool processed:1;
 };
 
-struct xkb_compose_table_iterator {
-    struct xkb_compose_table *table;
+काष्ठा xkb_compose_table_iterator {
+    काष्ठा xkb_compose_table *table;
     /* Current entry */
-    struct xkb_compose_table_entry entry;
+    काष्ठा xkb_compose_table_entry entry;
     /* Stack of pending nodes to process */
-    darray(struct xkb_compose_table_iterator_pending_node) pending_nodes;
+    darray(काष्ठा xkb_compose_table_iterator_pending_गाँठ) pending_nodes;
 };
 
-struct xkb_compose_table_iterator *
-xkb_compose_table_iterator_new(struct xkb_compose_table *table)
+काष्ठा xkb_compose_table_iterator *
+xkb_compose_table_iterator_new(काष्ठा xkb_compose_table *table)
 {
-    struct xkb_compose_table_iterator *iter;
+    काष्ठा xkb_compose_table_iterator *iter;
     xkb_keysym_t *sequence;
 
-    iter = calloc(1, sizeof(*iter));
-    if (!iter) {
-        return NULL;
+    iter = सुस्मृति(1, माप(*iter));
+    अगर (!iter) {
+        वापस शून्य;
     }
     iter->table = xkb_compose_table_ref(table);
-    sequence = calloc(COMPOSE_MAX_LHS_LEN, sizeof(xkb_keysym_t));
-    if (!sequence) {
-        free(iter);
-        return NULL;
+    sequence = सुस्मृति(COMPOSE_MAX_LHS_LEN, माप(xkb_keysym_t));
+    अगर (!sequence) {
+        मुक्त(iter);
+        वापस शून्य;
     }
     iter->entry.sequence = sequence;
-    iter->entry.sequence_length = 0;
+    iter->entry.sequence_लंबाई = 0;
 
     darray_init(iter->pending_nodes);
     /* Short-circuit if table contains only the dummy entry */
-    if (darray_size(table->nodes) == 1) {
-        return iter;
+    अगर (darray_आकार(table->nodes) == 1) {
+        वापस iter;
     }
     /* Add root node */
-    struct xkb_compose_table_iterator_pending_node pending = {
+    काष्ठा xkb_compose_table_iterator_pending_गाँठ pending = {
         .offset = 1,
         .processed = false
     };
     darray_append(iter->pending_nodes, pending);
-    const struct compose_node *node = &darray_item(iter->table->nodes,
+    स्थिर काष्ठा compose_गाँठ *गाँठ = &darray_item(iter->table->nodes,
                                                    pending.offset);
 
     /* Find the first left-most node and store intermediate nodes as pending */
-    while (node->lokid) {
-        pending.offset = node->lokid;
+    जबतक (गाँठ->lokid) {
+        pending.offset = गाँठ->lokid;
         darray_append(iter->pending_nodes, pending);
-        node = &darray_item(iter->table->nodes, pending.offset);
+        गाँठ = &darray_item(iter->table->nodes, pending.offset);
     };
 
-    return iter;
+    वापस iter;
 }
 
-void
-xkb_compose_table_iterator_free(struct xkb_compose_table_iterator *iter)
+व्योम
+xkb_compose_table_iterator_free(काष्ठा xkb_compose_table_iterator *iter)
 {
     xkb_compose_table_unref(iter->table);
     darray_free(iter->pending_nodes);
-    free(iter->entry.sequence);
-    free(iter);
+    मुक्त(iter->entry.sequence);
+    मुक्त(iter);
 }
 
-struct xkb_compose_table_entry *
-xkb_compose_table_iterator_next(struct xkb_compose_table_iterator *iter)
+काष्ठा xkb_compose_table_entry *
+xkb_compose_table_iterator_अग्र(काष्ठा xkb_compose_table_iterator *iter)
 {
     /* Traversal algorithm (simplified):
      * 1. Resume last pending node from the stack as the current pending node.
@@ -298,75 +298,75 @@ xkb_compose_table_iterator_next(struct xkb_compose_table_iterator *iter)
      * 7. Go to 5.
      */
 
-    struct xkb_compose_table_iterator_pending_node *pending;
-    const struct compose_node *node;
+    काष्ठा xkb_compose_table_iterator_pending_गाँठ *pending;
+    स्थिर काष्ठा compose_गाँठ *गाँठ;
 
     /* Iterator is empty if there is no pending nodes */
-    if (unlikely(darray_empty(iter->pending_nodes))) {
-        return NULL;
+    अगर (unlikely(darray_empty(iter->pending_nodes))) {
+        वापस शून्य;
     }
 
     /* Resume to the last element in the stack */
     pending = &darray_item(iter->pending_nodes,
-                           darray_size(iter->pending_nodes) - 1);
-    node = &darray_item(iter->table->nodes, pending->offset);
+                           darray_आकार(iter->pending_nodes) - 1);
+    गाँठ = &darray_item(iter->table->nodes, pending->offset);
 
-    struct xkb_compose_table_iterator_pending_node new = {
+    काष्ठा xkb_compose_table_iterator_pending_गाँठ new = {
         .processed = false,
         .offset = 0
     };
 
     /* Remove processed leaves until an unprocessed right arrow or parent
      * is found, then update entry accordingly */
-    while (pending->processed) {
+    जबतक (pending->processed) {
         /* Remove last keysym */
-        iter->entry.sequence_length--;
-        if (node->hikid) {
+        iter->entry.sequence_लंबाई--;
+        अगर (गाँठ->hikid) {
             /* Follow right arrow: replace current pending node */
             pending->processed = false;
-            pending->offset = node->hikid;
+            pending->offset = गाँठ->hikid;
             /* Process child’s left arrow */
-            goto node_left;
-        } else {
+            जाओ गाँठ_बायाँ;
+        } अन्यथा {
             /* Remove processed node */
             darray_remove_last(iter->pending_nodes);
-            if (unlikely(darray_empty(iter->pending_nodes))) {
+            अगर (unlikely(darray_empty(iter->pending_nodes))) {
                 /* No more nodes to process */
-                return NULL;
+                वापस शून्य;
             }
             /* Get parent node */
             pending = &darray_item(iter->pending_nodes,
-                                   darray_size(iter->pending_nodes) - 1);
-            node = &darray_item(iter->table->nodes, pending->offset);
+                                   darray_आकार(iter->pending_nodes) - 1);
+            गाँठ = &darray_item(iter->table->nodes, pending->offset);
         }
     }
 
-    while (1) {
+    जबतक (1) {
         /* Follow down arrow */
         pending->processed = true;
-        iter->entry.sequence_length++;
-        iter->entry.sequence[iter->entry.sequence_length - 1] = node->keysym;
-        if (node->is_leaf) {
+        iter->entry.sequence_लंबाई++;
+        iter->entry.sequence[iter->entry.sequence_लंबाई - 1] = गाँठ->keysym;
+        अगर (गाँठ->is_leaf) {
             /* Leaf: return entry */
-            iter->entry.keysym = node->leaf.keysym;
-            iter->entry.utf8 = &darray_item(iter->table->utf8, node->leaf.utf8);
-            return &iter->entry;
+            iter->entry.keysym = गाँठ->leaf.keysym;
+            iter->entry.utf8 = &darray_item(iter->table->utf8, गाँठ->leaf.utf8);
+            वापस &iter->entry;
         }
         /* Not a leaf: process child node */
-        new.offset = node->internal.eqkid;
+        new.offset = गाँठ->internal.eqkid;
         darray_append(iter->pending_nodes, new);
         pending = &darray_item(iter->pending_nodes,
-                               darray_size(iter->pending_nodes) - 1);
-node_left:
-        node = &darray_item(iter->table->nodes, pending->offset);
+                               darray_आकार(iter->pending_nodes) - 1);
+गाँठ_बायाँ:
+        गाँठ = &darray_item(iter->table->nodes, pending->offset);
         /* Find the next left-most arrow and store intermediate pending nodes */
-        while (node->lokid) {
+        जबतक (गाँठ->lokid) {
             /* Follow left arrow */
-            new.offset = node->lokid;
+            new.offset = गाँठ->lokid;
             darray_append(iter->pending_nodes, new);
             pending = &darray_item(iter->pending_nodes,
-                                   darray_size(iter->pending_nodes) - 1);
-            node = &darray_item(iter->table->nodes, new.offset);
+                                   darray_आकार(iter->pending_nodes) - 1);
+            गाँठ = &darray_item(iter->table->nodes, new.offset);
         }
     }
 }

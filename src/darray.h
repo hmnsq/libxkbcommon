@@ -2,50 +2,50 @@
  * Copyright (C) 2011 Joseph Adams <joeyadams3.14159@gmail.com>
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#आशय once
 
-#include "config.h"
+#समावेश "config.h"
 
 /* Originally taken from: https://ccodearchive.net/info/darray.html
  * But modified for xkbcommon. */
 
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
-#include <limits.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
+#समावेश <assert.h>
+#समावेश <limits.h>
 
-#include "utils.h"
+#समावेश "utils.h"
 
-typedef unsigned int darray_size_t;
-#define DARRAY_SIZE_T_WIDTH (sizeof(darray_size_t) * CHAR_BIT)
-#define DARRAY_SIZE_MAX UINT_MAX
+प्रकार अचिन्हित पूर्णांक darray_आकार_t;
+#घोषणा DARRAY_आकार_T_WIDTH (माप(darray_आकार_t) * अक्षर_बिट)
+#घोषणा DARRAY_आकार_MAX अच_पूर्णांक_उच्च
 
-#define darray(type) struct {         \
+#घोषणा darray(type) काष्ठा {         \
     /** Current size */               \
-    darray_size_t size;               \
+    darray_आकार_t आकार;               \
     /** Count of allocated items */   \
-    darray_size_t alloc;              \
+    darray_आकार_t alloc;              \
     /** Array of items */             \
-    type *item ATTR_COUNTED_BY(size); \
+    type *item ATTR_COUNTED_BY(आकार); \
 }
 
-#define darray_new() { 0, 0, 0 }
+#घोषणा darray_new() { 0, 0, 0 }
 
-#define darray_init(arr) do { \
-    (arr).item = 0; (arr).size = 0; (arr).alloc = 0; \
-} while (0)
+#घोषणा darray_init(arr) करो { \
+    (arr).item = 0; (arr).आकार = 0; (arr).alloc = 0; \
+} जबतक (0)
 
-#define darray_free(arr) do { \
-    free((arr).item); \
+#घोषणा darray_free(arr) करो { \
+    मुक्त((arr).item); \
     darray_init(arr); \
-} while (0)
+} जबतक (0)
 
-#define darray_steal(arr, to, to_size) do { \
+#घोषणा darray_steal(arr, to, to_आकार) करो { \
     *(to) = (arr).item; \
-    if (to_size) \
-        *(darray_size_t *) (to_size) = (arr).size; \
+    अगर (to_आकार) \
+        *(darray_आकार_t *) (to_आकार) = (arr).आकार; \
     darray_init(arr); \
-} while (0)
+} जबतक (0)
 
 /*
  * Typedefs for darrays of common types.  These are useful
@@ -64,204 +64,204 @@ typedef unsigned int darray_size_t;
  *     foo(&arr);
  */
 
-typedef darray (char)           darray_char;
-typedef darray (signed char)    darray_schar;
-typedef darray (unsigned char)  darray_uchar;
+प्रकार darray (अक्षर)           darray_char;
+प्रकार darray (चिन्हित अक्षर)    darray_schar;
+प्रकार darray (अचिन्हित अक्षर)  darray_uchar;
 
-typedef darray (char *)         darray_string;
+प्रकार darray (अक्षर *)         darray_string;
 
-typedef darray (short)          darray_short;
-typedef darray (int)            darray_int;
-typedef darray (long)           darray_long;
+प्रकार darray (लघु)          darray_short;
+प्रकार darray (पूर्णांक)            darray_int;
+प्रकार darray (दीर्घ)           darray_long;
 
-typedef darray (unsigned short) darray_ushort;
-typedef darray (unsigned int)   darray_uint;
-typedef darray (unsigned long)  darray_ulong;
+प्रकार darray (अचिन्हित लघु) darray_ushort;
+प्रकार darray (अचिन्हित पूर्णांक)   darray_uint;
+प्रकार darray (अचिन्हित दीर्घ)  darray_ulong;
 
 /*** Access ***/
 
-#define darray_item(arr, i)     ((arr).item[i])
-#define darray_items(arr)       ((arr).item)
-#define darray_size(arr)        ((arr).size)
-#define darray_empty(arr)       ((arr).size == 0)
+#घोषणा darray_item(arr, i)     ((arr).item[i])
+#घोषणा darray_वस्तुएँ(arr)       ((arr).item)
+#घोषणा darray_आकार(arr)        ((arr).आकार)
+#घोषणा darray_empty(arr)       ((arr).आकार == 0)
 
-#define darray_last(arr, fallback) ( \
-    !(arr).size \
+#घोषणा darray_last(arr, fallback) ( \
+    !(arr).आकार \
         ? (fallback) \
-        : (arr).item[(arr).size - 1] \
+        : (arr).item[(arr).आकार - 1] \
 )
 
 /*** Insertion (single item) ***/
 
-#define darray_append(arr, ...)  do { \
-    darray_resize(arr, (arr).size + 1); \
-    (arr).item[(arr).size - 1] = (__VA_ARGS__); \
-} while (0)
+#घोषणा darray_append(arr, ...)  करो { \
+    darray_resize(arr, (arr).आकार + 1); \
+    (arr).item[(arr).आकार - 1] = (__VA_ARGS__); \
+} जबतक (0)
 
-#define darray_insert(arr, i, ...) do { \
-    darray_size_t __index = (i); \
-    darray_resize(arr, (arr).size+1); \
-    memmove( \
+#घोषणा darray_जोड़ो(arr, i, ...) करो { \
+    darray_आकार_t __index = (i); \
+    darray_resize(arr, (arr).आकार+1); \
+    स_हटाओ( \
         (arr).item + __index + 1, \
         (arr).item + __index, \
-        ((arr).size - __index - 1) * sizeof(*(arr).item) \
+        ((arr).आकार - __index - 1) * माप(*(arr).item) \
     ); \
     (arr).item[__index] = (__VA_ARGS__); \
-} while(0)
+} जबतक(0)
 
 /*** Insertion (multiple items) ***/
 
-#define darray_append_items(arr, items, count) do { \
-    darray_size_t __count = (count), __oldSize = (arr).size; \
+#घोषणा darray_append_वस्तुएँ(arr, वस्तुएँ, गिनती) करो { \
+    darray_आकार_t __count = (गिनती), __oldSize = (arr).आकार; \
     darray_resize(arr, __oldSize + __count); \
-    memcpy((arr).item + __oldSize, items, __count * sizeof(*(arr).item)); \
-} while (0)
+    स_नकल((arr).item + __oldSize, वस्तुएँ, __count * माप(*(arr).item)); \
+} जबतक (0)
 
-#define darray_from_items(arr, items, count) do { \
-    darray_size_t __count = (count); \
+#घोषणा darray_from_वस्तुएँ(arr, वस्तुएँ, गिनती) करो { \
+    darray_आकार_t __count = (गिनती); \
     darray_resize(arr, __count); \
-    if (__count != 0) \
-        memcpy((arr).item, items, __count * sizeof(*(arr).item)); \
-} while (0)
+    अगर (__count != 0) \
+        स_नकल((arr).item, वस्तुएँ, __count * माप(*(arr).item)); \
+} जबतक (0)
 
-#define darray_copy(arr_to, arr_from) \
-    darray_from_items((arr_to), (arr_from).item, (arr_from).size)
+#घोषणा darray_copy(arr_to, arr_from) \
+    darray_from_वस्तुएँ((arr_to), (arr_from).item, (arr_from).आकार)
 
-#define darray_concat(arr_to, arr_from) do { \
-    if ((arr_from).size > 0) \
-        darray_append_items((arr_to), (arr_from).item, (arr_from).size); \
-} while (0)
+#घोषणा darray_concat(arr_to, arr_from) करो { \
+    अगर ((arr_from).आकार > 0) \
+        darray_append_वस्तुएँ((arr_to), (arr_from).item, (arr_from).आकार); \
+} जबतक (0)
 
 /*** Removal ***/
 
 /* Warning: Do not call darray_remove_last on an empty darray. */
-#define darray_remove_last(arr) (--(arr).size)
+#घोषणा darray_remove_last(arr) (--(arr).आकार)
 
 /* Warning, slow: Requires copying all elements after removed item. */
-#define darray_remove(arr, i) do { \
-    darray_size_t __index = (i); \
-    if (__index < (arr).size-1) \
-        memmove( \
+#घोषणा darray_remove(arr, i) करो { \
+    darray_आकार_t __index = (i); \
+    अगर (__index < (arr).आकार-1) \
+        स_हटाओ( \
             &(arr).item[__index], \
             &(arr).item[__index + 1], \
-            ((arr).size -1 - __index) * sizeof(*(arr).item) \
+            ((arr).आकार -1 - __index) * माप(*(arr).item) \
         ); \
-    (arr).size--; \
-} while(0)
+    (arr).आकार--; \
+} जबतक(0)
 
 /*** String buffer ***/
 
-#define darray_append_string(arr, str) do { \
-    const char *__str = (str); \
-    darray_append_items(arr, __str, (darray_size_t) strlen(__str) + 1); \
-    (arr).size--; \
-} while (0)
+#घोषणा darray_append_string(arr, str) करो { \
+    स्थिर अक्षर *__str = (str); \
+    darray_append_वस्तुएँ(arr, __str, (darray_आकार_t) म_माप(__str) + 1); \
+    (arr).आकार--; \
+} जबतक (0)
 
 /* Same as `darray_append_string` but do count the final '\0' in the size */
-#define darray_append_string0(arr, string) \
-    darray_append_items((arr), (string), (darray_size_t)strlen(string) + 1)
+#घोषणा darray_append_string0(arr, string) \
+    darray_append_वस्तुएँ((arr), (string), (darray_आकार_t)म_माप(string) + 1)
 
-#define darray_append_lit(arr, stringLiteral) do { \
-    darray_append_items(arr, stringLiteral, \
-                        (darray_size_t) sizeof(stringLiteral)); \
-    (arr).size--; \
-} while (0)
+#घोषणा darray_append_lit(arr, stringLiteral) करो { \
+    darray_append_वस्तुएँ(arr, stringLiteral, \
+                        (darray_आकार_t) माप(stringLiteral)); \
+    (arr).आकार--; \
+} जबतक (0)
 
-#define darray_appends_nullterminate(arr, items, count) do { \
-    darray_size_t __count = (count), __oldSize = (arr).size; \
+#घोषणा darray_appends_nullterminate(arr, वस्तुएँ, गिनती) करो { \
+    darray_आकार_t __count = (गिनती), __oldSize = (arr).आकार; \
     darray_resize(arr, __oldSize + __count + 1); \
-    memcpy((arr).item + __oldSize, items, __count * sizeof(*(arr).item)); \
-    (arr).item[(arr).size - 1] = 0; \
-    (arr).size--; \
-} while (0)
+    स_नकल((arr).item + __oldSize, वस्तुएँ, __count * माप(*(arr).item)); \
+    (arr).item[(arr).आकार - 1] = 0; \
+    (arr).आकार--; \
+} जबतक (0)
 
-#define darray_prepends_nullterminate(arr, items, count) do { \
-    darray_size_t __count = (count), __oldSize = (arr).size; \
+#घोषणा darray_prepends_nullterminate(arr, वस्तुएँ, गिनती) करो { \
+    darray_आकार_t __count = (गिनती), __oldSize = (arr).आकार; \
     darray_resize(arr, __count + __oldSize + 1); \
-    memmove((arr).item + __count, (arr).item, \
-            __oldSize * sizeof(*(arr).item)); \
-    memcpy((arr).item, items, __count * sizeof(*(arr).item)); \
-    (arr).item[(arr).size - 1] = 0; \
-    (arr).size--; \
-} while (0)
+    स_हटाओ((arr).item + __count, (arr).item, \
+            __oldSize * माप(*(arr).item)); \
+    स_नकल((arr).item, वस्तुएँ, __count * माप(*(arr).item)); \
+    (arr).item[(arr).आकार - 1] = 0; \
+    (arr).आकार--; \
+} जबतक (0)
 
 /*** Size management ***/
 
-#define darray_resize(arr, newSize) \
-    darray_growalloc(arr, (arr).size = (newSize))
+#घोषणा darray_resize(arr, new_आकार) \
+    darray_growalloc(arr, (arr).आकार = (new_आकार))
 
-#define darray_resize0(arr, newSize) do { \
-    darray_size_t __oldSize = (arr).size, __newSize = (newSize); \
-    (arr).size = __newSize; \
-    if (__newSize > __oldSize) { \
+#घोषणा darray_resize0(arr, new_आकार) करो { \
+    darray_आकार_t __oldSize = (arr).आकार, __newSize = (new_आकार); \
+    (arr).आकार = __newSize; \
+    अगर (__newSize > __oldSize) { \
         darray_growalloc(arr, __newSize); \
-        memset(&(arr).item[__oldSize], 0, \
-               (__newSize - __oldSize) * sizeof(*(arr).item)); \
+        स_रखो(&(arr).item[__oldSize], 0, \
+               (__newSize - __oldSize) * माप(*(arr).item)); \
     } \
-} while (0)
+} जबतक (0)
 
-#define darray_realloc(arr, newAlloc) do { \
-    (arr).item = realloc((arr).item, \
-                         ((arr).alloc = (newAlloc)) * sizeof(*(arr).item)); \
-} while (0)
+#घोषणा darray_realloc(arr, newAlloc) करो { \
+    (arr).item = पुनः_स्मृति((arr).item, \
+                         ((arr).alloc = (newAlloc)) * माप(*(arr).item)); \
+} जबतक (0)
 
-#define darray_growalloc(arr, need)   do { \
-    darray_size_t __need = (need); \
-    if (__need > (arr).alloc) \
-        darray_realloc(arr, darray_next_alloc((arr).alloc, __need, \
-                                              sizeof(*(arr).item))); \
-} while (0)
+#घोषणा darray_growalloc(arr, need)   करो { \
+    darray_आकार_t __need = (need); \
+    अगर (__need > (arr).alloc) \
+        darray_realloc(arr, darray_अग्र_alloc((arr).alloc, __need, \
+                                              माप(*(arr).item))); \
+} जबतक (0)
 
-#define darray_shrink(arr) do { \
-    if ((arr).size > 0) \
-        (arr).item = realloc((arr).item, \
-                             ((arr).alloc = (arr).size) * sizeof(*(arr).item)); \
-} while (0)
+#घोषणा darray_shrink(arr) करो { \
+    अगर ((arr).आकार > 0) \
+        (arr).item = पुनः_स्मृति((arr).item, \
+                             ((arr).alloc = (arr).आकार) * माप(*(arr).item)); \
+} जबतक (0)
 
-#define darray_max_alloc(itemSize) (UINT_MAX / (itemSize))
+#घोषणा darray_max_alloc(item_आकार) (अच_पूर्णांक_उच्च / (item_आकार))
 
-static inline darray_size_t
-darray_next_alloc(darray_size_t alloc, darray_size_t need, size_t itemSize)
+अटल अंतरभूत darray_आकार_t
+darray_अग्र_alloc(darray_आकार_t alloc, darray_आकार_t need, माप_प्रकार item_आकार)
 {
-    assert(need < darray_max_alloc(itemSize) / 2); /* Overflow. */
-    if (alloc == 0)
+    निश्चित(need < darray_max_alloc(item_आकार) / 2); /* Overflow. */
+    अगर (alloc == 0)
         alloc = 4;
-    while (alloc < need)
+    जबतक (alloc < need)
         alloc *= 2;
-    return alloc;
+    वापस alloc;
 }
 
 /*** Traversal ***/
 
-#define darray_foreach(i, arr) \
-    if ((arr).item) \
-    for ((i) = &(arr).item[0]; (i) < &(arr).item[(arr).size]; (i)++)
+#घोषणा darray_foreach(i, arr) \
+    अगर ((arr).item) \
+    क्रम ((i) = &(arr).item[0]; (i) < &(arr).item[(arr).आकार]; (i)++)
 
-#define darray_foreach_from(i, arr, from) \
-    if ((arr).item) \
-    for ((i) = &(arr).item[from]; (i) < &(arr).item[(arr).size]; (i)++)
+#घोषणा darray_foreach_from(i, arr, from) \
+    अगर ((arr).item) \
+    क्रम ((i) = &(arr).item[from]; (i) < &(arr).item[(arr).आकार]; (i)++)
 
 /* Iterate on index and value at the same time, like Python's enumerate. */
-#define darray_enumerate(idx, val, arr) \
-    if ((arr).item) \
-    for ((idx) = 0, (val) = &(arr).item[0]; \
-         (idx) < (arr).size; \
+#घोषणा darray_enumerate(idx, val, arr) \
+    अगर ((arr).item) \
+    क्रम ((idx) = 0, (val) = &(arr).item[0]; \
+         (idx) < (arr).आकार; \
          (idx)++, (val)++)
 
-#define darray_enumerate_from(idx, val, arr, from) \
-    if ((arr).item) \
-    for ((idx) = (from), (val) = &(arr).item[from]; \
-         (idx) < (arr).size; \
+#घोषणा darray_enumerate_from(idx, val, arr, from) \
+    अगर ((arr).item) \
+    क्रम ((idx) = (from), (val) = &(arr).item[from]; \
+         (idx) < (arr).आकार; \
          (idx)++, (val)++)
 
-#define darray_foreach_reverse(i, arr) \
-    if ((arr).item && (arr).size) \
-    for ((i) = &(arr).item[(arr).size - 1]; \
+#घोषणा darray_foreach_reverse(i, arr) \
+    अगर ((arr).item && (arr).आकार) \
+    क्रम ((i) = &(arr).item[(arr).आकार - 1]; \
          (i) >= &(arr).item[0]; \
          (i)--)
 
-#define darray_enumerate_reverse(idx, val, arr) \
-    if ((arr).item && (arr).size) \
-    for ((idx) = (arr).size - 1, (val) = &(arr).item[(arr).size - 1]; \
+#घोषणा darray_enumerate_reverse(idx, val, arr) \
+    अगर ((arr).item && (arr).आकार) \
+    क्रम ((idx) = (arr).आकार - 1, (val) = &(arr).item[(arr).आकार - 1]; \
          (val) >= &(arr).item[0]; \
          (idx)--, (val)--)

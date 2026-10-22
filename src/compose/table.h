@@ -2,13 +2,13 @@
  * Copyright © 2013,2021 Ran Benita <ran234@gmail.com>
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#आशय once
 
-#include "config.h"
+#समावेश "config.h"
 
-#include "xkbcommon/xkbcommon-compose.h"
-#include "src/utils.h"
-#include "src/context.h"
+#समावेश "xkbcommon/xkbcommon-compose.h"
+#समावेश "src/utils.h"
+#समावेश "src/context.h"
 
 /*
  * The compose table data structure is a ternary search tree.
@@ -59,10 +59,10 @@
 
 /* 7 nodes for every potential Unicode character and then some should be
  * enough for all purposes. */
-#define MAX_COMPOSE_NODES_LOG2 23
-#define MAX_COMPOSE_NODES (1u << MAX_COMPOSE_NODES_LOG2)
+#घोषणा MAX_COMPOSE_NODES_LOG2 23
+#घोषणा MAX_COMPOSE_NODES (1u << MAX_COMPOSE_NODES_LOG2)
 
-struct compose_node {
+काष्ठा compose_गाँठ {
     xkb_keysym_t keysym;
 
     /* Offset into xkb_compose_table::nodes or 0. */
@@ -70,18 +70,18 @@ struct compose_node {
     /* Offset into xkb_compose_table::nodes or 0. */
     uint32_t hikid;
 
-    union {
-        struct {
+    जोड़ {
+        काष्ठा {
             uint32_t _pad:31;
             bool is_leaf:1;
         };
-        struct {
+        काष्ठा {
             uint32_t _pad:31;
             bool is_leaf:1;
             /* Offset into xkb_compose_table::nodes or 0. */
             uint32_t eqkid;
         } internal;
-        struct {
+        काष्ठा {
             /* Offset into xkb_compose_table::utf8. */
             uint32_t utf8:31;
             bool is_leaf:1;
@@ -90,21 +90,21 @@ struct compose_node {
     };
 };
 
-struct xkb_compose_table {
-    int refcnt;
-    enum xkb_compose_format format;
-    enum xkb_compose_compile_flags flags;
-    struct xkb_context *ctx;
+काष्ठा xkb_compose_table {
+    पूर्णांक refcnt;
+    क्रमागत xkb_compose_format format;
+    क्रमागत xkb_compose_compile_flags flags;
+    काष्ठा xkb_context *ctx;
 
-    char *locale;
+    अक्षर *locale;
 
     darray_char utf8;
-    darray(struct compose_node) nodes;
+    darray(काष्ठा compose_गाँठ) nodes;
 };
 
-struct xkb_compose_table_entry {
-    size_t sequence_length;
-    xkb_keysym_t *sequence ATTR_COUNTED_BY(sequence_length);
+काष्ठा xkb_compose_table_entry {
+    माप_प्रकार sequence_लंबाई;
+    xkb_keysym_t *sequence ATTR_COUNTED_BY(sequence_लंबाई);
     xkb_keysym_t keysym;
-    const char *utf8;
+    स्थिर अक्षर *utf8;
 };

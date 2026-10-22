@@ -2,48 +2,48 @@
  * Copyright (c) 1994 by Silicon Graphics Computer Systems, Inc.
  * SPDX-License-Identifier: HPND
  */
-#pragma once
+#आशय once
 
-#include "config.h"
+#समावेश "config.h"
 
-#include "ast.h"
-#include "utils.h"
-#include "xkbcomp-priv.h"
+#समावेश "ast.h"
+#समावेश "utils.h"
+#समावेश "xkbcomp-priv.h"
 
 /* Reasonable threshold, with plenty of margin for keymaps in the wild */
-#define INCLUDE_MAX_DEPTH 15
+#घोषणा INCLUDE_MAX_DEPTH 15
 
-#define MERGE_OVERRIDE_PREFIX '+'
-#define MERGE_AUGMENT_PREFIX  '|'
-#define MERGE_REPLACE_PREFIX  '^'
-#define MERGE_DEFAULT_PREFIX  MERGE_OVERRIDE_PREFIX
-#define is_merge_mode_prefix(ch) \
+#घोषणा MERGE_OVERRIDE_PREFIX '+'
+#घोषणा MERGE_AUGMENT_PREFIX  '|'
+#घोषणा MERGE_REPLACE_PREFIX  '^'
+#घोषणा MERGE_DEFAULT_PREFIX  MERGE_OVERRIDE_PREFIX
+#घोषणा is_merge_mode_prefix(ch) \
     ((ch) == MERGE_OVERRIDE_PREFIX || (ch) == MERGE_AUGMENT_PREFIX || \
      (ch) == MERGE_REPLACE_PREFIX)
-static const char MERGE_MODE_PREFIXES[] =
+अटल स्थिर अक्षर MERGE_MODE_PREFIXES[] =
     { MERGE_OVERRIDE_PREFIX, MERGE_AUGMENT_PREFIX, MERGE_REPLACE_PREFIX, 0 };
 
 
 bool
-ParseIncludeMap(char **str_inout, char **file_rtrn, char **map_rtrn,
-                char *nextop_rtrn, char **extra_data);
+ParseIncludeMap(अक्षर **str_inout, अक्षर **file_rtrn, अक्षर **map_rtrn,
+                अक्षर *nextop_rtrn, अक्षर **extra_तथ्य);
 
 ssize_t
-expand_path(struct xkb_context *ctx, const char* parent_file_name,
-            const char *name, size_t name_len, enum xkb_file_type type,
-            char *buf, size_t buf_size);
+expand_path(काष्ठा xkb_context *ctx, स्थिर अक्षर* parent_file_name,
+            स्थिर अक्षर *name, माप_प्रकार name_len, क्रमागत xkb_file_type type,
+            अक्षर *buf, माप_प्रकार buf_आकार);
 
-FILE *
-FindFileInXkbPath(struct xkb_context *ctx, const char* parent_file_name,
-                  const char *name, size_t name_len, enum xkb_file_type type,
-                  char *buf, size_t buf_size, unsigned int *offset,
+खाता *
+FindFileInXkbPath(काष्ठा xkb_context *ctx, स्थिर अक्षर* parent_file_name,
+                  स्थिर अक्षर *name, माप_प्रकार name_len, क्रमागत xkb_file_type type,
+                  अक्षर *buf, माप_प्रकार buf_आकार, अचिन्हित पूर्णांक *offset,
                   bool required);
 
 bool
-ExceedsIncludeMaxDepth(struct xkb_context *ctx, unsigned int include_depth);
+ExceedsIncludeMaxDepth(काष्ठा xkb_context *ctx, अचिन्हित पूर्णांक include_depth);
 
 XkbFile *
-ProcessIncludeFile(struct xkb_context *ctx,
-                   const struct parser_keymap_config *config,
-                   const IncludeStmt *stmt,
-                   enum xkb_file_type file_type, char *path, size_t path_size);
+ProcessIncludeFile(काष्ठा xkb_context *ctx,
+                   स्थिर काष्ठा parser_keymap_config *config,
+                   स्थिर IncludeStmt *stmt,
+                   क्रमागत xkb_file_type file_type, अक्षर *path, माप_प्रकार path_आकार);

@@ -2,23 +2,23 @@
  * Copyright (c) 1994 by Silicon Graphics Computer Systems, Inc.
  * SPDX-License-Identifier: HPND
  */
-#pragma once
+#आशय once
 
-#include "config.h"
+#समावेश "config.h"
 
-#include "xkbcommon/xkbcommon.h"
+#समावेश "xkbcommon/xkbcommon.h"
 
-#include <stdbool.h>
+#समावेश <stdbool.h>
 
-#include "ast.h"
-#include "keymap.h"
+#समावेश "ast.h"
+#समावेश "keymap.h"
 
-void
-InitVMods(struct xkb_mod_set *info, const struct xkb_mod_set *mods, bool reset);
+व्योम
+InitVMods(काष्ठा xkb_mod_set *info, स्थिर काष्ठा xkb_mod_set *mods, bool reset);
 
-void
-MergeModSets(struct xkb_context *ctx, struct xkb_mod_set *into,
-             const struct xkb_mod_set *from, enum merge_mode merge);
+व्योम
+MergeModSets(काष्ठा xkb_context *ctx, काष्ठा xkb_mod_set *into,
+             स्थिर काष्ठा xkb_mod_set *from, क्रमागत merge_mode merge);
 
 bool
-HandleVModDef(struct xkb_context *ctx, struct xkb_mod_set *mods, VModDef *stmt);
+HandleVModDef(काष्ठा xkb_context *ctx, काष्ठा xkb_mod_set *mods, VModDef *stmt);

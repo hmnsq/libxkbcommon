@@ -3,48 +3,48 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#समावेश "config.h"
 
-#include <assert.h>
-#include <stdbool.h>
-#include <stdint.h>
+#समावेश <assert.h>
+#समावेश <stdbool.h>
+#समावेश <stdint.h>
 
-#include "scanner-utils.h"
-#include "xkbcomp-priv.h"
-#include "parser-priv.h"
+#समावेश "scanner-utils.h"
+#समावेश "xkbcomp-priv.h"
+#समावेश "parser-priv.h"
 
-static const char DECIMAL_SEPARATOR = '.';
+अटल स्थिर अक्षर DECIMAL_SEPARATOR = '.';
 
-static bool
-number(struct scanner *s, int64_t *out, int *out_tok)
+अटल bool
+संख्या_2(काष्ठा scanner *s, int64_t *out, पूर्णांक *out_tok)
 {
-    if (scanner_lit(s, "0x")) {
-        switch (scanner_hex_int64(s, out)) {
-        case -1:
+    अगर (scanner_lit(s, "0x")) {
+        चयन (scanner_hex_int64(s, out)) {
+        हाल -1:
             *out_tok = ERROR_TOK;
-            return true;
-        case 0:
-            return false;
-        default:
+            वापस true;
+        हाल 0:
+            वापस false;
+        शेष:
             *out_tok = INTEGER;
-            return true;
+            वापस true;
         }
     }
-    else {
+    अन्यथा {
         bool is_digit = false;
-        switch (scanner_dec_int64(s, out)) {
-        case -1:
+        चयन (scanner_dec_int64(s, out)) {
+        हाल -1:
             *out_tok = ERROR_TOK;
-            return true;
-        case 0:
-            return false;
-        case 1:
+            वापस true;
+        हाल 0:
+            वापस false;
+        हाल 1:
             is_digit = true;
-            break;
-        default:
+            अवरोध;
+        शेष:
             ;
         }
-        if (scanner_chr(s, DECIMAL_SEPARATOR)) {
+        अगर (scanner_chr(s, DECIMAL_SEPARATOR)) {
             /*
              * Since the parser does not use floats, we do not care of the
              * actual floating-point number value: we just need to ensure that
@@ -56,248 +56,248 @@ number(struct scanner *s, int64_t *out, int *out_tok)
              * which we cannot guarantee.
              */
             int64_t dec;
-            if (scanner_dec_int64(s, &dec) < 0) {
+            अगर (scanner_dec_int64(s, &dec) < 0) {
                 *out_tok = ERROR_TOK;
-                return true;
+                वापस true;
             }
             *out_tok = FLOAT;
-        } else if (is_digit) {
+        } अन्यथा अगर (is_digit) {
             *out_tok = DECIMAL_DIGIT;
-        } else {
+        } अन्यथा {
             *out_tok = INTEGER;
         }
-        return true;
+        वापस true;
     }
 }
 
-int
-_xkbcommon_lex(YYSTYPE *yylval, struct scanner *s)
+पूर्णांक
+_xkbcommon_lex(YYSTYPE *yylval, काष्ठा scanner *s)
 {
 skip_more_whitespace_and_comments:
     /* Skip spaces. */
-    while (is_space(scanner_peek(s))) scanner_next(s);
+    जबतक (is_space(scanner_peek(s))) scanner_अग्र(s);
 
     /*
      * Skip U+200E LEFT-TO-RIGHT MARK and U+200F RIGHT-TO-LEFT MARK, assuming
      * UTF-8 encoding. These Unicode code points are useful for forcing the text
      * directionality when displaying/editing an XKB file.
      */
-    if (scanner_lit(s, u8"\u200E") || scanner_lit(s, u8"\u200F"))
-        goto skip_more_whitespace_and_comments;
+    अगर (scanner_lit(s, u8"\u200E") || scanner_lit(s, u8"\u200F"))
+        जाओ skip_more_whitespace_and_comments;
 
     /* Skip comments. */
-    if (scanner_lit(s, "//") || scanner_chr(s, '#')) {
+    अगर (scanner_lit(s, "//") || scanner_chr(s, '#')) {
         scanner_skip_to_eol(s);
-        goto skip_more_whitespace_and_comments;
+        जाओ skip_more_whitespace_and_comments;
     }
 
     /* See if we're done. */
-    if (scanner_eof(s)) return END_OF_FILE;
+    अगर (scanner_eof(s)) वापस END_OF_FILE;
 
     /* New token. */
     s->token_pos = s->pos;
     s->buf_pos = 0;
 
     /* String literal. */
-    if (scanner_chr(s, '\"')) {
-        while (!scanner_eof(s) && !scanner_eol(s) && scanner_peek(s) != '\"') {
-            if (scanner_chr(s, '\\')) {
+    अगर (scanner_chr(s, '\"')) {
+        जबतक (!scanner_eof(s) && !scanner_eol(s) && scanner_peek(s) != '\"') {
+            अगर (scanner_chr(s, '\\')) {
                 uint8_t o;
-                const size_t start_pos = s->pos;
-                if      (scanner_chr(s, '\\')){scanner_buf_append(s, '\\');}
-                else if (scanner_chr(s, '"')) {scanner_buf_append(s, '"');}
-                else if (scanner_chr(s, 'n')) {scanner_buf_append(s, '\n');}
-                else if (scanner_chr(s, 't')) {scanner_buf_append(s, '\t');}
-                else if (scanner_chr(s, 'r')) {scanner_buf_append(s, '\r');}
-                else if (scanner_chr(s, 'b')) {scanner_buf_append(s, '\b');}
-                else if (scanner_chr(s, 'f')) {scanner_buf_append(s, '\f');}
-                else if (scanner_chr(s, 'v')) {scanner_buf_append(s, '\v');}
-                else if (scanner_chr(s, 'e')) {scanner_buf_append(s, '\x1b');}
-                else if (scanner_chr(s, 'u')) {
+                स्थिर माप_प्रकार start_pos = s->pos;
+                अगर      (scanner_chr(s, '\\')){scanner_buf_append(s, '\\');}
+                अन्यथा अगर (scanner_chr(s, '"')) {scanner_buf_append(s, '"');}
+                अन्यथा अगर (scanner_chr(s, 'n')) {scanner_buf_append(s, '\n');}
+                अन्यथा अगर (scanner_chr(s, 't')) {scanner_buf_append(s, '\t');}
+                अन्यथा अगर (scanner_chr(s, 'r')) {scanner_buf_append(s, '\r');}
+                अन्यथा अगर (scanner_chr(s, 'b')) {scanner_buf_append(s, '\b');}
+                अन्यथा अगर (scanner_chr(s, 'f')) {scanner_buf_append(s, '\f');}
+                अन्यथा अगर (scanner_chr(s, 'v')) {scanner_buf_append(s, '\v');}
+                अन्यथा अगर (scanner_chr(s, 'e')) {scanner_buf_append(s, '\x1b');}
+                अन्यथा अगर (scanner_chr(s, 'u')) {
                     /* Unicode escape sequence */
                     uint32_t cp = 0;
-                    if (scanner_unicode_code_point(s, &cp) &&
+                    अगर (scanner_unicode_code_point(s, &cp) &&
                         is_valid_char(cp)) {
                         /* Encode code point using UTF-8 */
                         scanner_buf_appends_code_point(s, cp);
-                    } else {
+                    } अन्यथा {
                         scanner_warn(
                             s, XKB_WARNING_INVALID_UNICODE_ESCAPE_SEQUENCE,
                             "invalid Unicode escape sequence \"%.*s\" "
                             "in string literal",
-                            (int) (s->pos - start_pos + 1),
+                            (पूर्णांक) (s->pos - start_pos + 1),
                             &s->s[start_pos - 1]
                         );
                         /* Ignore. */
                     }
                 }
-                else if (scanner_oct(s, &o) && is_valid_char((uint32_t) o)) {
-                    scanner_buf_append(s, (char) o);
+                अन्यथा अगर (scanner_oct(s, &o) && is_valid_char((uint32_t) o)) {
+                    scanner_buf_append(s, (अक्षर) o);
                 }
-                else if (s->pos > start_pos) {
+                अन्यथा अगर (s->pos > start_pos) {
                     scanner_warn(s, XKB_WARNING_INVALID_ESCAPE_SEQUENCE,
                                  "invalid octal escape sequence \"%.*s\" "
                                  "in string literal",
-                                 (int) (s->pos - start_pos + 1),
+                                 (पूर्णांक) (s->pos - start_pos + 1),
                                  &s->s[start_pos - 1]);
                     /* Ignore. */
                 }
-                else {
+                अन्यथा {
                     scanner_warn(s, XKB_WARNING_UNKNOWN_CHAR_ESCAPE_SEQUENCE,
                                  "unknown escape sequence \"\\%c\" in string literal",
                                  scanner_peek(s));
                     /* Ignore. */
                 }
-            } else {
-                scanner_buf_append(s, scanner_next(s));
+            } अन्यथा {
+                scanner_buf_append(s, scanner_अग्र(s));
             }
         }
-        if (!scanner_buf_append(s, '\0') || !scanner_chr(s, '\"')) {
+        अगर (!scanner_buf_append(s, '\0') || !scanner_chr(s, '\"')) {
             scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
                         "unterminated string literal");
-            return ERROR_TOK;
+            वापस ERROR_TOK;
         }
         yylval->str = strdup(s->buf);
-        if (!yylval->str)
-            return ERROR_TOK;
-        return STRING;
+        अगर (!yylval->str)
+            वापस ERROR_TOK;
+        वापस STRING;
     }
 
     /* Key name literal. */
-    if (scanner_chr(s, '<')) {
-        while (is_graph(scanner_peek(s)) && scanner_peek(s) != '>')
-            scanner_next(s);
-        if (!scanner_chr(s, '>')) {
+    अगर (scanner_chr(s, '<')) {
+        जबतक (is_graph(scanner_peek(s)) && scanner_peek(s) != '>')
+            scanner_अग्र(s);
+        अगर (!scanner_chr(s, '>')) {
             scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
                         "unterminated key name literal");
-            return ERROR_TOK;
+            वापस ERROR_TOK;
         }
         /* Empty key name literals are allowed. */
-        const char *start = s->s + s->token_pos + 1;
-        const size_t len = s->pos - s->token_pos - 2;
+        स्थिर अक्षर *start = s->s + s->token_pos + 1;
+        स्थिर माप_प्रकार len = s->pos - s->token_pos - 2;
         yylval->atom = xkb_atom_intern(s->ctx, start, len);
-        return KEYNAME;
+        वापस KEYNAME;
     }
 
     /* Operators and punctuation. */
-    if (scanner_chr(s, ';')) return SEMI;
-    if (scanner_chr(s, '{')) return OBRACE;
-    if (scanner_chr(s, '}')) return CBRACE;
-    if (scanner_chr(s, '=')) return EQUALS;
-    if (scanner_chr(s, '[')) return OBRACKET;
-    if (scanner_chr(s, ']')) return CBRACKET;
-    if (scanner_chr(s, '(')) return OPAREN;
-    if (scanner_chr(s, ')')) return CPAREN;
-    if (scanner_chr(s, '.')) return DOT;
-    if (scanner_chr(s, ',')) return COMMA;
-    if (scanner_chr(s, '+')) return PLUS;
-    if (scanner_chr(s, '-')) return MINUS;
-    if (scanner_chr(s, '*')) return TIMES;
-    if (scanner_chr(s, '/')) return DIVIDE;
-    if (scanner_chr(s, '!')) return EXCLAM;
-    if (scanner_chr(s, '~')) return INVERT;
+    अगर (scanner_chr(s, ';')) वापस SEMI;
+    अगर (scanner_chr(s, '{')) वापस OBRACE;
+    अगर (scanner_chr(s, '}')) वापस CBRACE;
+    अगर (scanner_chr(s, '=')) वापस EQUALS;
+    अगर (scanner_chr(s, '[')) वापस OBRACKET;
+    अगर (scanner_chr(s, ']')) वापस CBRACKET;
+    अगर (scanner_chr(s, '(')) वापस OPAREN;
+    अगर (scanner_chr(s, ')')) वापस CPAREN;
+    अगर (scanner_chr(s, '.')) वापस DOT;
+    अगर (scanner_chr(s, ',')) वापस COMMA;
+    अगर (scanner_chr(s, '+')) वापस PLUS;
+    अगर (scanner_chr(s, '-')) वापस MINUS;
+    अगर (scanner_chr(s, '*')) वापस TIMES;
+    अगर (scanner_chr(s, '/')) वापस DIVIDE;
+    अगर (scanner_chr(s, '!')) वापस EXCLAM;
+    अगर (scanner_chr(s, '~')) वापस INVERT;
 
-    int tok = ERROR_TOK;
+    पूर्णांक tok = ERROR_TOK;
 
     /* Identifier. */
-    if (is_alpha(scanner_peek(s)) || scanner_peek(s) == '_') {
-        while (is_alnum(scanner_peek(s)) || scanner_peek(s) == '_')
-            scanner_next(s);
+    अगर (is_alpha(scanner_peek(s)) || scanner_peek(s) == '_') {
+        जबतक (is_alnum(scanner_peek(s)) || scanner_peek(s) == '_')
+            scanner_अग्र(s);
 
-        const char *start = s->s + s->token_pos;
-        const size_t len = s->pos - s->token_pos;
+        स्थिर अक्षर *start = s->s + s->token_pos;
+        स्थिर माप_प्रकार len = s->pos - s->token_pos;
 
         /* Keyword. */
         tok = keyword_to_token(start, len);
-        if (tok >= 0) return tok;
+        अगर (tok >= 0) वापस tok;
 
         yylval->sval = SVAL(start, len);
-        return IDENT;
+        वापस IDENT;
     }
 
     /* Number literal (hexadecimal / decimal / float). */
-    if (number(s, &yylval->num, &tok)) {
-        if (tok == ERROR_TOK) {
-            scanner_err(s, XKB_ERROR_MALFORMED_NUMBER_LITERAL,
+    अगर (संख्या_2(s, &yylval->अंक, &tok)) {
+        अगर (tok == ERROR_TOK) {
+            scanner_err(s, XKB_ERROR_MALFORMED_संख्या_LITERAL,
                         "malformed number literal");
-            return ERROR_TOK;
+            वापस ERROR_TOK;
         }
-        return tok;
+        वापस tok;
     }
 
     scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
                 "unrecognized token");
-    return ERROR_TOK;
+    वापस ERROR_TOK;
 }
 
 bool
-XkbParseStringInit(struct xkb_context *ctx, struct scanner *scanner,
-                   const char *string, size_t len,
-                   const char *file_name, const char *map)
+XkbParseStringInit(काष्ठा xkb_context *ctx, काष्ठा scanner *scanner,
+                   स्थिर अक्षर *string, माप_प्रकार len,
+                   स्थिर अक्षर *file_name, स्थिर अक्षर *map)
 {
-    scanner_init(scanner, ctx, string, len, file_name, NULL);
+    scanner_init(scanner, ctx, string, len, file_name, शून्य);
 
     /* Basic detection of wrong character encoding.
        The first character relevant to the grammar must be ASCII:
        whitespace, section, comment */
-    if (!scanner_check_supported_char_encoding(scanner)) {
+    अगर (!scanner_check_supported_char_encoding(scanner)) {
         scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                     "This could be a file encoding issue. "
                     "Supported encodings must be backward compatible with ASCII.");
         scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                     "E.g. ISO/CEI 8859 and UTF-8 are supported "
                     "but UTF-16, UTF-32 and CP1026 are not.");
-        return false;
+        वापस false;
     }
 
-    return true;
+    वापस true;
 }
 
 XkbFile *
-XkbParseString(struct xkb_context *ctx,
-               const struct parser_keymap_config *config,
-               const char *string, size_t len,
-               const char *file_name, const char *map)
+XkbParseString(काष्ठा xkb_context *ctx,
+               स्थिर काष्ठा parser_keymap_config *config,
+               स्थिर अक्षर *string, माप_प्रकार len,
+               स्थिर अक्षर *file_name, स्थिर अक्षर *map)
 {
-    struct scanner scanner;
-    if (!XkbParseStringInit(ctx, &scanner, string, len, file_name, map))
-        return NULL;
+    काष्ठा scanner scanner;
+    अगर (!XkbParseStringInit(ctx, &scanner, string, len, file_name, map))
+        वापस शून्य;
 
-    return parse(ctx, config, &scanner, map);
+    वापस parse(ctx, config, &scanner, map);
 }
 
 bool
-XkbParseStringNext(struct xkb_context *ctx,
-                   const struct parser_keymap_config *config,
-                   struct scanner *scanner, const char *map, XkbFile **out)
+Xkb_Parse_String_अग्र(काष्ठा xkb_context *ctx,
+                   स्थिर काष्ठा parser_keymap_config *config,
+                   काष्ठा scanner *scanner, स्थिर अक्षर *map, XkbFile **out)
 {
-    if (map) {
+    अगर (map) {
         *out = parse(ctx, config, scanner, map);
-        return !!(*out);
-    } else {
-        return parse_next(ctx, config, scanner, out);
+        वापस !!(*out);
+    } अन्यथा {
+        वापस parse_अग्र(ctx, config, scanner, out);
     }
 }
 
 XkbFile *
-XkbParseFile(struct xkb_context *ctx,
-             const struct parser_keymap_config *config,
-             FILE *file, const char *file_name, const char *map)
+XkbParseFile(काष्ठा xkb_context *ctx,
+             स्थिर काष्ठा parser_keymap_config *config,
+             खाता *file, स्थिर अक्षर *file_name, स्थिर अक्षर *map)
 {
     bool ok;
     XkbFile *xkb_file;
-    char *string;
-    size_t size;
+    अक्षर *string;
+    माप_प्रकार आकार;
 
-    ok = map_file(file, &string, &size);
-    if (!ok) {
+    ok = map_file(file, &string, &आकार);
+    अगर (!ok) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "Couldn't read XKB file %s: %s\n",
-                file_name, strerror(errno));
-        return NULL;
+                file_name, म_त्रुटि(त्रुटि_सं));
+        वापस शून्य;
     }
 
-    xkb_file = XkbParseString(ctx, config, string, size, file_name, map);
-    unmap_file(string, size);
-    return xkb_file;
+    xkb_file = XkbParseString(ctx, config, string, आकार, file_name, map);
+    unmap_file(string, आकार);
+    वापस xkb_file;
 }

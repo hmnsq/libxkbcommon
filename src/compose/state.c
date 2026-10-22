@@ -3,20 +3,20 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#समावेश "config.h"
 
-#include <assert.h>
+#समावेश <assert.h>
 
-#include "context.h"
-#include "features/enums.h"
-#include "keysym.h"
-#include "table.h"
-#include "utils.h"
+#समावेश "context.h"
+#समावेश "features/enums.h"
+#समावेश "keysym.h"
+#समावेश "table.h"
+#समावेश "utils.h"
 
-struct xkb_compose_state {
-    int refcnt;
-    enum xkb_compose_state_flags flags;
-    struct xkb_compose_table *table;
+काष्ठा xkb_compose_state {
+    पूर्णांक refcnt;
+    क्रमागत xkb_compose_state_flags flags;
+    काष्ठा xkb_compose_table *table;
 
     /*
      * Offsets into xkb_compose_table::nodes.
@@ -27,67 +27,67 @@ struct xkb_compose_state {
      * This is also sufficient for inferring the current status; see
      * xkb_compose_state_get_status().
      */
-    uint32_t prev_context;
+    uint32_t पूर्व_context;
     uint32_t context;
 };
 
-struct xkb_compose_state *
-xkb_compose_state_new(struct xkb_compose_table *table,
-                      enum xkb_compose_state_flags flags)
+काष्ठा xkb_compose_state *
+xkb_compose_state_new(काष्ठा xkb_compose_table *table,
+                      क्रमागत xkb_compose_state_flags flags)
 {
-    const enum xkb_compose_state_flags invalid_flags =
-        (flags & ~(enum xkb_compose_state_flags)XKB_COMPOSE_STATE_FLAGS_VALUES);
-    if (invalid_flags) {
+    स्थिर क्रमागत xkb_compose_state_flags invalid_flags =
+        (flags & ~(क्रमागत xkb_compose_state_flags)XKB_COMPOSE_STATE_FLAGS_मूल्यावली);
+    अगर (invalid_flags) {
         log_err_func(table->ctx, XKB_LOG_MESSAGE_NO_ID,
                      "Unsupported compose state flags: %#x\n",
                      invalid_flags);
-        return NULL;
+        वापस शून्य;
     }
 
-    struct xkb_compose_state * const state = calloc(1, sizeof(*state));
-    if (!state)
-        return NULL;
+    काष्ठा xkb_compose_state * स्थिर state = सुस्मृति(1, माप(*state));
+    अगर (!state)
+        वापस शून्य;
 
     state->refcnt = 1;
     state->table = xkb_compose_table_ref(table);
 
     state->flags = flags;
-    state->prev_context = 0;
+    state->पूर्व_context = 0;
     state->context = 0;
 
-    return state;
+    वापस state;
 }
 
-struct xkb_compose_state *
-xkb_compose_state_ref(struct xkb_compose_state *state)
+काष्ठा xkb_compose_state *
+xkb_compose_state_ref(काष्ठा xkb_compose_state *state)
 {
-    assert(state->refcnt > 0);
+    निश्चित(state->refcnt > 0);
     state->refcnt++;
-    return state;
+    वापस state;
 }
 
-void
-xkb_compose_state_unref(struct xkb_compose_state *state)
+व्योम
+xkb_compose_state_unref(काष्ठा xkb_compose_state *state)
 {
-    assert(!state || state->refcnt > 0);
-    if (!state || --state->refcnt > 0)
-        return;
+    निश्चित(!state || state->refcnt > 0);
+    अगर (!state || --state->refcnt > 0)
+        वापस;
 
     xkb_compose_table_unref(state->table);
-    free(state);
+    मुक्त(state);
 }
 
-struct xkb_compose_table *
-xkb_compose_state_get_compose_table(struct xkb_compose_state *state)
+काष्ठा xkb_compose_table *
+xkb_compose_state_get_compose_table(काष्ठा xkb_compose_state *state)
 {
-    return state->table;
+    वापस state->table;
 }
 
-enum xkb_compose_feed_result
-xkb_compose_state_feed(struct xkb_compose_state *state, xkb_keysym_t keysym)
+क्रमागत xkb_compose_feed_परिणाम
+xkb_compose_state_feed(काष्ठा xkb_compose_state *state, xkb_keysym_t keysym)
 {
     uint32_t context;
-    const struct compose_node *node;
+    स्थिर काष्ठा compose_गाँठ *गाँठ;
 
     /*
      * Modifiers do not affect the sequence directly.  In particular,
@@ -99,98 +99,98 @@ xkb_compose_state_feed(struct xkb_compose_state *state, xkb_keysym_t keysym)
      * have it here.  However, this is (approximately) what libX11 does
      * as well.
      */
-    if (xkb_keysym_is_modifier(keysym))
-        return XKB_COMPOSE_FEED_IGNORED;
+    अगर (xkb_keysym_is_modifier(keysym))
+        वापस XKB_COMPOSE_FEED_IGNORED;
 
-    node = &darray_item(state->table->nodes, state->context);
+    गाँठ = &darray_item(state->table->nodes, state->context);
 
-    context = (node->is_leaf ? 1 : node->internal.eqkid);
-    if (context == 1 && darray_size(state->table->nodes) == 1)
+    context = (गाँठ->is_leaf ? 1 : गाँठ->internal.eqkid);
+    अगर (context == 1 && darray_आकार(state->table->nodes) == 1)
         context = 0;
 
-    while (context != 0) {
-        node = &darray_item(state->table->nodes, context);
-        if (keysym < node->keysym)
-            context = node->lokid;
-        else if (keysym > node->keysym)
-            context = node->hikid;
-        else
-            break;
+    जबतक (context != 0) {
+        गाँठ = &darray_item(state->table->nodes, context);
+        अगर (keysym < गाँठ->keysym)
+            context = गाँठ->lokid;
+        अन्यथा अगर (keysym > गाँठ->keysym)
+            context = गाँठ->hikid;
+        अन्यथा
+            अवरोध;
     }
 
-    state->prev_context = state->context;
+    state->पूर्व_context = state->context;
     state->context = context;
-    return XKB_COMPOSE_FEED_ACCEPTED;
+    वापस XKB_COMPOSE_FEED_ACCEPTED;
 }
 
-void
-xkb_compose_state_reset(struct xkb_compose_state *state)
+व्योम
+xkb_compose_state_reset(काष्ठा xkb_compose_state *state)
 {
-    state->prev_context = 0;
+    state->पूर्व_context = 0;
     state->context = 0;
 }
 
-enum xkb_compose_status
-xkb_compose_state_get_status(struct xkb_compose_state *state)
+क्रमागत xkb_compose_status
+xkb_compose_state_get_status(काष्ठा xkb_compose_state *state)
 {
-    const struct compose_node *prev_node, *node;
+    स्थिर काष्ठा compose_गाँठ *पूर्व_गाँठ, *गाँठ;
 
-    prev_node = &darray_item(state->table->nodes, state->prev_context);
-    node = &darray_item(state->table->nodes, state->context);
+    पूर्व_गाँठ = &darray_item(state->table->nodes, state->पूर्व_context);
+    गाँठ = &darray_item(state->table->nodes, state->context);
 
-    if (state->context == 0 && !prev_node->is_leaf)
-        return XKB_COMPOSE_CANCELLED;
+    अगर (state->context == 0 && !पूर्व_गाँठ->is_leaf)
+        वापस XKB_COMPOSE_CANCELLED;
 
-    if (state->context == 0)
-        return XKB_COMPOSE_NOTHING;
+    अगर (state->context == 0)
+        वापस XKB_COMPOSE_NOTHING;
 
-    if (!node->is_leaf)
-        return XKB_COMPOSE_COMPOSING;
+    अगर (!गाँठ->is_leaf)
+        वापस XKB_COMPOSE_COMPOSING;
 
-    return XKB_COMPOSE_COMPOSED;
+    वापस XKB_COMPOSE_COMPOSED;
 }
 
-int
-xkb_compose_state_get_utf8(struct xkb_compose_state *state,
-                           char *buffer, size_t size)
+पूर्णांक
+xkb_compose_state_get_utf8(काष्ठा xkb_compose_state *state,
+                           अक्षर *बफर, माप_प्रकार आकार)
 {
-    const struct compose_node *node =
+    स्थिर काष्ठा compose_गाँठ *गाँठ =
         &darray_item(state->table->nodes, state->context);
 
-    if (!node->is_leaf)
-        goto fail;
+    अगर (!गाँठ->is_leaf)
+        जाओ fail;
 
     /* If there's no string specified, but only a keysym, try to do the
      * most helpful thing. */
-    if (node->leaf.utf8 == 0 && node->leaf.keysym != XKB_KEY_NoSymbol) {
-        char utf8[XKB_KEYSYM_UTF8_MAX_SIZE];
-        int ret;
+    अगर (गाँठ->leaf.utf8 == 0 && गाँठ->leaf.keysym != XKB_कुंजी_No_प्रतीक) {
+        अक्षर utf8[XKB_KEYSYM_UTF8_MAX_आकार];
+        पूर्णांक ret;
 
-        ret = xkb_keysym_to_utf8(node->leaf.keysym, utf8, sizeof(utf8));
-        if (ret < 0 || ret == 0) {
+        ret = xkb_keysym_to_utf8(गाँठ->leaf.keysym, utf8, माप(utf8));
+        अगर (ret < 0 || ret == 0) {
             /* ret < 0 is impossible.
              * ret == 0 means the keysym has no string representation. */
-            goto fail;
+            जाओ fail;
         }
 
-        return snprintf(buffer, size, "%s", utf8);
+        वापस snprintf(बफर, आकार, "%s", utf8);
     }
 
-    return snprintf(buffer, size, "%s",
-                    &darray_item(state->table->utf8, node->leaf.utf8));
+    वापस snprintf(बफर, आकार, "%s",
+                    &darray_item(state->table->utf8, गाँठ->leaf.utf8));
 
 fail:
-    if (size > 0)
-        buffer[0] = '\0';
-    return 0;
+    अगर (आकार > 0)
+        बफर[0] = '\0';
+    वापस 0;
 }
 
 xkb_keysym_t
-xkb_compose_state_get_one_sym(struct xkb_compose_state *state)
+xkb_compose_state_get_one_sym(काष्ठा xkb_compose_state *state)
 {
-    const struct compose_node *node =
+    स्थिर काष्ठा compose_गाँठ *गाँठ =
         &darray_item(state->table->nodes, state->context);
-    if (!node->is_leaf)
-        return XKB_KEY_NoSymbol;
-    return node->leaf.keysym;
+    अगर (!गाँठ->is_leaf)
+        वापस XKB_कुंजी_No_प्रतीक;
+    वापस गाँठ->leaf.keysym;
 }

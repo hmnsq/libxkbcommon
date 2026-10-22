@@ -5,72 +5,72 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#समावेश "config.h"
 
-#include <assert.h>
-#include <stddef.h>
-#include <stdbool.h>
+#समावेश <assert.h>
+#समावेश <stddef.h>
+#समावेश <stdbool.h>
 
-#include "util-list.h"
+#समावेश "util-list.h"
 
-void
-list_init(struct list *list)
+व्योम
+list_init(काष्ठा list *list)
 {
-	list->prev = list;
-	list->next = list;
+	list->पूर्व = list;
+	list->अग्र = list;
 }
 
-void
-list_insert(struct list *list, struct list *elm)
+व्योम
+list_जोड़ो(काष्ठा list *list, काष्ठा list *elm)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	निश्चित((list->अग्र != शून्य && list->पूर्व != शून्य) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
-	assert(((elm->next == NULL && elm->prev == NULL) || list_empty(elm)) ||
+	निश्चित(((elm->अग्र == शून्य && elm->पूर्व == शून्य) || list_empty(elm)) ||
 	       !"elm->next|prev is not NULL, list node used twice?");
 
-	elm->prev = list;
-	elm->next = list->next;
-	list->next = elm;
-	elm->next->prev = elm;
+	elm->पूर्व = list;
+	elm->अग्र = list->अग्र;
+	list->अग्र = elm;
+	elm->अग्र->पूर्व = elm;
 }
 
-void
-list_append(struct list *list, struct list *elm)
+व्योम
+list_append(काष्ठा list *list, काष्ठा list *elm)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	निश्चित((list->अग्र != शून्य && list->पूर्व != शून्य) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
-	assert(((elm->next == NULL && elm->prev == NULL) || list_empty(elm)) ||
+	निश्चित(((elm->अग्र == शून्य && elm->पूर्व == शून्य) || list_empty(elm)) ||
 	       !"elm->next|prev is not NULL, list node used twice?");
 
-	elm->next = list;
-	elm->prev = list->prev;
-	list->prev = elm;
-	elm->prev->next = elm;
+	elm->अग्र = list;
+	elm->पूर्व = list->पूर्व;
+	list->पूर्व = elm;
+	elm->पूर्व->अग्र = elm;
 }
 
-void
-list_remove(struct list *elm)
+व्योम
+list_remove(काष्ठा list *elm)
 {
-	assert((elm->next != NULL && elm->prev != NULL) ||
+	निश्चित((elm->अग्र != शून्य && elm->पूर्व != शून्य) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
 
-	elm->prev->next = elm->next;
-	elm->next->prev = elm->prev;
-	elm->next = NULL;
-	elm->prev = NULL;
+	elm->पूर्व->अग्र = elm->अग्र;
+	elm->अग्र->पूर्व = elm->पूर्व;
+	elm->अग्र = शून्य;
+	elm->पूर्व = शून्य;
 }
 
 bool
-list_empty(const struct list *list)
+list_empty(स्थिर काष्ठा list *list)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	निश्चित((list->अग्र != शून्य && list->पूर्व != शून्य) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
 
-	return list->next == list;
+	वापस list->अग्र == list;
 }
 
 bool
-list_is_last(const struct list *list, const struct list *elm)
+list_is_last(स्थिर काष्ठा list *list, स्थिर काष्ठा list *elm)
 {
-	return elm->next == list;
+	वापस elm->अग्र == list;
 }

@@ -2,34 +2,34 @@
  * Copyright (c) 1994 by Silicon Graphics Computer Systems, Inc.
  * SPDX-License-Identifier: HPND
  */
-#pragma once
+#आशय once
 
-#include "config.h"
+#समावेश "config.h"
 
-#include "xkbcommon/xkbcommon.h"
-#include "ast.h"
-#include "keymap.h"
-#include "xkbcomp-priv.h"
+#समावेश "xkbcommon/xkbcommon.h"
+#समावेश "ast.h"
+#समावेश "keymap.h"
+#समावेश "xkbcomp-priv.h"
 
 /*
  * This struct contains the default values which every new action
  * (e.g. in an interpret statement) starts off with. It can be
  * modified within the files (see calls to SetDefaultActionField).
  */
-typedef struct {
-    union xkb_action actions[_ACTION_TYPE_NUM_ENTRIES];
+प्रकार काष्ठा {
+    जोड़ xkb_action actions[ACTION_TYPE_अंक_ENTRIES];
 } ActionsInfo;
 
-void
-InitActionsInfo(const struct xkb_keymap *keymap, ActionsInfo *info);
+व्योम
+InitActionsInfo(स्थिर काष्ठा xkb_keymap *keymap, ActionsInfo *info);
 
-enum xkb_parser_error
-HandleActionDef(const struct xkb_keymap_info *keymap_info, ActionsInfo *info,
-                const struct xkb_mod_set *mods, ExprDef *def,
-                union xkb_action *action);
+क्रमागत xkb_parser_error
+HandleActionDef(स्थिर काष्ठा xkb_keymap_info *keymap_info, ActionsInfo *info,
+                स्थिर काष्ठा xkb_mod_set *mods, व्यंजक_Def *def,
+                जोड़ xkb_action *action);
 
-enum xkb_parser_error
-SetDefaultActionField(const struct xkb_keymap_info *keymap_info,
-                      ActionsInfo *info, struct xkb_mod_set *mods,
-                      const char *elem, const char *field, ExprDef *array_ndx,
-                      ExprDef **value_ptr, enum merge_mode merge);
+क्रमागत xkb_parser_error
+SetDefaultActionField(स्थिर काष्ठा xkb_keymap_info *keymap_info,
+                      ActionsInfo *info, काष्ठा xkb_mod_set *mods,
+                      स्थिर अक्षर *elem, स्थिर अक्षर *field, व्यंजक_Def *array_ndx,
+                      व्यंजक_Def **मूल्य_ptr, क्रमागत merge_mode merge);

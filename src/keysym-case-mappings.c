@@ -71,22 +71,22 @@
  *     ];
  */
 
-#include "config.h"
+#समावेश "config.h"
 
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
-#include "xkbcommon/xkbcommon.h"
-#include "utils.h"
-#include "keysym.h"
+#समावेश <stdint.h>
+#समावेश <stdbool.h>
+#समावेश <string.h>
+#समावेश "xkbcommon/xkbcommon.h"
+#समावेश "utils.h"
+#समावेश "keysym.h"
 
-struct CaseMappings{
+काष्ठा CaseMappings{
     bool lower:1;
     bool upper:1;
     int32_t offset:30;
 };
 
-static const struct CaseMappings legacy_keysym_data[47] = {
+अटल स्थिर काष्ठा CaseMappings legacy_keysym_तथ्य[47] = {
     {0, 1, 0x0000000}, {1, 0, 0x0000010}, {0, 0, 0x0000000}, {0, 0, 0x0000000},
     {1, 0, 0x0000020}, {0, 1,-0x1001dbf}, {1, 0, 0x0000020}, {1, 0, 0x0000020},
     {0, 0, 0x0000000}, {0, 1,-0x0000717}, {0, 1, 0x0000020}, {0, 0, 0x0000000},
@@ -101,7 +101,7 @@ static const struct CaseMappings legacy_keysym_data[47] = {
     {0, 1, 0x0000021}, {1, 0, 0x0000001}, {0, 1, 0x0000001}
 };
 
-static const uint8_t legacy_keysym_offsets1[540] = {
+अटल स्थिर uint8_t legacy_keysym_offsets1[540] = {
     0x0002, 0x0002, 0x0002, 0x0002, 0x0002, 0x0002, 0x0002, 0x0002, 0x0002, 0x0002,
     0x0002, 0x0002, 0x0002, 0x0002, 0x0002, 0x0002, 0x0002, 0x0002, 0x0002, 0x0002,
     0x0002, 0x0002, 0x0002, 0x0002, 0x0002, 0x0002, 0x0002, 0x0002, 0x0002, 0x0002,
@@ -158,20 +158,20 @@ static const uint8_t legacy_keysym_offsets1[540] = {
     0x0021, 0x0021, 0x0021, 0x0021, 0x0021, 0x0021, 0x0021, 0x0021, 0x0021, 0x0021
 };
 
-static const uint16_t legacy_keysym_offsets2[40] = {
+अटल स्थिर uint16_t legacy_keysym_offsets2[40] = {
     0x0000, 0x011c, 0x007b, 0x019c, 0x007b, 0x015c, 0x007b, 0x00dc, 0x007b, 0x007b,
     0x007b, 0x007b, 0x007b, 0x01dc, 0x007b, 0x003e, 0x007b, 0x0080, 0x007b, 0x007b,
     0x007b, 0x007b, 0x007b, 0x007b, 0x007b, 0x007b, 0x007b, 0x007b, 0x007b, 0x007b,
     0x007b, 0x007b, 0x007b, 0x007b, 0x007b, 0x007b, 0x007b, 0x007b, 0x007b, 0x00bc
 };
 
-static inline const struct CaseMappings *
+अटल अंतरभूत स्थिर काष्ठा CaseMappings *
 get_legacy_keysym_entry(xkb_keysym_t ks)
 {
-    return &legacy_keysym_data[legacy_keysym_offsets1[legacy_keysym_offsets2[ks >> 7] + ((ks >> 1) & 0x3f)] + (ks & 0x01)];
+    वापस &legacy_keysym_तथ्य[legacy_keysym_offsets1[legacy_keysym_offsets2[ks >> 7] + ((ks >> 1) & 0x3f)] + (ks & 0x01)];
 }
 
-static const struct CaseMappings unicode_data[590] = {
+अटल स्थिर काष्ठा CaseMappings unicode_तथ्य[590] = {
     {1, 0, 0x0020}, {1, 0, 0x0020}, {0, 0, 0x0000}, {1, 0, 0x0020},
     {1, 0, 0x0020}, {1, 0, 0x0020}, {1, 0, 0x0020}, {0, 1,-0x1dbf},
     {0, 1,-0xa567}, {0, 1,-0xa528}, {0, 1,-0xa544}, {0, 1, 0x0000},
@@ -322,7 +322,7 @@ static const struct CaseMappings unicode_data[590] = {
     {1, 0, 0x97d0}, {1, 0, 0x97d0}
 };
 
-static const uint16_t unicode_offsets1[1795] = {
+अटल स्थिर uint16_t unicode_offsets1[1795] = {
     0x0083, 0x0083, 0x0083, 0x0083, 0x0083, 0x0083, 0x0083, 0x0083, 0x0083, 0x0085,
     0x0122, 0x0087, 0x0122, 0x0122, 0x0122, 0x0122, 0x0122, 0x0122, 0x0122, 0x0122,
     0x0122, 0x0122, 0x0122, 0x0122, 0x0122, 0x0122, 0x0122, 0x0122, 0x0122, 0x0122,
@@ -505,7 +505,7 @@ static const uint16_t unicode_offsets1[1795] = {
     0x0222, 0x0222, 0x0222, 0x0222, 0x0122
 };
 
-static const uint16_t unicode_offsets2[498] = {
+अटल स्थिर uint16_t unicode_offsets2[498] = {
     0x0270, 0x0573, 0x05b1, 0x0302, 0x0468, 0x049c, 0x015e, 0x015e, 0x015e, 0x015e,
     0x015e, 0x015e, 0x015e, 0x015e, 0x015e, 0x015e, 0x0018, 0x015e, 0x015e, 0x0603,
     0x015e, 0x015e, 0x015e, 0x015e, 0x015e, 0x015e, 0x015e, 0x015e, 0x0240, 0x0376,
@@ -558,47 +558,47 @@ static const uint16_t unicode_offsets2[498] = {
     0x015e, 0x015e, 0x015e, 0x015e, 0x015e, 0x015e, 0x015e, 0x051c
 };
 
-static inline const struct CaseMappings *
+अटल अंतरभूत स्थिर काष्ठा CaseMappings *
 get_unicode_entry(xkb_keysym_t ks)
 {
-    return &unicode_data[unicode_offsets1[unicode_offsets2[ks >> 8] + ((ks >> 2) & 0x3f)] + (ks & 0x03)];
+    वापस &unicode_तथ्य[unicode_offsets1[unicode_offsets2[ks >> 8] + ((ks >> 2) & 0x3f)] + (ks & 0x03)];
 }
 
 xkb_keysym_t
 xkb_keysym_to_lower(xkb_keysym_t ks)
 {
-    if (ks <= 0x13be) {
-        const struct CaseMappings *m = get_legacy_keysym_entry(ks);
-        return (m->lower) ? ks + (xkb_keysym_t)m->offset : ks;
-    } else if (XKB_KEYSYM_UNICODE_MIN <= ks && ks <= 0x0101f189) {
-        const struct CaseMappings *m = get_unicode_entry(ks - XKB_KEYSYM_UNICODE_OFFSET);
-        if (m->lower) {
+    अगर (ks <= 0x13be) {
+        स्थिर काष्ठा CaseMappings *m = get_legacy_keysym_entry(ks);
+        वापस (m->lower) ? ks + (xkb_keysym_t)m->offset : ks;
+    } अन्यथा अगर (XKB_KEYSYM_UNICODE_MIN <= ks && ks <= 0x0101f189) {
+        स्थिर काष्ठा CaseMappings *m = get_unicode_entry(ks - XKB_KEYSYM_UNICODE_OFFSET);
+        अगर (m->lower) {
             ks = ks + (xkb_keysym_t)m->offset;
-            return (ks < XKB_KEYSYM_UNICODE_MIN) ? ks - XKB_KEYSYM_UNICODE_OFFSET : ks;
-        } else {
-            return ks;
+            वापस (ks < XKB_KEYSYM_UNICODE_MIN) ? ks - XKB_KEYSYM_UNICODE_OFFSET : ks;
+        } अन्यथा {
+            वापस ks;
         }
-    } else {
-        return ks;
+    } अन्यथा {
+        वापस ks;
     }
 }
 
 xkb_keysym_t
 xkb_keysym_to_upper(xkb_keysym_t ks)
 {
-    if (ks <= 0x13be) {
-        const struct CaseMappings *m = get_legacy_keysym_entry(ks);
-        return (m->upper) ? ks - (xkb_keysym_t)m->offset : ks;
-    } else if (XKB_KEYSYM_UNICODE_MIN <= ks && ks <= 0x0101f189) {
-        const struct CaseMappings *m = get_unicode_entry(ks - XKB_KEYSYM_UNICODE_OFFSET);
-        if (m->upper) {
+    अगर (ks <= 0x13be) {
+        स्थिर काष्ठा CaseMappings *m = get_legacy_keysym_entry(ks);
+        वापस (m->upper) ? ks - (xkb_keysym_t)m->offset : ks;
+    } अन्यथा अगर (XKB_KEYSYM_UNICODE_MIN <= ks && ks <= 0x0101f189) {
+        स्थिर काष्ठा CaseMappings *m = get_unicode_entry(ks - XKB_KEYSYM_UNICODE_OFFSET);
+        अगर (m->upper) {
             ks -= (xkb_keysym_t)m->offset;
-            return (ks < XKB_KEYSYM_UNICODE_MIN) ? ks - XKB_KEYSYM_UNICODE_OFFSET : ks;
-        } else {
-            return ks;
+            वापस (ks < XKB_KEYSYM_UNICODE_MIN) ? ks - XKB_KEYSYM_UNICODE_OFFSET : ks;
+        } अन्यथा {
+            वापस ks;
         }
-    } else {
-        return ks;
+    } अन्यथा {
+        वापस ks;
     }
 }
 
@@ -614,14 +614,14 @@ xkb_keysym_is_lower(xkb_keysym_t ks)
      * • U+01F2 ǲ: title case
      * • U+01F3 ǳ: lower case
      */
-    if (ks <= 0x13be) {
-        const struct CaseMappings *m = get_legacy_keysym_entry(ks);
-        return m->upper && !m->lower;
-    } else if (XKB_KEYSYM_UNICODE_MIN <= ks && ks <= 0x0101f189) {
-        const struct CaseMappings *m = get_unicode_entry(ks - XKB_KEYSYM_UNICODE_OFFSET);
-        return m->upper && !m->lower;
-    } else {
-        return false;
+    अगर (ks <= 0x13be) {
+        स्थिर काष्ठा CaseMappings *m = get_legacy_keysym_entry(ks);
+        वापस m->upper && !m->lower;
+    } अन्यथा अगर (XKB_KEYSYM_UNICODE_MIN <= ks && ks <= 0x0101f189) {
+        स्थिर काष्ठा CaseMappings *m = get_unicode_entry(ks - XKB_KEYSYM_UNICODE_OFFSET);
+        वापस m->upper && !m->lower;
+    } अन्यथा {
+        वापस false;
     }
 }
 
@@ -632,11 +632,11 @@ xkb_keysym_is_upper_or_title(xkb_keysym_t ks)
      * having the Unicode properties “Uppercase” or General Category “Lt”.
      *
      * Here: a keysym is upper case or title case if it has a lower case. */
-    if (ks <= 0x13be) {
-        return get_legacy_keysym_entry(ks)->lower;
-    } else if (XKB_KEYSYM_UNICODE_MIN <= ks && ks <= 0x0101f189) {
-        return get_unicode_entry(ks - XKB_KEYSYM_UNICODE_OFFSET)->lower;
-    } else {
-        return false;
+    अगर (ks <= 0x13be) {
+        वापस get_legacy_keysym_entry(ks)->lower;
+    } अन्यथा अगर (XKB_KEYSYM_UNICODE_MIN <= ks && ks <= 0x0101f189) {
+        वापस get_unicode_entry(ks - XKB_KEYSYM_UNICODE_OFFSET)->lower;
+    } अन्यथा {
+        वापस false;
     }
 }

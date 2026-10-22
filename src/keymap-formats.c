@@ -4,17 +4,17 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#समावेश "config.h"
 
-#include <stdint.h>
-#include <string.h>
+#समावेश <stdint.h>
+#समावेश <string.h>
 
-#include "utils.h"
-#include "keymap-formats.h"
-#include "util-numbers.h"
+#समावेश "utils.h"
+#समावेश "keymap-formats.h"
+#समावेश "util-numbers.h"
 
 /* [WARNING] Must be in ascending order */
-static const enum xkb_keymap_format keymap_formats[] = {
+अटल स्थिर क्रमागत xkb_keymap_format keymap_formats[] = {
     XKB_KEYMAP_FORMAT_TEXT_V1,
     XKB_KEYMAP_FORMAT_TEXT_V2,
 };
@@ -27,79 +27,79 @@ static const enum xkb_keymap_format keymap_formats[] = {
  * may change in the future. Indeed, `xkb_keymap_format` encoding may change
  * (although we avoit it) while the corresponding labels remain unchanged.
  */
-struct format_label {
-    const char* label;
-    enum xkb_keymap_format format;
+काष्ठा format_label {
+    स्थिर अक्षर* label;
+    क्रमागत xkb_keymap_format format;
 };
 /* [WARNING] Must be in ascending order of the keymap format. */
-static const struct format_label keymap_formats_labels [] = {
+अटल स्थिर काष्ठा format_label keymap_formats_labels [] = {
     { "xkb_v1", XKB_KEYMAP_FORMAT_TEXT_V1 },
     { "v1",     XKB_KEYMAP_FORMAT_TEXT_V1 },
     { "xkb_v2", XKB_KEYMAP_FORMAT_TEXT_V2 },
     { "v2",     XKB_KEYMAP_FORMAT_TEXT_V2 },
 };
 
-size_t
-xkb_keymap_supported_formats(const enum xkb_keymap_format **formats)
+माप_प्रकार
+xkb_keymap_supported_formats(स्थिर क्रमागत xkb_keymap_format **formats)
 {
     *formats = keymap_formats;
-    return ARRAY_SIZE(keymap_formats);
+    वापस ARRAY_आकार(keymap_formats);
 }
 
 bool
-xkb_keymap_is_supported_format(enum xkb_keymap_format format)
+xkb_keymap_is_supported_format(क्रमागत xkb_keymap_format format)
 {
-    if (format < keymap_formats[0]) {
+    अगर (format < keymap_formats[0]) {
         /* Short-circuit because array is sorted */
-        return false;
+        वापस false;
     }
 
-    for (size_t k = 0; k < ARRAY_SIZE(keymap_formats); k++) {
-        if (keymap_formats[k] == format)
-            return true;
+    क्रम (माप_प्रकार k = 0; k < ARRAY_आकार(keymap_formats); k++) {
+        अगर (keymap_formats[k] == format)
+            वापस true;
         /* Short-circuit because array is sorted */
-        if (keymap_formats[k] > format)
-            return false;
+        अगर (keymap_formats[k] > format)
+            वापस false;
     }
 
-    return false;
+    वापस false;
 }
 
-enum xkb_keymap_format
-xkb_keymap_parse_format(const char *raw)
+क्रमागत xkb_keymap_format
+xkb_keymap_parse_format(स्थिर अक्षर *raw)
 {
-    if (!raw)
-        return 0;
+    अगर (!raw)
+        वापस 0;
 
     uint32_t format = 0;
-    if (parse_hex_to_uint32_t(raw, SIZE_MAX, &format) > 0) {
+    अगर (parse_hex_to_uint32_t(raw, SIZE_MAX, &format) > 0) {
         /* Numeric format */
-        return (xkb_keymap_is_supported_format(format)) ? format : 0;
-    } else {
+        वापस (xkb_keymap_is_supported_format(format)) ? format : 0;
+    } अन्यथा {
         /* Parse label: e.g. “xkb_vXXXX” and “vXXX” */
-        for (size_t k = 0; k < ARRAY_SIZE(keymap_formats_labels); k++) {
-            if (strcmp(raw, keymap_formats_labels[k].label) == 0)
-                return keymap_formats_labels[k].format;
+        क्रम (माप_प्रकार k = 0; k < ARRAY_आकार(keymap_formats_labels); k++) {
+            अगर (म_भेद(raw, keymap_formats_labels[k].label) == 0)
+                वापस keymap_formats_labels[k].format;
         }
-        return 0;
+        वापस 0;
     }
 }
 
-const char *
-xkb_keymap_get_format_label(enum xkb_keymap_format format)
+स्थिर अक्षर *
+xkb_keymap_get_format_label(क्रमागत xkb_keymap_format format)
 {
-    if (format < keymap_formats_labels[0].format) {
+    अगर (format < keymap_formats_labels[0].format) {
         /* Short-circuit because array is sorted */
-        return NULL;
+        वापस शून्य;
     }
 
-    for (size_t k = 0; k < ARRAY_SIZE(keymap_formats_labels); k++) {
-        if (keymap_formats_labels[k].format == format)
-            return keymap_formats_labels[k].label;
+    क्रम (माप_प्रकार k = 0; k < ARRAY_आकार(keymap_formats_labels); k++) {
+        अगर (keymap_formats_labels[k].format == format)
+            वापस keymap_formats_labels[k].label;
         /* Short-circuit because array is sorted */
-        if (keymap_formats_labels[k].format > format)
-            return NULL;
+        अगर (keymap_formats_labels[k].format > format)
+            वापस शून्य;
     }
 
-    return NULL;
+    वापस शून्य;
 }
