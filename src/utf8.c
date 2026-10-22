@@ -6,10 +6,10 @@
  * Author: Rob Bradford <rob@linux.intel.com>
  */
 
-#include "config.h"
+#ضمن "config.h"
 
-#include "utils.h"
-#include "utf8.h"
+#ضمن "utils.h"
+#ضمن "utf8.h"
 
 /* Conformant encoding form conversion from UTF-32 to UTF-8.
  *
@@ -17,119 +17,119 @@
  * for further details.
 */
 uint8_t
-utf32_to_utf8(uint32_t unichar, char *buffer)
+utf32_to_utf8(uint32_t unichar, حرف *buffer)
 {
     uint8_t length, head;
 
     /* NOLINTBEGIN(bugprone-branch-clone) */
-    if (unichar <= 0x007f) {
-        buffer[0] = (char) unichar;
+    𐡄𐡍 (unichar <= 0x007f) {
+        buffer[0] = (حرف) unichar;
         buffer[1] = '\0';
-        return 2;
+        أرجع 2;
     }
-    else if (unichar <= 0x07FF) {
+    وإلا 𐡄𐡍 (unichar <= 0x07FF) {
         length = 2;
         head = 0xc0;
     }
     /* Handle surrogates */
-    else if (is_surrogate(unichar)) {
-        goto ill_formed_code_unit_subsequence;
+    وإلا 𐡄𐡍 (is_surrogate(unichar)) {
+        اذهب ill_formed_code_unit_subsequence;
     }
-    else if (unichar <= 0xffff) {
+    وإلا 𐡄𐡍 (unichar <= 0xffff) {
         length = 3;
         head = 0xe0;
     }
-    else if (unichar <= 0x10ffff) {
+    وإلا 𐡄𐡍 (unichar <= 0x10ffff) {
         length = 4;
         head = 0xf0;
     }
-    else {
-        goto ill_formed_code_unit_subsequence;
+    وإلا {
+        اذهب ill_formed_code_unit_subsequence;
     }
     /* NOLINTEND(bugprone-branch-clone) */
 
     uint8_t shift = 0;
-    for (unsigned int count = length - 1; count > 0; count--, shift += 6)
-        buffer[count] = (char)(0x80 | ((unichar >> shift) & 0x3f));
+    لكل (unsigned صحيح count = length - 1; count > 0; count--, shift += 6)
+        buffer[count] = (حرف)(0x80 | ((unichar >> shift) & 0x3f));
 
-    buffer[0] = (char)(head | ((unichar >> shift) & 0x3f));
+    buffer[0] = (حرف)(head | ((unichar >> shift) & 0x3f));
     buffer[length] = '\0';
 
-    return length + 1;
+    أرجع length + 1;
 
 ill_formed_code_unit_subsequence:
     buffer[0] = '\0';
-    return 0;
+    أرجع 0;
 }
 
 bool
-is_valid_utf8(const char *ss, size_t len)
+is_valid_utf8(ثابت حرف *ss, size_t len)
 {
     size_t i = 0;
     size_t tail_bytes = 0;
-    const uint8_t *s = (const uint8_t *) ss;
+    ثابت uint8_t *s = (ثابت uint8_t *) ss;
 
     /* This beauty is from:
      *  The Unicode Standard Version 6.2 - Core Specification, Table 3.7
      *  https://www.unicode.org/versions/Unicode6.2.0/ch03.pdf#G7404
      * We can optimize if needed. */
-    while (i < len)
+    طالما (i < len)
     {
         /* NOLINTBEGIN(bugprone-branch-clone) */
-        if (s[i] <= 0x7F) {
+        𐡄𐡍 (s[i] <= 0x7F) {
             tail_bytes = 0;
         }
-        else if (s[i] >= 0xC2 && s[i] <= 0xDF) {
+        وإلا 𐡄𐡍 (s[i] >= 0xC2 && s[i] <= 0xDF) {
             tail_bytes = 1;
         }
-        else if (s[i] == 0xE0) {
+        وإلا 𐡄𐡍 (s[i] == 0xE0) {
             i++;
-            if (i >= len || !(s[i] >= 0xA0 && s[i] <= 0xBF))
-                return false;
+            𐡄𐡍 (i >= len || !(s[i] >= 0xA0 && s[i] <= 0xBF))
+                أرجع false;
             tail_bytes = 1;
         }
-        else if (s[i] >= 0xE1 && s[i] <= 0xEC) {
+        وإلا 𐡄𐡍 (s[i] >= 0xE1 && s[i] <= 0xEC) {
             tail_bytes = 2;
         }
-        else if (s[i] == 0xED) {
+        وإلا 𐡄𐡍 (s[i] == 0xED) {
             i++;
-            if (i >= len || !(s[i] >= 0x80 && s[i] <= 0x9F))
-                return false;
+            𐡄𐡍 (i >= len || !(s[i] >= 0x80 && s[i] <= 0x9F))
+                أرجع false;
             tail_bytes = 1;
         }
-        else if (s[i] >= 0xEE && s[i] <= 0xEF) {
+        وإلا 𐡄𐡍 (s[i] >= 0xEE && s[i] <= 0xEF) {
             tail_bytes = 2;
         }
-        else if (s[i] == 0xF0) {
+        وإلا 𐡄𐡍 (s[i] == 0xF0) {
             i++;
-            if (i >= len || !(s[i] >= 0x90 && s[i] <= 0xBF))
-                return false;
+            𐡄𐡍 (i >= len || !(s[i] >= 0x90 && s[i] <= 0xBF))
+                أرجع false;
             tail_bytes = 2;
         }
-        else if (s[i] >= 0xF1 && s[i] <= 0xF3) {
+        وإلا 𐡄𐡍 (s[i] >= 0xF1 && s[i] <= 0xF3) {
             tail_bytes = 3;
         }
-        else if (s[i] == 0xF4) {
+        وإلا 𐡄𐡍 (s[i] == 0xF4) {
             i++;
-            if (i >= len || !(s[i] >= 0x80 && s[i] <= 0x8F))
-                return false;
+            𐡄𐡍 (i >= len || !(s[i] >= 0x80 && s[i] <= 0x8F))
+                أرجع false;
             tail_bytes = 2;
         }
-        else {
-            return false;
+        وإلا {
+            أرجع false;
         }
         /* NOLINTEND(bugprone-branch-clone) */
 
         i++;
 
-        while (i < len && tail_bytes > 0 && s[i] >= 0x80 && s[i] <= 0xBF) {
+        طالما (i < len && tail_bytes > 0 && s[i] >= 0x80 && s[i] <= 0xBF) {
             i++;
             tail_bytes--;
         }
 
-        if (tail_bytes != 0)
-            return false;
+        𐡄𐡍 (tail_bytes != 0)
+            أرجع false;
     }
 
-    return true;
+    أرجع true;
 }
