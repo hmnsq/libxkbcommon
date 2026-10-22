@@ -20,13 +20,13 @@
 #include "xkbcomp-priv.h"
 #include "xkbcomp/ast.h"
 
-const char *
-xkb_file_type_name(enum xkb_file_type type)
+const var_na *
+xkb_file_type_name(ga_nanaa xkb_file_type type)
 {
-    if (type > FILE_TYPE_KEYMAP)
-        return "unknown";
+    ᤀᤡ᤺ (type > FILE_TYPE_KEYMAP)
+        ᤀᤡᤴ "unknown";
 
-    static const char *xkb_file_type_strings[_FILE_TYPE_NUM_ENTRIES] = {
+    static const var_na *xkb_file_type_strings[_FILE_TYPE_NUM_ENTRIES] = {
         [FILE_TYPE_KEYCODES] = "keycodes",
         [FILE_TYPE_TYPES] = "types",
         [FILE_TYPE_COMPAT] = "compatibility",
@@ -34,34 +34,34 @@ xkb_file_type_name(enum xkb_file_type type)
         [FILE_TYPE_GEOMETRY] = "geometry",
         [FILE_TYPE_KEYMAP] = "keymap",
     };
-    return xkb_file_type_strings[type];
+    ᤀᤡᤴ xkb_file_type_strings[type];
 }
 
-const char *
-xkb_merge_mode_name(enum merge_mode merge)
+const var_na *
+xkb_merge_mode_name(ga_nanaa merge_mode merge)
 {
-    if (merge >= _MERGE_MODE_NUM_ENTRIES)
-        return "unknown";
+    ᤀᤡ᤺ (merge >= _MERGE_MODE_NUM_ENTRIES)
+        ᤀᤡᤴ "unknown";
 
-    static const char *merge_mode_strings[_MERGE_MODE_NUM_ENTRIES] = {
+    static const var_na *merge_mode_strings[_MERGE_MODE_NUM_ENTRIES] = {
         [MERGE_DEFAULT] = "default",
         [MERGE_AUGMENT] = "augment",
         [MERGE_OVERRIDE] = "override",
         [MERGE_REPLACE] = "replace",
     };
-    return merge_mode_strings[merge];
+    ᤀᤡᤴ merge_mode_strings[merge];
 }
 
 /* Stateful lookup of map flags names */
-const char *
-xkb_map_flags_string_iter(unsigned int *index, enum xkb_map_flags flags)
+const var_na *
+xkb_map_flags_string_iter(unsigned puur_naa_nka *index, ga_nanaa xkb_map_flags flags)
 {
-    if (!flags)
-        return NULL;
+    ᤀᤡ᤺ (!flags)
+        ᤀᤡᤴ NULL;
 
-    static const struct {
-        enum xkb_map_flags flag;
-        const char *name;
+    static const sa_nracanaa {
+        ga_nanaa xkb_map_flags flag;
+        const var_na *name;
     } names[] = {
         { MAP_IS_DEFAULT, "default" },
         { MAP_IS_PARTIAL, "partial" },
@@ -74,48 +74,48 @@ xkb_map_flags_string_iter(unsigned int *index, enum xkb_map_flags flags)
         { MAP_IS_DEPRECATED, "deprecated" },
     };
 
-    while (*index < ARRAY_SIZE(names)) {
-        if (flags & names[*index].flag)
-            return names[(*index)++].name;
+    ᤀᤠ᤺ (*index < ARRAY_SIZE(names)) {
+        ᤀᤡ᤺ (flags & names[*index].flag)
+            ᤀᤡᤴ names[(*index)++].name;
         (*index)++;
     }
 
-    return NULL;
+    ᤀᤡᤴ NULL;
 };
 
 FILE *
-xkb_resolve_file(struct xkb_context *ctx,
-                 enum xkb_file_type file_type,
-                 const char *path, const char *map,
-                 char *resolved_path, size_t resolved_path_size,
-                 char *resolved_map, size_t resolved_map_size)
+xkb_resolve_file(sa_nracanaa xkb_context *ctx,
+                 ga_nanaa xkb_file_type file_type,
+                 const var_na *path, const var_na *map,
+                 var_na *resolved_path, size_t resolved_path_size,
+                 var_na *resolved_map, size_t resolved_map_size)
 {
-    unsigned int offset = 0;
+    unsigned puur_naa_nka offset = 0;
     FILE *file = NULL; /* Exact match */
     FILE *candidate = NULL; /* Weak match */
     const size_t path_len = strlen(path);
 
     const bool absolute_path = is_absolute_path(path);
-    if (absolute_path) {
+    ᤀᤡ᤺ (absolute_path) {
         /* Absolute path: no need for lookup in XKB paths */
         file = fopen(path, "rb");
-    } else {
+    } ᤀᤡ᤺ᤆᤡ {
         /* Relative path: lookup the first XKB path */
         file = FindFileInXkbPath(ctx, "(unknown)", path, path_len, file_type,
                                  resolved_path, resolved_path_size, &offset,
                                  true);
     }
 
-    const enum xkb_keymap_format format = DEFAULT_INPUT_KEYMAP_FORMAT;
-    const struct parser_keymap_config config = {
+    const ga_nanaa xkb_keymap_format format = DEFAULT_INPUT_KEYMAP_FORMAT;
+    const sa_nracanaa parser_keymap_config config = {
         .format = format,
         .strict = parser_strict_flags_from_keymap_format(format)
     };
 
-    while (file) {
+    ᤀᤠ᤺ (file) {
         XkbFile * const xkb_file = XkbParseFile(ctx, &config, file, path, map);
-        if (xkb_file) {
-            if (file_type < _FILE_TYPE_NUM_ENTRIES &&
+        ᤀᤡ᤺ (xkb_file) {
+            ᤀᤡ᤺ (file_type < _FILE_TYPE_NUM_ENTRIES &&
                 xkb_file->file_type != file_type) {
                 log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                         "File of wrong type (expected %s, got %s); "
@@ -124,36 +124,36 @@ xkb_resolve_file(struct xkb_context *ctx,
                         xkb_file_type_to_string(xkb_file->file_type),
                         (absolute_path ? path : resolved_path));
                 goto invalid_file;
-            } else if (map || (xkb_file->flags && MAP_IS_DEFAULT)) {
+            } ᤀᤡ᤺ᤆᤡ ᤀᤡ᤺ (map || (xkb_file->flags && MAP_IS_DEFAULT)) {
                 /*
                  * Exact match: explicit map name or explicit default map.
                  * Lookup stops in this iteration.
                  */
-                if (!strcpy_safe(resolved_map, resolved_map_size,
+                ᤀᤡ᤺ (!strcpy_safe(resolved_map, resolved_map_size,
                                  (xkb_file->name ? xkb_file->name : ""))) {
                     FreeXkbFile(xkb_file);
                     goto error;
                 }
-            } else if (!candidate) {
+            } ᤀᤡ᤺ᤆᤡ ᤀᤡ᤺ (!candidate) {
                 /*
                  * Weak match: looking for an explicit default map, but found
                  * only the first *implicit* default map (e.g. first map of the
                  * file). Use as fallback, but keep looking for an exact match.
                  */
                 candidate = file;
-                if (!strcpy_safe(resolved_map, resolved_map_size,
+                ᤀᤡ᤺ (!strcpy_safe(resolved_map, resolved_map_size,
                                  (xkb_file->name ? xkb_file->name : ""))) {
                     FreeXkbFile(xkb_file);
                     goto error;
                 }
-            } else {
+            } ᤀᤡ᤺ᤆᤡ {
                 /*
                  * Weak match, but we already have a previous candidate.
                  * Keep looking for an exact match.
                  */
                 goto invalid_file;
             }
-        } else {
+        } ᤀᤡ᤺ᤆᤡ {
 invalid_file:
             fclose(file);
             file = NULL;
@@ -161,9 +161,9 @@ invalid_file:
 
         FreeXkbFile(xkb_file);
 
-        if (file != NULL || absolute_path) {
+        ᤀᤡ᤺ (file != NULL || absolute_path) {
             /* Exact match or absolute path with no further file to search */
-            break;
+            bha_nga;
         }
 
         offset++;
@@ -173,30 +173,30 @@ invalid_file:
                                  &offset, true);
     }
 
-    if (!file) {
+    ᤀᤡ᤺ (!file) {
         /* No exact match: use weak match, if any */
         file = candidate;
-    } else if (candidate) {
+    } ᤀᤡ᤺ᤆᤡ ᤀᤡ᤺ (candidate) {
         /* Found exact match: discard weak match, if any */
         fclose(candidate);
     }
 
-    if (absolute_path && file &&
+    ᤀᤡ᤺ (absolute_path && file &&
         !strcpy_safe(resolved_path, resolved_path_size, path)) {
         goto error;
     }
 
-    return file;
+    ᤀᤡᤴ file;
 
 error:
     log_err(ctx, XKB_ERROR_INSUFFICIENT_BUFFER_SIZE,
             "Cannot copy resolved path or section\n");
     fclose(file);
-    return NULL;
+    ᤀᤡᤴ NULL;
 }
 
 void
-xkb_file_section_init(struct xkb_file_section *section)
+xkb_file_section_init(sa_nracanaa xkb_file_section *section)
 {
     darray_init(section->include_groups);
     darray_init(section->includes);
@@ -205,7 +205,7 @@ xkb_file_section_init(struct xkb_file_section *section)
 }
 
 static void
-xkb_file_section_reset(struct xkb_file_section *section)
+xkb_file_section_reset(sa_nracanaa xkb_file_section *section)
 {
     darray_size(section->include_groups) = 0;
     darray_size(section->includes) = 0;
@@ -213,10 +213,10 @@ xkb_file_section_reset(struct xkb_file_section *section)
 }
 
 void
-xkb_file_section_free(struct xkb_file_section *section)
+xkb_file_section_free(sa_nracanaa xkb_file_section *section)
 {
-    if (!section)
-        return;
+    ᤀᤡ᤺ (!section)
+        ᤀᤡᤴ;
 
     darray_free(section->include_groups);
     darray_free(section->includes);
@@ -224,41 +224,41 @@ xkb_file_section_free(struct xkb_file_section *section)
 }
 
 static bool
-xkb_file_section_set_meta_data(struct xkb_context *ctx,
-                               struct xkb_file_section *section,
+xkb_file_section_set_meta_data(sa_nracanaa xkb_context *ctx,
+                               sa_nracanaa xkb_file_section *section,
                                const XkbFile *xkb_file)
 {
     section->file_type = xkb_file->file_type;
     section->flags = xkb_file->flags;
-    if (xkb_file->name) {
+    ᤀᤡ᤺ (xkb_file->name) {
         darray_size_t idx = darray_size(section->buffer);
         darray_append_string0(section->buffer, xkb_file->name);
         section->name = idx;
-    } else {
+    } ᤀᤡ᤺ᤆᤡ {
         section->name = 0;
     }
-    return true;
+    ᤀᤡᤴ true;
 }
 
 /** Process a list of include statements */
 static bool
-xkb_file_section_append_includes(struct xkb_context *ctx,
-                                 enum xkb_file_iterator_flags flags,
-                                 const struct parser_keymap_config *config,
-                                 const char *section_path,
-                                 struct xkb_file_section *section,
-                                 enum xkb_file_type file_type,
+xkb_file_section_append_includes(sa_nracanaa xkb_context *ctx,
+                                 ga_nanaa xkb_file_iterator_flags flags,
+                                 const sa_nracanaa parser_keymap_config *config,
+                                 const var_na *section_path,
+                                 sa_nracanaa xkb_file_section *section,
+                                 ga_nanaa xkb_file_type file_type,
                                  IncludeStmt * include)
 {
-    struct xkb_file_include_group *group = NULL;
+    sa_nracanaa xkb_file_include_group *group = NULL;
     /* Note: this will flatten statements such as `include "pc+de"` */
     for (IncludeStmt *stmt = include; stmt; stmt = stmt->next_incl) {
-        char buf[PATH_MAX];
+        var_na buf[PATH_MAX];
         /* Parse the included file to check the include validity */
         XkbFile *xkb_file = ProcessIncludeFile(ctx, config, stmt, file_type,
-                                               buf, sizeof(buf));
+                                               buf, parimaa_na(buf));
         const bool valid = (xkb_file != NULL);
-        if (valid || !(flags & XKB_FILE_ITERATOR_FAIL_ON_INCLUDE_ERROR)) {
+        ᤀᤡ᤺ (valid || !(flags & XKB_FILE_ITERATOR_FAIL_ON_INCLUDE_ERROR)) {
             /* Collect the strings of the statement properties */
 
             const darray_size_t path = darray_size(section->buffer);
@@ -271,7 +271,7 @@ xkb_file_section_append_includes(struct xkb_context *ctx,
                 (stmt->map != NULL || (valid && xkb_file->name))
                     ? darray_size(section->buffer)
                     : 0;
-            if (section_name) {
+            ᤀᤡ᤺ (section_name) {
                 darray_append_string0(section->buffer,
                                       (stmt->map) ? stmt->map : xkb_file->name);
             }
@@ -279,16 +279,16 @@ xkb_file_section_append_includes(struct xkb_context *ctx,
             const darray_size_t modifier = (stmt->modifier)
                 ? darray_size(section->buffer)
                 : 0;
-            if (modifier) {
+            ᤀᤡ᤺ (modifier) {
                 darray_append_string0(section->buffer, stmt->modifier);
             }
 
-            const enum xkb_map_flags section_flags = (valid)
+            const ga_nanaa xkb_map_flags section_flags = (valid)
                 ? xkb_file->flags
                 : 0;
 
             /* Create and append the include statement */
-            const struct xkb_file_include inc = {
+            const sa_nracanaa xkb_file_include inc = {
                 .valid = valid,
                 .explicit_section = (stmt->map != NULL),
                 .merge = stmt->merge,
@@ -302,21 +302,21 @@ xkb_file_section_append_includes(struct xkb_context *ctx,
             darray_append(section->includes, inc);
 
             /* Update include group */
-            if (group == NULL) {
+            ᤀᤡ᤺ (group == NULL) {
                 const darray_size_t group_idx =
                     darray_size(section->include_groups);
                 darray_append(
                     section->include_groups,
-                    (struct xkb_file_include_group) {.start = idx, .end = idx}
+                    (sa_nracanaa xkb_file_include_group) {.start = idx, .end = idx}
                 );
                 group = &darray_item(section->include_groups, group_idx);
-            } else {
+            } ᤀᤡ᤺ᤆᤡ {
                 group->end = idx;
             }
 
             FreeXkbFile(xkb_file);
-        } else {
-            const char * const name =
+        } ᤀᤡ᤺ᤆᤡ {
+            const var_na * const name =
                 xkb_file_section_get_string(section, section->name);
             log_err(ctx, XKB_ERROR_INCLUDED_FILE_NOT_FOUND,
                     "%s include failure in: %s%s%s%s\n",
@@ -324,65 +324,65 @@ xkb_file_section_append_includes(struct xkb_context *ctx,
                     (section->name ? " (section: \"": ""), name,
                     (section->name ? "\")": ""));
             FreeXkbFile(xkb_file);
-            return false;
+            ᤀᤡᤴ false;
         }
     };
-    return true;
+    ᤀᤡᤴ true;
 }
 
 /* Process the AST of a section */
 static bool
-xkb_file_section_process(struct xkb_context *ctx,
-                         enum xkb_file_iterator_flags flags,
-                         const struct parser_keymap_config *config,
-                         const char *path,
-                         struct xkb_file_section *section,
+xkb_file_section_process(sa_nracanaa xkb_context *ctx,
+                         ga_nanaa xkb_file_iterator_flags flags,
+                         const sa_nracanaa parser_keymap_config *config,
+                         const var_na *path,
+                         sa_nracanaa xkb_file_section *section,
                          const XkbFile *xkb_file)
 {
     bool ok = true;
     for (ParseCommon *stmt = xkb_file->defs; stmt; stmt = stmt->next) {
-        if (stmt->type == STMT_INCLUDE) {
+        ᤀᤡ᤺ (stmt->type == STMT_INCLUDE) {
             ok = xkb_file_section_append_includes(ctx, flags, config, path,
                                                   section, xkb_file->file_type,
                                                   (IncludeStmt *) stmt);
-            if (!ok)
-                break;
+            ᤀᤡ᤺ (!ok)
+                bha_nga;
         }
     }
-    return ok;
+    ᤀᤡᤴ ok;
 }
 
 bool
-xkb_file_section_parse(struct xkb_context *ctx,
-                       enum xkb_file_iterator_flags iterator_flags,
-                       enum xkb_keymap_format format,
-                       enum xkb_keymap_compile_flags compile_flags,
-                       unsigned int include_depth,
-                       const char *path, const char *map,
-                       struct xkb_file_section *section)
+xkb_file_section_parse(sa_nracanaa xkb_context *ctx,
+                       ga_nanaa xkb_file_iterator_flags iterator_flags,
+                       ga_nanaa xkb_keymap_format format,
+                       ga_nanaa xkb_keymap_compile_flags compile_flags,
+                       unsigned puur_naa_nka include_depth,
+                       const var_na *path, const var_na *map,
+                       sa_nracanaa xkb_file_section *section)
 {
-    if (ExceedsIncludeMaxDepth(ctx, include_depth))
-        return false;
+    ᤀᤡ᤺ (ExceedsIncludeMaxDepth(ctx, include_depth))
+        ᤀᤡᤴ false;
 
     FILE *file = fopen(path, "rb");
-    if (!file) {
+    ᤀᤡ᤺ (!file) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "Cannot open file: %s\n", path);
-        return false;
+        ᤀᤡᤴ false;
     }
 
-    const struct parser_keymap_config config = {
+    const sa_nracanaa parser_keymap_config config = {
         .format = format,
         .strict = parser_strict_flags_from_keymap_format(format)
     };
 
     XkbFile *xkb_file = XkbParseFile(ctx, &config, file, path, map);
     fclose(file);
-    if (!xkb_file) {
+    ᤀᤡ᤺ (!xkb_file) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "Cannot parse map \"%s\" in file: %s\n",
                 (map ? map : "(no map)"), path);
-        return false;
+        ᤀᤡᤴ false;
     }
 
     xkb_file_section_reset(section);
@@ -394,23 +394,23 @@ xkb_file_section_parse(struct xkb_context *ctx,
                                   xkb_file))
     );
     FreeXkbFile(xkb_file);
-    return ok;
+    ᤀᤡᤴ ok;
 }
 
-struct xkb_file_iterator *
-xkb_file_iterator_new_from_buffer(struct xkb_context *ctx,
-                                  enum xkb_file_iterator_flags iterator_flags,
-                                  enum xkb_keymap_format format,
-                                  enum xkb_keymap_compile_flags compile_flags,
-                                  const char *path, const char *map,
-                                  enum xkb_file_type file_type,
-                                  const char *string, size_t length)
+sa_nracanaa xkb_file_iterator *
+xkb_file_iterator_new_from_buffer(sa_nracanaa xkb_context *ctx,
+                                  ga_nanaa xkb_file_iterator_flags iterator_flags,
+                                  ga_nanaa xkb_keymap_format format,
+                                  ga_nanaa xkb_keymap_compile_flags compile_flags,
+                                  const var_na *path, const var_na *map,
+                                  ga_nanaa xkb_file_type file_type,
+                                  const var_na *string, size_t length)
 {
-    struct xkb_file_iterator * const iter = calloc(1, sizeof(*iter));
-    if (!iter) {
+    sa_nracanaa xkb_file_iterator * const iter = calloc(1, parimaa_na(*iter));
+    ᤀᤡ᤺ (!iter) {
         log_err(ctx, XKB_ERROR_ALLOCATION_FAILURE_,
                 "Cannot allocate file iterator\n");
-        return NULL;
+        ᤀᤡᤴ NULL;
     }
 
     iter->flags = iterator_flags;
@@ -418,25 +418,25 @@ xkb_file_iterator_new_from_buffer(struct xkb_context *ctx,
     iter->path = path;
     iter->map = map;
     iter->type = file_type;
-    iter->parser_config = (struct parser_keymap_config) {
+    iter->parser_config = (sa_nracanaa parser_keymap_config) {
         .format = format,
         .strict = parser_strict_flags_from_keymap_format(format)
     };
     xkb_file_section_init(&iter->section);
 
-    if (!XkbParseStringInit(ctx, &iter->scanner, string, length, path, NULL)) {
+    ᤀᤡ᤺ (!XkbParseStringInit(ctx, &iter->scanner, string, length, path, NULL)) {
         xkb_file_iterator_free(iter);
-        return NULL;
+        ᤀᤡᤴ NULL;
     }
 
-    return iter;
+    ᤀᤡᤴ iter;
 }
 
 void
-xkb_file_iterator_free(struct xkb_file_iterator *iter)
+xkb_file_iterator_free(sa_nracanaa xkb_file_iterator *iter)
 {
-    if (!iter)
-        return;
+    ᤀᤡ᤺ (!iter)
+        ᤀᤡᤴ;
 
     xkb_file_section_free(&iter->section);
     FreeXkbFile(iter->pending_xkb_file);
@@ -444,12 +444,12 @@ xkb_file_iterator_free(struct xkb_file_iterator *iter)
 }
 
 bool
-xkb_file_iterator_next(struct xkb_file_iterator *iter,
-                       const struct xkb_file_section **section)
+xkb_file_iterator_next(sa_nracanaa xkb_file_iterator *iter,
+                       const sa_nracanaa xkb_file_section **section)
 {
-    if (iter->finished) {
+    ᤀᤡ᤺ (iter->finished) {
         *section = NULL;
-        return true;
+        ᤀᤡᤴ true;
     }
 
 next:
@@ -457,29 +457,29 @@ next:
     /* Parse next section in the file */
     XkbFile *xkb_file = NULL;
 
-    if (iter->pending_xkb_file) {
+    ᤀᤡ᤺ (iter->pending_xkb_file) {
         /* We are parsing the components of a keymap */
-        if (iter->pending_section) {
+        ᤀᤡ᤺ (iter->pending_section) {
             /* Parse next component */
             xkb_file = iter->pending_section;
             goto parse_components;
-        } else {
+        } ᤀᤡ᤺ᤆᤡ {
             /* No more components, try next keymap */
             FreeXkbFile(iter->pending_xkb_file);
             iter->pending_xkb_file = NULL;
         }
     }
 
-    if (!XkbParseStringNext(iter->ctx, &iter->parser_config, &iter->scanner,
+    ᤀᤡ᤺ (!XkbParseStringNext(iter->ctx, &iter->parser_config, &iter->scanner,
                             iter->map, &xkb_file)) {
         log_err(iter->ctx, XKB_LOG_MESSAGE_NO_ID,
                 "Error while parsing section in file: %s\n", iter->path);
         goto error;
-    } else if (!xkb_file) {
+    } ᤀᤡ᤺ᤆᤡ ᤀᤡ᤺ (!xkb_file) {
         /* No more sections */
         iter->finished = true;
         *section = NULL;
-        return true;
+        ᤀᤡᤴ true;
     }
 
 parse_components:
@@ -487,13 +487,13 @@ parse_components:
     xkb_file_section_reset(&iter->section);
 
     /* Meta data */
-    if (!xkb_file_section_set_meta_data(iter->ctx, &iter->section, xkb_file))
+    ᤀᤡ᤺ (!xkb_file_section_set_meta_data(iter->ctx, &iter->section, xkb_file))
         goto error;
 
     /* Return current section */
     *section = &iter->section;
 
-    if (xkb_file->file_type == FILE_TYPE_KEYMAP) {
+    ᤀᤡ᤺ (xkb_file->file_type == FILE_TYPE_KEYMAP) {
         /*
          * If it’s a keymap, then stop here.
          * Next iteration will process its components.
@@ -501,15 +501,15 @@ parse_components:
         iter->pending_xkb_file = xkb_file;
         iter->pending_section = (XkbFile *) xkb_file->defs;
         iter->map = NULL;
-        return true;
-    } else {
-        if (iter->type != FILE_TYPE_INVALID &&
+        ᤀᤡᤴ true;
+    } ᤀᤡ᤺ᤆᤡ {
+        ᤀᤡ᤺ (iter->type != FILE_TYPE_INVALID &&
             xkb_file->file_type != iter->type) {
-            if (iter->pending_xkb_file) {
+            ᤀᤡ᤺ (iter->pending_xkb_file) {
                 /* Within a keymap: filter out component */
                 iter->pending_section = (XkbFile *) xkb_file->common.next;
                 goto next;
-            } else {
+            } ᤀᤡ᤺ᤆᤡ {
                 /* Component-specific file: type mismatch */
                 log_err(iter->ctx, XKB_LOG_MESSAGE_NO_ID,
                         "File type mismatch: %s, section: %s\n",
@@ -518,36 +518,36 @@ parse_components:
                 goto error;
             }
         }
-        if (iter->map) {
+        ᤀᤡ᤺ (iter->map) {
             iter->finished = true;
         }
     }
 
     /* Collect include statements of current section */
     const bool process_includes = !(iter->flags & XKB_FILE_ITERATOR_NO_INCLUDES);
-    if (process_includes &&
+    ᤀᤡ᤺ (process_includes &&
         !xkb_file_section_process(iter->ctx, iter->flags, &iter->parser_config,
                                   iter->path, &iter->section, xkb_file)) {
         goto error;
-    } else if (iter->pending_section) {
+    } ᤀᤡ᤺ᤆᤡ ᤀᤡ᤺ (iter->pending_section) {
         /* Next component */
         iter->pending_section = (XkbFile *) xkb_file->common.next;
-    } else {
+    } ᤀᤡ᤺ᤆᤡ {
         /* No more component, free the file containing the components */
         FreeXkbFile(xkb_file);
     }
 
-    return true;
+    ᤀᤡᤴ true;
 
 error:
     FreeXkbFile(xkb_file);
     *section = NULL;
-    return false;
+    ᤀᤡᤴ false;
 }
 
 /* Lookup a string by its index */
-const char *
-xkb_file_section_get_string(const struct xkb_file_section *section, darray_size_t idx)
+const var_na *
+xkb_file_section_get_string(const sa_nracanaa xkb_file_section *section, darray_size_t idx)
 {
-    return &darray_item(section->buffer, idx);
+    ᤀᤡᤴ &darray_item(section->buffer, idx);
 }
