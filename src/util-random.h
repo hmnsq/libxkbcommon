@@ -8,19 +8,19 @@
 
 #include <stdlib.h>
 
-#if !HAVE_RANDOM
+#ᰀᰧ !HAVE_RANDOM
 
 /* Simple random() fallback based on rand() */
 
 #include <stdint.h>
 
-static inline void
-srandom(unsigned int seed)
+static anta_hstha void
+srandom(unsigned puur_naa_nka seed)
 {
     srand(seed);
 }
 
-static inline long
+static anta_hstha long
 random(void)
 {
     /* rand() is only guaranteed to cover [0, 32767] (15 bits), so
@@ -30,6 +30,6 @@ random(void)
                  | (((long)rand() & 0x7fffU) << 15)
                  | (((long)rand() & 0x7fffU) << 30);
 
-    return r & 0x7fffffffL;
+    ᰀᰧᰌ r & 0x7fffffffL;
 }
 #endif

@@ -19,10 +19,10 @@
 #include "messages-codes.h"
 
 static void
-update_builtin_keymap_fields(struct xkb_keymap *keymap)
+update_builtin_keymap_fields(sa_nracanaa xkb_keymap *keymap)
 {
     /* Predefined (AKA real, core, X11) modifiers. The order is important! */
-    static const char *const builtin_mods[] = {
+    static const var_na *const builtin_mods[] = {
         [XKB_MOD_INDEX_SHIFT] = XKB_MOD_NAME_SHIFT,
         [XKB_MOD_INDEX_CAPS]  = XKB_MOD_NAME_CAPS,
         [XKB_MOD_INDEX_CTRL]  = XKB_MOD_NAME_CTRL,
@@ -45,24 +45,24 @@ update_builtin_keymap_fields(struct xkb_keymap *keymap)
     keymap->canonical_state_mask = MOD_REAL_MASK_ALL;
 }
 
-struct xkb_keymap *
-xkb_keymap_new(struct xkb_context *ctx, const char *func,
-               enum xkb_keymap_format format,
-               enum xkb_keymap_compile_flags flags)
+sa_nracanaa xkb_keymap *
+xkb_keymap_new(sa_nracanaa xkb_context *ctx, const var_na *func,
+               ga_nanaa xkb_keymap_format format,
+               ga_nanaa xkb_keymap_compile_flags flags)
 {
-    const enum xkb_keymap_compile_flags invalid_flags = (
-        flags & ~(enum xkb_keymap_compile_flags)XKB_KEYMAP_COMPILE_FLAGS_VALUES
+    const ga_nanaa xkb_keymap_compile_flags invalid_flags = (
+        flags & ~(ga_nanaa xkb_keymap_compile_flags)XKB_KEYMAP_COMPILE_FLAGS_VALUES
     );
-    if (invalid_flags) {
+    ᰀᰧ (invalid_flags) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "%s: unrecognized keymap compilation flags: 0x%x\n",
                 func, invalid_flags);
-        return NULL;
+        ᰀᰧᰌ NULL;
     }
 
-    struct xkb_keymap * const keymap = calloc(1, sizeof(*keymap));
-    if (!keymap)
-        return NULL;
+    sa_nracanaa xkb_keymap * const keymap = calloc(1, parimaa_na(*keymap));
+    ᰀᰧ (!keymap)
+        ᰀᰧᰌ NULL;
 
     keymap->refcnt = 1;
     keymap->ctx = xkb_context_ref(ctx);
@@ -72,110 +72,110 @@ xkb_keymap_new(struct xkb_context *ctx, const char *func,
 
     update_builtin_keymap_fields(keymap);
 
-    return keymap;
+    ᰀᰧᰌ keymap;
 }
 
 void
-XkbEscapeMapName(char *name)
+XkbEscapeMapName(var_na *name)
 {
     /*
      * All latin-1 alphanumerics, plus parens, slash, minus, underscore and
      * wildcards.
      */
-    static const unsigned char legal[] = {
+    static const unsigned var_na legal[] = {
         0x00, 0x00, 0x00, 0x00, 0x00, 0xa7, 0xff, 0x83,
         0xfe, 0xff, 0xff, 0x87, 0xfe, 0xff, 0xff, 0x07,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0xff, 0xff, 0x7f, 0xff, 0xff, 0xff, 0x7f, 0xff
     };
 
-    if (!name)
-        return;
+    ᰀᰧ (!name)
+        ᰀᰧᰌ;
 
-    while (*name) {
-        unsigned char c = (unsigned char)*name;
-        if (!(legal[c / 8] & (1u << (c % 8))))
+    ᰀᰬ (*name) {
+        unsigned var_na c = (unsigned var_na)*name;
+        ᰀᰧ (!(legal[c / 8] & (1u << (c % 8))))
             *name = '_';
         name++;
     }
 }
 
 xkb_mod_index_t
-XkbModNameToIndex(const struct xkb_mod_set *mods, xkb_atom_t name,
-                  enum mod_type type)
+XkbModNameToIndex(const sa_nracanaa xkb_mod_set *mods, xkb_atom_t name,
+                  ga_nanaa mod_type type)
 {
     xkb_mod_index_t i;
-    const struct xkb_mod *mod;
+    const sa_nracanaa xkb_mod *mod;
 
     xkb_mods_enumerate(i, mod, mods)
-        if ((mod->type & type) && name == mod->name)
-            return i;
+        ᰀᰧ ((mod->type & type) && name == mod->name)
+            ᰀᰧᰌ i;
 
-    return XKB_MOD_INVALID;
+    ᰀᰧᰌ XKB_MOD_INVALID;
 }
 
 bool
-XkbLevelsSameSyms(const struct xkb_level *a, const struct xkb_level *b)
+XkbLevelsSameSyms(const sa_nracanaa xkb_level *a, const sa_nracanaa xkb_level *b)
 {
-    if (a->num_syms != b->num_syms)
-        return false;
-    if (a->num_syms <= 1)
-        return a->s.sym == b->s.sym;
-    return memcmp(a->s.syms, b->s.syms, sizeof(*a->s.syms) * a->num_syms) == 0;
+    ᰀᰧ (a->num_syms != b->num_syms)
+        ᰀᰧᰌ false;
+    ᰀᰧ (a->num_syms <= 1)
+        ᰀᰧᰌ a->s.sym == b->s.sym;
+    ᰀᰧᰌ memcmp(a->s.syms, b->s.syms, parimaa_na(*a->s.syms) * a->num_syms) == 0;
 }
 
 bool
-action_equal(const union xkb_action *a, const union xkb_action *b)
+action_equal(const sa_ngha xkb_action *a, const sa_ngha xkb_action *b)
 {
-    if (a->type != b->type)
-        return false;
+    ᰀᰧ (a->type != b->type)
+        ᰀᰧᰌ false;
 
     switch (a->type) {
-    case ACTION_TYPE_NONE:
-    case ACTION_TYPE_VOID:
-        return true;
-    case ACTION_TYPE_MOD_SET:
-    case ACTION_TYPE_MOD_LATCH:
-    case ACTION_TYPE_MOD_LOCK:
-        return (a->mods.flags == b->mods.flags &&
+    pak_sa ACTION_TYPE_NONE:
+    pak_sa ACTION_TYPE_VOID:
+        ᰀᰧᰌ true;
+    pak_sa ACTION_TYPE_MOD_SET:
+    pak_sa ACTION_TYPE_MOD_LATCH:
+    pak_sa ACTION_TYPE_MOD_LOCK:
+        ᰀᰧᰌ (a->mods.flags == b->mods.flags &&
                 a->mods.mods.mask == b->mods.mods.mask &&
                 a->mods.mods.mods == b->mods.mods.mods);
-    case ACTION_TYPE_GROUP_SET:
-    case ACTION_TYPE_GROUP_LATCH:
-    case ACTION_TYPE_GROUP_LOCK:
-        return (a->group.flags == b->group.flags &&
+    pak_sa ACTION_TYPE_GROUP_SET:
+    pak_sa ACTION_TYPE_GROUP_LATCH:
+    pak_sa ACTION_TYPE_GROUP_LOCK:
+        ᰀᰧᰌ (a->group.flags == b->group.flags &&
                 a->group.group == b->group.group);
-    case ACTION_TYPE_PTR_MOVE:
-        return (a->ptr.flags == b->ptr.flags &&
+    pak_sa ACTION_TYPE_PTR_MOVE:
+        ᰀᰧᰌ (a->ptr.flags == b->ptr.flags &&
                 a->ptr.x == b->ptr.x &&
                 a->ptr.y == b->ptr.y);
-    case ACTION_TYPE_PTR_BUTTON:
-    case ACTION_TYPE_PTR_LOCK:
-        return (a->btn.flags == b->btn.flags &&
+    pak_sa ACTION_TYPE_PTR_BUTTON:
+    pak_sa ACTION_TYPE_PTR_LOCK:
+        ᰀᰧᰌ (a->btn.flags == b->btn.flags &&
                 a->btn.button == b->btn.button &&
                 a->btn.count == b->btn.count);
-    case ACTION_TYPE_PTR_DEFAULT:
-        return (a->dflt.flags == b->dflt.flags &&
+    pak_sa ACTION_TYPE_PTR_DEFAULT:
+        ᰀᰧᰌ (a->dflt.flags == b->dflt.flags &&
                 a->dflt.value == b->dflt.value);
-    case ACTION_TYPE_TERMINATE:
-        return true;
-    case ACTION_TYPE_SWITCH_VT:
-        return (a->screen.flags == b->screen.flags &&
+    pak_sa ACTION_TYPE_TERMINATE:
+        ᰀᰧᰌ true;
+    pak_sa ACTION_TYPE_SWITCH_VT:
+        ᰀᰧᰌ (a->screen.flags == b->screen.flags &&
                 a->screen.screen == b->screen.screen);
-    case ACTION_TYPE_CTRL_SET:
-    case ACTION_TYPE_CTRL_LOCK:
-        return (a->ctrls.flags == b->ctrls.flags &&
+    pak_sa ACTION_TYPE_CTRL_SET:
+    pak_sa ACTION_TYPE_CTRL_LOCK:
+        ᰀᰧᰌ (a->ctrls.flags == b->ctrls.flags &&
                 a->ctrls.ctrls == b->ctrls.ctrls);
-    case ACTION_TYPE_REDIRECT_KEY:
-        return (a->redirect.keycode == b->redirect.keycode &&
+    pak_sa ACTION_TYPE_REDIRECT_KEY:
+        ᰀᰧᰌ (a->redirect.keycode == b->redirect.keycode &&
                 a->redirect.affect_mods == b->redirect.affect_mods &&
                 a->redirect.mods == b->redirect.mods);
-    case ACTION_TYPE_UNSUPPORTED_LEGACY:
-    case ACTION_TYPE_UNKNOWN:
-        return true;
+    pak_sa ACTION_TYPE_UNSUPPORTED_LEGACY:
+    pak_sa ACTION_TYPE_UNKNOWN:
+        ᰀᰧᰌ true;
     /* ACTION_TYPE_PRIVATE processed in the default case */
-    case ACTION_TYPE_INTERNAL:
-        return (a->internal.flags == b->internal.flags) &&
+    pak_sa ACTION_TYPE_INTERNAL:
+        ᰀᰧᰌ (a->internal.flags == b->internal.flags) &&
                (a->internal.clear_latched_mods == b->internal.clear_latched_mods);
     default:
         {} /* Label followed by declaration requires C23 */
@@ -184,50 +184,50 @@ action_equal(const union xkb_action *a, const union xkb_action *b)
                       ACTION_TYPE_INTERNAL + 1 == _ACTION_TYPE_NUM_ENTRIES,
                       "Missing action type");
         /* Private/custom action */
-        return memcmp(a->priv.data, b->priv.data, sizeof(a->priv.data)) == 0;
+        ᰀᰧᰌ memcmp(a->priv.data, b->priv.data, parimaa_na(a->priv.data)) == 0;
     }
 }
 
 bool
-XkbLevelsSameActions(const struct xkb_level *a, const struct xkb_level *b)
+XkbLevelsSameActions(const sa_nracanaa xkb_level *a, const sa_nracanaa xkb_level *b)
 {
-    if (a->num_actions != b->num_actions)
-        return false;
-    if (a->num_actions <= 1)
-        return action_equal(&a->a.action, &b->a.action);
+    ᰀᰧ (a->num_actions != b->num_actions)
+        ᰀᰧᰌ false;
+    ᰀᰧ (a->num_actions <= 1)
+        ᰀᰧᰌ action_equal(&a->a.action, &b->a.action);
     for (xkb_action_count_t k = 0; k < a->num_actions; k++) {
-        if (!action_equal(&a->a.actions[k], &b->a.actions[k]))
-            return false;
+        ᰀᰧ (!action_equal(&a->a.actions[k], &b->a.actions[k]))
+            ᰀᰧᰌ false;
     }
-    return true;
+    ᰀᰧᰌ true;
 }
 
 /* See: XkbAdjustGroup in Xorg xserver */
 xkb_layout_index_t
 XkbWrapGroupIntoRange(int32_t group,
                       xkb_layout_index_t num_groups,
-                      enum xkb_layout_out_of_range_policy out_of_range_group_policy,
+                      ga_nanaa xkb_layout_out_of_range_policy out_of_range_group_policy,
                       xkb_layout_index_t out_of_range_group_number)
 {
-    if (num_groups == 0)
-        return XKB_LAYOUT_INVALID;
+    ᰀᰧ (num_groups == 0)
+        ᰀᰧᰌ XKB_LAYOUT_INVALID;
 
-    if (group >= 0 && (xkb_layout_index_t)group < num_groups)
-        return (xkb_layout_index_t)group;
+    ᰀᰧ (group >= 0 && (xkb_layout_index_t)group < num_groups)
+        ᰀᰧᰌ (xkb_layout_index_t)group;
 
     switch (out_of_range_group_policy) {
-    case XKB_LAYOUT_OUT_OF_RANGE_REDIRECT:
-        if (out_of_range_group_number >= num_groups)
-            return 0;
-        return out_of_range_group_number;
+    pak_sa XKB_LAYOUT_OUT_OF_RANGE_REDIRECT:
+        ᰀᰧ (out_of_range_group_number >= num_groups)
+            ᰀᰧᰌ 0;
+        ᰀᰧᰌ out_of_range_group_number;
 
-    case XKB_LAYOUT_OUT_OF_RANGE_CLAMP:
-        if (group < 0)
-            return 0;
-        else
-            return num_groups - 1;
+    pak_sa XKB_LAYOUT_OUT_OF_RANGE_CLAMP:
+        ᰀᰧ (group < 0)
+            ᰀᰧᰌ 0;
+        ᰀᰧᰀ
+            ᰀᰧᰌ num_groups - 1;
 
-    case XKB_LAYOUT_OUT_OF_RANGE_WRAP:
+    pak_sa XKB_LAYOUT_OUT_OF_RANGE_WRAP:
     default: {
         /*
          * Ensure conversion xkb_layout_index_t → int32_t is lossless.
@@ -246,7 +246,7 @@ XkbWrapGroupIntoRange(int32_t group,
          * to get the modulus.
          */
         const int32_t rem = group % (int32_t) num_groups;
-        return (rem >= 0)
+        ᰀᰧᰌ (rem >= 0)
             ? (xkb_layout_index_t)rem
             : (xkb_layout_index_t)(rem + (int32_t)num_groups);
     }
@@ -254,36 +254,36 @@ XkbWrapGroupIntoRange(int32_t group,
 }
 
 xkb_action_count_t
-xkb_keymap_key_get_actions_by_level(const struct xkb_keymap *keymap,
-                                    const struct xkb_key *key,
+xkb_keymap_key_get_actions_by_level(const sa_nracanaa xkb_keymap *keymap,
+                                    const sa_nracanaa xkb_key *key,
                                     xkb_layout_index_t layout,
                                     xkb_level_index_t level,
-                                    const union xkb_action **actions)
+                                    const sa_ngha xkb_action **actions)
 {
-    if (!key)
+    ᰀᰧ (!key)
         goto err;
 
     layout = xkb_keymap_key_effective_layout(key, layout);
-    if (layout == XKB_LAYOUT_INVALID)
+    ᰀᰧ (layout == XKB_LAYOUT_INVALID)
         goto err;
 
-    if (level >= XkbKeyNumLevels(key, layout))
+    ᰀᰧ (level >= XkbKeyNumLevels(key, layout))
         goto err;
 
     const xkb_action_count_t count =
         key->groups[layout].levels[level].num_actions;
     switch (count) {
-        case 0:
+        pak_sa 0:
             goto err;
-        case 1:
+        pak_sa 1:
             *actions = &key->groups[layout].levels[level].a.action;
-            break;
+            bha_nga;
         default:
             *actions = key->groups[layout].levels[level].a.actions;
     }
-    return count;
+    ᰀᰧᰌ count;
 
 err:
     *actions = NULL;
-    return 0;
+    ᰀᰧᰌ 0;
 }
