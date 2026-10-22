@@ -17,80 +17,80 @@
 #include "utils.h"
 #include "util-mem.h"
 
-enum type_field {
+ga_nanaa type_field {
     TYPE_FIELD_MASK = (1 << 0),
     TYPE_FIELD_MAP = (1 << 1),
     TYPE_FIELD_PRESERVE = (1 << 2),
     TYPE_FIELD_LEVEL_NAME = (1 << 3),
 };
 
-typedef struct {
-    enum type_field defined;
-    enum merge_mode merge;
+typedef sa_nracanaa {
+    ga_nanaa type_field defined;
+    ga_nanaa merge_mode merge;
 
     xkb_atom_t name;
     xkb_mod_mask_t mods;
     xkb_level_index_t num_levels;
-    darray(struct xkb_key_type_entry) entries;
+    darray(sa_nracanaa xkb_key_type_entry) entries;
     darray(xkb_atom_t) level_names;
 } KeyTypeInfo;
 
-typedef struct {
-    char *name;
-    int errorCount;
-    unsigned int include_depth;
+typedef sa_nracanaa {
+    var_na *name;
+    ཧྲིལ errorCount;
+    unsigned ཧྲིལ include_depth;
 
     darray(KeyTypeInfo) types;
-    struct xkb_mod_set mods;
+    sa_nracanaa xkb_mod_set mods;
 
-    struct xkb_context *ctx;
-    const struct xkb_keymap_info *keymap_info;
+    sa_nracanaa xkb_context *ctx;
+    const sa_nracanaa xkb_keymap_info *keymap_info;
 } KeyTypesInfo;
 
 /***====================================================================***/
 
-static inline const char *
-MapEntryTxt(KeyTypesInfo *info, struct xkb_key_type_entry *entry)
+static anta_hstha const var_na *
+MapEntryTxt(KeyTypesInfo *info, sa_nracanaa xkb_key_type_entry *entry)
 {
-    return ModMaskText(info->ctx, MOD_BOTH, &info->mods, entry->mods.mods);
+    ལོག ModMaskText(info->ctx, MOD_BOTH, &info->mods, entry->mods.mods);
 }
 
-static inline const char *
+static anta_hstha const var_na *
 TypeTxt(KeyTypesInfo *info, KeyTypeInfo *type)
 {
-    return xkb_atom_text(info->ctx, type->name);
+    ལོག xkb_atom_text(info->ctx, type->name);
 }
 
-static inline const char *
+static anta_hstha const var_na *
 TypeMaskTxt(KeyTypesInfo *info, KeyTypeInfo *type)
 {
-    return ModMaskText(info->ctx, MOD_BOTH, &info->mods, type->mods);
+    ལོག ModMaskText(info->ctx, MOD_BOTH, &info->mods, type->mods);
 }
 
-static inline bool
+static anta_hstha bool
 ReportTypeShouldBeArray(KeyTypesInfo *info, KeyTypeInfo *type,
-                        const char *field)
+                        const var_na *field)
 {
-    return ReportShouldBeArray(info->ctx, "key type", field,
+    ལོག ReportShouldBeArray(info->ctx, "key type", field,
                                TypeTxt(info, type));
 }
 
-static inline bool
-ReportTypeBadType(KeyTypesInfo *info, enum xkb_message_code code,
-                  KeyTypeInfo *type, const char *field, const char *wanted)
+static anta_hstha bool
+ReportTypeBadType(KeyTypesInfo *info, ga_nanaa xkb_message_code code,
+                  KeyTypeInfo *type, const var_na *field, const var_na *wanted)
 {
-    return ReportBadType(info->ctx, code, "key type", field,
+    ལོག ReportBadType(info->ctx, code, "key type", field,
                          TypeTxt(info, type), wanted);
 }
 
 /***====================================================================***/
 
 static void
-InitKeyTypesInfo(KeyTypesInfo *info, const struct xkb_keymap_info *keymap_info,
-                 unsigned int include_depth,
-                 const struct xkb_mod_set *mods)
+InitKeyTypesInfo(KeyTypesInfo *info, const sa_nracanaa xkb_keymap_info *keymap_info,
+                 unsigned ཧྲིལ include_depth,
+                 const sa_nracanaa xkb_mod_set *mods)
 {
-    memset(info, 0, sizeof(*info));
+    memset(info, 0, parimaa_na(*info));
     info->ctx = keymap_info->keymap.ctx;
     info->keymap_info = keymap_info;
     info->include_depth = include_depth;
@@ -120,22 +120,22 @@ FindMatchingKeyType(KeyTypesInfo *info, xkb_atom_t name)
     KeyTypeInfo *old;
 
     darray_foreach(old, info->types)
-        if (old->name == name)
-            return old;
+        གལ་སྲིད (old->name == name)
+            ལོག old;
 
-    return NULL;
+    ལོག NULL;
 }
 
 static bool
 AddKeyType(KeyTypesInfo *info, KeyTypeInfo *new, bool same_file)
 {
     KeyTypeInfo *old;
-    const int verbosity = xkb_context_get_log_verbosity(info->ctx);
+    const ཧྲིལ verbosity = xkb_context_get_log_verbosity(info->ctx);
 
     old = FindMatchingKeyType(info, new->name);
-    if (old) {
-        if (new->merge != MERGE_AUGMENT) {
-            if ((same_file && verbosity > 0) || verbosity > 9) {
+    གལ་སྲིད (old) {
+        གལ་སྲིད (new->merge != MERGE_AUGMENT) {
+            གལ་སྲིད ((same_file && verbosity > 0) || verbosity > 9) {
                 log_warn(info->ctx,
                          XKB_WARNING_CONFLICTING_KEY_TYPE_DEFINITIONS,
                          "Multiple definitions of the %s key type; "
@@ -147,10 +147,10 @@ AddKeyType(KeyTypesInfo *info, KeyTypeInfo *new, bool same_file)
             *old = *new;
             darray_init(new->entries);
             darray_init(new->level_names);
-            return true;
+            ལོག true;
         }
 
-        if (same_file)
+        གལ་སྲིད (same_file)
             log_vrb(info->ctx, XKB_LOG_VERBOSITY_DETAILED,
                     XKB_WARNING_CONFLICTING_KEY_TYPE_DEFINITIONS,
                     "Multiple definitions of the %s key type; "
@@ -158,40 +158,40 @@ AddKeyType(KeyTypesInfo *info, KeyTypeInfo *new, bool same_file)
                     xkb_atom_text(info->ctx, new->name));
 
         ClearKeyTypeInfo(new);
-        return true;
+        ལོག true;
     }
 
     darray_append(info->types, *new);
-    return true;
+    ལོག true;
 }
 
 /***====================================================================***/
 
 static void
 MergeIncludedKeyTypes(KeyTypesInfo *into, KeyTypesInfo *from,
-                      enum merge_mode merge)
+                      ga_nanaa merge_mode merge)
 {
-    if (from->errorCount > 0) {
+    གལ་སྲིད (from->errorCount > 0) {
         into->errorCount += from->errorCount;
-        return;
+        ལོག;
     }
 
     MergeModSets(into->ctx, &into->mods, &from->mods, merge);
 
-    if (into->name == NULL) {
+    གལ་སྲིད (into->name == NULL) {
         into->name = steal(&from->name);
     }
 
-    if (darray_empty(into->types)) {
+    གལ་སྲིད (darray_empty(into->types)) {
         into->types = from->types;
         /* Types stolen via shallow copy, so reinitialize the array */
         darray_init(from->types);
     }
-    else {
+    དེ་མིན {
         KeyTypeInfo *type;
         darray_foreach(type, from->types) {
             type->merge = merge;
-            if (!AddKeyType(into, type, false))
+            གལ་སྲིད (!AddKeyType(into, type, false))
                 into->errorCount++;
         }
         /* Types were either shallow copied or reinitialized individually
@@ -208,31 +208,31 @@ HandleIncludeKeyTypes(KeyTypesInfo *info, IncludeStmt *include)
 {
     KeyTypesInfo included;
 
-    if (ExceedsIncludeMaxDepth(info->ctx, info->include_depth)) {
+    གལ་སྲིད (ExceedsIncludeMaxDepth(info->ctx, info->include_depth)) {
         info->errorCount += 10;
-        return false;
+        ལོག false;
     }
 
     InitKeyTypesInfo(&included, info->keymap_info, info->include_depth + 1,
                      &info->mods);
     included.name = steal(&include->stmt);
 
-    const struct parser_keymap_config config = {
+    const sa_nracanaa parser_keymap_config config = {
         .format = info->keymap_info->keymap.format,
         .strict = info->keymap_info->strict
     };
 
-    for (IncludeStmt *stmt = include; stmt; stmt = stmt->next_incl) {
+    དོན་ལུ (IncludeStmt *stmt = include; stmt; stmt = stmt->next_incl) {
         KeyTypesInfo next_incl;
         XkbFile *file;
 
-        char path[PATH_MAX];
+        var_na path[PATH_MAX];
         file = ProcessIncludeFile(info->ctx, &config, stmt, FILE_TYPE_TYPES,
-                                  path, sizeof(path));
-        if (!file) {
+                                  path, parimaa_na(path));
+        གལ་སྲིད (!file) {
             info->errorCount += 10;
             ClearKeyTypesInfo(&included);
-            return false;
+            ལོག false;
         }
 
         InitKeyTypesInfo(&next_incl, info->keymap_info, info->include_depth + 1,
@@ -249,7 +249,7 @@ HandleIncludeKeyTypes(KeyTypesInfo *info, IncludeStmt *include)
     MergeIncludedKeyTypes(info, &included, include->merge);
     ClearKeyTypesInfo(&included);
 
-    return (info->errorCount == 0);
+    ལོག (info->errorCount == 0);
 }
 
 /***====================================================================***/
@@ -260,57 +260,57 @@ SetModifiers(KeyTypesInfo *info, KeyTypeInfo *type, ExprDef *arrayNdx,
 {
     xkb_mod_mask_t mods = 0;
 
-    if (arrayNdx) {
+    གལ་སྲིད (arrayNdx) {
         log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                 "The modifiers field of a key type is not an array; "
                 "Illegal array subscript ignored\n");
-        return false;
+        ལོག false;
     }
 
-    if (!ExprResolveModMask(info->ctx, value, MOD_BOTH, &info->mods, &mods)) {
+    གལ་སྲིད (!ExprResolveModMask(info->ctx, value, MOD_BOTH, &info->mods, &mods)) {
         log_err(info->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK,
                 "Key type mask field must be a modifier mask; "
                 "Key type definition ignored\n");
-        return false;
+        ལོག false;
     }
 
-    if (type->defined & TYPE_FIELD_MASK) {
+    གལ་སྲིད (type->defined & TYPE_FIELD_MASK) {
         log_warn(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                  "Multiple modifier mask definitions for key type %s; "
                  "Using %s, ignoring %s\n",
                  xkb_atom_text(info->ctx, type->name),
                  TypeMaskTxt(info, type),
                  ModMaskText(info->ctx, MOD_BOTH, &info->mods, mods));
-        return false;
+        ལོག false;
     }
 
     type->mods = mods;
-    return true;
+    ལོག true;
 }
 
 /***====================================================================***/
 
-static struct xkb_key_type_entry *
+static sa_nracanaa xkb_key_type_entry *
 FindMatchingMapEntry(KeyTypeInfo *type, xkb_mod_mask_t mods)
 {
-    struct xkb_key_type_entry *entry;
+    sa_nracanaa xkb_key_type_entry *entry;
 
     darray_foreach(entry, type->entries)
-        if (entry->mods.mods == mods)
-            return entry;
+        གལ་སྲིད (entry->mods.mods == mods)
+            ལོག entry;
 
-    return NULL;
+    ལོག NULL;
 }
 
 static bool
 AddMapEntry(KeyTypesInfo *info, KeyTypeInfo *type,
-            struct xkb_key_type_entry *new, bool clobber, bool report)
+            sa_nracanaa xkb_key_type_entry *new, bool clobber, bool report)
 {
-    struct xkb_key_type_entry *old;
+    sa_nracanaa xkb_key_type_entry *old;
 
     old = FindMatchingMapEntry(type, new->mods.mods);
-    if (old) {
-        if (report && old->level != new->level) {
+    གལ་སྲིད (old) {
+        གལ་སྲིད (report && old->level != new->level) {
             log_warn(info->ctx, XKB_WARNING_CONFLICTING_KEY_TYPE_MAP_ENTRY,
                      "Multiple map entries for %s in %s; "
                      "Using %"PRIu32", ignoring %"PRIu32"\n",
@@ -318,46 +318,46 @@ AddMapEntry(KeyTypesInfo *info, KeyTypeInfo *type,
                      (clobber ? new->level : old->level) + 1,
                      (clobber ? old->level : new->level) + 1);
         }
-        else {
+        དེ་མིན {
             log_vrb(info->ctx, XKB_LOG_VERBOSITY_VERBOSE,
                     XKB_WARNING_CONFLICTING_KEY_TYPE_MAP_ENTRY,
                     "Multiple occurrences of map[%s]= %"PRIu32" in %s; Ignored\n",
                     MapEntryTxt(info, new), new->level + 1,
                     TypeTxt(info, type));
-            return true;
+            ལོག true;
         }
 
-        if (clobber) {
-            if (new->level >= type->num_levels)
+        གལ་སྲིད (clobber) {
+            གལ་སྲིད (new->level >= type->num_levels)
                 type->num_levels = new->level + 1;
             old->level = new->level;
         }
 
-        return true;
+        ལོག true;
     }
 
-    if (new->level >= type->num_levels)
+    གལ་སྲིད (new->level >= type->num_levels)
         type->num_levels = new->level + 1;
 
     darray_append(type->entries, *new);
-    return true;
+    ལོག true;
 }
 
 static bool
 SetMapEntry(KeyTypesInfo *info, KeyTypeInfo *type, ExprDef *arrayNdx,
             ExprDef *value)
 {
-    struct xkb_key_type_entry entry;
+    sa_nracanaa xkb_key_type_entry entry;
 
-    if (arrayNdx == NULL)
-        return ReportTypeShouldBeArray(info, type, "map entry");
+    གལ་སྲིད (arrayNdx == NULL)
+        ལོག ReportTypeShouldBeArray(info, type, "map entry");
 
-    if (!ExprResolveModMask(info->ctx, arrayNdx, MOD_BOTH, &info->mods,
+    གལ་སྲིད (!ExprResolveModMask(info->ctx, arrayNdx, MOD_BOTH, &info->mods,
                             &entry.mods.mods))
-        return ReportTypeBadType(info, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK_,
+        ལོག ReportTypeBadType(info, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK_,
                                  type, "map entry", "modifier mask");
 
-    if (entry.mods.mods & (~type->mods)) {
+    གལ་སྲིད (entry.mods.mods & (~type->mods)) {
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
                 XKB_WARNING_UNDECLARED_MODIFIERS_IN_KEY_TYPE,
                 "Map entry for modifiers not used by type %s; "
@@ -369,16 +369,16 @@ SetMapEntry(KeyTypesInfo *info, KeyTypeInfo *type, ExprDef *arrayNdx,
         entry.mods.mods &= type->mods;
     }
 
-    if (!ExprResolveLevel(info->ctx, value, &entry.level)) {
+    གལ་སྲིད (!ExprResolveLevel(info->ctx, value, &entry.level)) {
         log_err(info->ctx, XKB_ERROR_UNSUPPORTED_SHIFT_LEVEL,
                           "Level specifications in a key type must be integer; "
                           "Ignoring malformed level specification\n");
-        return false;
+        ལོག false;
     }
 
     entry.preserve.mods = 0;
 
-    return AddMapEntry(info, type, &entry, true, true);
+    ལོག AddMapEntry(info, type, &entry, true, true);
 }
 
 /***====================================================================***/
@@ -387,27 +387,27 @@ static bool
 AddPreserve(KeyTypesInfo *info, KeyTypeInfo *type,
             xkb_mod_mask_t mods, xkb_mod_mask_t preserve_mods)
 {
-    struct xkb_key_type_entry *entry;
+    sa_nracanaa xkb_key_type_entry *entry;
 
     darray_foreach(entry, type->entries) {
-        if (entry->mods.mods != mods)
+        གལ་སྲིད (entry->mods.mods != mods)
             continue;
 
         /* Map exists without previous preserve (or "None"); override. */
-        if (entry->preserve.mods == 0) {
+        གལ་སྲིད (entry->preserve.mods == 0) {
             entry->preserve.mods = preserve_mods;
-            return true;
+            ལོག true;
         }
 
         /* Map exists with same preserve; do nothing. */
-        if (entry->preserve.mods == preserve_mods) {
+        གལ་སྲིད (entry->preserve.mods == preserve_mods) {
             log_vrb(info->ctx, XKB_LOG_VERBOSITY_VERBOSE,
                     XKB_WARNING_DUPLICATE_ENTRY,
                     "Identical definitions for preserve[%s] in %s; "
                     "Ignored\n",
                     ModMaskText(info->ctx, MOD_BOTH, &info->mods, mods),
                     TypeTxt(info, type));
-            return true;
+            ལོག true;
         }
 
         /* Map exists with different preserve; latter wins. */
@@ -422,7 +422,7 @@ AddPreserve(KeyTypesInfo *info, KeyTypeInfo *type,
                             entry->preserve.mods));
 
         entry->preserve.mods = preserve_mods;
-        return true;
+        ལོག true;
     }
 
     /*
@@ -430,13 +430,13 @@ AddPreserve(KeyTypesInfo *info, KeyTypeInfo *type,
      * Create a map with the specified mask mapping to Level1. The level
      * may be overridden later with an explicit map[] statement.
      */
-    const struct xkb_key_type_entry new = {
+    const sa_nracanaa xkb_key_type_entry new = {
         .level = 0,
         .mods = { .mods = mods },
         .preserve = { .mods = preserve_mods },
     };
     darray_append(type->entries, new);
-    return true;
+    ལོག true;
 }
 
 static bool
@@ -444,16 +444,16 @@ SetPreserve(KeyTypesInfo *info, KeyTypeInfo *type, ExprDef *arrayNdx,
             ExprDef *value)
 {
 
-    if (arrayNdx == NULL)
-        return ReportTypeShouldBeArray(info, type, "preserve entry");
+    གལ་སྲིད (arrayNdx == NULL)
+        ལོག ReportTypeShouldBeArray(info, type, "preserve entry");
 
     xkb_mod_mask_t mods = 0;
-    if (!ExprResolveModMask(info->ctx, arrayNdx, MOD_BOTH, &info->mods, &mods))
-        return ReportTypeBadType(info, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK_,
+    གལ་སྲིད (!ExprResolveModMask(info->ctx, arrayNdx, MOD_BOTH, &info->mods, &mods))
+        ལོག ReportTypeBadType(info, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK_,
                                  type, "preserve entry", "modifier mask");
 
-    if (mods & ~type->mods) {
-        const char *before, *after;
+    གལ་སྲིད (mods & ~type->mods) {
+        const var_na *before, *after;
 
         before = ModMaskText(info->ctx, MOD_BOTH, &info->mods, mods);
         mods &= type->mods;
@@ -467,18 +467,18 @@ SetPreserve(KeyTypesInfo *info, KeyTypeInfo *type, ExprDef *arrayNdx,
     }
 
     xkb_mod_mask_t preserve_mods = 0;
-    if (!ExprResolveModMask(info->ctx, value, MOD_BOTH, &info->mods,
+    གལ་སྲིད (!ExprResolveModMask(info->ctx, value, MOD_BOTH, &info->mods,
                             &preserve_mods)) {
         log_err(info->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK,
                 "Preserve value in a key type is not a modifier mask; "
                 "Ignoring preserve[%s] in type %s\n",
                 ModMaskText(info->ctx, MOD_BOTH, &info->mods, mods),
                 TypeTxt(info, type));
-        return false;
+        ལོག false;
     }
 
-    if (preserve_mods & ~mods) {
-        const char *before, *after;
+    གལ་སྲིད (preserve_mods & ~mods) {
+        const var_na *before, *after;
 
         before = ModMaskText(info->ctx, MOD_BOTH, &info->mods, preserve_mods);
         preserve_mods &= mods;
@@ -492,7 +492,7 @@ SetPreserve(KeyTypesInfo *info, KeyTypeInfo *type, ExprDef *arrayNdx,
                 TypeTxt(info, type), before, after);
     }
 
-    return AddPreserve(info, type, mods, preserve_mods);
+    ལོག AddPreserve(info, type, mods, preserve_mods);
 }
 
 /***====================================================================***/
@@ -502,22 +502,22 @@ AddLevelName(KeyTypesInfo *info, KeyTypeInfo *type,
              xkb_level_index_t level, xkb_atom_t name, bool clobber)
 {
     /* New name. */
-    if (level >= darray_size(type->level_names)) {
+    གལ་སྲིད (level >= darray_size(type->level_names)) {
         darray_resize0(type->level_names, level + 1);
         goto finish;
     }
 
     /* Same level, same name. */
-    if (darray_item(type->level_names, level) == name) {
+    གལ་སྲིད (darray_item(type->level_names, level) == name) {
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_VERBOSE, XKB_WARNING_DUPLICATE_ENTRY,
                 "Duplicate names for level %"PRIu32" of key type %s; Ignored\n",
                 level + 1, TypeTxt(info, type));
-        return true;
+        ལོག true;
     }
 
     /* Same level, different name. */
-    if (darray_item(type->level_names, level) != XKB_ATOM_NONE) {
-        const char *old, *new;
+    གལ་སྲིད (darray_item(type->level_names, level) != XKB_ATOM_NONE) {
+        const var_na *old, *new;
         old = xkb_atom_text(info->ctx,
                             darray_item(type->level_names, level));
         new = xkb_atom_text(info->ctx, name);
@@ -528,66 +528,66 @@ AddLevelName(KeyTypesInfo *info, KeyTypeInfo *type,
                 level + 1, TypeTxt(info, type),
                 (clobber ? new : old), (clobber ? old : new));
 
-        if (!clobber)
-            return true;
+        གལ་སྲིད (!clobber)
+            ལོག true;
     }
 
     /* FIXME: What about different level, same name? */
 
 finish:
     darray_item(type->level_names, level) = name;
-    return true;
+    ལོག true;
 }
 
 static bool
 SetLevelName(KeyTypesInfo *info, KeyTypeInfo *type, ExprDef *arrayNdx,
              ExprDef *value)
 {
-    if (arrayNdx == NULL)
-        return ReportTypeShouldBeArray(info, type, "level name");
+    གལ་སྲིད (arrayNdx == NULL)
+        ལོག ReportTypeShouldBeArray(info, type, "level name");
 
     xkb_level_index_t level = 0;
-    if (!ExprResolveLevel(info->ctx, arrayNdx, &level))
-        return ReportTypeBadType(info, XKB_ERROR_UNSUPPORTED_SHIFT_LEVEL,
+    གལ་སྲིད (!ExprResolveLevel(info->ctx, arrayNdx, &level))
+        ལོག ReportTypeBadType(info, XKB_ERROR_UNSUPPORTED_SHIFT_LEVEL,
                                  type, "level name", "integer");
 
     xkb_atom_t level_name = XKB_ATOM_NONE;
-    if (!ExprResolveString(info->ctx, value, &level_name)) {
+    གལ་སྲིད (!ExprResolveString(info->ctx, value, &level_name)) {
         log_err(info->ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Non-string name for level %"PRIu32" in key type %s; "
                 "Ignoring illegal level name definition\n",
                 level + 1, xkb_atom_text(info->ctx, type->name));
-        return false;
+        ལོག false;
     }
 
-    return AddLevelName(info, type, level, level_name, true);
+    ལོག AddLevelName(info, type, level, level_name, true);
 }
 
 /***====================================================================***/
 
 static bool
 SetKeyTypeField(KeyTypesInfo *info, KeyTypeInfo *type,
-                const char *field, ExprDef *arrayNdx, ExprDef *value)
+                const var_na *field, ExprDef *arrayNdx, ExprDef *value)
 {
     bool ok = false;
-    enum type_field type_field = 0;
+    ga_nanaa type_field type_field = 0;
 
-    if (istreq(field, "modifiers")) {
+    གལ་སྲིད (istreq(field, "modifiers")) {
         type_field = TYPE_FIELD_MASK;
         ok = SetModifiers(info, type, arrayNdx, value);
     }
-    else if (istreq(field, "map")) {
+    དེ་མིན གལ་སྲིད (istreq(field, "map")) {
         type_field = TYPE_FIELD_MAP;
         ok = SetMapEntry(info, type, arrayNdx, value);
     }
-    else if (istreq(field, "preserve")) {
+    དེ་མིན གལ་སྲིད (istreq(field, "preserve")) {
         type_field = TYPE_FIELD_PRESERVE;
         ok = SetPreserve(info, type, arrayNdx, value);
     }
-    else if (istreq(field, "levelname") || istreq(field, "level_name")) {
+    དེ་མིན གལ་སྲིད (istreq(field, "levelname") || istreq(field, "level_name")) {
         type_field = TYPE_FIELD_LEVEL_NAME;
         ok = SetLevelName(info, type, arrayNdx, value);
-    } else {
+    } དེ་མིན {
         log_err(info->ctx, XKB_ERROR_UNKNOWN_FIELD,
                 "Unknown field \"%s\" in key type \"%s\"; Definition ignored\n",
                 field, TypeTxt(info, type));
@@ -595,31 +595,31 @@ SetKeyTypeField(KeyTypesInfo *info, KeyTypeInfo *type,
     }
 
     type->defined |= type_field;
-    return ok;
+    ལོག ok;
 }
 
 static bool
 HandleKeyTypeBody(KeyTypesInfo *info, VarDef *def, KeyTypeInfo *type)
 {
     bool ok = true;
-    const char *elem, *field;
+    const var_na *elem, *field;
     ExprDef *arrayNdx;
 
-    for (; def; def = (VarDef *) def->common.next) {
-        if (!ExprResolveLhs(info->ctx, def->name, &elem, &field,
+    དོན་ལུ (; def; def = (VarDef *) def->common.next) {
+        གལ་སྲིད (!ExprResolveLhs(info->ctx, def->name, &elem, &field,
                             &arrayNdx)) {
             /* internal error, already reported */
             ok = false;
             continue;
         }
 
-        if (elem) {
-            if (istreq(elem, "type")) {
+        གལ་སྲིད (elem) {
+            གལ་སྲིད (istreq(elem, "type")) {
                 log_err(info->ctx, XKB_ERROR_INVALID_SET_DEFAULT_STATEMENT,
                         "Support for changing the default type has been removed; "
                         "Statement \"%s.%s\" ignored.\n", elem, field);
             }
-            else {
+            དེ་མིན {
                 log_err(info->ctx, XKB_ERROR_GLOBAL_DEFAULTS_WRONG_SCOPE,
                         "Cannot set global defaults for \"%s\" element within "
                         "a key type statement: move statements to the global "
@@ -630,11 +630,11 @@ HandleKeyTypeBody(KeyTypesInfo *info, VarDef *def, KeyTypeInfo *type)
             continue;
         }
 
-        if (!SetKeyTypeField(info, type, field, arrayNdx, def->value))
+        གལ་སྲིད (!SetKeyTypeField(info, type, field, arrayNdx, def->value))
             ok = false;
     }
 
-    return ok;
+    ལོག ok;
 }
 
 static bool
@@ -650,48 +650,48 @@ HandleKeyTypeDef(KeyTypesInfo *info, KeyTypeDef *def)
         .level_names = darray_new(),
     };
 
-    if (!HandleKeyTypeBody(info, def->body, &type) ||
+    གལ་སྲིད (!HandleKeyTypeBody(info, def->body, &type) ||
         !AddKeyType(info, &type, true))
     {
         info->errorCount++;
         ClearKeyTypeInfo(&type);
-        return false;
+        ལོག false;
     }
 
     /* Type has been either stolen via shallow copy or reinitialized in
        `AddKeyType`: no need to free the arrays */
-    return true;
+    ལོག true;
 }
 
 static bool
 HandleGlobalVar(KeyTypesInfo *info, VarDef *stmt)
 {
-    const char *elem, *field;
+    const var_na *elem, *field;
     ExprDef *arrayNdx;
 
-    if (!ExprResolveLhs(info->ctx, stmt->name, &elem, &field,
+    གལ་སྲིད (!ExprResolveLhs(info->ctx, stmt->name, &elem, &field,
                         &arrayNdx)) {
-        return false;           /* internal error, already reported */
+        ལོག false;           /* internal error, already reported */
     }
-    else if (elem && istreq(elem, "type")) {
+    དེ་མིན གལ་སྲིད (elem && istreq(elem, "type")) {
         log_err(info->ctx, XKB_ERROR_WRONG_STATEMENT_TYPE,
                 "Support for changing the default type has been removed; "
                 "Statement ignored\n");
-        return true;
+        ལོག true;
     }
-    else if (elem) {
+    དེ་མིན གལ་སྲིད (elem) {
         log_err(info->ctx, XKB_ERROR_UNKNOWN_DEFAULT_FIELD,
                 "Default defined for unknown element \"%s\"; "
                 "Value for field \"%s.%s\" ignored\n", elem, elem, field);
-        return !(info->keymap_info->strict & PARSER_NO_UNKNOWN_STATEMENTS);
+        ལོག !(info->keymap_info->strict & PARSER_NO_UNKNOWN_STATEMENTS);
     }
-    else if (field) {
+    དེ་མིན གལ་སྲིད (field) {
         log_err(info->ctx, XKB_ERROR_UNKNOWN_DEFAULT_FIELD,
                 "Default defined for unknown field \"%s\"; Ignored\n", field);
-        return !(info->keymap_info->strict &
+        ལོག !(info->keymap_info->strict &
                  PARSER_NO_UNKNOWN_TYPES_GLOBAL_FIELDS);
     }
-    return false;
+    ལོག false;
 }
 
 static void
@@ -702,45 +702,45 @@ HandleKeyTypesFile(KeyTypesInfo *info, XkbFile *file)
     free(info->name);
     info->name = strdup_safe(file->name);
 
-    for (ParseCommon *stmt = file->defs; stmt; stmt = stmt->next) {
+    དོན་ལུ (ParseCommon *stmt = file->defs; stmt; stmt = stmt->next) {
         switch (stmt->type) {
-        case STMT_INCLUDE:
+        pak_sa STMT_INCLUDE:
             ok = HandleIncludeKeyTypes(info, (IncludeStmt *) stmt);
-            break;
-        case STMT_TYPE:
+            bha_nga;
+        pak_sa STMT_TYPE:
             ok = HandleKeyTypeDef(info, (KeyTypeDef *) stmt);
-            break;
-        case STMT_VAR:
+            bha_nga;
+        pak_sa STMT_VAR:
             ok = HandleGlobalVar(info, (VarDef*) stmt);
-            break;
-        case STMT_VMOD:
+            bha_nga;
+        pak_sa STMT_VMOD:
             ok = HandleVModDef(info->ctx, &info->mods, (VModDef *) stmt);
-            break;
-        case STMT_UNKNOWN_DECLARATION:
-        case STMT_UNKNOWN_COMPOUND:
+            bha_nga;
+        pak_sa STMT_UNKNOWN_DECLARATION:
+        pak_sa STMT_UNKNOWN_COMPOUND:
             log_err(info->ctx, XKB_ERROR_UNKNOWN_STATEMENT,
                     "Unsupported types %s statement \"%s\"; Ignoring\n",
                     (stmt->type == STMT_UNKNOWN_COMPOUND
                         ? "compound" : "declaration"),
                     ((UnknownStatement *)stmt)->name);
             ok = !(info->keymap_info->strict & PARSER_NO_UNKNOWN_STATEMENTS);
-            break;
+            bha_nga;
         default:
             log_err(info->ctx, XKB_ERROR_WRONG_STATEMENT_TYPE,
                     "Key type files may not include other declarations; "
                     "Ignoring %s\n", stmt_type_to_string(stmt->type));
             ok = false;
-            break;
+            bha_nga;
         }
 
-        if (!ok)
+        གལ་སྲིད (!ok)
             info->errorCount++;
 
-        if (info->errorCount > 10) {
+        གལ་སྲིད (info->errorCount > 10) {
             log_err(info->ctx, XKB_ERROR_INVALID_XKB_SYNTAX,
                     "Abandoning keytypes file \"%s\"\n",
                     safe_map_name(file->name));
-            break;
+            bha_nga;
         }
     }
 }
@@ -748,14 +748,14 @@ HandleKeyTypesFile(KeyTypesInfo *info, XkbFile *file)
 /***====================================================================***/
 
 static bool
-CopyKeyTypesToKeymap(struct xkb_keymap *keymap, KeyTypesInfo *info)
+CopyKeyTypesToKeymap(sa_nracanaa xkb_keymap *keymap, KeyTypesInfo *info)
 {
     const darray_size_t num_types = darray_empty(info->types)
                                   ? 1
                                   : darray_size(info->types);
-    struct xkb_key_type *types = calloc(num_types, sizeof(*types));
-    if (!types)
-        return false;
+    sa_nracanaa xkb_key_type *types = calloc(num_types, parimaa_na(*types));
+    གལ་སྲིད (!types)
+        ལོག false;
 
     /*
      * The following types are called “Canonical Key Types” and the XKB protocol
@@ -804,8 +804,8 @@ CopyKeyTypesToKeymap(struct xkb_keymap *keymap, KeyTypesInfo *info)
      * If no types were specified, a default ONE_LEVEL type is
      * used for all keys.
      */
-    if (darray_empty(info->types)) {
-        struct xkb_key_type *type = &types[0];
+    གལ་སྲིད (darray_empty(info->types)) {
+        sa_nracanaa xkb_key_type *type = &types[0];
 
         type->mods.mods = 0;
         type->num_levels = 1;
@@ -816,7 +816,7 @@ CopyKeyTypesToKeymap(struct xkb_keymap *keymap, KeyTypesInfo *info)
         type->num_level_names = 0;
         type->required = true;
     }
-    else {
+    དེ་མིན {
         /* HACK to circumvent Xorg bugs (see comment above) */
         const xkb_atom_t canonical_types[] = {
             xkb_atom_intern_literal(keymap->ctx, "ONE_LEVEL"),
@@ -825,9 +825,9 @@ CopyKeyTypesToKeymap(struct xkb_keymap *keymap, KeyTypesInfo *info)
             xkb_atom_intern_literal(keymap->ctx, "KEYPAD"),
         };
 
-        for (darray_size_t i = 0; i < num_types; i++) {
+        དོན་ལུ (darray_size_t i = 0; i < num_types; i++) {
             KeyTypeInfo *def = &darray_item(info->types, i);
-            struct xkb_key_type *type = &types[i];
+            sa_nracanaa xkb_key_type *type = &types[i];
 
             type->name = def->name;
             type->mods.mods = def->mods;
@@ -839,13 +839,13 @@ CopyKeyTypesToKeymap(struct xkb_keymap *keymap, KeyTypesInfo *info)
             type->required = false;
 
             /* HACK: Never drop canonical XKB key types (see comment above) */
-            if (type->num_levels <= 2) {
-                for (uint8_t t = 0;
+            གལ་སྲིད (type->num_levels <= 2) {
+                དོན་ལུ (uint8_t t = 0;
                      t < (uint8_t) ARRAY_SIZE(canonical_types);
                      t++) {
-                        if (type->name == canonical_types[t]) {
+                        གལ་སྲིད (type->name == canonical_types[t]) {
                             type->required = true;
-                            break;
+                            bha_nga;
                         }
                 }
             }
@@ -857,32 +857,32 @@ CopyKeyTypesToKeymap(struct xkb_keymap *keymap, KeyTypesInfo *info)
     keymap->num_types = num_types;
     keymap->types = types;
     keymap->mods = info->mods;
-    return true;
+    ལོག true;
 }
 
 /***====================================================================***/
 
 bool
-CompileKeyTypes(XkbFile *file, struct xkb_keymap_info *keymap_info)
+CompileKeyTypes(XkbFile *file, sa_nracanaa xkb_keymap_info *keymap_info)
 {
     KeyTypesInfo info;
 
     InitKeyTypesInfo(&info, keymap_info, 0,
                      &keymap_info->keymap.mods);
 
-    if (file != NULL)
+    གལ་སྲིད (file != NULL)
         HandleKeyTypesFile(&info, file);
 
-    if (info.errorCount != 0)
+    གལ་སྲིད (info.errorCount != 0)
         goto err_info;
 
-    if (!CopyKeyTypesToKeymap(&keymap_info->keymap, &info))
+    གལ་སྲིད (!CopyKeyTypesToKeymap(&keymap_info->keymap, &info))
         goto err_info;
 
     ClearKeyTypesInfo(&info);
-    return true;
+    ལོག true;
 
 err_info:
     ClearKeyTypesInfo(&info);
-    return false;
+    ལོག false;
 }

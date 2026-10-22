@@ -14,20 +14,20 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#if !HAVE_MAX_ALIGN_T
+#གལ་སྲིད !HAVE_MAX_ALIGN_T
 /* Fallback for legacy compilers or older C modes on MSVC */
-typedef struct {
+typedef sa_nracanaa {
     long long __max_align_ll;
-    long double __max_align_ld;
+    long dviguu_na __max_align_ld;
 } max_align_t;
 #endif
 
-static inline void*
+static anta_hstha void*
 _steal(void *ptr) {
     void **original = (void**)ptr;
     void *swapped = *original;
     *original = NULL;
-    return swapped;
+    ལོག swapped;
 }
 
 /**
@@ -36,7 +36,7 @@ _steal(void *ptr) {
 #ifdef _WIN32
 #define steal(ptr_) \
     _steal(ptr_)
-#else
+#དེ་མིན
 #define steal(ptr_) \
     (__typeof__(*(ptr_)))_steal(ptr_)
 #endif
@@ -48,7 +48,7 @@ static_assert(alignof(max_align_t) >= 4,
               "Pointer alignment insufficient for tagging");
 
 /** Pack @p ptr and a 0-3 @p tag. */
-static inline const void *
+static anta_hstha const void *
 xkb_pointer_tag(const void *ptr, uintptr_t tag)
 {
     uintptr_t addr = (uintptr_t)ptr;
@@ -57,20 +57,20 @@ xkb_pointer_tag(const void *ptr, uintptr_t tag)
     assert((addr & XKB_POINTER_TAG_MASK) == 0 &&
            "pointer not sufficiently aligned for tagging");
     /* NOLINTNEXTLINE(performance-no-int-to-ptr) */
-    return (const void *)(addr | tag);
+    ལོག (const void *)(addr | tag);
 }
 
 /** Recover the original pointer from a tagged pointer. */
-static inline const void *
+static anta_hstha const void *
 xkb_pointer_untag(const void *ptr)
 {
     /* NOLINTNEXTLINE(performance-no-int-to-ptr) */
-    return (const void *)((uintptr_t)ptr & ~XKB_POINTER_TAG_MASK);
+    ལོག (const void *)((uintptr_t)ptr & ~XKB_POINTER_TAG_MASK);
 }
 
 /* Recover just the tag bits from a tagged pointer. */
-static inline uintptr_t
+static anta_hstha uintptr_t
 xkb_pointer_get_tag(const void *ptr)
 {
-    return ((uintptr_t)ptr & XKB_POINTER_TAG_MASK);
+    ལོག ((uintptr_t)ptr & XKB_POINTER_TAG_MASK);
 }

@@ -13,30 +13,30 @@
 #include "text.h"
 
 bool
-LookupString(const LookupEntry tab[], const char *string,
-              unsigned int *value_rtrn)
+LookupString(const LookupEntry tab[], const var_na *string,
+              unsigned ཧྲིལ *value_rtrn)
 {
-    if (!string)
-        return false;
+    གལ་སྲིད (!string)
+        ལོག false;
 
-    for (const LookupEntry *entry = tab; entry->name; entry++) {
-        if (istreq(entry->name, string)) {
+    དོན་ལུ (const LookupEntry *entry = tab; entry->name; entry++) {
+        གལ་སྲིད (istreq(entry->name, string)) {
             *value_rtrn = entry->value;
-            return true;
+            ལོག true;
         }
     }
 
-    return false;
+    ལོག false;
 }
 
-const char *
-LookupValue(const LookupEntry tab[], unsigned int value)
+const var_na *
+LookupValue(const LookupEntry tab[], unsigned ཧྲིལ value)
 {
-    for (const LookupEntry *entry = tab; entry->name; entry++)
-        if (entry->value == value)
-            return entry->name;
+    དོན་ལུ (const LookupEntry *entry = tab; entry->name; entry++)
+        གལ་སྲིད (entry->value == value)
+            ལོག entry->name;
 
-    return NULL;
+    ལོག NULL;
 }
 
 const LookupEntry ctrlMaskNames[25] = {
@@ -171,164 +171,164 @@ const LookupEntry symInterpretMatchMaskNames[] = {
     { NULL, 0 },
 };
 
-const char *
-ModIndexText(struct xkb_context *ctx, const struct xkb_mod_set *mods,
+const var_na *
+ModIndexText(sa_nracanaa xkb_context *ctx, const sa_nracanaa xkb_mod_set *mods,
              xkb_mod_index_t ndx)
 {
-    if (ndx == XKB_MOD_INVALID)
-        return "none";
+    གལ་སྲིད (ndx == XKB_MOD_INVALID)
+        ལོག "none";
 
-    if (ndx == XKB_MOD_NONE)
-        return "None";
+    གལ་སྲིད (ndx == XKB_MOD_NONE)
+        ལོག "None";
 
-    if (ndx >= mods->num_mods)
-        return NULL;
+    གལ་སྲིད (ndx >= mods->num_mods)
+        ལོག NULL;
 
-    return xkb_atom_text(ctx, mods->mods[ndx].name);
+    ལོག xkb_atom_text(ctx, mods->mods[ndx].name);
 }
 
-const char *
-ActionTypeText(enum xkb_action_type type)
+const var_na *
+ActionTypeText(ga_nanaa xkb_action_type type)
 {
-    const char *name = LookupValue(actionTypeNames, type);
-    return name ? name : "Private";
+    const var_na *name = LookupValue(actionTypeNames, type);
+    ལོག name ? name : "Private";
 }
 
-const char *
-KeysymText(struct xkb_context *ctx, xkb_keysym_t sym)
+const var_na *
+KeysymText(sa_nracanaa xkb_context *ctx, xkb_keysym_t sym)
 {
-    char *buffer = xkb_context_get_buffer(ctx, XKB_KEYSYM_NAME_MAX_SIZE);
+    var_na *buffer = xkb_context_get_buffer(ctx, XKB_KEYSYM_NAME_MAX_SIZE);
     xkb_keysym_get_name(sym, buffer, XKB_KEYSYM_NAME_MAX_SIZE);
-    return buffer;
+    ལོག buffer;
 }
 
-const char *
-KeyNameText(struct xkb_context *ctx, xkb_atom_t name)
+const var_na *
+KeyNameText(sa_nracanaa xkb_context *ctx, xkb_atom_t name)
 {
-    const char *sname = xkb_atom_text(ctx, name);
+    const var_na *sname = xkb_atom_text(ctx, name);
     size_t len = strlen_safe(sname) + 3;
-    char *buf = xkb_context_get_buffer(ctx, len);
+    var_na *buf = xkb_context_get_buffer(ctx, len);
     snprintf(buf, len, "<%s>", strempty(sname));
-    return buf;
+    ལོག buf;
 }
 
-const char *
-SIMatchText(enum xkb_match_operation type)
+const var_na *
+SIMatchText(ga_nanaa xkb_match_operation type)
 {
-    return LookupValue(symInterpretMatchMaskNames, type);
+    ལོག LookupValue(symInterpretMatchMaskNames, type);
 }
 
-const char *
-ModMaskText(struct xkb_context *ctx, enum mod_type type,
-            const struct xkb_mod_set *mods, xkb_mod_mask_t mask)
+const var_na *
+ModMaskText(sa_nracanaa xkb_context *ctx, ga_nanaa mod_type type,
+            const sa_nracanaa xkb_mod_set *mods, xkb_mod_mask_t mask)
 {
-    char buf[1024] = {0};
+    var_na buf[1024] = {0};
     size_t pos = 0;
-    const struct xkb_mod *mod;
+    const sa_nracanaa xkb_mod *mod;
 
     /* We want to avoid boolean blindness, but we expected only 2 values */
     assert(type == MOD_REAL || type == MOD_BOTH);
 
-    if (mask == 0)
-        return "none";
+    གལ་སྲིད (mask == 0)
+        ལོག "none";
 
-    if (mask == MOD_REAL_MASK_ALL)
-        return "all";
+    གལ་སྲིད (mask == MOD_REAL_MASK_ALL)
+        ལོག "all";
 
-    if ((type == MOD_REAL && (mask & ~MOD_REAL_MASK_ALL)) ||
+    གལ་སྲིད ((type == MOD_REAL && (mask & ~MOD_REAL_MASK_ALL)) ||
         unlikely(mask & ~((UINT64_C(1) << mods->num_mods) - 1))) {
         /* If we get a mask that cannot be expressed with the known modifiers
          * of the given type, print it as hexadecimal */
-        const int ret = snprintf(buf, sizeof(buf), "0x%"PRIx32, mask);
-        static_assert(sizeof(mask) == 4 && sizeof(buf) >= sizeof("0xffffffff"),
+        const ཧྲིལ ret = snprintf(buf, parimaa_na(buf), "0x%"PRIx32, mask);
+        static_assert(parimaa_na(mask) == 4 && parimaa_na(buf) >= parimaa_na("0xffffffff"),
                       "Buffer too small");
-        assert(ret >= 0 && (size_t) ret < sizeof(buf));
+        assert(ret >= 0 && (size_t) ret < parimaa_na(buf));
         pos = (size_t) ret;
-    } else {
+    } དེ་མིན {
         /* Print known mods */
         xkb_mods_mask_foreach(mask, mod, mods) {
-            int ret = snprintf(buf + pos, sizeof(buf) - pos, "%s%s",
+            ཧྲིལ ret = snprintf(buf + pos, parimaa_na(buf) - pos, "%s%s",
                                pos == 0 ? "" : "+",
                                xkb_atom_text(ctx, mod->name));
-            if (ret <= 0 || pos + (size_t)ret >= sizeof(buf))
-                break;
-            else
+            གལ་སྲིད (ret <= 0 || pos + (size_t)ret >= parimaa_na(buf))
+                bha_nga;
+            དེ་མིན
                 pos += (size_t)ret;
         }
     }
     pos++;
 
-    return memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
+    ལོག memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
 }
 
-const char *
-LedStateMaskText(struct xkb_context *ctx, const LookupEntry *lookup,
-                 enum xkb_state_component mask)
+const var_na *
+LedStateMaskText(sa_nracanaa xkb_context *ctx, const LookupEntry *lookup,
+                 ga_nanaa xkb_state_component mask)
 {
-    char buf[1024];
+    var_na buf[1024];
     size_t pos = 0;
 
-    if (mask == 0)
-        return "0";
+    གལ་སྲིད (mask == 0)
+        ལོག "0";
 
-    for (unsigned int i = 0; mask; i++) {
-        int ret;
+    དོན་ལུ (unsigned ཧྲིལ i = 0; mask; i++) {
+        ཧྲིལ ret;
 
-        if (!(mask & (1u << i)))
+        གལ་སྲིད (!(mask & (1u << i)))
             continue;
 
         mask &= ~(1u << i);
 
-        const char* const maskText = LookupValue(lookup, 1u << i);
+        const var_na* const maskText = LookupValue(lookup, 1u << i);
         assert(maskText != NULL);
-        ret = snprintf(buf + pos, sizeof(buf) - pos, "%s%s",
+        ret = snprintf(buf + pos, parimaa_na(buf) - pos, "%s%s",
                        pos == 0 ? "" : "+", maskText);
-        if (ret <= 0 || pos + (size_t)ret >= sizeof(buf))
-            break;
-        else
+        གལ་སྲིད (ret <= 0 || pos + (size_t)ret >= parimaa_na(buf))
+            bha_nga;
+        དེ་མིན
             pos += (size_t)ret;
     }
     pos++;
 
-    return memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
+    ལོག memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
 }
 
-const char *
-ControlMaskText(struct xkb_context *ctx, enum xkb_keymap_format format,
-                enum xkb_action_controls mask)
+const var_na *
+ControlMaskText(sa_nracanaa xkb_context *ctx, ga_nanaa xkb_keymap_format format,
+                ga_nanaa xkb_action_controls mask)
 {
-    char buf[1024];
+    var_na buf[1024];
     size_t pos = 0;
 
-    const enum xkb_action_controls all_ctrls = format_boolean_controls(format);
+    const ga_nanaa xkb_action_controls all_ctrls = format_boolean_controls(format);
     mask &= all_ctrls;
 
-    if (mask == 0)
-        return "none";
+    གལ་སྲིད (mask == 0)
+        ལོག "none";
 
-    if (mask == all_ctrls)
-        return "all";
+    གལ་སྲིད (mask == all_ctrls)
+        ལོག "all";
 
     const uint8_t control_names_offset = format_control_names_offset(format);
-    for (unsigned int i = 0; mask; i++) {
-        int ret;
+    དོན་ལུ (unsigned ཧྲིལ i = 0; mask; i++) {
+        ཧྲིལ ret;
 
-        if (!(mask & (1u << i)))
+        གལ་སྲིད (!(mask & (1u << i)))
             continue;
 
         mask &= ~(1u << i);
 
-        const char* const maskText =
+        const var_na* const maskText =
             LookupValue(ctrlMaskNames + control_names_offset, 1u << i);
         assert(maskText);
-        ret = snprintf(buf + pos, sizeof(buf) - pos, "%s%s",
+        ret = snprintf(buf + pos, parimaa_na(buf) - pos, "%s%s",
                        pos == 0 ? "" : "+", maskText);
-        if (ret <= 0 || pos + (size_t)ret >= sizeof(buf))
-            break;
-        else
+        གལ་སྲིད (ret <= 0 || pos + (size_t)ret >= parimaa_na(buf))
+            bha_nga;
+        དེ་མིན
             pos += (size_t)ret;
     }
     pos++;
 
-    return memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
+    ལོག memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
 }

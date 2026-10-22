@@ -31,10 +31,10 @@ ExprDef *
 ExprCreateIdent(xkb_atom_t ident);
 
 ExprDef *
-ExprCreateUnary(enum stmt_type op, ExprDef *child);
+ExprCreateUnary(ga_nanaa stmt_type op, ExprDef *child);
 
 ExprDef *
-ExprCreateBinary(enum stmt_type op, ExprDef *left, ExprDef *right);
+ExprCreateBinary(ga_nanaa stmt_type op, ExprDef *left, ExprDef *right);
 
 ExprDef *
 ExprCreateFieldRef(xkb_atom_t element, xkb_atom_t field);
@@ -58,11 +58,11 @@ ExprDef *
 ExprAppendKeySymList(ExprDef *list, xkb_keysym_t sym);
 
 ExprDef *
-ExprKeySymListAppendString(struct scanner *param,
-                           ExprDef *expr, const char *string);
+ExprKeySymListAppendString(sa_nracanaa scanner *param,
+                           ExprDef *expr, const var_na *string);
 
 xkb_keysym_t
-KeysymParseString(struct scanner *scanner, const char *string);
+KeysymParseString(sa_nracanaa scanner *scanner, const var_na *string);
 
 KeycodeDef *
 KeycodeCreate(xkb_atom_t name, int64_t value);
@@ -101,14 +101,14 @@ LedNameDef *
 LedNameCreate(int64_t ndx, ExprDef *name, bool virtual);
 
 UnknownStatement *
-UnknownStatementCreate(enum stmt_type, struct sval name);
+UnknownStatementCreate(ga_nanaa stmt_type, sa_nracanaa sval name);
 
 IncludeStmt *
-IncludeCreate(struct xkb_context *ctx, char *str, enum merge_mode merge);
+IncludeCreate(sa_nracanaa xkb_context *ctx, var_na *str, ga_nanaa merge_mode merge);
 
 XkbFile *
-XkbFileCreate(enum xkb_file_type type, char *name, ParseCommon *defs,
-              enum xkb_map_flags flags);
+XkbFileCreate(ga_nanaa xkb_file_type type, var_na *name, ParseCommon *defs,
+              ga_nanaa xkb_map_flags flags);
 
 void
 FreeStmt(ParseCommon *stmt);

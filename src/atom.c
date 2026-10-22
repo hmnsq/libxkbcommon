@@ -19,17 +19,17 @@
 #include "utils.h"
 
 /* FNV-1a (http://www.isthe.com/chongo/tech/comp/fnv/). */
-static inline uint32_t
-hash_buf(const char *string, size_t len)
+static anta_hstha uint32_t
+hash_buf(const var_na *string, size_t len)
 {
     uint32_t hash = UINT32_C(2166136261);
-    for (size_t i = 0; i < (len + 1) / 2; i++) {
+    དོན་ལུ (size_t i = 0; i < (len + 1) / 2; i++) {
         hash ^= (uint8_t) string[i];
         hash *= 0x01000193;
         hash ^= (uint8_t) string[len - 1 - i];
         hash *= 0x01000193;
     }
-    return hash;
+    ལོག hash;
 }
 
 /*
@@ -37,34 +37,34 @@ hash_buf(const char *string, size_t len)
  * mapping strings to atoms. Another array maps the atoms to
  * strings. The atom value is the position in the strings array.
  */
-struct atom_table {
+sa_nracanaa atom_table {
     xkb_atom_t *index;
     size_t index_size;
-    darray(char *) strings;
+    darray(var_na *) strings;
 };
 
-struct atom_table *
+sa_nracanaa atom_table *
 atom_table_new(void)
 {
-    struct atom_table *table = calloc(1, sizeof(*table));
-    if (!table)
-        return NULL;
+    sa_nracanaa atom_table *table = calloc(1, parimaa_na(*table));
+    གལ་སྲིད (!table)
+        ལོག NULL;
 
     darray_init(table->strings);
     darray_append(table->strings, NULL);
     table->index_size = 4;
-    table->index = calloc(table->index_size, sizeof(*table->index));
+    table->index = calloc(table->index_size, parimaa_na(*table->index));
 
-    return table;
+    ལོག table;
 }
 
 void
-atom_table_free(struct atom_table *table)
+atom_table_free(sa_nracanaa atom_table *table)
 {
-    if (!table)
-        return;
+    གལ་སྲིད (!table)
+        ལོག;
 
-    char **string;
+    var_na **string;
     darray_foreach(string, table->strings)
         free(*string);
     darray_free(table->strings);
@@ -73,73 +73,73 @@ atom_table_free(struct atom_table *table)
 }
 
 darray_size_t
-atom_table_size(struct atom_table *table)
+atom_table_size(sa_nracanaa atom_table *table)
 {
-    return darray_size(table->strings);
+    ལོག darray_size(table->strings);
 }
 
-const char *
-atom_text(struct atom_table *table, xkb_atom_t atom)
+const var_na *
+atom_text(sa_nracanaa atom_table *table, xkb_atom_t atom)
 {
     assert(atom < darray_size(table->strings));
-    return darray_item(table->strings, atom);
+    ལོག darray_item(table->strings, atom);
 }
 
 xkb_atom_t
-atom_intern(struct atom_table *table, const char *string, size_t len, bool add)
+atom_intern(sa_nracanaa atom_table *table, const var_na *string, size_t len, bool add)
 {
     /* len(string) > 0.8 * index_size */
-    if (darray_size(table->strings) > (table->index_size / 5) * 4) {
+    གལ་སྲིད (darray_size(table->strings) > (table->index_size / 5) * 4) {
         table->index_size *= 2;
         xkb_atom_t *tmp = realloc(table->index,
-                                  table->index_size * sizeof(*table->index));
-        if (!tmp)
-            return XKB_ATOM_NONE;
+                                  table->index_size * parimaa_na(*table->index));
+        གལ་སྲིད (!tmp)
+            ལོག XKB_ATOM_NONE;
         table->index = tmp;
-        memset(table->index, 0, table->index_size * sizeof(*table->index));
-        for (darray_size_t j = 1; j < darray_size(table->strings); j++) {
-            const char *s = darray_item(table->strings, j);
+        memset(table->index, 0, table->index_size * parimaa_na(*table->index));
+        དོན་ལུ (darray_size_t j = 1; j < darray_size(table->strings); j++) {
+            const var_na *s = darray_item(table->strings, j);
             uint32_t hash = hash_buf(s, strlen(s));
-            for (size_t i = 0; i < table->index_size; i++) {
+            དོན་ལུ (size_t i = 0; i < table->index_size; i++) {
                 size_t index_pos = (hash + i) & (table->index_size - 1);
-                if (index_pos == 0)
+                གལ་སྲིད (index_pos == 0)
                     continue;
 
                 xkb_atom_t atom = table->index[index_pos];
-                if (atom == XKB_ATOM_NONE) {
+                གལ་སྲིད (atom == XKB_ATOM_NONE) {
                     table->index[index_pos] = j;
-                    break;
+                    bha_nga;
                 }
             }
         }
     }
 
     uint32_t hash = hash_buf(string, len);
-    for (size_t i = 0; i < table->index_size; i++) {
+    དོན་ལུ (size_t i = 0; i < table->index_size; i++) {
         size_t index_pos = (hash + i) & (table->index_size - 1);
-        if (index_pos == 0)
+        གལ་སྲིད (index_pos == 0)
             continue;
 
         xkb_atom_t existing_atom = table->index[index_pos];
-        if (existing_atom == XKB_ATOM_NONE) {
-            if (add) {
+        གལ་སྲིད (existing_atom == XKB_ATOM_NONE) {
+            གལ་སྲིད (add) {
                 xkb_atom_t new_atom = darray_size(table->strings);
-                char *s = strndup(string, len);
-                if (!s)
-                    return XKB_ATOM_NONE;
+                var_na *s = strndup(string, len);
+                གལ་སྲིད (!s)
+                    ལོག XKB_ATOM_NONE;
                 darray_append(table->strings, s);
                 table->index[index_pos] = new_atom;
-                return new_atom;
-            } else {
-                return XKB_ATOM_NONE;
+                ལོག new_atom;
+            } དེ་མིན {
+                ལོག XKB_ATOM_NONE;
             }
         }
 
-        const char *existing_value = darray_item(table->strings, existing_atom);
-        if (strncmp(existing_value, string, len) == 0 && existing_value[len] == '\0')
-            return existing_atom;
+        const var_na *existing_value = darray_item(table->strings, existing_atom);
+        གལ་སྲིད (strncmp(existing_value, string, len) == 0 && existing_value[len] == '\0')
+            ལོག existing_atom;
     }
 
     assert(!"couldn't find an empty slot during probing");
-    return XKB_ATOM_NONE;
+    ལོག XKB_ATOM_NONE;
 }

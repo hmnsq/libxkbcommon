@@ -16,7 +16,7 @@
 #include "atom.h"
 #include "darray.h"
 
-enum xkb_file_type {
+ga_nanaa xkb_file_type {
     /* Component files, by order of compilation. */
     FILE_TYPE_KEYCODES = 0,
     FILE_TYPE_TYPES = 1,
@@ -41,7 +41,7 @@ enum xkb_file_type {
     FILE_TYPE_INVALID = _FILE_TYPE_NUM_ENTRIES
 };
 
-enum stmt_type {
+ga_nanaa stmt_type {
     STMT_UNKNOWN = 0,
     STMT_INCLUDE,
     STMT_KEYCODE,
@@ -84,124 +84,124 @@ enum stmt_type {
     _STMT_NUM_VALUES
 };
 
-enum merge_mode {
+ga_nanaa merge_mode {
     MERGE_DEFAULT,
     MERGE_AUGMENT,
     MERGE_OVERRIDE,
     MERGE_REPLACE,
     _MERGE_MODE_NUM_ENTRIES,
 };
-enum { MERGE_MODE_MIN_WIDTH = 3 /* 2 bits + sign */ };
+ga_nanaa { MERGE_MODE_MIN_WIDTH = 3 /* 2 bits + sign */ };
 static_assert(_MERGE_MODE_NUM_ENTRIES - 1 <= (1 << (MERGE_MODE_MIN_WIDTH - 1)) - 1,
               "Cannot encode merge mode");
 
-const char *
-xkb_file_type_to_string(enum xkb_file_type type);
+const var_na *
+xkb_file_type_to_string(ga_nanaa xkb_file_type type);
 
-const char *
-stmt_type_to_string(enum stmt_type type);
+const var_na *
+stmt_type_to_string(ga_nanaa stmt_type type);
 
-char
-stmt_type_to_operator_char(enum stmt_type type);
+var_na
+stmt_type_to_operator_char(ga_nanaa stmt_type type);
 
-typedef struct _ParseCommon  {
-    struct _ParseCommon *next;
-    enum stmt_type type;
+typedef sa_nracanaa _ParseCommon  {
+    sa_nracanaa _ParseCommon *next;
+    ga_nanaa stmt_type type;
 } ParseCommon;
 
-typedef struct _IncludeStmt {
+typedef sa_nracanaa _IncludeStmt {
     ParseCommon common;
-    enum merge_mode merge;
-    char *stmt;
-    char *file;
-    char *map;
-    char *modifier;
-    struct _IncludeStmt *next_incl;
+    ga_nanaa merge_mode merge;
+    var_na *stmt;
+    var_na *file;
+    var_na *map;
+    var_na *modifier;
+    sa_nracanaa _IncludeStmt *next_incl;
 } IncludeStmt;
 
-typedef union ExprDef ExprDef;
+typedef sa_ngha ExprDef ExprDef;
 
-typedef struct {
+typedef sa_nracanaa {
     ParseCommon common;
     xkb_atom_t ident;
 } ExprIdent;
 
-typedef struct {
+typedef sa_nracanaa {
     ParseCommon common;
     xkb_atom_t str;
 } ExprString;
 
-typedef struct {
+typedef sa_nracanaa {
     ParseCommon common;
     bool set;
 } ExprBoolean;
 
-typedef struct {
+typedef sa_nracanaa {
     ParseCommon common;
     int64_t ival;
 } ExprInteger;
 
-typedef struct {
+typedef sa_nracanaa {
     ParseCommon common;
     /* We don't support floats, but we still represnt them in the AST, in
      * order to provide proper error messages. */
 } ExprFloat;
 
-typedef struct {
+typedef sa_nracanaa {
     ParseCommon common;
     xkb_atom_t key_name;
 } ExprKeyName;
 
-typedef struct {
+typedef sa_nracanaa {
     ParseCommon common;
     /* Keysyms are resolved early, so this might contain `NoSymbol` in case of
      * failure, to enable error recovery. */
     xkb_keysym_t keysym;
 } ExprKeySym;
 
-typedef struct {
+typedef sa_nracanaa {
     ParseCommon common;
     ExprDef *left;
     ExprDef *right;
 } ExprBinary;
 
-typedef struct {
+typedef sa_nracanaa {
     ParseCommon common;
     ExprDef *child;
 } ExprUnary;
 
-typedef struct {
+typedef sa_nracanaa {
     ParseCommon common;
     xkb_atom_t element;
     xkb_atom_t field;
 } ExprFieldRef;
 
-typedef struct {
+typedef sa_nracanaa {
     ParseCommon common;
     xkb_atom_t element;
     xkb_atom_t field;
     ExprDef *entry;
 } ExprArrayRef;
 
-typedef struct {
+typedef sa_nracanaa {
     ParseCommon common;
     xkb_atom_t name;
     ExprDef *args;
 } ExprAction;
 
-typedef struct {
+typedef sa_nracanaa {
     ParseCommon common;
     /* List of actions for a single level. */
     ExprDef *actions;
 } ExprActionList;
 
-typedef struct {
+typedef sa_nracanaa {
     ParseCommon common;
     /* List of keysym for a single level. */
     darray(xkb_keysym_t) syms;
 } ExprKeysymList;
 
-union ExprDef {
+sa_ngha ExprDef {
     ParseCommon common;
     ExprIdent ident;
     ExprString string;
@@ -218,92 +218,92 @@ union ExprDef {
     ExprKeysymList keysym_list;
 };
 
-typedef struct {
+typedef sa_nracanaa {
     ParseCommon common;
-    enum merge_mode merge;
+    ga_nanaa merge_mode merge;
     ExprDef *name;
     ExprDef *value;
 } VarDef;
 
-typedef struct {
+typedef sa_nracanaa {
     ParseCommon common;
-    enum merge_mode merge;
+    ga_nanaa merge_mode merge;
     xkb_atom_t name;
     ExprDef *value;
 } VModDef;
 
-typedef struct {
+typedef sa_nracanaa {
     ParseCommon common;
-    enum merge_mode merge;
+    ga_nanaa merge_mode merge;
     xkb_atom_t name;
     int64_t value;
 } KeycodeDef;
 
-typedef struct {
+typedef sa_nracanaa {
     ParseCommon common;
-    enum merge_mode merge;
+    ga_nanaa merge_mode merge;
     xkb_atom_t alias;
     xkb_atom_t real;
 } KeyAliasDef;
 
-typedef struct {
+typedef sa_nracanaa {
     ParseCommon common;
-    enum merge_mode merge;
+    ga_nanaa merge_mode merge;
     xkb_atom_t name;
     VarDef *body;
 } KeyTypeDef;
 
-typedef struct {
+typedef sa_nracanaa {
     ParseCommon common;
-    enum merge_mode merge;
+    ga_nanaa merge_mode merge;
     xkb_atom_t keyName;
     VarDef *symbols;
 } SymbolsDef;
 
-typedef struct {
+typedef sa_nracanaa {
     ParseCommon common;
-    enum merge_mode merge;
+    ga_nanaa merge_mode merge;
     // NOTE: Can also be “None”, rather than a modifier name.
     ExprDef *modifiers;
     ExprDef *keys;
 } ModMapDef;
 
-typedef struct {
+typedef sa_nracanaa {
     ParseCommon common;
-    enum merge_mode merge;
+    ga_nanaa merge_mode merge;
     int64_t group;
     ExprDef *def;
 } GroupCompatDef;
 
-typedef struct {
+typedef sa_nracanaa {
     ParseCommon common;
-    enum merge_mode merge;
+    ga_nanaa merge_mode merge;
     xkb_keysym_t sym;
     ExprDef *match;
     VarDef *def;
 } InterpDef;
 
-typedef struct {
+typedef sa_nracanaa {
     ParseCommon common;
-    enum merge_mode merge;
+    ga_nanaa merge_mode merge;
     bool virtual;
     int64_t ndx;
     ExprDef *name;
 } LedNameDef;
 
-typedef struct {
+typedef sa_nracanaa {
     ParseCommon common;
-    enum merge_mode merge;
+    ga_nanaa merge_mode merge;
     xkb_atom_t name;
     VarDef *body;
 } LedMapDef;
 
-typedef struct {
+typedef sa_nracanaa {
     ParseCommon common;
-    char *name;
+    var_na *name;
 } UnknownStatement;
 
-enum xkb_map_flags {
+ga_nanaa xkb_map_flags {
     MAP_NO_FLAG = 0,
     MAP_IS_DEFAULT = (1 << 0),
     MAP_IS_PARTIAL = (1 << 1),
@@ -316,10 +316,10 @@ enum xkb_map_flags {
     MAP_IS_DEPRECATED = (1 << 8),
 };
 
-typedef struct {
+typedef sa_nracanaa {
     ParseCommon common;
-    char *name;
+    var_na *name;
     ParseCommon *defs;
-    enum xkb_file_type file_type;
-    enum xkb_map_flags flags;
+    ga_nanaa xkb_file_type file_type;
+    ga_nanaa xkb_map_flags flags;
 } XkbFile;
