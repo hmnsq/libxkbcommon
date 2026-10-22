@@ -48,24 +48,24 @@
 #ifndef YYDEBUG
 # define YYDEBUG 0
 #endif
-#if YYDEBUG
-extern int _xkbcommon_debug;
+#אם YYDEBUG
+خارجي صحيح _xkbcommon_debug;
 #endif
 /* "%code requires" blocks.  */
 #line 14 "src/xkbcomp/parser.y"
 
-#include "config.h"
+#ضمن "config.h"
 
-#include "scanner-utils.h"
-#include "xkbcomp/ast.h"
-#include "xkbcomp/xkbcomp-priv.h"
+#ضمن "scanner-utils.h"
+#ضمن "xkbcomp/ast.h"
+#ضمن "xkbcomp/xkbcomp-priv.h"
 
 #line 57 "src/xkbcomp/parser.h"
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
-  enum yytokentype
+  تعداد yytokentype
   {
     YYEMPTY = -2,
     END_OF_FILE = 0,               /* "end of file"  */
@@ -136,32 +136,32 @@ extern int _xkbcommon_debug;
     ALTERNATE_GROUP = 77,          /* "alternate_group"  */
     DEPRECATED = 78                /* "deprecated"  */
   };
-  typedef enum yytokentype yytoken_kind_t;
+  تعريفنوع تعداد yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */
-#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-union YYSTYPE
+#אם ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
+اتحاد YYSTYPE
 {
 #line 177 "src/xkbcomp/parser.y"
 
         int64_t          num;
-        enum xkb_file_type file_type;
-        char            *str;
-        struct sval     sval;
+        تعداد xkb_file_type file_type;
+        حرف            *str;
+        بنية sval     sval;
         xkb_atom_t      atom;
-        enum merge_mode merge;
-        enum xkb_map_flags mapFlags;
+        تعداد merge_mode merge;
+        تعداد xkb_map_flags mapFlags;
         xkb_keysym_t    keysym;
         ParseCommon     *any;
-        struct { ParseCommon *head; ParseCommon *last; } anyList;
+        بنية { ParseCommon *head; ParseCommon *last; } anyList;
         uint32_t        noSymbolOrActionList;
         ExprDef         *expr;
-        struct { ExprDef *head; ExprDef *last; } exprList;
+        بنية { ExprDef *head; ExprDef *last; } exprList;
         VarDef          *var;
-        struct { VarDef *head; VarDef *last; } varList;
+        بنية { VarDef *head; VarDef *last; } varList;
         VModDef         *vmod;
-        struct { VModDef *head; VModDef *last; } vmodList;
+        بنية { VModDef *head; VModDef *last; } vmodList;
         InterpDef       *interp;
         KeyTypeDef      *keyType;
         SymbolsDef      *syms;
@@ -172,14 +172,14 @@ union YYSTYPE
         KeycodeDef      *keyCode;
         KeyAliasDef     *keyAlias;
         UnknownStatement *unknown;
-        void            *geom;
+        فراغ            *geom;
         XkbFile         *file;
-        struct { XkbFile *head; XkbFile *last; } fileList;
+        بنية { XkbFile *head; XkbFile *last; } fileList;
 
 #line 173 "src/xkbcomp/parser.h"
 
 };
-typedef union YYSTYPE YYSTYPE;
+تعريفنوع اتحاد YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
@@ -187,7 +187,7 @@ typedef union YYSTYPE YYSTYPE;
 
 
 
-int _xkbcommon_parse (struct parser_param *param);
+صحيح _xkbcommon_parse (بنية parser_param *param);
 
 
 #endif /* !YY__XKBCOMMON_SRC_XKBCOMP_PARSER_H_INCLUDED  */

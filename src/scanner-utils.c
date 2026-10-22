@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#ضمن "config.h"
 
-#include "scanner-utils.h"
+#ضمن "scanner-utils.h"
 
-struct scanner_loc
-scanner_token_location(struct scanner *s)
+بنية scanner_loc
+scanner_token_location(بنية scanner *s)
 {
     /*
      * The following article and accompying code compares some algorithms:
@@ -22,25 +22,25 @@ scanner_token_location(struct scanner *s)
      */
     size_t line, column;
     size_t line_pos = 0;
-    if (s->cached_pos > s->token_pos) {
+    אם (s->cached_pos > s->token_pos) {
         s->cached_pos = 0;
         s->cached_loc.line = s->cached_loc.column = 1;
     }
     line = s->cached_loc.line;
-    const char *ptr = s->s + s->cached_pos;
-    const char *last = s->s + s->token_pos;
-    while ((ptr = memchr(ptr, '\n', (size_t)(last - ptr)))) {
+    ثابت حرف *ptr = s->s + s->cached_pos;
+    ثابت حرف *last = s->s + s->token_pos;
+    כלעוד ((ptr = memchr(ptr, '\n', (size_t)(last - ptr)))) {
         line++;
         ptr++;
         line_pos = (size_t)(ptr - s->s);
     }
-    if (line == s->cached_loc.line) {
+    אם (line == s->cached_loc.line) {
         column = s->cached_loc.column + (s->token_pos - s->cached_pos);
-    } else {
+    } אחרת {
         column = s->token_pos - line_pos + 1;
     }
-    struct scanner_loc loc = {.line = line, .column = column};
+    بنية scanner_loc loc = {.line = line, .column = column};
     s->cached_pos = s->token_pos;
     s->cached_loc = loc;
-    return loc;
+    החזר loc;
 }

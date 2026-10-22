@@ -4,16 +4,16 @@
  */
 #pragma once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include "xkbcommon/xkbcommon.h"
-#include "ast.h"
-#include "darray.h"
-#include "keymap.h"
-#include "scanner-utils.h"
-#include "text.h"
+#ضمن "xkbcommon/xkbcommon.h"
+#ضمن "ast.h"
+#ضمن "darray.h"
+#ضمن "keymap.h"
+#ضمن "scanner-utils.h"
+#ضمن "text.h"
 
-enum xkb_parser_error {
+تعداد xkb_parser_error {
     PARSER_SUCCESS = 0,
     PARSER_RECOVERABLE_ERROR,
     PARSER_FATAL_ERROR
@@ -25,7 +25,7 @@ enum xkb_parser_error {
  * This is probably overkill, but it could enable fine grained control
  * depending of the keymap format or other factors.
  */
-enum xkb_parser_strict_flags {
+تعداد xkb_parser_strict_flags {
     PARSER_NO_STRICT_FLAGS = 0,
     PARSER_NO_UNKNOWN_STATEMENTS = (1 << 0),
     PARSER_NO_FIELD_TYPE_MISMATCH = (1 << 1),
@@ -60,18 +60,18 @@ enum xkb_parser_strict_flags {
     PARSER_V2_LAX_FLAGS = PARSER_NO_STRICT_FLAGS,
 };
 
-static inline enum xkb_parser_strict_flags
-parser_strict_flags_from_keymap_format(enum xkb_keymap_format format)
+ساكن مضمن تعداد xkb_parser_strict_flags
+parser_strict_flags_from_keymap_format(تعداد xkb_keymap_format format)
 {
-    return (format == XKB_KEYMAP_FORMAT_TEXT_V1)
+    החזר (format == XKB_KEYMAP_FORMAT_TEXT_V1)
             ? PARSER_V1_LAX_FLAGS
             : PARSER_V2_LAX_FLAGS;
 }
 
-static inline enum xkb_parser_strict_flags
-parser_strict_flags_from_keymap(const struct xkb_keymap *keymap)
+ساكن مضمن تعداد xkb_parser_strict_flags
+parser_strict_flags_from_keymap(ثابت بنية xkb_keymap *keymap)
 {
-    return (keymap->format == XKB_KEYMAP_FORMAT_TEXT_V1)
+    החזר (keymap->format == XKB_KEYMAP_FORMAT_TEXT_V1)
             ? (keymap->flags & XKB_KEYMAP_COMPILE_STRICT_MODE
                 ? PARSER_V1_STRICT_FLAGS
                 : PARSER_V1_LAX_FLAGS)
@@ -80,29 +80,29 @@ parser_strict_flags_from_keymap(const struct xkb_keymap *keymap)
                 : PARSER_V2_LAX_FLAGS);
 }
 
-struct parser_keymap_config {
-    enum xkb_keymap_format format;
-    enum xkb_parser_strict_flags strict;
+بنية parser_keymap_config {
+    تعداد xkb_keymap_format format;
+    تعداد xkb_parser_strict_flags strict;
 };
 
-typedef union ExprDef ExprDef;
-struct pending_computation {
+تعريفنوع اتحاد ExprDef ExprDef;
+بنية pending_computation {
     ExprDef * expr;
     bool computed;
     uint32_t value;
 };
-typedef darray(struct pending_computation) pending_computation_array;
+تعريفنوع darray(بنية pending_computation) pending_computation_array;
 
 /** Keymap augmented with miscellaneous data used during compilation */
-struct xkb_keymap_info {
+بنية xkb_keymap_info {
     /** The keymap being compiled */
-    struct xkb_keymap keymap;
+    بنية xkb_keymap keymap;
 
     /** Flags of the strict mode */
-    enum xkb_parser_strict_flags strict;
+    تعداد xkb_parser_strict_flags strict;
 
     /** Features */
-    struct {
+    بنية {
         /** Maximum groups for the keymap format */
         xkb_layout_index_t max_groups;
         /** Maximum overlays for the keymap format */
@@ -118,7 +118,7 @@ struct xkb_keymap_info {
     } features;
 
     /* Non-static LUTs */
-    struct {
+    بنية {
         LookupEntry groupIndexNames[3];
         LookupEntry groupMaskNames[5];
     } lookup;
@@ -127,104 +127,104 @@ struct xkb_keymap_info {
     pending_computation_array *pending_computations;
 };
 
-enum xkb_status
+تعداد xkb_status
 text_v1_keymap_serialize(
-        const struct xkb_keymap *keymap,
-        const struct xkb_keymap_serialize_config *config,
-        struct xkb_keymap_serialize_result *result
+        ثابت بنية xkb_keymap *keymap,
+        ثابت بنية xkb_keymap_serialize_config *config,
+        بنية xkb_keymap_serialize_result *result
 );
 
 XkbFile *
-XkbParseFile(struct xkb_context *ctx,
-             const struct parser_keymap_config *config,
-             FILE *file, const char *file_name, const char *map);
+XkbParseFile(بنية xkb_context *ctx,
+             ثابت بنية parser_keymap_config *config,
+             FILE *file, ثابت حرف *file_name, ثابت حرف *map);
 bool
-XkbParseStringInit(struct xkb_context *ctx, struct scanner *scanner,
-                   const char *string, size_t len,
-                   const char *file_name, const char *map);
+XkbParseStringInit(بنية xkb_context *ctx, بنية scanner *scanner,
+                   ثابت حرف *string, size_t len,
+                   ثابت حرف *file_name, ثابت حرف *map);
 
 XkbFile *
-XkbParseString(struct xkb_context *ctx,
-               const struct parser_keymap_config *config,
-               const char *string, size_t len,
-               const char *file_name, const char *map);
+XkbParseString(بنية xkb_context *ctx,
+               ثابت بنية parser_keymap_config *config,
+               ثابت حرف *string, size_t len,
+               ثابت حرف *file_name, ثابت حرف *map);
 
 bool
-XkbParseStringNext(struct xkb_context *ctx,
-                   const struct parser_keymap_config *config,
-                   struct scanner *scanner, const char *map, XkbFile **out);
+XkbParseStringNext(بنية xkb_context *ctx,
+                   ثابت بنية parser_keymap_config *config,
+                   بنية scanner *scanner, ثابت حرف *map, XkbFile **out);
 
-void
+فراغ
 FreeXkbFile(XkbFile *file);
 
 XkbFile *
-XkbFileFromComponents(struct xkb_context *ctx,
-                      const struct xkb_component_names *kkctgs);
+XkbFileFromComponents(بنية xkb_context *ctx,
+                      ثابت بنية xkb_component_names *kkctgs);
 
 bool
-CompileKeycodes(XkbFile *file, struct xkb_keymap_info *keymap_info);
+CompileKeycodes(XkbFile *file, بنية xkb_keymap_info *keymap_info);
 
 bool
-CompileKeyTypes(XkbFile *file, struct xkb_keymap_info *keymap_info);
+CompileKeyTypes(XkbFile *file, بنية xkb_keymap_info *keymap_info);
 
 bool
-CompileCompatMap(XkbFile *file, struct xkb_keymap_info *keymap_info);
+CompileCompatMap(XkbFile *file, بنية xkb_keymap_info *keymap_info);
 
 bool
-CompileSymbols(XkbFile *file, struct xkb_keymap_info *keymap_info);
+CompileSymbols(XkbFile *file, بنية xkb_keymap_info *keymap_info);
 
 bool
-CompileKeymap(XkbFile *file, struct xkb_keymap *keymap);
+CompileKeymap(XkbFile *file, بنية xkb_keymap *keymap);
 
 /***====================================================================***/
 
-static inline bool
-ReportNotArray(struct xkb_context *ctx, const char *type, const char *field,
-               const char *name)
+ساكن مضمن bool
+ReportNotArray(بنية xkb_context *ctx, ثابت حرف *type, ثابت حرف *field,
+               ثابت حرف *name)
 {
     log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
             "The %s %s field is not an array; "
             "Ignoring illegal assignment in %s\n",
             type, field, name);
-    return false;
+    החזר false;
 }
 
-static inline bool
-ReportShouldBeArray(struct xkb_context *ctx, const char *type,
-                    const char *field, const char *name)
+ساكن مضمن bool
+ReportShouldBeArray(بنية xkb_context *ctx, ثابت حرف *type,
+                    ثابت حرف *field, ثابت حرف *name)
 {
     log_err(ctx, XKB_ERROR_EXPECTED_ARRAY_ENTRY,
             "Missing subscript for %s %s; "
             "Ignoring illegal assignment in %s\n",
             type, field, name);
-    return false;
+    החזר false;
 }
 
-static inline bool
-ReportBadType(struct xkb_context *ctx, enum xkb_message_code code,
-              const char *type, const char *field, const char *name,
-              const char *wanted)
+ساكن مضمن bool
+ReportBadType(بنية xkb_context *ctx, تعداد xkb_message_code code,
+              ثابت حرف *type, ثابت حرف *field, ثابت حرف *name,
+              ثابت حرف *wanted)
 {
     log_err(ctx, code,
             "The %s %s field must be a %s; "
             "Ignoring illegal assignment in %s\n",
             type, field, wanted, name);
-    return false;
+    החזר false;
 }
 
-static inline bool
-ReportBadField(struct xkb_context *ctx, const char *type, const char *field,
-               const char *name)
+ساكن مضمن bool
+ReportBadField(بنية xkb_context *ctx, ثابت حرف *type, ثابت حرف *field,
+               ثابت حرف *name)
 {
     log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
             "Unknown %s field \"%s\" in %s; "
             "Ignoring assignment to unknown field in %s\n",
             type, field, name, name);
-    return false;
+    החזר false;
 }
 
-static inline const char*
-safe_map_name(const char* name)
+ساكن مضمن ثابت حرف*
+safe_map_name(ثابت حرف* name)
 {
-    return name ? name : "(unnamed map)";
+    החזר name ? name : "(unnamed map)";
 }

@@ -2,9 +2,9 @@
 //       Do not edit manually!
 #pragma once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <stdint.h>
+#ضمن <stdint.h>
 
 /*
  * Macro sorcery: PREPEND_MESSAGE_ID enables the log functions to format messages
@@ -38,7 +38,7 @@
 /**
  * Set of verbosity levels
  */
-enum xkb_log_verbosity {
+تعداد xkb_log_verbosity {
     XKB_LOG_VERBOSITY_SILENT = -1,
     XKB_LOG_VERBOSITY_MINIMAL = 0,
     XKB_LOG_VERBOSITY_BRIEF = 1,
@@ -56,7 +56,7 @@ enum xkb_log_verbosity {
 /**
  * @name Codes of the log messages
  */
-enum xkb_message_code {
+تعداد xkb_message_code {
     _XKB_LOG_MESSAGE_MIN_CODE = 21,
     /** XKB section is deprecated */
     XKB_WARNING_DEPRECATED_SECTION = 21,

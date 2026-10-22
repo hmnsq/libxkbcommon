@@ -6,19 +6,19 @@
  */
 #pragma once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <stddef.h>
-#include <stdint.h>
+#ضمن <stddef.h>
+#ضمن <stdint.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "utils.h"
+#ضمن "xkbcommon/xkbcommon.h"
+#ضمن "utils.h"
 
 #ifdef __GNUC__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Woverlength-strings"
 #endif
-static const char *keysym_names =
+ساكن ثابت حرف *keysym_names =
     "0\0"
     "1\0"
     "2\0"
@@ -2662,7 +2662,7 @@ static const char *keysym_names =
 #pragma GCC diagnostic pop
 #endif
 
-static const uint16_t keysym_name_G[] = {
+ساكن ثابت uint16_t keysym_name_G[] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2508,
     0, 0, 0, 0, 0, 0, 3350, 0, 0, 0, 0, 0, 0, 0, 2987, 2941, 0, 0, 0, 1606,
     2880, 0, 170, 0, 0, 2634, 0, 0, 0, 0, 1265, 0, 2777, 0, 0, 0, 0, 0, 0,
@@ -2970,27 +2970,27 @@ static const uint16_t keysym_name_G[] = {
     600, 2354, 277, 2185, 0
 };
 
-static inline size_t
-keysym_name_perfect_hash(const char *key)
+ساكن مضمن size_t
+keysym_name_perfect_hash(ثابت حرف *key)
 {
-    const char *T1 = "mGfOhSKH0Is7uINY8QVfaJ9N0Fe0yHYu";
-    const char *T2 = "nXsEsvAWpmIhmalLNlkBZssDXdmoTYKy";
+    ثابت حرف *T1 = "mGfOhSKH0Is7uINY8QVfaJ9N0Fe0yHYu";
+    ثابت حرف *T2 = "nXsEsvAWpmIhmalLNlkBZssDXdmoTYKy";
     size_t h1 = 0;
     size_t h2 = 0;
-    for (size_t i = 0; key[i] != '\0'; i++) {
+    עבור (size_t i = 0; key[i] != '\0'; i++) {
         h1 += (size_t) (T1[i % 32] * key[i]);
         h2 += (size_t) (T2[i % 32] * key[i]);
     }
-    return (keysym_name_G[h1 % 4731] + keysym_name_G[h2 % 4731]) % 4731;
+    החזר (keysym_name_G[h1 % 4731] + keysym_name_G[h2 % 4731]) % 4731;
 }
 
 
-struct name_keysym {
+بنية name_keysym {
     xkb_keysym_t keysym;
     uint16_t offset;
 };
 
-static const struct name_keysym name_to_keysym[] = {
+ساكن ثابت بنية name_keysym name_to_keysym[] = {
     { 0x00000030, 0 }, /* 0 */
     { 0x00000031, 2 }, /* 1 */
     { 0x00000032, 4 }, /* 2 */
@@ -5631,7 +5631,7 @@ static const struct name_keysym name_to_keysym[] = {
     { 0x010001b6, 32872 }, /* zstroke */
 };
 
-static const struct name_keysym keysym_to_name[] = {
+ساكن ثابت بنية name_keysym keysym_to_name[] = {
     { 0x00000000, 20276 }, /* NoSymbol */
     { 0x00000020, 24027 }, /* space */
     { 0x00000021, 12230 }, /* exclam */
@@ -8142,7 +8142,7 @@ static const struct name_keysym keysym_to_name[] = {
 #define UNICODE_KEYSYM    0xfffe
 #define DEPRECATED_KEYSYM 0xffff
 
-struct deprecated_keysym {
+بنية deprecated_keysym {
     xkb_keysym_t keysym;
     uint16_t offset;
     /* Explicit deprecated aliases start index & count */
@@ -8150,7 +8150,7 @@ struct deprecated_keysym {
     uint8_t explicit_count;
 };
 
-static const struct deprecated_keysym deprecated_keysyms[] = {
+ساكن ثابت بنية deprecated_keysym deprecated_keysyms[] = {
     { 0x00000027, 934              , 0, 0 }, /* Reference: apostrophe. Deprecated: quoteright */
     { 0x00000060, 13397            , 0, 0 }, /* Reference: grave. Deprecated: quoteleft */
     { 0x000000ab, 14480            , 0, 0 }, /* Reference: guillemetleft. Deprecated: guillemotleft */
@@ -8310,7 +8310,7 @@ static const struct deprecated_keysym deprecated_keysyms[] = {
     { 0x100810f4, 30581            , 0, 0 }, /* Reference: XF86MonBrightnessAuto. Deprecated: XF86BrightnessAuto */
 };
 
-static const uint32_t explicit_deprecated_aliases[] = {
+ساكن ثابت uint32_t explicit_deprecated_aliases[] = {
     24103,
 };
 

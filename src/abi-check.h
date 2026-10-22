@@ -5,13 +5,13 @@
 
 #pragma once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <assert.h>
+#ضمن <assert.h>
 
-#include "xkbcommon/xkbcommon.h"
+#ضمن "xkbcommon/xkbcommon.h"
 
-enum {
+تعداد {
     /** Use a reasonable upper size limit to avoid malicious caller values */
     XKB_ABI_MAX_SIZE = 4096,
 };
@@ -21,8 +21,8 @@ enum {
  * next field (3rd argument) or the struct end (when using only 2 arguments).
  */
 #define assert_no_padding(T, f, ...) static_assert(      \
-    offsetof(T, f) + sizeof(((T){0}).f) ==               \
-    __VA_OPT__(offsetof(T, __VA_ARGS__) + 0 *) sizeof(T),\
+    offsetof(T, f) + حجم(((T){0}).f) ==               \
+    __VA_OPT__(offsetof(T, __VA_ARGS__) + 0 *) حجم(T),\
     #T " has implicit padding after " #f                 \
 )
 
@@ -32,7 +32,7 @@ enum {
  */
 #define assert_same_field(T, suffix, f) static_assert(                         \
     offsetof(T, f) == offsetof(T##suffix, f) &&                                \
-    sizeof(((T){0}).f) == sizeof(((T##suffix){0}).f) &&                        \
+    حجم(((T){0}).f) == حجم(((T##suffix){0}).f) &&                        \
     alignof(__typeof__(((T){0}).f)) == alignof(__typeof__(((T##suffix){0}).f)),\
     "Field " #f " is different in " #T " and " #T #suffix                      \
 )
@@ -57,27 +57,27 @@ enum {
  * @returns `::XKB_SUCCESS` if the struct is valid and safe to use, otherwise
  * an error code indicating the kind of ABI violation.
  */
-static inline enum xkb_status
+ساكن مضمن تعداد xkb_status
 xkb_check_versioned_struct_size_(size_t v1_size, size_t min_size,
                                  size_t callee_meaningful_bytes,
                                  size_t callee_size, size_t caller_size,
-                                 const void *caller_data)
+                                 ثابت فراغ *caller_data)
 {
-    static const size_t max_size = (size_t)XKB_ABI_MAX_SIZE;
+    ساكن ثابت size_t max_size = (size_t)XKB_ABI_MAX_SIZE;
 
     /* Check internal misuse */
-    assert(v1_size <= min_size);
-    assert(min_size <= callee_size);
-    assert(callee_meaningful_bytes <= callee_size);
-    assert(callee_size <= max_size);
+    أكد(v1_size <= min_size);
+    أكد(min_size <= callee_size);
+    أكد(callee_meaningful_bytes <= callee_size);
+    أكد(callee_size <= max_size);
 
-    if (caller_size < v1_size || caller_size > max_size || !caller_data)
-        return XKB_ERROR_ABI_INVALID_STRUCT_SIZE;
+    אם (caller_size < v1_size || caller_size > max_size || !caller_data)
+        החזר XKB_ERROR_ABI_INVALID_STRUCT_SIZE;
 
-    if (caller_size < min_size)
-        return XKB_ERROR_ABI_BACKWARD_COMPAT;
+    אם (caller_size < min_size)
+        החזר XKB_ERROR_ABI_BACKWARD_COMPAT;
 
-    if (caller_size <= callee_meaningful_bytes) {
+    אם (caller_size <= callee_meaningful_bytes) {
         /*
          * Caller's data does not reach beyond the callee meaningful region:
          * nothing to check, missing bytes default to 0.
@@ -85,7 +85,7 @@ xkb_check_versioned_struct_size_(size_t v1_size, size_t min_size,
          * E.g.: caller has older or same callee struct, without explicit
          * trailing padding.
          */
-        return XKB_SUCCESS;
+        החזר XKB_SUCCESS;
     }
 
     /*
@@ -95,24 +95,24 @@ xkb_check_versioned_struct_size_(size_t v1_size, size_t min_size,
      * E.g.: callee struct with explicit trailing padding, new struct using
      * callee reserved field, caller newer struct with greater size.
      */
-    const unsigned char *p =
-        (const unsigned char *)caller_data + callee_meaningful_bytes;
-    const unsigned char *end = (const unsigned char *)caller_data + caller_size;
+    ثابت unsigned حرف *p =
+        (ثابت unsigned حرف *)caller_data + callee_meaningful_bytes;
+    ثابت unsigned حرف *end = (ثابت unsigned حرف *)caller_data + caller_size;
 
-    while (p < end) {
-        if (*(p++) != 0)
-            return XKB_ERROR_ABI_FORWARD_COMPAT;
+    כלעוד (p < end) {
+        אם (*(p++) != 0)
+            החזר XKB_ERROR_ABI_FORWARD_COMPAT;
     }
 
-    return XKB_SUCCESS;
+    החזר XKB_SUCCESS;
 }
 
 #define xkb_check_versioned_struct_size(v1_size, min_size, \
                                         callee_meaningful_bytes, x) \
     xkb_check_versioned_struct_size_(v1_size, min_size, \
                                      callee_meaningful_bytes, \
-                                     sizeof(*(x)), (x)->size, x)
+                                     حجم(*(x)), (x)->size, x)
 
-void
-xkb_log_abi_error(struct xkb_context * restrict ctx,
-                  const char * restrict func, enum xkb_status status);
+فراغ
+xkb_log_abi_error(بنية xkb_context * restrict ctx,
+                  ثابت حرف * restrict func, تعداد xkb_status status);

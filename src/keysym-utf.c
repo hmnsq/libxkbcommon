@@ -35,25 +35,25 @@
  *
  */
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <stdbool.h>
+#ضمن <stdbool.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "utils.h"
-#include "utf8.h"
-#include "keysym.h"
+#ضمن "xkbcommon/xkbcommon.h"
+#ضمن "utils.h"
+#ضمن "utf8.h"
+#ضمن "keysym.h"
 
 #define NO_KEYSYM_UNICODE_CONVERSION 0
 
 /* We don't use the uint32_t types here, to save some space. */
-struct codepair {
+بنية codepair {
     uint16_t keysym:15;
     bool deprecated:1;
     uint16_t ucs;
 };
 
-static const struct codepair keysymtab[] = {
+ساكن ثابت بنية codepair keysymtab[] = {
     { 0x01a1, false, 0x0104 }, /*                     Aogonek Ą LATIN CAPITAL LETTER A WITH OGONEK */
     { 0x01a2, false, 0x02d8 }, /*                       breve ˘ BREVE */
     { 0x01a3, false, 0x0141 }, /*                     Lstroke Ł LATIN CAPITAL LETTER L WITH STROKE */
@@ -832,49 +832,49 @@ static const struct codepair keysymtab[] = {
 };
 
 /* binary search with range check */
-static uint32_t
-bin_search(const struct codepair *table, size_t length, xkb_keysym_t keysym)
+ساكن uint32_t
+bin_search(ثابت بنية codepair *table, size_t length, xkb_keysym_t keysym)
 {
     size_t first = 0;
     size_t last = length;
 
-    if (keysym < table[0].keysym  || keysym > table[length].keysym)
-        return 0;
+    אם (keysym < table[0].keysym  || keysym > table[length].keysym)
+        החזר 0;
 
     /* binary search in table */
-    while (last >= first) {
+    כלעוד (last >= first) {
         size_t mid = (first + last) / 2;
-        if (table[mid].keysym < keysym)
+        אם (table[mid].keysym < keysym)
             first = mid + 1;
-        else if (table[mid].keysym > keysym)
+        אחרת אם (table[mid].keysym > keysym)
             last = mid - 1;
-        else /* found it */
-            return table[mid].ucs;
+        אחרת /* found it */
+            החזר table[mid].ucs;
     }
 
     /* no matching Unicode value found in table */
-    return NO_KEYSYM_UNICODE_CONVERSION;
+    החזר NO_KEYSYM_UNICODE_CONVERSION;
 }
 
 uint32_t
 xkb_keysym_to_utf32(xkb_keysym_t keysym)
 {
     /* first check for Latin-1 characters (1:1 mapping) */
-    if ((keysym >= 0x0020 && keysym <= 0x007e) ||
+    אם ((keysym >= 0x0020 && keysym <= 0x007e) ||
         (keysym >= 0x00a0 && keysym <= 0x00ff))
-        return keysym;
+        החזר keysym;
 
     /* patch encoding botch */
-    if (keysym == XKB_KEY_KP_Space)
-        return XKB_KEY_space & 0x7f;
+    אם (keysym == XKB_KEY_KP_Space)
+        החזר XKB_KEY_space & 0x7f;
 
     /* special keysyms */
-    if ((keysym >= XKB_KEY_BackSpace && keysym <= XKB_KEY_Clear) ||
+    אם ((keysym >= XKB_KEY_BackSpace && keysym <= XKB_KEY_Clear) ||
         (keysym >= XKB_KEY_KP_Multiply && keysym <= XKB_KEY_KP_9) ||
         keysym == XKB_KEY_Return || keysym == XKB_KEY_Escape ||
         keysym == XKB_KEY_Delete || keysym == XKB_KEY_KP_Tab ||
         keysym == XKB_KEY_KP_Enter || keysym == XKB_KEY_KP_Equal)
-        return keysym & 0x7f;
+        החזר keysym & 0x7f;
 
     /* also check for directly encoded Unicode codepoints */
 
@@ -882,29 +882,29 @@ xkb_keysym_to_utf32(xkb_keysym_t keysym)
      * See https://www.unicode.org/versions/Unicode15.0.0/ch03.pdf#G28875
      * for further details.
      */
-    if (keysym >= XKB_KEYSYM_UNICODE_SURROGATE_MIN &&
+    אם (keysym >= XKB_KEYSYM_UNICODE_SURROGATE_MIN &&
         keysym <= XKB_KEYSYM_UNICODE_SURROGATE_MAX)
-        return NO_KEYSYM_UNICODE_CONVERSION;
+        החזר NO_KEYSYM_UNICODE_CONVERSION;
     /*
      * In theory, this is supposed to start from 0x100100, such that the ASCII
      * range, which is already covered by 0x00-0xff, can't be encoded in two
      * ways. However, changing this after a couple of decades probably won't
      * go well, so it stays as it is.
      */
-    if (XKB_KEYSYM_UNICODE_OFFSET <= keysym && keysym <= XKB_KEYSYM_UNICODE_MAX)
-        return keysym - XKB_KEYSYM_UNICODE_OFFSET;
+    אם (XKB_KEYSYM_UNICODE_OFFSET <= keysym && keysym <= XKB_KEYSYM_UNICODE_MAX)
+        החזר keysym - XKB_KEYSYM_UNICODE_OFFSET;
 
     /* Some EVDEV keysyms that do not fit in `keysymtab` */
-    if (keysym >= XKB_KEY_XF86Numeric0 && keysym <= XKB_KEY_XF86Numeric9)
-        return keysym - XKB_KEY_XF86Numeric0 + 0x30;
-    switch (keysym) {
-    case XKB_KEY_XF86NumericStar:
-        return 0x2a; /* * */
-    case XKB_KEY_XF86NumericPound:
-        return 0x23; /* # */
-    default:
+    אם (keysym >= XKB_KEY_XF86Numeric0 && keysym <= XKB_KEY_XF86Numeric9)
+        החזר keysym - XKB_KEY_XF86Numeric0 + 0x30;
+    بدل (keysym) {
+    حالة XKB_KEY_XF86NumericStar:
+        החזר 0x2a; /* * */
+    حالة XKB_KEY_XF86NumericPound:
+        החזר 0x23; /* # */
+    افتراضي:
         /* search main table */
-        return bin_search(keysymtab, ARRAY_SIZE(keysymtab) - 1, keysym);
+        החזר bin_search(keysymtab, ARRAY_SIZE(keysymtab) - 1, keysym);
     }
 }
 
@@ -912,16 +912,16 @@ xkb_keysym_t
 xkb_utf32_to_keysym(uint32_t ucs)
 {
     /* first check for Latin-1 characters (1:1 mapping) */
-    if ((ucs >= 0x0020 && ucs <= 0x007e) ||
+    אם ((ucs >= 0x0020 && ucs <= 0x007e) ||
         (ucs >= 0x00a0 && ucs <= 0x00ff))
-        return ucs;
+        החזר ucs;
 
     /* special keysyms */
-    if ((ucs >= (XKB_KEY_BackSpace & 0x7f) && ucs <= (XKB_KEY_Clear & 0x7f)) ||
+    אם ((ucs >= (XKB_KEY_BackSpace & 0x7f) && ucs <= (XKB_KEY_Clear & 0x7f)) ||
         ucs == (XKB_KEY_Return & 0x7f) || ucs == (XKB_KEY_Escape & 0x7f))
-        return ucs | 0xff00;
-    if (ucs == (XKB_KEY_Delete & 0x7f))
-        return XKB_KEY_Delete;
+        החזר ucs | 0xff00;
+    אם (ucs == (XKB_KEY_Delete & 0x7f))
+        החזר XKB_KEY_Delete;
 
     /*
      * U+0000 NULL and invalid Unicode code points.
@@ -929,18 +929,18 @@ xkb_utf32_to_keysym(uint32_t ucs)
      * See https://www.unicode.org/versions/Unicode15.0.0/ch03.pdf#G28875
      * for further details.
      */
-    if (unlikely(ucs == 0 || is_surrogate(ucs) || ucs > 0x10ffff))
-        return XKB_KEY_NoSymbol;
+    אם (unlikely(ucs == 0 || is_surrogate(ucs) || ucs > 0x10ffff))
+        החזר XKB_KEY_NoSymbol;
 
     /* search main table */
-    for (size_t i = 0; i < ARRAY_SIZE(keysymtab); i++) {
+    עבור (size_t i = 0; i < ARRAY_SIZE(keysymtab); i++) {
         /* Do not use deprecated keysyms */
-        if (keysymtab[i].ucs == ucs && !keysymtab[i].deprecated)
-            return keysymtab[i].keysym;
+        אם (keysymtab[i].ucs == ucs && !keysymtab[i].deprecated)
+            החזר keysymtab[i].keysym;
     }
 
     /* Use direct encoding if everything else failed */
-    return ucs | XKB_KEYSYM_UNICODE_OFFSET;
+    החזר ucs | XKB_KEYSYM_UNICODE_OFFSET;
 }
 
 /*
@@ -951,22 +951,22 @@ xkb_utf32_to_keysym(uint32_t ucs)
  * Author: Rob Bradford <rob@linux.intel.com>
  */
 
-int
-xkb_keysym_to_utf8(xkb_keysym_t keysym, char *buffer, size_t size)
+صحيح
+xkb_keysym_to_utf8(xkb_keysym_t keysym, حرف *buffer, size_t size)
 {
     uint32_t codepoint;
 
     /* Unicode code point takes up to 4 bytes in UTF-8, plus the
      * NULL-terminating byte. */
-    if (size < XKB_KEYSYM_UTF8_MAX_SIZE)
-        return -1;
+    אם (size < XKB_KEYSYM_UTF8_MAX_SIZE)
+        החזר -1;
 
     codepoint = xkb_keysym_to_utf32(keysym);
 
-    if (codepoint == NO_KEYSYM_UNICODE_CONVERSION)
-        return 0;
+    אם (codepoint == NO_KEYSYM_UNICODE_CONVERSION)
+        החזר 0;
 
-    return (int)utf32_to_utf8(codepoint, buffer);
+    החזר (صحيح)utf32_to_utf8(codepoint, buffer);
 }
 
 /* SPDX-SnippetEnd */
