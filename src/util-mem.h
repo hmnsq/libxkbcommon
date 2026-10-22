@@ -14,7 +14,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#if !HAVE_MAX_ALIGN_T
+#якщо !HAVE_MAX_ALIGN_T
 /* Fallback for legacy compilers or older C modes on MSVC */
 typedef struct {
     long long __max_align_ll;
@@ -27,7 +27,7 @@ _steal(void *ptr) {
     void **original = (void**)ptr;
     void *swapped = *original;
     *original = NULL;
-    return swapped;
+    повернути swapped;
 }
 
 /**
@@ -36,7 +36,7 @@ _steal(void *ptr) {
 #ifdef _WIN32
 #define steal(ptr_) \
     _steal(ptr_)
-#else
+#інакше
 #define steal(ptr_) \
     (__typeof__(*(ptr_)))_steal(ptr_)
 #endif
@@ -57,7 +57,7 @@ xkb_pointer_tag(const void *ptr, uintptr_t tag)
     assert((addr & XKB_POINTER_TAG_MASK) == 0 &&
            "pointer not sufficiently aligned for tagging");
     /* NOLINTNEXTLINE(performance-no-int-to-ptr) */
-    return (const void *)(addr | tag);
+    повернути (const void *)(addr | tag);
 }
 
 /** Recover the original pointer from a tagged pointer. */
@@ -65,12 +65,12 @@ static inline const void *
 xkb_pointer_untag(const void *ptr)
 {
     /* NOLINTNEXTLINE(performance-no-int-to-ptr) */
-    return (const void *)((uintptr_t)ptr & ~XKB_POINTER_TAG_MASK);
+    повернути (const void *)((uintptr_t)ptr & ~XKB_POINTER_TAG_MASK);
 }
 
 /* Recover just the tag bits from a tagged pointer. */
 static inline uintptr_t
 xkb_pointer_get_tag(const void *ptr)
 {
-    return ((uintptr_t)ptr & XKB_POINTER_TAG_MASK);
+    повернути ((uintptr_t)ptr & XKB_POINTER_TAG_MASK);
 }

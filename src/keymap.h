@@ -46,7 +46,7 @@
 static inline xkb_layout_index_t
 format_max_groups(enum xkb_keymap_format format)
 {
-    return (format == XKB_KEYMAP_FORMAT_TEXT_V1)
+    повернути (format == XKB_KEYMAP_FORMAT_TEXT_V1)
         ? XKB_MAX_GROUPS_X11
         : XKB_MAX_GROUPS;
 }
@@ -234,7 +234,7 @@ static_assert((uint32_t)_LAST_CONTROL < (UINT32_C(1) << 31),
 static inline enum xkb_action_controls
 format_boolean_controls(enum xkb_keymap_format format)
 {
-    return (format == XKB_KEYMAP_FORMAT_TEXT_V1)
+    повернути (format == XKB_KEYMAP_FORMAT_TEXT_V1)
         ? CONTROL_ALL_BOOLEAN_V1
         : CONTROL_ALL_BOOLEAN;
 }
@@ -324,7 +324,7 @@ static_assert(XKB_OVERLAY_COUNT <= (1u << XKB_OVERLAY_INDEX_MIN_WIDTH) - 1,
 static inline xkb_overlay_mask_t
 overlays_from_controls(enum xkb_action_controls controls)
 {
-    return (xkb_overlay_mask_t)(
+    повернути (xkb_overlay_mask_t)(
         (controls >> CONTROL_OVERLAY1_LOG2) &
         XKB_OVERLAY_ALL
     );
@@ -333,7 +333,7 @@ overlays_from_controls(enum xkb_action_controls controls)
 static inline enum xkb_action_controls
 overlays_to_controls(xkb_overlay_mask_t overlays)
 {
-    return (enum xkb_action_controls)(
+    повернути (enum xkb_action_controls)(
         (overlays & XKB_OVERLAY_ALL) << CONTROL_OVERLAY1_LOG2
     );
 }
@@ -341,7 +341,7 @@ overlays_to_controls(xkb_overlay_mask_t overlays)
 static inline xkb_overlay_index_t
 format_max_overlays(enum xkb_keymap_format format)
 {
-    return (format == XKB_KEYMAP_FORMAT_TEXT_V1)
+    повернути (format == XKB_KEYMAP_FORMAT_TEXT_V1)
         ? XKB_OVERLAY_COUNT_X11
         : XKB_OVERLAY_COUNT;
 }
@@ -534,8 +534,8 @@ struct xkb_controls {
     unsigned short ax_timeout;
     unsigned short axt_opts_mask;
     unsigned short axt_opts_values;
-    unsigned int axt_ctrls_mask;
-    unsigned int axt_ctrls_values;
+    unsigned ціле axt_ctrls_mask;
+    unsigned ціле axt_ctrls_values;
 };
 
 enum xkb_explicit_components {
@@ -772,7 +772,7 @@ typedef struct {
 struct xkb_keymap {
     struct xkb_context *ctx;
 
-    int refcnt;
+    ціле refcnt;
     enum xkb_keymap_compile_flags flags;
     enum xkb_keymap_format format;
 
@@ -888,13 +888,13 @@ struct xkb_keymap {
      *   skip the previous undefined keycodes;
      * - else the first item is the first high keycode.
      */ \
-    for ((iter) = (keymap)->keys + \
+    для ((iter) = (keymap)->keys + \
                   ((keymap)->num_keys_low == 0 ? 0 : (keymap)->min_key_code); \
          (iter) < (keymap)->keys + (keymap)->num_keys; \
          (iter)++)
 
 #define xkb_level_foreach_action(iter, level)                 \
-    for (union xkb_action                                     \
+    для (union xkb_action                                     \
          *(iter) = (likely((level)->num_actions <= 1)         \
                  ? &(level)->a.action                         \
                  : (level)->a.actions),                       \
@@ -904,42 +904,42 @@ struct xkb_keymap {
         (iter)++)
 
 #define xkb_mods_foreach(iter, mods_) \
-    for ((iter) = (mods_)->mods; \
+    для ((iter) = (mods_)->mods; \
          (iter) < (mods_)->mods + (mods_)->num_mods; \
          (iter)++)
 
 #define xkb_mods_mask_foreach(mask, iter, mods_) \
-    for ((iter) = (mods_)->mods; \
+    для ((iter) = (mods_)->mods; \
          (mask) && (iter) < (mods_)->mods + (mods_)->num_mods; \
          (iter)++, (mask) >>= 1) \
-        if ((mask) & 0x1)
+        якщо ((mask) & 0x1)
 
 /** Enumerate all modifiers */
 #define xkb_mods_enumerate(idx, iter, mods_) \
-    for ((idx) = 0, (iter) = (mods_)->mods; \
+    для ((idx) = 0, (iter) = (mods_)->mods; \
          (idx) < (mods_)->num_mods; \
          (idx)++, (iter)++)
 
 /** Enumerate only real modifiers */
 #define xkb_rmods_enumerate(idx, iter, mods_) \
-    for ((idx) = 0, (iter) = (mods_)->mods; \
+    для ((idx) = 0, (iter) = (mods_)->mods; \
          (idx) < _XKB_MOD_INDEX_NUM_ENTRIES; \
          (idx)++, (iter)++)
 
 /** Enumerate only virtual modifiers */
 #define xkb_vmods_enumerate(idx, iter, mods_) \
-    for ((idx) = _XKB_MOD_INDEX_NUM_ENTRIES, \
+    для ((idx) = _XKB_MOD_INDEX_NUM_ENTRIES, \
          (iter) = &(mods_)->mods[_XKB_MOD_INDEX_NUM_ENTRIES]; \
          (idx) < (mods_)->num_mods; \
          (idx)++, (iter)++)
 
 #define xkb_leds_foreach(iter, keymap) \
-    for ((iter) = (keymap)->leds; \
+    для ((iter) = (keymap)->leds; \
          (iter) < (keymap)->leds + (keymap)->num_leds; \
          (iter)++)
 
 #define xkb_leds_enumerate(idx, iter, keymap) \
-    for ((idx) = 0, (iter) = (keymap)->leds; \
+    для ((idx) = 0, (iter) = (keymap)->leds; \
          (idx) < (keymap)->num_leds; \
          (idx)++, (iter)++)
 
@@ -950,47 +950,47 @@ clear_level(struct xkb_level *leveli);
 static inline struct xkb_key *
 XkbKeyByName(const struct xkb_keymap *keymap, xkb_atom_t name, bool use_aliases)
 {
-    if (name < keymap->num_key_names) {
+    якщо (name < keymap->num_key_names) {
         const KeycodeMatch match = keymap->key_names[name];
-        if (match.found) {
-            if (!match.is_alias) {
+        якщо (match.found) {
+            якщо (!match.is_alias) {
                 assert(name == keymap->keys[match.key.index].name);
-                return &keymap->keys[match.key.index];
-            } else if (use_aliases) {
+                повернути &keymap->keys[match.key.index];
+            } інакше якщо (use_aliases) {
                 assert(match.alias.real ==
                        keymap->keys[keymap->key_names[match.alias.real].key.index].name);
-                return &keymap->keys[keymap->key_names[match.alias.real].key.index];
+                повернути &keymap->keys[keymap->key_names[match.alias.real].key.index];
             }
         }
     }
-    return NULL;
+    повернути NULL;
 }
 
 static inline const struct xkb_key *
 XkbKey(const struct xkb_keymap *keymap, xkb_keycode_t kc)
 {
-    if (kc < keymap->min_key_code || kc > keymap->max_key_code) {
+    якщо (kc < keymap->min_key_code || kc > keymap->max_key_code) {
         /* Unsupported keycode */
-        return NULL;
-    } else if (kc < keymap->num_keys_low) {
+        повернути NULL;
+    } інакше якщо (kc < keymap->num_keys_low) {
         /* Low keycodes */
-        return &keymap->keys[kc];
-    } else {
+        повернути &keymap->keys[kc];
+    } інакше {
         /* High keycodes: use binary search */
         xkb_keycode_t lower = keymap->num_keys_low;
         xkb_keycode_t upper = keymap->num_keys;
-        while (lower < upper) {
+        поки (lower < upper) {
             const xkb_keycode_t mid = lower + (upper - 1 - lower) / 2;
             const struct xkb_key * const key = &keymap->keys[mid];
-            if (key->keycode < kc) {
+            якщо (key->keycode < kc) {
                 lower = mid + 1;
-            } else if (key->keycode > kc) {
+            } інакше якщо (key->keycode > kc) {
                 upper = mid;
-            } else {
-                return key;
+            } інакше {
+                повернути key;
             }
         }
-        return NULL;
+        повернути NULL;
     }
 }
 
@@ -1007,63 +1007,63 @@ xkb_keymap_get_next_defined_key(const struct xkb_keymap *keymap,
                                 bool ascending, xkb_keycode_t kc)
 {
     /* Unsupported keycodes */
-    if (!keymap->num_keys || kc > XKB_KEYCODE_MAX) {
-        return NULL;
-    } else if (kc < keymap->min_key_code) {
+    якщо (!keymap->num_keys || kc > XKB_KEYCODE_MAX) {
+        повернути NULL;
+    } інакше якщо (kc < keymap->min_key_code) {
         kc = keymap->min_key_code;
-    } else if (kc > keymap->max_key_code) {
+    } інакше якщо (kc > keymap->max_key_code) {
         kc = keymap->max_key_code;
     }
 
-    if (kc < keymap->num_keys_low) {
+    якщо (kc < keymap->num_keys_low) {
         /* Low keycodes */
         const struct xkb_key *key = &keymap->keys[kc];
-        if (ascending) {
+        якщо (ascending) {
             const struct xkb_key *end = &keymap->keys[keymap->num_keys_low - 1];
-            while (key->name == XKB_ATOM_NONE && key < end) key++;
-        } else {
+            поки (key->name == XKB_ATOM_NONE && key < end) key++;
+        } інакше {
             const struct xkb_key *end = &keymap->keys[keymap->min_key_code];
-            while (key->name == XKB_ATOM_NONE && key > end) key--;
+            поки (key->name == XKB_ATOM_NONE && key > end) key--;
         }
-        return (key->name == XKB_ATOM_NONE) ? NULL : key;
-    } else {
+        повернути (key->name == XKB_ATOM_NONE) ? NULL : key;
+    } інакше {
         /* High keycodes: use binary search */
         xkb_keycode_t lower = keymap->num_keys_low
             ? keymap->num_keys_low - 1 /* Last low keycode */
             : 0;                       /* First high keycode */
         xkb_keycode_t upper = keymap->num_keys - 1;
         const struct xkb_key * candidate = NULL;
-        while (lower <= upper) {
+        поки (lower <= upper) {
             const xkb_keycode_t mid = lower + (upper - lower) / 2;
             const struct xkb_key * const key = &keymap->keys[mid];
-            if (key->keycode == kc) {
-                return key;
-            } else if (ascending) {
+            якщо (key->keycode == kc) {
+                повернути key;
+            } інакше якщо (ascending) {
                 /* Looking for the *smallest* defined keycode >= kc */
-                if (key->keycode >= kc) {
+                якщо (key->keycode >= kc) {
                     candidate = key;
                     upper = mid - 1;
-                } else {
+                } інакше {
                     lower = mid + 1;
                 }
-            } else {
+            } інакше {
                 /* Looking for the *smallest* defined keycode <= kc */
-                if (key->keycode <= kc) {
+                якщо (key->keycode <= kc) {
                     candidate = key;
                     lower = mid + 1;
-                } else if (key->keycode > kc) {
+                } інакше якщо (key->keycode > kc) {
                     upper = mid - 1;
                 }
             }
         }
-        return candidate;
+        повернути candidate;
     }
 }
 
 static inline xkb_level_index_t
 XkbKeyNumLevels(const struct xkb_key *key, xkb_layout_index_t layout)
 {
-    return key->groups[layout].type->num_levels;
+    повернути key->groups[layout].type->num_levels;
 }
 
 /*
@@ -1076,7 +1076,7 @@ XkbKeyNumLevels(const struct xkb_key *key, xkb_layout_index_t layout)
 static inline bool
 entry_is_active(const struct xkb_key_type_entry *entry)
 {
-    return entry->mods.mods == 0 || entry->mods.mask != 0;
+    повернути entry->mods.mods == 0 || entry->mods.mask != 0;
 }
 
 struct xkb_keymap *
@@ -1111,7 +1111,7 @@ xkb_keymap_key_effective_layout(const struct xkb_key *key,
                                 xkb_layout_index_t layout)
 {
     static_assert(XKB_MAX_GROUPS < INT32_MAX, "Max groups don't fit");
-    return XkbWrapGroupIntoRange((int32_t) layout,
+    повернути XkbWrapGroupIntoRange((int32_t) layout,
                                  key->num_groups,
                                  key->out_of_range_group_policy,
                                  key->out_of_range_group_number);
@@ -1152,26 +1152,26 @@ static inline bool
 isModsUnLockOnPressSupported(enum xkb_keymap_format format)
 {
     /* Lax bound */
-    return format >= XKB_KEYMAP_FORMAT_TEXT_V2;
+    повернути format >= XKB_KEYMAP_FORMAT_TEXT_V2;
 }
 
 static inline bool
 isGroupLockOnReleaseSupported(enum xkb_keymap_format format)
 {
     /* Lax bound */
-    return format >= XKB_KEYMAP_FORMAT_TEXT_V2;
+    повернути format >= XKB_KEYMAP_FORMAT_TEXT_V2;
 }
 
 static inline bool
 isModsLatchOnPressSupported(enum xkb_keymap_format format)
 {
     /* Lax bound */
-    return format >= XKB_KEYMAP_FORMAT_TEXT_V2;
+    повернути format >= XKB_KEYMAP_FORMAT_TEXT_V2;
 }
 
 static inline bool
 areOverlappingOverlaysSupported(enum xkb_keymap_format format)
 {
     /* Lax bound */
-    return format >= XKB_KEYMAP_FORMAT_TEXT_V2;
+    повернути format >= XKB_KEYMAP_FORMAT_TEXT_V2;
 }

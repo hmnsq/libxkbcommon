@@ -89,227 +89,227 @@ lex(struct scanner *s, union lvalue *val)
 {
 skip_more_whitespace_and_comments:
     /* Skip spaces. */
-    while (is_space(scanner_peek(s)))
-        if (scanner_next(s) == '\n')
-            return TOK_END_OF_LINE;
+    поки (is_space(scanner_peek(s)))
+        якщо (scanner_next(s) == '\n')
+            повернути TOK_END_OF_LINE;
 
     /* Skip comments. */
-    if (scanner_chr(s, '#')) {
+    якщо (scanner_chr(s, '#')) {
         scanner_skip_to_eol(s);
         goto skip_more_whitespace_and_comments;
     }
 
     /* See if we're done. */
-    if (scanner_eof(s)) return TOK_END_OF_FILE;
+    якщо (scanner_eof(s)) повернути TOK_END_OF_FILE;
 
     /* New token. */
     s->token_pos = s->pos;
     s->buf_pos = 0;
 
     /* LHS Keysym. */
-    if (scanner_chr(s, '<')) {
-        while (scanner_peek(s) != '>' && !scanner_eol(s) && !scanner_eof(s))
+    якщо (scanner_chr(s, '<')) {
+        поки (scanner_peek(s) != '>' && !scanner_eol(s) && !scanner_eof(s))
             scanner_buf_append(s, scanner_next(s));
-        if (!scanner_chr(s, '>')) {
+        якщо (!scanner_chr(s, '>')) {
             scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                         "unterminated keysym literal");
-            return TOK_ERROR;
+            повернути TOK_ERROR;
         }
-        if (!scanner_buf_append(s, '\0')) {
+        якщо (!scanner_buf_append(s, '\0')) {
             scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                         "keysym literal is too long");
-            return TOK_ERROR;
+            повернути TOK_ERROR;
         }
         val->string.str = s->buf;
         val->string.len = s->buf_pos;
-        return TOK_LHS_KEYSYM;
+        повернути TOK_LHS_KEYSYM;
     }
 
     /* Colon. */
-    if (scanner_chr(s, ':'))
-        return TOK_COLON;
-    if (scanner_chr(s, '!'))
-        return TOK_BANG;
-    if (scanner_chr(s, '~'))
-        return TOK_TILDE;
+    якщо (scanner_chr(s, ':'))
+        повернути TOK_COLON;
+    якщо (scanner_chr(s, '!'))
+        повернути TOK_BANG;
+    якщо (scanner_chr(s, '~'))
+        повернути TOK_TILDE;
 
     /* String literal. */
-    if (scanner_chr(s, '\"')) {
-        while (!scanner_eof(s) && !scanner_eol(s) && scanner_peek(s) != '\"') {
-            if (scanner_chr(s, '\\')) {
+    якщо (scanner_chr(s, '\"')) {
+        поки (!scanner_eof(s) && !scanner_eol(s) && scanner_peek(s) != '\"') {
+            якщо (scanner_chr(s, '\\')) {
                 uint8_t o;
                 size_t start_pos = s->pos;
-                if (scanner_chr(s, '\\')) {
+                якщо (scanner_chr(s, '\\')) {
                     scanner_buf_append(s, '\\');
                 }
-                else if (scanner_chr(s, '"')) {
+                інакше якщо (scanner_chr(s, '"')) {
                     scanner_buf_append(s, '"');
                 }
-                else if (scanner_chr(s, 'x') || scanner_chr(s, 'X')) {
-                    if (scanner_hex(s, &o) && is_valid_char((uint32_t) o)) {
+                інакше якщо (scanner_chr(s, 'x') || scanner_chr(s, 'X')) {
+                    якщо (scanner_hex(s, &o) && is_valid_char((uint32_t) o)) {
                         scanner_buf_append(s, (char) o);
-                    } else {
+                    } інакше {
                         scanner_warn(s, XKB_WARNING_INVALID_ESCAPE_SEQUENCE,
                                      "illegal hexadecimal escape sequence "
                                      "\"%.*s\" in string literal",
-                                     (int) (s->pos - start_pos + 1),
+                                     (ціле) (s->pos - start_pos + 1),
                                      &s->s[start_pos - 1]);
                     }
                 }
-                else if (scanner_oct(s, &o) && is_valid_char((uint32_t) o)) {
+                інакше якщо (scanner_oct(s, &o) && is_valid_char((uint32_t) o)) {
                     scanner_buf_append(s, (char) o);
                 }
-                else if (s->pos > start_pos) {
+                інакше якщо (s->pos > start_pos) {
                     scanner_warn(s, XKB_WARNING_INVALID_ESCAPE_SEQUENCE,
                                  "illegal octal escape sequence \"%.*s\" "
                                  "in string literal",
-                                 (int) (s->pos - start_pos + 1),
+                                 (ціле) (s->pos - start_pos + 1),
                                  &s->s[start_pos - 1]);
                     /* Ignore. */
                 }
-                else {
+                інакше {
                     scanner_warn(s, XKB_WARNING_UNKNOWN_CHAR_ESCAPE_SEQUENCE,
                                  "unknown escape sequence \"\\%c\" "
                                  "in string literal",
                                  scanner_peek(s));
                     /* Ignore. */
                 }
-            } else {
+            } інакше {
                 scanner_buf_append(s, scanner_next(s));
             }
         }
-        if (!scanner_chr(s, '\"')) {
+        якщо (!scanner_chr(s, '\"')) {
             scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                         "unterminated string literal");
-            return TOK_ERROR;
+            повернути TOK_ERROR;
         }
-        if (!scanner_buf_append(s, '\0')) {
+        якщо (!scanner_buf_append(s, '\0')) {
             scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                         "string literal is too long");
-            return TOK_ERROR;
+            повернути TOK_ERROR;
         }
-        if (!is_valid_utf8(s->buf, s->buf_pos - 1)) {
+        якщо (!is_valid_utf8(s->buf, s->buf_pos - 1)) {
             scanner_err(s, XKB_ERROR_INVALID_FILE_ENCODING,
                         "string literal is not a valid UTF-8 string");
-            return TOK_ERROR;
+            повернути TOK_ERROR;
         }
         val->string.str = s->buf;
         val->string.len = s->buf_pos;
-        return TOK_STRING;
+        повернути TOK_STRING;
     }
 
     /* Identifier or include. */
-    if (is_alpha(scanner_peek(s)) || scanner_peek(s) == '_') {
+    якщо (is_alpha(scanner_peek(s)) || scanner_peek(s) == '_') {
         s->buf_pos = 0;
-        while (is_alnum(scanner_peek(s)) || scanner_peek(s) == '_')
+        поки (is_alnum(scanner_peek(s)) || scanner_peek(s) == '_')
             scanner_buf_append(s, scanner_next(s));
-        if (!scanner_buf_append(s, '\0')) {
+        якщо (!scanner_buf_append(s, '\0')) {
             scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                         "identifier is too long");
-            return TOK_ERROR;
+            повернути TOK_ERROR;
         }
 
-        if (streq(s->buf, "include"))
-            return TOK_INCLUDE;
+        якщо (streq(s->buf, "include"))
+            повернути TOK_INCLUDE;
 
         val->string.str = s->buf;
         val->string.len = s->buf_pos;
-        return TOK_IDENT;
+        повернути TOK_IDENT;
     }
 
     scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                 "unrecognized token");
     /* Discard rest of line. */
     scanner_skip_to_eol(s);
-    return TOK_ERROR;
+    повернути TOK_ERROR;
 }
 
 static enum rules_token
 lex_include_string(struct scanner *s, struct xkb_compose_table *table,
                    union lvalue *val_out)
 {
-    while (is_space(scanner_peek(s)))
-        if (scanner_next(s) == '\n')
-            return TOK_END_OF_LINE;
+    поки (is_space(scanner_peek(s)))
+        якщо (scanner_next(s) == '\n')
+            повернути TOK_END_OF_LINE;
 
     s->token_pos = s->pos;
     s->buf_pos = 0;
 
-    if (!scanner_chr(s, '\"')) {
+    якщо (!scanner_chr(s, '\"')) {
         scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                     "include statement must be followed by a path");
-        return TOK_ERROR;
+        повернути TOK_ERROR;
     }
 
-    while (!scanner_eof(s) && !scanner_eol(s) && scanner_peek(s) != '\"') {
-        if (scanner_chr(s, '%')) {
-            if (scanner_chr(s, '%')) {
+    поки (!scanner_eof(s) && !scanner_eol(s) && scanner_peek(s) != '\"') {
+        якщо (scanner_chr(s, '%')) {
+            якщо (scanner_chr(s, '%')) {
                 scanner_buf_append(s, '%');
             }
-            else if (scanner_chr(s, 'H')) {
+            інакше якщо (scanner_chr(s, 'H')) {
                 const char *home = xkb_context_getenv(table->ctx, "HOME");
-                if (!home) {
+                якщо (!home) {
                     scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
                                 "%%H was used in an include statement, "
                                 "but the HOME environment variable is not set");
-                    return TOK_ERROR;
+                    повернути TOK_ERROR;
                 }
-                if (!scanner_buf_appends(s, home)) {
+                якщо (!scanner_buf_appends(s, home)) {
                     scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
                                 "include path after expanding %%H is too long");
-                    return TOK_ERROR;
+                    повернути TOK_ERROR;
                 }
             }
-            else if (scanner_chr(s, 'L')) {
+            інакше якщо (scanner_chr(s, 'L')) {
                 char *path = get_locale_compose_file_path(table->ctx, table->locale);
-                if (!path) {
+                якщо (!path) {
                     scanner_err(s, XKB_ERROR_INVALID_COMPOSE_LOCALE,
                                 "failed to expand %%L to the locale Compose file");
-                    return TOK_ERROR;
+                    повернути TOK_ERROR;
                 }
-                if (!scanner_buf_appends(s, path)) {
+                якщо (!scanner_buf_appends(s, path)) {
                     free(path);
                     scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
                                 "include path after expanding %%L is too long");
-                    return TOK_ERROR;
+                    повернути TOK_ERROR;
                 }
                 free(path);
             }
-            else if (scanner_chr(s, 'S')) {
+            інакше якщо (scanner_chr(s, 'S')) {
                 const char *xlocaledir = get_xlocaledir_path(table->ctx);
-                if (!scanner_buf_appends(s, xlocaledir)) {
+                якщо (!scanner_buf_appends(s, xlocaledir)) {
                     scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
                                 "include path after expanding %%S is too long");
-                    return TOK_ERROR;
+                    повернути TOK_ERROR;
                 }
             }
-            else {
+            інакше {
                 scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                             "unknown %% format (%c) in include statement", scanner_peek(s));
-                return TOK_ERROR;
+                повернути TOK_ERROR;
             }
-        } else {
+        } інакше {
             scanner_buf_append(s, scanner_next(s));
         }
     }
-    if (!scanner_chr(s, '\"')) {
+    якщо (!scanner_chr(s, '\"')) {
         scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                     "unterminated include statement");
-        return TOK_ERROR;
+        повернути TOK_ERROR;
     }
-    if (!scanner_buf_append(s, '\0')) {
+    якщо (!scanner_buf_append(s, '\0')) {
         scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
                     "include path is too long");
-        return TOK_ERROR;
+        повернути TOK_ERROR;
     }
     val_out->string.str = s->buf;
     val_out->string.len = s->buf_pos;
-    return TOK_INCLUDE_STRING;
+    повернути TOK_INCLUDE_STRING;
 }
 
 struct production {
     xkb_keysym_t lhs[COMPOSE_MAX_LHS_LEN];
-    unsigned int len;
+    unsigned ціле len;
     xkb_keysym_t keysym;
     char string[XKB_COMPOSE_MAX_STRING_SIZE];
     /* At least one of these is true. */
@@ -325,19 +325,19 @@ static void
 add_production(struct xkb_compose_table *table, struct scanner *s,
                const struct production *production)
 {
-    unsigned int lhs_pos = 0;
+    unsigned ціле lhs_pos = 0;
     uint32_t curr = darray_size(table->nodes) == 1 ? 0 : 1;
     uint32_t *pptr = NULL;
     struct compose_node *node = NULL;
 
     /* Warn before potentially going over the limit, discard silently after. */
-    if (darray_size(table->nodes) + production->len + COMPOSE_MAX_LHS_LEN >
+    якщо (darray_size(table->nodes) + production->len + COMPOSE_MAX_LHS_LEN >
         MAX_COMPOSE_NODES)
         scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
                      "too many sequences for one Compose file; "
                      "will ignore further lines");
-    if (darray_size(table->nodes) + production->len >= MAX_COMPOSE_NODES)
-        return;
+    якщо (darray_size(table->nodes) + production->len >= MAX_COMPOSE_NODES)
+        повернути;
 
     /*
      * Insert the sequence to the ternary search tree, creating new nodes as
@@ -347,11 +347,11 @@ add_production(struct xkb_compose_table *table, struct scanner *s,
      * long O(n) chains, which results in total O(n^2) parsing time. We should
      * ensure the tree is reasonably balanced somehow.
      */
-    while (true) {
+    поки (true) {
         const xkb_keysym_t keysym = production->lhs[lhs_pos];
         const bool last = lhs_pos + 1 == production->len;
 
-        if (curr == 0) {
+        якщо (curr == 0) {
             /*
              * Create a new node and update the parent pointer to it.
              * Update the pointer first because the append invalidates it.
@@ -366,7 +366,7 @@ add_production(struct xkb_compose_table *table, struct scanner *s,
                 },
             };
             curr = darray_size(table->nodes);
-            if (pptr != NULL) {
+            якщо (pptr != NULL) {
                 *pptr = curr;
                 pptr = NULL;
             }
@@ -375,14 +375,14 @@ add_production(struct xkb_compose_table *table, struct scanner *s,
 
         node = &darray_item(table->nodes, curr);
 
-        if (keysym < node->keysym) {
+        якщо (keysym < node->keysym) {
             pptr = &node->lokid;
             curr = node->lokid;
-        } else if (keysym > node->keysym) {
+        } інакше якщо (keysym > node->keysym) {
             pptr = &node->hikid;
             curr = node->hikid;
-        } else if (!last) {
-            if (node->is_leaf) {
+        } інакше якщо (!last) {
+            якщо (node->is_leaf) {
                 scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
                              "a sequence already exists which is a prefix of "
                              "this sequence; overriding");
@@ -392,8 +392,8 @@ add_production(struct xkb_compose_table *table, struct scanner *s,
             lhs_pos++;
             pptr = &node->internal.eqkid;
             curr = node->internal.eqkid;
-        } else {
-            if (node->is_leaf) {
+        } інакше {
+            якщо (node->is_leaf) {
                 bool same_string =
                     (node->leaf.utf8 == 0 && !production->has_string) ||
                     (
@@ -407,16 +407,16 @@ add_production(struct xkb_compose_table *table, struct scanner *s,
                         node->leaf.keysym != XKB_KEY_NoSymbol && production->has_keysym &&
                         node->leaf.keysym == production->keysym
                     );
-                if (same_string && same_keysym) {
+                якщо (same_string && same_keysym) {
                     scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
                                  "this compose sequence is a duplicate of another; "
                                  "skipping line");
-                    return;
-                } else {
+                    повернути;
+                } інакше {
                     scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
                                  "this compose sequence already exists; overriding");
                 }
-            } else if (node->internal.eqkid != 0) {
+            } інакше якщо (node->internal.eqkid != 0) {
                 scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
                              "this compose sequence is a prefix of another; "
                              "overriding");
@@ -426,33 +426,33 @@ add_production(struct xkb_compose_table *table, struct scanner *s,
             /* NOTE: If there was a previous entry, its string may *not* be
              * reused in the UTF8 table and the corresponding memory is then
              * wasted! */
-            if (production->has_string) {
+            якщо (production->has_string) {
                 const size_t len = strlen(production->string);
-                if (node->is_leaf && node->leaf.utf8 &&
+                якщо (node->is_leaf && node->leaf.utf8 &&
                     len <= strlen(&darray_item(table->utf8, node->leaf.utf8))) {
                     /* There is a previous entry with an overwritable string */
                     memcpy(&darray_item(table->utf8, node->leaf.utf8),
                            production->string, len + 1);
-                } else {
+                } інакше {
                     /* Cannot reuse string: allocate new one */
                     node->leaf.utf8 = darray_size(table->utf8);
                     darray_append_items(table->utf8, production->string,
                                         (darray_size_t)strlen(production->string) + 1);
                 }
-            } else {
+            } інакше {
                 /* Ensure we reset possible previous entry */
                 node->leaf.utf8 = 0;
             }
 
-            if (production->has_keysym) {
+            якщо (production->has_keysym) {
                 node->leaf.keysym = production->keysym;
-            } else {
+            } інакше {
                 /* Ensure we reset possible previous entry */
                 node->leaf.keysym = XKB_KEY_NoSymbol;
             }
 
             node->is_leaf = true;
-            return;
+            повернути;
         }
     }
 }
@@ -475,11 +475,11 @@ resolve_modifier(const char *name)
         { "Caps", 1 },
     };
 
-    for (unsigned int i = 0; i < ARRAY_SIZE(mods); i++)
-        if (streq(name, mods[i].name))
-            return mods[i].mod;
+    для (unsigned ціле i = 0; i < ARRAY_SIZE(mods); i++)
+        якщо (streq(name, mods[i].name))
+            повернути mods[i].mod;
 
-    return XKB_MOD_INVALID;
+    повернути XKB_MOD_INVALID;
 }
 
 /* Parse a string literal ("...") and return the corresponding unescaped string,
@@ -491,21 +491,21 @@ parse_string_literal(struct xkb_context *ctx, const char *string)
     struct scanner s;
     union lvalue val;
     scanner_init(&s, ctx, string, strlen(string), "(unnamed)", NULL);
-    if (lex(&s, &val) == TOK_STRING) {
-        return strdup(val.string.str);
-    } else {
+    якщо (lex(&s, &val) == TOK_STRING) {
+        повернути strdup(val.string.str);
+    } інакше {
         fprintf(stderr, "ERROR: %s\n", s.s);
-        return NULL;
+        повернути NULL;
     }
 }
 
 static bool
 parse(struct xkb_compose_table *table, struct scanner *s,
-      unsigned int include_depth);
+      unsigned ціле include_depth);
 
 static bool
 do_include(struct xkb_compose_table *table, struct scanner *s,
-           const char *path, unsigned int include_depth)
+           const char *path, unsigned ціле include_depth)
 {
     FILE *file;
     bool ok;
@@ -513,23 +513,23 @@ do_include(struct xkb_compose_table *table, struct scanner *s,
     size_t size;
     struct scanner new_s;
 
-    if (include_depth >= COMPOSE_MAX_INCLUDE_DEPTH) {
+    якщо (include_depth >= COMPOSE_MAX_INCLUDE_DEPTH) {
         scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
                     "maximum include depth (%u) exceeded; maybe there is an include loop?",
                     COMPOSE_MAX_INCLUDE_DEPTH);
-        return false;
+        повернути false;
     }
 
     file = fopen(path, "rb");
-    if (!file) {
+    якщо (!file) {
         scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
                     "failed to open included Compose file \"%s\": %s",
                     path, strerror(errno));
-        return false;
+        повернути false;
     }
 
     ok = map_file(file, &string, &size);
-    if (!ok) {
+    якщо (!ok) {
         scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
                     "failed to read included Compose file \"%s\": %s",
                     path, strerror(errno));
@@ -539,32 +539,32 @@ do_include(struct xkb_compose_table *table, struct scanner *s,
     scanner_init(&new_s, table->ctx, string, size, path, s->priv);
 
     ok = parse(table, &new_s, include_depth + 1);
-    if (!ok)
+    якщо (!ok)
         goto err_unmap;
 
 err_unmap:
     unmap_file(string, size);
 err_file:
     fclose(file);
-    return ok;
+    повернути ok;
 }
 
 // NOLINTBEGIN(readability-trivial-switch)
 static bool
 parse(struct xkb_compose_table *table, struct scanner *s,
-      unsigned int include_depth)
+      unsigned ціле include_depth)
 {
     enum rules_token tok;
     union lvalue val;
     xkb_keysym_t keysym;
     struct production production;
     enum { MAX_ERRORS = 10 };
-    int num_errors = 0;
+    ціле num_errors = 0;
 
     /* Basic detection of wrong character encoding.
        The first character relevant to the grammar must be ASCII:
        whitespace, include, modifier list, keysym, comment */
-    if (!scanner_check_supported_char_encoding(s)) {
+    якщо (!scanner_check_supported_char_encoding(s)) {
         scanner_err(s, XKB_ERROR_INVALID_FILE_ENCODING,
                     "This could be a file encoding issue. "
                     "Supported file encodings are ASCII and UTF-8.");
@@ -603,7 +603,7 @@ include:
 include_eol:
     switch (tok = lex(s, &val)) {
     case TOK_END_OF_LINE:
-        if (!do_include(table, s, val.string.str, include_depth))
+        якщо (!do_include(table, s, val.string.str, include_depth))
             goto fail;
         goto initial;
     default:
@@ -615,7 +615,7 @@ lhs:
 lhs_tok:
     switch (tok) {
     case TOK_COLON:
-        if (production.len <= 0) {
+        якщо (production.len <= 0) {
             scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
                          "expected at least one keysym on left-hand side; "
                          "skipping line");
@@ -623,7 +623,7 @@ lhs_tok:
         }
         goto rhs;
     case TOK_IDENT:
-        if (streq(val.string.str, "None")) {
+        якщо (streq(val.string.str, "None")) {
             production.mods = 0;
             production.modmask = ALL_MODS_MASK;
             goto lhs_keysym;
@@ -644,7 +644,7 @@ lhs_keysym_tok:
     switch (tok) {
     case TOK_LHS_KEYSYM:
         keysym = xkb_keysym_from_name(val.string.str, XKB_KEYSYM_NO_FLAGS);
-        if (keysym == XKB_KEY_NoSymbol) {
+        якщо (keysym == XKB_KEY_NoSymbol) {
             scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
                         "unrecognized keysym \"%s\" on left-hand side",
                         val.string.str);
@@ -652,7 +652,7 @@ lhs_keysym_tok:
         }
         check_deprecated_keysyms(scanner_warn, s, s->ctx,
                                  keysym, val.string.str, val.string.str, "%s", "");
-        if (production.len + 1 > COMPOSE_MAX_LHS_LEN) {
+        якщо (production.len + 1 > COMPOSE_MAX_LHS_LEN) {
             scanner_warn(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                          "too many keysyms (%u) on left-hand side; skipping line",
                          COMPOSE_MAX_LHS_LEN + 1);
@@ -672,19 +672,19 @@ lhs_mod_list_tok: {
         bool tilde = false;
         xkb_mod_index_t mod;
 
-        if (tok != TOK_TILDE && tok != TOK_IDENT)
+        якщо (tok != TOK_TILDE && tok != TOK_IDENT)
             goto lhs_keysym_tok;
 
-        if (tok == TOK_TILDE) {
+        якщо (tok == TOK_TILDE) {
             tilde = true;
             tok = lex(s, &val);
         }
 
-        if (tok != TOK_IDENT)
+        якщо (tok != TOK_IDENT)
             goto unexpected;
 
         mod = resolve_modifier(val.string.str);
-        if (mod == XKB_MOD_INVALID) {
+        якщо (mod == XKB_MOD_INVALID) {
             scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                         "unrecognized modifier \"%s\"",
                         val.string.str);
@@ -692,9 +692,9 @@ lhs_mod_list_tok: {
         }
 
         production.modmask |= UINT32_C(1) << mod;
-        if (tilde)
+        якщо (tilde)
             production.mods &= ~(UINT32_C(1) << mod);
-        else
+        інакше
             production.mods |= UINT32_C(1) << mod;
 
         goto lhs_mod_list;
@@ -703,19 +703,19 @@ lhs_mod_list_tok: {
 rhs:
     switch (tok = lex(s, &val)) {
     case TOK_STRING:
-        if (production.has_string) {
+        якщо (production.has_string) {
             scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
                          "right-hand side can have at most one string; "
                          "skipping line");
             goto skip;
         }
-        if (val.string.len <= 0) {
+        якщо (val.string.len <= 0) {
             scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
                          "right-hand side string must not be empty; "
                          "skipping line");
             goto skip;
         }
-        if (val.string.len > sizeof(production.string)) {
+        якщо (val.string.len > sizeof(production.string)) {
             scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
                          "right-hand side string is too long: "
                          "expected max: %zu, got: %zu; skipping line",
@@ -728,7 +728,7 @@ rhs:
         goto rhs;
     case TOK_IDENT:
         keysym = xkb_keysym_from_name(val.string.str, XKB_KEYSYM_NO_FLAGS);
-        if (keysym == XKB_KEY_NoSymbol) {
+        якщо (keysym == XKB_KEY_NoSymbol) {
             scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
                         "unrecognized keysym \"%s\" on right-hand side",
                         val.string.str);
@@ -736,7 +736,7 @@ rhs:
         }
         check_deprecated_keysyms(scanner_warn, s, s->ctx,
                                  keysym, val.string.str, val.string.str, "%s", "");
-        if (production.has_keysym) {
+        якщо (production.has_keysym) {
             scanner_warn(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                          "right-hand side can have at most one keysym; "
                          "skipping line");
@@ -746,7 +746,7 @@ rhs:
         production.has_keysym = true;
         /* fallthrough */
     case TOK_END_OF_LINE:
-        if (!production.has_string && !production.has_keysym) {
+        якщо (!production.has_string && !production.has_keysym) {
             scanner_warn(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                          "right-hand side must have at least one of string "
                          "or keysym; skipping line");
@@ -759,12 +759,12 @@ rhs:
     }
 
 unexpected:
-    if (tok != TOK_ERROR)
+    якщо (tok != TOK_ERROR)
         scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                     "unexpected token");
 error:
     num_errors++;
-    if (num_errors <= MAX_ERRORS)
+    якщо (num_errors <= MAX_ERRORS)
         goto skip;
 
     scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
@@ -774,15 +774,15 @@ error:
 fail:
     scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
                 "failed to parse file");
-    return false;
+    повернути false;
 
 skip:
-    while (tok != TOK_END_OF_LINE && tok != TOK_END_OF_FILE)
+    поки (tok != TOK_END_OF_LINE && tok != TOK_END_OF_FILE)
         tok = lex(s, &val);
     goto initial;
 
 finished:
-    return true;
+    повернути true;
 }
 // NOLINTEND(readability-trivial-switch)
 
@@ -792,12 +792,12 @@ parse_string(struct xkb_compose_table *table, const char *string, size_t len,
 {
     struct scanner s;
     scanner_init(&s, table->ctx, string, len, file_name, NULL);
-    if (!parse(table, &s, 0))
-        return false;
+    якщо (!parse(table, &s, 0))
+        повернути false;
     /* Maybe the allocator can use the excess space. */
     darray_shrink(table->nodes);
     darray_shrink(table->utf8);
-    return true;
+    повернути true;
 }
 
 bool
@@ -808,14 +808,14 @@ parse_file(struct xkb_compose_table *table, FILE *file, const char *file_name)
     size_t size;
 
     ok = map_file(file, &string, &size);
-    if (!ok) {
+    якщо (!ok) {
         log_err(table->ctx, XKB_LOG_MESSAGE_NO_ID,
                 "Couldn't read Compose file %s: %s\n",
                 file_name, strerror(errno));
-        return false;
+        повернути false;
     }
 
     ok = parse_string(table, string, size, file_name);
     unmap_file(string, size);
-    return ok;
+    повернути ok;
 }

@@ -148,18 +148,18 @@ static void
 StealLevelInfo(struct xkb_level *into, struct xkb_level *from)
 {
     clear_level(into);
-    if (from->num_syms > 1) {
+    якщо (from->num_syms > 1) {
         /* Steal */
         into->s.syms = steal(&from->s.syms);
-    } else {
+    } інакше {
         into->s.sym = from->s.sym;
     }
     into->num_syms = from->num_syms;
     from->num_syms = 0;
 
-    if (from->num_actions > 1) {
+    якщо (from->num_actions > 1) {
         into->a.actions = steal(&from->a.actions);
-    } else {
+    } інакше {
         into->a.action = from->a.action;
     }
     into->num_actions = from->num_actions;
@@ -188,14 +188,14 @@ CopyGroupInfo(GroupInfo *to, const GroupInfo *from)
     to->type = from->type;
     darray_init(to->levels);
     darray_copy(to->levels, from->levels);
-    for (xkb_level_index_t j = 0; j < darray_size(to->levels); j++) {
-        if (darray_item(from->levels, j).num_syms > 1) {
+    для (xkb_level_index_t j = 0; j < darray_size(to->levels); j++) {
+        якщо (darray_item(from->levels, j).num_syms > 1) {
             darray_item(to->levels, j).s.syms =
                 memdup(darray_item(from->levels, j).s.syms,
                        darray_item(from->levels, j).num_syms,
                        sizeof(xkb_keysym_t));
         }
-        if (darray_item(from->levels, j).num_actions > 1) {
+        якщо (darray_item(from->levels, j).num_actions > 1) {
             darray_item(to->levels, j).a.actions =
                 memdup(darray_item(from->levels, j).a.actions,
                        darray_item(from->levels, j).num_actions,
@@ -223,7 +223,7 @@ ClearKeyInfo(KeyInfo *keyi)
     darray_foreach(groupi, keyi->groups)
         ClearGroupInfo(groupi);
     darray_free(keyi->groups);
-    if (keyi->overlays_alloc)
+    якщо (keyi->overlays_alloc)
         free(keyi->overlays_keys);
 }
 
@@ -231,8 +231,8 @@ ClearKeyInfo(KeyInfo *keyi)
 
 typedef struct {
     char *name;         /* e.g. pc+us+inet(evdev) */
-    int errorCount;
-    unsigned int include_depth;
+    ціле errorCount;
+    unsigned ціле include_depth;
     xkb_layout_index_t explicit_group;
     xkb_layout_index_t max_groups;
     darray(KeyInfo) keys;
@@ -249,7 +249,7 @@ typedef struct {
 
 static void
 InitSymbolsInfo(SymbolsInfo *info, const struct xkb_keymap_info *keymap_info,
-                unsigned int include_depth, const struct xkb_mod_set *mods)
+                unsigned ціле include_depth, const struct xkb_mod_set *mods)
 {
     memset(info, 0, sizeof(*info));
     info->ctx = keymap_info->keymap.ctx;
@@ -278,7 +278,7 @@ ClearSymbolsInfo(SymbolsInfo *info)
 static const char *
 KeyInfoText(SymbolsInfo *info, KeyInfo *keyi)
 {
-    return KeyNameText(info->ctx, keyi->name);
+    повернути KeyNameText(info->ctx, keyi->name);
 }
 
 static bool
@@ -286,18 +286,18 @@ MergeGroups(SymbolsInfo *info, GroupInfo *into, GroupInfo *from, bool clobber,
             bool report, xkb_layout_index_t group, xkb_atom_t key_name)
 {
     /* First find the type of the merged group. */
-    if (into->type != from->type) {
-        if (from->type == XKB_ATOM_NONE) {
+    якщо (into->type != from->type) {
+        якщо (from->type == XKB_ATOM_NONE) {
             /* it's empty for consistency with other comparisons */
         }
-        else if (into->type == XKB_ATOM_NONE) {
+        інакше якщо (into->type == XKB_ATOM_NONE) {
             into->type = from->type;
         }
-        else {
+        інакше {
             xkb_atom_t use = (clobber ? from->type : into->type);
             xkb_atom_t ignore = (clobber ? into->type : from->type);
 
-            if (report) {
+            якщо (report) {
                 log_warn(info->ctx, XKB_WARNING_CONFLICTING_KEY_TYPE_MERGING_GROUPS,
                          "Multiple definitions for group %"PRIu32" type of key %s; "
                          "Using %s, ignoring %s\n",
@@ -313,16 +313,16 @@ MergeGroups(SymbolsInfo *info, GroupInfo *into, GroupInfo *from, bool clobber,
 
     /* Now look at the levels. */
 
-    if (darray_empty(from->levels)) {
+    якщо (darray_empty(from->levels)) {
         InitGroupInfo(from);
-        return true;
+        повернути true;
     }
 
-    if (darray_empty(into->levels)) {
+    якщо (darray_empty(into->levels)) {
         from->type = into->type;
         *into = *from;
         InitGroupInfo(from);
-        return true;
+        повернути true;
     }
 
     /* Merge the actions and syms. */
@@ -330,20 +330,20 @@ MergeGroups(SymbolsInfo *info, GroupInfo *into, GroupInfo *from, bool clobber,
         MIN(darray_size(into->levels), darray_size(from->levels));
     darray_size_t fromKeysymsCount = 0;
     darray_size_t fromActionsCount = 0;
-    for (darray_size_t i = 0; i < levels_in_both; i++) {
+    для (darray_size_t i = 0; i < levels_in_both; i++) {
         struct xkb_level* const intoLevel = &darray_item(into->levels, i);
         struct xkb_level* const fromLevel = &darray_item(from->levels, i);
 
         const bool fromHasNoKeysym = fromLevel->num_syms == 0;
         const bool fromHasNoAction = fromLevel->num_actions == 0;
-        if (fromHasNoKeysym && fromHasNoAction) {
+        якщо (fromHasNoKeysym && fromHasNoAction) {
             /* Empty `from`: do nothing */
             continue;
         }
 
         const bool intoHasNoKeysym = intoLevel->num_syms == 0;
         const bool intoHasNoAction = intoLevel->num_actions == 0;
-        if (intoHasNoKeysym && intoHasNoAction) {
+        якщо (intoHasNoKeysym && intoHasNoAction) {
             /* Empty `into`: use `from` keysyms and actions */
             StealLevelInfo(intoLevel, fromLevel);
             fromKeysymsCount++;
@@ -356,9 +356,9 @@ MergeGroups(SymbolsInfo *info, GroupInfo *into, GroupInfo *from, bool clobber,
         assert(fromLevel->num_syms > 0 || fromLevel->num_actions > 0);
 
         /* Handle keysyms */
-        if (!XkbLevelsSameSyms(fromLevel, intoLevel)) {
+        якщо (!XkbLevelsSameSyms(fromLevel, intoLevel)) {
             /* Incompatible keysyms */
-            if (report && !(intoHasNoKeysym || fromHasNoKeysym)) {
+            якщо (report && !(intoHasNoKeysym || fromHasNoKeysym)) {
                 log_warn(info->ctx, XKB_WARNING_CONFLICTING_KEY_SYMBOL,
                             "Multiple symbols for level %u/group "
                             "%"PRIu32" on key %s; Using %s, ignoring %s\n",
@@ -366,40 +366,40 @@ MergeGroups(SymbolsInfo *info, GroupInfo *into, GroupInfo *from, bool clobber,
                             (clobber ? "from" : "to"),
                             (clobber ? "to" : "from"));
             }
-            if (fromHasNoKeysym) {
+            якщо (fromHasNoKeysym) {
                 /* No keysym to copy */
-            } else if (clobber) {
+            } інакше якщо (clobber) {
                 /* Override: copy any defined keysym from `from` */
-                if (unlikely(fromLevel->num_syms > 1)) {
+                якщо (unlikely(fromLevel->num_syms > 1)) {
                     /* Multiple keysyms: always replace, all syms are defined */
-                    if (unlikely(intoLevel->num_syms > 1))
+                    якщо (unlikely(intoLevel->num_syms > 1))
                         free(intoLevel->s.syms);
                     /* Steal */
                     intoLevel->s.syms = fromLevel->s.syms;
                     intoLevel->num_syms = fromLevel->num_syms;
                     fromLevel->num_syms = 0;
                     fromKeysymsCount++;
-                } else if (fromLevel->s.sym != XKB_KEY_NoSymbol) {
+                } інакше якщо (fromLevel->s.sym != XKB_KEY_NoSymbol) {
                     /* Single defined keysym */
-                    if (unlikely(intoLevel->num_syms > 1))
+                    якщо (unlikely(intoLevel->num_syms > 1))
                         free(intoLevel->s.syms);
                     intoLevel->s.sym = fromLevel->s.sym;
                     intoLevel->num_syms = 1;
                     fromKeysymsCount++;
                 }
-            } else {
+            } інакше {
                 /* Augment: copy only the keysyms from `from` that are
                  * undefined in `into` */
-                if (unlikely(intoLevel->num_syms > 1)) {
+                якщо (unlikely(intoLevel->num_syms > 1)) {
                     /* Multiple keysyms: always ignore, all syms are defined */
-                } else if (intoLevel->s.sym == XKB_KEY_NoSymbol) {
+                } інакше якщо (intoLevel->s.sym == XKB_KEY_NoSymbol) {
                     /* Single undefined keysym */
-                    if (unlikely(fromLevel->num_syms > 1)) {
+                    якщо (unlikely(fromLevel->num_syms > 1)) {
                         /* Steal */
                         intoLevel->s.syms = fromLevel->s.syms;
                         intoLevel->num_syms = fromLevel->num_syms;
                         fromLevel->num_syms = 0;
-                    } else {
+                    } інакше {
                         intoLevel->s.sym = fromLevel->s.sym;
                         intoLevel->num_syms = 1;
                     }
@@ -409,10 +409,10 @@ MergeGroups(SymbolsInfo *info, GroupInfo *into, GroupInfo *from, bool clobber,
         }
 
         /* Handle actions */
-        if (!XkbLevelsSameActions(intoLevel, fromLevel)) {
+        якщо (!XkbLevelsSameActions(intoLevel, fromLevel)) {
             /* Incompatible actions */
-            if (report && !(intoHasNoAction || fromHasNoAction)) {
-                if (unlikely(intoLevel->num_actions > 1)) {
+            якщо (report && !(intoHasNoAction || fromHasNoAction)) {
+                якщо (unlikely(intoLevel->num_actions > 1)) {
                     log_warn(
                         info->ctx, XKB_WARNING_CONFLICTING_KEY_ACTION,
                         "Multiple actions for level %u/group %"PRIu32" "
@@ -420,7 +420,7 @@ MergeGroups(SymbolsInfo *info, GroupInfo *into, GroupInfo *from, bool clobber,
                         i + 1, group + 1, KeyNameText(info->ctx, key_name),
                         clobber ? "Using from, ignoring to"
                                 : "Using to, ignoring from");
-                } else {
+                } інакше {
                     union xkb_action *use, *ignore;
                     use = clobber
                         ? &fromLevel->a.action
@@ -438,40 +438,40 @@ MergeGroups(SymbolsInfo *info, GroupInfo *into, GroupInfo *from, bool clobber,
                                 ActionTypeText(ignore->type));
                 }
             }
-            if (fromHasNoAction) {
+            якщо (fromHasNoAction) {
                 /* No action to copy */
-            } else if (clobber) {
+            } інакше якщо (clobber) {
                 /* Override: copy any defined action from `from` */
-                if (unlikely(fromLevel->num_actions > 1)) {
+                якщо (unlikely(fromLevel->num_actions > 1)) {
                     /* Multiple actions: always replace, all syms are defined */
-                    if (unlikely(intoLevel->num_actions > 1))
+                    якщо (unlikely(intoLevel->num_actions > 1))
                         free(intoLevel->a.actions);
                     /* Steal */
                     intoLevel->a.actions = fromLevel->a.actions;
                     intoLevel->num_actions = fromLevel->num_actions;
                     fromLevel->num_actions = 0;
                     fromActionsCount++;
-                } else if (fromLevel->a.action.type != ACTION_TYPE_NONE) {
+                } інакше якщо (fromLevel->a.action.type != ACTION_TYPE_NONE) {
                     /* Single defined action */
-                    if (unlikely(intoLevel->num_actions > 1))
+                    якщо (unlikely(intoLevel->num_actions > 1))
                         free(intoLevel->a.actions);
                     intoLevel->a.action = fromLevel->a.action;
                     intoLevel->num_actions = 1;
                     fromActionsCount++;
                 }
-            } else {
+            } інакше {
                 /* Augment: copy only the actions from `from` that are
                  * undefined in `into` */
-                if (unlikely(intoLevel->num_actions > 1)) {
+                якщо (unlikely(intoLevel->num_actions > 1)) {
                     /* Multiple keysyms: always ignore, all syms are defined */
-                } else if (intoLevel->a.action.type == ACTION_TYPE_NONE) {
+                } інакше якщо (intoLevel->a.action.type == ACTION_TYPE_NONE) {
                     /* Single undefined keysym */
-                    if (unlikely(fromLevel->num_actions > 1)) {
+                    якщо (unlikely(fromLevel->num_actions > 1)) {
                         /* Steal */
                         intoLevel->a.actions = fromLevel->a.actions;
                         intoLevel->num_actions = fromLevel->num_actions;
                         fromLevel->num_actions = 0;
-                    } else {
+                    } інакше {
                         intoLevel->a.action = fromLevel->a.action;
                         intoLevel->num_actions = 1;
                     }
@@ -491,52 +491,52 @@ MergeGroups(SymbolsInfo *info, GroupInfo *into, GroupInfo *from, bool clobber,
         fromKeysymsCount++;
         fromActionsCount++;
     }
-    if (fromKeysymsCount) {
+    якщо (fromKeysymsCount) {
         /* Reset defined keysyms field if we used no keysym from `into` */
-        if (fromKeysymsCount == darray_size(into->levels))
+        якщо (fromKeysymsCount == darray_size(into->levels))
             into->defined &= ~GROUP_FIELD_SYMS;
         into->defined |= (from->defined & GROUP_FIELD_SYMS);
     }
-    if (fromActionsCount) {
+    якщо (fromActionsCount) {
         /* Reset defined actions field if we used no action from `into` */
-        if (fromActionsCount == darray_size(into->levels))
+        якщо (fromActionsCount == darray_size(into->levels))
             into->defined &= ~GROUP_FIELD_ACTS;
         into->defined |= (from->defined & GROUP_FIELD_ACTS);
     }
 
-    return true;
+    повернути true;
 }
 
 static bool
 UseNewKeyField(enum key_field field, enum key_field old, enum key_field new,
                bool clobber, bool report, enum key_field *collide)
 {
-    if (!(old & field))
-        return (new & field);
+    якщо (!(old & field))
+        повернути (new & field);
 
-    if (new & field) {
-        if (report)
+    якщо (new & field) {
+        якщо (report)
             *collide |= field;
 
-        return clobber;
+        повернути clobber;
     }
 
-    return false;
+    повернути false;
 }
 
 static bool
 overlays_get(const KeyInfo *info, xkb_overlay_index_t bit,
              const struct xkb_key **key_out)
 {
-    if (bit >= (xkb_overlay_index_t)(sizeof(xkb_overlay_mask_t) * CHAR_BIT))
-        return false;
+    якщо (bit >= (xkb_overlay_index_t)(sizeof(xkb_overlay_mask_t) * CHAR_BIT))
+        повернути false;
     const xkb_overlay_mask_t mask = (xkb_overlay_mask_t)(1u << bit);
-    if (!(info->overlays & mask)) return false;
-    if (key_out) {
-        if (!info->overlays_alloc) {
+    якщо (!(info->overlays & mask)) повернути false;
+    якщо (key_out) {
+        якщо (!info->overlays_alloc) {
             /* Stored inline */
             *key_out = info->overlay_key;
-        } else {
+        } інакше {
             /* Stored in sparse array */
             const xkb_overlay_mask_t low = (xkb_overlay_mask_t)(
                 info->overlays & (mask - 1u)
@@ -545,26 +545,26 @@ overlays_get(const KeyInfo *info, xkb_overlay_index_t bit,
             *key_out = info->overlays_keys[index];
         }
     }
-    return true;
+    повернути true;
 }
 
 static bool
 overlays_insert(KeyInfo *keyi, xkb_overlay_index_t bit,
                 const struct xkb_key *key)
 {
-    if (bit >= (xkb_overlay_index_t)(sizeof(xkb_overlay_mask_t) * CHAR_BIT))
-        return false;
+    якщо (bit >= (xkb_overlay_index_t)(sizeof(xkb_overlay_mask_t) * CHAR_BIT))
+        повернути false;
 
     const xkb_overlay_mask_t mask = (xkb_overlay_mask_t)(1u << bit);
 
-    if ((keyi->overlays & mask) && !keyi->overlays_clear) {
+    якщо ((keyi->overlays & mask) && !keyi->overlays_clear) {
         /* Overwrite existing slot */
-        if (!keyi->overlays_alloc) {
+        якщо (!keyi->overlays_alloc) {
             /* Stored inline */
             keyi->overlay_key = key;
-            if (!key)
+            якщо (!key)
                 keyi->overlays_clear = true;
-        } else {
+        } інакше {
             /* Stored in sparse array */
             const xkb_overlay_mask_t low = (xkb_overlay_mask_t)(
                 keyi->overlays & (xkb_overlay_mask_t)(mask - 1u)
@@ -574,16 +574,16 @@ overlays_insert(KeyInfo *keyi, xkb_overlay_index_t bit,
                 (xkb_overlay_index_t)popcount32(low);
             keyi->overlays_keys[index] = key;
         }
-        return true;
+        повернути true;
     }
 
     /* Insert new element */
-    if (!keyi->overlays || (keyi->overlays_clear && !key)) {
+    якщо (!keyi->overlays || (keyi->overlays_clear && !key)) {
         /* No previous overlay or only cleared overlays: use inline storage */
         keyi->overlay_key = key;
         keyi->overlays |= mask;
         keyi->overlays_clear = !key;
-    } else if (!keyi->overlays_alloc) {
+    } інакше якщо (!keyi->overlays_alloc) {
         /* Promote inline element to heap */
         const xkb_overlay_mask_t overlays = keyi->overlays | mask;
         const xkb_overlay_index_t alloc =
@@ -591,17 +591,17 @@ overlays_insert(KeyInfo *keyi, xkb_overlay_index_t bit,
 
         /* Alloc sparse array */
         const struct xkb_key ** const tmp = calloc(alloc, sizeof(*tmp));
-        if (!tmp) return false;
+        якщо (!tmp) повернути false;
 
         /* Copy previous entries to the buffer */
-        if (!keyi->overlays_clear) {
+        якщо (!keyi->overlays_clear) {
             /* A previous single overlay was set */
             const xkb_overlay_mask_t low = (xkb_overlay_mask_t)(
                 overlays & (xkb_overlay_mask_t)(keyi->overlays - 1u)
             );
             const xkb_overlay_index_t idx = (xkb_overlay_index_t)popcount32(low);
             tmp[idx] = keyi->overlay_key;
-        } else {
+        } інакше {
             /* All previous overlays were set to none: set thanks to calloc */
         }
 
@@ -616,13 +616,13 @@ overlays_insert(KeyInfo *keyi, xkb_overlay_index_t bit,
         keyi->overlays_alloc = alloc;
         keyi->overlays = overlays;
         keyi->overlays_clear = false;
-    } else {
+    } інакше {
         /* Allocated items: grow heap and shift if relevant */
         const xkb_overlay_mask_t overlays =
             (xkb_overlay_mask_t)(keyi->overlays | mask);
         const xkb_overlay_index_t count =
             (xkb_overlay_index_t)popcount32(overlays);
-        if (count > keyi->overlays_alloc) {
+        якщо (count > keyi->overlays_alloc) {
             const xkb_overlay_index_t alloc =
                 (xkb_overlay_index_t)next_pow2(count);
             assert(alloc >= count);
@@ -630,7 +630,7 @@ overlays_insert(KeyInfo *keyi, xkb_overlay_index_t bit,
                 keyi->overlays_keys,
                 (size_t)alloc * sizeof(*keyi->overlays_keys)
             );
-            if (!tmp) return false;
+            якщо (!tmp) повернути false;
             keyi->overlays_keys = tmp;
             keyi->overlays_alloc = alloc;
         }
@@ -639,9 +639,9 @@ overlays_insert(KeyInfo *keyi, xkb_overlay_index_t bit,
             overlays & (xkb_overlay_mask_t)(mask - 1u)
         );
         const xkb_overlay_index_t index = (xkb_overlay_index_t)popcount32(low);
-        if (index >= keyi->overlays_alloc)
+        якщо (index >= keyi->overlays_alloc)
             PANIC_UNREACHABLE();
-        if (index < count - 1u /* previous count */) {
+        якщо (index < count - 1u /* previous count */) {
             /* insert between 2 previous items: move items from greater bits */
             assert(index + 1 < keyi->overlays_alloc);
             memmove(keyi->overlays_keys + index + 1, keyi->overlays_keys + index,
@@ -651,7 +651,7 @@ overlays_insert(KeyInfo *keyi, xkb_overlay_index_t bit,
         keyi->overlays = overlays;
     }
 
-    return true;
+    повернути true;
 }
 
 /** Merge keyboard overlays. At most one can be defined (X11 limitation) */
@@ -659,9 +659,9 @@ static bool
 merge_overlays(SymbolsInfo *info, KeyInfo *into, KeyInfo *from,
                bool clobber, bool report, enum key_field *collide)
 {
-    if (!(from->defined & KEY_FIELD_OVERLAY)) {
+    якщо (!(from->defined & KEY_FIELD_OVERLAY)) {
         /* `from` is empty: do nothing */
-    } else if (!(into->defined & KEY_FIELD_OVERLAY)) {
+    } інакше якщо (!(into->defined & KEY_FIELD_OVERLAY)) {
         /* `into` is empty: steal `from` */
         into->overlays = from->overlays;
         into->overlays_keys = from->overlays_keys;
@@ -669,11 +669,11 @@ merge_overlays(SymbolsInfo *info, KeyInfo *into, KeyInfo *from,
         into->overlays_alloc = from->overlays_alloc;
         from->overlays_alloc = 0;
         into->defined |= KEY_FIELD_OVERLAY;
-    } else if (into->overlays_clear && from->overlays_clear) {
+    } інакше якщо (into->overlays_clear && from->overlays_clear) {
         /* Only cleared overlays: combine them */
         into->overlays |= from->overlays;
-    } else {
-        if (info->keymap_info->features.overlapping_overlays) {
+    } інакше {
+        якщо (info->keymap_info->features.overlapping_overlays) {
             /* Overlapping overlays */
 
             const xkb_overlay_mask_t result_mask =
@@ -681,7 +681,7 @@ merge_overlays(SymbolsInfo *info, KeyInfo *into, KeyInfo *from,
             const xkb_overlay_index_t count =
                 (xkb_overlay_index_t)popcount32(result_mask);
 
-            if (count == 0)
+            якщо (count == 0)
                 PANIC_UNREACHABLE();
 
             /*
@@ -692,35 +692,35 @@ merge_overlays(SymbolsInfo *info, KeyInfo *into, KeyInfo *from,
 
             KeyInfo *dest = into;
             KeyInfo *src = from;
-            if (into->overlays_alloc >= count &&
+            якщо (into->overlays_alloc >= count &&
                 into->overlays_alloc >= from->overlays_alloc) {
                 /* Do nothing */
-            } else if (from->overlays_alloc >= count) {
+            } інакше якщо (from->overlays_alloc >= count) {
                 dest = from;
                 src = into;
                 clobber = !clobber;
-            } else if (count > 1) {
+            } інакше якщо (count > 1) {
                 /* Neither is sufficient: realloc the larger one if possible */
-                if (into->overlays_alloc < from->overlays_alloc) {
+                якщо (into->overlays_alloc < from->overlays_alloc) {
                     dest = from;
                     src = into;
                     clobber = !clobber;
                 }
 
-                if (!dest->overlays_alloc) {
+                якщо (!dest->overlays_alloc) {
                     const struct xkb_key **tmp = calloc(count, sizeof(*tmp));
-                    if (!tmp)
-                        return false;
-                    if (dest->overlay_key)
+                    якщо (!tmp)
+                        повернути false;
+                    якщо (dest->overlay_key)
                         tmp[0] = dest->overlay_key;
                     dest->overlays_keys = tmp;
                     dest->overlays_alloc = count;
-                } else {
+                } інакше {
                     const struct xkb_key **tmp =
                         realloc(dest->overlays_keys,
                                 count * sizeof(*dest->overlays_keys));
-                    if (!tmp)
-                        return false;
+                    якщо (!tmp)
+                        повернути false;
                     dest->overlays_keys = tmp;
                     dest->overlays_alloc = count;
                 }
@@ -732,7 +732,7 @@ merge_overlays(SymbolsInfo *info, KeyInfo *into, KeyInfo *from,
                 : (src->overlays_alloc)
                     ? src->overlays_keys
                     : &src->overlay_key;
-            while (remaining) {
+            поки (remaining) {
                 /* isolate lowest set bit */
                 const xkb_overlay_mask_t lsb = (xkb_overlay_mask_t)(
                     remaining &
@@ -744,7 +744,7 @@ merge_overlays(SymbolsInfo *info, KeyInfo *into, KeyInfo *from,
                 remaining = (remaining & ~lsb);
 
                 /* pop current value */
-                if (!src->overlays_clear && !src->overlays_alloc && remaining)
+                якщо (!src->overlays_clear && !src->overlays_alloc && remaining)
                     PANIC_UNREACHABLE();
                 const struct xkb_key *src_key = (src_keys)
                     ? *(src_keys++)
@@ -753,59 +753,59 @@ merge_overlays(SymbolsInfo *info, KeyInfo *into, KeyInfo *from,
                 /* check dest */
                 const struct xkb_key *dest_key = NULL;
                 const bool conflict = overlays_get(dest, bit, &dest_key);
-                if (conflict) {
-                    if (dest_key == src_key)
+                якщо (conflict) {
+                    якщо (dest_key == src_key)
                        continue;
-                    else if (report)
+                    інакше якщо (report)
                         *collide |= KEY_FIELD_OVERLAY;
                 }
 
-                if ((!conflict || clobber) && !overlays_insert(dest, bit, src_key))
-                    return false;
+                якщо ((!conflict || clobber) && !overlays_insert(dest, bit, src_key))
+                    повернути false;
             }
 
-            if (dest == from) {
+            якщо (dest == from) {
                 /* `from` buffer was used; clone it into `into` then clear it */
-                if (into->overlays_alloc)
+                якщо (into->overlays_alloc)
                     free(into->overlays_keys);
                 into->overlays = from->overlays;
                 into->overlays_clear = from->overlays_clear;
                 into->overlays_alloc = from->overlays_alloc;
-                if (from->overlays_alloc) {
+                якщо (from->overlays_alloc) {
                     /* Steal */
                     into->overlays_keys = from->overlays_keys;
                     from->overlays_keys = NULL;
                     from->overlays_alloc = 0;
-                } else {
+                } інакше {
                     into->overlay_key = from->overlay_key;
                 }
             }
-        } else {
+        } інакше {
             /* Disjoint overlays */
 
-            if (into->overlays == from->overlays &&
+            якщо (into->overlays == from->overlays &&
                 into->overlays_clear == from->overlays_clear &&
                 into->overlay_key == from->overlay_key) {
                 /* Indentical: do nothing */
-                return true;
+                повернути true;
             }
-            if (!(into->overlays & from->overlays)) {
-                if (into->overlays_clear) {
+            якщо (!(into->overlays & from->overlays)) {
+                якщо (into->overlays_clear) {
                     /* `into` clears and `from` sets distinct overlays: use `from` */
                     into->overlays = from->overlays;
                     into->overlays_clear = from->overlays_clear;
                     into->overlays_alloc = from->overlays_alloc;
                     into->overlay_key = from->overlay_key;
-                    return true;
-                } else if (from->overlays_clear) {
+                    повернути true;
+                } інакше якщо (from->overlays_clear) {
                     /* `into` sets and `from` clears distinct overlays: use `into` */
-                    return true;
+                    повернути true;
                 }
             }
             /* Conflict */
-            if (report)
+            якщо (report)
                 *collide |= KEY_FIELD_OVERLAY;
-            if (clobber) {
+            якщо (clobber) {
                 into->overlays = from->overlays;
                 into->overlays_clear = from->overlays_clear;
                 into->overlays_alloc = from->overlays_alloc;
@@ -813,7 +813,7 @@ merge_overlays(SymbolsInfo *info, KeyInfo *into, KeyInfo *from,
             }
         }
     }
-    return true;
+    повернути true;
 }
 
 static bool
@@ -822,45 +822,45 @@ MergeKeys(SymbolsInfo *info, KeyInfo *into, KeyInfo *from, bool same_file)
     xkb_layout_index_t i;
     xkb_layout_index_t groups_in_both;
     enum key_field collide = 0;
-    const int verbosity = xkb_context_get_log_verbosity(info->ctx);
+    const ціле verbosity = xkb_context_get_log_verbosity(info->ctx);
     const bool clobber = (from->merge != MERGE_AUGMENT);
     const bool report = (same_file && verbosity > 0) || verbosity > 9;
 
-    if (from->merge == MERGE_REPLACE) {
+    якщо (from->merge == MERGE_REPLACE) {
         ClearKeyInfo(into);
         *into = *from;
         InitKeyInfo(info->ctx, from);
-        return true;
+        повернути true;
     }
 
     groups_in_both = MIN(darray_size(into->groups), darray_size(from->groups));
-    for (i = 0; i < groups_in_both; i++)
+    для (i = 0; i < groups_in_both; i++)
         MergeGroups(info,
                     &darray_item(into->groups, i),
                     &darray_item(from->groups, i),
                     clobber, report, i, into->name);
     /* If @from has extra groups, just move them to @into. */
-    for (i = groups_in_both; i < darray_size(from->groups); i++) {
+    для (i = groups_in_both; i < darray_size(from->groups); i++) {
         darray_append(into->groups, darray_item(from->groups, i));
         InitGroupInfo(&darray_item(from->groups, i));
     }
 
-    if (UseNewKeyField(KEY_FIELD_VMODMAP, into->defined, from->defined,
+    якщо (UseNewKeyField(KEY_FIELD_VMODMAP, into->defined, from->defined,
                        clobber, report, &collide)) {
         into->vmodmap = from->vmodmap;
         into->defined |= KEY_FIELD_VMODMAP;
     }
-    if (UseNewKeyField(KEY_FIELD_REPEAT, into->defined, from->defined,
+    якщо (UseNewKeyField(KEY_FIELD_REPEAT, into->defined, from->defined,
                        clobber, report, &collide)) {
         into->repeat = from->repeat;
         into->defined |= KEY_FIELD_REPEAT;
     }
-    if (UseNewKeyField(KEY_FIELD_DEFAULT_TYPE, into->defined, from->defined,
+    якщо (UseNewKeyField(KEY_FIELD_DEFAULT_TYPE, into->defined, from->defined,
                        clobber, report, &collide)) {
         into->default_type = from->default_type;
         into->defined |= KEY_FIELD_DEFAULT_TYPE;
     }
-    if (UseNewKeyField(KEY_FIELD_GROUPINFO, into->defined, from->defined,
+    якщо (UseNewKeyField(KEY_FIELD_GROUPINFO, into->defined, from->defined,
                        clobber, report, &collide)) {
         into->out_of_range_pending_group = from->out_of_range_pending_group;
         into->out_of_range_group_policy = from->out_of_range_group_policy;
@@ -868,10 +868,10 @@ MergeKeys(SymbolsInfo *info, KeyInfo *into, KeyInfo *from, bool same_file)
         into->defined |= KEY_FIELD_GROUPINFO;
     }
 
-    if (!merge_overlays(info, into, from, clobber, report, &collide))
-        return false;
+    якщо (!merge_overlays(info, into, from, clobber, report, &collide))
+        повернути false;
 
-    if (collide) {
+    якщо (collide) {
         log_warn(info->ctx, XKB_WARNING_CONFLICTING_KEY_FIELDS,
                  "Symbol map for key %s redefined; "
                  "Using %s definition for conflicting fields\n",
@@ -881,19 +881,19 @@ MergeKeys(SymbolsInfo *info, KeyInfo *into, KeyInfo *from, bool same_file)
 
     ClearKeyInfo(from);
     InitKeyInfo(info->ctx, from);
-    return true;
+    повернути true;
 }
 
 static xkb_atom_t
 XkbResolveKeyAlias(const struct xkb_keymap *keymap, xkb_atom_t name)
 {
-    if (name < keymap->num_key_names) {
+    якщо (name < keymap->num_key_names) {
         const KeycodeMatch match = keymap->key_names[name];
-        if (match.found && match.is_alias) {
-            return match.alias.real;
+        якщо (match.found && match.is_alias) {
+            повернути match.alias.real;
         }
     }
-    return name;
+    повернути name;
 }
 
 /* TODO: Make it so this function doesn't need the entire keymap. */
@@ -910,12 +910,12 @@ AddKeySymbols(SymbolsInfo *info, KeyInfo *keyi, bool same_file)
 
     KeyInfo *iter;
     darray_foreach(iter, info->keys)
-        if (iter->name == keyi->name)
-            return MergeKeys(info, iter, keyi, same_file);
+        якщо (iter->name == keyi->name)
+            повернути MergeKeys(info, iter, keyi, same_file);
 
     darray_append(info->keys, *keyi);
     InitKeyInfo(info->ctx, keyi);
-    return true;
+    повернути true;
 }
 
 static bool
@@ -925,25 +925,25 @@ AddModMapEntry(SymbolsInfo *info, const ModMapEntry *new)
 
     ModMapEntry *old;
     darray_foreach(old, info->modmaps) {
-        if ((new->haveSymbol != old->haveSymbol) ||
+        якщо ((new->haveSymbol != old->haveSymbol) ||
             (new->haveSymbol && new->u.keySym != old->u.keySym) ||
             (!new->haveSymbol && new->u.keyName != old->u.keyName))
             continue;
 
-        if (new->mods == old->mods)
-            return true;
+        якщо (new->mods == old->mods)
+            повернути true;
 
         const xkb_mod_mask_t use = (clobber ? new->mods : old->mods);
         const xkb_mod_mask_t ignore = (clobber ? old->mods : new->mods);
 
-        if (new->haveSymbol) {
+        якщо (new->haveSymbol) {
             log_warn(info->ctx, XKB_WARNING_CONFLICTING_MODMAP,
                     "Symbol \"%s\" added to modifier map "
                     "for distinct modifiers mask; Using %s, ignoring %s\n",
                     KeysymText(info->ctx, new->u.keySym),
                     ModMaskText(info->ctx, MOD_REAL, &info->mods, use),
                     ModMaskText(info->ctx, MOD_REAL, &info->mods, ignore));
-        } else {
+        } інакше {
             log_warn(info->ctx, XKB_WARNING_CONFLICTING_MODMAP,
                     "Key \"%s\" added to modifier map "
                     "for distinct modifiers mask; Using %s, ignoring %s\n",
@@ -952,12 +952,12 @@ AddModMapEntry(SymbolsInfo *info, const ModMapEntry *new)
                     ModMaskText(info->ctx, MOD_REAL, &info->mods, ignore));
         }
         old->mods = use;
-        return true;
+        повернути true;
     }
 
     darray_append(info->modmaps, *new);
 
-    return true;
+    повернути true;
 }
 
 /***====================================================================***/
@@ -969,24 +969,24 @@ MergeIncludedSymbols(SymbolsInfo *into, SymbolsInfo *from,
     xkb_atom_t *group_name;
     xkb_layout_index_t group_names_in_both;
 
-    if (from->errorCount > 0) {
+    якщо (from->errorCount > 0) {
         into->errorCount += from->errorCount;
-        return;
+        повернути;
     }
 
     MergeModSets(into->ctx, &into->mods, &from->mods, merge);
 
-    if (into->name == NULL) {
+    якщо (into->name == NULL) {
         into->name = steal(&from->name);
     }
 
     group_names_in_both = MIN(darray_size(into->group_names),
                               darray_size(from->group_names));
-    for (xkb_layout_index_t i = 0; i < group_names_in_both; i++) {
-        if (!darray_item(from->group_names, i))
+    для (xkb_layout_index_t i = 0; i < group_names_in_both; i++) {
+        якщо (!darray_item(from->group_names, i))
             continue;
 
-        if (merge == MERGE_AUGMENT && darray_item(into->group_names, i))
+        якщо (merge == MERGE_AUGMENT && darray_item(into->group_names, i))
             continue;
 
         darray_item(into->group_names, i) = darray_item(from->group_names, i);
@@ -995,28 +995,28 @@ MergeIncludedSymbols(SymbolsInfo *into, SymbolsInfo *from,
     darray_foreach_from(group_name, from->group_names, group_names_in_both)
         darray_append(into->group_names, *group_name);
 
-    if (darray_empty(into->keys)) {
+    якщо (darray_empty(into->keys)) {
         into->keys = from->keys;
         darray_init(from->keys);
     }
-    else {
+    інакше {
         KeyInfo *keyi;
         darray_foreach(keyi, from->keys) {
             keyi->merge = merge;
-            if (!AddKeySymbols(into, keyi, false))
+            якщо (!AddKeySymbols(into, keyi, false))
                 into->errorCount++;
         }
     }
 
-    if (darray_empty(into->modmaps)) {
+    якщо (darray_empty(into->modmaps)) {
         into->modmaps = from->modmaps;
         darray_init(from->modmaps);
     }
-    else {
+    інакше {
         ModMapEntry *mm;
         darray_foreach(mm, from->modmaps) {
             mm->merge = merge;
-            if (!AddModMapEntry(into, mm))
+            якщо (!AddModMapEntry(into, mm))
                 into->errorCount++;
         }
     }
@@ -1030,9 +1030,9 @@ HandleIncludeSymbols(SymbolsInfo *info, IncludeStmt *include)
 {
     SymbolsInfo included;
 
-    if (ExceedsIncludeMaxDepth(info->ctx, info->include_depth)) {
+    якщо (ExceedsIncludeMaxDepth(info->ctx, info->include_depth)) {
         info->errorCount += 10;
-        return false;
+        повернути false;
     }
 
     InitSymbolsInfo(&included, info->keymap_info, info->include_depth + 1,
@@ -1044,25 +1044,25 @@ HandleIncludeSymbols(SymbolsInfo *info, IncludeStmt *include)
         .strict = info->keymap_info->strict
     };
 
-    for (IncludeStmt *stmt = include; stmt; stmt = stmt->next_incl) {
+    для (IncludeStmt *stmt = include; stmt; stmt = stmt->next_incl) {
         SymbolsInfo next_incl;
         XkbFile *file;
 
         char path[PATH_MAX];
         file = ProcessIncludeFile(info->ctx, &config, stmt, FILE_TYPE_SYMBOLS,
                                   path, sizeof(path));
-        if (!file) {
+        якщо (!file) {
             info->errorCount += 10;
             ClearSymbolsInfo(&included);
-            return false;
+            повернути false;
         }
 
         InitSymbolsInfo(&next_incl, info->keymap_info, info->include_depth + 1,
                         &included.mods);
-        if (stmt->modifier) {
-            const int count = parse_dec_to_uint32_t(stmt->modifier, SIZE_MAX,
+        якщо (stmt->modifier) {
+            const ціле count = parse_dec_to_uint32_t(stmt->modifier, SIZE_MAX,
                                                     &next_incl.explicit_group);
-            if (count <= 0 || *(stmt->modifier + count) != '\0' ||
+            якщо (count <= 0 || *(stmt->modifier + count) != '\0' ||
                 next_incl.explicit_group == 0 ||
                 next_incl.explicit_group > info->max_groups) {
                 log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
@@ -1070,11 +1070,11 @@ HandleIncludeSymbols(SymbolsInfo *info, IncludeStmt *include)
                         "must be between 1..%"PRIu32"; Ignoring group number\n",
                         stmt->modifier, info->max_groups);
                 next_incl.explicit_group = info->explicit_group;
-            } else {
+            } інакше {
                 next_incl.explicit_group--;
             }
         }
-        else if (info->keymap_info->keymap.num_groups != 0 &&
+        інакше якщо (info->keymap_info->keymap.num_groups != 0 &&
                  next_incl.include_depth == 1) {
             /*
              * If keymap is the result of RMLVO resolution and we are at the
@@ -1089,7 +1089,7 @@ HandleIncludeSymbols(SymbolsInfo *info, IncludeStmt *include)
              */
             next_incl.explicit_group = 0;
         }
-        else {
+        інакше {
             /* The keymap was not generated from rules or this is not the first
              * level of include: take the parent’s explicit group. */
             next_incl.explicit_group = info->explicit_group;
@@ -1106,7 +1106,7 @@ HandleIncludeSymbols(SymbolsInfo *info, IncludeStmt *include)
     MergeIncludedSymbols(info, &included, include->merge);
     ClearSymbolsInfo(&included);
 
-    return (info->errorCount == 0);
+    повернути (info->errorCount == 0);
 }
 
 static bool
@@ -1116,44 +1116,44 @@ GetGroupIndex(SymbolsInfo *info, KeyInfo *keyi, ExprDef *arrayNdx,
     assert (field == GROUP_FIELD_SYMS || field == GROUP_FIELD_ACTS);
     const char *name = (field == GROUP_FIELD_SYMS ? "symbols" : "actions");
 
-    if (arrayNdx == NULL) {
+    якщо (arrayNdx == NULL) {
         xkb_layout_index_t i = 0;
         GroupInfo *groupi;
 
         darray_enumerate(i, groupi, keyi->groups) {
-            if (!(groupi->defined & field)) {
+            якщо (!(groupi->defined & field)) {
                 *ndx_rtrn = i;
-                return true;
+                повернути true;
             }
         }
 
-        if (i >= info->max_groups) {
+        якщо (i >= info->max_groups) {
             log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                     "Too many groups of %s for key %s (max %"PRIu32"); "
                     "Ignoring %s defined for extra groups\n",
                     name, KeyInfoText(info, keyi), info->max_groups, name);
-            return false;
+            повернути false;
         }
 
         darray_resize0(keyi->groups, darray_size(keyi->groups) + 1);
         *ndx_rtrn = darray_size(keyi->groups) - 1;
-        return true;
+        повернути true;
     }
 
-    if (ExprResolveGroup(info->keymap_info, arrayNdx, false, ndx_rtrn, NULL) !=
+    якщо (ExprResolveGroup(info->keymap_info, arrayNdx, false, ndx_rtrn, NULL) !=
         PARSER_SUCCESS) {
         log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                 "Illegal group index for %s of key %s\n"
                 "Definition with non-integer array index ignored\n",
                 name, KeyInfoText(info, keyi));
-        return false;
+        повернути false;
     }
 
     (*ndx_rtrn)--;
-    if (*ndx_rtrn >= darray_size(keyi->groups))
+    якщо (*ndx_rtrn >= darray_size(keyi->groups))
         darray_resize0(keyi->groups, *ndx_rtrn + 1);
 
-    return true;
+    повернути true;
 }
 
 static bool
@@ -1162,66 +1162,66 @@ AddSymbolsToKey(SymbolsInfo *info, KeyInfo *keyi, ExprDef *arrayNdx,
 {
     xkb_layout_index_t ndx = 0;
 
-    if (!GetGroupIndex(info, keyi, arrayNdx, GROUP_FIELD_SYMS, &ndx))
-        return false;
+    якщо (!GetGroupIndex(info, keyi, arrayNdx, GROUP_FIELD_SYMS, &ndx))
+        повернути false;
 
     GroupInfo *groupi = &darray_item(keyi->groups, ndx);
 
-    if (value->common.type == STMT_EXPR_EMPTY_LIST) {
+    якщо (value->common.type == STMT_EXPR_EMPTY_LIST) {
         groupi->defined |= GROUP_FIELD_SYMS;
-        return true;
+        повернути true;
     }
 
-    if (value->common.type != STMT_EXPR_KEYSYM_LIST) {
+    якщо (value->common.type != STMT_EXPR_KEYSYM_LIST) {
         log_err(info->ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Expected a list of symbols, found %s; "
                 "Ignoring symbols for group %"PRIu32" of %s\n",
                 stmt_type_to_string(value->common.type), ndx + 1,
                 KeyInfoText(info, keyi));
-        return false;
+        повернути false;
     }
 
-    if (groupi->defined & GROUP_FIELD_SYMS) {
+    якщо (groupi->defined & GROUP_FIELD_SYMS) {
         log_err(info->ctx, XKB_ERROR_CONFLICTING_KEY_SYMBOLS_ENTRY,
                 "Symbols for key %s, group %"PRIu32" already defined; "
                 "Ignoring duplicate definition\n",
                 KeyInfoText(info, keyi), ndx + 1);
-        return false;
+        повернути false;
     }
 
     xkb_level_index_t nLevels = 0;
     xkb_level_index_t nonEmptyLevels = 0;
     /* Contrary to actions, keysyms are already parsed at this point so we drop
      * trailing symbols by not adding them in the first place. */
-    for (ExprKeysymList *keysymList = (ExprKeysymList *) value;
+    для (ExprKeysymList *keysymList = (ExprKeysymList *) value;
          keysymList;
          keysymList = (ExprKeysymList *) keysymList->common.next) {
         nLevels++;
         /* Drop trailing NoSymbol */
-        if (darray_size(keysymList->syms) > 0)
+        якщо (darray_size(keysymList->syms) > 0)
             nonEmptyLevels = nLevels;
     }
-    if (nonEmptyLevels < nLevels)
+    якщо (nonEmptyLevels < nLevels)
         nLevels = nonEmptyLevels;
-    if (darray_size(groupi->levels) < nLevels)
+    якщо (darray_size(groupi->levels) < nLevels)
         darray_resize0(groupi->levels, nLevels);
 
     groupi->defined |= GROUP_FIELD_SYMS;
 
     xkb_level_index_t level = 0;
-    for (ExprKeysymList *keysymList = (ExprKeysymList *) value;
+    для (ExprKeysymList *keysymList = (ExprKeysymList *) value;
          keysymList && level < nLevels;
          keysymList = (ExprKeysymList *) keysymList->common.next, level++) {
         struct xkb_level *leveli = &darray_item(groupi->levels, level);
         assert(leveli->num_syms == 0);
 
-        if (unlikely(darray_size(keysymList->syms) > MAX_KEYSYMS_PER_LEVEL)) {
+        якщо (unlikely(darray_size(keysymList->syms) > MAX_KEYSYMS_PER_LEVEL)) {
             log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Key %s has too many keysyms for group %"PRIu32", "
                     "level %"PRIu32"; expected max %u, got: %u\n",
                     KeyInfoText(info, keyi), ndx + 1, level + 1,
                     MAX_KEYSYMS_PER_LEVEL, darray_size(keysymList->syms));
-            return false;
+            повернути false;
         }
 
         leveli->num_syms = (xkb_keysym_count_t) darray_size(keysymList->syms);
@@ -1238,13 +1238,13 @@ AddSymbolsToKey(SymbolsInfo *info, KeyInfo *keyi, ExprDef *arrayNdx,
             darray_steal(keysymList->syms, &leveli->s.syms, NULL);
 #ifndef NDEBUG
             /* Canonical list: all NoSymbol were dropped */
-            for (xkb_keysym_count_t k = 0; k < leveli->num_syms; k++)
+            для (xkb_keysym_count_t k = 0; k < leveli->num_syms; k++)
                 assert(leveli->s.syms[k] != XKB_KEY_NoSymbol);
 #endif
         }
     }
 
-    return true;
+    повернути true;
 }
 
 static bool
@@ -1253,108 +1253,108 @@ AddActionsToKey(SymbolsInfo *info, KeyInfo *keyi, ExprDef *arrayNdx,
 {
     xkb_layout_index_t ndx = 0;
 
-    if (!GetGroupIndex(info, keyi, arrayNdx, GROUP_FIELD_ACTS, &ndx))
-        return false;
+    якщо (!GetGroupIndex(info, keyi, arrayNdx, GROUP_FIELD_ACTS, &ndx))
+        повернути false;
 
     GroupInfo *groupi = &darray_item(keyi->groups, ndx);
 
-    if (value->common.type == STMT_EXPR_EMPTY_LIST) {
+    якщо (value->common.type == STMT_EXPR_EMPTY_LIST) {
         groupi->defined |= GROUP_FIELD_ACTS;
-        return true;
+        повернути true;
     }
 
-    if (value->common.type != STMT_EXPR_ACTION_LIST) {
+    якщо (value->common.type != STMT_EXPR_ACTION_LIST) {
         log_wsgo(info->ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
                  "Bad expression type (%d) for action list value; "
                  "Ignoring actions for group %"PRIu32" of %s\n",
                  value->common.type, ndx, KeyInfoText(info, keyi));
-        return false;
+        повернути false;
     }
 
-    if (groupi->defined & GROUP_FIELD_ACTS) {
+    якщо (groupi->defined & GROUP_FIELD_ACTS) {
         log_wsgo(info->ctx, XKB_WARNING_CONFLICTING_KEY_ACTION,
                  "Actions for key %s, group %"PRIu32" already defined\n",
                  KeyInfoText(info, keyi), ndx);
-        return false;
+        повернути false;
     }
 
     xkb_level_index_t nLevels = 0;
     /* Contrary to keysyms with trailing `NoSymbol`, we cannot detect trailing
      * `NoAction()` now, because we need to parse the actions first. Jusr count
      * explicit actions for now. */
-    for (ParseCommon *p = &value->common; p; p = p->next)
+    для (ParseCommon *p = &value->common; p; p = p->next)
         nLevels++;
-    if (darray_size(groupi->levels) < nLevels)
+    якщо (darray_size(groupi->levels) < nLevels)
         darray_resize0(groupi->levels, nLevels);
 
     groupi->defined |= GROUP_FIELD_ACTS;
 
     xkb_level_index_t level = 0;
     xkb_level_index_t nonEmptyLevels = 0;
-    for (ExprActionList *actionList = (ExprActionList *) value;
+    для (ExprActionList *actionList = (ExprActionList *) value;
          actionList;
          actionList = (ExprActionList *) actionList->common.next, level++) {
         struct xkb_level *leveli = &darray_item(groupi->levels, level);
         assert(leveli->num_actions == 0);
 
-        unsigned int num_actions = 0;
-        for (ExprDef *act = actionList->actions;
+        unsigned ціле num_actions = 0;
+        для (ExprDef *act = actionList->actions;
              act; act = (ExprDef *) act->common.next)
             num_actions++;
 
-        if (unlikely(num_actions > MAX_ACTIONS_PER_LEVEL)) {
+        якщо (unlikely(num_actions > MAX_ACTIONS_PER_LEVEL)) {
             log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Key %s has too many actions for group %"PRIu32", "
                     "level %"PRIu32"; expected max %u, got: %u\n",
                     KeyInfoText(info, keyi), ndx + 1, level + 1,
                     MAX_ACTIONS_PER_LEVEL, num_actions);
-            return false;
+            повернути false;
         }
 
         /* Parse actions and add only defined actions */
         darray(union xkb_action) actions = darray_new();
-        for (ExprDef *act = actionList->actions;
+        для (ExprDef *act = actionList->actions;
              act; act = (ExprDef *) act->common.next) {
             union xkb_action toAct = { 0 };
             const enum xkb_parser_error r =
                 HandleActionDef(info->keymap_info, &info->default_actions,
                                 &info->mods, act, &toAct);
-            if (r != PARSER_SUCCESS) {
+            якщо (r != PARSER_SUCCESS) {
                 log_err(info->ctx, XKB_ERROR_INVALID_VALUE,
                         "Illegal action definition for %s; "
                         "Action for group %"PRIu32"/level %"PRIu32" ignored\n",
                         KeyInfoText(info, keyi), ndx + 1, level + 1);
-                if (r == PARSER_FATAL_ERROR) {
+                якщо (r == PARSER_FATAL_ERROR) {
                     darray_free(actions);
-                    return false;
-                } else {
+                    повернути false;
+                } інакше {
                     /* Ensure action type is reset */
                     toAct.type = ACTION_TYPE_NONE;
                 }
             }
-            if (toAct.type == ACTION_TYPE_NONE) {
+            якщо (toAct.type == ACTION_TYPE_NONE) {
                 /* Drop action */
-            } else if (likely(num_actions == 1)) {
+            } інакше якщо (likely(num_actions == 1)) {
                 /* Only one action: do not allocate */
                 leveli->num_actions = 1;
                 leveli->a.action = toAct;
                 goto next_level;
-            } else {
+            } інакше {
                 darray_append(actions, toAct);
             }
         }
-        if (darray_empty(actions)) {
+        якщо (darray_empty(actions)) {
             leveli->num_actions = 0;
-        } else if (likely(darray_size(actions) > 1)) {
+        } інакше якщо (likely(darray_size(actions) > 1)) {
             leveli->num_actions = (xkb_action_count_t) darray_size(actions);
             darray_shrink(actions);
             darray_steal(actions, &leveli->a.actions, NULL);
 #ifndef NDEBUG
             /* Canonical list: all NoAction() were dropped */
-            for (xkb_action_count_t k = 0; k < leveli->num_actions; k++)
+            для (xkb_action_count_t k = 0; k < leveli->num_actions; k++)
                 assert(leveli->a.actions[k].type != ACTION_TYPE_NONE);
 #endif
-        } else {
+        } інакше {
             /* Unlikely: some actions were dropped and only one remains */
             assert(num_actions > darray_size(actions));
             leveli->num_actions = 1;
@@ -1367,21 +1367,21 @@ next_level:
          * Check trailing `NoAction()`, but count as empty level only if there
          * is no corresponding keysym.
          */
-        if (leveli->num_actions > 0 || leveli->num_syms > 0)
+        якщо (leveli->num_actions > 0 || leveli->num_syms > 0)
             nonEmptyLevels = level + 1;
     }
 
-    if (nonEmptyLevels < nLevels) {
+    якщо (nonEmptyLevels < nLevels) {
         /* Drop trailing `NoAction()`.
          * No need to clear dropped levels: there are no keysyms nor actions */
         darray_size(groupi->levels) = nonEmptyLevels;
-        if (nonEmptyLevels > 0)
+        якщо (nonEmptyLevels > 0)
             darray_shrink(groupi->levels);
-        else
+        інакше
             darray_free(groupi->levels);
     }
 
-    return true;
+    повернути true;
 }
 
 static const LookupEntry repeatEntries[] = {
@@ -1404,26 +1404,26 @@ ExprResolveOverlayEntry(const struct xkb_keymap_info *keymap_info,
                         const struct xkb_key **key_rtrn)
 {
     /* Overlay index */
-    if (arrayNdx) {
+    якщо (arrayNdx) {
         log_err(keymap_info->keymap.ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Overlay field \"%s\" in %s does not support array index; "
                 "ignored\n",
                 field, KeyNameText(keymap_info->keymap.ctx, keyi->name));
-        return false;
+        повернути false;
     }
     static_assert(sizeof(xkb_overlay_index_t) == sizeof(uint8_t), "");
     const size_t prefix = sizeof("overlay") - 1;
     const size_t len = strlen(field + prefix);
     int64_t raw_overlay = XKB_OVERLAY_INVALID;
-    if (parse_dec_to_uint64_t(field + prefix, len, (uint64_t *)&raw_overlay)
-        != (int)len || raw_overlay < 1 ||
+    якщо (parse_dec_to_uint64_t(field + prefix, len, (uint64_t *)&raw_overlay)
+        != (ціле)len || raw_overlay < 1 ||
         raw_overlay > (int64_t)keymap_info->features.max_overlays) {
         log_err(keymap_info->keymap.ctx, XKB_ERROR_UNSUPPORTED_OVERLAY_INDEX,
                 "Unsupported overlay index \"%s\" field for %s: "
                 "expected 1..%u, got: %"PRId64"; ignored\n",
                 field, KeyNameText(keymap_info->keymap.ctx, keyi->name),
                 keymap_info->features.max_overlays, raw_overlay);
-        return false;
+        повернути false;
     }
     *overlay_rtrn = (xkb_overlay_index_t)raw_overlay - 1;
 
@@ -1432,31 +1432,31 @@ ExprResolveOverlayEntry(const struct xkb_keymap_info *keymap_info,
     case STMT_EXPR_KEYNAME_LITERAL:
         *key_rtrn = XkbKeyByName(&keymap_info->keymap, expr->key_name.key_name,
                                  false);
-        if (!*key_rtrn) {
+        якщо (!*key_rtrn) {
             log_err(keymap_info->keymap.ctx, XKB_WARNING_UNDEFINED_KEYCODE,
                     "Unknown key \"%s\" for field %s in %s\n",
                     xkb_atom_text(keymap_info->keymap.ctx, expr->key_name.key_name),
                     field, KeyNameText(keymap_info->keymap.ctx, keyi->name));
-            return false;
+            повернути false;
         }
-        return true;
+        повернути true;
     case STMT_EXPR_IDENT: {
         const char * const id =
             xkb_atom_text(keymap_info->keymap.ctx, expr->ident.ident);
-        if (id && istreq(id, "none")) {
+        якщо (id && istreq(id, "none")) {
             /* Explicitly no overlay (clear) */
             *key_rtrn = NULL;
-            return true;
-        } else if (id && istreq(id, "any")) {
+            повернути true;
+        } інакше якщо (id && istreq(id, "any")) {
             /* Implicitly no overlay */
             *key_rtrn = NULL;
             *overlay_rtrn = XKB_OVERLAY_INVALID;
-            return true;
+            повернути true;
         }
         log_err(keymap_info->keymap.ctx, XKB_ERROR_INVALID_VALUE,
                 "Unsupported overlay value \"%s\" for field %s in %s\n",
                 id, field, KeyNameText(keymap_info->keymap.ctx, keyi->name));
-        return false;
+        повернути false;
     }
     default:
         log_err(keymap_info->keymap.ctx, XKB_ERROR_INVALID_VALUE,
@@ -1464,7 +1464,7 @@ ExprResolveOverlayEntry(const struct xkb_keymap_info *keymap_info,
                 stmt_type_to_string(STMT_EXPR_KEYNAME_LITERAL),
                 field, KeyNameText(keymap_info->keymap.ctx, keyi->name),
                 stmt_type_to_string(expr->common.type));
-        return false;
+        повернути false;
     }
 }
 
@@ -1473,32 +1473,32 @@ SetSymbolsField(SymbolsInfo *info, KeyInfo *keyi, const char *field,
                 ExprDef *arrayNdx, ExprDef **value_ptr)
 {
     ExprDef * restrict const value = *value_ptr;
-    if (istreq(field, "type")) {
+    якщо (istreq(field, "type")) {
         xkb_layout_index_t ndx = 0;
         xkb_atom_t val = XKB_ATOM_NONE;
 
-        if (!ExprResolveString(info->ctx, value, &val)) {
+        якщо (!ExprResolveString(info->ctx, value, &val)) {
             log_err(info->ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                     "The type field of a key symbol map must be a string; "
                     "Ignoring illegal type definition\n");
-            return false;
+            повернути false;
         }
 
-        if (!arrayNdx) {
+        якщо (!arrayNdx) {
             keyi->default_type = val;
             keyi->defined |= KEY_FIELD_DEFAULT_TYPE;
         }
-        else if (ExprResolveGroup(info->keymap_info, arrayNdx, false,
+        інакше якщо (ExprResolveGroup(info->keymap_info, arrayNdx, false,
                                   &ndx, NULL) != PARSER_SUCCESS) {
             log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                     "Illegal group index for type of key %s; "
                     "Definition with non-integer array index ignored\n",
                     KeyInfoText(info, keyi));
-            return false;
+            повернути false;
         }
-        else {
+        інакше {
             ndx--;
-            if (ndx >= darray_size(keyi->groups)) {
+            якщо (ndx >= darray_size(keyi->groups)) {
                 /* Avoid clang-tidy false positive */
                 assert(darray_size(keyi->groups) < ndx + 1);
                 darray_resize0(keyi->groups, ndx + 1);
@@ -1507,31 +1507,31 @@ SetSymbolsField(SymbolsInfo *info, KeyInfo *keyi, const char *field,
             darray_item(keyi->groups, ndx).defined |= GROUP_FIELD_TYPE;
         }
     }
-    else if (istreq(field, "symbols")) {
-        return AddSymbolsToKey(info, keyi, arrayNdx, value);
+    інакше якщо (istreq(field, "symbols")) {
+        повернути AddSymbolsToKey(info, keyi, arrayNdx, value);
     }
-    else if (istreq(field, "actions")) {
-        return AddActionsToKey(info, keyi, arrayNdx, value);
+    інакше якщо (istreq(field, "actions")) {
+        повернути AddActionsToKey(info, keyi, arrayNdx, value);
     }
-    else if (istreq(field, "vmods") ||
+    інакше якщо (istreq(field, "vmods") ||
              istreq(field, "virtualmods") ||
              istreq(field, "virtualmodifiers")) {
         xkb_mod_mask_t mask = 0;
 
-        if (!ExprResolveModMask(info->ctx, value, MOD_VIRT, &info->mods,
+        якщо (!ExprResolveModMask(info->ctx, value, MOD_VIRT, &info->mods,
                                 &mask)) {
             log_err(info->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK,
                     "Expected a virtual modifier mask, found %s; "
                     "Ignoring virtual modifiers definition for key %s\n",
                     stmt_type_to_string(value->common.type),
                     KeyInfoText(info, keyi));
-            return false;
+            повернути false;
         }
 
         keyi->vmodmap = mask;
         keyi->defined |= KEY_FIELD_VMODMAP;
     }
-    else if (istreq(field, "locking") ||
+    інакше якщо (istreq(field, "locking") ||
              istreq(field, "lock") ||
              istreq(field, "locks")) {
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
@@ -1540,7 +1540,7 @@ SetSymbolsField(SymbolsInfo *info, KeyInfo *keyi, const char *field,
                 "Ignoring locking specification for key %s\n",
                 KeyInfoText(info, keyi));
     }
-    else if (istreq(field, "radiogroup") ||
+    інакше якщо (istreq(field, "radiogroup") ||
              istreq(field, "permanentradiogroup") ||
              istreq(field, "allownone")) {
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
@@ -1549,7 +1549,7 @@ SetSymbolsField(SymbolsInfo *info, KeyInfo *keyi, const char *field,
                 "Ignoring radio group specification for key %s\n",
                 KeyInfoText(info, keyi));
     }
-    else if (istreq_prefix("permanentoverlay", field)) {
+    інакше якщо (istreq_prefix("permanentoverlay", field)) {
         /*
          * Permanent overlay is ineffectual and serves as documentation of the
          * hardware, so skip it entirely.
@@ -1560,27 +1560,27 @@ SetSymbolsField(SymbolsInfo *info, KeyInfo *keyi, const char *field,
                 "Ignoring overlay specification for key %s\n",
                 KeyInfoText(info, keyi));
     }
-    else if (istreq_prefix("overlay", field)) {
+    інакше якщо (istreq_prefix("overlay", field)) {
         xkb_overlay_index_t overlay = XKB_OVERLAY_INVALID;
         const struct xkb_key *key = NULL;
-        if (!ExprResolveOverlayEntry(info->keymap_info, field, arrayNdx,
+        якщо (!ExprResolveOverlayEntry(info->keymap_info, field, arrayNdx,
                                      *value_ptr, keyi, &overlay, &key))
-            return false;
-        if (overlay == XKB_OVERLAY_INVALID) {
+            повернути false;
+        якщо (overlay == XKB_OVERLAY_INVALID) {
             /* Overlay has not explicit value: skip */
-            return true;
-        } else if (key && key->name == keyi->name) {
+            повернути true;
+        } інакше якщо (key && key->name == keyi->name) {
             /* Do not overlay to the same key! */
             log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
                     XKB_LOG_MESSAGE_NO_ID,
                     "Cannot overlay a key to itself; "
                     "Ignoring overlay %u specification for key %s\n",
                     overlay + 1, KeyInfoText(info, keyi));
-        } else {
+        } інакше {
             const struct xkb_key *prev;
-            if (overlays_get(keyi, overlay, &prev)) {
+            якщо (overlays_get(keyi, overlay, &prev)) {
                 /* Duplicate entry */
-                if (key != prev) {
+                якщо (key != prev) {
                     /* Conflicting fields */
                     log_warn(info->ctx, XKB_WARNING_CONFLICTING_KEY_FIELDS,
                              "Conflicting overlays defined in key %s; "
@@ -1594,70 +1594,70 @@ SetSymbolsField(SymbolsInfo *info, KeyInfo *keyi, const char *field,
                                  ? KeyNameText(info->ctx, key->name)
                                  : "none"));
                 }
-            } else if (info->keymap_info->features.overlapping_overlays) {
+            } інакше якщо (info->keymap_info->features.overlapping_overlays) {
                 /* Handle overlapping overlays mode */
-                if (!overlays_insert(keyi, overlay, key))
-                    return false;
+                якщо (!overlays_insert(keyi, overlay, key))
+                    повернути false;
                 keyi->defined |= KEY_FIELD_OVERLAY;
-            } else {
+            } інакше {
                 /* Handle disjoint overlays mode */
                 const xkb_overlay_mask_t mask = (xkb_overlay_mask_t)(1u << overlay);
-                if (!keyi->overlays || keyi->overlays_clear) {
+                якщо (!keyi->overlays || keyi->overlays_clear) {
                     /* No overlay previously defined or different overlay cleared */
-                    if (key) {
+                    якщо (key) {
                         /* Replace any explicitly cleared overlay */
                         keyi->overlays = mask;
                         keyi->overlays_clear = false;
                         keyi->overlay_key = key;
-                    } else {
+                    } інакше {
                         /* Explicitly no overlay (clear) */
                         keyi->overlays |= mask;
                         keyi->overlays_clear = true;
                     }
                     keyi->defined |= KEY_FIELD_OVERLAY;
-                } else if (keyi->overlays) {
-                    if (key) {
+                } інакше якщо (keyi->overlays) {
+                    якщо (key) {
                         log_err(info->ctx, XKB_ERROR_OVERLAPPING_OVERLAY,
                                 "Overlapping overlays are not allowed in %s; "
                                 "use overlay%d=%s, ignore overlay%u=%s\n",
                                 KeyInfoText(info, keyi), keyi->overlays,
                                 KeyNameText(info->ctx, keyi->overlay_key->name),
                                 overlay + 1, KeyNameText(info->ctx, key->name));
-                        return !(info->keymap_info->strict &
+                        повернути !(info->keymap_info->strict &
                                  PARSER_NO_FIELD_VALUE_MISMATCH);
-                    } else {
+                    } інакше {
                         /* Ignore: the previous overlay is explicitly defined */
                     }
                 }
             }
         }
     }
-    else if (istreq(field, "repeating") ||
+    інакше якщо (istreq(field, "repeating") ||
              istreq(field, "repeats") ||
              istreq(field, "repeat")) {
         uint32_t val = 0;
 
-        if (!ExprResolveEnum(info->ctx, value, &val, repeatEntries)) {
+        якщо (!ExprResolveEnum(info->ctx, value, &val, repeatEntries)) {
             log_err(info->ctx, XKB_ERROR_INVALID_VALUE,
                     "Illegal repeat setting for %s; "
                     "Non-boolean repeat setting ignored\n",
                     KeyInfoText(info, keyi));
-            return false;
+            повернути false;
         }
 
         keyi->repeat = (enum key_repeat) val;
         keyi->defined |= KEY_FIELD_REPEAT;
     }
-    else if (istreq(field, "groupswrap") ||
+    інакше якщо (istreq(field, "groupswrap") ||
              istreq(field, "wrapgroups")) {
         bool set = false;
 
-        if (!ExprResolveBoolean(info->ctx, value, &set)) {
+        якщо (!ExprResolveBoolean(info->ctx, value, &set)) {
             log_err(info->ctx, XKB_ERROR_INVALID_VALUE,
                     "Illegal groupsWrap setting for %s; "
                     "Non-boolean value ignored\n",
                     KeyInfoText(info, keyi));
-            return false;
+            повернути false;
         }
 
         keyi->out_of_range_group_policy = (set)
@@ -1665,16 +1665,16 @@ SetSymbolsField(SymbolsInfo *info, KeyInfo *keyi, const char *field,
             : XKB_LAYOUT_OUT_OF_RANGE_CLAMP;
         keyi->defined |= KEY_FIELD_GROUPINFO;
     }
-    else if (istreq(field, "groupsclamp") ||
+    інакше якщо (istreq(field, "groupsclamp") ||
              istreq(field, "clampgroups")) {
         bool set = false;
 
-        if (!ExprResolveBoolean(info->ctx, value, &set)) {
+        якщо (!ExprResolveBoolean(info->ctx, value, &set)) {
             log_err(info->ctx, XKB_ERROR_INVALID_VALUE,
                     "Illegal groupsClamp setting for %s; "
                     "Non-boolean value ignored\n",
                     KeyInfoText(info, keyi));
-            return false;
+            повернути false;
         }
 
         keyi->out_of_range_group_policy = (set)
@@ -1682,22 +1682,22 @@ SetSymbolsField(SymbolsInfo *info, KeyInfo *keyi, const char *field,
             : XKB_LAYOUT_OUT_OF_RANGE_WRAP;
         keyi->defined |= KEY_FIELD_GROUPINFO;
     }
-    else if (istreq(field, "groupsredirect") ||
+    інакше якщо (istreq(field, "groupsredirect") ||
              istreq(field, "redirectgroups")) {
         xkb_layout_index_t grp = 0;
         bool pending = false;
 
         // TODO: recover?
-        if (ExprResolveGroup(info->keymap_info, value, false, &grp, &pending) !=
+        якщо (ExprResolveGroup(info->keymap_info, value, false, &grp, &pending) !=
             PARSER_SUCCESS && !pending) {
             log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                     "Illegal group index for redirect of key %s; "
                     "Definition with non-integer group ignored\n",
                     KeyInfoText(info, keyi));
-            return false;
+            повернути false;
         }
 
-        if (pending) {
+        якщо (pending) {
             keyi->out_of_range_pending_group = true;
             const darray_size_t pending_index =
                 darray_size(*info->keymap_info->pending_computations);
@@ -1714,7 +1714,7 @@ SetSymbolsField(SymbolsInfo *info, KeyInfo *keyi, const char *field,
                           sizeof(pending_index),
                           "Cannot save pending computation");
             keyi->out_of_range_group_number = pending_index;
-        } else {
+        } інакше {
             keyi->out_of_range_pending_group = false;
             keyi->out_of_range_group_number = grp - 1;
         }
@@ -1722,69 +1722,69 @@ SetSymbolsField(SymbolsInfo *info, KeyInfo *keyi, const char *field,
         keyi->out_of_range_group_policy = XKB_LAYOUT_OUT_OF_RANGE_REDIRECT;
         keyi->defined |= KEY_FIELD_GROUPINFO;
     }
-    else {
+    інакше {
         log_err(info->ctx, XKB_ERROR_UNKNOWN_FIELD,
                 "Unknown field \"%s\" in a key; definition ignored\n",
                 field);
-        return !(info->keymap_info->strict & PARSER_NO_UNKNOWN_KEY_FIELDS);
+        повернути !(info->keymap_info->strict & PARSER_NO_UNKNOWN_KEY_FIELDS);
     }
 
-    return true;
+    повернути true;
 }
 
 static bool
 SetGroupName(SymbolsInfo *info, ExprDef *arrayNdx, ExprDef *value,
              enum merge_mode merge)
 {
-    if (!arrayNdx) {
+    якщо (!arrayNdx) {
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
                 XKB_WARNING_MISSING_SYMBOLS_GROUP_NAME_INDEX,
                 "You must specify an index when specifying a group name; "
                 "Group name definition without array subscript ignored\n");
-        return false;
+        повернути false;
     }
 
     xkb_layout_index_t group = 0;
-    if (ExprResolveGroup(info->keymap_info, arrayNdx, false, &group, NULL) !=
+    якщо (ExprResolveGroup(info->keymap_info, arrayNdx, false, &group, NULL) !=
         PARSER_SUCCESS) {
         log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                 "Illegal index in group name definition; "
                 "Definition with non-integer array index ignored\n");
-        return false;
+        повернути false;
     }
 
     xkb_atom_t name = XKB_ATOM_NONE;
-    if (!ExprResolveString(info->ctx, value, &name)) {
+    якщо (!ExprResolveString(info->ctx, value, &name)) {
         log_err(info->ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Group name must be a string; "
                 "Illegal name for group %"PRIu32" ignored\n", group);
-        return false;
+        повернути false;
     }
 
     xkb_layout_index_t group_to_use;
-    if (info->explicit_group == XKB_LAYOUT_INVALID) {
+    якщо (info->explicit_group == XKB_LAYOUT_INVALID) {
         group_to_use = group - 1;
     }
-    else if (group - 1 == 0) {
+    інакше якщо (group - 1 == 0) {
         group_to_use = info->explicit_group;
     }
-    else {
+    інакше {
         log_warn(info->ctx, XKB_WARNING_NON_BASE_GROUP_NAME,
                  "An explicit group was specified for the '%s' map, "
                  "but it provides a name for a group other than Group1 "
                  "(%"PRIu32"); Ignoring group name '%s'\n",
                  info->name, group,
                  xkb_atom_text(info->ctx, name));
-        return false;
+        повернути false;
     }
 
-    if (group_to_use >= darray_size(info->group_names)) {
+    якщо (group_to_use >= darray_size(info->group_names)) {
         /* Avoid clang-tidy false positive */
         assert(darray_size(info->group_names) < group_to_use + 1);
         darray_resize0(info->group_names, group_to_use + 1);
-    } else {
+    } інакше {
         const xkb_atom_t old_name = darray_item(info->group_names, group_to_use);
-        if (old_name != XKB_ATOM_NONE && old_name != name) {
+        якщо (old_name != XKB_ATOM_NONE && old_name != name) {
             const bool replace = (merge != MERGE_AUGMENT);
             const xkb_atom_t use    = (replace ? name : old_name);
             const xkb_atom_t ignore = (replace ? old_name : name);
@@ -1799,7 +1799,7 @@ SetGroupName(SymbolsInfo *info, ExprDef *arrayNdx, ExprDef *value,
     }
     darray_item(info->group_names, group_to_use) = name;
 
-    return true;
+    повернути true;
 }
 
 static bool
@@ -1809,10 +1809,10 @@ HandleGlobalVar(SymbolsInfo *info, VarDef *stmt)
     ExprDef *arrayNdx;
     bool ret;
 
-    if (!ExprResolveLhs(info->ctx, stmt->name, &elem, &field, &arrayNdx))
-        return false;
+    якщо (!ExprResolveLhs(info->ctx, stmt->name, &elem, &field, &arrayNdx))
+        повернути false;
 
-    if (elem && istreq(elem, "key")) {
+    якщо (elem && istreq(elem, "key")) {
         KeyInfo temp = {0};
         InitKeyInfo(info->ctx, &temp);
         /* Do not replace the whole key, only the current field */
@@ -1823,47 +1823,47 @@ HandleGlobalVar(SymbolsInfo *info, VarDef *stmt)
               MergeKeys(info, &info->default_key, &temp, true);
         ClearKeyInfo(&temp);
     }
-    else if (!elem && (istreq(field, "name") ||
+    інакше якщо (!elem && (istreq(field, "name") ||
                        istreq(field, "groupname"))) {
         ret = SetGroupName(info, arrayNdx, stmt->value, stmt->merge);
     }
-    else if (!elem && (istreq(field, "groupswrap") ||
+    інакше якщо (!elem && (istreq(field, "groupswrap") ||
                        istreq(field, "wrapgroups"))) {
         log_err(info->ctx, XKB_WARNING_UNSUPPORTED_SYMBOLS_FIELD,
                 "Global \"groupswrap\" not supported; Ignored\n");
         ret = true;
     }
-    else if (!elem && (istreq(field, "groupsclamp") ||
+    інакше якщо (!elem && (istreq(field, "groupsclamp") ||
                        istreq(field, "clampgroups"))) {
         log_err(info->ctx, XKB_WARNING_UNSUPPORTED_SYMBOLS_FIELD,
                 "Global \"groupsclamp\" not supported; Ignored\n");
         ret = true;
     }
-    else if (!elem && (istreq(field, "groupsredirect") ||
+    інакше якщо (!elem && (istreq(field, "groupsredirect") ||
                        istreq(field, "redirectgroups"))) {
         log_err(info->ctx, XKB_WARNING_UNSUPPORTED_SYMBOLS_FIELD,
                 "Global \"groupsredirect\" not supported; Ignored\n");
         ret = true;
     }
-    else if (!elem && istreq(field, "allownone")) {
+    інакше якщо (!elem && istreq(field, "allownone")) {
         log_err(info->ctx, XKB_WARNING_UNSUPPORTED_SYMBOLS_FIELD,
                 "Radio groups not supported; "
                 "Ignoring \"allownone\" specification\n");
         ret = true;
     }
-    else if (elem) {
+    інакше якщо (elem) {
         ret = (SetDefaultActionField(info->keymap_info, &info->default_actions,
                                      &info->mods, elem, field, arrayNdx,
                                      &stmt->value, stmt->merge) !=
                PARSER_FATAL_ERROR);
-    } else {
+    } інакше {
         log_err(info->ctx, XKB_ERROR_UNKNOWN_DEFAULT_FIELD,
                 "Default defined for unknown field \"%s\"; Ignored\n", field);
-        return !(info->keymap_info->strict &
+        повернути !(info->keymap_info->strict &
                  PARSER_NO_UNKNOWN_SYMBOLS_GLOBAL_FIELDS);
     }
 
-    return ret;
+    повернути ret;
 }
 
 static bool
@@ -1871,23 +1871,23 @@ HandleSymbolsBody(SymbolsInfo *info, VarDef *def, KeyInfo *keyi)
 {
     bool all_valid_entries = true;
 
-    for (; def; def = (VarDef *) def->common.next) {
+    для (; def; def = (VarDef *) def->common.next) {
         const char *field;
         ExprDef *arrayNdx;
         bool ok = true;
 
-        if (!def->name) {
-            if (unlikely(!def->value) || def->value->common.type != STMT_EXPR_ACTION_LIST)
+        якщо (!def->name) {
+            якщо (unlikely(!def->value) || def->value->common.type != STMT_EXPR_ACTION_LIST)
                 field = "symbols"; /* Default to symbols field */
-            else
+            інакше
                 field = "actions";
             arrayNdx = NULL;
         }
-        else {
+        інакше {
             const char *elem;
             ok = ExprResolveLhs(info->ctx, def->name, &elem, &field,
                                 &arrayNdx);
-            if (ok && elem) {
+            якщо (ok && elem) {
                 log_err(info->ctx, XKB_ERROR_GLOBAL_DEFAULTS_WRONG_SCOPE,
                         "Cannot set global defaults for \"%s\" element within "
                         "a key statement: move statements to the global file "
@@ -1897,18 +1897,18 @@ HandleSymbolsBody(SymbolsInfo *info, VarDef *def, KeyInfo *keyi)
             }
         }
 
-        if (unlikely(!def->value)) {
+        якщо (unlikely(!def->value)) {
             log_err(info->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
                     "Could not allocate the value of field \"%s\". "
                     "Statement ignored.\n", field);
             ok = false;
         }
 
-        if (!ok || !SetSymbolsField(info, keyi, field, arrayNdx, &def->value))
+        якщо (!ok || !SetSymbolsField(info, keyi, field, arrayNdx, &def->value))
             all_valid_entries = false;
     }
 
-    return all_valid_entries;
+    повернути all_valid_entries;
 }
 
 static bool
@@ -1918,18 +1918,18 @@ SetExplicitGroup(SymbolsInfo *info, KeyInfo *keyi)
     GroupInfo *groupi;
     bool warn = false;
 
-    if (info->explicit_group == XKB_LAYOUT_INVALID)
-        return true;
+    якщо (info->explicit_group == XKB_LAYOUT_INVALID)
+        повернути true;
 
     darray_enumerate_from(i, groupi, keyi->groups, 1) {
-        if (groupi->defined) {
+        якщо (groupi->defined) {
             warn = true;
             ClearGroupInfo(groupi);
             InitGroupInfo(groupi);
         }
     }
 
-    if (warn) {
+    якщо (warn) {
         log_warn(info->ctx, XKB_WARNING_MULTIPLE_GROUPS_AT_ONCE,
                  "For the map %s the explicit group %"PRIu32" is specified, "
                  "but key %s has more than one group defined; "
@@ -1938,13 +1938,13 @@ SetExplicitGroup(SymbolsInfo *info, KeyInfo *keyi)
     }
 
     darray_resize0(keyi->groups, info->explicit_group + 1);
-    if (info->explicit_group > 0) {
+    якщо (info->explicit_group > 0) {
         darray_item(keyi->groups, info->explicit_group) =
             darray_item(keyi->groups, 0);
         InitGroupInfo(&darray_item(keyi->groups, 0));
     }
 
-    return true;
+    повернути true;
 }
 
 static bool
@@ -1955,21 +1955,21 @@ HandleSymbolsDef(SymbolsInfo *info, SymbolsDef *stmt)
     keyi = info->default_key;
     darray_init(keyi.groups);
     darray_copy(keyi.groups, info->default_key.groups);
-    for (xkb_layout_index_t i = 0; i < darray_size(keyi.groups); i++)
+    для (xkb_layout_index_t i = 0; i < darray_size(keyi.groups); i++)
         CopyGroupInfo(&darray_item(keyi.groups, i),
                       &darray_item(info->default_key.groups, i));
     keyi.merge = stmt->merge;
     keyi.name = stmt->keyName;
 
-    if (HandleSymbolsBody(info, stmt->symbols, &keyi) &&
+    якщо (HandleSymbolsBody(info, stmt->symbols, &keyi) &&
         SetExplicitGroup(info, &keyi) &&
         AddKeySymbols(info, &keyi, true)) {
-        return true;
+        повернути true;
     }
 
     ClearKeyInfo(&keyi);
     info->errorCount++;
-    return false;
+    повернути false;
 }
 
 static bool
@@ -1978,10 +1978,10 @@ HandleModMapDef(SymbolsInfo *info, ModMapDef *def)
     ModMapEntry tmp;
     struct xkb_context *ctx = info->ctx;
 
-    if (!ExprResolveModMask(ctx, def->modifiers, MOD_REAL, &info->mods, &tmp.mods)) {
+    якщо (!ExprResolveModMask(ctx, def->modifiers, MOD_REAL, &info->mods, &tmp.mods)) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "Illegal modifier map definition: invalid modifier mask\n");
-        return false;
+        повернути false;
     }
 
     /*
@@ -1994,21 +1994,21 @@ HandleModMapDef(SymbolsInfo *info, ModMapDef *def)
     bool ok = true;
     tmp.merge = def->merge;
 
-    for (ExprDef *key = def->keys; key; key = (ExprDef *) key->common.next) {
-        if (key->common.type == STMT_EXPR_KEYNAME_LITERAL) {
+    для (ExprDef *key = def->keys; key; key = (ExprDef *) key->common.next) {
+        якщо (key->common.type == STMT_EXPR_KEYNAME_LITERAL) {
             tmp.haveSymbol = false;
             tmp.u.keyName = key->key_name.key_name;
         }
-        else if (key->common.type == STMT_EXPR_KEYSYM_LITERAL) {
-            if (key->keysym.keysym == XKB_KEY_NoSymbol) {
+        інакше якщо (key->common.type == STMT_EXPR_KEYSYM_LITERAL) {
+            якщо (key->keysym.keysym == XKB_KEY_NoSymbol) {
                 /* Invalid keysym: ignore. Error message already printed */
                 continue;
-            } else {
+            } інакше {
                 tmp.haveSymbol = true;
                 tmp.u.keySym = key->keysym.keysym;
             }
         }
-        else {
+        інакше {
             log_err(info->ctx, XKB_ERROR_INVALID_MODMAP_ENTRY,
                     "Modmap entries may contain only key names or keysyms; "
                     "Illegal definition for %s modifier mask ignored\n",
@@ -2018,7 +2018,7 @@ HandleModMapDef(SymbolsInfo *info, ModMapDef *def)
 
         ok = AddModMapEntry(info, &tmp) && ok;
     }
-    return ok;
+    повернути ok;
 }
 
 static void
@@ -2029,7 +2029,7 @@ HandleSymbolsFile(SymbolsInfo *info, XkbFile *file)
     free(info->name);
     info->name = strdup_safe(file->name);
 
-    for (ParseCommon *stmt = file->defs; stmt; stmt = stmt->next) {
+    для (ParseCommon *stmt = file->defs; stmt; stmt = stmt->next) {
         switch (stmt->type) {
         case STMT_INCLUDE:
             ok = HandleIncludeSymbols(info, (IncludeStmt *) stmt);
@@ -2063,10 +2063,10 @@ HandleSymbolsFile(SymbolsInfo *info, XkbFile *file)
             break;
         }
 
-        if (!ok)
+        якщо (!ok)
             info->errorCount++;
 
-        if (info->errorCount > 10) {
+        якщо (info->errorCount > 10) {
             log_err(info->ctx, XKB_ERROR_INVALID_XKB_SYNTAX,
                     "Abandoning symbols file \"%s\"\n",
                     safe_map_name(file->name));
@@ -2098,28 +2098,28 @@ FindKeyForSymbol(struct xkb_keymap *keymap, xkb_keysym_t sym)
             got_one_level = false;
             struct xkb_key *key;
             xkb_keys_foreach(key, keymap) {
-                if (group < key->num_groups &&
+                якщо (group < key->num_groups &&
                     level < XkbKeyNumLevels(key, group)) {
                     got_one_group = got_one_level = true;
                     const xkb_keysym_count_t num_syms =
                         key->groups[group].levels[level].num_syms;
-                    if (num_syms > 1) {
-                        for (xkb_keysym_count_t k = 0; k < num_syms; k++) {
-                            if (key->groups[group].levels[level].s.syms[k] == sym)
-                                return key;
+                    якщо (num_syms > 1) {
+                        для (xkb_keysym_count_t k = 0; k < num_syms; k++) {
+                            якщо (key->groups[group].levels[level].s.syms[k] == sym)
+                                повернути key;
                         }
-                    } else if (num_syms &&
+                    } інакше якщо (num_syms &&
                                key->groups[group].levels[level].s.sym == sym) {
-                        return key;
+                        повернути key;
                     }
                 }
             }
             level++;
-        } while (got_one_level);
+        } поки (got_one_level);
         group++;
-    } while (got_one_group);
+    } поки (got_one_group);
 
-    return NULL;
+    повернути NULL;
 }
 
 /*
@@ -2148,41 +2148,41 @@ FindAutomaticType(struct xkb_context *ctx, GroupInfo *groupi)
      /* num_syms > 1 */ \
         darray_item(groupi->levels, level).s.syms[0])
 
-    if (width == 1 || width <= 0)
-        return xkb_atom_intern_literal(ctx, "ONE_LEVEL");
+    якщо (width == 1 || width <= 0)
+        повернути xkb_atom_intern_literal(ctx, "ONE_LEVEL");
 
     sym0 = GET_SYM(0);
     sym1 = GET_SYM(1);
 
-    if (width == 2) {
-        if (xkb_keysym_is_lower(sym0) && xkb_keysym_is_upper_or_title(sym1))
-            return xkb_atom_intern_literal(ctx, "ALPHABETIC");
+    якщо (width == 2) {
+        якщо (xkb_keysym_is_lower(sym0) && xkb_keysym_is_upper_or_title(sym1))
+            повернути xkb_atom_intern_literal(ctx, "ALPHABETIC");
 
-        if (xkb_keysym_is_keypad(sym0) || xkb_keysym_is_keypad(sym1))
-            return xkb_atom_intern_literal(ctx, "KEYPAD");
+        якщо (xkb_keysym_is_keypad(sym0) || xkb_keysym_is_keypad(sym1))
+            повернути xkb_atom_intern_literal(ctx, "KEYPAD");
 
-        return xkb_atom_intern_literal(ctx, "TWO_LEVEL");
+        повернути xkb_atom_intern_literal(ctx, "TWO_LEVEL");
     }
 
-    if (width <= 4) {
-        if (xkb_keysym_is_lower(sym0) && xkb_keysym_is_upper_or_title(sym1)) {
+    якщо (width <= 4) {
+        якщо (xkb_keysym_is_lower(sym0) && xkb_keysym_is_upper_or_title(sym1)) {
             xkb_keysym_t sym2, sym3;
             sym2 = GET_SYM(2);
             sym3 = (width == 4 ? GET_SYM(3) : XKB_KEY_NoSymbol);
 
-            if (xkb_keysym_is_lower(sym2) && xkb_keysym_is_upper_or_title(sym3))
-                return xkb_atom_intern_literal(ctx, "FOUR_LEVEL_ALPHABETIC");
+            якщо (xkb_keysym_is_lower(sym2) && xkb_keysym_is_upper_or_title(sym3))
+                повернути xkb_atom_intern_literal(ctx, "FOUR_LEVEL_ALPHABETIC");
 
-            return xkb_atom_intern_literal(ctx, "FOUR_LEVEL_SEMIALPHABETIC");
+            повернути xkb_atom_intern_literal(ctx, "FOUR_LEVEL_SEMIALPHABETIC");
         }
 
-        if (xkb_keysym_is_keypad(sym0) || xkb_keysym_is_keypad(sym1))
-            return xkb_atom_intern_literal(ctx, "FOUR_LEVEL_KEYPAD");
+        якщо (xkb_keysym_is_keypad(sym0) || xkb_keysym_is_keypad(sym1))
+            повернути xkb_atom_intern_literal(ctx, "FOUR_LEVEL_KEYPAD");
 
-        return xkb_atom_intern_literal(ctx, "FOUR_LEVEL");
+        повернути xkb_atom_intern_literal(ctx, "FOUR_LEVEL");
     }
 
-    return XKB_ATOM_NONE;
+    повернути XKB_ATOM_NONE;
 
 #undef GET_SYM
 }
@@ -2196,18 +2196,18 @@ FindTypeForGroup(struct xkb_keymap *keymap, KeyInfo *keyi,
 
     *explicit_type = true;
 
-    if (type_name == XKB_ATOM_NONE) {
-        if (keyi->default_type != XKB_ATOM_NONE) {
+    якщо (type_name == XKB_ATOM_NONE) {
+        якщо (keyi->default_type != XKB_ATOM_NONE) {
             type_name = keyi->default_type;
         }
-        else {
+        інакше {
             type_name = FindAutomaticType(keymap->ctx, groupi);
-            if (type_name != XKB_ATOM_NONE)
+            якщо (type_name != XKB_ATOM_NONE)
                 *explicit_type = false;
         }
     }
 
-    if (type_name == XKB_ATOM_NONE) {
+    якщо (type_name == XKB_ATOM_NONE) {
         log_warn(keymap->ctx, XKB_WARNING_CANNOT_INFER_KEY_TYPE,
                  "Couldn't find an automatic type for key '%s' "
                  "group %"PRIu32" with %u levels; Using the default type\n",
@@ -2217,11 +2217,11 @@ FindTypeForGroup(struct xkb_keymap *keymap, KeyInfo *keyi,
     }
 
     darray_size_t i;
-    for (i = 0; i < keymap->num_types; i++)
-        if (keymap->types[i].name == type_name)
+    для (i = 0; i < keymap->num_types; i++)
+        якщо (keymap->types[i].name == type_name)
             break;
 
-    if (i >= keymap->num_types) {
+    якщо (i >= keymap->num_types) {
         log_warn(keymap->ctx, XKB_WARNING_UNDEFINED_KEY_TYPE,
                  "The type \"%s\" for key '%s' group %"PRIu32" "
                  "was not previously defined; Using the default type\n",
@@ -2231,7 +2231,7 @@ FindTypeForGroup(struct xkb_keymap *keymap, KeyInfo *keyi,
     }
 
     keymap->types[i].required = true;
-    return &keymap->types[i];
+    повернути &keymap->types[i];
 
 use_default:
     /*
@@ -2239,7 +2239,7 @@ use_default:
      * ONE_LEVEL or at least some default one-level type.
      */
     keymap->types[0].required = true;
-    return &keymap->types[0];
+    повернути &keymap->types[0];
 }
 
 static bool
@@ -2256,12 +2256,12 @@ CopySymbolsDefToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info,
      * AddKeySymbols), so 'false' is safe here.
      */
     key = XkbKeyByName(keymap, keyi->name, false);
-    if (!key) {
+    якщо (!key) {
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_DETAILED,
                 XKB_WARNING_UNDEFINED_KEYCODE,
                 "Key %s not found in keycodes; Symbols ignored\n",
                 KeyInfoText(info, keyi));
-        return false;
+        повернути false;
     }
 
     /* Find the range of groups we need. */
@@ -2271,18 +2271,18 @@ CopySymbolsDefToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info,
          * Such group would be filled with `NoSymbol` anyway. */
         const bool has_explicit_type = (keyi->defined & KEY_FIELD_DEFAULT_TYPE)
                                     || (groupi->defined & GROUP_FIELD_TYPE);
-        if (darray_size(groupi->levels) > 0 || has_explicit_type)
+        якщо (darray_size(groupi->levels) > 0 || has_explicit_type)
             key->num_groups = i + 1;
-        if (has_explicit_type)
+        якщо (has_explicit_type)
             key->explicit |= EXPLICIT_TYPES;
     }
 
-    if (key->num_groups <= 0) {
+    якщо (key->num_groups <= 0) {
         /* A key with no group may still have other fields defined */
-        if (keyi->defined)
+        якщо (keyi->defined)
             goto key_fields;
-        else
-            return false;
+        інакше
+            повернути false;
     }
 
     darray_resize(keyi->groups, key->num_groups);
@@ -2294,7 +2294,7 @@ CopySymbolsDefToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info,
      */
     group0 = &darray_item(keyi->groups, 0);
     darray_foreach_from(groupi, keyi->groups, 1) {
-        if (groupi->defined)
+        якщо (groupi->defined)
             continue;
 
         CopyGroupInfo(groupi, group0);
@@ -2314,7 +2314,7 @@ CopySymbolsDefToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info,
             FindTypeForGroup(keymap, keyi, i, &explicit_type);
 
         /* Always have as many levels as the type specifies. */
-        if (type->num_levels < darray_size(groupi->levels)) {
+        якщо (type->num_levels < darray_size(groupi->levels)) {
             struct xkb_level *leveli;
 
             log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
@@ -2355,15 +2355,15 @@ CopySymbolsDefToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info,
             default:
                 /* Multiple keysyms: check if there is any cased keysym */
                 leveli->has_upper = false;
-                for (xkb_keysym_count_t k = 0; k < leveli->num_syms; k++) {
+                для (xkb_keysym_count_t k = 0; k < leveli->num_syms; k++) {
                     const xkb_keysym_t upper =
                         xkb_keysym_to_upper(leveli->s.syms[k]);
-                    if (upper != leveli->s.syms[k]) {
+                    якщо (upper != leveli->s.syms[k]) {
                         leveli->has_upper = true;
                         break;
                     }
                 }
-                if (leveli->has_upper) {
+                якщо (leveli->has_upper) {
                     /*
                      * Some cased keysyms: store the transformation result in
                      * the same array, right after the original keysyms.
@@ -2371,9 +2371,9 @@ CopySymbolsDefToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info,
                     leveli->s.syms = realloc(leveli->s.syms,
                                              (size_t) 2 * leveli->num_syms *
                                              sizeof(*leveli->s.syms));
-                    if (!leveli->s.syms)
-                        return false; /* FIXME: better handling? */
-                    for (xkb_keysym_count_t k = 0; k < leveli->num_syms; k++) {
+                    якщо (!leveli->s.syms)
+                        повернути false; /* FIXME: better handling? */
+                    для (xkb_keysym_count_t k = 0; k < leveli->num_syms; k++) {
                         leveli->s.syms[leveli->num_syms + k] =
                             xkb_keysym_to_upper(leveli->s.syms[k]);
                     }
@@ -2383,16 +2383,16 @@ CopySymbolsDefToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info,
 
         /* Copy the level */
         darray_steal(groupi->levels, &key->groups[i].levels, NULL);
-        if (key->groups[i].type->num_levels > 1 ||
+        якщо (key->groups[i].type->num_levels > 1 ||
             key->groups[i].levels[0].num_syms > 0) {
             key->groups[i].explicit_symbols = true;
             key->explicit |= EXPLICIT_SYMBOLS;
         }
-        if (groupi->defined & GROUP_FIELD_ACTS) { // FIXME
+        якщо (groupi->defined & GROUP_FIELD_ACTS) { // FIXME
             key->groups[i].explicit_actions = true;
             key->explicit |= EXPLICIT_INTERP;
         }
-        if (key->groups[i].explicit_type)
+        якщо (key->groups[i].explicit_type)
             key->explicit |= EXPLICIT_TYPES;
     }
 
@@ -2401,40 +2401,40 @@ CopySymbolsDefToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info,
     key->out_of_range_group_policy = keyi->out_of_range_group_policy;
 
 key_fields:
-    if (keyi->defined & KEY_FIELD_VMODMAP) {
+    якщо (keyi->defined & KEY_FIELD_VMODMAP) {
         key->vmodmap = keyi->vmodmap;
         key->explicit |= EXPLICIT_VMODMAP;
     }
 
-    if (keyi->repeat != KEY_REPEAT_UNDEFINED) {
+    якщо (keyi->repeat != KEY_REPEAT_UNDEFINED) {
         key->repeats = (keyi->repeat == KEY_REPEAT_YES);
         key->explicit |= EXPLICIT_REPEAT;
     }
 
-    if ((keyi->defined & KEY_FIELD_OVERLAY) &&
+    якщо ((keyi->defined & KEY_FIELD_OVERLAY) &&
         keyi->overlays && !keyi->overlays_clear) {
         key->overlays = keyi->overlays;
-        if (keyi->overlays_alloc) {
+        якщо (keyi->overlays_alloc) {
             /* Remove empty entries */
 
             xkb_overlay_mask_t remaining = key->overlays;
             const struct xkb_key **overlays_keys = keyi->overlays_keys;
-            while (remaining) {
+            поки (remaining) {
                 /* isolate lowest set bit */
                 const xkb_overlay_mask_t lsb = (xkb_overlay_mask_t)(
                     remaining &
                     (xkb_overlay_mask_t)((unsigned)~remaining + 1u)
                 );
                 remaining = (remaining & ~lsb);
-                if (*overlays_keys) {
+                якщо (*overlays_keys) {
                     overlays_keys++;
-                } else {
+                } інакше {
                     /* drop current null value (overlayN=none) */
                     key->overlays &= ~lsb;
                 }
             }
 
-            if (key->overlays) {
+            якщо (key->overlays) {
                 /* Steal */
                 key->overlays_keys = keyi->overlays_keys;
                 keyi->overlays_keys = NULL;
@@ -2443,14 +2443,14 @@ key_fields:
                 key->overlays_inline = false;
                 key->explicit |= EXPLICIT_OVERLAY;
             }
-        } else {
+        } інакше {
             key->overlay_key = keyi->overlay_key;
             key->overlays_inline = true;
             key->explicit |= EXPLICIT_OVERLAY;
         }
     }
 
-    return true;
+    повернути true;
 }
 
 static bool
@@ -2459,9 +2459,9 @@ CopyModMapDefToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info,
 {
     struct xkb_key *key;
 
-    if (!entry->haveSymbol) {
+    якщо (!entry->haveSymbol) {
         key = XkbKeyByName(keymap, entry->u.keyName, true);
-        if (!key) {
+        якщо (!key) {
             log_vrb(info->ctx, XKB_LOG_VERBOSITY_DETAILED,
                     XKB_WARNING_UNDEFINED_KEYCODE,
                     "Key %s not found in keycodes; "
@@ -2469,12 +2469,12 @@ CopyModMapDefToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info,
                     KeyNameText(info->ctx, entry->u.keyName),
                     ModMaskText(info->ctx, MOD_REAL, &info->mods, entry->mods));
             entry->mods = 0; /* disable */
-            return false;
+            повернути false;
         }
     }
-    else {
+    інакше {
         key = FindKeyForSymbol(keymap, entry->u.keySym);
-        if (!key) {
+        якщо (!key) {
             log_vrb(info->ctx, XKB_LOG_VERBOSITY_DETAILED,
                     XKB_WARNING_UNRESOLVED_KEYMAP_SYMBOL,
                     "Key \"%s\" not found in symbol map; "
@@ -2482,17 +2482,17 @@ CopyModMapDefToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info,
                     KeysymText(info->ctx, entry->u.keySym),
                     ModMaskText(info->ctx, MOD_REAL, &info->mods, entry->mods));
             entry->mods = 0; /* disable */
-            return false;
+            повернути false;
         }
     }
 
     /* Skip modMap None */
-    if (entry->mods) {
+    якщо (entry->mods) {
         key->modmap |= entry->mods;
         entry->keyCode = key->keycode;
     }
 
-    return true;
+    повернути true;
 }
 
 static bool
@@ -2509,17 +2509,17 @@ CopySymbolsToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info)
     darray_steal(info->group_names, &keymap->group_names, NULL);
 
     darray_foreach(keyi, info->keys)
-        if (!CopySymbolsDefToKeymap(keymap, info, keyi))
+        якщо (!CopySymbolsDefToKeymap(keymap, info, keyi))
             info->errorCount++;
 
-    if (xkb_context_get_log_verbosity(keymap->ctx) > 3) {
+    якщо (xkb_context_get_log_verbosity(keymap->ctx) > 3) {
         struct xkb_key *key;
 
         xkb_keys_foreach(key, keymap) {
-            if (key->name == XKB_ATOM_NONE)
+            якщо (key->name == XKB_ATOM_NONE)
                 continue;
 
-            if (key->num_groups < 1)
+            якщо (key->num_groups < 1)
                 log_info(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                          "No symbols defined for %s\n",
                          KeyNameText(info->ctx, key->name));
@@ -2529,14 +2529,14 @@ CopySymbolsToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info)
     /* Resolve modmaps */
     ModMapEntry *mm;
     darray_foreach(mm, info->modmaps)
-        if (!CopyModMapDefToKeymap(keymap, info, mm))
+        якщо (!CopyModMapDefToKeymap(keymap, info, mm))
             info->errorCount++;
 
     /* Copy detailed modmap */
     darray_steal(info->modmaps, &keymap->modmaps, &keymap->num_modmaps);
 
     /* XXX: If we don't ignore errorCount, things break. */
-    return true;
+    повернути true;
 }
 
 bool
@@ -2546,19 +2546,19 @@ CompileSymbols(XkbFile *file, struct xkb_keymap_info *keymap_info)
 
     InitSymbolsInfo(&info, keymap_info, 0, &keymap_info->keymap.mods);
 
-    if (file !=NULL)
+    якщо (file !=NULL)
         HandleSymbolsFile(&info, file);
 
-    if (info.errorCount != 0)
+    якщо (info.errorCount != 0)
         goto err_info;
 
-    if (!CopySymbolsToKeymap(&keymap_info->keymap, &info))
+    якщо (!CopySymbolsToKeymap(&keymap_info->keymap, &info))
         goto err_info;
 
     ClearSymbolsInfo(&info);
-    return true;
+    повернути true;
 
 err_info:
     ClearSymbolsInfo(&info);
-    return false;
+    повернути false;
 }
