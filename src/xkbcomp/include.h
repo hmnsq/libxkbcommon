@@ -2,48 +2,48 @@
  * Copyright (c) 1994 by Silicon Graphics Computer Systems, Inc.
  * SPDX-License-Identifier: HPND
  */
-#pragma once
+#ہدایت once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include "ast.h"
-#include "utils.h"
-#include "xkbcomp-priv.h"
+#ضمن "ast.h"
+#ضمن "utils.h"
+#ضمن "xkbcomp-priv.h"
 
 /* Reasonable threshold, with plenty of margin for keymaps in the wild */
-#define INCLUDE_MAX_DEPTH 15
+#تعریف_کرو INCLUDE_MAX_ڈونگھائی 15
 
-#define MERGE_OVERRIDE_PREFIX '+'
-#define MERGE_AUGMENT_PREFIX  '|'
-#define MERGE_REPLACE_PREFIX  '^'
-#define MERGE_DEFAULT_PREFIX  MERGE_OVERRIDE_PREFIX
-#define is_merge_mode_prefix(ch) \
-    ((ch) == MERGE_OVERRIDE_PREFIX || (ch) == MERGE_AUGMENT_PREFIX || \
-     (ch) == MERGE_REPLACE_PREFIX)
-static const char MERGE_MODE_PREFIXES[] =
-    { MERGE_OVERRIDE_PREFIX, MERGE_AUGMENT_PREFIX, MERGE_REPLACE_PREFIX, 0 };
+#تعریف_کرو ملاؤ_OVERRIDE_اگیتر '+'
+#تعریف_کرو ملاؤ_AUGMENT_اگیتر  '|'
+#تعریف_کرو ملاؤ_REPLACE_اگیتر  '^'
+#تعریف_کرو ملاؤ_DEFAULT_اگیتر  ملاؤ_OVERRIDE_اگیتر
+#تعریف_کرو is_ملاؤ_منوال_اگیتر(ch) \
+    ((ch) == ملاؤ_OVERRIDE_اگیتر || (ch) == ملاؤ_AUGMENT_اگیتر || \
+     (ch) == ملاؤ_REPLACE_اگیتر)
+ساكن ثابت حرف ملاؤ_منوال_PREFIXES[] =
+    { ملاؤ_OVERRIDE_اگیتر, ملاؤ_AUGMENT_اگیتر, ملاؤ_REPLACE_اگیتر, 0 };
 
 
 bool
-ParseIncludeMap(char **str_inout, char **file_rtrn, char **map_rtrn,
-                char *nextop_rtrn, char **extra_data);
+ParseIncludeMap(حرف **str_inout, حرف **file_rtrn, حرف **map_rtrn,
+                حرف *nextop_rtrn, حرف **extra_انکڑے);
 
 ssize_t
-expand_path(struct xkb_context *ctx, const char* parent_file_name,
-            const char *name, size_t name_len, enum xkb_file_type type,
-            char *buf, size_t buf_size);
+expand_رستہ(بنية xkb_context *ctx, ثابت حرف* ماپا_file_name,
+            ثابت حرف *name, ناپ_t name_len, تعداد xkb_file_type type,
+            حرف *buf, ناپ_t buf_ناپ);
 
 FILE *
-FindFileInXkbPath(struct xkb_context *ctx, const char* parent_file_name,
-                  const char *name, size_t name_len, enum xkb_file_type type,
-                  char *buf, size_t buf_size, unsigned int *offset,
+لبھو_File_وچ_Xkb_رستہ(بنية xkb_context *ctx, ثابت حرف* ماپا_file_name,
+                  ثابت حرف *name, ناپ_t name_len, تعداد xkb_file_type type,
+                  حرف *buf, ناپ_t buf_ناپ, بنانشانی صحيح *وتھ,
                   bool required);
 
 bool
-ExceedsIncludeMaxDepth(struct xkb_context *ctx, unsigned int include_depth);
+Exceeds_Include_Max_ڈونگھائی(بنية xkb_context *ctx, بنانشانی صحيح include_ڈونگھائی);
 
 XkbFile *
-ProcessIncludeFile(struct xkb_context *ctx,
-                   const struct parser_keymap_config *config,
-                   const IncludeStmt *stmt,
-                   enum xkb_file_type file_type, char *path, size_t path_size);
+ProcessIncludeFile(بنية xkb_context *ctx,
+                   ثابت بنية parser_keymap_config *config,
+                   ثابت IncludeStmt *stmt,
+                   تعداد xkb_file_type file_type, حرف *رستہ, ناپ_t رستہ_ناپ);

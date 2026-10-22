@@ -2,19 +2,19 @@
  * Copyright © 2025 Pierre Le Marre <dev@wismill.eu>
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#ہدایت once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <limits.h>
-#include <stdbool.h>
-#include <stdint.h>
+#ضمن <limits.h>
+#ضمن <stdbool.h>
+#ضمن <stdint.h>
 
-#if defined(_MSC_VER)
+#إذا defined(_MSC_VER)
 # include <intrin.h>
-#endif
+#جے_انت
 
-#include "utils.h"
+#ضمن "utils.h"
 
 /*
  * Define various parsers to avoid the use of strto* -- it’s slower and accepts
@@ -26,24 +26,24 @@
  * the parsers will *always* stop on a NULL character.
  */
 
-#define MAKE_PARSE_DEC_TO(type, max)                         \
-static inline int                                            \
-parse_dec_to_##type(const char *s, size_t len, type (*out))  \
+#تعریف_کرو MAKE_PARSE_DEC_منزل(type, max)                         \
+ساكن مضمن صحيح                                            \
+parse_dec_منزل##type(ثابت حرف *s, ناپ_t len, type (*باہرلا))  \
 {                                                            \
-    type result = 0;                                         \
-    size_t i;                                                \
-    for (i = 0;                                              \
-         i < len && (unsigned char)(s[i] - '0') < 10U &&     \
-         result <= (max) / 10 &&                             \
-         result * 10 <= (max) - (unsigned char) (s[i] - '0');\
+    type نتیجہ = 0;                                         \
+    ناپ_t i;                                                \
+    لكل (i = 0;                                              \
+         i < len && (بنانشانی حرف)(s[i] - '0') < 10U &&     \
+         نتیجہ <= (max) / 10 &&                             \
+         نتیجہ * 10 <= (max) - (بنانشانی حرف) (s[i] - '0');\
          i++) {                                              \
-        result = result * 10 + (type)(s[i] - '0');           \
+        نتیجہ = نتیجہ * 10 + (type)(s[i] - '0');           \
     }                                                        \
-    *out = result;                                           \
+    *باہرلا = نتیجہ;                                           \
     /* Check if there is more to parse */                    \
     /* We can safely convert the length to int on success */ \
-    return (i >= len || (unsigned char)(s[i] - '0') >= 10U)  \
-           ? (int) i                                         \
+    أرجع (i >= len || (بنانشانی حرف)(s[i] - '0') >= 10U)  \
+           ? (صحيح) i                                         \
            : -1;                                             \
 }
 
@@ -52,18 +52,18 @@ parse_dec_to_##type(const char *s, size_t len, type (*out))  \
  *
  * @returns -1 on error (overflow) or the count of characters parsed.
  */
-MAKE_PARSE_DEC_TO(uint32_t, UINT32_MAX)
+MAKE_PARSE_DEC_منزل(uint32_t, UINT32_MAX)
 
 /**
  * Parse a `uint64_t` in decimal format.
  *
  * @returns -1 on error (overflow) or the count of characters parsed.
  */
-MAKE_PARSE_DEC_TO(uint64_t, UINT64_MAX)
+MAKE_PARSE_DEC_منزل(uint64_t, UINT64_MAX)
 
-#undef MAKE_PARSE_DEC_TO
+#تعریف_رد MAKE_PARSE_DEC_منزل
 
-static const unsigned char digits__[] = {
+ساكن ثابت بنانشانی حرف digits__[] = {
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
@@ -88,21 +88,21 @@ static const unsigned char digits__[] = {
     0xff, 0xff, 0xff, 0xff
 };
 
-#define MAKE_PARSE_HEX_TO(type, max)                           \
-static inline int                                              \
-parse_hex_to_##type(const char *s, size_t len, type (*out))    \
+#تعریف_کرو MAKE_PARSE_HEX_منزل(type, max)                           \
+ساكن مضمن صحيح                                              \
+parse_hex_منزل##type(ثابت حرف *s, ناپ_t len, type (*باہرلا))    \
 {                                                              \
-    type result = 0;                                           \
-    size_t i = 0;                                              \
-    for (; i < len && digits__[(unsigned char) s[i]] < 16u &&  \
-         result <= (max) >> 4;                                 \
+    type نتیجہ = 0;                                           \
+    ناپ_t i = 0;                                              \
+    لكل (; i < len && digits__[(بنانشانی حرف) s[i]] < 16u &&  \
+         نتیجہ <= (max) >> 4;                                 \
          i++) {                                                \
-        result = result * 16 + digits__[(unsigned char) s[i]]; \
+        نتیجہ = نتیجہ * 16 + digits__[(بنانشانی حرف) s[i]]; \
     }                                                          \
-    *out = result;                                             \
+    *باہرلا = نتیجہ;                                             \
     /* Check if there is more to parse */                      \
     /* We can safely convert the length to int on success */   \
-    return (i >= len || !is_xdigit(s[i])) ? (int) i : -1;      \
+    أرجع (i >= len || !is_xdigit(s[i])) ? (صحيح) i : -1;      \
 }
 
 /**
@@ -110,115 +110,115 @@ parse_hex_to_##type(const char *s, size_t len, type (*out))    \
  *
  * @returns -1 on error (overflow) or the count of characters parsed.
  */
-MAKE_PARSE_HEX_TO(uint32_t, UINT32_MAX)
+MAKE_PARSE_HEX_منزل(uint32_t, UINT32_MAX)
 
 /**
  * Parse a `uint64_t` in hexdecimal format.
  *
  * @returns -1 on error (overflow) or the count of characters parsed.
  */
-MAKE_PARSE_HEX_TO(uint64_t, UINT64_MAX)
+MAKE_PARSE_HEX_منزل(uint64_t, UINT64_MAX)
 
-#undef MAKE_PARSE_HEX_TO
+#تعریف_رد MAKE_PARSE_HEX_منزل
 
-static inline unsigned int
+ساكن مضمن بنانشانی صحيح
 popcount32(uint32_t x)
 {
-#if defined(__GNUC__) || defined(__clang__)
-    return (unsigned int)__builtin_popcountl(x);
-#elif defined(_MSC_VER)
-    return __popcnt(x);
-#else
+#إذا defined(__GNUC__) || defined(__clang__)
+    أرجع (بنانشانی صحيح)__builtin_popcountl(x);
+#وإلاإذا defined(_MSC_VER)
+    أرجع __popcnt(x);
+#وإلا
     /* Fallback (Brian Kernighan’s method) */
-    unsigned int count = 0;
-    while (x) {
+    بنانشانی صحيح گنتی = 0;
+    طالما (x) {
         x &= x - 1;
-        count++;
+        گنتی++;
     }
-    return count;
-#endif
+    أرجع گنتی;
+#جے_انت
 }
 
-static inline unsigned int
+ساكن مضمن بنانشانی صحيح
 ctz32(uint32_t x)
 {
-    if (x == 0)
-        return 32;
+    إذا (x == 0)
+        أرجع 32;
 
-#if defined(__GNUC__) || defined(__clang__)
-    return _Generic(
+#إذا defined(__GNUC__) || defined(__clang__)
+    أرجع _Generic(
         x,
-        unsigned int: (unsigned int)__builtin_ctz(x),
-        unsigned long: (unsigned int)__builtin_ctzl(x),
-        unsigned long long: (unsigned int)__builtin_ctzll(x)
+        بنانشانی صحيح: (بنانشانی صحيح)__builtin_ctz(x),
+        بنانشانی لما: (بنانشانی صحيح)__builtin_ctzl(x),
+        بنانشانی لما لما: (بنانشانی صحيح)__builtin_ctzll(x)
     );
-#elif defined(_MSC_VER)
-    unsigned long index;
-    _BitScanForward(&index, x);
-    return (unsigned int)index;
-#else
+#وإلاإذا defined(_MSC_VER)
+    بنانشانی لما اشاریہ;
+    ثنائی_ہندسہ_جانچ_Forward(&اشاریہ, x);
+    أرجع (بنانشانی صحيح)اشاریہ;
+#وإلا
     /* Fallback: De Bruijn sequence algorithm for 32-bit integers */
-    static const unsigned int debruijn32[32] = {
+    ساكن ثابت بنانشانی صحيح debruijn32[32] = {
         0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8,
         31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9
     };
-    return debruijn32[((x & -x) * UINT32_C(0x077cb531)) >> 27];
-#endif
+    أرجع debruijn32[((x & -x) * UINT32_C(0x077cb531)) >> 27];
+#جے_انت
 }
 
-static inline unsigned int
+ساكن مضمن بنانشانی صحيح
 clz32(uint32_t x)
 {
-    if (x == 0)
-        return 32;
+    إذا (x == 0)
+        أرجع 32;
 
-#if defined(__GNUC__) || defined(__clang__)
-    return _Generic(
+#إذا defined(__GNUC__) || defined(__clang__)
+    أرجع _Generic(
         x,
-        unsigned int:
-            (unsigned int)__builtin_clz(x) -
-            (unsigned int)((sizeof(unsigned int) * CHAR_BIT) - 32),
-        unsigned long:
-            (unsigned int)__builtin_clzl(x) -
-            (unsigned int)((sizeof(unsigned long) * CHAR_BIT) - 32),
-        unsigned long long:
-            (unsigned int)__builtin_clzll(x) -
-            (unsigned int)((sizeof(unsigned long long) * CHAR_BIT) - 32)
+        بنانشانی صحيح:
+            (بنانشانی صحيح)__builtin_clz(x) -
+            (بنانشانی صحيح)((حجم(بنانشانی صحيح) * CHAR_BIT) - 32),
+        بنانشانی لما:
+            (بنانشانی صحيح)__builtin_clzl(x) -
+            (بنانشانی صحيح)((حجم(بنانشانی لما) * CHAR_BIT) - 32),
+        بنانشانی لما لما:
+            (بنانشانی صحيح)__builtin_clzll(x) -
+            (بنانشانی صحيح)((حجم(بنانشانی لما لما) * CHAR_BIT) - 32)
     );
-#else
+#وإلا
     // Efficient binary search fallback for 32-bit integers
-    unsigned int count = 0;
-    if ((x & 0xffff0000) == 0) { count += 16; x <<= 16; }
-    if ((x & 0xff000000) == 0) { count += 8;  x <<= 8;  }
-    if ((x & 0xf0000000) == 0) { count += 4;  x <<= 4;  }
-    if ((x & 0xc0000000) == 0) { count += 2;  x <<= 2;  }
-    if ((x & 0x80000000) == 0) { count += 1; }
-    return count;
-#endif
+    بنانشانی صحيح گنتی = 0;
+    إذا ((x & 0xffff0000) == 0) { گنتی += 16; x <<= 16; }
+    إذا ((x & 0xff000000) == 0) { گنتی += 8;  x <<= 8;  }
+    إذا ((x & 0xf0000000) == 0) { گنتی += 4;  x <<= 4;  }
+    إذا ((x & 0xc0000000) == 0) { گنتی += 2;  x <<= 2;  }
+    إذا ((x & 0x80000000) == 0) { گنتی += 1; }
+    أرجع گنتی;
+#جے_انت
 }
 
-static inline unsigned int
-next_pow2(unsigned int x)
+ساكن مضمن بنانشانی صحيح
+اگلا_pow2(بنانشانی صحيح x)
 {
-#if defined(__GNUC__) || defined(__clang__)
-    if (x <= 1) return 1u;
-    return 1u << ((int)sizeof(unsigned) * CHAR_BIT - __builtin_clz(x - 1));
-#else
-    if (x <= 1u) return 1u;
+#إذا defined(__GNUC__) || defined(__clang__)
+    إذا (x <= 1) أرجع 1u;
+    أرجع 1u << ((صحيح)حجم(بنانشانی) * CHAR_BIT - __builtin_clz(x - 1));
+#وإلا
+    إذا (x <= 1u) أرجع 1u;
     x--;
-    for (unsigned s = 1; s < (unsigned)sizeof(x)*CHAR_BIT; s <<= 1)
+    لكل (بنانشانی s = 1; s < (بنانشانی)حجم(x)*CHAR_BIT; s <<= 1)
         x |= x >> s;
-    return x + 1u;
-#endif
+    أرجع x + 1u;
+#جے_انت
 }
 
-static inline uint32_t
-keep_lowest_n_set_bits(uint32_t mask, unsigned int n) {
-    const uint32_t original = mask;
+ساكن مضمن uint32_t
+keep_سبھ_توں_نیواں_n_سیٹ_بٹ(uint32_t نقاب, بنانشانی صحيح n) {
+    ثابت uint32_t original = نقاب;
 
     /* Clear the lowest set bit n times */
-    while (n-- && mask)
-        mask &= (mask - 1);
+    طالما (n-- && نقاب)
+        نقاب &= (نقاب - 1);
 
-    return original ^ mask;
+    أرجع original ^ نقاب;
 }

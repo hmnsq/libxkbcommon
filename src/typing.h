@@ -3,122 +3,122 @@
  * SPDX-License-Identifier: MIT
  */
 
-#pragma once
+#ہدایت once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <stddef.h>
-#include <stdint.h>
+#ضمن <stddef.h>
+#ضمن <stdint.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-status.h"
-#include "darray.h"
+#ضمن "xkbcommon/xkbcommon.h"
+#ضمن "xkbcommon/xkbcommon-status.h"
+#ضمن "darray.h"
 
-enum xkb_modifier_kind {
+تعداد xkb_modifier_قسم {
     /** Shift, Ctrl, Alt: press — other key(s) — release */
-    XKB_MOD_SET,
+    XKB_MOD_سیٹ,
     /** sticky-keys tap: press — release — exactly one other key */
     XKB_MOD_LATCH,
     /** CapsLock, NumLock: press — release, toggles persistent state */
-    XKB_MOD_LOCK,
+    XKB_MOD_جندرا,
 };
 
-enum xkb_key_kind {
-    XKB_KEY_PRINTABLE,
-    XKB_KEY_MODIFIER,
-    XKB_KEY_MISC,
-    _NUM_XKB_KEY_KIND,
+تعداد xkb_کلید_قسم {
+    XKB_کلید_PRINTABLE,
+    XKB_کلید_MODIFIER,
+    XKB_کلید_MISC,
+    عدد_XKB_کلید_قسم,
 };
 
-struct xkb_modifier_key {
+بنية xkb_modifier_کلید {
     xkb_keycode_t keycode;
-    xkb_mod_mask_t mods;
-    enum xkb_modifier_kind kind;
+    xkb_mod_نقاب_t mods;
+    تعداد xkb_modifier_قسم قسم;
 };
 
-typedef darray(xkb_keycode_t) xkb_keycodes_t;
+تعريفنوع darray(xkb_keycode_t) xkb_keycodes_t;
 
 /** Keys classified by category */
-struct xkb_key_set {
+بنية xkb_کلید_سیٹ {
     /** Printable keys: alphanum, punctuation, symbols, etc. */
     xkb_keycodes_t printable;
     /** Modifier keys */
-    darray(struct xkb_modifier_key) modifiers;
+    darray(بنية xkb_modifier_کلید) modifiers;
     /** Miscellaneous: arrows, editing, functions, system, etc. */
     xkb_keycodes_t misc;
 };
 
-struct xkb_key_set_config {
+بنية xkb_کلید_سیٹ_config {
     xkb_keycode_t min;
     xkb_keycode_t max;
 };
 
-enum xkb_status
-xkb_key_set_init(struct xkb_key_set *set,
-                 struct xkb_keymap *keymap,
-                 const struct xkb_key_set_config *config);
+تعداد xkb_حالت
+xkb_کلید_سیٹ_init(بنية xkb_کلید_سیٹ *سیٹ,
+                 بنية xkb_keymap *keymap,
+                 ثابت بنية xkb_کلید_سیٹ_config *config);
 
-void
-xkb_key_set_destroy(struct xkb_key_set *set);
+فراغ
+xkb_کلید_سیٹ_destroy(بنية xkb_کلید_سیٹ *سیٹ);
 
-struct xkb_typing_event {
+بنية xkb_typing_event {
     xkb_keycode_t keycode;
-    enum xkb_key_direction direction;
+    تعداد xkb_کلید_direction direction;
 };
 
-typedef darray(struct xkb_typing_event) xkb_typing_events;
+تعريفنوع darray(بنية xkb_typing_event) xkb_typing_events;
 
-struct xkb_pending_typing_event {
-    struct xkb_typing_event event;
-    xkb_mod_mask_t mods;
+بنية xkb_pending_typing_event {
+    بنية xkb_typing_event event;
+    xkb_mod_نقاب_t mods;
     uint8_t counter;
 };
 
 /** PRNG: return values must be between 0 and 2^31 - 1 (see random()) */
-typedef long (*xkb_prng_t)(void *);
+تعريفنوع لما (*xkb_prng_t)(فراغ *);
 
-struct xkb_typing_state {
+بنية xkb_typing_state {
     /** Keys used for typing, classified by category. Borrowed */
-    const struct xkb_key_set *keys;
+    ثابت بنية xkb_کلید_سیٹ *کلیدیں;
     /** Keys state: pressed (1) or released (0) */
-    uintptr_t *keys_state;
+    uintptr_t *کلیدیں_state;
     xkb_prng_t prng;
     /** Borrowed */
-    void *prng_state;
-    size_t num_events;
+    فراغ *prng_state;
+    ناپ_t عدد_events;
     /** Realistic typing events */
-    struct xkb_typing_event *events ATTR_COUNTED_BY(num_events);
+    بنية xkb_typing_event *events ATTR_COUNTED_BY(عدد_events);
     /** Pending events */
-    darray(struct xkb_pending_typing_event) pending;
-    darray_size_t num_pending;
+    darray(بنية xkb_pending_typing_event) pending;
+    darray_ناپ_t عدد_pending;
     /** Effective mods */
-    xkb_mod_mask_t mods;
+    xkb_mod_نقاب_t mods;
 };
 
-enum {
-    XKB_TYPING_EVENT_PRINTABLE_IMMEDIATE_RELEASE_PERCENT = 75,
+تعداد {
+    XKB_TYPING_EVENT_PRINTABLE_فوری_RELEASE_PERCENT = 75,
     XKB_TYPING_EVENT_PRINTABLE_MAX_PENDING_TURNS = 1,
     XKB_TYPING_EVENT_MODIFIER_MIN_PENDING_TURNS = 2,
     XKB_TYPING_EVENT_MODIFIER_MAX_PENDING_TURNS = 10,
-    XKB_TYPING_EVENT_MISC_IMMEDIATE_RELEASE_PERCENT = 100,
+    XKB_TYPING_EVENT_MISC_فوری_RELEASE_PERCENT = 100,
     XKB_TYPING_EVENT_MISC_MAX_PENDING_TURNS = 0,
 };
 
-struct xkb_typing_input {
-    struct xkb_typing_event *events;
-    size_t num_events;
+بنية xkb_typing_داخلہ {
+    بنية xkb_typing_event *events;
+    ناپ_t عدد_events;
 };
 
-struct xkb_typing_input_config {
+بنية xkb_typing_داخلہ_config {
     xkb_prng_t prng;
-    void *prng_state;
-    size_t input_length;
+    فراغ *prng_state;
+    ناپ_t داخلہ_لمائی;
 };
 
-enum xkb_status
-xkb_typing_input_init(struct xkb_typing_input *typing,
-                      const struct xkb_key_set *keys,
-                      const struct xkb_typing_input_config *config);
+تعداد xkb_حالت
+xkb_typing_داخلہ_init(بنية xkb_typing_داخلہ *typing,
+                      ثابت بنية xkb_کلید_سیٹ *کلیدیں,
+                      ثابت بنية xkb_typing_داخلہ_config *config);
 
-void
-xkb_typing_input_destroy(struct xkb_typing_input *typing);
+فراغ
+xkb_typing_داخلہ_destroy(بنية xkb_typing_داخلہ *typing);

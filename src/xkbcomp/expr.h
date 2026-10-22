@@ -2,66 +2,66 @@
  * Copyright (c) 1994 by Silicon Graphics Computer Systems, Inc.
  * SPDX-License-Identifier: HPND
  */
-#pragma once
+#ہدایت once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include "xkbcommon/xkbcommon.h"
+#ضمن "xkbcommon/xkbcommon.h"
 
-#include "ast.h"
-#include "keymap.h"
-#include "text.h"
-#include "xkbcomp-priv.h"
-
-bool
-ExprResolveLhs(struct xkb_context *ctx, const ExprDef *expr,
-               const char **elem_rtrn, const char **field_rtrn,
-               ExprDef **index_rtrn);
+#ضمن "ast.h"
+#ضمن "keymap.h"
+#ضمن "text.h"
+#ضمن "xkbcomp-priv.h"
 
 bool
-ExprResolveModMask(struct xkb_context *ctx, const ExprDef *expr,
-                   enum mod_type mod_type, const struct xkb_mod_set *mods,
-                   xkb_mod_mask_t *mask_rtrn);
+اظہاریہ_Resolve_Lhs(بنية xkb_context *ctx, ثابت اظہاریہ_Def *اظہاریہ,
+               ثابت حرف **elem_rtrn, ثابت حرف **میدان_rtrn,
+               اظہاریہ_Def **اشاریہ_rtrn);
 
 bool
-ExprResolveMod(struct xkb_context *ctx, const ExprDef *def,
-               enum mod_type mod_type, const struct xkb_mod_set *mods,
-               xkb_mod_index_t *ndx_rtrn);
+اظہاریہ_Resolve_Mod_نقاب(بنية xkb_context *ctx, ثابت اظہاریہ_Def *اظہاریہ,
+                   تعداد mod_type mod_type, ثابت بنية xkb_mod_سیٹ *mods,
+                   xkb_mod_نقاب_t *نقاب_rtrn);
 
 bool
-ExprResolveBoolean(struct xkb_context *ctx, const ExprDef *expr,
-                   bool *set_rtrn);
+اظہاریہ_Resolve_Mod(بنية xkb_context *ctx, ثابت اظہاریہ_Def *def,
+               تعداد mod_type mod_type, ثابت بنية xkb_mod_سیٹ *mods,
+               xkb_mod_اشاریہ_t *ndx_rtrn);
 
 bool
-ExprResolveInteger(struct xkb_context *ctx, const ExprDef *expr,
+اظہاریہ_Resolve_Boolean(بنية xkb_context *ctx, ثابت اظہاریہ_Def *اظہاریہ,
+                   bool *سیٹ_rtrn);
+
+bool
+اظہاریہ_Resolve_Integer(بنية xkb_context *ctx, ثابت اظہاریہ_Def *اظہاریہ,
                    int64_t *val_rtrn);
 
 bool
-ExprResolveLevel(struct xkb_context *ctx, const ExprDef *expr,
-                 xkb_level_index_t *level_rtrn);
+اظہاریہ_Resolve_Level(بنية xkb_context *ctx, ثابت اظہاریہ_Def *اظہاریہ,
+                 xkb_level_اشاریہ_t *level_rtrn);
 
-enum xkb_parser_error
-ExprResolveGroup(const struct xkb_keymap_info *keymap_info,
-                 const ExprDef *expr, bool absolute,
-                 xkb_layout_index_t *group_rtrn, bool *pending_rtrn);
+تعداد xkb_parser_error
+اظہاریہ_Resolve_گروہ(ثابت بنية xkb_keymap_info *keymap_info,
+                 ثابت اظہاریہ_Def *اظہاریہ, bool absolute,
+                 xkb_layout_اشاریہ_t *گروہ_rtrn, bool *pending_rtrn);
 
 bool
-ExprResolveGroupMask(const struct xkb_keymap_info *keymap_info,
-                     const ExprDef *expr, xkb_layout_mask_t *group_rtrn,
+اظہاریہ_Resolve_گروہ_نقاب(ثابت بنية xkb_keymap_info *keymap_info,
+                     ثابت اظہاریہ_Def *اظہاریہ, xkb_layout_نقاب_t *گروہ_rtrn,
                      bool *pending_rtrn);
 
 bool
-ExprResolveButton(struct xkb_context *ctx, const ExprDef *expr,
+اظہاریہ_Resolve_Button(بنية xkb_context *ctx, ثابت اظہاریہ_Def *اظہاریہ,
                   int64_t *btn_rtrn);
 
 bool
-ExprResolveString(struct xkb_context *ctx, const ExprDef *expr,
+اظہاریہ_Resolve_String(بنية xkb_context *ctx, ثابت اظہاریہ_Def *اظہاریہ,
                   xkb_atom_t *val_rtrn);
 
 bool
-ExprResolveEnum(struct xkb_context *ctx, const ExprDef *expr,
-                uint32_t *val_rtrn, const LookupEntry *values);
+اظہاریہ_Resolve_Enum(بنية xkb_context *ctx, ثابت اظہاریہ_Def *اظہاریہ,
+                uint32_t *val_rtrn, ثابت Lookup_اندراج *اقدار);
 
 bool
-ExprResolveMask(struct xkb_context *ctx, const ExprDef *expr,
-                uint32_t *mask_rtrn, const LookupEntry *values);
+اظہاریہ_Resolve_نقاب(بنية xkb_context *ctx, ثابت اظہاریہ_Def *اظہاریہ,
+                uint32_t *نقاب_rtrn, ثابت Lookup_اندراج *اقدار);

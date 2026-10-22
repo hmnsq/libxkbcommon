@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#ضمن "config.h"
 
-#include "utils.h"
-#include "utf8-decoding.h"
+#ضمن "utils.h"
+#ضمن "utf8-decoding.h"
 
 /* Array mapping the leading byte to the length of a UTF-8 sequence.
  * A value of zero indicates that the byte can not begin a UTF-8 sequence. */
-static const uint8_t utf8_sequence_length_by_leading_byte[256] = {
+ساكن ثابت uint8_t utf8_sequence_لمائی_by_leading_byte[256] = {
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /* 0x00-0x0F */
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /* 0x10-0x1F */
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /* 0x20-0x2F */
@@ -31,52 +31,52 @@ static const uint8_t utf8_sequence_length_by_leading_byte[256] = {
 
 /* Length of next utf-8 sequence */
 uint8_t
-utf8_sequence_length(const char *s)
+utf8_sequence_لمائی(ثابت حرف *s)
 {
-    return utf8_sequence_length_by_leading_byte[(unsigned char)s[0]];
+    أرجع utf8_sequence_لمائی_by_leading_byte[(بنانشانی حرف)s[0]];
 }
 
 /* Reads the next UTF-8 sequence in a string */
 uint32_t
-utf8_next_code_point(const char *s, size_t max_size, size_t *size_out)
+utf8_اگلا_کوڈ_نقطہ(ثابت حرف *s, ناپ_t max_ناپ, ناپ_t *ناپ_باہرلا)
 {
     uint32_t cp = 0;
-    uint8_t len = utf8_sequence_length(s);
-    *size_out = 0;
+    uint8_t len = utf8_sequence_لمائی(s);
+    *ناپ_باہرلا = 0;
 
-    if (!max_size || len > max_size)
-        return INVALID_UTF8_CODE_POINT;
+    إذا (!max_ناپ || len > max_ناپ)
+        أرجع INVALID_UTF8_کوڈ_نقطہ;
 
     /* Handle leading byte */
-    switch (len) {
-    case 1:
-        *size_out = 1;
-        return (uint32_t)s[0];
-    case 2:
+    بدل (len) {
+    حالة 1:
+        *ناپ_باہرلا = 1;
+        أرجع (uint32_t)s[0];
+    حالة 2:
         cp = (uint32_t)s[0] & 0x1f;
-        break;
-    case 3:
+        اكسر;
+    حالة 3:
         cp = (uint32_t)s[0] & 0x0f;
-        break;
-    case 4:
+        اكسر;
+    حالة 4:
         cp = (uint32_t)s[0] & 0x07;
-        break;
-    default:
-        return INVALID_UTF8_CODE_POINT;
+        اكسر;
+    افتراضي:
+        أرجع INVALID_UTF8_کوڈ_نقطہ;
     }
 
     /* Process remaining bytes of the UTF-8 sequence */
-    for (size_t k = 1; k < len; k++) {
-        if (((uint32_t)s[k] & 0xc0) != 0x80)
-            return INVALID_UTF8_CODE_POINT;
+    لكل (ناپ_t k = 1; k < len; k++) {
+        إذا (((uint32_t)s[k] & 0xc0) != 0x80)
+            أرجع INVALID_UTF8_کوڈ_نقطہ;
         cp <<= 6;
         cp |= (uint32_t)s[k] & 0x3f;
     }
 
     /* Check surrogates */
-    if (is_surrogate(cp))
-        return INVALID_UTF8_CODE_POINT;
+    إذا (is_surrogate(cp))
+        أرجع INVALID_UTF8_کوڈ_نقطہ;
 
-    *size_out = len;
-    return cp;
+    *ناپ_باہرلا = len;
+    أرجع cp;
 }

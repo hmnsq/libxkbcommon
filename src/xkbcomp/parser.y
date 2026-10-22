@@ -12,95 +12,95 @@
 
 /* The following goes in the header */
 %code requires {
-#include "config.h"
+#ضمن "config.h"
 
-#include "scanner-utils.h"
-#include "xkbcomp/ast.h"
-#include "xkbcomp/xkbcomp-priv.h"
+#ضمن "scanner-utils.h"
+#ضمن "xkbcomp/ast.h"
+#ضمن "xkbcomp/xkbcomp-priv.h"
 }
 
 %{
-#include "config.h"
+#ضمن "config.h"
 
-#include <assert.h>
+#ضمن <assert.h>
 
-#include "keysym.h"
-#include "xkbcomp/xkbcomp-priv.h"
-#include "xkbcomp/parser-priv.h"
-#include "xkbcomp/ast-build.h"
+#ضمن "keysym.h"
+#ضمن "xkbcomp/xkbcomp-priv.h"
+#ضمن "xkbcomp/parser-priv.h"
+#ضمن "xkbcomp/ast-build.h"
 
-struct parser_param {
-    struct xkb_context *ctx;
-    struct scanner *scanner;
+بنية parser_param {
+    بنية xkb_context *ctx;
+    بنية scanner *scanner;
     XkbFile *rtrn;
-    struct parser_keymap_config config;
-    bool more_maps;
+    بنية parser_keymap_config config;
+    bool ہور_maps;
 };
 
-#define parser_log_with_code(param, level, verbosity, log_msg_id, fmt, ...)   \
-    scanner_log_with_code((param)->scanner, level, verbosity, log_msg_id, fmt,\
+#تعریف_کرو parser_log_with_کوڈ(param, level, verbosity, log_پیغام_id, fmt, ...)   \
+    scanner_log_with_کوڈ((param)->scanner, level, verbosity, log_پیغام_id, fmt,\
                           ##__VA_ARGS__)
 
-#define parser_err(param, error_id, fmt, ...) \
+#تعریف_کرو parser_err(param, error_id, fmt, ...) \
     scanner_err((param)->scanner, error_id, fmt, ##__VA_ARGS__)
 
-#define parser_warn(param, warning_id, fmt, ...) \
+#تعریف_کرو parser_warn(param, warning_id, fmt, ...) \
     scanner_warn((param)->scanner, warning_id, fmt, ##__VA_ARGS__)
 
-#define parser_vrb(param, verbosity, warning_id, fmt, ...) \
+#تعریف_کرو parser_vrb(param, verbosity, warning_id, fmt, ...) \
     scanner_vrb((param)->scanner, verbosity, warning_id, fmt, ##__VA_ARGS__)
 
-static void
-_xkbcommon_error(struct parser_param *param, const char *msg)
+ساكن فراغ
+_xkbcommon_error(بنية parser_param *param, ثابت حرف *پیغام)
 {
-    parser_err(param, XKB_ERROR_INVALID_XKB_SYNTAX, "%s", msg);
+    parser_err(param, XKB_ERROR_INVALID_XKB_SYNTAX, "%s", پیغام);
 }
 
-static bool
-resolve_keysym(struct parser_param *param, struct sval name, xkb_keysym_t *sym_rtrn)
+ساكن bool
+resolve_keysym(بنية parser_param *param, بنية sval name, xkb_keysym_t *sym_rtrn)
 {
     xkb_keysym_t sym;
 
-    if (isvaleq(name, SVAL_LIT("any")) || isvaleq(name, SVAL_LIT("nosymbol"))) {
-        *sym_rtrn = XKB_KEY_NoSymbol;
-        return true;
+    إذا (isvaleq(name, SVAL_LIT("any")) || isvaleq(name, SVAL_LIT("nosymbol"))) {
+        *sym_rtrn = XKB_کلید_No_علامت;
+        أرجع true;
     }
 
-    if (isvaleq(name, SVAL_LIT("none")) || isvaleq(name, SVAL_LIT("voidsymbol"))) {
-        *sym_rtrn = XKB_KEY_VoidSymbol;
-        return true;
+    إذا (isvaleq(name, SVAL_LIT("none")) || isvaleq(name, SVAL_LIT("voidsymbol"))) {
+        *sym_rtrn = XKB_کلید_Void_علامت;
+        أرجع true;
     }
 
     /* xkb_keysym_from_name needs a C string. */
-    char buf[XKB_KEYSYM_NAME_MAX_SIZE];
-    if (name.len >= sizeof(buf)) {
-        return false;
+    حرف buf[XKB_KEYSYM_NAME_MAX_SIZE];
+    إذا (name.len >= حجم(buf)) {
+        أرجع false;
     }
-    memcpy(buf, name.start, name.len);
+    حافظہ_نقل(buf, name.شروع, name.len);
     buf[name.len] = '\0';
 
     sym = xkb_keysym_from_name(buf, XKB_KEYSYM_NO_FLAGS);
-    if (sym != XKB_KEY_NoSymbol) {
+    إذا (sym != XKB_کلید_No_علامت) {
         *sym_rtrn = sym;
         check_deprecated_keysyms(parser_warn, param, param->ctx,
                                  sym, buf, buf, "%s", "");
-        return true;
+        أرجع true;
     }
 
-    return false;
+    أرجع false;
 }
 
-#define param_scanner param->scanner
+#تعریف_کرو param_scanner param->scanner
 %}
 
-%define api.pure
-%lex-param      { struct scanner *param_scanner }
-%parse-param    { struct parser_param *param }
+%define api.خالص
+%lex-param      { بنية scanner *param_scanner }
+%parse-param    { بنية parser_param *param }
 
 %define parse.error detailed
 
 %token
-        END_OF_FILE     0 "end of file"
+        سرا_دا_FILE     0 "end of file"
         ERROR_TOK       255 "invalid token"
         XKB_KEYMAP      1 "xkb_keymap"
         XKB_KEYCODES    2 "xkb_keycodes"
@@ -119,17 +119,17 @@ resolve_keysym(struct parser_param *param, struct sval name, xkb_keysym_t *sym_r
         TYPE            21 "type"
         INTERPRET       22 "interpret"
         ACTION_TOK      23 "action"
-        KEY             24 "key"
+        کلید_3             24 "key"
         ALIAS           25 "alias"
-        GROUP           26 "group"
+        گروہ_2           26 "group"
         MODIFIER_MAP    27 "modifier_map"
         INDICATOR       28 "indicator"
         SHAPE           29 "shape"
-        KEYS            30 "keys"
-        ROW             31 "row"
+        کلیدیں_2            30 "keys"
+        صف             31 "row"
         SECTION         32 "section"
         OVERLAY         33 "overlay"
-        TEXT            34 "text"
+        متن            34 "text"
         OUTLINE         35 "outline"
         SOLID           36 "solid"
         LOGO            37 "logo"
@@ -159,104 +159,104 @@ resolve_keysym(struct parser_param *param, struct sval name, xkb_keysym_t *sym_r
         PARTIAL         70 "partial"
         DEFAULT         71 "default"
         HIDDEN          72 "hidden"
-        ALPHANUMERIC_KEYS       73 "alphanumeric_keys"
-        MODIFIER_KEYS           74 "modifier_keys"
-        KEYPAD_KEYS             75 "keypad_keys"
-        FUNCTION_KEYS           76 "function_keys"
-        ALTERNATE_GROUP         77 "alternate_group"
+        ALPHANUMERIC_کلیدیں       73 "alphanumeric_keys"
+        MODIFIER_کلیدیں           74 "modifier_keys"
+        KEYPAD_کلیدیں             75 "keypad_keys"
+        FUNCTION_کلیدیں           76 "function_keys"
+        ALTERNATE_گروہ         77 "alternate_group"
         DEPRECATED              78 "deprecated"
 
-%right  EQUALS
-%left   PLUS MINUS
-%left   TIMES DIVIDE
-%left   EXCLAM INVERT
-%left   OPAREN
+%سجے  EQUALS
+%کھبے   PLUS MINUS
+%کھبے   TIMES DIVIDE
+%کھبے   EXCLAM INVERT
+%کھبے   OPAREN
 
 %start  XkbFile
 
-%union  {
-        int64_t          num;
-        enum xkb_file_type file_type;
-        char            *str;
-        struct sval     sval;
+%اتحاد  {
+        int64_t          عدد;
+        تعداد xkb_file_type file_type;
+        حرف            *str;
+        بنية sval     sval;
         xkb_atom_t      atom;
-        enum merge_mode merge;
-        enum xkb_map_flags mapFlags;
+        تعداد ملاؤ_منوال ملاؤ;
+        تعداد xkb_map_flags mapFlags;
         xkb_keysym_t    keysym;
         ParseCommon     *any;
-        struct { ParseCommon *head; ParseCommon *last; } anyList;
-        uint32_t        noSymbolOrActionList;
-        ExprDef         *expr;
-        struct { ExprDef *head; ExprDef *last; } exprList;
+        بنية { ParseCommon *سر; ParseCommon *آخری; } anyList;
+        uint32_t        no_علامت_Or_Action_List;
+        اظہاریہ_Def         *اظہاریہ;
+        بنية { اظہاریہ_Def *سر; اظہاریہ_Def *آخری; } اظہاریہ_List;
         VarDef          *var;
-        struct { VarDef *head; VarDef *last; } varList;
+        بنية { VarDef *سر; VarDef *آخری; } varList;
         VModDef         *vmod;
-        struct { VModDef *head; VModDef *last; } vmodList;
+        بنية { VModDef *سر; VModDef *آخری; } vmodList;
         InterpDef       *interp;
-        KeyTypeDef      *keyType;
+        کلید_Type_Def      *کلید_Type;
         SymbolsDef      *syms;
-        ModMapDef       *modMask;
-        GroupCompatDef  *groupCompat;
+        ModMapDef       *mod_نقاب_2;
+        گروہ_Compat_Def  *گروہ_Compat;
         LedMapDef       *ledMap;
         LedNameDef      *ledName;
-        KeycodeDef      *keyCode;
-        KeyAliasDef     *keyAlias;
+        KeycodeDef      *کلید_کوڈ;
+        کلید_Alias_Def     *کلید_Alias;
         UnknownStatement *unknown;
-        void            *geom;
+        فراغ            *geom;
         XkbFile         *file;
-        struct { XkbFile *head; XkbFile *last; } fileList;
+        بنية { XkbFile *سر; XkbFile *آخری; } fileList;
 }
 
-%type <num>     DECIMAL_DIGIT INTEGER FLOAT
-%type <str>     STRING
-%type <sval>    IDENT
-%type <atom>    KEYNAME
-%type <num>     KeyCode Number Integer Float SignedNumber DoodadType
-%type <merge>   MergeMode OptMergeMode
-%type <file_type> XkbCompositeType FileType
-%type <mapFlags> Flag Flags OptFlags
-%type <str>     MapName OptMapName
-%type <atom>    FieldSpec Ident Element String
-%type <keysym>  KeySym KeySymLit
-%type <noSymbolOrActionList> NoSymbolOrActionList
-%type <any>     Decl
-%type <anyList> DeclList
-%type <expr>    Expr Term Lhs Terminal OptTerminal Coord CoordList
-%type <expr>    MultiKeySymOrActionList NonEmptyActions Actions Action
-%type <expr>    KeySyms NonEmptyKeySyms KeySymList KeyOrKeySym
-%type <exprList> ExprList KeyOrKeySymList
-%type <exprList> ActionList MultiActionList MultiKeySymList
-%type <var>     VarDecl SymbolsVarDecl
-%type <varList> VarDeclList SymbolsBody OptSymbolsBody
-%type <vmod>    VModDef
-%type <vmodList> VModDefList VModDecl
-%type <interp>  InterpretDecl InterpretMatch
-%type <keyType> KeyTypeDecl
-%type <syms>    SymbolsDecl
-%type <modMask> ModMapDecl
-%type <groupCompat> GroupCompatDecl
-%type <ledMap>  LedMapDecl
-%type <ledName> LedNameDecl
-%type <keyCode> KeyNameDecl
-%type <keyAlias> KeyAliasDecl
-%type <geom>    ShapeDecl SectionDecl SectionBody SectionBodyItem RowBody RowBodyItem
-%type <geom>    Keys Key OverlayDecl OverlayKeyList OverlayKey OutlineList OutlineInList
-%type <geom>    DoodadDecl
-%type <unknown> UnknownDecl UnknownCompoundStatementDecl
-%type <file>    XkbFile XkbMapConfig
-%type <fileList> XkbMapConfigList
-%type <file>    XkbCompositeMap
+%نوع <عدد>     DECIMAL_DIGIT INTEGER FLOAT
+%نوع <str>     STRING
+%نوع <sval>    IDENT
+%نوع <atom>    KEYNAME
+%نوع <عدد>     کلید_کوڈ_2 نمبر Integer Float Signed_نمبر DoodadType
+%نوع <ملاؤ>   ملاؤ_منوال_2 Opt_ملاؤ_منوال
+%نوع <file_type> Xkb_مرکب_Type FileType
+%نوع <mapFlags> Flag Flags OptFlags
+%نوع <str>     MapName OptMapName
+%نوع <atom>    میدان_Spec Ident Element String
+%نوع <keysym>  کلید_Sym_2 کلید_Sym_Lit
+%نوع <no_علامت_Or_Action_List> No_علامت_Or_Action_List
+%نوع <any>     Decl
+%نوع <anyList> DeclList
+%نوع <اظہاریہ>    اظہاریہ_2 رکن Lhs Terminal OptTerminal Coord CoordList
+%نوع <اظہاریہ>    Multi_کلید_Sym_Or_Action_List Non_خالی_تھاواں_Actions Actions Action
+%نوع <اظہاریہ>    کلید_Syms Non_خالی_تھاواں_کلید_Syms کلید_Sym_List کلید_Or_کلید_Sym
+%نوع <اظہاریہ_List> اظہاریہ_List_2 کلید_Or_کلید_Sym_List
+%نوع <اظہاریہ_List> ActionList MultiActionList Multi_کلید_Sym_List
+%نوع <var>     VarDecl SymbolsVarDecl
+%نوع <varList> VarDeclList SymbolsBody OptSymbolsBody
+%نوع <vmod>    VModDef
+%نوع <vmodList> VModDefList VModDecl
+%نوع <interp>  InterpretDecl Interpret_میل
+%نوع <کلید_Type> کلید_Type_Decl
+%نوع <syms>    SymbolsDecl
+%نوع <mod_نقاب_2> ModMapDecl
+%نوع <گروہ_Compat> گروہ_Compat_Decl
+%نوع <ledMap>  LedMapDecl
+%نوع <ledName> LedNameDecl
+%نوع <کلید_کوڈ> کلید_Name_Decl
+%نوع <کلید_Alias> کلید_Alias_Decl
+%نوع <geom>    ShapeDecl SectionDecl SectionBody Section_Body_شے صف_Body صف_Body_شے
+%نوع <geom>    کلیدیں_3 کلید_4 OverlayDecl Overlay_کلید_List Overlay_کلید OutlineList Outline_وچ_List
+%نوع <geom>    DoodadDecl
+%نوع <unknown> UnknownDecl UnknownCompoundStatementDecl
+%نوع <file>    XkbFile XkbMapConfig
+%نوع <fileList> XkbMapConfigList
+%نوع <file>    Xkb_مرکب_Map
 
 %destructor { FreeStmt((ParseCommon *) $$); }
-    <any> <expr> <var> <vmod> <interp> <keyType> <syms> <modMask> <groupCompat>
-    <ledMap> <ledName> <keyCode> <keyAlias>
-%destructor { FreeStmt((ParseCommon *) $$.head); }
-    <anyList> <exprList> <varList> <vmodList>
+    <any> <اظہاریہ> <var> <vmod> <interp> <کلید_Type> <syms> <mod_نقاب_2> <گروہ_Compat>
+    <ledMap> <ledName> <کلید_کوڈ> <کلید_Alias>
+%destructor { FreeStmt((ParseCommon *) $$.سر); }
+    <anyList> <اظہاریہ_List> <varList> <vmodList>
 /* The destructor also runs on the start symbol when the parser *succeeds*.
  * The `if` here catches this case. */
-%destructor { if (!param->rtrn) FreeXkbFile($$); } <file>
-%destructor { FreeXkbFile($$.head); } <fileList>
-%destructor { free($$); } <str>
+%destructor { إذا (!param->rtrn) FreeXkbFile($$); } <file>
+%destructor { FreeXkbFile($$.سر); } <fileList>
+%destructor { حرر($$); } <str>
 
 %%
 
@@ -272,21 +272,21 @@ resolve_keysym(struct parser_param *param, struct sval name, xkb_keysym_t *sym_r
  * contain complete garbage after that. But it's worth it.
  */
 
-XkbFile         :       XkbCompositeMap
-                        { $$ = param->rtrn = $1; param->more_maps = !!param->rtrn; (void) yynerrs; }
+XkbFile         :       Xkb_مرکب_Map
+                        { $$ = param->rtrn = $1; param->ہور_maps = !!param->rtrn; (فراغ) yynerrs; }
                 |       XkbMapConfig
-                        { $$ = param->rtrn = $1; param->more_maps = !!param->rtrn; YYACCEPT; }
-                |       END_OF_FILE
-                        { $$ = param->rtrn = NULL; param->more_maps = false; }
+                        { $$ = param->rtrn = $1; param->ہور_maps = !!param->rtrn; YYACCEPT; }
+                |       سرا_دا_FILE
+                        { $$ = param->rtrn = عدم; param->ہور_maps = false; }
                 ;
 
-XkbCompositeMap :       OptFlags XkbCompositeType OptMapName OBRACE
+Xkb_مرکب_Map :       OptFlags Xkb_مرکب_Type OptMapName OBRACE
                             XkbMapConfigList
                         CBRACE SEMI
-                        { $$ = XkbFileCreate($2, $3, (ParseCommon *) $5.head, $1); }
+                        { $$ = XkbFileCreate($2, $3, (ParseCommon *) $5.سر, $1); }
                 ;
 
-XkbCompositeType:       XKB_KEYMAP      { $$ = FILE_TYPE_KEYMAP; }
+Xkb_مرکب_Type:       XKB_KEYMAP      { $$ = FILE_TYPE_KEYMAP; }
                 |       XKB_SEMANTICS   { $$ = FILE_TYPE_KEYMAP; }
                 |       XKB_LAYOUT      { $$ = FILE_TYPE_KEYMAP; }
                 ;
@@ -296,29 +296,29 @@ XkbCompositeType:       XKB_KEYMAP      { $$ = FILE_TYPE_KEYMAP; }
  */
 XkbMapConfigList :      XkbMapConfigList XkbMapConfig
                         {
-                            if ($2) {
-                                if ($1.head) {
-                                    $$.head = $1.head;
-                                    $$.last->common.next = &$2->common;
-                                    $$.last = $2;
-                                } else {
-                                    $$.head = $$.last = $2;
+                            إذا ($2) {
+                                إذا ($1.سر) {
+                                    $$.سر = $1.سر;
+                                    $$.آخری->common.اگلا = &$2->common;
+                                    $$.آخری = $2;
+                                } وإلا {
+                                    $$.سر = $$.آخری = $2;
                                 }
                             }
                         }
-                |       { $$.head = $$.last = NULL; }
+                |       { $$.سر = $$.آخری = عدم; }
                 ;
 
 XkbMapConfig    :       OptFlags FileType OptMapName OBRACE
                             DeclList
                         CBRACE SEMI
                         {
-                            if ($1 & MAP_IS_DEPRECATED) {
+                            إذا ($1 & MAP_IS_DEPRECATED) {
                                 parser_warn(param, XKB_WARNING_DEPRECATED_SECTION,
                                             "deprecated section: \"%s\"",
-                                            safe_map_name($3));
+                                            محفوظ_map_name($3));
                             }
-                            $$ = XkbFileCreate($2, $3, $5.head, $1);
+                            $$ = XkbFileCreate($2, $3, $5.سر, $1);
                         }
                 ;
 
@@ -340,24 +340,24 @@ Flags           :       Flags Flag              { $$ = ($1 | $2); }
 Flag            :       PARTIAL                 { $$ = MAP_IS_PARTIAL; }
                 |       DEFAULT                 { $$ = MAP_IS_DEFAULT; }
                 |       HIDDEN                  { $$ = MAP_IS_HIDDEN; }
-                |       ALPHANUMERIC_KEYS       { $$ = MAP_HAS_ALPHANUMERIC; }
-                |       MODIFIER_KEYS           { $$ = MAP_HAS_MODIFIER; }
-                |       KEYPAD_KEYS             { $$ = MAP_HAS_KEYPAD; }
-                |       FUNCTION_KEYS           { $$ = MAP_HAS_FN; }
-                |       ALTERNATE_GROUP         { $$ = MAP_IS_ALTGR; }
+                |       ALPHANUMERIC_کلیدیں       { $$ = MAP_HAS_ALPHANUMERIC; }
+                |       MODIFIER_کلیدیں           { $$ = MAP_HAS_MODIFIER; }
+                |       KEYPAD_کلیدیں             { $$ = MAP_HAS_KEYPAD; }
+                |       FUNCTION_کلیدیں           { $$ = MAP_HAS_FN; }
+                |       ALTERNATE_گروہ         { $$ = MAP_IS_ALTGR; }
                 |       DEPRECATED              { $$ = MAP_IS_DEPRECATED; }
                 |       IDENT
                         {
-                            const bool error = (param->config.strict & PARSER_NO_UNKNOWN_SECTION_FLAGS);
-                            parser_log_with_code(
+                            ثابت bool error = (param->config.strict & PARSER_NO_UNKNOWN_SECTION_FLAGS);
+                            parser_log_with_کوڈ(
                                 param, (error ? XKB_LOG_LEVEL_ERROR : XKB_LOG_LEVEL_WARNING),
-                                XKB_LOG_VERBOSITY_MINIMAL,
+                                XKB_LOG_VERBOSITY_اقل,
                                 XKB_ERROR_UNKNOWN_SECTION_FLAG,
                                 "Unknown section flag \"%.*s\"%s",
-                                (unsigned)$1.len, $1.start,
+                                (بنانشانی)$1.len, $1.شروع,
                                 (error ? "" : "; ignored")
                             );
-                            if (error)
+                            إذا (error)
                                 YYABORT;
                             $$ = 0;
                         }
@@ -365,11 +365,11 @@ Flag            :       PARTIAL                 { $$ = MAP_IS_PARTIAL; }
 
 DeclList        :       DeclList Decl
                         {
-                            if ($2) {
-                                if ($1.head) {
-                                    $$.head = $1.head; $1.last->next = $2; $$.last = $2;
-                                } else {
-                                    $$.head = $$.last = $2;
+                            إذا ($2) {
+                                إذا ($1.سر) {
+                                    $$.سر = $1.سر; $1.آخری->اگلا = $2; $$.آخری = $2;
+                                } وإلا {
+                                    $$.سر = $$.آخری = $2;
                                 }
                             }
                         }
@@ -378,85 +378,85 @@ DeclList        :       DeclList Decl
                          * each VModDef in the VModDecl is a separate Decl in
                          * the File.
                          */
-                |       DeclList OptMergeMode VModDecl
+                |       DeclList Opt_ملاؤ_منوال VModDecl
                         {
-                            for (VModDef *vmod = $3.head; vmod; vmod = (VModDef *) vmod->common.next)
-                                vmod->merge = $2;
-                            if ($1.head) {
-                                $$.head = $1.head; $1.last->next = &$3.head->common; $$.last = &$3.last->common;
-                            } else {
-                                $$.head = &$3.head->common; $$.last = &$3.last->common;
+                            لكل (VModDef *vmod = $3.سر; vmod; vmod = (VModDef *) vmod->common.اگلا)
+                                vmod->ملاؤ = $2;
+                            إذا ($1.سر) {
+                                $$.سر = $1.سر; $1.آخری->اگلا = &$3.سر->common; $$.آخری = &$3.آخری->common;
+                            } وإلا {
+                                $$.سر = &$3.سر->common; $$.آخری = &$3.آخری->common;
                             }
                         }
-                |       { $$.head = $$.last = NULL; }
+                |       { $$.سر = $$.آخری = عدم; }
                 ;
 
-Decl            :       OptMergeMode VarDecl
+Decl            :       Opt_ملاؤ_منوال VarDecl
                         {
-                            $2->merge = $1;
+                            $2->ملاؤ = $1;
                             $$ = (ParseCommon *) $2;
                         }
                 /*      OptMergeMode VModDecl - see above. */
-                |       OptMergeMode InterpretDecl
+                |       Opt_ملاؤ_منوال InterpretDecl
                         {
-                            $2->merge = $1;
+                            $2->ملاؤ = $1;
                             $$ = (ParseCommon *) $2;
                         }
-                |       OptMergeMode KeyNameDecl
+                |       Opt_ملاؤ_منوال کلید_Name_Decl
                         {
-                            $2->merge = $1;
+                            $2->ملاؤ = $1;
                             $$ = (ParseCommon *) $2;
                         }
-                |       OptMergeMode KeyAliasDecl
+                |       Opt_ملاؤ_منوال کلید_Alias_Decl
                         {
-                            $2->merge = $1;
+                            $2->ملاؤ = $1;
                             $$ = (ParseCommon *) $2;
                         }
-                |       OptMergeMode KeyTypeDecl
+                |       Opt_ملاؤ_منوال کلید_Type_Decl
                         {
-                            $2->merge = $1;
+                            $2->ملاؤ = $1;
                             $$ = (ParseCommon *) $2;
                         }
-                |       OptMergeMode SymbolsDecl
+                |       Opt_ملاؤ_منوال SymbolsDecl
                         {
-                            $2->merge = $1;
+                            $2->ملاؤ = $1;
                             $$ = (ParseCommon *) $2;
                         }
-                |       OptMergeMode ModMapDecl
+                |       Opt_ملاؤ_منوال ModMapDecl
                         {
-                            $2->merge = $1;
+                            $2->ملاؤ = $1;
                             $$ = (ParseCommon *) $2;
                         }
-                |       OptMergeMode GroupCompatDecl
+                |       Opt_ملاؤ_منوال گروہ_Compat_Decl
                         {
-                            $2->merge = $1;
+                            $2->ملاؤ = $1;
                             $$ = (ParseCommon *) $2;
                         }
-                |       OptMergeMode LedMapDecl
+                |       Opt_ملاؤ_منوال LedMapDecl
                         {
-                            $2->merge = $1;
+                            $2->ملاؤ = $1;
                             $$ = (ParseCommon *) $2;
                         }
-                |       OptMergeMode LedNameDecl
+                |       Opt_ملاؤ_منوال LedNameDecl
                         {
-                            $2->merge = $1;
+                            $2->ملاؤ = $1;
                             $$ = (ParseCommon *) $2;
                         }
-                |       OptMergeMode ShapeDecl          { $$ = NULL; }
-                |       OptMergeMode SectionDecl        { $$ = NULL; }
-                |       OptMergeMode DoodadDecl         { $$ = NULL; }
-                |       OptMergeMode UnknownDecl
+                |       Opt_ملاؤ_منوال ShapeDecl          { $$ = عدم; }
+                |       Opt_ملاؤ_منوال SectionDecl        { $$ = عدم; }
+                |       Opt_ملاؤ_منوال DoodadDecl         { $$ = عدم; }
+                |       Opt_ملاؤ_منوال UnknownDecl
                             { $$ = (ParseCommon *) $2; }
-                |       OptMergeMode UnknownCompoundStatementDecl
+                |       Opt_ملاؤ_منوال UnknownCompoundStatementDecl
                             { $$ = (ParseCommon *) $2; }
-                |       MergeMode STRING
+                |       ملاؤ_منوال_2 STRING
                         {
                             $$ = (ParseCommon *) IncludeCreate(param->ctx, $2, $1);
-                            free($2);
+                            حرر($2);
                         }
                 ;
 
-VarDecl         :       Lhs EQUALS Expr SEMI
+VarDecl         :       Lhs EQUALS اظہاریہ_2 SEMI
                         { $$ = VarCreate($1, $3); }
                 |       Ident SEMI
                         { $$ = BoolVarCreate($1, true); }
@@ -464,12 +464,12 @@ VarDecl         :       Lhs EQUALS Expr SEMI
                         { $$ = BoolVarCreate($2, false); }
                 ;
 
-KeyNameDecl     :       KEYNAME EQUALS KeyCode SEMI
+کلید_Name_Decl     :       KEYNAME EQUALS کلید_کوڈ_2 SEMI
                         { $$ = KeycodeCreate($1, $3); }
                 ;
 
-KeyAliasDecl    :       ALIAS KEYNAME EQUALS KEYNAME SEMI
-                        { $$ = KeyAliasCreate($2, $4); }
+کلید_Alias_Decl    :       ALIAS KEYNAME EQUALS KEYNAME SEMI
+                        { $$ = کلید_Alias_Create($2, $4); }
                 ;
 
 VModDecl        :       VIRTUAL_MODS VModDefList SEMI
@@ -477,71 +477,71 @@ VModDecl        :       VIRTUAL_MODS VModDefList SEMI
                 ;
 
 VModDefList     :       VModDefList COMMA VModDef
-                        { $$.head = $1.head; $$.last->common.next = &$3->common; $$.last = $3; }
+                        { $$.سر = $1.سر; $$.آخری->common.اگلا = &$3->common; $$.آخری = $3; }
                 |       VModDef
-                        { $$.head = $$.last = $1; }
+                        { $$.سر = $$.آخری = $1; }
                 ;
 
 VModDef         :       Ident
-                        { $$ = VModCreate($1, NULL); }
-                |       Ident EQUALS Expr
+                        { $$ = VModCreate($1, عدم); }
+                |       Ident EQUALS اظہاریہ_2
                         { $$ = VModCreate($1, $3); }
                 ;
 
-InterpretDecl   :       INTERPRET InterpretMatch OBRACE
+InterpretDecl   :       INTERPRET Interpret_میل OBRACE
                             VarDeclList
                         CBRACE SEMI
-                        { $2->def = $4.head; $$ = $2; }
+                        { $2->def = $4.سر; $$ = $2; }
                 ;
 
-InterpretMatch  :       KeySym PLUS Expr
+Interpret_میل  :       کلید_Sym_2 PLUS اظہاریہ_2
                         { $$ = InterpCreate($1, $3); }
-                |       KeySym
-                        { $$ = InterpCreate($1, NULL); }
+                |       کلید_Sym_2
+                        { $$ = InterpCreate($1, عدم); }
                 ;
 
 VarDeclList     :       VarDeclList VarDecl
                         {
-                            if ($2) {
-                                if ($1.head) {
-                                    $$.head = $1.head;
-                                    $$.last->common.next = &$2->common;
-                                    $$.last = $2;
-                                } else {
-                                    $$.head = $$.last = $2;
+                            إذا ($2) {
+                                إذا ($1.سر) {
+                                    $$.سر = $1.سر;
+                                    $$.آخری->common.اگلا = &$2->common;
+                                    $$.آخری = $2;
+                                } وإلا {
+                                    $$.سر = $$.آخری = $2;
                                 }
                             }
                         }
-                |       { $$.head = $$.last = NULL; }
+                |       { $$.سر = $$.آخری = عدم; }
                 ;
 
-KeyTypeDecl     :       TYPE String OBRACE
+کلید_Type_Decl     :       TYPE String OBRACE
                             VarDeclList
                         CBRACE SEMI
-                        { $$ = KeyTypeCreate($2, $4.head); }
+                        { $$ = کلید_Type_Create($2, $4.سر); }
                 ;
 
-SymbolsDecl     :       KEY KEYNAME OBRACE
+SymbolsDecl     :       کلید_3 KEYNAME OBRACE
                             OptSymbolsBody
                         CBRACE SEMI
-                        { $$ = SymbolsCreate($2, $4.head); }
+                        { $$ = SymbolsCreate($2, $4.سر); }
                 ;
 
 OptSymbolsBody  :       SymbolsBody { $$ = $1; }
-                |                   { $$.head = $$.last = NULL; }
+                |                   { $$.سر = $$.آخری = عدم; }
                 ;
 
 SymbolsBody     :       SymbolsBody COMMA SymbolsVarDecl
-                        { $$.head = $1.head; $$.last->common.next = &$3->common; $$.last = $3; }
+                        { $$.سر = $1.سر; $$.آخری->common.اگلا = &$3->common; $$.آخری = $3; }
                 |       SymbolsVarDecl
-                        { $$.head = $$.last = $1; }
+                        { $$.سر = $$.آخری = $1; }
                 ;
 
-SymbolsVarDecl  :       Lhs EQUALS Expr         { $$ = VarCreate($1, $3); }
-                |       Lhs EQUALS MultiKeySymOrActionList { $$ = VarCreate($1, $3); }
+SymbolsVarDecl  :       Lhs EQUALS اظہاریہ_2         { $$ = VarCreate($1, $3); }
+                |       Lhs EQUALS Multi_کلید_Sym_Or_Action_List { $$ = VarCreate($1, $3); }
                 |       Ident                   { $$ = BoolVarCreate($1, true); }
                 |       EXCLAM Ident            { $$ = BoolVarCreate($2, false); }
-                |       MultiKeySymOrActionList { $$ = VarCreate(NULL, $1); }
+                |       Multi_کلید_Sym_Or_Action_List { $$ = VarCreate(عدم, $1); }
                 ;
 
 /*
@@ -555,108 +555,108 @@ SymbolsVarDecl  :       Lhs EQUALS Expr         { $$ = VarCreate($1, $3); }
  * ambiguity is solved. If not, this is a list of empties of *some* type: we
  * drop those empties and delegate the type resolution using `ExprEmptyList()`.
  */
-MultiKeySymOrActionList
-                :       OBRACKET MultiKeySymList CBRACKET
-                        { $$ = $2.head; }
-                |       OBRACKET NoSymbolOrActionList COMMA MultiKeySymList CBRACKET
+Multi_کلید_Sym_Or_Action_List
+                :       OBRACKET Multi_کلید_Sym_List CBRACKET
+                        { $$ = $2.سر; }
+                |       OBRACKET No_علامت_Or_Action_List COMMA Multi_کلید_Sym_List CBRACKET
                         {
                             /* Prepend n times NoSymbol */
-                            struct {ExprDef *head; ExprDef *last;} list = {
-                                .head = $4.head, .last = $4.last
+                            بنية {اظہاریہ_Def *سر; اظہاریہ_Def *آخری;} list = {
+                                .سر = $4.سر, .آخری = $4.آخری
                             };
-                            for (uint32_t k = 0; k < $2; k++) {
-                                ExprDef* const syms =
-                                    ExprCreateKeySymList(XKB_KEY_NoSymbol);
-                                if (!syms) {
+                            لكل (uint32_t k = 0; k < $2; k++) {
+                                اظہاریہ_Def* ثابت syms =
+                                    اظہاریہ_Create_کلید_Sym_List(XKB_کلید_No_علامت);
+                                إذا (!syms) {
                                     /* TODO: Use Bison’s more appropriate YYNOMEM */
                                     YYABORT;
                                 }
-                                syms->common.next = &list.head->common;
-                                list.head = syms;
+                                syms->common.اگلا = &list.سر->common;
+                                list.سر = syms;
                             }
-                            $$ = list.head;
+                            $$ = list.سر;
                         }
                 |       OBRACKET MultiActionList CBRACKET
-                        { $$ = $2.head; }
-                |       OBRACKET NoSymbolOrActionList COMMA MultiActionList CBRACKET
+                        { $$ = $2.سر; }
+                |       OBRACKET No_علامت_Or_Action_List COMMA MultiActionList CBRACKET
                         {
                             /* Prepend n times NoAction() */
-                            struct {ExprDef *head; ExprDef *last;} list = {
-                                .head = $4.head, .last = $4.last
+                            بنية {اظہاریہ_Def *سر; اظہاریہ_Def *آخری;} list = {
+                                .سر = $4.سر, .آخری = $4.آخری
                             };
-                            for (uint32_t k = 0; k < $2; k++) {
-                                ExprDef* const acts = ExprCreateActionList(NULL);
-                                if (!acts) {
+                            لكل (uint32_t k = 0; k < $2; k++) {
+                                اظہاریہ_Def* ثابت acts = اظہاریہ_Create_Action_List(عدم);
+                                إذا (!acts) {
                                     /* TODO: Use Bison’s more appropriate YYNOMEM */
                                     YYABORT;
                                 }
-                                acts->common.next = &list.head->common;
-                                list.head = acts;
+                                acts->common.اگلا = &list.سر->common;
+                                list.سر = acts;
                             }
-                            $$ = list.head;
+                            $$ = list.سر;
                         }
                         /*
                          * A list of *empty* keysym/action lists `{}`.
                          * There is not enough context here to decide if it is
                          * a `MultiKeySymList` or a `MultiActionList`.
                          */
-                |       OBRACKET NoSymbolOrActionList CBRACKET
-                        { $$ = ExprEmptyList(); }
+                |       OBRACKET No_علامت_Or_Action_List CBRACKET
+                        { $$ = اظہاریہ_خالی_تھاواں_List(); }
                 ;
 
 /* A list of `{}`, which remains ambiguous until reaching a keysym or action list */
-NoSymbolOrActionList
-                :       NoSymbolOrActionList COMMA OBRACE CBRACE
+No_علامت_Or_Action_List
+                :       No_علامت_Or_Action_List COMMA OBRACE CBRACE
                         { $$ = $1 + 1; }
                 |       OBRACE CBRACE
                         { $$ = 1; }
                 |       { $$ = 0; }
                 ;
 
-GroupCompatDecl :       GROUP Integer EQUALS Expr SEMI
-                        { $$ = GroupCompatCreate($2, $4); }
+گروہ_Compat_Decl :       گروہ_2 Integer EQUALS اظہاریہ_2 SEMI
+                        { $$ = گروہ_Compat_Create($2, $4); }
                 ;
 
-ModMapDecl      :       MODIFIER_MAP Expr OBRACE KeyOrKeySymList CBRACE SEMI
+ModMapDecl      :       MODIFIER_MAP اظہاریہ_2 OBRACE کلید_Or_کلید_Sym_List CBRACE SEMI
                         {
-                            if (param->config.format == XKB_KEYMAP_FORMAT_TEXT_V1 &&
-                                $2->common.type != STMT_EXPR_IDENT) {
+                            إذا (param->config.format == XKB_KEYMAP_FORMAT_متن_V1 &&
+                                $2->common.نوع != STMT_اظہاریہ_IDENT) {
                                     parser_err(
-                                        param, XKB_ERROR_INVALID_MODIFIER_MAP_MASK,
+                                        param, XKB_ERROR_INVALID_MODIFIER_MAP_نقاب,
                                         "Invalid real modifier mask in modifier "
                                         "map definition: expected identifier"
                                     );
                                     FreeStmt((ParseCommon *) $2);
-                                    FreeStmt((ParseCommon *) $4.head);
+                                    FreeStmt((ParseCommon *) $4.سر);
                                     YYERROR;
                             }
-                            $$ = ModMapCreate($2, $4.head);
+                            $$ = ModMapCreate($2, $4.سر);
                         }
                 ;
 
-KeyOrKeySymList :       KeyOrKeySymList COMMA KeyOrKeySym
-                        { $$.head = $1.head; $$.last->common.next = &$3->common; $$.last = $3; }
-                |       KeyOrKeySym
-                        { $$.head = $$.last = $1; }
+کلید_Or_کلید_Sym_List :       کلید_Or_کلید_Sym_List COMMA کلید_Or_کلید_Sym
+                        { $$.سر = $1.سر; $$.آخری->common.اگلا = &$3->common; $$.آخری = $3; }
+                |       کلید_Or_کلید_Sym
+                        { $$.سر = $$.آخری = $1; }
                 ;
 
-KeyOrKeySym     :       KEYNAME
-                        { $$ = ExprCreateKeyName($1); }
-                |       KeySym
-                        { $$ = ExprCreateKeySym($1); }
+کلید_Or_کلید_Sym     :       KEYNAME
+                        { $$ = اظہاریہ_Create_کلید_Name($1); }
+                |       کلید_Sym_2
+                        { $$ = اظہاریہ_Create_کلید_Sym($1); }
                 ;
 
 LedMapDecl:             INDICATOR String OBRACE VarDeclList CBRACE SEMI
-                        { $$ = LedMapCreate($2, $4.head); }
+                        { $$ = LedMapCreate($2, $4.سر); }
                 ;
 
-LedNameDecl:            INDICATOR Integer EQUALS Expr SEMI
+LedNameDecl:            INDICATOR Integer EQUALS اظہاریہ_2 SEMI
                         { $$ = LedNameCreate($2, $4, false); }
-                |       VIRTUAL INDICATOR Integer EQUALS Expr SEMI
+                |       VIRTUAL INDICATOR Integer EQUALS اظہاریہ_2 SEMI
                         { $$ = LedNameCreate($3, $5, true); }
                 ;
 
-UnknownDecl     :       IDENT Terminal EQUALS Expr SEMI
+UnknownDecl     :       IDENT Terminal EQUALS اظہاریہ_2 SEMI
                         {
                             FreeStmt((ParseCommon *) $2);
                             FreeStmt((ParseCommon *) $4);
@@ -668,102 +668,102 @@ UnknownCompoundStatementDecl:
                         IDENT OptTerminal OBRACE VarDeclList CBRACE SEMI
                         {
                             FreeStmt((ParseCommon *) $2);
-                            FreeStmt((ParseCommon *) $4.head);
+                            FreeStmt((ParseCommon *) $4.سر);
                             $$ = UnknownStatementCreate(STMT_UNKNOWN_COMPOUND, $1);
                         }
                 ;
 
 ShapeDecl       :       SHAPE String OBRACE OutlineList CBRACE SEMI
-                        { $$ = NULL; }
+                        { $$ = عدم; }
                 |       SHAPE String OBRACE CoordList CBRACE SEMI
-                        { (void) $4; $$ = NULL; }
+                        { (فراغ) $4; $$ = عدم; }
                 ;
 
 SectionDecl     :       SECTION String OBRACE SectionBody CBRACE SEMI
-                        { $$ = NULL; }
+                        { $$ = عدم; }
                 ;
 
-SectionBody     :       SectionBody SectionBodyItem     { $$ = NULL;}
-                |       SectionBodyItem                 { $$ = NULL; }
+SectionBody     :       SectionBody Section_Body_شے     { $$ = عدم;}
+                |       Section_Body_شے                 { $$ = عدم; }
                 ;
 
-SectionBodyItem :       ROW OBRACE RowBody CBRACE SEMI
-                        { $$ = NULL; }
+Section_Body_شے :       صف OBRACE صف_Body CBRACE SEMI
+                        { $$ = عدم; }
                 |       VarDecl
-                        { FreeStmt((ParseCommon *) $1); $$ = NULL; }
+                        { FreeStmt((ParseCommon *) $1); $$ = عدم; }
                 |       DoodadDecl
-                        { $$ = NULL; }
+                        { $$ = عدم; }
                 |       LedMapDecl
-                        { FreeStmt((ParseCommon *) $1); $$ = NULL; }
+                        { FreeStmt((ParseCommon *) $1); $$ = عدم; }
                 |       OverlayDecl
-                        { $$ = NULL; }
+                        { $$ = عدم; }
                 ;
 
-RowBody         :       RowBody RowBodyItem     { $$ = NULL;}
-                |       RowBodyItem             { $$ = NULL; }
+صف_Body         :       صف_Body صف_Body_شے     { $$ = عدم;}
+                |       صف_Body_شے             { $$ = عدم; }
                 ;
 
-RowBodyItem     :       KEYS OBRACE Keys CBRACE SEMI { $$ = NULL; }
+صف_Body_شے     :       کلیدیں_2 OBRACE کلیدیں_3 CBRACE SEMI { $$ = عدم; }
                 |       VarDecl
-                        { FreeStmt((ParseCommon *) $1); $$ = NULL; }
+                        { FreeStmt((ParseCommon *) $1); $$ = عدم; }
                 ;
 
-Keys            :       Keys COMMA Key          { $$ = NULL; }
-                |       Key                     { $$ = NULL; }
+کلیدیں_3            :       کلیدیں_3 COMMA کلید_4          { $$ = عدم; }
+                |       کلید_4                     { $$ = عدم; }
                 ;
 
-Key             :       KEYNAME
-                        { $$ = NULL; }
-                |       OBRACE ExprList CBRACE
-                        { FreeStmt((ParseCommon *) $2.head); $$ = NULL; }
+کلید_4             :       KEYNAME
+                        { $$ = عدم; }
+                |       OBRACE اظہاریہ_List_2 CBRACE
+                        { FreeStmt((ParseCommon *) $2.سر); $$ = عدم; }
                 ;
 
-OverlayDecl     :       OVERLAY String OBRACE OverlayKeyList CBRACE SEMI
-                        { $$ = NULL; }
+OverlayDecl     :       OVERLAY String OBRACE Overlay_کلید_List CBRACE SEMI
+                        { $$ = عدم; }
                 ;
 
-OverlayKeyList  :       OverlayKeyList COMMA OverlayKey { $$ = NULL; }
-                |       OverlayKey                      { $$ = NULL; }
+Overlay_کلید_List  :       Overlay_کلید_List COMMA Overlay_کلید { $$ = عدم; }
+                |       Overlay_کلید                      { $$ = عدم; }
                 ;
 
-OverlayKey      :       KEYNAME EQUALS KEYNAME          { $$ = NULL; }
+Overlay_کلید      :       KEYNAME EQUALS KEYNAME          { $$ = عدم; }
                 ;
 
-OutlineList     :       OutlineList COMMA OutlineInList
-                        { $$ = NULL;}
-                |       OutlineInList
-                        { $$ = NULL; }
+OutlineList     :       OutlineList COMMA Outline_وچ_List
+                        { $$ = عدم;}
+                |       Outline_وچ_List
+                        { $$ = عدم; }
                 ;
 
-OutlineInList   :       OBRACE CoordList CBRACE
-                        { (void) $2; $$ = NULL; }
+Outline_وچ_List   :       OBRACE CoordList CBRACE
+                        { (فراغ) $2; $$ = عدم; }
                 |       Ident EQUALS OBRACE CoordList CBRACE
-                        { (void) $4; $$ = NULL; }
-                |       Ident EQUALS Expr
-                        { FreeStmt((ParseCommon *) $3); $$ = NULL; }
+                        { (فراغ) $4; $$ = عدم; }
+                |       Ident EQUALS اظہاریہ_2
+                        { FreeStmt((ParseCommon *) $3); $$ = عدم; }
                 ;
 
 CoordList       :       CoordList COMMA Coord
-                        { (void) $1; (void) $3; $$ = NULL; }
+                        { (فراغ) $1; (فراغ) $3; $$ = عدم; }
                 |       Coord
-                        { (void) $1; $$ = NULL; }
+                        { (فراغ) $1; $$ = عدم; }
                 ;
 
-Coord           :       OBRACKET SignedNumber COMMA SignedNumber CBRACKET
-                        { $$ = NULL; }
+Coord           :       OBRACKET Signed_نمبر COMMA Signed_نمبر CBRACKET
+                        { $$ = عدم; }
                 ;
 
 DoodadDecl      :       DoodadType String OBRACE VarDeclList CBRACE SEMI
-                        { FreeStmt((ParseCommon *) $4.head); $$ = NULL; }
+                        { FreeStmt((ParseCommon *) $4.سر); $$ = عدم; }
                 ;
 
-DoodadType      :       TEXT    { $$ = 0; }
+DoodadType      :       متن    { $$ = 0; }
                 |       OUTLINE { $$ = 0; }
                 |       SOLID   { $$ = 0; }
                 |       LOGO    { $$ = 0; }
                 ;
 
-FieldSpec       :       Ident   { $$ = $1; }
+میدان_Spec       :       Ident   { $$ = $1; }
                 |       Element { $$ = $1; }
                 ;
 
@@ -773,9 +773,9 @@ Element         :       ACTION_TOK
                         { $$ = xkb_atom_intern_literal(param->ctx, "interpret"); }
                 |       TYPE
                         { $$ = xkb_atom_intern_literal(param->ctx, "type"); }
-                |       KEY
+                |       کلید_3
                         { $$ = xkb_atom_intern_literal(param->ctx, "key"); }
-                |       GROUP
+                |       گروہ_2
                         { $$ = xkb_atom_intern_literal(param->ctx, "group"); }
                 |       MODIFIER_MAP
                         {$$ = xkb_atom_intern_literal(param->ctx, "modifier_map");}
@@ -783,230 +783,230 @@ Element         :       ACTION_TOK
                         { $$ = xkb_atom_intern_literal(param->ctx, "indicator"); }
                 |       SHAPE
                         { $$ = xkb_atom_intern_literal(param->ctx, "shape"); }
-                |       ROW
+                |       صف
                         { $$ = xkb_atom_intern_literal(param->ctx, "row"); }
                 |       SECTION
                         { $$ = xkb_atom_intern_literal(param->ctx, "section"); }
-                |       TEXT
+                |       متن
                         { $$ = xkb_atom_intern_literal(param->ctx, "text"); }
                 ;
 
-OptMergeMode    :       MergeMode       { $$ = $1; }
-                |                       { $$ = MERGE_DEFAULT; }
+Opt_ملاؤ_منوال    :       ملاؤ_منوال_2       { $$ = $1; }
+                |                       { $$ = ملاؤ_DEFAULT; }
                 ;
 
-MergeMode       :       INCLUDE         { $$ = MERGE_DEFAULT; }
-                |       AUGMENT         { $$ = MERGE_AUGMENT; }
-                |       OVERRIDE        { $$ = MERGE_OVERRIDE; }
-                |       REPLACE         { $$ = MERGE_REPLACE; }
+ملاؤ_منوال_2       :       INCLUDE         { $$ = ملاؤ_DEFAULT; }
+                |       AUGMENT         { $$ = ملاؤ_AUGMENT; }
+                |       OVERRIDE        { $$ = ملاؤ_OVERRIDE; }
+                |       REPLACE         { $$ = ملاؤ_REPLACE; }
                 |       ALTERNATE
                 {
                     /*
                      * This used to be MERGE_ALT_FORM. This functionality was
                      * unused and has been removed.
                      */
-                    parser_warn(param, XKB_LOG_MESSAGE_NO_ID,
+                    parser_warn(param, XKB_LOG_سنیہا_NO_ID,
                                 "ignored unsupported legacy merge mode \"alternate\"");
-                    $$ = MERGE_DEFAULT;
+                    $$ = ملاؤ_DEFAULT;
                 }
                 ;
 
-ExprList        :       ExprList COMMA Expr
+اظہاریہ_List_2        :       اظہاریہ_List_2 COMMA اظہاریہ_2
                         {
-                            if ($3) {
-                                if ($1.head) {
-                                    $$.head = $1.head;
-                                    $$.last->common.next = &$3->common;
-                                    $$.last = $3;
-                                } else {
-                                    $$.head = $$.last = $3;
+                            إذا ($3) {
+                                إذا ($1.سر) {
+                                    $$.سر = $1.سر;
+                                    $$.آخری->common.اگلا = &$3->common;
+                                    $$.آخری = $3;
+                                } وإلا {
+                                    $$.سر = $$.آخری = $3;
                                 }
                             }
                         }
-                |       Expr
-                        { $$.head = $$.last = $1; }
-                |       { $$.head = $$.last = NULL; }
+                |       اظہاریہ_2
+                        { $$.سر = $$.آخری = $1; }
+                |       { $$.سر = $$.آخری = عدم; }
                 ;
 
-Expr            :       Expr DIVIDE Expr
-                        { $$ = ExprCreateBinary(STMT_EXPR_DIVIDE, $1, $3); }
-                |       Expr PLUS Expr
-                        { $$ = ExprCreateBinary(STMT_EXPR_ADD, $1, $3); }
-                |       Expr MINUS Expr
-                        { $$ = ExprCreateBinary(STMT_EXPR_SUBTRACT, $1, $3); }
-                |       Expr TIMES Expr
-                        { $$ = ExprCreateBinary(STMT_EXPR_MULTIPLY, $1, $3); }
-                |       Lhs EQUALS Expr
-                        { $$ = ExprCreateBinary(STMT_EXPR_ASSIGN, $1, $3); }
-                |       Term
+اظہاریہ_2            :       اظہاریہ_2 DIVIDE اظہاریہ_2
+                        { $$ = اظہاریہ_Create_ثنائی(STMT_اظہاریہ_DIVIDE, $1, $3); }
+                |       اظہاریہ_2 PLUS اظہاریہ_2
+                        { $$ = اظہاریہ_Create_ثنائی(STMT_اظہاریہ_جوڑو, $1, $3); }
+                |       اظہاریہ_2 MINUS اظہاریہ_2
+                        { $$ = اظہاریہ_Create_ثنائی(STMT_اظہاریہ_گھٹاؤ, $1, $3); }
+                |       اظہاریہ_2 TIMES اظہاریہ_2
+                        { $$ = اظہاریہ_Create_ثنائی(STMT_اظہاریہ_MULTIPLY, $1, $3); }
+                |       Lhs EQUALS اظہاریہ_2
+                        { $$ = اظہاریہ_Create_ثنائی(STMT_اظہاریہ_سونپو, $1, $3); }
+                |       رکن
                         { $$ = $1; }
                 ;
 
-Term            :       MINUS Term
-                        { $$ = ExprCreateUnary(STMT_EXPR_NEGATE, $2); }
-                |       PLUS Term
-                        { $$ = ExprCreateUnary(STMT_EXPR_UNARY_PLUS, $2); }
-                |       EXCLAM Term
-                        { $$ = ExprCreateUnary(STMT_EXPR_NOT, $2); }
-                |       INVERT Term
-                        { $$ = ExprCreateUnary(STMT_EXPR_INVERT, $2); }
+رکن            :       MINUS رکن
+                        { $$ = اظہاریہ_Create_Unary(STMT_اظہاریہ_NEGATE, $2); }
+                |       PLUS رکن
+                        { $$ = اظہاریہ_Create_Unary(STMT_اظہاریہ_UNARY_PLUS, $2); }
+                |       EXCLAM رکن
+                        { $$ = اظہاریہ_Create_Unary(STMT_اظہاریہ_NOT, $2); }
+                |       INVERT رکن
+                        { $$ = اظہاریہ_Create_Unary(STMT_اظہاریہ_INVERT, $2); }
                 |       Lhs
                         { $$ = $1; }
-                |       FieldSpec OPAREN ExprList CPAREN %prec OPAREN
-                        { $$ = ExprCreateAction($1, $3.head); }
+                |       میدان_Spec OPAREN اظہاریہ_List_2 CPAREN %prec OPAREN
+                        { $$ = اظہاریہ_Create_Action($1, $3.سر); }
                 |       Actions
                         { $$ = $1; }
                 |       Terminal
                         { $$ = $1; }
-                |       OPAREN Expr CPAREN
+                |       OPAREN اظہاریہ_2 CPAREN
                         { $$ = $2; }
                 ;
 
 MultiActionList :       MultiActionList COMMA Action
                         {
-                            ExprDef *expr = ExprCreateActionList($3);
+                            اظہاریہ_Def *اظہاریہ = اظہاریہ_Create_Action_List($3);
                             $$ = $1;
-                            $$.last->common.next = &expr->common; $$.last = expr;
+                            $$.آخری->common.اگلا = &اظہاریہ->common; $$.آخری = اظہاریہ;
                         }
                 |       MultiActionList COMMA Actions
-                        { $$ = $1; $$.last->common.next = &$3->common; $$.last = $3; }
+                        { $$ = $1; $$.آخری->common.اگلا = &$3->common; $$.آخری = $3; }
                 |       Action
-                        { $$.head = $$.last = ExprCreateActionList($1); }
-                |       NonEmptyActions
-                        { $$.head = $$.last = $1; }
+                        { $$.سر = $$.آخری = اظہاریہ_Create_Action_List($1); }
+                |       Non_خالی_تھاواں_Actions
+                        { $$.سر = $$.آخری = $1; }
                 ;
 
 ActionList      :       ActionList COMMA Action
-                        { $$ = $1; $$.last->common.next = &$3->common; $$.last = $3; }
+                        { $$ = $1; $$.آخری->common.اگلا = &$3->common; $$.آخری = $3; }
                 |       Action
-                        { $$.head = $$.last = $1; }
+                        { $$.سر = $$.آخری = $1; }
                 ;
 
-NonEmptyActions :       OBRACE ActionList CBRACE
-                        { $$ = ExprCreateActionList($2.head); }
+Non_خالی_تھاواں_Actions :       OBRACE ActionList CBRACE
+                        { $$ = اظہاریہ_Create_Action_List($2.سر); }
                 ;
 
-Actions         :       NonEmptyActions
+Actions         :       Non_خالی_تھاواں_Actions
                         { $$ = $1; }
                 |       OBRACE CBRACE
-                        { $$ = ExprCreateActionList(NULL); }
+                        { $$ = اظہاریہ_Create_Action_List(عدم); }
                 ;
 
-Action          :       FieldSpec OPAREN ExprList CPAREN
-                        { $$ = ExprCreateAction($1, $3.head); }
+Action          :       میدان_Spec OPAREN اظہاریہ_List_2 CPAREN
+                        { $$ = اظہاریہ_Create_Action($1, $3.سر); }
                 ;
 
-Lhs             :       FieldSpec
-                        { $$ = ExprCreateIdent($1); }
-                |       FieldSpec DOT FieldSpec
-                        { $$ = ExprCreateFieldRef($1, $3); }
-                |       FieldSpec OBRACKET Expr CBRACKET
-                        { $$ = ExprCreateArrayRef(XKB_ATOM_NONE, $1, $3); }
-                |       FieldSpec DOT FieldSpec OBRACKET Expr CBRACKET
-                        { $$ = ExprCreateArrayRef($1, $3, $5); }
+Lhs             :       میدان_Spec
+                        { $$ = اظہاریہ_Create_Ident($1); }
+                |       میدان_Spec DOT میدان_Spec
+                        { $$ = اظہاریہ_Create_میدان_Ref($1, $3); }
+                |       میدان_Spec OBRACKET اظہاریہ_2 CBRACKET
+                        { $$ = اظہاریہ_Create_Array_Ref(XKB_ATOM_NONE, $1, $3); }
+                |       میدان_Spec DOT میدان_Spec OBRACKET اظہاریہ_2 CBRACKET
+                        { $$ = اظہاریہ_Create_Array_Ref($1, $3, $5); }
                 ;
 
 OptTerminal     :       Terminal
                         { $$ = $1; }
-                |       { $$ = NULL; }
+                |       { $$ = عدم; }
                 ;
 
 Terminal        :       String
-                        { $$ = ExprCreateString($1); }
+                        { $$ = اظہاریہ_Create_String($1); }
                 |       Integer
-                        { $$ = ExprCreateInteger($1); }
+                        { $$ = اظہاریہ_Create_Integer($1); }
                 |       Float
-                        { $$ = ExprCreateFloat(/* Discard $1 */); }
+                        { $$ = اظہاریہ_Create_Float(/* Discard $1 */); }
                 |       KEYNAME
-                        { $$ = ExprCreateKeyName($1); }
+                        { $$ = اظہاریہ_Create_کلید_Name($1); }
                 ;
 
-MultiKeySymList :       MultiKeySymList COMMA KeySymLit
+Multi_کلید_Sym_List :       Multi_کلید_Sym_List COMMA کلید_Sym_Lit
                         {
-                            ExprDef *expr = ExprCreateKeySymList($3);
+                            اظہاریہ_Def *اظہاریہ = اظہاریہ_Create_کلید_Sym_List($3);
                             $$ = $1;
-                            $$.last->common.next = &expr->common; $$.last = expr;
+                            $$.آخری->common.اگلا = &اظہاریہ->common; $$.آخری = اظہاریہ;
                         }
-                |       MultiKeySymList COMMA KeySyms
-                        { $$ = $1; $$.last->common.next = &$3->common; $$.last = $3; }
-                |       KeySymLit
-                        { $$.head = $$.last = ExprCreateKeySymList($1); }
-                |       NonEmptyKeySyms
-                        { $$.head = $$.last = $1; }
+                |       Multi_کلید_Sym_List COMMA کلید_Syms
+                        { $$ = $1; $$.آخری->common.اگلا = &$3->common; $$.آخری = $3; }
+                |       کلید_Sym_Lit
+                        { $$.سر = $$.آخری = اظہاریہ_Create_کلید_Sym_List($1); }
+                |       Non_خالی_تھاواں_کلید_Syms
+                        { $$.سر = $$.آخری = $1; }
                 ;
 
-KeySymList      :       KeySymList COMMA KeySymLit
-                        { $$ = ExprAppendKeySymList($1, $3); }
-                |       KeySymList COMMA STRING
+کلید_Sym_List      :       کلید_Sym_List COMMA کلید_Sym_Lit
+                        { $$ = اظہاریہ_Append_کلید_Sym_List($1, $3); }
+                |       کلید_Sym_List COMMA STRING
                         {
-                            $$ = ExprKeySymListAppendString(param->scanner, $1, $3);
-                            free($3);
-                            if (!$$)
+                            $$ = اظہاریہ_کلید_Sym_List_Append_String(param->scanner, $1, $3);
+                            حرر($3);
+                            إذا (!$$)
                                 YYERROR;
                         }
-                |       KeySymLit
+                |       کلید_Sym_Lit
                         {
-                            $$ = ExprCreateKeySymList($1);
-                            if (!$$)
+                            $$ = اظہاریہ_Create_کلید_Sym_List($1);
+                            إذا (!$$)
                                 YYERROR;
                         }
                 |       STRING
                         {
-                            $$ = ExprCreateKeySymList(XKB_KEY_NoSymbol);
-                            if (!$$)
+                            $$ = اظہاریہ_Create_کلید_Sym_List(XKB_کلید_No_علامت);
+                            إذا (!$$)
                                 YYERROR;
-                            $$ = ExprKeySymListAppendString(param->scanner, $$, $1);
-                            free($1);
-                            if (!$$)
+                            $$ = اظہاریہ_کلید_Sym_List_Append_String(param->scanner, $$, $1);
+                            حرر($1);
+                            إذا (!$$)
                                 YYERROR;
                         }
                 ;
 
-NonEmptyKeySyms :       OBRACE KeySymList CBRACE
+Non_خالی_تھاواں_کلید_Syms :       OBRACE کلید_Sym_List CBRACE
                         { $$ = $2; }
                 |       STRING
                         {
-                            $$ = ExprCreateKeySymList(XKB_KEY_NoSymbol);
-                            if (!$$)
+                            $$ = اظہاریہ_Create_کلید_Sym_List(XKB_کلید_No_علامت);
+                            إذا (!$$)
                                 YYERROR;
-                            $$ = ExprKeySymListAppendString(param->scanner, $$, $1);
-                            free($1);
-                            if (!$$)
+                            $$ = اظہاریہ_کلید_Sym_List_Append_String(param->scanner, $$, $1);
+                            حرر($1);
+                            إذا (!$$)
                                 YYERROR;
                         }
                 ;
 
-KeySyms         :       NonEmptyKeySyms
+کلید_Syms         :       Non_خالی_تھاواں_کلید_Syms
                         { $$ = $1; }
                 |       OBRACE CBRACE
-                        { $$ = ExprCreateKeySymList(XKB_KEY_NoSymbol); }
+                        { $$ = اظہاریہ_Create_کلید_Sym_List(XKB_کلید_No_علامت); }
                 ;
 
-KeySym          :       KeySymLit
+کلید_Sym_2          :       کلید_Sym_Lit
                         { $$ = $1; }
                 |       STRING
                         {
                             $$ = KeysymParseString(param->scanner, $1);
-                            free($1);
-                            if ($$ == XKB_KEY_NoSymbol)
+                            حرر($1);
+                            إذا ($$ == XKB_کلید_No_علامت)
                                 YYERROR;
                         }
                 ;
 
-KeySymLit       :       IDENT
+کلید_Sym_Lit       :       IDENT
                         {
-                            if (!resolve_keysym(param, $1, &$$)) {
+                            إذا (!resolve_keysym(param, $1, &$$)) {
                                 parser_warn(
                                     param,
                                     XKB_WARNING_UNRECOGNIZED_KEYSYM,
                                     "unrecognized keysym \"%.*s\"",
-                                    (unsigned int) $1.len, $1.start
+                                    (بنانشانی صحيح) $1.len, $1.شروع
                                 );
-                                $$ = XKB_KEY_NoSymbol;
+                                $$ = XKB_کلید_No_علامت;
                             }
                         }
                         /* Handle keysym that is also a keyword  */
-                |       SECTION { $$ = XKB_KEY_section; }
+                |       SECTION { $$ = XKB_کلید_section; }
                 |       DECIMAL_DIGIT
                         {
                             /*
@@ -1014,11 +1014,11 @@ KeySymLit       :       IDENT
                              * map to XKB_KEY_0 .. XKB_KEY_9, consistent with
                              * other keysym names: <name> → XKB_KEY_<name>.
                              */
-                            $$ = XKB_KEY_0 + (xkb_keysym_t) $1;
+                            $$ = XKB_کلید_0 + (xkb_keysym_t) $1;
                         }
                 |       INTEGER
                         {
-                            if ($1 < XKB_KEYSYM_MIN) {
+                            إذا ($1 < XKB_KEYSYM_MIN) {
                                 /* Negative value */
                                 static_assert(XKB_KEYSYM_MIN == 0,
                                               "Keysyms are positive");
@@ -1029,7 +1029,7 @@ KeySymLit       :       IDENT
                                     " (%"PRId64")",
                                     -$1, $1
                                 );
-                                $$ = XKB_KEY_NoSymbol;
+                                $$ = XKB_کلید_No_علامت;
                             }
                             /*
                              * Integers 0..9 are handled with DECIMAL_DIGIT if
@@ -1039,9 +1039,9 @@ KeySymLit       :       IDENT
                              * the keysym 0x0001, while `1` is interpreted as
                              * XKB_KEY_1.
                              */
-                            else {
+                            وإلا {
                                 /* Any other numeric value */
-                                if ($1 <= XKB_KEYSYM_MAX) {
+                                إذا ($1 <= XKB_KEYSYM_MAX) {
                                     /*
                                      * Valid keysym
                                      * No normalization is performed and value
@@ -1050,15 +1050,15 @@ KeySymLit       :       IDENT
                                     $$ = (xkb_keysym_t) $1;
                                     check_deprecated_keysyms(
                                         parser_warn, param, param->ctx,
-                                        $$, NULL, $$, "%#06"PRIx32, "");
-                                } else {
+                                        $$, عدم, $$, "%#06"PRIx32, "");
+                                } وإلا {
                                     /* Invalid keysym */
                                     parser_warn(
                                         param, XKB_ERROR_INVALID_NUMERIC_KEYSYM,
                                         "unrecognized keysym \"%#06"PRIx64"\" "
                                         "(%"PRId64")", $1, $1
                                     );
-                                    $$ = XKB_KEY_NoSymbol;
+                                    $$ = XKB_کلید_No_علامت;
                                 }
                                 parser_vrb(
                                     /*
@@ -1076,11 +1076,11 @@ KeySymLit       :       IDENT
                         }
                 ;
 
-SignedNumber    :       MINUS Number    { $$ = -$2; }
-                |       Number          { $$ = $1; }
+Signed_نمبر    :       MINUS نمبر    { $$ = -$2; }
+                |       نمبر          { $$ = $1; }
                 ;
 
-Number          :       FLOAT         { $$ = $1; }
+نمبر          :       FLOAT         { $$ = $1; }
                 |       DECIMAL_DIGIT { $$ = $1; }
                 |       INTEGER       { $$ = $1; }
                 ;
@@ -1092,19 +1092,19 @@ Integer         :       INTEGER       { $$ = $1; }
                 |       DECIMAL_DIGIT { $$ = $1; }
                 ;
 
-KeyCode         :       INTEGER       { $$ = $1; }
+کلید_کوڈ_2         :       INTEGER       { $$ = $1; }
                 |       DECIMAL_DIGIT { $$ = $1; }
                 ;
 
-Ident           :       IDENT   { $$ = xkb_atom_intern(param->ctx, $1.start, $1.len); }
+Ident           :       IDENT   { $$ = xkb_atom_intern(param->ctx, $1.شروع, $1.len); }
                 |       DEFAULT { $$ = xkb_atom_intern_literal(param->ctx, "default"); }
                 ;
 
-String          :       STRING  { $$ = xkb_atom_intern(param->ctx, $1, strlen($1)); free($1); }
+String          :       STRING  { $$ = xkb_atom_intern(param->ctx, $1, لڑی_لمبائی($1)); حرر($1); }
                 ;
 
 OptMapName      :       MapName { $$ = $1; }
-                |               { $$ = NULL; }
+                |               { $$ = عدم; }
                 ;
 
 MapName         :       STRING  { $$ = $1; }
@@ -1114,17 +1114,17 @@ MapName         :       STRING  { $$ = $1; }
 
 /* Parse a specific section */
 XkbFile *
-parse(struct xkb_context *ctx, const struct parser_keymap_config *config,
-      struct scanner *scanner, const char *map)
+parse(بنية xkb_context *ctx, ثابت بنية parser_keymap_config *config,
+      بنية scanner *scanner, ثابت حرف *map)
 {
-    int ret;
-    XkbFile *first = NULL;
-    struct parser_param param = {
+    صحيح ret;
+    XkbFile *پہلا = عدم;
+    بنية parser_param param = {
         .scanner = scanner,
         .ctx = ctx,
-        .rtrn = NULL,
+        .rtrn = عدم,
         .config = *config,
-        .more_maps = false,
+        .ہور_maps = false,
     };
 
     /*
@@ -1135,70 +1135,70 @@ parse(struct xkb_context *ctx, const struct parser_keymap_config *config,
      * the first map in the file.
      */
 
-    while ((ret = yyparse(&param)) == 0 && param.more_maps) {
-        if (map) {
-            if (streq_not_null(map, param.rtrn->name))
-                return param.rtrn;
-            else
+    طالما ((ret = yyparse(&param)) == 0 && param.ہور_maps) {
+        إذا (map) {
+            إذا (streq_not_null(map, param.rtrn->name))
+                أرجع param.rtrn;
+            وإلا
                 FreeXkbFile(param.rtrn);
         }
-        else {
-            if (param.rtrn->flags & MAP_IS_DEFAULT) {
-                FreeXkbFile(first);
-                return param.rtrn;
+        وإلا {
+            إذا (param.rtrn->flags & MAP_IS_DEFAULT) {
+                FreeXkbFile(پہلا);
+                أرجع param.rtrn;
             }
-            else if (!first) {
-                first = param.rtrn;
+            وإلا إذا (!پہلا) {
+                پہلا = param.rtrn;
             }
-            else {
+            وإلا {
                 FreeXkbFile(param.rtrn);
             }
         }
-        param.rtrn = NULL;
+        param.rtrn = عدم;
     }
 
-    if (ret != 0) {
+    إذا (ret != 0) {
         /* Some error happend; clear the Xkbfiles parsed so far */
-        FreeXkbFile(first);
+        FreeXkbFile(پہلا);
         FreeXkbFile(param.rtrn);
-        return NULL;
+        أرجع عدم;
     }
 
     /*
      * Warn about implicit default section,
      * but only if not a keymap: multiple keymaps per file not supported
      */
-    if (first && first->file_type != FILE_TYPE_KEYMAP)
+    إذا (پہلا && پہلا->file_type != FILE_TYPE_KEYMAP)
         log_vrb(ctx, XKB_LOG_VERBOSITY_DETAILED,
                 XKB_WARNING_MISSING_DEFAULT_SECTION,
                 "No section name in include statement, but \"%s\" contains several; "
                 "Using first defined section, \"%s\"\n",
-                scanner->file_name, safe_map_name(first->name));
+                scanner->file_name, محفوظ_map_name(پہلا->name));
 
-    return first;
+    أرجع پہلا;
 }
 
 /* Parse the next section */
 bool
-parse_next(struct xkb_context *ctx,
-           const struct parser_keymap_config *config,
-           struct scanner *scanner, XkbFile **xkb_file)
+parse_اگلا(بنية xkb_context *ctx,
+           ثابت بنية parser_keymap_config *config,
+           بنية scanner *scanner, XkbFile **xkb_file)
 {
-    int ret;
-    struct parser_param param = {
+    صحيح ret;
+    بنية parser_param param = {
         .scanner = scanner,
         .ctx = ctx,
-        .rtrn = NULL,
+        .rtrn = عدم,
         .config = *config,
-        .more_maps = false,
+        .ہور_maps = false,
     };
 
-    if ((ret = yyparse(&param)) == 0 && param.more_maps) {
+    إذا ((ret = yyparse(&param)) == 0 && param.ہور_maps) {
         *xkb_file = param.rtrn;
-        return true;
-    } else {
+        أرجع true;
+    } وإلا {
         FreeXkbFile(param.rtrn);
-        *xkb_file = NULL;
-        return (ret == 0);
+        *xkb_file = عدم;
+        أرجع (ret == 0);
     }
 }

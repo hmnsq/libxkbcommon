@@ -3,75 +3,75 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#ضمن "config.h"
 
-#include "x11-priv.h"
+#ضمن "x11-priv.h"
 
-int
-xkb_x11_setup_xkb_extension(xcb_connection_t *conn,
-                            uint16_t major_xkb_version,
-                            uint16_t minor_xkb_version,
-                            enum xkb_x11_setup_xkb_extension_flags flags,
-                            uint16_t *major_xkb_version_out,
-                            uint16_t *minor_xkb_version_out,
-                            uint8_t *base_event_out,
-                            uint8_t *base_error_out)
+صحيح
+xkb_x11_تیاری_xkb_extension(xcb_connection_t *conn,
+                            uint16_t major_xkb_نسخہ,
+                            uint16_t minor_xkb_نسخہ,
+                            تعداد xkb_x11_تیاری_xkb_extension_flags flags,
+                            uint16_t *major_xkb_نسخہ_باہرلا,
+                            uint16_t *minor_xkb_نسخہ_باہرلا,
+                            uint8_t *ادھار_event_باہرلا,
+                            uint8_t *ادھار_error_باہرلا)
 {
-    uint8_t base_event, base_error;
+    uint8_t ادھار_event, ادھار_error;
     uint16_t server_major, server_minor;
 
-    static const enum xkb_x11_setup_xkb_extension_flags
-        XKB_X11_SETUP_XKB_EXTENSION_FLAGS = XKB_X11_SETUP_XKB_EXTENSION_NO_FLAGS;
+    ساكن ثابت تعداد xkb_x11_تیاری_xkb_extension_flags
+        XKB_X11_تیاری_XKB_EXTENSION_FLAGS = XKB_X11_تیاری_XKB_EXTENSION_NO_FLAGS;
 
-    if (flags & ~XKB_X11_SETUP_XKB_EXTENSION_FLAGS) {
+    إذا (flags & ~XKB_X11_تیاری_XKB_EXTENSION_FLAGS) {
         /* log_err_func(ctx, "unrecognized flags: %#x\n", flags); */
-        return 0;
+        أرجع 0;
     }
 
     {
-        const xcb_query_extension_reply_t *reply =
-            xcb_get_extension_data(conn, &xcb_xkb_id);
-        if (!reply) {
+        ثابت xcb_query_extension_جواب_t *جواب =
+            xcb_get_extension_انکڑے(conn, &xcb_xkb_id);
+        إذا (!جواب) {
             /* log_err_func(ctx, "failed to query for XKB extension\n"); */
-            return 0;
+            أرجع 0;
         }
 
-        if (!reply->present) {
+        إذا (!جواب->present) {
             /* log_err_func(ctx, "failed to start using XKB extension: not available in server\n"); */
-            return 0;
+            أرجع 0;
         }
 
-        base_event = reply->first_event;
-        base_error = reply->first_error;
+        ادھار_event = جواب->پہلا_event;
+        ادھار_error = جواب->پہلا_error;
     }
 
     {
-        xcb_generic_error_t *error = NULL;
+        xcb_generic_error_t *error = عدم;
         xcb_xkb_use_extension_cookie_t cookie =
-            xcb_xkb_use_extension(conn, major_xkb_version, minor_xkb_version);
-        xcb_xkb_use_extension_reply_t *reply =
-            xcb_xkb_use_extension_reply(conn, cookie, &error);
+            xcb_xkb_use_extension(conn, major_xkb_نسخہ, minor_xkb_نسخہ);
+        xcb_xkb_use_extension_جواب_t *جواب =
+            xcb_xkb_use_extension_جواب(conn, cookie, &error);
 
-        if (!reply) {
+        إذا (!جواب) {
             /* log_err_func(ctx, */
             /*              "failed to start using XKB extension: error code %d\n", */
             /*              error ? error->error_code : -1); */
-            free(error);
-            return 0;
+            حرر(error);
+            أرجع 0;
         }
 
-        if (!reply->supported) {
+        إذا (!جواب->supported) {
             /* log_err_func(ctx, */
             /*              "failed to start using XKB extension: server doesn't support version %d.%d\n", */
             /*              major_xkb_version, minor_xkb_version); */
-            free(reply);
-            return 0;
+            حرر(جواب);
+            أرجع 0;
         }
 
-        server_major = reply->serverMajor;
-        server_minor = reply->serverMinor;
+        server_major = جواب->serverMajor;
+        server_minor = جواب->serverMinor;
 
-        free(reply);
+        حرر(جواب);
     }
 
     /*
@@ -79,16 +79,16 @@ xkb_x11_setup_xkb_extension(xcb_connection_t *conn,
     * it doesn't seem like any of it is useful to us.
     */
 
-    if (major_xkb_version_out)
-        *major_xkb_version_out = server_major;
-    if (minor_xkb_version_out)
-        *minor_xkb_version_out = server_minor;
-    if (base_event_out)
-        *base_event_out = base_event;
-    if (base_error_out)
-        *base_error_out = base_error;
+    إذا (major_xkb_نسخہ_باہرلا)
+        *major_xkb_نسخہ_باہرلا = server_major;
+    إذا (minor_xkb_نسخہ_باہرلا)
+        *minor_xkb_نسخہ_باہرلا = server_minor;
+    إذا (ادھار_event_باہرلا)
+        *ادھار_event_باہرلا = ادھار_event;
+    إذا (ادھار_error_باہرلا)
+        *ادھار_error_باہرلا = ادھار_error;
 
-    return 1;
+    أرجع 1;
 }
 
 int32_t
@@ -98,186 +98,186 @@ xkb_x11_get_core_keyboard_device_id(xcb_connection_t *conn)
     xcb_xkb_get_device_info_cookie_t cookie =
         xcb_xkb_get_device_info(conn, XCB_XKB_ID_USE_CORE_KBD,
                                 0, 0, 0, 0, 0, 0);
-    xcb_xkb_get_device_info_reply_t *reply =
-        xcb_xkb_get_device_info_reply(conn, cookie, NULL);
+    xcb_xkb_get_device_info_جواب_t *جواب =
+        xcb_xkb_get_device_info_جواب(conn, cookie, عدم);
 
-    if (!reply)
-        return -1;
+    إذا (!جواب)
+        أرجع -1;
 
-    device_id = reply->deviceID;
-    free(reply);
-    return device_id;
+    device_id = جواب->deviceID;
+    حرر(جواب);
+    أرجع device_id;
 }
 
-struct x11_atom_cache {
+بنية x11_atom_cache {
     /*
      * Invalidate the cache based on the XCB connection.
      * X11 atoms are actually not per connection or client, but per X server
      * session. But better be safe just in case we survive an X server restart.
      */
     xcb_connection_t *conn;
-    struct {
+    بنية {
         xcb_atom_t from;
-        xkb_atom_t to;
+        xkb_atom_t منزل;
     } cache[256];
-    size_t len;
+    ناپ_t len;
 };
 
-static struct x11_atom_cache *
-get_cache(struct xkb_context *ctx, xcb_connection_t *conn)
+ساكن بنية x11_atom_cache *
+get_cache(بنية xkb_context *ctx, xcb_connection_t *conn)
 {
-    if (!ctx->x11_atom_cache) {
-        ctx->x11_atom_cache = calloc(1, sizeof(struct x11_atom_cache));
+    إذا (!ctx->x11_atom_cache) {
+        ctx->x11_atom_cache = صفر_حافظہ_دیو(1, حجم(بنية x11_atom_cache));
     }
     /* Can be NULL in case the malloc failed. */
-    struct x11_atom_cache *cache = ctx->x11_atom_cache;
-    if (cache && cache->conn != conn) {
+    بنية x11_atom_cache *cache = ctx->x11_atom_cache;
+    إذا (cache && cache->conn != conn) {
         cache->conn = conn;
         cache->len = 0;
     }
-    return cache;
+    أرجع cache;
 }
 
-void
-x11_atom_interner_init(struct x11_atom_interner *interner,
-                       struct xkb_context *ctx, xcb_connection_t *conn)
+فراغ
+x11_atom_interner_init(بنية x11_atom_interner *interner,
+                       بنية xkb_context *ctx, xcb_connection_t *conn)
 {
     interner->had_error = false;
     interner->ctx = ctx;
     interner->conn = conn;
-    interner->num_pending = 0;
-    interner->num_copies = 0;
-    interner->num_escaped = 0;
+    interner->عدد_pending = 0;
+    interner->عدد_copies = 0;
+    interner->عدد_escaped = 0;
 }
 
-void
-x11_atom_interner_adopt_atom(struct x11_atom_interner *interner,
-                             const xcb_atom_t atom, xkb_atom_t *out)
+فراغ
+x11_atom_interner_adopt_atom(بنية x11_atom_interner *interner,
+                             ثابت xcb_atom_t atom, xkb_atom_t *باہرلا)
 {
-    *out = XKB_ATOM_NONE;
+    *باہرلا = XKB_ATOM_NONE;
 
-    if (atom == XCB_ATOM_NONE)
-        return;
+    إذا (atom == XCB_ATOM_NONE)
+        أرجع;
 
     /* Can be NULL in case the malloc failed. */
-    struct x11_atom_cache *cache = get_cache(interner->ctx, interner->conn);
+    بنية x11_atom_cache *cache = get_cache(interner->ctx, interner->conn);
 
 retry:
 
     /* Already in the cache? */
-    if (cache) {
-        for (size_t c = 0; c < cache->len; c++) {
-            if (cache->cache[c].from == atom) {
-                *out = cache->cache[c].to;
-                return;
+    إذا (cache) {
+        لكل (ناپ_t c = 0; c < cache->len; c++) {
+            إذا (cache->cache[c].from == atom) {
+                *باہرلا = cache->cache[c].منزل;
+                أرجع;
             }
         }
     }
 
     /* Already pending? */
-    for (size_t i = 0; i < interner->num_pending; i++) {
-        if (interner->pending[i].from == atom) {
-            if (interner->num_copies == ARRAY_SIZE(interner->copies)) {
-                x11_atom_interner_round_trip(interner);
-                goto retry;
+    لكل (ناپ_t i = 0; i < interner->عدد_pending; i++) {
+        إذا (interner->pending[i].from == atom) {
+            إذا (interner->عدد_copies == ARRAY_ناپ(interner->copies)) {
+                x11_atom_interner_گیڑا_trip(interner);
+                اذهب retry;
             }
 
-            size_t idx = interner->num_copies++;
+            ناپ_t idx = interner->عدد_copies++;
             interner->copies[idx].from = atom;
-            interner->copies[idx].out = out;
-            return;
+            interner->copies[idx].باہرلا = باہرلا;
+            أرجع;
         }
     }
 
     /* We have to send a GetAtomName request */
-    if (interner->num_pending == ARRAY_SIZE(interner->pending)) {
-        x11_atom_interner_round_trip(interner);
-        assert(interner->num_pending < ARRAY_SIZE(interner->pending));
+    إذا (interner->عدد_pending == ARRAY_ناپ(interner->pending)) {
+        x11_atom_interner_گیڑا_trip(interner);
+        أكد(interner->عدد_pending < ARRAY_ناپ(interner->pending));
     }
-    size_t idx = interner->num_pending++;
+    ناپ_t idx = interner->عدد_pending++;
     interner->pending[idx].from = atom;
-    interner->pending[idx].out = out;
+    interner->pending[idx].باہرلا = باہرلا;
     interner->pending[idx].cookie = xcb_get_atom_name(interner->conn, atom);
 }
 
-void
-x11_atom_interner_round_trip(struct x11_atom_interner *interner) {
-    struct xkb_context *ctx = interner->ctx;
+فراغ
+x11_atom_interner_گیڑا_trip(بنية x11_atom_interner *interner) {
+    بنية xkb_context *ctx = interner->ctx;
     xcb_connection_t *conn = interner->conn;
 
     /* Can be NULL in case the malloc failed. */
-    struct x11_atom_cache *cache = get_cache(ctx, conn);
+    بنية x11_atom_cache *cache = get_cache(ctx, conn);
 
-    for (size_t i = 0; i < interner->num_pending; i++) {
-        xcb_get_atom_name_reply_t *reply;
+    لكل (ناپ_t i = 0; i < interner->عدد_pending; i++) {
+        xcb_get_atom_name_جواب_t *جواب;
 
-        reply = xcb_get_atom_name_reply(conn, interner->pending[i].cookie, NULL);
-        if (!reply) {
+        جواب = xcb_get_atom_name_جواب(conn, interner->pending[i].cookie, عدم);
+        إذا (!جواب) {
             interner->had_error = true;
-            continue;
+            استمر;
         }
         xcb_atom_t x11_atom = interner->pending[i].from;
         xkb_atom_t atom = xkb_atom_intern(ctx,
-                                          xcb_get_atom_name_name(reply),
-                                          xcb_get_atom_name_name_length(reply));
-        free(reply);
+                                          xcb_get_atom_name_name(جواب),
+                                          xcb_get_atom_name_name_لمائی(جواب));
+        حرر(جواب);
 
-        if (cache && cache->len < ARRAY_SIZE(cache->cache)) {
-            size_t idx = cache->len++;
+        إذا (cache && cache->len < ARRAY_ناپ(cache->cache)) {
+            ناپ_t idx = cache->len++;
             cache->cache[idx].from = x11_atom;
-            cache->cache[idx].to = atom;
+            cache->cache[idx].منزل = atom;
         }
 
-        *interner->pending[i].out = atom;
+        *interner->pending[i].باہرلا = atom;
 
-        for (size_t j = 0; j < interner->num_copies; j++) {
-            if (interner->copies[j].from == x11_atom)
-                *interner->copies[j].out = atom;
+        لكل (ناپ_t j = 0; j < interner->عدد_copies; j++) {
+            إذا (interner->copies[j].from == x11_atom)
+                *interner->copies[j].باہرلا = atom;
         }
     }
 
-    for (size_t i = 0; i < interner->num_escaped; i++) {
-        xcb_get_atom_name_reply_t *reply;
-        int length;
-        char *name;
-        char **out = interner->escaped[i].out;
+    لكل (ناپ_t i = 0; i < interner->عدد_escaped; i++) {
+        xcb_get_atom_name_جواب_t *جواب;
+        صحيح لمائی;
+        حرف *name;
+        حرف **باہرلا = interner->escaped[i].باہرلا;
 
-        reply = xcb_get_atom_name_reply(conn, interner->escaped[i].cookie, NULL);
-        *interner->escaped[i].out = NULL;
-        if (!reply) {
+        جواب = xcb_get_atom_name_جواب(conn, interner->escaped[i].cookie, عدم);
+        *interner->escaped[i].باہرلا = عدم;
+        إذا (!جواب) {
             interner->had_error = true;
-        } else {
-            length = xcb_get_atom_name_name_length(reply);
-            name = xcb_get_atom_name_name(reply);
+        } وإلا {
+            لمائی = xcb_get_atom_name_name_لمائی(جواب);
+            name = xcb_get_atom_name_name(جواب);
 
-            *out = strndup(name, (size_t)length);
-            free(reply);
-            if (*out == NULL) {
+            *باہرلا = strndup(name, (ناپ_t)لمائی);
+            حرر(جواب);
+            إذا (*باہرلا == عدم) {
                 interner->had_error = true;
-            } else {
-                XkbEscapeMapName(*out);
+            } وإلا {
+                XkbEscapeMapName(*باہرلا);
             }
         }
     }
 
-    interner->num_pending = 0;
-    interner->num_copies = 0;
-    interner->num_escaped = 0;
+    interner->عدد_pending = 0;
+    interner->عدد_copies = 0;
+    interner->عدد_escaped = 0;
 }
 
-void
-x11_atom_interner_get_escaped_atom_name(struct x11_atom_interner *interner,
-                                        xcb_atom_t atom, char **out)
+فراغ
+x11_atom_interner_get_escaped_atom_name(بنية x11_atom_interner *interner,
+                                        xcb_atom_t atom, حرف **باہرلا)
 {
-    if (atom == 0) {
-        *out = NULL;
-        return;
+    إذا (atom == 0) {
+        *باہرلا = عدم;
+        أرجع;
     }
-    size_t idx = interner->num_escaped++;
+    ناپ_t idx = interner->عدد_escaped++;
     /* There can only be a fixed number of calls to this function "in-flight",
      * thus we assert this number. Increase the array size if this assert fails.
      */
-    assert(idx < ARRAY_SIZE(interner->escaped));
-    interner->escaped[idx].out = out;
+    أكد(idx < ARRAY_ناپ(interner->escaped));
+    interner->escaped[idx].باہرلا = باہرلا;
     interner->escaped[idx].cookie = xcb_get_atom_name(interner->conn, atom);
 }

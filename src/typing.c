@@ -3,564 +3,564 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <assert.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <stdint.h>
-#if WCHAR_MAX >= 0x7FFFFFFF
-#include <wctype.h>
-#define USE_ISWPRINT
-#if HAVE_NEWLOCALE && HAVE_ISWPRINT_L
-#define USE_ISWPRINT_L
-#include <locale.h>
-#endif
-#else
-#include <ctype.h>
-#endif
+#ضمن <assert.h>
+#ضمن <stdbool.h>
+#ضمن <stdlib.h>
+#ضمن <stdint.h>
+#إذا WCHAR_MAX >= 0x7FFFFFFF
+#ضمن <wctype.h>
+#تعریف_کرو USE_ISWPRINT
+#إذا HAVE_NEWLOCALE && HAVE_ISWPRINT_L
+#تعریف_کرو USE_ISWPRINT_L
+#ضمن <locale.h>
+#جے_انت
+#وإلا
+#ضمن <ctype.h>
+#جے_انت
 
-#include "xkbcommon/xkbcommon-status.h"
-#include "xkbcommon/xkbcommon.h"
-#include "darray.h"
-#include "state-priv.h"
-#include "typing.h"
-#include "util-bits.h"
-#include "util-mem.h"
-#include "utils.h"
+#ضمن "xkbcommon/xkbcommon-status.h"
+#ضمن "xkbcommon/xkbcommon.h"
+#ضمن "darray.h"
+#ضمن "state-priv.h"
+#ضمن "typing.h"
+#ضمن "util-bits.h"
+#ضمن "util-mem.h"
+#ضمن "utils.h"
 
-enum xkb_status
-xkb_key_set_init(struct xkb_key_set *set,
-                 struct xkb_keymap *keymap,
-                 const struct xkb_key_set_config *config)
+تعداد xkb_حالت
+xkb_کلید_سیٹ_init(بنية xkb_کلید_سیٹ *سیٹ,
+                 بنية xkb_keymap *keymap,
+                 ثابت بنية xkb_کلید_سیٹ_config *config)
 {
-    darray_init(set->printable);
-    darray_init(set->modifiers);
-    darray_init(set->misc);
+    darray_init(سیٹ->printable);
+    darray_init(سیٹ->modifiers);
+    darray_init(سیٹ->misc);
 
-    static const struct xkb_key_set_config default_config = {0};
-    if (!config)
+    ساكن ثابت بنية xkb_کلید_سیٹ_config default_config = {0};
+    إذا (!config)
         config = &default_config;
     /* keycode = 0 denotes “default” */
-    const xkb_keycode_t min = MAX(config->min, xkb_keymap_min_keycode(keymap));
-    const xkb_keycode_t max = config->max
+    ثابت xkb_keycode_t min = MAX(config->min, xkb_keymap_min_keycode(keymap));
+    ثابت xkb_keycode_t max = config->max
         ? MIN(config->max, xkb_keymap_max_keycode(keymap))
         : xkb_keymap_max_keycode(keymap);
 
-    enum xkb_status status;
-    struct xkb_state *state =
-        xkb_state_new_with_mode(keymap, XKB_STATE_MODE_SERVER, &status);
-    if (!state)
-        return status;
+    تعداد xkb_حالت حالت;
+    بنية xkb_state *state =
+        xkb_state_new_with_منوال(keymap, XKB_STATE_منوال_SERVER, &حالت);
+    إذا (!state)
+        أرجع حالت;
 
-    #ifdef USE_ISWPRINT_L
+    #جے_تعریف_شدہ USE_ISWPRINT_L
     locale_t loc = newlocale(LC_ALL_MASK, "C.UTF-8", (locale_t)0);
-    #endif
+    #جے_انت
 
-    struct xkb_keymap_key_iterator iter;
-    const struct xkb_keymap_key_iterator_config iter_config = {
-        .size = sizeof(iter_config),
-        .flags = XKB_KEYMAP_KEY_ITERATOR_NO_FLAGS,
-        .start = min
+    بنية xkb_keymap_کلید_iterator iter;
+    ثابت بنية xkb_keymap_کلید_iterator_config iter_config = {
+        .ناپ = حجم(iter_config),
+        .flags = XKB_KEYMAP_کلید_ITERATOR_NO_FLAGS,
+        .شروع = min
     };
-    status = xkb_keymap_key_iterator_init(&iter, keymap, &iter_config);
-    if (status != XKB_SUCCESS)
-        goto error;
+    حالت = xkb_keymap_کلید_iterator_init(&iter, keymap, &iter_config);
+    إذا (حالت != XKB_SUCCESS)
+        اذهب error;
 
-    const xkb_mod_mask_t numlock =
-        xkb_keymap_mod_get_mask(keymap, XKB_VMOD_NAME_NUM);
+    ثابت xkb_mod_نقاب_t numlock =
+        xkb_keymap_mod_get_نقاب(keymap, XKB_VMOD_NAME_عدد);
 
-    const struct xkb_state_components_update components_update = {
-        .size = sizeof(components_update),
+    ثابت بنية xkb_state_components_update components_update = {
+        .ناپ = حجم(components_update),
         .components = XKB_STATE_MODS_LOCKED,
         .affect_locked_mods = numlock,
         .locked_mods = numlock,
     };
 
-    const struct xkb_synthetic_update update = {
-        .size = sizeof(update),
+    ثابت بنية xkb_synthetic_update update = {
+        .ناپ = حجم(update),
         .components = &components_update,
     };
 
     xkb_keycode_t k;
-    while ((k = xkb_keymap_key_iterator_next(&iter)) != XKB_KEYCODE_INVALID) {
-        if (k > max)
-            break;
+    طالما ((k = xkb_keymap_کلید_iterator_اگلا(&iter)) != XKB_KEYCODE_INVALID) {
+        إذا (k > max)
+            اكسر;
 
         xkb_state_reset(state);
-        status = xkb_state_update_synthetic(state, &update, NULL);
-        if (status != XKB_SUCCESS)
-            goto error;
+        حالت = xkb_state_update_synthetic(state, &update, عدم);
+        إذا (حالت != XKB_SUCCESS)
+            اذهب error;
 
-        const xkb_keysym_t *syms = NULL;
-        const int count = xkb_state_key_get_syms(state, k, &syms);
+        ثابت xkb_keysym_t *syms = عدم;
+        ثابت صحيح گنتی = xkb_state_کلید_get_syms(state, k, &syms);
 
-        enum xkb_state_component changed =
-            xkb_state_update_key(state, k, XKB_KEY_DOWN);
-        xkb_mod_mask_t mods =
+        تعداد xkb_state_component بدلیا =
+            xkb_state_update_کلید(state, k, XKB_کلید_تھلے);
+        xkb_mod_نقاب_t mods =
             xkb_state_serialize_mods(state, XKB_STATE_MODS_EFFECTIVE);
-        changed |= xkb_state_update_key(state, k, XKB_KEY_UP);
+        بدلیا |= xkb_state_update_کلید(state, k, XKB_کلید_اتے);
         mods |= xkb_state_serialize_mods(state, XKB_STATE_MODS_EFFECTIVE);
 
-        if (changed & XKB_STATE_MODS_EFFECTIVE) {
+        إذا (بدلیا & XKB_STATE_MODS_EFFECTIVE) {
             /* Modifier key */
-            enum xkb_modifier_kind kind;
-            if (changed & XKB_STATE_MODS_LOCKED) {
-                kind = XKB_MOD_LOCK;
-            } else if (changed & XKB_STATE_MODS_LATCHED) {
-                kind = XKB_MOD_LATCH;
-            } else {
-                kind = XKB_MOD_SET;
+            تعداد xkb_modifier_قسم قسم;
+            إذا (بدلیا & XKB_STATE_MODS_LOCKED) {
+                قسم = XKB_MOD_جندرا;
+            } وإلا إذا (بدلیا & XKB_STATE_MODS_LATCHED) {
+                قسم = XKB_MOD_LATCH;
+            } وإلا {
+                قسم = XKB_MOD_سیٹ;
             }
             mods &= ~numlock;
-            if (!mods)
+            إذا (!mods)
                 mods = numlock;
-            darray_append(set->modifiers, (struct xkb_modifier_key) {
+            darray_append(سیٹ->modifiers, (بنية xkb_modifier_کلید) {
                 .keycode = k,
                 .mods = mods,
-                .kind = kind,
+                .قسم = قسم,
             });
-            continue;
+            استمر;
         }
 
-        if (count > 0) {
+        إذا (گنتی > 0) {
             uint32_t utf32 = 0;
-            for (int s = 0; s < count; s++) {
-                utf32 = xkb_keysym_to_utf32(syms[s]);
-                const bool is_printable =
-                    #ifdef USE_ISWPRINT_L
+            لكل (صحيح s = 0; s < گنتی; s++) {
+                utf32 = xkb_keysym_منزل_utf32(syms[s]);
+                ثابت bool is_printable =
+                    #جے_تعریف_شدہ USE_ISWPRINT_L
                     ((loc && iswprint_l((wint_t)utf32, loc)) || iswprint((wint_t)utf32))
-                    #elif defined(USE_ISWPRINT)
+                    #وإلاإذا defined(USE_ISWPRINT)
                     iswprint((wint_t)utf32)
-                    #else
-                    utf32 <= 0x7f && isprint((int)utf32)
-                    #endif
+                    #وإلا
+                    utf32 <= 0x7f && isprint((صحيح)utf32)
+                    #جے_انت
                     ;
-                if (is_printable)
-                    break;
+                إذا (is_printable)
+                    اكسر;
                 utf32 = 0;
             }
-            if (utf32) {
+            إذا (utf32) {
                 /* Printable keysyms */
-                darray_append(set->printable, k);
-                continue;
+                darray_append(سیٹ->printable, k);
+                استمر;
             }
         }
 
         /* Miscellaneous key */
-        darray_append(set->misc, k);
+        darray_append(سیٹ->misc, k);
     }
 
 error:
-    #ifdef USE_ISWPRINT_L
-    if (loc)
+    #جے_تعریف_شدہ USE_ISWPRINT_L
+    إذا (loc)
         freelocale(loc);
-    #endif
+    #جے_انت
 
     xkb_state_unref(state);
-    if (status != XKB_SUCCESS)
-        xkb_key_set_destroy(set);
+    إذا (حالت != XKB_SUCCESS)
+        xkb_کلید_سیٹ_destroy(سیٹ);
 
-    return status;
+    أرجع حالت;
 }
 
-void
-xkb_key_set_destroy(struct xkb_key_set *set)
+فراغ
+xkb_کلید_سیٹ_destroy(بنية xkb_کلید_سیٹ *سیٹ)
 {
-    if (!set)
-        return;
+    إذا (!سیٹ)
+        أرجع;
 
-    darray_free(set->modifiers);
-    darray_free(set->printable);
-    darray_free(set->misc);
+    darray_free(سیٹ->modifiers);
+    darray_free(سیٹ->printable);
+    darray_free(سیٹ->misc);
 }
 
-static enum xkb_status
-add_pending_events(struct xkb_typing_state * restrict state,
-                   const struct xkb_pending_typing_event * restrict events,
-                   size_t count)
+ساكن تعداد xkb_حالت
+جوڑو_pending_events(بنية xkb_typing_state * محدود state,
+                   ثابت بنية xkb_pending_typing_event * محدود events,
+                   ناپ_t گنتی)
 {
-    for (size_t e = 0; e < count; e++) {
+    لكل (ناپ_t e = 0; e < گنتی; e++) {
         /* Look for a free slot */
-        struct xkb_pending_typing_event *pending;
-        darray_size_t idx = 0;
+        بنية xkb_pending_typing_event *pending;
+        darray_ناپ_t idx = 0;
         darray_enumerate_from(idx, pending, state->pending, idx) {
-            if (!pending->counter) {
-                darray_item(state->pending, idx) = events[e];
-                goto next;
+            إذا (!pending->counter) {
+                darray_شے(state->pending, idx) = events[e];
+                اذهب اگلا;
             }
         }
         /* No free slot found: append new one */
-        idx = darray_size(state->pending);
+        idx = darray_ناپ(state->pending);
         darray_append(state->pending, events[e]);
-    next:
+    اگلا:
         /* Avoid immediate consumption */
-        darray_item(state->pending, idx).counter++;
+        darray_شے(state->pending, idx).counter++;
     }
-    state->num_pending += count;
+    state->عدد_pending += گنتی;
 
-    return XKB_SUCCESS;
+    أرجع XKB_SUCCESS;
 }
 
-static enum xkb_status
-next_pending_events(struct xkb_typing_state * restrict state,
-                    xkb_typing_events * restrict out)
+ساكن تعداد xkb_حالت
+اگلا_pending_events(بنية xkb_typing_state * محدود state,
+                    xkb_typing_events * محدود باہرلا)
 {
     /* Reset the output */
-    darray_size(*out) = 0;
+    darray_ناپ(*باہرلا) = 0;
 
-    darray_size_t idx;
-    struct xkb_pending_typing_event *pending;
+    darray_ناپ_t idx;
+    بنية xkb_pending_typing_event *pending;
     /* Stack: start from the end */
-    darray_enumerate_reverse(idx, pending, state->pending) {
-        if (!pending->counter)
-            continue;
+    darray_enumerate_الٹ(idx, pending, state->pending) {
+        إذا (!pending->counter)
+            استمر;
         pending->counter--;
-        if (pending->counter)
-            continue;
-        darray_append(*out, pending->event);
-        state->num_pending--;
+        إذا (pending->counter)
+            استمر;
+        darray_append(*باہرلا, pending->event);
+        state->عدد_pending--;
         /* Resize array if it was the last element */
-        if (idx + 1 == darray_size(state->pending))
-            darray_size(state->pending)--;
+        إذا (idx + 1 == darray_ناپ(state->pending))
+            darray_ناپ(state->pending)--;
         state->mods &= ~pending->mods;
     }
 
-    return XKB_SUCCESS;
+    أرجع XKB_SUCCESS;
 }
 
-enum {
+تعداد {
     /** Tries to avoid pressing a key already pressed */
-    KEY_CHOICE_MAX_TRIES = 12,
-    XKB_ERROR_NO_RELEASED_KEY = -1000,
+    کلید_CHOICE_MAX_TRIES = 12,
+    XKB_ERROR_NO_RELEASED_کلید = -1000,
 };
 
-static enum xkb_status
-add_modifier_key(struct xkb_typing_state * restrict state, size_t * restrict e)
+ساكن تعداد xkb_حالت
+جوڑو_modifier_کلید(بنية xkb_typing_state * محدود state, ناپ_t * محدود e)
 {
     /* Choose a random key */
-    long idx = -1;
-    for (int tries = 0; tries < KEY_CHOICE_MAX_TRIES; tries++) {
+    لما idx = -1;
+    لكل (صحيح tries = 0; tries < کلید_CHOICE_MAX_TRIES; tries++) {
         idx = state->prng(state->prng_state)
-            % darray_size(state->keys->modifiers);
+            % darray_ناپ(state->کلیدیں->modifiers);
         /*
          * Ensure key is not already down and its modifier mask is not active,
          * i.e. to avoid simultaneous keys with the same modifier.
          */
-        if (!bit_array_get(state->keys_state,
-                           darray_item(state->keys->modifiers, idx).keycode) &&
-            !(state->mods & darray_item(state->keys->modifiers, idx).mods))
+        إذا (!ثنائی_ہندسہ_array_get(state->کلیدیں_state,
+                           darray_شے(state->کلیدیں->modifiers, idx).keycode) &&
+            !(state->mods & darray_شے(state->کلیدیں->modifiers, idx).mods))
         {
-            break;
+            اكسر;
         }
         idx = -1;
     }
 
-    struct xkb_modifier_key key = {0};
-    if (idx < 0) {
+    بنية xkb_modifier_کلید کلید = {0};
+    إذا (idx < 0) {
         /* No released key found: fall back to linear search */
-        const struct xkb_modifier_key *key_;
-        darray_foreach(key_, state->keys->modifiers) {
+        ثابت بنية xkb_modifier_کلید *کلید_2;
+        darray_foreach(کلید_2, state->کلیدیں->modifiers) {
             /* See test doc above */
-            if (!bit_array_get(state->keys_state, key_->keycode) &&
-                !(state->mods & key_->mods))
+            إذا (!ثنائی_ہندسہ_array_get(state->کلیدیں_state, کلید_2->keycode) &&
+                !(state->mods & کلید_2->mods))
             {
-                key = *key_;
+                کلید = *کلید_2;
                 idx = 0;
-                break;
+                اكسر;
             }
         }
-        if (idx < 0) {
+        إذا (idx < 0) {
             /* No fallback: skip */
-            return (enum xkb_status)XKB_ERROR_NO_RELEASED_KEY;
+            أرجع (تعداد xkb_حالت)XKB_ERROR_NO_RELEASED_کلید;
         }
-    } else {
-        key = darray_item(state->keys->modifiers, idx);
+    } وإلا {
+        کلید = darray_شے(state->کلیدیں->modifiers, idx);
     }
 
-    const size_t remaining_events =
-        state->num_events - state->num_pending - *e;
-    size_t pending_turns = 0;
+    ثابت ناپ_t بچیا_events =
+        state->عدد_events - state->عدد_pending - *e;
+    ناپ_t pending_turns = 0;
 
-    if (remaining_events >= 2) {
-        if (key.kind == XKB_MOD_SET ||
-            (key.kind == XKB_MOD_LOCK && remaining_events >= 4))
+    إذا (بچیا_events >= 2) {
+        إذا (کلید.قسم == XKB_MOD_سیٹ ||
+            (کلید.قسم == XKB_MOD_جندرا && بچیا_events >= 4))
         {
             /* Delay SetMods release or LockMods unlock */
-            const size_t max_turns = MIN(
-                (size_t)(
+            ثابت ناپ_t max_turns = MIN(
+                (ناپ_t)(
                     XKB_TYPING_EVENT_MODIFIER_MAX_PENDING_TURNS -
                     XKB_TYPING_EVENT_MODIFIER_MIN_PENDING_TURNS
                  ),
-                remaining_events + state->num_pending
+                بچیا_events + state->عدد_pending
             );
             pending_turns = XKB_TYPING_EVENT_MODIFIER_MIN_PENDING_TURNS
-                          + (size_t)state->prng(state->prng_state)
+                          + (ناپ_t)state->prng(state->prng_state)
                           % (max_turns + 1);
         }
-    } else {
-        return XKB_ERROR_INVALID;
+    } وإلا {
+        أرجع XKB_ERROR_INVALID;
     }
 
-    state->events[(*e)++] = (struct xkb_typing_event) {
-        .keycode = key.keycode,
-        .direction = XKB_KEY_DOWN,
+    state->events[(*e)++] = (بنية xkb_typing_event) {
+        .keycode = کلید.keycode,
+        .direction = XKB_کلید_تھلے,
     };
 
-    struct xkb_pending_typing_event pending[2] = {
+    بنية xkb_pending_typing_event pending[2] = {
         {
             .event = {
-                .keycode = key.keycode,
-                .direction = XKB_KEY_DOWN,
+                .keycode = کلید.keycode,
+                .direction = XKB_کلید_تھلے,
             },
             .counter = (uint8_t)pending_turns,
         },
         {
             .event = {
-                .keycode = key.keycode,
-                .direction = XKB_KEY_UP,
+                .keycode = کلید.keycode,
+                .direction = XKB_کلید_اتے,
             },
-            .mods = key.mods,
+            .mods = کلید.mods,
             .counter = (uint8_t)pending_turns,
         },
     };
 
-    if (pending_turns) {
-        if (key.kind == XKB_MOD_LOCK) {
+    إذا (pending_turns) {
+        إذا (کلید.قسم == XKB_MOD_جندرا) {
             /* Immediate release */
             state->events[(*e)++] = pending[1].event;
             /* Delayed unlock (press + release) */
             pending[1].counter++;
-            const enum xkb_status status =
-                add_pending_events(state, pending, ARRAY_SIZE(pending));
-            if (status != XKB_SUCCESS)
-                return status;
+            ثابت تعداد xkb_حالت حالت =
+                جوڑو_pending_events(state, pending, ARRAY_ناپ(pending));
+            إذا (حالت != XKB_SUCCESS)
+                أرجع حالت;
             /*
              * Register “locked” state, to avoid tapping the key before
              * delayed key released
              */
-            bit_array_set(state->keys_state, key.keycode);
-        } else {
+            ثنائی_ہندسہ_array_سیٹ(state->کلیدیں_state, کلید.keycode);
+        } وإلا {
             /* Delayed release */
-            const enum xkb_status status =
-                add_pending_events(state, &pending[1], 1);
-            if (status != XKB_SUCCESS)
-                return status;
+            ثابت تعداد xkb_حالت حالت =
+                جوڑو_pending_events(state, &pending[1], 1);
+            إذا (حالت != XKB_SUCCESS)
+                أرجع حالت;
             /* Register pressed state */
-            bit_array_set(state->keys_state, key.keycode);
+            ثنائی_ہندسہ_array_سیٹ(state->کلیدیں_state, کلید.keycode);
         }
-        state->mods |= key.mods;
-    } else {
+        state->mods |= کلید.mods;
+    } وإلا {
         /* Immediate release */
         state->events[(*e)++] = pending[1].event;
         /* TODO: add latched modifier to mask state. */
     }
 
-    return XKB_SUCCESS;
+    أرجع XKB_SUCCESS;
 }
 
-static enum xkb_status
-add_other_key(struct xkb_typing_state * restrict state,
-              const xkb_keycodes_t * restrict keycodes, size_t * restrict e,
-              uint8_t immediate_release_prob, uint8_t max_pending_turns)
+ساكن تعداد xkb_حالت
+جوڑو_other_کلید(بنية xkb_typing_state * محدود state,
+              ثابت xkb_keycodes_t * محدود keycodes, ناپ_t * محدود e,
+              uint8_t فوری_release_prob, uint8_t max_pending_turns)
 {
     /* Choose a random key */
-    long idx = -1;
-    for (int tries = 0; tries < KEY_CHOICE_MAX_TRIES; tries++) {
-        idx = state->prng(state->prng_state) % darray_size(*keycodes);
+    لما idx = -1;
+    لكل (صحيح tries = 0; tries < کلید_CHOICE_MAX_TRIES; tries++) {
+        idx = state->prng(state->prng_state) % darray_ناپ(*keycodes);
         /* Ensure key is not already down */
-        if (!bit_array_get(state->keys_state,
-                           darray_item(*keycodes, idx)))
+        إذا (!ثنائی_ہندسہ_array_get(state->کلیدیں_state,
+                           darray_شے(*keycodes, idx)))
         {
-            break;
+            اكسر;
         }
         idx = -1;
     }
 
     xkb_keycode_t keycode = XKB_KEYCODE_INVALID;
-    if (idx < 0) {
+    إذا (idx < 0) {
         /* No released key found: fall back to linear search */
-        const xkb_keycode_t *keycode_;
+        ثابت xkb_keycode_t *keycode_;
         darray_foreach(keycode_, *keycodes) {
-            if (!bit_array_get(state->keys_state, *keycode_)) {
+            إذا (!ثنائی_ہندسہ_array_get(state->کلیدیں_state, *keycode_)) {
                 keycode = *keycode_;
                 idx = 0;
-                break;
+                اكسر;
             }
         }
-        if (idx < 0) {
+        إذا (idx < 0) {
             /* No fallback: skip */
-            return (enum xkb_status)XKB_ERROR_NO_RELEASED_KEY;
+            أرجع (تعداد xkb_حالت)XKB_ERROR_NO_RELEASED_کلید;
         }
-    } else {
-        keycode = darray_item(*keycodes, idx);
+    } وإلا {
+        keycode = darray_شے(*keycodes, idx);
     }
 
-    const size_t remaining_events =
-        state->num_events - state->num_pending - *e;
-    size_t pending_turns;
+    ثابت ناپ_t بچیا_events =
+        state->عدد_events - state->عدد_pending - *e;
+    ناپ_t pending_turns;
 
-    if (remaining_events >= 2) {
-        const size_t max_turns = MIN(
-            (size_t)max_pending_turns,
-            remaining_events + state->num_pending
+    إذا (بچیا_events >= 2) {
+        ثابت ناپ_t max_turns = MIN(
+            (ناپ_t)max_pending_turns,
+            بچیا_events + state->عدد_pending
         );
-        const bool immediate_release = (
-            (immediate_release_prob >= 100) ||
+        ثابت bool فوری_release = (
+            (فوری_release_prob >= 100) ||
             !max_turns ||
-            (state->prng(state->prng_state) % 100) < immediate_release_prob
+            (state->prng(state->prng_state) % 100) < فوری_release_prob
         );
-        if (immediate_release) {
+        إذا (فوری_release) {
             pending_turns = 0;
-        } else {
-            pending_turns = 1 + (size_t)state->prng(state->prng_state)
+        } وإلا {
+            pending_turns = 1 + (ناپ_t)state->prng(state->prng_state)
                           % max_turns;
         }
-    } else {
-        return XKB_ERROR_INVALID;
+    } وإلا {
+        أرجع XKB_ERROR_INVALID;
     }
 
-    state->events[(*e)++] = (struct xkb_typing_event) {
+    state->events[(*e)++] = (بنية xkb_typing_event) {
         .keycode = keycode,
-        .direction = XKB_KEY_DOWN,
+        .direction = XKB_کلید_تھلے,
     };
 
-    const struct xkb_pending_typing_event pending = {
+    ثابت بنية xkb_pending_typing_event pending = {
         .event = {
             .keycode = keycode,
-            .direction = XKB_KEY_UP,
+            .direction = XKB_کلید_اتے,
         },
         .counter = (uint8_t)pending_turns,
     };
-    if (pending_turns) {
-        const enum xkb_status status = add_pending_events(state, &pending, 1);
-        if (status != XKB_SUCCESS)
-            return status;
+    إذا (pending_turns) {
+        ثابت تعداد xkb_حالت حالت = جوڑو_pending_events(state, &pending, 1);
+        إذا (حالت != XKB_SUCCESS)
+            أرجع حالت;
         /* Register pressed state */
-        bit_array_set(state->keys_state, keycode);
-    } else {
+        ثنائی_ہندسہ_array_سیٹ(state->کلیدیں_state, keycode);
+    } وإلا {
         state->events[(*e)++] = pending.event;
     }
 
-    return XKB_SUCCESS;
+    أرجع XKB_SUCCESS;
 }
 
-static enum xkb_key_kind
-pick_key_kind(xkb_prng_t prng, void *prng_state)
+ساكن تعداد xkb_کلید_قسم
+pick_کلید_قسم(xkb_prng_t prng, فراغ *prng_state)
 {
-    static const uint8_t weights[_NUM_XKB_KEY_KIND] = {
-        [XKB_KEY_PRINTABLE] = 60,
-        [XKB_KEY_MODIFIER] = 30,
-        [XKB_KEY_MISC] = 10,
+    ساكن ثابت uint8_t weights[عدد_XKB_کلید_قسم] = {
+        [XKB_کلید_PRINTABLE] = 60,
+        [XKB_کلید_MODIFIER] = 30,
+        [XKB_کلید_MISC] = 10,
     };
-    static_assert(XKB_KEY_MISC == 2 &&
-                  XKB_KEY_MISC == _NUM_XKB_KEY_KIND - 1, "");
-    assert(weights[0] + weights[1] + weights[2] == 100);
+    static_assert(XKB_کلید_MISC == 2 &&
+                  XKB_کلید_MISC == عدد_XKB_کلید_قسم - 1, "");
+    أكد(weights[0] + weights[1] + weights[2] == 100);
 
-    long r = prng(prng_state) % 100;
-    for (enum xkb_key_kind k = 0; k < _NUM_XKB_KEY_KIND; k++)
-        if ((r -= weights[k]) < 0)
-            return k;
-    return XKB_KEY_PRINTABLE;
+    لما r = prng(prng_state) % 100;
+    لكل (تعداد xkb_کلید_قسم k = 0; k < عدد_XKB_کلید_قسم; k++)
+        إذا ((r -= weights[k]) < 0)
+            أرجع k;
+    أرجع XKB_کلید_PRINTABLE;
 }
 
-static void
-xkb_typing_state_destroy(struct xkb_typing_state *state)
+ساكن فراغ
+xkb_typing_state_destroy(بنية xkb_typing_state *state)
 {
-    free(state->keys_state);
+    حرر(state->کلیدیں_state);
     darray_free(state->pending);
-    free(state->events);
+    حرر(state->events);
 }
 
-enum xkb_status
-xkb_typing_input_init(struct xkb_typing_input * restrict typing,
-                      const struct xkb_key_set * restrict keys,
-                      const struct xkb_typing_input_config * restrict config)
+تعداد xkb_حالت
+xkb_typing_داخلہ_init(بنية xkb_typing_داخلہ * محدود typing,
+                      ثابت بنية xkb_کلید_سیٹ * محدود کلیدیں,
+                      ثابت بنية xkb_typing_داخلہ_config * محدود config)
 {
-    typing->events = NULL;
-    typing->num_events = 0;
+    typing->events = عدم;
+    typing->عدد_events = 0;
 
-    if (!config->input_length)
-        return XKB_ERROR_INVALID;
+    إذا (!config->داخلہ_لمائی)
+        أرجع XKB_ERROR_INVALID;
 
-    if (darray_empty(keys->printable) ||
-        darray_empty(keys->modifiers) ||
-        darray_empty(keys->misc))
+    إذا (darray_خالی_تھاواں(کلیدیں->printable) ||
+        darray_خالی_تھاواں(کلیدیں->modifiers) ||
+        darray_خالی_تھاواں(کلیدیں->misc))
     {
-        return XKB_ERROR_INVALID;
+        أرجع XKB_ERROR_INVALID;
     }
 
-    enum xkb_status status = XKB_SUCCESS;
+    تعداد xkb_حالت حالت = XKB_SUCCESS;
 
     /* NOTE: arrays are sorted because they were built using the key iterator */
-    xkb_keycode_t keycode_max = darray_last(keys->printable, 0);
+    xkb_keycode_t keycode_max = darray_آخری(کلیدیں->printable, 0);
     keycode_max = MAX(
-        darray_last(keys->modifiers, (struct xkb_modifier_key){0}).keycode,
+        darray_آخری(کلیدیں->modifiers, (بنية xkb_modifier_کلید){0}).keycode,
         keycode_max
     );
-    keycode_max = MAX(darray_last(keys->misc, 0), keycode_max);
-    const size_t keys_state_num = bit_array_words((size_t)keycode_max + 1);
-    uintptr_t *keys_state = calloc(keys_state_num, sizeof(*keys_state));
+    keycode_max = MAX(darray_آخری(کلیدیں->misc, 0), keycode_max);
+    ثابت ناپ_t کلیدیں_state_عدد = ثنائی_ہندسہ_array_الفاظ((ناپ_t)keycode_max + 1);
+    uintptr_t *کلیدیں_state = صفر_حافظہ_دیو(کلیدیں_state_عدد, حجم(*کلیدیں_state));
 
-    const size_t num_events = config->input_length;
-    struct xkb_typing_event *events = calloc(num_events, sizeof(*events));
+    ثابت ناپ_t عدد_events = config->داخلہ_لمائی;
+    بنية xkb_typing_event *events = صفر_حافظہ_دیو(عدد_events, حجم(*events));
 
-    struct xkb_typing_state state = {
-        .keys = keys,
-        .keys_state = keys_state,
+    بنية xkb_typing_state state = {
+        .کلیدیں = کلیدیں,
+        .کلیدیں_state = کلیدیں_state,
         .prng = config->prng,
         .prng_state = config->prng_state,
         .events = events,
-        .num_events = num_events,
+        .عدد_events = عدد_events,
         .pending = darray_new(),
-        .num_pending = 0,
+        .عدد_pending = 0,
     };
 
     xkb_typing_events pending = darray_new();
 
-    if (!keys_state || !events) {
-        status = XKB_ERROR_ALLOCATION_FAILURE;
-        goto error;
+    إذا (!کلیدیں_state || !events) {
+        حالت = XKB_ERROR_ونڈ_FAILURE;
+        اذهب error;
     }
 
     /*
      * Invariant: e + state.num_pending <= state.num_events
      */
 
-    for (size_t e = 0; e < num_events;) {
+    لكل (ناپ_t e = 0; e < عدد_events;) {
         /*
          * Process pending events
          */
-        status = next_pending_events(&state, &pending);
-        if (status != XKB_SUCCESS) {
-            goto error;
+        حالت = اگلا_pending_events(&state, &pending);
+        إذا (حالت != XKB_SUCCESS) {
+            اذهب error;
         }
-        struct xkb_typing_event *event;
+        بنية xkb_typing_event *event;
         darray_foreach(event, pending) {
-            if (e >= num_events) {
+            إذا (e >= عدد_events) {
                 /* invariant violated: should be unreachable */
                 PANIC_UNREACHABLE();
             }
             events[e] = *event;
-            bit_array_assign(keys_state, event->keycode, (bool)event->direction);
+            ثنائی_ہندسہ_array_سونپو(کلیدیں_state, event->keycode, (bool)event->direction);
             e++;
         }
 
-        if (!state.num_pending && e == num_events - 1) {
+        إذا (!state.عدد_pending && e == عدد_events - 1) {
             /*
              * Cannot add press/release *pair*, so just use an invalid keycode
              * for the last event.
              */
-            events[e] = (struct xkb_typing_event) {
+            events[e] = (بنية xkb_typing_event) {
                 .keycode = XKB_KEYCODE_INVALID,
-                .direction = XKB_KEY_DOWN,
+                .direction = XKB_کلید_تھلے,
             };
-            break;
+            اكسر;
         }
 
-        if (e + 1 + state.num_pending >= num_events) {
+        إذا (e + 1 + state.عدد_pending >= عدد_events) {
             /* Cannot add new pair of events: require flushing pending events */
-            continue;
+            استمر;
         }
 
         /*
@@ -568,60 +568,60 @@ xkb_typing_input_init(struct xkb_typing_input * restrict typing,
          */
 
         /* Choose kind of key */
-        static_assert(XKB_KEY_PRINTABLE == 0, "");
-        const enum xkb_key_kind key_kind =
-            pick_key_kind(config->prng, config->prng_state);
-        switch (key_kind) {
-        case XKB_KEY_PRINTABLE:
-            status = add_other_key(
-                &state, &state.keys->printable, &e,
-                XKB_TYPING_EVENT_PRINTABLE_IMMEDIATE_RELEASE_PERCENT,
+        static_assert(XKB_کلید_PRINTABLE == 0, "");
+        ثابت تعداد xkb_کلید_قسم کلید_قسم =
+            pick_کلید_قسم(config->prng, config->prng_state);
+        بدل (کلید_قسم) {
+        حالة XKB_کلید_PRINTABLE:
+            حالت = جوڑو_other_کلید(
+                &state, &state.کلیدیں->printable, &e,
+                XKB_TYPING_EVENT_PRINTABLE_فوری_RELEASE_PERCENT,
                 XKB_TYPING_EVENT_PRINTABLE_MAX_PENDING_TURNS
             );
-            break;
-        case XKB_KEY_MODIFIER:
-            status = add_modifier_key(&state, &e);
-            break;
-        case XKB_KEY_MISC:
-            status = add_other_key(
-                &state, &state.keys->misc, &e,
-                XKB_TYPING_EVENT_MISC_IMMEDIATE_RELEASE_PERCENT,
+            اكسر;
+        حالة XKB_کلید_MODIFIER:
+            حالت = جوڑو_modifier_کلید(&state, &e);
+            اكسر;
+        حالة XKB_کلید_MISC:
+            حالت = جوڑو_other_کلید(
+                &state, &state.کلیدیں->misc, &e,
+                XKB_TYPING_EVENT_MISC_فوری_RELEASE_PERCENT,
                 XKB_TYPING_EVENT_MISC_MAX_PENDING_TURNS
             );
-            break;
-        default: {
-            static_assert(XKB_KEY_MISC == 2 &&
-                          XKB_KEY_MISC == _NUM_XKB_KEY_KIND - 1, "");
-            status = XKB_ERROR_INVALID;
+            اكسر;
+        افتراضي: {
+            static_assert(XKB_کلید_MISC == 2 &&
+                          XKB_کلید_MISC == عدد_XKB_کلید_قسم - 1, "");
+            حالت = XKB_ERROR_INVALID;
         }}
 
-        if (status != XKB_SUCCESS &&
-            status != (enum xkb_status)XKB_ERROR_NO_RELEASED_KEY)
+        إذا (حالت != XKB_SUCCESS &&
+            حالت != (تعداد xkb_حالت)XKB_ERROR_NO_RELEASED_کلید)
         {
-            goto error;
+            اذهب error;
         }
     }
 
-    assert(!state.num_pending);
+    أكد(!state.عدد_pending);
 
     typing->events = steal(&state.events);
-    typing->num_events = num_events;
+    typing->عدد_events = عدد_events;
 
-    status = XKB_SUCCESS;
+    حالت = XKB_SUCCESS;
 
 error:
     darray_free(pending);
     xkb_typing_state_destroy(&state);
 
-    return status;
+    أرجع حالت;
 }
 
-void
-xkb_typing_input_destroy(struct xkb_typing_input *typing)
+فراغ
+xkb_typing_داخلہ_destroy(بنية xkb_typing_داخلہ *typing)
 {
-    if (!typing)
-        return;
+    إذا (!typing)
+        أرجع;
 
-    free(typing->events);
-    typing->events = NULL;
+    حرر(typing->events);
+    typing->events = عدم;
 }

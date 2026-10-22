@@ -2,29 +2,29 @@
  * Copyright (c) 1994 by Silicon Graphics Computer Systems, Inc.
  * SPDX-License-Identifier: HPND
  */
-#pragma once
+#ہدایت once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <stdbool.h>
+#ضمن <stdbool.h>
 
-struct parser_param;
-struct scanner;
+بنية parser_param;
+بنية scanner;
 
-#include "scanner-utils.h"
-#include "parser.h"
+#ضمن "scanner-utils.h"
+#ضمن "parser.h"
 
-int
-_xkbcommon_lex(YYSTYPE *yylval, struct scanner *scanner);
+صحيح
+_xkbcommon_lex(YYSTYPE *yylval, بنية scanner *scanner);
 
 XkbFile *
-parse(struct xkb_context *ctx, const struct parser_keymap_config *config,
-      struct scanner *scanner, const char *map);
+parse(بنية xkb_context *ctx, ثابت بنية parser_keymap_config *config,
+      بنية scanner *scanner, ثابت حرف *map);
 
 bool
-parse_next(struct xkb_context *ctx,
-           const struct parser_keymap_config *config,
-           struct scanner *scanner, XkbFile **xkb_file);
+parse_اگلا(بنية xkb_context *ctx,
+           ثابت بنية parser_keymap_config *config,
+           بنية scanner *scanner, XkbFile **xkb_file);
 
-int
-keyword_to_token(const char *string, size_t len);
+صحيح
+keyword_منزل_token(ثابت حرف *string, ناپ_t len);
