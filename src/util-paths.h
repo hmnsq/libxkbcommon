@@ -15,7 +15,7 @@
 #define ALT_PATH_SEPARATOR '/'
 #define is_path_separator(s) \
     ((s) == PATH_SEPARATOR || (s) == ALT_PATH_SEPARATOR)
-#else
+#инако
 #define PATH_SEPARATOR '/'
 #define is_path_separator(s) ((s) == PATH_SEPARATOR)
 #endif

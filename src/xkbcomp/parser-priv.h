@@ -14,7 +14,7 @@ struct scanner;
 #include "scanner-utils.h"
 #include "parser.h"
 
-int
+цео
 _xkbcommon_lex(YYSTYPE *yylval, struct scanner *scanner);
 
 XkbFile *
@@ -26,5 +26,5 @@ parse_next(struct xkb_context *ctx,
            const struct parser_keymap_config *config,
            struct scanner *scanner, XkbFile **xkb_file);
 
-int
+цео
 keyword_to_token(const char *string, size_t len);

@@ -29,9 +29,9 @@ has_unbound_vmods(struct xkb_keymap *keymap, xkb_mod_mask_t mask)
     xkb_mod_index_t k;
     struct xkb_mod *mod;
     xkb_vmods_enumerate(k, mod, &keymap->mods)
-        if ((mask & (UINT32_C(1) << k)) && mod->mapping == 0)
-            return true;
-    return false;
+        ако ((mask & (UINT32_C(1) << k)) && mod->mapping == 0)
+            врати true;
+    врати false;
 }
 
 static inline void
@@ -56,7 +56,7 @@ UpdateActionMods(struct xkb_keymap *keymap, union xkb_action *act,
     case ACTION_TYPE_MOD_SET:
     case ACTION_TYPE_MOD_LATCH:
     case ACTION_TYPE_MOD_LOCK:
-        if (act->mods.flags & ACTION_MODS_LOOKUP_MODMAP)
+        ако (act->mods.flags & ACTION_MODS_LOOKUP_MODMAP)
             act->mods.mods.mods = modmap;
         ComputeEffectiveMask(keymap, &act->mods.mods);
         break;
@@ -88,12 +88,12 @@ FindInterpForKey(struct xkb_keymap *keymap, const struct xkb_key *key,
                  xkb_sym_interprets *interprets)
 {
     const xkb_keysym_t *syms;
-    int num_syms;
+    цео num_syms;
 
     num_syms = xkb_keymap_key_get_syms_by_level(keymap, key->keycode, group,
                                                 level, &syms);
-    if (num_syms <= 0)
-        return false;
+    ако (num_syms <= 0)
+        врати false;
 
     /*
      * There may be multiple matchings interprets; we should always return
@@ -101,20 +101,20 @@ FindInterpForKey(struct xkb_keymap *keymap, const struct xkb_key *key,
      * sym_interprets array from the most specific to the least specific,
      * such that when we find a match we return immediately.
      */
-    for (int s = 0; s < num_syms; s++) {
+    за (цео s = 0; s < num_syms; s++) {
         bool found = false;
-        for (darray_size_t i = 0; i < keymap->num_sym_interprets; i++) {
+        за (darray_size_t i = 0; i < keymap->num_sym_interprets; i++) {
             struct xkb_sym_interpret * const interp = &keymap->sym_interprets[i];
             xkb_mod_mask_t mods;
 
             found = false;
 
-            if (interp->sym != syms[s] && interp->sym != XKB_KEY_NoSymbol)
+            ако (interp->sym != syms[s] && interp->sym != XKB_KEY_NoSymbol)
                 continue;
 
-            if (interp->level_one_only && level != 0)
+            ако (interp->level_one_only && level != 0)
                 mods = 0;
-            else
+            инако
                 mods = key->modmap;
 
             switch (interp->match) {
@@ -135,7 +135,7 @@ FindInterpForKey(struct xkb_keymap *keymap, const struct xkb_key *key,
                 break;
             }
 
-            if (found && i > 0 && interp->sym == XKB_KEY_NoSymbol) {
+            ако (found && i > 0 && interp->sym == XKB_KEY_NoSymbol) {
                 /*
                  * For an interpretation matching Any keysym, we may get the
                  * same interpretation for multiple keysyms. This may result in
@@ -145,7 +145,7 @@ FindInterpForKey(struct xkb_keymap *keymap, const struct xkb_key *key,
                  */
                 struct xkb_sym_interpret const **previous_interp;
                 darray_foreach(previous_interp, *interprets) {
-                    if (*previous_interp == interp) {
+                    ако (*previous_interp == interp) {
                         /* Keep as a safeguard against refactoring
                          * NOLINTNEXTLINE(clang-analyzer-deadcode.DeadStores) */
                         found = false;
@@ -160,17 +160,17 @@ FindInterpForKey(struct xkb_keymap *keymap, const struct xkb_key *key,
                     }
                 }
             }
-            if (found) {
+            ако (found) {
                 darray_append(*interprets, interp);
                 interp->required = true;
                 break;
             }
         }
-        if (!found)
+        ако (!found)
 not_found:
             darray_append(*interprets, &default_interpret);
     }
-    return true;
+    врати true;
 }
 
 static bool
@@ -182,12 +182,12 @@ ApplyInterpsToKey(struct xkb_keymap *keymap, struct xkb_key *key)
     xkb_sym_interprets interprets = darray_new();
     darray(union xkb_action) actions = darray_new();
 
-    for (xkb_layout_index_t group = 0; group < key->num_groups; group++) {
+    за (xkb_layout_index_t group = 0; group < key->num_groups; group++) {
         /* Skip any interpretation for this group if it has explicit actions */
-        if (key->groups[group].explicit_actions)
+        ако (key->groups[group].explicit_actions)
             continue;
 
-        for (level = 0; level < XkbKeyNumLevels(key, group); level++) {
+        за (level = 0; level < XkbKeyNumLevels(key, group); level++) {
             assert(key->groups[group].levels[level].num_actions == 0);
 
             const struct xkb_sym_interpret **interp_iter;
@@ -196,23 +196,23 @@ ApplyInterpsToKey(struct xkb_keymap *keymap, struct xkb_key *key)
             darray_resize(interprets, 0);
 
             const bool found = FindInterpForKey(keymap, key, group, level, &interprets);
-            if (!found)
+            ако (!found)
                 continue;
 
             darray_enumerate(k, interp_iter, interprets) {
                 interp = *interp_iter;
                 /* Infer default key behaviours from the base level. */
-                if (group == 0 && level == 0 &&
+                ако (group == 0 && level == 0 &&
                     !(key->explicit & EXPLICIT_REPEAT) && interp->repeat)
                 {
                     key->repeats = true;
                 }
 
-                if ((group == 0 && level == 0) || !interp->level_one_only) {
+                ако ((group == 0 && level == 0) || !interp->level_one_only) {
                     static_assert((uint32_t)DEFAULT_INTERPRET_VMOD ==
                                   (uint32_t)XKB_MOD_INVALID, "");
                     static_assert(!DEFAULT_INTERPRET_VMODMAP, "");
-                    if (interp->virtual_mod != XKB_MOD_INVALID)
+                    ако (interp->virtual_mod != XKB_MOD_INVALID)
                         vmodmap |= (UINT32_C(1) << interp->virtual_mod);
                 }
 
@@ -229,7 +229,7 @@ ApplyInterpsToKey(struct xkb_keymap *keymap, struct xkb_key *key)
             }
 
             /* Copy the actions */
-            if (unlikely(darray_size(actions)) > MAX_ACTIONS_PER_LEVEL) {
+            ако (unlikely(darray_size(actions)) > MAX_ACTIONS_PER_LEVEL) {
                 log_warn(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
                          "Could not append interpret actions to key %s: "
                          "maximum is %u, got: %u. Dropping excessive actions\n",
@@ -237,7 +237,7 @@ ApplyInterpsToKey(struct xkb_keymap *keymap, struct xkb_key *key)
                          MAX_ACTIONS_PER_LEVEL, darray_size(actions));
                 key->groups[group].levels[level].num_actions =
                     MAX_ACTIONS_PER_LEVEL;
-            } else {
+            } инако {
                 key->groups[group].levels[level].num_actions =
                     (xkb_action_count_t) darray_size(actions);
             }
@@ -255,38 +255,38 @@ ApplyInterpsToKey(struct xkb_keymap *keymap, struct xkb_key *key)
                         memdup(darray_items(actions),
                                key->groups[group].levels[level].num_actions,
                                sizeof(*darray_items(actions)));
-                    if (!key->groups[group].levels[level].a.actions) {
+                    ако (!key->groups[group].levels[level].a.actions) {
                         log_err(keymap->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
                                 "Could not allocate interpret actions\n");
                         darray_free(actions);
                         darray_free(interprets);
-                        return false;
+                        врати false;
                     }
             }
 
-            if (!darray_empty(actions))
+            ако (!darray_empty(actions))
                 key->groups[group].implicit_actions = true;
 
             /* Do not free here */
             darray_resize(actions, 0);
         }
 
-        if (key->groups[group].implicit_actions)
+        ако (key->groups[group].implicit_actions)
             key->implicit_actions = true;
     }
     darray_free(actions);
     darray_free(interprets);
 
-    if (!(key->explicit & EXPLICIT_VMODMAP))
+    ако (!(key->explicit & EXPLICIT_VMODMAP))
         key->vmodmap = vmodmap;
 
-    return true;
+    врати true;
 }
 
 static inline bool
 is_mod_action(union xkb_action *action)
 {
-    return action->type == ACTION_TYPE_MOD_SET ||
+    врати action->type == ACTION_TYPE_MOD_SET ||
            action->type == ACTION_TYPE_MOD_LATCH ||
            action->type == ACTION_TYPE_MOD_LOCK;
 }
@@ -294,7 +294,7 @@ is_mod_action(union xkb_action *action)
 static inline bool
 is_group_action(union xkb_action *action)
 {
-    return action->type == ACTION_TYPE_GROUP_SET ||
+    врати action->type == ACTION_TYPE_GROUP_SET ||
            action->type == ACTION_TYPE_GROUP_LATCH ||
            action->type == ACTION_TYPE_GROUP_LOCK;
 }
@@ -305,21 +305,21 @@ is_group_action(union xkb_action *action)
 static void
 CheckMultipleActionsCategories(struct xkb_keymap *keymap, struct xkb_key *key)
 {
-    for (xkb_layout_index_t g = 0; g < key->num_groups; g++) {
-        for (xkb_level_index_t l = 0; l < XkbKeyNumLevels(key, g); l++) {
+    за (xkb_layout_index_t g = 0; g < key->num_groups; g++) {
+        за (xkb_level_index_t l = 0; l < XkbKeyNumLevels(key, g); l++) {
             struct xkb_level *level = &key->groups[g].levels[l];
-            if (level->num_actions <= 1)
+            ако (level->num_actions <= 1)
                 continue;
-            for (xkb_action_count_t i = 0; i < level->num_actions; i++) {
+            за (xkb_action_count_t i = 0; i < level->num_actions; i++) {
                 union xkb_action *action1 = &level->a.actions[i];
                 bool mod_action = is_mod_action(action1);
                 bool group_action = is_group_action(action1);
-                if (!(mod_action || group_action ||
+                ако (!(mod_action || group_action ||
                       action1->type == ACTION_TYPE_REDIRECT_KEY))
                     continue;
-                for (xkb_action_count_t j = i + 1; j < level->num_actions; j++) {
+                за (xkb_action_count_t j = i + 1; j < level->num_actions; j++) {
                     union xkb_action *action2 = &level->a.actions[j];
-                    if (action1->type == action2->type ||
+                    ако (action1->type == action2->type ||
                         (mod_action && is_mod_action(action2)) ||
                         (group_action && is_group_action(action2)))
                     {
@@ -347,9 +347,9 @@ static void
 add_key_aliases(struct xkb_keymap *keymap, darray_size_t min, darray_size_t max,
                 struct xkb_key_alias *aliases)
 {
-    for (darray_size_t alias = min; alias <= max; alias++) {
+    за (darray_size_t alias = min; alias <= max; alias++) {
         const KeycodeMatch entry = keymap->key_names[alias];
-        if (entry.is_alias && entry.found) {
+        ако (entry.is_alias && entry.found) {
             *aliases = (struct xkb_key_alias) {
                 .alias = alias,
                 .real = entry.alias.real
@@ -362,11 +362,11 @@ add_key_aliases(struct xkb_keymap *keymap, darray_size_t min, darray_size_t max,
 static bool
 update_pending_key_fields(struct xkb_keymap_info *info, struct xkb_key *key)
 {
-    if (key->out_of_range_pending_group) {
+    ако (key->out_of_range_pending_group) {
         struct pending_computation * const pc = &darray_item(
             *info->pending_computations, key->out_of_range_group_number
         );
-        if (!pc->computed) {
+        ако (!pc->computed) {
             xkb_layout_index_t group = 0;
             switch (ExprResolveGroup(info, pc->expr, true, &group, NULL)) {
             case PARSER_SUCCESS:
@@ -376,7 +376,7 @@ update_pending_key_fields(struct xkb_keymap_info *info, struct xkb_key *key)
             case PARSER_FATAL_ERROR:
                 log_err(info->keymap.ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                         "Invalid key redirect group index\n");
-                return (info->strict & PARSER_NO_FIELD_TYPE_MISMATCH);
+                врати (info->strict & PARSER_NO_FIELD_TYPE_MISMATCH);
             default:
                 /* Recover from error: ignore */;
             }
@@ -384,7 +384,7 @@ update_pending_key_fields(struct xkb_keymap_info *info, struct xkb_key *key)
         key->out_of_range_pending_group = false;
         key->out_of_range_group_number = pc->value;
     }
-    return true;
+    врати true;
 }
 
 static bool
@@ -395,10 +395,10 @@ update_pending_action_fields(struct xkb_keymap_info *info,
     case ACTION_TYPE_GROUP_SET:
     case ACTION_TYPE_GROUP_LATCH:
     case ACTION_TYPE_GROUP_LOCK:
-        if (act->group.flags & ACTION_PENDING_COMPUTATION) {
+        ако (act->group.flags & ACTION_PENDING_COMPUTATION) {
             struct pending_computation * const pc =
                 &darray_item(*info->pending_computations, act->group.group);
-            if (!pc->computed) {
+            ако (!pc->computed) {
                 xkb_layout_index_t group = 0;
                 const bool absolute =
                     (act->group.flags & ACTION_ABSOLUTE_SWITCH);
@@ -406,17 +406,17 @@ update_pending_action_fields(struct xkb_keymap_info *info,
                 case PARSER_FATAL_ERROR:
                     log_err(info->keymap.ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                             "Invalid action group index\n");
-                    return false;
+                    врати false;
                 case PARSER_RECOVERABLE_ERROR:
                     /* ignore */
                     break;
                 default:
                     pc->computed = true;
-                    if (absolute) {
+                    ако (absolute) {
                         pc->value = group - 1;
-                    } else {
+                    } инако {
                         pc->value = group;
-                        if (pc->expr->common.type == STMT_EXPR_NEGATE)
+                        ако (pc->expr->common.type == STMT_EXPR_NEGATE)
                             pc->value = (uint32_t) (-(int32_t) pc->value);
                     }
                 }
@@ -424,38 +424,38 @@ update_pending_action_fields(struct xkb_keymap_info *info,
             act->group.group = (int32_t) pc->value;
             act->group.flags &= ~ACTION_PENDING_COMPUTATION;
         }
-        return true;
+        врати true;
     case ACTION_TYPE_REDIRECT_KEY: {
-        if (keycode == XKB_KEYCODE_INVALID ||
+        ако (keycode == XKB_KEYCODE_INVALID ||
             act->redirect.keycode != info->keymap.redirect_key_auto) {
             /* No auto value to set */
-            return true;
-        } else {
+            врати true;
+        } инако {
             /*
              * Auto value: use the provided keycode to redirect to the key
              * where the action is defined
              */
             act->redirect.keycode = keycode;
         }
-        return true;
+        врати true;
     }
     default:
-        return true;
+        врати true;
     }
 }
 
 static bool
 update_pending_led_fields(struct xkb_keymap_info *info, struct xkb_led *led)
 {
-    if (led->pending_groups) {
+    ако (led->pending_groups) {
         struct pending_computation * const pc =
             &darray_item(*info->pending_computations, led->groups);
-        if (!pc->computed) {
+        ако (!pc->computed) {
             xkb_layout_mask_t mask = 0;
-            if (!ExprResolveGroupMask(info, pc->expr, &mask, NULL)) {
+            ако (!ExprResolveGroupMask(info, pc->expr, &mask, NULL)) {
                 log_err(info->keymap.ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                         "Invalid LED group mask\n");
-                return false;
+                врати false;
             }
             pc->computed = true;
             pc->value = mask;
@@ -463,7 +463,7 @@ update_pending_led_fields(struct xkb_keymap_info *info, struct xkb_led *led)
         led->pending_groups = false;
         led->groups = pc->value;
     }
-    return true;
+    врати true;
 }
 
 /** Indices for the array "groupIndexNames" */
@@ -481,7 +481,7 @@ update_auto_group_lock_on_modifier_release(struct xkb_level * restrict level0,
                                            xkb_level_index_t l,
                                            union xkb_action * restrict action)
 {
-    if (!(/* Must be level index 1+ */
+    ако (!(/* Must be level index 1+ */
         l > 0 &&
         /* level has a single action: LockGroup() */
         level0[l].num_actions == 1 &&
@@ -492,7 +492,7 @@ update_auto_group_lock_on_modifier_release(struct xkb_level * restrict level0,
         level0->num_actions == 1 &&
         level0->a.action.type ==  ACTION_TYPE_MOD_SET))
     {
-        return;
+        врати;
     }
 
     action->group.flags |= ACTION_AUTO_GROUP_LOCK_ON_MODIFIER_RELEASE;
@@ -524,22 +524,22 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
 #ifdef _WIN32
     /* Bit fields are not packed on Windows as efficiently as other platforms */
     static_assert(sizeof(struct xkb_key_alias) == sizeof(KeycodeMatch), "");
-#else
+#инако
     static_assert(sizeof(struct xkb_key_alias) == 2 * sizeof(KeycodeMatch), "");
 #endif
     darray_size_t num_key_aliases = 0;
     darray_size_t min_alias = 0;
     darray_size_t max_alias = 0;
-    for (xkb_atom_t alias = 0; alias < keymap->num_key_names; alias++) {
+    за (xkb_atom_t alias = 0; alias < keymap->num_key_names; alias++) {
         const KeycodeMatch entry = keymap->key_names[alias];
-        if (entry.is_alias && entry.found) {
-            if (!num_key_aliases)
+        ако (entry.is_alias && entry.found) {
+            ако (!num_key_aliases)
                 min_alias = alias;
             max_alias = alias;
             num_key_aliases++;
         }
     }
-    if (num_key_aliases) {
+    ако (num_key_aliases) {
         /*
          * No fancy algorithm used here: either we can trivially write the whole
          * range of `xkb_key_aliases` without overlapping with the `KeycodeMatch`
@@ -551,17 +551,17 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
                                            / sizeof(KeycodeMatch)
                                            * num_key_aliases;
         assert(num_key_aliases <= keymap->num_key_names);
-        if (min_alias >= required_space) {
+        ако (min_alias >= required_space) {
             /* Overwrite before the *first* alias entry */
             add_key_aliases(keymap, min_alias, max_alias, keymap->key_aliases);
             /* Shrink */
             struct xkb_key_alias * const r =
                 realloc(keymap->key_aliases,
                         num_key_aliases * sizeof(*keymap->key_aliases));
-            if (!r)
-                return false;
+            ако (!r)
+                врати false;
             keymap->key_aliases = r;
-        } else if (keymap->num_key_names - max_alias - 1 > required_space) {
+        } инако ако (keymap->num_key_names - max_alias - 1 > required_space) {
             /* Overwrite after the *last* alias entry */
             struct xkb_key_alias * const aliases = (struct xkb_key_alias *) (
                 keymap->key_names + max_alias + 1 +
@@ -575,18 +575,18 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
             struct xkb_key_alias * const r =
                 realloc(keymap->key_aliases,
                         num_key_aliases * sizeof(*keymap->key_aliases));
-            if (!r)
-                return false;
+            ако (!r)
+                врати false;
             keymap->key_aliases = r;
-        } else {
+        } инако {
             /*
              * No space trivially available: instead of processing the LUT with
              * a buffer to handle overlaps, we simply allocate a dedicated array
              */
             struct xkb_key_alias * const aliases = calloc(num_key_aliases,
                                                           sizeof(*aliases));
-            if (!aliases)
-                return false;
+            ако (!aliases)
+                врати false;
             add_key_aliases(keymap, min_alias, max_alias, aliases);
             free(keymap->key_names);
             keymap->key_aliases = aliases;
@@ -601,7 +601,7 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
 
     const bool pending_computations = !darray_empty(*info->pending_computations);
 
-    if (pending_computations) {
+    ако (pending_computations) {
         /*
          * Update non-static LUTs for pending computations:
          * - enable entry by setting a non-null name
@@ -624,12 +624,12 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
             };
 
         /* Update interpret fields with pending computations */
-        for (darray_size_t i = 0; i < keymap->num_sym_interprets; i++) {
+        за (darray_size_t i = 0; i < keymap->num_sym_interprets; i++) {
             struct xkb_sym_interpret * restrict const interp =
                 &keymap->sym_interprets[i];
             xkb_level_foreach_action(act, interp) {
-                if (!update_pending_action_fields(info, XKB_KEYCODE_INVALID, act))
-                    return false;
+                ако (!update_pending_action_fields(info, XKB_KEYCODE_INVALID, act))
+                    врати false;
             }
         }
     }
@@ -637,8 +637,8 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
     /* Find all the interprets for the key and bind them to actions,
      * which will also update the vmodmap. */
     xkb_keys_foreach(key, keymap) {
-        if (!ApplyInterpsToKey(keymap, key))
-            return false;
+        ако (!ApplyInterpsToKey(keymap, key))
+            врати false;
         CheckMultipleActionsCategories(keymap, key);
     }
 
@@ -647,10 +647,10 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
     struct xkb_mod *mod;
     xkb_keys_foreach(key, keymap)
         xkb_vmods_enumerate(idx, mod, &keymap->mods)
-            if (key->vmodmap & (UINT32_C(1) << idx))
+            ако (key->vmodmap & (UINT32_C(1) << idx))
                 mod->mapping |= key->modmap;
 
-    if (keymap->format >= XKB_KEYMAP_FORMAT_TEXT_V2) {
+    ако (keymap->format >= XKB_KEYMAP_FORMAT_TEXT_V2) {
         /*
          * XKB extension: canonical virtual modifiers (incompatible with X11)
          *
@@ -664,7 +664,7 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
          */
         xkb_vmods_enumerate(idx, mod, &keymap->mods) {
             const xkb_mod_mask_t mask = UINT32_C(1) << idx;
-            if (mod->mapping == 0 && !(keymap->mods.explicit_vmods & mask)) {
+            ако (mod->mapping == 0 && !(keymap->mods.explicit_vmods & mask)) {
                 mod->mapping = mask;
                 /*
                  * Make the mapping explicit, so that it is interoperable
@@ -685,11 +685,11 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
     keymap->canonical_state_mask |= extra_canonical_mods;
 
     /* Now update the level masks for all the types to reflect the vmods. */
-    for (darray_size_t i = 0; i < keymap->num_types; i++) {
+    за (darray_size_t i = 0; i < keymap->num_types; i++) {
         ComputeEffectiveMask(keymap, &keymap->types[i].mods);
 
-        for (darray_size_t j = 0; j < keymap->types[i].num_entries; j++) {
-            if (has_unbound_vmods(keymap,
+        за (darray_size_t j = 0; j < keymap->types[i].num_entries; j++) {
+            ако (has_unbound_vmods(keymap,
                                   keymap->types[i].entries[j].mods.mods)) {
                 /*
                  * Map entries which specify unbound virtual modifiers are not
@@ -711,18 +711,18 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
 
     /* Update action modifiers and fields with pending computations. */
     xkb_keys_foreach(key, keymap) {
-        if (!update_pending_key_fields(info, key))
-            return false;
-        for (xkb_layout_index_t i = 0; i < key->num_groups; i++) {
-            for (xkb_level_index_t j = 0; j < XkbKeyNumLevels(key, i); j++) {
+        ако (!update_pending_key_fields(info, key))
+            врати false;
+        за (xkb_layout_index_t i = 0; i < key->num_groups; i++) {
+            за (xkb_level_index_t j = 0; j < XkbKeyNumLevels(key, i); j++) {
                 struct xkb_level * const level = &key->groups[i].levels[j];
                 xkb_level_foreach_action(act, level) {
                     UpdateActionMods(keymap, act, key->modmap);
-                    if ((pending_computations ||
+                    ако ((pending_computations ||
                          act->type == ACTION_TYPE_REDIRECT_KEY) &&
                         !update_pending_action_fields(info, key->keycode, act))
                     {
-                        return false;
+                        врати false;
                     }
                     update_auto_group_lock_on_modifier_release(
                         key->groups[i].levels, j, act
@@ -736,12 +736,12 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
     struct xkb_led *led;
     xkb_leds_foreach(led, keymap) {
         ComputeEffectiveMask(keymap, &led->mods); /* vmod -> led maps */
-        if (pending_computations &&
+        ако (pending_computations &&
             !update_pending_led_fields(info, led))
-            return false;
+            врати false;
     }
 
-    return true;
+    врати true;
 }
 
 typedef bool (*compile_file_fn)(XkbFile *file, struct xkb_keymap_info *info);
@@ -770,15 +770,15 @@ CompileKeymap(XkbFile *file, struct xkb_keymap *keymap)
     struct xkb_context *ctx = keymap->ctx;
 
     /* Collect section files and check for duplicates. */
-    for (file = (XkbFile *) file->defs; file;
+    за (file = (XkbFile *) file->defs; file;
          file = (XkbFile *) file->common.next) {
-        if (file->file_type < FIRST_KEYMAP_FILE_TYPE ||
+        ако (file->file_type < FIRST_KEYMAP_FILE_TYPE ||
             file->file_type > LAST_KEYMAP_FILE_TYPE) {
-            if (file->file_type == FILE_TYPE_GEOMETRY) {
+            ако (file->file_type == FILE_TYPE_GEOMETRY) {
                 log_vrb(ctx, XKB_LOG_VERBOSITY_BRIEF,
                         XKB_WARNING_UNSUPPORTED_GEOMETRY_SECTION,
                         "Geometry sections are not supported; ignoring\n");
-            } else {
+            } инако {
                 log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                         "Cannot define %s in a keymap file\n",
                         xkb_file_type_to_string(file->file_type));
@@ -786,7 +786,7 @@ CompileKeymap(XkbFile *file, struct xkb_keymap *keymap)
             continue;
         }
 
-        if (files[file->file_type]) {
+        ако (files[file->file_type]) {
             log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "More than one %s section in keymap file; "
                     "All sections after the first ignored\n",
@@ -870,14 +870,14 @@ CompileKeymap(XkbFile *file, struct xkb_keymap *keymap)
      *
      * NOTE: Any component is optional.
      */
-    for (type = FIRST_KEYMAP_FILE_TYPE;
+    за (type = FIRST_KEYMAP_FILE_TYPE;
          type <= LAST_KEYMAP_FILE_TYPE;
          type++) {
-        if (files[type] == NULL) {
+        ако (files[type] == NULL) {
             log_dbg(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Component %s not provided in keymap\n",
                     xkb_file_type_to_string(type));
-        } else {
+        } инако {
             log_dbg(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Compiling %s \"%s\"\n",
                     xkb_file_type_to_string(type),
@@ -886,14 +886,14 @@ CompileKeymap(XkbFile *file, struct xkb_keymap *keymap)
 
         /* Missing components are initialized with defaults */
         const bool ok = compile_file_fns[type](files[type], &info);
-        if (!ok) {
+        ако (!ok) {
             log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Failed to compile %s\n",
                     xkb_file_type_to_string(type));
             /* Copy back to the keymap, so that all can be properly freed */
             *keymap = info.keymap;
             pending_computations_array_free(&pending_computations);
-            return false;
+            врати false;
         }
     }
 
@@ -901,5 +901,5 @@ CompileKeymap(XkbFile *file, struct xkb_keymap *keymap)
     /* Copy back the keymap */
     *keymap = info.keymap;
     pending_computations_array_free(&pending_computations);
-    return ok;
+    врати ok;
 }
