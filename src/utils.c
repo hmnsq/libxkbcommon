@@ -3,92 +3,92 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#அந்தர்பாவ "config.h"
 
-#include <sys/stat.h>
-#include <fcntl.h>
-#include "utils.h"
+#அந்தர்பாவ <sys/stat.h>
+#அந்தர்பாவ <fcntl.h>
+#அந்தர்பாவ "utils.h"
 
-#if HAVE_MMAP
+#எனில் HAVE_MMAP
 
-#include <unistd.h>
-#include <sys/mman.h>
-#include <sys/types.h>
+#அந்தர்பாவ <unistd.h>
+#அந்தர்பாவ <sys/mman.h>
+#அந்தர்பாவ <sys/types.h>
 
 bool
-map_file(FILE *file, char **string_out, size_t *size_out)
+map_file(FILE *file, எழுத்து **string_out, size_t *size_out)
 {
-    struct stat stat_buf;
-    int fd;
-    char *string;
+    கட்டமைப்பு stat stat_buf;
+    முழு fd;
+    எழுத்து *string;
 
     /* Make sure to keep the errno on failure! */
     fd = fileno(file);
-    if (fd < 0)
-        return false;
+    எனில் (fd < 0)
+        திரும்பு false;
 
-    if (fstat(fd, &stat_buf) != 0)
-        return false;
+    எனில் (fstat(fd, &stat_buf) != 0)
+        திரும்பு false;
 
-    string = mmap(NULL, (size_t)stat_buf.st_size, PROT_READ, MAP_SHARED, fd, 0);
-    if (string == MAP_FAILED)
-        return false;
+    string = mmap(வெற்று, (size_t)stat_buf.st_size, PROT_READ, MAP_SHARED, fd, 0);
+    எனில் (string == MAP_FAILED)
+        திரும்பு false;
 
     *string_out = string;
     *size_out = (size_t)stat_buf.st_size;
-    return true;
+    திரும்பு true;
 }
 
-void
-unmap_file(char *str, size_t size)
+வெறுமை
+unmap_file(எழுத்து *str, size_t size)
 {
     munmap(str, size);
 }
 
-#else
+#இல்லையெனில்
 
 bool
-map_file(FILE *file, char **string_out, size_t *size_out)
+map_file(FILE *file, எழுத்து **string_out, size_t *size_out)
 {
     long ret;
     size_t ret_s;
-    char *string;
+    எழுத்து *string;
     size_t size;
 
     /* Make sure to keep the errno on failure! */
 
     ret = fseek(file, 0, SEEK_END);
-    if (ret != 0)
-        return false;
+    எனில் (ret != 0)
+        திரும்பு false;
 
     ret = ftell(file);
-    if (ret < 0)
-        return false;
+    எனில் (ret < 0)
+        திரும்பு false;
     size = (size_t) ret;
 
     ret = fseek(file, 0, SEEK_SET);
-    if (ret < 0)
-        return false;
+    எனில் (ret < 0)
+        திரும்பு false;
 
     string = malloc(size);
-    if (!string)
-        return false;
+    எனில் (!string)
+        திரும்பு false;
 
     ret_s = fread(string, 1, size, file);
-    if (ret_s < size) {
-        free(string);
-        return false;
+    எனில் (ret_s < size) {
+        விடுவி(string);
+        திரும்பு false;
     }
 
     *string_out = string;
     *size_out = size;
-    return true;
+    திரும்பு true;
 }
 
-void
-unmap_file(char *str, size_t size)
+வெறுமை
+unmap_file(எழுத்து *str, size_t size)
 {
-    free(str);
+    விடுவி(str);
 }
 
 #endif
@@ -96,21 +96,21 @@ unmap_file(char *str, size_t size)
 /* Open a file and ensure it is a regular file.
  * Returns NULL in case of error. */
 FILE*
-open_file(const char *path)
+open_file(மாறிலி எழுத்து *path)
 {
-    if (!path)
-        return NULL;
+    எனில் (!path)
+        திரும்பு வெற்று;
 
-    int fd = open(path, O_RDONLY);
-    if (fd < 0)
-        return NULL;
+    முழு fd = open(path, O_RDONLY);
+    எனில் (fd < 0)
+        திரும்பு வெற்று;
 
-    struct stat stat_buf;
-    int err = fstat(fd, &stat_buf);
+    கட்டமைப்பு stat stat_buf;
+    முழு err = fstat(fd, &stat_buf);
 
-    if (err != 0 || !S_ISREG(stat_buf.st_mode)) {
+    எனில் (err != 0 || !S_ISREG(stat_buf.st_mode)) {
         close(fd);
-        return NULL;
+        திரும்பு வெற்று;
     }
 
     /* While unlikely to happen, if `fp` is NULL then we must close the file
@@ -118,15 +118,15 @@ open_file(const char *path)
      * https://www.ibm.com/docs/en/i/7.3?topic=functions-fdopen-associates-stream-file-descriptor)
      * Confirmed by Peter to be necessary in glibc. */
     FILE *fp = fdopen(fd, "rb");
-    if (fp == NULL) {
+    எனில் (fp == வெற்று) {
         close(fd);
     }
 
-    return fp;
+    திரும்பு fp;
 }
 
 // ASCII lower-case map.
-static const unsigned char lower_map[] = {
+நிலையான மாறிலி unsigned எழுத்து lower_map[] = {
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
     21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
     40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58,
@@ -146,56 +146,56 @@ static const unsigned char lower_map[] = {
 };
 
 // ASCII tolower (to avoid locale issues).
-char
-to_lower(char c)
+எழுத்து
+to_lower(எழுத்து c)
 {
-    return (char) lower_map[(unsigned char) c];
+    திரும்பு (எழுத்து) lower_map[(unsigned எழுத்து) c];
 }
 
 // ASCII strcasecmp (to avoid locale issues).
-int
-istrcmp(const char *a, const char *b)
+முழு
+istrcmp(மாறிலி எழுத்து *a, மாறிலி எழுத்து *b)
 {
-    for (size_t i = 0; ; i++) {
-        if (to_lower(a[i]) != to_lower(b[i]))
-            return (int) to_lower(a[i]) - (int) to_lower(b[i]);
-        if (!a[i])
-            break;
+    க்கு (size_t i = 0; ; i++) {
+        எனில் (to_lower(a[i]) != to_lower(b[i]))
+            திரும்பு (முழு) to_lower(a[i]) - (முழு) to_lower(b[i]);
+        எனில் (!a[i])
+            நிறுத்து;
     }
-    return 0;
+    திரும்பு 0;
 }
 
 // ASCII strncasecmp (to avoid locale issues).
-int
-istrncmp(const char *a, const char *b, size_t n)
+முழு
+istrncmp(மாறிலி எழுத்து *a, மாறிலி எழுத்து *b, size_t n)
 {
-    for (size_t i = 0; i < n; i++) {
-        if (to_lower(a[i]) != to_lower(b[i]))
-            return (int) to_lower(a[i]) - (int) to_lower(b[i]);
-        if (!a[i])
-            break;
+    க்கு (size_t i = 0; i < n; i++) {
+        எனில் (to_lower(a[i]) != to_lower(b[i]))
+            திரும்பு (முழு) to_lower(a[i]) - (முழு) to_lower(b[i]);
+        எனில் (!a[i])
+            நிறுத்து;
     }
-    return 0;
+    திரும்பு 0;
 }
 
-#if !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
-int
-asprintf(char **strp, const char *fmt, ...)
+#எனில் !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
+முழு
+asprintf(எழுத்து **strp, மாறிலி எழுத்து *fmt, ...)
 {
-    int ret;
+    முழு ret;
     va_list ap;
     va_start(ap, fmt);
     ret = vasprintf(strp, fmt, ap);
     va_end(ap);
-    return ret;
+    திரும்பு ret;
 }
 
-# if !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
-int
-vasprintf(char **strp, const char *fmt, va_list ap)
+# எனில் !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
+முழு
+vasprintf(எழுத்து **strp, மாறிலி எழுத்து *fmt, va_list ap)
 {
-    int ret;
-    char *buf;
+    முழு ret;
+    எழுத்து *buf;
     va_list ap_copy;
 
     /*
@@ -203,22 +203,22 @@ vasprintf(char **strp, const char *fmt, va_list ap)
      * vsnprintf() returns: pass a copy to make sure "ap" remains valid.
      */
     va_copy(ap_copy, ap);
-    ret = vsnprintf(NULL, 0, fmt, ap_copy);
+    ret = vsnprintf(வெற்று, 0, fmt, ap_copy);
     va_end(ap_copy);
 
-    if (ret < 0)
-        return ret;
+    எனில் (ret < 0)
+        திரும்பு ret;
 
-    if (!(buf = malloc(ret + 1)))
-        return -1;
+    எனில் (!(buf = malloc(ret + 1)))
+        திரும்பு -1;
 
-    if ((ret = vsnprintf(buf, ret + 1, fmt, ap)) < 0) {
-        free(buf);
-        return ret;
+    எனில் ((ret = vsnprintf(buf, ret + 1, fmt, ap)) < 0) {
+        விடுவி(buf);
+        திரும்பு ret;
     }
 
     *strp = buf;
-    return ret;
+    திரும்பு ret;
 }
 # endif /* !HAVE_VASPRINTF */
 #endif /* !HAVE_ASPRINTF */

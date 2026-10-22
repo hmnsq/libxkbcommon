@@ -20,28 +20,28 @@
  *   - messages (very unlikely)
  */
 
-#include "config.h"
+#அந்தர்பாவ "config.h"
 
-#include <assert.h>
-#include <limits.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#அந்தர்பாவ <assert.h>
+#அந்தர்பாவ <limits.h>
+#அந்தர்பாவ <stdint.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-status.h"
-#include "xkbcommon/xkbcommon-features.h"
-#include "abi-check.h"
-#include "darray.h"
-#include "features/enums.h"
-#include "keymap.h"
-#include "keysym.h"
-#include "messages-codes.h"
-#include "state-priv.h"
-#include "utf8.h"
-#include "utils.h"
-#include "util-mem.h"
-#include "util-numbers.h"
+#அந்தர்பாவ "xkbcommon/xkbcommon.h"
+#அந்தர்பாவ "xkbcommon/xkbcommon-status.h"
+#அந்தர்பாவ "xkbcommon/xkbcommon-features.h"
+#அந்தர்பாவ "abi-check.h"
+#அந்தர்பாவ "darray.h"
+#அந்தர்பாவ "features/enums.h"
+#அந்தர்பாவ "keymap.h"
+#அந்தர்பாவ "keysym.h"
+#அந்தர்பாவ "messages-codes.h"
+#அந்தர்பாவ "state-priv.h"
+#அந்தர்பாவ "utf8.h"
+#அந்தர்பாவ "utils.h"
+#அந்தர்பாவ "util-mem.h"
+#அந்தர்பாவ "util-numbers.h"
 
 /*
  * @struct xkb_events
@@ -60,9 +60,9 @@
  * @todo For multi-threaded use, we need a future `xkb_event` **queue** to
  * provide a thread-safe implementation (e.g. circular buffer).
  */
-struct xkb_events {
-    struct xkb_context *ctx;
-    darray(struct xkb_event) queue;
+கட்டமைப்பு xkb_events {
+    கட்டமைப்பு xkb_context *ctx;
+    darray(கட்டமைப்பு xkb_event) queue;
     /**
      * Read cursor for `xkb_events_next()`.
      *
@@ -71,21 +71,21 @@ struct xkb_events {
     darray_size_t next;
 };
 
-struct xkb_server_state;
+கட்டமைப்பு xkb_server_state;
 
-struct xkb_filter {
-    union xkb_action action;
-    const struct xkb_key *key;
-    bool (*func)(struct xkb_server_state *state,
-                 struct xkb_events *events,
-                 struct xkb_filter *filter,
-                 const struct xkb_key *key,
-                 enum xkb_key_direction direction);
+கட்டமைப்பு xkb_filter {
+    ஒன்றிப்பு xkb_action action;
+    மாறிலி கட்டமைப்பு xkb_சாவி *சாவி;
+    bool (*func)(கட்டமைப்பு xkb_server_state *state,
+                 கட்டமைப்பு xkb_events *events,
+                 கட்டமைப்பு xkb_filter *filter,
+                 மாறிலி கட்டமைப்பு xkb_சாவி *சாவி,
+                 எண்ணிக்கை xkb_சாவி_direction direction);
     uint32_t priv;
-    int refcnt;
+    முழு refcnt;
 };
 
-enum xkb_state_mode_internal {
+எண்ணிக்கை xkb_state_mode_internal {
     /** `xkb_state`: Client-only state (server API raises errors) */
     CLIENT_STATE = XKB_STATE_MODE_CLIENT,
     /** `xkb_state`: Server query companion */
@@ -96,7 +96,7 @@ enum xkb_state_mode_internal {
     LEGACY_SERVER_STATE = 3,
     /** `xkb_machine`: Server-only state */
     SERVER_STATE = 4,
-    _XKB_STATE_TYPE_NUM_ENTRIES = 5
+    XKB_STATE_TYPE_இலக்கம்_ENTRIES = 5
 };
 
 static_assert(CLIENT_STATE == 0 &&
@@ -104,23 +104,23 @@ static_assert(CLIENT_STATE == 0 &&
               SERVER_COMPANION == LEGACY_MIXED_STATE - 1 &&
               LEGACY_MIXED_STATE == LEGACY_SERVER_STATE - 1 &&
               LEGACY_SERVER_STATE == SERVER_STATE - 1 &&
-              SERVER_STATE == _XKB_STATE_TYPE_NUM_ENTRIES - 1 &&
-              _XKB_STATE_TYPE_NUM_ENTRIES == 5,
+              SERVER_STATE == XKB_STATE_TYPE_இலக்கம்_ENTRIES - 1 &&
+              XKB_STATE_TYPE_இலக்கம்_ENTRIES == 5,
               "Order is used to guard client/server -only APIs: do not change");
 
-enum { XKB_LAYOUT_INDEX_T_MIN_WIDTH = 6 };
+எண்ணிக்கை { XKB_LAYOUT_INDEX_T_MIN_WIDTH = 6 };
 static_assert(XKB_MAX_GROUPS < (1 << XKB_LAYOUT_INDEX_T_MIN_WIDTH),
               "Cannot encode out_of_range_group::redirect_group");
 
-struct out_of_range_group {
-    enum xkb_layout_out_of_range_policy policy :
-        (sizeof(enum xkb_layout_out_of_range_policy) * CHAR_BIT -
+கட்டமைப்பு out_of_range_group {
+    எண்ணிக்கை xkb_layout_out_of_range_policy policy :
+        (அளவு(எண்ணிக்கை xkb_layout_out_of_range_policy) * CHAR_BIT -
          XKB_LAYOUT_INDEX_T_MIN_WIDTH);
     xkb_layout_index_t redirect_group : XKB_LAYOUT_INDEX_T_MIN_WIDTH;
 };
 
-enum { XKB_STATE_MODE_INTERNAL_MIN_WIDTH = 4 /* 3 bits + sign */ };
-static_assert(_XKB_STATE_TYPE_NUM_ENTRIES <
+எண்ணிக்கை { XKB_STATE_MODE_INTERNAL_MIN_WIDTH = 4 /* 3 bits + sign */ };
+static_assert(XKB_STATE_TYPE_இலக்கம்_ENTRIES <
               (1 << XKB_STATE_MODE_INTERNAL_MIN_WIDTH),
               "Cannot encode xkb_state::mode");
 
@@ -130,17 +130,17 @@ static_assert(_XKB_STATE_TYPE_NUM_ENTRIES <
  * `mode` indicates whether the object is casted from a `xkb_server_state` or a
  * `xkb_client_state` struct.
  */
-struct xkb_state {
-    struct xkb_keymap *keymap;
+கட்டமைப்பு xkb_state {
+    கட்டமைப்பு xkb_keymap *keymap;
     /*
      * Before updating the state, we keep a copy of just this struct. This
      * allows us to report which components of the state have changed.
      */
-    struct state_components components;
-    struct out_of_range_group out_of_range_group;
+    கட்டமைப்பு state_components components;
+    கட்டமைப்பு out_of_range_group out_of_range_group;
 
-    enum xkb_state_mode_internal mode : XKB_STATE_MODE_INTERNAL_MIN_WIDTH;
-    int refcnt : (sizeof(int) * CHAR_BIT - XKB_STATE_MODE_INTERNAL_MIN_WIDTH);
+    எண்ணிக்கை xkb_state_mode_internal mode : XKB_STATE_MODE_INTERNAL_MIN_WIDTH;
+    முழு refcnt : (அளவு(முழு) * CHAR_BIT - XKB_STATE_MODE_INTERNAL_MIN_WIDTH);
 };
 
 /**
@@ -148,15 +148,15 @@ struct xkb_state {
  *
  * Wrapper for strong typing
  */
-struct xkb_client_state {
+கட்டமைப்பு xkb_client_state {
     /** Inherits from `xkb_state` */
-    struct xkb_state base;
+    கட்டமைப்பு xkb_state base;
 };
 
-enum state_flags {
+எண்ணிக்கை state_flags {
     STATE_NO_FLAGS = 0,
-    STATE_REQUIRE_KEY_EVENT = (1 << 0),
-    STATE_FIX_LAYOUT_SWITCH_ON_MODIFIER_KEY = (1 << 1),
+    STATE_REQUIRE_சாவி_EVENT = (1 << 0),
+    STATE_FIX_LAYOUT_SWITCH_ON_MODIFIER_சாவி = (1 << 1),
     STATE_UNLOCK_MODS_ON_PRESS = (1 << 2),
 };
 
@@ -166,21 +166,21 @@ enum state_flags {
  *
  * Casted as `xkb_state` in the public API. See `xkb_state::mode`.
  */
-struct xkb_server_state {
+கட்டமைப்பு xkb_server_state {
     /** Inherits from `xkb_state` */
-    struct xkb_state base;
+    கட்டமைப்பு xkb_state base;
 
     /* Server-specific state data */
 
-    darray(struct xkb_filter) filters;
+    darray(கட்டமைப்பு xkb_filter) filters;
 
     /**
      * Mix of constant configuration flags and
      * variable state-processing flags.
      */
-    enum state_flags flags;
+    எண்ணிக்கை state_flags flags;
 
-    enum xkb_a11y_flags a11y_flags;
+    எண்ணிக்கை xkb_a11y_flags a11y_flags;
 
     /*
      * At each event, we accumulate all the needed modifications to the base
@@ -195,40 +195,40 @@ struct xkb_server_state {
      * < Left Shift down, Right Shift down, Left Shift Up >
      * the modifier should still be set. This keeps the count.
      */
-    int16_t mod_key_count[XKB_MAX_MODS];
+    int16_t mod_சாவி_மொத்தம்[XKB_MAX_MODS];
 };
 
-static const struct xkb_key_type_entry *
-get_entry_for_mods(const struct xkb_key_type *type, xkb_mod_mask_t mods)
+நிலையான மாறிலி கட்டமைப்பு xkb_சாவி_type_entry *
+get_entry_for_mods(மாறிலி கட்டமைப்பு xkb_சாவி_type *type, xkb_mod_mask_t mods)
 {
-    for (darray_size_t i = 0; i < type->num_entries; i++)
-        if (entry_is_active(&type->entries[i]) &&
+    க்கு (darray_size_t i = 0; i < type->இலக்கம்_entries; i++)
+        எனில் (entry_is_active(&type->entries[i]) &&
             type->entries[i].mods.mask == mods)
-            return &type->entries[i];
-    return NULL;
+            திரும்பு &type->entries[i];
+    திரும்பு வெற்று;
 }
 
-static const struct xkb_key_type_entry *
-get_entry_for_key_state(struct xkb_state *state, const struct xkb_key *key,
+நிலையான மாறிலி கட்டமைப்பு xkb_சாவி_type_entry *
+get_entry_for_சாவி_state(கட்டமைப்பு xkb_state *state, மாறிலி கட்டமைப்பு xkb_சாவி *சாவி,
                         xkb_layout_index_t group)
 {
-    const struct xkb_key_type* const type = key->groups[group].type;
+    மாறிலி கட்டமைப்பு xkb_சாவி_type* மாறிலி type = சாவி->groups[group].type;
     xkb_mod_mask_t active_mods = state->components.mods & type->mods.mask;
-    return get_entry_for_mods(type, active_mods);
+    திரும்பு get_entry_for_mods(type, active_mods);
 }
 
-static inline xkb_level_index_t
-state_key_get_level(struct xkb_state *state, const struct xkb_key *key,
+நிலையான உள்வரி xkb_level_index_t
+state_சாவி_get_level(கட்டமைப்பு xkb_state *state, மாறிலி கட்டமைப்பு xkb_சாவி *சாவி,
                          xkb_layout_index_t layout)
 {
-    if (layout >= key->num_groups)
-        return XKB_LEVEL_INVALID;
+    எனில் (layout >= சாவி->இலக்கம்_groups)
+        திரும்பு XKB_LEVEL_INVALID;
 
     /* If we don't find an explicit match the default is 0. */
-    const struct xkb_key_type_entry* const entry =
-        get_entry_for_key_state(state, key, layout);
+    மாறிலி கட்டமைப்பு xkb_சாவி_type_entry* மாறிலி entry =
+        get_entry_for_சாவி_state(state, சாவி, layout);
 
-    return (entry) ? entry->level : 0;
+    திரும்பு (entry) ? entry->level : 0;
 }
 
 /**
@@ -236,20 +236,20 @@ state_key_get_level(struct xkb_state *state, const struct xkb_key *key,
  * XKB_LEVEL_INVALID.
  */
 xkb_level_index_t
-xkb_state_key_get_level(struct xkb_state *state, xkb_keycode_t kc,
+xkb_state_சாவி_get_level(கட்டமைப்பு xkb_state *state, xkb_keycode_t kc,
                         xkb_layout_index_t layout)
 {
-    const struct xkb_key* const key = XkbKey(state->keymap, kc);
+    மாறிலி கட்டமைப்பு xkb_சாவி* மாறிலி சாவி = Xkb_சாவி(state->keymap, kc);
 
-    return (key)
-        ? state_key_get_level(state, key, layout)
+    திரும்பு (சாவி)
+        ? state_சாவி_get_level(state, சாவி, layout)
         : XKB_LEVEL_INVALID;
 }
 
-static inline xkb_layout_index_t
-state_key_get_layout(struct xkb_state *state, const struct xkb_key *key)
+நிலையான உள்வரி xkb_layout_index_t
+state_சாவி_get_layout(கட்டமைப்பு xkb_state *state, மாறிலி கட்டமைப்பு xkb_சாவி *சாவி)
 {
-    return xkb_keymap_key_effective_layout(key, state->components.group);
+    திரும்பு xkb_keymap_சாவி_effective_layout(சாவி, state->components.group);
 }
 
 /**
@@ -257,69 +257,69 @@ state_key_get_layout(struct xkb_state *state, const struct xkb_key *key)
  * wrapping/clamping/etc into account, or XKB_LAYOUT_INVALID.
  */
 xkb_layout_index_t
-xkb_state_key_get_layout(struct xkb_state *state, xkb_keycode_t kc)
+xkb_state_சாவி_get_layout(கட்டமைப்பு xkb_state *state, xkb_keycode_t kc)
 {
-    const struct xkb_key* const key = XkbKey(state->keymap, kc);
+    மாறிலி கட்டமைப்பு xkb_சாவி* மாறிலி சாவி = Xkb_சாவி(state->keymap, kc);
 
-    if (!key)
-        return XKB_LAYOUT_INVALID;
+    எனில் (!சாவி)
+        திரும்பு XKB_LAYOUT_INVALID;
 
-    return state_key_get_layout(state, key);
+    திரும்பு state_சாவி_get_layout(state, சாவி);
 }
 
 /* Empty action used for empty levels */
-static const union xkb_action dummy_action = { .type = ACTION_TYPE_NONE };
+நிலையான மாறிலி ஒன்றிப்பு xkb_action dummy_action = { .type = ACTION_TYPE_NONE };
 
-static xkb_action_count_t
-xkb_key_get_actions(struct xkb_state *state, const struct xkb_key *key,
-                    const union xkb_action **actions)
+நிலையான xkb_action_மொத்தம்_t
+xkb_சாவி_get_actions(கட்டமைப்பு xkb_state *state, மாறிலி கட்டமைப்பு xkb_சாவி *சாவி,
+                    மாறிலி ஒன்றிப்பு xkb_action **actions)
 {
-    const xkb_layout_index_t layout = state_key_get_layout(state, key);
-    const xkb_level_index_t level = state_key_get_level(state, key, layout);
-    if (level == XKB_LEVEL_INVALID)
-        goto err;
+    மாறிலி xkb_layout_index_t layout = state_சாவி_get_layout(state, சாவி);
+    மாறிலி xkb_level_index_t level = state_சாவி_get_level(state, சாவி, layout);
+    எனில் (level == XKB_LEVEL_INVALID)
+        செல் err;
 
-    const xkb_action_count_t count =
-        xkb_keymap_key_get_actions_by_level(state->keymap, key,
+    மாறிலி xkb_action_மொத்தம்_t மொத்தம் =
+        xkb_keymap_சாவி_get_actions_by_level(state->keymap, சாவி,
                                             layout, level, actions);
-    if (!count)
-        goto err;
+    எனில் (!மொத்தம்)
+        செல் err;
 
-    return count;
+    திரும்பு மொத்தம்;
 
 err:
     /* Use a dummy action if no corresponding level was found or if it is empty.
      * This is required e.g. to handle latches properly. */
     *actions = &dummy_action;
-    return 1;
+    திரும்பு 1;
 }
 
-static struct xkb_filter *
-xkb_filter_new(struct xkb_server_state *state)
+நிலையான கட்டமைப்பு xkb_filter *
+xkb_filter_new(கட்டமைப்பு xkb_server_state *state)
 {
-    struct xkb_filter *filter = NULL, *iter;
+    கட்டமைப்பு xkb_filter *filter = வெற்று, *iter;
 
     darray_foreach(iter, state->filters) {
-        if (iter->func)
-            continue;
+        எனில் (iter->func)
+            தொடர்;
         /* Use available slot */
         filter = iter;
-        break;
+        நிறுத்து;
     }
 
-    if (!filter) {
+    எனில் (!filter) {
         /* No available slot: resize the filters array */
         darray_resize0(state->filters, darray_size(state->filters) + 1);
         filter = &darray_item(state->filters, darray_size(state->filters) -1);
     }
 
     filter->refcnt = 1;
-    return filter;
+    திரும்பு filter;
 }
 
 /***====================================================================***/
 
-enum xkb_filter_result {
+எண்ணிக்கை xkb_filter_result {
     /*
      * The event is consumed by the filters.
      *
@@ -336,115 +336,115 @@ enum xkb_filter_result {
 
 /* Modify a group component, depending on the ACTION_ABSOLUTE_SWITCH flag */
 #define apply_group_delta(filter_, state_, component_)                   \
-    if ((filter_)->action.group.flags & ACTION_ABSOLUTE_SWITCH)          \
+    எனில் ((filter_)->action.group.flags & ACTION_ABSOLUTE_SWITCH)          \
         (state_)->components.component_ = (filter_)->action.group.group; \
-    else                                                                 \
+    இல்லையெனில்                                                                 \
         (state_)->components.component_ += (filter_)->action.group.group
 
-static void
-xkb_filter_group_set_new(struct xkb_server_state *state,
-                         struct xkb_events *events,
-                         struct xkb_filter *filter)
+நிலையான வெறுமை
+xkb_filter_group_set_new(கட்டமைப்பு xkb_server_state *state,
+                         கட்டமைப்பு xkb_events *events,
+                         கட்டமைப்பு xkb_filter *filter)
 {
-    static_assert(sizeof(state->base.components.base_group) ==
-                  sizeof(filter->priv),
+    static_assert(அளவு(state->base.components.base_group) ==
+                  அளவு(filter->priv),
                   "Max groups don't fit");
     filter->priv = (uint32_t)state->base.components.base_group;
     apply_group_delta(filter, &state->base, base_group);
 }
 
-static bool
-xkb_filter_group_set_func(struct xkb_server_state *state,
-                          struct xkb_events *events,
-                          struct xkb_filter *filter,
-                          const struct xkb_key *key,
-                          enum xkb_key_direction direction)
+நிலையான bool
+xkb_filter_group_set_func(கட்டமைப்பு xkb_server_state *state,
+                          கட்டமைப்பு xkb_events *events,
+                          கட்டமைப்பு xkb_filter *filter,
+                          மாறிலி கட்டமைப்பு xkb_சாவி *சாவி,
+                          எண்ணிக்கை xkb_சாவி_direction direction)
 {
-    if (key != filter->key) {
+    எனில் (சாவி != filter->சாவி) {
         filter->action.group.flags &= ~ACTION_LOCK_CLEAR;
-        return XKB_FILTER_CONTINUE;
+        திரும்பு XKB_FILTER_CONTINUE;
     }
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    தேர்வு (direction) {
+    நிலை XKB_சாவி_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    நிலை XKB_சாவி_REPEATED:
+        திரும்பு XKB_FILTER_CONSUME;
+    இயல்பு:
+        எனில் (--filter->refcnt > 0)
+            திரும்பு XKB_FILTER_CONSUME;
     }
 
-    static_assert(sizeof(state->base.components.base_group) == sizeof(filter->priv),
+    static_assert(அளவு(state->base.components.base_group) == அளவு(filter->priv),
                   "Max groups don't fit");
     state->base.components.base_group = (int32_t) filter->priv;
 
-    if (filter->action.group.flags & ACTION_LOCK_CLEAR)
+    எனில் (filter->action.group.flags & ACTION_LOCK_CLEAR)
         state->base.components.locked_group = 0;
 
-    filter->func = NULL;
-    return XKB_FILTER_CONTINUE;
+    filter->func = வெற்று;
+    திரும்பு XKB_FILTER_CONTINUE;
 }
 
-static enum xkb_state_component
-get_state_component_changes(const struct state_components *a,
-                            const struct state_components *b)
+நிலையான எண்ணிக்கை xkb_state_component
+get_state_component_changes(மாறிலி கட்டமைப்பு state_components *a,
+                            மாறிலி கட்டமைப்பு state_components *b)
 {
-    enum xkb_state_component mask = 0;
+    எண்ணிக்கை xkb_state_component mask = 0;
 
-    if (a->group != b->group)
+    எனில் (a->group != b->group)
         mask |= XKB_STATE_LAYOUT_EFFECTIVE;
-    if (a->base_group != b->base_group)
+    எனில் (a->base_group != b->base_group)
         mask |= XKB_STATE_LAYOUT_DEPRESSED;
-    if (a->latched_group != b->latched_group)
+    எனில் (a->latched_group != b->latched_group)
         mask |= XKB_STATE_LAYOUT_LATCHED;
-    if (a->locked_group != b->locked_group)
+    எனில் (a->locked_group != b->locked_group)
         mask |= XKB_STATE_LAYOUT_LOCKED;
-    if (a->mods != b->mods)
+    எனில் (a->mods != b->mods)
         mask |= XKB_STATE_MODS_EFFECTIVE;
-    if (a->base_mods != b->base_mods)
+    எனில் (a->base_mods != b->base_mods)
         mask |= XKB_STATE_MODS_DEPRESSED;
-    if (a->latched_mods != b->latched_mods)
+    எனில் (a->latched_mods != b->latched_mods)
         mask |= XKB_STATE_MODS_LATCHED;
-    if (a->locked_mods != b->locked_mods)
+    எனில் (a->locked_mods != b->locked_mods)
         mask |= XKB_STATE_MODS_LOCKED;
-    if (a->leds != b->leds)
+    எனில் (a->leds != b->leds)
         mask |= XKB_STATE_LEDS;
-    if (a->controls != b->controls)
+    எனில் (a->controls != b->controls)
         mask |= XKB_STATE_CONTROLS_EFFECTIVE;
 
-    return mask;
+    திரும்பு mask;
 }
 
-static void
-xkb_filter_group_lock_new(struct xkb_server_state *state,
-                          struct xkb_events *events,
-                          struct xkb_filter *filter)
+நிலையான வெறுமை
+xkb_filter_group_lock_new(கட்டமைப்பு xkb_server_state *state,
+                          கட்டமைப்பு xkb_events *events,
+                          கட்டமைப்பு xkb_filter *filter)
 {
-    if (filter->action.group.flags & ACTION_LOCK_ON_RELEASE) {
+    எனில் (filter->action.group.flags & ACTION_LOCK_ON_RELEASE) {
         /*
          * Lock on key release: do nothing on key press.
          *
          * This is a keymap format v2 extension.
          */
-        return;
-    } else {
+        திரும்பு;
+    } இல்லையெனில் {
         /* Lock on key press */
         apply_group_delta(filter, &state->base, locked_group);
     }
 }
 
-static bool
-xkb_filter_group_lock_func(struct xkb_server_state *state,
-                           struct xkb_events *events,
-                           struct xkb_filter *filter,
-                           const struct xkb_key *key,
-                           enum xkb_key_direction direction)
+நிலையான bool
+xkb_filter_group_lock_func(கட்டமைப்பு xkb_server_state *state,
+                           கட்டமைப்பு xkb_events *events,
+                           கட்டமைப்பு xkb_filter *filter,
+                           மாறிலி கட்டமைப்பு xkb_சாவி *சாவி,
+                           எண்ணிக்கை xkb_சாவி_direction direction)
 {
-    if (key != filter->key) {
-        if ((filter->action.group.flags & ACTION_LOCK_ON_RELEASE) &&
-            direction == XKB_KEY_DOWN) {
+    எனில் (சாவி != filter->சாவி) {
+        எனில் ((filter->action.group.flags & ACTION_LOCK_ON_RELEASE) &&
+            direction == XKB_சாவி_DOWN) {
             /*
              * Another key has been pressed after the locking key:
              * cancel group lock on release.
@@ -453,100 +453,100 @@ xkb_filter_group_lock_func(struct xkb_server_state *state,
              */
             filter->action.group.flags &= ~ACTION_LOCK_ON_RELEASE;
         }
-        return XKB_FILTER_CONTINUE;
+        திரும்பு XKB_FILTER_CONTINUE;
     }
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    தேர்வு (direction) {
+    நிலை XKB_சாவி_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    நிலை XKB_சாவி_REPEATED:
+        திரும்பு XKB_FILTER_CONSUME;
+    இயல்பு:
+        எனில் (--filter->refcnt > 0)
+            திரும்பு XKB_FILTER_CONSUME;
     }
 
-    if (filter->action.group.flags & ACTION_LOCK_ON_RELEASE) {
+    எனில் (filter->action.group.flags & ACTION_LOCK_ON_RELEASE) {
         /*
          * Lock on key release
          *
          * This is a keymap v2 extension.
          */
         apply_group_delta(filter, &state->base, locked_group);
-    } else {
+    } இல்லையெனில் {
         /* Lock on key press: do nothing on key release. */
     }
-    filter->func = NULL;
-    return XKB_FILTER_CONTINUE;
+    filter->func = வெற்று;
+    திரும்பு XKB_FILTER_CONTINUE;
 }
 
-static bool
-xkb_action_breaks_latch(const union xkb_action *action,
-                        enum xkb_action_controls controls,
-                        enum xkb_internal_action_flags flag,
+நிலையான bool
+xkb_action_breaks_latch(மாறிலி ஒன்றிப்பு xkb_action *action,
+                        எண்ணிக்கை xkb_action_controls controls,
+                        எண்ணிக்கை xkb_internal_action_flags flag,
                         xkb_mod_mask_t mask)
 {
-    switch (action->type) {
-    case ACTION_TYPE_NONE:
-    case ACTION_TYPE_VOID:
-    case ACTION_TYPE_PTR_BUTTON:
-    case ACTION_TYPE_PTR_LOCK:
-    case ACTION_TYPE_CTRL_SET:
-    case ACTION_TYPE_CTRL_LOCK:
-    case ACTION_TYPE_SWITCH_VT:
-    case ACTION_TYPE_TERMINATE:
-    case ACTION_TYPE_REDIRECT_KEY:
-        return true;
-    case ACTION_TYPE_PTR_MOVE:
-    case ACTION_TYPE_PTR_DEFAULT:
-        return !(controls & CONTROL_MOUSE_KEYS);
-    case ACTION_TYPE_INTERNAL:
-        return (action->internal.flags & flag) &&
+    தேர்வு (action->type) {
+    நிலை ACTION_TYPE_NONE:
+    நிலை ACTION_TYPE_VOID:
+    நிலை ACTION_TYPE_PTR_BUTTON:
+    நிலை ACTION_TYPE_PTR_LOCK:
+    நிலை ACTION_TYPE_CTRL_SET:
+    நிலை ACTION_TYPE_CTRL_LOCK:
+    நிலை ACTION_TYPE_SWITCH_VT:
+    நிலை ACTION_TYPE_TERMINATE:
+    நிலை ACTION_TYPE_REDIRECT_சாவி:
+        திரும்பு true;
+    நிலை ACTION_TYPE_PTR_MOVE:
+    நிலை ACTION_TYPE_PTR_DEFAULT:
+        திரும்பு !(controls & CONTROL_MOUSE_சாவிகள்);
+    நிலை ACTION_TYPE_INTERNAL:
+        திரும்பு (action->internal.flags & flag) &&
                ((action->internal.clear_latched_mods & mask) == mask);
-    default:
+    இயல்பு:
         {} /* Label followed by declaration requires C23 */
         /* Ensure to not miss `xkb_action_type` updates */
         static_assert(ACTION_TYPE_INTERNAL == 20 &&
-                      ACTION_TYPE_INTERNAL + 1 == _ACTION_TYPE_NUM_ENTRIES,
+                      ACTION_TYPE_INTERNAL + 1 == ACTION_TYPE_இலக்கம்_ENTRIES,
                       "Missing action type");
-        return false;
+        திரும்பு false;
     }
 }
 
-enum xkb_key_latch_state {
+எண்ணிக்கை xkb_சாவி_latch_state {
     NO_LATCH = 0,
-    LATCH_KEY_DOWN,
+    LATCH_சாவி_DOWN,
     LATCH_PENDING,
-    _KEY_LATCH_STATE_NUM_ENTRIES
+    சாவி_LATCH_STATE_இலக்கம்_ENTRIES
 };
 
-#define MAX_XKB_KEY_LATCH_STATE_LOG2 2
-#if (_KEY_LATCH_STATE_NUM_ENTRIES > (1 << MAX_XKB_KEY_LATCH_STATE_LOG2)) || \
-    (-XKB_MAX_GROUPS) < (INT32_MIN >> MAX_XKB_KEY_LATCH_STATE_LOG2) || \
-      XKB_MAX_GROUPS > (INT32_MAX >> MAX_XKB_KEY_LATCH_STATE_LOG2)
+#define MAX_XKB_சாவி_LATCH_STATE_LOG2 2
+#எனில் (சாவி_LATCH_STATE_இலக்கம்_ENTRIES > (1 << MAX_XKB_சாவி_LATCH_STATE_LOG2)) || \
+    (-XKB_MAX_GROUPS) < (INT32_MIN >> MAX_XKB_சாவி_LATCH_STATE_LOG2) || \
+      XKB_MAX_GROUPS > (INT32_MAX >> MAX_XKB_சாவி_LATCH_STATE_LOG2)
 #error "Cannot represent priv field of the group latch filter"
 #endif
 
 /* Hold the latch state *and* the group delta */
-union group_latch_priv {
+ஒன்றிப்பு group_latch_priv {
     uint32_t priv;
-    struct {
+    கட்டமைப்பு {
         /* The type is really: enum xkb_key_latch_state, but it is problematic
          * on Windows, because it is interpreted as signed and leads to wrong
          * negative values. */
-        unsigned int latch:MAX_XKB_KEY_LATCH_STATE_LOG2;
-        int32_t group_delta:(32 - MAX_XKB_KEY_LATCH_STATE_LOG2);
+        unsigned முழு latch:MAX_XKB_சாவி_LATCH_STATE_LOG2;
+        int32_t group_delta:(32 - MAX_XKB_சாவி_LATCH_STATE_LOG2);
     };
 };
 
-static void
-xkb_filter_group_latch_new(struct xkb_server_state *state,
-                           struct xkb_events *events,
-                           struct xkb_filter *filter)
+நிலையான வெறுமை
+xkb_filter_group_latch_new(கட்டமைப்பு xkb_server_state *state,
+                           கட்டமைப்பு xkb_events *events,
+                           கட்டமைப்பு xkb_filter *filter)
 {
-    const union group_latch_priv priv = {
-        .latch = LATCH_KEY_DOWN,
+    மாறிலி ஒன்றிப்பு group_latch_priv priv = {
+        .latch = LATCH_சாவி_DOWN,
         .group_delta = (filter->action.group.flags & ACTION_ABSOLUTE_SWITCH)
             ? filter->action.group.group - state->base.components.base_group
             : filter->action.group.group
@@ -556,22 +556,22 @@ xkb_filter_group_latch_new(struct xkb_server_state *state,
     apply_group_delta(filter, &state->base, base_group);
 }
 
-static bool
-xkb_filter_group_latch_func(struct xkb_server_state *state,
-                            struct xkb_events *events,
-                            struct xkb_filter *filter,
-                            const struct xkb_key *key,
-                            enum xkb_key_direction direction)
+நிலையான bool
+xkb_filter_group_latch_func(கட்டமைப்பு xkb_server_state *state,
+                            கட்டமைப்பு xkb_events *events,
+                            கட்டமைப்பு xkb_filter *filter,
+                            மாறிலி கட்டமைப்பு xkb_சாவி *சாவி,
+                            எண்ணிக்கை xkb_சாவி_direction direction)
 {
-    union group_latch_priv priv = {.priv = filter->priv};
-    enum xkb_key_latch_state latch = priv.latch;
+    ஒன்றிப்பு group_latch_priv priv = {.priv = filter->priv};
+    எண்ணிக்கை xkb_சாவி_latch_state latch = priv.latch;
 
-    if (direction == XKB_KEY_DOWN) {
-        const union xkb_action *actions = NULL;
-        const xkb_action_count_t count = xkb_key_get_actions(&state->base, key,
+    எனில் (direction == XKB_சாவி_DOWN) {
+        மாறிலி ஒன்றிப்பு xkb_action *actions = வெற்று;
+        மாறிலி xkb_action_மொத்தம்_t மொத்தம் = xkb_சாவி_get_actions(&state->base, சாவி,
                                                              &actions);
 
-        if (latch == LATCH_KEY_DOWN) {
+        எனில் (latch == LATCH_சாவி_DOWN) {
             /*
              * Another key was pressed while we’ve still got the latching key
              * held down.
@@ -585,7 +585,7 @@ xkb_filter_group_latch_func(struct xkb_server_state *state,
              *   xkb_filter_group_latch_new(), until the latch key is
              *   released.
              */
-            if (state->a11y_flags & XKB_A11Y_LATCH_SIMULTANEOUS_KEYS) {
+            எனில் (state->a11y_flags & XKB_A11_Y_LATCH_SIMULTANEOUS_சாவிகள்) {
                 /*
                  * Prevent the latch to trigger only if some of the pressed
                  * key’s actions breaks latches, mirroring the behavior in the
@@ -593,28 +593,28 @@ xkb_filter_group_latch_func(struct xkb_server_state *state,
                  *
                  * This is an extension to the X11 XKB protocol.
                  */
-                for (xkb_action_count_t k = 0; k < count; k++) {
-                    if (xkb_action_breaks_latch(&(actions[k]),
+                க்கு (xkb_action_மொத்தம்_t k = 0; k < மொத்தம்; k++) {
+                    எனில் (xkb_action_breaks_latch(&(actions[k]),
                                                 state->base.components.controls,
                                                 INTERNAL_BREAKS_GROUP_LATCH,
                                                 0))
                     {
                         latch = NO_LATCH;
-                        break;
+                        நிறுத்து;
                     }
                 }
-            } else {
+            } இல்லையெனில் {
                 /* Unconditionally prevent the latch to trigger. */
                 latch = NO_LATCH;
             }
         }
-        else if (latch == LATCH_PENDING) {
+        இல்லையெனில் எனில் (latch == LATCH_PENDING) {
             /* If this is a new keypress and we're awaiting our single latched
              * keypress, then either break the latch if any random key is
              * pressed, or promote it to a lock if it's the same group delta &
              * flags and latchToLock option is enabled. */
-            const bool sticky_keys = state->base.components.controls
-                                   & CONTROL_STICKY_KEYS;
+            மாறிலி bool sticky_சாவிகள் = state->base.components.controls
+                                   & CONTROL_STICKY_சாவிகள்;
             /*
              * NOTE: Action’s flags other than `ACTION_ABSOLUTE_SWITCH` are
              * not compared:
@@ -625,13 +625,13 @@ xkb_filter_group_latch_func(struct xkb_server_state *state,
              * - even if it were the case, one would most likely want both
              *   actions to be considered compatible in this context.
              */
-            for (xkb_action_count_t k = 0; k < count; k++) {
-                if (((actions[k].type == ACTION_TYPE_GROUP_LATCH) ||
-                     (actions[k].type == ACTION_TYPE_GROUP_SET && sticky_keys)) &&
+            க்கு (xkb_action_மொத்தம்_t k = 0; k < மொத்தம்; k++) {
+                எனில் (((actions[k].type == ACTION_TYPE_GROUP_LATCH) ||
+                     (actions[k].type == ACTION_TYPE_GROUP_SET && sticky_சாவிகள்)) &&
                      actions[k].group.group == filter->action.group.group &&
                      (actions[k].group.flags & ACTION_ABSOLUTE_SWITCH) ==
                      (filter->action.group.flags & ACTION_ABSOLUTE_SWITCH)) {
-                    if (filter->action.group.flags & ACTION_LATCH_TO_LOCK &&
+                    எனில் (filter->action.group.flags & ACTION_LATCH_TO_LOCK &&
                         filter->action.group.group != 0)
                     {
                         /* Promote to lock */
@@ -639,63 +639,63 @@ xkb_filter_group_latch_func(struct xkb_server_state *state,
                         filter->func = xkb_filter_group_lock_func;
                         xkb_filter_group_lock_new(state, events, filter);
                         state->base.components.latched_group -= priv.group_delta;
-                        filter->key = key;
+                        filter->சாவி = சாவி;
                         /* XXX beep beep! */
-                        return XKB_FILTER_CONSUME;
+                        திரும்பு XKB_FILTER_CONSUME;
                     }
                     /* Do nothing if `latchToLock` option is not activated; if
                      * the latch is not broken by the following actions and the
                      * key is not consumed, then another latch filter will be
                      * created.
                      */
-                    continue;
+                    தொடர்;
                 }
-                else if (xkb_action_breaks_latch(&(actions[k]),
+                இல்லையெனில் எனில் (xkb_action_breaks_latch(&(actions[k]),
                                                  state->base.components.controls,
                                                  INTERNAL_BREAKS_GROUP_LATCH,
                                                  0))
                 {
                     /* Breaks the latch */
                     state->base.components.latched_group -= priv.group_delta;
-                    filter->func = NULL;
-                    return XKB_FILTER_CONTINUE;
+                    filter->func = வெற்று;
+                    திரும்பு XKB_FILTER_CONTINUE;
                 }
             }
         }
-        else {
+        இல்லையெனில் {
             /* Ignore press in NO_LATCH state */
-            assert(latch == NO_LATCH);
+            ப்ரதிஜ்ஞா(latch == NO_LATCH);
         }
     }
-    else if (key != filter->key) {
+    இல்லையெனில் எனில் (சாவி != filter->சாவி) {
         /* Ignore repeat/release of other keys */
     }
-    else if (direction == XKB_KEY_REPEATED) {
-        return XKB_FILTER_CONSUME; // TODO: check
+    இல்லையெனில் எனில் (direction == XKB_சாவி_REPEATED) {
+        திரும்பு XKB_FILTER_CONSUME; // TODO: check
     }
-    else {
+    இல்லையெனில் {
         /* Our key got released.  If we've set it to clear locks, and we
          * currently have a group locked, then release it and
          * don't actually latch.  Else we've actually hit the latching
          * stage, so set PENDING and move our group from base to
          * latched. */
-        if ((filter->action.group.flags & ACTION_LOCK_CLEAR) &&
+        எனில் ((filter->action.group.flags & ACTION_LOCK_CLEAR) &&
              state->base.components.locked_group) {
-            if (latch == LATCH_PENDING)
+            எனில் (latch == LATCH_PENDING)
                 state->base.components.latched_group -= priv.group_delta;
-            else
+            இல்லையெனில்
                 state->base.components.base_group -= priv.group_delta;
             state->base.components.locked_group = 0;
-            filter->func = NULL;
+            filter->func = வெற்று;
         }
         /* Broken latch */
-        else if (latch == NO_LATCH) {
+        இல்லையெனில் எனில் (latch == NO_LATCH) {
             state->base.components.base_group -= priv.group_delta;
-            filter->func = NULL;
+            filter->func = வெற்று;
         }
         /* We may already have reached the latch state if pressing the
          * key multiple times without latch-to-lock enabled. */
-        else if (latch == LATCH_KEY_DOWN) {
+        இல்லையெனில் எனில் (latch == LATCH_சாவி_DOWN) {
             latch = LATCH_PENDING;
             /* Switch from set to latch */
             state->base.components.base_group -= priv.group_delta;
@@ -707,17 +707,17 @@ xkb_filter_group_latch_func(struct xkb_server_state *state,
     priv.latch = latch;
     filter->priv = priv.priv;
 
-    return XKB_FILTER_CONTINUE;
+    திரும்பு XKB_FILTER_CONTINUE;
 }
 
-static void
-xkb_filter_mod_set_new(struct xkb_server_state *state,
-                       struct xkb_events *events,
-                       struct xkb_filter *filter)
+நிலையான வெறுமை
+xkb_filter_mod_set_new(கட்டமைப்பு xkb_server_state *state,
+                       கட்டமைப்பு xkb_events *events,
+                       கட்டமைப்பு xkb_filter *filter)
 {
-    const enum xkb_action_flags unlock = ACTION_UNLOCK_ON_PRESS
+    மாறிலி எண்ணிக்கை xkb_action_flags unlock = ACTION_UNLOCK_ON_PRESS
                                        | ACTION_LOCK_CLEAR;
-    if ((filter->action.mods.flags & unlock) == unlock) {
+    எனில் ((filter->action.mods.flags & unlock) == unlock) {
         /*
          * Unlock on press
          *
@@ -726,112 +726,112 @@ xkb_filter_mod_set_new(struct xkb_server_state *state,
         filter->priv = filter->action.mods.mods.mask
                      & ~state->base.components.locked_mods;
         state->base.components.locked_mods &= ~filter->action.mods.mods.mask;
-    } else {
+    } இல்லையெனில் {
         filter->priv = filter->action.mods.mods.mask;
     }
 
     state->set_mods |= (xkb_mod_mask_t) filter->priv;
 }
 
-static bool
-xkb_filter_mod_set_func(struct xkb_server_state *state,
-                        struct xkb_events *events,
-                        struct xkb_filter *filter,
-                        const struct xkb_key *key,
-                        enum xkb_key_direction direction)
+நிலையான bool
+xkb_filter_mod_set_func(கட்டமைப்பு xkb_server_state *state,
+                        கட்டமைப்பு xkb_events *events,
+                        கட்டமைப்பு xkb_filter *filter,
+                        மாறிலி கட்டமைப்பு xkb_சாவி *சாவி,
+                        எண்ணிக்கை xkb_சாவி_direction direction)
 {
 
-    if (key != filter->key) {
+    எனில் (சாவி != filter->சாவி) {
         filter->action.mods.flags &= ~ACTION_LOCK_CLEAR;
-        return XKB_FILTER_CONTINUE;
+        திரும்பு XKB_FILTER_CONTINUE;
     }
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    தேர்வு (direction) {
+    நிலை XKB_சாவி_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    நிலை XKB_சாவி_REPEATED:
+        திரும்பு XKB_FILTER_CONSUME;
+    இயல்பு:
+        எனில் (--filter->refcnt > 0)
+            திரும்பு XKB_FILTER_CONSUME;
     }
 
     state->clear_mods |= (xkb_mod_mask_t) filter->priv;
-    const enum xkb_action_flags unlock = ACTION_UNLOCK_ON_PRESS
+    மாறிலி எண்ணிக்கை xkb_action_flags unlock = ACTION_UNLOCK_ON_PRESS
                                        | ACTION_LOCK_CLEAR;
-    if ((filter->action.mods.flags & unlock) == ACTION_LOCK_CLEAR)
+    எனில் ((filter->action.mods.flags & unlock) == ACTION_LOCK_CLEAR)
         state->base.components.locked_mods &= ~filter->action.mods.mods.mask;
 
-    filter->func = NULL;
-    return XKB_FILTER_CONTINUE;
+    filter->func = வெற்று;
+    திரும்பு XKB_FILTER_CONTINUE;
 }
 
-static void
-xkb_filter_mod_lock_new(struct xkb_server_state *state,
-                        struct xkb_events *events,
-                        struct xkb_filter *filter)
+நிலையான வெறுமை
+xkb_filter_mod_lock_new(கட்டமைப்பு xkb_server_state *state,
+                        கட்டமைப்பு xkb_events *events,
+                        கட்டமைப்பு xkb_filter *filter)
 {
     filter->priv = (state->base.components.locked_mods &
                     filter->action.mods.mods.mask);
 
-    if (filter->priv && (filter->action.mods.flags & ACTION_UNLOCK_ON_PRESS)) {
+    எனில் (filter->priv && (filter->action.mods.flags & ACTION_UNLOCK_ON_PRESS)) {
         /*
          * Some of the target modifiers were locked before key press: unlock.
          *
          * This is a keymap v2 extension: unlock-on-press.
          */
-        if (!(filter->action.mods.flags & ACTION_LOCK_NO_UNLOCK))
+        எனில் (!(filter->action.mods.flags & ACTION_LOCK_NO_UNLOCK))
             state->base.components.locked_mods &= ~filter->priv;
         /* No further action: cancel filter */
-        filter->func = NULL;
-    } else {
+        filter->func = வெற்று;
+    } இல்லையெனில் {
         /* Set base mods; lock mods if relevant (XKB 1.0 spec) */
         state->set_mods |= filter->action.mods.mods.mask;
-        if (!(filter->action.mods.flags & ACTION_LOCK_NO_LOCK))
+        எனில் (!(filter->action.mods.flags & ACTION_LOCK_NO_LOCK))
             state->base.components.locked_mods |= filter->action.mods.mods.mask;
     }
 }
 
-static bool
-xkb_filter_mod_lock_func(struct xkb_server_state *state,
-                         struct xkb_events *events,
-                         struct xkb_filter *filter,
-                         const struct xkb_key *key,
-                         enum xkb_key_direction direction)
+நிலையான bool
+xkb_filter_mod_lock_func(கட்டமைப்பு xkb_server_state *state,
+                         கட்டமைப்பு xkb_events *events,
+                         கட்டமைப்பு xkb_filter *filter,
+                         மாறிலி கட்டமைப்பு xkb_சாவி *சாவி,
+                         எண்ணிக்கை xkb_சாவி_direction direction)
 {
-    if (key != filter->key)
-        return XKB_FILTER_CONTINUE;
+    எனில் (சாவி != filter->சாவி)
+        திரும்பு XKB_FILTER_CONTINUE;
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    தேர்வு (direction) {
+    நிலை XKB_சாவி_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    நிலை XKB_சாவி_REPEATED:
+        திரும்பு XKB_FILTER_CONSUME;
+    இயல்பு:
+        எனில் (--filter->refcnt > 0)
+            திரும்பு XKB_FILTER_CONSUME;
     }
 
     state->clear_mods |= filter->action.mods.mods.mask;
-    if (!(filter->action.mods.flags & ACTION_LOCK_NO_UNLOCK))
+    எனில் (!(filter->action.mods.flags & ACTION_LOCK_NO_UNLOCK))
         state->base.components.locked_mods &= ~filter->priv;
 
-    filter->func = NULL;
-    return XKB_FILTER_CONTINUE;
+    filter->func = வெற்று;
+    திரும்பு XKB_FILTER_CONTINUE;
 }
 
-static void
-xkb_filter_mod_latch_new(struct xkb_server_state *state,
-                         struct xkb_events *events,
-                         struct xkb_filter *filter)
+நிலையான வெறுமை
+xkb_filter_mod_latch_new(கட்டமைப்பு xkb_server_state *state,
+                         கட்டமைப்பு xkb_events *events,
+                         கட்டமைப்பு xkb_filter *filter)
 {
     /* Latch-on-press + clear-locks imply unlock-on-press */
-    const enum xkb_action_flags unlockOnPress = ACTION_UNLOCK_ON_PRESS
+    மாறிலி எண்ணிக்கை xkb_action_flags unlockOnPress = ACTION_UNLOCK_ON_PRESS
                                               | ACTION_LATCH_ON_PRESS;
 
-    if ((filter->action.mods.flags & ACTION_LOCK_CLEAR) &&
+    எனில் ((filter->action.mods.flags & ACTION_LOCK_CLEAR) &&
         (filter->action.mods.flags & unlockOnPress) &&
         (state->base.components.locked_mods & filter->action.mods.mods.mask) ==
          filter->action.mods.mods.mask) {
@@ -841,8 +841,8 @@ xkb_filter_mod_latch_new(struct xkb_server_state *state,
          * This is a keymap v2 extension: clear locks and do not latch.
          */
         state->base.components.locked_mods &= ~filter->action.mods.mods.mask;
-        filter->func = NULL;
-    } else if (filter->action.mods.flags & ACTION_LATCH_ON_PRESS) {
+        filter->func = வெற்று;
+    } இல்லையெனில் எனில் (filter->action.mods.flags & ACTION_LATCH_ON_PRESS) {
         /*
          * Latch on key press
          *
@@ -851,28 +851,28 @@ xkb_filter_mod_latch_new(struct xkb_server_state *state,
         filter->priv = LATCH_PENDING;
         state->base.components.latched_mods |= filter->action.mods.mods.mask;
         /* XXX beep beep! */
-    } else {
+    } இல்லையெனில் {
         /* XKB standard latch action */
-        filter->priv = LATCH_KEY_DOWN;
+        filter->priv = LATCH_சாவி_DOWN;
         state->set_mods |= filter->action.mods.mods.mask;
     }
 }
 
-static bool
-xkb_filter_mod_latch_func(struct xkb_server_state *state,
-                          struct xkb_events *events,
-                          struct xkb_filter *filter,
-                          const struct xkb_key *key,
-                          enum xkb_key_direction direction)
+நிலையான bool
+xkb_filter_mod_latch_func(கட்டமைப்பு xkb_server_state *state,
+                          கட்டமைப்பு xkb_events *events,
+                          கட்டமைப்பு xkb_filter *filter,
+                          மாறிலி கட்டமைப்பு xkb_சாவி *சாவி,
+                          எண்ணிக்கை xkb_சாவி_direction direction)
 {
-    enum xkb_key_latch_state latch = filter->priv;
+    எண்ணிக்கை xkb_சாவி_latch_state latch = filter->priv;
 
-    if (direction == XKB_KEY_DOWN) {
-        const union xkb_action *actions = NULL;
-        const xkb_action_count_t count = xkb_key_get_actions(&state->base, key,
+    எனில் (direction == XKB_சாவி_DOWN) {
+        மாறிலி ஒன்றிப்பு xkb_action *actions = வெற்று;
+        மாறிலி xkb_action_மொத்தம்_t மொத்தம் = xkb_சாவி_get_actions(&state->base, சாவி,
                                                              &actions);
 
-        if (latch == LATCH_KEY_DOWN) {
+        எனில் (latch == LATCH_சாவி_DOWN) {
             /*
              * Another key was pressed while we’ve still got the latching key
              * held down.
@@ -885,7 +885,7 @@ xkb_filter_mod_latch_func(struct xkb_server_state *state,
              * • Prevent the latch to trigger and keep the base modifiers set
              *   by xkb_filter_mod_latch_new(), until the latch key is released.
              */
-            if (state->a11y_flags & XKB_A11Y_LATCH_SIMULTANEOUS_KEYS) {
+            எனில் (state->a11y_flags & XKB_A11_Y_LATCH_SIMULTANEOUS_சாவிகள்) {
                 /*
                  * Prevent the latch to trigger only if some of the pressed
                  * key’s actions breaks latches, mirroring the behavior in the
@@ -893,28 +893,28 @@ xkb_filter_mod_latch_func(struct xkb_server_state *state,
                  *
                  * This is an extension to the X11 XKB protocol.
                  */
-                for (xkb_action_count_t k = 0; k < count; k++) {
-                    if (xkb_action_breaks_latch(&(actions[k]),
+                க்கு (xkb_action_மொத்தம்_t k = 0; k < மொத்தம்; k++) {
+                    எனில் (xkb_action_breaks_latch(&(actions[k]),
                                                 state->base.components.controls,
                                                 INTERNAL_BREAKS_MOD_LATCH,
                                                 filter->action.mods.mods.mask))
                     {
                         latch = NO_LATCH;
-                        break;
+                        நிறுத்து;
                     }
                 }
-            } else {
+            } இல்லையெனில் {
                 /* Unconditionally prevent the latch to trigger. */
                 latch = NO_LATCH;
             }
         }
-        else if (latch == LATCH_PENDING) {
+        இல்லையெனில் எனில் (latch == LATCH_PENDING) {
             /* If this is a new keypress and we're awaiting our single latched
              * keypress, then either break the latch if any random key is pressed,
              * or promote it to a lock or plain base set if it's the same
              * modifier. */
-            const bool sticky_keys = state->base.components.controls
-                                   & CONTROL_STICKY_KEYS;
+            மாறிலி bool sticky_சாவிகள் = state->base.components.controls
+                                   & CONTROL_STICKY_சாவிகள்;
             /*
              * NOTE: Action’s flags are not compared:
              * - flags may have been modified by keyboard controls at the
@@ -924,31 +924,31 @@ xkb_filter_mod_latch_func(struct xkb_server_state *state,
              * - even if it were the case, one would most likely want both
              *   actions to be considered compatible in this context.
              */
-            for (xkb_action_count_t k = 0; k < count; k++) {
-                if (((actions[k].type == ACTION_TYPE_MOD_LATCH) ||
-                     (actions[k].type == ACTION_TYPE_MOD_SET && sticky_keys)) &&
+            க்கு (xkb_action_மொத்தம்_t k = 0; k < மொத்தம்; k++) {
+                எனில் (((actions[k].type == ACTION_TYPE_MOD_LATCH) ||
+                     (actions[k].type == ACTION_TYPE_MOD_SET && sticky_சாவிகள்)) &&
                     actions[k].mods.mods.mask == filter->action.mods.mods.mask)
                 {
-                    if (filter->action.mods.flags & ACTION_LATCH_TO_LOCK) {
+                    எனில் (filter->action.mods.flags & ACTION_LATCH_TO_LOCK) {
                         /* Mutate the action to LockMods() */
                         filter->action.type = ACTION_TYPE_MOD_LOCK;
                         filter->func = xkb_filter_mod_lock_func;
                         xkb_filter_mod_lock_new(state, events, filter);
                     }
-                    else {
+                    இல்லையெனில் {
                         /* Mutate the action to SetMods() */
                         filter->action.type = ACTION_TYPE_MOD_SET;
                         filter->func = xkb_filter_mod_set_func;
                         xkb_filter_mod_set_new(state, events, filter);
                     }
-                    filter->key = key;
+                    filter->சாவி = சாவி;
                     /* Clear latches */
                     state->base.components.latched_mods &=
                         ~filter->action.mods.mods.mask;
                     /* XXX beep beep! */
-                    return XKB_FILTER_CONSUME;
+                    திரும்பு XKB_FILTER_CONSUME;
                 }
-                else if (xkb_action_breaks_latch(&(actions[k]),
+                இல்லையெனில் எனில் (xkb_action_breaks_latch(&(actions[k]),
                                                  state->base.components.controls,
                                                  INTERNAL_BREAKS_MOD_LATCH,
                                                  filter->action.mods.mods.mask))
@@ -957,23 +957,23 @@ xkb_filter_mod_latch_func(struct xkb_server_state *state,
                      *      latch in the next run after this press? */
                     state->base.components.latched_mods &=
                         ~filter->action.mods.mods.mask;
-                    filter->func = NULL;
-                    return XKB_FILTER_CONTINUE;
+                    filter->func = வெற்று;
+                    திரும்பு XKB_FILTER_CONTINUE;
                 }
             }
         }
-        else {
+        இல்லையெனில் {
             /* Ignore press in NO_LATCH state */
-            assert(latch == NO_LATCH);
+            ப்ரதிஜ்ஞா(latch == NO_LATCH);
         }
     }
-    else if (key != filter->key) {
+    இல்லையெனில் எனில் (சாவி != filter->சாவி) {
         /* Ignore repeat/release of other keys */
     }
-    else if (direction == XKB_KEY_REPEATED) {
-        return XKB_FILTER_CONSUME; // TODO: check
+    இல்லையெனில் எனில் (direction == XKB_சாவி_REPEATED) {
+        திரும்பு XKB_FILTER_CONSUME; // TODO: check
     }
-    else {
+    இல்லையெனில் {
         /* Our key got released.  If we’ve set it to clear locks, and we
          * currently have the same modifiers locked, then release them and
          * don't actually latch.  Else we’ve actually hit the latching
@@ -981,30 +981,30 @@ xkb_filter_mod_latch_func(struct xkb_server_state *state,
          * latched. */
 
         /* Latch-on-press + clear-locks imply unlock-on-press */
-        const enum xkb_action_flags unlockOnPress = ACTION_UNLOCK_ON_PRESS
+        மாறிலி எண்ணிக்கை xkb_action_flags unlockOnPress = ACTION_UNLOCK_ON_PRESS
                                                   | ACTION_LATCH_ON_PRESS;
 
-        if ((filter->action.mods.flags & ACTION_LOCK_CLEAR) &&
+        எனில் ((filter->action.mods.flags & ACTION_LOCK_CLEAR) &&
             !(filter->action.mods.flags & unlockOnPress) &&
             (state->base.components.locked_mods &
              filter->action.mods.mods.mask) == filter->action.mods.mods.mask)
         {
             /* XXX: We might be a bit overenthusiastic about clearing
              *      mods other filters have set here? */
-            if (latch == LATCH_PENDING)
+            எனில் (latch == LATCH_PENDING)
                 state->base.components.latched_mods &=
                     ~filter->action.mods.mods.mask;
-            else
+            இல்லையெனில்
                 state->clear_mods |= filter->action.mods.mods.mask;
             state->base.components.locked_mods &= ~filter->action.mods.mods.mask;
-            filter->func = NULL;
+            filter->func = வெற்று;
         }
-        else if (latch == NO_LATCH) {
+        இல்லையெனில் எனில் (latch == NO_LATCH) {
             /* Broken latch */
             state->clear_mods |= filter->action.mods.mods.mask;
-            filter->func = NULL;
+            filter->func = வெற்று;
         }
-        else if (!(filter->action.mods.flags & ACTION_LATCH_ON_PRESS)) {
+        இல்லையெனில் எனில் (!(filter->action.mods.flags & ACTION_LATCH_ON_PRESS)) {
             latch = LATCH_PENDING;
             state->clear_mods |= filter->action.mods.mods.mask;
             state->base.components.latched_mods |= filter->action.mods.mods.mask;
@@ -1014,25 +1014,25 @@ xkb_filter_mod_latch_func(struct xkb_server_state *state,
 
     filter->priv = latch;
 
-    return XKB_FILTER_CONTINUE;
+    திரும்பு XKB_FILTER_CONTINUE;
 }
 
-static void
-append_pointer_move(struct xkb_events *events,
-                    struct xkb_filter *filter)
+நிலையான வெறுமை
+append_pointer_move(கட்டமைப்பு xkb_events *events,
+                    கட்டமைப்பு xkb_filter *filter)
 {
-    enum xkb_pointer_motion_flags flags = 0;
-    if (filter->action.ptr.flags & ACTION_ABSOLUTE_X)
+    எண்ணிக்கை xkb_pointer_motion_flags flags = 0;
+    எனில் (filter->action.ptr.flags & ACTION_ABSOLUTE_X)
         flags |= XKB_POINTER_MOTION_ABSOLUTE_X;
-    if (filter->action.ptr.flags & ACTION_ABSOLUTE_Y)
+    எனில் (filter->action.ptr.flags & ACTION_ABSOLUTE_Y)
         flags |= XKB_POINTER_MOTION_ABSOLUTE_Y;
-    if (filter->action.ptr.flags & ACTION_REPEAT)
+    எனில் (filter->action.ptr.flags & ACTION_REPEAT)
         flags |= XKB_POINTER_MOTION_REPEATS;
-    darray_append(events->queue, (struct xkb_event) {
+    darray_append(events->queue, (கட்டமைப்பு xkb_event) {
         .ctx = events->ctx, /* borrowed from events */
         .type = XKB_EVENT_TYPE_POINTER_MOTION,
         .pointer_motion = {
-            .size = sizeof(((struct xkb_event*)0)->pointer_motion),
+            .size = அளவு(((கட்டமைப்பு xkb_event*)0)->pointer_motion),
             .flags = flags,
             .x = filter->action.ptr.x,
             .y = filter->action.ptr.y,
@@ -1040,221 +1040,221 @@ append_pointer_move(struct xkb_events *events,
     });
 }
 
-static void
-xkb_filter_pointer_move_new(struct xkb_server_state *state,
-                            struct xkb_events *events,
-                            struct xkb_filter *filter)
+நிலையான வெறுமை
+xkb_filter_pointer_move_new(கட்டமைப்பு xkb_server_state *state,
+                            கட்டமைப்பு xkb_events *events,
+                            கட்டமைப்பு xkb_filter *filter)
 {
-    if (!events) {
-        filter->func = NULL;
-        return;
+    எனில் (!events) {
+        filter->func = வெற்று;
+        திரும்பு;
     }
 
-    assert(state->base.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_KEYS);
+    ப்ரதிஜ்ஞா(state->base.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_சாவிகள்);
     append_pointer_move(events, filter);
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_சாவி_EVENT;
 }
 
-static bool
-xkb_filter_pointer_move_func(struct xkb_server_state *state,
-                             struct xkb_events *events,
-                             struct xkb_filter *filter,
-                             const struct xkb_key *key,
-                             enum xkb_key_direction direction)
+நிலையான bool
+xkb_filter_pointer_move_func(கட்டமைப்பு xkb_server_state *state,
+                             கட்டமைப்பு xkb_events *events,
+                             கட்டமைப்பு xkb_filter *filter,
+                             மாறிலி கட்டமைப்பு xkb_சாவி *சாவி,
+                             எண்ணிக்கை xkb_சாவி_direction direction)
 {
-    if (key != filter->key || !events)
-        return XKB_FILTER_CONTINUE;
+    எனில் (சாவி != filter->சாவி || !events)
+        திரும்பு XKB_FILTER_CONTINUE;
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_சாவி_EVENT;
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    தேர்வு (direction) {
+    நிலை XKB_சாவி_DOWN:
         filter->refcnt++;
         append_pointer_move(events, filter);
-        return XKB_FILTER_CONSUME;
-    case XKB_KEY_REPEATED:
-        if (filter->action.ptr.flags & ACTION_REPEAT)
+        திரும்பு XKB_FILTER_CONSUME;
+    நிலை XKB_சாவி_REPEATED:
+        எனில் (filter->action.ptr.flags & ACTION_REPEAT)
             append_pointer_move(events, filter);
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+        திரும்பு XKB_FILTER_CONSUME;
+    இயல்பு:
+        எனில் (--filter->refcnt > 0)
+            திரும்பு XKB_FILTER_CONSUME;
     }
 
-    filter->func = NULL;
-    return XKB_FILTER_CONSUME;
+    filter->func = வெற்று;
+    திரும்பு XKB_FILTER_CONSUME;
 }
 
 /* Implemented with xkb_machine API because it requires struct xkb_machine */
-static void
-xkb_filter_pointer_button_new(struct xkb_server_state *state,
-                              struct xkb_events *events,
-                              struct xkb_filter *filter);
+நிலையான வெறுமை
+xkb_filter_pointer_button_new(கட்டமைப்பு xkb_server_state *state,
+                              கட்டமைப்பு xkb_events *events,
+                              கட்டமைப்பு xkb_filter *filter);
 
 /* Implemented with xkb_machine API because it requires struct xkb_machine */
-static bool
-xkb_filter_pointer_button_func(struct xkb_server_state *state,
-                               struct xkb_events *events,
-                               struct xkb_filter *filter,
-                               const struct xkb_key *key,
-                               enum xkb_key_direction direction);
+நிலையான bool
+xkb_filter_pointer_button_func(கட்டமைப்பு xkb_server_state *state,
+                               கட்டமைப்பு xkb_events *events,
+                               கட்டமைப்பு xkb_filter *filter,
+                               மாறிலி கட்டமைப்பு xkb_சாவி *சாவி,
+                               எண்ணிக்கை xkb_சாவி_direction direction);
 
 /* Implemented with xkb_machine API because it requires struct xkb_machine */
-static void
-xkb_filter_pointer_lock_button_new(struct xkb_server_state *state,
-                                   struct xkb_events *events,
-                                   struct xkb_filter *filter);
+நிலையான வெறுமை
+xkb_filter_pointer_lock_button_new(கட்டமைப்பு xkb_server_state *state,
+                                   கட்டமைப்பு xkb_events *events,
+                                   கட்டமைப்பு xkb_filter *filter);
 
 /* Implemented with xkb_machine API because it requires struct xkb_machine */
-static bool
-xkb_filter_pointer_lock_button_func(struct xkb_server_state *state,
-                                    struct xkb_events *events,
-                                    struct xkb_filter *filter,
-                                    const struct xkb_key *key,
-                                    enum xkb_key_direction direction);
+நிலையான bool
+xkb_filter_pointer_lock_button_func(கட்டமைப்பு xkb_server_state *state,
+                                    கட்டமைப்பு xkb_events *events,
+                                    கட்டமைப்பு xkb_filter *filter,
+                                    மாறிலி கட்டமைப்பு xkb_சாவி *சாவி,
+                                    எண்ணிக்கை xkb_சாவி_direction direction);
 
 /* Implemented with xkb_machine API because it requires struct xkb_machine */
-static void
-xkb_filter_pointer_set_default_button_new(struct xkb_server_state *state,
-                                          struct xkb_events *events,
-                                          struct xkb_filter *filter);
+நிலையான வெறுமை
+xkb_filter_pointer_set_default_button_new(கட்டமைப்பு xkb_server_state *state,
+                                          கட்டமைப்பு xkb_events *events,
+                                          கட்டமைப்பு xkb_filter *filter);
 
 /* Implemented with xkb_machine API because it requires struct xkb_machine */
-static bool
-xkb_filter_pointer_set_default_button_func(struct xkb_server_state *state,
-                                           struct xkb_events *events,
-                                           struct xkb_filter *filter,
-                                           const struct xkb_key *key,
-                                           enum xkb_key_direction direction);
+நிலையான bool
+xkb_filter_pointer_set_default_button_func(கட்டமைப்பு xkb_server_state *state,
+                                           கட்டமைப்பு xkb_events *events,
+                                           கட்டமைப்பு xkb_filter *filter,
+                                           மாறிலி கட்டமைப்பு xkb_சாவி *சாவி,
+                                           எண்ணிக்கை xkb_சாவி_direction direction);
 
-static void
-xkb_filter_terminate_server_new(struct xkb_server_state *state,
-                                 struct xkb_events *events,
-                                 struct xkb_filter *filter);
+நிலையான வெறுமை
+xkb_filter_terminate_server_new(கட்டமைப்பு xkb_server_state *state,
+                                 கட்டமைப்பு xkb_events *events,
+                                 கட்டமைப்பு xkb_filter *filter);
 
-static bool
-xkb_filter_terminate_server_func(struct xkb_server_state *state,
-                                  struct xkb_events *events,
-                                  struct xkb_filter *filter,
-                                  const struct xkb_key *key,
-                                  enum xkb_key_direction direction);
-
-/* Implemented with xkb_machine API because it requires struct xkb_machine */
-static void
-xkb_filter_switch_virtual_console_new(struct xkb_server_state *state,
-                                      struct xkb_events *events,
-                                      struct xkb_filter *filter);
+நிலையான bool
+xkb_filter_terminate_server_func(கட்டமைப்பு xkb_server_state *state,
+                                  கட்டமைப்பு xkb_events *events,
+                                  கட்டமைப்பு xkb_filter *filter,
+                                  மாறிலி கட்டமைப்பு xkb_சாவி *சாவி,
+                                  எண்ணிக்கை xkb_சாவி_direction direction);
 
 /* Implemented with xkb_machine API because it requires struct xkb_machine */
-static bool
-xkb_filter_switch_virtual_console_func(struct xkb_server_state *state,
-                                       struct xkb_events *events,
-                                       struct xkb_filter *filter,
-                                       const struct xkb_key *key,
-                                       enum xkb_key_direction direction);
+நிலையான வெறுமை
+xkb_filter_switch_virtual_console_new(கட்டமைப்பு xkb_server_state *state,
+                                      கட்டமைப்பு xkb_events *events,
+                                      கட்டமைப்பு xkb_filter *filter);
 
-static inline void
-clear_all_latches_and_locks(struct xkb_server_state *state,
-                            struct xkb_events *events);
+/* Implemented with xkb_machine API because it requires struct xkb_machine */
+நிலையான bool
+xkb_filter_switch_virtual_console_func(கட்டமைப்பு xkb_server_state *state,
+                                       கட்டமைப்பு xkb_events *events,
+                                       கட்டமைப்பு xkb_filter *filter,
+                                       மாறிலி கட்டமைப்பு xkb_சாவி *சாவி,
+                                       எண்ணிக்கை xkb_சாவி_direction direction);
 
-static void
-xkb_filter_ctrls_new(struct xkb_server_state *state,
-                     struct xkb_events *events,
-                     struct xkb_filter *filter)
+நிலையான உள்வரி வெறுமை
+clear_all_latches_and_locks(கட்டமைப்பு xkb_server_state *state,
+                            கட்டமைப்பு xkb_events *events);
+
+நிலையான வெறுமை
+xkb_filter_ctrls_new(கட்டமைப்பு xkb_server_state *state,
+                     கட்டமைப்பு xkb_events *events,
+                     கட்டமைப்பு xkb_filter *filter)
 {
-    if (filter->action.type == ACTION_TYPE_CTRL_SET) {
+    எனில் (filter->action.type == ACTION_TYPE_CTRL_SET) {
         /* Set: save the specified controls that are *not* already enabled */
         filter->priv = (uint32_t) (
             (~state->base.components.controls) & filter->action.ctrls.ctrls
         );
-    } else {
+    } இல்லையெனில் {
         /* Lock: save the specified controls that *are* already enabled */
         filter->priv = (uint32_t) (
             state->base.components.controls & filter->action.ctrls.ctrls
         );
     }
 
-    if (filter->action.type == ACTION_TYPE_CTRL_SET ||
+    எனில் (filter->action.type == ACTION_TYPE_CTRL_SET ||
         !(filter->action.ctrls.flags & ACTION_LOCK_NO_LOCK)) {
         /* Enable the specified controls that are not already enabled */
         state->base.components.controls |= filter->action.ctrls.ctrls;
     }
 }
 
-static bool
-xkb_filter_ctrls_func(struct xkb_server_state *state,
-                      struct xkb_events *events,
-                      struct xkb_filter *filter,
-                      const struct xkb_key *key,
-                      enum xkb_key_direction direction)
+நிலையான bool
+xkb_filter_ctrls_func(கட்டமைப்பு xkb_server_state *state,
+                      கட்டமைப்பு xkb_events *events,
+                      கட்டமைப்பு xkb_filter *filter,
+                      மாறிலி கட்டமைப்பு xkb_சாவி *சாவி,
+                      எண்ணிக்கை xkb_சாவி_direction direction)
 {
-    if (key != filter->key)
-        return XKB_FILTER_CONTINUE;
+    எனில் (சாவி != filter->சாவி)
+        திரும்பு XKB_FILTER_CONTINUE;
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    தேர்வு (direction) {
+    நிலை XKB_சாவி_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    நிலை XKB_சாவி_REPEATED:
+        திரும்பு XKB_FILTER_CONSUME;
+    இயல்பு:
+        எனில் (--filter->refcnt > 0)
+            திரும்பு XKB_FILTER_CONSUME;
     }
 
-    if (filter->action.type == ACTION_TYPE_CTRL_SET ||
+    எனில் (filter->action.type == ACTION_TYPE_CTRL_SET ||
         !(filter->action.ctrls.flags & ACTION_LOCK_NO_UNLOCK)) {
-        const enum xkb_action_controls old = state->base.components.controls;
+        மாறிலி எண்ணிக்கை xkb_action_controls old = state->base.components.controls;
 
         /*
          * Set: Disable specified controls that were *not* enabled at key press.
          * Lock: Disable specified controls that *were* enabled at key press.
          */
-        state->base.components.controls &= ~(enum xkb_action_controls) filter->priv;
+        state->base.components.controls &= ~(எண்ணிக்கை xkb_action_controls) filter->priv;
 
-        if ((old & CONTROL_STICKY_KEYS) &&
-            !(state->base.components.controls & CONTROL_STICKY_KEYS)) {
+        எனில் ((old & CONTROL_STICKY_சாவிகள்) &&
+            !(state->base.components.controls & CONTROL_STICKY_சாவிகள்)) {
             /* Sticky keys were disabled: clear all locks and latches */
             clear_all_latches_and_locks(state, events);
         }
     }
 
-    filter->func = NULL;
-    return XKB_FILTER_CONTINUE;
+    filter->func = வெற்று;
+    திரும்பு XKB_FILTER_CONTINUE;
 }
 
-static bool
-append_redirect_key_events(struct xkb_server_state *state,
-                           struct xkb_events *events,
-                           const struct xkb_redirect_key_action *redirect,
-                           enum xkb_key_direction direction)
+நிலையான bool
+append_redirect_சாவி_events(கட்டமைப்பு xkb_server_state *state,
+                           கட்டமைப்பு xkb_events *events,
+                           மாறிலி கட்டமைப்பு xkb_redirect_சாவி_action *redirect,
+                           எண்ணிக்கை xkb_சாவி_direction direction)
 {
-    enum xkb_state_component changed = 0;
-    const xkb_mod_mask_t mask = redirect->affect_mods;
+    எண்ணிக்கை xkb_state_component changed = 0;
+    மாறிலி xkb_mod_mask_t mask = redirect->affect_mods;
 
     /*
      * Reference state: find the last state update in the queue, otherwise
      * use the current state.
      */
-    struct xkb_event *event;
-    struct state_components last_components = state->base.components;
+    கட்டமைப்பு xkb_event *event;
+    கட்டமைப்பு state_components last_components = state->base.components;
     darray_foreach_reverse(event, events->queue) {
-        if (event->type == XKB_EVENT_TYPE_STATE_COMPONENTS) {
+        எனில் (event->type == XKB_EVENT_TYPE_STATE_COMPONENTS) {
             last_components = event->components.components;
-            break;
+            நிறுத்து;
         }
     }
 
-    if (mask) {
-        struct state_components new = last_components;
+    எனில் (mask) {
+        கட்டமைப்பு state_components new = last_components;
         new.base_mods = (new.base_mods & ~mask) | redirect->mods;
         new.latched_mods = (new.latched_mods & ~mask) | redirect->mods;
         new.locked_mods = (new.locked_mods & ~mask) | redirect->mods;
         new.mods = (new.mods & ~mask) | redirect->mods;
 
         changed = get_state_component_changes(&last_components, &new);
-        if (changed) {
-            darray_append(events->queue, (struct xkb_event) {
+        எனில் (changed) {
+            darray_append(events->queue, (கட்டமைப்பு xkb_event) {
                 .ctx = events->ctx, /* borrowed from events */
                 .type = XKB_EVENT_TYPE_STATE_COMPONENTS,
                 .components = {
@@ -1267,25 +1267,25 @@ append_redirect_key_events(struct xkb_server_state *state,
              * it was computed for: consumers must observe the key event
              * under the *redirected* modifiers.
              */
-            darray_append(events->queue, (struct xkb_event) {
+            darray_append(events->queue, (கட்டமைப்பு xkb_event) {
                 .ctx = events->ctx, /* borrowed from events */
                 .type = XKB_EVENT_TYPE_FRAME,
             });
         }
     }
 
-    darray_append(events->queue, (struct xkb_event) {
+    darray_append(events->queue, (கட்டமைப்பு xkb_event) {
         .ctx = events->ctx, /* borrowed from events */
-        .type = XKB_EVENT_TYPE_KEY,
-        .key = {
+        .type = XKB_EVENT_TYPE_சாவி,
+        .சாவி = {
             .keycode = redirect->keycode,
             .direction = direction
         }
     });
 
-    if (mask && changed) {
+    எனில் (mask && changed) {
         /* Restore state */
-        darray_append(events->queue, (struct xkb_event) {
+        darray_append(events->queue, (கட்டமைப்பு xkb_event) {
             .ctx = events->ctx, /* borrowed from events */
             .type = XKB_EVENT_TYPE_STATE_COMPONENTS,
             .components = {
@@ -1295,71 +1295,71 @@ append_redirect_key_events(struct xkb_server_state *state,
         });
     }
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
-    return true;
+    state->flags &= ~STATE_REQUIRE_சாவி_EVENT;
+    திரும்பு true;
 }
 
-static void
-xkb_filter_redirect_key_new(struct xkb_server_state *state,
-                            struct xkb_events *events,
-                            struct xkb_filter *filter)
+நிலையான வெறுமை
+xkb_filter_redirect_சாவி_new(கட்டமைப்பு xkb_server_state *state,
+                            கட்டமைப்பு xkb_events *events,
+                            கட்டமைப்பு xkb_filter *filter)
 {
     /* Action effectual only with the xkb_machine API and a valid keycode */
-    if (!events || filter->action.redirect.keycode == XKB_KEYCODE_INVALID) {
-        filter->func = NULL;
-        return;
+    எனில் (!events || filter->action.redirect.keycode == XKB_KEYCODE_INVALID) {
+        filter->func = வெற்று;
+        திரும்பு;
     }
-    append_redirect_key_events(state, events, &filter->action.redirect,
-                               XKB_KEY_DOWN);
+    append_redirect_சாவி_events(state, events, &filter->action.redirect,
+                               XKB_சாவி_DOWN);
 }
 
-static bool
-xkb_filter_redirect_key_func(struct xkb_server_state *state,
-                             struct xkb_events *events,
-                             struct xkb_filter *filter,
-                             const struct xkb_key *key,
-                             enum xkb_key_direction direction)
+நிலையான bool
+xkb_filter_redirect_சாவி_func(கட்டமைப்பு xkb_server_state *state,
+                             கட்டமைப்பு xkb_events *events,
+                             கட்டமைப்பு xkb_filter *filter,
+                             மாறிலி கட்டமைப்பு xkb_சாவி *சாவி,
+                             எண்ணிக்கை xkb_சாவி_direction direction)
 {
-    if (key != filter->key)
-        return XKB_FILTER_CONTINUE;
+    எனில் (சாவி != filter->சாவி)
+        திரும்பு XKB_FILTER_CONTINUE;
 
-    if (direction == XKB_KEY_UP) {
-        append_redirect_key_events(state, events,
-                                   &filter->action.redirect, XKB_KEY_UP);
-        filter->func = NULL;
-        return XKB_FILTER_CONSUME;
-     } else if (direction == XKB_KEY_DOWN) {
-        const union xkb_action *actions = NULL;
-        const xkb_action_count_t count =
-            xkb_key_get_actions(&state->base, key, &actions);
+    எனில் (direction == XKB_சாவி_UP) {
+        append_redirect_சாவி_events(state, events,
+                                   &filter->action.redirect, XKB_சாவி_UP);
+        filter->func = வெற்று;
+        திரும்பு XKB_FILTER_CONSUME;
+     } இல்லையெனில் எனில் (direction == XKB_சாவி_DOWN) {
+        மாறிலி ஒன்றிப்பு xkb_action *actions = வெற்று;
+        மாறிலி xkb_action_மொத்தம்_t மொத்தம் =
+            xkb_சாவி_get_actions(&state->base, சாவி, &actions);
 
-        for (xkb_action_count_t a = 0; a < count; a++) {
-            if (actions[a].type == ACTION_TYPE_REDIRECT_KEY &&
+        க்கு (xkb_action_மொத்தம்_t a = 0; a < மொத்தம்; a++) {
+            எனில் (actions[a].type == ACTION_TYPE_REDIRECT_சாவி &&
                 actions[a].redirect.keycode != filter->action.redirect.keycode) {
                     /* One action redirects to a different key: release first */
-                    append_redirect_key_events(state, events,
+                    append_redirect_சாவி_events(state, events,
                                                &filter->action.redirect,
-                                               XKB_KEY_UP);
-                filter->func = NULL;
-                return XKB_FILTER_CONTINUE;
+                                               XKB_சாவி_UP);
+                filter->func = வெற்று;
+                திரும்பு XKB_FILTER_CONTINUE;
             }
         }
     }
 
-    append_redirect_key_events(state, events, &filter->action.redirect,
+    append_redirect_சாவி_events(state, events, &filter->action.redirect,
                                direction);
-    return XKB_FILTER_CONSUME;
+    திரும்பு XKB_FILTER_CONSUME;
 }
 
-static const struct {
-    void (*new)(struct xkb_server_state *state,
-                struct xkb_events *events,
-                struct xkb_filter *filter);
-    bool (*func)(struct xkb_server_state *state,
-                 struct xkb_events *events,
-                 struct xkb_filter *filter,
-                 const struct xkb_key *key, enum xkb_key_direction direction);
-} filter_action_funcs[_ACTION_TYPE_NUM_ENTRIES] = {
+நிலையான மாறிலி கட்டமைப்பு {
+    வெறுமை (*new)(கட்டமைப்பு xkb_server_state *state,
+                கட்டமைப்பு xkb_events *events,
+                கட்டமைப்பு xkb_filter *filter);
+    bool (*func)(கட்டமைப்பு xkb_server_state *state,
+                 கட்டமைப்பு xkb_events *events,
+                 கட்டமைப்பு xkb_filter *filter,
+                 மாறிலி கட்டமைப்பு xkb_சாவி *சாவி, எண்ணிக்கை xkb_சாவி_direction direction);
+} filter_action_funcs[ACTION_TYPE_இலக்கம்_ENTRIES] = {
     [ACTION_TYPE_MOD_SET]     = { xkb_filter_mod_set_new,
                                   xkb_filter_mod_set_func },
     [ACTION_TYPE_MOD_LATCH]   = { xkb_filter_mod_latch_new,
@@ -1388,8 +1388,8 @@ static const struct {
                                   xkb_filter_ctrls_func },
     [ACTION_TYPE_CTRL_LOCK]   = { xkb_filter_ctrls_new,
                                   xkb_filter_ctrls_func },
-    [ACTION_TYPE_REDIRECT_KEY] = { xkb_filter_redirect_key_new,
-                                   xkb_filter_redirect_key_func },
+    [ACTION_TYPE_REDIRECT_சாவி] = { xkb_filter_redirect_சாவி_new,
+                                   xkb_filter_redirect_சாவி_func },
 };
 
 /**
@@ -1397,37 +1397,37 @@ static const struct {
  * that are currently active, then if no filter has claimed the key, possibly
  * apply a new filter from the key action.
  */
-static void
-xkb_filter_apply_all(struct xkb_server_state *state,
-                     struct xkb_events *events,
-                     const struct xkb_key *key,
-                     enum xkb_key_direction direction)
+நிலையான வெறுமை
+xkb_filter_apply_all(கட்டமைப்பு xkb_server_state *state,
+                     கட்டமைப்பு xkb_events *events,
+                     மாறிலி கட்டமைப்பு xkb_சாவி *சாவி,
+                     எண்ணிக்கை xkb_சாவி_direction direction)
 {
     /* First run through all the currently active filters and see if any of
      * them have consumed this event. */
     bool consumed = false;
-    struct xkb_filter *filter;
+    கட்டமைப்பு xkb_filter *filter;
     darray_foreach(filter, state->filters) {
-        if (!filter->func)
-            continue;
+        எனில் (!filter->func)
+            தொடர்;
 
-        if (filter->func(state, events, filter, key, direction) == XKB_FILTER_CONSUME)
+        எனில் (filter->func(state, events, filter, சாவி, direction) == XKB_FILTER_CONSUME)
             consumed = true;
     }
-    if (consumed || direction == XKB_KEY_UP)
-        return;
+    எனில் (consumed || direction == XKB_சாவி_UP)
+        திரும்பு;
 
     /* No filter consumed this event, so proceed with the key actions */
-    const union xkb_action *actions = NULL;
-    xkb_action_count_t count = xkb_key_get_actions(&state->base, key,
+    மாறிலி ஒன்றிப்பு xkb_action *actions = வெற்று;
+    xkb_action_மொத்தம்_t மொத்தம் = xkb_சாவி_get_actions(&state->base, சாவி,
                                                          &actions);
 
-    for (struct {
-            xkb_action_count_t count;
-            const union xkb_action *actions;
+    க்கு (கட்டமைப்பு {
+            xkb_action_மொத்தம்_t மொத்தம்;
+            மாறிலி ஒன்றிப்பு xkb_action *actions;
          } next = {0};
-         count;
-         count = next.count, next.count = 0, actions = next.actions
+         மொத்தம்;
+         மொத்தம் = next.மொத்தம், next.மொத்தம் = 0, actions = next.actions
     ) {
         /*
          * Process actions sequentially.
@@ -1436,7 +1436,7 @@ xkb_filter_apply_all(struct xkb_server_state *state,
          * actions (see `CheckMultipleActionsCategories`). Allowing multiple
          * such actions requires a refactor of the state handling.
          */
-        for (xkb_action_count_t k = 0; k < count; k++) {
+        க்கு (xkb_action_மொத்தம்_t k = 0; k < மொத்தம்; k++) {
             /*
              * It's possible for the keymap to set action->type explicitly, like
              * so:
@@ -1445,35 +1445,35 @@ xkb_filter_apply_all(struct xkb_server_state *state,
              *     };
              * We don't handle those.
              */
-            if (actions[k].type >= _ACTION_TYPE_NUM_ENTRIES)
-                continue;
+            எனில் (actions[k].type >= ACTION_TYPE_இலக்கம்_ENTRIES)
+                தொடர்;
 
             /* Go to next action if no corresponding action handler */
-            if (!filter_action_funcs[actions[k].type].new)
-                continue;
+            எனில் (!filter_action_funcs[actions[k].type].new)
+                தொடர்;
 
             /* Add a new filter and run the corresponding initial action */
             filter = xkb_filter_new(state);
-            filter->key = key;
+            filter->சாவி = சாவி;
             filter->action = actions[k];
 
-            switch (filter->action.type) {
-            case ACTION_TYPE_MOD_SET:
-                if (state->base.components.controls & CONTROL_STICKY_KEYS) {
+            தேர்வு (filter->action.type) {
+            நிலை ACTION_TYPE_MOD_SET:
+                எனில் (state->base.components.controls & CONTROL_STICKY_சாவிகள்) {
                     /* Convert modifier set action to a latch */
                     filter->action.type = ACTION_TYPE_MOD_LATCH;
-                    if (state->a11y_flags & XKB_A11Y_STICKY_KEYS_LATCH_TO_LOCK) {
+                    எனில் (state->a11y_flags & XKB_A11_Y_STICKY_சாவிகள்_LATCH_TO_LOCK) {
                         filter->action.mods.flags |= ACTION_LATCH_TO_LOCK;
                     }
                 }
                 /* fallthrough */
-            case ACTION_TYPE_MOD_LATCH:
-            case ACTION_TYPE_MOD_LOCK: {
-                static const enum xkb_action_flags unlock_mods_on_press
+            நிலை ACTION_TYPE_MOD_LATCH:
+            நிலை ACTION_TYPE_MOD_LOCK: {
+                நிலையான மாறிலி எண்ணிக்கை xkb_action_flags unlock_mods_on_press
                     = ACTION_LOCK_CLEAR     /* SetMods & LatchMods: can unlock */
                     | ACTION_LOCK_NO_UNLOCK /* LockMods: cannot unlock */
                     | ACTION_EXPLICIT_UNLOCK_ON_PRESS;
-                if ((state->flags & STATE_UNLOCK_MODS_ON_PRESS) &&
+                எனில் ((state->flags & STATE_UNLOCK_MODS_ON_PRESS) &&
                     /*
                      * Ensure that the action can actually unlock and has
                      * no *explicit* `unlockOnPress` parameter.
@@ -1484,49 +1484,49 @@ xkb_filter_apply_all(struct xkb_server_state *state,
                 {
                     filter->action.mods.flags |= ACTION_UNLOCK_ON_PRESS;
                 }
-                break;
+                நிறுத்து;
             }
-            case ACTION_TYPE_GROUP_SET:
-                if (state->base.components.controls & CONTROL_STICKY_KEYS) {
+            நிலை ACTION_TYPE_GROUP_SET:
+                எனில் (state->base.components.controls & CONTROL_STICKY_சாவிகள்) {
                     /* Convert group set action to a latch */
                     filter->action.type = ACTION_TYPE_GROUP_LATCH;
-                    if (state->a11y_flags & XKB_A11Y_STICKY_KEYS_LATCH_TO_LOCK) {
+                    எனில் (state->a11y_flags & XKB_A11_Y_STICKY_சாவிகள்_LATCH_TO_LOCK) {
                         filter->action.group.flags |= ACTION_LATCH_TO_LOCK;
                     }
                 }
-                break;
-            case ACTION_TYPE_GROUP_LOCK:
-                if ((filter->action.group.flags &
+                நிறுத்து;
+            நிலை ACTION_TYPE_GROUP_LOCK:
+                எனில் ((filter->action.group.flags &
                      ACTION_AUTO_GROUP_LOCK_ON_MODIFIER_RELEASE) &&
                     (state->flags &
-                     STATE_FIX_LAYOUT_SWITCH_ON_MODIFIER_KEY) &&
+                     STATE_FIX_LAYOUT_SWITCH_ON_MODIFIER_சாவி) &&
                     /*
                      * FIXME: sticky keys may leave an unexpected modifier
                      * from the level 0 latched, so disable for now.
                      */
-                    !(state->base.components.controls & CONTROL_STICKY_KEYS))
+                    !(state->base.components.controls & CONTROL_STICKY_சாவிகள்))
                 {
                     filter->action.group.flags |= ACTION_LOCK_ON_RELEASE;
                     /* Add base level action */
-                    next.count = xkb_keymap_key_get_actions_by_level(
-                        state->base.keymap, key, state->base.components.group,
+                    next.மொத்தம் = xkb_keymap_சாவி_get_actions_by_level(
+                        state->base.keymap, சாவி, state->base.components.group,
                         0, &next.actions
                     );
-                    assert(next.count == 1);
+                    ப்ரதிஜ்ஞா(next.மொத்தம் == 1);
                 }
-                break;
-            case ACTION_TYPE_PTR_MOVE:
-            case ACTION_TYPE_PTR_BUTTON:
-            case ACTION_TYPE_PTR_LOCK:
-            case ACTION_TYPE_PTR_DEFAULT:
-                if (!(state->base.components.controls & CONTROL_MOUSE_KEYS)) {
+                நிறுத்து;
+            நிலை ACTION_TYPE_PTR_MOVE:
+            நிலை ACTION_TYPE_PTR_BUTTON:
+            நிலை ACTION_TYPE_PTR_LOCK:
+            நிலை ACTION_TYPE_PTR_DEFAULT:
+                எனில் (!(state->base.components.controls & CONTROL_MOUSE_சாவிகள்)) {
                     /* Convert pointer actions to NoAction */
-                    assert(!filter_action_funcs[ACTION_TYPE_NONE].new);
-                    filter->func = NULL;
-                    continue;
+                    ப்ரதிஜ்ஞா(!filter_action_funcs[ACTION_TYPE_NONE].new);
+                    filter->func = வெற்று;
+                    தொடர்;
                 }
-                break;
-            case ACTION_TYPE_REDIRECT_KEY:
+                நிறுத்து;
+            நிலை ACTION_TYPE_REDIRECT_சாவி:
                 // FIXME: this is not efficient to resolve mods here each time
                 filter->action.redirect.affect_mods = mod_mask_get_effective(
                     state->base.keymap, filter->action.redirect.affect_mods
@@ -1534,8 +1534,8 @@ xkb_filter_apply_all(struct xkb_server_state *state,
                 filter->action.redirect.mods = mod_mask_get_effective(
                     state->base.keymap, filter->action.redirect.mods
                 );
-                break;
-            default: ;
+                நிறுத்து;
+            இயல்பு: ;
             }
             filter->func = filter_action_funcs[filter->action.type].func;
             filter_action_funcs[filter->action.type].new(state, events, filter);
@@ -1543,13 +1543,13 @@ xkb_filter_apply_all(struct xkb_server_state *state,
     }
 }
 
-static void
-xkb_state_update_derived(struct xkb_state *state);
+நிலையான வெறுமை
+xkb_state_update_derived(கட்டமைப்பு xkb_state *state);
 
-static inline void
-xkb_state_init(struct xkb_state * restrict state,
-               struct xkb_keymap * restrict keymap,
-               enum xkb_state_mode_internal mode)
+நிலையான உள்வரி வெறுமை
+xkb_state_init(கட்டமைப்பு xkb_state * restrict state,
+               கட்டமைப்பு xkb_keymap * restrict keymap,
+               எண்ணிக்கை xkb_state_mode_internal mode)
 {
     state->mode = mode;
     state->refcnt = 1;
@@ -1560,117 +1560,117 @@ xkb_state_init(struct xkb_state * restrict state,
     xkb_state_update_derived(state);
 }
 
-static inline void
-xkb_client_state_init(struct xkb_client_state * restrict state,
-                      struct xkb_keymap * restrict keymap,
-                      enum xkb_state_mode_internal mode)
+நிலையான உள்வரி வெறுமை
+xkb_client_state_init(கட்டமைப்பு xkb_client_state * restrict state,
+                      கட்டமைப்பு xkb_keymap * restrict keymap,
+                      எண்ணிக்கை xkb_state_mode_internal mode)
 {
     xkb_state_init(&state->base, keymap, mode);
 }
 
-static inline void
-xkb_server_state_init(struct xkb_server_state * restrict state,
-                      struct xkb_keymap * restrict keymap,
-                      enum xkb_state_mode_internal mode,
-                      enum xkb_a11y_flags a11y_affect,
-                      enum xkb_a11y_flags a11y_flags)
+நிலையான உள்வரி வெறுமை
+xkb_server_state_init(கட்டமைப்பு xkb_server_state * restrict state,
+                      கட்டமைப்பு xkb_keymap * restrict keymap,
+                      எண்ணிக்கை xkb_state_mode_internal mode,
+                      எண்ணிக்கை xkb_a11y_flags a11y_affect,
+                      எண்ணிக்கை xkb_a11y_flags a11y_flags)
 {
     xkb_state_init(&state->base, keymap, mode);
 
     state->a11y_flags = a11y_flags;
-    if (keymap->format != XKB_KEYMAP_FORMAT_TEXT_V1 &&
-        !(a11y_affect & XKB_A11Y_LATCH_SIMULTANEOUS_KEYS)) {
+    எனில் (keymap->format != XKB_KEYMAP_FORMAT_TEXT_V1 &&
+        !(a11y_affect & XKB_A11_Y_LATCH_SIMULTANEOUS_சாவிகள்)) {
              /* Keymap v2+: enable extension to XKB if not manually disabled */
-             state->a11y_flags |= XKB_A11Y_LATCH_SIMULTANEOUS_KEYS;
+             state->a11y_flags |= XKB_A11_Y_LATCH_SIMULTANEOUS_சாவிகள்;
     }
 }
 
-struct xkb_state *
-xkb_state_new(struct xkb_keymap *keymap)
+கட்டமைப்பு xkb_state *
+xkb_state_new(கட்டமைப்பு xkb_keymap *keymap)
 {
-    struct xkb_server_state * const state = calloc(1, sizeof(*state));
-    if (!state) {
+    கட்டமைப்பு xkb_server_state * மாறிலி state = calloc(1, அளவு(*state));
+    எனில் (!state) {
         log_err_func1(keymap->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
                       "Could not allocate a state object.\n");
-        return NULL;
+        திரும்பு வெற்று;
     }
 
     xkb_server_state_init(state, keymap, LEGACY_MIXED_STATE, 0, 0);
 
-    return (struct xkb_state *)state;
+    திரும்பு (கட்டமைப்பு xkb_state *)state;
 }
 
-struct xkb_state *
-xkb_state_new_with_mode(struct xkb_keymap * restrict keymap,
-                        enum xkb_state_mode mode,
-                        enum xkb_status * restrict status)
+கட்டமைப்பு xkb_state *
+xkb_state_new_with_mode(கட்டமைப்பு xkb_keymap * restrict keymap,
+                        எண்ணிக்கை xkb_state_mode mode,
+                        எண்ணிக்கை xkb_status * restrict status)
 {
-    switch (mode) {
-    case XKB_STATE_MODE_CLIENT:
-    case XKB_STATE_MODE_SERVER_QUERY: {
-        struct xkb_client_state * const state = calloc(1, sizeof(*state));
-        if (!state)
-            break;
+    தேர்வு (mode) {
+    நிலை XKB_STATE_MODE_CLIENT:
+    நிலை XKB_STATE_MODE_SERVER_QUERY: {
+        கட்டமைப்பு xkb_client_state * மாறிலி state = calloc(1, அளவு(*state));
+        எனில் (!state)
+            நிறுத்து;
 
         static_assert((unsigned)XKB_STATE_MODE_CLIENT ==
                       (unsigned)CLIENT_STATE, "");
         static_assert((unsigned)XKB_STATE_MODE_SERVER_QUERY ==
                       (unsigned)SERVER_COMPANION, "");
-        xkb_client_state_init(state, keymap, (enum xkb_state_mode_internal)mode);
+        xkb_client_state_init(state, keymap, (எண்ணிக்கை xkb_state_mode_internal)mode);
 
-        if (status)
+        எனில் (status)
             *status = XKB_SUCCESS;
 
-        return (struct xkb_state *)state;
+        திரும்பு (கட்டமைப்பு xkb_state *)state;
     }
-    case XKB_STATE_MODE_SERVER: {
-        struct xkb_server_state * const state = calloc(1, sizeof(*state));
-        if (!state)
-            break;
+    நிலை XKB_STATE_MODE_SERVER: {
+        கட்டமைப்பு xkb_server_state * மாறிலி state = calloc(1, அளவு(*state));
+        எனில் (!state)
+            நிறுத்து;
 
         xkb_server_state_init(state, keymap, LEGACY_SERVER_STATE, 0, 0);
 
-        if (status)
+        எனில் (status)
             *status = XKB_SUCCESS;
 
-        return (struct xkb_state *)state;
+        திரும்பு (கட்டமைப்பு xkb_state *)state;
     }
-    default:
+    இயல்பு:
         log_err_func(keymap->ctx, XKB_ERROR_UNSUPPORTED_STATE_MODE_,
                      "Unsupported state mode: %u\n", mode);
-        if (status)
+        எனில் (status)
             *status = XKB_ERROR_UNSUPPORTED_STATE_MODE;
-        return NULL;
+        திரும்பு வெற்று;
     }
 
     log_err_func1(keymap->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
                   "Could not allocate a state object.\n");
-    if (status)
+    எனில் (status)
         *status = XKB_ERROR_ALLOCATION_FAILURE;
-    return NULL;
+    திரும்பு வெற்று;
 }
 
-struct xkb_state *
-xkb_state_ref(struct xkb_state *state)
+கட்டமைப்பு xkb_state *
+xkb_state_ref(கட்டமைப்பு xkb_state *state)
 {
-    assert(state->refcnt > 0);
+    ப்ரதிஜ்ஞா(state->refcnt > 0);
     state->refcnt++;
-    return state;
+    திரும்பு state;
 }
 
-void
-xkb_state_reset(struct xkb_state *state)
+வெறுமை
+xkb_state_reset(கட்டமைப்பு xkb_state *state)
 {
-    memset(&state->components, 0, sizeof(state->components));
+    memset(&state->components, 0, அளவு(state->components));
 
-    if (state->mode < LEGACY_MIXED_STATE) {
-        static_assert(sizeof(*state) == sizeof(struct xkb_client_state),
+    எனில் (state->mode < LEGACY_MIXED_STATE) {
+        static_assert(அளவு(*state) == அளவு(கட்டமைப்பு xkb_client_state),
                       "Not a mere wrapper");
         /* Nothing else to reset */
-    } else {
-        struct xkb_server_state *state_ = (struct xkb_server_state *)state;
-        const struct xkb_server_state prev = *state_;
-        memset(state_, 0, sizeof(*state_));
+    } இல்லையெனில் {
+        கட்டமைப்பு xkb_server_state *state_ = (கட்டமைப்பு xkb_server_state *)state;
+        மாறிலி கட்டமைப்பு xkb_server_state prev = *state_;
+        memset(state_, 0, அளவு(*state_));
 
         state_->base = prev.base;
         state_->a11y_flags = prev.a11y_flags;
@@ -1679,113 +1679,113 @@ xkb_state_reset(struct xkb_state *state)
     }
 }
 
-static inline void
-xkb_state_destroy(struct xkb_state *state)
+நிலையான உள்வரி வெறுமை
+xkb_state_destroy(கட்டமைப்பு xkb_state *state)
 {
     xkb_keymap_unref(state->keymap);
-    if (state->mode > SERVER_COMPANION)
-        darray_free(((struct xkb_server_state *)state)->filters);
+    எனில் (state->mode > SERVER_COMPANION)
+        darray_free(((கட்டமைப்பு xkb_server_state *)state)->filters);
 }
 
-void
-xkb_state_unref(struct xkb_state *state)
+வெறுமை
+xkb_state_unref(கட்டமைப்பு xkb_state *state)
 {
-    assert(!state || state->refcnt > 0);
-    if (!state || --state->refcnt > 0)
-        return;
+    ப்ரதிஜ்ஞா(!state || state->refcnt > 0);
+    எனில் (!state || --state->refcnt > 0)
+        திரும்பு;
 
     xkb_state_destroy(state);
 
-    switch (state->mode) {
-    case CLIENT_STATE:
-    case SERVER_COMPANION:
-        free((struct xkb_client_state *)state);
-        break;
-    case LEGACY_MIXED_STATE:
-    case LEGACY_SERVER_STATE:
-        free((struct xkb_server_state *)state);
-        break;
-    case SERVER_STATE: /* handled by xkb_machine_unref() */
-    default:
+    தேர்வு (state->mode) {
+    நிலை CLIENT_STATE:
+    நிலை SERVER_COMPANION:
+        விடுவி((கட்டமைப்பு xkb_client_state *)state);
+        நிறுத்து;
+    நிலை LEGACY_MIXED_STATE:
+    நிலை LEGACY_SERVER_STATE:
+        விடுவி((கட்டமைப்பு xkb_server_state *)state);
+        நிறுத்து;
+    நிலை SERVER_STATE: /* handled by xkb_machine_unref() */
+    இயல்பு:
         PANIC_UNREACHABLE();
     }
 }
 
-struct xkb_keymap *
-xkb_state_get_keymap(struct xkb_state *state)
+கட்டமைப்பு xkb_keymap *
+xkb_state_get_keymap(கட்டமைப்பு xkb_state *state)
 {
-    return state->keymap;
+    திரும்பு state->keymap;
 }
 
 /**
  * Update the LED state to match the rest of the xkb_state.
  */
-static void
-xkb_state_led_update_all(struct xkb_state *state)
+நிலையான வெறுமை
+xkb_state_led_update_all(கட்டமைப்பு xkb_state *state)
 {
     xkb_led_index_t idx;
-    const struct xkb_led *led;
+    மாறிலி கட்டமைப்பு xkb_led *led;
 
     state->components.leds = 0;
 
     xkb_leds_enumerate(idx, led, state->keymap) {
 
-        if (led->which_mods != 0 && led->mods.mask != 0) {
+        எனில் (led->which_mods != 0 && led->mods.mask != 0) {
             xkb_mod_mask_t mod_mask = 0;
-            if (led->which_mods & XKB_STATE_MODS_EFFECTIVE)
+            எனில் (led->which_mods & XKB_STATE_MODS_EFFECTIVE)
                 mod_mask |= state->components.mods;
-            if (led->which_mods & XKB_STATE_MODS_DEPRESSED)
+            எனில் (led->which_mods & XKB_STATE_MODS_DEPRESSED)
                 mod_mask |= state->components.base_mods;
-            if (led->which_mods & XKB_STATE_MODS_LATCHED)
+            எனில் (led->which_mods & XKB_STATE_MODS_LATCHED)
                 mod_mask |= state->components.latched_mods;
-            if (led->which_mods & XKB_STATE_MODS_LOCKED)
+            எனில் (led->which_mods & XKB_STATE_MODS_LOCKED)
                 mod_mask |= state->components.locked_mods;
 
-            if (led->mods.mask & mod_mask) {
+            எனில் (led->mods.mask & mod_mask) {
                 state->components.leds |= (UINT32_C(1) << idx);
-                continue;
+                தொடர்;
             }
         }
 
-        if (led->which_groups != 0) {
-            if (likely(led->groups) != 0) {
+        எனில் (led->which_groups != 0) {
+            எனில் (likely(led->groups) != 0) {
                 xkb_layout_mask_t group_mask = 0;
                 /* Effective and locked groups have been brought into range */
-                assert(state->components.group < XKB_MAX_GROUPS);
-                assert(state->components.locked_group >= 0 &&
+                ப்ரதிஜ்ஞா(state->components.group < XKB_MAX_GROUPS);
+                ப்ரதிஜ்ஞா(state->components.locked_group >= 0 &&
                        state->components.locked_group < XKB_MAX_GROUPS);
                 /* Effective and locked groups are used as mask */
-                if (led->which_groups & XKB_STATE_LAYOUT_EFFECTIVE)
+                எனில் (led->which_groups & XKB_STATE_LAYOUT_EFFECTIVE)
                     group_mask |= (UINT32_C(1) << state->components.group);
-                if (led->which_groups & XKB_STATE_LAYOUT_LOCKED)
+                எனில் (led->which_groups & XKB_STATE_LAYOUT_LOCKED)
                     group_mask |= (UINT32_C(1) << state->components.locked_group);
                 /* Base and latched groups only have to be non-zero */
-                if ((led->which_groups & XKB_STATE_LAYOUT_DEPRESSED) &&
+                எனில் ((led->which_groups & XKB_STATE_LAYOUT_DEPRESSED) &&
                     state->components.base_group != 0)
                     group_mask |= led->groups;
-                if ((led->which_groups & XKB_STATE_LAYOUT_LATCHED) &&
+                எனில் ((led->which_groups & XKB_STATE_LAYOUT_LATCHED) &&
                     state->components.latched_group != 0)
                     group_mask |= led->groups;
 
-                if (led->groups & group_mask) {
+                எனில் (led->groups & group_mask) {
                     state->components.leds |= (UINT32_C(1) << idx);
-                    continue;
+                    தொடர்;
                 }
-            } else {
+            } இல்லையெனில் {
                 /* Special case for Base and latched groups */
-                if (((led->which_groups & XKB_STATE_LAYOUT_DEPRESSED) &&
+                எனில் (((led->which_groups & XKB_STATE_LAYOUT_DEPRESSED) &&
                      state->components.base_group == 0) ||
                     ((led->which_groups & XKB_STATE_LAYOUT_LATCHED) &&
                      state->components.latched_group == 0)) {
                     state->components.leds |= (UINT32_C(1) << idx);
-                    continue;
+                    தொடர்;
                 }
             }
         }
 
-        if (led->ctrls & state->components.controls) {
+        எனில் (led->ctrls & state->components.controls) {
             state->components.leds |= (UINT32_C(1) << idx);
-            continue;
+            தொடர்;
         }
     }
 }
@@ -1794,8 +1794,8 @@ xkb_state_led_update_all(struct xkb_state *state)
  * Calculates the derived state (effective mods/group and LEDs) from an
  * up-to-date xkb_state.
  */
-static void
-xkb_state_update_derived(struct xkb_state *state)
+நிலையான வெறுமை
+xkb_state_update_derived(கட்டமைப்பு xkb_state *state)
 {
     xkb_layout_index_t wrapped;
 
@@ -1805,7 +1805,7 @@ xkb_state_update_derived(struct xkb_state *state)
 
     /* Lock group must be adjusted, but not base nor latched groups */
     wrapped = XkbWrapGroupIntoRange(state->components.locked_group,
-                                    state->keymap->num_groups,
+                                    state->keymap->இலக்கம்_groups,
                                     state->out_of_range_group.policy,
                                     state->out_of_range_group.redirect_group);
     static_assert(XKB_MAX_GROUPS < INT32_MAX, "Max groups don't fit");
@@ -1816,7 +1816,7 @@ xkb_state_update_derived(struct xkb_state *state)
     wrapped = XkbWrapGroupIntoRange(state->components.base_group +
                                     state->components.latched_group +
                                     state->components.locked_group,
-                                    state->keymap->num_groups,
+                                    state->keymap->இலக்கம்_groups,
                                     state->out_of_range_group.policy,
                                     state->out_of_range_group.redirect_group);
     state->components.group =
@@ -1825,14 +1825,14 @@ xkb_state_update_derived(struct xkb_state *state)
     xkb_state_led_update_all(state);
 }
 
-static void
-state_update_enabled_controls(struct xkb_server_state *state,
-                              enum xkb_keyboard_control_flags affect_controls,
-                              enum xkb_keyboard_control_flags controls,
-                              struct xkb_events *events)
+நிலையான வெறுமை
+state_update_enabled_controls(கட்டமைப்பு xkb_server_state *state,
+                              எண்ணிக்கை xkb_keyboard_control_flags affect_controls,
+                              எண்ணிக்கை xkb_keyboard_control_flags controls,
+                              கட்டமைப்பு xkb_events *events)
 {
-    const bool had_sticky_keys = state->base.components.controls
-                               & CONTROL_STICKY_KEYS;
+    மாறிலி bool had_sticky_சாவிகள் = state->base.components.controls
+                               & CONTROL_STICKY_சாவிகள்;
 
     /*
      * Enable using the public API with the all the Control values, except
@@ -1840,14 +1840,14 @@ state_update_enabled_controls(struct xkb_server_state *state,
      */
     affect_controls =
         ( affect_controls
-        & (enum xkb_keyboard_control_flags)CONTROL_ALL_BOOLEAN );
+        & (எண்ணிக்கை xkb_keyboard_control_flags)CONTROL_ALL_BOOLEAN );
     state->base.components.controls &=
-        (enum xkb_action_controls)~affect_controls;
+        (எண்ணிக்கை xkb_action_controls)~affect_controls;
     state->base.components.controls |=
-        (enum xkb_action_controls)(controls & affect_controls);
+        (எண்ணிக்கை xkb_action_controls)(controls & affect_controls);
 
-    if (had_sticky_keys &&
-        !(state->base.components.controls & CONTROL_STICKY_KEYS)) {
+    எனில் (had_sticky_சாவிகள் &&
+        !(state->base.components.controls & CONTROL_STICKY_சாவிகள்)) {
         /* Sticky keys were disabled: clear all locks and latches */
         clear_all_latches_and_locks(state, events);
     }
@@ -1859,59 +1859,59 @@ state_update_enabled_controls(struct xkb_server_state *state,
  * Given a particular key event, updates the state structure to reflect the
  * new modifiers.
  */
-enum xkb_state_component
-xkb_state_update_key(struct xkb_state *base_state, xkb_keycode_t kc,
-                     enum xkb_key_direction direction)
+எண்ணிக்கை xkb_state_component
+xkb_state_update_சாவி(கட்டமைப்பு xkb_state *base_state, xkb_keycode_t kc,
+                     எண்ணிக்கை xkb_சாவி_direction direction)
 {
     /* Guard against client-only state */
-    assert(base_state->mode > SERVER_COMPANION);
-    if (base_state->mode <= SERVER_COMPANION) {
+    ப்ரதிஜ்ஞா(base_state->mode > SERVER_COMPANION);
+    எனில் (base_state->mode <= SERVER_COMPANION) {
         log_err(base_state->keymap->ctx, XKB_ERROR_UNEXPECTED_STATE_MODE,
                 "%s: Unexpected state type %d\n", __func__, base_state->mode);
-        return 0;
+        திரும்பு 0;
     }
 
-    struct xkb_server_state * const state =
-        (struct xkb_server_state *)base_state;
+    கட்டமைப்பு xkb_server_state * மாறிலி state =
+        (கட்டமைப்பு xkb_server_state *)base_state;
 
-    const struct xkb_key* const key = XkbKey(state->base.keymap, kc);
+    மாறிலி கட்டமைப்பு xkb_சாவி* மாறிலி சாவி = Xkb_சாவி(state->base.keymap, kc);
     /* Ignore unknown key and repeat state for non-repeating key */
-    if (!key || (direction == XKB_KEY_REPEATED && !key->repeats))
-        return 0;
+    எனில் (!சாவி || (direction == XKB_சாவி_REPEATED && !சாவி->repeats))
+        திரும்பு 0;
 
-    if (direction == XKB_KEY_DOWN &&
-        (state->base.components.controls & XKB_KEYBOARD_CONTROL_A11Y_STICKY_KEYS) &&
-        (state->a11y_flags & XKB_A11Y_STICKY_KEYS_NO_SIMULTANEOUS_KEYS) &&
+    எனில் (direction == XKB_சாவி_DOWN &&
+        (state->base.components.controls & XKB_KEYBOARD_CONTROL_A11_Y_STICKY_சாவிகள்) &&
+        (state->a11y_flags & XKB_A11_Y_STICKY_சாவிகள்_NO_SIMULTANEOUS_சாவிகள்) &&
         state->base.components.base_mods) {
         /* Deactivate sticky keys if a modifier was already held down*/
         state_update_enabled_controls(state,
-                                      XKB_KEYBOARD_CONTROL_A11Y_STICKY_KEYS,
-                                      0, NULL);
+                                      XKB_KEYBOARD_CONTROL_A11_Y_STICKY_சாவிகள்,
+                                      0, வெற்று);
     }
 
-    const struct state_components prev_components = state->base.components;
+    மாறிலி கட்டமைப்பு state_components prev_components = state->base.components;
 
     state->set_mods = 0;
     state->clear_mods = 0;
 
-    xkb_filter_apply_all(state, NULL, key, direction);
+    xkb_filter_apply_all(state, வெற்று, சாவி, direction);
 
     xkb_mod_index_t i;
     xkb_mod_mask_t bit;
-    for (i = 0, bit = 1; state->set_mods; i++, bit <<= 1) {
-        if (state->set_mods & bit) {
-            state->mod_key_count[i]++;
+    க்கு (i = 0, bit = 1; state->set_mods; i++, bit <<= 1) {
+        எனில் (state->set_mods & bit) {
+            state->mod_சாவி_மொத்தம்[i]++;
             state->base.components.base_mods |= bit;
             state->set_mods &= ~bit;
         }
     }
 
-    for (i = 0, bit = 1; state->clear_mods; i++, bit <<= 1) {
-        if (state->clear_mods & bit) {
-            state->mod_key_count[i]--;
-            if (state->mod_key_count[i] <= 0) {
+    க்கு (i = 0, bit = 1; state->clear_mods; i++, bit <<= 1) {
+        எனில் (state->clear_mods & bit) {
+            state->mod_சாவி_மொத்தம்[i]--;
+            எனில் (state->mod_சாவி_மொத்தம்[i] <= 0) {
                 state->base.components.base_mods &= ~bit;
-                state->mod_key_count[i] = 0;
+                state->mod_சாவி_மொத்தம்[i] = 0;
             }
             state->clear_mods &= ~bit;
         }
@@ -1919,119 +1919,119 @@ xkb_state_update_key(struct xkb_state *base_state, xkb_keycode_t kc,
 
     xkb_state_update_derived(&state->base);
 
-    return get_state_component_changes(&prev_components, &state->base.components);
+    திரும்பு get_state_component_changes(&prev_components, &state->base.components);
 }
 
 /* We need fake keys for `update_latch_modifiers` and `update_latch_group`.
  * These keys must have at least one level in order to break latches. We need 2
  * keys with specific actions in order to update group/mod latches without
  * affecting each other. */
-static struct xkb_key_type_entry synthetic_key_level_entry = { 0 };
-static struct xkb_key_type synthetic_key_type = {
-     .num_entries = 1,
-     .num_levels = 1,
-     .entries = &synthetic_key_level_entry
+நிலையான கட்டமைப்பு xkb_சாவி_type_entry synthetic_சாவி_level_entry = { 0 };
+நிலையான கட்டமைப்பு xkb_சாவி_type synthetic_சாவி_type = {
+     .இலக்கம்_entries = 1,
+     .இலக்கம்_levels = 1,
+     .entries = &synthetic_சாவி_level_entry
 };
-static const struct xkb_key synthetic_key = { 0 };
+நிலையான மாறிலி கட்டமைப்பு xkb_சாவி synthetic_சாவி = { 0 };
 
 /* Transcription from xserver: XkbLatchModifiers */
-static void
-update_latch_modifiers(struct xkb_server_state *state,
-                       struct xkb_events *events,
+நிலையான வெறுமை
+update_latch_modifiers(கட்டமைப்பு xkb_server_state *state,
+                       கட்டமைப்பு xkb_events *events,
                        xkb_mod_mask_t mask, xkb_mod_mask_t latches)
 {
     /* Clear affected latched modifiers */
-    const xkb_mod_mask_t clear = mask & ~latches;
+    மாறிலி xkb_mod_mask_t clear = mask & ~latches;
     state->base.components.latched_mods &= ~clear;
 
     /* Clear any pending latch to locks using ad hoc action:
      * only affect corresponding modifier latches and no group latch. */
-    struct xkb_level synthetic_key_level_break_mod_latch = {
-        .num_syms = 0,
-        .num_actions = 1,
-        .upper = XKB_KEY_NoSymbol,
-        .s.sym = XKB_KEY_NoSymbol,
+    கட்டமைப்பு xkb_level synthetic_சாவி_level_break_mod_latch = {
+        .இலக்கம்_syms = 0,
+        .இலக்கம்_actions = 1,
+        .upper = XKB_சாவி_No_குறியீடு,
+        .s.sym = XKB_சாவி_No_குறியீடு,
         .a.action.internal = {
             .type = ACTION_TYPE_INTERNAL,
             .flags = INTERNAL_BREAKS_MOD_LATCH,
             .clear_latched_mods = clear
         }
     };
-    struct xkb_group synthetic_key_group_break_mod_latch = {
-        .type = &synthetic_key_type,
-        .levels = &synthetic_key_level_break_mod_latch
+    கட்டமைப்பு xkb_group synthetic_சாவி_group_break_mod_latch = {
+        .type = &synthetic_சாவி_type,
+        .levels = &synthetic_சாவி_level_break_mod_latch
     };
-    const struct xkb_key synthetic_key_break_mod_latch = {
-        .num_groups = 1,
-        .groups = &synthetic_key_group_break_mod_latch
+    மாறிலி கட்டமைப்பு xkb_சாவி synthetic_சாவி_break_mod_latch = {
+        .இலக்கம்_groups = 1,
+        .groups = &synthetic_சாவி_group_break_mod_latch
     };
     xkb_filter_apply_all(state, events,
-                         &synthetic_key_break_mod_latch, XKB_KEY_DOWN);
+                         &synthetic_சாவி_break_mod_latch, XKB_சாவி_DOWN);
 
     /* Finally set the latched mods by simulate tapping a key with the
      * corresponding action */
-    const struct xkb_key* const key = &synthetic_key;
-    const union xkb_action latch_mods = {
+    மாறிலி கட்டமைப்பு xkb_சாவி* மாறிலி சாவி = &synthetic_சாவி;
+    மாறிலி ஒன்றிப்பு xkb_action latch_mods = {
         .mods = {
             .type = ACTION_TYPE_MOD_LATCH,
             .mods = { .mask = mask & latches },
             .flags = 0,
         },
     };
-    struct xkb_filter* const filter = xkb_filter_new(state);
-    filter->key = key;
+    கட்டமைப்பு xkb_filter* மாறிலி filter = xkb_filter_new(state);
+    filter->சாவி = சாவி;
     filter->func = xkb_filter_mod_latch_func;
     filter->action = latch_mods;
     xkb_filter_mod_latch_new(state, events, filter);
     /* We added the filter manually, so only fire “up” event */
-    xkb_filter_mod_latch_func(state, events, filter, key, XKB_KEY_UP);
+    xkb_filter_mod_latch_func(state, events, filter, சாவி, XKB_சாவி_UP);
 }
 
 /* Transcription from xserver: XkbLatchGroup */
-static void
-update_latch_group(struct xkb_server_state *state,
-                   struct xkb_events *events, int32_t group)
+நிலையான வெறுமை
+update_latch_group(கட்டமைப்பு xkb_server_state *state,
+                   கட்டமைப்பு xkb_events *events, int32_t group)
 {
     /* Clear any pending latch to locks. */
-    static struct xkb_level synthetic_key_level_break_group_latch = {
-        .num_syms = 0,
-        .num_actions = 1,
-        .upper = XKB_KEY_NoSymbol,
-        .s.sym = XKB_KEY_NoSymbol,
+    நிலையான கட்டமைப்பு xkb_level synthetic_சாவி_level_break_group_latch = {
+        .இலக்கம்_syms = 0,
+        .இலக்கம்_actions = 1,
+        .upper = XKB_சாவி_No_குறியீடு,
+        .s.sym = XKB_சாவி_No_குறியீடு,
         .a.action.internal = {
             .type = ACTION_TYPE_INTERNAL,
             .flags = INTERNAL_BREAKS_GROUP_LATCH,
             .clear_latched_mods = 0
         }
     };
-    static struct xkb_group synthetic_key_group_break_group_latch = {
-        .type = &synthetic_key_type,
-        .levels = &synthetic_key_level_break_group_latch
+    நிலையான கட்டமைப்பு xkb_group synthetic_சாவி_group_break_group_latch = {
+        .type = &synthetic_சாவி_type,
+        .levels = &synthetic_சாவி_level_break_group_latch
     };
-    static const struct xkb_key synthetic_key_break_group_latch = {
-        .num_groups = 1,
-        .groups = &synthetic_key_group_break_group_latch
+    நிலையான மாறிலி கட்டமைப்பு xkb_சாவி synthetic_சாவி_break_group_latch = {
+        .இலக்கம்_groups = 1,
+        .groups = &synthetic_சாவி_group_break_group_latch
     };
     xkb_filter_apply_all(state, events,
-                         &synthetic_key_break_group_latch, XKB_KEY_DOWN);
+                         &synthetic_சாவி_break_group_latch, XKB_சாவி_DOWN);
 
     /* Simulate tapping a key with a group latch action, but in isolation: i.e.
      * without affecting the other filters. */
-    const struct xkb_key* const key = &synthetic_key;
-    const union xkb_action latch_group = {
+    மாறிலி கட்டமைப்பு xkb_சாவி* மாறிலி சாவி = &synthetic_சாவி;
+    மாறிலி ஒன்றிப்பு xkb_action latch_group = {
         .group = {
             .type = ACTION_TYPE_GROUP_LATCH,
             .flags = ACTION_ABSOLUTE_SWITCH,
             .group = group,
         },
     };
-    struct xkb_filter* const filter = xkb_filter_new(state);
-    filter->key = key;
+    கட்டமைப்பு xkb_filter* மாறிலி filter = xkb_filter_new(state);
+    filter->சாவி = சாவி;
     filter->func = xkb_filter_group_latch_func;
     filter->action = latch_group;
     xkb_filter_group_latch_new(state, events, filter);
     /* We added the filter manually, so only fire “up” event */
-    xkb_filter_group_latch_func(state, events, filter, key, XKB_KEY_UP);
+    xkb_filter_group_latch_func(state, events, filter, சாவி, XKB_சாவி_UP);
 }
 
 /**
@@ -2041,10 +2041,10 @@ update_latch_group(struct xkb_server_state *state,
  * in the canonical mask, so that it enables `xkb_state_serialize_mods` to
  * round trip via `xkb_state_update_mask`.
  */
-static inline xkb_mod_mask_t
-resolve_to_canonical_mods(struct xkb_keymap *keymap, xkb_mod_mask_t mods)
+நிலையான உள்வரி xkb_mod_mask_t
+resolve_to_canonical_mods(கட்டமைப்பு xkb_keymap *keymap, xkb_mod_mask_t mods)
 {
-    return
+    திரும்பு
         /*
          * Keep canonical modifier mask.
          * It contains either real modifiers or canonical virtual modifiers.
@@ -2055,43 +2055,43 @@ resolve_to_canonical_mods(struct xkb_keymap *keymap, xkb_mod_mask_t mods)
                                mods & ~keymap->canonical_state_mask);
 }
 
-static void
+நிலையான வெறுமை
 state_update_latched_locked(
-    struct xkb_server_state * restrict state,
-    const struct xkb_state_components_update * restrict update,
-    struct xkb_events * restrict events
+    கட்டமைப்பு xkb_server_state * restrict state,
+    மாறிலி கட்டமைப்பு xkb_state_components_update * restrict update,
+    கட்டமைப்பு xkb_events * restrict events
 )
 {
     /* Update locks */
-    const xkb_mod_mask_t affect_locked_mods =
+    மாறிலி xkb_mod_mask_t affect_locked_mods =
         resolve_to_canonical_mods(state->base.keymap, update->affect_locked_mods);
-    if ((update->components & XKB_STATE_MODS_LOCKED) &&
+    எனில் ((update->components & XKB_STATE_MODS_LOCKED) &&
         affect_locked_mods) {
-        const xkb_mod_mask_t locked_mods =
+        மாறிலி xkb_mod_mask_t locked_mods =
             resolve_to_canonical_mods(state->base.keymap, update->locked_mods);
         state->base.components.locked_mods &= ~affect_locked_mods;
         state->base.components.locked_mods |= locked_mods & affect_locked_mods;
     }
-    if (update->components & XKB_STATE_LAYOUT_LOCKED) {
+    எனில் (update->components & XKB_STATE_LAYOUT_LOCKED) {
         state->base.components.locked_group = update->locked_layout;
     }
 
     /* Update latches */
-    const xkb_mod_mask_t affect_latched_mods =
+    மாறிலி xkb_mod_mask_t affect_latched_mods =
         resolve_to_canonical_mods(state->base.keymap, update->affect_latched_mods);
-    if ((update->components & XKB_STATE_MODS_LATCHED) &&
+    எனில் ((update->components & XKB_STATE_MODS_LATCHED) &&
         affect_latched_mods) {
-        const xkb_mod_mask_t latched_mods =
+        மாறிலி xkb_mod_mask_t latched_mods =
             resolve_to_canonical_mods(state->base.keymap, update->latched_mods);
         update_latch_modifiers(state, events, affect_latched_mods, latched_mods);
     }
-    if (update->components & XKB_STATE_LAYOUT_LATCHED) {
+    எனில் (update->components & XKB_STATE_LAYOUT_LATCHED) {
         update_latch_group(state, events, update->latched_layout);
     }
 }
 
-enum xkb_state_component
-xkb_state_update_latched_locked(struct xkb_state *base_state,
+எண்ணிக்கை xkb_state_component
+xkb_state_update_latched_locked(கட்டமைப்பு xkb_state *base_state,
                                 xkb_mod_mask_t affect_latched_mods,
                                 xkb_mod_mask_t latched_mods,
                                 bool affect_latched_layout,
@@ -2102,24 +2102,24 @@ xkb_state_update_latched_locked(struct xkb_state *base_state,
                                 int32_t locked_layout)
 {
     /* Guard against client-only state */
-    assert(base_state->mode > SERVER_COMPANION);
-    if (base_state->mode <= SERVER_COMPANION) {
+    ப்ரதிஜ்ஞா(base_state->mode > SERVER_COMPANION);
+    எனில் (base_state->mode <= SERVER_COMPANION) {
         log_err(base_state->keymap->ctx, XKB_ERROR_UNEXPECTED_STATE_MODE,
                 "%s: Unexpected state type %d\n", __func__, base_state->mode);
-        return 0;
+        திரும்பு 0;
     }
 
-    struct xkb_server_state * const state =
-        (struct xkb_server_state *)base_state;
+    கட்டமைப்பு xkb_server_state * மாறிலி state =
+        (கட்டமைப்பு xkb_server_state *)base_state;
 
-    const struct state_components previous_components = state->base.components;
-    const enum xkb_state_component components
+    மாறிலி கட்டமைப்பு state_components previous_components = state->base.components;
+    மாறிலி எண்ணிக்கை xkb_state_component components
         = ((affect_latched_mods || latched_mods) ? XKB_STATE_MODS_LATCHED : 0)
         | ((affect_locked_mods || locked_mods) ? XKB_STATE_MODS_LOCKED : 0)
         | (affect_latched_layout ? XKB_STATE_LAYOUT_LATCHED : 0)
         | (affect_locked_layout ? XKB_STATE_LAYOUT_LOCKED : 0);
-    const struct xkb_state_components_update update = {
-        .size = sizeof(update),
+    மாறிலி கட்டமைப்பு xkb_state_components_update update = {
+        .size = அளவு(update),
         .components = components,
         .affect_latched_mods = affect_latched_mods,
         .latched_mods = latched_mods,
@@ -2128,21 +2128,21 @@ xkb_state_update_latched_locked(struct xkb_state *base_state,
         .locked_mods = locked_mods,
         .locked_layout = locked_layout
     };
-    state_update_latched_locked(state, &update, NULL);
+    state_update_latched_locked(state, &update, வெற்று);
     xkb_state_update_derived(&state->base);
-    return get_state_component_changes(&previous_components,
+    திரும்பு get_state_component_changes(&previous_components,
                                        &state->base.components);
 }
 
-static inline void
-clear_all_latches_and_locks(struct xkb_server_state *state,
-                            struct xkb_events *events)
+நிலையான உள்வரி வெறுமை
+clear_all_latches_and_locks(கட்டமைப்பு xkb_server_state *state,
+                            கட்டமைப்பு xkb_events *events)
 {
-    static const enum xkb_state_component components
+    நிலையான மாறிலி எண்ணிக்கை xkb_state_component components
         = XKB_STATE_MODS_LATCHED | XKB_STATE_MODS_LOCKED
         | XKB_STATE_LAYOUT_LATCHED | XKB_STATE_LAYOUT_LOCKED;
-    const struct xkb_state_components_update update = {
-        .size = sizeof(update),
+    மாறிலி கட்டமைப்பு xkb_state_components_update update = {
+        .size = அளவு(update),
         .components = components,
         .affect_latched_mods = (xkb_mod_mask_t)XKB_MOD_ALL,
         .latched_mods = 0,
@@ -2154,44 +2154,44 @@ clear_all_latches_and_locks(struct xkb_server_state *state,
     state_update_latched_locked(state, &update, events);
 }
 
-static enum xkb_status
-state_update_layout_policy(struct xkb_server_state *state,
-                           const struct xkb_layout_policy_update *update)
+நிலையான எண்ணிக்கை xkb_status
+state_update_layout_policy(கட்டமைப்பு xkb_server_state *state,
+                           மாறிலி கட்டமைப்பு xkb_layout_policy_update *update)
 {
-    if (xkb_feature_supported(XKB_FEATURE_ENUM_LAYOUT_OUT_OF_RANGE_POLICY,
+    எனில் (xkb_feature_supported(XKB_FEATURE_ENUM_LAYOUT_OUT_OF_RANGE_POLICY,
                               update->policy)) {
-        if (update->policy == XKB_LAYOUT_OUT_OF_RANGE_REDIRECT) {
-            if (update->redirect < state->base.keymap->num_groups) {
+        எனில் (update->policy == XKB_LAYOUT_OUT_OF_RANGE_REDIRECT) {
+            எனில் (update->redirect < state->base.keymap->இலக்கம்_groups) {
                 state->base.out_of_range_group.redirect_group =
                     update->redirect;
-            } else {
+            } இல்லையெனில் {
                 log_err(state->base.keymap->ctx,
                         XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                         "Layout policy: "
                         "unsupported layout index %"PRIu32" > %"PRIu32"\n",
-                        update->redirect + 1, state->base.keymap->num_groups);
-                return XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX;
+                        update->redirect + 1, state->base.keymap->இலக்கம்_groups);
+                திரும்பு XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX;
             }
         }
         state->base.out_of_range_group.policy = update->policy;
-        return XKB_SUCCESS;
-    } else {
+        திரும்பு XKB_SUCCESS;
+    } இல்லையெனில் {
         log_err(state->base.keymap->ctx,
                 XKB_ERROR_UNSUPPORTED_LAYOUT_OUT_OF_RANGE_POLICY_,
                 "Unsupported layout policy: %d\n", update->policy);
-        return XKB_ERROR_UNSUPPORTED_LAYOUT_OUT_OF_RANGE_POLICY;
+        திரும்பு XKB_ERROR_UNSUPPORTED_LAYOUT_OUT_OF_RANGE_POLICY;
     }
 }
 
 /** Check ABI compatibility */
 // NOLINTBEGIN(bugprone-assignment-in-selection-statement)
-static enum xkb_status
-check_state_update_abi_(struct xkb_context * restrict ctx,
-                        const char * restrict func,
-                        const struct xkb_synthetic_update * restrict update)
+நிலையான எண்ணிக்கை xkb_status
+check_state_update_abi_(கட்டமைப்பு xkb_context * restrict ctx,
+                        மாறிலி எழுத்து * restrict func,
+                        மாறிலி கட்டமைப்பு xkb_synthetic_update * restrict update)
 {
-    enum xkb_status status = XKB_SUCCESS;
-    if ((status = xkb_check_state_abi(update)) ||
+    எண்ணிக்கை xkb_status status = XKB_SUCCESS;
+    எனில் ((status = xkb_check_state_abi(update)) ||
         (update->reserved0 != 0 &&
          (status = XKB_ERROR_ABI_FORWARD_COMPAT)) ||
         (update->components &&
@@ -2200,66 +2200,66 @@ check_state_update_abi_(struct xkb_context * restrict ctx,
          (status = xkb_check_state_abi(update->layout_policy)))) {
         xkb_log_abi_error(ctx, func, status);
     }
-    return status;
+    திரும்பு status;
 }
 // NOLINTEND(bugprone-assignment-in-selection-statement)
 
 #define check_state_update_abi(ctx, update) \
     check_state_update_abi_(ctx, __func__, update)
 
-enum xkb_status
-xkb_state_update_synthetic(struct xkb_state * base_state,
-                           const struct xkb_synthetic_update * update,
-                           enum xkb_state_component *changed)
+எண்ணிக்கை xkb_status
+xkb_state_update_synthetic(கட்டமைப்பு xkb_state * base_state,
+                           மாறிலி கட்டமைப்பு xkb_synthetic_update * update,
+                           எண்ணிக்கை xkb_state_component *changed)
 {
     /* Guard against client-only state */
-    if (base_state->mode <= SERVER_COMPANION) {
+    எனில் (base_state->mode <= SERVER_COMPANION) {
         log_err(base_state->keymap->ctx, XKB_ERROR_UNEXPECTED_STATE_MODE,
                 "%s: Unexpected state type %d\n", __func__, base_state->mode);
-        return XKB_ERROR_UNEXPECTED_STATE_MODE;
+        திரும்பு XKB_ERROR_UNEXPECTED_STATE_MODE;
     }
 
-    struct xkb_server_state * const state =
-        (struct xkb_server_state *)base_state;
+    கட்டமைப்பு xkb_server_state * மாறிலி state =
+        (கட்டமைப்பு xkb_server_state *)base_state;
 
     /* Check ABI compatibility */
-    enum xkb_status status = check_state_update_abi(state->base.keymap->ctx,
+    எண்ணிக்கை xkb_status status = check_state_update_abi(state->base.keymap->ctx,
                                                     update);
-    if (status != XKB_SUCCESS)
-        return status;
+    எனில் (status != XKB_SUCCESS)
+        திரும்பு status;
 
-    const struct state_components previous_components = state->base.components;
+    மாறிலி கட்டமைப்பு state_components previous_components = state->base.components;
 
     // TODO: use a *transaction* mechanism: either the whole update succeeds
     //       or rollback
 
     /* Update parametrized controls first */
-    if (update->layout_policy) {
+    எனில் (update->layout_policy) {
         status = state_update_layout_policy(state, update->layout_policy);
-        if (status != XKB_SUCCESS)
-            return status;
+        எனில் (status != XKB_SUCCESS)
+            திரும்பு status;
     }
 
-    if (update->components) {
-        const struct xkb_state_components_update * const components =
+    எனில் (update->components) {
+        மாறிலி கட்டமைப்பு xkb_state_components_update * மாறிலி components =
             update->components;
         /* Update boolean controls first */
-        if (components->components & XKB_STATE_CONTROLS_EFFECTIVE) {
+        எனில் (components->components & XKB_STATE_CONTROLS_EFFECTIVE) {
             state_update_enabled_controls(state,
                                           components->affect_controls,
-                                          components->controls, NULL);
+                                          components->controls, வெற்று);
         }
 
-        state_update_latched_locked(state, components, NULL);
+        state_update_latched_locked(state, components, வெற்று);
     }
 
     xkb_state_update_derived(&state->base);
 
-    if (changed) {
+    எனில் (changed) {
         *changed = get_state_component_changes(&previous_components,
                                                &state->base.components);
     }
-    return XKB_SUCCESS;
+    திரும்பு XKB_SUCCESS;
 }
 
 /**
@@ -2269,8 +2269,8 @@ xkb_state_update_synthetic(struct xkb_state * base_state,
  * lossy, and should only be used to update a slave state mirroring the
  * master, e.g. in a client/server window system.
  */
-enum xkb_state_component
-xkb_state_update_mask(struct xkb_state *base_state,
+எண்ணிக்கை xkb_state_component
+xkb_state_update_mask(கட்டமைப்பு xkb_state *base_state,
                       xkb_mod_mask_t base_mods,
                       xkb_mod_mask_t latched_mods,
                       xkb_mod_mask_t locked_mods,
@@ -2279,19 +2279,19 @@ xkb_state_update_mask(struct xkb_state *base_state,
                       xkb_layout_index_t locked_group)
 {
     /* Guard against server-only and server companion state */
-    assert(base_state->mode == CLIENT_STATE ||
+    ப்ரதிஜ்ஞா(base_state->mode == CLIENT_STATE ||
            base_state->mode == LEGACY_MIXED_STATE);
-    if (base_state->mode != CLIENT_STATE &&
+    எனில் (base_state->mode != CLIENT_STATE &&
         base_state->mode != LEGACY_MIXED_STATE) {
         log_err(base_state->keymap->ctx, XKB_ERROR_UNEXPECTED_STATE_MODE,
                 "%s: Unexpected state type %d\n", __func__, base_state->mode);
-        return 0;
+        திரும்பு 0;
     }
 
-    struct xkb_client_state * const state =
-        (struct xkb_client_state *)base_state;
+    கட்டமைப்பு xkb_client_state * மாறிலி state =
+        (கட்டமைப்பு xkb_client_state *)base_state;
 
-    const struct state_components prev_components = state->base.components;
+    மாறிலி கட்டமைப்பு state_components prev_components = state->base.components;
 
     /*
      * Make sure the mods are fully resolved - since we get arbitrary
@@ -2321,16 +2321,16 @@ xkb_state_update_mask(struct xkb_state *base_state,
 
     xkb_state_update_derived(&state->base);
 
-    return get_state_component_changes(&prev_components, &state->base.components);
+    திரும்பு get_state_component_changes(&prev_components, &state->base.components);
 }
 
 /*
  * https://www.x.org/releases/current/doc/kbproto/xkbproto.html#Interpreting_the_Lock_Modifier
  */
-static bool
-should_do_caps_transformation(struct xkb_state *state, xkb_keycode_t kc)
+நிலையான bool
+should_do_caps_transformation(கட்டமைப்பு xkb_state *state, xkb_keycode_t kc)
 {
-    return
+    திரும்பு
         xkb_state_mod_index_is_active(state, XKB_MOD_INDEX_CAPS,
                                       XKB_STATE_MODS_EFFECTIVE) > 0 &&
         xkb_state_mod_index_is_consumed(state, kc, XKB_MOD_INDEX_CAPS) == 0;
@@ -2339,10 +2339,10 @@ should_do_caps_transformation(struct xkb_state *state, xkb_keycode_t kc)
 /*
  * https://www.x.org/releases/current/doc/kbproto/xkbproto.html#Interpreting_the_Control_Modifier
  */
-static bool
-should_do_ctrl_transformation(struct xkb_state *state, xkb_keycode_t kc)
+நிலையான bool
+should_do_ctrl_transformation(கட்டமைப்பு xkb_state *state, xkb_keycode_t kc)
 {
-    return
+    திரும்பு
         xkb_state_mod_index_is_active(state, XKB_MOD_INDEX_CTRL,
                                       XKB_STATE_MODS_EFFECTIVE) > 0 &&
         xkb_state_mod_index_is_consumed(state, kc, XKB_MOD_INDEX_CTRL) == 0;
@@ -2352,52 +2352,52 @@ should_do_ctrl_transformation(struct xkb_state *state, xkb_keycode_t kc)
  * Provides the symbols to use for the given key and state.  Returns the
  * number of symbols pointed to in syms_out.
  */
-int
-xkb_state_key_get_syms(struct xkb_state *state, xkb_keycode_t kc,
-                       const xkb_keysym_t **syms_out)
+முழு
+xkb_state_சாவி_get_syms(கட்டமைப்பு xkb_state *state, xkb_keycode_t kc,
+                       மாறிலி xkb_keysym_t **syms_out)
 {
-    const xkb_layout_index_t layout = xkb_state_key_get_layout(state, kc);
-    if (layout == XKB_LAYOUT_INVALID)
-        goto err;
+    மாறிலி xkb_layout_index_t layout = xkb_state_சாவி_get_layout(state, kc);
+    எனில் (layout == XKB_LAYOUT_INVALID)
+        செல் err;
 
-    const xkb_level_index_t level = xkb_state_key_get_level(state, kc, layout);
-    if (level == XKB_LEVEL_INVALID)
-        goto err;
+    மாறிலி xkb_level_index_t level = xkb_state_சாவி_get_level(state, kc, layout);
+    எனில் (level == XKB_LEVEL_INVALID)
+        செல் err;
 
-    const struct xkb_key* const key = XkbKey(state->keymap, kc);
+    மாறிலி கட்டமைப்பு xkb_சாவி* மாறிலி சாவி = Xkb_சாவி(state->keymap, kc);
 
-    if (!key)
-        goto err;
+    எனில் (!சாவி)
+        செல் err;
 
-    const struct xkb_level* const leveli =
-        xkb_keymap_key_get_level(state->keymap, key, layout, level);
+    மாறிலி கட்டமைப்பு xkb_level* மாறிலி leveli =
+        xkb_keymap_சாவி_get_level(state->keymap, சாவி, layout, level);
 
-    if (!leveli)
-        goto err;
+    எனில் (!leveli)
+        செல் err;
 
-    const xkb_keysym_count_t num_syms = leveli->num_syms;
-    if (num_syms == 0)
-        goto err;
+    மாறிலி xkb_keysym_மொத்தம்_t இலக்கம்_syms = leveli->இலக்கம்_syms;
+    எனில் (இலக்கம்_syms == 0)
+        செல் err;
 
-    if (should_do_caps_transformation(state, kc)) {
+    எனில் (should_do_caps_transformation(state, kc)) {
         /* Only simple capitalization rules: keysyms count is unchanged. */
-        if (num_syms > 1) {
+        எனில் (இலக்கம்_syms > 1) {
             *syms_out = (leveli->has_upper)
-                      ? leveli->s.syms + num_syms
+                      ? leveli->s.syms + இலக்கம்_syms
                       : leveli->s.syms;
-        } else {
+        } இல்லையெனில் {
             *syms_out = &leveli->upper;
         }
-    } else {
-        *syms_out = (num_syms > 1)
+    } இல்லையெனில் {
+        *syms_out = (இலக்கம்_syms > 1)
                   ? leveli->s.syms
                   : &leveli->s.sym;
     }
-    return (int) num_syms;
+    திரும்பு (முழு) இலக்கம்_syms;
 
 err:
-    *syms_out = NULL;
-    return 0;
+    *syms_out = வெற்று;
+    திரும்பு 0;
 }
 
 /*
@@ -2427,37 +2427,37 @@ err:
  * [caret notation]: https://en.wikipedia.org/wiki/Caret_notation
  * [VT220 terminal]: https://vt100.net/docs/vt220-rm/chapter3.html#T3-5
  */
-static char
-XkbToControl(char ch)
+நிலையான எழுத்து
+XkbToControl(எழுத்து ch)
 {
-    char c = ch;
+    எழுத்து c = ch;
 
-    if ((c >= '@' && c < '\177') || c == ' ')
+    எனில் ((c >= '@' && c < '\177') || c == ' ')
         c &= 0x1F;
-    else if (c == '2')
+    இல்லையெனில் எனில் (c == '2')
         c = '\000';
-    else if (c >= '3' && c <= '7')
+    இல்லையெனில் எனில் (c >= '3' && c <= '7')
         c -= ('3' - '\033');
-    else if (c == '8')
+    இல்லையெனில் எனில் (c == '8')
         c = '\177';
-    else if (c == '/')
+    இல்லையெனில் எனில் (c == '/')
         c = '_' & 0x1F;
-    return c;
+    திரும்பு c;
 }
 
 /**
  * Provides either exactly one symbol, or XKB_KEY_NoSymbol.
  */
 xkb_keysym_t
-xkb_state_key_get_one_sym(struct xkb_state *state, xkb_keycode_t kc)
+xkb_state_சாவி_get_one_sym(கட்டமைப்பு xkb_state *state, xkb_keycode_t kc)
 {
-    const xkb_keysym_t *syms = NULL;
-    const int num_syms = xkb_state_key_get_syms(state, kc, &syms);
+    மாறிலி xkb_keysym_t *syms = வெற்று;
+    மாறிலி முழு இலக்கம்_syms = xkb_state_சாவி_get_syms(state, kc, &syms);
 
-    if (num_syms != 1)
-        return XKB_KEY_NoSymbol;
-    else
-        return syms[0];
+    எனில் (இலக்கம்_syms != 1)
+        திரும்பு XKB_சாவி_No_குறியீடு;
+    இல்லையெனில்
+        திரும்பு syms[0];
 }
 
 /*
@@ -2469,197 +2469,197 @@ xkb_state_key_get_one_sym(struct xkb_state *state, xkb_keycode_t kc)
  * behavior with the XkbLC_ControlFallback (see XkbSetXlibControls(3)),
  * but it is enabled by default, yippee.
  */
-static xkb_keysym_t
-get_one_sym_for_string(struct xkb_state *state, xkb_keycode_t kc)
+நிலையான xkb_keysym_t
+get_one_sym_for_string(கட்டமைப்பு xkb_state *state, xkb_keycode_t kc)
 {
-    const xkb_layout_index_t layout = xkb_state_key_get_layout(state, kc);
-    const xkb_layout_index_t num_layouts =
-        xkb_keymap_num_layouts_for_key(state->keymap, kc);
-    xkb_level_index_t level = xkb_state_key_get_level(state, kc, layout);
-    if (layout == XKB_LAYOUT_INVALID || num_layouts == 0 ||
+    மாறிலி xkb_layout_index_t layout = xkb_state_சாவி_get_layout(state, kc);
+    மாறிலி xkb_layout_index_t இலக்கம்_layouts =
+        xkb_keymap_இலக்கம்_layouts_for_சாவி(state->keymap, kc);
+    xkb_level_index_t level = xkb_state_சாவி_get_level(state, kc, layout);
+    எனில் (layout == XKB_LAYOUT_INVALID || இலக்கம்_layouts == 0 ||
         level == XKB_LEVEL_INVALID)
-        return XKB_KEY_NoSymbol;
+        திரும்பு XKB_சாவி_No_குறியீடு;
 
-    const xkb_keysym_t *syms = NULL;
-    int nsyms = xkb_keymap_key_get_syms_by_level(state->keymap, kc,
+    மாறிலி xkb_keysym_t *syms = வெற்று;
+    முழு nsyms = xkb_keymap_சாவி_get_syms_by_level(state->keymap, kc,
                                                  layout, level, &syms);
-    if (nsyms != 1)
-        return XKB_KEY_NoSymbol;
+    எனில் (nsyms != 1)
+        திரும்பு XKB_சாவி_No_குறியீடு;
     xkb_keysym_t sym = syms[0];
 
-    if (should_do_ctrl_transformation(state, kc) && sym > 127u) {
-        for (xkb_layout_index_t i = 0; i < num_layouts; i++) {
-            level = xkb_state_key_get_level(state, kc, i);
-            if (level == XKB_LEVEL_INVALID)
-                continue;
+    எனில் (should_do_ctrl_transformation(state, kc) && sym > 127u) {
+        க்கு (xkb_layout_index_t i = 0; i < இலக்கம்_layouts; i++) {
+            level = xkb_state_சாவி_get_level(state, kc, i);
+            எனில் (level == XKB_LEVEL_INVALID)
+                தொடர்;
 
-            nsyms = xkb_keymap_key_get_syms_by_level(state->keymap, kc,
+            nsyms = xkb_keymap_சாவி_get_syms_by_level(state->keymap, kc,
                                                      i, level, &syms);
-            if (nsyms == 1 && syms[0] <= 127u) {
+            எனில் (nsyms == 1 && syms[0] <= 127u) {
                 sym = syms[0];
-                break;
+                நிறுத்து;
             }
         }
     }
 
-    if (should_do_caps_transformation(state, kc)) {
+    எனில் (should_do_caps_transformation(state, kc)) {
         sym = xkb_keysym_to_upper(sym);
     }
 
-    return sym;
+    திரும்பு sym;
 }
 
-int
-xkb_state_key_get_utf8(struct xkb_state *state, xkb_keycode_t kc,
-                       char *buffer, size_t size)
+முழு
+xkb_state_சாவி_get_utf8(கட்டமைப்பு xkb_state *state, xkb_keycode_t kc,
+                       எழுத்து *buffer, size_t size)
 {
-    int nsyms;
-    const xkb_keysym_t *syms = NULL;
-    const xkb_keysym_t sym = get_one_sym_for_string(state, kc);
-    if (sym != XKB_KEY_NoSymbol) {
+    முழு nsyms;
+    மாறிலி xkb_keysym_t *syms = வெற்று;
+    மாறிலி xkb_keysym_t sym = get_one_sym_for_string(state, kc);
+    எனில் (sym != XKB_சாவி_No_குறியீடு) {
         nsyms = 1; syms = &sym;
     }
-    else {
-        nsyms = xkb_state_key_get_syms(state, kc, &syms);
+    இல்லையெனில் {
+        nsyms = xkb_state_சாவி_get_syms(state, kc, &syms);
     }
 
     /* Make sure not to truncate in the middle of a UTF-8 sequence. */
-    int offset = 0;
-    char tmp[XKB_KEYSYM_UTF8_MAX_SIZE];
-    for (int i = 0; i < nsyms; i++) {
-        int ret = xkb_keysym_to_utf8(syms[i], tmp, sizeof(tmp));
-        if (ret <= 0)
-            goto err_bad;
+    முழு offset = 0;
+    எழுத்து tmp[XKB_KEYSYM_UTF8_MAX_SIZE];
+    க்கு (முழு i = 0; i < nsyms; i++) {
+        முழு ret = xkb_keysym_to_utf8(syms[i], tmp, அளவு(tmp));
+        எனில் (ret <= 0)
+            செல் err_bad;
 
         ret--;
-        if ((size_t)offset + (size_t)ret <= size)
+        எனில் ((size_t)offset + (size_t)ret <= size)
             memcpy(buffer + offset, tmp, (size_t)ret);
         offset += ret;
     }
 
-    if ((size_t)offset >= size)
-        goto err_trunc;
+    எனில் ((size_t)offset >= size)
+        செல் err_trunc;
     buffer[offset] = '\0';
 
-    if (!is_valid_utf8(buffer, (size_t)offset))
-        goto err_bad;
+    எனில் (!is_valid_utf8(buffer, (size_t)offset))
+        செல் err_bad;
 
-    if (offset == 1 && (unsigned int) buffer[0] <= 127u &&
+    எனில் (offset == 1 && (unsigned முழு) buffer[0] <= 127u &&
         should_do_ctrl_transformation(state, kc))
         buffer[0] = XkbToControl(buffer[0]);
 
-    return offset;
+    திரும்பு offset;
 
 err_trunc:
-    if (size > 0)
+    எனில் (size > 0)
         buffer[size - 1] = '\0';
-    return offset;
+    திரும்பு offset;
 
 err_bad:
-    if (size > 0)
+    எனில் (size > 0)
         buffer[0] = '\0';
-    return 0;
+    திரும்பு 0;
 }
 
 uint32_t
-xkb_state_key_get_utf32(struct xkb_state *state, xkb_keycode_t kc)
+xkb_state_சாவி_get_utf32(கட்டமைப்பு xkb_state *state, xkb_keycode_t kc)
 {
-    const xkb_keysym_t sym = get_one_sym_for_string(state, kc);
+    மாறிலி xkb_keysym_t sym = get_one_sym_for_string(state, kc);
     uint32_t cp = xkb_keysym_to_utf32(sym);
 
-    if (cp <= 127u && should_do_ctrl_transformation(state, kc))
-        cp = (uint32_t) XkbToControl((char) cp);
+    எனில் (cp <= 127u && should_do_ctrl_transformation(state, kc))
+        cp = (uint32_t) XkbToControl((எழுத்து) cp);
 
-    return cp;
+    திரும்பு cp;
 }
 
 /**
  * Serializes the requested modifier state into an xkb_mod_mask_t, with all
  * the same disclaimers as in xkb_state_update_mask.
  */
-static inline xkb_mod_mask_t
-serialize_mods(const struct state_components *components,
-               enum xkb_state_component type)
+நிலையான உள்வரி xkb_mod_mask_t
+serialize_mods(மாறிலி கட்டமைப்பு state_components *components,
+               எண்ணிக்கை xkb_state_component type)
 {
     xkb_mod_mask_t ret = 0;
 
-    if (type & XKB_STATE_MODS_EFFECTIVE)
-        return components->mods;
+    எனில் (type & XKB_STATE_MODS_EFFECTIVE)
+        திரும்பு components->mods;
 
-    if (type & XKB_STATE_MODS_DEPRESSED)
+    எனில் (type & XKB_STATE_MODS_DEPRESSED)
         ret |= components->base_mods;
-    if (type & XKB_STATE_MODS_LATCHED)
+    எனில் (type & XKB_STATE_MODS_LATCHED)
         ret |= components->latched_mods;
-    if (type & XKB_STATE_MODS_LOCKED)
+    எனில் (type & XKB_STATE_MODS_LOCKED)
         ret |= components->locked_mods;
 
-    return ret;
+    திரும்பு ret;
 }
 
 xkb_mod_mask_t
-xkb_state_serialize_mods(struct xkb_state *state,
-                         enum xkb_state_component type)
+xkb_state_serialize_mods(கட்டமைப்பு xkb_state *state,
+                         எண்ணிக்கை xkb_state_component type)
 {
-    return serialize_mods(&state->components, type);
+    திரும்பு serialize_mods(&state->components, type);
 }
 
 /**
  * Serialises the requested group state, with all the same disclaimers as
  * in xkb_state_update_mask.
  */
-static inline xkb_layout_index_t
-serialize_layout(const struct state_components *components,
-                 enum xkb_state_component type)
+நிலையான உள்வரி xkb_layout_index_t
+serialize_layout(மாறிலி கட்டமைப்பு state_components *components,
+                 எண்ணிக்கை xkb_state_component type)
 {
-    if (type & XKB_STATE_LAYOUT_EFFECTIVE)
-        return components->group;
+    எனில் (type & XKB_STATE_LAYOUT_EFFECTIVE)
+        திரும்பு components->group;
 
     int32_t ret = 0;
-    if (type & XKB_STATE_LAYOUT_DEPRESSED)
+    எனில் (type & XKB_STATE_LAYOUT_DEPRESSED)
         ret += components->base_group;
-    if (type & XKB_STATE_LAYOUT_LATCHED)
+    எனில் (type & XKB_STATE_LAYOUT_LATCHED)
         ret += components->latched_group;
-    if (type & XKB_STATE_LAYOUT_LOCKED)
+    எனில் (type & XKB_STATE_LAYOUT_LOCKED)
         ret += components->locked_group;
 
-    return (xkb_layout_index_t)ret;
+    திரும்பு (xkb_layout_index_t)ret;
 }
 
 xkb_layout_index_t
-xkb_state_serialize_layout(struct xkb_state *state,
-                           enum xkb_state_component type)
+xkb_state_serialize_layout(கட்டமைப்பு xkb_state *state,
+                           எண்ணிக்கை xkb_state_component type)
 {
-    return serialize_layout(&state->components, type);
+    திரும்பு serialize_layout(&state->components, type);
 }
 
 xkb_led_mask_t
-xkb_state_serialize_leds(const struct xkb_state *state,
-                         enum xkb_state_component type)
+xkb_state_serialize_leds(மாறிலி கட்டமைப்பு xkb_state *state,
+                         எண்ணிக்கை xkb_state_component type)
 {
-    return (type & XKB_STATE_LEDS)
+    திரும்பு (type & XKB_STATE_LEDS)
         ? state->components.leds
         : 0;
 }
 
-static inline enum xkb_keyboard_control_flags
-serialize_controls(const struct state_components *components,
-                   enum xkb_state_component type)
+நிலையான உள்வரி எண்ணிக்கை xkb_keyboard_control_flags
+serialize_controls(மாறிலி கட்டமைப்பு state_components *components,
+                   எண்ணிக்கை xkb_state_component type)
 {
-    return (type & XKB_STATE_CONTROLS_EFFECTIVE)
+    திரும்பு (type & XKB_STATE_CONTROLS_EFFECTIVE)
         /*
          * Enable using the public API with the all the Controls values, except
          * the internal ones, if any.
          */
-        ? (enum xkb_keyboard_control_flags)
+        ? (எண்ணிக்கை xkb_keyboard_control_flags)
           (components->controls & CONTROL_ALL_BOOLEAN)
         : 0;
 }
 
-enum xkb_keyboard_control_flags
-xkb_state_serialize_controls(const struct xkb_state *state,
-                             enum xkb_state_component type)
+எண்ணிக்கை xkb_keyboard_control_flags
+xkb_state_serialize_controls(மாறிலி கட்டமைப்பு xkb_state *state,
+                             எண்ணிக்கை xkb_state_component type)
 {
-    return serialize_controls(&state->components, type);
+    திரும்பு serialize_controls(&state->components, type);
 }
 
 /**
@@ -2668,43 +2668,43 @@ xkb_state_serialize_controls(const struct xkb_state *state,
  * the "NumLock" modifier usually also sets the "Mod2" modifier.
  */
 xkb_mod_mask_t
-mod_mask_get_effective(struct xkb_keymap *keymap, xkb_mod_mask_t mods)
+mod_mask_get_effective(கட்டமைப்பு xkb_keymap *keymap, xkb_mod_mask_t mods)
 {
     /* Initialize the effective mask with its corresponding real mods. */
     xkb_mod_mask_t mask = mods & MOD_REAL_MASK_ALL;
 
     /* Resolve the virtual modifiers */
-    const struct xkb_mod *mod;
+    மாறிலி கட்டமைப்பு xkb_mod *mod;
     xkb_mod_index_t i;
     xkb_vmods_enumerate(i, mod, &keymap->mods)
-        if (mods & (UINT32_C(1) << i))
+        எனில் (mods & (UINT32_C(1) << i))
             mask |= mod->mapping;
 
-    return mask;
+    திரும்பு mask;
 }
 
 /**
  * Returns 1 if the given modifier is active with the specified type(s), 0 if
  * not, or -1 if the modifier is invalid.
  */
-int
-xkb_state_mod_index_is_active(struct xkb_state *state,
+முழு
+xkb_state_mod_index_is_active(கட்டமைப்பு xkb_state *state,
                               xkb_mod_index_t idx,
-                              enum xkb_state_component type)
+                              எண்ணிக்கை xkb_state_component type)
 {
-    if (unlikely(idx >= xkb_keymap_num_mods(state->keymap)))
-        return -1;
+    எனில் (unlikely(idx >= xkb_keymap_இலக்கம்_mods(state->keymap)))
+        திரும்பு -1;
 
-    const xkb_mod_mask_t mapping = state->keymap->mods.mods[idx].mapping;
-    if (!mapping) {
+    மாறிலி xkb_mod_mask_t mapping = state->keymap->mods.mods[idx].mapping;
+    எனில் (!mapping) {
         /* Modifier not mapped */
-        return 0;
+        திரும்பு 0;
     }
     /* WARNING: this may overmatch for virtual modifiers */
-    return (xkb_state_serialize_mods(state, type) & mapping) == mapping;
+    திரும்பு (xkb_state_serialize_mods(state, type) & mapping) == mapping;
 }
 
-enum {
+எண்ணிக்கை {
     XKB_STATE_MATCH_FLAGS = XKB_STATE_MATCH_ANY
                           | XKB_STATE_MATCH_ALL
                           | XKB_STATE_MATCH_NON_EXCLUSIVE
@@ -2714,27 +2714,27 @@ enum {
  * Helper function for xkb_state_mod_indices_are_active and
  * xkb_state_mod_names_are_active.
  */
-static bool
-match_mod_masks(struct xkb_state *state,
-                enum xkb_state_component type,
-                enum xkb_state_match match,
+நிலையான bool
+match_mod_masks(கட்டமைப்பு xkb_state *state,
+                எண்ணிக்கை xkb_state_component type,
+                எண்ணிக்கை xkb_state_match match,
                 xkb_mod_mask_t wanted)
 {
-    const xkb_mod_mask_t active = xkb_state_serialize_mods(state, type);
+    மாறிலி xkb_mod_mask_t active = xkb_state_serialize_mods(state, type);
 
-    if (!(match & XKB_STATE_MATCH_NON_EXCLUSIVE) && (active & ~wanted))
-        return false;
+    எனில் (!(match & XKB_STATE_MATCH_NON_EXCLUSIVE) && (active & ~wanted))
+        திரும்பு false;
 
-    if (match & XKB_STATE_MATCH_ANY)
-        return active & wanted;
+    எனில் (match & XKB_STATE_MATCH_ANY)
+        திரும்பு active & wanted;
 
     /* Ensure all flags but XKB_STATE_MATCH_ALL are processed before */
     static_assert(XKB_STATE_MATCH_ALL ==
-                  ((enum xkb_state_match) XKB_STATE_MATCH_FLAGS &
+                  ((எண்ணிக்கை xkb_state_match) XKB_STATE_MATCH_FLAGS &
                    ~(XKB_STATE_MATCH_ANY | XKB_STATE_MATCH_NON_EXCLUSIVE)),
                   "");
 
-    return (active & wanted) == wanted;
+    திரும்பு (active & wanted) == wanted;
 }
 
 /**
@@ -2742,58 +2742,58 @@ match_mod_masks(struct xkb_state *state,
  * not, or -1 if any of the modifiers are invalid or -2 if the match flag is
  * invalid.
  */
-int
-xkb_state_mod_indices_are_active(struct xkb_state *state,
-                                 enum xkb_state_component type,
-                                 enum xkb_state_match match,
+முழு
+xkb_state_mod_indices_are_active(கட்டமைப்பு xkb_state *state,
+                                 எண்ணிக்கை xkb_state_component type,
+                                 எண்ணிக்கை xkb_state_match match,
                                  ...)
 {
-    if (match & ~((enum xkb_state_match) XKB_STATE_MATCH_FLAGS))
-        return -2;
+    எனில் (match & ~((எண்ணிக்கை xkb_state_match) XKB_STATE_MATCH_FLAGS))
+        திரும்பு -2;
 
     va_list ap;
     xkb_mod_mask_t wanted = 0;
-    int ret = 0;
-    const xkb_mod_index_t num_mods = xkb_keymap_num_mods(state->keymap);
+    முழு ret = 0;
+    மாறிலி xkb_mod_index_t இலக்கம்_mods = xkb_keymap_இலக்கம்_mods(state->keymap);
 
     va_start(ap, match);
-    while (1) {
+    போது (1) {
         xkb_mod_index_t idx = va_arg(ap, xkb_mod_index_t);
-        if (idx == XKB_MOD_INVALID)
-            break;
-        if (unlikely(idx >= num_mods)) {
+        எனில் (idx == XKB_MOD_INVALID)
+            நிறுத்து;
+        எனில் (unlikely(idx >= இலக்கம்_mods)) {
             ret = -1;
-            break;
+            நிறுத்து;
         }
         wanted |= state->keymap->mods.mods[idx].mapping;
     }
     va_end(ap);
 
-    if (ret == -1)
-        return ret;
+    எனில் (ret == -1)
+        திரும்பு ret;
 
-    if (!wanted) {
+    எனில் (!wanted) {
         /* Modifiers not mapped */
-        return 0;
+        திரும்பு 0;
     }
 
-    return match_mod_masks(state, type, match, wanted);
+    திரும்பு match_mod_masks(state, type, match, wanted);
 }
 
 /**
  * Returns 1 if the given modifier is active with the specified type(s), 0 if
  * not, or -1 if the modifier is invalid.
  */
-int
-xkb_state_mod_name_is_active(struct xkb_state *state, const char *name,
-                             enum xkb_state_component type)
+முழு
+xkb_state_mod_name_is_active(கட்டமைப்பு xkb_state *state, மாறிலி எழுத்து *name,
+                             எண்ணிக்கை xkb_state_component type)
 {
-    const xkb_mod_index_t idx = xkb_keymap_mod_get_index(state->keymap, name);
+    மாறிலி xkb_mod_index_t idx = xkb_keymap_mod_get_index(state->keymap, name);
 
-    if (idx == XKB_MOD_INVALID)
-        return -1;
+    எனில் (idx == XKB_MOD_INVALID)
+        திரும்பு -1;
 
-    return xkb_state_mod_index_is_active(state, idx, type);
+    திரும்பு xkb_state_mod_index_is_active(state, idx, type);
 }
 
 /**
@@ -2801,111 +2801,111 @@ xkb_state_mod_name_is_active(struct xkb_state *state, const char *name,
  * not, -1 if any of the modifiers are invalid or -2 if the match flag is
  * invalid.
  */
-ATTR_NULL_SENTINEL int
-xkb_state_mod_names_are_active(struct xkb_state *state,
-                               enum xkb_state_component type,
-                               enum xkb_state_match match,
+ATTR_NULL_SENTINEL முழு
+xkb_state_mod_names_are_active(கட்டமைப்பு xkb_state *state,
+                               எண்ணிக்கை xkb_state_component type,
+                               எண்ணிக்கை xkb_state_match match,
                                ...)
 {
-    if (match & ~((enum xkb_state_match) XKB_STATE_MATCH_FLAGS))
-        return -2;
+    எனில் (match & ~((எண்ணிக்கை xkb_state_match) XKB_STATE_MATCH_FLAGS))
+        திரும்பு -2;
 
     va_list ap;
     xkb_mod_mask_t wanted = 0;
-    int ret = 0;
+    முழு ret = 0;
 
     va_start(ap, match);
-    while (1) {
-        const char *str = va_arg(ap, const char *);
-        if (str == NULL)
-            break;
-        const xkb_mod_index_t idx = xkb_keymap_mod_get_index(state->keymap, str);
-        if (idx == XKB_MOD_INVALID) {
+    போது (1) {
+        மாறிலி எழுத்து *str = va_arg(ap, மாறிலி எழுத்து *);
+        எனில் (str == வெற்று)
+            நிறுத்து;
+        மாறிலி xkb_mod_index_t idx = xkb_keymap_mod_get_index(state->keymap, str);
+        எனில் (idx == XKB_MOD_INVALID) {
             ret = -1;
-            break;
+            நிறுத்து;
         }
         wanted |= state->keymap->mods.mods[idx].mapping;
     }
     va_end(ap);
 
-    if (ret == -1)
-        return ret;
+    எனில் (ret == -1)
+        திரும்பு ret;
 
-    if (!wanted) {
+    எனில் (!wanted) {
         /* Modifiers not mapped */
-        return 0;
+        திரும்பு 0;
     }
 
-    return match_mod_masks(state, type, match, wanted);
+    திரும்பு match_mod_masks(state, type, match, wanted);
 }
 
 /**
  * Returns 1 if the given group is active with the specified type(s), 0 if
  * not, or -1 if the group is invalid.
  */
-int
-xkb_state_layout_index_is_active(struct xkb_state *state,
+முழு
+xkb_state_layout_index_is_active(கட்டமைப்பு xkb_state *state,
                                  xkb_layout_index_t idx,
-                                 enum xkb_state_component type)
+                                 எண்ணிக்கை xkb_state_component type)
 {
-    if (idx >= state->keymap->num_groups)
-        return -1;
+    எனில் (idx >= state->keymap->இலக்கம்_groups)
+        திரும்பு -1;
 
-    int ret = 0;
-    if (type & XKB_STATE_LAYOUT_EFFECTIVE)
+    முழு ret = 0;
+    எனில் (type & XKB_STATE_LAYOUT_EFFECTIVE)
         ret |= (state->components.group == idx);
-    if (type & XKB_STATE_LAYOUT_DEPRESSED)
+    எனில் (type & XKB_STATE_LAYOUT_DEPRESSED)
         ret |= (state->components.base_group == (int32_t) idx);
-    if (type & XKB_STATE_LAYOUT_LATCHED)
+    எனில் (type & XKB_STATE_LAYOUT_LATCHED)
         ret |= (state->components.latched_group == (int32_t) idx);
-    if (type & XKB_STATE_LAYOUT_LOCKED)
+    எனில் (type & XKB_STATE_LAYOUT_LOCKED)
         ret |= (state->components.locked_group == (int32_t) idx);
 
-    return ret;
+    திரும்பு ret;
 }
 
 /**
  * Returns 1 if the given modifier is active with the specified type(s), 0 if
  * not, or -1 if the modifier is invalid.
  */
-int
-xkb_state_layout_name_is_active(struct xkb_state *state, const char *name,
-                                enum xkb_state_component type)
+முழு
+xkb_state_layout_name_is_active(கட்டமைப்பு xkb_state *state, மாறிலி எழுத்து *name,
+                                எண்ணிக்கை xkb_state_component type)
 {
-    const xkb_layout_index_t idx =
+    மாறிலி xkb_layout_index_t idx =
         xkb_keymap_layout_get_index(state->keymap, name);
 
-    if (idx == XKB_LAYOUT_INVALID)
-        return -1;
+    எனில் (idx == XKB_LAYOUT_INVALID)
+        திரும்பு -1;
 
-    return xkb_state_layout_index_is_active(state, idx, type);
+    திரும்பு xkb_state_layout_index_is_active(state, idx, type);
 }
 
 /**
  * Returns 1 if the given LED is active, 0 if not, or -1 if the LED is invalid.
  */
-int
-xkb_state_led_index_is_active(struct xkb_state *state, xkb_led_index_t idx)
+முழு
+xkb_state_led_index_is_active(கட்டமைப்பு xkb_state *state, xkb_led_index_t idx)
 {
-    if (idx >= state->keymap->num_leds ||
+    எனில் (idx >= state->keymap->இலக்கம்_leds ||
         state->keymap->leds[idx].name == XKB_ATOM_NONE)
-        return -1;
+        திரும்பு -1;
 
-    return !!(state->components.leds & (UINT32_C(1) << idx));
+    திரும்பு !!(state->components.leds & (UINT32_C(1) << idx));
 }
 
 /**
  * Returns 1 if the given LED is active, 0 if not, or -1 if the LED is invalid.
  */
-int
-xkb_state_led_name_is_active(struct xkb_state *state, const char *name)
+முழு
+xkb_state_led_name_is_active(கட்டமைப்பு xkb_state *state, மாறிலி எழுத்து *name)
 {
-    const xkb_led_index_t idx = xkb_keymap_led_get_index(state->keymap, name);
+    மாறிலி xkb_led_index_t idx = xkb_keymap_led_get_index(state->keymap, name);
 
-    if (idx == XKB_LED_INVALID)
-        return -1;
+    எனில் (idx == XKB_LED_INVALID)
+        திரும்பு -1;
 
-    return xkb_state_led_index_is_active(state, idx);
+    திரும்பு xkb_state_led_index_is_active(state, idx);
 }
 
 /**
@@ -2913,122 +2913,122 @@ xkb_state_led_name_is_active(struct xkb_state *state, const char *name)
  * - XkbTranslateKeyCode(3), mod_rtrn return value, from libX11.
  * - MyEnhancedXkbTranslateKeyCode(), a modification of the above, from GTK+.
  */
-static xkb_mod_mask_t
-key_get_consumed(struct xkb_state *state, const struct xkb_key *key,
-                 enum xkb_consumed_mode mode)
+நிலையான xkb_mod_mask_t
+சாவி_get_consumed(கட்டமைப்பு xkb_state *state, மாறிலி கட்டமைப்பு xkb_சாவி *சாவி,
+                 எண்ணிக்கை xkb_consumed_mode mode)
 {
-    const xkb_layout_index_t group =
-        xkb_state_key_get_layout(state, key->keycode);
-    if (group == XKB_LAYOUT_INVALID)
-        return 0;
+    மாறிலி xkb_layout_index_t group =
+        xkb_state_சாவி_get_layout(state, சாவி->keycode);
+    எனில் (group == XKB_LAYOUT_INVALID)
+        திரும்பு 0;
 
     xkb_mod_mask_t preserve = 0;
     xkb_mod_mask_t consumed = 0;
 
-    const struct xkb_key_type_entry* const matching_entry =
-        get_entry_for_key_state(state, key, group);
-    if (matching_entry)
+    மாறிலி கட்டமைப்பு xkb_சாவி_type_entry* மாறிலி matching_entry =
+        get_entry_for_சாவி_state(state, சாவி, group);
+    எனில் (matching_entry)
         preserve = matching_entry->preserve.mask;
 
-    const struct xkb_key_type* const type = key->groups[group].type;
-    switch (mode) {
-    case XKB_CONSUMED_MODE_XKB:
+    மாறிலி கட்டமைப்பு xkb_சாவி_type* மாறிலி type = சாவி->groups[group].type;
+    தேர்வு (mode) {
+    நிலை XKB_CONSUMED_MODE_XKB:
         consumed = type->mods.mask;
-        break;
+        நிறுத்து;
 
-    case XKB_CONSUMED_MODE_GTK: {
-        const struct xkb_key_type_entry* const no_mods_entry =
+    நிலை XKB_CONSUMED_MODE_GTK: {
+        மாறிலி கட்டமைப்பு xkb_சாவி_type_entry* மாறிலி no_mods_entry =
             get_entry_for_mods(type, 0);
-        const xkb_level_index_t no_mods_leveli = no_mods_entry
+        மாறிலி xkb_level_index_t no_mods_leveli = no_mods_entry
                                                ? no_mods_entry->level
                                                : 0;
-        const struct xkb_level* const no_mods_level =
-            &key->groups[group].levels[no_mods_leveli];
+        மாறிலி கட்டமைப்பு xkb_level* மாறிலி no_mods_level =
+            &சாவி->groups[group].levels[no_mods_leveli];
 
-        for (darray_size_t i = 0; i < type->num_entries; i++) {
-            const struct xkb_key_type_entry* const entry = &type->entries[i];
-            if (!entry_is_active(entry))
-                continue;
+        க்கு (darray_size_t i = 0; i < type->இலக்கம்_entries; i++) {
+            மாறிலி கட்டமைப்பு xkb_சாவி_type_entry* மாறிலி entry = &type->entries[i];
+            எனில் (!entry_is_active(entry))
+                தொடர்;
 
-            const struct xkb_level* const level =
-                &key->groups[group].levels[entry->level];
-            if (XkbLevelsSameSyms(level, no_mods_level))
-                continue;
+            மாறிலி கட்டமைப்பு xkb_level* மாறிலி level =
+                &சாவி->groups[group].levels[entry->level];
+            எனில் (XkbLevelsSameSyms(level, no_mods_level))
+                தொடர்;
 
-            if (entry == matching_entry || one_bit_set(entry->mods.mask))
+            எனில் (entry == matching_entry || one_bit_set(entry->mods.mask))
                 consumed |= entry->mods.mask & ~entry->preserve.mask;
         }
-        break;
+        நிறுத்து;
     }
     }
 
-    return consumed & ~preserve;
+    திரும்பு consumed & ~preserve;
 }
 
-int
-xkb_state_mod_index_is_consumed2(struct xkb_state *state, xkb_keycode_t kc,
+முழு
+xkb_state_mod_index_is_consumed2(கட்டமைப்பு xkb_state *state, xkb_keycode_t kc,
                                  xkb_mod_index_t idx,
-                                 enum xkb_consumed_mode mode)
+                                 எண்ணிக்கை xkb_consumed_mode mode)
 {
-    const struct xkb_key* const key = XkbKey(state->keymap, kc);
+    மாறிலி கட்டமைப்பு xkb_சாவி* மாறிலி சாவி = Xkb_சாவி(state->keymap, kc);
 
-    if (unlikely(!key || idx >= xkb_keymap_num_mods(state->keymap)))
-        return -1;
+    எனில் (unlikely(!சாவி || idx >= xkb_keymap_இலக்கம்_mods(state->keymap)))
+        திரும்பு -1;
 
-    const xkb_mod_mask_t mapping = state->keymap->mods.mods[idx].mapping;
-    if (!mapping) {
+    மாறிலி xkb_mod_mask_t mapping = state->keymap->mods.mods[idx].mapping;
+    எனில் (!mapping) {
         /* Modifier not mapped */
-        return 0;
+        திரும்பு 0;
     }
-    return (mapping & key_get_consumed(state, key, mode)) == mapping;
+    திரும்பு (mapping & சாவி_get_consumed(state, சாவி, mode)) == mapping;
 }
 
-int
-xkb_state_mod_index_is_consumed(struct xkb_state *state, xkb_keycode_t kc,
+முழு
+xkb_state_mod_index_is_consumed(கட்டமைப்பு xkb_state *state, xkb_keycode_t kc,
                                 xkb_mod_index_t idx)
 {
-    return xkb_state_mod_index_is_consumed2(state, kc, idx,
+    திரும்பு xkb_state_mod_index_is_consumed2(state, kc, idx,
                                             XKB_CONSUMED_MODE_XKB);
 }
 
 xkb_mod_mask_t
-xkb_state_mod_mask_remove_consumed(struct xkb_state *state, xkb_keycode_t kc,
+xkb_state_mod_mask_remove_consumed(கட்டமைப்பு xkb_state *state, xkb_keycode_t kc,
                                    xkb_mod_mask_t mask)
 {
-    const struct xkb_key* const key = XkbKey(state->keymap, kc);
+    மாறிலி கட்டமைப்பு xkb_சாவி* மாறிலி சாவி = Xkb_சாவி(state->keymap, kc);
 
-    if (!key)
-        return 0;
+    எனில் (!சாவி)
+        திரும்பு 0;
 
-    return resolve_to_canonical_mods(state->keymap, mask) &
-           ~key_get_consumed(state, key, XKB_CONSUMED_MODE_XKB);
+    திரும்பு resolve_to_canonical_mods(state->keymap, mask) &
+           ~சாவி_get_consumed(state, சாவி, XKB_CONSUMED_MODE_XKB);
 }
 
 xkb_mod_mask_t
-xkb_state_key_get_consumed_mods2(struct xkb_state *state, xkb_keycode_t kc,
-                                 enum xkb_consumed_mode mode)
+xkb_state_சாவி_get_consumed_mods2(கட்டமைப்பு xkb_state *state, xkb_keycode_t kc,
+                                 எண்ணிக்கை xkb_consumed_mode mode)
 {
-    switch (mode) {
-    case XKB_CONSUMED_MODE_XKB:
-    case XKB_CONSUMED_MODE_GTK:
-        break;
-    default:
+    தேர்வு (mode) {
+    நிலை XKB_CONSUMED_MODE_XKB:
+    நிலை XKB_CONSUMED_MODE_GTK:
+        நிறுத்து;
+    இயல்பு:
         log_err_func(state->keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
                      "unrecognized consumed modifiers mode: %d\n", mode);
-        return 0;
+        திரும்பு 0;
     }
 
-    const struct xkb_key* const key = XkbKey(state->keymap, kc);
-    if (!key)
-        return 0;
+    மாறிலி கட்டமைப்பு xkb_சாவி* மாறிலி சாவி = Xkb_சாவி(state->keymap, kc);
+    எனில் (!சாவி)
+        திரும்பு 0;
 
-    return key_get_consumed(state, key, mode);
+    திரும்பு சாவி_get_consumed(state, சாவி, mode);
 }
 
 xkb_mod_mask_t
-xkb_state_key_get_consumed_mods(struct xkb_state *state, xkb_keycode_t kc)
+xkb_state_சாவி_get_consumed_mods(கட்டமைப்பு xkb_state *state, xkb_keycode_t kc)
 {
-    return xkb_state_key_get_consumed_mods2(state, kc, XKB_CONSUMED_MODE_XKB);
+    திரும்பு xkb_state_சாவி_get_consumed_mods2(state, kc, XKB_CONSUMED_MODE_XKB);
 }
 
 /*******************************************************************************
@@ -3036,16 +3036,16 @@ xkb_state_key_get_consumed_mods(struct xkb_state *state, xkb_keycode_t kc)
  ******************************************************************************/
 
 /** Entry to keep track of the state of an overlaid key */
-struct xkb_overlaid_key {
+கட்டமைப்பு xkb_overlaid_சாவி {
     /** The source key being overlaid */
-    const struct xkb_key *old;
+    மாறிலி கட்டமைப்பு xkb_சாவி *old;
     /** The target key */
-    const struct xkb_key *new;
+    மாறிலி கட்டமைப்பு xkb_சாவி *new;
     /** Counter of key currently down */
-    int refcnt;
+    முழு refcnt;
 };
 
-struct xkb_shortcuts_config_entry {
+கட்டமைப்பு xkb_shortcuts_config_entry {
     /** Real modifier mask to trigger shortcuts tweaks */
     xkb_mod_mask_t mods;
     /** Target layout */
@@ -3063,14 +3063,14 @@ struct xkb_shortcuts_config_entry {
  * - Add further features without modifying `xkb_state`, which is already
  *   bloated for *clients* applications.
  */
-struct xkb_machine {
+கட்டமைப்பு xkb_machine {
     /** Inherits from `xkb_server_state` */
-    struct xkb_server_state base;
+    கட்டமைப்பு xkb_server_state base;
 
     /* Extra server-specific state data */
 
     /** Keyboard overlays handling */
-    struct {
+    கட்டமைப்பு {
         /**
          * Current overlaid keys
          *
@@ -3078,7 +3078,7 @@ struct xkb_machine {
          * until totally released, i.e. every key press was matched with the
          * corresponding key release.
          */
-        darray(struct xkb_overlaid_key) keys;
+        darray(கட்டமைப்பு xkb_overlaid_சாவி) சாவிகள்;
         /**
          * Activation order of the overlay
          *
@@ -3091,48 +3091,48 @@ struct xkb_machine {
     } overlays;
 
     /** Configuration */
-    struct machine_config {
+    கட்டமைப்பு machine_config {
         /** Modifiers remapping */
-        struct machine_modifiers_config {
+        கட்டமைப்பு machine_modifiers_config {
             /** Real modifier mask */
             xkb_mod_mask_t mask;
             /** Modifiers re-mappings */
-            darray_size_t mappings_num;
-            struct machine_mods_mapping {
+            darray_size_t mappings_இலக்கம்;
+            கட்டமைப்பு machine_mods_mapping {
                 xkb_mod_mask_t source;
                 xkb_mod_mask_t target;
-            } * mappings ATTR_COUNTED_BY(mappings_num);
+            } * mappings ATTR_COUNTED_BY(mappings_இலக்கம்);
         } modifiers;
 
         /** Shortcuts tweak */
-        struct machine_shortcuts_config {
+        கட்டமைப்பு machine_shortcuts_config {
             /** Substitution entries */
-            struct xkb_shortcuts_config_entry *entries;
+            கட்டமைப்பு xkb_shortcuts_config_entry *entries;
         } shortcuts;
     } config;
 
     /** Mouse keys handling */
-    struct {
+    கட்டமைப்பு {
         /** Default pointer button */
         xkb_pointer_button_index_t default_button;
         /** Mask of the locked buttons */
         xkb_pointer_button_mask_t locked_buttons;
     } mouse;
 
-    enum xkb_machine_flags flags;
+    எண்ணிக்கை xkb_machine_flags flags;
 };
 
-typedef darray(struct machine_mods_mapping) machine_mods_mappings;
+வகைவரை darray(கட்டமைப்பு machine_mods_mapping) machine_mods_mappings;
 
-struct xkb_machine_builder {
-    struct xkb_keymap *keymap;
+கட்டமைப்பு xkb_machine_builder {
+    கட்டமைப்பு xkb_keymap *keymap;
 
     /** Controls */
-    struct {
+    கட்டமைப்பு {
         /** Accessibility flags */
-        struct {
-            enum xkb_a11y_flags affect_flags;
-            enum xkb_a11y_flags flags;
+        கட்டமைப்பு {
+            எண்ணிக்கை xkb_a11y_flags affect_flags;
+            எண்ணிக்கை xkb_a11y_flags flags;
         } a11y;
     } controls;
 
@@ -3140,78 +3140,78 @@ struct xkb_machine_builder {
     machine_mods_mappings mods;
 
     /** Shortcuts tweak */
-    struct xkb_shortcuts_config_options {
+    கட்டமைப்பு xkb_shortcuts_config_options {
         /** Substitution entries */
-        darray(struct xkb_shortcuts_config_entry) entries;
+        darray(கட்டமைப்பு xkb_shortcuts_config_entry) entries;
     } shortcuts;
 
-    enum xkb_machine_flags machine_flags;
-    enum xkb_machine_builder_flags builder_flags;
-    int refcnt;
+    எண்ணிக்கை xkb_machine_flags machine_flags;
+    எண்ணிக்கை xkb_machine_builder_flags builder_flags;
+    முழு refcnt;
 };
 
-struct xkb_machine_builder *
+கட்டமைப்பு xkb_machine_builder *
 xkb_machine_builder_new(
-    struct xkb_keymap * restrict keymap,
-    const struct xkb_machine_builder_config * restrict config,
-    enum xkb_status * restrict status
+    கட்டமைப்பு xkb_keymap * restrict keymap,
+    மாறிலி கட்டமைப்பு xkb_machine_builder_config * restrict config,
+    எண்ணிக்கை xkb_status * restrict status
 )
 {
     /* Handle default configuration */
-    static const struct xkb_machine_builder_config default_config = {
-        .size = sizeof(default_config)
+    நிலையான மாறிலி கட்டமைப்பு xkb_machine_builder_config default_config = {
+        .size = அளவு(default_config)
     };
-    if (!config)
+    எனில் (!config)
         config = &default_config;
 
     /* Check ABI compatibility */
-    const enum xkb_status status_ = xkb_check_state_abi(config);
-    if (status_) {
+    மாறிலி எண்ணிக்கை xkb_status status_ = xkb_check_state_abi(config);
+    எனில் (status_) {
         xkb_log_abi_error(keymap->ctx, __func__, status_);
-        if (status)
+        எனில் (status)
             *status = status_;
-        return NULL;
+        திரும்பு வெற்று;
     }
 
     /* Sanitize input */
-    const enum xkb_machine_builder_flags invalid_builder_flags
+    மாறிலி எண்ணிக்கை xkb_machine_builder_flags invalid_builder_flags
         = config->builder_flags
-        & ~(enum xkb_machine_builder_flags)XKB_MACHINE_BUILDER_FLAGS_VALUES;
-    if (invalid_builder_flags) {
+        & ~(எண்ணிக்கை xkb_machine_builder_flags)XKB_MACHINE_BUILDER_FLAGS_மதிப்புகள்;
+    எனில் (invalid_builder_flags) {
         log_err_func(keymap->ctx, XKB_ERROR_UNSUPPORTED_MACHINE_BUILDER_FLAGS_,
                      "unrecognized machine builder flags: 0x%x\n",
                      invalid_builder_flags);
-        if (status)
+        எனில் (status)
             *status = XKB_ERROR_UNSUPPORTED_MACHINE_BUILDER_FLAGS;
-        return NULL;
+        திரும்பு வெற்று;
     }
 
-    const enum xkb_machine_flags invalid_machine_flags
-        = (enum xkb_machine_flags)config->machine_flags
-        & ~(enum xkb_machine_flags)XKB_MACHINE_FLAGS_VALUES;
-    if (invalid_machine_flags) {
+    மாறிலி எண்ணிக்கை xkb_machine_flags invalid_machine_flags
+        = (எண்ணிக்கை xkb_machine_flags)config->machine_flags
+        & ~(எண்ணிக்கை xkb_machine_flags)XKB_MACHINE_FLAGS_மதிப்புகள்;
+    எனில் (invalid_machine_flags) {
         log_err_func(keymap->ctx, XKB_ERROR_UNSUPPORTED_MACHINE_FLAGS_,
                      "unrecognized state machine flags: 0x%x\n",
                      invalid_machine_flags);
-        if (status)
+        எனில் (status)
             *status = XKB_ERROR_UNSUPPORTED_MACHINE_FLAGS;
-        return NULL;
+        திரும்பு வெற்று;
     }
 
-    struct xkb_machine_builder * const builder = calloc(1, sizeof(*builder));
-    if (!builder) {
+    கட்டமைப்பு xkb_machine_builder * மாறிலி builder = calloc(1, அளவு(*builder));
+    எனில் (!builder) {
         log_err_func1(keymap->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
                       "cannot allocate machine builder\n");
-        if (status)
+        எனில் (status)
             *status = XKB_ERROR_ALLOCATION_FAILURE;
-        return NULL;
+        திரும்பு வெற்று;
     }
 
-    *builder = (struct xkb_machine_builder) {
+    *builder = (கட்டமைப்பு xkb_machine_builder) {
         .keymap = xkb_keymap_ref(keymap),
         .refcnt = 1,
-        .builder_flags = (enum xkb_machine_builder_flags)config->builder_flags,
-        .machine_flags = (enum xkb_machine_flags)config->machine_flags,
+        .builder_flags = (எண்ணிக்கை xkb_machine_builder_flags)config->builder_flags,
+        .machine_flags = (எண்ணிக்கை xkb_machine_flags)config->machine_flags,
         .controls = {
             .a11y = {
                 .affect_flags = XKB_A11Y_NO_FLAGS,
@@ -3224,276 +3224,276 @@ xkb_machine_builder_new(
         },
     };
 
-    if (status)
+    எனில் (status)
         *status = XKB_SUCCESS;
 
-    return builder;
+    திரும்பு builder;
 }
 
-struct xkb_machine_builder *
-xkb_machine_builder_ref(struct xkb_machine_builder *builder)
+கட்டமைப்பு xkb_machine_builder *
+xkb_machine_builder_ref(கட்டமைப்பு xkb_machine_builder *builder)
 {
-    assert(builder->refcnt > 0);
+    ப்ரதிஜ்ஞா(builder->refcnt > 0);
     builder->refcnt++;
-    return builder;
+    திரும்பு builder;
 }
 
-void
-xkb_machine_builder_unref(struct xkb_machine_builder *builder)
+வெறுமை
+xkb_machine_builder_unref(கட்டமைப்பு xkb_machine_builder *builder)
 {
-    assert(!builder || builder->refcnt > 0);
-    if (!builder || --builder->refcnt > 0)
-        return;
+    ப்ரதிஜ்ஞா(!builder || builder->refcnt > 0);
+    எனில் (!builder || --builder->refcnt > 0)
+        திரும்பு;
 
     darray_free(builder->shortcuts.entries);
     darray_free(builder->mods);
     xkb_keymap_unref(builder->keymap);
-    free(builder);
+    விடுவி(builder);
 }
 
-struct xkb_keymap *
-xkb_machine_builder_get_keymap(const struct xkb_machine_builder *builder)
+கட்டமைப்பு xkb_keymap *
+xkb_machine_builder_get_keymap(மாறிலி கட்டமைப்பு xkb_machine_builder *builder)
 {
     /* Reference count is not updated. See API doc. */
-    return builder->keymap;
+    திரும்பு builder->keymap;
 }
 
-enum xkb_status
+எண்ணிக்கை xkb_status
 xkb_machine_builder_update_a11y(
-    struct xkb_machine_builder * restrict builder,
-    const struct xkb_machine_builder_a11y_update * restrict update)
+    கட்டமைப்பு xkb_machine_builder * restrict builder,
+    மாறிலி கட்டமைப்பு xkb_machine_builder_a11y_update * restrict update)
 {
     /* Check ABI compatibility */
-    enum xkb_status status = xkb_check_state_abi(update);
-    if (status != XKB_SUCCESS) {
+    எண்ணிக்கை xkb_status status = xkb_check_state_abi(update);
+    எனில் (status != XKB_SUCCESS) {
         xkb_log_abi_error(builder->keymap->ctx, __func__, status);
-        return status;
+        திரும்பு status;
     }
 
-    const enum xkb_a11y_flags invalid_flags =
-        ~(enum xkb_a11y_flags)XKB_A11Y_FLAGS_VALUES;
+    மாறிலி எண்ணிக்கை xkb_a11y_flags invalid_flags =
+        ~(எண்ணிக்கை xkb_a11y_flags)XKB_A11_Y_FLAGS_மதிப்புகள்;
 
-    if (update->affect_flags & invalid_flags) {
+    எனில் (update->affect_flags & invalid_flags) {
         log_err(builder->keymap->ctx, XKB_ERROR_UNSUPPORTED_A11Y_FLAGS_,
                 "%s: unrecognized A11Y affected flags: %#x\n",
                 __func__, update->affect_flags & invalid_flags);
-        return XKB_ERROR_UNSUPPORTED_A11Y_FLAGS;
+        திரும்பு XKB_ERROR_UNSUPPORTED_A11Y_FLAGS;
     }
-    if (update->flags & invalid_flags) {
+    எனில் (update->flags & invalid_flags) {
         log_err(builder->keymap->ctx, XKB_ERROR_UNSUPPORTED_A11Y_FLAGS_,
                 "%s: unrecognized A11Y flags: %#x\n",
                 __func__, update->flags & invalid_flags);
-        return XKB_ERROR_UNSUPPORTED_A11Y_FLAGS;
+        திரும்பு XKB_ERROR_UNSUPPORTED_A11Y_FLAGS;
     }
 
     builder->controls.a11y.affect_flags |= update->affect_flags;
     builder->controls.a11y.flags &= ~update->affect_flags;
     builder->controls.a11y.flags |= (update->flags & update->affect_flags);
 
-    return XKB_SUCCESS;
+    திரும்பு XKB_SUCCESS;
 }
 
-enum xkb_status
+எண்ணிக்கை xkb_status
 xkb_machine_builder_update_mods_remap(
-    struct xkb_machine_builder * restrict builder,
-    const struct xkb_machine_builder_mods_remap_update * restrict update
+    கட்டமைப்பு xkb_machine_builder * restrict builder,
+    மாறிலி கட்டமைப்பு xkb_machine_builder_mods_remap_update * restrict update
 )
 {
-    if (!update->source) {
-        if (!update->target) {
+    எனில் (!update->source) {
+        எனில் (!update->target) {
             /* Reset mappings */
             darray_resize(builder->mods, 0);
-            return XKB_SUCCESS;
-        } else {
-            return XKB_ERROR_UNSUPPORTED_MODIFIER_MASK;
+            திரும்பு XKB_SUCCESS;
+        } இல்லையெனில் {
+            திரும்பு XKB_ERROR_UNSUPPORTED_MODIFIER_MASK;
         }
     }
 
     /* Check the modifiers against the keymap */
-    const xkb_mod_mask_t invalid = ~builder->keymap->canonical_state_mask;
-    if ((update->source & invalid)) {
+    மாறிலி xkb_mod_mask_t invalid = ~builder->keymap->canonical_state_mask;
+    எனில் ((update->source & invalid)) {
         log_err(builder->keymap->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK,
                 "%s: Invalid source modifiers: 0x%"PRIx32"\n",
                 __func__, update->source);
-        return XKB_ERROR_UNSUPPORTED_MODIFIER_MASK;
+        திரும்பு XKB_ERROR_UNSUPPORTED_MODIFIER_MASK;
     }
-    if ((update->target & invalid)) {
+    எனில் ((update->target & invalid)) {
         log_err(builder->keymap->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK,
                 "%s: Invalid target modifiers: 0x%"PRIx32"\n",
                 __func__, update->target);
-        return XKB_ERROR_UNSUPPORTED_MODIFIER_MASK;
+        திரும்பு XKB_ERROR_UNSUPPORTED_MODIFIER_MASK;
     }
 
-    struct machine_mods_mapping *mapping = NULL;
+    கட்டமைப்பு machine_mods_mapping *mapping = வெற்று;
     darray_size_t m = 0;
     darray_enumerate(m, mapping, builder->mods) {
-        if (mapping->source == update->source) {
-            if (!update->target) {
+        எனில் (mapping->source == update->source) {
+            எனில் (!update->target) {
                 /* Remove mapping */
                 darray_remove(builder->mods, m);
-            } else {
+            } இல்லையெனில் {
                 /* Update mapping */
                 mapping->target = update->target;
             }
-            return XKB_SUCCESS;
+            திரும்பு XKB_SUCCESS;
         }
     }
 
-    if (update->target) {
+    எனில் (update->target) {
         /* Append new mapping */
         darray_append(
             builder->mods,
-            (struct machine_mods_mapping) {
+            (கட்டமைப்பு machine_mods_mapping) {
                 .source = update->source,
                 .target = update->target
             }
         );
-    } else {
+    } இல்லையெனில் {
         /* Ignore missing mapping */
     }
 
-    return XKB_SUCCESS;
+    திரும்பு XKB_SUCCESS;
 }
 
-enum xkb_status
+எண்ணிக்கை xkb_status
 xkb_machine_builder_update_shortcut_override(
-    struct xkb_machine_builder * restrict builder,
-    const struct xkb_machine_builder_shortcut_override_update * restrict update
+    கட்டமைப்பு xkb_machine_builder * restrict builder,
+    மாறிலி கட்டமைப்பு xkb_machine_builder_shortcut_override_update * restrict update
 )
 {
-    struct xkb_keymap *keymap = builder->keymap;
+    கட்டமைப்பு xkb_keymap *keymap = builder->keymap;
 
     /* Check the modifiers against the keymap */
-    const xkb_mod_mask_t invalid = ~keymap->canonical_state_mask;
-    if ((update->affect_mods & invalid)) {
+    மாறிலி xkb_mod_mask_t invalid = ~keymap->canonical_state_mask;
+    எனில் ((update->affect_mods & invalid)) {
         log_err(keymap->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK,
                 "%s: Invalid affected modifiers: 0x%"PRIx32"\n",
                 __func__, update->affect_mods);
-        return XKB_ERROR_UNSUPPORTED_MODIFIER_MASK;
+        திரும்பு XKB_ERROR_UNSUPPORTED_MODIFIER_MASK;
     }
-    if ((update->mods & invalid)) {
+    எனில் ((update->mods & invalid)) {
         log_err(keymap->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK,
                 "%s: Invalid modifiers: 0x%"PRIx32"\n",
                 __func__, update->mods);
-        return XKB_ERROR_UNSUPPORTED_MODIFIER_MASK;
+        திரும்பு XKB_ERROR_UNSUPPORTED_MODIFIER_MASK;
     }
 
     /* Check the layout indices against the keymap */
-    if (update->source >= keymap->num_groups &&
+    எனில் (update->source >= keymap->இலக்கம்_groups &&
         update->source != XKB_LAYOUT_INVALID) {
         static_assert(XKB_LAYOUT_INVALID == UINT32_MAX, "integer overflow");
         log_err(keymap->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                 "%s: Invalid source layout: "
                 "expected index in range 1..%"PRIu32", but got %"PRIu32"\n",
-                __func__, keymap->num_groups, update->source + 1);
-        return XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX;
+                __func__, keymap->இலக்கம்_groups, update->source + 1);
+        திரும்பு XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX;
     }
-    if (update->target >= keymap->num_groups &&
+    எனில் (update->target >= keymap->இலக்கம்_groups &&
         update->target != XKB_LAYOUT_INVALID) {
         static_assert(XKB_LAYOUT_INVALID == UINT32_MAX, "integer overflow");
         log_err(keymap->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                 "%s: Invalid target layout: "
                 "expected index in range 1..%"PRIu32", but got %"PRIu32"\n",
-                __func__, keymap->num_groups, update->target + 1);
-        return XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX;
+                __func__, keymap->இலக்கம்_groups, update->target + 1);
+        திரும்பு XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX;
     }
 
-    struct xkb_shortcuts_config_options * const config = &builder->shortcuts;
+    கட்டமைப்பு xkb_shortcuts_config_options * மாறிலி config = &builder->shortcuts;
 
     /* Resize array & initialize new entries, if relevant */
-    if (update->source >= darray_size(config->entries) &&
+    எனில் (update->source >= darray_size(config->entries) &&
         update->source != XKB_LAYOUT_INVALID) {
-        if (update->target == update->source) {
+        எனில் (update->target == update->source) {
             /* Skip default setting */
-            return XKB_SUCCESS;
+            திரும்பு XKB_SUCCESS;
         }
         xkb_layout_index_t new = darray_size(config->entries);
         darray_resize(config->entries, update->source + 1);
-        for (; new <= update->source; new++) {
+        க்கு (; new <= update->source; new++) {
             darray_item(config->entries, new) =
-                (struct xkb_shortcuts_config_entry) {
+                (கட்டமைப்பு xkb_shortcuts_config_entry) {
                     .target = XKB_LAYOUT_INVALID,
                     .mods = 0
                 };
         }
     }
 
-    struct xkb_shortcuts_config_entry *entry;
+    கட்டமைப்பு xkb_shortcuts_config_entry *entry;
     xkb_layout_index_t source = (update->source == XKB_LAYOUT_INVALID)
         ? 0               /* Loop over all entries */
         : update->source; /* Single entry */
     darray_foreach_from(entry, config->entries, source) {
-        if (update->source == XKB_LAYOUT_INVALID &&
+        எனில் (update->source == XKB_LAYOUT_INVALID &&
             entry->target == XKB_LAYOUT_INVALID) {
             /* Skip previous deactivated entry */
             source++;
-            continue;
+            தொடர்;
         }
 
-        if (update->affect_mods) {
+        எனில் (update->affect_mods) {
             entry->mods &= ~update->affect_mods;
             entry->mods |= (update->affect_mods & update->mods);
         }
 
-        if (update->source != XKB_LAYOUT_INVALID) {
+        எனில் (update->source != XKB_LAYOUT_INVALID) {
             entry->target = (update->target == source)
                 ? XKB_LAYOUT_INVALID
                 : update->target;
             /* Single entry: exit loop */
-            break;
+            நிறுத்து;
         }
         source++;
     }
 
-    return XKB_SUCCESS;
+    திரும்பு XKB_SUCCESS;
 }
 
 /** Compare 2 modifiers combinations */
-static int
-cmp_mod_masks(const void *a, const void *b)
+நிலையான முழு
+cmp_mod_masks(மாறிலி வெறுமை *a, மாறிலி வெறுமை *b)
 {
-    const xkb_mod_mask_t m1 = *((xkb_mod_mask_t *) a);
-    const xkb_mod_mask_t m2 = *((xkb_mod_mask_t *) b);
-    if (m1 == m2)
-        return 0;
+    மாறிலி xkb_mod_mask_t m1 = *((xkb_mod_mask_t *) a);
+    மாறிலி xkb_mod_mask_t m2 = *((xkb_mod_mask_t *) b);
+    எனில் (m1 == m2)
+        திரும்பு 0;
 
-    if (!m1)
-        return +1;
-    if (!m2)
-        return -1;
+    எனில் (!m1)
+        திரும்பு +1;
+    எனில் (!m2)
+        திரும்பு -1;
 
-    const xkb_mod_mask_t overlap = (m1 & m2);
-    if (overlap == m1)
-        return +1; /* m1 is a subset of m2 */
-    if (overlap == m2)
-        return -1; /* m2 is a subset of m1 */
+    மாறிலி xkb_mod_mask_t overlap = (m1 & m2);
+    எனில் (overlap == m1)
+        திரும்பு +1; /* m1 is a subset of m2 */
+    எனில் (overlap == m2)
+        திரும்பு -1; /* m2 is a subset of m1 */
 
     /* Compare active modifiers numbers */
-    const unsigned int count1 = popcount32(m1);
-    const unsigned int count2 = popcount32(m2);
-    if (count1 > count2)
-        return -1;
-    if (count1 < count2)
-        return +1;
+    மாறிலி unsigned முழு count1 = popcount32(m1);
+    மாறிலி unsigned முழு count2 = popcount32(m2);
+    எனில் (count1 > count2)
+        திரும்பு -1;
+    எனில் (count1 < count2)
+        திரும்பு +1;
 
     /* Give priority to real modifiers */
-    return (m1 < m2) ? -1 : +1;
+    திரும்பு (m1 < m2) ? -1 : +1;
 }
 
-static enum xkb_status
-machine_set_mods(struct xkb_machine *sm,
-                 const machine_mods_mappings *raw_mappings)
+நிலையான எண்ணிக்கை xkb_status
+machine_set_mods(கட்டமைப்பு xkb_machine *sm,
+                 மாறிலி machine_mods_mappings *raw_mappings)
 {
-    if (!darray_empty(*raw_mappings)) {
+    எனில் (!darray_empty(*raw_mappings)) {
         machine_mods_mappings mappings = darray_new();
         xkb_mod_mask_t mask = 0;
-        const struct machine_mods_mapping *mapping;
-        const xkb_mod_mask_t invalid =
+        மாறிலி கட்டமைப்பு machine_mods_mapping *mapping;
+        மாறிலி xkb_mod_mask_t invalid =
             ~sm->base.base.keymap->canonical_state_mask;
         darray_foreach(mapping, *raw_mappings) {
-            if (!mapping->source || !mapping->target ||
+            எனில் (!mapping->source || !mapping->target ||
                 (mapping->source & invalid) || (mapping->target & invalid))
-                continue;
+                தொடர்;
             darray_append(mappings, *mapping);
             mask |= mapping->source;
         }
@@ -3503,197 +3503,197 @@ machine_set_mods(struct xkb_machine *sm,
          * if they are superset of other combinations.
          * For other type of overlaps, see the sorting function.
          */
-        qsort(darray_items(mappings), darray_size(mappings),
-              sizeof(*darray_items(mappings)), &cmp_mod_masks);
+        qsort(darray_பொருட்கள்(mappings), darray_size(mappings),
+              அளவு(*darray_பொருட்கள்(mappings)), &cmp_mod_masks);
 
         darray_steal(
             mappings,
             &sm->config.modifiers.mappings,
-            &sm->config.modifiers.mappings_num
+            &sm->config.modifiers.mappings_இலக்கம்
         );
         sm->config.modifiers.mask = mask;
-    } else {
-        sm->config.modifiers = (struct machine_modifiers_config) {
-            .mappings = NULL,
-            .mappings_num = 0,
+    } இல்லையெனில் {
+        sm->config.modifiers = (கட்டமைப்பு machine_modifiers_config) {
+            .mappings = வெற்று,
+            .mappings_இலக்கம் = 0,
             .mask = 0
         };
     }
 
-    return XKB_SUCCESS;
+    திரும்பு XKB_SUCCESS;
 }
 
-static enum xkb_status
+நிலையான எண்ணிக்கை xkb_status
 machine_set_shortcuts(
-    struct xkb_machine * restrict sm,
-    const struct xkb_shortcuts_config_options * restrict options
+    கட்டமைப்பு xkb_machine * restrict sm,
+    மாறிலி கட்டமைப்பு xkb_shortcuts_config_options * restrict options
 )
 {
-    if (darray_empty(options->entries)) {
-        sm->config.shortcuts = (struct machine_shortcuts_config) {
-            .entries = NULL
+    எனில் (darray_empty(options->entries)) {
+        sm->config.shortcuts = (கட்டமைப்பு machine_shortcuts_config) {
+            .entries = வெற்று
         };
-        return XKB_SUCCESS;
+        திரும்பு XKB_SUCCESS;
     }
 
-    struct xkb_keymap * const keymap = sm->base.base.keymap;
+    கட்டமைப்பு xkb_keymap * மாறிலி keymap = sm->base.base.keymap;
 
-    struct xkb_shortcuts_config_entry * entries =
-        calloc(keymap->num_groups, sizeof(*entries));
-    if (!entries)
-        return XKB_ERROR_ALLOCATION_FAILURE;
+    கட்டமைப்பு xkb_shortcuts_config_entry * entries =
+        calloc(keymap->இலக்கம்_groups, அளவு(*entries));
+    எனில் (!entries)
+        திரும்பு XKB_ERROR_ALLOCATION_FAILURE;
 
-    const xkb_layout_index_t count = MIN(
-        keymap->num_groups,
+    மாறிலி xkb_layout_index_t மொத்தம் = MIN(
+        keymap->இலக்கம்_groups,
         (xkb_layout_index_t) darray_size(options->entries)
     );
 
     bool some_entries = false;
-    for (xkb_layout_index_t l = 0; l < count; l++) {
+    க்கு (xkb_layout_index_t l = 0; l < மொத்தம்; l++) {
         /* Sanitize layout target */
-        const xkb_layout_index_t target =
+        மாறிலி xkb_layout_index_t target =
             darray_item(options->entries, l).target;
         /* Sanitize modifier mask */
-        const xkb_mod_mask_t mods = (
+        மாறிலி xkb_mod_mask_t mods = (
             darray_item(options->entries, l).mods &
             sm->base.base.keymap->canonical_state_mask
         );
-        if (target < keymap->num_groups && target != l && mods) {
-            entries[l] = (struct xkb_shortcuts_config_entry) {
+        எனில் (target < keymap->இலக்கம்_groups && target != l && mods) {
+            entries[l] = (கட்டமைப்பு xkb_shortcuts_config_entry) {
                 .target = target,
                 .mods = mods
             };
             some_entries = true;
-        } else {
-            entries[l] = (struct xkb_shortcuts_config_entry) {
+        } இல்லையெனில் {
+            entries[l] = (கட்டமைப்பு xkb_shortcuts_config_entry) {
                 .target = XKB_LAYOUT_INVALID,
                 .mods = 0
             };
-            continue;
+            தொடர்;
         }
     }
 
-    if (!some_entries) {
-        free(entries);
-        entries = NULL;
-    } else {
+    எனில் (!some_entries) {
+        விடுவி(entries);
+        entries = வெற்று;
+    } இல்லையெனில் {
         /* Initialize groups with no entries */
-        for (xkb_layout_index_t l = count; l < keymap->num_groups; l++) {
-            entries[l] = (struct xkb_shortcuts_config_entry) {
+        க்கு (xkb_layout_index_t l = மொத்தம்; l < keymap->இலக்கம்_groups; l++) {
+            entries[l] = (கட்டமைப்பு xkb_shortcuts_config_entry) {
                 .target = XKB_LAYOUT_INVALID,
                 .mods = 0
             };
         }
     }
 
-    sm->config.shortcuts = (struct machine_shortcuts_config) {
+    sm->config.shortcuts = (கட்டமைப்பு machine_shortcuts_config) {
         .entries = entries
     };
-    return XKB_SUCCESS;
+    திரும்பு XKB_SUCCESS;
 }
 
-struct xkb_machine *
-xkb_machine_new(const struct xkb_machine_builder * restrict builder,
-                enum xkb_status * restrict status)
+கட்டமைப்பு xkb_machine *
+xkb_machine_new(மாறிலி கட்டமைப்பு xkb_machine_builder * restrict builder,
+                எண்ணிக்கை xkb_status * restrict status)
 {
-    struct xkb_machine * const machine = calloc(1, sizeof(*machine));
-    if (!machine) {
+    கட்டமைப்பு xkb_machine * மாறிலி machine = calloc(1, அளவு(*machine));
+    எனில் (!machine) {
         log_err_func1(builder->keymap->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
                       "cannot allocate machine\n");
-        if (status)
+        எனில் (status)
             *status = XKB_ERROR_ALLOCATION_FAILURE;
-        return NULL;
+        திரும்பு வெற்று;
     }
 
     xkb_server_state_init(&machine->base, builder->keymap, SERVER_STATE,
                           builder->controls.a11y.affect_flags,
                           builder->controls.a11y.flags);
     machine->flags = builder->machine_flags;
-    if (!(machine->flags &
-          XKB_MACHINE_DISABLE_LAYOUT_SWITCH_ON_MODIFIER_KEY_FIX))
+    எனில் (!(machine->flags &
+          XKB_MACHINE_DISABLE_LAYOUT_SWITCH_ON_MODIFIER_சாவி_FIX))
     {
-        machine->base.flags |= STATE_FIX_LAYOUT_SWITCH_ON_MODIFIER_KEY;
+        machine->base.flags |= STATE_FIX_LAYOUT_SWITCH_ON_MODIFIER_சாவி;
     }
-    if (machine->flags & XKB_MACHINE_UNLOCK_MODS_ON_PRESS) {
+    எனில் (machine->flags & XKB_MACHINE_UNLOCK_MODS_ON_PRESS) {
         machine->base.flags |= STATE_UNLOCK_MODS_ON_PRESS;
     }
 
-    enum xkb_status status_;
-    if ((status_ = machine_set_mods(machine, &builder->mods)) != XKB_SUCCESS ||
+    எண்ணிக்கை xkb_status status_;
+    எனில் ((status_ = machine_set_mods(machine, &builder->mods)) != XKB_SUCCESS ||
         (status_ = machine_set_shortcuts(machine, &builder->shortcuts)) !=
         XKB_SUCCESS) {
         *status = status_;
-        goto error;
+        செல் error;
     }
 
-    darray_init(machine->overlays.keys);
+    darray_init(machine->overlays.சாவிகள்);
     machine->mouse.default_button = XKB_POINTER_BUTTON_MIN;
 
-    if (status)
+    எனில் (status)
         *status = XKB_SUCCESS;
 
-    return machine;
+    திரும்பு machine;
 
 error:
     xkb_machine_unref(machine);
-    return NULL;
+    திரும்பு வெற்று;
 }
 
-struct xkb_machine *
-xkb_machine_ref(struct xkb_machine *sm)
+கட்டமைப்பு xkb_machine *
+xkb_machine_ref(கட்டமைப்பு xkb_machine *sm)
 {
-    assert(sm->base.base.refcnt > 0);
+    ப்ரதிஜ்ஞா(sm->base.base.refcnt > 0);
     sm->base.base.refcnt++;
-    return sm;
+    திரும்பு sm;
 }
 
-void
-xkb_machine_unref(struct xkb_machine *sm)
+வெறுமை
+xkb_machine_unref(கட்டமைப்பு xkb_machine *sm)
 {
-    assert(!sm || sm->base.base.refcnt > 0);
-    if (!sm || --sm->base.base.refcnt > 0)
-        return;
+    ப்ரதிஜ்ஞா(!sm || sm->base.base.refcnt > 0);
+    எனில் (!sm || --sm->base.base.refcnt > 0)
+        திரும்பு;
 
     xkb_state_destroy(&sm->base.base);
-    darray_free(sm->overlays.keys);
-    free(sm->config.shortcuts.entries);
-    free(sm->config.modifiers.mappings);
-    free(sm);
+    darray_free(sm->overlays.சாவிகள்);
+    விடுவி(sm->config.shortcuts.entries);
+    விடுவி(sm->config.modifiers.mappings);
+    விடுவி(sm);
 }
 
-struct xkb_keymap *
-xkb_machine_get_keymap(const struct xkb_machine *sm)
+கட்டமைப்பு xkb_keymap *
+xkb_machine_get_keymap(மாறிலி கட்டமைப்பு xkb_machine *sm)
 {
     /* Reference count is not updated. See API doc. */
-    return sm->base.base.keymap;
+    திரும்பு sm->base.base.keymap;
 }
 
-struct xkb_state *
-xkb_machine_get_state(struct xkb_machine *sm)
+கட்டமைப்பு xkb_state *
+xkb_machine_get_state(கட்டமைப்பு xkb_machine *sm)
 {
     /* Reference count is not updated. See API doc. */
-    return (struct xkb_state *)sm;
+    திரும்பு (கட்டமைப்பு xkb_state *)sm;
 }
 
-struct xkb_state *
-xkb_state_new_from_machine(const struct xkb_machine * restrict machine,
-                           enum xkb_status * restrict status)
+கட்டமைப்பு xkb_state *
+xkb_state_new_from_machine(மாறிலி கட்டமைப்பு xkb_machine * restrict machine,
+                           எண்ணிக்கை xkb_status * restrict status)
 {
     /* Creation */
-    enum xkb_status status_;
-    struct xkb_state * const state = xkb_state_new_with_mode(
+    எண்ணிக்கை xkb_status status_;
+    கட்டமைப்பு xkb_state * மாறிலி state = xkb_state_new_with_mode(
         machine->base.base.keymap,
         XKB_STATE_MODE_SERVER_QUERY,
         &status_
     );
-    if (status_ != XKB_SUCCESS) {
-        if (status)
+    எனில் (status_ != XKB_SUCCESS) {
+        எனில் (status)
             *status = status_;
-        return NULL;
+        திரும்பு வெற்று;
     }
 
-    assert(state->mode == SERVER_COMPANION);
-    assert(state->refcnt == 1);
+    ப்ரதிஜ்ஞா(state->mode == SERVER_COMPANION);
+    ப்ரதிஜ்ஞா(state->refcnt == 1);
 
     /* Copy machine’s state */
     *state = machine->base.base;
@@ -3702,47 +3702,47 @@ xkb_state_new_from_machine(const struct xkb_machine * restrict machine,
     state->mode = SERVER_COMPANION;
     state->refcnt = 1;
 
-    if (status)
+    எனில் (status)
         *status = XKB_SUCCESS;
-    return state;
+    திரும்பு state;
 }
 
-static void
-machine_update_overlays(struct xkb_machine *sm)
+நிலையான வெறுமை
+machine_update_overlays(கட்டமைப்பு xkb_machine *sm)
 {
     /*
      * Overlays indices are stored 1-indexed in nibbles: the lowest
      * nibble corresponds to the latest activated index.
      */
 
-    const xkb_overlay_mask_t mask =
+    மாறிலி xkb_overlay_mask_t mask =
         overlays_from_controls(sm->base.base.components.controls);
     xkb_overlay_mask_t added = mask & ~sm->overlays.enabled;
 
     /* Remove overlays no longer enabled and keep relative order */
     uint32_t order = sm->overlays.order;
-    const xkb_overlay_index_t overlay_max =
+    மாறிலி xkb_overlay_index_t overlay_max =
         format_max_overlays(sm->base.base.keymap->format);
-    for (uint8_t n = 0; n < overlay_max;) {
+    க்கு (uint8_t n = 0; n < overlay_max;) {
         xkb_overlay_index_t overlay_idx = (order >> (n * 4)) & 0xf;
-        if (!overlay_idx)
-            break;
-        const xkb_overlay_mask_t overlay_mask =
+        எனில் (!overlay_idx)
+            நிறுத்து;
+        மாறிலி xkb_overlay_mask_t overlay_mask =
             (xkb_overlay_mask_t)(1u << (overlay_idx - 1u) /* k is 1-indexed */);
-        if (overlay_mask & mask) {
+        எனில் (overlay_mask & mask) {
             /* no duplicates */
             added &= ~overlay_mask;
             n++;
-        } else {
+        } இல்லையெனில் {
             /* remove overlay */
-            const uint32_t head = (UINT32_C(1) << (n * 4)) - 1;
+            மாறிலி uint32_t head = (UINT32_C(1) << (n * 4)) - 1;
             order = (order & head) | ((order >> 4) & ~head);
         }
     }
 
     /* Add new overlays in ascending order */
-    for (xkb_overlay_index_t k = 0; added; k++, added >>= 1) {
-        if (added & 0x1) {
+    க்கு (xkb_overlay_index_t k = 0; added; k++, added >>= 1) {
+        எனில் (added & 0x1) {
             order <<= 4;
             order |= k + 1u; /* k is 0-indexed */
         }
@@ -3752,19 +3752,19 @@ machine_update_overlays(struct xkb_machine *sm)
     sm->overlays.enabled = mask;
 }
 
-enum xkb_status
-xkb_machine_process_synthetic(struct xkb_machine *sm,
-                              const struct xkb_synthetic_update *update,
-                              struct xkb_events *events)
+எண்ணிக்கை xkb_status
+xkb_machine_process_synthetic(கட்டமைப்பு xkb_machine *sm,
+                              மாறிலி கட்டமைப்பு xkb_synthetic_update *update,
+                              கட்டமைப்பு xkb_events *events)
 {
     /* Check ABI compatibility */
-    enum xkb_status status =
+    எண்ணிக்கை xkb_status status =
         check_state_update_abi(sm->base.base.keymap->ctx, update);
-    if (status != XKB_SUCCESS)
-        return status;
+    எனில் (status != XKB_SUCCESS)
+        திரும்பு status;
 
-    struct xkb_server_state * const state = &sm->base;
-    const struct state_components previous_components = state->base.components;
+    கட்டமைப்பு xkb_server_state * மாறிலி state = &sm->base;
+    மாறிலி கட்டமைப்பு state_components previous_components = state->base.components;
 
     // TODO: use a *transaction* mechanism: either the whole update succeeds
     //       or rollback
@@ -3773,17 +3773,17 @@ xkb_machine_process_synthetic(struct xkb_machine *sm,
     events->next = 0;
 
     /* Update parametrized controls first */
-    if (update->layout_policy) {
+    எனில் (update->layout_policy) {
         status = state_update_layout_policy(state, update->layout_policy);
-        if (status != XKB_SUCCESS)
-            return status;
+        எனில் (status != XKB_SUCCESS)
+            திரும்பு status;
     }
 
-    if (update->components) {
-        const struct xkb_state_components_update * const components =
+    எனில் (update->components) {
+        மாறிலி கட்டமைப்பு xkb_state_components_update * மாறிலி components =
             update->components;
         /* Update boolean controls first */
-        if (components->components & XKB_STATE_CONTROLS_EFFECTIVE) {
+        எனில் (components->components & XKB_STATE_CONTROLS_EFFECTIVE) {
             state_update_enabled_controls(state,
                                           components->affect_controls,
                                           components->controls, events);
@@ -3794,16 +3794,16 @@ xkb_machine_process_synthetic(struct xkb_machine *sm,
 
     xkb_state_update_derived(&state->base);
 
-    const enum xkb_state_component changed = get_state_component_changes(
+    மாறிலி எண்ணிக்கை xkb_state_component changed = get_state_component_changes(
         &previous_components, &state->base.components
     );
-    if (changed) {
+    எனில் (changed) {
         // TODO: latch controls
-        if (changed & XKB_STATE_CONTROLS_EFFECTIVE)
+        எனில் (changed & XKB_STATE_CONTROLS_EFFECTIVE)
             machine_update_overlays(sm);
 
         /* Create event only if some component actually changed */
-        darray_append(events->queue, (struct xkb_event) {
+        darray_append(events->queue, (கட்டமைப்பு xkb_event) {
             .ctx = events->ctx, /* borrowed from events */
             .type = XKB_EVENT_TYPE_STATE_COMPONENTS,
             .components = {
@@ -3813,35 +3813,35 @@ xkb_machine_process_synthetic(struct xkb_machine *sm,
         });
 
         /* Terminate the frame */
-        darray_append(events->queue, (struct xkb_event) {
+        darray_append(events->queue, (கட்டமைப்பு xkb_event) {
             .ctx = events->ctx, /* borrowed from events */
             .type = XKB_EVENT_TYPE_FRAME,
         });
     }
 
-    return XKB_SUCCESS;
+    திரும்பு XKB_SUCCESS;
 }
 
-static ssize_t
-do_remap_modifiers(const struct machine_modifiers_config * restrict mappings,
-                   struct xkb_state * restrict state,
-                   struct xkb_events * restrict events,
-                   const struct xkb_key * restrict key)
+நிலையான ssize_t
+do_remap_modifiers(மாறிலி கட்டமைப்பு machine_modifiers_config * restrict mappings,
+                   கட்டமைப்பு xkb_state * restrict state,
+                   கட்டமைப்பு xkb_events * restrict events,
+                   மாறிலி கட்டமைப்பு xkb_சாவி * restrict சாவி)
 {
-    if (!(mappings->mask & state->components.mods))
-        return -1;
+    எனில் (!(mappings->mask & state->components.mods))
+        திரும்பு -1;
 
-    const xkb_layout_index_t layout = state_key_get_layout(state, key);
-    if (layout >= key->num_groups)
-        return -1;
+    மாறிலி xkb_layout_index_t layout = state_சாவி_get_layout(state, சாவி);
+    எனில் (layout >= சாவி->இலக்கம்_groups)
+        திரும்பு -1;
 
-    const struct xkb_key_type * const type = key->groups[layout].type;
+    மாறிலி கட்டமைப்பு xkb_சாவி_type * மாறிலி type = சாவி->groups[layout].type;
     xkb_mod_mask_t affect_mods = 0;
     xkb_mod_mask_t mods = 0;
-    for (darray_size_t m = 0; m < mappings->mappings_num; m++) {
-        const struct machine_mods_mapping * const mapping =
+    க்கு (darray_size_t m = 0; m < mappings->mappings_இலக்கம்; m++) {
+        மாறிலி கட்டமைப்பு machine_mods_mapping * மாறிலி mapping =
             &mappings->mappings[m];
-        if (/* Skip not matching active mods */
+        எனில் (/* Skip not matching active mods */
             (mapping->source & state->components.mods) == mapping->source &&
             /* Skip overlap with previous active mappings */
             !(mapping->source & affect_mods) &&
@@ -3852,21 +3852,21 @@ do_remap_modifiers(const struct machine_modifiers_config * restrict mappings,
         }
     }
 
-    if (!affect_mods)
-        return -1;
+    எனில் (!affect_mods)
+        திரும்பு -1;
 
-    struct xkb_state new = *state;
+    கட்டமைப்பு xkb_state new = *state;
     new.components.base_mods = (new.components.base_mods & ~affect_mods) | mods;
     new.components.latched_mods = (new.components.latched_mods & ~affect_mods);
     new.components.locked_mods = (new.components.locked_mods & ~affect_mods);
     xkb_state_update_derived(&new);
 
     ssize_t event_idx = -1;
-    const enum xkb_state_component changed =
+    மாறிலி எண்ணிக்கை xkb_state_component changed =
         get_state_component_changes(&state->components, &new.components);
-    if (changed) {
+    எனில் (changed) {
         event_idx = (ssize_t) darray_size(events->queue);
-        darray_append(events->queue, (struct xkb_event) {
+        darray_append(events->queue, (கட்டமைப்பு xkb_event) {
             .ctx = events->ctx, /* borrowed from events */
             .type = XKB_EVENT_TYPE_STATE_COMPONENTS,
             .components = {
@@ -3877,7 +3877,7 @@ do_remap_modifiers(const struct machine_modifiers_config * restrict mappings,
     }
 
     state->components.mods = new.components.mods;
-    return event_idx;
+    திரும்பு event_idx;
 }
 
 /**
@@ -3887,21 +3887,21 @@ do_remap_modifiers(const struct machine_modifiers_config * restrict mappings,
  * The tweak consists of computing a *base* layout such that the *effective*
  * layout is the corresponding target layout.
  */
-static ssize_t
-do_shortcuts_tweak(const struct machine_shortcuts_config *config,
-                   struct xkb_state *state,
-                   const struct state_components *previous_components,
-                   struct xkb_events *events, ssize_t remap_event)
+நிலையான ssize_t
+do_shortcuts_tweak(மாறிலி கட்டமைப்பு machine_shortcuts_config *config,
+                   கட்டமைப்பு xkb_state *state,
+                   மாறிலி கட்டமைப்பு state_components *previous_components,
+                   கட்டமைப்பு xkb_events *events, ssize_t remap_event)
 {
-    if (!config->entries) {
+    எனில் (!config->entries) {
         /* No shortcuts tweak */
-        return remap_event;
+        திரும்பு remap_event;
     }
 
-    const struct xkb_shortcuts_config_entry * const entry =
+    மாறிலி கட்டமைப்பு xkb_shortcuts_config_entry * மாறிலி entry =
         &config->entries[state->components.group];
 
-    if (entry->target != XKB_LAYOUT_INVALID &&
+    எனில் (entry->target != XKB_LAYOUT_INVALID &&
         (entry->mods & state->components.mods)) {
         /*
          * Activate shortcuts tweak:
@@ -3911,11 +3911,11 @@ do_shortcuts_tweak(const struct machine_shortcuts_config *config,
          *    is the target.
          * 3. Recompute derived state components.
          */
-        struct xkb_state new = *state;
-        if (remap_event < 0) {
+        கட்டமைப்பு xkb_state new = *state;
+        எனில் (remap_event < 0) {
             /* Create new event */
             remap_event = (ssize_t) darray_size(events->queue);
-            darray_append(events->queue, (struct xkb_event) {
+            darray_append(events->queue, (கட்டமைப்பு xkb_event) {
                 .ctx = events->ctx, /* borrowed from events */
                 .type = XKB_EVENT_TYPE_STATE_COMPONENTS,
                 .components = {
@@ -3923,7 +3923,7 @@ do_shortcuts_tweak(const struct machine_shortcuts_config *config,
                     .changed = 0
                 }
             });
-        } else {
+        } இல்லையெனில் {
             /* Merge with last remap event */
             new.components =
                 darray_item(events->queue, remap_event).components.components;
@@ -3934,39 +3934,39 @@ do_shortcuts_tweak(const struct machine_shortcuts_config *config,
             - state->components.locked_group;
         xkb_state_update_derived(&new);
 
-        const enum xkb_state_component changed =
+        மாறிலி எண்ணிக்கை xkb_state_component changed =
             get_state_component_changes(previous_components, &new.components);
         darray_item(events->queue, remap_event).components.changed = changed;
         darray_item(events->queue, remap_event).components.components =
             new.components;
 
         state->components.group = new.components.group;
-    } else {
+    } இல்லையெனில் {
         /* Deactivated entry or modifiers do not match */
     }
-    return remap_event;
+    திரும்பு remap_event;
 }
 
-static void
-undo_tweaks(const struct xkb_state *state,
-            const struct state_components *initial_components,
-            struct xkb_events *events)
+நிலையான வெறுமை
+undo_tweaks(மாறிலி கட்டமைப்பு xkb_state *state,
+            மாறிலி கட்டமைப்பு state_components *initial_components,
+            கட்டமைப்பு xkb_events *events)
 {
     /* Get last component event */
-    const struct xkb_event *event = NULL;
+    மாறிலி கட்டமைப்பு xkb_event *event = வெற்று;
     darray_foreach_reverse(event, events->queue) {
-        if (event->type == XKB_EVENT_TYPE_STATE_COMPONENTS)
-            break;
+        எனில் (event->type == XKB_EVENT_TYPE_STATE_COMPONENTS)
+            நிறுத்து;
     }
-    if (!event)
-        return;
+    எனில் (!event)
+        திரும்பு;
 
     /* Restore state */
-    const enum xkb_state_component changed =
+    மாறிலி எண்ணிக்கை xkb_state_component changed =
         get_state_component_changes(initial_components,
                                     &event->components.components);
-    if (changed) {
-        darray_append(events->queue, (struct xkb_event) {
+    எனில் (changed) {
+        darray_append(events->queue, (கட்டமைப்பு xkb_event) {
             .ctx = events->ctx, /* borrowed from events */
             .type = XKB_EVENT_TYPE_STATE_COMPONENTS,
             .components = {
@@ -3977,71 +3977,71 @@ undo_tweaks(const struct xkb_state *state,
     }
 }
 
-static const struct xkb_key *
-process_overlayable_key(struct xkb_machine *sm,
-                        const struct xkb_key * key,
-                        enum xkb_key_direction direction)
+நிலையான மாறிலி கட்டமைப்பு xkb_சாவி *
+process_overlayable_சாவி(கட்டமைப்பு xkb_machine *sm,
+                        மாறிலி கட்டமைப்பு xkb_சாவி * சாவி,
+                        எண்ணிக்கை xkb_சாவி_direction direction)
 {
     /* Check if key is currently overlaid */
-    struct xkb_overlaid_key *entry = NULL;
-    struct xkb_overlaid_key *available_entry = NULL;
-    darray_foreach(entry, sm->overlays.keys) {
-        if (entry->old == key) {
+    கட்டமைப்பு xkb_overlaid_சாவி *entry = வெற்று;
+    கட்டமைப்பு xkb_overlaid_சாவி *available_entry = வெற்று;
+    darray_foreach(entry, sm->overlays.சாவிகள்) {
+        எனில் (entry->old == சாவி) {
             /* Maintain the key overlaid */
-            switch (direction) {
-            case XKB_KEY_DOWN:
+            தேர்வு (direction) {
+            நிலை XKB_சாவி_DOWN:
                 entry->refcnt++;
-                break;
-            case XKB_KEY_REPEATED:
-                break;
-            case XKB_KEY_UP:
-            default:
+                நிறுத்து;
+            நிலை XKB_சாவி_REPEATED:
+                நிறுத்து;
+            நிலை XKB_சாவி_UP:
+            இயல்பு:
                 entry->refcnt--;
-                break;
+                நிறுத்து;
             }
-            if (entry->refcnt <= 0)
-                entry->old = NULL;
-            return entry->new;
-        } else if (!entry->old && !available_entry) {
+            எனில் (entry->refcnt <= 0)
+                entry->old = வெற்று;
+            திரும்பு entry->new;
+        } இல்லையெனில் எனில் (!entry->old && !available_entry) {
             /* First free spot */
             available_entry = entry;
         }
     }
-    if (direction == XKB_KEY_DOWN) {
+    எனில் (direction == XKB_சாவி_DOWN) {
         /* Enable key overlay */
 
         /*
          * Get overlay index: select the latest activated overlay
          * containing the key.
          */
-        const struct xkb_key *new = key;
+        மாறிலி கட்டமைப்பு xkb_சாவி *new = சாவி;
 
-        if (key->overlays & sm->overlays.enabled) {
+        எனில் (சாவி->overlays & sm->overlays.enabled) {
             /* Some relevant overlay is active */
-            for (uint32_t stack = sm->overlays.order; stack; stack >>= 4) {
-                static_assert(XKB_OVERLAY_COUNT == 8, "");
-                const xkb_overlay_index_t overlay = (stack & 0xf) - 1;
-                const xkb_overlay_mask_t mask =
+            க்கு (uint32_t அடுக்கு = sm->overlays.order; அடுக்கு; அடுக்கு >>= 4) {
+                static_assert(XKB_OVERLAY_மொத்தம் == 8, "");
+                மாறிலி xkb_overlay_index_t overlay = (அடுக்கு & 0xf) - 1;
+                மாறிலி xkb_overlay_mask_t mask =
                     (xkb_overlay_mask_t)(1u << overlay);
-                if (key->overlays & mask) {
+                எனில் (சாவி->overlays & mask) {
                     /* Get new key */
-                    if (key->overlays_inline) {
+                    எனில் (சாவி->overlays_inline) {
                         /* Stored inline */
-                        new = key->overlay_key;
-                    } else {
+                        new = சாவி->overlay_சாவி;
+                    } இல்லையெனில் {
                         /* Stored in sparse array */
-                        const xkb_overlay_mask_t low = (xkb_overlay_mask_t)(
-                            key->overlays & (xkb_overlay_mask_t)(mask - 1u)
+                        மாறிலி xkb_overlay_mask_t கீழ் = (xkb_overlay_mask_t)(
+                            சாவி->overlays & (xkb_overlay_mask_t)(mask - 1u)
                         );
                         /* index = number of set bits strictly below bit */
-                        const xkb_overlay_index_t index =
-                            (xkb_overlay_index_t)popcount32(low);
-                        new = key->overlays_keys[index];
+                        மாறிலி xkb_overlay_index_t index =
+                            (xkb_overlay_index_t)popcount32(கீழ்);
+                        new = சாவி->overlays_சாவிகள்[index];
                     }
-                    break;
+                    நிறுத்து;
                 }
             }
-        } else {
+        } இல்லையெனில் {
             /*
              * No relevant overlay is active: block future overlays while
              * the key is pressed.
@@ -4049,93 +4049,93 @@ process_overlayable_key(struct xkb_machine *sm,
         }
 
         /* Get new entry */
-        if (available_entry) {
+        எனில் (available_entry) {
             /* Re-use a free entry */
             entry = available_entry;
-        } else {
+        } இல்லையெனில் {
             /* Append a new entry */
-            const darray_size_t idx = darray_size(sm->overlays.keys);
-            darray_resize(sm->overlays.keys, idx + 1);
-            entry = &darray_item(sm->overlays.keys, idx);
+            மாறிலி darray_size_t idx = darray_size(sm->overlays.சாவிகள்);
+            darray_resize(sm->overlays.சாவிகள், idx + 1);
+            entry = &darray_item(sm->overlays.சாவிகள், idx);
         }
 
         /* Overlay the key */
-        entry->old = key;
+        entry->old = சாவி;
         entry->new = new;
         entry->refcnt = 1;
-        return new;
+        திரும்பு new;
     }
 
     /* No overlay */
-    return key;
+    திரும்பு சாவி;
 }
 
-enum xkb_status
-xkb_machine_process_key(struct xkb_machine *sm,
-                        xkb_keycode_t kc, enum xkb_key_direction direction,
-                        struct xkb_events *events)
+எண்ணிக்கை xkb_status
+xkb_machine_process_சாவி(கட்டமைப்பு xkb_machine *sm,
+                        xkb_keycode_t kc, எண்ணிக்கை xkb_சாவி_direction direction,
+                        கட்டமைப்பு xkb_events *events)
 {
     darray_size(events->queue) = 0;
     events->next = 0;
 
-    struct xkb_server_state * const state = &sm->base;
-    const struct xkb_key * key = XkbKey(state->base.keymap, kc);
+    கட்டமைப்பு xkb_server_state * மாறிலி state = &sm->base;
+    மாறிலி கட்டமைப்பு xkb_சாவி * சாவி = Xkb_சாவி(state->base.keymap, kc);
     /* Ignore unknown key and repeat state for non-repeating key */
-    if (!key || (direction == XKB_KEY_REPEATED && !key->repeats))
-        return XKB_SUCCESS;
+    எனில் (!சாவி || (direction == XKB_சாவி_REPEATED && !சாவி->repeats))
+        திரும்பு XKB_SUCCESS;
 
-    const struct state_components initial_components = state->base.components;
+    மாறிலி கட்டமைப்பு state_components initial_components = state->base.components;
 
-    if (direction == XKB_KEY_DOWN &&
-        (sm->base.base.components.controls & XKB_KEYBOARD_CONTROL_A11Y_STICKY_KEYS) &&
-        (sm->base.a11y_flags & XKB_A11Y_STICKY_KEYS_NO_SIMULTANEOUS_KEYS) &&
+    எனில் (direction == XKB_சாவி_DOWN &&
+        (sm->base.base.components.controls & XKB_KEYBOARD_CONTROL_A11_Y_STICKY_சாவிகள்) &&
+        (sm->base.a11y_flags & XKB_A11_Y_STICKY_சாவிகள்_NO_SIMULTANEOUS_சாவிகள்) &&
         state->base.components.base_mods) {
         /* Deactivate sticky keys if a modifier was already held down*/
         state_update_enabled_controls(state,
-                                      XKB_KEYBOARD_CONTROL_A11Y_STICKY_KEYS,
+                                      XKB_KEYBOARD_CONTROL_A11_Y_STICKY_சாவிகள்,
                                       0, events);
     }
 
-    if (key->overlays)
-        key = process_overlayable_key(sm, key, direction);
+    எனில் (சாவி->overlays)
+        சாவி = process_overlayable_சாவி(sm, சாவி, direction);
 
     ssize_t remap_event = do_remap_modifiers(&sm->config.modifiers,
-                                             &state->base, events, key);
+                                             &state->base, events, சாவி);
 
     remap_event = do_shortcuts_tweak(&sm->config.shortcuts, &state->base,
                                      &initial_components, events, remap_event);
 
-    if (remap_event >= 0) {
+    எனில் (remap_event >= 0) {
         // TODO: what about merging state event for RedirectKey?
-        darray_append(events->queue, (struct xkb_event) {
+        darray_append(events->queue, (கட்டமைப்பு xkb_event) {
             .ctx = events->ctx, /* borrowed from events */
             .type = XKB_EVENT_TYPE_FRAME,
         });
     }
 
-    state->flags |= STATE_REQUIRE_KEY_EVENT;
+    state->flags |= STATE_REQUIRE_சாவி_EVENT;
     state->set_mods = 0;
     state->clear_mods = 0;
 
     /* Handle key actions */
-    xkb_filter_apply_all(state, events, key, direction);
+    xkb_filter_apply_all(state, events, சாவி, direction);
 
     xkb_mod_index_t i;
     xkb_mod_mask_t bit;
-    for (i = 0, bit = 1; state->set_mods; i++, bit <<= 1) {
-        if (state->set_mods & bit) {
-            state->mod_key_count[i]++;
+    க்கு (i = 0, bit = 1; state->set_mods; i++, bit <<= 1) {
+        எனில் (state->set_mods & bit) {
+            state->mod_சாவி_மொத்தம்[i]++;
             state->base.components.base_mods |= bit;
             state->set_mods &= ~bit;
         }
     }
 
-    for (i = 0, bit = 1; state->clear_mods; i++, bit <<= 1) {
-        if (state->clear_mods & bit) {
-            state->mod_key_count[i]--;
-            if (state->mod_key_count[i] <= 0) {
+    க்கு (i = 0, bit = 1; state->clear_mods; i++, bit <<= 1) {
+        எனில் (state->clear_mods & bit) {
+            state->mod_சாவி_மொத்தம்[i]--;
+            எனில் (state->mod_சாவி_மொத்தம்[i] <= 0) {
                 state->base.components.base_mods &= ~bit;
-                state->mod_key_count[i] = 0;
+                state->mod_சாவி_மொத்தம்[i] = 0;
             }
             state->clear_mods &= ~bit;
         }
@@ -4150,32 +4150,32 @@ xkb_machine_process_key(struct xkb_machine *sm,
      *   of key events;
      * - TerminateServer() generate a Server event instead of key events.
      */
-    if (state->flags & STATE_REQUIRE_KEY_EVENT) {
-        darray_append(events->queue, (struct xkb_event) {
+    எனில் (state->flags & STATE_REQUIRE_சாவி_EVENT) {
+        darray_append(events->queue, (கட்டமைப்பு xkb_event) {
             .ctx = events->ctx, /* borrowed from events */
-            .type = XKB_EVENT_TYPE_KEY,
-            .key = {
-                .keycode = key->keycode,
+            .type = XKB_EVENT_TYPE_சாவி,
+            .சாவி = {
+                .keycode = சாவி->keycode,
                 .direction = direction
             }
         });
     }
 
-    if (remap_event >= 0) {
+    எனில் (remap_event >= 0) {
         // FIXME: fragile if last state change does not restore the state to the remap event
         undo_tweaks(&state->base, &initial_components, events);
     }
 
-    const enum xkb_state_component changed = get_state_component_changes(
+    மாறிலி எண்ணிக்கை xkb_state_component changed = get_state_component_changes(
         &initial_components, &state->base.components
     );
-    if (changed) {
-        if (changed & XKB_STATE_CONTROLS_EFFECTIVE)
+    எனில் (changed) {
+        எனில் (changed & XKB_STATE_CONTROLS_EFFECTIVE)
             machine_update_overlays(sm);
 
         // TODO: merge with previous state event, if any
 
-        darray_append(events->queue, (struct xkb_event) {
+        darray_append(events->queue, (கட்டமைப்பு xkb_event) {
             .ctx = events->ctx, /* borrowed from events */
             .type = XKB_EVENT_TYPE_STATE_COMPONENTS,
             .components = {
@@ -4185,137 +4185,137 @@ xkb_machine_process_key(struct xkb_machine *sm,
         });
     }
 
-    if (!darray_empty(events->queue) &&
+    எனில் (!darray_empty(events->queue) &&
         darray_item(events->queue, darray_size(events->queue) - 1).type !=
         XKB_EVENT_TYPE_FRAME)
     {
-        darray_append(events->queue, (struct xkb_event) {
+        darray_append(events->queue, (கட்டமைப்பு xkb_event) {
             .ctx = events->ctx, /* borrowed from events */
             .type = XKB_EVENT_TYPE_FRAME,
         });
     }
 
-    return XKB_SUCCESS;
+    திரும்பு XKB_SUCCESS;
 }
 
-struct xkb_events *
-xkb_events_new(struct xkb_context * restrict context,
-               const struct xkb_events_config * restrict config,
-               enum xkb_status * restrict status)
+கட்டமைப்பு xkb_events *
+xkb_events_new(கட்டமைப்பு xkb_context * restrict context,
+               மாறிலி கட்டமைப்பு xkb_events_config * restrict config,
+               எண்ணிக்கை xkb_status * restrict status)
 {
     /* Handle default configuration */
-    static const struct xkb_events_config default_config = {
-        .size = sizeof(default_config)
+    நிலையான மாறிலி கட்டமைப்பு xkb_events_config default_config = {
+        .size = அளவு(default_config)
     };
-    if (!config)
+    எனில் (!config)
         config = &default_config;
 
     /* Check ABI compatibility */
-    const enum xkb_status abi_error = xkb_check_state_abi(config);
-    if (abi_error) {
+    மாறிலி எண்ணிக்கை xkb_status abi_error = xkb_check_state_abi(config);
+    எனில் (abi_error) {
         xkb_log_abi_error(context, __func__, abi_error);
-        if (status)
+        எனில் (status)
             *status = abi_error;
-        return NULL;
+        திரும்பு வெற்று;
     }
 
     /* Sanitize input */
-    const uint32_t invalid_flags =
-        (config->flags & ~(uint32_t)XKB_EVENTS_FLAGS_VALUES);
-    if (invalid_flags) {
+    மாறிலி uint32_t invalid_flags =
+        (config->flags & ~(uint32_t)XKB_EVENTS_FLAGS_மதிப்புகள்);
+    எனில் (invalid_flags) {
         log_err_func(context, XKB_ERROR_UNSUPPORTED_EVENTS_FLAGS_,
                      "unrecognized events collection flags: 0x%"PRIx32"\n",
                      invalid_flags);
-        if (status)
+        எனில் (status)
             *status = XKB_ERROR_UNSUPPORTED_EVENTS_FLAGS;
-        return NULL;
+        திரும்பு வெற்று;
     }
 
-    struct xkb_events *events = calloc(1, sizeof(*events));
-    if (!events) {
+    கட்டமைப்பு xkb_events *events = calloc(1, அளவு(*events));
+    எனில் (!events) {
         log_err_func1(context, XKB_ERROR_ALLOCATION_FAILURE_,
                       "cannot allocate state events collection\n");
-        if (status)
+        எனில் (status)
             *status = XKB_ERROR_ALLOCATION_FAILURE;
-        return NULL;
+        திரும்பு வெற்று;
     }
 
     /* Pre-allocate event queue */
     darray_init(events->queue);
-    static const darray_size_t queue_initial_size = 16;
+    நிலையான மாறிலி darray_size_t queue_initial_size = 16;
     darray_resize(events->queue, queue_initial_size);
     // TODO: proper safe darray_resize() with return value
-    if (!darray_items(events->queue)) {
+    எனில் (!darray_பொருட்கள்(events->queue)) {
         log_err_func1(context, XKB_ERROR_ALLOCATION_FAILURE_,
                       "cannot allocate state events queue\n");
         xkb_events_destroy(events);
-        if (status)
+        எனில் (status)
             *status = XKB_ERROR_ALLOCATION_FAILURE;
-        return NULL;
+        திரும்பு வெற்று;
     }
     darray_size(events->queue) = 0;
 
     events->ctx = xkb_context_ref(context);
     events->next = 0;
 
-    if (status)
+    எனில் (status)
         *status = XKB_SUCCESS;
-    return events;
+    திரும்பு events;
 }
 
-void
-xkb_events_destroy(struct xkb_events *events)
+வெறுமை
+xkb_events_destroy(கட்டமைப்பு xkb_events *events)
 {
-    if (!events)
-        return;
+    எனில் (!events)
+        திரும்பு;
     darray_free(events->queue);
     xkb_context_unref(events->ctx);
-    free(events);
+    விடுவி(events);
 }
 
-const struct xkb_event *
-xkb_events_next(struct xkb_events *events)
+மாறிலி கட்டமைப்பு xkb_event *
+xkb_events_next(கட்டமைப்பு xkb_events *events)
 {
-    if (events->next < darray_size(events->queue)) {
-        const darray_size_t index = events->next++;
-        return &darray_item(events->queue, index);
-    } else {
-        return NULL;
+    எனில் (events->next < darray_size(events->queue)) {
+        மாறிலி darray_size_t index = events->next++;
+        திரும்பு &darray_item(events->queue, index);
+    } இல்லையெனில் {
+        திரும்பு வெற்று;
     }
 }
 
-enum xkb_event_type
-xkb_event_get_type(const struct xkb_event *event)
+எண்ணிக்கை xkb_event_type
+xkb_event_get_type(மாறிலி கட்டமைப்பு xkb_event *event)
 {
-    return event->type;
+    திரும்பு event->type;
 }
 
-enum xkb_status
-xkb_event_get_keycode(const struct xkb_event *event,
+எண்ணிக்கை xkb_status
+xkb_event_get_keycode(மாறிலி கட்டமைப்பு xkb_event *event,
                       xkb_keycode_t *keycode,
-                      enum xkb_key_direction *direction)
+                      எண்ணிக்கை xkb_சாவி_direction *direction)
 {
-    if (event->type == XKB_EVENT_TYPE_KEY) {
-        *keycode = event->key.keycode;
-        *direction = event->key.direction;
-        return XKB_SUCCESS;
-    } else {
-        return XKB_ERROR_EVENT_TYPE_MISMATCH;
+    எனில் (event->type == XKB_EVENT_TYPE_சாவி) {
+        *keycode = event->சாவி.keycode;
+        *direction = event->சாவி.direction;
+        திரும்பு XKB_SUCCESS;
+    } இல்லையெனில் {
+        திரும்பு XKB_ERROR_EVENT_TYPE_MISMATCH;
     }
 }
 
-enum xkb_status
-xkb_event_get_components(const struct xkb_event * restrict event,
-                         struct xkb_event_components * restrict components)
+எண்ணிக்கை xkb_status
+xkb_event_get_components(மாறிலி கட்டமைப்பு xkb_event * restrict event,
+                         கட்டமைப்பு xkb_event_components * restrict components)
 {
-    if (event->type != XKB_EVENT_TYPE_STATE_COMPONENTS)
-        return XKB_ERROR_EVENT_TYPE_MISMATCH;
+    எனில் (event->type != XKB_EVENT_TYPE_STATE_COMPONENTS)
+        திரும்பு XKB_ERROR_EVENT_TYPE_MISMATCH;
 
     /* Check ABI compatibility */
-    const enum xkb_status status = xkb_check_state_abi(components);
-    if (status != XKB_SUCCESS) {
+    மாறிலி எண்ணிக்கை xkb_status status = xkb_check_state_abi(components);
+    எனில் (status != XKB_SUCCESS) {
         xkb_log_abi_error(event->ctx, __func__, status);
-        return status;
+        திரும்பு status;
     }
 
     components->changed = (uint32_t)event->components.changed;
@@ -4330,214 +4330,214 @@ xkb_event_get_components(const struct xkb_event * restrict event,
     components->leds = event->components.components.leds;
     components->controls = (uint32_t)event->components.components.controls;
 
-    return XKB_SUCCESS;
+    திரும்பு XKB_SUCCESS;
 }
 
-enum xkb_status
-xkb_event_get_pointer_motion(const struct xkb_event * restrict event,
-                             struct xkb_event_pointer_motion * restrict motion)
+எண்ணிக்கை xkb_status
+xkb_event_get_pointer_motion(மாறிலி கட்டமைப்பு xkb_event * restrict event,
+                             கட்டமைப்பு xkb_event_pointer_motion * restrict motion)
 {
-    if (event->type != XKB_EVENT_TYPE_POINTER_MOTION)
-        return XKB_ERROR_EVENT_TYPE_MISMATCH;
+    எனில் (event->type != XKB_EVENT_TYPE_POINTER_MOTION)
+        திரும்பு XKB_ERROR_EVENT_TYPE_MISMATCH;
 
     /* Check ABI compatibility */
-    const enum xkb_status status = xkb_check_state_abi(motion);
-    if (status != XKB_SUCCESS) {
+    மாறிலி எண்ணிக்கை xkb_status status = xkb_check_state_abi(motion);
+    எனில் (status != XKB_SUCCESS) {
         xkb_log_abi_error(event->ctx, __func__, status);
-        return status;
+        திரும்பு status;
     }
 
     motion->flags = event->pointer_motion.flags;
     motion->x = event->pointer_motion.x;
     motion->y = event->pointer_motion.y;
 
-    return XKB_SUCCESS;
+    திரும்பு XKB_SUCCESS;
 }
 
-enum xkb_status
-xkb_event_get_pointer_button(const struct xkb_event * restrict event,
-                             struct xkb_event_pointer_button * restrict button)
+எண்ணிக்கை xkb_status
+xkb_event_get_pointer_button(மாறிலி கட்டமைப்பு xkb_event * restrict event,
+                             கட்டமைப்பு xkb_event_pointer_button * restrict button)
 {
-    if (event->type != XKB_EVENT_TYPE_POINTER_BUTTON)
-        return XKB_ERROR_EVENT_TYPE_MISMATCH;
+    எனில் (event->type != XKB_EVENT_TYPE_POINTER_BUTTON)
+        திரும்பு XKB_ERROR_EVENT_TYPE_MISMATCH;
 
     /* Check ABI compatibility */
-    const enum xkb_status status = xkb_check_state_abi(button);
-    if (status != XKB_SUCCESS) {
+    மாறிலி எண்ணிக்கை xkb_status status = xkb_check_state_abi(button);
+    எனில் (status != XKB_SUCCESS) {
         xkb_log_abi_error(event->ctx, __func__, status);
-        return status;
+        திரும்பு status;
     }
 
     button->button = event->pointer_button.button;
     button->state = event->pointer_button.state;
-    button->count = event->pointer_button.count;
+    button->மொத்தம் = event->pointer_button.மொத்தம்;
 
-    return XKB_SUCCESS;
+    திரும்பு XKB_SUCCESS;
 }
 
-enum xkb_status
-xkb_event_get_virtual_console(const struct xkb_event * restrict event,
+எண்ணிக்கை xkb_status
+xkb_event_get_virtual_console(மாறிலி கட்டமைப்பு xkb_event * restrict event,
                               int8_t * restrict index_or_offset,
                               bool * restrict is_offset)
 {
-    if (event->type != XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE)
-        return XKB_ERROR_EVENT_TYPE_MISMATCH;
+    எனில் (event->type != XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE)
+        திரும்பு XKB_ERROR_EVENT_TYPE_MISMATCH;
 
     *index_or_offset = event->virtual_console.index_or_offset;
     *is_offset = event->virtual_console.is_offset;
 
-    return XKB_SUCCESS;
+    திரும்பு XKB_SUCCESS;
 }
 
-enum xkb_status
-xkb_state_update_event(struct xkb_state * restrict base_state,
-                       const struct xkb_event * restrict event,
-                       enum xkb_state_component * restrict changed)
+எண்ணிக்கை xkb_status
+xkb_state_update_event(கட்டமைப்பு xkb_state * restrict base_state,
+                       மாறிலி கட்டமைப்பு xkb_event * restrict event,
+                       எண்ணிக்கை xkb_state_component * restrict changed)
 {
     /* Guard against server-only state */
-    assert(base_state->mode == SERVER_COMPANION ||
+    ப்ரதிஜ்ஞா(base_state->mode == SERVER_COMPANION ||
            base_state->mode == LEGACY_MIXED_STATE);
-    if (base_state->mode != SERVER_COMPANION &&
+    எனில் (base_state->mode != SERVER_COMPANION &&
         base_state->mode != LEGACY_MIXED_STATE) {
         log_err(base_state->keymap->ctx, XKB_ERROR_UNEXPECTED_STATE_MODE_,
                 "%s: Unexpected state type %d\n", __func__, base_state->mode);
-        return XKB_ERROR_UNEXPECTED_STATE_MODE;
+        திரும்பு XKB_ERROR_UNEXPECTED_STATE_MODE;
     }
 
-    struct xkb_client_state * const state =
-        (struct xkb_client_state *)base_state;
+    கட்டமைப்பு xkb_client_state * மாறிலி state =
+        (கட்டமைப்பு xkb_client_state *)base_state;
 
-    if (event->type == XKB_EVENT_TYPE_STATE_COMPONENTS) {
-        const struct state_components prev_components = state->base.components;
+    எனில் (event->type == XKB_EVENT_TYPE_STATE_COMPONENTS) {
+        மாறிலி கட்டமைப்பு state_components prev_components = state->base.components;
         state->base.components = event->components.components;
         /*
          * Recompute the changes instead of using the event value, because we do
          * not know if the event’s queue and the state are synced.
          */
-        if (changed)
+        எனில் (changed)
             *changed = get_state_component_changes(&prev_components,
                                                    &state->base.components);
-    } else {
-        if (changed)
+    } இல்லையெனில் {
+        எனில் (changed)
             *changed = 0;
     }
-    return XKB_SUCCESS;
+    திரும்பு XKB_SUCCESS;
 }
 
-static void
-append_pointer_button(struct xkb_events * restrict events,
-                      struct xkb_filter * restrict filter,
-                      enum xkb_pointer_button_state button_state,
-                      uint8_t count)
+நிலையான வெறுமை
+append_pointer_button(கட்டமைப்பு xkb_events * restrict events,
+                      கட்டமைப்பு xkb_filter * restrict filter,
+                      எண்ணிக்கை xkb_pointer_button_state button_state,
+                      uint8_t மொத்தம்)
 {
-    darray_append(events->queue, (struct xkb_event) {
+    darray_append(events->queue, (கட்டமைப்பு xkb_event) {
         .ctx = events->ctx, /* borrowed from events */
         .type = XKB_EVENT_TYPE_POINTER_BUTTON,
         .pointer_button = {
-            .size = sizeof(((struct xkb_event*)0)->pointer_button),
+            .size = அளவு(((கட்டமைப்பு xkb_event*)0)->pointer_button),
             .button = filter->priv,
             .state = button_state,
-            .count = count,
+            .மொத்தம் = மொத்தம்,
         }
     });
 }
 
-static void
-xkb_filter_pointer_button_new(struct xkb_server_state *state,
-                              struct xkb_events *events,
-                              struct xkb_filter *filter)
+நிலையான வெறுமை
+xkb_filter_pointer_button_new(கட்டமைப்பு xkb_server_state *state,
+                              கட்டமைப்பு xkb_events *events,
+                              கட்டமைப்பு xkb_filter *filter)
 {
-    if (!events || state->base.mode != SERVER_STATE ||
-        !(state->base.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_KEYS)) {
-        filter->func = NULL;
-        return;
+    எனில் (!events || state->base.mode != SERVER_STATE ||
+        !(state->base.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_சாவிகள்)) {
+        filter->func = வெற்று;
+        திரும்பு;
     }
 
-    struct xkb_machine * const sm = (struct xkb_machine *)state;
+    கட்டமைப்பு xkb_machine * மாறிலி sm = (கட்டமைப்பு xkb_machine *)state;
 
     /* Resolve button */
-    const xkb_pointer_button_index_t button =
+    மாறிலி xkb_pointer_button_index_t button =
         (filter->action.btn.button == XKB_POINTER_BUTTON_DEFAULT)
             ? sm->mouse.default_button
             : filter->action.btn.button;
     filter->priv = button;
 
-    const enum xkb_pointer_button_state button_state =
+    மாறிலி எண்ணிக்கை xkb_pointer_button_state button_state =
         XKB_POINTER_BUTTON_PRESSED;
     append_pointer_button(events, filter, button_state,
-                          filter->action.btn.count);
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+                          filter->action.btn.மொத்தம்);
+    state->flags &= ~STATE_REQUIRE_சாவி_EVENT;
 }
 
-static bool
-xkb_filter_pointer_button_func(struct xkb_server_state *state,
-                               struct xkb_events *events,
-                               struct xkb_filter *filter,
-                               const struct xkb_key *key,
-                               enum xkb_key_direction direction)
+நிலையான bool
+xkb_filter_pointer_button_func(கட்டமைப்பு xkb_server_state *state,
+                               கட்டமைப்பு xkb_events *events,
+                               கட்டமைப்பு xkb_filter *filter,
+                               மாறிலி கட்டமைப்பு xkb_சாவி *சாவி,
+                               எண்ணிக்கை xkb_சாவி_direction direction)
 {
-    if (key != filter->key || !events)
-        return XKB_FILTER_CONTINUE;
+    எனில் (சாவி != filter->சாவி || !events)
+        திரும்பு XKB_FILTER_CONTINUE;
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_சாவி_EVENT;
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    தேர்வு (direction) {
+    நிலை XKB_சாவி_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    நிலை XKB_சாவி_REPEATED:
+        திரும்பு XKB_FILTER_CONSUME;
+    இயல்பு:
+        எனில் (--filter->refcnt > 0)
+            திரும்பு XKB_FILTER_CONSUME;
     }
 
-    if (!filter->action.btn.count)
+    எனில் (!filter->action.btn.மொத்தம்)
         append_pointer_button(events, filter, XKB_POINTER_BUTTON_RELEASED, 0);
 
-    filter->func = NULL;
-    return XKB_FILTER_CONSUME;
+    filter->func = வெற்று;
+    திரும்பு XKB_FILTER_CONSUME;
 }
 
-struct xkb_filter_pointer_lock_button_priv {
+கட்டமைப்பு xkb_filter_pointer_lock_button_priv {
     uint32_t button:31;
 #ifdef _WIN32
     uint32_t locked:1; // MSVC requires matching types to pack bitfields
-#else
+#இல்லையெனில்
     bool locked:1;
 #endif
 };
 
-enum {
+எண்ணிக்கை {
     XKB_FILTER_POINTER_LOCK_BUTTON_PRIV_WIDTH =
-        sizeof(struct xkb_filter_pointer_lock_button_priv) * CHAR_BIT,
+        அளவு(கட்டமைப்பு xkb_filter_pointer_lock_button_priv) * CHAR_BIT,
     XKB_FILTER_POINTER_LOCK_BUTTON_PRIV_MAX =
         (UINT64_C(1) << XKB_FILTER_POINTER_LOCK_BUTTON_PRIV_WIDTH) - 1
 };
 
-static_assert(sizeof(struct xkb_filter_pointer_lock_button_priv) ==
-              sizeof(((struct xkb_filter*)0)->priv),
+static_assert(அளவு(கட்டமைப்பு xkb_filter_pointer_lock_button_priv) ==
+              அளவு(((கட்டமைப்பு xkb_filter*)0)->priv),
               "");
 static_assert((uint32_t)XKB_POINTER_BUTTON_MAX < (uint32_t)XKB_FILTER_POINTER_LOCK_BUTTON_PRIV_MAX,
               "xkb_filter_pointer_lock_button_priv cannot store button");
 
-static void
-xkb_filter_pointer_lock_button_new(struct xkb_server_state *state,
-                                   struct xkb_events *events,
-                                   struct xkb_filter *filter)
+நிலையான வெறுமை
+xkb_filter_pointer_lock_button_new(கட்டமைப்பு xkb_server_state *state,
+                                   கட்டமைப்பு xkb_events *events,
+                                   கட்டமைப்பு xkb_filter *filter)
 {
-    if (!events || state->base.mode != SERVER_STATE ||
-        !(state->base.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_KEYS)) {
-        filter->func = NULL;
-        return;
+    எனில் (!events || state->base.mode != SERVER_STATE ||
+        !(state->base.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_சாவிகள்)) {
+        filter->func = வெற்று;
+        திரும்பு;
     }
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_சாவி_EVENT;
 
-    struct xkb_machine * const sm = (struct xkb_machine *)state;
+    கட்டமைப்பு xkb_machine * மாறிலி sm = (கட்டமைப்பு xkb_machine *)state;
 
     /* Resolve button */
-    const xkb_pointer_button_index_t button =
+    மாறிலி xkb_pointer_button_index_t button =
         (filter->action.btn.button == XKB_POINTER_BUTTON_DEFAULT)
             ? sm->mouse.default_button
             : filter->action.btn.button;
@@ -4546,180 +4546,180 @@ xkb_filter_pointer_lock_button_new(struct xkb_server_state *state,
                   "invalid UINTx_C() macro");
     static_assert(XKB_POINTER_BUTTON_MAX <= XKB_POINTER_BUTTON_MASK_WIDTH,
                   "invalid left shift");
-    const xkb_pointer_button_mask_t mask = (UINT8_C(1) << button);
+    மாறிலி xkb_pointer_button_mask_t mask = (UINT8_C(1) << button);
 
-    const bool locked = (sm->mouse.locked_buttons & mask);
+    மாறிலி bool locked = (sm->mouse.locked_buttons & mask);
 
-    if (!locked && !(filter->action.btn.flags & ACTION_LOCK_NO_LOCK)) {
+    எனில் (!locked && !(filter->action.btn.flags & ACTION_LOCK_NO_LOCK)) {
         sm->mouse.locked_buttons |= mask;
         filter->priv = button;
         append_pointer_button(events, filter, XKB_POINTER_BUTTON_PRESSED, 0);
     }
 
-    struct xkb_filter_pointer_lock_button_priv *priv =
-        (struct xkb_filter_pointer_lock_button_priv*)&filter->priv;
+    கட்டமைப்பு xkb_filter_pointer_lock_button_priv *priv =
+        (கட்டமைப்பு xkb_filter_pointer_lock_button_priv*)&filter->priv;
     priv->button = button,
     priv->locked = locked;
 }
 
-static bool
-xkb_filter_pointer_lock_button_func(struct xkb_server_state *state,
-                                    struct xkb_events *events,
-                                    struct xkb_filter *filter,
-                                    const struct xkb_key *key,
-                                    enum xkb_key_direction direction)
+நிலையான bool
+xkb_filter_pointer_lock_button_func(கட்டமைப்பு xkb_server_state *state,
+                                    கட்டமைப்பு xkb_events *events,
+                                    கட்டமைப்பு xkb_filter *filter,
+                                    மாறிலி கட்டமைப்பு xkb_சாவி *சாவி,
+                                    எண்ணிக்கை xkb_சாவி_direction direction)
 {
-    if (key != filter->key || !events || state->base.mode != SERVER_STATE)
-        return XKB_FILTER_CONTINUE;
+    எனில் (சாவி != filter->சாவி || !events || state->base.mode != SERVER_STATE)
+        திரும்பு XKB_FILTER_CONTINUE;
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_சாவி_EVENT;
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    தேர்வு (direction) {
+    நிலை XKB_சாவி_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    நிலை XKB_சாவி_REPEATED:
+        திரும்பு XKB_FILTER_CONSUME;
+    இயல்பு:
+        எனில் (--filter->refcnt > 0)
+            திரும்பு XKB_FILTER_CONSUME;
     }
 
-    const struct xkb_filter_pointer_lock_button_priv *priv =
-        (struct xkb_filter_pointer_lock_button_priv*)&filter->priv;
+    மாறிலி கட்டமைப்பு xkb_filter_pointer_lock_button_priv *priv =
+        (கட்டமைப்பு xkb_filter_pointer_lock_button_priv*)&filter->priv;
 
-    if (priv->locked && !(filter->action.btn.flags & ACTION_LOCK_NO_UNLOCK)) {
-        struct xkb_machine * const sm = (struct xkb_machine *)state;
+    எனில் (priv->locked && !(filter->action.btn.flags & ACTION_LOCK_NO_UNLOCK)) {
+        கட்டமைப்பு xkb_machine * மாறிலி sm = (கட்டமைப்பு xkb_machine *)state;
 
         static_assert(XKB_POINTER_BUTTON_MASK_WIDTH <= 8,
                     "invalid UINTx_C() macro");
         static_assert(XKB_POINTER_BUTTON_MAX <= XKB_POINTER_BUTTON_MASK_WIDTH,
                     "invalid left shift");
-        const xkb_pointer_button_mask_t mask = (UINT8_C(1) << priv->button);
+        மாறிலி xkb_pointer_button_mask_t mask = (UINT8_C(1) << priv->button);
 
         sm->mouse.locked_buttons &= ~mask;
         filter->priv = priv->button;
         append_pointer_button(events, filter, XKB_POINTER_BUTTON_RELEASED, 0);
     }
 
-    filter->func = NULL;
-    return XKB_FILTER_CONSUME;
+    filter->func = வெற்று;
+    திரும்பு XKB_FILTER_CONSUME;
 }
 
-static void
-xkb_filter_pointer_set_default_button_new(struct xkb_server_state *state,
-                                          struct xkb_events *events,
-                                          struct xkb_filter *filter)
+நிலையான வெறுமை
+xkb_filter_pointer_set_default_button_new(கட்டமைப்பு xkb_server_state *state,
+                                          கட்டமைப்பு xkb_events *events,
+                                          கட்டமைப்பு xkb_filter *filter)
 {
-    if (!events || state->base.mode != SERVER_STATE ||
-        !(state->base.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_KEYS)) {
-        filter->func = NULL;
-        return;
+    எனில் (!events || state->base.mode != SERVER_STATE ||
+        !(state->base.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_சாவிகள்)) {
+        filter->func = வெற்று;
+        திரும்பு;
     }
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_சாவி_EVENT;
 
-    struct xkb_machine * const sm = (struct xkb_machine *)state;
+    கட்டமைப்பு xkb_machine * மாறிலி sm = (கட்டமைப்பு xkb_machine *)state;
 
     static_assert(2 * XKB_POINTER_BUTTON_MAX <= INT_MAX, "lossy conversion");
-    int button = (filter->action.dflt.flags & ACTION_ABSOLUTE_SWITCH)
-        ? filter->action.dflt.value
-        : sm->mouse.default_button + filter->action.dflt.value;
+    முழு button = (filter->action.dflt.flags & ACTION_ABSOLUTE_SWITCH)
+        ? filter->action.dflt.மதிப்பு
+        : sm->mouse.default_button + filter->action.dflt.மதிப்பு;
 
     /* Wrap into range */
-    const int rem = button % XKB_POINTER_BUTTON_MAX;
+    மாறிலி முழு rem = button % XKB_POINTER_BUTTON_MAX;
     sm->mouse.default_button = (rem >= 0)
         ? (xkb_pointer_button_index_t)rem
         : (xkb_pointer_button_index_t)(rem + XKB_POINTER_BUTTON_MAX);
 }
 
-static bool
-xkb_filter_pointer_set_default_button_func(struct xkb_server_state *state,
-                                           struct xkb_events *events,
-                                           struct xkb_filter *filter,
-                                           const struct xkb_key *key,
-                                           enum xkb_key_direction direction)
+நிலையான bool
+xkb_filter_pointer_set_default_button_func(கட்டமைப்பு xkb_server_state *state,
+                                           கட்டமைப்பு xkb_events *events,
+                                           கட்டமைப்பு xkb_filter *filter,
+                                           மாறிலி கட்டமைப்பு xkb_சாவி *சாவி,
+                                           எண்ணிக்கை xkb_சாவி_direction direction)
 {
-    if (key != filter->key || !events)
-        return XKB_FILTER_CONTINUE;
+    எனில் (சாவி != filter->சாவி || !events)
+        திரும்பு XKB_FILTER_CONTINUE;
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_சாவி_EVENT;
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    தேர்வு (direction) {
+    நிலை XKB_சாவி_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    நிலை XKB_சாவி_REPEATED:
+        திரும்பு XKB_FILTER_CONSUME;
+    இயல்பு:
+        எனில் (--filter->refcnt > 0)
+            திரும்பு XKB_FILTER_CONSUME;
     }
 
-    filter->func = NULL;
-    return XKB_FILTER_CONTINUE;
+    filter->func = வெற்று;
+    திரும்பு XKB_FILTER_CONTINUE;
 }
 
-static void
-xkb_filter_terminate_server_new(struct xkb_server_state *state,
-                                 struct xkb_events *events,
-                                 struct xkb_filter *filter)
+நிலையான வெறுமை
+xkb_filter_terminate_server_new(கட்டமைப்பு xkb_server_state *state,
+                                 கட்டமைப்பு xkb_events *events,
+                                 கட்டமைப்பு xkb_filter *filter)
 {
-    if (!events || state->base.mode != SERVER_STATE ||
-        !(((struct xkb_machine *)state)->flags & XKB_MACHINE_SERVER_ACTIONS)) {
-        filter->func = NULL;
-        return;
+    எனில் (!events || state->base.mode != SERVER_STATE ||
+        !(((கட்டமைப்பு xkb_machine *)state)->flags & XKB_MACHINE_SERVER_ACTIONS)) {
+        filter->func = வெற்று;
+        திரும்பு;
     }
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_சாவி_EVENT;
 
-    darray_append(events->queue, (struct xkb_event) {
+    darray_append(events->queue, (கட்டமைப்பு xkb_event) {
         .ctx = events->ctx, /* borrowed from events */
         .type = XKB_EVENT_TYPE_TERMINATE_DISPLAY_SERVER,
     });
 }
 
-static bool
-xkb_filter_terminate_server_func(struct xkb_server_state *state,
-                                 struct xkb_events *events,
-                                 struct xkb_filter *filter,
-                                 const struct xkb_key *key,
-                                 enum xkb_key_direction direction)
+நிலையான bool
+xkb_filter_terminate_server_func(கட்டமைப்பு xkb_server_state *state,
+                                 கட்டமைப்பு xkb_events *events,
+                                 கட்டமைப்பு xkb_filter *filter,
+                                 மாறிலி கட்டமைப்பு xkb_சாவி *சாவி,
+                                 எண்ணிக்கை xkb_சாவி_direction direction)
 {
-    if (key != filter->key || !events)
-        return XKB_FILTER_CONTINUE;
+    எனில் (சாவி != filter->சாவி || !events)
+        திரும்பு XKB_FILTER_CONTINUE;
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_சாவி_EVENT;
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    தேர்வு (direction) {
+    நிலை XKB_சாவி_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    நிலை XKB_சாவி_REPEATED:
+        திரும்பு XKB_FILTER_CONSUME;
+    இயல்பு:
+        எனில் (--filter->refcnt > 0)
+            திரும்பு XKB_FILTER_CONSUME;
     }
 
-    filter->func = NULL;
-    return XKB_FILTER_CONSUME;
+    filter->func = வெற்று;
+    திரும்பு XKB_FILTER_CONSUME;
 }
 
-static void
-xkb_filter_switch_virtual_console_new(struct xkb_server_state *state,
-                                      struct xkb_events *events,
-                                      struct xkb_filter *filter)
+நிலையான வெறுமை
+xkb_filter_switch_virtual_console_new(கட்டமைப்பு xkb_server_state *state,
+                                      கட்டமைப்பு xkb_events *events,
+                                      கட்டமைப்பு xkb_filter *filter)
 {
-    if (!events || state->base.mode != SERVER_STATE ||
-        !(((struct xkb_machine *)state)->flags & XKB_MACHINE_SERVER_ACTIONS)) {
-        filter->func = NULL;
-        return;
+    எனில் (!events || state->base.mode != SERVER_STATE ||
+        !(((கட்டமைப்பு xkb_machine *)state)->flags & XKB_MACHINE_SERVER_ACTIONS)) {
+        filter->func = வெற்று;
+        திரும்பு;
     }
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_சாவி_EVENT;
 
-    darray_append(events->queue, (struct xkb_event) {
+    darray_append(events->queue, (கட்டமைப்பு xkb_event) {
         .ctx = events->ctx, /* borrowed from events */
         .type = XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE,
         .virtual_console = {
@@ -4729,29 +4729,29 @@ xkb_filter_switch_virtual_console_new(struct xkb_server_state *state,
     });
 }
 
-static bool
-xkb_filter_switch_virtual_console_func(struct xkb_server_state *state,
-                                       struct xkb_events *events,
-                                       struct xkb_filter *filter,
-                                       const struct xkb_key *key,
-                                       enum xkb_key_direction direction)
+நிலையான bool
+xkb_filter_switch_virtual_console_func(கட்டமைப்பு xkb_server_state *state,
+                                       கட்டமைப்பு xkb_events *events,
+                                       கட்டமைப்பு xkb_filter *filter,
+                                       மாறிலி கட்டமைப்பு xkb_சாவி *சாவி,
+                                       எண்ணிக்கை xkb_சாவி_direction direction)
 {
-    if (key != filter->key || !events)
-        return XKB_FILTER_CONTINUE;
+    எனில் (சாவி != filter->சாவி || !events)
+        திரும்பு XKB_FILTER_CONTINUE;
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_சாவி_EVENT;
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    தேர்வு (direction) {
+    நிலை XKB_சாவி_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    நிலை XKB_சாவி_REPEATED:
+        திரும்பு XKB_FILTER_CONSUME;
+    இயல்பு:
+        எனில் (--filter->refcnt > 0)
+            திரும்பு XKB_FILTER_CONSUME;
     }
 
-    filter->func = NULL;
-    return XKB_FILTER_CONSUME;
+    filter->func = வெற்று;
+    திரும்பு XKB_FILTER_CONSUME;
 }

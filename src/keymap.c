@@ -11,342 +11,342 @@
  * Author: Daniel Stone <daniel@fooishbar.org>
  */
 
-#include "config.h"
+#அந்தர்பாவ "config.h"
 
-#include <assert.h>
-#include <stdint.h>
-#include <string.h>
+#அந்தர்பாவ <assert.h>
+#அந்தர்பாவ <stdint.h>
+#அந்தர்பாவ <string.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "abi-check.h"
-#include "atom.h"
-#include "context.h"
-#include "features/enums.h"
-#include "keymap.h"
-#include "keymap-priv.h"
-#include "messages-codes.h"
-#include "text.h"
-#include "util-mem.h"
-#include "util-numbers.h"
+#அந்தர்பாவ "xkbcommon/xkbcommon.h"
+#அந்தர்பாவ "abi-check.h"
+#அந்தர்பாவ "atom.h"
+#அந்தர்பாவ "context.h"
+#அந்தர்பாவ "features/enums.h"
+#அந்தர்பாவ "keymap.h"
+#அந்தர்பாவ "keymap-priv.h"
+#அந்தர்பாவ "messages-codes.h"
+#அந்தர்பாவ "text.h"
+#அந்தர்பாவ "util-mem.h"
+#அந்தர்பாவ "util-numbers.h"
 
-struct xkb_keymap *
-xkb_keymap_ref(struct xkb_keymap *keymap)
+கட்டமைப்பு xkb_keymap *
+xkb_keymap_ref(கட்டமைப்பு xkb_keymap *keymap)
 {
-    assert(keymap->refcnt > 0);
+    ப்ரதிஜ்ஞா(keymap->refcnt > 0);
     keymap->refcnt++;
-    return keymap;
+    திரும்பு keymap;
 }
 
-void
-clear_level(struct xkb_level *leveli)
+வெறுமை
+clear_level(கட்டமைப்பு xkb_level *leveli)
 {
-    if (leveli->num_syms > 1)
-        free(leveli->s.syms);
-    if (leveli->num_actions > 1)
-        free(leveli->a.actions);
+    எனில் (leveli->இலக்கம்_syms > 1)
+        விடுவி(leveli->s.syms);
+    எனில் (leveli->இலக்கம்_actions > 1)
+        விடுவி(leveli->a.actions);
 }
 
-static void
-clear_interpret(struct xkb_sym_interpret *interp)
+நிலையான வெறுமை
+clear_interpret(கட்டமைப்பு xkb_sym_interpret *interp)
 {
-    if (interp->num_actions > 1)
-        free(interp->a.actions);
+    எனில் (interp->இலக்கம்_actions > 1)
+        விடுவி(interp->a.actions);
 }
 
-void
-xkb_keymap_unref(struct xkb_keymap *keymap)
+வெறுமை
+xkb_keymap_unref(கட்டமைப்பு xkb_keymap *keymap)
 {
-    assert(!keymap || keymap->refcnt > 0);
-    if (!keymap || --keymap->refcnt > 0)
-        return;
+    ப்ரதிஜ்ஞா(!keymap || keymap->refcnt > 0);
+    எனில் (!keymap || --keymap->refcnt > 0)
+        திரும்பு;
 
-    if (keymap->keys) {
-        struct xkb_key *key;
-        xkb_keys_foreach(key, keymap) {
-            if (key->groups) {
-                for (xkb_layout_index_t i = 0; i < key->num_groups; i++) {
-                    if (key->groups[i].levels) {
-                        for (xkb_level_index_t j = 0;
-                             j < XkbKeyNumLevels(key, i);
+    எனில் (keymap->சாவிகள்) {
+        கட்டமைப்பு xkb_சாவி *சாவி;
+        xkb_சாவிகள்_foreach(சாவி, keymap) {
+            எனில் (சாவி->groups) {
+                க்கு (xkb_layout_index_t i = 0; i < சாவி->இலக்கம்_groups; i++) {
+                    எனில் (சாவி->groups[i].levels) {
+                        க்கு (xkb_level_index_t j = 0;
+                             j < Xkb_சாவி_இலக்கம்_Levels(சாவி, i);
                              j++)
-                            clear_level(&key->groups[i].levels[j]);
-                        free(key->groups[i].levels);
+                            clear_level(&சாவி->groups[i].levels[j]);
+                        விடுவி(சாவி->groups[i].levels);
                     }
                 }
-                free(key->groups);
+                விடுவி(சாவி->groups);
             }
-            if (!key->overlays_inline && key->overlays_keys) {
-                free((void *)key->overlays_keys);
+            எனில் (!சாவி->overlays_inline && சாவி->overlays_சாவிகள்) {
+                விடுவி((வெறுமை *)சாவி->overlays_சாவிகள்);
             }
         }
-        free(keymap->keys);
+        விடுவி(keymap->சாவிகள்);
     }
-    if (keymap->types) {
-        for (darray_size_t i = 0; i < keymap->num_types; i++) {
-            free(keymap->types[i].entries);
-            free(keymap->types[i].level_names);
+    எனில் (keymap->types) {
+        க்கு (darray_size_t i = 0; i < keymap->இலக்கம்_types; i++) {
+            விடுவி(keymap->types[i].entries);
+            விடுவி(keymap->types[i].level_names);
         }
-        free(keymap->types);
+        விடுவி(keymap->types);
     }
-    for (darray_size_t k = 0; k < keymap->num_sym_interprets; k++) {
+    க்கு (darray_size_t k = 0; k < keymap->இலக்கம்_sym_interprets; k++) {
         clear_interpret(&keymap->sym_interprets[k]);
     }
-    free(keymap->sym_interprets);
-    free(keymap->modmaps);
-    free(keymap->key_aliases);
-    free(keymap->group_names);
-    free(keymap->keycodes_section_name);
-    free(keymap->symbols_section_name);
-    free(keymap->types_section_name);
-    free(keymap->compat_section_name);
+    விடுவி(keymap->sym_interprets);
+    விடுவி(keymap->modmaps);
+    விடுவி(keymap->சாவி_aliases);
+    விடுவி(keymap->group_names);
+    விடுவி(keymap->keycodes_section_name);
+    விடுவி(keymap->symbols_section_name);
+    விடுவி(keymap->types_section_name);
+    விடுவி(keymap->compat_section_name);
     xkb_context_unref(keymap->ctx);
-    free(keymap);
+    விடுவி(keymap);
 }
 
-static const struct xkb_keymap_format_ops *
-get_keymap_format_ops(enum xkb_keymap_format format)
+நிலையான மாறிலி கட்டமைப்பு xkb_keymap_format_ops *
+get_keymap_format_ops(எண்ணிக்கை xkb_keymap_format format)
 {
-    static const struct xkb_keymap_format_ops *keymap_format_ops[] = {
+    நிலையான மாறிலி கட்டமைப்பு xkb_keymap_format_ops *keymap_format_ops[] = {
         [XKB_KEYMAP_FORMAT_TEXT_V1] = &text_v1_keymap_format_ops,
         [XKB_KEYMAP_FORMAT_TEXT_V2] = &text_v1_keymap_format_ops,
     };
 
-    if ((int) format < 0 || (int) format >= (int) ARRAY_SIZE(keymap_format_ops))
-        return NULL;
+    எனில் ((முழு) format < 0 || (முழு) format >= (முழு) ARRAY_SIZE(keymap_format_ops))
+        திரும்பு வெற்று;
 
-    return keymap_format_ops[(int) format];
+    திரும்பு keymap_format_ops[(முழு) format];
 }
 
-struct xkb_keymap *
-xkb_keymap_new_from_rmlvo(const struct xkb_rmlvo_builder *rmlvo,
-                          enum xkb_keymap_format format,
-                          enum xkb_keymap_compile_flags flags)
+கட்டமைப்பு xkb_keymap *
+xkb_keymap_new_from_rmlvo(மாறிலி கட்டமைப்பு xkb_rmlvo_builder *rmlvo,
+                          எண்ணிக்கை xkb_keymap_format format,
+                          எண்ணிக்கை xkb_keymap_compile_flags flags)
 {
-    const struct xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
-    if (!ops || !ops->keymap_new_from_rmlvo) {
+    மாறிலி கட்டமைப்பு xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
+    எனில் (!ops || !ops->keymap_new_from_rmlvo) {
         log_err_func(rmlvo->ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", format);
-        return NULL;
+        திரும்பு வெற்று;
     }
 
-    struct xkb_keymap *keymap = xkb_keymap_new(rmlvo->ctx, __func__, format,
+    கட்டமைப்பு xkb_keymap *keymap = xkb_keymap_new(rmlvo->ctx, __func__, format,
                                                flags);
-    if (!keymap)
-        return NULL;
+    எனில் (!keymap)
+        திரும்பு வெற்று;
 
-    if (!ops->keymap_new_from_rmlvo(keymap, rmlvo)) {
+    எனில் (!ops->keymap_new_from_rmlvo(keymap, rmlvo)) {
         xkb_keymap_unref(keymap);
-        return NULL;
+        திரும்பு வெற்று;
     }
 
-    return keymap;
+    திரும்பு keymap;
 }
 
-struct xkb_keymap *
-xkb_keymap_new_from_names2(struct xkb_context *ctx,
-                           const struct xkb_rule_names *rmlvo_in,
-                           enum xkb_keymap_format format,
-                           enum xkb_keymap_compile_flags flags)
+கட்டமைப்பு xkb_keymap *
+xkb_keymap_new_from_names2(கட்டமைப்பு xkb_context *ctx,
+                           மாறிலி கட்டமைப்பு xkb_rule_names *rmlvo_in,
+                           எண்ணிக்கை xkb_keymap_format format,
+                           எண்ணிக்கை xkb_keymap_compile_flags flags)
 {
-    const struct xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
-    if (!ops || !ops->keymap_new_from_names) {
+    மாறிலி கட்டமைப்பு xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
+    எனில் (!ops || !ops->keymap_new_from_names) {
         log_err_func(ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", format);
-        return NULL;
+        திரும்பு வெற்று;
     }
 
-    struct xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
-    if (!keymap)
-        return NULL;
+    கட்டமைப்பு xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
+    எனில் (!keymap)
+        திரும்பு வெற்று;
 
-    struct xkb_rule_names rmlvo = {0};
-    if (rmlvo_in)
+    கட்டமைப்பு xkb_rule_names rmlvo = {0};
+    எனில் (rmlvo_in)
         rmlvo = *rmlvo_in;
     xkb_context_sanitize_rule_names(ctx, &rmlvo);
 
-    if (!ops->keymap_new_from_names(keymap, &rmlvo)) {
+    எனில் (!ops->keymap_new_from_names(keymap, &rmlvo)) {
         xkb_keymap_unref(keymap);
-        return NULL;
+        திரும்பு வெற்று;
     }
 
-    return keymap;
+    திரும்பு keymap;
 }
 
 
-struct xkb_keymap *
-xkb_keymap_new_from_names(struct xkb_context *ctx,
-                          const struct xkb_rule_names *rmlvo_in,
-                          enum xkb_keymap_compile_flags flags)
+கட்டமைப்பு xkb_keymap *
+xkb_keymap_new_from_names(கட்டமைப்பு xkb_context *ctx,
+                          மாறிலி கட்டமைப்பு xkb_rule_names *rmlvo_in,
+                          எண்ணிக்கை xkb_keymap_compile_flags flags)
 {
-    return xkb_keymap_new_from_names2(ctx, rmlvo_in,
+    திரும்பு xkb_keymap_new_from_names2(ctx, rmlvo_in,
                                       XKB_KEYMAP_FORMAT_TEXT_V2, flags);
 }
 
-struct xkb_keymap *
-xkb_keymap_new_from_string(struct xkb_context *ctx,
-                           const char *string,
-                           enum xkb_keymap_format format,
-                           enum xkb_keymap_compile_flags flags)
+கட்டமைப்பு xkb_keymap *
+xkb_keymap_new_from_string(கட்டமைப்பு xkb_context *ctx,
+                           மாறிலி எழுத்து *string,
+                           எண்ணிக்கை xkb_keymap_format format,
+                           எண்ணிக்கை xkb_keymap_compile_flags flags)
 {
-    return xkb_keymap_new_from_buffer(ctx, string, strlen(string),
+    திரும்பு xkb_keymap_new_from_buffer(ctx, string, strlen(string),
                                       format, flags);
 }
 
-struct xkb_keymap *
-xkb_keymap_new_from_buffer(struct xkb_context *ctx,
-                           const char *buffer, size_t length,
-                           enum xkb_keymap_format format,
-                           enum xkb_keymap_compile_flags flags)
+கட்டமைப்பு xkb_keymap *
+xkb_keymap_new_from_buffer(கட்டமைப்பு xkb_context *ctx,
+                           மாறிலி எழுத்து *buffer, size_t length,
+                           எண்ணிக்கை xkb_keymap_format format,
+                           எண்ணிக்கை xkb_keymap_compile_flags flags)
 {
-    const struct xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
-    if (!ops || !ops->keymap_new_from_string) {
+    மாறிலி கட்டமைப்பு xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
+    எனில் (!ops || !ops->keymap_new_from_string) {
         log_err_func(ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", format);
-        return NULL;
+        திரும்பு வெற்று;
     }
 
-    if (!buffer) {
+    எனில் (!buffer) {
         log_err_func1(ctx, XKB_LOG_MESSAGE_NO_ID,
                       "no buffer specified\n");
-        return NULL;
+        திரும்பு வெற்று;
     }
 
-    struct xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
-    if (!keymap)
-        return NULL;
+    கட்டமைப்பு xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
+    எனில் (!keymap)
+        திரும்பு வெற்று;
 
     /* Allow a zero-terminated string as a buffer */
-    if (length > 0 && buffer[length - 1] == '\0')
+    எனில் (length > 0 && buffer[length - 1] == '\0')
         length--;
 
-    if (!ops->keymap_new_from_string(keymap, buffer, length)) {
+    எனில் (!ops->keymap_new_from_string(keymap, buffer, length)) {
         xkb_keymap_unref(keymap);
-        return NULL;
+        திரும்பு வெற்று;
     }
 
-    return keymap;
+    திரும்பு keymap;
 }
 
-struct xkb_keymap *
-xkb_keymap_new_from_file(struct xkb_context *ctx,
+கட்டமைப்பு xkb_keymap *
+xkb_keymap_new_from_file(கட்டமைப்பு xkb_context *ctx,
                          FILE *file,
-                         enum xkb_keymap_format format,
-                         enum xkb_keymap_compile_flags flags)
+                         எண்ணிக்கை xkb_keymap_format format,
+                         எண்ணிக்கை xkb_keymap_compile_flags flags)
 {
-    const struct xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
-    if (!ops || !ops->keymap_new_from_file) {
+    மாறிலி கட்டமைப்பு xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
+    எனில் (!ops || !ops->keymap_new_from_file) {
         log_err_func(ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", format);
-        return NULL;
+        திரும்பு வெற்று;
     }
 
-    if (!file) {
+    எனில் (!file) {
         log_err_func1(ctx, XKB_LOG_MESSAGE_NO_ID,
                       "no file specified\n");
-        return NULL;
+        திரும்பு வெற்று;
     }
 
-    struct xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
-    if (!keymap)
-        return NULL;
+    கட்டமைப்பு xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
+    எனில் (!keymap)
+        திரும்பு வெற்று;
 
-    if (!ops->keymap_new_from_file(keymap, file)) {
+    எனில் (!ops->keymap_new_from_file(keymap, file)) {
         xkb_keymap_unref(keymap);
-        return NULL;
+        திரும்பு வெற்று;
     }
 
-    return keymap;
+    திரும்பு keymap;
 }
 
 /** Check ABI compatibility */
 // NOLINTBEGIN(bugprone-assignment-in-selection-statement)
-static enum xkb_status
+நிலையான எண்ணிக்கை xkb_status
 check_keymap_serialize_abi(
-    struct xkb_context * restrict ctx,
-    const char * restrict func,
-    const struct xkb_keymap_serialize_config * restrict config,
-    const struct xkb_keymap_serialize_result * restrict result
+    கட்டமைப்பு xkb_context * restrict ctx,
+    மாறிலி எழுத்து * restrict func,
+    மாறிலி கட்டமைப்பு xkb_keymap_serialize_config * restrict config,
+    மாறிலி கட்டமைப்பு xkb_keymap_serialize_result * restrict result
 )
 {
-    enum xkb_status status;
-    if ((status = xkb_check_keymap_abi(config)) ||
+    எண்ணிக்கை xkb_status status;
+    எனில் ((status = xkb_check_keymap_abi(config)) ||
         (status = xkb_check_keymap_abi(result))) {
         xkb_log_abi_error(ctx, func, status);
     }
-    return status;
+    திரும்பு status;
 }
 // NOLINTEND(bugprone-assignment-in-selection-statement)
 
-enum xkb_status
-xkb_keymap_serialize(const struct xkb_keymap *keymap,
-                     const struct xkb_keymap_serialize_config *config,
-                     struct xkb_keymap_serialize_result *result)
+எண்ணிக்கை xkb_status
+xkb_keymap_serialize(மாறிலி கட்டமைப்பு xkb_keymap *keymap,
+                     மாறிலி கட்டமைப்பு xkb_keymap_serialize_config *config,
+                     கட்டமைப்பு xkb_keymap_serialize_result *result)
 {
     /* Check ABI compatibility */
-    const enum xkb_status status =
+    மாறிலி எண்ணிக்கை xkb_status status =
         check_keymap_serialize_abi(keymap->ctx, __func__, config, result);
-    if (status != XKB_SUCCESS)
-        return status;
+    எனில் (status != XKB_SUCCESS)
+        திரும்பு status;
 
-    struct xkb_keymap_serialize_config new_config = *config;
+    கட்டமைப்பு xkb_keymap_serialize_config new_config = *config;
 
-    const enum xkb_keymap_serialize_flags invalid_flags = (
+    மாறிலி எண்ணிக்கை xkb_keymap_serialize_flags invalid_flags = (
         new_config.flags &
-        ~(enum xkb_keymap_serialize_flags)XKB_KEYMAP_SERIALIZE_FLAGS_VALUES
+        ~(எண்ணிக்கை xkb_keymap_serialize_flags)XKB_KEYMAP_SERIALIZE_FLAGS_மதிப்புகள்
     );
-    if (invalid_flags) {
+    எனில் (invalid_flags) {
         log_err_func(keymap->ctx,
                      XKB_ERROR_UNSUPPORTED_KEYMAP_SERIALIZATION_FLAGS_,
                      "unrecognized serialization flags: %#x\n",
                      invalid_flags);
-        return XKB_ERROR_UNSUPPORTED_KEYMAP_SERIALIZATION_FLAGS;
+        திரும்பு XKB_ERROR_UNSUPPORTED_KEYMAP_SERIALIZATION_FLAGS;
     }
 
-    if (new_config.format == XKB_KEYMAP_USE_ORIGINAL_FORMAT)
+    எனில் (new_config.format == XKB_KEYMAP_USE_ORIGINAL_FORMAT)
         new_config.format = keymap->format;
 
-    const struct xkb_keymap_format_ops * const ops =
+    மாறிலி கட்டமைப்பு xkb_keymap_format_ops * மாறிலி ops =
         get_keymap_format_ops(new_config.format);
-    if (!ops || !ops->keymap_serialize) {
+    எனில் (!ops || !ops->keymap_serialize) {
         log_err_func(keymap->ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", new_config.format);
-        return XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT;
+        திரும்பு XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT;
     }
 
-    const xkb_layout_mask_t all_layouts =
-        (xkb_layout_mask_t)((UINT64_C(1) << keymap->num_groups) - 1);
-    if (!new_config.layouts) {
+    மாறிலி xkb_layout_mask_t all_layouts =
+        (xkb_layout_mask_t)((UINT64_C(1) << keymap->இலக்கம்_groups) - 1);
+    எனில் (!new_config.layouts) {
         new_config.layouts = all_layouts;
     }
 
-    if (new_config.layouts & ~all_layouts) {
+    எனில் (new_config.layouts & ~all_layouts) {
         log_err_func(keymap->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                      "unsupported layout mask: "
                      "expected subset of 0x%08"PRIx32", got: 0x%08"PRIx32"\n",
                      all_layouts, new_config.layouts);
-        return XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX;
+        திரும்பு XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX;
     }
 
-    const xkb_layout_index_t max_groups = format_max_groups(config->format);
-    const xkb_layout_index_t num_groups =
+    மாறிலி xkb_layout_index_t max_groups = format_max_groups(config->format);
+    மாறிலி xkb_layout_index_t இலக்கம்_groups =
         (xkb_layout_index_t)popcount32(new_config.layouts);
 
-    if (num_groups > max_groups) {
-        const bool strict =
+    எனில் (இலக்கம்_groups > max_groups) {
+        மாறிலி bool strict =
             (new_config.flags & XKB_KEYMAP_SERIALIZE_STRICT_MODE);
         xkb_log_with_code(
             keymap->ctx,
             (strict ? XKB_LOG_LEVEL_ERROR : XKB_LOG_LEVEL_WARNING),
             XKB_LOG_VERBOSITY_MINIMAL,
-            XKB_ERROR_LAYOUT_COUNT_LIMIT_EXCEEDED_,
+            XKB_ERROR_LAYOUT_மொத்தம்_LIMIT_EXCEEDED_2,
             "Cannot serialize %"PRIu32" groups in keymap format %d: "
             "maximum is %"PRIu32"%s\n",
-            num_groups, config->format, max_groups,
+            இலக்கம்_groups, config->format, max_groups,
             (strict ? "" : "; discarding unsupported groups")
         );
-        if (strict) {
-            return XKB_ERROR_LAYOUT_COUNT_LIMIT_EXCEEDED;
-        } else {
+        எனில் (strict) {
+            திரும்பு XKB_ERROR_LAYOUT_மொத்தம்_LIMIT_EXCEEDED;
+        } இல்லையெனில் {
             new_config.layouts =
                 keep_lowest_n_set_bits(new_config.layouts, max_groups);
         }
@@ -354,44 +354,44 @@ xkb_keymap_serialize(const struct xkb_keymap *keymap,
 
     log_dbg(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
             "Serializing group mask 0x%"PRIx32" (total: %"PRIu32")\n",
-            new_config.layouts, num_groups);
+            new_config.layouts, இலக்கம்_groups);
 
-    if (new_config.layouts != all_layouts) {
+    எனில் (new_config.layouts != all_layouts) {
         /*
          * If some layouts are discarded, then interprets may not trigger
          * properly. Avoid this by requiring explicit values.
          */
-        new_config.flags |= (XKB_KEYMAP_SERIALIZE_EXPLICIT_KEY_VALUES |
+        new_config.flags |= (XKB_KEYMAP_SERIALIZE_EXPLICIT_சாவி_மதிப்புகள் |
                              XKB_KEYMAP_SERIALIZE_EXPLICIT_VMODS);
     }
 
-    return ops->keymap_serialize(keymap, &new_config, result);
+    திரும்பு ops->keymap_serialize(keymap, &new_config, result);
 }
 
-char *
-xkb_keymap_get_as_string2(struct xkb_keymap *keymap,
-                          enum xkb_keymap_format format,
-                          enum xkb_keymap_serialize_flags flags)
+எழுத்து *
+xkb_keymap_get_as_string2(கட்டமைப்பு xkb_keymap *keymap,
+                          எண்ணிக்கை xkb_keymap_format format,
+                          எண்ணிக்கை xkb_keymap_serialize_flags flags)
 {
-    const struct xkb_keymap_serialize_config config = {
-        .size = sizeof(config),
+    மாறிலி கட்டமைப்பு xkb_keymap_serialize_config config = {
+        .size = அளவு(config),
         .flags = flags,
         .format = format,
         .layouts = 0,
     };
 
-    struct xkb_keymap_serialize_result result = { .size = sizeof(result) };
+    கட்டமைப்பு xkb_keymap_serialize_result result = { .size = அளவு(result) };
 
-    return (xkb_keymap_serialize(keymap, &config, &result) == XKB_SUCCESS)
+    திரும்பு (xkb_keymap_serialize(keymap, &config, &result) == XKB_SUCCESS)
         ? result.serialized
-        : NULL;
+        : வெற்று;
 }
 
-char *
-xkb_keymap_get_as_string(struct xkb_keymap *keymap,
-                         enum xkb_keymap_format format)
+எழுத்து *
+xkb_keymap_get_as_string(கட்டமைப்பு xkb_keymap *keymap,
+                         எண்ணிக்கை xkb_keymap_format format)
 {
-    return xkb_keymap_get_as_string2(keymap, format,
+    திரும்பு xkb_keymap_get_as_string2(keymap, format,
                                      XKB_KEYMAP_SERIALIZE_NO_FLAGS);
 }
 
@@ -399,31 +399,31 @@ xkb_keymap_get_as_string(struct xkb_keymap *keymap,
  * Returns the total number of modifiers active in the keymap.
  */
 xkb_mod_index_t
-xkb_keymap_num_mods(struct xkb_keymap *keymap)
+xkb_keymap_இலக்கம்_mods(கட்டமைப்பு xkb_keymap *keymap)
 {
-    return keymap->mods.num_mods;
+    திரும்பு keymap->mods.இலக்கம்_mods;
 }
 
 /**
  * Return the name for a given modifier.
  */
-const char *
-xkb_keymap_mod_get_name(struct xkb_keymap *keymap, xkb_mod_index_t idx)
+மாறிலி எழுத்து *
+xkb_keymap_mod_get_name(கட்டமைப்பு xkb_keymap *keymap, xkb_mod_index_t idx)
 {
-    if (idx >= keymap->mods.num_mods)
-        return NULL;
+    எனில் (idx >= keymap->mods.இலக்கம்_mods)
+        திரும்பு வெற்று;
 
-    return xkb_atom_text(keymap->ctx, keymap->mods.mods[idx].name);
+    திரும்பு xkb_atom_text(keymap->ctx, keymap->mods.mods[idx].name);
 }
 
 /**
  * Returns the index for a named modifier.
  */
 xkb_mod_index_t
-xkb_keymap_mod_get_index(struct xkb_keymap *keymap, const char *name)
+xkb_keymap_mod_get_index(கட்டமைப்பு xkb_keymap *keymap, மாறிலி எழுத்து *name)
 {
-    const xkb_atom_t atom = xkb_atom_lookup(keymap->ctx, name);
-    return (atom == XKB_ATOM_NONE)
+    மாறிலி xkb_atom_t atom = xkb_atom_lookup(keymap->ctx, name);
+    திரும்பு (atom == XKB_ATOM_NONE)
         ? XKB_MOD_INVALID
         : XkbModNameToIndex(&keymap->mods, atom, MOD_BOTH);
 }
@@ -432,10 +432,10 @@ xkb_keymap_mod_get_index(struct xkb_keymap *keymap, const char *name)
  * Return the canonical mapping of a named modifier.
  */
 xkb_mod_mask_t
-xkb_keymap_mod_get_mask(struct xkb_keymap *keymap, const char* name)
+xkb_keymap_mod_get_mask(கட்டமைப்பு xkb_keymap *keymap, மாறிலி எழுத்து* name)
 {
-    const xkb_mod_index_t idx = xkb_keymap_mod_get_index(keymap, name);
-    return (idx >= keymap->mods.num_mods)
+    மாறிலி xkb_mod_index_t idx = xkb_keymap_mod_get_index(keymap, name);
+    திரும்பு (idx >= keymap->mods.இலக்கம்_mods)
         ? 0
         : keymap->mods.mods[idx].mapping;
 }
@@ -444,9 +444,9 @@ xkb_keymap_mod_get_mask(struct xkb_keymap *keymap, const char* name)
  * Return the canonical mapping of a given modifier.
  */
 xkb_mod_mask_t
-xkb_keymap_mod_get_mask2(struct xkb_keymap *keymap, xkb_mod_index_t idx)
+xkb_keymap_mod_get_mask2(கட்டமைப்பு xkb_keymap *keymap, xkb_mod_index_t idx)
 {
-    return (idx >= keymap->mods.num_mods)
+    திரும்பு (idx >= keymap->mods.இலக்கம்_mods)
         ? 0
         : keymap->mods.mods[idx].mapping;
 }
@@ -455,138 +455,138 @@ xkb_keymap_mod_get_mask2(struct xkb_keymap *keymap, xkb_mod_index_t idx)
  * Return the total number of active groups in the keymap.
  */
 xkb_layout_index_t
-xkb_keymap_num_layouts(struct xkb_keymap *keymap)
+xkb_keymap_இலக்கம்_layouts(கட்டமைப்பு xkb_keymap *keymap)
 {
-    return keymap->num_groups;
+    திரும்பு keymap->இலக்கம்_groups;
 }
 
 /**
  * Returns the name for a given group.
  */
-const char *
-xkb_keymap_layout_get_name(struct xkb_keymap *keymap, xkb_layout_index_t idx)
+மாறிலி எழுத்து *
+xkb_keymap_layout_get_name(கட்டமைப்பு xkb_keymap *keymap, xkb_layout_index_t idx)
 {
-    if (idx >= keymap->num_group_names)
-        return NULL;
+    எனில் (idx >= keymap->இலக்கம்_group_names)
+        திரும்பு வெற்று;
 
-    return xkb_atom_text(keymap->ctx, keymap->group_names[idx]);
+    திரும்பு xkb_atom_text(keymap->ctx, keymap->group_names[idx]);
 }
 
 /**
  * Returns the index for a named layout.
  */
 xkb_layout_index_t
-xkb_keymap_layout_get_index(struct xkb_keymap *keymap, const char *name)
+xkb_keymap_layout_get_index(கட்டமைப்பு xkb_keymap *keymap, மாறிலி எழுத்து *name)
 {
     xkb_atom_t atom = xkb_atom_lookup(keymap->ctx, name);
     xkb_layout_index_t i;
 
-    if (atom == XKB_ATOM_NONE)
-        return XKB_LAYOUT_INVALID;
+    எனில் (atom == XKB_ATOM_NONE)
+        திரும்பு XKB_LAYOUT_INVALID;
 
-    for (i = 0; i < keymap->num_group_names; i++)
-        if (keymap->group_names[i] == atom)
-            return i;
+    க்கு (i = 0; i < keymap->இலக்கம்_group_names; i++)
+        எனில் (keymap->group_names[i] == atom)
+            திரும்பு i;
 
-    return XKB_LAYOUT_INVALID;
+    திரும்பு XKB_LAYOUT_INVALID;
 }
 
 /**
  * Returns the number of layouts active for a particular key.
  */
 xkb_layout_index_t
-xkb_keymap_num_layouts_for_key(struct xkb_keymap *keymap, xkb_keycode_t kc)
+xkb_keymap_இலக்கம்_layouts_for_சாவி(கட்டமைப்பு xkb_keymap *keymap, xkb_keycode_t kc)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    மாறிலி கட்டமைப்பு xkb_சாவி *சாவி = Xkb_சாவி(keymap, kc);
 
-    if (!key)
-        return 0;
+    எனில் (!சாவி)
+        திரும்பு 0;
 
-    return key->num_groups;
+    திரும்பு சாவி->இலக்கம்_groups;
 }
 
 /**
  * Returns the number of levels active for a particular key and layout.
  */
 xkb_level_index_t
-xkb_keymap_num_levels_for_key(struct xkb_keymap *keymap, xkb_keycode_t kc,
+xkb_keymap_இலக்கம்_levels_for_சாவி(கட்டமைப்பு xkb_keymap *keymap, xkb_keycode_t kc,
                               xkb_layout_index_t layout)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    மாறிலி கட்டமைப்பு xkb_சாவி *சாவி = Xkb_சாவி(keymap, kc);
 
-    if (!key)
-        return 0;
+    எனில் (!சாவி)
+        திரும்பு 0;
 
-    layout = xkb_keymap_key_effective_layout(key, layout);
-    if (layout == XKB_LAYOUT_INVALID)
-        return 0;
+    layout = xkb_keymap_சாவி_effective_layout(சாவி, layout);
+    எனில் (layout == XKB_LAYOUT_INVALID)
+        திரும்பு 0;
 
-    return XkbKeyNumLevels(key, layout);
+    திரும்பு Xkb_சாவி_இலக்கம்_Levels(சாவி, layout);
 }
 
 /**
  * Return the total number of LEDs in the keymap.
  */
 xkb_led_index_t
-xkb_keymap_num_leds(struct xkb_keymap *keymap)
+xkb_keymap_இலக்கம்_leds(கட்டமைப்பு xkb_keymap *keymap)
 {
-    return keymap->num_leds;
+    திரும்பு keymap->இலக்கம்_leds;
 }
 
 /**
  * Returns the name for a given LED.
  */
-const char *
-xkb_keymap_led_get_name(struct xkb_keymap *keymap, xkb_led_index_t idx)
+மாறிலி எழுத்து *
+xkb_keymap_led_get_name(கட்டமைப்பு xkb_keymap *keymap, xkb_led_index_t idx)
 {
-    if (idx >= keymap->num_leds)
-        return NULL;
+    எனில் (idx >= keymap->இலக்கம்_leds)
+        திரும்பு வெற்று;
 
-    return xkb_atom_text(keymap->ctx, keymap->leds[idx].name);
+    திரும்பு xkb_atom_text(keymap->ctx, keymap->leds[idx].name);
 }
 
 /**
  * Returns the index for a named LED.
  */
 xkb_led_index_t
-xkb_keymap_led_get_index(struct xkb_keymap *keymap, const char *name)
+xkb_keymap_led_get_index(கட்டமைப்பு xkb_keymap *keymap, மாறிலி எழுத்து *name)
 {
     xkb_atom_t atom = xkb_atom_lookup(keymap->ctx, name);
     xkb_led_index_t i;
-    const struct xkb_led *led;
+    மாறிலி கட்டமைப்பு xkb_led *led;
 
-    if (atom == XKB_ATOM_NONE)
-        return XKB_LED_INVALID;
+    எனில் (atom == XKB_ATOM_NONE)
+        திரும்பு XKB_LED_INVALID;
 
     xkb_leds_enumerate(i, led, keymap)
-        if (led->name == atom)
-            return i;
+        எனில் (led->name == atom)
+            திரும்பு i;
 
-    return XKB_LED_INVALID;
+    திரும்பு XKB_LED_INVALID;
 }
 
 size_t
-xkb_keymap_key_get_mods_for_level(struct xkb_keymap *keymap,
+xkb_keymap_சாவி_get_mods_for_level(கட்டமைப்பு xkb_keymap *keymap,
                                   xkb_keycode_t kc,
                                   xkb_layout_index_t layout,
                                   xkb_level_index_t level,
                                   xkb_mod_mask_t *masks_out,
                                   size_t masks_size)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
-    if (!key)
-        return 0;
+    மாறிலி கட்டமைப்பு xkb_சாவி *சாவி = Xkb_சாவி(keymap, kc);
+    எனில் (!சாவி)
+        திரும்பு 0;
 
-    layout = xkb_keymap_key_effective_layout(key, layout);
-    if (layout == XKB_LAYOUT_INVALID)
-        return 0;
+    layout = xkb_keymap_சாவி_effective_layout(சாவி, layout);
+    எனில் (layout == XKB_LAYOUT_INVALID)
+        திரும்பு 0;
 
-    if (level >= XkbKeyNumLevels(key, layout))
-        return 0;
+    எனில் (level >= Xkb_சாவி_இலக்கம்_Levels(சாவி, layout))
+        திரும்பு 0;
 
-    const struct xkb_key_type *type = key->groups[layout].type;
+    மாறிலி கட்டமைப்பு xkb_சாவி_type *type = சாவி->groups[layout].type;
 
-    size_t count = 0;
+    size_t மொத்தம் = 0;
 
     /*
      * If the active set of modifiers doesn't match any explicit entry of
@@ -599,244 +599,244 @@ xkb_keymap_key_get_mods_for_level(struct xkb_keymap *keymap,
      * This is almost always what we want. If applicable, given it priority
      * over other ways to generate the level.
      */
-    if (level == 0) {
+    எனில் (level == 0) {
         bool empty_mapped = false;
-        for (darray_size_t i = 0; i < type->num_entries && count < masks_size; i++)
-            if (entry_is_active(&type->entries[i]) &&
+        க்கு (darray_size_t i = 0; i < type->இலக்கம்_entries && மொத்தம் < masks_size; i++)
+            எனில் (entry_is_active(&type->entries[i]) &&
                 type->entries[i].mods.mask == 0) {
                 empty_mapped = true;
-                break;
+                நிறுத்து;
             }
-        if (!empty_mapped && count < masks_size) {
-            masks_out[count++] = 0;
+        எனில் (!empty_mapped && மொத்தம் < masks_size) {
+            masks_out[மொத்தம்++] = 0;
         }
     }
 
     /* Now search explicit mappings. */
-    for (darray_size_t i = 0; i < type->num_entries && count < masks_size; i++) {
-        if (entry_is_active(&type->entries[i]) &&
+    க்கு (darray_size_t i = 0; i < type->இலக்கம்_entries && மொத்தம் < masks_size; i++) {
+        எனில் (entry_is_active(&type->entries[i]) &&
             type->entries[i].level == level) {
-            masks_out[count++] = type->entries[i].mods.mask;
+            masks_out[மொத்தம்++] = type->entries[i].mods.mask;
         }
     }
 
-    return count;
+    திரும்பு மொத்தம்;
 }
 
-struct xkb_level *
-xkb_keymap_key_get_level(struct xkb_keymap *keymap, const struct xkb_key *key,
+கட்டமைப்பு xkb_level *
+xkb_keymap_சாவி_get_level(கட்டமைப்பு xkb_keymap *keymap, மாறிலி கட்டமைப்பு xkb_சாவி *சாவி,
                          xkb_layout_index_t layout, xkb_level_index_t level)
 {
-    layout = xkb_keymap_key_effective_layout(key, layout);
-    if (layout == XKB_LAYOUT_INVALID)
-        return NULL;
+    layout = xkb_keymap_சாவி_effective_layout(சாவி, layout);
+    எனில் (layout == XKB_LAYOUT_INVALID)
+        திரும்பு வெற்று;
 
-    if (level >= XkbKeyNumLevels(key, layout))
-        return NULL;
+    எனில் (level >= Xkb_சாவி_இலக்கம்_Levels(சாவி, layout))
+        திரும்பு வெற்று;
 
-    return &key->groups[layout].levels[level];
+    திரும்பு &சாவி->groups[layout].levels[level];
 }
 
 /**
  * As below, but takes an explicit layout/level rather than state.
  */
-int
-xkb_keymap_key_get_syms_by_level(struct xkb_keymap *keymap,
+முழு
+xkb_keymap_சாவி_get_syms_by_level(கட்டமைப்பு xkb_keymap *keymap,
                                  xkb_keycode_t kc,
                                  xkb_layout_index_t layout,
                                  xkb_level_index_t level,
-                                 const xkb_keysym_t **syms_out)
+                                 மாறிலி xkb_keysym_t **syms_out)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    மாறிலி கட்டமைப்பு xkb_சாவி *சாவி = Xkb_சாவி(keymap, kc);
 
-    if (!key)
-        goto err;
+    எனில் (!சாவி)
+        செல் err;
 
-    const struct xkb_level* const leveli =
-        xkb_keymap_key_get_level(keymap, key, layout, level);
+    மாறிலி கட்டமைப்பு xkb_level* மாறிலி leveli =
+        xkb_keymap_சாவி_get_level(keymap, சாவி, layout, level);
 
-    if (!leveli)
-        goto err;
+    எனில் (!leveli)
+        செல் err;
 
-    const xkb_keysym_count_t num_syms = leveli->num_syms;
-    if (num_syms == 0)
-        goto err;
+    மாறிலி xkb_keysym_மொத்தம்_t இலக்கம்_syms = leveli->இலக்கம்_syms;
+    எனில் (இலக்கம்_syms == 0)
+        செல் err;
 
-    if (num_syms == 1)
+    எனில் (இலக்கம்_syms == 1)
         *syms_out = &leveli->s.sym;
-    else
+    இல்லையெனில்
         *syms_out = leveli->s.syms;
 
-    return (int) num_syms;
+    திரும்பு (முழு) இலக்கம்_syms;
 
 err:
-    *syms_out = NULL;
-    return 0;
+    *syms_out = வெற்று;
+    திரும்பு 0;
 }
 
 xkb_keycode_t
-xkb_keymap_min_keycode(struct xkb_keymap *keymap)
+xkb_keymap_min_keycode(கட்டமைப்பு xkb_keymap *keymap)
 {
-    return keymap->min_key_code;
+    திரும்பு keymap->min_சாவி_code;
 }
 
 xkb_keycode_t
-xkb_keymap_max_keycode(struct xkb_keymap *keymap)
+xkb_keymap_max_keycode(கட்டமைப்பு xkb_keymap *keymap)
 {
-    return keymap->max_key_code;
+    திரும்பு keymap->max_சாவி_code;
 }
 
-static enum xkb_status
-keymap_key_iterator_config_check(
-    struct xkb_context * restrict ctx,
-    const char *func,
-    const struct xkb_keymap_key_iterator_config * restrict config
+நிலையான எண்ணிக்கை xkb_status
+keymap_சாவி_iterator_config_check(
+    கட்டமைப்பு xkb_context * restrict ctx,
+    மாறிலி எழுத்து *func,
+    மாறிலி கட்டமைப்பு xkb_keymap_சாவி_iterator_config * restrict config
 )
 {
     /* Check ABI compatibility */
-    const enum xkb_status abi_error = xkb_check_keymap_abi(config);
-    if (abi_error) {
+    மாறிலி எண்ணிக்கை xkb_status abi_error = xkb_check_keymap_abi(config);
+    எனில் (abi_error) {
         xkb_log_abi_error(ctx, func, abi_error);
-        return abi_error;
+        திரும்பு abi_error;
     }
 
     /* Sanitize input: flags */
-    const uint32_t invalid_flags =
-        (config->flags & ~(uint32_t)XKB_KEYMAP_KEY_ITERATOR_FLAGS_VALUES);
-    if (invalid_flags) {
-        log_err(ctx, XKB_ERROR_UNSUPPORTED_KEY_ITERATOR_FLAGS_,
+    மாறிலி uint32_t invalid_flags =
+        (config->flags & ~(uint32_t)XKB_KEYMAP_சாவி_ITERATOR_FLAGS_மதிப்புகள்);
+    எனில் (invalid_flags) {
+        log_err(ctx, XKB_ERROR_UNSUPPORTED_சாவி_ITERATOR_FLAGS_2,
                 "%s: Unsupported keymap iterator flags: 0x%"PRIx32"\n",
                 func, invalid_flags);
-        return XKB_ERROR_UNSUPPORTED_KEY_ITERATOR_FLAGS;
+        திரும்பு XKB_ERROR_UNSUPPORTED_சாவி_ITERATOR_FLAGS;
     }
 
     /* Sanitize input: start */
-    if (config->start > XKB_KEYCODE_MAX)
-        return XKB_ERROR_INVALID_KEYCODE;
+    எனில் (config->start > XKB_KEYCODE_MAX)
+        திரும்பு XKB_ERROR_INVALID_KEYCODE;
 
-    return XKB_SUCCESS;
+    திரும்பு XKB_SUCCESS;
 }
 
-static_assert(XKB_KEYMAP_KEY_ITERATOR_FLAGS_VALUES <=
-              (int)XKB_POINTER_TAG_MASK,
+static_assert(XKB_KEYMAP_சாவி_ITERATOR_FLAGS_மதிப்புகள் <=
+              (முழு)XKB_POINTER_TAG_MASK,
               "Cannot tag cursor pointer with flags");
 
 #define iter_init_keymap(i, ptr, flags) {          \
     (i)->opaque0 = xkb_pointer_tag((ptr), (flags));\
 }
 #define iter_get_keymap(i) (                                  \
-    (const struct xkb_keymap *)xkb_pointer_untag((i)->opaque0)\
+    (மாறிலி கட்டமைப்பு xkb_keymap *)xkb_pointer_untag((i)->opaque0)\
 )
-#define iter_get_next(i) ((const struct xkb_key *)(i)->opaque1)
-#define iter_set_next(i, ptr) {(i)->opaque1 = (const void *)(ptr);}
+#define iter_get_next(i) ((மாறிலி கட்டமைப்பு xkb_சாவி *)(i)->opaque1)
+#define iter_set_next(i, ptr) {(i)->opaque1 = (மாறிலி வெறுமை *)(ptr);}
 #define iter_get_descending_order(i) (                  \
     xkb_pointer_get_tag((i)->opaque0) &                 \
-    (uintptr_t)XKB_KEYMAP_KEY_ITERATOR_DESCENDING_ORDER \
+    (uintptr_t)XKB_KEYMAP_சாவி_ITERATOR_DESCENDING_ORDER \
 )
 #define iter_get_include_unbound(i) (                  \
     xkb_pointer_get_tag((i)->opaque0) &                \
-    (uintptr_t)XKB_KEYMAP_KEY_ITERATOR_INCLUDE_UNBOUND \
+    (uintptr_t)XKB_KEYMAP_சாவி_ITERATOR_INCLUDE_UNBOUND \
 )
 
-enum xkb_status
-xkb_keymap_key_iterator_init(
-    struct xkb_keymap_key_iterator * restrict iter,
-    const struct xkb_keymap * restrict keymap,
-    const struct xkb_keymap_key_iterator_config * restrict config
+எண்ணிக்கை xkb_status
+xkb_keymap_சாவி_iterator_init(
+    கட்டமைப்பு xkb_keymap_சாவி_iterator * restrict iter,
+    மாறிலி கட்டமைப்பு xkb_keymap * restrict keymap,
+    மாறிலி கட்டமைப்பு xkb_keymap_சாவி_iterator_config * restrict config
 )
 {
     /* Handle default configuration */
-    static const struct xkb_keymap_key_iterator_config default_config = {
-        .size = sizeof(default_config)
+    நிலையான மாறிலி கட்டமைப்பு xkb_keymap_சாவி_iterator_config default_config = {
+        .size = அளவு(default_config)
     };
-    if (!config)
+    எனில் (!config)
         config = &default_config;
 
     /* Check input */
-    const enum xkb_status status =
-        keymap_key_iterator_config_check(keymap->ctx, __func__, config);
-    if (status != XKB_SUCCESS) {
-        return status;
+    மாறிலி எண்ணிக்கை xkb_status status =
+        keymap_சாவி_iterator_config_check(keymap->ctx, __func__, config);
+    எனில் (status != XKB_SUCCESS) {
+        திரும்பு status;
     }
 
     /*
      * Initialization
      */
 
-    memset(iter, 0, sizeof(*iter));
+    memset(iter, 0, அளவு(*iter));
 
     /* Borrow keymap */
     iter_init_keymap(iter, keymap, config->flags);
 
-    if (keymap->num_keys == 0) {
-        iter_set_next(iter, NULL);
-        return XKB_SUCCESS;
+    எனில் (keymap->இலக்கம்_சாவிகள் == 0) {
+        iter_set_next(iter, வெற்று);
+        திரும்பு XKB_SUCCESS;
     }
 
     /* Borrow key */
-    const struct xkb_key *next;
-    if (config->flags & XKB_KEYMAP_KEY_ITERATOR_DESCENDING_ORDER) {
-        if (!config->start || config->start > keymap->max_key_code) {
-            next = &keymap->keys[keymap->num_keys - 1];
-        } else {
+    மாறிலி கட்டமைப்பு xkb_சாவி *next;
+    எனில் (config->flags & XKB_KEYMAP_சாவி_ITERATOR_DESCENDING_ORDER) {
+        எனில் (!config->start || config->start > keymap->max_சாவி_code) {
+            next = &keymap->சாவிகள்[keymap->இலக்கம்_சாவிகள் - 1];
+        } இல்லையெனில் {
             /*
              * May still fail *safely* if start < keymap->min_key_code:
              * there will be simply no key to iterate over.
              */
-            next = xkb_keymap_get_next_defined_key(keymap, false, config->start);
+            next = xkb_keymap_get_next_defined_சாவி(keymap, false, config->start);
         }
-    } else {
-        if (!config->start || config->start < keymap->min_key_code) {
-            next = (keymap->num_keys_low)
-                ? &keymap->keys[keymap->min_key_code]
-                : &keymap->keys[0];
-        } else {
+    } இல்லையெனில் {
+        எனில் (!config->start || config->start < keymap->min_சாவி_code) {
+            next = (keymap->இலக்கம்_சாவிகள்_கீழ்)
+                ? &keymap->சாவிகள்[keymap->min_சாவி_code]
+                : &keymap->சாவிகள்[0];
+        } இல்லையெனில் {
             /*
              * May still fail *safely* if start > keymap->max_key_code:
              * there will be simply no key to iterate over.
              */
-            next = xkb_keymap_get_next_defined_key(keymap, true, config->start);
+            next = xkb_keymap_get_next_defined_சாவி(keymap, true, config->start);
         }
     };
     iter_set_next(iter, next);
 
-    return XKB_SUCCESS;
+    திரும்பு XKB_SUCCESS;
 }
 
 xkb_keycode_t
-xkb_keymap_key_iterator_next(struct xkb_keymap_key_iterator *iter)
+xkb_keymap_சாவி_iterator_next(கட்டமைப்பு xkb_keymap_சாவி_iterator *iter)
 {
-    const struct xkb_key *next = iter_get_next(iter);
-    if (!next)
-        return XKB_KEYCODE_INVALID;
+    மாறிலி கட்டமைப்பு xkb_சாவி *next = iter_get_next(iter);
+    எனில் (!next)
+        திரும்பு XKB_KEYCODE_INVALID;
 
-    const struct xkb_keymap *keymap = iter_get_keymap(iter);
-    assert(keymap->num_keys);
+    மாறிலி கட்டமைப்பு xkb_keymap *keymap = iter_get_keymap(iter);
+    ப்ரதிஜ்ஞா(keymap->இலக்கம்_சாவிகள்);
 
-    const bool descending = iter_get_descending_order(iter);
-    const bool skip_unbound = !iter_get_include_unbound(iter);
-    const struct xkb_key *last = descending
-        ? (keymap->num_keys_low)
-            ? &keymap->keys[keymap->min_key_code]
-            : &keymap->keys[0]
-        : &keymap->keys[keymap->num_keys - 1];
-    const ptrdiff_t step = descending ? -1 : 1;
+    மாறிலி bool descending = iter_get_descending_order(iter);
+    மாறிலி bool skip_unbound = !iter_get_include_unbound(iter);
+    மாறிலி கட்டமைப்பு xkb_சாவி *last = descending
+        ? (keymap->இலக்கம்_சாவிகள்_கீழ்)
+            ? &keymap->சாவிகள்[keymap->min_சாவி_code]
+            : &keymap->சாவிகள்[0]
+        : &keymap->சாவிகள்[keymap->இலக்கம்_சாவிகள் - 1];
+    மாறிலி ptrdiff_t step = descending ? -1 : 1;
 
     /* Skip undefined keys (no name) and optionally unbound keys */
-    for (;;) {
-        const bool iter_end = descending ? (next <= last) : (next >= last);
-        const bool skip = (
+    க்கு (;;) {
+        மாறிலி bool iter_end = descending ? (next <= last) : (next >= last);
+        மாறிலி bool skip = (
             next->name == XKB_ATOM_NONE ||
-            (skip_unbound && (next->num_groups == 0))
+            (skip_unbound && (next->இலக்கம்_groups == 0))
         );
-        if (!skip) {
-            const xkb_keycode_t ret = next->keycode;
-            iter_set_next(iter, iter_end ? NULL : next + step);
-            return ret;
+        எனில் (!skip) {
+            மாறிலி xkb_keycode_t ret = next->keycode;
+            iter_set_next(iter, iter_end ? வெற்று : next + step);
+            திரும்பு ret;
         }
-        if (iter_end) {
-            iter_set_next(iter, NULL);
-            return XKB_KEYCODE_INVALID;
+        எனில் (iter_end) {
+            iter_set_next(iter, வெற்று);
+            திரும்பு XKB_KEYCODE_INVALID;
         }
         next += step;
     }
@@ -849,60 +849,60 @@ xkb_keymap_key_iterator_next(struct xkb_keymap_key_iterator *iter)
 #undef iter_get_descending_order
 #undef iter_get_include_unbound
 
-void
-xkb_keymap_key_for_each(struct xkb_keymap *keymap, xkb_keymap_key_iter_t iter,
-                        void *data)
+வெறுமை
+xkb_keymap_சாவி_for_each(கட்டமைப்பு xkb_keymap *keymap, xkb_keymap_சாவி_iter_t iter,
+                        வெறுமை *data)
 {
-    struct xkb_key *key;
+    கட்டமைப்பு xkb_சாவி *சாவி;
 
-    xkb_keys_foreach(key, keymap)
-        iter(keymap, key->keycode, data);
+    xkb_சாவிகள்_foreach(சாவி, keymap)
+        iter(keymap, சாவி->keycode, data);
 }
 
-const char *
-xkb_keymap_key_get_name(struct xkb_keymap *keymap, xkb_keycode_t kc)
+மாறிலி எழுத்து *
+xkb_keymap_சாவி_get_name(கட்டமைப்பு xkb_keymap *keymap, xkb_keycode_t kc)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    மாறிலி கட்டமைப்பு xkb_சாவி *சாவி = Xkb_சாவி(keymap, kc);
 
-    if (!key)
-        return NULL;
+    எனில் (!சாவி)
+        திரும்பு வெற்று;
 
-    return xkb_atom_text(keymap->ctx, key->name);
+    திரும்பு xkb_atom_text(keymap->ctx, சாவி->name);
 }
 
 xkb_keycode_t
-xkb_keymap_key_by_name(struct xkb_keymap *keymap, const char *name)
+xkb_keymap_சாவி_by_name(கட்டமைப்பு xkb_keymap *keymap, மாறிலி எழுத்து *name)
 {
-    struct xkb_key *key;
+    கட்டமைப்பு xkb_சாவி *சாவி;
     xkb_atom_t atom;
 
     atom = xkb_atom_lookup(keymap->ctx, name);
-    if (atom) {
-        for (darray_size_t i = 0; i < keymap->num_key_aliases; i++)
-            if (keymap->key_aliases[i].alias == atom)
-                atom = keymap->key_aliases[i].real;
+    எனில் (atom) {
+        க்கு (darray_size_t i = 0; i < keymap->இலக்கம்_சாவி_aliases; i++)
+            எனில் (keymap->சாவி_aliases[i].alias == atom)
+                atom = keymap->சாவி_aliases[i].real;
     }
-    if (!atom)
-        return XKB_KEYCODE_INVALID;
+    எனில் (!atom)
+        திரும்பு XKB_KEYCODE_INVALID;
 
-    xkb_keys_foreach(key, keymap) {
-        if (key->name == atom)
-            return key->keycode;
+    xkb_சாவிகள்_foreach(சாவி, keymap) {
+        எனில் (சாவி->name == atom)
+            திரும்பு சாவி->keycode;
     }
 
-    return XKB_KEYCODE_INVALID;
+    திரும்பு XKB_KEYCODE_INVALID;
 }
 
 /**
  * Simple boolean specifying whether or not the key should repeat.
  */
-int
-xkb_keymap_key_repeats(struct xkb_keymap *keymap, xkb_keycode_t kc)
+முழு
+xkb_keymap_சாவி_repeats(கட்டமைப்பு xkb_keymap *keymap, xkb_keycode_t kc)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    மாறிலி கட்டமைப்பு xkb_சாவி *சாவி = Xkb_சாவி(keymap, kc);
 
-    if (!key)
-        return 0;
+    எனில் (!சாவி)
+        திரும்பு 0;
 
-    return key->repeats;
+    திரும்பு சாவி->repeats;
 }

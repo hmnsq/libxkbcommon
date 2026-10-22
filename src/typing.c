@@ -3,147 +3,147 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#அந்தர்பாவ "config.h"
 
-#include <assert.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <stdint.h>
-#if WCHAR_MAX >= 0x7FFFFFFF
-#include <wctype.h>
+#அந்தர்பாவ <assert.h>
+#அந்தர்பாவ <stdbool.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <stdint.h>
+#எனில் WCHAR_MAX >= 0x7FFFFFFF
+#அந்தர்பாவ <wctype.h>
 #define USE_ISWPRINT
-#if HAVE_NEWLOCALE && HAVE_ISWPRINT_L
+#எனில் HAVE_NEWLOCALE && HAVE_ISWPRINT_L
 #define USE_ISWPRINT_L
-#include <locale.h>
+#அந்தர்பாவ <locale.h>
 #endif
-#else
-#include <ctype.h>
+#இல்லையெனில்
+#அந்தர்பாவ <ctype.h>
 #endif
 
-#include "xkbcommon/xkbcommon-status.h"
-#include "xkbcommon/xkbcommon.h"
-#include "darray.h"
-#include "state-priv.h"
-#include "typing.h"
-#include "util-bits.h"
-#include "util-mem.h"
-#include "utils.h"
+#அந்தர்பாவ "xkbcommon/xkbcommon-status.h"
+#அந்தர்பாவ "xkbcommon/xkbcommon.h"
+#அந்தர்பாவ "darray.h"
+#அந்தர்பாவ "state-priv.h"
+#அந்தர்பாவ "typing.h"
+#அந்தர்பாவ "util-bits.h"
+#அந்தர்பாவ "util-mem.h"
+#அந்தர்பாவ "utils.h"
 
-enum xkb_status
-xkb_key_set_init(struct xkb_key_set *set,
-                 struct xkb_keymap *keymap,
-                 const struct xkb_key_set_config *config)
+எண்ணிக்கை xkb_status
+xkb_சாவி_set_init(கட்டமைப்பு xkb_சாவி_set *set,
+                 கட்டமைப்பு xkb_keymap *keymap,
+                 மாறிலி கட்டமைப்பு xkb_சாவி_set_config *config)
 {
     darray_init(set->printable);
     darray_init(set->modifiers);
     darray_init(set->misc);
 
-    static const struct xkb_key_set_config default_config = {0};
-    if (!config)
+    நிலையான மாறிலி கட்டமைப்பு xkb_சாவி_set_config default_config = {0};
+    எனில் (!config)
         config = &default_config;
     /* keycode = 0 denotes “default” */
-    const xkb_keycode_t min = MAX(config->min, xkb_keymap_min_keycode(keymap));
-    const xkb_keycode_t max = config->max
+    மாறிலி xkb_keycode_t min = MAX(config->min, xkb_keymap_min_keycode(keymap));
+    மாறிலி xkb_keycode_t max = config->max
         ? MIN(config->max, xkb_keymap_max_keycode(keymap))
         : xkb_keymap_max_keycode(keymap);
 
-    enum xkb_status status;
-    struct xkb_state *state =
+    எண்ணிக்கை xkb_status status;
+    கட்டமைப்பு xkb_state *state =
         xkb_state_new_with_mode(keymap, XKB_STATE_MODE_SERVER, &status);
-    if (!state)
-        return status;
+    எனில் (!state)
+        திரும்பு status;
 
     #ifdef USE_ISWPRINT_L
     locale_t loc = newlocale(LC_ALL_MASK, "C.UTF-8", (locale_t)0);
     #endif
 
-    struct xkb_keymap_key_iterator iter;
-    const struct xkb_keymap_key_iterator_config iter_config = {
-        .size = sizeof(iter_config),
-        .flags = XKB_KEYMAP_KEY_ITERATOR_NO_FLAGS,
+    கட்டமைப்பு xkb_keymap_சாவி_iterator iter;
+    மாறிலி கட்டமைப்பு xkb_keymap_சாவி_iterator_config iter_config = {
+        .size = அளவு(iter_config),
+        .flags = XKB_KEYMAP_சாவி_ITERATOR_NO_FLAGS,
         .start = min
     };
-    status = xkb_keymap_key_iterator_init(&iter, keymap, &iter_config);
-    if (status != XKB_SUCCESS)
-        goto error;
+    status = xkb_keymap_சாவி_iterator_init(&iter, keymap, &iter_config);
+    எனில் (status != XKB_SUCCESS)
+        செல் error;
 
-    const xkb_mod_mask_t numlock =
-        xkb_keymap_mod_get_mask(keymap, XKB_VMOD_NAME_NUM);
+    மாறிலி xkb_mod_mask_t numlock =
+        xkb_keymap_mod_get_mask(keymap, XKB_VMOD_NAME_இலக்கம்);
 
-    const struct xkb_state_components_update components_update = {
-        .size = sizeof(components_update),
+    மாறிலி கட்டமைப்பு xkb_state_components_update components_update = {
+        .size = அளவு(components_update),
         .components = XKB_STATE_MODS_LOCKED,
         .affect_locked_mods = numlock,
         .locked_mods = numlock,
     };
 
-    const struct xkb_synthetic_update update = {
-        .size = sizeof(update),
+    மாறிலி கட்டமைப்பு xkb_synthetic_update update = {
+        .size = அளவு(update),
         .components = &components_update,
     };
 
     xkb_keycode_t k;
-    while ((k = xkb_keymap_key_iterator_next(&iter)) != XKB_KEYCODE_INVALID) {
-        if (k > max)
-            break;
+    போது ((k = xkb_keymap_சாவி_iterator_next(&iter)) != XKB_KEYCODE_INVALID) {
+        எனில் (k > max)
+            நிறுத்து;
 
         xkb_state_reset(state);
-        status = xkb_state_update_synthetic(state, &update, NULL);
-        if (status != XKB_SUCCESS)
-            goto error;
+        status = xkb_state_update_synthetic(state, &update, வெற்று);
+        எனில் (status != XKB_SUCCESS)
+            செல் error;
 
-        const xkb_keysym_t *syms = NULL;
-        const int count = xkb_state_key_get_syms(state, k, &syms);
+        மாறிலி xkb_keysym_t *syms = வெற்று;
+        மாறிலி முழு மொத்தம் = xkb_state_சாவி_get_syms(state, k, &syms);
 
-        enum xkb_state_component changed =
-            xkb_state_update_key(state, k, XKB_KEY_DOWN);
+        எண்ணிக்கை xkb_state_component changed =
+            xkb_state_update_சாவி(state, k, XKB_சாவி_DOWN);
         xkb_mod_mask_t mods =
             xkb_state_serialize_mods(state, XKB_STATE_MODS_EFFECTIVE);
-        changed |= xkb_state_update_key(state, k, XKB_KEY_UP);
+        changed |= xkb_state_update_சாவி(state, k, XKB_சாவி_UP);
         mods |= xkb_state_serialize_mods(state, XKB_STATE_MODS_EFFECTIVE);
 
-        if (changed & XKB_STATE_MODS_EFFECTIVE) {
+        எனில் (changed & XKB_STATE_MODS_EFFECTIVE) {
             /* Modifier key */
-            enum xkb_modifier_kind kind;
-            if (changed & XKB_STATE_MODS_LOCKED) {
+            எண்ணிக்கை xkb_modifier_kind kind;
+            எனில் (changed & XKB_STATE_MODS_LOCKED) {
                 kind = XKB_MOD_LOCK;
-            } else if (changed & XKB_STATE_MODS_LATCHED) {
+            } இல்லையெனில் எனில் (changed & XKB_STATE_MODS_LATCHED) {
                 kind = XKB_MOD_LATCH;
-            } else {
+            } இல்லையெனில் {
                 kind = XKB_MOD_SET;
             }
             mods &= ~numlock;
-            if (!mods)
+            எனில் (!mods)
                 mods = numlock;
-            darray_append(set->modifiers, (struct xkb_modifier_key) {
+            darray_append(set->modifiers, (கட்டமைப்பு xkb_modifier_சாவி) {
                 .keycode = k,
                 .mods = mods,
                 .kind = kind,
             });
-            continue;
+            தொடர்;
         }
 
-        if (count > 0) {
+        எனில் (மொத்தம் > 0) {
             uint32_t utf32 = 0;
-            for (int s = 0; s < count; s++) {
+            க்கு (முழு s = 0; s < மொத்தம்; s++) {
                 utf32 = xkb_keysym_to_utf32(syms[s]);
-                const bool is_printable =
+                மாறிலி bool is_printable =
                     #ifdef USE_ISWPRINT_L
                     ((loc && iswprint_l((wint_t)utf32, loc)) || iswprint((wint_t)utf32))
-                    #elif defined(USE_ISWPRINT)
+                    #அல்லதெனில் defined(USE_ISWPRINT)
                     iswprint((wint_t)utf32)
-                    #else
-                    utf32 <= 0x7f && isprint((int)utf32)
+                    #இல்லையெனில்
+                    utf32 <= 0x7f && isprint((முழு)utf32)
                     #endif
                     ;
-                if (is_printable)
-                    break;
+                எனில் (is_printable)
+                    நிறுத்து;
                 utf32 = 0;
             }
-            if (utf32) {
+            எனில் (utf32) {
                 /* Printable keysyms */
                 darray_append(set->printable, k);
-                continue;
+                தொடர்;
             }
         }
 
@@ -153,41 +153,41 @@ xkb_key_set_init(struct xkb_key_set *set,
 
 error:
     #ifdef USE_ISWPRINT_L
-    if (loc)
+    எனில் (loc)
         freelocale(loc);
     #endif
 
     xkb_state_unref(state);
-    if (status != XKB_SUCCESS)
-        xkb_key_set_destroy(set);
+    எனில் (status != XKB_SUCCESS)
+        xkb_சாவி_set_destroy(set);
 
-    return status;
+    திரும்பு status;
 }
 
-void
-xkb_key_set_destroy(struct xkb_key_set *set)
+வெறுமை
+xkb_சாவி_set_destroy(கட்டமைப்பு xkb_சாவி_set *set)
 {
-    if (!set)
-        return;
+    எனில் (!set)
+        திரும்பு;
 
     darray_free(set->modifiers);
     darray_free(set->printable);
     darray_free(set->misc);
 }
 
-static enum xkb_status
-add_pending_events(struct xkb_typing_state * restrict state,
-                   const struct xkb_pending_typing_event * restrict events,
-                   size_t count)
+நிலையான எண்ணிக்கை xkb_status
+add_pending_events(கட்டமைப்பு xkb_typing_state * restrict state,
+                   மாறிலி கட்டமைப்பு xkb_pending_typing_event * restrict events,
+                   size_t மொத்தம்)
 {
-    for (size_t e = 0; e < count; e++) {
+    க்கு (size_t e = 0; e < மொத்தம்; e++) {
         /* Look for a free slot */
-        struct xkb_pending_typing_event *pending;
+        கட்டமைப்பு xkb_pending_typing_event *pending;
         darray_size_t idx = 0;
         darray_enumerate_from(idx, pending, state->pending, idx) {
-            if (!pending->counter) {
+            எனில் (!pending->counter) {
                 darray_item(state->pending, idx) = events[e];
-                goto next;
+                செல் next;
             }
         }
         /* No free slot found: append new one */
@@ -197,370 +197,370 @@ add_pending_events(struct xkb_typing_state * restrict state,
         /* Avoid immediate consumption */
         darray_item(state->pending, idx).counter++;
     }
-    state->num_pending += count;
+    state->இலக்கம்_pending += மொத்தம்;
 
-    return XKB_SUCCESS;
+    திரும்பு XKB_SUCCESS;
 }
 
-static enum xkb_status
-next_pending_events(struct xkb_typing_state * restrict state,
+நிலையான எண்ணிக்கை xkb_status
+next_pending_events(கட்டமைப்பு xkb_typing_state * restrict state,
                     xkb_typing_events * restrict out)
 {
     /* Reset the output */
     darray_size(*out) = 0;
 
     darray_size_t idx;
-    struct xkb_pending_typing_event *pending;
+    கட்டமைப்பு xkb_pending_typing_event *pending;
     /* Stack: start from the end */
     darray_enumerate_reverse(idx, pending, state->pending) {
-        if (!pending->counter)
-            continue;
+        எனில் (!pending->counter)
+            தொடர்;
         pending->counter--;
-        if (pending->counter)
-            continue;
+        எனில் (pending->counter)
+            தொடர்;
         darray_append(*out, pending->event);
-        state->num_pending--;
+        state->இலக்கம்_pending--;
         /* Resize array if it was the last element */
-        if (idx + 1 == darray_size(state->pending))
+        எனில் (idx + 1 == darray_size(state->pending))
             darray_size(state->pending)--;
         state->mods &= ~pending->mods;
     }
 
-    return XKB_SUCCESS;
+    திரும்பு XKB_SUCCESS;
 }
 
-enum {
+எண்ணிக்கை {
     /** Tries to avoid pressing a key already pressed */
-    KEY_CHOICE_MAX_TRIES = 12,
-    XKB_ERROR_NO_RELEASED_KEY = -1000,
+    சாவி_CHOICE_MAX_TRIES = 12,
+    XKB_ERROR_NO_RELEASED_சாவி = -1000,
 };
 
-static enum xkb_status
-add_modifier_key(struct xkb_typing_state * restrict state, size_t * restrict e)
+நிலையான எண்ணிக்கை xkb_status
+add_modifier_சாவி(கட்டமைப்பு xkb_typing_state * restrict state, size_t * restrict e)
 {
     /* Choose a random key */
     long idx = -1;
-    for (int tries = 0; tries < KEY_CHOICE_MAX_TRIES; tries++) {
+    க்கு (முழு tries = 0; tries < சாவி_CHOICE_MAX_TRIES; tries++) {
         idx = state->prng(state->prng_state)
-            % darray_size(state->keys->modifiers);
+            % darray_size(state->சாவிகள்->modifiers);
         /*
          * Ensure key is not already down and its modifier mask is not active,
          * i.e. to avoid simultaneous keys with the same modifier.
          */
-        if (!bit_array_get(state->keys_state,
-                           darray_item(state->keys->modifiers, idx).keycode) &&
-            !(state->mods & darray_item(state->keys->modifiers, idx).mods))
+        எனில் (!bit_array_get(state->சாவிகள்_state,
+                           darray_item(state->சாவிகள்->modifiers, idx).keycode) &&
+            !(state->mods & darray_item(state->சாவிகள்->modifiers, idx).mods))
         {
-            break;
+            நிறுத்து;
         }
         idx = -1;
     }
 
-    struct xkb_modifier_key key = {0};
-    if (idx < 0) {
+    கட்டமைப்பு xkb_modifier_சாவி சாவி = {0};
+    எனில் (idx < 0) {
         /* No released key found: fall back to linear search */
-        const struct xkb_modifier_key *key_;
-        darray_foreach(key_, state->keys->modifiers) {
+        மாறிலி கட்டமைப்பு xkb_modifier_சாவி *சாவி_2;
+        darray_foreach(சாவி_2, state->சாவிகள்->modifiers) {
             /* See test doc above */
-            if (!bit_array_get(state->keys_state, key_->keycode) &&
-                !(state->mods & key_->mods))
+            எனில் (!bit_array_get(state->சாவிகள்_state, சாவி_2->keycode) &&
+                !(state->mods & சாவி_2->mods))
             {
-                key = *key_;
+                சாவி = *சாவி_2;
                 idx = 0;
-                break;
+                நிறுத்து;
             }
         }
-        if (idx < 0) {
+        எனில் (idx < 0) {
             /* No fallback: skip */
-            return (enum xkb_status)XKB_ERROR_NO_RELEASED_KEY;
+            திரும்பு (எண்ணிக்கை xkb_status)XKB_ERROR_NO_RELEASED_சாவி;
         }
-    } else {
-        key = darray_item(state->keys->modifiers, idx);
+    } இல்லையெனில் {
+        சாவி = darray_item(state->சாவிகள்->modifiers, idx);
     }
 
-    const size_t remaining_events =
-        state->num_events - state->num_pending - *e;
+    மாறிலி size_t remaining_events =
+        state->இலக்கம்_events - state->இலக்கம்_pending - *e;
     size_t pending_turns = 0;
 
-    if (remaining_events >= 2) {
-        if (key.kind == XKB_MOD_SET ||
-            (key.kind == XKB_MOD_LOCK && remaining_events >= 4))
+    எனில் (remaining_events >= 2) {
+        எனில் (சாவி.kind == XKB_MOD_SET ||
+            (சாவி.kind == XKB_MOD_LOCK && remaining_events >= 4))
         {
             /* Delay SetMods release or LockMods unlock */
-            const size_t max_turns = MIN(
+            மாறிலி size_t max_turns = MIN(
                 (size_t)(
                     XKB_TYPING_EVENT_MODIFIER_MAX_PENDING_TURNS -
                     XKB_TYPING_EVENT_MODIFIER_MIN_PENDING_TURNS
                  ),
-                remaining_events + state->num_pending
+                remaining_events + state->இலக்கம்_pending
             );
             pending_turns = XKB_TYPING_EVENT_MODIFIER_MIN_PENDING_TURNS
                           + (size_t)state->prng(state->prng_state)
                           % (max_turns + 1);
         }
-    } else {
-        return XKB_ERROR_INVALID;
+    } இல்லையெனில் {
+        திரும்பு XKB_ERROR_INVALID;
     }
 
-    state->events[(*e)++] = (struct xkb_typing_event) {
-        .keycode = key.keycode,
-        .direction = XKB_KEY_DOWN,
+    state->events[(*e)++] = (கட்டமைப்பு xkb_typing_event) {
+        .keycode = சாவி.keycode,
+        .direction = XKB_சாவி_DOWN,
     };
 
-    struct xkb_pending_typing_event pending[2] = {
+    கட்டமைப்பு xkb_pending_typing_event pending[2] = {
         {
             .event = {
-                .keycode = key.keycode,
-                .direction = XKB_KEY_DOWN,
+                .keycode = சாவி.keycode,
+                .direction = XKB_சாவி_DOWN,
             },
             .counter = (uint8_t)pending_turns,
         },
         {
             .event = {
-                .keycode = key.keycode,
-                .direction = XKB_KEY_UP,
+                .keycode = சாவி.keycode,
+                .direction = XKB_சாவி_UP,
             },
-            .mods = key.mods,
+            .mods = சாவி.mods,
             .counter = (uint8_t)pending_turns,
         },
     };
 
-    if (pending_turns) {
-        if (key.kind == XKB_MOD_LOCK) {
+    எனில் (pending_turns) {
+        எனில் (சாவி.kind == XKB_MOD_LOCK) {
             /* Immediate release */
             state->events[(*e)++] = pending[1].event;
             /* Delayed unlock (press + release) */
             pending[1].counter++;
-            const enum xkb_status status =
+            மாறிலி எண்ணிக்கை xkb_status status =
                 add_pending_events(state, pending, ARRAY_SIZE(pending));
-            if (status != XKB_SUCCESS)
-                return status;
+            எனில் (status != XKB_SUCCESS)
+                திரும்பு status;
             /*
              * Register “locked” state, to avoid tapping the key before
              * delayed key released
              */
-            bit_array_set(state->keys_state, key.keycode);
-        } else {
+            bit_array_set(state->சாவிகள்_state, சாவி.keycode);
+        } இல்லையெனில் {
             /* Delayed release */
-            const enum xkb_status status =
+            மாறிலி எண்ணிக்கை xkb_status status =
                 add_pending_events(state, &pending[1], 1);
-            if (status != XKB_SUCCESS)
-                return status;
+            எனில் (status != XKB_SUCCESS)
+                திரும்பு status;
             /* Register pressed state */
-            bit_array_set(state->keys_state, key.keycode);
+            bit_array_set(state->சாவிகள்_state, சாவி.keycode);
         }
-        state->mods |= key.mods;
-    } else {
+        state->mods |= சாவி.mods;
+    } இல்லையெனில் {
         /* Immediate release */
         state->events[(*e)++] = pending[1].event;
         /* TODO: add latched modifier to mask state. */
     }
 
-    return XKB_SUCCESS;
+    திரும்பு XKB_SUCCESS;
 }
 
-static enum xkb_status
-add_other_key(struct xkb_typing_state * restrict state,
-              const xkb_keycodes_t * restrict keycodes, size_t * restrict e,
+நிலையான எண்ணிக்கை xkb_status
+add_other_சாவி(கட்டமைப்பு xkb_typing_state * restrict state,
+              மாறிலி xkb_keycodes_t * restrict keycodes, size_t * restrict e,
               uint8_t immediate_release_prob, uint8_t max_pending_turns)
 {
     /* Choose a random key */
     long idx = -1;
-    for (int tries = 0; tries < KEY_CHOICE_MAX_TRIES; tries++) {
+    க்கு (முழு tries = 0; tries < சாவி_CHOICE_MAX_TRIES; tries++) {
         idx = state->prng(state->prng_state) % darray_size(*keycodes);
         /* Ensure key is not already down */
-        if (!bit_array_get(state->keys_state,
+        எனில் (!bit_array_get(state->சாவிகள்_state,
                            darray_item(*keycodes, idx)))
         {
-            break;
+            நிறுத்து;
         }
         idx = -1;
     }
 
     xkb_keycode_t keycode = XKB_KEYCODE_INVALID;
-    if (idx < 0) {
+    எனில் (idx < 0) {
         /* No released key found: fall back to linear search */
-        const xkb_keycode_t *keycode_;
+        மாறிலி xkb_keycode_t *keycode_;
         darray_foreach(keycode_, *keycodes) {
-            if (!bit_array_get(state->keys_state, *keycode_)) {
+            எனில் (!bit_array_get(state->சாவிகள்_state, *keycode_)) {
                 keycode = *keycode_;
                 idx = 0;
-                break;
+                நிறுத்து;
             }
         }
-        if (idx < 0) {
+        எனில் (idx < 0) {
             /* No fallback: skip */
-            return (enum xkb_status)XKB_ERROR_NO_RELEASED_KEY;
+            திரும்பு (எண்ணிக்கை xkb_status)XKB_ERROR_NO_RELEASED_சாவி;
         }
-    } else {
+    } இல்லையெனில் {
         keycode = darray_item(*keycodes, idx);
     }
 
-    const size_t remaining_events =
-        state->num_events - state->num_pending - *e;
+    மாறிலி size_t remaining_events =
+        state->இலக்கம்_events - state->இலக்கம்_pending - *e;
     size_t pending_turns;
 
-    if (remaining_events >= 2) {
-        const size_t max_turns = MIN(
+    எனில் (remaining_events >= 2) {
+        மாறிலி size_t max_turns = MIN(
             (size_t)max_pending_turns,
-            remaining_events + state->num_pending
+            remaining_events + state->இலக்கம்_pending
         );
-        const bool immediate_release = (
+        மாறிலி bool immediate_release = (
             (immediate_release_prob >= 100) ||
             !max_turns ||
             (state->prng(state->prng_state) % 100) < immediate_release_prob
         );
-        if (immediate_release) {
+        எனில் (immediate_release) {
             pending_turns = 0;
-        } else {
+        } இல்லையெனில் {
             pending_turns = 1 + (size_t)state->prng(state->prng_state)
                           % max_turns;
         }
-    } else {
-        return XKB_ERROR_INVALID;
+    } இல்லையெனில் {
+        திரும்பு XKB_ERROR_INVALID;
     }
 
-    state->events[(*e)++] = (struct xkb_typing_event) {
+    state->events[(*e)++] = (கட்டமைப்பு xkb_typing_event) {
         .keycode = keycode,
-        .direction = XKB_KEY_DOWN,
+        .direction = XKB_சாவி_DOWN,
     };
 
-    const struct xkb_pending_typing_event pending = {
+    மாறிலி கட்டமைப்பு xkb_pending_typing_event pending = {
         .event = {
             .keycode = keycode,
-            .direction = XKB_KEY_UP,
+            .direction = XKB_சாவி_UP,
         },
         .counter = (uint8_t)pending_turns,
     };
-    if (pending_turns) {
-        const enum xkb_status status = add_pending_events(state, &pending, 1);
-        if (status != XKB_SUCCESS)
-            return status;
+    எனில் (pending_turns) {
+        மாறிலி எண்ணிக்கை xkb_status status = add_pending_events(state, &pending, 1);
+        எனில் (status != XKB_SUCCESS)
+            திரும்பு status;
         /* Register pressed state */
-        bit_array_set(state->keys_state, keycode);
-    } else {
+        bit_array_set(state->சாவிகள்_state, keycode);
+    } இல்லையெனில் {
         state->events[(*e)++] = pending.event;
     }
 
-    return XKB_SUCCESS;
+    திரும்பு XKB_SUCCESS;
 }
 
-static enum xkb_key_kind
-pick_key_kind(xkb_prng_t prng, void *prng_state)
+நிலையான எண்ணிக்கை xkb_சாவி_kind
+pick_சாவி_kind(xkb_prng_t prng, வெறுமை *prng_state)
 {
-    static const uint8_t weights[_NUM_XKB_KEY_KIND] = {
-        [XKB_KEY_PRINTABLE] = 60,
-        [XKB_KEY_MODIFIER] = 30,
-        [XKB_KEY_MISC] = 10,
+    நிலையான மாறிலி uint8_t weights[இலக்கம்_XKB_சாவி_KIND] = {
+        [XKB_சாவி_PRINTABLE] = 60,
+        [XKB_சாவி_MODIFIER] = 30,
+        [XKB_சாவி_MISC] = 10,
     };
-    static_assert(XKB_KEY_MISC == 2 &&
-                  XKB_KEY_MISC == _NUM_XKB_KEY_KIND - 1, "");
-    assert(weights[0] + weights[1] + weights[2] == 100);
+    static_assert(XKB_சாவி_MISC == 2 &&
+                  XKB_சாவி_MISC == இலக்கம்_XKB_சாவி_KIND - 1, "");
+    ப்ரதிஜ்ஞா(weights[0] + weights[1] + weights[2] == 100);
 
     long r = prng(prng_state) % 100;
-    for (enum xkb_key_kind k = 0; k < _NUM_XKB_KEY_KIND; k++)
-        if ((r -= weights[k]) < 0)
-            return k;
-    return XKB_KEY_PRINTABLE;
+    க்கு (எண்ணிக்கை xkb_சாவி_kind k = 0; k < இலக்கம்_XKB_சாவி_KIND; k++)
+        எனில் ((r -= weights[k]) < 0)
+            திரும்பு k;
+    திரும்பு XKB_சாவி_PRINTABLE;
 }
 
-static void
-xkb_typing_state_destroy(struct xkb_typing_state *state)
+நிலையான வெறுமை
+xkb_typing_state_destroy(கட்டமைப்பு xkb_typing_state *state)
 {
-    free(state->keys_state);
+    விடுவி(state->சாவிகள்_state);
     darray_free(state->pending);
-    free(state->events);
+    விடுவி(state->events);
 }
 
-enum xkb_status
-xkb_typing_input_init(struct xkb_typing_input * restrict typing,
-                      const struct xkb_key_set * restrict keys,
-                      const struct xkb_typing_input_config * restrict config)
+எண்ணிக்கை xkb_status
+xkb_typing_உள்ளீடு_init(கட்டமைப்பு xkb_typing_உள்ளீடு * restrict typing,
+                      மாறிலி கட்டமைப்பு xkb_சாவி_set * restrict சாவிகள்,
+                      மாறிலி கட்டமைப்பு xkb_typing_உள்ளீடு_config * restrict config)
 {
-    typing->events = NULL;
-    typing->num_events = 0;
+    typing->events = வெற்று;
+    typing->இலக்கம்_events = 0;
 
-    if (!config->input_length)
-        return XKB_ERROR_INVALID;
+    எனில் (!config->உள்ளீடு_length)
+        திரும்பு XKB_ERROR_INVALID;
 
-    if (darray_empty(keys->printable) ||
-        darray_empty(keys->modifiers) ||
-        darray_empty(keys->misc))
+    எனில் (darray_empty(சாவிகள்->printable) ||
+        darray_empty(சாவிகள்->modifiers) ||
+        darray_empty(சாவிகள்->misc))
     {
-        return XKB_ERROR_INVALID;
+        திரும்பு XKB_ERROR_INVALID;
     }
 
-    enum xkb_status status = XKB_SUCCESS;
+    எண்ணிக்கை xkb_status status = XKB_SUCCESS;
 
     /* NOTE: arrays are sorted because they were built using the key iterator */
-    xkb_keycode_t keycode_max = darray_last(keys->printable, 0);
+    xkb_keycode_t keycode_max = darray_last(சாவிகள்->printable, 0);
     keycode_max = MAX(
-        darray_last(keys->modifiers, (struct xkb_modifier_key){0}).keycode,
+        darray_last(சாவிகள்->modifiers, (கட்டமைப்பு xkb_modifier_சாவி){0}).keycode,
         keycode_max
     );
-    keycode_max = MAX(darray_last(keys->misc, 0), keycode_max);
-    const size_t keys_state_num = bit_array_words((size_t)keycode_max + 1);
-    uintptr_t *keys_state = calloc(keys_state_num, sizeof(*keys_state));
+    keycode_max = MAX(darray_last(சாவிகள்->misc, 0), keycode_max);
+    மாறிலி size_t சாவிகள்_state_இலக்கம் = bit_array_சொற்கள்((size_t)keycode_max + 1);
+    uintptr_t *சாவிகள்_state = calloc(சாவிகள்_state_இலக்கம், அளவு(*சாவிகள்_state));
 
-    const size_t num_events = config->input_length;
-    struct xkb_typing_event *events = calloc(num_events, sizeof(*events));
+    மாறிலி size_t இலக்கம்_events = config->உள்ளீடு_length;
+    கட்டமைப்பு xkb_typing_event *events = calloc(இலக்கம்_events, அளவு(*events));
 
-    struct xkb_typing_state state = {
-        .keys = keys,
-        .keys_state = keys_state,
+    கட்டமைப்பு xkb_typing_state state = {
+        .சாவிகள் = சாவிகள்,
+        .சாவிகள்_state = சாவிகள்_state,
         .prng = config->prng,
         .prng_state = config->prng_state,
         .events = events,
-        .num_events = num_events,
+        .இலக்கம்_events = இலக்கம்_events,
         .pending = darray_new(),
-        .num_pending = 0,
+        .இலக்கம்_pending = 0,
     };
 
     xkb_typing_events pending = darray_new();
 
-    if (!keys_state || !events) {
+    எனில் (!சாவிகள்_state || !events) {
         status = XKB_ERROR_ALLOCATION_FAILURE;
-        goto error;
+        செல் error;
     }
 
     /*
      * Invariant: e + state.num_pending <= state.num_events
      */
 
-    for (size_t e = 0; e < num_events;) {
+    க்கு (size_t e = 0; e < இலக்கம்_events;) {
         /*
          * Process pending events
          */
         status = next_pending_events(&state, &pending);
-        if (status != XKB_SUCCESS) {
-            goto error;
+        எனில் (status != XKB_SUCCESS) {
+            செல் error;
         }
-        struct xkb_typing_event *event;
+        கட்டமைப்பு xkb_typing_event *event;
         darray_foreach(event, pending) {
-            if (e >= num_events) {
+            எனில் (e >= இலக்கம்_events) {
                 /* invariant violated: should be unreachable */
                 PANIC_UNREACHABLE();
             }
             events[e] = *event;
-            bit_array_assign(keys_state, event->keycode, (bool)event->direction);
+            bit_array_assign(சாவிகள்_state, event->keycode, (bool)event->direction);
             e++;
         }
 
-        if (!state.num_pending && e == num_events - 1) {
+        எனில் (!state.இலக்கம்_pending && e == இலக்கம்_events - 1) {
             /*
              * Cannot add press/release *pair*, so just use an invalid keycode
              * for the last event.
              */
-            events[e] = (struct xkb_typing_event) {
+            events[e] = (கட்டமைப்பு xkb_typing_event) {
                 .keycode = XKB_KEYCODE_INVALID,
-                .direction = XKB_KEY_DOWN,
+                .direction = XKB_சாவி_DOWN,
             };
-            break;
+            நிறுத்து;
         }
 
-        if (e + 1 + state.num_pending >= num_events) {
+        எனில் (e + 1 + state.இலக்கம்_pending >= இலக்கம்_events) {
             /* Cannot add new pair of events: require flushing pending events */
-            continue;
+            தொடர்;
         }
 
         /*
@@ -568,44 +568,44 @@ xkb_typing_input_init(struct xkb_typing_input * restrict typing,
          */
 
         /* Choose kind of key */
-        static_assert(XKB_KEY_PRINTABLE == 0, "");
-        const enum xkb_key_kind key_kind =
-            pick_key_kind(config->prng, config->prng_state);
-        switch (key_kind) {
-        case XKB_KEY_PRINTABLE:
-            status = add_other_key(
-                &state, &state.keys->printable, &e,
+        static_assert(XKB_சாவி_PRINTABLE == 0, "");
+        மாறிலி எண்ணிக்கை xkb_சாவி_kind சாவி_kind =
+            pick_சாவி_kind(config->prng, config->prng_state);
+        தேர்வு (சாவி_kind) {
+        நிலை XKB_சாவி_PRINTABLE:
+            status = add_other_சாவி(
+                &state, &state.சாவிகள்->printable, &e,
                 XKB_TYPING_EVENT_PRINTABLE_IMMEDIATE_RELEASE_PERCENT,
                 XKB_TYPING_EVENT_PRINTABLE_MAX_PENDING_TURNS
             );
-            break;
-        case XKB_KEY_MODIFIER:
-            status = add_modifier_key(&state, &e);
-            break;
-        case XKB_KEY_MISC:
-            status = add_other_key(
-                &state, &state.keys->misc, &e,
+            நிறுத்து;
+        நிலை XKB_சாவி_MODIFIER:
+            status = add_modifier_சாவி(&state, &e);
+            நிறுத்து;
+        நிலை XKB_சாவி_MISC:
+            status = add_other_சாவி(
+                &state, &state.சாவிகள்->misc, &e,
                 XKB_TYPING_EVENT_MISC_IMMEDIATE_RELEASE_PERCENT,
                 XKB_TYPING_EVENT_MISC_MAX_PENDING_TURNS
             );
-            break;
-        default: {
-            static_assert(XKB_KEY_MISC == 2 &&
-                          XKB_KEY_MISC == _NUM_XKB_KEY_KIND - 1, "");
+            நிறுத்து;
+        இயல்பு: {
+            static_assert(XKB_சாவி_MISC == 2 &&
+                          XKB_சாவி_MISC == இலக்கம்_XKB_சாவி_KIND - 1, "");
             status = XKB_ERROR_INVALID;
         }}
 
-        if (status != XKB_SUCCESS &&
-            status != (enum xkb_status)XKB_ERROR_NO_RELEASED_KEY)
+        எனில் (status != XKB_SUCCESS &&
+            status != (எண்ணிக்கை xkb_status)XKB_ERROR_NO_RELEASED_சாவி)
         {
-            goto error;
+            செல் error;
         }
     }
 
-    assert(!state.num_pending);
+    ப்ரதிஜ்ஞா(!state.இலக்கம்_pending);
 
     typing->events = steal(&state.events);
-    typing->num_events = num_events;
+    typing->இலக்கம்_events = இலக்கம்_events;
 
     status = XKB_SUCCESS;
 
@@ -613,15 +613,15 @@ error:
     darray_free(pending);
     xkb_typing_state_destroy(&state);
 
-    return status;
+    திரும்பு status;
 }
 
-void
-xkb_typing_input_destroy(struct xkb_typing_input *typing)
+வெறுமை
+xkb_typing_உள்ளீடு_destroy(கட்டமைப்பு xkb_typing_உள்ளீடு *typing)
 {
-    if (!typing)
-        return;
+    எனில் (!typing)
+        திரும்பு;
 
-    free(typing->events);
-    typing->events = NULL;
+    விடுவி(typing->events);
+    typing->events = வெற்று;
 }

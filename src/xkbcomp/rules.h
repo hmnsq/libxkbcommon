@@ -4,22 +4,22 @@
  */
 #pragma once
 
-#include "config.h"
+#அந்தர்பாவ "config.h"
 
-#include <stdbool.h>
+#அந்தர்பாவ <stdbool.h>
 
-#include "xkbcomp-priv.h"
-#include "rmlvo.h"
+#அந்தர்பாவ "xkbcomp-priv.h"
+#அந்தர்பாவ "rmlvo.h"
 
 XKB_EXPORT_PRIVATE bool
-xkb_components_from_rmlvo_builder(const struct xkb_rmlvo_builder *rmlvo,
-                                  struct xkb_component_names *out,
+xkb_components_from_rmlvo_builder(மாறிலி கட்டமைப்பு xkb_rmlvo_builder *rmlvo,
+                                  கட்டமைப்பு xkb_component_names *out,
                                   xkb_layout_index_t *explicit_layouts);
 
 XKB_EXPORT_PRIVATE bool
-xkb_components_from_rules_names(struct xkb_context *ctx,
-                                const struct xkb_rule_names *rmlvo,
-                                struct xkb_component_names *out,
+xkb_components_from_rules_names(கட்டமைப்பு xkb_context *ctx,
+                                மாறிலி கட்டமைப்பு xkb_rule_names *rmlvo,
+                                கட்டமைப்பு xkb_component_names *out,
                                 xkb_layout_index_t *explicit_layouts);
 
 /* Maximum length of a layout index string:
@@ -29,7 +29,7 @@ xkb_components_from_rules_names(struct xkb_context *ctx,
  *        < 1 + floor (bitsize(xkb_layout_index_t) * 5 / 16)
  */
 #define MAX_LAYOUT_INDEX_STR_LENGTH \
-        (1 + ((sizeof(xkb_layout_index_t) * CHAR_BIT * 5) >> 4))
-static_assert(MAX_LAYOUT_INDEX_STR_LENGTH == sizeof("4294967295"), "");
+        (1 + ((அளவு(xkb_layout_index_t) * CHAR_BIT * 5) >> 4))
+static_assert(MAX_LAYOUT_INDEX_STR_LENGTH == அளவு("4294967295"), "");
 
 #define OPTIONS_GROUP_SPECIFIER_PREFIX '!'

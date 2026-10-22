@@ -5,19 +5,19 @@
 
 #pragma once
 
-#include "config.h"
+#அந்தர்பாவ "config.h"
 
-#include <assert.h>
-#include <limits.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stddef.h>
+#அந்தர்பாவ <assert.h>
+#அந்தர்பாவ <limits.h>
+#அந்தர்பாவ <stdbool.h>
+#அந்தர்பாவ <stdint.h>
+#அந்தர்பாவ <stddef.h>
 
 /*
  * Bit array using native pointer-width word for optimal performance
  */
 
-#define BIT_ARRAY_UINTPTR_WIDTH (sizeof(uintptr_t) * CHAR_BIT)
+#define BIT_ARRAY_UINTPTR_WIDTH (அளவு(uintptr_t) * CHAR_BIT)
 
 /* Compile-time sanity checks */
 #ifdef UINTPTR_WIDTH
@@ -33,9 +33,9 @@ static_assert((BIT_ARRAY_UINTPTR_WIDTH & (BIT_ARRAY_UINTPTR_WIDTH - 1)) == 0,
  * @param num_bits  Number of bits to store.
  * @return Number of `uintptr_t` words required.
  */
-static inline size_t bit_array_words(size_t num_bits) {
-    return num_bits / BIT_ARRAY_UINTPTR_WIDTH +
-          (num_bits % BIT_ARRAY_UINTPTR_WIDTH != 0);
+நிலையான உள்வரி size_t bit_array_சொற்கள்(size_t இலக்கம்_bits) {
+    திரும்பு இலக்கம்_bits / BIT_ARRAY_UINTPTR_WIDTH +
+          (இலக்கம்_bits % BIT_ARRAY_UINTPTR_WIDTH != 0);
 }
 
 /**
@@ -43,10 +43,10 @@ static inline size_t bit_array_words(size_t num_bits) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline bool bit_array_get(const uintptr_t *arr, size_t index) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
-    return (arr[word_idx] >> bit_idx) & (uintptr_t)1;
+நிலையான உள்வரி bool bit_array_get(மாறிலி uintptr_t *arr, size_t index) {
+    மாறிலி size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
+    மாறிலி size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
+    திரும்பு (arr[word_idx] >> bit_idx) & (uintptr_t)1;
 }
 
 /**
@@ -54,9 +54,9 @@ static inline bool bit_array_get(const uintptr_t *arr, size_t index) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline void bit_array_set(uintptr_t *arr, size_t index) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
+நிலையான உள்வரி வெறுமை bit_array_set(uintptr_t *arr, size_t index) {
+    மாறிலி size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
+    மாறிலி size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
     arr[word_idx] |= ((uintptr_t)1 << bit_idx);
 }
 
@@ -65,9 +65,9 @@ static inline void bit_array_set(uintptr_t *arr, size_t index) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline void bit_array_clear(uintptr_t *arr, size_t index) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
+நிலையான உள்வரி வெறுமை bit_array_clear(uintptr_t *arr, size_t index) {
+    மாறிலி size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
+    மாறிலி size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
     arr[word_idx] &= ~((uintptr_t)1 << bit_idx);
 }
 
@@ -76,9 +76,9 @@ static inline void bit_array_clear(uintptr_t *arr, size_t index) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline void bit_array_toggle(uintptr_t *arr, size_t index) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
+நிலையான உள்வரி வெறுமை bit_array_toggle(uintptr_t *arr, size_t index) {
+    மாறிலி size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
+    மாறிலி size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
     arr[word_idx] ^= ((uintptr_t)1 << bit_idx);
 }
 
@@ -87,9 +87,9 @@ static inline void bit_array_toggle(uintptr_t *arr, size_t index) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline void bit_array_assign(uintptr_t *arr, size_t index, bool val) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
+நிலையான உள்வரி வெறுமை bit_array_assign(uintptr_t *arr, size_t index, bool val) {
+    மாறிலி size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
+    மாறிலி size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
     uintptr_t mask = (uintptr_t)1 << bit_idx;
     arr[word_idx] = (arr[word_idx] & ~mask)     /* clear bit */
                   | ((-(uintptr_t)val) & mask); /* set bit */

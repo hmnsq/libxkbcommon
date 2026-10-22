@@ -4,33 +4,33 @@
  */
 #pragma once
 
-#include "config.h"
+#அந்தர்பாவ "config.h"
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
+#அந்தர்பாவ <stddef.h>
+#அந்தர்பாவ <stdint.h>
+#அந்தர்பாவ <stdbool.h>
 
-#include "darray.h"
-#include "utils.h"
+#அந்தர்பாவ "darray.h"
+#அந்தர்பாவ "utils.h"
 
 /** Atoms are indexes into a `darray` */
-typedef darray_size_t xkb_atom_t;
+வகைவரை darray_size_t xkb_atom_t;
 
 #define XKB_ATOM_NONE 0
 
-struct atom_table;
+கட்டமைப்பு atom_table;
 
-XKB_EXPORT_PRIVATE struct atom_table *
-atom_table_new(void);
+XKB_EXPORT_PRIVATE கட்டமைப்பு atom_table *
+atom_table_new(வெறுமை);
 
-XKB_EXPORT_PRIVATE void
-atom_table_free(struct atom_table *table);
+XKB_EXPORT_PRIVATE வெறுமை
+atom_table_free(கட்டமைப்பு atom_table *table);
 
 XKB_EXPORT_PRIVATE darray_size_t
-atom_table_size(struct atom_table *table);
+atom_table_size(கட்டமைப்பு atom_table *table);
 
 XKB_EXPORT_PRIVATE xkb_atom_t
-atom_intern(struct atom_table *table, const char *string, size_t len, bool add);
+atom_intern(கட்டமைப்பு atom_table *table, மாறிலி எழுத்து *string, size_t len, bool add);
 
-XKB_EXPORT_PRIVATE const char *
-atom_text(struct atom_table *table, xkb_atom_t atom);
+XKB_EXPORT_PRIVATE மாறிலி எழுத்து *
+atom_text(கட்டமைப்பு atom_table *table, xkb_atom_t atom);

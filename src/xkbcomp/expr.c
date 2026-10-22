@@ -3,409 +3,409 @@
  * SPDX-License-Identifier: HPND
  */
 
-#include "config.h"
+#அந்தர்பாவ "config.h"
 
-#include <stdint.h>
+#அந்தர்பாவ <stdint.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcomp-priv.h"
-#include "expr.h"
-#include "keymap.h"
-#include "keysym.h"
-#include "messages-codes.h"
-#include "text.h"
-#include "xkbcomp/ast.h"
-#include "utils.h"
-#include "util-numbers.h"
-#include "util-checked-arithmetic.h"
+#அந்தர்பாவ "xkbcommon/xkbcommon.h"
+#அந்தர்பாவ "xkbcomp-priv.h"
+#அந்தர்பாவ "expr.h"
+#அந்தர்பாவ "keymap.h"
+#அந்தர்பாவ "keysym.h"
+#அந்தர்பாவ "messages-codes.h"
+#அந்தர்பாவ "text.h"
+#அந்தர்பாவ "xkbcomp/ast.h"
+#அந்தர்பாவ "utils.h"
+#அந்தர்பாவ "util-numbers.h"
+#அந்தர்பாவ "util-checked-arithmetic.h"
 
-typedef bool (*IdentLookupFunc)(struct xkb_context *ctx, const void *priv,
+வகைவரை bool (*IdentLookupFunc)(கட்டமைப்பு xkb_context *ctx, மாறிலி வெறுமை *priv,
                                 xkb_atom_t field, uint32_t *val_rtrn,
                                 bool *pending);
 
 bool
-ExprResolveLhs(struct xkb_context *ctx, const ExprDef *expr,
-               const char **elem_rtrn, const char **field_rtrn,
-               ExprDef **index_rtrn)
+கோவை_Resolve_Lhs(கட்டமைப்பு xkb_context *ctx, மாறிலி கோவை_Def *கோவை,
+               மாறிலி எழுத்து **elem_rtrn, மாறிலி எழுத்து **field_rtrn,
+               கோவை_Def **index_rtrn)
 {
-    switch (expr->common.type) {
-    case STMT_EXPR_IDENT:
-        *elem_rtrn = NULL;
-        *field_rtrn = xkb_atom_text(ctx, expr->ident.ident);
-        *index_rtrn = NULL;
-        return (*field_rtrn != NULL);
-    case STMT_EXPR_FIELD_REF:
-        *elem_rtrn = xkb_atom_text(ctx, expr->field_ref.element);
-        *field_rtrn = xkb_atom_text(ctx, expr->field_ref.field);
-        *index_rtrn = NULL;
-        return (*elem_rtrn != NULL && *field_rtrn != NULL);
-    case STMT_EXPR_ARRAY_REF:
-        *elem_rtrn = xkb_atom_text(ctx, expr->array_ref.element);
-        *field_rtrn = xkb_atom_text(ctx, expr->array_ref.field);
-        *index_rtrn = expr->array_ref.entry;
-        if (expr->array_ref.element != XKB_ATOM_NONE && *elem_rtrn == NULL)
-            return false;
-        if (*field_rtrn == NULL)
-            return false;
-        return true;
-    default:
-        break;
+    தேர்வு (கோவை->common.type) {
+    நிலை STMT_கோவை_IDENT:
+        *elem_rtrn = வெற்று;
+        *field_rtrn = xkb_atom_text(ctx, கோவை->ident.ident);
+        *index_rtrn = வெற்று;
+        திரும்பு (*field_rtrn != வெற்று);
+    நிலை STMT_கோவை_FIELD_REF:
+        *elem_rtrn = xkb_atom_text(ctx, கோவை->field_ref.element);
+        *field_rtrn = xkb_atom_text(ctx, கோவை->field_ref.field);
+        *index_rtrn = வெற்று;
+        திரும்பு (*elem_rtrn != வெற்று && *field_rtrn != வெற்று);
+    நிலை STMT_கோவை_ARRAY_REF:
+        *elem_rtrn = xkb_atom_text(ctx, கோவை->array_ref.element);
+        *field_rtrn = xkb_atom_text(ctx, கோவை->array_ref.field);
+        *index_rtrn = கோவை->array_ref.entry;
+        எனில் (கோவை->array_ref.element != XKB_ATOM_NONE && *elem_rtrn == வெற்று)
+            திரும்பு false;
+        எனில் (*field_rtrn == வெற்று)
+            திரும்பு false;
+        திரும்பு true;
+    இயல்பு:
+        நிறுத்து;
     }
     log_wsgo(ctx,
              XKB_ERROR_INVALID_XKB_SYNTAX,
-             "Unexpected operator %d in ResolveLhs\n", expr->common.type);
-    return false;
+             "Unexpected operator %d in ResolveLhs\n", கோவை->common.type);
+    திரும்பு false;
 }
 
-static bool
-SimpleLookup(struct xkb_context *ctx, const void *priv, xkb_atom_t field,
+நிலையான bool
+SimpleLookup(கட்டமைப்பு xkb_context *ctx, மாறிலி வெறுமை *priv, xkb_atom_t field,
              uint32_t *val_rtrn, bool *pending_rtrn)
 {
-    if (!priv || field == XKB_ATOM_NONE)
-        return false;
+    எனில் (!priv || field == XKB_ATOM_NONE)
+        திரும்பு false;
 
-    const char *str = xkb_atom_text(ctx, field);
-    for (const LookupEntry *entry = priv; entry && entry->name; entry++) {
-        if (istreq(str, entry->name)) {
-            *val_rtrn = entry->value;
-            return true;
+    மாறிலி எழுத்து *str = xkb_atom_text(ctx, field);
+    க்கு (மாறிலி LookupEntry *entry = priv; entry && entry->name; entry++) {
+        எனில் (istreq(str, entry->name)) {
+            *val_rtrn = entry->மதிப்பு;
+            திரும்பு true;
         }
     }
 
-    return false;
+    திரும்பு false;
 }
 
-struct named_integer_pattern {
-    const char *prefix;
+கட்டமைப்பு named_integer_pattern {
+    மாறிலி எழுத்து *prefix;
     size_t prefix_length;
     uint32_t min;
     uint32_t max;
-    const LookupEntry *entries;
-    const LookupEntry *pending_entries;
+    மாறிலி LookupEntry *entries;
+    மாறிலி LookupEntry *pending_entries;
     bool is_mask;
-    enum xkb_message_code error_id;
+    எண்ணிக்கை xkb_message_code error_id;
 };
 
 /* Parse a number expressed with the pattern `<prefix><decimal number>` */
-static bool
-NamedIntegerPatternLookup(struct xkb_context *ctx, const void *priv,
+நிலையான bool
+NamedIntegerPatternLookup(கட்டமைப்பு xkb_context *ctx, மாறிலி வெறுமை *priv,
                           xkb_atom_t field, uint32_t *val_rtrn,
                           bool *pending_rtrn)
 {
-    if (!priv || field == XKB_ATOM_NONE)
-        return false;
+    எனில் (!priv || field == XKB_ATOM_NONE)
+        திரும்பு false;
 
-    const char * const str = xkb_atom_text(ctx, field);
-    const struct named_integer_pattern * const pattern = priv;
+    மாறிலி எழுத்து * மாறிலி str = xkb_atom_text(ctx, field);
+    மாறிலி கட்டமைப்பு named_integer_pattern * மாறிலி pattern = priv;
 
-    const int count = (istrneq(str, pattern->prefix, pattern->prefix_length))
+    மாறிலி முழு மொத்தம் = (istrneq(str, pattern->prefix, pattern->prefix_length))
         ? parse_dec_to_uint32_t(str + pattern->prefix_length, SIZE_MAX, val_rtrn)
         : 0;
 
-    if (count > 0 && *(str + pattern->prefix_length + count) == '\0') {
-        if (*val_rtrn < pattern->min || *val_rtrn > pattern->max) {
+    எனில் (மொத்தம் > 0 && *(str + pattern->prefix_length + மொத்தம்) == '\0') {
+        எனில் (*val_rtrn < pattern->min || *val_rtrn > pattern->max) {
             log_err(ctx, pattern->error_id,
                     "%s index %"PRIu32" is out of range (%"PRIu32"..%"PRIu32")\n",
                     pattern->prefix, *val_rtrn, pattern->min, pattern->max);
-            return false;
+            திரும்பு false;
         }
-        if (pattern->is_mask) {
+        எனில் (pattern->is_mask) {
             /* Compute mask (bit 0 = min index) */
-            assert(*val_rtrn - pattern->min < 32);
+            ப்ரதிஜ்ஞா(*val_rtrn - pattern->min < 32);
             *val_rtrn = UINT32_C(1) << (*val_rtrn - pattern->min);
         }
-        return true;
-    } else {
-        if (pattern->entries &&
-            SimpleLookup(ctx, pattern->entries, field, val_rtrn, NULL)) {
-            return true;
+        திரும்பு true;
+    } இல்லையெனில் {
+        எனில் (pattern->entries &&
+            SimpleLookup(ctx, pattern->entries, field, val_rtrn, வெற்று)) {
+            திரும்பு true;
         }
-        if (pattern->pending_entries && pending_rtrn &&
-            SimpleLookup(ctx, pattern->pending_entries, field, val_rtrn, NULL)) {
+        எனில் (pattern->pending_entries && pending_rtrn &&
+            SimpleLookup(ctx, pattern->pending_entries, field, val_rtrn, வெற்று)) {
             *pending_rtrn = true;
-            return true;
+            திரும்பு true;
         }
-        return false;
+        திரும்பு false;
     }
 }
 
 /* Data passed in the *priv argument for LookupModMask. */
-typedef struct {
-    const struct xkb_mod_set *mods;
-    enum mod_type mod_type;
+வகைவரை கட்டமைப்பு {
+    மாறிலி கட்டமைப்பு xkb_mod_set *mods;
+    எண்ணிக்கை mod_type mod_type;
 } LookupModMaskPriv;
 
-static bool
-LookupModMask(struct xkb_context *ctx, const void *priv, xkb_atom_t field,
+நிலையான bool
+LookupModMask(கட்டமைப்பு xkb_context *ctx, மாறிலி வெறுமை *priv, xkb_atom_t field,
               xkb_mod_mask_t *val_rtrn, bool *pending_rtrn)
 {
-    const char *str = xkb_atom_text(ctx, field);
-    if (!str)
-        return false;
+    மாறிலி எழுத்து *str = xkb_atom_text(ctx, field);
+    எனில் (!str)
+        திரும்பு false;
 
-    if (istreq(str, "all")) {
+    எனில் (istreq(str, "all")) {
         *val_rtrn  = MOD_REAL_MASK_ALL;
-        return true;
+        திரும்பு true;
     }
 
-    if (istreq(str, "none")) {
+    எனில் (istreq(str, "none")) {
         *val_rtrn = 0;
-        return true;
+        திரும்பு true;
     }
 
-    const LookupModMaskPriv *arg = priv;
-    const struct xkb_mod_set *mods = arg->mods;
-    const enum mod_type mod_type = arg->mod_type;
-    const xkb_mod_index_t ndx = XkbModNameToIndex(mods, field, mod_type);
-    if (ndx == XKB_MOD_INVALID)
-        return false;
+    மாறிலி LookupModMaskPriv *arg = priv;
+    மாறிலி கட்டமைப்பு xkb_mod_set *mods = arg->mods;
+    மாறிலி எண்ணிக்கை mod_type mod_type = arg->mod_type;
+    மாறிலி xkb_mod_index_t ndx = XkbModNameToIndex(mods, field, mod_type);
+    எனில் (ndx == XKB_MOD_INVALID)
+        திரும்பு false;
 
     *val_rtrn = (UINT32_C(1) << ndx);
-    return true;
+    திரும்பு true;
 }
 
 bool
-ExprResolveBoolean(struct xkb_context *ctx, const ExprDef *expr,
+கோவை_Resolve_Boolean(கட்டமைப்பு xkb_context *ctx, மாறிலி கோவை_Def *கோவை,
                    bool *set_rtrn)
 {
     bool ok = false;
-    const char *ident;
+    மாறிலி எழுத்து *ident;
 
-    switch (expr->common.type) {
-    case STMT_EXPR_BOOLEAN_LITERAL:
-        *set_rtrn = expr->boolean.set;
-        return true;
+    தேர்வு (கோவை->common.type) {
+    நிலை STMT_கோவை_BOOLEAN_LITERAL:
+        *set_rtrn = கோவை->boolean.set;
+        திரும்பு true;
 
-    case STMT_EXPR_STRING_LITERAL:
-    case STMT_EXPR_INTEGER_LITERAL:
-    case STMT_EXPR_FLOAT_LITERAL:
-    case STMT_EXPR_KEYNAME_LITERAL:
-    case STMT_EXPR_KEYSYM_LITERAL:
+    நிலை STMT_கோவை_STRING_LITERAL:
+    நிலை STMT_கோவை_INTEGER_LITERAL:
+    நிலை STMT_கோவை_FLOAT_LITERAL:
+    நிலை STMT_கோவை_KEYNAME_LITERAL:
+    நிலை STMT_கோவை_KEYSYM_LITERAL:
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found %s where boolean was expected\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_to_string(கோவை->common.type));
+        திரும்பு false;
 
-    case STMT_EXPR_IDENT:
-        ident = xkb_atom_text(ctx, expr->ident.ident);
-        if (ident) {
-            if (istreq(ident, "true") ||
+    நிலை STMT_கோவை_IDENT:
+        ident = xkb_atom_text(ctx, கோவை->ident.ident);
+        எனில் (ident) {
+            எனில் (istreq(ident, "true") ||
                 istreq(ident, "yes") ||
                 istreq(ident, "on")) {
                 *set_rtrn = true;
-                return true;
+                திரும்பு true;
             }
-            else if (istreq(ident, "false") ||
+            இல்லையெனில் எனில் (istreq(ident, "false") ||
                      istreq(ident, "no") ||
                      istreq(ident, "off")) {
                 *set_rtrn = false;
-                return true;
+                திரும்பு true;
             }
         }
         log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                 "Identifier \"%s\" of type boolean is unknown\n", ident);
-        return false;
+        திரும்பு false;
 
-    case STMT_EXPR_FIELD_REF:
+    நிலை STMT_கோவை_FIELD_REF:
         log_err(ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
                 "Default \"%s.%s\" of type boolean is unknown\n",
-                xkb_atom_text(ctx, expr->field_ref.element),
-                xkb_atom_text(ctx, expr->field_ref.field));
-        return false;
+                xkb_atom_text(ctx, கோவை->field_ref.element),
+                xkb_atom_text(ctx, கோவை->field_ref.field));
+        திரும்பு false;
 
-    case STMT_EXPR_INVERT:
-    case STMT_EXPR_NOT:
-        ok = ExprResolveBoolean(ctx, expr->unary.child, set_rtrn);
-        if (ok)
+    நிலை STMT_கோவை_INVERT:
+    நிலை STMT_கோவை_NOT:
+        ok = கோவை_Resolve_Boolean(ctx, கோவை->unary.child, set_rtrn);
+        எனில் (ok)
             *set_rtrn = !*set_rtrn;
-        return ok;
-    case STMT_EXPR_ADD:
-    case STMT_EXPR_SUBTRACT:
-    case STMT_EXPR_MULTIPLY:
-    case STMT_EXPR_DIVIDE:
-    case STMT_EXPR_ASSIGN:
-    case STMT_EXPR_NEGATE:
-    case STMT_EXPR_UNARY_PLUS:
-    case STMT_EXPR_EMPTY_LIST:
-    case STMT_EXPR_ACTION_DECL:
-    case STMT_EXPR_ACTION_LIST:
-    case STMT_EXPR_KEYSYM_LIST:
+        திரும்பு ok;
+    நிலை STMT_கோவை_ADD:
+    நிலை STMT_கோவை_SUBTRACT:
+    நிலை STMT_கோவை_MULTIPLY:
+    நிலை STMT_கோவை_DIVIDE:
+    நிலை STMT_கோவை_ASSIGN:
+    நிலை STMT_கோவை_NEGATE:
+    நிலை STMT_கோவை_UNARY_PLUS:
+    நிலை STMT_கோவை_EMPTY_LIST:
+    நிலை STMT_கோவை_ACTION_DECL:
+    நிலை STMT_கோவை_ACTION_LIST:
+    நிலை STMT_கோவை_KEYSYM_LIST:
         log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                 "%s of boolean values not permitted\n",
-                stmt_type_to_string(expr->common.type));
-        break;
+                stmt_type_to_string(கோவை->common.type));
+        நிறுத்து;
 
-    default:
+    இயல்பு:
         log_wsgo(ctx, XKB_ERROR_UNKNOWN_OPERATOR,
                  "Unknown operator %d in ResolveBoolean\n",
-                 expr->common.type);
-        break;
+                 கோவை->common.type);
+        நிறுத்து;
     }
 
-    return false;
+    திரும்பு false;
 }
 
-static bool
-ExprResolveIntegerLookup(struct xkb_context *ctx, const ExprDef *expr,
+நிலையான bool
+கோவை_Resolve_Integer_Lookup(கட்டமைப்பு xkb_context *ctx, மாறிலி கோவை_Def *கோவை,
                          int64_t *val_rtrn, bool *pending,
-                         IdentLookupFunc lookup, const void *lookupPriv)
+                         IdentLookupFunc lookup, மாறிலி வெறுமை *lookupPriv)
 {
     bool ok = false;
     int64_t l = 0, r = 0;
     uint32_t u = 0;
-    ExprDef *left, *right;
+    கோவை_Def *இடது, *வலது;
 
-    switch (expr->common.type) {
-    case STMT_EXPR_INTEGER_LITERAL:
-        *val_rtrn = expr->integer.ival;
-        return true;
+    தேர்வு (கோவை->common.type) {
+    நிலை STMT_கோவை_INTEGER_LITERAL:
+        *val_rtrn = கோவை->integer.ival;
+        திரும்பு true;
 
-    case STMT_EXPR_STRING_LITERAL:
-    case STMT_EXPR_FLOAT_LITERAL:
-    case STMT_EXPR_BOOLEAN_LITERAL:
-    case STMT_EXPR_KEYNAME_LITERAL:
-    case STMT_EXPR_KEYSYM_LITERAL:
+    நிலை STMT_கோவை_STRING_LITERAL:
+    நிலை STMT_கோவை_FLOAT_LITERAL:
+    நிலை STMT_கோவை_BOOLEAN_LITERAL:
+    நிலை STMT_கோவை_KEYNAME_LITERAL:
+    நிலை STMT_கோவை_KEYSYM_LITERAL:
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found %s where an int was expected\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_to_string(கோவை->common.type));
+        திரும்பு false;
 
-    case STMT_EXPR_IDENT:
-        if (lookup)
-            ok = lookup(ctx, lookupPriv, expr->ident.ident, &u, pending);
+    நிலை STMT_கோவை_IDENT:
+        எனில் (lookup)
+            ok = lookup(ctx, lookupPriv, கோவை->ident.ident, &u, pending);
 
-        if (!ok)
+        எனில் (!ok)
             log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                     "Identifier \"%s\" of type int is unknown\n",
-                    xkb_atom_text(ctx, expr->ident.ident));
-        else
+                    xkb_atom_text(ctx, கோவை->ident.ident));
+        இல்லையெனில்
             *val_rtrn = (int64_t) u;
 
-        if (pending && *pending) {
+        எனில் (pending && *pending) {
             /* Postpone computation */
-            return false;
+            திரும்பு false;
         }
 
-        return ok;
+        திரும்பு ok;
 
-    case STMT_EXPR_FIELD_REF:
+    நிலை STMT_கோவை_FIELD_REF:
         log_err(ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
                 "Default \"%s.%s\" of type int is unknown\n",
-                xkb_atom_text(ctx, expr->field_ref.element),
-                xkb_atom_text(ctx, expr->field_ref.field));
-        return false;
+                xkb_atom_text(ctx, கோவை->field_ref.element),
+                xkb_atom_text(ctx, கோவை->field_ref.field));
+        திரும்பு false;
 
-    case STMT_EXPR_ADD:
-    case STMT_EXPR_SUBTRACT:
-    case STMT_EXPR_MULTIPLY:
-    case STMT_EXPR_DIVIDE:
-        left = expr->binary.left;
-        right = expr->binary.right;
-        if (!ExprResolveIntegerLookup(ctx, left, &l, pending, lookup, lookupPriv) ||
-            !ExprResolveIntegerLookup(ctx, right, &r, pending, lookup, lookupPriv))
-            return false;
+    நிலை STMT_கோவை_ADD:
+    நிலை STMT_கோவை_SUBTRACT:
+    நிலை STMT_கோவை_MULTIPLY:
+    நிலை STMT_கோவை_DIVIDE:
+        இடது = கோவை->இருமம்.இடது;
+        வலது = கோவை->இருமம்.வலது;
+        எனில் (!கோவை_Resolve_Integer_Lookup(ctx, இடது, &l, pending, lookup, lookupPriv) ||
+            !கோவை_Resolve_Integer_Lookup(ctx, வலது, &r, pending, lookup, lookupPriv))
+            திரும்பு false;
 
-        switch (expr->common.type) {
-        case STMT_EXPR_ADD:
-            if (ckd_add(val_rtrn, l, r)) {
+        தேர்வு (கோவை->common.type) {
+        நிலை STMT_கோவை_ADD:
+            எனில் (ckd_add(val_rtrn, l, r)) {
                 log_err(ctx, XKB_ERROR_INTEGER_OVERFLOW,
                         "Addition %"PRId64" + %"PRId64" has an invalid "
                         "mathematical result: %"PRId64"\n",
                         l, r, *val_rtrn);
-                return false;
+                திரும்பு false;
             }
-            break;
-        case STMT_EXPR_SUBTRACT:
-            if (ckd_sub(val_rtrn, l, r)) {
+            நிறுத்து;
+        நிலை STMT_கோவை_SUBTRACT:
+            எனில் (ckd_sub(val_rtrn, l, r)) {
                 log_err(ctx, XKB_ERROR_INTEGER_OVERFLOW,
                         "Substraction %"PRId64" - %"PRId64" has an invalid "
                         "mathematical result: %"PRId64"\n",
                         l, r, *val_rtrn);
-                return false;
+                திரும்பு false;
             }
-            break;
-        case STMT_EXPR_MULTIPLY:
-            if (ckd_mul(val_rtrn, l, r)) {
+            நிறுத்து;
+        நிலை STMT_கோவை_MULTIPLY:
+            எனில் (ckd_mul(val_rtrn, l, r)) {
                 log_err(ctx, XKB_ERROR_INTEGER_OVERFLOW,
                         "Multiplication %"PRId64" * %"PRId64" has an invalid "
                         "mathematical result: %"PRId64"\n",
                         l, r, *val_rtrn);
-                return false;
+                திரும்பு false;
             }
-            break;
-        case STMT_EXPR_DIVIDE:
-            if (r == 0) {
+            நிறுத்து;
+        நிலை STMT_கோவை_DIVIDE:
+            எனில் (r == 0) {
                 log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                         "Cannot divide by zero: %"PRId64" / %"PRId64"\n", l, r);
-                return false;
+                திரும்பு false;
             }
             *val_rtrn = l / r;
-            break;
-        default:
+            நிறுத்து;
+        இயல்பு:
             log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                     "%s of integers not permitted\n",
-                    stmt_type_to_string(expr->common.type));
-            return false;
+                    stmt_type_to_string(கோவை->common.type));
+            திரும்பு false;
         }
 
-        return true;
+        திரும்பு true;
 
-    case STMT_EXPR_ASSIGN:
+    நிலை STMT_கோவை_ASSIGN:
         log_wsgo(ctx,
                  XKB_ERROR_INVALID_OPERATION,
                  "Assignment operator not implemented yet\n");
-        break;
+        நிறுத்து;
 
-    case STMT_EXPR_NOT:
+    நிலை STMT_கோவை_NOT:
         log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                 "The ! operator cannot be applied to an integer\n");
-        return false;
+        திரும்பு false;
 
-    case STMT_EXPR_INVERT:
-    case STMT_EXPR_NEGATE:
-        left = expr->unary.child;
-        if (!ExprResolveIntegerLookup(ctx, left, &l, pending, lookup, lookupPriv))
-            return false;
+    நிலை STMT_கோவை_INVERT:
+    நிலை STMT_கோவை_NEGATE:
+        இடது = கோவை->unary.child;
+        எனில் (!கோவை_Resolve_Integer_Lookup(ctx, இடது, &l, pending, lookup, lookupPriv))
+            திரும்பு false;
 
-        *val_rtrn = (expr->common.type == STMT_EXPR_NEGATE ? -l : ~l);
-        return true;
+        *val_rtrn = (கோவை->common.type == STMT_கோவை_NEGATE ? -l : ~l);
+        திரும்பு true;
 
-    case STMT_EXPR_UNARY_PLUS:
-        left = expr->unary.child;
-        return ExprResolveIntegerLookup(ctx, left, val_rtrn, pending, lookup,
+    நிலை STMT_கோவை_UNARY_PLUS:
+        இடது = கோவை->unary.child;
+        திரும்பு கோவை_Resolve_Integer_Lookup(ctx, இடது, val_rtrn, pending, lookup,
                                         lookupPriv);
 
-    default:
+    இயல்பு:
         log_wsgo(ctx, XKB_ERROR_UNKNOWN_OPERATOR,
                  "Unknown operator %d in ResolveInteger\n",
-                 expr->common.type);
-        break;
+                 கோவை->common.type);
+        நிறுத்து;
     }
 
-    return false;
+    திரும்பு false;
 }
 
 bool
-ExprResolveInteger(struct xkb_context *ctx, const ExprDef *expr,
+கோவை_Resolve_Integer(கட்டமைப்பு xkb_context *ctx, மாறிலி கோவை_Def *கோவை,
                    int64_t *val_rtrn)
 {
-    return ExprResolveIntegerLookup(ctx, expr, val_rtrn, NULL, NULL, NULL);
+    திரும்பு கோவை_Resolve_Integer_Lookup(ctx, கோவை, val_rtrn, வெற்று, வெற்று, வெற்று);
 }
 
-enum xkb_parser_error
-ExprResolveGroup(const struct xkb_keymap_info *keymap_info,
-                 const ExprDef *expr, bool absolute,
+எண்ணிக்கை xkb_parser_error
+கோவை_Resolve_Group(மாறிலி கட்டமைப்பு xkb_keymap_info *keymap_info,
+                 மாறிலி கோவை_Def *கோவை, bool absolute,
                  xkb_layout_index_t *group_rtrn, bool *pending)
 {
-    static const LookupEntry pendingGroupIndexNames[] = {
+    நிலையான மாறிலி LookupEntry pendingGroupIndexNames[] = {
         { GROUP_LAST_INDEX_NAME, 0 },
-        { NULL, 0 }
+        { வெற்று, 0 }
     };
 
-    const struct named_integer_pattern group_name_pattern = {
+    மாறிலி கட்டமைப்பு named_integer_pattern group_name_pattern = {
         /* Prefix is title-cased, because it is also used in error messages */
         .prefix = "Group",
-        .prefix_length = sizeof("Group") - 1,
+        .prefix_length = அளவு("Group") - 1,
         .min = 1,
         .max = keymap_info->features.max_groups,
         .is_mask = false,
@@ -415,338 +415,338 @@ ExprResolveGroup(const struct xkb_keymap_info *keymap_info,
     };
 
     int64_t result = 0;
-    if (!ExprResolveIntegerLookup(keymap_info->keymap.ctx, expr, &result, pending,
+    எனில் (!கோவை_Resolve_Integer_Lookup(keymap_info->keymap.ctx, கோவை, &result, pending,
                                   NamedIntegerPatternLookup, &group_name_pattern))
-        return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+        திரும்பு (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
             ? PARSER_FATAL_ERROR
             : PARSER_RECOVERABLE_ERROR;
 
-    if (result < (int64_t)absolute || result > keymap_info->features.max_groups) {
+    எனில் (result < (int64_t)absolute || result > keymap_info->features.max_groups) {
         log_err(keymap_info->keymap.ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                 "Group index %"PRId64" is out of range (%u..%"PRIu32")\n",
                 result, absolute, keymap_info->features.max_groups);
-        return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+        திரும்பு (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
             ? PARSER_FATAL_ERROR
             : PARSER_RECOVERABLE_ERROR;
     }
 
     *group_rtrn = (xkb_layout_index_t) result;
-    return PARSER_SUCCESS;
+    திரும்பு PARSER_SUCCESS;
 }
 
 bool
-ExprResolveLevel(struct xkb_context *ctx, const ExprDef *expr,
+கோவை_Resolve_Level(கட்டமைப்பு xkb_context *ctx, மாறிலி கோவை_Def *கோவை,
                  xkb_level_index_t *level_rtrn)
 {
-    static const struct named_integer_pattern level_name_pattern = {
+    நிலையான மாறிலி கட்டமைப்பு named_integer_pattern level_name_pattern = {
         /* Prefix is title-cased, because it is also used in error messages */
         .prefix = "Level",
-        .prefix_length = sizeof("Level") - 1,
+        .prefix_length = அளவு("Level") - 1,
         .min = 1,
         .max = XKB_LEVEL_MAX_IMPL,
         .is_mask = false,
-        .entries = NULL,
+        .entries = வெற்று,
         .error_id = XKB_ERROR_UNSUPPORTED_SHIFT_LEVEL,
     };
     int64_t result = 0;
-    if (!ExprResolveIntegerLookup(ctx, expr, &result, NULL,
+    எனில் (!கோவை_Resolve_Integer_Lookup(ctx, கோவை, &result, வெற்று,
                                   NamedIntegerPatternLookup,
                                   &level_name_pattern))
-        return false;
+        திரும்பு false;
 
-    if (result < 1 || result > XKB_LEVEL_MAX_IMPL) {
+    எனில் (result < 1 || result > XKB_LEVEL_MAX_IMPL) {
         log_err(ctx, XKB_ERROR_UNSUPPORTED_SHIFT_LEVEL,
                 "Shift level %"PRId64" is out of range (1..%u)\n",
                 result, XKB_LEVEL_MAX_IMPL);
-        return false;
+        திரும்பு false;
     }
 
     /* Level is zero-indexed from now on. */
     *level_rtrn = (xkb_level_index_t) (result - 1);
-    return true;
+    திரும்பு true;
 }
 
 bool
-ExprResolveButton(struct xkb_context *ctx, const ExprDef *expr, int64_t *btn_rtrn)
+கோவை_Resolve_Button(கட்டமைப்பு xkb_context *ctx, மாறிலி கோவை_Def *கோவை, int64_t *btn_rtrn)
 {
-    return ExprResolveIntegerLookup(ctx, expr, btn_rtrn, NULL, SimpleLookup,
+    திரும்பு கோவை_Resolve_Integer_Lookup(ctx, கோவை, btn_rtrn, வெற்று, SimpleLookup,
                                     buttonNames);
 }
 
 bool
-ExprResolveString(struct xkb_context *ctx, const ExprDef *expr,
+கோவை_Resolve_String(கட்டமைப்பு xkb_context *ctx, மாறிலி கோவை_Def *கோவை,
                   xkb_atom_t *val_rtrn)
 {
-    switch (expr->common.type) {
-    case STMT_EXPR_STRING_LITERAL:
-        *val_rtrn = expr->string.str;
-        return true;
+    தேர்வு (கோவை->common.type) {
+    நிலை STMT_கோவை_STRING_LITERAL:
+        *val_rtrn = கோவை->string.str;
+        திரும்பு true;
 
-    case STMT_EXPR_INTEGER_LITERAL:
-    case STMT_EXPR_FLOAT_LITERAL:
-    case STMT_EXPR_BOOLEAN_LITERAL:
-    case STMT_EXPR_KEYNAME_LITERAL:
-    case STMT_EXPR_KEYSYM_LITERAL:
+    நிலை STMT_கோவை_INTEGER_LITERAL:
+    நிலை STMT_கோவை_FLOAT_LITERAL:
+    நிலை STMT_கோவை_BOOLEAN_LITERAL:
+    நிலை STMT_கோவை_KEYNAME_LITERAL:
+    நிலை STMT_கோவை_KEYSYM_LITERAL:
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found %s, expected a string\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_to_string(கோவை->common.type));
+        திரும்பு false;
 
-    case STMT_EXPR_IDENT:
+    நிலை STMT_கோவை_IDENT:
         log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                 "Identifier \"%s\" of type string not found\n",
-                xkb_atom_text(ctx, expr->ident.ident));
-        return false;
+                xkb_atom_text(ctx, கோவை->ident.ident));
+        திரும்பு false;
 
-    case STMT_EXPR_FIELD_REF:
+    நிலை STMT_கோவை_FIELD_REF:
         log_err(ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
                 "Default \"%s.%s\" of type string not found\n",
-                xkb_atom_text(ctx, expr->field_ref.element),
-                xkb_atom_text(ctx, expr->field_ref.field));
-        return false;
+                xkb_atom_text(ctx, கோவை->field_ref.element),
+                xkb_atom_text(ctx, கோவை->field_ref.field));
+        திரும்பு false;
 
-    case STMT_EXPR_ADD:
-    case STMT_EXPR_SUBTRACT:
-    case STMT_EXPR_MULTIPLY:
-    case STMT_EXPR_DIVIDE:
-    case STMT_EXPR_ASSIGN:
-    case STMT_EXPR_NEGATE:
-    case STMT_EXPR_INVERT:
-    case STMT_EXPR_NOT:
-    case STMT_EXPR_UNARY_PLUS:
-    case STMT_EXPR_EMPTY_LIST:
-    case STMT_EXPR_ACTION_DECL:
-    case STMT_EXPR_ACTION_LIST:
-    case STMT_EXPR_KEYSYM_LIST:
+    நிலை STMT_கோவை_ADD:
+    நிலை STMT_கோவை_SUBTRACT:
+    நிலை STMT_கோவை_MULTIPLY:
+    நிலை STMT_கோவை_DIVIDE:
+    நிலை STMT_கோவை_ASSIGN:
+    நிலை STMT_கோவை_NEGATE:
+    நிலை STMT_கோவை_INVERT:
+    நிலை STMT_கோவை_NOT:
+    நிலை STMT_கோவை_UNARY_PLUS:
+    நிலை STMT_கோவை_EMPTY_LIST:
+    நிலை STMT_கோவை_ACTION_DECL:
+    நிலை STMT_கோவை_ACTION_LIST:
+    நிலை STMT_கோவை_KEYSYM_LIST:
         log_err(ctx, XKB_ERROR_INVALID_XKB_SYNTAX,
                 "%s of strings not permitted\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_to_string(கோவை->common.type));
+        திரும்பு false;
 
-    default:
+    இயல்பு:
         log_wsgo(ctx, XKB_ERROR_UNKNOWN_OPERATOR,
                  "Unknown operator %d in ResolveString\n",
-                 expr->common.type);
-        break;
+                 கோவை->common.type);
+        நிறுத்து;
     }
-    return false;
+    திரும்பு false;
 }
 
 bool
-ExprResolveEnum(struct xkb_context *ctx, const ExprDef *expr,
-                uint32_t *val_rtrn, const LookupEntry *values)
+கோவை_Resolve_Enum(கட்டமைப்பு xkb_context *ctx, மாறிலி கோவை_Def *கோவை,
+                uint32_t *val_rtrn, மாறிலி LookupEntry *மதிப்புகள்)
 {
-    if (expr->common.type != STMT_EXPR_IDENT) {
+    எனில் (கோவை->common.type != STMT_கோவை_IDENT) {
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found a %s where an enumerated value was expected\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_to_string(கோவை->common.type));
+        திரும்பு false;
     }
 
-    if (!SimpleLookup(ctx, values, expr->ident.ident, val_rtrn, NULL)) {
+    எனில் (!SimpleLookup(ctx, மதிப்புகள், கோவை->ident.ident, val_rtrn, வெற்று)) {
         log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                 "Illegal identifier %s; expected one of:\n",
-                xkb_atom_text(ctx, expr->ident.ident));
-        while (values && values->name)
+                xkb_atom_text(ctx, கோவை->ident.ident));
+        போது (மதிப்புகள் && மதிப்புகள்->name)
         {
-            log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER, "\t%s\n", values->name);
-            values++;
+            log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER, "\t%s\n", மதிப்புகள்->name);
+            மதிப்புகள்++;
         }
-        return false;
+        திரும்பு false;
     }
 
-    return true;
+    திரும்பு true;
 }
 
-static bool
-ExprResolveMaskLookup(struct xkb_context *ctx, const ExprDef *expr,
+நிலையான bool
+கோவை_Resolve_Mask_Lookup(கட்டமைப்பு xkb_context *ctx, மாறிலி கோவை_Def *கோவை,
                       uint32_t *val_rtrn, bool *pending,
-                      IdentLookupFunc lookup, const void *lookupPriv)
+                      IdentLookupFunc lookup, மாறிலி வெறுமை *lookupPriv)
 {
     bool ok = false;
     uint32_t l = 0, r = 0;
     int64_t v = 0;
-    ExprDef *left, *right;
-    const char *bogus = NULL;
+    கோவை_Def *இடது, *வலது;
+    மாறிலி எழுத்து *bogus = வெற்று;
 
-    switch (expr->common.type) {
-    case STMT_EXPR_INTEGER_LITERAL:
-        if (expr->integer.ival < 0 || expr->integer.ival > UINT32_MAX) {
+    தேர்வு (கோவை->common.type) {
+    நிலை STMT_கோவை_INTEGER_LITERAL:
+        எனில் (கோவை->integer.ival < 0 || கோவை->integer.ival > UINT32_MAX) {
             log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Mask %s%#"PRIxMAX" is out of range (0..%#"PRIx32")\n",
-                    expr->integer.ival < 0 ? "-" : "",
-                    imaxabs(expr->integer.ival),
+                    கோவை->integer.ival < 0 ? "-" : "",
+                    imaxabs(கோவை->integer.ival),
                     UINT32_MAX);
-            return false;
+            திரும்பு false;
         }
-        *val_rtrn = (uint32_t) expr->integer.ival;
-        return true;
+        *val_rtrn = (uint32_t) கோவை->integer.ival;
+        திரும்பு true;
 
-    case STMT_EXPR_STRING_LITERAL:
-    case STMT_EXPR_FLOAT_LITERAL:
-    case STMT_EXPR_BOOLEAN_LITERAL:
-    case STMT_EXPR_KEYNAME_LITERAL:
-    case STMT_EXPR_KEYSYM_LITERAL:
+    நிலை STMT_கோவை_STRING_LITERAL:
+    நிலை STMT_கோவை_FLOAT_LITERAL:
+    நிலை STMT_கோவை_BOOLEAN_LITERAL:
+    நிலை STMT_கோவை_KEYNAME_LITERAL:
+    நிலை STMT_கோவை_KEYSYM_LITERAL:
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found %s where a mask was expected\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_to_string(கோவை->common.type));
+        திரும்பு false;
 
-    case STMT_EXPR_IDENT:
-        ok = lookup(ctx, lookupPriv, expr->ident.ident, val_rtrn, pending);
-        if (!ok)
+    நிலை STMT_கோவை_IDENT:
+        ok = lookup(ctx, lookupPriv, கோவை->ident.ident, val_rtrn, pending);
+        எனில் (!ok)
             log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                     "Identifier \"%s\" of type int is unknown\n",
-                    xkb_atom_text(ctx, expr->ident.ident));
-        if (pending && *pending) {
+                    xkb_atom_text(ctx, கோவை->ident.ident));
+        எனில் (pending && *pending) {
             /* Postpone computation */
-            return false;
+            திரும்பு false;
         }
-        return ok;
+        திரும்பு ok;
 
-    case STMT_EXPR_FIELD_REF:
+    நிலை STMT_கோவை_FIELD_REF:
         log_err(ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
                 "Default \"%s.%s\" of type int is unknown\n",
-                xkb_atom_text(ctx, expr->field_ref.element),
-                xkb_atom_text(ctx, expr->field_ref.field));
-        return false;
+                xkb_atom_text(ctx, கோவை->field_ref.element),
+                xkb_atom_text(ctx, கோவை->field_ref.field));
+        திரும்பு false;
 
-    case STMT_EXPR_ARRAY_REF:
+    நிலை STMT_கோவை_ARRAY_REF:
         bogus = "array reference";
         /* fallthrough */
-    case STMT_EXPR_ACTION_DECL:
-        if (bogus == NULL)
+    நிலை STMT_கோவை_ACTION_DECL:
+        எனில் (bogus == வெற்று)
             bogus = "function use";
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Unexpected %s in mask expression; Expression Ignored\n",
                 bogus);
-        return false;
+        திரும்பு false;
 
-    case STMT_EXPR_ADD:
-    case STMT_EXPR_SUBTRACT:
-    case STMT_EXPR_MULTIPLY:
-    case STMT_EXPR_DIVIDE:
-        left = expr->binary.left;
-        right = expr->binary.right;
-        if (!ExprResolveMaskLookup(ctx, left, &l, pending, lookup, lookupPriv) ||
-            !ExprResolveMaskLookup(ctx, right, &r, pending, lookup, lookupPriv))
-            return false;
+    நிலை STMT_கோவை_ADD:
+    நிலை STMT_கோவை_SUBTRACT:
+    நிலை STMT_கோவை_MULTIPLY:
+    நிலை STMT_கோவை_DIVIDE:
+        இடது = கோவை->இருமம்.இடது;
+        வலது = கோவை->இருமம்.வலது;
+        எனில் (!கோவை_Resolve_Mask_Lookup(ctx, இடது, &l, pending, lookup, lookupPriv) ||
+            !கோவை_Resolve_Mask_Lookup(ctx, வலது, &r, pending, lookup, lookupPriv))
+            திரும்பு false;
 
-        switch (expr->common.type) {
-        case STMT_EXPR_ADD:
+        தேர்வு (கோவை->common.type) {
+        நிலை STMT_கோவை_ADD:
             *val_rtrn = l | r;
-            break;
-        case STMT_EXPR_SUBTRACT:
+            நிறுத்து;
+        நிலை STMT_கோவை_SUBTRACT:
             *val_rtrn = l & (~r);
-            break;
-        case STMT_EXPR_MULTIPLY:
-        case STMT_EXPR_DIVIDE:
+            நிறுத்து;
+        நிலை STMT_கோவை_MULTIPLY:
+        நிலை STMT_கோவை_DIVIDE:
             log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                     "Cannot %s masks; Illegal operation ignored\n",
-                    (expr->common.type == STMT_EXPR_DIVIDE ? "divide" : "multiply"));
-            return false;
-        default:
-            break;
+                    (கோவை->common.type == STMT_கோவை_DIVIDE ? "divide" : "multiply"));
+            திரும்பு false;
+        இயல்பு:
+            நிறுத்து;
         }
 
-        return true;
+        திரும்பு true;
 
-    case STMT_EXPR_ASSIGN:
+    நிலை STMT_கோவை_ASSIGN:
         log_wsgo(ctx, XKB_ERROR_INVALID_OPERATION,
                  "Assignment operator not implemented yet\n");
-        break;
+        நிறுத்து;
 
-    case STMT_EXPR_INVERT:
-        left = expr->unary.child;
-        if (!ExprResolveIntegerLookup(ctx, left, &v, pending, lookup, lookupPriv))
-            return false;
-        if (v < 0 || v > UINT32_MAX) {
+    நிலை STMT_கோவை_INVERT:
+        இடது = கோவை->unary.child;
+        எனில் (!கோவை_Resolve_Integer_Lookup(ctx, இடது, &v, pending, lookup, lookupPriv))
+            திரும்பு false;
+        எனில் (v < 0 || v > UINT32_MAX) {
             log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Mask %s%#"PRIxMAX" is out of range (0..%#"PRIx32")\n",
                     v < 0 ? "-" : "", imaxabs(v), UINT32_MAX);
-            return false;
+            திரும்பு false;
         }
         *val_rtrn = ~(uint32_t) v;
-        return true;
+        திரும்பு true;
 
-    case STMT_EXPR_UNARY_PLUS:
-    case STMT_EXPR_NEGATE:
-    case STMT_EXPR_NOT:
-        left = expr->unary.child;
-        if (!ExprResolveIntegerLookup(ctx, left, &v, pending, lookup, lookupPriv))
-            return false;
+    நிலை STMT_கோவை_UNARY_PLUS:
+    நிலை STMT_கோவை_NEGATE:
+    நிலை STMT_கோவை_NOT:
+        இடது = கோவை->unary.child;
+        எனில் (!கோவை_Resolve_Integer_Lookup(ctx, இடது, &v, pending, lookup, lookupPriv))
+            திரும்பு false;
         log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                 "The '%c' unary operator cannot be used with a mask\n",
-                stmt_type_to_operator_char(expr->common.type));
-        return false;
+                stmt_type_to_operator_char(கோவை->common.type));
+        திரும்பு false;
 
-    default:
+    இயல்பு:
         log_wsgo(ctx, XKB_ERROR_UNKNOWN_OPERATOR,
                  "Unknown operator type %d in ResolveMask\n",
-                 expr->common.type);
-        break;
+                 கோவை->common.type);
+        நிறுத்து;
     }
 
-    return false;
+    திரும்பு false;
 }
 
 bool
-ExprResolveMask(struct xkb_context *ctx, const ExprDef *expr,
-                uint32_t *mask_rtrn, const LookupEntry *values)
+கோவை_Resolve_Mask(கட்டமைப்பு xkb_context *ctx, மாறிலி கோவை_Def *கோவை,
+                uint32_t *mask_rtrn, மாறிலி LookupEntry *மதிப்புகள்)
 {
-    return ExprResolveMaskLookup(ctx, expr, mask_rtrn, NULL, SimpleLookup, values);
+    திரும்பு கோவை_Resolve_Mask_Lookup(ctx, கோவை, mask_rtrn, வெற்று, SimpleLookup, மதிப்புகள்);
 }
 
 bool
-ExprResolveModMask(struct xkb_context *ctx, const ExprDef *expr,
-                   enum mod_type mod_type, const struct xkb_mod_set *mods,
+கோவை_Resolve_Mod_Mask(கட்டமைப்பு xkb_context *ctx, மாறிலி கோவை_Def *கோவை,
+                   எண்ணிக்கை mod_type mod_type, மாறிலி கட்டமைப்பு xkb_mod_set *mods,
                    xkb_mod_mask_t *mask_rtrn)
 {
     LookupModMaskPriv priv = { .mods = mods, .mod_type = mod_type };
-    return ExprResolveMaskLookup(ctx, expr, mask_rtrn, NULL, LookupModMask, &priv);
+    திரும்பு கோவை_Resolve_Mask_Lookup(ctx, கோவை, mask_rtrn, வெற்று, LookupModMask, &priv);
 }
 
 bool
-ExprResolveMod(struct xkb_context *ctx, const ExprDef *def,
-               enum mod_type mod_type, const struct xkb_mod_set *mods,
+கோவை_Resolve_Mod(கட்டமைப்பு xkb_context *ctx, மாறிலி கோவை_Def *def,
+               எண்ணிக்கை mod_type mod_type, மாறிலி கட்டமைப்பு xkb_mod_set *mods,
                xkb_mod_index_t *ndx_rtrn)
 {
-    if (def->common.type != STMT_EXPR_IDENT) {
+    எனில் (def->common.type != STMT_கோவை_IDENT) {
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Cannot resolve virtual modifier: "
                 "found %s where a virtual modifier name was expected\n",
                 stmt_type_to_string(def->common.type));
-        return false;
+        திரும்பு false;
     }
 
     xkb_atom_t name = def->ident.ident;
     xkb_mod_index_t ndx = XkbModNameToIndex(mods, name, mod_type);
-    if (ndx == XKB_MOD_INVALID) {
+    எனில் (ndx == XKB_MOD_INVALID) {
         log_err(ctx, XKB_ERROR_UNDECLARED_VIRTUAL_MODIFIER,
                 "Cannot resolve virtual modifier: "
                 "\"%s\" was not previously declared\n",
                 xkb_atom_text(ctx, name));
-        return false;
+        திரும்பு false;
     }
 
     *ndx_rtrn = ndx;
-    return true;
+    திரும்பு true;
 }
 
 bool
-ExprResolveGroupMask(const struct xkb_keymap_info *keymap_info,
-                     const ExprDef *expr, xkb_layout_mask_t *group_rtrn,
+கோவை_Resolve_Group_Mask(மாறிலி கட்டமைப்பு xkb_keymap_info *keymap_info,
+                     மாறிலி கோவை_Def *கோவை, xkb_layout_mask_t *group_rtrn,
                      bool *pending_rtrn)
 {
-    static const LookupEntry pendingGroupMaskNames[] = {
+    நிலையான மாறிலி LookupEntry pendingGroupMaskNames[] = {
         { GROUP_LAST_INDEX_NAME, 0 },
-        { NULL, 0 }
+        { வெற்று, 0 }
     };
 
-    const struct named_integer_pattern group_name_pattern = {
+    மாறிலி கட்டமைப்பு named_integer_pattern group_name_pattern = {
         /* Prefix is title-cased, because it is also used in error messages */
         .prefix = "Group",
-        .prefix_length = sizeof("Group") - 1,
+        .prefix_length = அளவு("Group") - 1,
         .min = 1,
         .max = keymap_info->features.max_groups,
         .is_mask = true,
@@ -755,7 +755,7 @@ ExprResolveGroupMask(const struct xkb_keymap_info *keymap_info,
         .error_id = XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_
     };
 
-    return ExprResolveMaskLookup(keymap_info->keymap.ctx, expr, group_rtrn,
+    திரும்பு கோவை_Resolve_Mask_Lookup(keymap_info->keymap.ctx, கோவை, group_rtrn,
                                  pending_rtrn, NamedIntegerPatternLookup,
                                  &group_name_pattern);
 }

@@ -4,11 +4,11 @@
  */
 #pragma once
 
-#include "config.h"
+#அந்தர்பாவ "config.h"
 
-#include "xkbcommon/xkbcommon-compose.h"
-#include "src/utils.h"
-#include "src/context.h"
+#அந்தர்பாவ "xkbcommon/xkbcommon-compose.h"
+#அந்தர்பாவ "src/utils.h"
+#அந்தர்பாவ "src/context.h"
 
 /*
  * The compose table data structure is a ternary search tree.
@@ -62,7 +62,7 @@
 #define MAX_COMPOSE_NODES_LOG2 23
 #define MAX_COMPOSE_NODES (1u << MAX_COMPOSE_NODES_LOG2)
 
-struct compose_node {
+கட்டமைப்பு compose_முனை {
     xkb_keysym_t keysym;
 
     /* Offset into xkb_compose_table::nodes or 0. */
@@ -70,18 +70,18 @@ struct compose_node {
     /* Offset into xkb_compose_table::nodes or 0. */
     uint32_t hikid;
 
-    union {
-        struct {
+    ஒன்றிப்பு {
+        கட்டமைப்பு {
             uint32_t _pad:31;
             bool is_leaf:1;
         };
-        struct {
+        கட்டமைப்பு {
             uint32_t _pad:31;
             bool is_leaf:1;
             /* Offset into xkb_compose_table::nodes or 0. */
             uint32_t eqkid;
         } internal;
-        struct {
+        கட்டமைப்பு {
             /* Offset into xkb_compose_table::utf8. */
             uint32_t utf8:31;
             bool is_leaf:1;
@@ -90,21 +90,21 @@ struct compose_node {
     };
 };
 
-struct xkb_compose_table {
-    int refcnt;
-    enum xkb_compose_format format;
-    enum xkb_compose_compile_flags flags;
-    struct xkb_context *ctx;
+கட்டமைப்பு xkb_compose_table {
+    முழு refcnt;
+    எண்ணிக்கை xkb_compose_format format;
+    எண்ணிக்கை xkb_compose_compile_flags flags;
+    கட்டமைப்பு xkb_context *ctx;
 
-    char *locale;
+    எழுத்து *locale;
 
     darray_char utf8;
-    darray(struct compose_node) nodes;
+    darray(கட்டமைப்பு compose_முனை) nodes;
 };
 
-struct xkb_compose_table_entry {
+கட்டமைப்பு xkb_compose_table_entry {
     size_t sequence_length;
     xkb_keysym_t *sequence ATTR_COUNTED_BY(sequence_length);
     xkb_keysym_t keysym;
-    const char *utf8;
+    மாறிலி எழுத்து *utf8;
 };

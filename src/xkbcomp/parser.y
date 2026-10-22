@@ -12,33 +12,33 @@
 
 /* The following goes in the header */
 %code requires {
-#include "config.h"
+#அந்தர்பாவ "config.h"
 
-#include "scanner-utils.h"
-#include "xkbcomp/ast.h"
-#include "xkbcomp/xkbcomp-priv.h"
+#அந்தர்பாவ "scanner-utils.h"
+#அந்தர்பாவ "xkbcomp/ast.h"
+#அந்தர்பாவ "xkbcomp/xkbcomp-priv.h"
 }
 
 %{
-#include "config.h"
+#அந்தர்பாவ "config.h"
 
-#include <assert.h>
+#அந்தர்பாவ <assert.h>
 
-#include "keysym.h"
-#include "xkbcomp/xkbcomp-priv.h"
-#include "xkbcomp/parser-priv.h"
-#include "xkbcomp/ast-build.h"
+#அந்தர்பாவ "keysym.h"
+#அந்தர்பாவ "xkbcomp/xkbcomp-priv.h"
+#அந்தர்பாவ "xkbcomp/parser-priv.h"
+#அந்தர்பாவ "xkbcomp/ast-build.h"
 
-struct parser_param {
-    struct xkb_context *ctx;
-    struct scanner *scanner;
+கட்டமைப்பு parser_param {
+    கட்டமைப்பு xkb_context *ctx;
+    கட்டமைப்பு scanner *scanner;
     XkbFile *rtrn;
-    struct parser_keymap_config config;
+    கட்டமைப்பு parser_keymap_config config;
     bool more_maps;
 };
 
-#define parser_log_with_code(param, level, verbosity, log_msg_id, fmt, ...)   \
-    scanner_log_with_code((param)->scanner, level, verbosity, log_msg_id, fmt,\
+#define parser_log_with_code(param, level, verbosity, log_செய்தி_id, fmt, ...)   \
+    scanner_log_with_code((param)->scanner, level, verbosity, log_செய்தி_id, fmt,\
                           ##__VA_ARGS__)
 
 #define parser_err(param, error_id, fmt, ...) \
@@ -50,52 +50,52 @@ struct parser_param {
 #define parser_vrb(param, verbosity, warning_id, fmt, ...) \
     scanner_vrb((param)->scanner, verbosity, warning_id, fmt, ##__VA_ARGS__)
 
-static void
-_xkbcommon_error(struct parser_param *param, const char *msg)
+நிலையான வெறுமை
+_xkbcommon_error(கட்டமைப்பு parser_param *param, மாறிலி எழுத்து *செய்தி)
 {
-    parser_err(param, XKB_ERROR_INVALID_XKB_SYNTAX, "%s", msg);
+    parser_err(param, XKB_ERROR_INVALID_XKB_SYNTAX, "%s", செய்தி);
 }
 
-static bool
-resolve_keysym(struct parser_param *param, struct sval name, xkb_keysym_t *sym_rtrn)
+நிலையான bool
+resolve_keysym(கட்டமைப்பு parser_param *param, கட்டமைப்பு sval name, xkb_keysym_t *sym_rtrn)
 {
     xkb_keysym_t sym;
 
-    if (isvaleq(name, SVAL_LIT("any")) || isvaleq(name, SVAL_LIT("nosymbol"))) {
-        *sym_rtrn = XKB_KEY_NoSymbol;
-        return true;
+    எனில் (isvaleq(name, SVAL_LIT("any")) || isvaleq(name, SVAL_LIT("nosymbol"))) {
+        *sym_rtrn = XKB_சாவி_No_குறியீடு;
+        திரும்பு true;
     }
 
-    if (isvaleq(name, SVAL_LIT("none")) || isvaleq(name, SVAL_LIT("voidsymbol"))) {
-        *sym_rtrn = XKB_KEY_VoidSymbol;
-        return true;
+    எனில் (isvaleq(name, SVAL_LIT("none")) || isvaleq(name, SVAL_LIT("voidsymbol"))) {
+        *sym_rtrn = XKB_சாவி_Void_குறியீடு;
+        திரும்பு true;
     }
 
     /* xkb_keysym_from_name needs a C string. */
-    char buf[XKB_KEYSYM_NAME_MAX_SIZE];
-    if (name.len >= sizeof(buf)) {
-        return false;
+    எழுத்து buf[XKB_KEYSYM_NAME_MAX_SIZE];
+    எனில் (name.len >= அளவு(buf)) {
+        திரும்பு false;
     }
     memcpy(buf, name.start, name.len);
     buf[name.len] = '\0';
 
     sym = xkb_keysym_from_name(buf, XKB_KEYSYM_NO_FLAGS);
-    if (sym != XKB_KEY_NoSymbol) {
+    எனில் (sym != XKB_சாவி_No_குறியீடு) {
         *sym_rtrn = sym;
         check_deprecated_keysyms(parser_warn, param, param->ctx,
                                  sym, buf, buf, "%s", "");
-        return true;
+        திரும்பு true;
     }
 
-    return false;
+    திரும்பு false;
 }
 
 #define param_scanner param->scanner
 %}
 
 %define api.pure
-%lex-param      { struct scanner *param_scanner }
-%parse-param    { struct parser_param *param }
+%lex-param      { கட்டமைப்பு scanner *param_scanner }
+%parse-param    { கட்டமைப்பு parser_param *param }
 
 %define parse.error detailed
 
@@ -119,13 +119,13 @@ resolve_keysym(struct parser_param *param, struct sval name, xkb_keysym_t *sym_r
         TYPE            21 "type"
         INTERPRET       22 "interpret"
         ACTION_TOK      23 "action"
-        KEY             24 "key"
+        சாவி_3             24 "key"
         ALIAS           25 "alias"
         GROUP           26 "group"
         MODIFIER_MAP    27 "modifier_map"
         INDICATOR       28 "indicator"
         SHAPE           29 "shape"
-        KEYS            30 "keys"
+        சாவிகள்_2            30 "keys"
         ROW             31 "row"
         SECTION         32 "section"
         OVERLAY         33 "overlay"
@@ -159,10 +159,10 @@ resolve_keysym(struct parser_param *param, struct sval name, xkb_keysym_t *sym_r
         PARTIAL         70 "partial"
         DEFAULT         71 "default"
         HIDDEN          72 "hidden"
-        ALPHANUMERIC_KEYS       73 "alphanumeric_keys"
-        MODIFIER_KEYS           74 "modifier_keys"
-        KEYPAD_KEYS             75 "keypad_keys"
-        FUNCTION_KEYS           76 "function_keys"
+        ALPHANUMERIC_சாவிகள்       73 "alphanumeric_keys"
+        MODIFIER_சாவிகள்           74 "modifier_keys"
+        KEYPAD_சாவிகள்             75 "keypad_keys"
+        FUNCTION_சாவிகள்           76 "function_keys"
         ALTERNATE_GROUP         77 "alternate_group"
         DEPRECATED              78 "deprecated"
 
@@ -174,89 +174,89 @@ resolve_keysym(struct parser_param *param, struct sval name, xkb_keysym_t *sym_r
 
 %start  XkbFile
 
-%union  {
-        int64_t          num;
-        enum xkb_file_type file_type;
-        char            *str;
-        struct sval     sval;
+%ஒன்றிப்பு  {
+        int64_t          இலக்கம்;
+        எண்ணிக்கை xkb_file_type file_type;
+        எழுத்து            *str;
+        கட்டமைப்பு sval     sval;
         xkb_atom_t      atom;
-        enum merge_mode merge;
-        enum xkb_map_flags mapFlags;
+        எண்ணிக்கை merge_mode merge;
+        எண்ணிக்கை xkb_map_flags mapFlags;
         xkb_keysym_t    keysym;
         ParseCommon     *any;
-        struct { ParseCommon *head; ParseCommon *last; } anyList;
-        uint32_t        noSymbolOrActionList;
-        ExprDef         *expr;
-        struct { ExprDef *head; ExprDef *last; } exprList;
+        கட்டமைப்பு { ParseCommon *head; ParseCommon *last; } anyList;
+        uint32_t        no_குறியீடு_Or_Action_List;
+        கோவை_Def         *கோவை;
+        கட்டமைப்பு { கோவை_Def *head; கோவை_Def *last; } கோவை_List;
         VarDef          *var;
-        struct { VarDef *head; VarDef *last; } varList;
+        கட்டமைப்பு { VarDef *head; VarDef *last; } varList;
         VModDef         *vmod;
-        struct { VModDef *head; VModDef *last; } vmodList;
+        கட்டமைப்பு { VModDef *head; VModDef *last; } vmodList;
         InterpDef       *interp;
-        KeyTypeDef      *keyType;
+        சாவி_Type_Def      *சாவி_Type;
         SymbolsDef      *syms;
         ModMapDef       *modMask;
         GroupCompatDef  *groupCompat;
         LedMapDef       *ledMap;
         LedNameDef      *ledName;
-        KeycodeDef      *keyCode;
-        KeyAliasDef     *keyAlias;
+        KeycodeDef      *சாவி_Code;
+        சாவி_Alias_Def     *சாவி_Alias;
         UnknownStatement *unknown;
-        void            *geom;
+        வெறுமை            *geom;
         XkbFile         *file;
-        struct { XkbFile *head; XkbFile *last; } fileList;
+        கட்டமைப்பு { XkbFile *head; XkbFile *last; } fileList;
 }
 
-%type <num>     DECIMAL_DIGIT INTEGER FLOAT
-%type <str>     STRING
-%type <sval>    IDENT
-%type <atom>    KEYNAME
-%type <num>     KeyCode Number Integer Float SignedNumber DoodadType
-%type <merge>   MergeMode OptMergeMode
-%type <file_type> XkbCompositeType FileType
-%type <mapFlags> Flag Flags OptFlags
-%type <str>     MapName OptMapName
-%type <atom>    FieldSpec Ident Element String
-%type <keysym>  KeySym KeySymLit
-%type <noSymbolOrActionList> NoSymbolOrActionList
-%type <any>     Decl
-%type <anyList> DeclList
-%type <expr>    Expr Term Lhs Terminal OptTerminal Coord CoordList
-%type <expr>    MultiKeySymOrActionList NonEmptyActions Actions Action
-%type <expr>    KeySyms NonEmptyKeySyms KeySymList KeyOrKeySym
-%type <exprList> ExprList KeyOrKeySymList
-%type <exprList> ActionList MultiActionList MultiKeySymList
-%type <var>     VarDecl SymbolsVarDecl
-%type <varList> VarDeclList SymbolsBody OptSymbolsBody
-%type <vmod>    VModDef
-%type <vmodList> VModDefList VModDecl
-%type <interp>  InterpretDecl InterpretMatch
-%type <keyType> KeyTypeDecl
-%type <syms>    SymbolsDecl
-%type <modMask> ModMapDecl
-%type <groupCompat> GroupCompatDecl
-%type <ledMap>  LedMapDecl
-%type <ledName> LedNameDecl
-%type <keyCode> KeyNameDecl
-%type <keyAlias> KeyAliasDecl
-%type <geom>    ShapeDecl SectionDecl SectionBody SectionBodyItem RowBody RowBodyItem
-%type <geom>    Keys Key OverlayDecl OverlayKeyList OverlayKey OutlineList OutlineInList
-%type <geom>    DoodadDecl
-%type <unknown> UnknownDecl UnknownCompoundStatementDecl
-%type <file>    XkbFile XkbMapConfig
-%type <fileList> XkbMapConfigList
-%type <file>    XkbCompositeMap
+%வகை <இலக்கம்>     DECIMAL_DIGIT INTEGER FLOAT
+%வகை <str>     STRING
+%வகை <sval>    IDENT
+%வகை <atom>    KEYNAME
+%வகை <இலக்கம்>     சாவி_Code_2 எண் Integer Float Signed_எண் DoodadType
+%வகை <merge>   MergeMode OptMergeMode
+%வகை <file_type> XkbCompositeType FileType
+%வகை <mapFlags> Flag Flags OptFlags
+%வகை <str>     MapName OptMapName
+%வகை <atom>    FieldSpec Ident Element String
+%வகை <keysym>  சாவி_Sym_2 சாவி_Sym_Lit
+%வகை <no_குறியீடு_Or_Action_List> No_குறியீடு_Or_Action_List
+%வகை <any>     Decl
+%வகை <anyList> DeclList
+%வகை <கோவை>    கோவை_2 Term Lhs Terminal OptTerminal Coord CoordList
+%வகை <கோவை>    Multi_சாவி_Sym_Or_Action_List NonEmptyActions Actions Action
+%வகை <கோவை>    சாவி_Syms Non_Empty_சாவி_Syms சாவி_Sym_List சாவி_Or_சாவி_Sym
+%வகை <கோவை_List> கோவை_List_2 சாவி_Or_சாவி_Sym_List
+%வகை <கோவை_List> ActionList MultiActionList Multi_சாவி_Sym_List
+%வகை <var>     VarDecl SymbolsVarDecl
+%வகை <varList> VarDeclList SymbolsBody OptSymbolsBody
+%வகை <vmod>    VModDef
+%வகை <vmodList> VModDefList VModDecl
+%வகை <interp>  InterpretDecl InterpretMatch
+%வகை <சாவி_Type> சாவி_Type_Decl
+%வகை <syms>    SymbolsDecl
+%வகை <modMask> ModMapDecl
+%வகை <groupCompat> GroupCompatDecl
+%வகை <ledMap>  LedMapDecl
+%வகை <ledName> LedNameDecl
+%வகை <சாவி_Code> சாவி_Name_Decl
+%வகை <சாவி_Alias> சாவி_Alias_Decl
+%வகை <geom>    ShapeDecl SectionDecl SectionBody SectionBodyItem RowBody RowBodyItem
+%வகை <geom>    சாவிகள்_3 சாவி_4 OverlayDecl Overlay_சாவி_List Overlay_சாவி OutlineList OutlineInList
+%வகை <geom>    DoodadDecl
+%வகை <unknown> UnknownDecl UnknownCompoundStatementDecl
+%வகை <file>    XkbFile XkbMapConfig
+%வகை <fileList> XkbMapConfigList
+%வகை <file>    XkbCompositeMap
 
 %destructor { FreeStmt((ParseCommon *) $$); }
-    <any> <expr> <var> <vmod> <interp> <keyType> <syms> <modMask> <groupCompat>
-    <ledMap> <ledName> <keyCode> <keyAlias>
+    <any> <கோவை> <var> <vmod> <interp> <சாவி_Type> <syms> <modMask> <groupCompat>
+    <ledMap> <ledName> <சாவி_Code> <சாவி_Alias>
 %destructor { FreeStmt((ParseCommon *) $$.head); }
-    <anyList> <exprList> <varList> <vmodList>
+    <anyList> <கோவை_List> <varList> <vmodList>
 /* The destructor also runs on the start symbol when the parser *succeeds*.
  * The `if` here catches this case. */
-%destructor { if (!param->rtrn) FreeXkbFile($$); } <file>
+%destructor { எனில் (!param->rtrn) FreeXkbFile($$); } <file>
 %destructor { FreeXkbFile($$.head); } <fileList>
-%destructor { free($$); } <str>
+%destructor { விடுவி($$); } <str>
 
 %%
 
@@ -273,11 +273,11 @@ resolve_keysym(struct parser_param *param, struct sval name, xkb_keysym_t *sym_r
  */
 
 XkbFile         :       XkbCompositeMap
-                        { $$ = param->rtrn = $1; param->more_maps = !!param->rtrn; (void) yynerrs; }
+                        { $$ = param->rtrn = $1; param->more_maps = !!param->rtrn; (வெறுமை) yynerrs; }
                 |       XkbMapConfig
                         { $$ = param->rtrn = $1; param->more_maps = !!param->rtrn; YYACCEPT; }
                 |       END_OF_FILE
-                        { $$ = param->rtrn = NULL; param->more_maps = false; }
+                        { $$ = param->rtrn = வெற்று; param->more_maps = false; }
                 ;
 
 XkbCompositeMap :       OptFlags XkbCompositeType OptMapName OBRACE
@@ -296,24 +296,24 @@ XkbCompositeType:       XKB_KEYMAP      { $$ = FILE_TYPE_KEYMAP; }
  */
 XkbMapConfigList :      XkbMapConfigList XkbMapConfig
                         {
-                            if ($2) {
-                                if ($1.head) {
+                            எனில் ($2) {
+                                எனில் ($1.head) {
                                     $$.head = $1.head;
                                     $$.last->common.next = &$2->common;
                                     $$.last = $2;
-                                } else {
+                                } இல்லையெனில் {
                                     $$.head = $$.last = $2;
                                 }
                             }
                         }
-                |       { $$.head = $$.last = NULL; }
+                |       { $$.head = $$.last = வெற்று; }
                 ;
 
 XkbMapConfig    :       OptFlags FileType OptMapName OBRACE
                             DeclList
                         CBRACE SEMI
                         {
-                            if ($1 & MAP_IS_DEPRECATED) {
+                            எனில் ($1 & MAP_IS_DEPRECATED) {
                                 parser_warn(param, XKB_WARNING_DEPRECATED_SECTION,
                                             "deprecated section: \"%s\"",
                                             safe_map_name($3));
@@ -340,15 +340,15 @@ Flags           :       Flags Flag              { $$ = ($1 | $2); }
 Flag            :       PARTIAL                 { $$ = MAP_IS_PARTIAL; }
                 |       DEFAULT                 { $$ = MAP_IS_DEFAULT; }
                 |       HIDDEN                  { $$ = MAP_IS_HIDDEN; }
-                |       ALPHANUMERIC_KEYS       { $$ = MAP_HAS_ALPHANUMERIC; }
-                |       MODIFIER_KEYS           { $$ = MAP_HAS_MODIFIER; }
-                |       KEYPAD_KEYS             { $$ = MAP_HAS_KEYPAD; }
-                |       FUNCTION_KEYS           { $$ = MAP_HAS_FN; }
+                |       ALPHANUMERIC_சாவிகள்       { $$ = MAP_HAS_ALPHANUMERIC; }
+                |       MODIFIER_சாவிகள்           { $$ = MAP_HAS_MODIFIER; }
+                |       KEYPAD_சாவிகள்             { $$ = MAP_HAS_KEYPAD; }
+                |       FUNCTION_சாவிகள்           { $$ = MAP_HAS_FN; }
                 |       ALTERNATE_GROUP         { $$ = MAP_IS_ALTGR; }
                 |       DEPRECATED              { $$ = MAP_IS_DEPRECATED; }
                 |       IDENT
                         {
-                            const bool error = (param->config.strict & PARSER_NO_UNKNOWN_SECTION_FLAGS);
+                            மாறிலி bool error = (param->config.strict & PARSER_NO_UNKNOWN_SECTION_FLAGS);
                             parser_log_with_code(
                                 param, (error ? XKB_LOG_LEVEL_ERROR : XKB_LOG_LEVEL_WARNING),
                                 XKB_LOG_VERBOSITY_MINIMAL,
@@ -357,7 +357,7 @@ Flag            :       PARTIAL                 { $$ = MAP_IS_PARTIAL; }
                                 (unsigned)$1.len, $1.start,
                                 (error ? "" : "; ignored")
                             );
-                            if (error)
+                            எனில் (error)
                                 YYABORT;
                             $$ = 0;
                         }
@@ -365,10 +365,10 @@ Flag            :       PARTIAL                 { $$ = MAP_IS_PARTIAL; }
 
 DeclList        :       DeclList Decl
                         {
-                            if ($2) {
-                                if ($1.head) {
+                            எனில் ($2) {
+                                எனில் ($1.head) {
                                     $$.head = $1.head; $1.last->next = $2; $$.last = $2;
-                                } else {
+                                } இல்லையெனில் {
                                     $$.head = $$.last = $2;
                                 }
                             }
@@ -380,15 +380,15 @@ DeclList        :       DeclList Decl
                          */
                 |       DeclList OptMergeMode VModDecl
                         {
-                            for (VModDef *vmod = $3.head; vmod; vmod = (VModDef *) vmod->common.next)
+                            க்கு (VModDef *vmod = $3.head; vmod; vmod = (VModDef *) vmod->common.next)
                                 vmod->merge = $2;
-                            if ($1.head) {
+                            எனில் ($1.head) {
                                 $$.head = $1.head; $1.last->next = &$3.head->common; $$.last = &$3.last->common;
-                            } else {
+                            } இல்லையெனில் {
                                 $$.head = &$3.head->common; $$.last = &$3.last->common;
                             }
                         }
-                |       { $$.head = $$.last = NULL; }
+                |       { $$.head = $$.last = வெற்று; }
                 ;
 
 Decl            :       OptMergeMode VarDecl
@@ -402,17 +402,17 @@ Decl            :       OptMergeMode VarDecl
                             $2->merge = $1;
                             $$ = (ParseCommon *) $2;
                         }
-                |       OptMergeMode KeyNameDecl
+                |       OptMergeMode சாவி_Name_Decl
                         {
                             $2->merge = $1;
                             $$ = (ParseCommon *) $2;
                         }
-                |       OptMergeMode KeyAliasDecl
+                |       OptMergeMode சாவி_Alias_Decl
                         {
                             $2->merge = $1;
                             $$ = (ParseCommon *) $2;
                         }
-                |       OptMergeMode KeyTypeDecl
+                |       OptMergeMode சாவி_Type_Decl
                         {
                             $2->merge = $1;
                             $$ = (ParseCommon *) $2;
@@ -442,9 +442,9 @@ Decl            :       OptMergeMode VarDecl
                             $2->merge = $1;
                             $$ = (ParseCommon *) $2;
                         }
-                |       OptMergeMode ShapeDecl          { $$ = NULL; }
-                |       OptMergeMode SectionDecl        { $$ = NULL; }
-                |       OptMergeMode DoodadDecl         { $$ = NULL; }
+                |       OptMergeMode ShapeDecl          { $$ = வெற்று; }
+                |       OptMergeMode SectionDecl        { $$ = வெற்று; }
+                |       OptMergeMode DoodadDecl         { $$ = வெற்று; }
                 |       OptMergeMode UnknownDecl
                             { $$ = (ParseCommon *) $2; }
                 |       OptMergeMode UnknownCompoundStatementDecl
@@ -452,11 +452,11 @@ Decl            :       OptMergeMode VarDecl
                 |       MergeMode STRING
                         {
                             $$ = (ParseCommon *) IncludeCreate(param->ctx, $2, $1);
-                            free($2);
+                            விடுவி($2);
                         }
                 ;
 
-VarDecl         :       Lhs EQUALS Expr SEMI
+VarDecl         :       Lhs EQUALS கோவை_2 SEMI
                         { $$ = VarCreate($1, $3); }
                 |       Ident SEMI
                         { $$ = BoolVarCreate($1, true); }
@@ -464,12 +464,12 @@ VarDecl         :       Lhs EQUALS Expr SEMI
                         { $$ = BoolVarCreate($2, false); }
                 ;
 
-KeyNameDecl     :       KEYNAME EQUALS KeyCode SEMI
+சாவி_Name_Decl     :       KEYNAME EQUALS சாவி_Code_2 SEMI
                         { $$ = KeycodeCreate($1, $3); }
                 ;
 
-KeyAliasDecl    :       ALIAS KEYNAME EQUALS KEYNAME SEMI
-                        { $$ = KeyAliasCreate($2, $4); }
+சாவி_Alias_Decl    :       ALIAS KEYNAME EQUALS KEYNAME SEMI
+                        { $$ = சாவி_Alias_Create($2, $4); }
                 ;
 
 VModDecl        :       VIRTUAL_MODS VModDefList SEMI
@@ -483,8 +483,8 @@ VModDefList     :       VModDefList COMMA VModDef
                 ;
 
 VModDef         :       Ident
-                        { $$ = VModCreate($1, NULL); }
-                |       Ident EQUALS Expr
+                        { $$ = VModCreate($1, வெற்று); }
+                |       Ident EQUALS கோவை_2
                         { $$ = VModCreate($1, $3); }
                 ;
 
@@ -494,41 +494,41 @@ InterpretDecl   :       INTERPRET InterpretMatch OBRACE
                         { $2->def = $4.head; $$ = $2; }
                 ;
 
-InterpretMatch  :       KeySym PLUS Expr
+InterpretMatch  :       சாவி_Sym_2 PLUS கோவை_2
                         { $$ = InterpCreate($1, $3); }
-                |       KeySym
-                        { $$ = InterpCreate($1, NULL); }
+                |       சாவி_Sym_2
+                        { $$ = InterpCreate($1, வெற்று); }
                 ;
 
 VarDeclList     :       VarDeclList VarDecl
                         {
-                            if ($2) {
-                                if ($1.head) {
+                            எனில் ($2) {
+                                எனில் ($1.head) {
                                     $$.head = $1.head;
                                     $$.last->common.next = &$2->common;
                                     $$.last = $2;
-                                } else {
+                                } இல்லையெனில் {
                                     $$.head = $$.last = $2;
                                 }
                             }
                         }
-                |       { $$.head = $$.last = NULL; }
+                |       { $$.head = $$.last = வெற்று; }
                 ;
 
-KeyTypeDecl     :       TYPE String OBRACE
+சாவி_Type_Decl     :       TYPE String OBRACE
                             VarDeclList
                         CBRACE SEMI
-                        { $$ = KeyTypeCreate($2, $4.head); }
+                        { $$ = சாவி_Type_Create($2, $4.head); }
                 ;
 
-SymbolsDecl     :       KEY KEYNAME OBRACE
+SymbolsDecl     :       சாவி_3 KEYNAME OBRACE
                             OptSymbolsBody
                         CBRACE SEMI
                         { $$ = SymbolsCreate($2, $4.head); }
                 ;
 
 OptSymbolsBody  :       SymbolsBody { $$ = $1; }
-                |                   { $$.head = $$.last = NULL; }
+                |                   { $$.head = $$.last = வெற்று; }
                 ;
 
 SymbolsBody     :       SymbolsBody COMMA SymbolsVarDecl
@@ -537,11 +537,11 @@ SymbolsBody     :       SymbolsBody COMMA SymbolsVarDecl
                         { $$.head = $$.last = $1; }
                 ;
 
-SymbolsVarDecl  :       Lhs EQUALS Expr         { $$ = VarCreate($1, $3); }
-                |       Lhs EQUALS MultiKeySymOrActionList { $$ = VarCreate($1, $3); }
+SymbolsVarDecl  :       Lhs EQUALS கோவை_2         { $$ = VarCreate($1, $3); }
+                |       Lhs EQUALS Multi_சாவி_Sym_Or_Action_List { $$ = VarCreate($1, $3); }
                 |       Ident                   { $$ = BoolVarCreate($1, true); }
                 |       EXCLAM Ident            { $$ = BoolVarCreate($2, false); }
-                |       MultiKeySymOrActionList { $$ = VarCreate(NULL, $1); }
+                |       Multi_சாவி_Sym_Or_Action_List { $$ = VarCreate(வெற்று, $1); }
                 ;
 
 /*
@@ -555,19 +555,19 @@ SymbolsVarDecl  :       Lhs EQUALS Expr         { $$ = VarCreate($1, $3); }
  * ambiguity is solved. If not, this is a list of empties of *some* type: we
  * drop those empties and delegate the type resolution using `ExprEmptyList()`.
  */
-MultiKeySymOrActionList
-                :       OBRACKET MultiKeySymList CBRACKET
+Multi_சாவி_Sym_Or_Action_List
+                :       OBRACKET Multi_சாவி_Sym_List CBRACKET
                         { $$ = $2.head; }
-                |       OBRACKET NoSymbolOrActionList COMMA MultiKeySymList CBRACKET
+                |       OBRACKET No_குறியீடு_Or_Action_List COMMA Multi_சாவி_Sym_List CBRACKET
                         {
                             /* Prepend n times NoSymbol */
-                            struct {ExprDef *head; ExprDef *last;} list = {
+                            கட்டமைப்பு {கோவை_Def *head; கோவை_Def *last;} list = {
                                 .head = $4.head, .last = $4.last
                             };
-                            for (uint32_t k = 0; k < $2; k++) {
-                                ExprDef* const syms =
-                                    ExprCreateKeySymList(XKB_KEY_NoSymbol);
-                                if (!syms) {
+                            க்கு (uint32_t k = 0; k < $2; k++) {
+                                கோவை_Def* மாறிலி syms =
+                                    கோவை_Create_சாவி_Sym_List(XKB_சாவி_No_குறியீடு);
+                                எனில் (!syms) {
                                     /* TODO: Use Bison’s more appropriate YYNOMEM */
                                     YYABORT;
                                 }
@@ -578,15 +578,15 @@ MultiKeySymOrActionList
                         }
                 |       OBRACKET MultiActionList CBRACKET
                         { $$ = $2.head; }
-                |       OBRACKET NoSymbolOrActionList COMMA MultiActionList CBRACKET
+                |       OBRACKET No_குறியீடு_Or_Action_List COMMA MultiActionList CBRACKET
                         {
                             /* Prepend n times NoAction() */
-                            struct {ExprDef *head; ExprDef *last;} list = {
+                            கட்டமைப்பு {கோவை_Def *head; கோவை_Def *last;} list = {
                                 .head = $4.head, .last = $4.last
                             };
-                            for (uint32_t k = 0; k < $2; k++) {
-                                ExprDef* const acts = ExprCreateActionList(NULL);
-                                if (!acts) {
+                            க்கு (uint32_t k = 0; k < $2; k++) {
+                                கோவை_Def* மாறிலி acts = கோவை_Create_Action_List(வெற்று);
+                                எனில் (!acts) {
                                     /* TODO: Use Bison’s more appropriate YYNOMEM */
                                     YYABORT;
                                 }
@@ -600,27 +600,27 @@ MultiKeySymOrActionList
                          * There is not enough context here to decide if it is
                          * a `MultiKeySymList` or a `MultiActionList`.
                          */
-                |       OBRACKET NoSymbolOrActionList CBRACKET
-                        { $$ = ExprEmptyList(); }
+                |       OBRACKET No_குறியீடு_Or_Action_List CBRACKET
+                        { $$ = கோவை_Empty_List(); }
                 ;
 
 /* A list of `{}`, which remains ambiguous until reaching a keysym or action list */
-NoSymbolOrActionList
-                :       NoSymbolOrActionList COMMA OBRACE CBRACE
+No_குறியீடு_Or_Action_List
+                :       No_குறியீடு_Or_Action_List COMMA OBRACE CBRACE
                         { $$ = $1 + 1; }
                 |       OBRACE CBRACE
                         { $$ = 1; }
                 |       { $$ = 0; }
                 ;
 
-GroupCompatDecl :       GROUP Integer EQUALS Expr SEMI
+GroupCompatDecl :       GROUP Integer EQUALS கோவை_2 SEMI
                         { $$ = GroupCompatCreate($2, $4); }
                 ;
 
-ModMapDecl      :       MODIFIER_MAP Expr OBRACE KeyOrKeySymList CBRACE SEMI
+ModMapDecl      :       MODIFIER_MAP கோவை_2 OBRACE சாவி_Or_சாவி_Sym_List CBRACE SEMI
                         {
-                            if (param->config.format == XKB_KEYMAP_FORMAT_TEXT_V1 &&
-                                $2->common.type != STMT_EXPR_IDENT) {
+                            எனில் (param->config.format == XKB_KEYMAP_FORMAT_TEXT_V1 &&
+                                $2->common.வகை != STMT_கோவை_IDENT) {
                                     parser_err(
                                         param, XKB_ERROR_INVALID_MODIFIER_MAP_MASK,
                                         "Invalid real modifier mask in modifier "
@@ -634,29 +634,29 @@ ModMapDecl      :       MODIFIER_MAP Expr OBRACE KeyOrKeySymList CBRACE SEMI
                         }
                 ;
 
-KeyOrKeySymList :       KeyOrKeySymList COMMA KeyOrKeySym
+சாவி_Or_சாவி_Sym_List :       சாவி_Or_சாவி_Sym_List COMMA சாவி_Or_சாவி_Sym
                         { $$.head = $1.head; $$.last->common.next = &$3->common; $$.last = $3; }
-                |       KeyOrKeySym
+                |       சாவி_Or_சாவி_Sym
                         { $$.head = $$.last = $1; }
                 ;
 
-KeyOrKeySym     :       KEYNAME
-                        { $$ = ExprCreateKeyName($1); }
-                |       KeySym
-                        { $$ = ExprCreateKeySym($1); }
+சாவி_Or_சாவி_Sym     :       KEYNAME
+                        { $$ = கோவை_Create_சாவி_Name($1); }
+                |       சாவி_Sym_2
+                        { $$ = கோவை_Create_சாவி_Sym($1); }
                 ;
 
 LedMapDecl:             INDICATOR String OBRACE VarDeclList CBRACE SEMI
                         { $$ = LedMapCreate($2, $4.head); }
                 ;
 
-LedNameDecl:            INDICATOR Integer EQUALS Expr SEMI
+LedNameDecl:            INDICATOR Integer EQUALS கோவை_2 SEMI
                         { $$ = LedNameCreate($2, $4, false); }
-                |       VIRTUAL INDICATOR Integer EQUALS Expr SEMI
+                |       VIRTUAL INDICATOR Integer EQUALS கோவை_2 SEMI
                         { $$ = LedNameCreate($3, $5, true); }
                 ;
 
-UnknownDecl     :       IDENT Terminal EQUALS Expr SEMI
+UnknownDecl     :       IDENT Terminal EQUALS கோவை_2 SEMI
                         {
                             FreeStmt((ParseCommon *) $2);
                             FreeStmt((ParseCommon *) $4);
@@ -674,87 +674,87 @@ UnknownCompoundStatementDecl:
                 ;
 
 ShapeDecl       :       SHAPE String OBRACE OutlineList CBRACE SEMI
-                        { $$ = NULL; }
+                        { $$ = வெற்று; }
                 |       SHAPE String OBRACE CoordList CBRACE SEMI
-                        { (void) $4; $$ = NULL; }
+                        { (வெறுமை) $4; $$ = வெற்று; }
                 ;
 
 SectionDecl     :       SECTION String OBRACE SectionBody CBRACE SEMI
-                        { $$ = NULL; }
+                        { $$ = வெற்று; }
                 ;
 
-SectionBody     :       SectionBody SectionBodyItem     { $$ = NULL;}
-                |       SectionBodyItem                 { $$ = NULL; }
+SectionBody     :       SectionBody SectionBodyItem     { $$ = வெற்று;}
+                |       SectionBodyItem                 { $$ = வெற்று; }
                 ;
 
 SectionBodyItem :       ROW OBRACE RowBody CBRACE SEMI
-                        { $$ = NULL; }
+                        { $$ = வெற்று; }
                 |       VarDecl
-                        { FreeStmt((ParseCommon *) $1); $$ = NULL; }
+                        { FreeStmt((ParseCommon *) $1); $$ = வெற்று; }
                 |       DoodadDecl
-                        { $$ = NULL; }
+                        { $$ = வெற்று; }
                 |       LedMapDecl
-                        { FreeStmt((ParseCommon *) $1); $$ = NULL; }
+                        { FreeStmt((ParseCommon *) $1); $$ = வெற்று; }
                 |       OverlayDecl
-                        { $$ = NULL; }
+                        { $$ = வெற்று; }
                 ;
 
-RowBody         :       RowBody RowBodyItem     { $$ = NULL;}
-                |       RowBodyItem             { $$ = NULL; }
+RowBody         :       RowBody RowBodyItem     { $$ = வெற்று;}
+                |       RowBodyItem             { $$ = வெற்று; }
                 ;
 
-RowBodyItem     :       KEYS OBRACE Keys CBRACE SEMI { $$ = NULL; }
+RowBodyItem     :       சாவிகள்_2 OBRACE சாவிகள்_3 CBRACE SEMI { $$ = வெற்று; }
                 |       VarDecl
-                        { FreeStmt((ParseCommon *) $1); $$ = NULL; }
+                        { FreeStmt((ParseCommon *) $1); $$ = வெற்று; }
                 ;
 
-Keys            :       Keys COMMA Key          { $$ = NULL; }
-                |       Key                     { $$ = NULL; }
+சாவிகள்_3            :       சாவிகள்_3 COMMA சாவி_4          { $$ = வெற்று; }
+                |       சாவி_4                     { $$ = வெற்று; }
                 ;
 
-Key             :       KEYNAME
-                        { $$ = NULL; }
-                |       OBRACE ExprList CBRACE
-                        { FreeStmt((ParseCommon *) $2.head); $$ = NULL; }
+சாவி_4             :       KEYNAME
+                        { $$ = வெற்று; }
+                |       OBRACE கோவை_List_2 CBRACE
+                        { FreeStmt((ParseCommon *) $2.head); $$ = வெற்று; }
                 ;
 
-OverlayDecl     :       OVERLAY String OBRACE OverlayKeyList CBRACE SEMI
-                        { $$ = NULL; }
+OverlayDecl     :       OVERLAY String OBRACE Overlay_சாவி_List CBRACE SEMI
+                        { $$ = வெற்று; }
                 ;
 
-OverlayKeyList  :       OverlayKeyList COMMA OverlayKey { $$ = NULL; }
-                |       OverlayKey                      { $$ = NULL; }
+Overlay_சாவி_List  :       Overlay_சாவி_List COMMA Overlay_சாவி { $$ = வெற்று; }
+                |       Overlay_சாவி                      { $$ = வெற்று; }
                 ;
 
-OverlayKey      :       KEYNAME EQUALS KEYNAME          { $$ = NULL; }
+Overlay_சாவி      :       KEYNAME EQUALS KEYNAME          { $$ = வெற்று; }
                 ;
 
 OutlineList     :       OutlineList COMMA OutlineInList
-                        { $$ = NULL;}
+                        { $$ = வெற்று;}
                 |       OutlineInList
-                        { $$ = NULL; }
+                        { $$ = வெற்று; }
                 ;
 
 OutlineInList   :       OBRACE CoordList CBRACE
-                        { (void) $2; $$ = NULL; }
+                        { (வெறுமை) $2; $$ = வெற்று; }
                 |       Ident EQUALS OBRACE CoordList CBRACE
-                        { (void) $4; $$ = NULL; }
-                |       Ident EQUALS Expr
-                        { FreeStmt((ParseCommon *) $3); $$ = NULL; }
+                        { (வெறுமை) $4; $$ = வெற்று; }
+                |       Ident EQUALS கோவை_2
+                        { FreeStmt((ParseCommon *) $3); $$ = வெற்று; }
                 ;
 
 CoordList       :       CoordList COMMA Coord
-                        { (void) $1; (void) $3; $$ = NULL; }
+                        { (வெறுமை) $1; (வெறுமை) $3; $$ = வெற்று; }
                 |       Coord
-                        { (void) $1; $$ = NULL; }
+                        { (வெறுமை) $1; $$ = வெற்று; }
                 ;
 
-Coord           :       OBRACKET SignedNumber COMMA SignedNumber CBRACKET
-                        { $$ = NULL; }
+Coord           :       OBRACKET Signed_எண் COMMA Signed_எண் CBRACKET
+                        { $$ = வெற்று; }
                 ;
 
 DoodadDecl      :       DoodadType String OBRACE VarDeclList CBRACE SEMI
-                        { FreeStmt((ParseCommon *) $4.head); $$ = NULL; }
+                        { FreeStmt((ParseCommon *) $4.head); $$ = வெற்று; }
                 ;
 
 DoodadType      :       TEXT    { $$ = 0; }
@@ -773,7 +773,7 @@ Element         :       ACTION_TOK
                         { $$ = xkb_atom_intern_literal(param->ctx, "interpret"); }
                 |       TYPE
                         { $$ = xkb_atom_intern_literal(param->ctx, "type"); }
-                |       KEY
+                |       சாவி_3
                         { $$ = xkb_atom_intern_literal(param->ctx, "key"); }
                 |       GROUP
                         { $$ = xkb_atom_intern_literal(param->ctx, "group"); }
@@ -811,67 +811,67 @@ MergeMode       :       INCLUDE         { $$ = MERGE_DEFAULT; }
                 }
                 ;
 
-ExprList        :       ExprList COMMA Expr
+கோவை_List_2        :       கோவை_List_2 COMMA கோவை_2
                         {
-                            if ($3) {
-                                if ($1.head) {
+                            எனில் ($3) {
+                                எனில் ($1.head) {
                                     $$.head = $1.head;
                                     $$.last->common.next = &$3->common;
                                     $$.last = $3;
-                                } else {
+                                } இல்லையெனில் {
                                     $$.head = $$.last = $3;
                                 }
                             }
                         }
-                |       Expr
+                |       கோவை_2
                         { $$.head = $$.last = $1; }
-                |       { $$.head = $$.last = NULL; }
+                |       { $$.head = $$.last = வெற்று; }
                 ;
 
-Expr            :       Expr DIVIDE Expr
-                        { $$ = ExprCreateBinary(STMT_EXPR_DIVIDE, $1, $3); }
-                |       Expr PLUS Expr
-                        { $$ = ExprCreateBinary(STMT_EXPR_ADD, $1, $3); }
-                |       Expr MINUS Expr
-                        { $$ = ExprCreateBinary(STMT_EXPR_SUBTRACT, $1, $3); }
-                |       Expr TIMES Expr
-                        { $$ = ExprCreateBinary(STMT_EXPR_MULTIPLY, $1, $3); }
-                |       Lhs EQUALS Expr
-                        { $$ = ExprCreateBinary(STMT_EXPR_ASSIGN, $1, $3); }
+கோவை_2            :       கோவை_2 DIVIDE கோவை_2
+                        { $$ = கோவை_Create_இருமம்(STMT_கோவை_DIVIDE, $1, $3); }
+                |       கோவை_2 PLUS கோவை_2
+                        { $$ = கோவை_Create_இருமம்(STMT_கோவை_ADD, $1, $3); }
+                |       கோவை_2 MINUS கோவை_2
+                        { $$ = கோவை_Create_இருமம்(STMT_கோவை_SUBTRACT, $1, $3); }
+                |       கோவை_2 TIMES கோவை_2
+                        { $$ = கோவை_Create_இருமம்(STMT_கோவை_MULTIPLY, $1, $3); }
+                |       Lhs EQUALS கோவை_2
+                        { $$ = கோவை_Create_இருமம்(STMT_கோவை_ASSIGN, $1, $3); }
                 |       Term
                         { $$ = $1; }
                 ;
 
 Term            :       MINUS Term
-                        { $$ = ExprCreateUnary(STMT_EXPR_NEGATE, $2); }
+                        { $$ = கோவை_Create_Unary(STMT_கோவை_NEGATE, $2); }
                 |       PLUS Term
-                        { $$ = ExprCreateUnary(STMT_EXPR_UNARY_PLUS, $2); }
+                        { $$ = கோவை_Create_Unary(STMT_கோவை_UNARY_PLUS, $2); }
                 |       EXCLAM Term
-                        { $$ = ExprCreateUnary(STMT_EXPR_NOT, $2); }
+                        { $$ = கோவை_Create_Unary(STMT_கோவை_NOT, $2); }
                 |       INVERT Term
-                        { $$ = ExprCreateUnary(STMT_EXPR_INVERT, $2); }
+                        { $$ = கோவை_Create_Unary(STMT_கோவை_INVERT, $2); }
                 |       Lhs
                         { $$ = $1; }
-                |       FieldSpec OPAREN ExprList CPAREN %prec OPAREN
-                        { $$ = ExprCreateAction($1, $3.head); }
+                |       FieldSpec OPAREN கோவை_List_2 CPAREN %prec OPAREN
+                        { $$ = கோவை_Create_Action($1, $3.head); }
                 |       Actions
                         { $$ = $1; }
                 |       Terminal
                         { $$ = $1; }
-                |       OPAREN Expr CPAREN
+                |       OPAREN கோவை_2 CPAREN
                         { $$ = $2; }
                 ;
 
 MultiActionList :       MultiActionList COMMA Action
                         {
-                            ExprDef *expr = ExprCreateActionList($3);
+                            கோவை_Def *கோவை = கோவை_Create_Action_List($3);
                             $$ = $1;
-                            $$.last->common.next = &expr->common; $$.last = expr;
+                            $$.last->common.next = &கோவை->common; $$.last = கோவை;
                         }
                 |       MultiActionList COMMA Actions
                         { $$ = $1; $$.last->common.next = &$3->common; $$.last = $3; }
                 |       Action
-                        { $$.head = $$.last = ExprCreateActionList($1); }
+                        { $$.head = $$.last = கோவை_Create_Action_List($1); }
                 |       NonEmptyActions
                         { $$.head = $$.last = $1; }
                 ;
@@ -883,130 +883,130 @@ ActionList      :       ActionList COMMA Action
                 ;
 
 NonEmptyActions :       OBRACE ActionList CBRACE
-                        { $$ = ExprCreateActionList($2.head); }
+                        { $$ = கோவை_Create_Action_List($2.head); }
                 ;
 
 Actions         :       NonEmptyActions
                         { $$ = $1; }
                 |       OBRACE CBRACE
-                        { $$ = ExprCreateActionList(NULL); }
+                        { $$ = கோவை_Create_Action_List(வெற்று); }
                 ;
 
-Action          :       FieldSpec OPAREN ExprList CPAREN
-                        { $$ = ExprCreateAction($1, $3.head); }
+Action          :       FieldSpec OPAREN கோவை_List_2 CPAREN
+                        { $$ = கோவை_Create_Action($1, $3.head); }
                 ;
 
 Lhs             :       FieldSpec
-                        { $$ = ExprCreateIdent($1); }
+                        { $$ = கோவை_Create_Ident($1); }
                 |       FieldSpec DOT FieldSpec
-                        { $$ = ExprCreateFieldRef($1, $3); }
-                |       FieldSpec OBRACKET Expr CBRACKET
-                        { $$ = ExprCreateArrayRef(XKB_ATOM_NONE, $1, $3); }
-                |       FieldSpec DOT FieldSpec OBRACKET Expr CBRACKET
-                        { $$ = ExprCreateArrayRef($1, $3, $5); }
+                        { $$ = கோவை_Create_Field_Ref($1, $3); }
+                |       FieldSpec OBRACKET கோவை_2 CBRACKET
+                        { $$ = கோவை_Create_Array_Ref(XKB_ATOM_NONE, $1, $3); }
+                |       FieldSpec DOT FieldSpec OBRACKET கோவை_2 CBRACKET
+                        { $$ = கோவை_Create_Array_Ref($1, $3, $5); }
                 ;
 
 OptTerminal     :       Terminal
                         { $$ = $1; }
-                |       { $$ = NULL; }
+                |       { $$ = வெற்று; }
                 ;
 
 Terminal        :       String
-                        { $$ = ExprCreateString($1); }
+                        { $$ = கோவை_Create_String($1); }
                 |       Integer
-                        { $$ = ExprCreateInteger($1); }
+                        { $$ = கோவை_Create_Integer($1); }
                 |       Float
-                        { $$ = ExprCreateFloat(/* Discard $1 */); }
+                        { $$ = கோவை_Create_Float(/* Discard $1 */); }
                 |       KEYNAME
-                        { $$ = ExprCreateKeyName($1); }
+                        { $$ = கோவை_Create_சாவி_Name($1); }
                 ;
 
-MultiKeySymList :       MultiKeySymList COMMA KeySymLit
+Multi_சாவி_Sym_List :       Multi_சாவி_Sym_List COMMA சாவி_Sym_Lit
                         {
-                            ExprDef *expr = ExprCreateKeySymList($3);
+                            கோவை_Def *கோவை = கோவை_Create_சாவி_Sym_List($3);
                             $$ = $1;
-                            $$.last->common.next = &expr->common; $$.last = expr;
+                            $$.last->common.next = &கோவை->common; $$.last = கோவை;
                         }
-                |       MultiKeySymList COMMA KeySyms
+                |       Multi_சாவி_Sym_List COMMA சாவி_Syms
                         { $$ = $1; $$.last->common.next = &$3->common; $$.last = $3; }
-                |       KeySymLit
-                        { $$.head = $$.last = ExprCreateKeySymList($1); }
-                |       NonEmptyKeySyms
+                |       சாவி_Sym_Lit
+                        { $$.head = $$.last = கோவை_Create_சாவி_Sym_List($1); }
+                |       Non_Empty_சாவி_Syms
                         { $$.head = $$.last = $1; }
                 ;
 
-KeySymList      :       KeySymList COMMA KeySymLit
-                        { $$ = ExprAppendKeySymList($1, $3); }
-                |       KeySymList COMMA STRING
+சாவி_Sym_List      :       சாவி_Sym_List COMMA சாவி_Sym_Lit
+                        { $$ = கோவை_Append_சாவி_Sym_List($1, $3); }
+                |       சாவி_Sym_List COMMA STRING
                         {
-                            $$ = ExprKeySymListAppendString(param->scanner, $1, $3);
-                            free($3);
-                            if (!$$)
+                            $$ = கோவை_சாவி_Sym_List_Append_String(param->scanner, $1, $3);
+                            விடுவி($3);
+                            எனில் (!$$)
                                 YYERROR;
                         }
-                |       KeySymLit
+                |       சாவி_Sym_Lit
                         {
-                            $$ = ExprCreateKeySymList($1);
-                            if (!$$)
+                            $$ = கோவை_Create_சாவி_Sym_List($1);
+                            எனில் (!$$)
                                 YYERROR;
                         }
                 |       STRING
                         {
-                            $$ = ExprCreateKeySymList(XKB_KEY_NoSymbol);
-                            if (!$$)
+                            $$ = கோவை_Create_சாவி_Sym_List(XKB_சாவி_No_குறியீடு);
+                            எனில் (!$$)
                                 YYERROR;
-                            $$ = ExprKeySymListAppendString(param->scanner, $$, $1);
-                            free($1);
-                            if (!$$)
+                            $$ = கோவை_சாவி_Sym_List_Append_String(param->scanner, $$, $1);
+                            விடுவி($1);
+                            எனில் (!$$)
                                 YYERROR;
                         }
                 ;
 
-NonEmptyKeySyms :       OBRACE KeySymList CBRACE
+Non_Empty_சாவி_Syms :       OBRACE சாவி_Sym_List CBRACE
                         { $$ = $2; }
                 |       STRING
                         {
-                            $$ = ExprCreateKeySymList(XKB_KEY_NoSymbol);
-                            if (!$$)
+                            $$ = கோவை_Create_சாவி_Sym_List(XKB_சாவி_No_குறியீடு);
+                            எனில் (!$$)
                                 YYERROR;
-                            $$ = ExprKeySymListAppendString(param->scanner, $$, $1);
-                            free($1);
-                            if (!$$)
+                            $$ = கோவை_சாவி_Sym_List_Append_String(param->scanner, $$, $1);
+                            விடுவி($1);
+                            எனில் (!$$)
                                 YYERROR;
                         }
                 ;
 
-KeySyms         :       NonEmptyKeySyms
+சாவி_Syms         :       Non_Empty_சாவி_Syms
                         { $$ = $1; }
                 |       OBRACE CBRACE
-                        { $$ = ExprCreateKeySymList(XKB_KEY_NoSymbol); }
+                        { $$ = கோவை_Create_சாவி_Sym_List(XKB_சாவி_No_குறியீடு); }
                 ;
 
-KeySym          :       KeySymLit
+சாவி_Sym_2          :       சாவி_Sym_Lit
                         { $$ = $1; }
                 |       STRING
                         {
                             $$ = KeysymParseString(param->scanner, $1);
-                            free($1);
-                            if ($$ == XKB_KEY_NoSymbol)
+                            விடுவி($1);
+                            எனில் ($$ == XKB_சாவி_No_குறியீடு)
                                 YYERROR;
                         }
                 ;
 
-KeySymLit       :       IDENT
+சாவி_Sym_Lit       :       IDENT
                         {
-                            if (!resolve_keysym(param, $1, &$$)) {
+                            எனில் (!resolve_keysym(param, $1, &$$)) {
                                 parser_warn(
                                     param,
                                     XKB_WARNING_UNRECOGNIZED_KEYSYM,
                                     "unrecognized keysym \"%.*s\"",
-                                    (unsigned int) $1.len, $1.start
+                                    (unsigned முழு) $1.len, $1.start
                                 );
-                                $$ = XKB_KEY_NoSymbol;
+                                $$ = XKB_சாவி_No_குறியீடு;
                             }
                         }
                         /* Handle keysym that is also a keyword  */
-                |       SECTION { $$ = XKB_KEY_section; }
+                |       SECTION { $$ = XKB_சாவி_section; }
                 |       DECIMAL_DIGIT
                         {
                             /*
@@ -1014,11 +1014,11 @@ KeySymLit       :       IDENT
                              * map to XKB_KEY_0 .. XKB_KEY_9, consistent with
                              * other keysym names: <name> → XKB_KEY_<name>.
                              */
-                            $$ = XKB_KEY_0 + (xkb_keysym_t) $1;
+                            $$ = XKB_சாவி_0 + (xkb_keysym_t) $1;
                         }
                 |       INTEGER
                         {
-                            if ($1 < XKB_KEYSYM_MIN) {
+                            எனில் ($1 < XKB_KEYSYM_MIN) {
                                 /* Negative value */
                                 static_assert(XKB_KEYSYM_MIN == 0,
                                               "Keysyms are positive");
@@ -1029,7 +1029,7 @@ KeySymLit       :       IDENT
                                     " (%"PRId64")",
                                     -$1, $1
                                 );
-                                $$ = XKB_KEY_NoSymbol;
+                                $$ = XKB_சாவி_No_குறியீடு;
                             }
                             /*
                              * Integers 0..9 are handled with DECIMAL_DIGIT if
@@ -1039,9 +1039,9 @@ KeySymLit       :       IDENT
                              * the keysym 0x0001, while `1` is interpreted as
                              * XKB_KEY_1.
                              */
-                            else {
+                            இல்லையெனில் {
                                 /* Any other numeric value */
-                                if ($1 <= XKB_KEYSYM_MAX) {
+                                எனில் ($1 <= XKB_KEYSYM_MAX) {
                                     /*
                                      * Valid keysym
                                      * No normalization is performed and value
@@ -1050,15 +1050,15 @@ KeySymLit       :       IDENT
                                     $$ = (xkb_keysym_t) $1;
                                     check_deprecated_keysyms(
                                         parser_warn, param, param->ctx,
-                                        $$, NULL, $$, "%#06"PRIx32, "");
-                                } else {
+                                        $$, வெற்று, $$, "%#06"PRIx32, "");
+                                } இல்லையெனில் {
                                     /* Invalid keysym */
                                     parser_warn(
                                         param, XKB_ERROR_INVALID_NUMERIC_KEYSYM,
                                         "unrecognized keysym \"%#06"PRIx64"\" "
                                         "(%"PRId64")", $1, $1
                                     );
-                                    $$ = XKB_KEY_NoSymbol;
+                                    $$ = XKB_சாவி_No_குறியீடு;
                                 }
                                 parser_vrb(
                                     /*
@@ -1076,11 +1076,11 @@ KeySymLit       :       IDENT
                         }
                 ;
 
-SignedNumber    :       MINUS Number    { $$ = -$2; }
-                |       Number          { $$ = $1; }
+Signed_எண்    :       MINUS எண்    { $$ = -$2; }
+                |       எண்          { $$ = $1; }
                 ;
 
-Number          :       FLOAT         { $$ = $1; }
+எண்          :       FLOAT         { $$ = $1; }
                 |       DECIMAL_DIGIT { $$ = $1; }
                 |       INTEGER       { $$ = $1; }
                 ;
@@ -1092,7 +1092,7 @@ Integer         :       INTEGER       { $$ = $1; }
                 |       DECIMAL_DIGIT { $$ = $1; }
                 ;
 
-KeyCode         :       INTEGER       { $$ = $1; }
+சாவி_Code_2         :       INTEGER       { $$ = $1; }
                 |       DECIMAL_DIGIT { $$ = $1; }
                 ;
 
@@ -1100,11 +1100,11 @@ Ident           :       IDENT   { $$ = xkb_atom_intern(param->ctx, $1.start, $1.
                 |       DEFAULT { $$ = xkb_atom_intern_literal(param->ctx, "default"); }
                 ;
 
-String          :       STRING  { $$ = xkb_atom_intern(param->ctx, $1, strlen($1)); free($1); }
+String          :       STRING  { $$ = xkb_atom_intern(param->ctx, $1, strlen($1)); விடுவி($1); }
                 ;
 
 OptMapName      :       MapName { $$ = $1; }
-                |               { $$ = NULL; }
+                |               { $$ = வெற்று; }
                 ;
 
 MapName         :       STRING  { $$ = $1; }
@@ -1114,15 +1114,15 @@ MapName         :       STRING  { $$ = $1; }
 
 /* Parse a specific section */
 XkbFile *
-parse(struct xkb_context *ctx, const struct parser_keymap_config *config,
-      struct scanner *scanner, const char *map)
+parse(கட்டமைப்பு xkb_context *ctx, மாறிலி கட்டமைப்பு parser_keymap_config *config,
+      கட்டமைப்பு scanner *scanner, மாறிலி எழுத்து *map)
 {
-    int ret;
-    XkbFile *first = NULL;
-    struct parser_param param = {
+    முழு ret;
+    XkbFile *first = வெற்று;
+    கட்டமைப்பு parser_param param = {
         .scanner = scanner,
         .ctx = ctx,
-        .rtrn = NULL,
+        .rtrn = வெற்று,
         .config = *config,
         .more_maps = false,
     };
@@ -1135,70 +1135,70 @@ parse(struct xkb_context *ctx, const struct parser_keymap_config *config,
      * the first map in the file.
      */
 
-    while ((ret = yyparse(&param)) == 0 && param.more_maps) {
-        if (map) {
-            if (streq_not_null(map, param.rtrn->name))
-                return param.rtrn;
-            else
+    போது ((ret = yyparse(&param)) == 0 && param.more_maps) {
+        எனில் (map) {
+            எனில் (streq_not_null(map, param.rtrn->name))
+                திரும்பு param.rtrn;
+            இல்லையெனில்
                 FreeXkbFile(param.rtrn);
         }
-        else {
-            if (param.rtrn->flags & MAP_IS_DEFAULT) {
+        இல்லையெனில் {
+            எனில் (param.rtrn->flags & MAP_IS_DEFAULT) {
                 FreeXkbFile(first);
-                return param.rtrn;
+                திரும்பு param.rtrn;
             }
-            else if (!first) {
+            இல்லையெனில் எனில் (!first) {
                 first = param.rtrn;
             }
-            else {
+            இல்லையெனில் {
                 FreeXkbFile(param.rtrn);
             }
         }
-        param.rtrn = NULL;
+        param.rtrn = வெற்று;
     }
 
-    if (ret != 0) {
+    எனில் (ret != 0) {
         /* Some error happend; clear the Xkbfiles parsed so far */
         FreeXkbFile(first);
         FreeXkbFile(param.rtrn);
-        return NULL;
+        திரும்பு வெற்று;
     }
 
     /*
      * Warn about implicit default section,
      * but only if not a keymap: multiple keymaps per file not supported
      */
-    if (first && first->file_type != FILE_TYPE_KEYMAP)
+    எனில் (first && first->file_type != FILE_TYPE_KEYMAP)
         log_vrb(ctx, XKB_LOG_VERBOSITY_DETAILED,
                 XKB_WARNING_MISSING_DEFAULT_SECTION,
                 "No section name in include statement, but \"%s\" contains several; "
                 "Using first defined section, \"%s\"\n",
                 scanner->file_name, safe_map_name(first->name));
 
-    return first;
+    திரும்பு first;
 }
 
 /* Parse the next section */
 bool
-parse_next(struct xkb_context *ctx,
-           const struct parser_keymap_config *config,
-           struct scanner *scanner, XkbFile **xkb_file)
+parse_next(கட்டமைப்பு xkb_context *ctx,
+           மாறிலி கட்டமைப்பு parser_keymap_config *config,
+           கட்டமைப்பு scanner *scanner, XkbFile **xkb_file)
 {
-    int ret;
-    struct parser_param param = {
+    முழு ret;
+    கட்டமைப்பு parser_param param = {
         .scanner = scanner,
         .ctx = ctx,
-        .rtrn = NULL,
+        .rtrn = வெற்று,
         .config = *config,
         .more_maps = false,
     };
 
-    if ((ret = yyparse(&param)) == 0 && param.more_maps) {
+    எனில் ((ret = yyparse(&param)) == 0 && param.more_maps) {
         *xkb_file = param.rtrn;
-        return true;
-    } else {
+        திரும்பு true;
+    } இல்லையெனில் {
         FreeXkbFile(param.rtrn);
-        *xkb_file = NULL;
-        return (ret == 0);
+        *xkb_file = வெற்று;
+        திரும்பு (ret == 0);
     }
 }

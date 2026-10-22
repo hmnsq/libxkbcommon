@@ -4,64 +4,64 @@
  */
 #pragma once
 
-#include "config.h"
+#அந்தர்பாவ "config.h"
 
-#include "xkbcommon/xkbcommon.h"
+#அந்தர்பாவ "xkbcommon/xkbcommon.h"
 
-#include "ast.h"
-#include "keymap.h"
-#include "text.h"
-#include "xkbcomp-priv.h"
-
-bool
-ExprResolveLhs(struct xkb_context *ctx, const ExprDef *expr,
-               const char **elem_rtrn, const char **field_rtrn,
-               ExprDef **index_rtrn);
+#அந்தர்பாவ "ast.h"
+#அந்தர்பாவ "keymap.h"
+#அந்தர்பாவ "text.h"
+#அந்தர்பாவ "xkbcomp-priv.h"
 
 bool
-ExprResolveModMask(struct xkb_context *ctx, const ExprDef *expr,
-                   enum mod_type mod_type, const struct xkb_mod_set *mods,
+கோவை_Resolve_Lhs(கட்டமைப்பு xkb_context *ctx, மாறிலி கோவை_Def *கோவை,
+               மாறிலி எழுத்து **elem_rtrn, மாறிலி எழுத்து **field_rtrn,
+               கோவை_Def **index_rtrn);
+
+bool
+கோவை_Resolve_Mod_Mask(கட்டமைப்பு xkb_context *ctx, மாறிலி கோவை_Def *கோவை,
+                   எண்ணிக்கை mod_type mod_type, மாறிலி கட்டமைப்பு xkb_mod_set *mods,
                    xkb_mod_mask_t *mask_rtrn);
 
 bool
-ExprResolveMod(struct xkb_context *ctx, const ExprDef *def,
-               enum mod_type mod_type, const struct xkb_mod_set *mods,
+கோவை_Resolve_Mod(கட்டமைப்பு xkb_context *ctx, மாறிலி கோவை_Def *def,
+               எண்ணிக்கை mod_type mod_type, மாறிலி கட்டமைப்பு xkb_mod_set *mods,
                xkb_mod_index_t *ndx_rtrn);
 
 bool
-ExprResolveBoolean(struct xkb_context *ctx, const ExprDef *expr,
+கோவை_Resolve_Boolean(கட்டமைப்பு xkb_context *ctx, மாறிலி கோவை_Def *கோவை,
                    bool *set_rtrn);
 
 bool
-ExprResolveInteger(struct xkb_context *ctx, const ExprDef *expr,
+கோவை_Resolve_Integer(கட்டமைப்பு xkb_context *ctx, மாறிலி கோவை_Def *கோவை,
                    int64_t *val_rtrn);
 
 bool
-ExprResolveLevel(struct xkb_context *ctx, const ExprDef *expr,
+கோவை_Resolve_Level(கட்டமைப்பு xkb_context *ctx, மாறிலி கோவை_Def *கோவை,
                  xkb_level_index_t *level_rtrn);
 
-enum xkb_parser_error
-ExprResolveGroup(const struct xkb_keymap_info *keymap_info,
-                 const ExprDef *expr, bool absolute,
+எண்ணிக்கை xkb_parser_error
+கோவை_Resolve_Group(மாறிலி கட்டமைப்பு xkb_keymap_info *keymap_info,
+                 மாறிலி கோவை_Def *கோவை, bool absolute,
                  xkb_layout_index_t *group_rtrn, bool *pending_rtrn);
 
 bool
-ExprResolveGroupMask(const struct xkb_keymap_info *keymap_info,
-                     const ExprDef *expr, xkb_layout_mask_t *group_rtrn,
+கோவை_Resolve_Group_Mask(மாறிலி கட்டமைப்பு xkb_keymap_info *keymap_info,
+                     மாறிலி கோவை_Def *கோவை, xkb_layout_mask_t *group_rtrn,
                      bool *pending_rtrn);
 
 bool
-ExprResolveButton(struct xkb_context *ctx, const ExprDef *expr,
+கோவை_Resolve_Button(கட்டமைப்பு xkb_context *ctx, மாறிலி கோவை_Def *கோவை,
                   int64_t *btn_rtrn);
 
 bool
-ExprResolveString(struct xkb_context *ctx, const ExprDef *expr,
+கோவை_Resolve_String(கட்டமைப்பு xkb_context *ctx, மாறிலி கோவை_Def *கோவை,
                   xkb_atom_t *val_rtrn);
 
 bool
-ExprResolveEnum(struct xkb_context *ctx, const ExprDef *expr,
-                uint32_t *val_rtrn, const LookupEntry *values);
+கோவை_Resolve_Enum(கட்டமைப்பு xkb_context *ctx, மாறிலி கோவை_Def *கோவை,
+                uint32_t *val_rtrn, மாறிலி LookupEntry *மதிப்புகள்);
 
 bool
-ExprResolveMask(struct xkb_context *ctx, const ExprDef *expr,
-                uint32_t *mask_rtrn, const LookupEntry *values);
+கோவை_Resolve_Mask(கட்டமைப்பு xkb_context *ctx, மாறிலி கோவை_Def *கோவை,
+                uint32_t *mask_rtrn, மாறிலி LookupEntry *மதிப்புகள்);

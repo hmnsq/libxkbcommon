@@ -4,74 +4,74 @@
  */
 #pragma once
 
-#include "config.h"
+#அந்தர்பாவ "config.h"
 
-#include <stdbool.h>
+#அந்தர்பாவ <stdbool.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "atom.h"
-#include "keymap.h"
+#அந்தர்பாவ "xkbcommon/xkbcommon.h"
+#அந்தர்பாவ "atom.h"
+#அந்தர்பாவ "keymap.h"
 
 /** LUT entry */
-typedef struct {
-    const char *name;
-    uint32_t value;
+வகைவரை கட்டமைப்பு {
+    மாறிலி எழுத்து *name;
+    uint32_t மதிப்பு;
 } LookupEntry;
 
 bool
-LookupString(const LookupEntry tab[], const char *string,
-              unsigned int *value_rtrn);
+LookupString(மாறிலி LookupEntry tab[], மாறிலி எழுத்து *string,
+              unsigned முழு *மதிப்பு_rtrn);
 
-const char *
-LookupValue(const LookupEntry tab[], unsigned int value);
+மாறிலி எழுத்து *
+Lookup_மதிப்பு(மாறிலி LookupEntry tab[], unsigned முழு மதிப்பு);
 
 #define GROUP_LAST_INDEX_NAME "last"
-enum {
+எண்ணிக்கை {
     CONTROL_NAMES_MIN_V1_INDEX = 7,
     CONTROL_NAMES_MIN_V2_INDEX = 0,
 };
 
-static inline uint8_t
-format_control_names_offset(enum xkb_keymap_format format)
+நிலையான உள்வரி uint8_t
+format_control_names_offset(எண்ணிக்கை xkb_keymap_format format)
 {
-    return (format == XKB_KEYMAP_FORMAT_TEXT_V1)
+    திரும்பு (format == XKB_KEYMAP_FORMAT_TEXT_V1)
         ? CONTROL_NAMES_MIN_V1_INDEX
         : CONTROL_NAMES_MIN_V2_INDEX;
 }
 
-extern const LookupEntry ctrlMaskNames[];
-extern const LookupEntry modComponentMaskNames[];
-extern const LookupEntry groupComponentMaskNames[];
-extern const LookupEntry groupMaskNames[];
-extern const LookupEntry buttonNames[];
-extern const LookupEntry useModMapValueNames[];
-extern const LookupEntry actionTypeNames[];
-extern const LookupEntry symInterpretMatchMaskNames[];
+வெளி மாறிலி LookupEntry ctrlMaskNames[];
+வெளி மாறிலி LookupEntry modComponentMaskNames[];
+வெளி மாறிலி LookupEntry groupComponentMaskNames[];
+வெளி மாறிலி LookupEntry groupMaskNames[];
+வெளி மாறிலி LookupEntry buttonNames[];
+வெளி மாறிலி LookupEntry use_Mod_Map_மதிப்பு_Names[];
+வெளி மாறிலி LookupEntry actionTypeNames[];
+வெளி மாறிலி LookupEntry symInterpretMatchMaskNames[];
 
-const char *
-ModMaskText(struct xkb_context *ctx, enum mod_type type,
-            const struct xkb_mod_set *mods, xkb_mod_mask_t mask);
+மாறிலி எழுத்து *
+ModMaskText(கட்டமைப்பு xkb_context *ctx, எண்ணிக்கை mod_type type,
+            மாறிலி கட்டமைப்பு xkb_mod_set *mods, xkb_mod_mask_t mask);
 
-const char *
-ModIndexText(struct xkb_context *ctx, const struct xkb_mod_set *mods,
+மாறிலி எழுத்து *
+ModIndexText(கட்டமைப்பு xkb_context *ctx, மாறிலி கட்டமைப்பு xkb_mod_set *mods,
              xkb_mod_index_t ndx);
 
-const char *
-ActionTypeText(enum xkb_action_type type);
+மாறிலி எழுத்து *
+ActionTypeText(எண்ணிக்கை xkb_action_type type);
 
-const char *
-KeysymText(struct xkb_context *ctx, xkb_keysym_t sym);
+மாறிலி எழுத்து *
+KeysymText(கட்டமைப்பு xkb_context *ctx, xkb_keysym_t sym);
 
-const char *
-KeyNameText(struct xkb_context *ctx, xkb_atom_t name);
+மாறிலி எழுத்து *
+சாவி_Name_Text(கட்டமைப்பு xkb_context *ctx, xkb_atom_t name);
 
-const char *
-SIMatchText(enum xkb_match_operation type);
+மாறிலி எழுத்து *
+SIMatchText(எண்ணிக்கை xkb_match_operation type);
 
-const char *
-LedStateMaskText(struct xkb_context *ctx, const LookupEntry *lookup,
-                 enum xkb_state_component mask);
+மாறிலி எழுத்து *
+LedStateMaskText(கட்டமைப்பு xkb_context *ctx, மாறிலி LookupEntry *lookup,
+                 எண்ணிக்கை xkb_state_component mask);
 
-const char *
-ControlMaskText(struct xkb_context *ctx, enum xkb_keymap_format format,
-                enum xkb_action_controls mask);
+மாறிலி எழுத்து *
+ControlMaskText(கட்டமைப்பு xkb_context *ctx, எண்ணிக்கை xkb_keymap_format format,
+                எண்ணிக்கை xkb_action_controls mask);

@@ -9,14 +9,14 @@
  */
 #pragma once
 
-#include "config.h"
+#அந்தர்பாவ "config.h"
 
-#include "xkbcommon/xkbcommon.h"
+#அந்தர்பாவ "xkbcommon/xkbcommon.h"
 
-#include "atom.h"
-#include "darray.h"
+#அந்தர்பாவ "atom.h"
+#அந்தர்பாவ "darray.h"
 
-enum xkb_file_type {
+எண்ணிக்கை xkb_file_type {
     /* Component files, by order of compilation. */
     FILE_TYPE_KEYCODES = 0,
     FILE_TYPE_TYPES = 1,
@@ -37,38 +37,38 @@ enum xkb_file_type {
     /* This one doesn't mix with the others, but useful here as well. */
     FILE_TYPE_RULES,
 
-    _FILE_TYPE_NUM_ENTRIES,
-    FILE_TYPE_INVALID = _FILE_TYPE_NUM_ENTRIES
+    FILE_TYPE_இலக்கம்_ENTRIES,
+    FILE_TYPE_INVALID = FILE_TYPE_இலக்கம்_ENTRIES
 };
 
-enum stmt_type {
+எண்ணிக்கை stmt_type {
     STMT_UNKNOWN = 0,
     STMT_INCLUDE,
     STMT_KEYCODE,
     STMT_ALIAS,
-    STMT_EXPR_STRING_LITERAL,
-    STMT_EXPR_INTEGER_LITERAL,
-    STMT_EXPR_FLOAT_LITERAL,
-    STMT_EXPR_BOOLEAN_LITERAL,
-    STMT_EXPR_KEYNAME_LITERAL,
-    STMT_EXPR_KEYSYM_LITERAL,
-    STMT_EXPR_IDENT,
-    STMT_EXPR_ACTION_DECL,
-    STMT_EXPR_FIELD_REF,
-    STMT_EXPR_ARRAY_REF,
+    STMT_கோவை_STRING_LITERAL,
+    STMT_கோவை_INTEGER_LITERAL,
+    STMT_கோவை_FLOAT_LITERAL,
+    STMT_கோவை_BOOLEAN_LITERAL,
+    STMT_கோவை_KEYNAME_LITERAL,
+    STMT_கோவை_KEYSYM_LITERAL,
+    STMT_கோவை_IDENT,
+    STMT_கோவை_ACTION_DECL,
+    STMT_கோவை_FIELD_REF,
+    STMT_கோவை_ARRAY_REF,
     /* Needed because of the ambiguity between keysym and action empty lists */
-    STMT_EXPR_EMPTY_LIST,
-    STMT_EXPR_KEYSYM_LIST,
-    STMT_EXPR_ACTION_LIST,
-    STMT_EXPR_ADD,
-    STMT_EXPR_SUBTRACT,
-    STMT_EXPR_MULTIPLY,
-    STMT_EXPR_DIVIDE,
-    STMT_EXPR_ASSIGN,
-    STMT_EXPR_NOT,
-    STMT_EXPR_NEGATE,
-    STMT_EXPR_INVERT,
-    STMT_EXPR_UNARY_PLUS,
+    STMT_கோவை_EMPTY_LIST,
+    STMT_கோவை_KEYSYM_LIST,
+    STMT_கோவை_ACTION_LIST,
+    STMT_கோவை_ADD,
+    STMT_கோவை_SUBTRACT,
+    STMT_கோவை_MULTIPLY,
+    STMT_கோவை_DIVIDE,
+    STMT_கோவை_ASSIGN,
+    STMT_கோவை_NOT,
+    STMT_கோவை_NEGATE,
+    STMT_கோவை_INVERT,
+    STMT_கோவை_UNARY_PLUS,
     STMT_VAR,
     STMT_TYPE,
     STMT_INTERP,
@@ -81,229 +81,229 @@ enum stmt_type {
     STMT_UNKNOWN_DECLARATION,
     STMT_UNKNOWN_COMPOUND,
 
-    _STMT_NUM_VALUES
+    STMT_இலக்கம்_மதிப்புகள்
 };
 
-enum merge_mode {
+எண்ணிக்கை merge_mode {
     MERGE_DEFAULT,
     MERGE_AUGMENT,
     MERGE_OVERRIDE,
     MERGE_REPLACE,
-    _MERGE_MODE_NUM_ENTRIES,
+    MERGE_MODE_இலக்கம்_ENTRIES,
 };
-enum { MERGE_MODE_MIN_WIDTH = 3 /* 2 bits + sign */ };
-static_assert(_MERGE_MODE_NUM_ENTRIES - 1 <= (1 << (MERGE_MODE_MIN_WIDTH - 1)) - 1,
+எண்ணிக்கை { MERGE_MODE_MIN_WIDTH = 3 /* 2 bits + sign */ };
+static_assert(MERGE_MODE_இலக்கம்_ENTRIES - 1 <= (1 << (MERGE_MODE_MIN_WIDTH - 1)) - 1,
               "Cannot encode merge mode");
 
-const char *
-xkb_file_type_to_string(enum xkb_file_type type);
+மாறிலி எழுத்து *
+xkb_file_type_to_string(எண்ணிக்கை xkb_file_type type);
 
-const char *
-stmt_type_to_string(enum stmt_type type);
+மாறிலி எழுத்து *
+stmt_type_to_string(எண்ணிக்கை stmt_type type);
 
-char
-stmt_type_to_operator_char(enum stmt_type type);
+எழுத்து
+stmt_type_to_operator_char(எண்ணிக்கை stmt_type type);
 
-typedef struct _ParseCommon  {
-    struct _ParseCommon *next;
-    enum stmt_type type;
+வகைவரை கட்டமைப்பு _ParseCommon  {
+    கட்டமைப்பு _ParseCommon *next;
+    எண்ணிக்கை stmt_type type;
 } ParseCommon;
 
-typedef struct _IncludeStmt {
+வகைவரை கட்டமைப்பு _IncludeStmt {
     ParseCommon common;
-    enum merge_mode merge;
-    char *stmt;
-    char *file;
-    char *map;
-    char *modifier;
-    struct _IncludeStmt *next_incl;
+    எண்ணிக்கை merge_mode merge;
+    எழுத்து *stmt;
+    எழுத்து *file;
+    எழுத்து *map;
+    எழுத்து *modifier;
+    கட்டமைப்பு _IncludeStmt *next_incl;
 } IncludeStmt;
 
-typedef union ExprDef ExprDef;
+வகைவரை ஒன்றிப்பு கோவை_Def கோவை_Def;
 
-typedef struct {
+வகைவரை கட்டமைப்பு {
     ParseCommon common;
     xkb_atom_t ident;
-} ExprIdent;
+} கோவை_Ident;
 
-typedef struct {
+வகைவரை கட்டமைப்பு {
     ParseCommon common;
     xkb_atom_t str;
-} ExprString;
+} கோவை_String;
 
-typedef struct {
+வகைவரை கட்டமைப்பு {
     ParseCommon common;
     bool set;
-} ExprBoolean;
+} கோவை_Boolean;
 
-typedef struct {
+வகைவரை கட்டமைப்பு {
     ParseCommon common;
     int64_t ival;
-} ExprInteger;
+} கோவை_Integer;
 
-typedef struct {
+வகைவரை கட்டமைப்பு {
     ParseCommon common;
     /* We don't support floats, but we still represnt them in the AST, in
      * order to provide proper error messages. */
-} ExprFloat;
+} கோவை_Float;
 
-typedef struct {
+வகைவரை கட்டமைப்பு {
     ParseCommon common;
-    xkb_atom_t key_name;
-} ExprKeyName;
+    xkb_atom_t சாவி_name;
+} கோவை_சாவி_Name;
 
-typedef struct {
+வகைவரை கட்டமைப்பு {
     ParseCommon common;
     /* Keysyms are resolved early, so this might contain `NoSymbol` in case of
      * failure, to enable error recovery. */
     xkb_keysym_t keysym;
-} ExprKeySym;
+} கோவை_சாவி_Sym;
 
-typedef struct {
+வகைவரை கட்டமைப்பு {
     ParseCommon common;
-    ExprDef *left;
-    ExprDef *right;
-} ExprBinary;
+    கோவை_Def *இடது;
+    கோவை_Def *வலது;
+} கோவை_இருமம்;
 
-typedef struct {
+வகைவரை கட்டமைப்பு {
     ParseCommon common;
-    ExprDef *child;
-} ExprUnary;
+    கோவை_Def *child;
+} கோவை_Unary;
 
-typedef struct {
-    ParseCommon common;
-    xkb_atom_t element;
-    xkb_atom_t field;
-} ExprFieldRef;
-
-typedef struct {
+வகைவரை கட்டமைப்பு {
     ParseCommon common;
     xkb_atom_t element;
     xkb_atom_t field;
-    ExprDef *entry;
-} ExprArrayRef;
+} கோவை_Field_Ref;
 
-typedef struct {
+வகைவரை கட்டமைப்பு {
+    ParseCommon common;
+    xkb_atom_t element;
+    xkb_atom_t field;
+    கோவை_Def *entry;
+} கோவை_Array_Ref;
+
+வகைவரை கட்டமைப்பு {
     ParseCommon common;
     xkb_atom_t name;
-    ExprDef *args;
-} ExprAction;
+    கோவை_Def *args;
+} கோவை_Action;
 
-typedef struct {
+வகைவரை கட்டமைப்பு {
     ParseCommon common;
     /* List of actions for a single level. */
-    ExprDef *actions;
-} ExprActionList;
+    கோவை_Def *actions;
+} கோவை_Action_List;
 
-typedef struct {
+வகைவரை கட்டமைப்பு {
     ParseCommon common;
     /* List of keysym for a single level. */
     darray(xkb_keysym_t) syms;
-} ExprKeysymList;
+} கோவை_Keysym_List;
 
-union ExprDef {
+ஒன்றிப்பு கோவை_Def {
     ParseCommon common;
-    ExprIdent ident;
-    ExprString string;
-    ExprBoolean boolean;
-    ExprInteger integer;
-    ExprKeyName key_name;
-    ExprKeySym keysym;
-    ExprBinary binary;
-    ExprUnary unary;
-    ExprFieldRef field_ref;
-    ExprArrayRef array_ref;
-    ExprAction action;
-    ExprActionList actions;
-    ExprKeysymList keysym_list;
+    கோவை_Ident ident;
+    கோவை_String string;
+    கோவை_Boolean boolean;
+    கோவை_Integer integer;
+    கோவை_சாவி_Name சாவி_name;
+    கோவை_சாவி_Sym keysym;
+    கோவை_இருமம் இருமம்;
+    கோவை_Unary unary;
+    கோவை_Field_Ref field_ref;
+    கோவை_Array_Ref array_ref;
+    கோவை_Action action;
+    கோவை_Action_List actions;
+    கோவை_Keysym_List keysym_list;
 };
 
-typedef struct {
+வகைவரை கட்டமைப்பு {
     ParseCommon common;
-    enum merge_mode merge;
-    ExprDef *name;
-    ExprDef *value;
+    எண்ணிக்கை merge_mode merge;
+    கோவை_Def *name;
+    கோவை_Def *மதிப்பு;
 } VarDef;
 
-typedef struct {
+வகைவரை கட்டமைப்பு {
     ParseCommon common;
-    enum merge_mode merge;
+    எண்ணிக்கை merge_mode merge;
     xkb_atom_t name;
-    ExprDef *value;
+    கோவை_Def *மதிப்பு;
 } VModDef;
 
-typedef struct {
+வகைவரை கட்டமைப்பு {
     ParseCommon common;
-    enum merge_mode merge;
+    எண்ணிக்கை merge_mode merge;
     xkb_atom_t name;
-    int64_t value;
+    int64_t மதிப்பு;
 } KeycodeDef;
 
-typedef struct {
+வகைவரை கட்டமைப்பு {
     ParseCommon common;
-    enum merge_mode merge;
+    எண்ணிக்கை merge_mode merge;
     xkb_atom_t alias;
     xkb_atom_t real;
-} KeyAliasDef;
+} சாவி_Alias_Def;
 
-typedef struct {
+வகைவரை கட்டமைப்பு {
     ParseCommon common;
-    enum merge_mode merge;
+    எண்ணிக்கை merge_mode merge;
     xkb_atom_t name;
     VarDef *body;
-} KeyTypeDef;
+} சாவி_Type_Def;
 
-typedef struct {
+வகைவரை கட்டமைப்பு {
     ParseCommon common;
-    enum merge_mode merge;
-    xkb_atom_t keyName;
+    எண்ணிக்கை merge_mode merge;
+    xkb_atom_t சாவி_Name;
     VarDef *symbols;
 } SymbolsDef;
 
-typedef struct {
+வகைவரை கட்டமைப்பு {
     ParseCommon common;
-    enum merge_mode merge;
+    எண்ணிக்கை merge_mode merge;
     // NOTE: Can also be “None”, rather than a modifier name.
-    ExprDef *modifiers;
-    ExprDef *keys;
+    கோவை_Def *modifiers;
+    கோவை_Def *சாவிகள்;
 } ModMapDef;
 
-typedef struct {
+வகைவரை கட்டமைப்பு {
     ParseCommon common;
-    enum merge_mode merge;
+    எண்ணிக்கை merge_mode merge;
     int64_t group;
-    ExprDef *def;
+    கோவை_Def *def;
 } GroupCompatDef;
 
-typedef struct {
+வகைவரை கட்டமைப்பு {
     ParseCommon common;
-    enum merge_mode merge;
+    எண்ணிக்கை merge_mode merge;
     xkb_keysym_t sym;
-    ExprDef *match;
+    கோவை_Def *match;
     VarDef *def;
 } InterpDef;
 
-typedef struct {
+வகைவரை கட்டமைப்பு {
     ParseCommon common;
-    enum merge_mode merge;
-    bool virtual;
+    எண்ணிக்கை merge_mode merge;
+    bool மெய்நிகர்;
     int64_t ndx;
-    ExprDef *name;
+    கோவை_Def *name;
 } LedNameDef;
 
-typedef struct {
+வகைவரை கட்டமைப்பு {
     ParseCommon common;
-    enum merge_mode merge;
+    எண்ணிக்கை merge_mode merge;
     xkb_atom_t name;
     VarDef *body;
 } LedMapDef;
 
-typedef struct {
+வகைவரை கட்டமைப்பு {
     ParseCommon common;
-    char *name;
+    எழுத்து *name;
 } UnknownStatement;
 
-enum xkb_map_flags {
+எண்ணிக்கை xkb_map_flags {
     MAP_NO_FLAG = 0,
     MAP_IS_DEFAULT = (1 << 0),
     MAP_IS_PARTIAL = (1 << 1),
@@ -316,10 +316,10 @@ enum xkb_map_flags {
     MAP_IS_DEPRECATED = (1 << 8),
 };
 
-typedef struct {
+வகைவரை கட்டமைப்பு {
     ParseCommon common;
-    char *name;
+    எழுத்து *name;
     ParseCommon *defs;
-    enum xkb_file_type file_type;
-    enum xkb_map_flags flags;
+    எண்ணிக்கை xkb_file_type file_type;
+    எண்ணிக்கை xkb_map_flags flags;
 } XkbFile;

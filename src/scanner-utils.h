@@ -4,88 +4,88 @@
  */
 #pragma once
 
-#include "config.h"
+#அந்தர்பாவ "config.h"
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <string.h>
+#அந்தர்பாவ <stdbool.h>
+#அந்தர்பாவ <stddef.h>
+#அந்தர்பாவ <stdint.h>
+#அந்தர்பாவ <string.h>
 
-#include "context.h"
-#include "darray.h"
-#include "messages-codes.h"
-#include "utils.h"
-#include "util-numbers.h"
-#include "utf8.h"
+#அந்தர்பாவ "context.h"
+#அந்தர்பாவ "darray.h"
+#அந்தர்பாவ "messages-codes.h"
+#அந்தர்பாவ "utils.h"
+#அந்தர்பாவ "util-numbers.h"
+#அந்தர்பாவ "utf8.h"
 
 /* Point to some substring in the file; used to avoid copying. */
-struct sval {
+கட்டமைப்பு sval {
     size_t len;
-    const char *start ATTR_COUNTED_BY(len);
+    மாறிலி எழுத்து *start ATTR_COUNTED_BY(len);
 };
-typedef darray(struct sval) darray_sval;
+வகைவரை darray(கட்டமைப்பு sval) darray_sval;
 
-static inline bool
-svaleq(struct sval s1, struct sval s2)
+நிலையான உள்வரி bool
+svaleq(கட்டமைப்பு sval s1, கட்டமைப்பு sval s2)
 {
-    return s1.len == s2.len && memcmp(s1.start, s2.start, s1.len) == 0;
+    திரும்பு s1.len == s2.len && memcmp(s1.start, s2.start, s1.len) == 0;
 }
 
-static inline bool
-isvaleq(struct sval s1, struct sval s2)
+நிலையான உள்வரி bool
+isvaleq(கட்டமைப்பு sval s1, கட்டமைப்பு sval s2)
 {
-    return s1.len == s2.len && istrncmp(s1.start, s2.start, s1.len) == 0;
+    திரும்பு s1.len == s2.len && istrncmp(s1.start, s2.start, s1.len) == 0;
 }
 
-static inline bool
-svaleq_prefix(struct sval s1, struct sval s2)
+நிலையான உள்வரி bool
+svaleq_prefix(கட்டமைப்பு sval s1, கட்டமைப்பு sval s2)
 {
-    return s1.len <= s2.len && memcmp(s1.start, s2.start, s1.len) == 0;
+    திரும்பு s1.len <= s2.len && memcmp(s1.start, s2.start, s1.len) == 0;
 }
 
-#define SVAL(__start, __len) (struct sval){ .start = (__start), .len = (__len) }
-#define SVAL_LIT(literal) SVAL(literal, sizeof(literal) - 1)
-#define SVAL_INIT(literal) { .start = (literal), .len = sizeof(literal) - 1 }
+#define SVAL(__start, __len) (கட்டமைப்பு sval){ .start = (__start), .len = (__len) }
+#define SVAL_LIT(literal) SVAL(literal, அளவு(literal) - 1)
+#define SVAL_INIT(literal) { .start = (literal), .len = அளவு(literal) - 1 }
 
 /* A line:column location in the input string (1-based). */
-struct scanner_loc {
-    size_t line, column;
+கட்டமைப்பு scanner_loc {
+    size_t வரி, column;
 };
 
-struct scanner {
+கட்டமைப்பு scanner {
     size_t pos;
     size_t len;
-    const char *s ATTR_COUNTED_BY(len);
+    மாறிலி எழுத்து *s ATTR_COUNTED_BY(len);
     /*
      * Internal buffer.
      * Since this is used to handle paths that are possibly absolute, in theory
      * we should size it to PATH_MAX. However it is very unlikely to reach such
      * long paths in our context.
      */
-    char buf[1024];
+    எழுத்து buf[1024];
     size_t buf_pos;
     /* The position of the start of the current token. */
     size_t token_pos;
     /* Cached values used by scanner_token_location. */
     size_t cached_pos;
-    struct scanner_loc cached_loc;
-    const char *file_name;
-    struct xkb_context *ctx;
-    void *priv;
+    கட்டமைப்பு scanner_loc cached_loc;
+    மாறிலி எழுத்து *file_name;
+    கட்டமைப்பு xkb_context *ctx;
+    வெறுமை *priv;
 };
 
 /* Compute the line:column location for the current token (slow). */
-struct scanner_loc
-scanner_token_location(struct scanner *s);
+கட்டமைப்பு scanner_loc
+scanner_token_location(கட்டமைப்பு scanner *s);
 
-#define scanner_log_with_code(scanner, level, verbosity, log_msg_id, fmt, ...) do { \
-    struct scanner_loc loc = scanner_token_location((scanner));                     \
-    xkb_log_with_code((scanner)->ctx, (level), verbosity, log_msg_id,               \
+#define scanner_log_with_code(scanner, level, verbosity, log_செய்தி_id, fmt, ...) செய் { \
+    கட்டமைப்பு scanner_loc loc = scanner_token_location((scanner));                     \
+    xkb_log_with_code((scanner)->ctx, (level), verbosity, log_செய்தி_id,               \
                       "%s:%zu:%zu: " fmt "\n",                                      \
                       (scanner)->file_name,                                         \
-                      loc.line,                                                     \
+                      loc.வரி,                                                     \
                       loc.column, ##__VA_ARGS__);                                   \
-} while(0)
+} போது(0)
 
 #define scanner_err(scanner, id, fmt, ...)              \
     scanner_log_with_code(scanner, XKB_LOG_LEVEL_ERROR, \
@@ -99,200 +99,200 @@ scanner_token_location(struct scanner *s);
     scanner_log_with_code(scanner, XKB_LOG_LEVEL_WARNING, verbosity, id, \
                           fmt, ##__VA_ARGS__)
 
-static inline void
-scanner_init(struct scanner *s, struct xkb_context *ctx,
-             const char *string, size_t len, const char *file_name,
-             void *priv)
+நிலையான உள்வரி வெறுமை
+scanner_init(கட்டமைப்பு scanner *s, கட்டமைப்பு xkb_context *ctx,
+             மாறிலி எழுத்து *string, size_t len, மாறிலி எழுத்து *file_name,
+             வெறுமை *priv)
 {
     s->s = string;
     s->len = len;
     s->pos = 0;
     s->token_pos = 0;
     s->cached_pos = 0;
-    s->cached_loc.line = s->cached_loc.column = 1;
+    s->cached_loc.வரி = s->cached_loc.column = 1;
     s->file_name = file_name;
     s->ctx = ctx;
     s->priv = priv;
 }
 
-static inline char
-scanner_peek(struct scanner *s)
+நிலையான உள்வரி எழுத்து
+scanner_peek(கட்டமைப்பு scanner *s)
 {
-    if (unlikely(s->pos >= s->len))
-        return '\0';
-    return s->s[s->pos];
+    எனில் (unlikely(s->pos >= s->len))
+        திரும்பு '\0';
+    திரும்பு s->s[s->pos];
 }
 
-static inline bool
-scanner_eof(struct scanner *s)
+நிலையான உள்வரி bool
+scanner_eof(கட்டமைப்பு scanner *s)
 {
-    return s->pos >= s->len;
+    திரும்பு s->pos >= s->len;
 }
 
-static inline bool
-scanner_eol(struct scanner *s)
+நிலையான உள்வரி bool
+scanner_eol(கட்டமைப்பு scanner *s)
 {
-    return scanner_peek(s) == '\n';
+    திரும்பு scanner_peek(s) == '\n';
 }
 
-static inline void
-scanner_skip_to_eol(struct scanner *s)
+நிலையான உள்வரி வெறுமை
+scanner_skip_to_eol(கட்டமைப்பு scanner *s)
 {
-    const char *nl = memchr(s->s + s->pos, '\n', s->len - s->pos);
-    const size_t new_pos = nl ? (size_t) (nl - s->s) : s->len;
+    மாறிலி எழுத்து *nl = memchr(s->s + s->pos, '\n', s->len - s->pos);
+    மாறிலி size_t new_pos = nl ? (size_t) (nl - s->s) : s->len;
     s->pos = new_pos;
 }
 
-static inline char
-scanner_next(struct scanner *s)
+நிலையான உள்வரி எழுத்து
+scanner_next(கட்டமைப்பு scanner *s)
 {
-    if (unlikely(scanner_eof(s)))
-        return '\0';
-    return s->s[s->pos++];
+    எனில் (unlikely(scanner_eof(s)))
+        திரும்பு '\0';
+    திரும்பு s->s[s->pos++];
 }
 
-static inline bool
-scanner_chr(struct scanner *s, char ch)
+நிலையான உள்வரி bool
+scanner_chr(கட்டமைப்பு scanner *s, எழுத்து ch)
 {
-    if (likely(scanner_peek(s) != ch))
-        return false;
+    எனில் (likely(scanner_peek(s) != ch))
+        திரும்பு false;
     s->pos++;
-    return true;
+    திரும்பு true;
 }
 
-static inline bool
-scanner_str(struct scanner *s, const char *string, size_t len)
+நிலையான உள்வரி bool
+scanner_str(கட்டமைப்பு scanner *s, மாறிலி எழுத்து *string, size_t len)
 {
-    if (s->len - s->pos < len)
-        return false;
-    if (memcmp(s->s + s->pos, string, len) != 0)
-        return false;
+    எனில் (s->len - s->pos < len)
+        திரும்பு false;
+    எனில் (memcmp(s->s + s->pos, string, len) != 0)
+        திரும்பு false;
     s->pos += len;
-    return true;
+    திரும்பு true;
 }
 
-#define scanner_lit(s, literal) scanner_str(s, literal, sizeof(literal) - 1)
+#define scanner_lit(s, literal) scanner_str(s, literal, அளவு(literal) - 1)
 
-static inline bool
-scanner_rules_is_ident(char ch)
+நிலையான உள்வரி bool
+scanner_rules_is_ident(எழுத்து ch)
 {
-    return is_graph(ch) && ch != '\\';
+    திரும்பு is_graph(ch) && ch != '\\';
 }
 
 /*
  * A keyword/operator is only valid when it is followed by a character
  * which cannot continue the token.
  */
-static inline bool
-scanner_rules_str_token(struct scanner *s, const char *string, size_t len)
+நிலையான உள்வரி bool
+scanner_rules_str_token(கட்டமைப்பு scanner *s, மாறிலி எழுத்து *string, size_t len)
 {
-    if (!scanner_str(s, string, len)) {
-        return false;
+    எனில் (!scanner_str(s, string, len)) {
+        திரும்பு false;
     }
-    if (scanner_rules_is_ident(scanner_peek(s))) {
+    எனில் (scanner_rules_is_ident(scanner_peek(s))) {
         /* Backtrack */
         s->pos -= len;
-        return false;
+        திரும்பு false;
     }
-    return true;
+    திரும்பு true;
 }
 
 #define scanner_rules_lit_token(s, literal) \
-    scanner_rules_str_token((s), (literal), sizeof(literal) - 1)
+    scanner_rules_str_token((s), (literal), அளவு(literal) - 1)
 
-static inline size_t
-scanner_rules_ident_token(struct scanner *s)
+நிலையான உள்வரி size_t
+scanner_rules_ident_token(கட்டமைப்பு scanner *s)
 {
     size_t len = 0;
-    while (!scanner_eof(s) && scanner_rules_is_ident(s->s[s->pos])) {
+    போது (!scanner_eof(s) && scanner_rules_is_ident(s->s[s->pos])) {
         s->pos++;
         len++;
     }
-    return len;
+    திரும்பு len;
 }
 
-static inline bool
-scanner_buf_append(struct scanner *s, char ch)
+நிலையான உள்வரி bool
+scanner_buf_append(கட்டமைப்பு scanner *s, எழுத்து ch)
 {
-    if (s->buf_pos + 1 >= sizeof(s->buf))
-        return false;
+    எனில் (s->buf_pos + 1 >= அளவு(s->buf))
+        திரும்பு false;
     s->buf[s->buf_pos++] = ch;
-    return true;
+    திரும்பு true;
 }
 
-static inline bool
-scanner_buf_appends(struct scanner *s, const char *str)
+நிலையான உள்வரி bool
+scanner_buf_appends(கட்டமைப்பு scanner *s, மாறிலி எழுத்து *str)
 {
-    const int ret = snprintf(s->buf + s->buf_pos,
-                             sizeof(s->buf) - s->buf_pos,
+    மாறிலி முழு ret = snprintf(s->buf + s->buf_pos,
+                             அளவு(s->buf) - s->buf_pos,
                              "%s", str);
-    if (ret < 0 || (size_t)ret >= sizeof(s->buf) - s->buf_pos)
-        return false;
+    எனில் (ret < 0 || (size_t)ret >= அளவு(s->buf) - s->buf_pos)
+        திரும்பு false;
     s->buf_pos += (size_t)ret;
-    return true;
+    திரும்பு true;
 }
 
-static inline bool
-scanner_buf_appends_code_point(struct scanner *s, uint32_t c)
+நிலையான உள்வரி bool
+scanner_buf_appends_code_point(கட்டமைப்பு scanner *s, uint32_t c)
 {
     /* Up to 4 bytes + NULL */
-    if (s->buf_pos + 5 <= sizeof(s->buf)) {
-        uint8_t count = utf32_to_utf8(c, s->buf + s->buf_pos);
-        if (count == 0) {
+    எனில் (s->buf_pos + 5 <= அளவு(s->buf)) {
+        uint8_t மொத்தம் = utf32_to_utf8(c, s->buf + s->buf_pos);
+        எனில் (மொத்தம் == 0) {
             /* Handle encoding failure with U+FFFD REPLACEMENT CHARACTER */
-            count = utf32_to_utf8(0xfffd, s->buf + s->buf_pos);
+            மொத்தம் = utf32_to_utf8(0xfffd, s->buf + s->buf_pos);
         }
-        if (count == 0)
-            return false;
+        எனில் (மொத்தம் == 0)
+            திரும்பு false;
         /* `count` counts the NULL byte */
-        s->buf_pos += (size_t)count - 1;
-        return true;
-    } else {
-        return false;
+        s->buf_pos += (size_t)மொத்தம் - 1;
+        திரும்பு true;
+    } இல்லையெனில் {
+        திரும்பு false;
     }
 }
 
-static inline bool
-scanner_oct(struct scanner *s, uint8_t *out)
+நிலையான உள்வரி bool
+scanner_oct(கட்டமைப்பு scanner *s, uint8_t *out)
 {
     uint8_t i = 0;
     uint8_t c = 0;
-    for (; scanner_peek(s) >= '0' && scanner_peek(s) <= '7' && i < 4; i++) {
+    க்கு (; scanner_peek(s) >= '0' && scanner_peek(s) <= '7' && i < 4; i++) {
         /* Test overflow */
-        if (c < 040) {
+        எனில் (c < 040) {
             c = c * 8 + (uint8_t)(scanner_next(s) - '0');
-        } else {
+        } இல்லையெனில் {
             /* Consume valid digit, but mark result as invalid */
             scanner_next(s);
             *out = c;
-            return false;
+            திரும்பு false;
         }
     }
     *out = c;
-    return i > 0;
+    திரும்பு i > 0;
 }
 
-static inline bool
-scanner_hex(struct scanner *s, uint8_t *out)
+நிலையான உள்வரி bool
+scanner_hex(கட்டமைப்பு scanner *s, uint8_t *out)
 {
     uint8_t i;
-    for (i = 0, *out = 0; is_xdigit(scanner_peek(s)) && i < 2; i++) {
-        const char c = scanner_next(s);
-        const char offset = (char) (c >= '0' && c <= '9' ? '0' :
+    க்கு (i = 0, *out = 0; is_xdigit(scanner_peek(s)) && i < 2; i++) {
+        மாறிலி எழுத்து c = scanner_next(s);
+        மாறிலி எழுத்து offset = (எழுத்து) (c >= '0' && c <= '9' ? '0' :
                                     c >= 'a' && c <= 'f' ? 'a' - 10
                                                          : 'A' - 10);
         *out = *out * 16 + (uint8_t)(c - offset);
     }
-    return i > 0;
+    திரும்பு i > 0;
 }
 
-static inline int
-scanner_dec_int64(struct scanner *s, int64_t *out)
+நிலையான உள்வரி முழு
+scanner_dec_int64(கட்டமைப்பு scanner *s, int64_t *out)
 {
     uint64_t val = 0;
-    const int count =
+    மாறிலி முழு மொத்தம் =
         parse_dec_to_uint64_t(s->s + s->pos, s->len - s->pos, &val);
-    if (count > 0) {
+    எனில் (மொத்தம் > 0) {
         /*
          * NOTE: Since the sign is handled as a token, we parse only *positive*
          *       values here. So that means that *we cannot parse INT64_MIN*,
@@ -302,86 +302,86 @@ scanner_dec_int64(struct scanner *s, int64_t *out)
          *       to parse only 32 bits integers in realistic keymap files and
          *       the limitation should not be an issue.
          */
-        if (val > INT64_MAX)
-            return -1;
-        s->pos += (size_t)count;
+        எனில் (val > INT64_MAX)
+            திரும்பு -1;
+        s->pos += (size_t)மொத்தம்;
         *out = (int64_t)val;
     }
-    return count;
+    திரும்பு மொத்தம்;
 }
 
-static inline int
-scanner_hex_int64(struct scanner *s, int64_t *out)
+நிலையான உள்வரி முழு
+scanner_hex_int64(கட்டமைப்பு scanner *s, int64_t *out)
 {
     uint64_t val = 0;
-    const int count =
+    மாறிலி முழு மொத்தம் =
         parse_hex_to_uint64_t(s->s + s->pos, s->len - s->pos, &val);
-    if (count > 0) {
+    எனில் (மொத்தம் > 0) {
         /* See comment in `scanner_dec_int64()` above */
-        if (val > INT64_MAX)
-            return -1;
-        s->pos += (size_t)count;
+        எனில் (val > INT64_MAX)
+            திரும்பு -1;
+        s->pos += (size_t)மொத்தம்;
         *out = (int64_t) val;
     }
-    return count;
+    திரும்பு மொத்தம்;
 }
 
 /** Parser for the {NNNN} part of a Unicode escape sequences */
-static inline bool
-scanner_unicode_code_point(struct scanner *s, uint32_t *out)
+நிலையான உள்வரி bool
+scanner_unicode_code_point(கட்டமைப்பு scanner *s, uint32_t *out)
 {
-    if (!scanner_chr(s, '{'))
-        return false;
+    எனில் (!scanner_chr(s, '{'))
+        திரும்பு false;
 
     uint32_t cp = 0;
-    const int count =
+    மாறிலி முழு மொத்தம் =
         parse_hex_to_uint32_t(s->s + s->pos, s->len - s->pos, &cp);
-    if (count > 0)
-        s->pos += (size_t)count;
+    எனில் (மொத்தம் > 0)
+        s->pos += (size_t)மொத்தம்;
 
     /* Try to consume everything within the string until the next `}` */
-    const size_t last_valid = s->pos;
-    while (!scanner_eof(s) && !scanner_eol(s) && scanner_peek(s) != '"' &&
+    மாறிலி size_t last_valid = s->pos;
+    போது (!scanner_eof(s) && !scanner_eol(s) && scanner_peek(s) != '"' &&
            scanner_peek(s) != '}') {
         scanner_next(s);
     }
 
-    if (scanner_chr(s, '}')) {
+    எனில் (scanner_chr(s, '}')) {
         /* End of the escape sequence; code point may be invalid */
         *out = cp;
-        return (count > 0 && s->pos == last_valid + 1 && cp <= 0x10ffff);
+        திரும்பு (மொத்தம் > 0 && s->pos == last_valid + 1 && cp <= 0x10ffff);
     }
 
     /* No closing `}` within the string: rollback to last valid position */
     s->pos = last_valid;
-    return false;
+    திரும்பு false;
 }
 
 /* Basic detection of wrong character encoding based on the first bytes */
-static inline bool
-scanner_check_supported_char_encoding(struct scanner *scanner)
+நிலையான உள்வரி bool
+scanner_check_supported_char_encoding(கட்டமைப்பு scanner *scanner)
 {
     /* Skip UTF-8 encoded BOM (U+FEFF)
      * See: https://www.unicode.org/faq/utf_bom.html#bom5 */
-    if (scanner_str(scanner, "\xef\xbb\xbf", 3) || scanner->len < 2) {
+    எனில் (scanner_str(scanner, "\xef\xbb\xbf", 3) || scanner->len < 2) {
         /* Assume UTF-8 encoding or trivial short input */
-        return true;
+        திரும்பு true;
     }
 
     /* Early detection of wrong file encoding, e.g. UTF-16 or UTF-32 */
-    if (scanner->s[0] == '\0' || scanner->s[1] == '\0') {
+    எனில் (scanner->s[0] == '\0' || scanner->s[1] == '\0') {
         scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                     "unexpected NULL character.");
-        return false;
+        திரும்பு false;
     }
     /* Enforce the first character to be ASCII.
        See the note before the use of this function, that explains the relevant
        parts of the grammars of rules, keymap components and Compose. */
-    if (!is_ascii(scanner->s[0])) {
+    எனில் (!is_ascii(scanner->s[0])) {
         scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                     "unexpected non-ASCII character.");
-        return false;
+        திரும்பு false;
     }
 
-    return true;
+    திரும்பு true;
 }

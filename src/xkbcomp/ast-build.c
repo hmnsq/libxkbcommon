@@ -12,503 +12,503 @@
  * Author: Ran Benita <ran234@gmail.com>
  */
 
-#include "config.h"
+#அந்தர்பாவ "config.h"
 
-#include <stdint.h>
-#include <string.h>
+#அந்தர்பாவ <stdint.h>
+#அந்தர்பாவ <string.h>
 
-#include "xkbcommon/xkbcommon-keysyms.h"
-#include "messages-codes.h"
-#include "xkbcomp-priv.h"
-#include "ast.h"
-#include "ast-build.h"
-#include "include.h"
-#include "keysym.h"
-#include "utf8-decoding.h"
+#அந்தர்பாவ "xkbcommon/xkbcommon-keysyms.h"
+#அந்தர்பாவ "messages-codes.h"
+#அந்தர்பாவ "xkbcomp-priv.h"
+#அந்தர்பாவ "ast.h"
+#அந்தர்பாவ "ast-build.h"
+#அந்தர்பாவ "include.h"
+#அந்தர்பாவ "keysym.h"
+#அந்தர்பாவ "utf8-decoding.h"
 
-static ExprDef *
-ExprCreate(enum stmt_type op)
+நிலையான கோவை_Def *
+கோவை_Create(எண்ணிக்கை stmt_type op)
 {
-    ExprDef *expr = malloc(sizeof(*expr));
-    if (!expr)
-        return NULL;
+    கோவை_Def *கோவை = malloc(அளவு(*கோவை));
+    எனில் (!கோவை)
+        திரும்பு வெற்று;
 
-    expr->common.type = op;
-    expr->common.next = NULL;
+    கோவை->common.type = op;
+    கோவை->common.next = வெற்று;
 
-    return expr;
+    திரும்பு கோவை;
 }
 
-ExprDef *
-ExprCreateString(xkb_atom_t str)
+கோவை_Def *
+கோவை_Create_String(xkb_atom_t str)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_STRING_LITERAL);
-    if (!expr)
-        return NULL;
-    expr->string.str = str;
-    return expr;
+    கோவை_Def *கோவை = கோவை_Create(STMT_கோவை_STRING_LITERAL);
+    எனில் (!கோவை)
+        திரும்பு வெற்று;
+    கோவை->string.str = str;
+    திரும்பு கோவை;
 }
 
-ExprDef *
-ExprCreateInteger(int64_t ival)
+கோவை_Def *
+கோவை_Create_Integer(int64_t ival)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_INTEGER_LITERAL);
-    if (!expr)
-        return NULL;
-    expr->integer.ival = ival;
-    return expr;
+    கோவை_Def *கோவை = கோவை_Create(STMT_கோவை_INTEGER_LITERAL);
+    எனில் (!கோவை)
+        திரும்பு வெற்று;
+    கோவை->integer.ival = ival;
+    திரும்பு கோவை;
 }
 
-ExprDef *
-ExprCreateFloat(void)
+கோவை_Def *
+கோவை_Create_Float(வெறுமை)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_FLOAT_LITERAL);
-    if (!expr)
-        return NULL;
-    return expr;
+    கோவை_Def *கோவை = கோவை_Create(STMT_கோவை_FLOAT_LITERAL);
+    எனில் (!கோவை)
+        திரும்பு வெற்று;
+    திரும்பு கோவை;
 }
 
-ExprDef *
-ExprCreateBoolean(bool set)
+கோவை_Def *
+கோவை_Create_Boolean(bool set)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_BOOLEAN_LITERAL);
-    if (!expr)
-        return NULL;
-    expr->boolean.set = set;
-    return expr;
+    கோவை_Def *கோவை = கோவை_Create(STMT_கோவை_BOOLEAN_LITERAL);
+    எனில் (!கோவை)
+        திரும்பு வெற்று;
+    கோவை->boolean.set = set;
+    திரும்பு கோவை;
 }
 
-ExprDef *
-ExprCreateKeyName(xkb_atom_t key_name)
+கோவை_Def *
+கோவை_Create_சாவி_Name(xkb_atom_t சாவி_name)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_KEYNAME_LITERAL);
-    if (!expr)
-        return NULL;
-    expr->key_name.key_name = key_name;
-    return expr;
+    கோவை_Def *கோவை = கோவை_Create(STMT_கோவை_KEYNAME_LITERAL);
+    எனில் (!கோவை)
+        திரும்பு வெற்று;
+    கோவை->சாவி_name.சாவி_name = சாவி_name;
+    திரும்பு கோவை;
 }
 
-ExprDef *
-ExprCreateKeySym(xkb_keysym_t keysym)
+கோவை_Def *
+கோவை_Create_சாவி_Sym(xkb_keysym_t keysym)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_KEYSYM_LITERAL);
-    if (!expr)
-        return NULL;
-    expr->keysym.keysym = keysym;
-    return expr;
+    கோவை_Def *கோவை = கோவை_Create(STMT_கோவை_KEYSYM_LITERAL);
+    எனில் (!கோவை)
+        திரும்பு வெற்று;
+    கோவை->keysym.keysym = keysym;
+    திரும்பு கோவை;
 }
 
-ExprDef *
-ExprCreateIdent(xkb_atom_t ident)
+கோவை_Def *
+கோவை_Create_Ident(xkb_atom_t ident)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_IDENT);
-    if (!expr)
-        return NULL;
-    expr->ident.ident = ident;
-    return expr;
+    கோவை_Def *கோவை = கோவை_Create(STMT_கோவை_IDENT);
+    எனில் (!கோவை)
+        திரும்பு வெற்று;
+    கோவை->ident.ident = ident;
+    திரும்பு கோவை;
 }
 
-ExprDef *
-ExprCreateUnary(enum stmt_type op, ExprDef *child)
+கோவை_Def *
+கோவை_Create_Unary(எண்ணிக்கை stmt_type op, கோவை_Def *child)
 {
-    ExprDef *expr = ExprCreate(op);
-    if (!expr)
-        return NULL;
-    expr->unary.child = child;
-    return expr;
+    கோவை_Def *கோவை = கோவை_Create(op);
+    எனில் (!கோவை)
+        திரும்பு வெற்று;
+    கோவை->unary.child = child;
+    திரும்பு கோவை;
 }
 
-ExprDef *
-ExprCreateBinary(enum stmt_type op, ExprDef *left, ExprDef *right)
+கோவை_Def *
+கோவை_Create_இருமம்(எண்ணிக்கை stmt_type op, கோவை_Def *இடது, கோவை_Def *வலது)
 {
-    ExprDef *expr = ExprCreate(op);
-    if (!expr)
-        return NULL;
+    கோவை_Def *கோவை = கோவை_Create(op);
+    எனில் (!கோவை)
+        திரும்பு வெற்று;
 
-    expr->binary.left = left;
-    expr->binary.right = right;
+    கோவை->இருமம்.இடது = இடது;
+    கோவை->இருமம்.வலது = வலது;
 
-    return expr;
+    திரும்பு கோவை;
 }
 
-ExprDef *
-ExprCreateFieldRef(xkb_atom_t element, xkb_atom_t field)
+கோவை_Def *
+கோவை_Create_Field_Ref(xkb_atom_t element, xkb_atom_t field)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_FIELD_REF);
-    if (!expr)
-        return NULL;
-    expr->field_ref.element = element;
-    expr->field_ref.field = field;
-    return expr;
+    கோவை_Def *கோவை = கோவை_Create(STMT_கோவை_FIELD_REF);
+    எனில் (!கோவை)
+        திரும்பு வெற்று;
+    கோவை->field_ref.element = element;
+    கோவை->field_ref.field = field;
+    திரும்பு கோவை;
 }
 
-ExprDef *
-ExprCreateArrayRef(xkb_atom_t element, xkb_atom_t field, ExprDef *entry)
+கோவை_Def *
+கோவை_Create_Array_Ref(xkb_atom_t element, xkb_atom_t field, கோவை_Def *entry)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_ARRAY_REF);
-    if (!expr)
-        return NULL;
-    expr->array_ref.element = element;
-    expr->array_ref.field = field;
-    expr->array_ref.entry = entry;
-    return expr;
+    கோவை_Def *கோவை = கோவை_Create(STMT_கோவை_ARRAY_REF);
+    எனில் (!கோவை)
+        திரும்பு வெற்று;
+    கோவை->array_ref.element = element;
+    கோவை->array_ref.field = field;
+    கோவை->array_ref.entry = entry;
+    திரும்பு கோவை;
 }
 
-ExprDef *
-ExprEmptyList(void)
+கோவை_Def *
+கோவை_Empty_List(வெறுமை)
 {
-    return ExprCreate(STMT_EXPR_EMPTY_LIST);
+    திரும்பு கோவை_Create(STMT_கோவை_EMPTY_LIST);
 }
 
-ExprDef *
-ExprCreateAction(xkb_atom_t name, ExprDef *args)
+கோவை_Def *
+கோவை_Create_Action(xkb_atom_t name, கோவை_Def *args)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_ACTION_DECL);
-    if (!expr)
-        return NULL;
-    expr->action.name = name;
-    expr->action.args = args;
-    return expr;
+    கோவை_Def *கோவை = கோவை_Create(STMT_கோவை_ACTION_DECL);
+    எனில் (!கோவை)
+        திரும்பு வெற்று;
+    கோவை->action.name = name;
+    கோவை->action.args = args;
+    திரும்பு கோவை;
 }
 
-ExprDef *
-ExprCreateActionList(ExprDef *actions)
+கோவை_Def *
+கோவை_Create_Action_List(கோவை_Def *actions)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_ACTION_LIST);
-    if (!expr)
-        return NULL;
-    expr->actions.actions = actions;
-    return expr;
+    கோவை_Def *கோவை = கோவை_Create(STMT_கோவை_ACTION_LIST);
+    எனில் (!கோவை)
+        திரும்பு வெற்று;
+    கோவை->actions.actions = actions;
+    திரும்பு கோவை;
 }
 
-ExprDef *
-ExprCreateKeySymList(xkb_keysym_t sym)
+கோவை_Def *
+கோவை_Create_சாவி_Sym_List(xkb_keysym_t sym)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_KEYSYM_LIST);
-    if (!expr)
-        return NULL;
-    darray_init(expr->keysym_list.syms);
-    if (sym == XKB_KEY_NoSymbol) {
+    கோவை_Def *கோவை = கோவை_Create(STMT_கோவை_KEYSYM_LIST);
+    எனில் (!கோவை)
+        திரும்பு வெற்று;
+    darray_init(கோவை->keysym_list.syms);
+    எனில் (sym == XKB_சாவி_No_குறியீடு) {
         /* Discard NoSymbol */
-    } else {
-        darray_append(expr->keysym_list.syms, sym);
+    } இல்லையெனில் {
+        darray_append(கோவை->keysym_list.syms, sym);
     }
-    return expr;
+    திரும்பு கோவை;
 }
 
-ExprDef *
-ExprAppendKeySymList(ExprDef *expr, xkb_keysym_t sym)
+கோவை_Def *
+கோவை_Append_சாவி_Sym_List(கோவை_Def *கோவை, xkb_keysym_t sym)
 {
-    if (sym == XKB_KEY_NoSymbol) {
+    எனில் (sym == XKB_சாவி_No_குறியீடு) {
         /* Discard NoSymbol */
-    } else {
-        darray_append(expr->keysym_list.syms, sym);
+    } இல்லையெனில் {
+        darray_append(கோவை->keysym_list.syms, sym);
     }
-    return expr;
+    திரும்பு கோவை;
 }
 
-ExprDef *
-ExprKeySymListAppendString(struct scanner *scanner,
-                           ExprDef *expr, const char *string)
+கோவை_Def *
+கோவை_சாவி_Sym_List_Append_String(கட்டமைப்பு scanner *scanner,
+                           கோவை_Def *கோவை, மாறிலி எழுத்து *string)
 {
     /* TODO: use strnlen with max len = 4 * MAX_KEYSYMS_LIST_LENGTH */
-    const size_t len = strlen(string);
+    மாறிலி size_t len = strlen(string);
     size_t idx = 0;
     size_t idx_cp = 1;
-    while (idx < len) {
-        size_t count = 0;
-        uint32_t cp = utf8_next_code_point(string + idx, len - idx, &count);
-        if (cp == INVALID_UTF8_CODE_POINT) {
+    போது (idx < len) {
+        size_t மொத்தம் = 0;
+        uint32_t cp = utf8_next_code_point(string + idx, len - idx, &மொத்தம்);
+        எனில் (cp == INVALID_UTF8_CODE_POINT) {
             scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                         "Cannot convert string to keysyms: "
                         "Invalid UTF-8 encoding starting at byte position %zu "
                         "(code point position: %zu).",
                         idx + 1, idx_cp);
-            goto error;
+            செல் error;
         }
-        const xkb_keysym_t sym = xkb_utf32_to_keysym(cp);
-        if (sym == XKB_KEY_NoSymbol) {
+        மாறிலி xkb_keysym_t sym = xkb_utf32_to_keysym(cp);
+        எனில் (sym == XKB_சாவி_No_குறியீடு) {
             scanner_err(scanner, XKB_LOG_MESSAGE_NO_ID,
                         "Cannot convert string to keysyms: Unicode code point "
                         "U+04%"PRIX32" has no keysym equivalent"
                         "(byte position: %zu, code point position: %zu).",
                         cp, idx + 1, idx_cp);
-            goto error;
+            செல் error;
         }
-        darray_append(expr->keysym_list.syms, sym);
-        idx += count;
+        darray_append(கோவை->keysym_list.syms, sym);
+        idx += மொத்தம்;
         idx_cp++;
     }
-    assert(string[idx] == '\0');
-    return expr;
+    ப்ரதிஜ்ஞா(string[idx] == '\0');
+    திரும்பு கோவை;
 error:
-    FreeStmt((ParseCommon*) expr);
-    return NULL;
+    FreeStmt((ParseCommon*) கோவை);
+    திரும்பு வெற்று;
 }
 
 xkb_keysym_t
-KeysymParseString(struct scanner *scanner, const char *string)
+KeysymParseString(கட்டமைப்பு scanner *scanner, மாறிலி எழுத்து *string)
 {
-    const size_t len = strlen(string);
-    if (len == 0) {
+    மாறிலி size_t len = strlen(string);
+    எனில் (len == 0) {
         scanner_err(scanner, XKB_LOG_MESSAGE_NO_ID,
                     "Cannot convert string to single keysym: empty string.");
-        return XKB_KEY_NoSymbol;
+        திரும்பு XKB_சாவி_No_குறியீடு;
     }
-    size_t count = 0;
-    const uint32_t cp = utf8_next_code_point(string, len, &count);
-    if (cp == INVALID_UTF8_CODE_POINT) {
+    size_t மொத்தம் = 0;
+    மாறிலி uint32_t cp = utf8_next_code_point(string, len, &மொத்தம்);
+    எனில் (cp == INVALID_UTF8_CODE_POINT) {
         scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                     "Cannot convert string to single keysym: "
                     "Invalid UTF-8 encoding.");
-        return XKB_KEY_NoSymbol;
-    } else if (count != len) {
+        திரும்பு XKB_சாவி_No_குறியீடு;
+    } இல்லையெனில் எனில் (மொத்தம் != len) {
         scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                     "Cannot convert string to single keysym: "
                     "Expected a single Unicode code point, got: \"%s\".",
                     string);
-        return XKB_KEY_NoSymbol;
+        திரும்பு XKB_சாவி_No_குறியீடு;
     }
-    const xkb_keysym_t sym = xkb_utf32_to_keysym(cp);
-    if (sym == XKB_KEY_NoSymbol) {
+    மாறிலி xkb_keysym_t sym = xkb_utf32_to_keysym(cp);
+    எனில் (sym == XKB_சாவி_No_குறியீடு) {
         scanner_err(scanner, XKB_LOG_MESSAGE_NO_ID,
                     "Cannot convert string to single keysym: Unicode "
                     "code point U+%04"PRIX32" has no keysym equivalent.",
                     cp);
     }
-    return sym;
+    திரும்பு sym;
 }
 
 KeycodeDef *
-KeycodeCreate(xkb_atom_t name, int64_t value)
+KeycodeCreate(xkb_atom_t name, int64_t மதிப்பு)
 {
-    KeycodeDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    KeycodeDef *def = malloc(அளவு(*def));
+    எனில் (!def)
+        திரும்பு வெற்று;
 
     def->common.type = STMT_KEYCODE;
-    def->common.next = NULL;
+    def->common.next = வெற்று;
     def->name = name;
-    def->value = value;
+    def->மதிப்பு = மதிப்பு;
 
-    return def;
+    திரும்பு def;
 }
 
-KeyAliasDef *
-KeyAliasCreate(xkb_atom_t alias, xkb_atom_t real)
+சாவி_Alias_Def *
+சாவி_Alias_Create(xkb_atom_t alias, xkb_atom_t real)
 {
-    KeyAliasDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    சாவி_Alias_Def *def = malloc(அளவு(*def));
+    எனில் (!def)
+        திரும்பு வெற்று;
 
     def->common.type = STMT_ALIAS;
-    def->common.next = NULL;
+    def->common.next = வெற்று;
     def->alias = alias;
     def->real = real;
 
-    return def;
+    திரும்பு def;
 }
 
 VModDef *
-VModCreate(xkb_atom_t name, ExprDef *value)
+VModCreate(xkb_atom_t name, கோவை_Def *மதிப்பு)
 {
-    VModDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    VModDef *def = malloc(அளவு(*def));
+    எனில் (!def)
+        திரும்பு வெற்று;
 
     def->common.type = STMT_VMOD;
-    def->common.next = NULL;
+    def->common.next = வெற்று;
     def->name = name;
-    def->value = value;
+    def->மதிப்பு = மதிப்பு;
 
-    return def;
+    திரும்பு def;
 }
 
 VarDef *
-VarCreate(ExprDef *name, ExprDef *value)
+VarCreate(கோவை_Def *name, கோவை_Def *மதிப்பு)
 {
-    VarDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    VarDef *def = malloc(அளவு(*def));
+    எனில் (!def)
+        திரும்பு வெற்று;
 
     def->common.type = STMT_VAR;
-    def->common.next = NULL;
+    def->common.next = வெற்று;
     def->name = name;
-    def->value = value;
+    def->மதிப்பு = மதிப்பு;
 
-    return def;
+    திரும்பு def;
 }
 
 VarDef *
 BoolVarCreate(xkb_atom_t ident, bool set)
 {
-    ExprDef *name, *value;
+    கோவை_Def *name, *மதிப்பு;
     VarDef *def;
-    if (!(name = ExprCreateIdent(ident))) {
-        return NULL;
+    எனில் (!(name = கோவை_Create_Ident(ident))) {
+        திரும்பு வெற்று;
     }
-    if (!(value = ExprCreateBoolean(set))) {
+    எனில் (!(மதிப்பு = கோவை_Create_Boolean(set))) {
         FreeStmt((ParseCommon *) name);
-        return NULL;
+        திரும்பு வெற்று;
     }
-    if (!(def = VarCreate(name, value))) {
+    எனில் (!(def = VarCreate(name, மதிப்பு))) {
         FreeStmt((ParseCommon *) name);
-        FreeStmt((ParseCommon *) value);
-        return NULL;
+        FreeStmt((ParseCommon *) மதிப்பு);
+        திரும்பு வெற்று;
     }
-    return def;
+    திரும்பு def;
 }
 
 InterpDef *
-InterpCreate(xkb_keysym_t sym, ExprDef *match)
+InterpCreate(xkb_keysym_t sym, கோவை_Def *match)
 {
-    InterpDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    InterpDef *def = malloc(அளவு(*def));
+    எனில் (!def)
+        திரும்பு வெற்று;
 
     def->common.type = STMT_INTERP;
-    def->common.next = NULL;
+    def->common.next = வெற்று;
     def->sym = sym;
     def->match = match;
-    def->def = NULL;
+    def->def = வெற்று;
 
-    return def;
+    திரும்பு def;
 }
 
-KeyTypeDef *
-KeyTypeCreate(xkb_atom_t name, VarDef *body)
+சாவி_Type_Def *
+சாவி_Type_Create(xkb_atom_t name, VarDef *body)
 {
-    KeyTypeDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    சாவி_Type_Def *def = malloc(அளவு(*def));
+    எனில் (!def)
+        திரும்பு வெற்று;
 
     def->common.type = STMT_TYPE;
-    def->common.next = NULL;
+    def->common.next = வெற்று;
     def->merge = MERGE_DEFAULT;
     def->name = name;
     def->body = body;
 
-    return def;
+    திரும்பு def;
 }
 
 SymbolsDef *
-SymbolsCreate(xkb_atom_t keyName, VarDef *symbols)
+SymbolsCreate(xkb_atom_t சாவி_Name, VarDef *symbols)
 {
-    SymbolsDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    SymbolsDef *def = malloc(அளவு(*def));
+    எனில் (!def)
+        திரும்பு வெற்று;
 
     def->common.type = STMT_SYMBOLS;
-    def->common.next = NULL;
+    def->common.next = வெற்று;
     def->merge = MERGE_DEFAULT;
-    def->keyName = keyName;
+    def->சாவி_Name = சாவி_Name;
     def->symbols = symbols;
 
-    return def;
+    திரும்பு def;
 }
 
 GroupCompatDef *
-GroupCompatCreate(int64_t group, ExprDef *val)
+GroupCompatCreate(int64_t group, கோவை_Def *val)
 {
-    GroupCompatDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    GroupCompatDef *def = malloc(அளவு(*def));
+    எனில் (!def)
+        திரும்பு வெற்று;
 
     def->common.type = STMT_GROUP_COMPAT;
-    def->common.next = NULL;
+    def->common.next = வெற்று;
     def->merge = MERGE_DEFAULT;
     def->group = group;
     def->def = val;
 
-    return def;
+    திரும்பு def;
 }
 
 ModMapDef *
-ModMapCreate(ExprDef *modifiers, ExprDef *keys)
+ModMapCreate(கோவை_Def *modifiers, கோவை_Def *சாவிகள்)
 {
-    ModMapDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    ModMapDef *def = malloc(அளவு(*def));
+    எனில் (!def)
+        திரும்பு வெற்று;
 
     def->common.type = STMT_MODMAP;
-    def->common.next = NULL;
+    def->common.next = வெற்று;
     def->merge = MERGE_DEFAULT;
     def->modifiers = modifiers;
-    def->keys = keys;
+    def->சாவிகள் = சாவிகள்;
 
-    return def;
+    திரும்பு def;
 }
 
 LedMapDef *
 LedMapCreate(xkb_atom_t name, VarDef *body)
 {
-    LedMapDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    LedMapDef *def = malloc(அளவு(*def));
+    எனில் (!def)
+        திரும்பு வெற்று;
 
     def->common.type = STMT_LED_MAP;
-    def->common.next = NULL;
+    def->common.next = வெற்று;
     def->merge = MERGE_DEFAULT;
     def->name = name;
     def->body = body;
 
-    return def;
+    திரும்பு def;
 }
 
 LedNameDef *
-LedNameCreate(int64_t ndx, ExprDef *name, bool virtual)
+LedNameCreate(int64_t ndx, கோவை_Def *name, bool மெய்நிகர்)
 {
-    LedNameDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    LedNameDef *def = malloc(அளவு(*def));
+    எனில் (!def)
+        திரும்பு வெற்று;
 
     def->common.type = STMT_LED_NAME;
-    def->common.next = NULL;
+    def->common.next = வெற்று;
     def->merge = MERGE_DEFAULT;
     def->ndx = ndx;
     def->name = name;
-    def->virtual = virtual;
+    def->மெய்நிகர் = மெய்நிகர்;
 
-    return def;
+    திரும்பு def;
 }
 
 UnknownStatement *
-UnknownStatementCreate(enum stmt_type type, struct sval name)
+UnknownStatementCreate(எண்ணிக்கை stmt_type type, கட்டமைப்பு sval name)
 {
-    UnknownStatement *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    UnknownStatement *def = malloc(அளவு(*def));
+    எனில் (!def)
+        திரும்பு வெற்று;
 
     def->common.type = type;
-    def->common.next = NULL;
+    def->common.next = வெற்று;
     def->name = strndup(name.start, name.len);
-    if (!def->name) {
-        free(def);
-        return NULL;
+    எனில் (!def->name) {
+        விடுவி(def);
+        திரும்பு வெற்று;
     }
 
-    return def;
+    திரும்பு def;
 }
 
-static void
+நிலையான வெறுமை
 FreeInclude(IncludeStmt *incl);
 
 IncludeStmt *
-IncludeCreate(struct xkb_context *ctx, char *str, enum merge_mode merge)
+IncludeCreate(கட்டமைப்பு xkb_context *ctx, எழுத்து *str, எண்ணிக்கை merge_mode merge)
 {
     IncludeStmt *incl, *first;
-    char *stmt, *tmp;
-    char nextop;
+    எழுத்து *stmt, *tmp;
+    எழுத்து nextop;
 
-    incl = first = NULL;
+    incl = first = வெற்று;
     tmp = str;
     stmt = strdup_safe(str);
-    while (tmp && *tmp)
+    போது (tmp && *tmp)
     {
-        char *file = NULL, *map = NULL, *extra_data = NULL;
+        எழுத்து *file = வெற்று, *map = வெற்று, *extra_data = வெற்று;
 
-        if (!ParseIncludeMap(&tmp, &file, &map, &nextop, &extra_data))
-            goto err;
+        எனில் (!ParseIncludeMap(&tmp, &file, &map, &nextop, &extra_data))
+            செல் err;
 
         /*
          * Given an RMLVO (here layout) like 'us,,fr', the rules parser
@@ -516,72 +516,72 @@ IncludeCreate(struct xkb_context *ctx, char *str, enum merge_mode merge)
          * We should just skip the ':2' in this case and leave it to the
          * appropriate section to deal with the empty group.
          */
-        if (isempty(file)) {
-            free(file);
-            free(map);
-            free(extra_data);
-            continue;
+        எனில் (isempty(file)) {
+            விடுவி(file);
+            விடுவி(map);
+            விடுவி(extra_data);
+            தொடர்;
         }
 
-        if (first == NULL) {
-            first = incl = malloc(sizeof(*first));
-        } else {
-            incl->next_incl = malloc(sizeof(*first));
+        எனில் (first == வெற்று) {
+            first = incl = malloc(அளவு(*first));
+        } இல்லையெனில் {
+            incl->next_incl = malloc(அளவு(*first));
             incl = incl->next_incl;
         }
 
-        if (!incl) {
-            free(file);
-            free(map);
-            free(extra_data);
-            break;
+        எனில் (!incl) {
+            விடுவி(file);
+            விடுவி(map);
+            விடுவி(extra_data);
+            நிறுத்து;
         }
 
         incl->common.type = STMT_INCLUDE;
-        incl->common.next = NULL;
+        incl->common.next = வெற்று;
         incl->merge = merge;
-        incl->stmt = NULL;
+        incl->stmt = வெற்று;
         incl->file = file;
         incl->map = map;
         incl->modifier = extra_data;
-        incl->next_incl = NULL;
+        incl->next_incl = வெற்று;
 
-        switch (nextop) {
-        case MERGE_AUGMENT_PREFIX:
+        தேர்வு (nextop) {
+        நிலை MERGE_AUGMENT_PREFIX:
             merge = MERGE_AUGMENT;
-            break;
-        case MERGE_REPLACE_PREFIX:
+            நிறுத்து;
+        நிலை MERGE_REPLACE_PREFIX:
             merge = MERGE_REPLACE;
-            break;
-        default:
+            நிறுத்து;
+        இயல்பு:
             merge = MERGE_OVERRIDE;
         }
     }
 
-    if (first)
+    எனில் (first)
         first->stmt = stmt;
-    else
-        free(stmt);
+    இல்லையெனில்
+        விடுவி(stmt);
 
-    return first;
+    திரும்பு first;
 
 err:
     log_err(ctx, XKB_ERROR_INVALID_INCLUDE_STATEMENT,
             "Illegal include statement \"%s\"; Ignored\n", stmt);
     FreeInclude(first);
-    free(stmt);
-    return NULL;
+    விடுவி(stmt);
+    திரும்பு வெற்று;
 }
 
 XkbFile *
-XkbFileCreate(enum xkb_file_type type, char *name, ParseCommon *defs,
-              enum xkb_map_flags flags)
+XkbFileCreate(எண்ணிக்கை xkb_file_type type, எழுத்து *name, ParseCommon *defs,
+              எண்ணிக்கை xkb_map_flags flags)
 {
     XkbFile *file;
 
-    file = calloc(1, sizeof(*file));
-    if (!file)
-        return NULL;
+    file = calloc(1, அளவு(*file));
+    எனில் (!file)
+        திரும்பு வெற்று;
 
     XkbEscapeMapName(name);
     file->file_type = type;
@@ -589,197 +589,197 @@ XkbFileCreate(enum xkb_file_type type, char *name, ParseCommon *defs,
     file->defs = defs;
     file->flags = flags;
 
-    return file;
+    திரும்பு file;
 }
 
 XkbFile *
-XkbFileFromComponents(struct xkb_context *ctx,
-                      const struct xkb_component_names *kkctgs)
+XkbFileFromComponents(கட்டமைப்பு xkb_context *ctx,
+                      மாறிலி கட்டமைப்பு xkb_component_names *kkctgs)
 {
-    char *const components[] = {
+    எழுத்து *மாறிலி components[] = {
         kkctgs->keycodes, kkctgs->types,
         kkctgs->compatibility, kkctgs->symbols,
     };
-    enum xkb_file_type type;
-    IncludeStmt *include = NULL;
-    XkbFile *file = NULL;
-    ParseCommon *defs = NULL, *defsLast = NULL;
+    எண்ணிக்கை xkb_file_type type;
+    IncludeStmt *include = வெற்று;
+    XkbFile *file = வெற்று;
+    ParseCommon *defs = வெற்று, *defsLast = வெற்று;
 
-    for (type = FIRST_KEYMAP_FILE_TYPE; type <= LAST_KEYMAP_FILE_TYPE; type++) {
+    க்கு (type = FIRST_KEYMAP_FILE_TYPE; type <= LAST_KEYMAP_FILE_TYPE; type++) {
         include = IncludeCreate(ctx, components[type], MERGE_DEFAULT);
-        if (!include)
-            goto err;
+        எனில் (!include)
+            செல் err;
 
-        file = XkbFileCreate(type, NULL, (ParseCommon *) include, 0);
-        if (!file) {
+        file = XkbFileCreate(type, வெற்று, (ParseCommon *) include, 0);
+        எனில் (!file) {
             FreeInclude(include);
-            goto err;
+            செல் err;
         }
 
-        if (!defs)
+        எனில் (!defs)
             defsLast = defs = &file->common;
-        else
+        இல்லையெனில்
             defsLast = defsLast->next = &file->common;
     }
 
-    file = XkbFileCreate(FILE_TYPE_KEYMAP, NULL, defs, 0);
-    if (!file)
-        goto err;
+    file = XkbFileCreate(FILE_TYPE_KEYMAP, வெற்று, defs, 0);
+    எனில் (!file)
+        செல் err;
 
-    return file;
+    திரும்பு file;
 
 err:
     FreeXkbFile((XkbFile *) defs);
-    return NULL;
+    திரும்பு வெற்று;
 }
 
-static void
+நிலையான வெறுமை
 FreeInclude(IncludeStmt *incl)
 {
     IncludeStmt *next;
 
-    while (incl)
+    போது (incl)
     {
         next = incl->next_incl;
 
-        free(incl->file);
-        free(incl->map);
-        free(incl->modifier);
-        free(incl->stmt);
+        விடுவி(incl->file);
+        விடுவி(incl->map);
+        விடுவி(incl->modifier);
+        விடுவி(incl->stmt);
 
-        free(incl);
+        விடுவி(incl);
         incl = next;
     }
 }
 
-void
+வெறுமை
 FreeStmt(ParseCommon *stmt)
 {
     ParseCommon *next;
 
-    while (stmt)
+    போது (stmt)
     {
         next = stmt->next;
 
-        switch (stmt->type) {
-        case STMT_INCLUDE:
+        தேர்வு (stmt->type) {
+        நிலை STMT_INCLUDE:
             FreeInclude((IncludeStmt *) stmt);
             /* stmt is already free'd here. */
-            stmt = NULL;
-            break;
+            stmt = வெற்று;
+            நிறுத்து;
 
-        case STMT_EXPR_NEGATE:
-        case STMT_EXPR_UNARY_PLUS:
-        case STMT_EXPR_NOT:
-        case STMT_EXPR_INVERT:
-            FreeStmt((ParseCommon *) ((ExprUnary *) stmt)->child);
-            break;
+        நிலை STMT_கோவை_NEGATE:
+        நிலை STMT_கோவை_UNARY_PLUS:
+        நிலை STMT_கோவை_NOT:
+        நிலை STMT_கோவை_INVERT:
+            FreeStmt((ParseCommon *) ((கோவை_Unary *) stmt)->child);
+            நிறுத்து;
 
-        case STMT_EXPR_DIVIDE:
-        case STMT_EXPR_ADD:
-        case STMT_EXPR_SUBTRACT:
-        case STMT_EXPR_MULTIPLY:
-        case STMT_EXPR_ASSIGN:
-            FreeStmt((ParseCommon *) ((ExprBinary *) stmt)->left);
-            FreeStmt((ParseCommon *) ((ExprBinary *) stmt)->right);
-            break;
+        நிலை STMT_கோவை_DIVIDE:
+        நிலை STMT_கோவை_ADD:
+        நிலை STMT_கோவை_SUBTRACT:
+        நிலை STMT_கோவை_MULTIPLY:
+        நிலை STMT_கோவை_ASSIGN:
+            FreeStmt((ParseCommon *) ((கோவை_இருமம் *) stmt)->இடது);
+            FreeStmt((ParseCommon *) ((கோவை_இருமம் *) stmt)->வலது);
+            நிறுத்து;
 
-        case STMT_EXPR_ACTION_DECL:
-            FreeStmt((ParseCommon *) ((ExprAction *) stmt)->args);
-            break;
+        நிலை STMT_கோவை_ACTION_DECL:
+            FreeStmt((ParseCommon *) ((கோவை_Action *) stmt)->args);
+            நிறுத்து;
 
-        case STMT_EXPR_ACTION_LIST:
-            FreeStmt((ParseCommon *) ((ExprActionList *) stmt)->actions);
-            break;
+        நிலை STMT_கோவை_ACTION_LIST:
+            FreeStmt((ParseCommon *) ((கோவை_Action_List *) stmt)->actions);
+            நிறுத்து;
 
-        case STMT_EXPR_ARRAY_REF:
-            FreeStmt((ParseCommon *) ((ExprArrayRef *) stmt)->entry);
-            break;
+        நிலை STMT_கோவை_ARRAY_REF:
+            FreeStmt((ParseCommon *) ((கோவை_Array_Ref *) stmt)->entry);
+            நிறுத்து;
 
-        case STMT_EXPR_KEYSYM_LIST:
-            darray_free(((ExprKeysymList *) stmt)->syms);
-            break;
+        நிலை STMT_கோவை_KEYSYM_LIST:
+            darray_free(((கோவை_Keysym_List *) stmt)->syms);
+            நிறுத்து;
 
-        case STMT_VAR:
+        நிலை STMT_VAR:
             FreeStmt((ParseCommon *) ((VarDef *) stmt)->name);
-            FreeStmt((ParseCommon *) ((VarDef *) stmt)->value);
-            break;
-        case STMT_TYPE:
-            FreeStmt((ParseCommon *) ((KeyTypeDef *) stmt)->body);
-            break;
-        case STMT_INTERP:
+            FreeStmt((ParseCommon *) ((VarDef *) stmt)->மதிப்பு);
+            நிறுத்து;
+        நிலை STMT_TYPE:
+            FreeStmt((ParseCommon *) ((சாவி_Type_Def *) stmt)->body);
+            நிறுத்து;
+        நிலை STMT_INTERP:
             FreeStmt((ParseCommon *) ((InterpDef *) stmt)->match);
             FreeStmt((ParseCommon *) ((InterpDef *) stmt)->def);
-            break;
-        case STMT_VMOD:
-            FreeStmt((ParseCommon *) ((VModDef *) stmt)->value);
-            break;
-        case STMT_SYMBOLS:
+            நிறுத்து;
+        நிலை STMT_VMOD:
+            FreeStmt((ParseCommon *) ((VModDef *) stmt)->மதிப்பு);
+            நிறுத்து;
+        நிலை STMT_SYMBOLS:
             FreeStmt((ParseCommon *) ((SymbolsDef *) stmt)->symbols);
-            break;
-        case STMT_MODMAP:
+            நிறுத்து;
+        நிலை STMT_MODMAP:
             FreeStmt((ParseCommon *) ((ModMapDef *) stmt)->modifiers);
-            FreeStmt((ParseCommon *) ((ModMapDef *) stmt)->keys);
-            break;
-        case STMT_GROUP_COMPAT:
+            FreeStmt((ParseCommon *) ((ModMapDef *) stmt)->சாவிகள்);
+            நிறுத்து;
+        நிலை STMT_GROUP_COMPAT:
             FreeStmt((ParseCommon *) ((GroupCompatDef *) stmt)->def);
-            break;
-        case STMT_LED_MAP:
+            நிறுத்து;
+        நிலை STMT_LED_MAP:
             FreeStmt((ParseCommon *) ((LedMapDef *) stmt)->body);
-            break;
-        case STMT_LED_NAME:
+            நிறுத்து;
+        நிலை STMT_LED_NAME:
             FreeStmt((ParseCommon *) ((LedNameDef *) stmt)->name);
-            break;
-        case STMT_UNKNOWN_DECLARATION:
-        case STMT_UNKNOWN_COMPOUND:
-            free(((UnknownStatement *) stmt)->name);
-            break;
-        default:
+            நிறுத்து;
+        நிலை STMT_UNKNOWN_DECLARATION:
+        நிலை STMT_UNKNOWN_COMPOUND:
+            விடுவி(((UnknownStatement *) stmt)->name);
+            நிறுத்து;
+        இயல்பு:
             {} /* Label followed by declaration requires C23 */
-            static_assert(_STMT_NUM_VALUES == 37 &&
-                          _STMT_NUM_VALUES == STMT_UNKNOWN_COMPOUND + 1,
+            static_assert(STMT_இலக்கம்_மதிப்புகள் == 37 &&
+                          STMT_இலக்கம்_மதிப்புகள் == STMT_UNKNOWN_COMPOUND + 1,
                           "Missing statement type");
-            break;
+            நிறுத்து;
         }
 
-        free(stmt);
+        விடுவி(stmt);
         stmt = next;
     }
 }
 
-void
+வெறுமை
 FreeXkbFile(XkbFile *file)
 {
     XkbFile *next;
 
-    while (file)
+    போது (file)
     {
         next = (XkbFile *) file->common.next;
 
-        switch (file->file_type) {
-        case FILE_TYPE_KEYMAP:
+        தேர்வு (file->file_type) {
+        நிலை FILE_TYPE_KEYMAP:
             FreeXkbFile((XkbFile *) file->defs);
-            break;
+            நிறுத்து;
 
-        case FILE_TYPE_TYPES:
-        case FILE_TYPE_COMPAT:
-        case FILE_TYPE_SYMBOLS:
-        case FILE_TYPE_KEYCODES:
-        case FILE_TYPE_GEOMETRY:
+        நிலை FILE_TYPE_TYPES:
+        நிலை FILE_TYPE_COMPAT:
+        நிலை FILE_TYPE_SYMBOLS:
+        நிலை FILE_TYPE_KEYCODES:
+        நிலை FILE_TYPE_GEOMETRY:
             FreeStmt(file->defs);
-            break;
+            நிறுத்து;
 
-        default:
-            break;
+        இயல்பு:
+            நிறுத்து;
         }
 
-        free(file->name);
-        free(file);
+        விடுவி(file->name);
+        விடுவி(file);
         file = next;
     }
 }
 
-static const char *xkb_file_type_strings[_FILE_TYPE_NUM_ENTRIES] = {
+நிலையான மாறிலி எழுத்து *xkb_file_type_strings[FILE_TYPE_இலக்கம்_ENTRIES] = {
     [FILE_TYPE_KEYCODES] = "xkb_keycodes",
     [FILE_TYPE_TYPES] = "xkb_types",
     [FILE_TYPE_COMPAT] = "xkb_compatibility",
@@ -789,41 +789,41 @@ static const char *xkb_file_type_strings[_FILE_TYPE_NUM_ENTRIES] = {
     [FILE_TYPE_RULES] = "rules",
 };
 
-const char *
-xkb_file_type_to_string(enum xkb_file_type type)
+மாறிலி எழுத்து *
+xkb_file_type_to_string(எண்ணிக்கை xkb_file_type type)
 {
-    if (type >= _FILE_TYPE_NUM_ENTRIES)
-        return "unknown";
-    return xkb_file_type_strings[type];
+    எனில் (type >= FILE_TYPE_இலக்கம்_ENTRIES)
+        திரும்பு "unknown";
+    திரும்பு xkb_file_type_strings[type];
 }
 
-static const char *stmt_type_strings[_STMT_NUM_VALUES] = {
+நிலையான மாறிலி எழுத்து *stmt_type_strings[STMT_இலக்கம்_மதிப்புகள்] = {
     [STMT_UNKNOWN] = "unknown statement",
     [STMT_INCLUDE] = "include statement",
     [STMT_KEYCODE] = "key name definition",
     [STMT_ALIAS] = "key alias definition",
-    [STMT_EXPR_STRING_LITERAL] = "string literal expression",
-    [STMT_EXPR_INTEGER_LITERAL] = "integer literal expression",
-    [STMT_EXPR_FLOAT_LITERAL] = "float literal expression",
-    [STMT_EXPR_BOOLEAN_LITERAL] = "boolean literal expression",
-    [STMT_EXPR_KEYNAME_LITERAL] = "key name expression",
-    [STMT_EXPR_KEYSYM_LITERAL] = "keysym expression",
-    [STMT_EXPR_IDENT] = "identifier expression",
-    [STMT_EXPR_ACTION_DECL] = "action declaration expression",
-    [STMT_EXPR_FIELD_REF] = "field reference expression",
-    [STMT_EXPR_ARRAY_REF] = "array reference expression",
-    [STMT_EXPR_EMPTY_LIST] = "empty list expression",
-    [STMT_EXPR_KEYSYM_LIST] = "keysym list expression",
-    [STMT_EXPR_ACTION_LIST] = "action list expression",
-    [STMT_EXPR_ADD] = "addition expression",
-    [STMT_EXPR_SUBTRACT] = "substraction expression",
-    [STMT_EXPR_MULTIPLY] = "multiplication expression",
-    [STMT_EXPR_DIVIDE] = "division expression",
-    [STMT_EXPR_ASSIGN] = "assignment expression",
-    [STMT_EXPR_NOT] = "logical negation expression",
-    [STMT_EXPR_NEGATE] = "arithmetic negation expression",
-    [STMT_EXPR_INVERT] = "bitwise inversion expression",
-    [STMT_EXPR_UNARY_PLUS] = "unary plus expression",
+    [STMT_கோவை_STRING_LITERAL] = "string literal expression",
+    [STMT_கோவை_INTEGER_LITERAL] = "integer literal expression",
+    [STMT_கோவை_FLOAT_LITERAL] = "float literal expression",
+    [STMT_கோவை_BOOLEAN_LITERAL] = "boolean literal expression",
+    [STMT_கோவை_KEYNAME_LITERAL] = "key name expression",
+    [STMT_கோவை_KEYSYM_LITERAL] = "keysym expression",
+    [STMT_கோவை_IDENT] = "identifier expression",
+    [STMT_கோவை_ACTION_DECL] = "action declaration expression",
+    [STMT_கோவை_FIELD_REF] = "field reference expression",
+    [STMT_கோவை_ARRAY_REF] = "array reference expression",
+    [STMT_கோவை_EMPTY_LIST] = "empty list expression",
+    [STMT_கோவை_KEYSYM_LIST] = "keysym list expression",
+    [STMT_கோவை_ACTION_LIST] = "action list expression",
+    [STMT_கோவை_ADD] = "addition expression",
+    [STMT_கோவை_SUBTRACT] = "substraction expression",
+    [STMT_கோவை_MULTIPLY] = "multiplication expression",
+    [STMT_கோவை_DIVIDE] = "division expression",
+    [STMT_கோவை_ASSIGN] = "assignment expression",
+    [STMT_கோவை_NOT] = "logical negation expression",
+    [STMT_கோவை_NEGATE] = "arithmetic negation expression",
+    [STMT_கோவை_INVERT] = "bitwise inversion expression",
+    [STMT_கோவை_UNARY_PLUS] = "unary plus expression",
     [STMT_VAR] = "variable definition",
     [STMT_TYPE] = "key type definition",
     [STMT_INTERP] = "symbol interpretation definition",
@@ -836,39 +836,39 @@ static const char *stmt_type_strings[_STMT_NUM_VALUES] = {
     [STMT_UNKNOWN_DECLARATION] = "unknown declaration statement",
     [STMT_UNKNOWN_COMPOUND] = "unknown compound statement",
 };
-static_assert(_STMT_NUM_VALUES == 37 &&
-              _STMT_NUM_VALUES == STMT_UNKNOWN_COMPOUND + 1,
+static_assert(STMT_இலக்கம்_மதிப்புகள் == 37 &&
+              STMT_இலக்கம்_மதிப்புகள் == STMT_UNKNOWN_COMPOUND + 1,
               "Missing statement type");
 
-const char *
-stmt_type_to_string(enum stmt_type type)
+மாறிலி எழுத்து *
+stmt_type_to_string(எண்ணிக்கை stmt_type type)
 {
-    if (type >= _STMT_NUM_VALUES)
-        return NULL;
-    return stmt_type_strings[type];
+    எனில் (type >= STMT_இலக்கம்_மதிப்புகள்)
+        திரும்பு வெற்று;
+    திரும்பு stmt_type_strings[type];
 }
 
-char
-stmt_type_to_operator_char(enum stmt_type type)
+எழுத்து
+stmt_type_to_operator_char(எண்ணிக்கை stmt_type type)
 {
-    switch (type) {
-    case STMT_EXPR_ADD:
-        return '+';
-    case STMT_EXPR_SUBTRACT:
-        return '-';
-    case STMT_EXPR_MULTIPLY:
-        return '*';
-    case STMT_EXPR_DIVIDE:
-        return '/';
-    case STMT_EXPR_NOT:
-        return '!';
-    case STMT_EXPR_NEGATE:
-        return '-';
-    case STMT_EXPR_INVERT:
-        return '~';
-    case STMT_EXPR_UNARY_PLUS:
-        return '+';
-    default:
-        return '\0';
+    தேர்வு (type) {
+    நிலை STMT_கோவை_ADD:
+        திரும்பு '+';
+    நிலை STMT_கோவை_SUBTRACT:
+        திரும்பு '-';
+    நிலை STMT_கோவை_MULTIPLY:
+        திரும்பு '*';
+    நிலை STMT_கோவை_DIVIDE:
+        திரும்பு '/';
+    நிலை STMT_கோவை_NOT:
+        திரும்பு '!';
+    நிலை STMT_கோவை_NEGATE:
+        திரும்பு '-';
+    நிலை STMT_கோவை_INVERT:
+        திரும்பு '~';
+    நிலை STMT_கோவை_UNARY_PLUS:
+        திரும்பு '+';
+    இயல்பு:
+        திரும்பு '\0';
     }
 }

@@ -4,19 +4,19 @@
  */
 #pragma once
 
-#include "config.h"
+#அந்தர்பாவ "config.h"
 
-#include <assert.h>
-#include <errno.h>
-#include <inttypes.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#if HAVE_UNISTD_H
+#அந்தர்பாவ <assert.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <inttypes.h>
+#அந்தர்பாவ <stdarg.h>
+#அந்தர்பாவ <stdbool.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
+#எனில் HAVE_UNISTD_H
 # include <unistd.h>
-#else
+#இல்லையெனில்
 /* Required on Windows where unistd.h doesn't exist */
 # define R_OK    4               /* Test for read permission.  */
 # define W_OK    2               /* Test for write permission.  */
@@ -38,18 +38,18 @@
 #  define STDIN_FILENO 0
 # endif
 #ifdef _MSC_VER
-typedef SSIZE_T ssize_t;
+வகைவரை SSIZE_T ssize_t;
 #endif
 #endif
 
-static inline bool
-is_aligned(const void *restrict pointer, size_t byte_count)
+நிலையான உள்வரி bool
+is_aligned(மாறிலி வெறுமை *restrict pointer, size_t byte_மொத்தம்)
 {
-    return (uintptr_t) pointer % byte_count == 0;
+    திரும்பு (uintptr_t) pointer % byte_மொத்தம் == 0;
 }
 
 
-#define ARRAY_SIZE(arr) ((sizeof(arr) / sizeof(*(arr))))
+#define ARRAY_SIZE(arr) ((அளவு(arr) / அளவு(*(arr))))
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
@@ -63,179 +63,179 @@ is_aligned(const void *restrict pointer, size_t byte_count)
 #define CONCAT2(x,y) CONCAT(x,y)
 
 /* Check if a Unicode code point is valid in a string literal */
-static inline bool
+நிலையான உள்வரி bool
 is_valid_char(uint32_t cp)
 {
     /* Currently we only check for NULL character, but this could be extended
      * in the future to further ASCII control characters. */
-    return cp != 0;
+    திரும்பு cp != 0;
 }
 
 /* Check if a Unicode code point is a surrogate.
  * Those code points are used only in UTF-16 encodings. */
-static inline bool
+நிலையான உள்வரி bool
 is_surrogate(uint32_t cp)
 {
-    return (cp >= 0xd800 && cp <= 0xdfff);
+    திரும்பு (cp >= 0xd800 && cp <= 0xdfff);
 }
 
-char
-to_lower(char c);
+எழுத்து
+to_lower(எழுத்து c);
 
-int
-istrcmp(const char *a, const char *b);
+முழு
+istrcmp(மாறிலி எழுத்து *a, மாறிலி எழுத்து *b);
 
-int
-istrncmp(const char *a, const char *b, size_t n);
+முழு
+istrncmp(மாறிலி எழுத்து *a, மாறிலி எழுத்து *b, size_t n);
 
-static inline bool
-streq(const char *s1, const char *s2)
+நிலையான உள்வரி bool
+streq(மாறிலி எழுத்து *s1, மாறிலி எழுத்து *s2)
 {
-    assert(s1 && s2);
-    return strcmp(s1, s2) == 0;
+    ப்ரதிஜ்ஞா(s1 && s2);
+    திரும்பு strcmp(s1, s2) == 0;
 }
 
-static inline bool
-streq_null(const char *s1, const char *s2)
+நிலையான உள்வரி bool
+streq_null(மாறிலி எழுத்து *s1, மாறிலி எழுத்து *s2)
 {
-    if (s1 == NULL || s2 == NULL)
-        return s1 == s2;
-    return streq(s1, s2);
+    எனில் (s1 == வெற்று || s2 == வெற்று)
+        திரும்பு s1 == s2;
+    திரும்பு streq(s1, s2);
 }
 
-static inline bool
-streq_not_null(const char *s1, const char *s2)
+நிலையான உள்வரி bool
+streq_not_null(மாறிலி எழுத்து *s1, மாறிலி எழுத்து *s2)
 {
-    if (!s1 || !s2)
-        return false;
-    return streq(s1, s2);
+    எனில் (!s1 || !s2)
+        திரும்பு false;
+    திரும்பு streq(s1, s2);
 }
 
-static inline bool
-istreq(const char *s1, const char *s2)
+நிலையான உள்வரி bool
+istreq(மாறிலி எழுத்து *s1, மாறிலி எழுத்து *s2)
 {
-    return istrcmp(s1, s2) == 0;
+    திரும்பு istrcmp(s1, s2) == 0;
 }
 
-static inline bool
-istrneq(const char *s1, const char *s2, size_t len)
+நிலையான உள்வரி bool
+istrneq(மாறிலி எழுத்து *s1, மாறிலி எழுத்து *s2, size_t len)
 {
-    return istrncmp(s1, s2, len) == 0;
+    திரும்பு istrncmp(s1, s2, len) == 0;
 }
 
-#define istreq_prefix(s1, s2) istrneq(s1, s2, sizeof(s1) - 1)
+#define istreq_prefix(s1, s2) istrneq(s1, s2, அளவு(s1) - 1)
 
-static inline char *
-strcpy_safe(char *dest, size_t size, const char *src) {
-    if (!dest || !size || !src)
-        return NULL;
-    const char * const limit = dest + size - 1;
-    while (dest < limit && *src) {
+நிலையான உள்வரி எழுத்து *
+strcpy_safe(எழுத்து *dest, size_t size, மாறிலி எழுத்து *src) {
+    எனில் (!dest || !size || !src)
+        திரும்பு வெற்று;
+    மாறிலி எழுத்து * மாறிலி limit = dest + size - 1;
+    போது (dest < limit && *src) {
         *dest++ = *src++;
     }
     *dest = '\0';
-    return *src ? NULL : dest;
+    திரும்பு *src ? வெற்று : dest;
 }
 
-static inline char *
-strdup_safe(const char *s)
+நிலையான உள்வரி எழுத்து *
+strdup_safe(மாறிலி எழுத்து *s)
 {
-    return s ? strdup(s) : NULL;
+    திரும்பு s ? strdup(s) : வெற்று;
 }
 
-static inline size_t
-strlen_safe(const char *s)
+நிலையான உள்வரி size_t
+strlen_safe(மாறிலி எழுத்து *s)
 {
-    return s ? strlen(s) : 0;
+    திரும்பு s ? strlen(s) : 0;
 }
 
-static inline bool
-isempty(const char *s)
+நிலையான உள்வரி bool
+isempty(மாறிலி எழுத்து *s)
 {
-    return s == NULL || s[0] == '\0';
+    திரும்பு s == வெற்று || s[0] == '\0';
 }
 
-static inline const char *
-strnull(const char *s)
+நிலையான உள்வரி மாறிலி எழுத்து *
+strnull(மாறிலி எழுத்து *s)
 {
-    return s ? s : "(null)";
+    திரும்பு s ? s : "(null)";
 }
 
-static inline const char *
-strempty(const char *s)
+நிலையான உள்வரி மாறிலி எழுத்து *
+strempty(மாறிலி எழுத்து *s)
 {
-    return s ? s : "";
+    திரும்பு s ? s : "";
 }
 
-static inline void *
-memdup(const void *mem, size_t nmemb, size_t size)
+நிலையான உள்வரி வெறுமை *
+memdup(மாறிலி வெறுமை *mem, size_t nmemb, size_t size)
 {
-    void *p = calloc(nmemb, size);
-    if (p)
+    வெறுமை *p = calloc(nmemb, size);
+    எனில் (p)
         memcpy(p, mem, nmemb * size);
-    return p;
+    திரும்பு p;
 }
 
-#if !(defined(HAVE_STRNDUP) && HAVE_STRNDUP)
-static inline char *
-strndup(const char *s, size_t n)
+#எனில் !(defined(HAVE_STRNDUP) && HAVE_STRNDUP)
+நிலையான உள்வரி எழுத்து *
+strndup(மாறிலி எழுத்து *s, size_t n)
 {
     size_t slen = strlen(s);
     size_t len = MIN(slen, n);
-    char *p = malloc(len + 1);
-    if (!p)
-        return NULL;
+    எழுத்து *p = malloc(len + 1);
+    எனில் (!p)
+        திரும்பு வெற்று;
     memcpy(p, s, len);
     p[len] = '\0';
-    return p;
+    திரும்பு p;
 }
 #endif
 
 /* ctype.h is locale-dependent and has other oddities. */
-static inline bool
-is_ascii(char ch)
+நிலையான உள்வரி bool
+is_ascii(எழுத்து ch)
 {
-    return (ch & ~0x7f) == 0;
+    திரும்பு (ch & ~0x7f) == 0;
 }
 
-static inline bool
-is_space(char ch)
+நிலையான உள்வரி bool
+is_space(எழுத்து ch)
 {
-    return ch == ' ' || (ch >= '\t' && ch <= '\r');
+    திரும்பு ch == ' ' || (ch >= '\t' && ch <= '\r');
 }
 
-static inline bool
-is_alpha(char ch)
+நிலையான உள்வரி bool
+is_alpha(எழுத்து ch)
 {
-    return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
+    திரும்பு (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
 }
 
-static inline bool
-is_digit(char ch)
+நிலையான உள்வரி bool
+is_digit(எழுத்து ch)
 {
-    return ch >= '0' && ch <= '9';
+    திரும்பு ch >= '0' && ch <= '9';
 }
 
-static inline bool
-is_alnum(char ch)
+நிலையான உள்வரி bool
+is_alnum(எழுத்து ch)
 {
-    return is_alpha(ch) || is_digit(ch);
+    திரும்பு is_alpha(ch) || is_digit(ch);
 }
 
-static inline bool
-is_xdigit(char ch)
+நிலையான உள்வரி bool
+is_xdigit(எழுத்து ch)
 {
-    return
+    திரும்பு
         (ch >= '0' && ch <= '9') ||
         (ch >= 'a' && ch <= 'f') ||
         (ch >= 'A' && ch <= 'F');
 }
 
-static inline bool
-is_graph(char ch)
+நிலையான உள்வரி bool
+is_graph(எழுத்து ch)
 {
     /* See table in ascii(7). */
-    return ch >= '!' && ch <= '~';
+    திரும்பு ch >= '!' && ch <= '~';
 }
 
 /*
@@ -243,58 +243,58 @@ is_graph(char ch)
  * Note: this is 1-based! It's more useful this way, and returns 0 when
  * mask is all 0s.
  */
-static inline unsigned int
+நிலையான உள்வரி unsigned முழு
 msb_pos(uint32_t mask)
 {
-    unsigned int pos = 0;
-    while (mask) {
+    unsigned முழு pos = 0;
+    போது (mask) {
         pos++;
         mask >>= 1u;
     }
-    return pos;
+    திரும்பு pos;
 }
 
-static inline int
+நிலையான உள்வரி முழு
 one_bit_set(uint32_t x)
 {
-    return x && (x & (x - 1)) == 0;
+    திரும்பு x && (x & (x - 1)) == 0;
 }
 
 bool
-map_file(FILE *file, char **string_out, size_t *size_out);
+map_file(FILE *file, எழுத்து **string_out, size_t *size_out);
 
-void
-unmap_file(char *string, size_t size);
+வெறுமை
+unmap_file(எழுத்து *string, size_t size);
 
-static inline bool
-check_eaccess(const char *path, int mode)
+நிலையான உள்வரி bool
+check_eaccess(மாறிலி எழுத்து *path, முழு mode)
 {
-#if defined(HAVE_EACCESS)
-    if (eaccess(path, mode) != 0)
-        return false;
-#elif defined(HAVE_EUIDACCESS)
-    if (euidaccess(path, mode) != 0)
-        return false;
+#எனில் defined(HAVE_EACCESS)
+    எனில் (eaccess(path, mode) != 0)
+        திரும்பு false;
+#அல்லதெனில் defined(HAVE_EUIDACCESS)
+    எனில் (euidaccess(path, mode) != 0)
+        திரும்பு false;
 #endif
 
-    return true;
+    திரும்பு true;
 }
 
 FILE*
-open_file(const char *path);
+open_file(மாறிலி எழுத்து *path);
 
-#if defined(HAVE_SECURE_GETENV)
+#எனில் defined(HAVE_SECURE_GETENV)
 # define secure_getenv secure_getenv
-#elif defined(HAVE___SECURE_GETENV)
+#அல்லதெனில் defined(HAVE___SECURE_GETENV)
 # define secure_getenv __secure_getenv
-#else
+#இல்லையெனில்
 # define secure_getenv getenv
 #endif
 
-#if defined(HAVE___BUILTIN_EXPECT)
+#எனில் defined(HAVE___BUILTIN_EXPECT)
 # define likely(x)   __builtin_expect(!!(x), 1)
 # define unlikely(x) __builtin_expect(!!(x), 0)
-#else
+#இல்லையெனில்
 # define likely(x)   (x)
 # define unlikely(x) (x)
 #endif
@@ -303,131 +303,131 @@ open_file(const char *path);
 
 /* Private functions only exposed in tests. */
 #ifdef ENABLE_PRIVATE_APIS
-# if defined(__GNUC__) && !defined(__CYGWIN__)
+# எனில் defined(__GNUC__) && !defined(__CYGWIN__)
 #  define XKB_EXPORT_PRIVATE __attribute__((visibility("default")))
 # elif defined(_WIN32)
 #  define XKB_EXPORT_PRIVATE __declspec(dllexport)
-# else
+# இல்லையெனில்
 #  define XKB_EXPORT_PRIVATE
 # endif
-#else
+#இல்லையெனில்
 # define XKB_EXPORT_PRIVATE
 #endif
 
-#if defined(__MINGW32__)
+#எனில் defined(__MINGW32__)
 # define ATTR_PRINTF(x,y) __attribute__((__format__(__MINGW_PRINTF_FORMAT, x, y)))
-#elif defined(__GNUC__)
+#அல்லதெனில் defined(__GNUC__)
 # define ATTR_PRINTF(x,y) __attribute__((__format__(__printf__, x, y)))
-#else
+#இல்லையெனில்
 # define ATTR_PRINTF(x,y)
 #endif
 
-#if defined(__GNUC__)
+#எனில் defined(__GNUC__)
 # define ATTR_NORETURN __attribute__((__noreturn__))
-#else
+#இல்லையெனில்
 # define ATTR_NORETURN
 #endif /* GNUC  */
 
-#if defined(__GNUC__)
+#எனில் defined(__GNUC__)
 #define ATTR_MALLOC  __attribute__((__malloc__))
-#else
+#இல்லையெனில்
 #define ATTR_MALLOC
 #endif
 
-#if defined(__GNUC__)
+#எனில் defined(__GNUC__)
 # define ATTR_NULL_SENTINEL __attribute__((__sentinel__))
-#else
+#இல்லையெனில்
 # define ATTR_NULL_SENTINEL
 #endif
 
-#if defined(__GNUC__)
+#எனில் defined(__GNUC__)
 #define ATTR_PACKED  __attribute__((__packed__))
-#else
+#இல்லையெனில்
 #define ATTR_PACKED
 #endif
 
-#if defined(HAVE_ATTR_COUNTED_BY) && HAVE_ATTR_COUNTED_BY
-# define ATTR_COUNTED_BY(count) __attribute__((counted_by(count)))
-#else
-# define ATTR_COUNTED_BY(count)
+#எனில் defined(HAVE_ATTR_COUNTED_BY) && HAVE_ATTR_COUNTED_BY
+# define ATTR_COUNTED_BY(மொத்தம்) __attribute__((counted_by(மொத்தம்)))
+#இல்லையெனில்
+# define ATTR_COUNTED_BY(மொத்தம்)
 #endif
 
-#if !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
-XKB_EXPORT_PRIVATE int asprintf(char **strp, const char *fmt, ...) ATTR_PRINTF(2, 3);
-# if !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
+#எனில் !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
+XKB_EXPORT_PRIVATE முழு asprintf(எழுத்து **strp, மாறிலி எழுத்து *fmt, ...) ATTR_PRINTF(2, 3);
+# எனில் !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
 #  include <stdarg.h>
-XKB_EXPORT_PRIVATE int vasprintf(char **strp, const char *fmt, va_list ap);
+XKB_EXPORT_PRIVATE முழு vasprintf(எழுத்து **strp, மாறிலி எழுத்து *fmt, va_list ap);
 # endif /* !HAVE_VASPRINTF */
 #endif /* !HAVE_ASPRINTF */
 
-static inline bool
+நிலையான உள்வரி bool
 ATTR_PRINTF(3, 4)
-snprintf_safe(char *buf, size_t sz, const char *format, ...)
+snprintf_safe(எழுத்து *buf, size_t sz, மாறிலி எழுத்து *format, ...)
 {
     va_list ap;
-    int rc;
+    முழு rc;
 
     va_start(ap, format);
     rc = vsnprintf(buf, sz, format, ap);
     va_end(ap);
 
-    return rc >= 0 && (size_t)rc < sz;
+    திரும்பு rc >= 0 && (size_t)rc < sz;
 }
 
-static inline char *
+நிலையான உள்வரி எழுத்து *
 ATTR_PRINTF(1, 0)
-vasprintf_safe(const char *fmt, va_list args)
+vasprintf_safe(மாறிலி எழுத்து *fmt, va_list args)
 {
-    char *str;
-    int len;
+    எழுத்து *str;
+    முழு len;
 
     len = vasprintf(&str, fmt, args);
 
-    if (len == -1)
-        return NULL;
+    எனில் (len == -1)
+        திரும்பு வெற்று;
 
-    return str;
+    திரும்பு str;
 }
 
 /**
  * A version of asprintf that returns the allocated string or NULL on error.
  */
-static inline char *
+நிலையான உள்வரி எழுத்து *
 ATTR_PRINTF(1, 2)
-asprintf_safe(const char *fmt, ...)
+asprintf_safe(மாறிலி எழுத்து *fmt, ...)
 {
     va_list args;
-    char *str;
+    எழுத்து *str;
 
     va_start(args, fmt);
     str = vasprintf_safe(fmt, args);
     va_end(args);
 
-    return str;
+    திரும்பு str;
 }
 
 #ifdef NDEBUG
-    #if defined(__GNUC__) || defined(__clang__)
+    #எனில் defined(__GNUC__) || defined(__clang__)
         #define PANIC_UNREACHABLE() __builtin_unreachable()
-    #elif defined(_MSC_VER)
+    #அல்லதெனில் defined(_MSC_VER)
         #define PANIC_UNREACHABLE() __assume(0)
-    #else
+    #இல்லையெனில்
         #define PANIC_UNREACHABLE() abort()
     #endif
-#else
+#இல்லையெனில்
     #define PANIC_UNREACHABLE() \
-        do { \
+        செய் { \
             fprintf(stderr, "Critical Error: Reached unreachable line in %s at %d\n", __FILE__, __LINE__); \
             abort(); \
-        } while (0)
+        } போது (0)
 #endif
 
-#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
+#எனில் defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
 #  define NOINLINE [[noinline]]
-#elif defined(__GNUC__) || defined(__clang__)
+#அல்லதெனில் defined(__GNUC__) || defined(__clang__)
 #  define NOINLINE __attribute__((noinline))
-#elif defined(_MSC_VER)
+#அல்லதெனில் defined(_MSC_VER)
 #  define NOINLINE __declspec(noinline)
-#else
+#இல்லையெனில்
 #  define NOINLINE
 #endif

@@ -4,17 +4,17 @@
  */
 #pragma once
 
-#include "config.h"
+#அந்தர்பாவ "config.h"
 
-#include <limits.h>
-#include <stdbool.h>
-#include <stdint.h>
+#அந்தர்பாவ <limits.h>
+#அந்தர்பாவ <stdbool.h>
+#அந்தர்பாவ <stdint.h>
 
-#if defined(_MSC_VER)
+#எனில் defined(_MSC_VER)
 # include <intrin.h>
 #endif
 
-#include "utils.h"
+#அந்தர்பாவ "utils.h"
 
 /*
  * Define various parsers to avoid the use of strto* -- it’s slower and accepts
@@ -27,23 +27,23 @@
  */
 
 #define MAKE_PARSE_DEC_TO(type, max)                         \
-static inline int                                            \
-parse_dec_to_##type(const char *s, size_t len, type (*out))  \
+நிலையான உள்வரி முழு                                            \
+parse_dec_to_##type(மாறிலி எழுத்து *s, size_t len, type (*out))  \
 {                                                            \
     type result = 0;                                         \
     size_t i;                                                \
-    for (i = 0;                                              \
-         i < len && (unsigned char)(s[i] - '0') < 10U &&     \
+    க்கு (i = 0;                                              \
+         i < len && (unsigned எழுத்து)(s[i] - '0') < 10U &&     \
          result <= (max) / 10 &&                             \
-         result * 10 <= (max) - (unsigned char) (s[i] - '0');\
+         result * 10 <= (max) - (unsigned எழுத்து) (s[i] - '0');\
          i++) {                                              \
         result = result * 10 + (type)(s[i] - '0');           \
     }                                                        \
     *out = result;                                           \
     /* Check if there is more to parse */                    \
     /* We can safely convert the length to int on success */ \
-    return (i >= len || (unsigned char)(s[i] - '0') >= 10U)  \
-           ? (int) i                                         \
+    திரும்பு (i >= len || (unsigned எழுத்து)(s[i] - '0') >= 10U)  \
+           ? (முழு) i                                         \
            : -1;                                             \
 }
 
@@ -63,7 +63,7 @@ MAKE_PARSE_DEC_TO(uint64_t, UINT64_MAX)
 
 #undef MAKE_PARSE_DEC_TO
 
-static const unsigned char digits__[] = {
+நிலையான மாறிலி unsigned எழுத்து digits__[] = {
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
@@ -89,20 +89,20 @@ static const unsigned char digits__[] = {
 };
 
 #define MAKE_PARSE_HEX_TO(type, max)                           \
-static inline int                                              \
-parse_hex_to_##type(const char *s, size_t len, type (*out))    \
+நிலையான உள்வரி முழு                                              \
+parse_hex_to_##type(மாறிலி எழுத்து *s, size_t len, type (*out))    \
 {                                                              \
     type result = 0;                                           \
     size_t i = 0;                                              \
-    for (; i < len && digits__[(unsigned char) s[i]] < 16u &&  \
+    க்கு (; i < len && digits__[(unsigned எழுத்து) s[i]] < 16u &&  \
          result <= (max) >> 4;                                 \
          i++) {                                                \
-        result = result * 16 + digits__[(unsigned char) s[i]]; \
+        result = result * 16 + digits__[(unsigned எழுத்து) s[i]]; \
     }                                                          \
     *out = result;                                             \
     /* Check if there is more to parse */                      \
     /* We can safely convert the length to int on success */   \
-    return (i >= len || !is_xdigit(s[i])) ? (int) i : -1;      \
+    திரும்பு (i >= len || !is_xdigit(s[i])) ? (முழு) i : -1;      \
 }
 
 /**
@@ -121,104 +121,104 @@ MAKE_PARSE_HEX_TO(uint64_t, UINT64_MAX)
 
 #undef MAKE_PARSE_HEX_TO
 
-static inline unsigned int
+நிலையான உள்வரி unsigned முழு
 popcount32(uint32_t x)
 {
-#if defined(__GNUC__) || defined(__clang__)
-    return (unsigned int)__builtin_popcountl(x);
-#elif defined(_MSC_VER)
-    return __popcnt(x);
-#else
+#எனில் defined(__GNUC__) || defined(__clang__)
+    திரும்பு (unsigned முழு)__builtin_popcountl(x);
+#அல்லதெனில் defined(_MSC_VER)
+    திரும்பு __popcnt(x);
+#இல்லையெனில்
     /* Fallback (Brian Kernighan’s method) */
-    unsigned int count = 0;
-    while (x) {
+    unsigned முழு மொத்தம் = 0;
+    போது (x) {
         x &= x - 1;
-        count++;
+        மொத்தம்++;
     }
-    return count;
+    திரும்பு மொத்தம்;
 #endif
 }
 
-static inline unsigned int
+நிலையான உள்வரி unsigned முழு
 ctz32(uint32_t x)
 {
-    if (x == 0)
-        return 32;
+    எனில் (x == 0)
+        திரும்பு 32;
 
-#if defined(__GNUC__) || defined(__clang__)
-    return _Generic(
+#எனில் defined(__GNUC__) || defined(__clang__)
+    திரும்பு _Generic(
         x,
-        unsigned int: (unsigned int)__builtin_ctz(x),
-        unsigned long: (unsigned int)__builtin_ctzl(x),
-        unsigned long long: (unsigned int)__builtin_ctzll(x)
+        unsigned முழு: (unsigned முழு)__builtin_ctz(x),
+        unsigned long: (unsigned முழு)__builtin_ctzl(x),
+        unsigned long long: (unsigned முழு)__builtin_ctzll(x)
     );
-#elif defined(_MSC_VER)
+#அல்லதெனில் defined(_MSC_VER)
     unsigned long index;
     _BitScanForward(&index, x);
-    return (unsigned int)index;
-#else
+    திரும்பு (unsigned முழு)index;
+#இல்லையெனில்
     /* Fallback: De Bruijn sequence algorithm for 32-bit integers */
-    static const unsigned int debruijn32[32] = {
+    நிலையான மாறிலி unsigned முழு debruijn32[32] = {
         0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8,
         31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9
     };
-    return debruijn32[((x & -x) * UINT32_C(0x077cb531)) >> 27];
+    திரும்பு debruijn32[((x & -x) * UINT32_C(0x077cb531)) >> 27];
 #endif
 }
 
-static inline unsigned int
+நிலையான உள்வரி unsigned முழு
 clz32(uint32_t x)
 {
-    if (x == 0)
-        return 32;
+    எனில் (x == 0)
+        திரும்பு 32;
 
-#if defined(__GNUC__) || defined(__clang__)
-    return _Generic(
+#எனில் defined(__GNUC__) || defined(__clang__)
+    திரும்பு _Generic(
         x,
-        unsigned int:
-            (unsigned int)__builtin_clz(x) -
-            (unsigned int)((sizeof(unsigned int) * CHAR_BIT) - 32),
+        unsigned முழு:
+            (unsigned முழு)__builtin_clz(x) -
+            (unsigned முழு)((அளவு(unsigned முழு) * CHAR_BIT) - 32),
         unsigned long:
-            (unsigned int)__builtin_clzl(x) -
-            (unsigned int)((sizeof(unsigned long) * CHAR_BIT) - 32),
+            (unsigned முழு)__builtin_clzl(x) -
+            (unsigned முழு)((அளவு(unsigned long) * CHAR_BIT) - 32),
         unsigned long long:
-            (unsigned int)__builtin_clzll(x) -
-            (unsigned int)((sizeof(unsigned long long) * CHAR_BIT) - 32)
+            (unsigned முழு)__builtin_clzll(x) -
+            (unsigned முழு)((அளவு(unsigned long long) * CHAR_BIT) - 32)
     );
-#else
+#இல்லையெனில்
     // Efficient binary search fallback for 32-bit integers
-    unsigned int count = 0;
-    if ((x & 0xffff0000) == 0) { count += 16; x <<= 16; }
-    if ((x & 0xff000000) == 0) { count += 8;  x <<= 8;  }
-    if ((x & 0xf0000000) == 0) { count += 4;  x <<= 4;  }
-    if ((x & 0xc0000000) == 0) { count += 2;  x <<= 2;  }
-    if ((x & 0x80000000) == 0) { count += 1; }
-    return count;
+    unsigned முழு மொத்தம் = 0;
+    எனில் ((x & 0xffff0000) == 0) { மொத்தம் += 16; x <<= 16; }
+    எனில் ((x & 0xff000000) == 0) { மொத்தம் += 8;  x <<= 8;  }
+    எனில் ((x & 0xf0000000) == 0) { மொத்தம் += 4;  x <<= 4;  }
+    எனில் ((x & 0xc0000000) == 0) { மொத்தம் += 2;  x <<= 2;  }
+    எனில் ((x & 0x80000000) == 0) { மொத்தம் += 1; }
+    திரும்பு மொத்தம்;
 #endif
 }
 
-static inline unsigned int
-next_pow2(unsigned int x)
+நிலையான உள்வரி unsigned முழு
+next_pow2(unsigned முழு x)
 {
-#if defined(__GNUC__) || defined(__clang__)
-    if (x <= 1) return 1u;
-    return 1u << ((int)sizeof(unsigned) * CHAR_BIT - __builtin_clz(x - 1));
-#else
-    if (x <= 1u) return 1u;
+#எனில் defined(__GNUC__) || defined(__clang__)
+    எனில் (x <= 1) திரும்பு 1u;
+    திரும்பு 1u << ((முழு)அளவு(unsigned) * CHAR_BIT - __builtin_clz(x - 1));
+#இல்லையெனில்
+    எனில் (x <= 1u) திரும்பு 1u;
     x--;
-    for (unsigned s = 1; s < (unsigned)sizeof(x)*CHAR_BIT; s <<= 1)
+    க்கு (unsigned s = 1; s < (unsigned)அளவு(x)*CHAR_BIT; s <<= 1)
         x |= x >> s;
-    return x + 1u;
+    திரும்பு x + 1u;
 #endif
 }
 
-static inline uint32_t
-keep_lowest_n_set_bits(uint32_t mask, unsigned int n) {
-    const uint32_t original = mask;
+நிலையான உள்வரி uint32_t
+keep_lowest_n_set_bits(uint32_t mask, unsigned முழு n) {
+    மாறிலி uint32_t original = mask;
 
     /* Clear the lowest set bit n times */
-    while (n-- && mask)
+    போது (n-- && mask)
         mask &= (mask - 1);
 
-    return original ^ mask;
+    திரும்பு original ^ mask;
 }

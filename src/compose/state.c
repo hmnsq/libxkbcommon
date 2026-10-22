@@ -3,20 +3,20 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#அந்தர்பாவ "config.h"
 
-#include <assert.h>
+#அந்தர்பாவ <assert.h>
 
-#include "context.h"
-#include "features/enums.h"
-#include "keysym.h"
-#include "table.h"
-#include "utils.h"
+#அந்தர்பாவ "context.h"
+#அந்தர்பாவ "features/enums.h"
+#அந்தர்பாவ "keysym.h"
+#அந்தர்பாவ "table.h"
+#அந்தர்பாவ "utils.h"
 
-struct xkb_compose_state {
-    int refcnt;
-    enum xkb_compose_state_flags flags;
-    struct xkb_compose_table *table;
+கட்டமைப்பு xkb_compose_state {
+    முழு refcnt;
+    எண்ணிக்கை xkb_compose_state_flags flags;
+    கட்டமைப்பு xkb_compose_table *table;
 
     /*
      * Offsets into xkb_compose_table::nodes.
@@ -31,22 +31,22 @@ struct xkb_compose_state {
     uint32_t context;
 };
 
-struct xkb_compose_state *
-xkb_compose_state_new(struct xkb_compose_table *table,
-                      enum xkb_compose_state_flags flags)
+கட்டமைப்பு xkb_compose_state *
+xkb_compose_state_new(கட்டமைப்பு xkb_compose_table *table,
+                      எண்ணிக்கை xkb_compose_state_flags flags)
 {
-    const enum xkb_compose_state_flags invalid_flags =
-        (flags & ~(enum xkb_compose_state_flags)XKB_COMPOSE_STATE_FLAGS_VALUES);
-    if (invalid_flags) {
+    மாறிலி எண்ணிக்கை xkb_compose_state_flags invalid_flags =
+        (flags & ~(எண்ணிக்கை xkb_compose_state_flags)XKB_COMPOSE_STATE_FLAGS_மதிப்புகள்);
+    எனில் (invalid_flags) {
         log_err_func(table->ctx, XKB_LOG_MESSAGE_NO_ID,
                      "Unsupported compose state flags: %#x\n",
                      invalid_flags);
-        return NULL;
+        திரும்பு வெற்று;
     }
 
-    struct xkb_compose_state * const state = calloc(1, sizeof(*state));
-    if (!state)
-        return NULL;
+    கட்டமைப்பு xkb_compose_state * மாறிலி state = calloc(1, அளவு(*state));
+    எனில் (!state)
+        திரும்பு வெற்று;
 
     state->refcnt = 1;
     state->table = xkb_compose_table_ref(table);
@@ -55,39 +55,39 @@ xkb_compose_state_new(struct xkb_compose_table *table,
     state->prev_context = 0;
     state->context = 0;
 
-    return state;
+    திரும்பு state;
 }
 
-struct xkb_compose_state *
-xkb_compose_state_ref(struct xkb_compose_state *state)
+கட்டமைப்பு xkb_compose_state *
+xkb_compose_state_ref(கட்டமைப்பு xkb_compose_state *state)
 {
-    assert(state->refcnt > 0);
+    ப்ரதிஜ்ஞா(state->refcnt > 0);
     state->refcnt++;
-    return state;
+    திரும்பு state;
 }
 
-void
-xkb_compose_state_unref(struct xkb_compose_state *state)
+வெறுமை
+xkb_compose_state_unref(கட்டமைப்பு xkb_compose_state *state)
 {
-    assert(!state || state->refcnt > 0);
-    if (!state || --state->refcnt > 0)
-        return;
+    ப்ரதிஜ்ஞா(!state || state->refcnt > 0);
+    எனில் (!state || --state->refcnt > 0)
+        திரும்பு;
 
     xkb_compose_table_unref(state->table);
-    free(state);
+    விடுவி(state);
 }
 
-struct xkb_compose_table *
-xkb_compose_state_get_compose_table(struct xkb_compose_state *state)
+கட்டமைப்பு xkb_compose_table *
+xkb_compose_state_get_compose_table(கட்டமைப்பு xkb_compose_state *state)
 {
-    return state->table;
+    திரும்பு state->table;
 }
 
-enum xkb_compose_feed_result
-xkb_compose_state_feed(struct xkb_compose_state *state, xkb_keysym_t keysym)
+எண்ணிக்கை xkb_compose_feed_result
+xkb_compose_state_feed(கட்டமைப்பு xkb_compose_state *state, xkb_keysym_t keysym)
 {
     uint32_t context;
-    const struct compose_node *node;
+    மாறிலி கட்டமைப்பு compose_முனை *முனை;
 
     /*
      * Modifiers do not affect the sequence directly.  In particular,
@@ -99,98 +99,98 @@ xkb_compose_state_feed(struct xkb_compose_state *state, xkb_keysym_t keysym)
      * have it here.  However, this is (approximately) what libX11 does
      * as well.
      */
-    if (xkb_keysym_is_modifier(keysym))
-        return XKB_COMPOSE_FEED_IGNORED;
+    எனில் (xkb_keysym_is_modifier(keysym))
+        திரும்பு XKB_COMPOSE_FEED_IGNORED;
 
-    node = &darray_item(state->table->nodes, state->context);
+    முனை = &darray_item(state->table->nodes, state->context);
 
-    context = (node->is_leaf ? 1 : node->internal.eqkid);
-    if (context == 1 && darray_size(state->table->nodes) == 1)
+    context = (முனை->is_leaf ? 1 : முனை->internal.eqkid);
+    எனில் (context == 1 && darray_size(state->table->nodes) == 1)
         context = 0;
 
-    while (context != 0) {
-        node = &darray_item(state->table->nodes, context);
-        if (keysym < node->keysym)
-            context = node->lokid;
-        else if (keysym > node->keysym)
-            context = node->hikid;
-        else
-            break;
+    போது (context != 0) {
+        முனை = &darray_item(state->table->nodes, context);
+        எனில் (keysym < முனை->keysym)
+            context = முனை->lokid;
+        இல்லையெனில் எனில் (keysym > முனை->keysym)
+            context = முனை->hikid;
+        இல்லையெனில்
+            நிறுத்து;
     }
 
     state->prev_context = state->context;
     state->context = context;
-    return XKB_COMPOSE_FEED_ACCEPTED;
+    திரும்பு XKB_COMPOSE_FEED_ACCEPTED;
 }
 
-void
-xkb_compose_state_reset(struct xkb_compose_state *state)
+வெறுமை
+xkb_compose_state_reset(கட்டமைப்பு xkb_compose_state *state)
 {
     state->prev_context = 0;
     state->context = 0;
 }
 
-enum xkb_compose_status
-xkb_compose_state_get_status(struct xkb_compose_state *state)
+எண்ணிக்கை xkb_compose_status
+xkb_compose_state_get_status(கட்டமைப்பு xkb_compose_state *state)
 {
-    const struct compose_node *prev_node, *node;
+    மாறிலி கட்டமைப்பு compose_முனை *prev_முனை, *முனை;
 
-    prev_node = &darray_item(state->table->nodes, state->prev_context);
-    node = &darray_item(state->table->nodes, state->context);
+    prev_முனை = &darray_item(state->table->nodes, state->prev_context);
+    முனை = &darray_item(state->table->nodes, state->context);
 
-    if (state->context == 0 && !prev_node->is_leaf)
-        return XKB_COMPOSE_CANCELLED;
+    எனில் (state->context == 0 && !prev_முனை->is_leaf)
+        திரும்பு XKB_COMPOSE_CANCELLED;
 
-    if (state->context == 0)
-        return XKB_COMPOSE_NOTHING;
+    எனில் (state->context == 0)
+        திரும்பு XKB_COMPOSE_NOTHING;
 
-    if (!node->is_leaf)
-        return XKB_COMPOSE_COMPOSING;
+    எனில் (!முனை->is_leaf)
+        திரும்பு XKB_COMPOSE_COMPOSING;
 
-    return XKB_COMPOSE_COMPOSED;
+    திரும்பு XKB_COMPOSE_COMPOSED;
 }
 
-int
-xkb_compose_state_get_utf8(struct xkb_compose_state *state,
-                           char *buffer, size_t size)
+முழு
+xkb_compose_state_get_utf8(கட்டமைப்பு xkb_compose_state *state,
+                           எழுத்து *buffer, size_t size)
 {
-    const struct compose_node *node =
+    மாறிலி கட்டமைப்பு compose_முனை *முனை =
         &darray_item(state->table->nodes, state->context);
 
-    if (!node->is_leaf)
-        goto fail;
+    எனில் (!முனை->is_leaf)
+        செல் fail;
 
     /* If there's no string specified, but only a keysym, try to do the
      * most helpful thing. */
-    if (node->leaf.utf8 == 0 && node->leaf.keysym != XKB_KEY_NoSymbol) {
-        char utf8[XKB_KEYSYM_UTF8_MAX_SIZE];
-        int ret;
+    எனில் (முனை->leaf.utf8 == 0 && முனை->leaf.keysym != XKB_சாவி_No_குறியீடு) {
+        எழுத்து utf8[XKB_KEYSYM_UTF8_MAX_SIZE];
+        முழு ret;
 
-        ret = xkb_keysym_to_utf8(node->leaf.keysym, utf8, sizeof(utf8));
-        if (ret < 0 || ret == 0) {
+        ret = xkb_keysym_to_utf8(முனை->leaf.keysym, utf8, அளவு(utf8));
+        எனில் (ret < 0 || ret == 0) {
             /* ret < 0 is impossible.
              * ret == 0 means the keysym has no string representation. */
-            goto fail;
+            செல் fail;
         }
 
-        return snprintf(buffer, size, "%s", utf8);
+        திரும்பு snprintf(buffer, size, "%s", utf8);
     }
 
-    return snprintf(buffer, size, "%s",
-                    &darray_item(state->table->utf8, node->leaf.utf8));
+    திரும்பு snprintf(buffer, size, "%s",
+                    &darray_item(state->table->utf8, முனை->leaf.utf8));
 
 fail:
-    if (size > 0)
+    எனில் (size > 0)
         buffer[0] = '\0';
-    return 0;
+    திரும்பு 0;
 }
 
 xkb_keysym_t
-xkb_compose_state_get_one_sym(struct xkb_compose_state *state)
+xkb_compose_state_get_one_sym(கட்டமைப்பு xkb_compose_state *state)
 {
-    const struct compose_node *node =
+    மாறிலி கட்டமைப்பு compose_முனை *முனை =
         &darray_item(state->table->nodes, state->context);
-    if (!node->is_leaf)
-        return XKB_KEY_NoSymbol;
-    return node->leaf.keysym;
+    எனில் (!முனை->is_leaf)
+        திரும்பு XKB_சாவி_No_குறியீடு;
+    திரும்பு முனை->leaf.keysym;
 }

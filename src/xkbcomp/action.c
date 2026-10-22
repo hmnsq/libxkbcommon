@@ -12,35 +12,35 @@
  * Author: Ran Benita <ran234@gmail.com>
  */
 
-#include "config.h"
+#அந்தர்பாவ "config.h"
 
-#include <assert.h>
+#அந்தர்பாவ <assert.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "context.h"
-#include "darray.h"
-#include "keymap.h"
-#include "messages-codes.h"
-#include "xkbcomp-priv.h"
-#include "text.h"
-#include "expr.h"
-#include "xkbcomp/ast.h"
-#include "action.h"
+#அந்தர்பாவ "xkbcommon/xkbcommon.h"
+#அந்தர்பாவ "context.h"
+#அந்தர்பாவ "darray.h"
+#அந்தர்பாவ "keymap.h"
+#அந்தர்பாவ "messages-codes.h"
+#அந்தர்பாவ "xkbcomp-priv.h"
+#அந்தர்பாவ "text.h"
+#அந்தர்பாவ "expr.h"
+#அந்தர்பாவ "xkbcomp/ast.h"
+#அந்தர்பாவ "action.h"
 
-static const ExprBoolean constTrue = {
-    .common = { .type = STMT_EXPR_BOOLEAN_LITERAL, .next = NULL },
+நிலையான மாறிலி கோவை_Boolean constTrue = {
+    .common = { .type = STMT_கோவை_BOOLEAN_LITERAL, .next = வெற்று },
     .set = true,
 };
 
-static const ExprBoolean constFalse = {
-    .common = { .type = STMT_EXPR_BOOLEAN_LITERAL, .next = NULL },
+நிலையான மாறிலி கோவை_Boolean constFalse = {
+    .common = { .type = STMT_கோவை_BOOLEAN_LITERAL, .next = வெற்று },
     .set = false,
 };
 
-enum action_field {
+எண்ணிக்கை action_field {
     ACTION_FIELD_CLEAR_LOCKS,
     ACTION_FIELD_LATCH_TO_LOCK,
-    ACTION_FIELD_GEN_KEY_EVENT,
+    ACTION_FIELD_GEN_சாவி_EVENT,
     ACTION_FIELD_REPORT,
     ACTION_FIELD_DEFAULT,
     ACTION_FIELD_AFFECT,
@@ -51,10 +51,10 @@ enum action_field {
     ACTION_FIELD_Y,
     ACTION_FIELD_REPEAT,
     ACTION_FIELD_BUTTON,
-    ACTION_FIELD_VALUE,
+    ACTION_FIELD_மதிப்பு,
     ACTION_FIELD_CONTROLS,
     ACTION_FIELD_TYPE,
-    ACTION_FIELD_COUNT,
+    ACTION_FIELD_மொத்தம்,
     ACTION_FIELD_SCREEN,
     ACTION_FIELD_SAME,
     ACTION_FIELD_DATA,
@@ -66,28 +66,28 @@ enum action_field {
     ACTION_FIELD_LATCH_ON_PRESS,
 };
 
-void
-InitActionsInfo(const struct xkb_keymap *keymap, ActionsInfo *info)
+வெறுமை
+InitActionsInfo(மாறிலி கட்டமைப்பு xkb_keymap *keymap, ActionsInfo *info)
 {
-    for (enum xkb_action_type type = 0; type < _ACTION_TYPE_NUM_ENTRIES; type++)
+    க்கு (எண்ணிக்கை xkb_action_type type = 0; type < ACTION_TYPE_இலக்கம்_ENTRIES; type++)
         info->actions[type].type = type;
 
     /* Apply some "factory defaults". */
 
     /* Increment default button. */
     info->actions[ACTION_TYPE_PTR_DEFAULT].dflt.flags = 0;
-    info->actions[ACTION_TYPE_PTR_DEFAULT].dflt.value = 1;
+    info->actions[ACTION_TYPE_PTR_DEFAULT].dflt.மதிப்பு = 1;
     info->actions[ACTION_TYPE_PTR_MOVE].ptr.flags = ACTION_REPEAT;
     info->actions[ACTION_TYPE_SWITCH_VT].screen.flags = ACTION_SAME_SCREEN;
-    info->actions[ACTION_TYPE_REDIRECT_KEY].redirect.keycode =
-        keymap->redirect_key_auto;
+    info->actions[ACTION_TYPE_REDIRECT_சாவி].redirect.keycode =
+        keymap->redirect_சாவி_auto;
 }
 
-static const LookupEntry fieldStrings[] = {
+நிலையான மாறிலி LookupEntry fieldStrings[] = {
     { "clearLocks",       ACTION_FIELD_CLEAR_LOCKS     },
     { "latchToLock",      ACTION_FIELD_LATCH_TO_LOCK   },
-    { "genKeyEvent",      ACTION_FIELD_GEN_KEY_EVENT   },
-    { "generateKeyEvent", ACTION_FIELD_GEN_KEY_EVENT   },
+    { "genKeyEvent",      ACTION_FIELD_GEN_சாவி_EVENT   },
+    { "generateKeyEvent", ACTION_FIELD_GEN_சாவி_EVENT   },
     { "report",           ACTION_FIELD_REPORT          },
     { "default",          ACTION_FIELD_DEFAULT         },
     { "affect",           ACTION_FIELD_AFFECT          },
@@ -101,11 +101,11 @@ static const LookupEntry fieldStrings[] = {
     { "accel",            ACTION_FIELD_REPEAT          },
     { "accelerate",       ACTION_FIELD_REPEAT          },
     { "button",           ACTION_FIELD_BUTTON          },
-    { "value",            ACTION_FIELD_VALUE           },
+    { "value",            ACTION_FIELD_மதிப்பு           },
     { "controls",         ACTION_FIELD_CONTROLS        },
     { "ctrls",            ACTION_FIELD_CONTROLS        },
     { "type",             ACTION_FIELD_TYPE            },
-    { "count",            ACTION_FIELD_COUNT           },
+    { "count",            ACTION_FIELD_மொத்தம்           },
     { "screen",           ACTION_FIELD_SCREEN          },
     { "same",             ACTION_FIELD_SAME            },
     { "sameServer",       ACTION_FIELD_SAME            },
@@ -120,479 +120,479 @@ static const LookupEntry fieldStrings[] = {
     { "lockOnRelease",    ACTION_FIELD_LOCK_ON_RELEASE },
     { "unlockOnPress",    ACTION_FIELD_UNLOCK_ON_PRESS },
     { "latchOnPress",     ACTION_FIELD_LATCH_ON_PRESS  },
-    { NULL,               0                            }
+    { வெற்று,               0                            }
 };
 
-static bool
-stringToActionType(const char *str, enum xkb_action_type *type_rtrn)
+நிலையான bool
+stringToActionType(மாறிலி எழுத்து *str, எண்ணிக்கை xkb_action_type *type_rtrn)
 {
-    unsigned int type = 0;
-    const bool ret = LookupString(actionTypeNames, str, &type);
-    *type_rtrn = (enum xkb_action_type) type;
-    return ret;
+    unsigned முழு type = 0;
+    மாறிலி bool ret = LookupString(actionTypeNames, str, &type);
+    *type_rtrn = (எண்ணிக்கை xkb_action_type) type;
+    திரும்பு ret;
 }
 
-static bool
-stringToField(const char *str, enum action_field *field_rtrn)
+நிலையான bool
+stringToField(மாறிலி எழுத்து *str, எண்ணிக்கை action_field *field_rtrn)
 {
-    unsigned int field = 0;
-    const bool ret = LookupString(fieldStrings, str, &field);
-    *field_rtrn = (enum action_field) field;
-    return ret;
+    unsigned முழு field = 0;
+    மாறிலி bool ret = LookupString(fieldStrings, str, &field);
+    *field_rtrn = (எண்ணிக்கை action_field) field;
+    திரும்பு ret;
 }
 
-static const char *
-fieldText(enum action_field field)
+நிலையான மாறிலி எழுத்து *
+fieldText(எண்ணிக்கை action_field field)
 {
-    return LookupValue(fieldStrings, field);
+    திரும்பு Lookup_மதிப்பு(fieldStrings, field);
 }
 
 /***====================================================================***/
 
-static inline enum xkb_parser_error
-ReportMismatch(struct xkb_context *ctx, enum xkb_message_code code,
-               enum xkb_action_type action, enum action_field field,
-               const char *type, enum xkb_parser_strict_flags strict)
+நிலையான உள்வரி எண்ணிக்கை xkb_parser_error
+ReportMismatch(கட்டமைப்பு xkb_context *ctx, எண்ணிக்கை xkb_message_code code,
+               எண்ணிக்கை xkb_action_type action, எண்ணிக்கை action_field field,
+               மாறிலி எழுத்து *type, எண்ணிக்கை xkb_parser_strict_flags strict)
 {
     log_err(ctx, code,
             "Value of %s field must be of type %s; "
             "Action %s definition ignored\n",
             fieldText(field), type, ActionTypeText(action));
-    return (strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+    திரும்பு (strict & PARSER_NO_FIELD_TYPE_MISMATCH)
         ? PARSER_FATAL_ERROR
         : PARSER_RECOVERABLE_ERROR;
 }
 
-static inline enum xkb_parser_error
-ReportFormatVersionMismatch(struct xkb_context *ctx,
-                            enum xkb_action_type action,
-                            enum action_field field,
-                            enum xkb_keymap_format format,
-                            const char *versions,
-                            enum xkb_parser_strict_flags strict)
+நிலையான உள்வரி எண்ணிக்கை xkb_parser_error
+ReportFormatVersionMismatch(கட்டமைப்பு xkb_context *ctx,
+                            எண்ணிக்கை xkb_action_type action,
+                            எண்ணிக்கை action_field field,
+                            எண்ணிக்கை xkb_keymap_format format,
+                            மாறிலி எழுத்து *versions,
+                            எண்ணிக்கை xkb_parser_strict_flags strict)
 {
     log_err(ctx, XKB_ERROR_INCOMPATIBLE_KEYMAP_TEXT_FORMAT,
             "Field %s for an action of type %s requires keymap text format %s, "
             " but got: %d; Action definition ignored\n",
             fieldText(field), ActionTypeText(action), versions, format);
-    return (strict & PARSER_NO_UNKNOWN_ACTION_FIELDS)
+    திரும்பு (strict & PARSER_NO_UNKNOWN_ACTION_FIELDS)
         ? PARSER_FATAL_ERROR
         /* No error reported: field is just ignored */
         : PARSER_SUCCESS;
 }
 
-static inline enum xkb_parser_error
-ReportIllegal(struct xkb_context *ctx, enum xkb_action_type action,
-              enum action_field field, enum xkb_parser_strict_flags strict)
+நிலையான உள்வரி எண்ணிக்கை xkb_parser_error
+ReportIllegal(கட்டமைப்பு xkb_context *ctx, எண்ணிக்கை xkb_action_type action,
+              எண்ணிக்கை action_field field, எண்ணிக்கை xkb_parser_strict_flags strict)
 {
     log_err(ctx, XKB_ERROR_INVALID_ACTION_FIELD,
             "Field %s is not defined for an action of type %s; "
             "Action definition ignored\n",
             fieldText(field), ActionTypeText(action));
-    return (strict & PARSER_NO_ILLEGAL_ACTION_FIELDS)
+    திரும்பு (strict & PARSER_NO_ILLEGAL_ACTION_FIELDS)
         ? PARSER_FATAL_ERROR
         /* No error reported: field is just ignored */
         : PARSER_SUCCESS;
 }
 
-static inline enum xkb_parser_error
-ReportActionNotArray(struct xkb_context *ctx, enum xkb_action_type action,
-                     enum action_field field,
-                     enum xkb_parser_strict_flags strict)
+நிலையான உள்வரி எண்ணிக்கை xkb_parser_error
+ReportActionNotArray(கட்டமைப்பு xkb_context *ctx, எண்ணிக்கை xkb_action_type action,
+                     எண்ணிக்கை action_field field,
+                     எண்ணிக்கை xkb_parser_strict_flags strict)
 {
     log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
             "The %s field in the %s action is not an array; "
             "Action definition ignored\n",
             fieldText(field), ActionTypeText(action));
-    return (strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+    திரும்பு (strict & PARSER_NO_FIELD_TYPE_MISMATCH)
         ? PARSER_FATAL_ERROR
         : PARSER_RECOVERABLE_ERROR;
 }
 
-static enum xkb_parser_error
-HandleNoAction(const struct xkb_keymap_info *keymap_info,
-               const struct xkb_mod_set *mods,
-               union xkb_action *action, enum action_field field,
-               const ExprDef *array_ndx, const ExprDef *value,
-               ExprDef **value_ptr)
+நிலையான எண்ணிக்கை xkb_parser_error
+HandleNoAction(மாறிலி கட்டமைப்பு xkb_keymap_info *keymap_info,
+               மாறிலி கட்டமைப்பு xkb_mod_set *mods,
+               ஒன்றிப்பு xkb_action *action, எண்ணிக்கை action_field field,
+               மாறிலி கோவை_Def *array_ndx, மாறிலி கோவை_Def *மதிப்பு,
+               கோவை_Def **மதிப்பு_ptr)
 {
     log_err(keymap_info->keymap.ctx, XKB_ERROR_INVALID_ACTION_FIELD,
             "The \"%s\" action takes no argument, but got \"%s\" field; "
             "Action definition ignored\n",
             ActionTypeText(action->type), fieldText(field));
-    return (keymap_info->strict & PARSER_NO_ILLEGAL_ACTION_FIELDS)
+    திரும்பு (keymap_info->strict & PARSER_NO_ILLEGAL_ACTION_FIELDS)
         ? PARSER_FATAL_ERROR
         /* No error reported: field is just ignored */
         : PARSER_SUCCESS;
 }
 
-static enum xkb_parser_error
-CheckBooleanFlag(struct xkb_context *ctx, enum xkb_parser_strict_flags strict,
-                 enum xkb_action_type action, enum action_field field,
-                 enum xkb_action_flags flag, const ExprDef *array_ndx,
-                 const ExprDef *value, enum xkb_action_flags *flags_inout)
+நிலையான எண்ணிக்கை xkb_parser_error
+CheckBooleanFlag(கட்டமைப்பு xkb_context *ctx, எண்ணிக்கை xkb_parser_strict_flags strict,
+                 எண்ணிக்கை xkb_action_type action, எண்ணிக்கை action_field field,
+                 எண்ணிக்கை xkb_action_flags flag, மாறிலி கோவை_Def *array_ndx,
+                 மாறிலி கோவை_Def *மதிப்பு, எண்ணிக்கை xkb_action_flags *flags_inout)
 {
     bool set = false;
 
-    if (array_ndx)
-        return ReportActionNotArray(ctx, action, field, strict);
+    எனில் (array_ndx)
+        திரும்பு ReportActionNotArray(ctx, action, field, strict);
 
-    if (!ExprResolveBoolean(ctx, value, &set))
-        return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
+    எனில் (!கோவை_Resolve_Boolean(ctx, மதிப்பு, &set))
+        திரும்பு ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                               action, field, "boolean", strict);
 
-    if (set)
+    எனில் (set)
         *flags_inout |= flag;
-    else
+    இல்லையெனில்
         *flags_inout &= ~flag;
 
-    return PARSER_SUCCESS;
+    திரும்பு PARSER_SUCCESS;
 }
 
-static enum xkb_parser_error
-CheckModifierField(struct xkb_context *ctx, enum xkb_parser_strict_flags strict,
-                   const struct xkb_mod_set *mods, enum xkb_action_type action,
-                   const ExprDef *array_ndx, const ExprDef *value,
-                   enum xkb_action_flags *flags_inout, xkb_mod_mask_t *mods_rtrn)
+நிலையான எண்ணிக்கை xkb_parser_error
+CheckModifierField(கட்டமைப்பு xkb_context *ctx, எண்ணிக்கை xkb_parser_strict_flags strict,
+                   மாறிலி கட்டமைப்பு xkb_mod_set *mods, எண்ணிக்கை xkb_action_type action,
+                   மாறிலி கோவை_Def *array_ndx, மாறிலி கோவை_Def *மதிப்பு,
+                   எண்ணிக்கை xkb_action_flags *flags_inout, xkb_mod_mask_t *mods_rtrn)
 {
-    if (array_ndx)
-        return ReportActionNotArray(ctx, action, ACTION_FIELD_MODIFIERS, strict);
+    எனில் (array_ndx)
+        திரும்பு ReportActionNotArray(ctx, action, ACTION_FIELD_MODIFIERS, strict);
 
-    if (value->common.type == STMT_EXPR_IDENT) {
-        const char *valStr;
-        valStr = xkb_atom_text(ctx, value->ident.ident);
-        if (valStr && (istreq(valStr, "usemodmapmods") ||
+    எனில் (மதிப்பு->common.type == STMT_கோவை_IDENT) {
+        மாறிலி எழுத்து *valStr;
+        valStr = xkb_atom_text(ctx, மதிப்பு->ident.ident);
+        எனில் (valStr && (istreq(valStr, "usemodmapmods") ||
                        istreq(valStr, "modmapmods"))) {
             *mods_rtrn = 0;
             *flags_inout |= ACTION_MODS_LOOKUP_MODMAP;
-            return PARSER_SUCCESS;
+            திரும்பு PARSER_SUCCESS;
         }
     }
 
-    if (!ExprResolveModMask(ctx, value, MOD_BOTH, mods, mods_rtrn))
-        return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action,
+    எனில் (!கோவை_Resolve_Mod_Mask(ctx, மதிப்பு, MOD_BOTH, mods, mods_rtrn))
+        திரும்பு ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action,
                               ACTION_FIELD_MODIFIERS, "modifier mask", strict);
 
     *flags_inout &= ~ACTION_MODS_LOOKUP_MODMAP;
-    return PARSER_SUCCESS;
+    திரும்பு PARSER_SUCCESS;
 }
 
-static const LookupEntry lockWhich[] = {
+நிலையான மாறிலி LookupEntry lockWhich[] = {
     { "both", 0 },
     { "lock", ACTION_LOCK_NO_UNLOCK },
     { "neither", (ACTION_LOCK_NO_LOCK | ACTION_LOCK_NO_UNLOCK) },
     { "unlock", ACTION_LOCK_NO_LOCK },
-    { NULL, 0 }
+    { வெற்று, 0 }
 };
 
-static enum xkb_parser_error
-CheckAffectField(struct xkb_context *ctx, enum xkb_parser_strict_flags strict,
-                 enum xkb_action_type action, const ExprDef *array_ndx,
-                 const ExprDef *value, enum xkb_action_flags *flags_inout)
+நிலையான எண்ணிக்கை xkb_parser_error
+CheckAffectField(கட்டமைப்பு xkb_context *ctx, எண்ணிக்கை xkb_parser_strict_flags strict,
+                 எண்ணிக்கை xkb_action_type action, மாறிலி கோவை_Def *array_ndx,
+                 மாறிலி கோவை_Def *மதிப்பு, எண்ணிக்கை xkb_action_flags *flags_inout)
 {
-    if (array_ndx)
-        return ReportActionNotArray(ctx, action, ACTION_FIELD_AFFECT, strict);
+    எனில் (array_ndx)
+        திரும்பு ReportActionNotArray(ctx, action, ACTION_FIELD_AFFECT, strict);
 
     uint32_t flags = 0;
-    if (!ExprResolveEnum(ctx, value, &flags, lockWhich))
-        return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
+    எனில் (!கோவை_Resolve_Enum(ctx, மதிப்பு, &flags, lockWhich))
+        திரும்பு ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                               action, ACTION_FIELD_AFFECT,
                               "lock, unlock, both, neither", strict);
 
     *flags_inout &= ~(ACTION_LOCK_NO_LOCK | ACTION_LOCK_NO_UNLOCK);
-    *flags_inout |= (enum xkb_action_flags) flags;
-    return PARSER_SUCCESS;
+    *flags_inout |= (எண்ணிக்கை xkb_action_flags) flags;
+    திரும்பு PARSER_SUCCESS;
 }
 
-static enum xkb_parser_error
-HandleSetLatchLockMods(const struct xkb_keymap_info *keymap_info,
-                       const struct xkb_mod_set *mods,
-                       union xkb_action *action, enum action_field field,
-                       const ExprDef *array_ndx, const ExprDef *value,
-                       ExprDef **value_ptr)
+நிலையான எண்ணிக்கை xkb_parser_error
+HandleSetLatchLockMods(மாறிலி கட்டமைப்பு xkb_keymap_info *keymap_info,
+                       மாறிலி கட்டமைப்பு xkb_mod_set *mods,
+                       ஒன்றிப்பு xkb_action *action, எண்ணிக்கை action_field field,
+                       மாறிலி கோவை_Def *array_ndx, மாறிலி கோவை_Def *மதிப்பு,
+                       கோவை_Def **மதிப்பு_ptr)
 {
-    struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
-    struct xkb_mod_action *act = &action->mods;
-    const enum xkb_action_type type = action->type;
+    கட்டமைப்பு xkb_context * restrict மாறிலி ctx = keymap_info->keymap.ctx;
+    கட்டமைப்பு xkb_mod_action *act = &action->mods;
+    மாறிலி எண்ணிக்கை xkb_action_type type = action->type;
 
-    if (field == ACTION_FIELD_MODIFIERS)
-        return CheckModifierField(ctx, keymap_info->strict, mods, action->type,
-                                  array_ndx, value, &act->flags, &act->mods.mods);
-    if (field == ACTION_FIELD_UNLOCK_ON_PRESS) {
+    எனில் (field == ACTION_FIELD_MODIFIERS)
+        திரும்பு CheckModifierField(ctx, keymap_info->strict, mods, action->type,
+                                  array_ndx, மதிப்பு, &act->flags, &act->mods.mods);
+    எனில் (field == ACTION_FIELD_UNLOCK_ON_PRESS) {
         /* Ensure to update if a new modifier action is introduced. */
-        assert(type == ACTION_TYPE_MOD_SET || type == ACTION_TYPE_MOD_LATCH ||
+        ப்ரதிஜ்ஞா(type == ACTION_TYPE_MOD_SET || type == ACTION_TYPE_MOD_LATCH ||
                type == ACTION_TYPE_MOD_LOCK);
-        if (keymap_info->features.mods_unlock_on_press) {
-            const enum xkb_parser_error ret = CheckBooleanFlag(
+        எனில் (keymap_info->features.mods_unlock_on_press) {
+            மாறிலி எண்ணிக்கை xkb_parser_error ret = CheckBooleanFlag(
                 ctx, keymap_info->strict, action->type, field,
-                ACTION_UNLOCK_ON_PRESS, array_ndx, value, &act->flags
+                ACTION_UNLOCK_ON_PRESS, array_ndx, மதிப்பு, &act->flags
             );
-            if (ret == PARSER_SUCCESS)
+            எனில் (ret == PARSER_SUCCESS)
                 act->flags |= ACTION_EXPLICIT_UNLOCK_ON_PRESS;
-            return ret;
-        } else {
-            return ReportFormatVersionMismatch(ctx, action->type, field,
+            திரும்பு ret;
+        } இல்லையெனில் {
+            திரும்பு ReportFormatVersionMismatch(ctx, action->type, field,
                                                keymap_info->keymap.format,
                                                ">= 2", keymap_info->strict);
         }
     }
-    if ((type == ACTION_TYPE_MOD_SET || type == ACTION_TYPE_MOD_LATCH) &&
+    எனில் ((type == ACTION_TYPE_MOD_SET || type == ACTION_TYPE_MOD_LATCH) &&
         field == ACTION_FIELD_CLEAR_LOCKS)
-        return CheckBooleanFlag(ctx, keymap_info->strict, action->type, field,
-                                ACTION_LOCK_CLEAR, array_ndx, value,
+        திரும்பு CheckBooleanFlag(ctx, keymap_info->strict, action->type, field,
+                                ACTION_LOCK_CLEAR, array_ndx, மதிப்பு,
                                 &act->flags);
-    if (type == ACTION_TYPE_MOD_LATCH) {
-        if (field == ACTION_FIELD_LATCH_TO_LOCK)
-            return CheckBooleanFlag(ctx, keymap_info->strict, action->type,
+    எனில் (type == ACTION_TYPE_MOD_LATCH) {
+        எனில் (field == ACTION_FIELD_LATCH_TO_LOCK)
+            திரும்பு CheckBooleanFlag(ctx, keymap_info->strict, action->type,
                                     field, ACTION_LATCH_TO_LOCK, array_ndx,
-                                    value, &act->flags);
-        if (field == ACTION_FIELD_LATCH_ON_PRESS) {
-            if (keymap_info->features.mods_latch_on_press) {
-                return CheckBooleanFlag(ctx, keymap_info->strict, action->type,
+                                    மதிப்பு, &act->flags);
+        எனில் (field == ACTION_FIELD_LATCH_ON_PRESS) {
+            எனில் (keymap_info->features.mods_latch_on_press) {
+                திரும்பு CheckBooleanFlag(ctx, keymap_info->strict, action->type,
                                         field, ACTION_LATCH_ON_PRESS, array_ndx,
-                                        value, &act->flags);
-            } else {
-                return ReportFormatVersionMismatch(ctx, action->type, field,
+                                        மதிப்பு, &act->flags);
+            } இல்லையெனில் {
+                திரும்பு ReportFormatVersionMismatch(ctx, action->type, field,
                                                    keymap_info->keymap.format,
                                                    ">= 2", keymap_info->strict);
             }
         }
     }
-    if (type == ACTION_TYPE_MOD_LOCK && field == ACTION_FIELD_AFFECT)
-        return CheckAffectField(ctx, keymap_info->strict, action->type,
-                                array_ndx, value, &act->flags);
+    எனில் (type == ACTION_TYPE_MOD_LOCK && field == ACTION_FIELD_AFFECT)
+        திரும்பு CheckAffectField(ctx, keymap_info->strict, action->type,
+                                array_ndx, மதிப்பு, &act->flags);
 
-    return ReportIllegal(ctx, action->type, field, keymap_info->strict);
+    திரும்பு ReportIllegal(ctx, action->type, field, keymap_info->strict);
 }
 
-static enum xkb_parser_error
-CheckGroupField(const struct xkb_keymap_info *keymap_info,
-                enum xkb_action_type action, const ExprDef *array_ndx,
-                const ExprDef *value, ExprDef **value_ptr,
-                enum xkb_action_flags *flags_inout, int32_t *group_rtrn)
+நிலையான எண்ணிக்கை xkb_parser_error
+CheckGroupField(மாறிலி கட்டமைப்பு xkb_keymap_info *keymap_info,
+                எண்ணிக்கை xkb_action_type action, மாறிலி கோவை_Def *array_ndx,
+                மாறிலி கோவை_Def *மதிப்பு, கோவை_Def **மதிப்பு_ptr,
+                எண்ணிக்கை xkb_action_flags *flags_inout, int32_t *group_rtrn)
 {
-    const ExprDef *spec;
+    மாறிலி கோவை_Def *spec;
     xkb_layout_index_t idx = 0;
-    enum xkb_action_flags flags = *flags_inout;
+    எண்ணிக்கை xkb_action_flags flags = *flags_inout;
 
-    if (array_ndx)
-        return ReportActionNotArray(keymap_info->keymap.ctx, action,
+    எனில் (array_ndx)
+        திரும்பு ReportActionNotArray(keymap_info->keymap.ctx, action,
                                     ACTION_FIELD_GROUP, keymap_info->strict);
 
-    if (value->common.type == STMT_EXPR_NEGATE ||
-        value->common.type == STMT_EXPR_UNARY_PLUS) {
+    எனில் (மதிப்பு->common.type == STMT_கோவை_NEGATE ||
+        மதிப்பு->common.type == STMT_கோவை_UNARY_PLUS) {
         flags &= ~ACTION_ABSOLUTE_SWITCH;
-        spec = value->unary.child;
-        value_ptr = &(*value_ptr)->unary.child;
-    } else {
+        spec = மதிப்பு->unary.child;
+        மதிப்பு_ptr = &(*மதிப்பு_ptr)->unary.child;
+    } இல்லையெனில் {
         flags |= ACTION_ABSOLUTE_SWITCH;
-        spec = value;
+        spec = மதிப்பு;
     }
 
-    const bool absolute = (flags & ACTION_ABSOLUTE_SWITCH);
+    மாறிலி bool absolute = (flags & ACTION_ABSOLUTE_SWITCH);
     bool pending = false;
-    const enum xkb_parser_error ret =
-        ExprResolveGroup(keymap_info, spec, absolute, &idx, &pending);
-    if (ret != PARSER_SUCCESS && !pending) {
+    மாறிலி எண்ணிக்கை xkb_parser_error ret =
+        கோவை_Resolve_Group(keymap_info, spec, absolute, &idx, &pending);
+    எனில் (ret != PARSER_SUCCESS && !pending) {
         ReportMismatch(keymap_info->keymap.ctx,
                        XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_, action,
                        ACTION_FIELD_GROUP, "integer", keymap_info->strict);
-        return ret;
+        திரும்பு ret;
     }
 
-    if (pending) {
+    எனில் (pending) {
         flags |= ACTION_PENDING_COMPUTATION;
-        const darray_size_t pending_index =
+        மாறிலி darray_size_t pending_index =
             darray_size(*keymap_info->pending_computations);
         darray_append(
             *keymap_info->pending_computations,
-            (struct pending_computation) {
-                .expr = *value_ptr,
+            (கட்டமைப்பு pending_computation) {
+                .கோவை = *மதிப்பு_ptr,
                 .computed = false,
-                .value = 0,
+                .மதிப்பு = 0,
             }
         );
-        *value_ptr = NULL;
-        static_assert(sizeof(pending_index) == sizeof(*group_rtrn),
+        *மதிப்பு_ptr = வெற்று;
+        static_assert(அளவு(pending_index) == அளவு(*group_rtrn),
                       "Cannot save pending computation");
         *group_rtrn = (int32_t) pending_index;
-    } else {
+    } இல்லையெனில் {
         flags &= ~ACTION_PENDING_COMPUTATION;
         /* `+n`, `-n` are relative, `n` is absolute. */
-        if (absolute) {
+        எனில் (absolute) {
             *group_rtrn = (int32_t) (idx - 1);
-        } else {
+        } இல்லையெனில் {
             *group_rtrn = (int32_t) idx;
-            if (value->common.type == STMT_EXPR_NEGATE)
+            எனில் (மதிப்பு->common.type == STMT_கோவை_NEGATE)
                 *group_rtrn = -*group_rtrn;
         }
     }
 
     *flags_inout = flags;
-    return PARSER_SUCCESS;
+    திரும்பு PARSER_SUCCESS;
 }
 
-static enum xkb_parser_error
-HandleSetLatchLockGroup(const struct xkb_keymap_info *keymap_info,
-                        const struct xkb_mod_set *mods,
-                        union xkb_action *action, enum action_field field,
-                        const ExprDef *array_ndx, const ExprDef *value,
-                        ExprDef **value_ptr)
+நிலையான எண்ணிக்கை xkb_parser_error
+HandleSetLatchLockGroup(மாறிலி கட்டமைப்பு xkb_keymap_info *keymap_info,
+                        மாறிலி கட்டமைப்பு xkb_mod_set *mods,
+                        ஒன்றிப்பு xkb_action *action, எண்ணிக்கை action_field field,
+                        மாறிலி கோவை_Def *array_ndx, மாறிலி கோவை_Def *மதிப்பு,
+                        கோவை_Def **மதிப்பு_ptr)
 {
-    struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
-    struct xkb_group_action *act = &action->group;
-    const enum xkb_action_type type = action->type;
+    கட்டமைப்பு xkb_context * restrict மாறிலி ctx = keymap_info->keymap.ctx;
+    கட்டமைப்பு xkb_group_action *act = &action->group;
+    மாறிலி எண்ணிக்கை xkb_action_type type = action->type;
 
-    if (field == ACTION_FIELD_GROUP) {
-        return CheckGroupField(keymap_info, action->type, array_ndx, value,
-                               value_ptr, &act->flags, &act->group);
+    எனில் (field == ACTION_FIELD_GROUP) {
+        திரும்பு CheckGroupField(keymap_info, action->type, array_ndx, மதிப்பு,
+                               மதிப்பு_ptr, &act->flags, &act->group);
     }
-    if ((type == ACTION_TYPE_GROUP_SET || type == ACTION_TYPE_GROUP_LATCH) &&
+    எனில் ((type == ACTION_TYPE_GROUP_SET || type == ACTION_TYPE_GROUP_LATCH) &&
         field == ACTION_FIELD_CLEAR_LOCKS)
-        return CheckBooleanFlag(ctx, keymap_info->strict, action->type, field,
-                                ACTION_LOCK_CLEAR, array_ndx, value,
+        திரும்பு CheckBooleanFlag(ctx, keymap_info->strict, action->type, field,
+                                ACTION_LOCK_CLEAR, array_ndx, மதிப்பு,
                                 &act->flags);
-    if (type == ACTION_TYPE_GROUP_LATCH &&
+    எனில் (type == ACTION_TYPE_GROUP_LATCH &&
         field == ACTION_FIELD_LATCH_TO_LOCK)
-        return CheckBooleanFlag(ctx, keymap_info->strict, action->type, field,
-                                ACTION_LATCH_TO_LOCK, array_ndx, value,
+        திரும்பு CheckBooleanFlag(ctx, keymap_info->strict, action->type, field,
+                                ACTION_LATCH_TO_LOCK, array_ndx, மதிப்பு,
                                 &act->flags);
-    if (type == ACTION_TYPE_GROUP_LOCK &&
+    எனில் (type == ACTION_TYPE_GROUP_LOCK &&
         field == ACTION_FIELD_LOCK_ON_RELEASE) {
         /* TODO: support this for `ACTION_TYPE_MOD_LOCK` too? */
-        if (keymap_info->features.group_lock_on_release) {
-            const enum xkb_parser_error ret = CheckBooleanFlag(
+        எனில் (keymap_info->features.group_lock_on_release) {
+            மாறிலி எண்ணிக்கை xkb_parser_error ret = CheckBooleanFlag(
                 ctx, keymap_info->strict, action->type, field,
-                ACTION_LOCK_ON_RELEASE, array_ndx, value, &act->flags
+                ACTION_LOCK_ON_RELEASE, array_ndx, மதிப்பு, &act->flags
             );
-            if (ret == PARSER_SUCCESS)
+            எனில் (ret == PARSER_SUCCESS)
                 act->flags |= ACTION_EXPLICIT_LOCK_ON_RELEASE;
-            return ret;
-        } else {
-            return ReportFormatVersionMismatch(ctx, action->type, field,
+            திரும்பு ret;
+        } இல்லையெனில் {
+            திரும்பு ReportFormatVersionMismatch(ctx, action->type, field,
                                                keymap_info->keymap.format,
                                                ">= v2", keymap_info->strict);
         }
     }
 
-    return ReportIllegal(ctx, action->type, field, keymap_info->strict);
+    திரும்பு ReportIllegal(ctx, action->type, field, keymap_info->strict);
 }
 
-static enum xkb_parser_error
-HandleMovePtr(const struct xkb_keymap_info *keymap_info,
-              const struct xkb_mod_set *mods,
-              union xkb_action *action, enum action_field field,
-              const ExprDef *array_ndx, const ExprDef *value,
-              ExprDef **value_ptr)
+நிலையான எண்ணிக்கை xkb_parser_error
+HandleMovePtr(மாறிலி கட்டமைப்பு xkb_keymap_info *keymap_info,
+              மாறிலி கட்டமைப்பு xkb_mod_set *mods,
+              ஒன்றிப்பு xkb_action *action, எண்ணிக்கை action_field field,
+              மாறிலி கோவை_Def *array_ndx, மாறிலி கோவை_Def *மதிப்பு,
+              கோவை_Def **மதிப்பு_ptr)
 {
-    struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
-    struct xkb_pointer_motion_action *act = &action->ptr;
+    கட்டமைப்பு xkb_context * restrict மாறிலி ctx = keymap_info->keymap.ctx;
+    கட்டமைப்பு xkb_pointer_motion_action *act = &action->ptr;
 
-    if (field == ACTION_FIELD_X || field == ACTION_FIELD_Y) {
+    எனில் (field == ACTION_FIELD_X || field == ACTION_FIELD_Y) {
         int64_t val = 0;
-        const bool absolute = (value->common.type != STMT_EXPR_NEGATE &&
-                               value->common.type != STMT_EXPR_UNARY_PLUS);
+        மாறிலி bool absolute = (மதிப்பு->common.type != STMT_கோவை_NEGATE &&
+                               மதிப்பு->common.type != STMT_கோவை_UNARY_PLUS);
 
-        if (array_ndx)
-            return ReportActionNotArray(ctx, action->type, field,
+        எனில் (array_ndx)
+            திரும்பு ReportActionNotArray(ctx, action->type, field,
                                         keymap_info->strict);
 
-        if (!ExprResolveInteger(ctx, value, &val))
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
+        எனில் (!கோவை_Resolve_Integer(ctx, மதிப்பு, &val))
+            திரும்பு ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
                                   field, "integer", keymap_info->strict);
 
-        if (val < INT16_MIN || val > INT16_MAX) {
+        எனில் (val < INT16_MIN || val > INT16_MAX) {
             log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "The %s field in the %s action must be in range %d..%d, "
                     "but got %"PRId64". Action definition ignored\n",
                     fieldText(field), ActionTypeText(action->type),
                     INT16_MIN, INT16_MAX, val);
-            return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+            திரும்பு (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
                 ? PARSER_FATAL_ERROR
                 : PARSER_RECOVERABLE_ERROR;
         }
 
-        if (field == ACTION_FIELD_X) {
-            if (absolute)
+        எனில் (field == ACTION_FIELD_X) {
+            எனில் (absolute)
                 act->flags |= ACTION_ABSOLUTE_X;
             act->x = (int16_t) val;
         }
-        else {
-            if (absolute)
+        இல்லையெனில் {
+            எனில் (absolute)
                 act->flags |= ACTION_ABSOLUTE_Y;
             act->y = (int16_t) val;
         }
 
-        return PARSER_SUCCESS;
+        திரும்பு PARSER_SUCCESS;
     }
-    else if (field == ACTION_FIELD_REPEAT) {
-        return CheckBooleanFlag(ctx, keymap_info->strict, action->type, field,
-                                ACTION_REPEAT, array_ndx, value, &act->flags);
+    இல்லையெனில் எனில் (field == ACTION_FIELD_REPEAT) {
+        திரும்பு CheckBooleanFlag(ctx, keymap_info->strict, action->type, field,
+                                ACTION_REPEAT, array_ndx, மதிப்பு, &act->flags);
     }
 
-    return ReportIllegal(ctx, action->type, field, keymap_info->strict);
+    திரும்பு ReportIllegal(ctx, action->type, field, keymap_info->strict);
 }
 
-static enum xkb_parser_error
-HandlePtrBtn(const struct xkb_keymap_info *keymap_info,
-             const struct xkb_mod_set *mods,
-             union xkb_action *action, enum action_field field,
-             const ExprDef *array_ndx, const ExprDef *value,
-             ExprDef **value_ptr)
+நிலையான எண்ணிக்கை xkb_parser_error
+HandlePtrBtn(மாறிலி கட்டமைப்பு xkb_keymap_info *keymap_info,
+             மாறிலி கட்டமைப்பு xkb_mod_set *mods,
+             ஒன்றிப்பு xkb_action *action, எண்ணிக்கை action_field field,
+             மாறிலி கோவை_Def *array_ndx, மாறிலி கோவை_Def *மதிப்பு,
+             கோவை_Def **மதிப்பு_ptr)
 {
-    struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
-    struct xkb_pointer_button_action *act = &action->btn;
+    கட்டமைப்பு xkb_context * restrict மாறிலி ctx = keymap_info->keymap.ctx;
+    கட்டமைப்பு xkb_pointer_button_action *act = &action->btn;
 
-    if (field == ACTION_FIELD_BUTTON) {
+    எனில் (field == ACTION_FIELD_BUTTON) {
         int64_t btn = 0;
 
-        if (array_ndx)
-            return ReportActionNotArray(ctx, action->type, field,
+        எனில் (array_ndx)
+            திரும்பு ReportActionNotArray(ctx, action->type, field,
                                         keymap_info->strict);
 
-        if (!ExprResolveButton(ctx, value, &btn)) {
+        எனில் (!கோவை_Resolve_Button(ctx, மதிப்பு, &btn)) {
             static_assert(XKB_POINTER_BUTTON_MIN == 1 &&
                           XKB_POINTER_BUTTON_MAX == 5, "invalid message");
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
+            திரும்பு ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
                                   field, "integer (range 1..5)",
                                   keymap_info->strict);
         }
 
         static_assert(XKB_POINTER_BUTTON_DEFAULT < XKB_POINTER_BUTTON_MIN, "");
-        if (btn < XKB_POINTER_BUTTON_DEFAULT || btn > XKB_POINTER_BUTTON_MAX) {
+        எனில் (btn < XKB_POINTER_BUTTON_DEFAULT || btn > XKB_POINTER_BUTTON_MAX) {
             log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Button must specify default or be in the range %d..%d; "
                     "Illegal button value %"PRId64" ignored\n",
                     XKB_POINTER_BUTTON_MIN, XKB_POINTER_BUTTON_MAX, btn);
-            return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+            திரும்பு (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
                 ? PARSER_FATAL_ERROR
                 : PARSER_RECOVERABLE_ERROR;
         }
 
         act->button = (uint8_t) btn;
-        return PARSER_SUCCESS;
+        திரும்பு PARSER_SUCCESS;
     }
-    else if (action->type == ACTION_TYPE_PTR_LOCK &&
+    இல்லையெனில் எனில் (action->type == ACTION_TYPE_PTR_LOCK &&
              field == ACTION_FIELD_AFFECT) {
-        return CheckAffectField(ctx, keymap_info->strict, action->type,
-                                array_ndx, value, &act->flags);
+        திரும்பு CheckAffectField(ctx, keymap_info->strict, action->type,
+                                array_ndx, மதிப்பு, &act->flags);
     }
-    else if (field == ACTION_FIELD_COUNT) {
+    இல்லையெனில் எனில் (field == ACTION_FIELD_மொத்தம்) {
         int64_t val = 0;
 
-        if (array_ndx)
-            return ReportActionNotArray(ctx, action->type, field,
+        எனில் (array_ndx)
+            திரும்பு ReportActionNotArray(ctx, action->type, field,
                                         keymap_info->strict);
 
-        if (!ExprResolveInteger(ctx, value, &val))
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
+        எனில் (!கோவை_Resolve_Integer(ctx, மதிப்பு, &val))
+            திரும்பு ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
                                   field, "integer", keymap_info->strict);
 
-        if (val < 0 || val > 255) {
+        எனில் (val < 0 || val > 255) {
             log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "The count field must have a value in the range 0..255; "
                     "Illegal count %"PRId64" ignored\n", val);
-            return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+            திரும்பு (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
                 ? PARSER_FATAL_ERROR
                 : PARSER_RECOVERABLE_ERROR;
         }
@@ -602,292 +602,292 @@ HandlePtrBtn(const struct xkb_keymap_info *keymap_info,
          * X.Org’s xkbcomp, since `SA_LockPtrBtn` has no `count` parameter.
          * See: https://xorg.freedesktop.org/archive/current/doc/kbproto/xkbproto.html#:~:text=SA_LockPtrBtn
          */
-        if (action->type != ACTION_TYPE_PTR_LOCK)
-            act->count = (uint8_t) val;
-        return PARSER_SUCCESS;
+        எனில் (action->type != ACTION_TYPE_PTR_LOCK)
+            act->மொத்தம் = (uint8_t) val;
+        திரும்பு PARSER_SUCCESS;
     }
 
-    return ReportIllegal(ctx, action->type, field, keymap_info->strict);
+    திரும்பு ReportIllegal(ctx, action->type, field, keymap_info->strict);
 }
 
-enum {
+எண்ணிக்கை {
     SET_POINTER_DEFAULT_BUTTON_AFFECT_DEFAULT = 0,
-    _SET_POINTER_DEFAULT_BUTTON_AFFECT_NUM_ENTRIES
+    SET_POINTER_DEFAULT_BUTTON_AFFECT_இலக்கம்_ENTRIES
 };
 
-static const LookupEntry ptrDflts[] = {
+நிலையான மாறிலி LookupEntry ptrDflts[] = {
     { "dfltbtn", SET_POINTER_DEFAULT_BUTTON_AFFECT_DEFAULT },
     { "defaultbutton", SET_POINTER_DEFAULT_BUTTON_AFFECT_DEFAULT },
     { "button", SET_POINTER_DEFAULT_BUTTON_AFFECT_DEFAULT },
-    { NULL, 0 }
+    { வெற்று, 0 }
 };
 
-static enum xkb_parser_error
-HandleSetPtrDflt(const struct xkb_keymap_info *keymap_info,
-                 const struct xkb_mod_set *mods,
-                 union xkb_action *action, enum action_field field,
-                 const ExprDef *array_ndx, const ExprDef *value,
-                 ExprDef **value_ptr)
+நிலையான எண்ணிக்கை xkb_parser_error
+HandleSetPtrDflt(மாறிலி கட்டமைப்பு xkb_keymap_info *keymap_info,
+                 மாறிலி கட்டமைப்பு xkb_mod_set *mods,
+                 ஒன்றிப்பு xkb_action *action, எண்ணிக்கை action_field field,
+                 மாறிலி கோவை_Def *array_ndx, மாறிலி கோவை_Def *மதிப்பு,
+                 கோவை_Def **மதிப்பு_ptr)
 {
-    struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
-    struct xkb_pointer_default_action *act = &action->dflt;
+    கட்டமைப்பு xkb_context * restrict மாறிலி ctx = keymap_info->keymap.ctx;
+    கட்டமைப்பு xkb_pointer_default_action *act = &action->dflt;
 
-    if (field == ACTION_FIELD_AFFECT) {
+    எனில் (field == ACTION_FIELD_AFFECT) {
         uint32_t val = 0;
 
-        if (array_ndx)
-            return ReportActionNotArray(ctx, action->type, field,
+        எனில் (array_ndx)
+            திரும்பு ReportActionNotArray(ctx, action->type, field,
                                         keymap_info->strict);
 
-        if (!ExprResolveEnum(ctx, value, &val, ptrDflts))
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
+        எனில் (!கோவை_Resolve_Enum(ctx, மதிப்பு, &val, ptrDflts))
+            திரும்பு ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
                                   field, "pointer component", keymap_info->strict);
-        static_assert(_SET_POINTER_DEFAULT_BUTTON_AFFECT_NUM_ENTRIES == 1,
+        static_assert(SET_POINTER_DEFAULT_BUTTON_AFFECT_இலக்கம்_ENTRIES == 1,
                       "affect has a single valid value and thus it is not stored");
-        return PARSER_SUCCESS;
+        திரும்பு PARSER_SUCCESS;
     }
-    else if (field == ACTION_FIELD_BUTTON || field == ACTION_FIELD_VALUE) {
-        const ExprDef *button;
+    இல்லையெனில் எனில் (field == ACTION_FIELD_BUTTON || field == ACTION_FIELD_மதிப்பு) {
+        மாறிலி கோவை_Def *button;
         int64_t btn = 0;
 
-        if (array_ndx)
-            return ReportActionNotArray(ctx, action->type, field,
+        எனில் (array_ndx)
+            திரும்பு ReportActionNotArray(ctx, action->type, field,
                                         keymap_info->strict);
 
-        if (value->common.type == STMT_EXPR_NEGATE ||
-            value->common.type == STMT_EXPR_UNARY_PLUS) {
+        எனில் (மதிப்பு->common.type == STMT_கோவை_NEGATE ||
+            மதிப்பு->common.type == STMT_கோவை_UNARY_PLUS) {
             act->flags &= ~ACTION_ABSOLUTE_SWITCH;
-            button = value->unary.child;
+            button = மதிப்பு->unary.child;
         }
-        else {
+        இல்லையெனில் {
             act->flags |= ACTION_ABSOLUTE_SWITCH;
-            button = value;
+            button = மதிப்பு;
         }
 
-        if (!ExprResolveButton(ctx, button, &btn)) {
+        எனில் (!கோவை_Resolve_Button(ctx, button, &btn)) {
             static_assert(XKB_POINTER_BUTTON_MIN == 1 &&
                           XKB_POINTER_BUTTON_MAX == 5, "invalid message");
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
+            திரும்பு ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
                                   field, "integer (range 1..5)",
                                   keymap_info->strict);
         }
 
         static_assert(XKB_POINTER_BUTTON_DEFAULT < XKB_POINTER_BUTTON_MIN, "");
-        if (btn < XKB_POINTER_BUTTON_DEFAULT || btn > XKB_POINTER_BUTTON_MAX) {
+        எனில் (btn < XKB_POINTER_BUTTON_DEFAULT || btn > XKB_POINTER_BUTTON_MAX) {
             log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "New default button value must be in the range %d..%d; "
                     "Illegal default button value %"PRId64" ignored\n",
                     XKB_POINTER_BUTTON_MIN, XKB_POINTER_BUTTON_MAX, btn);
-            return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+            திரும்பு (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
                 ? PARSER_FATAL_ERROR
                 : PARSER_RECOVERABLE_ERROR;
         }
-        if (btn == XKB_POINTER_BUTTON_DEFAULT) {
+        எனில் (btn == XKB_POINTER_BUTTON_DEFAULT) {
             log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Cannot set default pointer button to \"default\"; "
                     "Illegal default button setting ignored\n");
-            return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+            திரும்பு (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
                 ? PARSER_FATAL_ERROR
                 : PARSER_RECOVERABLE_ERROR;
         }
 
-        act->value = (int8_t) (value->common.type == STMT_EXPR_NEGATE ? -btn: btn);
-        return PARSER_SUCCESS;
+        act->மதிப்பு = (int8_t) (மதிப்பு->common.type == STMT_கோவை_NEGATE ? -btn: btn);
+        திரும்பு PARSER_SUCCESS;
     }
 
-    return ReportIllegal(ctx, action->type, field, keymap_info->strict);
+    திரும்பு ReportIllegal(ctx, action->type, field, keymap_info->strict);
 }
 
-static enum xkb_parser_error
-HandleSwitchScreen(const struct xkb_keymap_info *keymap_info,
-                   const struct xkb_mod_set *mods,
-                   union xkb_action *action, enum action_field field,
-                   const ExprDef *array_ndx, const ExprDef *value,
-                   ExprDef **value_ptr)
+நிலையான எண்ணிக்கை xkb_parser_error
+HandleSwitchScreen(மாறிலி கட்டமைப்பு xkb_keymap_info *keymap_info,
+                   மாறிலி கட்டமைப்பு xkb_mod_set *mods,
+                   ஒன்றிப்பு xkb_action *action, எண்ணிக்கை action_field field,
+                   மாறிலி கோவை_Def *array_ndx, மாறிலி கோவை_Def *மதிப்பு,
+                   கோவை_Def **மதிப்பு_ptr)
 {
-    struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
-    struct xkb_switch_screen_action *act = &action->screen;
+    கட்டமைப்பு xkb_context * restrict மாறிலி ctx = keymap_info->keymap.ctx;
+    கட்டமைப்பு xkb_switch_screen_action *act = &action->screen;
 
-    if (field == ACTION_FIELD_SCREEN) {
-        const ExprDef *scrn;
+    எனில் (field == ACTION_FIELD_SCREEN) {
+        மாறிலி கோவை_Def *scrn;
         int64_t val = 0;
 
-        if (array_ndx)
-            return ReportActionNotArray(ctx, action->type, field,
+        எனில் (array_ndx)
+            திரும்பு ReportActionNotArray(ctx, action->type, field,
                                         keymap_info->strict);
 
-        if (value->common.type == STMT_EXPR_NEGATE ||
-            value->common.type == STMT_EXPR_UNARY_PLUS) {
+        எனில் (மதிப்பு->common.type == STMT_கோவை_NEGATE ||
+            மதிப்பு->common.type == STMT_கோவை_UNARY_PLUS) {
             act->flags &= ~ACTION_ABSOLUTE_SWITCH;
-            scrn = value->unary.child;
+            scrn = மதிப்பு->unary.child;
         }
-        else {
+        இல்லையெனில் {
             act->flags |= ACTION_ABSOLUTE_SWITCH;
-            scrn = value;
+            scrn = மதிப்பு;
         }
 
-        if (!ExprResolveInteger(ctx, scrn, &val))
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
+        எனில் (!கோவை_Resolve_Integer(ctx, scrn, &val))
+            திரும்பு ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
                                   field, "integer (-128..127)",
                                   keymap_info->strict);
 
-        val = (value->common.type == STMT_EXPR_NEGATE ? -val : val);
-        if (val < INT8_MIN || val > INT8_MAX) {
+        val = (மதிப்பு->common.type == STMT_கோவை_NEGATE ? -val : val);
+        எனில் (val < INT8_MIN || val > INT8_MAX) {
             log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Screen index must be in the range %d..%d; "
                     "Illegal screen value %"PRId64" ignored\n",
                     INT8_MIN, INT8_MAX, val);
-            return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+            திரும்பு (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
                 ? PARSER_FATAL_ERROR
                 : PARSER_RECOVERABLE_ERROR;
         }
 
         act->screen = (int8_t) val;
-        return PARSER_SUCCESS;
+        திரும்பு PARSER_SUCCESS;
     }
-    else if (field == ACTION_FIELD_SAME) {
-        return CheckBooleanFlag(ctx, keymap_info->strict, action->type, field,
-                                ACTION_SAME_SCREEN, array_ndx, value,
+    இல்லையெனில் எனில் (field == ACTION_FIELD_SAME) {
+        திரும்பு CheckBooleanFlag(ctx, keymap_info->strict, action->type, field,
+                                ACTION_SAME_SCREEN, array_ndx, மதிப்பு,
                                 &act->flags);
     }
 
-    return ReportIllegal(ctx, action->type, field, keymap_info->strict);
+    திரும்பு ReportIllegal(ctx, action->type, field, keymap_info->strict);
 }
 
-static enum xkb_parser_error
-HandleSetLockControls(const struct xkb_keymap_info *keymap_info,
-                      const struct xkb_mod_set *mods,
-                      union xkb_action *action, enum action_field field,
-                      const ExprDef *array_ndx, const ExprDef *value,
-                      ExprDef **value_ptr)
+நிலையான எண்ணிக்கை xkb_parser_error
+HandleSetLockControls(மாறிலி கட்டமைப்பு xkb_keymap_info *keymap_info,
+                      மாறிலி கட்டமைப்பு xkb_mod_set *mods,
+                      ஒன்றிப்பு xkb_action *action, எண்ணிக்கை action_field field,
+                      மாறிலி கோவை_Def *array_ndx, மாறிலி கோவை_Def *மதிப்பு,
+                      கோவை_Def **மதிப்பு_ptr)
 {
-    struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
-    struct xkb_controls_action *act = &action->ctrls;
+    கட்டமைப்பு xkb_context * restrict மாறிலி ctx = keymap_info->keymap.ctx;
+    கட்டமைப்பு xkb_controls_action *act = &action->ctrls;
 
-    if (field == ACTION_FIELD_CONTROLS) {
-        if (array_ndx)
-            return ReportActionNotArray(ctx, action->type, field,
+    எனில் (field == ACTION_FIELD_CONTROLS) {
+        எனில் (array_ndx)
+            திரும்பு ReportActionNotArray(ctx, action->type, field,
                                         keymap_info->strict);
 
         uint32_t mask = 0;
-        const uint8_t offset = keymap_info->features.controls_name_offset;
-        if (!ExprResolveMask(ctx, value, &mask, ctrlMaskNames + offset))
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
+        மாறிலி uint8_t offset = keymap_info->features.controls_name_offset;
+        எனில் (!கோவை_Resolve_Mask(ctx, மதிப்பு, &mask, ctrlMaskNames + offset))
+            திரும்பு ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
                                   field, "controls mask", keymap_info->strict);
 
-        act->ctrls = (enum xkb_action_controls) mask;
-        return PARSER_SUCCESS;
+        act->ctrls = (எண்ணிக்கை xkb_action_controls) mask;
+        திரும்பு PARSER_SUCCESS;
     }
-    else if (field == ACTION_FIELD_AFFECT &&
+    இல்லையெனில் எனில் (field == ACTION_FIELD_AFFECT &&
              action->type == ACTION_TYPE_CTRL_LOCK) {
-        return CheckAffectField(ctx, keymap_info->strict, action->type,
-                                array_ndx, value, &act->flags);
+        திரும்பு CheckAffectField(ctx, keymap_info->strict, action->type,
+                                array_ndx, மதிப்பு, &act->flags);
     }
 
-    return ReportIllegal(ctx, action->type, field, keymap_info->strict);
+    திரும்பு ReportIllegal(ctx, action->type, field, keymap_info->strict);
 }
 
-static enum xkb_parser_error
-HandleRedirectKey(const struct xkb_keymap_info *keymap_info,
-                  const struct xkb_mod_set *mods,
-                  union xkb_action *action, enum action_field field,
-                  const ExprDef *array_ndx, const ExprDef *value,
-                  ExprDef **value_ptr)
+நிலையான எண்ணிக்கை xkb_parser_error
+Handle_Redirect_சாவி(மாறிலி கட்டமைப்பு xkb_keymap_info *keymap_info,
+                  மாறிலி கட்டமைப்பு xkb_mod_set *mods,
+                  ஒன்றிப்பு xkb_action *action, எண்ணிக்கை action_field field,
+                  மாறிலி கோவை_Def *array_ndx, மாறிலி கோவை_Def *மதிப்பு,
+                  கோவை_Def **மதிப்பு_ptr)
 {
-    const struct xkb_keymap * restrict const keymap = &keymap_info->keymap;
-    struct xkb_context * restrict const ctx = keymap->ctx;
-    struct xkb_redirect_key_action * const act = &action->redirect;
+    மாறிலி கட்டமைப்பு xkb_keymap * restrict மாறிலி keymap = &keymap_info->keymap;
+    கட்டமைப்பு xkb_context * restrict மாறிலி ctx = keymap->ctx;
+    கட்டமைப்பு xkb_redirect_சாவி_action * மாறிலி act = &action->redirect;
 
-    if (field == ACTION_FIELD_KEYCODE) {
-        if (array_ndx)
-            return ReportActionNotArray(ctx, action->type, field,
+    எனில் (field == ACTION_FIELD_KEYCODE) {
+        எனில் (array_ndx)
+            திரும்பு ReportActionNotArray(ctx, action->type, field,
                                         keymap_info->strict);
-        if (value->common.type == STMT_EXPR_IDENT) {
-            const char *valStr = xkb_atom_text(ctx, value->ident.ident);
-            if (valStr && istreq(valStr, "auto")) {
-                act->keycode = keymap_info->keymap.redirect_key_auto;
-                return PARSER_SUCCESS;
+        எனில் (மதிப்பு->common.type == STMT_கோவை_IDENT) {
+            மாறிலி எழுத்து *valStr = xkb_atom_text(ctx, மதிப்பு->ident.ident);
+            எனில் (valStr && istreq(valStr, "auto")) {
+                act->keycode = keymap_info->keymap.redirect_சாவி_auto;
+                திரும்பு PARSER_SUCCESS;
             }
         }
-        if (value->common.type != STMT_EXPR_KEYNAME_LITERAL) {
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
+        எனில் (மதிப்பு->common.type != STMT_கோவை_KEYNAME_LITERAL) {
+            திரும்பு ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
                                   field, "key name", keymap_info->strict);
         }
-        const struct xkb_key * const key =
-            XkbKeyByName(keymap, value->key_name.key_name, true);
-        if (key == NULL) {
+        மாறிலி கட்டமைப்பு xkb_சாவி * மாறிலி சாவி =
+            Xkb_சாவி_By_Name(keymap, மதிப்பு->சாவி_name.சாவி_name, true);
+        எனில் (சாவி == வெற்று) {
             log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "RedirectKey field %s cannot resolve %s to a valid key\n",
-                    fieldText(field), KeyNameText(ctx, value->key_name.key_name));
-            return (keymap_info->strict & PARSER_NO_FIELD_VALUE_MISMATCH)
+                    fieldText(field), சாவி_Name_Text(ctx, மதிப்பு->சாவி_name.சாவி_name));
+            திரும்பு (keymap_info->strict & PARSER_NO_FIELD_மதிப்பு_MISMATCH)
                 ? PARSER_FATAL_ERROR
                 : PARSER_RECOVERABLE_ERROR;
         }
-        act->keycode = key->keycode;
-        return PARSER_SUCCESS;
+        act->keycode = சாவி->keycode;
+        திரும்பு PARSER_SUCCESS;
     }
 
-    if (field == ACTION_FIELD_MODIFIERS || field == ACTION_FIELD_MODS_TO_CLEAR) {
-        enum xkb_action_flags flags = 0;
+    எனில் (field == ACTION_FIELD_MODIFIERS || field == ACTION_FIELD_MODS_TO_CLEAR) {
+        எண்ணிக்கை xkb_action_flags flags = 0;
         xkb_mod_mask_t m = 0;
-        enum xkb_parser_error r =
+        எண்ணிக்கை xkb_parser_error r =
             CheckModifierField(ctx, keymap_info->strict, mods, action->type,
-                               array_ndx, value, &flags, &m);
-        if (r != PARSER_SUCCESS)
-            return r;
-        if (flags)
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
+                               array_ndx, மதிப்பு, &flags, &m);
+        எனில் (r != PARSER_SUCCESS)
+            திரும்பு r;
+        எனில் (flags)
+            திரும்பு ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
                                   field, "modifier mask", keymap_info->strict);
         act->affect_mods |= m;
-        if (field == ACTION_FIELD_MODIFIERS)
+        எனில் (field == ACTION_FIELD_MODIFIERS)
             act->mods |= m;
-        else
+        இல்லையெனில்
             act->mods &= ~m;
-        return PARSER_SUCCESS;
+        திரும்பு PARSER_SUCCESS;
     }
 
-    return ReportIllegal(ctx, action->type, field, keymap_info->strict);
+    திரும்பு ReportIllegal(ctx, action->type, field, keymap_info->strict);
 }
 
-static enum xkb_parser_error
-HandleUnsupported(const struct xkb_keymap_info *keymap_info,
-                        const struct xkb_mod_set *mods,
-                        union xkb_action *action, enum action_field field,
-                        const ExprDef *array_ndx, const ExprDef *value,
-                        ExprDef **value_ptr)
+நிலையான எண்ணிக்கை xkb_parser_error
+HandleUnsupported(மாறிலி கட்டமைப்பு xkb_keymap_info *keymap_info,
+                        மாறிலி கட்டமைப்பு xkb_mod_set *mods,
+                        ஒன்றிப்பு xkb_action *action, எண்ணிக்கை action_field field,
+                        மாறிலி கோவை_Def *array_ndx, மாறிலி கோவை_Def *மதிப்பு,
+                        கோவை_Def **மதிப்பு_ptr)
 
 {
     /* Do not check any field */
-    return PARSER_SUCCESS;
+    திரும்பு PARSER_SUCCESS;
 }
 
-static enum xkb_parser_error
-HandlePrivate(const struct xkb_keymap_info *keymap_info,
-              const struct xkb_mod_set *mods,
-              union xkb_action *action, enum action_field field,
-              const ExprDef *array_ndx, const ExprDef *value,
-              ExprDef **value_ptr)
+நிலையான எண்ணிக்கை xkb_parser_error
+HandlePrivate(மாறிலி கட்டமைப்பு xkb_keymap_info *keymap_info,
+              மாறிலி கட்டமைப்பு xkb_mod_set *mods,
+              ஒன்றிப்பு xkb_action *action, எண்ணிக்கை action_field field,
+              மாறிலி கோவை_Def *array_ndx, மாறிலி கோவை_Def *மதிப்பு,
+              கோவை_Def **மதிப்பு_ptr)
 {
-    struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
-    struct xkb_private_action *act = &action->priv;
+    கட்டமைப்பு xkb_context * restrict மாறிலி ctx = keymap_info->keymap.ctx;
+    கட்டமைப்பு xkb_private_action *act = &action->priv;
 
-    if (field == ACTION_FIELD_TYPE) {
+    எனில் (field == ACTION_FIELD_TYPE) {
         int64_t type = 0;
 
-        if (array_ndx)
-            return ReportActionNotArray(ctx, action->type, field,
+        எனில் (array_ndx)
+            திரும்பு ReportActionNotArray(ctx, action->type, field,
                                         keymap_info->strict);
 
-        if (!ExprResolveInteger(ctx, value, &type))
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
+        எனில் (!கோவை_Resolve_Integer(ctx, மதிப்பு, &type))
+            திரும்பு ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                                   ACTION_TYPE_PRIVATE, field, "integer",
                                   keymap_info->strict);
 
-        if (type < 0 || type > 255) {
+        எனில் (type < 0 || type > 255) {
             log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Private action type must be in the range 0..255; "
                     "Illegal type %"PRId64" ignored\n", type);
-            return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+            திரும்பு (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
                 ? PARSER_FATAL_ERROR
                 : PARSER_RECOVERABLE_ERROR;
         }
@@ -902,96 +902,96 @@ HandlePrivate(const struct xkb_keymap_info *keymap_info,
          * assumption is no longer true. Since this is a lousy "feature", we
          * make actions like these no-ops for now.
          */
-        if (type < ACTION_TYPE_PRIVATE) {
+        எனில் (type < ACTION_TYPE_PRIVATE) {
             log_info(ctx, XKB_LOG_MESSAGE_NO_ID,
                      "Private actions of type %s are not supported; Ignored\n",
-                     ActionTypeText((enum xkb_action_type) type));
+                     ActionTypeText((எண்ணிக்கை xkb_action_type) type));
             act->type = ACTION_TYPE_NONE;
         }
-        else {
-            act->type = (enum xkb_action_type) type;
+        இல்லையெனில் {
+            act->type = (எண்ணிக்கை xkb_action_type) type;
         }
 
-        return PARSER_SUCCESS;
+        திரும்பு PARSER_SUCCESS;
     }
-    else if (field == ACTION_FIELD_DATA) {
-        if (array_ndx == NULL) {
+    இல்லையெனில் எனில் (field == ACTION_FIELD_DATA) {
+        எனில் (array_ndx == வெற்று) {
             xkb_atom_t val = XKB_ATOM_NONE;
 
-            if (!ExprResolveString(ctx, value, &val))
-                return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
+            எனில் (!கோவை_Resolve_String(ctx, மதிப்பு, &val))
+                திரும்பு ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                                       action->type, field, "string",
                                       keymap_info->strict);
 
-            const char *str = xkb_atom_text(ctx, val);
+            மாறிலி எழுத்து *str = xkb_atom_text(ctx, val);
             size_t len = strlen(str);
-            if (len < 1 || len > sizeof(act->data)) {
+            எனில் (len < 1 || len > அளவு(act->data)) {
                 log_warn(ctx, XKB_LOG_MESSAGE_NO_ID,
                          "A private action has %zu data bytes, but got: %zu; "
-                         "Illegal data ignored\n", sizeof(act->data), len);
-                return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+                         "Illegal data ignored\n", அளவு(act->data), len);
+                திரும்பு (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
                     ? PARSER_FATAL_ERROR
                     : PARSER_RECOVERABLE_ERROR;
             }
 
             /* act->data may not be null-terminated, this is intentional */
-            memset(act->data, 0, sizeof(act->data));
+            memset(act->data, 0, அளவு(act->data));
             memcpy(act->data, str, len);
-            return PARSER_SUCCESS;
+            திரும்பு PARSER_SUCCESS;
         }
-        else {
+        இல்லையெனில் {
             int64_t ndx = 0, datum = 0;
 
-            if (!ExprResolveInteger(ctx, array_ndx, &ndx)) {
+            எனில் (!கோவை_Resolve_Integer(ctx, array_ndx, &ndx)) {
                 log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                         "Array subscript must be integer; "
                         "Illegal subscript ignored\n");
-                return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+                திரும்பு (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
                     ? PARSER_FATAL_ERROR
                     : PARSER_RECOVERABLE_ERROR;
             }
 
-            if (ndx < 0 || (size_t) ndx >= sizeof(act->data)) {
+            எனில் (ndx < 0 || (size_t) ndx >= அளவு(act->data)) {
                 log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                         "The data for a private action is %zu bytes long; "
                         "Attempt to use data[%"PRId64"] ignored\n",
-                        sizeof(act->data), ndx);
-                return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+                        அளவு(act->data), ndx);
+                திரும்பு (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
                     ? PARSER_FATAL_ERROR
                     : PARSER_RECOVERABLE_ERROR;
             }
 
-            if (!ExprResolveInteger(ctx, value, &datum))
-                return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, act->type,
+            எனில் (!கோவை_Resolve_Integer(ctx, மதிப்பு, &datum))
+                திரும்பு ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, act->type,
                                       field, "integer", keymap_info->strict);
 
-            if (datum < 0 || datum > 255) {
+            எனில் (datum < 0 || datum > 255) {
                 log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                         "All data for a private action must be 0..255; "
                         "Illegal datum %"PRId64" ignored\n", datum);
-                return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+                திரும்பு (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
                     ? PARSER_FATAL_ERROR
                     : PARSER_RECOVERABLE_ERROR;
             }
 
             act->data[ndx] = (uint8_t) datum;
-            return PARSER_SUCCESS;
+            திரும்பு PARSER_SUCCESS;
         }
     }
 
-    return ReportIllegal(ctx, action->type, field, keymap_info->strict);
+    திரும்பு ReportIllegal(ctx, action->type, field, keymap_info->strict);
 }
 
-typedef enum xkb_parser_error
-        (*actionHandler)(const struct xkb_keymap_info *keymap_info,
-                         const struct xkb_mod_set *mods,
-                         union xkb_action *action,
-                         enum action_field field,
-                         const ExprDef *array_ndx,
-                         const ExprDef *value,
-                         ExprDef **value_ptr);
+வகைவரை எண்ணிக்கை xkb_parser_error
+        (*actionHandler)(மாறிலி கட்டமைப்பு xkb_keymap_info *keymap_info,
+                         மாறிலி கட்டமைப்பு xkb_mod_set *mods,
+                         ஒன்றிப்பு xkb_action *action,
+                         எண்ணிக்கை action_field field,
+                         மாறிலி கோவை_Def *array_ndx,
+                         மாறிலி கோவை_Def *மதிப்பு,
+                         கோவை_Def **மதிப்பு_ptr);
 
-static const actionHandler handleAction[_ACTION_TYPE_NUM_ENTRIES] = {
+நிலையான மாறிலி actionHandler handleAction[ACTION_TYPE_இலக்கம்_ENTRIES] = {
     [ACTION_TYPE_NONE] = HandleNoAction,
     [ACTION_TYPE_VOID] = HandleNoAction,
     [ACTION_TYPE_MOD_SET] = HandleSetLatchLockMods,
@@ -1008,7 +1008,7 @@ static const actionHandler handleAction[_ACTION_TYPE_NUM_ENTRIES] = {
     [ACTION_TYPE_SWITCH_VT] = HandleSwitchScreen,
     [ACTION_TYPE_CTRL_SET] = HandleSetLockControls,
     [ACTION_TYPE_CTRL_LOCK] = HandleSetLockControls,
-    [ACTION_TYPE_REDIRECT_KEY] = HandleRedirectKey,
+    [ACTION_TYPE_REDIRECT_சாவி] = Handle_Redirect_சாவி,
     [ACTION_TYPE_UNSUPPORTED_LEGACY] = HandleUnsupported,
     [ACTION_TYPE_UNKNOWN] = HandleUnsupported,
     [ACTION_TYPE_PRIVATE] = HandlePrivate,
@@ -1016,32 +1016,32 @@ static const actionHandler handleAction[_ACTION_TYPE_NUM_ENTRIES] = {
 
 /* Ensure to not miss `xkb_action_type` updates */
 static_assert(ACTION_TYPE_INTERNAL == 20 &&
-              ACTION_TYPE_INTERNAL + 1 == _ACTION_TYPE_NUM_ENTRIES,
+              ACTION_TYPE_INTERNAL + 1 == ACTION_TYPE_இலக்கம்_ENTRIES,
               "Missing action type");
 
 /***====================================================================***/
 
-enum xkb_parser_error
-HandleActionDef(const struct xkb_keymap_info *keymap_info, ActionsInfo *info,
-                const struct xkb_mod_set *mods, ExprDef *def,
-                union xkb_action *action)
+எண்ணிக்கை xkb_parser_error
+HandleActionDef(மாறிலி கட்டமைப்பு xkb_keymap_info *keymap_info, ActionsInfo *info,
+                மாறிலி கட்டமைப்பு xkb_mod_set *mods, கோவை_Def *def,
+                ஒன்றிப்பு xkb_action *action)
 {
-    struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
-    if (def->common.type != STMT_EXPR_ACTION_DECL) {
+    கட்டமைப்பு xkb_context * restrict மாறிலி ctx = keymap_info->keymap.ctx;
+    எனில் (def->common.type != STMT_கோவை_ACTION_DECL) {
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Expected an action definition, found %s\n",
                 stmt_type_to_string(def->common.type));
-        return PARSER_FATAL_ERROR;
+        திரும்பு PARSER_FATAL_ERROR;
     }
 
-    const char *action_name = xkb_atom_text(ctx, def->action.name);
-    enum xkb_action_type handler_type;
-    if (!stringToActionType(action_name, &handler_type)) {
+    மாறிலி எழுத்து *action_name = xkb_atom_text(ctx, def->action.name);
+    எண்ணிக்கை xkb_action_type handler_type;
+    எனில் (!stringToActionType(action_name, &handler_type)) {
         log_err(ctx, XKB_ERROR_UNKNOWN_ACTION_TYPE,
                 "Unknown action \"%s\"\n", action_name);
         handler_type = ACTION_TYPE_UNKNOWN;
-        if (keymap_info->strict & PARSER_NO_UNKNOWN_ACTION)
-            return PARSER_FATAL_ERROR;
+        எனில் (keymap_info->strict & PARSER_NO_UNKNOWN_ACTION)
+            திரும்பு PARSER_FATAL_ERROR;
     }
 
     /*
@@ -1051,7 +1051,7 @@ HandleActionDef(const struct xkb_keymap_info *keymap_info, ActionsInfo *info,
      */
     *action = info->actions[handler_type];
 
-    if (handler_type == ACTION_TYPE_UNSUPPORTED_LEGACY) {
+    எனில் (handler_type == ACTION_TYPE_UNSUPPORTED_LEGACY) {
         log_warn(ctx, XKB_WARNING_UNSUPPORTED_LEGACY_ACTION,
                  "Unsupported legacy action type \"%s\".\n", action_name);
         /*
@@ -1069,108 +1069,108 @@ HandleActionDef(const struct xkb_keymap_info *keymap_info, ActionsInfo *info,
      * particular instance, e.g. "modifiers" and "clearLocks" in:
      *     SetMods(modifiers=Alt,clearLocks);
      */
-    enum xkb_parser_error ret = PARSER_SUCCESS;
-    for (ExprDef *arg = def->action.args; arg != NULL;
-         arg = (ExprDef *) arg->common.next) {
-        const ExprDef *value;
-        ExprDef **value_ptr = NULL;
-        ExprDef *field, *arrayRtrn;
-        const char *elemRtrn, *fieldRtrn;
+    எண்ணிக்கை xkb_parser_error ret = PARSER_SUCCESS;
+    க்கு (கோவை_Def *arg = def->action.args; arg != வெற்று;
+         arg = (கோவை_Def *) arg->common.next) {
+        மாறிலி கோவை_Def *மதிப்பு;
+        கோவை_Def **மதிப்பு_ptr = வெற்று;
+        கோவை_Def *field, *arrayRtrn;
+        மாறிலி எழுத்து *elemRtrn, *fieldRtrn;
 
-        if (arg->common.type == STMT_EXPR_ASSIGN) {
-            field = arg->binary.left;
-            value = arg->binary.right;
-            value_ptr = &arg->binary.right;
+        எனில் (arg->common.type == STMT_கோவை_ASSIGN) {
+            field = arg->இருமம்.இடது;
+            மதிப்பு = arg->இருமம்.வலது;
+            மதிப்பு_ptr = &arg->இருமம்.வலது;
         }
-        else if (arg->common.type == STMT_EXPR_NOT ||
-                 arg->common.type == STMT_EXPR_INVERT) {
+        இல்லையெனில் எனில் (arg->common.type == STMT_கோவை_NOT ||
+                 arg->common.type == STMT_கோவை_INVERT) {
             field = arg->unary.child;
-            value = (const ExprDef *) &constFalse;
+            மதிப்பு = (மாறிலி கோவை_Def *) &constFalse;
         }
-        else {
+        இல்லையெனில் {
             field = arg;
-            value = (const ExprDef *) &constTrue;
+            மதிப்பு = (மாறிலி கோவை_Def *) &constTrue;
         }
 
-        if (!ExprResolveLhs(ctx, field, &elemRtrn, &fieldRtrn, &arrayRtrn))
-            return PARSER_FATAL_ERROR;
+        எனில் (!கோவை_Resolve_Lhs(ctx, field, &elemRtrn, &fieldRtrn, &arrayRtrn))
+            திரும்பு PARSER_FATAL_ERROR;
 
-        if (elemRtrn) {
+        எனில் (elemRtrn) {
             log_err(ctx, XKB_ERROR_GLOBAL_DEFAULTS_WRONG_SCOPE,
                     "Cannot change defaults in an action definition; "
                     "Ignoring attempt to change \"%s.%s\".\n",
                     elemRtrn, fieldRtrn);
-            return PARSER_FATAL_ERROR;
+            திரும்பு PARSER_FATAL_ERROR;
         }
 
-        enum action_field fieldNdx;
-        if (!stringToField(fieldRtrn, &fieldNdx)) {
+        எண்ணிக்கை action_field fieldNdx;
+        எனில் (!stringToField(fieldRtrn, &fieldNdx)) {
             log_err(ctx, XKB_ERROR_INVALID_ACTION_FIELD,
                     "Unknown field name %s for action %s discarded\n",
                     fieldRtrn, ActionTypeText(action->type));
-            if (keymap_info->strict & PARSER_NO_UNKNOWN_ACTION_FIELDS) {
-                return PARSER_FATAL_ERROR;
-            } else {
+            எனில் (keymap_info->strict & PARSER_NO_UNKNOWN_ACTION_FIELDS) {
+                திரும்பு PARSER_FATAL_ERROR;
+            } இல்லையெனில் {
                 /* Field is just ignored */
-                continue;
+                தொடர்;
             }
         }
 
-        switch (handleAction[handler_type](keymap_info, mods, action, fieldNdx,
-                                           arrayRtrn, value, value_ptr)) {
-        case PARSER_FATAL_ERROR:
-            return PARSER_FATAL_ERROR;
-        case PARSER_RECOVERABLE_ERROR:
+        தேர்வு (handleAction[handler_type](keymap_info, mods, action, fieldNdx,
+                                           arrayRtrn, மதிப்பு, மதிப்பு_ptr)) {
+        நிலை PARSER_FATAL_ERROR:
+            திரும்பு PARSER_FATAL_ERROR;
+        நிலை PARSER_RECOVERABLE_ERROR:
             ret = PARSER_RECOVERABLE_ERROR;
             /* Continue field parsing */
-            break;
-        default:
+            நிறுத்து;
+        இயல்பு:
             ;
         }
     }
 
-    return (action->type == ACTION_TYPE_UNKNOWN)
+    திரும்பு (action->type == ACTION_TYPE_UNKNOWN)
         ? PARSER_RECOVERABLE_ERROR
         : ret;
 }
 
-enum xkb_parser_error
-SetDefaultActionField(const struct xkb_keymap_info *keymap_info,
-                      ActionsInfo *info, struct xkb_mod_set *mods,
-                      const char *elem, const char *field, ExprDef *array_ndx,
-                      ExprDef **value_ptr, enum merge_mode merge)
+எண்ணிக்கை xkb_parser_error
+SetDefaultActionField(மாறிலி கட்டமைப்பு xkb_keymap_info *keymap_info,
+                      ActionsInfo *info, கட்டமைப்பு xkb_mod_set *mods,
+                      மாறிலி எழுத்து *elem, மாறிலி எழுத்து *field, கோவை_Def *array_ndx,
+                      கோவை_Def **மதிப்பு_ptr, எண்ணிக்கை merge_mode merge)
 {
-    const ExprDef * restrict const value = *value_ptr;
-    enum xkb_action_type action;
-    if (!stringToActionType(elem, &action)) {
+    மாறிலி கோவை_Def * restrict மாறிலி மதிப்பு = *மதிப்பு_ptr;
+    எண்ணிக்கை xkb_action_type action;
+    எனில் (!stringToActionType(elem, &action)) {
         log_err(keymap_info->keymap.ctx, XKB_ERROR_UNKNOWN_ACTION_TYPE,
                 "Unknown action \"%s\"\n", elem);
-        return (keymap_info->strict & PARSER_NO_UNKNOWN_ACTION)
+        திரும்பு (keymap_info->strict & PARSER_NO_UNKNOWN_ACTION)
             ? PARSER_FATAL_ERROR
             : PARSER_RECOVERABLE_ERROR;
     }
 
-    enum action_field action_field;
-    if (!stringToField(field, &action_field)) {
+    எண்ணிக்கை action_field action_field;
+    எனில் (!stringToField(field, &action_field)) {
         log_err(keymap_info->keymap.ctx, XKB_ERROR_INVALID_ACTION_FIELD,
                 "Unknown action field \"%s\"\n", field);
-        return (keymap_info->strict & PARSER_NO_UNKNOWN_ACTION_FIELDS)
+        திரும்பு (keymap_info->strict & PARSER_NO_UNKNOWN_ACTION_FIELDS)
             ? PARSER_FATAL_ERROR
             : PARSER_RECOVERABLE_ERROR;
     }
 
-    union xkb_action* const into = &info->actions[action];
+    ஒன்றிப்பு xkb_action* மாறிலி into = &info->actions[action];
     /* Initialize with current defaults to enable comparison, see afterwards */
-    union xkb_action from = *into;
+    ஒன்றிப்பு xkb_action from = *into;
 
     /* Parse action */
-    const enum xkb_parser_error ret = handleAction[action](
-        keymap_info, mods, &from, action_field, array_ndx, value, value_ptr
+    மாறிலி எண்ணிக்கை xkb_parser_error ret = handleAction[action](
+        keymap_info, mods, &from, action_field, array_ndx, மதிப்பு, மதிப்பு_ptr
     );
 
     /* Success is mandatory to update defaults */
-    if (ret != PARSER_SUCCESS)
-        return ret;
+    எனில் (ret != PARSER_SUCCESS)
+        திரும்பு ret;
 
     /*
      * Merge action with its corresponding default
@@ -1182,16 +1182,16 @@ SetDefaultActionField(const struct xkb_keymap_info *keymap_info,
      * warning. So we guard the logging with a high verbosity, as best effort
      * mitigation.
      */
-    if (!action_equal(into, &from)) {
-        const bool replace = (merge != MERGE_AUGMENT);
+    எனில் (!action_equal(into, &from)) {
+        மாறிலி bool replace = (merge != MERGE_AUGMENT);
         log_vrb(keymap_info->keymap.ctx, XKB_LOG_VERBOSITY_VERBOSE,
                 XKB_LOG_MESSAGE_NO_ID,
                 "Conflicting field \"%s\" for default action \"%s\"; "
                 "Using %s, ignore %s\n",
                 fieldText(action_field), ActionTypeText(action),
                 (replace ? "from" : "into"), (replace ? "into" : "from"));
-        if (replace)
+        எனில் (replace)
             *into = from;
     }
-    return PARSER_SUCCESS;
+    திரும்பு PARSER_SUCCESS;
 }
