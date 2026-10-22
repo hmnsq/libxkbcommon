@@ -9,140 +9,140 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include <stdint.h>
+#अन्तर्भाव <stdint.h>
 
-#include "xkbcommon/xkbcommon-features.h"
-#include "features/enums.h"
-#include "utils.h"
+#अन्तर्भाव "xkbcommon/xkbcommon-features.h"
+#अन्तर्भाव "features/enums.h"
+#अन्तर्भाव "utils.h"
 
-static bool
-is_supported_enum_value_mask(enum xkb_enumerations_values values, uint32_t value)
+स्थिर bool
+is_supported_enum_मानम्_mask(गणना xkb_enumerations_मानानि मानानि, uint32_t मानम्)
 {
-    return (value < UINT32_WIDTH && (values & (UINT32_C(1) << value)));
+    पटिनिवत्त (मानम् < UINT32_WIDTH && (मानानि & (UINT32_C(1) << मानम्)));
 }
 
-static bool
-is_supported_enum_value_array(const uint32_t *values, size_t size, uint32_t value)
+स्थिर bool
+is_supported_enum_मानम्_array(ध्रुव uint32_t *मानानि, size_t size, uint32_t मानम्)
 {
-    for (size_t v = 0; v < size; v++) {
-        if (values[v] == value) {
-            return true;
+    अत्थाय (size_t v = 0; v < size; v++) {
+        सचे (मानानि[v] == मानम्) {
+            पटिनिवत्त true;
         }
     }
-    return false;
+    पटिनिवत्त false;
 }
 
-static inline bool
-is_supported_flag_value(enum xkb_enumerations_values values,
-                        bool accept_zero, uint32_t value)
+स्थिर अन्तःस्थ bool
+is_supported_flag_मानम्(गणना xkb_enumerations_मानानि मानानि,
+                        bool accept_zero, uint32_t मानम्)
 {
-    return (accept_zero || value) && ((uint32_t) values & value) == value;
+    पटिनिवत्त (accept_zero || मानम्) && ((uint32_t) मानानि & मानम्) == मानम्;
 }
 
 bool
-xkb_feature_supported(enum xkb_feature feature, uint32_t value)
+xkb_feature_supported(गणना xkb_feature feature, uint32_t मानम्)
 {
-    switch (feature) {
-    case XKB_FEATURE_ENUM_FEATURE:
-        return is_supported_enum_value_array(
-            xkb_feature_values, ARRAY_SIZE(xkb_feature_values), value
+    विकल्प (feature) {
+    पक्ष XKB_FEATURE_ENUM_FEATURE:
+        पटिनिवत्त is_supported_enum_मानम्_array(
+            xkb_feature_मानानि, ARRAY_SIZE(xkb_feature_मानानि), मानम्
         );
-    case XKB_FEATURE_ENUM_STATUS:
-        return is_supported_enum_value_array(
-            xkb_status_values, ARRAY_SIZE(xkb_status_values), value
+    पक्ष XKB_FEATURE_ENUM_STATUS:
+        पटिनिवत्त is_supported_enum_मानम्_array(
+            xkb_status_मानानि, ARRAY_SIZE(xkb_status_मानानि), मानम्
         );
-    case XKB_FEATURE_ENUM_CONTEXT_FLAGS:
-        return is_supported_flag_value(
-            XKB_CONTEXT_FLAGS_VALUES, true, value
+    पक्ष XKB_FEATURE_ENUM_CONTEXT_FLAGS:
+        पटिनिवत्त is_supported_flag_मानम्(
+            XKB_CONTEXT_FLAGS_मानानि, true, मानम्
         );
-    case XKB_FEATURE_ENUM_LOG_LEVEL:
-        return is_supported_enum_value_array(
-            xkb_log_level_values, ARRAY_SIZE(xkb_log_level_values), value
+    पक्ष XKB_FEATURE_ENUM_LOG_LEVEL:
+        पटिनिवत्त is_supported_enum_मानम्_array(
+            xkb_log_level_मानानि, ARRAY_SIZE(xkb_log_level_मानानि), मानम्
         );
-    case XKB_FEATURE_ENUM_KEYSYM_FLAGS:
-        return is_supported_flag_value(
-            XKB_KEYSYM_FLAGS_VALUES, true, value
+    पक्ष XKB_FEATURE_ENUM_KEYSYM_FLAGS:
+        पटिनिवत्त is_supported_flag_मानम्(
+            XKB_KEYSYM_FLAGS_मानानि, true, मानम्
         );
-    case XKB_FEATURE_ENUM_RMLVO_BUILDER_FLAGS:
-        return is_supported_flag_value(
-            XKB_RMLVO_BUILDER_FLAGS_VALUES, true, value
+    पक्ष XKB_FEATURE_ENUM_RMLVO_BUILDER_FLAGS:
+        पटिनिवत्त is_supported_flag_मानम्(
+            XKB_RMLVO_BUILDER_FLAGS_मानानि, true, मानम्
         );
-    case XKB_FEATURE_ENUM_KEYMAP_FORMAT:
-        return is_supported_enum_value_mask(XKB_KEYMAP_FORMAT_VALUES, value);
-    case XKB_FEATURE_ENUM_KEYMAP_COMPILE_FLAGS:
-        return is_supported_flag_value(
-            XKB_KEYMAP_COMPILE_FLAGS_VALUES, true, value
+    पक्ष XKB_FEATURE_ENUM_KEYMAP_FORMAT:
+        पटिनिवत्त is_supported_enum_मानम्_mask(XKB_KEYMAP_FORMAT_मानानि, मानम्);
+    पक्ष XKB_FEATURE_ENUM_KEYMAP_COMPILE_FLAGS:
+        पटिनिवत्त is_supported_flag_मानम्(
+            XKB_KEYMAP_COMPILE_FLAGS_मानानि, true, मानम्
         );
-    case XKB_FEATURE_ENUM_KEYMAP_SERIALIZE_FLAGS:
-        return is_supported_flag_value(
-            XKB_KEYMAP_SERIALIZE_FLAGS_VALUES, true, value
+    पक्ष XKB_FEATURE_ENUM_KEYMAP_SERIALIZE_FLAGS:
+        पटिनिवत्त is_supported_flag_मानम्(
+            XKB_KEYMAP_SERIALIZE_FLAGS_मानानि, true, मानम्
         );
-    case XKB_FEATURE_ENUM_KEYMAP_KEY_ITERATOR_FLAGS:
-        return is_supported_flag_value(
-            XKB_KEYMAP_KEY_ITERATOR_FLAGS_VALUES, true, value
+    पक्ष XKB_FEATURE_ENUM_KEYMAP_कुञ्चिका_ITERATOR_FLAGS:
+        पटिनिवत्त is_supported_flag_मानम्(
+            XKB_KEYMAP_कुञ्चिका_ITERATOR_FLAGS_मानानि, true, मानम्
         );
-    case XKB_FEATURE_ENUM_STATE_COMPONENT:
-        return is_supported_flag_value(
-            XKB_STATE_COMPONENT_VALUES, true, value
+    पक्ष XKB_FEATURE_ENUM_STATE_COMPONENT:
+        पटिनिवत्त is_supported_flag_मानम्(
+            XKB_STATE_COMPONENT_मानानि, true, मानम्
         );
-    case XKB_FEATURE_ENUM_LAYOUT_OUT_OF_RANGE_POLICY:
-        return is_supported_enum_value_mask(XKB_LAYOUT_OUT_OF_RANGE_POLICY_VALUES, value);
-    case XKB_FEATURE_ENUM_A11Y_FLAGS:
-        return is_supported_flag_value(
-            XKB_A11Y_FLAGS_VALUES, true, value
+    पक्ष XKB_FEATURE_ENUM_LAYOUT_OUT_OF_RANGE_POLICY:
+        पटिनिवत्त is_supported_enum_मानम्_mask(XKB_LAYOUT_OUT_OF_RANGE_POLICY_मानानि, मानम्);
+    पक्ष XKB_FEATURE_ENUM_A11Y_FLAGS:
+        पटिनिवत्त is_supported_flag_मानम्(
+            XKB_A11_Y_FLAGS_मानानि, true, मानम्
         );
-    case XKB_FEATURE_ENUM_KEYBOARD_CONTROL_FLAGS:
-        return is_supported_flag_value(
-            XKB_KEYBOARD_CONTROL_FLAGS_VALUES, true, value
+    पक्ष XKB_FEATURE_ENUM_KEYBOARD_CONTROL_FLAGS:
+        पटिनिवत्त is_supported_flag_मानम्(
+            XKB_KEYBOARD_CONTROL_FLAGS_मानानि, true, मानम्
         );
-    case XKB_FEATURE_ENUM_STATE_MODE:
-        return is_supported_enum_value_mask(XKB_STATE_MODE_VALUES, value);
-    case XKB_FEATURE_ENUM_STATE_MATCH:
-        return is_supported_flag_value(
-            XKB_STATE_MATCH_VALUES, false, value
+    पक्ष XKB_FEATURE_ENUM_STATE_MODE:
+        पटिनिवत्त is_supported_enum_मानम्_mask(XKB_STATE_MODE_मानानि, मानम्);
+    पक्ष XKB_FEATURE_ENUM_STATE_MATCH:
+        पटिनिवत्त is_supported_flag_मानम्(
+            XKB_STATE_MATCH_मानानि, false, मानम्
         );
-    case XKB_FEATURE_ENUM_CONSUMED_MODE:
-        return is_supported_enum_value_mask(XKB_CONSUMED_MODE_VALUES, value);
-    case XKB_FEATURE_ENUM_MACHINE_BUILDER_FLAGS:
-        return is_supported_flag_value(
-            XKB_MACHINE_BUILDER_FLAGS_VALUES, true, value
+    पक्ष XKB_FEATURE_ENUM_CONSUMED_MODE:
+        पटिनिवत्त is_supported_enum_मानम्_mask(XKB_CONSUMED_MODE_मानानि, मानम्);
+    पक्ष XKB_FEATURE_ENUM_MACHINE_BUILDER_FLAGS:
+        पटिनिवत्त is_supported_flag_मानम्(
+            XKB_MACHINE_BUILDER_FLAGS_मानानि, true, मानम्
         );
-    case XKB_FEATURE_ENUM_MACHINE_FLAGS:
-        return is_supported_flag_value(
-            XKB_MACHINE_FLAGS_VALUES, true, value
+    पक्ष XKB_FEATURE_ENUM_MACHINE_FLAGS:
+        पटिनिवत्त is_supported_flag_मानम्(
+            XKB_MACHINE_FLAGS_मानानि, true, मानम्
         );
-    case XKB_FEATURE_ENUM_EVENT_TYPE:
-        return is_supported_enum_value_mask(XKB_EVENT_TYPE_VALUES, value);
-    case XKB_FEATURE_ENUM_KEY_DIRECTION:
-        return is_supported_enum_value_mask(XKB_KEY_DIRECTION_VALUES, value);
-    case XKB_FEATURE_ENUM_POINTER_MOTION_FLAGS:
-        return is_supported_flag_value(
-            XKB_POINTER_MOTION_FLAGS_VALUES, true, value
+    पक्ष XKB_FEATURE_ENUM_EVENT_TYPE:
+        पटिनिवत्त is_supported_enum_मानम्_mask(XKB_EVENT_TYPE_मानानि, मानम्);
+    पक्ष XKB_FEATURE_ENUM_कुञ्चिका_DIRECTION:
+        पटिनिवत्त is_supported_enum_मानम्_mask(XKB_कुञ्चिका_DIRECTION_मानानि, मानम्);
+    पक्ष XKB_FEATURE_ENUM_POINTER_MOTION_FLAGS:
+        पटिनिवत्त is_supported_flag_मानम्(
+            XKB_POINTER_MOTION_FLAGS_मानानि, true, मानम्
         );
-    case XKB_FEATURE_ENUM_POINTER_BUTTON_STATE:
-        return is_supported_enum_value_mask(XKB_POINTER_BUTTON_STATE_VALUES, value);
-    case XKB_FEATURE_ENUM_EVENTS_FLAGS:
-        return is_supported_flag_value(
-            XKB_EVENTS_FLAGS_VALUES, true, value
+    पक्ष XKB_FEATURE_ENUM_POINTER_BUTTON_STATE:
+        पटिनिवत्त is_supported_enum_मानम्_mask(XKB_POINTER_BUTTON_STATE_मानानि, मानम्);
+    पक्ष XKB_FEATURE_ENUM_EVENTS_FLAGS:
+        पटिनिवत्त is_supported_flag_मानम्(
+            XKB_EVENTS_FLAGS_मानानि, true, मानम्
         );
-    case XKB_FEATURE_ENUM_COMPOSE_FORMAT:
-        return is_supported_enum_value_mask(XKB_COMPOSE_FORMAT_VALUES, value);
-    case XKB_FEATURE_ENUM_COMPOSE_COMPILE_FLAGS:
-        return is_supported_flag_value(
-            XKB_COMPOSE_COMPILE_FLAGS_VALUES, true, value
+    पक्ष XKB_FEATURE_ENUM_COMPOSE_FORMAT:
+        पटिनिवत्त is_supported_enum_मानम्_mask(XKB_COMPOSE_FORMAT_मानानि, मानम्);
+    पक्ष XKB_FEATURE_ENUM_COMPOSE_COMPILE_FLAGS:
+        पटिनिवत्त is_supported_flag_मानम्(
+            XKB_COMPOSE_COMPILE_FLAGS_मानानि, true, मानम्
         );
-    case XKB_FEATURE_ENUM_COMPOSE_STATUS:
-        return is_supported_enum_value_mask(XKB_COMPOSE_STATUS_VALUES, value);
-    case XKB_FEATURE_ENUM_COMPOSE_STATE_FLAGS:
-        return is_supported_flag_value(
-            XKB_COMPOSE_STATE_FLAGS_VALUES, true, value
+    पक्ष XKB_FEATURE_ENUM_COMPOSE_STATUS:
+        पटिनिवत्त is_supported_enum_मानम्_mask(XKB_COMPOSE_STATUS_मानानि, मानम्);
+    पक्ष XKB_FEATURE_ENUM_COMPOSE_STATE_FLAGS:
+        पटिनिवत्त is_supported_flag_मानम्(
+            XKB_COMPOSE_STATE_FLAGS_मानानि, true, मानम्
         );
-    case XKB_FEATURE_ENUM_COMPOSE_FEED_RESULT:
-        return is_supported_enum_value_mask(XKB_COMPOSE_FEED_RESULT_VALUES, value);
-    default:
+    पक्ष XKB_FEATURE_ENUM_COMPOSE_FEED_RESULT:
+        पटिनिवत्त is_supported_enum_मानम्_mask(XKB_COMPOSE_FEED_RESULT_मानानि, मानम्);
+    स्वभाव:
         /* Invalid feature */
-        return false;
+        पटिनिवत्त false;
     }
 }

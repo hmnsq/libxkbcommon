@@ -4,32 +4,32 @@
  */
 #pragma once
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include <stdlib.h>
+#अन्तर्भाव <stdlib.h>
 
-#if !HAVE_RANDOM
+#सचे !HAVE_RANDOM
 
 /* Simple random() fallback based on rand() */
 
-#include <stdint.h>
+#अन्तर्भाव <stdint.h>
 
-static inline void
-srandom(unsigned int seed)
+स्थिर अन्तःस्थ शून्य
+srandom(unsigned पूर्णाङ्क seed)
 {
     srand(seed);
 }
 
-static inline long
-random(void)
+स्थिर अन्तःस्थ long
+random(शून्य)
 {
     /* rand() is only guaranteed to cover [0, 32767] (15 bits), so
      * combine three calls to safely fill 31 bits regardless of the
      * platform's actual RAND_MAX. */
-    const long r = ((long)rand() & 0x7fffU)
+    ध्रुव long r = ((long)rand() & 0x7fffU)
                  | (((long)rand() & 0x7fffU) << 15)
                  | (((long)rand() & 0x7fffU) << 30);
 
-    return r & 0x7fffffffL;
+    पटिनिवत्त r & 0x7fffffffL;
 }
 #endif

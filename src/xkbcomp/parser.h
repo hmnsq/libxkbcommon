@@ -48,24 +48,24 @@
 #ifndef YYDEBUG
 # define YYDEBUG 0
 #endif
-#if YYDEBUG
-extern int _xkbcommon_debug;
+#सचे YYDEBUG
+बाह्य पूर्णाङ्क _xkbcommon_debug;
 #endif
 /* "%code requires" blocks.  */
 #line 14 "src/xkbcomp/parser.y"
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include "scanner-utils.h"
-#include "xkbcomp/ast.h"
-#include "xkbcomp/xkbcomp-priv.h"
+#अन्तर्भाव "scanner-utils.h"
+#अन्तर्भाव "xkbcomp/ast.h"
+#अन्तर्भाव "xkbcomp/xkbcomp-priv.h"
 
 #line 57 "src/xkbcomp/parser.h"
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
-  enum yytokentype
+  गणना yytokentype
   {
     YYEMPTY = -2,
     END_OF_FILE = 0,               /* "end of file"  */
@@ -89,13 +89,13 @@ extern int _xkbcommon_debug;
     TYPE = 21,                     /* "type"  */
     INTERPRET = 22,                /* "interpret"  */
     ACTION_TOK = 23,               /* "action"  */
-    KEY = 24,                      /* "key"  */
+    कुञ्चिका_3 = 24,                      /* "key"  */
     ALIAS = 25,                    /* "alias"  */
     GROUP = 26,                    /* "group"  */
     MODIFIER_MAP = 27,             /* "modifier_map"  */
     INDICATOR = 28,                /* "indicator"  */
     SHAPE = 29,                    /* "shape"  */
-    KEYS = 30,                     /* "keys"  */
+    कुञ्चिकाः_2 = 30,                     /* "keys"  */
     ROW = 31,                      /* "row"  */
     SECTION = 32,                  /* "section"  */
     OVERLAY = 33,                  /* "overlay"  */
@@ -129,57 +129,57 @@ extern int _xkbcommon_debug;
     PARTIAL = 70,                  /* "partial"  */
     DEFAULT = 71,                  /* "default"  */
     HIDDEN = 72,                   /* "hidden"  */
-    ALPHANUMERIC_KEYS = 73,        /* "alphanumeric_keys"  */
-    MODIFIER_KEYS = 74,            /* "modifier_keys"  */
-    KEYPAD_KEYS = 75,              /* "keypad_keys"  */
-    FUNCTION_KEYS = 76,            /* "function_keys"  */
+    ALPHANUMERIC_कुञ्चिकाः = 73,        /* "alphanumeric_keys"  */
+    MODIFIER_कुञ्चिकाः = 74,            /* "modifier_keys"  */
+    KEYPAD_कुञ्चिकाः = 75,              /* "keypad_keys"  */
+    FUNCTION_कुञ्चिकाः = 76,            /* "function_keys"  */
     ALTERNATE_GROUP = 77,          /* "alternate_group"  */
     DEPRECATED = 78                /* "deprecated"  */
   };
-  typedef enum yytokentype yytoken_kind_t;
+  प्रकारनिर्देश गणना yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */
-#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-union YYSTYPE
+#सचे ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
+सङ्घ YYSTYPE
 {
 #line 177 "src/xkbcomp/parser.y"
 
-        int64_t          num;
-        enum xkb_file_type file_type;
-        char            *str;
-        struct sval     sval;
+        int64_t          अङ्कः;
+        गणना xkb_file_type file_type;
+        वर्ण            *str;
+        संरचना sval     sval;
         xkb_atom_t      atom;
-        enum merge_mode merge;
-        enum xkb_map_flags mapFlags;
+        गणना merge_mode merge;
+        गणना xkb_map_flags mapFlags;
         xkb_keysym_t    keysym;
         ParseCommon     *any;
-        struct { ParseCommon *head; ParseCommon *last; } anyList;
-        uint32_t        noSymbolOrActionList;
-        ExprDef         *expr;
-        struct { ExprDef *head; ExprDef *last; } exprList;
+        संरचना { ParseCommon *head; ParseCommon *last; } anyList;
+        uint32_t        no_चिह्नम्_Or_Action_List;
+        व्यञ्जकम्_Def         *व्यञ्जकम्;
+        संरचना { व्यञ्जकम्_Def *head; व्यञ्जकम्_Def *last; } व्यञ्जकम्_List;
         VarDef          *var;
-        struct { VarDef *head; VarDef *last; } varList;
+        संरचना { VarDef *head; VarDef *last; } varList;
         VModDef         *vmod;
-        struct { VModDef *head; VModDef *last; } vmodList;
+        संरचना { VModDef *head; VModDef *last; } vmodList;
         InterpDef       *interp;
-        KeyTypeDef      *keyType;
+        कुञ्चिका_Type_Def      *कुञ्चिका_Type;
         SymbolsDef      *syms;
         ModMapDef       *modMask;
         GroupCompatDef  *groupCompat;
         LedMapDef       *ledMap;
         LedNameDef      *ledName;
-        KeycodeDef      *keyCode;
-        KeyAliasDef     *keyAlias;
+        KeycodeDef      *कुञ्चिका_Code;
+        कुञ्चिका_Alias_Def     *कुञ्चिका_Alias;
         UnknownStatement *unknown;
-        void            *geom;
+        शून्य            *geom;
         XkbFile         *file;
-        struct { XkbFile *head; XkbFile *last; } fileList;
+        संरचना { XkbFile *head; XkbFile *last; } fileList;
 
 #line 173 "src/xkbcomp/parser.h"
 
 };
-typedef union YYSTYPE YYSTYPE;
+प्रकारनिर्देश सङ्घ YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
@@ -187,7 +187,7 @@ typedef union YYSTYPE YYSTYPE;
 
 
 
-int _xkbcommon_parse (struct parser_param *param);
+पूर्णाङ्क _xkbcommon_parse (संरचना parser_param *param);
 
 
 #endif /* !YY__XKBCOMMON_SRC_XKBCOMP_PARSER_H_INCLUDED  */

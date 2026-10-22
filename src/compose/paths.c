@@ -3,29 +3,29 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include <locale.h>
+#अन्तर्भाव <locale.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "messages-codes.h"
-#include "utils.h"
-#include "util-paths.h"
-#include "context.h"
-#include "paths.h"
+#अन्तर्भाव "xkbcommon/xkbcommon.h"
+#अन्तर्भाव "messages-codes.h"
+#अन्तर्भाव "utils.h"
+#अन्तर्भाव "util-paths.h"
+#अन्तर्भाव "context.h"
+#अन्तर्भाव "paths.h"
 
-enum resolve_name_direction {
-    LEFT_TO_RIGHT,
-    RIGHT_TO_LEFT,
+गणना resolve_name_direction {
+    वामः_TO_दक्षिणः,
+    दक्षिणः_TO_वामः,
 };
 
-const char *
-get_xlocaledir_path(struct xkb_context *ctx)
+ध्रुव वर्ण *
+get_xlocaledir_path(संरचना xkb_context *ctx)
 {
-    const char *dir = xkb_context_getenv(ctx, "XLOCALEDIR");
-    if (!dir)
+    ध्रुव वर्ण *dir = xkb_context_getenv(ctx, "XLOCALEDIR");
+    सचे (!dir)
         dir = XLOCALEDIR;
-    return dir;
+    पटिनिवत्त dir;
 }
 
 /*
@@ -33,142 +33,142 @@ get_xlocaledir_path(struct xkb_context *ctx)
  * such a file and return its matching value, according to @direction.
  * @filename is relative to the xlocaledir.
  */
-static char *
-resolve_name(struct xkb_context *ctx, const char *filename,
-             enum resolve_name_direction direction, const char *name)
+स्थिर वर्ण *
+resolve_name(संरचना xkb_context *ctx, ध्रुव वर्ण *filename,
+             गणना resolve_name_direction direction, ध्रुव वर्ण *name)
 {
-    int ret;
+    पूर्णाङ्क ret;
     bool ok;
-    const char *xlocaledir;
-    char path[512];
+    ध्रुव वर्ण *xlocaledir;
+    वर्ण path[512];
     FILE *file;
-    char *string;
+    वर्ण *string;
     size_t string_size;
-    const char *end;
-    const char *s, *left, *right;
-    char *match;
-    size_t left_len, right_len, name_len;
+    ध्रुव वर्ण *end;
+    ध्रुव वर्ण *s, *वामः, *दक्षिणः;
+    वर्ण *match;
+    size_t वामः_len, दक्षिणः_len, name_len;
 
     xlocaledir = get_xlocaledir_path(ctx);
 
-    ret = snprintf(path, sizeof(path), "%s/%s", xlocaledir, filename);
-    if (ret < 0 || (size_t) ret >= sizeof(path))
-        return NULL;
+    ret = snprintf(path, परिमाण(path), "%s/%s", xlocaledir, filename);
+    सचे (ret < 0 || (size_t) ret >= परिमाण(path))
+        पटिनिवत्त रिक्त;
 
     file = fopen(path, "rb");
-    if (!file)
-        return NULL;
+    सचे (!file)
+        पटिनिवत्त रिक्त;
 
     ok = map_file(file, &string, &string_size);
     fclose(file);
-    if (!ok)
-        return NULL;
+    सचे (!ok)
+        पटिनिवत्त रिक्त;
 
     s = string;
     end = string + string_size;
     name_len = strlen(name);
-    match = NULL;
+    match = रिक्त;
 
-    while (s < end) {
+    याव (s < end) {
         /* Skip spaces. */
-        while (s < end && is_space(*s))
+        याव (s < end && is_space(*s))
             s++;
 
         /* Skip comments. */
-        if (s < end && *s == '#') {
-            while (s < end && *s != '\n')
+        सचे (s < end && *s == '#') {
+            याव (s < end && *s != '\n')
                 s++;
-            continue;
+            अनुवर्त;
         }
 
         /* Get the left value. */
-        left = s;
-        while (s < end && !is_space(*s) && *s != ':')
+        वामः = s;
+        याव (s < end && !is_space(*s) && *s != ':')
             s++;
-        left_len = (size_t)(s - left);
+        वामः_len = (size_t)(s - वामः);
 
         /* There's an optional colon between left and right. */
-        if (s < end && *s == ':')
+        सचे (s < end && *s == ':')
             s++;
 
         /* Skip spaces. */
-        while (s < end && is_space(*s))
+        याव (s < end && is_space(*s))
             s++;
 
         /* Get the right value. */
-        right = s;
-        while (s < end && !is_space(*s))
+        दक्षिणः = s;
+        याव (s < end && !is_space(*s))
             s++;
-        right_len = (size_t)(s - right);
+        दक्षिणः_len = (size_t)(s - दक्षिणः);
 
         /* Discard rest of line. */
-        while (s < end && *s != '\n')
+        याव (s < end && *s != '\n')
             s++;
 
-        if (direction == LEFT_TO_RIGHT) {
-            if (left_len == name_len && memcmp(left, name, left_len) == 0) {
-                match = strndup(right, right_len);
-                break;
+        सचे (direction == वामः_TO_दक्षिणः) {
+            सचे (वामः_len == name_len && memcmp(वामः, name, वामः_len) == 0) {
+                match = strndup(दक्षिणः, दक्षिणः_len);
+                भङ्ग;
             }
-        } else if (direction == RIGHT_TO_LEFT &&
-                   right_len == name_len &&
-                   memcmp(right, name, right_len) == 0) {
-            match = strndup(left, left_len);
-            break;
+        } अञ्ञथा सचे (direction == दक्षिणः_TO_वामः &&
+                   दक्षिणः_len == name_len &&
+                   memcmp(दक्षिणः, name, दक्षिणः_len) == 0) {
+            match = strndup(वामः, वामः_len);
+            भङ्ग;
         }
     }
 
     unmap_file(string, string_size);
-    return match;
+    पटिनिवत्त match;
 }
 
-char *
-resolve_locale(struct xkb_context *ctx, const char *locale)
+वर्ण *
+resolve_locale(संरचना xkb_context *ctx, ध्रुव वर्ण *locale)
 {
-    char *alias = resolve_name(ctx, "locale.alias", LEFT_TO_RIGHT, locale);
-    return alias ? alias : strdup(locale);
+    वर्ण *alias = resolve_name(ctx, "locale.alias", वामः_TO_दक्षिणः, locale);
+    पटिनिवत्त alias ? alias : strdup(locale);
 }
 
-char *
-get_xcomposefile_path(struct xkb_context *ctx)
+वर्ण *
+get_xcomposefile_path(संरचना xkb_context *ctx)
 {
-    return strdup_safe(xkb_context_getenv(ctx, "XCOMPOSEFILE"));
+    पटिनिवत्त strdup_safe(xkb_context_getenv(ctx, "XCOMPOSEFILE"));
 }
 
-char *
-get_xdg_xcompose_file_path(struct xkb_context *ctx)
+वर्ण *
+get_xdg_xcompose_file_path(संरचना xkb_context *ctx)
 {
-    const char *xdg_config_home;
-    const char *home;
+    ध्रुव वर्ण *xdg_config_home;
+    ध्रुव वर्ण *home;
 
     xdg_config_home = xkb_context_getenv(ctx, "XDG_CONFIG_HOME");
-    if (!xdg_config_home || !is_absolute_path(xdg_config_home)) {
+    सचे (!xdg_config_home || !is_absolute_path(xdg_config_home)) {
         home = xkb_context_getenv(ctx, "HOME");
-        if (!home)
-            return NULL;
-        return asprintf_safe("%s/.config/XCompose", home);
+        सचे (!home)
+            पटिनिवत्त रिक्त;
+        पटिनिवत्त asprintf_safe("%s/.config/XCompose", home);
     }
 
-    return asprintf_safe("%s/XCompose", xdg_config_home);
+    पटिनिवत्त asprintf_safe("%s/XCompose", xdg_config_home);
 }
 
-char *
-get_home_xcompose_file_path(struct xkb_context *ctx)
+वर्ण *
+get_home_xcompose_file_path(संरचना xkb_context *ctx)
 {
-    const char *home;
+    ध्रुव वर्ण *home;
 
     home = xkb_context_getenv(ctx, "HOME");
-    if (!home)
-        return NULL;
+    सचे (!home)
+        पटिनिवत्त रिक्त;
 
-    return asprintf_safe("%s/.XCompose", home);
+    पटिनिवत्त asprintf_safe("%s/.XCompose", home);
 }
 
-char *
-get_locale_compose_file_path(struct xkb_context *ctx, const char *locale)
+वर्ण *
+get_locale_compose_file_path(संरचना xkb_context *ctx, ध्रुव वर्ण *locale)
 {
-    char *resolved;
-    char *path;
+    वर्ण *resolved;
+    वर्ण *path;
 
     /*
      * WARNING: Random workaround ahead.
@@ -181,14 +181,14 @@ get_locale_compose_file_path(struct xkb_context *ctx, const char *locale)
      * is UTF-8 based, and since 99% of the time a C locale is really just
      * a misconfiguration for UTF-8, let's do the most helpful thing.
      */
-    static const char * const fallback = "en_US.UTF-8";
-    static const char * const registry = "compose.dir";
-    if (streq(locale, "C"))
+    स्थिर ध्रुव वर्ण * ध्रुव fallback = "en_US.UTF-8";
+    स्थिर ध्रुव वर्ण * ध्रुव registry = "compose.dir";
+    सचे (streq(locale, "C"))
         locale = fallback;
 
-    resolved = resolve_name(ctx, registry, RIGHT_TO_LEFT, locale);
-    if (!resolved) {
-#if HAVE_NEWLOCALE
+    resolved = resolve_name(ctx, registry, दक्षिणः_TO_वामः, locale);
+    सचे (!resolved) {
+#सचे HAVE_NEWLOCALE
         /*
          * There is no extension mechanism for X11 Compose locales.
          * Instead of failing, we just use `en_US.UTF-8` as a fallback because
@@ -197,42 +197,42 @@ get_locale_compose_file_path(struct xkb_context *ctx, const char *locale)
          * so that we can catch missing system locales and typos.
          */
         locale_t loc = newlocale(LC_ALL_MASK, locale, (locale_t) 0);
-        if (loc == (locale_t) 0) {
+        सचे (loc == (locale_t) 0) {
             log_err(ctx, XKB_ERROR_INVALID_COMPOSE_LOCALE,
                     "No Compose file for locale \"%s\": "
                     "locale is either invalid or not installed\n", locale);
-            return NULL;
-        } else {
+            पटिनिवत्त रिक्त;
+        } अञ्ञथा {
             /*
              * The locale is legit but have no entry in the X11 Compose registry,
              * so use the `en_US.UTF-8` fallback.
              */
             freelocale(loc);
-            resolved = resolve_name(ctx, registry, RIGHT_TO_LEFT, fallback);
-            if (!resolved) {
+            resolved = resolve_name(ctx, registry, दक्षिणः_TO_वामः, fallback);
+            सचे (!resolved) {
                 log_err(ctx, XKB_ERROR_INVALID_COMPOSE_LOCALE,
                         "No Compose file for locale \"%s\": "
                         "failed to use fallback \"%s\"\n", locale, fallback);
-                return NULL;
-            } else {
+                पटिनिवत्त रिक्त;
+            } अञ्ञथा {
                 log_warn(ctx, XKB_ERROR_INVALID_COMPOSE_LOCALE,
                          "No Compose file for locale \"%s\": "
                          "using locale fallback \"%s\"\n", locale, fallback);
             }
         }
-#else
-        return NULL;
+#अञ्ञथा
+        पटिनिवत्त रिक्त;
 #endif
     }
 
-    if (is_absolute_path(resolved)) {
+    सचे (is_absolute_path(resolved)) {
         path = resolved;
     }
-    else {
-        const char *xlocaledir = get_xlocaledir_path(ctx);
+    अञ्ञथा {
+        ध्रुव वर्ण *xlocaledir = get_xlocaledir_path(ctx);
         path = asprintf_safe("%s/%s", xlocaledir, resolved);
-        free(resolved);
+        मुक्त(resolved);
     }
 
-    return path;
+    पटिनिवत्त path;
 }
