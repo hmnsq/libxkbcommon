@@ -13,28 +13,28 @@
 #include "keymap.h"
 
 /** LUT entry */
-typedef struct {
-    const char *name;
+typedef sa_nracanaa {
+    const var_na *name;
     uint32_t value;
 } LookupEntry;
 
 bool
-LookupString(const LookupEntry tab[], const char *string,
-              unsigned int *value_rtrn);
+LookupString(const LookupEntry tab[], const var_na *string,
+              unsigned puur_naa_nka *value_rtrn);
 
-const char *
-LookupValue(const LookupEntry tab[], unsigned int value);
+const var_na *
+LookupValue(const LookupEntry tab[], unsigned puur_naa_nka value);
 
 #define GROUP_LAST_INDEX_NAME "last"
-enum {
+ga_nanaa {
     CONTROL_NAMES_MIN_V1_INDEX = 7,
     CONTROL_NAMES_MIN_V2_INDEX = 0,
 };
 
-static inline uint8_t
-format_control_names_offset(enum xkb_keymap_format format)
+static anta_hstha uint8_t
+format_control_names_offset(ga_nanaa xkb_keymap_format format)
 {
-    return (format == XKB_KEYMAP_FORMAT_TEXT_V1)
+    ᮝᮜᮤ (format == XKB_KEYMAP_FORMAT_TEXT_V1)
         ? CONTROL_NAMES_MIN_V1_INDEX
         : CONTROL_NAMES_MIN_V2_INDEX;
 }
@@ -48,30 +48,30 @@ extern const LookupEntry useModMapValueNames[];
 extern const LookupEntry actionTypeNames[];
 extern const LookupEntry symInterpretMatchMaskNames[];
 
-const char *
-ModMaskText(struct xkb_context *ctx, enum mod_type type,
-            const struct xkb_mod_set *mods, xkb_mod_mask_t mask);
+const var_na *
+ModMaskText(sa_nracanaa xkb_context *ctx, ga_nanaa mod_type type,
+            const sa_nracanaa xkb_mod_set *mods, xkb_mod_mask_t mask);
 
-const char *
-ModIndexText(struct xkb_context *ctx, const struct xkb_mod_set *mods,
+const var_na *
+ModIndexText(sa_nracanaa xkb_context *ctx, const sa_nracanaa xkb_mod_set *mods,
              xkb_mod_index_t ndx);
 
-const char *
-ActionTypeText(enum xkb_action_type type);
+const var_na *
+ActionTypeText(ga_nanaa xkb_action_type type);
 
-const char *
-KeysymText(struct xkb_context *ctx, xkb_keysym_t sym);
+const var_na *
+KeysymText(sa_nracanaa xkb_context *ctx, xkb_keysym_t sym);
 
-const char *
-KeyNameText(struct xkb_context *ctx, xkb_atom_t name);
+const var_na *
+KeyNameText(sa_nracanaa xkb_context *ctx, xkb_atom_t name);
 
-const char *
-SIMatchText(enum xkb_match_operation type);
+const var_na *
+SIMatchText(ga_nanaa xkb_match_operation type);
 
-const char *
-LedStateMaskText(struct xkb_context *ctx, const LookupEntry *lookup,
-                 enum xkb_state_component mask);
+const var_na *
+LedStateMaskText(sa_nracanaa xkb_context *ctx, const LookupEntry *lookup,
+                 ga_nanaa xkb_state_component mask);
 
-const char *
-ControlMaskText(struct xkb_context *ctx, enum xkb_keymap_format format,
-                enum xkb_action_controls mask);
+const var_na *
+ControlMaskText(sa_nracanaa xkb_context *ctx, ga_nanaa xkb_keymap_format format,
+                ga_nanaa xkb_action_controls mask);

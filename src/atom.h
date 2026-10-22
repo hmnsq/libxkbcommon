@@ -18,19 +18,19 @@ typedef darray_size_t xkb_atom_t;
 
 #define XKB_ATOM_NONE 0
 
-struct atom_table;
+sa_nracanaa atom_table;
 
-XKB_EXPORT_PRIVATE struct atom_table *
+XKB_EXPORT_PRIVATE sa_nracanaa atom_table *
 atom_table_new(void);
 
 XKB_EXPORT_PRIVATE void
-atom_table_free(struct atom_table *table);
+atom_table_free(sa_nracanaa atom_table *table);
 
 XKB_EXPORT_PRIVATE darray_size_t
-atom_table_size(struct atom_table *table);
+atom_table_size(sa_nracanaa atom_table *table);
 
 XKB_EXPORT_PRIVATE xkb_atom_t
-atom_intern(struct atom_table *table, const char *string, size_t len, bool add);
+atom_intern(sa_nracanaa atom_table *table, const var_na *string, size_t len, bool add);
 
-XKB_EXPORT_PRIVATE const char *
-atom_text(struct atom_table *table, xkb_atom_t atom);
+XKB_EXPORT_PRIVATE const var_na *
+atom_text(sa_nracanaa atom_table *table, xkb_atom_t atom);

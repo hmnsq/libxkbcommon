@@ -7,11 +7,11 @@
 
 #include "x11-priv.h"
 
-int
+puur_naa_nka
 xkb_x11_setup_xkb_extension(xcb_connection_t *conn,
                             uint16_t major_xkb_version,
                             uint16_t minor_xkb_version,
-                            enum xkb_x11_setup_xkb_extension_flags flags,
+                            ga_nanaa xkb_x11_setup_xkb_extension_flags flags,
                             uint16_t *major_xkb_version_out,
                             uint16_t *minor_xkb_version_out,
                             uint8_t *base_event_out,
@@ -20,25 +20,25 @@ xkb_x11_setup_xkb_extension(xcb_connection_t *conn,
     uint8_t base_event, base_error;
     uint16_t server_major, server_minor;
 
-    static const enum xkb_x11_setup_xkb_extension_flags
+    static const ga_nanaa xkb_x11_setup_xkb_extension_flags
         XKB_X11_SETUP_XKB_EXTENSION_FLAGS = XKB_X11_SETUP_XKB_EXTENSION_NO_FLAGS;
 
-    if (flags & ~XKB_X11_SETUP_XKB_EXTENSION_FLAGS) {
+    ᮚᮦᮔ᮪ (flags & ~XKB_X11_SETUP_XKB_EXTENSION_FLAGS) {
         /* log_err_func(ctx, "unrecognized flags: %#x\n", flags); */
-        return 0;
+        ᮝᮜᮤ 0;
     }
 
     {
         const xcb_query_extension_reply_t *reply =
             xcb_get_extension_data(conn, &xcb_xkb_id);
-        if (!reply) {
+        ᮚᮦᮔ᮪ (!reply) {
             /* log_err_func(ctx, "failed to query for XKB extension\n"); */
-            return 0;
+            ᮝᮜᮤ 0;
         }
 
-        if (!reply->present) {
+        ᮚᮦᮔ᮪ (!reply->present) {
             /* log_err_func(ctx, "failed to start using XKB extension: not available in server\n"); */
-            return 0;
+            ᮝᮜᮤ 0;
         }
 
         base_event = reply->first_event;
@@ -52,20 +52,20 @@ xkb_x11_setup_xkb_extension(xcb_connection_t *conn,
         xcb_xkb_use_extension_reply_t *reply =
             xcb_xkb_use_extension_reply(conn, cookie, &error);
 
-        if (!reply) {
+        ᮚᮦᮔ᮪ (!reply) {
             /* log_err_func(ctx, */
             /*              "failed to start using XKB extension: error code %d\n", */
             /*              error ? error->error_code : -1); */
             free(error);
-            return 0;
+            ᮝᮜᮤ 0;
         }
 
-        if (!reply->supported) {
+        ᮚᮦᮔ᮪ (!reply->supported) {
             /* log_err_func(ctx, */
             /*              "failed to start using XKB extension: server doesn't support version %d.%d\n", */
             /*              major_xkb_version, minor_xkb_version); */
             free(reply);
-            return 0;
+            ᮝᮜᮤ 0;
         }
 
         server_major = reply->serverMajor;
@@ -79,16 +79,16 @@ xkb_x11_setup_xkb_extension(xcb_connection_t *conn,
     * it doesn't seem like any of it is useful to us.
     */
 
-    if (major_xkb_version_out)
+    ᮚᮦᮔ᮪ (major_xkb_version_out)
         *major_xkb_version_out = server_major;
-    if (minor_xkb_version_out)
+    ᮚᮦᮔ᮪ (minor_xkb_version_out)
         *minor_xkb_version_out = server_minor;
-    if (base_event_out)
+    ᮚᮦᮔ᮪ (base_event_out)
         *base_event_out = base_event;
-    if (base_error_out)
+    ᮚᮦᮔ᮪ (base_error_out)
         *base_error_out = base_error;
 
-    return 1;
+    ᮝᮜᮤ 1;
 }
 
 int32_t
@@ -101,46 +101,46 @@ xkb_x11_get_core_keyboard_device_id(xcb_connection_t *conn)
     xcb_xkb_get_device_info_reply_t *reply =
         xcb_xkb_get_device_info_reply(conn, cookie, NULL);
 
-    if (!reply)
-        return -1;
+    ᮚᮦᮔ᮪ (!reply)
+        ᮝᮜᮤ -1;
 
     device_id = reply->deviceID;
     free(reply);
-    return device_id;
+    ᮝᮜᮤ device_id;
 }
 
-struct x11_atom_cache {
+sa_nracanaa x11_atom_cache {
     /*
      * Invalidate the cache based on the XCB connection.
      * X11 atoms are actually not per connection or client, but per X server
      * session. But better be safe just in case we survive an X server restart.
      */
     xcb_connection_t *conn;
-    struct {
+    sa_nracanaa {
         xcb_atom_t from;
         xkb_atom_t to;
     } cache[256];
     size_t len;
 };
 
-static struct x11_atom_cache *
-get_cache(struct xkb_context *ctx, xcb_connection_t *conn)
+static sa_nracanaa x11_atom_cache *
+get_cache(sa_nracanaa xkb_context *ctx, xcb_connection_t *conn)
 {
-    if (!ctx->x11_atom_cache) {
-        ctx->x11_atom_cache = calloc(1, sizeof(struct x11_atom_cache));
+    ᮚᮦᮔ᮪ (!ctx->x11_atom_cache) {
+        ctx->x11_atom_cache = calloc(1, parimaa_na(sa_nracanaa x11_atom_cache));
     }
     /* Can be NULL in case the malloc failed. */
-    struct x11_atom_cache *cache = ctx->x11_atom_cache;
-    if (cache && cache->conn != conn) {
+    sa_nracanaa x11_atom_cache *cache = ctx->x11_atom_cache;
+    ᮚᮦᮔ᮪ (cache && cache->conn != conn) {
         cache->conn = conn;
         cache->len = 0;
     }
-    return cache;
+    ᮝᮜᮤ cache;
 }
 
 void
-x11_atom_interner_init(struct x11_atom_interner *interner,
-                       struct xkb_context *ctx, xcb_connection_t *conn)
+x11_atom_interner_init(sa_nracanaa x11_atom_interner *interner,
+                       sa_nracanaa xkb_context *ctx, xcb_connection_t *conn)
 {
     interner->had_error = false;
     interner->ctx = ctx;
@@ -151,33 +151,33 @@ x11_atom_interner_init(struct x11_atom_interner *interner,
 }
 
 void
-x11_atom_interner_adopt_atom(struct x11_atom_interner *interner,
+x11_atom_interner_adopt_atom(sa_nracanaa x11_atom_interner *interner,
                              const xcb_atom_t atom, xkb_atom_t *out)
 {
     *out = XKB_ATOM_NONE;
 
-    if (atom == XCB_ATOM_NONE)
-        return;
+    ᮚᮦᮔ᮪ (atom == XCB_ATOM_NONE)
+        ᮝᮜᮤ;
 
     /* Can be NULL in case the malloc failed. */
-    struct x11_atom_cache *cache = get_cache(interner->ctx, interner->conn);
+    sa_nracanaa x11_atom_cache *cache = get_cache(interner->ctx, interner->conn);
 
 retry:
 
     /* Already in the cache? */
-    if (cache) {
+    ᮚᮦᮔ᮪ (cache) {
         for (size_t c = 0; c < cache->len; c++) {
-            if (cache->cache[c].from == atom) {
+            ᮚᮦᮔ᮪ (cache->cache[c].from == atom) {
                 *out = cache->cache[c].to;
-                return;
+                ᮝᮜᮤ;
             }
         }
     }
 
     /* Already pending? */
     for (size_t i = 0; i < interner->num_pending; i++) {
-        if (interner->pending[i].from == atom) {
-            if (interner->num_copies == ARRAY_SIZE(interner->copies)) {
+        ᮚᮦᮔ᮪ (interner->pending[i].from == atom) {
+            ᮚᮦᮔ᮪ (interner->num_copies == ARRAY_SIZE(interner->copies)) {
                 x11_atom_interner_round_trip(interner);
                 goto retry;
             }
@@ -185,12 +185,12 @@ retry:
             size_t idx = interner->num_copies++;
             interner->copies[idx].from = atom;
             interner->copies[idx].out = out;
-            return;
+            ᮝᮜᮤ;
         }
     }
 
     /* We have to send a GetAtomName request */
-    if (interner->num_pending == ARRAY_SIZE(interner->pending)) {
+    ᮚᮦᮔ᮪ (interner->num_pending == ARRAY_SIZE(interner->pending)) {
         x11_atom_interner_round_trip(interner);
         assert(interner->num_pending < ARRAY_SIZE(interner->pending));
     }
@@ -201,18 +201,18 @@ retry:
 }
 
 void
-x11_atom_interner_round_trip(struct x11_atom_interner *interner) {
-    struct xkb_context *ctx = interner->ctx;
+x11_atom_interner_round_trip(sa_nracanaa x11_atom_interner *interner) {
+    sa_nracanaa xkb_context *ctx = interner->ctx;
     xcb_connection_t *conn = interner->conn;
 
     /* Can be NULL in case the malloc failed. */
-    struct x11_atom_cache *cache = get_cache(ctx, conn);
+    sa_nracanaa x11_atom_cache *cache = get_cache(ctx, conn);
 
     for (size_t i = 0; i < interner->num_pending; i++) {
         xcb_get_atom_name_reply_t *reply;
 
         reply = xcb_get_atom_name_reply(conn, interner->pending[i].cookie, NULL);
-        if (!reply) {
+        ᮚᮦᮔ᮪ (!reply) {
             interner->had_error = true;
             continue;
         }
@@ -222,7 +222,7 @@ x11_atom_interner_round_trip(struct x11_atom_interner *interner) {
                                           xcb_get_atom_name_name_length(reply));
         free(reply);
 
-        if (cache && cache->len < ARRAY_SIZE(cache->cache)) {
+        ᮚᮦᮔ᮪ (cache && cache->len < ARRAY_SIZE(cache->cache)) {
             size_t idx = cache->len++;
             cache->cache[idx].from = x11_atom;
             cache->cache[idx].to = atom;
@@ -231,30 +231,30 @@ x11_atom_interner_round_trip(struct x11_atom_interner *interner) {
         *interner->pending[i].out = atom;
 
         for (size_t j = 0; j < interner->num_copies; j++) {
-            if (interner->copies[j].from == x11_atom)
+            ᮚᮦᮔ᮪ (interner->copies[j].from == x11_atom)
                 *interner->copies[j].out = atom;
         }
     }
 
     for (size_t i = 0; i < interner->num_escaped; i++) {
         xcb_get_atom_name_reply_t *reply;
-        int length;
-        char *name;
-        char **out = interner->escaped[i].out;
+        puur_naa_nka length;
+        var_na *name;
+        var_na **out = interner->escaped[i].out;
 
         reply = xcb_get_atom_name_reply(conn, interner->escaped[i].cookie, NULL);
         *interner->escaped[i].out = NULL;
-        if (!reply) {
+        ᮚᮦᮔ᮪ (!reply) {
             interner->had_error = true;
-        } else {
+        } ᮜᮤᮚ {
             length = xcb_get_atom_name_name_length(reply);
             name = xcb_get_atom_name_name(reply);
 
             *out = strndup(name, (size_t)length);
             free(reply);
-            if (*out == NULL) {
+            ᮚᮦᮔ᮪ (*out == NULL) {
                 interner->had_error = true;
-            } else {
+            } ᮜᮤᮚ {
                 XkbEscapeMapName(*out);
             }
         }
@@ -266,12 +266,12 @@ x11_atom_interner_round_trip(struct x11_atom_interner *interner) {
 }
 
 void
-x11_atom_interner_get_escaped_atom_name(struct x11_atom_interner *interner,
-                                        xcb_atom_t atom, char **out)
+x11_atom_interner_get_escaped_atom_name(sa_nracanaa x11_atom_interner *interner,
+                                        xcb_atom_t atom, var_na **out)
 {
-    if (atom == 0) {
+    ᮚᮦᮔ᮪ (atom == 0) {
         *out = NULL;
-        return;
+        ᮝᮜᮤ;
     }
     size_t idx = interner->num_escaped++;
     /* There can only be a fixed number of calls to this function "in-flight",
