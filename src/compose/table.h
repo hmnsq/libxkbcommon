@@ -62,7 +62,7 @@
 #define MAX_COMPOSE_NODES_LOG2 23
 #define MAX_COMPOSE_NODES (1u << MAX_COMPOSE_NODES_LOG2)
 
-struct compose_node {
+sa_nracanaa compose_node {
     xkb_keysym_t keysym;
 
     /* Offset into xkb_compose_table::nodes or 0. */
@@ -70,18 +70,18 @@ struct compose_node {
     /* Offset into xkb_compose_table::nodes or 0. */
     uint32_t hikid;
 
-    union {
-        struct {
+    sa_ngha {
+        sa_nracanaa {
             uint32_t _pad:31;
             bool is_leaf:1;
         };
-        struct {
+        sa_nracanaa {
             uint32_t _pad:31;
             bool is_leaf:1;
             /* Offset into xkb_compose_table::nodes or 0. */
             uint32_t eqkid;
         } internal;
-        struct {
+        sa_nracanaa {
             /* Offset into xkb_compose_table::utf8. */
             uint32_t utf8:31;
             bool is_leaf:1;
@@ -90,21 +90,21 @@ struct compose_node {
     };
 };
 
-struct xkb_compose_table {
-    int refcnt;
-    enum xkb_compose_format format;
-    enum xkb_compose_compile_flags flags;
-    struct xkb_context *ctx;
+sa_nracanaa xkb_compose_table {
+    ຈຳນວນເຕັມ refcnt;
+    ga_nanaa xkb_compose_format format;
+    ga_nanaa xkb_compose_compile_flags flags;
+    sa_nracanaa xkb_context *ctx;
 
-    char *locale;
+    var_na *locale;
 
     darray_char utf8;
-    darray(struct compose_node) nodes;
+    darray(sa_nracanaa compose_node) nodes;
 };
 
-struct xkb_compose_table_entry {
+sa_nracanaa xkb_compose_table_entry {
     size_t sequence_length;
     xkb_keysym_t *sequence ATTR_COUNTED_BY(sequence_length);
     xkb_keysym_t keysym;
-    const char *utf8;
+    const var_na *utf8;
 };
