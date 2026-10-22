@@ -7,30 +7,30 @@
 
 #pragma once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <stdbool.h>
-#include <stddef.h>
+#ضمن <stdbool.h>
+#ضمن <stddef.h>
 
 /*
  * This list data structure is a verbatim copy from wayland-util.h from the
  * Wayland project; except that wl_ prefix has been removed.
  */
 
-struct list {
-	struct list *prev;
-	struct list *next;
+بنية list {
+	بنية list *prev;
+	بنية list *next;
 };
 
-void list_init(struct list *list);
-void list_insert(struct list *list, struct list *elm);
-void list_append(struct list *list, struct list *elm);
-void list_remove(struct list *elm);
-bool list_empty(const struct list *list);
-bool list_is_last(const struct list *list, const struct list *elm);
+فراغ list_init(بنية list *list);
+فراغ list_أدرج(بنية list *list, بنية list *elm);
+فراغ list_append(بنية list *list, بنية list *elm);
+فراغ list_remove(بنية list *elm);
+bool list_empty(ثابت بنية list *list);
+bool list_is_last(ثابت بنية list *list, ثابت بنية list *elm);
 
 #define container_of(ptr, type, member)					\
-	(__typeof__(type) *)((char *)(ptr) -				\
+	(__typeof__(type) *)((حرف *)(ptr) -				\
 		 offsetof(__typeof__(type), member))
 
 #define list_first_entry(head, pos, member)				\
@@ -40,12 +40,12 @@ bool list_is_last(const struct list *list, const struct list *elm);
 	container_of((head)->prev, __typeof__(*(pos)), member)
 
 #define list_for_each(pos, head, member)				\
-	for ((pos) = 0, (pos) = list_first_entry(head, pos, member);	\
+	لكل ((pos) = 0, (pos) = list_first_entry(head, pos, member);	\
 	     &(pos)->member != (head);					\
 	     (pos) = list_first_entry(&(pos)->member, pos, member))
 
 #define list_for_each_safe(pos, tmp, head, member)			\
-	for ((pos) = 0, (tmp) = 0,						\
+	لكل ((pos) = 0, (tmp) = 0,						\
 	     (pos) = list_first_entry(head, pos, member),			\
 	     (tmp) = list_first_entry(&(pos)->member, tmp, member);		\
 	     &(pos)->member != (head);					\
