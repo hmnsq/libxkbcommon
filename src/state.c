@@ -20,28 +20,28 @@
  *   - messages (very unlikely)
  */
 
-#include "config.h"
+#شامل "config.h"
 
-#include <assert.h>
-#include <limits.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#شامل <assert.h>
+#شامل <limits.h>
+#شامل <stdint.h>
+#شامل <stdlib.h>
+#شامل <string.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-status.h"
-#include "xkbcommon/xkbcommon-features.h"
-#include "abi-check.h"
-#include "darray.h"
-#include "features/enums.h"
-#include "keymap.h"
-#include "keysym.h"
-#include "messages-codes.h"
-#include "state-priv.h"
-#include "utf8.h"
-#include "utils.h"
-#include "util-mem.h"
-#include "util-numbers.h"
+#شامل "xkbcommon/xkbcommon.h"
+#شامل "xkbcommon/xkbcommon-status.h"
+#شامل "xkbcommon/xkbcommon-features.h"
+#شامل "abi-check.h"
+#شامل "darray.h"
+#شامل "features/enums.h"
+#شامل "keymap.h"
+#شامل "keysym.h"
+#شامل "messages-codes.h"
+#شامل "state-priv.h"
+#شامل "utf8.h"
+#شامل "utils.h"
+#شامل "util-mem.h"
+#شامل "util-numbers.h"
 
 /*
  * @struct xkb_events
@@ -60,9 +60,9 @@
  * @todo For multi-threaded use, we need a future `xkb_event` **queue** to
  * provide a thread-safe implementation (e.g. circular buffer).
  */
-struct xkb_events {
-    struct xkb_context *ctx;
-    darray(struct xkb_event) queue;
+ساختار xkb_events {
+    ساختار xkb_context *ctx;
+    darray(ساختار xkb_event) queue;
     /**
      * Read cursor for `xkb_events_next()`.
      *
@@ -71,21 +71,21 @@ struct xkb_events {
     darray_size_t next;
 };
 
-struct xkb_server_state;
+ساختار xkb_server_state;
 
-struct xkb_filter {
-    union xkb_action action;
-    const struct xkb_key *key;
-    bool (*func)(struct xkb_server_state *state,
-                 struct xkb_events *events,
-                 struct xkb_filter *filter,
-                 const struct xkb_key *key,
-                 enum xkb_key_direction direction);
+ساختار xkb_filter {
+    اجتماع xkb_action action;
+    ثابت ساختار xkb_کلید *کلید;
+    bool (*func)(ساختار xkb_server_state *state,
+                 ساختار xkb_events *events,
+                 ساختار xkb_filter *filter,
+                 ثابت ساختار xkb_کلید *کلید,
+                 شمارش xkb_کلید_direction direction);
     uint32_t priv;
-    int refcnt;
+    صحیح refcnt;
 };
 
-enum xkb_state_mode_internal {
+شمارش xkb_state_mode_internal {
     /** `xkb_state`: Client-only state (server API raises errors) */
     CLIENT_STATE = XKB_STATE_MODE_CLIENT,
     /** `xkb_state`: Server query companion */
@@ -96,7 +96,7 @@ enum xkb_state_mode_internal {
     LEGACY_SERVER_STATE = 3,
     /** `xkb_machine`: Server-only state */
     SERVER_STATE = 4,
-    _XKB_STATE_TYPE_NUM_ENTRIES = 5
+    XKB_STATE_TYPE_رقم_ENTRIES = 5
 };
 
 static_assert(CLIENT_STATE == 0 &&
@@ -104,23 +104,23 @@ static_assert(CLIENT_STATE == 0 &&
               SERVER_COMPANION == LEGACY_MIXED_STATE - 1 &&
               LEGACY_MIXED_STATE == LEGACY_SERVER_STATE - 1 &&
               LEGACY_SERVER_STATE == SERVER_STATE - 1 &&
-              SERVER_STATE == _XKB_STATE_TYPE_NUM_ENTRIES - 1 &&
-              _XKB_STATE_TYPE_NUM_ENTRIES == 5,
+              SERVER_STATE == XKB_STATE_TYPE_رقم_ENTRIES - 1 &&
+              XKB_STATE_TYPE_رقم_ENTRIES == 5,
               "Order is used to guard client/server -only APIs: do not change");
 
-enum { XKB_LAYOUT_INDEX_T_MIN_WIDTH = 6 };
+شمارش { XKB_LAYOUT_INDEX_T_MIN_WIDTH = 6 };
 static_assert(XKB_MAX_GROUPS < (1 << XKB_LAYOUT_INDEX_T_MIN_WIDTH),
               "Cannot encode out_of_range_group::redirect_group");
 
-struct out_of_range_group {
-    enum xkb_layout_out_of_range_policy policy :
-        (sizeof(enum xkb_layout_out_of_range_policy) * CHAR_BIT -
+ساختار out_of_range_group {
+    شمارش xkb_layout_out_of_range_policy policy :
+        (اندازه(شمارش xkb_layout_out_of_range_policy) * CHAR_BIT -
          XKB_LAYOUT_INDEX_T_MIN_WIDTH);
     xkb_layout_index_t redirect_group : XKB_LAYOUT_INDEX_T_MIN_WIDTH;
 };
 
-enum { XKB_STATE_MODE_INTERNAL_MIN_WIDTH = 4 /* 3 bits + sign */ };
-static_assert(_XKB_STATE_TYPE_NUM_ENTRIES <
+شمارش { XKB_STATE_MODE_INTERNAL_MIN_WIDTH = 4 /* 3 bits + sign */ };
+static_assert(XKB_STATE_TYPE_رقم_ENTRIES <
               (1 << XKB_STATE_MODE_INTERNAL_MIN_WIDTH),
               "Cannot encode xkb_state::mode");
 
@@ -130,17 +130,17 @@ static_assert(_XKB_STATE_TYPE_NUM_ENTRIES <
  * `mode` indicates whether the object is casted from a `xkb_server_state` or a
  * `xkb_client_state` struct.
  */
-struct xkb_state {
-    struct xkb_keymap *keymap;
+ساختار xkb_state {
+    ساختار xkb_keymap *keymap;
     /*
      * Before updating the state, we keep a copy of just this struct. This
      * allows us to report which components of the state have changed.
      */
-    struct state_components components;
-    struct out_of_range_group out_of_range_group;
+    ساختار state_components components;
+    ساختار out_of_range_group out_of_range_group;
 
-    enum xkb_state_mode_internal mode : XKB_STATE_MODE_INTERNAL_MIN_WIDTH;
-    int refcnt : (sizeof(int) * CHAR_BIT - XKB_STATE_MODE_INTERNAL_MIN_WIDTH);
+    شمارش xkb_state_mode_internal mode : XKB_STATE_MODE_INTERNAL_MIN_WIDTH;
+    صحیح refcnt : (اندازه(صحیح) * CHAR_BIT - XKB_STATE_MODE_INTERNAL_MIN_WIDTH);
 };
 
 /**
@@ -148,15 +148,15 @@ struct xkb_state {
  *
  * Wrapper for strong typing
  */
-struct xkb_client_state {
+ساختار xkb_client_state {
     /** Inherits from `xkb_state` */
-    struct xkb_state base;
+    ساختار xkb_state base;
 };
 
-enum state_flags {
+شمارش state_flags {
     STATE_NO_FLAGS = 0,
-    STATE_REQUIRE_KEY_EVENT = (1 << 0),
-    STATE_FIX_LAYOUT_SWITCH_ON_MODIFIER_KEY = (1 << 1),
+    STATE_REQUIRE_کلید_EVENT = (1 << 0),
+    STATE_FIX_LAYOUT_SWITCH_ON_MODIFIER_کلید = (1 << 1),
     STATE_UNLOCK_MODS_ON_PRESS = (1 << 2),
 };
 
@@ -166,21 +166,21 @@ enum state_flags {
  *
  * Casted as `xkb_state` in the public API. See `xkb_state::mode`.
  */
-struct xkb_server_state {
+ساختار xkb_server_state {
     /** Inherits from `xkb_state` */
-    struct xkb_state base;
+    ساختار xkb_state base;
 
     /* Server-specific state data */
 
-    darray(struct xkb_filter) filters;
+    darray(ساختار xkb_filter) filters;
 
     /**
      * Mix of constant configuration flags and
      * variable state-processing flags.
      */
-    enum state_flags flags;
+    شمارش state_flags flags;
 
-    enum xkb_a11y_flags a11y_flags;
+    شمارش xkb_a11y_flags a11y_flags;
 
     /*
      * At each event, we accumulate all the needed modifications to the base
@@ -195,40 +195,40 @@ struct xkb_server_state {
      * < Left Shift down, Right Shift down, Left Shift Up >
      * the modifier should still be set. This keeps the count.
      */
-    int16_t mod_key_count[XKB_MAX_MODS];
+    int16_t mod_کلید_شمار[XKB_MAX_MODS];
 };
 
-static const struct xkb_key_type_entry *
-get_entry_for_mods(const struct xkb_key_type *type, xkb_mod_mask_t mods)
+ایستا ثابت ساختار xkb_کلید_type_entry *
+get_entry_for_mods(ثابت ساختار xkb_کلید_type *type, xkb_mod_mask_t mods)
 {
-    for (darray_size_t i = 0; i < type->num_entries; i++)
-        if (entry_is_active(&type->entries[i]) &&
+    برای (darray_size_t i = 0; i < type->رقم_entries; i++)
+        اگر (entry_is_active(&type->entries[i]) &&
             type->entries[i].mods.mask == mods)
-            return &type->entries[i];
-    return NULL;
+            بازگشت &type->entries[i];
+    بازگشت پوچ;
 }
 
-static const struct xkb_key_type_entry *
-get_entry_for_key_state(struct xkb_state *state, const struct xkb_key *key,
+ایستا ثابت ساختار xkb_کلید_type_entry *
+get_entry_for_کلید_state(ساختار xkb_state *state, ثابت ساختار xkb_کلید *کلید,
                         xkb_layout_index_t group)
 {
-    const struct xkb_key_type* const type = key->groups[group].type;
+    ثابت ساختار xkb_کلید_type* ثابت type = کلید->groups[group].type;
     xkb_mod_mask_t active_mods = state->components.mods & type->mods.mask;
-    return get_entry_for_mods(type, active_mods);
+    بازگشت get_entry_for_mods(type, active_mods);
 }
 
-static inline xkb_level_index_t
-state_key_get_level(struct xkb_state *state, const struct xkb_key *key,
+ایستا درونخطی xkb_level_index_t
+state_کلید_get_level(ساختار xkb_state *state, ثابت ساختار xkb_کلید *کلید,
                          xkb_layout_index_t layout)
 {
-    if (layout >= key->num_groups)
-        return XKB_LEVEL_INVALID;
+    اگر (layout >= کلید->رقم_groups)
+        بازگشت XKB_LEVEL_INVALID;
 
     /* If we don't find an explicit match the default is 0. */
-    const struct xkb_key_type_entry* const entry =
-        get_entry_for_key_state(state, key, layout);
+    ثابت ساختار xkb_کلید_type_entry* ثابت entry =
+        get_entry_for_کلید_state(state, کلید, layout);
 
-    return (entry) ? entry->level : 0;
+    بازگشت (entry) ? entry->level : 0;
 }
 
 /**
@@ -236,20 +236,20 @@ state_key_get_level(struct xkb_state *state, const struct xkb_key *key,
  * XKB_LEVEL_INVALID.
  */
 xkb_level_index_t
-xkb_state_key_get_level(struct xkb_state *state, xkb_keycode_t kc,
+xkb_state_کلید_get_level(ساختار xkb_state *state, xkb_keycode_t kc,
                         xkb_layout_index_t layout)
 {
-    const struct xkb_key* const key = XkbKey(state->keymap, kc);
+    ثابت ساختار xkb_کلید* ثابت کلید = Xkb_کلید(state->keymap, kc);
 
-    return (key)
-        ? state_key_get_level(state, key, layout)
+    بازگشت (کلید)
+        ? state_کلید_get_level(state, کلید, layout)
         : XKB_LEVEL_INVALID;
 }
 
-static inline xkb_layout_index_t
-state_key_get_layout(struct xkb_state *state, const struct xkb_key *key)
+ایستا درونخطی xkb_layout_index_t
+state_کلید_get_layout(ساختار xkb_state *state, ثابت ساختار xkb_کلید *کلید)
 {
-    return xkb_keymap_key_effective_layout(key, state->components.group);
+    بازگشت xkb_keymap_کلید_effective_layout(کلید, state->components.group);
 }
 
 /**
@@ -257,69 +257,69 @@ state_key_get_layout(struct xkb_state *state, const struct xkb_key *key)
  * wrapping/clamping/etc into account, or XKB_LAYOUT_INVALID.
  */
 xkb_layout_index_t
-xkb_state_key_get_layout(struct xkb_state *state, xkb_keycode_t kc)
+xkb_state_کلید_get_layout(ساختار xkb_state *state, xkb_keycode_t kc)
 {
-    const struct xkb_key* const key = XkbKey(state->keymap, kc);
+    ثابت ساختار xkb_کلید* ثابت کلید = Xkb_کلید(state->keymap, kc);
 
-    if (!key)
-        return XKB_LAYOUT_INVALID;
+    اگر (!کلید)
+        بازگشت XKB_LAYOUT_INVALID;
 
-    return state_key_get_layout(state, key);
+    بازگشت state_کلید_get_layout(state, کلید);
 }
 
 /* Empty action used for empty levels */
-static const union xkb_action dummy_action = { .type = ACTION_TYPE_NONE };
+ایستا ثابت اجتماع xkb_action dummy_action = { .type = ACTION_TYPE_NONE };
 
-static xkb_action_count_t
-xkb_key_get_actions(struct xkb_state *state, const struct xkb_key *key,
-                    const union xkb_action **actions)
+ایستا xkb_action_شمار_t
+xkb_کلید_get_actions(ساختار xkb_state *state, ثابت ساختار xkb_کلید *کلید,
+                    ثابت اجتماع xkb_action **actions)
 {
-    const xkb_layout_index_t layout = state_key_get_layout(state, key);
-    const xkb_level_index_t level = state_key_get_level(state, key, layout);
-    if (level == XKB_LEVEL_INVALID)
-        goto err;
+    ثابت xkb_layout_index_t layout = state_کلید_get_layout(state, کلید);
+    ثابت xkb_level_index_t level = state_کلید_get_level(state, کلید, layout);
+    اگر (level == XKB_LEVEL_INVALID)
+        برو err;
 
-    const xkb_action_count_t count =
-        xkb_keymap_key_get_actions_by_level(state->keymap, key,
+    ثابت xkb_action_شمار_t شمار =
+        xkb_keymap_کلید_get_actions_by_level(state->keymap, کلید,
                                             layout, level, actions);
-    if (!count)
-        goto err;
+    اگر (!شمار)
+        برو err;
 
-    return count;
+    بازگشت شمار;
 
 err:
     /* Use a dummy action if no corresponding level was found or if it is empty.
      * This is required e.g. to handle latches properly. */
     *actions = &dummy_action;
-    return 1;
+    بازگشت 1;
 }
 
-static struct xkb_filter *
-xkb_filter_new(struct xkb_server_state *state)
+ایستا ساختار xkb_filter *
+xkb_filter_new(ساختار xkb_server_state *state)
 {
-    struct xkb_filter *filter = NULL, *iter;
+    ساختار xkb_filter *filter = پوچ, *iter;
 
     darray_foreach(iter, state->filters) {
-        if (iter->func)
-            continue;
+        اگر (iter->func)
+            ادامه;
         /* Use available slot */
         filter = iter;
-        break;
+        بشکن;
     }
 
-    if (!filter) {
+    اگر (!filter) {
         /* No available slot: resize the filters array */
         darray_resize0(state->filters, darray_size(state->filters) + 1);
         filter = &darray_item(state->filters, darray_size(state->filters) -1);
     }
 
     filter->refcnt = 1;
-    return filter;
+    بازگشت filter;
 }
 
 /***====================================================================***/
 
-enum xkb_filter_result {
+شمارش xkb_filter_result {
     /*
      * The event is consumed by the filters.
      *
@@ -336,115 +336,115 @@ enum xkb_filter_result {
 
 /* Modify a group component, depending on the ACTION_ABSOLUTE_SWITCH flag */
 #define apply_group_delta(filter_, state_, component_)                   \
-    if ((filter_)->action.group.flags & ACTION_ABSOLUTE_SWITCH)          \
+    اگر ((filter_)->action.group.flags & ACTION_ABSOLUTE_SWITCH)          \
         (state_)->components.component_ = (filter_)->action.group.group; \
-    else                                                                 \
+    وگرنه                                                                 \
         (state_)->components.component_ += (filter_)->action.group.group
 
-static void
-xkb_filter_group_set_new(struct xkb_server_state *state,
-                         struct xkb_events *events,
-                         struct xkb_filter *filter)
+ایستا تهی
+xkb_filter_group_set_new(ساختار xkb_server_state *state,
+                         ساختار xkb_events *events,
+                         ساختار xkb_filter *filter)
 {
-    static_assert(sizeof(state->base.components.base_group) ==
-                  sizeof(filter->priv),
+    static_assert(اندازه(state->base.components.base_group) ==
+                  اندازه(filter->priv),
                   "Max groups don't fit");
     filter->priv = (uint32_t)state->base.components.base_group;
     apply_group_delta(filter, &state->base, base_group);
 }
 
-static bool
-xkb_filter_group_set_func(struct xkb_server_state *state,
-                          struct xkb_events *events,
-                          struct xkb_filter *filter,
-                          const struct xkb_key *key,
-                          enum xkb_key_direction direction)
+ایستا bool
+xkb_filter_group_set_func(ساختار xkb_server_state *state,
+                          ساختار xkb_events *events,
+                          ساختار xkb_filter *filter,
+                          ثابت ساختار xkb_کلید *کلید,
+                          شمارش xkb_کلید_direction direction)
 {
-    if (key != filter->key) {
+    اگر (کلید != filter->کلید) {
         filter->action.group.flags &= ~ACTION_LOCK_CLEAR;
-        return XKB_FILTER_CONTINUE;
+        بازگشت XKB_FILTER_CONTINUE;
     }
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    انتخاب (direction) {
+    حالت XKB_کلید_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    حالت XKB_کلید_REPEATED:
+        بازگشت XKB_FILTER_CONSUME;
+    پیشفرض:
+        اگر (--filter->refcnt > 0)
+            بازگشت XKB_FILTER_CONSUME;
     }
 
-    static_assert(sizeof(state->base.components.base_group) == sizeof(filter->priv),
+    static_assert(اندازه(state->base.components.base_group) == اندازه(filter->priv),
                   "Max groups don't fit");
     state->base.components.base_group = (int32_t) filter->priv;
 
-    if (filter->action.group.flags & ACTION_LOCK_CLEAR)
+    اگر (filter->action.group.flags & ACTION_LOCK_CLEAR)
         state->base.components.locked_group = 0;
 
-    filter->func = NULL;
-    return XKB_FILTER_CONTINUE;
+    filter->func = پوچ;
+    بازگشت XKB_FILTER_CONTINUE;
 }
 
-static enum xkb_state_component
-get_state_component_changes(const struct state_components *a,
-                            const struct state_components *b)
+ایستا شمارش xkb_state_component
+get_state_component_changes(ثابت ساختار state_components *a,
+                            ثابت ساختار state_components *b)
 {
-    enum xkb_state_component mask = 0;
+    شمارش xkb_state_component mask = 0;
 
-    if (a->group != b->group)
+    اگر (a->group != b->group)
         mask |= XKB_STATE_LAYOUT_EFFECTIVE;
-    if (a->base_group != b->base_group)
+    اگر (a->base_group != b->base_group)
         mask |= XKB_STATE_LAYOUT_DEPRESSED;
-    if (a->latched_group != b->latched_group)
+    اگر (a->latched_group != b->latched_group)
         mask |= XKB_STATE_LAYOUT_LATCHED;
-    if (a->locked_group != b->locked_group)
+    اگر (a->locked_group != b->locked_group)
         mask |= XKB_STATE_LAYOUT_LOCKED;
-    if (a->mods != b->mods)
+    اگر (a->mods != b->mods)
         mask |= XKB_STATE_MODS_EFFECTIVE;
-    if (a->base_mods != b->base_mods)
+    اگر (a->base_mods != b->base_mods)
         mask |= XKB_STATE_MODS_DEPRESSED;
-    if (a->latched_mods != b->latched_mods)
+    اگر (a->latched_mods != b->latched_mods)
         mask |= XKB_STATE_MODS_LATCHED;
-    if (a->locked_mods != b->locked_mods)
+    اگر (a->locked_mods != b->locked_mods)
         mask |= XKB_STATE_MODS_LOCKED;
-    if (a->leds != b->leds)
+    اگر (a->leds != b->leds)
         mask |= XKB_STATE_LEDS;
-    if (a->controls != b->controls)
+    اگر (a->controls != b->controls)
         mask |= XKB_STATE_CONTROLS_EFFECTIVE;
 
-    return mask;
+    بازگشت mask;
 }
 
-static void
-xkb_filter_group_lock_new(struct xkb_server_state *state,
-                          struct xkb_events *events,
-                          struct xkb_filter *filter)
+ایستا تهی
+xkb_filter_group_lock_new(ساختار xkb_server_state *state,
+                          ساختار xkb_events *events,
+                          ساختار xkb_filter *filter)
 {
-    if (filter->action.group.flags & ACTION_LOCK_ON_RELEASE) {
+    اگر (filter->action.group.flags & ACTION_LOCK_ON_RELEASE) {
         /*
          * Lock on key release: do nothing on key press.
          *
          * This is a keymap format v2 extension.
          */
-        return;
-    } else {
+        بازگشت;
+    } وگرنه {
         /* Lock on key press */
         apply_group_delta(filter, &state->base, locked_group);
     }
 }
 
-static bool
-xkb_filter_group_lock_func(struct xkb_server_state *state,
-                           struct xkb_events *events,
-                           struct xkb_filter *filter,
-                           const struct xkb_key *key,
-                           enum xkb_key_direction direction)
+ایستا bool
+xkb_filter_group_lock_func(ساختار xkb_server_state *state,
+                           ساختار xkb_events *events,
+                           ساختار xkb_filter *filter,
+                           ثابت ساختار xkb_کلید *کلید,
+                           شمارش xkb_کلید_direction direction)
 {
-    if (key != filter->key) {
-        if ((filter->action.group.flags & ACTION_LOCK_ON_RELEASE) &&
-            direction == XKB_KEY_DOWN) {
+    اگر (کلید != filter->کلید) {
+        اگر ((filter->action.group.flags & ACTION_LOCK_ON_RELEASE) &&
+            direction == XKB_کلید_DOWN) {
             /*
              * Another key has been pressed after the locking key:
              * cancel group lock on release.
@@ -453,100 +453,100 @@ xkb_filter_group_lock_func(struct xkb_server_state *state,
              */
             filter->action.group.flags &= ~ACTION_LOCK_ON_RELEASE;
         }
-        return XKB_FILTER_CONTINUE;
+        بازگشت XKB_FILTER_CONTINUE;
     }
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    انتخاب (direction) {
+    حالت XKB_کلید_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    حالت XKB_کلید_REPEATED:
+        بازگشت XKB_FILTER_CONSUME;
+    پیشفرض:
+        اگر (--filter->refcnt > 0)
+            بازگشت XKB_FILTER_CONSUME;
     }
 
-    if (filter->action.group.flags & ACTION_LOCK_ON_RELEASE) {
+    اگر (filter->action.group.flags & ACTION_LOCK_ON_RELEASE) {
         /*
          * Lock on key release
          *
          * This is a keymap v2 extension.
          */
         apply_group_delta(filter, &state->base, locked_group);
-    } else {
+    } وگرنه {
         /* Lock on key press: do nothing on key release. */
     }
-    filter->func = NULL;
-    return XKB_FILTER_CONTINUE;
+    filter->func = پوچ;
+    بازگشت XKB_FILTER_CONTINUE;
 }
 
-static bool
-xkb_action_breaks_latch(const union xkb_action *action,
-                        enum xkb_action_controls controls,
-                        enum xkb_internal_action_flags flag,
+ایستا bool
+xkb_action_breaks_latch(ثابت اجتماع xkb_action *action,
+                        شمارش xkb_action_controls controls,
+                        شمارش xkb_internal_action_flags flag,
                         xkb_mod_mask_t mask)
 {
-    switch (action->type) {
-    case ACTION_TYPE_NONE:
-    case ACTION_TYPE_VOID:
-    case ACTION_TYPE_PTR_BUTTON:
-    case ACTION_TYPE_PTR_LOCK:
-    case ACTION_TYPE_CTRL_SET:
-    case ACTION_TYPE_CTRL_LOCK:
-    case ACTION_TYPE_SWITCH_VT:
-    case ACTION_TYPE_TERMINATE:
-    case ACTION_TYPE_REDIRECT_KEY:
-        return true;
-    case ACTION_TYPE_PTR_MOVE:
-    case ACTION_TYPE_PTR_DEFAULT:
-        return !(controls & CONTROL_MOUSE_KEYS);
-    case ACTION_TYPE_INTERNAL:
-        return (action->internal.flags & flag) &&
+    انتخاب (action->type) {
+    حالت ACTION_TYPE_NONE:
+    حالت ACTION_TYPE_VOID:
+    حالت ACTION_TYPE_PTR_BUTTON:
+    حالت ACTION_TYPE_PTR_LOCK:
+    حالت ACTION_TYPE_CTRL_SET:
+    حالت ACTION_TYPE_CTRL_LOCK:
+    حالت ACTION_TYPE_SWITCH_VT:
+    حالت ACTION_TYPE_TERMINATE:
+    حالت ACTION_TYPE_REDIRECT_کلید:
+        بازگشت true;
+    حالت ACTION_TYPE_PTR_MOVE:
+    حالت ACTION_TYPE_PTR_DEFAULT:
+        بازگشت !(controls & CONTROL_MOUSE_کلیدها);
+    حالت ACTION_TYPE_INTERNAL:
+        بازگشت (action->internal.flags & flag) &&
                ((action->internal.clear_latched_mods & mask) == mask);
-    default:
+    پیشفرض:
         {} /* Label followed by declaration requires C23 */
         /* Ensure to not miss `xkb_action_type` updates */
         static_assert(ACTION_TYPE_INTERNAL == 20 &&
-                      ACTION_TYPE_INTERNAL + 1 == _ACTION_TYPE_NUM_ENTRIES,
+                      ACTION_TYPE_INTERNAL + 1 == ACTION_TYPE_رقم_ENTRIES,
                       "Missing action type");
-        return false;
+        بازگشت false;
     }
 }
 
-enum xkb_key_latch_state {
+شمارش xkb_کلید_latch_state {
     NO_LATCH = 0,
-    LATCH_KEY_DOWN,
+    LATCH_کلید_DOWN,
     LATCH_PENDING,
-    _KEY_LATCH_STATE_NUM_ENTRIES
+    کلید_LATCH_STATE_رقم_ENTRIES
 };
 
-#define MAX_XKB_KEY_LATCH_STATE_LOG2 2
-#if (_KEY_LATCH_STATE_NUM_ENTRIES > (1 << MAX_XKB_KEY_LATCH_STATE_LOG2)) || \
-    (-XKB_MAX_GROUPS) < (INT32_MIN >> MAX_XKB_KEY_LATCH_STATE_LOG2) || \
-      XKB_MAX_GROUPS > (INT32_MAX >> MAX_XKB_KEY_LATCH_STATE_LOG2)
+#define MAX_XKB_کلید_LATCH_STATE_LOG2 2
+#اگر (کلید_LATCH_STATE_رقم_ENTRIES > (1 << MAX_XKB_کلید_LATCH_STATE_LOG2)) || \
+    (-XKB_MAX_GROUPS) < (INT32_MIN >> MAX_XKB_کلید_LATCH_STATE_LOG2) || \
+      XKB_MAX_GROUPS > (INT32_MAX >> MAX_XKB_کلید_LATCH_STATE_LOG2)
 #error "Cannot represent priv field of the group latch filter"
 #endif
 
 /* Hold the latch state *and* the group delta */
-union group_latch_priv {
+اجتماع group_latch_priv {
     uint32_t priv;
-    struct {
+    ساختار {
         /* The type is really: enum xkb_key_latch_state, but it is problematic
          * on Windows, because it is interpreted as signed and leads to wrong
          * negative values. */
-        unsigned int latch:MAX_XKB_KEY_LATCH_STATE_LOG2;
-        int32_t group_delta:(32 - MAX_XKB_KEY_LATCH_STATE_LOG2);
+        unsigned صحیح latch:MAX_XKB_کلید_LATCH_STATE_LOG2;
+        int32_t group_delta:(32 - MAX_XKB_کلید_LATCH_STATE_LOG2);
     };
 };
 
-static void
-xkb_filter_group_latch_new(struct xkb_server_state *state,
-                           struct xkb_events *events,
-                           struct xkb_filter *filter)
+ایستا تهی
+xkb_filter_group_latch_new(ساختار xkb_server_state *state,
+                           ساختار xkb_events *events,
+                           ساختار xkb_filter *filter)
 {
-    const union group_latch_priv priv = {
-        .latch = LATCH_KEY_DOWN,
+    ثابت اجتماع group_latch_priv priv = {
+        .latch = LATCH_کلید_DOWN,
         .group_delta = (filter->action.group.flags & ACTION_ABSOLUTE_SWITCH)
             ? filter->action.group.group - state->base.components.base_group
             : filter->action.group.group
@@ -556,22 +556,22 @@ xkb_filter_group_latch_new(struct xkb_server_state *state,
     apply_group_delta(filter, &state->base, base_group);
 }
 
-static bool
-xkb_filter_group_latch_func(struct xkb_server_state *state,
-                            struct xkb_events *events,
-                            struct xkb_filter *filter,
-                            const struct xkb_key *key,
-                            enum xkb_key_direction direction)
+ایستا bool
+xkb_filter_group_latch_func(ساختار xkb_server_state *state,
+                            ساختار xkb_events *events,
+                            ساختار xkb_filter *filter,
+                            ثابت ساختار xkb_کلید *کلید,
+                            شمارش xkb_کلید_direction direction)
 {
-    union group_latch_priv priv = {.priv = filter->priv};
-    enum xkb_key_latch_state latch = priv.latch;
+    اجتماع group_latch_priv priv = {.priv = filter->priv};
+    شمارش xkb_کلید_latch_state latch = priv.latch;
 
-    if (direction == XKB_KEY_DOWN) {
-        const union xkb_action *actions = NULL;
-        const xkb_action_count_t count = xkb_key_get_actions(&state->base, key,
+    اگر (direction == XKB_کلید_DOWN) {
+        ثابت اجتماع xkb_action *actions = پوچ;
+        ثابت xkb_action_شمار_t شمار = xkb_کلید_get_actions(&state->base, کلید,
                                                              &actions);
 
-        if (latch == LATCH_KEY_DOWN) {
+        اگر (latch == LATCH_کلید_DOWN) {
             /*
              * Another key was pressed while we’ve still got the latching key
              * held down.
@@ -585,7 +585,7 @@ xkb_filter_group_latch_func(struct xkb_server_state *state,
              *   xkb_filter_group_latch_new(), until the latch key is
              *   released.
              */
-            if (state->a11y_flags & XKB_A11Y_LATCH_SIMULTANEOUS_KEYS) {
+            اگر (state->a11y_flags & XKB_A11_Y_LATCH_SIMULTANEOUS_کلیدها) {
                 /*
                  * Prevent the latch to trigger only if some of the pressed
                  * key’s actions breaks latches, mirroring the behavior in the
@@ -593,28 +593,28 @@ xkb_filter_group_latch_func(struct xkb_server_state *state,
                  *
                  * This is an extension to the X11 XKB protocol.
                  */
-                for (xkb_action_count_t k = 0; k < count; k++) {
-                    if (xkb_action_breaks_latch(&(actions[k]),
+                برای (xkb_action_شمار_t k = 0; k < شمار; k++) {
+                    اگر (xkb_action_breaks_latch(&(actions[k]),
                                                 state->base.components.controls,
                                                 INTERNAL_BREAKS_GROUP_LATCH,
                                                 0))
                     {
                         latch = NO_LATCH;
-                        break;
+                        بشکن;
                     }
                 }
-            } else {
+            } وگرنه {
                 /* Unconditionally prevent the latch to trigger. */
                 latch = NO_LATCH;
             }
         }
-        else if (latch == LATCH_PENDING) {
+        وگرنه اگر (latch == LATCH_PENDING) {
             /* If this is a new keypress and we're awaiting our single latched
              * keypress, then either break the latch if any random key is
              * pressed, or promote it to a lock if it's the same group delta &
              * flags and latchToLock option is enabled. */
-            const bool sticky_keys = state->base.components.controls
-                                   & CONTROL_STICKY_KEYS;
+            ثابت bool sticky_کلیدها = state->base.components.controls
+                                   & CONTROL_STICKY_کلیدها;
             /*
              * NOTE: Action’s flags other than `ACTION_ABSOLUTE_SWITCH` are
              * not compared:
@@ -625,13 +625,13 @@ xkb_filter_group_latch_func(struct xkb_server_state *state,
              * - even if it were the case, one would most likely want both
              *   actions to be considered compatible in this context.
              */
-            for (xkb_action_count_t k = 0; k < count; k++) {
-                if (((actions[k].type == ACTION_TYPE_GROUP_LATCH) ||
-                     (actions[k].type == ACTION_TYPE_GROUP_SET && sticky_keys)) &&
+            برای (xkb_action_شمار_t k = 0; k < شمار; k++) {
+                اگر (((actions[k].type == ACTION_TYPE_GROUP_LATCH) ||
+                     (actions[k].type == ACTION_TYPE_GROUP_SET && sticky_کلیدها)) &&
                      actions[k].group.group == filter->action.group.group &&
                      (actions[k].group.flags & ACTION_ABSOLUTE_SWITCH) ==
                      (filter->action.group.flags & ACTION_ABSOLUTE_SWITCH)) {
-                    if (filter->action.group.flags & ACTION_LATCH_TO_LOCK &&
+                    اگر (filter->action.group.flags & ACTION_LATCH_TO_LOCK &&
                         filter->action.group.group != 0)
                     {
                         /* Promote to lock */
@@ -639,63 +639,63 @@ xkb_filter_group_latch_func(struct xkb_server_state *state,
                         filter->func = xkb_filter_group_lock_func;
                         xkb_filter_group_lock_new(state, events, filter);
                         state->base.components.latched_group -= priv.group_delta;
-                        filter->key = key;
+                        filter->کلید = کلید;
                         /* XXX beep beep! */
-                        return XKB_FILTER_CONSUME;
+                        بازگشت XKB_FILTER_CONSUME;
                     }
                     /* Do nothing if `latchToLock` option is not activated; if
                      * the latch is not broken by the following actions and the
                      * key is not consumed, then another latch filter will be
                      * created.
                      */
-                    continue;
+                    ادامه;
                 }
-                else if (xkb_action_breaks_latch(&(actions[k]),
+                وگرنه اگر (xkb_action_breaks_latch(&(actions[k]),
                                                  state->base.components.controls,
                                                  INTERNAL_BREAKS_GROUP_LATCH,
                                                  0))
                 {
                     /* Breaks the latch */
                     state->base.components.latched_group -= priv.group_delta;
-                    filter->func = NULL;
-                    return XKB_FILTER_CONTINUE;
+                    filter->func = پوچ;
+                    بازگشت XKB_FILTER_CONTINUE;
                 }
             }
         }
-        else {
+        وگرنه {
             /* Ignore press in NO_LATCH state */
-            assert(latch == NO_LATCH);
+            أكد(latch == NO_LATCH);
         }
     }
-    else if (key != filter->key) {
+    وگرنه اگر (کلید != filter->کلید) {
         /* Ignore repeat/release of other keys */
     }
-    else if (direction == XKB_KEY_REPEATED) {
-        return XKB_FILTER_CONSUME; // TODO: check
+    وگرنه اگر (direction == XKB_کلید_REPEATED) {
+        بازگشت XKB_FILTER_CONSUME; // TODO: check
     }
-    else {
+    وگرنه {
         /* Our key got released.  If we've set it to clear locks, and we
          * currently have a group locked, then release it and
          * don't actually latch.  Else we've actually hit the latching
          * stage, so set PENDING and move our group from base to
          * latched. */
-        if ((filter->action.group.flags & ACTION_LOCK_CLEAR) &&
+        اگر ((filter->action.group.flags & ACTION_LOCK_CLEAR) &&
              state->base.components.locked_group) {
-            if (latch == LATCH_PENDING)
+            اگر (latch == LATCH_PENDING)
                 state->base.components.latched_group -= priv.group_delta;
-            else
+            وگرنه
                 state->base.components.base_group -= priv.group_delta;
             state->base.components.locked_group = 0;
-            filter->func = NULL;
+            filter->func = پوچ;
         }
         /* Broken latch */
-        else if (latch == NO_LATCH) {
+        وگرنه اگر (latch == NO_LATCH) {
             state->base.components.base_group -= priv.group_delta;
-            filter->func = NULL;
+            filter->func = پوچ;
         }
         /* We may already have reached the latch state if pressing the
          * key multiple times without latch-to-lock enabled. */
-        else if (latch == LATCH_KEY_DOWN) {
+        وگرنه اگر (latch == LATCH_کلید_DOWN) {
             latch = LATCH_PENDING;
             /* Switch from set to latch */
             state->base.components.base_group -= priv.group_delta;
@@ -707,17 +707,17 @@ xkb_filter_group_latch_func(struct xkb_server_state *state,
     priv.latch = latch;
     filter->priv = priv.priv;
 
-    return XKB_FILTER_CONTINUE;
+    بازگشت XKB_FILTER_CONTINUE;
 }
 
-static void
-xkb_filter_mod_set_new(struct xkb_server_state *state,
-                       struct xkb_events *events,
-                       struct xkb_filter *filter)
+ایستا تهی
+xkb_filter_mod_set_new(ساختار xkb_server_state *state,
+                       ساختار xkb_events *events,
+                       ساختار xkb_filter *filter)
 {
-    const enum xkb_action_flags unlock = ACTION_UNLOCK_ON_PRESS
+    ثابت شمارش xkb_action_flags unlock = ACTION_UNLOCK_ON_PRESS
                                        | ACTION_LOCK_CLEAR;
-    if ((filter->action.mods.flags & unlock) == unlock) {
+    اگر ((filter->action.mods.flags & unlock) == unlock) {
         /*
          * Unlock on press
          *
@@ -726,112 +726,112 @@ xkb_filter_mod_set_new(struct xkb_server_state *state,
         filter->priv = filter->action.mods.mods.mask
                      & ~state->base.components.locked_mods;
         state->base.components.locked_mods &= ~filter->action.mods.mods.mask;
-    } else {
+    } وگرنه {
         filter->priv = filter->action.mods.mods.mask;
     }
 
     state->set_mods |= (xkb_mod_mask_t) filter->priv;
 }
 
-static bool
-xkb_filter_mod_set_func(struct xkb_server_state *state,
-                        struct xkb_events *events,
-                        struct xkb_filter *filter,
-                        const struct xkb_key *key,
-                        enum xkb_key_direction direction)
+ایستا bool
+xkb_filter_mod_set_func(ساختار xkb_server_state *state,
+                        ساختار xkb_events *events,
+                        ساختار xkb_filter *filter,
+                        ثابت ساختار xkb_کلید *کلید,
+                        شمارش xkb_کلید_direction direction)
 {
 
-    if (key != filter->key) {
+    اگر (کلید != filter->کلید) {
         filter->action.mods.flags &= ~ACTION_LOCK_CLEAR;
-        return XKB_FILTER_CONTINUE;
+        بازگشت XKB_FILTER_CONTINUE;
     }
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    انتخاب (direction) {
+    حالت XKB_کلید_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    حالت XKB_کلید_REPEATED:
+        بازگشت XKB_FILTER_CONSUME;
+    پیشفرض:
+        اگر (--filter->refcnt > 0)
+            بازگشت XKB_FILTER_CONSUME;
     }
 
     state->clear_mods |= (xkb_mod_mask_t) filter->priv;
-    const enum xkb_action_flags unlock = ACTION_UNLOCK_ON_PRESS
+    ثابت شمارش xkb_action_flags unlock = ACTION_UNLOCK_ON_PRESS
                                        | ACTION_LOCK_CLEAR;
-    if ((filter->action.mods.flags & unlock) == ACTION_LOCK_CLEAR)
+    اگر ((filter->action.mods.flags & unlock) == ACTION_LOCK_CLEAR)
         state->base.components.locked_mods &= ~filter->action.mods.mods.mask;
 
-    filter->func = NULL;
-    return XKB_FILTER_CONTINUE;
+    filter->func = پوچ;
+    بازگشت XKB_FILTER_CONTINUE;
 }
 
-static void
-xkb_filter_mod_lock_new(struct xkb_server_state *state,
-                        struct xkb_events *events,
-                        struct xkb_filter *filter)
+ایستا تهی
+xkb_filter_mod_lock_new(ساختار xkb_server_state *state,
+                        ساختار xkb_events *events,
+                        ساختار xkb_filter *filter)
 {
     filter->priv = (state->base.components.locked_mods &
                     filter->action.mods.mods.mask);
 
-    if (filter->priv && (filter->action.mods.flags & ACTION_UNLOCK_ON_PRESS)) {
+    اگر (filter->priv && (filter->action.mods.flags & ACTION_UNLOCK_ON_PRESS)) {
         /*
          * Some of the target modifiers were locked before key press: unlock.
          *
          * This is a keymap v2 extension: unlock-on-press.
          */
-        if (!(filter->action.mods.flags & ACTION_LOCK_NO_UNLOCK))
+        اگر (!(filter->action.mods.flags & ACTION_LOCK_NO_UNLOCK))
             state->base.components.locked_mods &= ~filter->priv;
         /* No further action: cancel filter */
-        filter->func = NULL;
-    } else {
+        filter->func = پوچ;
+    } وگرنه {
         /* Set base mods; lock mods if relevant (XKB 1.0 spec) */
         state->set_mods |= filter->action.mods.mods.mask;
-        if (!(filter->action.mods.flags & ACTION_LOCK_NO_LOCK))
+        اگر (!(filter->action.mods.flags & ACTION_LOCK_NO_LOCK))
             state->base.components.locked_mods |= filter->action.mods.mods.mask;
     }
 }
 
-static bool
-xkb_filter_mod_lock_func(struct xkb_server_state *state,
-                         struct xkb_events *events,
-                         struct xkb_filter *filter,
-                         const struct xkb_key *key,
-                         enum xkb_key_direction direction)
+ایستا bool
+xkb_filter_mod_lock_func(ساختار xkb_server_state *state,
+                         ساختار xkb_events *events,
+                         ساختار xkb_filter *filter,
+                         ثابت ساختار xkb_کلید *کلید,
+                         شمارش xkb_کلید_direction direction)
 {
-    if (key != filter->key)
-        return XKB_FILTER_CONTINUE;
+    اگر (کلید != filter->کلید)
+        بازگشت XKB_FILTER_CONTINUE;
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    انتخاب (direction) {
+    حالت XKB_کلید_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    حالت XKB_کلید_REPEATED:
+        بازگشت XKB_FILTER_CONSUME;
+    پیشفرض:
+        اگر (--filter->refcnt > 0)
+            بازگشت XKB_FILTER_CONSUME;
     }
 
     state->clear_mods |= filter->action.mods.mods.mask;
-    if (!(filter->action.mods.flags & ACTION_LOCK_NO_UNLOCK))
+    اگر (!(filter->action.mods.flags & ACTION_LOCK_NO_UNLOCK))
         state->base.components.locked_mods &= ~filter->priv;
 
-    filter->func = NULL;
-    return XKB_FILTER_CONTINUE;
+    filter->func = پوچ;
+    بازگشت XKB_FILTER_CONTINUE;
 }
 
-static void
-xkb_filter_mod_latch_new(struct xkb_server_state *state,
-                         struct xkb_events *events,
-                         struct xkb_filter *filter)
+ایستا تهی
+xkb_filter_mod_latch_new(ساختار xkb_server_state *state,
+                         ساختار xkb_events *events,
+                         ساختار xkb_filter *filter)
 {
     /* Latch-on-press + clear-locks imply unlock-on-press */
-    const enum xkb_action_flags unlockOnPress = ACTION_UNLOCK_ON_PRESS
+    ثابت شمارش xkb_action_flags unlockOnPress = ACTION_UNLOCK_ON_PRESS
                                               | ACTION_LATCH_ON_PRESS;
 
-    if ((filter->action.mods.flags & ACTION_LOCK_CLEAR) &&
+    اگر ((filter->action.mods.flags & ACTION_LOCK_CLEAR) &&
         (filter->action.mods.flags & unlockOnPress) &&
         (state->base.components.locked_mods & filter->action.mods.mods.mask) ==
          filter->action.mods.mods.mask) {
@@ -841,8 +841,8 @@ xkb_filter_mod_latch_new(struct xkb_server_state *state,
          * This is a keymap v2 extension: clear locks and do not latch.
          */
         state->base.components.locked_mods &= ~filter->action.mods.mods.mask;
-        filter->func = NULL;
-    } else if (filter->action.mods.flags & ACTION_LATCH_ON_PRESS) {
+        filter->func = پوچ;
+    } وگرنه اگر (filter->action.mods.flags & ACTION_LATCH_ON_PRESS) {
         /*
          * Latch on key press
          *
@@ -851,28 +851,28 @@ xkb_filter_mod_latch_new(struct xkb_server_state *state,
         filter->priv = LATCH_PENDING;
         state->base.components.latched_mods |= filter->action.mods.mods.mask;
         /* XXX beep beep! */
-    } else {
+    } وگرنه {
         /* XKB standard latch action */
-        filter->priv = LATCH_KEY_DOWN;
+        filter->priv = LATCH_کلید_DOWN;
         state->set_mods |= filter->action.mods.mods.mask;
     }
 }
 
-static bool
-xkb_filter_mod_latch_func(struct xkb_server_state *state,
-                          struct xkb_events *events,
-                          struct xkb_filter *filter,
-                          const struct xkb_key *key,
-                          enum xkb_key_direction direction)
+ایستا bool
+xkb_filter_mod_latch_func(ساختار xkb_server_state *state,
+                          ساختار xkb_events *events,
+                          ساختار xkb_filter *filter,
+                          ثابت ساختار xkb_کلید *کلید,
+                          شمارش xkb_کلید_direction direction)
 {
-    enum xkb_key_latch_state latch = filter->priv;
+    شمارش xkb_کلید_latch_state latch = filter->priv;
 
-    if (direction == XKB_KEY_DOWN) {
-        const union xkb_action *actions = NULL;
-        const xkb_action_count_t count = xkb_key_get_actions(&state->base, key,
+    اگر (direction == XKB_کلید_DOWN) {
+        ثابت اجتماع xkb_action *actions = پوچ;
+        ثابت xkb_action_شمار_t شمار = xkb_کلید_get_actions(&state->base, کلید,
                                                              &actions);
 
-        if (latch == LATCH_KEY_DOWN) {
+        اگر (latch == LATCH_کلید_DOWN) {
             /*
              * Another key was pressed while we’ve still got the latching key
              * held down.
@@ -885,7 +885,7 @@ xkb_filter_mod_latch_func(struct xkb_server_state *state,
              * • Prevent the latch to trigger and keep the base modifiers set
              *   by xkb_filter_mod_latch_new(), until the latch key is released.
              */
-            if (state->a11y_flags & XKB_A11Y_LATCH_SIMULTANEOUS_KEYS) {
+            اگر (state->a11y_flags & XKB_A11_Y_LATCH_SIMULTANEOUS_کلیدها) {
                 /*
                  * Prevent the latch to trigger only if some of the pressed
                  * key’s actions breaks latches, mirroring the behavior in the
@@ -893,28 +893,28 @@ xkb_filter_mod_latch_func(struct xkb_server_state *state,
                  *
                  * This is an extension to the X11 XKB protocol.
                  */
-                for (xkb_action_count_t k = 0; k < count; k++) {
-                    if (xkb_action_breaks_latch(&(actions[k]),
+                برای (xkb_action_شمار_t k = 0; k < شمار; k++) {
+                    اگر (xkb_action_breaks_latch(&(actions[k]),
                                                 state->base.components.controls,
                                                 INTERNAL_BREAKS_MOD_LATCH,
                                                 filter->action.mods.mods.mask))
                     {
                         latch = NO_LATCH;
-                        break;
+                        بشکن;
                     }
                 }
-            } else {
+            } وگرنه {
                 /* Unconditionally prevent the latch to trigger. */
                 latch = NO_LATCH;
             }
         }
-        else if (latch == LATCH_PENDING) {
+        وگرنه اگر (latch == LATCH_PENDING) {
             /* If this is a new keypress and we're awaiting our single latched
              * keypress, then either break the latch if any random key is pressed,
              * or promote it to a lock or plain base set if it's the same
              * modifier. */
-            const bool sticky_keys = state->base.components.controls
-                                   & CONTROL_STICKY_KEYS;
+            ثابت bool sticky_کلیدها = state->base.components.controls
+                                   & CONTROL_STICKY_کلیدها;
             /*
              * NOTE: Action’s flags are not compared:
              * - flags may have been modified by keyboard controls at the
@@ -924,31 +924,31 @@ xkb_filter_mod_latch_func(struct xkb_server_state *state,
              * - even if it were the case, one would most likely want both
              *   actions to be considered compatible in this context.
              */
-            for (xkb_action_count_t k = 0; k < count; k++) {
-                if (((actions[k].type == ACTION_TYPE_MOD_LATCH) ||
-                     (actions[k].type == ACTION_TYPE_MOD_SET && sticky_keys)) &&
+            برای (xkb_action_شمار_t k = 0; k < شمار; k++) {
+                اگر (((actions[k].type == ACTION_TYPE_MOD_LATCH) ||
+                     (actions[k].type == ACTION_TYPE_MOD_SET && sticky_کلیدها)) &&
                     actions[k].mods.mods.mask == filter->action.mods.mods.mask)
                 {
-                    if (filter->action.mods.flags & ACTION_LATCH_TO_LOCK) {
+                    اگر (filter->action.mods.flags & ACTION_LATCH_TO_LOCK) {
                         /* Mutate the action to LockMods() */
                         filter->action.type = ACTION_TYPE_MOD_LOCK;
                         filter->func = xkb_filter_mod_lock_func;
                         xkb_filter_mod_lock_new(state, events, filter);
                     }
-                    else {
+                    وگرنه {
                         /* Mutate the action to SetMods() */
                         filter->action.type = ACTION_TYPE_MOD_SET;
                         filter->func = xkb_filter_mod_set_func;
                         xkb_filter_mod_set_new(state, events, filter);
                     }
-                    filter->key = key;
+                    filter->کلید = کلید;
                     /* Clear latches */
                     state->base.components.latched_mods &=
                         ~filter->action.mods.mods.mask;
                     /* XXX beep beep! */
-                    return XKB_FILTER_CONSUME;
+                    بازگشت XKB_FILTER_CONSUME;
                 }
-                else if (xkb_action_breaks_latch(&(actions[k]),
+                وگرنه اگر (xkb_action_breaks_latch(&(actions[k]),
                                                  state->base.components.controls,
                                                  INTERNAL_BREAKS_MOD_LATCH,
                                                  filter->action.mods.mods.mask))
@@ -957,23 +957,23 @@ xkb_filter_mod_latch_func(struct xkb_server_state *state,
                      *      latch in the next run after this press? */
                     state->base.components.latched_mods &=
                         ~filter->action.mods.mods.mask;
-                    filter->func = NULL;
-                    return XKB_FILTER_CONTINUE;
+                    filter->func = پوچ;
+                    بازگشت XKB_FILTER_CONTINUE;
                 }
             }
         }
-        else {
+        وگرنه {
             /* Ignore press in NO_LATCH state */
-            assert(latch == NO_LATCH);
+            أكد(latch == NO_LATCH);
         }
     }
-    else if (key != filter->key) {
+    وگرنه اگر (کلید != filter->کلید) {
         /* Ignore repeat/release of other keys */
     }
-    else if (direction == XKB_KEY_REPEATED) {
-        return XKB_FILTER_CONSUME; // TODO: check
+    وگرنه اگر (direction == XKB_کلید_REPEATED) {
+        بازگشت XKB_FILTER_CONSUME; // TODO: check
     }
-    else {
+    وگرنه {
         /* Our key got released.  If we’ve set it to clear locks, and we
          * currently have the same modifiers locked, then release them and
          * don't actually latch.  Else we’ve actually hit the latching
@@ -981,30 +981,30 @@ xkb_filter_mod_latch_func(struct xkb_server_state *state,
          * latched. */
 
         /* Latch-on-press + clear-locks imply unlock-on-press */
-        const enum xkb_action_flags unlockOnPress = ACTION_UNLOCK_ON_PRESS
+        ثابت شمارش xkb_action_flags unlockOnPress = ACTION_UNLOCK_ON_PRESS
                                                   | ACTION_LATCH_ON_PRESS;
 
-        if ((filter->action.mods.flags & ACTION_LOCK_CLEAR) &&
+        اگر ((filter->action.mods.flags & ACTION_LOCK_CLEAR) &&
             !(filter->action.mods.flags & unlockOnPress) &&
             (state->base.components.locked_mods &
              filter->action.mods.mods.mask) == filter->action.mods.mods.mask)
         {
             /* XXX: We might be a bit overenthusiastic about clearing
              *      mods other filters have set here? */
-            if (latch == LATCH_PENDING)
+            اگر (latch == LATCH_PENDING)
                 state->base.components.latched_mods &=
                     ~filter->action.mods.mods.mask;
-            else
+            وگرنه
                 state->clear_mods |= filter->action.mods.mods.mask;
             state->base.components.locked_mods &= ~filter->action.mods.mods.mask;
-            filter->func = NULL;
+            filter->func = پوچ;
         }
-        else if (latch == NO_LATCH) {
+        وگرنه اگر (latch == NO_LATCH) {
             /* Broken latch */
             state->clear_mods |= filter->action.mods.mods.mask;
-            filter->func = NULL;
+            filter->func = پوچ;
         }
-        else if (!(filter->action.mods.flags & ACTION_LATCH_ON_PRESS)) {
+        وگرنه اگر (!(filter->action.mods.flags & ACTION_LATCH_ON_PRESS)) {
             latch = LATCH_PENDING;
             state->clear_mods |= filter->action.mods.mods.mask;
             state->base.components.latched_mods |= filter->action.mods.mods.mask;
@@ -1014,25 +1014,25 @@ xkb_filter_mod_latch_func(struct xkb_server_state *state,
 
     filter->priv = latch;
 
-    return XKB_FILTER_CONTINUE;
+    بازگشت XKB_FILTER_CONTINUE;
 }
 
-static void
-append_pointer_move(struct xkb_events *events,
-                    struct xkb_filter *filter)
+ایستا تهی
+append_pointer_move(ساختار xkb_events *events,
+                    ساختار xkb_filter *filter)
 {
-    enum xkb_pointer_motion_flags flags = 0;
-    if (filter->action.ptr.flags & ACTION_ABSOLUTE_X)
+    شمارش xkb_pointer_motion_flags flags = 0;
+    اگر (filter->action.ptr.flags & ACTION_ABSOLUTE_X)
         flags |= XKB_POINTER_MOTION_ABSOLUTE_X;
-    if (filter->action.ptr.flags & ACTION_ABSOLUTE_Y)
+    اگر (filter->action.ptr.flags & ACTION_ABSOLUTE_Y)
         flags |= XKB_POINTER_MOTION_ABSOLUTE_Y;
-    if (filter->action.ptr.flags & ACTION_REPEAT)
+    اگر (filter->action.ptr.flags & ACTION_REPEAT)
         flags |= XKB_POINTER_MOTION_REPEATS;
-    darray_append(events->queue, (struct xkb_event) {
+    darray_append(events->queue, (ساختار xkb_event) {
         .ctx = events->ctx, /* borrowed from events */
         .type = XKB_EVENT_TYPE_POINTER_MOTION,
         .pointer_motion = {
-            .size = sizeof(((struct xkb_event*)0)->pointer_motion),
+            .size = اندازه(((ساختار xkb_event*)0)->pointer_motion),
             .flags = flags,
             .x = filter->action.ptr.x,
             .y = filter->action.ptr.y,
@@ -1040,221 +1040,221 @@ append_pointer_move(struct xkb_events *events,
     });
 }
 
-static void
-xkb_filter_pointer_move_new(struct xkb_server_state *state,
-                            struct xkb_events *events,
-                            struct xkb_filter *filter)
+ایستا تهی
+xkb_filter_pointer_move_new(ساختار xkb_server_state *state,
+                            ساختار xkb_events *events,
+                            ساختار xkb_filter *filter)
 {
-    if (!events) {
-        filter->func = NULL;
-        return;
+    اگر (!events) {
+        filter->func = پوچ;
+        بازگشت;
     }
 
-    assert(state->base.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_KEYS);
+    أكد(state->base.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_کلیدها);
     append_pointer_move(events, filter);
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_کلید_EVENT;
 }
 
-static bool
-xkb_filter_pointer_move_func(struct xkb_server_state *state,
-                             struct xkb_events *events,
-                             struct xkb_filter *filter,
-                             const struct xkb_key *key,
-                             enum xkb_key_direction direction)
+ایستا bool
+xkb_filter_pointer_move_func(ساختار xkb_server_state *state,
+                             ساختار xkb_events *events,
+                             ساختار xkb_filter *filter,
+                             ثابت ساختار xkb_کلید *کلید,
+                             شمارش xkb_کلید_direction direction)
 {
-    if (key != filter->key || !events)
-        return XKB_FILTER_CONTINUE;
+    اگر (کلید != filter->کلید || !events)
+        بازگشت XKB_FILTER_CONTINUE;
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_کلید_EVENT;
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    انتخاب (direction) {
+    حالت XKB_کلید_DOWN:
         filter->refcnt++;
         append_pointer_move(events, filter);
-        return XKB_FILTER_CONSUME;
-    case XKB_KEY_REPEATED:
-        if (filter->action.ptr.flags & ACTION_REPEAT)
+        بازگشت XKB_FILTER_CONSUME;
+    حالت XKB_کلید_REPEATED:
+        اگر (filter->action.ptr.flags & ACTION_REPEAT)
             append_pointer_move(events, filter);
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+        بازگشت XKB_FILTER_CONSUME;
+    پیشفرض:
+        اگر (--filter->refcnt > 0)
+            بازگشت XKB_FILTER_CONSUME;
     }
 
-    filter->func = NULL;
-    return XKB_FILTER_CONSUME;
+    filter->func = پوچ;
+    بازگشت XKB_FILTER_CONSUME;
 }
 
 /* Implemented with xkb_machine API because it requires struct xkb_machine */
-static void
-xkb_filter_pointer_button_new(struct xkb_server_state *state,
-                              struct xkb_events *events,
-                              struct xkb_filter *filter);
+ایستا تهی
+xkb_filter_pointer_button_new(ساختار xkb_server_state *state,
+                              ساختار xkb_events *events,
+                              ساختار xkb_filter *filter);
 
 /* Implemented with xkb_machine API because it requires struct xkb_machine */
-static bool
-xkb_filter_pointer_button_func(struct xkb_server_state *state,
-                               struct xkb_events *events,
-                               struct xkb_filter *filter,
-                               const struct xkb_key *key,
-                               enum xkb_key_direction direction);
+ایستا bool
+xkb_filter_pointer_button_func(ساختار xkb_server_state *state,
+                               ساختار xkb_events *events,
+                               ساختار xkb_filter *filter,
+                               ثابت ساختار xkb_کلید *کلید,
+                               شمارش xkb_کلید_direction direction);
 
 /* Implemented with xkb_machine API because it requires struct xkb_machine */
-static void
-xkb_filter_pointer_lock_button_new(struct xkb_server_state *state,
-                                   struct xkb_events *events,
-                                   struct xkb_filter *filter);
+ایستا تهی
+xkb_filter_pointer_lock_button_new(ساختار xkb_server_state *state,
+                                   ساختار xkb_events *events,
+                                   ساختار xkb_filter *filter);
 
 /* Implemented with xkb_machine API because it requires struct xkb_machine */
-static bool
-xkb_filter_pointer_lock_button_func(struct xkb_server_state *state,
-                                    struct xkb_events *events,
-                                    struct xkb_filter *filter,
-                                    const struct xkb_key *key,
-                                    enum xkb_key_direction direction);
+ایستا bool
+xkb_filter_pointer_lock_button_func(ساختار xkb_server_state *state,
+                                    ساختار xkb_events *events,
+                                    ساختار xkb_filter *filter,
+                                    ثابت ساختار xkb_کلید *کلید,
+                                    شمارش xkb_کلید_direction direction);
 
 /* Implemented with xkb_machine API because it requires struct xkb_machine */
-static void
-xkb_filter_pointer_set_default_button_new(struct xkb_server_state *state,
-                                          struct xkb_events *events,
-                                          struct xkb_filter *filter);
+ایستا تهی
+xkb_filter_pointer_set_default_button_new(ساختار xkb_server_state *state,
+                                          ساختار xkb_events *events,
+                                          ساختار xkb_filter *filter);
 
 /* Implemented with xkb_machine API because it requires struct xkb_machine */
-static bool
-xkb_filter_pointer_set_default_button_func(struct xkb_server_state *state,
-                                           struct xkb_events *events,
-                                           struct xkb_filter *filter,
-                                           const struct xkb_key *key,
-                                           enum xkb_key_direction direction);
+ایستا bool
+xkb_filter_pointer_set_default_button_func(ساختار xkb_server_state *state,
+                                           ساختار xkb_events *events,
+                                           ساختار xkb_filter *filter,
+                                           ثابت ساختار xkb_کلید *کلید,
+                                           شمارش xkb_کلید_direction direction);
 
-static void
-xkb_filter_terminate_server_new(struct xkb_server_state *state,
-                                 struct xkb_events *events,
-                                 struct xkb_filter *filter);
+ایستا تهی
+xkb_filter_terminate_server_new(ساختار xkb_server_state *state,
+                                 ساختار xkb_events *events,
+                                 ساختار xkb_filter *filter);
 
-static bool
-xkb_filter_terminate_server_func(struct xkb_server_state *state,
-                                  struct xkb_events *events,
-                                  struct xkb_filter *filter,
-                                  const struct xkb_key *key,
-                                  enum xkb_key_direction direction);
-
-/* Implemented with xkb_machine API because it requires struct xkb_machine */
-static void
-xkb_filter_switch_virtual_console_new(struct xkb_server_state *state,
-                                      struct xkb_events *events,
-                                      struct xkb_filter *filter);
+ایستا bool
+xkb_filter_terminate_server_func(ساختار xkb_server_state *state,
+                                  ساختار xkb_events *events,
+                                  ساختار xkb_filter *filter,
+                                  ثابت ساختار xkb_کلید *کلید,
+                                  شمارش xkb_کلید_direction direction);
 
 /* Implemented with xkb_machine API because it requires struct xkb_machine */
-static bool
-xkb_filter_switch_virtual_console_func(struct xkb_server_state *state,
-                                       struct xkb_events *events,
-                                       struct xkb_filter *filter,
-                                       const struct xkb_key *key,
-                                       enum xkb_key_direction direction);
+ایستا تهی
+xkb_filter_switch_virtual_console_new(ساختار xkb_server_state *state,
+                                      ساختار xkb_events *events,
+                                      ساختار xkb_filter *filter);
 
-static inline void
-clear_all_latches_and_locks(struct xkb_server_state *state,
-                            struct xkb_events *events);
+/* Implemented with xkb_machine API because it requires struct xkb_machine */
+ایستا bool
+xkb_filter_switch_virtual_console_func(ساختار xkb_server_state *state,
+                                       ساختار xkb_events *events,
+                                       ساختار xkb_filter *filter,
+                                       ثابت ساختار xkb_کلید *کلید,
+                                       شمارش xkb_کلید_direction direction);
 
-static void
-xkb_filter_ctrls_new(struct xkb_server_state *state,
-                     struct xkb_events *events,
-                     struct xkb_filter *filter)
+ایستا درونخطی تهی
+clear_all_latches_and_locks(ساختار xkb_server_state *state,
+                            ساختار xkb_events *events);
+
+ایستا تهی
+xkb_filter_ctrls_new(ساختار xkb_server_state *state,
+                     ساختار xkb_events *events,
+                     ساختار xkb_filter *filter)
 {
-    if (filter->action.type == ACTION_TYPE_CTRL_SET) {
+    اگر (filter->action.type == ACTION_TYPE_CTRL_SET) {
         /* Set: save the specified controls that are *not* already enabled */
         filter->priv = (uint32_t) (
             (~state->base.components.controls) & filter->action.ctrls.ctrls
         );
-    } else {
+    } وگرنه {
         /* Lock: save the specified controls that *are* already enabled */
         filter->priv = (uint32_t) (
             state->base.components.controls & filter->action.ctrls.ctrls
         );
     }
 
-    if (filter->action.type == ACTION_TYPE_CTRL_SET ||
+    اگر (filter->action.type == ACTION_TYPE_CTRL_SET ||
         !(filter->action.ctrls.flags & ACTION_LOCK_NO_LOCK)) {
         /* Enable the specified controls that are not already enabled */
         state->base.components.controls |= filter->action.ctrls.ctrls;
     }
 }
 
-static bool
-xkb_filter_ctrls_func(struct xkb_server_state *state,
-                      struct xkb_events *events,
-                      struct xkb_filter *filter,
-                      const struct xkb_key *key,
-                      enum xkb_key_direction direction)
+ایستا bool
+xkb_filter_ctrls_func(ساختار xkb_server_state *state,
+                      ساختار xkb_events *events,
+                      ساختار xkb_filter *filter,
+                      ثابت ساختار xkb_کلید *کلید,
+                      شمارش xkb_کلید_direction direction)
 {
-    if (key != filter->key)
-        return XKB_FILTER_CONTINUE;
+    اگر (کلید != filter->کلید)
+        بازگشت XKB_FILTER_CONTINUE;
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    انتخاب (direction) {
+    حالت XKB_کلید_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    حالت XKB_کلید_REPEATED:
+        بازگشت XKB_FILTER_CONSUME;
+    پیشفرض:
+        اگر (--filter->refcnt > 0)
+            بازگشت XKB_FILTER_CONSUME;
     }
 
-    if (filter->action.type == ACTION_TYPE_CTRL_SET ||
+    اگر (filter->action.type == ACTION_TYPE_CTRL_SET ||
         !(filter->action.ctrls.flags & ACTION_LOCK_NO_UNLOCK)) {
-        const enum xkb_action_controls old = state->base.components.controls;
+        ثابت شمارش xkb_action_controls old = state->base.components.controls;
 
         /*
          * Set: Disable specified controls that were *not* enabled at key press.
          * Lock: Disable specified controls that *were* enabled at key press.
          */
-        state->base.components.controls &= ~(enum xkb_action_controls) filter->priv;
+        state->base.components.controls &= ~(شمارش xkb_action_controls) filter->priv;
 
-        if ((old & CONTROL_STICKY_KEYS) &&
-            !(state->base.components.controls & CONTROL_STICKY_KEYS)) {
+        اگر ((old & CONTROL_STICKY_کلیدها) &&
+            !(state->base.components.controls & CONTROL_STICKY_کلیدها)) {
             /* Sticky keys were disabled: clear all locks and latches */
             clear_all_latches_and_locks(state, events);
         }
     }
 
-    filter->func = NULL;
-    return XKB_FILTER_CONTINUE;
+    filter->func = پوچ;
+    بازگشت XKB_FILTER_CONTINUE;
 }
 
-static bool
-append_redirect_key_events(struct xkb_server_state *state,
-                           struct xkb_events *events,
-                           const struct xkb_redirect_key_action *redirect,
-                           enum xkb_key_direction direction)
+ایستا bool
+append_redirect_کلید_events(ساختار xkb_server_state *state,
+                           ساختار xkb_events *events,
+                           ثابت ساختار xkb_redirect_کلید_action *redirect,
+                           شمارش xkb_کلید_direction direction)
 {
-    enum xkb_state_component changed = 0;
-    const xkb_mod_mask_t mask = redirect->affect_mods;
+    شمارش xkb_state_component changed = 0;
+    ثابت xkb_mod_mask_t mask = redirect->affect_mods;
 
     /*
      * Reference state: find the last state update in the queue, otherwise
      * use the current state.
      */
-    struct xkb_event *event;
-    struct state_components last_components = state->base.components;
+    ساختار xkb_event *event;
+    ساختار state_components last_components = state->base.components;
     darray_foreach_reverse(event, events->queue) {
-        if (event->type == XKB_EVENT_TYPE_STATE_COMPONENTS) {
+        اگر (event->type == XKB_EVENT_TYPE_STATE_COMPONENTS) {
             last_components = event->components.components;
-            break;
+            بشکن;
         }
     }
 
-    if (mask) {
-        struct state_components new = last_components;
+    اگر (mask) {
+        ساختار state_components new = last_components;
         new.base_mods = (new.base_mods & ~mask) | redirect->mods;
         new.latched_mods = (new.latched_mods & ~mask) | redirect->mods;
         new.locked_mods = (new.locked_mods & ~mask) | redirect->mods;
         new.mods = (new.mods & ~mask) | redirect->mods;
 
         changed = get_state_component_changes(&last_components, &new);
-        if (changed) {
-            darray_append(events->queue, (struct xkb_event) {
+        اگر (changed) {
+            darray_append(events->queue, (ساختار xkb_event) {
                 .ctx = events->ctx, /* borrowed from events */
                 .type = XKB_EVENT_TYPE_STATE_COMPONENTS,
                 .components = {
@@ -1267,25 +1267,25 @@ append_redirect_key_events(struct xkb_server_state *state,
              * it was computed for: consumers must observe the key event
              * under the *redirected* modifiers.
              */
-            darray_append(events->queue, (struct xkb_event) {
+            darray_append(events->queue, (ساختار xkb_event) {
                 .ctx = events->ctx, /* borrowed from events */
                 .type = XKB_EVENT_TYPE_FRAME,
             });
         }
     }
 
-    darray_append(events->queue, (struct xkb_event) {
+    darray_append(events->queue, (ساختار xkb_event) {
         .ctx = events->ctx, /* borrowed from events */
-        .type = XKB_EVENT_TYPE_KEY,
-        .key = {
+        .type = XKB_EVENT_TYPE_کلید,
+        .کلید = {
             .keycode = redirect->keycode,
             .direction = direction
         }
     });
 
-    if (mask && changed) {
+    اگر (mask && changed) {
         /* Restore state */
-        darray_append(events->queue, (struct xkb_event) {
+        darray_append(events->queue, (ساختار xkb_event) {
             .ctx = events->ctx, /* borrowed from events */
             .type = XKB_EVENT_TYPE_STATE_COMPONENTS,
             .components = {
@@ -1295,71 +1295,71 @@ append_redirect_key_events(struct xkb_server_state *state,
         });
     }
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
-    return true;
+    state->flags &= ~STATE_REQUIRE_کلید_EVENT;
+    بازگشت true;
 }
 
-static void
-xkb_filter_redirect_key_new(struct xkb_server_state *state,
-                            struct xkb_events *events,
-                            struct xkb_filter *filter)
+ایستا تهی
+xkb_filter_redirect_کلید_new(ساختار xkb_server_state *state,
+                            ساختار xkb_events *events,
+                            ساختار xkb_filter *filter)
 {
     /* Action effectual only with the xkb_machine API and a valid keycode */
-    if (!events || filter->action.redirect.keycode == XKB_KEYCODE_INVALID) {
-        filter->func = NULL;
-        return;
+    اگر (!events || filter->action.redirect.keycode == XKB_KEYCODE_INVALID) {
+        filter->func = پوچ;
+        بازگشت;
     }
-    append_redirect_key_events(state, events, &filter->action.redirect,
-                               XKB_KEY_DOWN);
+    append_redirect_کلید_events(state, events, &filter->action.redirect,
+                               XKB_کلید_DOWN);
 }
 
-static bool
-xkb_filter_redirect_key_func(struct xkb_server_state *state,
-                             struct xkb_events *events,
-                             struct xkb_filter *filter,
-                             const struct xkb_key *key,
-                             enum xkb_key_direction direction)
+ایستا bool
+xkb_filter_redirect_کلید_func(ساختار xkb_server_state *state,
+                             ساختار xkb_events *events,
+                             ساختار xkb_filter *filter,
+                             ثابت ساختار xkb_کلید *کلید,
+                             شمارش xkb_کلید_direction direction)
 {
-    if (key != filter->key)
-        return XKB_FILTER_CONTINUE;
+    اگر (کلید != filter->کلید)
+        بازگشت XKB_FILTER_CONTINUE;
 
-    if (direction == XKB_KEY_UP) {
-        append_redirect_key_events(state, events,
-                                   &filter->action.redirect, XKB_KEY_UP);
-        filter->func = NULL;
-        return XKB_FILTER_CONSUME;
-     } else if (direction == XKB_KEY_DOWN) {
-        const union xkb_action *actions = NULL;
-        const xkb_action_count_t count =
-            xkb_key_get_actions(&state->base, key, &actions);
+    اگر (direction == XKB_کلید_UP) {
+        append_redirect_کلید_events(state, events,
+                                   &filter->action.redirect, XKB_کلید_UP);
+        filter->func = پوچ;
+        بازگشت XKB_FILTER_CONSUME;
+     } وگرنه اگر (direction == XKB_کلید_DOWN) {
+        ثابت اجتماع xkb_action *actions = پوچ;
+        ثابت xkb_action_شمار_t شمار =
+            xkb_کلید_get_actions(&state->base, کلید, &actions);
 
-        for (xkb_action_count_t a = 0; a < count; a++) {
-            if (actions[a].type == ACTION_TYPE_REDIRECT_KEY &&
+        برای (xkb_action_شمار_t a = 0; a < شمار; a++) {
+            اگر (actions[a].type == ACTION_TYPE_REDIRECT_کلید &&
                 actions[a].redirect.keycode != filter->action.redirect.keycode) {
                     /* One action redirects to a different key: release first */
-                    append_redirect_key_events(state, events,
+                    append_redirect_کلید_events(state, events,
                                                &filter->action.redirect,
-                                               XKB_KEY_UP);
-                filter->func = NULL;
-                return XKB_FILTER_CONTINUE;
+                                               XKB_کلید_UP);
+                filter->func = پوچ;
+                بازگشت XKB_FILTER_CONTINUE;
             }
         }
     }
 
-    append_redirect_key_events(state, events, &filter->action.redirect,
+    append_redirect_کلید_events(state, events, &filter->action.redirect,
                                direction);
-    return XKB_FILTER_CONSUME;
+    بازگشت XKB_FILTER_CONSUME;
 }
 
-static const struct {
-    void (*new)(struct xkb_server_state *state,
-                struct xkb_events *events,
-                struct xkb_filter *filter);
-    bool (*func)(struct xkb_server_state *state,
-                 struct xkb_events *events,
-                 struct xkb_filter *filter,
-                 const struct xkb_key *key, enum xkb_key_direction direction);
-} filter_action_funcs[_ACTION_TYPE_NUM_ENTRIES] = {
+ایستا ثابت ساختار {
+    تهی (*new)(ساختار xkb_server_state *state,
+                ساختار xkb_events *events,
+                ساختار xkb_filter *filter);
+    bool (*func)(ساختار xkb_server_state *state,
+                 ساختار xkb_events *events,
+                 ساختار xkb_filter *filter,
+                 ثابت ساختار xkb_کلید *کلید, شمارش xkb_کلید_direction direction);
+} filter_action_funcs[ACTION_TYPE_رقم_ENTRIES] = {
     [ACTION_TYPE_MOD_SET]     = { xkb_filter_mod_set_new,
                                   xkb_filter_mod_set_func },
     [ACTION_TYPE_MOD_LATCH]   = { xkb_filter_mod_latch_new,
@@ -1388,8 +1388,8 @@ static const struct {
                                   xkb_filter_ctrls_func },
     [ACTION_TYPE_CTRL_LOCK]   = { xkb_filter_ctrls_new,
                                   xkb_filter_ctrls_func },
-    [ACTION_TYPE_REDIRECT_KEY] = { xkb_filter_redirect_key_new,
-                                   xkb_filter_redirect_key_func },
+    [ACTION_TYPE_REDIRECT_کلید] = { xkb_filter_redirect_کلید_new,
+                                   xkb_filter_redirect_کلید_func },
 };
 
 /**
@@ -1397,37 +1397,37 @@ static const struct {
  * that are currently active, then if no filter has claimed the key, possibly
  * apply a new filter from the key action.
  */
-static void
-xkb_filter_apply_all(struct xkb_server_state *state,
-                     struct xkb_events *events,
-                     const struct xkb_key *key,
-                     enum xkb_key_direction direction)
+ایستا تهی
+xkb_filter_apply_all(ساختار xkb_server_state *state,
+                     ساختار xkb_events *events,
+                     ثابت ساختار xkb_کلید *کلید,
+                     شمارش xkb_کلید_direction direction)
 {
     /* First run through all the currently active filters and see if any of
      * them have consumed this event. */
     bool consumed = false;
-    struct xkb_filter *filter;
+    ساختار xkb_filter *filter;
     darray_foreach(filter, state->filters) {
-        if (!filter->func)
-            continue;
+        اگر (!filter->func)
+            ادامه;
 
-        if (filter->func(state, events, filter, key, direction) == XKB_FILTER_CONSUME)
+        اگر (filter->func(state, events, filter, کلید, direction) == XKB_FILTER_CONSUME)
             consumed = true;
     }
-    if (consumed || direction == XKB_KEY_UP)
-        return;
+    اگر (consumed || direction == XKB_کلید_UP)
+        بازگشت;
 
     /* No filter consumed this event, so proceed with the key actions */
-    const union xkb_action *actions = NULL;
-    xkb_action_count_t count = xkb_key_get_actions(&state->base, key,
+    ثابت اجتماع xkb_action *actions = پوچ;
+    xkb_action_شمار_t شمار = xkb_کلید_get_actions(&state->base, کلید,
                                                          &actions);
 
-    for (struct {
-            xkb_action_count_t count;
-            const union xkb_action *actions;
+    برای (ساختار {
+            xkb_action_شمار_t شمار;
+            ثابت اجتماع xkb_action *actions;
          } next = {0};
-         count;
-         count = next.count, next.count = 0, actions = next.actions
+         شمار;
+         شمار = next.شمار, next.شمار = 0, actions = next.actions
     ) {
         /*
          * Process actions sequentially.
@@ -1436,7 +1436,7 @@ xkb_filter_apply_all(struct xkb_server_state *state,
          * actions (see `CheckMultipleActionsCategories`). Allowing multiple
          * such actions requires a refactor of the state handling.
          */
-        for (xkb_action_count_t k = 0; k < count; k++) {
+        برای (xkb_action_شمار_t k = 0; k < شمار; k++) {
             /*
              * It's possible for the keymap to set action->type explicitly, like
              * so:
@@ -1445,35 +1445,35 @@ xkb_filter_apply_all(struct xkb_server_state *state,
              *     };
              * We don't handle those.
              */
-            if (actions[k].type >= _ACTION_TYPE_NUM_ENTRIES)
-                continue;
+            اگر (actions[k].type >= ACTION_TYPE_رقم_ENTRIES)
+                ادامه;
 
             /* Go to next action if no corresponding action handler */
-            if (!filter_action_funcs[actions[k].type].new)
-                continue;
+            اگر (!filter_action_funcs[actions[k].type].new)
+                ادامه;
 
             /* Add a new filter and run the corresponding initial action */
             filter = xkb_filter_new(state);
-            filter->key = key;
+            filter->کلید = کلید;
             filter->action = actions[k];
 
-            switch (filter->action.type) {
-            case ACTION_TYPE_MOD_SET:
-                if (state->base.components.controls & CONTROL_STICKY_KEYS) {
+            انتخاب (filter->action.type) {
+            حالت ACTION_TYPE_MOD_SET:
+                اگر (state->base.components.controls & CONTROL_STICKY_کلیدها) {
                     /* Convert modifier set action to a latch */
                     filter->action.type = ACTION_TYPE_MOD_LATCH;
-                    if (state->a11y_flags & XKB_A11Y_STICKY_KEYS_LATCH_TO_LOCK) {
+                    اگر (state->a11y_flags & XKB_A11_Y_STICKY_کلیدها_LATCH_TO_LOCK) {
                         filter->action.mods.flags |= ACTION_LATCH_TO_LOCK;
                     }
                 }
                 /* fallthrough */
-            case ACTION_TYPE_MOD_LATCH:
-            case ACTION_TYPE_MOD_LOCK: {
-                static const enum xkb_action_flags unlock_mods_on_press
+            حالت ACTION_TYPE_MOD_LATCH:
+            حالت ACTION_TYPE_MOD_LOCK: {
+                ایستا ثابت شمارش xkb_action_flags unlock_mods_on_press
                     = ACTION_LOCK_CLEAR     /* SetMods & LatchMods: can unlock */
                     | ACTION_LOCK_NO_UNLOCK /* LockMods: cannot unlock */
                     | ACTION_EXPLICIT_UNLOCK_ON_PRESS;
-                if ((state->flags & STATE_UNLOCK_MODS_ON_PRESS) &&
+                اگر ((state->flags & STATE_UNLOCK_MODS_ON_PRESS) &&
                     /*
                      * Ensure that the action can actually unlock and has
                      * no *explicit* `unlockOnPress` parameter.
@@ -1484,49 +1484,49 @@ xkb_filter_apply_all(struct xkb_server_state *state,
                 {
                     filter->action.mods.flags |= ACTION_UNLOCK_ON_PRESS;
                 }
-                break;
+                بشکن;
             }
-            case ACTION_TYPE_GROUP_SET:
-                if (state->base.components.controls & CONTROL_STICKY_KEYS) {
+            حالت ACTION_TYPE_GROUP_SET:
+                اگر (state->base.components.controls & CONTROL_STICKY_کلیدها) {
                     /* Convert group set action to a latch */
                     filter->action.type = ACTION_TYPE_GROUP_LATCH;
-                    if (state->a11y_flags & XKB_A11Y_STICKY_KEYS_LATCH_TO_LOCK) {
+                    اگر (state->a11y_flags & XKB_A11_Y_STICKY_کلیدها_LATCH_TO_LOCK) {
                         filter->action.group.flags |= ACTION_LATCH_TO_LOCK;
                     }
                 }
-                break;
-            case ACTION_TYPE_GROUP_LOCK:
-                if ((filter->action.group.flags &
+                بشکن;
+            حالت ACTION_TYPE_GROUP_LOCK:
+                اگر ((filter->action.group.flags &
                      ACTION_AUTO_GROUP_LOCK_ON_MODIFIER_RELEASE) &&
                     (state->flags &
-                     STATE_FIX_LAYOUT_SWITCH_ON_MODIFIER_KEY) &&
+                     STATE_FIX_LAYOUT_SWITCH_ON_MODIFIER_کلید) &&
                     /*
                      * FIXME: sticky keys may leave an unexpected modifier
                      * from the level 0 latched, so disable for now.
                      */
-                    !(state->base.components.controls & CONTROL_STICKY_KEYS))
+                    !(state->base.components.controls & CONTROL_STICKY_کلیدها))
                 {
                     filter->action.group.flags |= ACTION_LOCK_ON_RELEASE;
                     /* Add base level action */
-                    next.count = xkb_keymap_key_get_actions_by_level(
-                        state->base.keymap, key, state->base.components.group,
+                    next.شمار = xkb_keymap_کلید_get_actions_by_level(
+                        state->base.keymap, کلید, state->base.components.group,
                         0, &next.actions
                     );
-                    assert(next.count == 1);
+                    أكد(next.شمار == 1);
                 }
-                break;
-            case ACTION_TYPE_PTR_MOVE:
-            case ACTION_TYPE_PTR_BUTTON:
-            case ACTION_TYPE_PTR_LOCK:
-            case ACTION_TYPE_PTR_DEFAULT:
-                if (!(state->base.components.controls & CONTROL_MOUSE_KEYS)) {
+                بشکن;
+            حالت ACTION_TYPE_PTR_MOVE:
+            حالت ACTION_TYPE_PTR_BUTTON:
+            حالت ACTION_TYPE_PTR_LOCK:
+            حالت ACTION_TYPE_PTR_DEFAULT:
+                اگر (!(state->base.components.controls & CONTROL_MOUSE_کلیدها)) {
                     /* Convert pointer actions to NoAction */
-                    assert(!filter_action_funcs[ACTION_TYPE_NONE].new);
-                    filter->func = NULL;
-                    continue;
+                    أكد(!filter_action_funcs[ACTION_TYPE_NONE].new);
+                    filter->func = پوچ;
+                    ادامه;
                 }
-                break;
-            case ACTION_TYPE_REDIRECT_KEY:
+                بشکن;
+            حالت ACTION_TYPE_REDIRECT_کلید:
                 // FIXME: this is not efficient to resolve mods here each time
                 filter->action.redirect.affect_mods = mod_mask_get_effective(
                     state->base.keymap, filter->action.redirect.affect_mods
@@ -1534,8 +1534,8 @@ xkb_filter_apply_all(struct xkb_server_state *state,
                 filter->action.redirect.mods = mod_mask_get_effective(
                     state->base.keymap, filter->action.redirect.mods
                 );
-                break;
-            default: ;
+                بشکن;
+            پیشفرض: ;
             }
             filter->func = filter_action_funcs[filter->action.type].func;
             filter_action_funcs[filter->action.type].new(state, events, filter);
@@ -1543,13 +1543,13 @@ xkb_filter_apply_all(struct xkb_server_state *state,
     }
 }
 
-static void
-xkb_state_update_derived(struct xkb_state *state);
+ایستا تهی
+xkb_state_update_derived(ساختار xkb_state *state);
 
-static inline void
-xkb_state_init(struct xkb_state * restrict state,
-               struct xkb_keymap * restrict keymap,
-               enum xkb_state_mode_internal mode)
+ایستا درونخطی تهی
+xkb_state_init(ساختار xkb_state * restrict state,
+               ساختار xkb_keymap * restrict keymap,
+               شمارش xkb_state_mode_internal mode)
 {
     state->mode = mode;
     state->refcnt = 1;
@@ -1560,117 +1560,117 @@ xkb_state_init(struct xkb_state * restrict state,
     xkb_state_update_derived(state);
 }
 
-static inline void
-xkb_client_state_init(struct xkb_client_state * restrict state,
-                      struct xkb_keymap * restrict keymap,
-                      enum xkb_state_mode_internal mode)
+ایستا درونخطی تهی
+xkb_client_state_init(ساختار xkb_client_state * restrict state,
+                      ساختار xkb_keymap * restrict keymap,
+                      شمارش xkb_state_mode_internal mode)
 {
     xkb_state_init(&state->base, keymap, mode);
 }
 
-static inline void
-xkb_server_state_init(struct xkb_server_state * restrict state,
-                      struct xkb_keymap * restrict keymap,
-                      enum xkb_state_mode_internal mode,
-                      enum xkb_a11y_flags a11y_affect,
-                      enum xkb_a11y_flags a11y_flags)
+ایستا درونخطی تهی
+xkb_server_state_init(ساختار xkb_server_state * restrict state,
+                      ساختار xkb_keymap * restrict keymap,
+                      شمارش xkb_state_mode_internal mode,
+                      شمارش xkb_a11y_flags a11y_affect,
+                      شمارش xkb_a11y_flags a11y_flags)
 {
     xkb_state_init(&state->base, keymap, mode);
 
     state->a11y_flags = a11y_flags;
-    if (keymap->format != XKB_KEYMAP_FORMAT_TEXT_V1 &&
-        !(a11y_affect & XKB_A11Y_LATCH_SIMULTANEOUS_KEYS)) {
+    اگر (keymap->format != XKB_KEYMAP_FORMAT_TEXT_V1 &&
+        !(a11y_affect & XKB_A11_Y_LATCH_SIMULTANEOUS_کلیدها)) {
              /* Keymap v2+: enable extension to XKB if not manually disabled */
-             state->a11y_flags |= XKB_A11Y_LATCH_SIMULTANEOUS_KEYS;
+             state->a11y_flags |= XKB_A11_Y_LATCH_SIMULTANEOUS_کلیدها;
     }
 }
 
-struct xkb_state *
-xkb_state_new(struct xkb_keymap *keymap)
+ساختار xkb_state *
+xkb_state_new(ساختار xkb_keymap *keymap)
 {
-    struct xkb_server_state * const state = calloc(1, sizeof(*state));
-    if (!state) {
+    ساختار xkb_server_state * ثابت state = calloc(1, اندازه(*state));
+    اگر (!state) {
         log_err_func1(keymap->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
                       "Could not allocate a state object.\n");
-        return NULL;
+        بازگشت پوچ;
     }
 
     xkb_server_state_init(state, keymap, LEGACY_MIXED_STATE, 0, 0);
 
-    return (struct xkb_state *)state;
+    بازگشت (ساختار xkb_state *)state;
 }
 
-struct xkb_state *
-xkb_state_new_with_mode(struct xkb_keymap * restrict keymap,
-                        enum xkb_state_mode mode,
-                        enum xkb_status * restrict status)
+ساختار xkb_state *
+xkb_state_new_with_mode(ساختار xkb_keymap * restrict keymap,
+                        شمارش xkb_state_mode mode,
+                        شمارش xkb_status * restrict status)
 {
-    switch (mode) {
-    case XKB_STATE_MODE_CLIENT:
-    case XKB_STATE_MODE_SERVER_QUERY: {
-        struct xkb_client_state * const state = calloc(1, sizeof(*state));
-        if (!state)
-            break;
+    انتخاب (mode) {
+    حالت XKB_STATE_MODE_CLIENT:
+    حالت XKB_STATE_MODE_SERVER_QUERY: {
+        ساختار xkb_client_state * ثابت state = calloc(1, اندازه(*state));
+        اگر (!state)
+            بشکن;
 
         static_assert((unsigned)XKB_STATE_MODE_CLIENT ==
                       (unsigned)CLIENT_STATE, "");
         static_assert((unsigned)XKB_STATE_MODE_SERVER_QUERY ==
                       (unsigned)SERVER_COMPANION, "");
-        xkb_client_state_init(state, keymap, (enum xkb_state_mode_internal)mode);
+        xkb_client_state_init(state, keymap, (شمارش xkb_state_mode_internal)mode);
 
-        if (status)
+        اگر (status)
             *status = XKB_SUCCESS;
 
-        return (struct xkb_state *)state;
+        بازگشت (ساختار xkb_state *)state;
     }
-    case XKB_STATE_MODE_SERVER: {
-        struct xkb_server_state * const state = calloc(1, sizeof(*state));
-        if (!state)
-            break;
+    حالت XKB_STATE_MODE_SERVER: {
+        ساختار xkb_server_state * ثابت state = calloc(1, اندازه(*state));
+        اگر (!state)
+            بشکن;
 
         xkb_server_state_init(state, keymap, LEGACY_SERVER_STATE, 0, 0);
 
-        if (status)
+        اگر (status)
             *status = XKB_SUCCESS;
 
-        return (struct xkb_state *)state;
+        بازگشت (ساختار xkb_state *)state;
     }
-    default:
+    پیشفرض:
         log_err_func(keymap->ctx, XKB_ERROR_UNSUPPORTED_STATE_MODE_,
                      "Unsupported state mode: %u\n", mode);
-        if (status)
+        اگر (status)
             *status = XKB_ERROR_UNSUPPORTED_STATE_MODE;
-        return NULL;
+        بازگشت پوچ;
     }
 
     log_err_func1(keymap->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
                   "Could not allocate a state object.\n");
-    if (status)
+    اگر (status)
         *status = XKB_ERROR_ALLOCATION_FAILURE;
-    return NULL;
+    بازگشت پوچ;
 }
 
-struct xkb_state *
-xkb_state_ref(struct xkb_state *state)
+ساختار xkb_state *
+xkb_state_ref(ساختار xkb_state *state)
 {
-    assert(state->refcnt > 0);
+    أكد(state->refcnt > 0);
     state->refcnt++;
-    return state;
+    بازگشت state;
 }
 
-void
-xkb_state_reset(struct xkb_state *state)
+تهی
+xkb_state_reset(ساختار xkb_state *state)
 {
-    memset(&state->components, 0, sizeof(state->components));
+    memset(&state->components, 0, اندازه(state->components));
 
-    if (state->mode < LEGACY_MIXED_STATE) {
-        static_assert(sizeof(*state) == sizeof(struct xkb_client_state),
+    اگر (state->mode < LEGACY_MIXED_STATE) {
+        static_assert(اندازه(*state) == اندازه(ساختار xkb_client_state),
                       "Not a mere wrapper");
         /* Nothing else to reset */
-    } else {
-        struct xkb_server_state *state_ = (struct xkb_server_state *)state;
-        const struct xkb_server_state prev = *state_;
-        memset(state_, 0, sizeof(*state_));
+    } وگرنه {
+        ساختار xkb_server_state *state_ = (ساختار xkb_server_state *)state;
+        ثابت ساختار xkb_server_state prev = *state_;
+        memset(state_, 0, اندازه(*state_));
 
         state_->base = prev.base;
         state_->a11y_flags = prev.a11y_flags;
@@ -1679,113 +1679,113 @@ xkb_state_reset(struct xkb_state *state)
     }
 }
 
-static inline void
-xkb_state_destroy(struct xkb_state *state)
+ایستا درونخطی تهی
+xkb_state_destroy(ساختار xkb_state *state)
 {
     xkb_keymap_unref(state->keymap);
-    if (state->mode > SERVER_COMPANION)
-        darray_free(((struct xkb_server_state *)state)->filters);
+    اگر (state->mode > SERVER_COMPANION)
+        darray_free(((ساختار xkb_server_state *)state)->filters);
 }
 
-void
-xkb_state_unref(struct xkb_state *state)
+تهی
+xkb_state_unref(ساختار xkb_state *state)
 {
-    assert(!state || state->refcnt > 0);
-    if (!state || --state->refcnt > 0)
-        return;
+    أكد(!state || state->refcnt > 0);
+    اگر (!state || --state->refcnt > 0)
+        بازگشت;
 
     xkb_state_destroy(state);
 
-    switch (state->mode) {
-    case CLIENT_STATE:
-    case SERVER_COMPANION:
-        free((struct xkb_client_state *)state);
-        break;
-    case LEGACY_MIXED_STATE:
-    case LEGACY_SERVER_STATE:
-        free((struct xkb_server_state *)state);
-        break;
-    case SERVER_STATE: /* handled by xkb_machine_unref() */
-    default:
+    انتخاب (state->mode) {
+    حالت CLIENT_STATE:
+    حالت SERVER_COMPANION:
+        آزاد((ساختار xkb_client_state *)state);
+        بشکن;
+    حالت LEGACY_MIXED_STATE:
+    حالت LEGACY_SERVER_STATE:
+        آزاد((ساختار xkb_server_state *)state);
+        بشکن;
+    حالت SERVER_STATE: /* handled by xkb_machine_unref() */
+    پیشفرض:
         PANIC_UNREACHABLE();
     }
 }
 
-struct xkb_keymap *
-xkb_state_get_keymap(struct xkb_state *state)
+ساختار xkb_keymap *
+xkb_state_get_keymap(ساختار xkb_state *state)
 {
-    return state->keymap;
+    بازگشت state->keymap;
 }
 
 /**
  * Update the LED state to match the rest of the xkb_state.
  */
-static void
-xkb_state_led_update_all(struct xkb_state *state)
+ایستا تهی
+xkb_state_led_update_all(ساختار xkb_state *state)
 {
     xkb_led_index_t idx;
-    const struct xkb_led *led;
+    ثابت ساختار xkb_led *led;
 
     state->components.leds = 0;
 
     xkb_leds_enumerate(idx, led, state->keymap) {
 
-        if (led->which_mods != 0 && led->mods.mask != 0) {
+        اگر (led->which_mods != 0 && led->mods.mask != 0) {
             xkb_mod_mask_t mod_mask = 0;
-            if (led->which_mods & XKB_STATE_MODS_EFFECTIVE)
+            اگر (led->which_mods & XKB_STATE_MODS_EFFECTIVE)
                 mod_mask |= state->components.mods;
-            if (led->which_mods & XKB_STATE_MODS_DEPRESSED)
+            اگر (led->which_mods & XKB_STATE_MODS_DEPRESSED)
                 mod_mask |= state->components.base_mods;
-            if (led->which_mods & XKB_STATE_MODS_LATCHED)
+            اگر (led->which_mods & XKB_STATE_MODS_LATCHED)
                 mod_mask |= state->components.latched_mods;
-            if (led->which_mods & XKB_STATE_MODS_LOCKED)
+            اگر (led->which_mods & XKB_STATE_MODS_LOCKED)
                 mod_mask |= state->components.locked_mods;
 
-            if (led->mods.mask & mod_mask) {
+            اگر (led->mods.mask & mod_mask) {
                 state->components.leds |= (UINT32_C(1) << idx);
-                continue;
+                ادامه;
             }
         }
 
-        if (led->which_groups != 0) {
-            if (likely(led->groups) != 0) {
+        اگر (led->which_groups != 0) {
+            اگر (likely(led->groups) != 0) {
                 xkb_layout_mask_t group_mask = 0;
                 /* Effective and locked groups have been brought into range */
-                assert(state->components.group < XKB_MAX_GROUPS);
-                assert(state->components.locked_group >= 0 &&
+                أكد(state->components.group < XKB_MAX_GROUPS);
+                أكد(state->components.locked_group >= 0 &&
                        state->components.locked_group < XKB_MAX_GROUPS);
                 /* Effective and locked groups are used as mask */
-                if (led->which_groups & XKB_STATE_LAYOUT_EFFECTIVE)
+                اگر (led->which_groups & XKB_STATE_LAYOUT_EFFECTIVE)
                     group_mask |= (UINT32_C(1) << state->components.group);
-                if (led->which_groups & XKB_STATE_LAYOUT_LOCKED)
+                اگر (led->which_groups & XKB_STATE_LAYOUT_LOCKED)
                     group_mask |= (UINT32_C(1) << state->components.locked_group);
                 /* Base and latched groups only have to be non-zero */
-                if ((led->which_groups & XKB_STATE_LAYOUT_DEPRESSED) &&
+                اگر ((led->which_groups & XKB_STATE_LAYOUT_DEPRESSED) &&
                     state->components.base_group != 0)
                     group_mask |= led->groups;
-                if ((led->which_groups & XKB_STATE_LAYOUT_LATCHED) &&
+                اگر ((led->which_groups & XKB_STATE_LAYOUT_LATCHED) &&
                     state->components.latched_group != 0)
                     group_mask |= led->groups;
 
-                if (led->groups & group_mask) {
+                اگر (led->groups & group_mask) {
                     state->components.leds |= (UINT32_C(1) << idx);
-                    continue;
+                    ادامه;
                 }
-            } else {
+            } وگرنه {
                 /* Special case for Base and latched groups */
-                if (((led->which_groups & XKB_STATE_LAYOUT_DEPRESSED) &&
+                اگر (((led->which_groups & XKB_STATE_LAYOUT_DEPRESSED) &&
                      state->components.base_group == 0) ||
                     ((led->which_groups & XKB_STATE_LAYOUT_LATCHED) &&
                      state->components.latched_group == 0)) {
                     state->components.leds |= (UINT32_C(1) << idx);
-                    continue;
+                    ادامه;
                 }
             }
         }
 
-        if (led->ctrls & state->components.controls) {
+        اگر (led->ctrls & state->components.controls) {
             state->components.leds |= (UINT32_C(1) << idx);
-            continue;
+            ادامه;
         }
     }
 }
@@ -1794,8 +1794,8 @@ xkb_state_led_update_all(struct xkb_state *state)
  * Calculates the derived state (effective mods/group and LEDs) from an
  * up-to-date xkb_state.
  */
-static void
-xkb_state_update_derived(struct xkb_state *state)
+ایستا تهی
+xkb_state_update_derived(ساختار xkb_state *state)
 {
     xkb_layout_index_t wrapped;
 
@@ -1805,7 +1805,7 @@ xkb_state_update_derived(struct xkb_state *state)
 
     /* Lock group must be adjusted, but not base nor latched groups */
     wrapped = XkbWrapGroupIntoRange(state->components.locked_group,
-                                    state->keymap->num_groups,
+                                    state->keymap->رقم_groups,
                                     state->out_of_range_group.policy,
                                     state->out_of_range_group.redirect_group);
     static_assert(XKB_MAX_GROUPS < INT32_MAX, "Max groups don't fit");
@@ -1816,7 +1816,7 @@ xkb_state_update_derived(struct xkb_state *state)
     wrapped = XkbWrapGroupIntoRange(state->components.base_group +
                                     state->components.latched_group +
                                     state->components.locked_group,
-                                    state->keymap->num_groups,
+                                    state->keymap->رقم_groups,
                                     state->out_of_range_group.policy,
                                     state->out_of_range_group.redirect_group);
     state->components.group =
@@ -1825,14 +1825,14 @@ xkb_state_update_derived(struct xkb_state *state)
     xkb_state_led_update_all(state);
 }
 
-static void
-state_update_enabled_controls(struct xkb_server_state *state,
-                              enum xkb_keyboard_control_flags affect_controls,
-                              enum xkb_keyboard_control_flags controls,
-                              struct xkb_events *events)
+ایستا تهی
+state_update_enabled_controls(ساختار xkb_server_state *state,
+                              شمارش xkb_keyboard_control_flags affect_controls,
+                              شمارش xkb_keyboard_control_flags controls,
+                              ساختار xkb_events *events)
 {
-    const bool had_sticky_keys = state->base.components.controls
-                               & CONTROL_STICKY_KEYS;
+    ثابت bool had_sticky_کلیدها = state->base.components.controls
+                               & CONTROL_STICKY_کلیدها;
 
     /*
      * Enable using the public API with the all the Control values, except
@@ -1840,14 +1840,14 @@ state_update_enabled_controls(struct xkb_server_state *state,
      */
     affect_controls =
         ( affect_controls
-        & (enum xkb_keyboard_control_flags)CONTROL_ALL_BOOLEAN );
+        & (شمارش xkb_keyboard_control_flags)CONTROL_ALL_BOOLEAN );
     state->base.components.controls &=
-        (enum xkb_action_controls)~affect_controls;
+        (شمارش xkb_action_controls)~affect_controls;
     state->base.components.controls |=
-        (enum xkb_action_controls)(controls & affect_controls);
+        (شمارش xkb_action_controls)(controls & affect_controls);
 
-    if (had_sticky_keys &&
-        !(state->base.components.controls & CONTROL_STICKY_KEYS)) {
+    اگر (had_sticky_کلیدها &&
+        !(state->base.components.controls & CONTROL_STICKY_کلیدها)) {
         /* Sticky keys were disabled: clear all locks and latches */
         clear_all_latches_and_locks(state, events);
     }
@@ -1859,59 +1859,59 @@ state_update_enabled_controls(struct xkb_server_state *state,
  * Given a particular key event, updates the state structure to reflect the
  * new modifiers.
  */
-enum xkb_state_component
-xkb_state_update_key(struct xkb_state *base_state, xkb_keycode_t kc,
-                     enum xkb_key_direction direction)
+شمارش xkb_state_component
+xkb_state_update_کلید(ساختار xkb_state *base_state, xkb_keycode_t kc,
+                     شمارش xkb_کلید_direction direction)
 {
     /* Guard against client-only state */
-    assert(base_state->mode > SERVER_COMPANION);
-    if (base_state->mode <= SERVER_COMPANION) {
+    أكد(base_state->mode > SERVER_COMPANION);
+    اگر (base_state->mode <= SERVER_COMPANION) {
         log_err(base_state->keymap->ctx, XKB_ERROR_UNEXPECTED_STATE_MODE,
                 "%s: Unexpected state type %d\n", __func__, base_state->mode);
-        return 0;
+        بازگشت 0;
     }
 
-    struct xkb_server_state * const state =
-        (struct xkb_server_state *)base_state;
+    ساختار xkb_server_state * ثابت state =
+        (ساختار xkb_server_state *)base_state;
 
-    const struct xkb_key* const key = XkbKey(state->base.keymap, kc);
+    ثابت ساختار xkb_کلید* ثابت کلید = Xkb_کلید(state->base.keymap, kc);
     /* Ignore unknown key and repeat state for non-repeating key */
-    if (!key || (direction == XKB_KEY_REPEATED && !key->repeats))
-        return 0;
+    اگر (!کلید || (direction == XKB_کلید_REPEATED && !کلید->repeats))
+        بازگشت 0;
 
-    if (direction == XKB_KEY_DOWN &&
-        (state->base.components.controls & XKB_KEYBOARD_CONTROL_A11Y_STICKY_KEYS) &&
-        (state->a11y_flags & XKB_A11Y_STICKY_KEYS_NO_SIMULTANEOUS_KEYS) &&
+    اگر (direction == XKB_کلید_DOWN &&
+        (state->base.components.controls & XKB_KEYBOARD_CONTROL_A11_Y_STICKY_کلیدها) &&
+        (state->a11y_flags & XKB_A11_Y_STICKY_کلیدها_NO_SIMULTANEOUS_کلیدها) &&
         state->base.components.base_mods) {
         /* Deactivate sticky keys if a modifier was already held down*/
         state_update_enabled_controls(state,
-                                      XKB_KEYBOARD_CONTROL_A11Y_STICKY_KEYS,
-                                      0, NULL);
+                                      XKB_KEYBOARD_CONTROL_A11_Y_STICKY_کلیدها,
+                                      0, پوچ);
     }
 
-    const struct state_components prev_components = state->base.components;
+    ثابت ساختار state_components prev_components = state->base.components;
 
     state->set_mods = 0;
     state->clear_mods = 0;
 
-    xkb_filter_apply_all(state, NULL, key, direction);
+    xkb_filter_apply_all(state, پوچ, کلید, direction);
 
     xkb_mod_index_t i;
     xkb_mod_mask_t bit;
-    for (i = 0, bit = 1; state->set_mods; i++, bit <<= 1) {
-        if (state->set_mods & bit) {
-            state->mod_key_count[i]++;
+    برای (i = 0, bit = 1; state->set_mods; i++, bit <<= 1) {
+        اگر (state->set_mods & bit) {
+            state->mod_کلید_شمار[i]++;
             state->base.components.base_mods |= bit;
             state->set_mods &= ~bit;
         }
     }
 
-    for (i = 0, bit = 1; state->clear_mods; i++, bit <<= 1) {
-        if (state->clear_mods & bit) {
-            state->mod_key_count[i]--;
-            if (state->mod_key_count[i] <= 0) {
+    برای (i = 0, bit = 1; state->clear_mods; i++, bit <<= 1) {
+        اگر (state->clear_mods & bit) {
+            state->mod_کلید_شمار[i]--;
+            اگر (state->mod_کلید_شمار[i] <= 0) {
                 state->base.components.base_mods &= ~bit;
-                state->mod_key_count[i] = 0;
+                state->mod_کلید_شمار[i] = 0;
             }
             state->clear_mods &= ~bit;
         }
@@ -1919,119 +1919,119 @@ xkb_state_update_key(struct xkb_state *base_state, xkb_keycode_t kc,
 
     xkb_state_update_derived(&state->base);
 
-    return get_state_component_changes(&prev_components, &state->base.components);
+    بازگشت get_state_component_changes(&prev_components, &state->base.components);
 }
 
 /* We need fake keys for `update_latch_modifiers` and `update_latch_group`.
  * These keys must have at least one level in order to break latches. We need 2
  * keys with specific actions in order to update group/mod latches without
  * affecting each other. */
-static struct xkb_key_type_entry synthetic_key_level_entry = { 0 };
-static struct xkb_key_type synthetic_key_type = {
-     .num_entries = 1,
-     .num_levels = 1,
-     .entries = &synthetic_key_level_entry
+ایستا ساختار xkb_کلید_type_entry synthetic_کلید_level_entry = { 0 };
+ایستا ساختار xkb_کلید_type synthetic_کلید_type = {
+     .رقم_entries = 1,
+     .رقم_levels = 1,
+     .entries = &synthetic_کلید_level_entry
 };
-static const struct xkb_key synthetic_key = { 0 };
+ایستا ثابت ساختار xkb_کلید synthetic_کلید = { 0 };
 
 /* Transcription from xserver: XkbLatchModifiers */
-static void
-update_latch_modifiers(struct xkb_server_state *state,
-                       struct xkb_events *events,
+ایستا تهی
+update_latch_modifiers(ساختار xkb_server_state *state,
+                       ساختار xkb_events *events,
                        xkb_mod_mask_t mask, xkb_mod_mask_t latches)
 {
     /* Clear affected latched modifiers */
-    const xkb_mod_mask_t clear = mask & ~latches;
+    ثابت xkb_mod_mask_t clear = mask & ~latches;
     state->base.components.latched_mods &= ~clear;
 
     /* Clear any pending latch to locks using ad hoc action:
      * only affect corresponding modifier latches and no group latch. */
-    struct xkb_level synthetic_key_level_break_mod_latch = {
-        .num_syms = 0,
-        .num_actions = 1,
-        .upper = XKB_KEY_NoSymbol,
-        .s.sym = XKB_KEY_NoSymbol,
+    ساختار xkb_level synthetic_کلید_level_break_mod_latch = {
+        .رقم_syms = 0,
+        .رقم_actions = 1,
+        .upper = XKB_کلید_No_نماد,
+        .s.sym = XKB_کلید_No_نماد,
         .a.action.internal = {
             .type = ACTION_TYPE_INTERNAL,
             .flags = INTERNAL_BREAKS_MOD_LATCH,
             .clear_latched_mods = clear
         }
     };
-    struct xkb_group synthetic_key_group_break_mod_latch = {
-        .type = &synthetic_key_type,
-        .levels = &synthetic_key_level_break_mod_latch
+    ساختار xkb_group synthetic_کلید_group_break_mod_latch = {
+        .type = &synthetic_کلید_type,
+        .levels = &synthetic_کلید_level_break_mod_latch
     };
-    const struct xkb_key synthetic_key_break_mod_latch = {
-        .num_groups = 1,
-        .groups = &synthetic_key_group_break_mod_latch
+    ثابت ساختار xkb_کلید synthetic_کلید_break_mod_latch = {
+        .رقم_groups = 1,
+        .groups = &synthetic_کلید_group_break_mod_latch
     };
     xkb_filter_apply_all(state, events,
-                         &synthetic_key_break_mod_latch, XKB_KEY_DOWN);
+                         &synthetic_کلید_break_mod_latch, XKB_کلید_DOWN);
 
     /* Finally set the latched mods by simulate tapping a key with the
      * corresponding action */
-    const struct xkb_key* const key = &synthetic_key;
-    const union xkb_action latch_mods = {
+    ثابت ساختار xkb_کلید* ثابت کلید = &synthetic_کلید;
+    ثابت اجتماع xkb_action latch_mods = {
         .mods = {
             .type = ACTION_TYPE_MOD_LATCH,
             .mods = { .mask = mask & latches },
             .flags = 0,
         },
     };
-    struct xkb_filter* const filter = xkb_filter_new(state);
-    filter->key = key;
+    ساختار xkb_filter* ثابت filter = xkb_filter_new(state);
+    filter->کلید = کلید;
     filter->func = xkb_filter_mod_latch_func;
     filter->action = latch_mods;
     xkb_filter_mod_latch_new(state, events, filter);
     /* We added the filter manually, so only fire “up” event */
-    xkb_filter_mod_latch_func(state, events, filter, key, XKB_KEY_UP);
+    xkb_filter_mod_latch_func(state, events, filter, کلید, XKB_کلید_UP);
 }
 
 /* Transcription from xserver: XkbLatchGroup */
-static void
-update_latch_group(struct xkb_server_state *state,
-                   struct xkb_events *events, int32_t group)
+ایستا تهی
+update_latch_group(ساختار xkb_server_state *state,
+                   ساختار xkb_events *events, int32_t group)
 {
     /* Clear any pending latch to locks. */
-    static struct xkb_level synthetic_key_level_break_group_latch = {
-        .num_syms = 0,
-        .num_actions = 1,
-        .upper = XKB_KEY_NoSymbol,
-        .s.sym = XKB_KEY_NoSymbol,
+    ایستا ساختار xkb_level synthetic_کلید_level_break_group_latch = {
+        .رقم_syms = 0,
+        .رقم_actions = 1,
+        .upper = XKB_کلید_No_نماد,
+        .s.sym = XKB_کلید_No_نماد,
         .a.action.internal = {
             .type = ACTION_TYPE_INTERNAL,
             .flags = INTERNAL_BREAKS_GROUP_LATCH,
             .clear_latched_mods = 0
         }
     };
-    static struct xkb_group synthetic_key_group_break_group_latch = {
-        .type = &synthetic_key_type,
-        .levels = &synthetic_key_level_break_group_latch
+    ایستا ساختار xkb_group synthetic_کلید_group_break_group_latch = {
+        .type = &synthetic_کلید_type,
+        .levels = &synthetic_کلید_level_break_group_latch
     };
-    static const struct xkb_key synthetic_key_break_group_latch = {
-        .num_groups = 1,
-        .groups = &synthetic_key_group_break_group_latch
+    ایستا ثابت ساختار xkb_کلید synthetic_کلید_break_group_latch = {
+        .رقم_groups = 1,
+        .groups = &synthetic_کلید_group_break_group_latch
     };
     xkb_filter_apply_all(state, events,
-                         &synthetic_key_break_group_latch, XKB_KEY_DOWN);
+                         &synthetic_کلید_break_group_latch, XKB_کلید_DOWN);
 
     /* Simulate tapping a key with a group latch action, but in isolation: i.e.
      * without affecting the other filters. */
-    const struct xkb_key* const key = &synthetic_key;
-    const union xkb_action latch_group = {
+    ثابت ساختار xkb_کلید* ثابت کلید = &synthetic_کلید;
+    ثابت اجتماع xkb_action latch_group = {
         .group = {
             .type = ACTION_TYPE_GROUP_LATCH,
             .flags = ACTION_ABSOLUTE_SWITCH,
             .group = group,
         },
     };
-    struct xkb_filter* const filter = xkb_filter_new(state);
-    filter->key = key;
+    ساختار xkb_filter* ثابت filter = xkb_filter_new(state);
+    filter->کلید = کلید;
     filter->func = xkb_filter_group_latch_func;
     filter->action = latch_group;
     xkb_filter_group_latch_new(state, events, filter);
     /* We added the filter manually, so only fire “up” event */
-    xkb_filter_group_latch_func(state, events, filter, key, XKB_KEY_UP);
+    xkb_filter_group_latch_func(state, events, filter, کلید, XKB_کلید_UP);
 }
 
 /**
@@ -2041,10 +2041,10 @@ update_latch_group(struct xkb_server_state *state,
  * in the canonical mask, so that it enables `xkb_state_serialize_mods` to
  * round trip via `xkb_state_update_mask`.
  */
-static inline xkb_mod_mask_t
-resolve_to_canonical_mods(struct xkb_keymap *keymap, xkb_mod_mask_t mods)
+ایستا درونخطی xkb_mod_mask_t
+resolve_to_canonical_mods(ساختار xkb_keymap *keymap, xkb_mod_mask_t mods)
 {
-    return
+    بازگشت
         /*
          * Keep canonical modifier mask.
          * It contains either real modifiers or canonical virtual modifiers.
@@ -2055,43 +2055,43 @@ resolve_to_canonical_mods(struct xkb_keymap *keymap, xkb_mod_mask_t mods)
                                mods & ~keymap->canonical_state_mask);
 }
 
-static void
+ایستا تهی
 state_update_latched_locked(
-    struct xkb_server_state * restrict state,
-    const struct xkb_state_components_update * restrict update,
-    struct xkb_events * restrict events
+    ساختار xkb_server_state * restrict state,
+    ثابت ساختار xkb_state_components_update * restrict update,
+    ساختار xkb_events * restrict events
 )
 {
     /* Update locks */
-    const xkb_mod_mask_t affect_locked_mods =
+    ثابت xkb_mod_mask_t affect_locked_mods =
         resolve_to_canonical_mods(state->base.keymap, update->affect_locked_mods);
-    if ((update->components & XKB_STATE_MODS_LOCKED) &&
+    اگر ((update->components & XKB_STATE_MODS_LOCKED) &&
         affect_locked_mods) {
-        const xkb_mod_mask_t locked_mods =
+        ثابت xkb_mod_mask_t locked_mods =
             resolve_to_canonical_mods(state->base.keymap, update->locked_mods);
         state->base.components.locked_mods &= ~affect_locked_mods;
         state->base.components.locked_mods |= locked_mods & affect_locked_mods;
     }
-    if (update->components & XKB_STATE_LAYOUT_LOCKED) {
+    اگر (update->components & XKB_STATE_LAYOUT_LOCKED) {
         state->base.components.locked_group = update->locked_layout;
     }
 
     /* Update latches */
-    const xkb_mod_mask_t affect_latched_mods =
+    ثابت xkb_mod_mask_t affect_latched_mods =
         resolve_to_canonical_mods(state->base.keymap, update->affect_latched_mods);
-    if ((update->components & XKB_STATE_MODS_LATCHED) &&
+    اگر ((update->components & XKB_STATE_MODS_LATCHED) &&
         affect_latched_mods) {
-        const xkb_mod_mask_t latched_mods =
+        ثابت xkb_mod_mask_t latched_mods =
             resolve_to_canonical_mods(state->base.keymap, update->latched_mods);
         update_latch_modifiers(state, events, affect_latched_mods, latched_mods);
     }
-    if (update->components & XKB_STATE_LAYOUT_LATCHED) {
+    اگر (update->components & XKB_STATE_LAYOUT_LATCHED) {
         update_latch_group(state, events, update->latched_layout);
     }
 }
 
-enum xkb_state_component
-xkb_state_update_latched_locked(struct xkb_state *base_state,
+شمارش xkb_state_component
+xkb_state_update_latched_locked(ساختار xkb_state *base_state,
                                 xkb_mod_mask_t affect_latched_mods,
                                 xkb_mod_mask_t latched_mods,
                                 bool affect_latched_layout,
@@ -2102,24 +2102,24 @@ xkb_state_update_latched_locked(struct xkb_state *base_state,
                                 int32_t locked_layout)
 {
     /* Guard against client-only state */
-    assert(base_state->mode > SERVER_COMPANION);
-    if (base_state->mode <= SERVER_COMPANION) {
+    أكد(base_state->mode > SERVER_COMPANION);
+    اگر (base_state->mode <= SERVER_COMPANION) {
         log_err(base_state->keymap->ctx, XKB_ERROR_UNEXPECTED_STATE_MODE,
                 "%s: Unexpected state type %d\n", __func__, base_state->mode);
-        return 0;
+        بازگشت 0;
     }
 
-    struct xkb_server_state * const state =
-        (struct xkb_server_state *)base_state;
+    ساختار xkb_server_state * ثابت state =
+        (ساختار xkb_server_state *)base_state;
 
-    const struct state_components previous_components = state->base.components;
-    const enum xkb_state_component components
+    ثابت ساختار state_components previous_components = state->base.components;
+    ثابت شمارش xkb_state_component components
         = ((affect_latched_mods || latched_mods) ? XKB_STATE_MODS_LATCHED : 0)
         | ((affect_locked_mods || locked_mods) ? XKB_STATE_MODS_LOCKED : 0)
         | (affect_latched_layout ? XKB_STATE_LAYOUT_LATCHED : 0)
         | (affect_locked_layout ? XKB_STATE_LAYOUT_LOCKED : 0);
-    const struct xkb_state_components_update update = {
-        .size = sizeof(update),
+    ثابت ساختار xkb_state_components_update update = {
+        .size = اندازه(update),
         .components = components,
         .affect_latched_mods = affect_latched_mods,
         .latched_mods = latched_mods,
@@ -2128,21 +2128,21 @@ xkb_state_update_latched_locked(struct xkb_state *base_state,
         .locked_mods = locked_mods,
         .locked_layout = locked_layout
     };
-    state_update_latched_locked(state, &update, NULL);
+    state_update_latched_locked(state, &update, پوچ);
     xkb_state_update_derived(&state->base);
-    return get_state_component_changes(&previous_components,
+    بازگشت get_state_component_changes(&previous_components,
                                        &state->base.components);
 }
 
-static inline void
-clear_all_latches_and_locks(struct xkb_server_state *state,
-                            struct xkb_events *events)
+ایستا درونخطی تهی
+clear_all_latches_and_locks(ساختار xkb_server_state *state,
+                            ساختار xkb_events *events)
 {
-    static const enum xkb_state_component components
+    ایستا ثابت شمارش xkb_state_component components
         = XKB_STATE_MODS_LATCHED | XKB_STATE_MODS_LOCKED
         | XKB_STATE_LAYOUT_LATCHED | XKB_STATE_LAYOUT_LOCKED;
-    const struct xkb_state_components_update update = {
-        .size = sizeof(update),
+    ثابت ساختار xkb_state_components_update update = {
+        .size = اندازه(update),
         .components = components,
         .affect_latched_mods = (xkb_mod_mask_t)XKB_MOD_ALL,
         .latched_mods = 0,
@@ -2154,44 +2154,44 @@ clear_all_latches_and_locks(struct xkb_server_state *state,
     state_update_latched_locked(state, &update, events);
 }
 
-static enum xkb_status
-state_update_layout_policy(struct xkb_server_state *state,
-                           const struct xkb_layout_policy_update *update)
+ایستا شمارش xkb_status
+state_update_layout_policy(ساختار xkb_server_state *state,
+                           ثابت ساختار xkb_layout_policy_update *update)
 {
-    if (xkb_feature_supported(XKB_FEATURE_ENUM_LAYOUT_OUT_OF_RANGE_POLICY,
+    اگر (xkb_feature_supported(XKB_FEATURE_ENUM_LAYOUT_OUT_OF_RANGE_POLICY,
                               update->policy)) {
-        if (update->policy == XKB_LAYOUT_OUT_OF_RANGE_REDIRECT) {
-            if (update->redirect < state->base.keymap->num_groups) {
+        اگر (update->policy == XKB_LAYOUT_OUT_OF_RANGE_REDIRECT) {
+            اگر (update->redirect < state->base.keymap->رقم_groups) {
                 state->base.out_of_range_group.redirect_group =
                     update->redirect;
-            } else {
+            } وگرنه {
                 log_err(state->base.keymap->ctx,
                         XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                         "Layout policy: "
                         "unsupported layout index %"PRIu32" > %"PRIu32"\n",
-                        update->redirect + 1, state->base.keymap->num_groups);
-                return XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX;
+                        update->redirect + 1, state->base.keymap->رقم_groups);
+                بازگشت XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX;
             }
         }
         state->base.out_of_range_group.policy = update->policy;
-        return XKB_SUCCESS;
-    } else {
+        بازگشت XKB_SUCCESS;
+    } وگرنه {
         log_err(state->base.keymap->ctx,
                 XKB_ERROR_UNSUPPORTED_LAYOUT_OUT_OF_RANGE_POLICY_,
                 "Unsupported layout policy: %d\n", update->policy);
-        return XKB_ERROR_UNSUPPORTED_LAYOUT_OUT_OF_RANGE_POLICY;
+        بازگشت XKB_ERROR_UNSUPPORTED_LAYOUT_OUT_OF_RANGE_POLICY;
     }
 }
 
 /** Check ABI compatibility */
 // NOLINTBEGIN(bugprone-assignment-in-selection-statement)
-static enum xkb_status
-check_state_update_abi_(struct xkb_context * restrict ctx,
-                        const char * restrict func,
-                        const struct xkb_synthetic_update * restrict update)
+ایستا شمارش xkb_status
+check_state_update_abi_(ساختار xkb_context * restrict ctx,
+                        ثابت نویسه * restrict func,
+                        ثابت ساختار xkb_synthetic_update * restrict update)
 {
-    enum xkb_status status = XKB_SUCCESS;
-    if ((status = xkb_check_state_abi(update)) ||
+    شمارش xkb_status status = XKB_SUCCESS;
+    اگر ((status = xkb_check_state_abi(update)) ||
         (update->reserved0 != 0 &&
          (status = XKB_ERROR_ABI_FORWARD_COMPAT)) ||
         (update->components &&
@@ -2200,66 +2200,66 @@ check_state_update_abi_(struct xkb_context * restrict ctx,
          (status = xkb_check_state_abi(update->layout_policy)))) {
         xkb_log_abi_error(ctx, func, status);
     }
-    return status;
+    بازگشت status;
 }
 // NOLINTEND(bugprone-assignment-in-selection-statement)
 
 #define check_state_update_abi(ctx, update) \
     check_state_update_abi_(ctx, __func__, update)
 
-enum xkb_status
-xkb_state_update_synthetic(struct xkb_state * base_state,
-                           const struct xkb_synthetic_update * update,
-                           enum xkb_state_component *changed)
+شمارش xkb_status
+xkb_state_update_synthetic(ساختار xkb_state * base_state,
+                           ثابت ساختار xkb_synthetic_update * update,
+                           شمارش xkb_state_component *changed)
 {
     /* Guard against client-only state */
-    if (base_state->mode <= SERVER_COMPANION) {
+    اگر (base_state->mode <= SERVER_COMPANION) {
         log_err(base_state->keymap->ctx, XKB_ERROR_UNEXPECTED_STATE_MODE,
                 "%s: Unexpected state type %d\n", __func__, base_state->mode);
-        return XKB_ERROR_UNEXPECTED_STATE_MODE;
+        بازگشت XKB_ERROR_UNEXPECTED_STATE_MODE;
     }
 
-    struct xkb_server_state * const state =
-        (struct xkb_server_state *)base_state;
+    ساختار xkb_server_state * ثابت state =
+        (ساختار xkb_server_state *)base_state;
 
     /* Check ABI compatibility */
-    enum xkb_status status = check_state_update_abi(state->base.keymap->ctx,
+    شمارش xkb_status status = check_state_update_abi(state->base.keymap->ctx,
                                                     update);
-    if (status != XKB_SUCCESS)
-        return status;
+    اگر (status != XKB_SUCCESS)
+        بازگشت status;
 
-    const struct state_components previous_components = state->base.components;
+    ثابت ساختار state_components previous_components = state->base.components;
 
     // TODO: use a *transaction* mechanism: either the whole update succeeds
     //       or rollback
 
     /* Update parametrized controls first */
-    if (update->layout_policy) {
+    اگر (update->layout_policy) {
         status = state_update_layout_policy(state, update->layout_policy);
-        if (status != XKB_SUCCESS)
-            return status;
+        اگر (status != XKB_SUCCESS)
+            بازگشت status;
     }
 
-    if (update->components) {
-        const struct xkb_state_components_update * const components =
+    اگر (update->components) {
+        ثابت ساختار xkb_state_components_update * ثابت components =
             update->components;
         /* Update boolean controls first */
-        if (components->components & XKB_STATE_CONTROLS_EFFECTIVE) {
+        اگر (components->components & XKB_STATE_CONTROLS_EFFECTIVE) {
             state_update_enabled_controls(state,
                                           components->affect_controls,
-                                          components->controls, NULL);
+                                          components->controls, پوچ);
         }
 
-        state_update_latched_locked(state, components, NULL);
+        state_update_latched_locked(state, components, پوچ);
     }
 
     xkb_state_update_derived(&state->base);
 
-    if (changed) {
+    اگر (changed) {
         *changed = get_state_component_changes(&previous_components,
                                                &state->base.components);
     }
-    return XKB_SUCCESS;
+    بازگشت XKB_SUCCESS;
 }
 
 /**
@@ -2269,8 +2269,8 @@ xkb_state_update_synthetic(struct xkb_state * base_state,
  * lossy, and should only be used to update a slave state mirroring the
  * master, e.g. in a client/server window system.
  */
-enum xkb_state_component
-xkb_state_update_mask(struct xkb_state *base_state,
+شمارش xkb_state_component
+xkb_state_update_mask(ساختار xkb_state *base_state,
                       xkb_mod_mask_t base_mods,
                       xkb_mod_mask_t latched_mods,
                       xkb_mod_mask_t locked_mods,
@@ -2279,19 +2279,19 @@ xkb_state_update_mask(struct xkb_state *base_state,
                       xkb_layout_index_t locked_group)
 {
     /* Guard against server-only and server companion state */
-    assert(base_state->mode == CLIENT_STATE ||
+    أكد(base_state->mode == CLIENT_STATE ||
            base_state->mode == LEGACY_MIXED_STATE);
-    if (base_state->mode != CLIENT_STATE &&
+    اگر (base_state->mode != CLIENT_STATE &&
         base_state->mode != LEGACY_MIXED_STATE) {
         log_err(base_state->keymap->ctx, XKB_ERROR_UNEXPECTED_STATE_MODE,
                 "%s: Unexpected state type %d\n", __func__, base_state->mode);
-        return 0;
+        بازگشت 0;
     }
 
-    struct xkb_client_state * const state =
-        (struct xkb_client_state *)base_state;
+    ساختار xkb_client_state * ثابت state =
+        (ساختار xkb_client_state *)base_state;
 
-    const struct state_components prev_components = state->base.components;
+    ثابت ساختار state_components prev_components = state->base.components;
 
     /*
      * Make sure the mods are fully resolved - since we get arbitrary
@@ -2321,16 +2321,16 @@ xkb_state_update_mask(struct xkb_state *base_state,
 
     xkb_state_update_derived(&state->base);
 
-    return get_state_component_changes(&prev_components, &state->base.components);
+    بازگشت get_state_component_changes(&prev_components, &state->base.components);
 }
 
 /*
  * https://www.x.org/releases/current/doc/kbproto/xkbproto.html#Interpreting_the_Lock_Modifier
  */
-static bool
-should_do_caps_transformation(struct xkb_state *state, xkb_keycode_t kc)
+ایستا bool
+should_do_caps_transformation(ساختار xkb_state *state, xkb_keycode_t kc)
 {
-    return
+    بازگشت
         xkb_state_mod_index_is_active(state, XKB_MOD_INDEX_CAPS,
                                       XKB_STATE_MODS_EFFECTIVE) > 0 &&
         xkb_state_mod_index_is_consumed(state, kc, XKB_MOD_INDEX_CAPS) == 0;
@@ -2339,10 +2339,10 @@ should_do_caps_transformation(struct xkb_state *state, xkb_keycode_t kc)
 /*
  * https://www.x.org/releases/current/doc/kbproto/xkbproto.html#Interpreting_the_Control_Modifier
  */
-static bool
-should_do_ctrl_transformation(struct xkb_state *state, xkb_keycode_t kc)
+ایستا bool
+should_do_ctrl_transformation(ساختار xkb_state *state, xkb_keycode_t kc)
 {
-    return
+    بازگشت
         xkb_state_mod_index_is_active(state, XKB_MOD_INDEX_CTRL,
                                       XKB_STATE_MODS_EFFECTIVE) > 0 &&
         xkb_state_mod_index_is_consumed(state, kc, XKB_MOD_INDEX_CTRL) == 0;
@@ -2352,52 +2352,52 @@ should_do_ctrl_transformation(struct xkb_state *state, xkb_keycode_t kc)
  * Provides the symbols to use for the given key and state.  Returns the
  * number of symbols pointed to in syms_out.
  */
-int
-xkb_state_key_get_syms(struct xkb_state *state, xkb_keycode_t kc,
-                       const xkb_keysym_t **syms_out)
+صحیح
+xkb_state_کلید_get_syms(ساختار xkb_state *state, xkb_keycode_t kc,
+                       ثابت xkb_keysym_t **syms_out)
 {
-    const xkb_layout_index_t layout = xkb_state_key_get_layout(state, kc);
-    if (layout == XKB_LAYOUT_INVALID)
-        goto err;
+    ثابت xkb_layout_index_t layout = xkb_state_کلید_get_layout(state, kc);
+    اگر (layout == XKB_LAYOUT_INVALID)
+        برو err;
 
-    const xkb_level_index_t level = xkb_state_key_get_level(state, kc, layout);
-    if (level == XKB_LEVEL_INVALID)
-        goto err;
+    ثابت xkb_level_index_t level = xkb_state_کلید_get_level(state, kc, layout);
+    اگر (level == XKB_LEVEL_INVALID)
+        برو err;
 
-    const struct xkb_key* const key = XkbKey(state->keymap, kc);
+    ثابت ساختار xkb_کلید* ثابت کلید = Xkb_کلید(state->keymap, kc);
 
-    if (!key)
-        goto err;
+    اگر (!کلید)
+        برو err;
 
-    const struct xkb_level* const leveli =
-        xkb_keymap_key_get_level(state->keymap, key, layout, level);
+    ثابت ساختار xkb_level* ثابت leveli =
+        xkb_keymap_کلید_get_level(state->keymap, کلید, layout, level);
 
-    if (!leveli)
-        goto err;
+    اگر (!leveli)
+        برو err;
 
-    const xkb_keysym_count_t num_syms = leveli->num_syms;
-    if (num_syms == 0)
-        goto err;
+    ثابت xkb_keysym_شمار_t رقم_syms = leveli->رقم_syms;
+    اگر (رقم_syms == 0)
+        برو err;
 
-    if (should_do_caps_transformation(state, kc)) {
+    اگر (should_do_caps_transformation(state, kc)) {
         /* Only simple capitalization rules: keysyms count is unchanged. */
-        if (num_syms > 1) {
+        اگر (رقم_syms > 1) {
             *syms_out = (leveli->has_upper)
-                      ? leveli->s.syms + num_syms
+                      ? leveli->s.syms + رقم_syms
                       : leveli->s.syms;
-        } else {
+        } وگرنه {
             *syms_out = &leveli->upper;
         }
-    } else {
-        *syms_out = (num_syms > 1)
+    } وگرنه {
+        *syms_out = (رقم_syms > 1)
                   ? leveli->s.syms
                   : &leveli->s.sym;
     }
-    return (int) num_syms;
+    بازگشت (صحیح) رقم_syms;
 
 err:
-    *syms_out = NULL;
-    return 0;
+    *syms_out = پوچ;
+    بازگشت 0;
 }
 
 /*
@@ -2427,37 +2427,37 @@ err:
  * [caret notation]: https://en.wikipedia.org/wiki/Caret_notation
  * [VT220 terminal]: https://vt100.net/docs/vt220-rm/chapter3.html#T3-5
  */
-static char
-XkbToControl(char ch)
+ایستا نویسه
+XkbToControl(نویسه ch)
 {
-    char c = ch;
+    نویسه c = ch;
 
-    if ((c >= '@' && c < '\177') || c == ' ')
+    اگر ((c >= '@' && c < '\177') || c == ' ')
         c &= 0x1F;
-    else if (c == '2')
+    وگرنه اگر (c == '2')
         c = '\000';
-    else if (c >= '3' && c <= '7')
+    وگرنه اگر (c >= '3' && c <= '7')
         c -= ('3' - '\033');
-    else if (c == '8')
+    وگرنه اگر (c == '8')
         c = '\177';
-    else if (c == '/')
+    وگرنه اگر (c == '/')
         c = '_' & 0x1F;
-    return c;
+    بازگشت c;
 }
 
 /**
  * Provides either exactly one symbol, or XKB_KEY_NoSymbol.
  */
 xkb_keysym_t
-xkb_state_key_get_one_sym(struct xkb_state *state, xkb_keycode_t kc)
+xkb_state_کلید_get_one_sym(ساختار xkb_state *state, xkb_keycode_t kc)
 {
-    const xkb_keysym_t *syms = NULL;
-    const int num_syms = xkb_state_key_get_syms(state, kc, &syms);
+    ثابت xkb_keysym_t *syms = پوچ;
+    ثابت صحیح رقم_syms = xkb_state_کلید_get_syms(state, kc, &syms);
 
-    if (num_syms != 1)
-        return XKB_KEY_NoSymbol;
-    else
-        return syms[0];
+    اگر (رقم_syms != 1)
+        بازگشت XKB_کلید_No_نماد;
+    وگرنه
+        بازگشت syms[0];
 }
 
 /*
@@ -2469,197 +2469,197 @@ xkb_state_key_get_one_sym(struct xkb_state *state, xkb_keycode_t kc)
  * behavior with the XkbLC_ControlFallback (see XkbSetXlibControls(3)),
  * but it is enabled by default, yippee.
  */
-static xkb_keysym_t
-get_one_sym_for_string(struct xkb_state *state, xkb_keycode_t kc)
+ایستا xkb_keysym_t
+get_one_sym_for_string(ساختار xkb_state *state, xkb_keycode_t kc)
 {
-    const xkb_layout_index_t layout = xkb_state_key_get_layout(state, kc);
-    const xkb_layout_index_t num_layouts =
-        xkb_keymap_num_layouts_for_key(state->keymap, kc);
-    xkb_level_index_t level = xkb_state_key_get_level(state, kc, layout);
-    if (layout == XKB_LAYOUT_INVALID || num_layouts == 0 ||
+    ثابت xkb_layout_index_t layout = xkb_state_کلید_get_layout(state, kc);
+    ثابت xkb_layout_index_t رقم_layouts =
+        xkb_keymap_رقم_layouts_for_کلید(state->keymap, kc);
+    xkb_level_index_t level = xkb_state_کلید_get_level(state, kc, layout);
+    اگر (layout == XKB_LAYOUT_INVALID || رقم_layouts == 0 ||
         level == XKB_LEVEL_INVALID)
-        return XKB_KEY_NoSymbol;
+        بازگشت XKB_کلید_No_نماد;
 
-    const xkb_keysym_t *syms = NULL;
-    int nsyms = xkb_keymap_key_get_syms_by_level(state->keymap, kc,
+    ثابت xkb_keysym_t *syms = پوچ;
+    صحیح nsyms = xkb_keymap_کلید_get_syms_by_level(state->keymap, kc,
                                                  layout, level, &syms);
-    if (nsyms != 1)
-        return XKB_KEY_NoSymbol;
+    اگر (nsyms != 1)
+        بازگشت XKB_کلید_No_نماد;
     xkb_keysym_t sym = syms[0];
 
-    if (should_do_ctrl_transformation(state, kc) && sym > 127u) {
-        for (xkb_layout_index_t i = 0; i < num_layouts; i++) {
-            level = xkb_state_key_get_level(state, kc, i);
-            if (level == XKB_LEVEL_INVALID)
-                continue;
+    اگر (should_do_ctrl_transformation(state, kc) && sym > 127u) {
+        برای (xkb_layout_index_t i = 0; i < رقم_layouts; i++) {
+            level = xkb_state_کلید_get_level(state, kc, i);
+            اگر (level == XKB_LEVEL_INVALID)
+                ادامه;
 
-            nsyms = xkb_keymap_key_get_syms_by_level(state->keymap, kc,
+            nsyms = xkb_keymap_کلید_get_syms_by_level(state->keymap, kc,
                                                      i, level, &syms);
-            if (nsyms == 1 && syms[0] <= 127u) {
+            اگر (nsyms == 1 && syms[0] <= 127u) {
                 sym = syms[0];
-                break;
+                بشکن;
             }
         }
     }
 
-    if (should_do_caps_transformation(state, kc)) {
+    اگر (should_do_caps_transformation(state, kc)) {
         sym = xkb_keysym_to_upper(sym);
     }
 
-    return sym;
+    بازگشت sym;
 }
 
-int
-xkb_state_key_get_utf8(struct xkb_state *state, xkb_keycode_t kc,
-                       char *buffer, size_t size)
+صحیح
+xkb_state_کلید_get_utf8(ساختار xkb_state *state, xkb_keycode_t kc,
+                       نویسه *buffer, size_t size)
 {
-    int nsyms;
-    const xkb_keysym_t *syms = NULL;
-    const xkb_keysym_t sym = get_one_sym_for_string(state, kc);
-    if (sym != XKB_KEY_NoSymbol) {
+    صحیح nsyms;
+    ثابت xkb_keysym_t *syms = پوچ;
+    ثابت xkb_keysym_t sym = get_one_sym_for_string(state, kc);
+    اگر (sym != XKB_کلید_No_نماد) {
         nsyms = 1; syms = &sym;
     }
-    else {
-        nsyms = xkb_state_key_get_syms(state, kc, &syms);
+    وگرنه {
+        nsyms = xkb_state_کلید_get_syms(state, kc, &syms);
     }
 
     /* Make sure not to truncate in the middle of a UTF-8 sequence. */
-    int offset = 0;
-    char tmp[XKB_KEYSYM_UTF8_MAX_SIZE];
-    for (int i = 0; i < nsyms; i++) {
-        int ret = xkb_keysym_to_utf8(syms[i], tmp, sizeof(tmp));
-        if (ret <= 0)
-            goto err_bad;
+    صحیح offset = 0;
+    نویسه tmp[XKB_KEYSYM_UTF8_MAX_SIZE];
+    برای (صحیح i = 0; i < nsyms; i++) {
+        صحیح ret = xkb_keysym_to_utf8(syms[i], tmp, اندازه(tmp));
+        اگر (ret <= 0)
+            برو err_bad;
 
         ret--;
-        if ((size_t)offset + (size_t)ret <= size)
+        اگر ((size_t)offset + (size_t)ret <= size)
             memcpy(buffer + offset, tmp, (size_t)ret);
         offset += ret;
     }
 
-    if ((size_t)offset >= size)
-        goto err_trunc;
+    اگر ((size_t)offset >= size)
+        برو err_trunc;
     buffer[offset] = '\0';
 
-    if (!is_valid_utf8(buffer, (size_t)offset))
-        goto err_bad;
+    اگر (!is_valid_utf8(buffer, (size_t)offset))
+        برو err_bad;
 
-    if (offset == 1 && (unsigned int) buffer[0] <= 127u &&
+    اگر (offset == 1 && (unsigned صحیح) buffer[0] <= 127u &&
         should_do_ctrl_transformation(state, kc))
         buffer[0] = XkbToControl(buffer[0]);
 
-    return offset;
+    بازگشت offset;
 
 err_trunc:
-    if (size > 0)
+    اگر (size > 0)
         buffer[size - 1] = '\0';
-    return offset;
+    بازگشت offset;
 
 err_bad:
-    if (size > 0)
+    اگر (size > 0)
         buffer[0] = '\0';
-    return 0;
+    بازگشت 0;
 }
 
 uint32_t
-xkb_state_key_get_utf32(struct xkb_state *state, xkb_keycode_t kc)
+xkb_state_کلید_get_utf32(ساختار xkb_state *state, xkb_keycode_t kc)
 {
-    const xkb_keysym_t sym = get_one_sym_for_string(state, kc);
+    ثابت xkb_keysym_t sym = get_one_sym_for_string(state, kc);
     uint32_t cp = xkb_keysym_to_utf32(sym);
 
-    if (cp <= 127u && should_do_ctrl_transformation(state, kc))
-        cp = (uint32_t) XkbToControl((char) cp);
+    اگر (cp <= 127u && should_do_ctrl_transformation(state, kc))
+        cp = (uint32_t) XkbToControl((نویسه) cp);
 
-    return cp;
+    بازگشت cp;
 }
 
 /**
  * Serializes the requested modifier state into an xkb_mod_mask_t, with all
  * the same disclaimers as in xkb_state_update_mask.
  */
-static inline xkb_mod_mask_t
-serialize_mods(const struct state_components *components,
-               enum xkb_state_component type)
+ایستا درونخطی xkb_mod_mask_t
+serialize_mods(ثابت ساختار state_components *components,
+               شمارش xkb_state_component type)
 {
     xkb_mod_mask_t ret = 0;
 
-    if (type & XKB_STATE_MODS_EFFECTIVE)
-        return components->mods;
+    اگر (type & XKB_STATE_MODS_EFFECTIVE)
+        بازگشت components->mods;
 
-    if (type & XKB_STATE_MODS_DEPRESSED)
+    اگر (type & XKB_STATE_MODS_DEPRESSED)
         ret |= components->base_mods;
-    if (type & XKB_STATE_MODS_LATCHED)
+    اگر (type & XKB_STATE_MODS_LATCHED)
         ret |= components->latched_mods;
-    if (type & XKB_STATE_MODS_LOCKED)
+    اگر (type & XKB_STATE_MODS_LOCKED)
         ret |= components->locked_mods;
 
-    return ret;
+    بازگشت ret;
 }
 
 xkb_mod_mask_t
-xkb_state_serialize_mods(struct xkb_state *state,
-                         enum xkb_state_component type)
+xkb_state_serialize_mods(ساختار xkb_state *state,
+                         شمارش xkb_state_component type)
 {
-    return serialize_mods(&state->components, type);
+    بازگشت serialize_mods(&state->components, type);
 }
 
 /**
  * Serialises the requested group state, with all the same disclaimers as
  * in xkb_state_update_mask.
  */
-static inline xkb_layout_index_t
-serialize_layout(const struct state_components *components,
-                 enum xkb_state_component type)
+ایستا درونخطی xkb_layout_index_t
+serialize_layout(ثابت ساختار state_components *components,
+                 شمارش xkb_state_component type)
 {
-    if (type & XKB_STATE_LAYOUT_EFFECTIVE)
-        return components->group;
+    اگر (type & XKB_STATE_LAYOUT_EFFECTIVE)
+        بازگشت components->group;
 
     int32_t ret = 0;
-    if (type & XKB_STATE_LAYOUT_DEPRESSED)
+    اگر (type & XKB_STATE_LAYOUT_DEPRESSED)
         ret += components->base_group;
-    if (type & XKB_STATE_LAYOUT_LATCHED)
+    اگر (type & XKB_STATE_LAYOUT_LATCHED)
         ret += components->latched_group;
-    if (type & XKB_STATE_LAYOUT_LOCKED)
+    اگر (type & XKB_STATE_LAYOUT_LOCKED)
         ret += components->locked_group;
 
-    return (xkb_layout_index_t)ret;
+    بازگشت (xkb_layout_index_t)ret;
 }
 
 xkb_layout_index_t
-xkb_state_serialize_layout(struct xkb_state *state,
-                           enum xkb_state_component type)
+xkb_state_serialize_layout(ساختار xkb_state *state,
+                           شمارش xkb_state_component type)
 {
-    return serialize_layout(&state->components, type);
+    بازگشت serialize_layout(&state->components, type);
 }
 
 xkb_led_mask_t
-xkb_state_serialize_leds(const struct xkb_state *state,
-                         enum xkb_state_component type)
+xkb_state_serialize_leds(ثابت ساختار xkb_state *state,
+                         شمارش xkb_state_component type)
 {
-    return (type & XKB_STATE_LEDS)
+    بازگشت (type & XKB_STATE_LEDS)
         ? state->components.leds
         : 0;
 }
 
-static inline enum xkb_keyboard_control_flags
-serialize_controls(const struct state_components *components,
-                   enum xkb_state_component type)
+ایستا درونخطی شمارش xkb_keyboard_control_flags
+serialize_controls(ثابت ساختار state_components *components,
+                   شمارش xkb_state_component type)
 {
-    return (type & XKB_STATE_CONTROLS_EFFECTIVE)
+    بازگشت (type & XKB_STATE_CONTROLS_EFFECTIVE)
         /*
          * Enable using the public API with the all the Controls values, except
          * the internal ones, if any.
          */
-        ? (enum xkb_keyboard_control_flags)
+        ? (شمارش xkb_keyboard_control_flags)
           (components->controls & CONTROL_ALL_BOOLEAN)
         : 0;
 }
 
-enum xkb_keyboard_control_flags
-xkb_state_serialize_controls(const struct xkb_state *state,
-                             enum xkb_state_component type)
+شمارش xkb_keyboard_control_flags
+xkb_state_serialize_controls(ثابت ساختار xkb_state *state,
+                             شمارش xkb_state_component type)
 {
-    return serialize_controls(&state->components, type);
+    بازگشت serialize_controls(&state->components, type);
 }
 
 /**
@@ -2668,43 +2668,43 @@ xkb_state_serialize_controls(const struct xkb_state *state,
  * the "NumLock" modifier usually also sets the "Mod2" modifier.
  */
 xkb_mod_mask_t
-mod_mask_get_effective(struct xkb_keymap *keymap, xkb_mod_mask_t mods)
+mod_mask_get_effective(ساختار xkb_keymap *keymap, xkb_mod_mask_t mods)
 {
     /* Initialize the effective mask with its corresponding real mods. */
     xkb_mod_mask_t mask = mods & MOD_REAL_MASK_ALL;
 
     /* Resolve the virtual modifiers */
-    const struct xkb_mod *mod;
+    ثابت ساختار xkb_mod *mod;
     xkb_mod_index_t i;
     xkb_vmods_enumerate(i, mod, &keymap->mods)
-        if (mods & (UINT32_C(1) << i))
+        اگر (mods & (UINT32_C(1) << i))
             mask |= mod->mapping;
 
-    return mask;
+    بازگشت mask;
 }
 
 /**
  * Returns 1 if the given modifier is active with the specified type(s), 0 if
  * not, or -1 if the modifier is invalid.
  */
-int
-xkb_state_mod_index_is_active(struct xkb_state *state,
+صحیح
+xkb_state_mod_index_is_active(ساختار xkb_state *state,
                               xkb_mod_index_t idx,
-                              enum xkb_state_component type)
+                              شمارش xkb_state_component type)
 {
-    if (unlikely(idx >= xkb_keymap_num_mods(state->keymap)))
-        return -1;
+    اگر (unlikely(idx >= xkb_keymap_رقم_mods(state->keymap)))
+        بازگشت -1;
 
-    const xkb_mod_mask_t mapping = state->keymap->mods.mods[idx].mapping;
-    if (!mapping) {
+    ثابت xkb_mod_mask_t mapping = state->keymap->mods.mods[idx].mapping;
+    اگر (!mapping) {
         /* Modifier not mapped */
-        return 0;
+        بازگشت 0;
     }
     /* WARNING: this may overmatch for virtual modifiers */
-    return (xkb_state_serialize_mods(state, type) & mapping) == mapping;
+    بازگشت (xkb_state_serialize_mods(state, type) & mapping) == mapping;
 }
 
-enum {
+شمارش {
     XKB_STATE_MATCH_FLAGS = XKB_STATE_MATCH_ANY
                           | XKB_STATE_MATCH_ALL
                           | XKB_STATE_MATCH_NON_EXCLUSIVE
@@ -2714,27 +2714,27 @@ enum {
  * Helper function for xkb_state_mod_indices_are_active and
  * xkb_state_mod_names_are_active.
  */
-static bool
-match_mod_masks(struct xkb_state *state,
-                enum xkb_state_component type,
-                enum xkb_state_match match,
+ایستا bool
+match_mod_masks(ساختار xkb_state *state,
+                شمارش xkb_state_component type,
+                شمارش xkb_state_match match,
                 xkb_mod_mask_t wanted)
 {
-    const xkb_mod_mask_t active = xkb_state_serialize_mods(state, type);
+    ثابت xkb_mod_mask_t active = xkb_state_serialize_mods(state, type);
 
-    if (!(match & XKB_STATE_MATCH_NON_EXCLUSIVE) && (active & ~wanted))
-        return false;
+    اگر (!(match & XKB_STATE_MATCH_NON_EXCLUSIVE) && (active & ~wanted))
+        بازگشت false;
 
-    if (match & XKB_STATE_MATCH_ANY)
-        return active & wanted;
+    اگر (match & XKB_STATE_MATCH_ANY)
+        بازگشت active & wanted;
 
     /* Ensure all flags but XKB_STATE_MATCH_ALL are processed before */
     static_assert(XKB_STATE_MATCH_ALL ==
-                  ((enum xkb_state_match) XKB_STATE_MATCH_FLAGS &
+                  ((شمارش xkb_state_match) XKB_STATE_MATCH_FLAGS &
                    ~(XKB_STATE_MATCH_ANY | XKB_STATE_MATCH_NON_EXCLUSIVE)),
                   "");
 
-    return (active & wanted) == wanted;
+    بازگشت (active & wanted) == wanted;
 }
 
 /**
@@ -2742,58 +2742,58 @@ match_mod_masks(struct xkb_state *state,
  * not, or -1 if any of the modifiers are invalid or -2 if the match flag is
  * invalid.
  */
-int
-xkb_state_mod_indices_are_active(struct xkb_state *state,
-                                 enum xkb_state_component type,
-                                 enum xkb_state_match match,
+صحیح
+xkb_state_mod_indices_are_active(ساختار xkb_state *state,
+                                 شمارش xkb_state_component type,
+                                 شمارش xkb_state_match match,
                                  ...)
 {
-    if (match & ~((enum xkb_state_match) XKB_STATE_MATCH_FLAGS))
-        return -2;
+    اگر (match & ~((شمارش xkb_state_match) XKB_STATE_MATCH_FLAGS))
+        بازگشت -2;
 
     va_list ap;
     xkb_mod_mask_t wanted = 0;
-    int ret = 0;
-    const xkb_mod_index_t num_mods = xkb_keymap_num_mods(state->keymap);
+    صحیح ret = 0;
+    ثابت xkb_mod_index_t رقم_mods = xkb_keymap_رقم_mods(state->keymap);
 
     va_start(ap, match);
-    while (1) {
+    وقتی (1) {
         xkb_mod_index_t idx = va_arg(ap, xkb_mod_index_t);
-        if (idx == XKB_MOD_INVALID)
-            break;
-        if (unlikely(idx >= num_mods)) {
+        اگر (idx == XKB_MOD_INVALID)
+            بشکن;
+        اگر (unlikely(idx >= رقم_mods)) {
             ret = -1;
-            break;
+            بشکن;
         }
         wanted |= state->keymap->mods.mods[idx].mapping;
     }
     va_end(ap);
 
-    if (ret == -1)
-        return ret;
+    اگر (ret == -1)
+        بازگشت ret;
 
-    if (!wanted) {
+    اگر (!wanted) {
         /* Modifiers not mapped */
-        return 0;
+        بازگشت 0;
     }
 
-    return match_mod_masks(state, type, match, wanted);
+    بازگشت match_mod_masks(state, type, match, wanted);
 }
 
 /**
  * Returns 1 if the given modifier is active with the specified type(s), 0 if
  * not, or -1 if the modifier is invalid.
  */
-int
-xkb_state_mod_name_is_active(struct xkb_state *state, const char *name,
-                             enum xkb_state_component type)
+صحیح
+xkb_state_mod_name_is_active(ساختار xkb_state *state, ثابت نویسه *name,
+                             شمارش xkb_state_component type)
 {
-    const xkb_mod_index_t idx = xkb_keymap_mod_get_index(state->keymap, name);
+    ثابت xkb_mod_index_t idx = xkb_keymap_mod_get_index(state->keymap, name);
 
-    if (idx == XKB_MOD_INVALID)
-        return -1;
+    اگر (idx == XKB_MOD_INVALID)
+        بازگشت -1;
 
-    return xkb_state_mod_index_is_active(state, idx, type);
+    بازگشت xkb_state_mod_index_is_active(state, idx, type);
 }
 
 /**
@@ -2801,111 +2801,111 @@ xkb_state_mod_name_is_active(struct xkb_state *state, const char *name,
  * not, -1 if any of the modifiers are invalid or -2 if the match flag is
  * invalid.
  */
-ATTR_NULL_SENTINEL int
-xkb_state_mod_names_are_active(struct xkb_state *state,
-                               enum xkb_state_component type,
-                               enum xkb_state_match match,
+ATTR_NULL_SENTINEL صحیح
+xkb_state_mod_names_are_active(ساختار xkb_state *state,
+                               شمارش xkb_state_component type,
+                               شمارش xkb_state_match match,
                                ...)
 {
-    if (match & ~((enum xkb_state_match) XKB_STATE_MATCH_FLAGS))
-        return -2;
+    اگر (match & ~((شمارش xkb_state_match) XKB_STATE_MATCH_FLAGS))
+        بازگشت -2;
 
     va_list ap;
     xkb_mod_mask_t wanted = 0;
-    int ret = 0;
+    صحیح ret = 0;
 
     va_start(ap, match);
-    while (1) {
-        const char *str = va_arg(ap, const char *);
-        if (str == NULL)
-            break;
-        const xkb_mod_index_t idx = xkb_keymap_mod_get_index(state->keymap, str);
-        if (idx == XKB_MOD_INVALID) {
+    وقتی (1) {
+        ثابت نویسه *str = va_arg(ap, ثابت نویسه *);
+        اگر (str == پوچ)
+            بشکن;
+        ثابت xkb_mod_index_t idx = xkb_keymap_mod_get_index(state->keymap, str);
+        اگر (idx == XKB_MOD_INVALID) {
             ret = -1;
-            break;
+            بشکن;
         }
         wanted |= state->keymap->mods.mods[idx].mapping;
     }
     va_end(ap);
 
-    if (ret == -1)
-        return ret;
+    اگر (ret == -1)
+        بازگشت ret;
 
-    if (!wanted) {
+    اگر (!wanted) {
         /* Modifiers not mapped */
-        return 0;
+        بازگشت 0;
     }
 
-    return match_mod_masks(state, type, match, wanted);
+    بازگشت match_mod_masks(state, type, match, wanted);
 }
 
 /**
  * Returns 1 if the given group is active with the specified type(s), 0 if
  * not, or -1 if the group is invalid.
  */
-int
-xkb_state_layout_index_is_active(struct xkb_state *state,
+صحیح
+xkb_state_layout_index_is_active(ساختار xkb_state *state,
                                  xkb_layout_index_t idx,
-                                 enum xkb_state_component type)
+                                 شمارش xkb_state_component type)
 {
-    if (idx >= state->keymap->num_groups)
-        return -1;
+    اگر (idx >= state->keymap->رقم_groups)
+        بازگشت -1;
 
-    int ret = 0;
-    if (type & XKB_STATE_LAYOUT_EFFECTIVE)
+    صحیح ret = 0;
+    اگر (type & XKB_STATE_LAYOUT_EFFECTIVE)
         ret |= (state->components.group == idx);
-    if (type & XKB_STATE_LAYOUT_DEPRESSED)
+    اگر (type & XKB_STATE_LAYOUT_DEPRESSED)
         ret |= (state->components.base_group == (int32_t) idx);
-    if (type & XKB_STATE_LAYOUT_LATCHED)
+    اگر (type & XKB_STATE_LAYOUT_LATCHED)
         ret |= (state->components.latched_group == (int32_t) idx);
-    if (type & XKB_STATE_LAYOUT_LOCKED)
+    اگر (type & XKB_STATE_LAYOUT_LOCKED)
         ret |= (state->components.locked_group == (int32_t) idx);
 
-    return ret;
+    بازگشت ret;
 }
 
 /**
  * Returns 1 if the given modifier is active with the specified type(s), 0 if
  * not, or -1 if the modifier is invalid.
  */
-int
-xkb_state_layout_name_is_active(struct xkb_state *state, const char *name,
-                                enum xkb_state_component type)
+صحیح
+xkb_state_layout_name_is_active(ساختار xkb_state *state, ثابت نویسه *name,
+                                شمارش xkb_state_component type)
 {
-    const xkb_layout_index_t idx =
+    ثابت xkb_layout_index_t idx =
         xkb_keymap_layout_get_index(state->keymap, name);
 
-    if (idx == XKB_LAYOUT_INVALID)
-        return -1;
+    اگر (idx == XKB_LAYOUT_INVALID)
+        بازگشت -1;
 
-    return xkb_state_layout_index_is_active(state, idx, type);
+    بازگشت xkb_state_layout_index_is_active(state, idx, type);
 }
 
 /**
  * Returns 1 if the given LED is active, 0 if not, or -1 if the LED is invalid.
  */
-int
-xkb_state_led_index_is_active(struct xkb_state *state, xkb_led_index_t idx)
+صحیح
+xkb_state_led_index_is_active(ساختار xkb_state *state, xkb_led_index_t idx)
 {
-    if (idx >= state->keymap->num_leds ||
+    اگر (idx >= state->keymap->رقم_leds ||
         state->keymap->leds[idx].name == XKB_ATOM_NONE)
-        return -1;
+        بازگشت -1;
 
-    return !!(state->components.leds & (UINT32_C(1) << idx));
+    بازگشت !!(state->components.leds & (UINT32_C(1) << idx));
 }
 
 /**
  * Returns 1 if the given LED is active, 0 if not, or -1 if the LED is invalid.
  */
-int
-xkb_state_led_name_is_active(struct xkb_state *state, const char *name)
+صحیح
+xkb_state_led_name_is_active(ساختار xkb_state *state, ثابت نویسه *name)
 {
-    const xkb_led_index_t idx = xkb_keymap_led_get_index(state->keymap, name);
+    ثابت xkb_led_index_t idx = xkb_keymap_led_get_index(state->keymap, name);
 
-    if (idx == XKB_LED_INVALID)
-        return -1;
+    اگر (idx == XKB_LED_INVALID)
+        بازگشت -1;
 
-    return xkb_state_led_index_is_active(state, idx);
+    بازگشت xkb_state_led_index_is_active(state, idx);
 }
 
 /**
@@ -2913,122 +2913,122 @@ xkb_state_led_name_is_active(struct xkb_state *state, const char *name)
  * - XkbTranslateKeyCode(3), mod_rtrn return value, from libX11.
  * - MyEnhancedXkbTranslateKeyCode(), a modification of the above, from GTK+.
  */
-static xkb_mod_mask_t
-key_get_consumed(struct xkb_state *state, const struct xkb_key *key,
-                 enum xkb_consumed_mode mode)
+ایستا xkb_mod_mask_t
+کلید_get_consumed(ساختار xkb_state *state, ثابت ساختار xkb_کلید *کلید,
+                 شمارش xkb_consumed_mode mode)
 {
-    const xkb_layout_index_t group =
-        xkb_state_key_get_layout(state, key->keycode);
-    if (group == XKB_LAYOUT_INVALID)
-        return 0;
+    ثابت xkb_layout_index_t group =
+        xkb_state_کلید_get_layout(state, کلید->keycode);
+    اگر (group == XKB_LAYOUT_INVALID)
+        بازگشت 0;
 
     xkb_mod_mask_t preserve = 0;
     xkb_mod_mask_t consumed = 0;
 
-    const struct xkb_key_type_entry* const matching_entry =
-        get_entry_for_key_state(state, key, group);
-    if (matching_entry)
+    ثابت ساختار xkb_کلید_type_entry* ثابت matching_entry =
+        get_entry_for_کلید_state(state, کلید, group);
+    اگر (matching_entry)
         preserve = matching_entry->preserve.mask;
 
-    const struct xkb_key_type* const type = key->groups[group].type;
-    switch (mode) {
-    case XKB_CONSUMED_MODE_XKB:
+    ثابت ساختار xkb_کلید_type* ثابت type = کلید->groups[group].type;
+    انتخاب (mode) {
+    حالت XKB_CONSUMED_MODE_XKB:
         consumed = type->mods.mask;
-        break;
+        بشکن;
 
-    case XKB_CONSUMED_MODE_GTK: {
-        const struct xkb_key_type_entry* const no_mods_entry =
+    حالت XKB_CONSUMED_MODE_GTK: {
+        ثابت ساختار xkb_کلید_type_entry* ثابت no_mods_entry =
             get_entry_for_mods(type, 0);
-        const xkb_level_index_t no_mods_leveli = no_mods_entry
+        ثابت xkb_level_index_t no_mods_leveli = no_mods_entry
                                                ? no_mods_entry->level
                                                : 0;
-        const struct xkb_level* const no_mods_level =
-            &key->groups[group].levels[no_mods_leveli];
+        ثابت ساختار xkb_level* ثابت no_mods_level =
+            &کلید->groups[group].levels[no_mods_leveli];
 
-        for (darray_size_t i = 0; i < type->num_entries; i++) {
-            const struct xkb_key_type_entry* const entry = &type->entries[i];
-            if (!entry_is_active(entry))
-                continue;
+        برای (darray_size_t i = 0; i < type->رقم_entries; i++) {
+            ثابت ساختار xkb_کلید_type_entry* ثابت entry = &type->entries[i];
+            اگر (!entry_is_active(entry))
+                ادامه;
 
-            const struct xkb_level* const level =
-                &key->groups[group].levels[entry->level];
-            if (XkbLevelsSameSyms(level, no_mods_level))
-                continue;
+            ثابت ساختار xkb_level* ثابت level =
+                &کلید->groups[group].levels[entry->level];
+            اگر (XkbLevelsSameSyms(level, no_mods_level))
+                ادامه;
 
-            if (entry == matching_entry || one_bit_set(entry->mods.mask))
+            اگر (entry == matching_entry || one_bit_set(entry->mods.mask))
                 consumed |= entry->mods.mask & ~entry->preserve.mask;
         }
-        break;
+        بشکن;
     }
     }
 
-    return consumed & ~preserve;
+    بازگشت consumed & ~preserve;
 }
 
-int
-xkb_state_mod_index_is_consumed2(struct xkb_state *state, xkb_keycode_t kc,
+صحیح
+xkb_state_mod_index_is_consumed2(ساختار xkb_state *state, xkb_keycode_t kc,
                                  xkb_mod_index_t idx,
-                                 enum xkb_consumed_mode mode)
+                                 شمارش xkb_consumed_mode mode)
 {
-    const struct xkb_key* const key = XkbKey(state->keymap, kc);
+    ثابت ساختار xkb_کلید* ثابت کلید = Xkb_کلید(state->keymap, kc);
 
-    if (unlikely(!key || idx >= xkb_keymap_num_mods(state->keymap)))
-        return -1;
+    اگر (unlikely(!کلید || idx >= xkb_keymap_رقم_mods(state->keymap)))
+        بازگشت -1;
 
-    const xkb_mod_mask_t mapping = state->keymap->mods.mods[idx].mapping;
-    if (!mapping) {
+    ثابت xkb_mod_mask_t mapping = state->keymap->mods.mods[idx].mapping;
+    اگر (!mapping) {
         /* Modifier not mapped */
-        return 0;
+        بازگشت 0;
     }
-    return (mapping & key_get_consumed(state, key, mode)) == mapping;
+    بازگشت (mapping & کلید_get_consumed(state, کلید, mode)) == mapping;
 }
 
-int
-xkb_state_mod_index_is_consumed(struct xkb_state *state, xkb_keycode_t kc,
+صحیح
+xkb_state_mod_index_is_consumed(ساختار xkb_state *state, xkb_keycode_t kc,
                                 xkb_mod_index_t idx)
 {
-    return xkb_state_mod_index_is_consumed2(state, kc, idx,
+    بازگشت xkb_state_mod_index_is_consumed2(state, kc, idx,
                                             XKB_CONSUMED_MODE_XKB);
 }
 
 xkb_mod_mask_t
-xkb_state_mod_mask_remove_consumed(struct xkb_state *state, xkb_keycode_t kc,
+xkb_state_mod_mask_remove_consumed(ساختار xkb_state *state, xkb_keycode_t kc,
                                    xkb_mod_mask_t mask)
 {
-    const struct xkb_key* const key = XkbKey(state->keymap, kc);
+    ثابت ساختار xkb_کلید* ثابت کلید = Xkb_کلید(state->keymap, kc);
 
-    if (!key)
-        return 0;
+    اگر (!کلید)
+        بازگشت 0;
 
-    return resolve_to_canonical_mods(state->keymap, mask) &
-           ~key_get_consumed(state, key, XKB_CONSUMED_MODE_XKB);
+    بازگشت resolve_to_canonical_mods(state->keymap, mask) &
+           ~کلید_get_consumed(state, کلید, XKB_CONSUMED_MODE_XKB);
 }
 
 xkb_mod_mask_t
-xkb_state_key_get_consumed_mods2(struct xkb_state *state, xkb_keycode_t kc,
-                                 enum xkb_consumed_mode mode)
+xkb_state_کلید_get_consumed_mods2(ساختار xkb_state *state, xkb_keycode_t kc,
+                                 شمارش xkb_consumed_mode mode)
 {
-    switch (mode) {
-    case XKB_CONSUMED_MODE_XKB:
-    case XKB_CONSUMED_MODE_GTK:
-        break;
-    default:
+    انتخاب (mode) {
+    حالت XKB_CONSUMED_MODE_XKB:
+    حالت XKB_CONSUMED_MODE_GTK:
+        بشکن;
+    پیشفرض:
         log_err_func(state->keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
                      "unrecognized consumed modifiers mode: %d\n", mode);
-        return 0;
+        بازگشت 0;
     }
 
-    const struct xkb_key* const key = XkbKey(state->keymap, kc);
-    if (!key)
-        return 0;
+    ثابت ساختار xkb_کلید* ثابت کلید = Xkb_کلید(state->keymap, kc);
+    اگر (!کلید)
+        بازگشت 0;
 
-    return key_get_consumed(state, key, mode);
+    بازگشت کلید_get_consumed(state, کلید, mode);
 }
 
 xkb_mod_mask_t
-xkb_state_key_get_consumed_mods(struct xkb_state *state, xkb_keycode_t kc)
+xkb_state_کلید_get_consumed_mods(ساختار xkb_state *state, xkb_keycode_t kc)
 {
-    return xkb_state_key_get_consumed_mods2(state, kc, XKB_CONSUMED_MODE_XKB);
+    بازگشت xkb_state_کلید_get_consumed_mods2(state, kc, XKB_CONSUMED_MODE_XKB);
 }
 
 /*******************************************************************************
@@ -3036,16 +3036,16 @@ xkb_state_key_get_consumed_mods(struct xkb_state *state, xkb_keycode_t kc)
  ******************************************************************************/
 
 /** Entry to keep track of the state of an overlaid key */
-struct xkb_overlaid_key {
+ساختار xkb_overlaid_کلید {
     /** The source key being overlaid */
-    const struct xkb_key *old;
+    ثابت ساختار xkb_کلید *old;
     /** The target key */
-    const struct xkb_key *new;
+    ثابت ساختار xkb_کلید *new;
     /** Counter of key currently down */
-    int refcnt;
+    صحیح refcnt;
 };
 
-struct xkb_shortcuts_config_entry {
+ساختار xkb_shortcuts_config_entry {
     /** Real modifier mask to trigger shortcuts tweaks */
     xkb_mod_mask_t mods;
     /** Target layout */
@@ -3063,14 +3063,14 @@ struct xkb_shortcuts_config_entry {
  * - Add further features without modifying `xkb_state`, which is already
  *   bloated for *clients* applications.
  */
-struct xkb_machine {
+ساختار xkb_machine {
     /** Inherits from `xkb_server_state` */
-    struct xkb_server_state base;
+    ساختار xkb_server_state base;
 
     /* Extra server-specific state data */
 
     /** Keyboard overlays handling */
-    struct {
+    ساختار {
         /**
          * Current overlaid keys
          *
@@ -3078,7 +3078,7 @@ struct xkb_machine {
          * until totally released, i.e. every key press was matched with the
          * corresponding key release.
          */
-        darray(struct xkb_overlaid_key) keys;
+        darray(ساختار xkb_overlaid_کلید) کلیدها;
         /**
          * Activation order of the overlay
          *
@@ -3091,48 +3091,48 @@ struct xkb_machine {
     } overlays;
 
     /** Configuration */
-    struct machine_config {
+    ساختار machine_config {
         /** Modifiers remapping */
-        struct machine_modifiers_config {
+        ساختار machine_modifiers_config {
             /** Real modifier mask */
             xkb_mod_mask_t mask;
             /** Modifiers re-mappings */
-            darray_size_t mappings_num;
-            struct machine_mods_mapping {
+            darray_size_t mappings_رقم;
+            ساختار machine_mods_mapping {
                 xkb_mod_mask_t source;
                 xkb_mod_mask_t target;
-            } * mappings ATTR_COUNTED_BY(mappings_num);
+            } * mappings ATTR_COUNTED_BY(mappings_رقم);
         } modifiers;
 
         /** Shortcuts tweak */
-        struct machine_shortcuts_config {
+        ساختار machine_shortcuts_config {
             /** Substitution entries */
-            struct xkb_shortcuts_config_entry *entries;
+            ساختار xkb_shortcuts_config_entry *entries;
         } shortcuts;
     } config;
 
     /** Mouse keys handling */
-    struct {
+    ساختار {
         /** Default pointer button */
         xkb_pointer_button_index_t default_button;
         /** Mask of the locked buttons */
         xkb_pointer_button_mask_t locked_buttons;
     } mouse;
 
-    enum xkb_machine_flags flags;
+    شمارش xkb_machine_flags flags;
 };
 
-typedef darray(struct machine_mods_mapping) machine_mods_mappings;
+تعریفنوع darray(ساختار machine_mods_mapping) machine_mods_mappings;
 
-struct xkb_machine_builder {
-    struct xkb_keymap *keymap;
+ساختار xkb_machine_builder {
+    ساختار xkb_keymap *keymap;
 
     /** Controls */
-    struct {
+    ساختار {
         /** Accessibility flags */
-        struct {
-            enum xkb_a11y_flags affect_flags;
-            enum xkb_a11y_flags flags;
+        ساختار {
+            شمارش xkb_a11y_flags affect_flags;
+            شمارش xkb_a11y_flags flags;
         } a11y;
     } controls;
 
@@ -3140,78 +3140,78 @@ struct xkb_machine_builder {
     machine_mods_mappings mods;
 
     /** Shortcuts tweak */
-    struct xkb_shortcuts_config_options {
+    ساختار xkb_shortcuts_config_options {
         /** Substitution entries */
-        darray(struct xkb_shortcuts_config_entry) entries;
+        darray(ساختار xkb_shortcuts_config_entry) entries;
     } shortcuts;
 
-    enum xkb_machine_flags machine_flags;
-    enum xkb_machine_builder_flags builder_flags;
-    int refcnt;
+    شمارش xkb_machine_flags machine_flags;
+    شمارش xkb_machine_builder_flags builder_flags;
+    صحیح refcnt;
 };
 
-struct xkb_machine_builder *
+ساختار xkb_machine_builder *
 xkb_machine_builder_new(
-    struct xkb_keymap * restrict keymap,
-    const struct xkb_machine_builder_config * restrict config,
-    enum xkb_status * restrict status
+    ساختار xkb_keymap * restrict keymap,
+    ثابت ساختار xkb_machine_builder_config * restrict config,
+    شمارش xkb_status * restrict status
 )
 {
     /* Handle default configuration */
-    static const struct xkb_machine_builder_config default_config = {
-        .size = sizeof(default_config)
+    ایستا ثابت ساختار xkb_machine_builder_config default_config = {
+        .size = اندازه(default_config)
     };
-    if (!config)
+    اگر (!config)
         config = &default_config;
 
     /* Check ABI compatibility */
-    const enum xkb_status status_ = xkb_check_state_abi(config);
-    if (status_) {
+    ثابت شمارش xkb_status status_ = xkb_check_state_abi(config);
+    اگر (status_) {
         xkb_log_abi_error(keymap->ctx, __func__, status_);
-        if (status)
+        اگر (status)
             *status = status_;
-        return NULL;
+        بازگشت پوچ;
     }
 
     /* Sanitize input */
-    const enum xkb_machine_builder_flags invalid_builder_flags
+    ثابت شمارش xkb_machine_builder_flags invalid_builder_flags
         = config->builder_flags
-        & ~(enum xkb_machine_builder_flags)XKB_MACHINE_BUILDER_FLAGS_VALUES;
-    if (invalid_builder_flags) {
+        & ~(شمارش xkb_machine_builder_flags)XKB_MACHINE_BUILDER_FLAGS_مقادیر;
+    اگر (invalid_builder_flags) {
         log_err_func(keymap->ctx, XKB_ERROR_UNSUPPORTED_MACHINE_BUILDER_FLAGS_,
                      "unrecognized machine builder flags: 0x%x\n",
                      invalid_builder_flags);
-        if (status)
+        اگر (status)
             *status = XKB_ERROR_UNSUPPORTED_MACHINE_BUILDER_FLAGS;
-        return NULL;
+        بازگشت پوچ;
     }
 
-    const enum xkb_machine_flags invalid_machine_flags
-        = (enum xkb_machine_flags)config->machine_flags
-        & ~(enum xkb_machine_flags)XKB_MACHINE_FLAGS_VALUES;
-    if (invalid_machine_flags) {
+    ثابت شمارش xkb_machine_flags invalid_machine_flags
+        = (شمارش xkb_machine_flags)config->machine_flags
+        & ~(شمارش xkb_machine_flags)XKB_MACHINE_FLAGS_مقادیر;
+    اگر (invalid_machine_flags) {
         log_err_func(keymap->ctx, XKB_ERROR_UNSUPPORTED_MACHINE_FLAGS_,
                      "unrecognized state machine flags: 0x%x\n",
                      invalid_machine_flags);
-        if (status)
+        اگر (status)
             *status = XKB_ERROR_UNSUPPORTED_MACHINE_FLAGS;
-        return NULL;
+        بازگشت پوچ;
     }
 
-    struct xkb_machine_builder * const builder = calloc(1, sizeof(*builder));
-    if (!builder) {
+    ساختار xkb_machine_builder * ثابت builder = calloc(1, اندازه(*builder));
+    اگر (!builder) {
         log_err_func1(keymap->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
                       "cannot allocate machine builder\n");
-        if (status)
+        اگر (status)
             *status = XKB_ERROR_ALLOCATION_FAILURE;
-        return NULL;
+        بازگشت پوچ;
     }
 
-    *builder = (struct xkb_machine_builder) {
+    *builder = (ساختار xkb_machine_builder) {
         .keymap = xkb_keymap_ref(keymap),
         .refcnt = 1,
-        .builder_flags = (enum xkb_machine_builder_flags)config->builder_flags,
-        .machine_flags = (enum xkb_machine_flags)config->machine_flags,
+        .builder_flags = (شمارش xkb_machine_builder_flags)config->builder_flags,
+        .machine_flags = (شمارش xkb_machine_flags)config->machine_flags,
         .controls = {
             .a11y = {
                 .affect_flags = XKB_A11Y_NO_FLAGS,
@@ -3224,276 +3224,276 @@ xkb_machine_builder_new(
         },
     };
 
-    if (status)
+    اگر (status)
         *status = XKB_SUCCESS;
 
-    return builder;
+    بازگشت builder;
 }
 
-struct xkb_machine_builder *
-xkb_machine_builder_ref(struct xkb_machine_builder *builder)
+ساختار xkb_machine_builder *
+xkb_machine_builder_ref(ساختار xkb_machine_builder *builder)
 {
-    assert(builder->refcnt > 0);
+    أكد(builder->refcnt > 0);
     builder->refcnt++;
-    return builder;
+    بازگشت builder;
 }
 
-void
-xkb_machine_builder_unref(struct xkb_machine_builder *builder)
+تهی
+xkb_machine_builder_unref(ساختار xkb_machine_builder *builder)
 {
-    assert(!builder || builder->refcnt > 0);
-    if (!builder || --builder->refcnt > 0)
-        return;
+    أكد(!builder || builder->refcnt > 0);
+    اگر (!builder || --builder->refcnt > 0)
+        بازگشت;
 
     darray_free(builder->shortcuts.entries);
     darray_free(builder->mods);
     xkb_keymap_unref(builder->keymap);
-    free(builder);
+    آزاد(builder);
 }
 
-struct xkb_keymap *
-xkb_machine_builder_get_keymap(const struct xkb_machine_builder *builder)
+ساختار xkb_keymap *
+xkb_machine_builder_get_keymap(ثابت ساختار xkb_machine_builder *builder)
 {
     /* Reference count is not updated. See API doc. */
-    return builder->keymap;
+    بازگشت builder->keymap;
 }
 
-enum xkb_status
+شمارش xkb_status
 xkb_machine_builder_update_a11y(
-    struct xkb_machine_builder * restrict builder,
-    const struct xkb_machine_builder_a11y_update * restrict update)
+    ساختار xkb_machine_builder * restrict builder,
+    ثابت ساختار xkb_machine_builder_a11y_update * restrict update)
 {
     /* Check ABI compatibility */
-    enum xkb_status status = xkb_check_state_abi(update);
-    if (status != XKB_SUCCESS) {
+    شمارش xkb_status status = xkb_check_state_abi(update);
+    اگر (status != XKB_SUCCESS) {
         xkb_log_abi_error(builder->keymap->ctx, __func__, status);
-        return status;
+        بازگشت status;
     }
 
-    const enum xkb_a11y_flags invalid_flags =
-        ~(enum xkb_a11y_flags)XKB_A11Y_FLAGS_VALUES;
+    ثابت شمارش xkb_a11y_flags invalid_flags =
+        ~(شمارش xkb_a11y_flags)XKB_A11_Y_FLAGS_مقادیر;
 
-    if (update->affect_flags & invalid_flags) {
+    اگر (update->affect_flags & invalid_flags) {
         log_err(builder->keymap->ctx, XKB_ERROR_UNSUPPORTED_A11Y_FLAGS_,
                 "%s: unrecognized A11Y affected flags: %#x\n",
                 __func__, update->affect_flags & invalid_flags);
-        return XKB_ERROR_UNSUPPORTED_A11Y_FLAGS;
+        بازگشت XKB_ERROR_UNSUPPORTED_A11Y_FLAGS;
     }
-    if (update->flags & invalid_flags) {
+    اگر (update->flags & invalid_flags) {
         log_err(builder->keymap->ctx, XKB_ERROR_UNSUPPORTED_A11Y_FLAGS_,
                 "%s: unrecognized A11Y flags: %#x\n",
                 __func__, update->flags & invalid_flags);
-        return XKB_ERROR_UNSUPPORTED_A11Y_FLAGS;
+        بازگشت XKB_ERROR_UNSUPPORTED_A11Y_FLAGS;
     }
 
     builder->controls.a11y.affect_flags |= update->affect_flags;
     builder->controls.a11y.flags &= ~update->affect_flags;
     builder->controls.a11y.flags |= (update->flags & update->affect_flags);
 
-    return XKB_SUCCESS;
+    بازگشت XKB_SUCCESS;
 }
 
-enum xkb_status
+شمارش xkb_status
 xkb_machine_builder_update_mods_remap(
-    struct xkb_machine_builder * restrict builder,
-    const struct xkb_machine_builder_mods_remap_update * restrict update
+    ساختار xkb_machine_builder * restrict builder,
+    ثابت ساختار xkb_machine_builder_mods_remap_update * restrict update
 )
 {
-    if (!update->source) {
-        if (!update->target) {
+    اگر (!update->source) {
+        اگر (!update->target) {
             /* Reset mappings */
             darray_resize(builder->mods, 0);
-            return XKB_SUCCESS;
-        } else {
-            return XKB_ERROR_UNSUPPORTED_MODIFIER_MASK;
+            بازگشت XKB_SUCCESS;
+        } وگرنه {
+            بازگشت XKB_ERROR_UNSUPPORTED_MODIFIER_MASK;
         }
     }
 
     /* Check the modifiers against the keymap */
-    const xkb_mod_mask_t invalid = ~builder->keymap->canonical_state_mask;
-    if ((update->source & invalid)) {
+    ثابت xkb_mod_mask_t invalid = ~builder->keymap->canonical_state_mask;
+    اگر ((update->source & invalid)) {
         log_err(builder->keymap->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK,
                 "%s: Invalid source modifiers: 0x%"PRIx32"\n",
                 __func__, update->source);
-        return XKB_ERROR_UNSUPPORTED_MODIFIER_MASK;
+        بازگشت XKB_ERROR_UNSUPPORTED_MODIFIER_MASK;
     }
-    if ((update->target & invalid)) {
+    اگر ((update->target & invalid)) {
         log_err(builder->keymap->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK,
                 "%s: Invalid target modifiers: 0x%"PRIx32"\n",
                 __func__, update->target);
-        return XKB_ERROR_UNSUPPORTED_MODIFIER_MASK;
+        بازگشت XKB_ERROR_UNSUPPORTED_MODIFIER_MASK;
     }
 
-    struct machine_mods_mapping *mapping = NULL;
+    ساختار machine_mods_mapping *mapping = پوچ;
     darray_size_t m = 0;
     darray_enumerate(m, mapping, builder->mods) {
-        if (mapping->source == update->source) {
-            if (!update->target) {
+        اگر (mapping->source == update->source) {
+            اگر (!update->target) {
                 /* Remove mapping */
                 darray_remove(builder->mods, m);
-            } else {
+            } وگرنه {
                 /* Update mapping */
                 mapping->target = update->target;
             }
-            return XKB_SUCCESS;
+            بازگشت XKB_SUCCESS;
         }
     }
 
-    if (update->target) {
+    اگر (update->target) {
         /* Append new mapping */
         darray_append(
             builder->mods,
-            (struct machine_mods_mapping) {
+            (ساختار machine_mods_mapping) {
                 .source = update->source,
                 .target = update->target
             }
         );
-    } else {
+    } وگرنه {
         /* Ignore missing mapping */
     }
 
-    return XKB_SUCCESS;
+    بازگشت XKB_SUCCESS;
 }
 
-enum xkb_status
+شمارش xkb_status
 xkb_machine_builder_update_shortcut_override(
-    struct xkb_machine_builder * restrict builder,
-    const struct xkb_machine_builder_shortcut_override_update * restrict update
+    ساختار xkb_machine_builder * restrict builder,
+    ثابت ساختار xkb_machine_builder_shortcut_override_update * restrict update
 )
 {
-    struct xkb_keymap *keymap = builder->keymap;
+    ساختار xkb_keymap *keymap = builder->keymap;
 
     /* Check the modifiers against the keymap */
-    const xkb_mod_mask_t invalid = ~keymap->canonical_state_mask;
-    if ((update->affect_mods & invalid)) {
+    ثابت xkb_mod_mask_t invalid = ~keymap->canonical_state_mask;
+    اگر ((update->affect_mods & invalid)) {
         log_err(keymap->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK,
                 "%s: Invalid affected modifiers: 0x%"PRIx32"\n",
                 __func__, update->affect_mods);
-        return XKB_ERROR_UNSUPPORTED_MODIFIER_MASK;
+        بازگشت XKB_ERROR_UNSUPPORTED_MODIFIER_MASK;
     }
-    if ((update->mods & invalid)) {
+    اگر ((update->mods & invalid)) {
         log_err(keymap->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK,
                 "%s: Invalid modifiers: 0x%"PRIx32"\n",
                 __func__, update->mods);
-        return XKB_ERROR_UNSUPPORTED_MODIFIER_MASK;
+        بازگشت XKB_ERROR_UNSUPPORTED_MODIFIER_MASK;
     }
 
     /* Check the layout indices against the keymap */
-    if (update->source >= keymap->num_groups &&
+    اگر (update->source >= keymap->رقم_groups &&
         update->source != XKB_LAYOUT_INVALID) {
         static_assert(XKB_LAYOUT_INVALID == UINT32_MAX, "integer overflow");
         log_err(keymap->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                 "%s: Invalid source layout: "
                 "expected index in range 1..%"PRIu32", but got %"PRIu32"\n",
-                __func__, keymap->num_groups, update->source + 1);
-        return XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX;
+                __func__, keymap->رقم_groups, update->source + 1);
+        بازگشت XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX;
     }
-    if (update->target >= keymap->num_groups &&
+    اگر (update->target >= keymap->رقم_groups &&
         update->target != XKB_LAYOUT_INVALID) {
         static_assert(XKB_LAYOUT_INVALID == UINT32_MAX, "integer overflow");
         log_err(keymap->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                 "%s: Invalid target layout: "
                 "expected index in range 1..%"PRIu32", but got %"PRIu32"\n",
-                __func__, keymap->num_groups, update->target + 1);
-        return XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX;
+                __func__, keymap->رقم_groups, update->target + 1);
+        بازگشت XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX;
     }
 
-    struct xkb_shortcuts_config_options * const config = &builder->shortcuts;
+    ساختار xkb_shortcuts_config_options * ثابت config = &builder->shortcuts;
 
     /* Resize array & initialize new entries, if relevant */
-    if (update->source >= darray_size(config->entries) &&
+    اگر (update->source >= darray_size(config->entries) &&
         update->source != XKB_LAYOUT_INVALID) {
-        if (update->target == update->source) {
+        اگر (update->target == update->source) {
             /* Skip default setting */
-            return XKB_SUCCESS;
+            بازگشت XKB_SUCCESS;
         }
         xkb_layout_index_t new = darray_size(config->entries);
         darray_resize(config->entries, update->source + 1);
-        for (; new <= update->source; new++) {
+        برای (; new <= update->source; new++) {
             darray_item(config->entries, new) =
-                (struct xkb_shortcuts_config_entry) {
+                (ساختار xkb_shortcuts_config_entry) {
                     .target = XKB_LAYOUT_INVALID,
                     .mods = 0
                 };
         }
     }
 
-    struct xkb_shortcuts_config_entry *entry;
+    ساختار xkb_shortcuts_config_entry *entry;
     xkb_layout_index_t source = (update->source == XKB_LAYOUT_INVALID)
         ? 0               /* Loop over all entries */
         : update->source; /* Single entry */
     darray_foreach_from(entry, config->entries, source) {
-        if (update->source == XKB_LAYOUT_INVALID &&
+        اگر (update->source == XKB_LAYOUT_INVALID &&
             entry->target == XKB_LAYOUT_INVALID) {
             /* Skip previous deactivated entry */
             source++;
-            continue;
+            ادامه;
         }
 
-        if (update->affect_mods) {
+        اگر (update->affect_mods) {
             entry->mods &= ~update->affect_mods;
             entry->mods |= (update->affect_mods & update->mods);
         }
 
-        if (update->source != XKB_LAYOUT_INVALID) {
+        اگر (update->source != XKB_LAYOUT_INVALID) {
             entry->target = (update->target == source)
                 ? XKB_LAYOUT_INVALID
                 : update->target;
             /* Single entry: exit loop */
-            break;
+            بشکن;
         }
         source++;
     }
 
-    return XKB_SUCCESS;
+    بازگشت XKB_SUCCESS;
 }
 
 /** Compare 2 modifiers combinations */
-static int
-cmp_mod_masks(const void *a, const void *b)
+ایستا صحیح
+cmp_mod_masks(ثابت تهی *a, ثابت تهی *b)
 {
-    const xkb_mod_mask_t m1 = *((xkb_mod_mask_t *) a);
-    const xkb_mod_mask_t m2 = *((xkb_mod_mask_t *) b);
-    if (m1 == m2)
-        return 0;
+    ثابت xkb_mod_mask_t m1 = *((xkb_mod_mask_t *) a);
+    ثابت xkb_mod_mask_t m2 = *((xkb_mod_mask_t *) b);
+    اگر (m1 == m2)
+        بازگشت 0;
 
-    if (!m1)
-        return +1;
-    if (!m2)
-        return -1;
+    اگر (!m1)
+        بازگشت +1;
+    اگر (!m2)
+        بازگشت -1;
 
-    const xkb_mod_mask_t overlap = (m1 & m2);
-    if (overlap == m1)
-        return +1; /* m1 is a subset of m2 */
-    if (overlap == m2)
-        return -1; /* m2 is a subset of m1 */
+    ثابت xkb_mod_mask_t overlap = (m1 & m2);
+    اگر (overlap == m1)
+        بازگشت +1; /* m1 is a subset of m2 */
+    اگر (overlap == m2)
+        بازگشت -1; /* m2 is a subset of m1 */
 
     /* Compare active modifiers numbers */
-    const unsigned int count1 = popcount32(m1);
-    const unsigned int count2 = popcount32(m2);
-    if (count1 > count2)
-        return -1;
-    if (count1 < count2)
-        return +1;
+    ثابت unsigned صحیح count1 = popcount32(m1);
+    ثابت unsigned صحیح count2 = popcount32(m2);
+    اگر (count1 > count2)
+        بازگشت -1;
+    اگر (count1 < count2)
+        بازگشت +1;
 
     /* Give priority to real modifiers */
-    return (m1 < m2) ? -1 : +1;
+    بازگشت (m1 < m2) ? -1 : +1;
 }
 
-static enum xkb_status
-machine_set_mods(struct xkb_machine *sm,
-                 const machine_mods_mappings *raw_mappings)
+ایستا شمارش xkb_status
+machine_set_mods(ساختار xkb_machine *sm,
+                 ثابت machine_mods_mappings *raw_mappings)
 {
-    if (!darray_empty(*raw_mappings)) {
+    اگر (!darray_empty(*raw_mappings)) {
         machine_mods_mappings mappings = darray_new();
         xkb_mod_mask_t mask = 0;
-        const struct machine_mods_mapping *mapping;
-        const xkb_mod_mask_t invalid =
+        ثابت ساختار machine_mods_mapping *mapping;
+        ثابت xkb_mod_mask_t invalid =
             ~sm->base.base.keymap->canonical_state_mask;
         darray_foreach(mapping, *raw_mappings) {
-            if (!mapping->source || !mapping->target ||
+            اگر (!mapping->source || !mapping->target ||
                 (mapping->source & invalid) || (mapping->target & invalid))
-                continue;
+                ادامه;
             darray_append(mappings, *mapping);
             mask |= mapping->source;
         }
@@ -3503,197 +3503,197 @@ machine_set_mods(struct xkb_machine *sm,
          * if they are superset of other combinations.
          * For other type of overlaps, see the sorting function.
          */
-        qsort(darray_items(mappings), darray_size(mappings),
-              sizeof(*darray_items(mappings)), &cmp_mod_masks);
+        qsort(darray_اقلام(mappings), darray_size(mappings),
+              اندازه(*darray_اقلام(mappings)), &cmp_mod_masks);
 
         darray_steal(
             mappings,
             &sm->config.modifiers.mappings,
-            &sm->config.modifiers.mappings_num
+            &sm->config.modifiers.mappings_رقم
         );
         sm->config.modifiers.mask = mask;
-    } else {
-        sm->config.modifiers = (struct machine_modifiers_config) {
-            .mappings = NULL,
-            .mappings_num = 0,
+    } وگرنه {
+        sm->config.modifiers = (ساختار machine_modifiers_config) {
+            .mappings = پوچ,
+            .mappings_رقم = 0,
             .mask = 0
         };
     }
 
-    return XKB_SUCCESS;
+    بازگشت XKB_SUCCESS;
 }
 
-static enum xkb_status
+ایستا شمارش xkb_status
 machine_set_shortcuts(
-    struct xkb_machine * restrict sm,
-    const struct xkb_shortcuts_config_options * restrict options
+    ساختار xkb_machine * restrict sm,
+    ثابت ساختار xkb_shortcuts_config_options * restrict options
 )
 {
-    if (darray_empty(options->entries)) {
-        sm->config.shortcuts = (struct machine_shortcuts_config) {
-            .entries = NULL
+    اگر (darray_empty(options->entries)) {
+        sm->config.shortcuts = (ساختار machine_shortcuts_config) {
+            .entries = پوچ
         };
-        return XKB_SUCCESS;
+        بازگشت XKB_SUCCESS;
     }
 
-    struct xkb_keymap * const keymap = sm->base.base.keymap;
+    ساختار xkb_keymap * ثابت keymap = sm->base.base.keymap;
 
-    struct xkb_shortcuts_config_entry * entries =
-        calloc(keymap->num_groups, sizeof(*entries));
-    if (!entries)
-        return XKB_ERROR_ALLOCATION_FAILURE;
+    ساختار xkb_shortcuts_config_entry * entries =
+        calloc(keymap->رقم_groups, اندازه(*entries));
+    اگر (!entries)
+        بازگشت XKB_ERROR_ALLOCATION_FAILURE;
 
-    const xkb_layout_index_t count = MIN(
-        keymap->num_groups,
+    ثابت xkb_layout_index_t شمار = MIN(
+        keymap->رقم_groups,
         (xkb_layout_index_t) darray_size(options->entries)
     );
 
     bool some_entries = false;
-    for (xkb_layout_index_t l = 0; l < count; l++) {
+    برای (xkb_layout_index_t l = 0; l < شمار; l++) {
         /* Sanitize layout target */
-        const xkb_layout_index_t target =
+        ثابت xkb_layout_index_t target =
             darray_item(options->entries, l).target;
         /* Sanitize modifier mask */
-        const xkb_mod_mask_t mods = (
+        ثابت xkb_mod_mask_t mods = (
             darray_item(options->entries, l).mods &
             sm->base.base.keymap->canonical_state_mask
         );
-        if (target < keymap->num_groups && target != l && mods) {
-            entries[l] = (struct xkb_shortcuts_config_entry) {
+        اگر (target < keymap->رقم_groups && target != l && mods) {
+            entries[l] = (ساختار xkb_shortcuts_config_entry) {
                 .target = target,
                 .mods = mods
             };
             some_entries = true;
-        } else {
-            entries[l] = (struct xkb_shortcuts_config_entry) {
+        } وگرنه {
+            entries[l] = (ساختار xkb_shortcuts_config_entry) {
                 .target = XKB_LAYOUT_INVALID,
                 .mods = 0
             };
-            continue;
+            ادامه;
         }
     }
 
-    if (!some_entries) {
-        free(entries);
-        entries = NULL;
-    } else {
+    اگر (!some_entries) {
+        آزاد(entries);
+        entries = پوچ;
+    } وگرنه {
         /* Initialize groups with no entries */
-        for (xkb_layout_index_t l = count; l < keymap->num_groups; l++) {
-            entries[l] = (struct xkb_shortcuts_config_entry) {
+        برای (xkb_layout_index_t l = شمار; l < keymap->رقم_groups; l++) {
+            entries[l] = (ساختار xkb_shortcuts_config_entry) {
                 .target = XKB_LAYOUT_INVALID,
                 .mods = 0
             };
         }
     }
 
-    sm->config.shortcuts = (struct machine_shortcuts_config) {
+    sm->config.shortcuts = (ساختار machine_shortcuts_config) {
         .entries = entries
     };
-    return XKB_SUCCESS;
+    بازگشت XKB_SUCCESS;
 }
 
-struct xkb_machine *
-xkb_machine_new(const struct xkb_machine_builder * restrict builder,
-                enum xkb_status * restrict status)
+ساختار xkb_machine *
+xkb_machine_new(ثابت ساختار xkb_machine_builder * restrict builder,
+                شمارش xkb_status * restrict status)
 {
-    struct xkb_machine * const machine = calloc(1, sizeof(*machine));
-    if (!machine) {
+    ساختار xkb_machine * ثابت machine = calloc(1, اندازه(*machine));
+    اگر (!machine) {
         log_err_func1(builder->keymap->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
                       "cannot allocate machine\n");
-        if (status)
+        اگر (status)
             *status = XKB_ERROR_ALLOCATION_FAILURE;
-        return NULL;
+        بازگشت پوچ;
     }
 
     xkb_server_state_init(&machine->base, builder->keymap, SERVER_STATE,
                           builder->controls.a11y.affect_flags,
                           builder->controls.a11y.flags);
     machine->flags = builder->machine_flags;
-    if (!(machine->flags &
-          XKB_MACHINE_DISABLE_LAYOUT_SWITCH_ON_MODIFIER_KEY_FIX))
+    اگر (!(machine->flags &
+          XKB_MACHINE_DISABLE_LAYOUT_SWITCH_ON_MODIFIER_کلید_FIX))
     {
-        machine->base.flags |= STATE_FIX_LAYOUT_SWITCH_ON_MODIFIER_KEY;
+        machine->base.flags |= STATE_FIX_LAYOUT_SWITCH_ON_MODIFIER_کلید;
     }
-    if (machine->flags & XKB_MACHINE_UNLOCK_MODS_ON_PRESS) {
+    اگر (machine->flags & XKB_MACHINE_UNLOCK_MODS_ON_PRESS) {
         machine->base.flags |= STATE_UNLOCK_MODS_ON_PRESS;
     }
 
-    enum xkb_status status_;
-    if ((status_ = machine_set_mods(machine, &builder->mods)) != XKB_SUCCESS ||
+    شمارش xkb_status status_;
+    اگر ((status_ = machine_set_mods(machine, &builder->mods)) != XKB_SUCCESS ||
         (status_ = machine_set_shortcuts(machine, &builder->shortcuts)) !=
         XKB_SUCCESS) {
         *status = status_;
-        goto error;
+        برو error;
     }
 
-    darray_init(machine->overlays.keys);
+    darray_init(machine->overlays.کلیدها);
     machine->mouse.default_button = XKB_POINTER_BUTTON_MIN;
 
-    if (status)
+    اگر (status)
         *status = XKB_SUCCESS;
 
-    return machine;
+    بازگشت machine;
 
 error:
     xkb_machine_unref(machine);
-    return NULL;
+    بازگشت پوچ;
 }
 
-struct xkb_machine *
-xkb_machine_ref(struct xkb_machine *sm)
+ساختار xkb_machine *
+xkb_machine_ref(ساختار xkb_machine *sm)
 {
-    assert(sm->base.base.refcnt > 0);
+    أكد(sm->base.base.refcnt > 0);
     sm->base.base.refcnt++;
-    return sm;
+    بازگشت sm;
 }
 
-void
-xkb_machine_unref(struct xkb_machine *sm)
+تهی
+xkb_machine_unref(ساختار xkb_machine *sm)
 {
-    assert(!sm || sm->base.base.refcnt > 0);
-    if (!sm || --sm->base.base.refcnt > 0)
-        return;
+    أكد(!sm || sm->base.base.refcnt > 0);
+    اگر (!sm || --sm->base.base.refcnt > 0)
+        بازگشت;
 
     xkb_state_destroy(&sm->base.base);
-    darray_free(sm->overlays.keys);
-    free(sm->config.shortcuts.entries);
-    free(sm->config.modifiers.mappings);
-    free(sm);
+    darray_free(sm->overlays.کلیدها);
+    آزاد(sm->config.shortcuts.entries);
+    آزاد(sm->config.modifiers.mappings);
+    آزاد(sm);
 }
 
-struct xkb_keymap *
-xkb_machine_get_keymap(const struct xkb_machine *sm)
+ساختار xkb_keymap *
+xkb_machine_get_keymap(ثابت ساختار xkb_machine *sm)
 {
     /* Reference count is not updated. See API doc. */
-    return sm->base.base.keymap;
+    بازگشت sm->base.base.keymap;
 }
 
-struct xkb_state *
-xkb_machine_get_state(struct xkb_machine *sm)
+ساختار xkb_state *
+xkb_machine_get_state(ساختار xkb_machine *sm)
 {
     /* Reference count is not updated. See API doc. */
-    return (struct xkb_state *)sm;
+    بازگشت (ساختار xkb_state *)sm;
 }
 
-struct xkb_state *
-xkb_state_new_from_machine(const struct xkb_machine * restrict machine,
-                           enum xkb_status * restrict status)
+ساختار xkb_state *
+xkb_state_new_from_machine(ثابت ساختار xkb_machine * restrict machine,
+                           شمارش xkb_status * restrict status)
 {
     /* Creation */
-    enum xkb_status status_;
-    struct xkb_state * const state = xkb_state_new_with_mode(
+    شمارش xkb_status status_;
+    ساختار xkb_state * ثابت state = xkb_state_new_with_mode(
         machine->base.base.keymap,
         XKB_STATE_MODE_SERVER_QUERY,
         &status_
     );
-    if (status_ != XKB_SUCCESS) {
-        if (status)
+    اگر (status_ != XKB_SUCCESS) {
+        اگر (status)
             *status = status_;
-        return NULL;
+        بازگشت پوچ;
     }
 
-    assert(state->mode == SERVER_COMPANION);
-    assert(state->refcnt == 1);
+    أكد(state->mode == SERVER_COMPANION);
+    أكد(state->refcnt == 1);
 
     /* Copy machine’s state */
     *state = machine->base.base;
@@ -3702,47 +3702,47 @@ xkb_state_new_from_machine(const struct xkb_machine * restrict machine,
     state->mode = SERVER_COMPANION;
     state->refcnt = 1;
 
-    if (status)
+    اگر (status)
         *status = XKB_SUCCESS;
-    return state;
+    بازگشت state;
 }
 
-static void
-machine_update_overlays(struct xkb_machine *sm)
+ایستا تهی
+machine_update_overlays(ساختار xkb_machine *sm)
 {
     /*
      * Overlays indices are stored 1-indexed in nibbles: the lowest
      * nibble corresponds to the latest activated index.
      */
 
-    const xkb_overlay_mask_t mask =
+    ثابت xkb_overlay_mask_t mask =
         overlays_from_controls(sm->base.base.components.controls);
     xkb_overlay_mask_t added = mask & ~sm->overlays.enabled;
 
     /* Remove overlays no longer enabled and keep relative order */
     uint32_t order = sm->overlays.order;
-    const xkb_overlay_index_t overlay_max =
+    ثابت xkb_overlay_index_t overlay_max =
         format_max_overlays(sm->base.base.keymap->format);
-    for (uint8_t n = 0; n < overlay_max;) {
+    برای (uint8_t n = 0; n < overlay_max;) {
         xkb_overlay_index_t overlay_idx = (order >> (n * 4)) & 0xf;
-        if (!overlay_idx)
-            break;
-        const xkb_overlay_mask_t overlay_mask =
+        اگر (!overlay_idx)
+            بشکن;
+        ثابت xkb_overlay_mask_t overlay_mask =
             (xkb_overlay_mask_t)(1u << (overlay_idx - 1u) /* k is 1-indexed */);
-        if (overlay_mask & mask) {
+        اگر (overlay_mask & mask) {
             /* no duplicates */
             added &= ~overlay_mask;
             n++;
-        } else {
+        } وگرنه {
             /* remove overlay */
-            const uint32_t head = (UINT32_C(1) << (n * 4)) - 1;
+            ثابت uint32_t head = (UINT32_C(1) << (n * 4)) - 1;
             order = (order & head) | ((order >> 4) & ~head);
         }
     }
 
     /* Add new overlays in ascending order */
-    for (xkb_overlay_index_t k = 0; added; k++, added >>= 1) {
-        if (added & 0x1) {
+    برای (xkb_overlay_index_t k = 0; added; k++, added >>= 1) {
+        اگر (added & 0x1) {
             order <<= 4;
             order |= k + 1u; /* k is 0-indexed */
         }
@@ -3752,19 +3752,19 @@ machine_update_overlays(struct xkb_machine *sm)
     sm->overlays.enabled = mask;
 }
 
-enum xkb_status
-xkb_machine_process_synthetic(struct xkb_machine *sm,
-                              const struct xkb_synthetic_update *update,
-                              struct xkb_events *events)
+شمارش xkb_status
+xkb_machine_process_synthetic(ساختار xkb_machine *sm,
+                              ثابت ساختار xkb_synthetic_update *update,
+                              ساختار xkb_events *events)
 {
     /* Check ABI compatibility */
-    enum xkb_status status =
+    شمارش xkb_status status =
         check_state_update_abi(sm->base.base.keymap->ctx, update);
-    if (status != XKB_SUCCESS)
-        return status;
+    اگر (status != XKB_SUCCESS)
+        بازگشت status;
 
-    struct xkb_server_state * const state = &sm->base;
-    const struct state_components previous_components = state->base.components;
+    ساختار xkb_server_state * ثابت state = &sm->base;
+    ثابت ساختار state_components previous_components = state->base.components;
 
     // TODO: use a *transaction* mechanism: either the whole update succeeds
     //       or rollback
@@ -3773,17 +3773,17 @@ xkb_machine_process_synthetic(struct xkb_machine *sm,
     events->next = 0;
 
     /* Update parametrized controls first */
-    if (update->layout_policy) {
+    اگر (update->layout_policy) {
         status = state_update_layout_policy(state, update->layout_policy);
-        if (status != XKB_SUCCESS)
-            return status;
+        اگر (status != XKB_SUCCESS)
+            بازگشت status;
     }
 
-    if (update->components) {
-        const struct xkb_state_components_update * const components =
+    اگر (update->components) {
+        ثابت ساختار xkb_state_components_update * ثابت components =
             update->components;
         /* Update boolean controls first */
-        if (components->components & XKB_STATE_CONTROLS_EFFECTIVE) {
+        اگر (components->components & XKB_STATE_CONTROLS_EFFECTIVE) {
             state_update_enabled_controls(state,
                                           components->affect_controls,
                                           components->controls, events);
@@ -3794,16 +3794,16 @@ xkb_machine_process_synthetic(struct xkb_machine *sm,
 
     xkb_state_update_derived(&state->base);
 
-    const enum xkb_state_component changed = get_state_component_changes(
+    ثابت شمارش xkb_state_component changed = get_state_component_changes(
         &previous_components, &state->base.components
     );
-    if (changed) {
+    اگر (changed) {
         // TODO: latch controls
-        if (changed & XKB_STATE_CONTROLS_EFFECTIVE)
+        اگر (changed & XKB_STATE_CONTROLS_EFFECTIVE)
             machine_update_overlays(sm);
 
         /* Create event only if some component actually changed */
-        darray_append(events->queue, (struct xkb_event) {
+        darray_append(events->queue, (ساختار xkb_event) {
             .ctx = events->ctx, /* borrowed from events */
             .type = XKB_EVENT_TYPE_STATE_COMPONENTS,
             .components = {
@@ -3813,35 +3813,35 @@ xkb_machine_process_synthetic(struct xkb_machine *sm,
         });
 
         /* Terminate the frame */
-        darray_append(events->queue, (struct xkb_event) {
+        darray_append(events->queue, (ساختار xkb_event) {
             .ctx = events->ctx, /* borrowed from events */
             .type = XKB_EVENT_TYPE_FRAME,
         });
     }
 
-    return XKB_SUCCESS;
+    بازگشت XKB_SUCCESS;
 }
 
-static ssize_t
-do_remap_modifiers(const struct machine_modifiers_config * restrict mappings,
-                   struct xkb_state * restrict state,
-                   struct xkb_events * restrict events,
-                   const struct xkb_key * restrict key)
+ایستا ssize_t
+do_remap_modifiers(ثابت ساختار machine_modifiers_config * restrict mappings,
+                   ساختار xkb_state * restrict state,
+                   ساختار xkb_events * restrict events,
+                   ثابت ساختار xkb_کلید * restrict کلید)
 {
-    if (!(mappings->mask & state->components.mods))
-        return -1;
+    اگر (!(mappings->mask & state->components.mods))
+        بازگشت -1;
 
-    const xkb_layout_index_t layout = state_key_get_layout(state, key);
-    if (layout >= key->num_groups)
-        return -1;
+    ثابت xkb_layout_index_t layout = state_کلید_get_layout(state, کلید);
+    اگر (layout >= کلید->رقم_groups)
+        بازگشت -1;
 
-    const struct xkb_key_type * const type = key->groups[layout].type;
+    ثابت ساختار xkb_کلید_type * ثابت type = کلید->groups[layout].type;
     xkb_mod_mask_t affect_mods = 0;
     xkb_mod_mask_t mods = 0;
-    for (darray_size_t m = 0; m < mappings->mappings_num; m++) {
-        const struct machine_mods_mapping * const mapping =
+    برای (darray_size_t m = 0; m < mappings->mappings_رقم; m++) {
+        ثابت ساختار machine_mods_mapping * ثابت mapping =
             &mappings->mappings[m];
-        if (/* Skip not matching active mods */
+        اگر (/* Skip not matching active mods */
             (mapping->source & state->components.mods) == mapping->source &&
             /* Skip overlap with previous active mappings */
             !(mapping->source & affect_mods) &&
@@ -3852,21 +3852,21 @@ do_remap_modifiers(const struct machine_modifiers_config * restrict mappings,
         }
     }
 
-    if (!affect_mods)
-        return -1;
+    اگر (!affect_mods)
+        بازگشت -1;
 
-    struct xkb_state new = *state;
+    ساختار xkb_state new = *state;
     new.components.base_mods = (new.components.base_mods & ~affect_mods) | mods;
     new.components.latched_mods = (new.components.latched_mods & ~affect_mods);
     new.components.locked_mods = (new.components.locked_mods & ~affect_mods);
     xkb_state_update_derived(&new);
 
     ssize_t event_idx = -1;
-    const enum xkb_state_component changed =
+    ثابت شمارش xkb_state_component changed =
         get_state_component_changes(&state->components, &new.components);
-    if (changed) {
+    اگر (changed) {
         event_idx = (ssize_t) darray_size(events->queue);
-        darray_append(events->queue, (struct xkb_event) {
+        darray_append(events->queue, (ساختار xkb_event) {
             .ctx = events->ctx, /* borrowed from events */
             .type = XKB_EVENT_TYPE_STATE_COMPONENTS,
             .components = {
@@ -3877,7 +3877,7 @@ do_remap_modifiers(const struct machine_modifiers_config * restrict mappings,
     }
 
     state->components.mods = new.components.mods;
-    return event_idx;
+    بازگشت event_idx;
 }
 
 /**
@@ -3887,21 +3887,21 @@ do_remap_modifiers(const struct machine_modifiers_config * restrict mappings,
  * The tweak consists of computing a *base* layout such that the *effective*
  * layout is the corresponding target layout.
  */
-static ssize_t
-do_shortcuts_tweak(const struct machine_shortcuts_config *config,
-                   struct xkb_state *state,
-                   const struct state_components *previous_components,
-                   struct xkb_events *events, ssize_t remap_event)
+ایستا ssize_t
+do_shortcuts_tweak(ثابت ساختار machine_shortcuts_config *config,
+                   ساختار xkb_state *state,
+                   ثابت ساختار state_components *previous_components,
+                   ساختار xkb_events *events, ssize_t remap_event)
 {
-    if (!config->entries) {
+    اگر (!config->entries) {
         /* No shortcuts tweak */
-        return remap_event;
+        بازگشت remap_event;
     }
 
-    const struct xkb_shortcuts_config_entry * const entry =
+    ثابت ساختار xkb_shortcuts_config_entry * ثابت entry =
         &config->entries[state->components.group];
 
-    if (entry->target != XKB_LAYOUT_INVALID &&
+    اگر (entry->target != XKB_LAYOUT_INVALID &&
         (entry->mods & state->components.mods)) {
         /*
          * Activate shortcuts tweak:
@@ -3911,11 +3911,11 @@ do_shortcuts_tweak(const struct machine_shortcuts_config *config,
          *    is the target.
          * 3. Recompute derived state components.
          */
-        struct xkb_state new = *state;
-        if (remap_event < 0) {
+        ساختار xkb_state new = *state;
+        اگر (remap_event < 0) {
             /* Create new event */
             remap_event = (ssize_t) darray_size(events->queue);
-            darray_append(events->queue, (struct xkb_event) {
+            darray_append(events->queue, (ساختار xkb_event) {
                 .ctx = events->ctx, /* borrowed from events */
                 .type = XKB_EVENT_TYPE_STATE_COMPONENTS,
                 .components = {
@@ -3923,7 +3923,7 @@ do_shortcuts_tweak(const struct machine_shortcuts_config *config,
                     .changed = 0
                 }
             });
-        } else {
+        } وگرنه {
             /* Merge with last remap event */
             new.components =
                 darray_item(events->queue, remap_event).components.components;
@@ -3934,39 +3934,39 @@ do_shortcuts_tweak(const struct machine_shortcuts_config *config,
             - state->components.locked_group;
         xkb_state_update_derived(&new);
 
-        const enum xkb_state_component changed =
+        ثابت شمارش xkb_state_component changed =
             get_state_component_changes(previous_components, &new.components);
         darray_item(events->queue, remap_event).components.changed = changed;
         darray_item(events->queue, remap_event).components.components =
             new.components;
 
         state->components.group = new.components.group;
-    } else {
+    } وگرنه {
         /* Deactivated entry or modifiers do not match */
     }
-    return remap_event;
+    بازگشت remap_event;
 }
 
-static void
-undo_tweaks(const struct xkb_state *state,
-            const struct state_components *initial_components,
-            struct xkb_events *events)
+ایستا تهی
+undo_tweaks(ثابت ساختار xkb_state *state,
+            ثابت ساختار state_components *initial_components,
+            ساختار xkb_events *events)
 {
     /* Get last component event */
-    const struct xkb_event *event = NULL;
+    ثابت ساختار xkb_event *event = پوچ;
     darray_foreach_reverse(event, events->queue) {
-        if (event->type == XKB_EVENT_TYPE_STATE_COMPONENTS)
-            break;
+        اگر (event->type == XKB_EVENT_TYPE_STATE_COMPONENTS)
+            بشکن;
     }
-    if (!event)
-        return;
+    اگر (!event)
+        بازگشت;
 
     /* Restore state */
-    const enum xkb_state_component changed =
+    ثابت شمارش xkb_state_component changed =
         get_state_component_changes(initial_components,
                                     &event->components.components);
-    if (changed) {
-        darray_append(events->queue, (struct xkb_event) {
+    اگر (changed) {
+        darray_append(events->queue, (ساختار xkb_event) {
             .ctx = events->ctx, /* borrowed from events */
             .type = XKB_EVENT_TYPE_STATE_COMPONENTS,
             .components = {
@@ -3977,71 +3977,71 @@ undo_tweaks(const struct xkb_state *state,
     }
 }
 
-static const struct xkb_key *
-process_overlayable_key(struct xkb_machine *sm,
-                        const struct xkb_key * key,
-                        enum xkb_key_direction direction)
+ایستا ثابت ساختار xkb_کلید *
+process_overlayable_کلید(ساختار xkb_machine *sm,
+                        ثابت ساختار xkb_کلید * کلید,
+                        شمارش xkb_کلید_direction direction)
 {
     /* Check if key is currently overlaid */
-    struct xkb_overlaid_key *entry = NULL;
-    struct xkb_overlaid_key *available_entry = NULL;
-    darray_foreach(entry, sm->overlays.keys) {
-        if (entry->old == key) {
+    ساختار xkb_overlaid_کلید *entry = پوچ;
+    ساختار xkb_overlaid_کلید *available_entry = پوچ;
+    darray_foreach(entry, sm->overlays.کلیدها) {
+        اگر (entry->old == کلید) {
             /* Maintain the key overlaid */
-            switch (direction) {
-            case XKB_KEY_DOWN:
+            انتخاب (direction) {
+            حالت XKB_کلید_DOWN:
                 entry->refcnt++;
-                break;
-            case XKB_KEY_REPEATED:
-                break;
-            case XKB_KEY_UP:
-            default:
+                بشکن;
+            حالت XKB_کلید_REPEATED:
+                بشکن;
+            حالت XKB_کلید_UP:
+            پیشفرض:
                 entry->refcnt--;
-                break;
+                بشکن;
             }
-            if (entry->refcnt <= 0)
-                entry->old = NULL;
-            return entry->new;
-        } else if (!entry->old && !available_entry) {
+            اگر (entry->refcnt <= 0)
+                entry->old = پوچ;
+            بازگشت entry->new;
+        } وگرنه اگر (!entry->old && !available_entry) {
             /* First free spot */
             available_entry = entry;
         }
     }
-    if (direction == XKB_KEY_DOWN) {
+    اگر (direction == XKB_کلید_DOWN) {
         /* Enable key overlay */
 
         /*
          * Get overlay index: select the latest activated overlay
          * containing the key.
          */
-        const struct xkb_key *new = key;
+        ثابت ساختار xkb_کلید *new = کلید;
 
-        if (key->overlays & sm->overlays.enabled) {
+        اگر (کلید->overlays & sm->overlays.enabled) {
             /* Some relevant overlay is active */
-            for (uint32_t stack = sm->overlays.order; stack; stack >>= 4) {
-                static_assert(XKB_OVERLAY_COUNT == 8, "");
-                const xkb_overlay_index_t overlay = (stack & 0xf) - 1;
-                const xkb_overlay_mask_t mask =
+            برای (uint32_t پشته = sm->overlays.order; پشته; پشته >>= 4) {
+                static_assert(XKB_OVERLAY_شمار == 8, "");
+                ثابت xkb_overlay_index_t overlay = (پشته & 0xf) - 1;
+                ثابت xkb_overlay_mask_t mask =
                     (xkb_overlay_mask_t)(1u << overlay);
-                if (key->overlays & mask) {
+                اگر (کلید->overlays & mask) {
                     /* Get new key */
-                    if (key->overlays_inline) {
+                    اگر (کلید->overlays_inline) {
                         /* Stored inline */
-                        new = key->overlay_key;
-                    } else {
+                        new = کلید->overlay_کلید;
+                    } وگرنه {
                         /* Stored in sparse array */
-                        const xkb_overlay_mask_t low = (xkb_overlay_mask_t)(
-                            key->overlays & (xkb_overlay_mask_t)(mask - 1u)
+                        ثابت xkb_overlay_mask_t کم = (xkb_overlay_mask_t)(
+                            کلید->overlays & (xkb_overlay_mask_t)(mask - 1u)
                         );
                         /* index = number of set bits strictly below bit */
-                        const xkb_overlay_index_t index =
-                            (xkb_overlay_index_t)popcount32(low);
-                        new = key->overlays_keys[index];
+                        ثابت xkb_overlay_index_t index =
+                            (xkb_overlay_index_t)popcount32(کم);
+                        new = کلید->overlays_کلیدها[index];
                     }
-                    break;
+                    بشکن;
                 }
             }
-        } else {
+        } وگرنه {
             /*
              * No relevant overlay is active: block future overlays while
              * the key is pressed.
@@ -4049,93 +4049,93 @@ process_overlayable_key(struct xkb_machine *sm,
         }
 
         /* Get new entry */
-        if (available_entry) {
+        اگر (available_entry) {
             /* Re-use a free entry */
             entry = available_entry;
-        } else {
+        } وگرنه {
             /* Append a new entry */
-            const darray_size_t idx = darray_size(sm->overlays.keys);
-            darray_resize(sm->overlays.keys, idx + 1);
-            entry = &darray_item(sm->overlays.keys, idx);
+            ثابت darray_size_t idx = darray_size(sm->overlays.کلیدها);
+            darray_resize(sm->overlays.کلیدها, idx + 1);
+            entry = &darray_item(sm->overlays.کلیدها, idx);
         }
 
         /* Overlay the key */
-        entry->old = key;
+        entry->old = کلید;
         entry->new = new;
         entry->refcnt = 1;
-        return new;
+        بازگشت new;
     }
 
     /* No overlay */
-    return key;
+    بازگشت کلید;
 }
 
-enum xkb_status
-xkb_machine_process_key(struct xkb_machine *sm,
-                        xkb_keycode_t kc, enum xkb_key_direction direction,
-                        struct xkb_events *events)
+شمارش xkb_status
+xkb_machine_process_کلید(ساختار xkb_machine *sm,
+                        xkb_keycode_t kc, شمارش xkb_کلید_direction direction,
+                        ساختار xkb_events *events)
 {
     darray_size(events->queue) = 0;
     events->next = 0;
 
-    struct xkb_server_state * const state = &sm->base;
-    const struct xkb_key * key = XkbKey(state->base.keymap, kc);
+    ساختار xkb_server_state * ثابت state = &sm->base;
+    ثابت ساختار xkb_کلید * کلید = Xkb_کلید(state->base.keymap, kc);
     /* Ignore unknown key and repeat state for non-repeating key */
-    if (!key || (direction == XKB_KEY_REPEATED && !key->repeats))
-        return XKB_SUCCESS;
+    اگر (!کلید || (direction == XKB_کلید_REPEATED && !کلید->repeats))
+        بازگشت XKB_SUCCESS;
 
-    const struct state_components initial_components = state->base.components;
+    ثابت ساختار state_components initial_components = state->base.components;
 
-    if (direction == XKB_KEY_DOWN &&
-        (sm->base.base.components.controls & XKB_KEYBOARD_CONTROL_A11Y_STICKY_KEYS) &&
-        (sm->base.a11y_flags & XKB_A11Y_STICKY_KEYS_NO_SIMULTANEOUS_KEYS) &&
+    اگر (direction == XKB_کلید_DOWN &&
+        (sm->base.base.components.controls & XKB_KEYBOARD_CONTROL_A11_Y_STICKY_کلیدها) &&
+        (sm->base.a11y_flags & XKB_A11_Y_STICKY_کلیدها_NO_SIMULTANEOUS_کلیدها) &&
         state->base.components.base_mods) {
         /* Deactivate sticky keys if a modifier was already held down*/
         state_update_enabled_controls(state,
-                                      XKB_KEYBOARD_CONTROL_A11Y_STICKY_KEYS,
+                                      XKB_KEYBOARD_CONTROL_A11_Y_STICKY_کلیدها,
                                       0, events);
     }
 
-    if (key->overlays)
-        key = process_overlayable_key(sm, key, direction);
+    اگر (کلید->overlays)
+        کلید = process_overlayable_کلید(sm, کلید, direction);
 
     ssize_t remap_event = do_remap_modifiers(&sm->config.modifiers,
-                                             &state->base, events, key);
+                                             &state->base, events, کلید);
 
     remap_event = do_shortcuts_tweak(&sm->config.shortcuts, &state->base,
                                      &initial_components, events, remap_event);
 
-    if (remap_event >= 0) {
+    اگر (remap_event >= 0) {
         // TODO: what about merging state event for RedirectKey?
-        darray_append(events->queue, (struct xkb_event) {
+        darray_append(events->queue, (ساختار xkb_event) {
             .ctx = events->ctx, /* borrowed from events */
             .type = XKB_EVENT_TYPE_FRAME,
         });
     }
 
-    state->flags |= STATE_REQUIRE_KEY_EVENT;
+    state->flags |= STATE_REQUIRE_کلید_EVENT;
     state->set_mods = 0;
     state->clear_mods = 0;
 
     /* Handle key actions */
-    xkb_filter_apply_all(state, events, key, direction);
+    xkb_filter_apply_all(state, events, کلید, direction);
 
     xkb_mod_index_t i;
     xkb_mod_mask_t bit;
-    for (i = 0, bit = 1; state->set_mods; i++, bit <<= 1) {
-        if (state->set_mods & bit) {
-            state->mod_key_count[i]++;
+    برای (i = 0, bit = 1; state->set_mods; i++, bit <<= 1) {
+        اگر (state->set_mods & bit) {
+            state->mod_کلید_شمار[i]++;
             state->base.components.base_mods |= bit;
             state->set_mods &= ~bit;
         }
     }
 
-    for (i = 0, bit = 1; state->clear_mods; i++, bit <<= 1) {
-        if (state->clear_mods & bit) {
-            state->mod_key_count[i]--;
-            if (state->mod_key_count[i] <= 0) {
+    برای (i = 0, bit = 1; state->clear_mods; i++, bit <<= 1) {
+        اگر (state->clear_mods & bit) {
+            state->mod_کلید_شمار[i]--;
+            اگر (state->mod_کلید_شمار[i] <= 0) {
                 state->base.components.base_mods &= ~bit;
-                state->mod_key_count[i] = 0;
+                state->mod_کلید_شمار[i] = 0;
             }
             state->clear_mods &= ~bit;
         }
@@ -4150,32 +4150,32 @@ xkb_machine_process_key(struct xkb_machine *sm,
      *   of key events;
      * - TerminateServer() generate a Server event instead of key events.
      */
-    if (state->flags & STATE_REQUIRE_KEY_EVENT) {
-        darray_append(events->queue, (struct xkb_event) {
+    اگر (state->flags & STATE_REQUIRE_کلید_EVENT) {
+        darray_append(events->queue, (ساختار xkb_event) {
             .ctx = events->ctx, /* borrowed from events */
-            .type = XKB_EVENT_TYPE_KEY,
-            .key = {
-                .keycode = key->keycode,
+            .type = XKB_EVENT_TYPE_کلید,
+            .کلید = {
+                .keycode = کلید->keycode,
                 .direction = direction
             }
         });
     }
 
-    if (remap_event >= 0) {
+    اگر (remap_event >= 0) {
         // FIXME: fragile if last state change does not restore the state to the remap event
         undo_tweaks(&state->base, &initial_components, events);
     }
 
-    const enum xkb_state_component changed = get_state_component_changes(
+    ثابت شمارش xkb_state_component changed = get_state_component_changes(
         &initial_components, &state->base.components
     );
-    if (changed) {
-        if (changed & XKB_STATE_CONTROLS_EFFECTIVE)
+    اگر (changed) {
+        اگر (changed & XKB_STATE_CONTROLS_EFFECTIVE)
             machine_update_overlays(sm);
 
         // TODO: merge with previous state event, if any
 
-        darray_append(events->queue, (struct xkb_event) {
+        darray_append(events->queue, (ساختار xkb_event) {
             .ctx = events->ctx, /* borrowed from events */
             .type = XKB_EVENT_TYPE_STATE_COMPONENTS,
             .components = {
@@ -4185,137 +4185,137 @@ xkb_machine_process_key(struct xkb_machine *sm,
         });
     }
 
-    if (!darray_empty(events->queue) &&
+    اگر (!darray_empty(events->queue) &&
         darray_item(events->queue, darray_size(events->queue) - 1).type !=
         XKB_EVENT_TYPE_FRAME)
     {
-        darray_append(events->queue, (struct xkb_event) {
+        darray_append(events->queue, (ساختار xkb_event) {
             .ctx = events->ctx, /* borrowed from events */
             .type = XKB_EVENT_TYPE_FRAME,
         });
     }
 
-    return XKB_SUCCESS;
+    بازگشت XKB_SUCCESS;
 }
 
-struct xkb_events *
-xkb_events_new(struct xkb_context * restrict context,
-               const struct xkb_events_config * restrict config,
-               enum xkb_status * restrict status)
+ساختار xkb_events *
+xkb_events_new(ساختار xkb_context * restrict context,
+               ثابت ساختار xkb_events_config * restrict config,
+               شمارش xkb_status * restrict status)
 {
     /* Handle default configuration */
-    static const struct xkb_events_config default_config = {
-        .size = sizeof(default_config)
+    ایستا ثابت ساختار xkb_events_config default_config = {
+        .size = اندازه(default_config)
     };
-    if (!config)
+    اگر (!config)
         config = &default_config;
 
     /* Check ABI compatibility */
-    const enum xkb_status abi_error = xkb_check_state_abi(config);
-    if (abi_error) {
+    ثابت شمارش xkb_status abi_error = xkb_check_state_abi(config);
+    اگر (abi_error) {
         xkb_log_abi_error(context, __func__, abi_error);
-        if (status)
+        اگر (status)
             *status = abi_error;
-        return NULL;
+        بازگشت پوچ;
     }
 
     /* Sanitize input */
-    const uint32_t invalid_flags =
-        (config->flags & ~(uint32_t)XKB_EVENTS_FLAGS_VALUES);
-    if (invalid_flags) {
+    ثابت uint32_t invalid_flags =
+        (config->flags & ~(uint32_t)XKB_EVENTS_FLAGS_مقادیر);
+    اگر (invalid_flags) {
         log_err_func(context, XKB_ERROR_UNSUPPORTED_EVENTS_FLAGS_,
                      "unrecognized events collection flags: 0x%"PRIx32"\n",
                      invalid_flags);
-        if (status)
+        اگر (status)
             *status = XKB_ERROR_UNSUPPORTED_EVENTS_FLAGS;
-        return NULL;
+        بازگشت پوچ;
     }
 
-    struct xkb_events *events = calloc(1, sizeof(*events));
-    if (!events) {
+    ساختار xkb_events *events = calloc(1, اندازه(*events));
+    اگر (!events) {
         log_err_func1(context, XKB_ERROR_ALLOCATION_FAILURE_,
                       "cannot allocate state events collection\n");
-        if (status)
+        اگر (status)
             *status = XKB_ERROR_ALLOCATION_FAILURE;
-        return NULL;
+        بازگشت پوچ;
     }
 
     /* Pre-allocate event queue */
     darray_init(events->queue);
-    static const darray_size_t queue_initial_size = 16;
+    ایستا ثابت darray_size_t queue_initial_size = 16;
     darray_resize(events->queue, queue_initial_size);
     // TODO: proper safe darray_resize() with return value
-    if (!darray_items(events->queue)) {
+    اگر (!darray_اقلام(events->queue)) {
         log_err_func1(context, XKB_ERROR_ALLOCATION_FAILURE_,
                       "cannot allocate state events queue\n");
         xkb_events_destroy(events);
-        if (status)
+        اگر (status)
             *status = XKB_ERROR_ALLOCATION_FAILURE;
-        return NULL;
+        بازگشت پوچ;
     }
     darray_size(events->queue) = 0;
 
     events->ctx = xkb_context_ref(context);
     events->next = 0;
 
-    if (status)
+    اگر (status)
         *status = XKB_SUCCESS;
-    return events;
+    بازگشت events;
 }
 
-void
-xkb_events_destroy(struct xkb_events *events)
+تهی
+xkb_events_destroy(ساختار xkb_events *events)
 {
-    if (!events)
-        return;
+    اگر (!events)
+        بازگشت;
     darray_free(events->queue);
     xkb_context_unref(events->ctx);
-    free(events);
+    آزاد(events);
 }
 
-const struct xkb_event *
-xkb_events_next(struct xkb_events *events)
+ثابت ساختار xkb_event *
+xkb_events_next(ساختار xkb_events *events)
 {
-    if (events->next < darray_size(events->queue)) {
-        const darray_size_t index = events->next++;
-        return &darray_item(events->queue, index);
-    } else {
-        return NULL;
+    اگر (events->next < darray_size(events->queue)) {
+        ثابت darray_size_t index = events->next++;
+        بازگشت &darray_item(events->queue, index);
+    } وگرنه {
+        بازگشت پوچ;
     }
 }
 
-enum xkb_event_type
-xkb_event_get_type(const struct xkb_event *event)
+شمارش xkb_event_type
+xkb_event_get_type(ثابت ساختار xkb_event *event)
 {
-    return event->type;
+    بازگشت event->type;
 }
 
-enum xkb_status
-xkb_event_get_keycode(const struct xkb_event *event,
+شمارش xkb_status
+xkb_event_get_keycode(ثابت ساختار xkb_event *event,
                       xkb_keycode_t *keycode,
-                      enum xkb_key_direction *direction)
+                      شمارش xkb_کلید_direction *direction)
 {
-    if (event->type == XKB_EVENT_TYPE_KEY) {
-        *keycode = event->key.keycode;
-        *direction = event->key.direction;
-        return XKB_SUCCESS;
-    } else {
-        return XKB_ERROR_EVENT_TYPE_MISMATCH;
+    اگر (event->type == XKB_EVENT_TYPE_کلید) {
+        *keycode = event->کلید.keycode;
+        *direction = event->کلید.direction;
+        بازگشت XKB_SUCCESS;
+    } وگرنه {
+        بازگشت XKB_ERROR_EVENT_TYPE_MISMATCH;
     }
 }
 
-enum xkb_status
-xkb_event_get_components(const struct xkb_event * restrict event,
-                         struct xkb_event_components * restrict components)
+شمارش xkb_status
+xkb_event_get_components(ثابت ساختار xkb_event * restrict event,
+                         ساختار xkb_event_components * restrict components)
 {
-    if (event->type != XKB_EVENT_TYPE_STATE_COMPONENTS)
-        return XKB_ERROR_EVENT_TYPE_MISMATCH;
+    اگر (event->type != XKB_EVENT_TYPE_STATE_COMPONENTS)
+        بازگشت XKB_ERROR_EVENT_TYPE_MISMATCH;
 
     /* Check ABI compatibility */
-    const enum xkb_status status = xkb_check_state_abi(components);
-    if (status != XKB_SUCCESS) {
+    ثابت شمارش xkb_status status = xkb_check_state_abi(components);
+    اگر (status != XKB_SUCCESS) {
         xkb_log_abi_error(event->ctx, __func__, status);
-        return status;
+        بازگشت status;
     }
 
     components->changed = (uint32_t)event->components.changed;
@@ -4330,214 +4330,214 @@ xkb_event_get_components(const struct xkb_event * restrict event,
     components->leds = event->components.components.leds;
     components->controls = (uint32_t)event->components.components.controls;
 
-    return XKB_SUCCESS;
+    بازگشت XKB_SUCCESS;
 }
 
-enum xkb_status
-xkb_event_get_pointer_motion(const struct xkb_event * restrict event,
-                             struct xkb_event_pointer_motion * restrict motion)
+شمارش xkb_status
+xkb_event_get_pointer_motion(ثابت ساختار xkb_event * restrict event,
+                             ساختار xkb_event_pointer_motion * restrict motion)
 {
-    if (event->type != XKB_EVENT_TYPE_POINTER_MOTION)
-        return XKB_ERROR_EVENT_TYPE_MISMATCH;
+    اگر (event->type != XKB_EVENT_TYPE_POINTER_MOTION)
+        بازگشت XKB_ERROR_EVENT_TYPE_MISMATCH;
 
     /* Check ABI compatibility */
-    const enum xkb_status status = xkb_check_state_abi(motion);
-    if (status != XKB_SUCCESS) {
+    ثابت شمارش xkb_status status = xkb_check_state_abi(motion);
+    اگر (status != XKB_SUCCESS) {
         xkb_log_abi_error(event->ctx, __func__, status);
-        return status;
+        بازگشت status;
     }
 
     motion->flags = event->pointer_motion.flags;
     motion->x = event->pointer_motion.x;
     motion->y = event->pointer_motion.y;
 
-    return XKB_SUCCESS;
+    بازگشت XKB_SUCCESS;
 }
 
-enum xkb_status
-xkb_event_get_pointer_button(const struct xkb_event * restrict event,
-                             struct xkb_event_pointer_button * restrict button)
+شمارش xkb_status
+xkb_event_get_pointer_button(ثابت ساختار xkb_event * restrict event,
+                             ساختار xkb_event_pointer_button * restrict button)
 {
-    if (event->type != XKB_EVENT_TYPE_POINTER_BUTTON)
-        return XKB_ERROR_EVENT_TYPE_MISMATCH;
+    اگر (event->type != XKB_EVENT_TYPE_POINTER_BUTTON)
+        بازگشت XKB_ERROR_EVENT_TYPE_MISMATCH;
 
     /* Check ABI compatibility */
-    const enum xkb_status status = xkb_check_state_abi(button);
-    if (status != XKB_SUCCESS) {
+    ثابت شمارش xkb_status status = xkb_check_state_abi(button);
+    اگر (status != XKB_SUCCESS) {
         xkb_log_abi_error(event->ctx, __func__, status);
-        return status;
+        بازگشت status;
     }
 
     button->button = event->pointer_button.button;
     button->state = event->pointer_button.state;
-    button->count = event->pointer_button.count;
+    button->شمار = event->pointer_button.شمار;
 
-    return XKB_SUCCESS;
+    بازگشت XKB_SUCCESS;
 }
 
-enum xkb_status
-xkb_event_get_virtual_console(const struct xkb_event * restrict event,
+شمارش xkb_status
+xkb_event_get_virtual_console(ثابت ساختار xkb_event * restrict event,
                               int8_t * restrict index_or_offset,
                               bool * restrict is_offset)
 {
-    if (event->type != XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE)
-        return XKB_ERROR_EVENT_TYPE_MISMATCH;
+    اگر (event->type != XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE)
+        بازگشت XKB_ERROR_EVENT_TYPE_MISMATCH;
 
     *index_or_offset = event->virtual_console.index_or_offset;
     *is_offset = event->virtual_console.is_offset;
 
-    return XKB_SUCCESS;
+    بازگشت XKB_SUCCESS;
 }
 
-enum xkb_status
-xkb_state_update_event(struct xkb_state * restrict base_state,
-                       const struct xkb_event * restrict event,
-                       enum xkb_state_component * restrict changed)
+شمارش xkb_status
+xkb_state_update_event(ساختار xkb_state * restrict base_state,
+                       ثابت ساختار xkb_event * restrict event,
+                       شمارش xkb_state_component * restrict changed)
 {
     /* Guard against server-only state */
-    assert(base_state->mode == SERVER_COMPANION ||
+    أكد(base_state->mode == SERVER_COMPANION ||
            base_state->mode == LEGACY_MIXED_STATE);
-    if (base_state->mode != SERVER_COMPANION &&
+    اگر (base_state->mode != SERVER_COMPANION &&
         base_state->mode != LEGACY_MIXED_STATE) {
         log_err(base_state->keymap->ctx, XKB_ERROR_UNEXPECTED_STATE_MODE_,
                 "%s: Unexpected state type %d\n", __func__, base_state->mode);
-        return XKB_ERROR_UNEXPECTED_STATE_MODE;
+        بازگشت XKB_ERROR_UNEXPECTED_STATE_MODE;
     }
 
-    struct xkb_client_state * const state =
-        (struct xkb_client_state *)base_state;
+    ساختار xkb_client_state * ثابت state =
+        (ساختار xkb_client_state *)base_state;
 
-    if (event->type == XKB_EVENT_TYPE_STATE_COMPONENTS) {
-        const struct state_components prev_components = state->base.components;
+    اگر (event->type == XKB_EVENT_TYPE_STATE_COMPONENTS) {
+        ثابت ساختار state_components prev_components = state->base.components;
         state->base.components = event->components.components;
         /*
          * Recompute the changes instead of using the event value, because we do
          * not know if the event’s queue and the state are synced.
          */
-        if (changed)
+        اگر (changed)
             *changed = get_state_component_changes(&prev_components,
                                                    &state->base.components);
-    } else {
-        if (changed)
+    } وگرنه {
+        اگر (changed)
             *changed = 0;
     }
-    return XKB_SUCCESS;
+    بازگشت XKB_SUCCESS;
 }
 
-static void
-append_pointer_button(struct xkb_events * restrict events,
-                      struct xkb_filter * restrict filter,
-                      enum xkb_pointer_button_state button_state,
-                      uint8_t count)
+ایستا تهی
+append_pointer_button(ساختار xkb_events * restrict events,
+                      ساختار xkb_filter * restrict filter,
+                      شمارش xkb_pointer_button_state button_state,
+                      uint8_t شمار)
 {
-    darray_append(events->queue, (struct xkb_event) {
+    darray_append(events->queue, (ساختار xkb_event) {
         .ctx = events->ctx, /* borrowed from events */
         .type = XKB_EVENT_TYPE_POINTER_BUTTON,
         .pointer_button = {
-            .size = sizeof(((struct xkb_event*)0)->pointer_button),
+            .size = اندازه(((ساختار xkb_event*)0)->pointer_button),
             .button = filter->priv,
             .state = button_state,
-            .count = count,
+            .شمار = شمار,
         }
     });
 }
 
-static void
-xkb_filter_pointer_button_new(struct xkb_server_state *state,
-                              struct xkb_events *events,
-                              struct xkb_filter *filter)
+ایستا تهی
+xkb_filter_pointer_button_new(ساختار xkb_server_state *state,
+                              ساختار xkb_events *events,
+                              ساختار xkb_filter *filter)
 {
-    if (!events || state->base.mode != SERVER_STATE ||
-        !(state->base.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_KEYS)) {
-        filter->func = NULL;
-        return;
+    اگر (!events || state->base.mode != SERVER_STATE ||
+        !(state->base.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_کلیدها)) {
+        filter->func = پوچ;
+        بازگشت;
     }
 
-    struct xkb_machine * const sm = (struct xkb_machine *)state;
+    ساختار xkb_machine * ثابت sm = (ساختار xkb_machine *)state;
 
     /* Resolve button */
-    const xkb_pointer_button_index_t button =
+    ثابت xkb_pointer_button_index_t button =
         (filter->action.btn.button == XKB_POINTER_BUTTON_DEFAULT)
             ? sm->mouse.default_button
             : filter->action.btn.button;
     filter->priv = button;
 
-    const enum xkb_pointer_button_state button_state =
+    ثابت شمارش xkb_pointer_button_state button_state =
         XKB_POINTER_BUTTON_PRESSED;
     append_pointer_button(events, filter, button_state,
-                          filter->action.btn.count);
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+                          filter->action.btn.شمار);
+    state->flags &= ~STATE_REQUIRE_کلید_EVENT;
 }
 
-static bool
-xkb_filter_pointer_button_func(struct xkb_server_state *state,
-                               struct xkb_events *events,
-                               struct xkb_filter *filter,
-                               const struct xkb_key *key,
-                               enum xkb_key_direction direction)
+ایستا bool
+xkb_filter_pointer_button_func(ساختار xkb_server_state *state,
+                               ساختار xkb_events *events,
+                               ساختار xkb_filter *filter,
+                               ثابت ساختار xkb_کلید *کلید,
+                               شمارش xkb_کلید_direction direction)
 {
-    if (key != filter->key || !events)
-        return XKB_FILTER_CONTINUE;
+    اگر (کلید != filter->کلید || !events)
+        بازگشت XKB_FILTER_CONTINUE;
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_کلید_EVENT;
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    انتخاب (direction) {
+    حالت XKB_کلید_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    حالت XKB_کلید_REPEATED:
+        بازگشت XKB_FILTER_CONSUME;
+    پیشفرض:
+        اگر (--filter->refcnt > 0)
+            بازگشت XKB_FILTER_CONSUME;
     }
 
-    if (!filter->action.btn.count)
+    اگر (!filter->action.btn.شمار)
         append_pointer_button(events, filter, XKB_POINTER_BUTTON_RELEASED, 0);
 
-    filter->func = NULL;
-    return XKB_FILTER_CONSUME;
+    filter->func = پوچ;
+    بازگشت XKB_FILTER_CONSUME;
 }
 
-struct xkb_filter_pointer_lock_button_priv {
+ساختار xkb_filter_pointer_lock_button_priv {
     uint32_t button:31;
 #ifdef _WIN32
     uint32_t locked:1; // MSVC requires matching types to pack bitfields
-#else
+#وگرنه
     bool locked:1;
 #endif
 };
 
-enum {
+شمارش {
     XKB_FILTER_POINTER_LOCK_BUTTON_PRIV_WIDTH =
-        sizeof(struct xkb_filter_pointer_lock_button_priv) * CHAR_BIT,
+        اندازه(ساختار xkb_filter_pointer_lock_button_priv) * CHAR_BIT,
     XKB_FILTER_POINTER_LOCK_BUTTON_PRIV_MAX =
         (UINT64_C(1) << XKB_FILTER_POINTER_LOCK_BUTTON_PRIV_WIDTH) - 1
 };
 
-static_assert(sizeof(struct xkb_filter_pointer_lock_button_priv) ==
-              sizeof(((struct xkb_filter*)0)->priv),
+static_assert(اندازه(ساختار xkb_filter_pointer_lock_button_priv) ==
+              اندازه(((ساختار xkb_filter*)0)->priv),
               "");
 static_assert((uint32_t)XKB_POINTER_BUTTON_MAX < (uint32_t)XKB_FILTER_POINTER_LOCK_BUTTON_PRIV_MAX,
               "xkb_filter_pointer_lock_button_priv cannot store button");
 
-static void
-xkb_filter_pointer_lock_button_new(struct xkb_server_state *state,
-                                   struct xkb_events *events,
-                                   struct xkb_filter *filter)
+ایستا تهی
+xkb_filter_pointer_lock_button_new(ساختار xkb_server_state *state,
+                                   ساختار xkb_events *events,
+                                   ساختار xkb_filter *filter)
 {
-    if (!events || state->base.mode != SERVER_STATE ||
-        !(state->base.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_KEYS)) {
-        filter->func = NULL;
-        return;
+    اگر (!events || state->base.mode != SERVER_STATE ||
+        !(state->base.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_کلیدها)) {
+        filter->func = پوچ;
+        بازگشت;
     }
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_کلید_EVENT;
 
-    struct xkb_machine * const sm = (struct xkb_machine *)state;
+    ساختار xkb_machine * ثابت sm = (ساختار xkb_machine *)state;
 
     /* Resolve button */
-    const xkb_pointer_button_index_t button =
+    ثابت xkb_pointer_button_index_t button =
         (filter->action.btn.button == XKB_POINTER_BUTTON_DEFAULT)
             ? sm->mouse.default_button
             : filter->action.btn.button;
@@ -4546,180 +4546,180 @@ xkb_filter_pointer_lock_button_new(struct xkb_server_state *state,
                   "invalid UINTx_C() macro");
     static_assert(XKB_POINTER_BUTTON_MAX <= XKB_POINTER_BUTTON_MASK_WIDTH,
                   "invalid left shift");
-    const xkb_pointer_button_mask_t mask = (UINT8_C(1) << button);
+    ثابت xkb_pointer_button_mask_t mask = (UINT8_C(1) << button);
 
-    const bool locked = (sm->mouse.locked_buttons & mask);
+    ثابت bool locked = (sm->mouse.locked_buttons & mask);
 
-    if (!locked && !(filter->action.btn.flags & ACTION_LOCK_NO_LOCK)) {
+    اگر (!locked && !(filter->action.btn.flags & ACTION_LOCK_NO_LOCK)) {
         sm->mouse.locked_buttons |= mask;
         filter->priv = button;
         append_pointer_button(events, filter, XKB_POINTER_BUTTON_PRESSED, 0);
     }
 
-    struct xkb_filter_pointer_lock_button_priv *priv =
-        (struct xkb_filter_pointer_lock_button_priv*)&filter->priv;
+    ساختار xkb_filter_pointer_lock_button_priv *priv =
+        (ساختار xkb_filter_pointer_lock_button_priv*)&filter->priv;
     priv->button = button,
     priv->locked = locked;
 }
 
-static bool
-xkb_filter_pointer_lock_button_func(struct xkb_server_state *state,
-                                    struct xkb_events *events,
-                                    struct xkb_filter *filter,
-                                    const struct xkb_key *key,
-                                    enum xkb_key_direction direction)
+ایستا bool
+xkb_filter_pointer_lock_button_func(ساختار xkb_server_state *state,
+                                    ساختار xkb_events *events,
+                                    ساختار xkb_filter *filter,
+                                    ثابت ساختار xkb_کلید *کلید,
+                                    شمارش xkb_کلید_direction direction)
 {
-    if (key != filter->key || !events || state->base.mode != SERVER_STATE)
-        return XKB_FILTER_CONTINUE;
+    اگر (کلید != filter->کلید || !events || state->base.mode != SERVER_STATE)
+        بازگشت XKB_FILTER_CONTINUE;
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_کلید_EVENT;
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    انتخاب (direction) {
+    حالت XKB_کلید_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    حالت XKB_کلید_REPEATED:
+        بازگشت XKB_FILTER_CONSUME;
+    پیشفرض:
+        اگر (--filter->refcnt > 0)
+            بازگشت XKB_FILTER_CONSUME;
     }
 
-    const struct xkb_filter_pointer_lock_button_priv *priv =
-        (struct xkb_filter_pointer_lock_button_priv*)&filter->priv;
+    ثابت ساختار xkb_filter_pointer_lock_button_priv *priv =
+        (ساختار xkb_filter_pointer_lock_button_priv*)&filter->priv;
 
-    if (priv->locked && !(filter->action.btn.flags & ACTION_LOCK_NO_UNLOCK)) {
-        struct xkb_machine * const sm = (struct xkb_machine *)state;
+    اگر (priv->locked && !(filter->action.btn.flags & ACTION_LOCK_NO_UNLOCK)) {
+        ساختار xkb_machine * ثابت sm = (ساختار xkb_machine *)state;
 
         static_assert(XKB_POINTER_BUTTON_MASK_WIDTH <= 8,
                     "invalid UINTx_C() macro");
         static_assert(XKB_POINTER_BUTTON_MAX <= XKB_POINTER_BUTTON_MASK_WIDTH,
                     "invalid left shift");
-        const xkb_pointer_button_mask_t mask = (UINT8_C(1) << priv->button);
+        ثابت xkb_pointer_button_mask_t mask = (UINT8_C(1) << priv->button);
 
         sm->mouse.locked_buttons &= ~mask;
         filter->priv = priv->button;
         append_pointer_button(events, filter, XKB_POINTER_BUTTON_RELEASED, 0);
     }
 
-    filter->func = NULL;
-    return XKB_FILTER_CONSUME;
+    filter->func = پوچ;
+    بازگشت XKB_FILTER_CONSUME;
 }
 
-static void
-xkb_filter_pointer_set_default_button_new(struct xkb_server_state *state,
-                                          struct xkb_events *events,
-                                          struct xkb_filter *filter)
+ایستا تهی
+xkb_filter_pointer_set_default_button_new(ساختار xkb_server_state *state,
+                                          ساختار xkb_events *events,
+                                          ساختار xkb_filter *filter)
 {
-    if (!events || state->base.mode != SERVER_STATE ||
-        !(state->base.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_KEYS)) {
-        filter->func = NULL;
-        return;
+    اگر (!events || state->base.mode != SERVER_STATE ||
+        !(state->base.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_کلیدها)) {
+        filter->func = پوچ;
+        بازگشت;
     }
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_کلید_EVENT;
 
-    struct xkb_machine * const sm = (struct xkb_machine *)state;
+    ساختار xkb_machine * ثابت sm = (ساختار xkb_machine *)state;
 
     static_assert(2 * XKB_POINTER_BUTTON_MAX <= INT_MAX, "lossy conversion");
-    int button = (filter->action.dflt.flags & ACTION_ABSOLUTE_SWITCH)
-        ? filter->action.dflt.value
-        : sm->mouse.default_button + filter->action.dflt.value;
+    صحیح button = (filter->action.dflt.flags & ACTION_ABSOLUTE_SWITCH)
+        ? filter->action.dflt.مقدار
+        : sm->mouse.default_button + filter->action.dflt.مقدار;
 
     /* Wrap into range */
-    const int rem = button % XKB_POINTER_BUTTON_MAX;
+    ثابت صحیح rem = button % XKB_POINTER_BUTTON_MAX;
     sm->mouse.default_button = (rem >= 0)
         ? (xkb_pointer_button_index_t)rem
         : (xkb_pointer_button_index_t)(rem + XKB_POINTER_BUTTON_MAX);
 }
 
-static bool
-xkb_filter_pointer_set_default_button_func(struct xkb_server_state *state,
-                                           struct xkb_events *events,
-                                           struct xkb_filter *filter,
-                                           const struct xkb_key *key,
-                                           enum xkb_key_direction direction)
+ایستا bool
+xkb_filter_pointer_set_default_button_func(ساختار xkb_server_state *state,
+                                           ساختار xkb_events *events,
+                                           ساختار xkb_filter *filter,
+                                           ثابت ساختار xkb_کلید *کلید,
+                                           شمارش xkb_کلید_direction direction)
 {
-    if (key != filter->key || !events)
-        return XKB_FILTER_CONTINUE;
+    اگر (کلید != filter->کلید || !events)
+        بازگشت XKB_FILTER_CONTINUE;
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_کلید_EVENT;
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    انتخاب (direction) {
+    حالت XKB_کلید_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    حالت XKB_کلید_REPEATED:
+        بازگشت XKB_FILTER_CONSUME;
+    پیشفرض:
+        اگر (--filter->refcnt > 0)
+            بازگشت XKB_FILTER_CONSUME;
     }
 
-    filter->func = NULL;
-    return XKB_FILTER_CONTINUE;
+    filter->func = پوچ;
+    بازگشت XKB_FILTER_CONTINUE;
 }
 
-static void
-xkb_filter_terminate_server_new(struct xkb_server_state *state,
-                                 struct xkb_events *events,
-                                 struct xkb_filter *filter)
+ایستا تهی
+xkb_filter_terminate_server_new(ساختار xkb_server_state *state,
+                                 ساختار xkb_events *events,
+                                 ساختار xkb_filter *filter)
 {
-    if (!events || state->base.mode != SERVER_STATE ||
-        !(((struct xkb_machine *)state)->flags & XKB_MACHINE_SERVER_ACTIONS)) {
-        filter->func = NULL;
-        return;
+    اگر (!events || state->base.mode != SERVER_STATE ||
+        !(((ساختار xkb_machine *)state)->flags & XKB_MACHINE_SERVER_ACTIONS)) {
+        filter->func = پوچ;
+        بازگشت;
     }
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_کلید_EVENT;
 
-    darray_append(events->queue, (struct xkb_event) {
+    darray_append(events->queue, (ساختار xkb_event) {
         .ctx = events->ctx, /* borrowed from events */
         .type = XKB_EVENT_TYPE_TERMINATE_DISPLAY_SERVER,
     });
 }
 
-static bool
-xkb_filter_terminate_server_func(struct xkb_server_state *state,
-                                 struct xkb_events *events,
-                                 struct xkb_filter *filter,
-                                 const struct xkb_key *key,
-                                 enum xkb_key_direction direction)
+ایستا bool
+xkb_filter_terminate_server_func(ساختار xkb_server_state *state,
+                                 ساختار xkb_events *events,
+                                 ساختار xkb_filter *filter,
+                                 ثابت ساختار xkb_کلید *کلید,
+                                 شمارش xkb_کلید_direction direction)
 {
-    if (key != filter->key || !events)
-        return XKB_FILTER_CONTINUE;
+    اگر (کلید != filter->کلید || !events)
+        بازگشت XKB_FILTER_CONTINUE;
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_کلید_EVENT;
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    انتخاب (direction) {
+    حالت XKB_کلید_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    حالت XKB_کلید_REPEATED:
+        بازگشت XKB_FILTER_CONSUME;
+    پیشفرض:
+        اگر (--filter->refcnt > 0)
+            بازگشت XKB_FILTER_CONSUME;
     }
 
-    filter->func = NULL;
-    return XKB_FILTER_CONSUME;
+    filter->func = پوچ;
+    بازگشت XKB_FILTER_CONSUME;
 }
 
-static void
-xkb_filter_switch_virtual_console_new(struct xkb_server_state *state,
-                                      struct xkb_events *events,
-                                      struct xkb_filter *filter)
+ایستا تهی
+xkb_filter_switch_virtual_console_new(ساختار xkb_server_state *state,
+                                      ساختار xkb_events *events,
+                                      ساختار xkb_filter *filter)
 {
-    if (!events || state->base.mode != SERVER_STATE ||
-        !(((struct xkb_machine *)state)->flags & XKB_MACHINE_SERVER_ACTIONS)) {
-        filter->func = NULL;
-        return;
+    اگر (!events || state->base.mode != SERVER_STATE ||
+        !(((ساختار xkb_machine *)state)->flags & XKB_MACHINE_SERVER_ACTIONS)) {
+        filter->func = پوچ;
+        بازگشت;
     }
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_کلید_EVENT;
 
-    darray_append(events->queue, (struct xkb_event) {
+    darray_append(events->queue, (ساختار xkb_event) {
         .ctx = events->ctx, /* borrowed from events */
         .type = XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE,
         .virtual_console = {
@@ -4729,29 +4729,29 @@ xkb_filter_switch_virtual_console_new(struct xkb_server_state *state,
     });
 }
 
-static bool
-xkb_filter_switch_virtual_console_func(struct xkb_server_state *state,
-                                       struct xkb_events *events,
-                                       struct xkb_filter *filter,
-                                       const struct xkb_key *key,
-                                       enum xkb_key_direction direction)
+ایستا bool
+xkb_filter_switch_virtual_console_func(ساختار xkb_server_state *state,
+                                       ساختار xkb_events *events,
+                                       ساختار xkb_filter *filter,
+                                       ثابت ساختار xkb_کلید *کلید,
+                                       شمارش xkb_کلید_direction direction)
 {
-    if (key != filter->key || !events)
-        return XKB_FILTER_CONTINUE;
+    اگر (کلید != filter->کلید || !events)
+        بازگشت XKB_FILTER_CONTINUE;
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_کلید_EVENT;
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    انتخاب (direction) {
+    حالت XKB_کلید_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    حالت XKB_کلید_REPEATED:
+        بازگشت XKB_FILTER_CONSUME;
+    پیشفرض:
+        اگر (--filter->refcnt > 0)
+            بازگشت XKB_FILTER_CONSUME;
     }
 
-    filter->func = NULL;
-    return XKB_FILTER_CONSUME;
+    filter->func = پوچ;
+    بازگشت XKB_FILTER_CONSUME;
 }

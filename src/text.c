@@ -3,43 +3,43 @@
  * SPDX-License-Identifier: HPND
  */
 
-#include "config.h"
+#شامل "config.h"
 
-#include <assert.h>
+#شامل <assert.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "keymap.h"
-#include "keysym.h"
-#include "text.h"
+#شامل "xkbcommon/xkbcommon.h"
+#شامل "keymap.h"
+#شامل "keysym.h"
+#شامل "text.h"
 
 bool
-LookupString(const LookupEntry tab[], const char *string,
-              unsigned int *value_rtrn)
+LookupString(ثابت LookupEntry tab[], ثابت نویسه *string,
+              unsigned صحیح *مقدار_rtrn)
 {
-    if (!string)
-        return false;
+    اگر (!string)
+        بازگشت false;
 
-    for (const LookupEntry *entry = tab; entry->name; entry++) {
-        if (istreq(entry->name, string)) {
-            *value_rtrn = entry->value;
-            return true;
+    برای (ثابت LookupEntry *entry = tab; entry->name; entry++) {
+        اگر (istreq(entry->name, string)) {
+            *مقدار_rtrn = entry->مقدار;
+            بازگشت true;
         }
     }
 
-    return false;
+    بازگشت false;
 }
 
-const char *
-LookupValue(const LookupEntry tab[], unsigned int value)
+ثابت نویسه *
+Lookup_مقدار(ثابت LookupEntry tab[], unsigned صحیح مقدار)
 {
-    for (const LookupEntry *entry = tab; entry->name; entry++)
-        if (entry->value == value)
-            return entry->name;
+    برای (ثابت LookupEntry *entry = tab; entry->name; entry++)
+        اگر (entry->مقدار == مقدار)
+            بازگشت entry->name;
 
-    return NULL;
+    بازگشت پوچ;
 }
 
-const LookupEntry ctrlMaskNames[25] = {
+ثابت LookupEntry ctrlMaskNames[25] = {
     /* v2 keymap format only */
     { "Overlay3", CONTROL_OVERLAY3 },
     { "Overlay4", CONTROL_OVERLAY4 },
@@ -54,9 +54,9 @@ const LookupEntry ctrlMaskNames[25] = {
     { "AutoRepeat", CONTROL_REPEAT },
     { "SlowKeys", CONTROL_SLOW },
     { "BounceKeys", CONTROL_DEBOUNCE },
-    { "StickyKeys", CONTROL_STICKY_KEYS },
-    { "MouseKeys", CONTROL_MOUSE_KEYS },
-    { "MouseKeysAccel", CONTROL_MOUSE_KEYS_ACCEL },
+    { "StickyKeys", CONTROL_STICKY_کلیدها },
+    { "MouseKeys", CONTROL_MOUSE_کلیدها },
+    { "MouseKeysAccel", CONTROL_MOUSE_کلیدها_ACCEL },
     { "AccessXKeys", CONTROL_AX },
     { "AccessXTimeout", CONTROL_AX_TIMEOUT },
     { "AccessXFeedback", CONTROL_AX_FEEDBACK },
@@ -66,10 +66,10 @@ const LookupEntry ctrlMaskNames[25] = {
     { "Overlay2", CONTROL_OVERLAY2 },
     { "all", CONTROL_ALL_BOOLEAN_V1 }, /* duplicate, matches only v1 */
     { "none", 0 },
-    { NULL, 0 }
+    { پوچ, 0 }
 };
 
-const LookupEntry modComponentMaskNames[] = {
+ثابت LookupEntry modComponentMaskNames[] = {
     { "base", XKB_STATE_MODS_DEPRESSED },
     { "latched", XKB_STATE_MODS_LATCHED },
     { "locked", XKB_STATE_MODS_LOCKED },
@@ -77,45 +77,45 @@ const LookupEntry modComponentMaskNames[] = {
     { "compat", XKB_STATE_MODS_EFFECTIVE },
     { "any", XKB_STATE_MODS_EFFECTIVE },
     { "none", 0 },
-    { NULL, 0 }
+    { پوچ, 0 }
 };
 
-const LookupEntry groupComponentMaskNames[] = {
+ثابت LookupEntry groupComponentMaskNames[] = {
     { "base", XKB_STATE_LAYOUT_DEPRESSED },
     { "latched", XKB_STATE_LAYOUT_LATCHED },
     { "locked", XKB_STATE_LAYOUT_LOCKED },
     { "effective", XKB_STATE_LAYOUT_EFFECTIVE },
     { "any", XKB_STATE_LAYOUT_EFFECTIVE },
     { "none", 0 },
-    { NULL, 0 }
+    { پوچ, 0 }
 };
 
-const LookupEntry groupMaskNames[] = {
+ثابت LookupEntry groupMaskNames[] = {
     { "none", 0x00 },
     /* "first" is omitted for compatibility reasons */
     { "all", XKB_ALL_GROUPS },
-    { NULL, 0 }
+    { پوچ, 0 }
 };
 
-const LookupEntry buttonNames[] = {
+ثابت LookupEntry buttonNames[] = {
     { "Button1", 1 },
     { "Button2", 2 },
     { "Button3", 3 },
     { "Button4", 4 },
     { "Button5", 5 },
     { "default", 0 },
-    { NULL, 0 }
+    { پوچ, 0 }
 };
 
-const LookupEntry useModMapValueNames[] = {
+ثابت LookupEntry use_Mod_Map_مقدار_Names[] = {
     { "LevelOne", 1 },
     { "Level1", 1 },
     { "AnyLevel", 0 },
     { "any", 0 },
-    { NULL, 0 }
+    { پوچ, 0 }
 };
 
-const LookupEntry actionTypeNames[] = {
+ثابت LookupEntry actionTypeNames[] = {
     { "NoAction", ACTION_TYPE_NONE },
     { "VoidAction", ACTION_TYPE_VOID },
     { "SetMods", ACTION_TYPE_MOD_SET },
@@ -139,8 +139,8 @@ const LookupEntry actionTypeNames[] = {
     { "SwitchScreen", ACTION_TYPE_SWITCH_VT },
     { "SetControls", ACTION_TYPE_CTRL_SET },
     { "LockControls", ACTION_TYPE_CTRL_LOCK },
-    { "RedirectKey", ACTION_TYPE_REDIRECT_KEY },
-    { "Redirect", ACTION_TYPE_REDIRECT_KEY },
+    { "RedirectKey", ACTION_TYPE_REDIRECT_کلید },
+    { "Redirect", ACTION_TYPE_REDIRECT_کلید },
     { "Private", ACTION_TYPE_PRIVATE },
     /* deprecated actions below here - unused */
     { "ISOLock", ACTION_TYPE_UNSUPPORTED_LEGACY },
@@ -159,176 +159,176 @@ const LookupEntry actionTypeNames[] = {
     { "DevVal", ACTION_TYPE_UNSUPPORTED_LEGACY },
     { "DeviceVal", ACTION_TYPE_UNSUPPORTED_LEGACY },
     { "DevValuator", ACTION_TYPE_UNSUPPORTED_LEGACY },
-    { NULL, 0 },
+    { پوچ, 0 },
 };
 
-const LookupEntry symInterpretMatchMaskNames[] = {
+ثابت LookupEntry symInterpretMatchMaskNames[] = {
     { "NoneOf", MATCH_NONE },
     { "AnyOfOrNone", MATCH_ANY_OR_NONE },
     { "AnyOf", MATCH_ANY },
     { "AllOf", MATCH_ALL },
     { "Exactly", MATCH_EXACTLY },
-    { NULL, 0 },
+    { پوچ, 0 },
 };
 
-const char *
-ModIndexText(struct xkb_context *ctx, const struct xkb_mod_set *mods,
+ثابت نویسه *
+ModIndexText(ساختار xkb_context *ctx, ثابت ساختار xkb_mod_set *mods,
              xkb_mod_index_t ndx)
 {
-    if (ndx == XKB_MOD_INVALID)
-        return "none";
+    اگر (ndx == XKB_MOD_INVALID)
+        بازگشت "none";
 
-    if (ndx == XKB_MOD_NONE)
-        return "None";
+    اگر (ndx == XKB_MOD_NONE)
+        بازگشت "None";
 
-    if (ndx >= mods->num_mods)
-        return NULL;
+    اگر (ndx >= mods->رقم_mods)
+        بازگشت پوچ;
 
-    return xkb_atom_text(ctx, mods->mods[ndx].name);
+    بازگشت xkb_atom_text(ctx, mods->mods[ndx].name);
 }
 
-const char *
-ActionTypeText(enum xkb_action_type type)
+ثابت نویسه *
+ActionTypeText(شمارش xkb_action_type type)
 {
-    const char *name = LookupValue(actionTypeNames, type);
-    return name ? name : "Private";
+    ثابت نویسه *name = Lookup_مقدار(actionTypeNames, type);
+    بازگشت name ? name : "Private";
 }
 
-const char *
-KeysymText(struct xkb_context *ctx, xkb_keysym_t sym)
+ثابت نویسه *
+KeysymText(ساختار xkb_context *ctx, xkb_keysym_t sym)
 {
-    char *buffer = xkb_context_get_buffer(ctx, XKB_KEYSYM_NAME_MAX_SIZE);
+    نویسه *buffer = xkb_context_get_buffer(ctx, XKB_KEYSYM_NAME_MAX_SIZE);
     xkb_keysym_get_name(sym, buffer, XKB_KEYSYM_NAME_MAX_SIZE);
-    return buffer;
+    بازگشت buffer;
 }
 
-const char *
-KeyNameText(struct xkb_context *ctx, xkb_atom_t name)
+ثابت نویسه *
+کلید_Name_Text(ساختار xkb_context *ctx, xkb_atom_t name)
 {
-    const char *sname = xkb_atom_text(ctx, name);
+    ثابت نویسه *sname = xkb_atom_text(ctx, name);
     size_t len = strlen_safe(sname) + 3;
-    char *buf = xkb_context_get_buffer(ctx, len);
+    نویسه *buf = xkb_context_get_buffer(ctx, len);
     snprintf(buf, len, "<%s>", strempty(sname));
-    return buf;
+    بازگشت buf;
 }
 
-const char *
-SIMatchText(enum xkb_match_operation type)
+ثابت نویسه *
+SIMatchText(شمارش xkb_match_operation type)
 {
-    return LookupValue(symInterpretMatchMaskNames, type);
+    بازگشت Lookup_مقدار(symInterpretMatchMaskNames, type);
 }
 
-const char *
-ModMaskText(struct xkb_context *ctx, enum mod_type type,
-            const struct xkb_mod_set *mods, xkb_mod_mask_t mask)
+ثابت نویسه *
+ModMaskText(ساختار xkb_context *ctx, شمارش mod_type type,
+            ثابت ساختار xkb_mod_set *mods, xkb_mod_mask_t mask)
 {
-    char buf[1024] = {0};
+    نویسه buf[1024] = {0};
     size_t pos = 0;
-    const struct xkb_mod *mod;
+    ثابت ساختار xkb_mod *mod;
 
     /* We want to avoid boolean blindness, but we expected only 2 values */
-    assert(type == MOD_REAL || type == MOD_BOTH);
+    أكد(type == MOD_REAL || type == MOD_BOTH);
 
-    if (mask == 0)
-        return "none";
+    اگر (mask == 0)
+        بازگشت "none";
 
-    if (mask == MOD_REAL_MASK_ALL)
-        return "all";
+    اگر (mask == MOD_REAL_MASK_ALL)
+        بازگشت "all";
 
-    if ((type == MOD_REAL && (mask & ~MOD_REAL_MASK_ALL)) ||
-        unlikely(mask & ~((UINT64_C(1) << mods->num_mods) - 1))) {
+    اگر ((type == MOD_REAL && (mask & ~MOD_REAL_MASK_ALL)) ||
+        unlikely(mask & ~((UINT64_C(1) << mods->رقم_mods) - 1))) {
         /* If we get a mask that cannot be expressed with the known modifiers
          * of the given type, print it as hexadecimal */
-        const int ret = snprintf(buf, sizeof(buf), "0x%"PRIx32, mask);
-        static_assert(sizeof(mask) == 4 && sizeof(buf) >= sizeof("0xffffffff"),
+        ثابت صحیح ret = snprintf(buf, اندازه(buf), "0x%"PRIx32, mask);
+        static_assert(اندازه(mask) == 4 && اندازه(buf) >= اندازه("0xffffffff"),
                       "Buffer too small");
-        assert(ret >= 0 && (size_t) ret < sizeof(buf));
+        أكد(ret >= 0 && (size_t) ret < اندازه(buf));
         pos = (size_t) ret;
-    } else {
+    } وگرنه {
         /* Print known mods */
         xkb_mods_mask_foreach(mask, mod, mods) {
-            int ret = snprintf(buf + pos, sizeof(buf) - pos, "%s%s",
+            صحیح ret = snprintf(buf + pos, اندازه(buf) - pos, "%s%s",
                                pos == 0 ? "" : "+",
                                xkb_atom_text(ctx, mod->name));
-            if (ret <= 0 || pos + (size_t)ret >= sizeof(buf))
-                break;
-            else
+            اگر (ret <= 0 || pos + (size_t)ret >= اندازه(buf))
+                بشکن;
+            وگرنه
                 pos += (size_t)ret;
         }
     }
     pos++;
 
-    return memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
+    بازگشت memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
 }
 
-const char *
-LedStateMaskText(struct xkb_context *ctx, const LookupEntry *lookup,
-                 enum xkb_state_component mask)
+ثابت نویسه *
+LedStateMaskText(ساختار xkb_context *ctx, ثابت LookupEntry *lookup,
+                 شمارش xkb_state_component mask)
 {
-    char buf[1024];
+    نویسه buf[1024];
     size_t pos = 0;
 
-    if (mask == 0)
-        return "0";
+    اگر (mask == 0)
+        بازگشت "0";
 
-    for (unsigned int i = 0; mask; i++) {
-        int ret;
+    برای (unsigned صحیح i = 0; mask; i++) {
+        صحیح ret;
 
-        if (!(mask & (1u << i)))
-            continue;
+        اگر (!(mask & (1u << i)))
+            ادامه;
 
         mask &= ~(1u << i);
 
-        const char* const maskText = LookupValue(lookup, 1u << i);
-        assert(maskText != NULL);
-        ret = snprintf(buf + pos, sizeof(buf) - pos, "%s%s",
+        ثابت نویسه* ثابت maskText = Lookup_مقدار(lookup, 1u << i);
+        أكد(maskText != پوچ);
+        ret = snprintf(buf + pos, اندازه(buf) - pos, "%s%s",
                        pos == 0 ? "" : "+", maskText);
-        if (ret <= 0 || pos + (size_t)ret >= sizeof(buf))
-            break;
-        else
+        اگر (ret <= 0 || pos + (size_t)ret >= اندازه(buf))
+            بشکن;
+        وگرنه
             pos += (size_t)ret;
     }
     pos++;
 
-    return memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
+    بازگشت memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
 }
 
-const char *
-ControlMaskText(struct xkb_context *ctx, enum xkb_keymap_format format,
-                enum xkb_action_controls mask)
+ثابت نویسه *
+ControlMaskText(ساختار xkb_context *ctx, شمارش xkb_keymap_format format,
+                شمارش xkb_action_controls mask)
 {
-    char buf[1024];
+    نویسه buf[1024];
     size_t pos = 0;
 
-    const enum xkb_action_controls all_ctrls = format_boolean_controls(format);
+    ثابت شمارش xkb_action_controls all_ctrls = format_boolean_controls(format);
     mask &= all_ctrls;
 
-    if (mask == 0)
-        return "none";
+    اگر (mask == 0)
+        بازگشت "none";
 
-    if (mask == all_ctrls)
-        return "all";
+    اگر (mask == all_ctrls)
+        بازگشت "all";
 
-    const uint8_t control_names_offset = format_control_names_offset(format);
-    for (unsigned int i = 0; mask; i++) {
-        int ret;
+    ثابت uint8_t control_names_offset = format_control_names_offset(format);
+    برای (unsigned صحیح i = 0; mask; i++) {
+        صحیح ret;
 
-        if (!(mask & (1u << i)))
-            continue;
+        اگر (!(mask & (1u << i)))
+            ادامه;
 
         mask &= ~(1u << i);
 
-        const char* const maskText =
-            LookupValue(ctrlMaskNames + control_names_offset, 1u << i);
-        assert(maskText);
-        ret = snprintf(buf + pos, sizeof(buf) - pos, "%s%s",
+        ثابت نویسه* ثابت maskText =
+            Lookup_مقدار(ctrlMaskNames + control_names_offset, 1u << i);
+        أكد(maskText);
+        ret = snprintf(buf + pos, اندازه(buf) - pos, "%s%s",
                        pos == 0 ? "" : "+", maskText);
-        if (ret <= 0 || pos + (size_t)ret >= sizeof(buf))
-            break;
-        else
+        اگر (ret <= 0 || pos + (size_t)ret >= اندازه(buf))
+            بشکن;
+        وگرنه
             pos += (size_t)ret;
     }
     pos++;
 
-    return memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
+    بازگشت memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
 }

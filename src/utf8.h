@@ -7,16 +7,16 @@
  */
 #pragma once
 
-#include "config.h"
+#شامل "config.h"
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
+#شامل <stdbool.h>
+#شامل <stddef.h>
+#شامل <stdint.h>
 
-#include "utils.h"
+#شامل "utils.h"
 
 XKB_EXPORT_PRIVATE uint8_t
-utf32_to_utf8(uint32_t unichar, char *buffer);
+utf32_to_utf8(uint32_t unichar, نویسه *buffer);
 
 XKB_EXPORT_PRIVATE bool
-is_valid_utf8(const char *ss, size_t len);
+is_valid_utf8(ثابت نویسه *ss, size_t len);

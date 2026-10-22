@@ -6,40 +6,40 @@
  */
 #pragma once
 
-#include "config.h"
+#شامل "config.h"
 
-#include <stdbool.h>
-#include <stddef.h>
+#شامل <stdbool.h>
+#شامل <stddef.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "atom.h"
-#include "darray.h"
-#include "messages-codes.h"
-#include "rmlvo.h"
-#include "utils.h"
+#شامل "xkbcommon/xkbcommon.h"
+#شامل "atom.h"
+#شامل "darray.h"
+#شامل "messages-codes.h"
+#شامل "rmlvo.h"
+#شامل "utils.h"
 
-struct xkb_context {
-    int refcnt;
+ساختار xkb_context {
+    صحیح refcnt;
 
-    ATTR_PRINTF(3, 0) void (*log_fn)(struct xkb_context *ctx,
-                                     enum xkb_log_level level,
-                                     const char *fmt, va_list args);
-    enum xkb_log_level log_level;
-    int log_verbosity;
-    void *user_data;
+    ATTR_PRINTF(3, 0) تهی (*log_fn)(ساختار xkb_context *ctx,
+                                     شمارش xkb_log_level level,
+                                     ثابت نویسه *fmt, va_list args);
+    شمارش xkb_log_level log_level;
+    صحیح log_verbosity;
+    تهی *user_data;
 
-    struct xkb_rule_names names_dflt;
+    ساختار xkb_rule_names names_dflt;
 
-    darray(char *) includes;
-    darray(char *) failed_includes;
+    darray(نویسه *) includes;
+    darray(نویسه *) failed_includes;
 
-    struct atom_table *atom_table;
+    ساختار atom_table *atom_table;
 
     /* Used and allocated by xkbcommon-x11, free()d with the context. */
-    void *x11_atom_cache;
+    تهی *x11_atom_cache;
 
     /* Buffer for the *Text() functions. */
-    char text_buffer[2048];
+    نویسه text_buffer[2048];
     size_t text_next;
 
     bool use_environment_names : 1;
@@ -47,46 +47,46 @@ struct xkb_context {
     bool pending_default_includes : 1;
 };
 
-char *
-xkb_context_getenv(struct xkb_context *ctx, const char *name);
+نویسه *
+xkb_context_getenv(ساختار xkb_context *ctx, ثابت نویسه *name);
 
 darray_size_t
-xkb_context_num_failed_include_paths(struct xkb_context *ctx);
+xkb_context_رقم_failed_include_paths(ساختار xkb_context *ctx);
 
 bool
-xkb_context_init_includes(struct xkb_context *ctx);
+xkb_context_init_includes(ساختار xkb_context *ctx);
 
-const char *
-xkb_context_failed_include_path_get(struct xkb_context *ctx,
+ثابت نویسه *
+xkb_context_failed_include_path_get(ساختار xkb_context *ctx,
                                     darray_size_t idx);
 
-const char *
-xkb_context_include_path_get_extra_path(struct xkb_context *ctx);
+ثابت نویسه *
+xkb_context_include_path_get_extra_path(ساختار xkb_context *ctx);
 
-const char *
-xkb_context_include_path_get_unversioned_extensions_path(struct xkb_context *ctx);
+ثابت نویسه *
+xkb_context_include_path_get_unversioned_extensions_path(ساختار xkb_context *ctx);
 
-const char *
-xkb_context_include_path_get_versioned_extensions_path(struct xkb_context *ctx);
+ثابت نویسه *
+xkb_context_include_path_get_versioned_extensions_path(ساختار xkb_context *ctx);
 
-const char *
-xkb_context_include_path_get_system_path(struct xkb_context *ctx);
+ثابت نویسه *
+xkb_context_include_path_get_system_path(ساختار xkb_context *ctx);
 
 XKB_EXPORT_PRIVATE darray_size_t
-xkb_atom_table_size(struct xkb_context *ctx);
+xkb_atom_table_size(ساختار xkb_context *ctx);
 
 /*
  * Returns XKB_ATOM_NONE if @string was not previously interned,
  * otherwise returns the atom.
  */
 xkb_atom_t
-xkb_atom_lookup(struct xkb_context *ctx, const char *string);
+xkb_atom_lookup(ساختار xkb_context *ctx, ثابت نویسه *string);
 
 XKB_EXPORT_PRIVATE xkb_atom_t
-xkb_atom_intern(struct xkb_context *ctx, const char *string, size_t len);
+xkb_atom_intern(ساختار xkb_context *ctx, ثابت نویسه *string, size_t len);
 
 #define xkb_atom_intern_literal(ctx, literal) \
-    xkb_atom_intern((ctx), (literal), sizeof(literal) - 1)
+    xkb_atom_intern((ctx), (literal), اندازه(literal) - 1)
 
 /**
  * If @string is dynamically allocated, NUL-terminated, free'd immediately
@@ -95,21 +95,21 @@ xkb_atom_intern(struct xkb_context *ctx, const char *string, size_t len);
  * The caller should not use or free the passed in string afterwards.
  */
 xkb_atom_t
-xkb_atom_steal(struct xkb_context *ctx, char *string);
+xkb_atom_steal(ساختار xkb_context *ctx, نویسه *string);
 
-XKB_EXPORT_PRIVATE const char *
-xkb_atom_text(struct xkb_context *ctx, xkb_atom_t atom);
+XKB_EXPORT_PRIVATE ثابت نویسه *
+xkb_atom_text(ساختار xkb_context *ctx, xkb_atom_t atom);
 
-char *
-xkb_context_get_buffer(struct xkb_context *ctx, size_t size);
+نویسه *
+xkb_context_get_buffer(ساختار xkb_context *ctx, size_t size);
 
-XKB_EXPORT_PRIVATE ATTR_PRINTF(4, 5) void
-xkb_log(struct xkb_context *ctx, enum xkb_log_level level, int verbosity,
-        const char *fmt, ...);
+XKB_EXPORT_PRIVATE ATTR_PRINTF(4, 5) تهی
+xkb_log(ساختار xkb_context *ctx, شمارش xkb_log_level level, صحیح verbosity,
+        ثابت نویسه *fmt, ...);
 
-enum RMLVO
-xkb_context_sanitize_rule_names(struct xkb_context *ctx,
-                                struct xkb_rule_names *rmlvo);
+شمارش RMLVO
+xkb_context_sanitize_rule_names(ساختار xkb_context *ctx,
+                                ساختار xkb_rule_names *rmlvo);
 
 /*
  * The format is not part of the argument list in order to avoid the
@@ -117,8 +117,8 @@ xkb_context_sanitize_rule_names(struct xkb_context *ctx,
  * format is supplied without arguments. Not supplying it would still
  * result in an error, though.
  */
-#define xkb_log_with_code(ctx, level, verbosity, msg_id, fmt, ...) \
-    xkb_log(ctx, level, verbosity, PREPEND_MESSAGE_ID(msg_id, fmt), ##__VA_ARGS__)
+#define xkb_log_with_code(ctx, level, verbosity, پیام_id, fmt, ...) \
+    xkb_log(ctx, level, verbosity, PREPEND_MESSAGE_ID(پیام_id, fmt), ##__VA_ARGS__)
 #define log_dbg(ctx, id, ...) \
     xkb_log_with_code((ctx), XKB_LOG_LEVEL_DEBUG, XKB_LOG_VERBOSITY_MINIMAL, id, __VA_ARGS__)
 #define log_info(ctx, id, ...) \

@@ -4,70 +4,70 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#شامل "config.h"
 
-#include <stdio.h>
-#include <stdbool.h>
-#include <string.h>
+#شامل <stdio.h>
+#شامل <stdbool.h>
+#شامل <string.h>
 
-#include "xkbcommon/xkbcommon-compose.h"
-#include "darray.h"
-#include "parser.h"
-#include "escape.h"
-#include "dump.h"
-#include "src/keysym.h"
+#شامل "xkbcommon/xkbcommon-compose.h"
+#شامل "darray.h"
+#شامل "parser.h"
+#شامل "escape.h"
+#شامل "dump.h"
+#شامل "src/keysym.h"
 
 bool
-print_compose_table_entry(FILE *file, struct xkb_compose_table_entry *entry)
+print_compose_table_entry(FILE *file, ساختار xkb_compose_table_entry *entry)
 {
     size_t nsyms;
-    const xkb_keysym_t *syms = xkb_compose_table_entry_sequence(entry, &nsyms);
-    char buf[XKB_KEYSYM_NAME_MAX_SIZE];
-    for (size_t i = 0; i < nsyms; i++) {
-        xkb_keysym_get_name(syms[i], buf, sizeof(buf));
+    ثابت xkb_keysym_t *syms = xkb_compose_table_entry_sequence(entry, &nsyms);
+    نویسه buf[XKB_KEYSYM_NAME_MAX_SIZE];
+    برای (size_t i = 0; i < nsyms; i++) {
+        xkb_keysym_get_name(syms[i], buf, اندازه(buf));
         fprintf(file, "<%s>", buf);
-        if (i + 1 < nsyms) {
+        اگر (i + 1 < nsyms) {
             fprintf(file, " ");
         }
     }
     fprintf(file, " : ");
-    const char *utf8 = xkb_compose_table_entry_utf8(entry);
-    if (*utf8 != '\0') {
-        char *escaped = escape_utf8_string_literal(utf8);
-        if (!escaped) {
+    ثابت نویسه *utf8 = xkb_compose_table_entry_utf8(entry);
+    اگر (*utf8 != '\0') {
+        نویسه *escaped = escape_utf8_string_literal(utf8);
+        اگر (!escaped) {
             fprintf(stderr, "ERROR: Cannot escape the string: allocation error\n");
-            return false;
-        } else {
+            بازگشت false;
+        } وگرنه {
             fprintf(file, " \"%s\"", escaped);
-            free(escaped);
+            آزاد(escaped);
         }
     }
-    const xkb_keysym_t keysym = xkb_compose_table_entry_keysym(entry);
-    if (keysym != XKB_KEY_NoSymbol) {
-        xkb_keysym_get_name(keysym, buf, sizeof(buf));
+    ثابت xkb_keysym_t keysym = xkb_compose_table_entry_keysym(entry);
+    اگر (keysym != XKB_کلید_No_نماد) {
+        xkb_keysym_get_name(keysym, buf, اندازه(buf));
         fprintf(file, " %s", buf);
     }
     fprintf(file, "\n");
-    return true;
+    بازگشت true;
 }
 
 bool
-xkb_compose_table_dump(FILE *file, struct xkb_compose_table *table)
+xkb_compose_table_dump(FILE *file, ساختار xkb_compose_table *table)
 {
-    struct xkb_compose_table_entry *entry;
-    struct xkb_compose_table_iterator *iter = xkb_compose_table_iterator_new(table);
+    ساختار xkb_compose_table_entry *entry;
+    ساختار xkb_compose_table_iterator *iter = xkb_compose_table_iterator_new(table);
 
-    if (!iter)
-        return false;
+    اگر (!iter)
+        بازگشت false;
 
     bool ok = true;
-    while ((entry = xkb_compose_table_iterator_next(iter))) {
-        if (!print_compose_table_entry(file, entry)) {
+    وقتی ((entry = xkb_compose_table_iterator_next(iter))) {
+        اگر (!print_compose_table_entry(file, entry)) {
             ok = false;
-            break;
+            بشکن;
         }
     }
 
     xkb_compose_table_iterator_free(iter);
-    return ok;
+    بازگشت ok;
 }

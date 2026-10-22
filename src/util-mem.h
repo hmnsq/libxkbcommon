@@ -5,29 +5,29 @@
 
 #pragma once
 
-#include "config.h"
+#شامل "config.h"
 
-#include <assert.h>
-#include <stdalign.h>
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
+#شامل <assert.h>
+#شامل <stdalign.h>
+#شامل <stdbool.h>
+#شامل <stddef.h>
+#شامل <stdint.h>
+#شامل <stdlib.h>
 
-#if !HAVE_MAX_ALIGN_T
+#اگر !HAVE_MAX_ALIGN_T
 /* Fallback for legacy compilers or older C modes on MSVC */
-typedef struct {
+تعریفنوع ساختار {
     long long __max_align_ll;
-    long double __max_align_ld;
+    long دوگانه __max_align_ld;
 } max_align_t;
 #endif
 
-static inline void*
-_steal(void *ptr) {
-    void **original = (void**)ptr;
-    void *swapped = *original;
-    *original = NULL;
-    return swapped;
+ایستا درونخطی تهی*
+_steal(تهی *ptr) {
+    تهی **original = (تهی**)ptr;
+    تهی *swapped = *original;
+    *original = پوچ;
+    بازگشت swapped;
 }
 
 /**
@@ -36,7 +36,7 @@ _steal(void *ptr) {
 #ifdef _WIN32
 #define steal(ptr_) \
     _steal(ptr_)
-#else
+#وگرنه
 #define steal(ptr_) \
     (__typeof__(*(ptr_)))_steal(ptr_)
 #endif
@@ -48,29 +48,29 @@ static_assert(alignof(max_align_t) >= 4,
               "Pointer alignment insufficient for tagging");
 
 /** Pack @p ptr and a 0-3 @p tag. */
-static inline const void *
-xkb_pointer_tag(const void *ptr, uintptr_t tag)
+ایستا درونخطی ثابت تهی *
+xkb_pointer_tag(ثابت تهی *ptr, uintptr_t tag)
 {
     uintptr_t addr = (uintptr_t)ptr;
-    assert(tag <= XKB_POINTER_TAG_MASK &&
+    أكد(tag <= XKB_POINTER_TAG_MASK &&
            "tag exceeds available bits");
-    assert((addr & XKB_POINTER_TAG_MASK) == 0 &&
+    أكد((addr & XKB_POINTER_TAG_MASK) == 0 &&
            "pointer not sufficiently aligned for tagging");
     /* NOLINTNEXTLINE(performance-no-int-to-ptr) */
-    return (const void *)(addr | tag);
+    بازگشت (ثابت تهی *)(addr | tag);
 }
 
 /** Recover the original pointer from a tagged pointer. */
-static inline const void *
-xkb_pointer_untag(const void *ptr)
+ایستا درونخطی ثابت تهی *
+xkb_pointer_untag(ثابت تهی *ptr)
 {
     /* NOLINTNEXTLINE(performance-no-int-to-ptr) */
-    return (const void *)((uintptr_t)ptr & ~XKB_POINTER_TAG_MASK);
+    بازگشت (ثابت تهی *)((uintptr_t)ptr & ~XKB_POINTER_TAG_MASK);
 }
 
 /* Recover just the tag bits from a tagged pointer. */
-static inline uintptr_t
-xkb_pointer_get_tag(const void *ptr)
+ایستا درونخطی uintptr_t
+xkb_pointer_get_tag(ثابت تهی *ptr)
 {
-    return ((uintptr_t)ptr & XKB_POINTER_TAG_MASK);
+    بازگشت ((uintptr_t)ptr & XKB_POINTER_TAG_MASK);
 }

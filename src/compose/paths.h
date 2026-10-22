@@ -5,24 +5,24 @@
 
 #pragma once
 
-#include "config.h"
+#شامل "config.h"
 
-#include "xkbcommon/xkbcommon.h"
+#شامل "xkbcommon/xkbcommon.h"
 
-char *
-resolve_locale(struct xkb_context *ctx, const char *locale);
+نویسه *
+resolve_locale(ساختار xkb_context *ctx, ثابت نویسه *locale);
 
-const char *
-get_xlocaledir_path(struct xkb_context *ctx);
+ثابت نویسه *
+get_xlocaledir_path(ساختار xkb_context *ctx);
 
-char *
-get_xcomposefile_path(struct xkb_context *ctx);
+نویسه *
+get_xcomposefile_path(ساختار xkb_context *ctx);
 
-char *
-get_xdg_xcompose_file_path(struct xkb_context *ctx);
+نویسه *
+get_xdg_xcompose_file_path(ساختار xkb_context *ctx);
 
-char *
-get_home_xcompose_file_path(struct xkb_context *ctx);
+نویسه *
+get_home_xcompose_file_path(ساختار xkb_context *ctx);
 
-char *
-get_locale_compose_file_path(struct xkb_context *ctx, const char *locale);
+نویسه *
+get_locale_compose_file_path(ساختار xkb_context *ctx, ثابت نویسه *locale);

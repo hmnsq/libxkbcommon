@@ -4,32 +4,32 @@
  */
 #pragma once
 
-#include "config.h"
+#شامل "config.h"
 
-#include <stdlib.h>
+#شامل <stdlib.h>
 
-#if !HAVE_RANDOM
+#اگر !HAVE_RANDOM
 
 /* Simple random() fallback based on rand() */
 
-#include <stdint.h>
+#شامل <stdint.h>
 
-static inline void
-srandom(unsigned int seed)
+ایستا درونخطی تهی
+srandom(unsigned صحیح seed)
 {
     srand(seed);
 }
 
-static inline long
-random(void)
+ایستا درونخطی long
+random(تهی)
 {
     /* rand() is only guaranteed to cover [0, 32767] (15 bits), so
      * combine three calls to safely fill 31 bits regardless of the
      * platform's actual RAND_MAX. */
-    const long r = ((long)rand() & 0x7fffU)
+    ثابت long r = ((long)rand() & 0x7fffU)
                  | (((long)rand() & 0x7fffU) << 15)
                  | (((long)rand() & 0x7fffU) << 30);
 
-    return r & 0x7fffffffL;
+    بازگشت r & 0x7fffffffL;
 }
 #endif

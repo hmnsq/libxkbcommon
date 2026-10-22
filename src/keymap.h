@@ -20,21 +20,21 @@
  /* Don't use compat names in internal code. */
 #define _XKBCOMMON_COMPAT_H
 
-#include "config.h"
+#شامل "config.h"
 
-#include <assert.h>
-#include <limits.h>
-#include <stdint.h>
-#include <stdbool.h>
+#شامل <assert.h>
+#شامل <limits.h>
+#شامل <stdint.h>
+#شامل <stdbool.h>
 
-#include "xkbcommon/xkbcommon.h"
+#شامل "xkbcommon/xkbcommon.h"
 
-#include "atom.h"
-#include "context.h"
-#include "darray.h"
-#include "rmlvo.h"
-#include "utils.h"
-#include "xkbcomp/ast.h"
+#شامل "atom.h"
+#شامل "context.h"
+#شامل "darray.h"
+#شامل "rmlvo.h"
+#شامل "utils.h"
+#شامل "xkbcomp/ast.h"
 
 /* Note: imposed by the size of the xkb_layout_mask_t type (32).
  * This is more than enough though. */
@@ -43,21 +43,21 @@
 /* Limit imposed by X11 */
 #define XKB_MAX_GROUPS_X11 4
 
-static inline xkb_layout_index_t
-format_max_groups(enum xkb_keymap_format format)
+ایستا درونخطی xkb_layout_index_t
+format_max_groups(شمارش xkb_keymap_format format)
 {
-    return (format == XKB_KEYMAP_FORMAT_TEXT_V1)
+    بازگشت (format == XKB_KEYMAP_FORMAT_TEXT_V1)
         ? XKB_MAX_GROUPS_X11
         : XKB_MAX_GROUPS;
 }
 
 /* Don't allow more leds than we can hold in xkb_led_mask_t. */
-#define XKB_MAX_LEDS ((xkb_led_index_t) (sizeof(xkb_led_mask_t) * CHAR_BIT))
+#define XKB_MAX_LEDS ((xkb_led_index_t) (اندازه(xkb_led_mask_t) * CHAR_BIT))
 
 /* Don't allow more modifiers than we can hold in xkb_mod_mask_t. */
-#define XKB_MAX_MODS ((xkb_mod_index_t) (sizeof(xkb_mod_mask_t) * CHAR_BIT))
+#define XKB_MAX_MODS ((xkb_mod_index_t) (اندازه(xkb_mod_mask_t) * CHAR_BIT))
 
-enum {
+شمارش {
     /** Mask of all possible modifiers */
     XKB_MOD_ALL = UINT32_MAX,
 };
@@ -65,7 +65,7 @@ enum {
 /* Special value to handle modMap None {…} */
 #define XKB_MOD_NONE 0xffffffffU
 
-enum mod_type {
+شمارش mod_type {
     /** X11 core modifier */
     MOD_REAL = (1 << 0),
     /** A non-X11 core modifier */
@@ -76,7 +76,7 @@ enum mod_type {
 #define MOD_REAL_MASK_ALL ((xkb_mod_mask_t) 0x000000ff)
 
 /** Predefined (AKA real, core, X11) modifiers. The order is important! */
-enum real_mod_index {
+شمارش real_mod_index {
     XKB_MOD_INDEX_SHIFT = 0,
     XKB_MOD_INDEX_CAPS,
     XKB_MOD_INDEX_CTRL,
@@ -85,11 +85,11 @@ enum real_mod_index {
     XKB_MOD_INDEX_MOD3,
     XKB_MOD_INDEX_MOD4,
     XKB_MOD_INDEX_MOD5,
-    _XKB_MOD_INDEX_NUM_ENTRIES
+    XKB_MOD_INDEX_رقم_ENTRIES
 };
-static_assert(_XKB_MOD_INDEX_NUM_ENTRIES == 8, "Invalid X11 core modifiers");
+static_assert(XKB_MOD_INDEX_رقم_ENTRIES == 8, "Invalid X11 core modifiers");
 
-enum xkb_action_type {
+شمارش xkb_action_type {
     ACTION_TYPE_NONE = 0,
     ACTION_TYPE_VOID, /* xkbcommon extension */
     ACTION_TYPE_MOD_SET,
@@ -106,15 +106,15 @@ enum xkb_action_type {
     ACTION_TYPE_SWITCH_VT,
     ACTION_TYPE_CTRL_SET,
     ACTION_TYPE_CTRL_LOCK,
-    ACTION_TYPE_REDIRECT_KEY,
+    ACTION_TYPE_REDIRECT_کلید,
     ACTION_TYPE_UNSUPPORTED_LEGACY,
     ACTION_TYPE_UNKNOWN,
     ACTION_TYPE_PRIVATE,
     ACTION_TYPE_INTERNAL, /* Action specific and internal to xkbcommon */
-    _ACTION_TYPE_NUM_ENTRIES
+    ACTION_TYPE_رقم_ENTRIES
 };
 
-enum xkb_action_flags {
+شمارش xkb_action_flags {
     ACTION_LOCK_CLEAR = (1 << 0),
     ACTION_LATCH_TO_LOCK = (1 << 1),
     ACTION_LOCK_NO_LOCK = (1 << 2),
@@ -150,7 +150,7 @@ enum xkb_action_flags {
     ACTION_AUTO_GROUP_LOCK_ON_MODIFIER_RELEASE = (1 << 16),
 };
 
-enum {
+شمارش {
     CONTROL_OVERLAY1_LOG2 = 23,
     CONTROL_OVERLAY2_LOG2,
     CONTROL_OVERLAY3_LOG2,
@@ -170,11 +170,11 @@ enum {
  *
  * @warning Encoding is different from X11.
  */
-enum xkb_action_controls {
+شمارش xkb_action_controls {
     CONTROL_NONE = 0,
     /* Public API */
-    CONTROL_STICKY_KEYS = (1 << 0),
-    CONTROL_MOUSE_KEYS = (1 << 1),
+    CONTROL_STICKY_کلیدها = (1 << 0),
+    CONTROL_MOUSE_کلیدها = (1 << 1),
 
     /* Range (1 << 2) .. (1 << 8) for future public controls */
 
@@ -183,7 +183,7 @@ enum xkb_action_controls {
     CONTROL_REPEAT = (1 << 10),
     CONTROL_SLOW = (1 << 11),
     CONTROL_DEBOUNCE = (1 << 12),
-    CONTROL_MOUSE_KEYS_ACCEL = (1 << 15),
+    CONTROL_MOUSE_کلیدها_ACCEL = (1 << 15),
     CONTROL_AX = (1 << 16),
     CONTROL_AX_TIMEOUT = (1 << 17),
     CONTROL_AX_FEEDBACK = (1 << 18),
@@ -206,7 +206,7 @@ enum xkb_action_controls {
      */
     CONTROL_ALL_V1 = \
         (CONTROL_REPEAT | CONTROL_SLOW | CONTROL_DEBOUNCE | \
-         CONTROL_STICKY_KEYS | CONTROL_MOUSE_KEYS | CONTROL_MOUSE_KEYS_ACCEL | \
+         CONTROL_STICKY_کلیدها | CONTROL_MOUSE_کلیدها | CONTROL_MOUSE_کلیدها_ACCEL | \
          CONTROL_AX | CONTROL_AX_TIMEOUT | CONTROL_AX_FEEDBACK | \
          CONTROL_BELL | CONTROL_OVERLAY1 | CONTROL_OVERLAY2 |
          CONTROL_IGNORE_GROUP_LOCK | CONTROL_GROUPS_WRAP),
@@ -217,7 +217,7 @@ enum xkb_action_controls {
     /* All the boolean controls */
     CONTROL_ALL_BOOLEAN_V1 = \
         (CONTROL_REPEAT | CONTROL_SLOW | CONTROL_DEBOUNCE | \
-         CONTROL_STICKY_KEYS | CONTROL_MOUSE_KEYS | CONTROL_MOUSE_KEYS_ACCEL | \
+         CONTROL_STICKY_کلیدها | CONTROL_MOUSE_کلیدها | CONTROL_MOUSE_کلیدها_ACCEL | \
          CONTROL_AX | CONTROL_AX_TIMEOUT | CONTROL_AX_FEEDBACK | \
          CONTROL_BELL | CONTROL_OVERLAY1 | CONTROL_OVERLAY2 | \
          CONTROL_IGNORE_GROUP_LOCK),
@@ -227,32 +227,32 @@ enum xkb_action_controls {
          CONTROL_OVERLAY6 | CONTROL_OVERLAY7 | CONTROL_OVERLAY8),
 };
 
-static_assert(sizeof(enum xkb_action_controls) >= 3, "truncated enum");
+static_assert(اندازه(شمارش xkb_action_controls) >= 3, "truncated enum");
 static_assert((uint32_t)_LAST_CONTROL < (UINT32_C(1) << 31),
               "Cannot ensure enum portability");
 
-static inline enum xkb_action_controls
-format_boolean_controls(enum xkb_keymap_format format)
+ایستا درونخطی شمارش xkb_action_controls
+format_boolean_controls(شمارش xkb_keymap_format format)
 {
-    return (format == XKB_KEYMAP_FORMAT_TEXT_V1)
+    بازگشت (format == XKB_KEYMAP_FORMAT_TEXT_V1)
         ? CONTROL_ALL_BOOLEAN_V1
         : CONTROL_ALL_BOOLEAN;
 }
 
 static_assert(
-    CONTROL_STICKY_KEYS ==
-    (enum xkb_action_controls) XKB_KEYBOARD_CONTROL_A11Y_STICKY_KEYS,
+    CONTROL_STICKY_کلیدها ==
+    (شمارش xkb_action_controls) XKB_KEYBOARD_CONTROL_A11_Y_STICKY_کلیدها,
     "Private value should match public API"
 );
 
 static_assert(
-    CONTROL_MOUSE_KEYS ==
-    (enum xkb_action_controls) XKB_KEYBOARD_CONTROL_MOUSE_KEYS,
+    CONTROL_MOUSE_کلیدها ==
+    (شمارش xkb_action_controls) XKB_KEYBOARD_CONTROL_MOUSE_کلیدها,
     "Private value should match public API"
 );
 
 
-enum xkb_match_operation {
+شمارش xkb_match_operation {
     MATCH_NONE,
     MATCH_ANY_OR_NONE,
     MATCH_ANY,
@@ -260,38 +260,38 @@ enum xkb_match_operation {
     MATCH_EXACTLY,
 };
 
-struct xkb_mods {
+ساختار xkb_mods {
     xkb_mod_mask_t mods;       /* original real+virtual mods in definition */
     xkb_mod_mask_t mask;       /* computed effective mask */
 };
 
-struct xkb_mod_action {
-    enum xkb_action_type type;
-    enum xkb_action_flags flags;
-    struct xkb_mods mods;
+ساختار xkb_mod_action {
+    شمارش xkb_action_type type;
+    شمارش xkb_action_flags flags;
+    ساختار xkb_mods mods;
 };
 
-struct xkb_group_action {
-    enum xkb_action_type type;
-    enum xkb_action_flags flags;
+ساختار xkb_group_action {
+    شمارش xkb_action_type type;
+    شمارش xkb_action_flags flags;
     int32_t group;
 };
 
 /** Keyboard overlay index or count */
-typedef uint8_t xkb_overlay_index_t;
+تعریفنوع uint8_t xkb_overlay_index_t;
 /** Keyboard overlay mask */
-typedef uint8_t xkb_overlay_mask_t;
-enum {
+تعریفنوع uint8_t xkb_overlay_mask_t;
+شمارش {
     /* Indices */
 
     /** Maximum number of keymap v1 overlays (X11 limit) */
-    XKB_OVERLAY_COUNT_X11 = 2,
+    XKB_OVERLAY_شمار_X11 = 2,
     /** Maximum number of keymap v2+ overlays */
-    XKB_OVERLAY_COUNT = (sizeof(xkb_overlay_mask_t) * CHAR_BIT),
+    XKB_OVERLAY_شمار = (اندازه(xkb_overlay_mask_t) * CHAR_BIT),
     /** Minimum overlay index */
     XKB_OVERLAY_MIN = 0,
     /** Maximum overlay index */
-    XKB_OVERLAY_MAX = XKB_OVERLAY_COUNT - 1,
+    XKB_OVERLAY_MAX = XKB_OVERLAY_شمار - 1,
     /** Invalid overlay index */
     XKB_OVERLAY_INVALID = UINT8_MAX,
     /** Min bits required to store overlays indices */
@@ -300,9 +300,9 @@ enum {
     /* Masks */
 
     /** Mask of all valid keymap v1 overlays (X11 limit) */
-    XKB_OVERLAY_ALL_X11 = ((UINT8_C(1) << XKB_OVERLAY_COUNT_X11) - 1),
+    XKB_OVERLAY_ALL_X11 = ((UINT8_C(1) << XKB_OVERLAY_شمار_X11) - 1),
     /** Mask of all valid keymap v2+ overlays */
-    XKB_OVERLAY_ALL = ((UINT64_C(1) << XKB_OVERLAY_COUNT) - 1),
+    XKB_OVERLAY_ALL = ((UINT64_C(1) << XKB_OVERLAY_شمار) - 1),
 };
 
 static_assert(CONTROL_OVERLAY1 == (1u << CONTROL_OVERLAY1_LOG2) &&
@@ -312,56 +312,56 @@ static_assert(CONTROL_OVERLAY8_LOG2 == _MAX_CONTROL_OVERLAY_LOG2 - 1,
               "Maximum of overlays changed");
 static_assert(XKB_OVERLAY_MIN ==
               (_MAX_CONTROL_OVERLAY_LOG2 - CONTROL_OVERLAY8_LOG2 - 1) &&
-              XKB_OVERLAY_COUNT ==
+              XKB_OVERLAY_شمار ==
               (_MAX_CONTROL_OVERLAY_LOG2 - CONTROL_OVERLAY1_LOG2),
               "Overlays types do not match with overlays enum constants in "
               "xkb_action_controls");
-static_assert(XKB_OVERLAY_COUNT < XKB_OVERLAY_INVALID,
+static_assert(XKB_OVERLAY_شمار < XKB_OVERLAY_INVALID,
               "Cannot encode XKB_OVERLAY_INVALID");
-static_assert(XKB_OVERLAY_COUNT <= (1u << XKB_OVERLAY_INDEX_MIN_WIDTH) - 1,
+static_assert(XKB_OVERLAY_شمار <= (1u << XKB_OVERLAY_INDEX_MIN_WIDTH) - 1,
               "Cannot encode overlay index or count in a nibble");
 
-static inline xkb_overlay_mask_t
-overlays_from_controls(enum xkb_action_controls controls)
+ایستا درونخطی xkb_overlay_mask_t
+overlays_from_controls(شمارش xkb_action_controls controls)
 {
-    return (xkb_overlay_mask_t)(
+    بازگشت (xkb_overlay_mask_t)(
         (controls >> CONTROL_OVERLAY1_LOG2) &
         XKB_OVERLAY_ALL
     );
 }
 
-static inline enum xkb_action_controls
+ایستا درونخطی شمارش xkb_action_controls
 overlays_to_controls(xkb_overlay_mask_t overlays)
 {
-    return (enum xkb_action_controls)(
+    بازگشت (شمارش xkb_action_controls)(
         (overlays & XKB_OVERLAY_ALL) << CONTROL_OVERLAY1_LOG2
     );
 }
 
-static inline xkb_overlay_index_t
-format_max_overlays(enum xkb_keymap_format format)
+ایستا درونخطی xkb_overlay_index_t
+format_max_overlays(شمارش xkb_keymap_format format)
 {
-    return (format == XKB_KEYMAP_FORMAT_TEXT_V1)
-        ? XKB_OVERLAY_COUNT_X11
-        : XKB_OVERLAY_COUNT;
+    بازگشت (format == XKB_KEYMAP_FORMAT_TEXT_V1)
+        ? XKB_OVERLAY_شمار_X11
+        : XKB_OVERLAY_شمار;
 }
 
-struct xkb_controls_action {
-    enum xkb_action_type type;
-    enum xkb_action_flags flags;
-    enum xkb_action_controls ctrls;
+ساختار xkb_controls_action {
+    شمارش xkb_action_type type;
+    شمارش xkb_action_flags flags;
+    شمارش xkb_action_controls ctrls;
 };
 
-typedef uint8_t xkb_pointer_button_index_t;
-typedef uint8_t xkb_pointer_button_mask_t;
+تعریفنوع uint8_t xkb_pointer_button_index_t;
+تعریفنوع uint8_t xkb_pointer_button_mask_t;
 
-enum {
+شمارش {
     XKB_POINTER_BUTTON_INDEX_WIDTH =
-        sizeof(xkb_pointer_button_index_t) * CHAR_BIT,
+        اندازه(xkb_pointer_button_index_t) * CHAR_BIT,
     XKB_POINTER_BUTTON_INDEX_MAX =
         (1 << XKB_POINTER_BUTTON_INDEX_WIDTH) - 1,
     XKB_POINTER_BUTTON_MASK_WIDTH =
-        sizeof(xkb_pointer_button_mask_t) * CHAR_BIT,
+        اندازه(xkb_pointer_button_mask_t) * CHAR_BIT,
     XKB_POINTER_BUTTON_DEFAULT = 0,
     XKB_POINTER_BUTTON_MIN = 1,
     XKB_POINTER_BUTTON_MAX = 5,
@@ -373,46 +373,46 @@ static_assert(XKB_POINTER_BUTTON_MAX <= XKB_POINTER_BUTTON_INDEX_MAX,
 static_assert(XKB_POINTER_BUTTON_MAX <= XKB_POINTER_BUTTON_MASK_WIDTH,
               "xkb_pointer_button_mask_t cannot store button mask");
 
-struct xkb_pointer_default_action {
-    enum xkb_action_type type;
-    enum xkb_action_flags flags;
-    int8_t value;
+ساختار xkb_pointer_default_action {
+    شمارش xkb_action_type type;
+    شمارش xkb_action_flags flags;
+    int8_t مقدار;
 };
 
-enum {
-    XKB_POINTER_DEFAULT_ACTION_VALUE_WIDTH =
-        sizeof(((struct xkb_pointer_default_action*)0)->value) * CHAR_BIT,
-    XKB_POINTER_DEFAULT_ACTION_VALUE_MAX =
+شمارش {
+    XKB_POINTER_DEFAULT_ACTION_مقدار_WIDTH =
+        اندازه(((ساختار xkb_pointer_default_action*)0)->مقدار) * CHAR_BIT,
+    XKB_POINTER_DEFAULT_ACTION_مقدار_MAX =
         /* NOTE: signed integer */
-        (UINT32_C(1) << (XKB_POINTER_DEFAULT_ACTION_VALUE_WIDTH - 1)) - 1,
+        (UINT32_C(1) << (XKB_POINTER_DEFAULT_ACTION_مقدار_WIDTH - 1)) - 1,
 };
 
 static_assert((uint32_t)XKB_POINTER_BUTTON_MAX <=
-              (uint32_t)XKB_POINTER_DEFAULT_ACTION_VALUE_MAX,
+              (uint32_t)XKB_POINTER_DEFAULT_ACTION_مقدار_MAX,
               "Cannot store button in xkb_pointer_default_action::value");
 
-struct xkb_pointer_motion_action {
-    enum xkb_action_type type;
-    enum xkb_action_flags flags;
+ساختار xkb_pointer_motion_action {
+    شمارش xkb_action_type type;
+    شمارش xkb_action_flags flags;
     int16_t x;
     int16_t y;
 };
 
-struct xkb_pointer_button_action {
-    enum xkb_action_type type;
-    enum xkb_action_flags flags;
-    uint8_t count;
+ساختار xkb_pointer_button_action {
+    شمارش xkb_action_type type;
+    شمارش xkb_action_flags flags;
+    uint8_t شمار;
     xkb_pointer_button_index_t button;
 };
 
-struct xkb_switch_screen_action {
-    enum xkb_action_type type;
-    enum xkb_action_flags flags;
+ساختار xkb_switch_screen_action {
+    شمارش xkb_action_type type;
+    شمارش xkb_action_flags flags;
     int8_t screen;
 };
 
-struct xkb_redirect_key_action {
-    enum xkb_action_type type;
+ساختار xkb_redirect_کلید_action {
+    شمارش xkb_action_type type;
     xkb_keycode_t keycode;
     /*
      * Next 2 fields are only used for parsing and serializing.
@@ -430,115 +430,115 @@ struct xkb_redirect_key_action {
     xkb_mod_mask_t mods;
 };
 
-struct xkb_private_action {
-    enum xkb_action_type type;
+ساختار xkb_private_action {
+    شمارش xkb_action_type type;
     uint8_t data[7];
 };
 
-enum xkb_internal_action_flags {
+شمارش xkb_internal_action_flags {
     INTERNAL_BREAKS_GROUP_LATCH = (1 << 0),
     INTERNAL_BREAKS_MOD_LATCH = (1 << 1),
 };
 
 /* Action specific and internal to xkbcommon */
-struct xkb_internal_action {
-    enum xkb_action_type type;
-    enum xkb_internal_action_flags flags;
-    union {
+ساختار xkb_internal_action {
+    شمارش xkb_action_type type;
+    شمارش xkb_internal_action_flags flags;
+    اجتماع {
         /* flag == INTERNAL_BREAKS_MOD_LATCH */
         xkb_mod_mask_t clear_latched_mods;
     };
 };
 
-union xkb_action {
-    enum xkb_action_type type;
-    struct xkb_mod_action mods;
-    struct xkb_group_action group;
-    struct xkb_controls_action ctrls;
-    struct xkb_redirect_key_action redirect;
-    struct xkb_pointer_default_action dflt;
-    struct xkb_pointer_motion_action ptr;
-    struct xkb_pointer_button_action btn;
-    struct xkb_switch_screen_action screen;
-    struct xkb_private_action priv;
-    struct xkb_internal_action internal;
+اجتماع xkb_action {
+    شمارش xkb_action_type type;
+    ساختار xkb_mod_action mods;
+    ساختار xkb_group_action group;
+    ساختار xkb_controls_action ctrls;
+    ساختار xkb_redirect_کلید_action redirect;
+    ساختار xkb_pointer_default_action dflt;
+    ساختار xkb_pointer_motion_action ptr;
+    ساختار xkb_pointer_button_action btn;
+    ساختار xkb_switch_screen_action screen;
+    ساختار xkb_private_action priv;
+    ساختار xkb_internal_action internal;
 };
 
-struct xkb_key_type_entry {
+ساختار xkb_کلید_type_entry {
     xkb_level_index_t level;
-    struct xkb_mods mods;
-    struct xkb_mods preserve;
+    ساختار xkb_mods mods;
+    ساختار xkb_mods preserve;
 };
 
-struct xkb_key_type {
+ساختار xkb_کلید_type {
     xkb_atom_t name;
-    struct xkb_mods mods;
+    ساختار xkb_mods mods;
     bool required;
-    xkb_level_index_t num_levels;
-    xkb_level_index_t num_level_names;
-    xkb_atom_t *level_names ATTR_COUNTED_BY(num_level_names);
-    darray_size_t num_entries;
-    struct xkb_key_type_entry *entries ATTR_COUNTED_BY(num_entries);
+    xkb_level_index_t رقم_levels;
+    xkb_level_index_t رقم_level_names;
+    xkb_atom_t *level_names ATTR_COUNTED_BY(رقم_level_names);
+    darray_size_t رقم_entries;
+    ساختار xkb_کلید_type_entry *entries ATTR_COUNTED_BY(رقم_entries);
 };
 
-typedef uint16_t xkb_action_count_t;
+تعریفنوع uint16_t xkb_action_شمار_t;
 #define MAX_ACTIONS_PER_LEVEL UINT16_MAX
 
-struct xkb_sym_interpret {
+ساختار xkb_sym_interpret {
     xkb_keysym_t sym;
-    enum xkb_match_operation match;
+    شمارش xkb_match_operation match;
     xkb_mod_mask_t mods;
     xkb_mod_index_t virtual_mod;
     bool level_one_only;
     bool repeat:1;
     bool required:1;
-    xkb_action_count_t num_actions;
-    union {
+    xkb_action_شمار_t رقم_actions;
+    اجتماع {
         /* num_actions <= 1 */
-        union xkb_action action;
+        اجتماع xkb_action action;
         /* num_actions >  1 */
-        union xkb_action *actions;
+        اجتماع xkb_action *actions;
     } a;
 };
 
-enum {XKB_STATE_COMPONENT_WIDTH = (sizeof(enum xkb_state_component) * CHAR_BIT)};
+شمارش {XKB_STATE_COMPONENT_WIDTH = (اندازه(شمارش xkb_state_component) * CHAR_BIT)};
 static_assert(
     (UINT64_C(1) << XKB_STATE_COMPONENT_WIDTH) - 1 > XKB_STATE_CONTROLS_EFFECTIVE,
     "Cannot encode xkb_led::pending_groups"
 );
 
-struct xkb_led {
+ساختار xkb_led {
     xkb_atom_t name;
-    enum xkb_state_component which_groups:(XKB_STATE_COMPONENT_WIDTH - 1);
+    شمارش xkb_state_component which_groups:(XKB_STATE_COMPONENT_WIDTH - 1);
     bool pending_groups:1;
     xkb_layout_mask_t groups;
-    enum xkb_state_component which_mods;
-    struct xkb_mods mods;
-    enum xkb_action_controls ctrls;
+    شمارش xkb_state_component which_mods;
+    ساختار xkb_mods mods;
+    شمارش xkb_action_controls ctrls;
 };
 
-struct xkb_key_alias {
+ساختار xkb_کلید_alias {
     xkb_atom_t real;
     xkb_atom_t alias;
 };
 
-struct xkb_controls {
-    unsigned char groups_wrap;
-    struct xkb_mods internal;
-    struct xkb_mods ignore_lock;
+ساختار xkb_controls {
+    unsigned نویسه groups_wrap;
+    ساختار xkb_mods internal;
+    ساختار xkb_mods ignore_lock;
     unsigned short repeat_delay;
     unsigned short repeat_interval;
-    unsigned short slow_keys_delay;
+    unsigned short slow_کلیدها_delay;
     unsigned short debounce_delay;
     unsigned short ax_options;
     unsigned short ax_timeout;
     unsigned short axt_opts_mask;
-    unsigned short axt_opts_values;
-    unsigned int axt_ctrls_mask;
-    unsigned int axt_ctrls_values;
+    unsigned short axt_opts_مقادیر;
+    unsigned صحیح axt_ctrls_mask;
+    unsigned صحیح axt_ctrls_مقادیر;
 };
 
-enum xkb_explicit_components {
+شمارش xkb_explicit_components {
     EXPLICIT_NONE = 0,
     EXPLICIT_SYMBOLS = (1 << 0),
     EXPLICIT_INTERP = (1 << 1),
@@ -548,17 +548,17 @@ enum xkb_explicit_components {
     EXPLICIT_OVERLAY = (1 << 5),
 };
 
-typedef uint16_t xkb_keysym_count_t;
+تعریفنوع uint16_t xkb_keysym_شمار_t;
 #define MAX_KEYSYMS_PER_LEVEL UINT16_MAX
 
 /** A key level */
-struct xkb_level {
+ساختار xkb_level {
     /** Count of keysyms */
-    xkb_keysym_count_t num_syms;
+    xkb_keysym_شمار_t رقم_syms;
     /** Count of actions */
-    xkb_action_count_t num_actions;
+    xkb_action_شمار_t رقم_actions;
     /** Upper keysym */
-    union {
+    اجتماع {
         /** num_syms == 1: Upper keysym */
         xkb_keysym_t upper;
         /** num_syms >  1: Indicate if `syms` contains the upper case keysyms
@@ -566,21 +566,21 @@ struct xkb_level {
         bool has_upper;
     };
     /** Keysyms */
-    union {
+    اجتماع {
         xkb_keysym_t sym;          /* num_syms == 1 */
         xkb_keysym_t *syms;        /* num_syms > 1  */
     } s;
     /** Actions */
-    union {
-        union xkb_action action;   /* num_actions == 1 */
-        union xkb_action *actions; /* num_actions >  1 */
+    اجتماع {
+        اجتماع xkb_action action;   /* num_actions == 1 */
+        اجتماع xkb_action *actions; /* num_actions >  1 */
     } a;
 };
 
 /**
  * Group in a key
  */
-struct xkb_group {
+ساختار xkb_group {
     /** Flag that indicates whether a group has some *explicit* symbols */
     bool explicit_symbols:1;
     /**
@@ -599,36 +599,36 @@ struct xkb_group {
     /**
      * Key type of the group. Points to an entry in keymap->types.
      */
-    const struct xkb_key_type *type;
+    ثابت ساختار xkb_کلید_type *type;
     /**
      * Array of group levels. Use `XkbKeyNumLevels` for the number of levels.
      */
-    struct xkb_level *levels;
+    ساختار xkb_level *levels;
 };
 
-enum {
-    DEFAULT_KEY_REPEAT = false,
+شمارش {
+    DEFAULT_کلید_REPEAT = false,
     /**
      * Any key with no explicit key repeat value that trigger the default
      * interpret, e.g. some explicit symbols in a group with no action that do
      * not trigger any explicit interpret.
      */
-    DEFAULT_INTERPRET_KEY_REPEAT = true,
-    FALLBACK_INTERPRET_KEY_REPEAT = DEFAULT_KEY_REPEAT
+    DEFAULT_INTERPRET_کلید_REPEAT = true,
+    FALLBACK_INTERPRET_کلید_REPEAT = DEFAULT_کلید_REPEAT
 };
 
-enum {
-    DEFAULT_KEY_VMODMAP = 0,
+شمارش {
+    DEFAULT_کلید_VMODMAP = 0,
     DEFAULT_INTERPRET_VMOD = XKB_MOD_INVALID,
-    DEFAULT_INTERPRET_VMODMAP = DEFAULT_KEY_VMODMAP,
-    FALLBACK_INTERPRET_VMODMAP = DEFAULT_KEY_VMODMAP
+    DEFAULT_INTERPRET_VMODMAP = DEFAULT_کلید_VMODMAP,
+    FALLBACK_INTERPRET_VMODMAP = DEFAULT_کلید_VMODMAP
 };
 
-struct xkb_key {
+ساختار xkb_کلید {
     xkb_keycode_t keycode;
     xkb_atom_t name;
 
-    enum xkb_explicit_components explicit;
+    شمارش xkb_explicit_components explicit;
 
     xkb_mod_mask_t modmap;
     xkb_mod_mask_t vmodmap;
@@ -641,20 +641,20 @@ struct xkb_key {
     bool implicit_actions:1;
 
     bool out_of_range_pending_group:1;
-    enum xkb_layout_out_of_range_policy out_of_range_group_policy:4;
-    xkb_layout_index_t out_of_range_group_number:8;
+    شمارش xkb_layout_out_of_range_policy out_of_range_group_policy:4;
+    xkb_layout_index_t out_of_range_group_عدد:8;
 
-    xkb_layout_index_t num_groups:8;
-    struct xkb_group *groups ATTR_COUNTED_BY(num_groups);
+    xkb_layout_index_t رقم_groups:8;
+    ساختار xkb_group *groups ATTR_COUNTED_BY(رقم_groups);
     /**
      * Target overlays keys, if any.
      *
      * For 0 or 1 elements storage is inline in the struct; for 2 or more a
      * heap sparse array is used.
      */
-    union {
+    اجتماع {
         /** Inlined if at most one overlay is set (overlays_inline = true) */
-        const struct xkb_key *overlay_key;
+        ثابت ساختار xkb_کلید *overlay_کلید;
         /**
          * Allocated if 2 or more overlays are defined (overlays_inline = false).
          *
@@ -663,19 +663,19 @@ struct xkb_key {
          * ascending overlay order, and a value’s position in storage equals the
          * popcount of all mask bits strictly below its overlay — its rank.
          */
-        const struct xkb_key **overlays_keys;
+        ثابت ساختار xkb_کلید **overlays_کلیدها;
     };
 };
 
-struct xkb_mod {
+ساختار xkb_mod {
     xkb_atom_t name;
-    enum mod_type type;
+    شمارش mod_type type;
     xkb_mod_mask_t mapping; /* vmod -> real mod mapping */
 };
 
-struct xkb_mod_set {
-    struct xkb_mod mods[XKB_MAX_MODS];
-    xkb_mod_index_t num_mods;
+ساختار xkb_mod_set {
+    ساختار xkb_mod mods[XKB_MAX_MODS];
+    xkb_mod_index_t رقم_mods;
     xkb_mod_mask_t explicit_vmods;
 };
 
@@ -693,9 +693,9 @@ struct xkb_mod_set {
 #define XKB_KEYCODE_MAX_CONTIGUOUS 0xfff
 static_assert(XKB_KEYCODE_MAX_CONTIGUOUS < XKB_KEYCODE_MAX,
               "Valid keycodes");
-static_assert(XKB_KEYCODE_MAX_CONTIGUOUS < darray_max_alloc(sizeof(xkb_atom_t)),
+static_assert(XKB_KEYCODE_MAX_CONTIGUOUS < darray_max_alloc(اندازه(xkb_atom_t)),
               "Max keycodes names");
-static_assert(XKB_KEYCODE_MAX_CONTIGUOUS < darray_max_alloc(sizeof(struct xkb_key)),
+static_assert(XKB_KEYCODE_MAX_CONTIGUOUS < darray_max_alloc(اندازه(ساختار xkb_کلید)),
               "Max keymap keys");
 
 /*
@@ -708,9 +708,9 @@ static_assert(XKB_KEYCODE_MAX_CONTIGUOUS < darray_max_alloc(sizeof(struct xkb_ke
 #define XKB_LEVEL_MAX_IMPL 2048
 static_assert(XKB_LEVEL_MAX_IMPL < XKB_LEVEL_INVALID,
               "Valid levels");
-static_assert(XKB_LEVEL_MAX_IMPL < darray_max_alloc(sizeof(xkb_atom_t)),
+static_assert(XKB_LEVEL_MAX_IMPL < darray_max_alloc(اندازه(xkb_atom_t)),
               "Max key types level names");
-static_assert(XKB_LEVEL_MAX_IMPL < darray_max_alloc(sizeof(struct xkb_level)),
+static_assert(XKB_LEVEL_MAX_IMPL < darray_max_alloc(اندازه(ساختار xkb_level)),
               "Max keys levels");
 
 static_assert((1LLU << (DARRAY_SIZE_T_WIDTH - 3)) - 1 >=
@@ -718,8 +718,8 @@ static_assert((1LLU << (DARRAY_SIZE_T_WIDTH - 3)) - 1 >=
               "Cannot store low keycodes");
 
 /** Keycode store lookup result */
-typedef union {
-    struct {
+تعریفنوع اجتماع {
+    ساختار {
         /** If true, the index is valid */
         bool found:1;
         bool:1;
@@ -728,22 +728,22 @@ typedef union {
         darray_size_t:(DARRAY_SIZE_T_WIDTH - 3);
     };
     /* Only if is_alias = false, for better semantics */
-    struct {
+    ساختار {
         bool found:1;
         /**
          * Whether the corresponding entry is stored in the low or high table
          * of the keycode store
          */
-        bool low:1;
+        bool کم:1;
         bool is_alias:1;
         /**
          * - xkb_keycodes: index of the entry in the keycode store
          * - xkb_symbols: index of the entry in xkb_keymap::keys array
          */
         darray_size_t index:(DARRAY_SIZE_T_WIDTH - 3);
-    } key;
+    } کلید;
     /* Only if is_alias = true, for better semantics */
-    struct {
+    ساختار {
         bool found:1;
         bool:1;
         bool is_alias:1;
@@ -752,36 +752,36 @@ typedef union {
     } alias;
 } KeycodeMatch;
 
-typedef struct {
-    union {
+تعریفنوع ساختار {
+    اجتماع {
         /** Used for parsing */
-        enum merge_mode merge;
+        شمارش merge_mode merge;
         /** Used for serializing */
-        xkb_keycode_t keyCode;
+        xkb_keycode_t کلید_Code;
     };
-    bool haveSymbol;
+    bool have_نماد;
     /** NOTE: 0 means: “remove the key or keysym from the modmap” */
     xkb_mod_mask_t mods;
-    union {
-        xkb_keysym_t keySym;
-        xkb_atom_t keyName;
+    اجتماع {
+        xkb_keysym_t کلید_Sym;
+        xkb_atom_t کلید_Name;
     } u;
 } ModMapEntry;
 
 /** Common keyboard description structure */
-struct xkb_keymap {
-    struct xkb_context *ctx;
+ساختار xkb_keymap {
+    ساختار xkb_context *ctx;
 
-    int refcnt;
-    enum xkb_keymap_compile_flags flags;
-    enum xkb_keymap_format format;
+    صحیح refcnt;
+    شمارش xkb_keymap_compile_flags flags;
+    شمارش xkb_keymap_format format;
 
-    xkb_led_index_t num_leds;
-    struct xkb_led leds[XKB_MAX_LEDS];
+    xkb_led_index_t رقم_leds;
+    ساختار xkb_led leds[XKB_MAX_LEDS];
 
-    xkb_keycode_t min_key_code;
-    xkb_keycode_t max_key_code;
-    xkb_keycode_t num_keys;
+    xkb_keycode_t min_کلید_code;
+    xkb_keycode_t max_کلید_code;
+    xkb_keycode_t رقم_کلیدها;
     /*
      * Keys are divided into 2 ordered (possibly empty) lists:
      *
@@ -792,10 +792,10 @@ struct xkb_keymap {
      *     Stored noncontiguously at indexes [num_keys_low..num_keys).
      *     Slow access via a binary search.
      */
-    xkb_keycode_t num_keys_low;
-    struct xkb_key *keys ATTR_COUNTED_BY(num_keys);
+    xkb_keycode_t رقم_کلیدها_کم;
+    ساختار xkb_کلید *کلیدها ATTR_COUNTED_BY(رقم_کلیدها);
 
-    union {
+    اجتماع {
         /**
          * Keycode name atom -> key index lookup table
          *
@@ -807,29 +807,29 @@ struct xkb_keymap {
          * then the first atoms will be mostly the keycodes and their aliases,
          * so we can achieve O(1) lookup of the key names by using a simple array.
          */
-        struct {
-            darray_size_t num_key_names;
-            KeycodeMatch *key_names;
+        ساختار {
+            darray_size_t رقم_کلید_names;
+            KeycodeMatch *کلید_names;
         };
         /**
          * Aliases in no particular order
          *
          * ⚠️ Used only *after* compilation
          */
-        struct {
-            darray_size_t num_key_aliases;
-            struct xkb_key_alias *key_aliases;
+        ساختار {
+            darray_size_t رقم_کلید_aliases;
+            ساختار xkb_کلید_alias *کلید_aliases;
         };
     };
 
-    struct xkb_key_type *types;
-    darray_size_t num_types;
+    ساختار xkb_کلید_type *types;
+    darray_size_t رقم_types;
 
-    darray_size_t num_sym_interprets;
-    struct xkb_sym_interpret *sym_interprets;
+    darray_size_t رقم_sym_interprets;
+    ساختار xkb_sym_interpret *sym_interprets;
 
     darray_size_t _padding;
-    darray_size_t num_modmaps;
+    darray_size_t رقم_modmaps;
     ModMapEntry *modmaps;
 
     /**
@@ -839,7 +839,7 @@ struct xkb_keymap {
      *   1. the order of the parsing of the keymap components;
      *   2. the order of the virtual modifiers declarations;
      */
-    struct xkb_mod_set mods;
+    ساختار xkb_mod_set mods;
     /**
      * Modifier mask of the *canonical* state, i.e. the mask with the *smallest*
      * population count that denotes all bits used to encode the modifiers in
@@ -865,132 +865,132 @@ struct xkb_keymap {
     xkb_mod_mask_t canonical_state_mask;
 
     /** Encode the “auto” special value of RedirectKey() */
-    xkb_keycode_t redirect_key_auto;
+    xkb_keycode_t redirect_کلید_auto;
 
     /* This field has 2 uses:
      * • During parsing: Expected layouts count after RMLVO resolution, if any;
      * • After parsing: Number of groups in the key with the most groups. */
-    xkb_layout_index_t num_groups;
+    xkb_layout_index_t رقم_groups;
     /* Not all groups must have names. */
-    xkb_layout_index_t num_group_names;
-    xkb_atom_t *group_names ATTR_COUNTED_BY(num_group_names);
+    xkb_layout_index_t رقم_group_names;
+    xkb_atom_t *group_names ATTR_COUNTED_BY(رقم_group_names);
 
-    char *keycodes_section_name;
-    char *symbols_section_name;
-    char *types_section_name;
-    char *compat_section_name;
+    نویسه *keycodes_section_name;
+    نویسه *symbols_section_name;
+    نویسه *types_section_name;
+    نویسه *compat_section_name;
 };
 
-#define xkb_keys_foreach(iter, keymap) \
+#define xkb_کلیدها_foreach(iter, keymap) \
     /*
      * Start at the first defined low or high keycode:
      * - if there are some low keycodes, the index is min_key_code, because we
      *   skip the previous undefined keycodes;
      * - else the first item is the first high keycode.
      */ \
-    for ((iter) = (keymap)->keys + \
-                  ((keymap)->num_keys_low == 0 ? 0 : (keymap)->min_key_code); \
-         (iter) < (keymap)->keys + (keymap)->num_keys; \
+    برای ((iter) = (keymap)->کلیدها + \
+                  ((keymap)->رقم_کلیدها_کم == 0 ? 0 : (keymap)->min_کلید_code); \
+         (iter) < (keymap)->کلیدها + (keymap)->رقم_کلیدها; \
          (iter)++)
 
 #define xkb_level_foreach_action(iter, level)                 \
-    for (union xkb_action                                     \
-         *(iter) = (likely((level)->num_actions <= 1)         \
+    برای (اجتماع xkb_action                                     \
+         *(iter) = (likely((level)->رقم_actions <= 1)         \
                  ? &(level)->a.action                         \
                  : (level)->a.actions),                       \
          /* NOTE: loop is skipped if num_actions == 0 */      \
-         * const iter##_last_ = (iter) + (level)->num_actions;\
+         * ثابت iter##_last_ = (iter) + (level)->رقم_actions;\
         (iter) < iter##_last_;                                \
         (iter)++)
 
 #define xkb_mods_foreach(iter, mods_) \
-    for ((iter) = (mods_)->mods; \
-         (iter) < (mods_)->mods + (mods_)->num_mods; \
+    برای ((iter) = (mods_)->mods; \
+         (iter) < (mods_)->mods + (mods_)->رقم_mods; \
          (iter)++)
 
 #define xkb_mods_mask_foreach(mask, iter, mods_) \
-    for ((iter) = (mods_)->mods; \
-         (mask) && (iter) < (mods_)->mods + (mods_)->num_mods; \
+    برای ((iter) = (mods_)->mods; \
+         (mask) && (iter) < (mods_)->mods + (mods_)->رقم_mods; \
          (iter)++, (mask) >>= 1) \
-        if ((mask) & 0x1)
+        اگر ((mask) & 0x1)
 
 /** Enumerate all modifiers */
 #define xkb_mods_enumerate(idx, iter, mods_) \
-    for ((idx) = 0, (iter) = (mods_)->mods; \
-         (idx) < (mods_)->num_mods; \
+    برای ((idx) = 0, (iter) = (mods_)->mods; \
+         (idx) < (mods_)->رقم_mods; \
          (idx)++, (iter)++)
 
 /** Enumerate only real modifiers */
 #define xkb_rmods_enumerate(idx, iter, mods_) \
-    for ((idx) = 0, (iter) = (mods_)->mods; \
-         (idx) < _XKB_MOD_INDEX_NUM_ENTRIES; \
+    برای ((idx) = 0, (iter) = (mods_)->mods; \
+         (idx) < XKB_MOD_INDEX_رقم_ENTRIES; \
          (idx)++, (iter)++)
 
 /** Enumerate only virtual modifiers */
 #define xkb_vmods_enumerate(idx, iter, mods_) \
-    for ((idx) = _XKB_MOD_INDEX_NUM_ENTRIES, \
-         (iter) = &(mods_)->mods[_XKB_MOD_INDEX_NUM_ENTRIES]; \
-         (idx) < (mods_)->num_mods; \
+    برای ((idx) = XKB_MOD_INDEX_رقم_ENTRIES, \
+         (iter) = &(mods_)->mods[XKB_MOD_INDEX_رقم_ENTRIES]; \
+         (idx) < (mods_)->رقم_mods; \
          (idx)++, (iter)++)
 
 #define xkb_leds_foreach(iter, keymap) \
-    for ((iter) = (keymap)->leds; \
-         (iter) < (keymap)->leds + (keymap)->num_leds; \
+    برای ((iter) = (keymap)->leds; \
+         (iter) < (keymap)->leds + (keymap)->رقم_leds; \
          (iter)++)
 
 #define xkb_leds_enumerate(idx, iter, keymap) \
-    for ((idx) = 0, (iter) = (keymap)->leds; \
-         (idx) < (keymap)->num_leds; \
+    برای ((idx) = 0, (iter) = (keymap)->leds; \
+         (idx) < (keymap)->رقم_leds; \
          (idx)++, (iter)++)
 
-void
-clear_level(struct xkb_level *leveli);
+تهی
+clear_level(ساختار xkb_level *leveli);
 
 /* ⚠️ Only valid before copying symbols to keymap */
-static inline struct xkb_key *
-XkbKeyByName(const struct xkb_keymap *keymap, xkb_atom_t name, bool use_aliases)
+ایستا درونخطی ساختار xkb_کلید *
+Xkb_کلید_By_Name(ثابت ساختار xkb_keymap *keymap, xkb_atom_t name, bool use_aliases)
 {
-    if (name < keymap->num_key_names) {
-        const KeycodeMatch match = keymap->key_names[name];
-        if (match.found) {
-            if (!match.is_alias) {
-                assert(name == keymap->keys[match.key.index].name);
-                return &keymap->keys[match.key.index];
-            } else if (use_aliases) {
-                assert(match.alias.real ==
-                       keymap->keys[keymap->key_names[match.alias.real].key.index].name);
-                return &keymap->keys[keymap->key_names[match.alias.real].key.index];
+    اگر (name < keymap->رقم_کلید_names) {
+        ثابت KeycodeMatch match = keymap->کلید_names[name];
+        اگر (match.found) {
+            اگر (!match.is_alias) {
+                أكد(name == keymap->کلیدها[match.کلید.index].name);
+                بازگشت &keymap->کلیدها[match.کلید.index];
+            } وگرنه اگر (use_aliases) {
+                أكد(match.alias.real ==
+                       keymap->کلیدها[keymap->کلید_names[match.alias.real].کلید.index].name);
+                بازگشت &keymap->کلیدها[keymap->کلید_names[match.alias.real].کلید.index];
             }
         }
     }
-    return NULL;
+    بازگشت پوچ;
 }
 
-static inline const struct xkb_key *
-XkbKey(const struct xkb_keymap *keymap, xkb_keycode_t kc)
+ایستا درونخطی ثابت ساختار xkb_کلید *
+Xkb_کلید(ثابت ساختار xkb_keymap *keymap, xkb_keycode_t kc)
 {
-    if (kc < keymap->min_key_code || kc > keymap->max_key_code) {
+    اگر (kc < keymap->min_کلید_code || kc > keymap->max_کلید_code) {
         /* Unsupported keycode */
-        return NULL;
-    } else if (kc < keymap->num_keys_low) {
+        بازگشت پوچ;
+    } وگرنه اگر (kc < keymap->رقم_کلیدها_کم) {
         /* Low keycodes */
-        return &keymap->keys[kc];
-    } else {
+        بازگشت &keymap->کلیدها[kc];
+    } وگرنه {
         /* High keycodes: use binary search */
-        xkb_keycode_t lower = keymap->num_keys_low;
-        xkb_keycode_t upper = keymap->num_keys;
-        while (lower < upper) {
-            const xkb_keycode_t mid = lower + (upper - 1 - lower) / 2;
-            const struct xkb_key * const key = &keymap->keys[mid];
-            if (key->keycode < kc) {
+        xkb_keycode_t lower = keymap->رقم_کلیدها_کم;
+        xkb_keycode_t upper = keymap->رقم_کلیدها;
+        وقتی (lower < upper) {
+            ثابت xkb_keycode_t mid = lower + (upper - 1 - lower) / 2;
+            ثابت ساختار xkb_کلید * ثابت کلید = &keymap->کلیدها[mid];
+            اگر (کلید->keycode < kc) {
                 lower = mid + 1;
-            } else if (key->keycode > kc) {
+            } وگرنه اگر (کلید->keycode > kc) {
                 upper = mid;
-            } else {
-                return key;
+            } وگرنه {
+                بازگشت کلید;
             }
         }
-        return NULL;
+        بازگشت پوچ;
     }
 }
 
@@ -1002,68 +1002,68 @@ XkbKey(const struct xkb_keymap *keymap, xkb_keycode_t kc)
  *
  * Returns NULL if no such key exists.
  */
-static inline const struct xkb_key *
-xkb_keymap_get_next_defined_key(const struct xkb_keymap *keymap,
+ایستا درونخطی ثابت ساختار xkb_کلید *
+xkb_keymap_get_next_defined_کلید(ثابت ساختار xkb_keymap *keymap,
                                 bool ascending, xkb_keycode_t kc)
 {
     /* Unsupported keycodes */
-    if (!keymap->num_keys || kc > XKB_KEYCODE_MAX) {
-        return NULL;
-    } else if (kc < keymap->min_key_code) {
-        kc = keymap->min_key_code;
-    } else if (kc > keymap->max_key_code) {
-        kc = keymap->max_key_code;
+    اگر (!keymap->رقم_کلیدها || kc > XKB_KEYCODE_MAX) {
+        بازگشت پوچ;
+    } وگرنه اگر (kc < keymap->min_کلید_code) {
+        kc = keymap->min_کلید_code;
+    } وگرنه اگر (kc > keymap->max_کلید_code) {
+        kc = keymap->max_کلید_code;
     }
 
-    if (kc < keymap->num_keys_low) {
+    اگر (kc < keymap->رقم_کلیدها_کم) {
         /* Low keycodes */
-        const struct xkb_key *key = &keymap->keys[kc];
-        if (ascending) {
-            const struct xkb_key *end = &keymap->keys[keymap->num_keys_low - 1];
-            while (key->name == XKB_ATOM_NONE && key < end) key++;
-        } else {
-            const struct xkb_key *end = &keymap->keys[keymap->min_key_code];
-            while (key->name == XKB_ATOM_NONE && key > end) key--;
+        ثابت ساختار xkb_کلید *کلید = &keymap->کلیدها[kc];
+        اگر (ascending) {
+            ثابت ساختار xkb_کلید *end = &keymap->کلیدها[keymap->رقم_کلیدها_کم - 1];
+            وقتی (کلید->name == XKB_ATOM_NONE && کلید < end) کلید++;
+        } وگرنه {
+            ثابت ساختار xkb_کلید *end = &keymap->کلیدها[keymap->min_کلید_code];
+            وقتی (کلید->name == XKB_ATOM_NONE && کلید > end) کلید--;
         }
-        return (key->name == XKB_ATOM_NONE) ? NULL : key;
-    } else {
+        بازگشت (کلید->name == XKB_ATOM_NONE) ? پوچ : کلید;
+    } وگرنه {
         /* High keycodes: use binary search */
-        xkb_keycode_t lower = keymap->num_keys_low
-            ? keymap->num_keys_low - 1 /* Last low keycode */
+        xkb_keycode_t lower = keymap->رقم_کلیدها_کم
+            ? keymap->رقم_کلیدها_کم - 1 /* Last low keycode */
             : 0;                       /* First high keycode */
-        xkb_keycode_t upper = keymap->num_keys - 1;
-        const struct xkb_key * candidate = NULL;
-        while (lower <= upper) {
-            const xkb_keycode_t mid = lower + (upper - lower) / 2;
-            const struct xkb_key * const key = &keymap->keys[mid];
-            if (key->keycode == kc) {
-                return key;
-            } else if (ascending) {
+        xkb_keycode_t upper = keymap->رقم_کلیدها - 1;
+        ثابت ساختار xkb_کلید * candidate = پوچ;
+        وقتی (lower <= upper) {
+            ثابت xkb_keycode_t mid = lower + (upper - lower) / 2;
+            ثابت ساختار xkb_کلید * ثابت کلید = &keymap->کلیدها[mid];
+            اگر (کلید->keycode == kc) {
+                بازگشت کلید;
+            } وگرنه اگر (ascending) {
                 /* Looking for the *smallest* defined keycode >= kc */
-                if (key->keycode >= kc) {
-                    candidate = key;
+                اگر (کلید->keycode >= kc) {
+                    candidate = کلید;
                     upper = mid - 1;
-                } else {
+                } وگرنه {
                     lower = mid + 1;
                 }
-            } else {
+            } وگرنه {
                 /* Looking for the *smallest* defined keycode <= kc */
-                if (key->keycode <= kc) {
-                    candidate = key;
+                اگر (کلید->keycode <= kc) {
+                    candidate = کلید;
                     lower = mid + 1;
-                } else if (key->keycode > kc) {
+                } وگرنه اگر (کلید->keycode > kc) {
                     upper = mid - 1;
                 }
             }
         }
-        return candidate;
+        بازگشت candidate;
     }
 }
 
-static inline xkb_level_index_t
-XkbKeyNumLevels(const struct xkb_key *key, xkb_layout_index_t layout)
+ایستا درونخطی xkb_level_index_t
+Xkb_کلید_رقم_Levels(ثابت ساختار xkb_کلید *کلید, xkb_layout_index_t layout)
 {
-    return key->groups[layout].type->num_levels;
+    بازگشت کلید->groups[layout].type->رقم_levels;
 }
 
 /*
@@ -1073,105 +1073,105 @@ XkbKeyNumLevels(const struct xkb_key *key, xkb_layout_index_t layout)
  *
  * xserver does this with cached entry->active field.
  */
-static inline bool
-entry_is_active(const struct xkb_key_type_entry *entry)
+ایستا درونخطی bool
+entry_is_active(ثابت ساختار xkb_کلید_type_entry *entry)
 {
-    return entry->mods.mods == 0 || entry->mods.mask != 0;
+    بازگشت entry->mods.mods == 0 || entry->mods.mask != 0;
 }
 
-struct xkb_keymap *
-xkb_keymap_new(struct xkb_context *ctx, const char* func,
-               enum xkb_keymap_format format,
-               enum xkb_keymap_compile_flags flags);
+ساختار xkb_keymap *
+xkb_keymap_new(ساختار xkb_context *ctx, ثابت نویسه* func,
+               شمارش xkb_keymap_format format,
+               شمارش xkb_keymap_compile_flags flags);
 
-void
-XkbEscapeMapName(char *name);
+تهی
+XkbEscapeMapName(نویسه *name);
 
 xkb_mod_index_t
-XkbModNameToIndex(const struct xkb_mod_set *mods, xkb_atom_t name,
-                  enum mod_type type);
+XkbModNameToIndex(ثابت ساختار xkb_mod_set *mods, xkb_atom_t name,
+                  شمارش mod_type type);
 
 bool
-XkbLevelsSameSyms(const struct xkb_level *a, const struct xkb_level *b);
+XkbLevelsSameSyms(ثابت ساختار xkb_level *a, ثابت ساختار xkb_level *b);
 
 bool
-action_equal(const union xkb_action *a, const union xkb_action *b);
+action_equal(ثابت اجتماع xkb_action *a, ثابت اجتماع xkb_action *b);
 
 bool
-XkbLevelsSameActions(const struct xkb_level *a, const struct xkb_level *b);
+XkbLevelsSameActions(ثابت ساختار xkb_level *a, ثابت ساختار xkb_level *b);
 
 xkb_layout_index_t
 XkbWrapGroupIntoRange(int32_t group,
-                      xkb_layout_index_t num_groups,
-                      enum xkb_layout_out_of_range_policy out_of_range_group_policy,
-                      xkb_layout_index_t out_of_range_group_number);
+                      xkb_layout_index_t رقم_groups,
+                      شمارش xkb_layout_out_of_range_policy out_of_range_group_policy,
+                      xkb_layout_index_t out_of_range_group_عدد);
 
-static inline xkb_layout_index_t
-xkb_keymap_key_effective_layout(const struct xkb_key *key,
+ایستا درونخطی xkb_layout_index_t
+xkb_keymap_کلید_effective_layout(ثابت ساختار xkb_کلید *کلید,
                                 xkb_layout_index_t layout)
 {
     static_assert(XKB_MAX_GROUPS < INT32_MAX, "Max groups don't fit");
-    return XkbWrapGroupIntoRange((int32_t) layout,
-                                 key->num_groups,
-                                 key->out_of_range_group_policy,
-                                 key->out_of_range_group_number);
+    بازگشت XkbWrapGroupIntoRange((int32_t) layout,
+                                 کلید->رقم_groups,
+                                 کلید->out_of_range_group_policy,
+                                 کلید->out_of_range_group_عدد);
 }
 
 XKB_EXPORT_PRIVATE xkb_mod_mask_t
-mod_mask_get_effective(struct xkb_keymap *keymap, xkb_mod_mask_t mods);
+mod_mask_get_effective(ساختار xkb_keymap *keymap, xkb_mod_mask_t mods);
 
-struct xkb_level *
-xkb_keymap_key_get_level(struct xkb_keymap *keymap, const struct xkb_key *key,
+ساختار xkb_level *
+xkb_keymap_کلید_get_level(ساختار xkb_keymap *keymap, ثابت ساختار xkb_کلید *کلید,
                          xkb_layout_index_t layout, xkb_level_index_t level);
 
-xkb_action_count_t
-xkb_keymap_key_get_actions_by_level(const struct xkb_keymap *keymap,
-                                    const struct xkb_key *key,
+xkb_action_شمار_t
+xkb_keymap_کلید_get_actions_by_level(ثابت ساختار xkb_keymap *keymap,
+                                    ثابت ساختار xkb_کلید *کلید,
                                     xkb_layout_index_t layout,
                                     xkb_level_index_t level,
-                                    const union xkb_action **actions);
+                                    ثابت اجتماع xkb_action **actions);
 
-struct xkb_keymap_format_ops {
-    bool (*keymap_new_from_rmlvo)(struct xkb_keymap *keymap,
-                                  const struct xkb_rmlvo_builder *rmlvo);
-    bool (*keymap_new_from_names)(struct xkb_keymap *keymap,
-                                  const struct xkb_rule_names *names);
-    bool (*keymap_new_from_string)(struct xkb_keymap *keymap,
-                                   const char *string, size_t length);
-    bool (*keymap_new_from_file)(struct xkb_keymap *keymap, FILE *file);
-    enum xkb_status (*keymap_serialize)(
-        const struct xkb_keymap *keymap,
-        const struct xkb_keymap_serialize_config *config,
-        struct xkb_keymap_serialize_result *result
+ساختار xkb_keymap_format_ops {
+    bool (*keymap_new_from_rmlvo)(ساختار xkb_keymap *keymap,
+                                  ثابت ساختار xkb_rmlvo_builder *rmlvo);
+    bool (*keymap_new_from_names)(ساختار xkb_keymap *keymap,
+                                  ثابت ساختار xkb_rule_names *names);
+    bool (*keymap_new_from_string)(ساختار xkb_keymap *keymap,
+                                   ثابت نویسه *string, size_t length);
+    bool (*keymap_new_from_file)(ساختار xkb_keymap *keymap, FILE *file);
+    شمارش xkb_status (*keymap_serialize)(
+        ثابت ساختار xkb_keymap *keymap,
+        ثابت ساختار xkb_keymap_serialize_config *config,
+        ساختار xkb_keymap_serialize_result *result
     );
 };
 
-extern const struct xkb_keymap_format_ops text_v1_keymap_format_ops;
+بیرونی ثابت ساختار xkb_keymap_format_ops text_v1_keymap_format_ops;
 
-static inline bool
-isModsUnLockOnPressSupported(enum xkb_keymap_format format)
+ایستا درونخطی bool
+isModsUnLockOnPressSupported(شمارش xkb_keymap_format format)
 {
     /* Lax bound */
-    return format >= XKB_KEYMAP_FORMAT_TEXT_V2;
+    بازگشت format >= XKB_KEYMAP_FORMAT_TEXT_V2;
 }
 
-static inline bool
-isGroupLockOnReleaseSupported(enum xkb_keymap_format format)
+ایستا درونخطی bool
+isGroupLockOnReleaseSupported(شمارش xkb_keymap_format format)
 {
     /* Lax bound */
-    return format >= XKB_KEYMAP_FORMAT_TEXT_V2;
+    بازگشت format >= XKB_KEYMAP_FORMAT_TEXT_V2;
 }
 
-static inline bool
-isModsLatchOnPressSupported(enum xkb_keymap_format format)
+ایستا درونخطی bool
+isModsLatchOnPressSupported(شمارش xkb_keymap_format format)
 {
     /* Lax bound */
-    return format >= XKB_KEYMAP_FORMAT_TEXT_V2;
+    بازگشت format >= XKB_KEYMAP_FORMAT_TEXT_V2;
 }
 
-static inline bool
-areOverlappingOverlaysSupported(enum xkb_keymap_format format)
+ایستا درونخطی bool
+areOverlappingOverlaysSupported(شمارش xkb_keymap_format format)
 {
     /* Lax bound */
-    return format >= XKB_KEYMAP_FORMAT_TEXT_V2;
+    بازگشت format >= XKB_KEYMAP_FORMAT_TEXT_V2;
 }

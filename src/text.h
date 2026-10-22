@@ -4,74 +4,74 @@
  */
 #pragma once
 
-#include "config.h"
+#شامل "config.h"
 
-#include <stdbool.h>
+#شامل <stdbool.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "atom.h"
-#include "keymap.h"
+#شامل "xkbcommon/xkbcommon.h"
+#شامل "atom.h"
+#شامل "keymap.h"
 
 /** LUT entry */
-typedef struct {
-    const char *name;
-    uint32_t value;
+تعریفنوع ساختار {
+    ثابت نویسه *name;
+    uint32_t مقدار;
 } LookupEntry;
 
 bool
-LookupString(const LookupEntry tab[], const char *string,
-              unsigned int *value_rtrn);
+LookupString(ثابت LookupEntry tab[], ثابت نویسه *string,
+              unsigned صحیح *مقدار_rtrn);
 
-const char *
-LookupValue(const LookupEntry tab[], unsigned int value);
+ثابت نویسه *
+Lookup_مقدار(ثابت LookupEntry tab[], unsigned صحیح مقدار);
 
 #define GROUP_LAST_INDEX_NAME "last"
-enum {
+شمارش {
     CONTROL_NAMES_MIN_V1_INDEX = 7,
     CONTROL_NAMES_MIN_V2_INDEX = 0,
 };
 
-static inline uint8_t
-format_control_names_offset(enum xkb_keymap_format format)
+ایستا درونخطی uint8_t
+format_control_names_offset(شمارش xkb_keymap_format format)
 {
-    return (format == XKB_KEYMAP_FORMAT_TEXT_V1)
+    بازگشت (format == XKB_KEYMAP_FORMAT_TEXT_V1)
         ? CONTROL_NAMES_MIN_V1_INDEX
         : CONTROL_NAMES_MIN_V2_INDEX;
 }
 
-extern const LookupEntry ctrlMaskNames[];
-extern const LookupEntry modComponentMaskNames[];
-extern const LookupEntry groupComponentMaskNames[];
-extern const LookupEntry groupMaskNames[];
-extern const LookupEntry buttonNames[];
-extern const LookupEntry useModMapValueNames[];
-extern const LookupEntry actionTypeNames[];
-extern const LookupEntry symInterpretMatchMaskNames[];
+بیرونی ثابت LookupEntry ctrlMaskNames[];
+بیرونی ثابت LookupEntry modComponentMaskNames[];
+بیرونی ثابت LookupEntry groupComponentMaskNames[];
+بیرونی ثابت LookupEntry groupMaskNames[];
+بیرونی ثابت LookupEntry buttonNames[];
+بیرونی ثابت LookupEntry use_Mod_Map_مقدار_Names[];
+بیرونی ثابت LookupEntry actionTypeNames[];
+بیرونی ثابت LookupEntry symInterpretMatchMaskNames[];
 
-const char *
-ModMaskText(struct xkb_context *ctx, enum mod_type type,
-            const struct xkb_mod_set *mods, xkb_mod_mask_t mask);
+ثابت نویسه *
+ModMaskText(ساختار xkb_context *ctx, شمارش mod_type type,
+            ثابت ساختار xkb_mod_set *mods, xkb_mod_mask_t mask);
 
-const char *
-ModIndexText(struct xkb_context *ctx, const struct xkb_mod_set *mods,
+ثابت نویسه *
+ModIndexText(ساختار xkb_context *ctx, ثابت ساختار xkb_mod_set *mods,
              xkb_mod_index_t ndx);
 
-const char *
-ActionTypeText(enum xkb_action_type type);
+ثابت نویسه *
+ActionTypeText(شمارش xkb_action_type type);
 
-const char *
-KeysymText(struct xkb_context *ctx, xkb_keysym_t sym);
+ثابت نویسه *
+KeysymText(ساختار xkb_context *ctx, xkb_keysym_t sym);
 
-const char *
-KeyNameText(struct xkb_context *ctx, xkb_atom_t name);
+ثابت نویسه *
+کلید_Name_Text(ساختار xkb_context *ctx, xkb_atom_t name);
 
-const char *
-SIMatchText(enum xkb_match_operation type);
+ثابت نویسه *
+SIMatchText(شمارش xkb_match_operation type);
 
-const char *
-LedStateMaskText(struct xkb_context *ctx, const LookupEntry *lookup,
-                 enum xkb_state_component mask);
+ثابت نویسه *
+LedStateMaskText(ساختار xkb_context *ctx, ثابت LookupEntry *lookup,
+                 شمارش xkb_state_component mask);
 
-const char *
-ControlMaskText(struct xkb_context *ctx, enum xkb_keymap_format format,
-                enum xkb_action_controls mask);
+ثابت نویسه *
+ControlMaskText(ساختار xkb_context *ctx, شمارش xkb_keymap_format format,
+                شمارش xkb_action_controls mask);

@@ -5,27 +5,27 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#شامل "config.h"
 
-#include <assert.h>
-#include <stddef.h>
-#include <stdbool.h>
+#شامل <assert.h>
+#شامل <stddef.h>
+#شامل <stdbool.h>
 
-#include "util-list.h"
+#شامل "util-list.h"
 
-void
-list_init(struct list *list)
+تهی
+list_init(ساختار list *list)
 {
 	list->prev = list;
 	list->next = list;
 }
 
-void
-list_insert(struct list *list, struct list *elm)
+تهی
+list_درج(ساختار list *list, ساختار list *elm)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	أكد((list->next != پوچ && list->prev != پوچ) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
-	assert(((elm->next == NULL && elm->prev == NULL) || list_empty(elm)) ||
+	أكد(((elm->next == پوچ && elm->prev == پوچ) || list_empty(elm)) ||
 	       !"elm->next|prev is not NULL, list node used twice?");
 
 	elm->prev = list;
@@ -34,12 +34,12 @@ list_insert(struct list *list, struct list *elm)
 	elm->next->prev = elm;
 }
 
-void
-list_append(struct list *list, struct list *elm)
+تهی
+list_append(ساختار list *list, ساختار list *elm)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	أكد((list->next != پوچ && list->prev != پوچ) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
-	assert(((elm->next == NULL && elm->prev == NULL) || list_empty(elm)) ||
+	أكد(((elm->next == پوچ && elm->prev == پوچ) || list_empty(elm)) ||
 	       !"elm->next|prev is not NULL, list node used twice?");
 
 	elm->next = list;
@@ -48,29 +48,29 @@ list_append(struct list *list, struct list *elm)
 	elm->prev->next = elm;
 }
 
-void
-list_remove(struct list *elm)
+تهی
+list_remove(ساختار list *elm)
 {
-	assert((elm->next != NULL && elm->prev != NULL) ||
+	أكد((elm->next != پوچ && elm->prev != پوچ) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
 
 	elm->prev->next = elm->next;
 	elm->next->prev = elm->prev;
-	elm->next = NULL;
-	elm->prev = NULL;
+	elm->next = پوچ;
+	elm->prev = پوچ;
 }
 
 bool
-list_empty(const struct list *list)
+list_empty(ثابت ساختار list *list)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	أكد((list->next != پوچ && list->prev != پوچ) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
 
-	return list->next == list;
+	بازگشت list->next == list;
 }
 
 bool
-list_is_last(const struct list *list, const struct list *elm)
+list_is_last(ثابت ساختار list *list, ثابت ساختار list *elm)
 {
-	return elm->next == list;
+	بازگشت elm->next == list;
 }

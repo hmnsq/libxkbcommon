@@ -3,29 +3,29 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#شامل "config.h"
 
-#include <locale.h>
+#شامل <locale.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "messages-codes.h"
-#include "utils.h"
-#include "util-paths.h"
-#include "context.h"
-#include "paths.h"
+#شامل "xkbcommon/xkbcommon.h"
+#شامل "messages-codes.h"
+#شامل "utils.h"
+#شامل "util-paths.h"
+#شامل "context.h"
+#شامل "paths.h"
 
-enum resolve_name_direction {
-    LEFT_TO_RIGHT,
-    RIGHT_TO_LEFT,
+شمارش resolve_name_direction {
+    چپ_TO_راست,
+    راست_TO_چپ,
 };
 
-const char *
-get_xlocaledir_path(struct xkb_context *ctx)
+ثابت نویسه *
+get_xlocaledir_path(ساختار xkb_context *ctx)
 {
-    const char *dir = xkb_context_getenv(ctx, "XLOCALEDIR");
-    if (!dir)
+    ثابت نویسه *dir = xkb_context_getenv(ctx, "XLOCALEDIR");
+    اگر (!dir)
         dir = XLOCALEDIR;
-    return dir;
+    بازگشت dir;
 }
 
 /*
@@ -33,142 +33,142 @@ get_xlocaledir_path(struct xkb_context *ctx)
  * such a file and return its matching value, according to @direction.
  * @filename is relative to the xlocaledir.
  */
-static char *
-resolve_name(struct xkb_context *ctx, const char *filename,
-             enum resolve_name_direction direction, const char *name)
+ایستا نویسه *
+resolve_name(ساختار xkb_context *ctx, ثابت نویسه *filename,
+             شمارش resolve_name_direction direction, ثابت نویسه *name)
 {
-    int ret;
+    صحیح ret;
     bool ok;
-    const char *xlocaledir;
-    char path[512];
+    ثابت نویسه *xlocaledir;
+    نویسه path[512];
     FILE *file;
-    char *string;
+    نویسه *string;
     size_t string_size;
-    const char *end;
-    const char *s, *left, *right;
-    char *match;
-    size_t left_len, right_len, name_len;
+    ثابت نویسه *end;
+    ثابت نویسه *s, *چپ, *راست;
+    نویسه *match;
+    size_t چپ_len, راست_len, name_len;
 
     xlocaledir = get_xlocaledir_path(ctx);
 
-    ret = snprintf(path, sizeof(path), "%s/%s", xlocaledir, filename);
-    if (ret < 0 || (size_t) ret >= sizeof(path))
-        return NULL;
+    ret = snprintf(path, اندازه(path), "%s/%s", xlocaledir, filename);
+    اگر (ret < 0 || (size_t) ret >= اندازه(path))
+        بازگشت پوچ;
 
     file = fopen(path, "rb");
-    if (!file)
-        return NULL;
+    اگر (!file)
+        بازگشت پوچ;
 
     ok = map_file(file, &string, &string_size);
     fclose(file);
-    if (!ok)
-        return NULL;
+    اگر (!ok)
+        بازگشت پوچ;
 
     s = string;
     end = string + string_size;
     name_len = strlen(name);
-    match = NULL;
+    match = پوچ;
 
-    while (s < end) {
+    وقتی (s < end) {
         /* Skip spaces. */
-        while (s < end && is_space(*s))
+        وقتی (s < end && is_space(*s))
             s++;
 
         /* Skip comments. */
-        if (s < end && *s == '#') {
-            while (s < end && *s != '\n')
+        اگر (s < end && *s == '#') {
+            وقتی (s < end && *s != '\n')
                 s++;
-            continue;
+            ادامه;
         }
 
         /* Get the left value. */
-        left = s;
-        while (s < end && !is_space(*s) && *s != ':')
+        چپ = s;
+        وقتی (s < end && !is_space(*s) && *s != ':')
             s++;
-        left_len = (size_t)(s - left);
+        چپ_len = (size_t)(s - چپ);
 
         /* There's an optional colon between left and right. */
-        if (s < end && *s == ':')
+        اگر (s < end && *s == ':')
             s++;
 
         /* Skip spaces. */
-        while (s < end && is_space(*s))
+        وقتی (s < end && is_space(*s))
             s++;
 
         /* Get the right value. */
-        right = s;
-        while (s < end && !is_space(*s))
+        راست = s;
+        وقتی (s < end && !is_space(*s))
             s++;
-        right_len = (size_t)(s - right);
+        راست_len = (size_t)(s - راست);
 
         /* Discard rest of line. */
-        while (s < end && *s != '\n')
+        وقتی (s < end && *s != '\n')
             s++;
 
-        if (direction == LEFT_TO_RIGHT) {
-            if (left_len == name_len && memcmp(left, name, left_len) == 0) {
-                match = strndup(right, right_len);
-                break;
+        اگر (direction == چپ_TO_راست) {
+            اگر (چپ_len == name_len && memcmp(چپ, name, چپ_len) == 0) {
+                match = strndup(راست, راست_len);
+                بشکن;
             }
-        } else if (direction == RIGHT_TO_LEFT &&
-                   right_len == name_len &&
-                   memcmp(right, name, right_len) == 0) {
-            match = strndup(left, left_len);
-            break;
+        } وگرنه اگر (direction == راست_TO_چپ &&
+                   راست_len == name_len &&
+                   memcmp(راست, name, راست_len) == 0) {
+            match = strndup(چپ, چپ_len);
+            بشکن;
         }
     }
 
     unmap_file(string, string_size);
-    return match;
+    بازگشت match;
 }
 
-char *
-resolve_locale(struct xkb_context *ctx, const char *locale)
+نویسه *
+resolve_locale(ساختار xkb_context *ctx, ثابت نویسه *locale)
 {
-    char *alias = resolve_name(ctx, "locale.alias", LEFT_TO_RIGHT, locale);
-    return alias ? alias : strdup(locale);
+    نویسه *alias = resolve_name(ctx, "locale.alias", چپ_TO_راست, locale);
+    بازگشت alias ? alias : strdup(locale);
 }
 
-char *
-get_xcomposefile_path(struct xkb_context *ctx)
+نویسه *
+get_xcomposefile_path(ساختار xkb_context *ctx)
 {
-    return strdup_safe(xkb_context_getenv(ctx, "XCOMPOSEFILE"));
+    بازگشت strdup_safe(xkb_context_getenv(ctx, "XCOMPOSEFILE"));
 }
 
-char *
-get_xdg_xcompose_file_path(struct xkb_context *ctx)
+نویسه *
+get_xdg_xcompose_file_path(ساختار xkb_context *ctx)
 {
-    const char *xdg_config_home;
-    const char *home;
+    ثابت نویسه *xdg_config_home;
+    ثابت نویسه *home;
 
     xdg_config_home = xkb_context_getenv(ctx, "XDG_CONFIG_HOME");
-    if (!xdg_config_home || !is_absolute_path(xdg_config_home)) {
+    اگر (!xdg_config_home || !is_absolute_path(xdg_config_home)) {
         home = xkb_context_getenv(ctx, "HOME");
-        if (!home)
-            return NULL;
-        return asprintf_safe("%s/.config/XCompose", home);
+        اگر (!home)
+            بازگشت پوچ;
+        بازگشت asprintf_safe("%s/.config/XCompose", home);
     }
 
-    return asprintf_safe("%s/XCompose", xdg_config_home);
+    بازگشت asprintf_safe("%s/XCompose", xdg_config_home);
 }
 
-char *
-get_home_xcompose_file_path(struct xkb_context *ctx)
+نویسه *
+get_home_xcompose_file_path(ساختار xkb_context *ctx)
 {
-    const char *home;
+    ثابت نویسه *home;
 
     home = xkb_context_getenv(ctx, "HOME");
-    if (!home)
-        return NULL;
+    اگر (!home)
+        بازگشت پوچ;
 
-    return asprintf_safe("%s/.XCompose", home);
+    بازگشت asprintf_safe("%s/.XCompose", home);
 }
 
-char *
-get_locale_compose_file_path(struct xkb_context *ctx, const char *locale)
+نویسه *
+get_locale_compose_file_path(ساختار xkb_context *ctx, ثابت نویسه *locale)
 {
-    char *resolved;
-    char *path;
+    نویسه *resolved;
+    نویسه *path;
 
     /*
      * WARNING: Random workaround ahead.
@@ -181,14 +181,14 @@ get_locale_compose_file_path(struct xkb_context *ctx, const char *locale)
      * is UTF-8 based, and since 99% of the time a C locale is really just
      * a misconfiguration for UTF-8, let's do the most helpful thing.
      */
-    static const char * const fallback = "en_US.UTF-8";
-    static const char * const registry = "compose.dir";
-    if (streq(locale, "C"))
+    ایستا ثابت نویسه * ثابت fallback = "en_US.UTF-8";
+    ایستا ثابت نویسه * ثابت registry = "compose.dir";
+    اگر (streq(locale, "C"))
         locale = fallback;
 
-    resolved = resolve_name(ctx, registry, RIGHT_TO_LEFT, locale);
-    if (!resolved) {
-#if HAVE_NEWLOCALE
+    resolved = resolve_name(ctx, registry, راست_TO_چپ, locale);
+    اگر (!resolved) {
+#اگر HAVE_NEWLOCALE
         /*
          * There is no extension mechanism for X11 Compose locales.
          * Instead of failing, we just use `en_US.UTF-8` as a fallback because
@@ -197,42 +197,42 @@ get_locale_compose_file_path(struct xkb_context *ctx, const char *locale)
          * so that we can catch missing system locales and typos.
          */
         locale_t loc = newlocale(LC_ALL_MASK, locale, (locale_t) 0);
-        if (loc == (locale_t) 0) {
+        اگر (loc == (locale_t) 0) {
             log_err(ctx, XKB_ERROR_INVALID_COMPOSE_LOCALE,
                     "No Compose file for locale \"%s\": "
                     "locale is either invalid or not installed\n", locale);
-            return NULL;
-        } else {
+            بازگشت پوچ;
+        } وگرنه {
             /*
              * The locale is legit but have no entry in the X11 Compose registry,
              * so use the `en_US.UTF-8` fallback.
              */
             freelocale(loc);
-            resolved = resolve_name(ctx, registry, RIGHT_TO_LEFT, fallback);
-            if (!resolved) {
+            resolved = resolve_name(ctx, registry, راست_TO_چپ, fallback);
+            اگر (!resolved) {
                 log_err(ctx, XKB_ERROR_INVALID_COMPOSE_LOCALE,
                         "No Compose file for locale \"%s\": "
                         "failed to use fallback \"%s\"\n", locale, fallback);
-                return NULL;
-            } else {
+                بازگشت پوچ;
+            } وگرنه {
                 log_warn(ctx, XKB_ERROR_INVALID_COMPOSE_LOCALE,
                          "No Compose file for locale \"%s\": "
                          "using locale fallback \"%s\"\n", locale, fallback);
             }
         }
-#else
-        return NULL;
+#وگرنه
+        بازگشت پوچ;
 #endif
     }
 
-    if (is_absolute_path(resolved)) {
+    اگر (is_absolute_path(resolved)) {
         path = resolved;
     }
-    else {
-        const char *xlocaledir = get_xlocaledir_path(ctx);
+    وگرنه {
+        ثابت نویسه *xlocaledir = get_xlocaledir_path(ctx);
         path = asprintf_safe("%s/%s", xlocaledir, resolved);
-        free(resolved);
+        آزاد(resolved);
     }
 
-    return path;
+    بازگشت path;
 }

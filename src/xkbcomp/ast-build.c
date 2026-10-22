@@ -12,503 +12,503 @@
  * Author: Ran Benita <ran234@gmail.com>
  */
 
-#include "config.h"
+#شامل "config.h"
 
-#include <stdint.h>
-#include <string.h>
+#شامل <stdint.h>
+#شامل <string.h>
 
-#include "xkbcommon/xkbcommon-keysyms.h"
-#include "messages-codes.h"
-#include "xkbcomp-priv.h"
-#include "ast.h"
-#include "ast-build.h"
-#include "include.h"
-#include "keysym.h"
-#include "utf8-decoding.h"
+#شامل "xkbcommon/xkbcommon-keysyms.h"
+#شامل "messages-codes.h"
+#شامل "xkbcomp-priv.h"
+#شامل "ast.h"
+#شامل "ast-build.h"
+#شامل "include.h"
+#شامل "keysym.h"
+#شامل "utf8-decoding.h"
 
-static ExprDef *
-ExprCreate(enum stmt_type op)
+ایستا عبارت_Def *
+عبارت_Create(شمارش stmt_type op)
 {
-    ExprDef *expr = malloc(sizeof(*expr));
-    if (!expr)
-        return NULL;
+    عبارت_Def *عبارت = malloc(اندازه(*عبارت));
+    اگر (!عبارت)
+        بازگشت پوچ;
 
-    expr->common.type = op;
-    expr->common.next = NULL;
+    عبارت->common.type = op;
+    عبارت->common.next = پوچ;
 
-    return expr;
+    بازگشت عبارت;
 }
 
-ExprDef *
-ExprCreateString(xkb_atom_t str)
+عبارت_Def *
+عبارت_Create_String(xkb_atom_t str)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_STRING_LITERAL);
-    if (!expr)
-        return NULL;
-    expr->string.str = str;
-    return expr;
+    عبارت_Def *عبارت = عبارت_Create(STMT_عبارت_STRING_LITERAL);
+    اگر (!عبارت)
+        بازگشت پوچ;
+    عبارت->string.str = str;
+    بازگشت عبارت;
 }
 
-ExprDef *
-ExprCreateInteger(int64_t ival)
+عبارت_Def *
+عبارت_Create_Integer(int64_t ival)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_INTEGER_LITERAL);
-    if (!expr)
-        return NULL;
-    expr->integer.ival = ival;
-    return expr;
+    عبارت_Def *عبارت = عبارت_Create(STMT_عبارت_INTEGER_LITERAL);
+    اگر (!عبارت)
+        بازگشت پوچ;
+    عبارت->integer.ival = ival;
+    بازگشت عبارت;
 }
 
-ExprDef *
-ExprCreateFloat(void)
+عبارت_Def *
+عبارت_Create_Float(تهی)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_FLOAT_LITERAL);
-    if (!expr)
-        return NULL;
-    return expr;
+    عبارت_Def *عبارت = عبارت_Create(STMT_عبارت_FLOAT_LITERAL);
+    اگر (!عبارت)
+        بازگشت پوچ;
+    بازگشت عبارت;
 }
 
-ExprDef *
-ExprCreateBoolean(bool set)
+عبارت_Def *
+عبارت_Create_Boolean(bool set)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_BOOLEAN_LITERAL);
-    if (!expr)
-        return NULL;
-    expr->boolean.set = set;
-    return expr;
+    عبارت_Def *عبارت = عبارت_Create(STMT_عبارت_BOOLEAN_LITERAL);
+    اگر (!عبارت)
+        بازگشت پوچ;
+    عبارت->boolean.set = set;
+    بازگشت عبارت;
 }
 
-ExprDef *
-ExprCreateKeyName(xkb_atom_t key_name)
+عبارت_Def *
+عبارت_Create_کلید_Name(xkb_atom_t کلید_name)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_KEYNAME_LITERAL);
-    if (!expr)
-        return NULL;
-    expr->key_name.key_name = key_name;
-    return expr;
+    عبارت_Def *عبارت = عبارت_Create(STMT_عبارت_KEYNAME_LITERAL);
+    اگر (!عبارت)
+        بازگشت پوچ;
+    عبارت->کلید_name.کلید_name = کلید_name;
+    بازگشت عبارت;
 }
 
-ExprDef *
-ExprCreateKeySym(xkb_keysym_t keysym)
+عبارت_Def *
+عبارت_Create_کلید_Sym(xkb_keysym_t keysym)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_KEYSYM_LITERAL);
-    if (!expr)
-        return NULL;
-    expr->keysym.keysym = keysym;
-    return expr;
+    عبارت_Def *عبارت = عبارت_Create(STMT_عبارت_KEYSYM_LITERAL);
+    اگر (!عبارت)
+        بازگشت پوچ;
+    عبارت->keysym.keysym = keysym;
+    بازگشت عبارت;
 }
 
-ExprDef *
-ExprCreateIdent(xkb_atom_t ident)
+عبارت_Def *
+عبارت_Create_Ident(xkb_atom_t ident)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_IDENT);
-    if (!expr)
-        return NULL;
-    expr->ident.ident = ident;
-    return expr;
+    عبارت_Def *عبارت = عبارت_Create(STMT_عبارت_IDENT);
+    اگر (!عبارت)
+        بازگشت پوچ;
+    عبارت->ident.ident = ident;
+    بازگشت عبارت;
 }
 
-ExprDef *
-ExprCreateUnary(enum stmt_type op, ExprDef *child)
+عبارت_Def *
+عبارت_Create_Unary(شمارش stmt_type op, عبارت_Def *child)
 {
-    ExprDef *expr = ExprCreate(op);
-    if (!expr)
-        return NULL;
-    expr->unary.child = child;
-    return expr;
+    عبارت_Def *عبارت = عبارت_Create(op);
+    اگر (!عبارت)
+        بازگشت پوچ;
+    عبارت->unary.child = child;
+    بازگشت عبارت;
 }
 
-ExprDef *
-ExprCreateBinary(enum stmt_type op, ExprDef *left, ExprDef *right)
+عبارت_Def *
+عبارت_Create_دودویی(شمارش stmt_type op, عبارت_Def *چپ, عبارت_Def *راست)
 {
-    ExprDef *expr = ExprCreate(op);
-    if (!expr)
-        return NULL;
+    عبارت_Def *عبارت = عبارت_Create(op);
+    اگر (!عبارت)
+        بازگشت پوچ;
 
-    expr->binary.left = left;
-    expr->binary.right = right;
+    عبارت->دودویی.چپ = چپ;
+    عبارت->دودویی.راست = راست;
 
-    return expr;
+    بازگشت عبارت;
 }
 
-ExprDef *
-ExprCreateFieldRef(xkb_atom_t element, xkb_atom_t field)
+عبارت_Def *
+عبارت_Create_Field_Ref(xkb_atom_t element, xkb_atom_t field)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_FIELD_REF);
-    if (!expr)
-        return NULL;
-    expr->field_ref.element = element;
-    expr->field_ref.field = field;
-    return expr;
+    عبارت_Def *عبارت = عبارت_Create(STMT_عبارت_FIELD_REF);
+    اگر (!عبارت)
+        بازگشت پوچ;
+    عبارت->field_ref.element = element;
+    عبارت->field_ref.field = field;
+    بازگشت عبارت;
 }
 
-ExprDef *
-ExprCreateArrayRef(xkb_atom_t element, xkb_atom_t field, ExprDef *entry)
+عبارت_Def *
+عبارت_Create_Array_Ref(xkb_atom_t element, xkb_atom_t field, عبارت_Def *entry)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_ARRAY_REF);
-    if (!expr)
-        return NULL;
-    expr->array_ref.element = element;
-    expr->array_ref.field = field;
-    expr->array_ref.entry = entry;
-    return expr;
+    عبارت_Def *عبارت = عبارت_Create(STMT_عبارت_ARRAY_REF);
+    اگر (!عبارت)
+        بازگشت پوچ;
+    عبارت->array_ref.element = element;
+    عبارت->array_ref.field = field;
+    عبارت->array_ref.entry = entry;
+    بازگشت عبارت;
 }
 
-ExprDef *
-ExprEmptyList(void)
+عبارت_Def *
+عبارت_Empty_List(تهی)
 {
-    return ExprCreate(STMT_EXPR_EMPTY_LIST);
+    بازگشت عبارت_Create(STMT_عبارت_EMPTY_LIST);
 }
 
-ExprDef *
-ExprCreateAction(xkb_atom_t name, ExprDef *args)
+عبارت_Def *
+عبارت_Create_Action(xkb_atom_t name, عبارت_Def *args)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_ACTION_DECL);
-    if (!expr)
-        return NULL;
-    expr->action.name = name;
-    expr->action.args = args;
-    return expr;
+    عبارت_Def *عبارت = عبارت_Create(STMT_عبارت_ACTION_DECL);
+    اگر (!عبارت)
+        بازگشت پوچ;
+    عبارت->action.name = name;
+    عبارت->action.args = args;
+    بازگشت عبارت;
 }
 
-ExprDef *
-ExprCreateActionList(ExprDef *actions)
+عبارت_Def *
+عبارت_Create_Action_List(عبارت_Def *actions)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_ACTION_LIST);
-    if (!expr)
-        return NULL;
-    expr->actions.actions = actions;
-    return expr;
+    عبارت_Def *عبارت = عبارت_Create(STMT_عبارت_ACTION_LIST);
+    اگر (!عبارت)
+        بازگشت پوچ;
+    عبارت->actions.actions = actions;
+    بازگشت عبارت;
 }
 
-ExprDef *
-ExprCreateKeySymList(xkb_keysym_t sym)
+عبارت_Def *
+عبارت_Create_کلید_Sym_List(xkb_keysym_t sym)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_KEYSYM_LIST);
-    if (!expr)
-        return NULL;
-    darray_init(expr->keysym_list.syms);
-    if (sym == XKB_KEY_NoSymbol) {
+    عبارت_Def *عبارت = عبارت_Create(STMT_عبارت_KEYSYM_LIST);
+    اگر (!عبارت)
+        بازگشت پوچ;
+    darray_init(عبارت->keysym_list.syms);
+    اگر (sym == XKB_کلید_No_نماد) {
         /* Discard NoSymbol */
-    } else {
-        darray_append(expr->keysym_list.syms, sym);
+    } وگرنه {
+        darray_append(عبارت->keysym_list.syms, sym);
     }
-    return expr;
+    بازگشت عبارت;
 }
 
-ExprDef *
-ExprAppendKeySymList(ExprDef *expr, xkb_keysym_t sym)
+عبارت_Def *
+عبارت_Append_کلید_Sym_List(عبارت_Def *عبارت, xkb_keysym_t sym)
 {
-    if (sym == XKB_KEY_NoSymbol) {
+    اگر (sym == XKB_کلید_No_نماد) {
         /* Discard NoSymbol */
-    } else {
-        darray_append(expr->keysym_list.syms, sym);
+    } وگرنه {
+        darray_append(عبارت->keysym_list.syms, sym);
     }
-    return expr;
+    بازگشت عبارت;
 }
 
-ExprDef *
-ExprKeySymListAppendString(struct scanner *scanner,
-                           ExprDef *expr, const char *string)
+عبارت_Def *
+عبارت_کلید_Sym_List_Append_String(ساختار scanner *scanner,
+                           عبارت_Def *عبارت, ثابت نویسه *string)
 {
     /* TODO: use strnlen with max len = 4 * MAX_KEYSYMS_LIST_LENGTH */
-    const size_t len = strlen(string);
+    ثابت size_t len = strlen(string);
     size_t idx = 0;
     size_t idx_cp = 1;
-    while (idx < len) {
-        size_t count = 0;
-        uint32_t cp = utf8_next_code_point(string + idx, len - idx, &count);
-        if (cp == INVALID_UTF8_CODE_POINT) {
+    وقتی (idx < len) {
+        size_t شمار = 0;
+        uint32_t cp = utf8_next_code_point(string + idx, len - idx, &شمار);
+        اگر (cp == INVALID_UTF8_CODE_POINT) {
             scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                         "Cannot convert string to keysyms: "
                         "Invalid UTF-8 encoding starting at byte position %zu "
                         "(code point position: %zu).",
                         idx + 1, idx_cp);
-            goto error;
+            برو error;
         }
-        const xkb_keysym_t sym = xkb_utf32_to_keysym(cp);
-        if (sym == XKB_KEY_NoSymbol) {
+        ثابت xkb_keysym_t sym = xkb_utf32_to_keysym(cp);
+        اگر (sym == XKB_کلید_No_نماد) {
             scanner_err(scanner, XKB_LOG_MESSAGE_NO_ID,
                         "Cannot convert string to keysyms: Unicode code point "
                         "U+04%"PRIX32" has no keysym equivalent"
                         "(byte position: %zu, code point position: %zu).",
                         cp, idx + 1, idx_cp);
-            goto error;
+            برو error;
         }
-        darray_append(expr->keysym_list.syms, sym);
-        idx += count;
+        darray_append(عبارت->keysym_list.syms, sym);
+        idx += شمار;
         idx_cp++;
     }
-    assert(string[idx] == '\0');
-    return expr;
+    أكد(string[idx] == '\0');
+    بازگشت عبارت;
 error:
-    FreeStmt((ParseCommon*) expr);
-    return NULL;
+    FreeStmt((ParseCommon*) عبارت);
+    بازگشت پوچ;
 }
 
 xkb_keysym_t
-KeysymParseString(struct scanner *scanner, const char *string)
+KeysymParseString(ساختار scanner *scanner, ثابت نویسه *string)
 {
-    const size_t len = strlen(string);
-    if (len == 0) {
+    ثابت size_t len = strlen(string);
+    اگر (len == 0) {
         scanner_err(scanner, XKB_LOG_MESSAGE_NO_ID,
                     "Cannot convert string to single keysym: empty string.");
-        return XKB_KEY_NoSymbol;
+        بازگشت XKB_کلید_No_نماد;
     }
-    size_t count = 0;
-    const uint32_t cp = utf8_next_code_point(string, len, &count);
-    if (cp == INVALID_UTF8_CODE_POINT) {
+    size_t شمار = 0;
+    ثابت uint32_t cp = utf8_next_code_point(string, len, &شمار);
+    اگر (cp == INVALID_UTF8_CODE_POINT) {
         scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                     "Cannot convert string to single keysym: "
                     "Invalid UTF-8 encoding.");
-        return XKB_KEY_NoSymbol;
-    } else if (count != len) {
+        بازگشت XKB_کلید_No_نماد;
+    } وگرنه اگر (شمار != len) {
         scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                     "Cannot convert string to single keysym: "
                     "Expected a single Unicode code point, got: \"%s\".",
                     string);
-        return XKB_KEY_NoSymbol;
+        بازگشت XKB_کلید_No_نماد;
     }
-    const xkb_keysym_t sym = xkb_utf32_to_keysym(cp);
-    if (sym == XKB_KEY_NoSymbol) {
+    ثابت xkb_keysym_t sym = xkb_utf32_to_keysym(cp);
+    اگر (sym == XKB_کلید_No_نماد) {
         scanner_err(scanner, XKB_LOG_MESSAGE_NO_ID,
                     "Cannot convert string to single keysym: Unicode "
                     "code point U+%04"PRIX32" has no keysym equivalent.",
                     cp);
     }
-    return sym;
+    بازگشت sym;
 }
 
 KeycodeDef *
-KeycodeCreate(xkb_atom_t name, int64_t value)
+KeycodeCreate(xkb_atom_t name, int64_t مقدار)
 {
-    KeycodeDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    KeycodeDef *def = malloc(اندازه(*def));
+    اگر (!def)
+        بازگشت پوچ;
 
     def->common.type = STMT_KEYCODE;
-    def->common.next = NULL;
+    def->common.next = پوچ;
     def->name = name;
-    def->value = value;
+    def->مقدار = مقدار;
 
-    return def;
+    بازگشت def;
 }
 
-KeyAliasDef *
-KeyAliasCreate(xkb_atom_t alias, xkb_atom_t real)
+کلید_Alias_Def *
+کلید_Alias_Create(xkb_atom_t alias, xkb_atom_t real)
 {
-    KeyAliasDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    کلید_Alias_Def *def = malloc(اندازه(*def));
+    اگر (!def)
+        بازگشت پوچ;
 
     def->common.type = STMT_ALIAS;
-    def->common.next = NULL;
+    def->common.next = پوچ;
     def->alias = alias;
     def->real = real;
 
-    return def;
+    بازگشت def;
 }
 
 VModDef *
-VModCreate(xkb_atom_t name, ExprDef *value)
+VModCreate(xkb_atom_t name, عبارت_Def *مقدار)
 {
-    VModDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    VModDef *def = malloc(اندازه(*def));
+    اگر (!def)
+        بازگشت پوچ;
 
     def->common.type = STMT_VMOD;
-    def->common.next = NULL;
+    def->common.next = پوچ;
     def->name = name;
-    def->value = value;
+    def->مقدار = مقدار;
 
-    return def;
+    بازگشت def;
 }
 
 VarDef *
-VarCreate(ExprDef *name, ExprDef *value)
+VarCreate(عبارت_Def *name, عبارت_Def *مقدار)
 {
-    VarDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    VarDef *def = malloc(اندازه(*def));
+    اگر (!def)
+        بازگشت پوچ;
 
     def->common.type = STMT_VAR;
-    def->common.next = NULL;
+    def->common.next = پوچ;
     def->name = name;
-    def->value = value;
+    def->مقدار = مقدار;
 
-    return def;
+    بازگشت def;
 }
 
 VarDef *
 BoolVarCreate(xkb_atom_t ident, bool set)
 {
-    ExprDef *name, *value;
+    عبارت_Def *name, *مقدار;
     VarDef *def;
-    if (!(name = ExprCreateIdent(ident))) {
-        return NULL;
+    اگر (!(name = عبارت_Create_Ident(ident))) {
+        بازگشت پوچ;
     }
-    if (!(value = ExprCreateBoolean(set))) {
+    اگر (!(مقدار = عبارت_Create_Boolean(set))) {
         FreeStmt((ParseCommon *) name);
-        return NULL;
+        بازگشت پوچ;
     }
-    if (!(def = VarCreate(name, value))) {
+    اگر (!(def = VarCreate(name, مقدار))) {
         FreeStmt((ParseCommon *) name);
-        FreeStmt((ParseCommon *) value);
-        return NULL;
+        FreeStmt((ParseCommon *) مقدار);
+        بازگشت پوچ;
     }
-    return def;
+    بازگشت def;
 }
 
 InterpDef *
-InterpCreate(xkb_keysym_t sym, ExprDef *match)
+InterpCreate(xkb_keysym_t sym, عبارت_Def *match)
 {
-    InterpDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    InterpDef *def = malloc(اندازه(*def));
+    اگر (!def)
+        بازگشت پوچ;
 
     def->common.type = STMT_INTERP;
-    def->common.next = NULL;
+    def->common.next = پوچ;
     def->sym = sym;
     def->match = match;
-    def->def = NULL;
+    def->def = پوچ;
 
-    return def;
+    بازگشت def;
 }
 
-KeyTypeDef *
-KeyTypeCreate(xkb_atom_t name, VarDef *body)
+کلید_Type_Def *
+کلید_Type_Create(xkb_atom_t name, VarDef *body)
 {
-    KeyTypeDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    کلید_Type_Def *def = malloc(اندازه(*def));
+    اگر (!def)
+        بازگشت پوچ;
 
     def->common.type = STMT_TYPE;
-    def->common.next = NULL;
+    def->common.next = پوچ;
     def->merge = MERGE_DEFAULT;
     def->name = name;
     def->body = body;
 
-    return def;
+    بازگشت def;
 }
 
 SymbolsDef *
-SymbolsCreate(xkb_atom_t keyName, VarDef *symbols)
+SymbolsCreate(xkb_atom_t کلید_Name, VarDef *symbols)
 {
-    SymbolsDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    SymbolsDef *def = malloc(اندازه(*def));
+    اگر (!def)
+        بازگشت پوچ;
 
     def->common.type = STMT_SYMBOLS;
-    def->common.next = NULL;
+    def->common.next = پوچ;
     def->merge = MERGE_DEFAULT;
-    def->keyName = keyName;
+    def->کلید_Name = کلید_Name;
     def->symbols = symbols;
 
-    return def;
+    بازگشت def;
 }
 
 GroupCompatDef *
-GroupCompatCreate(int64_t group, ExprDef *val)
+GroupCompatCreate(int64_t group, عبارت_Def *val)
 {
-    GroupCompatDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    GroupCompatDef *def = malloc(اندازه(*def));
+    اگر (!def)
+        بازگشت پوچ;
 
     def->common.type = STMT_GROUP_COMPAT;
-    def->common.next = NULL;
+    def->common.next = پوچ;
     def->merge = MERGE_DEFAULT;
     def->group = group;
     def->def = val;
 
-    return def;
+    بازگشت def;
 }
 
 ModMapDef *
-ModMapCreate(ExprDef *modifiers, ExprDef *keys)
+ModMapCreate(عبارت_Def *modifiers, عبارت_Def *کلیدها)
 {
-    ModMapDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    ModMapDef *def = malloc(اندازه(*def));
+    اگر (!def)
+        بازگشت پوچ;
 
     def->common.type = STMT_MODMAP;
-    def->common.next = NULL;
+    def->common.next = پوچ;
     def->merge = MERGE_DEFAULT;
     def->modifiers = modifiers;
-    def->keys = keys;
+    def->کلیدها = کلیدها;
 
-    return def;
+    بازگشت def;
 }
 
 LedMapDef *
 LedMapCreate(xkb_atom_t name, VarDef *body)
 {
-    LedMapDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    LedMapDef *def = malloc(اندازه(*def));
+    اگر (!def)
+        بازگشت پوچ;
 
     def->common.type = STMT_LED_MAP;
-    def->common.next = NULL;
+    def->common.next = پوچ;
     def->merge = MERGE_DEFAULT;
     def->name = name;
     def->body = body;
 
-    return def;
+    بازگشت def;
 }
 
 LedNameDef *
-LedNameCreate(int64_t ndx, ExprDef *name, bool virtual)
+LedNameCreate(int64_t ndx, عبارت_Def *name, bool مجازی)
 {
-    LedNameDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    LedNameDef *def = malloc(اندازه(*def));
+    اگر (!def)
+        بازگشت پوچ;
 
     def->common.type = STMT_LED_NAME;
-    def->common.next = NULL;
+    def->common.next = پوچ;
     def->merge = MERGE_DEFAULT;
     def->ndx = ndx;
     def->name = name;
-    def->virtual = virtual;
+    def->مجازی = مجازی;
 
-    return def;
+    بازگشت def;
 }
 
 UnknownStatement *
-UnknownStatementCreate(enum stmt_type type, struct sval name)
+UnknownStatementCreate(شمارش stmt_type type, ساختار sval name)
 {
-    UnknownStatement *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    UnknownStatement *def = malloc(اندازه(*def));
+    اگر (!def)
+        بازگشت پوچ;
 
     def->common.type = type;
-    def->common.next = NULL;
+    def->common.next = پوچ;
     def->name = strndup(name.start, name.len);
-    if (!def->name) {
-        free(def);
-        return NULL;
+    اگر (!def->name) {
+        آزاد(def);
+        بازگشت پوچ;
     }
 
-    return def;
+    بازگشت def;
 }
 
-static void
+ایستا تهی
 FreeInclude(IncludeStmt *incl);
 
 IncludeStmt *
-IncludeCreate(struct xkb_context *ctx, char *str, enum merge_mode merge)
+IncludeCreate(ساختار xkb_context *ctx, نویسه *str, شمارش merge_mode merge)
 {
     IncludeStmt *incl, *first;
-    char *stmt, *tmp;
-    char nextop;
+    نویسه *stmt, *tmp;
+    نویسه nextop;
 
-    incl = first = NULL;
+    incl = first = پوچ;
     tmp = str;
     stmt = strdup_safe(str);
-    while (tmp && *tmp)
+    وقتی (tmp && *tmp)
     {
-        char *file = NULL, *map = NULL, *extra_data = NULL;
+        نویسه *file = پوچ, *map = پوچ, *extra_data = پوچ;
 
-        if (!ParseIncludeMap(&tmp, &file, &map, &nextop, &extra_data))
-            goto err;
+        اگر (!ParseIncludeMap(&tmp, &file, &map, &nextop, &extra_data))
+            برو err;
 
         /*
          * Given an RMLVO (here layout) like 'us,,fr', the rules parser
@@ -516,72 +516,72 @@ IncludeCreate(struct xkb_context *ctx, char *str, enum merge_mode merge)
          * We should just skip the ':2' in this case and leave it to the
          * appropriate section to deal with the empty group.
          */
-        if (isempty(file)) {
-            free(file);
-            free(map);
-            free(extra_data);
-            continue;
+        اگر (isempty(file)) {
+            آزاد(file);
+            آزاد(map);
+            آزاد(extra_data);
+            ادامه;
         }
 
-        if (first == NULL) {
-            first = incl = malloc(sizeof(*first));
-        } else {
-            incl->next_incl = malloc(sizeof(*first));
+        اگر (first == پوچ) {
+            first = incl = malloc(اندازه(*first));
+        } وگرنه {
+            incl->next_incl = malloc(اندازه(*first));
             incl = incl->next_incl;
         }
 
-        if (!incl) {
-            free(file);
-            free(map);
-            free(extra_data);
-            break;
+        اگر (!incl) {
+            آزاد(file);
+            آزاد(map);
+            آزاد(extra_data);
+            بشکن;
         }
 
         incl->common.type = STMT_INCLUDE;
-        incl->common.next = NULL;
+        incl->common.next = پوچ;
         incl->merge = merge;
-        incl->stmt = NULL;
+        incl->stmt = پوچ;
         incl->file = file;
         incl->map = map;
         incl->modifier = extra_data;
-        incl->next_incl = NULL;
+        incl->next_incl = پوچ;
 
-        switch (nextop) {
-        case MERGE_AUGMENT_PREFIX:
+        انتخاب (nextop) {
+        حالت MERGE_AUGMENT_PREFIX:
             merge = MERGE_AUGMENT;
-            break;
-        case MERGE_REPLACE_PREFIX:
+            بشکن;
+        حالت MERGE_REPLACE_PREFIX:
             merge = MERGE_REPLACE;
-            break;
-        default:
+            بشکن;
+        پیشفرض:
             merge = MERGE_OVERRIDE;
         }
     }
 
-    if (first)
+    اگر (first)
         first->stmt = stmt;
-    else
-        free(stmt);
+    وگرنه
+        آزاد(stmt);
 
-    return first;
+    بازگشت first;
 
 err:
     log_err(ctx, XKB_ERROR_INVALID_INCLUDE_STATEMENT,
             "Illegal include statement \"%s\"; Ignored\n", stmt);
     FreeInclude(first);
-    free(stmt);
-    return NULL;
+    آزاد(stmt);
+    بازگشت پوچ;
 }
 
 XkbFile *
-XkbFileCreate(enum xkb_file_type type, char *name, ParseCommon *defs,
-              enum xkb_map_flags flags)
+XkbFileCreate(شمارش xkb_file_type type, نویسه *name, ParseCommon *defs,
+              شمارش xkb_map_flags flags)
 {
     XkbFile *file;
 
-    file = calloc(1, sizeof(*file));
-    if (!file)
-        return NULL;
+    file = calloc(1, اندازه(*file));
+    اگر (!file)
+        بازگشت پوچ;
 
     XkbEscapeMapName(name);
     file->file_type = type;
@@ -589,197 +589,197 @@ XkbFileCreate(enum xkb_file_type type, char *name, ParseCommon *defs,
     file->defs = defs;
     file->flags = flags;
 
-    return file;
+    بازگشت file;
 }
 
 XkbFile *
-XkbFileFromComponents(struct xkb_context *ctx,
-                      const struct xkb_component_names *kkctgs)
+XkbFileFromComponents(ساختار xkb_context *ctx,
+                      ثابت ساختار xkb_component_names *kkctgs)
 {
-    char *const components[] = {
+    نویسه *ثابت components[] = {
         kkctgs->keycodes, kkctgs->types,
         kkctgs->compatibility, kkctgs->symbols,
     };
-    enum xkb_file_type type;
-    IncludeStmt *include = NULL;
-    XkbFile *file = NULL;
-    ParseCommon *defs = NULL, *defsLast = NULL;
+    شمارش xkb_file_type type;
+    IncludeStmt *include = پوچ;
+    XkbFile *file = پوچ;
+    ParseCommon *defs = پوچ, *defsLast = پوچ;
 
-    for (type = FIRST_KEYMAP_FILE_TYPE; type <= LAST_KEYMAP_FILE_TYPE; type++) {
+    برای (type = FIRST_KEYMAP_FILE_TYPE; type <= LAST_KEYMAP_FILE_TYPE; type++) {
         include = IncludeCreate(ctx, components[type], MERGE_DEFAULT);
-        if (!include)
-            goto err;
+        اگر (!include)
+            برو err;
 
-        file = XkbFileCreate(type, NULL, (ParseCommon *) include, 0);
-        if (!file) {
+        file = XkbFileCreate(type, پوچ, (ParseCommon *) include, 0);
+        اگر (!file) {
             FreeInclude(include);
-            goto err;
+            برو err;
         }
 
-        if (!defs)
+        اگر (!defs)
             defsLast = defs = &file->common;
-        else
+        وگرنه
             defsLast = defsLast->next = &file->common;
     }
 
-    file = XkbFileCreate(FILE_TYPE_KEYMAP, NULL, defs, 0);
-    if (!file)
-        goto err;
+    file = XkbFileCreate(FILE_TYPE_KEYMAP, پوچ, defs, 0);
+    اگر (!file)
+        برو err;
 
-    return file;
+    بازگشت file;
 
 err:
     FreeXkbFile((XkbFile *) defs);
-    return NULL;
+    بازگشت پوچ;
 }
 
-static void
+ایستا تهی
 FreeInclude(IncludeStmt *incl)
 {
     IncludeStmt *next;
 
-    while (incl)
+    وقتی (incl)
     {
         next = incl->next_incl;
 
-        free(incl->file);
-        free(incl->map);
-        free(incl->modifier);
-        free(incl->stmt);
+        آزاد(incl->file);
+        آزاد(incl->map);
+        آزاد(incl->modifier);
+        آزاد(incl->stmt);
 
-        free(incl);
+        آزاد(incl);
         incl = next;
     }
 }
 
-void
+تهی
 FreeStmt(ParseCommon *stmt)
 {
     ParseCommon *next;
 
-    while (stmt)
+    وقتی (stmt)
     {
         next = stmt->next;
 
-        switch (stmt->type) {
-        case STMT_INCLUDE:
+        انتخاب (stmt->type) {
+        حالت STMT_INCLUDE:
             FreeInclude((IncludeStmt *) stmt);
             /* stmt is already free'd here. */
-            stmt = NULL;
-            break;
+            stmt = پوچ;
+            بشکن;
 
-        case STMT_EXPR_NEGATE:
-        case STMT_EXPR_UNARY_PLUS:
-        case STMT_EXPR_NOT:
-        case STMT_EXPR_INVERT:
-            FreeStmt((ParseCommon *) ((ExprUnary *) stmt)->child);
-            break;
+        حالت STMT_عبارت_NEGATE:
+        حالت STMT_عبارت_UNARY_PLUS:
+        حالت STMT_عبارت_NOT:
+        حالت STMT_عبارت_INVERT:
+            FreeStmt((ParseCommon *) ((عبارت_Unary *) stmt)->child);
+            بشکن;
 
-        case STMT_EXPR_DIVIDE:
-        case STMT_EXPR_ADD:
-        case STMT_EXPR_SUBTRACT:
-        case STMT_EXPR_MULTIPLY:
-        case STMT_EXPR_ASSIGN:
-            FreeStmt((ParseCommon *) ((ExprBinary *) stmt)->left);
-            FreeStmt((ParseCommon *) ((ExprBinary *) stmt)->right);
-            break;
+        حالت STMT_عبارت_DIVIDE:
+        حالت STMT_عبارت_ADD:
+        حالت STMT_عبارت_SUBTRACT:
+        حالت STMT_عبارت_MULTIPLY:
+        حالت STMT_عبارت_ASSIGN:
+            FreeStmt((ParseCommon *) ((عبارت_دودویی *) stmt)->چپ);
+            FreeStmt((ParseCommon *) ((عبارت_دودویی *) stmt)->راست);
+            بشکن;
 
-        case STMT_EXPR_ACTION_DECL:
-            FreeStmt((ParseCommon *) ((ExprAction *) stmt)->args);
-            break;
+        حالت STMT_عبارت_ACTION_DECL:
+            FreeStmt((ParseCommon *) ((عبارت_Action *) stmt)->args);
+            بشکن;
 
-        case STMT_EXPR_ACTION_LIST:
-            FreeStmt((ParseCommon *) ((ExprActionList *) stmt)->actions);
-            break;
+        حالت STMT_عبارت_ACTION_LIST:
+            FreeStmt((ParseCommon *) ((عبارت_Action_List *) stmt)->actions);
+            بشکن;
 
-        case STMT_EXPR_ARRAY_REF:
-            FreeStmt((ParseCommon *) ((ExprArrayRef *) stmt)->entry);
-            break;
+        حالت STMT_عبارت_ARRAY_REF:
+            FreeStmt((ParseCommon *) ((عبارت_Array_Ref *) stmt)->entry);
+            بشکن;
 
-        case STMT_EXPR_KEYSYM_LIST:
-            darray_free(((ExprKeysymList *) stmt)->syms);
-            break;
+        حالت STMT_عبارت_KEYSYM_LIST:
+            darray_free(((عبارت_Keysym_List *) stmt)->syms);
+            بشکن;
 
-        case STMT_VAR:
+        حالت STMT_VAR:
             FreeStmt((ParseCommon *) ((VarDef *) stmt)->name);
-            FreeStmt((ParseCommon *) ((VarDef *) stmt)->value);
-            break;
-        case STMT_TYPE:
-            FreeStmt((ParseCommon *) ((KeyTypeDef *) stmt)->body);
-            break;
-        case STMT_INTERP:
+            FreeStmt((ParseCommon *) ((VarDef *) stmt)->مقدار);
+            بشکن;
+        حالت STMT_TYPE:
+            FreeStmt((ParseCommon *) ((کلید_Type_Def *) stmt)->body);
+            بشکن;
+        حالت STMT_INTERP:
             FreeStmt((ParseCommon *) ((InterpDef *) stmt)->match);
             FreeStmt((ParseCommon *) ((InterpDef *) stmt)->def);
-            break;
-        case STMT_VMOD:
-            FreeStmt((ParseCommon *) ((VModDef *) stmt)->value);
-            break;
-        case STMT_SYMBOLS:
+            بشکن;
+        حالت STMT_VMOD:
+            FreeStmt((ParseCommon *) ((VModDef *) stmt)->مقدار);
+            بشکن;
+        حالت STMT_SYMBOLS:
             FreeStmt((ParseCommon *) ((SymbolsDef *) stmt)->symbols);
-            break;
-        case STMT_MODMAP:
+            بشکن;
+        حالت STMT_MODMAP:
             FreeStmt((ParseCommon *) ((ModMapDef *) stmt)->modifiers);
-            FreeStmt((ParseCommon *) ((ModMapDef *) stmt)->keys);
-            break;
-        case STMT_GROUP_COMPAT:
+            FreeStmt((ParseCommon *) ((ModMapDef *) stmt)->کلیدها);
+            بشکن;
+        حالت STMT_GROUP_COMPAT:
             FreeStmt((ParseCommon *) ((GroupCompatDef *) stmt)->def);
-            break;
-        case STMT_LED_MAP:
+            بشکن;
+        حالت STMT_LED_MAP:
             FreeStmt((ParseCommon *) ((LedMapDef *) stmt)->body);
-            break;
-        case STMT_LED_NAME:
+            بشکن;
+        حالت STMT_LED_NAME:
             FreeStmt((ParseCommon *) ((LedNameDef *) stmt)->name);
-            break;
-        case STMT_UNKNOWN_DECLARATION:
-        case STMT_UNKNOWN_COMPOUND:
-            free(((UnknownStatement *) stmt)->name);
-            break;
-        default:
+            بشکن;
+        حالت STMT_UNKNOWN_DECLARATION:
+        حالت STMT_UNKNOWN_COMPOUND:
+            آزاد(((UnknownStatement *) stmt)->name);
+            بشکن;
+        پیشفرض:
             {} /* Label followed by declaration requires C23 */
-            static_assert(_STMT_NUM_VALUES == 37 &&
-                          _STMT_NUM_VALUES == STMT_UNKNOWN_COMPOUND + 1,
+            static_assert(STMT_رقم_مقادیر == 37 &&
+                          STMT_رقم_مقادیر == STMT_UNKNOWN_COMPOUND + 1,
                           "Missing statement type");
-            break;
+            بشکن;
         }
 
-        free(stmt);
+        آزاد(stmt);
         stmt = next;
     }
 }
 
-void
+تهی
 FreeXkbFile(XkbFile *file)
 {
     XkbFile *next;
 
-    while (file)
+    وقتی (file)
     {
         next = (XkbFile *) file->common.next;
 
-        switch (file->file_type) {
-        case FILE_TYPE_KEYMAP:
+        انتخاب (file->file_type) {
+        حالت FILE_TYPE_KEYMAP:
             FreeXkbFile((XkbFile *) file->defs);
-            break;
+            بشکن;
 
-        case FILE_TYPE_TYPES:
-        case FILE_TYPE_COMPAT:
-        case FILE_TYPE_SYMBOLS:
-        case FILE_TYPE_KEYCODES:
-        case FILE_TYPE_GEOMETRY:
+        حالت FILE_TYPE_TYPES:
+        حالت FILE_TYPE_COMPAT:
+        حالت FILE_TYPE_SYMBOLS:
+        حالت FILE_TYPE_KEYCODES:
+        حالت FILE_TYPE_GEOMETRY:
             FreeStmt(file->defs);
-            break;
+            بشکن;
 
-        default:
-            break;
+        پیشفرض:
+            بشکن;
         }
 
-        free(file->name);
-        free(file);
+        آزاد(file->name);
+        آزاد(file);
         file = next;
     }
 }
 
-static const char *xkb_file_type_strings[_FILE_TYPE_NUM_ENTRIES] = {
+ایستا ثابت نویسه *xkb_file_type_strings[FILE_TYPE_رقم_ENTRIES] = {
     [FILE_TYPE_KEYCODES] = "xkb_keycodes",
     [FILE_TYPE_TYPES] = "xkb_types",
     [FILE_TYPE_COMPAT] = "xkb_compatibility",
@@ -789,41 +789,41 @@ static const char *xkb_file_type_strings[_FILE_TYPE_NUM_ENTRIES] = {
     [FILE_TYPE_RULES] = "rules",
 };
 
-const char *
-xkb_file_type_to_string(enum xkb_file_type type)
+ثابت نویسه *
+xkb_file_type_to_string(شمارش xkb_file_type type)
 {
-    if (type >= _FILE_TYPE_NUM_ENTRIES)
-        return "unknown";
-    return xkb_file_type_strings[type];
+    اگر (type >= FILE_TYPE_رقم_ENTRIES)
+        بازگشت "unknown";
+    بازگشت xkb_file_type_strings[type];
 }
 
-static const char *stmt_type_strings[_STMT_NUM_VALUES] = {
+ایستا ثابت نویسه *stmt_type_strings[STMT_رقم_مقادیر] = {
     [STMT_UNKNOWN] = "unknown statement",
     [STMT_INCLUDE] = "include statement",
     [STMT_KEYCODE] = "key name definition",
     [STMT_ALIAS] = "key alias definition",
-    [STMT_EXPR_STRING_LITERAL] = "string literal expression",
-    [STMT_EXPR_INTEGER_LITERAL] = "integer literal expression",
-    [STMT_EXPR_FLOAT_LITERAL] = "float literal expression",
-    [STMT_EXPR_BOOLEAN_LITERAL] = "boolean literal expression",
-    [STMT_EXPR_KEYNAME_LITERAL] = "key name expression",
-    [STMT_EXPR_KEYSYM_LITERAL] = "keysym expression",
-    [STMT_EXPR_IDENT] = "identifier expression",
-    [STMT_EXPR_ACTION_DECL] = "action declaration expression",
-    [STMT_EXPR_FIELD_REF] = "field reference expression",
-    [STMT_EXPR_ARRAY_REF] = "array reference expression",
-    [STMT_EXPR_EMPTY_LIST] = "empty list expression",
-    [STMT_EXPR_KEYSYM_LIST] = "keysym list expression",
-    [STMT_EXPR_ACTION_LIST] = "action list expression",
-    [STMT_EXPR_ADD] = "addition expression",
-    [STMT_EXPR_SUBTRACT] = "substraction expression",
-    [STMT_EXPR_MULTIPLY] = "multiplication expression",
-    [STMT_EXPR_DIVIDE] = "division expression",
-    [STMT_EXPR_ASSIGN] = "assignment expression",
-    [STMT_EXPR_NOT] = "logical negation expression",
-    [STMT_EXPR_NEGATE] = "arithmetic negation expression",
-    [STMT_EXPR_INVERT] = "bitwise inversion expression",
-    [STMT_EXPR_UNARY_PLUS] = "unary plus expression",
+    [STMT_عبارت_STRING_LITERAL] = "string literal expression",
+    [STMT_عبارت_INTEGER_LITERAL] = "integer literal expression",
+    [STMT_عبارت_FLOAT_LITERAL] = "float literal expression",
+    [STMT_عبارت_BOOLEAN_LITERAL] = "boolean literal expression",
+    [STMT_عبارت_KEYNAME_LITERAL] = "key name expression",
+    [STMT_عبارت_KEYSYM_LITERAL] = "keysym expression",
+    [STMT_عبارت_IDENT] = "identifier expression",
+    [STMT_عبارت_ACTION_DECL] = "action declaration expression",
+    [STMT_عبارت_FIELD_REF] = "field reference expression",
+    [STMT_عبارت_ARRAY_REF] = "array reference expression",
+    [STMT_عبارت_EMPTY_LIST] = "empty list expression",
+    [STMT_عبارت_KEYSYM_LIST] = "keysym list expression",
+    [STMT_عبارت_ACTION_LIST] = "action list expression",
+    [STMT_عبارت_ADD] = "addition expression",
+    [STMT_عبارت_SUBTRACT] = "substraction expression",
+    [STMT_عبارت_MULTIPLY] = "multiplication expression",
+    [STMT_عبارت_DIVIDE] = "division expression",
+    [STMT_عبارت_ASSIGN] = "assignment expression",
+    [STMT_عبارت_NOT] = "logical negation expression",
+    [STMT_عبارت_NEGATE] = "arithmetic negation expression",
+    [STMT_عبارت_INVERT] = "bitwise inversion expression",
+    [STMT_عبارت_UNARY_PLUS] = "unary plus expression",
     [STMT_VAR] = "variable definition",
     [STMT_TYPE] = "key type definition",
     [STMT_INTERP] = "symbol interpretation definition",
@@ -836,39 +836,39 @@ static const char *stmt_type_strings[_STMT_NUM_VALUES] = {
     [STMT_UNKNOWN_DECLARATION] = "unknown declaration statement",
     [STMT_UNKNOWN_COMPOUND] = "unknown compound statement",
 };
-static_assert(_STMT_NUM_VALUES == 37 &&
-              _STMT_NUM_VALUES == STMT_UNKNOWN_COMPOUND + 1,
+static_assert(STMT_رقم_مقادیر == 37 &&
+              STMT_رقم_مقادیر == STMT_UNKNOWN_COMPOUND + 1,
               "Missing statement type");
 
-const char *
-stmt_type_to_string(enum stmt_type type)
+ثابت نویسه *
+stmt_type_to_string(شمارش stmt_type type)
 {
-    if (type >= _STMT_NUM_VALUES)
-        return NULL;
-    return stmt_type_strings[type];
+    اگر (type >= STMT_رقم_مقادیر)
+        بازگشت پوچ;
+    بازگشت stmt_type_strings[type];
 }
 
-char
-stmt_type_to_operator_char(enum stmt_type type)
+نویسه
+stmt_type_to_operator_char(شمارش stmt_type type)
 {
-    switch (type) {
-    case STMT_EXPR_ADD:
-        return '+';
-    case STMT_EXPR_SUBTRACT:
-        return '-';
-    case STMT_EXPR_MULTIPLY:
-        return '*';
-    case STMT_EXPR_DIVIDE:
-        return '/';
-    case STMT_EXPR_NOT:
-        return '!';
-    case STMT_EXPR_NEGATE:
-        return '-';
-    case STMT_EXPR_INVERT:
-        return '~';
-    case STMT_EXPR_UNARY_PLUS:
-        return '+';
-    default:
-        return '\0';
+    انتخاب (type) {
+    حالت STMT_عبارت_ADD:
+        بازگشت '+';
+    حالت STMT_عبارت_SUBTRACT:
+        بازگشت '-';
+    حالت STMT_عبارت_MULTIPLY:
+        بازگشت '*';
+    حالت STMT_عبارت_DIVIDE:
+        بازگشت '/';
+    حالت STMT_عبارت_NOT:
+        بازگشت '!';
+    حالت STMT_عبارت_NEGATE:
+        بازگشت '-';
+    حالت STMT_عبارت_INVERT:
+        بازگشت '~';
+    حالت STMT_عبارت_UNARY_PLUS:
+        بازگشت '+';
+    پیشفرض:
+        بازگشت '\0';
     }
 }
