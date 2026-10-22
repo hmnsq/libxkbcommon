@@ -6,23 +6,23 @@
  * Author: Daniel Stone <daniel@fooishbar.org>
  */
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <assert.h>
-#include <stdint.h>
-#include <string.h>
+#ضمن <assert.h>
+#ضمن <stdint.h>
+#ضمن <string.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-names.h"
-#include "features/enums.h"
-#include "keymap.h"
-#include "messages-codes.h"
+#ضمن "xkbcommon/xkbcommon.h"
+#ضمن "xkbcommon/xkbcommon-names.h"
+#ضمن "features/enums.h"
+#ضمن "keymap.h"
+#ضمن "messages-codes.h"
 
-static void
-update_builtin_keymap_fields(struct xkb_keymap *keymap)
+ساكن فراغ
+update_builtin_keymap_fields(بنية xkb_keymap *keymap)
 {
     /* Predefined (AKA real, core, X11) modifiers. The order is important! */
-    static const char *const builtin_mods[] = {
+    ساكن ثابت حرف *ثابت builtin_mods[] = {
         [XKB_MOD_INDEX_SHIFT] = XKB_MOD_NAME_SHIFT,
         [XKB_MOD_INDEX_CAPS]  = XKB_MOD_NAME_CAPS,
         [XKB_MOD_INDEX_CTRL]  = XKB_MOD_NAME_CTRL,
@@ -33,7 +33,7 @@ update_builtin_keymap_fields(struct xkb_keymap *keymap)
         [XKB_MOD_INDEX_MOD5]  = XKB_MOD_NAME_MOD5
     };
 
-    for (xkb_mod_index_t i = 0; i < ARRAY_SIZE(builtin_mods); i++) {
+    لكل (xkb_mod_index_t i = 0; i < ARRAY_SIZE(builtin_mods); i++) {
         keymap->mods.mods[i].name = xkb_atom_intern(keymap->ctx,
                                                     builtin_mods[i],
                                                     strlen(builtin_mods[i]));
@@ -41,28 +41,28 @@ update_builtin_keymap_fields(struct xkb_keymap *keymap)
         /* Real modifiers have a canonical mapping */
         keymap->mods.mods[i].mapping = UINT32_C(1) << i;
     }
-    keymap->mods.num_mods = ARRAY_SIZE(builtin_mods);
+    keymap->mods.رقم_mods = ARRAY_SIZE(builtin_mods);
     keymap->canonical_state_mask = MOD_REAL_MASK_ALL;
 }
 
-struct xkb_keymap *
-xkb_keymap_new(struct xkb_context *ctx, const char *func,
-               enum xkb_keymap_format format,
-               enum xkb_keymap_compile_flags flags)
+بنية xkb_keymap *
+xkb_keymap_new(بنية xkb_context *ctx, ثابت حرف *func,
+               تعداد xkb_keymap_format format,
+               تعداد xkb_keymap_compile_flags flags)
 {
-    const enum xkb_keymap_compile_flags invalid_flags = (
-        flags & ~(enum xkb_keymap_compile_flags)XKB_KEYMAP_COMPILE_FLAGS_VALUES
+    ثابت تعداد xkb_keymap_compile_flags invalid_flags = (
+        flags & ~(تعداد xkb_keymap_compile_flags)XKB_KEYMAP_COMPILE_FLAGS_قيم
     );
-    if (invalid_flags) {
+    إذا (invalid_flags) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "%s: unrecognized keymap compilation flags: 0x%x\n",
                 func, invalid_flags);
-        return NULL;
+        إرجاع عدم;
     }
 
-    struct xkb_keymap * const keymap = calloc(1, sizeof(*keymap));
-    if (!keymap)
-        return NULL;
+    بنية xkb_keymap * ثابت keymap = calloc(1, حجم(*keymap));
+    إذا (!keymap)
+        إرجاع عدم;
 
     keymap->refcnt = 1;
     keymap->ctx = xkb_context_ref(ctx);
@@ -72,163 +72,163 @@ xkb_keymap_new(struct xkb_context *ctx, const char *func,
 
     update_builtin_keymap_fields(keymap);
 
-    return keymap;
+    إرجاع keymap;
 }
 
-void
-XkbEscapeMapName(char *name)
+فراغ
+XkbEscapeMapName(حرف *name)
 {
     /*
      * All latin-1 alphanumerics, plus parens, slash, minus, underscore and
      * wildcards.
      */
-    static const unsigned char legal[] = {
+    ساكن ثابت unsigned حرف legal[] = {
         0x00, 0x00, 0x00, 0x00, 0x00, 0xa7, 0xff, 0x83,
         0xfe, 0xff, 0xff, 0x87, 0xfe, 0xff, 0xff, 0x07,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0xff, 0xff, 0x7f, 0xff, 0xff, 0xff, 0x7f, 0xff
     };
 
-    if (!name)
-        return;
+    إذا (!name)
+        إرجاع;
 
-    while (*name) {
-        unsigned char c = (unsigned char)*name;
-        if (!(legal[c / 8] & (1u << (c % 8))))
+    بينما (*name) {
+        unsigned حرف c = (unsigned حرف)*name;
+        إذا (!(legal[c / 8] & (1u << (c % 8))))
             *name = '_';
         name++;
     }
 }
 
 xkb_mod_index_t
-XkbModNameToIndex(const struct xkb_mod_set *mods, xkb_atom_t name,
-                  enum mod_type type)
+XkbModNameToIndex(ثابت بنية xkb_mod_set *mods, xkb_atom_t name,
+                  تعداد mod_type type)
 {
     xkb_mod_index_t i;
-    const struct xkb_mod *mod;
+    ثابت بنية xkb_mod *mod;
 
     xkb_mods_enumerate(i, mod, mods)
-        if ((mod->type & type) && name == mod->name)
-            return i;
+        إذا ((mod->type & type) && name == mod->name)
+            إرجاع i;
 
-    return XKB_MOD_INVALID;
+    إرجاع XKB_MOD_INVALID;
 }
 
 bool
-XkbLevelsSameSyms(const struct xkb_level *a, const struct xkb_level *b)
+XkbLevelsSameSyms(ثابت بنية xkb_level *a, ثابت بنية xkb_level *b)
 {
-    if (a->num_syms != b->num_syms)
-        return false;
-    if (a->num_syms <= 1)
-        return a->s.sym == b->s.sym;
-    return memcmp(a->s.syms, b->s.syms, sizeof(*a->s.syms) * a->num_syms) == 0;
+    إذا (a->رقم_syms != b->رقم_syms)
+        إرجاع false;
+    إذا (a->رقم_syms <= 1)
+        إرجاع a->s.sym == b->s.sym;
+    إرجاع memcmp(a->s.syms, b->s.syms, حجم(*a->s.syms) * a->رقم_syms) == 0;
 }
 
 bool
-action_equal(const union xkb_action *a, const union xkb_action *b)
+action_equal(ثابت اتحاد xkb_action *a, ثابت اتحاد xkb_action *b)
 {
-    if (a->type != b->type)
-        return false;
+    إذا (a->type != b->type)
+        إرجاع false;
 
-    switch (a->type) {
-    case ACTION_TYPE_NONE:
-    case ACTION_TYPE_VOID:
-        return true;
-    case ACTION_TYPE_MOD_SET:
-    case ACTION_TYPE_MOD_LATCH:
-    case ACTION_TYPE_MOD_LOCK:
-        return (a->mods.flags == b->mods.flags &&
+    بدل (a->type) {
+    حالة ACTION_TYPE_NONE:
+    حالة ACTION_TYPE_VOID:
+        إرجاع true;
+    حالة ACTION_TYPE_MOD_SET:
+    حالة ACTION_TYPE_MOD_LATCH:
+    حالة ACTION_TYPE_MOD_LOCK:
+        إرجاع (a->mods.flags == b->mods.flags &&
                 a->mods.mods.mask == b->mods.mods.mask &&
                 a->mods.mods.mods == b->mods.mods.mods);
-    case ACTION_TYPE_GROUP_SET:
-    case ACTION_TYPE_GROUP_LATCH:
-    case ACTION_TYPE_GROUP_LOCK:
-        return (a->group.flags == b->group.flags &&
+    حالة ACTION_TYPE_GROUP_SET:
+    حالة ACTION_TYPE_GROUP_LATCH:
+    حالة ACTION_TYPE_GROUP_LOCK:
+        إرجاع (a->group.flags == b->group.flags &&
                 a->group.group == b->group.group);
-    case ACTION_TYPE_PTR_MOVE:
-        return (a->ptr.flags == b->ptr.flags &&
+    حالة ACTION_TYPE_PTR_MOVE:
+        إرجاع (a->ptr.flags == b->ptr.flags &&
                 a->ptr.x == b->ptr.x &&
                 a->ptr.y == b->ptr.y);
-    case ACTION_TYPE_PTR_BUTTON:
-    case ACTION_TYPE_PTR_LOCK:
-        return (a->btn.flags == b->btn.flags &&
+    حالة ACTION_TYPE_PTR_BUTTON:
+    حالة ACTION_TYPE_PTR_LOCK:
+        إرجاع (a->btn.flags == b->btn.flags &&
                 a->btn.button == b->btn.button &&
-                a->btn.count == b->btn.count);
-    case ACTION_TYPE_PTR_DEFAULT:
-        return (a->dflt.flags == b->dflt.flags &&
-                a->dflt.value == b->dflt.value);
-    case ACTION_TYPE_TERMINATE:
-        return true;
-    case ACTION_TYPE_SWITCH_VT:
-        return (a->screen.flags == b->screen.flags &&
+                a->btn.تعداد_2 == b->btn.تعداد_2);
+    حالة ACTION_TYPE_PTR_DEFAULT:
+        إرجاع (a->dflt.flags == b->dflt.flags &&
+                a->dflt.قيمة == b->dflt.قيمة);
+    حالة ACTION_TYPE_TERMINATE:
+        إرجاع true;
+    حالة ACTION_TYPE_SWITCH_VT:
+        إرجاع (a->screen.flags == b->screen.flags &&
                 a->screen.screen == b->screen.screen);
-    case ACTION_TYPE_CTRL_SET:
-    case ACTION_TYPE_CTRL_LOCK:
-        return (a->ctrls.flags == b->ctrls.flags &&
+    حالة ACTION_TYPE_CTRL_SET:
+    حالة ACTION_TYPE_CTRL_LOCK:
+        إرجاع (a->ctrls.flags == b->ctrls.flags &&
                 a->ctrls.ctrls == b->ctrls.ctrls);
-    case ACTION_TYPE_REDIRECT_KEY:
-        return (a->redirect.keycode == b->redirect.keycode &&
+    حالة ACTION_TYPE_REDIRECT_مفتاح:
+        إرجاع (a->redirect.keycode == b->redirect.keycode &&
                 a->redirect.affect_mods == b->redirect.affect_mods &&
                 a->redirect.mods == b->redirect.mods);
-    case ACTION_TYPE_UNSUPPORTED_LEGACY:
-    case ACTION_TYPE_UNKNOWN:
-        return true;
+    حالة ACTION_TYPE_UNSUPPORTED_LEGACY:
+    حالة ACTION_TYPE_UNKNOWN:
+        إرجاع true;
     /* ACTION_TYPE_PRIVATE processed in the default case */
-    case ACTION_TYPE_INTERNAL:
-        return (a->internal.flags == b->internal.flags) &&
+    حالة ACTION_TYPE_INTERNAL:
+        إرجاع (a->internal.flags == b->internal.flags) &&
                (a->internal.clear_latched_mods == b->internal.clear_latched_mods);
-    default:
+    افتراضي:
         {} /* Label followed by declaration requires C23 */
         /* Ensure to not miss `xkb_action_type` updates */
         static_assert(ACTION_TYPE_INTERNAL == 20 &&
-                      ACTION_TYPE_INTERNAL + 1 == _ACTION_TYPE_NUM_ENTRIES,
+                      ACTION_TYPE_INTERNAL + 1 == ACTION_TYPE_رقم_ENTRIES,
                       "Missing action type");
         /* Private/custom action */
-        return memcmp(a->priv.data, b->priv.data, sizeof(a->priv.data)) == 0;
+        إرجاع memcmp(a->priv.data, b->priv.data, حجم(a->priv.data)) == 0;
     }
 }
 
 bool
-XkbLevelsSameActions(const struct xkb_level *a, const struct xkb_level *b)
+XkbLevelsSameActions(ثابت بنية xkb_level *a, ثابت بنية xkb_level *b)
 {
-    if (a->num_actions != b->num_actions)
-        return false;
-    if (a->num_actions <= 1)
-        return action_equal(&a->a.action, &b->a.action);
-    for (xkb_action_count_t k = 0; k < a->num_actions; k++) {
-        if (!action_equal(&a->a.actions[k], &b->a.actions[k]))
-            return false;
+    إذا (a->رقم_actions != b->رقم_actions)
+        إرجاع false;
+    إذا (a->رقم_actions <= 1)
+        إرجاع action_equal(&a->a.action, &b->a.action);
+    لكل (xkb_action_تعداد_t k = 0; k < a->رقم_actions; k++) {
+        إذا (!action_equal(&a->a.actions[k], &b->a.actions[k]))
+            إرجاع false;
     }
-    return true;
+    إرجاع true;
 }
 
 /* See: XkbAdjustGroup in Xorg xserver */
 xkb_layout_index_t
 XkbWrapGroupIntoRange(int32_t group,
-                      xkb_layout_index_t num_groups,
-                      enum xkb_layout_out_of_range_policy out_of_range_group_policy,
-                      xkb_layout_index_t out_of_range_group_number)
+                      xkb_layout_index_t رقم_groups,
+                      تعداد xkb_layout_out_of_range_policy out_of_range_group_policy,
+                      xkb_layout_index_t out_of_range_group_العدد)
 {
-    if (num_groups == 0)
-        return XKB_LAYOUT_INVALID;
+    إذا (رقم_groups == 0)
+        إرجاع XKB_LAYOUT_INVALID;
 
-    if (group >= 0 && (xkb_layout_index_t)group < num_groups)
-        return (xkb_layout_index_t)group;
+    إذا (group >= 0 && (xkb_layout_index_t)group < رقم_groups)
+        إرجاع (xkb_layout_index_t)group;
 
-    switch (out_of_range_group_policy) {
-    case XKB_LAYOUT_OUT_OF_RANGE_REDIRECT:
-        if (out_of_range_group_number >= num_groups)
-            return 0;
-        return out_of_range_group_number;
+    بدل (out_of_range_group_policy) {
+    حالة XKB_LAYOUT_OUT_OF_RANGE_REDIRECT:
+        إذا (out_of_range_group_العدد >= رقم_groups)
+            إرجاع 0;
+        إرجاع out_of_range_group_العدد;
 
-    case XKB_LAYOUT_OUT_OF_RANGE_CLAMP:
-        if (group < 0)
-            return 0;
-        else
-            return num_groups - 1;
+    حالة XKB_LAYOUT_OUT_OF_RANGE_CLAMP:
+        إذا (group < 0)
+            إرجاع 0;
+        وإلا
+            إرجاع رقم_groups - 1;
 
-    case XKB_LAYOUT_OUT_OF_RANGE_WRAP:
-    default: {
+    حالة XKB_LAYOUT_OUT_OF_RANGE_WRAP:
+    افتراضي: {
         /*
          * Ensure conversion xkb_layout_index_t → int32_t is lossless.
          *
@@ -245,45 +245,45 @@ XkbWrapGroupIntoRange(int32_t group,
          * positive. So if the remainder is negative, we must add `num_groups`
          * to get the modulus.
          */
-        const int32_t rem = group % (int32_t) num_groups;
-        return (rem >= 0)
+        ثابت int32_t rem = group % (int32_t) رقم_groups;
+        إرجاع (rem >= 0)
             ? (xkb_layout_index_t)rem
-            : (xkb_layout_index_t)(rem + (int32_t)num_groups);
+            : (xkb_layout_index_t)(rem + (int32_t)رقم_groups);
     }
     }
 }
 
-xkb_action_count_t
-xkb_keymap_key_get_actions_by_level(const struct xkb_keymap *keymap,
-                                    const struct xkb_key *key,
+xkb_action_تعداد_t
+xkb_keymap_مفتاح_get_actions_by_level(ثابت بنية xkb_keymap *keymap,
+                                    ثابت بنية xkb_مفتاح *مفتاح,
                                     xkb_layout_index_t layout,
                                     xkb_level_index_t level,
-                                    const union xkb_action **actions)
+                                    ثابت اتحاد xkb_action **actions)
 {
-    if (!key)
-        goto err;
+    إذا (!مفتاح)
+        اذهب err;
 
-    layout = xkb_keymap_key_effective_layout(key, layout);
-    if (layout == XKB_LAYOUT_INVALID)
-        goto err;
+    layout = xkb_keymap_مفتاح_effective_layout(مفتاح, layout);
+    إذا (layout == XKB_LAYOUT_INVALID)
+        اذهب err;
 
-    if (level >= XkbKeyNumLevels(key, layout))
-        goto err;
+    إذا (level >= Xkb_مفتاح_رقم_Levels(مفتاح, layout))
+        اذهب err;
 
-    const xkb_action_count_t count =
-        key->groups[layout].levels[level].num_actions;
-    switch (count) {
-        case 0:
-            goto err;
-        case 1:
-            *actions = &key->groups[layout].levels[level].a.action;
-            break;
-        default:
-            *actions = key->groups[layout].levels[level].a.actions;
+    ثابت xkb_action_تعداد_t تعداد_2 =
+        مفتاح->groups[layout].levels[level].رقم_actions;
+    بدل (تعداد_2) {
+        حالة 0:
+            اذهب err;
+        حالة 1:
+            *actions = &مفتاح->groups[layout].levels[level].a.action;
+            اكسر;
+        افتراضي:
+            *actions = مفتاح->groups[layout].levels[level].a.actions;
     }
-    return count;
+    إرجاع تعداد_2;
 
 err:
-    *actions = NULL;
-    return 0;
+    *actions = عدم;
+    إرجاع 0;
 }

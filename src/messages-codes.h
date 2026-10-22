@@ -2,9 +2,9 @@
 //       Do not edit manually!
 #pragma once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <stdint.h>
+#ضمن <stdint.h>
 
 /*
  * Macro sorcery: PREPEND_MESSAGE_ID enables the log functions to format messages
@@ -29,7 +29,7 @@
 #define SECOND(...)              EXPAND(SECOND_EXPAND(__VA_ARGS__))
 
 #define MATCH0                   unused,WITHOUT_ID
-#define CHECK_ID(value)          SECOND(JOIN(MATCH, value), WITH_ID, unused)
+#define CHECK_ID(قيمة)          SECOND(JOIN(MATCH, قيمة), WITH_ID, unused)
 
 #define FORMAT_MESSAGE_WITHOUT_ID(id, fmt) fmt
 #define FORMAT_MESSAGE_WITH_ID(id, fmt)    "[XKB-%03d] " fmt, id
@@ -38,7 +38,7 @@
 /**
  * Set of verbosity levels
  */
-enum xkb_log_verbosity {
+تعداد xkb_log_verbosity {
     XKB_LOG_VERBOSITY_SILENT = -1,
     XKB_LOG_VERBOSITY_MINIMAL = 0,
     XKB_LOG_VERBOSITY_BRIEF = 1,
@@ -56,14 +56,14 @@ enum xkb_log_verbosity {
 /**
  * @name Codes of the log messages
  */
-enum xkb_message_code {
+تعداد xkb_message_code {
     _XKB_LOG_MESSAGE_MIN_CODE = 21,
     /** XKB section is deprecated */
     XKB_WARNING_DEPRECATED_SECTION = 21,
     /** Warn on malformed number literals */
-    XKB_ERROR_MALFORMED_NUMBER_LITERAL = 34,
+    XKB_ERROR_MALFORMED_العدد_LITERAL = 34,
     /** Conflicting “preserve” entries in a key type */
-    XKB_WARNING_CONFLICTING_KEY_TYPE_PRESERVE_ENTRIES = 43,
+    XKB_WARNING_CONFLICTING_مفتاح_TYPE_PRESERVE_ENTRIES = 43,
     /** The result of the operation is not mathematically correct */
     XKB_ERROR_INTEGER_OVERFLOW = 52,
     /** Unsupported modifier mask */
@@ -85,7 +85,7 @@ enum xkb_message_code {
     /** A buffer has an insufficient size */
     XKB_ERROR_INSUFFICIENT_BUFFER_SIZE = 134,
     /** Unsupported `xkb_keymap_key_iterator_flags` value */
-    XKB_ERROR_UNSUPPORTED_KEY_ITERATOR_FLAGS_ = 138,
+    XKB_ERROR_UNSUPPORTED_مفتاح_ITERATOR_FLAGS_2 = 138,
     /** The type of the statement is not allowed in the context */
     XKB_ERROR_WRONG_STATEMENT_TYPE = 150,
     /** The given path is invalid */
@@ -93,11 +93,11 @@ enum xkb_message_code {
     /** Geometry sections are not supported */
     XKB_WARNING_UNSUPPORTED_GEOMETRY_SECTION = 172,
     /** Warn if no key type can be inferred */
-    XKB_WARNING_CANNOT_INFER_KEY_TYPE = 183,
+    XKB_WARNING_CANNOT_INFER_مفتاح_TYPE = 183,
     /** Invalid escape sequence in a string */
     XKB_WARNING_INVALID_ESCAPE_SEQUENCE = 193,
     /** The result of a key type “preserve” entry must be a subset of its input modifiers. */
-    XKB_WARNING_ILLEGAL_KEY_TYPE_PRESERVE_RESULT = 195,
+    XKB_WARNING_ILLEGAL_مفتاح_TYPE_PRESERVE_RESULT = 195,
     /** Syntax error in the include statement */
     XKB_ERROR_INVALID_INCLUDE_STATEMENT = 203,
     /** A modmap entry is invalid */
@@ -109,17 +109,17 @@ enum xkb_message_code {
     /** Layout index is not supported */
     XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_ = 237,
     /** The name of a key type level is defined multiple times. */
-    XKB_WARNING_CONFLICTING_KEY_TYPE_LEVEL_NAMES = 239,
+    XKB_WARNING_CONFLICTING_مفتاح_TYPE_LEVEL_NAMES = 239,
     /** Invalid statement setting default values */
     XKB_ERROR_INVALID_SET_DEFAULT_STATEMENT = 254,
     /** Conflicting “map” entries in type definition */
-    XKB_WARNING_CONFLICTING_KEY_TYPE_MAP_ENTRY = 266,
+    XKB_WARNING_CONFLICTING_مفتاح_TYPE_MAP_ENTRY = 266,
     /** Unsupported keymap format */
     XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_ = 277,
     /** Unrecognized RMLVO value ignored */
-    XKB_ERROR_UNRECOGNIZED_RMLVO_VALUE = 282,
+    XKB_ERROR_UNRECOGNIZED_RMLVO_قيمة = 282,
     /** Warn if using an undefined key type */
-    XKB_WARNING_UNDEFINED_KEY_TYPE = 286,
+    XKB_WARNING_UNDEFINED_مفتاح_TYPE = 286,
     /** A keysym has been deprecated: consider using an alternative keysym */
     XKB_WARNING_DEPRECATED_KEYSYM = 301,
     /** A keysym name has been deprecated: use the corresponding canonical name instead */
@@ -137,7 +137,7 @@ enum xkb_message_code {
     /** Use of a legacy X11 action that is not supported */
     XKB_WARNING_UNSUPPORTED_LEGACY_ACTION = 362,
     /** Layout count limit exceeded for the corresponding keymap format */
-    XKB_ERROR_LAYOUT_COUNT_LIMIT_EXCEEDED_ = 366,
+    XKB_ERROR_LAYOUT_تعداد_LIMIT_EXCEEDED_2 = 366,
     /** Unsupported `xkb_a11y_flags` value */
     XKB_ERROR_UNSUPPORTED_A11Y_FLAGS_ = 371,
     /** An entry is duplicated and will be ignored */
@@ -147,7 +147,7 @@ enum xkb_message_code {
     /** A `xkb_state` object has an unexpected `xkb_state_mode` */
     XKB_ERROR_UNEXPECTED_STATE_MODE_ = 399,
     /** Conflicting definitions of a key type */
-    XKB_WARNING_CONFLICTING_KEY_TYPE_DEFINITIONS = 407,
+    XKB_WARNING_CONFLICTING_مفتاح_TYPE_DEFINITIONS = 407,
     /** A global defaults statement is in a wrong scope and should be moved */
     XKB_ERROR_GLOBAL_DEFAULTS_WRONG_SCOPE = 428,
     /** Missing default section in included file */
@@ -157,7 +157,7 @@ enum xkb_message_code {
     /** Invalid real modifier mask in modifier map definition */
     XKB_ERROR_INVALID_MODIFIER_MAP_MASK = 453,
     /** Warn if there are conflicting keysyms while merging keys */
-    XKB_WARNING_CONFLICTING_KEY_SYMBOL = 461,
+    XKB_WARNING_CONFLICTING_مفتاح_رمز = 461,
     /** The operation is invalid in the context */
     XKB_ERROR_INVALID_OPERATION = 478,
     /** Warn on numeric keysym (other than 0-9) */
@@ -165,7 +165,7 @@ enum xkb_message_code {
     /** TODO: add description */
     XKB_WARNING_EXTRA_SYMBOLS_IGNORED = 516,
     /** Conflicting definitions of a key name or alias */
-    XKB_WARNING_CONFLICTING_KEY_NAME = 523,
+    XKB_WARNING_CONFLICTING_مفتاح_NAME = 523,
     /** Invalid keycode */
     XKB_ERROR_INVALID_KEYCODE_ = 538,
     /** Invalid file encoding */
@@ -199,7 +199,7 @@ enum xkb_message_code {
     /** The Compose file syntax is invalid and the entry cannot be parsed */
     XKB_ERROR_INVALID_COMPOSE_SYNTAX = 685,
     /** A level has a different number of keysyms and actions */
-    XKB_ERROR_INCOMPATIBLE_ACTIONS_AND_KEYSYMS_COUNT = 693,
+    XKB_ERROR_INCOMPATIBLE_ACTIONS_AND_KEYSYMS_تعداد = 693,
     /** Warn if a key defines multiple groups at once */
     XKB_WARNING_MULTIPLE_GROUPS_AT_ONCE = 700,
     /** A legacy X11 symbol field is not supported */
@@ -217,7 +217,7 @@ enum xkb_message_code {
     /** An expression has not the expected type */
     XKB_ERROR_INVALID_EXPRESSION_TYPE = 784,
     /** A value is invalid and will be ignored */
-    XKB_ERROR_INVALID_VALUE = 796,
+    XKB_ERROR_INVALID_قيمة = 796,
     /** Warn if there are conflicting modmap definitions */
     XKB_WARNING_CONFLICTING_MODMAP = 800,
     /** A field is unknown and will be ignored */
@@ -231,13 +231,13 @@ enum xkb_message_code {
     /** ABI forward-compatibility check failed */
     XKB_ERROR_ABI_FORWARD_COMPAT_ = 876,
     /** Warn if there are conflicting actions while merging keys */
-    XKB_WARNING_CONFLICTING_KEY_ACTION = 883,
+    XKB_WARNING_CONFLICTING_مفتاح_ACTION = 883,
     /** Warn if there are conflicting key types while merging groups */
-    XKB_WARNING_CONFLICTING_KEY_TYPE_MERGING_GROUPS = 893,
+    XKB_WARNING_CONFLICTING_مفتاح_TYPE_MERGING_GROUPS = 893,
     /** Unsupported `xkb_machine_builder_flags` value */
     XKB_ERROR_UNSUPPORTED_MACHINE_BUILDER_FLAGS_ = 899,
     /** Conflicting symbols entry for a key */
-    XKB_ERROR_CONFLICTING_KEY_SYMBOLS_ENTRY = 901,
+    XKB_ERROR_CONFLICTING_مفتاح_SYMBOLS_ENTRY = 901,
     /** Missing group index in a group name entry */
     XKB_WARNING_MISSING_SYMBOLS_GROUP_NAME_INDEX = 903,
     /** ABI backward-compatibility check failed */
@@ -245,14 +245,14 @@ enum xkb_message_code {
     /** Invalid section flag */
     XKB_ERROR_UNKNOWN_SECTION_FLAG = 917,
     /** Warn if there are conflicting fields in the key definition or while merging keys */
-    XKB_WARNING_CONFLICTING_KEY_FIELDS = 935,
+    XKB_WARNING_CONFLICTING_مفتاح_FIELDS = 935,
     /** An identifier is used but is not built-in */
     XKB_ERROR_INVALID_IDENTIFIER = 949,
     /** Warn if using a symbol not defined in the keymap */
-    XKB_WARNING_UNRESOLVED_KEYMAP_SYMBOL = 965,
+    XKB_WARNING_UNRESOLVED_KEYMAP_رمز = 965,
     /** The rules syntax is invalid and the file cannot be parsed */
     XKB_ERROR_INVALID_RULES_SYNTAX = 967,
     /** Some modifiers used in a key type “map” or “preserve” entry are not declared */
-    XKB_WARNING_UNDECLARED_MODIFIERS_IN_KEY_TYPE = 971,
+    XKB_WARNING_UNDECLARED_MODIFIERS_IN_مفتاح_TYPE = 971,
     _XKB_LOG_MESSAGE_MAX_CODE = 971
 };
