@@ -2,50 +2,50 @@
  * Copyright (C) 2011 Joseph Adams <joeyadams3.14159@gmail.com>
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#ہدایت once
 
-#include "config.h"
+#شامل "config.h"
 
 /* Originally taken from: https://ccodearchive.net/info/darray.html
  * But modified for xkbcommon. */
 
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
-#include <limits.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <assert.h>
+#شامل <limits.h>
 
-#include "utils.h"
+#شامل "utils.h"
 
-typedef unsigned int darray_size_t;
-#define DARRAY_SIZE_T_WIDTH (sizeof(darray_size_t) * CHAR_BIT)
-#define DARRAY_SIZE_MAX UINT_MAX
+قسمتعریف غیرعلامتی صحیح darray_سائز_t;
+#تعریف_کرو DARRAY_سائز_T_چوڑائی (حجم(darray_سائز_t) * CHAR_BIT)
+#تعریف_کرو DARRAY_سائز_MAX UINT_MAX
 
-#define darray(type) struct {         \
+#تعریف_کرو darray(type) ساخت {         \
     /** Current size */               \
-    darray_size_t size;               \
+    darray_سائز_t سائز;               \
     /** Count of allocated items */   \
-    darray_size_t alloc;              \
+    darray_سائز_t alloc;              \
     /** Array of items */             \
-    type *item ATTR_COUNTED_BY(size); \
+    type *شے ATTR_COUNTED_BY(سائز); \
 }
 
-#define darray_new() { 0, 0, 0 }
+#تعریف_کرو darray_new() { 0, 0, 0 }
 
-#define darray_init(arr) do { \
-    (arr).item = 0; (arr).size = 0; (arr).alloc = 0; \
-} while (0)
+#تعریف_کرو darray_init(arr) کرو { \
+    (arr).شے = 0; (arr).سائز = 0; (arr).alloc = 0; \
+} جب (0)
 
-#define darray_free(arr) do { \
-    free((arr).item); \
+#تعریف_کرو darray_free(arr) کرو { \
+    آزاد((arr).شے); \
     darray_init(arr); \
-} while (0)
+} جب (0)
 
-#define darray_steal(arr, to, to_size) do { \
-    *(to) = (arr).item; \
-    if (to_size) \
-        *(darray_size_t *) (to_size) = (arr).size; \
+#تعریف_کرو darray_steal(arr, مقصد, مقصد_سائز) کرو { \
+    *(مقصد) = (arr).شے; \
+    اگر (مقصد_سائز) \
+        *(darray_سائز_t *) (مقصد_سائز) = (arr).سائز; \
     darray_init(arr); \
-} while (0)
+} جب (0)
 
 /*
  * Typedefs for darrays of common types.  These are useful
@@ -64,204 +64,204 @@ typedef unsigned int darray_size_t;
  *     foo(&arr);
  */
 
-typedef darray (char)           darray_char;
-typedef darray (signed char)    darray_schar;
-typedef darray (unsigned char)  darray_uchar;
+قسمتعریف darray (حرف)           darray_char;
+قسمتعریف darray (علامتی حرف)    darray_schar;
+قسمتعریف darray (غیرعلامتی حرف)  darray_uchar;
 
-typedef darray (char *)         darray_string;
+قسمتعریف darray (حرف *)         darray_string;
 
-typedef darray (short)          darray_short;
-typedef darray (int)            darray_int;
-typedef darray (long)           darray_long;
+قسمتعریف darray (مختصر)          darray_short;
+قسمتعریف darray (صحیح)            darray_int;
+قسمتعریف darray (طویل)           darray_long;
 
-typedef darray (unsigned short) darray_ushort;
-typedef darray (unsigned int)   darray_uint;
-typedef darray (unsigned long)  darray_ulong;
+قسمتعریف darray (غیرعلامتی مختصر) darray_ushort;
+قسمتعریف darray (غیرعلامتی صحیح)   darray_uint;
+قسمتعریف darray (غیرعلامتی طویل)  darray_ulong;
 
 /*** Access ***/
 
-#define darray_item(arr, i)     ((arr).item[i])
-#define darray_items(arr)       ((arr).item)
-#define darray_size(arr)        ((arr).size)
-#define darray_empty(arr)       ((arr).size == 0)
+#تعریف_کرو darray_شے(arr, i)     ((arr).شے[i])
+#تعریف_کرو darray_اشیاء(arr)       ((arr).شے)
+#تعریف_کرو darray_سائز(arr)        ((arr).سائز)
+#تعریف_کرو darray_خالی_خانے(arr)       ((arr).سائز == 0)
 
-#define darray_last(arr, fallback) ( \
-    !(arr).size \
+#تعریف_کرو darray_آخری(arr, fallback) ( \
+    !(arr).سائز \
         ? (fallback) \
-        : (arr).item[(arr).size - 1] \
+        : (arr).شے[(arr).سائز - 1] \
 )
 
 /*** Insertion (single item) ***/
 
-#define darray_append(arr, ...)  do { \
-    darray_resize(arr, (arr).size + 1); \
-    (arr).item[(arr).size - 1] = (__VA_ARGS__); \
-} while (0)
+#تعریف_کرو darray_append(arr, ...)  کرو { \
+    darray_resize(arr, (arr).سائز + 1); \
+    (arr).شے[(arr).سائز - 1] = (__VA_ARGS__); \
+} جب (0)
 
-#define darray_insert(arr, i, ...) do { \
-    darray_size_t __index = (i); \
-    darray_resize(arr, (arr).size+1); \
+#تعریف_کرو darray_داخل_کرو(arr, i, ...) کرو { \
+    darray_سائز_t __index = (i); \
+    darray_resize(arr, (arr).سائز+1); \
     memmove( \
-        (arr).item + __index + 1, \
-        (arr).item + __index, \
-        ((arr).size - __index - 1) * sizeof(*(arr).item) \
+        (arr).شے + __index + 1, \
+        (arr).شے + __index, \
+        ((arr).سائز - __index - 1) * حجم(*(arr).شے) \
     ); \
-    (arr).item[__index] = (__VA_ARGS__); \
-} while(0)
+    (arr).شے[__index] = (__VA_ARGS__); \
+} جب(0)
 
 /*** Insertion (multiple items) ***/
 
-#define darray_append_items(arr, items, count) do { \
-    darray_size_t __count = (count), __oldSize = (arr).size; \
+#تعریف_کرو darray_append_اشیاء(arr, اشیاء, گنتی) کرو { \
+    darray_سائز_t __count = (گنتی), __oldSize = (arr).سائز; \
     darray_resize(arr, __oldSize + __count); \
-    memcpy((arr).item + __oldSize, items, __count * sizeof(*(arr).item)); \
-} while (0)
+    حافظہ_نقل((arr).شے + __oldSize, اشیاء, __count * حجم(*(arr).شے)); \
+} جب (0)
 
-#define darray_from_items(arr, items, count) do { \
-    darray_size_t __count = (count); \
+#تعریف_کرو darray_from_اشیاء(arr, اشیاء, گنتی) کرو { \
+    darray_سائز_t __count = (گنتی); \
     darray_resize(arr, __count); \
-    if (__count != 0) \
-        memcpy((arr).item, items, __count * sizeof(*(arr).item)); \
-} while (0)
+    اگر (__count != 0) \
+        حافظہ_نقل((arr).شے, اشیاء, __count * حجم(*(arr).شے)); \
+} جب (0)
 
-#define darray_copy(arr_to, arr_from) \
-    darray_from_items((arr_to), (arr_from).item, (arr_from).size)
+#تعریف_کرو darray_copy(arr_مقصد, arr_from) \
+    darray_from_اشیاء((arr_مقصد), (arr_from).شے, (arr_from).سائز)
 
-#define darray_concat(arr_to, arr_from) do { \
-    if ((arr_from).size > 0) \
-        darray_append_items((arr_to), (arr_from).item, (arr_from).size); \
-} while (0)
+#تعریف_کرو darray_concat(arr_مقصد, arr_from) کرو { \
+    اگر ((arr_from).سائز > 0) \
+        darray_append_اشیاء((arr_مقصد), (arr_from).شے, (arr_from).سائز); \
+} جب (0)
 
 /*** Removal ***/
 
 /* Warning: Do not call darray_remove_last on an empty darray. */
-#define darray_remove_last(arr) (--(arr).size)
+#تعریف_کرو darray_remove_آخری(arr) (--(arr).سائز)
 
 /* Warning, slow: Requires copying all elements after removed item. */
-#define darray_remove(arr, i) do { \
-    darray_size_t __index = (i); \
-    if (__index < (arr).size-1) \
+#تعریف_کرو darray_remove(arr, i) کرو { \
+    darray_سائز_t __index = (i); \
+    اگر (__index < (arr).سائز-1) \
         memmove( \
-            &(arr).item[__index], \
-            &(arr).item[__index + 1], \
-            ((arr).size -1 - __index) * sizeof(*(arr).item) \
+            &(arr).شے[__index], \
+            &(arr).شے[__index + 1], \
+            ((arr).سائز -1 - __index) * حجم(*(arr).شے) \
         ); \
-    (arr).size--; \
-} while(0)
+    (arr).سائز--; \
+} جب(0)
 
 /*** String buffer ***/
 
-#define darray_append_string(arr, str) do { \
-    const char *__str = (str); \
-    darray_append_items(arr, __str, (darray_size_t) strlen(__str) + 1); \
-    (arr).size--; \
-} while (0)
+#تعریف_کرو darray_append_string(arr, str) کرو { \
+    ثابت حرف *__str = (str); \
+    darray_append_اشیاء(arr, __str, (darray_سائز_t) لڑی_لمبائی(__str) + 1); \
+    (arr).سائز--; \
+} جب (0)
 
 /* Same as `darray_append_string` but do count the final '\0' in the size */
-#define darray_append_string0(arr, string) \
-    darray_append_items((arr), (string), (darray_size_t)strlen(string) + 1)
+#تعریف_کرو darray_append_string0(arr, string) \
+    darray_append_اشیاء((arr), (string), (darray_سائز_t)لڑی_لمبائی(string) + 1)
 
-#define darray_append_lit(arr, stringLiteral) do { \
-    darray_append_items(arr, stringLiteral, \
-                        (darray_size_t) sizeof(stringLiteral)); \
-    (arr).size--; \
-} while (0)
+#تعریف_کرو darray_append_lit(arr, stringLiteral) کرو { \
+    darray_append_اشیاء(arr, stringLiteral, \
+                        (darray_سائز_t) حجم(stringLiteral)); \
+    (arr).سائز--; \
+} جب (0)
 
-#define darray_appends_nullterminate(arr, items, count) do { \
-    darray_size_t __count = (count), __oldSize = (arr).size; \
+#تعریف_کرو darray_appends_nullterminate(arr, اشیاء, گنتی) کرو { \
+    darray_سائز_t __count = (گنتی), __oldSize = (arr).سائز; \
     darray_resize(arr, __oldSize + __count + 1); \
-    memcpy((arr).item + __oldSize, items, __count * sizeof(*(arr).item)); \
-    (arr).item[(arr).size - 1] = 0; \
-    (arr).size--; \
-} while (0)
+    حافظہ_نقل((arr).شے + __oldSize, اشیاء, __count * حجم(*(arr).شے)); \
+    (arr).شے[(arr).سائز - 1] = 0; \
+    (arr).سائز--; \
+} جب (0)
 
-#define darray_prepends_nullterminate(arr, items, count) do { \
-    darray_size_t __count = (count), __oldSize = (arr).size; \
+#تعریف_کرو darray_prepends_nullterminate(arr, اشیاء, گنتی) کرو { \
+    darray_سائز_t __count = (گنتی), __oldSize = (arr).سائز; \
     darray_resize(arr, __count + __oldSize + 1); \
-    memmove((arr).item + __count, (arr).item, \
-            __oldSize * sizeof(*(arr).item)); \
-    memcpy((arr).item, items, __count * sizeof(*(arr).item)); \
-    (arr).item[(arr).size - 1] = 0; \
-    (arr).size--; \
-} while (0)
+    memmove((arr).شے + __count, (arr).شے, \
+            __oldSize * حجم(*(arr).شے)); \
+    حافظہ_نقل((arr).شے, اشیاء, __count * حجم(*(arr).شے)); \
+    (arr).شے[(arr).سائز - 1] = 0; \
+    (arr).سائز--; \
+} جب (0)
 
 /*** Size management ***/
 
-#define darray_resize(arr, newSize) \
-    darray_growalloc(arr, (arr).size = (newSize))
+#تعریف_کرو darray_resize(arr, new_سائز) \
+    darray_growalloc(arr, (arr).سائز = (new_سائز))
 
-#define darray_resize0(arr, newSize) do { \
-    darray_size_t __oldSize = (arr).size, __newSize = (newSize); \
-    (arr).size = __newSize; \
-    if (__newSize > __oldSize) { \
+#تعریف_کرو darray_resize0(arr, new_سائز) کرو { \
+    darray_سائز_t __oldSize = (arr).سائز, __newSize = (new_سائز); \
+    (arr).سائز = __newSize; \
+    اگر (__newSize > __oldSize) { \
         darray_growalloc(arr, __newSize); \
-        memset(&(arr).item[__oldSize], 0, \
-               (__newSize - __oldSize) * sizeof(*(arr).item)); \
+        memset(&(arr).شے[__oldSize], 0, \
+               (__newSize - __oldSize) * حجم(*(arr).شے)); \
     } \
-} while (0)
+} جب (0)
 
-#define darray_realloc(arr, newAlloc) do { \
-    (arr).item = realloc((arr).item, \
-                         ((arr).alloc = (newAlloc)) * sizeof(*(arr).item)); \
-} while (0)
+#تعریف_کرو darray_realloc(arr, newAlloc) کرو { \
+    (arr).شے = realloc((arr).شے, \
+                         ((arr).alloc = (newAlloc)) * حجم(*(arr).شے)); \
+} جب (0)
 
-#define darray_growalloc(arr, need)   do { \
-    darray_size_t __need = (need); \
-    if (__need > (arr).alloc) \
-        darray_realloc(arr, darray_next_alloc((arr).alloc, __need, \
-                                              sizeof(*(arr).item))); \
-} while (0)
+#تعریف_کرو darray_growalloc(arr, need)   کرو { \
+    darray_سائز_t __need = (need); \
+    اگر (__need > (arr).alloc) \
+        darray_realloc(arr, darray_اگلا_alloc((arr).alloc, __need, \
+                                              حجم(*(arr).شے))); \
+} جب (0)
 
-#define darray_shrink(arr) do { \
-    if ((arr).size > 0) \
-        (arr).item = realloc((arr).item, \
-                             ((arr).alloc = (arr).size) * sizeof(*(arr).item)); \
-} while (0)
+#تعریف_کرو darray_shrink(arr) کرو { \
+    اگر ((arr).سائز > 0) \
+        (arr).شے = realloc((arr).شے, \
+                             ((arr).alloc = (arr).سائز) * حجم(*(arr).شے)); \
+} جب (0)
 
-#define darray_max_alloc(itemSize) (UINT_MAX / (itemSize))
+#تعریف_کرو darray_max_alloc(شے_سائز) (UINT_MAX / (شے_سائز))
 
-static inline darray_size_t
-darray_next_alloc(darray_size_t alloc, darray_size_t need, size_t itemSize)
+ساکن اندرونی darray_سائز_t
+darray_اگلا_alloc(darray_سائز_t alloc, darray_سائز_t need, سائز_t شے_سائز)
 {
-    assert(need < darray_max_alloc(itemSize) / 2); /* Overflow. */
-    if (alloc == 0)
+    أكد(need < darray_max_alloc(شے_سائز) / 2); /* Overflow. */
+    اگر (alloc == 0)
         alloc = 4;
-    while (alloc < need)
+    جب (alloc < need)
         alloc *= 2;
-    return alloc;
+    واپس alloc;
 }
 
 /*** Traversal ***/
 
-#define darray_foreach(i, arr) \
-    if ((arr).item) \
-    for ((i) = &(arr).item[0]; (i) < &(arr).item[(arr).size]; (i)++)
+#تعریف_کرو darray_foreach(i, arr) \
+    اگر ((arr).شے) \
+    برائے ((i) = &(arr).شے[0]; (i) < &(arr).شے[(arr).سائز]; (i)++)
 
-#define darray_foreach_from(i, arr, from) \
-    if ((arr).item) \
-    for ((i) = &(arr).item[from]; (i) < &(arr).item[(arr).size]; (i)++)
+#تعریف_کرو darray_foreach_from(i, arr, from) \
+    اگر ((arr).شے) \
+    برائے ((i) = &(arr).شے[from]; (i) < &(arr).شے[(arr).سائز]; (i)++)
 
 /* Iterate on index and value at the same time, like Python's enumerate. */
-#define darray_enumerate(idx, val, arr) \
-    if ((arr).item) \
-    for ((idx) = 0, (val) = &(arr).item[0]; \
-         (idx) < (arr).size; \
+#تعریف_کرو darray_enumerate(idx, val, arr) \
+    اگر ((arr).شے) \
+    برائے ((idx) = 0, (val) = &(arr).شے[0]; \
+         (idx) < (arr).سائز; \
          (idx)++, (val)++)
 
-#define darray_enumerate_from(idx, val, arr, from) \
-    if ((arr).item) \
-    for ((idx) = (from), (val) = &(arr).item[from]; \
-         (idx) < (arr).size; \
+#تعریف_کرو darray_enumerate_from(idx, val, arr, from) \
+    اگر ((arr).شے) \
+    برائے ((idx) = (from), (val) = &(arr).شے[from]; \
+         (idx) < (arr).سائز; \
          (idx)++, (val)++)
 
-#define darray_foreach_reverse(i, arr) \
-    if ((arr).item && (arr).size) \
-    for ((i) = &(arr).item[(arr).size - 1]; \
-         (i) >= &(arr).item[0]; \
+#تعریف_کرو darray_foreach_الٹ(i, arr) \
+    اگر ((arr).شے && (arr).سائز) \
+    برائے ((i) = &(arr).شے[(arr).سائز - 1]; \
+         (i) >= &(arr).شے[0]; \
          (i)--)
 
-#define darray_enumerate_reverse(idx, val, arr) \
-    if ((arr).item && (arr).size) \
-    for ((idx) = (arr).size - 1, (val) = &(arr).item[(arr).size - 1]; \
-         (val) >= &(arr).item[0]; \
+#تعریف_کرو darray_enumerate_الٹ(idx, val, arr) \
+    اگر ((arr).شے && (arr).سائز) \
+    برائے ((idx) = (arr).سائز - 1, (val) = &(arr).شے[(arr).سائز - 1]; \
+         (val) >= &(arr).شے[0]; \
          (idx)--, (val)--)

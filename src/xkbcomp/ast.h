@@ -7,16 +7,16 @@
  *
  * SPDX-License-Identifier: HPND AND MIT
  */
-#pragma once
+#ہدایت once
 
-#include "config.h"
+#شامل "config.h"
 
-#include "xkbcommon/xkbcommon.h"
+#شامل "xkbcommon/xkbcommon.h"
 
-#include "atom.h"
-#include "darray.h"
+#شامل "atom.h"
+#شامل "darray.h"
 
-enum xkb_file_type {
+شمار xkb_file_type {
     /* Component files, by order of compilation. */
     FILE_TYPE_KEYCODES = 0,
     FILE_TYPE_TYPES = 1,
@@ -24,8 +24,8 @@ enum xkb_file_type {
     FILE_TYPE_SYMBOLS = 3,
 
     /* File types which must be found in a keymap file. */
-    FIRST_KEYMAP_FILE_TYPE = FILE_TYPE_KEYCODES,
-    LAST_KEYMAP_FILE_TYPE = FILE_TYPE_SYMBOLS,
+    پہلا_KEYMAP_FILE_TYPE = FILE_TYPE_KEYCODES,
+    آخری_KEYMAP_FILE_TYPE = FILE_TYPE_SYMBOLS,
 
     /* Geometry is not compiled any more. */
     FILE_TYPE_GEOMETRY = 4,
@@ -35,275 +35,275 @@ enum xkb_file_type {
 
 
     /* This one doesn't mix with the others, but useful here as well. */
-    FILE_TYPE_RULES,
+    FILE_TYPE_قواعد,
 
-    _FILE_TYPE_NUM_ENTRIES,
-    FILE_TYPE_INVALID = _FILE_TYPE_NUM_ENTRIES
+    FILE_TYPE_عدد_ENTRIES,
+    FILE_TYPE_INVALID = FILE_TYPE_عدد_ENTRIES
 };
 
-enum stmt_type {
+شمار stmt_type {
     STMT_UNKNOWN = 0,
     STMT_INCLUDE,
     STMT_KEYCODE,
     STMT_ALIAS,
-    STMT_EXPR_STRING_LITERAL,
-    STMT_EXPR_INTEGER_LITERAL,
-    STMT_EXPR_FLOAT_LITERAL,
-    STMT_EXPR_BOOLEAN_LITERAL,
-    STMT_EXPR_KEYNAME_LITERAL,
-    STMT_EXPR_KEYSYM_LITERAL,
-    STMT_EXPR_IDENT,
-    STMT_EXPR_ACTION_DECL,
-    STMT_EXPR_FIELD_REF,
-    STMT_EXPR_ARRAY_REF,
+    STMT_اظہاریہ_STRING_LITERAL,
+    STMT_اظہاریہ_INTEGER_LITERAL,
+    STMT_اظہاریہ_FLOAT_LITERAL,
+    STMT_اظہاریہ_BOOLEAN_LITERAL,
+    STMT_اظہاریہ_KEYNAME_LITERAL,
+    STMT_اظہاریہ_KEYSYM_LITERAL,
+    STMT_اظہاریہ_IDENT,
+    STMT_اظہاریہ_ACTION_DECL,
+    STMT_اظہاریہ_میدان_REF,
+    STMT_اظہاریہ_ARRAY_REF,
     /* Needed because of the ambiguity between keysym and action empty lists */
-    STMT_EXPR_EMPTY_LIST,
-    STMT_EXPR_KEYSYM_LIST,
-    STMT_EXPR_ACTION_LIST,
-    STMT_EXPR_ADD,
-    STMT_EXPR_SUBTRACT,
-    STMT_EXPR_MULTIPLY,
-    STMT_EXPR_DIVIDE,
-    STMT_EXPR_ASSIGN,
-    STMT_EXPR_NOT,
-    STMT_EXPR_NEGATE,
-    STMT_EXPR_INVERT,
-    STMT_EXPR_UNARY_PLUS,
+    STMT_اظہاریہ_خالی_خانے_LIST,
+    STMT_اظہاریہ_KEYSYM_LIST,
+    STMT_اظہاریہ_ACTION_LIST,
+    STMT_اظہاریہ_جوڑو,
+    STMT_اظہاریہ_تفریق,
+    STMT_اظہاریہ_MULTIPLY,
+    STMT_اظہاریہ_DIVIDE,
+    STMT_اظہاریہ_تفویض,
+    STMT_اظہاریہ_NOT,
+    STMT_اظہاریہ_NEGATE,
+    STMT_اظہاریہ_INVERT,
+    STMT_اظہاریہ_UNARY_PLUS,
     STMT_VAR,
     STMT_TYPE,
     STMT_INTERP,
     STMT_VMOD,
     STMT_SYMBOLS,
     STMT_MODMAP,
-    STMT_GROUP_COMPAT,
+    STMT_گروہ_COMPAT,
     STMT_LED_MAP,
     STMT_LED_NAME,
     STMT_UNKNOWN_DECLARATION,
     STMT_UNKNOWN_COMPOUND,
 
-    _STMT_NUM_VALUES
+    STMT_عدد_اقدار
 };
 
-enum merge_mode {
-    MERGE_DEFAULT,
-    MERGE_AUGMENT,
-    MERGE_OVERRIDE,
-    MERGE_REPLACE,
-    _MERGE_MODE_NUM_ENTRIES,
+شمار ملاؤ_منوال {
+    ملاؤ_DEFAULT,
+    ملاؤ_AUGMENT,
+    ملاؤ_OVERRIDE,
+    ملاؤ_REPLACE,
+    ملاؤ_منوال_عدد_ENTRIES,
 };
-enum { MERGE_MODE_MIN_WIDTH = 3 /* 2 bits + sign */ };
-static_assert(_MERGE_MODE_NUM_ENTRIES - 1 <= (1 << (MERGE_MODE_MIN_WIDTH - 1)) - 1,
+شمار { ملاؤ_منوال_MIN_چوڑائی = 3 /* 2 bits + sign */ };
+static_assert(ملاؤ_منوال_عدد_ENTRIES - 1 <= (1 << (ملاؤ_منوال_MIN_چوڑائی - 1)) - 1,
               "Cannot encode merge mode");
 
-const char *
-xkb_file_type_to_string(enum xkb_file_type type);
+ثابت حرف *
+xkb_file_type_مقصد_string(شمار xkb_file_type type);
 
-const char *
-stmt_type_to_string(enum stmt_type type);
+ثابت حرف *
+stmt_type_مقصد_string(شمار stmt_type type);
 
-char
-stmt_type_to_operator_char(enum stmt_type type);
+حرف
+stmt_type_مقصد_operator_char(شمار stmt_type type);
 
-typedef struct _ParseCommon  {
-    struct _ParseCommon *next;
-    enum stmt_type type;
+قسمتعریف ساخت _ParseCommon  {
+    ساخت _ParseCommon *اگلا;
+    شمار stmt_type type;
 } ParseCommon;
 
-typedef struct _IncludeStmt {
+قسمتعریف ساخت _IncludeStmt {
     ParseCommon common;
-    enum merge_mode merge;
-    char *stmt;
-    char *file;
-    char *map;
-    char *modifier;
-    struct _IncludeStmt *next_incl;
+    شمار ملاؤ_منوال ملاؤ;
+    حرف *stmt;
+    حرف *file;
+    حرف *map;
+    حرف *modifier;
+    ساخت _IncludeStmt *اگلا_incl;
 } IncludeStmt;
 
-typedef union ExprDef ExprDef;
+قسمتعریف اتحاد اظہاریہ_Def اظہاریہ_Def;
 
-typedef struct {
+قسمتعریف ساخت {
     ParseCommon common;
     xkb_atom_t ident;
-} ExprIdent;
+} اظہاریہ_Ident;
 
-typedef struct {
+قسمتعریف ساخت {
     ParseCommon common;
     xkb_atom_t str;
-} ExprString;
+} اظہاریہ_String;
 
-typedef struct {
+قسمتعریف ساخت {
     ParseCommon common;
-    bool set;
-} ExprBoolean;
+    bool سیٹ;
+} اظہاریہ_Boolean;
 
-typedef struct {
+قسمتعریف ساخت {
     ParseCommon common;
     int64_t ival;
-} ExprInteger;
+} اظہاریہ_Integer;
 
-typedef struct {
+قسمتعریف ساخت {
     ParseCommon common;
     /* We don't support floats, but we still represnt them in the AST, in
      * order to provide proper error messages. */
-} ExprFloat;
+} اظہاریہ_Float;
 
-typedef struct {
+قسمتعریف ساخت {
     ParseCommon common;
-    xkb_atom_t key_name;
-} ExprKeyName;
+    xkb_atom_t کلید_name;
+} اظہاریہ_کلید_Name;
 
-typedef struct {
+قسمتعریف ساخت {
     ParseCommon common;
     /* Keysyms are resolved early, so this might contain `NoSymbol` in case of
      * failure, to enable error recovery. */
     xkb_keysym_t keysym;
-} ExprKeySym;
+} اظہاریہ_کلید_Sym;
 
-typedef struct {
+قسمتعریف ساخت {
     ParseCommon common;
-    ExprDef *left;
-    ExprDef *right;
-} ExprBinary;
+    اظہاریہ_Def *بایاں;
+    اظہاریہ_Def *دایاں;
+} اظہاریہ_ثنائی;
 
-typedef struct {
+قسمتعریف ساخت {
     ParseCommon common;
-    ExprDef *child;
-} ExprUnary;
+    اظہاریہ_Def *بچہ;
+} اظہاریہ_Unary;
 
-typedef struct {
-    ParseCommon common;
-    xkb_atom_t element;
-    xkb_atom_t field;
-} ExprFieldRef;
-
-typedef struct {
+قسمتعریف ساخت {
     ParseCommon common;
     xkb_atom_t element;
-    xkb_atom_t field;
-    ExprDef *entry;
-} ExprArrayRef;
+    xkb_atom_t میدان_2;
+} اظہاریہ_میدان_Ref;
 
-typedef struct {
+قسمتعریف ساخت {
+    ParseCommon common;
+    xkb_atom_t element;
+    xkb_atom_t میدان_2;
+    اظہاریہ_Def *اندراج_2;
+} اظہاریہ_Array_Ref;
+
+قسمتعریف ساخت {
     ParseCommon common;
     xkb_atom_t name;
-    ExprDef *args;
-} ExprAction;
+    اظہاریہ_Def *دلائل;
+} اظہاریہ_Action;
 
-typedef struct {
+قسمتعریف ساخت {
     ParseCommon common;
     /* List of actions for a single level. */
-    ExprDef *actions;
-} ExprActionList;
+    اظہاریہ_Def *actions;
+} اظہاریہ_Action_List;
 
-typedef struct {
+قسمتعریف ساخت {
     ParseCommon common;
     /* List of keysym for a single level. */
     darray(xkb_keysym_t) syms;
-} ExprKeysymList;
+} اظہاریہ_Keysym_List;
 
-union ExprDef {
+اتحاد اظہاریہ_Def {
     ParseCommon common;
-    ExprIdent ident;
-    ExprString string;
-    ExprBoolean boolean;
-    ExprInteger integer;
-    ExprKeyName key_name;
-    ExprKeySym keysym;
-    ExprBinary binary;
-    ExprUnary unary;
-    ExprFieldRef field_ref;
-    ExprArrayRef array_ref;
-    ExprAction action;
-    ExprActionList actions;
-    ExprKeysymList keysym_list;
+    اظہاریہ_Ident ident;
+    اظہاریہ_String string;
+    اظہاریہ_Boolean boolean;
+    اظہاریہ_Integer integer;
+    اظہاریہ_کلید_Name کلید_name;
+    اظہاریہ_کلید_Sym keysym;
+    اظہاریہ_ثنائی ثنائی;
+    اظہاریہ_Unary unary;
+    اظہاریہ_میدان_Ref میدان_ref;
+    اظہاریہ_Array_Ref array_ref;
+    اظہاریہ_Action action;
+    اظہاریہ_Action_List actions;
+    اظہاریہ_Keysym_List keysym_list;
 };
 
-typedef struct {
+قسمتعریف ساخت {
     ParseCommon common;
-    enum merge_mode merge;
-    ExprDef *name;
-    ExprDef *value;
+    شمار ملاؤ_منوال ملاؤ;
+    اظہاریہ_Def *name;
+    اظہاریہ_Def *قدر;
 } VarDef;
 
-typedef struct {
+قسمتعریف ساخت {
     ParseCommon common;
-    enum merge_mode merge;
+    شمار ملاؤ_منوال ملاؤ;
     xkb_atom_t name;
-    ExprDef *value;
+    اظہاریہ_Def *قدر;
 } VModDef;
 
-typedef struct {
+قسمتعریف ساخت {
     ParseCommon common;
-    enum merge_mode merge;
+    شمار ملاؤ_منوال ملاؤ;
     xkb_atom_t name;
-    int64_t value;
+    int64_t قدر;
 } KeycodeDef;
 
-typedef struct {
+قسمتعریف ساخت {
     ParseCommon common;
-    enum merge_mode merge;
+    شمار ملاؤ_منوال ملاؤ;
     xkb_atom_t alias;
     xkb_atom_t real;
-} KeyAliasDef;
+} کلید_Alias_Def;
 
-typedef struct {
+قسمتعریف ساخت {
     ParseCommon common;
-    enum merge_mode merge;
+    شمار ملاؤ_منوال ملاؤ;
     xkb_atom_t name;
     VarDef *body;
-} KeyTypeDef;
+} کلید_Type_Def;
 
-typedef struct {
+قسمتعریف ساخت {
     ParseCommon common;
-    enum merge_mode merge;
-    xkb_atom_t keyName;
+    شمار ملاؤ_منوال ملاؤ;
+    xkb_atom_t کلید_Name;
     VarDef *symbols;
 } SymbolsDef;
 
-typedef struct {
+قسمتعریف ساخت {
     ParseCommon common;
-    enum merge_mode merge;
+    شمار ملاؤ_منوال ملاؤ;
     // NOTE: Can also be “None”, rather than a modifier name.
-    ExprDef *modifiers;
-    ExprDef *keys;
+    اظہاریہ_Def *modifiers;
+    اظہاریہ_Def *کلیدیں;
 } ModMapDef;
 
-typedef struct {
+قسمتعریف ساخت {
     ParseCommon common;
-    enum merge_mode merge;
-    int64_t group;
-    ExprDef *def;
-} GroupCompatDef;
+    شمار ملاؤ_منوال ملاؤ;
+    int64_t گروہ;
+    اظہاریہ_Def *def;
+} گروہ_Compat_Def;
 
-typedef struct {
+قسمتعریف ساخت {
     ParseCommon common;
-    enum merge_mode merge;
+    شمار ملاؤ_منوال ملاؤ;
     xkb_keysym_t sym;
-    ExprDef *match;
+    اظہاریہ_Def *مطابقت;
     VarDef *def;
 } InterpDef;
 
-typedef struct {
+قسمتعریف ساخت {
     ParseCommon common;
-    enum merge_mode merge;
-    bool virtual;
+    شمار ملاؤ_منوال ملاؤ;
+    bool مجازی;
     int64_t ndx;
-    ExprDef *name;
+    اظہاریہ_Def *name;
 } LedNameDef;
 
-typedef struct {
+قسمتعریف ساخت {
     ParseCommon common;
-    enum merge_mode merge;
+    شمار ملاؤ_منوال ملاؤ;
     xkb_atom_t name;
     VarDef *body;
 } LedMapDef;
 
-typedef struct {
+قسمتعریف ساخت {
     ParseCommon common;
-    char *name;
+    حرف *name;
 } UnknownStatement;
 
-enum xkb_map_flags {
+شمار xkb_map_flags {
     MAP_NO_FLAG = 0,
     MAP_IS_DEFAULT = (1 << 0),
     MAP_IS_PARTIAL = (1 << 1),
@@ -316,10 +316,10 @@ enum xkb_map_flags {
     MAP_IS_DEPRECATED = (1 << 8),
 };
 
-typedef struct {
+قسمتعریف ساخت {
     ParseCommon common;
-    char *name;
+    حرف *name;
     ParseCommon *defs;
-    enum xkb_file_type file_type;
-    enum xkb_map_flags flags;
+    شمار xkb_file_type file_type;
+    شمار xkb_map_flags flags;
 } XkbFile;

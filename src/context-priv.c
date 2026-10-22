@@ -6,205 +6,205 @@
  * Author: Daniel Stone <daniel@fooishbar.org>
  */
 
-#include "config.h"
+#شامل "config.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#شامل <sys/types.h>
+#شامل <sys/stat.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "atom.h"
-#include "darray.h"
-#include "context.h"
-#include "rmlvo.h"
-#include "utils.h"
+#شامل "xkbcommon/xkbcommon.h"
+#شامل "atom.h"
+#شامل "darray.h"
+#شامل "context.h"
+#شامل "rmlvo.h"
+#شامل "utils.h"
 
-char *
-xkb_context_getenv(struct xkb_context *ctx, const char *name)
+حرف *
+xkb_context_getenv(ساخت xkb_context *ctx, ثابت حرف *name)
 {
-    if (ctx->use_secure_getenv) {
-        return secure_getenv(name);
-    } else {
-        return getenv(name);
+    اگر (ctx->use_secure_getenv) {
+        واپس secure_getenv(name);
+    } ورنہ {
+        واپس getenv(name);
     }
 }
 
 bool
-xkb_context_init_includes(struct xkb_context *ctx)
+xkb_context_init_includes(ساخت xkb_context *ctx)
 {
-    if (ctx->pending_default_includes) {
-        if (darray_empty(ctx->failed_includes)) {
-            if (!xkb_context_include_path_append_default(ctx)) {
-                log_err(ctx, XKB_ERROR_NO_VALID_DEFAULT_INCLUDE_PATH,
+    اگر (ctx->pending_default_includes) {
+        اگر (darray_خالی_خانے(ctx->failed_includes)) {
+            اگر (!xkb_context_include_راستہ_append_default(ctx)) {
+                log_err(ctx, XKB_ERROR_NO_VALID_DEFAULT_INCLUDE_راستہ,
                         "Failed to add any default include path "
                         "(system path: %s)\n",
-                        xkb_context_include_path_get_system_path(ctx));
-                return false;
+                        xkb_context_include_راستہ_get_system_راستہ(ctx));
+                واپس false;
             }
             ctx->pending_default_includes = false;
-        } else {
+        } ورنہ {
             /*
              * If there are failed includes then we already tried to load
              * default include paths, so avoid further attempts.
              */
-            return false;
+            واپس false;
         }
     }
-    return true;
+    واپس true;
 }
 
-darray_size_t
-xkb_context_num_failed_include_paths(struct xkb_context *ctx)
+darray_سائز_t
+xkb_context_عدد_failed_include_paths(ساخت xkb_context *ctx)
 {
-    return (xkb_context_init_includes(ctx))
-        ? darray_size(ctx->failed_includes)
+    واپس (xkb_context_init_includes(ctx))
+        ? darray_سائز(ctx->failed_includes)
         : 0;
 }
 
-const char *
-xkb_context_failed_include_path_get(struct xkb_context *ctx,
-                                    darray_size_t idx)
+ثابت حرف *
+xkb_context_failed_include_راستہ_get(ساخت xkb_context *ctx,
+                                    darray_سائز_t idx)
 {
-    if (idx >= xkb_context_num_failed_include_paths(ctx))
-        return NULL;
+    اگر (idx >= xkb_context_عدد_failed_include_paths(ctx))
+        واپس تہی;
 
-    return darray_item(ctx->failed_includes, idx);
+    واپس darray_شے(ctx->failed_includes, idx);
 }
 
-darray_size_t
-xkb_atom_table_size(struct xkb_context *ctx)
+darray_سائز_t
+xkb_atom_جدول_سائز(ساخت xkb_context *ctx)
 {
-    return atom_table_size(ctx->atom_table);
-}
-
-xkb_atom_t
-xkb_atom_lookup(struct xkb_context *ctx, const char *string)
-{
-    return atom_intern(ctx->atom_table, string, strlen(string), false);
+    واپس atom_جدول_سائز(ctx->atom_جدول);
 }
 
 xkb_atom_t
-xkb_atom_intern(struct xkb_context *ctx, const char *string, size_t len)
+xkb_atom_lookup(ساخت xkb_context *ctx, ثابت حرف *string)
 {
-    return atom_intern(ctx->atom_table, string, len, true);
+    واپس atom_intern(ctx->atom_جدول, string, لڑی_لمبائی(string), false);
 }
 
-const char *
-xkb_atom_text(struct xkb_context *ctx, xkb_atom_t atom)
+xkb_atom_t
+xkb_atom_intern(ساخت xkb_context *ctx, ثابت حرف *string, سائز_t len)
 {
-    return atom_text(ctx->atom_table, atom);
+    واپس atom_intern(ctx->atom_جدول, string, len, true);
 }
 
-void
-xkb_log(struct xkb_context *ctx, enum xkb_log_level level, int verbosity,
-        const char *fmt, ...)
+ثابت حرف *
+xkb_atom_متن(ساخت xkb_context *ctx, xkb_atom_t atom)
 {
-    va_list args;
-
-    if (ctx->log_level < level || ctx->log_verbosity < verbosity)
-        return;
-
-    va_start(args, fmt);
-    ctx->log_fn(ctx, level, fmt, args);
-    va_end(args);
+    واپس atom_متن(ctx->atom_جدول, atom);
 }
 
-char *
-xkb_context_get_buffer(struct xkb_context *ctx, size_t size)
+خالی
+xkb_log(ساخت xkb_context *ctx, شمار xkb_log_level level, صحیح verbosity,
+        ثابت حرف *fmt, ...)
 {
-    char *rtrn;
+    va_list دلائل;
 
-    if (size >= sizeof(ctx->text_buffer))
-        return NULL;
+    اگر (ctx->log_level < level || ctx->log_verbosity < verbosity)
+        واپس;
 
-    if (sizeof(ctx->text_buffer) - ctx->text_next <= size)
-        ctx->text_next = 0;
-
-    rtrn = &ctx->text_buffer[ctx->text_next];
-    ctx->text_next += size;
-
-    return rtrn;
+    va_آغاز(دلائل, fmt);
+    ctx->log_fn(ctx, level, fmt, دلائل);
+    va_انتہا(دلائل);
 }
 
-static const char *
-xkb_context_get_default_rules(struct xkb_context *ctx)
+حرف *
+xkb_context_get_بفر(ساخت xkb_context *ctx, سائز_t سائز)
 {
-    const char *env = NULL;
+    حرف *rtrn;
 
-    if (ctx->use_environment_names)
+    اگر (سائز >= حجم(ctx->متن_بفر))
+        واپس تہی;
+
+    اگر (حجم(ctx->متن_بفر) - ctx->متن_اگلا <= سائز)
+        ctx->متن_اگلا = 0;
+
+    rtrn = &ctx->متن_بفر[ctx->متن_اگلا];
+    ctx->متن_اگلا += سائز;
+
+    واپس rtrn;
+}
+
+ساکن ثابت حرف *
+xkb_context_get_default_قواعد(ساخت xkb_context *ctx)
+{
+    ثابت حرف *env = تہی;
+
+    اگر (ctx->use_environment_نام)
         env = xkb_context_getenv(ctx, "XKB_DEFAULT_RULES");
 
-    return env ? env : DEFAULT_XKB_RULES;
+    واپس env ? env : DEFAULT_XKB_قواعد;
 }
 
-static const char *
-xkb_context_get_default_model(struct xkb_context *ctx)
+ساکن ثابت حرف *
+xkb_context_get_default_model(ساخت xkb_context *ctx)
 {
-    const char *env = NULL;
+    ثابت حرف *env = تہی;
 
-    if (ctx->use_environment_names)
+    اگر (ctx->use_environment_نام)
         env = xkb_context_getenv(ctx, "XKB_DEFAULT_MODEL");
 
-    return env ? env : DEFAULT_XKB_MODEL;
+    واپس env ? env : DEFAULT_XKB_MODEL;
 }
 
-static const char *
-xkb_context_get_default_layout(struct xkb_context *ctx)
+ساکن ثابت حرف *
+xkb_context_get_default_layout(ساخت xkb_context *ctx)
 {
-    const char *env = NULL;
+    ثابت حرف *env = تہی;
 
-    if (ctx->use_environment_names)
+    اگر (ctx->use_environment_نام)
         env = xkb_context_getenv(ctx, "XKB_DEFAULT_LAYOUT");
 
-    return env ? env : DEFAULT_XKB_LAYOUT;
+    واپس env ? env : DEFAULT_XKB_LAYOUT;
 }
 
-static const char *
-xkb_context_get_default_variant(struct xkb_context *ctx)
+ساکن ثابت حرف *
+xkb_context_get_default_variant(ساخت xkb_context *ctx)
 {
-    const char *env = NULL;
-    const char *layout = xkb_context_getenv(ctx, "XKB_DEFAULT_LAYOUT");
+    ثابت حرف *env = تہی;
+    ثابت حرف *layout = xkb_context_getenv(ctx, "XKB_DEFAULT_LAYOUT");
 
     /* We don't want to inherit the variant if they haven't also set a
      * layout, since they're so closely paired. */
-    if (layout && ctx->use_environment_names)
+    اگر (layout && ctx->use_environment_نام)
         env = xkb_context_getenv(ctx, "XKB_DEFAULT_VARIANT");
 
-    return env ? env : DEFAULT_XKB_VARIANT;
+    واپس env ? env : DEFAULT_XKB_VARIANT;
 }
 
-static const char *
-xkb_context_get_default_options(struct xkb_context *ctx)
+ساکن ثابت حرف *
+xkb_context_get_default_options(ساخت xkb_context *ctx)
 {
-    const char *env = NULL;
+    ثابت حرف *env = تہی;
 
-    if (ctx->use_environment_names)
+    اگر (ctx->use_environment_نام)
         env = xkb_context_getenv(ctx, "XKB_DEFAULT_OPTIONS");
 
-    return env ? env : DEFAULT_XKB_OPTIONS;
+    واپس env ? env : DEFAULT_XKB_OPTIONS;
 }
 
-enum RMLVO
-xkb_context_sanitize_rule_names(struct xkb_context *ctx,
-                                struct xkb_rule_names *rmlvo)
+شمار RMLVO
+xkb_context_sanitize_قاعدہ_نام(ساخت xkb_context *ctx,
+                                ساخت xkb_قاعدہ_نام *rmlvo)
 {
-    enum RMLVO modified = 0;
+    شمار RMLVO modified = 0;
 
-    if (isempty(rmlvo->rules)) {
-        rmlvo->rules = xkb_context_get_default_rules(ctx);
-        modified |= RMLVO_RULES;
+    اگر (isempty(rmlvo->قواعد)) {
+        rmlvo->قواعد = xkb_context_get_default_قواعد(ctx);
+        modified |= RMLVO_قواعد;
     }
-    if (isempty(rmlvo->model)) {
+    اگر (isempty(rmlvo->model)) {
         rmlvo->model = xkb_context_get_default_model(ctx);
         modified |= RMLVO_MODEL;
     }
     /* Layout and variant are tied together, so don't try to use one from
      * the caller and one from the environment. */
-    if (isempty(rmlvo->layout)) {
+    اگر (isempty(rmlvo->layout)) {
         rmlvo->layout = xkb_context_get_default_layout(ctx);
         modified |= RMLVO_LAYOUT;
-        const char * const variant = xkb_context_get_default_variant(ctx);
-        if (!isempty(rmlvo->variant)) {
-            log_warn(ctx, XKB_LOG_MESSAGE_NO_ID,
+        ثابت حرف * ثابت variant = xkb_context_get_default_variant(ctx);
+        اگر (!isempty(rmlvo->variant)) {
+            log_warn(ctx, XKB_LOG_پیغام_NO_ID,
                      "Layout not provided, but variant set to \"%s\": "
                      "ignoring variant and using defaults for both: "
                      "layout=\"%s\", variant=\"%s\".\n",
@@ -216,10 +216,10 @@ xkb_context_sanitize_rule_names(struct xkb_context *ctx,
         modified |= RMLVO_VARIANT;
     }
     /* Options can be empty, so respect that if passed in. */
-    if (rmlvo->options == NULL) {
+    اگر (rmlvo->options == تہی) {
         rmlvo->options = xkb_context_get_default_options(ctx);
         modified |= RMLVO_OPTIONS;
     }
 
-    return modified;
+    واپس modified;
 }

@@ -3,34 +3,34 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#شامل "config.h"
 
-#include <assert.h>
+#شامل <assert.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "abi-check.h"
-#include "context.h"
+#شامل "xkbcommon/xkbcommon.h"
+#شامل "abi-check.h"
+#شامل "context.h"
 
-void
-xkb_log_abi_error(struct xkb_context * restrict ctx,
-                  const char * restrict func, enum xkb_status status)
+خالی
+xkb_log_abi_error(ساخت xkb_context * محدود ctx,
+                  ثابت حرف * محدود func, شمار xkb_حالت حالت_2)
 {
-    switch (status) {
-    case XKB_ERROR_ABI_INVALID_STRUCT_SIZE:
-        log_err(ctx, XKB_ERROR_ABI_INVALID_STRUCT_SIZE,
+    انتخاب (حالت_2) {
+    حالت XKB_ERROR_ABI_INVALID_STRUCT_سائز:
+        log_err(ctx, XKB_ERROR_ABI_INVALID_STRUCT_سائز,
                 "%s: ABI error: unsupported versioned struct\n", func);
-        break;
-    case XKB_ERROR_ABI_BACKWARD_COMPAT:
+        توڑو;
+    حالت XKB_ERROR_ABI_BACKWARD_COMPAT:
         log_err(ctx, XKB_ERROR_ABI_BACKWARD_COMPAT,
                 "%s: ABI version mismatch: missing newer required fields\n",
                 func);
-        break;
-    case XKB_ERROR_ABI_FORWARD_COMPAT:
+        توڑو;
+    حالت XKB_ERROR_ABI_FORWARD_COMPAT:
         log_err(ctx, XKB_ERROR_ABI_FORWARD_COMPAT,
                 "%s: ABI version mismatch: cannot use newer fields\n", func);
-        break;
-    default:
+        توڑو;
+    طےشدہ:
         /* unreachable */
-        assert(false);
+        أكد(false);
     }
 }

@@ -6,318 +6,318 @@
  * Author: Daniel Stone <daniel@fooishbar.org>
  */
 
-#include "config.h"
+#شامل "config.h"
 
-#include <assert.h>
-#include <errno.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+#شامل <assert.h>
+#شامل <errno.h>
+#شامل <string.h>
+#شامل <sys/types.h>
+#شامل <sys/stat.h>
 
-#if HAVE_XKB_EXTENSIONS_DIRECTORIES
-    #include <limits.h>
-    #if HAVE_UNISTD_H && HAVE_DIRENT_H
-        #include <dirent.h>
-        #include <unistd.h>
-    #endif
-#endif
+#اگر HAVE_XKB_EXTENSIONS_DIRECTORIES
+    #شامل <limits.h>
+    #اگر HAVE_UNISTD_H && HAVE_DIRENT_H
+        #شامل <dirent.h>
+        #شامل <unistd.h>
+    #اگر_ختم
+#اگر_ختم
 
-#include "xkbcommon/xkbcommon.h"
-#include "context.h"
-#include "darray.h"
-#include "features/enums.h"
-#include "messages-codes.h"
-#include "utils.h"
+#شامل "xkbcommon/xkbcommon.h"
+#شامل "context.h"
+#شامل "darray.h"
+#شامل "features/enums.h"
+#شامل "messages-codes.h"
+#شامل "utils.h"
 
 
 /**
  * Append one directory to the context’s include path.
  */
-static int
-context_include_path_append(struct xkb_context *ctx, const char *path)
+ساکن صحیح
+context_include_راستہ_append(ساخت xkb_context *ctx, ثابت حرف *راستہ)
 {
-    int err = ENOMEM;
+    صحیح err = ENOMEM;
 
-    char *tmp = strdup(path);
-    if (!tmp)
-        goto err;
+    حرف *tmp = strdup(راستہ);
+    اگر (!tmp)
+        جاؤ err;
 
-    struct stat stat_buf;
-    err = stat(path, &stat_buf);
-    if (err != 0) {
+    ساخت stat stat_buf;
+    err = stat(راستہ, &stat_buf);
+    اگر (err != 0) {
         err = errno;
-        goto err;
+        جاؤ err;
     }
-    if (!S_ISDIR(stat_buf.st_mode)) {
+    اگر (!S_ISDIR(stat_buf.st_منوال)) {
         err = ENOTDIR;
-        goto err;
+        جاؤ err;
     }
 
-    if (!check_eaccess(path, R_OK | X_OK)) {
+    اگر (!check_eaccess(راستہ, R_OK | X_OK)) {
         err = EACCES;
-        goto err;
+        جاؤ err;
     }
 
     darray_append(ctx->includes, tmp);
     /* Use “info” log level to facilitate bug reporting. */
-    log_info(ctx, XKB_LOG_MESSAGE_NO_ID, "Include path added: %s\n", tmp);
+    log_info(ctx, XKB_LOG_پیغام_NO_ID, "Include path added: %s\n", tmp);
 
-    return 1;
+    واپس 1;
 
 err:
-    if (tmp)
+    اگر (tmp)
         darray_append(ctx->failed_includes, tmp);
     /*
      * This error is not fatal because some valid paths may still be defined.
      * Use “info” log level to facilitate bug reporting.
      */
-    log_info(ctx, XKB_LOG_MESSAGE_NO_ID,
-             "Include path failed: \"%s\" (%s)\n", path, strerror(err));
-    return 0;
+    log_info(ctx, XKB_LOG_پیغام_NO_ID,
+             "Include path failed: \"%s\" (%s)\n", راستہ, strerror(err));
+    واپس 0;
 }
 
 /**
  * Append one directory to the context’s include path.
  */
-int
-xkb_context_include_path_append(struct xkb_context *ctx, const char *path)
+صحیح
+xkb_context_include_راستہ_append(ساخت xkb_context *ctx, ثابت حرف *راستہ)
 {
-    return (xkb_context_init_includes(ctx))
-        ? context_include_path_append(ctx, path)
+    واپس (xkb_context_init_includes(ctx))
+        ? context_include_راستہ_append(ctx, راستہ)
         : 0;
 }
 
-const char *
-xkb_context_include_path_get_extra_path(struct xkb_context *ctx)
+ثابت حرف *
+xkb_context_include_راستہ_get_extra_راستہ(ساخت xkb_context *ctx)
 {
-    const char * const extra = xkb_context_getenv(ctx, "XKB_CONFIG_EXTRA_PATH");
+    ثابت حرف * ثابت extra = xkb_context_getenv(ctx, "XKB_CONFIG_EXTRA_PATH");
     /*
      * Only use default if path is undefined, but accept empty string, which may
      * be unintentional and should be reported.
      */
-    return extra ? extra : DFLT_XKB_CONFIG_EXTRA_PATH;
+    واپس extra ? extra : DFLT_XKB_CONFIG_EXTRA_راستہ;
 }
 
-#if HAVE_XKB_EXTENSIONS_DIRECTORIES
-const char *
-xkb_context_include_path_get_unversioned_extensions_path(struct xkb_context *ctx)
+#اگر HAVE_XKB_EXTENSIONS_DIRECTORIES
+ثابت حرف *
+xkb_context_include_راستہ_get_unversioned_extensions_راستہ(ساخت xkb_context *ctx)
 {
-    const char *ext =
+    ثابت حرف *ext =
         xkb_context_getenv(ctx, "XKB_CONFIG_UNVERSIONED_EXTENSIONS_PATH");
-    return ext
+    واپس ext
         ? ext
-#ifdef DFLT_XKB_CONFIG_UNVERSIONED_EXTENSIONS_PATH
-        : DFLT_XKB_CONFIG_UNVERSIONED_EXTENSIONS_PATH;
-#else
-        : NULL;
-#endif
+#اگر_تعریف_شدہ DFLT_XKB_CONFIG_UNVERSIONED_EXTENSIONS_راستہ
+        : DFLT_XKB_CONFIG_UNVERSIONED_EXTENSIONS_راستہ;
+#ورنہ
+        : تہی;
+#اگر_ختم
 }
 
-const char *
-xkb_context_include_path_get_versioned_extensions_path(struct xkb_context *ctx)
+ثابت حرف *
+xkb_context_include_راستہ_get_versioned_extensions_راستہ(ساخت xkb_context *ctx)
 {
-    const char *ext =
+    ثابت حرف *ext =
         xkb_context_getenv(ctx, "XKB_CONFIG_VERSIONED_EXTENSIONS_PATH");
-    return ext
+    واپس ext
         ? ext
-#ifdef DFLT_XKB_CONFIG_VERSIONED_EXTENSIONS_PATH
-        : DFLT_XKB_CONFIG_VERSIONED_EXTENSIONS_PATH;
-#else
-        : NULL;
-#endif
+#اگر_تعریف_شدہ DFLT_XKB_CONFIG_VERSIONED_EXTENSIONS_راستہ
+        : DFLT_XKB_CONFIG_VERSIONED_EXTENSIONS_راستہ;
+#ورنہ
+        : تہی;
+#اگر_ختم
 }
 
-static int
-compare_str(const void *a, const void *b)
+ساکن صحیح
+compare_str(ثابت خالی *a, ثابت خالی *b)
 {
-    return strcmp(*(char **)a, *(char **) b);
+    واپس strcmp(*(حرف **)a, *(حرف **) b);
 }
 
-static int
-add_direct_subdirectories(struct xkb_context *ctx, const char *path,
+ساکن صحیح
+جوڑو_براہ_راست_subdirectories(ساخت xkb_context *ctx, ثابت حرف *راستہ,
                           darray_string *extensions,
-                          darray_size_t versioned_count,
-                          size_t versioned_path_length)
+                          darray_سائز_t versioned_گنتی,
+                          سائز_t versioned_راستہ_لمبائی)
 {
-    int ret = 0;
-    int err = ENOMEM;
-    DIR *dir = NULL;
+    صحیح ret = 0;
+    صحیح err = ENOMEM;
+    DIR *dir = تہی;
 
     /* Check extensions parent directory */
-    struct stat stat_buf;
-    err = stat(path, &stat_buf);
-    if (err != 0) {
+    ساخت stat stat_buf;
+    err = stat(راستہ, &stat_buf);
+    اگر (err != 0) {
         err = errno;
-        goto err;
+        جاؤ err;
     }
-    if (!S_ISDIR(stat_buf.st_mode)) {
+    اگر (!S_ISDIR(stat_buf.st_منوال)) {
         err = ENOTDIR;
-        goto err;
+        جاؤ err;
     }
-    if (!check_eaccess(path, R_OK | X_OK)) {
+    اگر (!check_eaccess(راستہ, R_OK | X_OK)) {
         err = EACCES;
-        goto err;
+        جاؤ err;
     }
 
-    dir = opendir(path);
-    if (dir == NULL) {
+    dir = opendir(راستہ);
+    اگر (dir == تہی) {
         err = EACCES;
-        goto err;
+        جاؤ err;
     }
 
-    struct dirent *entry;
-    char path_buf[PATH_MAX] = "";
-    versioned_path_length++; /* Additional final ‘/’ */
-    while ((entry = readdir(dir)) != NULL) {
-        const char *name = entry->d_name;
+    ساخت dirent *اندراج_2;
+    حرف راستہ_buf[PATH_MAX] = "";
+    versioned_راستہ_لمبائی++; /* Additional final ‘/’ */
+    جب ((اندراج_2 = readdir(dir)) != تہی) {
+        ثابت حرف *name = اندراج_2->d_name;
 
         /* Skip special entries */
-        if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
-            continue;
+        اگر (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
+            جاری;
 
-        if (!snprintf_safe(path_buf, sizeof(path_buf), "%s/%s", path, name)) {
+        اگر (!snprintf_محفوظ(راستہ_buf, حجم(راستہ_buf), "%s/%s", راستہ, name)) {
             err = ENOMEM;
-            goto err;
+            جاؤ err;
         }
-        if (stat(path_buf, &stat_buf) != 0 || !S_ISDIR(stat_buf.st_mode))
-            continue;
+        اگر (stat(راستہ_buf, &stat_buf) != 0 || !S_ISDIR(stat_buf.st_منوال))
+            جاری;
 
         /* Skip if the corresponding versioned directory is already included */
-        for (darray_size_t i = 0; i < versioned_count; i++) {
-            const char * const prev_name = darray_item(*extensions, i)
-                                         + versioned_path_length;
-            if (strcmp(name, prev_name) == 0)
-                goto next;
+        برائے (darray_سائز_t i = 0; i < versioned_گنتی; i++) {
+            ثابت حرف * ثابت پچھلا_name = darray_شے(*extensions, i)
+                                         + versioned_راستہ_لمبائی;
+            اگر (strcmp(name, پچھلا_name) == 0)
+                جاؤ اگلا;
         }
 
-        char *ext_path = strdup_safe(path_buf);
-        if (!ext_path) {
+        حرف *ext_راستہ = strdup_محفوظ(راستہ_buf);
+        اگر (!ext_راستہ) {
             err = ENOMEM;
-            goto err;
+            جاؤ err;
         }
 
-        darray_append(*extensions, ext_path);
-next:
+        darray_append(*extensions, ext_راستہ);
+اگلا:
     {} /* Label at end of compound statement is a C23 extension */
     }
 
     closedir(dir);
 
-    if (darray_size(*extensions) > versioned_count) {
+    اگر (darray_سائز(*extensions) > versioned_گنتی) {
         /* Sort the entries, so that they are appended in lexicographic order */
-        qsort(darray_items(*extensions) + versioned_count,
-              darray_size(*extensions) - versioned_count,
-              sizeof(*darray_items(*extensions)), &compare_str);
-        char **ext_path;
-        darray_foreach_from(ext_path, *extensions, versioned_count) {
-            ret |= context_include_path_append(ctx, *ext_path);
+        qsort(darray_اشیاء(*extensions) + versioned_گنتی,
+              darray_سائز(*extensions) - versioned_گنتی,
+              حجم(*darray_اشیاء(*extensions)), &compare_str);
+        حرف **ext_راستہ;
+        darray_foreach_from(ext_راستہ, *extensions, versioned_گنتی) {
+            ret |= context_include_راستہ_append(ctx, *ext_راستہ);
         }
     }
 
-    return ret;
+    واپس ret;
 
 err:
-    log_dbg(ctx, XKB_LOG_MESSAGE_NO_ID,
-            "Include extensions path failed: %s (%s)\n", path, strerror(err));
-    if (dir)
+    log_dbg(ctx, XKB_LOG_پیغام_NO_ID,
+            "Include extensions path failed: %s (%s)\n", راستہ, strerror(err));
+    اگر (dir)
         closedir(dir);
 
-    return ret;
+    واپس ret;
 }
-#endif
+#اگر_ختم
 
-const char *
-xkb_context_include_path_get_system_path(struct xkb_context *ctx)
+ثابت حرف *
+xkb_context_include_راستہ_get_system_راستہ(ساخت xkb_context *ctx)
 {
-    const char * const root = xkb_context_getenv(ctx, "XKB_CONFIG_ROOT");
+    ثابت حرف * ثابت جڑ = xkb_context_getenv(ctx, "XKB_CONFIG_ROOT");
     /*
      * Only use default if path is undefined, but accept empty string, which may
      * be unintentional and should be reported.
      */
-    return root ? root : DFLT_XKB_CONFIG_ROOT;
+    واپس جڑ ? جڑ : DFLT_XKB_CONFIG_جڑ;
 }
 
 /**
  * Append the default include directories to the context.
  */
-int
-xkb_context_include_path_append_default(struct xkb_context *ctx)
+صحیح
+xkb_context_include_راستہ_append_default(ساخت xkb_context *ctx)
 {
     /*
      * We do not call `xkb_context_init_includes()` here, because either
      * we already initialized the includes paths or we are doing it now.
      */
 
-    char *user_path;
-    int ret = 0;
+    حرف *user_راستہ;
+    صحیح ret = 0;
 
-    const char * const home = xkb_context_getenv(ctx, "HOME");
-    const char * const xdg = xkb_context_getenv(ctx, "XDG_CONFIG_HOME");
+    ثابت حرف * ثابت home = xkb_context_getenv(ctx, "HOME");
+    ثابت حرف * ثابت xdg = xkb_context_getenv(ctx, "XDG_CONFIG_HOME");
     /* Accept empty string, which may be unintentional and should be reported */
-    if (xdg != NULL) {
-        user_path = asprintf_safe("%s/xkb", xdg);
-        if (user_path) {
-            ret |= context_include_path_append(ctx, user_path);
-            free(user_path);
+    اگر (xdg != تہی) {
+        user_راستہ = asprintf_محفوظ("%s/xkb", xdg);
+        اگر (user_راستہ) {
+            ret |= context_include_راستہ_append(ctx, user_راستہ);
+            آزاد(user_راستہ);
         }
-    } else if (home != NULL) {
+    } ورنہ اگر (home != تہی) {
         /* XDG_CONFIG_HOME fallback is $HOME/.config/ */
-        user_path = asprintf_safe("%s/.config/xkb", home);
-        if (user_path) {
-            ret |= context_include_path_append(ctx, user_path);
-            free(user_path);
+        user_راستہ = asprintf_محفوظ("%s/.config/xkb", home);
+        اگر (user_راستہ) {
+            ret |= context_include_راستہ_append(ctx, user_راستہ);
+            آزاد(user_راستہ);
         }
     }
 
-    if (home != NULL) {
-        user_path = asprintf_safe("%s/.xkb", home);
-        if (user_path) {
-            ret |= context_include_path_append(ctx, user_path);
-            free(user_path);
+    اگر (home != تہی) {
+        user_راستہ = asprintf_محفوظ("%s/.xkb", home);
+        اگر (user_راستہ) {
+            ret |= context_include_راستہ_append(ctx, user_راستہ);
+            آزاد(user_راستہ);
         }
     }
 
-    const char * const extra = xkb_context_include_path_get_extra_path(ctx);
-    ret |= context_include_path_append(ctx, extra);
+    ثابت حرف * ثابت extra = xkb_context_include_راستہ_get_extra_راستہ(ctx);
+    ret |= context_include_راستہ_append(ctx, extra);
 
-#if HAVE_XKB_EXTENSIONS_DIRECTORIES
+#اگر HAVE_XKB_EXTENSIONS_DIRECTORIES
     darray_string extensions = darray_new();
 
     /* Versioned extensions directory */
-    const char *extensions_path =
-        xkb_context_include_path_get_versioned_extensions_path(ctx);
-    size_t versioned_path_length = 0;
-    if (extensions_path) {
+    ثابت حرف *extensions_راستہ =
+        xkb_context_include_راستہ_get_versioned_extensions_راستہ(ctx);
+    سائز_t versioned_راستہ_لمبائی = 0;
+    اگر (extensions_راستہ) {
         /* Add direct subdirectories */
-        ret |= add_direct_subdirectories(ctx, extensions_path,
+        ret |= جوڑو_براہ_راست_subdirectories(ctx, extensions_راستہ,
                                          &extensions, 0, 0);
-        versioned_path_length = strlen(extensions_path);
+        versioned_راستہ_لمبائی = لڑی_لمبائی(extensions_راستہ);
     }
 
     /* Unversioned extensions directory */
-    extensions_path =
-        xkb_context_include_path_get_unversioned_extensions_path(ctx);
-    if (extensions_path) {
+    extensions_راستہ =
+        xkb_context_include_راستہ_get_unversioned_extensions_راستہ(ctx);
+    اگر (extensions_راستہ) {
         /*
          * Add direct subdirectories, except those already added from the
          * *versioned* extensions path hereinabove.
          */
-        ret |= add_direct_subdirectories(ctx, extensions_path, &extensions,
-                                         darray_size(extensions),
-                                         versioned_path_length);
+        ret |= جوڑو_براہ_راست_subdirectories(ctx, extensions_راستہ, &extensions,
+                                         darray_سائز(extensions),
+                                         versioned_راستہ_لمبائی);
     }
 
-    char **ext_path;
-    darray_foreach(ext_path, extensions) {
-        free(*ext_path);
+    حرف **ext_راستہ;
+    darray_foreach(ext_راستہ, extensions) {
+        آزاد(*ext_راستہ);
     }
     darray_free(extensions);
-#endif
+#اگر_ختم
 
     /* Canonical XKB root */
-    const char * const root = xkb_context_include_path_get_system_path(ctx);
-    const bool has_root = context_include_path_append(ctx, root);
-    ret |= has_root;
+    ثابت حرف * ثابت جڑ = xkb_context_include_راستہ_get_system_راستہ(ctx);
+    ثابت bool has_جڑ = context_include_راستہ_append(ctx, جڑ);
+    ret |= has_جڑ;
 
     /*
      * Fallback for misconfigured setups.
@@ -328,32 +328,32 @@ xkb_context_include_path_append_default(struct xkb_context *ctx)
      * This fallback can still be skipped if deliberately using an empty string
      * for the canonical XKB root hereinabove.
      */
-    if (!has_root && root[0] != '\0') {
-        log_warn(ctx, XKB_LOG_MESSAGE_NO_ID,
+    اگر (!has_جڑ && جڑ[0] != '\0') {
+        log_warn(ctx, XKB_LOG_پیغام_NO_ID,
                  "Root include path failed; fallback to \"%s\". "
                  "The setup is probably misconfigured. "
                  "Please ensure that \"%s\" is available in the environment.\n",
-                 DFLT_XKB_LEGACY_ROOT, root);
-        ret |= context_include_path_append(ctx, DFLT_XKB_LEGACY_ROOT);
+                 DFLT_XKB_LEGACY_جڑ, جڑ);
+        ret |= context_include_راستہ_append(ctx, DFLT_XKB_LEGACY_جڑ);
     }
 
-    return ret;
+    واپس ret;
 }
 
 /**
  * Remove all entries in the context's include path.
  */
-void
-xkb_context_include_path_clear(struct xkb_context *ctx)
+خالی
+xkb_context_include_راستہ_clear(ساخت xkb_context *ctx)
 {
-    char **path;
+    حرف **راستہ;
 
-    darray_foreach(path, ctx->includes)
-        free(*path);
+    darray_foreach(راستہ, ctx->includes)
+        آزاد(*راستہ);
     darray_free(ctx->includes);
 
-    darray_foreach(path, ctx->failed_includes)
-        free(*path);
+    darray_foreach(راستہ, ctx->failed_includes)
+        آزاد(*راستہ);
     darray_free(ctx->failed_includes);
 
     /* It does not make sense to keep the pending defaults */
@@ -363,21 +363,21 @@ xkb_context_include_path_clear(struct xkb_context *ctx)
 /**
  * xkb_context_include_path_clear() + xkb_context_include_path_append_default()
  */
-int
-xkb_context_include_path_reset_defaults(struct xkb_context *ctx)
+صحیح
+xkb_context_include_راستہ_reset_defaults(ساخت xkb_context *ctx)
 {
-    xkb_context_include_path_clear(ctx);
-    return xkb_context_include_path_append_default(ctx);
+    xkb_context_include_راستہ_clear(ctx);
+    واپس xkb_context_include_راستہ_append_default(ctx);
 }
 
 /**
  * Returns the number of entries in the context's include path.
  */
-unsigned int
-xkb_context_num_include_paths(struct xkb_context *ctx)
+غیرعلامتی صحیح
+xkb_context_عدد_include_paths(ساخت xkb_context *ctx)
 {
-    return (xkb_context_init_includes(ctx))
-        ? darray_size(ctx->includes)
+    واپس (xkb_context_init_includes(ctx))
+        ? darray_سائز(ctx->includes)
         : 0;
 }
 
@@ -385,133 +385,133 @@ xkb_context_num_include_paths(struct xkb_context *ctx)
  * Returns the given entry in the context's include path, or NULL if an
  * invalid index is passed.
  */
-const char *
-xkb_context_include_path_get(struct xkb_context *ctx, unsigned int idx)
+ثابت حرف *
+xkb_context_include_راستہ_get(ساخت xkb_context *ctx, غیرعلامتی صحیح idx)
 {
-    if (idx >= xkb_context_num_include_paths(ctx))
-        return NULL;
+    اگر (idx >= xkb_context_عدد_include_paths(ctx))
+        واپس تہی;
 
-    return darray_item(ctx->includes, idx);
+    واپس darray_شے(ctx->includes, idx);
 }
 
 /**
  * Take a new reference on the context.
  */
-struct xkb_context *
-xkb_context_ref(struct xkb_context *ctx)
+ساخت xkb_context *
+xkb_context_ref(ساخت xkb_context *ctx)
 {
-    assert(ctx->refcnt > 0);
+    أكد(ctx->refcnt > 0);
     ctx->refcnt++;
-    return ctx;
+    واپس ctx;
 }
 
 /**
  * Drop an existing reference on the context, and free it if the refcnt is
  * now 0.
  */
-void
-xkb_context_unref(struct xkb_context *ctx)
+خالی
+xkb_context_unref(ساخت xkb_context *ctx)
 {
-    assert(!ctx || ctx->refcnt > 0);
-    if (!ctx || --ctx->refcnt > 0)
-        return;
+    أكد(!ctx || ctx->refcnt > 0);
+    اگر (!ctx || --ctx->refcnt > 0)
+        واپس;
 
-    free(ctx->x11_atom_cache);
-    xkb_context_include_path_clear(ctx);
-    atom_table_free(ctx->atom_table);
-    free(ctx);
+    آزاد(ctx->x11_atom_cache);
+    xkb_context_include_راستہ_clear(ctx);
+    atom_جدول_free(ctx->atom_جدول);
+    آزاد(ctx);
 }
 
-static const char *
-log_level_to_prefix(enum xkb_log_level level)
+ساکن ثابت حرف *
+log_level_مقصد_سابقہ(شمار xkb_log_level level)
 {
-    switch (level) {
-    case XKB_LOG_LEVEL_DEBUG:
-        return "xkbcommon: DEBUG: ";
-    case XKB_LOG_LEVEL_INFO:
-        return "xkbcommon: INFO: ";
-    case XKB_LOG_LEVEL_WARNING:
-        return "xkbcommon: WARNING: ";
-    case XKB_LOG_LEVEL_ERROR:
-        return "xkbcommon: ERROR: ";
-    case XKB_LOG_LEVEL_CRITICAL:
-        return "xkbcommon: CRITICAL: ";
-    default:
-        return NULL;
+    انتخاب (level) {
+    حالت XKB_LOG_LEVEL_DEBUG:
+        واپس "xkbcommon: DEBUG: ";
+    حالت XKB_LOG_LEVEL_INFO:
+        واپس "xkbcommon: INFO: ";
+    حالت XKB_LOG_LEVEL_WARNING:
+        واپس "xkbcommon: WARNING: ";
+    حالت XKB_LOG_LEVEL_ERROR:
+        واپس "xkbcommon: ERROR: ";
+    حالت XKB_LOG_LEVEL_CRITICAL:
+        واپس "xkbcommon: CRITICAL: ";
+    طےشدہ:
+        واپس تہی;
     }
 }
 
-ATTR_PRINTF(3, 0) static void
-default_log_fn(struct xkb_context *ctx, enum xkb_log_level level,
-               const char *fmt, va_list args)
+ATTR_PRINTF(3, 0) ساکن خالی
+default_log_fn(ساخت xkb_context *ctx, شمار xkb_log_level level,
+               ثابت حرف *fmt, va_list دلائل)
 {
-    const char *prefix = log_level_to_prefix(level);
+    ثابت حرف *سابقہ = log_level_مقصد_سابقہ(level);
 
-    if (prefix)
-        fprintf(stderr, "%s", prefix);
-    vfprintf(stderr, fmt, args);
+    اگر (سابقہ)
+        fprintf(stderr, "%s", سابقہ);
+    vfprintf(stderr, fmt, دلائل);
 }
 
-static enum xkb_log_level
-log_level(const char *level) {
+ساکن شمار xkb_log_level
+log_level(ثابت حرف *level) {
     errno = 0;
-    char *endptr = NULL;
-    const long lvl = strtol(level, &endptr, 10);
-    if (errno == 0 && (endptr[0] == '\0' || is_space(endptr[0])))
-        return (enum xkb_log_level)lvl;
-    if (istreq_prefix("crit", level))
-        return XKB_LOG_LEVEL_CRITICAL;
-    if (istreq_prefix("err", level))
-        return XKB_LOG_LEVEL_ERROR;
-    if (istreq_prefix("warn", level))
-        return XKB_LOG_LEVEL_WARNING;
-    if (istreq_prefix("info", level))
-        return XKB_LOG_LEVEL_INFO;
-    if (istreq_prefix("debug", level) || istreq_prefix("dbg", level))
-        return XKB_LOG_LEVEL_DEBUG;
+    حرف *endptr = تہی;
+    ثابت طویل lvl = strtol(level, &endptr, 10);
+    اگر (errno == 0 && (endptr[0] == '\0' || is_space(endptr[0])))
+        واپس (شمار xkb_log_level)lvl;
+    اگر (istreq_سابقہ("crit", level))
+        واپس XKB_LOG_LEVEL_CRITICAL;
+    اگر (istreq_سابقہ("err", level))
+        واپس XKB_LOG_LEVEL_ERROR;
+    اگر (istreq_سابقہ("warn", level))
+        واپس XKB_LOG_LEVEL_WARNING;
+    اگر (istreq_سابقہ("info", level))
+        واپس XKB_LOG_LEVEL_INFO;
+    اگر (istreq_سابقہ("debug", level) || istreq_سابقہ("dbg", level))
+        واپس XKB_LOG_LEVEL_DEBUG;
 
-    return XKB_LOG_LEVEL_ERROR;
+    واپس XKB_LOG_LEVEL_ERROR;
 }
 
-static int
-log_verbosity(const char *verbosity) {
+ساکن صحیح
+log_verbosity(ثابت حرف *verbosity) {
     errno = 0;
-    const long int v = strtol(verbosity, NULL, 10);
-    if (errno == 0) {
+    ثابت طویل صحیح v = strtol(verbosity, تہی, 10);
+    اگر (errno == 0) {
         /* Truncate */
-        return (int) v;
+        واپس (صحیح) v;
     }
 
-    return XKB_LOG_VERBOSITY_DEFAULT;
+    واپس XKB_LOG_VERBOSITY_DEFAULT;
 }
 
 /**
  * Create a new context.
  */
-struct xkb_context *
-xkb_context_new(enum xkb_context_flags flags)
+ساخت xkb_context *
+xkb_context_new(شمار xkb_context_flags flags)
 {
-    const char *env;
-    struct xkb_context *ctx = calloc(1, sizeof(*ctx));
+    ثابت حرف *env;
+    ساخت xkb_context *ctx = صفر_حافظہ_دو(1, حجم(*ctx));
 
-    if (!ctx)
-        return NULL;
+    اگر (!ctx)
+        واپس تہی;
 
     ctx->refcnt = 1;
     ctx->log_fn = default_log_fn;
     ctx->log_level = XKB_LOG_LEVEL_ERROR;
     ctx->log_verbosity = XKB_LOG_VERBOSITY_DEFAULT;
 
-    const enum xkb_context_flags invalid_flags =
-        (flags & ~(enum xkb_context_flags)XKB_CONTEXT_FLAGS_VALUES);
-    if (invalid_flags) {
-        log_err_func(ctx, XKB_LOG_MESSAGE_NO_ID,
+    ثابت شمار xkb_context_flags invalid_flags =
+        (flags & ~(شمار xkb_context_flags)XKB_CONTEXT_FLAGS_اقدار);
+    اگر (invalid_flags) {
+        log_err_func(ctx, XKB_LOG_پیغام_NO_ID,
                      "Invalid context flags: 0x%x\n", invalid_flags);
-        free(ctx);
-        return NULL;
+        آزاد(ctx);
+        واپس تہی;
     }
 
-    ctx->use_environment_names = !(flags & XKB_CONTEXT_NO_ENVIRONMENT_NAMES);
+    ctx->use_environment_نام = !(flags & XKB_CONTEXT_NO_ENVIRONMENT_نام);
     ctx->use_secure_getenv = !(flags & XKB_CONTEXT_NO_SECURE_GETENV);
 
     /*
@@ -535,67 +535,67 @@ xkb_context_new(enum xkb_context_flags flags)
 
     /* Environment overwrites defaults. */
     env = xkb_context_getenv(ctx, "XKB_LOG_LEVEL");
-    if (env)
-        xkb_context_set_log_level(ctx, log_level(env));
+    اگر (env)
+        xkb_context_سیٹ_log_level(ctx, log_level(env));
 
     env = xkb_context_getenv(ctx, "XKB_LOG_VERBOSITY");
-    if (env)
-        xkb_context_set_log_verbosity(ctx, log_verbosity(env));
+    اگر (env)
+        xkb_context_سیٹ_log_verbosity(ctx, log_verbosity(env));
 
-    ctx->atom_table = atom_table_new();
-    if (!ctx->atom_table) {
+    ctx->atom_جدول = atom_جدول_new();
+    اگر (!ctx->atom_جدول) {
         xkb_context_unref(ctx);
-        return NULL;
+        واپس تہی;
     }
 
-    ctx->x11_atom_cache = NULL;
+    ctx->x11_atom_cache = تہی;
 
-    return ctx;
+    واپس ctx;
 }
 
-void
-xkb_context_set_log_fn(struct xkb_context *ctx,
-                       void (*log_fn)(struct xkb_context *ctx,
-                                      enum xkb_log_level level,
-                                      const char *fmt, va_list args))
+خالی
+xkb_context_سیٹ_log_fn(ساخت xkb_context *ctx,
+                       خالی (*log_fn)(ساخت xkb_context *ctx,
+                                      شمار xkb_log_level level,
+                                      ثابت حرف *fmt, va_list دلائل))
 {
     ctx->log_fn = (log_fn ? log_fn : default_log_fn);
 }
 
-enum xkb_log_level
-xkb_context_get_log_level(struct xkb_context *ctx)
+شمار xkb_log_level
+xkb_context_get_log_level(ساخت xkb_context *ctx)
 {
-    return ctx->log_level;
+    واپس ctx->log_level;
 }
 
-void
-xkb_context_set_log_level(struct xkb_context *ctx, enum xkb_log_level level)
+خالی
+xkb_context_سیٹ_log_level(ساخت xkb_context *ctx, شمار xkb_log_level level)
 {
     ctx->log_level = level;
 }
 
-int
-xkb_context_get_log_verbosity(struct xkb_context *ctx)
+صحیح
+xkb_context_get_log_verbosity(ساخت xkb_context *ctx)
 {
-    return ctx->log_verbosity;
+    واپس ctx->log_verbosity;
 }
 
-void
-xkb_context_set_log_verbosity(struct xkb_context *ctx, int verbosity)
+خالی
+xkb_context_سیٹ_log_verbosity(ساخت xkb_context *ctx, صحیح verbosity)
 {
     ctx->log_verbosity = verbosity;
 }
 
-void *
-xkb_context_get_user_data(struct xkb_context *ctx)
+خالی *
+xkb_context_get_user_ڈیٹا(ساخت xkb_context *ctx)
 {
-    if (ctx)
-        return ctx->user_data;
-    return NULL;
+    اگر (ctx)
+        واپس ctx->user_ڈیٹا;
+    واپس تہی;
 }
 
-void
-xkb_context_set_user_data(struct xkb_context *ctx, void *user_data)
+خالی
+xkb_context_سیٹ_user_ڈیٹا(ساخت xkb_context *ctx, خالی *user_ڈیٹا)
 {
-    ctx->user_data = user_data;
+    ctx->user_ڈیٹا = user_ڈیٹا;
 }

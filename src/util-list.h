@@ -5,49 +5,49 @@
  * SPDX-License-Identifier: MIT
  */
 
-#pragma once
+#ہدایت once
 
-#include "config.h"
+#شامل "config.h"
 
-#include <stdbool.h>
-#include <stddef.h>
+#شامل <stdbool.h>
+#شامل <stddef.h>
 
 /*
  * This list data structure is a verbatim copy from wayland-util.h from the
  * Wayland project; except that wl_ prefix has been removed.
  */
 
-struct list {
-	struct list *prev;
-	struct list *next;
+ساخت list {
+	ساخت list *پچھلا;
+	ساخت list *اگلا;
 };
 
-void list_init(struct list *list);
-void list_insert(struct list *list, struct list *elm);
-void list_append(struct list *list, struct list *elm);
-void list_remove(struct list *elm);
-bool list_empty(const struct list *list);
-bool list_is_last(const struct list *list, const struct list *elm);
+خالی list_init(ساخت list *list);
+خالی list_داخل_کرو(ساخت list *list, ساخت list *elm);
+خالی list_append(ساخت list *list, ساخت list *elm);
+خالی list_remove(ساخت list *elm);
+bool list_خالی_خانے(ثابت ساخت list *list);
+bool list_is_آخری(ثابت ساخت list *list, ثابت ساخت list *elm);
 
-#define container_of(ptr, type, member)					\
-	(__typeof__(type) *)((char *)(ptr) -				\
+#تعریف_کرو container_کا(ptr, type, member)					\
+	(__typeof__(type) *)((حرف *)(ptr) -				\
 		 offsetof(__typeof__(type), member))
 
-#define list_first_entry(head, pos, member)				\
-	container_of((head)->next, __typeof__(*(pos)), member)
+#تعریف_کرو list_پہلا_اندراج(سر, pos, member)				\
+	container_کا((سر)->اگلا, __typeof__(*(pos)), member)
 
-#define list_last_entry(head, pos, member)				\
-	container_of((head)->prev, __typeof__(*(pos)), member)
+#تعریف_کرو list_آخری_اندراج(سر, pos, member)				\
+	container_کا((سر)->پچھلا, __typeof__(*(pos)), member)
 
-#define list_for_each(pos, head, member)				\
-	for ((pos) = 0, (pos) = list_first_entry(head, pos, member);	\
-	     &(pos)->member != (head);					\
-	     (pos) = list_first_entry(&(pos)->member, pos, member))
+#تعریف_کرو list_for_each(pos, سر, member)				\
+	برائے ((pos) = 0, (pos) = list_پہلا_اندراج(سر, pos, member);	\
+	     &(pos)->member != (سر);					\
+	     (pos) = list_پہلا_اندراج(&(pos)->member, pos, member))
 
-#define list_for_each_safe(pos, tmp, head, member)			\
-	for ((pos) = 0, (tmp) = 0,						\
-	     (pos) = list_first_entry(head, pos, member),			\
-	     (tmp) = list_first_entry(&(pos)->member, tmp, member);		\
-	     &(pos)->member != (head);					\
+#تعریف_کرو list_for_each_محفوظ(pos, tmp, سر, member)			\
+	برائے ((pos) = 0, (tmp) = 0,						\
+	     (pos) = list_پہلا_اندراج(سر, pos, member),			\
+	     (tmp) = list_پہلا_اندراج(&(pos)->member, tmp, member);		\
+	     &(pos)->member != (سر);					\
 	     (pos) = (tmp),							\
-	     (tmp) = list_first_entry(&(pos)->member, tmp, member))
+	     (tmp) = list_پہلا_اندراج(&(pos)->member, tmp, member))

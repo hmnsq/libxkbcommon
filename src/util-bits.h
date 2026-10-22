@@ -3,28 +3,28 @@
  * SPDX-License-Identifier: MIT
  */
 
-#pragma once
+#ہدایت once
 
-#include "config.h"
+#شامل "config.h"
 
-#include <assert.h>
-#include <limits.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stddef.h>
+#شامل <assert.h>
+#شامل <limits.h>
+#شامل <stdbool.h>
+#شامل <stdint.h>
+#شامل <stddef.h>
 
 /*
  * Bit array using native pointer-width word for optimal performance
  */
 
-#define BIT_ARRAY_UINTPTR_WIDTH (sizeof(uintptr_t) * CHAR_BIT)
+#تعریف_کرو ثنائی_ہندسہ_ARRAY_UINTPTR_چوڑائی (حجم(uintptr_t) * CHAR_BIT)
 
 /* Compile-time sanity checks */
-#ifdef UINTPTR_WIDTH
-static_assert(UINTPTR_WIDTH == BIT_ARRAY_UINTPTR_WIDTH,
+#اگر_تعریف_شدہ UINTPTR_چوڑائی
+static_assert(UINTPTR_چوڑائی == ثنائی_ہندسہ_ARRAY_UINTPTR_چوڑائی,
               "uintptr_t contains padding bits!");
-#endif
-static_assert((BIT_ARRAY_UINTPTR_WIDTH & (BIT_ARRAY_UINTPTR_WIDTH - 1)) == 0,
+#اگر_ختم
+static_assert((ثنائی_ہندسہ_ARRAY_UINTPTR_چوڑائی & (ثنائی_ہندسہ_ARRAY_UINTPTR_چوڑائی - 1)) == 0,
               "BIT_ARRAY_UINTPTR_WIDTH must be a power of 2!");
 
 /**
@@ -33,9 +33,9 @@ static_assert((BIT_ARRAY_UINTPTR_WIDTH & (BIT_ARRAY_UINTPTR_WIDTH - 1)) == 0,
  * @param num_bits  Number of bits to store.
  * @return Number of `uintptr_t` words required.
  */
-static inline size_t bit_array_words(size_t num_bits) {
-    return num_bits / BIT_ARRAY_UINTPTR_WIDTH +
-          (num_bits % BIT_ARRAY_UINTPTR_WIDTH != 0);
+ساکن اندرونی سائز_t ثنائی_ہندسہ_array_الفاظ(سائز_t عدد_بٹ) {
+    واپس عدد_بٹ / ثنائی_ہندسہ_ARRAY_UINTPTR_چوڑائی +
+          (عدد_بٹ % ثنائی_ہندسہ_ARRAY_UINTPTR_چوڑائی != 0);
 }
 
 /**
@@ -43,10 +43,10 @@ static inline size_t bit_array_words(size_t num_bits) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline bool bit_array_get(const uintptr_t *arr, size_t index) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
-    return (arr[word_idx] >> bit_idx) & (uintptr_t)1;
+ساکن اندرونی bool ثنائی_ہندسہ_array_get(ثابت uintptr_t *arr, سائز_t اشاریہ) {
+    ثابت سائز_t لفظ_idx = اشاریہ / ثنائی_ہندسہ_ARRAY_UINTPTR_چوڑائی;
+    ثابت سائز_t ثنائی_ہندسہ_idx  = اشاریہ % ثنائی_ہندسہ_ARRAY_UINTPTR_چوڑائی;
+    واپس (arr[لفظ_idx] >> ثنائی_ہندسہ_idx) & (uintptr_t)1;
 }
 
 /**
@@ -54,10 +54,10 @@ static inline bool bit_array_get(const uintptr_t *arr, size_t index) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline void bit_array_set(uintptr_t *arr, size_t index) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
-    arr[word_idx] |= ((uintptr_t)1 << bit_idx);
+ساکن اندرونی خالی ثنائی_ہندسہ_array_سیٹ(uintptr_t *arr, سائز_t اشاریہ) {
+    ثابت سائز_t لفظ_idx = اشاریہ / ثنائی_ہندسہ_ARRAY_UINTPTR_چوڑائی;
+    ثابت سائز_t ثنائی_ہندسہ_idx  = اشاریہ % ثنائی_ہندسہ_ARRAY_UINTPTR_چوڑائی;
+    arr[لفظ_idx] |= ((uintptr_t)1 << ثنائی_ہندسہ_idx);
 }
 
 /**
@@ -65,10 +65,10 @@ static inline void bit_array_set(uintptr_t *arr, size_t index) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline void bit_array_clear(uintptr_t *arr, size_t index) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
-    arr[word_idx] &= ~((uintptr_t)1 << bit_idx);
+ساکن اندرونی خالی ثنائی_ہندسہ_array_clear(uintptr_t *arr, سائز_t اشاریہ) {
+    ثابت سائز_t لفظ_idx = اشاریہ / ثنائی_ہندسہ_ARRAY_UINTPTR_چوڑائی;
+    ثابت سائز_t ثنائی_ہندسہ_idx  = اشاریہ % ثنائی_ہندسہ_ARRAY_UINTPTR_چوڑائی;
+    arr[لفظ_idx] &= ~((uintptr_t)1 << ثنائی_ہندسہ_idx);
 }
 
 /**
@@ -76,10 +76,10 @@ static inline void bit_array_clear(uintptr_t *arr, size_t index) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline void bit_array_toggle(uintptr_t *arr, size_t index) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
-    arr[word_idx] ^= ((uintptr_t)1 << bit_idx);
+ساکن اندرونی خالی ثنائی_ہندسہ_array_toggle(uintptr_t *arr, سائز_t اشاریہ) {
+    ثابت سائز_t لفظ_idx = اشاریہ / ثنائی_ہندسہ_ARRAY_UINTPTR_چوڑائی;
+    ثابت سائز_t ثنائی_ہندسہ_idx  = اشاریہ % ثنائی_ہندسہ_ARRAY_UINTPTR_چوڑائی;
+    arr[لفظ_idx] ^= ((uintptr_t)1 << ثنائی_ہندسہ_idx);
 }
 
 /**
@@ -87,12 +87,12 @@ static inline void bit_array_toggle(uintptr_t *arr, size_t index) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline void bit_array_assign(uintptr_t *arr, size_t index, bool val) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
-    uintptr_t mask = (uintptr_t)1 << bit_idx;
-    arr[word_idx] = (arr[word_idx] & ~mask)     /* clear bit */
-                  | ((-(uintptr_t)val) & mask); /* set bit */
+ساکن اندرونی خالی ثنائی_ہندسہ_array_تفویض(uintptr_t *arr, سائز_t اشاریہ, bool val) {
+    ثابت سائز_t لفظ_idx = اشاریہ / ثنائی_ہندسہ_ARRAY_UINTPTR_چوڑائی;
+    ثابت سائز_t ثنائی_ہندسہ_idx  = اشاریہ % ثنائی_ہندسہ_ARRAY_UINTPTR_چوڑائی;
+    uintptr_t نقاب = (uintptr_t)1 << ثنائی_ہندسہ_idx;
+    arr[لفظ_idx] = (arr[لفظ_idx] & ~نقاب)     /* clear bit */
+                  | ((-(uintptr_t)val) & نقاب); /* set bit */
 }
 
-#undef BIT_ARRAY_UINTPTR_WIDTH
+#تعریف_منسوخ ثنائی_ہندسہ_ARRAY_UINTPTR_چوڑائی

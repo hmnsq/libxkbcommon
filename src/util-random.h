@@ -2,34 +2,34 @@
  * Copyright © 2026 Pierre Le Marre
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#ہدایت once
 
-#include "config.h"
+#شامل "config.h"
 
-#include <stdlib.h>
+#شامل <stdlib.h>
 
-#if !HAVE_RANDOM
+#اگر !HAVE_RANDOM
 
 /* Simple random() fallback based on rand() */
 
-#include <stdint.h>
+#شامل <stdint.h>
 
-static inline void
-srandom(unsigned int seed)
+ساکن اندرونی خالی
+srandom(غیرعلامتی صحیح بیج)
 {
-    srand(seed);
+    srand(بیج);
 }
 
-static inline long
-random(void)
+ساکن اندرونی طویل
+random(خالی)
 {
     /* rand() is only guaranteed to cover [0, 32767] (15 bits), so
      * combine three calls to safely fill 31 bits regardless of the
      * platform's actual RAND_MAX. */
-    const long r = ((long)rand() & 0x7fffU)
-                 | (((long)rand() & 0x7fffU) << 15)
-                 | (((long)rand() & 0x7fffU) << 30);
+    ثابت طویل r = ((طویل)rand() & 0x7fffU)
+                 | (((طویل)rand() & 0x7fffU) << 15)
+                 | (((طویل)rand() & 0x7fffU) << 30);
 
-    return r & 0x7fffffffL;
+    واپس r & 0x7fffffffL;
 }
-#endif
+#اگر_ختم

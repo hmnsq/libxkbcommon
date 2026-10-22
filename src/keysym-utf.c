@@ -35,25 +35,25 @@
  *
  */
 
-#include "config.h"
+#شامل "config.h"
 
-#include <stdbool.h>
+#شامل <stdbool.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "utils.h"
-#include "utf8.h"
-#include "keysym.h"
+#شامل "xkbcommon/xkbcommon.h"
+#شامل "utils.h"
+#شامل "utf8.h"
+#شامل "keysym.h"
 
-#define NO_KEYSYM_UNICODE_CONVERSION 0
+#تعریف_کرو NO_KEYSYM_UNICODE_CONVERSION 0
 
 /* We don't use the uint32_t types here, to save some space. */
-struct codepair {
+ساخت codepair {
     uint16_t keysym:15;
     bool deprecated:1;
     uint16_t ucs;
 };
 
-static const struct codepair keysymtab[] = {
+ساکن ثابت ساخت codepair keysymtab[] = {
     { 0x01a1, false, 0x0104 }, /*                     Aogonek Ą LATIN CAPITAL LETTER A WITH OGONEK */
     { 0x01a2, false, 0x02d8 }, /*                       breve ˘ BREVE */
     { 0x01a3, false, 0x0141 }, /*                     Lstroke Ł LATIN CAPITAL LETTER L WITH STROKE */
@@ -832,49 +832,49 @@ static const struct codepair keysymtab[] = {
 };
 
 /* binary search with range check */
-static uint32_t
-bin_search(const struct codepair *table, size_t length, xkb_keysym_t keysym)
+ساکن uint32_t
+bin_تلاش(ثابت ساخت codepair *جدول, سائز_t لمبائی, xkb_keysym_t keysym)
 {
-    size_t first = 0;
-    size_t last = length;
+    سائز_t پہلا = 0;
+    سائز_t آخری = لمبائی;
 
-    if (keysym < table[0].keysym  || keysym > table[length].keysym)
-        return 0;
+    اگر (keysym < جدول[0].keysym  || keysym > جدول[لمبائی].keysym)
+        واپس 0;
 
     /* binary search in table */
-    while (last >= first) {
-        size_t mid = (first + last) / 2;
-        if (table[mid].keysym < keysym)
-            first = mid + 1;
-        else if (table[mid].keysym > keysym)
-            last = mid - 1;
-        else /* found it */
-            return table[mid].ucs;
+    جب (آخری >= پہلا) {
+        سائز_t mid = (پہلا + آخری) / 2;
+        اگر (جدول[mid].keysym < keysym)
+            پہلا = mid + 1;
+        ورنہ اگر (جدول[mid].keysym > keysym)
+            آخری = mid - 1;
+        ورنہ /* found it */
+            واپس جدول[mid].ucs;
     }
 
     /* no matching Unicode value found in table */
-    return NO_KEYSYM_UNICODE_CONVERSION;
+    واپس NO_KEYSYM_UNICODE_CONVERSION;
 }
 
 uint32_t
-xkb_keysym_to_utf32(xkb_keysym_t keysym)
+xkb_keysym_مقصد_utf32(xkb_keysym_t keysym)
 {
     /* first check for Latin-1 characters (1:1 mapping) */
-    if ((keysym >= 0x0020 && keysym <= 0x007e) ||
+    اگر ((keysym >= 0x0020 && keysym <= 0x007e) ||
         (keysym >= 0x00a0 && keysym <= 0x00ff))
-        return keysym;
+        واپس keysym;
 
     /* patch encoding botch */
-    if (keysym == XKB_KEY_KP_Space)
-        return XKB_KEY_space & 0x7f;
+    اگر (keysym == XKB_کلید_KP_Space)
+        واپس XKB_کلید_space & 0x7f;
 
     /* special keysyms */
-    if ((keysym >= XKB_KEY_BackSpace && keysym <= XKB_KEY_Clear) ||
-        (keysym >= XKB_KEY_KP_Multiply && keysym <= XKB_KEY_KP_9) ||
-        keysym == XKB_KEY_Return || keysym == XKB_KEY_Escape ||
-        keysym == XKB_KEY_Delete || keysym == XKB_KEY_KP_Tab ||
-        keysym == XKB_KEY_KP_Enter || keysym == XKB_KEY_KP_Equal)
-        return keysym & 0x7f;
+    اگر ((keysym >= XKB_کلید_عقب_Space && keysym <= XKB_کلید_Clear) ||
+        (keysym >= XKB_کلید_KP_Multiply && keysym <= XKB_کلید_KP_9) ||
+        keysym == XKB_کلید_Return || keysym == XKB_کلید_Escape ||
+        keysym == XKB_کلید_Delete || keysym == XKB_کلید_KP_Tab ||
+        keysym == XKB_کلید_KP_Enter || keysym == XKB_کلید_KP_Equal)
+        واپس keysym & 0x7f;
 
     /* also check for directly encoded Unicode codepoints */
 
@@ -882,46 +882,46 @@ xkb_keysym_to_utf32(xkb_keysym_t keysym)
      * See https://www.unicode.org/versions/Unicode15.0.0/ch03.pdf#G28875
      * for further details.
      */
-    if (keysym >= XKB_KEYSYM_UNICODE_SURROGATE_MIN &&
+    اگر (keysym >= XKB_KEYSYM_UNICODE_SURROGATE_MIN &&
         keysym <= XKB_KEYSYM_UNICODE_SURROGATE_MAX)
-        return NO_KEYSYM_UNICODE_CONVERSION;
+        واپس NO_KEYSYM_UNICODE_CONVERSION;
     /*
      * In theory, this is supposed to start from 0x100100, such that the ASCII
      * range, which is already covered by 0x00-0xff, can't be encoded in two
      * ways. However, changing this after a couple of decades probably won't
      * go well, so it stays as it is.
      */
-    if (XKB_KEYSYM_UNICODE_OFFSET <= keysym && keysym <= XKB_KEYSYM_UNICODE_MAX)
-        return keysym - XKB_KEYSYM_UNICODE_OFFSET;
+    اگر (XKB_KEYSYM_UNICODE_انحراف <= keysym && keysym <= XKB_KEYSYM_UNICODE_MAX)
+        واپس keysym - XKB_KEYSYM_UNICODE_انحراف;
 
     /* Some EVDEV keysyms that do not fit in `keysymtab` */
-    if (keysym >= XKB_KEY_XF86Numeric0 && keysym <= XKB_KEY_XF86Numeric9)
-        return keysym - XKB_KEY_XF86Numeric0 + 0x30;
-    switch (keysym) {
-    case XKB_KEY_XF86NumericStar:
-        return 0x2a; /* * */
-    case XKB_KEY_XF86NumericPound:
-        return 0x23; /* # */
-    default:
+    اگر (keysym >= XKB_کلید_XF86_Numeric0 && keysym <= XKB_کلید_XF86_Numeric9)
+        واپس keysym - XKB_کلید_XF86_Numeric0 + 0x30;
+    انتخاب (keysym) {
+    حالت XKB_کلید_XF86_Numeric_ستارہ:
+        واپس 0x2a; /* * */
+    حالت XKB_کلید_XF86_Numeric_Pound:
+        واپس 0x23; /* # */
+    طےشدہ:
         /* search main table */
-        return bin_search(keysymtab, ARRAY_SIZE(keysymtab) - 1, keysym);
+        واپس bin_تلاش(keysymtab, ARRAY_سائز(keysymtab) - 1, keysym);
     }
 }
 
 xkb_keysym_t
-xkb_utf32_to_keysym(uint32_t ucs)
+xkb_utf32_مقصد_keysym(uint32_t ucs)
 {
     /* first check for Latin-1 characters (1:1 mapping) */
-    if ((ucs >= 0x0020 && ucs <= 0x007e) ||
+    اگر ((ucs >= 0x0020 && ucs <= 0x007e) ||
         (ucs >= 0x00a0 && ucs <= 0x00ff))
-        return ucs;
+        واپس ucs;
 
     /* special keysyms */
-    if ((ucs >= (XKB_KEY_BackSpace & 0x7f) && ucs <= (XKB_KEY_Clear & 0x7f)) ||
-        ucs == (XKB_KEY_Return & 0x7f) || ucs == (XKB_KEY_Escape & 0x7f))
-        return ucs | 0xff00;
-    if (ucs == (XKB_KEY_Delete & 0x7f))
-        return XKB_KEY_Delete;
+    اگر ((ucs >= (XKB_کلید_عقب_Space & 0x7f) && ucs <= (XKB_کلید_Clear & 0x7f)) ||
+        ucs == (XKB_کلید_Return & 0x7f) || ucs == (XKB_کلید_Escape & 0x7f))
+        واپس ucs | 0xff00;
+    اگر (ucs == (XKB_کلید_Delete & 0x7f))
+        واپس XKB_کلید_Delete;
 
     /*
      * U+0000 NULL and invalid Unicode code points.
@@ -929,18 +929,18 @@ xkb_utf32_to_keysym(uint32_t ucs)
      * See https://www.unicode.org/versions/Unicode15.0.0/ch03.pdf#G28875
      * for further details.
      */
-    if (unlikely(ucs == 0 || is_surrogate(ucs) || ucs > 0x10ffff))
-        return XKB_KEY_NoSymbol;
+    اگر (unlikely(ucs == 0 || is_surrogate(ucs) || ucs > 0x10ffff))
+        واپس XKB_کلید_No_علامت;
 
     /* search main table */
-    for (size_t i = 0; i < ARRAY_SIZE(keysymtab); i++) {
+    برائے (سائز_t i = 0; i < ARRAY_سائز(keysymtab); i++) {
         /* Do not use deprecated keysyms */
-        if (keysymtab[i].ucs == ucs && !keysymtab[i].deprecated)
-            return keysymtab[i].keysym;
+        اگر (keysymtab[i].ucs == ucs && !keysymtab[i].deprecated)
+            واپس keysymtab[i].keysym;
     }
 
     /* Use direct encoding if everything else failed */
-    return ucs | XKB_KEYSYM_UNICODE_OFFSET;
+    واپس ucs | XKB_KEYSYM_UNICODE_انحراف;
 }
 
 /*
@@ -951,22 +951,22 @@ xkb_utf32_to_keysym(uint32_t ucs)
  * Author: Rob Bradford <rob@linux.intel.com>
  */
 
-int
-xkb_keysym_to_utf8(xkb_keysym_t keysym, char *buffer, size_t size)
+صحیح
+xkb_keysym_مقصد_utf8(xkb_keysym_t keysym, حرف *بفر, سائز_t سائز)
 {
     uint32_t codepoint;
 
     /* Unicode code point takes up to 4 bytes in UTF-8, plus the
      * NULL-terminating byte. */
-    if (size < XKB_KEYSYM_UTF8_MAX_SIZE)
-        return -1;
+    اگر (سائز < XKB_KEYSYM_UTF8_MAX_سائز)
+        واپس -1;
 
-    codepoint = xkb_keysym_to_utf32(keysym);
+    codepoint = xkb_keysym_مقصد_utf32(keysym);
 
-    if (codepoint == NO_KEYSYM_UNICODE_CONVERSION)
-        return 0;
+    اگر (codepoint == NO_KEYSYM_UNICODE_CONVERSION)
+        واپس 0;
 
-    return (int)utf32_to_utf8(codepoint, buffer);
+    واپس (صحیح)utf32_مقصد_utf8(codepoint, بفر);
 }
 
 /* SPDX-SnippetEnd */

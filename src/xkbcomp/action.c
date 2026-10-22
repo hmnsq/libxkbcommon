@@ -12,587 +12,587 @@
  * Author: Ran Benita <ran234@gmail.com>
  */
 
-#include "config.h"
+#شامل "config.h"
 
-#include <assert.h>
+#شامل <assert.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "context.h"
-#include "darray.h"
-#include "keymap.h"
-#include "messages-codes.h"
-#include "xkbcomp-priv.h"
-#include "text.h"
-#include "expr.h"
-#include "xkbcomp/ast.h"
-#include "action.h"
+#شامل "xkbcommon/xkbcommon.h"
+#شامل "context.h"
+#شامل "darray.h"
+#شامل "keymap.h"
+#شامل "messages-codes.h"
+#شامل "xkbcomp-priv.h"
+#شامل "text.h"
+#شامل "expr.h"
+#شامل "xkbcomp/ast.h"
+#شامل "action.h"
 
-static const ExprBoolean constTrue = {
-    .common = { .type = STMT_EXPR_BOOLEAN_LITERAL, .next = NULL },
-    .set = true,
+ساکن ثابت اظہاریہ_Boolean constTrue = {
+    .common = { .type = STMT_اظہاریہ_BOOLEAN_LITERAL, .اگلا = تہی },
+    .سیٹ = true,
 };
 
-static const ExprBoolean constFalse = {
-    .common = { .type = STMT_EXPR_BOOLEAN_LITERAL, .next = NULL },
-    .set = false,
+ساکن ثابت اظہاریہ_Boolean constFalse = {
+    .common = { .type = STMT_اظہاریہ_BOOLEAN_LITERAL, .اگلا = تہی },
+    .سیٹ = false,
 };
 
-enum action_field {
-    ACTION_FIELD_CLEAR_LOCKS,
-    ACTION_FIELD_LATCH_TO_LOCK,
-    ACTION_FIELD_GEN_KEY_EVENT,
-    ACTION_FIELD_REPORT,
-    ACTION_FIELD_DEFAULT,
-    ACTION_FIELD_AFFECT,
-    ACTION_FIELD_INCREMENT,
-    ACTION_FIELD_MODIFIERS,
-    ACTION_FIELD_GROUP,
-    ACTION_FIELD_X,
-    ACTION_FIELD_Y,
-    ACTION_FIELD_REPEAT,
-    ACTION_FIELD_BUTTON,
-    ACTION_FIELD_VALUE,
-    ACTION_FIELD_CONTROLS,
-    ACTION_FIELD_TYPE,
-    ACTION_FIELD_COUNT,
-    ACTION_FIELD_SCREEN,
-    ACTION_FIELD_SAME,
-    ACTION_FIELD_DATA,
-    ACTION_FIELD_DEVICE,
-    ACTION_FIELD_KEYCODE,
-    ACTION_FIELD_MODS_TO_CLEAR,
-    ACTION_FIELD_LOCK_ON_RELEASE,
-    ACTION_FIELD_UNLOCK_ON_PRESS,
-    ACTION_FIELD_LATCH_ON_PRESS,
+شمار action_میدان {
+    ACTION_میدان_CLEAR_LOCKS,
+    ACTION_میدان_LATCH_مقصد_تالا,
+    ACTION_میدان_GEN_کلید_EVENT,
+    ACTION_میدان_REPORT,
+    ACTION_میدان_DEFAULT,
+    ACTION_میدان_AFFECT,
+    ACTION_میدان_INCREMENT,
+    ACTION_میدان_MODIFIERS,
+    ACTION_میدان_گروہ,
+    ACTION_میدان_X,
+    ACTION_میدان_Y,
+    ACTION_میدان_REPEAT,
+    ACTION_میدان_BUTTON,
+    ACTION_میدان_قدر,
+    ACTION_میدان_CONTROLS,
+    ACTION_میدان_TYPE,
+    ACTION_میدان_گنتی,
+    ACTION_میدان_SCREEN,
+    ACTION_میدان_SAME,
+    ACTION_میدان_ڈیٹا,
+    ACTION_میدان_DEVICE,
+    ACTION_میدان_KEYCODE,
+    ACTION_میدان_MODS_مقصد_CLEAR,
+    ACTION_میدان_تالا_ON_RELEASE,
+    ACTION_میدان_UNLOCK_ON_PRESS,
+    ACTION_میدان_LATCH_ON_PRESS,
 };
 
-void
-InitActionsInfo(const struct xkb_keymap *keymap, ActionsInfo *info)
+خالی
+InitActionsInfo(ثابت ساخت xkb_keymap *keymap, ActionsInfo *info)
 {
-    for (enum xkb_action_type type = 0; type < _ACTION_TYPE_NUM_ENTRIES; type++)
+    برائے (شمار xkb_action_type type = 0; type < ACTION_TYPE_عدد_ENTRIES; type++)
         info->actions[type].type = type;
 
     /* Apply some "factory defaults". */
 
     /* Increment default button. */
     info->actions[ACTION_TYPE_PTR_DEFAULT].dflt.flags = 0;
-    info->actions[ACTION_TYPE_PTR_DEFAULT].dflt.value = 1;
+    info->actions[ACTION_TYPE_PTR_DEFAULT].dflt.قدر = 1;
     info->actions[ACTION_TYPE_PTR_MOVE].ptr.flags = ACTION_REPEAT;
     info->actions[ACTION_TYPE_SWITCH_VT].screen.flags = ACTION_SAME_SCREEN;
-    info->actions[ACTION_TYPE_REDIRECT_KEY].redirect.keycode =
-        keymap->redirect_key_auto;
+    info->actions[ACTION_TYPE_REDIRECT_کلید].redirect.keycode =
+        keymap->redirect_کلید_auto;
 }
 
-static const LookupEntry fieldStrings[] = {
-    { "clearLocks",       ACTION_FIELD_CLEAR_LOCKS     },
-    { "latchToLock",      ACTION_FIELD_LATCH_TO_LOCK   },
-    { "genKeyEvent",      ACTION_FIELD_GEN_KEY_EVENT   },
-    { "generateKeyEvent", ACTION_FIELD_GEN_KEY_EVENT   },
-    { "report",           ACTION_FIELD_REPORT          },
-    { "default",          ACTION_FIELD_DEFAULT         },
-    { "affect",           ACTION_FIELD_AFFECT          },
-    { "increment",        ACTION_FIELD_INCREMENT       },
-    { "modifiers",        ACTION_FIELD_MODIFIERS       },
-    { "mods",             ACTION_FIELD_MODIFIERS       },
-    { "group",            ACTION_FIELD_GROUP           },
-    { "x",                ACTION_FIELD_X               },
-    { "y",                ACTION_FIELD_Y               },
-    { "repeat",           ACTION_FIELD_REPEAT          },
-    { "accel",            ACTION_FIELD_REPEAT          },
-    { "accelerate",       ACTION_FIELD_REPEAT          },
-    { "button",           ACTION_FIELD_BUTTON          },
-    { "value",            ACTION_FIELD_VALUE           },
-    { "controls",         ACTION_FIELD_CONTROLS        },
-    { "ctrls",            ACTION_FIELD_CONTROLS        },
-    { "type",             ACTION_FIELD_TYPE            },
-    { "count",            ACTION_FIELD_COUNT           },
-    { "screen",           ACTION_FIELD_SCREEN          },
-    { "same",             ACTION_FIELD_SAME            },
-    { "sameServer",       ACTION_FIELD_SAME            },
-    { "data",             ACTION_FIELD_DATA            },
-    { "device",           ACTION_FIELD_DEVICE          },
-    { "dev",              ACTION_FIELD_DEVICE          },
-    { "key",              ACTION_FIELD_KEYCODE         },
-    { "keycode",          ACTION_FIELD_KEYCODE         },
-    { "kc",               ACTION_FIELD_KEYCODE         },
-    { "clearmods",        ACTION_FIELD_MODS_TO_CLEAR   },
-    { "clearmodifiers",   ACTION_FIELD_MODS_TO_CLEAR   },
-    { "lockOnRelease",    ACTION_FIELD_LOCK_ON_RELEASE },
-    { "unlockOnPress",    ACTION_FIELD_UNLOCK_ON_PRESS },
-    { "latchOnPress",     ACTION_FIELD_LATCH_ON_PRESS  },
-    { NULL,               0                            }
+ساکن ثابت Lookup_اندراج میدان_لڑیاں[] = {
+    { "clearLocks",       ACTION_میدان_CLEAR_LOCKS     },
+    { "latchToLock",      ACTION_میدان_LATCH_مقصد_تالا   },
+    { "genKeyEvent",      ACTION_میدان_GEN_کلید_EVENT   },
+    { "generateKeyEvent", ACTION_میدان_GEN_کلید_EVENT   },
+    { "report",           ACTION_میدان_REPORT          },
+    { "default",          ACTION_میدان_DEFAULT         },
+    { "affect",           ACTION_میدان_AFFECT          },
+    { "increment",        ACTION_میدان_INCREMENT       },
+    { "modifiers",        ACTION_میدان_MODIFIERS       },
+    { "mods",             ACTION_میدان_MODIFIERS       },
+    { "group",            ACTION_میدان_گروہ           },
+    { "x",                ACTION_میدان_X               },
+    { "y",                ACTION_میدان_Y               },
+    { "repeat",           ACTION_میدان_REPEAT          },
+    { "accel",            ACTION_میدان_REPEAT          },
+    { "accelerate",       ACTION_میدان_REPEAT          },
+    { "button",           ACTION_میدان_BUTTON          },
+    { "value",            ACTION_میدان_قدر           },
+    { "controls",         ACTION_میدان_CONTROLS        },
+    { "ctrls",            ACTION_میدان_CONTROLS        },
+    { "type",             ACTION_میدان_TYPE            },
+    { "count",            ACTION_میدان_گنتی           },
+    { "screen",           ACTION_میدان_SCREEN          },
+    { "same",             ACTION_میدان_SAME            },
+    { "sameServer",       ACTION_میدان_SAME            },
+    { "data",             ACTION_میدان_ڈیٹا            },
+    { "device",           ACTION_میدان_DEVICE          },
+    { "dev",              ACTION_میدان_DEVICE          },
+    { "key",              ACTION_میدان_KEYCODE         },
+    { "keycode",          ACTION_میدان_KEYCODE         },
+    { "kc",               ACTION_میدان_KEYCODE         },
+    { "clearmods",        ACTION_میدان_MODS_مقصد_CLEAR   },
+    { "clearmodifiers",   ACTION_میدان_MODS_مقصد_CLEAR   },
+    { "lockOnRelease",    ACTION_میدان_تالا_ON_RELEASE },
+    { "unlockOnPress",    ACTION_میدان_UNLOCK_ON_PRESS },
+    { "latchOnPress",     ACTION_میدان_LATCH_ON_PRESS  },
+    { تہی,               0                            }
 };
 
-static bool
-stringToActionType(const char *str, enum xkb_action_type *type_rtrn)
+ساکن bool
+string_مقصد_Action_Type(ثابت حرف *str, شمار xkb_action_type *type_rtrn)
 {
-    unsigned int type = 0;
-    const bool ret = LookupString(actionTypeNames, str, &type);
-    *type_rtrn = (enum xkb_action_type) type;
-    return ret;
+    غیرعلامتی صحیح type = 0;
+    ثابت bool ret = LookupString(action_Type_نام, str, &type);
+    *type_rtrn = (شمار xkb_action_type) type;
+    واپس ret;
 }
 
-static bool
-stringToField(const char *str, enum action_field *field_rtrn)
+ساکن bool
+string_مقصد_میدان(ثابت حرف *str, شمار action_میدان *میدان_rtrn)
 {
-    unsigned int field = 0;
-    const bool ret = LookupString(fieldStrings, str, &field);
-    *field_rtrn = (enum action_field) field;
-    return ret;
+    غیرعلامتی صحیح میدان_2 = 0;
+    ثابت bool ret = LookupString(میدان_لڑیاں, str, &میدان_2);
+    *میدان_rtrn = (شمار action_میدان) میدان_2;
+    واپس ret;
 }
 
-static const char *
-fieldText(enum action_field field)
+ساکن ثابت حرف *
+میدان_متن(شمار action_میدان میدان_2)
 {
-    return LookupValue(fieldStrings, field);
+    واپس Lookup_قدر(میدان_لڑیاں, میدان_2);
 }
 
 /***====================================================================***/
 
-static inline enum xkb_parser_error
-ReportMismatch(struct xkb_context *ctx, enum xkb_message_code code,
-               enum xkb_action_type action, enum action_field field,
-               const char *type, enum xkb_parser_strict_flags strict)
+ساکن اندرونی شمار xkb_parser_error
+ReportMismatch(ساخت xkb_context *ctx, شمار xkb_پیغام_رمز رمز,
+               شمار xkb_action_type action, شمار action_میدان میدان_2,
+               ثابت حرف *type, شمار xkb_parser_strict_flags strict)
 {
-    log_err(ctx, code,
+    log_err(ctx, رمز,
             "Value of %s field must be of type %s; "
             "Action %s definition ignored\n",
-            fieldText(field), type, ActionTypeText(action));
-    return (strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+            میدان_متن(میدان_2), type, Action_Type_متن(action));
+    واپس (strict & PARSER_NO_میدان_TYPE_MISMATCH)
         ? PARSER_FATAL_ERROR
         : PARSER_RECOVERABLE_ERROR;
 }
 
-static inline enum xkb_parser_error
-ReportFormatVersionMismatch(struct xkb_context *ctx,
-                            enum xkb_action_type action,
-                            enum action_field field,
-                            enum xkb_keymap_format format,
-                            const char *versions,
-                            enum xkb_parser_strict_flags strict)
+ساکن اندرونی شمار xkb_parser_error
+Report_Format_نسخہ_Mismatch(ساخت xkb_context *ctx,
+                            شمار xkb_action_type action,
+                            شمار action_میدان میدان_2,
+                            شمار xkb_keymap_format format,
+                            ثابت حرف *versions,
+                            شمار xkb_parser_strict_flags strict)
 {
-    log_err(ctx, XKB_ERROR_INCOMPATIBLE_KEYMAP_TEXT_FORMAT,
+    log_err(ctx, XKB_ERROR_INCOMPATIBLE_KEYMAP_متن_FORMAT,
             "Field %s for an action of type %s requires keymap text format %s, "
             " but got: %d; Action definition ignored\n",
-            fieldText(field), ActionTypeText(action), versions, format);
-    return (strict & PARSER_NO_UNKNOWN_ACTION_FIELDS)
+            میدان_متن(میدان_2), Action_Type_متن(action), versions, format);
+    واپس (strict & PARSER_NO_UNKNOWN_ACTION_FIELDS)
         ? PARSER_FATAL_ERROR
         /* No error reported: field is just ignored */
         : PARSER_SUCCESS;
 }
 
-static inline enum xkb_parser_error
-ReportIllegal(struct xkb_context *ctx, enum xkb_action_type action,
-              enum action_field field, enum xkb_parser_strict_flags strict)
+ساکن اندرونی شمار xkb_parser_error
+ReportIllegal(ساخت xkb_context *ctx, شمار xkb_action_type action,
+              شمار action_میدان میدان_2, شمار xkb_parser_strict_flags strict)
 {
-    log_err(ctx, XKB_ERROR_INVALID_ACTION_FIELD,
+    log_err(ctx, XKB_ERROR_INVALID_ACTION_میدان,
             "Field %s is not defined for an action of type %s; "
             "Action definition ignored\n",
-            fieldText(field), ActionTypeText(action));
-    return (strict & PARSER_NO_ILLEGAL_ACTION_FIELDS)
+            میدان_متن(میدان_2), Action_Type_متن(action));
+    واپس (strict & PARSER_NO_ILLEGAL_ACTION_FIELDS)
         ? PARSER_FATAL_ERROR
         /* No error reported: field is just ignored */
         : PARSER_SUCCESS;
 }
 
-static inline enum xkb_parser_error
-ReportActionNotArray(struct xkb_context *ctx, enum xkb_action_type action,
-                     enum action_field field,
-                     enum xkb_parser_strict_flags strict)
+ساکن اندرونی شمار xkb_parser_error
+ReportActionNotArray(ساخت xkb_context *ctx, شمار xkb_action_type action,
+                     شمار action_میدان میدان_2,
+                     شمار xkb_parser_strict_flags strict)
 {
-    log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
+    log_err(ctx, XKB_ERROR_WRONG_میدان_TYPE,
             "The %s field in the %s action is not an array; "
             "Action definition ignored\n",
-            fieldText(field), ActionTypeText(action));
-    return (strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+            میدان_متن(میدان_2), Action_Type_متن(action));
+    واپس (strict & PARSER_NO_میدان_TYPE_MISMATCH)
         ? PARSER_FATAL_ERROR
         : PARSER_RECOVERABLE_ERROR;
 }
 
-static enum xkb_parser_error
-HandleNoAction(const struct xkb_keymap_info *keymap_info,
-               const struct xkb_mod_set *mods,
-               union xkb_action *action, enum action_field field,
-               const ExprDef *array_ndx, const ExprDef *value,
-               ExprDef **value_ptr)
+ساکن شمار xkb_parser_error
+HandleNoAction(ثابت ساخت xkb_keymap_info *keymap_info,
+               ثابت ساخت xkb_mod_سیٹ *mods,
+               اتحاد xkb_action *action, شمار action_میدان میدان_2,
+               ثابت اظہاریہ_Def *array_ndx, ثابت اظہاریہ_Def *قدر,
+               اظہاریہ_Def **قدر_ptr)
 {
-    log_err(keymap_info->keymap.ctx, XKB_ERROR_INVALID_ACTION_FIELD,
+    log_err(keymap_info->keymap.ctx, XKB_ERROR_INVALID_ACTION_میدان,
             "The \"%s\" action takes no argument, but got \"%s\" field; "
             "Action definition ignored\n",
-            ActionTypeText(action->type), fieldText(field));
-    return (keymap_info->strict & PARSER_NO_ILLEGAL_ACTION_FIELDS)
+            Action_Type_متن(action->type), میدان_متن(میدان_2));
+    واپس (keymap_info->strict & PARSER_NO_ILLEGAL_ACTION_FIELDS)
         ? PARSER_FATAL_ERROR
         /* No error reported: field is just ignored */
         : PARSER_SUCCESS;
 }
 
-static enum xkb_parser_error
-CheckBooleanFlag(struct xkb_context *ctx, enum xkb_parser_strict_flags strict,
-                 enum xkb_action_type action, enum action_field field,
-                 enum xkb_action_flags flag, const ExprDef *array_ndx,
-                 const ExprDef *value, enum xkb_action_flags *flags_inout)
+ساکن شمار xkb_parser_error
+CheckBooleanFlag(ساخت xkb_context *ctx, شمار xkb_parser_strict_flags strict,
+                 شمار xkb_action_type action, شمار action_میدان میدان_2,
+                 شمار xkb_action_flags flag, ثابت اظہاریہ_Def *array_ndx,
+                 ثابت اظہاریہ_Def *قدر, شمار xkb_action_flags *flags_inout)
 {
-    bool set = false;
+    bool سیٹ = false;
 
-    if (array_ndx)
-        return ReportActionNotArray(ctx, action, field, strict);
+    اگر (array_ndx)
+        واپس ReportActionNotArray(ctx, action, میدان_2, strict);
 
-    if (!ExprResolveBoolean(ctx, value, &set))
-        return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
-                              action, field, "boolean", strict);
+    اگر (!اظہاریہ_Resolve_Boolean(ctx, قدر, &سیٹ))
+        واپس ReportMismatch(ctx, XKB_ERROR_WRONG_میدان_TYPE,
+                              action, میدان_2, "boolean", strict);
 
-    if (set)
+    اگر (سیٹ)
         *flags_inout |= flag;
-    else
+    ورنہ
         *flags_inout &= ~flag;
 
-    return PARSER_SUCCESS;
+    واپس PARSER_SUCCESS;
 }
 
-static enum xkb_parser_error
-CheckModifierField(struct xkb_context *ctx, enum xkb_parser_strict_flags strict,
-                   const struct xkb_mod_set *mods, enum xkb_action_type action,
-                   const ExprDef *array_ndx, const ExprDef *value,
-                   enum xkb_action_flags *flags_inout, xkb_mod_mask_t *mods_rtrn)
+ساکن شمار xkb_parser_error
+Check_Modifier_میدان(ساخت xkb_context *ctx, شمار xkb_parser_strict_flags strict,
+                   ثابت ساخت xkb_mod_سیٹ *mods, شمار xkb_action_type action,
+                   ثابت اظہاریہ_Def *array_ndx, ثابت اظہاریہ_Def *قدر,
+                   شمار xkb_action_flags *flags_inout, xkb_mod_نقاب_t *mods_rtrn)
 {
-    if (array_ndx)
-        return ReportActionNotArray(ctx, action, ACTION_FIELD_MODIFIERS, strict);
+    اگر (array_ndx)
+        واپس ReportActionNotArray(ctx, action, ACTION_میدان_MODIFIERS, strict);
 
-    if (value->common.type == STMT_EXPR_IDENT) {
-        const char *valStr;
-        valStr = xkb_atom_text(ctx, value->ident.ident);
-        if (valStr && (istreq(valStr, "usemodmapmods") ||
+    اگر (قدر->common.type == STMT_اظہاریہ_IDENT) {
+        ثابت حرف *valStr;
+        valStr = xkb_atom_متن(ctx, قدر->ident.ident);
+        اگر (valStr && (istreq(valStr, "usemodmapmods") ||
                        istreq(valStr, "modmapmods"))) {
             *mods_rtrn = 0;
             *flags_inout |= ACTION_MODS_LOOKUP_MODMAP;
-            return PARSER_SUCCESS;
+            واپس PARSER_SUCCESS;
         }
     }
 
-    if (!ExprResolveModMask(ctx, value, MOD_BOTH, mods, mods_rtrn))
-        return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action,
-                              ACTION_FIELD_MODIFIERS, "modifier mask", strict);
+    اگر (!اظہاریہ_Resolve_Mod_نقاب(ctx, قدر, MOD_BOTH, mods, mods_rtrn))
+        واپس ReportMismatch(ctx, XKB_ERROR_WRONG_میدان_TYPE, action,
+                              ACTION_میدان_MODIFIERS, "modifier mask", strict);
 
     *flags_inout &= ~ACTION_MODS_LOOKUP_MODMAP;
-    return PARSER_SUCCESS;
+    واپس PARSER_SUCCESS;
 }
 
-static const LookupEntry lockWhich[] = {
+ساکن ثابت Lookup_اندراج تالا_Which[] = {
     { "both", 0 },
-    { "lock", ACTION_LOCK_NO_UNLOCK },
-    { "neither", (ACTION_LOCK_NO_LOCK | ACTION_LOCK_NO_UNLOCK) },
-    { "unlock", ACTION_LOCK_NO_LOCK },
-    { NULL, 0 }
+    { "lock", ACTION_تالا_NO_UNLOCK },
+    { "neither", (ACTION_تالا_NO_تالا | ACTION_تالا_NO_UNLOCK) },
+    { "unlock", ACTION_تالا_NO_تالا },
+    { تہی, 0 }
 };
 
-static enum xkb_parser_error
-CheckAffectField(struct xkb_context *ctx, enum xkb_parser_strict_flags strict,
-                 enum xkb_action_type action, const ExprDef *array_ndx,
-                 const ExprDef *value, enum xkb_action_flags *flags_inout)
+ساکن شمار xkb_parser_error
+Check_Affect_میدان(ساخت xkb_context *ctx, شمار xkb_parser_strict_flags strict,
+                 شمار xkb_action_type action, ثابت اظہاریہ_Def *array_ndx,
+                 ثابت اظہاریہ_Def *قدر, شمار xkb_action_flags *flags_inout)
 {
-    if (array_ndx)
-        return ReportActionNotArray(ctx, action, ACTION_FIELD_AFFECT, strict);
+    اگر (array_ndx)
+        واپس ReportActionNotArray(ctx, action, ACTION_میدان_AFFECT, strict);
 
     uint32_t flags = 0;
-    if (!ExprResolveEnum(ctx, value, &flags, lockWhich))
-        return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
-                              action, ACTION_FIELD_AFFECT,
+    اگر (!اظہاریہ_Resolve_Enum(ctx, قدر, &flags, تالا_Which))
+        واپس ReportMismatch(ctx, XKB_ERROR_WRONG_میدان_TYPE,
+                              action, ACTION_میدان_AFFECT,
                               "lock, unlock, both, neither", strict);
 
-    *flags_inout &= ~(ACTION_LOCK_NO_LOCK | ACTION_LOCK_NO_UNLOCK);
-    *flags_inout |= (enum xkb_action_flags) flags;
-    return PARSER_SUCCESS;
+    *flags_inout &= ~(ACTION_تالا_NO_تالا | ACTION_تالا_NO_UNLOCK);
+    *flags_inout |= (شمار xkb_action_flags) flags;
+    واپس PARSER_SUCCESS;
 }
 
-static enum xkb_parser_error
-HandleSetLatchLockMods(const struct xkb_keymap_info *keymap_info,
-                       const struct xkb_mod_set *mods,
-                       union xkb_action *action, enum action_field field,
-                       const ExprDef *array_ndx, const ExprDef *value,
-                       ExprDef **value_ptr)
+ساکن شمار xkb_parser_error
+Handle_سیٹ_Latch_تالا_Mods(ثابت ساخت xkb_keymap_info *keymap_info,
+                       ثابت ساخت xkb_mod_سیٹ *mods,
+                       اتحاد xkb_action *action, شمار action_میدان میدان_2,
+                       ثابت اظہاریہ_Def *array_ndx, ثابت اظہاریہ_Def *قدر,
+                       اظہاریہ_Def **قدر_ptr)
 {
-    struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
-    struct xkb_mod_action *act = &action->mods;
-    const enum xkb_action_type type = action->type;
+    ساخت xkb_context * محدود ثابت ctx = keymap_info->keymap.ctx;
+    ساخت xkb_mod_action *act = &action->mods;
+    ثابت شمار xkb_action_type type = action->type;
 
-    if (field == ACTION_FIELD_MODIFIERS)
-        return CheckModifierField(ctx, keymap_info->strict, mods, action->type,
-                                  array_ndx, value, &act->flags, &act->mods.mods);
-    if (field == ACTION_FIELD_UNLOCK_ON_PRESS) {
+    اگر (میدان_2 == ACTION_میدان_MODIFIERS)
+        واپس Check_Modifier_میدان(ctx, keymap_info->strict, mods, action->type,
+                                  array_ndx, قدر, &act->flags, &act->mods.mods);
+    اگر (میدان_2 == ACTION_میدان_UNLOCK_ON_PRESS) {
         /* Ensure to update if a new modifier action is introduced. */
-        assert(type == ACTION_TYPE_MOD_SET || type == ACTION_TYPE_MOD_LATCH ||
-               type == ACTION_TYPE_MOD_LOCK);
-        if (keymap_info->features.mods_unlock_on_press) {
-            const enum xkb_parser_error ret = CheckBooleanFlag(
-                ctx, keymap_info->strict, action->type, field,
-                ACTION_UNLOCK_ON_PRESS, array_ndx, value, &act->flags
+        أكد(type == ACTION_TYPE_MOD_سیٹ || type == ACTION_TYPE_MOD_LATCH ||
+               type == ACTION_TYPE_MOD_تالا);
+        اگر (keymap_info->features.mods_unlock_on_press) {
+            ثابت شمار xkb_parser_error ret = CheckBooleanFlag(
+                ctx, keymap_info->strict, action->type, میدان_2,
+                ACTION_UNLOCK_ON_PRESS, array_ndx, قدر, &act->flags
             );
-            if (ret == PARSER_SUCCESS)
+            اگر (ret == PARSER_SUCCESS)
                 act->flags |= ACTION_EXPLICIT_UNLOCK_ON_PRESS;
-            return ret;
-        } else {
-            return ReportFormatVersionMismatch(ctx, action->type, field,
+            واپس ret;
+        } ورنہ {
+            واپس Report_Format_نسخہ_Mismatch(ctx, action->type, میدان_2,
                                                keymap_info->keymap.format,
                                                ">= 2", keymap_info->strict);
         }
     }
-    if ((type == ACTION_TYPE_MOD_SET || type == ACTION_TYPE_MOD_LATCH) &&
-        field == ACTION_FIELD_CLEAR_LOCKS)
-        return CheckBooleanFlag(ctx, keymap_info->strict, action->type, field,
-                                ACTION_LOCK_CLEAR, array_ndx, value,
+    اگر ((type == ACTION_TYPE_MOD_سیٹ || type == ACTION_TYPE_MOD_LATCH) &&
+        میدان_2 == ACTION_میدان_CLEAR_LOCKS)
+        واپس CheckBooleanFlag(ctx, keymap_info->strict, action->type, میدان_2,
+                                ACTION_تالا_CLEAR, array_ndx, قدر,
                                 &act->flags);
-    if (type == ACTION_TYPE_MOD_LATCH) {
-        if (field == ACTION_FIELD_LATCH_TO_LOCK)
-            return CheckBooleanFlag(ctx, keymap_info->strict, action->type,
-                                    field, ACTION_LATCH_TO_LOCK, array_ndx,
-                                    value, &act->flags);
-        if (field == ACTION_FIELD_LATCH_ON_PRESS) {
-            if (keymap_info->features.mods_latch_on_press) {
-                return CheckBooleanFlag(ctx, keymap_info->strict, action->type,
-                                        field, ACTION_LATCH_ON_PRESS, array_ndx,
-                                        value, &act->flags);
-            } else {
-                return ReportFormatVersionMismatch(ctx, action->type, field,
+    اگر (type == ACTION_TYPE_MOD_LATCH) {
+        اگر (میدان_2 == ACTION_میدان_LATCH_مقصد_تالا)
+            واپس CheckBooleanFlag(ctx, keymap_info->strict, action->type,
+                                    میدان_2, ACTION_LATCH_مقصد_تالا, array_ndx,
+                                    قدر, &act->flags);
+        اگر (میدان_2 == ACTION_میدان_LATCH_ON_PRESS) {
+            اگر (keymap_info->features.mods_latch_on_press) {
+                واپس CheckBooleanFlag(ctx, keymap_info->strict, action->type,
+                                        میدان_2, ACTION_LATCH_ON_PRESS, array_ndx,
+                                        قدر, &act->flags);
+            } ورنہ {
+                واپس Report_Format_نسخہ_Mismatch(ctx, action->type, میدان_2,
                                                    keymap_info->keymap.format,
                                                    ">= 2", keymap_info->strict);
             }
         }
     }
-    if (type == ACTION_TYPE_MOD_LOCK && field == ACTION_FIELD_AFFECT)
-        return CheckAffectField(ctx, keymap_info->strict, action->type,
-                                array_ndx, value, &act->flags);
+    اگر (type == ACTION_TYPE_MOD_تالا && میدان_2 == ACTION_میدان_AFFECT)
+        واپس Check_Affect_میدان(ctx, keymap_info->strict, action->type,
+                                array_ndx, قدر, &act->flags);
 
-    return ReportIllegal(ctx, action->type, field, keymap_info->strict);
+    واپس ReportIllegal(ctx, action->type, میدان_2, keymap_info->strict);
 }
 
-static enum xkb_parser_error
-CheckGroupField(const struct xkb_keymap_info *keymap_info,
-                enum xkb_action_type action, const ExprDef *array_ndx,
-                const ExprDef *value, ExprDef **value_ptr,
-                enum xkb_action_flags *flags_inout, int32_t *group_rtrn)
+ساکن شمار xkb_parser_error
+Check_گروہ_میدان(ثابت ساخت xkb_keymap_info *keymap_info,
+                شمار xkb_action_type action, ثابت اظہاریہ_Def *array_ndx,
+                ثابت اظہاریہ_Def *قدر, اظہاریہ_Def **قدر_ptr,
+                شمار xkb_action_flags *flags_inout, int32_t *گروہ_rtrn)
 {
-    const ExprDef *spec;
-    xkb_layout_index_t idx = 0;
-    enum xkb_action_flags flags = *flags_inout;
+    ثابت اظہاریہ_Def *spec;
+    xkb_layout_اشاریہ_t idx = 0;
+    شمار xkb_action_flags flags = *flags_inout;
 
-    if (array_ndx)
-        return ReportActionNotArray(keymap_info->keymap.ctx, action,
-                                    ACTION_FIELD_GROUP, keymap_info->strict);
+    اگر (array_ndx)
+        واپس ReportActionNotArray(keymap_info->keymap.ctx, action,
+                                    ACTION_میدان_گروہ, keymap_info->strict);
 
-    if (value->common.type == STMT_EXPR_NEGATE ||
-        value->common.type == STMT_EXPR_UNARY_PLUS) {
+    اگر (قدر->common.type == STMT_اظہاریہ_NEGATE ||
+        قدر->common.type == STMT_اظہاریہ_UNARY_PLUS) {
         flags &= ~ACTION_ABSOLUTE_SWITCH;
-        spec = value->unary.child;
-        value_ptr = &(*value_ptr)->unary.child;
-    } else {
+        spec = قدر->unary.بچہ;
+        قدر_ptr = &(*قدر_ptr)->unary.بچہ;
+    } ورنہ {
         flags |= ACTION_ABSOLUTE_SWITCH;
-        spec = value;
+        spec = قدر;
     }
 
-    const bool absolute = (flags & ACTION_ABSOLUTE_SWITCH);
+    ثابت bool absolute = (flags & ACTION_ABSOLUTE_SWITCH);
     bool pending = false;
-    const enum xkb_parser_error ret =
-        ExprResolveGroup(keymap_info, spec, absolute, &idx, &pending);
-    if (ret != PARSER_SUCCESS && !pending) {
+    ثابت شمار xkb_parser_error ret =
+        اظہاریہ_Resolve_گروہ(keymap_info, spec, absolute, &idx, &pending);
+    اگر (ret != PARSER_SUCCESS && !pending) {
         ReportMismatch(keymap_info->keymap.ctx,
-                       XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_, action,
-                       ACTION_FIELD_GROUP, "integer", keymap_info->strict);
-        return ret;
+                       XKB_ERROR_UNSUPPORTED_LAYOUT_اشاریہ_2, action,
+                       ACTION_میدان_گروہ, "integer", keymap_info->strict);
+        واپس ret;
     }
 
-    if (pending) {
+    اگر (pending) {
         flags |= ACTION_PENDING_COMPUTATION;
-        const darray_size_t pending_index =
-            darray_size(*keymap_info->pending_computations);
+        ثابت darray_سائز_t pending_اشاریہ =
+            darray_سائز(*keymap_info->pending_computations);
         darray_append(
             *keymap_info->pending_computations,
-            (struct pending_computation) {
-                .expr = *value_ptr,
+            (ساخت pending_computation) {
+                .اظہاریہ = *قدر_ptr,
                 .computed = false,
-                .value = 0,
+                .قدر = 0,
             }
         );
-        *value_ptr = NULL;
-        static_assert(sizeof(pending_index) == sizeof(*group_rtrn),
+        *قدر_ptr = تہی;
+        static_assert(حجم(pending_اشاریہ) == حجم(*گروہ_rtrn),
                       "Cannot save pending computation");
-        *group_rtrn = (int32_t) pending_index;
-    } else {
+        *گروہ_rtrn = (int32_t) pending_اشاریہ;
+    } ورنہ {
         flags &= ~ACTION_PENDING_COMPUTATION;
         /* `+n`, `-n` are relative, `n` is absolute. */
-        if (absolute) {
-            *group_rtrn = (int32_t) (idx - 1);
-        } else {
-            *group_rtrn = (int32_t) idx;
-            if (value->common.type == STMT_EXPR_NEGATE)
-                *group_rtrn = -*group_rtrn;
+        اگر (absolute) {
+            *گروہ_rtrn = (int32_t) (idx - 1);
+        } ورنہ {
+            *گروہ_rtrn = (int32_t) idx;
+            اگر (قدر->common.type == STMT_اظہاریہ_NEGATE)
+                *گروہ_rtrn = -*گروہ_rtrn;
         }
     }
 
     *flags_inout = flags;
-    return PARSER_SUCCESS;
+    واپس PARSER_SUCCESS;
 }
 
-static enum xkb_parser_error
-HandleSetLatchLockGroup(const struct xkb_keymap_info *keymap_info,
-                        const struct xkb_mod_set *mods,
-                        union xkb_action *action, enum action_field field,
-                        const ExprDef *array_ndx, const ExprDef *value,
-                        ExprDef **value_ptr)
+ساکن شمار xkb_parser_error
+Handle_سیٹ_Latch_تالا_گروہ(ثابت ساخت xkb_keymap_info *keymap_info,
+                        ثابت ساخت xkb_mod_سیٹ *mods,
+                        اتحاد xkb_action *action, شمار action_میدان میدان_2,
+                        ثابت اظہاریہ_Def *array_ndx, ثابت اظہاریہ_Def *قدر,
+                        اظہاریہ_Def **قدر_ptr)
 {
-    struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
-    struct xkb_group_action *act = &action->group;
-    const enum xkb_action_type type = action->type;
+    ساخت xkb_context * محدود ثابت ctx = keymap_info->keymap.ctx;
+    ساخت xkb_گروہ_action *act = &action->گروہ;
+    ثابت شمار xkb_action_type type = action->type;
 
-    if (field == ACTION_FIELD_GROUP) {
-        return CheckGroupField(keymap_info, action->type, array_ndx, value,
-                               value_ptr, &act->flags, &act->group);
+    اگر (میدان_2 == ACTION_میدان_گروہ) {
+        واپس Check_گروہ_میدان(keymap_info, action->type, array_ndx, قدر,
+                               قدر_ptr, &act->flags, &act->گروہ);
     }
-    if ((type == ACTION_TYPE_GROUP_SET || type == ACTION_TYPE_GROUP_LATCH) &&
-        field == ACTION_FIELD_CLEAR_LOCKS)
-        return CheckBooleanFlag(ctx, keymap_info->strict, action->type, field,
-                                ACTION_LOCK_CLEAR, array_ndx, value,
+    اگر ((type == ACTION_TYPE_گروہ_سیٹ || type == ACTION_TYPE_گروہ_LATCH) &&
+        میدان_2 == ACTION_میدان_CLEAR_LOCKS)
+        واپس CheckBooleanFlag(ctx, keymap_info->strict, action->type, میدان_2,
+                                ACTION_تالا_CLEAR, array_ndx, قدر,
                                 &act->flags);
-    if (type == ACTION_TYPE_GROUP_LATCH &&
-        field == ACTION_FIELD_LATCH_TO_LOCK)
-        return CheckBooleanFlag(ctx, keymap_info->strict, action->type, field,
-                                ACTION_LATCH_TO_LOCK, array_ndx, value,
+    اگر (type == ACTION_TYPE_گروہ_LATCH &&
+        میدان_2 == ACTION_میدان_LATCH_مقصد_تالا)
+        واپس CheckBooleanFlag(ctx, keymap_info->strict, action->type, میدان_2,
+                                ACTION_LATCH_مقصد_تالا, array_ndx, قدر,
                                 &act->flags);
-    if (type == ACTION_TYPE_GROUP_LOCK &&
-        field == ACTION_FIELD_LOCK_ON_RELEASE) {
+    اگر (type == ACTION_TYPE_گروہ_تالا &&
+        میدان_2 == ACTION_میدان_تالا_ON_RELEASE) {
         /* TODO: support this for `ACTION_TYPE_MOD_LOCK` too? */
-        if (keymap_info->features.group_lock_on_release) {
-            const enum xkb_parser_error ret = CheckBooleanFlag(
-                ctx, keymap_info->strict, action->type, field,
-                ACTION_LOCK_ON_RELEASE, array_ndx, value, &act->flags
+        اگر (keymap_info->features.گروہ_تالا_on_release) {
+            ثابت شمار xkb_parser_error ret = CheckBooleanFlag(
+                ctx, keymap_info->strict, action->type, میدان_2,
+                ACTION_تالا_ON_RELEASE, array_ndx, قدر, &act->flags
             );
-            if (ret == PARSER_SUCCESS)
-                act->flags |= ACTION_EXPLICIT_LOCK_ON_RELEASE;
-            return ret;
-        } else {
-            return ReportFormatVersionMismatch(ctx, action->type, field,
+            اگر (ret == PARSER_SUCCESS)
+                act->flags |= ACTION_EXPLICIT_تالا_ON_RELEASE;
+            واپس ret;
+        } ورنہ {
+            واپس Report_Format_نسخہ_Mismatch(ctx, action->type, میدان_2,
                                                keymap_info->keymap.format,
                                                ">= v2", keymap_info->strict);
         }
     }
 
-    return ReportIllegal(ctx, action->type, field, keymap_info->strict);
+    واپس ReportIllegal(ctx, action->type, میدان_2, keymap_info->strict);
 }
 
-static enum xkb_parser_error
-HandleMovePtr(const struct xkb_keymap_info *keymap_info,
-              const struct xkb_mod_set *mods,
-              union xkb_action *action, enum action_field field,
-              const ExprDef *array_ndx, const ExprDef *value,
-              ExprDef **value_ptr)
+ساکن شمار xkb_parser_error
+HandleMovePtr(ثابت ساخت xkb_keymap_info *keymap_info,
+              ثابت ساخت xkb_mod_سیٹ *mods,
+              اتحاد xkb_action *action, شمار action_میدان میدان_2,
+              ثابت اظہاریہ_Def *array_ndx, ثابت اظہاریہ_Def *قدر,
+              اظہاریہ_Def **قدر_ptr)
 {
-    struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
-    struct xkb_pointer_motion_action *act = &action->ptr;
+    ساخت xkb_context * محدود ثابت ctx = keymap_info->keymap.ctx;
+    ساخت xkb_اشارہ_گر_motion_action *act = &action->ptr;
 
-    if (field == ACTION_FIELD_X || field == ACTION_FIELD_Y) {
+    اگر (میدان_2 == ACTION_میدان_X || میدان_2 == ACTION_میدان_Y) {
         int64_t val = 0;
-        const bool absolute = (value->common.type != STMT_EXPR_NEGATE &&
-                               value->common.type != STMT_EXPR_UNARY_PLUS);
+        ثابت bool absolute = (قدر->common.type != STMT_اظہاریہ_NEGATE &&
+                               قدر->common.type != STMT_اظہاریہ_UNARY_PLUS);
 
-        if (array_ndx)
-            return ReportActionNotArray(ctx, action->type, field,
+        اگر (array_ndx)
+            واپس ReportActionNotArray(ctx, action->type, میدان_2,
                                         keymap_info->strict);
 
-        if (!ExprResolveInteger(ctx, value, &val))
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
-                                  field, "integer", keymap_info->strict);
+        اگر (!اظہاریہ_Resolve_Integer(ctx, قدر, &val))
+            واپس ReportMismatch(ctx, XKB_ERROR_WRONG_میدان_TYPE, action->type,
+                                  میدان_2, "integer", keymap_info->strict);
 
-        if (val < INT16_MIN || val > INT16_MAX) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        اگر (val < INT16_MIN || val > INT16_MAX) {
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "The %s field in the %s action must be in range %d..%d, "
                     "but got %"PRId64". Action definition ignored\n",
-                    fieldText(field), ActionTypeText(action->type),
+                    میدان_متن(میدان_2), Action_Type_متن(action->type),
                     INT16_MIN, INT16_MAX, val);
-            return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+            واپس (keymap_info->strict & PARSER_NO_میدان_TYPE_MISMATCH)
                 ? PARSER_FATAL_ERROR
                 : PARSER_RECOVERABLE_ERROR;
         }
 
-        if (field == ACTION_FIELD_X) {
-            if (absolute)
+        اگر (میدان_2 == ACTION_میدان_X) {
+            اگر (absolute)
                 act->flags |= ACTION_ABSOLUTE_X;
             act->x = (int16_t) val;
         }
-        else {
-            if (absolute)
+        ورنہ {
+            اگر (absolute)
                 act->flags |= ACTION_ABSOLUTE_Y;
             act->y = (int16_t) val;
         }
 
-        return PARSER_SUCCESS;
+        واپس PARSER_SUCCESS;
     }
-    else if (field == ACTION_FIELD_REPEAT) {
-        return CheckBooleanFlag(ctx, keymap_info->strict, action->type, field,
-                                ACTION_REPEAT, array_ndx, value, &act->flags);
+    ورنہ اگر (میدان_2 == ACTION_میدان_REPEAT) {
+        واپس CheckBooleanFlag(ctx, keymap_info->strict, action->type, میدان_2,
+                                ACTION_REPEAT, array_ndx, قدر, &act->flags);
     }
 
-    return ReportIllegal(ctx, action->type, field, keymap_info->strict);
+    واپس ReportIllegal(ctx, action->type, میدان_2, keymap_info->strict);
 }
 
-static enum xkb_parser_error
-HandlePtrBtn(const struct xkb_keymap_info *keymap_info,
-             const struct xkb_mod_set *mods,
-             union xkb_action *action, enum action_field field,
-             const ExprDef *array_ndx, const ExprDef *value,
-             ExprDef **value_ptr)
+ساکن شمار xkb_parser_error
+HandlePtrBtn(ثابت ساخت xkb_keymap_info *keymap_info,
+             ثابت ساخت xkb_mod_سیٹ *mods,
+             اتحاد xkb_action *action, شمار action_میدان میدان_2,
+             ثابت اظہاریہ_Def *array_ndx, ثابت اظہاریہ_Def *قدر,
+             اظہاریہ_Def **قدر_ptr)
 {
-    struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
-    struct xkb_pointer_button_action *act = &action->btn;
+    ساخت xkb_context * محدود ثابت ctx = keymap_info->keymap.ctx;
+    ساخت xkb_اشارہ_گر_button_action *act = &action->btn;
 
-    if (field == ACTION_FIELD_BUTTON) {
+    اگر (میدان_2 == ACTION_میدان_BUTTON) {
         int64_t btn = 0;
 
-        if (array_ndx)
-            return ReportActionNotArray(ctx, action->type, field,
+        اگر (array_ndx)
+            واپس ReportActionNotArray(ctx, action->type, میدان_2,
                                         keymap_info->strict);
 
-        if (!ExprResolveButton(ctx, value, &btn)) {
-            static_assert(XKB_POINTER_BUTTON_MIN == 1 &&
-                          XKB_POINTER_BUTTON_MAX == 5, "invalid message");
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
-                                  field, "integer (range 1..5)",
+        اگر (!اظہاریہ_Resolve_Button(ctx, قدر, &btn)) {
+            static_assert(XKB_اشارہ_گر_BUTTON_MIN == 1 &&
+                          XKB_اشارہ_گر_BUTTON_MAX == 5, "invalid message");
+            واپس ReportMismatch(ctx, XKB_ERROR_WRONG_میدان_TYPE, action->type,
+                                  میدان_2, "integer (range 1..5)",
                                   keymap_info->strict);
         }
 
-        static_assert(XKB_POINTER_BUTTON_DEFAULT < XKB_POINTER_BUTTON_MIN, "");
-        if (btn < XKB_POINTER_BUTTON_DEFAULT || btn > XKB_POINTER_BUTTON_MAX) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        static_assert(XKB_اشارہ_گر_BUTTON_DEFAULT < XKB_اشارہ_گر_BUTTON_MIN, "");
+        اگر (btn < XKB_اشارہ_گر_BUTTON_DEFAULT || btn > XKB_اشارہ_گر_BUTTON_MAX) {
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "Button must specify default or be in the range %d..%d; "
                     "Illegal button value %"PRId64" ignored\n",
-                    XKB_POINTER_BUTTON_MIN, XKB_POINTER_BUTTON_MAX, btn);
-            return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+                    XKB_اشارہ_گر_BUTTON_MIN, XKB_اشارہ_گر_BUTTON_MAX, btn);
+            واپس (keymap_info->strict & PARSER_NO_میدان_TYPE_MISMATCH)
                 ? PARSER_FATAL_ERROR
                 : PARSER_RECOVERABLE_ERROR;
         }
 
         act->button = (uint8_t) btn;
-        return PARSER_SUCCESS;
+        واپس PARSER_SUCCESS;
     }
-    else if (action->type == ACTION_TYPE_PTR_LOCK &&
-             field == ACTION_FIELD_AFFECT) {
-        return CheckAffectField(ctx, keymap_info->strict, action->type,
-                                array_ndx, value, &act->flags);
+    ورنہ اگر (action->type == ACTION_TYPE_PTR_تالا &&
+             میدان_2 == ACTION_میدان_AFFECT) {
+        واپس Check_Affect_میدان(ctx, keymap_info->strict, action->type,
+                                array_ndx, قدر, &act->flags);
     }
-    else if (field == ACTION_FIELD_COUNT) {
+    ورنہ اگر (میدان_2 == ACTION_میدان_گنتی) {
         int64_t val = 0;
 
-        if (array_ndx)
-            return ReportActionNotArray(ctx, action->type, field,
+        اگر (array_ndx)
+            واپس ReportActionNotArray(ctx, action->type, میدان_2,
                                         keymap_info->strict);
 
-        if (!ExprResolveInteger(ctx, value, &val))
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
-                                  field, "integer", keymap_info->strict);
+        اگر (!اظہاریہ_Resolve_Integer(ctx, قدر, &val))
+            واپس ReportMismatch(ctx, XKB_ERROR_WRONG_میدان_TYPE, action->type,
+                                  میدان_2, "integer", keymap_info->strict);
 
-        if (val < 0 || val > 255) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        اگر (val < 0 || val > 255) {
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "The count field must have a value in the range 0..255; "
                     "Illegal count %"PRId64" ignored\n", val);
-            return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+            واپس (keymap_info->strict & PARSER_NO_میدان_TYPE_MISMATCH)
                 ? PARSER_FATAL_ERROR
                 : PARSER_RECOVERABLE_ERROR;
         }
@@ -602,292 +602,292 @@ HandlePtrBtn(const struct xkb_keymap_info *keymap_info,
          * X.Org’s xkbcomp, since `SA_LockPtrBtn` has no `count` parameter.
          * See: https://xorg.freedesktop.org/archive/current/doc/kbproto/xkbproto.html#:~:text=SA_LockPtrBtn
          */
-        if (action->type != ACTION_TYPE_PTR_LOCK)
-            act->count = (uint8_t) val;
-        return PARSER_SUCCESS;
+        اگر (action->type != ACTION_TYPE_PTR_تالا)
+            act->گنتی = (uint8_t) val;
+        واپس PARSER_SUCCESS;
     }
 
-    return ReportIllegal(ctx, action->type, field, keymap_info->strict);
+    واپس ReportIllegal(ctx, action->type, میدان_2, keymap_info->strict);
 }
 
-enum {
-    SET_POINTER_DEFAULT_BUTTON_AFFECT_DEFAULT = 0,
-    _SET_POINTER_DEFAULT_BUTTON_AFFECT_NUM_ENTRIES
+شمار {
+    سیٹ_اشارہ_گر_DEFAULT_BUTTON_AFFECT_DEFAULT = 0,
+    سیٹ_اشارہ_گر_DEFAULT_BUTTON_AFFECT_عدد_ENTRIES
 };
 
-static const LookupEntry ptrDflts[] = {
-    { "dfltbtn", SET_POINTER_DEFAULT_BUTTON_AFFECT_DEFAULT },
-    { "defaultbutton", SET_POINTER_DEFAULT_BUTTON_AFFECT_DEFAULT },
-    { "button", SET_POINTER_DEFAULT_BUTTON_AFFECT_DEFAULT },
-    { NULL, 0 }
+ساکن ثابت Lookup_اندراج ptrDflts[] = {
+    { "dfltbtn", سیٹ_اشارہ_گر_DEFAULT_BUTTON_AFFECT_DEFAULT },
+    { "defaultbutton", سیٹ_اشارہ_گر_DEFAULT_BUTTON_AFFECT_DEFAULT },
+    { "button", سیٹ_اشارہ_گر_DEFAULT_BUTTON_AFFECT_DEFAULT },
+    { تہی, 0 }
 };
 
-static enum xkb_parser_error
-HandleSetPtrDflt(const struct xkb_keymap_info *keymap_info,
-                 const struct xkb_mod_set *mods,
-                 union xkb_action *action, enum action_field field,
-                 const ExprDef *array_ndx, const ExprDef *value,
-                 ExprDef **value_ptr)
+ساکن شمار xkb_parser_error
+Handle_سیٹ_Ptr_Dflt(ثابت ساخت xkb_keymap_info *keymap_info,
+                 ثابت ساخت xkb_mod_سیٹ *mods,
+                 اتحاد xkb_action *action, شمار action_میدان میدان_2,
+                 ثابت اظہاریہ_Def *array_ndx, ثابت اظہاریہ_Def *قدر,
+                 اظہاریہ_Def **قدر_ptr)
 {
-    struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
-    struct xkb_pointer_default_action *act = &action->dflt;
+    ساخت xkb_context * محدود ثابت ctx = keymap_info->keymap.ctx;
+    ساخت xkb_اشارہ_گر_default_action *act = &action->dflt;
 
-    if (field == ACTION_FIELD_AFFECT) {
+    اگر (میدان_2 == ACTION_میدان_AFFECT) {
         uint32_t val = 0;
 
-        if (array_ndx)
-            return ReportActionNotArray(ctx, action->type, field,
+        اگر (array_ndx)
+            واپس ReportActionNotArray(ctx, action->type, میدان_2,
                                         keymap_info->strict);
 
-        if (!ExprResolveEnum(ctx, value, &val, ptrDflts))
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
-                                  field, "pointer component", keymap_info->strict);
-        static_assert(_SET_POINTER_DEFAULT_BUTTON_AFFECT_NUM_ENTRIES == 1,
+        اگر (!اظہاریہ_Resolve_Enum(ctx, قدر, &val, ptrDflts))
+            واپس ReportMismatch(ctx, XKB_ERROR_WRONG_میدان_TYPE, action->type,
+                                  میدان_2, "pointer component", keymap_info->strict);
+        static_assert(سیٹ_اشارہ_گر_DEFAULT_BUTTON_AFFECT_عدد_ENTRIES == 1,
                       "affect has a single valid value and thus it is not stored");
-        return PARSER_SUCCESS;
+        واپس PARSER_SUCCESS;
     }
-    else if (field == ACTION_FIELD_BUTTON || field == ACTION_FIELD_VALUE) {
-        const ExprDef *button;
+    ورنہ اگر (میدان_2 == ACTION_میدان_BUTTON || میدان_2 == ACTION_میدان_قدر) {
+        ثابت اظہاریہ_Def *button;
         int64_t btn = 0;
 
-        if (array_ndx)
-            return ReportActionNotArray(ctx, action->type, field,
+        اگر (array_ndx)
+            واپس ReportActionNotArray(ctx, action->type, میدان_2,
                                         keymap_info->strict);
 
-        if (value->common.type == STMT_EXPR_NEGATE ||
-            value->common.type == STMT_EXPR_UNARY_PLUS) {
+        اگر (قدر->common.type == STMT_اظہاریہ_NEGATE ||
+            قدر->common.type == STMT_اظہاریہ_UNARY_PLUS) {
             act->flags &= ~ACTION_ABSOLUTE_SWITCH;
-            button = value->unary.child;
+            button = قدر->unary.بچہ;
         }
-        else {
+        ورنہ {
             act->flags |= ACTION_ABSOLUTE_SWITCH;
-            button = value;
+            button = قدر;
         }
 
-        if (!ExprResolveButton(ctx, button, &btn)) {
-            static_assert(XKB_POINTER_BUTTON_MIN == 1 &&
-                          XKB_POINTER_BUTTON_MAX == 5, "invalid message");
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
-                                  field, "integer (range 1..5)",
+        اگر (!اظہاریہ_Resolve_Button(ctx, button, &btn)) {
+            static_assert(XKB_اشارہ_گر_BUTTON_MIN == 1 &&
+                          XKB_اشارہ_گر_BUTTON_MAX == 5, "invalid message");
+            واپس ReportMismatch(ctx, XKB_ERROR_WRONG_میدان_TYPE, action->type,
+                                  میدان_2, "integer (range 1..5)",
                                   keymap_info->strict);
         }
 
-        static_assert(XKB_POINTER_BUTTON_DEFAULT < XKB_POINTER_BUTTON_MIN, "");
-        if (btn < XKB_POINTER_BUTTON_DEFAULT || btn > XKB_POINTER_BUTTON_MAX) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        static_assert(XKB_اشارہ_گر_BUTTON_DEFAULT < XKB_اشارہ_گر_BUTTON_MIN, "");
+        اگر (btn < XKB_اشارہ_گر_BUTTON_DEFAULT || btn > XKB_اشارہ_گر_BUTTON_MAX) {
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "New default button value must be in the range %d..%d; "
                     "Illegal default button value %"PRId64" ignored\n",
-                    XKB_POINTER_BUTTON_MIN, XKB_POINTER_BUTTON_MAX, btn);
-            return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+                    XKB_اشارہ_گر_BUTTON_MIN, XKB_اشارہ_گر_BUTTON_MAX, btn);
+            واپس (keymap_info->strict & PARSER_NO_میدان_TYPE_MISMATCH)
                 ? PARSER_FATAL_ERROR
                 : PARSER_RECOVERABLE_ERROR;
         }
-        if (btn == XKB_POINTER_BUTTON_DEFAULT) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        اگر (btn == XKB_اشارہ_گر_BUTTON_DEFAULT) {
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "Cannot set default pointer button to \"default\"; "
                     "Illegal default button setting ignored\n");
-            return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+            واپس (keymap_info->strict & PARSER_NO_میدان_TYPE_MISMATCH)
                 ? PARSER_FATAL_ERROR
                 : PARSER_RECOVERABLE_ERROR;
         }
 
-        act->value = (int8_t) (value->common.type == STMT_EXPR_NEGATE ? -btn: btn);
-        return PARSER_SUCCESS;
+        act->قدر = (int8_t) (قدر->common.type == STMT_اظہاریہ_NEGATE ? -btn: btn);
+        واپس PARSER_SUCCESS;
     }
 
-    return ReportIllegal(ctx, action->type, field, keymap_info->strict);
+    واپس ReportIllegal(ctx, action->type, میدان_2, keymap_info->strict);
 }
 
-static enum xkb_parser_error
-HandleSwitchScreen(const struct xkb_keymap_info *keymap_info,
-                   const struct xkb_mod_set *mods,
-                   union xkb_action *action, enum action_field field,
-                   const ExprDef *array_ndx, const ExprDef *value,
-                   ExprDef **value_ptr)
+ساکن شمار xkb_parser_error
+HandleSwitchScreen(ثابت ساخت xkb_keymap_info *keymap_info,
+                   ثابت ساخت xkb_mod_سیٹ *mods,
+                   اتحاد xkb_action *action, شمار action_میدان میدان_2,
+                   ثابت اظہاریہ_Def *array_ndx, ثابت اظہاریہ_Def *قدر,
+                   اظہاریہ_Def **قدر_ptr)
 {
-    struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
-    struct xkb_switch_screen_action *act = &action->screen;
+    ساخت xkb_context * محدود ثابت ctx = keymap_info->keymap.ctx;
+    ساخت xkb_switch_screen_action *act = &action->screen;
 
-    if (field == ACTION_FIELD_SCREEN) {
-        const ExprDef *scrn;
+    اگر (میدان_2 == ACTION_میدان_SCREEN) {
+        ثابت اظہاریہ_Def *scrn;
         int64_t val = 0;
 
-        if (array_ndx)
-            return ReportActionNotArray(ctx, action->type, field,
+        اگر (array_ndx)
+            واپس ReportActionNotArray(ctx, action->type, میدان_2,
                                         keymap_info->strict);
 
-        if (value->common.type == STMT_EXPR_NEGATE ||
-            value->common.type == STMT_EXPR_UNARY_PLUS) {
+        اگر (قدر->common.type == STMT_اظہاریہ_NEGATE ||
+            قدر->common.type == STMT_اظہاریہ_UNARY_PLUS) {
             act->flags &= ~ACTION_ABSOLUTE_SWITCH;
-            scrn = value->unary.child;
+            scrn = قدر->unary.بچہ;
         }
-        else {
+        ورنہ {
             act->flags |= ACTION_ABSOLUTE_SWITCH;
-            scrn = value;
+            scrn = قدر;
         }
 
-        if (!ExprResolveInteger(ctx, scrn, &val))
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
-                                  field, "integer (-128..127)",
+        اگر (!اظہاریہ_Resolve_Integer(ctx, scrn, &val))
+            واپس ReportMismatch(ctx, XKB_ERROR_WRONG_میدان_TYPE, action->type,
+                                  میدان_2, "integer (-128..127)",
                                   keymap_info->strict);
 
-        val = (value->common.type == STMT_EXPR_NEGATE ? -val : val);
-        if (val < INT8_MIN || val > INT8_MAX) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        val = (قدر->common.type == STMT_اظہاریہ_NEGATE ? -val : val);
+        اگر (val < INT8_MIN || val > INT8_MAX) {
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "Screen index must be in the range %d..%d; "
                     "Illegal screen value %"PRId64" ignored\n",
                     INT8_MIN, INT8_MAX, val);
-            return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+            واپس (keymap_info->strict & PARSER_NO_میدان_TYPE_MISMATCH)
                 ? PARSER_FATAL_ERROR
                 : PARSER_RECOVERABLE_ERROR;
         }
 
         act->screen = (int8_t) val;
-        return PARSER_SUCCESS;
+        واپس PARSER_SUCCESS;
     }
-    else if (field == ACTION_FIELD_SAME) {
-        return CheckBooleanFlag(ctx, keymap_info->strict, action->type, field,
-                                ACTION_SAME_SCREEN, array_ndx, value,
+    ورنہ اگر (میدان_2 == ACTION_میدان_SAME) {
+        واپس CheckBooleanFlag(ctx, keymap_info->strict, action->type, میدان_2,
+                                ACTION_SAME_SCREEN, array_ndx, قدر,
                                 &act->flags);
     }
 
-    return ReportIllegal(ctx, action->type, field, keymap_info->strict);
+    واپس ReportIllegal(ctx, action->type, میدان_2, keymap_info->strict);
 }
 
-static enum xkb_parser_error
-HandleSetLockControls(const struct xkb_keymap_info *keymap_info,
-                      const struct xkb_mod_set *mods,
-                      union xkb_action *action, enum action_field field,
-                      const ExprDef *array_ndx, const ExprDef *value,
-                      ExprDef **value_ptr)
+ساکن شمار xkb_parser_error
+Handle_سیٹ_تالا_Controls(ثابت ساخت xkb_keymap_info *keymap_info,
+                      ثابت ساخت xkb_mod_سیٹ *mods,
+                      اتحاد xkb_action *action, شمار action_میدان میدان_2,
+                      ثابت اظہاریہ_Def *array_ndx, ثابت اظہاریہ_Def *قدر,
+                      اظہاریہ_Def **قدر_ptr)
 {
-    struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
-    struct xkb_controls_action *act = &action->ctrls;
+    ساخت xkb_context * محدود ثابت ctx = keymap_info->keymap.ctx;
+    ساخت xkb_controls_action *act = &action->ctrls;
 
-    if (field == ACTION_FIELD_CONTROLS) {
-        if (array_ndx)
-            return ReportActionNotArray(ctx, action->type, field,
+    اگر (میدان_2 == ACTION_میدان_CONTROLS) {
+        اگر (array_ndx)
+            واپس ReportActionNotArray(ctx, action->type, میدان_2,
                                         keymap_info->strict);
 
-        uint32_t mask = 0;
-        const uint8_t offset = keymap_info->features.controls_name_offset;
-        if (!ExprResolveMask(ctx, value, &mask, ctrlMaskNames + offset))
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
-                                  field, "controls mask", keymap_info->strict);
+        uint32_t نقاب = 0;
+        ثابت uint8_t انحراف = keymap_info->features.controls_name_انحراف;
+        اگر (!اظہاریہ_Resolve_نقاب(ctx, قدر, &نقاب, ctrl_نقاب_نام + انحراف))
+            واپس ReportMismatch(ctx, XKB_ERROR_WRONG_میدان_TYPE, action->type,
+                                  میدان_2, "controls mask", keymap_info->strict);
 
-        act->ctrls = (enum xkb_action_controls) mask;
-        return PARSER_SUCCESS;
+        act->ctrls = (شمار xkb_action_controls) نقاب;
+        واپس PARSER_SUCCESS;
     }
-    else if (field == ACTION_FIELD_AFFECT &&
-             action->type == ACTION_TYPE_CTRL_LOCK) {
-        return CheckAffectField(ctx, keymap_info->strict, action->type,
-                                array_ndx, value, &act->flags);
+    ورنہ اگر (میدان_2 == ACTION_میدان_AFFECT &&
+             action->type == ACTION_TYPE_CTRL_تالا) {
+        واپس Check_Affect_میدان(ctx, keymap_info->strict, action->type,
+                                array_ndx, قدر, &act->flags);
     }
 
-    return ReportIllegal(ctx, action->type, field, keymap_info->strict);
+    واپس ReportIllegal(ctx, action->type, میدان_2, keymap_info->strict);
 }
 
-static enum xkb_parser_error
-HandleRedirectKey(const struct xkb_keymap_info *keymap_info,
-                  const struct xkb_mod_set *mods,
-                  union xkb_action *action, enum action_field field,
-                  const ExprDef *array_ndx, const ExprDef *value,
-                  ExprDef **value_ptr)
+ساکن شمار xkb_parser_error
+Handle_Redirect_کلید(ثابت ساخت xkb_keymap_info *keymap_info,
+                  ثابت ساخت xkb_mod_سیٹ *mods,
+                  اتحاد xkb_action *action, شمار action_میدان میدان_2,
+                  ثابت اظہاریہ_Def *array_ndx, ثابت اظہاریہ_Def *قدر,
+                  اظہاریہ_Def **قدر_ptr)
 {
-    const struct xkb_keymap * restrict const keymap = &keymap_info->keymap;
-    struct xkb_context * restrict const ctx = keymap->ctx;
-    struct xkb_redirect_key_action * const act = &action->redirect;
+    ثابت ساخت xkb_keymap * محدود ثابت keymap = &keymap_info->keymap;
+    ساخت xkb_context * محدود ثابت ctx = keymap->ctx;
+    ساخت xkb_redirect_کلید_action * ثابت act = &action->redirect;
 
-    if (field == ACTION_FIELD_KEYCODE) {
-        if (array_ndx)
-            return ReportActionNotArray(ctx, action->type, field,
+    اگر (میدان_2 == ACTION_میدان_KEYCODE) {
+        اگر (array_ndx)
+            واپس ReportActionNotArray(ctx, action->type, میدان_2,
                                         keymap_info->strict);
-        if (value->common.type == STMT_EXPR_IDENT) {
-            const char *valStr = xkb_atom_text(ctx, value->ident.ident);
-            if (valStr && istreq(valStr, "auto")) {
-                act->keycode = keymap_info->keymap.redirect_key_auto;
-                return PARSER_SUCCESS;
+        اگر (قدر->common.type == STMT_اظہاریہ_IDENT) {
+            ثابت حرف *valStr = xkb_atom_متن(ctx, قدر->ident.ident);
+            اگر (valStr && istreq(valStr, "auto")) {
+                act->keycode = keymap_info->keymap.redirect_کلید_auto;
+                واپس PARSER_SUCCESS;
             }
         }
-        if (value->common.type != STMT_EXPR_KEYNAME_LITERAL) {
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
-                                  field, "key name", keymap_info->strict);
+        اگر (قدر->common.type != STMT_اظہاریہ_KEYNAME_LITERAL) {
+            واپس ReportMismatch(ctx, XKB_ERROR_WRONG_میدان_TYPE, action->type,
+                                  میدان_2, "key name", keymap_info->strict);
         }
-        const struct xkb_key * const key =
-            XkbKeyByName(keymap, value->key_name.key_name, true);
-        if (key == NULL) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        ثابت ساخت xkb_کلید * ثابت کلید =
+            Xkb_کلید_By_Name(keymap, قدر->کلید_name.کلید_name, true);
+        اگر (کلید == تہی) {
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "RedirectKey field %s cannot resolve %s to a valid key\n",
-                    fieldText(field), KeyNameText(ctx, value->key_name.key_name));
-            return (keymap_info->strict & PARSER_NO_FIELD_VALUE_MISMATCH)
+                    میدان_متن(میدان_2), کلید_Name_متن(ctx, قدر->کلید_name.کلید_name));
+            واپس (keymap_info->strict & PARSER_NO_میدان_قدر_MISMATCH)
                 ? PARSER_FATAL_ERROR
                 : PARSER_RECOVERABLE_ERROR;
         }
-        act->keycode = key->keycode;
-        return PARSER_SUCCESS;
+        act->keycode = کلید->keycode;
+        واپس PARSER_SUCCESS;
     }
 
-    if (field == ACTION_FIELD_MODIFIERS || field == ACTION_FIELD_MODS_TO_CLEAR) {
-        enum xkb_action_flags flags = 0;
-        xkb_mod_mask_t m = 0;
-        enum xkb_parser_error r =
-            CheckModifierField(ctx, keymap_info->strict, mods, action->type,
-                               array_ndx, value, &flags, &m);
-        if (r != PARSER_SUCCESS)
-            return r;
-        if (flags)
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
-                                  field, "modifier mask", keymap_info->strict);
+    اگر (میدان_2 == ACTION_میدان_MODIFIERS || میدان_2 == ACTION_میدان_MODS_مقصد_CLEAR) {
+        شمار xkb_action_flags flags = 0;
+        xkb_mod_نقاب_t m = 0;
+        شمار xkb_parser_error r =
+            Check_Modifier_میدان(ctx, keymap_info->strict, mods, action->type,
+                               array_ndx, قدر, &flags, &m);
+        اگر (r != PARSER_SUCCESS)
+            واپس r;
+        اگر (flags)
+            واپس ReportMismatch(ctx, XKB_ERROR_WRONG_میدان_TYPE, action->type,
+                                  میدان_2, "modifier mask", keymap_info->strict);
         act->affect_mods |= m;
-        if (field == ACTION_FIELD_MODIFIERS)
+        اگر (میدان_2 == ACTION_میدان_MODIFIERS)
             act->mods |= m;
-        else
+        ورنہ
             act->mods &= ~m;
-        return PARSER_SUCCESS;
+        واپس PARSER_SUCCESS;
     }
 
-    return ReportIllegal(ctx, action->type, field, keymap_info->strict);
+    واپس ReportIllegal(ctx, action->type, میدان_2, keymap_info->strict);
 }
 
-static enum xkb_parser_error
-HandleUnsupported(const struct xkb_keymap_info *keymap_info,
-                        const struct xkb_mod_set *mods,
-                        union xkb_action *action, enum action_field field,
-                        const ExprDef *array_ndx, const ExprDef *value,
-                        ExprDef **value_ptr)
+ساکن شمار xkb_parser_error
+HandleUnsupported(ثابت ساخت xkb_keymap_info *keymap_info,
+                        ثابت ساخت xkb_mod_سیٹ *mods,
+                        اتحاد xkb_action *action, شمار action_میدان میدان_2,
+                        ثابت اظہاریہ_Def *array_ndx, ثابت اظہاریہ_Def *قدر,
+                        اظہاریہ_Def **قدر_ptr)
 
 {
     /* Do not check any field */
-    return PARSER_SUCCESS;
+    واپس PARSER_SUCCESS;
 }
 
-static enum xkb_parser_error
-HandlePrivate(const struct xkb_keymap_info *keymap_info,
-              const struct xkb_mod_set *mods,
-              union xkb_action *action, enum action_field field,
-              const ExprDef *array_ndx, const ExprDef *value,
-              ExprDef **value_ptr)
+ساکن شمار xkb_parser_error
+Handle_نجی(ثابت ساخت xkb_keymap_info *keymap_info,
+              ثابت ساخت xkb_mod_سیٹ *mods,
+              اتحاد xkb_action *action, شمار action_میدان میدان_2,
+              ثابت اظہاریہ_Def *array_ndx, ثابت اظہاریہ_Def *قدر,
+              اظہاریہ_Def **قدر_ptr)
 {
-    struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
-    struct xkb_private_action *act = &action->priv;
+    ساخت xkb_context * محدود ثابت ctx = keymap_info->keymap.ctx;
+    ساخت xkb_نجی_action *act = &action->priv;
 
-    if (field == ACTION_FIELD_TYPE) {
+    اگر (میدان_2 == ACTION_میدان_TYPE) {
         int64_t type = 0;
 
-        if (array_ndx)
-            return ReportActionNotArray(ctx, action->type, field,
+        اگر (array_ndx)
+            واپس ReportActionNotArray(ctx, action->type, میدان_2,
                                         keymap_info->strict);
 
-        if (!ExprResolveInteger(ctx, value, &type))
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
-                                  ACTION_TYPE_PRIVATE, field, "integer",
+        اگر (!اظہاریہ_Resolve_Integer(ctx, قدر, &type))
+            واپس ReportMismatch(ctx, XKB_ERROR_WRONG_میدان_TYPE,
+                                  ACTION_TYPE_نجی, میدان_2, "integer",
                                   keymap_info->strict);
 
-        if (type < 0 || type > 255) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        اگر (type < 0 || type > 255) {
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "Private action type must be in the range 0..255; "
                     "Illegal type %"PRId64" ignored\n", type);
-            return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+            واپس (keymap_info->strict & PARSER_NO_میدان_TYPE_MISMATCH)
                 ? PARSER_FATAL_ERROR
                 : PARSER_RECOVERABLE_ERROR;
         }
@@ -902,146 +902,146 @@ HandlePrivate(const struct xkb_keymap_info *keymap_info,
          * assumption is no longer true. Since this is a lousy "feature", we
          * make actions like these no-ops for now.
          */
-        if (type < ACTION_TYPE_PRIVATE) {
-            log_info(ctx, XKB_LOG_MESSAGE_NO_ID,
+        اگر (type < ACTION_TYPE_نجی) {
+            log_info(ctx, XKB_LOG_پیغام_NO_ID,
                      "Private actions of type %s are not supported; Ignored\n",
-                     ActionTypeText((enum xkb_action_type) type));
+                     Action_Type_متن((شمار xkb_action_type) type));
             act->type = ACTION_TYPE_NONE;
         }
-        else {
-            act->type = (enum xkb_action_type) type;
+        ورنہ {
+            act->type = (شمار xkb_action_type) type;
         }
 
-        return PARSER_SUCCESS;
+        واپس PARSER_SUCCESS;
     }
-    else if (field == ACTION_FIELD_DATA) {
-        if (array_ndx == NULL) {
+    ورنہ اگر (میدان_2 == ACTION_میدان_ڈیٹا) {
+        اگر (array_ndx == تہی) {
             xkb_atom_t val = XKB_ATOM_NONE;
 
-            if (!ExprResolveString(ctx, value, &val))
-                return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
-                                      action->type, field, "string",
+            اگر (!اظہاریہ_Resolve_String(ctx, قدر, &val))
+                واپس ReportMismatch(ctx, XKB_ERROR_WRONG_میدان_TYPE,
+                                      action->type, میدان_2, "string",
                                       keymap_info->strict);
 
-            const char *str = xkb_atom_text(ctx, val);
-            size_t len = strlen(str);
-            if (len < 1 || len > sizeof(act->data)) {
-                log_warn(ctx, XKB_LOG_MESSAGE_NO_ID,
+            ثابت حرف *str = xkb_atom_متن(ctx, val);
+            سائز_t len = لڑی_لمبائی(str);
+            اگر (len < 1 || len > حجم(act->ڈیٹا)) {
+                log_warn(ctx, XKB_LOG_پیغام_NO_ID,
                          "A private action has %zu data bytes, but got: %zu; "
-                         "Illegal data ignored\n", sizeof(act->data), len);
-                return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+                         "Illegal data ignored\n", حجم(act->ڈیٹا), len);
+                واپس (keymap_info->strict & PARSER_NO_میدان_TYPE_MISMATCH)
                     ? PARSER_FATAL_ERROR
                     : PARSER_RECOVERABLE_ERROR;
             }
 
             /* act->data may not be null-terminated, this is intentional */
-            memset(act->data, 0, sizeof(act->data));
-            memcpy(act->data, str, len);
-            return PARSER_SUCCESS;
+            memset(act->ڈیٹا, 0, حجم(act->ڈیٹا));
+            حافظہ_نقل(act->ڈیٹا, str, len);
+            واپس PARSER_SUCCESS;
         }
-        else {
+        ورنہ {
             int64_t ndx = 0, datum = 0;
 
-            if (!ExprResolveInteger(ctx, array_ndx, &ndx)) {
-                log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+            اگر (!اظہاریہ_Resolve_Integer(ctx, array_ndx, &ndx)) {
+                log_err(ctx, XKB_LOG_پیغام_NO_ID,
                         "Array subscript must be integer; "
                         "Illegal subscript ignored\n");
-                return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+                واپس (keymap_info->strict & PARSER_NO_میدان_TYPE_MISMATCH)
                     ? PARSER_FATAL_ERROR
                     : PARSER_RECOVERABLE_ERROR;
             }
 
-            if (ndx < 0 || (size_t) ndx >= sizeof(act->data)) {
-                log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+            اگر (ndx < 0 || (سائز_t) ndx >= حجم(act->ڈیٹا)) {
+                log_err(ctx, XKB_LOG_پیغام_NO_ID,
                         "The data for a private action is %zu bytes long; "
                         "Attempt to use data[%"PRId64"] ignored\n",
-                        sizeof(act->data), ndx);
-                return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+                        حجم(act->ڈیٹا), ndx);
+                واپس (keymap_info->strict & PARSER_NO_میدان_TYPE_MISMATCH)
                     ? PARSER_FATAL_ERROR
                     : PARSER_RECOVERABLE_ERROR;
             }
 
-            if (!ExprResolveInteger(ctx, value, &datum))
-                return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, act->type,
-                                      field, "integer", keymap_info->strict);
+            اگر (!اظہاریہ_Resolve_Integer(ctx, قدر, &datum))
+                واپس ReportMismatch(ctx, XKB_ERROR_WRONG_میدان_TYPE, act->type,
+                                      میدان_2, "integer", keymap_info->strict);
 
-            if (datum < 0 || datum > 255) {
-                log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+            اگر (datum < 0 || datum > 255) {
+                log_err(ctx, XKB_LOG_پیغام_NO_ID,
                         "All data for a private action must be 0..255; "
                         "Illegal datum %"PRId64" ignored\n", datum);
-                return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+                واپس (keymap_info->strict & PARSER_NO_میدان_TYPE_MISMATCH)
                     ? PARSER_FATAL_ERROR
                     : PARSER_RECOVERABLE_ERROR;
             }
 
-            act->data[ndx] = (uint8_t) datum;
-            return PARSER_SUCCESS;
+            act->ڈیٹا[ndx] = (uint8_t) datum;
+            واپس PARSER_SUCCESS;
         }
     }
 
-    return ReportIllegal(ctx, action->type, field, keymap_info->strict);
+    واپس ReportIllegal(ctx, action->type, میدان_2, keymap_info->strict);
 }
 
-typedef enum xkb_parser_error
-        (*actionHandler)(const struct xkb_keymap_info *keymap_info,
-                         const struct xkb_mod_set *mods,
-                         union xkb_action *action,
-                         enum action_field field,
-                         const ExprDef *array_ndx,
-                         const ExprDef *value,
-                         ExprDef **value_ptr);
+قسمتعریف شمار xkb_parser_error
+        (*actionHandler)(ثابت ساخت xkb_keymap_info *keymap_info,
+                         ثابت ساخت xkb_mod_سیٹ *mods,
+                         اتحاد xkb_action *action,
+                         شمار action_میدان میدان_2,
+                         ثابت اظہاریہ_Def *array_ndx,
+                         ثابت اظہاریہ_Def *قدر,
+                         اظہاریہ_Def **قدر_ptr);
 
-static const actionHandler handleAction[_ACTION_TYPE_NUM_ENTRIES] = {
+ساکن ثابت actionHandler handleAction[ACTION_TYPE_عدد_ENTRIES] = {
     [ACTION_TYPE_NONE] = HandleNoAction,
     [ACTION_TYPE_VOID] = HandleNoAction,
-    [ACTION_TYPE_MOD_SET] = HandleSetLatchLockMods,
-    [ACTION_TYPE_MOD_LATCH] = HandleSetLatchLockMods,
-    [ACTION_TYPE_MOD_LOCK] = HandleSetLatchLockMods,
-    [ACTION_TYPE_GROUP_SET] = HandleSetLatchLockGroup,
-    [ACTION_TYPE_GROUP_LATCH] = HandleSetLatchLockGroup,
-    [ACTION_TYPE_GROUP_LOCK] = HandleSetLatchLockGroup,
+    [ACTION_TYPE_MOD_سیٹ] = Handle_سیٹ_Latch_تالا_Mods,
+    [ACTION_TYPE_MOD_LATCH] = Handle_سیٹ_Latch_تالا_Mods,
+    [ACTION_TYPE_MOD_تالا] = Handle_سیٹ_Latch_تالا_Mods,
+    [ACTION_TYPE_گروہ_سیٹ] = Handle_سیٹ_Latch_تالا_گروہ,
+    [ACTION_TYPE_گروہ_LATCH] = Handle_سیٹ_Latch_تالا_گروہ,
+    [ACTION_TYPE_گروہ_تالا] = Handle_سیٹ_Latch_تالا_گروہ,
     [ACTION_TYPE_PTR_MOVE] = HandleMovePtr,
     [ACTION_TYPE_PTR_BUTTON] = HandlePtrBtn,
-    [ACTION_TYPE_PTR_LOCK] = HandlePtrBtn,
-    [ACTION_TYPE_PTR_DEFAULT] = HandleSetPtrDflt,
+    [ACTION_TYPE_PTR_تالا] = HandlePtrBtn,
+    [ACTION_TYPE_PTR_DEFAULT] = Handle_سیٹ_Ptr_Dflt,
     [ACTION_TYPE_TERMINATE] = HandleNoAction,
     [ACTION_TYPE_SWITCH_VT] = HandleSwitchScreen,
-    [ACTION_TYPE_CTRL_SET] = HandleSetLockControls,
-    [ACTION_TYPE_CTRL_LOCK] = HandleSetLockControls,
-    [ACTION_TYPE_REDIRECT_KEY] = HandleRedirectKey,
+    [ACTION_TYPE_CTRL_سیٹ] = Handle_سیٹ_تالا_Controls,
+    [ACTION_TYPE_CTRL_تالا] = Handle_سیٹ_تالا_Controls,
+    [ACTION_TYPE_REDIRECT_کلید] = Handle_Redirect_کلید,
     [ACTION_TYPE_UNSUPPORTED_LEGACY] = HandleUnsupported,
     [ACTION_TYPE_UNKNOWN] = HandleUnsupported,
-    [ACTION_TYPE_PRIVATE] = HandlePrivate,
+    [ACTION_TYPE_نجی] = Handle_نجی,
 };
 
 /* Ensure to not miss `xkb_action_type` updates */
-static_assert(ACTION_TYPE_INTERNAL == 20 &&
-              ACTION_TYPE_INTERNAL + 1 == _ACTION_TYPE_NUM_ENTRIES,
+static_assert(ACTION_TYPE_اندرونی == 20 &&
+              ACTION_TYPE_اندرونی + 1 == ACTION_TYPE_عدد_ENTRIES,
               "Missing action type");
 
 /***====================================================================***/
 
-enum xkb_parser_error
-HandleActionDef(const struct xkb_keymap_info *keymap_info, ActionsInfo *info,
-                const struct xkb_mod_set *mods, ExprDef *def,
-                union xkb_action *action)
+شمار xkb_parser_error
+HandleActionDef(ثابت ساخت xkb_keymap_info *keymap_info, ActionsInfo *info,
+                ثابت ساخت xkb_mod_سیٹ *mods, اظہاریہ_Def *def,
+                اتحاد xkb_action *action)
 {
-    struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
-    if (def->common.type != STMT_EXPR_ACTION_DECL) {
-        log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
+    ساخت xkb_context * محدود ثابت ctx = keymap_info->keymap.ctx;
+    اگر (def->common.type != STMT_اظہاریہ_ACTION_DECL) {
+        log_err(ctx, XKB_ERROR_WRONG_میدان_TYPE,
                 "Expected an action definition, found %s\n",
-                stmt_type_to_string(def->common.type));
-        return PARSER_FATAL_ERROR;
+                stmt_type_مقصد_string(def->common.type));
+        واپس PARSER_FATAL_ERROR;
     }
 
-    const char *action_name = xkb_atom_text(ctx, def->action.name);
-    enum xkb_action_type handler_type;
-    if (!stringToActionType(action_name, &handler_type)) {
+    ثابت حرف *action_name = xkb_atom_متن(ctx, def->action.name);
+    شمار xkb_action_type handler_type;
+    اگر (!string_مقصد_Action_Type(action_name, &handler_type)) {
         log_err(ctx, XKB_ERROR_UNKNOWN_ACTION_TYPE,
                 "Unknown action \"%s\"\n", action_name);
         handler_type = ACTION_TYPE_UNKNOWN;
-        if (keymap_info->strict & PARSER_NO_UNKNOWN_ACTION)
-            return PARSER_FATAL_ERROR;
+        اگر (keymap_info->strict & PARSER_NO_UNKNOWN_ACTION)
+            واپس PARSER_FATAL_ERROR;
     }
 
     /*
@@ -1051,7 +1051,7 @@ HandleActionDef(const struct xkb_keymap_info *keymap_info, ActionsInfo *info,
      */
     *action = info->actions[handler_type];
 
-    if (handler_type == ACTION_TYPE_UNSUPPORTED_LEGACY) {
+    اگر (handler_type == ACTION_TYPE_UNSUPPORTED_LEGACY) {
         log_warn(ctx, XKB_WARNING_UNSUPPORTED_LEGACY_ACTION,
                  "Unsupported legacy action type \"%s\".\n", action_name);
         /*
@@ -1069,108 +1069,108 @@ HandleActionDef(const struct xkb_keymap_info *keymap_info, ActionsInfo *info,
      * particular instance, e.g. "modifiers" and "clearLocks" in:
      *     SetMods(modifiers=Alt,clearLocks);
      */
-    enum xkb_parser_error ret = PARSER_SUCCESS;
-    for (ExprDef *arg = def->action.args; arg != NULL;
-         arg = (ExprDef *) arg->common.next) {
-        const ExprDef *value;
-        ExprDef **value_ptr = NULL;
-        ExprDef *field, *arrayRtrn;
-        const char *elemRtrn, *fieldRtrn;
+    شمار xkb_parser_error ret = PARSER_SUCCESS;
+    برائے (اظہاریہ_Def *arg = def->action.دلائل; arg != تہی;
+         arg = (اظہاریہ_Def *) arg->common.اگلا) {
+        ثابت اظہاریہ_Def *قدر;
+        اظہاریہ_Def **قدر_ptr = تہی;
+        اظہاریہ_Def *میدان_2, *arrayRtrn;
+        ثابت حرف *elemRtrn, *میدان_Rtrn;
 
-        if (arg->common.type == STMT_EXPR_ASSIGN) {
-            field = arg->binary.left;
-            value = arg->binary.right;
-            value_ptr = &arg->binary.right;
+        اگر (arg->common.type == STMT_اظہاریہ_تفویض) {
+            میدان_2 = arg->ثنائی.بایاں;
+            قدر = arg->ثنائی.دایاں;
+            قدر_ptr = &arg->ثنائی.دایاں;
         }
-        else if (arg->common.type == STMT_EXPR_NOT ||
-                 arg->common.type == STMT_EXPR_INVERT) {
-            field = arg->unary.child;
-            value = (const ExprDef *) &constFalse;
+        ورنہ اگر (arg->common.type == STMT_اظہاریہ_NOT ||
+                 arg->common.type == STMT_اظہاریہ_INVERT) {
+            میدان_2 = arg->unary.بچہ;
+            قدر = (ثابت اظہاریہ_Def *) &constFalse;
         }
-        else {
-            field = arg;
-            value = (const ExprDef *) &constTrue;
+        ورنہ {
+            میدان_2 = arg;
+            قدر = (ثابت اظہاریہ_Def *) &constTrue;
         }
 
-        if (!ExprResolveLhs(ctx, field, &elemRtrn, &fieldRtrn, &arrayRtrn))
-            return PARSER_FATAL_ERROR;
+        اگر (!اظہاریہ_Resolve_Lhs(ctx, میدان_2, &elemRtrn, &میدان_Rtrn, &arrayRtrn))
+            واپس PARSER_FATAL_ERROR;
 
-        if (elemRtrn) {
+        اگر (elemRtrn) {
             log_err(ctx, XKB_ERROR_GLOBAL_DEFAULTS_WRONG_SCOPE,
                     "Cannot change defaults in an action definition; "
                     "Ignoring attempt to change \"%s.%s\".\n",
-                    elemRtrn, fieldRtrn);
-            return PARSER_FATAL_ERROR;
+                    elemRtrn, میدان_Rtrn);
+            واپس PARSER_FATAL_ERROR;
         }
 
-        enum action_field fieldNdx;
-        if (!stringToField(fieldRtrn, &fieldNdx)) {
-            log_err(ctx, XKB_ERROR_INVALID_ACTION_FIELD,
+        شمار action_میدان میدان_Ndx;
+        اگر (!string_مقصد_میدان(میدان_Rtrn, &میدان_Ndx)) {
+            log_err(ctx, XKB_ERROR_INVALID_ACTION_میدان,
                     "Unknown field name %s for action %s discarded\n",
-                    fieldRtrn, ActionTypeText(action->type));
-            if (keymap_info->strict & PARSER_NO_UNKNOWN_ACTION_FIELDS) {
-                return PARSER_FATAL_ERROR;
-            } else {
+                    میدان_Rtrn, Action_Type_متن(action->type));
+            اگر (keymap_info->strict & PARSER_NO_UNKNOWN_ACTION_FIELDS) {
+                واپس PARSER_FATAL_ERROR;
+            } ورنہ {
                 /* Field is just ignored */
-                continue;
+                جاری;
             }
         }
 
-        switch (handleAction[handler_type](keymap_info, mods, action, fieldNdx,
-                                           arrayRtrn, value, value_ptr)) {
-        case PARSER_FATAL_ERROR:
-            return PARSER_FATAL_ERROR;
-        case PARSER_RECOVERABLE_ERROR:
+        انتخاب (handleAction[handler_type](keymap_info, mods, action, میدان_Ndx,
+                                           arrayRtrn, قدر, قدر_ptr)) {
+        حالت PARSER_FATAL_ERROR:
+            واپس PARSER_FATAL_ERROR;
+        حالت PARSER_RECOVERABLE_ERROR:
             ret = PARSER_RECOVERABLE_ERROR;
             /* Continue field parsing */
-            break;
-        default:
+            توڑو;
+        طےشدہ:
             ;
         }
     }
 
-    return (action->type == ACTION_TYPE_UNKNOWN)
+    واپس (action->type == ACTION_TYPE_UNKNOWN)
         ? PARSER_RECOVERABLE_ERROR
         : ret;
 }
 
-enum xkb_parser_error
-SetDefaultActionField(const struct xkb_keymap_info *keymap_info,
-                      ActionsInfo *info, struct xkb_mod_set *mods,
-                      const char *elem, const char *field, ExprDef *array_ndx,
-                      ExprDef **value_ptr, enum merge_mode merge)
+شمار xkb_parser_error
+سیٹ_Default_Action_میدان(ثابت ساخت xkb_keymap_info *keymap_info,
+                      ActionsInfo *info, ساخت xkb_mod_سیٹ *mods,
+                      ثابت حرف *elem, ثابت حرف *میدان_2, اظہاریہ_Def *array_ndx,
+                      اظہاریہ_Def **قدر_ptr, شمار ملاؤ_منوال ملاؤ)
 {
-    const ExprDef * restrict const value = *value_ptr;
-    enum xkb_action_type action;
-    if (!stringToActionType(elem, &action)) {
+    ثابت اظہاریہ_Def * محدود ثابت قدر = *قدر_ptr;
+    شمار xkb_action_type action;
+    اگر (!string_مقصد_Action_Type(elem, &action)) {
         log_err(keymap_info->keymap.ctx, XKB_ERROR_UNKNOWN_ACTION_TYPE,
                 "Unknown action \"%s\"\n", elem);
-        return (keymap_info->strict & PARSER_NO_UNKNOWN_ACTION)
+        واپس (keymap_info->strict & PARSER_NO_UNKNOWN_ACTION)
             ? PARSER_FATAL_ERROR
             : PARSER_RECOVERABLE_ERROR;
     }
 
-    enum action_field action_field;
-    if (!stringToField(field, &action_field)) {
-        log_err(keymap_info->keymap.ctx, XKB_ERROR_INVALID_ACTION_FIELD,
-                "Unknown action field \"%s\"\n", field);
-        return (keymap_info->strict & PARSER_NO_UNKNOWN_ACTION_FIELDS)
+    شمار action_میدان action_میدان;
+    اگر (!string_مقصد_میدان(میدان_2, &action_میدان)) {
+        log_err(keymap_info->keymap.ctx, XKB_ERROR_INVALID_ACTION_میدان,
+                "Unknown action field \"%s\"\n", میدان_2);
+        واپس (keymap_info->strict & PARSER_NO_UNKNOWN_ACTION_FIELDS)
             ? PARSER_FATAL_ERROR
             : PARSER_RECOVERABLE_ERROR;
     }
 
-    union xkb_action* const into = &info->actions[action];
+    اتحاد xkb_action* ثابت into = &info->actions[action];
     /* Initialize with current defaults to enable comparison, see afterwards */
-    union xkb_action from = *into;
+    اتحاد xkb_action from = *into;
 
     /* Parse action */
-    const enum xkb_parser_error ret = handleAction[action](
-        keymap_info, mods, &from, action_field, array_ndx, value, value_ptr
+    ثابت شمار xkb_parser_error ret = handleAction[action](
+        keymap_info, mods, &from, action_میدان, array_ndx, قدر, قدر_ptr
     );
 
     /* Success is mandatory to update defaults */
-    if (ret != PARSER_SUCCESS)
-        return ret;
+    اگر (ret != PARSER_SUCCESS)
+        واپس ret;
 
     /*
      * Merge action with its corresponding default
@@ -1182,16 +1182,16 @@ SetDefaultActionField(const struct xkb_keymap_info *keymap_info,
      * warning. So we guard the logging with a high verbosity, as best effort
      * mitigation.
      */
-    if (!action_equal(into, &from)) {
-        const bool replace = (merge != MERGE_AUGMENT);
+    اگر (!action_equal(into, &from)) {
+        ثابت bool replace = (ملاؤ != ملاؤ_AUGMENT);
         log_vrb(keymap_info->keymap.ctx, XKB_LOG_VERBOSITY_VERBOSE,
-                XKB_LOG_MESSAGE_NO_ID,
+                XKB_LOG_پیغام_NO_ID,
                 "Conflicting field \"%s\" for default action \"%s\"; "
                 "Using %s, ignore %s\n",
-                fieldText(action_field), ActionTypeText(action),
+                میدان_متن(action_میدان), Action_Type_متن(action),
                 (replace ? "from" : "into"), (replace ? "into" : "from"));
-        if (replace)
+        اگر (replace)
             *into = from;
     }
-    return PARSER_SUCCESS;
+    واپس PARSER_SUCCESS;
 }

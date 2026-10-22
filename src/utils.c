@@ -3,114 +3,114 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#شامل "config.h"
 
-#include <sys/stat.h>
-#include <fcntl.h>
-#include "utils.h"
+#شامل <sys/stat.h>
+#شامل <fcntl.h>
+#شامل "utils.h"
 
-#if HAVE_MMAP
+#اگر HAVE_MMAP
 
-#include <unistd.h>
-#include <sys/mman.h>
-#include <sys/types.h>
+#شامل <unistd.h>
+#شامل <sys/mman.h>
+#شامل <sys/types.h>
 
 bool
-map_file(FILE *file, char **string_out, size_t *size_out)
+map_file(FILE *file, حرف **string_برآمد, سائز_t *سائز_برآمد)
 {
-    struct stat stat_buf;
-    int fd;
-    char *string;
+    ساخت stat stat_buf;
+    صحیح fd;
+    حرف *string;
 
     /* Make sure to keep the errno on failure! */
     fd = fileno(file);
-    if (fd < 0)
-        return false;
+    اگر (fd < 0)
+        واپس false;
 
-    if (fstat(fd, &stat_buf) != 0)
-        return false;
+    اگر (fstat(fd, &stat_buf) != 0)
+        واپس false;
 
-    string = mmap(NULL, (size_t)stat_buf.st_size, PROT_READ, MAP_SHARED, fd, 0);
-    if (string == MAP_FAILED)
-        return false;
+    string = mmap(تہی, (سائز_t)stat_buf.st_سائز, PROT_READ, MAP_SHARED, fd, 0);
+    اگر (string == MAP_FAILED)
+        واپس false;
 
-    *string_out = string;
-    *size_out = (size_t)stat_buf.st_size;
-    return true;
+    *string_برآمد = string;
+    *سائز_برآمد = (سائز_t)stat_buf.st_سائز;
+    واپس true;
 }
 
-void
-unmap_file(char *str, size_t size)
+خالی
+unmap_file(حرف *str, سائز_t سائز)
 {
-    munmap(str, size);
+    munmap(str, سائز);
 }
 
-#else
+#ورنہ
 
 bool
-map_file(FILE *file, char **string_out, size_t *size_out)
+map_file(FILE *file, حرف **string_برآمد, سائز_t *سائز_برآمد)
 {
-    long ret;
-    size_t ret_s;
-    char *string;
-    size_t size;
+    طویل ret;
+    سائز_t ret_s;
+    حرف *string;
+    سائز_t سائز;
 
     /* Make sure to keep the errno on failure! */
 
     ret = fseek(file, 0, SEEK_END);
-    if (ret != 0)
-        return false;
+    اگر (ret != 0)
+        واپس false;
 
     ret = ftell(file);
-    if (ret < 0)
-        return false;
-    size = (size_t) ret;
+    اگر (ret < 0)
+        واپس false;
+    سائز = (سائز_t) ret;
 
     ret = fseek(file, 0, SEEK_SET);
-    if (ret < 0)
-        return false;
+    اگر (ret < 0)
+        واپس false;
 
-    string = malloc(size);
-    if (!string)
-        return false;
+    string = حافظہ_دو(سائز);
+    اگر (!string)
+        واپس false;
 
-    ret_s = fread(string, 1, size, file);
-    if (ret_s < size) {
-        free(string);
-        return false;
+    ret_s = fread(string, 1, سائز, file);
+    اگر (ret_s < سائز) {
+        آزاد(string);
+        واپس false;
     }
 
-    *string_out = string;
-    *size_out = size;
-    return true;
+    *string_برآمد = string;
+    *سائز_برآمد = سائز;
+    واپس true;
 }
 
-void
-unmap_file(char *str, size_t size)
+خالی
+unmap_file(حرف *str, سائز_t سائز)
 {
-    free(str);
+    آزاد(str);
 }
 
-#endif
+#اگر_ختم
 
 /* Open a file and ensure it is a regular file.
  * Returns NULL in case of error. */
 FILE*
-open_file(const char *path)
+open_file(ثابت حرف *راستہ)
 {
-    if (!path)
-        return NULL;
+    اگر (!راستہ)
+        واپس تہی;
 
-    int fd = open(path, O_RDONLY);
-    if (fd < 0)
-        return NULL;
+    صحیح fd = open(راستہ, O_RDONLY);
+    اگر (fd < 0)
+        واپس تہی;
 
-    struct stat stat_buf;
-    int err = fstat(fd, &stat_buf);
+    ساخت stat stat_buf;
+    صحیح err = fstat(fd, &stat_buf);
 
-    if (err != 0 || !S_ISREG(stat_buf.st_mode)) {
+    اگر (err != 0 || !S_ISREG(stat_buf.st_منوال)) {
         close(fd);
-        return NULL;
+        واپس تہی;
     }
 
     /* While unlikely to happen, if `fp` is NULL then we must close the file
@@ -118,15 +118,15 @@ open_file(const char *path)
      * https://www.ibm.com/docs/en/i/7.3?topic=functions-fdopen-associates-stream-file-descriptor)
      * Confirmed by Peter to be necessary in glibc. */
     FILE *fp = fdopen(fd, "rb");
-    if (fp == NULL) {
+    اگر (fp == تہی) {
         close(fd);
     }
 
-    return fp;
+    واپس fp;
 }
 
 // ASCII lower-case map.
-static const unsigned char lower_map[] = {
+ساکن ثابت غیرعلامتی حرف زیریں_map[] = {
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
     21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
     40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58,
@@ -146,56 +146,56 @@ static const unsigned char lower_map[] = {
 };
 
 // ASCII tolower (to avoid locale issues).
-char
-to_lower(char c)
+حرف
+مقصد_زیریں(حرف c)
 {
-    return (char) lower_map[(unsigned char) c];
+    واپس (حرف) زیریں_map[(غیرعلامتی حرف) c];
 }
 
 // ASCII strcasecmp (to avoid locale issues).
-int
-istrcmp(const char *a, const char *b)
+صحیح
+istrcmp(ثابت حرف *a, ثابت حرف *b)
 {
-    for (size_t i = 0; ; i++) {
-        if (to_lower(a[i]) != to_lower(b[i]))
-            return (int) to_lower(a[i]) - (int) to_lower(b[i]);
-        if (!a[i])
-            break;
+    برائے (سائز_t i = 0; ; i++) {
+        اگر (مقصد_زیریں(a[i]) != مقصد_زیریں(b[i]))
+            واپس (صحیح) مقصد_زیریں(a[i]) - (صحیح) مقصد_زیریں(b[i]);
+        اگر (!a[i])
+            توڑو;
     }
-    return 0;
+    واپس 0;
 }
 
 // ASCII strncasecmp (to avoid locale issues).
-int
-istrncmp(const char *a, const char *b, size_t n)
+صحیح
+istrncmp(ثابت حرف *a, ثابت حرف *b, سائز_t n)
 {
-    for (size_t i = 0; i < n; i++) {
-        if (to_lower(a[i]) != to_lower(b[i]))
-            return (int) to_lower(a[i]) - (int) to_lower(b[i]);
-        if (!a[i])
-            break;
+    برائے (سائز_t i = 0; i < n; i++) {
+        اگر (مقصد_زیریں(a[i]) != مقصد_زیریں(b[i]))
+            واپس (صحیح) مقصد_زیریں(a[i]) - (صحیح) مقصد_زیریں(b[i]);
+        اگر (!a[i])
+            توڑو;
     }
-    return 0;
+    واپس 0;
 }
 
-#if !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
-int
-asprintf(char **strp, const char *fmt, ...)
+#اگر !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
+صحیح
+asprintf(حرف **strp, ثابت حرف *fmt, ...)
 {
-    int ret;
+    صحیح ret;
     va_list ap;
-    va_start(ap, fmt);
+    va_آغاز(ap, fmt);
     ret = vasprintf(strp, fmt, ap);
-    va_end(ap);
-    return ret;
+    va_انتہا(ap);
+    واپس ret;
 }
 
-# if !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
-int
-vasprintf(char **strp, const char *fmt, va_list ap)
+# اگر !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
+صحیح
+vasprintf(حرف **strp, ثابت حرف *fmt, va_list ap)
 {
-    int ret;
-    char *buf;
+    صحیح ret;
+    حرف *buf;
     va_list ap_copy;
 
     /*
@@ -203,22 +203,22 @@ vasprintf(char **strp, const char *fmt, va_list ap)
      * vsnprintf() returns: pass a copy to make sure "ap" remains valid.
      */
     va_copy(ap_copy, ap);
-    ret = vsnprintf(NULL, 0, fmt, ap_copy);
-    va_end(ap_copy);
+    ret = vsnprintf(تہی, 0, fmt, ap_copy);
+    va_انتہا(ap_copy);
 
-    if (ret < 0)
-        return ret;
+    اگر (ret < 0)
+        واپس ret;
 
-    if (!(buf = malloc(ret + 1)))
-        return -1;
+    اگر (!(buf = حافظہ_دو(ret + 1)))
+        واپس -1;
 
-    if ((ret = vsnprintf(buf, ret + 1, fmt, ap)) < 0) {
-        free(buf);
-        return ret;
+    اگر ((ret = vsnprintf(buf, ret + 1, fmt, ap)) < 0) {
+        آزاد(buf);
+        واپس ret;
     }
 
     *strp = buf;
-    return ret;
+    واپس ret;
 }
 # endif /* !HAVE_VASPRINTF */
-#endif /* !HAVE_ASPRINTF */
+#اگر_ختم /* !HAVE_ASPRINTF */

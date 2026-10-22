@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#شامل "config.h"
 
-#include <assert.h>
+#شامل <assert.h>
 
-#include "keymap.h"
-#include "src/messages-codes.h"
-#include "src/utils.h"
-#include "xkbcommon/xkbcommon.h"
-#include "keymap-compare.h"
+#شامل "keymap.h"
+#شامل "src/messages-codes.h"
+#شامل "src/utils.h"
+#شامل "xkbcommon/xkbcommon.h"
+#شامل "keymap-compare.h"
 
 /*
  * NOTE: these keymap comparison utilities are pretty basic and require that
@@ -22,38 +22,38 @@
 /* TODO: enable relaxing the order on some items, such as: aliases, etc. */
 
 
-static bool
-keymap_compare_mods(struct xkb_context *ctx,
-                    const struct xkb_keymap *keymap1,
-                    const struct xkb_keymap *keymap2)
+ساکن bool
+keymap_compare_mods(ساخت xkb_context *ctx,
+                    ثابت ساخت xkb_keymap *keymap1,
+                    ثابت ساخت xkb_keymap *keymap2)
 {
     bool identical = true;
     /* Check that the keymaps have the same virtual modifiers */
 
     /* Check common modifiers*/
-    const xkb_mod_index_t mod_max = MIN(keymap1->mods.num_mods,
-                                        keymap2->mods.num_mods);
-    for (xkb_mod_index_t mod = 0; mod < mod_max; mod++) {
-        const struct xkb_mod * const mod1 = &keymap1->mods.mods[mod];
-        const struct xkb_mod * const mod2 = &keymap2->mods.mods[mod];
+    ثابت xkb_mod_اشاریہ_t mod_max = MIN(keymap1->mods.عدد_mods,
+                                        keymap2->mods.عدد_mods);
+    برائے (xkb_mod_اشاریہ_t mod = 0; mod < mod_max; mod++) {
+        ثابت ساخت xkb_mod * ثابت mod1 = &keymap1->mods.mods[mod];
+        ثابت ساخت xkb_mod * ثابت mod2 = &keymap2->mods.mods[mod];
         /* NOTE: cannot compare atoms: keymaps may use different contexts */
-        const char * const name1 = xkb_atom_text(keymap1->ctx, mod1->name);
-        const char * const name2 = xkb_atom_text(keymap2->ctx, mod2->name);
-        if (!streq_null(name1, name2)) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        ثابت حرف * ثابت name1 = xkb_atom_متن(keymap1->ctx, mod1->name);
+        ثابت حرف * ثابت name2 = xkb_atom_متن(keymap2->ctx, mod2->name);
+        اگر (!streq_null(name1, name2)) {
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "Modifier #%"PRIu32" names do not match: "
                     "\"%s\" != \"%s\"\n", mod, name1, name2);
             identical = false;
         }
-        if (mod1->type != mod2->type) {
+        اگر (mod1->type != mod2->type) {
             /* Unlikely, only for completeness */
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "Modifier #%"PRIu32" types do not match: "
                     "%d != %d\n", mod, mod1->type, mod2->type);
             identical = false;
         }
-        if (mod1->mapping != mod2->mapping) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        اگر (mod1->mapping != mod2->mapping) {
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "Modifier #%"PRIu32" mappings do not match: "
                     "0x%"PRIx32" != 0x%"PRIx32"\n",
                     mod, mod1->mapping, mod2->mapping);
@@ -62,72 +62,72 @@ keymap_compare_mods(struct xkb_context *ctx,
     }
 
     /* Check non-common modifiers */
-    if (keymap1->mods.num_mods != keymap2->mods.num_mods) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    اگر (keymap1->mods.عدد_mods != keymap2->mods.عدد_mods) {
+        log_err(ctx, XKB_LOG_پیغام_NO_ID,
                 "Modifiers counts do not match: %"PRIu32" != %"PRIu32"\n",
-                keymap1->mods.num_mods, keymap2->mods.num_mods);
+                keymap1->mods.عدد_mods, keymap2->mods.عدد_mods);
         identical = false;
     }
 
-    return identical;
+    واپس identical;
 }
 
-static bool
-keymap_compare_keycodes(struct xkb_context *ctx,
-                        const struct xkb_keymap *keymap1,
-                        const struct xkb_keymap *keymap2)
+ساکن bool
+keymap_compare_keycodes(ساخت xkb_context *ctx,
+                        ثابت ساخت xkb_keymap *keymap1,
+                        ثابت ساخت xkb_keymap *keymap2)
 {
     bool identical = true;
 
     /*
      * Check keycode range
      */
-    if (keymap1->num_keys != keymap2->num_keys) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    اگر (keymap1->عدد_کلیدیں != keymap2->عدد_کلیدیں) {
+        log_err(ctx, XKB_LOG_پیغام_NO_ID,
                 "Keycodes counts do not match: %"PRIu32" != %"PRIu32"\n",
-                keymap1->num_keys, keymap2->num_keys);
+                keymap1->عدد_کلیدیں, keymap2->عدد_کلیدیں);
         identical = false;
     }
-    if (keymap1->min_key_code != keymap2->min_key_code) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    اگر (keymap1->min_کلید_رمز != keymap2->min_کلید_رمز) {
+        log_err(ctx, XKB_LOG_پیغام_NO_ID,
                 "Min keycodes do not match: %"PRIu32" != %"PRIu32"\n",
-                keymap1->min_key_code, keymap2->min_key_code);
+                keymap1->min_کلید_رمز, keymap2->min_کلید_رمز);
         identical = false;
     }
-    if (keymap1->max_key_code != keymap2->max_key_code) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    اگر (keymap1->max_کلید_رمز != keymap2->max_کلید_رمز) {
+        log_err(ctx, XKB_LOG_پیغام_NO_ID,
                 "Low keycodes counts do not match: %"PRIu32" != %"PRIu32"\n",
-                keymap1->num_keys_low, keymap2->num_keys_low);
+                keymap1->عدد_کلیدیں_کم, keymap2->عدد_کلیدیں_کم);
         identical = false;
     }
-    if (keymap1->max_key_code != keymap2->max_key_code) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    اگر (keymap1->max_کلید_رمز != keymap2->max_کلید_رمز) {
+        log_err(ctx, XKB_LOG_پیغام_NO_ID,
                 "Max keycodes do not match: %"PRIu32" != %"PRIu32"\n",
-                keymap1->min_key_code, keymap2->min_key_code);
+                keymap1->min_کلید_رمز, keymap2->min_کلید_رمز);
         identical = false;
     }
 
     /* Check common keys */
-    const xkb_keycode_t k_max = MIN(keymap1->num_keys, keymap2->num_keys);
-    for (xkb_keycode_t k = 0; k < k_max; k++) {
-        const struct xkb_key * const key1 = &keymap1->keys[k];
-        const struct xkb_key * const key2 = &keymap1->keys[k];
-        if (key1->keycode != key2->keycode) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    ثابت xkb_keycode_t k_max = MIN(keymap1->عدد_کلیدیں, keymap2->عدد_کلیدیں);
+    برائے (xkb_keycode_t k = 0; k < k_max; k++) {
+        ثابت ساخت xkb_کلید * ثابت key1 = &keymap1->کلیدیں[k];
+        ثابت ساخت xkb_کلید * ثابت key2 = &keymap1->کلیدیں[k];
+        اگر (key1->keycode != key2->keycode) {
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "Key #%"PRIu32" keycodes do not match: "
                     "%"PRIx32" != %"PRIx32"\n", k, key1->keycode, key2->keycode);
             identical = false;
             /* It does not make sense to compare further properties */
-            continue;
+            جاری;
         }
 
-        const xkb_keycode_t kc = key1->keycode;
+        ثابت xkb_keycode_t kc = key1->keycode;
 
         /* NOTE: cannot compare atoms: keymaps may use different contexts */
-        const char * const name1 = xkb_atom_text(keymap1->ctx, key1->name);
-        const char * const name2 = xkb_atom_text(keymap2->ctx, key2->name);
-        if (!streq_null(name1, name2)) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        ثابت حرف * ثابت name1 = xkb_atom_متن(keymap1->ctx, key1->name);
+        ثابت حرف * ثابت name2 = xkb_atom_متن(keymap2->ctx, key2->name);
+        اگر (!streq_null(name1, name2)) {
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "Key 0x%"PRIx32" names do not match: "
                     "\"%s\" != \"%s\"\n", kc, name1, name2);
             identical = false;
@@ -135,98 +135,98 @@ keymap_compare_keycodes(struct xkb_context *ctx,
     }
 
     /* Check common aliases */
-    const darray_size_t a_max = MIN(keymap1->num_key_aliases,
-                                    keymap2->num_key_aliases);
-    for (darray_size_t a = 0; a < a_max; a++) {
-        const struct xkb_key_alias * const entry1 = &keymap1->key_aliases[a];
-        const struct xkb_key_alias * const entry2 = &keymap2->key_aliases[a];
+    ثابت darray_سائز_t a_max = MIN(keymap1->عدد_کلید_aliases,
+                                    keymap2->عدد_کلید_aliases);
+    برائے (darray_سائز_t a = 0; a < a_max; a++) {
+        ثابت ساخت xkb_کلید_alias * ثابت entry1 = &keymap1->کلید_aliases[a];
+        ثابت ساخت xkb_کلید_alias * ثابت entry2 = &keymap2->کلید_aliases[a];
 
         /* NOTE: cannot compare atoms: keymaps may use different contexts */
-        const char * const alias1 = xkb_atom_text(keymap1->ctx, entry1->alias);
-        const char * const alias2 = xkb_atom_text(keymap2->ctx, entry2->alias);
-        if (!streq_null(alias1, alias2)) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        ثابت حرف * ثابت alias1 = xkb_atom_متن(keymap1->ctx, entry1->alias);
+        ثابت حرف * ثابت alias2 = xkb_atom_متن(keymap2->ctx, entry2->alias);
+        اگر (!streq_null(alias1, alias2)) {
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "Alias #%u names do not match: \"%s\" != \"%s\"\n",
                     a, alias1, alias2);
             identical = false;
         }
 
-        const char * const real1 = xkb_atom_text(keymap1->ctx, entry1->real);
-        const char * const real2 = xkb_atom_text(keymap2->ctx, entry2->real);
-        if (!streq_null(real1, real2)) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        ثابت حرف * ثابت real1 = xkb_atom_متن(keymap1->ctx, entry1->real);
+        ثابت حرف * ثابت real2 = xkb_atom_متن(keymap2->ctx, entry2->real);
+        اگر (!streq_null(real1, real2)) {
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "Alias #%u \"%s\" target do not match: \"%s\" != \"%s\"\n",
                     a, alias1, real1, real2);
             identical = false;
         }
     }
-    if (keymap1->num_key_aliases != keymap2->num_key_aliases) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    اگر (keymap1->عدد_کلید_aliases != keymap2->عدد_کلید_aliases) {
+        log_err(ctx, XKB_LOG_پیغام_NO_ID,
                 "Aliases count do not match: %u != %u\n",
-                keymap1->num_key_aliases, keymap2->num_key_aliases);
+                keymap1->عدد_کلید_aliases, keymap2->عدد_کلید_aliases);
         identical = false;
     }
 
-    return identical;
+    واپس identical;
 }
 
-static bool
-keymap_compare_leds(struct xkb_context *ctx,
-                    const struct xkb_keymap *keymap1,
-                    const struct xkb_keymap *keymap2)
+ساکن bool
+keymap_compare_leds(ساخت xkb_context *ctx,
+                    ثابت ساخت xkb_keymap *keymap1,
+                    ثابت ساخت xkb_keymap *keymap2)
 {
     bool identical = true;
 
     /* Check common LEDs */
-    xkb_led_index_t led_max = MIN(keymap1->num_leds, keymap2->num_leds);
-    for (xkb_led_index_t led = 0; led < led_max; led++) {
-        const struct xkb_led * const led1 = &keymap1->leds[led];
-        const struct xkb_led * const led2 = &keymap2->leds[led];
+    xkb_led_اشاریہ_t led_max = MIN(keymap1->عدد_leds, keymap2->عدد_leds);
+    برائے (xkb_led_اشاریہ_t led = 0; led < led_max; led++) {
+        ثابت ساخت xkb_led * ثابت led1 = &keymap1->leds[led];
+        ثابت ساخت xkb_led * ثابت led2 = &keymap2->leds[led];
 
         /* NOTE: cannot compare atoms: keymaps may use different contexts */
-        const char * const name1 = xkb_atom_text(keymap1->ctx, led1->name);
-        const char * const name2 = xkb_atom_text(keymap2->ctx, led2->name);
-        if (!streq_null(name1, name2)) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        ثابت حرف * ثابت name1 = xkb_atom_متن(keymap1->ctx, led1->name);
+        ثابت حرف * ثابت name2 = xkb_atom_متن(keymap2->ctx, led2->name);
+        اگر (!streq_null(name1, name2)) {
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "LED #%"PRIu32" names do not match: \"%s\" != \"%s\"\n",
                     led, name1, name2);
             identical = false;
         }
 
-        if (led1->which_groups != led2->which_groups) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        اگر (led1->which_groups != led2->which_groups) {
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "LED #%"PRIu32" \"%s\" `which_groups` do not match: "
                     "0x%x != 0x%x\n",
                     led, name1, led1->which_groups, led2->which_groups);
             identical = false;
         }
 
-        if (led1->groups != led2->groups) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        اگر (led1->groups != led2->groups) {
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "LED #%"PRIu32" \"%s\" `groups` do not match: "
                     "0x%"PRIx32" != 0x%"PRIx32"\n",
                     led, name1, led1->groups, led2->groups);
             identical = false;
         }
 
-        if (led1->which_mods != led2->which_mods) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        اگر (led1->which_mods != led2->which_mods) {
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "LED #%"PRIu32" \"%s\" `which_mods` do not match: "
                     "0x%x != 0x%x\n",
                     led, name1, led1->which_mods, led2->which_mods);
             identical = false;
         }
 
-        if (led1->mods.mods != led2->mods.mods) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        اگر (led1->mods.mods != led2->mods.mods) {
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "LED #%"PRIu32" \"%s\" `mods` do not match: "
                     "0x%"PRIx32" != 0x%"PRIx32"\n",
                     led, name1, led1->mods.mods, led2->mods.mods);
             identical = false;
         }
 
-        if (led1->ctrls != led2->ctrls) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        اگر (led1->ctrls != led2->ctrls) {
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "LED #%"PRIu32" \"%s\" `ctrls` do not match: "
                     "0x%x != 0x%x\n",
                     led, name1, led1->ctrls, led2->ctrls);
@@ -234,28 +234,28 @@ keymap_compare_leds(struct xkb_context *ctx,
         }
     }
 
-    if (keymap1->num_leds != keymap2->num_leds) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    اگر (keymap1->عدد_leds != keymap2->عدد_leds) {
+        log_err(ctx, XKB_LOG_پیغام_NO_ID,
                 "LEDs count do not match: %"PRIu32" != %"PRIu32"\n",
-                keymap1->num_leds, keymap2->num_leds);
+                keymap1->عدد_leds, keymap2->عدد_leds);
         identical = false;
     }
 
-    return identical;
+    واپس identical;
 }
 
-static bool
-compare_types(struct xkb_context *ctx,
-              const struct xkb_keymap *keymap1, const struct xkb_keymap *keymap2,
-              const struct xkb_key_type *type1, const struct xkb_key_type *type2)
+ساکن bool
+compare_types(ساخت xkb_context *ctx,
+              ثابت ساخت xkb_keymap *keymap1, ثابت ساخت xkb_keymap *keymap2,
+              ثابت ساخت xkb_کلید_type *type1, ثابت ساخت xkb_کلید_type *type2)
 {
     bool identical = true;
 
     /* NOTE: cannot compare atoms: keymaps may use different contexts */
-    const char * const name1 = xkb_atom_text(keymap1->ctx, type1->name);
-    const char * const name2 = xkb_atom_text(keymap2->ctx, type2->name);
-    if (!streq_null(name1, name2)) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    ثابت حرف * ثابت name1 = xkb_atom_متن(keymap1->ctx, type1->name);
+    ثابت حرف * ثابت name2 = xkb_atom_متن(keymap2->ctx, type2->name);
+    اگر (!streq_null(name1, name2)) {
+        log_err(ctx, XKB_LOG_پیغام_NO_ID,
                 "Key type names do not match: \"%s\" != \"%s\"\n",
                 name1, name2);
         identical = false;
@@ -263,39 +263,39 @@ compare_types(struct xkb_context *ctx,
 
     /* From here we will use the name of `type1` as the reference */
 
-    if (type1->mods.mods != type2->mods.mods) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    اگر (type1->mods.mods != type2->mods.mods) {
+        log_err(ctx, XKB_LOG_پیغام_NO_ID,
                 "Key type \"%s\" mods do not match: "
                 "0x%"PRIx32" != 0x%"PRIx32"\n",
                 name1, type1->mods.mods, type2->mods.mods);
         /* No point to check further properties */
-        return false;
+        واپس false;
     }
 
-    if (type1->num_levels != type2->num_levels) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    اگر (type1->عدد_سطحیں != type2->عدد_سطحیں) {
+        log_err(ctx, XKB_LOG_پیغام_NO_ID,
                 "Key type \"%s\" levels count do not match: "
                 "%"PRIu32" != %"PRIu32"\n",
-                name1, type1->num_levels, type2->num_levels);
+                name1, type1->عدد_سطحیں, type2->عدد_سطحیں);
         /* No point to check further properties */
-        return false;
+        واپس false;
     }
 
-    if (type1->num_level_names != type2->num_level_names) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    اگر (type1->عدد_level_نام != type2->عدد_level_نام) {
+        log_err(ctx, XKB_LOG_پیغام_NO_ID,
                 "Key type \"%s\" level names count do not match: "
                 "%"PRIu32" != %"PRIu32"\n",
-                name1, type1->num_level_names, type2->num_level_names);
+                name1, type1->عدد_level_نام, type2->عدد_level_نام);
         identical = false;
-    } else {
-        for (xkb_level_index_t l = 0; l < type1->num_level_names; l++) {
+    } ورنہ {
+        برائے (xkb_level_اشاریہ_t l = 0; l < type1->عدد_level_نام; l++) {
             /* NOTE: cannot compare atoms: keymaps may use different contexts */
-            const char * const lname1 = xkb_atom_text(keymap1->ctx,
-                                                      type1->level_names[l]);
-            const char * const lname2 = xkb_atom_text(keymap2->ctx,
-                                                      type2->level_names[l]);
-            if (!streq_null(lname1, lname2)) {
-                log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+            ثابت حرف * ثابت lname1 = xkb_atom_متن(keymap1->ctx,
+                                                      type1->level_نام[l]);
+            ثابت حرف * ثابت lname2 = xkb_atom_متن(keymap2->ctx,
+                                                      type2->level_نام[l]);
+            اگر (!streq_null(lname1, lname2)) {
+                log_err(ctx, XKB_LOG_پیغام_NO_ID,
                         "Key type \"%s\" level #%"PRIu32" names do not match: "
                         "\"%s\" != \"%s\"\n",
                         name1, l, lname1, lname2);
@@ -304,32 +304,32 @@ compare_types(struct xkb_context *ctx,
         }
     }
 
-    if (type1->num_entries != type2->num_entries) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    اگر (type1->عدد_entries != type2->عدد_entries) {
+        log_err(ctx, XKB_LOG_پیغام_NO_ID,
                 "Key type \"%s\" entries count do not match: "
                 "%u != %u\n",
-                name1, type1->num_entries, type2->num_entries);
+                name1, type1->عدد_entries, type2->عدد_entries);
         identical = false;
-    } else {
-        for (darray_size_t e = 0; e < type1->num_entries; e++) {
-            const struct xkb_key_type_entry * const entry1 = &type1->entries[e];
-            const struct xkb_key_type_entry * const entry2 = &type2->entries[e];
-            if (entry1->level != entry2->level) {
-                log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    } ورنہ {
+        برائے (darray_سائز_t e = 0; e < type1->عدد_entries; e++) {
+            ثابت ساخت xkb_کلید_type_اندراج * ثابت entry1 = &type1->entries[e];
+            ثابت ساخت xkb_کلید_type_اندراج * ثابت entry2 = &type2->entries[e];
+            اگر (entry1->level != entry2->level) {
+                log_err(ctx, XKB_LOG_پیغام_NO_ID,
                         "Key type \"%s\" entry #%u levels do not match: "
                         "%"PRIu32" != %"PRIu32"\n",
                         name1, e, entry1->level, entry2->level);
                 identical = false;
             }
-            if (entry1->mods.mods != entry2->mods.mods) {
-                log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+            اگر (entry1->mods.mods != entry2->mods.mods) {
+                log_err(ctx, XKB_LOG_پیغام_NO_ID,
                         "Key type \"%s\" entry #%u mods do not match: "
                         "0x%"PRIx32" != 0x%"PRIx32"\n",
                         name1, e, entry1->mods.mods, entry2->mods.mods);
                 identical = false;
             }
-            if (entry1->preserve.mods != entry2->preserve.mods) {
-                log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+            اگر (entry1->preserve.mods != entry2->preserve.mods) {
+                log_err(ctx, XKB_LOG_پیغام_NO_ID,
                         "Key type \"%s\" entry #%u preserve do not match: "
                         "0x%"PRIx32" != 0x%"PRIx32"\n",
                         name1, e, entry1->preserve.mods, entry2->preserve.mods);
@@ -338,79 +338,79 @@ compare_types(struct xkb_context *ctx,
         }
     }
 
-    return identical;
+    واپس identical;
 }
 
-static bool
-keymap_compare_types(struct xkb_context *ctx,
-                     const struct xkb_keymap *keymap1, const struct xkb_keymap *keymap2)
+ساکن bool
+keymap_compare_types(ساخت xkb_context *ctx,
+                     ثابت ساخت xkb_keymap *keymap1, ثابت ساخت xkb_keymap *keymap2)
 {
     bool identical = true;
 
     /* Compare common types */
-    const darray_size_t t_max = MIN(keymap1->num_types, keymap2->num_types);
-    for (darray_size_t t = 0; t < t_max; t++) {
+    ثابت darray_سائز_t t_max = MIN(keymap1->عدد_types, keymap2->عدد_types);
+    برائے (darray_سائز_t t = 0; t < t_max; t++) {
         identical = compare_types(ctx, keymap1, keymap2,
                                   &keymap1->types[t], &keymap2->types[t])
                   && identical;
     }
 
-    if (keymap1->num_types != keymap2->num_types) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    اگر (keymap1->عدد_types != keymap2->عدد_types) {
+        log_err(ctx, XKB_LOG_پیغام_NO_ID,
                 "Key types counts do not match: %u != %u\n",
-                keymap1->num_types, keymap2->num_types);
+                keymap1->عدد_types, keymap2->عدد_types);
         identical = false;
     }
 
-    return identical;
+    واپس identical;
 }
 
-static bool
-compare_groups(struct xkb_context *ctx,
-               const struct xkb_keymap *keymap1, const struct xkb_keymap *keymap2,
-               xkb_keycode_t kc, xkb_layout_index_t g,
-               const struct xkb_group *group1, const struct xkb_group *group2)
+ساکن bool
+compare_groups(ساخت xkb_context *ctx,
+               ثابت ساخت xkb_keymap *keymap1, ثابت ساخت xkb_keymap *keymap2,
+               xkb_keycode_t kc, xkb_layout_اشاریہ_t g,
+               ثابت ساخت xkb_گروہ *group1, ثابت ساخت xkb_گروہ *group2)
 {
     /* TODO: repeatedly compare the same key types is inefficient!! */
-    if (!compare_types(ctx, keymap1, keymap2, group1->type, group2->type)) {
-        const char * const name1 = xkb_atom_text(keymap1->ctx,
+    اگر (!compare_types(ctx, keymap1, keymap2, group1->type, group2->type)) {
+        ثابت حرف * ثابت name1 = xkb_atom_متن(keymap1->ctx,
                                                  group1->type->name);
-        const char * const name2 = xkb_atom_text(keymap2->ctx,
+        ثابت حرف * ثابت name2 = xkb_atom_متن(keymap2->ctx,
                                                  group2->type->name);
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        log_err(ctx, XKB_LOG_پیغام_NO_ID,
                 "Key 0x%"PRIx32"/group %"PRIu32" types do not match: "
                 "\"%s\" != \"%s\"\n", kc, g, name1, name2);
         /* No relevant to compare groups with different types */
-        return false;
+        واپس false;
     }
-    assert(group1->type->num_levels == group2->type->num_levels);
+    أكد(group1->type->عدد_سطحیں == group2->type->عدد_سطحیں);
 
     bool identical = true;
-    for (xkb_level_index_t l = 0; l < group1->type->num_levels; l++) {
-        const struct xkb_level * const level1 = &group1->levels[l];
-        const struct xkb_level * const level2 = &group2->levels[l];
+    برائے (xkb_level_اشاریہ_t l = 0; l < group1->type->عدد_سطحیں; l++) {
+        ثابت ساخت xkb_level * ثابت level1 = &group1->سطحیں[l];
+        ثابت ساخت xkb_level * ثابت level2 = &group2->سطحیں[l];
 
         /* Keysyms */
-        if (level1->num_syms != level2->num_syms) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        اگر (level1->عدد_syms != level2->عدد_syms) {
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "Key 0x%"PRIx32"/group %"PRIu32"/level %"PRIu32" "
                     "keysyms count do not match: %u != %u\n",
-                    kc, g, l, level1->num_syms, level2->num_syms);
+                    kc, g, l, level1->عدد_syms, level2->عدد_syms);
             identical = false;
-        } else {
-            if (level1->num_syms > 1) {
-                for (xkb_keysym_count_t k = 0; k < level1->num_syms; k++) {
-                    if (level1->s.syms[k] == level2->s.syms[k])
-                        continue;
-                    log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        } ورنہ {
+            اگر (level1->عدد_syms > 1) {
+                برائے (xkb_keysym_گنتی_t k = 0; k < level1->عدد_syms; k++) {
+                    اگر (level1->s.syms[k] == level2->s.syms[k])
+                        جاری;
+                    log_err(ctx, XKB_LOG_پیغام_NO_ID,
                             "Key 0x%"PRIx32"/group %"PRIu32"/level %"PRIu32" "
                             "keysyms #%u do not match: "
                             "0x%"PRIx32" != 0x%"PRIx32"\n",
                             kc, g, l, k, level1->s.syms[k], level2->s.syms[k]);
                     identical = false;
                 }
-            } else if (level1->s.sym != level2->s.sym) {
-                log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+            } ورنہ اگر (level1->s.sym != level2->s.sym) {
+                log_err(ctx, XKB_LOG_پیغام_NO_ID,
                         "Key 0x%"PRIx32"/group %"PRIu32"/level %"PRIu32" "
                         "keysyms do not match: 0x%"PRIx32" != 0x%"PRIx32"\n",
                         kc, g, l, level1->s.sym, level2->s.sym);
@@ -419,65 +419,65 @@ compare_groups(struct xkb_context *ctx,
         }
 
         /* Actions */
-        if (level1->num_actions != level2->num_actions) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        اگر (level1->عدد_actions != level2->عدد_actions) {
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "Key 0x%"PRIx32"/group %"PRIu32"/level %"PRIu32" "
                     "actions count do not match: %u != %u\n",
-                    kc, g, l, level1->num_actions, level2->num_actions);
+                    kc, g, l, level1->عدد_actions, level2->عدد_actions);
             identical = false;
-        } else {
-            if (level1->num_actions > 1) {
-                for (xkb_action_count_t a = 0; a < level1->num_actions; a++) {
-                    if (action_equal(&level1->a.actions[a], &level2->a.actions[a]))
-                        continue;
-                    log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        } ورنہ {
+            اگر (level1->عدد_actions > 1) {
+                برائے (xkb_action_گنتی_t a = 0; a < level1->عدد_actions; a++) {
+                    اگر (action_equal(&level1->a.actions[a], &level2->a.actions[a]))
+                        جاری;
+                    log_err(ctx, XKB_LOG_پیغام_NO_ID,
                             "Key 0x%"PRIx32"/group %"PRIu32"/level %"PRIu32" "
                             "actions #%u do not match\n", kc, g, l, a);
                     identical = false;
                 }
-            } else if (level1->num_actions == 1 &&
+            } ورنہ اگر (level1->عدد_actions == 1 &&
                        !action_equal(&level1->a.action, &level2->a.action)) {
-                log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+                log_err(ctx, XKB_LOG_پیغام_NO_ID,
                         "Key 0x%"PRIx32"/group %"PRIu32"/level %"PRIu32" "
                         "actions do not match\n", kc, g, l);
                 identical = false;
             }
         }
     }
-    return identical;
+    واپس identical;
 }
 
-static bool
-keymap_compare_symbols(struct xkb_context *ctx,
-                       const struct xkb_keymap *keymap1,
-                       const struct xkb_keymap *keymap2)
+ساکن bool
+keymap_compare_symbols(ساخت xkb_context *ctx,
+                       ثابت ساخت xkb_keymap *keymap1,
+                       ثابت ساخت xkb_keymap *keymap2)
 {
     bool identical = true;
 
     /*
      * Check groups
      */
-    if (keymap1->num_groups != keymap2->num_groups) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    اگر (keymap1->عدد_groups != keymap2->عدد_groups) {
+        log_err(ctx, XKB_LOG_پیغام_NO_ID,
                 "Group counts do not match: %"PRIu32" != %"PRIu32"\n",
-                keymap1->num_groups, keymap2->num_groups);
+                keymap1->عدد_groups, keymap2->عدد_groups);
         identical = false;
     }
 
-    if (keymap1->num_group_names != keymap2->num_group_names) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    اگر (keymap1->عدد_گروہ_نام != keymap2->عدد_گروہ_نام) {
+        log_err(ctx, XKB_LOG_پیغام_NO_ID,
                 "Group name counts do not match: %"PRIu32" != %"PRIu32"\n",
-                keymap1->num_group_names, keymap2->num_group_names);
+                keymap1->عدد_گروہ_نام, keymap2->عدد_گروہ_نام);
         identical = false;
-    } else {
-        for (xkb_layout_index_t g = 0; g < keymap1->num_group_names; g++) {
+    } ورنہ {
+        برائے (xkb_layout_اشاریہ_t g = 0; g < keymap1->عدد_گروہ_نام; g++) {
             /* NOTE: cannot compare atoms: keymaps may use different contexts */
-            const char * const name1 = xkb_atom_text(keymap1->ctx,
-                                                     keymap1->group_names[g]);
-            const char * const name2 = xkb_atom_text(keymap2->ctx,
-                                                     keymap2->group_names[g]);
-            if (!streq_null(name1, name2)) {
-                log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+            ثابت حرف * ثابت name1 = xkb_atom_متن(keymap1->ctx,
+                                                     keymap1->گروہ_نام[g]);
+            ثابت حرف * ثابت name2 = xkb_atom_متن(keymap2->ctx,
+                                                     keymap2->گروہ_نام[g]);
+            اگر (!streq_null(name1, name2)) {
+                log_err(ctx, XKB_LOG_پیغام_NO_ID,
                         "Group #%"PRIu32" names do not match: "
                         "\"%s\" != \"%s\"\n", g, name1, name2);
                 identical = false;
@@ -488,68 +488,68 @@ keymap_compare_symbols(struct xkb_context *ctx,
     /*
      * Check common keycodes
      */
-    const xkb_keycode_t k_max = MIN(keymap1->num_keys, keymap2->num_keys);
-    for (xkb_keycode_t k = 0; k < k_max; k++) {
-        const struct xkb_key * const key1 = &keymap1->keys[k];
-        const struct xkb_key * const key2 = &keymap1->keys[k];
-        if (key1->keycode != key2->keycode) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    ثابت xkb_keycode_t k_max = MIN(keymap1->عدد_کلیدیں, keymap2->عدد_کلیدیں);
+    برائے (xkb_keycode_t k = 0; k < k_max; k++) {
+        ثابت ساخت xkb_کلید * ثابت key1 = &keymap1->کلیدیں[k];
+        ثابت ساخت xkb_کلید * ثابت key2 = &keymap1->کلیدیں[k];
+        اگر (key1->keycode != key2->keycode) {
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "Key #%"PRIu32" keycodes do not match: "
                     "%"PRIx32" != %"PRIx32"\n", k, key1->keycode, key2->keycode);
             identical = false;
             /* It does not make sense to compare further properties */
-            continue;
+            جاری;
         }
 
-        const xkb_keycode_t kc = key1->keycode;
+        ثابت xkb_keycode_t kc = key1->keycode;
 
         /* NOTE: key name checked in `compare_keycodes()` */
 
-        if (key1->modmap != key2->modmap) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        اگر (key1->modmap != key2->modmap) {
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "Key 0x%"PRIx32" modmap do not match: "
                     "0x%"PRIx32" != 0x%"PRIx32"\n", kc, key1->modmap, key2->modmap);
             identical = false;
         }
-        if (key1->vmodmap != key2->vmodmap) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        اگر (key1->vmodmap != key2->vmodmap) {
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "Key 0x%"PRIx32" vmodmap do not match: "
                     "0x%"PRIx32" != 0x%"PRIx32"\n", kc, key1->vmodmap, key2->vmodmap);
             identical = false;
         }
-        if (key1->repeats != key2->repeats) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        اگر (key1->repeats != key2->repeats) {
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "Key 0x%"PRIx32" repeats do not match: "
                     "%d != %d\n", kc, key1->repeats, key2->repeats);
             identical = false;
         }
-        if (key1->out_of_range_group_policy != key2->out_of_range_group_policy ||
-            key1->out_of_range_group_number != key2->out_of_range_group_number) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        اگر (key1->برآمد_کا_range_گروہ_policy != key2->برآمد_کا_range_گروہ_policy ||
+            key1->برآمد_کا_range_گروہ_نمبر != key2->برآمد_کا_range_گروہ_نمبر) {
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "Key 0x%"PRIx32" out-of-range do not match: "
                     "%d != %d or %"PRIu32" != %"PRIu32"\n", kc,
-                    key1->out_of_range_group_policy,
-                    key2->out_of_range_group_policy,
-                    key1->out_of_range_group_number,
-                    key2->out_of_range_group_number);
+                    key1->برآمد_کا_range_گروہ_policy,
+                    key2->برآمد_کا_range_گروہ_policy,
+                    key1->برآمد_کا_range_گروہ_نمبر,
+                    key2->برآمد_کا_range_گروہ_نمبر);
             identical = false;
         }
-        if (key1->num_groups != key2->num_groups) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        اگر (key1->عدد_groups != key2->عدد_groups) {
+            log_err(ctx, XKB_LOG_پیغام_NO_ID,
                     "Key 0x%"PRIx32" groups counts do not match: "
                     "%"PRIu32" != %"PRIu32"\n", kc,
-                    key1->num_groups, key2->num_groups);
+                    key1->عدد_groups, key2->عدد_groups);
             identical = false;
         }
-        const xkb_layout_index_t g_max = MIN(key1->num_groups, key2->num_groups);
-        for (xkb_layout_index_t g = 0; g < g_max; g++) {
+        ثابت xkb_layout_اشاریہ_t g_max = MIN(key1->عدد_groups, key2->عدد_groups);
+        برائے (xkb_layout_اشاریہ_t g = 0; g < g_max; g++) {
             identical = compare_groups(ctx, keymap1, keymap2, kc, g,
                                        &key1->groups[g], &key2->groups[g])
                       && identical;
         }
     }
 
-    return identical;
+    واپس identical;
 }
 
 /**
@@ -561,31 +561,31 @@ keymap_compare_symbols(struct xkb_context *ctx,
  * Return `true` if the properties to compare are identical, `false` otherwise.
  */
 bool
-xkb_keymap_compare(struct xkb_context *ctx,
-                   const struct xkb_keymap *keymap1, const struct xkb_keymap *keymap2,
-                   enum xkb_keymap_compare_property properties)
+xkb_keymap_compare(ساخت xkb_context *ctx,
+                   ثابت ساخت xkb_keymap *keymap1, ثابت ساخت xkb_keymap *keymap2,
+                   شمار xkb_keymap_compare_property properties)
 {
     bool identical = true;
 
-    if (properties & XKB_KEYMAP_CMP_MODS) {
+    اگر (properties & XKB_KEYMAP_CMP_MODS) {
         identical = keymap_compare_mods(ctx, keymap1, keymap2) && identical;
     }
 
-    if (properties & XKB_KEYMAP_CMP_TYPES) {
+    اگر (properties & XKB_KEYMAP_CMP_TYPES) {
         identical = keymap_compare_types(ctx, keymap1, keymap2) && identical;
     }
 
-    if (properties & XKB_KEYMAP_CMP_LEDS) {
+    اگر (properties & XKB_KEYMAP_CMP_LEDS) {
         identical = keymap_compare_leds(ctx, keymap1, keymap2) && identical;
     }
 
-    if (properties & XKB_KEYMAP_CMP_KEYCODES) {
+    اگر (properties & XKB_KEYMAP_CMP_KEYCODES) {
         identical = keymap_compare_keycodes(ctx, keymap1, keymap2) && identical;
     }
 
-    if (properties & XKB_KEYMAP_CMP_SYMBOLS) {
+    اگر (properties & XKB_KEYMAP_CMP_SYMBOLS) {
         identical = keymap_compare_symbols(ctx, keymap1, keymap2) && identical;
     }
 
-    return identical;
+    واپس identical;
 }

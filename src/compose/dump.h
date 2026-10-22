@@ -3,14 +3,14 @@
  * Copyright © 2023 Pierre Le Marre <dev@wismill.eu>
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#ہدایت once
 
-#include "config.h"
+#شامل "config.h"
 
-#include "table.h"
-
-bool
-print_compose_table_entry(FILE *file, struct xkb_compose_table_entry *entry);
+#شامل "table.h"
 
 bool
-xkb_compose_table_dump(FILE *file, struct xkb_compose_table *table);
+print_compose_جدول_اندراج(FILE *file, ساخت xkb_compose_جدول_اندراج *اندراج_2);
+
+bool
+xkb_compose_جدول_dump(FILE *file, ساخت xkb_compose_جدول *جدول);

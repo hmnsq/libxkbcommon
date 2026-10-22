@@ -3,20 +3,20 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#شامل "config.h"
 
-#include <assert.h>
+#شامل <assert.h>
 
-#include "context.h"
-#include "features/enums.h"
-#include "keysym.h"
-#include "table.h"
-#include "utils.h"
+#شامل "context.h"
+#شامل "features/enums.h"
+#شامل "keysym.h"
+#شامل "table.h"
+#شامل "utils.h"
 
-struct xkb_compose_state {
-    int refcnt;
-    enum xkb_compose_state_flags flags;
-    struct xkb_compose_table *table;
+ساخت xkb_compose_state {
+    صحیح refcnt;
+    شمار xkb_compose_state_flags flags;
+    ساخت xkb_compose_جدول *جدول;
 
     /*
      * Offsets into xkb_compose_table::nodes.
@@ -27,67 +27,67 @@ struct xkb_compose_state {
      * This is also sufficient for inferring the current status; see
      * xkb_compose_state_get_status().
      */
-    uint32_t prev_context;
+    uint32_t پچھلا_context;
     uint32_t context;
 };
 
-struct xkb_compose_state *
-xkb_compose_state_new(struct xkb_compose_table *table,
-                      enum xkb_compose_state_flags flags)
+ساخت xkb_compose_state *
+xkb_compose_state_new(ساخت xkb_compose_جدول *جدول,
+                      شمار xkb_compose_state_flags flags)
 {
-    const enum xkb_compose_state_flags invalid_flags =
-        (flags & ~(enum xkb_compose_state_flags)XKB_COMPOSE_STATE_FLAGS_VALUES);
-    if (invalid_flags) {
-        log_err_func(table->ctx, XKB_LOG_MESSAGE_NO_ID,
+    ثابت شمار xkb_compose_state_flags invalid_flags =
+        (flags & ~(شمار xkb_compose_state_flags)XKB_COMPOSE_STATE_FLAGS_اقدار);
+    اگر (invalid_flags) {
+        log_err_func(جدول->ctx, XKB_LOG_پیغام_NO_ID,
                      "Unsupported compose state flags: %#x\n",
                      invalid_flags);
-        return NULL;
+        واپس تہی;
     }
 
-    struct xkb_compose_state * const state = calloc(1, sizeof(*state));
-    if (!state)
-        return NULL;
+    ساخت xkb_compose_state * ثابت state = صفر_حافظہ_دو(1, حجم(*state));
+    اگر (!state)
+        واپس تہی;
 
     state->refcnt = 1;
-    state->table = xkb_compose_table_ref(table);
+    state->جدول = xkb_compose_جدول_ref(جدول);
 
     state->flags = flags;
-    state->prev_context = 0;
+    state->پچھلا_context = 0;
     state->context = 0;
 
-    return state;
+    واپس state;
 }
 
-struct xkb_compose_state *
-xkb_compose_state_ref(struct xkb_compose_state *state)
+ساخت xkb_compose_state *
+xkb_compose_state_ref(ساخت xkb_compose_state *state)
 {
-    assert(state->refcnt > 0);
+    أكد(state->refcnt > 0);
     state->refcnt++;
-    return state;
+    واپس state;
 }
 
-void
-xkb_compose_state_unref(struct xkb_compose_state *state)
+خالی
+xkb_compose_state_unref(ساخت xkb_compose_state *state)
 {
-    assert(!state || state->refcnt > 0);
-    if (!state || --state->refcnt > 0)
-        return;
+    أكد(!state || state->refcnt > 0);
+    اگر (!state || --state->refcnt > 0)
+        واپس;
 
-    xkb_compose_table_unref(state->table);
-    free(state);
+    xkb_compose_جدول_unref(state->جدول);
+    آزاد(state);
 }
 
-struct xkb_compose_table *
-xkb_compose_state_get_compose_table(struct xkb_compose_state *state)
+ساخت xkb_compose_جدول *
+xkb_compose_state_get_compose_جدول(ساخت xkb_compose_state *state)
 {
-    return state->table;
+    واپس state->جدول;
 }
 
-enum xkb_compose_feed_result
-xkb_compose_state_feed(struct xkb_compose_state *state, xkb_keysym_t keysym)
+شمار xkb_compose_feed_نتیجہ
+xkb_compose_state_feed(ساخت xkb_compose_state *state, xkb_keysym_t keysym)
 {
     uint32_t context;
-    const struct compose_node *node;
+    ثابت ساخت compose_گرہ *گرہ;
 
     /*
      * Modifiers do not affect the sequence directly.  In particular,
@@ -99,98 +99,98 @@ xkb_compose_state_feed(struct xkb_compose_state *state, xkb_keysym_t keysym)
      * have it here.  However, this is (approximately) what libX11 does
      * as well.
      */
-    if (xkb_keysym_is_modifier(keysym))
-        return XKB_COMPOSE_FEED_IGNORED;
+    اگر (xkb_keysym_is_modifier(keysym))
+        واپس XKB_COMPOSE_FEED_IGNORED;
 
-    node = &darray_item(state->table->nodes, state->context);
+    گرہ = &darray_شے(state->جدول->nodes, state->context);
 
-    context = (node->is_leaf ? 1 : node->internal.eqkid);
-    if (context == 1 && darray_size(state->table->nodes) == 1)
+    context = (گرہ->is_برگ ? 1 : گرہ->اندرونی_2.eqkid);
+    اگر (context == 1 && darray_سائز(state->جدول->nodes) == 1)
         context = 0;
 
-    while (context != 0) {
-        node = &darray_item(state->table->nodes, context);
-        if (keysym < node->keysym)
-            context = node->lokid;
-        else if (keysym > node->keysym)
-            context = node->hikid;
-        else
-            break;
+    جب (context != 0) {
+        گرہ = &darray_شے(state->جدول->nodes, context);
+        اگر (keysym < گرہ->keysym)
+            context = گرہ->lokid;
+        ورنہ اگر (keysym > گرہ->keysym)
+            context = گرہ->hikid;
+        ورنہ
+            توڑو;
     }
 
-    state->prev_context = state->context;
+    state->پچھلا_context = state->context;
     state->context = context;
-    return XKB_COMPOSE_FEED_ACCEPTED;
+    واپس XKB_COMPOSE_FEED_ACCEPTED;
 }
 
-void
-xkb_compose_state_reset(struct xkb_compose_state *state)
+خالی
+xkb_compose_state_reset(ساخت xkb_compose_state *state)
 {
-    state->prev_context = 0;
+    state->پچھلا_context = 0;
     state->context = 0;
 }
 
-enum xkb_compose_status
-xkb_compose_state_get_status(struct xkb_compose_state *state)
+شمار xkb_compose_حالت
+xkb_compose_state_get_حالت(ساخت xkb_compose_state *state)
 {
-    const struct compose_node *prev_node, *node;
+    ثابت ساخت compose_گرہ *پچھلا_گرہ, *گرہ;
 
-    prev_node = &darray_item(state->table->nodes, state->prev_context);
-    node = &darray_item(state->table->nodes, state->context);
+    پچھلا_گرہ = &darray_شے(state->جدول->nodes, state->پچھلا_context);
+    گرہ = &darray_شے(state->جدول->nodes, state->context);
 
-    if (state->context == 0 && !prev_node->is_leaf)
-        return XKB_COMPOSE_CANCELLED;
+    اگر (state->context == 0 && !پچھلا_گرہ->is_برگ)
+        واپس XKB_COMPOSE_CANCELLED;
 
-    if (state->context == 0)
-        return XKB_COMPOSE_NOTHING;
+    اگر (state->context == 0)
+        واپس XKB_COMPOSE_NOTHING;
 
-    if (!node->is_leaf)
-        return XKB_COMPOSE_COMPOSING;
+    اگر (!گرہ->is_برگ)
+        واپس XKB_COMPOSE_COMPOSING;
 
-    return XKB_COMPOSE_COMPOSED;
+    واپس XKB_COMPOSE_COMPOSED;
 }
 
-int
-xkb_compose_state_get_utf8(struct xkb_compose_state *state,
-                           char *buffer, size_t size)
+صحیح
+xkb_compose_state_get_utf8(ساخت xkb_compose_state *state,
+                           حرف *بفر, سائز_t سائز)
 {
-    const struct compose_node *node =
-        &darray_item(state->table->nodes, state->context);
+    ثابت ساخت compose_گرہ *گرہ =
+        &darray_شے(state->جدول->nodes, state->context);
 
-    if (!node->is_leaf)
-        goto fail;
+    اگر (!گرہ->is_برگ)
+        جاؤ fail;
 
     /* If there's no string specified, but only a keysym, try to do the
      * most helpful thing. */
-    if (node->leaf.utf8 == 0 && node->leaf.keysym != XKB_KEY_NoSymbol) {
-        char utf8[XKB_KEYSYM_UTF8_MAX_SIZE];
-        int ret;
+    اگر (گرہ->برگ.utf8 == 0 && گرہ->برگ.keysym != XKB_کلید_No_علامت) {
+        حرف utf8[XKB_KEYSYM_UTF8_MAX_سائز];
+        صحیح ret;
 
-        ret = xkb_keysym_to_utf8(node->leaf.keysym, utf8, sizeof(utf8));
-        if (ret < 0 || ret == 0) {
+        ret = xkb_keysym_مقصد_utf8(گرہ->برگ.keysym, utf8, حجم(utf8));
+        اگر (ret < 0 || ret == 0) {
             /* ret < 0 is impossible.
              * ret == 0 means the keysym has no string representation. */
-            goto fail;
+            جاؤ fail;
         }
 
-        return snprintf(buffer, size, "%s", utf8);
+        واپس snprintf(بفر, سائز, "%s", utf8);
     }
 
-    return snprintf(buffer, size, "%s",
-                    &darray_item(state->table->utf8, node->leaf.utf8));
+    واپس snprintf(بفر, سائز, "%s",
+                    &darray_شے(state->جدول->utf8, گرہ->برگ.utf8));
 
 fail:
-    if (size > 0)
-        buffer[0] = '\0';
-    return 0;
+    اگر (سائز > 0)
+        بفر[0] = '\0';
+    واپس 0;
 }
 
 xkb_keysym_t
-xkb_compose_state_get_one_sym(struct xkb_compose_state *state)
+xkb_compose_state_get_one_sym(ساخت xkb_compose_state *state)
 {
-    const struct compose_node *node =
-        &darray_item(state->table->nodes, state->context);
-    if (!node->is_leaf)
-        return XKB_KEY_NoSymbol;
-    return node->leaf.keysym;
+    ثابت ساخت compose_گرہ *گرہ =
+        &darray_شے(state->جدول->nodes, state->context);
+    اگر (!گرہ->is_برگ)
+        واپس XKB_کلید_No_علامت;
+    واپس گرہ->برگ.keysym;
 }
