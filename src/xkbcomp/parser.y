@@ -12,28 +12,28 @@
 
 /* The following goes in the header */
 %code requires {
-#include "config.h"
+#ضمن "config.h"
 
-#include "scanner-utils.h"
-#include "xkbcomp/ast.h"
-#include "xkbcomp/xkbcomp-priv.h"
+#ضمن "scanner-utils.h"
+#ضمن "xkbcomp/ast.h"
+#ضمن "xkbcomp/xkbcomp-priv.h"
 }
 
 %{
-#include "config.h"
+#ضمن "config.h"
 
-#include <assert.h>
+#ضمن <assert.h>
 
-#include "keysym.h"
-#include "xkbcomp/xkbcomp-priv.h"
-#include "xkbcomp/parser-priv.h"
-#include "xkbcomp/ast-build.h"
+#ضمن "keysym.h"
+#ضمن "xkbcomp/xkbcomp-priv.h"
+#ضمن "xkbcomp/parser-priv.h"
+#ضمن "xkbcomp/ast-build.h"
 
-struct parser_param {
-    struct xkb_context *ctx;
-    struct scanner *scanner;
+بنية parser_param {
+    بنية xkb_context *ctx;
+    بنية scanner *scanner;
     XkbFile *rtrn;
-    struct parser_keymap_config config;
+    بنية parser_keymap_config config;
     bool more_maps;
 };
 
@@ -50,52 +50,52 @@ struct parser_param {
 #define parser_vrb(param, verbosity, warning_id, fmt, ...) \
     scanner_vrb((param)->scanner, verbosity, warning_id, fmt, ##__VA_ARGS__)
 
-static void
-_xkbcommon_error(struct parser_param *param, const char *msg)
+ساكن فراغ
+_xkbcommon_error(بنية parser_param *param, ثابت حرف *msg)
 {
     parser_err(param, XKB_ERROR_INVALID_XKB_SYNTAX, "%s", msg);
 }
 
-static bool
-resolve_keysym(struct parser_param *param, struct sval name, xkb_keysym_t *sym_rtrn)
+ساكن bool
+resolve_keysym(بنية parser_param *param, بنية sval name, xkb_keysym_t *sym_rtrn)
 {
     xkb_keysym_t sym;
 
-    if (isvaleq(name, SVAL_LIT("any")) || isvaleq(name, SVAL_LIT("nosymbol"))) {
+    𐤀𐤌 (isvaleq(name, SVAL_LIT("any")) || isvaleq(name, SVAL_LIT("nosymbol"))) {
         *sym_rtrn = XKB_KEY_NoSymbol;
-        return true;
+        أرجع true;
     }
 
-    if (isvaleq(name, SVAL_LIT("none")) || isvaleq(name, SVAL_LIT("voidsymbol"))) {
+    𐤀𐤌 (isvaleq(name, SVAL_LIT("none")) || isvaleq(name, SVAL_LIT("voidsymbol"))) {
         *sym_rtrn = XKB_KEY_VoidSymbol;
-        return true;
+        أرجع true;
     }
 
     /* xkb_keysym_from_name needs a C string. */
-    char buf[XKB_KEYSYM_NAME_MAX_SIZE];
-    if (name.len >= sizeof(buf)) {
-        return false;
+    حرف buf[XKB_KEYSYM_NAME_MAX_SIZE];
+    𐤀𐤌 (name.len >= حجم(buf)) {
+        أرجع false;
     }
     memcpy(buf, name.start, name.len);
     buf[name.len] = '\0';
 
     sym = xkb_keysym_from_name(buf, XKB_KEYSYM_NO_FLAGS);
-    if (sym != XKB_KEY_NoSymbol) {
+    𐤀𐤌 (sym != XKB_KEY_NoSymbol) {
         *sym_rtrn = sym;
         check_deprecated_keysyms(parser_warn, param, param->ctx,
                                  sym, buf, buf, "%s", "");
-        return true;
+        أرجع true;
     }
 
-    return false;
+    أرجع false;
 }
 
 #define param_scanner param->scanner
 %}
 
 %define api.pure
-%lex-param      { struct scanner *param_scanner }
-%parse-param    { struct parser_param *param }
+%lex-param      { بنية scanner *param_scanner }
+%parse-param    { بنية parser_param *param }
 
 %define parse.error detailed
 
@@ -174,24 +174,24 @@ resolve_keysym(struct parser_param *param, struct sval name, xkb_keysym_t *sym_r
 
 %start  XkbFile
 
-%union  {
+%اتحاد  {
         int64_t          num;
-        enum xkb_file_type file_type;
-        char            *str;
-        struct sval     sval;
+        تعداد xkb_file_type file_type;
+        حرف            *str;
+        بنية sval     sval;
         xkb_atom_t      atom;
-        enum merge_mode merge;
-        enum xkb_map_flags mapFlags;
+        تعداد merge_mode merge;
+        تعداد xkb_map_flags mapFlags;
         xkb_keysym_t    keysym;
         ParseCommon     *any;
-        struct { ParseCommon *head; ParseCommon *last; } anyList;
+        بنية { ParseCommon *head; ParseCommon *last; } anyList;
         uint32_t        noSymbolOrActionList;
         ExprDef         *expr;
-        struct { ExprDef *head; ExprDef *last; } exprList;
+        بنية { ExprDef *head; ExprDef *last; } exprList;
         VarDef          *var;
-        struct { VarDef *head; VarDef *last; } varList;
+        بنية { VarDef *head; VarDef *last; } varList;
         VModDef         *vmod;
-        struct { VModDef *head; VModDef *last; } vmodList;
+        بنية { VModDef *head; VModDef *last; } vmodList;
         InterpDef       *interp;
         KeyTypeDef      *keyType;
         SymbolsDef      *syms;
@@ -202,50 +202,50 @@ resolve_keysym(struct parser_param *param, struct sval name, xkb_keysym_t *sym_r
         KeycodeDef      *keyCode;
         KeyAliasDef     *keyAlias;
         UnknownStatement *unknown;
-        void            *geom;
+        فراغ            *geom;
         XkbFile         *file;
-        struct { XkbFile *head; XkbFile *last; } fileList;
+        بنية { XkbFile *head; XkbFile *last; } fileList;
 }
 
-%type <num>     DECIMAL_DIGIT INTEGER FLOAT
-%type <str>     STRING
-%type <sval>    IDENT
-%type <atom>    KEYNAME
-%type <num>     KeyCode Number Integer Float SignedNumber DoodadType
-%type <merge>   MergeMode OptMergeMode
-%type <file_type> XkbCompositeType FileType
-%type <mapFlags> Flag Flags OptFlags
-%type <str>     MapName OptMapName
-%type <atom>    FieldSpec Ident Element String
-%type <keysym>  KeySym KeySymLit
-%type <noSymbolOrActionList> NoSymbolOrActionList
-%type <any>     Decl
-%type <anyList> DeclList
-%type <expr>    Expr Term Lhs Terminal OptTerminal Coord CoordList
-%type <expr>    MultiKeySymOrActionList NonEmptyActions Actions Action
-%type <expr>    KeySyms NonEmptyKeySyms KeySymList KeyOrKeySym
-%type <exprList> ExprList KeyOrKeySymList
-%type <exprList> ActionList MultiActionList MultiKeySymList
-%type <var>     VarDecl SymbolsVarDecl
-%type <varList> VarDeclList SymbolsBody OptSymbolsBody
-%type <vmod>    VModDef
-%type <vmodList> VModDefList VModDecl
-%type <interp>  InterpretDecl InterpretMatch
-%type <keyType> KeyTypeDecl
-%type <syms>    SymbolsDecl
-%type <modMask> ModMapDecl
-%type <groupCompat> GroupCompatDecl
-%type <ledMap>  LedMapDecl
-%type <ledName> LedNameDecl
-%type <keyCode> KeyNameDecl
-%type <keyAlias> KeyAliasDecl
-%type <geom>    ShapeDecl SectionDecl SectionBody SectionBodyItem RowBody RowBodyItem
-%type <geom>    Keys Key OverlayDecl OverlayKeyList OverlayKey OutlineList OutlineInList
-%type <geom>    DoodadDecl
-%type <unknown> UnknownDecl UnknownCompoundStatementDecl
-%type <file>    XkbFile XkbMapConfig
-%type <fileList> XkbMapConfigList
-%type <file>    XkbCompositeMap
+%نوع <num>     DECIMAL_DIGIT INTEGER FLOAT
+%نوع <str>     STRING
+%نوع <sval>    IDENT
+%نوع <atom>    KEYNAME
+%نوع <num>     KeyCode Number Integer Float SignedNumber DoodadType
+%نوع <merge>   MergeMode OptMergeMode
+%نوع <file_type> XkbCompositeType FileType
+%نوع <mapFlags> Flag Flags OptFlags
+%نوع <str>     MapName OptMapName
+%نوع <atom>    FieldSpec Ident Element String
+%نوع <keysym>  KeySym KeySymLit
+%نوع <noSymbolOrActionList> NoSymbolOrActionList
+%نوع <any>     Decl
+%نوع <anyList> DeclList
+%نوع <expr>    Expr Term Lhs Terminal OptTerminal Coord CoordList
+%نوع <expr>    MultiKeySymOrActionList NonEmptyActions Actions Action
+%نوع <expr>    KeySyms NonEmptyKeySyms KeySymList KeyOrKeySym
+%نوع <exprList> ExprList KeyOrKeySymList
+%نوع <exprList> ActionList MultiActionList MultiKeySymList
+%نوع <var>     VarDecl SymbolsVarDecl
+%نوع <varList> VarDeclList SymbolsBody OptSymbolsBody
+%نوع <vmod>    VModDef
+%نوع <vmodList> VModDefList VModDecl
+%نوع <interp>  InterpretDecl InterpretMatch
+%نوع <keyType> KeyTypeDecl
+%نوع <syms>    SymbolsDecl
+%نوع <modMask> ModMapDecl
+%نوع <groupCompat> GroupCompatDecl
+%نوع <ledMap>  LedMapDecl
+%نوع <ledName> LedNameDecl
+%نوع <keyCode> KeyNameDecl
+%نوع <keyAlias> KeyAliasDecl
+%نوع <geom>    ShapeDecl SectionDecl SectionBody SectionBodyItem RowBody RowBodyItem
+%نوع <geom>    Keys Key OverlayDecl OverlayKeyList OverlayKey OutlineList OutlineInList
+%نوع <geom>    DoodadDecl
+%نوع <unknown> UnknownDecl UnknownCompoundStatementDecl
+%نوع <file>    XkbFile XkbMapConfig
+%نوع <fileList> XkbMapConfigList
+%نوع <file>    XkbCompositeMap
 
 %destructor { FreeStmt((ParseCommon *) $$); }
     <any> <expr> <var> <vmod> <interp> <keyType> <syms> <modMask> <groupCompat>
@@ -254,9 +254,9 @@ resolve_keysym(struct parser_param *param, struct sval name, xkb_keysym_t *sym_r
     <anyList> <exprList> <varList> <vmodList>
 /* The destructor also runs on the start symbol when the parser *succeeds*.
  * The `if` here catches this case. */
-%destructor { if (!param->rtrn) FreeXkbFile($$); } <file>
+%destructor { 𐤀𐤌 (!param->rtrn) FreeXkbFile($$); } <file>
 %destructor { FreeXkbFile($$.head); } <fileList>
-%destructor { free($$); } <str>
+%destructor { حرر($$); } <str>
 
 %%
 
@@ -273,11 +273,11 @@ resolve_keysym(struct parser_param *param, struct sval name, xkb_keysym_t *sym_r
  */
 
 XkbFile         :       XkbCompositeMap
-                        { $$ = param->rtrn = $1; param->more_maps = !!param->rtrn; (void) yynerrs; }
+                        { $$ = param->rtrn = $1; param->more_maps = !!param->rtrn; (فراغ) yynerrs; }
                 |       XkbMapConfig
                         { $$ = param->rtrn = $1; param->more_maps = !!param->rtrn; YYACCEPT; }
                 |       END_OF_FILE
-                        { $$ = param->rtrn = NULL; param->more_maps = false; }
+                        { $$ = param->rtrn = عدم; param->more_maps = false; }
                 ;
 
 XkbCompositeMap :       OptFlags XkbCompositeType OptMapName OBRACE
@@ -296,24 +296,24 @@ XkbCompositeType:       XKB_KEYMAP      { $$ = FILE_TYPE_KEYMAP; }
  */
 XkbMapConfigList :      XkbMapConfigList XkbMapConfig
                         {
-                            if ($2) {
-                                if ($1.head) {
+                            𐤀𐤌 ($2) {
+                                𐤀𐤌 ($1.head) {
                                     $$.head = $1.head;
                                     $$.last->common.next = &$2->common;
                                     $$.last = $2;
-                                } else {
+                                } وإلا {
                                     $$.head = $$.last = $2;
                                 }
                             }
                         }
-                |       { $$.head = $$.last = NULL; }
+                |       { $$.head = $$.last = عدم; }
                 ;
 
 XkbMapConfig    :       OptFlags FileType OptMapName OBRACE
                             DeclList
                         CBRACE SEMI
                         {
-                            if ($1 & MAP_IS_DEPRECATED) {
+                            𐤀𐤌 ($1 & MAP_IS_DEPRECATED) {
                                 parser_warn(param, XKB_WARNING_DEPRECATED_SECTION,
                                             "deprecated section: \"%s\"",
                                             safe_map_name($3));
@@ -348,7 +348,7 @@ Flag            :       PARTIAL                 { $$ = MAP_IS_PARTIAL; }
                 |       DEPRECATED              { $$ = MAP_IS_DEPRECATED; }
                 |       IDENT
                         {
-                            const bool error = (param->config.strict & PARSER_NO_UNKNOWN_SECTION_FLAGS);
+                            ثابت bool error = (param->config.strict & PARSER_NO_UNKNOWN_SECTION_FLAGS);
                             parser_log_with_code(
                                 param, (error ? XKB_LOG_LEVEL_ERROR : XKB_LOG_LEVEL_WARNING),
                                 XKB_LOG_VERBOSITY_MINIMAL,
@@ -357,7 +357,7 @@ Flag            :       PARTIAL                 { $$ = MAP_IS_PARTIAL; }
                                 (unsigned)$1.len, $1.start,
                                 (error ? "" : "; ignored")
                             );
-                            if (error)
+                            𐤀𐤌 (error)
                                 YYABORT;
                             $$ = 0;
                         }
@@ -365,10 +365,10 @@ Flag            :       PARTIAL                 { $$ = MAP_IS_PARTIAL; }
 
 DeclList        :       DeclList Decl
                         {
-                            if ($2) {
-                                if ($1.head) {
+                            𐤀𐤌 ($2) {
+                                𐤀𐤌 ($1.head) {
                                     $$.head = $1.head; $1.last->next = $2; $$.last = $2;
-                                } else {
+                                } وإلا {
                                     $$.head = $$.last = $2;
                                 }
                             }
@@ -380,15 +380,15 @@ DeclList        :       DeclList Decl
                          */
                 |       DeclList OptMergeMode VModDecl
                         {
-                            for (VModDef *vmod = $3.head; vmod; vmod = (VModDef *) vmod->common.next)
+                            لكل (VModDef *vmod = $3.head; vmod; vmod = (VModDef *) vmod->common.next)
                                 vmod->merge = $2;
-                            if ($1.head) {
+                            𐤀𐤌 ($1.head) {
                                 $$.head = $1.head; $1.last->next = &$3.head->common; $$.last = &$3.last->common;
-                            } else {
+                            } وإلا {
                                 $$.head = &$3.head->common; $$.last = &$3.last->common;
                             }
                         }
-                |       { $$.head = $$.last = NULL; }
+                |       { $$.head = $$.last = عدم; }
                 ;
 
 Decl            :       OptMergeMode VarDecl
@@ -442,9 +442,9 @@ Decl            :       OptMergeMode VarDecl
                             $2->merge = $1;
                             $$ = (ParseCommon *) $2;
                         }
-                |       OptMergeMode ShapeDecl          { $$ = NULL; }
-                |       OptMergeMode SectionDecl        { $$ = NULL; }
-                |       OptMergeMode DoodadDecl         { $$ = NULL; }
+                |       OptMergeMode ShapeDecl          { $$ = عدم; }
+                |       OptMergeMode SectionDecl        { $$ = عدم; }
+                |       OptMergeMode DoodadDecl         { $$ = عدم; }
                 |       OptMergeMode UnknownDecl
                             { $$ = (ParseCommon *) $2; }
                 |       OptMergeMode UnknownCompoundStatementDecl
@@ -452,7 +452,7 @@ Decl            :       OptMergeMode VarDecl
                 |       MergeMode STRING
                         {
                             $$ = (ParseCommon *) IncludeCreate(param->ctx, $2, $1);
-                            free($2);
+                            حرر($2);
                         }
                 ;
 
@@ -483,7 +483,7 @@ VModDefList     :       VModDefList COMMA VModDef
                 ;
 
 VModDef         :       Ident
-                        { $$ = VModCreate($1, NULL); }
+                        { $$ = VModCreate($1, عدم); }
                 |       Ident EQUALS Expr
                         { $$ = VModCreate($1, $3); }
                 ;
@@ -497,22 +497,22 @@ InterpretDecl   :       INTERPRET InterpretMatch OBRACE
 InterpretMatch  :       KeySym PLUS Expr
                         { $$ = InterpCreate($1, $3); }
                 |       KeySym
-                        { $$ = InterpCreate($1, NULL); }
+                        { $$ = InterpCreate($1, عدم); }
                 ;
 
 VarDeclList     :       VarDeclList VarDecl
                         {
-                            if ($2) {
-                                if ($1.head) {
+                            𐤀𐤌 ($2) {
+                                𐤀𐤌 ($1.head) {
                                     $$.head = $1.head;
                                     $$.last->common.next = &$2->common;
                                     $$.last = $2;
-                                } else {
+                                } وإلا {
                                     $$.head = $$.last = $2;
                                 }
                             }
                         }
-                |       { $$.head = $$.last = NULL; }
+                |       { $$.head = $$.last = عدم; }
                 ;
 
 KeyTypeDecl     :       TYPE String OBRACE
@@ -528,7 +528,7 @@ SymbolsDecl     :       KEY KEYNAME OBRACE
                 ;
 
 OptSymbolsBody  :       SymbolsBody { $$ = $1; }
-                |                   { $$.head = $$.last = NULL; }
+                |                   { $$.head = $$.last = عدم; }
                 ;
 
 SymbolsBody     :       SymbolsBody COMMA SymbolsVarDecl
@@ -541,7 +541,7 @@ SymbolsVarDecl  :       Lhs EQUALS Expr         { $$ = VarCreate($1, $3); }
                 |       Lhs EQUALS MultiKeySymOrActionList { $$ = VarCreate($1, $3); }
                 |       Ident                   { $$ = BoolVarCreate($1, true); }
                 |       EXCLAM Ident            { $$ = BoolVarCreate($2, false); }
-                |       MultiKeySymOrActionList { $$ = VarCreate(NULL, $1); }
+                |       MultiKeySymOrActionList { $$ = VarCreate(عدم, $1); }
                 ;
 
 /*
@@ -561,13 +561,13 @@ MultiKeySymOrActionList
                 |       OBRACKET NoSymbolOrActionList COMMA MultiKeySymList CBRACKET
                         {
                             /* Prepend n times NoSymbol */
-                            struct {ExprDef *head; ExprDef *last;} list = {
+                            بنية {ExprDef *head; ExprDef *last;} list = {
                                 .head = $4.head, .last = $4.last
                             };
-                            for (uint32_t k = 0; k < $2; k++) {
-                                ExprDef* const syms =
+                            لكل (uint32_t k = 0; k < $2; k++) {
+                                ExprDef* ثابت syms =
                                     ExprCreateKeySymList(XKB_KEY_NoSymbol);
-                                if (!syms) {
+                                𐤀𐤌 (!syms) {
                                     /* TODO: Use Bison’s more appropriate YYNOMEM */
                                     YYABORT;
                                 }
@@ -581,12 +581,12 @@ MultiKeySymOrActionList
                 |       OBRACKET NoSymbolOrActionList COMMA MultiActionList CBRACKET
                         {
                             /* Prepend n times NoAction() */
-                            struct {ExprDef *head; ExprDef *last;} list = {
+                            بنية {ExprDef *head; ExprDef *last;} list = {
                                 .head = $4.head, .last = $4.last
                             };
-                            for (uint32_t k = 0; k < $2; k++) {
-                                ExprDef* const acts = ExprCreateActionList(NULL);
-                                if (!acts) {
+                            لكل (uint32_t k = 0; k < $2; k++) {
+                                ExprDef* ثابت acts = ExprCreateActionList(عدم);
+                                𐤀𐤌 (!acts) {
                                     /* TODO: Use Bison’s more appropriate YYNOMEM */
                                     YYABORT;
                                 }
@@ -619,8 +619,8 @@ GroupCompatDecl :       GROUP Integer EQUALS Expr SEMI
 
 ModMapDecl      :       MODIFIER_MAP Expr OBRACE KeyOrKeySymList CBRACE SEMI
                         {
-                            if (param->config.format == XKB_KEYMAP_FORMAT_TEXT_V1 &&
-                                $2->common.type != STMT_EXPR_IDENT) {
+                            𐤀𐤌 (param->config.format == XKB_KEYMAP_FORMAT_TEXT_V1 &&
+                                $2->common.نوع != STMT_EXPR_IDENT) {
                                     parser_err(
                                         param, XKB_ERROR_INVALID_MODIFIER_MAP_MASK,
                                         "Invalid real modifier mask in modifier "
@@ -674,87 +674,87 @@ UnknownCompoundStatementDecl:
                 ;
 
 ShapeDecl       :       SHAPE String OBRACE OutlineList CBRACE SEMI
-                        { $$ = NULL; }
+                        { $$ = عدم; }
                 |       SHAPE String OBRACE CoordList CBRACE SEMI
-                        { (void) $4; $$ = NULL; }
+                        { (فراغ) $4; $$ = عدم; }
                 ;
 
 SectionDecl     :       SECTION String OBRACE SectionBody CBRACE SEMI
-                        { $$ = NULL; }
+                        { $$ = عدم; }
                 ;
 
-SectionBody     :       SectionBody SectionBodyItem     { $$ = NULL;}
-                |       SectionBodyItem                 { $$ = NULL; }
+SectionBody     :       SectionBody SectionBodyItem     { $$ = عدم;}
+                |       SectionBodyItem                 { $$ = عدم; }
                 ;
 
 SectionBodyItem :       ROW OBRACE RowBody CBRACE SEMI
-                        { $$ = NULL; }
+                        { $$ = عدم; }
                 |       VarDecl
-                        { FreeStmt((ParseCommon *) $1); $$ = NULL; }
+                        { FreeStmt((ParseCommon *) $1); $$ = عدم; }
                 |       DoodadDecl
-                        { $$ = NULL; }
+                        { $$ = عدم; }
                 |       LedMapDecl
-                        { FreeStmt((ParseCommon *) $1); $$ = NULL; }
+                        { FreeStmt((ParseCommon *) $1); $$ = عدم; }
                 |       OverlayDecl
-                        { $$ = NULL; }
+                        { $$ = عدم; }
                 ;
 
-RowBody         :       RowBody RowBodyItem     { $$ = NULL;}
-                |       RowBodyItem             { $$ = NULL; }
+RowBody         :       RowBody RowBodyItem     { $$ = عدم;}
+                |       RowBodyItem             { $$ = عدم; }
                 ;
 
-RowBodyItem     :       KEYS OBRACE Keys CBRACE SEMI { $$ = NULL; }
+RowBodyItem     :       KEYS OBRACE Keys CBRACE SEMI { $$ = عدم; }
                 |       VarDecl
-                        { FreeStmt((ParseCommon *) $1); $$ = NULL; }
+                        { FreeStmt((ParseCommon *) $1); $$ = عدم; }
                 ;
 
-Keys            :       Keys COMMA Key          { $$ = NULL; }
-                |       Key                     { $$ = NULL; }
+Keys            :       Keys COMMA Key          { $$ = عدم; }
+                |       Key                     { $$ = عدم; }
                 ;
 
 Key             :       KEYNAME
-                        { $$ = NULL; }
+                        { $$ = عدم; }
                 |       OBRACE ExprList CBRACE
-                        { FreeStmt((ParseCommon *) $2.head); $$ = NULL; }
+                        { FreeStmt((ParseCommon *) $2.head); $$ = عدم; }
                 ;
 
 OverlayDecl     :       OVERLAY String OBRACE OverlayKeyList CBRACE SEMI
-                        { $$ = NULL; }
+                        { $$ = عدم; }
                 ;
 
-OverlayKeyList  :       OverlayKeyList COMMA OverlayKey { $$ = NULL; }
-                |       OverlayKey                      { $$ = NULL; }
+OverlayKeyList  :       OverlayKeyList COMMA OverlayKey { $$ = عدم; }
+                |       OverlayKey                      { $$ = عدم; }
                 ;
 
-OverlayKey      :       KEYNAME EQUALS KEYNAME          { $$ = NULL; }
+OverlayKey      :       KEYNAME EQUALS KEYNAME          { $$ = عدم; }
                 ;
 
 OutlineList     :       OutlineList COMMA OutlineInList
-                        { $$ = NULL;}
+                        { $$ = عدم;}
                 |       OutlineInList
-                        { $$ = NULL; }
+                        { $$ = عدم; }
                 ;
 
 OutlineInList   :       OBRACE CoordList CBRACE
-                        { (void) $2; $$ = NULL; }
+                        { (فراغ) $2; $$ = عدم; }
                 |       Ident EQUALS OBRACE CoordList CBRACE
-                        { (void) $4; $$ = NULL; }
+                        { (فراغ) $4; $$ = عدم; }
                 |       Ident EQUALS Expr
-                        { FreeStmt((ParseCommon *) $3); $$ = NULL; }
+                        { FreeStmt((ParseCommon *) $3); $$ = عدم; }
                 ;
 
 CoordList       :       CoordList COMMA Coord
-                        { (void) $1; (void) $3; $$ = NULL; }
+                        { (فراغ) $1; (فراغ) $3; $$ = عدم; }
                 |       Coord
-                        { (void) $1; $$ = NULL; }
+                        { (فراغ) $1; $$ = عدم; }
                 ;
 
 Coord           :       OBRACKET SignedNumber COMMA SignedNumber CBRACKET
-                        { $$ = NULL; }
+                        { $$ = عدم; }
                 ;
 
 DoodadDecl      :       DoodadType String OBRACE VarDeclList CBRACE SEMI
-                        { FreeStmt((ParseCommon *) $4.head); $$ = NULL; }
+                        { FreeStmt((ParseCommon *) $4.head); $$ = عدم; }
                 ;
 
 DoodadType      :       TEXT    { $$ = 0; }
@@ -813,19 +813,19 @@ MergeMode       :       INCLUDE         { $$ = MERGE_DEFAULT; }
 
 ExprList        :       ExprList COMMA Expr
                         {
-                            if ($3) {
-                                if ($1.head) {
+                            𐤀𐤌 ($3) {
+                                𐤀𐤌 ($1.head) {
                                     $$.head = $1.head;
                                     $$.last->common.next = &$3->common;
                                     $$.last = $3;
-                                } else {
+                                } وإلا {
                                     $$.head = $$.last = $3;
                                 }
                             }
                         }
                 |       Expr
                         { $$.head = $$.last = $1; }
-                |       { $$.head = $$.last = NULL; }
+                |       { $$.head = $$.last = عدم; }
                 ;
 
 Expr            :       Expr DIVIDE Expr
@@ -889,7 +889,7 @@ NonEmptyActions :       OBRACE ActionList CBRACE
 Actions         :       NonEmptyActions
                         { $$ = $1; }
                 |       OBRACE CBRACE
-                        { $$ = ExprCreateActionList(NULL); }
+                        { $$ = ExprCreateActionList(عدم); }
                 ;
 
 Action          :       FieldSpec OPAREN ExprList CPAREN
@@ -908,7 +908,7 @@ Lhs             :       FieldSpec
 
 OptTerminal     :       Terminal
                         { $$ = $1; }
-                |       { $$ = NULL; }
+                |       { $$ = عدم; }
                 ;
 
 Terminal        :       String
@@ -940,24 +940,24 @@ KeySymList      :       KeySymList COMMA KeySymLit
                 |       KeySymList COMMA STRING
                         {
                             $$ = ExprKeySymListAppendString(param->scanner, $1, $3);
-                            free($3);
-                            if (!$$)
+                            حرر($3);
+                            𐤀𐤌 (!$$)
                                 YYERROR;
                         }
                 |       KeySymLit
                         {
                             $$ = ExprCreateKeySymList($1);
-                            if (!$$)
+                            𐤀𐤌 (!$$)
                                 YYERROR;
                         }
                 |       STRING
                         {
                             $$ = ExprCreateKeySymList(XKB_KEY_NoSymbol);
-                            if (!$$)
+                            𐤀𐤌 (!$$)
                                 YYERROR;
                             $$ = ExprKeySymListAppendString(param->scanner, $$, $1);
-                            free($1);
-                            if (!$$)
+                            حرر($1);
+                            𐤀𐤌 (!$$)
                                 YYERROR;
                         }
                 ;
@@ -967,11 +967,11 @@ NonEmptyKeySyms :       OBRACE KeySymList CBRACE
                 |       STRING
                         {
                             $$ = ExprCreateKeySymList(XKB_KEY_NoSymbol);
-                            if (!$$)
+                            𐤀𐤌 (!$$)
                                 YYERROR;
                             $$ = ExprKeySymListAppendString(param->scanner, $$, $1);
-                            free($1);
-                            if (!$$)
+                            حرر($1);
+                            𐤀𐤌 (!$$)
                                 YYERROR;
                         }
                 ;
@@ -987,20 +987,20 @@ KeySym          :       KeySymLit
                 |       STRING
                         {
                             $$ = KeysymParseString(param->scanner, $1);
-                            free($1);
-                            if ($$ == XKB_KEY_NoSymbol)
+                            حرر($1);
+                            𐤀𐤌 ($$ == XKB_KEY_NoSymbol)
                                 YYERROR;
                         }
                 ;
 
 KeySymLit       :       IDENT
                         {
-                            if (!resolve_keysym(param, $1, &$$)) {
+                            𐤀𐤌 (!resolve_keysym(param, $1, &$$)) {
                                 parser_warn(
                                     param,
                                     XKB_WARNING_UNRECOGNIZED_KEYSYM,
                                     "unrecognized keysym \"%.*s\"",
-                                    (unsigned int) $1.len, $1.start
+                                    (unsigned صحيح) $1.len, $1.start
                                 );
                                 $$ = XKB_KEY_NoSymbol;
                             }
@@ -1018,7 +1018,7 @@ KeySymLit       :       IDENT
                         }
                 |       INTEGER
                         {
-                            if ($1 < XKB_KEYSYM_MIN) {
+                            𐤀𐤌 ($1 < XKB_KEYSYM_MIN) {
                                 /* Negative value */
                                 static_assert(XKB_KEYSYM_MIN == 0,
                                               "Keysyms are positive");
@@ -1039,9 +1039,9 @@ KeySymLit       :       IDENT
                              * the keysym 0x0001, while `1` is interpreted as
                              * XKB_KEY_1.
                              */
-                            else {
+                            وإلا {
                                 /* Any other numeric value */
-                                if ($1 <= XKB_KEYSYM_MAX) {
+                                𐤀𐤌 ($1 <= XKB_KEYSYM_MAX) {
                                     /*
                                      * Valid keysym
                                      * No normalization is performed and value
@@ -1050,8 +1050,8 @@ KeySymLit       :       IDENT
                                     $$ = (xkb_keysym_t) $1;
                                     check_deprecated_keysyms(
                                         parser_warn, param, param->ctx,
-                                        $$, NULL, $$, "%#06"PRIx32, "");
-                                } else {
+                                        $$, عدم, $$, "%#06"PRIx32, "");
+                                } وإلا {
                                     /* Invalid keysym */
                                     parser_warn(
                                         param, XKB_ERROR_INVALID_NUMERIC_KEYSYM,
@@ -1100,11 +1100,11 @@ Ident           :       IDENT   { $$ = xkb_atom_intern(param->ctx, $1.start, $1.
                 |       DEFAULT { $$ = xkb_atom_intern_literal(param->ctx, "default"); }
                 ;
 
-String          :       STRING  { $$ = xkb_atom_intern(param->ctx, $1, strlen($1)); free($1); }
+String          :       STRING  { $$ = xkb_atom_intern(param->ctx, $1, strlen($1)); حرر($1); }
                 ;
 
 OptMapName      :       MapName { $$ = $1; }
-                |               { $$ = NULL; }
+                |               { $$ = عدم; }
                 ;
 
 MapName         :       STRING  { $$ = $1; }
@@ -1114,15 +1114,15 @@ MapName         :       STRING  { $$ = $1; }
 
 /* Parse a specific section */
 XkbFile *
-parse(struct xkb_context *ctx, const struct parser_keymap_config *config,
-      struct scanner *scanner, const char *map)
+parse(بنية xkb_context *ctx, ثابت بنية parser_keymap_config *config,
+      بنية scanner *scanner, ثابت حرف *map)
 {
-    int ret;
-    XkbFile *first = NULL;
-    struct parser_param param = {
+    صحيح ret;
+    XkbFile *first = عدم;
+    بنية parser_param param = {
         .scanner = scanner,
         .ctx = ctx,
-        .rtrn = NULL,
+        .rtrn = عدم,
         .config = *config,
         .more_maps = false,
     };
@@ -1135,70 +1135,70 @@ parse(struct xkb_context *ctx, const struct parser_keymap_config *config,
      * the first map in the file.
      */
 
-    while ((ret = yyparse(&param)) == 0 && param.more_maps) {
-        if (map) {
-            if (streq_not_null(map, param.rtrn->name))
-                return param.rtrn;
-            else
+    طالما ((ret = yyparse(&param)) == 0 && param.more_maps) {
+        𐤀𐤌 (map) {
+            𐤀𐤌 (streq_not_null(map, param.rtrn->name))
+                أرجع param.rtrn;
+            وإلا
                 FreeXkbFile(param.rtrn);
         }
-        else {
-            if (param.rtrn->flags & MAP_IS_DEFAULT) {
+        وإلا {
+            𐤀𐤌 (param.rtrn->flags & MAP_IS_DEFAULT) {
                 FreeXkbFile(first);
-                return param.rtrn;
+                أرجع param.rtrn;
             }
-            else if (!first) {
+            وإلا 𐤀𐤌 (!first) {
                 first = param.rtrn;
             }
-            else {
+            وإلا {
                 FreeXkbFile(param.rtrn);
             }
         }
-        param.rtrn = NULL;
+        param.rtrn = عدم;
     }
 
-    if (ret != 0) {
+    𐤀𐤌 (ret != 0) {
         /* Some error happend; clear the Xkbfiles parsed so far */
         FreeXkbFile(first);
         FreeXkbFile(param.rtrn);
-        return NULL;
+        أرجع عدم;
     }
 
     /*
      * Warn about implicit default section,
      * but only if not a keymap: multiple keymaps per file not supported
      */
-    if (first && first->file_type != FILE_TYPE_KEYMAP)
+    𐤀𐤌 (first && first->file_type != FILE_TYPE_KEYMAP)
         log_vrb(ctx, XKB_LOG_VERBOSITY_DETAILED,
                 XKB_WARNING_MISSING_DEFAULT_SECTION,
                 "No section name in include statement, but \"%s\" contains several; "
                 "Using first defined section, \"%s\"\n",
                 scanner->file_name, safe_map_name(first->name));
 
-    return first;
+    أرجع first;
 }
 
 /* Parse the next section */
 bool
-parse_next(struct xkb_context *ctx,
-           const struct parser_keymap_config *config,
-           struct scanner *scanner, XkbFile **xkb_file)
+parse_next(بنية xkb_context *ctx,
+           ثابت بنية parser_keymap_config *config,
+           بنية scanner *scanner, XkbFile **xkb_file)
 {
-    int ret;
-    struct parser_param param = {
+    صحيح ret;
+    بنية parser_param param = {
         .scanner = scanner,
         .ctx = ctx,
-        .rtrn = NULL,
+        .rtrn = عدم,
         .config = *config,
         .more_maps = false,
     };
 
-    if ((ret = yyparse(&param)) == 0 && param.more_maps) {
+    𐤀𐤌 ((ret = yyparse(&param)) == 0 && param.more_maps) {
         *xkb_file = param.rtrn;
-        return true;
-    } else {
+        أرجع true;
+    } وإلا {
         FreeXkbFile(param.rtrn);
-        *xkb_file = NULL;
-        return (ret == 0);
+        *xkb_file = عدم;
+        أرجع (ret == 0);
     }
 }

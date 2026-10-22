@@ -4,10 +4,10 @@
  */
 #pragma once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include "ast.h"
-#include "scanner-utils.h"
+#ضمن "ast.h"
+#ضمن "scanner-utils.h"
 
 ExprDef *
 ExprCreateString(xkb_atom_t str);
@@ -16,7 +16,7 @@ ExprDef *
 ExprCreateInteger(int64_t ival);
 
 ExprDef *
-ExprCreateFloat(void);
+ExprCreateFloat(فراغ);
 
 ExprDef *
 ExprCreateBoolean(bool set);
@@ -31,10 +31,10 @@ ExprDef *
 ExprCreateIdent(xkb_atom_t ident);
 
 ExprDef *
-ExprCreateUnary(enum stmt_type op, ExprDef *child);
+ExprCreateUnary(تعداد stmt_type op, ExprDef *child);
 
 ExprDef *
-ExprCreateBinary(enum stmt_type op, ExprDef *left, ExprDef *right);
+ExprCreateBinary(تعداد stmt_type op, ExprDef *left, ExprDef *right);
 
 ExprDef *
 ExprCreateFieldRef(xkb_atom_t element, xkb_atom_t field);
@@ -43,7 +43,7 @@ ExprDef *
 ExprCreateArrayRef(xkb_atom_t element, xkb_atom_t field, ExprDef *entry);
 
 ExprDef *
-ExprEmptyList(void);
+ExprEmptyList(فراغ);
 
 ExprDef *
 ExprCreateAction(xkb_atom_t name, ExprDef *args);
@@ -58,11 +58,11 @@ ExprDef *
 ExprAppendKeySymList(ExprDef *list, xkb_keysym_t sym);
 
 ExprDef *
-ExprKeySymListAppendString(struct scanner *param,
-                           ExprDef *expr, const char *string);
+ExprKeySymListAppendString(بنية scanner *param,
+                           ExprDef *expr, ثابت حرف *string);
 
 xkb_keysym_t
-KeysymParseString(struct scanner *scanner, const char *string);
+KeysymParseString(بنية scanner *scanner, ثابت حرف *string);
 
 KeycodeDef *
 KeycodeCreate(xkb_atom_t name, int64_t value);
@@ -101,14 +101,14 @@ LedNameDef *
 LedNameCreate(int64_t ndx, ExprDef *name, bool virtual);
 
 UnknownStatement *
-UnknownStatementCreate(enum stmt_type, struct sval name);
+UnknownStatementCreate(تعداد stmt_type, بنية sval name);
 
 IncludeStmt *
-IncludeCreate(struct xkb_context *ctx, char *str, enum merge_mode merge);
+IncludeCreate(بنية xkb_context *ctx, حرف *str, تعداد merge_mode merge);
 
 XkbFile *
-XkbFileCreate(enum xkb_file_type type, char *name, ParseCommon *defs,
-              enum xkb_map_flags flags);
+XkbFileCreate(تعداد xkb_file_type type, حرف *name, ParseCommon *defs,
+              تعداد xkb_map_flags flags);
 
-void
+فراغ
 FreeStmt(ParseCommon *stmt);
