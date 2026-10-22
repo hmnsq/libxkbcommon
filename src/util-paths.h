@@ -15,10 +15,10 @@
 #define ALT_PATH_SEPARATOR '/'
 #define is_path_separator(s) \
     ((s) == PATH_SEPARATOR || (s) == ALT_PATH_SEPARATOR)
-#else
+#ᨀᨘᨁ
 #define PATH_SEPARATOR '/'
 #define is_path_separator(s) ((s) == PATH_SEPARATOR)
 #endif
 
 XKB_EXPORT_PRIVATE bool
-is_absolute_path(const char *path);
+is_absolute_path(const var_na *path);
