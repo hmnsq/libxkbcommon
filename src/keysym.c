@@ -8,23 +8,23 @@
  * SPDX-License-Identifier: MIT-open-group AND MIT
  */
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <assert.h>
-#include <stdint.h>
-#include <stdlib.h>
+#ضمن <assert.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
 
-#include "xkbcommon/xkbcommon-keysyms.h"
-#include "xkbcommon/xkbcommon.h"
-#include "features/enums.h"
-#include "keysym.h"
-#include "keysym-names.h"
-#include "utf8-decoding.h"
-#include "utils.h"
-#include "util-numbers.h"
+#ضمن "xkbcommon/xkbcommon-keysyms.h"
+#ضمن "xkbcommon/xkbcommon.h"
+#ضمن "features/enums.h"
+#ضمن "keysym.h"
+#ضمن "keysym-names.h"
+#ضمن "utf8-decoding.h"
+#ضمن "utils.h"
+#ضمن "util-numbers.h"
 
-static ssize_t
-find_keysym_index(xkb_keysym_t ks)
+ساكن ssize_t
+پیدا_کن_keysym_شاخص(xkb_keysym_t ks)
 {
     /* Lower bound:
      * keysym_to_name[0].keysym
@@ -35,50 +35,50 @@ find_keysym_index(xkb_keysym_t ks)
      * keysym_to_name[ARRAY_SIZE(keysym_to_name) - 1].keysym
      * == XKB_KEYSYM_MAX_EXPLICIT <= XKB_KEYSYM_MAX
      */
-    if (ks > XKB_KEYSYM_MAX_EXPLICIT)
-        return -1;
+    إذا (ks > XKB_KEYSYM_MAX_EXPLICIT)
+        أرجع -1;
 
-    ssize_t lo = 0, hi = ARRAY_SIZE(keysym_to_name) - 1;
-    while (hi >= lo) {
+    ssize_t lo = 0, hi = ARRAY_اندازه(keysym_مقصد_name) - 1;
+    طالما (hi >= lo) {
         ssize_t mid = (lo + hi) / 2;
-        if (ks > keysym_to_name[mid].keysym) {
+        إذا (ks > keysym_مقصد_name[mid].keysym) {
             lo = mid + 1;
-        } else if (ks < keysym_to_name[mid].keysym) {
+        } وإلا إذا (ks < keysym_مقصد_name[mid].keysym) {
             hi = mid - 1;
-        } else {
-            return mid;
+        } وإلا {
+            أرجع mid;
         }
     }
 
-    return -1;
+    أرجع -1;
 }
 
-#define get_name_by_index(index) (keysym_names + (index))
+#تعریف_کن get_name_by_شاخص(شاخص) (keysym_نامها + (شاخص))
 
-static inline const char *
-get_name(const struct name_keysym *entry)
+ساكن مضمن ثابت حرف *
+get_name(ثابت بنية name_keysym *مدخل)
 {
-    return get_name_by_index(entry->offset);
+    أرجع get_name_by_شاخص(مدخل->جابه_جایی);
 }
 
 /* Unnamed Unicode codepoint. */
-static inline int
-get_unicode_name(xkb_keysym_t ks, char *buffer, size_t size)
+ساكن مضمن صحيح
+get_unicode_name(xkb_keysym_t ks, حرف *میانگیر, اندازه_t اندازه)
 {
-    return snprintf(buffer, size, "U%04"PRIX32, ks & UINT32_C(0xffffff));
+    أرجع snprintf(میانگیر, اندازه, "U%04"PRIX32, ks & UINT32_C(0xffffff));
 }
 
-int
-xkb_keysym_get_name(xkb_keysym_t ks, char *buffer, size_t size)
+صحيح
+xkb_keysym_get_name(xkb_keysym_t ks, حرف *میانگیر, اندازه_t اندازه)
 {
-    if (ks > XKB_KEYSYM_MAX) {
-        snprintf(buffer, size, "Invalid");
-        return -1;
+    إذا (ks > XKB_KEYSYM_MAX) {
+        snprintf(میانگیر, اندازه, "Invalid");
+        أرجع -1;
     }
 
-    ssize_t index = find_keysym_index(ks);
-    if (index != -1)
-        return snprintf(buffer, size, "%s", get_name(&keysym_to_name[index]));
+    ssize_t شاخص = پیدا_کن_keysym_شاخص(ks);
+    إذا (شاخص != -1)
+        أرجع snprintf(میانگیر, اندازه, "%s", get_name(&keysym_مقصد_name[شاخص]));
 
     /*
      * Unnamed Unicode codepoint.
@@ -88,64 +88,64 @@ xkb_keysym_get_name(xkb_keysym_t ks, char *buffer, size_t size)
      *   `xkb_utf32_to_keysym` with the corresponding code point may return a
      *   different keysym or fail (e.g. surrogates are invalid in UTF-32).
      */
-    if (ks >= XKB_KEYSYM_UNICODE_MIN && ks <= XKB_KEYSYM_UNICODE_MAX)
-        return get_unicode_name(ks, buffer, size);
+    إذا (ks >= XKB_KEYSYM_UNICODE_MIN && ks <= XKB_KEYSYM_UNICODE_MAX)
+        أرجع get_unicode_name(ks, میانگیر, اندازه);
 
     /* Unnamed, non-Unicode, symbol (shouldn't generally happen). */
-    return snprintf(buffer, size, "0x%08"PRIx32, ks);
+    أرجع snprintf(میانگیر, اندازه, "0x%08"PRIx32, ks);
 }
 
 bool
 xkb_keysym_is_assigned(xkb_keysym_t ks)
 {
-    return (XKB_KEYSYM_UNICODE_MIN <= ks && ks <= XKB_KEYSYM_UNICODE_MAX) ||
-           find_keysym_index(ks) != -1;
+    أرجع (XKB_KEYSYM_UNICODE_MIN <= ks && ks <= XKB_KEYSYM_UNICODE_MAX) ||
+           پیدا_کن_keysym_شاخص(ks) != -1;
 }
 
-int
-xkb_keysym_get_explicit_names(xkb_keysym_t ks, const char **buffer, size_t size)
+صحيح
+xkb_keysym_get_explicit_نامها(xkb_keysym_t ks, ثابت حرف **میانگیر, اندازه_t اندازه)
 {
-    if (ks > XKB_KEYSYM_MAX)
-        return -1;
-    const ssize_t index = find_keysym_index(ks);
-    if (index < 0)
-        return 0;
-    const uint16_t canonical = keysym_to_name[index].offset;
-    if (size > 0)
-        buffer[0] = get_name(&keysym_to_name[index]);
-    int count = 1;
-    for (size_t pos = 0; pos < ARRAY_SIZE(name_to_keysym); pos++) {
-        if (name_to_keysym[pos].keysym == ks &&
-            name_to_keysym[pos].offset != canonical) {
-            if ((size_t) count < size) {
-                buffer[count] = get_name(&name_to_keysym[pos]);
+    إذا (ks > XKB_KEYSYM_MAX)
+        أرجع -1;
+    ثابت ssize_t شاخص = پیدا_کن_keysym_شاخص(ks);
+    إذا (شاخص < 0)
+        أرجع 0;
+    ثابت uint16_t canonical = keysym_مقصد_name[شاخص].جابه_جایی;
+    إذا (اندازه > 0)
+        میانگیر[0] = get_name(&keysym_مقصد_name[شاخص]);
+    صحيح شمار = 1;
+    لكل (اندازه_t pos = 0; pos < ARRAY_اندازه(name_مقصد_keysym); pos++) {
+        إذا (name_مقصد_keysym[pos].keysym == ks &&
+            name_مقصد_keysym[pos].جابه_جایی != canonical) {
+            إذا ((اندازه_t) شمار < اندازه) {
+                میانگیر[شمار] = get_name(&name_مقصد_keysym[pos]);
             }
-            count++;
+            شمار++;
         }
     }
-    return count;
+    أرجع شمار;
 }
 
-struct xkb_keysym_iterator {
+بنية xkb_keysym_iterator {
     bool explicit;       /* If true, traverse only explicitly named keysyms */
-    int32_t index;       /* Current index in `keysym_to_name` */
+    int32_t شاخص;       /* Current index in `keysym_to_name` */
     xkb_keysym_t keysym; /* Current keysym */
 };
 
-struct xkb_keysym_iterator*
+بنية xkb_keysym_iterator*
 xkb_keysym_iterator_new(bool iterate_only_explicit_keysyms)
 {
-    struct xkb_keysym_iterator* iter = calloc(1, sizeof(*iter));
-    if (!iter)
-        return NULL;
+    بنية xkb_keysym_iterator* iter = حافظه_صفر_بده(1, حجم(*iter));
+    إذا (!iter)
+        أرجع عدم;
     iter->explicit = iterate_only_explicit_keysyms;
-    iter->index = -1;
+    iter->شاخص = -1;
     iter->keysym = XKB_KEYSYM_UNICODE_MAX;
-    return iter;
+    أرجع iter;
 }
 
-struct xkb_keysym_iterator*
-xkb_keysym_iterator_unref(struct xkb_keysym_iterator *iter)
+بنية xkb_keysym_iterator*
+xkb_keysym_iterator_unref(بنية xkb_keysym_iterator *iter)
 {
     /*
      * [NOTE] If we ever make this API public, add:
@@ -153,36 +153,36 @@ xkb_keysym_iterator_unref(struct xkb_keysym_iterator *iter)
      * - `xkb_keysym_iterator_ref()`,
      * - `assert(!iter || iter->refcnt > 0)`.
      */
-    if (iter)
-        free(iter);
-    return NULL;
+    إذا (iter)
+        حرر(iter);
+    أرجع عدم;
 }
 
 xkb_keysym_t
-xkb_keysym_iterator_get_keysym(struct xkb_keysym_iterator *iter)
+xkb_keysym_iterator_get_keysym(بنية xkb_keysym_iterator *iter)
 {
-    return iter->keysym;
+    أرجع iter->keysym;
 }
 
 bool
-xkb_keysym_iterator_is_explicitly_named(struct xkb_keysym_iterator *iter)
+xkb_keysym_iterator_is_explicitly_named(بنية xkb_keysym_iterator *iter)
 {
-    return iter->index >= 0 &&
-           iter->index < (int32_t)ARRAY_SIZE(keysym_to_name) &&
+    أرجع iter->شاخص >= 0 &&
+           iter->شاخص < (int32_t)ARRAY_اندازه(keysym_مقصد_name) &&
            (iter->explicit ||
-            iter->keysym == keysym_to_name[iter->index].keysym);
+            iter->keysym == keysym_مقصد_name[iter->شاخص].keysym);
 }
 
-int
-xkb_keysym_iterator_get_name(struct xkb_keysym_iterator *iter,
-                             char *buffer, size_t size)
+صحيح
+xkb_keysym_iterator_get_name(بنية xkb_keysym_iterator *iter,
+                             حرف *میانگیر, اندازه_t اندازه)
 {
-    if (iter->index < 0 || iter->index >= (int32_t)ARRAY_SIZE(keysym_to_name))
-        return -1;
-    if (iter->explicit || iter->keysym == keysym_to_name[iter->index].keysym)
-        return snprintf(buffer, size, "%s",
-                        get_name(&keysym_to_name[iter->index]));
-    return get_unicode_name(iter->keysym, buffer, size);
+    إذا (iter->شاخص < 0 || iter->شاخص >= (int32_t)ARRAY_اندازه(keysym_مقصد_name))
+        أرجع -1;
+    إذا (iter->explicit || iter->keysym == keysym_مقصد_name[iter->شاخص].keysym)
+        أرجع snprintf(میانگیر, اندازه, "%s",
+                        get_name(&keysym_مقصد_name[iter->شاخص]));
+    أرجع get_unicode_name(iter->keysym, میانگیر, اندازه);
 }
 
 /* Iterate over the *assigned* keysyms.
@@ -198,53 +198,53 @@ xkb_keysym_iterator_get_name(struct xkb_keysym_iterator *iter,
  * ```
  */
 bool
-xkb_keysym_iterator_next(struct xkb_keysym_iterator *iter)
+xkb_keysym_iterator_بعدی(بنية xkb_keysym_iterator *iter)
 {
-    if (iter->index >= (int32_t)ARRAY_SIZE(keysym_to_name) - 1)
-        return false;
+    إذا (iter->شاخص >= (int32_t)ARRAY_اندازه(keysym_مقصد_name) - 1)
+        أرجع false;
 
     /* Next keysym */
-    if (iter->explicit || iter->keysym >= XKB_KEYSYM_UNICODE_MAX ||
-        keysym_to_name[iter->index + 1].keysym < XKB_KEYSYM_UNICODE_MIN) {
+    إذا (iter->explicit || iter->keysym >= XKB_KEYSYM_UNICODE_MAX ||
+        keysym_مقصد_name[iter->شاخص + 1].keysym < XKB_KEYSYM_UNICODE_MIN) {
         /* Explicitly named keysyms only */
-        iter->keysym = keysym_to_name[++iter->index].keysym;
-        assert(iter->explicit ||
+        iter->keysym = keysym_مقصد_name[++iter->شاخص].keysym;
+        أكد(iter->explicit ||
                iter->keysym <= XKB_KEYSYM_UNICODE_MIN ||
                iter->keysym >= XKB_KEYSYM_UNICODE_MAX);
-    } else {
+    } وإلا {
         /* Unicode keysyms
          * NOTE: Unicode keysyms are within keysym_to_name keysyms range. */
-        if (iter->keysym >= keysym_to_name[iter->index].keysym)
-            iter->index++;
-        if (iter->keysym >= XKB_KEYSYM_UNICODE_MIN) {
+        إذا (iter->keysym >= keysym_مقصد_name[iter->شاخص].keysym)
+            iter->شاخص++;
+        إذا (iter->keysym >= XKB_KEYSYM_UNICODE_MIN) {
             /* Continue Unicode keysyms */
             iter->keysym++;
-        } else {
+        } وإلا {
             /* Start Unicode keysyms */
             iter->keysym = XKB_KEYSYM_UNICODE_MIN;
         }
     }
-    return true;
+    أرجع true;
 }
 
 /* Parse the numeric part of a 0xXXXX and UXXXX keysym. */
-static bool
-parse_keysym_hex(const char *s, uint32_t *out)
+ساكن bool
+parse_keysym_hex(ثابت حرف *s, uint32_t *بیرون)
 {
     /* We expect a NULL-terminated string of length up to 8 */
-    const int count = parse_hex_to_uint32_t(s, 8, out);
+    ثابت صحيح شمار = parse_hex_مقصد_uint32_t(s, 8, بیرون);
     /* Check that some value was parsed and we reached the end of the string */
-    return (count > 0 && s[count] == '\0');
+    أرجع (شمار > 0 && s[شمار] == '\0');
 }
 
 xkb_keysym_t
-xkb_keysym_from_name(const char *name, enum xkb_keysym_flags flags)
+xkb_keysym_from_name(ثابت حرف *name, تعداد xkb_keysym_flags flags)
 {
-    if (flags & ~(enum xkb_keysym_flags)XKB_KEYSYM_FLAGS_VALUES)
-        return XKB_KEY_NoSymbol;
+    إذا (flags & ~(تعداد xkb_keysym_flags)XKB_KEYSYM_FLAGS_مقادیر)
+        أرجع XKB_کلید_No_نماد;
 
-    const struct name_keysym *entry = NULL;
-    char *tmp;
+    ثابت بنية name_keysym *مدخل = عدم;
+    حرف *tmp;
     uint32_t val;
     bool icase = (flags & XKB_KEYSYM_CASE_INSENSITIVE);
 
@@ -252,12 +252,12 @@ xkb_keysym_from_name(const char *name, enum xkb_keysym_flags flags)
      * We need to !icase case to be fast, for e.g. Compose file parsing.
      * So do it in a fast path.
      */
-    if (!icase) {
-        size_t pos = keysym_name_perfect_hash(name);
-        if (pos < ARRAY_SIZE(name_to_keysym)) {
-            const char *s = get_name(&name_to_keysym[pos]);
-            if (strcmp(name, s) == 0)
-                return name_to_keysym[pos].keysym;
+    إذا (!icase) {
+        اندازه_t pos = keysym_name_perfect_hash(name);
+        إذا (pos < ARRAY_اندازه(name_مقصد_keysym)) {
+            ثابت حرف *s = get_name(&name_مقصد_keysym[pos]);
+            إذا (strcmp(name, s) == 0)
+                أرجع name_مقصد_keysym[pos].keysym;
         }
     }
     /*
@@ -279,93 +279,93 @@ xkb_keysym_from_name(const char *name, enum xkb_keysym_flags flags)
     *
     * There are some exceptions, e.g. `XF86Screensaver` and `XF86ScreenSaver`.
     */
-    else {
-        int32_t lo = 0, hi = ARRAY_SIZE(name_to_keysym) - 1;
-        while (hi >= lo) {
+    وإلا {
+        int32_t lo = 0, hi = ARRAY_اندازه(name_مقصد_keysym) - 1;
+        طالما (hi >= lo) {
             int32_t mid = (lo + hi) / 2;
-            int cmp = istrcmp(name, get_name(&name_to_keysym[mid]));
-            if (cmp > 0) {
+            صحيح cmp = istrcmp(name, get_name(&name_مقصد_keysym[mid]));
+            إذا (cmp > 0) {
                 lo = mid + 1;
-            } else if (cmp < 0) {
+            } وإلا إذا (cmp < 0) {
                 hi = mid - 1;
-            } else {
-                entry = &name_to_keysym[mid];
-                break;
+            } وإلا {
+                مدخل = &name_مقصد_keysym[mid];
+                اكسر;
             }
         }
-        if (entry) {
-            const struct name_keysym *last;
-            last = name_to_keysym + ARRAY_SIZE(name_to_keysym) - 1;
+        إذا (مدخل) {
+            ثابت بنية name_keysym *آخرین;
+            آخرین = name_مقصد_keysym + ARRAY_اندازه(name_مقصد_keysym) - 1;
             /* Keep going until we reach end of array
              * or non case-insensitve match */
-            while (entry < last &&
-                   istrcmp(get_name(entry + 1), get_name(entry)) == 0) {
-                entry++;
+            طالما (مدخل < آخرین &&
+                   istrcmp(get_name(مدخل + 1), get_name(مدخل)) == 0) {
+                مدخل++;
             }
-            return entry->keysym;
+            أرجع مدخل->keysym;
         }
     }
 
-    if (*name == 'U' || (icase && *name == 'u')) {
+    إذا (*name == 'U' || (icase && *name == 'u')) {
         /* Parse Unicode notation */
-        if (!parse_keysym_hex(&name[1], &val))
-            return XKB_KEY_NoSymbol;
-        return (val > 0xff && val <= 0x10ffff)
+        إذا (!parse_keysym_hex(&name[1], &val))
+            أرجع XKB_کلید_No_نماد;
+        أرجع (val > 0xff && val <= 0x10ffff)
             /*
              * No normalization.
              *
              * NOTE: It allows surrogates, as we are dealing with Unicode
              * *code points* here, not Unicode *scalars*.
              */
-            ? XKB_KEYSYM_UNICODE_OFFSET + val
+            ? XKB_KEYSYM_UNICODE_جابه_جایی + val
             /*
              * Normalize ISO-8859-1 (Latin-1 + C0 and C1 control code)
              *
              * These code points require special processing to ensure
              * backward compatibility with legacy keysyms.
              */
-            : xkb_utf32_to_keysym(val);
+            : xkb_utf32_مقصد_keysym(val);
     }
-    else if (name[0] == '0' && (name[1] == 'x' || (icase && name[1] == 'X'))) {
+    وإلا إذا (name[0] == '0' && (name[1] == 'x' || (icase && name[1] == 'X'))) {
         /*
          * Parse numeric hexadecimal notation without any normalization, in
          * in order to be consistent with the keymap files parsing.
          */
-        if (!parse_keysym_hex(&name[2], &val) || val > XKB_KEYSYM_MAX)
-            return XKB_KEY_NoSymbol;
-        return (xkb_keysym_t) val;
+        إذا (!parse_keysym_hex(&name[2], &val) || val > XKB_KEYSYM_MAX)
+            أرجع XKB_کلید_No_نماد;
+        أرجع (xkb_keysym_t) val;
     }
 
     /* Stupid inconsistency between the headers and XKeysymDB: the former has
      * no separating underscore, while some XF86* syms in the latter did.
      * As a last ditch effort, try without. */
-    if (strncmp(name, "XF86_", 5) == 0 ||
+    إذا (مقایسه_رشته(name, "XF86_", 5) == 0 ||
         (icase && istrncmp(name, "XF86_", 5) == 0)) {
         xkb_keysym_t ret;
         tmp = strdup(name);
-        if (!tmp)
-            return XKB_KEY_NoSymbol;
-        memmove(&tmp[4], &tmp[5], strlen(name) - 5 + 1);
+        إذا (!tmp)
+            أرجع XKB_کلید_No_نماد;
+        memmove(&tmp[4], &tmp[5], طول_رشته(name) - 5 + 1);
         ret = xkb_keysym_from_name(tmp, flags);
-        free(tmp);
-        return ret;
+        حرر(tmp);
+        أرجع ret;
     }
 
-    return XKB_KEY_NoSymbol;
+    أرجع XKB_کلید_No_نماد;
 }
 
 xkb_keysym_t
-xkb_utf8_to_keysym(const char *buffer, size_t size)
+xkb_utf8_مقصد_keysym(ثابت حرف *میانگیر, اندازه_t اندازه)
 {
-    if (!buffer || !size)
-        return 0;
+    إذا (!میانگیر || !اندازه)
+        أرجع 0;
 
     /* Try to parse the parameter as a single UTF-8 encoded character */
-    size_t length = 0;
-    const uint32_t codepoint = utf8_next_code_point(buffer, size, &length);
-    return (codepoint == INVALID_UTF8_CODE_POINT || length == 0)
-        ? XKB_KEY_NoSymbol
-        : xkb_utf32_to_keysym(codepoint);
+    اندازه_t درازی = 0;
+    ثابت uint32_t codepoint = utf8_بعدی_کد_نقطه(میانگیر, اندازه, &درازی);
+    أرجع (codepoint == INVALID_UTF8_کد_نقطه || درازی == 0)
+        ? XKB_کلید_No_نماد
+        : xkb_utf32_مقصد_keysym(codepoint);
 }
 
 /*
@@ -383,93 +383,93 @@ xkb_utf8_to_keysym(const char *buffer, size_t size)
  */
 bool
 xkb_keysym_is_deprecated(xkb_keysym_t keysym,
-                         const char *name,
-                         const char **reference_name)
+                         ثابت حرف *name,
+                         ثابت حرف **reference_name)
 {
-    if (keysym > XKB_KEYSYM_MAX) {
+    إذا (keysym > XKB_KEYSYM_MAX) {
         /* Invalid keysym */
-        *reference_name = NULL;
-        return false;
+        *reference_name = عدم;
+        أرجع false;
     }
     /* [WARNING] We do not check that name, if defined, is a valid for keysym */
 
-    int32_t lo = 0, hi = ARRAY_SIZE(deprecated_keysyms) - 1;
-    while (hi >= lo) {
+    int32_t lo = 0, hi = ARRAY_اندازه(deprecated_keysyms) - 1;
+    طالما (hi >= lo) {
         int32_t mid = (lo + hi) / 2;
-        if (keysym > deprecated_keysyms[mid].keysym) {
+        إذا (keysym > deprecated_keysyms[mid].keysym) {
             lo = mid + 1;
-        } else if (keysym < deprecated_keysyms[mid].keysym) {
+        } وإلا إذا (keysym < deprecated_keysyms[mid].keysym) {
             hi = mid - 1;
-        } else {
+        } وإلا {
             /* Keysym have some deprecated names */
-            if (deprecated_keysyms[mid].offset == DEPRECATED_KEYSYM) {
+            إذا (deprecated_keysyms[mid].جابه_جایی == DEPRECATED_KEYSYM) {
                 /* All names are deprecated */
-                *reference_name = NULL;
-                return true;
-            } else if (deprecated_keysyms[mid].offset == UNICODE_KEYSYM) {
+                *reference_name = عدم;
+                أرجع true;
+            } وإلا إذا (deprecated_keysyms[mid].جابه_جایی == UNICODE_KEYSYM) {
                 /* All names are deprecated, but Unicode notation is valid */
-                *reference_name = NULL;
-                if (name == NULL)
-                    return false;
-                if (name[0] != 'U')
-                    return true;
+                *reference_name = عدم;
+                إذا (name == عدم)
+                    أرجع false;
+                إذا (name[0] != 'U')
+                    أرجع true;
                 /* Since the current function is internal, assume the name
                  * corresponds to the keysym value and just check its syntax. */
-                const char *start = name + 1;
-                while (is_xdigit(*start))
-                    start++;
-                return *start != '\0' && start > name + 1;
+                ثابت حرف *شروع = name + 1;
+                طالما (is_xdigit(*شروع))
+                    شروع++;
+                أرجع *شروع != '\0' && شروع > name + 1;
             }
             /* There is a reference name that is not deprecated */
-            *reference_name = get_name_by_index(deprecated_keysyms[mid].offset);
-            if (!name) {
+            *reference_name = get_name_by_شاخص(deprecated_keysyms[mid].جابه_جایی);
+            إذا (!name) {
                 /* No name to check: indicate not deprecated */
-                return false;
+                أرجع false;
             }
-            if (deprecated_keysyms[mid].explicit_count) {
+            إذا (deprecated_keysyms[mid].explicit_شمار) {
                 /* Only some explicit names are deprecated */
-                const uint8_t k_max = deprecated_keysyms[mid].explicit_index
-                                    + deprecated_keysyms[mid].explicit_count;
-                assert(k_max <= ARRAY_SIZE(explicit_deprecated_aliases));
+                ثابت uint8_t k_max = deprecated_keysyms[mid].explicit_شاخص
+                                    + deprecated_keysyms[mid].explicit_شمار;
+                أكد(k_max <= ARRAY_اندازه(explicit_deprecated_aliases));
                 /* Check every deprecated alias */
-                for (uint8_t k = deprecated_keysyms[mid].explicit_index;
+                لكل (uint8_t k = deprecated_keysyms[mid].explicit_شاخص;
                      k < k_max; k++) {
-                    #ifdef __clang__
+                    #اگر_تعریف_شده __clang__
                     /* Make clang-tidy happy */
                     __builtin_assume(k_max <=
-                                     ARRAY_SIZE(explicit_deprecated_aliases));
-                    #endif
-                    const char *alias =
-                        get_name_by_index(explicit_deprecated_aliases[k]);
-                    if (strcmp(name, alias) == 0)
-                        return true;
+                                     ARRAY_اندازه(explicit_deprecated_aliases));
+                    #پایان_اگر
+                    ثابت حرف *alias =
+                        get_name_by_شاخص(explicit_deprecated_aliases[k]);
+                    إذا (strcmp(name, alias) == 0)
+                        أرجع true;
                 }
-                return false;
-            } else {
+                أرجع false;
+            } وإلا {
                 /* All names but the reference one are deprecated */
-                return strcmp(name, *reference_name) != 0;
+                أرجع strcmp(name, *reference_name) != 0;
             }
         }
     }
 
     /* Keysym has no deprecated names */
-    *reference_name = NULL;
-    return false;
+    *reference_name = عدم;
+    أرجع false;
 }
 
 bool
 xkb_keysym_is_keypad(xkb_keysym_t keysym)
 {
-    return keysym >= XKB_KEY_KP_Space && keysym <= XKB_KEY_KP_Equal;
+    أرجع keysym >= XKB_کلید_KP_Space && keysym <= XKB_کلید_KP_Equal;
 }
 
 
 bool
 xkb_keysym_is_modifier(xkb_keysym_t keysym)
 {
-    return
-        (keysym >= XKB_KEY_Shift_L && keysym <= XKB_KEY_Hyper_R) ||
-        (keysym >= XKB_KEY_ISO_Lock && keysym <= XKB_KEY_ISO_Level5_Lock) ||
-        keysym == XKB_KEY_Mode_switch ||
-        keysym == XKB_KEY_Num_Lock;
+    أرجع
+        (keysym >= XKB_کلید_لغزش_L && keysym <= XKB_کلید_Hyper_R) ||
+        (keysym >= XKB_کلید_ISO_قفل && keysym <= XKB_کلید_ISO_Level5_قفل) ||
+        keysym == XKB_کلید_نما_switch ||
+        keysym == XKB_کلید_رقم_قفل;
 }

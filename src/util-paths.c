@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#ضمن "config.h"
 
-#include "utils.h"
-#include "util-paths.h"
+#ضمن "utils.h"
+#ضمن "util-paths.h"
 
 
 /* Caller must ensure that the input is not NULL or empty */
 bool
-is_absolute_path(const char *path)
+is_absolute_مسیر(ثابت حرف *مسیر)
 {
-#ifdef _WIN32
+#اگر_تعریف_شده _WIN32
     /*
      * A file name is relative to the current directory if it does not begin with
      * one of the following:
@@ -22,9 +22,9 @@ is_absolute_path(const char *path)
      * - A single backslash, for example, "\directory" or "\file.txt".
      * See: https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file
      */
-    return is_path_separator(path[0]) ||
-           (strlen_safe(path) >= 3 && path[1] == ':' && is_path_separator(path[2]));
-#else
-    return is_path_separator(path[0]);
-#endif
+    أرجع is_مسیر_separator(مسیر[0]) ||
+           (strlen_امن(مسیر) >= 3 && مسیر[1] == ':' && is_مسیر_separator(مسیر[2]));
+#وإلا
+    أرجع is_مسیر_separator(مسیر[0]);
+#پایان_اگر
 }

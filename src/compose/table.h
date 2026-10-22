@@ -2,13 +2,13 @@
  * Copyright © 2013,2021 Ran Benita <ran234@gmail.com>
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#رهنمود once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include "xkbcommon/xkbcommon-compose.h"
-#include "src/utils.h"
-#include "src/context.h"
+#ضمن "xkbcommon/xkbcommon-compose.h"
+#ضمن "src/utils.h"
+#ضمن "src/context.h"
 
 /*
  * The compose table data structure is a ternary search tree.
@@ -59,10 +59,10 @@
 
 /* 7 nodes for every potential Unicode character and then some should be
  * enough for all purposes. */
-#define MAX_COMPOSE_NODES_LOG2 23
-#define MAX_COMPOSE_NODES (1u << MAX_COMPOSE_NODES_LOG2)
+#تعریف_کن MAX_COMPOSE_NODES_LOG2 23
+#تعریف_کن MAX_COMPOSE_NODES (1u << MAX_COMPOSE_NODES_LOG2)
 
-struct compose_node {
+بنية compose_گره {
     xkb_keysym_t keysym;
 
     /* Offset into xkb_compose_table::nodes or 0. */
@@ -70,41 +70,41 @@ struct compose_node {
     /* Offset into xkb_compose_table::nodes or 0. */
     uint32_t hikid;
 
-    union {
-        struct {
+    اتحاد {
+        بنية {
             uint32_t _pad:31;
-            bool is_leaf:1;
+            bool is_برگ:1;
         };
-        struct {
+        بنية {
             uint32_t _pad:31;
-            bool is_leaf:1;
+            bool is_برگ:1;
             /* Offset into xkb_compose_table::nodes or 0. */
             uint32_t eqkid;
-        } internal;
-        struct {
+        } داخلی;
+        بنية {
             /* Offset into xkb_compose_table::utf8. */
             uint32_t utf8:31;
-            bool is_leaf:1;
+            bool is_برگ:1;
             xkb_keysym_t keysym;
-        } leaf;
+        } برگ;
     };
 };
 
-struct xkb_compose_table {
-    int refcnt;
-    enum xkb_compose_format format;
-    enum xkb_compose_compile_flags flags;
-    struct xkb_context *ctx;
+بنية xkb_compose_جدول {
+    صحيح refcnt;
+    تعداد xkb_compose_format format;
+    تعداد xkb_compose_compile_flags flags;
+    بنية xkb_context *ctx;
 
-    char *locale;
+    حرف *locale;
 
     darray_char utf8;
-    darray(struct compose_node) nodes;
+    darray(بنية compose_گره) nodes;
 };
 
-struct xkb_compose_table_entry {
-    size_t sequence_length;
-    xkb_keysym_t *sequence ATTR_COUNTED_BY(sequence_length);
+بنية xkb_compose_جدول_مدخل {
+    اندازه_t sequence_درازی;
+    xkb_keysym_t *sequence ATTR_COUNTED_BY(sequence_درازی);
     xkb_keysym_t keysym;
-    const char *utf8;
+    ثابت حرف *utf8;
 };

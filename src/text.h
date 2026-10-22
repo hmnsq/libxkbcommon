@@ -2,76 +2,76 @@
  * Copyright © 2009 Dan Nicholson
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#رهنمود once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <stdbool.h>
+#ضمن <stdbool.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "atom.h"
-#include "keymap.h"
+#ضمن "xkbcommon/xkbcommon.h"
+#ضمن "atom.h"
+#ضمن "keymap.h"
 
 /** LUT entry */
-typedef struct {
-    const char *name;
-    uint32_t value;
-} LookupEntry;
+تعريفنوع بنية {
+    ثابت حرف *name;
+    uint32_t مقدار;
+} Lookup_مدخل;
 
 bool
-LookupString(const LookupEntry tab[], const char *string,
-              unsigned int *value_rtrn);
+LookupString(ثابت Lookup_مدخل tab[], ثابت حرف *string,
+              بیعلامت صحيح *مقدار_rtrn);
 
-const char *
-LookupValue(const LookupEntry tab[], unsigned int value);
+ثابت حرف *
+Lookup_مقدار(ثابت Lookup_مدخل tab[], بیعلامت صحيح مقدار);
 
-#define GROUP_LAST_INDEX_NAME "last"
-enum {
-    CONTROL_NAMES_MIN_V1_INDEX = 7,
-    CONTROL_NAMES_MIN_V2_INDEX = 0,
+#تعریف_کن گروه_آخرین_شاخص_NAME "last"
+تعداد {
+    CONTROL_نامها_MIN_V1_شاخص = 7,
+    CONTROL_نامها_MIN_V2_شاخص = 0,
 };
 
-static inline uint8_t
-format_control_names_offset(enum xkb_keymap_format format)
+ساكن مضمن uint8_t
+format_control_نامها_جابه_جایی(تعداد xkb_keymap_format format)
 {
-    return (format == XKB_KEYMAP_FORMAT_TEXT_V1)
-        ? CONTROL_NAMES_MIN_V1_INDEX
-        : CONTROL_NAMES_MIN_V2_INDEX;
+    أرجع (format == XKB_KEYMAP_FORMAT_متن_V1)
+        ? CONTROL_نامها_MIN_V1_شاخص
+        : CONTROL_نامها_MIN_V2_شاخص;
 }
 
-extern const LookupEntry ctrlMaskNames[];
-extern const LookupEntry modComponentMaskNames[];
-extern const LookupEntry groupComponentMaskNames[];
-extern const LookupEntry groupMaskNames[];
-extern const LookupEntry buttonNames[];
-extern const LookupEntry useModMapValueNames[];
-extern const LookupEntry actionTypeNames[];
-extern const LookupEntry symInterpretMatchMaskNames[];
+خارجي ثابت Lookup_مدخل ctrl_ماسک_نامها[];
+خارجي ثابت Lookup_مدخل mod_Component_ماسک_نامها[];
+خارجي ثابت Lookup_مدخل گروه_Component_ماسک_نامها[];
+خارجي ثابت Lookup_مدخل گروه_ماسک_نامها[];
+خارجي ثابت Lookup_مدخل button_نامها[];
+خارجي ثابت Lookup_مدخل use_Mod_Map_مقدار_نامها[];
+خارجي ثابت Lookup_مدخل action_Type_نامها[];
+خارجي ثابت Lookup_مدخل sym_Interpret_تطابق_ماسک_نامها[];
 
-const char *
-ModMaskText(struct xkb_context *ctx, enum mod_type type,
-            const struct xkb_mod_set *mods, xkb_mod_mask_t mask);
+ثابت حرف *
+Mod_ماسک_متن(بنية xkb_context *ctx, تعداد mod_type type,
+            ثابت بنية xkb_mod_مجموعه *mods, xkb_mod_ماسک_t ماسک);
 
-const char *
-ModIndexText(struct xkb_context *ctx, const struct xkb_mod_set *mods,
-             xkb_mod_index_t ndx);
+ثابت حرف *
+Mod_شاخص_متن(بنية xkb_context *ctx, ثابت بنية xkb_mod_مجموعه *mods,
+             xkb_mod_شاخص_t ndx);
 
-const char *
-ActionTypeText(enum xkb_action_type type);
+ثابت حرف *
+Action_Type_متن(تعداد xkb_action_type type);
 
-const char *
-KeysymText(struct xkb_context *ctx, xkb_keysym_t sym);
+ثابت حرف *
+Keysym_متن(بنية xkb_context *ctx, xkb_keysym_t sym);
 
-const char *
-KeyNameText(struct xkb_context *ctx, xkb_atom_t name);
+ثابت حرف *
+کلید_Name_متن(بنية xkb_context *ctx, xkb_atom_t name);
 
-const char *
-SIMatchText(enum xkb_match_operation type);
+ثابت حرف *
+SIMatch_متن(تعداد xkb_تطابق_operation type);
 
-const char *
-LedStateMaskText(struct xkb_context *ctx, const LookupEntry *lookup,
-                 enum xkb_state_component mask);
+ثابت حرف *
+Led_State_ماسک_متن(بنية xkb_context *ctx, ثابت Lookup_مدخل *lookup,
+                 تعداد xkb_state_component ماسک);
 
-const char *
-ControlMaskText(struct xkb_context *ctx, enum xkb_keymap_format format,
-                enum xkb_action_controls mask);
+ثابت حرف *
+Control_ماسک_متن(بنية xkb_context *ctx, تعداد xkb_keymap_format format,
+                تعداد xkb_action_controls ماسک);

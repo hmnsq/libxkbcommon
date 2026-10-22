@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: MIT
  */
 
-#pragma once
+#رهنمود once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <assert.h>
-#include <stdalign.h>
-#include <stddef.h>
+#ضمن <assert.h>
+#ضمن <stdalign.h>
+#ضمن <stddef.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "abi-check.h"
+#ضمن "xkbcommon/xkbcommon.h"
+#ضمن "abi-check.h"
 
 /******************************************************************************
  * xkb_keymap_serialize_config
@@ -23,30 +23,30 @@
  *
  * @since 1.14.0
  */
-struct xkb_keymap_serialize_config_v1 {
-    uint32_t size;
+بنية xkb_keymap_serialize_config_v1 {
+    uint32_t اندازه;
     uint32_t flags;
     uint32_t format;
-    xkb_layout_mask_t layouts;
+    xkb_layout_ماسک_t layouts;
 };
 
 /* Ensure there is no implicit padding */
-assert_no_padding(struct xkb_keymap_serialize_config, size, flags);
-assert_no_padding(struct xkb_keymap_serialize_config, flags, format);
-assert_no_padding(struct xkb_keymap_serialize_config, format, layouts);
-assert_no_padding(struct xkb_keymap_serialize_config, layouts);
+assert_no_padding(بنية xkb_keymap_serialize_config, اندازه, flags);
+assert_no_padding(بنية xkb_keymap_serialize_config, flags, format);
+assert_no_padding(بنية xkb_keymap_serialize_config, format, layouts);
+assert_no_padding(بنية xkb_keymap_serialize_config, layouts);
 
 /* Current version is 1 */
-static_assert(sizeof(struct xkb_keymap_serialize_config) ==
-              sizeof(struct xkb_keymap_serialize_config_v1), "");
-assert_same_field(struct xkb_keymap_serialize_config, _v1, size);
-assert_same_field(struct xkb_keymap_serialize_config, _v1, flags);
-assert_same_field(struct xkb_keymap_serialize_config, _v1, format);
-assert_same_field(struct xkb_keymap_serialize_config, _v1, layouts);
+static_assert(حجم(بنية xkb_keymap_serialize_config) ==
+              حجم(بنية xkb_keymap_serialize_config_v1), "");
+assert_same_فیلد(بنية xkb_keymap_serialize_config, _v1, اندازه);
+assert_same_فیلد(بنية xkb_keymap_serialize_config, _v1, flags);
+assert_same_فیلد(بنية xkb_keymap_serialize_config, _v1, format);
+assert_same_فیلد(بنية xkb_keymap_serialize_config, _v1, layouts);
 
 /* Ensure reasonable margin to the upper size limit */
-static_assert(sizeof(struct xkb_keymap_serialize_config) * 30 <=
-              (size_t)XKB_ABI_MAX_SIZE, "");
+static_assert(حجم(بنية xkb_keymap_serialize_config) * 30 <=
+              (اندازه_t)XKB_ABI_MAX_اندازه, "");
 
 /******************************************************************************
  * xkb_keymap_serialize_result
@@ -57,32 +57,32 @@ static_assert(sizeof(struct xkb_keymap_serialize_config) * 30 <=
  *
  * @since 1.14.0
  */
-struct xkb_keymap_serialize_result_v1 {
-    uint32_t size;
-    xkb_layout_mask_t layouts;
-    char *serialized;
-    size_t length;
+بنية xkb_keymap_serialize_نتیجه_v1 {
+    uint32_t اندازه;
+    xkb_layout_ماسک_t layouts;
+    حرف *serialized;
+    اندازه_t درازی;
 };
 
 /* Ensure there is no implicit padding */
-assert_no_padding(struct xkb_keymap_serialize_result, size, layouts);
-assert_no_padding(struct xkb_keymap_serialize_result, layouts, serialized);
-assert_no_padding(struct xkb_keymap_serialize_result, serialized, length);
-assert_no_padding(struct xkb_keymap_serialize_result, length);
+assert_no_padding(بنية xkb_keymap_serialize_نتیجه, اندازه, layouts);
+assert_no_padding(بنية xkb_keymap_serialize_نتیجه, layouts, serialized);
+assert_no_padding(بنية xkb_keymap_serialize_نتیجه, serialized, درازی);
+assert_no_padding(بنية xkb_keymap_serialize_نتیجه, درازی);
 
 /* Current version is 1 */
-static_assert(sizeof(struct xkb_keymap_serialize_result) ==
-              sizeof(struct xkb_keymap_serialize_result_v1), "");
-assert_same_field(struct xkb_keymap_serialize_result, _v1, size);
+static_assert(حجم(بنية xkb_keymap_serialize_نتیجه) ==
+              حجم(بنية xkb_keymap_serialize_نتیجه_v1), "");
+assert_same_فیلد(بنية xkb_keymap_serialize_نتیجه, _v1, اندازه);
 // NOLINTBEGIN(bugprone-sizeof-expression)
-assert_same_field(struct xkb_keymap_serialize_result, _v1, serialized);
+assert_same_فیلد(بنية xkb_keymap_serialize_نتیجه, _v1, serialized);
 // NOLINTEND(bugprone-sizeof-expression)
-assert_same_field(struct xkb_keymap_serialize_result, _v1, length);
-assert_same_field(struct xkb_keymap_serialize_result, _v1, layouts);
+assert_same_فیلد(بنية xkb_keymap_serialize_نتیجه, _v1, درازی);
+assert_same_فیلد(بنية xkb_keymap_serialize_نتیجه, _v1, layouts);
 
 /* Ensure reasonable margin to the upper size limit */
-static_assert(sizeof(struct xkb_keymap_serialize_result) * 30 <=
-              (size_t)XKB_ABI_MAX_SIZE, "");
+static_assert(حجم(بنية xkb_keymap_serialize_نتیجه) * 30 <=
+              (اندازه_t)XKB_ABI_MAX_اندازه, "");
 
 /******************************************************************************
  * xkb_keymap_key_iterator_config
@@ -93,102 +93,102 @@ static_assert(sizeof(struct xkb_keymap_serialize_result) * 30 <=
  *
  * @since 1.14.0
  */
-struct xkb_keymap_key_iterator_config_v1 {
-    uint32_t size;
+بنية xkb_keymap_کلید_iterator_config_v1 {
+    uint32_t اندازه;
     uint32_t flags;
-    xkb_keycode_t start;
+    xkb_keycode_t شروع;
 };
 
 /* Ensure there is no implicit padding */
-assert_no_padding(struct xkb_keymap_key_iterator_config, size, flags);
-assert_no_padding(struct xkb_keymap_key_iterator_config, flags, start);
-assert_no_padding(struct xkb_keymap_key_iterator_config, start);
+assert_no_padding(بنية xkb_keymap_کلید_iterator_config, اندازه, flags);
+assert_no_padding(بنية xkb_keymap_کلید_iterator_config, flags, شروع);
+assert_no_padding(بنية xkb_keymap_کلید_iterator_config, شروع);
 
 /* Current version is 1 */
-static_assert(sizeof(struct xkb_keymap_key_iterator_config) ==
-              sizeof(struct xkb_keymap_key_iterator_config_v1), "");
-assert_same_field(struct xkb_keymap_key_iterator_config, _v1, size);
-assert_same_field(struct xkb_keymap_key_iterator_config, _v1, flags);
-assert_same_field(struct xkb_keymap_key_iterator_config, _v1, start);
+static_assert(حجم(بنية xkb_keymap_کلید_iterator_config) ==
+              حجم(بنية xkb_keymap_کلید_iterator_config_v1), "");
+assert_same_فیلد(بنية xkb_keymap_کلید_iterator_config, _v1, اندازه);
+assert_same_فیلد(بنية xkb_keymap_کلید_iterator_config, _v1, flags);
+assert_same_فیلد(بنية xkb_keymap_کلید_iterator_config, _v1, شروع);
 
 /* Ensure reasonable margin to the upper size limit */
-static_assert(sizeof(struct xkb_keymap_key_iterator_config) * 30 <=
-              (size_t)XKB_ABI_MAX_SIZE, "");
+static_assert(حجم(بنية xkb_keymap_کلید_iterator_config) * 30 <=
+              (اندازه_t)XKB_ABI_MAX_اندازه, "");
 
 /******************************************************************************
  * Utils
  *****************************************************************************/
 
 /** Size of the *first version* of the struct */
-#define xkb_versioned_struct_size_v1(x) _Generic(        \
+#تعریف_کن xkb_versioned_struct_اندازه_v1(x) _Generic(        \
     (x),                                                 \
-    const struct xkb_keymap_serialize_config *:          \
-        sizeof(struct xkb_keymap_serialize_config_v1),   \
-    const struct xkb_keymap_serialize_result *:          \
-        sizeof(struct xkb_keymap_serialize_result_v1),   \
-    const struct xkb_keymap_key_iterator_config *:      \
-        sizeof(struct xkb_keymap_key_iterator_config_v1)\
+    ثابت بنية xkb_keymap_serialize_config *:          \
+        حجم(بنية xkb_keymap_serialize_config_v1),   \
+    ثابت بنية xkb_keymap_serialize_نتیجه *:          \
+        حجم(بنية xkb_keymap_serialize_نتیجه_v1),   \
+    ثابت بنية xkb_keymap_کلید_iterator_config *:      \
+        حجم(بنية xkb_keymap_کلید_iterator_config_v1)\
 )
 
 /** Minimal *current* valid size of the struct */
-#define xkb_versioned_struct_size_min(x) _Generic(       \
+#تعریف_کن xkb_versioned_struct_اندازه_min(x) _Generic(       \
     (x),                                                 \
-    const struct xkb_keymap_serialize_config *:          \
-        sizeof(struct xkb_keymap_serialize_config_v1),   \
-    const struct xkb_keymap_serialize_result *:          \
-        sizeof(struct xkb_keymap_serialize_result_v1),   \
-    const struct xkb_keymap_key_iterator_config *:      \
-        sizeof(struct xkb_keymap_key_iterator_config_v1)\
+    ثابت بنية xkb_keymap_serialize_config *:          \
+        حجم(بنية xkb_keymap_serialize_config_v1),   \
+    ثابت بنية xkb_keymap_serialize_نتیجه *:          \
+        حجم(بنية xkb_keymap_serialize_نتیجه_v1),   \
+    ثابت بنية xkb_keymap_کلید_iterator_config *:      \
+        حجم(بنية xkb_keymap_کلید_iterator_config_v1)\
 )
 
 /** Offset of the last meaningful field of the current struct */
-#define xkb_versioned_struct_reserved_offset(x) _Generic(\
+#تعریف_کن xkb_versioned_struct_reserved_جابه_جایی(x) _Generic(\
     (x),                                                 \
-    const struct xkb_keymap_serialize_config *:          \
-        sizeof(struct xkb_keymap_serialize_config),      \
-    const struct xkb_keymap_serialize_result *:          \
-        sizeof(struct xkb_keymap_serialize_result),      \
-    const struct xkb_keymap_key_iterator_config *:      \
-        sizeof(struct xkb_keymap_key_iterator_config)   \
+    ثابت بنية xkb_keymap_serialize_config *:          \
+        حجم(بنية xkb_keymap_serialize_config),      \
+    ثابت بنية xkb_keymap_serialize_نتیجه *:          \
+        حجم(بنية xkb_keymap_serialize_نتیجه),      \
+    ثابت بنية xkb_keymap_کلید_iterator_config *:      \
+        حجم(بنية xkb_keymap_کلید_iterator_config)   \
 )
 
 /* V1 is the smallest struct version */
 static_assert(
-    xkb_versioned_struct_size_v1(((const struct xkb_keymap_serialize_config *)NULL)) <=
-    xkb_versioned_struct_size_min(((const struct xkb_keymap_serialize_config *)NULL)),
+    xkb_versioned_struct_اندازه_v1(((ثابت بنية xkb_keymap_serialize_config *)عدم)) <=
+    xkb_versioned_struct_اندازه_min(((ثابت بنية xkb_keymap_serialize_config *)عدم)),
     ""
 );
 static_assert(
-    xkb_versioned_struct_size_v1(((const struct xkb_keymap_serialize_result *)NULL)) <=
-    xkb_versioned_struct_size_min(((const struct xkb_keymap_serialize_result *)NULL)),
+    xkb_versioned_struct_اندازه_v1(((ثابت بنية xkb_keymap_serialize_نتیجه *)عدم)) <=
+    xkb_versioned_struct_اندازه_min(((ثابت بنية xkb_keymap_serialize_نتیجه *)عدم)),
     ""
 );
 static_assert(
-    xkb_versioned_struct_size_v1(((const struct xkb_keymap_key_iterator_config *)NULL)) <=
-    xkb_versioned_struct_size_min(((const struct xkb_keymap_key_iterator_config *)NULL)),
+    xkb_versioned_struct_اندازه_v1(((ثابت بنية xkb_keymap_کلید_iterator_config *)عدم)) <=
+    xkb_versioned_struct_اندازه_min(((ثابت بنية xkb_keymap_کلید_iterator_config *)عدم)),
     ""
 );
 
 /* Minimal size is lower or equal to the current size */
 static_assert(
-    xkb_versioned_struct_size_min(((const struct xkb_keymap_serialize_config *)NULL)) <=
-    sizeof(const struct xkb_keymap_serialize_config),
+    xkb_versioned_struct_اندازه_min(((ثابت بنية xkb_keymap_serialize_config *)عدم)) <=
+    حجم(ثابت بنية xkb_keymap_serialize_config),
     ""
 );
 static_assert(
-    xkb_versioned_struct_size_min(((const struct xkb_keymap_serialize_result *)NULL)) <=
-    sizeof(const struct xkb_keymap_serialize_result),
+    xkb_versioned_struct_اندازه_min(((ثابت بنية xkb_keymap_serialize_نتیجه *)عدم)) <=
+    حجم(ثابت بنية xkb_keymap_serialize_نتیجه),
     ""
 );
 static_assert(
-    xkb_versioned_struct_size_min(((const struct xkb_keymap_key_iterator_config *)NULL)) <=
-    sizeof(const struct xkb_keymap_key_iterator_config),
+    xkb_versioned_struct_اندازه_min(((ثابت بنية xkb_keymap_کلید_iterator_config *)عدم)) <=
+    حجم(ثابت بنية xkb_keymap_کلید_iterator_config),
     ""
 );
 
-#define xkb_check_keymap_abi(x) xkb_check_versioned_struct_size( \
-    xkb_versioned_struct_size_v1(x),                                               \
-    xkb_versioned_struct_size_min(x),                                              \
-    xkb_versioned_struct_reserved_offset(x),                                       \
+#تعریف_کن xkb_check_keymap_abi(x) xkb_check_versioned_struct_اندازه_2( \
+    xkb_versioned_struct_اندازه_v1(x),                                               \
+    xkb_versioned_struct_اندازه_min(x),                                              \
+    xkb_versioned_struct_reserved_جابه_جایی(x),                                       \
     (x)                                                                            \
 )

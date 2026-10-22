@@ -3,476 +3,476 @@
  * SPDX-License-Identifier: HPND
  */
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <assert.h>
-#include <limits.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <assert.h>
+#ضمن <limits.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-#include "context.h"
-#include "messages-codes.h"
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcomp-priv.h"
-#include "atom.h"
-#include "darray.h"
-#include "keymap.h"
-#include "text.h"
-#include "expr.h"
-#include "include.h"
-#include "util-mem.h"
+#ضمن "context.h"
+#ضمن "messages-codes.h"
+#ضمن "xkbcommon/xkbcommon.h"
+#ضمن "xkbcomp-priv.h"
+#ضمن "atom.h"
+#ضمن "darray.h"
+#ضمن "keymap.h"
+#ضمن "text.h"
+#ضمن "expr.h"
+#ضمن "include.h"
+#ضمن "util-mem.h"
 
-typedef struct {
+تعريفنوع بنية {
     xkb_keycode_t keycode;
     xkb_atom_t name;
-} HighKeycodeEntry;
+} بالا_Keycode_مدخل;
 
-typedef struct {
+تعريفنوع بنية {
     /** Minimum keycode */
     xkb_keycode_t min;
     /**
      * keycode -> name mapping, stored contiguously
      * keycode <= XKB_KEYCODE_MAX_CONTIGUOUS
      */
-    darray(xkb_atom_t) low;
+    darray(xkb_atom_t) کم;
     /**
      * keycode -> name mapping, sorted entries, possibly noncontiguous keycodes
      * keycode > XKB_KEYCODE_MAX_CONTIGUOUS
      */
-    darray(HighKeycodeEntry) high;
+    darray(بالا_Keycode_مدخل) بالا;
     /**
      * name -> keycode mapping
      */
-    darray(KeycodeMatch) names;
+    darray(Keycode_تطابق) نامها;
 } KeycodeStore;
 
-static inline void
+ساكن مضمن فراغ
 keycode_store_init(KeycodeStore *store)
 {
-    darray_init(store->low);
-    darray_init(store->high);
-    darray_init(store->names);
+    darray_init(store->کم);
+    darray_init(store->بالا);
+    darray_init(store->نامها);
     static_assert(XKB_KEYCODE_INVALID > XKB_KEYCODE_MAX,
                   "Hey, you can't be changing stuff like that!");
     store->min = XKB_KEYCODE_INVALID;
 }
 
-static inline void
+ساكن مضمن فراغ
 keycode_store_free(KeycodeStore *store)
 {
-    darray_free(store->low);
-    darray_free(store->high);
-    darray_free(store->names);
+    darray_free(store->کم);
+    darray_free(store->بالا);
+    darray_free(store->نامها);
 }
 
-static inline void
-keycode_store_update_key(KeycodeStore *store, KeycodeMatch match, xkb_atom_t name)
+ساكن مضمن فراغ
+keycode_store_update_کلید(KeycodeStore *store, Keycode_تطابق تطابق, xkb_atom_t name)
 {
-    if (unlikely(!match.found || match.is_alias)) {
-        return;
-    } else if (match.key.low) {
+    إذا (unlikely(!تطابق.یافت || تطابق.is_alias)) {
+        أرجع;
+    } وإلا إذا (تطابق.کلید.کم) {
         /* assume valid index */
-        assert(match.key.index < darray_size(store->low));
-        darray_item(store->low, match.key.index) = name;
-    } else {
+        أكد(تطابق.کلید.شاخص < darray_اندازه(store->کم));
+        darray_قلم(store->کم, تطابق.کلید.شاخص) = name;
+    } وإلا {
         /* assume valid index */
-        assert(match.key.index < darray_size(store->high));
-        darray_item(store->high, match.key.index).name = name;
+        أكد(تطابق.کلید.شاخص < darray_اندازه(store->بالا));
+        darray_قلم(store->بالا, تطابق.کلید.شاخص).name = name;
     }
 
     /* Names lookup */
-    if (name >= darray_size(store->names)) {
-        darray_resize0(store->names, name + 1);
+    إذا (name >= darray_اندازه(store->نامها)) {
+        darray_resize0(store->نامها, name + 1);
     }
-    darray_item(store->names, name) = match;
+    darray_قلم(store->نامها, name) = تطابق;
 }
 
-static bool
-keycode_store_insert_key(KeycodeStore *store, xkb_keycode_t kc, xkb_atom_t name)
+ساكن bool
+keycode_store_درج_کلید(KeycodeStore *store, xkb_keycode_t kc, xkb_atom_t name)
 {
-    if (name >= darray_size(store->names)) {
-        darray_resize0(store->names, name + 1);
+    إذا (name >= darray_اندازه(store->نامها)) {
+        darray_resize0(store->نامها, name + 1);
     }
-    if (kc <= XKB_KEYCODE_MAX_CONTIGUOUS) {
+    إذا (kc <= XKB_KEYCODE_MAX_CONTIGUOUS) {
         /* Low keycode */
-        if (kc >= (xkb_keycode_t) darray_size(store->low))
-            darray_resize0(store->low, kc + 1);
-        darray_item(store->low, kc) = name;
-        if (kc < store->min)
+        إذا (kc >= (xkb_keycode_t) darray_اندازه(store->کم))
+            darray_resize0(store->کم, kc + 1);
+        darray_قلم(store->کم, kc) = name;
+        إذا (kc < store->min)
             store->min = kc;
-        darray_item(store->names, name) = (KeycodeMatch) {
-            .key = {
-                .found = true,
-                .low = true,
+        darray_قلم(store->نامها, name) = (Keycode_تطابق) {
+            .کلید = {
+                .یافت = true,
+                .کم = true,
                 .is_alias = false,
-                .index = kc
+                .شاخص = kc
             }
         };
-    } else {
+    } وإلا {
         /* High keycode: insert into a sorted list */
-        const darray_size_t idx = darray_size(store->high);
-        if (idx && darray_item(store->high, idx - 1).keycode > kc) {
+        ثابت darray_اندازه_t idx = darray_اندازه(store->بالا);
+        إذا (idx && darray_قلم(store->بالا, idx - 1).keycode > kc) {
             /*
              * Slow path: need to sort the keys. Since we maintain the list
              * sorted, we simply need to look for the insertion index.
              */
-            darray_size_t lower = 0;
-            darray_size_t upper = idx;
-            while (lower < upper) {
-                const darray_size_t mid = lower + (upper - 1 - lower) / 2;
-                const HighKeycodeEntry * const entry =
-                    &darray_item(store->high, mid);
-                if (entry->keycode < kc) {
-                    lower = mid + 1;
-                } else if (entry->keycode > kc) {
-                    upper = mid;
-                } else {
+            darray_اندازه_t پایینی = 0;
+            darray_اندازه_t فوقانی = idx;
+            طالما (پایینی < فوقانی) {
+                ثابت darray_اندازه_t mid = پایینی + (فوقانی - 1 - پایینی) / 2;
+                ثابت بالا_Keycode_مدخل * ثابت مدخل =
+                    &darray_قلم(store->بالا, mid);
+                إذا (مدخل->keycode < kc) {
+                    پایینی = mid + 1;
+                } وإلا إذا (مدخل->keycode > kc) {
+                    فوقانی = mid;
+                } وإلا {
                     /* Unreachable: there is no repetition in the list */
-                    assert(entry->keycode != kc);
+                    أكد(مدخل->keycode != kc);
                 }
             }
-            assert(lower < idx);
-            assert(darray_item(store->high, lower).keycode > kc);
+            أكد(پایینی < idx);
+            أكد(darray_قلم(store->بالا, پایینی).keycode > kc);
 
             /* Update references to entries that will be moved */
-            HighKeycodeEntry *entry;
-            darray_foreach_from(entry, store->high, lower) {
-                darray_item(store->names, entry->name).key.index++;
+            بالا_Keycode_مدخل *مدخل;
+            darray_foreach_from(مدخل, store->بالا, پایینی) {
+                darray_قلم(store->نامها, مدخل->name).کلید.شاخص++;
             }
 
-            darray_insert(store->high, lower,
-                          (HighKeycodeEntry){.keycode = kc, .name = name});
-            darray_item(store->names, name) = (KeycodeMatch) {
-                .key = {
-                    .found = true,
-                    .low = false,
+            darray_درج(store->بالا, پایینی,
+                          (بالا_Keycode_مدخل){.keycode = kc, .name = name});
+            darray_قلم(store->نامها, name) = (Keycode_تطابق) {
+                .کلید = {
+                    .یافت = true,
+                    .کم = false,
                     .is_alias = false,
-                    .index = lower
+                    .شاخص = پایینی
                 }
             };
-        } else {
+        } وإلا {
             /* Fast path: no need to sort */
-            darray_append(store->high,
-                          (HighKeycodeEntry){.keycode = kc, .name = name});
-            darray_item(store->names, name) = (KeycodeMatch) {
-                .key = {
-                    .found = true,
-                    .low = false,
+            darray_append(store->بالا,
+                          (بالا_Keycode_مدخل){.keycode = kc, .name = name});
+            darray_قلم(store->نامها, name) = (Keycode_تطابق) {
+                .کلید = {
+                    .یافت = true,
+                    .کم = false,
                     .is_alias = false,
-                    .index = idx
+                    .شاخص = idx
                 }
             };
         }
-        if (darray_empty(store->low))
-            store->min = darray_item(store->high, 0).keycode;
+        إذا (darray_خالی(store->کم))
+            store->min = darray_قلم(store->بالا, 0).keycode;
     }
-    return true;
+    أرجع true;
 }
 
-static inline bool
-keycode_store_insert_alias(KeycodeStore *store, xkb_atom_t alias, xkb_atom_t real)
+ساكن مضمن bool
+keycode_store_درج_alias(KeycodeStore *store, xkb_atom_t alias, xkb_atom_t real)
 {
-    if (alias >= darray_size(store->names)) {
-        darray_resize0(store->names, alias + 1);
+    إذا (alias >= darray_اندازه(store->نامها)) {
+        darray_resize0(store->نامها, alias + 1);
     }
-    darray_item(store->names, alias) = (KeycodeMatch) {
+    darray_قلم(store->نامها, alias) = (Keycode_تطابق) {
         .alias = {
-            .found = true,
+            .یافت = true,
             .is_alias = true,
             .real = real
         }
     };
-    return true;
+    أرجع true;
 }
 
-static inline bool
+ساكن مضمن bool
 keycode_store_update_alias(KeycodeStore *store, xkb_atom_t alias, xkb_atom_t real)
 {
-    darray_item(store->names, alias).alias.real = real;
-    return true;
+    darray_قلم(store->نامها, alias).alias.real = real;
+    أرجع true;
 }
 
-static inline void
-keycode_store_delete_name(const KeycodeStore *store, xkb_atom_t name)
+ساكن مضمن فراغ
+keycode_store_delete_name(ثابت KeycodeStore *store, xkb_atom_t name)
 {
-    if (name < darray_size(store->names))
-        darray_item(store->names, name).found = false;
+    إذا (name < darray_اندازه(store->نامها))
+        darray_قلم(store->نامها, name).یافت = false;
 }
 
-static void
-keycode_store_delete_key(KeycodeStore *store, const KeycodeMatch match)
+ساكن فراغ
+keycode_store_delete_کلید(KeycodeStore *store, ثابت Keycode_تطابق تطابق)
 {
-    if (unlikely(!match.found || match.is_alias)) {
-        return;
-    } else if (match.key.low) {
+    إذا (unlikely(!تطابق.یافت || تطابق.is_alias)) {
+        أرجع;
+    } وإلا إذا (تطابق.کلید.کم) {
         /* assume valid index */
-        assert(match.key.index < darray_size(store->low));
-        darray_item(store->names,
-                    darray_item(store->low, match.key.index)).found = false;
-        if (match.key.index + 1u == darray_size(store->low)) {
+        أكد(تطابق.کلید.شاخص < darray_اندازه(store->کم));
+        darray_قلم(store->نامها,
+                    darray_قلم(store->کم, تطابق.کلید.شاخص)).یافت = false;
+        إذا (تطابق.کلید.شاخص + 1u == darray_اندازه(store->کم)) {
             /* Highest low keycode: shrink */
-            if (store->min == match.key.index) {
+            إذا (store->min == تطابق.کلید.شاخص) {
                 /* No low keycode left */
-                darray_size(store->low) = 0;
-            } else {
+                darray_اندازه(store->کم) = 0;
+            } وإلا {
                 /* Look for previous defined low keycode */
-                for (darray_size_t idx = match.key.index; idx > 0; idx--) {
-                    if (darray_item(store->low, idx - 1) != XKB_ATOM_NONE) {
-                        darray_size(store->low) = idx;
-                        break;
+                لكل (darray_اندازه_t idx = تطابق.کلید.شاخص; idx > 0; idx--) {
+                    إذا (darray_قلم(store->کم, idx - 1) != XKB_ATOM_NONE) {
+                        darray_اندازه(store->کم) = idx;
+                        اكسر;
                     }
                 }
             }
-        } else {
+        } وإلا {
             /* Lower keycode: reset */
-            darray_item(store->low, match.key.index) = XKB_ATOM_NONE;
+            darray_قلم(store->کم, تطابق.کلید.شاخص) = XKB_ATOM_NONE;
         }
-    } else {
-        assert(match.key.index < darray_size(store->high)); /* assume valid index */
-        darray_item(store->names,
-                    darray_item(store->high, match.key.index).name).found = false;
-        darray_remove(store->high, match.key.index);
+    } وإلا {
+        أكد(تطابق.کلید.شاخص < darray_اندازه(store->بالا)); /* assume valid index */
+        darray_قلم(store->نامها,
+                    darray_قلم(store->بالا, تطابق.کلید.شاخص).name).یافت = false;
+        darray_remove(store->بالا, تطابق.کلید.شاخص);
         /* Update LUT indexes of high codes after the deleted one, if any */
-        KeycodeMatch *entry;
-        darray_foreach(entry, store->names) {
-            if (entry->found && !entry->is_alias && !entry->key.low &&
-                entry->key.index > match.key.index) {
-                entry->key.index--;
+        Keycode_تطابق *مدخل;
+        darray_foreach(مدخل, store->نامها) {
+            إذا (مدخل->یافت && !مدخل->is_alias && !مدخل->کلید.کم &&
+                مدخل->کلید.شاخص > تطابق.کلید.شاخص) {
+                مدخل->کلید.شاخص--;
             }
         }
     }
 
     /* Update bounds */
-    if (darray_empty(store->low)) {
-        store->min = (darray_empty(store->high))
+    إذا (darray_خالی(store->کم)) {
+        store->min = (darray_خالی(store->بالا))
             ? XKB_KEYCODE_INVALID
-            : darray_item(store->high, 0).keycode;
-    } else {
-        for (xkb_keycode_t kc = store->min; kc < darray_size(store->low); kc++) {
-            if (darray_item(store->low, kc) != XKB_ATOM_NONE) {
+            : darray_قلم(store->بالا, 0).keycode;
+    } وإلا {
+        لكل (xkb_keycode_t kc = store->min; kc < darray_اندازه(store->کم); kc++) {
+            إذا (darray_قلم(store->کم, kc) != XKB_ATOM_NONE) {
                 store->min = kc;
-                break;
+                اكسر;
             }
         }
     }
 }
 
-static inline xkb_keycode_t
-keycode_store_get_keycode(const KeycodeStore *store, KeycodeMatch match)
+ساكن مضمن xkb_keycode_t
+keycode_store_get_keycode(ثابت KeycodeStore *store, Keycode_تطابق تطابق)
 {
-    if (!match.found || match.is_alias) {
-        return XKB_KEYCODE_INVALID;
-    } else if (match.key.low) {
+    إذا (!تطابق.یافت || تطابق.is_alias) {
+        أرجع XKB_KEYCODE_INVALID;
+    } وإلا إذا (تطابق.کلید.کم) {
         /* assume valid index */
-        assert(match.key.index < darray_size(store->low));
-        return (xkb_keycode_t) match.key.index;
-    } else {
+        أكد(تطابق.کلید.شاخص < darray_اندازه(store->کم));
+        أرجع (xkb_keycode_t) تطابق.کلید.شاخص;
+    } وإلا {
         /* assume valid index */
-        assert(match.key.index < darray_size(store->high));
-        return darray_item(store->high, match.key.index).keycode;
+        أكد(تطابق.کلید.شاخص < darray_اندازه(store->بالا));
+        أرجع darray_قلم(store->بالا, تطابق.کلید.شاخص).keycode;
     }
 }
 
-static inline xkb_atom_t
-keycode_store_get_key_name(const KeycodeStore *store, KeycodeMatch match)
+ساكن مضمن xkb_atom_t
+keycode_store_get_کلید_name(ثابت KeycodeStore *store, Keycode_تطابق تطابق)
 {
-    if (!match.found || match.is_alias) {
-        return XKB_ATOM_NONE;
-    } else if (match.key.low) {
+    إذا (!تطابق.یافت || تطابق.is_alias) {
+        أرجع XKB_ATOM_NONE;
+    } وإلا إذا (تطابق.کلید.کم) {
         /* assume valid index */
-        assert(match.key.index < darray_size(store->low));
-        return darray_item(store->low, match.key.index);
-    } else {
+        أكد(تطابق.کلید.شاخص < darray_اندازه(store->کم));
+        أرجع darray_قلم(store->کم, تطابق.کلید.شاخص);
+    } وإلا {
         /* assume valid index */
-        assert(match.key.index < darray_size(store->high));
-        return darray_item(store->high, match.key.index).name;
+        أكد(تطابق.کلید.شاخص < darray_اندازه(store->بالا));
+        أرجع darray_قلم(store->بالا, تطابق.کلید.شاخص).name;
     }
 }
 
-static KeycodeMatch
-keycode_store_lookup_keycode(const KeycodeStore *store, xkb_keycode_t kc)
+ساكن Keycode_تطابق
+keycode_store_lookup_keycode(ثابت KeycodeStore *store, xkb_keycode_t kc)
 {
     /* Low keycodes */
-    if (kc < (xkb_keycode_t) darray_size(store->low)) {
-        return (KeycodeMatch) {
-            .key = {
-                .found = true,
-                .low = true,
+    إذا (kc < (xkb_keycode_t) darray_اندازه(store->کم)) {
+        أرجع (Keycode_تطابق) {
+            .کلید = {
+                .یافت = true,
+                .کم = true,
                 .is_alias = false,
-                .index = kc
+                .شاخص = kc
             }
         };
-    } else if (kc <= XKB_KEYCODE_MAX_CONTIGUOUS) {
-        return (KeycodeMatch) { .found = false };
+    } وإلا إذا (kc <= XKB_KEYCODE_MAX_CONTIGUOUS) {
+        أرجع (Keycode_تطابق) { .یافت = false };
     }
 
     /* High keycodes: use binary search */
-    darray_size_t lower = 0;
-    darray_size_t upper = darray_size(store->high);
-    while (lower < upper) {
-        const darray_size_t mid = lower + (upper - 1 - lower) / 2;
-        HighKeycodeEntry * const entry = &darray_item(store->high, mid);
-        if (entry->keycode < kc) {
-            lower = mid + 1;
-        } else if (entry->keycode > kc) {
-            upper = mid;
-        } else {
-            return (KeycodeMatch) {
-                .key = {
-                    .found = true,
-                    .low = false,
+    darray_اندازه_t پایینی = 0;
+    darray_اندازه_t فوقانی = darray_اندازه(store->بالا);
+    طالما (پایینی < فوقانی) {
+        ثابت darray_اندازه_t mid = پایینی + (فوقانی - 1 - پایینی) / 2;
+        بالا_Keycode_مدخل * ثابت مدخل = &darray_قلم(store->بالا, mid);
+        إذا (مدخل->keycode < kc) {
+            پایینی = mid + 1;
+        } وإلا إذا (مدخل->keycode > kc) {
+            فوقانی = mid;
+        } وإلا {
+            أرجع (Keycode_تطابق) {
+                .کلید = {
+                    .یافت = true,
+                    .کم = false,
                     .is_alias = false,
-                    .index = mid
+                    .شاخص = mid
                 }
             };
         }
     }
 
-    return (KeycodeMatch) { .found = false };
+    أرجع (Keycode_تطابق) { .یافت = false };
 }
 
-static KeycodeMatch
-keycode_store_lookup_name(const KeycodeStore *store, xkb_atom_t name)
+ساكن Keycode_تطابق
+keycode_store_lookup_name(ثابت KeycodeStore *store, xkb_atom_t name)
 {
-    if (name >= darray_size(store->names)) {
-        return (KeycodeMatch) { .found = false, .is_alias = false };
-    } else {
-        return darray_item(store->names, name);
+    إذا (name >= darray_اندازه(store->نامها)) {
+        أرجع (Keycode_تطابق) { .یافت = false, .is_alias = false };
+    } وإلا {
+        أرجع darray_قلم(store->نامها, name);
     }
 }
 
 /***====================================================================***/
 
-typedef struct {
-    enum merge_mode merge;
+تعريفنوع بنية {
+    تعداد ادغام_نما ادغام;
 
     xkb_atom_t name;
 } LedNameInfo;
 
-typedef struct {
-    char *name;
-    int errorCount;
-    unsigned int include_depth;
+تعريفنوع بنية {
+    حرف *name;
+    صحيح error_شمار;
+    بیعلامت صحيح include_عمق;
 
     KeycodeStore keycodes;
-    LedNameInfo led_names[XKB_MAX_LEDS];
-    xkb_led_index_t num_led_names;
+    LedNameInfo led_نامها[XKB_MAX_LEDS];
+    xkb_led_شاخص_t رقم_led_نامها;
 
-    struct xkb_context *ctx;
-    const struct xkb_keymap_info *keymap_info;
-} KeyNamesInfo;
+    بنية xkb_context *ctx;
+    ثابت بنية xkb_keymap_info *keymap_info;
+} کلید_نامها_Info;
 
 /***====================================================================***/
 
-static LedNameInfo *
-FindLedByName(KeyNamesInfo *info, xkb_atom_t name,
-              xkb_led_index_t *idx_out)
+ساكن LedNameInfo *
+پیدا_کن_Led_By_Name(کلید_نامها_Info *info, xkb_atom_t name,
+              xkb_led_شاخص_t *idx_بیرون)
 {
-    for (xkb_led_index_t idx = 0; idx < info->num_led_names; idx++) {
-        LedNameInfo *ledi = &info->led_names[idx];
-        if (ledi->name == name) {
-            *idx_out = idx;
-            return ledi;
+    لكل (xkb_led_شاخص_t idx = 0; idx < info->رقم_led_نامها; idx++) {
+        LedNameInfo *ledi = &info->led_نامها[idx];
+        إذا (ledi->name == name) {
+            *idx_بیرون = idx;
+            أرجع ledi;
         }
     }
 
-    return NULL;
+    أرجع عدم;
 }
 
-static bool
-AddLedName(KeyNamesInfo *info, bool same_file,
-           LedNameInfo *new, xkb_led_index_t new_idx, bool report)
+ساكن bool
+جمع_کن_Led_Name(کلید_نامها_Info *info, bool same_file,
+           LedNameInfo *new, xkb_led_شاخص_t new_idx, bool report)
 {
-    xkb_led_index_t old_idx;
+    xkb_led_شاخص_t old_idx;
     LedNameInfo *old;
-    const bool replace = (new->merge != MERGE_AUGMENT);
+    ثابت bool replace = (new->ادغام != ادغام_AUGMENT);
 
     /* Check if LED with the same name already exists. */
-    old = FindLedByName(info, new->name, &old_idx);
-    if (old) {
-        if (old_idx == new_idx) {
-            if (report)
-                log_warn(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+    old = پیدا_کن_Led_By_Name(info, new->name, &old_idx);
+    إذا (old) {
+        إذا (old_idx == new_idx) {
+            إذا (report)
+                log_warn(info->ctx, XKB_LOG_پیام_NO_ID,
                          "Multiple indicators named \"%s\"; "
                          "Identical definitions ignored\n",
-                         xkb_atom_text(info->ctx, new->name));
-            return true;
+                         xkb_atom_متن(info->ctx, new->name));
+            أرجع true;
         }
 
-        if (report) {
-            xkb_led_index_t use    = (replace ? new_idx + 1 : old_idx + 1);
-            xkb_led_index_t ignore = (replace ? old_idx + 1 : new_idx + 1);
-            log_warn(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+        إذا (report) {
+            xkb_led_شاخص_t use    = (replace ? new_idx + 1 : old_idx + 1);
+            xkb_led_شاخص_t ignore = (replace ? old_idx + 1 : new_idx + 1);
+            log_warn(info->ctx, XKB_LOG_پیام_NO_ID,
                      "Multiple indicators named %s; "
                      "Using %"PRIu32", ignoring %"PRIu32"\n",
-                     xkb_atom_text(info->ctx, new->name), use, ignore);
+                     xkb_atom_متن(info->ctx, new->name), use, ignore);
         }
 
-        if (replace) {
+        إذا (replace) {
             /* Unset previous */
             old->name = XKB_ATOM_NONE;
-        } else {
-            return true;
+        } وإلا {
+            أرجع true;
         }
     }
 
-    if (new_idx >= info->num_led_names)
-        info->num_led_names = new_idx + 1;
+    إذا (new_idx >= info->رقم_led_نامها)
+        info->رقم_led_نامها = new_idx + 1;
 
     /* Check if LED with the same index already exists. */
-    old = &info->led_names[new_idx];
-    if (old->name != XKB_ATOM_NONE) {
-        if (report) {
-            const xkb_atom_t use    = (replace ? new->name : old->name);
-            const xkb_atom_t ignore = (replace ? old->name : new->name);
-            log_warn(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+    old = &info->led_نامها[new_idx];
+    إذا (old->name != XKB_ATOM_NONE) {
+        إذا (report) {
+            ثابت xkb_atom_t use    = (replace ? new->name : old->name);
+            ثابت xkb_atom_t ignore = (replace ? old->name : new->name);
+            log_warn(info->ctx, XKB_LOG_پیام_NO_ID,
                      "Multiple names for indicator %"PRIu32"; "
                      "Using %s, ignoring %s\n", new_idx + 1,
-                     xkb_atom_text(info->ctx, use),
-                     xkb_atom_text(info->ctx, ignore));
+                     xkb_atom_متن(info->ctx, use),
+                     xkb_atom_متن(info->ctx, ignore));
         }
 
-        if (replace)
+        إذا (replace)
             *old = *new;
 
-        return true;
+        أرجع true;
     }
 
     *old = *new;
-    return true;
+    أرجع true;
 }
 
-static void
-ClearKeyNamesInfo(KeyNamesInfo *info)
+ساكن فراغ
+Clear_کلید_نامها_Info(کلید_نامها_Info *info)
 {
-    free(info->name);
+    حرر(info->name);
     keycode_store_free(&info->keycodes);
 }
 
-static void
-InitKeyNamesInfo(KeyNamesInfo *info, const struct xkb_keymap_info *keymap_info,
-                 unsigned int include_depth)
+ساكن فراغ
+Init_کلید_نامها_Info(کلید_نامها_Info *info, ثابت بنية xkb_keymap_info *keymap_info,
+                 بیعلامت صحيح include_عمق)
 {
-    memset(info, 0, sizeof(*info));
+    memset(info, 0, حجم(*info));
     info->ctx = keymap_info->keymap.ctx;
     info->keymap_info = keymap_info;
-    info->include_depth = include_depth;
+    info->include_عمق = include_عمق;
     keycode_store_init(&info->keycodes);
 }
 
-static bool
-AddKeyName(KeyNamesInfo *info, xkb_keycode_t kc, xkb_atom_t name,
-           enum merge_mode merge, bool report)
+ساكن bool
+جمع_کن_کلید_Name(کلید_نامها_Info *info, xkb_keycode_t kc, xkb_atom_t name,
+           تعداد ادغام_نما ادغام, bool report)
 {
-#ifdef NDEBUG
-    const
-#endif
-    KeycodeMatch match_name = keycode_store_lookup_name(&info->keycodes, name);
-    if (match_name.found) {
-        const bool clobber = (merge != MERGE_AUGMENT);
+#اگر_تعریف_شده NDEBUG
+    ثابت
+#پایان_اگر
+    Keycode_تطابق تطابق_name = keycode_store_lookup_name(&info->keycodes, name);
+    إذا (تطابق_name.یافت) {
+        ثابت bool clobber = (ادغام != ادغام_AUGMENT);
 
-        if (match_name.is_alias) {
+        إذا (تطابق_name.is_alias) {
             /*
              * There is already an alias with this name.
              *
@@ -482,290 +482,290 @@ AddKeyName(KeyNamesInfo *info, xkb_keycode_t kc, xkb_atom_t name,
              * the keymap.
              */
 
-            if (report) {
-                log_warn(info->ctx, XKB_WARNING_CONFLICTING_KEY_NAME,
+            إذا (report) {
+                log_warn(info->ctx, XKB_WARNING_CONFLICTING_کلید_NAME,
                          "Key name %s already assigned to an alias; "
                          "Using %s, ignoring %s\n",
-                         KeyNameText(info->ctx, name),
+                         کلید_Name_متن(info->ctx, name),
                          (clobber ? "key" : "alias"),
                          (clobber ? "alias" : "key"));
             }
 
-            if (clobber) {
+            إذا (clobber) {
                 /*
                  * Override the alias. If there is a conflict with the keycode
                  * afterwards, the old key entry will be also overriden thanks
                  * to “clobber”.
                  */
                 keycode_store_delete_name(&info->keycodes, name);
-#ifndef NDEBUG
-                match_name.found = false;
-#endif
-            } else {
-                return true;
+#اگر_تعریف_نشده NDEBUG
+                تطابق_name.یافت = false;
+#پایان_اگر
+            } وإلا {
+                أرجع true;
             }
-        } else {
-            const xkb_keycode_t old_kc =
-                keycode_store_get_keycode(&info->keycodes, match_name);
-            assert(old_kc != XKB_KEYCODE_INVALID);
-            if (old_kc != kc) {
+        } وإلا {
+            ثابت xkb_keycode_t old_kc =
+                keycode_store_get_keycode(&info->keycodes, تطابق_name);
+            أكد(old_kc != XKB_KEYCODE_INVALID);
+            إذا (old_kc != kc) {
                 /* There is already a different key with this name. */
 
-                if (report) {
-                    const xkb_keycode_t use    = (clobber) ? kc : old_kc;
-                    const xkb_keycode_t ignore = (clobber) ? old_kc : kc;
-                    log_warn(info->ctx, XKB_WARNING_CONFLICTING_KEY_NAME,
+                إذا (report) {
+                    ثابت xkb_keycode_t use    = (clobber) ? kc : old_kc;
+                    ثابت xkb_keycode_t ignore = (clobber) ? old_kc : kc;
+                    log_warn(info->ctx, XKB_WARNING_CONFLICTING_کلید_NAME,
                             "Key name %s assigned to multiple keys; "
                             "Using %"PRIu32", ignoring %"PRIu32"\n",
-                            KeyNameText(info->ctx, name), use, ignore);
+                            کلید_Name_متن(info->ctx, name), use, ignore);
                 }
 
-                if (clobber) {
+                إذا (clobber) {
                     /* Remove conflicting key name mapping */
-                    keycode_store_delete_key(&info->keycodes, match_name);
-                } else {
-                    return true;
+                    keycode_store_delete_کلید(&info->keycodes, تطابق_name);
+                } وإلا {
+                    أرجع true;
                 }
             }
         }
     }
 
-    const KeycodeMatch match_kc = keycode_store_lookup_keycode(&info->keycodes, kc);
-    const xkb_atom_t old_name = keycode_store_get_key_name(&info->keycodes, match_kc);
-    if (old_name != XKB_ATOM_NONE) {
+    ثابت Keycode_تطابق تطابق_kc = keycode_store_lookup_keycode(&info->keycodes, kc);
+    ثابت xkb_atom_t old_name = keycode_store_get_کلید_name(&info->keycodes, تطابق_kc);
+    إذا (old_name != XKB_ATOM_NONE) {
         /* There is already a key with this keycode. */
 
-        if (old_name == name) {
-            assert(keycode_store_get_keycode(&info->keycodes, match_name) == kc);
-            if (report)
-                log_warn(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+        إذا (old_name == name) {
+            أكد(keycode_store_get_keycode(&info->keycodes, تطابق_name) == kc);
+            إذا (report)
+                log_warn(info->ctx, XKB_LOG_پیام_NO_ID,
                          "Multiple identical key name definitions; "
                          "Later occurrences of \"%s = %"PRIu32"\" ignored\n",
-                         KeyNameText(info->ctx, old_name), kc);
-            return true;
+                         کلید_Name_متن(info->ctx, old_name), kc);
+            أرجع true;
         }
 
-        const bool clobber = (merge != MERGE_AUGMENT);
-        if (report) {
-            const char* const kname     = KeyNameText(info->ctx, name);
-            const char* const old_kname = KeyNameText(info->ctx, old_name);
-            const char* const use    = (clobber) ? kname : old_kname;
-            const char* const ignore = (clobber) ? old_kname : kname;
-            log_warn(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+        ثابت bool clobber = (ادغام != ادغام_AUGMENT);
+        إذا (report) {
+            ثابت حرف* ثابت kname     = کلید_Name_متن(info->ctx, name);
+            ثابت حرف* ثابت old_kname = کلید_Name_متن(info->ctx, old_name);
+            ثابت حرف* ثابت use    = (clobber) ? kname : old_kname;
+            ثابت حرف* ثابت ignore = (clobber) ? old_kname : kname;
+            log_warn(info->ctx, XKB_LOG_پیام_NO_ID,
                      "Multiple names for keycode %"PRIu32"; "
                      "Using %s, ignoring %s\n", kc, use, ignore);
         }
-        if (clobber) {
+        إذا (clobber) {
             keycode_store_delete_name(&info->keycodes, old_name);
-            keycode_store_update_key(&info->keycodes, match_kc, name);
+            keycode_store_update_کلید(&info->keycodes, تطابق_kc, name);
         }
-    } else {
+    } وإلا {
         /* No previous keycode */
-        if (!keycode_store_insert_key(&info->keycodes, kc, name)) {
-            log_err(info->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
+        إذا (!keycode_store_درج_کلید(&info->keycodes, kc, name)) {
+            log_err(info->ctx, XKB_ERROR_تخصیص_FAILURE_2,
                     "Cannot add keycode\n");
-            return false;
+            أرجع false;
         }
     }
 
-    return true;
+    أرجع true;
 }
 
 /***====================================================================***/
 
-static bool
-HandleAliasDef(KeyNamesInfo *info, const KeyAliasDef *def, bool report);
+ساكن bool
+HandleAliasDef(کلید_نامها_Info *info, ثابت کلید_Alias_Def *def, bool report);
 
-static void
-MergeKeycodeStores(KeyNamesInfo *into, KeyNamesInfo *from,
-                   enum merge_mode merge, bool report)
+ساكن فراغ
+ادغام_Keycode_Stores(کلید_نامها_Info *into, کلید_نامها_Info *from,
+                   تعداد ادغام_نما ادغام, bool report)
 {
-    if (darray_empty(into->keycodes.low) && darray_empty(into->keycodes.high) &&
-        darray_empty(into->keycodes.names)) {
+    إذا (darray_خالی(into->keycodes.کم) && darray_خالی(into->keycodes.بالا) &&
+        darray_خالی(into->keycodes.نامها)) {
         /* Fast path: steal “from” */
         into->keycodes = from->keycodes;
-        darray_init(from->keycodes.low);
-        darray_init(from->keycodes.high);
-        darray_init(from->keycodes.names);
-    } else {
+        darray_init(from->keycodes.کم);
+        darray_init(from->keycodes.بالا);
+        darray_init(from->keycodes.نامها);
+    } وإلا {
         /* Slow path: check for conflicts */
 
         /* Low keycodes */
-        for (xkb_keycode_t kc = from->keycodes.min;
-             kc < (xkb_keycode_t) darray_size(from->keycodes.low);
+        لكل (xkb_keycode_t kc = from->keycodes.min;
+             kc < (xkb_keycode_t) darray_اندازه(from->keycodes.کم);
              kc++) {
             /* Skip undefined keycodes */
-            const xkb_atom_t name = darray_item(from->keycodes.low, kc);
-            if (name == XKB_ATOM_NONE)
-                continue;
+            ثابت xkb_atom_t name = darray_قلم(from->keycodes.کم, kc);
+            إذا (name == XKB_ATOM_NONE)
+                استمر;
 
-            if (!AddKeyName(into, kc, name, merge, report))
-                into->errorCount++;
+            إذا (!جمع_کن_کلید_Name(into, kc, name, ادغام, report))
+                into->error_شمار++;
         }
 
         /* High keycodes */
-        const HighKeycodeEntry *new;
-        darray_foreach(new, from->keycodes.high) {
-            assert(new->name != XKB_ATOM_NONE);
-            if (!AddKeyName(into, new->keycode, new->name, merge, report))
-                into->errorCount++;
+        ثابت بالا_Keycode_مدخل *new;
+        darray_foreach(new, from->keycodes.بالا) {
+            أكد(new->name != XKB_ATOM_NONE);
+            إذا (!جمع_کن_کلید_Name(into, new->keycode, new->name, ادغام, report))
+                into->error_شمار++;
         }
 
         /* Aliases. */
-        KeycodeMatch *match;
+        Keycode_تطابق *تطابق;
         xkb_atom_t alias;
-        darray_enumerate(alias, match, from->keycodes.names) {
-            if (!match->found || !match->is_alias)
-                continue;
+        darray_enumerate(alias, تطابق, from->keycodes.نامها) {
+            إذا (!تطابق->یافت || !تطابق->is_alias)
+                استمر;
 
-            const KeyAliasDef def = {
-                .merge = merge,
+            ثابت کلید_Alias_Def def = {
+                .ادغام = ادغام,
                 .alias = alias,
-                .real = match->alias.real
+                .real = تطابق->alias.real
             };
-            if (!HandleAliasDef(into, &def, report))
-                into->errorCount++;
+            إذا (!HandleAliasDef(into, &def, report))
+                into->error_شمار++;
         }
     }
 }
 
-static void
-MergeIncludedKeycodes(KeyNamesInfo *into, KeyNamesInfo *from,
-                      enum merge_mode merge, bool report)
+ساكن فراغ
+ادغام_Included_Keycodes(کلید_نامها_Info *into, کلید_نامها_Info *from,
+                      تعداد ادغام_نما ادغام, bool report)
 {
-    if (from->errorCount > 0) {
-        into->errorCount += from->errorCount;
-        return;
+    إذا (from->error_شمار > 0) {
+        into->error_شمار += from->error_شمار;
+        أرجع;
     }
 
-    if (into->name == NULL) {
+    إذا (into->name == عدم) {
         into->name = steal(&from->name);
     }
 
     /* Merge key names. */
-    MergeKeycodeStores(into, from, merge, report);
+    ادغام_Keycode_Stores(into, from, ادغام, report);
 
     /* Merge LED names. */
-    if (into->num_led_names == 0) {
-        memcpy(into->led_names, from->led_names,
-               sizeof(*from->led_names) * from->num_led_names);
-        into->num_led_names = from->num_led_names;
-        from->num_led_names = 0;
+    إذا (into->رقم_led_نامها == 0) {
+        کپی_حافظه(into->led_نامها, from->led_نامها,
+               حجم(*from->led_نامها) * from->رقم_led_نامها);
+        into->رقم_led_نامها = from->رقم_led_نامها;
+        from->رقم_led_نامها = 0;
     }
-    else {
-        for (xkb_led_index_t idx = 0; idx < from->num_led_names; idx++) {
-            LedNameInfo *ledi = &from->led_names[idx];
+    وإلا {
+        لكل (xkb_led_شاخص_t idx = 0; idx < from->رقم_led_نامها; idx++) {
+            LedNameInfo *ledi = &from->led_نامها[idx];
 
-            if (ledi->name == XKB_ATOM_NONE)
-                continue;
+            إذا (ledi->name == XKB_ATOM_NONE)
+                استمر;
 
-            ledi->merge = merge;
-            if (!AddLedName(into, false, ledi, idx, report))
-                into->errorCount++;
+            ledi->ادغام = ادغام;
+            إذا (!جمع_کن_Led_Name(into, false, ledi, idx, report))
+                into->error_شمار++;
         }
     }
 }
 
-static void
-HandleKeycodesFile(KeyNamesInfo *info, XkbFile *file);
+ساكن فراغ
+HandleKeycodesFile(کلید_نامها_Info *info, XkbFile *file);
 
-static bool
-HandleIncludeKeycodes(KeyNamesInfo *info, IncludeStmt *include, bool report)
+ساكن bool
+HandleIncludeKeycodes(کلید_نامها_Info *info, IncludeStmt *include, bool report)
 {
-    KeyNamesInfo included;
+    کلید_نامها_Info included;
 
-    if (ExceedsIncludeMaxDepth(info->ctx, info->include_depth)) {
-        info->errorCount += 10;
-        return false;
+    إذا (Exceeds_Include_Max_عمق(info->ctx, info->include_عمق)) {
+        info->error_شمار += 10;
+        أرجع false;
     }
 
-    InitKeyNamesInfo(&included, info->keymap_info, 0 /* unused */);
+    Init_کلید_نامها_Info(&included, info->keymap_info, 0 /* unused */);
     included.name = steal(&include->stmt);
 
-    const struct parser_keymap_config config = {
+    ثابت بنية parser_keymap_config config = {
         .format = info->keymap_info->keymap.format,
         .strict = info->keymap_info->strict
     };
 
-    for (IncludeStmt *stmt = include; stmt; stmt = stmt->next_incl) {
-        KeyNamesInfo next_incl;
+    لكل (IncludeStmt *stmt = include; stmt; stmt = stmt->بعدی_incl) {
+        کلید_نامها_Info بعدی_incl;
         XkbFile *file;
 
-        char path[PATH_MAX];
+        حرف مسیر[PATH_MAX];
 
         file = ProcessIncludeFile(info->ctx, &config, stmt, FILE_TYPE_KEYCODES,
-                                  path, sizeof(path));
-        if (!file) {
-            info->errorCount += 10;
-            ClearKeyNamesInfo(&included);
-            return false;
+                                  مسیر, حجم(مسیر));
+        إذا (!file) {
+            info->error_شمار += 10;
+            Clear_کلید_نامها_Info(&included);
+            أرجع false;
         }
 
-        InitKeyNamesInfo(&next_incl, info->keymap_info, info->include_depth + 1);
+        Init_کلید_نامها_Info(&بعدی_incl, info->keymap_info, info->include_عمق + 1);
 
-        HandleKeycodesFile(&next_incl, file);
+        HandleKeycodesFile(&بعدی_incl, file);
 
-        MergeIncludedKeycodes(&included, &next_incl, stmt->merge, report);
+        ادغام_Included_Keycodes(&included, &بعدی_incl, stmt->ادغام, report);
 
-        ClearKeyNamesInfo(&next_incl);
+        Clear_کلید_نامها_Info(&بعدی_incl);
         FreeXkbFile(file);
     }
 
-    MergeIncludedKeycodes(info, &included, include->merge, report);
-    ClearKeyNamesInfo(&included);
+    ادغام_Included_Keycodes(info, &included, include->ادغام, report);
+    Clear_کلید_نامها_Info(&included);
 
-    return (info->errorCount == 0);
+    أرجع (info->error_شمار == 0);
 }
 
-static bool
-HandleKeycodeDef(KeyNamesInfo *info, KeycodeDef *stmt, bool report)
+ساكن bool
+HandleKeycodeDef(کلید_نامها_Info *info, KeycodeDef *stmt, bool report)
 {
-    if (stmt->value < 0 || stmt->value > XKB_KEYCODE_MAX) {
+    إذا (stmt->مقدار < 0 || stmt->مقدار > XKB_KEYCODE_MAX) {
         log_err(info->ctx, XKB_ERROR_INVALID_KEYCODE_,
                 "Illegal keycode %"PRId64": must be between 0..%u; "
-                "Key ignored\n", stmt->value, XKB_KEYCODE_MAX);
-        return false;
+                "Key ignored\n", stmt->مقدار, XKB_KEYCODE_MAX);
+        أرجع false;
     }
 
-    return AddKeyName(info, (xkb_keycode_t) stmt->value,
-                      stmt->name, stmt->merge, report);
+    أرجع جمع_کن_کلید_Name(info, (xkb_keycode_t) stmt->مقدار,
+                      stmt->name, stmt->ادغام, report);
 }
 
-static bool
-HandleAliasDef(KeyNamesInfo *info, const KeyAliasDef *def, bool report)
+ساكن bool
+HandleAliasDef(کلید_نامها_Info *info, ثابت کلید_Alias_Def *def, bool report)
 {
-    const KeycodeMatch match_name = keycode_store_lookup_name(&info->keycodes,
+    ثابت Keycode_تطابق تطابق_name = keycode_store_lookup_name(&info->keycodes,
                                                               def->alias);
-    if (match_name.found) {
-        const bool clobber = (def->merge != MERGE_AUGMENT);
-        if (match_name.is_alias) {
-            if (def->real == match_name.alias.real) {
-                if (report)
-                    log_warn(info->ctx, XKB_WARNING_CONFLICTING_KEY_NAME,
+    إذا (تطابق_name.یافت) {
+        ثابت bool clobber = (def->ادغام != ادغام_AUGMENT);
+        إذا (تطابق_name.is_alias) {
+            إذا (def->real == تطابق_name.alias.real) {
+                إذا (report)
+                    log_warn(info->ctx, XKB_WARNING_CONFLICTING_کلید_NAME,
                              "Alias of %s for %s declared more than once; "
                              "First definition ignored\n",
-                             KeyNameText(info->ctx, def->alias),
-                             KeyNameText(info->ctx, def->real));
-            } else {
-                const xkb_atom_t use = (clobber)
+                             کلید_Name_متن(info->ctx, def->alias),
+                             کلید_Name_متن(info->ctx, def->real));
+            } وإلا {
+                ثابت xkb_atom_t use = (clobber)
                     ? def->real
-                    : match_name.alias.real;
-                const xkb_atom_t ignore = (clobber)
-                    ? match_name.alias.real
+                    : تطابق_name.alias.real;
+                ثابت xkb_atom_t ignore = (clobber)
+                    ? تطابق_name.alias.real
                     : def->real;
 
-                if (report)
-                    log_warn(info->ctx, XKB_WARNING_CONFLICTING_KEY_NAME,
+                إذا (report)
+                    log_warn(info->ctx, XKB_WARNING_CONFLICTING_کلید_NAME,
                              "Multiple definitions for alias %s; "
                              "Using %s, ignoring %s\n",
-                             KeyNameText(info->ctx, def->alias),
-                             KeyNameText(info->ctx, use),
-                             KeyNameText(info->ctx, ignore));
+                             کلید_Name_متن(info->ctx, def->alias),
+                             کلید_Name_متن(info->ctx, use),
+                             کلید_Name_متن(info->ctx, ignore));
 
                 keycode_store_update_alias(&info->keycodes, def->alias, use);
             }
-            return true;
-        } else {
+            أرجع true;
+        } وإلا {
             /* There is already a real key with this name.
              *
              * Contrary to Xorg’s xkbcomp, keys and aliases share the same
@@ -775,327 +775,327 @@ HandleAliasDef(KeyNamesInfo *info, const KeyAliasDef *def, bool report)
              *
              * Also contrary to xkbcomp, we enable aliases to override keys.
              */
-            if (report) {
-                log_warn(info->ctx, XKB_WARNING_CONFLICTING_KEY_NAME,
+            إذا (report) {
+                log_warn(info->ctx, XKB_WARNING_CONFLICTING_کلید_NAME,
                          "Alias name %s already assigned to a real key; "
                          "Using %s, ignoring %s\n",
-                         KeyNameText(info->ctx, def->alias),
+                         کلید_Name_متن(info->ctx, def->alias),
                          (clobber ? "alias" : "key"),
                          (clobber ? "key" : "alias"));
             }
 
-            if (clobber) {
+            إذا (clobber) {
                 /*
                  * Note that we override the key even if the alias is proved
                  * invalid afterwards. This would be a bug in the keycodes
                  * files or rules, not xkbcommon.
                  */
-                keycode_store_delete_key(&info->keycodes, match_name);
-            } else {
-                return true;
+                keycode_store_delete_کلید(&info->keycodes, تطابق_name);
+            } وإلا {
+                أرجع true;
             }
         }
     }
 
-    return keycode_store_insert_alias(&info->keycodes, def->alias, def->real);
+    أرجع keycode_store_درج_alias(&info->keycodes, def->alias, def->real);
 }
 
-static bool
-HandleKeyNameVar(KeyNamesInfo *info, VarDef *stmt)
+ساكن bool
+Handle_کلید_Name_Var(کلید_نامها_Info *info, VarDef *stmt)
 {
-    const char *elem, *field;
-    ExprDef *arrayNdx;
+    ثابت حرف *elem, *فیلد_2;
+    عبارت_Def *arrayNdx;
 
-    if (!ExprResolveLhs(info->ctx, stmt->name, &elem, &field, &arrayNdx))
-        return false;
+    إذا (!عبارت_Resolve_Lhs(info->ctx, stmt->name, &elem, &فیلد_2, &arrayNdx))
+        أرجع false;
 
-    if (elem) {
+    إذا (elem) {
         log_err(info->ctx, XKB_ERROR_GLOBAL_DEFAULTS_WRONG_SCOPE,
                 "Cannot set global defaults for \"%s\" element; "
-                "Assignment to \"%s.%s\" ignored\n", elem, elem, field);
-        return !(info->keymap_info->strict &
+                "Assignment to \"%s.%s\" ignored\n", elem, elem, فیلد_2);
+        أرجع !(info->keymap_info->strict &
                  PARSER_NO_UNKNOWN_KEYCODES_GLOBAL_FIELDS);
     }
 
-    if (!istreq(field, "minimum") && !istreq(field, "maximum")) {
-        log_err(info->ctx, XKB_ERROR_UNKNOWN_DEFAULT_FIELD,
-                "Default defined for unknown field \"%s\"; Ignored\n", field);
-        return !(info->keymap_info->strict &
+    إذا (!istreq(فیلد_2, "minimum") && !istreq(فیلد_2, "maximum")) {
+        log_err(info->ctx, XKB_ERROR_UNKNOWN_DEFAULT_فیلد,
+                "Default defined for unknown field \"%s\"; Ignored\n", فیلد_2);
+        أرجع !(info->keymap_info->strict &
                  PARSER_NO_UNKNOWN_KEYCODES_GLOBAL_FIELDS);
     }
 
-    if (arrayNdx) {
-        ReportNotArray(info->ctx, "keycodes", field, "defaults");
-        return !(info->keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH);
+    إذا (arrayNdx) {
+        ReportNotArray(info->ctx, "keycodes", فیلد_2, "defaults");
+        أرجع !(info->keymap_info->strict & PARSER_NO_فیلد_TYPE_MISMATCH);
     }
 
     int64_t val = 0;
-    if (!ExprResolveInteger(info->ctx, stmt->value, &val) ||
+    إذا (!عبارت_Resolve_Integer(info->ctx, stmt->مقدار, &val) ||
         val < 0 || val > UINT32_MAX) {
-        ReportBadType(info->ctx, XKB_ERROR_WRONG_FIELD_TYPE, "keycodes",
-                      field, "defaults", "integer 0..0xfffffffe");
+        ReportBadType(info->ctx, XKB_ERROR_WRONG_فیلد_TYPE, "keycodes",
+                      فیلد_2, "defaults", "integer 0..0xfffffffe");
         static_assert(XKB_KEYCODE_MAX == 0xfffffffe, "update error message");
-        return !(info->keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH);
+        أرجع !(info->keymap_info->strict & PARSER_NO_فیلد_TYPE_MISMATCH);
     }
 
     /* We ignore explicit min/max statements, we always use computed. */
-    return true;
+    أرجع true;
 }
 
-static bool
-HandleLedNameDef(KeyNamesInfo *info, LedNameDef *def, bool report)
+ساكن bool
+HandleLedNameDef(کلید_نامها_Info *info, LedNameDef *def, bool report)
 {
-    if (def->ndx < 1 || def->ndx > XKB_MAX_LEDS) {
-        info->errorCount++;
-        log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+    إذا (def->ndx < 1 || def->ndx > XKB_MAX_LEDS) {
+        info->error_شمار++;
+        log_err(info->ctx, XKB_LOG_پیام_NO_ID,
                 "Illegal indicator index (%"PRId64") specified; "
                 "must be between 1 .. %"PRIu32"; Ignored\n",
                 def->ndx, XKB_MAX_LEDS);
-        return false;
+        أرجع false;
     }
 
     xkb_atom_t name = XKB_ATOM_NONE;
-    if (!ExprResolveString(info->ctx, def->name, &name)) {
-        char buf[20];
-        snprintf(buf, sizeof(buf), "%"PRId64, def->ndx);
-        info->errorCount++;
-        return ReportBadType(info->ctx, XKB_ERROR_WRONG_FIELD_TYPE,
+    إذا (!عبارت_Resolve_String(info->ctx, def->name, &name)) {
+        حرف buf[20];
+        snprintf(buf, حجم(buf), "%"PRId64, def->ndx);
+        info->error_شمار++;
+        أرجع ReportBadType(info->ctx, XKB_ERROR_WRONG_فیلد_TYPE,
                              "indicator", "name", buf, "string");
     }
 
-    LedNameInfo ledi = {.merge = def->merge, .name = name};
-    return AddLedName(info, true, &ledi, (xkb_led_index_t) def->ndx - 1, report);
+    LedNameInfo ledi = {.ادغام = def->ادغام, .name = name};
+    أرجع جمع_کن_Led_Name(info, true, &ledi, (xkb_led_شاخص_t) def->ndx - 1, report);
 }
 
-static void
-HandleKeycodesFile(KeyNamesInfo *info, XkbFile *file)
+ساكن فراغ
+HandleKeycodesFile(کلید_نامها_Info *info, XkbFile *file)
 {
     bool ok;
 
     /* Conflicts in the same file probably require more attention than conflicts
      * with included files. */
-    const int verbosity = xkb_context_get_log_verbosity(info->ctx);
-    const bool report_same_file = verbosity > 0;
-    const bool report_include   = verbosity > 7;
+    ثابت صحيح verbosity = xkb_context_get_log_verbosity(info->ctx);
+    ثابت bool report_same_file = verbosity > 0;
+    ثابت bool report_include   = verbosity > 7;
 
-    free(info->name);
-    info->name = strdup_safe(file->name);
+    حرر(info->name);
+    info->name = strdup_امن(file->name);
 
-    for (ParseCommon *stmt = file->defs; stmt; stmt = stmt->next) {
-        switch (stmt->type) {
-        case STMT_INCLUDE:
+    لكل (ParseCommon *stmt = file->defs; stmt; stmt = stmt->بعدی) {
+        بدل (stmt->type) {
+        حالة STMT_INCLUDE:
             ok = HandleIncludeKeycodes(info, (IncludeStmt *) stmt, report_include);
-            break;
-        case STMT_KEYCODE:
+            اكسر;
+        حالة STMT_KEYCODE:
             ok = HandleKeycodeDef(info, (KeycodeDef *) stmt, report_same_file);
-            break;
-        case STMT_ALIAS:
-            ok = HandleAliasDef(info, (KeyAliasDef *) stmt, report_same_file);
-            break;
-        case STMT_VAR:
-            ok = HandleKeyNameVar(info, (VarDef *) stmt);
-            break;
-        case STMT_LED_NAME:
+            اكسر;
+        حالة STMT_ALIAS:
+            ok = HandleAliasDef(info, (کلید_Alias_Def *) stmt, report_same_file);
+            اكسر;
+        حالة STMT_VAR:
+            ok = Handle_کلید_Name_Var(info, (VarDef *) stmt);
+            اكسر;
+        حالة STMT_LED_NAME:
             ok = HandleLedNameDef(info, (LedNameDef *) stmt, report_same_file);
-            break;
-        case STMT_UNKNOWN_DECLARATION:
-        case STMT_UNKNOWN_COMPOUND:
+            اكسر;
+        حالة STMT_UNKNOWN_DECLARATION:
+        حالة STMT_UNKNOWN_COMPOUND:
             log_err(info->ctx, XKB_ERROR_UNKNOWN_STATEMENT,
                     "Unsupported keycodes %s statement \"%s\"; Ignoring\n",
                     (stmt->type == STMT_UNKNOWN_COMPOUND
                         ? "compound" : "declaration"),
                     ((UnknownStatement *)stmt)->name);
             ok = !(info->keymap_info->strict & PARSER_NO_UNKNOWN_STATEMENTS);
-            break;
-        default:
-            log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+            اكسر;
+        افتراضي:
+            log_err(info->ctx, XKB_LOG_پیام_NO_ID,
                     "Keycode files may define key and indicator names only; "
-                    "Ignoring %s\n", stmt_type_to_string(stmt->type));
+                    "Ignoring %s\n", stmt_type_مقصد_string(stmt->type));
             ok = false;
-            break;
+            اكسر;
         }
 
-        if (!ok)
-            info->errorCount++;
+        إذا (!ok)
+            info->error_شمار++;
 
-        if (info->errorCount > 10) {
-            log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+        إذا (info->error_شمار > 10) {
+            log_err(info->ctx, XKB_LOG_پیام_NO_ID,
                     "Abandoning keycodes file \"%s\"\n",
-                    safe_map_name(file->name));
-            break;
+                    امن_map_name(file->name));
+            اكسر;
         }
     }
 }
 
 /***====================================================================***/
 
-static bool
-CopyKeyNamesToKeymap(struct xkb_keymap *keymap, KeyNamesInfo *info)
+ساكن bool
+Copy_کلید_نامها_مقصد_Keymap(بنية xkb_keymap *keymap, کلید_نامها_Info *info)
 {
-    if (darray_empty(info->keycodes.low) && darray_empty(info->keycodes.high)) {
+    إذا (darray_خالی(info->keycodes.کم) && darray_خالی(info->keycodes.بالا)) {
         /* If the keymap has no keys, let’s just use the safest pair we know. */
-        assert(info->keycodes.min == XKB_KEYCODE_INVALID);
-        keymap->min_key_code = 8;
+        أكد(info->keycodes.min == XKB_KEYCODE_INVALID);
+        keymap->min_کلید_کد = 8;
         static_assert(255 < XKB_KEYCODE_MAX_CONTIGUOUS, "");
-        keymap->max_key_code = 255;
-        keymap->num_keys = keymap->num_keys_low = keymap->max_key_code + 1;
-    } else {
-        assert(info->keycodes.min <= XKB_KEYCODE_MAX);
-        keymap->min_key_code = info->keycodes.min;
-        keymap->max_key_code = (darray_empty(info->keycodes.high))
-            ? darray_size(info->keycodes.low) - 1
-            : darray_item(
-                info->keycodes.high,
-                darray_size(info->keycodes.high) - 1
+        keymap->max_کلید_کد = 255;
+        keymap->رقم_کلیدها = keymap->رقم_کلیدها_کم = keymap->max_کلید_کد + 1;
+    } وإلا {
+        أكد(info->keycodes.min <= XKB_KEYCODE_MAX);
+        keymap->min_کلید_کد = info->keycodes.min;
+        keymap->max_کلید_کد = (darray_خالی(info->keycodes.بالا))
+            ? darray_اندازه(info->keycodes.کم) - 1
+            : darray_قلم(
+                info->keycodes.بالا,
+                darray_اندازه(info->keycodes.بالا) - 1
             ).keycode;
-        keymap->num_keys_low = darray_size(info->keycodes.low);
-        keymap->num_keys = keymap->num_keys_low
-                         + darray_size(info->keycodes.high);
+        keymap->رقم_کلیدها_کم = darray_اندازه(info->keycodes.کم);
+        keymap->رقم_کلیدها = keymap->رقم_کلیدها_کم
+                         + darray_اندازه(info->keycodes.بالا);
     }
 
-    struct xkb_key * const keys = calloc(keymap->num_keys, sizeof(*keys));
-    if (!keys) {
-        keymap->num_keys = 0;
-        keymap->min_key_code = keymap->max_key_code = XKB_KEYCODE_INVALID;
-        return false;
+    بنية xkb_کلید * ثابت کلیدها = حافظه_صفر_بده(keymap->رقم_کلیدها, حجم(*کلیدها));
+    إذا (!کلیدها) {
+        keymap->رقم_کلیدها = 0;
+        keymap->min_کلید_کد = keymap->max_کلید_کد = XKB_KEYCODE_INVALID;
+        أرجع false;
     }
 
     /* Low keycodes */
-    for (xkb_keycode_t kc = keymap->min_key_code; kc < keymap->num_keys_low; kc++)
-        keys[kc].keycode = kc;
+    لكل (xkb_keycode_t kc = keymap->min_کلید_کد; kc < keymap->رقم_کلیدها_کم; kc++)
+        کلیدها[kc].keycode = kc;
 
-    for (xkb_keycode_t kc = info->keycodes.min;
-         kc < (xkb_keycode_t) darray_size(info->keycodes.low);
+    لكل (xkb_keycode_t kc = info->keycodes.min;
+         kc < (xkb_keycode_t) darray_اندازه(info->keycodes.کم);
          kc++)
-        keys[kc].name = darray_item(info->keycodes.low, kc);
+        کلیدها[kc].name = darray_قلم(info->keycodes.کم, kc);
 
     /* High keycodes */
-    xkb_keycode_t idx = keymap->num_keys_low; /* First high keycode index */
-    const HighKeycodeEntry *entry;
-    darray_foreach(entry, info->keycodes.high) {
-        assert(entry->name != XKB_ATOM_NONE);
-        keys[idx].keycode = entry->keycode;
-        keys[idx].name = entry->name;
+    xkb_keycode_t idx = keymap->رقم_کلیدها_کم; /* First high keycode index */
+    ثابت بالا_Keycode_مدخل *مدخل;
+    darray_foreach(مدخل, info->keycodes.بالا) {
+        أكد(مدخل->name != XKB_ATOM_NONE);
+        کلیدها[idx].keycode = مدخل->keycode;
+        کلیدها[idx].name = مدخل->name;
         idx++;
     }
 
-    keymap->keys = keys;
-    return true;
+    keymap->کلیدها = کلیدها;
+    أرجع true;
 }
 
-static bool
-CopyKeycodeNameLUT(struct xkb_keymap *keymap, KeyNamesInfo *info)
+ساكن bool
+CopyKeycodeNameLUT(بنية xkb_keymap *keymap, کلید_نامها_Info *info)
 {
-    KeycodeMatch *match;
+    Keycode_تطابق *تطابق;
     xkb_atom_t name;
-    darray_enumerate(name, match, info->keycodes.names) {
-        if (!match->found)
-            continue;
+    darray_enumerate(name, تطابق, info->keycodes.نامها) {
+        إذا (!تطابق->یافت)
+            استمر;
 
-        if (match->is_alias) {
+        إذا (تطابق->is_alias) {
             /*
              * Do some sanity checking on the aliases. We can’t do it before
              * because keys and their aliases may be added out-of-order.
              */
 
             /* Check that ->real is a key. */
-            const KeycodeMatch match_real =
-                keycode_store_lookup_name(&info->keycodes, match->alias.real);
-            if (!match_real.found) {
+            ثابت Keycode_تطابق تطابق_real =
+                keycode_store_lookup_name(&info->keycodes, تطابق->alias.real);
+            إذا (!تطابق_real.یافت) {
                 log_vrb(info->ctx, XKB_LOG_VERBOSITY_DETAILED,
                         XKB_WARNING_UNDEFINED_KEYCODE,
                         "Attempt to alias %s to non-existent key %s; Ignored\n",
-                        KeyNameText(info->ctx, name),
-                        KeyNameText(info->ctx, match->alias.real));
-                match->found = false;
-                continue;
+                        کلید_Name_متن(info->ctx, name),
+                        کلید_Name_متن(info->ctx, تطابق->alias.real));
+                تطابق->یافت = false;
+                استمر;
             }
-            assert(!match_real.is_alias);
-        } else if (!match->key.low) {
+            أكد(!تطابق_real.is_alias);
+        } وإلا إذا (!تطابق->کلید.کم) {
             /* Update to final index in keymap::keys */
-            match->key.index += keymap->num_keys_low;
+            تطابق->کلید.شاخص += keymap->رقم_کلیدها_کم;
         }
     }
 
-    darray_shrink(info->keycodes.names);
-    keymap->num_key_names = darray_size(info->keycodes.names);
-    darray_steal(info->keycodes.names, &keymap->key_names, NULL);
-    darray_init(info->keycodes.names);
-    return true;
+    darray_shrink(info->keycodes.نامها);
+    keymap->رقم_کلید_نامها = darray_اندازه(info->keycodes.نامها);
+    darray_steal(info->keycodes.نامها, &keymap->کلید_نامها, عدم);
+    darray_init(info->keycodes.نامها);
+    أرجع true;
 }
 
-static bool
-CopyLedNamesToKeymap(struct xkb_keymap *keymap, KeyNamesInfo *info)
+ساكن bool
+Copy_Led_نامها_مقصد_Keymap(بنية xkb_keymap *keymap, کلید_نامها_Info *info)
 {
-    keymap->num_leds = info->num_led_names;
-    for (xkb_led_index_t idx = 0; idx < info->num_led_names; idx++) {
-        LedNameInfo *ledi = &info->led_names[idx];
+    keymap->رقم_leds = info->رقم_led_نامها;
+    لكل (xkb_led_شاخص_t idx = 0; idx < info->رقم_led_نامها; idx++) {
+        LedNameInfo *ledi = &info->led_نامها[idx];
 
-        if (ledi->name == XKB_ATOM_NONE)
-            continue;
+        إذا (ledi->name == XKB_ATOM_NONE)
+            استمر;
 
         keymap->leds[idx].name = ledi->name;
     }
 
-    return true;
+    أرجع true;
 }
 
-static bool
-CopyKeyNamesInfoToKeymap(struct xkb_keymap *keymap, KeyNamesInfo *info)
+ساكن bool
+Copy_کلید_نامها_Info_مقصد_Keymap(بنية xkb_keymap *keymap, کلید_نامها_Info *info)
 {
     /* This function trashes keymap on error, but that's OK. */
-    if (!CopyKeyNamesToKeymap(keymap, info) ||
+    إذا (!Copy_کلید_نامها_مقصد_Keymap(keymap, info) ||
         !CopyKeycodeNameLUT(keymap, info) ||
-        !CopyLedNamesToKeymap(keymap, info))
-        return false;
+        !Copy_Led_نامها_مقصد_Keymap(keymap, info))
+        أرجع false;
 
     /*
      * Choose an undefined keycode as an intermediary value to encode special
      * “auto” value of RedirectKey(), because there is no space left in the
      * action type to store a flag.
      */
-    if (!keymap->num_keys ||
-        keymap->min_key_code > 0) {
-        keymap->redirect_key_auto = 0;
-    } else {
+    إذا (!keymap->رقم_کلیدها ||
+        keymap->min_کلید_کد > 0) {
+        keymap->redirect_کلید_auto = 0;
+    } وإلا {
         /* Slow path */
         xkb_keycode_t keycode = XKB_KEYCODE_INVALID - 1;
-        for (xkb_keycode_t k = keymap->num_keys; k-- > keymap->num_keys_low;) {
-            if (keycode > keymap->keys[k].keycode)
-                break;
+        لكل (xkb_keycode_t k = keymap->رقم_کلیدها; k-- > keymap->رقم_کلیدها_کم;) {
+            إذا (keycode > keymap->کلیدها[k].keycode)
+                اكسر;
             /* Try next keycode downwards */
-            keycode = keymap->keys[k].keycode - 1;
+            keycode = keymap->کلیدها[k].keycode - 1;
         }
-        keymap->redirect_key_auto = keycode;
+        keymap->redirect_کلید_auto = keycode;
     }
 
-    keymap->keycodes_section_name = strdup_safe(info->name);
+    keymap->keycodes_section_name = strdup_امن(info->name);
     XkbEscapeMapName(keymap->keycodes_section_name);
-    return true;
+    أرجع true;
 }
 
 /***====================================================================***/
 
 bool
-CompileKeycodes(XkbFile *file, struct xkb_keymap_info *keymap_info)
+CompileKeycodes(XkbFile *file, بنية xkb_keymap_info *keymap_info)
 {
-    KeyNamesInfo info;
+    کلید_نامها_Info info;
 
-    InitKeyNamesInfo(&info, keymap_info, 0);
+    Init_کلید_نامها_Info(&info, keymap_info, 0);
 
-    if (file != NULL)
+    إذا (file != عدم)
         HandleKeycodesFile(&info, file);
 
-    if (info.errorCount != 0)
-        goto err_info;
+    إذا (info.error_شمار != 0)
+        اذهب err_info;
 
-    if (!CopyKeyNamesInfoToKeymap(&keymap_info->keymap, &info))
-        goto err_info;
+    إذا (!Copy_کلید_نامها_Info_مقصد_Keymap(&keymap_info->keymap, &info))
+        اذهب err_info;
 
-    ClearKeyNamesInfo(&info);
-    return true;
+    Clear_کلید_نامها_Info(&info);
+    أرجع true;
 
 err_info:
-    ClearKeyNamesInfo(&info);
-    return false;
+    Clear_کلید_نامها_Info(&info);
+    أرجع false;
 }

@@ -53,132 +53,132 @@
    USER NAME SPACE" below.  */
 
 /* Identify Bison output, and Bison version.  */
-#define YYBISON 30802
+#تعریف_کن YYBISON 30802
 
 /* Bison version string.  */
-#define YYBISON_VERSION "3.8.2"
+#تعریف_کن YYBISON_نسخه "3.8.2"
 
 /* Skeleton name.  */
-#define YYSKELETON_NAME "yacc.c"
+#تعریف_کن YYSKELETON_NAME "yacc.c"
 
 /* Pure parsers.  */
-#define YYPURE 1
+#تعریف_کن YYPURE 1
 
 /* Push parsers.  */
-#define YYPUSH 0
+#تعریف_کن YYPUSH 0
 
 /* Pull parsers.  */
-#define YYPULL 1
+#تعریف_کن YYPULL 1
 
 
 /* Substitute the variable and function names.  */
-#define yyparse         _xkbcommon_parse
-#define yylex           _xkbcommon_lex
-#define yyerror         _xkbcommon_error
-#define yydebug         _xkbcommon_debug
-#define yynerrs         _xkbcommon_nerrs
+#تعریف_کن yyparse         _xkbcommon_parse
+#تعریف_کن yylex           _xkbcommon_lex
+#تعریف_کن yyerror         _xkbcommon_error
+#تعریف_کن yydebug         _xkbcommon_debug
+#تعریف_کن yynerrs         _xkbcommon_nerrs
 
 /* First part of user prologue.  */
-#line 22 "src/xkbcomp/parser.y"
+#سطر 22 "src/xkbcomp/parser.y"
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <assert.h>
+#ضمن <assert.h>
 
-#include "keysym.h"
-#include "xkbcomp/xkbcomp-priv.h"
-#include "xkbcomp/parser-priv.h"
-#include "xkbcomp/ast-build.h"
+#ضمن "keysym.h"
+#ضمن "xkbcomp/xkbcomp-priv.h"
+#ضمن "xkbcomp/parser-priv.h"
+#ضمن "xkbcomp/ast-build.h"
 
-struct parser_param {
-    struct xkb_context *ctx;
-    struct scanner *scanner;
+بنية parser_param {
+    بنية xkb_context *ctx;
+    بنية scanner *scanner;
     XkbFile *rtrn;
-    struct parser_keymap_config config;
-    bool more_maps;
+    بنية parser_keymap_config config;
+    bool بیشتر_maps;
 };
 
-#define parser_log_with_code(param, level, verbosity, log_msg_id, fmt, ...)   \
-    scanner_log_with_code((param)->scanner, level, verbosity, log_msg_id, fmt,\
+#تعریف_کن parser_log_with_کد(param, level, verbosity, log_پیام_id, fmt, ...)   \
+    scanner_log_with_کد((param)->scanner, level, verbosity, log_پیام_id, fmt,\
                           ##__VA_ARGS__)
 
-#define parser_err(param, error_id, fmt, ...) \
+#تعریف_کن parser_err(param, error_id, fmt, ...) \
     scanner_err((param)->scanner, error_id, fmt, ##__VA_ARGS__)
 
-#define parser_warn(param, warning_id, fmt, ...) \
+#تعریف_کن parser_warn(param, warning_id, fmt, ...) \
     scanner_warn((param)->scanner, warning_id, fmt, ##__VA_ARGS__)
 
-#define parser_vrb(param, verbosity, warning_id, fmt, ...) \
+#تعریف_کن parser_vrb(param, verbosity, warning_id, fmt, ...) \
     scanner_vrb((param)->scanner, verbosity, warning_id, fmt, ##__VA_ARGS__)
 
-static void
-_xkbcommon_error(struct parser_param *param, const char *msg)
+ساكن فراغ
+_xkbcommon_error(بنية parser_param *param, ثابت حرف *پیام)
 {
-    parser_err(param, XKB_ERROR_INVALID_XKB_SYNTAX, "%s", msg);
+    parser_err(param, XKB_ERROR_INVALID_XKB_SYNTAX, "%s", پیام);
 }
 
-static bool
-resolve_keysym(struct parser_param *param, struct sval name, xkb_keysym_t *sym_rtrn)
+ساكن bool
+resolve_keysym(بنية parser_param *param, بنية sval name, xkb_keysym_t *sym_rtrn)
 {
     xkb_keysym_t sym;
 
-    if (isvaleq(name, SVAL_LIT("any")) || isvaleq(name, SVAL_LIT("nosymbol"))) {
-        *sym_rtrn = XKB_KEY_NoSymbol;
-        return true;
+    إذا (isvaleq(name, SVAL_LIT("any")) || isvaleq(name, SVAL_LIT("nosymbol"))) {
+        *sym_rtrn = XKB_کلید_No_نماد;
+        أرجع true;
     }
 
-    if (isvaleq(name, SVAL_LIT("none")) || isvaleq(name, SVAL_LIT("voidsymbol"))) {
-        *sym_rtrn = XKB_KEY_VoidSymbol;
-        return true;
+    إذا (isvaleq(name, SVAL_LIT("none")) || isvaleq(name, SVAL_LIT("voidsymbol"))) {
+        *sym_rtrn = XKB_کلید_Void_نماد;
+        أرجع true;
     }
 
     /* xkb_keysym_from_name needs a C string. */
-    char buf[XKB_KEYSYM_NAME_MAX_SIZE];
-    if (name.len >= sizeof(buf)) {
-        return false;
+    حرف buf[XKB_KEYSYM_NAME_MAX_اندازه];
+    إذا (name.len >= حجم(buf)) {
+        أرجع false;
     }
-    memcpy(buf, name.start, name.len);
+    کپی_حافظه(buf, name.شروع, name.len);
     buf[name.len] = '\0';
 
     sym = xkb_keysym_from_name(buf, XKB_KEYSYM_NO_FLAGS);
-    if (sym != XKB_KEY_NoSymbol) {
+    إذا (sym != XKB_کلید_No_نماد) {
         *sym_rtrn = sym;
         check_deprecated_keysyms(parser_warn, param, param->ctx,
                                  sym, buf, buf, "%s", "");
-        return true;
+        أرجع true;
     }
 
-    return false;
+    أرجع false;
 }
 
-#define param_scanner param->scanner
+#تعریف_کن param_scanner param->scanner
 
-#line 150 "src/xkbcomp/parser.c"
+#سطر 150 "src/xkbcomp/parser.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
 #   define YY_CAST(Type, Val) static_cast<Type> (Val)
 #   define YY_REINTERPRET_CAST(Type, Val) reinterpret_cast<Type> (Val)
-#  else
+#  وإلا
 #   define YY_CAST(Type, Val) ((Type) (Val))
 #   define YY_REINTERPRET_CAST(Type, Val) ((Type) (Val))
 #  endif
 # endif
 # ifndef YY_NULLPTR
-#  if defined __cplusplus
-#   if 201103L <= __cplusplus
+#  إذا defined __cplusplus
+#   إذا 201103L <= __cplusplus
 #    define YY_NULLPTR nullptr
-#   else
+#   وإلا
 #    define YY_NULLPTR 0
 #   endif
-#  else
-#   define YY_NULLPTR ((void*)0)
+#  وإلا
+#   define YY_NULLPTR ((فراغ*)0)
 #  endif
 # endif
 
-#include "parser.h"
+#ضمن "parser.h"
 /* Symbol kind.  */
-enum yysymbol_kind_t
+تعداد yysymbol_نوع_t
 {
   YYSYMBOL_YYEMPTY = -2,
   YYSYMBOL_YYEOF = 0,                      /* "end of file"  */
@@ -202,17 +202,17 @@ enum yysymbol_kind_t
   YYSYMBOL_TYPE = 18,                      /* "type"  */
   YYSYMBOL_INTERPRET = 19,                 /* "interpret"  */
   YYSYMBOL_ACTION_TOK = 20,                /* "action"  */
-  YYSYMBOL_KEY = 21,                       /* "key"  */
+  YYSYMBOL_کلید = 21,                       /* "key"  */
   YYSYMBOL_ALIAS = 22,                     /* "alias"  */
-  YYSYMBOL_GROUP = 23,                     /* "group"  */
+  YYSYMBOL_گروه = 23,                     /* "group"  */
   YYSYMBOL_MODIFIER_MAP = 24,              /* "modifier_map"  */
   YYSYMBOL_INDICATOR = 25,                 /* "indicator"  */
   YYSYMBOL_SHAPE = 26,                     /* "shape"  */
-  YYSYMBOL_KEYS = 27,                      /* "keys"  */
-  YYSYMBOL_ROW = 28,                       /* "row"  */
+  YYSYMBOL_کلیدها = 27,                      /* "keys"  */
+  YYSYMBOL_ردیف = 28,                       /* "row"  */
   YYSYMBOL_SECTION = 29,                   /* "section"  */
   YYSYMBOL_OVERLAY = 30,                   /* "overlay"  */
-  YYSYMBOL_TEXT = 31,                      /* "text"  */
+  YYSYMBOL_متن = 31,                      /* "text"  */
   YYSYMBOL_OUTLINE = 32,                   /* "outline"  */
   YYSYMBOL_SOLID = 33,                     /* "solid"  */
   YYSYMBOL_LOGO = 34,                      /* "logo"  */
@@ -242,16 +242,16 @@ enum yysymbol_kind_t
   YYSYMBOL_PARTIAL = 58,                   /* "partial"  */
   YYSYMBOL_DEFAULT = 59,                   /* "default"  */
   YYSYMBOL_HIDDEN = 60,                    /* "hidden"  */
-  YYSYMBOL_ALPHANUMERIC_KEYS = 61,         /* "alphanumeric_keys"  */
-  YYSYMBOL_MODIFIER_KEYS = 62,             /* "modifier_keys"  */
-  YYSYMBOL_KEYPAD_KEYS = 63,               /* "keypad_keys"  */
-  YYSYMBOL_FUNCTION_KEYS = 64,             /* "function_keys"  */
-  YYSYMBOL_ALTERNATE_GROUP = 65,           /* "alternate_group"  */
+  YYSYMBOL_ALPHANUMERIC_کلیدها = 61,         /* "alphanumeric_keys"  */
+  YYSYMBOL_MODIFIER_کلیدها = 62,             /* "modifier_keys"  */
+  YYSYMBOL_KEYPAD_کلیدها = 63,               /* "keypad_keys"  */
+  YYSYMBOL_FUNCTION_کلیدها = 64,             /* "function_keys"  */
+  YYSYMBOL_ALTERNATE_گروه = 65,           /* "alternate_group"  */
   YYSYMBOL_DEPRECATED = 66,                /* "deprecated"  */
   YYSYMBOL_YYACCEPT = 67,                  /* $accept  */
   YYSYMBOL_XkbFile = 68,                   /* XkbFile  */
-  YYSYMBOL_XkbCompositeMap = 69,           /* XkbCompositeMap  */
-  YYSYMBOL_XkbCompositeType = 70,          /* XkbCompositeType  */
+  YYSYMBOL_Xkb_مرکب_Map = 69,           /* XkbCompositeMap  */
+  YYSYMBOL_Xkb_مرکب_Type = 70,          /* XkbCompositeType  */
   YYSYMBOL_XkbMapConfigList = 71,          /* XkbMapConfigList  */
   YYSYMBOL_XkbMapConfig = 72,              /* XkbMapConfig  */
   YYSYMBOL_FileType = 73,                  /* FileType  */
@@ -261,25 +261,25 @@ enum yysymbol_kind_t
   YYSYMBOL_DeclList = 77,                  /* DeclList  */
   YYSYMBOL_Decl = 78,                      /* Decl  */
   YYSYMBOL_VarDecl = 79,                   /* VarDecl  */
-  YYSYMBOL_KeyNameDecl = 80,               /* KeyNameDecl  */
-  YYSYMBOL_KeyAliasDecl = 81,              /* KeyAliasDecl  */
+  YYSYMBOL_کلید_Name_Decl = 80,               /* KeyNameDecl  */
+  YYSYMBOL_کلید_Alias_Decl = 81,              /* KeyAliasDecl  */
   YYSYMBOL_VModDecl = 82,                  /* VModDecl  */
   YYSYMBOL_VModDefList = 83,               /* VModDefList  */
   YYSYMBOL_VModDef = 84,                   /* VModDef  */
   YYSYMBOL_InterpretDecl = 85,             /* InterpretDecl  */
-  YYSYMBOL_InterpretMatch = 86,            /* InterpretMatch  */
+  YYSYMBOL_Interpret_تطابق = 86,            /* InterpretMatch  */
   YYSYMBOL_VarDeclList = 87,               /* VarDeclList  */
-  YYSYMBOL_KeyTypeDecl = 88,               /* KeyTypeDecl  */
+  YYSYMBOL_کلید_Type_Decl = 88,               /* KeyTypeDecl  */
   YYSYMBOL_SymbolsDecl = 89,               /* SymbolsDecl  */
   YYSYMBOL_OptSymbolsBody = 90,            /* OptSymbolsBody  */
   YYSYMBOL_SymbolsBody = 91,               /* SymbolsBody  */
   YYSYMBOL_SymbolsVarDecl = 92,            /* SymbolsVarDecl  */
-  YYSYMBOL_MultiKeySymOrActionList = 93,   /* MultiKeySymOrActionList  */
-  YYSYMBOL_NoSymbolOrActionList = 94,      /* NoSymbolOrActionList  */
-  YYSYMBOL_GroupCompatDecl = 95,           /* GroupCompatDecl  */
+  YYSYMBOL_Multi_کلید_Sym_Or_Action_List = 93,   /* MultiKeySymOrActionList  */
+  YYSYMBOL_No_نماد_Or_Action_List = 94,      /* NoSymbolOrActionList  */
+  YYSYMBOL_گروه_Compat_Decl = 95,           /* GroupCompatDecl  */
   YYSYMBOL_ModMapDecl = 96,                /* ModMapDecl  */
-  YYSYMBOL_KeyOrKeySymList = 97,           /* KeyOrKeySymList  */
-  YYSYMBOL_KeyOrKeySym = 98,               /* KeyOrKeySym  */
+  YYSYMBOL_کلید_Or_کلید_Sym_List = 97,           /* KeyOrKeySymList  */
+  YYSYMBOL_کلید_Or_کلید_Sym = 98,               /* KeyOrKeySym  */
   YYSYMBOL_LedMapDecl = 99,                /* LedMapDecl  */
   YYSYMBOL_LedNameDecl = 100,              /* LedNameDecl  */
   YYSYMBOL_UnknownDecl = 101,              /* UnknownDecl  */
@@ -287,174 +287,174 @@ enum yysymbol_kind_t
   YYSYMBOL_ShapeDecl = 103,                /* ShapeDecl  */
   YYSYMBOL_SectionDecl = 104,              /* SectionDecl  */
   YYSYMBOL_SectionBody = 105,              /* SectionBody  */
-  YYSYMBOL_SectionBodyItem = 106,          /* SectionBodyItem  */
-  YYSYMBOL_RowBody = 107,                  /* RowBody  */
-  YYSYMBOL_RowBodyItem = 108,              /* RowBodyItem  */
-  YYSYMBOL_Keys = 109,                     /* Keys  */
-  YYSYMBOL_Key = 110,                      /* Key  */
+  YYSYMBOL_Section_Body_قلم = 106,          /* SectionBodyItem  */
+  YYSYMBOL_ردیف_Body = 107,                  /* RowBody  */
+  YYSYMBOL_ردیف_Body_قلم = 108,              /* RowBodyItem  */
+  YYSYMBOL_کلیدها_2 = 109,                     /*کلیدها*/
+  YYSYMBOL_کلید_2 = 110,                      /*کلید*/
   YYSYMBOL_OverlayDecl = 111,              /* OverlayDecl  */
-  YYSYMBOL_OverlayKeyList = 112,           /* OverlayKeyList  */
-  YYSYMBOL_OverlayKey = 113,               /* OverlayKey  */
+  YYSYMBOL_Overlay_کلید_List = 112,           /* OverlayKeyList  */
+  YYSYMBOL_Overlay_کلید = 113,               /* OverlayKey  */
   YYSYMBOL_OutlineList = 114,              /* OutlineList  */
-  YYSYMBOL_OutlineInList = 115,            /* OutlineInList  */
+  YYSYMBOL_Outline_درون_List = 115,            /* OutlineInList  */
   YYSYMBOL_CoordList = 116,                /* CoordList  */
   YYSYMBOL_Coord = 117,                    /* Coord  */
   YYSYMBOL_DoodadDecl = 118,               /* DoodadDecl  */
   YYSYMBOL_DoodadType = 119,               /* DoodadType  */
-  YYSYMBOL_FieldSpec = 120,                /* FieldSpec  */
+  YYSYMBOL_فیلد_Spec = 120,                /* FieldSpec  */
   YYSYMBOL_Element = 121,                  /* Element  */
-  YYSYMBOL_OptMergeMode = 122,             /* OptMergeMode  */
-  YYSYMBOL_MergeMode = 123,                /* MergeMode  */
-  YYSYMBOL_ExprList = 124,                 /* ExprList  */
-  YYSYMBOL_Expr = 125,                     /* Expr  */
-  YYSYMBOL_Term = 126,                     /* Term  */
+  YYSYMBOL_Opt_ادغام_نما = 122,             /* OptMergeMode  */
+  YYSYMBOL_ادغام_نما = 123,                /* MergeMode  */
+  YYSYMBOL_عبارت_List = 124,                 /* ExprList  */
+  YYSYMBOL_عبارت = 125,                     /*عبارت*/
+  YYSYMBOL_جمله = 126,                     /*جمله*/
   YYSYMBOL_MultiActionList = 127,          /* MultiActionList  */
   YYSYMBOL_ActionList = 128,               /* ActionList  */
-  YYSYMBOL_NonEmptyActions = 129,          /* NonEmptyActions  */
+  YYSYMBOL_Non_خالی_Actions = 129,          /* NonEmptyActions  */
   YYSYMBOL_Actions = 130,                  /* Actions  */
   YYSYMBOL_Action = 131,                   /* Action  */
   YYSYMBOL_Lhs = 132,                      /* Lhs  */
   YYSYMBOL_OptTerminal = 133,              /* OptTerminal  */
   YYSYMBOL_Terminal = 134,                 /* Terminal  */
-  YYSYMBOL_MultiKeySymList = 135,          /* MultiKeySymList  */
-  YYSYMBOL_KeySymList = 136,               /* KeySymList  */
-  YYSYMBOL_NonEmptyKeySyms = 137,          /* NonEmptyKeySyms  */
-  YYSYMBOL_KeySyms = 138,                  /* KeySyms  */
-  YYSYMBOL_KeySym = 139,                   /* KeySym  */
-  YYSYMBOL_KeySymLit = 140,                /* KeySymLit  */
-  YYSYMBOL_SignedNumber = 141,             /* SignedNumber  */
-  YYSYMBOL_Number = 142,                   /* Number  */
+  YYSYMBOL_Multi_کلید_Sym_List = 135,          /* MultiKeySymList  */
+  YYSYMBOL_کلید_Sym_List = 136,               /* KeySymList  */
+  YYSYMBOL_Non_خالی_کلید_Syms = 137,          /* NonEmptyKeySyms  */
+  YYSYMBOL_کلید_Syms = 138,                  /* KeySyms  */
+  YYSYMBOL_کلید_Sym = 139,                   /* KeySym  */
+  YYSYMBOL_کلید_Sym_Lit = 140,                /* KeySymLit  */
+  YYSYMBOL_Signed_عدد = 141,             /* SignedNumber  */
+  YYSYMBOL_عدد = 142,                   /*عدد*/
   YYSYMBOL_Float = 143,                    /* Float  */
   YYSYMBOL_Integer = 144,                  /* Integer  */
-  YYSYMBOL_KeyCode = 145,                  /* KeyCode  */
+  YYSYMBOL_کلید_کد = 145,                  /* KeyCode  */
   YYSYMBOL_Ident = 146,                    /* Ident  */
   YYSYMBOL_String = 147,                   /* String  */
   YYSYMBOL_OptMapName = 148,               /* OptMapName  */
   YYSYMBOL_MapName = 149                   /* MapName  */
 };
-typedef enum yysymbol_kind_t yysymbol_kind_t;
+تعريفنوع تعداد yysymbol_نوع_t yysymbol_نوع_t;
 
 
 
 
-#ifdef short
-# undef short
-#endif
+#اگر_تعریف_شده کوتاه
+# undef کوتاه
+#پایان_اگر
 
 /* On compilers that do not define __PTRDIFF_MAX__ etc., make sure
    <limits.h> and (if available) <stdint.h> are included
    so that the code can choose integer types of a good width.  */
 
-#ifndef __PTRDIFF_MAX__
+#اگر_تعریف_نشده __PTRDIFF_MAX__
 # include <limits.h> /* INFRINGES ON USER NAME SPACE */
-# if defined __STDC_VERSION__ && 199901 <= __STDC_VERSION__
+# إذا defined __STDC_VERSION__ && 199901 <= __STDC_VERSION__
 #  include <stdint.h> /* INFRINGES ON USER NAME SPACE */
 #  define YY_STDINT_H
 # endif
-#endif
+#پایان_اگر
 
 /* Narrow types that promote to a signed type and that can represent a
    signed or unsigned integer of at least N bits.  In tables they can
    save space and decrease cache pressure.  Promoting to a signed type
    helps avoid bugs in integer arithmetic.  */
 
-#ifdef __INT_LEAST8_MAX__
-typedef __INT_LEAST8_TYPE__ yytype_int8;
-#elif defined YY_STDINT_H
-typedef int_least8_t yytype_int8;
-#else
-typedef signed char yytype_int8;
-#endif
+#اگر_تعریف_شده __INT_LEAST8_MAX__
+تعريفنوع __INT_LEAST8_TYPE__ yytype_int8;
+#وإلاإذا defined YY_STDINT_H
+تعريفنوع int_least8_t yytype_int8;
+#وإلا
+تعريفنوع علامتدار حرف yytype_int8;
+#پایان_اگر
 
-#ifdef __INT_LEAST16_MAX__
-typedef __INT_LEAST16_TYPE__ yytype_int16;
-#elif defined YY_STDINT_H
-typedef int_least16_t yytype_int16;
-#else
-typedef short yytype_int16;
-#endif
+#اگر_تعریف_شده __INT_LEAST16_MAX__
+تعريفنوع __INT_LEAST16_TYPE__ yytype_int16;
+#وإلاإذا defined YY_STDINT_H
+تعريفنوع int_least16_t yytype_int16;
+#وإلا
+تعريفنوع کوتاه yytype_int16;
+#پایان_اگر
 
 /* Work around bug in HP-UX 11.23, which defines these macros
    incorrectly for preprocessor constants.  This workaround can likely
    be removed in 2023, as HPE has promised support for HP-UX 11.23
    (aka HP-UX 11i v2) only through the end of 2022; see Table 2 of
    <https://h20195.www2.hpe.com/V2/getpdf.aspx/4AA4-7673ENW.pdf>.  */
-#ifdef __hpux
+#اگر_تعریف_شده __hpux
 # undef UINT_LEAST8_MAX
 # undef UINT_LEAST16_MAX
 # define UINT_LEAST8_MAX 255
 # define UINT_LEAST16_MAX 65535
-#endif
+#پایان_اگر
 
-#if defined __UINT_LEAST8_MAX__ && __UINT_LEAST8_MAX__ <= __INT_MAX__
-typedef __UINT_LEAST8_TYPE__ yytype_uint8;
-#elif (!defined __UINT_LEAST8_MAX__ && defined YY_STDINT_H \
-       && UINT_LEAST8_MAX <= INT_MAX)
-typedef uint_least8_t yytype_uint8;
-#elif !defined __UINT_LEAST8_MAX__ && UCHAR_MAX <= INT_MAX
-typedef unsigned char yytype_uint8;
-#else
-typedef short yytype_uint8;
-#endif
+#إذا defined __UINT_LEAST8_MAX__ && __UINT_LEAST8_MAX__ <= __INT_MAX__
+تعريفنوع __UINT_LEAST8_TYPE__ yytype_uint8;
+#وإلاإذا (!defined __UINT_LEAST8_MAX__ && defined YY_STDINT_H \
+       && UINT_LEAST8_MAX <= بیشترین_صحیح)
+تعريفنوع uint_least8_t yytype_uint8;
+#وإلاإذا !defined __UINT_LEAST8_MAX__ && UCHAR_MAX <= بیشترین_صحیح
+تعريفنوع بیعلامت حرف yytype_uint8;
+#وإلا
+تعريفنوع کوتاه yytype_uint8;
+#پایان_اگر
 
-#if defined __UINT_LEAST16_MAX__ && __UINT_LEAST16_MAX__ <= __INT_MAX__
-typedef __UINT_LEAST16_TYPE__ yytype_uint16;
-#elif (!defined __UINT_LEAST16_MAX__ && defined YY_STDINT_H \
-       && UINT_LEAST16_MAX <= INT_MAX)
-typedef uint_least16_t yytype_uint16;
-#elif !defined __UINT_LEAST16_MAX__ && USHRT_MAX <= INT_MAX
-typedef unsigned short yytype_uint16;
-#else
-typedef int yytype_uint16;
-#endif
+#إذا defined __UINT_LEAST16_MAX__ && __UINT_LEAST16_MAX__ <= __INT_MAX__
+تعريفنوع __UINT_LEAST16_TYPE__ yytype_uint16;
+#وإلاإذا (!defined __UINT_LEAST16_MAX__ && defined YY_STDINT_H \
+       && UINT_LEAST16_MAX <= بیشترین_صحیح)
+تعريفنوع uint_least16_t yytype_uint16;
+#وإلاإذا !defined __UINT_LEAST16_MAX__ && USHRT_MAX <= بیشترین_صحیح
+تعريفنوع بیعلامت کوتاه yytype_uint16;
+#وإلا
+تعريفنوع صحيح yytype_uint16;
+#پایان_اگر
 
-#ifndef YYPTRDIFF_T
-# if defined __PTRDIFF_TYPE__ && defined __PTRDIFF_MAX__
+#اگر_تعریف_نشده YYPTRDIFF_T
+# إذا defined __PTRDIFF_TYPE__ && defined __PTRDIFF_MAX__
 #  define YYPTRDIFF_T __PTRDIFF_TYPE__
-#  define YYPTRDIFF_MAXIMUM __PTRDIFF_MAX__
+#  define YYPTRDIFF_بیشینه __PTRDIFF_MAX__
 # elif defined PTRDIFF_MAX
 #  ifndef ptrdiff_t
 #   include <stddef.h> /* INFRINGES ON USER NAME SPACE */
 #  endif
 #  define YYPTRDIFF_T ptrdiff_t
-#  define YYPTRDIFF_MAXIMUM PTRDIFF_MAX
-# else
-#  define YYPTRDIFF_T long
-#  define YYPTRDIFF_MAXIMUM LONG_MAX
+#  define YYPTRDIFF_بیشینه PTRDIFF_MAX
+# وإلا
+#  define YYPTRDIFF_T دراز
+#  define YYPTRDIFF_بیشینه LONG_MAX
 # endif
-#endif
+#پایان_اگر
 
-#ifndef YYSIZE_T
+#اگر_تعریف_نشده YYSIZE_T
 # ifdef __SIZE_TYPE__
 #  define YYSIZE_T __SIZE_TYPE__
-# elif defined size_t
-#  define YYSIZE_T size_t
+# elif defined اندازه_t
+#  define YYSIZE_T اندازه_t
 # elif defined __STDC_VERSION__ && 199901 <= __STDC_VERSION__
 #  include <stddef.h> /* INFRINGES ON USER NAME SPACE */
-#  define YYSIZE_T size_t
-# else
-#  define YYSIZE_T unsigned
+#  define YYSIZE_T اندازه_t
+# وإلا
+#  define YYSIZE_T بیعلامت
 # endif
-#endif
+#پایان_اگر
 
-#define YYSIZE_MAXIMUM                                  \
+#تعریف_کن YYSIZE_بیشینه                                  \
   YY_CAST (YYPTRDIFF_T,                                 \
-           (YYPTRDIFF_MAXIMUM < YY_CAST (YYSIZE_T, -1)  \
-            ? YYPTRDIFF_MAXIMUM                         \
+           (YYPTRDIFF_بیشینه < YY_CAST (YYSIZE_T, -1)  \
+            ? YYPTRDIFF_بیشینه                         \
             : YY_CAST (YYSIZE_T, -1)))
 
-#define YYSIZEOF(X) YY_CAST (YYPTRDIFF_T, sizeof (X))
+#تعریف_کن YYSIZEOF(X) YY_CAST (YYPTRDIFF_T, حجم (X))
 
 
 /* Stored state numbers (used for stacks). */
-typedef yytype_int16 yy_state_t;
+تعريفنوع yytype_int16 yy_state_t;
 
 /* State numbers in computations.  */
-typedef int yy_state_fast_t;
+تعريفنوع صحيح yy_state_fast_t;
 
-#ifndef YY_
-# if defined YYENABLE_NLS && YYENABLE_NLS
-#  if ENABLE_NLS
+#اگر_تعریف_نشده YY_
+# إذا defined YYENABLE_NLS && YYENABLE_NLS
+#  إذا ENABLE_NLS
 #   include <libintl.h> /* INFRINGES ON USER NAME SPACE */
 #   define YY_(Msgid) dgettext ("bison-runtime", Msgid)
 #  endif
@@ -462,78 +462,78 @@ typedef int yy_state_fast_t;
 # ifndef YY_
 #  define YY_(Msgid) Msgid
 # endif
-#endif
+#پایان_اگر
 
 
-#ifndef YY_ATTRIBUTE_PURE
-# if defined __GNUC__ && 2 < __GNUC__ + (96 <= __GNUC_MINOR__)
-#  define YY_ATTRIBUTE_PURE __attribute__ ((__pure__))
-# else
-#  define YY_ATTRIBUTE_PURE
+#اگر_تعریف_نشده YY_ATTRIBUTE_خالص
+# إذا defined __GNUC__ && 2 < __GNUC__ + (96 <= __GNUC_MINOR__)
+#  define YY_ATTRIBUTE_خالص __attribute__ ((__pure__))
+# وإلا
+#  define YY_ATTRIBUTE_خالص
 # endif
-#endif
+#پایان_اگر
 
-#ifndef YY_ATTRIBUTE_UNUSED
-# if defined __GNUC__ && 2 < __GNUC__ + (7 <= __GNUC_MINOR__)
-#  define YY_ATTRIBUTE_UNUSED __attribute__ ((__unused__))
-# else
-#  define YY_ATTRIBUTE_UNUSED
+#اگر_تعریف_نشده YY_ATTRIBUTE_استفادهنشده
+# إذا defined __GNUC__ && 2 < __GNUC__ + (7 <= __GNUC_MINOR__)
+#  define YY_ATTRIBUTE_استفادهنشده __attribute__ ((__unused__))
+# وإلا
+#  define YY_ATTRIBUTE_استفادهنشده
 # endif
-#endif
+#پایان_اگر
 
 /* Suppress unused-variable warnings by "using" E.  */
-#if ! defined lint || defined __GNUC__
-# define YY_USE(E) ((void) (E))
-#else
-# define YY_USE(E) /* empty */
-#endif
+#إذا ! defined lint || defined __GNUC__
+# define YY_USE(E) ((فراغ) (E))
+#وإلا
+# define YY_USE(E) /*خالی*/
+#پایان_اگر
 
 /* Suppress an incorrect diagnostic about yylval being uninitialized.  */
-#if defined __GNUC__ && ! defined __ICC && 406 <= __GNUC__ * 100 + __GNUC_MINOR__
-# if __GNUC__ * 100 + __GNUC_MINOR__ < 407
+#إذا defined __GNUC__ && ! defined __ICC && 406 <= __GNUC__ * 100 + __GNUC_MINOR__
+# إذا __GNUC__ * 100 + __GNUC_MINOR__ < 407
 #  define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN                           \
     _Pragma ("GCC diagnostic push")                                     \
     _Pragma ("GCC diagnostic ignored \"-Wuninitialized\"")
-# else
+# وإلا
 #  define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN                           \
     _Pragma ("GCC diagnostic push")                                     \
     _Pragma ("GCC diagnostic ignored \"-Wuninitialized\"")              \
     _Pragma ("GCC diagnostic ignored \"-Wmaybe-uninitialized\"")
 # endif
-# define YY_IGNORE_MAYBE_UNINITIALIZED_END      \
+# define YY_IGNORE_MAYBE_UNINITIALIZED_انتها      \
     _Pragma ("GCC diagnostic pop")
-#else
-# define YY_INITIAL_VALUE(Value) Value
-#endif
-#ifndef YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
+#وإلا
+# define YY_INITIAL_مقدار(مقدار_2) مقدار_2
+#پایان_اگر
+#اگر_تعریف_نشده YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
 # define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
-# define YY_IGNORE_MAYBE_UNINITIALIZED_END
-#endif
-#ifndef YY_INITIAL_VALUE
-# define YY_INITIAL_VALUE(Value) /* Nothing. */
-#endif
+# define YY_IGNORE_MAYBE_UNINITIALIZED_انتها
+#پایان_اگر
+#اگر_تعریف_نشده YY_INITIAL_مقدار
+# define YY_INITIAL_مقدار(مقدار_2) /* Nothing. */
+#پایان_اگر
 
-#if defined __cplusplus && defined __GNUC__ && ! defined __ICC && 6 <= __GNUC__
+#إذا defined __cplusplus && defined __GNUC__ && ! defined __ICC && 6 <= __GNUC__
 # define YY_IGNORE_USELESS_CAST_BEGIN                          \
     _Pragma ("GCC diagnostic push")                            \
     _Pragma ("GCC diagnostic ignored \"-Wuseless-cast\"")
-# define YY_IGNORE_USELESS_CAST_END            \
+# define YY_IGNORE_USELESS_CAST_انتها            \
     _Pragma ("GCC diagnostic pop")
-#endif
-#ifndef YY_IGNORE_USELESS_CAST_BEGIN
+#پایان_اگر
+#اگر_تعریف_نشده YY_IGNORE_USELESS_CAST_BEGIN
 # define YY_IGNORE_USELESS_CAST_BEGIN
-# define YY_IGNORE_USELESS_CAST_END
-#endif
+# define YY_IGNORE_USELESS_CAST_انتها
+#پایان_اگر
 
 
-#define YY_ASSERT(E) ((void) (0 && (E)))
+#تعریف_کن YY_ASSERT(E) ((فراغ) (0 && (E)))
 
-#if 1
+#إذا 1
 
 /* The parser invokes alloca or malloc; define the necessary symbols.  */
 
 # ifdef YYSTACK_USE_ALLOCA
-#  if YYSTACK_USE_ALLOCA
+#  إذا YYSTACK_USE_ALLOCA
 #   ifdef __GNUC__
 #    define YYSTACK_ALLOC __builtin_alloca
 #   elif defined __BUILTIN_VA_ARG_INCR
@@ -543,9 +543,9 @@ typedef int yy_state_fast_t;
 #   elif defined _MSC_VER
 #    include <malloc.h> /* INFRINGES ON USER NAME SPACE */
 #    define alloca _alloca
-#   else
+#   وإلا
 #    define YYSTACK_ALLOC alloca
-#    if ! defined _ALLOCA_H && ! defined EXIT_SUCCESS
+#    إذا ! defined _ALLOCA_H && ! defined EXIT_SUCCESS
 #     include <stdlib.h> /* INFRINGES ON USER NAME SPACE */
       /* Use EXIT_SUCCESS as a witness for stdlib.h.  */
 #     ifndef EXIT_SUCCESS
@@ -558,62 +558,62 @@ typedef int yy_state_fast_t;
 
 # ifdef YYSTACK_ALLOC
    /* Pacify GCC's 'empty if-body' warning.  */
-#  define YYSTACK_FREE(Ptr) do { /* empty */; } while (0)
-#  ifndef YYSTACK_ALLOC_MAXIMUM
+#  define YYSTACK_FREE(Ptr) افعل { /*خالی*/; } طالما (0)
+#  ifndef YYSTACK_ALLOC_بیشینه
     /* The OS might guarantee only one guard page at the bottom of the stack,
        and a page size can be as small as 4096 bytes.  So we cannot safely
        invoke alloca (N) if N exceeds 4096.  Use a slightly smaller number
        to allow for a few compiler-allocated temporary stack slots.  */
-#   define YYSTACK_ALLOC_MAXIMUM 4032 /* reasonable circa 2006 */
+#   define YYSTACK_ALLOC_بیشینه 4032 /* reasonable circa 2006 */
 #  endif
-# else
+# وإلا
 #  define YYSTACK_ALLOC YYMALLOC
 #  define YYSTACK_FREE YYFREE
-#  ifndef YYSTACK_ALLOC_MAXIMUM
-#   define YYSTACK_ALLOC_MAXIMUM YYSIZE_MAXIMUM
+#  ifndef YYSTACK_ALLOC_بیشینه
+#   define YYSTACK_ALLOC_بیشینه YYSIZE_بیشینه
 #  endif
-#  if (defined __cplusplus && ! defined EXIT_SUCCESS \
-       && ! ((defined YYMALLOC || defined malloc) \
-             && (defined YYFREE || defined free)))
+#  إذا (defined __cplusplus && ! defined EXIT_SUCCESS \
+       && ! ((defined YYMALLOC || defined حافظه_بده) \
+             && (defined YYFREE || defined حرر)))
 #   include <stdlib.h> /* INFRINGES ON USER NAME SPACE */
 #   ifndef EXIT_SUCCESS
 #    define EXIT_SUCCESS 0
 #   endif
 #  endif
 #  ifndef YYMALLOC
-#   define YYMALLOC malloc
-#   if ! defined malloc && ! defined EXIT_SUCCESS
-void *malloc (YYSIZE_T); /* INFRINGES ON USER NAME SPACE */
+#   define YYMALLOC حافظه_بده
+#   إذا ! defined حافظه_بده && ! defined EXIT_SUCCESS
+فراغ *حافظه_بده (YYSIZE_T); /* INFRINGES ON USER NAME SPACE */
 #   endif
 #  endif
 #  ifndef YYFREE
-#   define YYFREE free
-#   if ! defined free && ! defined EXIT_SUCCESS
-void free (void *); /* INFRINGES ON USER NAME SPACE */
+#   define YYFREE حرر
+#   إذا ! defined حرر && ! defined EXIT_SUCCESS
+فراغ حرر (فراغ *); /* INFRINGES ON USER NAME SPACE */
 #   endif
 #  endif
 # endif
-#endif /* 1 */
+#پایان_اگر /* 1 */
 
-#if (! defined yyoverflow \
+#إذا (! defined yyoverflow \
      && (! defined __cplusplus \
          || (defined YYSTYPE_IS_TRIVIAL && YYSTYPE_IS_TRIVIAL)))
 
 /* A type that is properly aligned for any stack member.  */
-union yyalloc
+اتحاد yyalloc
 {
   yy_state_t yyss_alloc;
   YYSTYPE yyvs_alloc;
 };
 
 /* The size of the maximum gap between one aligned stack and the next.  */
-# define YYSTACK_GAP_MAXIMUM (YYSIZEOF (union yyalloc) - 1)
+# define YYSTACK_GAP_بیشینه (YYSIZEOF (اتحاد yyalloc) - 1)
 
 /* The size of an array large to enough to hold all stacks, each with
    N elements.  */
-# define YYSTACK_BYTES(N) \
+# define YYSTACK_بایتها(N) \
      ((N) * (YYSIZEOF (yy_state_t) + YYSIZEOF (YYSTYPE)) \
-      + YYSTACK_GAP_MAXIMUM)
+      + YYSTACK_GAP_بیشینه)
 
 # define YYCOPY_NEEDED 1
 
@@ -622,67 +622,67 @@ union yyalloc
    elements in the stack, and YYPTR gives the new location of the
    stack.  Advance YYPTR to a properly aligned location for the next
    stack.  */
-# define YYSTACK_RELOCATE(Stack_alloc, Stack)                           \
-    do                                                                  \
+# define YYSTACK_RELOCATE(پشته_alloc, پشته_2)                           \
+    افعل                                                                  \
       {                                                                 \
         YYPTRDIFF_T yynewbytes;                                         \
-        YYCOPY (&yyptr->Stack_alloc, Stack, yysize);                    \
-        Stack = &yyptr->Stack_alloc;                                    \
-        yynewbytes = yystacksize * YYSIZEOF (*Stack) + YYSTACK_GAP_MAXIMUM; \
+        YYCOPY (&yyptr->پشته_alloc, پشته_2, yysize);                    \
+        پشته_2 = &yyptr->پشته_alloc;                                    \
+        yynewbytes = yystacksize * YYSIZEOF (*پشته_2) + YYSTACK_GAP_بیشینه; \
         yyptr += yynewbytes / YYSIZEOF (*yyptr);                        \
       }                                                                 \
-    while (0)
+    طالما (0)
 
-#endif
+#پایان_اگر
 
-#if defined YYCOPY_NEEDED && YYCOPY_NEEDED
+#إذا defined YYCOPY_NEEDED && YYCOPY_NEEDED
 /* Copy COUNT objects from SRC to DST.  The source and destination do
    not overlap.  */
 # ifndef YYCOPY
-#  if defined __GNUC__ && 1 < __GNUC__
-#   define YYCOPY(Dst, Src, Count) \
-      __builtin_memcpy (Dst, Src, YY_CAST (YYSIZE_T, (Count)) * sizeof (*(Src)))
-#  else
-#   define YYCOPY(Dst, Src, Count)              \
-      do                                        \
+#  إذا defined __GNUC__ && 1 < __GNUC__
+#   define YYCOPY(Dst, Src, شمار_2) \
+      __builtin_memcpy (Dst, Src, YY_CAST (YYSIZE_T, (شمار_2)) * حجم (*(Src)))
+#  وإلا
+#   define YYCOPY(Dst, Src, شمار_2)              \
+      افعل                                        \
         {                                       \
           YYPTRDIFF_T yyi;                      \
-          for (yyi = 0; yyi < (Count); yyi++)   \
+          لكل (yyi = 0; yyi < (شمار_2); yyi++)   \
             (Dst)[yyi] = (Src)[yyi];            \
         }                                       \
-      while (0)
+      طالما (0)
 #  endif
 # endif
-#endif /* !YYCOPY_NEEDED */
+#پایان_اگر /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  18
+#تعریف_کن YYFINAL  18
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   945
+#تعریف_کن YYLAST   945
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  67
+#تعریف_کن YYNTOKENS  67
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  83
+#تعریف_کن YYNNTS  83
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  221
+#تعریف_کن YYNRULES  221
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  386
+#تعریف_کن YYNSTATES  386
 
 /* YYMAXUTOK -- Last valid token kind.  */
-#define YYMAXUTOK   257
+#تعریف_کن YYMAXUTOK   257
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
    as returned by yylex, with out-of-bounds checking.  */
-#define YYTRANSLATE(YYX)                                \
+#تعریف_کن YYTRANSLATE(YYX)                                \
   (0 <= (YYX) && (YYX) <= YYMAXUTOK                     \
-   ? YY_CAST (yysymbol_kind_t, yytranslate[YYX])        \
+   ? YY_CAST (yysymbol_نوع_t, yytranslate[YYX])        \
    : YYSYMBOL_YYUNDEF)
 
 /* YYTRANSLATE[TOKEN-NUM] -- Symbol number corresponding to TOKEN-NUM
    as returned by yylex.  */
-static const yytype_int8 yytranslate[] =
+ساكن ثابت yytype_int8 yytranslate[] =
 {
        0,     4,     5,     6,     7,     8,     9,    10,    11,     2,
       12,    13,    14,    15,    16,     2,     2,     2,     2,     2,
@@ -712,9 +712,9 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     3,     1,     2
 };
 
-#if YYDEBUG
+#إذا YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_int16 yyrline[] =
+ساكن ثابت yytype_int16 yyrline[] =
 {
        0,   275,   275,   277,   279,   283,   289,   290,   291,   297,
      309,   312,   325,   326,   327,   328,   329,   332,   333,   336,
@@ -740,20 +740,20 @@ static const yytype_int16 yyrline[] =
     1085,  1088,  1091,  1092,  1095,  1096,  1099,  1100,  1103,  1106,
     1107,  1110
 };
-#endif
+#پایان_اگر
 
 /** Accessing symbol of state STATE.  */
-#define YY_ACCESSING_SYMBOL(State) YY_CAST (yysymbol_kind_t, yystos[State])
+#تعریف_کن YY_ACCESSING_نماد(State) YY_CAST (yysymbol_نوع_t, yystos[State])
 
-#if 1
+#إذا 1
 /* The user-facing name of the symbol whose (internal) number is
    YYSYMBOL.  No bounds checking.  */
-static const char *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
+ساكن ثابت حرف *yysymbol_name (yysymbol_نوع_t yysymbol) YY_ATTRIBUTE_استفادهنشده;
 
-static const char *
-yysymbol_name (yysymbol_kind_t yysymbol)
+ساكن ثابت حرف *
+yysymbol_name (yysymbol_نوع_t yysymbol)
 {
-  static const char *const yy_sname[] =
+  ساكن ثابت حرف *ثابت yy_sname[] =
   {
   "end of file", "error", "invalid token", "invalid token", "xkb_keymap",
   "xkb_keycodes", "xkb_types", "xkb_symbols", "xkb_compatibility",
@@ -785,23 +785,23 @@ yysymbol_name (yysymbol_kind_t yysymbol)
   "KeySymLit", "SignedNumber", "Number", "Float", "Integer", "KeyCode",
   "Ident", "String", "OptMapName", "MapName", YY_NULLPTR
   };
-  return yy_sname[yysymbol];
+  أرجع yy_sname[yysymbol];
 }
-#endif
+#پایان_اگر
 
-#define YYPACT_NINF (-225)
+#تعریف_کن YYPACT_NINF (-225)
 
-#define yypact_value_is_default(Yyn) \
+#تعریف_کن yypact_مقدار_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
 
-#define YYTABLE_NINF (-217)
+#تعریف_کن YYTABLE_NINF (-217)
 
-#define yytable_value_is_error(Yyn) \
+#تعریف_کن yytable_مقدار_is_error(Yyn) \
   0
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-static const yytype_int16 yypact[] =
+ساكن ثابت yytype_int16 yypact[] =
 {
      113,  -225,  -225,  -225,  -225,  -225,  -225,  -225,  -225,  -225,
     -225,  -225,    26,  -225,  -225,   530,   537,  -225,  -225,  -225,
@@ -847,7 +847,7 @@ static const yytype_int16 yypact[] =
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
    Performed when YYTABLE does not specify something else to do.  Zero
    means the default is an error.  */
-static const yytype_uint8 yydefact[] =
+ساكن ثابت yytype_uint8 yydefact[] =
 {
       18,     4,    30,    21,    22,    23,    24,    25,    26,    27,
       28,    29,     0,     2,     3,     0,    17,    20,     1,     6,
@@ -891,7 +891,7 @@ static const yytype_uint8 yydefact[] =
 };
 
 /* YYPGOTO[NTERM-NUM].  */
-static const yytype_int16 yypgoto[] =
+ساكن ثابت yytype_int16 yypgoto[] =
 {
     -225,  -225,  -225,  -225,  -225,   453,  -225,   477,  -225,   502,
     -225,  -225,   -47,  -225,  -225,  -225,  -225,   365,  -225,  -225,
@@ -905,7 +905,7 @@ static const yytype_int16 yypgoto[] =
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
-static const yytype_int16 yydefgoto[] =
+ساكن ثابت yytype_int16 yydefgoto[] =
 {
        0,    12,    13,    27,    36,    14,    28,    15,    16,    17,
       37,    47,   254,    74,    75,    76,    96,    97,    77,   106,
@@ -921,7 +921,7 @@ static const yytype_int16 yydefgoto[] =
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
    positive, shift that token.  If negative, reduce the rule whose
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
-static const yytype_int16 yytable[] =
+ساكن ثابت yytype_int16 yytable[] =
 {
       90,    73,   263,   262,   229,   281,   273,    93,   113,    92,
      142,    98,   156,   157,   274,   176,   177,   178,   179,    95,
@@ -1020,7 +1020,7 @@ static const yytype_int16 yytable[] =
        0,     0,    95,     0,     0,    72
 };
 
-static const yytype_int16 yycheck[] =
+ساكن ثابت yytype_int16 yycheck[] =
 {
       48,    48,   202,   202,    41,   229,   212,    48,    58,    48,
       60,    52,    48,    49,   214,    37,    38,    39,    40,    56,
@@ -1121,7 +1121,7 @@ static const yytype_int16 yycheck[] =
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
-static const yytype_uint8 yystos[] =
+ساكن ثابت yytype_uint8 yystos[] =
 {
        0,     0,    56,    58,    59,    60,    61,    62,    63,    64,
       65,    66,    68,    69,    72,    74,    75,    76,     0,     4,
@@ -1165,7 +1165,7 @@ static const yytype_uint8 yystos[] =
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
-static const yytype_uint8 yyr1[] =
+ساكن ثابت yytype_uint8 yyr1[] =
 {
        0,    67,    68,    68,    68,    69,    70,    70,    70,    71,
       71,    72,    73,    73,    73,    73,    73,    74,    74,    75,
@@ -1193,7 +1193,7 @@ static const yytype_uint8 yyr1[] =
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
-static const yytype_int8 yyr2[] =
+ساكن ثابت yytype_int8 yyr2[] =
 {
        0,     2,     1,     1,     1,     7,     1,     1,     1,     2,
        0,     7,     1,     1,     1,     1,     1,     1,     0,     2,
@@ -1221,86 +1221,86 @@ static const yytype_int8 yyr2[] =
 };
 
 
-enum { YYENOMEM = -2 };
+تعداد { YYENOMEM = -2 };
 
-#define yyerrok         (yyerrstatus = 0)
-#define yyclearin       (yychar = YYEMPTY)
+#تعریف_کن yyerrok         (yyerrstatus = 0)
+#تعریف_کن yyclearin       (yychar = YYEMPTY)
 
-#define YYACCEPT        goto yyacceptlab
-#define YYABORT         goto yyabortlab
-#define YYERROR         goto yyerrorlab
-#define YYNOMEM         goto yyexhaustedlab
+#تعریف_کن YYACCEPT        اذهب yyacceptlab
+#تعریف_کن YYABORT         اذهب yyabortlab
+#تعریف_کن YYERROR         اذهب yyerrorlab
+#تعریف_کن YYNOMEM         اذهب yyexhaustedlab
 
 
-#define YYRECOVERING()  (!!yyerrstatus)
+#تعریف_کن YYRECOVERING()  (!!yyerrstatus)
 
-#define YYBACKUP(Token, Value)                                    \
-  do                                                              \
-    if (yychar == YYEMPTY)                                        \
+#تعریف_کن YYBACKUP(Token, مقدار_2)                                    \
+  افعل                                                              \
+    إذا (yychar == YYEMPTY)                                        \
       {                                                           \
         yychar = (Token);                                         \
-        yylval = (Value);                                         \
+        yylval = (مقدار_2);                                         \
         YYPOPSTACK (yylen);                                       \
         yystate = *yyssp;                                         \
-        goto yybackup;                                            \
+        اذهب yybackup;                                            \
       }                                                           \
-    else                                                          \
+    وإلا                                                          \
       {                                                           \
         yyerror (param, YY_("syntax error: cannot back up")); \
         YYERROR;                                                  \
       }                                                           \
-  while (0)
+  طالما (0)
 
 /* Backward compatibility with an undocumented macro.
    Use YYerror or YYUNDEF. */
-#define YYERRCODE YYUNDEF
+#تعریف_کن YYERRCODE YYUNDEF
 
 
 /* Enable debugging if requested.  */
-#if YYDEBUG
+#إذا YYDEBUG
 
 # ifndef YYFPRINTF
 #  include <stdio.h> /* INFRINGES ON USER NAME SPACE */
 #  define YYFPRINTF fprintf
 # endif
 
-# define YYDPRINTF(Args)                        \
-do {                                            \
-  if (yydebug)                                  \
-    YYFPRINTF Args;                             \
-} while (0)
+# define YYDPRINTF(آرگومانها_2)                        \
+افعل {                                            \
+  إذا (yydebug)                                  \
+    YYFPRINTF آرگومانها_2;                             \
+} طالما (0)
 
 
 
 
-# define YY_SYMBOL_PRINT(Title, Kind, Value, Location)                    \
-do {                                                                      \
-  if (yydebug)                                                            \
+# define YY_نماد_PRINT(Title, نوع_2, مقدار_2, Location)                    \
+افعل {                                                                      \
+  إذا (yydebug)                                                            \
     {                                                                     \
       YYFPRINTF (stderr, "%s ", Title);                                   \
-      yy_symbol_print (stderr,                                            \
-                  Kind, Value, param); \
+      yy_نماد_print (stderr,                                            \
+                  نوع_2, مقدار_2, param); \
       YYFPRINTF (stderr, "\n");                                           \
     }                                                                     \
-} while (0)
+} طالما (0)
 
 
 /*-----------------------------------.
 | Print this symbol's value on YYO.  |
 `-----------------------------------*/
 
-static void
-yy_symbol_value_print (FILE *yyo,
-                       yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep, struct parser_param *param)
+ساكن فراغ
+yy_نماد_مقدار_print (FILE *yyo,
+                       yysymbol_نوع_t yykind, YYSTYPE ثابت * ثابت yyvaluep, بنية parser_param *param)
 {
   FILE *yyoutput = yyo;
   YY_USE (yyoutput);
   YY_USE (param);
-  if (!yyvaluep)
-    return;
+  إذا (!yyvaluep)
+    أرجع;
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
   YY_USE (yykind);
-  YY_IGNORE_MAYBE_UNINITIALIZED_END
+  YY_IGNORE_MAYBE_UNINITIALIZED_انتها
 }
 
 
@@ -1308,14 +1308,14 @@ yy_symbol_value_print (FILE *yyo,
 | Print this symbol on YYO.  |
 `---------------------------*/
 
-static void
-yy_symbol_print (FILE *yyo,
-                 yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep, struct parser_param *param)
+ساكن فراغ
+yy_نماد_print (FILE *yyo,
+                 yysymbol_نوع_t yykind, YYSTYPE ثابت * ثابت yyvaluep, بنية parser_param *param)
 {
   YYFPRINTF (yyo, "%s %s (",
              yykind < YYNTOKENS ? "token" : "nterm", yysymbol_name (yykind));
 
-  yy_symbol_value_print (yyo, yykind, yyvaluep, param);
+  yy_نماد_مقدار_print (yyo, yykind, yyvaluep, param);
   YYFPRINTF (yyo, ")");
 }
 
@@ -1324,70 +1324,70 @@ yy_symbol_print (FILE *yyo,
 | TOP (included).                                                   |
 `------------------------------------------------------------------*/
 
-static void
-yy_stack_print (yy_state_t *yybottom, yy_state_t *yytop)
+ساكن فراغ
+yy_پشته_print (yy_state_t *yybottom, yy_state_t *yytop)
 {
   YYFPRINTF (stderr, "Stack now");
-  for (; yybottom <= yytop; yybottom++)
+  لكل (; yybottom <= yytop; yybottom++)
     {
-      int yybot = *yybottom;
+      صحيح yybot = *yybottom;
       YYFPRINTF (stderr, " %d", yybot);
     }
   YYFPRINTF (stderr, "\n");
 }
 
-# define YY_STACK_PRINT(Bottom, Top)                            \
-do {                                                            \
-  if (yydebug)                                                  \
-    yy_stack_print ((Bottom), (Top));                           \
-} while (0)
+# define YY_پشته_PRINT(Bottom, بالاترین)                            \
+افعل {                                                            \
+  إذا (yydebug)                                                  \
+    yy_پشته_print ((Bottom), (بالاترین));                           \
+} طالما (0)
 
 
 /*------------------------------------------------.
 | Report that the YYRULE is going to be reduced.  |
 `------------------------------------------------*/
 
-static void
+ساكن فراغ
 yy_reduce_print (yy_state_t *yyssp, YYSTYPE *yyvsp,
-                 int yyrule, struct parser_param *param)
+                 صحيح yyrule, بنية parser_param *param)
 {
-  int yylno = yyrline[yyrule];
-  int yynrhs = yyr2[yyrule];
-  int yyi;
+  صحيح yylno = yyrline[yyrule];
+  صحيح yynrhs = yyr2[yyrule];
+  صحيح yyi;
   YYFPRINTF (stderr, "Reducing stack by rule %d (line %d):\n",
              yyrule - 1, yylno);
   /* The symbols being reduced.  */
-  for (yyi = 0; yyi < yynrhs; yyi++)
+  لكل (yyi = 0; yyi < yynrhs; yyi++)
     {
       YYFPRINTF (stderr, "   $%d = ", yyi + 1);
-      yy_symbol_print (stderr,
-                       YY_ACCESSING_SYMBOL (+yyssp[yyi + 1 - yynrhs]),
+      yy_نماد_print (stderr,
+                       YY_ACCESSING_نماد (+yyssp[yyi + 1 - yynrhs]),
                        &yyvsp[(yyi + 1) - (yynrhs)], param);
       YYFPRINTF (stderr, "\n");
     }
 }
 
-# define YY_REDUCE_PRINT(Rule)          \
-do {                                    \
-  if (yydebug)                          \
-    yy_reduce_print (yyssp, yyvsp, Rule, param); \
-} while (0)
+# define YY_REDUCE_PRINT(قاعده)          \
+افعل {                                    \
+  إذا (yydebug)                          \
+    yy_reduce_print (yyssp, yyvsp, قاعده, param); \
+} طالما (0)
 
 /* Nonzero means print parse trace.  It is left uninitialized so that
    multiple parsers can coexist.  */
-int yydebug;
-#else /* !YYDEBUG */
-# define YYDPRINTF(Args) ((void) 0)
-# define YY_SYMBOL_PRINT(Title, Kind, Value, Location)
-# define YY_STACK_PRINT(Bottom, Top)
-# define YY_REDUCE_PRINT(Rule)
-#endif /* !YYDEBUG */
+صحيح yydebug;
+#وإلا /* !YYDEBUG */
+# define YYDPRINTF(آرگومانها_2) ((فراغ) 0)
+# define YY_نماد_PRINT(Title, نوع_2, مقدار_2, Location)
+# define YY_پشته_PRINT(Bottom, بالاترین)
+# define YY_REDUCE_PRINT(قاعده)
+#پایان_اگر /* !YYDEBUG */
 
 
 /* YYINITDEPTH -- initial size of the parser's stacks.  */
-#ifndef YYINITDEPTH
+#اگر_تعریف_نشده YYINITDEPTH
 # define YYINITDEPTH 200
-#endif
+#پایان_اگر
 
 /* YYMAXDEPTH -- maximum size the stacks can grow to (effective only
    if the built-in stack extension method is used).
@@ -1396,16 +1396,16 @@ int yydebug;
    YYSTACK_ALLOC_MAXIMUM < YYSTACK_BYTES (YYMAXDEPTH)
    evaluated with infinite-precision integer arithmetic.  */
 
-#ifndef YYMAXDEPTH
+#اگر_تعریف_نشده YYMAXDEPTH
 # define YYMAXDEPTH 10000
-#endif
+#پایان_اگر
 
 
 /* Context of a parse error.  */
-typedef struct
+تعريفنوع بنية
 {
   yy_state_t *yyssp;
-  yysymbol_kind_t yytoken;
+  yysymbol_نوع_t yytoken;
 } yypcontext_t;
 
 /* Put in YYARG at most YYARGN of the expected tokens given the
@@ -1414,87 +1414,87 @@ typedef struct
    be less than YYNTOKENS).  Return YYENOMEM on memory exhaustion.
    Return 0 if there are more than YYARGN expected tokens, yet fill
    YYARG up to YYARGN. */
-static int
-yypcontext_expected_tokens (const yypcontext_t *yyctx,
-                            yysymbol_kind_t yyarg[], int yyargn)
+ساكن صحيح
+yypcontext_expected_نشانهها (ثابت yypcontext_t *yyctx,
+                            yysymbol_نوع_t yyarg[], صحيح yyargn)
 {
   /* Actual size of YYARG. */
-  int yycount = 0;
-  int yyn = yypact[+*yyctx->yyssp];
-  if (!yypact_value_is_default (yyn))
+  صحيح yycount = 0;
+  صحيح yyn = yypact[+*yyctx->yyssp];
+  إذا (!yypact_مقدار_is_default (yyn))
     {
       /* Start YYX at -YYN if negative to avoid negative indexes in
          YYCHECK.  In other words, skip the first -YYN actions for
          this state because they are default actions.  */
-      int yyxbegin = yyn < 0 ? -yyn : 0;
+      صحيح yyxbegin = yyn < 0 ? -yyn : 0;
       /* Stay within bounds of both yycheck and yytname.  */
-      int yychecklim = YYLAST - yyn + 1;
-      int yyxend = yychecklim < YYNTOKENS ? yychecklim : YYNTOKENS;
-      int yyx;
-      for (yyx = yyxbegin; yyx < yyxend; ++yyx)
-        if (yycheck[yyx + yyn] == yyx && yyx != YYSYMBOL_YYerror
-            && !yytable_value_is_error (yytable[yyx + yyn]))
+      صحيح yychecklim = YYLAST - yyn + 1;
+      صحيح yyxend = yychecklim < YYNTOKENS ? yychecklim : YYNTOKENS;
+      صحيح yyx;
+      لكل (yyx = yyxbegin; yyx < yyxend; ++yyx)
+        إذا (yycheck[yyx + yyn] == yyx && yyx != YYSYMBOL_YYerror
+            && !yytable_مقدار_is_error (yytable[yyx + yyn]))
           {
-            if (!yyarg)
+            إذا (!yyarg)
               ++yycount;
-            else if (yycount == yyargn)
-              return 0;
-            else
-              yyarg[yycount++] = YY_CAST (yysymbol_kind_t, yyx);
+            وإلا إذا (yycount == yyargn)
+              أرجع 0;
+            وإلا
+              yyarg[yycount++] = YY_CAST (yysymbol_نوع_t, yyx);
           }
     }
-  if (yyarg && yycount == 0 && 0 < yyargn)
+  إذا (yyarg && yycount == 0 && 0 < yyargn)
     yyarg[0] = YYSYMBOL_YYEMPTY;
-  return yycount;
+  أرجع yycount;
 }
 
 
 
 
-#ifndef yystrlen
-# if defined __GLIBC__ && defined _STRING_H
-#  define yystrlen(S) (YY_CAST (YYPTRDIFF_T, strlen (S)))
-# else
+#اگر_تعریف_نشده yystrlen
+# إذا defined __GLIBC__ && defined _STRING_H
+#  define yystrlen(S) (YY_CAST (YYPTRDIFF_T, طول_رشته (S)))
+# وإلا
 /* Return the length of YYSTR.  */
-static YYPTRDIFF_T
-yystrlen (const char *yystr)
+ساكن YYPTRDIFF_T
+yystrlen (ثابت حرف *yystr)
 {
   YYPTRDIFF_T yylen;
-  for (yylen = 0; yystr[yylen]; yylen++)
-    continue;
-  return yylen;
+  لكل (yylen = 0; yystr[yylen]; yylen++)
+    استمر;
+  أرجع yylen;
 }
 # endif
-#endif
+#پایان_اگر
 
-#ifndef yystpcpy
-# if defined __GLIBC__ && defined _STRING_H && defined _GNU_SOURCE
+#اگر_تعریف_نشده yystpcpy
+# إذا defined __GLIBC__ && defined _STRING_H && defined GNU_منبع
 #  define yystpcpy stpcpy
-# else
+# وإلا
 /* Copy YYSRC to YYDEST, returning the address of the terminating '\0' in
    YYDEST.  */
-static char *
-yystpcpy (char *yydest, const char *yysrc)
+ساكن حرف *
+yystpcpy (حرف *yydest, ثابت حرف *yysrc)
 {
-  char *yyd = yydest;
-  const char *yys = yysrc;
+  حرف *yyd = yydest;
+  ثابت حرف *yys = yysrc;
 
-  while ((*yyd++ = *yys++) != '\0')
-    continue;
+  طالما ((*yyd++ = *yys++) != '\0')
+    استمر;
 
-  return yyd - 1;
+  أرجع yyd - 1;
 }
 # endif
-#endif
+#پایان_اگر
 
 
 
-static int
-yy_syntax_error_arguments (const yypcontext_t *yyctx,
-                           yysymbol_kind_t yyarg[], int yyargn)
+ساكن صحيح
+yy_syntax_error_arguments (ثابت yypcontext_t *yyctx,
+                           yysymbol_نوع_t yyarg[], صحيح yyargn)
 {
   /* Actual size of YYARG. */
-  int yycount = 0;
+  صحيح yycount = 0;
   /* There are many possibilities here to consider:
      - If this state is a consistent state with a default action, then
        the only way this function was invoked is if the default action
@@ -1518,20 +1518,20 @@ yy_syntax_error_arguments (const yypcontext_t *yyctx,
        one exception: it will still contain any token that will not be
        accepted due to an error action in a later state.
   */
-  if (yyctx->yytoken != YYSYMBOL_YYEMPTY)
+  إذا (yyctx->yytoken != YYSYMBOL_YYEMPTY)
     {
-      int yyn;
-      if (yyarg)
+      صحيح yyn;
+      إذا (yyarg)
         yyarg[yycount] = yyctx->yytoken;
       ++yycount;
-      yyn = yypcontext_expected_tokens (yyctx,
+      yyn = yypcontext_expected_نشانهها (yyctx,
                                         yyarg ? yyarg + 1 : yyarg, yyargn - 1);
-      if (yyn == YYENOMEM)
-        return YYENOMEM;
-      else
+      إذا (yyn == YYENOMEM)
+        أرجع YYENOMEM;
+      وإلا
         yycount += yyn;
     }
-  return yycount;
+  أرجع yycount;
 }
 
 /* Copy into *YYMSG, which is of size *YYMSG_ALLOC, an error message
@@ -1542,84 +1542,84 @@ yy_syntax_error_arguments (const yypcontext_t *yyctx,
    not large enough to hold the message.  In that case, also set
    *YYMSG_ALLOC to the required number of bytes.  Return YYENOMEM if the
    required number of bytes is too large to store.  */
-static int
-yysyntax_error (YYPTRDIFF_T *yymsg_alloc, char **yymsg,
-                const yypcontext_t *yyctx)
+ساكن صحيح
+yysyntax_error (YYPTRDIFF_T *yymsg_alloc, حرف **yymsg,
+                ثابت yypcontext_t *yyctx)
 {
-  enum { YYARGS_MAX = 5 };
+  تعداد { YYARGS_MAX = 5 };
   /* Internationalized format string. */
-  const char *yyformat = YY_NULLPTR;
+  ثابت حرف *yyformat = YY_NULLPTR;
   /* Arguments of yyformat: reported tokens (one for the "unexpected",
      one per "expected"). */
-  yysymbol_kind_t yyarg[YYARGS_MAX];
+  yysymbol_نوع_t yyarg[YYARGS_MAX];
   /* Cumulated lengths of YYARG.  */
   YYPTRDIFF_T yysize = 0;
 
   /* Actual size of YYARG. */
-  int yycount = yy_syntax_error_arguments (yyctx, yyarg, YYARGS_MAX);
-  if (yycount == YYENOMEM)
-    return YYENOMEM;
+  صحيح yycount = yy_syntax_error_arguments (yyctx, yyarg, YYARGS_MAX);
+  إذا (yycount == YYENOMEM)
+    أرجع YYENOMEM;
 
-  switch (yycount)
+  بدل (yycount)
     {
-#define YYCASE_(N, S)                       \
-      case N:                               \
+#تعریف_کن YYCASE_(N, S)                       \
+      حالة N:                               \
         yyformat = S;                       \
-        break
-    default: /* Avoid compiler warnings. */
+        اكسر
+    افتراضي: /* Avoid compiler warnings. */
       YYCASE_(0, YY_("syntax error"));
       YYCASE_(1, YY_("syntax error, unexpected %s"));
       YYCASE_(2, YY_("syntax error, unexpected %s, expecting %s"));
       YYCASE_(3, YY_("syntax error, unexpected %s, expecting %s or %s"));
       YYCASE_(4, YY_("syntax error, unexpected %s, expecting %s or %s or %s"));
       YYCASE_(5, YY_("syntax error, unexpected %s, expecting %s or %s or %s or %s"));
-#undef YYCASE_
+#لغو_تعریف YYCASE_
     }
 
   /* Compute error message size.  Don't count the "%s"s, but reserve
      room for the terminator.  */
   yysize = yystrlen (yyformat) - 2 * yycount + 1;
   {
-    int yyi;
-    for (yyi = 0; yyi < yycount; ++yyi)
+    صحيح yyi;
+    لكل (yyi = 0; yyi < yycount; ++yyi)
       {
         YYPTRDIFF_T yysize1
           = yysize + yystrlen (yysymbol_name (yyarg[yyi]));
-        if (yysize <= yysize1 && yysize1 <= YYSTACK_ALLOC_MAXIMUM)
+        إذا (yysize <= yysize1 && yysize1 <= YYSTACK_ALLOC_بیشینه)
           yysize = yysize1;
-        else
-          return YYENOMEM;
+        وإلا
+          أرجع YYENOMEM;
       }
   }
 
-  if (*yymsg_alloc < yysize)
+  إذا (*yymsg_alloc < yysize)
     {
       *yymsg_alloc = 2 * yysize;
-      if (! (yysize <= *yymsg_alloc
-             && *yymsg_alloc <= YYSTACK_ALLOC_MAXIMUM))
-        *yymsg_alloc = YYSTACK_ALLOC_MAXIMUM;
-      return -1;
+      إذا (! (yysize <= *yymsg_alloc
+             && *yymsg_alloc <= YYSTACK_ALLOC_بیشینه))
+        *yymsg_alloc = YYSTACK_ALLOC_بیشینه;
+      أرجع -1;
     }
 
   /* Avoid sprintf, as that infringes on the user's name space.
      Don't have undefined behavior even if the translation
      produced a string with the wrong number of "%s"s.  */
   {
-    char *yyp = *yymsg;
-    int yyi = 0;
-    while ((*yyp = *yyformat) != '\0')
-      if (*yyp == '%' && yyformat[1] == 's' && yyi < yycount)
+    حرف *yyp = *yymsg;
+    صحيح yyi = 0;
+    طالما ((*yyp = *yyformat) != '\0')
+      إذا (*yyp == '%' && yyformat[1] == 's' && yyi < yycount)
         {
           yyp = yystpcpy (yyp, yysymbol_name (yyarg[yyi++]));
           yyformat += 2;
         }
-      else
+      وإلا
         {
           ++yyp;
           ++yyformat;
         }
   }
-  return 0;
+  أرجع 0;
 }
 
 
@@ -1627,305 +1627,305 @@ yysyntax_error (YYPTRDIFF_T *yymsg_alloc, char **yymsg,
 | Release the memory associated to this symbol.  |
 `-----------------------------------------------*/
 
-static void
-yydestruct (const char *yymsg,
-            yysymbol_kind_t yykind, YYSTYPE *yyvaluep, struct parser_param *param)
+ساكن فراغ
+yydestruct (ثابت حرف *yymsg,
+            yysymbol_نوع_t yykind, YYSTYPE *yyvaluep, بنية parser_param *param)
 {
   YY_USE (yyvaluep);
   YY_USE (param);
-  if (!yymsg)
+  إذا (!yymsg)
     yymsg = "Deleting";
-  YY_SYMBOL_PRINT (yymsg, yykind, yyvaluep, yylocationp);
+  YY_نماد_PRINT (yymsg, yykind, yyvaluep, yylocationp);
 
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
-  switch (yykind)
+  بدل (yykind)
     {
-    case YYSYMBOL_STRING: /* "string literal"  */
-#line 259 "src/xkbcomp/parser.y"
-            { free(((*yyvaluep).str)); }
-#line 1640 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_STRING: /* "string literal"  */
+#سطر 259 "src/xkbcomp/parser.y"
+            { حرر(((*yyvaluep).str)); }
+#سطر 1640 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_XkbFile: /* XkbFile  */
-#line 257 "src/xkbcomp/parser.y"
-            { if (!param->rtrn) FreeXkbFile(((*yyvaluep).file)); }
-#line 1646 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_XkbFile: /* XkbFile  */
+#سطر 257 "src/xkbcomp/parser.y"
+            { إذا (!param->rtrn) FreeXkbFile(((*yyvaluep).file)); }
+#سطر 1646 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_XkbCompositeMap: /* XkbCompositeMap  */
-#line 257 "src/xkbcomp/parser.y"
-            { if (!param->rtrn) FreeXkbFile(((*yyvaluep).file)); }
-#line 1652 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_Xkb_مرکب_Map: /* XkbCompositeMap  */
+#سطر 257 "src/xkbcomp/parser.y"
+            { إذا (!param->rtrn) FreeXkbFile(((*yyvaluep).file)); }
+#سطر 1652 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_XkbMapConfigList: /* XkbMapConfigList  */
-#line 258 "src/xkbcomp/parser.y"
-            { FreeXkbFile(((*yyvaluep).fileList).head); }
-#line 1658 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_XkbMapConfigList: /* XkbMapConfigList  */
+#سطر 258 "src/xkbcomp/parser.y"
+            { FreeXkbFile(((*yyvaluep).fileList).سر); }
+#سطر 1658 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_XkbMapConfig: /* XkbMapConfig  */
-#line 257 "src/xkbcomp/parser.y"
-            { if (!param->rtrn) FreeXkbFile(((*yyvaluep).file)); }
-#line 1664 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_XkbMapConfig: /* XkbMapConfig  */
+#سطر 257 "src/xkbcomp/parser.y"
+            { إذا (!param->rtrn) FreeXkbFile(((*yyvaluep).file)); }
+#سطر 1664 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_DeclList: /* DeclList  */
-#line 253 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).anyList).head); }
-#line 1670 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_DeclList: /* DeclList  */
+#سطر 253 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).anyList).سر); }
+#سطر 1670 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_Decl: /* Decl  */
-#line 250 "src/xkbcomp/parser.y"
+    حالة YYSYMBOL_Decl: /* Decl  */
+#سطر 250 "src/xkbcomp/parser.y"
             { FreeStmt((ParseCommon *) ((*yyvaluep).any)); }
-#line 1676 "src/xkbcomp/parser.c"
-        break;
+#سطر 1676 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_VarDecl: /* VarDecl  */
-#line 250 "src/xkbcomp/parser.y"
+    حالة YYSYMBOL_VarDecl: /* VarDecl  */
+#سطر 250 "src/xkbcomp/parser.y"
             { FreeStmt((ParseCommon *) ((*yyvaluep).var)); }
-#line 1682 "src/xkbcomp/parser.c"
-        break;
+#سطر 1682 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_KeyNameDecl: /* KeyNameDecl  */
-#line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).keyCode)); }
-#line 1688 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_کلید_Name_Decl: /* KeyNameDecl  */
+#سطر 250 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).کلید_کد)); }
+#سطر 1688 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_KeyAliasDecl: /* KeyAliasDecl  */
-#line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).keyAlias)); }
-#line 1694 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_کلید_Alias_Decl: /* KeyAliasDecl  */
+#سطر 250 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).کلید_Alias)); }
+#سطر 1694 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_VModDecl: /* VModDecl  */
-#line 253 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).vmodList).head); }
-#line 1700 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_VModDecl: /* VModDecl  */
+#سطر 253 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).vmodList).سر); }
+#سطر 1700 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_VModDefList: /* VModDefList  */
-#line 253 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).vmodList).head); }
-#line 1706 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_VModDefList: /* VModDefList  */
+#سطر 253 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).vmodList).سر); }
+#سطر 1706 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_VModDef: /* VModDef  */
-#line 250 "src/xkbcomp/parser.y"
+    حالة YYSYMBOL_VModDef: /* VModDef  */
+#سطر 250 "src/xkbcomp/parser.y"
             { FreeStmt((ParseCommon *) ((*yyvaluep).vmod)); }
-#line 1712 "src/xkbcomp/parser.c"
-        break;
+#سطر 1712 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_InterpretDecl: /* InterpretDecl  */
-#line 250 "src/xkbcomp/parser.y"
+    حالة YYSYMBOL_InterpretDecl: /* InterpretDecl  */
+#سطر 250 "src/xkbcomp/parser.y"
             { FreeStmt((ParseCommon *) ((*yyvaluep).interp)); }
-#line 1718 "src/xkbcomp/parser.c"
-        break;
+#سطر 1718 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_InterpretMatch: /* InterpretMatch  */
-#line 250 "src/xkbcomp/parser.y"
+    حالة YYSYMBOL_Interpret_تطابق: /* InterpretMatch  */
+#سطر 250 "src/xkbcomp/parser.y"
             { FreeStmt((ParseCommon *) ((*yyvaluep).interp)); }
-#line 1724 "src/xkbcomp/parser.c"
-        break;
+#سطر 1724 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_VarDeclList: /* VarDeclList  */
-#line 253 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).varList).head); }
-#line 1730 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_VarDeclList: /* VarDeclList  */
+#سطر 253 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).varList).سر); }
+#سطر 1730 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_KeyTypeDecl: /* KeyTypeDecl  */
-#line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).keyType)); }
-#line 1736 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_کلید_Type_Decl: /* KeyTypeDecl  */
+#سطر 250 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).کلید_Type)); }
+#سطر 1736 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_SymbolsDecl: /* SymbolsDecl  */
-#line 250 "src/xkbcomp/parser.y"
+    حالة YYSYMBOL_SymbolsDecl: /* SymbolsDecl  */
+#سطر 250 "src/xkbcomp/parser.y"
             { FreeStmt((ParseCommon *) ((*yyvaluep).syms)); }
-#line 1742 "src/xkbcomp/parser.c"
-        break;
+#سطر 1742 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_OptSymbolsBody: /* OptSymbolsBody  */
-#line 253 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).varList).head); }
-#line 1748 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_OptSymbolsBody: /* OptSymbolsBody  */
+#سطر 253 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).varList).سر); }
+#سطر 1748 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_SymbolsBody: /* SymbolsBody  */
-#line 253 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).varList).head); }
-#line 1754 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_SymbolsBody: /* SymbolsBody  */
+#سطر 253 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).varList).سر); }
+#سطر 1754 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_SymbolsVarDecl: /* SymbolsVarDecl  */
-#line 250 "src/xkbcomp/parser.y"
+    حالة YYSYMBOL_SymbolsVarDecl: /* SymbolsVarDecl  */
+#سطر 250 "src/xkbcomp/parser.y"
             { FreeStmt((ParseCommon *) ((*yyvaluep).var)); }
-#line 1760 "src/xkbcomp/parser.c"
-        break;
+#سطر 1760 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_MultiKeySymOrActionList: /* MultiKeySymOrActionList  */
-#line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
-#line 1766 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_Multi_کلید_Sym_Or_Action_List: /* MultiKeySymOrActionList  */
+#سطر 250 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).عبارت)); }
+#سطر 1766 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_GroupCompatDecl: /* GroupCompatDecl  */
-#line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).groupCompat)); }
-#line 1772 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_گروه_Compat_Decl: /* GroupCompatDecl  */
+#سطر 250 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).گروه_Compat)); }
+#سطر 1772 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_ModMapDecl: /* ModMapDecl  */
-#line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).modMask)); }
-#line 1778 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_ModMapDecl: /* ModMapDecl  */
+#سطر 250 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).mod_ماسک_2)); }
+#سطر 1778 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_KeyOrKeySymList: /* KeyOrKeySymList  */
-#line 253 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).exprList).head); }
-#line 1784 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_کلید_Or_کلید_Sym_List: /* KeyOrKeySymList  */
+#سطر 253 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).عبارت_List).سر); }
+#سطر 1784 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_KeyOrKeySym: /* KeyOrKeySym  */
-#line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
-#line 1790 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_کلید_Or_کلید_Sym: /* KeyOrKeySym  */
+#سطر 250 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).عبارت)); }
+#سطر 1790 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_LedMapDecl: /* LedMapDecl  */
-#line 250 "src/xkbcomp/parser.y"
+    حالة YYSYMBOL_LedMapDecl: /* LedMapDecl  */
+#سطر 250 "src/xkbcomp/parser.y"
             { FreeStmt((ParseCommon *) ((*yyvaluep).ledMap)); }
-#line 1796 "src/xkbcomp/parser.c"
-        break;
+#سطر 1796 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_LedNameDecl: /* LedNameDecl  */
-#line 250 "src/xkbcomp/parser.y"
+    حالة YYSYMBOL_LedNameDecl: /* LedNameDecl  */
+#سطر 250 "src/xkbcomp/parser.y"
             { FreeStmt((ParseCommon *) ((*yyvaluep).ledName)); }
-#line 1802 "src/xkbcomp/parser.c"
-        break;
+#سطر 1802 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_CoordList: /* CoordList  */
-#line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
-#line 1808 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_CoordList: /* CoordList  */
+#سطر 250 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).عبارت)); }
+#سطر 1808 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_Coord: /* Coord  */
-#line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
-#line 1814 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_Coord: /* Coord  */
+#سطر 250 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).عبارت)); }
+#سطر 1814 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_ExprList: /* ExprList  */
-#line 253 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).exprList).head); }
-#line 1820 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_عبارت_List: /* ExprList  */
+#سطر 253 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).عبارت_List).سر); }
+#سطر 1820 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_Expr: /* Expr  */
-#line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
-#line 1826 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_عبارت: /*عبارت*/
+#سطر 250 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).عبارت)); }
+#سطر 1826 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_Term: /* Term  */
-#line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
-#line 1832 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_جمله: /*جمله*/
+#سطر 250 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).عبارت)); }
+#سطر 1832 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_MultiActionList: /* MultiActionList  */
-#line 253 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).exprList).head); }
-#line 1838 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_MultiActionList: /* MultiActionList  */
+#سطر 253 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).عبارت_List).سر); }
+#سطر 1838 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_ActionList: /* ActionList  */
-#line 253 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).exprList).head); }
-#line 1844 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_ActionList: /* ActionList  */
+#سطر 253 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).عبارت_List).سر); }
+#سطر 1844 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_NonEmptyActions: /* NonEmptyActions  */
-#line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
-#line 1850 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_Non_خالی_Actions: /* NonEmptyActions  */
+#سطر 250 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).عبارت)); }
+#سطر 1850 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_Actions: /* Actions  */
-#line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
-#line 1856 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_Actions: /* Actions  */
+#سطر 250 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).عبارت)); }
+#سطر 1856 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_Action: /* Action  */
-#line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
-#line 1862 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_Action: /* Action  */
+#سطر 250 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).عبارت)); }
+#سطر 1862 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_Lhs: /* Lhs  */
-#line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
-#line 1868 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_Lhs: /* Lhs  */
+#سطر 250 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).عبارت)); }
+#سطر 1868 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_OptTerminal: /* OptTerminal  */
-#line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
-#line 1874 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_OptTerminal: /* OptTerminal  */
+#سطر 250 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).عبارت)); }
+#سطر 1874 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_Terminal: /* Terminal  */
-#line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
-#line 1880 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_Terminal: /* Terminal  */
+#سطر 250 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).عبارت)); }
+#سطر 1880 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_MultiKeySymList: /* MultiKeySymList  */
-#line 253 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).exprList).head); }
-#line 1886 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_Multi_کلید_Sym_List: /* MultiKeySymList  */
+#سطر 253 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).عبارت_List).سر); }
+#سطر 1886 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_KeySymList: /* KeySymList  */
-#line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
-#line 1892 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_کلید_Sym_List: /* KeySymList  */
+#سطر 250 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).عبارت)); }
+#سطر 1892 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_NonEmptyKeySyms: /* NonEmptyKeySyms  */
-#line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
-#line 1898 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_Non_خالی_کلید_Syms: /* NonEmptyKeySyms  */
+#سطر 250 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).عبارت)); }
+#سطر 1898 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_KeySyms: /* KeySyms  */
-#line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
-#line 1904 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_کلید_Syms: /* KeySyms  */
+#سطر 250 "src/xkbcomp/parser.y"
+            { FreeStmt((ParseCommon *) ((*yyvaluep).عبارت)); }
+#سطر 1904 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_OptMapName: /* OptMapName  */
-#line 259 "src/xkbcomp/parser.y"
-            { free(((*yyvaluep).str)); }
-#line 1910 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_OptMapName: /* OptMapName  */
+#سطر 259 "src/xkbcomp/parser.y"
+            { حرر(((*yyvaluep).str)); }
+#سطر 1910 "src/xkbcomp/parser.c"
+        اكسر;
 
-    case YYSYMBOL_MapName: /* MapName  */
-#line 259 "src/xkbcomp/parser.y"
-            { free(((*yyvaluep).str)); }
-#line 1916 "src/xkbcomp/parser.c"
-        break;
+    حالة YYSYMBOL_MapName: /* MapName  */
+#سطر 259 "src/xkbcomp/parser.y"
+            { حرر(((*yyvaluep).str)); }
+#سطر 1916 "src/xkbcomp/parser.c"
+        اكسر;
 
-      default:
-        break;
+      افتراضي:
+        اكسر;
     }
-  YY_IGNORE_MAYBE_UNINITIALIZED_END
+  YY_IGNORE_MAYBE_UNINITIALIZED_انتها
 }
 
 
@@ -1937,25 +1937,25 @@ yydestruct (const char *yymsg,
 | yyparse.  |
 `----------*/
 
-int
-yyparse (struct parser_param *param)
+صحيح
+yyparse (بنية parser_param *param)
 {
 /* Lookahead token kind.  */
-int yychar;
+صحيح yychar;
 
 
 /* The semantic value of the lookahead symbol.  */
 /* Default value used for initialization, for pacifying older GCCs
    or non-GCC compilers.  */
-YY_INITIAL_VALUE (static YYSTYPE yyval_default;)
-YYSTYPE yylval YY_INITIAL_VALUE (= yyval_default);
+YY_INITIAL_مقدار (ساكن YYSTYPE yyval_default;)
+YYSTYPE yylval YY_INITIAL_مقدار (= yyval_default);
 
     /* Number of syntax errors so far.  */
-    int yynerrs = 0;
+    صحيح yynerrs = 0;
 
     yy_state_fast_t yystate = 0;
     /* Number of tokens to shift before error messages enabled.  */
-    int yyerrstatus = 0;
+    صحيح yyerrstatus = 0;
 
     /* Refer to the stacks through separate pointers, to allow yyoverflow
        to reallocate them elsewhere.  */
@@ -1973,31 +1973,31 @@ YYSTYPE yylval YY_INITIAL_VALUE (= yyval_default);
     YYSTYPE *yyvs = yyvsa;
     YYSTYPE *yyvsp = yyvs;
 
-  int yyn;
+  صحيح yyn;
   /* The return value of yyparse.  */
-  int yyresult;
+  صحيح yyresult;
   /* Lookahead symbol kind.  */
-  yysymbol_kind_t yytoken = YYSYMBOL_YYEMPTY;
+  yysymbol_نوع_t yytoken = YYSYMBOL_YYEMPTY;
   /* The variables used to return semantic value and location from the
      action routines.  */
   YYSTYPE yyval;
 
   /* Buffer for error messages, and its allocated size.  */
-  char yymsgbuf[128];
-  char *yymsg = yymsgbuf;
-  YYPTRDIFF_T yymsg_alloc = sizeof yymsgbuf;
+  حرف yymsgbuf[128];
+  حرف *yymsg = yymsgbuf;
+  YYPTRDIFF_T yymsg_alloc = حجم yymsgbuf;
 
-#define YYPOPSTACK(N)   (yyvsp -= (N), yyssp -= (N))
+#تعریف_کن YYPOPSTACK(N)   (yyvsp -= (N), yyssp -= (N))
 
   /* The number of symbols on the RHS of the reduced rule.
      Keep to zero when no symbol should be popped.  */
-  int yylen = 0;
+  صحيح yylen = 0;
 
   YYDPRINTF ((stderr, "Starting parse\n"));
 
   yychar = YYEMPTY; /* Cause a token to be read.  */
 
-  goto yysetstate;
+  اذهب yysetstate;
 
 
 /*------------------------------------------------------------.
@@ -2017,18 +2017,18 @@ yysetstate:
   YY_ASSERT (0 <= yystate && yystate < YYNSTATES);
   YY_IGNORE_USELESS_CAST_BEGIN
   *yyssp = YY_CAST (yy_state_t, yystate);
-  YY_IGNORE_USELESS_CAST_END
-  YY_STACK_PRINT (yyss, yyssp);
+  YY_IGNORE_USELESS_CAST_انتها
+  YY_پشته_PRINT (yyss, yyssp);
 
-  if (yyss + yystacksize - 1 <= yyssp)
-#if !defined yyoverflow && !defined YYSTACK_RELOCATE
+  إذا (yyss + yystacksize - 1 <= yyssp)
+#إذا !defined yyoverflow && !defined YYSTACK_RELOCATE
     YYNOMEM;
-#else
+#وإلا
     {
       /* Get the current used size of the three stacks, in elements.  */
       YYPTRDIFF_T yysize = yyssp - yyss + 1;
 
-# if defined yyoverflow
+# إذا defined yyoverflow
       {
         /* Give user a chance to reallocate the stack.  Use copies of
            these so that the &'s don't force the real ones into
@@ -2047,25 +2047,25 @@ yysetstate:
         yyss = yyss1;
         yyvs = yyvs1;
       }
-# else /* defined YYSTACK_RELOCATE */
+# وإلا /* defined YYSTACK_RELOCATE */
       /* Extend the stack our own way.  */
-      if (YYMAXDEPTH <= yystacksize)
+      إذا (YYMAXDEPTH <= yystacksize)
         YYNOMEM;
       yystacksize *= 2;
-      if (YYMAXDEPTH < yystacksize)
+      إذا (YYMAXDEPTH < yystacksize)
         yystacksize = YYMAXDEPTH;
 
       {
         yy_state_t *yyss1 = yyss;
-        union yyalloc *yyptr =
-          YY_CAST (union yyalloc *,
-                   YYSTACK_ALLOC (YY_CAST (YYSIZE_T, YYSTACK_BYTES (yystacksize))));
-        if (! yyptr)
+        اتحاد yyalloc *yyptr =
+          YY_CAST (اتحاد yyalloc *,
+                   YYSTACK_ALLOC (YY_CAST (YYSIZE_T, YYSTACK_بایتها (yystacksize))));
+        إذا (! yyptr)
           YYNOMEM;
         YYSTACK_RELOCATE (yyss_alloc, yyss);
         YYSTACK_RELOCATE (yyvs_alloc, yyvs);
 #  undef YYSTACK_RELOCATE
-        if (yyss1 != yyssa)
+        إذا (yyss1 != yyssa)
           YYSTACK_FREE (yyss1);
       }
 # endif
@@ -2075,19 +2075,19 @@ yysetstate:
 
       YY_IGNORE_USELESS_CAST_BEGIN
       YYDPRINTF ((stderr, "Stack size increased to %ld\n",
-                  YY_CAST (long, yystacksize)));
-      YY_IGNORE_USELESS_CAST_END
+                  YY_CAST (دراز, yystacksize)));
+      YY_IGNORE_USELESS_CAST_انتها
 
-      if (yyss + yystacksize - 1 <= yyssp)
+      إذا (yyss + yystacksize - 1 <= yyssp)
         YYABORT;
     }
-#endif /* !defined yyoverflow && !defined YYSTACK_RELOCATE */
+#پایان_اگر /* !defined yyoverflow && !defined YYSTACK_RELOCATE */
 
 
-  if (yystate == YYFINAL)
+  إذا (yystate == YYFINAL)
     YYACCEPT;
 
-  goto yybackup;
+  اذهب yybackup;
 
 
 /*-----------.
@@ -2099,25 +2099,25 @@ yybackup:
 
   /* First try to decide what to do without reference to lookahead token.  */
   yyn = yypact[yystate];
-  if (yypact_value_is_default (yyn))
-    goto yydefault;
+  إذا (yypact_مقدار_is_default (yyn))
+    اذهب yydefault;
 
   /* Not known => get a lookahead token if don't already have one.  */
 
   /* YYCHAR is either empty, or end-of-input, or a valid lookahead.  */
-  if (yychar == YYEMPTY)
+  إذا (yychar == YYEMPTY)
     {
       YYDPRINTF ((stderr, "Reading a token\n"));
       yychar = yylex (&yylval, param_scanner);
     }
 
-  if (yychar <= END_OF_FILE)
+  إذا (yychar <= انتها_از_FILE)
     {
-      yychar = END_OF_FILE;
+      yychar = انتها_از_FILE;
       yytoken = YYSYMBOL_YYEOF;
       YYDPRINTF ((stderr, "Now at end of input.\n"));
     }
-  else if (yychar == YYerror)
+  وإلا إذا (yychar == YYerror)
     {
       /* The scanner already issued an error message, process directly
          to error recovery.  But do not keep the error token as
@@ -2125,43 +2125,43 @@ yybackup:
          loop in error recovery. */
       yychar = YYUNDEF;
       yytoken = YYSYMBOL_YYerror;
-      goto yyerrlab1;
+      اذهب yyerrlab1;
     }
-  else
+  وإلا
     {
       yytoken = YYTRANSLATE (yychar);
-      YY_SYMBOL_PRINT ("Next token is", yytoken, &yylval, &yylloc);
+      YY_نماد_PRINT ("Next token is", yytoken, &yylval, &yylloc);
     }
 
   /* If the proper action on seeing token YYTOKEN is to reduce or to
      detect an error, take that action.  */
   yyn += yytoken;
-  if (yyn < 0 || YYLAST < yyn || yycheck[yyn] != yytoken)
-    goto yydefault;
+  إذا (yyn < 0 || YYLAST < yyn || yycheck[yyn] != yytoken)
+    اذهب yydefault;
   yyn = yytable[yyn];
-  if (yyn <= 0)
+  إذا (yyn <= 0)
     {
-      if (yytable_value_is_error (yyn))
-        goto yyerrlab;
+      إذا (yytable_مقدار_is_error (yyn))
+        اذهب yyerrlab;
       yyn = -yyn;
-      goto yyreduce;
+      اذهب yyreduce;
     }
 
   /* Count tokens shifted since error; after three, turn off error
      status.  */
-  if (yyerrstatus)
+  إذا (yyerrstatus)
     yyerrstatus--;
 
   /* Shift the lookahead token.  */
-  YY_SYMBOL_PRINT ("Shifting", yytoken, &yylval, &yylloc);
+  YY_نماد_PRINT ("Shifting", yytoken, &yylval, &yylloc);
   yystate = yyn;
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
   *++yyvsp = yylval;
-  YY_IGNORE_MAYBE_UNINITIALIZED_END
+  YY_IGNORE_MAYBE_UNINITIALIZED_انتها
 
   /* Discard the shifted token.  */
   yychar = YYEMPTY;
-  goto yynewstate;
+  اذهب yynewstate;
 
 
 /*-----------------------------------------------------------.
@@ -2169,9 +2169,9 @@ yybackup:
 `-----------------------------------------------------------*/
 yydefault:
   yyn = yydefact[yystate];
-  if (yyn == 0)
-    goto yyerrlab;
-  goto yyreduce;
+  إذا (yyn == 0)
+    اذهب yyerrlab;
+  اذهب yyreduce;
 
 
 /*-----------------------------.
@@ -2193,1444 +2193,1444 @@ yyreduce:
 
 
   YY_REDUCE_PRINT (yyn);
-  switch (yyn)
+  بدل (yyn)
     {
-  case 2: /* XkbFile: XkbCompositeMap  */
-#line 276 "src/xkbcomp/parser.y"
-                        { (yyval.file) = param->rtrn = (yyvsp[0].file); param->more_maps = !!param->rtrn; (void) yynerrs; }
-#line 2195 "src/xkbcomp/parser.c"
-    break;
+  حالة 2: /* XkbFile: XkbCompositeMap  */
+#سطر 276 "src/xkbcomp/parser.y"
+                        { (yyval.file) = param->rtrn = (yyvsp[0].file); param->بیشتر_maps = !!param->rtrn; (فراغ) yynerrs; }
+#سطر 2195 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 3: /* XkbFile: XkbMapConfig  */
-#line 278 "src/xkbcomp/parser.y"
-                        { (yyval.file) = param->rtrn = (yyvsp[0].file); param->more_maps = !!param->rtrn; YYACCEPT; }
-#line 2201 "src/xkbcomp/parser.c"
-    break;
+  حالة 3: /* XkbFile: XkbMapConfig  */
+#سطر 278 "src/xkbcomp/parser.y"
+                        { (yyval.file) = param->rtrn = (yyvsp[0].file); param->بیشتر_maps = !!param->rtrn; YYACCEPT; }
+#سطر 2201 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 4: /* XkbFile: "end of file"  */
-#line 280 "src/xkbcomp/parser.y"
-                        { (yyval.file) = param->rtrn = NULL; param->more_maps = false; }
-#line 2207 "src/xkbcomp/parser.c"
-    break;
+  حالة 4: /* XkbFile: "end of file"  */
+#سطر 280 "src/xkbcomp/parser.y"
+                        { (yyval.file) = param->rtrn = عدم; param->بیشتر_maps = false; }
+#سطر 2207 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 5: /* XkbCompositeMap: OptFlags XkbCompositeType OptMapName "{" XkbMapConfigList "}" ";"  */
-#line 286 "src/xkbcomp/parser.y"
-                        { (yyval.file) = XkbFileCreate((yyvsp[-5].file_type), (yyvsp[-4].str), (ParseCommon *) (yyvsp[-2].fileList).head, (yyvsp[-6].mapFlags)); }
-#line 2213 "src/xkbcomp/parser.c"
-    break;
+  حالة 5: /* XkbCompositeMap: OptFlags XkbCompositeType OptMapName "{" XkbMapConfigList "}" ";"  */
+#سطر 286 "src/xkbcomp/parser.y"
+                        { (yyval.file) = XkbFileCreate((yyvsp[-5].file_type), (yyvsp[-4].str), (ParseCommon *) (yyvsp[-2].fileList).سر, (yyvsp[-6].mapFlags)); }
+#سطر 2213 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 6: /* XkbCompositeType: "xkb_keymap"  */
-#line 289 "src/xkbcomp/parser.y"
+  حالة 6: /* XkbCompositeType: "xkb_keymap"  */
+#سطر 289 "src/xkbcomp/parser.y"
                                         { (yyval.file_type) = FILE_TYPE_KEYMAP; }
-#line 2219 "src/xkbcomp/parser.c"
-    break;
+#سطر 2219 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 7: /* XkbCompositeType: "xkb_semantics"  */
-#line 290 "src/xkbcomp/parser.y"
+  حالة 7: /* XkbCompositeType: "xkb_semantics"  */
+#سطر 290 "src/xkbcomp/parser.y"
                                         { (yyval.file_type) = FILE_TYPE_KEYMAP; }
-#line 2225 "src/xkbcomp/parser.c"
-    break;
+#سطر 2225 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 8: /* XkbCompositeType: "xkb_layout"  */
-#line 291 "src/xkbcomp/parser.y"
+  حالة 8: /* XkbCompositeType: "xkb_layout"  */
+#سطر 291 "src/xkbcomp/parser.y"
                                         { (yyval.file_type) = FILE_TYPE_KEYMAP; }
-#line 2231 "src/xkbcomp/parser.c"
-    break;
+#سطر 2231 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 9: /* XkbMapConfigList: XkbMapConfigList XkbMapConfig  */
-#line 298 "src/xkbcomp/parser.y"
+  حالة 9: /* XkbMapConfigList: XkbMapConfigList XkbMapConfig  */
+#سطر 298 "src/xkbcomp/parser.y"
                         {
-                            if ((yyvsp[0].file)) {
-                                if ((yyvsp[-1].fileList).head) {
-                                    (yyval.fileList).head = (yyvsp[-1].fileList).head;
-                                    (yyval.fileList).last->common.next = &(yyvsp[0].file)->common;
-                                    (yyval.fileList).last = (yyvsp[0].file);
-                                } else {
-                                    (yyval.fileList).head = (yyval.fileList).last = (yyvsp[0].file);
+                            إذا ((yyvsp[0].file)) {
+                                إذا ((yyvsp[-1].fileList).سر) {
+                                    (yyval.fileList).سر = (yyvsp[-1].fileList).سر;
+                                    (yyval.fileList).آخرین->common.بعدی = &(yyvsp[0].file)->common;
+                                    (yyval.fileList).آخرین = (yyvsp[0].file);
+                                } وإلا {
+                                    (yyval.fileList).سر = (yyval.fileList).آخرین = (yyvsp[0].file);
                                 }
                             }
                         }
-#line 2247 "src/xkbcomp/parser.c"
-    break;
+#سطر 2247 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 10: /* XkbMapConfigList: %empty  */
-#line 309 "src/xkbcomp/parser.y"
-                        { (yyval.fileList).head = (yyval.fileList).last = NULL; }
-#line 2253 "src/xkbcomp/parser.c"
-    break;
+  حالة 10: /* XkbMapConfigList: %empty  */
+#سطر 309 "src/xkbcomp/parser.y"
+                        { (yyval.fileList).سر = (yyval.fileList).آخرین = عدم; }
+#سطر 2253 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 11: /* XkbMapConfig: OptFlags FileType OptMapName "{" DeclList "}" ";"  */
-#line 315 "src/xkbcomp/parser.y"
+  حالة 11: /* XkbMapConfig: OptFlags FileType OptMapName "{" DeclList "}" ";"  */
+#سطر 315 "src/xkbcomp/parser.y"
                         {
-                            if ((yyvsp[-6].mapFlags) & MAP_IS_DEPRECATED) {
+                            إذا ((yyvsp[-6].mapFlags) & MAP_IS_DEPRECATED) {
                                 parser_warn(param, XKB_WARNING_DEPRECATED_SECTION,
                                             "deprecated section: \"%s\"",
-                                            safe_map_name((yyvsp[-4].str)));
+                                            امن_map_name((yyvsp[-4].str)));
                             }
-                            (yyval.file) = XkbFileCreate((yyvsp[-5].file_type), (yyvsp[-4].str), (yyvsp[-2].anyList).head, (yyvsp[-6].mapFlags));
+                            (yyval.file) = XkbFileCreate((yyvsp[-5].file_type), (yyvsp[-4].str), (yyvsp[-2].anyList).سر, (yyvsp[-6].mapFlags));
                         }
-#line 2266 "src/xkbcomp/parser.c"
-    break;
+#سطر 2266 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 12: /* FileType: "xkb_keycodes"  */
-#line 325 "src/xkbcomp/parser.y"
+  حالة 12: /* FileType: "xkb_keycodes"  */
+#سطر 325 "src/xkbcomp/parser.y"
                                                 { (yyval.file_type) = FILE_TYPE_KEYCODES; }
-#line 2272 "src/xkbcomp/parser.c"
-    break;
+#سطر 2272 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 13: /* FileType: "xkb_types"  */
-#line 326 "src/xkbcomp/parser.y"
+  حالة 13: /* FileType: "xkb_types"  */
+#سطر 326 "src/xkbcomp/parser.y"
                                                 { (yyval.file_type) = FILE_TYPE_TYPES; }
-#line 2278 "src/xkbcomp/parser.c"
-    break;
+#سطر 2278 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 14: /* FileType: "xkb_compatibility"  */
-#line 327 "src/xkbcomp/parser.y"
+  حالة 14: /* FileType: "xkb_compatibility"  */
+#سطر 327 "src/xkbcomp/parser.y"
                                                 { (yyval.file_type) = FILE_TYPE_COMPAT; }
-#line 2284 "src/xkbcomp/parser.c"
-    break;
+#سطر 2284 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 15: /* FileType: "xkb_symbols"  */
-#line 328 "src/xkbcomp/parser.y"
+  حالة 15: /* FileType: "xkb_symbols"  */
+#سطر 328 "src/xkbcomp/parser.y"
                                                 { (yyval.file_type) = FILE_TYPE_SYMBOLS; }
-#line 2290 "src/xkbcomp/parser.c"
-    break;
+#سطر 2290 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 16: /* FileType: "xkb_geometry"  */
-#line 329 "src/xkbcomp/parser.y"
+  حالة 16: /* FileType: "xkb_geometry"  */
+#سطر 329 "src/xkbcomp/parser.y"
                                                 { (yyval.file_type) = FILE_TYPE_GEOMETRY; }
-#line 2296 "src/xkbcomp/parser.c"
-    break;
+#سطر 2296 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 17: /* OptFlags: Flags  */
-#line 332 "src/xkbcomp/parser.y"
+  حالة 17: /* OptFlags: Flags  */
+#سطر 332 "src/xkbcomp/parser.y"
                                                 { (yyval.mapFlags) = (yyvsp[0].mapFlags); }
-#line 2302 "src/xkbcomp/parser.c"
-    break;
+#سطر 2302 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 18: /* OptFlags: %empty  */
-#line 333 "src/xkbcomp/parser.y"
+  حالة 18: /* OptFlags: %empty  */
+#سطر 333 "src/xkbcomp/parser.y"
                                                 { (yyval.mapFlags) = 0; }
-#line 2308 "src/xkbcomp/parser.c"
-    break;
+#سطر 2308 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 19: /* Flags: Flags Flag  */
-#line 336 "src/xkbcomp/parser.y"
+  حالة 19: /* Flags: Flags Flag  */
+#سطر 336 "src/xkbcomp/parser.y"
                                                 { (yyval.mapFlags) = ((yyvsp[-1].mapFlags) | (yyvsp[0].mapFlags)); }
-#line 2314 "src/xkbcomp/parser.c"
-    break;
+#سطر 2314 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 20: /* Flags: Flag  */
-#line 337 "src/xkbcomp/parser.y"
+  حالة 20: /* Flags: Flag  */
+#سطر 337 "src/xkbcomp/parser.y"
                                                 { (yyval.mapFlags) = (yyvsp[0].mapFlags); }
-#line 2320 "src/xkbcomp/parser.c"
-    break;
+#سطر 2320 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 21: /* Flag: "partial"  */
-#line 340 "src/xkbcomp/parser.y"
+  حالة 21: /* Flag: "partial"  */
+#سطر 340 "src/xkbcomp/parser.y"
                                                 { (yyval.mapFlags) = MAP_IS_PARTIAL; }
-#line 2326 "src/xkbcomp/parser.c"
-    break;
+#سطر 2326 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 22: /* Flag: "default"  */
-#line 341 "src/xkbcomp/parser.y"
+  حالة 22: /* Flag: "default"  */
+#سطر 341 "src/xkbcomp/parser.y"
                                                 { (yyval.mapFlags) = MAP_IS_DEFAULT; }
-#line 2332 "src/xkbcomp/parser.c"
-    break;
+#سطر 2332 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 23: /* Flag: "hidden"  */
-#line 342 "src/xkbcomp/parser.y"
+  حالة 23: /* Flag: "hidden"  */
+#سطر 342 "src/xkbcomp/parser.y"
                                                 { (yyval.mapFlags) = MAP_IS_HIDDEN; }
-#line 2338 "src/xkbcomp/parser.c"
-    break;
+#سطر 2338 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 24: /* Flag: "alphanumeric_keys"  */
-#line 343 "src/xkbcomp/parser.y"
+  حالة 24: /* Flag: "alphanumeric_keys"  */
+#سطر 343 "src/xkbcomp/parser.y"
                                                 { (yyval.mapFlags) = MAP_HAS_ALPHANUMERIC; }
-#line 2344 "src/xkbcomp/parser.c"
-    break;
+#سطر 2344 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 25: /* Flag: "modifier_keys"  */
-#line 344 "src/xkbcomp/parser.y"
+  حالة 25: /* Flag: "modifier_keys"  */
+#سطر 344 "src/xkbcomp/parser.y"
                                                 { (yyval.mapFlags) = MAP_HAS_MODIFIER; }
-#line 2350 "src/xkbcomp/parser.c"
-    break;
+#سطر 2350 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 26: /* Flag: "keypad_keys"  */
-#line 345 "src/xkbcomp/parser.y"
+  حالة 26: /* Flag: "keypad_keys"  */
+#سطر 345 "src/xkbcomp/parser.y"
                                                 { (yyval.mapFlags) = MAP_HAS_KEYPAD; }
-#line 2356 "src/xkbcomp/parser.c"
-    break;
+#سطر 2356 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 27: /* Flag: "function_keys"  */
-#line 346 "src/xkbcomp/parser.y"
+  حالة 27: /* Flag: "function_keys"  */
+#سطر 346 "src/xkbcomp/parser.y"
                                                 { (yyval.mapFlags) = MAP_HAS_FN; }
-#line 2362 "src/xkbcomp/parser.c"
-    break;
+#سطر 2362 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 28: /* Flag: "alternate_group"  */
-#line 347 "src/xkbcomp/parser.y"
+  حالة 28: /* Flag: "alternate_group"  */
+#سطر 347 "src/xkbcomp/parser.y"
                                                 { (yyval.mapFlags) = MAP_IS_ALTGR; }
-#line 2368 "src/xkbcomp/parser.c"
-    break;
+#سطر 2368 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 29: /* Flag: "deprecated"  */
-#line 348 "src/xkbcomp/parser.y"
+  حالة 29: /* Flag: "deprecated"  */
+#سطر 348 "src/xkbcomp/parser.y"
                                                 { (yyval.mapFlags) = MAP_IS_DEPRECATED; }
-#line 2374 "src/xkbcomp/parser.c"
-    break;
+#سطر 2374 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 30: /* Flag: "identifier"  */
-#line 350 "src/xkbcomp/parser.y"
+  حالة 30: /* Flag: "identifier"  */
+#سطر 350 "src/xkbcomp/parser.y"
                         {
-                            const bool error = (param->config.strict & PARSER_NO_UNKNOWN_SECTION_FLAGS);
-                            parser_log_with_code(
+                            ثابت bool error = (param->config.strict & PARSER_NO_UNKNOWN_SECTION_FLAGS);
+                            parser_log_with_کد(
                                 param, (error ? XKB_LOG_LEVEL_ERROR : XKB_LOG_LEVEL_WARNING),
-                                XKB_LOG_VERBOSITY_MINIMAL,
+                                XKB_LOG_VERBOSITY_کمینه,
                                 XKB_ERROR_UNKNOWN_SECTION_FLAG,
                                 "Unknown section flag \"%.*s\"%s",
-                                (unsigned)(yyvsp[0].sval).len, (yyvsp[0].sval).start,
+                                (بیعلامت)(yyvsp[0].sval).len, (yyvsp[0].sval).شروع,
                                 (error ? "" : "; ignored")
                             );
-                            if (error)
+                            إذا (error)
                                 YYABORT;
                             (yyval.mapFlags) = 0;
                         }
-#line 2393 "src/xkbcomp/parser.c"
-    break;
+#سطر 2393 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 31: /* DeclList: DeclList Decl  */
-#line 367 "src/xkbcomp/parser.y"
+  حالة 31: /* DeclList: DeclList Decl  */
+#سطر 367 "src/xkbcomp/parser.y"
                         {
-                            if ((yyvsp[0].any)) {
-                                if ((yyvsp[-1].anyList).head) {
-                                    (yyval.anyList).head = (yyvsp[-1].anyList).head; (yyvsp[-1].anyList).last->next = (yyvsp[0].any); (yyval.anyList).last = (yyvsp[0].any);
-                                } else {
-                                    (yyval.anyList).head = (yyval.anyList).last = (yyvsp[0].any);
+                            إذا ((yyvsp[0].any)) {
+                                إذا ((yyvsp[-1].anyList).سر) {
+                                    (yyval.anyList).سر = (yyvsp[-1].anyList).سر; (yyvsp[-1].anyList).آخرین->بعدی = (yyvsp[0].any); (yyval.anyList).آخرین = (yyvsp[0].any);
+                                } وإلا {
+                                    (yyval.anyList).سر = (yyval.anyList).آخرین = (yyvsp[0].any);
                                 }
                             }
                         }
-#line 2407 "src/xkbcomp/parser.c"
-    break;
+#سطر 2407 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 32: /* DeclList: DeclList OptMergeMode VModDecl  */
-#line 382 "src/xkbcomp/parser.y"
+  حالة 32: /* DeclList: DeclList OptMergeMode VModDecl  */
+#سطر 382 "src/xkbcomp/parser.y"
                         {
-                            for (VModDef *vmod = (yyvsp[0].vmodList).head; vmod; vmod = (VModDef *) vmod->common.next)
-                                vmod->merge = (yyvsp[-1].merge);
-                            if ((yyvsp[-2].anyList).head) {
-                                (yyval.anyList).head = (yyvsp[-2].anyList).head; (yyvsp[-2].anyList).last->next = &(yyvsp[0].vmodList).head->common; (yyval.anyList).last = &(yyvsp[0].vmodList).last->common;
-                            } else {
-                                (yyval.anyList).head = &(yyvsp[0].vmodList).head->common; (yyval.anyList).last = &(yyvsp[0].vmodList).last->common;
+                            لكل (VModDef *vmod = (yyvsp[0].vmodList).سر; vmod; vmod = (VModDef *) vmod->common.بعدی)
+                                vmod->ادغام = (yyvsp[-1].ادغام);
+                            إذا ((yyvsp[-2].anyList).سر) {
+                                (yyval.anyList).سر = (yyvsp[-2].anyList).سر; (yyvsp[-2].anyList).آخرین->بعدی = &(yyvsp[0].vmodList).سر->common; (yyval.anyList).آخرین = &(yyvsp[0].vmodList).آخرین->common;
+                            } وإلا {
+                                (yyval.anyList).سر = &(yyvsp[0].vmodList).سر->common; (yyval.anyList).آخرین = &(yyvsp[0].vmodList).آخرین->common;
                             }
                         }
-#line 2421 "src/xkbcomp/parser.c"
-    break;
+#سطر 2421 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 33: /* DeclList: %empty  */
-#line 391 "src/xkbcomp/parser.y"
-                        { (yyval.anyList).head = (yyval.anyList).last = NULL; }
-#line 2427 "src/xkbcomp/parser.c"
-    break;
+  حالة 33: /* DeclList: %empty  */
+#سطر 391 "src/xkbcomp/parser.y"
+                        { (yyval.anyList).سر = (yyval.anyList).آخرین = عدم; }
+#سطر 2427 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 34: /* Decl: OptMergeMode VarDecl  */
-#line 395 "src/xkbcomp/parser.y"
+  حالة 34: /* Decl: OptMergeMode VarDecl  */
+#سطر 395 "src/xkbcomp/parser.y"
                         {
-                            (yyvsp[0].var)->merge = (yyvsp[-1].merge);
+                            (yyvsp[0].var)->ادغام = (yyvsp[-1].ادغام);
                             (yyval.any) = (ParseCommon *) (yyvsp[0].var);
                         }
-#line 2436 "src/xkbcomp/parser.c"
-    break;
+#سطر 2436 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 35: /* Decl: OptMergeMode InterpretDecl  */
-#line 401 "src/xkbcomp/parser.y"
+  حالة 35: /* Decl: OptMergeMode InterpretDecl  */
+#سطر 401 "src/xkbcomp/parser.y"
                         {
-                            (yyvsp[0].interp)->merge = (yyvsp[-1].merge);
+                            (yyvsp[0].interp)->ادغام = (yyvsp[-1].ادغام);
                             (yyval.any) = (ParseCommon *) (yyvsp[0].interp);
                         }
-#line 2445 "src/xkbcomp/parser.c"
-    break;
+#سطر 2445 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 36: /* Decl: OptMergeMode KeyNameDecl  */
-#line 406 "src/xkbcomp/parser.y"
+  حالة 36: /* Decl: OptMergeMode KeyNameDecl  */
+#سطر 406 "src/xkbcomp/parser.y"
                         {
-                            (yyvsp[0].keyCode)->merge = (yyvsp[-1].merge);
-                            (yyval.any) = (ParseCommon *) (yyvsp[0].keyCode);
+                            (yyvsp[0].کلید_کد)->ادغام = (yyvsp[-1].ادغام);
+                            (yyval.any) = (ParseCommon *) (yyvsp[0].کلید_کد);
                         }
-#line 2454 "src/xkbcomp/parser.c"
-    break;
+#سطر 2454 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 37: /* Decl: OptMergeMode KeyAliasDecl  */
-#line 411 "src/xkbcomp/parser.y"
+  حالة 37: /* Decl: OptMergeMode KeyAliasDecl  */
+#سطر 411 "src/xkbcomp/parser.y"
                         {
-                            (yyvsp[0].keyAlias)->merge = (yyvsp[-1].merge);
-                            (yyval.any) = (ParseCommon *) (yyvsp[0].keyAlias);
+                            (yyvsp[0].کلید_Alias)->ادغام = (yyvsp[-1].ادغام);
+                            (yyval.any) = (ParseCommon *) (yyvsp[0].کلید_Alias);
                         }
-#line 2463 "src/xkbcomp/parser.c"
-    break;
+#سطر 2463 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 38: /* Decl: OptMergeMode KeyTypeDecl  */
-#line 416 "src/xkbcomp/parser.y"
+  حالة 38: /* Decl: OptMergeMode KeyTypeDecl  */
+#سطر 416 "src/xkbcomp/parser.y"
                         {
-                            (yyvsp[0].keyType)->merge = (yyvsp[-1].merge);
-                            (yyval.any) = (ParseCommon *) (yyvsp[0].keyType);
+                            (yyvsp[0].کلید_Type)->ادغام = (yyvsp[-1].ادغام);
+                            (yyval.any) = (ParseCommon *) (yyvsp[0].کلید_Type);
                         }
-#line 2472 "src/xkbcomp/parser.c"
-    break;
+#سطر 2472 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 39: /* Decl: OptMergeMode SymbolsDecl  */
-#line 421 "src/xkbcomp/parser.y"
+  حالة 39: /* Decl: OptMergeMode SymbolsDecl  */
+#سطر 421 "src/xkbcomp/parser.y"
                         {
-                            (yyvsp[0].syms)->merge = (yyvsp[-1].merge);
+                            (yyvsp[0].syms)->ادغام = (yyvsp[-1].ادغام);
                             (yyval.any) = (ParseCommon *) (yyvsp[0].syms);
                         }
-#line 2481 "src/xkbcomp/parser.c"
-    break;
+#سطر 2481 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 40: /* Decl: OptMergeMode ModMapDecl  */
-#line 426 "src/xkbcomp/parser.y"
+  حالة 40: /* Decl: OptMergeMode ModMapDecl  */
+#سطر 426 "src/xkbcomp/parser.y"
                         {
-                            (yyvsp[0].modMask)->merge = (yyvsp[-1].merge);
-                            (yyval.any) = (ParseCommon *) (yyvsp[0].modMask);
+                            (yyvsp[0].mod_ماسک_2)->ادغام = (yyvsp[-1].ادغام);
+                            (yyval.any) = (ParseCommon *) (yyvsp[0].mod_ماسک_2);
                         }
-#line 2490 "src/xkbcomp/parser.c"
-    break;
+#سطر 2490 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 41: /* Decl: OptMergeMode GroupCompatDecl  */
-#line 431 "src/xkbcomp/parser.y"
+  حالة 41: /* Decl: OptMergeMode GroupCompatDecl  */
+#سطر 431 "src/xkbcomp/parser.y"
                         {
-                            (yyvsp[0].groupCompat)->merge = (yyvsp[-1].merge);
-                            (yyval.any) = (ParseCommon *) (yyvsp[0].groupCompat);
+                            (yyvsp[0].گروه_Compat)->ادغام = (yyvsp[-1].ادغام);
+                            (yyval.any) = (ParseCommon *) (yyvsp[0].گروه_Compat);
                         }
-#line 2499 "src/xkbcomp/parser.c"
-    break;
+#سطر 2499 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 42: /* Decl: OptMergeMode LedMapDecl  */
-#line 436 "src/xkbcomp/parser.y"
+  حالة 42: /* Decl: OptMergeMode LedMapDecl  */
+#سطر 436 "src/xkbcomp/parser.y"
                         {
-                            (yyvsp[0].ledMap)->merge = (yyvsp[-1].merge);
+                            (yyvsp[0].ledMap)->ادغام = (yyvsp[-1].ادغام);
                             (yyval.any) = (ParseCommon *) (yyvsp[0].ledMap);
                         }
-#line 2508 "src/xkbcomp/parser.c"
-    break;
+#سطر 2508 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 43: /* Decl: OptMergeMode LedNameDecl  */
-#line 441 "src/xkbcomp/parser.y"
+  حالة 43: /* Decl: OptMergeMode LedNameDecl  */
+#سطر 441 "src/xkbcomp/parser.y"
                         {
-                            (yyvsp[0].ledName)->merge = (yyvsp[-1].merge);
+                            (yyvsp[0].ledName)->ادغام = (yyvsp[-1].ادغام);
                             (yyval.any) = (ParseCommon *) (yyvsp[0].ledName);
                         }
-#line 2517 "src/xkbcomp/parser.c"
-    break;
+#سطر 2517 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 44: /* Decl: OptMergeMode ShapeDecl  */
-#line 445 "src/xkbcomp/parser.y"
-                                                        { (yyval.any) = NULL; }
-#line 2523 "src/xkbcomp/parser.c"
-    break;
+  حالة 44: /* Decl: OptMergeMode ShapeDecl  */
+#سطر 445 "src/xkbcomp/parser.y"
+                                                        { (yyval.any) = عدم; }
+#سطر 2523 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 45: /* Decl: OptMergeMode SectionDecl  */
-#line 446 "src/xkbcomp/parser.y"
-                                                        { (yyval.any) = NULL; }
-#line 2529 "src/xkbcomp/parser.c"
-    break;
+  حالة 45: /* Decl: OptMergeMode SectionDecl  */
+#سطر 446 "src/xkbcomp/parser.y"
+                                                        { (yyval.any) = عدم; }
+#سطر 2529 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 46: /* Decl: OptMergeMode DoodadDecl  */
-#line 447 "src/xkbcomp/parser.y"
-                                                        { (yyval.any) = NULL; }
-#line 2535 "src/xkbcomp/parser.c"
-    break;
+  حالة 46: /* Decl: OptMergeMode DoodadDecl  */
+#سطر 447 "src/xkbcomp/parser.y"
+                                                        { (yyval.any) = عدم; }
+#سطر 2535 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 47: /* Decl: OptMergeMode UnknownDecl  */
-#line 449 "src/xkbcomp/parser.y"
+  حالة 47: /* Decl: OptMergeMode UnknownDecl  */
+#سطر 449 "src/xkbcomp/parser.y"
                             { (yyval.any) = (ParseCommon *) (yyvsp[0].unknown); }
-#line 2541 "src/xkbcomp/parser.c"
-    break;
+#سطر 2541 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 48: /* Decl: OptMergeMode UnknownCompoundStatementDecl  */
-#line 451 "src/xkbcomp/parser.y"
+  حالة 48: /* Decl: OptMergeMode UnknownCompoundStatementDecl  */
+#سطر 451 "src/xkbcomp/parser.y"
                             { (yyval.any) = (ParseCommon *) (yyvsp[0].unknown); }
-#line 2547 "src/xkbcomp/parser.c"
-    break;
+#سطر 2547 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 49: /* Decl: MergeMode "string literal"  */
-#line 453 "src/xkbcomp/parser.y"
+  حالة 49: /* Decl: MergeMode "string literal"  */
+#سطر 453 "src/xkbcomp/parser.y"
                         {
-                            (yyval.any) = (ParseCommon *) IncludeCreate(param->ctx, (yyvsp[0].str), (yyvsp[-1].merge));
-                            free((yyvsp[0].str));
+                            (yyval.any) = (ParseCommon *) IncludeCreate(param->ctx, (yyvsp[0].str), (yyvsp[-1].ادغام));
+                            حرر((yyvsp[0].str));
                         }
-#line 2556 "src/xkbcomp/parser.c"
-    break;
+#سطر 2556 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 50: /* VarDecl: Lhs "=" Expr ";"  */
-#line 460 "src/xkbcomp/parser.y"
-                        { (yyval.var) = VarCreate((yyvsp[-3].expr), (yyvsp[-1].expr)); }
-#line 2562 "src/xkbcomp/parser.c"
-    break;
+  حالة 50: /* VarDecl: Lhs "=" Expr ";"  */
+#سطر 460 "src/xkbcomp/parser.y"
+                        { (yyval.var) = VarCreate((yyvsp[-3].عبارت), (yyvsp[-1].عبارت)); }
+#سطر 2562 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 51: /* VarDecl: Ident ";"  */
-#line 462 "src/xkbcomp/parser.y"
+  حالة 51: /* VarDecl: Ident ";"  */
+#سطر 462 "src/xkbcomp/parser.y"
                         { (yyval.var) = BoolVarCreate((yyvsp[-1].atom), true); }
-#line 2568 "src/xkbcomp/parser.c"
-    break;
+#سطر 2568 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 52: /* VarDecl: "!" Ident ";"  */
-#line 464 "src/xkbcomp/parser.y"
+  حالة 52: /* VarDecl: "!" Ident ";"  */
+#سطر 464 "src/xkbcomp/parser.y"
                         { (yyval.var) = BoolVarCreate((yyvsp[-1].atom), false); }
-#line 2574 "src/xkbcomp/parser.c"
-    break;
+#سطر 2574 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 53: /* KeyNameDecl: "key name" "=" KeyCode ";"  */
-#line 468 "src/xkbcomp/parser.y"
-                        { (yyval.keyCode) = KeycodeCreate((yyvsp[-3].atom), (yyvsp[-1].num)); }
-#line 2580 "src/xkbcomp/parser.c"
-    break;
+  حالة 53: /* KeyNameDecl: "key name" "=" KeyCode ";"  */
+#سطر 468 "src/xkbcomp/parser.y"
+                        { (yyval.کلید_کد) = KeycodeCreate((yyvsp[-3].atom), (yyvsp[-1].رقم)); }
+#سطر 2580 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 54: /* KeyAliasDecl: "alias" "key name" "=" "key name" ";"  */
-#line 472 "src/xkbcomp/parser.y"
-                        { (yyval.keyAlias) = KeyAliasCreate((yyvsp[-3].atom), (yyvsp[-1].atom)); }
-#line 2586 "src/xkbcomp/parser.c"
-    break;
+  حالة 54: /* KeyAliasDecl: "alias" "key name" "=" "key name" ";"  */
+#سطر 472 "src/xkbcomp/parser.y"
+                        { (yyval.کلید_Alias) = کلید_Alias_Create((yyvsp[-3].atom), (yyvsp[-1].atom)); }
+#سطر 2586 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 55: /* VModDecl: "virtual_modifiers" VModDefList ";"  */
-#line 476 "src/xkbcomp/parser.y"
+  حالة 55: /* VModDecl: "virtual_modifiers" VModDefList ";"  */
+#سطر 476 "src/xkbcomp/parser.y"
                         { (yyval.vmodList) = (yyvsp[-1].vmodList); }
-#line 2592 "src/xkbcomp/parser.c"
-    break;
+#سطر 2592 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 56: /* VModDefList: VModDefList "," VModDef  */
-#line 480 "src/xkbcomp/parser.y"
-                        { (yyval.vmodList).head = (yyvsp[-2].vmodList).head; (yyval.vmodList).last->common.next = &(yyvsp[0].vmod)->common; (yyval.vmodList).last = (yyvsp[0].vmod); }
-#line 2598 "src/xkbcomp/parser.c"
-    break;
+  حالة 56: /* VModDefList: VModDefList "," VModDef  */
+#سطر 480 "src/xkbcomp/parser.y"
+                        { (yyval.vmodList).سر = (yyvsp[-2].vmodList).سر; (yyval.vmodList).آخرین->common.بعدی = &(yyvsp[0].vmod)->common; (yyval.vmodList).آخرین = (yyvsp[0].vmod); }
+#سطر 2598 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 57: /* VModDefList: VModDef  */
-#line 482 "src/xkbcomp/parser.y"
-                        { (yyval.vmodList).head = (yyval.vmodList).last = (yyvsp[0].vmod); }
-#line 2604 "src/xkbcomp/parser.c"
-    break;
+  حالة 57: /* VModDefList: VModDef  */
+#سطر 482 "src/xkbcomp/parser.y"
+                        { (yyval.vmodList).سر = (yyval.vmodList).آخرین = (yyvsp[0].vmod); }
+#سطر 2604 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 58: /* VModDef: Ident  */
-#line 486 "src/xkbcomp/parser.y"
-                        { (yyval.vmod) = VModCreate((yyvsp[0].atom), NULL); }
-#line 2610 "src/xkbcomp/parser.c"
-    break;
+  حالة 58: /* VModDef: Ident  */
+#سطر 486 "src/xkbcomp/parser.y"
+                        { (yyval.vmod) = VModCreate((yyvsp[0].atom), عدم); }
+#سطر 2610 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 59: /* VModDef: Ident "=" Expr  */
-#line 488 "src/xkbcomp/parser.y"
-                        { (yyval.vmod) = VModCreate((yyvsp[-2].atom), (yyvsp[0].expr)); }
-#line 2616 "src/xkbcomp/parser.c"
-    break;
+  حالة 59: /* VModDef: Ident "=" Expr  */
+#سطر 488 "src/xkbcomp/parser.y"
+                        { (yyval.vmod) = VModCreate((yyvsp[-2].atom), (yyvsp[0].عبارت)); }
+#سطر 2616 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 60: /* InterpretDecl: "interpret" InterpretMatch "{" VarDeclList "}" ";"  */
-#line 494 "src/xkbcomp/parser.y"
-                        { (yyvsp[-4].interp)->def = (yyvsp[-2].varList).head; (yyval.interp) = (yyvsp[-4].interp); }
-#line 2622 "src/xkbcomp/parser.c"
-    break;
+  حالة 60: /* InterpretDecl: "interpret" InterpretMatch "{" VarDeclList "}" ";"  */
+#سطر 494 "src/xkbcomp/parser.y"
+                        { (yyvsp[-4].interp)->def = (yyvsp[-2].varList).سر; (yyval.interp) = (yyvsp[-4].interp); }
+#سطر 2622 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 61: /* InterpretMatch: KeySym "+" Expr  */
-#line 498 "src/xkbcomp/parser.y"
-                        { (yyval.interp) = InterpCreate((yyvsp[-2].keysym), (yyvsp[0].expr)); }
-#line 2628 "src/xkbcomp/parser.c"
-    break;
+  حالة 61: /* InterpretMatch: KeySym "+" Expr  */
+#سطر 498 "src/xkbcomp/parser.y"
+                        { (yyval.interp) = InterpCreate((yyvsp[-2].keysym), (yyvsp[0].عبارت)); }
+#سطر 2628 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 62: /* InterpretMatch: KeySym  */
-#line 500 "src/xkbcomp/parser.y"
-                        { (yyval.interp) = InterpCreate((yyvsp[0].keysym), NULL); }
-#line 2634 "src/xkbcomp/parser.c"
-    break;
+  حالة 62: /* InterpretMatch: KeySym  */
+#سطر 500 "src/xkbcomp/parser.y"
+                        { (yyval.interp) = InterpCreate((yyvsp[0].keysym), عدم); }
+#سطر 2634 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 63: /* VarDeclList: VarDeclList VarDecl  */
-#line 504 "src/xkbcomp/parser.y"
+  حالة 63: /* VarDeclList: VarDeclList VarDecl  */
+#سطر 504 "src/xkbcomp/parser.y"
                         {
-                            if ((yyvsp[0].var)) {
-                                if ((yyvsp[-1].varList).head) {
-                                    (yyval.varList).head = (yyvsp[-1].varList).head;
-                                    (yyval.varList).last->common.next = &(yyvsp[0].var)->common;
-                                    (yyval.varList).last = (yyvsp[0].var);
-                                } else {
-                                    (yyval.varList).head = (yyval.varList).last = (yyvsp[0].var);
+                            إذا ((yyvsp[0].var)) {
+                                إذا ((yyvsp[-1].varList).سر) {
+                                    (yyval.varList).سر = (yyvsp[-1].varList).سر;
+                                    (yyval.varList).آخرین->common.بعدی = &(yyvsp[0].var)->common;
+                                    (yyval.varList).آخرین = (yyvsp[0].var);
+                                } وإلا {
+                                    (yyval.varList).سر = (yyval.varList).آخرین = (yyvsp[0].var);
                                 }
                             }
                         }
-#line 2650 "src/xkbcomp/parser.c"
-    break;
+#سطر 2650 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 64: /* VarDeclList: %empty  */
-#line 515 "src/xkbcomp/parser.y"
-                        { (yyval.varList).head = (yyval.varList).last = NULL; }
-#line 2656 "src/xkbcomp/parser.c"
-    break;
+  حالة 64: /* VarDeclList: %empty  */
+#سطر 515 "src/xkbcomp/parser.y"
+                        { (yyval.varList).سر = (yyval.varList).آخرین = عدم; }
+#سطر 2656 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 65: /* KeyTypeDecl: "type" String "{" VarDeclList "}" ";"  */
-#line 521 "src/xkbcomp/parser.y"
-                        { (yyval.keyType) = KeyTypeCreate((yyvsp[-4].atom), (yyvsp[-2].varList).head); }
-#line 2662 "src/xkbcomp/parser.c"
-    break;
+  حالة 65: /* KeyTypeDecl: "type" String "{" VarDeclList "}" ";"  */
+#سطر 521 "src/xkbcomp/parser.y"
+                        { (yyval.کلید_Type) = کلید_Type_Create((yyvsp[-4].atom), (yyvsp[-2].varList).سر); }
+#سطر 2662 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 66: /* SymbolsDecl: "key" "key name" "{" OptSymbolsBody "}" ";"  */
-#line 527 "src/xkbcomp/parser.y"
-                        { (yyval.syms) = SymbolsCreate((yyvsp[-4].atom), (yyvsp[-2].varList).head); }
-#line 2668 "src/xkbcomp/parser.c"
-    break;
+  حالة 66: /* SymbolsDecl: "key" "key name" "{" OptSymbolsBody "}" ";"  */
+#سطر 527 "src/xkbcomp/parser.y"
+                        { (yyval.syms) = SymbolsCreate((yyvsp[-4].atom), (yyvsp[-2].varList).سر); }
+#سطر 2668 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 67: /* OptSymbolsBody: SymbolsBody  */
-#line 530 "src/xkbcomp/parser.y"
+  حالة 67: /* OptSymbolsBody: SymbolsBody  */
+#سطر 530 "src/xkbcomp/parser.y"
                                     { (yyval.varList) = (yyvsp[0].varList); }
-#line 2674 "src/xkbcomp/parser.c"
-    break;
+#سطر 2674 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 68: /* OptSymbolsBody: %empty  */
-#line 531 "src/xkbcomp/parser.y"
-                                    { (yyval.varList).head = (yyval.varList).last = NULL; }
-#line 2680 "src/xkbcomp/parser.c"
-    break;
+  حالة 68: /* OptSymbolsBody: %empty  */
+#سطر 531 "src/xkbcomp/parser.y"
+                                    { (yyval.varList).سر = (yyval.varList).آخرین = عدم; }
+#سطر 2680 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 69: /* SymbolsBody: SymbolsBody "," SymbolsVarDecl  */
-#line 535 "src/xkbcomp/parser.y"
-                        { (yyval.varList).head = (yyvsp[-2].varList).head; (yyval.varList).last->common.next = &(yyvsp[0].var)->common; (yyval.varList).last = (yyvsp[0].var); }
-#line 2686 "src/xkbcomp/parser.c"
-    break;
+  حالة 69: /* SymbolsBody: SymbolsBody "," SymbolsVarDecl  */
+#سطر 535 "src/xkbcomp/parser.y"
+                        { (yyval.varList).سر = (yyvsp[-2].varList).سر; (yyval.varList).آخرین->common.بعدی = &(yyvsp[0].var)->common; (yyval.varList).آخرین = (yyvsp[0].var); }
+#سطر 2686 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 70: /* SymbolsBody: SymbolsVarDecl  */
-#line 537 "src/xkbcomp/parser.y"
-                        { (yyval.varList).head = (yyval.varList).last = (yyvsp[0].var); }
-#line 2692 "src/xkbcomp/parser.c"
-    break;
+  حالة 70: /* SymbolsBody: SymbolsVarDecl  */
+#سطر 537 "src/xkbcomp/parser.y"
+                        { (yyval.varList).سر = (yyval.varList).آخرین = (yyvsp[0].var); }
+#سطر 2692 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 71: /* SymbolsVarDecl: Lhs "=" Expr  */
-#line 540 "src/xkbcomp/parser.y"
-                                                { (yyval.var) = VarCreate((yyvsp[-2].expr), (yyvsp[0].expr)); }
-#line 2698 "src/xkbcomp/parser.c"
-    break;
+  حالة 71: /* SymbolsVarDecl: Lhs "=" Expr  */
+#سطر 540 "src/xkbcomp/parser.y"
+                                                { (yyval.var) = VarCreate((yyvsp[-2].عبارت), (yyvsp[0].عبارت)); }
+#سطر 2698 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 72: /* SymbolsVarDecl: Lhs "=" MultiKeySymOrActionList  */
-#line 541 "src/xkbcomp/parser.y"
-                                                           { (yyval.var) = VarCreate((yyvsp[-2].expr), (yyvsp[0].expr)); }
-#line 2704 "src/xkbcomp/parser.c"
-    break;
+  حالة 72: /* SymbolsVarDecl: Lhs "=" MultiKeySymOrActionList  */
+#سطر 541 "src/xkbcomp/parser.y"
+                                                           { (yyval.var) = VarCreate((yyvsp[-2].عبارت), (yyvsp[0].عبارت)); }
+#سطر 2704 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 73: /* SymbolsVarDecl: Ident  */
-#line 542 "src/xkbcomp/parser.y"
+  حالة 73: /* SymbolsVarDecl: Ident  */
+#سطر 542 "src/xkbcomp/parser.y"
                                                 { (yyval.var) = BoolVarCreate((yyvsp[0].atom), true); }
-#line 2710 "src/xkbcomp/parser.c"
-    break;
+#سطر 2710 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 74: /* SymbolsVarDecl: "!" Ident  */
-#line 543 "src/xkbcomp/parser.y"
+  حالة 74: /* SymbolsVarDecl: "!" Ident  */
+#سطر 543 "src/xkbcomp/parser.y"
                                                 { (yyval.var) = BoolVarCreate((yyvsp[0].atom), false); }
-#line 2716 "src/xkbcomp/parser.c"
-    break;
+#سطر 2716 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 75: /* SymbolsVarDecl: MultiKeySymOrActionList  */
-#line 544 "src/xkbcomp/parser.y"
-                                                { (yyval.var) = VarCreate(NULL, (yyvsp[0].expr)); }
-#line 2722 "src/xkbcomp/parser.c"
-    break;
+  حالة 75: /* SymbolsVarDecl: MultiKeySymOrActionList  */
+#سطر 544 "src/xkbcomp/parser.y"
+                                                { (yyval.var) = VarCreate(عدم, (yyvsp[0].عبارت)); }
+#سطر 2722 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 76: /* MultiKeySymOrActionList: "[" MultiKeySymList "]"  */
-#line 560 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[-1].exprList).head; }
-#line 2728 "src/xkbcomp/parser.c"
-    break;
+  حالة 76: /* MultiKeySymOrActionList: "[" MultiKeySymList "]"  */
+#سطر 560 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = (yyvsp[-1].عبارت_List).سر; }
+#سطر 2728 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 77: /* MultiKeySymOrActionList: "[" NoSymbolOrActionList "," MultiKeySymList "]"  */
-#line 562 "src/xkbcomp/parser.y"
+  حالة 77: /* MultiKeySymOrActionList: "[" NoSymbolOrActionList "," MultiKeySymList "]"  */
+#سطر 562 "src/xkbcomp/parser.y"
                         {
                             /* Prepend n times NoSymbol */
-                            struct {ExprDef *head; ExprDef *last;} list = {
-                                .head = (yyvsp[-1].exprList).head, .last = (yyvsp[-1].exprList).last
+                            بنية {عبارت_Def *سر; عبارت_Def *آخرین;} list = {
+                                .سر = (yyvsp[-1].عبارت_List).سر, .آخرین = (yyvsp[-1].عبارت_List).آخرین
                             };
-                            for (uint32_t k = 0; k < (yyvsp[-3].noSymbolOrActionList); k++) {
-                                ExprDef* const syms =
-                                    ExprCreateKeySymList(XKB_KEY_NoSymbol);
-                                if (!syms) {
+                            لكل (uint32_t k = 0; k < (yyvsp[-3].no_نماد_Or_Action_List); k++) {
+                                عبارت_Def* ثابت syms =
+                                    عبارت_Create_کلید_Sym_List(XKB_کلید_No_نماد);
+                                إذا (!syms) {
                                     /* TODO: Use Bison’s more appropriate YYNOMEM */
                                     YYABORT;
                                 }
-                                syms->common.next = &list.head->common;
-                                list.head = syms;
+                                syms->common.بعدی = &list.سر->common;
+                                list.سر = syms;
                             }
-                            (yyval.expr) = list.head;
+                            (yyval.عبارت) = list.سر;
                         }
-#line 2750 "src/xkbcomp/parser.c"
-    break;
+#سطر 2750 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 78: /* MultiKeySymOrActionList: "[" MultiActionList "]"  */
-#line 580 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[-1].exprList).head; }
-#line 2756 "src/xkbcomp/parser.c"
-    break;
+  حالة 78: /* MultiKeySymOrActionList: "[" MultiActionList "]"  */
+#سطر 580 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = (yyvsp[-1].عبارت_List).سر; }
+#سطر 2756 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 79: /* MultiKeySymOrActionList: "[" NoSymbolOrActionList "," MultiActionList "]"  */
-#line 582 "src/xkbcomp/parser.y"
+  حالة 79: /* MultiKeySymOrActionList: "[" NoSymbolOrActionList "," MultiActionList "]"  */
+#سطر 582 "src/xkbcomp/parser.y"
                         {
                             /* Prepend n times NoAction() */
-                            struct {ExprDef *head; ExprDef *last;} list = {
-                                .head = (yyvsp[-1].exprList).head, .last = (yyvsp[-1].exprList).last
+                            بنية {عبارت_Def *سر; عبارت_Def *آخرین;} list = {
+                                .سر = (yyvsp[-1].عبارت_List).سر, .آخرین = (yyvsp[-1].عبارت_List).آخرین
                             };
-                            for (uint32_t k = 0; k < (yyvsp[-3].noSymbolOrActionList); k++) {
-                                ExprDef* const acts = ExprCreateActionList(NULL);
-                                if (!acts) {
+                            لكل (uint32_t k = 0; k < (yyvsp[-3].no_نماد_Or_Action_List); k++) {
+                                عبارت_Def* ثابت acts = عبارت_Create_Action_List(عدم);
+                                إذا (!acts) {
                                     /* TODO: Use Bison’s more appropriate YYNOMEM */
                                     YYABORT;
                                 }
-                                acts->common.next = &list.head->common;
-                                list.head = acts;
+                                acts->common.بعدی = &list.سر->common;
+                                list.سر = acts;
                             }
-                            (yyval.expr) = list.head;
+                            (yyval.عبارت) = list.سر;
                         }
-#line 2777 "src/xkbcomp/parser.c"
-    break;
+#سطر 2777 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 80: /* MultiKeySymOrActionList: "[" NoSymbolOrActionList "]"  */
-#line 604 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprEmptyList(); }
-#line 2783 "src/xkbcomp/parser.c"
-    break;
+  حالة 80: /* MultiKeySymOrActionList: "[" NoSymbolOrActionList "]"  */
+#سطر 604 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = عبارت_خالی_List(); }
+#سطر 2783 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 81: /* NoSymbolOrActionList: NoSymbolOrActionList "," "{" "}"  */
-#line 610 "src/xkbcomp/parser.y"
-                        { (yyval.noSymbolOrActionList) = (yyvsp[-3].noSymbolOrActionList) + 1; }
-#line 2789 "src/xkbcomp/parser.c"
-    break;
+  حالة 81: /* NoSymbolOrActionList: NoSymbolOrActionList "," "{" "}"  */
+#سطر 610 "src/xkbcomp/parser.y"
+                        { (yyval.no_نماد_Or_Action_List) = (yyvsp[-3].no_نماد_Or_Action_List) + 1; }
+#سطر 2789 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 82: /* NoSymbolOrActionList: "{" "}"  */
-#line 612 "src/xkbcomp/parser.y"
-                        { (yyval.noSymbolOrActionList) = 1; }
-#line 2795 "src/xkbcomp/parser.c"
-    break;
+  حالة 82: /* NoSymbolOrActionList: "{" "}"  */
+#سطر 612 "src/xkbcomp/parser.y"
+                        { (yyval.no_نماد_Or_Action_List) = 1; }
+#سطر 2795 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 83: /* NoSymbolOrActionList: %empty  */
-#line 613 "src/xkbcomp/parser.y"
-                        { (yyval.noSymbolOrActionList) = 0; }
-#line 2801 "src/xkbcomp/parser.c"
-    break;
+  حالة 83: /* NoSymbolOrActionList: %empty  */
+#سطر 613 "src/xkbcomp/parser.y"
+                        { (yyval.no_نماد_Or_Action_List) = 0; }
+#سطر 2801 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 84: /* GroupCompatDecl: "group" Integer "=" Expr ";"  */
-#line 617 "src/xkbcomp/parser.y"
-                        { (yyval.groupCompat) = GroupCompatCreate((yyvsp[-3].num), (yyvsp[-1].expr)); }
-#line 2807 "src/xkbcomp/parser.c"
-    break;
+  حالة 84: /* GroupCompatDecl: "group" Integer "=" Expr ";"  */
+#سطر 617 "src/xkbcomp/parser.y"
+                        { (yyval.گروه_Compat) = گروه_Compat_Create((yyvsp[-3].رقم), (yyvsp[-1].عبارت)); }
+#سطر 2807 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 85: /* ModMapDecl: "modifier_map" Expr "{" KeyOrKeySymList "}" ";"  */
-#line 621 "src/xkbcomp/parser.y"
+  حالة 85: /* ModMapDecl: "modifier_map" Expr "{" KeyOrKeySymList "}" ";"  */
+#سطر 621 "src/xkbcomp/parser.y"
                         {
-                            if (param->config.format == XKB_KEYMAP_FORMAT_TEXT_V1 &&
-                                (yyvsp[-4].expr)->common.type != STMT_EXPR_IDENT) {
+                            إذا (param->config.format == XKB_KEYMAP_FORMAT_متن_V1 &&
+                                (yyvsp[-4].عبارت)->common.type != STMT_عبارت_IDENT) {
                                     parser_err(
-                                        param, XKB_ERROR_INVALID_MODIFIER_MAP_MASK,
+                                        param, XKB_ERROR_INVALID_MODIFIER_MAP_ماسک,
                                         "Invalid real modifier mask in modifier "
                                         "map definition: expected identifier"
                                     );
-                                    FreeStmt((ParseCommon *) (yyvsp[-4].expr));
-                                    FreeStmt((ParseCommon *) (yyvsp[-2].exprList).head);
+                                    FreeStmt((ParseCommon *) (yyvsp[-4].عبارت));
+                                    FreeStmt((ParseCommon *) (yyvsp[-2].عبارت_List).سر);
                                     YYERROR;
                             }
-                            (yyval.modMask) = ModMapCreate((yyvsp[-4].expr), (yyvsp[-2].exprList).head);
+                            (yyval.mod_ماسک_2) = ModMapCreate((yyvsp[-4].عبارت), (yyvsp[-2].عبارت_List).سر);
                         }
-#line 2826 "src/xkbcomp/parser.c"
-    break;
+#سطر 2826 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 86: /* KeyOrKeySymList: KeyOrKeySymList "," KeyOrKeySym  */
-#line 638 "src/xkbcomp/parser.y"
-                        { (yyval.exprList).head = (yyvsp[-2].exprList).head; (yyval.exprList).last->common.next = &(yyvsp[0].expr)->common; (yyval.exprList).last = (yyvsp[0].expr); }
-#line 2832 "src/xkbcomp/parser.c"
-    break;
+  حالة 86: /* KeyOrKeySymList: KeyOrKeySymList "," KeyOrKeySym  */
+#سطر 638 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت_List).سر = (yyvsp[-2].عبارت_List).سر; (yyval.عبارت_List).آخرین->common.بعدی = &(yyvsp[0].عبارت)->common; (yyval.عبارت_List).آخرین = (yyvsp[0].عبارت); }
+#سطر 2832 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 87: /* KeyOrKeySymList: KeyOrKeySym  */
-#line 640 "src/xkbcomp/parser.y"
-                        { (yyval.exprList).head = (yyval.exprList).last = (yyvsp[0].expr); }
-#line 2838 "src/xkbcomp/parser.c"
-    break;
+  حالة 87: /* KeyOrKeySymList: KeyOrKeySym  */
+#سطر 640 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت_List).سر = (yyval.عبارت_List).آخرین = (yyvsp[0].عبارت); }
+#سطر 2838 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 88: /* KeyOrKeySym: "key name"  */
-#line 644 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateKeyName((yyvsp[0].atom)); }
-#line 2844 "src/xkbcomp/parser.c"
-    break;
+  حالة 88: /* KeyOrKeySym: "key name"  */
+#سطر 644 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = عبارت_Create_کلید_Name((yyvsp[0].atom)); }
+#سطر 2844 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 89: /* KeyOrKeySym: KeySym  */
-#line 646 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateKeySym((yyvsp[0].keysym)); }
-#line 2850 "src/xkbcomp/parser.c"
-    break;
+  حالة 89: /* KeyOrKeySym: KeySym  */
+#سطر 646 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = عبارت_Create_کلید_Sym((yyvsp[0].keysym)); }
+#سطر 2850 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 90: /* LedMapDecl: "indicator" String "{" VarDeclList "}" ";"  */
-#line 650 "src/xkbcomp/parser.y"
-                        { (yyval.ledMap) = LedMapCreate((yyvsp[-4].atom), (yyvsp[-2].varList).head); }
-#line 2856 "src/xkbcomp/parser.c"
-    break;
+  حالة 90: /* LedMapDecl: "indicator" String "{" VarDeclList "}" ";"  */
+#سطر 650 "src/xkbcomp/parser.y"
+                        { (yyval.ledMap) = LedMapCreate((yyvsp[-4].atom), (yyvsp[-2].varList).سر); }
+#سطر 2856 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 91: /* LedNameDecl: "indicator" Integer "=" Expr ";"  */
-#line 654 "src/xkbcomp/parser.y"
-                        { (yyval.ledName) = LedNameCreate((yyvsp[-3].num), (yyvsp[-1].expr), false); }
-#line 2862 "src/xkbcomp/parser.c"
-    break;
+  حالة 91: /* LedNameDecl: "indicator" Integer "=" Expr ";"  */
+#سطر 654 "src/xkbcomp/parser.y"
+                        { (yyval.ledName) = LedNameCreate((yyvsp[-3].رقم), (yyvsp[-1].عبارت), false); }
+#سطر 2862 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 92: /* LedNameDecl: "virtual" "indicator" Integer "=" Expr ";"  */
-#line 656 "src/xkbcomp/parser.y"
-                        { (yyval.ledName) = LedNameCreate((yyvsp[-3].num), (yyvsp[-1].expr), true); }
-#line 2868 "src/xkbcomp/parser.c"
-    break;
+  حالة 92: /* LedNameDecl: "virtual" "indicator" Integer "=" Expr ";"  */
+#سطر 656 "src/xkbcomp/parser.y"
+                        { (yyval.ledName) = LedNameCreate((yyvsp[-3].رقم), (yyvsp[-1].عبارت), true); }
+#سطر 2868 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 93: /* UnknownDecl: "identifier" Terminal "=" Expr ";"  */
-#line 660 "src/xkbcomp/parser.y"
+  حالة 93: /* UnknownDecl: "identifier" Terminal "=" Expr ";"  */
+#سطر 660 "src/xkbcomp/parser.y"
                         {
-                            FreeStmt((ParseCommon *) (yyvsp[-3].expr));
-                            FreeStmt((ParseCommon *) (yyvsp[-1].expr));
+                            FreeStmt((ParseCommon *) (yyvsp[-3].عبارت));
+                            FreeStmt((ParseCommon *) (yyvsp[-1].عبارت));
                             (yyval.unknown) = UnknownStatementCreate(STMT_UNKNOWN_DECLARATION, (yyvsp[-4].sval));
                         }
-#line 2878 "src/xkbcomp/parser.c"
-    break;
+#سطر 2878 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 94: /* UnknownCompoundStatementDecl: "identifier" OptTerminal "{" VarDeclList "}" ";"  */
-#line 669 "src/xkbcomp/parser.y"
+  حالة 94: /* UnknownCompoundStatementDecl: "identifier" OptTerminal "{" VarDeclList "}" ";"  */
+#سطر 669 "src/xkbcomp/parser.y"
                         {
-                            FreeStmt((ParseCommon *) (yyvsp[-4].expr));
-                            FreeStmt((ParseCommon *) (yyvsp[-2].varList).head);
+                            FreeStmt((ParseCommon *) (yyvsp[-4].عبارت));
+                            FreeStmt((ParseCommon *) (yyvsp[-2].varList).سر);
                             (yyval.unknown) = UnknownStatementCreate(STMT_UNKNOWN_COMPOUND, (yyvsp[-5].sval));
                         }
-#line 2888 "src/xkbcomp/parser.c"
-    break;
+#سطر 2888 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 95: /* ShapeDecl: "shape" String "{" OutlineList "}" ";"  */
-#line 677 "src/xkbcomp/parser.y"
-                        { (yyval.geom) = NULL; }
-#line 2894 "src/xkbcomp/parser.c"
-    break;
+  حالة 95: /* ShapeDecl: "shape" String "{" OutlineList "}" ";"  */
+#سطر 677 "src/xkbcomp/parser.y"
+                        { (yyval.geom) = عدم; }
+#سطر 2894 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 96: /* ShapeDecl: "shape" String "{" CoordList "}" ";"  */
-#line 679 "src/xkbcomp/parser.y"
-                        { (void) (yyvsp[-2].expr); (yyval.geom) = NULL; }
-#line 2900 "src/xkbcomp/parser.c"
-    break;
+  حالة 96: /* ShapeDecl: "shape" String "{" CoordList "}" ";"  */
+#سطر 679 "src/xkbcomp/parser.y"
+                        { (فراغ) (yyvsp[-2].عبارت); (yyval.geom) = عدم; }
+#سطر 2900 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 97: /* SectionDecl: "section" String "{" SectionBody "}" ";"  */
-#line 683 "src/xkbcomp/parser.y"
-                        { (yyval.geom) = NULL; }
-#line 2906 "src/xkbcomp/parser.c"
-    break;
+  حالة 97: /* SectionDecl: "section" String "{" SectionBody "}" ";"  */
+#سطر 683 "src/xkbcomp/parser.y"
+                        { (yyval.geom) = عدم; }
+#سطر 2906 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 98: /* SectionBody: SectionBody SectionBodyItem  */
-#line 686 "src/xkbcomp/parser.y"
-                                                        { (yyval.geom) = NULL;}
-#line 2912 "src/xkbcomp/parser.c"
-    break;
+  حالة 98: /* SectionBody: SectionBody SectionBodyItem  */
+#سطر 686 "src/xkbcomp/parser.y"
+                                                        { (yyval.geom) = عدم;}
+#سطر 2912 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 99: /* SectionBody: SectionBodyItem  */
-#line 687 "src/xkbcomp/parser.y"
-                                                        { (yyval.geom) = NULL; }
-#line 2918 "src/xkbcomp/parser.c"
-    break;
+  حالة 99: /* SectionBody: SectionBodyItem  */
+#سطر 687 "src/xkbcomp/parser.y"
+                                                        { (yyval.geom) = عدم; }
+#سطر 2918 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 100: /* SectionBodyItem: "row" "{" RowBody "}" ";"  */
-#line 691 "src/xkbcomp/parser.y"
-                        { (yyval.geom) = NULL; }
-#line 2924 "src/xkbcomp/parser.c"
-    break;
+  حالة 100: /* SectionBodyItem: "row" "{" RowBody "}" ";"  */
+#سطر 691 "src/xkbcomp/parser.y"
+                        { (yyval.geom) = عدم; }
+#سطر 2924 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 101: /* SectionBodyItem: VarDecl  */
-#line 693 "src/xkbcomp/parser.y"
-                        { FreeStmt((ParseCommon *) (yyvsp[0].var)); (yyval.geom) = NULL; }
-#line 2930 "src/xkbcomp/parser.c"
-    break;
+  حالة 101: /* SectionBodyItem: VarDecl  */
+#سطر 693 "src/xkbcomp/parser.y"
+                        { FreeStmt((ParseCommon *) (yyvsp[0].var)); (yyval.geom) = عدم; }
+#سطر 2930 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 102: /* SectionBodyItem: DoodadDecl  */
-#line 695 "src/xkbcomp/parser.y"
-                        { (yyval.geom) = NULL; }
-#line 2936 "src/xkbcomp/parser.c"
-    break;
+  حالة 102: /* SectionBodyItem: DoodadDecl  */
+#سطر 695 "src/xkbcomp/parser.y"
+                        { (yyval.geom) = عدم; }
+#سطر 2936 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 103: /* SectionBodyItem: LedMapDecl  */
-#line 697 "src/xkbcomp/parser.y"
-                        { FreeStmt((ParseCommon *) (yyvsp[0].ledMap)); (yyval.geom) = NULL; }
-#line 2942 "src/xkbcomp/parser.c"
-    break;
+  حالة 103: /* SectionBodyItem: LedMapDecl  */
+#سطر 697 "src/xkbcomp/parser.y"
+                        { FreeStmt((ParseCommon *) (yyvsp[0].ledMap)); (yyval.geom) = عدم; }
+#سطر 2942 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 104: /* SectionBodyItem: OverlayDecl  */
-#line 699 "src/xkbcomp/parser.y"
-                        { (yyval.geom) = NULL; }
-#line 2948 "src/xkbcomp/parser.c"
-    break;
+  حالة 104: /* SectionBodyItem: OverlayDecl  */
+#سطر 699 "src/xkbcomp/parser.y"
+                        { (yyval.geom) = عدم; }
+#سطر 2948 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 105: /* RowBody: RowBody RowBodyItem  */
-#line 702 "src/xkbcomp/parser.y"
-                                                { (yyval.geom) = NULL;}
-#line 2954 "src/xkbcomp/parser.c"
-    break;
+  حالة 105: /* RowBody: RowBody RowBodyItem  */
+#سطر 702 "src/xkbcomp/parser.y"
+                                                { (yyval.geom) = عدم;}
+#سطر 2954 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 106: /* RowBody: RowBodyItem  */
-#line 703 "src/xkbcomp/parser.y"
-                                                { (yyval.geom) = NULL; }
-#line 2960 "src/xkbcomp/parser.c"
-    break;
+  حالة 106: /* RowBody: RowBodyItem  */
+#سطر 703 "src/xkbcomp/parser.y"
+                                                { (yyval.geom) = عدم; }
+#سطر 2960 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 107: /* RowBodyItem: "keys" "{" Keys "}" ";"  */
-#line 706 "src/xkbcomp/parser.y"
-                                                     { (yyval.geom) = NULL; }
-#line 2966 "src/xkbcomp/parser.c"
-    break;
+  حالة 107: /* RowBodyItem: "keys" "{" Keys "}" ";"  */
+#سطر 706 "src/xkbcomp/parser.y"
+                                                     { (yyval.geom) = عدم; }
+#سطر 2966 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 108: /* RowBodyItem: VarDecl  */
-#line 708 "src/xkbcomp/parser.y"
-                        { FreeStmt((ParseCommon *) (yyvsp[0].var)); (yyval.geom) = NULL; }
-#line 2972 "src/xkbcomp/parser.c"
-    break;
+  حالة 108: /* RowBodyItem: VarDecl  */
+#سطر 708 "src/xkbcomp/parser.y"
+                        { FreeStmt((ParseCommon *) (yyvsp[0].var)); (yyval.geom) = عدم; }
+#سطر 2972 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 109: /* Keys: Keys "," Key  */
-#line 711 "src/xkbcomp/parser.y"
-                                                { (yyval.geom) = NULL; }
-#line 2978 "src/xkbcomp/parser.c"
-    break;
+  حالة 109: /* Keys: Keys "," Key  */
+#سطر 711 "src/xkbcomp/parser.y"
+                                                { (yyval.geom) = عدم; }
+#سطر 2978 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 110: /* Keys: Key  */
-#line 712 "src/xkbcomp/parser.y"
-                                                { (yyval.geom) = NULL; }
-#line 2984 "src/xkbcomp/parser.c"
-    break;
+  حالة 110: /* Keys: Key  */
+#سطر 712 "src/xkbcomp/parser.y"
+                                                { (yyval.geom) = عدم; }
+#سطر 2984 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 111: /* Key: "key name"  */
-#line 716 "src/xkbcomp/parser.y"
-                        { (yyval.geom) = NULL; }
-#line 2990 "src/xkbcomp/parser.c"
-    break;
+  حالة 111: /* Key: "key name"  */
+#سطر 716 "src/xkbcomp/parser.y"
+                        { (yyval.geom) = عدم; }
+#سطر 2990 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 112: /* Key: "{" ExprList "}"  */
-#line 718 "src/xkbcomp/parser.y"
-                        { FreeStmt((ParseCommon *) (yyvsp[-1].exprList).head); (yyval.geom) = NULL; }
-#line 2996 "src/xkbcomp/parser.c"
-    break;
+  حالة 112: /* Key: "{" ExprList "}"  */
+#سطر 718 "src/xkbcomp/parser.y"
+                        { FreeStmt((ParseCommon *) (yyvsp[-1].عبارت_List).سر); (yyval.geom) = عدم; }
+#سطر 2996 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 113: /* OverlayDecl: "overlay" String "{" OverlayKeyList "}" ";"  */
-#line 722 "src/xkbcomp/parser.y"
-                        { (yyval.geom) = NULL; }
-#line 3002 "src/xkbcomp/parser.c"
-    break;
+  حالة 113: /* OverlayDecl: "overlay" String "{" OverlayKeyList "}" ";"  */
+#سطر 722 "src/xkbcomp/parser.y"
+                        { (yyval.geom) = عدم; }
+#سطر 3002 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 114: /* OverlayKeyList: OverlayKeyList "," OverlayKey  */
-#line 725 "src/xkbcomp/parser.y"
-                                                        { (yyval.geom) = NULL; }
-#line 3008 "src/xkbcomp/parser.c"
-    break;
+  حالة 114: /* OverlayKeyList: OverlayKeyList "," OverlayKey  */
+#سطر 725 "src/xkbcomp/parser.y"
+                                                        { (yyval.geom) = عدم; }
+#سطر 3008 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 115: /* OverlayKeyList: OverlayKey  */
-#line 726 "src/xkbcomp/parser.y"
-                                                        { (yyval.geom) = NULL; }
-#line 3014 "src/xkbcomp/parser.c"
-    break;
+  حالة 115: /* OverlayKeyList: OverlayKey  */
+#سطر 726 "src/xkbcomp/parser.y"
+                                                        { (yyval.geom) = عدم; }
+#سطر 3014 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 116: /* OverlayKey: "key name" "=" "key name"  */
-#line 729 "src/xkbcomp/parser.y"
-                                                        { (yyval.geom) = NULL; }
-#line 3020 "src/xkbcomp/parser.c"
-    break;
+  حالة 116: /* OverlayKey: "key name" "=" "key name"  */
+#سطر 729 "src/xkbcomp/parser.y"
+                                                        { (yyval.geom) = عدم; }
+#سطر 3020 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 117: /* OutlineList: OutlineList "," OutlineInList  */
-#line 733 "src/xkbcomp/parser.y"
-                        { (yyval.geom) = NULL;}
-#line 3026 "src/xkbcomp/parser.c"
-    break;
+  حالة 117: /* OutlineList: OutlineList "," OutlineInList  */
+#سطر 733 "src/xkbcomp/parser.y"
+                        { (yyval.geom) = عدم;}
+#سطر 3026 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 118: /* OutlineList: OutlineInList  */
-#line 735 "src/xkbcomp/parser.y"
-                        { (yyval.geom) = NULL; }
-#line 3032 "src/xkbcomp/parser.c"
-    break;
+  حالة 118: /* OutlineList: OutlineInList  */
+#سطر 735 "src/xkbcomp/parser.y"
+                        { (yyval.geom) = عدم; }
+#سطر 3032 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 119: /* OutlineInList: "{" CoordList "}"  */
-#line 739 "src/xkbcomp/parser.y"
-                        { (void) (yyvsp[-1].expr); (yyval.geom) = NULL; }
-#line 3038 "src/xkbcomp/parser.c"
-    break;
+  حالة 119: /* OutlineInList: "{" CoordList "}"  */
+#سطر 739 "src/xkbcomp/parser.y"
+                        { (فراغ) (yyvsp[-1].عبارت); (yyval.geom) = عدم; }
+#سطر 3038 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 120: /* OutlineInList: Ident "=" "{" CoordList "}"  */
-#line 741 "src/xkbcomp/parser.y"
-                        { (void) (yyvsp[-1].expr); (yyval.geom) = NULL; }
-#line 3044 "src/xkbcomp/parser.c"
-    break;
+  حالة 120: /* OutlineInList: Ident "=" "{" CoordList "}"  */
+#سطر 741 "src/xkbcomp/parser.y"
+                        { (فراغ) (yyvsp[-1].عبارت); (yyval.geom) = عدم; }
+#سطر 3044 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 121: /* OutlineInList: Ident "=" Expr  */
-#line 743 "src/xkbcomp/parser.y"
-                        { FreeStmt((ParseCommon *) (yyvsp[0].expr)); (yyval.geom) = NULL; }
-#line 3050 "src/xkbcomp/parser.c"
-    break;
+  حالة 121: /* OutlineInList: Ident "=" Expr  */
+#سطر 743 "src/xkbcomp/parser.y"
+                        { FreeStmt((ParseCommon *) (yyvsp[0].عبارت)); (yyval.geom) = عدم; }
+#سطر 3050 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 122: /* CoordList: CoordList "," Coord  */
-#line 747 "src/xkbcomp/parser.y"
-                        { (void) (yyvsp[-2].expr); (void) (yyvsp[0].expr); (yyval.expr) = NULL; }
-#line 3056 "src/xkbcomp/parser.c"
-    break;
+  حالة 122: /* CoordList: CoordList "," Coord  */
+#سطر 747 "src/xkbcomp/parser.y"
+                        { (فراغ) (yyvsp[-2].عبارت); (فراغ) (yyvsp[0].عبارت); (yyval.عبارت) = عدم; }
+#سطر 3056 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 123: /* CoordList: Coord  */
-#line 749 "src/xkbcomp/parser.y"
-                        { (void) (yyvsp[0].expr); (yyval.expr) = NULL; }
-#line 3062 "src/xkbcomp/parser.c"
-    break;
+  حالة 123: /* CoordList: Coord  */
+#سطر 749 "src/xkbcomp/parser.y"
+                        { (فراغ) (yyvsp[0].عبارت); (yyval.عبارت) = عدم; }
+#سطر 3062 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 124: /* Coord: "[" SignedNumber "," SignedNumber "]"  */
-#line 753 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = NULL; }
-#line 3068 "src/xkbcomp/parser.c"
-    break;
+  حالة 124: /* Coord: "[" SignedNumber "," SignedNumber "]"  */
+#سطر 753 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = عدم; }
+#سطر 3068 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 125: /* DoodadDecl: DoodadType String "{" VarDeclList "}" ";"  */
-#line 757 "src/xkbcomp/parser.y"
-                        { FreeStmt((ParseCommon *) (yyvsp[-2].varList).head); (yyval.geom) = NULL; }
-#line 3074 "src/xkbcomp/parser.c"
-    break;
+  حالة 125: /* DoodadDecl: DoodadType String "{" VarDeclList "}" ";"  */
+#سطر 757 "src/xkbcomp/parser.y"
+                        { FreeStmt((ParseCommon *) (yyvsp[-2].varList).سر); (yyval.geom) = عدم; }
+#سطر 3074 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 126: /* DoodadType: "text"  */
-#line 760 "src/xkbcomp/parser.y"
-                                { (yyval.num) = 0; }
-#line 3080 "src/xkbcomp/parser.c"
-    break;
+  حالة 126: /* DoodadType: "text"  */
+#سطر 760 "src/xkbcomp/parser.y"
+                                { (yyval.رقم) = 0; }
+#سطر 3080 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 127: /* DoodadType: "outline"  */
-#line 761 "src/xkbcomp/parser.y"
-                                { (yyval.num) = 0; }
-#line 3086 "src/xkbcomp/parser.c"
-    break;
+  حالة 127: /* DoodadType: "outline"  */
+#سطر 761 "src/xkbcomp/parser.y"
+                                { (yyval.رقم) = 0; }
+#سطر 3086 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 128: /* DoodadType: "solid"  */
-#line 762 "src/xkbcomp/parser.y"
-                                { (yyval.num) = 0; }
-#line 3092 "src/xkbcomp/parser.c"
-    break;
+  حالة 128: /* DoodadType: "solid"  */
+#سطر 762 "src/xkbcomp/parser.y"
+                                { (yyval.رقم) = 0; }
+#سطر 3092 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 129: /* DoodadType: "logo"  */
-#line 763 "src/xkbcomp/parser.y"
-                                { (yyval.num) = 0; }
-#line 3098 "src/xkbcomp/parser.c"
-    break;
+  حالة 129: /* DoodadType: "logo"  */
+#سطر 763 "src/xkbcomp/parser.y"
+                                { (yyval.رقم) = 0; }
+#سطر 3098 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 130: /* FieldSpec: Ident  */
-#line 766 "src/xkbcomp/parser.y"
+  حالة 130: /* FieldSpec: Ident  */
+#سطر 766 "src/xkbcomp/parser.y"
                                 { (yyval.atom) = (yyvsp[0].atom); }
-#line 3104 "src/xkbcomp/parser.c"
-    break;
+#سطر 3104 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 131: /* FieldSpec: Element  */
-#line 767 "src/xkbcomp/parser.y"
+  حالة 131: /* FieldSpec: Element  */
+#سطر 767 "src/xkbcomp/parser.y"
                                 { (yyval.atom) = (yyvsp[0].atom); }
-#line 3110 "src/xkbcomp/parser.c"
-    break;
+#سطر 3110 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 132: /* Element: "action"  */
-#line 771 "src/xkbcomp/parser.y"
+  حالة 132: /* Element: "action"  */
+#سطر 771 "src/xkbcomp/parser.y"
                         { (yyval.atom) = xkb_atom_intern_literal(param->ctx, "action"); }
-#line 3116 "src/xkbcomp/parser.c"
-    break;
+#سطر 3116 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 133: /* Element: "interpret"  */
-#line 773 "src/xkbcomp/parser.y"
+  حالة 133: /* Element: "interpret"  */
+#سطر 773 "src/xkbcomp/parser.y"
                         { (yyval.atom) = xkb_atom_intern_literal(param->ctx, "interpret"); }
-#line 3122 "src/xkbcomp/parser.c"
-    break;
+#سطر 3122 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 134: /* Element: "type"  */
-#line 775 "src/xkbcomp/parser.y"
+  حالة 134: /* Element: "type"  */
+#سطر 775 "src/xkbcomp/parser.y"
                         { (yyval.atom) = xkb_atom_intern_literal(param->ctx, "type"); }
-#line 3128 "src/xkbcomp/parser.c"
-    break;
+#سطر 3128 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 135: /* Element: "key"  */
-#line 777 "src/xkbcomp/parser.y"
+  حالة 135: /* Element: "key"  */
+#سطر 777 "src/xkbcomp/parser.y"
                         { (yyval.atom) = xkb_atom_intern_literal(param->ctx, "key"); }
-#line 3134 "src/xkbcomp/parser.c"
-    break;
+#سطر 3134 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 136: /* Element: "group"  */
-#line 779 "src/xkbcomp/parser.y"
+  حالة 136: /* Element: "group"  */
+#سطر 779 "src/xkbcomp/parser.y"
                         { (yyval.atom) = xkb_atom_intern_literal(param->ctx, "group"); }
-#line 3140 "src/xkbcomp/parser.c"
-    break;
+#سطر 3140 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 137: /* Element: "modifier_map"  */
-#line 781 "src/xkbcomp/parser.y"
+  حالة 137: /* Element: "modifier_map"  */
+#سطر 781 "src/xkbcomp/parser.y"
                         {(yyval.atom) = xkb_atom_intern_literal(param->ctx, "modifier_map");}
-#line 3146 "src/xkbcomp/parser.c"
-    break;
+#سطر 3146 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 138: /* Element: "indicator"  */
-#line 783 "src/xkbcomp/parser.y"
+  حالة 138: /* Element: "indicator"  */
+#سطر 783 "src/xkbcomp/parser.y"
                         { (yyval.atom) = xkb_atom_intern_literal(param->ctx, "indicator"); }
-#line 3152 "src/xkbcomp/parser.c"
-    break;
+#سطر 3152 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 139: /* Element: "shape"  */
-#line 785 "src/xkbcomp/parser.y"
+  حالة 139: /* Element: "shape"  */
+#سطر 785 "src/xkbcomp/parser.y"
                         { (yyval.atom) = xkb_atom_intern_literal(param->ctx, "shape"); }
-#line 3158 "src/xkbcomp/parser.c"
-    break;
+#سطر 3158 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 140: /* Element: "row"  */
-#line 787 "src/xkbcomp/parser.y"
+  حالة 140: /* Element: "row"  */
+#سطر 787 "src/xkbcomp/parser.y"
                         { (yyval.atom) = xkb_atom_intern_literal(param->ctx, "row"); }
-#line 3164 "src/xkbcomp/parser.c"
-    break;
+#سطر 3164 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 141: /* Element: "section"  */
-#line 789 "src/xkbcomp/parser.y"
+  حالة 141: /* Element: "section"  */
+#سطر 789 "src/xkbcomp/parser.y"
                         { (yyval.atom) = xkb_atom_intern_literal(param->ctx, "section"); }
-#line 3170 "src/xkbcomp/parser.c"
-    break;
+#سطر 3170 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 142: /* Element: "text"  */
-#line 791 "src/xkbcomp/parser.y"
+  حالة 142: /* Element: "text"  */
+#سطر 791 "src/xkbcomp/parser.y"
                         { (yyval.atom) = xkb_atom_intern_literal(param->ctx, "text"); }
-#line 3176 "src/xkbcomp/parser.c"
-    break;
+#سطر 3176 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 143: /* OptMergeMode: MergeMode  */
-#line 794 "src/xkbcomp/parser.y"
-                                        { (yyval.merge) = (yyvsp[0].merge); }
-#line 3182 "src/xkbcomp/parser.c"
-    break;
+  حالة 143: /* OptMergeMode: MergeMode  */
+#سطر 794 "src/xkbcomp/parser.y"
+                                        { (yyval.ادغام) = (yyvsp[0].ادغام); }
+#سطر 3182 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 144: /* OptMergeMode: %empty  */
-#line 795 "src/xkbcomp/parser.y"
-                                        { (yyval.merge) = MERGE_DEFAULT; }
-#line 3188 "src/xkbcomp/parser.c"
-    break;
+  حالة 144: /* OptMergeMode: %empty  */
+#سطر 795 "src/xkbcomp/parser.y"
+                                        { (yyval.ادغام) = ادغام_DEFAULT; }
+#سطر 3188 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 145: /* MergeMode: "include"  */
-#line 798 "src/xkbcomp/parser.y"
-                                        { (yyval.merge) = MERGE_DEFAULT; }
-#line 3194 "src/xkbcomp/parser.c"
-    break;
+  حالة 145: /* MergeMode: "include"  */
+#سطر 798 "src/xkbcomp/parser.y"
+                                        { (yyval.ادغام) = ادغام_DEFAULT; }
+#سطر 3194 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 146: /* MergeMode: "augment"  */
-#line 799 "src/xkbcomp/parser.y"
-                                        { (yyval.merge) = MERGE_AUGMENT; }
-#line 3200 "src/xkbcomp/parser.c"
-    break;
+  حالة 146: /* MergeMode: "augment"  */
+#سطر 799 "src/xkbcomp/parser.y"
+                                        { (yyval.ادغام) = ادغام_AUGMENT; }
+#سطر 3200 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 147: /* MergeMode: "override"  */
-#line 800 "src/xkbcomp/parser.y"
-                                        { (yyval.merge) = MERGE_OVERRIDE; }
-#line 3206 "src/xkbcomp/parser.c"
-    break;
+  حالة 147: /* MergeMode: "override"  */
+#سطر 800 "src/xkbcomp/parser.y"
+                                        { (yyval.ادغام) = ادغام_OVERRIDE; }
+#سطر 3206 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 148: /* MergeMode: "replace"  */
-#line 801 "src/xkbcomp/parser.y"
-                                        { (yyval.merge) = MERGE_REPLACE; }
-#line 3212 "src/xkbcomp/parser.c"
-    break;
+  حالة 148: /* MergeMode: "replace"  */
+#سطر 801 "src/xkbcomp/parser.y"
+                                        { (yyval.ادغام) = ادغام_REPLACE; }
+#سطر 3212 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 149: /* MergeMode: "alternate"  */
-#line 803 "src/xkbcomp/parser.y"
+  حالة 149: /* MergeMode: "alternate"  */
+#سطر 803 "src/xkbcomp/parser.y"
                 {
                     /*
                      * This used to be MERGE_ALT_FORM. This functionality was
                      * unused and has been removed.
                      */
-                    parser_warn(param, XKB_LOG_MESSAGE_NO_ID,
+                    parser_warn(param, XKB_LOG_پیام_NO_ID,
                                 "ignored unsupported legacy merge mode \"alternate\"");
-                    (yyval.merge) = MERGE_DEFAULT;
+                    (yyval.ادغام) = ادغام_DEFAULT;
                 }
-#line 3226 "src/xkbcomp/parser.c"
-    break;
+#سطر 3226 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 150: /* ExprList: ExprList "," Expr  */
-#line 815 "src/xkbcomp/parser.y"
+  حالة 150: /* ExprList: ExprList "," Expr  */
+#سطر 815 "src/xkbcomp/parser.y"
                         {
-                            if ((yyvsp[0].expr)) {
-                                if ((yyvsp[-2].exprList).head) {
-                                    (yyval.exprList).head = (yyvsp[-2].exprList).head;
-                                    (yyval.exprList).last->common.next = &(yyvsp[0].expr)->common;
-                                    (yyval.exprList).last = (yyvsp[0].expr);
-                                } else {
-                                    (yyval.exprList).head = (yyval.exprList).last = (yyvsp[0].expr);
+                            إذا ((yyvsp[0].عبارت)) {
+                                إذا ((yyvsp[-2].عبارت_List).سر) {
+                                    (yyval.عبارت_List).سر = (yyvsp[-2].عبارت_List).سر;
+                                    (yyval.عبارت_List).آخرین->common.بعدی = &(yyvsp[0].عبارت)->common;
+                                    (yyval.عبارت_List).آخرین = (yyvsp[0].عبارت);
+                                } وإلا {
+                                    (yyval.عبارت_List).سر = (yyval.عبارت_List).آخرین = (yyvsp[0].عبارت);
                                 }
                             }
                         }
-#line 3242 "src/xkbcomp/parser.c"
-    break;
+#سطر 3242 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 151: /* ExprList: Expr  */
-#line 827 "src/xkbcomp/parser.y"
-                        { (yyval.exprList).head = (yyval.exprList).last = (yyvsp[0].expr); }
-#line 3248 "src/xkbcomp/parser.c"
-    break;
+  حالة 151: /* ExprList: Expr  */
+#سطر 827 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت_List).سر = (yyval.عبارت_List).آخرین = (yyvsp[0].عبارت); }
+#سطر 3248 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 152: /* ExprList: %empty  */
-#line 828 "src/xkbcomp/parser.y"
-                        { (yyval.exprList).head = (yyval.exprList).last = NULL; }
-#line 3254 "src/xkbcomp/parser.c"
-    break;
+  حالة 152: /* ExprList: %empty  */
+#سطر 828 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت_List).سر = (yyval.عبارت_List).آخرین = عدم; }
+#سطر 3254 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 153: /* Expr: Expr "/" Expr  */
-#line 832 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateBinary(STMT_EXPR_DIVIDE, (yyvsp[-2].expr), (yyvsp[0].expr)); }
-#line 3260 "src/xkbcomp/parser.c"
-    break;
+  حالة 153: /* Expr: Expr "/" Expr  */
+#سطر 832 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = عبارت_Create_دودویی(STMT_عبارت_DIVIDE, (yyvsp[-2].عبارت), (yyvsp[0].عبارت)); }
+#سطر 3260 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 154: /* Expr: Expr "+" Expr  */
-#line 834 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateBinary(STMT_EXPR_ADD, (yyvsp[-2].expr), (yyvsp[0].expr)); }
-#line 3266 "src/xkbcomp/parser.c"
-    break;
+  حالة 154: /* Expr: Expr "+" Expr  */
+#سطر 834 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = عبارت_Create_دودویی(STMT_عبارت_جمع_کن, (yyvsp[-2].عبارت), (yyvsp[0].عبارت)); }
+#سطر 3266 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 155: /* Expr: Expr "-" Expr  */
-#line 836 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateBinary(STMT_EXPR_SUBTRACT, (yyvsp[-2].expr), (yyvsp[0].expr)); }
-#line 3272 "src/xkbcomp/parser.c"
-    break;
+  حالة 155: /* Expr: Expr "-" Expr  */
+#سطر 836 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = عبارت_Create_دودویی(STMT_عبارت_تفریق, (yyvsp[-2].عبارت), (yyvsp[0].عبارت)); }
+#سطر 3272 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 156: /* Expr: Expr "*" Expr  */
-#line 838 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateBinary(STMT_EXPR_MULTIPLY, (yyvsp[-2].expr), (yyvsp[0].expr)); }
-#line 3278 "src/xkbcomp/parser.c"
-    break;
+  حالة 156: /* Expr: Expr "*" Expr  */
+#سطر 838 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = عبارت_Create_دودویی(STMT_عبارت_MULTIPLY, (yyvsp[-2].عبارت), (yyvsp[0].عبارت)); }
+#سطر 3278 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 157: /* Expr: Lhs "=" Expr  */
-#line 840 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateBinary(STMT_EXPR_ASSIGN, (yyvsp[-2].expr), (yyvsp[0].expr)); }
-#line 3284 "src/xkbcomp/parser.c"
-    break;
+  حالة 157: /* Expr: Lhs "=" Expr  */
+#سطر 840 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = عبارت_Create_دودویی(STMT_عبارت_تخصیص_بده, (yyvsp[-2].عبارت), (yyvsp[0].عبارت)); }
+#سطر 3284 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 158: /* Expr: Term  */
-#line 842 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[0].expr); }
-#line 3290 "src/xkbcomp/parser.c"
-    break;
+  حالة 158: /* Expr: Term  */
+#سطر 842 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = (yyvsp[0].عبارت); }
+#سطر 3290 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 159: /* Term: "-" Term  */
-#line 846 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateUnary(STMT_EXPR_NEGATE, (yyvsp[0].expr)); }
-#line 3296 "src/xkbcomp/parser.c"
-    break;
+  حالة 159: /* Term: "-" Term  */
+#سطر 846 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = عبارت_Create_Unary(STMT_عبارت_NEGATE, (yyvsp[0].عبارت)); }
+#سطر 3296 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 160: /* Term: "+" Term  */
-#line 848 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateUnary(STMT_EXPR_UNARY_PLUS, (yyvsp[0].expr)); }
-#line 3302 "src/xkbcomp/parser.c"
-    break;
+  حالة 160: /* Term: "+" Term  */
+#سطر 848 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = عبارت_Create_Unary(STMT_عبارت_UNARY_PLUS, (yyvsp[0].عبارت)); }
+#سطر 3302 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 161: /* Term: "!" Term  */
-#line 850 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateUnary(STMT_EXPR_NOT, (yyvsp[0].expr)); }
-#line 3308 "src/xkbcomp/parser.c"
-    break;
+  حالة 161: /* Term: "!" Term  */
+#سطر 850 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = عبارت_Create_Unary(STMT_عبارت_NOT, (yyvsp[0].عبارت)); }
+#سطر 3308 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 162: /* Term: "~" Term  */
-#line 852 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateUnary(STMT_EXPR_INVERT, (yyvsp[0].expr)); }
-#line 3314 "src/xkbcomp/parser.c"
-    break;
+  حالة 162: /* Term: "~" Term  */
+#سطر 852 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = عبارت_Create_Unary(STMT_عبارت_INVERT, (yyvsp[0].عبارت)); }
+#سطر 3314 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 163: /* Term: Lhs  */
-#line 854 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[0].expr); }
-#line 3320 "src/xkbcomp/parser.c"
-    break;
+  حالة 163: /* Term: Lhs  */
+#سطر 854 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = (yyvsp[0].عبارت); }
+#سطر 3320 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 164: /* Term: FieldSpec "(" ExprList ")"  */
-#line 856 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateAction((yyvsp[-3].atom), (yyvsp[-1].exprList).head); }
-#line 3326 "src/xkbcomp/parser.c"
-    break;
+  حالة 164: /* Term: FieldSpec "(" ExprList ")"  */
+#سطر 856 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = عبارت_Create_Action((yyvsp[-3].atom), (yyvsp[-1].عبارت_List).سر); }
+#سطر 3326 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 165: /* Term: Actions  */
-#line 858 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[0].expr); }
-#line 3332 "src/xkbcomp/parser.c"
-    break;
+  حالة 165: /* Term: Actions  */
+#سطر 858 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = (yyvsp[0].عبارت); }
+#سطر 3332 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 166: /* Term: Terminal  */
-#line 860 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[0].expr); }
-#line 3338 "src/xkbcomp/parser.c"
-    break;
+  حالة 166: /* Term: Terminal  */
+#سطر 860 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = (yyvsp[0].عبارت); }
+#سطر 3338 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 167: /* Term: "(" Expr ")"  */
-#line 862 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[-1].expr); }
-#line 3344 "src/xkbcomp/parser.c"
-    break;
+  حالة 167: /* Term: "(" Expr ")"  */
+#سطر 862 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = (yyvsp[-1].عبارت); }
+#سطر 3344 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 168: /* MultiActionList: MultiActionList "," Action  */
-#line 866 "src/xkbcomp/parser.y"
+  حالة 168: /* MultiActionList: MultiActionList "," Action  */
+#سطر 866 "src/xkbcomp/parser.y"
                         {
-                            ExprDef *expr = ExprCreateActionList((yyvsp[0].expr));
-                            (yyval.exprList) = (yyvsp[-2].exprList);
-                            (yyval.exprList).last->common.next = &expr->common; (yyval.exprList).last = expr;
+                            عبارت_Def *عبارت = عبارت_Create_Action_List((yyvsp[0].عبارت));
+                            (yyval.عبارت_List) = (yyvsp[-2].عبارت_List);
+                            (yyval.عبارت_List).آخرین->common.بعدی = &عبارت->common; (yyval.عبارت_List).آخرین = عبارت;
                         }
-#line 3354 "src/xkbcomp/parser.c"
-    break;
+#سطر 3354 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 169: /* MultiActionList: MultiActionList "," Actions  */
-#line 872 "src/xkbcomp/parser.y"
-                        { (yyval.exprList) = (yyvsp[-2].exprList); (yyval.exprList).last->common.next = &(yyvsp[0].expr)->common; (yyval.exprList).last = (yyvsp[0].expr); }
-#line 3360 "src/xkbcomp/parser.c"
-    break;
+  حالة 169: /* MultiActionList: MultiActionList "," Actions  */
+#سطر 872 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت_List) = (yyvsp[-2].عبارت_List); (yyval.عبارت_List).آخرین->common.بعدی = &(yyvsp[0].عبارت)->common; (yyval.عبارت_List).آخرین = (yyvsp[0].عبارت); }
+#سطر 3360 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 170: /* MultiActionList: Action  */
-#line 874 "src/xkbcomp/parser.y"
-                        { (yyval.exprList).head = (yyval.exprList).last = ExprCreateActionList((yyvsp[0].expr)); }
-#line 3366 "src/xkbcomp/parser.c"
-    break;
+  حالة 170: /* MultiActionList: Action  */
+#سطر 874 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت_List).سر = (yyval.عبارت_List).آخرین = عبارت_Create_Action_List((yyvsp[0].عبارت)); }
+#سطر 3366 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 171: /* MultiActionList: NonEmptyActions  */
-#line 876 "src/xkbcomp/parser.y"
-                        { (yyval.exprList).head = (yyval.exprList).last = (yyvsp[0].expr); }
-#line 3372 "src/xkbcomp/parser.c"
-    break;
+  حالة 171: /* MultiActionList: NonEmptyActions  */
+#سطر 876 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت_List).سر = (yyval.عبارت_List).آخرین = (yyvsp[0].عبارت); }
+#سطر 3372 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 172: /* ActionList: ActionList "," Action  */
-#line 880 "src/xkbcomp/parser.y"
-                        { (yyval.exprList) = (yyvsp[-2].exprList); (yyval.exprList).last->common.next = &(yyvsp[0].expr)->common; (yyval.exprList).last = (yyvsp[0].expr); }
-#line 3378 "src/xkbcomp/parser.c"
-    break;
+  حالة 172: /* ActionList: ActionList "," Action  */
+#سطر 880 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت_List) = (yyvsp[-2].عبارت_List); (yyval.عبارت_List).آخرین->common.بعدی = &(yyvsp[0].عبارت)->common; (yyval.عبارت_List).آخرین = (yyvsp[0].عبارت); }
+#سطر 3378 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 173: /* ActionList: Action  */
-#line 882 "src/xkbcomp/parser.y"
-                        { (yyval.exprList).head = (yyval.exprList).last = (yyvsp[0].expr); }
-#line 3384 "src/xkbcomp/parser.c"
-    break;
+  حالة 173: /* ActionList: Action  */
+#سطر 882 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت_List).سر = (yyval.عبارت_List).آخرین = (yyvsp[0].عبارت); }
+#سطر 3384 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 174: /* NonEmptyActions: "{" ActionList "}"  */
-#line 886 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateActionList((yyvsp[-1].exprList).head); }
-#line 3390 "src/xkbcomp/parser.c"
-    break;
+  حالة 174: /* NonEmptyActions: "{" ActionList "}"  */
+#سطر 886 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = عبارت_Create_Action_List((yyvsp[-1].عبارت_List).سر); }
+#سطر 3390 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 175: /* Actions: NonEmptyActions  */
-#line 890 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[0].expr); }
-#line 3396 "src/xkbcomp/parser.c"
-    break;
+  حالة 175: /* Actions: NonEmptyActions  */
+#سطر 890 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = (yyvsp[0].عبارت); }
+#سطر 3396 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 176: /* Actions: "{" "}"  */
-#line 892 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateActionList(NULL); }
-#line 3402 "src/xkbcomp/parser.c"
-    break;
+  حالة 176: /* Actions: "{" "}"  */
+#سطر 892 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = عبارت_Create_Action_List(عدم); }
+#سطر 3402 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 177: /* Action: FieldSpec "(" ExprList ")"  */
-#line 896 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateAction((yyvsp[-3].atom), (yyvsp[-1].exprList).head); }
-#line 3408 "src/xkbcomp/parser.c"
-    break;
+  حالة 177: /* Action: FieldSpec "(" ExprList ")"  */
+#سطر 896 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = عبارت_Create_Action((yyvsp[-3].atom), (yyvsp[-1].عبارت_List).سر); }
+#سطر 3408 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 178: /* Lhs: FieldSpec  */
-#line 900 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateIdent((yyvsp[0].atom)); }
-#line 3414 "src/xkbcomp/parser.c"
-    break;
+  حالة 178: /* Lhs: FieldSpec  */
+#سطر 900 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = عبارت_Create_Ident((yyvsp[0].atom)); }
+#سطر 3414 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 179: /* Lhs: FieldSpec "." FieldSpec  */
-#line 902 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateFieldRef((yyvsp[-2].atom), (yyvsp[0].atom)); }
-#line 3420 "src/xkbcomp/parser.c"
-    break;
+  حالة 179: /* Lhs: FieldSpec "." FieldSpec  */
+#سطر 902 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = عبارت_Create_فیلد_Ref((yyvsp[-2].atom), (yyvsp[0].atom)); }
+#سطر 3420 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 180: /* Lhs: FieldSpec "[" Expr "]"  */
-#line 904 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateArrayRef(XKB_ATOM_NONE, (yyvsp[-3].atom), (yyvsp[-1].expr)); }
-#line 3426 "src/xkbcomp/parser.c"
-    break;
+  حالة 180: /* Lhs: FieldSpec "[" Expr "]"  */
+#سطر 904 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = عبارت_Create_Array_Ref(XKB_ATOM_NONE, (yyvsp[-3].atom), (yyvsp[-1].عبارت)); }
+#سطر 3426 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 181: /* Lhs: FieldSpec "." FieldSpec "[" Expr "]"  */
-#line 906 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateArrayRef((yyvsp[-5].atom), (yyvsp[-3].atom), (yyvsp[-1].expr)); }
-#line 3432 "src/xkbcomp/parser.c"
-    break;
+  حالة 181: /* Lhs: FieldSpec "." FieldSpec "[" Expr "]"  */
+#سطر 906 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = عبارت_Create_Array_Ref((yyvsp[-5].atom), (yyvsp[-3].atom), (yyvsp[-1].عبارت)); }
+#سطر 3432 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 182: /* OptTerminal: Terminal  */
-#line 910 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[0].expr); }
-#line 3438 "src/xkbcomp/parser.c"
-    break;
+  حالة 182: /* OptTerminal: Terminal  */
+#سطر 910 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = (yyvsp[0].عبارت); }
+#سطر 3438 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 183: /* OptTerminal: %empty  */
-#line 911 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = NULL; }
-#line 3444 "src/xkbcomp/parser.c"
-    break;
+  حالة 183: /* OptTerminal: %empty  */
+#سطر 911 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = عدم; }
+#سطر 3444 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 184: /* Terminal: String  */
-#line 915 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateString((yyvsp[0].atom)); }
-#line 3450 "src/xkbcomp/parser.c"
-    break;
+  حالة 184: /* Terminal: String  */
+#سطر 915 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = عبارت_Create_String((yyvsp[0].atom)); }
+#سطر 3450 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 185: /* Terminal: Integer  */
-#line 917 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateInteger((yyvsp[0].num)); }
-#line 3456 "src/xkbcomp/parser.c"
-    break;
+  حالة 185: /* Terminal: Integer  */
+#سطر 917 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = عبارت_Create_Integer((yyvsp[0].رقم)); }
+#سطر 3456 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 186: /* Terminal: Float  */
-#line 919 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateFloat(/* Discard $1 */); }
-#line 3462 "src/xkbcomp/parser.c"
-    break;
+  حالة 186: /* Terminal: Float  */
+#سطر 919 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = عبارت_Create_Float(/* Discard $1 */); }
+#سطر 3462 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 187: /* Terminal: "key name"  */
-#line 921 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateKeyName((yyvsp[0].atom)); }
-#line 3468 "src/xkbcomp/parser.c"
-    break;
+  حالة 187: /* Terminal: "key name"  */
+#سطر 921 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = عبارت_Create_کلید_Name((yyvsp[0].atom)); }
+#سطر 3468 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 188: /* MultiKeySymList: MultiKeySymList "," KeySymLit  */
-#line 925 "src/xkbcomp/parser.y"
+  حالة 188: /* MultiKeySymList: MultiKeySymList "," KeySymLit  */
+#سطر 925 "src/xkbcomp/parser.y"
                         {
-                            ExprDef *expr = ExprCreateKeySymList((yyvsp[0].keysym));
-                            (yyval.exprList) = (yyvsp[-2].exprList);
-                            (yyval.exprList).last->common.next = &expr->common; (yyval.exprList).last = expr;
+                            عبارت_Def *عبارت = عبارت_Create_کلید_Sym_List((yyvsp[0].keysym));
+                            (yyval.عبارت_List) = (yyvsp[-2].عبارت_List);
+                            (yyval.عبارت_List).آخرین->common.بعدی = &عبارت->common; (yyval.عبارت_List).آخرین = عبارت;
                         }
-#line 3478 "src/xkbcomp/parser.c"
-    break;
+#سطر 3478 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 189: /* MultiKeySymList: MultiKeySymList "," KeySyms  */
-#line 931 "src/xkbcomp/parser.y"
-                        { (yyval.exprList) = (yyvsp[-2].exprList); (yyval.exprList).last->common.next = &(yyvsp[0].expr)->common; (yyval.exprList).last = (yyvsp[0].expr); }
-#line 3484 "src/xkbcomp/parser.c"
-    break;
+  حالة 189: /* MultiKeySymList: MultiKeySymList "," KeySyms  */
+#سطر 931 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت_List) = (yyvsp[-2].عبارت_List); (yyval.عبارت_List).آخرین->common.بعدی = &(yyvsp[0].عبارت)->common; (yyval.عبارت_List).آخرین = (yyvsp[0].عبارت); }
+#سطر 3484 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 190: /* MultiKeySymList: KeySymLit  */
-#line 933 "src/xkbcomp/parser.y"
-                        { (yyval.exprList).head = (yyval.exprList).last = ExprCreateKeySymList((yyvsp[0].keysym)); }
-#line 3490 "src/xkbcomp/parser.c"
-    break;
+  حالة 190: /* MultiKeySymList: KeySymLit  */
+#سطر 933 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت_List).سر = (yyval.عبارت_List).آخرین = عبارت_Create_کلید_Sym_List((yyvsp[0].keysym)); }
+#سطر 3490 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 191: /* MultiKeySymList: NonEmptyKeySyms  */
-#line 935 "src/xkbcomp/parser.y"
-                        { (yyval.exprList).head = (yyval.exprList).last = (yyvsp[0].expr); }
-#line 3496 "src/xkbcomp/parser.c"
-    break;
+  حالة 191: /* MultiKeySymList: NonEmptyKeySyms  */
+#سطر 935 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت_List).سر = (yyval.عبارت_List).آخرین = (yyvsp[0].عبارت); }
+#سطر 3496 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 192: /* KeySymList: KeySymList "," KeySymLit  */
-#line 939 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprAppendKeySymList((yyvsp[-2].expr), (yyvsp[0].keysym)); }
-#line 3502 "src/xkbcomp/parser.c"
-    break;
+  حالة 192: /* KeySymList: KeySymList "," KeySymLit  */
+#سطر 939 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = عبارت_Append_کلید_Sym_List((yyvsp[-2].عبارت), (yyvsp[0].keysym)); }
+#سطر 3502 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 193: /* KeySymList: KeySymList "," "string literal"  */
-#line 941 "src/xkbcomp/parser.y"
+  حالة 193: /* KeySymList: KeySymList "," "string literal"  */
+#سطر 941 "src/xkbcomp/parser.y"
                         {
-                            (yyval.expr) = ExprKeySymListAppendString(param->scanner, (yyvsp[-2].expr), (yyvsp[0].str));
-                            free((yyvsp[0].str));
-                            if (!(yyval.expr))
+                            (yyval.عبارت) = عبارت_کلید_Sym_List_Append_String(param->scanner, (yyvsp[-2].عبارت), (yyvsp[0].str));
+                            حرر((yyvsp[0].str));
+                            إذا (!(yyval.عبارت))
                                 YYERROR;
                         }
-#line 3513 "src/xkbcomp/parser.c"
-    break;
+#سطر 3513 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 194: /* KeySymList: KeySymLit  */
-#line 948 "src/xkbcomp/parser.y"
+  حالة 194: /* KeySymList: KeySymLit  */
+#سطر 948 "src/xkbcomp/parser.y"
                         {
-                            (yyval.expr) = ExprCreateKeySymList((yyvsp[0].keysym));
-                            if (!(yyval.expr))
+                            (yyval.عبارت) = عبارت_Create_کلید_Sym_List((yyvsp[0].keysym));
+                            إذا (!(yyval.عبارت))
                                 YYERROR;
                         }
-#line 3523 "src/xkbcomp/parser.c"
-    break;
+#سطر 3523 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 195: /* KeySymList: "string literal"  */
-#line 954 "src/xkbcomp/parser.y"
+  حالة 195: /* KeySymList: "string literal"  */
+#سطر 954 "src/xkbcomp/parser.y"
                         {
-                            (yyval.expr) = ExprCreateKeySymList(XKB_KEY_NoSymbol);
-                            if (!(yyval.expr))
+                            (yyval.عبارت) = عبارت_Create_کلید_Sym_List(XKB_کلید_No_نماد);
+                            إذا (!(yyval.عبارت))
                                 YYERROR;
-                            (yyval.expr) = ExprKeySymListAppendString(param->scanner, (yyval.expr), (yyvsp[0].str));
-                            free((yyvsp[0].str));
-                            if (!(yyval.expr))
+                            (yyval.عبارت) = عبارت_کلید_Sym_List_Append_String(param->scanner, (yyval.عبارت), (yyvsp[0].str));
+                            حرر((yyvsp[0].str));
+                            إذا (!(yyval.عبارت))
                                 YYERROR;
                         }
-#line 3537 "src/xkbcomp/parser.c"
-    break;
+#سطر 3537 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 196: /* NonEmptyKeySyms: "{" KeySymList "}"  */
-#line 966 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[-1].expr); }
-#line 3543 "src/xkbcomp/parser.c"
-    break;
+  حالة 196: /* NonEmptyKeySyms: "{" KeySymList "}"  */
+#سطر 966 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = (yyvsp[-1].عبارت); }
+#سطر 3543 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 197: /* NonEmptyKeySyms: "string literal"  */
-#line 968 "src/xkbcomp/parser.y"
+  حالة 197: /* NonEmptyKeySyms: "string literal"  */
+#سطر 968 "src/xkbcomp/parser.y"
                         {
-                            (yyval.expr) = ExprCreateKeySymList(XKB_KEY_NoSymbol);
-                            if (!(yyval.expr))
+                            (yyval.عبارت) = عبارت_Create_کلید_Sym_List(XKB_کلید_No_نماد);
+                            إذا (!(yyval.عبارت))
                                 YYERROR;
-                            (yyval.expr) = ExprKeySymListAppendString(param->scanner, (yyval.expr), (yyvsp[0].str));
-                            free((yyvsp[0].str));
-                            if (!(yyval.expr))
+                            (yyval.عبارت) = عبارت_کلید_Sym_List_Append_String(param->scanner, (yyval.عبارت), (yyvsp[0].str));
+                            حرر((yyvsp[0].str));
+                            إذا (!(yyval.عبارت))
                                 YYERROR;
                         }
-#line 3557 "src/xkbcomp/parser.c"
-    break;
+#سطر 3557 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 198: /* KeySyms: NonEmptyKeySyms  */
-#line 980 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[0].expr); }
-#line 3563 "src/xkbcomp/parser.c"
-    break;
+  حالة 198: /* KeySyms: NonEmptyKeySyms  */
+#سطر 980 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = (yyvsp[0].عبارت); }
+#سطر 3563 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 199: /* KeySyms: "{" "}"  */
-#line 982 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateKeySymList(XKB_KEY_NoSymbol); }
-#line 3569 "src/xkbcomp/parser.c"
-    break;
+  حالة 199: /* KeySyms: "{" "}"  */
+#سطر 982 "src/xkbcomp/parser.y"
+                        { (yyval.عبارت) = عبارت_Create_کلید_Sym_List(XKB_کلید_No_نماد); }
+#سطر 3569 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 200: /* KeySym: KeySymLit  */
-#line 986 "src/xkbcomp/parser.y"
+  حالة 200: /* KeySym: KeySymLit  */
+#سطر 986 "src/xkbcomp/parser.y"
                         { (yyval.keysym) = (yyvsp[0].keysym); }
-#line 3575 "src/xkbcomp/parser.c"
-    break;
+#سطر 3575 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 201: /* KeySym: "string literal"  */
-#line 988 "src/xkbcomp/parser.y"
+  حالة 201: /* KeySym: "string literal"  */
+#سطر 988 "src/xkbcomp/parser.y"
                         {
                             (yyval.keysym) = KeysymParseString(param->scanner, (yyvsp[0].str));
-                            free((yyvsp[0].str));
-                            if ((yyval.keysym) == XKB_KEY_NoSymbol)
+                            حرر((yyvsp[0].str));
+                            إذا ((yyval.keysym) == XKB_کلید_No_نماد)
                                 YYERROR;
                         }
-#line 3586 "src/xkbcomp/parser.c"
-    break;
+#سطر 3586 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 202: /* KeySymLit: "identifier"  */
-#line 997 "src/xkbcomp/parser.y"
+  حالة 202: /* KeySymLit: "identifier"  */
+#سطر 997 "src/xkbcomp/parser.y"
                         {
-                            if (!resolve_keysym(param, (yyvsp[0].sval), &(yyval.keysym))) {
+                            إذا (!resolve_keysym(param, (yyvsp[0].sval), &(yyval.keysym))) {
                                 parser_warn(
                                     param,
                                     XKB_WARNING_UNRECOGNIZED_KEYSYM,
                                     "unrecognized keysym \"%.*s\"",
-                                    (unsigned int) (yyvsp[0].sval).len, (yyvsp[0].sval).start
+                                    (بیعلامت صحيح) (yyvsp[0].sval).len, (yyvsp[0].sval).شروع
                                 );
-                                (yyval.keysym) = XKB_KEY_NoSymbol;
+                                (yyval.keysym) = XKB_کلید_No_نماد;
                             }
                         }
-#line 3602 "src/xkbcomp/parser.c"
-    break;
+#سطر 3602 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 203: /* KeySymLit: "section"  */
-#line 1009 "src/xkbcomp/parser.y"
-                                { (yyval.keysym) = XKB_KEY_section; }
-#line 3608 "src/xkbcomp/parser.c"
-    break;
+  حالة 203: /* KeySymLit: "section"  */
+#سطر 1009 "src/xkbcomp/parser.y"
+                                { (yyval.keysym) = XKB_کلید_section; }
+#سطر 3608 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 204: /* KeySymLit: "decimal digit"  */
-#line 1011 "src/xkbcomp/parser.y"
+  حالة 204: /* KeySymLit: "decimal digit"  */
+#سطر 1011 "src/xkbcomp/parser.y"
                         {
                             /*
                              * Special case for digits 0..9:
                              * map to XKB_KEY_0 .. XKB_KEY_9, consistent with
                              * other keysym names: <name> → XKB_KEY_<name>.
                              */
-                            (yyval.keysym) = XKB_KEY_0 + (xkb_keysym_t) (yyvsp[0].num);
+                            (yyval.keysym) = XKB_کلید_0 + (xkb_keysym_t) (yyvsp[0].رقم);
                         }
-#line 3621 "src/xkbcomp/parser.c"
-    break;
+#سطر 3621 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 205: /* KeySymLit: "integer literal"  */
-#line 1020 "src/xkbcomp/parser.y"
+  حالة 205: /* KeySymLit: "integer literal"  */
+#سطر 1020 "src/xkbcomp/parser.y"
                         {
-                            if ((yyvsp[0].num) < XKB_KEYSYM_MIN) {
+                            إذا ((yyvsp[0].رقم) < XKB_KEYSYM_MIN) {
                                 /* Negative value */
                                 static_assert(XKB_KEYSYM_MIN == 0,
                                               "Keysyms are positive");
@@ -3639,9 +3639,9 @@ yyreduce:
                                     XKB_ERROR_INVALID_NUMERIC_KEYSYM,
                                     "unrecognized keysym \"-%#06"PRIx64"\""
                                     " (%"PRId64")",
-                                    -(yyvsp[0].num), (yyvsp[0].num)
+                                    -(yyvsp[0].رقم), (yyvsp[0].رقم)
                                 );
-                                (yyval.keysym) = XKB_KEY_NoSymbol;
+                                (yyval.keysym) = XKB_کلید_No_نماد;
                             }
                             /*
                              * Integers 0..9 are handled with DECIMAL_DIGIT if
@@ -3651,26 +3651,26 @@ yyreduce:
                              * the keysym 0x0001, while `1` is interpreted as
                              * XKB_KEY_1.
                              */
-                            else {
+                            وإلا {
                                 /* Any other numeric value */
-                                if ((yyvsp[0].num) <= XKB_KEYSYM_MAX) {
+                                إذا ((yyvsp[0].رقم) <= XKB_KEYSYM_MAX) {
                                     /*
                                      * Valid keysym
                                      * No normalization is performed and value
                                      * is used as is.
                                      */
-                                    (yyval.keysym) = (xkb_keysym_t) (yyvsp[0].num);
+                                    (yyval.keysym) = (xkb_keysym_t) (yyvsp[0].رقم);
                                     check_deprecated_keysyms(
                                         parser_warn, param, param->ctx,
-                                        (yyval.keysym), NULL, (yyval.keysym), "%#06"PRIx32, "");
-                                } else {
+                                        (yyval.keysym), عدم, (yyval.keysym), "%#06"PRIx32, "");
+                                } وإلا {
                                     /* Invalid keysym */
                                     parser_warn(
                                         param, XKB_ERROR_INVALID_NUMERIC_KEYSYM,
                                         "unrecognized keysym \"%#06"PRIx64"\" "
-                                        "(%"PRId64")", (yyvsp[0].num), (yyvsp[0].num)
+                                        "(%"PRId64")", (yyvsp[0].رقم), (yyvsp[0].رقم)
                                     );
-                                    (yyval.keysym) = XKB_KEY_NoSymbol;
+                                    (yyval.keysym) = XKB_کلید_No_نماد;
                                 }
                                 parser_vrb(
                                     /*
@@ -3682,113 +3682,113 @@ yyreduce:
                                     param, XKB_LOG_VERBOSITY_COMPREHENSIVE,
                                     XKB_WARNING_NUMERIC_KEYSYM,
                                     "numeric keysym \"%#06"PRIx64"\" (%"PRId64")",
-                                    (yyvsp[0].num), (yyvsp[0].num)
+                                    (yyvsp[0].رقم), (yyvsp[0].رقم)
                                 );
                             }
                         }
-#line 3683 "src/xkbcomp/parser.c"
-    break;
+#سطر 3683 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 206: /* SignedNumber: "-" Number  */
-#line 1079 "src/xkbcomp/parser.y"
-                                        { (yyval.num) = -(yyvsp[0].num); }
-#line 3689 "src/xkbcomp/parser.c"
-    break;
+  حالة 206: /* SignedNumber: "-" Number  */
+#سطر 1079 "src/xkbcomp/parser.y"
+                                        { (yyval.رقم) = -(yyvsp[0].رقم); }
+#سطر 3689 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 207: /* SignedNumber: Number  */
-#line 1080 "src/xkbcomp/parser.y"
-                                        { (yyval.num) = (yyvsp[0].num); }
-#line 3695 "src/xkbcomp/parser.c"
-    break;
+  حالة 207: /* SignedNumber: Number  */
+#سطر 1080 "src/xkbcomp/parser.y"
+                                        { (yyval.رقم) = (yyvsp[0].رقم); }
+#سطر 3695 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 208: /* Number: "float literal"  */
-#line 1083 "src/xkbcomp/parser.y"
-                                      { (yyval.num) = (yyvsp[0].num); }
-#line 3701 "src/xkbcomp/parser.c"
-    break;
+  حالة 208: /* Number: "float literal"  */
+#سطر 1083 "src/xkbcomp/parser.y"
+                                      { (yyval.رقم) = (yyvsp[0].رقم); }
+#سطر 3701 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 209: /* Number: "decimal digit"  */
-#line 1084 "src/xkbcomp/parser.y"
-                                      { (yyval.num) = (yyvsp[0].num); }
-#line 3707 "src/xkbcomp/parser.c"
-    break;
+  حالة 209: /* Number: "decimal digit"  */
+#سطر 1084 "src/xkbcomp/parser.y"
+                                      { (yyval.رقم) = (yyvsp[0].رقم); }
+#سطر 3707 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 210: /* Number: "integer literal"  */
-#line 1085 "src/xkbcomp/parser.y"
-                                      { (yyval.num) = (yyvsp[0].num); }
-#line 3713 "src/xkbcomp/parser.c"
-    break;
+  حالة 210: /* Number: "integer literal"  */
+#سطر 1085 "src/xkbcomp/parser.y"
+                                      { (yyval.رقم) = (yyvsp[0].رقم); }
+#سطر 3713 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 211: /* Float: "float literal"  */
-#line 1088 "src/xkbcomp/parser.y"
-                                { (yyval.num) = 0; }
-#line 3719 "src/xkbcomp/parser.c"
-    break;
+  حالة 211: /* Float: "float literal"  */
+#سطر 1088 "src/xkbcomp/parser.y"
+                                { (yyval.رقم) = 0; }
+#سطر 3719 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 212: /* Integer: "integer literal"  */
-#line 1091 "src/xkbcomp/parser.y"
-                                      { (yyval.num) = (yyvsp[0].num); }
-#line 3725 "src/xkbcomp/parser.c"
-    break;
+  حالة 212: /* Integer: "integer literal"  */
+#سطر 1091 "src/xkbcomp/parser.y"
+                                      { (yyval.رقم) = (yyvsp[0].رقم); }
+#سطر 3725 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 213: /* Integer: "decimal digit"  */
-#line 1092 "src/xkbcomp/parser.y"
-                                      { (yyval.num) = (yyvsp[0].num); }
-#line 3731 "src/xkbcomp/parser.c"
-    break;
+  حالة 213: /* Integer: "decimal digit"  */
+#سطر 1092 "src/xkbcomp/parser.y"
+                                      { (yyval.رقم) = (yyvsp[0].رقم); }
+#سطر 3731 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 214: /* KeyCode: "integer literal"  */
-#line 1095 "src/xkbcomp/parser.y"
-                                      { (yyval.num) = (yyvsp[0].num); }
-#line 3737 "src/xkbcomp/parser.c"
-    break;
+  حالة 214: /* KeyCode: "integer literal"  */
+#سطر 1095 "src/xkbcomp/parser.y"
+                                      { (yyval.رقم) = (yyvsp[0].رقم); }
+#سطر 3737 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 215: /* KeyCode: "decimal digit"  */
-#line 1096 "src/xkbcomp/parser.y"
-                                      { (yyval.num) = (yyvsp[0].num); }
-#line 3743 "src/xkbcomp/parser.c"
-    break;
+  حالة 215: /* KeyCode: "decimal digit"  */
+#سطر 1096 "src/xkbcomp/parser.y"
+                                      { (yyval.رقم) = (yyvsp[0].رقم); }
+#سطر 3743 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 216: /* Ident: "identifier"  */
-#line 1099 "src/xkbcomp/parser.y"
-                                { (yyval.atom) = xkb_atom_intern(param->ctx, (yyvsp[0].sval).start, (yyvsp[0].sval).len); }
-#line 3749 "src/xkbcomp/parser.c"
-    break;
+  حالة 216: /* Ident: "identifier"  */
+#سطر 1099 "src/xkbcomp/parser.y"
+                                { (yyval.atom) = xkb_atom_intern(param->ctx, (yyvsp[0].sval).شروع, (yyvsp[0].sval).len); }
+#سطر 3749 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 217: /* Ident: "default"  */
-#line 1100 "src/xkbcomp/parser.y"
+  حالة 217: /* Ident: "default"  */
+#سطر 1100 "src/xkbcomp/parser.y"
                                 { (yyval.atom) = xkb_atom_intern_literal(param->ctx, "default"); }
-#line 3755 "src/xkbcomp/parser.c"
-    break;
+#سطر 3755 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 218: /* String: "string literal"  */
-#line 1103 "src/xkbcomp/parser.y"
-                                { (yyval.atom) = xkb_atom_intern(param->ctx, (yyvsp[0].str), strlen((yyvsp[0].str))); free((yyvsp[0].str)); }
-#line 3761 "src/xkbcomp/parser.c"
-    break;
+  حالة 218: /* String: "string literal"  */
+#سطر 1103 "src/xkbcomp/parser.y"
+                                { (yyval.atom) = xkb_atom_intern(param->ctx, (yyvsp[0].str), طول_رشته((yyvsp[0].str))); حرر((yyvsp[0].str)); }
+#سطر 3761 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 219: /* OptMapName: MapName  */
-#line 1106 "src/xkbcomp/parser.y"
+  حالة 219: /* OptMapName: MapName  */
+#سطر 1106 "src/xkbcomp/parser.y"
                                 { (yyval.str) = (yyvsp[0].str); }
-#line 3767 "src/xkbcomp/parser.c"
-    break;
+#سطر 3767 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 220: /* OptMapName: %empty  */
-#line 1107 "src/xkbcomp/parser.y"
-                                { (yyval.str) = NULL; }
-#line 3773 "src/xkbcomp/parser.c"
-    break;
+  حالة 220: /* OptMapName: %empty  */
+#سطر 1107 "src/xkbcomp/parser.y"
+                                { (yyval.str) = عدم; }
+#سطر 3773 "src/xkbcomp/parser.c"
+    اكسر;
 
-  case 221: /* MapName: "string literal"  */
-#line 1110 "src/xkbcomp/parser.y"
+  حالة 221: /* MapName: "string literal"  */
+#سطر 1110 "src/xkbcomp/parser.y"
                                 { (yyval.str) = (yyvsp[0].str); }
-#line 3779 "src/xkbcomp/parser.c"
-    break;
+#سطر 3779 "src/xkbcomp/parser.c"
+    اكسر;
 
 
-#line 3783 "src/xkbcomp/parser.c"
+#سطر 3783 "src/xkbcomp/parser.c"
 
-      default: break;
+      افتراضي: اكسر;
     }
   /* User semantic actions sometimes alter yychar, and that requires
      that yytoken be updated with the new translation.  We take the
@@ -3801,7 +3801,7 @@ yyreduce:
      case of YYERROR or YYBACKUP, subsequent parser actions might lead
      to an incorrect destructor call or verbose syntax error message
      before the lookahead is translated.  */
-  YY_SYMBOL_PRINT ("-> $$ =", YY_CAST (yysymbol_kind_t, yyr1[yyn]), &yyval, &yyloc);
+  YY_نماد_PRINT ("-> $$ =", YY_CAST (yysymbol_نوع_t, yyr1[yyn]), &yyval, &yyloc);
 
   YYPOPSTACK (yylen);
   yylen = 0;
@@ -3812,14 +3812,14 @@ yyreduce:
      that goes to, based on the state we popped back to and the rule
      number reduced by.  */
   {
-    const int yylhs = yyr1[yyn] - YYNTOKENS;
-    const int yyi = yypgoto[yylhs] + *yyssp;
+    ثابت صحيح yylhs = yyr1[yyn] - YYNTOKENS;
+    ثابت صحيح yyi = yypgoto[yylhs] + *yyssp;
     yystate = (0 <= yyi && yyi <= YYLAST && yycheck[yyi] == *yyssp
                ? yytable[yyi]
                : yydefgoto[yylhs]);
   }
 
-  goto yynewstate;
+  اذهب yynewstate;
 
 
 /*--------------------------------------.
@@ -3830,54 +3830,54 @@ yyerrlab:
      user semantic actions for why this is necessary.  */
   yytoken = yychar == YYEMPTY ? YYSYMBOL_YYEMPTY : YYTRANSLATE (yychar);
   /* If not already recovering from an error, report this error.  */
-  if (!yyerrstatus)
+  إذا (!yyerrstatus)
     {
       ++yynerrs;
       {
         yypcontext_t yyctx
           = {yyssp, yytoken};
-        char const *yymsgp = YY_("syntax error");
-        int yysyntax_error_status;
-        yysyntax_error_status = yysyntax_error (&yymsg_alloc, &yymsg, &yyctx);
-        if (yysyntax_error_status == 0)
+        حرف ثابت *yymsgp = YY_("syntax error");
+        صحيح yysyntax_error_وضعیت;
+        yysyntax_error_وضعیت = yysyntax_error (&yymsg_alloc, &yymsg, &yyctx);
+        إذا (yysyntax_error_وضعیت == 0)
           yymsgp = yymsg;
-        else if (yysyntax_error_status == -1)
+        وإلا إذا (yysyntax_error_وضعیت == -1)
           {
-            if (yymsg != yymsgbuf)
+            إذا (yymsg != yymsgbuf)
               YYSTACK_FREE (yymsg);
-            yymsg = YY_CAST (char *,
+            yymsg = YY_CAST (حرف *,
                              YYSTACK_ALLOC (YY_CAST (YYSIZE_T, yymsg_alloc)));
-            if (yymsg)
+            إذا (yymsg)
               {
-                yysyntax_error_status
+                yysyntax_error_وضعیت
                   = yysyntax_error (&yymsg_alloc, &yymsg, &yyctx);
                 yymsgp = yymsg;
               }
-            else
+            وإلا
               {
                 yymsg = yymsgbuf;
-                yymsg_alloc = sizeof yymsgbuf;
-                yysyntax_error_status = YYENOMEM;
+                yymsg_alloc = حجم yymsgbuf;
+                yysyntax_error_وضعیت = YYENOMEM;
               }
           }
         yyerror (param, yymsgp);
-        if (yysyntax_error_status == YYENOMEM)
+        إذا (yysyntax_error_وضعیت == YYENOMEM)
           YYNOMEM;
       }
     }
 
-  if (yyerrstatus == 3)
+  إذا (yyerrstatus == 3)
     {
       /* If just tried and failed to reuse lookahead token after an
          error, discard it.  */
 
-      if (yychar <= END_OF_FILE)
+      إذا (yychar <= انتها_از_FILE)
         {
           /* Return failure if at end of input.  */
-          if (yychar == END_OF_FILE)
+          إذا (yychar == انتها_از_FILE)
             YYABORT;
         }
-      else
+      وإلا
         {
           yydestruct ("Error: discarding",
                       yytoken, &yylval, param);
@@ -3887,7 +3887,7 @@ yyerrlab:
 
   /* Else will try to reuse lookahead token after shifting the error
      token.  */
-  goto yyerrlab1;
+  اذهب yyerrlab1;
 
 
 /*---------------------------------------------------.
@@ -3896,7 +3896,7 @@ yyerrlab:
 yyerrorlab:
   /* Pacify compilers when the user code never invokes YYERROR and the
      label yyerrorlab therefore never appears in user code.  */
-  if (0)
+  إذا (0)
     YYERROR;
   ++yynerrs;
 
@@ -3904,9 +3904,9 @@ yyerrorlab:
      this YYERROR.  */
   YYPOPSTACK (yylen);
   yylen = 0;
-  YY_STACK_PRINT (yyss, yyssp);
+  YY_پشته_PRINT (yyss, yyssp);
   yystate = *yyssp;
-  goto yyerrlab1;
+  اذهب yyerrlab1;
 
 
 /*-------------------------------------------------------------.
@@ -3916,42 +3916,42 @@ yyerrlab1:
   yyerrstatus = 3;      /* Each real token shifted decrements this.  */
 
   /* Pop stack until we find a state that shifts the error token.  */
-  for (;;)
+  لكل (;;)
     {
       yyn = yypact[yystate];
-      if (!yypact_value_is_default (yyn))
+      إذا (!yypact_مقدار_is_default (yyn))
         {
           yyn += YYSYMBOL_YYerror;
-          if (0 <= yyn && yyn <= YYLAST && yycheck[yyn] == YYSYMBOL_YYerror)
+          إذا (0 <= yyn && yyn <= YYLAST && yycheck[yyn] == YYSYMBOL_YYerror)
             {
               yyn = yytable[yyn];
-              if (0 < yyn)
-                break;
+              إذا (0 < yyn)
+                اكسر;
             }
         }
 
       /* Pop the current state because it cannot handle the error token.  */
-      if (yyssp == yyss)
+      إذا (yyssp == yyss)
         YYABORT;
 
 
       yydestruct ("Error: popping",
-                  YY_ACCESSING_SYMBOL (yystate), yyvsp, param);
+                  YY_ACCESSING_نماد (yystate), yyvsp, param);
       YYPOPSTACK (1);
       yystate = *yyssp;
-      YY_STACK_PRINT (yyss, yyssp);
+      YY_پشته_PRINT (yyss, yyssp);
     }
 
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
   *++yyvsp = yylval;
-  YY_IGNORE_MAYBE_UNINITIALIZED_END
+  YY_IGNORE_MAYBE_UNINITIALIZED_انتها
 
 
   /* Shift the error token.  */
-  YY_SYMBOL_PRINT ("Shifting", YY_ACCESSING_SYMBOL (yyn), yyvsp, yylsp);
+  YY_نماد_PRINT ("Shifting", YY_ACCESSING_نماد (yyn), yyvsp, yylsp);
 
   yystate = yyn;
-  goto yynewstate;
+  اذهب yynewstate;
 
 
 /*-------------------------------------.
@@ -3959,7 +3959,7 @@ yyerrlab1:
 `-------------------------------------*/
 yyacceptlab:
   yyresult = 0;
-  goto yyreturnlab;
+  اذهب yyreturnlab;
 
 
 /*-----------------------------------.
@@ -3967,7 +3967,7 @@ yyacceptlab:
 `-----------------------------------*/
 yyabortlab:
   yyresult = 1;
-  goto yyreturnlab;
+  اذهب yyreturnlab;
 
 
 /*-----------------------------------------------------------.
@@ -3976,14 +3976,14 @@ yyabortlab:
 yyexhaustedlab:
   yyerror (param, YY_("memory exhausted"));
   yyresult = 2;
-  goto yyreturnlab;
+  اذهب yyreturnlab;
 
 
 /*----------------------------------------------------------.
 | yyreturnlab -- parsing is finished, clean up and return.  |
 `----------------------------------------------------------*/
 yyreturnlab:
-  if (yychar != YYEMPTY)
+  إذا (yychar != YYEMPTY)
     {
       /* Make sure we have latest lookahead translation.  See comments at
          user semantic actions for why this is necessary.  */
@@ -3994,38 +3994,38 @@ yyreturnlab:
   /* Do not reclaim the symbols of the rule whose action triggered
      this YYABORT or YYACCEPT.  */
   YYPOPSTACK (yylen);
-  YY_STACK_PRINT (yyss, yyssp);
-  while (yyssp != yyss)
+  YY_پشته_PRINT (yyss, yyssp);
+  طالما (yyssp != yyss)
     {
       yydestruct ("Cleanup: popping",
-                  YY_ACCESSING_SYMBOL (+*yyssp), yyvsp, param);
+                  YY_ACCESSING_نماد (+*yyssp), yyvsp, param);
       YYPOPSTACK (1);
     }
-#ifndef yyoverflow
-  if (yyss != yyssa)
+#اگر_تعریف_نشده yyoverflow
+  إذا (yyss != yyssa)
     YYSTACK_FREE (yyss);
-#endif
-  if (yymsg != yymsgbuf)
+#پایان_اگر
+  إذا (yymsg != yymsgbuf)
     YYSTACK_FREE (yymsg);
-  return yyresult;
+  أرجع yyresult;
 }
 
-#line 1113 "src/xkbcomp/parser.y"
+#سطر 1113 "src/xkbcomp/parser.y"
 
 
 /* Parse a specific section */
 XkbFile *
-parse(struct xkb_context *ctx, const struct parser_keymap_config *config,
-      struct scanner *scanner, const char *map)
+parse(بنية xkb_context *ctx, ثابت بنية parser_keymap_config *config,
+      بنية scanner *scanner, ثابت حرف *map)
 {
-    int ret;
-    XkbFile *first = NULL;
-    struct parser_param param = {
+    صحيح ret;
+    XkbFile *اولی = عدم;
+    بنية parser_param param = {
         .scanner = scanner,
         .ctx = ctx,
-        .rtrn = NULL,
+        .rtrn = عدم,
         .config = *config,
-        .more_maps = false,
+        .بیشتر_maps = false,
     };
 
     /*
@@ -4036,70 +4036,70 @@ parse(struct xkb_context *ctx, const struct parser_keymap_config *config,
      * the first map in the file.
      */
 
-    while ((ret = yyparse(&param)) == 0 && param.more_maps) {
-        if (map) {
-            if (streq_not_null(map, param.rtrn->name))
-                return param.rtrn;
-            else
+    طالما ((ret = yyparse(&param)) == 0 && param.بیشتر_maps) {
+        إذا (map) {
+            إذا (streq_not_null(map, param.rtrn->name))
+                أرجع param.rtrn;
+            وإلا
                 FreeXkbFile(param.rtrn);
         }
-        else {
-            if (param.rtrn->flags & MAP_IS_DEFAULT) {
-                FreeXkbFile(first);
-                return param.rtrn;
+        وإلا {
+            إذا (param.rtrn->flags & MAP_IS_DEFAULT) {
+                FreeXkbFile(اولی);
+                أرجع param.rtrn;
             }
-            else if (!first) {
-                first = param.rtrn;
+            وإلا إذا (!اولی) {
+                اولی = param.rtrn;
             }
-            else {
+            وإلا {
                 FreeXkbFile(param.rtrn);
             }
         }
-        param.rtrn = NULL;
+        param.rtrn = عدم;
     }
 
-    if (ret != 0) {
+    إذا (ret != 0) {
         /* Some error happend; clear the Xkbfiles parsed so far */
-        FreeXkbFile(first);
+        FreeXkbFile(اولی);
         FreeXkbFile(param.rtrn);
-        return NULL;
+        أرجع عدم;
     }
 
     /*
      * Warn about implicit default section,
      * but only if not a keymap: multiple keymaps per file not supported
      */
-    if (first && first->file_type != FILE_TYPE_KEYMAP)
+    إذا (اولی && اولی->file_type != FILE_TYPE_KEYMAP)
         log_vrb(ctx, XKB_LOG_VERBOSITY_DETAILED,
                 XKB_WARNING_MISSING_DEFAULT_SECTION,
                 "No section name in include statement, but \"%s\" contains several; "
                 "Using first defined section, \"%s\"\n",
-                scanner->file_name, safe_map_name(first->name));
+                scanner->file_name, امن_map_name(اولی->name));
 
-    return first;
+    أرجع اولی;
 }
 
 /* Parse the next section */
 bool
-parse_next(struct xkb_context *ctx,
-           const struct parser_keymap_config *config,
-           struct scanner *scanner, XkbFile **xkb_file)
+parse_بعدی(بنية xkb_context *ctx,
+           ثابت بنية parser_keymap_config *config,
+           بنية scanner *scanner, XkbFile **xkb_file)
 {
-    int ret;
-    struct parser_param param = {
+    صحيح ret;
+    بنية parser_param param = {
         .scanner = scanner,
         .ctx = ctx,
-        .rtrn = NULL,
+        .rtrn = عدم,
         .config = *config,
-        .more_maps = false,
+        .بیشتر_maps = false,
     };
 
-    if ((ret = yyparse(&param)) == 0 && param.more_maps) {
+    إذا ((ret = yyparse(&param)) == 0 && param.بیشتر_maps) {
         *xkb_file = param.rtrn;
-        return true;
-    } else {
+        أرجع true;
+    } وإلا {
         FreeXkbFile(param.rtrn);
-        *xkb_file = NULL;
-        return (ret == 0);
+        *xkb_file = عدم;
+        أرجع (ret == 0);
     }
 }

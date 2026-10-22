@@ -11,431 +11,431 @@
  * Author: Daniel Stone <daniel@fooishbar.org>
  */
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <assert.h>
-#include <stdint.h>
-#include <string.h>
+#ضمن <assert.h>
+#ضمن <stdint.h>
+#ضمن <string.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "abi-check.h"
-#include "atom.h"
-#include "context.h"
-#include "features/enums.h"
-#include "keymap.h"
-#include "keymap-priv.h"
-#include "messages-codes.h"
-#include "text.h"
-#include "util-mem.h"
-#include "util-numbers.h"
+#ضمن "xkbcommon/xkbcommon.h"
+#ضمن "abi-check.h"
+#ضمن "atom.h"
+#ضمن "context.h"
+#ضمن "features/enums.h"
+#ضمن "keymap.h"
+#ضمن "keymap-priv.h"
+#ضمن "messages-codes.h"
+#ضمن "text.h"
+#ضمن "util-mem.h"
+#ضمن "util-numbers.h"
 
-struct xkb_keymap *
-xkb_keymap_ref(struct xkb_keymap *keymap)
+بنية xkb_keymap *
+xkb_keymap_ref(بنية xkb_keymap *keymap)
 {
-    assert(keymap->refcnt > 0);
+    أكد(keymap->refcnt > 0);
     keymap->refcnt++;
-    return keymap;
+    أرجع keymap;
 }
 
-void
-clear_level(struct xkb_level *leveli)
+فراغ
+clear_level(بنية xkb_level *leveli)
 {
-    if (leveli->num_syms > 1)
-        free(leveli->s.syms);
-    if (leveli->num_actions > 1)
-        free(leveli->a.actions);
+    إذا (leveli->رقم_syms > 1)
+        حرر(leveli->s.syms);
+    إذا (leveli->رقم_actions > 1)
+        حرر(leveli->a.actions);
 }
 
-static void
-clear_interpret(struct xkb_sym_interpret *interp)
+ساكن فراغ
+clear_interpret(بنية xkb_sym_interpret *interp)
 {
-    if (interp->num_actions > 1)
-        free(interp->a.actions);
+    إذا (interp->رقم_actions > 1)
+        حرر(interp->a.actions);
 }
 
-void
-xkb_keymap_unref(struct xkb_keymap *keymap)
+فراغ
+xkb_keymap_unref(بنية xkb_keymap *keymap)
 {
-    assert(!keymap || keymap->refcnt > 0);
-    if (!keymap || --keymap->refcnt > 0)
-        return;
+    أكد(!keymap || keymap->refcnt > 0);
+    إذا (!keymap || --keymap->refcnt > 0)
+        أرجع;
 
-    if (keymap->keys) {
-        struct xkb_key *key;
-        xkb_keys_foreach(key, keymap) {
-            if (key->groups) {
-                for (xkb_layout_index_t i = 0; i < key->num_groups; i++) {
-                    if (key->groups[i].levels) {
-                        for (xkb_level_index_t j = 0;
-                             j < XkbKeyNumLevels(key, i);
+    إذا (keymap->کلیدها) {
+        بنية xkb_کلید *کلید;
+        xkb_کلیدها_foreach(کلید, keymap) {
+            إذا (کلید->groups) {
+                لكل (xkb_layout_شاخص_t i = 0; i < کلید->رقم_groups; i++) {
+                    إذا (کلید->groups[i].سطوح) {
+                        لكل (xkb_level_شاخص_t j = 0;
+                             j < Xkb_کلید_رقم_سطوح(کلید, i);
                              j++)
-                            clear_level(&key->groups[i].levels[j]);
-                        free(key->groups[i].levels);
+                            clear_level(&کلید->groups[i].سطوح[j]);
+                        حرر(کلید->groups[i].سطوح);
                     }
                 }
-                free(key->groups);
+                حرر(کلید->groups);
             }
-            if (!key->overlays_inline && key->overlays_keys) {
-                free((void *)key->overlays_keys);
+            إذا (!کلید->overlays_inline && کلید->overlays_کلیدها) {
+                حرر((فراغ *)کلید->overlays_کلیدها);
             }
         }
-        free(keymap->keys);
+        حرر(keymap->کلیدها);
     }
-    if (keymap->types) {
-        for (darray_size_t i = 0; i < keymap->num_types; i++) {
-            free(keymap->types[i].entries);
-            free(keymap->types[i].level_names);
+    إذا (keymap->types) {
+        لكل (darray_اندازه_t i = 0; i < keymap->رقم_types; i++) {
+            حرر(keymap->types[i].entries);
+            حرر(keymap->types[i].level_نامها);
         }
-        free(keymap->types);
+        حرر(keymap->types);
     }
-    for (darray_size_t k = 0; k < keymap->num_sym_interprets; k++) {
+    لكل (darray_اندازه_t k = 0; k < keymap->رقم_sym_interprets; k++) {
         clear_interpret(&keymap->sym_interprets[k]);
     }
-    free(keymap->sym_interprets);
-    free(keymap->modmaps);
-    free(keymap->key_aliases);
-    free(keymap->group_names);
-    free(keymap->keycodes_section_name);
-    free(keymap->symbols_section_name);
-    free(keymap->types_section_name);
-    free(keymap->compat_section_name);
+    حرر(keymap->sym_interprets);
+    حرر(keymap->modmaps);
+    حرر(keymap->کلید_aliases);
+    حرر(keymap->گروه_نامها);
+    حرر(keymap->keycodes_section_name);
+    حرر(keymap->symbols_section_name);
+    حرر(keymap->types_section_name);
+    حرر(keymap->compat_section_name);
     xkb_context_unref(keymap->ctx);
-    free(keymap);
+    حرر(keymap);
 }
 
-static const struct xkb_keymap_format_ops *
-get_keymap_format_ops(enum xkb_keymap_format format)
+ساكن ثابت بنية xkb_keymap_format_ops *
+get_keymap_format_ops(تعداد xkb_keymap_format format)
 {
-    static const struct xkb_keymap_format_ops *keymap_format_ops[] = {
-        [XKB_KEYMAP_FORMAT_TEXT_V1] = &text_v1_keymap_format_ops,
-        [XKB_KEYMAP_FORMAT_TEXT_V2] = &text_v1_keymap_format_ops,
+    ساكن ثابت بنية xkb_keymap_format_ops *keymap_format_ops[] = {
+        [XKB_KEYMAP_FORMAT_متن_V1] = &متن_v1_keymap_format_ops,
+        [XKB_KEYMAP_FORMAT_متن_V2] = &متن_v1_keymap_format_ops,
     };
 
-    if ((int) format < 0 || (int) format >= (int) ARRAY_SIZE(keymap_format_ops))
-        return NULL;
+    إذا ((صحيح) format < 0 || (صحيح) format >= (صحيح) ARRAY_اندازه(keymap_format_ops))
+        أرجع عدم;
 
-    return keymap_format_ops[(int) format];
+    أرجع keymap_format_ops[(صحيح) format];
 }
 
-struct xkb_keymap *
-xkb_keymap_new_from_rmlvo(const struct xkb_rmlvo_builder *rmlvo,
-                          enum xkb_keymap_format format,
-                          enum xkb_keymap_compile_flags flags)
+بنية xkb_keymap *
+xkb_keymap_new_from_rmlvo(ثابت بنية xkb_rmlvo_builder *rmlvo,
+                          تعداد xkb_keymap_format format,
+                          تعداد xkb_keymap_compile_flags flags)
 {
-    const struct xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
-    if (!ops || !ops->keymap_new_from_rmlvo) {
+    ثابت بنية xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
+    إذا (!ops || !ops->keymap_new_from_rmlvo) {
         log_err_func(rmlvo->ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", format);
-        return NULL;
+        أرجع عدم;
     }
 
-    struct xkb_keymap *keymap = xkb_keymap_new(rmlvo->ctx, __func__, format,
+    بنية xkb_keymap *keymap = xkb_keymap_new(rmlvo->ctx, __func__, format,
                                                flags);
-    if (!keymap)
-        return NULL;
+    إذا (!keymap)
+        أرجع عدم;
 
-    if (!ops->keymap_new_from_rmlvo(keymap, rmlvo)) {
+    إذا (!ops->keymap_new_from_rmlvo(keymap, rmlvo)) {
         xkb_keymap_unref(keymap);
-        return NULL;
+        أرجع عدم;
     }
 
-    return keymap;
+    أرجع keymap;
 }
 
-struct xkb_keymap *
-xkb_keymap_new_from_names2(struct xkb_context *ctx,
-                           const struct xkb_rule_names *rmlvo_in,
-                           enum xkb_keymap_format format,
-                           enum xkb_keymap_compile_flags flags)
+بنية xkb_keymap *
+xkb_keymap_new_from_names2(بنية xkb_context *ctx,
+                           ثابت بنية xkb_قاعده_نامها *rmlvo_درون,
+                           تعداد xkb_keymap_format format,
+                           تعداد xkb_keymap_compile_flags flags)
 {
-    const struct xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
-    if (!ops || !ops->keymap_new_from_names) {
+    ثابت بنية xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
+    إذا (!ops || !ops->keymap_new_from_نامها) {
         log_err_func(ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", format);
-        return NULL;
+        أرجع عدم;
     }
 
-    struct xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
-    if (!keymap)
-        return NULL;
+    بنية xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
+    إذا (!keymap)
+        أرجع عدم;
 
-    struct xkb_rule_names rmlvo = {0};
-    if (rmlvo_in)
-        rmlvo = *rmlvo_in;
-    xkb_context_sanitize_rule_names(ctx, &rmlvo);
+    بنية xkb_قاعده_نامها rmlvo = {0};
+    إذا (rmlvo_درون)
+        rmlvo = *rmlvo_درون;
+    xkb_context_sanitize_قاعده_نامها(ctx, &rmlvo);
 
-    if (!ops->keymap_new_from_names(keymap, &rmlvo)) {
+    إذا (!ops->keymap_new_from_نامها(keymap, &rmlvo)) {
         xkb_keymap_unref(keymap);
-        return NULL;
+        أرجع عدم;
     }
 
-    return keymap;
+    أرجع keymap;
 }
 
 
-struct xkb_keymap *
-xkb_keymap_new_from_names(struct xkb_context *ctx,
-                          const struct xkb_rule_names *rmlvo_in,
-                          enum xkb_keymap_compile_flags flags)
+بنية xkb_keymap *
+xkb_keymap_new_from_نامها(بنية xkb_context *ctx,
+                          ثابت بنية xkb_قاعده_نامها *rmlvo_درون,
+                          تعداد xkb_keymap_compile_flags flags)
 {
-    return xkb_keymap_new_from_names2(ctx, rmlvo_in,
-                                      XKB_KEYMAP_FORMAT_TEXT_V2, flags);
+    أرجع xkb_keymap_new_from_names2(ctx, rmlvo_درون,
+                                      XKB_KEYMAP_FORMAT_متن_V2, flags);
 }
 
-struct xkb_keymap *
-xkb_keymap_new_from_string(struct xkb_context *ctx,
-                           const char *string,
-                           enum xkb_keymap_format format,
-                           enum xkb_keymap_compile_flags flags)
+بنية xkb_keymap *
+xkb_keymap_new_from_string(بنية xkb_context *ctx,
+                           ثابت حرف *string,
+                           تعداد xkb_keymap_format format,
+                           تعداد xkb_keymap_compile_flags flags)
 {
-    return xkb_keymap_new_from_buffer(ctx, string, strlen(string),
+    أرجع xkb_keymap_new_from_میانگیر(ctx, string, طول_رشته(string),
                                       format, flags);
 }
 
-struct xkb_keymap *
-xkb_keymap_new_from_buffer(struct xkb_context *ctx,
-                           const char *buffer, size_t length,
-                           enum xkb_keymap_format format,
-                           enum xkb_keymap_compile_flags flags)
+بنية xkb_keymap *
+xkb_keymap_new_from_میانگیر(بنية xkb_context *ctx,
+                           ثابت حرف *میانگیر, اندازه_t درازی,
+                           تعداد xkb_keymap_format format,
+                           تعداد xkb_keymap_compile_flags flags)
 {
-    const struct xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
-    if (!ops || !ops->keymap_new_from_string) {
+    ثابت بنية xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
+    إذا (!ops || !ops->keymap_new_from_string) {
         log_err_func(ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", format);
-        return NULL;
+        أرجع عدم;
     }
 
-    if (!buffer) {
-        log_err_func1(ctx, XKB_LOG_MESSAGE_NO_ID,
+    إذا (!میانگیر) {
+        log_err_func1(ctx, XKB_LOG_پیام_NO_ID,
                       "no buffer specified\n");
-        return NULL;
+        أرجع عدم;
     }
 
-    struct xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
-    if (!keymap)
-        return NULL;
+    بنية xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
+    إذا (!keymap)
+        أرجع عدم;
 
     /* Allow a zero-terminated string as a buffer */
-    if (length > 0 && buffer[length - 1] == '\0')
-        length--;
+    إذا (درازی > 0 && میانگیر[درازی - 1] == '\0')
+        درازی--;
 
-    if (!ops->keymap_new_from_string(keymap, buffer, length)) {
+    إذا (!ops->keymap_new_from_string(keymap, میانگیر, درازی)) {
         xkb_keymap_unref(keymap);
-        return NULL;
+        أرجع عدم;
     }
 
-    return keymap;
+    أرجع keymap;
 }
 
-struct xkb_keymap *
-xkb_keymap_new_from_file(struct xkb_context *ctx,
+بنية xkb_keymap *
+xkb_keymap_new_from_file(بنية xkb_context *ctx,
                          FILE *file,
-                         enum xkb_keymap_format format,
-                         enum xkb_keymap_compile_flags flags)
+                         تعداد xkb_keymap_format format,
+                         تعداد xkb_keymap_compile_flags flags)
 {
-    const struct xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
-    if (!ops || !ops->keymap_new_from_file) {
+    ثابت بنية xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
+    إذا (!ops || !ops->keymap_new_from_file) {
         log_err_func(ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", format);
-        return NULL;
+        أرجع عدم;
     }
 
-    if (!file) {
-        log_err_func1(ctx, XKB_LOG_MESSAGE_NO_ID,
+    إذا (!file) {
+        log_err_func1(ctx, XKB_LOG_پیام_NO_ID,
                       "no file specified\n");
-        return NULL;
+        أرجع عدم;
     }
 
-    struct xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
-    if (!keymap)
-        return NULL;
+    بنية xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
+    إذا (!keymap)
+        أرجع عدم;
 
-    if (!ops->keymap_new_from_file(keymap, file)) {
+    إذا (!ops->keymap_new_from_file(keymap, file)) {
         xkb_keymap_unref(keymap);
-        return NULL;
+        أرجع عدم;
     }
 
-    return keymap;
+    أرجع keymap;
 }
 
 /** Check ABI compatibility */
 // NOLINTBEGIN(bugprone-assignment-in-selection-statement)
-static enum xkb_status
+ساكن تعداد xkb_وضعیت
 check_keymap_serialize_abi(
-    struct xkb_context * restrict ctx,
-    const char * restrict func,
-    const struct xkb_keymap_serialize_config * restrict config,
-    const struct xkb_keymap_serialize_result * restrict result
+    بنية xkb_context * محدود ctx,
+    ثابت حرف * محدود func,
+    ثابت بنية xkb_keymap_serialize_config * محدود config,
+    ثابت بنية xkb_keymap_serialize_نتیجه * محدود نتیجه
 )
 {
-    enum xkb_status status;
-    if ((status = xkb_check_keymap_abi(config)) ||
-        (status = xkb_check_keymap_abi(result))) {
-        xkb_log_abi_error(ctx, func, status);
+    تعداد xkb_وضعیت وضعیت;
+    إذا ((وضعیت = xkb_check_keymap_abi(config)) ||
+        (وضعیت = xkb_check_keymap_abi(نتیجه))) {
+        xkb_log_abi_error(ctx, func, وضعیت);
     }
-    return status;
+    أرجع وضعیت;
 }
 // NOLINTEND(bugprone-assignment-in-selection-statement)
 
-enum xkb_status
-xkb_keymap_serialize(const struct xkb_keymap *keymap,
-                     const struct xkb_keymap_serialize_config *config,
-                     struct xkb_keymap_serialize_result *result)
+تعداد xkb_وضعیت
+xkb_keymap_serialize(ثابت بنية xkb_keymap *keymap,
+                     ثابت بنية xkb_keymap_serialize_config *config,
+                     بنية xkb_keymap_serialize_نتیجه *نتیجه)
 {
     /* Check ABI compatibility */
-    const enum xkb_status status =
-        check_keymap_serialize_abi(keymap->ctx, __func__, config, result);
-    if (status != XKB_SUCCESS)
-        return status;
+    ثابت تعداد xkb_وضعیت وضعیت =
+        check_keymap_serialize_abi(keymap->ctx, __func__, config, نتیجه);
+    إذا (وضعیت != XKB_SUCCESS)
+        أرجع وضعیت;
 
-    struct xkb_keymap_serialize_config new_config = *config;
+    بنية xkb_keymap_serialize_config new_config = *config;
 
-    const enum xkb_keymap_serialize_flags invalid_flags = (
+    ثابت تعداد xkb_keymap_serialize_flags invalid_flags = (
         new_config.flags &
-        ~(enum xkb_keymap_serialize_flags)XKB_KEYMAP_SERIALIZE_FLAGS_VALUES
+        ~(تعداد xkb_keymap_serialize_flags)XKB_KEYMAP_SERIALIZE_FLAGS_مقادیر
     );
-    if (invalid_flags) {
+    إذا (invalid_flags) {
         log_err_func(keymap->ctx,
                      XKB_ERROR_UNSUPPORTED_KEYMAP_SERIALIZATION_FLAGS_,
                      "unrecognized serialization flags: %#x\n",
                      invalid_flags);
-        return XKB_ERROR_UNSUPPORTED_KEYMAP_SERIALIZATION_FLAGS;
+        أرجع XKB_ERROR_UNSUPPORTED_KEYMAP_SERIALIZATION_FLAGS;
     }
 
-    if (new_config.format == XKB_KEYMAP_USE_ORIGINAL_FORMAT)
+    إذا (new_config.format == XKB_KEYMAP_USE_ORIGINAL_FORMAT)
         new_config.format = keymap->format;
 
-    const struct xkb_keymap_format_ops * const ops =
+    ثابت بنية xkb_keymap_format_ops * ثابت ops =
         get_keymap_format_ops(new_config.format);
-    if (!ops || !ops->keymap_serialize) {
+    إذا (!ops || !ops->keymap_serialize) {
         log_err_func(keymap->ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", new_config.format);
-        return XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT;
+        أرجع XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT;
     }
 
-    const xkb_layout_mask_t all_layouts =
-        (xkb_layout_mask_t)((UINT64_C(1) << keymap->num_groups) - 1);
-    if (!new_config.layouts) {
+    ثابت xkb_layout_ماسک_t all_layouts =
+        (xkb_layout_ماسک_t)((UINT64_C(1) << keymap->رقم_groups) - 1);
+    إذا (!new_config.layouts) {
         new_config.layouts = all_layouts;
     }
 
-    if (new_config.layouts & ~all_layouts) {
-        log_err_func(keymap->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
+    إذا (new_config.layouts & ~all_layouts) {
+        log_err_func(keymap->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_شاخص_2,
                      "unsupported layout mask: "
                      "expected subset of 0x%08"PRIx32", got: 0x%08"PRIx32"\n",
                      all_layouts, new_config.layouts);
-        return XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX;
+        أرجع XKB_ERROR_UNSUPPORTED_LAYOUT_شاخص;
     }
 
-    const xkb_layout_index_t max_groups = format_max_groups(config->format);
-    const xkb_layout_index_t num_groups =
-        (xkb_layout_index_t)popcount32(new_config.layouts);
+    ثابت xkb_layout_شاخص_t max_groups = format_max_groups(config->format);
+    ثابت xkb_layout_شاخص_t رقم_groups =
+        (xkb_layout_شاخص_t)popcount32(new_config.layouts);
 
-    if (num_groups > max_groups) {
-        const bool strict =
-            (new_config.flags & XKB_KEYMAP_SERIALIZE_STRICT_MODE);
-        xkb_log_with_code(
+    إذا (رقم_groups > max_groups) {
+        ثابت bool strict =
+            (new_config.flags & XKB_KEYMAP_SERIALIZE_STRICT_نما);
+        xkb_log_with_کد(
             keymap->ctx,
             (strict ? XKB_LOG_LEVEL_ERROR : XKB_LOG_LEVEL_WARNING),
-            XKB_LOG_VERBOSITY_MINIMAL,
-            XKB_ERROR_LAYOUT_COUNT_LIMIT_EXCEEDED_,
+            XKB_LOG_VERBOSITY_کمینه,
+            XKB_ERROR_LAYOUT_شمار_حد_EXCEEDED_2,
             "Cannot serialize %"PRIu32" groups in keymap format %d: "
             "maximum is %"PRIu32"%s\n",
-            num_groups, config->format, max_groups,
+            رقم_groups, config->format, max_groups,
             (strict ? "" : "; discarding unsupported groups")
         );
-        if (strict) {
-            return XKB_ERROR_LAYOUT_COUNT_LIMIT_EXCEEDED;
-        } else {
+        إذا (strict) {
+            أرجع XKB_ERROR_LAYOUT_شمار_حد_EXCEEDED;
+        } وإلا {
             new_config.layouts =
-                keep_lowest_n_set_bits(new_config.layouts, max_groups);
+                keep_پایینترین_n_مجموعه_بیتها(new_config.layouts, max_groups);
         }
     }
 
-    log_dbg(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
+    log_dbg(keymap->ctx, XKB_LOG_پیام_NO_ID,
             "Serializing group mask 0x%"PRIx32" (total: %"PRIu32")\n",
-            new_config.layouts, num_groups);
+            new_config.layouts, رقم_groups);
 
-    if (new_config.layouts != all_layouts) {
+    إذا (new_config.layouts != all_layouts) {
         /*
          * If some layouts are discarded, then interprets may not trigger
          * properly. Avoid this by requiring explicit values.
          */
-        new_config.flags |= (XKB_KEYMAP_SERIALIZE_EXPLICIT_KEY_VALUES |
+        new_config.flags |= (XKB_KEYMAP_SERIALIZE_EXPLICIT_کلید_مقادیر |
                              XKB_KEYMAP_SERIALIZE_EXPLICIT_VMODS);
     }
 
-    return ops->keymap_serialize(keymap, &new_config, result);
+    أرجع ops->keymap_serialize(keymap, &new_config, نتیجه);
 }
 
-char *
-xkb_keymap_get_as_string2(struct xkb_keymap *keymap,
-                          enum xkb_keymap_format format,
-                          enum xkb_keymap_serialize_flags flags)
+حرف *
+xkb_keymap_get_as_string2(بنية xkb_keymap *keymap,
+                          تعداد xkb_keymap_format format,
+                          تعداد xkb_keymap_serialize_flags flags)
 {
-    const struct xkb_keymap_serialize_config config = {
-        .size = sizeof(config),
+    ثابت بنية xkb_keymap_serialize_config config = {
+        .اندازه = حجم(config),
         .flags = flags,
         .format = format,
         .layouts = 0,
     };
 
-    struct xkb_keymap_serialize_result result = { .size = sizeof(result) };
+    بنية xkb_keymap_serialize_نتیجه نتیجه = { .اندازه = حجم(نتیجه) };
 
-    return (xkb_keymap_serialize(keymap, &config, &result) == XKB_SUCCESS)
-        ? result.serialized
-        : NULL;
+    أرجع (xkb_keymap_serialize(keymap, &config, &نتیجه) == XKB_SUCCESS)
+        ? نتیجه.serialized
+        : عدم;
 }
 
-char *
-xkb_keymap_get_as_string(struct xkb_keymap *keymap,
-                         enum xkb_keymap_format format)
+حرف *
+xkb_keymap_get_as_string(بنية xkb_keymap *keymap,
+                         تعداد xkb_keymap_format format)
 {
-    return xkb_keymap_get_as_string2(keymap, format,
+    أرجع xkb_keymap_get_as_string2(keymap, format,
                                      XKB_KEYMAP_SERIALIZE_NO_FLAGS);
 }
 
 /**
  * Returns the total number of modifiers active in the keymap.
  */
-xkb_mod_index_t
-xkb_keymap_num_mods(struct xkb_keymap *keymap)
+xkb_mod_شاخص_t
+xkb_keymap_رقم_mods(بنية xkb_keymap *keymap)
 {
-    return keymap->mods.num_mods;
+    أرجع keymap->mods.رقم_mods;
 }
 
 /**
  * Return the name for a given modifier.
  */
-const char *
-xkb_keymap_mod_get_name(struct xkb_keymap *keymap, xkb_mod_index_t idx)
+ثابت حرف *
+xkb_keymap_mod_get_name(بنية xkb_keymap *keymap, xkb_mod_شاخص_t idx)
 {
-    if (idx >= keymap->mods.num_mods)
-        return NULL;
+    إذا (idx >= keymap->mods.رقم_mods)
+        أرجع عدم;
 
-    return xkb_atom_text(keymap->ctx, keymap->mods.mods[idx].name);
+    أرجع xkb_atom_متن(keymap->ctx, keymap->mods.mods[idx].name);
 }
 
 /**
  * Returns the index for a named modifier.
  */
-xkb_mod_index_t
-xkb_keymap_mod_get_index(struct xkb_keymap *keymap, const char *name)
+xkb_mod_شاخص_t
+xkb_keymap_mod_get_شاخص(بنية xkb_keymap *keymap, ثابت حرف *name)
 {
-    const xkb_atom_t atom = xkb_atom_lookup(keymap->ctx, name);
-    return (atom == XKB_ATOM_NONE)
+    ثابت xkb_atom_t atom = xkb_atom_lookup(keymap->ctx, name);
+    أرجع (atom == XKB_ATOM_NONE)
         ? XKB_MOD_INVALID
-        : XkbModNameToIndex(&keymap->mods, atom, MOD_BOTH);
+        : Xkb_Mod_Name_مقصد_شاخص(&keymap->mods, atom, MOD_BOTH);
 }
 
 /**
  * Return the canonical mapping of a named modifier.
  */
-xkb_mod_mask_t
-xkb_keymap_mod_get_mask(struct xkb_keymap *keymap, const char* name)
+xkb_mod_ماسک_t
+xkb_keymap_mod_get_ماسک(بنية xkb_keymap *keymap, ثابت حرف* name)
 {
-    const xkb_mod_index_t idx = xkb_keymap_mod_get_index(keymap, name);
-    return (idx >= keymap->mods.num_mods)
+    ثابت xkb_mod_شاخص_t idx = xkb_keymap_mod_get_شاخص(keymap, name);
+    أرجع (idx >= keymap->mods.رقم_mods)
         ? 0
         : keymap->mods.mods[idx].mapping;
 }
@@ -443,10 +443,10 @@ xkb_keymap_mod_get_mask(struct xkb_keymap *keymap, const char* name)
 /**
  * Return the canonical mapping of a given modifier.
  */
-xkb_mod_mask_t
-xkb_keymap_mod_get_mask2(struct xkb_keymap *keymap, xkb_mod_index_t idx)
+xkb_mod_ماسک_t
+xkb_keymap_mod_get_mask2(بنية xkb_keymap *keymap, xkb_mod_شاخص_t idx)
 {
-    return (idx >= keymap->mods.num_mods)
+    أرجع (idx >= keymap->mods.رقم_mods)
         ? 0
         : keymap->mods.mods[idx].mapping;
 }
@@ -454,139 +454,139 @@ xkb_keymap_mod_get_mask2(struct xkb_keymap *keymap, xkb_mod_index_t idx)
 /**
  * Return the total number of active groups in the keymap.
  */
-xkb_layout_index_t
-xkb_keymap_num_layouts(struct xkb_keymap *keymap)
+xkb_layout_شاخص_t
+xkb_keymap_رقم_layouts(بنية xkb_keymap *keymap)
 {
-    return keymap->num_groups;
+    أرجع keymap->رقم_groups;
 }
 
 /**
  * Returns the name for a given group.
  */
-const char *
-xkb_keymap_layout_get_name(struct xkb_keymap *keymap, xkb_layout_index_t idx)
+ثابت حرف *
+xkb_keymap_layout_get_name(بنية xkb_keymap *keymap, xkb_layout_شاخص_t idx)
 {
-    if (idx >= keymap->num_group_names)
-        return NULL;
+    إذا (idx >= keymap->رقم_گروه_نامها)
+        أرجع عدم;
 
-    return xkb_atom_text(keymap->ctx, keymap->group_names[idx]);
+    أرجع xkb_atom_متن(keymap->ctx, keymap->گروه_نامها[idx]);
 }
 
 /**
  * Returns the index for a named layout.
  */
-xkb_layout_index_t
-xkb_keymap_layout_get_index(struct xkb_keymap *keymap, const char *name)
+xkb_layout_شاخص_t
+xkb_keymap_layout_get_شاخص(بنية xkb_keymap *keymap, ثابت حرف *name)
 {
     xkb_atom_t atom = xkb_atom_lookup(keymap->ctx, name);
-    xkb_layout_index_t i;
+    xkb_layout_شاخص_t i;
 
-    if (atom == XKB_ATOM_NONE)
-        return XKB_LAYOUT_INVALID;
+    إذا (atom == XKB_ATOM_NONE)
+        أرجع XKB_LAYOUT_INVALID;
 
-    for (i = 0; i < keymap->num_group_names; i++)
-        if (keymap->group_names[i] == atom)
-            return i;
+    لكل (i = 0; i < keymap->رقم_گروه_نامها; i++)
+        إذا (keymap->گروه_نامها[i] == atom)
+            أرجع i;
 
-    return XKB_LAYOUT_INVALID;
+    أرجع XKB_LAYOUT_INVALID;
 }
 
 /**
  * Returns the number of layouts active for a particular key.
  */
-xkb_layout_index_t
-xkb_keymap_num_layouts_for_key(struct xkb_keymap *keymap, xkb_keycode_t kc)
+xkb_layout_شاخص_t
+xkb_keymap_رقم_layouts_for_کلید(بنية xkb_keymap *keymap, xkb_keycode_t kc)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    ثابت بنية xkb_کلید *کلید = Xkb_کلید(keymap, kc);
 
-    if (!key)
-        return 0;
+    إذا (!کلید)
+        أرجع 0;
 
-    return key->num_groups;
+    أرجع کلید->رقم_groups;
 }
 
 /**
  * Returns the number of levels active for a particular key and layout.
  */
-xkb_level_index_t
-xkb_keymap_num_levels_for_key(struct xkb_keymap *keymap, xkb_keycode_t kc,
-                              xkb_layout_index_t layout)
+xkb_level_شاخص_t
+xkb_keymap_رقم_سطوح_for_کلید(بنية xkb_keymap *keymap, xkb_keycode_t kc,
+                              xkb_layout_شاخص_t layout)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    ثابت بنية xkb_کلید *کلید = Xkb_کلید(keymap, kc);
 
-    if (!key)
-        return 0;
+    إذا (!کلید)
+        أرجع 0;
 
-    layout = xkb_keymap_key_effective_layout(key, layout);
-    if (layout == XKB_LAYOUT_INVALID)
-        return 0;
+    layout = xkb_keymap_کلید_effective_layout(کلید, layout);
+    إذا (layout == XKB_LAYOUT_INVALID)
+        أرجع 0;
 
-    return XkbKeyNumLevels(key, layout);
+    أرجع Xkb_کلید_رقم_سطوح(کلید, layout);
 }
 
 /**
  * Return the total number of LEDs in the keymap.
  */
-xkb_led_index_t
-xkb_keymap_num_leds(struct xkb_keymap *keymap)
+xkb_led_شاخص_t
+xkb_keymap_رقم_leds(بنية xkb_keymap *keymap)
 {
-    return keymap->num_leds;
+    أرجع keymap->رقم_leds;
 }
 
 /**
  * Returns the name for a given LED.
  */
-const char *
-xkb_keymap_led_get_name(struct xkb_keymap *keymap, xkb_led_index_t idx)
+ثابت حرف *
+xkb_keymap_led_get_name(بنية xkb_keymap *keymap, xkb_led_شاخص_t idx)
 {
-    if (idx >= keymap->num_leds)
-        return NULL;
+    إذا (idx >= keymap->رقم_leds)
+        أرجع عدم;
 
-    return xkb_atom_text(keymap->ctx, keymap->leds[idx].name);
+    أرجع xkb_atom_متن(keymap->ctx, keymap->leds[idx].name);
 }
 
 /**
  * Returns the index for a named LED.
  */
-xkb_led_index_t
-xkb_keymap_led_get_index(struct xkb_keymap *keymap, const char *name)
+xkb_led_شاخص_t
+xkb_keymap_led_get_شاخص(بنية xkb_keymap *keymap, ثابت حرف *name)
 {
     xkb_atom_t atom = xkb_atom_lookup(keymap->ctx, name);
-    xkb_led_index_t i;
-    const struct xkb_led *led;
+    xkb_led_شاخص_t i;
+    ثابت بنية xkb_led *led;
 
-    if (atom == XKB_ATOM_NONE)
-        return XKB_LED_INVALID;
+    إذا (atom == XKB_ATOM_NONE)
+        أرجع XKB_LED_INVALID;
 
     xkb_leds_enumerate(i, led, keymap)
-        if (led->name == atom)
-            return i;
+        إذا (led->name == atom)
+            أرجع i;
 
-    return XKB_LED_INVALID;
+    أرجع XKB_LED_INVALID;
 }
 
-size_t
-xkb_keymap_key_get_mods_for_level(struct xkb_keymap *keymap,
+اندازه_t
+xkb_keymap_کلید_get_mods_for_level(بنية xkb_keymap *keymap,
                                   xkb_keycode_t kc,
-                                  xkb_layout_index_t layout,
-                                  xkb_level_index_t level,
-                                  xkb_mod_mask_t *masks_out,
-                                  size_t masks_size)
+                                  xkb_layout_شاخص_t layout,
+                                  xkb_level_شاخص_t level,
+                                  xkb_mod_ماسک_t *masks_بیرون,
+                                  اندازه_t masks_اندازه)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
-    if (!key)
-        return 0;
+    ثابت بنية xkb_کلید *کلید = Xkb_کلید(keymap, kc);
+    إذا (!کلید)
+        أرجع 0;
 
-    layout = xkb_keymap_key_effective_layout(key, layout);
-    if (layout == XKB_LAYOUT_INVALID)
-        return 0;
+    layout = xkb_keymap_کلید_effective_layout(کلید, layout);
+    إذا (layout == XKB_LAYOUT_INVALID)
+        أرجع 0;
 
-    if (level >= XkbKeyNumLevels(key, layout))
-        return 0;
+    إذا (level >= Xkb_کلید_رقم_سطوح(کلید, layout))
+        أرجع 0;
 
-    const struct xkb_key_type *type = key->groups[layout].type;
+    ثابت بنية xkb_کلید_type *type = کلید->groups[layout].type;
 
-    size_t count = 0;
+    اندازه_t شمار = 0;
 
     /*
      * If the active set of modifiers doesn't match any explicit entry of
@@ -599,310 +599,310 @@ xkb_keymap_key_get_mods_for_level(struct xkb_keymap *keymap,
      * This is almost always what we want. If applicable, given it priority
      * over other ways to generate the level.
      */
-    if (level == 0) {
-        bool empty_mapped = false;
-        for (darray_size_t i = 0; i < type->num_entries && count < masks_size; i++)
-            if (entry_is_active(&type->entries[i]) &&
-                type->entries[i].mods.mask == 0) {
-                empty_mapped = true;
-                break;
+    إذا (level == 0) {
+        bool خالی_mapped = false;
+        لكل (darray_اندازه_t i = 0; i < type->رقم_entries && شمار < masks_اندازه; i++)
+            إذا (مدخل_is_فعال(&type->entries[i]) &&
+                type->entries[i].mods.ماسک == 0) {
+                خالی_mapped = true;
+                اكسر;
             }
-        if (!empty_mapped && count < masks_size) {
-            masks_out[count++] = 0;
+        إذا (!خالی_mapped && شمار < masks_اندازه) {
+            masks_بیرون[شمار++] = 0;
         }
     }
 
     /* Now search explicit mappings. */
-    for (darray_size_t i = 0; i < type->num_entries && count < masks_size; i++) {
-        if (entry_is_active(&type->entries[i]) &&
+    لكل (darray_اندازه_t i = 0; i < type->رقم_entries && شمار < masks_اندازه; i++) {
+        إذا (مدخل_is_فعال(&type->entries[i]) &&
             type->entries[i].level == level) {
-            masks_out[count++] = type->entries[i].mods.mask;
+            masks_بیرون[شمار++] = type->entries[i].mods.ماسک;
         }
     }
 
-    return count;
+    أرجع شمار;
 }
 
-struct xkb_level *
-xkb_keymap_key_get_level(struct xkb_keymap *keymap, const struct xkb_key *key,
-                         xkb_layout_index_t layout, xkb_level_index_t level)
+بنية xkb_level *
+xkb_keymap_کلید_get_level(بنية xkb_keymap *keymap, ثابت بنية xkb_کلید *کلید,
+                         xkb_layout_شاخص_t layout, xkb_level_شاخص_t level)
 {
-    layout = xkb_keymap_key_effective_layout(key, layout);
-    if (layout == XKB_LAYOUT_INVALID)
-        return NULL;
+    layout = xkb_keymap_کلید_effective_layout(کلید, layout);
+    إذا (layout == XKB_LAYOUT_INVALID)
+        أرجع عدم;
 
-    if (level >= XkbKeyNumLevels(key, layout))
-        return NULL;
+    إذا (level >= Xkb_کلید_رقم_سطوح(کلید, layout))
+        أرجع عدم;
 
-    return &key->groups[layout].levels[level];
+    أرجع &کلید->groups[layout].سطوح[level];
 }
 
 /**
  * As below, but takes an explicit layout/level rather than state.
  */
-int
-xkb_keymap_key_get_syms_by_level(struct xkb_keymap *keymap,
+صحيح
+xkb_keymap_کلید_get_syms_by_level(بنية xkb_keymap *keymap,
                                  xkb_keycode_t kc,
-                                 xkb_layout_index_t layout,
-                                 xkb_level_index_t level,
-                                 const xkb_keysym_t **syms_out)
+                                 xkb_layout_شاخص_t layout,
+                                 xkb_level_شاخص_t level,
+                                 ثابت xkb_keysym_t **syms_بیرون)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    ثابت بنية xkb_کلید *کلید = Xkb_کلید(keymap, kc);
 
-    if (!key)
-        goto err;
+    إذا (!کلید)
+        اذهب err;
 
-    const struct xkb_level* const leveli =
-        xkb_keymap_key_get_level(keymap, key, layout, level);
+    ثابت بنية xkb_level* ثابت leveli =
+        xkb_keymap_کلید_get_level(keymap, کلید, layout, level);
 
-    if (!leveli)
-        goto err;
+    إذا (!leveli)
+        اذهب err;
 
-    const xkb_keysym_count_t num_syms = leveli->num_syms;
-    if (num_syms == 0)
-        goto err;
+    ثابت xkb_keysym_شمار_t رقم_syms = leveli->رقم_syms;
+    إذا (رقم_syms == 0)
+        اذهب err;
 
-    if (num_syms == 1)
-        *syms_out = &leveli->s.sym;
-    else
-        *syms_out = leveli->s.syms;
+    إذا (رقم_syms == 1)
+        *syms_بیرون = &leveli->s.sym;
+    وإلا
+        *syms_بیرون = leveli->s.syms;
 
-    return (int) num_syms;
+    أرجع (صحيح) رقم_syms;
 
 err:
-    *syms_out = NULL;
-    return 0;
+    *syms_بیرون = عدم;
+    أرجع 0;
 }
 
 xkb_keycode_t
-xkb_keymap_min_keycode(struct xkb_keymap *keymap)
+xkb_keymap_min_keycode(بنية xkb_keymap *keymap)
 {
-    return keymap->min_key_code;
+    أرجع keymap->min_کلید_کد;
 }
 
 xkb_keycode_t
-xkb_keymap_max_keycode(struct xkb_keymap *keymap)
+xkb_keymap_max_keycode(بنية xkb_keymap *keymap)
 {
-    return keymap->max_key_code;
+    أرجع keymap->max_کلید_کد;
 }
 
-static enum xkb_status
-keymap_key_iterator_config_check(
-    struct xkb_context * restrict ctx,
-    const char *func,
-    const struct xkb_keymap_key_iterator_config * restrict config
+ساكن تعداد xkb_وضعیت
+keymap_کلید_iterator_config_check(
+    بنية xkb_context * محدود ctx,
+    ثابت حرف *func,
+    ثابت بنية xkb_keymap_کلید_iterator_config * محدود config
 )
 {
     /* Check ABI compatibility */
-    const enum xkb_status abi_error = xkb_check_keymap_abi(config);
-    if (abi_error) {
+    ثابت تعداد xkb_وضعیت abi_error = xkb_check_keymap_abi(config);
+    إذا (abi_error) {
         xkb_log_abi_error(ctx, func, abi_error);
-        return abi_error;
+        أرجع abi_error;
     }
 
     /* Sanitize input: flags */
-    const uint32_t invalid_flags =
-        (config->flags & ~(uint32_t)XKB_KEYMAP_KEY_ITERATOR_FLAGS_VALUES);
-    if (invalid_flags) {
-        log_err(ctx, XKB_ERROR_UNSUPPORTED_KEY_ITERATOR_FLAGS_,
+    ثابت uint32_t invalid_flags =
+        (config->flags & ~(uint32_t)XKB_KEYMAP_کلید_ITERATOR_FLAGS_مقادیر);
+    إذا (invalid_flags) {
+        log_err(ctx, XKB_ERROR_UNSUPPORTED_کلید_ITERATOR_FLAGS_2,
                 "%s: Unsupported keymap iterator flags: 0x%"PRIx32"\n",
                 func, invalid_flags);
-        return XKB_ERROR_UNSUPPORTED_KEY_ITERATOR_FLAGS;
+        أرجع XKB_ERROR_UNSUPPORTED_کلید_ITERATOR_FLAGS;
     }
 
     /* Sanitize input: start */
-    if (config->start > XKB_KEYCODE_MAX)
-        return XKB_ERROR_INVALID_KEYCODE;
+    إذا (config->شروع > XKB_KEYCODE_MAX)
+        أرجع XKB_ERROR_INVALID_KEYCODE;
 
-    return XKB_SUCCESS;
+    أرجع XKB_SUCCESS;
 }
 
-static_assert(XKB_KEYMAP_KEY_ITERATOR_FLAGS_VALUES <=
-              (int)XKB_POINTER_TAG_MASK,
+static_assert(XKB_KEYMAP_کلید_ITERATOR_FLAGS_مقادیر <=
+              (صحيح)XKB_اشاره_گر_برچسب_ماسک,
               "Cannot tag cursor pointer with flags");
 
-#define iter_init_keymap(i, ptr, flags) {          \
-    (i)->opaque0 = xkb_pointer_tag((ptr), (flags));\
+#تعریف_کن iter_init_keymap(i, ptr, flags) {          \
+    (i)->opaque0 = xkb_اشاره_گر_برچسب((ptr), (flags));\
 }
-#define iter_get_keymap(i) (                                  \
-    (const struct xkb_keymap *)xkb_pointer_untag((i)->opaque0)\
+#تعریف_کن iter_get_keymap(i) (                                  \
+    (ثابت بنية xkb_keymap *)xkb_اشاره_گر_untag((i)->opaque0)\
 )
-#define iter_get_next(i) ((const struct xkb_key *)(i)->opaque1)
-#define iter_set_next(i, ptr) {(i)->opaque1 = (const void *)(ptr);}
-#define iter_get_descending_order(i) (                  \
-    xkb_pointer_get_tag((i)->opaque0) &                 \
-    (uintptr_t)XKB_KEYMAP_KEY_ITERATOR_DESCENDING_ORDER \
+#تعریف_کن iter_get_بعدی(i) ((ثابت بنية xkb_کلید *)(i)->opaque1)
+#تعریف_کن iter_مجموعه_بعدی(i, ptr) {(i)->opaque1 = (ثابت فراغ *)(ptr);}
+#تعریف_کن iter_get_descending_ترتیب(i) (                  \
+    xkb_اشاره_گر_get_برچسب((i)->opaque0) &                 \
+    (uintptr_t)XKB_KEYMAP_کلید_ITERATOR_DESCENDING_ترتیب \
 )
-#define iter_get_include_unbound(i) (                  \
-    xkb_pointer_get_tag((i)->opaque0) &                \
-    (uintptr_t)XKB_KEYMAP_KEY_ITERATOR_INCLUDE_UNBOUND \
+#تعریف_کن iter_get_include_unbound(i) (                  \
+    xkb_اشاره_گر_get_برچسب((i)->opaque0) &                \
+    (uintptr_t)XKB_KEYMAP_کلید_ITERATOR_INCLUDE_UNBOUND \
 )
 
-enum xkb_status
-xkb_keymap_key_iterator_init(
-    struct xkb_keymap_key_iterator * restrict iter,
-    const struct xkb_keymap * restrict keymap,
-    const struct xkb_keymap_key_iterator_config * restrict config
+تعداد xkb_وضعیت
+xkb_keymap_کلید_iterator_init(
+    بنية xkb_keymap_کلید_iterator * محدود iter,
+    ثابت بنية xkb_keymap * محدود keymap,
+    ثابت بنية xkb_keymap_کلید_iterator_config * محدود config
 )
 {
     /* Handle default configuration */
-    static const struct xkb_keymap_key_iterator_config default_config = {
-        .size = sizeof(default_config)
+    ساكن ثابت بنية xkb_keymap_کلید_iterator_config default_config = {
+        .اندازه = حجم(default_config)
     };
-    if (!config)
+    إذا (!config)
         config = &default_config;
 
     /* Check input */
-    const enum xkb_status status =
-        keymap_key_iterator_config_check(keymap->ctx, __func__, config);
-    if (status != XKB_SUCCESS) {
-        return status;
+    ثابت تعداد xkb_وضعیت وضعیت =
+        keymap_کلید_iterator_config_check(keymap->ctx, __func__, config);
+    إذا (وضعیت != XKB_SUCCESS) {
+        أرجع وضعیت;
     }
 
     /*
      * Initialization
      */
 
-    memset(iter, 0, sizeof(*iter));
+    memset(iter, 0, حجم(*iter));
 
     /* Borrow keymap */
     iter_init_keymap(iter, keymap, config->flags);
 
-    if (keymap->num_keys == 0) {
-        iter_set_next(iter, NULL);
-        return XKB_SUCCESS;
+    إذا (keymap->رقم_کلیدها == 0) {
+        iter_مجموعه_بعدی(iter, عدم);
+        أرجع XKB_SUCCESS;
     }
 
     /* Borrow key */
-    const struct xkb_key *next;
-    if (config->flags & XKB_KEYMAP_KEY_ITERATOR_DESCENDING_ORDER) {
-        if (!config->start || config->start > keymap->max_key_code) {
-            next = &keymap->keys[keymap->num_keys - 1];
-        } else {
+    ثابت بنية xkb_کلید *بعدی;
+    إذا (config->flags & XKB_KEYMAP_کلید_ITERATOR_DESCENDING_ترتیب) {
+        إذا (!config->شروع || config->شروع > keymap->max_کلید_کد) {
+            بعدی = &keymap->کلیدها[keymap->رقم_کلیدها - 1];
+        } وإلا {
             /*
              * May still fail *safely* if start < keymap->min_key_code:
              * there will be simply no key to iterate over.
              */
-            next = xkb_keymap_get_next_defined_key(keymap, false, config->start);
+            بعدی = xkb_keymap_get_بعدی_defined_کلید(keymap, false, config->شروع);
         }
-    } else {
-        if (!config->start || config->start < keymap->min_key_code) {
-            next = (keymap->num_keys_low)
-                ? &keymap->keys[keymap->min_key_code]
-                : &keymap->keys[0];
-        } else {
+    } وإلا {
+        إذا (!config->شروع || config->شروع < keymap->min_کلید_کد) {
+            بعدی = (keymap->رقم_کلیدها_کم)
+                ? &keymap->کلیدها[keymap->min_کلید_کد]
+                : &keymap->کلیدها[0];
+        } وإلا {
             /*
              * May still fail *safely* if start > keymap->max_key_code:
              * there will be simply no key to iterate over.
              */
-            next = xkb_keymap_get_next_defined_key(keymap, true, config->start);
+            بعدی = xkb_keymap_get_بعدی_defined_کلید(keymap, true, config->شروع);
         }
     };
-    iter_set_next(iter, next);
+    iter_مجموعه_بعدی(iter, بعدی);
 
-    return XKB_SUCCESS;
+    أرجع XKB_SUCCESS;
 }
 
 xkb_keycode_t
-xkb_keymap_key_iterator_next(struct xkb_keymap_key_iterator *iter)
+xkb_keymap_کلید_iterator_بعدی(بنية xkb_keymap_کلید_iterator *iter)
 {
-    const struct xkb_key *next = iter_get_next(iter);
-    if (!next)
-        return XKB_KEYCODE_INVALID;
+    ثابت بنية xkb_کلید *بعدی = iter_get_بعدی(iter);
+    إذا (!بعدی)
+        أرجع XKB_KEYCODE_INVALID;
 
-    const struct xkb_keymap *keymap = iter_get_keymap(iter);
-    assert(keymap->num_keys);
+    ثابت بنية xkb_keymap *keymap = iter_get_keymap(iter);
+    أكد(keymap->رقم_کلیدها);
 
-    const bool descending = iter_get_descending_order(iter);
-    const bool skip_unbound = !iter_get_include_unbound(iter);
-    const struct xkb_key *last = descending
-        ? (keymap->num_keys_low)
-            ? &keymap->keys[keymap->min_key_code]
-            : &keymap->keys[0]
-        : &keymap->keys[keymap->num_keys - 1];
-    const ptrdiff_t step = descending ? -1 : 1;
+    ثابت bool descending = iter_get_descending_ترتیب(iter);
+    ثابت bool skip_unbound = !iter_get_include_unbound(iter);
+    ثابت بنية xkb_کلید *آخرین = descending
+        ? (keymap->رقم_کلیدها_کم)
+            ? &keymap->کلیدها[keymap->min_کلید_کد]
+            : &keymap->کلیدها[0]
+        : &keymap->کلیدها[keymap->رقم_کلیدها - 1];
+    ثابت ptrdiff_t گام = descending ? -1 : 1;
 
     /* Skip undefined keys (no name) and optionally unbound keys */
-    for (;;) {
-        const bool iter_end = descending ? (next <= last) : (next >= last);
-        const bool skip = (
-            next->name == XKB_ATOM_NONE ||
-            (skip_unbound && (next->num_groups == 0))
+    لكل (;;) {
+        ثابت bool iter_انتها = descending ? (بعدی <= آخرین) : (بعدی >= آخرین);
+        ثابت bool skip = (
+            بعدی->name == XKB_ATOM_NONE ||
+            (skip_unbound && (بعدی->رقم_groups == 0))
         );
-        if (!skip) {
-            const xkb_keycode_t ret = next->keycode;
-            iter_set_next(iter, iter_end ? NULL : next + step);
-            return ret;
+        إذا (!skip) {
+            ثابت xkb_keycode_t ret = بعدی->keycode;
+            iter_مجموعه_بعدی(iter, iter_انتها ? عدم : بعدی + گام);
+            أرجع ret;
         }
-        if (iter_end) {
-            iter_set_next(iter, NULL);
-            return XKB_KEYCODE_INVALID;
+        إذا (iter_انتها) {
+            iter_مجموعه_بعدی(iter, عدم);
+            أرجع XKB_KEYCODE_INVALID;
         }
-        next += step;
+        بعدی += گام;
     }
 }
 
-#undef iter_init_keymap
-#undef iter_get_keymap
-#undef iter_set_next
-#undef iter_get_next
-#undef iter_get_descending_order
-#undef iter_get_include_unbound
+#لغو_تعریف iter_init_keymap
+#لغو_تعریف iter_get_keymap
+#لغو_تعریف iter_مجموعه_بعدی
+#لغو_تعریف iter_get_بعدی
+#لغو_تعریف iter_get_descending_ترتیب
+#لغو_تعریف iter_get_include_unbound
 
-void
-xkb_keymap_key_for_each(struct xkb_keymap *keymap, xkb_keymap_key_iter_t iter,
-                        void *data)
+فراغ
+xkb_keymap_کلید_for_each(بنية xkb_keymap *keymap, xkb_keymap_کلید_iter_t iter,
+                        فراغ *داده)
 {
-    struct xkb_key *key;
+    بنية xkb_کلید *کلید;
 
-    xkb_keys_foreach(key, keymap)
-        iter(keymap, key->keycode, data);
+    xkb_کلیدها_foreach(کلید, keymap)
+        iter(keymap, کلید->keycode, داده);
 }
 
-const char *
-xkb_keymap_key_get_name(struct xkb_keymap *keymap, xkb_keycode_t kc)
+ثابت حرف *
+xkb_keymap_کلید_get_name(بنية xkb_keymap *keymap, xkb_keycode_t kc)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    ثابت بنية xkb_کلید *کلید = Xkb_کلید(keymap, kc);
 
-    if (!key)
-        return NULL;
+    إذا (!کلید)
+        أرجع عدم;
 
-    return xkb_atom_text(keymap->ctx, key->name);
+    أرجع xkb_atom_متن(keymap->ctx, کلید->name);
 }
 
 xkb_keycode_t
-xkb_keymap_key_by_name(struct xkb_keymap *keymap, const char *name)
+xkb_keymap_کلید_by_name(بنية xkb_keymap *keymap, ثابت حرف *name)
 {
-    struct xkb_key *key;
+    بنية xkb_کلید *کلید;
     xkb_atom_t atom;
 
     atom = xkb_atom_lookup(keymap->ctx, name);
-    if (atom) {
-        for (darray_size_t i = 0; i < keymap->num_key_aliases; i++)
-            if (keymap->key_aliases[i].alias == atom)
-                atom = keymap->key_aliases[i].real;
+    إذا (atom) {
+        لكل (darray_اندازه_t i = 0; i < keymap->رقم_کلید_aliases; i++)
+            إذا (keymap->کلید_aliases[i].alias == atom)
+                atom = keymap->کلید_aliases[i].real;
     }
-    if (!atom)
-        return XKB_KEYCODE_INVALID;
+    إذا (!atom)
+        أرجع XKB_KEYCODE_INVALID;
 
-    xkb_keys_foreach(key, keymap) {
-        if (key->name == atom)
-            return key->keycode;
+    xkb_کلیدها_foreach(کلید, keymap) {
+        إذا (کلید->name == atom)
+            أرجع کلید->keycode;
     }
 
-    return XKB_KEYCODE_INVALID;
+    أرجع XKB_KEYCODE_INVALID;
 }
 
 /**
  * Simple boolean specifying whether or not the key should repeat.
  */
-int
-xkb_keymap_key_repeats(struct xkb_keymap *keymap, xkb_keycode_t kc)
+صحيح
+xkb_keymap_کلید_repeats(بنية xkb_keymap *keymap, xkb_keycode_t kc)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    ثابت بنية xkb_کلید *کلید = Xkb_کلید(keymap, kc);
 
-    if (!key)
-        return 0;
+    إذا (!کلید)
+        أرجع 0;
 
-    return key->repeats;
+    أرجع کلید->repeats;
 }

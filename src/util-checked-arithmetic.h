@@ -56,99 +56,99 @@
  * @version 1.0 (2024-12-07)
  */
 
-#pragma once
+#رهنمود once
 
-#include "config.h"
+#ضمن "config.h"
 
-#ifdef __has_include
-#define __ckd_has_include(x) __has_include(x)
-#else
-#define __ckd_has_include(x) 0
-#endif
+#اگر_تعریف_شده __has_include
+#تعریف_کن __ckd_has_include(x) __has_include(x)
+#وإلا
+#تعریف_کن __ckd_has_include(x) 0
+#پایان_اگر
 
-#if __ckd_has_include(<stdckdint.h>)
-#include <stdckdint.h>
-#else
+#إذا __ckd_has_include(<stdckdint.h>)
+#ضمن <stdckdint.h>
+#وإلا
 
-#define __STDC_VERSION_STDCKDINT_H__ 202311L
+#تعریف_کن __STDC_VERSION_STDCKDINT_H__ 202311L
 
-#if (!defined(__STRICT_ANSI__) && defined(__SIZEOF_INT128__))
-#define __ckd_have_int128
-#define __ckd_intmax __int128
-#elif (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L)
-#define __ckd_intmax long long
-#else
-#define __ckd_intmax long
-#endif
+#إذا (!defined(__STRICT_ANSI__) && defined(__SIZEOF_INT128__))
+#تعریف_کن __ckd_have_int128
+#تعریف_کن __ckd_intmax __int128
+#وإلاإذا (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L)
+#تعریف_کن __ckd_intmax دراز دراز
+#وإلا
+#تعریف_کن __ckd_intmax دراز
+#پایان_اگر
 
-typedef signed __ckd_intmax __ckd_intmax_t;
-typedef unsigned __ckd_intmax __ckd_uintmax_t;
+تعريفنوع علامتدار __ckd_intmax __ckd_intmax_t;
+تعريفنوع بیعلامت __ckd_intmax __ckd_uintmax_t;
 
-#ifdef __has_builtin
-#define __ckd_has_builtin(x) __has_builtin(x)
-#else
-#define __ckd_has_builtin(x) 0
-#endif
+#اگر_تعریف_شده __has_builtin
+#تعریف_کن __ckd_has_builtin(x) __has_builtin(x)
+#وإلا
+#تعریف_کن __ckd_has_builtin(x) 0
+#پایان_اگر
 
-#if (!defined(__STRICT_ANSI__) &&                                       \
+#إذا (!defined(__STRICT_ANSI__) &&                                       \
      ((defined(__GNUC__) && __GNUC__ >= 5 && !defined(__ICC)) ||        \
       (__ckd_has_builtin(__builtin_add_overflow) &&                     \
        __ckd_has_builtin(__builtin_sub_overflow) &&                     \
        __ckd_has_builtin(__builtin_mul_overflow))))
-#define ckd_add(res, x, y) __builtin_add_overflow((x), (y), (res))
-#define ckd_sub(res, x, y) __builtin_sub_overflow((x), (y), (res))
-#define ckd_mul(res, x, y) __builtin_mul_overflow((x), (y), (res))
+#تعریف_کن ckd_جمع_کن(res, x, y) __builtin_add_overflow((x), (y), (res))
+#تعریف_کن ckd_sub(res, x, y) __builtin_sub_overflow((x), (y), (res))
+#تعریف_کن ckd_mul(res, x, y) __builtin_mul_overflow((x), (y), (res))
 
-#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
+#وإلاإذا defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
 
-#define ckd_add(res, a, b) __ckd_expr(add, (res), (a), (b))
-#define ckd_sub(res, a, b) __ckd_expr(sub, (res), (a), (b))
-#define ckd_mul(res, a, b) __ckd_expr(mul, (res), (a), (b))
+#تعریف_کن ckd_جمع_کن(res, a, b) __ckd_expr(جمع_کن, (res), (a), (b))
+#تعریف_کن ckd_sub(res, a, b) __ckd_expr(sub, (res), (a), (b))
+#تعریف_کن ckd_mul(res, a, b) __ckd_expr(mul, (res), (a), (b))
 
-#if defined(__GNUC__) || defined(__llvm__)
-#define __ckd_inline                                    \
-  extern __inline __attribute__((__gnu_inline__,        \
+#إذا defined(__GNUC__) || defined(__llvm__)
+#تعریف_کن __ckd_inline                                    \
+  خارجي __inline __attribute__((__gnu_inline__,        \
                                  __always_inline__,     \
                                  __artificial__))
-#else
-#define __ckd_inline static inline
-#endif
+#وإلا
+#تعریف_کن __ckd_inline ساكن مضمن
+#پایان_اگر
 
-#ifdef __ckd_have_int128
-#define __ckd_generic_int128(x, y) , signed __int128: x, unsigned __int128: y
-#else
-#define __ckd_generic_int128(x, y)
-#endif
+#اگر_تعریف_شده __ckd_have_int128
+#تعریف_کن __ckd_generic_int128(x, y) , علامتدار __int128: x, بیعلامت __int128: y
+#وإلا
+#تعریف_کن __ckd_generic_int128(x, y)
+#پایان_اگر
 
-#define __ckd_sign(T)                           \
-  ((T)1 << (sizeof(T) * 8 - 1))
+#تعریف_کن __ckd_sign(T)                           \
+  ((T)1 << (حجم(T) * 8 - 1))
 
-#define __ckd_is_signed(x)                      \
+#تعریف_کن __ckd_is_signed(x)                      \
   _Generic(x,                                   \
-           signed char: 1,                      \
-           unsigned char: 0,                    \
-           signed short: 1,                     \
-           unsigned short: 0,                   \
-           signed int: 1,                       \
-           unsigned int: 0,                     \
-           signed long: 1,                      \
-           unsigned long: 0,                    \
-           signed long long: 1,                 \
-           unsigned long long: 0                \
+           علامتدار حرف: 1,                      \
+           بیعلامت حرف: 0,                    \
+           علامتدار کوتاه: 1,                     \
+           بیعلامت کوتاه: 0,                   \
+           علامتدار صحيح: 1,                       \
+           بیعلامت صحيح: 0,                     \
+           علامتدار دراز: 1,                      \
+           بیعلامت دراز: 0,                    \
+           علامتدار دراز دراز: 1,                 \
+           بیعلامت دراز دراز: 0                \
            __ckd_generic_int128(1, 0))
 
-#define __ckd_expr(op, res, a, b)                       \
+#تعریف_کن __ckd_expr(op, res, a, b)                       \
   (_Generic(*res,                                       \
-            signed char: __ckd_##op##_schar,            \
-            unsigned char: __ckd_##op##_uchar,          \
-            signed short: __ckd_##op##_sshort,          \
-            unsigned short: __ckd_##op##_ushort,        \
-            signed int: __ckd_##op##_sint,              \
-            unsigned int: __ckd_##op##_uint,            \
-            signed long: __ckd_##op##_slong,            \
-            unsigned long: __ckd_##op##_ulong,          \
-            signed long long: __ckd_##op##_slonger,     \
-            unsigned long long: __ckd_##op##_ulonger    \
+            علامتدار حرف: __ckd_##op##_schar,            \
+            بیعلامت حرف: __ckd_##op##_uchar,          \
+            علامتدار کوتاه: __ckd_##op##_sshort,          \
+            بیعلامت کوتاه: __ckd_##op##_ushort,        \
+            علامتدار صحيح: __ckd_##op##_sint,              \
+            بیعلامت صحيح: __ckd_##op##_uint,            \
+            علامتدار دراز: __ckd_##op##_slong,            \
+            بیعلامت دراز: __ckd_##op##_ulong,          \
+            علامتدار دراز دراز: __ckd_##op##_slonger,     \
+            بیعلامت دراز دراز: __ckd_##op##_ulonger    \
             __ckd_generic_int128(                       \
                 __ckd_##op##_sint128,                   \
                 __ckd_##op##_uint128))(                 \
@@ -156,255 +156,255 @@ typedef unsigned __ckd_intmax __ckd_uintmax_t;
                     __ckd_is_signed(a),                 \
                     __ckd_is_signed(b)))
 
-#define __ckd_declare_add(S, T)                                         \
-  __ckd_inline char S(void *__res,                                      \
+#تعریف_کن __ckd_declare_add(S, T)                                         \
+  __ckd_inline حرف S(فراغ *__res,                                      \
                       __ckd_uintmax_t __x,                              \
                       __ckd_uintmax_t __y,                              \
-                      char __a_signed,                                  \
-                      char __b_signed) {                                \
+                      حرف __a_signed,                                  \
+                      حرف __b_signed) {                                \
     __ckd_uintmax_t __z = __x + __y;                                    \
     *(T *)__res = (T)__z;                                               \
-    char __truncated = 0;                                               \
-    if (sizeof(T) < sizeof(__ckd_intmax_t)) {                           \
+    حرف __truncated = 0;                                               \
+    إذا (حجم(T) < حجم(__ckd_intmax_t)) {                           \
       __truncated = __z != (__ckd_uintmax_t)(T)__z;                     \
     }                                                                   \
-    switch (__ckd_is_signed((T)0) << 2 |                                \
+    بدل (__ckd_is_signed((T)0) << 2 |                                \
             __a_signed << 1 | __b_signed) {                             \
-      case 0:  /* u = u + u */                                          \
-        return __truncated | (__z < __x);                               \
-      case 1:  /* u = u + s */                                          \
+      حالة 0:  /* u = u + u */                                          \
+        أرجع __truncated | (__z < __x);                               \
+      حالة 1:  /* u = u + s */                                          \
         __y ^= __ckd_sign(__ckd_uintmax_t);                             \
-        return __truncated |                                            \
+        أرجع __truncated |                                            \
             ((__ckd_intmax_t)((__z ^ __x) &                             \
                               (__z ^ __y)) < 0);                        \
-      case 2:  /* u = s + u */                                          \
+      حالة 2:  /* u = s + u */                                          \
         __x ^= __ckd_sign(__ckd_uintmax_t);                             \
-        return __truncated |                                            \
+        أرجع __truncated |                                            \
             ((__ckd_intmax_t)((__z ^ __x) &                             \
                               (__z ^ __y)) < 0);                        \
-      case 3:  /* u = s + s */                                          \
-        return __truncated |                                            \
+      حالة 3:  /* u = s + s */                                          \
+        أرجع __truncated |                                            \
             ((__ckd_intmax_t)(((__z | __x) &  __y) |                    \
                               ((__z & __x) & ~__y)) < 0);               \
-      case 4:  /* s = u + u */                                          \
-        return __truncated | (__z < __x) | ((__ckd_intmax_t)__z < 0);   \
-      case 5:  /* s = u + s */                                          \
+      حالة 4:  /* s = u + u */                                          \
+        أرجع __truncated | (__z < __x) | ((__ckd_intmax_t)__z < 0);   \
+      حالة 5:  /* s = u + s */                                          \
         __y ^= __ckd_sign(__ckd_uintmax_t);                             \
-        return __truncated | (__x + __y < __y);                         \
-      case 6:  /* s = s + u */                                          \
+        أرجع __truncated | (__x + __y < __y);                         \
+      حالة 6:  /* s = s + u */                                          \
         __x ^= __ckd_sign(__ckd_uintmax_t);                             \
-        return __truncated | (__x + __y < __x);                         \
-      case 7:  /* s = s + s */                                          \
-        return __truncated |                                            \
+        أرجع __truncated | (__x + __y < __x);                         \
+      حالة 7:  /* s = s + s */                                          \
+        أرجع __truncated |                                            \
             ((__ckd_intmax_t)((__z ^ __x) &                             \
                               (__z ^ __y)) < 0);                        \
-      default:                                                          \
-        for (;;) (void)0;                                               \
+      افتراضي:                                                          \
+        لكل (;;) (فراغ)0;                                               \
     }                                                                   \
   }
 
-__ckd_declare_add(__ckd_add_schar, signed char)
-__ckd_declare_add(__ckd_add_uchar, unsigned char)
-__ckd_declare_add(__ckd_add_sshort, signed short)
-__ckd_declare_add(__ckd_add_ushort, unsigned short)
-__ckd_declare_add(__ckd_add_sint, signed int)
-__ckd_declare_add(__ckd_add_uint, unsigned int)
-__ckd_declare_add(__ckd_add_slong, signed long)
-__ckd_declare_add(__ckd_add_ulong, unsigned long)
-__ckd_declare_add(__ckd_add_slonger, signed long long)
-__ckd_declare_add(__ckd_add_ulonger, unsigned long long)
-#ifdef __ckd_have_int128
-__ckd_declare_add(__ckd_add_sint128, signed __int128)
-__ckd_declare_add(__ckd_add_uint128, unsigned __int128)
-#endif
+__ckd_declare_add(__ckd_add_schar, علامتدار حرف)
+__ckd_declare_add(__ckd_add_uchar, بیعلامت حرف)
+__ckd_declare_add(__ckd_add_sshort, علامتدار کوتاه)
+__ckd_declare_add(__ckd_add_ushort, بیعلامت کوتاه)
+__ckd_declare_add(__ckd_add_sint, علامتدار صحيح)
+__ckd_declare_add(__ckd_add_uint, بیعلامت صحيح)
+__ckd_declare_add(__ckd_add_slong, علامتدار دراز)
+__ckd_declare_add(__ckd_add_ulong, بیعلامت دراز)
+__ckd_declare_add(__ckd_add_slonger, علامتدار دراز دراز)
+__ckd_declare_add(__ckd_add_ulonger, بیعلامت دراز دراز)
+#اگر_تعریف_شده __ckd_have_int128
+__ckd_declare_add(__ckd_add_sint128, علامتدار __int128)
+__ckd_declare_add(__ckd_add_uint128, بیعلامت __int128)
+#پایان_اگر
 
-#define __ckd_declare_sub(S, T)                                         \
-  __ckd_inline char S(void *__res,                                      \
+#تعریف_کن __ckd_declare_sub(S, T)                                         \
+  __ckd_inline حرف S(فراغ *__res,                                      \
                       __ckd_uintmax_t __x,                              \
                       __ckd_uintmax_t __y,                              \
-                      char __a_signed,                                  \
-                      char __b_signed) {                                \
+                      حرف __a_signed,                                  \
+                      حرف __b_signed) {                                \
     __ckd_uintmax_t __z = __x - __y;                                    \
     *(T *)__res = (T)__z;                                               \
-    char __truncated = 0;                                               \
-    if (sizeof(T) < sizeof(__ckd_intmax_t)) {                           \
+    حرف __truncated = 0;                                               \
+    إذا (حجم(T) < حجم(__ckd_intmax_t)) {                           \
       __truncated = __z != (__ckd_uintmax_t)(T)__z;                     \
     }                                                                   \
-    switch (__ckd_is_signed((T)0) << 2 |                                \
+    بدل (__ckd_is_signed((T)0) << 2 |                                \
             __a_signed << 1 | __b_signed) {                             \
-      case 0:  /* u = u - u */                                          \
-        return __truncated | (__x < __y);                               \
-      case 1:  /* u = u - s */                                          \
+      حالة 0:  /* u = u - u */                                          \
+        أرجع __truncated | (__x < __y);                               \
+      حالة 1:  /* u = u - s */                                          \
         __y ^= __ckd_sign(__ckd_uintmax_t);                             \
-        return __truncated |                                            \
+        أرجع __truncated |                                            \
             ((__ckd_intmax_t)((__x ^ __y) &                             \
                               (__z ^ __x)) < 0);                        \
-      case 2:  /* u = s - u */                                          \
-        return __truncated | (__y > __x) | ((__ckd_intmax_t)__x < 0);   \
-      case 3:  /* u = s - s */                                          \
-        return __truncated |                                            \
+      حالة 2:  /* u = s - u */                                          \
+        أرجع __truncated | (__y > __x) | ((__ckd_intmax_t)__x < 0);   \
+      حالة 3:  /* u = s - s */                                          \
+        أرجع __truncated |                                            \
             ((__ckd_intmax_t)(((__z & __x) &  __y) |                    \
                               ((__z | __x) & ~__y)) < 0);               \
-      case 4:  /* s = u - u */                                          \
-        return __truncated | ((__x < __y) ^ ((__ckd_intmax_t)__z < 0)); \
-      case 5:  /* s = u - s */                                          \
+      حالة 4:  /* s = u - u */                                          \
+        أرجع __truncated | ((__x < __y) ^ ((__ckd_intmax_t)__z < 0)); \
+      حالة 5:  /* s = u - s */                                          \
         __y ^= __ckd_sign(__ckd_uintmax_t);                             \
-        return __truncated | (__x >= __y);                              \
-      case 6:  /* s = s - u */                                          \
+        أرجع __truncated | (__x >= __y);                              \
+      حالة 6:  /* s = s - u */                                          \
         __x ^= __ckd_sign(__ckd_uintmax_t);                             \
-        return __truncated | (__x < __y);                               \
-      case 7:  /* s = s - s */                                          \
-        return __truncated |                                            \
+        أرجع __truncated | (__x < __y);                               \
+      حالة 7:  /* s = s - s */                                          \
+        أرجع __truncated |                                            \
             ((__ckd_intmax_t)((__x ^ __y) &                             \
                               (__z ^ __x)) < 0);                        \
-      default:                                                          \
-        for (;;) (void)0;                                               \
+      افتراضي:                                                          \
+        لكل (;;) (فراغ)0;                                               \
     }                                                                   \
   }
 
-__ckd_declare_sub(__ckd_sub_schar, signed char)
-__ckd_declare_sub(__ckd_sub_uchar, unsigned char)
-__ckd_declare_sub(__ckd_sub_sshort, signed short)
-__ckd_declare_sub(__ckd_sub_ushort, unsigned short)
-__ckd_declare_sub(__ckd_sub_sint, signed int)
-__ckd_declare_sub(__ckd_sub_uint, unsigned int)
-__ckd_declare_sub(__ckd_sub_slong, signed long)
-__ckd_declare_sub(__ckd_sub_ulong, unsigned long)
-__ckd_declare_sub(__ckd_sub_slonger, signed long long)
-__ckd_declare_sub(__ckd_sub_ulonger, unsigned long long)
-#ifdef __ckd_have_int128
-__ckd_declare_sub(__ckd_sub_sint128, signed __int128)
-__ckd_declare_sub(__ckd_sub_uint128, unsigned __int128)
-#endif
+__ckd_declare_sub(__ckd_sub_schar, علامتدار حرف)
+__ckd_declare_sub(__ckd_sub_uchar, بیعلامت حرف)
+__ckd_declare_sub(__ckd_sub_sshort, علامتدار کوتاه)
+__ckd_declare_sub(__ckd_sub_ushort, بیعلامت کوتاه)
+__ckd_declare_sub(__ckd_sub_sint, علامتدار صحيح)
+__ckd_declare_sub(__ckd_sub_uint, بیعلامت صحيح)
+__ckd_declare_sub(__ckd_sub_slong, علامتدار دراز)
+__ckd_declare_sub(__ckd_sub_ulong, بیعلامت دراز)
+__ckd_declare_sub(__ckd_sub_slonger, علامتدار دراز دراز)
+__ckd_declare_sub(__ckd_sub_ulonger, بیعلامت دراز دراز)
+#اگر_تعریف_شده __ckd_have_int128
+__ckd_declare_sub(__ckd_sub_sint128, علامتدار __int128)
+__ckd_declare_sub(__ckd_sub_uint128, بیعلامت __int128)
+#پایان_اگر
 
-#define __ckd_declare_mul(S, T)                                 \
-  __ckd_inline char S(void *__res,                              \
+#تعریف_کن __ckd_declare_mul(S, T)                                 \
+  __ckd_inline حرف S(فراغ *__res,                              \
                       __ckd_uintmax_t __x,                      \
                       __ckd_uintmax_t __y,                      \
-                      char __a_signed,                          \
-                      char __b_signed) {                        \
-    switch (__ckd_is_signed((T)0) << 2 |                        \
+                      حرف __a_signed,                          \
+                      حرف __b_signed) {                        \
+    بدل (__ckd_is_signed((T)0) << 2 |                        \
             __a_signed << 1 | __b_signed) {                     \
-      case 0: {  /* u = u * u */                                \
+      حالة 0: {  /* u = u * u */                                \
         __ckd_uintmax_t __z = __x * __y;                        \
-        int __o = __x && __z / __x != __y;                      \
+        صحيح __o = __x && __z / __x != __y;                      \
         *(T *)__res = (T)__z;                                   \
-        return (char)                                           \
-               (__o | (sizeof(T) < sizeof(__z) &&               \
+        أرجع (حرف)                                           \
+               (__o | (حجم(T) < حجم(__z) &&               \
                        __z != (__ckd_uintmax_t)*(T *)__res));   \
       }                                                         \
-      case 1: {  /* u = u * s */                                \
+      حالة 1: {  /* u = u * s */                                \
         __ckd_uintmax_t __z = __x * __y;                        \
-        int __o = __x && __z / __x != __y;                      \
+        صحيح __o = __x && __z / __x != __y;                      \
         *(T *)__res = (T)__z;                                   \
-        return (char)                                           \
+        أرجع (حرف)                                           \
                (__o | (((__ckd_intmax_t)__y < 0) & !!__x) |     \
-                (sizeof(T) < sizeof(__z) &&                     \
+                (حجم(T) < حجم(__z) &&                     \
                  __z != (__ckd_uintmax_t)*(T *)__res));         \
       }                                                         \
-      case 2: {  /* u = s * u */                                \
+      حالة 2: {  /* u = s * u */                                \
         __ckd_uintmax_t __z = __x * __y;                        \
-        int __o = __x && __z / __x != __y;                      \
+        صحيح __o = __x && __z / __x != __y;                      \
         *(T *)__res = (T)__z;                                   \
-        return (char)                                           \
+        أرجع (حرف)                                           \
                (__o | (((__ckd_intmax_t)__x < 0) & !!__y) |     \
-                (sizeof(T) < sizeof(__z) &&                     \
+                (حجم(T) < حجم(__z) &&                     \
                  __z != (__ckd_uintmax_t)*(T *)__res));         \
       }                                                         \
-      case 3: {  /* u = s * s */                                \
-        int __o = 0;                                            \
-        if ((__ckd_intmax_t)(__x & __y) < 0) {                  \
+      حالة 3: {  /* u = s * s */                                \
+        صحيح __o = 0;                                            \
+        إذا ((__ckd_intmax_t)(__x & __y) < 0) {                  \
           __x = 0 - __x;                                        \
           __y = 0 - __y;                                        \
-        } else if ((__ckd_intmax_t)(__x ^ __y) < 0) {           \
+        } وإلا إذا ((__ckd_intmax_t)(__x ^ __y) < 0) {           \
           __o = __x && __y;                                     \
         }                                                       \
         __ckd_uintmax_t __z = __x * __y;                        \
         __o |= __x && __z / __x != __y;                         \
         *(T *)__res = (T)__z;                                   \
-        return (char)                                           \
-               (__o | (sizeof(T) < sizeof(__z) &&               \
+        أرجع (حرف)                                           \
+               (__o | (حجم(T) < حجم(__z) &&               \
                        __z != (__ckd_uintmax_t)*(T *)__res));   \
       }                                                         \
-      case 4: {  /* s = u * u */                                \
+      حالة 4: {  /* s = u * u */                                \
         __ckd_uintmax_t __z = __x * __y;                        \
-        int __o = __x && __z / __x != __y;                      \
+        صحيح __o = __x && __z / __x != __y;                      \
         *(T *)__res = (T)__z;                                   \
-        return (char)                                           \
+        أرجع (حرف)                                           \
                (__o | ((__ckd_intmax_t)(__z) < 0) |             \
-                (sizeof(T) < sizeof(__z) &&                     \
+                (حجم(T) < حجم(__z) &&                     \
                  __z != (__ckd_uintmax_t)*(T *)__res));         \
       }                                                         \
-      case 5: {  /* s = u * s */                                \
+      حالة 5: {  /* s = u * s */                                \
         __ckd_uintmax_t __t = 0 - __y;                          \
         __t = (__ckd_intmax_t)(__t) < 0 ? __y : __t;            \
         __ckd_uintmax_t __p = __t * __x;                        \
-        int __o = __t && __p / __t != __x;                      \
-        int __n = (__ckd_intmax_t)__y < 0;                      \
+        صحيح __o = __t && __p / __t != __x;                      \
+        صحيح __n = (__ckd_intmax_t)__y < 0;                      \
         __ckd_uintmax_t __z = __n ? 0 - __p : __p;              \
         *(T *)__res = (T)__z;                                   \
         __ckd_uintmax_t __m = __ckd_sign(__ckd_uintmax_t) - 1;  \
-        return (char)                                           \
+        أرجع (حرف)                                           \
                (__o | (__p > __m + __n) |                       \
-                (sizeof(T) < sizeof(__z) &&                     \
+                (حجم(T) < حجم(__z) &&                     \
                  __z != (__ckd_uintmax_t)*(T *)__res));         \
       }                                                         \
-      case 6: {  /* s = s * u */                                \
+      حالة 6: {  /* s = s * u */                                \
         __ckd_uintmax_t __t = 0 - __x;                          \
         __t = (__ckd_intmax_t)(__t) < 0 ? __x : __t;            \
         __ckd_uintmax_t __p = __t * __y;                        \
-        int __o = __t && __p / __t != __y;                      \
-        int __n = (__ckd_intmax_t)__x < 0;                      \
+        صحيح __o = __t && __p / __t != __y;                      \
+        صحيح __n = (__ckd_intmax_t)__x < 0;                      \
         __ckd_uintmax_t __z = __n ? 0 - __p : __p;              \
         *(T *)__res = (T)__z;                                   \
         __ckd_uintmax_t __m = __ckd_sign(__ckd_uintmax_t) - 1;  \
-        return (char)                                           \
+        أرجع (حرف)                                           \
                (__o | (__p > __m + __n) |                       \
-                (sizeof(T) < sizeof(__z) &&                     \
+                (حجم(T) < حجم(__z) &&                     \
                  __z != (__ckd_uintmax_t)*(T *)__res));         \
       }                                                         \
-      case 7: {  /* s = s * s */                                \
+      حالة 7: {  /* s = s * s */                                \
         __ckd_uintmax_t __z = __x * __y;                        \
         *(T *)__res = (T)__z;                                   \
-        return (char)                                           \
+        أرجع (حرف)                                           \
                (((((__ckd_intmax_t)__y < 0) &&                  \
                   (__x == __ckd_sign(__ckd_uintmax_t))) ||      \
                  (__y && (((__ckd_intmax_t)__z /                \
                            (__ckd_intmax_t)__y) !=              \
                           (__ckd_intmax_t)__x))) |              \
-                (sizeof(T) < sizeof(__z) &&                     \
+                (حجم(T) < حجم(__z) &&                     \
                  __z != (__ckd_uintmax_t)*(T *)__res));         \
       }                                                         \
-      default:                                                  \
-        for (;;) (void)0;                                       \
+      افتراضي:                                                  \
+        لكل (;;) (فراغ)0;                                       \
     }                                                           \
   }
 
-__ckd_declare_mul(__ckd_mul_schar, signed char)
-__ckd_declare_mul(__ckd_mul_uchar, unsigned char)
-__ckd_declare_mul(__ckd_mul_sshort, signed short)
-__ckd_declare_mul(__ckd_mul_ushort, unsigned short)
-__ckd_declare_mul(__ckd_mul_sint, signed int)
-__ckd_declare_mul(__ckd_mul_uint, unsigned int)
-__ckd_declare_mul(__ckd_mul_slong, signed long)
-__ckd_declare_mul(__ckd_mul_ulong, unsigned long)
-__ckd_declare_mul(__ckd_mul_slonger, signed long long)
-__ckd_declare_mul(__ckd_mul_ulonger, unsigned long long)
-#ifdef __ckd_have_int128
-__ckd_declare_mul(__ckd_mul_sint128, signed __int128)
-__ckd_declare_mul(__ckd_mul_uint128, unsigned __int128)
-#endif
+__ckd_declare_mul(__ckd_mul_schar, علامتدار حرف)
+__ckd_declare_mul(__ckd_mul_uchar, بیعلامت حرف)
+__ckd_declare_mul(__ckd_mul_sshort, علامتدار کوتاه)
+__ckd_declare_mul(__ckd_mul_ushort, بیعلامت کوتاه)
+__ckd_declare_mul(__ckd_mul_sint, علامتدار صحيح)
+__ckd_declare_mul(__ckd_mul_uint, بیعلامت صحيح)
+__ckd_declare_mul(__ckd_mul_slong, علامتدار دراز)
+__ckd_declare_mul(__ckd_mul_ulong, بیعلامت دراز)
+__ckd_declare_mul(__ckd_mul_slonger, علامتدار دراز دراز)
+__ckd_declare_mul(__ckd_mul_ulonger, بیعلامت دراز دراز)
+#اگر_تعریف_شده __ckd_have_int128
+__ckd_declare_mul(__ckd_mul_sint128, علامتدار __int128)
+__ckd_declare_mul(__ckd_mul_uint128, بیعلامت __int128)
+#پایان_اگر
 
-#else
-#ifdef _MSC_VER
-#pragma warning("checked integer arithmetic unsupported in this environment")
-#else
-#pragma GCC warning "checked integer arithmetic unsupported in this environment"
-#endif
+#وإلا
+#اگر_تعریف_شده _MSC_VER
+#رهنمود warning("checked integer arithmetic unsupported in this environment")
+#وإلا
+#رهنمود GCC warning "checked integer arithmetic unsupported in this environment"
+#پایان_اگر
 
-#define ckd_add(res, x, y) (*(res) = (x) + (y), 0)
-#define ckd_sub(res, x, y) (*(res) = (x) - (y), 0)
-#define ckd_mul(res, x, y) (*(res) = (x) * (y), 0)
+#تعریف_کن ckd_جمع_کن(res, x, y) (*(res) = (x) + (y), 0)
+#تعریف_کن ckd_sub(res, x, y) (*(res) = (x) - (y), 0)
+#تعریف_کن ckd_mul(res, x, y) (*(res) = (x) * (y), 0)
 
-#endif /* GNU */
-#endif /* stdckdint.h */
+#پایان_اگر /* GNU */
+#پایان_اگر /* stdckdint.h */

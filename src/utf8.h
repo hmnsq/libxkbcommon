@@ -5,18 +5,18 @@
  *
  * Author: Rob Bradford <rob@linux.intel.com>
  */
-#pragma once
+#رهنمود once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
+#ضمن <stdbool.h>
+#ضمن <stddef.h>
+#ضمن <stdint.h>
 
-#include "utils.h"
+#ضمن "utils.h"
 
-XKB_EXPORT_PRIVATE uint8_t
-utf32_to_utf8(uint32_t unichar, char *buffer);
+XKB_EXPORT_خصوصی uint8_t
+utf32_مقصد_utf8(uint32_t unichar, حرف *میانگیر);
 
-XKB_EXPORT_PRIVATE bool
-is_valid_utf8(const char *ss, size_t len);
+XKB_EXPORT_خصوصی bool
+is_valid_utf8(ثابت حرف *ss, اندازه_t len);

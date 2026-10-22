@@ -2,35 +2,35 @@
  * Copyright © 2009 Dan Nicholson
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#رهنمود once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
+#ضمن <stddef.h>
+#ضمن <stdint.h>
+#ضمن <stdbool.h>
 
-#include "darray.h"
-#include "utils.h"
+#ضمن "darray.h"
+#ضمن "utils.h"
 
 /** Atoms are indexes into a `darray` */
-typedef darray_size_t xkb_atom_t;
+تعريفنوع darray_اندازه_t xkb_atom_t;
 
-#define XKB_ATOM_NONE 0
+#تعریف_کن XKB_ATOM_NONE 0
 
-struct atom_table;
+بنية atom_جدول;
 
-XKB_EXPORT_PRIVATE struct atom_table *
-atom_table_new(void);
+XKB_EXPORT_خصوصی بنية atom_جدول *
+atom_جدول_new(فراغ);
 
-XKB_EXPORT_PRIVATE void
-atom_table_free(struct atom_table *table);
+XKB_EXPORT_خصوصی فراغ
+atom_جدول_free(بنية atom_جدول *جدول);
 
-XKB_EXPORT_PRIVATE darray_size_t
-atom_table_size(struct atom_table *table);
+XKB_EXPORT_خصوصی darray_اندازه_t
+atom_جدول_اندازه(بنية atom_جدول *جدول);
 
-XKB_EXPORT_PRIVATE xkb_atom_t
-atom_intern(struct atom_table *table, const char *string, size_t len, bool add);
+XKB_EXPORT_خصوصی xkb_atom_t
+atom_intern(بنية atom_جدول *جدول, ثابت حرف *string, اندازه_t len, bool جمع_کن);
 
-XKB_EXPORT_PRIVATE const char *
-atom_text(struct atom_table *table, xkb_atom_t atom);
+XKB_EXPORT_خصوصی ثابت حرف *
+atom_متن(بنية atom_جدول *جدول, xkb_atom_t atom);
