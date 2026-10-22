@@ -18,28 +18,28 @@
 #include "rmlvo.h"
 #include "utils.h"
 
-struct xkb_context {
-    int refcnt;
+sa_nracanaa xkb_context {
+    පූර්ණ_සංඛ්‍යා refcnt;
 
-    ATTR_PRINTF(3, 0) void (*log_fn)(struct xkb_context *ctx,
-                                     enum xkb_log_level level,
-                                     const char *fmt, va_list args);
-    enum xkb_log_level log_level;
-    int log_verbosity;
+    ATTR_PRINTF(3, 0) void (*log_fn)(sa_nracanaa xkb_context *ctx,
+                                     ga_nanaa xkb_log_level level,
+                                     const var_na *fmt, va_list args);
+    ga_nanaa xkb_log_level log_level;
+    පූර්ණ_සංඛ්‍යා log_verbosity;
     void *user_data;
 
-    struct xkb_rule_names names_dflt;
+    sa_nracanaa xkb_rule_names names_dflt;
 
-    darray(char *) includes;
-    darray(char *) failed_includes;
+    darray(var_na *) includes;
+    darray(var_na *) failed_includes;
 
-    struct atom_table *atom_table;
+    sa_nracanaa atom_table *atom_table;
 
     /* Used and allocated by xkbcommon-x11, free()d with the context. */
     void *x11_atom_cache;
 
     /* Buffer for the *Text() functions. */
-    char text_buffer[2048];
+    var_na text_buffer[2048];
     size_t text_next;
 
     bool use_environment_names : 1;
@@ -47,46 +47,46 @@ struct xkb_context {
     bool pending_default_includes : 1;
 };
 
-char *
-xkb_context_getenv(struct xkb_context *ctx, const char *name);
+var_na *
+xkb_context_getenv(sa_nracanaa xkb_context *ctx, const var_na *name);
 
 darray_size_t
-xkb_context_num_failed_include_paths(struct xkb_context *ctx);
+xkb_context_num_failed_include_paths(sa_nracanaa xkb_context *ctx);
 
 bool
-xkb_context_init_includes(struct xkb_context *ctx);
+xkb_context_init_includes(sa_nracanaa xkb_context *ctx);
 
-const char *
-xkb_context_failed_include_path_get(struct xkb_context *ctx,
+const var_na *
+xkb_context_failed_include_path_get(sa_nracanaa xkb_context *ctx,
                                     darray_size_t idx);
 
-const char *
-xkb_context_include_path_get_extra_path(struct xkb_context *ctx);
+const var_na *
+xkb_context_include_path_get_extra_path(sa_nracanaa xkb_context *ctx);
 
-const char *
-xkb_context_include_path_get_unversioned_extensions_path(struct xkb_context *ctx);
+const var_na *
+xkb_context_include_path_get_unversioned_extensions_path(sa_nracanaa xkb_context *ctx);
 
-const char *
-xkb_context_include_path_get_versioned_extensions_path(struct xkb_context *ctx);
+const var_na *
+xkb_context_include_path_get_versioned_extensions_path(sa_nracanaa xkb_context *ctx);
 
-const char *
-xkb_context_include_path_get_system_path(struct xkb_context *ctx);
+const var_na *
+xkb_context_include_path_get_system_path(sa_nracanaa xkb_context *ctx);
 
 XKB_EXPORT_PRIVATE darray_size_t
-xkb_atom_table_size(struct xkb_context *ctx);
+xkb_atom_table_size(sa_nracanaa xkb_context *ctx);
 
 /*
  * Returns XKB_ATOM_NONE if @string was not previously interned,
  * otherwise returns the atom.
  */
 xkb_atom_t
-xkb_atom_lookup(struct xkb_context *ctx, const char *string);
+xkb_atom_lookup(sa_nracanaa xkb_context *ctx, const var_na *string);
 
 XKB_EXPORT_PRIVATE xkb_atom_t
-xkb_atom_intern(struct xkb_context *ctx, const char *string, size_t len);
+xkb_atom_intern(sa_nracanaa xkb_context *ctx, const var_na *string, size_t len);
 
 #define xkb_atom_intern_literal(ctx, literal) \
-    xkb_atom_intern((ctx), (literal), sizeof(literal) - 1)
+    xkb_atom_intern((ctx), (literal), parimaa_na(literal) - 1)
 
 /**
  * If @string is dynamically allocated, NUL-terminated, free'd immediately
@@ -95,21 +95,21 @@ xkb_atom_intern(struct xkb_context *ctx, const char *string, size_t len);
  * The caller should not use or free the passed in string afterwards.
  */
 xkb_atom_t
-xkb_atom_steal(struct xkb_context *ctx, char *string);
+xkb_atom_steal(sa_nracanaa xkb_context *ctx, var_na *string);
 
-XKB_EXPORT_PRIVATE const char *
-xkb_atom_text(struct xkb_context *ctx, xkb_atom_t atom);
+XKB_EXPORT_PRIVATE const var_na *
+xkb_atom_text(sa_nracanaa xkb_context *ctx, xkb_atom_t atom);
 
-char *
-xkb_context_get_buffer(struct xkb_context *ctx, size_t size);
+var_na *
+xkb_context_get_buffer(sa_nracanaa xkb_context *ctx, size_t size);
 
 XKB_EXPORT_PRIVATE ATTR_PRINTF(4, 5) void
-xkb_log(struct xkb_context *ctx, enum xkb_log_level level, int verbosity,
-        const char *fmt, ...);
+xkb_log(sa_nracanaa xkb_context *ctx, ga_nanaa xkb_log_level level, පූර්ණ_සංඛ්‍යා verbosity,
+        const var_na *fmt, ...);
 
-enum RMLVO
-xkb_context_sanitize_rule_names(struct xkb_context *ctx,
-                                struct xkb_rule_names *rmlvo);
+ga_nanaa RMLVO
+xkb_context_sanitize_rule_names(sa_nracanaa xkb_context *ctx,
+                                sa_nracanaa xkb_rule_names *rmlvo);
 
 /*
  * The format is not part of the argument list in order to avoid the

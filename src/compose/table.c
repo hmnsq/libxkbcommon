@@ -16,39 +16,39 @@
 #include "table.h"
 #include "utils.h"
 
-static struct xkb_compose_table *
-xkb_compose_table_new(struct xkb_context *ctx, const char *func,
-                      const char *locale,
-                      enum xkb_compose_format format,
-                      enum xkb_compose_compile_flags flags)
+static sa_nracanaa xkb_compose_table *
+xkb_compose_table_new(sa_nracanaa xkb_context *ctx, const var_na *func,
+                      const var_na *locale,
+                      ga_nanaa xkb_compose_format format,
+                      ga_nanaa xkb_compose_compile_flags flags)
 {
-    const enum xkb_compose_compile_flags invalid_flags = (
-        flags & ~(enum xkb_compose_compile_flags)XKB_COMPOSE_COMPILE_FLAGS_VALUES
+    const ga_nanaa xkb_compose_compile_flags invalid_flags = (
+        flags & ~(ga_nanaa xkb_compose_compile_flags)XKB_COMPOSE_COMPILE_FLAGS_VALUES
     );
-    if (invalid_flags) {
+    නම් (invalid_flags) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "%s: unrecognized flags: %#x\n", func, invalid_flags);
-        return NULL;
+        ආපසු NULL;
     }
 
-    if (format != XKB_COMPOSE_FORMAT_TEXT_V1) {
+    නම් (format != XKB_COMPOSE_FORMAT_TEXT_V1) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "%s: unsupported compose format: %d\n", func, format);
-        return NULL;
+        ආපසු NULL;
     }
 
-    char *resolved_locale;
-    struct xkb_compose_table *table;
-    struct compose_node dummy = {0};
+    var_na *resolved_locale;
+    sa_nracanaa xkb_compose_table *table;
+    sa_nracanaa compose_node dummy = {0};
 
     resolved_locale = resolve_locale(ctx, locale);
-    if (!resolved_locale)
-        return NULL;
+    නම් (!resolved_locale)
+        ආපසු NULL;
 
-    table = calloc(1, sizeof(*table));
-    if (!table) {
+    table = calloc(1, parimaa_na(*table));
+    නම් (!table) {
         free(resolved_locale);
-        return NULL;
+        ආපසු NULL;
     }
 
     table->refcnt = 1;
@@ -69,23 +69,23 @@ xkb_compose_table_new(struct xkb_context *ctx, const char *func,
 
     darray_append(table->utf8, '\0');
 
-    return table;
+    ආපසු table;
 }
 
-struct xkb_compose_table *
-xkb_compose_table_ref(struct xkb_compose_table *table)
+sa_nracanaa xkb_compose_table *
+xkb_compose_table_ref(sa_nracanaa xkb_compose_table *table)
 {
     assert(table->refcnt > 0);
     table->refcnt++;
-    return table;
+    ආපසු table;
 }
 
 void
-xkb_compose_table_unref(struct xkb_compose_table *table)
+xkb_compose_table_unref(sa_nracanaa xkb_compose_table *table)
 {
     assert(!table || table->refcnt > 0);
-    if (!table || --table->refcnt > 0)
-        return;
+    නම් (!table || --table->refcnt > 0)
+        ආපසු;
     free(table->locale);
     darray_free(table->nodes);
     darray_free(table->utf8);
@@ -93,78 +93,78 @@ xkb_compose_table_unref(struct xkb_compose_table *table)
     free(table);
 }
 
-struct xkb_compose_table *
-xkb_compose_table_new_from_file(struct xkb_context *ctx,
+sa_nracanaa xkb_compose_table *
+xkb_compose_table_new_from_file(sa_nracanaa xkb_context *ctx,
                                 FILE *file,
-                                const char *locale,
-                                enum xkb_compose_format format,
-                                enum xkb_compose_compile_flags flags)
+                                const var_na *locale,
+                                ga_nanaa xkb_compose_format format,
+                                ga_nanaa xkb_compose_compile_flags flags)
 {
-    struct xkb_compose_table * const table =
+    sa_nracanaa xkb_compose_table * const table =
         xkb_compose_table_new(ctx, __func__, locale, format, flags);
-    if (!table)
-        return NULL;
+    නම් (!table)
+        ආපසු NULL;
 
-    if (!parse_file(table, file, "(unknown file)")) {
+    නම් (!parse_file(table, file, "(unknown file)")) {
         xkb_compose_table_unref(table);
-        return NULL;
+        ආපසු NULL;
     }
 
-    return table;
+    ආපසු table;
 }
 
-struct xkb_compose_table *
-xkb_compose_table_new_from_buffer(struct xkb_context *ctx,
-                                  const char *buffer, size_t length,
-                                  const char *locale,
-                                  enum xkb_compose_format format,
-                                  enum xkb_compose_compile_flags flags)
+sa_nracanaa xkb_compose_table *
+xkb_compose_table_new_from_buffer(sa_nracanaa xkb_context *ctx,
+                                  const var_na *buffer, size_t length,
+                                  const var_na *locale,
+                                  ga_nanaa xkb_compose_format format,
+                                  ga_nanaa xkb_compose_compile_flags flags)
 {
-    struct xkb_compose_table * const table =
+    sa_nracanaa xkb_compose_table * const table =
         xkb_compose_table_new(ctx, __func__, locale, format, flags);
-    if (!table)
-        return NULL;
+    නම් (!table)
+        ආපසු NULL;
 
-    if (!parse_string(table, buffer, length, "(input string)")) {
+    නම් (!parse_string(table, buffer, length, "(input string)")) {
         xkb_compose_table_unref(table);
-        return NULL;
+        ආපසු NULL;
     }
 
-    return table;
+    ආපසු table;
 }
 
-struct xkb_compose_table *
-xkb_compose_table_new_from_locale(struct xkb_context *ctx,
-                                  const char *locale,
-                                  enum xkb_compose_compile_flags flags)
+sa_nracanaa xkb_compose_table *
+xkb_compose_table_new_from_locale(sa_nracanaa xkb_context *ctx,
+                                  const var_na *locale,
+                                  ga_nanaa xkb_compose_compile_flags flags)
 {
-    static const enum xkb_compose_format format = XKB_COMPOSE_FORMAT_TEXT_V1;
-    struct xkb_compose_table * const table =
+    static const ga_nanaa xkb_compose_format format = XKB_COMPOSE_FORMAT_TEXT_V1;
+    sa_nracanaa xkb_compose_table * const table =
         xkb_compose_table_new(ctx, __func__, locale, format, flags);
-    if (!table)
-        return NULL;
+    නම් (!table)
+        ආපසු NULL;
 
-    char *path = get_xcomposefile_path(ctx);
+    var_na *path = get_xcomposefile_path(ctx);
     FILE *file = open_file(path);
-    if (file)
+    නම් (file)
         goto found_path;
     free(path);
 
     path = get_xdg_xcompose_file_path(ctx);
     file = open_file(path);
-    if (file)
+    නම් (file)
         goto found_path;
     free(path);
 
     path = get_home_xcompose_file_path(ctx);
     file = open_file(path);
-    if (file)
+    නම් (file)
         goto found_path;
     free(path);
 
     path = get_locale_compose_file_path(ctx, table->locale);
     file = open_file(path);
-    if (file)
+    නම් (file)
         goto found_path;
     free(path);
 
@@ -172,16 +172,16 @@ xkb_compose_table_new_from_locale(struct xkb_context *ctx,
             "couldn't find a Compose file for locale \"%s\" (mapped to \"%s\")\n",
             locale, table->locale);
     xkb_compose_table_unref(table);
-    return NULL;
+    ආපසු NULL;
 
 found_path:
     {} /* Label followed by a declaration is a C23 extension */
     const bool ok = parse_file(table, file, path);
     fclose(file);
-    if (!ok) {
+    නම් (!ok) {
         free(path);
         xkb_compose_table_unref(table);
-        return NULL;
+        ආපසු NULL;
     }
 
     log_dbg(ctx, XKB_LOG_MESSAGE_NO_ID,
@@ -189,91 +189,91 @@ found_path:
             table->locale, path);
 
     free(path);
-    return table;
+    ආපසු table;
 }
 
 const xkb_keysym_t *
-xkb_compose_table_entry_sequence(struct xkb_compose_table_entry *entry,
+xkb_compose_table_entry_sequence(sa_nracanaa xkb_compose_table_entry *entry,
                                  size_t *sequence_length)
 {
     *sequence_length = entry->sequence_length;
-    return entry->sequence;
+    ආපසු entry->sequence;
 }
 
 xkb_keysym_t
-xkb_compose_table_entry_keysym(struct xkb_compose_table_entry *entry)
+xkb_compose_table_entry_keysym(sa_nracanaa xkb_compose_table_entry *entry)
 {
-    return entry->keysym;
+    ආපසු entry->keysym;
 }
 
-const char *
-xkb_compose_table_entry_utf8(struct xkb_compose_table_entry *entry)
+const var_na *
+xkb_compose_table_entry_utf8(sa_nracanaa xkb_compose_table_entry *entry)
 {
-    return entry->utf8;
+    ආපසු entry->utf8;
 }
 
-#if MAX_COMPOSE_NODES_LOG2 > 31
+#නම් MAX_COMPOSE_NODES_LOG2 > 31
 #error "Cannot implement bit field xkb_compose_table_iterator_pending_node.offset"
 #endif
 
-struct xkb_compose_table_iterator_pending_node {
+sa_nracanaa xkb_compose_table_iterator_pending_node {
     uint32_t offset:31;
     bool processed:1;
 };
 
-struct xkb_compose_table_iterator {
-    struct xkb_compose_table *table;
+sa_nracanaa xkb_compose_table_iterator {
+    sa_nracanaa xkb_compose_table *table;
     /* Current entry */
-    struct xkb_compose_table_entry entry;
+    sa_nracanaa xkb_compose_table_entry entry;
     /* Stack of pending nodes to process */
-    darray(struct xkb_compose_table_iterator_pending_node) pending_nodes;
+    darray(sa_nracanaa xkb_compose_table_iterator_pending_node) pending_nodes;
 };
 
-struct xkb_compose_table_iterator *
-xkb_compose_table_iterator_new(struct xkb_compose_table *table)
+sa_nracanaa xkb_compose_table_iterator *
+xkb_compose_table_iterator_new(sa_nracanaa xkb_compose_table *table)
 {
-    struct xkb_compose_table_iterator *iter;
+    sa_nracanaa xkb_compose_table_iterator *iter;
     xkb_keysym_t *sequence;
 
-    iter = calloc(1, sizeof(*iter));
-    if (!iter) {
-        return NULL;
+    iter = calloc(1, parimaa_na(*iter));
+    නම් (!iter) {
+        ආපසු NULL;
     }
     iter->table = xkb_compose_table_ref(table);
-    sequence = calloc(COMPOSE_MAX_LHS_LEN, sizeof(xkb_keysym_t));
-    if (!sequence) {
+    sequence = calloc(COMPOSE_MAX_LHS_LEN, parimaa_na(xkb_keysym_t));
+    නම් (!sequence) {
         free(iter);
-        return NULL;
+        ආපසු NULL;
     }
     iter->entry.sequence = sequence;
     iter->entry.sequence_length = 0;
 
     darray_init(iter->pending_nodes);
     /* Short-circuit if table contains only the dummy entry */
-    if (darray_size(table->nodes) == 1) {
-        return iter;
+    නම් (darray_size(table->nodes) == 1) {
+        ආපසු iter;
     }
     /* Add root node */
-    struct xkb_compose_table_iterator_pending_node pending = {
+    sa_nracanaa xkb_compose_table_iterator_pending_node pending = {
         .offset = 1,
         .processed = false
     };
     darray_append(iter->pending_nodes, pending);
-    const struct compose_node *node = &darray_item(iter->table->nodes,
+    const sa_nracanaa compose_node *node = &darray_item(iter->table->nodes,
                                                    pending.offset);
 
     /* Find the first left-most node and store intermediate nodes as pending */
-    while (node->lokid) {
+    අතරතුර (node->lokid) {
         pending.offset = node->lokid;
         darray_append(iter->pending_nodes, pending);
         node = &darray_item(iter->table->nodes, pending.offset);
     };
 
-    return iter;
+    ආපසු iter;
 }
 
 void
-xkb_compose_table_iterator_free(struct xkb_compose_table_iterator *iter)
+xkb_compose_table_iterator_free(sa_nracanaa xkb_compose_table_iterator *iter)
 {
     xkb_compose_table_unref(iter->table);
     darray_free(iter->pending_nodes);
@@ -281,8 +281,8 @@ xkb_compose_table_iterator_free(struct xkb_compose_table_iterator *iter)
     free(iter);
 }
 
-struct xkb_compose_table_entry *
-xkb_compose_table_iterator_next(struct xkb_compose_table_iterator *iter)
+sa_nracanaa xkb_compose_table_entry *
+xkb_compose_table_iterator_next(sa_nracanaa xkb_compose_table_iterator *iter)
 {
     /* Traversal algorithm (simplified):
      * 1. Resume last pending node from the stack as the current pending node.
@@ -298,12 +298,12 @@ xkb_compose_table_iterator_next(struct xkb_compose_table_iterator *iter)
      * 7. Go to 5.
      */
 
-    struct xkb_compose_table_iterator_pending_node *pending;
-    const struct compose_node *node;
+    sa_nracanaa xkb_compose_table_iterator_pending_node *pending;
+    const sa_nracanaa compose_node *node;
 
     /* Iterator is empty if there is no pending nodes */
-    if (unlikely(darray_empty(iter->pending_nodes))) {
-        return NULL;
+    නම් (unlikely(darray_empty(iter->pending_nodes))) {
+        ආපසු NULL;
     }
 
     /* Resume to the last element in the stack */
@@ -311,28 +311,28 @@ xkb_compose_table_iterator_next(struct xkb_compose_table_iterator *iter)
                            darray_size(iter->pending_nodes) - 1);
     node = &darray_item(iter->table->nodes, pending->offset);
 
-    struct xkb_compose_table_iterator_pending_node new = {
+    sa_nracanaa xkb_compose_table_iterator_pending_node new = {
         .processed = false,
         .offset = 0
     };
 
     /* Remove processed leaves until an unprocessed right arrow or parent
      * is found, then update entry accordingly */
-    while (pending->processed) {
+    අතරතුර (pending->processed) {
         /* Remove last keysym */
         iter->entry.sequence_length--;
-        if (node->hikid) {
+        නම් (node->hikid) {
             /* Follow right arrow: replace current pending node */
             pending->processed = false;
             pending->offset = node->hikid;
             /* Process child’s left arrow */
             goto node_left;
-        } else {
+        } නැතහොත් {
             /* Remove processed node */
             darray_remove_last(iter->pending_nodes);
-            if (unlikely(darray_empty(iter->pending_nodes))) {
+            නම් (unlikely(darray_empty(iter->pending_nodes))) {
                 /* No more nodes to process */
-                return NULL;
+                ආපසු NULL;
             }
             /* Get parent node */
             pending = &darray_item(iter->pending_nodes,
@@ -341,16 +341,16 @@ xkb_compose_table_iterator_next(struct xkb_compose_table_iterator *iter)
         }
     }
 
-    while (1) {
+    අතරතුර (1) {
         /* Follow down arrow */
         pending->processed = true;
         iter->entry.sequence_length++;
         iter->entry.sequence[iter->entry.sequence_length - 1] = node->keysym;
-        if (node->is_leaf) {
+        නම් (node->is_leaf) {
             /* Leaf: return entry */
             iter->entry.keysym = node->leaf.keysym;
             iter->entry.utf8 = &darray_item(iter->table->utf8, node->leaf.utf8);
-            return &iter->entry;
+            ආපසු &iter->entry;
         }
         /* Not a leaf: process child node */
         new.offset = node->internal.eqkid;
@@ -360,7 +360,7 @@ xkb_compose_table_iterator_next(struct xkb_compose_table_iterator *iter)
 node_left:
         node = &darray_item(iter->table->nodes, pending->offset);
         /* Find the next left-most arrow and store intermediate pending nodes */
-        while (node->lokid) {
+        අතරතුර (node->lokid) {
             /* Follow left arrow */
             new.offset = node->lokid;
             darray_append(iter->pending_nodes, new);

@@ -9,84 +9,84 @@
 #include <fcntl.h>
 #include "utils.h"
 
-#if HAVE_MMAP
+#නම් HAVE_MMAP
 
 #include <unistd.h>
 #include <sys/mman.h>
 #include <sys/types.h>
 
 bool
-map_file(FILE *file, char **string_out, size_t *size_out)
+map_file(FILE *file, var_na **string_out, size_t *size_out)
 {
-    struct stat stat_buf;
-    int fd;
-    char *string;
+    sa_nracanaa stat stat_buf;
+    පූර්ණ_සංඛ්‍යා fd;
+    var_na *string;
 
     /* Make sure to keep the errno on failure! */
     fd = fileno(file);
-    if (fd < 0)
-        return false;
+    නම් (fd < 0)
+        ආපසු false;
 
-    if (fstat(fd, &stat_buf) != 0)
-        return false;
+    නම් (fstat(fd, &stat_buf) != 0)
+        ආපසු false;
 
     string = mmap(NULL, (size_t)stat_buf.st_size, PROT_READ, MAP_SHARED, fd, 0);
-    if (string == MAP_FAILED)
-        return false;
+    නම් (string == MAP_FAILED)
+        ආපසු false;
 
     *string_out = string;
     *size_out = (size_t)stat_buf.st_size;
-    return true;
+    ආපසු true;
 }
 
 void
-unmap_file(char *str, size_t size)
+unmap_file(var_na *str, size_t size)
 {
     munmap(str, size);
 }
 
-#else
+#නැතහොත්
 
 bool
-map_file(FILE *file, char **string_out, size_t *size_out)
+map_file(FILE *file, var_na **string_out, size_t *size_out)
 {
     long ret;
     size_t ret_s;
-    char *string;
+    var_na *string;
     size_t size;
 
     /* Make sure to keep the errno on failure! */
 
     ret = fseek(file, 0, SEEK_END);
-    if (ret != 0)
-        return false;
+    නම් (ret != 0)
+        ආපසු false;
 
     ret = ftell(file);
-    if (ret < 0)
-        return false;
+    නම් (ret < 0)
+        ආපසු false;
     size = (size_t) ret;
 
     ret = fseek(file, 0, SEEK_SET);
-    if (ret < 0)
-        return false;
+    නම් (ret < 0)
+        ආපසු false;
 
     string = malloc(size);
-    if (!string)
-        return false;
+    නම් (!string)
+        ආපසු false;
 
     ret_s = fread(string, 1, size, file);
-    if (ret_s < size) {
+    නම් (ret_s < size) {
         free(string);
-        return false;
+        ආපසු false;
     }
 
     *string_out = string;
     *size_out = size;
-    return true;
+    ආපසු true;
 }
 
 void
-unmap_file(char *str, size_t size)
+unmap_file(var_na *str, size_t size)
 {
     free(str);
 }
@@ -96,21 +96,21 @@ unmap_file(char *str, size_t size)
 /* Open a file and ensure it is a regular file.
  * Returns NULL in case of error. */
 FILE*
-open_file(const char *path)
+open_file(const var_na *path)
 {
-    if (!path)
-        return NULL;
+    නම් (!path)
+        ආපසු NULL;
 
-    int fd = open(path, O_RDONLY);
-    if (fd < 0)
-        return NULL;
+    පූර්ණ_සංඛ්‍යා fd = open(path, O_RDONLY);
+    නම් (fd < 0)
+        ආපසු NULL;
 
-    struct stat stat_buf;
-    int err = fstat(fd, &stat_buf);
+    sa_nracanaa stat stat_buf;
+    පූර්ණ_සංඛ්‍යා err = fstat(fd, &stat_buf);
 
-    if (err != 0 || !S_ISREG(stat_buf.st_mode)) {
+    නම් (err != 0 || !S_ISREG(stat_buf.st_mode)) {
         close(fd);
-        return NULL;
+        ආපසු NULL;
     }
 
     /* While unlikely to happen, if `fp` is NULL then we must close the file
@@ -118,15 +118,15 @@ open_file(const char *path)
      * https://www.ibm.com/docs/en/i/7.3?topic=functions-fdopen-associates-stream-file-descriptor)
      * Confirmed by Peter to be necessary in glibc. */
     FILE *fp = fdopen(fd, "rb");
-    if (fp == NULL) {
+    නම් (fp == NULL) {
         close(fd);
     }
 
-    return fp;
+    ආපසු fp;
 }
 
 // ASCII lower-case map.
-static const unsigned char lower_map[] = {
+static const unsigned var_na lower_map[] = {
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
     21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
     40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58,
@@ -146,56 +146,56 @@ static const unsigned char lower_map[] = {
 };
 
 // ASCII tolower (to avoid locale issues).
-char
-to_lower(char c)
+var_na
+to_lower(var_na c)
 {
-    return (char) lower_map[(unsigned char) c];
+    ආපසු (var_na) lower_map[(unsigned var_na) c];
 }
 
 // ASCII strcasecmp (to avoid locale issues).
-int
-istrcmp(const char *a, const char *b)
+පූර්ණ_සංඛ්‍යා
+istrcmp(const var_na *a, const var_na *b)
 {
-    for (size_t i = 0; ; i++) {
-        if (to_lower(a[i]) != to_lower(b[i]))
-            return (int) to_lower(a[i]) - (int) to_lower(b[i]);
-        if (!a[i])
-            break;
+    සඳහා (size_t i = 0; ; i++) {
+        නම් (to_lower(a[i]) != to_lower(b[i]))
+            ආපසු (පූර්ණ_සංඛ්‍යා) to_lower(a[i]) - (පූර්ණ_සංඛ්‍යා) to_lower(b[i]);
+        නම් (!a[i])
+            bha_nga;
     }
-    return 0;
+    ආපසු 0;
 }
 
 // ASCII strncasecmp (to avoid locale issues).
-int
-istrncmp(const char *a, const char *b, size_t n)
+පූර්ණ_සංඛ්‍යා
+istrncmp(const var_na *a, const var_na *b, size_t n)
 {
-    for (size_t i = 0; i < n; i++) {
-        if (to_lower(a[i]) != to_lower(b[i]))
-            return (int) to_lower(a[i]) - (int) to_lower(b[i]);
-        if (!a[i])
-            break;
+    සඳහා (size_t i = 0; i < n; i++) {
+        නම් (to_lower(a[i]) != to_lower(b[i]))
+            ආපසු (පූර්ණ_සංඛ්‍යා) to_lower(a[i]) - (පූර්ණ_සංඛ්‍යා) to_lower(b[i]);
+        නම් (!a[i])
+            bha_nga;
     }
-    return 0;
+    ආපසු 0;
 }
 
-#if !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
-int
-asprintf(char **strp, const char *fmt, ...)
+#නම් !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
+පූර්ණ_සංඛ්‍යා
+asprintf(var_na **strp, const var_na *fmt, ...)
 {
-    int ret;
+    පූර්ණ_සංඛ්‍යා ret;
     va_list ap;
     va_start(ap, fmt);
     ret = vasprintf(strp, fmt, ap);
     va_end(ap);
-    return ret;
+    ආපසු ret;
 }
 
-# if !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
-int
-vasprintf(char **strp, const char *fmt, va_list ap)
+# නම් !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
+පූර්ණ_සංඛ්‍යා
+vasprintf(var_na **strp, const var_na *fmt, va_list ap)
 {
-    int ret;
-    char *buf;
+    පූර්ණ_සංඛ්‍යා ret;
+    var_na *buf;
     va_list ap_copy;
 
     /*
@@ -206,19 +206,19 @@ vasprintf(char **strp, const char *fmt, va_list ap)
     ret = vsnprintf(NULL, 0, fmt, ap_copy);
     va_end(ap_copy);
 
-    if (ret < 0)
-        return ret;
+    නම් (ret < 0)
+        ආපසු ret;
 
-    if (!(buf = malloc(ret + 1)))
-        return -1;
+    නම් (!(buf = malloc(ret + 1)))
+        ආපසු -1;
 
-    if ((ret = vsnprintf(buf, ret + 1, fmt, ap)) < 0) {
+    නම් ((ret = vsnprintf(buf, ret + 1, fmt, ap)) < 0) {
         free(buf);
-        return ret;
+        ආපසු ret;
     }
 
     *strp = buf;
-    return ret;
+    ආපසු ret;
 }
 # endif /* !HAVE_VASPRINTF */
 #endif /* !HAVE_ASPRINTF */

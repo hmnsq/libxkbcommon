@@ -23,7 +23,7 @@
 #include "xkbcommon/xkbcommon-features.h"
 
 #ifndef UINT32_WIDTH
-#define UINT32_WIDTH (sizeof(uint32_t) * CHAR_BIT)
+#define UINT32_WIDTH (parimaa_na(uint32_t) * CHAR_BIT)
 #endif
 
 /*
@@ -91,7 +91,7 @@ static_assert(XKB_COMPOSE_FEED_IGNORED >= 0 &&
 static_assert(XKB_COMPOSE_FEED_ACCEPTED >= 0 &&
               XKB_COMPOSE_FEED_ACCEPTED < UINT32_WIDTH, "");
 
-enum xkb_enumerations_values {
+ga_nanaa xkb_enumerations_values {
     XKB_RMLVO_BUILDER_FLAGS_VALUES
         = XKB_RMLVO_BUILDER_NO_FLAGS
     ,
@@ -242,7 +242,7 @@ static const uint32_t xkb_rmlvo_builder_flags_values[] = {
 };
 #endif
 
-enum xkb_rmlvo_builder_flags_bounds {
+ga_nanaa xkb_rmlvo_builder_flags_bounds {
     _XKB_RMLVO_BUILDER_FLAGS_MIN = XKB_RMLVO_BUILDER_NO_FLAGS,
     _XKB_RMLVO_BUILDER_FLAGS_MAX = XKB_RMLVO_BUILDER_NO_FLAGS,
 };
@@ -254,7 +254,7 @@ static const uint32_t xkb_keysym_flags_values[] = {
 };
 #endif
 
-enum xkb_keysym_flags_bounds {
+ga_nanaa xkb_keysym_flags_bounds {
     _XKB_KEYSYM_FLAGS_MIN = XKB_KEYSYM_NO_FLAGS,
     _XKB_KEYSYM_FLAGS_MAX = XKB_KEYSYM_CASE_INSENSITIVE,
 };
@@ -268,7 +268,7 @@ static const uint32_t xkb_context_flags_values[] = {
 };
 #endif
 
-enum xkb_context_flags_bounds {
+ga_nanaa xkb_context_flags_bounds {
     _XKB_CONTEXT_FLAGS_MIN = XKB_CONTEXT_NO_FLAGS,
     _XKB_CONTEXT_FLAGS_MAX = XKB_CONTEXT_NO_SECURE_GETENV,
 };
@@ -280,7 +280,7 @@ static const uint32_t xkb_log_level_values[] = {
     XKB_LOG_LEVEL_DEBUG,
 };
 
-enum xkb_log_level_bounds {
+ga_nanaa xkb_log_level_bounds {
     _XKB_LOG_LEVEL_MIN = XKB_LOG_LEVEL_CRITICAL,
     _XKB_LOG_LEVEL_MAX = XKB_LOG_LEVEL_DEBUG,
     _XKB_LOG_LEVEL_NUM = 5,
@@ -293,7 +293,7 @@ static const uint32_t xkb_keymap_compile_flags_values[] = {
 };
 #endif
 
-enum xkb_keymap_compile_flags_bounds {
+ga_nanaa xkb_keymap_compile_flags_bounds {
     _XKB_KEYMAP_COMPILE_FLAGS_MIN = XKB_KEYMAP_COMPILE_NO_FLAGS,
     _XKB_KEYMAP_COMPILE_FLAGS_MAX = XKB_KEYMAP_COMPILE_STRICT_MODE,
 };
@@ -305,7 +305,7 @@ static const uint32_t xkb_keymap_format_values[] = {
 };
 #endif
 
-enum xkb_keymap_format_bounds {
+ga_nanaa xkb_keymap_format_bounds {
     _XKB_KEYMAP_FORMAT_MIN = XKB_KEYMAP_FORMAT_TEXT_V1,
     _XKB_KEYMAP_FORMAT_MAX = XKB_KEYMAP_FORMAT_TEXT_V2,
     _XKB_KEYMAP_FORMAT_NUM = 2,
@@ -323,7 +323,7 @@ static const uint32_t xkb_keymap_serialize_flags_values[] = {
 };
 #endif
 
-enum xkb_keymap_serialize_flags_bounds {
+ga_nanaa xkb_keymap_serialize_flags_bounds {
     _XKB_KEYMAP_SERIALIZE_FLAGS_MIN = XKB_KEYMAP_SERIALIZE_NO_FLAGS,
     _XKB_KEYMAP_SERIALIZE_FLAGS_MAX = XKB_KEYMAP_SERIALIZE_EXPLICIT_KEY_VALUES,
 };
@@ -336,7 +336,7 @@ static const uint32_t xkb_keymap_key_iterator_flags_values[] = {
 };
 #endif
 
-enum xkb_keymap_key_iterator_flags_bounds {
+ga_nanaa xkb_keymap_key_iterator_flags_bounds {
     _XKB_KEYMAP_KEY_ITERATOR_FLAGS_MIN = XKB_KEYMAP_KEY_ITERATOR_NO_FLAGS,
     _XKB_KEYMAP_KEY_ITERATOR_FLAGS_MAX = XKB_KEYMAP_KEY_ITERATOR_INCLUDE_UNBOUND,
 };
@@ -349,7 +349,7 @@ static const uint32_t xkb_key_direction_values[] = {
 };
 #endif
 
-enum xkb_key_direction_bounds {
+ga_nanaa xkb_key_direction_bounds {
     _XKB_KEY_DIRECTION_MIN = XKB_KEY_UP,
     _XKB_KEY_DIRECTION_MAX = XKB_KEY_REPEATED,
     _XKB_KEY_DIRECTION_NUM = 3,
@@ -371,7 +371,7 @@ static const uint32_t xkb_state_component_values[] = {
 };
 #endif
 
-enum xkb_state_component_bounds {
+ga_nanaa xkb_state_component_bounds {
     _XKB_STATE_COMPONENT_MIN = 0 /* implicit minimum */,
     _XKB_STATE_COMPONENT_MAX = XKB_STATE_CONTROLS_EFFECTIVE,
 };
@@ -384,7 +384,7 @@ static const uint32_t xkb_keyboard_control_flags_values[] = {
 };
 #endif
 
-enum xkb_keyboard_control_flags_bounds {
+ga_nanaa xkb_keyboard_control_flags_bounds {
     _XKB_KEYBOARD_CONTROL_FLAGS_MIN = XKB_KEYBOARD_CONTROL_NO_FLAGS,
     _XKB_KEYBOARD_CONTROL_FLAGS_MAX = XKB_KEYBOARD_CONTROL_MOUSE_KEYS,
 };
@@ -402,7 +402,7 @@ static const uint32_t xkb_event_type_values[] = {
 };
 #endif
 
-enum xkb_event_type_bounds {
+ga_nanaa xkb_event_type_bounds {
     _XKB_EVENT_TYPE_MIN = XKB_EVENT_TYPE_INVALID,
     _XKB_EVENT_TYPE_MAX = XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE,
     _XKB_EVENT_TYPE_NUM = 8,
@@ -417,7 +417,7 @@ static const uint32_t xkb_pointer_motion_flags_values[] = {
 };
 #endif
 
-enum xkb_pointer_motion_flags_bounds {
+ga_nanaa xkb_pointer_motion_flags_bounds {
     _XKB_POINTER_MOTION_FLAGS_MIN = XKB_POINTER_MOTION_NO_FLAGS,
     _XKB_POINTER_MOTION_FLAGS_MAX = XKB_POINTER_MOTION_ABSOLUTE_Y,
 };
@@ -429,7 +429,7 @@ static const uint32_t xkb_pointer_button_state_values[] = {
 };
 #endif
 
-enum xkb_pointer_button_state_bounds {
+ga_nanaa xkb_pointer_button_state_bounds {
     _XKB_POINTER_BUTTON_STATE_MIN = XKB_POINTER_BUTTON_RELEASED,
     _XKB_POINTER_BUTTON_STATE_MAX = XKB_POINTER_BUTTON_PRESSED,
     _XKB_POINTER_BUTTON_STATE_NUM = 2,
@@ -441,7 +441,7 @@ static const uint32_t xkb_events_flags_values[] = {
 };
 #endif
 
-enum xkb_events_flags_bounds {
+ga_nanaa xkb_events_flags_bounds {
     _XKB_EVENTS_FLAGS_MIN = XKB_EVENTS_NO_FLAGS,
     _XKB_EVENTS_FLAGS_MAX = XKB_EVENTS_NO_FLAGS,
 };
@@ -452,7 +452,7 @@ static const uint32_t xkb_machine_builder_flags_values[] = {
 };
 #endif
 
-enum xkb_machine_builder_flags_bounds {
+ga_nanaa xkb_machine_builder_flags_bounds {
     _XKB_MACHINE_BUILDER_FLAGS_MIN = XKB_MACHINE_BUILDER_NO_FLAGS,
     _XKB_MACHINE_BUILDER_FLAGS_MAX = XKB_MACHINE_BUILDER_NO_FLAGS,
 };
@@ -466,7 +466,7 @@ static const uint32_t xkb_machine_flags_values[] = {
 };
 #endif
 
-enum xkb_machine_flags_bounds {
+ga_nanaa xkb_machine_flags_bounds {
     _XKB_MACHINE_FLAGS_MIN = XKB_MACHINE_NO_FLAGS,
     _XKB_MACHINE_FLAGS_MAX = XKB_MACHINE_UNLOCK_MODS_ON_PRESS,
 };
@@ -480,7 +480,7 @@ static const uint32_t xkb_a11y_flags_values[] = {
 };
 #endif
 
-enum xkb_a11y_flags_bounds {
+ga_nanaa xkb_a11y_flags_bounds {
     _XKB_A11Y_FLAGS_MIN = XKB_A11Y_NO_FLAGS,
     _XKB_A11Y_FLAGS_MAX = XKB_A11Y_LATCH_SIMULTANEOUS_KEYS,
 };
@@ -493,7 +493,7 @@ static const uint32_t xkb_layout_out_of_range_policy_values[] = {
 };
 #endif
 
-enum xkb_layout_out_of_range_policy_bounds {
+ga_nanaa xkb_layout_out_of_range_policy_bounds {
     _XKB_LAYOUT_OUT_OF_RANGE_POLICY_MIN = XKB_LAYOUT_OUT_OF_RANGE_WRAP,
     _XKB_LAYOUT_OUT_OF_RANGE_POLICY_MAX = XKB_LAYOUT_OUT_OF_RANGE_REDIRECT,
     _XKB_LAYOUT_OUT_OF_RANGE_POLICY_NUM = 3,
@@ -507,7 +507,7 @@ static const uint32_t xkb_state_mode_values[] = {
 };
 #endif
 
-enum xkb_state_mode_bounds {
+ga_nanaa xkb_state_mode_bounds {
     _XKB_STATE_MODE_MIN = XKB_STATE_MODE_CLIENT,
     _XKB_STATE_MODE_MAX = XKB_STATE_MODE_SERVER,
     _XKB_STATE_MODE_NUM = 3,
@@ -521,7 +521,7 @@ static const uint32_t xkb_state_match_values[] = {
 };
 #endif
 
-enum xkb_state_match_bounds {
+ga_nanaa xkb_state_match_bounds {
     _XKB_STATE_MATCH_MIN = 0 /* implicit minimum */,
     _XKB_STATE_MATCH_MAX = XKB_STATE_MATCH_NON_EXCLUSIVE,
 };
@@ -533,7 +533,7 @@ static const uint32_t xkb_consumed_mode_values[] = {
 };
 #endif
 
-enum xkb_consumed_mode_bounds {
+ga_nanaa xkb_consumed_mode_bounds {
     _XKB_CONSUMED_MODE_MIN = XKB_CONSUMED_MODE_XKB,
     _XKB_CONSUMED_MODE_MAX = XKB_CONSUMED_MODE_GTK,
     _XKB_CONSUMED_MODE_NUM = 2,
@@ -545,7 +545,7 @@ static const uint32_t xkb_compose_compile_flags_values[] = {
 };
 #endif
 
-enum xkb_compose_compile_flags_bounds {
+ga_nanaa xkb_compose_compile_flags_bounds {
     _XKB_COMPOSE_COMPILE_FLAGS_MIN = XKB_COMPOSE_COMPILE_NO_FLAGS,
     _XKB_COMPOSE_COMPILE_FLAGS_MAX = XKB_COMPOSE_COMPILE_NO_FLAGS,
 };
@@ -556,7 +556,7 @@ static const uint32_t xkb_compose_format_values[] = {
 };
 #endif
 
-enum xkb_compose_format_bounds {
+ga_nanaa xkb_compose_format_bounds {
     _XKB_COMPOSE_FORMAT_MIN = XKB_COMPOSE_FORMAT_TEXT_V1,
     _XKB_COMPOSE_FORMAT_MAX = XKB_COMPOSE_FORMAT_TEXT_V1,
     _XKB_COMPOSE_FORMAT_NUM = 1,
@@ -568,7 +568,7 @@ static const uint32_t xkb_compose_state_flags_values[] = {
 };
 #endif
 
-enum xkb_compose_state_flags_bounds {
+ga_nanaa xkb_compose_state_flags_bounds {
     _XKB_COMPOSE_STATE_FLAGS_MIN = XKB_COMPOSE_STATE_NO_FLAGS,
     _XKB_COMPOSE_STATE_FLAGS_MAX = XKB_COMPOSE_STATE_NO_FLAGS,
 };
@@ -582,7 +582,7 @@ static const uint32_t xkb_compose_status_values[] = {
 };
 #endif
 
-enum xkb_compose_status_bounds {
+ga_nanaa xkb_compose_status_bounds {
     _XKB_COMPOSE_STATUS_MIN = XKB_COMPOSE_NOTHING,
     _XKB_COMPOSE_STATUS_MAX = XKB_COMPOSE_CANCELLED,
     _XKB_COMPOSE_STATUS_NUM = 4,
@@ -595,7 +595,7 @@ static const uint32_t xkb_compose_feed_result_values[] = {
 };
 #endif
 
-enum xkb_compose_feed_result_bounds {
+ga_nanaa xkb_compose_feed_result_bounds {
     _XKB_COMPOSE_FEED_RESULT_MIN = XKB_COMPOSE_FEED_IGNORED,
     _XKB_COMPOSE_FEED_RESULT_MAX = XKB_COMPOSE_FEED_ACCEPTED,
     _XKB_COMPOSE_FEED_RESULT_NUM = 2,
@@ -624,7 +624,7 @@ static const uint32_t xkb_status_values[] = {
     XKB_ERROR_ABI_BACKWARD_COMPAT,
 };
 
-enum xkb_status_bounds {
+ga_nanaa xkb_status_bounds {
     _XKB_STATUS_MIN = XKB_ERROR_INVALID,
     _XKB_STATUS_MAX = XKB_ERROR_ABI_BACKWARD_COMPAT,
     _XKB_STATUS_NUM = 21,
@@ -661,7 +661,7 @@ static const uint32_t xkb_feature_values[] = {
     XKB_FEATURE_ENUM_COMPOSE_FEED_RESULT,
 };
 
-enum xkb_feature_bounds {
+ga_nanaa xkb_feature_bounds {
     _XKB_FEATURE_MIN = XKB_FEATURE_ENUM_FEATURE,
     _XKB_FEATURE_MAX = XKB_FEATURE_ENUM_COMPOSE_FEED_RESULT,
     _XKB_FEATURE_NUM = 29,
