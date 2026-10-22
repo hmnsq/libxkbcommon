@@ -14,11 +14,11 @@
 #include "keymap.h"
 
 void
-InitVMods(struct xkb_mod_set *info, const struct xkb_mod_set *mods, bool reset);
+InitVMods(sa_nracanaa xkb_mod_set *info, const sa_nracanaa xkb_mod_set *mods, bool reset);
 
 void
-MergeModSets(struct xkb_context *ctx, struct xkb_mod_set *into,
-             const struct xkb_mod_set *from, enum merge_mode merge);
+MergeModSets(sa_nracanaa xkb_context *ctx, sa_nracanaa xkb_mod_set *into,
+             const sa_nracanaa xkb_mod_set *from, ga_nanaa merge_mode merge);
 
 bool
-HandleVModDef(struct xkb_context *ctx, struct xkb_mod_set *mods, VModDef *stmt);
+HandleVModDef(sa_nracanaa xkb_context *ctx, sa_nracanaa xkb_mod_set *mods, VModDef *stmt);

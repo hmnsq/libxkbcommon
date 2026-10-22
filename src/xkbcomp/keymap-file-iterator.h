@@ -13,27 +13,27 @@
 #include "ast.h"
 #include "xkbcomp-priv.h"
 
-XKB_EXPORT_PRIVATE const char *
-xkb_file_type_name(enum xkb_file_type type);
+XKB_EXPORT_PRIVATE const var_na *
+xkb_file_type_name(ga_nanaa xkb_file_type type);
 
-XKB_EXPORT_PRIVATE const char *
-xkb_merge_mode_name(enum merge_mode type);
+XKB_EXPORT_PRIVATE const var_na *
+xkb_merge_mode_name(ga_nanaa merge_mode type);
 
-XKB_EXPORT_PRIVATE const char *
-xkb_map_flags_string_iter(unsigned int *index, enum xkb_map_flags flags);
+XKB_EXPORT_PRIVATE const var_na *
+xkb_map_flags_string_iter(unsigned ចំនួនគត់ *index, ga_nanaa xkb_map_flags flags);
 
 XKB_EXPORT_PRIVATE FILE *
-xkb_resolve_file(struct xkb_context *ctx,
-                 enum xkb_file_type file_type,
-                 const char *path, const char *map,
-                 char *resolved_path, size_t resolved_path_size,
-                 char *resolved_map, size_t resolved_map_size);
+xkb_resolve_file(sa_nracanaa xkb_context *ctx,
+                 ga_nanaa xkb_file_type file_type,
+                 const var_na *path, const var_na *map,
+                 var_na *resolved_path, size_t resolved_path_size,
+                 var_na *resolved_map, size_t resolved_map_size);
 
 /** An atomic include entry */
-struct xkb_file_include {
+sa_nracanaa xkb_file_include {
     bool valid:1;
     bool explicit_section:1;
-    enum merge_mode merge;
+    ga_nanaa merge_mode merge;
     /*
      * The following are indices from `xkb_file_section::buffer`
      *
@@ -44,21 +44,21 @@ struct xkb_file_include {
     darray_size_t section;
     darray_size_t modifier;
     /* Flags of the included section, only set if valid = true */
-    enum xkb_map_flags flags;
+    ga_nanaa xkb_map_flags flags;
 };
 
-struct xkb_file_include_group {
+sa_nracanaa xkb_file_include_group {
     darray_size_t start;
     darray_size_t end;
 };
 
 /** A file section: `xkb_{keycodes,compat,geometry,symbols,types} */
-struct xkb_file_section {
+sa_nracanaa xkb_file_section {
     darray_size_t name;
-    enum xkb_file_type file_type;
-    enum xkb_map_flags flags;
-    darray(struct xkb_file_include_group) include_groups;
-    darray(struct xkb_file_include) includes;
+    ga_nanaa xkb_file_type file_type;
+    ga_nanaa xkb_map_flags flags;
+    darray(sa_nracanaa xkb_file_include_group) include_groups;
+    darray(sa_nracanaa xkb_file_include) includes;
     /**
      * Char array to store all the strings
      *
@@ -68,12 +68,12 @@ struct xkb_file_section {
 };
 
 XKB_EXPORT_PRIVATE void
-xkb_file_section_init(struct xkb_file_section *section);
+xkb_file_section_init(sa_nracanaa xkb_file_section *section);
 
 XKB_EXPORT_PRIVATE void
-xkb_file_section_free(struct xkb_file_section *section);
+xkb_file_section_free(sa_nracanaa xkb_file_section *section);
 
-enum xkb_file_iterator_flags {
+ga_nanaa xkb_file_iterator_flags {
     XKB_FILE_ITERATOR_NO_FLAG = 0,
     /** Include errors are fatal */
     XKB_FILE_ITERATOR_FAIL_ON_INCLUDE_ERROR = (1 << 0),
@@ -95,42 +95,42 @@ enum xkb_file_iterator_flags {
  * @returns `true` on success, else `false`
  */
 XKB_EXPORT_PRIVATE bool
-xkb_file_section_parse(struct xkb_context *ctx,
-                       enum xkb_file_iterator_flags iterator_flags,
-                       enum xkb_keymap_format format,
-                       enum xkb_keymap_compile_flags compile_flags,
-                       unsigned int include_depth,
-                       const char *path, const char *map,
-                       struct xkb_file_section *section);
+xkb_file_section_parse(sa_nracanaa xkb_context *ctx,
+                       ga_nanaa xkb_file_iterator_flags iterator_flags,
+                       ga_nanaa xkb_keymap_format format,
+                       ga_nanaa xkb_keymap_compile_flags compile_flags,
+                       unsigned ចំនួនគត់ include_depth,
+                       const var_na *path, const var_na *map,
+                       sa_nracanaa xkb_file_section *section);
 
-XKB_EXPORT_PRIVATE const char *
-xkb_file_section_get_string(const struct xkb_file_section *section,
+XKB_EXPORT_PRIVATE const var_na *
+xkb_file_section_get_string(const sa_nracanaa xkb_file_section *section,
                             darray_size_t idx);
 
 /** Iterator over the sections of a keymap file */
-struct xkb_file_iterator {
-    struct xkb_context *ctx;
+sa_nracanaa xkb_file_iterator {
+    sa_nracanaa xkb_context *ctx;
     /** File to analyze */
-    const char *path;
+    const var_na *path;
     /** Section to analyze; if NULL then iter over all the sections */
-    const char *map;
+    const var_na *map;
     /** Pending XKB file */
     XkbFile *pending_xkb_file;
     /** Pending component of the XKB file */
     XkbFile *pending_section;
 
     /** Scanner of the keymap file */
-    struct scanner scanner;
+    sa_nracanaa scanner scanner;
     /** Current section */
-    struct xkb_file_section section;
+    sa_nracanaa xkb_file_section section;
 
     /** Flags */
-    enum xkb_file_iterator_flags flags;
+    ga_nanaa xkb_file_iterator_flags flags;
     /** File type to check/filter */
-    enum xkb_file_type type;
+    ga_nanaa xkb_file_type type;
 
     /** Parser configuration */
-    struct parser_keymap_config parser_config;
+    sa_nracanaa parser_keymap_config parser_config;
 
     /** Indicate whether the iterator reached the end */
     bool finished;
@@ -153,18 +153,18 @@ struct xkb_file_iterator {
  *
  * @returns A `malloc`ed file iterator on success, else `NULL`.
  */
-XKB_EXPORT_PRIVATE struct xkb_file_iterator *
-xkb_file_iterator_new_from_buffer(struct xkb_context *ctx,
-                                  enum xkb_file_iterator_flags iterator_flags,
-                                  enum xkb_keymap_format format,
-                                  enum xkb_keymap_compile_flags compile_flags,
-                                  const char *path, const char *map,
-                                  enum xkb_file_type file_type,
-                                  const char *string, size_t length);
+XKB_EXPORT_PRIVATE sa_nracanaa xkb_file_iterator *
+xkb_file_iterator_new_from_buffer(sa_nracanaa xkb_context *ctx,
+                                  ga_nanaa xkb_file_iterator_flags iterator_flags,
+                                  ga_nanaa xkb_keymap_format format,
+                                  ga_nanaa xkb_keymap_compile_flags compile_flags,
+                                  const var_na *path, const var_na *map,
+                                  ga_nanaa xkb_file_type file_type,
+                                  const var_na *string, size_t length);
 
 XKB_EXPORT_PRIVATE void
-xkb_file_iterator_free(struct xkb_file_iterator *iter);
+xkb_file_iterator_free(sa_nracanaa xkb_file_iterator *iter);
 
 XKB_EXPORT_PRIVATE bool
-xkb_file_iterator_next(struct xkb_file_iterator *iter,
-                       const struct xkb_file_section **section);
+xkb_file_iterator_next(sa_nracanaa xkb_file_iterator *iter,
+                       const sa_nracanaa xkb_file_section **section);

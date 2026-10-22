@@ -15,14 +15,14 @@
 
 #include "src/utils.h"
 
-XKB_EXPORT_PRIVATE char *
-parse_string_literal(struct xkb_context *ctx, const char *string);
+XKB_EXPORT_PRIVATE var_na *
+parse_string_literal(sa_nracanaa xkb_context *ctx, const var_na *string);
 
 bool
-parse_string(struct xkb_compose_table *table,
-             const char *string, size_t len,
-             const char *file_name);
+parse_string(sa_nracanaa xkb_compose_table *table,
+             const var_na *string, size_t len,
+             const var_na *file_name);
 
 bool
-parse_file(struct xkb_compose_table *table,
-           FILE *file, const char *file_name);
+parse_file(sa_nracanaa xkb_compose_table *table,
+           FILE *file, const var_na *file_name);

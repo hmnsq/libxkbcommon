@@ -19,234 +19,234 @@
 #include "util-numbers.h"
 #include "util-checked-arithmetic.h"
 
-typedef bool (*IdentLookupFunc)(struct xkb_context *ctx, const void *priv,
+typedef bool (*IdentLookupFunc)(sa_nracanaa xkb_context *ctx, const void *priv,
                                 xkb_atom_t field, uint32_t *val_rtrn,
                                 bool *pending);
 
 bool
-ExprResolveLhs(struct xkb_context *ctx, const ExprDef *expr,
-               const char **elem_rtrn, const char **field_rtrn,
+ExprResolveLhs(sa_nracanaa xkb_context *ctx, const ExprDef *expr,
+               const var_na **elem_rtrn, const var_na **field_rtrn,
                ExprDef **index_rtrn)
 {
     switch (expr->common.type) {
-    case STMT_EXPR_IDENT:
+    pak_sa STMT_EXPR_IDENT:
         *elem_rtrn = NULL;
         *field_rtrn = xkb_atom_text(ctx, expr->ident.ident);
         *index_rtrn = NULL;
-        return (*field_rtrn != NULL);
-    case STMT_EXPR_FIELD_REF:
+        ត្រឡប់ (*field_rtrn != NULL);
+    pak_sa STMT_EXPR_FIELD_REF:
         *elem_rtrn = xkb_atom_text(ctx, expr->field_ref.element);
         *field_rtrn = xkb_atom_text(ctx, expr->field_ref.field);
         *index_rtrn = NULL;
-        return (*elem_rtrn != NULL && *field_rtrn != NULL);
-    case STMT_EXPR_ARRAY_REF:
+        ត្រឡប់ (*elem_rtrn != NULL && *field_rtrn != NULL);
+    pak_sa STMT_EXPR_ARRAY_REF:
         *elem_rtrn = xkb_atom_text(ctx, expr->array_ref.element);
         *field_rtrn = xkb_atom_text(ctx, expr->array_ref.field);
         *index_rtrn = expr->array_ref.entry;
-        if (expr->array_ref.element != XKB_ATOM_NONE && *elem_rtrn == NULL)
-            return false;
-        if (*field_rtrn == NULL)
-            return false;
-        return true;
+        ប្រសិនបើ (expr->array_ref.element != XKB_ATOM_NONE && *elem_rtrn == NULL)
+            ត្រឡប់ false;
+        ប្រសិនបើ (*field_rtrn == NULL)
+            ត្រឡប់ false;
+        ត្រឡប់ true;
     default:
-        break;
+        bha_nga;
     }
     log_wsgo(ctx,
              XKB_ERROR_INVALID_XKB_SYNTAX,
              "Unexpected operator %d in ResolveLhs\n", expr->common.type);
-    return false;
+    ត្រឡប់ false;
 }
 
 static bool
-SimpleLookup(struct xkb_context *ctx, const void *priv, xkb_atom_t field,
+SimpleLookup(sa_nracanaa xkb_context *ctx, const void *priv, xkb_atom_t field,
              uint32_t *val_rtrn, bool *pending_rtrn)
 {
-    if (!priv || field == XKB_ATOM_NONE)
-        return false;
+    ប្រសិនបើ (!priv || field == XKB_ATOM_NONE)
+        ត្រឡប់ false;
 
-    const char *str = xkb_atom_text(ctx, field);
-    for (const LookupEntry *entry = priv; entry && entry->name; entry++) {
-        if (istreq(str, entry->name)) {
+    const var_na *str = xkb_atom_text(ctx, field);
+    សម្រាប់ (const LookupEntry *entry = priv; entry && entry->name; entry++) {
+        ប្រសិនបើ (istreq(str, entry->name)) {
             *val_rtrn = entry->value;
-            return true;
+            ត្រឡប់ true;
         }
     }
 
-    return false;
+    ត្រឡប់ false;
 }
 
-struct named_integer_pattern {
-    const char *prefix;
+sa_nracanaa named_integer_pattern {
+    const var_na *prefix;
     size_t prefix_length;
     uint32_t min;
     uint32_t max;
     const LookupEntry *entries;
     const LookupEntry *pending_entries;
     bool is_mask;
-    enum xkb_message_code error_id;
+    ga_nanaa xkb_message_code error_id;
 };
 
 /* Parse a number expressed with the pattern `<prefix><decimal number>` */
 static bool
-NamedIntegerPatternLookup(struct xkb_context *ctx, const void *priv,
+NamedIntegerPatternLookup(sa_nracanaa xkb_context *ctx, const void *priv,
                           xkb_atom_t field, uint32_t *val_rtrn,
                           bool *pending_rtrn)
 {
-    if (!priv || field == XKB_ATOM_NONE)
-        return false;
+    ប្រសិនបើ (!priv || field == XKB_ATOM_NONE)
+        ត្រឡប់ false;
 
-    const char * const str = xkb_atom_text(ctx, field);
-    const struct named_integer_pattern * const pattern = priv;
+    const var_na * const str = xkb_atom_text(ctx, field);
+    const sa_nracanaa named_integer_pattern * const pattern = priv;
 
-    const int count = (istrneq(str, pattern->prefix, pattern->prefix_length))
+    const ចំនួនគត់ count = (istrneq(str, pattern->prefix, pattern->prefix_length))
         ? parse_dec_to_uint32_t(str + pattern->prefix_length, SIZE_MAX, val_rtrn)
         : 0;
 
-    if (count > 0 && *(str + pattern->prefix_length + count) == '\0') {
-        if (*val_rtrn < pattern->min || *val_rtrn > pattern->max) {
+    ប្រសិនបើ (count > 0 && *(str + pattern->prefix_length + count) == '\0') {
+        ប្រសិនបើ (*val_rtrn < pattern->min || *val_rtrn > pattern->max) {
             log_err(ctx, pattern->error_id,
                     "%s index %"PRIu32" is out of range (%"PRIu32"..%"PRIu32")\n",
                     pattern->prefix, *val_rtrn, pattern->min, pattern->max);
-            return false;
+            ត្រឡប់ false;
         }
-        if (pattern->is_mask) {
+        ប្រសិនបើ (pattern->is_mask) {
             /* Compute mask (bit 0 = min index) */
             assert(*val_rtrn - pattern->min < 32);
             *val_rtrn = UINT32_C(1) << (*val_rtrn - pattern->min);
         }
-        return true;
-    } else {
-        if (pattern->entries &&
+        ត្រឡប់ true;
+    } បើមិនដូច្នេះ {
+        ប្រសិនបើ (pattern->entries &&
             SimpleLookup(ctx, pattern->entries, field, val_rtrn, NULL)) {
-            return true;
+            ត្រឡប់ true;
         }
-        if (pattern->pending_entries && pending_rtrn &&
+        ប្រសិនបើ (pattern->pending_entries && pending_rtrn &&
             SimpleLookup(ctx, pattern->pending_entries, field, val_rtrn, NULL)) {
             *pending_rtrn = true;
-            return true;
+            ត្រឡប់ true;
         }
-        return false;
+        ត្រឡប់ false;
     }
 }
 
 /* Data passed in the *priv argument for LookupModMask. */
-typedef struct {
-    const struct xkb_mod_set *mods;
-    enum mod_type mod_type;
+typedef sa_nracanaa {
+    const sa_nracanaa xkb_mod_set *mods;
+    ga_nanaa mod_type mod_type;
 } LookupModMaskPriv;
 
 static bool
-LookupModMask(struct xkb_context *ctx, const void *priv, xkb_atom_t field,
+LookupModMask(sa_nracanaa xkb_context *ctx, const void *priv, xkb_atom_t field,
               xkb_mod_mask_t *val_rtrn, bool *pending_rtrn)
 {
-    const char *str = xkb_atom_text(ctx, field);
-    if (!str)
-        return false;
+    const var_na *str = xkb_atom_text(ctx, field);
+    ប្រសិនបើ (!str)
+        ត្រឡប់ false;
 
-    if (istreq(str, "all")) {
+    ប្រសិនបើ (istreq(str, "all")) {
         *val_rtrn  = MOD_REAL_MASK_ALL;
-        return true;
+        ត្រឡប់ true;
     }
 
-    if (istreq(str, "none")) {
+    ប្រសិនបើ (istreq(str, "none")) {
         *val_rtrn = 0;
-        return true;
+        ត្រឡប់ true;
     }
 
     const LookupModMaskPriv *arg = priv;
-    const struct xkb_mod_set *mods = arg->mods;
-    const enum mod_type mod_type = arg->mod_type;
+    const sa_nracanaa xkb_mod_set *mods = arg->mods;
+    const ga_nanaa mod_type mod_type = arg->mod_type;
     const xkb_mod_index_t ndx = XkbModNameToIndex(mods, field, mod_type);
-    if (ndx == XKB_MOD_INVALID)
-        return false;
+    ប្រសិនបើ (ndx == XKB_MOD_INVALID)
+        ត្រឡប់ false;
 
     *val_rtrn = (UINT32_C(1) << ndx);
-    return true;
+    ត្រឡប់ true;
 }
 
 bool
-ExprResolveBoolean(struct xkb_context *ctx, const ExprDef *expr,
+ExprResolveBoolean(sa_nracanaa xkb_context *ctx, const ExprDef *expr,
                    bool *set_rtrn)
 {
     bool ok = false;
-    const char *ident;
+    const var_na *ident;
 
     switch (expr->common.type) {
-    case STMT_EXPR_BOOLEAN_LITERAL:
+    pak_sa STMT_EXPR_BOOLEAN_LITERAL:
         *set_rtrn = expr->boolean.set;
-        return true;
+        ត្រឡប់ true;
 
-    case STMT_EXPR_STRING_LITERAL:
-    case STMT_EXPR_INTEGER_LITERAL:
-    case STMT_EXPR_FLOAT_LITERAL:
-    case STMT_EXPR_KEYNAME_LITERAL:
-    case STMT_EXPR_KEYSYM_LITERAL:
+    pak_sa STMT_EXPR_STRING_LITERAL:
+    pak_sa STMT_EXPR_INTEGER_LITERAL:
+    pak_sa STMT_EXPR_FLOAT_LITERAL:
+    pak_sa STMT_EXPR_KEYNAME_LITERAL:
+    pak_sa STMT_EXPR_KEYSYM_LITERAL:
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found %s where boolean was expected\n",
                 stmt_type_to_string(expr->common.type));
-        return false;
+        ត្រឡប់ false;
 
-    case STMT_EXPR_IDENT:
+    pak_sa STMT_EXPR_IDENT:
         ident = xkb_atom_text(ctx, expr->ident.ident);
-        if (ident) {
-            if (istreq(ident, "true") ||
+        ប្រសិនបើ (ident) {
+            ប្រសិនបើ (istreq(ident, "true") ||
                 istreq(ident, "yes") ||
                 istreq(ident, "on")) {
                 *set_rtrn = true;
-                return true;
+                ត្រឡប់ true;
             }
-            else if (istreq(ident, "false") ||
+            បើមិនដូច្នេះ ប្រសិនបើ (istreq(ident, "false") ||
                      istreq(ident, "no") ||
                      istreq(ident, "off")) {
                 *set_rtrn = false;
-                return true;
+                ត្រឡប់ true;
             }
         }
         log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                 "Identifier \"%s\" of type boolean is unknown\n", ident);
-        return false;
+        ត្រឡប់ false;
 
-    case STMT_EXPR_FIELD_REF:
+    pak_sa STMT_EXPR_FIELD_REF:
         log_err(ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
                 "Default \"%s.%s\" of type boolean is unknown\n",
                 xkb_atom_text(ctx, expr->field_ref.element),
                 xkb_atom_text(ctx, expr->field_ref.field));
-        return false;
+        ត្រឡប់ false;
 
-    case STMT_EXPR_INVERT:
-    case STMT_EXPR_NOT:
+    pak_sa STMT_EXPR_INVERT:
+    pak_sa STMT_EXPR_NOT:
         ok = ExprResolveBoolean(ctx, expr->unary.child, set_rtrn);
-        if (ok)
+        ប្រសិនបើ (ok)
             *set_rtrn = !*set_rtrn;
-        return ok;
-    case STMT_EXPR_ADD:
-    case STMT_EXPR_SUBTRACT:
-    case STMT_EXPR_MULTIPLY:
-    case STMT_EXPR_DIVIDE:
-    case STMT_EXPR_ASSIGN:
-    case STMT_EXPR_NEGATE:
-    case STMT_EXPR_UNARY_PLUS:
-    case STMT_EXPR_EMPTY_LIST:
-    case STMT_EXPR_ACTION_DECL:
-    case STMT_EXPR_ACTION_LIST:
-    case STMT_EXPR_KEYSYM_LIST:
+        ត្រឡប់ ok;
+    pak_sa STMT_EXPR_ADD:
+    pak_sa STMT_EXPR_SUBTRACT:
+    pak_sa STMT_EXPR_MULTIPLY:
+    pak_sa STMT_EXPR_DIVIDE:
+    pak_sa STMT_EXPR_ASSIGN:
+    pak_sa STMT_EXPR_NEGATE:
+    pak_sa STMT_EXPR_UNARY_PLUS:
+    pak_sa STMT_EXPR_EMPTY_LIST:
+    pak_sa STMT_EXPR_ACTION_DECL:
+    pak_sa STMT_EXPR_ACTION_LIST:
+    pak_sa STMT_EXPR_KEYSYM_LIST:
         log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                 "%s of boolean values not permitted\n",
                 stmt_type_to_string(expr->common.type));
-        break;
+        bha_nga;
 
     default:
         log_wsgo(ctx, XKB_ERROR_UNKNOWN_OPERATOR,
                  "Unknown operator %d in ResolveBoolean\n",
                  expr->common.type);
-        break;
+        bha_nga;
     }
 
-    return false;
+    ត្រឡប់ false;
 }
 
 static bool
-ExprResolveIntegerLookup(struct xkb_context *ctx, const ExprDef *expr,
+ExprResolveIntegerLookup(sa_nracanaa xkb_context *ctx, const ExprDef *expr,
                          int64_t *val_rtrn, bool *pending,
                          IdentLookupFunc lookup, const void *lookupPriv)
 {
@@ -256,144 +256,144 @@ ExprResolveIntegerLookup(struct xkb_context *ctx, const ExprDef *expr,
     ExprDef *left, *right;
 
     switch (expr->common.type) {
-    case STMT_EXPR_INTEGER_LITERAL:
+    pak_sa STMT_EXPR_INTEGER_LITERAL:
         *val_rtrn = expr->integer.ival;
-        return true;
+        ត្រឡប់ true;
 
-    case STMT_EXPR_STRING_LITERAL:
-    case STMT_EXPR_FLOAT_LITERAL:
-    case STMT_EXPR_BOOLEAN_LITERAL:
-    case STMT_EXPR_KEYNAME_LITERAL:
-    case STMT_EXPR_KEYSYM_LITERAL:
+    pak_sa STMT_EXPR_STRING_LITERAL:
+    pak_sa STMT_EXPR_FLOAT_LITERAL:
+    pak_sa STMT_EXPR_BOOLEAN_LITERAL:
+    pak_sa STMT_EXPR_KEYNAME_LITERAL:
+    pak_sa STMT_EXPR_KEYSYM_LITERAL:
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found %s where an int was expected\n",
                 stmt_type_to_string(expr->common.type));
-        return false;
+        ត្រឡប់ false;
 
-    case STMT_EXPR_IDENT:
-        if (lookup)
+    pak_sa STMT_EXPR_IDENT:
+        ប្រសិនបើ (lookup)
             ok = lookup(ctx, lookupPriv, expr->ident.ident, &u, pending);
 
-        if (!ok)
+        ប្រសិនបើ (!ok)
             log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                     "Identifier \"%s\" of type int is unknown\n",
                     xkb_atom_text(ctx, expr->ident.ident));
-        else
+        បើមិនដូច្នេះ
             *val_rtrn = (int64_t) u;
 
-        if (pending && *pending) {
+        ប្រសិនបើ (pending && *pending) {
             /* Postpone computation */
-            return false;
+            ត្រឡប់ false;
         }
 
-        return ok;
+        ត្រឡប់ ok;
 
-    case STMT_EXPR_FIELD_REF:
+    pak_sa STMT_EXPR_FIELD_REF:
         log_err(ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
                 "Default \"%s.%s\" of type int is unknown\n",
                 xkb_atom_text(ctx, expr->field_ref.element),
                 xkb_atom_text(ctx, expr->field_ref.field));
-        return false;
+        ត្រឡប់ false;
 
-    case STMT_EXPR_ADD:
-    case STMT_EXPR_SUBTRACT:
-    case STMT_EXPR_MULTIPLY:
-    case STMT_EXPR_DIVIDE:
+    pak_sa STMT_EXPR_ADD:
+    pak_sa STMT_EXPR_SUBTRACT:
+    pak_sa STMT_EXPR_MULTIPLY:
+    pak_sa STMT_EXPR_DIVIDE:
         left = expr->binary.left;
         right = expr->binary.right;
-        if (!ExprResolveIntegerLookup(ctx, left, &l, pending, lookup, lookupPriv) ||
+        ប្រសិនបើ (!ExprResolveIntegerLookup(ctx, left, &l, pending, lookup, lookupPriv) ||
             !ExprResolveIntegerLookup(ctx, right, &r, pending, lookup, lookupPriv))
-            return false;
+            ត្រឡប់ false;
 
         switch (expr->common.type) {
-        case STMT_EXPR_ADD:
-            if (ckd_add(val_rtrn, l, r)) {
+        pak_sa STMT_EXPR_ADD:
+            ប្រសិនបើ (ckd_add(val_rtrn, l, r)) {
                 log_err(ctx, XKB_ERROR_INTEGER_OVERFLOW,
                         "Addition %"PRId64" + %"PRId64" has an invalid "
                         "mathematical result: %"PRId64"\n",
                         l, r, *val_rtrn);
-                return false;
+                ត្រឡប់ false;
             }
-            break;
-        case STMT_EXPR_SUBTRACT:
-            if (ckd_sub(val_rtrn, l, r)) {
+            bha_nga;
+        pak_sa STMT_EXPR_SUBTRACT:
+            ប្រសិនបើ (ckd_sub(val_rtrn, l, r)) {
                 log_err(ctx, XKB_ERROR_INTEGER_OVERFLOW,
                         "Substraction %"PRId64" - %"PRId64" has an invalid "
                         "mathematical result: %"PRId64"\n",
                         l, r, *val_rtrn);
-                return false;
+                ត្រឡប់ false;
             }
-            break;
-        case STMT_EXPR_MULTIPLY:
-            if (ckd_mul(val_rtrn, l, r)) {
+            bha_nga;
+        pak_sa STMT_EXPR_MULTIPLY:
+            ប្រសិនបើ (ckd_mul(val_rtrn, l, r)) {
                 log_err(ctx, XKB_ERROR_INTEGER_OVERFLOW,
                         "Multiplication %"PRId64" * %"PRId64" has an invalid "
                         "mathematical result: %"PRId64"\n",
                         l, r, *val_rtrn);
-                return false;
+                ត្រឡប់ false;
             }
-            break;
-        case STMT_EXPR_DIVIDE:
-            if (r == 0) {
+            bha_nga;
+        pak_sa STMT_EXPR_DIVIDE:
+            ប្រសិនបើ (r == 0) {
                 log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                         "Cannot divide by zero: %"PRId64" / %"PRId64"\n", l, r);
-                return false;
+                ត្រឡប់ false;
             }
             *val_rtrn = l / r;
-            break;
+            bha_nga;
         default:
             log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                     "%s of integers not permitted\n",
                     stmt_type_to_string(expr->common.type));
-            return false;
+            ត្រឡប់ false;
         }
 
-        return true;
+        ត្រឡប់ true;
 
-    case STMT_EXPR_ASSIGN:
+    pak_sa STMT_EXPR_ASSIGN:
         log_wsgo(ctx,
                  XKB_ERROR_INVALID_OPERATION,
                  "Assignment operator not implemented yet\n");
-        break;
+        bha_nga;
 
-    case STMT_EXPR_NOT:
+    pak_sa STMT_EXPR_NOT:
         log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                 "The ! operator cannot be applied to an integer\n");
-        return false;
+        ត្រឡប់ false;
 
-    case STMT_EXPR_INVERT:
-    case STMT_EXPR_NEGATE:
+    pak_sa STMT_EXPR_INVERT:
+    pak_sa STMT_EXPR_NEGATE:
         left = expr->unary.child;
-        if (!ExprResolveIntegerLookup(ctx, left, &l, pending, lookup, lookupPriv))
-            return false;
+        ប្រសិនបើ (!ExprResolveIntegerLookup(ctx, left, &l, pending, lookup, lookupPriv))
+            ត្រឡប់ false;
 
         *val_rtrn = (expr->common.type == STMT_EXPR_NEGATE ? -l : ~l);
-        return true;
+        ត្រឡប់ true;
 
-    case STMT_EXPR_UNARY_PLUS:
+    pak_sa STMT_EXPR_UNARY_PLUS:
         left = expr->unary.child;
-        return ExprResolveIntegerLookup(ctx, left, val_rtrn, pending, lookup,
+        ត្រឡប់ ExprResolveIntegerLookup(ctx, left, val_rtrn, pending, lookup,
                                         lookupPriv);
 
     default:
         log_wsgo(ctx, XKB_ERROR_UNKNOWN_OPERATOR,
                  "Unknown operator %d in ResolveInteger\n",
                  expr->common.type);
-        break;
+        bha_nga;
     }
 
-    return false;
+    ត្រឡប់ false;
 }
 
 bool
-ExprResolveInteger(struct xkb_context *ctx, const ExprDef *expr,
+ExprResolveInteger(sa_nracanaa xkb_context *ctx, const ExprDef *expr,
                    int64_t *val_rtrn)
 {
-    return ExprResolveIntegerLookup(ctx, expr, val_rtrn, NULL, NULL, NULL);
+    ត្រឡប់ ExprResolveIntegerLookup(ctx, expr, val_rtrn, NULL, NULL, NULL);
 }
 
-enum xkb_parser_error
-ExprResolveGroup(const struct xkb_keymap_info *keymap_info,
+ga_nanaa xkb_parser_error
+ExprResolveGroup(const sa_nracanaa xkb_keymap_info *keymap_info,
                  const ExprDef *expr, bool absolute,
                  xkb_layout_index_t *group_rtrn, bool *pending)
 {
@@ -402,10 +402,10 @@ ExprResolveGroup(const struct xkb_keymap_info *keymap_info,
         { NULL, 0 }
     };
 
-    const struct named_integer_pattern group_name_pattern = {
+    const sa_nracanaa named_integer_pattern group_name_pattern = {
         /* Prefix is title-cased, because it is also used in error messages */
         .prefix = "Group",
-        .prefix_length = sizeof("Group") - 1,
+        .prefix_length = parimaa_na("Group") - 1,
         .min = 1,
         .max = keymap_info->features.max_groups,
         .is_mask = false,
@@ -415,33 +415,33 @@ ExprResolveGroup(const struct xkb_keymap_info *keymap_info,
     };
 
     int64_t result = 0;
-    if (!ExprResolveIntegerLookup(keymap_info->keymap.ctx, expr, &result, pending,
+    ប្រសិនបើ (!ExprResolveIntegerLookup(keymap_info->keymap.ctx, expr, &result, pending,
                                   NamedIntegerPatternLookup, &group_name_pattern))
-        return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+        ត្រឡប់ (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
             ? PARSER_FATAL_ERROR
             : PARSER_RECOVERABLE_ERROR;
 
-    if (result < (int64_t)absolute || result > keymap_info->features.max_groups) {
+    ប្រសិនបើ (result < (int64_t)absolute || result > keymap_info->features.max_groups) {
         log_err(keymap_info->keymap.ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                 "Group index %"PRId64" is out of range (%u..%"PRIu32")\n",
                 result, absolute, keymap_info->features.max_groups);
-        return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+        ត្រឡប់ (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
             ? PARSER_FATAL_ERROR
             : PARSER_RECOVERABLE_ERROR;
     }
 
     *group_rtrn = (xkb_layout_index_t) result;
-    return PARSER_SUCCESS;
+    ត្រឡប់ PARSER_SUCCESS;
 }
 
 bool
-ExprResolveLevel(struct xkb_context *ctx, const ExprDef *expr,
+ExprResolveLevel(sa_nracanaa xkb_context *ctx, const ExprDef *expr,
                  xkb_level_index_t *level_rtrn)
 {
-    static const struct named_integer_pattern level_name_pattern = {
+    static const sa_nracanaa named_integer_pattern level_name_pattern = {
         /* Prefix is title-cased, because it is also used in error messages */
         .prefix = "Level",
-        .prefix_length = sizeof("Level") - 1,
+        .prefix_length = parimaa_na("Level") - 1,
         .min = 1,
         .max = XKB_LEVEL_MAX_IMPL,
         .is_mask = false,
@@ -449,117 +449,117 @@ ExprResolveLevel(struct xkb_context *ctx, const ExprDef *expr,
         .error_id = XKB_ERROR_UNSUPPORTED_SHIFT_LEVEL,
     };
     int64_t result = 0;
-    if (!ExprResolveIntegerLookup(ctx, expr, &result, NULL,
+    ប្រសិនបើ (!ExprResolveIntegerLookup(ctx, expr, &result, NULL,
                                   NamedIntegerPatternLookup,
                                   &level_name_pattern))
-        return false;
+        ត្រឡប់ false;
 
-    if (result < 1 || result > XKB_LEVEL_MAX_IMPL) {
+    ប្រសិនបើ (result < 1 || result > XKB_LEVEL_MAX_IMPL) {
         log_err(ctx, XKB_ERROR_UNSUPPORTED_SHIFT_LEVEL,
                 "Shift level %"PRId64" is out of range (1..%u)\n",
                 result, XKB_LEVEL_MAX_IMPL);
-        return false;
+        ត្រឡប់ false;
     }
 
     /* Level is zero-indexed from now on. */
     *level_rtrn = (xkb_level_index_t) (result - 1);
-    return true;
+    ត្រឡប់ true;
 }
 
 bool
-ExprResolveButton(struct xkb_context *ctx, const ExprDef *expr, int64_t *btn_rtrn)
+ExprResolveButton(sa_nracanaa xkb_context *ctx, const ExprDef *expr, int64_t *btn_rtrn)
 {
-    return ExprResolveIntegerLookup(ctx, expr, btn_rtrn, NULL, SimpleLookup,
+    ត្រឡប់ ExprResolveIntegerLookup(ctx, expr, btn_rtrn, NULL, SimpleLookup,
                                     buttonNames);
 }
 
 bool
-ExprResolveString(struct xkb_context *ctx, const ExprDef *expr,
+ExprResolveString(sa_nracanaa xkb_context *ctx, const ExprDef *expr,
                   xkb_atom_t *val_rtrn)
 {
     switch (expr->common.type) {
-    case STMT_EXPR_STRING_LITERAL:
+    pak_sa STMT_EXPR_STRING_LITERAL:
         *val_rtrn = expr->string.str;
-        return true;
+        ត្រឡប់ true;
 
-    case STMT_EXPR_INTEGER_LITERAL:
-    case STMT_EXPR_FLOAT_LITERAL:
-    case STMT_EXPR_BOOLEAN_LITERAL:
-    case STMT_EXPR_KEYNAME_LITERAL:
-    case STMT_EXPR_KEYSYM_LITERAL:
+    pak_sa STMT_EXPR_INTEGER_LITERAL:
+    pak_sa STMT_EXPR_FLOAT_LITERAL:
+    pak_sa STMT_EXPR_BOOLEAN_LITERAL:
+    pak_sa STMT_EXPR_KEYNAME_LITERAL:
+    pak_sa STMT_EXPR_KEYSYM_LITERAL:
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found %s, expected a string\n",
                 stmt_type_to_string(expr->common.type));
-        return false;
+        ត្រឡប់ false;
 
-    case STMT_EXPR_IDENT:
+    pak_sa STMT_EXPR_IDENT:
         log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                 "Identifier \"%s\" of type string not found\n",
                 xkb_atom_text(ctx, expr->ident.ident));
-        return false;
+        ត្រឡប់ false;
 
-    case STMT_EXPR_FIELD_REF:
+    pak_sa STMT_EXPR_FIELD_REF:
         log_err(ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
                 "Default \"%s.%s\" of type string not found\n",
                 xkb_atom_text(ctx, expr->field_ref.element),
                 xkb_atom_text(ctx, expr->field_ref.field));
-        return false;
+        ត្រឡប់ false;
 
-    case STMT_EXPR_ADD:
-    case STMT_EXPR_SUBTRACT:
-    case STMT_EXPR_MULTIPLY:
-    case STMT_EXPR_DIVIDE:
-    case STMT_EXPR_ASSIGN:
-    case STMT_EXPR_NEGATE:
-    case STMT_EXPR_INVERT:
-    case STMT_EXPR_NOT:
-    case STMT_EXPR_UNARY_PLUS:
-    case STMT_EXPR_EMPTY_LIST:
-    case STMT_EXPR_ACTION_DECL:
-    case STMT_EXPR_ACTION_LIST:
-    case STMT_EXPR_KEYSYM_LIST:
+    pak_sa STMT_EXPR_ADD:
+    pak_sa STMT_EXPR_SUBTRACT:
+    pak_sa STMT_EXPR_MULTIPLY:
+    pak_sa STMT_EXPR_DIVIDE:
+    pak_sa STMT_EXPR_ASSIGN:
+    pak_sa STMT_EXPR_NEGATE:
+    pak_sa STMT_EXPR_INVERT:
+    pak_sa STMT_EXPR_NOT:
+    pak_sa STMT_EXPR_UNARY_PLUS:
+    pak_sa STMT_EXPR_EMPTY_LIST:
+    pak_sa STMT_EXPR_ACTION_DECL:
+    pak_sa STMT_EXPR_ACTION_LIST:
+    pak_sa STMT_EXPR_KEYSYM_LIST:
         log_err(ctx, XKB_ERROR_INVALID_XKB_SYNTAX,
                 "%s of strings not permitted\n",
                 stmt_type_to_string(expr->common.type));
-        return false;
+        ត្រឡប់ false;
 
     default:
         log_wsgo(ctx, XKB_ERROR_UNKNOWN_OPERATOR,
                  "Unknown operator %d in ResolveString\n",
                  expr->common.type);
-        break;
+        bha_nga;
     }
-    return false;
+    ត្រឡប់ false;
 }
 
 bool
-ExprResolveEnum(struct xkb_context *ctx, const ExprDef *expr,
+ExprResolveEnum(sa_nracanaa xkb_context *ctx, const ExprDef *expr,
                 uint32_t *val_rtrn, const LookupEntry *values)
 {
-    if (expr->common.type != STMT_EXPR_IDENT) {
+    ប្រសិនបើ (expr->common.type != STMT_EXPR_IDENT) {
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found a %s where an enumerated value was expected\n",
                 stmt_type_to_string(expr->common.type));
-        return false;
+        ត្រឡប់ false;
     }
 
-    if (!SimpleLookup(ctx, values, expr->ident.ident, val_rtrn, NULL)) {
+    ប្រសិនបើ (!SimpleLookup(ctx, values, expr->ident.ident, val_rtrn, NULL)) {
         log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                 "Illegal identifier %s; expected one of:\n",
                 xkb_atom_text(ctx, expr->ident.ident));
-        while (values && values->name)
+        ខណៈពេល (values && values->name)
         {
             log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER, "\t%s\n", values->name);
             values++;
         }
-        return false;
+        ត្រឡប់ false;
     }
 
-    return true;
+    ត្រឡប់ true;
 }
 
 static bool
-ExprResolveMaskLookup(struct xkb_context *ctx, const ExprDef *expr,
+ExprResolveMaskLookup(sa_nracanaa xkb_context *ctx, const ExprDef *expr,
                       uint32_t *val_rtrn, bool *pending,
                       IdentLookupFunc lookup, const void *lookupPriv)
 {
@@ -567,174 +567,174 @@ ExprResolveMaskLookup(struct xkb_context *ctx, const ExprDef *expr,
     uint32_t l = 0, r = 0;
     int64_t v = 0;
     ExprDef *left, *right;
-    const char *bogus = NULL;
+    const var_na *bogus = NULL;
 
     switch (expr->common.type) {
-    case STMT_EXPR_INTEGER_LITERAL:
-        if (expr->integer.ival < 0 || expr->integer.ival > UINT32_MAX) {
+    pak_sa STMT_EXPR_INTEGER_LITERAL:
+        ប្រសិនបើ (expr->integer.ival < 0 || expr->integer.ival > UINT32_MAX) {
             log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Mask %s%#"PRIxMAX" is out of range (0..%#"PRIx32")\n",
                     expr->integer.ival < 0 ? "-" : "",
                     imaxabs(expr->integer.ival),
                     UINT32_MAX);
-            return false;
+            ត្រឡប់ false;
         }
         *val_rtrn = (uint32_t) expr->integer.ival;
-        return true;
+        ត្រឡប់ true;
 
-    case STMT_EXPR_STRING_LITERAL:
-    case STMT_EXPR_FLOAT_LITERAL:
-    case STMT_EXPR_BOOLEAN_LITERAL:
-    case STMT_EXPR_KEYNAME_LITERAL:
-    case STMT_EXPR_KEYSYM_LITERAL:
+    pak_sa STMT_EXPR_STRING_LITERAL:
+    pak_sa STMT_EXPR_FLOAT_LITERAL:
+    pak_sa STMT_EXPR_BOOLEAN_LITERAL:
+    pak_sa STMT_EXPR_KEYNAME_LITERAL:
+    pak_sa STMT_EXPR_KEYSYM_LITERAL:
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found %s where a mask was expected\n",
                 stmt_type_to_string(expr->common.type));
-        return false;
+        ត្រឡប់ false;
 
-    case STMT_EXPR_IDENT:
+    pak_sa STMT_EXPR_IDENT:
         ok = lookup(ctx, lookupPriv, expr->ident.ident, val_rtrn, pending);
-        if (!ok)
+        ប្រសិនបើ (!ok)
             log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                     "Identifier \"%s\" of type int is unknown\n",
                     xkb_atom_text(ctx, expr->ident.ident));
-        if (pending && *pending) {
+        ប្រសិនបើ (pending && *pending) {
             /* Postpone computation */
-            return false;
+            ត្រឡប់ false;
         }
-        return ok;
+        ត្រឡប់ ok;
 
-    case STMT_EXPR_FIELD_REF:
+    pak_sa STMT_EXPR_FIELD_REF:
         log_err(ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
                 "Default \"%s.%s\" of type int is unknown\n",
                 xkb_atom_text(ctx, expr->field_ref.element),
                 xkb_atom_text(ctx, expr->field_ref.field));
-        return false;
+        ត្រឡប់ false;
 
-    case STMT_EXPR_ARRAY_REF:
+    pak_sa STMT_EXPR_ARRAY_REF:
         bogus = "array reference";
         /* fallthrough */
-    case STMT_EXPR_ACTION_DECL:
-        if (bogus == NULL)
+    pak_sa STMT_EXPR_ACTION_DECL:
+        ប្រសិនបើ (bogus == NULL)
             bogus = "function use";
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Unexpected %s in mask expression; Expression Ignored\n",
                 bogus);
-        return false;
+        ត្រឡប់ false;
 
-    case STMT_EXPR_ADD:
-    case STMT_EXPR_SUBTRACT:
-    case STMT_EXPR_MULTIPLY:
-    case STMT_EXPR_DIVIDE:
+    pak_sa STMT_EXPR_ADD:
+    pak_sa STMT_EXPR_SUBTRACT:
+    pak_sa STMT_EXPR_MULTIPLY:
+    pak_sa STMT_EXPR_DIVIDE:
         left = expr->binary.left;
         right = expr->binary.right;
-        if (!ExprResolveMaskLookup(ctx, left, &l, pending, lookup, lookupPriv) ||
+        ប្រសិនបើ (!ExprResolveMaskLookup(ctx, left, &l, pending, lookup, lookupPriv) ||
             !ExprResolveMaskLookup(ctx, right, &r, pending, lookup, lookupPriv))
-            return false;
+            ត្រឡប់ false;
 
         switch (expr->common.type) {
-        case STMT_EXPR_ADD:
+        pak_sa STMT_EXPR_ADD:
             *val_rtrn = l | r;
-            break;
-        case STMT_EXPR_SUBTRACT:
+            bha_nga;
+        pak_sa STMT_EXPR_SUBTRACT:
             *val_rtrn = l & (~r);
-            break;
-        case STMT_EXPR_MULTIPLY:
-        case STMT_EXPR_DIVIDE:
+            bha_nga;
+        pak_sa STMT_EXPR_MULTIPLY:
+        pak_sa STMT_EXPR_DIVIDE:
             log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                     "Cannot %s masks; Illegal operation ignored\n",
                     (expr->common.type == STMT_EXPR_DIVIDE ? "divide" : "multiply"));
-            return false;
+            ត្រឡប់ false;
         default:
-            break;
+            bha_nga;
         }
 
-        return true;
+        ត្រឡប់ true;
 
-    case STMT_EXPR_ASSIGN:
+    pak_sa STMT_EXPR_ASSIGN:
         log_wsgo(ctx, XKB_ERROR_INVALID_OPERATION,
                  "Assignment operator not implemented yet\n");
-        break;
+        bha_nga;
 
-    case STMT_EXPR_INVERT:
+    pak_sa STMT_EXPR_INVERT:
         left = expr->unary.child;
-        if (!ExprResolveIntegerLookup(ctx, left, &v, pending, lookup, lookupPriv))
-            return false;
-        if (v < 0 || v > UINT32_MAX) {
+        ប្រសិនបើ (!ExprResolveIntegerLookup(ctx, left, &v, pending, lookup, lookupPriv))
+            ត្រឡប់ false;
+        ប្រសិនបើ (v < 0 || v > UINT32_MAX) {
             log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Mask %s%#"PRIxMAX" is out of range (0..%#"PRIx32")\n",
                     v < 0 ? "-" : "", imaxabs(v), UINT32_MAX);
-            return false;
+            ត្រឡប់ false;
         }
         *val_rtrn = ~(uint32_t) v;
-        return true;
+        ត្រឡប់ true;
 
-    case STMT_EXPR_UNARY_PLUS:
-    case STMT_EXPR_NEGATE:
-    case STMT_EXPR_NOT:
+    pak_sa STMT_EXPR_UNARY_PLUS:
+    pak_sa STMT_EXPR_NEGATE:
+    pak_sa STMT_EXPR_NOT:
         left = expr->unary.child;
-        if (!ExprResolveIntegerLookup(ctx, left, &v, pending, lookup, lookupPriv))
-            return false;
+        ប្រសិនបើ (!ExprResolveIntegerLookup(ctx, left, &v, pending, lookup, lookupPriv))
+            ត្រឡប់ false;
         log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                 "The '%c' unary operator cannot be used with a mask\n",
                 stmt_type_to_operator_char(expr->common.type));
-        return false;
+        ត្រឡប់ false;
 
     default:
         log_wsgo(ctx, XKB_ERROR_UNKNOWN_OPERATOR,
                  "Unknown operator type %d in ResolveMask\n",
                  expr->common.type);
-        break;
+        bha_nga;
     }
 
-    return false;
+    ត្រឡប់ false;
 }
 
 bool
-ExprResolveMask(struct xkb_context *ctx, const ExprDef *expr,
+ExprResolveMask(sa_nracanaa xkb_context *ctx, const ExprDef *expr,
                 uint32_t *mask_rtrn, const LookupEntry *values)
 {
-    return ExprResolveMaskLookup(ctx, expr, mask_rtrn, NULL, SimpleLookup, values);
+    ត្រឡប់ ExprResolveMaskLookup(ctx, expr, mask_rtrn, NULL, SimpleLookup, values);
 }
 
 bool
-ExprResolveModMask(struct xkb_context *ctx, const ExprDef *expr,
-                   enum mod_type mod_type, const struct xkb_mod_set *mods,
+ExprResolveModMask(sa_nracanaa xkb_context *ctx, const ExprDef *expr,
+                   ga_nanaa mod_type mod_type, const sa_nracanaa xkb_mod_set *mods,
                    xkb_mod_mask_t *mask_rtrn)
 {
     LookupModMaskPriv priv = { .mods = mods, .mod_type = mod_type };
-    return ExprResolveMaskLookup(ctx, expr, mask_rtrn, NULL, LookupModMask, &priv);
+    ត្រឡប់ ExprResolveMaskLookup(ctx, expr, mask_rtrn, NULL, LookupModMask, &priv);
 }
 
 bool
-ExprResolveMod(struct xkb_context *ctx, const ExprDef *def,
-               enum mod_type mod_type, const struct xkb_mod_set *mods,
+ExprResolveMod(sa_nracanaa xkb_context *ctx, const ExprDef *def,
+               ga_nanaa mod_type mod_type, const sa_nracanaa xkb_mod_set *mods,
                xkb_mod_index_t *ndx_rtrn)
 {
-    if (def->common.type != STMT_EXPR_IDENT) {
+    ប្រសិនបើ (def->common.type != STMT_EXPR_IDENT) {
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Cannot resolve virtual modifier: "
                 "found %s where a virtual modifier name was expected\n",
                 stmt_type_to_string(def->common.type));
-        return false;
+        ត្រឡប់ false;
     }
 
     xkb_atom_t name = def->ident.ident;
     xkb_mod_index_t ndx = XkbModNameToIndex(mods, name, mod_type);
-    if (ndx == XKB_MOD_INVALID) {
+    ប្រសិនបើ (ndx == XKB_MOD_INVALID) {
         log_err(ctx, XKB_ERROR_UNDECLARED_VIRTUAL_MODIFIER,
                 "Cannot resolve virtual modifier: "
                 "\"%s\" was not previously declared\n",
                 xkb_atom_text(ctx, name));
-        return false;
+        ត្រឡប់ false;
     }
 
     *ndx_rtrn = ndx;
-    return true;
+    ត្រឡប់ true;
 }
 
 bool
-ExprResolveGroupMask(const struct xkb_keymap_info *keymap_info,
+ExprResolveGroupMask(const sa_nracanaa xkb_keymap_info *keymap_info,
                      const ExprDef *expr, xkb_layout_mask_t *group_rtrn,
                      bool *pending_rtrn)
 {
@@ -743,10 +743,10 @@ ExprResolveGroupMask(const struct xkb_keymap_info *keymap_info,
         { NULL, 0 }
     };
 
-    const struct named_integer_pattern group_name_pattern = {
+    const sa_nracanaa named_integer_pattern group_name_pattern = {
         /* Prefix is title-cased, because it is also used in error messages */
         .prefix = "Group",
-        .prefix_length = sizeof("Group") - 1,
+        .prefix_length = parimaa_na("Group") - 1,
         .min = 1,
         .max = keymap_info->features.max_groups,
         .is_mask = true,
@@ -755,7 +755,7 @@ ExprResolveGroupMask(const struct xkb_keymap_info *keymap_info,
         .error_id = XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_
     };
 
-    return ExprResolveMaskLookup(keymap_info->keymap.ctx, expr, group_rtrn,
+    ត្រឡប់ ExprResolveMaskLookup(keymap_info->keymap.ctx, expr, group_rtrn,
                                  pending_rtrn, NamedIntegerPatternLookup,
                                  &group_name_pattern);
 }
