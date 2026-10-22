@@ -3,7 +3,7 @@
 /* Command-line: gperf src/xkbcomp/keywords.gperf  */
 /* Computed positions: -k'5,$' */
 
-#if !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
+#যদি !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
       && ('%' == 37) && ('&' == 38) && ('\'' == 39) && ('(' == 40) \
       && (')' == 41) && ('*' == 42) && ('+' == 43) && (',' == 44) \
       && ('-' == 45) && ('.' == 46) && ('/' == 47) && ('0' == 48) \
@@ -32,21 +32,21 @@
 
 #line 1 "src/xkbcomp/keywords.gperf"
 
-#include "config.h"
+#অন্তর্ভাব "config.h"
 
-#include "xkbcomp-priv.h"
-#include "parser-priv.h"
+#অন্তর্ভাব "xkbcomp-priv.h"
+#অন্তর্ভাব "parser-priv.h"
 
-static const struct keyword_tok *
-keyword_gperf_lookup (register const char *str, register size_t len);
+স্থির ধ্রুবক কাঠামো keyword_tok *
+keyword_gperf_lookup (নিবন্ধ ধ্রুবক অক্ষর *str, নিবন্ধ আকার_t len);
 #line 11 "src/xkbcomp/keywords.gperf"
-struct keyword_tok { int name; int tok; };
-#include <string.h>
+কাঠামো keyword_tok { পূর্ণসংখ্যা name; পূর্ণসংখ্যা tok; };
+#অন্তর্ভাব <string.h>
 /* maximum key range = 85, duplicates = 0 */
 
 #ifndef GPERF_DOWNCASE
 #define GPERF_DOWNCASE 1
-static const unsigned char gperf_downcase[256] =
+স্থির ধ্রুবক unsigned অক্ষর gperf_downcase[256] =
   {
       0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14,
      15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  26,  27,  28,  29,
@@ -71,35 +71,35 @@ static const unsigned char gperf_downcase[256] =
 
 #ifndef GPERF_CASE_MEMCMP
 #define GPERF_CASE_MEMCMP 1
-static int
-gperf_case_memcmp (register const char *s1, register const char *s2, register size_t n)
+স্থির পূর্ণসংখ্যা
+gperf_case_memcmp (নিবন্ধ ধ্রুবক অক্ষর *s1, নিবন্ধ ধ্রুবক অক্ষর *s2, নিবন্ধ আকার_t n)
 {
-  for (; n > 0;)
+  জন্য (; n > 0;)
     {
-      unsigned char c1 = gperf_downcase[(unsigned char)*s1++];
-      unsigned char c2 = gperf_downcase[(unsigned char)*s2++];
-      if (c1 == c2)
+      unsigned অক্ষর c1 = gperf_downcase[(unsigned অক্ষর)*s1++];
+      unsigned অক্ষর c2 = gperf_downcase[(unsigned অক্ষর)*s2++];
+      যদি (c1 == c2)
         {
           n--;
-          continue;
+          চালু;
         }
-      return (int)c1 - (int)c2;
+      ফেরত (পূর্ণসংখ্যা)c1 - (পূর্ণসংখ্যা)c2;
     }
-  return 0;
+  ফেরত 0;
 }
 #endif
 
 #ifdef __GNUC__
 __inline
-#else
+#অন্যথা
 #ifdef __cplusplus
-inline
+অন্তঃরেখ
 #endif
 #endif
-static unsigned int
-keyword_gperf_hash (register const char *str, register size_t len)
+স্থির unsigned পূর্ণসংখ্যা
+keyword_gperf_hash (নিবন্ধ ধ্রুবক অক্ষর *str, নিবন্ধ আকার_t len)
 {
-  static const unsigned char asso_values[] =
+  স্থির ধ্রুবক unsigned অক্ষর asso_মানসমূহ[] =
     {
       88, 88, 88, 88, 88, 88, 88, 88, 88, 88,
       88, 88, 88, 88, 88, 88, 88, 88, 88, 88,
@@ -128,75 +128,75 @@ keyword_gperf_hash (register const char *str, register size_t len)
       88, 88, 88, 88, 88, 88, 88, 88, 88, 88,
       88, 88, 88, 88, 88, 88
     };
-  register unsigned int hval = len;
+  নিবন্ধ unsigned পূর্ণসংখ্যা hval = len;
 
-  switch (hval)
+  নির্বাচন (hval)
     {
-      default:
-        hval += asso_values[(unsigned char)str[4]];
-#if (defined __cplusplus && (__cplusplus >= 201703L || (__cplusplus >= 201103L && defined __clang__ && __clang_major__ + (__clang_minor__ >= 9) > 3))) || (defined __STDC_VERSION__ && __STDC_VERSION__ >= 202000L && ((defined __GNUC__ && __GNUC__ >= 10) || (defined __clang__ && __clang_major__ >= 9)))
+      পূর্বনির্ধারিত:
+        hval += asso_মানসমূহ[(unsigned অক্ষর)str[4]];
+#যদি (defined __cplusplus && (__cplusplus >= 201703L || (__cplusplus >= 201103L && defined __clang__ && __clang_major__ + (__clang_minor__ >= 9) > 3))) || (defined __STDC_VERSION__ && __STDC_VERSION__ >= 202000L && ((defined __GNUC__ && __GNUC__ >= 10) || (defined __clang__ && __clang_major__ >= 9)))
       [[fallthrough]];
-#elif (defined __GNUC__ && __GNUC__ >= 7) || (defined __clang__ && __clang_major__ >= 10)
+#নতুবা_যদি (defined __GNUC__ && __GNUC__ >= 7) || (defined __clang__ && __clang_major__ >= 10)
       __attribute__ ((__fallthrough__));
 #endif
       /*FALLTHROUGH*/
-      case 4:
-      case 3:
-        break;
+      ক্ষেত্র 4:
+      ক্ষেত্র 3:
+        বিরতি;
     }
-  return hval + asso_values[(unsigned char)str[len - 1]];
+  ফেরত hval + asso_মানসমূহ[(unsigned অক্ষর)str[len - 1]];
 }
 
-struct stringpool_t
+কাঠামো stringpool_t
   {
-    char stringpool_str3[sizeof("row")];
-    char stringpool_str4[sizeof("keys")];
-    char stringpool_str5[sizeof("alias")];
-    char stringpool_str9[sizeof("type")];
-    char stringpool_str11[sizeof("xkb_symbols")];
-    char stringpool_str12[sizeof("xkb_keycodes")];
-    char stringpool_str13[sizeof("xkb_semantics")];
-    char stringpool_str14[sizeof("logo")];
-    char stringpool_str15[sizeof("shape")];
-    char stringpool_str16[sizeof("keypad_keys")];
-    char stringpool_str17[sizeof("replace")];
-    char stringpool_str19[sizeof("text")];
-    char stringpool_str20[sizeof("xkb_keymap")];
-    char stringpool_str21[sizeof("modmap")];
-    char stringpool_str22[sizeof("alphanumeric_keys")];
-    char stringpool_str24[sizeof("xkb_types")];
-    char stringpool_str25[sizeof("group")];
-    char stringpool_str27[sizeof("augment")];
-    char stringpool_str28[sizeof("function_keys")];
-    char stringpool_str30[sizeof("deprecated")];
-    char stringpool_str32[sizeof("include")];
-    char stringpool_str33[sizeof("override")];
-    char stringpool_str34[sizeof("alternate")];
-    char stringpool_str35[sizeof("solid")];
-    char stringpool_str36[sizeof("hidden")];
-    char stringpool_str37[sizeof("virtual_modifiers")];
-    char stringpool_str38[sizeof("key")];
-    char stringpool_str41[sizeof("action")];
-    char stringpool_str42[sizeof("default")];
-    char stringpool_str43[sizeof("modifier_keys")];
-    char stringpool_str44[sizeof("interpret")];
-    char stringpool_str45[sizeof("alternate_group")];
-    char stringpool_str47[sizeof("mod_map")];
-    char stringpool_str49[sizeof("xkb_compat_map")];
-    char stringpool_str50[sizeof("xkb_compat")];
-    char stringpool_str52[sizeof("modifier_map")];
-    char stringpool_str54[sizeof("indicator")];
-    char stringpool_str55[sizeof("xkb_layout")];
-    char stringpool_str56[sizeof("xkb_compatibility_map")];
-    char stringpool_str57[sizeof("virtual")];
-    char stringpool_str62[sizeof("outline")];
-    char stringpool_str67[sizeof("xkb_geometry")];
-    char stringpool_str72[sizeof("overlay")];
-    char stringpool_str77[sizeof("xkb_compatibility")];
-    char stringpool_str82[sizeof("section")];
-    char stringpool_str87[sizeof("partial")];
+    অক্ষর stringpool_str3[আকার("row")];
+    অক্ষর stringpool_str4[আকার("keys")];
+    অক্ষর stringpool_str5[আকার("alias")];
+    অক্ষর stringpool_str9[আকার("type")];
+    অক্ষর stringpool_str11[আকার("xkb_symbols")];
+    অক্ষর stringpool_str12[আকার("xkb_keycodes")];
+    অক্ষর stringpool_str13[আকার("xkb_semantics")];
+    অক্ষর stringpool_str14[আকার("logo")];
+    অক্ষর stringpool_str15[আকার("shape")];
+    অক্ষর stringpool_str16[আকার("keypad_keys")];
+    অক্ষর stringpool_str17[আকার("replace")];
+    অক্ষর stringpool_str19[আকার("text")];
+    অক্ষর stringpool_str20[আকার("xkb_keymap")];
+    অক্ষর stringpool_str21[আকার("modmap")];
+    অক্ষর stringpool_str22[আকার("alphanumeric_keys")];
+    অক্ষর stringpool_str24[আকার("xkb_types")];
+    অক্ষর stringpool_str25[আকার("group")];
+    অক্ষর stringpool_str27[আকার("augment")];
+    অক্ষর stringpool_str28[আকার("function_keys")];
+    অক্ষর stringpool_str30[আকার("deprecated")];
+    অক্ষর stringpool_str32[আকার("include")];
+    অক্ষর stringpool_str33[আকার("override")];
+    অক্ষর stringpool_str34[আকার("alternate")];
+    অক্ষর stringpool_str35[আকার("solid")];
+    অক্ষর stringpool_str36[আকার("hidden")];
+    অক্ষর stringpool_str37[আকার("virtual_modifiers")];
+    অক্ষর stringpool_str38[আকার("key")];
+    অক্ষর stringpool_str41[আকার("action")];
+    অক্ষর stringpool_str42[আকার("default")];
+    অক্ষর stringpool_str43[আকার("modifier_keys")];
+    অক্ষর stringpool_str44[আকার("interpret")];
+    অক্ষর stringpool_str45[আকার("alternate_group")];
+    অক্ষর stringpool_str47[আকার("mod_map")];
+    অক্ষর stringpool_str49[আকার("xkb_compat_map")];
+    অক্ষর stringpool_str50[আকার("xkb_compat")];
+    অক্ষর stringpool_str52[আকার("modifier_map")];
+    অক্ষর stringpool_str54[আকার("indicator")];
+    অক্ষর stringpool_str55[আকার("xkb_layout")];
+    অক্ষর stringpool_str56[আকার("xkb_compatibility_map")];
+    অক্ষর stringpool_str57[আকার("virtual")];
+    অক্ষর stringpool_str62[আকার("outline")];
+    অক্ষর stringpool_str67[আকার("xkb_geometry")];
+    অক্ষর stringpool_str72[আকার("overlay")];
+    অক্ষর stringpool_str77[আকার("xkb_compatibility")];
+    অক্ষর stringpool_str82[আকার("section")];
+    অক্ষর stringpool_str87[আকার("partial")];
   };
-static const struct stringpool_t stringpool_contents =
+স্থির ধ্রুবক কাঠামো stringpool_t stringpool_contents =
   {
     "row",
     "keys",
@@ -245,20 +245,20 @@ static const struct stringpool_t stringpool_contents =
     "section",
     "partial"
   };
-#define stringpool ((const char *) &stringpool_contents)
-const struct keyword_tok *
-keyword_gperf_lookup (register const char *str, register size_t len)
+#define stringpool ((ধ্রুবক অক্ষর *) &stringpool_contents)
+ধ্রুবক কাঠামো keyword_tok *
+keyword_gperf_lookup (নিবন্ধ ধ্রুবক অক্ষর *str, নিবন্ধ আকার_t len)
 {
-  enum
+  গণনা
     {
-      TOTAL_KEYWORDS = 46,
-      MIN_WORD_LENGTH = 3,
-      MAX_WORD_LENGTH = 21,
-      MIN_HASH_VALUE = 3,
-      MAX_HASH_VALUE = 87
+      যোগ_KEYWORDS = 46,
+      MIN_WORD_দৈর্ঘ্য = 3,
+      MAX_WORD_দৈর্ঘ্য = 21,
+      MIN_HASH_মান = 3,
+      MAX_HASH_মান = 87
     };
 
-  static const unsigned char lengthtable[] =
+  স্থির ধ্রুবক unsigned অক্ষর lengthtable[] =
     {
        0,  0,  0,  3,  4,  5,  0,  0,  0,  4,  0, 11, 12, 13,
        4,  5, 11,  7,  0,  4, 10,  6, 17,  0,  9,  5,  0,  7,
@@ -268,152 +268,152 @@ keyword_gperf_lookup (register const char *str, register size_t len)
        0,  0,  7,  0,  0,  0,  0, 17,  0,  0,  0,  0,  7,  0,
        0,  0,  0,  7
     };
-#if (defined __GNUC__ && __GNUC__ + (__GNUC_MINOR__ >= 6) > 4) || (defined __clang__ && __clang_major__ >= 3)
-#pragma GCC diagnostic push
+#যদি (defined __GNUC__ && __GNUC__ + (__GNUC_MINOR__ >= 6) > 4) || (defined __clang__ && __clang_major__ >= 3)
+#pragma GCC diagnostic ঠেলো
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 #endif
-  static const struct keyword_tok wordlist[] =
+  স্থির ধ্রুবক কাঠামো keyword_tok wordlist[] =
     {
       {-1}, {-1}, {-1},
 #line 51 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str3,                    ROW},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str3,                    ROW},
 #line 40 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str4,                   KEYS},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str4,                   চাবিগুলি_2},
 #line 25 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str5,                  ALIAS},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str5,                  ALIAS},
       {-1}, {-1}, {-1},
 #line 56 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str9,                   TYPE},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str9,                   TYPE},
       {-1},
 #line 68 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str11,            XKB_SYMBOLS},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str11,            XKB_SYMBOLS},
 #line 64 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str12,           XKB_KEYCODES},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str12,           XKB_KEYCODES},
 #line 67 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str13,          XKB_SEMANTICS},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str13,          XKB_SEMANTICS},
 #line 41 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str14,                   LOGO},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str14,                   LOGO},
 #line 53 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str15,                  SHAPE},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str15,                  SHAPE},
 #line 38 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str16,            KEYPAD_KEYS},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str16,            KEYPAD_চাবিগুলি},
 #line 50 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str17,                REPLACE},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str17,                REPLACE},
       {-1},
 #line 55 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str19,                   TEXT},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str19,                   TEXT},
 #line 65 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str20,             XKB_KEYMAP},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str20,             XKB_KEYMAP},
 #line 45 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str21,                 MODIFIER_MAP},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str21,                 MODIFIER_MAP},
 #line 26 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str22,      ALPHANUMERIC_KEYS},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str22,      ALPHANUMERIC_চাবিগুলি},
       {-1},
 #line 69 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str24,              XKB_TYPES},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str24,              XKB_TYPES},
 #line 33 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str25,                  GROUP},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str25,                  GROUP},
       {-1},
 #line 29 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str27,                AUGMENT},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str27,                AUGMENT},
 #line 32 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str28,          FUNCTION_KEYS},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str28,          FUNCTION_চাবিগুলি},
       {-1},
 #line 31 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str30,             DEPRECATED},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str30,             DEPRECATED},
       {-1},
 #line 35 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str32,                INCLUDE},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str32,                INCLUDE},
 #line 48 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str33,               OVERRIDE},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str33,               OVERRIDE},
 #line 28 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str34,              ALTERNATE},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str34,              ALTERNATE},
 #line 54 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str35,                  SOLID},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str35,                  SOLID},
 #line 34 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str36,                 HIDDEN},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str36,                 HIDDEN},
 #line 57 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str37,      VIRTUAL_MODS},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str37,      VIRTUAL_MODS},
 #line 39 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str38,                    KEY},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str38,                    চাবি_3},
       {-1}, {-1},
 #line 24 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str41,                 ACTION_TOK},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str41,                 ACTION_TOK},
 #line 30 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str42,                DEFAULT},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str42,                DEFAULT},
 #line 42 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str43,          MODIFIER_KEYS},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str43,          MODIFIER_চাবিগুলি},
 #line 37 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str44,              INTERPRET},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str44,              INTERPRET},
 #line 27 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str45,        ALTERNATE_GROUP},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str45,        ALTERNATE_GROUP},
       {-1},
 #line 44 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str47,                MODIFIER_MAP},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str47,                MODIFIER_MAP},
       {-1},
 #line 61 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str49,         XKB_COMPATMAP},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str49,         XKB_COMPATMAP},
 #line 62 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str50,             XKB_COMPATMAP},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str50,             XKB_COMPATMAP},
       {-1},
 #line 43 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str52,           MODIFIER_MAP},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str52,           MODIFIER_MAP},
       {-1},
 #line 36 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str54,              INDICATOR},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str54,              INDICATOR},
 #line 66 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str55,             XKB_LAYOUT},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str55,             XKB_LAYOUT},
 #line 59 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str56,  XKB_COMPATMAP},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str56,  XKB_COMPATMAP},
 #line 58 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str57,                VIRTUAL},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str57,                VIRTUAL},
       {-1}, {-1}, {-1}, {-1},
 #line 46 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str62,                OUTLINE},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str62,                OUTLINE},
       {-1}, {-1}, {-1}, {-1},
 #line 63 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str67,           XKB_GEOMETRY},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str67,           XKB_GEOMETRY},
       {-1}, {-1}, {-1}, {-1},
 #line 47 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str72,                OVERLAY},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str72,                OVERLAY},
       {-1}, {-1}, {-1}, {-1},
 #line 60 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str77,      XKB_COMPATMAP},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str77,      XKB_COMPATMAP},
       {-1}, {-1}, {-1}, {-1},
 #line 52 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str82,                SECTION},
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str82,                SECTION},
       {-1}, {-1}, {-1}, {-1},
 #line 49 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str87,                PARTIAL}
+      {(পূর্ণসংখ্যা)(আকার_t)&((কাঠামো stringpool_t *)0)->stringpool_str87,                PARTIAL}
     };
-#if (defined __GNUC__ && __GNUC__ + (__GNUC_MINOR__ >= 6) > 4) || (defined __clang__ && __clang_major__ >= 3)
-#pragma GCC diagnostic pop
+#যদি (defined __GNUC__ && __GNUC__ + (__GNUC_MINOR__ >= 6) > 4) || (defined __clang__ && __clang_major__ >= 3)
+#pragma GCC diagnostic বের_করো
 #endif
 
-  if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
+  যদি (len <= MAX_WORD_দৈর্ঘ্য && len >= MIN_WORD_দৈর্ঘ্য)
     {
-      register unsigned int key = keyword_gperf_hash (str, len);
+      নিবন্ধ unsigned পূর্ণসংখ্যা চাবি = keyword_gperf_hash (str, len);
 
-      if (key <= MAX_HASH_VALUE)
-        if (len == lengthtable[key])
+      যদি (চাবি <= MAX_HASH_মান)
+        যদি (len == lengthtable[চাবি])
           {
-            register const char *s = wordlist[key].name + stringpool;
+            নিবন্ধ ধ্রুবক অক্ষর *s = wordlist[চাবি].name + stringpool;
 
-            if ((((unsigned char)*str ^ (unsigned char)*s) & ~32) == 0 && !gperf_case_memcmp (str, s, len))
-              return &wordlist[key];
+            যদি ((((unsigned অক্ষর)*str ^ (unsigned অক্ষর)*s) & ~32) == 0 && !gperf_case_memcmp (str, s, len))
+              ফেরত &wordlist[চাবি];
           }
     }
-  return (struct keyword_tok *) 0;
+  ফেরত (কাঠামো keyword_tok *) 0;
 }
 #line 70 "src/xkbcomp/keywords.gperf"
 
 
-int
-keyword_to_token(const char *string, size_t len)
+পূর্ণসংখ্যা
+keyword_to_token(ধ্রুবক অক্ষর *string, আকার_t len)
 {
-    const struct keyword_tok *kt = keyword_gperf_lookup(string, len);
-    if (!kt)
-        return -1;
-    return kt->tok;
+    ধ্রুবক কাঠামো keyword_tok *kt = keyword_gperf_lookup(string, len);
+    যদি (!kt)
+        ফেরত -1;
+    ফেরত kt->tok;
 }
 // NOLINTEND

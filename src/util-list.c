@@ -5,72 +5,72 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#অন্তর্ভাব "config.h"
 
-#include <assert.h>
-#include <stddef.h>
-#include <stdbool.h>
+#অন্তর্ভাব <assert.h>
+#অন্তর্ভাব <stddef.h>
+#অন্তর্ভাব <stdbool.h>
 
-#include "util-list.h"
+#অন্তর্ভাব "util-list.h"
 
-void
-list_init(struct list *list)
+শূন্য
+list_init(কাঠামো list *list)
 {
-	list->prev = list;
-	list->next = list;
+	list->পূর্ব = list;
+	list->পরবর্তী = list;
 }
 
-void
-list_insert(struct list *list, struct list *elm)
+শূন্য
+list_ঢোকাও(কাঠামো list *list, কাঠামো list *elm)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	প্রতিজ্ঞা((list->পরবর্তী != ফাঁকা && list->পূর্ব != ফাঁকা) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
-	assert(((elm->next == NULL && elm->prev == NULL) || list_empty(elm)) ||
+	প্রতিজ্ঞা(((elm->পরবর্তী == ফাঁকা && elm->পূর্ব == ফাঁকা) || list_empty(elm)) ||
 	       !"elm->next|prev is not NULL, list node used twice?");
 
-	elm->prev = list;
-	elm->next = list->next;
-	list->next = elm;
-	elm->next->prev = elm;
+	elm->পূর্ব = list;
+	elm->পরবর্তী = list->পরবর্তী;
+	list->পরবর্তী = elm;
+	elm->পরবর্তী->পূর্ব = elm;
 }
 
-void
-list_append(struct list *list, struct list *elm)
+শূন্য
+list_append(কাঠামো list *list, কাঠামো list *elm)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	প্রতিজ্ঞা((list->পরবর্তী != ফাঁকা && list->পূর্ব != ফাঁকা) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
-	assert(((elm->next == NULL && elm->prev == NULL) || list_empty(elm)) ||
+	প্রতিজ্ঞা(((elm->পরবর্তী == ফাঁকা && elm->পূর্ব == ফাঁকা) || list_empty(elm)) ||
 	       !"elm->next|prev is not NULL, list node used twice?");
 
-	elm->next = list;
-	elm->prev = list->prev;
-	list->prev = elm;
-	elm->prev->next = elm;
+	elm->পরবর্তী = list;
+	elm->পূর্ব = list->পূর্ব;
+	list->পূর্ব = elm;
+	elm->পূর্ব->পরবর্তী = elm;
 }
 
-void
-list_remove(struct list *elm)
+শূন্য
+list_remove(কাঠামো list *elm)
 {
-	assert((elm->next != NULL && elm->prev != NULL) ||
+	প্রতিজ্ঞা((elm->পরবর্তী != ফাঁকা && elm->পূর্ব != ফাঁকা) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
 
-	elm->prev->next = elm->next;
-	elm->next->prev = elm->prev;
-	elm->next = NULL;
-	elm->prev = NULL;
+	elm->পূর্ব->পরবর্তী = elm->পরবর্তী;
+	elm->পরবর্তী->পূর্ব = elm->পূর্ব;
+	elm->পরবর্তী = ফাঁকা;
+	elm->পূর্ব = ফাঁকা;
 }
 
 bool
-list_empty(const struct list *list)
+list_empty(ধ্রুবক কাঠামো list *list)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	প্রতিজ্ঞা((list->পরবর্তী != ফাঁকা && list->পূর্ব != ফাঁকা) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
 
-	return list->next == list;
+	ফেরত list->পরবর্তী == list;
 }
 
 bool
-list_is_last(const struct list *list, const struct list *elm)
+list_is_last(ধ্রুবক কাঠামো list *list, ধ্রুবক কাঠামো list *elm)
 {
-	return elm->next == list;
+	ফেরত elm->পরবর্তী == list;
 }

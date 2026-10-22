@@ -3,759 +3,759 @@
  * SPDX-License-Identifier: HPND
  */
 
-#include "config.h"
+#অন্তর্ভাব "config.h"
 
-#include <stdint.h>
+#অন্তর্ভাব <stdint.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcomp-priv.h"
-#include "expr.h"
-#include "keymap.h"
-#include "keysym.h"
-#include "messages-codes.h"
-#include "text.h"
-#include "xkbcomp/ast.h"
-#include "utils.h"
-#include "util-numbers.h"
-#include "util-checked-arithmetic.h"
+#অন্তর্ভাব "xkbcommon/xkbcommon.h"
+#অন্তর্ভাব "xkbcomp-priv.h"
+#অন্তর্ভাব "expr.h"
+#অন্তর্ভাব "keymap.h"
+#অন্তর্ভাব "keysym.h"
+#অন্তর্ভাব "messages-codes.h"
+#অন্তর্ভাব "text.h"
+#অন্তর্ভাব "xkbcomp/ast.h"
+#অন্তর্ভাব "utils.h"
+#অন্তর্ভাব "util-numbers.h"
+#অন্তর্ভাব "util-checked-arithmetic.h"
 
-typedef bool (*IdentLookupFunc)(struct xkb_context *ctx, const void *priv,
+প্রকারলেখ bool (*IdentLookupFunc)(কাঠামো xkb_context *ctx, ধ্রুবক শূন্য *priv,
                                 xkb_atom_t field, uint32_t *val_rtrn,
                                 bool *pending);
 
 bool
-ExprResolveLhs(struct xkb_context *ctx, const ExprDef *expr,
-               const char **elem_rtrn, const char **field_rtrn,
-               ExprDef **index_rtrn)
+রাশিমালা_Resolve_Lhs(কাঠামো xkb_context *ctx, ধ্রুবক রাশিমালা_Def *রাশিমালা,
+               ধ্রুবক অক্ষর **elem_rtrn, ধ্রুবক অক্ষর **field_rtrn,
+               রাশিমালা_Def **সূচক_rtrn)
 {
-    switch (expr->common.type) {
-    case STMT_EXPR_IDENT:
-        *elem_rtrn = NULL;
-        *field_rtrn = xkb_atom_text(ctx, expr->ident.ident);
-        *index_rtrn = NULL;
-        return (*field_rtrn != NULL);
-    case STMT_EXPR_FIELD_REF:
-        *elem_rtrn = xkb_atom_text(ctx, expr->field_ref.element);
-        *field_rtrn = xkb_atom_text(ctx, expr->field_ref.field);
-        *index_rtrn = NULL;
-        return (*elem_rtrn != NULL && *field_rtrn != NULL);
-    case STMT_EXPR_ARRAY_REF:
-        *elem_rtrn = xkb_atom_text(ctx, expr->array_ref.element);
-        *field_rtrn = xkb_atom_text(ctx, expr->array_ref.field);
-        *index_rtrn = expr->array_ref.entry;
-        if (expr->array_ref.element != XKB_ATOM_NONE && *elem_rtrn == NULL)
-            return false;
-        if (*field_rtrn == NULL)
-            return false;
-        return true;
-    default:
-        break;
+    নির্বাচন (রাশিমালা->common.type) {
+    ক্ষেত্র STMT_রাশিমালা_IDENT:
+        *elem_rtrn = ফাঁকা;
+        *field_rtrn = xkb_atom_text(ctx, রাশিমালা->ident.ident);
+        *সূচক_rtrn = ফাঁকা;
+        ফেরত (*field_rtrn != ফাঁকা);
+    ক্ষেত্র STMT_রাশিমালা_FIELD_REF:
+        *elem_rtrn = xkb_atom_text(ctx, রাশিমালা->field_ref.element);
+        *field_rtrn = xkb_atom_text(ctx, রাশিমালা->field_ref.field);
+        *সূচক_rtrn = ফাঁকা;
+        ফেরত (*elem_rtrn != ফাঁকা && *field_rtrn != ফাঁকা);
+    ক্ষেত্র STMT_রাশিমালা_ARRAY_REF:
+        *elem_rtrn = xkb_atom_text(ctx, রাশিমালা->array_ref.element);
+        *field_rtrn = xkb_atom_text(ctx, রাশিমালা->array_ref.field);
+        *সূচক_rtrn = রাশিমালা->array_ref.entry;
+        যদি (রাশিমালা->array_ref.element != XKB_ATOM_NONE && *elem_rtrn == ফাঁকা)
+            ফেরত false;
+        যদি (*field_rtrn == ফাঁকা)
+            ফেরত false;
+        ফেরত true;
+    পূর্বনির্ধারিত:
+        বিরতি;
     }
     log_wsgo(ctx,
              XKB_ERROR_INVALID_XKB_SYNTAX,
-             "Unexpected operator %d in ResolveLhs\n", expr->common.type);
-    return false;
+             "Unexpected operator %d in ResolveLhs\n", রাশিমালা->common.type);
+    ফেরত false;
 }
 
-static bool
-SimpleLookup(struct xkb_context *ctx, const void *priv, xkb_atom_t field,
+স্থির bool
+SimpleLookup(কাঠামো xkb_context *ctx, ধ্রুবক শূন্য *priv, xkb_atom_t field,
              uint32_t *val_rtrn, bool *pending_rtrn)
 {
-    if (!priv || field == XKB_ATOM_NONE)
-        return false;
+    যদি (!priv || field == XKB_ATOM_NONE)
+        ফেরত false;
 
-    const char *str = xkb_atom_text(ctx, field);
-    for (const LookupEntry *entry = priv; entry && entry->name; entry++) {
-        if (istreq(str, entry->name)) {
-            *val_rtrn = entry->value;
-            return true;
+    ধ্রুবক অক্ষর *str = xkb_atom_text(ctx, field);
+    জন্য (ধ্রুবক LookupEntry *entry = priv; entry && entry->name; entry++) {
+        যদি (istreq(str, entry->name)) {
+            *val_rtrn = entry->মান;
+            ফেরত true;
         }
     }
 
-    return false;
+    ফেরত false;
 }
 
-struct named_integer_pattern {
-    const char *prefix;
-    size_t prefix_length;
+কাঠামো named_integer_pattern {
+    ধ্রুবক অক্ষর *prefix;
+    আকার_t prefix_দৈর্ঘ্য;
     uint32_t min;
     uint32_t max;
-    const LookupEntry *entries;
-    const LookupEntry *pending_entries;
+    ধ্রুবক LookupEntry *entries;
+    ধ্রুবক LookupEntry *pending_entries;
     bool is_mask;
-    enum xkb_message_code error_id;
+    গণনা xkb_message_code error_id;
 };
 
 /* Parse a number expressed with the pattern `<prefix><decimal number>` */
-static bool
-NamedIntegerPatternLookup(struct xkb_context *ctx, const void *priv,
+স্থির bool
+NamedIntegerPatternLookup(কাঠামো xkb_context *ctx, ধ্রুবক শূন্য *priv,
                           xkb_atom_t field, uint32_t *val_rtrn,
                           bool *pending_rtrn)
 {
-    if (!priv || field == XKB_ATOM_NONE)
-        return false;
+    যদি (!priv || field == XKB_ATOM_NONE)
+        ফেরত false;
 
-    const char * const str = xkb_atom_text(ctx, field);
-    const struct named_integer_pattern * const pattern = priv;
+    ধ্রুবক অক্ষর * ধ্রুবক str = xkb_atom_text(ctx, field);
+    ধ্রুবক কাঠামো named_integer_pattern * ধ্রুবক pattern = priv;
 
-    const int count = (istrneq(str, pattern->prefix, pattern->prefix_length))
-        ? parse_dec_to_uint32_t(str + pattern->prefix_length, SIZE_MAX, val_rtrn)
+    ধ্রুবক পূর্ণসংখ্যা গুনতি = (istrneq(str, pattern->prefix, pattern->prefix_দৈর্ঘ্য))
+        ? parse_dec_to_uint32_t(str + pattern->prefix_দৈর্ঘ্য, SIZE_MAX, val_rtrn)
         : 0;
 
-    if (count > 0 && *(str + pattern->prefix_length + count) == '\0') {
-        if (*val_rtrn < pattern->min || *val_rtrn > pattern->max) {
+    যদি (গুনতি > 0 && *(str + pattern->prefix_দৈর্ঘ্য + গুনতি) == '\0') {
+        যদি (*val_rtrn < pattern->min || *val_rtrn > pattern->max) {
             log_err(ctx, pattern->error_id,
                     "%s index %"PRIu32" is out of range (%"PRIu32"..%"PRIu32")\n",
                     pattern->prefix, *val_rtrn, pattern->min, pattern->max);
-            return false;
+            ফেরত false;
         }
-        if (pattern->is_mask) {
+        যদি (pattern->is_mask) {
             /* Compute mask (bit 0 = min index) */
-            assert(*val_rtrn - pattern->min < 32);
+            প্রতিজ্ঞা(*val_rtrn - pattern->min < 32);
             *val_rtrn = UINT32_C(1) << (*val_rtrn - pattern->min);
         }
-        return true;
-    } else {
-        if (pattern->entries &&
-            SimpleLookup(ctx, pattern->entries, field, val_rtrn, NULL)) {
-            return true;
+        ফেরত true;
+    } অন্যথা {
+        যদি (pattern->entries &&
+            SimpleLookup(ctx, pattern->entries, field, val_rtrn, ফাঁকা)) {
+            ফেরত true;
         }
-        if (pattern->pending_entries && pending_rtrn &&
-            SimpleLookup(ctx, pattern->pending_entries, field, val_rtrn, NULL)) {
+        যদি (pattern->pending_entries && pending_rtrn &&
+            SimpleLookup(ctx, pattern->pending_entries, field, val_rtrn, ফাঁকা)) {
             *pending_rtrn = true;
-            return true;
+            ফেরত true;
         }
-        return false;
+        ফেরত false;
     }
 }
 
 /* Data passed in the *priv argument for LookupModMask. */
-typedef struct {
-    const struct xkb_mod_set *mods;
-    enum mod_type mod_type;
+প্রকারলেখ কাঠামো {
+    ধ্রুবক কাঠামো xkb_mod_set *mods;
+    গণনা mod_type mod_type;
 } LookupModMaskPriv;
 
-static bool
-LookupModMask(struct xkb_context *ctx, const void *priv, xkb_atom_t field,
+স্থির bool
+LookupModMask(কাঠামো xkb_context *ctx, ধ্রুবক শূন্য *priv, xkb_atom_t field,
               xkb_mod_mask_t *val_rtrn, bool *pending_rtrn)
 {
-    const char *str = xkb_atom_text(ctx, field);
-    if (!str)
-        return false;
+    ধ্রুবক অক্ষর *str = xkb_atom_text(ctx, field);
+    যদি (!str)
+        ফেরত false;
 
-    if (istreq(str, "all")) {
+    যদি (istreq(str, "all")) {
         *val_rtrn  = MOD_REAL_MASK_ALL;
-        return true;
+        ফেরত true;
     }
 
-    if (istreq(str, "none")) {
+    যদি (istreq(str, "none")) {
         *val_rtrn = 0;
-        return true;
+        ফেরত true;
     }
 
-    const LookupModMaskPriv *arg = priv;
-    const struct xkb_mod_set *mods = arg->mods;
-    const enum mod_type mod_type = arg->mod_type;
-    const xkb_mod_index_t ndx = XkbModNameToIndex(mods, field, mod_type);
-    if (ndx == XKB_MOD_INVALID)
-        return false;
+    ধ্রুবক LookupModMaskPriv *arg = priv;
+    ধ্রুবক কাঠামো xkb_mod_set *mods = arg->mods;
+    ধ্রুবক গণনা mod_type mod_type = arg->mod_type;
+    ধ্রুবক xkb_mod_সূচক_t ndx = Xkb_Mod_Name_To_সূচক(mods, field, mod_type);
+    যদি (ndx == XKB_MOD_INVALID)
+        ফেরত false;
 
     *val_rtrn = (UINT32_C(1) << ndx);
-    return true;
+    ফেরত true;
 }
 
 bool
-ExprResolveBoolean(struct xkb_context *ctx, const ExprDef *expr,
+রাশিমালা_Resolve_Boolean(কাঠামো xkb_context *ctx, ধ্রুবক রাশিমালা_Def *রাশিমালা,
                    bool *set_rtrn)
 {
     bool ok = false;
-    const char *ident;
+    ধ্রুবক অক্ষর *ident;
 
-    switch (expr->common.type) {
-    case STMT_EXPR_BOOLEAN_LITERAL:
-        *set_rtrn = expr->boolean.set;
-        return true;
+    নির্বাচন (রাশিমালা->common.type) {
+    ক্ষেত্র STMT_রাশিমালা_BOOLEAN_LITERAL:
+        *set_rtrn = রাশিমালা->boolean.set;
+        ফেরত true;
 
-    case STMT_EXPR_STRING_LITERAL:
-    case STMT_EXPR_INTEGER_LITERAL:
-    case STMT_EXPR_FLOAT_LITERAL:
-    case STMT_EXPR_KEYNAME_LITERAL:
-    case STMT_EXPR_KEYSYM_LITERAL:
+    ক্ষেত্র STMT_রাশিমালা_STRING_LITERAL:
+    ক্ষেত্র STMT_রাশিমালা_INTEGER_LITERAL:
+    ক্ষেত্র STMT_রাশিমালা_FLOAT_LITERAL:
+    ক্ষেত্র STMT_রাশিমালা_KEYNAME_LITERAL:
+    ক্ষেত্র STMT_রাশিমালা_KEYSYM_LITERAL:
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found %s where boolean was expected\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_to_string(রাশিমালা->common.type));
+        ফেরত false;
 
-    case STMT_EXPR_IDENT:
-        ident = xkb_atom_text(ctx, expr->ident.ident);
-        if (ident) {
-            if (istreq(ident, "true") ||
+    ক্ষেত্র STMT_রাশিমালা_IDENT:
+        ident = xkb_atom_text(ctx, রাশিমালা->ident.ident);
+        যদি (ident) {
+            যদি (istreq(ident, "true") ||
                 istreq(ident, "yes") ||
                 istreq(ident, "on")) {
                 *set_rtrn = true;
-                return true;
+                ফেরত true;
             }
-            else if (istreq(ident, "false") ||
+            অন্যথা যদি (istreq(ident, "false") ||
                      istreq(ident, "no") ||
                      istreq(ident, "off")) {
                 *set_rtrn = false;
-                return true;
+                ফেরত true;
             }
         }
         log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                 "Identifier \"%s\" of type boolean is unknown\n", ident);
-        return false;
+        ফেরত false;
 
-    case STMT_EXPR_FIELD_REF:
+    ক্ষেত্র STMT_রাশিমালা_FIELD_REF:
         log_err(ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
                 "Default \"%s.%s\" of type boolean is unknown\n",
-                xkb_atom_text(ctx, expr->field_ref.element),
-                xkb_atom_text(ctx, expr->field_ref.field));
-        return false;
+                xkb_atom_text(ctx, রাশিমালা->field_ref.element),
+                xkb_atom_text(ctx, রাশিমালা->field_ref.field));
+        ফেরত false;
 
-    case STMT_EXPR_INVERT:
-    case STMT_EXPR_NOT:
-        ok = ExprResolveBoolean(ctx, expr->unary.child, set_rtrn);
-        if (ok)
+    ক্ষেত্র STMT_রাশিমালা_INVERT:
+    ক্ষেত্র STMT_রাশিমালা_NOT:
+        ok = রাশিমালা_Resolve_Boolean(ctx, রাশিমালা->unary.child, set_rtrn);
+        যদি (ok)
             *set_rtrn = !*set_rtrn;
-        return ok;
-    case STMT_EXPR_ADD:
-    case STMT_EXPR_SUBTRACT:
-    case STMT_EXPR_MULTIPLY:
-    case STMT_EXPR_DIVIDE:
-    case STMT_EXPR_ASSIGN:
-    case STMT_EXPR_NEGATE:
-    case STMT_EXPR_UNARY_PLUS:
-    case STMT_EXPR_EMPTY_LIST:
-    case STMT_EXPR_ACTION_DECL:
-    case STMT_EXPR_ACTION_LIST:
-    case STMT_EXPR_KEYSYM_LIST:
+        ফেরত ok;
+    ক্ষেত্র STMT_রাশিমালা_ADD:
+    ক্ষেত্র STMT_রাশিমালা_SUBTRACT:
+    ক্ষেত্র STMT_রাশিমালা_MULTIPLY:
+    ক্ষেত্র STMT_রাশিমালা_DIVIDE:
+    ক্ষেত্র STMT_রাশিমালা_ASSIGN:
+    ক্ষেত্র STMT_রাশিমালা_NEGATE:
+    ক্ষেত্র STMT_রাশিমালা_UNARY_PLUS:
+    ক্ষেত্র STMT_রাশিমালা_EMPTY_LIST:
+    ক্ষেত্র STMT_রাশিমালা_ACTION_DECL:
+    ক্ষেত্র STMT_রাশিমালা_ACTION_LIST:
+    ক্ষেত্র STMT_রাশিমালা_KEYSYM_LIST:
         log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                 "%s of boolean values not permitted\n",
-                stmt_type_to_string(expr->common.type));
-        break;
+                stmt_type_to_string(রাশিমালা->common.type));
+        বিরতি;
 
-    default:
+    পূর্বনির্ধারিত:
         log_wsgo(ctx, XKB_ERROR_UNKNOWN_OPERATOR,
                  "Unknown operator %d in ResolveBoolean\n",
-                 expr->common.type);
-        break;
+                 রাশিমালা->common.type);
+        বিরতি;
     }
 
-    return false;
+    ফেরত false;
 }
 
-static bool
-ExprResolveIntegerLookup(struct xkb_context *ctx, const ExprDef *expr,
+স্থির bool
+রাশিমালা_Resolve_Integer_Lookup(কাঠামো xkb_context *ctx, ধ্রুবক রাশিমালা_Def *রাশিমালা,
                          int64_t *val_rtrn, bool *pending,
-                         IdentLookupFunc lookup, const void *lookupPriv)
+                         IdentLookupFunc lookup, ধ্রুবক শূন্য *lookupPriv)
 {
     bool ok = false;
     int64_t l = 0, r = 0;
     uint32_t u = 0;
-    ExprDef *left, *right;
+    রাশিমালা_Def *বাম, *ডান;
 
-    switch (expr->common.type) {
-    case STMT_EXPR_INTEGER_LITERAL:
-        *val_rtrn = expr->integer.ival;
-        return true;
+    নির্বাচন (রাশিমালা->common.type) {
+    ক্ষেত্র STMT_রাশিমালা_INTEGER_LITERAL:
+        *val_rtrn = রাশিমালা->integer.ival;
+        ফেরত true;
 
-    case STMT_EXPR_STRING_LITERAL:
-    case STMT_EXPR_FLOAT_LITERAL:
-    case STMT_EXPR_BOOLEAN_LITERAL:
-    case STMT_EXPR_KEYNAME_LITERAL:
-    case STMT_EXPR_KEYSYM_LITERAL:
+    ক্ষেত্র STMT_রাশিমালা_STRING_LITERAL:
+    ক্ষেত্র STMT_রাশিমালা_FLOAT_LITERAL:
+    ক্ষেত্র STMT_রাশিমালা_BOOLEAN_LITERAL:
+    ক্ষেত্র STMT_রাশিমালা_KEYNAME_LITERAL:
+    ক্ষেত্র STMT_রাশিমালা_KEYSYM_LITERAL:
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found %s where an int was expected\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_to_string(রাশিমালা->common.type));
+        ফেরত false;
 
-    case STMT_EXPR_IDENT:
-        if (lookup)
-            ok = lookup(ctx, lookupPriv, expr->ident.ident, &u, pending);
+    ক্ষেত্র STMT_রাশিমালা_IDENT:
+        যদি (lookup)
+            ok = lookup(ctx, lookupPriv, রাশিমালা->ident.ident, &u, pending);
 
-        if (!ok)
+        যদি (!ok)
             log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                     "Identifier \"%s\" of type int is unknown\n",
-                    xkb_atom_text(ctx, expr->ident.ident));
-        else
+                    xkb_atom_text(ctx, রাশিমালা->ident.ident));
+        অন্যথা
             *val_rtrn = (int64_t) u;
 
-        if (pending && *pending) {
+        যদি (pending && *pending) {
             /* Postpone computation */
-            return false;
+            ফেরত false;
         }
 
-        return ok;
+        ফেরত ok;
 
-    case STMT_EXPR_FIELD_REF:
+    ক্ষেত্র STMT_রাশিমালা_FIELD_REF:
         log_err(ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
                 "Default \"%s.%s\" of type int is unknown\n",
-                xkb_atom_text(ctx, expr->field_ref.element),
-                xkb_atom_text(ctx, expr->field_ref.field));
-        return false;
+                xkb_atom_text(ctx, রাশিমালা->field_ref.element),
+                xkb_atom_text(ctx, রাশিমালা->field_ref.field));
+        ফেরত false;
 
-    case STMT_EXPR_ADD:
-    case STMT_EXPR_SUBTRACT:
-    case STMT_EXPR_MULTIPLY:
-    case STMT_EXPR_DIVIDE:
-        left = expr->binary.left;
-        right = expr->binary.right;
-        if (!ExprResolveIntegerLookup(ctx, left, &l, pending, lookup, lookupPriv) ||
-            !ExprResolveIntegerLookup(ctx, right, &r, pending, lookup, lookupPriv))
-            return false;
+    ক্ষেত্র STMT_রাশিমালা_ADD:
+    ক্ষেত্র STMT_রাশিমালা_SUBTRACT:
+    ক্ষেত্র STMT_রাশিমালা_MULTIPLY:
+    ক্ষেত্র STMT_রাশিমালা_DIVIDE:
+        বাম = রাশিমালা->দ্বিমিক.বাম;
+        ডান = রাশিমালা->দ্বিমিক.ডান;
+        যদি (!রাশিমালা_Resolve_Integer_Lookup(ctx, বাম, &l, pending, lookup, lookupPriv) ||
+            !রাশিমালা_Resolve_Integer_Lookup(ctx, ডান, &r, pending, lookup, lookupPriv))
+            ফেরত false;
 
-        switch (expr->common.type) {
-        case STMT_EXPR_ADD:
-            if (ckd_add(val_rtrn, l, r)) {
+        নির্বাচন (রাশিমালা->common.type) {
+        ক্ষেত্র STMT_রাশিমালা_ADD:
+            যদি (ckd_add(val_rtrn, l, r)) {
                 log_err(ctx, XKB_ERROR_INTEGER_OVERFLOW,
                         "Addition %"PRId64" + %"PRId64" has an invalid "
                         "mathematical result: %"PRId64"\n",
                         l, r, *val_rtrn);
-                return false;
+                ফেরত false;
             }
-            break;
-        case STMT_EXPR_SUBTRACT:
-            if (ckd_sub(val_rtrn, l, r)) {
+            বিরতি;
+        ক্ষেত্র STMT_রাশিমালা_SUBTRACT:
+            যদি (ckd_sub(val_rtrn, l, r)) {
                 log_err(ctx, XKB_ERROR_INTEGER_OVERFLOW,
                         "Substraction %"PRId64" - %"PRId64" has an invalid "
                         "mathematical result: %"PRId64"\n",
                         l, r, *val_rtrn);
-                return false;
+                ফেরত false;
             }
-            break;
-        case STMT_EXPR_MULTIPLY:
-            if (ckd_mul(val_rtrn, l, r)) {
+            বিরতি;
+        ক্ষেত্র STMT_রাশিমালা_MULTIPLY:
+            যদি (ckd_mul(val_rtrn, l, r)) {
                 log_err(ctx, XKB_ERROR_INTEGER_OVERFLOW,
                         "Multiplication %"PRId64" * %"PRId64" has an invalid "
                         "mathematical result: %"PRId64"\n",
                         l, r, *val_rtrn);
-                return false;
+                ফেরত false;
             }
-            break;
-        case STMT_EXPR_DIVIDE:
-            if (r == 0) {
+            বিরতি;
+        ক্ষেত্র STMT_রাশিমালা_DIVIDE:
+            যদি (r == 0) {
                 log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                         "Cannot divide by zero: %"PRId64" / %"PRId64"\n", l, r);
-                return false;
+                ফেরত false;
             }
             *val_rtrn = l / r;
-            break;
-        default:
+            বিরতি;
+        পূর্বনির্ধারিত:
             log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                     "%s of integers not permitted\n",
-                    stmt_type_to_string(expr->common.type));
-            return false;
+                    stmt_type_to_string(রাশিমালা->common.type));
+            ফেরত false;
         }
 
-        return true;
+        ফেরত true;
 
-    case STMT_EXPR_ASSIGN:
+    ক্ষেত্র STMT_রাশিমালা_ASSIGN:
         log_wsgo(ctx,
                  XKB_ERROR_INVALID_OPERATION,
                  "Assignment operator not implemented yet\n");
-        break;
+        বিরতি;
 
-    case STMT_EXPR_NOT:
+    ক্ষেত্র STMT_রাশিমালা_NOT:
         log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                 "The ! operator cannot be applied to an integer\n");
-        return false;
+        ফেরত false;
 
-    case STMT_EXPR_INVERT:
-    case STMT_EXPR_NEGATE:
-        left = expr->unary.child;
-        if (!ExprResolveIntegerLookup(ctx, left, &l, pending, lookup, lookupPriv))
-            return false;
+    ক্ষেত্র STMT_রাশিমালা_INVERT:
+    ক্ষেত্র STMT_রাশিমালা_NEGATE:
+        বাম = রাশিমালা->unary.child;
+        যদি (!রাশিমালা_Resolve_Integer_Lookup(ctx, বাম, &l, pending, lookup, lookupPriv))
+            ফেরত false;
 
-        *val_rtrn = (expr->common.type == STMT_EXPR_NEGATE ? -l : ~l);
-        return true;
+        *val_rtrn = (রাশিমালা->common.type == STMT_রাশিমালা_NEGATE ? -l : ~l);
+        ফেরত true;
 
-    case STMT_EXPR_UNARY_PLUS:
-        left = expr->unary.child;
-        return ExprResolveIntegerLookup(ctx, left, val_rtrn, pending, lookup,
+    ক্ষেত্র STMT_রাশিমালা_UNARY_PLUS:
+        বাম = রাশিমালা->unary.child;
+        ফেরত রাশিমালা_Resolve_Integer_Lookup(ctx, বাম, val_rtrn, pending, lookup,
                                         lookupPriv);
 
-    default:
+    পূর্বনির্ধারিত:
         log_wsgo(ctx, XKB_ERROR_UNKNOWN_OPERATOR,
                  "Unknown operator %d in ResolveInteger\n",
-                 expr->common.type);
-        break;
+                 রাশিমালা->common.type);
+        বিরতি;
     }
 
-    return false;
+    ফেরত false;
 }
 
 bool
-ExprResolveInteger(struct xkb_context *ctx, const ExprDef *expr,
+রাশিমালা_Resolve_Integer(কাঠামো xkb_context *ctx, ধ্রুবক রাশিমালা_Def *রাশিমালা,
                    int64_t *val_rtrn)
 {
-    return ExprResolveIntegerLookup(ctx, expr, val_rtrn, NULL, NULL, NULL);
+    ফেরত রাশিমালা_Resolve_Integer_Lookup(ctx, রাশিমালা, val_rtrn, ফাঁকা, ফাঁকা, ফাঁকা);
 }
 
-enum xkb_parser_error
-ExprResolveGroup(const struct xkb_keymap_info *keymap_info,
-                 const ExprDef *expr, bool absolute,
-                 xkb_layout_index_t *group_rtrn, bool *pending)
+গণনা xkb_parser_error
+রাশিমালা_Resolve_Group(ধ্রুবক কাঠামো xkb_keymap_info *keymap_info,
+                 ধ্রুবক রাশিমালা_Def *রাশিমালা, bool absolute,
+                 xkb_layout_সূচক_t *group_rtrn, bool *pending)
 {
-    static const LookupEntry pendingGroupIndexNames[] = {
-        { GROUP_LAST_INDEX_NAME, 0 },
-        { NULL, 0 }
+    স্থির ধ্রুবক LookupEntry pending_Group_সূচক_Names[] = {
+        { GROUP_LAST_সূচক_NAME, 0 },
+        { ফাঁকা, 0 }
     };
 
-    const struct named_integer_pattern group_name_pattern = {
+    ধ্রুবক কাঠামো named_integer_pattern group_name_pattern = {
         /* Prefix is title-cased, because it is also used in error messages */
         .prefix = "Group",
-        .prefix_length = sizeof("Group") - 1,
+        .prefix_দৈর্ঘ্য = আকার("Group") - 1,
         .min = 1,
         .max = keymap_info->features.max_groups,
         .is_mask = false,
-        .entries = keymap_info->lookup.groupIndexNames,
-        .pending_entries = pendingGroupIndexNames,
-        .error_id = XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
+        .entries = keymap_info->lookup.group_সূচক_Names,
+        .pending_entries = pending_Group_সূচক_Names,
+        .error_id = XKB_ERROR_UNSUPPORTED_LAYOUT_সূচক_2,
     };
 
-    int64_t result = 0;
-    if (!ExprResolveIntegerLookup(keymap_info->keymap.ctx, expr, &result, pending,
+    int64_t ফলাফল = 0;
+    যদি (!রাশিমালা_Resolve_Integer_Lookup(keymap_info->keymap.ctx, রাশিমালা, &ফলাফল, pending,
                                   NamedIntegerPatternLookup, &group_name_pattern))
-        return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+        ফেরত (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
             ? PARSER_FATAL_ERROR
             : PARSER_RECOVERABLE_ERROR;
 
-    if (result < (int64_t)absolute || result > keymap_info->features.max_groups) {
-        log_err(keymap_info->keymap.ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
+    যদি (ফলাফল < (int64_t)absolute || ফলাফল > keymap_info->features.max_groups) {
+        log_err(keymap_info->keymap.ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_সূচক_2,
                 "Group index %"PRId64" is out of range (%u..%"PRIu32")\n",
-                result, absolute, keymap_info->features.max_groups);
-        return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+                ফলাফল, absolute, keymap_info->features.max_groups);
+        ফেরত (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
             ? PARSER_FATAL_ERROR
             : PARSER_RECOVERABLE_ERROR;
     }
 
-    *group_rtrn = (xkb_layout_index_t) result;
-    return PARSER_SUCCESS;
+    *group_rtrn = (xkb_layout_সূচক_t) ফলাফল;
+    ফেরত PARSER_SUCCESS;
 }
 
 bool
-ExprResolveLevel(struct xkb_context *ctx, const ExprDef *expr,
-                 xkb_level_index_t *level_rtrn)
+রাশিমালা_Resolve_Level(কাঠামো xkb_context *ctx, ধ্রুবক রাশিমালা_Def *রাশিমালা,
+                 xkb_level_সূচক_t *level_rtrn)
 {
-    static const struct named_integer_pattern level_name_pattern = {
+    স্থির ধ্রুবক কাঠামো named_integer_pattern level_name_pattern = {
         /* Prefix is title-cased, because it is also used in error messages */
         .prefix = "Level",
-        .prefix_length = sizeof("Level") - 1,
+        .prefix_দৈর্ঘ্য = আকার("Level") - 1,
         .min = 1,
         .max = XKB_LEVEL_MAX_IMPL,
         .is_mask = false,
-        .entries = NULL,
+        .entries = ফাঁকা,
         .error_id = XKB_ERROR_UNSUPPORTED_SHIFT_LEVEL,
     };
-    int64_t result = 0;
-    if (!ExprResolveIntegerLookup(ctx, expr, &result, NULL,
+    int64_t ফলাফল = 0;
+    যদি (!রাশিমালা_Resolve_Integer_Lookup(ctx, রাশিমালা, &ফলাফল, ফাঁকা,
                                   NamedIntegerPatternLookup,
                                   &level_name_pattern))
-        return false;
+        ফেরত false;
 
-    if (result < 1 || result > XKB_LEVEL_MAX_IMPL) {
+    যদি (ফলাফল < 1 || ফলাফল > XKB_LEVEL_MAX_IMPL) {
         log_err(ctx, XKB_ERROR_UNSUPPORTED_SHIFT_LEVEL,
                 "Shift level %"PRId64" is out of range (1..%u)\n",
-                result, XKB_LEVEL_MAX_IMPL);
-        return false;
+                ফলাফল, XKB_LEVEL_MAX_IMPL);
+        ফেরত false;
     }
 
     /* Level is zero-indexed from now on. */
-    *level_rtrn = (xkb_level_index_t) (result - 1);
-    return true;
+    *level_rtrn = (xkb_level_সূচক_t) (ফলাফল - 1);
+    ফেরত true;
 }
 
 bool
-ExprResolveButton(struct xkb_context *ctx, const ExprDef *expr, int64_t *btn_rtrn)
+রাশিমালা_Resolve_Button(কাঠামো xkb_context *ctx, ধ্রুবক রাশিমালা_Def *রাশিমালা, int64_t *btn_rtrn)
 {
-    return ExprResolveIntegerLookup(ctx, expr, btn_rtrn, NULL, SimpleLookup,
+    ফেরত রাশিমালা_Resolve_Integer_Lookup(ctx, রাশিমালা, btn_rtrn, ফাঁকা, SimpleLookup,
                                     buttonNames);
 }
 
 bool
-ExprResolveString(struct xkb_context *ctx, const ExprDef *expr,
+রাশিমালা_Resolve_String(কাঠামো xkb_context *ctx, ধ্রুবক রাশিমালা_Def *রাশিমালা,
                   xkb_atom_t *val_rtrn)
 {
-    switch (expr->common.type) {
-    case STMT_EXPR_STRING_LITERAL:
-        *val_rtrn = expr->string.str;
-        return true;
+    নির্বাচন (রাশিমালা->common.type) {
+    ক্ষেত্র STMT_রাশিমালা_STRING_LITERAL:
+        *val_rtrn = রাশিমালা->string.str;
+        ফেরত true;
 
-    case STMT_EXPR_INTEGER_LITERAL:
-    case STMT_EXPR_FLOAT_LITERAL:
-    case STMT_EXPR_BOOLEAN_LITERAL:
-    case STMT_EXPR_KEYNAME_LITERAL:
-    case STMT_EXPR_KEYSYM_LITERAL:
+    ক্ষেত্র STMT_রাশিমালা_INTEGER_LITERAL:
+    ক্ষেত্র STMT_রাশিমালা_FLOAT_LITERAL:
+    ক্ষেত্র STMT_রাশিমালা_BOOLEAN_LITERAL:
+    ক্ষেত্র STMT_রাশিমালা_KEYNAME_LITERAL:
+    ক্ষেত্র STMT_রাশিমালা_KEYSYM_LITERAL:
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found %s, expected a string\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_to_string(রাশিমালা->common.type));
+        ফেরত false;
 
-    case STMT_EXPR_IDENT:
+    ক্ষেত্র STMT_রাশিমালা_IDENT:
         log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                 "Identifier \"%s\" of type string not found\n",
-                xkb_atom_text(ctx, expr->ident.ident));
-        return false;
+                xkb_atom_text(ctx, রাশিমালা->ident.ident));
+        ফেরত false;
 
-    case STMT_EXPR_FIELD_REF:
+    ক্ষেত্র STMT_রাশিমালা_FIELD_REF:
         log_err(ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
                 "Default \"%s.%s\" of type string not found\n",
-                xkb_atom_text(ctx, expr->field_ref.element),
-                xkb_atom_text(ctx, expr->field_ref.field));
-        return false;
+                xkb_atom_text(ctx, রাশিমালা->field_ref.element),
+                xkb_atom_text(ctx, রাশিমালা->field_ref.field));
+        ফেরত false;
 
-    case STMT_EXPR_ADD:
-    case STMT_EXPR_SUBTRACT:
-    case STMT_EXPR_MULTIPLY:
-    case STMT_EXPR_DIVIDE:
-    case STMT_EXPR_ASSIGN:
-    case STMT_EXPR_NEGATE:
-    case STMT_EXPR_INVERT:
-    case STMT_EXPR_NOT:
-    case STMT_EXPR_UNARY_PLUS:
-    case STMT_EXPR_EMPTY_LIST:
-    case STMT_EXPR_ACTION_DECL:
-    case STMT_EXPR_ACTION_LIST:
-    case STMT_EXPR_KEYSYM_LIST:
+    ক্ষেত্র STMT_রাশিমালা_ADD:
+    ক্ষেত্র STMT_রাশিমালা_SUBTRACT:
+    ক্ষেত্র STMT_রাশিমালা_MULTIPLY:
+    ক্ষেত্র STMT_রাশিমালা_DIVIDE:
+    ক্ষেত্র STMT_রাশিমালা_ASSIGN:
+    ক্ষেত্র STMT_রাশিমালা_NEGATE:
+    ক্ষেত্র STMT_রাশিমালা_INVERT:
+    ক্ষেত্র STMT_রাশিমালা_NOT:
+    ক্ষেত্র STMT_রাশিমালা_UNARY_PLUS:
+    ক্ষেত্র STMT_রাশিমালা_EMPTY_LIST:
+    ক্ষেত্র STMT_রাশিমালা_ACTION_DECL:
+    ক্ষেত্র STMT_রাশিমালা_ACTION_LIST:
+    ক্ষেত্র STMT_রাশিমালা_KEYSYM_LIST:
         log_err(ctx, XKB_ERROR_INVALID_XKB_SYNTAX,
                 "%s of strings not permitted\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_to_string(রাশিমালা->common.type));
+        ফেরত false;
 
-    default:
+    পূর্বনির্ধারিত:
         log_wsgo(ctx, XKB_ERROR_UNKNOWN_OPERATOR,
                  "Unknown operator %d in ResolveString\n",
-                 expr->common.type);
-        break;
+                 রাশিমালা->common.type);
+        বিরতি;
     }
-    return false;
+    ফেরত false;
 }
 
 bool
-ExprResolveEnum(struct xkb_context *ctx, const ExprDef *expr,
-                uint32_t *val_rtrn, const LookupEntry *values)
+রাশিমালা_Resolve_Enum(কাঠামো xkb_context *ctx, ধ্রুবক রাশিমালা_Def *রাশিমালা,
+                uint32_t *val_rtrn, ধ্রুবক LookupEntry *মানসমূহ)
 {
-    if (expr->common.type != STMT_EXPR_IDENT) {
+    যদি (রাশিমালা->common.type != STMT_রাশিমালা_IDENT) {
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found a %s where an enumerated value was expected\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_to_string(রাশিমালা->common.type));
+        ফেরত false;
     }
 
-    if (!SimpleLookup(ctx, values, expr->ident.ident, val_rtrn, NULL)) {
+    যদি (!SimpleLookup(ctx, মানসমূহ, রাশিমালা->ident.ident, val_rtrn, ফাঁকা)) {
         log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                 "Illegal identifier %s; expected one of:\n",
-                xkb_atom_text(ctx, expr->ident.ident));
-        while (values && values->name)
+                xkb_atom_text(ctx, রাশিমালা->ident.ident));
+        যখন (মানসমূহ && মানসমূহ->name)
         {
-            log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER, "\t%s\n", values->name);
-            values++;
+            log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER, "\t%s\n", মানসমূহ->name);
+            মানসমূহ++;
         }
-        return false;
+        ফেরত false;
     }
 
-    return true;
+    ফেরত true;
 }
 
-static bool
-ExprResolveMaskLookup(struct xkb_context *ctx, const ExprDef *expr,
+স্থির bool
+রাশিমালা_Resolve_Mask_Lookup(কাঠামো xkb_context *ctx, ধ্রুবক রাশিমালা_Def *রাশিমালা,
                       uint32_t *val_rtrn, bool *pending,
-                      IdentLookupFunc lookup, const void *lookupPriv)
+                      IdentLookupFunc lookup, ধ্রুবক শূন্য *lookupPriv)
 {
     bool ok = false;
     uint32_t l = 0, r = 0;
     int64_t v = 0;
-    ExprDef *left, *right;
-    const char *bogus = NULL;
+    রাশিমালা_Def *বাম, *ডান;
+    ধ্রুবক অক্ষর *bogus = ফাঁকা;
 
-    switch (expr->common.type) {
-    case STMT_EXPR_INTEGER_LITERAL:
-        if (expr->integer.ival < 0 || expr->integer.ival > UINT32_MAX) {
+    নির্বাচন (রাশিমালা->common.type) {
+    ক্ষেত্র STMT_রাশিমালা_INTEGER_LITERAL:
+        যদি (রাশিমালা->integer.ival < 0 || রাশিমালা->integer.ival > UINT32_MAX) {
             log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Mask %s%#"PRIxMAX" is out of range (0..%#"PRIx32")\n",
-                    expr->integer.ival < 0 ? "-" : "",
-                    imaxabs(expr->integer.ival),
+                    রাশিমালা->integer.ival < 0 ? "-" : "",
+                    imaxabs(রাশিমালা->integer.ival),
                     UINT32_MAX);
-            return false;
+            ফেরত false;
         }
-        *val_rtrn = (uint32_t) expr->integer.ival;
-        return true;
+        *val_rtrn = (uint32_t) রাশিমালা->integer.ival;
+        ফেরত true;
 
-    case STMT_EXPR_STRING_LITERAL:
-    case STMT_EXPR_FLOAT_LITERAL:
-    case STMT_EXPR_BOOLEAN_LITERAL:
-    case STMT_EXPR_KEYNAME_LITERAL:
-    case STMT_EXPR_KEYSYM_LITERAL:
+    ক্ষেত্র STMT_রাশিমালা_STRING_LITERAL:
+    ক্ষেত্র STMT_রাশিমালা_FLOAT_LITERAL:
+    ক্ষেত্র STMT_রাশিমালা_BOOLEAN_LITERAL:
+    ক্ষেত্র STMT_রাশিমালা_KEYNAME_LITERAL:
+    ক্ষেত্র STMT_রাশিমালা_KEYSYM_LITERAL:
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found %s where a mask was expected\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_to_string(রাশিমালা->common.type));
+        ফেরত false;
 
-    case STMT_EXPR_IDENT:
-        ok = lookup(ctx, lookupPriv, expr->ident.ident, val_rtrn, pending);
-        if (!ok)
+    ক্ষেত্র STMT_রাশিমালা_IDENT:
+        ok = lookup(ctx, lookupPriv, রাশিমালা->ident.ident, val_rtrn, pending);
+        যদি (!ok)
             log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                     "Identifier \"%s\" of type int is unknown\n",
-                    xkb_atom_text(ctx, expr->ident.ident));
-        if (pending && *pending) {
+                    xkb_atom_text(ctx, রাশিমালা->ident.ident));
+        যদি (pending && *pending) {
             /* Postpone computation */
-            return false;
+            ফেরত false;
         }
-        return ok;
+        ফেরত ok;
 
-    case STMT_EXPR_FIELD_REF:
+    ক্ষেত্র STMT_রাশিমালা_FIELD_REF:
         log_err(ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
                 "Default \"%s.%s\" of type int is unknown\n",
-                xkb_atom_text(ctx, expr->field_ref.element),
-                xkb_atom_text(ctx, expr->field_ref.field));
-        return false;
+                xkb_atom_text(ctx, রাশিমালা->field_ref.element),
+                xkb_atom_text(ctx, রাশিমালা->field_ref.field));
+        ফেরত false;
 
-    case STMT_EXPR_ARRAY_REF:
+    ক্ষেত্র STMT_রাশিমালা_ARRAY_REF:
         bogus = "array reference";
         /* fallthrough */
-    case STMT_EXPR_ACTION_DECL:
-        if (bogus == NULL)
+    ক্ষেত্র STMT_রাশিমালা_ACTION_DECL:
+        যদি (bogus == ফাঁকা)
             bogus = "function use";
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Unexpected %s in mask expression; Expression Ignored\n",
                 bogus);
-        return false;
+        ফেরত false;
 
-    case STMT_EXPR_ADD:
-    case STMT_EXPR_SUBTRACT:
-    case STMT_EXPR_MULTIPLY:
-    case STMT_EXPR_DIVIDE:
-        left = expr->binary.left;
-        right = expr->binary.right;
-        if (!ExprResolveMaskLookup(ctx, left, &l, pending, lookup, lookupPriv) ||
-            !ExprResolveMaskLookup(ctx, right, &r, pending, lookup, lookupPriv))
-            return false;
+    ক্ষেত্র STMT_রাশিমালা_ADD:
+    ক্ষেত্র STMT_রাশিমালা_SUBTRACT:
+    ক্ষেত্র STMT_রাশিমালা_MULTIPLY:
+    ক্ষেত্র STMT_রাশিমালা_DIVIDE:
+        বাম = রাশিমালা->দ্বিমিক.বাম;
+        ডান = রাশিমালা->দ্বিমিক.ডান;
+        যদি (!রাশিমালা_Resolve_Mask_Lookup(ctx, বাম, &l, pending, lookup, lookupPriv) ||
+            !রাশিমালা_Resolve_Mask_Lookup(ctx, ডান, &r, pending, lookup, lookupPriv))
+            ফেরত false;
 
-        switch (expr->common.type) {
-        case STMT_EXPR_ADD:
+        নির্বাচন (রাশিমালা->common.type) {
+        ক্ষেত্র STMT_রাশিমালা_ADD:
             *val_rtrn = l | r;
-            break;
-        case STMT_EXPR_SUBTRACT:
+            বিরতি;
+        ক্ষেত্র STMT_রাশিমালা_SUBTRACT:
             *val_rtrn = l & (~r);
-            break;
-        case STMT_EXPR_MULTIPLY:
-        case STMT_EXPR_DIVIDE:
+            বিরতি;
+        ক্ষেত্র STMT_রাশিমালা_MULTIPLY:
+        ক্ষেত্র STMT_রাশিমালা_DIVIDE:
             log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                     "Cannot %s masks; Illegal operation ignored\n",
-                    (expr->common.type == STMT_EXPR_DIVIDE ? "divide" : "multiply"));
-            return false;
-        default:
-            break;
+                    (রাশিমালা->common.type == STMT_রাশিমালা_DIVIDE ? "divide" : "multiply"));
+            ফেরত false;
+        পূর্বনির্ধারিত:
+            বিরতি;
         }
 
-        return true;
+        ফেরত true;
 
-    case STMT_EXPR_ASSIGN:
+    ক্ষেত্র STMT_রাশিমালা_ASSIGN:
         log_wsgo(ctx, XKB_ERROR_INVALID_OPERATION,
                  "Assignment operator not implemented yet\n");
-        break;
+        বিরতি;
 
-    case STMT_EXPR_INVERT:
-        left = expr->unary.child;
-        if (!ExprResolveIntegerLookup(ctx, left, &v, pending, lookup, lookupPriv))
-            return false;
-        if (v < 0 || v > UINT32_MAX) {
+    ক্ষেত্র STMT_রাশিমালা_INVERT:
+        বাম = রাশিমালা->unary.child;
+        যদি (!রাশিমালা_Resolve_Integer_Lookup(ctx, বাম, &v, pending, lookup, lookupPriv))
+            ফেরত false;
+        যদি (v < 0 || v > UINT32_MAX) {
             log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Mask %s%#"PRIxMAX" is out of range (0..%#"PRIx32")\n",
                     v < 0 ? "-" : "", imaxabs(v), UINT32_MAX);
-            return false;
+            ফেরত false;
         }
         *val_rtrn = ~(uint32_t) v;
-        return true;
+        ফেরত true;
 
-    case STMT_EXPR_UNARY_PLUS:
-    case STMT_EXPR_NEGATE:
-    case STMT_EXPR_NOT:
-        left = expr->unary.child;
-        if (!ExprResolveIntegerLookup(ctx, left, &v, pending, lookup, lookupPriv))
-            return false;
+    ক্ষেত্র STMT_রাশিমালা_UNARY_PLUS:
+    ক্ষেত্র STMT_রাশিমালা_NEGATE:
+    ক্ষেত্র STMT_রাশিমালা_NOT:
+        বাম = রাশিমালা->unary.child;
+        যদি (!রাশিমালা_Resolve_Integer_Lookup(ctx, বাম, &v, pending, lookup, lookupPriv))
+            ফেরত false;
         log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                 "The '%c' unary operator cannot be used with a mask\n",
-                stmt_type_to_operator_char(expr->common.type));
-        return false;
+                stmt_type_to_operator_char(রাশিমালা->common.type));
+        ফেরত false;
 
-    default:
+    পূর্বনির্ধারিত:
         log_wsgo(ctx, XKB_ERROR_UNKNOWN_OPERATOR,
                  "Unknown operator type %d in ResolveMask\n",
-                 expr->common.type);
-        break;
+                 রাশিমালা->common.type);
+        বিরতি;
     }
 
-    return false;
+    ফেরত false;
 }
 
 bool
-ExprResolveMask(struct xkb_context *ctx, const ExprDef *expr,
-                uint32_t *mask_rtrn, const LookupEntry *values)
+রাশিমালা_Resolve_Mask(কাঠামো xkb_context *ctx, ধ্রুবক রাশিমালা_Def *রাশিমালা,
+                uint32_t *mask_rtrn, ধ্রুবক LookupEntry *মানসমূহ)
 {
-    return ExprResolveMaskLookup(ctx, expr, mask_rtrn, NULL, SimpleLookup, values);
+    ফেরত রাশিমালা_Resolve_Mask_Lookup(ctx, রাশিমালা, mask_rtrn, ফাঁকা, SimpleLookup, মানসমূহ);
 }
 
 bool
-ExprResolveModMask(struct xkb_context *ctx, const ExprDef *expr,
-                   enum mod_type mod_type, const struct xkb_mod_set *mods,
+রাশিমালা_Resolve_Mod_Mask(কাঠামো xkb_context *ctx, ধ্রুবক রাশিমালা_Def *রাশিমালা,
+                   গণনা mod_type mod_type, ধ্রুবক কাঠামো xkb_mod_set *mods,
                    xkb_mod_mask_t *mask_rtrn)
 {
     LookupModMaskPriv priv = { .mods = mods, .mod_type = mod_type };
-    return ExprResolveMaskLookup(ctx, expr, mask_rtrn, NULL, LookupModMask, &priv);
+    ফেরত রাশিমালা_Resolve_Mask_Lookup(ctx, রাশিমালা, mask_rtrn, ফাঁকা, LookupModMask, &priv);
 }
 
 bool
-ExprResolveMod(struct xkb_context *ctx, const ExprDef *def,
-               enum mod_type mod_type, const struct xkb_mod_set *mods,
-               xkb_mod_index_t *ndx_rtrn)
+রাশিমালা_Resolve_Mod(কাঠামো xkb_context *ctx, ধ্রুবক রাশিমালা_Def *def,
+               গণনা mod_type mod_type, ধ্রুবক কাঠামো xkb_mod_set *mods,
+               xkb_mod_সূচক_t *ndx_rtrn)
 {
-    if (def->common.type != STMT_EXPR_IDENT) {
+    যদি (def->common.type != STMT_রাশিমালা_IDENT) {
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Cannot resolve virtual modifier: "
                 "found %s where a virtual modifier name was expected\n",
                 stmt_type_to_string(def->common.type));
-        return false;
+        ফেরত false;
     }
 
     xkb_atom_t name = def->ident.ident;
-    xkb_mod_index_t ndx = XkbModNameToIndex(mods, name, mod_type);
-    if (ndx == XKB_MOD_INVALID) {
+    xkb_mod_সূচক_t ndx = Xkb_Mod_Name_To_সূচক(mods, name, mod_type);
+    যদি (ndx == XKB_MOD_INVALID) {
         log_err(ctx, XKB_ERROR_UNDECLARED_VIRTUAL_MODIFIER,
                 "Cannot resolve virtual modifier: "
                 "\"%s\" was not previously declared\n",
                 xkb_atom_text(ctx, name));
-        return false;
+        ফেরত false;
     }
 
     *ndx_rtrn = ndx;
-    return true;
+    ফেরত true;
 }
 
 bool
-ExprResolveGroupMask(const struct xkb_keymap_info *keymap_info,
-                     const ExprDef *expr, xkb_layout_mask_t *group_rtrn,
+রাশিমালা_Resolve_Group_Mask(ধ্রুবক কাঠামো xkb_keymap_info *keymap_info,
+                     ধ্রুবক রাশিমালা_Def *রাশিমালা, xkb_layout_mask_t *group_rtrn,
                      bool *pending_rtrn)
 {
-    static const LookupEntry pendingGroupMaskNames[] = {
-        { GROUP_LAST_INDEX_NAME, 0 },
-        { NULL, 0 }
+    স্থির ধ্রুবক LookupEntry pendingGroupMaskNames[] = {
+        { GROUP_LAST_সূচক_NAME, 0 },
+        { ফাঁকা, 0 }
     };
 
-    const struct named_integer_pattern group_name_pattern = {
+    ধ্রুবক কাঠামো named_integer_pattern group_name_pattern = {
         /* Prefix is title-cased, because it is also used in error messages */
         .prefix = "Group",
-        .prefix_length = sizeof("Group") - 1,
+        .prefix_দৈর্ঘ্য = আকার("Group") - 1,
         .min = 1,
         .max = keymap_info->features.max_groups,
         .is_mask = true,
         .entries = keymap_info->lookup.groupMaskNames,
         .pending_entries = pendingGroupMaskNames,
-        .error_id = XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_
+        .error_id = XKB_ERROR_UNSUPPORTED_LAYOUT_সূচক_2
     };
 
-    return ExprResolveMaskLookup(keymap_info->keymap.ctx, expr, group_rtrn,
+    ফেরত রাশিমালা_Resolve_Mask_Lookup(keymap_info->keymap.ctx, রাশিমালা, group_rtrn,
                                  pending_rtrn, NamedIntegerPatternLookup,
                                  &group_name_pattern);
 }

@@ -3,92 +3,92 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#অন্তর্ভাব "config.h"
 
-#include <sys/stat.h>
-#include <fcntl.h>
-#include "utils.h"
+#অন্তর্ভাব <sys/stat.h>
+#অন্তর্ভাব <fcntl.h>
+#অন্তর্ভাব "utils.h"
 
-#if HAVE_MMAP
+#যদি HAVE_MMAP
 
-#include <unistd.h>
-#include <sys/mman.h>
-#include <sys/types.h>
+#অন্তর্ভাব <unistd.h>
+#অন্তর্ভাব <sys/mman.h>
+#অন্তর্ভাব <sys/types.h>
 
 bool
-map_file(FILE *file, char **string_out, size_t *size_out)
+map_file(FILE *file, অক্ষর **string_out, আকার_t *আকার_out)
 {
-    struct stat stat_buf;
-    int fd;
-    char *string;
+    কাঠামো stat stat_buf;
+    পূর্ণসংখ্যা fd;
+    অক্ষর *string;
 
     /* Make sure to keep the errno on failure! */
     fd = fileno(file);
-    if (fd < 0)
-        return false;
+    যদি (fd < 0)
+        ফেরত false;
 
-    if (fstat(fd, &stat_buf) != 0)
-        return false;
+    যদি (fstat(fd, &stat_buf) != 0)
+        ফেরত false;
 
-    string = mmap(NULL, (size_t)stat_buf.st_size, PROT_READ, MAP_SHARED, fd, 0);
-    if (string == MAP_FAILED)
-        return false;
+    string = mmap(ফাঁকা, (আকার_t)stat_buf.st_আকার, PROT_READ, MAP_SHARED, fd, 0);
+    যদি (string == MAP_FAILED)
+        ফেরত false;
 
     *string_out = string;
-    *size_out = (size_t)stat_buf.st_size;
-    return true;
+    *আকার_out = (আকার_t)stat_buf.st_আকার;
+    ফেরত true;
 }
 
-void
-unmap_file(char *str, size_t size)
+শূন্য
+unmap_file(অক্ষর *str, আকার_t আকার_2)
 {
-    munmap(str, size);
+    munmap(str, আকার_2);
 }
 
-#else
+#অন্যথা
 
 bool
-map_file(FILE *file, char **string_out, size_t *size_out)
+map_file(FILE *file, অক্ষর **string_out, আকার_t *আকার_out)
 {
     long ret;
-    size_t ret_s;
-    char *string;
-    size_t size;
+    আকার_t ret_s;
+    অক্ষর *string;
+    আকার_t আকার_2;
 
     /* Make sure to keep the errno on failure! */
 
     ret = fseek(file, 0, SEEK_END);
-    if (ret != 0)
-        return false;
+    যদি (ret != 0)
+        ফেরত false;
 
     ret = ftell(file);
-    if (ret < 0)
-        return false;
-    size = (size_t) ret;
+    যদি (ret < 0)
+        ফেরত false;
+    আকার_2 = (আকার_t) ret;
 
     ret = fseek(file, 0, SEEK_SET);
-    if (ret < 0)
-        return false;
+    যদি (ret < 0)
+        ফেরত false;
 
-    string = malloc(size);
-    if (!string)
-        return false;
+    string = malloc(আকার_2);
+    যদি (!string)
+        ফেরত false;
 
-    ret_s = fread(string, 1, size, file);
-    if (ret_s < size) {
-        free(string);
-        return false;
+    ret_s = fread(string, 1, আকার_2, file);
+    যদি (ret_s < আকার_2) {
+        মুক্ত(string);
+        ফেরত false;
     }
 
     *string_out = string;
-    *size_out = size;
-    return true;
+    *আকার_out = আকার_2;
+    ফেরত true;
 }
 
-void
-unmap_file(char *str, size_t size)
+শূন্য
+unmap_file(অক্ষর *str, আকার_t আকার_2)
 {
-    free(str);
+    মুক্ত(str);
 }
 
 #endif
@@ -96,21 +96,21 @@ unmap_file(char *str, size_t size)
 /* Open a file and ensure it is a regular file.
  * Returns NULL in case of error. */
 FILE*
-open_file(const char *path)
+open_file(ধ্রুবক অক্ষর *path)
 {
-    if (!path)
-        return NULL;
+    যদি (!path)
+        ফেরত ফাঁকা;
 
-    int fd = open(path, O_RDONLY);
-    if (fd < 0)
-        return NULL;
+    পূর্ণসংখ্যা fd = open(path, O_RDONLY);
+    যদি (fd < 0)
+        ফেরত ফাঁকা;
 
-    struct stat stat_buf;
-    int err = fstat(fd, &stat_buf);
+    কাঠামো stat stat_buf;
+    পূর্ণসংখ্যা err = fstat(fd, &stat_buf);
 
-    if (err != 0 || !S_ISREG(stat_buf.st_mode)) {
+    যদি (err != 0 || !S_ISREG(stat_buf.st_mode)) {
         close(fd);
-        return NULL;
+        ফেরত ফাঁকা;
     }
 
     /* While unlikely to happen, if `fp` is NULL then we must close the file
@@ -118,15 +118,15 @@ open_file(const char *path)
      * https://www.ibm.com/docs/en/i/7.3?topic=functions-fdopen-associates-stream-file-descriptor)
      * Confirmed by Peter to be necessary in glibc. */
     FILE *fp = fdopen(fd, "rb");
-    if (fp == NULL) {
+    যদি (fp == ফাঁকা) {
         close(fd);
     }
 
-    return fp;
+    ফেরত fp;
 }
 
 // ASCII lower-case map.
-static const unsigned char lower_map[] = {
+স্থির ধ্রুবক unsigned অক্ষর lower_map[] = {
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
     21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
     40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58,
@@ -146,56 +146,56 @@ static const unsigned char lower_map[] = {
 };
 
 // ASCII tolower (to avoid locale issues).
-char
-to_lower(char c)
+অক্ষর
+to_lower(অক্ষর c)
 {
-    return (char) lower_map[(unsigned char) c];
+    ফেরত (অক্ষর) lower_map[(unsigned অক্ষর) c];
 }
 
 // ASCII strcasecmp (to avoid locale issues).
-int
-istrcmp(const char *a, const char *b)
+পূর্ণসংখ্যা
+istrcmp(ধ্রুবক অক্ষর *a, ধ্রুবক অক্ষর *b)
 {
-    for (size_t i = 0; ; i++) {
-        if (to_lower(a[i]) != to_lower(b[i]))
-            return (int) to_lower(a[i]) - (int) to_lower(b[i]);
-        if (!a[i])
-            break;
+    জন্য (আকার_t i = 0; ; i++) {
+        যদি (to_lower(a[i]) != to_lower(b[i]))
+            ফেরত (পূর্ণসংখ্যা) to_lower(a[i]) - (পূর্ণসংখ্যা) to_lower(b[i]);
+        যদি (!a[i])
+            বিরতি;
     }
-    return 0;
+    ফেরত 0;
 }
 
 // ASCII strncasecmp (to avoid locale issues).
-int
-istrncmp(const char *a, const char *b, size_t n)
+পূর্ণসংখ্যা
+istrncmp(ধ্রুবক অক্ষর *a, ধ্রুবক অক্ষর *b, আকার_t n)
 {
-    for (size_t i = 0; i < n; i++) {
-        if (to_lower(a[i]) != to_lower(b[i]))
-            return (int) to_lower(a[i]) - (int) to_lower(b[i]);
-        if (!a[i])
-            break;
+    জন্য (আকার_t i = 0; i < n; i++) {
+        যদি (to_lower(a[i]) != to_lower(b[i]))
+            ফেরত (পূর্ণসংখ্যা) to_lower(a[i]) - (পূর্ণসংখ্যা) to_lower(b[i]);
+        যদি (!a[i])
+            বিরতি;
     }
-    return 0;
+    ফেরত 0;
 }
 
-#if !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
-int
-asprintf(char **strp, const char *fmt, ...)
+#যদি !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
+পূর্ণসংখ্যা
+asprintf(অক্ষর **strp, ধ্রুবক অক্ষর *fmt, ...)
 {
-    int ret;
+    পূর্ণসংখ্যা ret;
     va_list ap;
     va_start(ap, fmt);
     ret = vasprintf(strp, fmt, ap);
     va_end(ap);
-    return ret;
+    ফেরত ret;
 }
 
-# if !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
-int
-vasprintf(char **strp, const char *fmt, va_list ap)
+# যদি !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
+পূর্ণসংখ্যা
+vasprintf(অক্ষর **strp, ধ্রুবক অক্ষর *fmt, va_list ap)
 {
-    int ret;
-    char *buf;
+    পূর্ণসংখ্যা ret;
+    অক্ষর *buf;
     va_list ap_copy;
 
     /*
@@ -203,22 +203,22 @@ vasprintf(char **strp, const char *fmt, va_list ap)
      * vsnprintf() returns: pass a copy to make sure "ap" remains valid.
      */
     va_copy(ap_copy, ap);
-    ret = vsnprintf(NULL, 0, fmt, ap_copy);
+    ret = vsnprintf(ফাঁকা, 0, fmt, ap_copy);
     va_end(ap_copy);
 
-    if (ret < 0)
-        return ret;
+    যদি (ret < 0)
+        ফেরত ret;
 
-    if (!(buf = malloc(ret + 1)))
-        return -1;
+    যদি (!(buf = malloc(ret + 1)))
+        ফেরত -1;
 
-    if ((ret = vsnprintf(buf, ret + 1, fmt, ap)) < 0) {
-        free(buf);
-        return ret;
+    যদি ((ret = vsnprintf(buf, ret + 1, fmt, ap)) < 0) {
+        মুক্ত(buf);
+        ফেরত ret;
     }
 
     *strp = buf;
-    return ret;
+    ফেরত ret;
 }
 # endif /* !HAVE_VASPRINTF */
 #endif /* !HAVE_ASPRINTF */

@@ -7,47 +7,47 @@
 
 #pragma once
 
-#include "config.h"
+#অন্তর্ভাব "config.h"
 
-#include <stdbool.h>
-#include <stddef.h>
+#অন্তর্ভাব <stdbool.h>
+#অন্তর্ভাব <stddef.h>
 
 /*
  * This list data structure is a verbatim copy from wayland-util.h from the
  * Wayland project; except that wl_ prefix has been removed.
  */
 
-struct list {
-	struct list *prev;
-	struct list *next;
+কাঠামো list {
+	কাঠামো list *পূর্ব;
+	কাঠামো list *পরবর্তী;
 };
 
-void list_init(struct list *list);
-void list_insert(struct list *list, struct list *elm);
-void list_append(struct list *list, struct list *elm);
-void list_remove(struct list *elm);
-bool list_empty(const struct list *list);
-bool list_is_last(const struct list *list, const struct list *elm);
+শূন্য list_init(কাঠামো list *list);
+শূন্য list_ঢোকাও(কাঠামো list *list, কাঠামো list *elm);
+শূন্য list_append(কাঠামো list *list, কাঠামো list *elm);
+শূন্য list_remove(কাঠামো list *elm);
+bool list_empty(ধ্রুবক কাঠামো list *list);
+bool list_is_last(ধ্রুবক কাঠামো list *list, ধ্রুবক কাঠামো list *elm);
 
 #define container_of(ptr, type, member)					\
-	(__typeof__(type) *)((char *)(ptr) -				\
+	(__typeof__(type) *)((অক্ষর *)(ptr) -				\
 		 offsetof(__typeof__(type), member))
 
-#define list_first_entry(head, pos, member)				\
-	container_of((head)->next, __typeof__(*(pos)), member)
+#define list_first_entry(শীর্ষ, pos, member)				\
+	container_of((শীর্ষ)->পরবর্তী, __typeof__(*(pos)), member)
 
-#define list_last_entry(head, pos, member)				\
-	container_of((head)->prev, __typeof__(*(pos)), member)
+#define list_last_entry(শীর্ষ, pos, member)				\
+	container_of((শীর্ষ)->পূর্ব, __typeof__(*(pos)), member)
 
-#define list_for_each(pos, head, member)				\
-	for ((pos) = 0, (pos) = list_first_entry(head, pos, member);	\
-	     &(pos)->member != (head);					\
+#define list_for_each(pos, শীর্ষ, member)				\
+	জন্য ((pos) = 0, (pos) = list_first_entry(শীর্ষ, pos, member);	\
+	     &(pos)->member != (শীর্ষ);					\
 	     (pos) = list_first_entry(&(pos)->member, pos, member))
 
-#define list_for_each_safe(pos, tmp, head, member)			\
-	for ((pos) = 0, (tmp) = 0,						\
-	     (pos) = list_first_entry(head, pos, member),			\
+#define list_for_each_safe(pos, tmp, শীর্ষ, member)			\
+	জন্য ((pos) = 0, (tmp) = 0,						\
+	     (pos) = list_first_entry(শীর্ষ, pos, member),			\
 	     (tmp) = list_first_entry(&(pos)->member, tmp, member);		\
-	     &(pos)->member != (head);					\
+	     &(pos)->member != (শীর্ষ);					\
 	     (pos) = (tmp),							\
 	     (tmp) = list_first_entry(&(pos)->member, tmp, member))

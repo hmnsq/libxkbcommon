@@ -6,87 +6,87 @@
  */
 #pragma once
 
-#include "config.h"
+#অন্তর্ভাব "config.h"
 
-#include <stdbool.h>
-#include <stddef.h>
+#অন্তর্ভাব <stdbool.h>
+#অন্তর্ভাব <stddef.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "atom.h"
-#include "darray.h"
-#include "messages-codes.h"
-#include "rmlvo.h"
-#include "utils.h"
+#অন্তর্ভাব "xkbcommon/xkbcommon.h"
+#অন্তর্ভাব "atom.h"
+#অন্তর্ভাব "darray.h"
+#অন্তর্ভাব "messages-codes.h"
+#অন্তর্ভাব "rmlvo.h"
+#অন্তর্ভাব "utils.h"
 
-struct xkb_context {
-    int refcnt;
+কাঠামো xkb_context {
+    পূর্ণসংখ্যা refcnt;
 
-    ATTR_PRINTF(3, 0) void (*log_fn)(struct xkb_context *ctx,
-                                     enum xkb_log_level level,
-                                     const char *fmt, va_list args);
-    enum xkb_log_level log_level;
-    int log_verbosity;
-    void *user_data;
+    ATTR_PRINTF(3, 0) শূন্য (*log_fn)(কাঠামো xkb_context *ctx,
+                                     গণনা xkb_log_level level,
+                                     ধ্রুবক অক্ষর *fmt, va_list args);
+    গণনা xkb_log_level log_level;
+    পূর্ণসংখ্যা log_verbosity;
+    শূন্য *user_তথ্য;
 
-    struct xkb_rule_names names_dflt;
+    কাঠামো xkb_rule_names names_dflt;
 
-    darray(char *) includes;
-    darray(char *) failed_includes;
+    darray(অক্ষর *) includes;
+    darray(অক্ষর *) failed_includes;
 
-    struct atom_table *atom_table;
+    কাঠামো atom_table *atom_table;
 
     /* Used and allocated by xkbcommon-x11, free()d with the context. */
-    void *x11_atom_cache;
+    শূন্য *x11_atom_cache;
 
     /* Buffer for the *Text() functions. */
-    char text_buffer[2048];
-    size_t text_next;
+    অক্ষর text_বাফার[2048];
+    আকার_t text_পরবর্তী;
 
     bool use_environment_names : 1;
     bool use_secure_getenv : 1;
     bool pending_default_includes : 1;
 };
 
-char *
-xkb_context_getenv(struct xkb_context *ctx, const char *name);
+অক্ষর *
+xkb_context_getenv(কাঠামো xkb_context *ctx, ধ্রুবক অক্ষর *name);
 
-darray_size_t
-xkb_context_num_failed_include_paths(struct xkb_context *ctx);
+darray_আকার_t
+xkb_context_অঙ্ক_failed_include_paths(কাঠামো xkb_context *ctx);
 
 bool
-xkb_context_init_includes(struct xkb_context *ctx);
+xkb_context_init_includes(কাঠামো xkb_context *ctx);
 
-const char *
-xkb_context_failed_include_path_get(struct xkb_context *ctx,
-                                    darray_size_t idx);
+ধ্রুবক অক্ষর *
+xkb_context_failed_include_path_get(কাঠামো xkb_context *ctx,
+                                    darray_আকার_t idx);
 
-const char *
-xkb_context_include_path_get_extra_path(struct xkb_context *ctx);
+ধ্রুবক অক্ষর *
+xkb_context_include_path_get_extra_path(কাঠামো xkb_context *ctx);
 
-const char *
-xkb_context_include_path_get_unversioned_extensions_path(struct xkb_context *ctx);
+ধ্রুবক অক্ষর *
+xkb_context_include_path_get_unversioned_extensions_path(কাঠামো xkb_context *ctx);
 
-const char *
-xkb_context_include_path_get_versioned_extensions_path(struct xkb_context *ctx);
+ধ্রুবক অক্ষর *
+xkb_context_include_path_get_versioned_extensions_path(কাঠামো xkb_context *ctx);
 
-const char *
-xkb_context_include_path_get_system_path(struct xkb_context *ctx);
+ধ্রুবক অক্ষর *
+xkb_context_include_path_get_system_path(কাঠামো xkb_context *ctx);
 
-XKB_EXPORT_PRIVATE darray_size_t
-xkb_atom_table_size(struct xkb_context *ctx);
+XKB_EXPORT_PRIVATE darray_আকার_t
+xkb_atom_table_আকার(কাঠামো xkb_context *ctx);
 
 /*
  * Returns XKB_ATOM_NONE if @string was not previously interned,
  * otherwise returns the atom.
  */
 xkb_atom_t
-xkb_atom_lookup(struct xkb_context *ctx, const char *string);
+xkb_atom_lookup(কাঠামো xkb_context *ctx, ধ্রুবক অক্ষর *string);
 
 XKB_EXPORT_PRIVATE xkb_atom_t
-xkb_atom_intern(struct xkb_context *ctx, const char *string, size_t len);
+xkb_atom_intern(কাঠামো xkb_context *ctx, ধ্রুবক অক্ষর *string, আকার_t len);
 
 #define xkb_atom_intern_literal(ctx, literal) \
-    xkb_atom_intern((ctx), (literal), sizeof(literal) - 1)
+    xkb_atom_intern((ctx), (literal), আকার(literal) - 1)
 
 /**
  * If @string is dynamically allocated, NUL-terminated, free'd immediately
@@ -95,21 +95,21 @@ xkb_atom_intern(struct xkb_context *ctx, const char *string, size_t len);
  * The caller should not use or free the passed in string afterwards.
  */
 xkb_atom_t
-xkb_atom_steal(struct xkb_context *ctx, char *string);
+xkb_atom_steal(কাঠামো xkb_context *ctx, অক্ষর *string);
 
-XKB_EXPORT_PRIVATE const char *
-xkb_atom_text(struct xkb_context *ctx, xkb_atom_t atom);
+XKB_EXPORT_PRIVATE ধ্রুবক অক্ষর *
+xkb_atom_text(কাঠামো xkb_context *ctx, xkb_atom_t atom);
 
-char *
-xkb_context_get_buffer(struct xkb_context *ctx, size_t size);
+অক্ষর *
+xkb_context_get_বাফার(কাঠামো xkb_context *ctx, আকার_t আকার_2);
 
-XKB_EXPORT_PRIVATE ATTR_PRINTF(4, 5) void
-xkb_log(struct xkb_context *ctx, enum xkb_log_level level, int verbosity,
-        const char *fmt, ...);
+XKB_EXPORT_PRIVATE ATTR_PRINTF(4, 5) শূন্য
+xkb_log(কাঠামো xkb_context *ctx, গণনা xkb_log_level level, পূর্ণসংখ্যা verbosity,
+        ধ্রুবক অক্ষর *fmt, ...);
 
-enum RMLVO
-xkb_context_sanitize_rule_names(struct xkb_context *ctx,
-                                struct xkb_rule_names *rmlvo);
+গণনা RMLVO
+xkb_context_sanitize_rule_names(কাঠামো xkb_context *ctx,
+                                কাঠামো xkb_rule_names *rmlvo);
 
 /*
  * The format is not part of the argument list in order to avoid the
@@ -117,8 +117,8 @@ xkb_context_sanitize_rule_names(struct xkb_context *ctx,
  * format is supplied without arguments. Not supplying it would still
  * result in an error, though.
  */
-#define xkb_log_with_code(ctx, level, verbosity, msg_id, fmt, ...) \
-    xkb_log(ctx, level, verbosity, PREPEND_MESSAGE_ID(msg_id, fmt), ##__VA_ARGS__)
+#define xkb_log_with_code(ctx, level, verbosity, বার্তা_id, fmt, ...) \
+    xkb_log(ctx, level, verbosity, PREPEND_MESSAGE_ID(বার্তা_id, fmt), ##__VA_ARGS__)
 #define log_dbg(ctx, id, ...) \
     xkb_log_with_code((ctx), XKB_LOG_LEVEL_DEBUG, XKB_LOG_VERBOSITY_MINIMAL, id, __VA_ARGS__)
 #define log_info(ctx, id, ...) \

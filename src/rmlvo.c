@@ -3,262 +3,262 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#অন্তর্ভাব "config.h"
 
-#include <assert.h>
-#include <stdint.h>
-#include <string.h>
+#অন্তর্ভাব <assert.h>
+#অন্তর্ভাব <stdint.h>
+#অন্তর্ভাব <string.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-status.h"
-#include "context.h"
-#include "features/enums.h"
-#include "keymap.h"
-#include "messages-codes.h"
-#include "rmlvo.h"
-#include "darray.h"
-#include "utils.h"
-#include "xkbcomp/rules.h"
+#অন্তর্ভাব "xkbcommon/xkbcommon.h"
+#অন্তর্ভাব "xkbcommon/xkbcommon-status.h"
+#অন্তর্ভাব "context.h"
+#অন্তর্ভাব "features/enums.h"
+#অন্তর্ভাব "keymap.h"
+#অন্তর্ভাব "messages-codes.h"
+#অন্তর্ভাব "rmlvo.h"
+#অন্তর্ভাব "darray.h"
+#অন্তর্ভাব "utils.h"
+#অন্তর্ভাব "xkbcomp/rules.h"
 
-struct xkb_rmlvo_builder*
-xkb_rmlvo_builder_new(struct xkb_context *context,
-                      const char *rules, const char *model,
-                      enum xkb_rmlvo_builder_flags flags)
+কাঠামো xkb_rmlvo_builder*
+xkb_rmlvo_builder_new(কাঠামো xkb_context *context,
+                      ধ্রুবক অক্ষর *rules, ধ্রুবক অক্ষর *model,
+                      গণনা xkb_rmlvo_builder_flags flags)
 {
-    const enum xkb_rmlvo_builder_flags invalid_flags =
-        (flags & ~(enum xkb_rmlvo_builder_flags)XKB_RMLVO_BUILDER_FLAGS_VALUES);
-    if (invalid_flags) {
+    ধ্রুবক গণনা xkb_rmlvo_builder_flags invalid_flags =
+        (flags & ~(গণনা xkb_rmlvo_builder_flags)XKB_RMLVO_BUILDER_FLAGS_মানসমূহ);
+    যদি (invalid_flags) {
         log_err_func(context, XKB_LOG_MESSAGE_NO_ID,
                      "Unsupported RMLVO flags: 0x%x\n",
                      invalid_flags);
-        return NULL;
+        ফেরত ফাঁকা;
     }
 
-    struct xkb_rmlvo_builder * const builder = calloc(1, sizeof(*builder));
-    if (!builder)
-        goto error;
+    কাঠামো xkb_rmlvo_builder * ধ্রুবক builder = calloc(1, আকার(*builder));
+    যদি (!builder)
+        যাও error;
 
     builder->refcnt = 1;
     builder->ctx = xkb_context_ref(context);
 
     builder->rules = strdup_safe(rules);
-    if (!builder->rules && rules)
-        goto error;
+    যদি (!builder->rules && rules)
+        যাও error;
 
     builder->model = strdup_safe(model);
-    if (!builder->model && model)
-        goto error;
+    যদি (!builder->model && model)
+        যাও error;
 
     darray_init(builder->layouts);
     darray_init(builder->options);
 
-    return builder;
+    ফেরত builder;
 
 error:
     log_err(context, XKB_ERROR_ALLOCATION_FAILURE_,
             "Cannot allocate a RMLVO builder.\n");
     xkb_rmlvo_builder_unref(builder);
-    return NULL;
+    ফেরত ফাঁকা;
 }
 
-static enum xkb_status
-rmlvo_builder_append_option(struct xkb_rmlvo_builder *rmlvo,
-                            const char *option, xkb_layout_mask_t layouts)
+স্থির গণনা xkb_status
+rmlvo_builder_append_option(কাঠামো xkb_rmlvo_builder *rmlvo,
+                            ধ্রুবক অক্ষর *option, xkb_layout_mask_t layouts)
 {
-    if (isempty(option))
-        return XKB_ERROR_INVALID;
+    যদি (isempty(option))
+        ফেরত XKB_ERROR_INVALID;
 
     /* Check for previous entry */
-    struct xkb_rmlvo_builder_option *prev;
-    darray_foreach(prev, rmlvo->options) {
-        if (streq(prev->option, option)) {
+    কাঠামো xkb_rmlvo_builder_option *পূর্ব;
+    darray_foreach(পূর্ব, rmlvo->options) {
+        যদি (streq(পূর্ব->option, option)) {
             /* Merge with previous entry */
-            if (layouts == (xkb_layout_mask_t)XKB_OPTION_LAYOUT_MASK_GLOBAL) {
+            যদি (layouts == (xkb_layout_mask_t)XKB_OPTION_LAYOUT_MASK_GLOBAL) {
                 /* Global option overrides layout-specific ones */
-                prev->layouts = layouts;
-            } else if (prev->layouts != (xkb_layout_mask_t)
+                পূর্ব->layouts = layouts;
+            } অন্যথা যদি (পূর্ব->layouts != (xkb_layout_mask_t)
                        XKB_OPTION_LAYOUT_MASK_GLOBAL) {
                 /* Layout-specific option cannot override global */
-                prev->layouts |= layouts;
+                পূর্ব->layouts |= layouts;
             }
-            return XKB_SUCCESS;
+            ফেরত XKB_SUCCESS;
         }
     }
 
     /* Append new entry */
-    const struct xkb_rmlvo_builder_option new = {
+    ধ্রুবক কাঠামো xkb_rmlvo_builder_option new = {
         .option = strdup_safe(option),
         .layouts = layouts
     };
-    if (!new.option) {
+    যদি (!new.option) {
         log_err(rmlvo->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
                 "Cannot allocate option \"%s\" to the RMLVO builder.\n",
                 option);
-        return XKB_ERROR_ALLOCATION_FAILURE;
+        ফেরত XKB_ERROR_ALLOCATION_FAILURE;
     }
     darray_append(rmlvo->options, new);
-    return XKB_SUCCESS;
+    ফেরত XKB_SUCCESS;
 }
 
 bool
-xkb_rmlvo_builder_append_layout(struct xkb_rmlvo_builder *rmlvo,
-                                const char *layout, const char *variant,
-                                const char* const* options, size_t options_len)
+xkb_rmlvo_builder_append_layout(কাঠামো xkb_rmlvo_builder *rmlvo,
+                                ধ্রুবক অক্ষর *layout, ধ্রুবক অক্ষর *variant,
+                                ধ্রুবক অক্ষর* ধ্রুবক* options, আকার_t options_len)
 {
-    const xkb_layout_index_t idx = (xkb_layout_index_t)
-                                   darray_size(rmlvo->layouts);
+    ধ্রুবক xkb_layout_সূচক_t idx = (xkb_layout_সূচক_t)
+                                   darray_আকার(rmlvo->layouts);
 
     static_assert(XKB_MAX_GROUPS == 32, "Invalid shift for layout mask");
-    if (idx >= XKB_MAX_GROUPS) {
-        log_err(rmlvo->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
+    যদি (idx >= XKB_MAX_GROUPS) {
+        log_err(rmlvo->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_সূচক_2,
                 "Maximum layout count reached: %u; "
                 "cannot add layout \"%s(%s)\" to the RMLVO builder.\n",
                 XKB_MAX_GROUPS, layout, (variant) ? variant : "");
-        return false;
+        ফেরত false;
     }
 
     /* Append layout entry */
-    const struct xkb_rmlvo_builder_layout new = {
+    ধ্রুবক কাঠামো xkb_rmlvo_builder_layout new = {
         .layout = strdup_safe(layout),
         .variant = strdup_safe(variant)
     };
 
-    if (!new.layout || (!new.variant && variant)) {
-        free(new.layout);
-        free(new.variant);
+    যদি (!new.layout || (!new.variant && variant)) {
+        মুক্ত(new.layout);
+        মুক্ত(new.variant);
         log_err(rmlvo->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
                 "Cannot allocate layout \"%s(%s)\" to the RMLVO builder.\n",
                 layout, (variant) ? variant : "");
-        return false;
+        ফেরত false;
     }
 
     darray_append(rmlvo->layouts, new);
 
-    if (!options)
+    যদি (!options)
         options_len = 0;
 
-    const xkb_layout_mask_t layout_mask = (UINT32_C(1) << idx);
+    ধ্রুবক xkb_layout_mask_t layout_mask = (UINT32_C(1) << idx);
 
     /* Append layout-specific options entries */
-    for (size_t k = 0; k < options_len; k++) {
-        const enum xkb_status status =
+    জন্য (আকার_t k = 0; k < options_len; k++) {
+        ধ্রুবক গণনা xkb_status status =
             rmlvo_builder_append_option(rmlvo, options[k], layout_mask);
 
-        if (status == XKB_ERROR_ALLOCATION_FAILURE)
-            return false;
+        যদি (status == XKB_ERROR_ALLOCATION_FAILURE)
+            ফেরত false;
     }
 
-    return true;
+    ফেরত true;
 }
 
 bool
-xkb_rmlvo_builder_append_option(struct xkb_rmlvo_builder *rmlvo,
-                                const char *option)
+xkb_rmlvo_builder_append_option(কাঠামো xkb_rmlvo_builder *rmlvo,
+                                ধ্রুবক অক্ষর *option)
 {
-    const enum xkb_status status = rmlvo_builder_append_option(
+    ধ্রুবক গণনা xkb_status status = rmlvo_builder_append_option(
         rmlvo, option, (xkb_layout_mask_t)XKB_OPTION_LAYOUT_MASK_GLOBAL
     );
-    return (status == XKB_SUCCESS);
+    ফেরত (status == XKB_SUCCESS);
 }
 
-struct xkb_rmlvo_builder *
-xkb_rmlvo_builder_ref(struct xkb_rmlvo_builder *rmlvo)
+কাঠামো xkb_rmlvo_builder *
+xkb_rmlvo_builder_ref(কাঠামো xkb_rmlvo_builder *rmlvo)
 {
-    assert(rmlvo->refcnt > 0);
+    প্রতিজ্ঞা(rmlvo->refcnt > 0);
     rmlvo->refcnt++;
-    return rmlvo;
+    ফেরত rmlvo;
 }
 
-void
-xkb_rmlvo_builder_unref(struct xkb_rmlvo_builder *rmlvo)
+শূন্য
+xkb_rmlvo_builder_unref(কাঠামো xkb_rmlvo_builder *rmlvo)
 {
-    assert(!rmlvo || rmlvo->refcnt > 0);
-    if (!rmlvo || --rmlvo->refcnt > 0)
-        return;
+    প্রতিজ্ঞা(!rmlvo || rmlvo->refcnt > 0);
+    যদি (!rmlvo || --rmlvo->refcnt > 0)
+        ফেরত;
 
-    free(rmlvo->rules);
-    free(rmlvo->model);
+    মুক্ত(rmlvo->rules);
+    মুক্ত(rmlvo->model);
 
-    const struct xkb_rmlvo_builder_layout *layout;
+    ধ্রুবক কাঠামো xkb_rmlvo_builder_layout *layout;
     darray_foreach(layout, rmlvo->layouts) {
-        free(layout->layout);
-        free(layout->variant);
+        মুক্ত(layout->layout);
+        মুক্ত(layout->variant);
     }
     darray_free(rmlvo->layouts);
 
-    const struct xkb_rmlvo_builder_option *option;
+    ধ্রুবক কাঠামো xkb_rmlvo_builder_option *option;
     darray_foreach(option, rmlvo->options)
-        free(option->option);
+        মুক্ত(option->option);
     darray_free(rmlvo->options);
 
     xkb_context_unref(rmlvo->ctx);
-    free(rmlvo);
+    মুক্ত(rmlvo);
 }
 
 /* NOTE: the converse function, `xkb_rules_names_to_rmlvo_builder`, is currently
  * only used in tests */
 bool
-xkb_rmlvo_builder_to_rules_names(const struct xkb_rmlvo_builder *builder,
-                                 struct xkb_rule_names *rmlvo,
-                                 char *buf, size_t buf_size)
+xkb_rmlvo_builder_to_rules_names(ধ্রুবক কাঠামো xkb_rmlvo_builder *builder,
+                                 কাঠামো xkb_rule_names *rmlvo,
+                                 অক্ষর *buf, আকার_t buf_আকার)
 {
     rmlvo->rules = builder->rules;
     rmlvo->model = builder->model;
 
-    char *start = buf;
+    অক্ষর *start = buf;
     rmlvo->layout = start;
-    darray_size_t k;
-    const struct xkb_rmlvo_builder_layout *layout;
+    darray_আকার_t k;
+    ধ্রুবক কাঠামো xkb_rmlvo_builder_layout *layout;
     darray_enumerate(k, layout, builder->layouts) {
-        int count = snprintf(start, buf_size, "%s%s",
+        পূর্ণসংখ্যা গুনতি = snprintf(start, buf_আকার, "%s%s",
                              (k > 0 ? "," : ""), layout->layout);
-        if (count < 0 || (size_t)count >= buf_size)
-            return false;
-        buf_size -= (size_t)count;
-        start += count;
+        যদি (গুনতি < 0 || (আকার_t)গুনতি >= buf_আকার)
+            ফেরত false;
+        buf_আকার -= (আকার_t)গুনতি;
+        start += গুনতি;
     }
-    if (buf_size <= 1)
-        return false;
+    যদি (buf_আকার <= 1)
+        ফেরত false;
     *start = '\0';
     start++;
-    buf_size--;
+    buf_আকার--;
 
     rmlvo->variant = start;
     darray_enumerate(k, layout, builder->layouts) {
-        int count = snprintf(start, buf_size, "%s%s",
+        পূর্ণসংখ্যা গুনতি = snprintf(start, buf_আকার, "%s%s",
                              (k > 0 ? "," : ""),
                              (layout->variant ? layout->variant : ""));
-        if (count < 0 || (size_t) count >= buf_size)
-            return false;
-        buf_size -= (size_t)count;
-        start += count;
+        যদি (গুনতি < 0 || (আকার_t) গুনতি >= buf_আকার)
+            ফেরত false;
+        buf_আকার -= (আকার_t)গুনতি;
+        start += গুনতি;
     }
-    if (buf_size <= 1)
-        return false;
+    যদি (buf_আকার <= 1)
+        ফেরত false;
     *start = '\0';
     start++;
-    buf_size--;
+    buf_আকার--;
 
     rmlvo->options = start;
-    const struct xkb_rmlvo_builder_option *option;
+    ধ্রুবক কাঠামো xkb_rmlvo_builder_option *option;
     darray_enumerate(k, option, builder->options) {
-        int count = snprintf(start, buf_size, "%s%s",
+        পূর্ণসংখ্যা গুনতি = snprintf(start, buf_আকার, "%s%s",
                              (k > 0 ? "," : ""), option->option);
-        if (count < 0 || (size_t) count >= buf_size)
-            return false;
-        buf_size -= (size_t)count;
-        start += count;
-        if (option->layouts != XKB_LAYOUT_INVALID) {
-            count = snprintf(start, buf_size, "%c%"PRIu32,
+        যদি (গুনতি < 0 || (আকার_t) গুনতি >= buf_আকার)
+            ফেরত false;
+        buf_আকার -= (আকার_t)গুনতি;
+        start += গুনতি;
+        যদি (option->layouts != XKB_LAYOUT_INVALID) {
+            গুনতি = snprintf(start, buf_আকার, "%c%"PRIu32,
                              OPTIONS_GROUP_SPECIFIER_PREFIX, option->layouts);
-            if (count < 0 || (size_t) count >= buf_size)
-                return false;
-            buf_size -= (size_t)count;
-            start += count;
+            যদি (গুনতি < 0 || (আকার_t) গুনতি >= buf_আকার)
+                ফেরত false;
+            buf_আকার -= (আকার_t)গুনতি;
+            start += গুনতি;
         }
     }
-    if (buf_size == 0)
-        return false;
+    যদি (buf_আকার == 0)
+        ফেরত false;
     *start = '\0';
-    return true;
+    ফেরত true;
 }

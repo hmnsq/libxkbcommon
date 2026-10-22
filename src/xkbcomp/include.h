@@ -4,11 +4,11 @@
  */
 #pragma once
 
-#include "config.h"
+#অন্তর্ভাব "config.h"
 
-#include "ast.h"
-#include "utils.h"
-#include "xkbcomp-priv.h"
+#অন্তর্ভাব "ast.h"
+#অন্তর্ভাব "utils.h"
+#অন্তর্ভাব "xkbcomp-priv.h"
 
 /* Reasonable threshold, with plenty of margin for keymaps in the wild */
 #define INCLUDE_MAX_DEPTH 15
@@ -20,30 +20,30 @@
 #define is_merge_mode_prefix(ch) \
     ((ch) == MERGE_OVERRIDE_PREFIX || (ch) == MERGE_AUGMENT_PREFIX || \
      (ch) == MERGE_REPLACE_PREFIX)
-static const char MERGE_MODE_PREFIXES[] =
+স্থির ধ্রুবক অক্ষর MERGE_MODE_PREFIXES[] =
     { MERGE_OVERRIDE_PREFIX, MERGE_AUGMENT_PREFIX, MERGE_REPLACE_PREFIX, 0 };
 
 
 bool
-ParseIncludeMap(char **str_inout, char **file_rtrn, char **map_rtrn,
-                char *nextop_rtrn, char **extra_data);
+ParseIncludeMap(অক্ষর **str_inout, অক্ষর **file_rtrn, অক্ষর **map_rtrn,
+                অক্ষর *nextop_rtrn, অক্ষর **extra_তথ্য);
 
 ssize_t
-expand_path(struct xkb_context *ctx, const char* parent_file_name,
-            const char *name, size_t name_len, enum xkb_file_type type,
-            char *buf, size_t buf_size);
+expand_path(কাঠামো xkb_context *ctx, ধ্রুবক অক্ষর* parent_file_name,
+            ধ্রুবক অক্ষর *name, আকার_t name_len, গণনা xkb_file_type type,
+            অক্ষর *buf, আকার_t buf_আকার);
 
 FILE *
-FindFileInXkbPath(struct xkb_context *ctx, const char* parent_file_name,
-                  const char *name, size_t name_len, enum xkb_file_type type,
-                  char *buf, size_t buf_size, unsigned int *offset,
+FindFileInXkbPath(কাঠামো xkb_context *ctx, ধ্রুবক অক্ষর* parent_file_name,
+                  ধ্রুবক অক্ষর *name, আকার_t name_len, গণনা xkb_file_type type,
+                  অক্ষর *buf, আকার_t buf_আকার, unsigned পূর্ণসংখ্যা *offset,
                   bool required);
 
 bool
-ExceedsIncludeMaxDepth(struct xkb_context *ctx, unsigned int include_depth);
+ExceedsIncludeMaxDepth(কাঠামো xkb_context *ctx, unsigned পূর্ণসংখ্যা include_depth);
 
 XkbFile *
-ProcessIncludeFile(struct xkb_context *ctx,
-                   const struct parser_keymap_config *config,
-                   const IncludeStmt *stmt,
-                   enum xkb_file_type file_type, char *path, size_t path_size);
+ProcessIncludeFile(কাঠামো xkb_context *ctx,
+                   ধ্রুবক কাঠামো parser_keymap_config *config,
+                   ধ্রুবক IncludeStmt *stmt,
+                   গণনা xkb_file_type file_type, অক্ষর *path, আকার_t path_আকার);

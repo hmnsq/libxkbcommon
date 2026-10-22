@@ -9,14 +9,14 @@
  */
 #pragma once
 
-#include "config.h"
+#অন্তর্ভাব "config.h"
 
-#include "xkbcommon/xkbcommon.h"
+#অন্তর্ভাব "xkbcommon/xkbcommon.h"
 
-#include "atom.h"
-#include "darray.h"
+#অন্তর্ভাব "atom.h"
+#অন্তর্ভাব "darray.h"
 
-enum xkb_file_type {
+গণনা xkb_file_type {
     /* Component files, by order of compilation. */
     FILE_TYPE_KEYCODES = 0,
     FILE_TYPE_TYPES = 1,
@@ -37,38 +37,38 @@ enum xkb_file_type {
     /* This one doesn't mix with the others, but useful here as well. */
     FILE_TYPE_RULES,
 
-    _FILE_TYPE_NUM_ENTRIES,
-    FILE_TYPE_INVALID = _FILE_TYPE_NUM_ENTRIES
+    FILE_TYPE_অঙ্ক_ENTRIES,
+    FILE_TYPE_INVALID = FILE_TYPE_অঙ্ক_ENTRIES
 };
 
-enum stmt_type {
+গণনা stmt_type {
     STMT_UNKNOWN = 0,
     STMT_INCLUDE,
     STMT_KEYCODE,
     STMT_ALIAS,
-    STMT_EXPR_STRING_LITERAL,
-    STMT_EXPR_INTEGER_LITERAL,
-    STMT_EXPR_FLOAT_LITERAL,
-    STMT_EXPR_BOOLEAN_LITERAL,
-    STMT_EXPR_KEYNAME_LITERAL,
-    STMT_EXPR_KEYSYM_LITERAL,
-    STMT_EXPR_IDENT,
-    STMT_EXPR_ACTION_DECL,
-    STMT_EXPR_FIELD_REF,
-    STMT_EXPR_ARRAY_REF,
+    STMT_রাশিমালা_STRING_LITERAL,
+    STMT_রাশিমালা_INTEGER_LITERAL,
+    STMT_রাশিমালা_FLOAT_LITERAL,
+    STMT_রাশিমালা_BOOLEAN_LITERAL,
+    STMT_রাশিমালা_KEYNAME_LITERAL,
+    STMT_রাশিমালা_KEYSYM_LITERAL,
+    STMT_রাশিমালা_IDENT,
+    STMT_রাশিমালা_ACTION_DECL,
+    STMT_রাশিমালা_FIELD_REF,
+    STMT_রাশিমালা_ARRAY_REF,
     /* Needed because of the ambiguity between keysym and action empty lists */
-    STMT_EXPR_EMPTY_LIST,
-    STMT_EXPR_KEYSYM_LIST,
-    STMT_EXPR_ACTION_LIST,
-    STMT_EXPR_ADD,
-    STMT_EXPR_SUBTRACT,
-    STMT_EXPR_MULTIPLY,
-    STMT_EXPR_DIVIDE,
-    STMT_EXPR_ASSIGN,
-    STMT_EXPR_NOT,
-    STMT_EXPR_NEGATE,
-    STMT_EXPR_INVERT,
-    STMT_EXPR_UNARY_PLUS,
+    STMT_রাশিমালা_EMPTY_LIST,
+    STMT_রাশিমালা_KEYSYM_LIST,
+    STMT_রাশিমালা_ACTION_LIST,
+    STMT_রাশিমালা_ADD,
+    STMT_রাশিমালা_SUBTRACT,
+    STMT_রাশিমালা_MULTIPLY,
+    STMT_রাশিমালা_DIVIDE,
+    STMT_রাশিমালা_ASSIGN,
+    STMT_রাশিমালা_NOT,
+    STMT_রাশিমালা_NEGATE,
+    STMT_রাশিমালা_INVERT,
+    STMT_রাশিমালা_UNARY_PLUS,
     STMT_VAR,
     STMT_TYPE,
     STMT_INTERP,
@@ -81,229 +81,229 @@ enum stmt_type {
     STMT_UNKNOWN_DECLARATION,
     STMT_UNKNOWN_COMPOUND,
 
-    _STMT_NUM_VALUES
+    STMT_অঙ্ক_মানসমূহ
 };
 
-enum merge_mode {
+গণনা merge_mode {
     MERGE_DEFAULT,
     MERGE_AUGMENT,
     MERGE_OVERRIDE,
     MERGE_REPLACE,
-    _MERGE_MODE_NUM_ENTRIES,
+    MERGE_MODE_অঙ্ক_ENTRIES,
 };
-enum { MERGE_MODE_MIN_WIDTH = 3 /* 2 bits + sign */ };
-static_assert(_MERGE_MODE_NUM_ENTRIES - 1 <= (1 << (MERGE_MODE_MIN_WIDTH - 1)) - 1,
+গণনা { MERGE_MODE_MIN_WIDTH = 3 /* 2 bits + sign */ };
+static_assert(MERGE_MODE_অঙ্ক_ENTRIES - 1 <= (1 << (MERGE_MODE_MIN_WIDTH - 1)) - 1,
               "Cannot encode merge mode");
 
-const char *
-xkb_file_type_to_string(enum xkb_file_type type);
+ধ্রুবক অক্ষর *
+xkb_file_type_to_string(গণনা xkb_file_type type);
 
-const char *
-stmt_type_to_string(enum stmt_type type);
+ধ্রুবক অক্ষর *
+stmt_type_to_string(গণনা stmt_type type);
 
-char
-stmt_type_to_operator_char(enum stmt_type type);
+অক্ষর
+stmt_type_to_operator_char(গণনা stmt_type type);
 
-typedef struct _ParseCommon  {
-    struct _ParseCommon *next;
-    enum stmt_type type;
+প্রকারলেখ কাঠামো _ParseCommon  {
+    কাঠামো _ParseCommon *পরবর্তী;
+    গণনা stmt_type type;
 } ParseCommon;
 
-typedef struct _IncludeStmt {
+প্রকারলেখ কাঠামো _IncludeStmt {
     ParseCommon common;
-    enum merge_mode merge;
-    char *stmt;
-    char *file;
-    char *map;
-    char *modifier;
-    struct _IncludeStmt *next_incl;
+    গণনা merge_mode merge;
+    অক্ষর *stmt;
+    অক্ষর *file;
+    অক্ষর *map;
+    অক্ষর *modifier;
+    কাঠামো _IncludeStmt *পরবর্তী_incl;
 } IncludeStmt;
 
-typedef union ExprDef ExprDef;
+প্রকারলেখ সংঘ রাশিমালা_Def রাশিমালা_Def;
 
-typedef struct {
+প্রকারলেখ কাঠামো {
     ParseCommon common;
     xkb_atom_t ident;
-} ExprIdent;
+} রাশিমালা_Ident;
 
-typedef struct {
+প্রকারলেখ কাঠামো {
     ParseCommon common;
     xkb_atom_t str;
-} ExprString;
+} রাশিমালা_String;
 
-typedef struct {
+প্রকারলেখ কাঠামো {
     ParseCommon common;
     bool set;
-} ExprBoolean;
+} রাশিমালা_Boolean;
 
-typedef struct {
+প্রকারলেখ কাঠামো {
     ParseCommon common;
     int64_t ival;
-} ExprInteger;
+} রাশিমালা_Integer;
 
-typedef struct {
+প্রকারলেখ কাঠামো {
     ParseCommon common;
     /* We don't support floats, but we still represnt them in the AST, in
      * order to provide proper error messages. */
-} ExprFloat;
+} রাশিমালা_Float;
 
-typedef struct {
+প্রকারলেখ কাঠামো {
     ParseCommon common;
-    xkb_atom_t key_name;
-} ExprKeyName;
+    xkb_atom_t চাবি_name;
+} রাশিমালা_চাবি_Name;
 
-typedef struct {
+প্রকারলেখ কাঠামো {
     ParseCommon common;
     /* Keysyms are resolved early, so this might contain `NoSymbol` in case of
      * failure, to enable error recovery. */
     xkb_keysym_t keysym;
-} ExprKeySym;
+} রাশিমালা_চাবি_Sym;
 
-typedef struct {
+প্রকারলেখ কাঠামো {
     ParseCommon common;
-    ExprDef *left;
-    ExprDef *right;
-} ExprBinary;
+    রাশিমালা_Def *বাম;
+    রাশিমালা_Def *ডান;
+} রাশিমালা_দ্বিমিক;
 
-typedef struct {
+প্রকারলেখ কাঠামো {
     ParseCommon common;
-    ExprDef *child;
-} ExprUnary;
+    রাশিমালা_Def *child;
+} রাশিমালা_Unary;
 
-typedef struct {
-    ParseCommon common;
-    xkb_atom_t element;
-    xkb_atom_t field;
-} ExprFieldRef;
-
-typedef struct {
+প্রকারলেখ কাঠামো {
     ParseCommon common;
     xkb_atom_t element;
     xkb_atom_t field;
-    ExprDef *entry;
-} ExprArrayRef;
+} রাশিমালা_Field_Ref;
 
-typedef struct {
+প্রকারলেখ কাঠামো {
+    ParseCommon common;
+    xkb_atom_t element;
+    xkb_atom_t field;
+    রাশিমালা_Def *entry;
+} রাশিমালা_Array_Ref;
+
+প্রকারলেখ কাঠামো {
     ParseCommon common;
     xkb_atom_t name;
-    ExprDef *args;
-} ExprAction;
+    রাশিমালা_Def *args;
+} রাশিমালা_Action;
 
-typedef struct {
+প্রকারলেখ কাঠামো {
     ParseCommon common;
     /* List of actions for a single level. */
-    ExprDef *actions;
-} ExprActionList;
+    রাশিমালা_Def *actions;
+} রাশিমালা_Action_List;
 
-typedef struct {
+প্রকারলেখ কাঠামো {
     ParseCommon common;
     /* List of keysym for a single level. */
     darray(xkb_keysym_t) syms;
-} ExprKeysymList;
+} রাশিমালা_Keysym_List;
 
-union ExprDef {
+সংঘ রাশিমালা_Def {
     ParseCommon common;
-    ExprIdent ident;
-    ExprString string;
-    ExprBoolean boolean;
-    ExprInteger integer;
-    ExprKeyName key_name;
-    ExprKeySym keysym;
-    ExprBinary binary;
-    ExprUnary unary;
-    ExprFieldRef field_ref;
-    ExprArrayRef array_ref;
-    ExprAction action;
-    ExprActionList actions;
-    ExprKeysymList keysym_list;
+    রাশিমালা_Ident ident;
+    রাশিমালা_String string;
+    রাশিমালা_Boolean boolean;
+    রাশিমালা_Integer integer;
+    রাশিমালা_চাবি_Name চাবি_name;
+    রাশিমালা_চাবি_Sym keysym;
+    রাশিমালা_দ্বিমিক দ্বিমিক;
+    রাশিমালা_Unary unary;
+    রাশিমালা_Field_Ref field_ref;
+    রাশিমালা_Array_Ref array_ref;
+    রাশিমালা_Action action;
+    রাশিমালা_Action_List actions;
+    রাশিমালা_Keysym_List keysym_list;
 };
 
-typedef struct {
+প্রকারলেখ কাঠামো {
     ParseCommon common;
-    enum merge_mode merge;
-    ExprDef *name;
-    ExprDef *value;
+    গণনা merge_mode merge;
+    রাশিমালা_Def *name;
+    রাশিমালা_Def *মান;
 } VarDef;
 
-typedef struct {
+প্রকারলেখ কাঠামো {
     ParseCommon common;
-    enum merge_mode merge;
+    গণনা merge_mode merge;
     xkb_atom_t name;
-    ExprDef *value;
+    রাশিমালা_Def *মান;
 } VModDef;
 
-typedef struct {
+প্রকারলেখ কাঠামো {
     ParseCommon common;
-    enum merge_mode merge;
+    গণনা merge_mode merge;
     xkb_atom_t name;
-    int64_t value;
+    int64_t মান;
 } KeycodeDef;
 
-typedef struct {
+প্রকারলেখ কাঠামো {
     ParseCommon common;
-    enum merge_mode merge;
+    গণনা merge_mode merge;
     xkb_atom_t alias;
     xkb_atom_t real;
-} KeyAliasDef;
+} চাবি_Alias_Def;
 
-typedef struct {
+প্রকারলেখ কাঠামো {
     ParseCommon common;
-    enum merge_mode merge;
+    গণনা merge_mode merge;
     xkb_atom_t name;
     VarDef *body;
-} KeyTypeDef;
+} চাবি_Type_Def;
 
-typedef struct {
+প্রকারলেখ কাঠামো {
     ParseCommon common;
-    enum merge_mode merge;
-    xkb_atom_t keyName;
+    গণনা merge_mode merge;
+    xkb_atom_t চাবি_Name;
     VarDef *symbols;
 } SymbolsDef;
 
-typedef struct {
+প্রকারলেখ কাঠামো {
     ParseCommon common;
-    enum merge_mode merge;
+    গণনা merge_mode merge;
     // NOTE: Can also be “None”, rather than a modifier name.
-    ExprDef *modifiers;
-    ExprDef *keys;
+    রাশিমালা_Def *modifiers;
+    রাশিমালা_Def *চাবিগুলি;
 } ModMapDef;
 
-typedef struct {
+প্রকারলেখ কাঠামো {
     ParseCommon common;
-    enum merge_mode merge;
+    গণনা merge_mode merge;
     int64_t group;
-    ExprDef *def;
+    রাশিমালা_Def *def;
 } GroupCompatDef;
 
-typedef struct {
+প্রকারলেখ কাঠামো {
     ParseCommon common;
-    enum merge_mode merge;
+    গণনা merge_mode merge;
     xkb_keysym_t sym;
-    ExprDef *match;
+    রাশিমালা_Def *match;
     VarDef *def;
 } InterpDef;
 
-typedef struct {
+প্রকারলেখ কাঠামো {
     ParseCommon common;
-    enum merge_mode merge;
-    bool virtual;
+    গণনা merge_mode merge;
+    bool আভাসী;
     int64_t ndx;
-    ExprDef *name;
+    রাশিমালা_Def *name;
 } LedNameDef;
 
-typedef struct {
+প্রকারলেখ কাঠামো {
     ParseCommon common;
-    enum merge_mode merge;
+    গণনা merge_mode merge;
     xkb_atom_t name;
     VarDef *body;
 } LedMapDef;
 
-typedef struct {
+প্রকারলেখ কাঠামো {
     ParseCommon common;
-    char *name;
+    অক্ষর *name;
 } UnknownStatement;
 
-enum xkb_map_flags {
+গণনা xkb_map_flags {
     MAP_NO_FLAG = 0,
     MAP_IS_DEFAULT = (1 << 0),
     MAP_IS_PARTIAL = (1 << 1),
@@ -316,10 +316,10 @@ enum xkb_map_flags {
     MAP_IS_DEPRECATED = (1 << 8),
 };
 
-typedef struct {
+প্রকারলেখ কাঠামো {
     ParseCommon common;
-    char *name;
+    অক্ষর *name;
     ParseCommon *defs;
-    enum xkb_file_type file_type;
-    enum xkb_map_flags flags;
+    গণনা xkb_file_type file_type;
+    গণনা xkb_map_flags flags;
 } XkbFile;
