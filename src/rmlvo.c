@@ -27,61 +27,61 @@ xkb_rmlvo_builder_new(struct xkb_context *context,
 {
     const enum xkb_rmlvo_builder_flags invalid_flags =
         (flags & ~(enum xkb_rmlvo_builder_flags)XKB_RMLVO_BUILDER_FLAGS_VALUES);
-    if (invalid_flags) {
+    ако (invalid_flags) {
         log_err_func(context, XKB_LOG_MESSAGE_NO_ID,
                      "Unsupported RMLVO flags: 0x%x\n",
                      invalid_flags);
-        return NULL;
+        върни NULL;
     }
 
     struct xkb_rmlvo_builder * const builder = calloc(1, sizeof(*builder));
-    if (!builder)
+    ако (!builder)
         goto error;
 
     builder->refcnt = 1;
     builder->ctx = xkb_context_ref(context);
 
     builder->rules = strdup_safe(rules);
-    if (!builder->rules && rules)
+    ако (!builder->rules && rules)
         goto error;
 
     builder->model = strdup_safe(model);
-    if (!builder->model && model)
+    ако (!builder->model && model)
         goto error;
 
     darray_init(builder->layouts);
     darray_init(builder->options);
 
-    return builder;
+    върни builder;
 
 error:
     log_err(context, XKB_ERROR_ALLOCATION_FAILURE_,
             "Cannot allocate a RMLVO builder.\n");
     xkb_rmlvo_builder_unref(builder);
-    return NULL;
+    върни NULL;
 }
 
 static enum xkb_status
 rmlvo_builder_append_option(struct xkb_rmlvo_builder *rmlvo,
                             const char *option, xkb_layout_mask_t layouts)
 {
-    if (isempty(option))
-        return XKB_ERROR_INVALID;
+    ако (isempty(option))
+        върни XKB_ERROR_INVALID;
 
     /* Check for previous entry */
     struct xkb_rmlvo_builder_option *prev;
     darray_foreach(prev, rmlvo->options) {
-        if (streq(prev->option, option)) {
+        ако (streq(prev->option, option)) {
             /* Merge with previous entry */
-            if (layouts == (xkb_layout_mask_t)XKB_OPTION_LAYOUT_MASK_GLOBAL) {
+            ако (layouts == (xkb_layout_mask_t)XKB_OPTION_LAYOUT_MASK_GLOBAL) {
                 /* Global option overrides layout-specific ones */
                 prev->layouts = layouts;
-            } else if (prev->layouts != (xkb_layout_mask_t)
+            } иначе ако (prev->layouts != (xkb_layout_mask_t)
                        XKB_OPTION_LAYOUT_MASK_GLOBAL) {
                 /* Layout-specific option cannot override global */
                 prev->layouts |= layouts;
             }
-            return XKB_SUCCESS;
+            върни XKB_SUCCESS;
         }
     }
 
@@ -90,14 +90,14 @@ rmlvo_builder_append_option(struct xkb_rmlvo_builder *rmlvo,
         .option = strdup_safe(option),
         .layouts = layouts
     };
-    if (!new.option) {
+    ако (!new.option) {
         log_err(rmlvo->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
                 "Cannot allocate option \"%s\" to the RMLVO builder.\n",
                 option);
-        return XKB_ERROR_ALLOCATION_FAILURE;
+        върни XKB_ERROR_ALLOCATION_FAILURE;
     }
     darray_append(rmlvo->options, new);
-    return XKB_SUCCESS;
+    върни XKB_SUCCESS;
 }
 
 bool
@@ -109,12 +109,12 @@ xkb_rmlvo_builder_append_layout(struct xkb_rmlvo_builder *rmlvo,
                                    darray_size(rmlvo->layouts);
 
     static_assert(XKB_MAX_GROUPS == 32, "Invalid shift for layout mask");
-    if (idx >= XKB_MAX_GROUPS) {
+    ако (idx >= XKB_MAX_GROUPS) {
         log_err(rmlvo->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                 "Maximum layout count reached: %u; "
                 "cannot add layout \"%s(%s)\" to the RMLVO builder.\n",
                 XKB_MAX_GROUPS, layout, (variant) ? variant : "");
-        return false;
+        върни false;
     }
 
     /* Append layout entry */
@@ -123,32 +123,32 @@ xkb_rmlvo_builder_append_layout(struct xkb_rmlvo_builder *rmlvo,
         .variant = strdup_safe(variant)
     };
 
-    if (!new.layout || (!new.variant && variant)) {
+    ако (!new.layout || (!new.variant && variant)) {
         free(new.layout);
         free(new.variant);
         log_err(rmlvo->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
                 "Cannot allocate layout \"%s(%s)\" to the RMLVO builder.\n",
                 layout, (variant) ? variant : "");
-        return false;
+        върни false;
     }
 
     darray_append(rmlvo->layouts, new);
 
-    if (!options)
+    ако (!options)
         options_len = 0;
 
     const xkb_layout_mask_t layout_mask = (UINT32_C(1) << idx);
 
     /* Append layout-specific options entries */
-    for (size_t k = 0; k < options_len; k++) {
+    за (size_t k = 0; k < options_len; k++) {
         const enum xkb_status status =
             rmlvo_builder_append_option(rmlvo, options[k], layout_mask);
 
-        if (status == XKB_ERROR_ALLOCATION_FAILURE)
-            return false;
+        ако (status == XKB_ERROR_ALLOCATION_FAILURE)
+            върни false;
     }
 
-    return true;
+    върни true;
 }
 
 bool
@@ -158,7 +158,7 @@ xkb_rmlvo_builder_append_option(struct xkb_rmlvo_builder *rmlvo,
     const enum xkb_status status = rmlvo_builder_append_option(
         rmlvo, option, (xkb_layout_mask_t)XKB_OPTION_LAYOUT_MASK_GLOBAL
     );
-    return (status == XKB_SUCCESS);
+    върни (status == XKB_SUCCESS);
 }
 
 struct xkb_rmlvo_builder *
@@ -166,15 +166,15 @@ xkb_rmlvo_builder_ref(struct xkb_rmlvo_builder *rmlvo)
 {
     assert(rmlvo->refcnt > 0);
     rmlvo->refcnt++;
-    return rmlvo;
+    върни rmlvo;
 }
 
 void
 xkb_rmlvo_builder_unref(struct xkb_rmlvo_builder *rmlvo)
 {
     assert(!rmlvo || rmlvo->refcnt > 0);
-    if (!rmlvo || --rmlvo->refcnt > 0)
-        return;
+    ако (!rmlvo || --rmlvo->refcnt > 0)
+        върни;
 
     free(rmlvo->rules);
     free(rmlvo->model);
@@ -210,31 +210,31 @@ xkb_rmlvo_builder_to_rules_names(const struct xkb_rmlvo_builder *builder,
     darray_size_t k;
     const struct xkb_rmlvo_builder_layout *layout;
     darray_enumerate(k, layout, builder->layouts) {
-        int count = snprintf(start, buf_size, "%s%s",
+        цяло count = snprintf(start, buf_size, "%s%s",
                              (k > 0 ? "," : ""), layout->layout);
-        if (count < 0 || (size_t)count >= buf_size)
-            return false;
+        ако (count < 0 || (size_t)count >= buf_size)
+            върни false;
         buf_size -= (size_t)count;
         start += count;
     }
-    if (buf_size <= 1)
-        return false;
+    ако (buf_size <= 1)
+        върни false;
     *start = '\0';
     start++;
     buf_size--;
 
     rmlvo->variant = start;
     darray_enumerate(k, layout, builder->layouts) {
-        int count = snprintf(start, buf_size, "%s%s",
+        цяло count = snprintf(start, buf_size, "%s%s",
                              (k > 0 ? "," : ""),
                              (layout->variant ? layout->variant : ""));
-        if (count < 0 || (size_t) count >= buf_size)
-            return false;
+        ако (count < 0 || (size_t) count >= buf_size)
+            върни false;
         buf_size -= (size_t)count;
         start += count;
     }
-    if (buf_size <= 1)
-        return false;
+    ако (buf_size <= 1)
+        върни false;
     *start = '\0';
     start++;
     buf_size--;
@@ -242,23 +242,23 @@ xkb_rmlvo_builder_to_rules_names(const struct xkb_rmlvo_builder *builder,
     rmlvo->options = start;
     const struct xkb_rmlvo_builder_option *option;
     darray_enumerate(k, option, builder->options) {
-        int count = snprintf(start, buf_size, "%s%s",
+        цяло count = snprintf(start, buf_size, "%s%s",
                              (k > 0 ? "," : ""), option->option);
-        if (count < 0 || (size_t) count >= buf_size)
-            return false;
+        ако (count < 0 || (size_t) count >= buf_size)
+            върни false;
         buf_size -= (size_t)count;
         start += count;
-        if (option->layouts != XKB_LAYOUT_INVALID) {
+        ако (option->layouts != XKB_LAYOUT_INVALID) {
             count = snprintf(start, buf_size, "%c%"PRIu32,
                              OPTIONS_GROUP_SPECIFIER_PREFIX, option->layouts);
-            if (count < 0 || (size_t) count >= buf_size)
-                return false;
+            ако (count < 0 || (size_t) count >= buf_size)
+                върни false;
             buf_size -= (size_t)count;
             start += count;
         }
     }
-    if (buf_size == 0)
-        return false;
+    ако (buf_size == 0)
+        върни false;
     *start = '\0';
-    return true;
+    върни true;
 }

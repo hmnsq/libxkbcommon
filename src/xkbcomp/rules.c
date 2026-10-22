@@ -57,34 +57,34 @@ lex(struct scanner *s, union lvalue *val)
 {
 skip_more_whitespace_and_comments:
     /* Skip spaces */
-    while (scanner_chr(s, ' ') || scanner_chr(s, '\t') || scanner_chr(s, '\r'));
+    докато (scanner_chr(s, ' ') || scanner_chr(s, '\t') || scanner_chr(s, '\r'));
 
     /* Skip comments */
-    if (scanner_lit(s, "//")) {
+    ако (scanner_lit(s, "//")) {
         scanner_skip_to_eol(s);
     }
 
     /* New line */
-    if (scanner_eol(s)) {
-        while (scanner_eol(s)) scanner_next(s);
-        return TOK_END_OF_LINE;
+    ако (scanner_eol(s)) {
+        докато (scanner_eol(s)) scanner_next(s);
+        върни TOK_END_OF_LINE;
     }
 
     /* Escaped line continuation */
-    if (scanner_chr(s, '\\')) {
+    ако (scanner_chr(s, '\\')) {
         /* Optional \r. */
         scanner_chr(s, '\r');
-        if (!scanner_eol(s)) {
+        ако (!scanner_eol(s)) {
             scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                         "illegal new line escape; must appear at end of line");
-            return TOK_ERROR;
+            върни TOK_ERROR;
         }
         scanner_next(s);
         goto skip_more_whitespace_and_comments;
     }
 
     /* See if we're done */
-    if (scanner_eof(s)) return TOK_END_OF_FILE;
+    ако (scanner_eof(s)) върни TOK_END_OF_FILE;
 
     /* New token */
     s->token_pos = s->pos;
@@ -93,52 +93,52 @@ skip_more_whitespace_and_comments:
     const char next = scanner_next(s);
     switch (next) {
     case '!':
-        return TOK_BANG;
+        върни TOK_BANG;
     case '$':
         /* Group */
         token = TOK_GROUP_NAME;
         val->string.len = 0;
         break;
     case '*':
-        if (scanner_rules_is_ident(scanner_peek(s))) {
+        ако (scanner_rules_is_ident(scanner_peek(s))) {
             /* Backtrack */
             s->pos--;
             break;
-        } else {
+        } иначе {
             /* Legacy wild card */
-            return TOK_WILD_CARD_STAR;
+            върни TOK_WILD_CARD_STAR;
         }
     case '<':
         /* Extended wild cards */
-        if (scanner_rules_lit_token(s, "none>")) return TOK_WILD_CARD_NONE;
-        if (scanner_rules_lit_token(s, "some>")) return TOK_WILD_CARD_SOME;
-        if (scanner_rules_lit_token(s, "any>")) return TOK_WILD_CARD_ANY;
+        ако (scanner_rules_lit_token(s, "none>")) върни TOK_WILD_CARD_NONE;
+        ако (scanner_rules_lit_token(s, "some>")) върни TOK_WILD_CARD_SOME;
+        ако (scanner_rules_lit_token(s, "any>")) върни TOK_WILD_CARD_ANY;
         /* No match: continue lax parsing */
         assert(scanner_rules_is_ident('<'));
         val->string.len = 1;
         break;
     case '=':
-        if (scanner_rules_is_ident(scanner_peek(s))) {
+        ако (scanner_rules_is_ident(scanner_peek(s))) {
             /* Backtrack */
             s->pos--;
             break;
-        } else {
-            return TOK_EQUALS;
+        } иначе {
+            върни TOK_EQUALS;
         }
     case 'i':
-        if (scanner_rules_lit_token(s, "nclude")) {
+        ако (scanner_rules_lit_token(s, "nclude")) {
             /* Include statement */
-            return TOK_INCLUDE;
+            върни TOK_INCLUDE;
         }
         /* Identifier */
         assert(scanner_rules_is_ident('i'));
         val->string.len = 1;
         break;
     default:
-        if (likely(scanner_rules_is_ident(next))) {
+        ако (likely(scanner_rules_is_ident(next))) {
             /* Identifier */
             val->string.len = 1;
-        } else {
+        } иначе {
             /* Invalid */
             s->pos--;
             val->string.len = 0;
@@ -155,18 +155,18 @@ skip_more_whitespace_and_comments:
     assert(scanner_rules_is_ident(')'));
     val->string.len += scanner_rules_ident_token(s);
 
-    if (unlikely(val->string.len == 0)) {
-        if (token == TOK_GROUP_NAME) {
+    ако (unlikely(val->string.len == 0)) {
+        ако (token == TOK_GROUP_NAME) {
             scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                         "unexpected character after \'$\'; expected name");
-        } else {
+        } иначе {
             scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                         "unrecognized token");
         }
-        return TOK_ERROR;
+        върни TOK_ERROR;
     }
 
-    return token;
+    върни token;
 }
 
 /***====================================================================***/
@@ -353,9 +353,9 @@ struct matcher {
 static struct sval
 strip_spaces(struct sval v)
 {
-    while (v.len > 0 && is_space(v.start[0])) { v.len--; v.start++; }
-    while (v.len > 0 && is_space(v.start[v.len - 1])) v.len--;
-    return v;
+    докато (v.len > 0 && is_space(v.start[0])) { v.len--; v.start++; }
+    докато (v.len > 0 && is_space(v.start[v.len - 1])) v.len--;
+    върни v;
 }
 
 static darray_matched_sval
@@ -369,7 +369,7 @@ split_comma_separated_mlvo(struct xkb_context *ctx,
      * least one value, e.g. "" -> { "" } and "," -> { "", "" }.
      */
 
-    if (!s) {
+    ако (!s) {
         ensure_at_least_one_value:
         /* Label followed by a declaration is a C23 extension */ ;
 
@@ -379,71 +379,71 @@ split_comma_separated_mlvo(struct xkb_context *ctx,
             .matched = 0
         };
         darray_append(arr, val);
-        return arr;
+        върни arr;
     }
 
-    while (true) {
+    докато (true) {
         struct matched_sval val = {
             .sval = SVAL(s, 0),
             .layouts = (xkb_layout_mask_t)XKB_OPTION_LAYOUT_MASK_GLOBAL,
             .matched = 0,
         };
-        while (*s != '\0' && *s != ',' && *s != OPTIONS_GROUP_SPECIFIER_PREFIX) {
+        докато (*s != '\0' && *s != ',' && *s != OPTIONS_GROUP_SPECIFIER_PREFIX) {
             s++;
             val.sval.len++;
         }
         val.sval = strip_spaces(val.sval);
 
-        if (*s == OPTIONS_GROUP_SPECIFIER_PREFIX) {
+        ако (*s == OPTIONS_GROUP_SPECIFIER_PREFIX) {
             /* Handle numeric layout index */
             s++;
             const char* const layout_start = s;
             xkb_layout_index_t layout = XKB_LAYOUT_INVALID;
 
-            int count = parse_dec_to_uint32_t(s, SIZE_MAX, &layout);
-            if (count > 0) {
+            цяло count = parse_dec_to_uint32_t(s, SIZE_MAX, &layout);
+            ако (count > 0) {
                 /* Note: 1-indexed layout */
                 s += count;
                 static_assert(XKB_MAX_GROUPS == 32, "Invalid shift");
-                if (layout == 0 || layout > XKB_MAX_GROUPS) {
+                ако (layout == 0 || layout > XKB_MAX_GROUPS) {
                     log_err(ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                             "Invalid layout index %"PRIu32" "
                             "for the RMVLO component: \"%.*s\"\n", layout,
-                            (unsigned int) val.sval.len, val.sval.start);
-                } else if (mlvo != MLVO_OPTION) {
+                            (unsigned цяло) val.sval.len, val.sval.start);
+                } иначе ако (mlvo != MLVO_OPTION) {
                     log_warn(ctx, XKB_LOG_MESSAGE_NO_ID,
                              "Layout index %"PRIu32" is not supported for "
                              "the RMLVO component: \"%.*s\"\n", layout,
-                             (unsigned int) val.sval.len, val.sval.start);
-                } else {
+                             (unsigned цяло) val.sval.len, val.sval.start);
+                } иначе {
                     val.layouts = (UINT32_C(1) << (layout - 1));
                 }
             }
 
             /* Consume until reaching next item or end of string */
             const char* const layout_index_end = s;
-            while (*s != '\0' && *s != ',') { s++; }
-            if (count <= 0 || layout_index_end != s) {
+            докато (*s != '\0' && *s != ',') { s++; }
+            ако (count <= 0 || layout_index_end != s) {
                 log_err(ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                         "Invalid layout index \"%.*s\" for the RMLVO "
                         "component \"%.*s\"; discarding specifier.\n",
-                        (unsigned int) (s - layout_start), layout_start,
-                        (unsigned int) val.sval.len, val.sval.start);
+                        (unsigned цяло) (s - layout_start), layout_start,
+                        (unsigned цяло) val.sval.len, val.sval.start);
             }
         }
 
-        if (val.sval.len || mlvo != MLVO_OPTION) {
-            if (mlvo == MLVO_OPTION) {
+        ако (val.sval.len || mlvo != MLVO_OPTION) {
+            ако (mlvo == MLVO_OPTION) {
                 /* Check for previous entry */
                 struct matched_sval *prev;
                 darray_foreach(prev, arr) {
-                    if (svaleq(prev->sval, val.sval)) {
+                    ако (svaleq(prev->sval, val.sval)) {
                         /* Merge options */
-                        if (val.layouts ==
+                        ако (val.layouts ==
                             (xkb_layout_mask_t)XKB_OPTION_LAYOUT_MASK_GLOBAL) {
                             /* Global option overrides layout-specific ones */
                             prev->layouts = val.layouts;
-                        } else if (prev->layouts != (xkb_layout_mask_t)
+                        } иначе ако (prev->layouts != (xkb_layout_mask_t)
                                    XKB_OPTION_LAYOUT_MASK_GLOBAL) {
                             /* Layout-specific option cannot override global */
                             prev->layouts |= val.layouts;
@@ -456,22 +456,22 @@ split_comma_separated_mlvo(struct xkb_context *ctx,
         }
 
 next_value:
-        if (*s == '\0') break;
-        if (*s == ',') s++;
+        ако (*s == '\0') break;
+        ако (*s == ',') s++;
     }
 
-    if (darray_empty(arr))
+    ако (darray_empty(arr))
         goto ensure_at_least_one_value;
 
-    return arr;
+    върни arr;
 }
 
 static struct matcher *
 matcher_new_from_rmlvo(const struct xkb_rmlvo_builder *rmlvo, const char **rules)
 {
     struct matcher *m = calloc(1, sizeof(*m));
-    if (!m)
-        return NULL;
+    ако (!m)
+        върни NULL;
 
     m->ctx = rmlvo->ctx;
 
@@ -488,36 +488,36 @@ matcher_new_from_rmlvo(const struct xkb_rmlvo_builder *rmlvo, const char **rules
                                                                &names);
 
     /* Initialize matcher with sanitized names, if relevant */
-    if (changed & RMLVO_RULES) {
+    ако (changed & RMLVO_RULES) {
         *rules = names.rules;
-    } else {
+    } иначе {
         *rules = rmlvo->rules;
     }
 
-    if (changed & RMLVO_MODEL) {
+    ако (changed & RMLVO_MODEL) {
         m->rmlvo.model.sval.start = names.model;
-    } else {
+    } иначе {
         m->rmlvo.model.sval.start = rmlvo->model;
     }
     m->rmlvo.model.sval.len = strlen_safe(rmlvo->model);
     m->rmlvo.model.layouts = (xkb_layout_mask_t)XKB_OPTION_LAYOUT_MASK_GLOBAL;
 
     assert((changed & RMLVO_LAYOUT) || !(changed & RMLVO_VARIANT));
-    if (changed & RMLVO_LAYOUT) {
+    ако (changed & RMLVO_LAYOUT) {
         /* Layout and variant are tied together */
         m->rmlvo.layouts = split_comma_separated_mlvo(rmlvo->ctx, MLVO_LAYOUT,
                                                       names.layout);
         m->rmlvo.variants = split_comma_separated_mlvo(rmlvo->ctx, MLVO_VARIANT,
                                                        names.variant);
-        if (darray_size(m->rmlvo.layouts) > darray_size(m->rmlvo.variants)) {
+        ако (darray_size(m->rmlvo.layouts) > darray_size(m->rmlvo.variants)) {
             /* Do not warn if no variants was provided */
-            if (!isempty(names.variant))
+            ако (!isempty(names.variant))
                 log_warn(m->ctx, XKB_LOG_MESSAGE_NO_ID,
                          "More layouts than variants: \"%s\" vs. \"%s\".\n",
                          names.layout ? names.layout : "(none)",
                          names.variant ? names.variant : "(none)");
             darray_resize0(m->rmlvo.variants, darray_size(m->rmlvo.layouts));
-        } else if (darray_size(m->rmlvo.layouts) < darray_size(m->rmlvo.variants)) {
+        } иначе ако (darray_size(m->rmlvo.layouts) < darray_size(m->rmlvo.variants)) {
             log_err(m->ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Less layouts than variants: \"%s\" vs. \"%s\".\n",
                     names.layout ? names.layout : "(none)",
@@ -525,7 +525,7 @@ matcher_new_from_rmlvo(const struct xkb_rmlvo_builder *rmlvo, const char **rules
             darray_resize(m->rmlvo.variants, darray_size(m->rmlvo.layouts));
             darray_shrink(m->rmlvo.variants);
         }
-    } else {
+    } иначе {
         struct xkb_rmlvo_builder_layout *layout;
         darray_foreach(layout, rmlvo->layouts) {
             struct matched_sval val = {
@@ -540,10 +540,10 @@ matcher_new_from_rmlvo(const struct xkb_rmlvo_builder *rmlvo, const char **rules
         }
     }
 
-    if (changed & RMLVO_OPTIONS) {
+    ако (changed & RMLVO_OPTIONS) {
         m->rmlvo.options = split_comma_separated_mlvo(rmlvo->ctx, MLVO_OPTION,
                                                       names.options);
-    } else {
+    } иначе {
         struct xkb_rmlvo_builder_option *option;
         darray_foreach(option, rmlvo->options) {
             struct matched_sval val = {
@@ -555,7 +555,7 @@ matcher_new_from_rmlvo(const struct xkb_rmlvo_builder *rmlvo, const char **rules
         }
     }
 
-    return m;
+    върни m;
 }
 
 static struct matcher *
@@ -563,8 +563,8 @@ matcher_new_from_names(struct xkb_context *ctx,
             const struct xkb_rule_names *rmlvo)
 {
     struct matcher *m = calloc(1, sizeof(*m));
-    if (!m)
-        return NULL;
+    ако (!m)
+        върни NULL;
 
     m->ctx = ctx;
     m->rmlvo.model.sval.start = rmlvo->model;
@@ -574,15 +574,15 @@ matcher_new_from_names(struct xkb_context *ctx,
     m->rmlvo.variants = split_comma_separated_mlvo(ctx, MLVO_VARIANT, rmlvo->variant);
     m->rmlvo.options = split_comma_separated_mlvo(ctx, MLVO_OPTION, rmlvo->options);
 
-    if (darray_size(m->rmlvo.layouts) > darray_size(m->rmlvo.variants)) {
+    ако (darray_size(m->rmlvo.layouts) > darray_size(m->rmlvo.variants)) {
         /* Do not warn if no variants was provided */
-        if (!isempty(rmlvo->variant))
+        ако (!isempty(rmlvo->variant))
             log_warn(ctx, XKB_LOG_MESSAGE_NO_ID,
                      "More layouts than variants: \"%s\" vs. \"%s\".\n",
                      rmlvo->layout ? rmlvo->layout : "(none)",
                      rmlvo->variant ? rmlvo->variant : "(none)");
         darray_resize0(m->rmlvo.variants, darray_size(m->rmlvo.layouts));
-    } else if (darray_size(m->rmlvo.layouts) < darray_size(m->rmlvo.variants)) {
+    } иначе ако (darray_size(m->rmlvo.layouts) < darray_size(m->rmlvo.variants)) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "Less layouts than variants: \"%s\" vs. \"%s\".\n",
                 rmlvo->layout ? rmlvo->layout : "(none)",
@@ -591,14 +591,14 @@ matcher_new_from_names(struct xkb_context *ctx,
         darray_shrink(m->rmlvo.variants);
     }
 
-    return m;
+    върни m;
 }
 
 static void
 matcher_free(struct matcher *m)
 {
-    if (!m)
-        return;
+    ако (!m)
+        върни;
     darray_free(m->rmlvo.layouts);
     darray_free(m->rmlvo.variants);
     darray_free(m->rmlvo.options);
@@ -607,7 +607,7 @@ matcher_free(struct matcher *m)
         darray_free(group->elements);
     darray_free(m->pending_kccgst.buffer);
     darray_free(m->pending_kccgst.slices);
-    for (kccgst_index_t i = 0; i < (kccgst_index_t) _KCCGST_NUM_ENTRIES; i++)
+    за (kccgst_index_t i = 0; i < (kccgst_index_t) _KCCGST_NUM_ENTRIES; i++)
         darray_free(m->kccgst[i]);
     darray_free(m->groups);
     free(m);
@@ -631,21 +631,21 @@ matcher_group_add_element(struct matcher *m, struct scanner *s,
 static bool
 read_rules_file(struct xkb_context *ctx,
                 struct matcher *matcher,
-                unsigned int include_depth,
+                unsigned цяло include_depth,
                 FILE *file,
                 const char *path);
 
 static void
 matcher_include(struct matcher *m, struct scanner *parent_scanner,
-                unsigned int include_depth,
+                unsigned цяло include_depth,
                 struct sval inc)
 {
-    if (include_depth >= MAX_INCLUDE_DEPTH) {
+    ако (include_depth >= MAX_INCLUDE_DEPTH) {
         scanner_err(parent_scanner, XKB_LOG_MESSAGE_NO_ID,
                     "maximum include depth (%u) exceeded; "
                     "maybe there is an include loop?",
                     MAX_INCLUDE_DEPTH);
-        return;
+        върни;
     }
 
     const char *stmt_file = inc.start;
@@ -657,10 +657,10 @@ matcher_include(struct matcher *m, struct scanner *parent_scanner,
                                          stmt_file, stmt_file_len,
                                          FILE_TYPE_RULES,
                                          buf, sizeof(buf));
-    if (expanded < 0) {
+    ако (expanded < 0) {
         /* Error */
-        return;
-    } else if (expanded > 0) {
+        върни;
+    } иначе ако (expanded > 0) {
         /* %-expanded */
         stmt_file = buf;
         stmt_file_len = (size_t) expanded;
@@ -669,31 +669,31 @@ matcher_include(struct matcher *m, struct scanner *parent_scanner,
 
     /* Lookup the first candidate */
     FILE* file;
-    unsigned int offset = 0;
+    unsigned цяло offset = 0;
     const bool absolute_path = is_absolute_path(stmt_file);
-    if (absolute_path) {
+    ако (absolute_path) {
         /* Absolute path: no need for lookup in XKB paths */
-        if (!expanded) {
+        ако (!expanded) {
             /* No %expansion: ensure it’s NULL-terminated */
-            if (stmt_file_len < sizeof(buf)) {
+            ако (stmt_file_len < sizeof(buf)) {
                 memcpy(buf, stmt_file, stmt_file_len);
                 buf[stmt_file_len] = '\0';
                 stmt_file = buf;
-            } else {
+            } иначе {
                 log_err(m->ctx, XKB_ERROR_INVALID_PATH,
                         "Path is too long: %zu > %zu, got raw path: %.*s\n",
                         stmt_file_len, sizeof(buf),
-                        (unsigned int) stmt_file_len, stmt_file);
-                return;
+                        (unsigned цяло) stmt_file_len, stmt_file);
+                върни;
             }
-        } else {
+        } иначе {
             /* %-expansion is always NULL-terminated */
             assert(stmt_file[stmt_file_len] == '\0');
         }
         file = fopen(stmt_file, "rb");
-    } else {
+    } иначе {
         /* Relative path: lookup the first XKB path */
-        if (unlikely(expanded)) {
+        ако (unlikely(expanded)) {
             /*
              * Relative path after expansion
              *
@@ -707,25 +707,25 @@ matcher_include(struct matcher *m, struct scanner *parent_scanner,
              * we simply make the lookup fail.
              */
             file = NULL;
-        } else {
+        } иначе {
             file = FindFileInXkbPath(m->ctx, parent_scanner->file_name,
                                      stmt_file, stmt_file_len, FILE_TYPE_RULES,
                                      buf, sizeof(buf), &offset, true);
         }
     }
 
-    while (file) {
+    докато (file) {
         assert(strlen_safe(buf) < sizeof(buf));
         bool ret = read_rules_file(m->ctx, m, include_depth + 1, file, buf);
         fclose(file);
-        if (ret)
-            return;
+        ако (ret)
+            върни;
         /* Failed to parse rules or get all the components */
         log_err(m->ctx, XKB_LOG_MESSAGE_NO_ID,
                 "No components returned from included XKB rules \"%s\"\n",
                 buf);
 
-        if (absolute_path) {
+        ако (absolute_path) {
             /* There is no point to search further if the path is absolute */
             break;
         }
@@ -739,15 +739,15 @@ matcher_include(struct matcher *m, struct scanner *parent_scanner,
 
     log_err(m->ctx, XKB_LOG_MESSAGE_NO_ID,
             "Failed to open included XKB rules \"%.*s\"\n",
-            (unsigned int) stmt_file_len, stmt_file);
+            (unsigned цяло) stmt_file_len, stmt_file);
 }
 
 static void
 matcher_mapping_start_new(struct matcher *m)
 {
-    for (mlvo_index_t i = 0; i < (mlvo_index_t) _MLVO_NUM_ENTRIES; i++)
+    за (mlvo_index_t i = 0; i < (mlvo_index_t) _MLVO_NUM_ENTRIES; i++)
         m->mapping.mlvo_at_pos[i] = _MLVO_NUM_ENTRIES;
-    for (kccgst_index_t i = 0; i < (kccgst_index_t) _KCCGST_NUM_ENTRIES; i++)
+    за (kccgst_index_t i = 0; i < (kccgst_index_t) _KCCGST_NUM_ENTRIES; i++)
         m->mapping.kccgst_at_pos[i] = _KCCGST_NUM_ENTRIES;
     m->mapping.has_multiple_layouts = false;
     m->mapping.layout_idx = m->mapping.variant_idx = XKB_LAYOUT_INVALID;
@@ -758,41 +758,41 @@ matcher_mapping_start_new(struct matcher *m)
 }
 
 /** Caller must check prefix `[` and initialize `out` to XKB_LAYOUT_INVALID */
-static int
+static цяло
 parse_layout_int_index_tail(const char *s, size_t max_len,
                             xkb_layout_index_t *out)
 {
-    if (max_len < 3)
-        return -1;
+    ако (max_len < 3)
+        върни -1;
     uint32_t val = 0;
-    const int count = parse_dec_to_uint32_t(&s[1], max_len - 2, &val);
-    if (count <= 0 || s[1 + count] != ']' || val == 0 || val > XKB_MAX_GROUPS)
-        return -1;
+    const цяло count = parse_dec_to_uint32_t(&s[1], max_len - 2, &val);
+    ако (count <= 0 || s[1 + count] != ']' || val == 0 || val > XKB_MAX_GROUPS)
+        върни -1;
     /* To zero-based index. */
     *out = val - 1;
-    return count + 2; /* == length "[index]" */
+    върни count + 2; /* == length "[index]" */
 }
 
 /* Parse Kccgst layout index:
  * "[%i]" or "[n]", where "n" is a decimal number */
-static int
+static цяло
 extract_layout_index(const char *s, size_t max_len, xkb_layout_index_t *out)
 {
     /* This function is pretty stupid, but works for now. */
     *out = XKB_LAYOUT_INVALID;
-    if (max_len < 3 || s[0] != '[')
-        return -1;
-    if (s[2] == ']' && s[1] >= '1' && s[1] <= '9') {
+    ако (max_len < 3 || s[0] != '[')
+        върни -1;
+    ако (s[2] == ']' && s[1] >= '1' && s[1] <= '9') {
         /* Small numeric index */
         *out = (xkb_layout_index_t)(s[1] - '1');
-        return 3;
+        върни 3;
     }
-    if (max_len > 3 && s[1] == '%' && s[2] == 'i' && s[3] == ']') {
+    ако (max_len > 3 && s[1] == '%' && s[2] == 'i' && s[3] == ']') {
         /* Special index: %i */
-        return 4; /* == length "[%i]" */
+        върни 4; /* == length "[%i]" */
     }
     /* Fallback: any numeric index (unlikely) */
-    return parse_layout_int_index_tail(s, max_len, out);
+    върни parse_layout_int_index_tail(s, max_len, out);
 }
 
 /* Special layout indices */
@@ -825,15 +825,15 @@ extract_mapping_layout_index(const char *s, size_t max_len,
                              xkb_layout_index_t *out)
 {
     /* Check for minimal `[` + index + `]` */
-    if (max_len < 3 || s[0] != '[') {
+    ако (max_len < 3 || s[0] != '[') {
         *out = XKB_LAYOUT_INVALID;
-        return false;
+        върни false;
     }
 
     /* Small numeric index */
-    if (max_len == 3 && s[2] == ']' && s[1] >= '1' && s[1] <= '9') {
+    ако (max_len == 3 && s[2] == ']' && s[1] >= '1' && s[1] <= '9') {
         *out = (xkb_layout_index_t)(s[1] - '1');
-        return true;
+        върни true;
     }
 
     /* Named indices ranges */
@@ -852,24 +852,24 @@ extract_mapping_layout_index(const char *s, size_t max_len,
         #undef INDEX_RANGE
     };
 
-    for (size_t k = 0; k < ARRAY_SIZE(names); k++) {
-        if (max_len == names[k].size &&
+    за (size_t k = 0; k < ARRAY_SIZE(names); k++) {
+        ако (max_len == names[k].size &&
             memcmp(&s[1], names[k].name, names[k].size - 1) == 0) {
             *out = names[k].value;
-            return true;
+            върни true;
         }
     }
 
     /* Fallback: any numeric index (unlikely) */
     *out = XKB_LAYOUT_INVALID;
-    const int count = parse_layout_int_index_tail(s, max_len, out);
-    return count > 0 && (size_t)count == max_len;
+    const цяло count = parse_layout_int_index_tail(s, max_len, out);
+    върни count > 0 && (size_t)count == max_len;
 }
 
 static inline bool
 is_mlvo_mask_defined(struct matcher *m, enum rules_mlvo mlvo)
 {
-    return m->mapping.defined_mlvo_mask & (1u << mlvo);
+    върни m->mapping.defined_mlvo_mask & (1u << mlvo);
 }
 
 static void
@@ -879,75 +879,75 @@ matcher_mapping_set_mlvo(struct matcher *m, struct scanner *s,
     enum rules_mlvo mlvo;
     struct sval mlvo_sval;
 
-    for (mlvo = 0; mlvo < _MLVO_NUM_ENTRIES; mlvo++) {
+    за (mlvo = 0; mlvo < _MLVO_NUM_ENTRIES; mlvo++) {
         mlvo_sval = rules_mlvo_svals[mlvo];
 
-        if (svaleq_prefix(mlvo_sval, ident))
+        ако (svaleq_prefix(mlvo_sval, ident))
             break;
     }
 
     /* Not found. */
-    if (mlvo >= _MLVO_NUM_ENTRIES) {
+    ако (mlvo >= _MLVO_NUM_ENTRIES) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid mapping: \"%.*s\" is not a valid value here; "
                     "ignoring rule set",
-                    (unsigned int) ident.len, ident.start);
+                    (unsigned цяло) ident.len, ident.start);
         m->mapping.active = false;
-        return;
+        върни;
     }
 
-    if (is_mlvo_mask_defined(m, mlvo)) {
+    ако (is_mlvo_mask_defined(m, mlvo)) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid mapping: \"%.*s\" appears twice on the same line; "
                     "ignoring rule set",
-                    (unsigned int) mlvo_sval.len, mlvo_sval.start);
+                    (unsigned цяло) mlvo_sval.len, mlvo_sval.start);
         m->mapping.active = false;
-        return;
+        върни;
     }
 
     /* If there are leftovers still, it must be an index. */
-    if (mlvo_sval.len < ident.len) {
+    ако (mlvo_sval.len < ident.len) {
         xkb_layout_index_t idx;
-        if (!extract_mapping_layout_index(ident.start + mlvo_sval.len,
+        ако (!extract_mapping_layout_index(ident.start + mlvo_sval.len,
                                           ident.len - mlvo_sval.len, &idx)) {
             scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                         "invalid mapping: \"%.*s\" may only be followed by a "
                         "valid group index; ignoring rule set",
-                        (unsigned int) mlvo_sval.len, mlvo_sval.start);
+                        (unsigned цяло) mlvo_sval.len, mlvo_sval.start);
             m->mapping.active = false;
-            return;
+            върни;
         }
 
-        if (mlvo == MLVO_LAYOUT) {
+        ако (mlvo == MLVO_LAYOUT) {
             m->mapping.layout_idx = idx;
         }
-        else if (mlvo == MLVO_VARIANT) {
+        иначе ако (mlvo == MLVO_VARIANT) {
             m->mapping.variant_idx = idx;
         }
-        else {
+        иначе {
             scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                         "invalid mapping: \"%.*s\" cannot be followed by a group "
                         "index; ignoring rule set",
-                        (unsigned int) mlvo_sval.len, mlvo_sval.start);
+                        (unsigned цяло) mlvo_sval.len, mlvo_sval.start);
             m->mapping.active = false;
-            return;
+            върни;
         }
-    } else if (mlvo == MLVO_LAYOUT) {
+    } иначе ако (mlvo == MLVO_LAYOUT) {
         m->mapping.layout_idx = (xkb_layout_index_t) LAYOUT_INDEX_SINGLE;
-    } else if (mlvo == MLVO_VARIANT) {
+    } иначе ако (mlvo == MLVO_VARIANT) {
         m->mapping.variant_idx = (xkb_layout_index_t) LAYOUT_INDEX_SINGLE;
     }
 
     /* Check that if both layout and variant are defined, then they must have
      * the same index */
-    if (((mlvo == MLVO_LAYOUT && is_mlvo_mask_defined(m, MLVO_VARIANT)) ||
+    ако (((mlvo == MLVO_LAYOUT && is_mlvo_mask_defined(m, MLVO_VARIANT)) ||
          (mlvo == MLVO_VARIANT && is_mlvo_mask_defined(m, MLVO_LAYOUT))) &&
         m->mapping.layout_idx != m->mapping.variant_idx) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid mapping: \"layout\" index must be the same as the "
                     "\"variant\" index");
         m->mapping.active = false;
-        return;
+        върни;
     }
 
     m->mapping.mlvo_at_pos[m->mapping.num_mlvo] = mlvo;
@@ -1014,30 +1014,30 @@ matcher_mapping_set_kccgst(struct matcher *m, struct scanner *s, struct sval ide
     enum rules_kccgst kccgst;
     struct sval kccgst_sval;
 
-    for (kccgst = 0; kccgst < _KCCGST_NUM_ENTRIES; kccgst++) {
+    за (kccgst = 0; kccgst < _KCCGST_NUM_ENTRIES; kccgst++) {
         kccgst_sval = rules_kccgst_svals[kccgst];
 
-        if (svaleq(rules_kccgst_svals[kccgst], ident))
+        ако (svaleq(rules_kccgst_svals[kccgst], ident))
             break;
     }
 
     /* Not found. */
-    if (kccgst >= _KCCGST_NUM_ENTRIES) {
+    ако (kccgst >= _KCCGST_NUM_ENTRIES) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid mapping: \"%.*s\" is not a valid value here; "
                     "ignoring rule set",
-                    (unsigned int) ident.len, ident.start);
+                    (unsigned цяло) ident.len, ident.start);
         m->mapping.active = false;
-        return;
+        върни;
     }
 
-    if (m->mapping.defined_kccgst_mask & (1u << kccgst)) {
+    ако (m->mapping.defined_kccgst_mask & (1u << kccgst)) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid mapping: \"%.*s\" appears twice on the same line; "
                     "ignoring rule set",
-                    (unsigned int) kccgst_sval.len, kccgst_sval.start);
+                    (unsigned цяло) kccgst_sval.len, kccgst_sval.start);
         m->mapping.active = false;
-        return;
+        върни;
     }
 
     m->mapping.kccgst_at_pos[m->mapping.num_kccgst] = kccgst;
@@ -1048,14 +1048,14 @@ matcher_mapping_set_kccgst(struct matcher *m, struct scanner *s, struct sval ide
 static bool
 matcher_mapping_verify(struct matcher *m, struct scanner *s)
 {
-    if (m->mapping.num_mlvo == 0) {
+    ако (m->mapping.num_mlvo == 0) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid mapping: must have at least one value on the left "
                     "hand side; ignoring rule set");
         goto skip;
     }
 
-    if (m->mapping.num_kccgst == 0) {
+    ако (m->mapping.num_kccgst == 0) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid mapping: must have at least one value on the right "
                     "hand side; ignoring rule set");
@@ -1067,19 +1067,19 @@ matcher_mapping_verify(struct matcher *m, struct scanner *s)
      * See the "Notes" section in the overview above.
      */
 
-    if (is_mlvo_mask_defined(m, MLVO_LAYOUT)) {
+    ако (is_mlvo_mask_defined(m, MLVO_LAYOUT)) {
         assert(m->mapping.layout_idx != XKB_LAYOUT_INVALID);
         switch (m->mapping.layout_idx) {
             case LAYOUT_INDEX_SINGLE:
                 /* Layout rule without index matches when
                  * exactly 1 layout is specified */
-                if (darray_size(m->rmlvo.layouts) > 1)
+                ако (darray_size(m->rmlvo.layouts) > 1)
                     goto skip;
                 break;
             case LAYOUT_INDEX_MULTIPLE:
             case LAYOUT_INDEX_LATER:
                 /* Layout rule matches when at least 2 layouts are specified */
-                if (darray_size(m->rmlvo.layouts) < 2)
+                ако (darray_size(m->rmlvo.layouts) < 2)
                     goto skip;
                 break;
             case LAYOUT_INDEX_ANY:
@@ -1089,19 +1089,19 @@ matcher_mapping_verify(struct matcher *m, struct scanner *s)
             default:
                 /* Layout rule with index matches when at least 2 layouts are
                  * specified. Index must be in valid range. */
-                if (darray_size(m->rmlvo.layouts) < 2 ||
+                ако (darray_size(m->rmlvo.layouts) < 2 ||
                     m->mapping.layout_idx >= darray_size(m->rmlvo.layouts))
                     goto skip;
         }
     }
 
-    if (is_mlvo_mask_defined(m, MLVO_VARIANT)) {
+    ако (is_mlvo_mask_defined(m, MLVO_VARIANT)) {
         assert(m->mapping.variant_idx != XKB_LAYOUT_INVALID);
         switch (m->mapping.variant_idx) {
             case LAYOUT_INDEX_SINGLE:
                 /* Variant rule without index matches
                  * when exactly 1 variant is specified */
-                if (darray_size(m->rmlvo.variants) > 1)
+                ако (darray_size(m->rmlvo.variants) > 1)
                     goto skip;
                 break;
             case LAYOUT_INDEX_ANY:
@@ -1112,17 +1112,17 @@ matcher_mapping_verify(struct matcher *m, struct scanner *s)
             default:
                 /* Variant rule with index matches when at least 2 variants are
                  * specified. Index must be in valid range. */
-                if (darray_size(m->rmlvo.variants) < 2 ||
+                ако (darray_size(m->rmlvo.variants) < 2 ||
                     m->mapping.variant_idx >= darray_size(m->rmlvo.variants))
                     goto skip;
         }
     }
 
-    return true;
+    върни true;
 
 skip:
     m->mapping.active = false;
-    return false;
+    върни false;
 }
 
 static void
@@ -1137,12 +1137,12 @@ matcher_rule_set_mlvo_common(struct matcher *m, struct scanner *s,
                              struct sval ident,
                              enum mlvo_match_type match_type)
 {
-    if (m->rule.num_mlvo_values >= m->mapping.num_mlvo) {
+    ако (m->rule.num_mlvo_values >= m->mapping.num_mlvo) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid rule: has more values than the mapping line; "
                     "ignoring rule");
         m->rule.skip = true;
-        return;
+        върни;
     }
     m->rule.match_type_at_pos[m->rule.num_mlvo_values] = match_type;
     m->rule.mlvo_value_at_pos[m->rule.num_mlvo_values] = ident;
@@ -1175,12 +1175,12 @@ static void
 matcher_rule_set_kccgst(struct matcher *m, struct scanner *s,
                         struct sval ident)
 {
-    if (m->rule.num_kccgst_values >= m->mapping.num_kccgst) {
+    ако (m->rule.num_kccgst_values >= m->mapping.num_kccgst) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid rule: has more values than the mapping line; "
                     "ignoring rule");
         m->rule.skip = true;
-        return;
+        върни;
     }
     m->rule.kccgst_value_at_pos[m->rule.num_kccgst_values] = ident;
     m->rule.num_kccgst_values++;
@@ -1194,26 +1194,26 @@ match_group(struct matcher *m, struct sval group_name, struct sval to)
     bool found = false;
 
     darray_foreach(group, m->groups) {
-        if (svaleq(group->name, group_name)) {
+        ако (svaleq(group->name, group_name)) {
             found = true;
             break;
         }
     }
 
-    if (!found) {
+    ако (!found) {
         /*
          * rules/evdev intentionally uses some undeclared group names
          * in rules (e.g. commented group definitions which may be
          * uncommented if needed). So we continue silently.
          */
-        return false;
+        върни false;
     }
 
     darray_foreach(element, group->elements)
-        if (svaleq(to, *element))
-            return true;
+        ако (svaleq(to, *element))
+            върни true;
 
-    return false;
+    върни false;
 }
 
 static bool
@@ -1224,19 +1224,19 @@ match_value(struct matcher *m, const struct sval val, const struct sval to,
     switch (match_type) {
         case MLVO_MATCH_WILDCARD_LEGACY:
             /* Match empty values only if explicitly required */
-            return wildcard_type == WILDCARD_MATCH_ALL || !!to.len;
+            върни wildcard_type == WILDCARD_MATCH_ALL || !!to.len;
         case MLVO_MATCH_WILDCARD_NONE:
-            return !to.len;
+            върни !to.len;
         case MLVO_MATCH_WILDCARD_SOME:
-            return !!to.len;
+            върни !!to.len;
         case MLVO_MATCH_WILDCARD_ANY:
             /* Contrary to the legacy ‘*’, this wild card *always* matches */
-            return true;
+            върни true;
         case MLVO_MATCH_GROUP:
-            return match_group(m, val, to);
+            върни match_group(m, val, to);
         default:
             assert(match_type == MLVO_MATCH_NORMAL);
-            return svaleq(val, to);
+            върни svaleq(val, to);
     }
 }
 
@@ -1247,9 +1247,9 @@ match_value_and_mark(struct matcher *m, const struct sval val,
                      xkb_layout_mask_t layouts)
 {
     bool matched = match_value(m, val, to->sval, match_type, wildcard_type);
-    if (matched)
+    ако (matched)
         to->matched |= layouts;
-    return matched;
+    върни matched;
 }
 
 /*
@@ -1273,10 +1273,10 @@ expand_rmlvo_in_kccgst_value(struct matcher *m, struct scanner *s,
     struct matched_sval *expanded_value;
 
     /* %i not as layout/variant index "%l[%i]" but as qualifier ":%i" */
-    if (str[*i] == 'i' &&
+    ако (str[*i] == 'i' &&
         (*i + 1 == value.len || is_merge_mode_prefix(str[*i + 1])))
     {
-        if (layout_idx == XKB_LAYOUT_INVALID) {
+        ако (layout_idx == XKB_LAYOUT_INVALID) {
             scanner_err(
                 s, XKB_ERROR_RULES_INVALID_LAYOUT_INDEX_PERCENT_EXPANSION,
                 "Invalid %%i in %%-expansion: there is no corresponding "
@@ -1286,22 +1286,22 @@ expand_rmlvo_in_kccgst_value(struct matcher *m, struct scanner *s,
         }
         (*i)++;
         char index_str[MAX_LAYOUT_INDEX_STR_LENGTH + 1];
-        const int count = snprintf(index_str, sizeof(index_str), "%"PRIu32,
+        const цяло count = snprintf(index_str, sizeof(index_str), "%"PRIu32,
                                    layout_idx + 1);
         assert(count > 0); /* See MAX_LAYOUT_INDEX_STR_LENGTH */
         darray_appends_nullterminate(*expanded, index_str, (darray_size_t)count);
-        return true;
+        върни true;
     }
 
     pfx = sfx = 0;
 
     /* Check for prefix. */
-    if (str[*i] == '(' ||
+    ако (str[*i] == '(' ||
         is_merge_mode_prefix(str[*i]) ||
         str[*i] == '_' || str[*i] == '-') {
         pfx = str[*i];
-        if (str[*i] == '(') sfx = ')';
-        if (++(*i) >= value.len) goto error;
+        ако (str[*i] == '(') sfx = ')';
+        ако (++(*i) >= value.len) goto error;
     }
 
     /* Mandatory model/layout/variant specifier. */
@@ -1315,17 +1315,17 @@ expand_rmlvo_in_kccgst_value(struct matcher *m, struct scanner *s,
     /* Check for index. */
     idx = XKB_LAYOUT_INVALID;
     bool variable_index = false;
-    if (*i < value.len && str[*i] == '[') {
-        if (mlv != MLVO_LAYOUT && mlv != MLVO_VARIANT) {
+    ако (*i < value.len && str[*i] == '[') {
+        ако (mlv != MLVO_LAYOUT && mlv != MLVO_VARIANT) {
             scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                         "invalid index in %%-expansion; "
                         "may only index layout or variant");
             goto error;
         }
 
-        int consumed = extract_layout_index(str + (*i), value.len - (*i), &idx);
-        if (consumed <= 0) goto error;
-        if (idx == XKB_LAYOUT_INVALID) {
+        цяло consumed = extract_layout_index(str + (*i), value.len - (*i), &idx);
+        ако (consumed <= 0) goto error;
+        ако (idx == XKB_LAYOUT_INVALID) {
             /* %i encountered */
             assert(layout_idx != XKB_LAYOUT_INVALID);
             idx = layout_idx;
@@ -1335,56 +1335,56 @@ expand_rmlvo_in_kccgst_value(struct matcher *m, struct scanner *s,
     }
 
     /* Check for suffix, if there supposed to be one. */
-    if (sfx != 0) {
-        if (*i >= value.len) goto error;
-        if (str[(*i)++] != sfx) goto error;
+    ако (sfx != 0) {
+        ако (*i >= value.len) goto error;
+        ако (str[(*i)++] != sfx) goto error;
     }
 
     /* Get the expanded value. */
     expanded_value = NULL;
 
-    if (mlv == MLVO_LAYOUT) {
-        if (idx == XKB_LAYOUT_INVALID) {
+    ако (mlv == MLVO_LAYOUT) {
+        ако (idx == XKB_LAYOUT_INVALID) {
             /* No index provided: match only if single layout */
-            if (darray_size(m->rmlvo.layouts) == 1)
+            ако (darray_size(m->rmlvo.layouts) == 1)
                 expanded_value = &darray_item(m->rmlvo.layouts, 0);
         /* Some index provided: expand only if it is %i or
          * if there are multiple layouts */
-        } else if (idx < darray_size(m->rmlvo.layouts) &&
+        } иначе ако (idx < darray_size(m->rmlvo.layouts) &&
                    (variable_index || darray_size(m->rmlvo.layouts) > 1)) {
                 expanded_value = &darray_item(m->rmlvo.layouts, idx);
         }
     }
-    else if (mlv == MLVO_VARIANT) {
-        if (idx == XKB_LAYOUT_INVALID) {
+    иначе ако (mlv == MLVO_VARIANT) {
+        ако (idx == XKB_LAYOUT_INVALID) {
             /* No index provided: match only if single variant */
-            if (darray_size(m->rmlvo.variants) == 1)
+            ако (darray_size(m->rmlvo.variants) == 1)
                 expanded_value = &darray_item(m->rmlvo.variants, 0);
         /* Some index provided: expand only if it is %i or
          * if there are multiple variants */
-        } else if (idx < darray_size(m->rmlvo.variants) &&
+        } иначе ако (idx < darray_size(m->rmlvo.variants) &&
                    (variable_index || darray_size(m->rmlvo.variants) > 1)) {
                 expanded_value = &darray_item(m->rmlvo.variants, idx);
         }
     }
-    else if (mlv == MLVO_MODEL) {
+    иначе ако (mlv == MLVO_MODEL) {
         expanded_value = &m->rmlvo.model;
     }
 
     /* If we didn't get one, skip silently. */
-    if (!expanded_value || expanded_value->sval.len == 0) {
-        return true;
+    ако (!expanded_value || expanded_value->sval.len == 0) {
+        върни true;
     }
 
-    if (pfx != 0)
+    ако (pfx != 0)
         darray_appends_nullterminate(*expanded, &pfx, 1);
     darray_appends_nullterminate(*expanded,
                                  expanded_value->sval.start,
                                  (darray_size_t) expanded_value->sval.len);
-    if (sfx != 0)
+    ако (sfx != 0)
         darray_appends_nullterminate(*expanded, &sfx, 1);
 
-    if (mlv != MLVO_LAYOUT && mlv != MLVO_VARIANT) {
+    ако (mlv != MLVO_LAYOUT && mlv != MLVO_VARIANT) {
         static_assert(XKB_MAX_GROUPS == 32 &&
                       XKB_MAX_GROUPS < XKB_LAYOUT_INVALID,
                       "Invalid shift");
@@ -1392,16 +1392,16 @@ expand_rmlvo_in_kccgst_value(struct matcher *m, struct scanner *s,
             ? 0x1 /* default to first layout */
             : (UINT32_C(1) << idx);
         expanded_value->matched |= layouts;
-    } else {
+    } иначе {
         expanded_value->matched |= (xkb_layout_mask_t)GLOBAL_MATCHED_LAYOUTS;
     }
 
-    return true;
+    върни true;
 
 error:
     scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                 "invalid %%-expansion in value; not used");
-    return false;
+    върни false;
 }
 
 /*
@@ -1418,32 +1418,32 @@ expand_qualifier_in_kccgst_value(
     const char *str = value.start;
 
     /* “all” followed by nothing or by a layout separator */
-    if (*i + 2 < value.len &&
+    ако (*i + 2 < value.len &&
         str[*i] == 'a' && str[*i + 1] == 'l' && str[*i + 2] == 'l' &&
         (*i + 3 == value.len || is_merge_mode_prefix(str[*i + 3]))) {
-        if (has_layout_idx_range)
+        ако (has_layout_idx_range)
             scanner_vrb(s, XKB_LOG_VERBOSITY_DETAILED, XKB_LOG_MESSAGE_NO_ID,
                         "Using :all qualifier with indices range "
                         "is not recommended.");
         /* Add at least one layout */
         darray_appends_nullterminate(*expanded, "1", 1);
         /* Check for more layouts (slow path) */
-        if (darray_size(m->rmlvo.layouts) > 1) {
+        ако (darray_size(m->rmlvo.layouts) > 1) {
             char layout_index[MAX_LAYOUT_INDEX_STR_LENGTH + 1];
             const darray_size_t prefix_length =
                 darray_size(*expanded) - prefix_idx - 1;
-            for (xkb_layout_index_t l = 1;
+            за (xkb_layout_index_t l = 1;
                  l < MIN(XKB_MAX_GROUPS, darray_size(m->rmlvo.layouts));
                  l++)
             {
-                if (!has_separator)
+                ако (!has_separator)
                     darray_append(*expanded, MERGE_DEFAULT_PREFIX);
                 /* Append prefix */
                 darray_appends_nullterminate(*expanded,
                                              &darray_item(*expanded, prefix_idx),
                                              prefix_length);
                 /* Append index */
-                const int count = snprintf(layout_index, sizeof(layout_index),
+                const цяло count = snprintf(layout_index, sizeof(layout_index),
                                            "%"PRIu32, l + 1);
                 assert(count > 0); /* See MAX_LAYOUT_INDEX_STR_LENGTH */
                 darray_appends_nullterminate(*expanded, layout_index,
@@ -1457,7 +1457,7 @@ expand_qualifier_in_kccgst_value(
 static inline void
 #ifdef _MSC_VER
 concat_kccgst(darray_char *into, darray_size_t size, _In_reads_(size) const char* from)
-#else
+#иначе
 concat_kccgst(darray_char *into, darray_size_t size, const char from[static size])
 #endif
 {
@@ -1468,13 +1468,13 @@ concat_kccgst(darray_char *into, darray_size_t size, const char from[static size
      * Appending +bar to +foo -> +foo+bar
      */
     const bool from_plus = is_merge_mode_prefix(from[0]);
-    if (from_plus || darray_empty(*into)) {
+    ако (from_plus || darray_empty(*into)) {
         darray_appends_nullterminate(*into, from, size);
-    } else {
+    } иначе {
         const char ch =
             (char) (darray_empty(*into) ? '\0' : darray_item(*into, 0));
         const bool into_plus = is_merge_mode_prefix(ch);
-        if (into_plus)
+        ако (into_plus)
             darray_prepends_nullterminate(*into, from, size);
     }
 }
@@ -1493,7 +1493,7 @@ append_expanded_kccgst_value(struct matcher *m, struct scanner *s,
     darray_size_t last_item_idx = 0;
     bool has_separator = false;
 
-    for (size_t i = 0; i < value.len; ) {
+    за (size_t i = 0; i < value.len; ) {
         /* Check if that's a start of an expansion or qualifier */
         switch (str[i]) {
             /* Qualifier */
@@ -1507,7 +1507,7 @@ append_expanded_kccgst_value(struct matcher *m, struct scanner *s,
             /* Expansion */
             case '%':
                 i++;
-                if (i >= value.len ||
+                ако (i >= value.len ||
                     !expand_rmlvo_in_kccgst_value(m, s, value, layout_idx,
                                                   &expanded, &i))
                         goto error;
@@ -1527,44 +1527,44 @@ append_expanded_kccgst_value(struct matcher *m, struct scanner *s,
     }
 
     /* See note: “Layout index ranges and merging KcCGST values” */
-    if (merge) {
-        if (!darray_empty(expanded))
+    ако (merge) {
+        ако (!darray_empty(expanded))
             concat_kccgst(to, darray_size(expanded), darray_items(expanded));
-    } else {
+    } иначе {
         darray_concat(*to, expanded);
     }
     darray_free(expanded);
-    return true;
+    върни true;
 
 error:
     darray_free(expanded);
-    return false;
+    върни false;
 }
 
 static bool
 matcher_append_pending_kccgst(struct matcher *m)
 {
-    if (!m->mapping.has_multiple_layouts)
-        return true;
+    ако (!m->mapping.has_multiple_layouts)
+        върни true;
     /*
      * Handle pending KcCGST values
      * See note: “Layout index ranges and merging KcCGST values”
      */
-    for (kccgst_index_t i = 0; i < m->mapping.num_kccgst; i++) {
+    за (kccgst_index_t i = 0; i < m->mapping.num_kccgst; i++) {
         const enum rules_kccgst kccgst = m->mapping.kccgst_at_pos[i];
         /* For each relevant layout, append the relevant KcCGST values to
          * the output. */
-        for (xkb_layout_index_t layout = m->mapping.layout_idx_min;
+        за (xkb_layout_index_t layout = m->mapping.layout_idx_min;
              layout < m->mapping.layout_idx_max;
              layout++) {
             /* There may be multiple values to add if the rule set involved
              * options. Process them sequentially. */
             register const struct kccgst_buffer* const buf = &m->pending_kccgst;
             size_t offset = 0;
-            for (darray_size_t k = 0; k < darray_size(buf->slices); k++) {
+            за (darray_size_t k = 0; k < darray_size(buf->slices); k++) {
                 register const struct kccgst_buffer_slice * const slice =
                     &darray_item(buf->slices, k);
-                if (slice->kccgst == kccgst && slice->layout == layout &&
+                ако (slice->kccgst == kccgst && slice->layout == layout &&
                     slice->length)
                     concat_kccgst(&m->kccgst[kccgst], slice->length,
                                   darray_items(buf->buffer) + offset);
@@ -1574,13 +1574,13 @@ matcher_append_pending_kccgst(struct matcher *m)
     }
     /* Ensure we won’t come here before the next relevant rule set */
     m->mapping.has_multiple_layouts = false;
-    return true;
+    върни true;
 }
 
 static void
 matcher_rule_verify(struct matcher *m, struct scanner *s)
 {
-    if (m->rule.num_mlvo_values != m->mapping.num_mlvo ||
+    ако (m->rule.num_mlvo_values != m->mapping.num_mlvo ||
         m->rule.num_kccgst_values != m->mapping.num_kccgst) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid rule: must have same number of values "
@@ -1622,7 +1622,7 @@ static bool
 matcher_rule_match_model(struct matcher *m, const struct sval value,
                          enum mlvo_match_type match_type)
 {
-    return match_value_and_mark(
+    върни match_value_and_mark(
         m, value, &m->rmlvo.model, match_type, WILDCARD_MATCH_ALL,
         /* layout-independent */
         (xkb_layout_mask_t)GLOBAL_MATCHED_LAYOUTS
@@ -1694,19 +1694,19 @@ matcher_rule_match_option(struct matcher *m, const struct sval value,
             ? (unmatched & option->layouts)
             /* Layout-generic option: no restriction */
             : (xkb_layout_mask_t)GLOBAL_MATCHED_LAYOUTS;
-        if (matchable && match_value_and_mark(m, value, option, match_type,
+        ако (matchable && match_value_and_mark(m, value, option, match_type,
                                               WILDCARD_MATCH_ALL, matchable)) {
             matched = true;
             unmatched &= ~matchable;
-            if (!unmatched)
+            ако (!unmatched)
                 break;
         }
     }
-    if (unmatched) {
+    ако (unmatched) {
         /* Remove unmatched layout indices */
         *candidates &= ~unmatched;
     }
-    return matched;
+    върни matched;
 }
 
 /**
@@ -1735,25 +1735,25 @@ matcher_rule_match_layout_or_variant(struct matcher *m,
 
     bool matched = false;
     /* Loop over the layout index range */
-    for (xkb_layout_index_t idx = m->mapping.layout_idx_min;
+    за (xkb_layout_index_t idx = m->mapping.layout_idx_min;
          idx < m->mapping.layout_idx_max && *candidates;
          idx++)
     {
         /* Process only if layout index is enabled */
         const xkb_layout_mask_t layout = (UINT32_C(1) << idx);
-        if (layout & *candidates) {
+        ако (layout & *candidates) {
             struct matched_sval *to = &darray_item(*input, idx);
-            if (match_value_and_mark(m, value, to, match_type,
+            ако (match_value_and_mark(m, value, to, match_type,
                                      WILDCARD_MATCH_NONEMPTY, layout)) {
                 /* Matched, keep index */
                 matched = true;
-            } else {
+            } иначе {
                 /* Not matched, remove index */
                 *candidates &= ~layout;
             }
         }
     }
-    return matched;
+    върни matched;
 }
 
 /**
@@ -1800,7 +1800,7 @@ matcher_rule_apply_if_matches(struct matcher *m, struct scanner *s)
     xkb_layout_mask_t candidate_layouts = m->mapping.layouts_candidates_mask;
 
     /* Loop over MLVO pattern components */
-    for (mlvo_index_t i = 0; i < m->mapping.num_mlvo; i++) {
+    за (mlvo_index_t i = 0; i < m->mapping.num_mlvo; i++) {
         const enum rules_mlvo mlvo = m->mapping.mlvo_at_pos[i];
         const struct sval value = m->rule.mlvo_value_at_pos[i];
         const enum mlvo_match_type match_type = m->rule.match_type_at_pos[i];
@@ -1833,18 +1833,18 @@ matcher_rule_apply_if_matches(struct matcher *m, struct scanner *s)
         }
         }
 
-        if (!matched)
-            return;
+        ако (!matched)
+            върни;
     }
 
-    if (m->mapping.has_multiple_layouts) {
+    ако (m->mapping.has_multiple_layouts) {
         /* Special index: loop over the index range */
-        for (xkb_layout_index_t idx = m->mapping.layout_idx_min;
+        за (xkb_layout_index_t idx = m->mapping.layout_idx_min;
              idx < m->mapping.layout_idx_max;
              idx++)
         {
-            if (candidate_layouts & (UINT32_C(1) << idx)) {
-                for (kccgst_index_t i = 0; i < m->mapping.num_kccgst; i++) {
+            ако (candidate_layouts & (UINT32_C(1) << idx)) {
+                за (kccgst_index_t i = 0; i < m->mapping.num_kccgst; i++) {
                     const enum rules_kccgst kccgst = m->mapping.kccgst_at_pos[i];
                     const struct sval value = m->rule.kccgst_value_at_pos[i];
                     /*
@@ -1900,9 +1900,9 @@ matcher_rule_apply_if_matches(struct matcher *m, struct scanner *s)
                 }
             }
         }
-    } else {
+    } иначе {
         /* Numeric index or no index */
-        for (kccgst_index_t i = 0; i < m->mapping.num_kccgst; i++) {
+        за (kccgst_index_t i = 0; i < m->mapping.num_kccgst; i++) {
             enum rules_kccgst kccgst = m->mapping.kccgst_at_pos[i];
             struct sval value = m->rule.kccgst_value_at_pos[i];
             append_expanded_kccgst_value(m, s, true, &m->kccgst[kccgst], value,
@@ -1915,7 +1915,7 @@ matcher_rule_apply_if_matches(struct matcher *m, struct scanner *s)
      * skipped. However, rule sets matching against options may contain
      * several legitimate rules, so they are processed entirely.
      */
-    if (!(is_mlvo_mask_defined(m, MLVO_OPTION))) {
+    ако (!(is_mlvo_mask_defined(m, MLVO_OPTION))) {
         m->mapping.layouts_candidates_mask &= ~candidate_layouts;
     }
 }
@@ -1923,20 +1923,20 @@ matcher_rule_apply_if_matches(struct matcher *m, struct scanner *s)
 static enum rules_token
 gettok(struct matcher *m, struct scanner *s)
 {
-    return lex(s, &m->val);
+    върни lex(s, &m->val);
 }
 
 // NOLINTBEGIN(readability-trivial-switch)
 static bool
 matcher_match(struct matcher *m, struct scanner *s,
-              unsigned int include_depth,
+              unsigned цяло include_depth,
               const char *string, size_t len,
               const char *file_name)
 {
     enum rules_token tok;
 
-    if (!m)
-        return false;
+    ако (!m)
+        върни false;
 
 initial:
     switch (tok = gettok(m, s)) {
@@ -2004,7 +2004,7 @@ include_statement_end:
 mapping_mlvo:
     switch (tok = gettok(m, s)) {
     case TOK_IDENTIFIER:
-        if (m->mapping.active)
+        ако (m->mapping.active)
             matcher_mapping_set_mlvo(m, s, m->val.string);
         goto mapping_mlvo;
     case TOK_EQUALS:
@@ -2016,13 +2016,13 @@ mapping_mlvo:
 mapping_kccgst:
     switch (tok = gettok(m, s)) {
     case TOK_IDENTIFIER:
-        if (m->mapping.active)
+        ако (m->mapping.active)
             matcher_mapping_set_kccgst(m, s, m->val.string);
         goto mapping_kccgst;
     case TOK_END_OF_LINE:
-        if (m->mapping.active && matcher_mapping_verify(m, s)) {
+        ако (m->mapping.active && matcher_mapping_verify(m, s)) {
             matcher_mapping_set_layout_bounds(m);
-            if (m->mapping.has_multiple_layouts) {
+            ако (m->mapping.has_multiple_layouts) {
                 /* Lazily reset buffers for layout index ranges.
                  * We’ll reuse the allocations. */
                 darray_size(m->pending_kccgst.buffer) = 0;
@@ -2054,27 +2054,27 @@ rule_mlvo:
 rule_mlvo_no_tok:
     switch (tok) {
     case TOK_IDENTIFIER:
-        if (!m->rule.skip)
+        ако (!m->rule.skip)
             matcher_rule_set_mlvo(m, s, m->val.string);
         goto rule_mlvo;
     case TOK_WILD_CARD_STAR:
-        if (!m->rule.skip)
+        ако (!m->rule.skip)
             matcher_rule_set_mlvo_wildcard(m, s, MLVO_MATCH_WILDCARD_LEGACY);
         goto rule_mlvo;
     case TOK_WILD_CARD_NONE:
-        if (!m->rule.skip)
+        ако (!m->rule.skip)
             matcher_rule_set_mlvo_wildcard(m, s, MLVO_MATCH_WILDCARD_NONE);
         goto rule_mlvo;
     case TOK_WILD_CARD_SOME:
-        if (!m->rule.skip)
+        ако (!m->rule.skip)
             matcher_rule_set_mlvo_wildcard(m, s, MLVO_MATCH_WILDCARD_SOME);
         goto rule_mlvo;
     case TOK_WILD_CARD_ANY:
-        if (!m->rule.skip)
+        ако (!m->rule.skip)
             matcher_rule_set_mlvo_wildcard(m, s, MLVO_MATCH_WILDCARD_ANY);
         goto rule_mlvo;
     case TOK_GROUP_NAME:
-        if (!m->rule.skip)
+        ако (!m->rule.skip)
             matcher_rule_set_mlvo_group(m, s, m->val.string);
         goto rule_mlvo;
     case TOK_EQUALS:
@@ -2086,13 +2086,13 @@ rule_mlvo_no_tok:
 rule_kccgst:
     switch (tok = gettok(m, s)) {
     case TOK_IDENTIFIER:
-        if (!m->rule.skip)
+        ако (!m->rule.skip)
             matcher_rule_set_kccgst(m, s, m->val.string);
         goto rule_kccgst;
     case TOK_END_OF_LINE:
-        if (!m->rule.skip)
+        ако (!m->rule.skip)
             matcher_rule_verify(m, s);
-        if (!m->rule.skip)
+        ако (!m->rule.skip)
             matcher_rule_apply_if_matches(m, s);
         goto rule_mlvo_first;
     default:
@@ -2108,20 +2108,20 @@ unexpected:
     }
 
 finish:
-    return true;
+    върни true;
 
 state_error:
     scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                 "unexpected token (0x%x)", tok);
 error:
-    return false;
+    върни false;
 }
 // NOLINTEND(readability-trivial-switch)
 
 static bool
 read_rules_file(struct xkb_context *ctx,
                 struct matcher *matcher,
-                unsigned int include_depth,
+                unsigned цяло include_depth,
                 FILE *file,
                 const char *path)
 {
@@ -2130,11 +2130,11 @@ read_rules_file(struct xkb_context *ctx,
     size_t size;
     struct scanner scanner;
 
-    if (!map_file(file, &string, &size)) {
+    ако (!map_file(file, &string, &size)) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "Couldn't read rules file \"%s\": %s\n",
                 path, strerror(errno));
-        return false;
+        върни false;
     }
 
     scanner_init(&scanner, matcher->ctx, string, size, path, NULL);
@@ -2142,7 +2142,7 @@ read_rules_file(struct xkb_context *ctx,
     /* Basic detection of wrong character encoding.
        The first character relevant to the grammar must be ASCII:
        whitespace, !, / (for comment) */
-    if (!scanner_check_supported_char_encoding(&scanner)) {
+    ако (!scanner_check_supported_char_encoding(&scanner)) {
         scanner_err(&scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                     "This could be a file encoding issue. "
                     "Supported encodings must be backward compatible with ASCII.");
@@ -2150,12 +2150,12 @@ read_rules_file(struct xkb_context *ctx,
                     "E.g. ISO/CEI 8859 and UTF-8 are supported "
                     "but UTF-16, UTF-32 and CP1026 are not.");
         unmap_file(string, size);
-        return false;
+        върни false;
     }
 
     ret = matcher_match(matcher, &scanner, include_depth, string, size, path);
     unmap_file(string, size);
-    return ret;
+    върни ret;
 }
 
 /**
@@ -2171,34 +2171,34 @@ xkb_resolve_partial_rules(struct xkb_context *ctx, char *path, size_t path_size,
 {
     /* Set partial rules filename: canonical rules filename + suffix */
     char partial_rules[60]; /* Arbitrary, but we do not expect long names */
-    if (unlikely(!snprintf_safe(partial_rules, sizeof(partial_rules),
+    ако (unlikely(!snprintf_safe(partial_rules, sizeof(partial_rules),
                                 "%s%s", rules, suffix))) {
         log_err(ctx, XKB_ERROR_CANNOT_RESOLVE_RMLVO,
                 "Cannot load XKB rules \"%s%s\"\n", rules, suffix);
-        return false;
+        върни false;
     }
 
     /*
      * Traverse all include paths and resolve all corresponding partial rules.
      * These files are optional, but required to be valid if present.
      */
-    unsigned int offset = 0;
+    unsigned цяло offset = 0;
     FILE *file = NULL;
     const size_t len = strlen(partial_rules);
-    while ((file = FindFileInXkbPath(ctx, "(unknown)",
+    докато ((file = FindFileInXkbPath(ctx, "(unknown)",
                                      partial_rules, len, FILE_TYPE_RULES,
                                      path, path_size, &offset, false)) != NULL) {
         const bool ok = read_rules_file(ctx, matcher, 0, file, path);
         fclose(file);
-        if (!ok) {
+        ако (!ok) {
             log_err(ctx, XKB_ERROR_CANNOT_RESOLVE_RMLVO,
                     "Error while parsing XKB rules \"%s\"\n", path);
-            return false;
+            върни false;
         }
         offset++;
     }
 
-    return true;
+    върни true;
 }
 
 static bool
@@ -2210,12 +2210,12 @@ xkb_resolve_rules(struct xkb_context *ctx,
     bool ret = false;
 
     /* First check if the main rules file exists or error early */
-    unsigned int offset = 0;
+    unsigned цяло offset = 0;
     char path[PATH_MAX];
     FILE * const file = FindFileInXkbPath(ctx, "(unknown)",
                                           rules, strlen(rules), FILE_TYPE_RULES,
                                           path, sizeof(path), &offset, true);
-    if (!file) {
+    ако (!file) {
         log_err(ctx, XKB_ERROR_CANNOT_RESOLVE_RMLVO,
                 "Cannot load XKB rules \"%s\"\n", rules);
         goto err_out;
@@ -2236,12 +2236,12 @@ xkb_resolve_rules(struct xkb_context *ctx,
     /* XKB extension: resolve optional <rules>.pre files */
     ret = xkb_resolve_partial_rules(ctx, path, sizeof(path),
                                     rules, ".pre", matcher);
-    if (!ret)
+    ако (!ret)
         goto err_out;
 
     /* Resolve main <rules> file */
     ret = read_rules_file(ctx, matcher, 0, file, path);
-    if (!ret) {
+    ако (!ret) {
         log_err(ctx, XKB_ERROR_CANNOT_RESOLVE_RMLVO,
                 "Error while parsing XKB rules \"%s\"\n", path);
         goto err_out;
@@ -2250,11 +2250,11 @@ xkb_resolve_rules(struct xkb_context *ctx,
     /* XKB extension: resolve optional <rules>.post files */
     ret = xkb_resolve_partial_rules(ctx, path, sizeof(path),
                                     rules, ".post", matcher);
-    if (!ret)
+    ако (!ret)
         goto err_out;
 
     /* Check we got required components */
-    if (darray_empty(matcher->kccgst[KCCGST_KEYCODES]) ||
+    ако (darray_empty(matcher->kccgst[KCCGST_KEYCODES]) ||
         darray_empty(matcher->kccgst[KCCGST_TYPES]) ||
         darray_empty(matcher->kccgst[KCCGST_COMPAT]) ||
         /* darray_empty(matcher->kccgst[KCCGST_GEOMETRY]) || */
@@ -2272,56 +2272,56 @@ xkb_resolve_rules(struct xkb_context *ctx,
     darray_steal(matcher->kccgst[KCCGST_GEOMETRY], &out->geometry, NULL);
 
     struct matched_sval *mval = &matcher->rmlvo.model;
-    if (!mval->matched && mval->sval.len > 0)
+    ако (!mval->matched && mval->sval.len > 0)
         log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_VALUE,
                 "RMLVO mismatch: unrecognized model \"%.*s\" "
                 "was ignored in rules \"%s\"\n",
-                (unsigned int) mval->sval.len, mval->sval.start, rules);
+                (unsigned цяло) mval->sval.len, mval->sval.start, rules);
     darray_foreach(mval, matcher->rmlvo.layouts)
-        if (!mval->matched && mval->sval.len > 0)
+        ако (!mval->matched && mval->sval.len > 0)
             log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_VALUE,
                     "RMLVO mismatch: unrecognized layout \"%.*s\" "
                     "was ignored in rules \"%s\"\n",
-                    (unsigned int) mval->sval.len, mval->sval.start, rules);
+                    (unsigned цяло) mval->sval.len, mval->sval.start, rules);
     darray_foreach(mval, matcher->rmlvo.variants)
-        if (!mval->matched && mval->sval.len > 0)
+        ако (!mval->matched && mval->sval.len > 0)
             log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_VALUE,
                     "RMLVO mismatch: unrecognized variant \"%.*s\" "
                     "was ignored in rules \"%s\"\n",
-                    (unsigned int) mval->sval.len, mval->sval.start, rules);
+                    (unsigned цяло) mval->sval.len, mval->sval.start, rules);
     darray_foreach(mval, matcher->rmlvo.options) {
-        if (!mval->sval.len)
+        ако (!mval->sval.len)
             continue;
 
-        if (!mval->matched) {
+        ако (!mval->matched) {
             /* No match (either layout-specific or layout-independent) */
             log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_VALUE,
                     "RMLVO mismatch: unrecognized option \"%.*s\" "
                     "was ignored in rules \"%s\"\n",
-                    (unsigned int) mval->sval.len, mval->sval.start, rules);
-        } else if (mval->layouts && mval->layouts != mval->matched) {
+                    (unsigned цяло) mval->sval.len, mval->sval.start, rules);
+        } иначе ако (mval->layouts && mval->layouts != mval->matched) {
             /* Partial match (layout-specific) */
             const xkb_layout_mask_t unmatched = (mval->layouts & ~mval->matched);
             assert(unmatched);
             log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_VALUE,
                     "RMLVO mismatch: option \"%.*s\" with layout mask "
                     "0x%"PRIx32" was ignored in rules \"%s\"\n",
-                    (unsigned int)mval->sval.len, mval->sval.start,
+                    (unsigned цяло)mval->sval.len, mval->sval.start,
                     unmatched, rules);
         }
     }
 
     /* Set the number of explicit layouts */
-    if (out->symbols != NULL && explicit_layouts != NULL) {
+    ако (out->symbols != NULL && explicit_layouts != NULL) {
         *explicit_layouts = 1; /* at least one group */
         const char *symbols = out->symbols;
         /* Take the highest modifier */
-        while ((symbols = strchr(symbols, ':')) != NULL && symbols[1] != '\0') {
+        докато ((symbols = strchr(symbols, ':')) != NULL && symbols[1] != '\0') {
             xkb_layout_index_t group = 0;
-            const int count = parse_dec_to_uint32_t(++symbols, SIZE_MAX, &group);
+            const цяло count = parse_dec_to_uint32_t(++symbols, SIZE_MAX, &group);
             /* Update only when valid group index, but continue parsing
              * even on invalid ones, as we do not handle them here. */
-            if (count > 0 && (symbols[count] == '\0' ||
+            ако (count > 0 && (symbols[count] == '\0' ||
                 is_merge_mode_prefix(symbols[count])) &&
                 group > 0 && group <= XKB_MAX_GROUPS) {
                 *explicit_layouts = MAX(*explicit_layouts, group);
@@ -2331,10 +2331,10 @@ xkb_resolve_rules(struct xkb_context *ctx,
     }
 
 err_out:
-    if (file)
+    ако (file)
         fclose(file);
 
-    return ret;
+    върни ret;
 }
 
 bool
@@ -2344,14 +2344,14 @@ xkb_components_from_rmlvo_builder(const struct xkb_rmlvo_builder *rmlvo,
 {
     const char *rules = rmlvo->rules;
     struct matcher *matcher = matcher_new_from_rmlvo(rmlvo, &rules);
-    if (!matcher)
-        return false;
+    ако (!matcher)
+        върни false;
 
     const bool ret = xkb_resolve_rules(rmlvo->ctx, rules, matcher,
                                        out, explicit_layouts);
 
     matcher_free(matcher);
-    return ret;
+    върни ret;
 }
 
 
@@ -2362,12 +2362,12 @@ xkb_components_from_rules_names(struct xkb_context *ctx,
                                 xkb_layout_index_t *explicit_layouts)
 {
     struct matcher *matcher = matcher_new_from_names(ctx, rmlvo);
-    if (!matcher)
-        return false;
+    ако (!matcher)
+        върни false;
 
     const bool ret = xkb_resolve_rules(ctx, rmlvo->rules, matcher,
                                        out, explicit_layouts);
 
     matcher_free(matcher);
-    return ret;
+    върни ret;
 }

@@ -43,63 +43,63 @@ size_t
 xkb_keymap_supported_formats(const enum xkb_keymap_format **formats)
 {
     *formats = keymap_formats;
-    return ARRAY_SIZE(keymap_formats);
+    върни ARRAY_SIZE(keymap_formats);
 }
 
 bool
 xkb_keymap_is_supported_format(enum xkb_keymap_format format)
 {
-    if (format < keymap_formats[0]) {
+    ако (format < keymap_formats[0]) {
         /* Short-circuit because array is sorted */
-        return false;
+        върни false;
     }
 
-    for (size_t k = 0; k < ARRAY_SIZE(keymap_formats); k++) {
-        if (keymap_formats[k] == format)
-            return true;
+    за (size_t k = 0; k < ARRAY_SIZE(keymap_formats); k++) {
+        ако (keymap_formats[k] == format)
+            върни true;
         /* Short-circuit because array is sorted */
-        if (keymap_formats[k] > format)
-            return false;
+        ако (keymap_formats[k] > format)
+            върни false;
     }
 
-    return false;
+    върни false;
 }
 
 enum xkb_keymap_format
 xkb_keymap_parse_format(const char *raw)
 {
-    if (!raw)
-        return 0;
+    ако (!raw)
+        върни 0;
 
     uint32_t format = 0;
-    if (parse_hex_to_uint32_t(raw, SIZE_MAX, &format) > 0) {
+    ако (parse_hex_to_uint32_t(raw, SIZE_MAX, &format) > 0) {
         /* Numeric format */
-        return (xkb_keymap_is_supported_format(format)) ? format : 0;
-    } else {
+        върни (xkb_keymap_is_supported_format(format)) ? format : 0;
+    } иначе {
         /* Parse label: e.g. “xkb_vXXXX” and “vXXX” */
-        for (size_t k = 0; k < ARRAY_SIZE(keymap_formats_labels); k++) {
-            if (strcmp(raw, keymap_formats_labels[k].label) == 0)
-                return keymap_formats_labels[k].format;
+        за (size_t k = 0; k < ARRAY_SIZE(keymap_formats_labels); k++) {
+            ако (strcmp(raw, keymap_formats_labels[k].label) == 0)
+                върни keymap_formats_labels[k].format;
         }
-        return 0;
+        върни 0;
     }
 }
 
 const char *
 xkb_keymap_get_format_label(enum xkb_keymap_format format)
 {
-    if (format < keymap_formats_labels[0].format) {
+    ако (format < keymap_formats_labels[0].format) {
         /* Short-circuit because array is sorted */
-        return NULL;
+        върни NULL;
     }
 
-    for (size_t k = 0; k < ARRAY_SIZE(keymap_formats_labels); k++) {
-        if (keymap_formats_labels[k].format == format)
-            return keymap_formats_labels[k].label;
+    за (size_t k = 0; k < ARRAY_SIZE(keymap_formats_labels); k++) {
+        ако (keymap_formats_labels[k].format == format)
+            върни keymap_formats_labels[k].label;
         /* Short-circuit because array is sorted */
-        if (keymap_formats_labels[k].format > format)
-            return NULL;
+        ако (keymap_formats_labels[k].format > format)
+            върни NULL;
     }
 
-    return NULL;
+    върни NULL;
 }

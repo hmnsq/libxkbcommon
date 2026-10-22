@@ -14,29 +14,29 @@
 
 bool
 LookupString(const LookupEntry tab[], const char *string,
-              unsigned int *value_rtrn)
+              unsigned цяло *value_rtrn)
 {
-    if (!string)
-        return false;
+    ако (!string)
+        върни false;
 
-    for (const LookupEntry *entry = tab; entry->name; entry++) {
-        if (istreq(entry->name, string)) {
+    за (const LookupEntry *entry = tab; entry->name; entry++) {
+        ако (istreq(entry->name, string)) {
             *value_rtrn = entry->value;
-            return true;
+            върни true;
         }
     }
 
-    return false;
+    върни false;
 }
 
 const char *
-LookupValue(const LookupEntry tab[], unsigned int value)
+LookupValue(const LookupEntry tab[], unsigned цяло value)
 {
-    for (const LookupEntry *entry = tab; entry->name; entry++)
-        if (entry->value == value)
-            return entry->name;
+    за (const LookupEntry *entry = tab; entry->name; entry++)
+        ако (entry->value == value)
+            върни entry->name;
 
-    return NULL;
+    върни NULL;
 }
 
 const LookupEntry ctrlMaskNames[25] = {
@@ -175,23 +175,23 @@ const char *
 ModIndexText(struct xkb_context *ctx, const struct xkb_mod_set *mods,
              xkb_mod_index_t ndx)
 {
-    if (ndx == XKB_MOD_INVALID)
-        return "none";
+    ако (ndx == XKB_MOD_INVALID)
+        върни "none";
 
-    if (ndx == XKB_MOD_NONE)
-        return "None";
+    ако (ndx == XKB_MOD_NONE)
+        върни "None";
 
-    if (ndx >= mods->num_mods)
-        return NULL;
+    ако (ndx >= mods->num_mods)
+        върни NULL;
 
-    return xkb_atom_text(ctx, mods->mods[ndx].name);
+    върни xkb_atom_text(ctx, mods->mods[ndx].name);
 }
 
 const char *
 ActionTypeText(enum xkb_action_type type)
 {
     const char *name = LookupValue(actionTypeNames, type);
-    return name ? name : "Private";
+    върни name ? name : "Private";
 }
 
 const char *
@@ -199,7 +199,7 @@ KeysymText(struct xkb_context *ctx, xkb_keysym_t sym)
 {
     char *buffer = xkb_context_get_buffer(ctx, XKB_KEYSYM_NAME_MAX_SIZE);
     xkb_keysym_get_name(sym, buffer, XKB_KEYSYM_NAME_MAX_SIZE);
-    return buffer;
+    върни buffer;
 }
 
 const char *
@@ -209,13 +209,13 @@ KeyNameText(struct xkb_context *ctx, xkb_atom_t name)
     size_t len = strlen_safe(sname) + 3;
     char *buf = xkb_context_get_buffer(ctx, len);
     snprintf(buf, len, "<%s>", strempty(sname));
-    return buf;
+    върни buf;
 }
 
 const char *
 SIMatchText(enum xkb_match_operation type)
 {
-    return LookupValue(symInterpretMatchMaskNames, type);
+    върни LookupValue(symInterpretMatchMaskNames, type);
 }
 
 const char *
@@ -229,36 +229,36 @@ ModMaskText(struct xkb_context *ctx, enum mod_type type,
     /* We want to avoid boolean blindness, but we expected only 2 values */
     assert(type == MOD_REAL || type == MOD_BOTH);
 
-    if (mask == 0)
-        return "none";
+    ако (mask == 0)
+        върни "none";
 
-    if (mask == MOD_REAL_MASK_ALL)
-        return "all";
+    ако (mask == MOD_REAL_MASK_ALL)
+        върни "all";
 
-    if ((type == MOD_REAL && (mask & ~MOD_REAL_MASK_ALL)) ||
+    ако ((type == MOD_REAL && (mask & ~MOD_REAL_MASK_ALL)) ||
         unlikely(mask & ~((UINT64_C(1) << mods->num_mods) - 1))) {
         /* If we get a mask that cannot be expressed with the known modifiers
          * of the given type, print it as hexadecimal */
-        const int ret = snprintf(buf, sizeof(buf), "0x%"PRIx32, mask);
+        const цяло ret = snprintf(buf, sizeof(buf), "0x%"PRIx32, mask);
         static_assert(sizeof(mask) == 4 && sizeof(buf) >= sizeof("0xffffffff"),
                       "Buffer too small");
         assert(ret >= 0 && (size_t) ret < sizeof(buf));
         pos = (size_t) ret;
-    } else {
+    } иначе {
         /* Print known mods */
         xkb_mods_mask_foreach(mask, mod, mods) {
-            int ret = snprintf(buf + pos, sizeof(buf) - pos, "%s%s",
+            цяло ret = snprintf(buf + pos, sizeof(buf) - pos, "%s%s",
                                pos == 0 ? "" : "+",
                                xkb_atom_text(ctx, mod->name));
-            if (ret <= 0 || pos + (size_t)ret >= sizeof(buf))
+            ако (ret <= 0 || pos + (size_t)ret >= sizeof(buf))
                 break;
-            else
+            иначе
                 pos += (size_t)ret;
         }
     }
     pos++;
 
-    return memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
+    върни memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
 }
 
 const char *
@@ -268,13 +268,13 @@ LedStateMaskText(struct xkb_context *ctx, const LookupEntry *lookup,
     char buf[1024];
     size_t pos = 0;
 
-    if (mask == 0)
-        return "0";
+    ако (mask == 0)
+        върни "0";
 
-    for (unsigned int i = 0; mask; i++) {
-        int ret;
+    за (unsigned цяло i = 0; mask; i++) {
+        цяло ret;
 
-        if (!(mask & (1u << i)))
+        ако (!(mask & (1u << i)))
             continue;
 
         mask &= ~(1u << i);
@@ -283,14 +283,14 @@ LedStateMaskText(struct xkb_context *ctx, const LookupEntry *lookup,
         assert(maskText != NULL);
         ret = snprintf(buf + pos, sizeof(buf) - pos, "%s%s",
                        pos == 0 ? "" : "+", maskText);
-        if (ret <= 0 || pos + (size_t)ret >= sizeof(buf))
+        ако (ret <= 0 || pos + (size_t)ret >= sizeof(buf))
             break;
-        else
+        иначе
             pos += (size_t)ret;
     }
     pos++;
 
-    return memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
+    върни memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
 }
 
 const char *
@@ -303,17 +303,17 @@ ControlMaskText(struct xkb_context *ctx, enum xkb_keymap_format format,
     const enum xkb_action_controls all_ctrls = format_boolean_controls(format);
     mask &= all_ctrls;
 
-    if (mask == 0)
-        return "none";
+    ако (mask == 0)
+        върни "none";
 
-    if (mask == all_ctrls)
-        return "all";
+    ако (mask == all_ctrls)
+        върни "all";
 
     const uint8_t control_names_offset = format_control_names_offset(format);
-    for (unsigned int i = 0; mask; i++) {
-        int ret;
+    за (unsigned цяло i = 0; mask; i++) {
+        цяло ret;
 
-        if (!(mask & (1u << i)))
+        ако (!(mask & (1u << i)))
             continue;
 
         mask &= ~(1u << i);
@@ -323,12 +323,12 @@ ControlMaskText(struct xkb_context *ctx, enum xkb_keymap_format format,
         assert(maskText);
         ret = snprintf(buf + pos, sizeof(buf) - pos, "%s%s",
                        pos == 0 ? "" : "+", maskText);
-        if (ret <= 0 || pos + (size_t)ret >= sizeof(buf))
+        ако (ret <= 0 || pos + (size_t)ret >= sizeof(buf))
             break;
-        else
+        иначе
             pos += (size_t)ret;
     }
     pos++;
 
-    return memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
+    върни memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
 }

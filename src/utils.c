@@ -9,7 +9,7 @@
 #include <fcntl.h>
 #include "utils.h"
 
-#if HAVE_MMAP
+#ако HAVE_MMAP
 
 #include <unistd.h>
 #include <sys/mman.h>
@@ -19,24 +19,24 @@ bool
 map_file(FILE *file, char **string_out, size_t *size_out)
 {
     struct stat stat_buf;
-    int fd;
+    цяло fd;
     char *string;
 
     /* Make sure to keep the errno on failure! */
     fd = fileno(file);
-    if (fd < 0)
-        return false;
+    ако (fd < 0)
+        върни false;
 
-    if (fstat(fd, &stat_buf) != 0)
-        return false;
+    ако (fstat(fd, &stat_buf) != 0)
+        върни false;
 
     string = mmap(NULL, (size_t)stat_buf.st_size, PROT_READ, MAP_SHARED, fd, 0);
-    if (string == MAP_FAILED)
-        return false;
+    ако (string == MAP_FAILED)
+        върни false;
 
     *string_out = string;
     *size_out = (size_t)stat_buf.st_size;
-    return true;
+    върни true;
 }
 
 void
@@ -45,7 +45,7 @@ unmap_file(char *str, size_t size)
     munmap(str, size);
 }
 
-#else
+#иначе
 
 bool
 map_file(FILE *file, char **string_out, size_t *size_out)
@@ -58,31 +58,31 @@ map_file(FILE *file, char **string_out, size_t *size_out)
     /* Make sure to keep the errno on failure! */
 
     ret = fseek(file, 0, SEEK_END);
-    if (ret != 0)
-        return false;
+    ако (ret != 0)
+        върни false;
 
     ret = ftell(file);
-    if (ret < 0)
-        return false;
+    ако (ret < 0)
+        върни false;
     size = (size_t) ret;
 
     ret = fseek(file, 0, SEEK_SET);
-    if (ret < 0)
-        return false;
+    ако (ret < 0)
+        върни false;
 
     string = malloc(size);
-    if (!string)
-        return false;
+    ако (!string)
+        върни false;
 
     ret_s = fread(string, 1, size, file);
-    if (ret_s < size) {
+    ако (ret_s < size) {
         free(string);
-        return false;
+        върни false;
     }
 
     *string_out = string;
     *size_out = size;
-    return true;
+    върни true;
 }
 
 void
@@ -98,19 +98,19 @@ unmap_file(char *str, size_t size)
 FILE*
 open_file(const char *path)
 {
-    if (!path)
-        return NULL;
+    ако (!path)
+        върни NULL;
 
-    int fd = open(path, O_RDONLY);
-    if (fd < 0)
-        return NULL;
+    цяло fd = open(path, O_RDONLY);
+    ако (fd < 0)
+        върни NULL;
 
     struct stat stat_buf;
-    int err = fstat(fd, &stat_buf);
+    цяло err = fstat(fd, &stat_buf);
 
-    if (err != 0 || !S_ISREG(stat_buf.st_mode)) {
+    ако (err != 0 || !S_ISREG(stat_buf.st_mode)) {
         close(fd);
-        return NULL;
+        върни NULL;
     }
 
     /* While unlikely to happen, if `fp` is NULL then we must close the file
@@ -118,11 +118,11 @@ open_file(const char *path)
      * https://www.ibm.com/docs/en/i/7.3?topic=functions-fdopen-associates-stream-file-descriptor)
      * Confirmed by Peter to be necessary in glibc. */
     FILE *fp = fdopen(fd, "rb");
-    if (fp == NULL) {
+    ако (fp == NULL) {
         close(fd);
     }
 
-    return fp;
+    върни fp;
 }
 
 // ASCII lower-case map.
@@ -149,52 +149,52 @@ static const unsigned char lower_map[] = {
 char
 to_lower(char c)
 {
-    return (char) lower_map[(unsigned char) c];
+    върни (char) lower_map[(unsigned char) c];
 }
 
 // ASCII strcasecmp (to avoid locale issues).
-int
+цяло
 istrcmp(const char *a, const char *b)
 {
-    for (size_t i = 0; ; i++) {
-        if (to_lower(a[i]) != to_lower(b[i]))
-            return (int) to_lower(a[i]) - (int) to_lower(b[i]);
-        if (!a[i])
+    за (size_t i = 0; ; i++) {
+        ако (to_lower(a[i]) != to_lower(b[i]))
+            върни (цяло) to_lower(a[i]) - (цяло) to_lower(b[i]);
+        ако (!a[i])
             break;
     }
-    return 0;
+    върни 0;
 }
 
 // ASCII strncasecmp (to avoid locale issues).
-int
+цяло
 istrncmp(const char *a, const char *b, size_t n)
 {
-    for (size_t i = 0; i < n; i++) {
-        if (to_lower(a[i]) != to_lower(b[i]))
-            return (int) to_lower(a[i]) - (int) to_lower(b[i]);
-        if (!a[i])
+    за (size_t i = 0; i < n; i++) {
+        ако (to_lower(a[i]) != to_lower(b[i]))
+            върни (цяло) to_lower(a[i]) - (цяло) to_lower(b[i]);
+        ако (!a[i])
             break;
     }
-    return 0;
+    върни 0;
 }
 
-#if !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
-int
+#ако !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
+цяло
 asprintf(char **strp, const char *fmt, ...)
 {
-    int ret;
+    цяло ret;
     va_list ap;
     va_start(ap, fmt);
     ret = vasprintf(strp, fmt, ap);
     va_end(ap);
-    return ret;
+    върни ret;
 }
 
-# if !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
-int
+# ако !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
+цяло
 vasprintf(char **strp, const char *fmt, va_list ap)
 {
-    int ret;
+    цяло ret;
     char *buf;
     va_list ap_copy;
 
@@ -206,19 +206,19 @@ vasprintf(char **strp, const char *fmt, va_list ap)
     ret = vsnprintf(NULL, 0, fmt, ap_copy);
     va_end(ap_copy);
 
-    if (ret < 0)
-        return ret;
+    ако (ret < 0)
+        върни ret;
 
-    if (!(buf = malloc(ret + 1)))
-        return -1;
+    ако (!(buf = malloc(ret + 1)))
+        върни -1;
 
-    if ((ret = vsnprintf(buf, ret + 1, fmt, ap)) < 0) {
+    ако ((ret = vsnprintf(buf, ret + 1, fmt, ap)) < 0) {
         free(buf);
-        return ret;
+        върни ret;
     }
 
     *strp = buf;
-    return ret;
+    върни ret;
 }
 # endif /* !HAVE_VASPRINTF */
 #endif /* !HAVE_ASPRINTF */

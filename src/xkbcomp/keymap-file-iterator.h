@@ -20,7 +20,7 @@ XKB_EXPORT_PRIVATE const char *
 xkb_merge_mode_name(enum merge_mode type);
 
 XKB_EXPORT_PRIVATE const char *
-xkb_map_flags_string_iter(unsigned int *index, enum xkb_map_flags flags);
+xkb_map_flags_string_iter(unsigned цяло *index, enum xkb_map_flags flags);
 
 XKB_EXPORT_PRIVATE FILE *
 xkb_resolve_file(struct xkb_context *ctx,
@@ -99,7 +99,7 @@ xkb_file_section_parse(struct xkb_context *ctx,
                        enum xkb_file_iterator_flags iterator_flags,
                        enum xkb_keymap_format format,
                        enum xkb_keymap_compile_flags compile_flags,
-                       unsigned int include_depth,
+                       unsigned цяло include_depth,
                        const char *path, const char *map,
                        struct xkb_file_section *section);
 
