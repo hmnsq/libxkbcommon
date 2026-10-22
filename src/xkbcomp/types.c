@@ -3,196 +3,196 @@
  * SPDX-License-Identifier: HPND
  */
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <limits.h>
+#ضمن <limits.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-status.h"
-#include "xkbcomp-priv.h"
-#include "text.h"
-#include "vmod.h"
-#include "expr.h"
-#include "include.h"
-#include "utils.h"
-#include "util-mem.h"
+#ضمن "xkbcommon/xkbcommon.h"
+#ضمن "xkbcommon/xkbcommon-status.h"
+#ضمن "xkbcomp-priv.h"
+#ضمن "text.h"
+#ضمن "vmod.h"
+#ضمن "expr.h"
+#ضمن "include.h"
+#ضمن "utils.h"
+#ضمن "util-mem.h"
 
-enum type_field {
-    TYPE_FIELD_MASK = (1 << 0),
-    TYPE_FIELD_MAP = (1 << 1),
-    TYPE_FIELD_PRESERVE = (1 << 2),
-    TYPE_FIELD_LEVEL_NAME = (1 << 3),
+تعداد type_ډګر {
+    TYPE_ډګر_ماسک = (1 << 0),
+    TYPE_ډګر_MAP = (1 << 1),
+    TYPE_ډګر_PRESERVE = (1 << 2),
+    TYPE_ډګر_LEVEL_NAME = (1 << 3),
 };
 
-typedef struct {
-    enum type_field defined;
-    enum merge_mode merge;
+تعريفنوع بنية {
+    تعداد type_ډګر defined;
+    تعداد یوځای_ډېرپېښ یوځای;
 
     xkb_atom_t name;
-    xkb_mod_mask_t mods;
-    xkb_level_index_t num_levels;
-    darray(struct xkb_key_type_entry) entries;
-    darray(xkb_atom_t) level_names;
-} KeyTypeInfo;
+    xkb_mod_ماسک_t mods;
+    xkb_level_شاخص_t عدد_پوړونه;
+    darray(بنية xkb_کلی_type_ثبت) entries;
+    darray(xkb_atom_t) level_نومونه;
+} کلی_Type_Info;
 
-typedef struct {
-    char *name;
-    int errorCount;
-    unsigned int include_depth;
+تعريفنوع بنية {
+    حرف *name;
+    صحيح error_شمېر;
+    بینښه صحيح include_ژوروالی;
 
-    darray(KeyTypeInfo) types;
-    struct xkb_mod_set mods;
+    darray(کلی_Type_Info) types;
+    بنية xkb_mod_سېټ mods;
 
-    struct xkb_context *ctx;
-    const struct xkb_keymap_info *keymap_info;
-} KeyTypesInfo;
+    بنية xkb_context *ctx;
+    ثابت بنية xkb_keymap_info *keymap_info;
+} کلی_Types_Info;
 
 /***====================================================================***/
 
-static inline const char *
-MapEntryTxt(KeyTypesInfo *info, struct xkb_key_type_entry *entry)
+ساكن مضمن ثابت حرف *
+Map_ثبت_Txt(کلی_Types_Info *info, بنية xkb_کلی_type_ثبت *ثبت)
 {
-    return ModMaskText(info->ctx, MOD_BOTH, &info->mods, entry->mods.mods);
+    أرجع Mod_ماسک_متن(info->ctx, MOD_BOTH, &info->mods, ثبت->mods.mods);
 }
 
-static inline const char *
-TypeTxt(KeyTypesInfo *info, KeyTypeInfo *type)
+ساكن مضمن ثابت حرف *
+TypeTxt(کلی_Types_Info *info, کلی_Type_Info *type)
 {
-    return xkb_atom_text(info->ctx, type->name);
+    أرجع xkb_atom_متن(info->ctx, type->name);
 }
 
-static inline const char *
-TypeMaskTxt(KeyTypesInfo *info, KeyTypeInfo *type)
+ساكن مضمن ثابت حرف *
+Type_ماسک_Txt(کلی_Types_Info *info, کلی_Type_Info *type)
 {
-    return ModMaskText(info->ctx, MOD_BOTH, &info->mods, type->mods);
+    أرجع Mod_ماسک_متن(info->ctx, MOD_BOTH, &info->mods, type->mods);
 }
 
-static inline bool
-ReportTypeShouldBeArray(KeyTypesInfo *info, KeyTypeInfo *type,
-                        const char *field)
+ساكن مضمن bool
+ReportTypeShouldBeArray(کلی_Types_Info *info, کلی_Type_Info *type,
+                        ثابت حرف *ډګر_2)
 {
-    return ReportShouldBeArray(info->ctx, "key type", field,
+    أرجع ReportShouldBeArray(info->ctx, "key type", ډګر_2,
                                TypeTxt(info, type));
 }
 
-static inline bool
-ReportTypeBadType(KeyTypesInfo *info, enum xkb_message_code code,
-                  KeyTypeInfo *type, const char *field, const char *wanted)
+ساكن مضمن bool
+ReportTypeBadType(کلی_Types_Info *info, تعداد xkb_پیغام_کوډ کوډ,
+                  کلی_Type_Info *type, ثابت حرف *ډګر_2, ثابت حرف *wanted)
 {
-    return ReportBadType(info->ctx, code, "key type", field,
+    أرجع ReportBadType(info->ctx, کوډ, "key type", ډګر_2,
                          TypeTxt(info, type), wanted);
 }
 
 /***====================================================================***/
 
-static void
-InitKeyTypesInfo(KeyTypesInfo *info, const struct xkb_keymap_info *keymap_info,
-                 unsigned int include_depth,
-                 const struct xkb_mod_set *mods)
+ساكن فراغ
+Init_کلی_Types_Info(کلی_Types_Info *info, ثابت بنية xkb_keymap_info *keymap_info,
+                 بینښه صحيح include_ژوروالی,
+                 ثابت بنية xkb_mod_سېټ *mods)
 {
-    memset(info, 0, sizeof(*info));
+    memset(info, 0, حجم(*info));
     info->ctx = keymap_info->keymap.ctx;
     info->keymap_info = keymap_info;
-    info->include_depth = include_depth;
-    InitVMods(&info->mods, mods, include_depth > 0);
+    info->include_ژوروالی = include_ژوروالی;
+    InitVMods(&info->mods, mods, include_ژوروالی > 0);
 }
 
-static void
-ClearKeyTypeInfo(KeyTypeInfo *type)
+ساكن فراغ
+Clear_کلی_Type_Info(کلی_Type_Info *type)
 {
     darray_free(type->entries);
-    darray_free(type->level_names);
+    darray_free(type->level_نومونه);
 }
 
-static void
-ClearKeyTypesInfo(KeyTypesInfo *info)
+ساكن فراغ
+Clear_کلی_Types_Info(کلی_Types_Info *info)
 {
-    free(info->name);
-    KeyTypeInfo *type;
+    حرر(info->name);
+    کلی_Type_Info *type;
     darray_foreach(type, info->types)
-        ClearKeyTypeInfo(type);
+        Clear_کلی_Type_Info(type);
     darray_free(info->types);
 }
 
-static KeyTypeInfo *
-FindMatchingKeyType(KeyTypesInfo *info, xkb_atom_t name)
+ساكن کلی_Type_Info *
+پیدا_کړه_Matching_کلی_Type(کلی_Types_Info *info, xkb_atom_t name)
 {
-    KeyTypeInfo *old;
+    کلی_Type_Info *old;
 
     darray_foreach(old, info->types)
-        if (old->name == name)
-            return old;
+        إذا (old->name == name)
+            أرجع old;
 
-    return NULL;
+    أرجع عدم;
 }
 
-static bool
-AddKeyType(KeyTypesInfo *info, KeyTypeInfo *new, bool same_file)
+ساكن bool
+جمع_کړه_کلی_Type(کلی_Types_Info *info, کلی_Type_Info *new, bool same_file)
 {
-    KeyTypeInfo *old;
-    const int verbosity = xkb_context_get_log_verbosity(info->ctx);
+    کلی_Type_Info *old;
+    ثابت صحيح verbosity = xkb_context_get_log_verbosity(info->ctx);
 
-    old = FindMatchingKeyType(info, new->name);
-    if (old) {
-        if (new->merge != MERGE_AUGMENT) {
-            if ((same_file && verbosity > 0) || verbosity > 9) {
+    old = پیدا_کړه_Matching_کلی_Type(info, new->name);
+    إذا (old) {
+        إذا (new->یوځای != یوځای_AUGMENT) {
+            إذا ((same_file && verbosity > 0) || verbosity > 9) {
                 log_warn(info->ctx,
-                         XKB_WARNING_CONFLICTING_KEY_TYPE_DEFINITIONS,
+                         XKB_WARNING_CONFLICTING_کلی_TYPE_DEFINITIONS,
                          "Multiple definitions of the %s key type; "
                          "Earlier definition ignored\n",
-                         xkb_atom_text(info->ctx, new->name));
+                         xkb_atom_متن(info->ctx, new->name));
             }
 
-            ClearKeyTypeInfo(old);
+            Clear_کلی_Type_Info(old);
             *old = *new;
             darray_init(new->entries);
-            darray_init(new->level_names);
-            return true;
+            darray_init(new->level_نومونه);
+            أرجع true;
         }
 
-        if (same_file)
+        إذا (same_file)
             log_vrb(info->ctx, XKB_LOG_VERBOSITY_DETAILED,
-                    XKB_WARNING_CONFLICTING_KEY_TYPE_DEFINITIONS,
+                    XKB_WARNING_CONFLICTING_کلی_TYPE_DEFINITIONS,
                     "Multiple definitions of the %s key type; "
                     "Later definition ignored\n",
-                    xkb_atom_text(info->ctx, new->name));
+                    xkb_atom_متن(info->ctx, new->name));
 
-        ClearKeyTypeInfo(new);
-        return true;
+        Clear_کلی_Type_Info(new);
+        أرجع true;
     }
 
     darray_append(info->types, *new);
-    return true;
+    أرجع true;
 }
 
 /***====================================================================***/
 
-static void
-MergeIncludedKeyTypes(KeyTypesInfo *into, KeyTypesInfo *from,
-                      enum merge_mode merge)
+ساكن فراغ
+یوځای_Included_کلی_Types(کلی_Types_Info *into, کلی_Types_Info *from,
+                      تعداد یوځای_ډېرپېښ یوځای)
 {
-    if (from->errorCount > 0) {
-        into->errorCount += from->errorCount;
-        return;
+    إذا (from->error_شمېر > 0) {
+        into->error_شمېر += from->error_شمېر;
+        أرجع;
     }
 
-    MergeModSets(into->ctx, &into->mods, &from->mods, merge);
+    یوځای_Mod_Sets(into->ctx, &into->mods, &from->mods, یوځای);
 
-    if (into->name == NULL) {
+    إذا (into->name == عدم) {
         into->name = steal(&from->name);
     }
 
-    if (darray_empty(into->types)) {
+    إذا (darray_تشه(into->types)) {
         into->types = from->types;
         /* Types stolen via shallow copy, so reinitialize the array */
         darray_init(from->types);
     }
-    else {
-        KeyTypeInfo *type;
+    وإلا {
+        کلی_Type_Info *type;
         darray_foreach(type, from->types) {
-            type->merge = merge;
-            if (!AddKeyType(into, type, false))
-                into->errorCount++;
+            type->یوځای = یوځای;
+            إذا (!جمع_کړه_کلی_Type(into, type, false))
+                into->error_شمېر++;
         }
         /* Types were either shallow copied or reinitialized individually
            in `AddKeyType`, so we only need to free the array */
@@ -200,229 +200,229 @@ MergeIncludedKeyTypes(KeyTypesInfo *into, KeyTypesInfo *from,
     }
 }
 
-static void
-HandleKeyTypesFile(KeyTypesInfo *info, XkbFile *file);
+ساكن فراغ
+Handle_کلی_Types_File(کلی_Types_Info *info, XkbFile *file);
 
-static bool
-HandleIncludeKeyTypes(KeyTypesInfo *info, IncludeStmt *include)
+ساكن bool
+Handle_Include_کلی_Types(کلی_Types_Info *info, IncludeStmt *include)
 {
-    KeyTypesInfo included;
+    کلی_Types_Info included;
 
-    if (ExceedsIncludeMaxDepth(info->ctx, info->include_depth)) {
-        info->errorCount += 10;
-        return false;
+    إذا (Exceeds_Include_Max_ژوروالی(info->ctx, info->include_ژوروالی)) {
+        info->error_شمېر += 10;
+        أرجع false;
     }
 
-    InitKeyTypesInfo(&included, info->keymap_info, info->include_depth + 1,
+    Init_کلی_Types_Info(&included, info->keymap_info, info->include_ژوروالی + 1,
                      &info->mods);
     included.name = steal(&include->stmt);
 
-    const struct parser_keymap_config config = {
+    ثابت بنية parser_keymap_config config = {
         .format = info->keymap_info->keymap.format,
         .strict = info->keymap_info->strict
     };
 
-    for (IncludeStmt *stmt = include; stmt; stmt = stmt->next_incl) {
-        KeyTypesInfo next_incl;
+    لكل (IncludeStmt *stmt = include; stmt; stmt = stmt->بل_incl) {
+        کلی_Types_Info بل_incl;
         XkbFile *file;
 
-        char path[PATH_MAX];
+        حرف لار[PATH_MAX];
         file = ProcessIncludeFile(info->ctx, &config, stmt, FILE_TYPE_TYPES,
-                                  path, sizeof(path));
-        if (!file) {
-            info->errorCount += 10;
-            ClearKeyTypesInfo(&included);
-            return false;
+                                  لار, حجم(لار));
+        إذا (!file) {
+            info->error_شمېر += 10;
+            Clear_کلی_Types_Info(&included);
+            أرجع false;
         }
 
-        InitKeyTypesInfo(&next_incl, info->keymap_info, info->include_depth + 1,
+        Init_کلی_Types_Info(&بل_incl, info->keymap_info, info->include_ژوروالی + 1,
                          &included.mods);
 
-        HandleKeyTypesFile(&next_incl, file);
+        Handle_کلی_Types_File(&بل_incl, file);
 
-        MergeIncludedKeyTypes(&included, &next_incl, stmt->merge);
+        یوځای_Included_کلی_Types(&included, &بل_incl, stmt->یوځای);
 
-        ClearKeyTypesInfo(&next_incl);
+        Clear_کلی_Types_Info(&بل_incl);
         FreeXkbFile(file);
     }
 
-    MergeIncludedKeyTypes(info, &included, include->merge);
-    ClearKeyTypesInfo(&included);
+    یوځای_Included_کلی_Types(info, &included, include->یوځای);
+    Clear_کلی_Types_Info(&included);
 
-    return (info->errorCount == 0);
+    أرجع (info->error_شمېر == 0);
 }
 
 /***====================================================================***/
 
-static bool
-SetModifiers(KeyTypesInfo *info, KeyTypeInfo *type, ExprDef *arrayNdx,
-             ExprDef *value)
+ساكن bool
+سېټ_Modifiers(کلی_Types_Info *info, کلی_Type_Info *type, بیان_Def *arrayNdx,
+             بیان_Def *ارزښت)
 {
-    xkb_mod_mask_t mods = 0;
+    xkb_mod_ماسک_t mods = 0;
 
-    if (arrayNdx) {
-        log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+    إذا (arrayNdx) {
+        log_err(info->ctx, XKB_LOG_پیغام_NO_ID,
                 "The modifiers field of a key type is not an array; "
                 "Illegal array subscript ignored\n");
-        return false;
+        أرجع false;
     }
 
-    if (!ExprResolveModMask(info->ctx, value, MOD_BOTH, &info->mods, &mods)) {
-        log_err(info->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK,
+    إذا (!بیان_Resolve_Mod_ماسک(info->ctx, ارزښت, MOD_BOTH, &info->mods, &mods)) {
+        log_err(info->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_ماسک,
                 "Key type mask field must be a modifier mask; "
                 "Key type definition ignored\n");
-        return false;
+        أرجع false;
     }
 
-    if (type->defined & TYPE_FIELD_MASK) {
-        log_warn(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+    إذا (type->defined & TYPE_ډګر_ماسک) {
+        log_warn(info->ctx, XKB_LOG_پیغام_NO_ID,
                  "Multiple modifier mask definitions for key type %s; "
                  "Using %s, ignoring %s\n",
-                 xkb_atom_text(info->ctx, type->name),
-                 TypeMaskTxt(info, type),
-                 ModMaskText(info->ctx, MOD_BOTH, &info->mods, mods));
-        return false;
+                 xkb_atom_متن(info->ctx, type->name),
+                 Type_ماسک_Txt(info, type),
+                 Mod_ماسک_متن(info->ctx, MOD_BOTH, &info->mods, mods));
+        أرجع false;
     }
 
     type->mods = mods;
-    return true;
+    أرجع true;
 }
 
 /***====================================================================***/
 
-static struct xkb_key_type_entry *
-FindMatchingMapEntry(KeyTypeInfo *type, xkb_mod_mask_t mods)
+ساكن بنية xkb_کلی_type_ثبت *
+پیدا_کړه_Matching_Map_ثبت(کلی_Type_Info *type, xkb_mod_ماسک_t mods)
 {
-    struct xkb_key_type_entry *entry;
+    بنية xkb_کلی_type_ثبت *ثبت;
 
-    darray_foreach(entry, type->entries)
-        if (entry->mods.mods == mods)
-            return entry;
+    darray_foreach(ثبت, type->entries)
+        إذا (ثبت->mods.mods == mods)
+            أرجع ثبت;
 
-    return NULL;
+    أرجع عدم;
 }
 
-static bool
-AddMapEntry(KeyTypesInfo *info, KeyTypeInfo *type,
-            struct xkb_key_type_entry *new, bool clobber, bool report)
+ساكن bool
+جمع_کړه_Map_ثبت(کلی_Types_Info *info, کلی_Type_Info *type,
+            بنية xkb_کلی_type_ثبت *new, bool clobber, bool report)
 {
-    struct xkb_key_type_entry *old;
+    بنية xkb_کلی_type_ثبت *old;
 
-    old = FindMatchingMapEntry(type, new->mods.mods);
-    if (old) {
-        if (report && old->level != new->level) {
-            log_warn(info->ctx, XKB_WARNING_CONFLICTING_KEY_TYPE_MAP_ENTRY,
+    old = پیدا_کړه_Matching_Map_ثبت(type, new->mods.mods);
+    إذا (old) {
+        إذا (report && old->level != new->level) {
+            log_warn(info->ctx, XKB_WARNING_CONFLICTING_کلی_TYPE_MAP_ثبت,
                      "Multiple map entries for %s in %s; "
                      "Using %"PRIu32", ignoring %"PRIu32"\n",
-                     MapEntryTxt(info, new), TypeTxt(info, type),
+                     Map_ثبت_Txt(info, new), TypeTxt(info, type),
                      (clobber ? new->level : old->level) + 1,
                      (clobber ? old->level : new->level) + 1);
         }
-        else {
+        وإلا {
             log_vrb(info->ctx, XKB_LOG_VERBOSITY_VERBOSE,
-                    XKB_WARNING_CONFLICTING_KEY_TYPE_MAP_ENTRY,
+                    XKB_WARNING_CONFLICTING_کلی_TYPE_MAP_ثبت,
                     "Multiple occurrences of map[%s]= %"PRIu32" in %s; Ignored\n",
-                    MapEntryTxt(info, new), new->level + 1,
+                    Map_ثبت_Txt(info, new), new->level + 1,
                     TypeTxt(info, type));
-            return true;
+            أرجع true;
         }
 
-        if (clobber) {
-            if (new->level >= type->num_levels)
-                type->num_levels = new->level + 1;
+        إذا (clobber) {
+            إذا (new->level >= type->عدد_پوړونه)
+                type->عدد_پوړونه = new->level + 1;
             old->level = new->level;
         }
 
-        return true;
+        أرجع true;
     }
 
-    if (new->level >= type->num_levels)
-        type->num_levels = new->level + 1;
+    إذا (new->level >= type->عدد_پوړونه)
+        type->عدد_پوړونه = new->level + 1;
 
     darray_append(type->entries, *new);
-    return true;
+    أرجع true;
 }
 
-static bool
-SetMapEntry(KeyTypesInfo *info, KeyTypeInfo *type, ExprDef *arrayNdx,
-            ExprDef *value)
+ساكن bool
+سېټ_Map_ثبت(کلی_Types_Info *info, کلی_Type_Info *type, بیان_Def *arrayNdx,
+            بیان_Def *ارزښت)
 {
-    struct xkb_key_type_entry entry;
+    بنية xkb_کلی_type_ثبت ثبت;
 
-    if (arrayNdx == NULL)
-        return ReportTypeShouldBeArray(info, type, "map entry");
+    إذا (arrayNdx == عدم)
+        أرجع ReportTypeShouldBeArray(info, type, "map entry");
 
-    if (!ExprResolveModMask(info->ctx, arrayNdx, MOD_BOTH, &info->mods,
-                            &entry.mods.mods))
-        return ReportTypeBadType(info, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK_,
+    إذا (!بیان_Resolve_Mod_ماسک(info->ctx, arrayNdx, MOD_BOTH, &info->mods,
+                            &ثبت.mods.mods))
+        أرجع ReportTypeBadType(info, XKB_ERROR_UNSUPPORTED_MODIFIER_ماسک_2,
                                  type, "map entry", "modifier mask");
 
-    if (entry.mods.mods & (~type->mods)) {
+    إذا (ثبت.mods.mods & (~type->mods)) {
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
-                XKB_WARNING_UNDECLARED_MODIFIERS_IN_KEY_TYPE,
+                XKB_WARNING_UNDECLARED_MODIFIERS_دننه_کلی_TYPE,
                 "Map entry for modifiers not used by type %s; "
                 "Using %s instead of %s\n",
                 TypeTxt(info, type),
-                ModMaskText(info->ctx, MOD_BOTH, &info->mods,
-                            entry.mods.mods & type->mods),
-                MapEntryTxt(info, &entry));
-        entry.mods.mods &= type->mods;
+                Mod_ماسک_متن(info->ctx, MOD_BOTH, &info->mods,
+                            ثبت.mods.mods & type->mods),
+                Map_ثبت_Txt(info, &ثبت));
+        ثبت.mods.mods &= type->mods;
     }
 
-    if (!ExprResolveLevel(info->ctx, value, &entry.level)) {
-        log_err(info->ctx, XKB_ERROR_UNSUPPORTED_SHIFT_LEVEL,
+    إذا (!بیان_Resolve_Level(info->ctx, ارزښت, &ثبت.level)) {
+        log_err(info->ctx, XKB_ERROR_UNSUPPORTED_ښويدنه_LEVEL,
                           "Level specifications in a key type must be integer; "
                           "Ignoring malformed level specification\n");
-        return false;
+        أرجع false;
     }
 
-    entry.preserve.mods = 0;
+    ثبت.preserve.mods = 0;
 
-    return AddMapEntry(info, type, &entry, true, true);
+    أرجع جمع_کړه_Map_ثبت(info, type, &ثبت, true, true);
 }
 
 /***====================================================================***/
 
-static bool
-AddPreserve(KeyTypesInfo *info, KeyTypeInfo *type,
-            xkb_mod_mask_t mods, xkb_mod_mask_t preserve_mods)
+ساكن bool
+جمع_کړه_Preserve(کلی_Types_Info *info, کلی_Type_Info *type,
+            xkb_mod_ماسک_t mods, xkb_mod_ماسک_t preserve_mods)
 {
-    struct xkb_key_type_entry *entry;
+    بنية xkb_کلی_type_ثبت *ثبت;
 
-    darray_foreach(entry, type->entries) {
-        if (entry->mods.mods != mods)
-            continue;
+    darray_foreach(ثبت, type->entries) {
+        إذا (ثبت->mods.mods != mods)
+            استمر;
 
         /* Map exists without previous preserve (or "None"); override. */
-        if (entry->preserve.mods == 0) {
-            entry->preserve.mods = preserve_mods;
-            return true;
+        إذا (ثبت->preserve.mods == 0) {
+            ثبت->preserve.mods = preserve_mods;
+            أرجع true;
         }
 
         /* Map exists with same preserve; do nothing. */
-        if (entry->preserve.mods == preserve_mods) {
+        إذا (ثبت->preserve.mods == preserve_mods) {
             log_vrb(info->ctx, XKB_LOG_VERBOSITY_VERBOSE,
-                    XKB_WARNING_DUPLICATE_ENTRY,
+                    XKB_WARNING_DUPLICATE_ثبت,
                     "Identical definitions for preserve[%s] in %s; "
                     "Ignored\n",
-                    ModMaskText(info->ctx, MOD_BOTH, &info->mods, mods),
+                    Mod_ماسک_متن(info->ctx, MOD_BOTH, &info->mods, mods),
                     TypeTxt(info, type));
-            return true;
+            أرجع true;
         }
 
         /* Map exists with different preserve; latter wins. */
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
-                XKB_WARNING_CONFLICTING_KEY_TYPE_PRESERVE_ENTRIES,
+                XKB_WARNING_CONFLICTING_کلی_TYPE_PRESERVE_ENTRIES,
                 "Multiple definitions for preserve[%s] in %s; "
                 "Using %s, ignoring %s\n",
-                ModMaskText(info->ctx, MOD_BOTH, &info->mods, mods),
+                Mod_ماسک_متن(info->ctx, MOD_BOTH, &info->mods, mods),
                 TypeTxt(info, type),
-                ModMaskText(info->ctx, MOD_BOTH, &info->mods, preserve_mods),
-                ModMaskText(info->ctx, MOD_BOTH, &info->mods,
-                            entry->preserve.mods));
+                Mod_ماسک_متن(info->ctx, MOD_BOTH, &info->mods, preserve_mods),
+                Mod_ماسک_متن(info->ctx, MOD_BOTH, &info->mods,
+                            ثبت->preserve.mods));
 
-        entry->preserve.mods = preserve_mods;
-        return true;
+        ثبت->preserve.mods = preserve_mods;
+        أرجع true;
     }
 
     /*
@@ -430,332 +430,332 @@ AddPreserve(KeyTypesInfo *info, KeyTypeInfo *type,
      * Create a map with the specified mask mapping to Level1. The level
      * may be overridden later with an explicit map[] statement.
      */
-    const struct xkb_key_type_entry new = {
+    ثابت بنية xkb_کلی_type_ثبت new = {
         .level = 0,
         .mods = { .mods = mods },
         .preserve = { .mods = preserve_mods },
     };
     darray_append(type->entries, new);
-    return true;
+    أرجع true;
 }
 
-static bool
-SetPreserve(KeyTypesInfo *info, KeyTypeInfo *type, ExprDef *arrayNdx,
-            ExprDef *value)
+ساكن bool
+سېټ_Preserve(کلی_Types_Info *info, کلی_Type_Info *type, بیان_Def *arrayNdx,
+            بیان_Def *ارزښت)
 {
 
-    if (arrayNdx == NULL)
-        return ReportTypeShouldBeArray(info, type, "preserve entry");
+    إذا (arrayNdx == عدم)
+        أرجع ReportTypeShouldBeArray(info, type, "preserve entry");
 
-    xkb_mod_mask_t mods = 0;
-    if (!ExprResolveModMask(info->ctx, arrayNdx, MOD_BOTH, &info->mods, &mods))
-        return ReportTypeBadType(info, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK_,
+    xkb_mod_ماسک_t mods = 0;
+    إذا (!بیان_Resolve_Mod_ماسک(info->ctx, arrayNdx, MOD_BOTH, &info->mods, &mods))
+        أرجع ReportTypeBadType(info, XKB_ERROR_UNSUPPORTED_MODIFIER_ماسک_2,
                                  type, "preserve entry", "modifier mask");
 
-    if (mods & ~type->mods) {
-        const char *before, *after;
+    إذا (mods & ~type->mods) {
+        ثابت حرف *before, *after;
 
-        before = ModMaskText(info->ctx, MOD_BOTH, &info->mods, mods);
+        before = Mod_ماسک_متن(info->ctx, MOD_BOTH, &info->mods, mods);
         mods &= type->mods;
-        after = ModMaskText(info->ctx, MOD_BOTH, &info->mods, mods);
+        after = Mod_ماسک_متن(info->ctx, MOD_BOTH, &info->mods, mods);
 
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
-                XKB_WARNING_UNDECLARED_MODIFIERS_IN_KEY_TYPE,
+                XKB_WARNING_UNDECLARED_MODIFIERS_دننه_کلی_TYPE,
                 "Preserve entry for modifiers not used by the %s type; "
                 "Index %s converted to %s\n",
                 TypeTxt(info, type), before, after);
     }
 
-    xkb_mod_mask_t preserve_mods = 0;
-    if (!ExprResolveModMask(info->ctx, value, MOD_BOTH, &info->mods,
+    xkb_mod_ماسک_t preserve_mods = 0;
+    إذا (!بیان_Resolve_Mod_ماسک(info->ctx, ارزښت, MOD_BOTH, &info->mods,
                             &preserve_mods)) {
-        log_err(info->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK,
+        log_err(info->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_ماسک,
                 "Preserve value in a key type is not a modifier mask; "
                 "Ignoring preserve[%s] in type %s\n",
-                ModMaskText(info->ctx, MOD_BOTH, &info->mods, mods),
+                Mod_ماسک_متن(info->ctx, MOD_BOTH, &info->mods, mods),
                 TypeTxt(info, type));
-        return false;
+        أرجع false;
     }
 
-    if (preserve_mods & ~mods) {
-        const char *before, *after;
+    إذا (preserve_mods & ~mods) {
+        ثابت حرف *before, *after;
 
-        before = ModMaskText(info->ctx, MOD_BOTH, &info->mods, preserve_mods);
+        before = Mod_ماسک_متن(info->ctx, MOD_BOTH, &info->mods, preserve_mods);
         preserve_mods &= mods;
-        after = ModMaskText(info->ctx, MOD_BOTH, &info->mods, preserve_mods);
+        after = Mod_ماسک_متن(info->ctx, MOD_BOTH, &info->mods, preserve_mods);
 
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
-                XKB_WARNING_ILLEGAL_KEY_TYPE_PRESERVE_RESULT,
+                XKB_WARNING_ILLEGAL_کلی_TYPE_PRESERVE_پایله,
                 "Illegal value for preserve[%s] in type %s; "
                 "Converted %s to %s\n",
-                ModMaskText(info->ctx, MOD_BOTH, &info->mods, mods),
+                Mod_ماسک_متن(info->ctx, MOD_BOTH, &info->mods, mods),
                 TypeTxt(info, type), before, after);
     }
 
-    return AddPreserve(info, type, mods, preserve_mods);
+    أرجع جمع_کړه_Preserve(info, type, mods, preserve_mods);
 }
 
 /***====================================================================***/
 
-static bool
-AddLevelName(KeyTypesInfo *info, KeyTypeInfo *type,
-             xkb_level_index_t level, xkb_atom_t name, bool clobber)
+ساكن bool
+جمع_کړه_Level_Name(کلی_Types_Info *info, کلی_Type_Info *type,
+             xkb_level_شاخص_t level, xkb_atom_t name, bool clobber)
 {
     /* New name. */
-    if (level >= darray_size(type->level_names)) {
-        darray_resize0(type->level_names, level + 1);
-        goto finish;
+    إذا (level >= darray_اندازه(type->level_نومونه)) {
+        darray_resize0(type->level_نومونه, level + 1);
+        اذهب پای;
     }
 
     /* Same level, same name. */
-    if (darray_item(type->level_names, level) == name) {
-        log_vrb(info->ctx, XKB_LOG_VERBOSITY_VERBOSE, XKB_WARNING_DUPLICATE_ENTRY,
+    إذا (darray_توکی(type->level_نومونه, level) == name) {
+        log_vrb(info->ctx, XKB_LOG_VERBOSITY_VERBOSE, XKB_WARNING_DUPLICATE_ثبت,
                 "Duplicate names for level %"PRIu32" of key type %s; Ignored\n",
                 level + 1, TypeTxt(info, type));
-        return true;
+        أرجع true;
     }
 
     /* Same level, different name. */
-    if (darray_item(type->level_names, level) != XKB_ATOM_NONE) {
-        const char *old, *new;
-        old = xkb_atom_text(info->ctx,
-                            darray_item(type->level_names, level));
-        new = xkb_atom_text(info->ctx, name);
+    إذا (darray_توکی(type->level_نومونه, level) != XKB_ATOM_NONE) {
+        ثابت حرف *old, *new;
+        old = xkb_atom_متن(info->ctx,
+                            darray_توکی(type->level_نومونه, level));
+        new = xkb_atom_متن(info->ctx, name);
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
-                XKB_WARNING_CONFLICTING_KEY_TYPE_LEVEL_NAMES,
+                XKB_WARNING_CONFLICTING_کلی_TYPE_LEVEL_نومونه,
                 "Multiple names for level %"PRIu32" of key type %s; "
                 "Using %s, ignoring %s\n",
                 level + 1, TypeTxt(info, type),
                 (clobber ? new : old), (clobber ? old : new));
 
-        if (!clobber)
-            return true;
+        إذا (!clobber)
+            أرجع true;
     }
 
     /* FIXME: What about different level, same name? */
 
-finish:
-    darray_item(type->level_names, level) = name;
-    return true;
+پای:
+    darray_توکی(type->level_نومونه, level) = name;
+    أرجع true;
 }
 
-static bool
-SetLevelName(KeyTypesInfo *info, KeyTypeInfo *type, ExprDef *arrayNdx,
-             ExprDef *value)
+ساكن bool
+سېټ_Level_Name(کلی_Types_Info *info, کلی_Type_Info *type, بیان_Def *arrayNdx,
+             بیان_Def *ارزښت)
 {
-    if (arrayNdx == NULL)
-        return ReportTypeShouldBeArray(info, type, "level name");
+    إذا (arrayNdx == عدم)
+        أرجع ReportTypeShouldBeArray(info, type, "level name");
 
-    xkb_level_index_t level = 0;
-    if (!ExprResolveLevel(info->ctx, arrayNdx, &level))
-        return ReportTypeBadType(info, XKB_ERROR_UNSUPPORTED_SHIFT_LEVEL,
+    xkb_level_شاخص_t level = 0;
+    إذا (!بیان_Resolve_Level(info->ctx, arrayNdx, &level))
+        أرجع ReportTypeBadType(info, XKB_ERROR_UNSUPPORTED_ښويدنه_LEVEL,
                                  type, "level name", "integer");
 
     xkb_atom_t level_name = XKB_ATOM_NONE;
-    if (!ExprResolveString(info->ctx, value, &level_name)) {
-        log_err(info->ctx, XKB_ERROR_WRONG_FIELD_TYPE,
+    إذا (!بیان_Resolve_String(info->ctx, ارزښت, &level_name)) {
+        log_err(info->ctx, XKB_ERROR_WRONG_ډګر_TYPE,
                 "Non-string name for level %"PRIu32" in key type %s; "
                 "Ignoring illegal level name definition\n",
-                level + 1, xkb_atom_text(info->ctx, type->name));
-        return false;
+                level + 1, xkb_atom_متن(info->ctx, type->name));
+        أرجع false;
     }
 
-    return AddLevelName(info, type, level, level_name, true);
+    أرجع جمع_کړه_Level_Name(info, type, level, level_name, true);
 }
 
 /***====================================================================***/
 
-static bool
-SetKeyTypeField(KeyTypesInfo *info, KeyTypeInfo *type,
-                const char *field, ExprDef *arrayNdx, ExprDef *value)
+ساكن bool
+سېټ_کلی_Type_ډګر(کلی_Types_Info *info, کلی_Type_Info *type,
+                ثابت حرف *ډګر_2, بیان_Def *arrayNdx, بیان_Def *ارزښت)
 {
     bool ok = false;
-    enum type_field type_field = 0;
+    تعداد type_ډګر type_ډګر = 0;
 
-    if (istreq(field, "modifiers")) {
-        type_field = TYPE_FIELD_MASK;
-        ok = SetModifiers(info, type, arrayNdx, value);
+    إذا (istreq(ډګر_2, "modifiers")) {
+        type_ډګر = TYPE_ډګر_ماسک;
+        ok = سېټ_Modifiers(info, type, arrayNdx, ارزښت);
     }
-    else if (istreq(field, "map")) {
-        type_field = TYPE_FIELD_MAP;
-        ok = SetMapEntry(info, type, arrayNdx, value);
+    وإلا إذا (istreq(ډګر_2, "map")) {
+        type_ډګر = TYPE_ډګر_MAP;
+        ok = سېټ_Map_ثبت(info, type, arrayNdx, ارزښت);
     }
-    else if (istreq(field, "preserve")) {
-        type_field = TYPE_FIELD_PRESERVE;
-        ok = SetPreserve(info, type, arrayNdx, value);
+    وإلا إذا (istreq(ډګر_2, "preserve")) {
+        type_ډګر = TYPE_ډګر_PRESERVE;
+        ok = سېټ_Preserve(info, type, arrayNdx, ارزښت);
     }
-    else if (istreq(field, "levelname") || istreq(field, "level_name")) {
-        type_field = TYPE_FIELD_LEVEL_NAME;
-        ok = SetLevelName(info, type, arrayNdx, value);
-    } else {
-        log_err(info->ctx, XKB_ERROR_UNKNOWN_FIELD,
+    وإلا إذا (istreq(ډګر_2, "levelname") || istreq(ډګر_2, "level_name")) {
+        type_ډګر = TYPE_ډګر_LEVEL_NAME;
+        ok = سېټ_Level_Name(info, type, arrayNdx, ارزښت);
+    } وإلا {
+        log_err(info->ctx, XKB_ERROR_UNKNOWN_ډګر,
                 "Unknown field \"%s\" in key type \"%s\"; Definition ignored\n",
-                field, TypeTxt(info, type));
+                ډګر_2, TypeTxt(info, type));
         ok = !(info->keymap_info->strict & PARSER_NO_UNKNOWN_TYPE_FIELDS);
     }
 
-    type->defined |= type_field;
-    return ok;
+    type->defined |= type_ډګر;
+    أرجع ok;
 }
 
-static bool
-HandleKeyTypeBody(KeyTypesInfo *info, VarDef *def, KeyTypeInfo *type)
+ساكن bool
+Handle_کلی_Type_Body(کلی_Types_Info *info, VarDef *def, کلی_Type_Info *type)
 {
     bool ok = true;
-    const char *elem, *field;
-    ExprDef *arrayNdx;
+    ثابت حرف *elem, *ډګر_2;
+    بیان_Def *arrayNdx;
 
-    for (; def; def = (VarDef *) def->common.next) {
-        if (!ExprResolveLhs(info->ctx, def->name, &elem, &field,
+    لكل (; def; def = (VarDef *) def->common.بل) {
+        إذا (!بیان_Resolve_Lhs(info->ctx, def->name, &elem, &ډګر_2,
                             &arrayNdx)) {
             /* internal error, already reported */
             ok = false;
-            continue;
+            استمر;
         }
 
-        if (elem) {
-            if (istreq(elem, "type")) {
-                log_err(info->ctx, XKB_ERROR_INVALID_SET_DEFAULT_STATEMENT,
+        إذا (elem) {
+            إذا (istreq(elem, "type")) {
+                log_err(info->ctx, XKB_ERROR_INVALID_سېټ_DEFAULT_STATEMENT,
                         "Support for changing the default type has been removed; "
-                        "Statement \"%s.%s\" ignored.\n", elem, field);
+                        "Statement \"%s.%s\" ignored.\n", elem, ډګر_2);
             }
-            else {
+            وإلا {
                 log_err(info->ctx, XKB_ERROR_GLOBAL_DEFAULTS_WRONG_SCOPE,
                         "Cannot set global defaults for \"%s\" element within "
                         "a key type statement: move statements to the global "
                         "file scope. Assignment to \"%s.%s\" ignored.\n",
-                        elem, elem, field);
+                        elem, elem, ډګر_2);
                 ok = false;
             }
-            continue;
+            استمر;
         }
 
-        if (!SetKeyTypeField(info, type, field, arrayNdx, def->value))
+        إذا (!سېټ_کلی_Type_ډګر(info, type, ډګر_2, arrayNdx, def->ارزښت))
             ok = false;
     }
 
-    return ok;
+    أرجع ok;
 }
 
-static bool
-HandleKeyTypeDef(KeyTypesInfo *info, KeyTypeDef *def)
+ساكن bool
+Handle_کلی_Type_Def(کلی_Types_Info *info, کلی_Type_Def *def)
 {
-    KeyTypeInfo type = {
+    کلی_Type_Info type = {
         .defined = 0,
-        .merge = def->merge,
+        .یوځای = def->یوځای,
         .name = def->name,
         .mods = 0,
-        .num_levels = 1,
+        .عدد_پوړونه = 1,
         .entries = darray_new(),
-        .level_names = darray_new(),
+        .level_نومونه = darray_new(),
     };
 
-    if (!HandleKeyTypeBody(info, def->body, &type) ||
-        !AddKeyType(info, &type, true))
+    إذا (!Handle_کلی_Type_Body(info, def->body, &type) ||
+        !جمع_کړه_کلی_Type(info, &type, true))
     {
-        info->errorCount++;
-        ClearKeyTypeInfo(&type);
-        return false;
+        info->error_شمېر++;
+        Clear_کلی_Type_Info(&type);
+        أرجع false;
     }
 
     /* Type has been either stolen via shallow copy or reinitialized in
        `AddKeyType`: no need to free the arrays */
-    return true;
+    أرجع true;
 }
 
-static bool
-HandleGlobalVar(KeyTypesInfo *info, VarDef *stmt)
+ساكن bool
+HandleGlobalVar(کلی_Types_Info *info, VarDef *stmt)
 {
-    const char *elem, *field;
-    ExprDef *arrayNdx;
+    ثابت حرف *elem, *ډګر_2;
+    بیان_Def *arrayNdx;
 
-    if (!ExprResolveLhs(info->ctx, stmt->name, &elem, &field,
+    إذا (!بیان_Resolve_Lhs(info->ctx, stmt->name, &elem, &ډګر_2,
                         &arrayNdx)) {
-        return false;           /* internal error, already reported */
+        أرجع false;           /* internal error, already reported */
     }
-    else if (elem && istreq(elem, "type")) {
+    وإلا إذا (elem && istreq(elem, "type")) {
         log_err(info->ctx, XKB_ERROR_WRONG_STATEMENT_TYPE,
                 "Support for changing the default type has been removed; "
                 "Statement ignored\n");
-        return true;
+        أرجع true;
     }
-    else if (elem) {
-        log_err(info->ctx, XKB_ERROR_UNKNOWN_DEFAULT_FIELD,
+    وإلا إذا (elem) {
+        log_err(info->ctx, XKB_ERROR_UNKNOWN_DEFAULT_ډګر,
                 "Default defined for unknown element \"%s\"; "
-                "Value for field \"%s.%s\" ignored\n", elem, elem, field);
-        return !(info->keymap_info->strict & PARSER_NO_UNKNOWN_STATEMENTS);
+                "Value for field \"%s.%s\" ignored\n", elem, elem, ډګر_2);
+        أرجع !(info->keymap_info->strict & PARSER_NO_UNKNOWN_STATEMENTS);
     }
-    else if (field) {
-        log_err(info->ctx, XKB_ERROR_UNKNOWN_DEFAULT_FIELD,
-                "Default defined for unknown field \"%s\"; Ignored\n", field);
-        return !(info->keymap_info->strict &
+    وإلا إذا (ډګر_2) {
+        log_err(info->ctx, XKB_ERROR_UNKNOWN_DEFAULT_ډګر,
+                "Default defined for unknown field \"%s\"; Ignored\n", ډګر_2);
+        أرجع !(info->keymap_info->strict &
                  PARSER_NO_UNKNOWN_TYPES_GLOBAL_FIELDS);
     }
-    return false;
+    أرجع false;
 }
 
-static void
-HandleKeyTypesFile(KeyTypesInfo *info, XkbFile *file)
+ساكن فراغ
+Handle_کلی_Types_File(کلی_Types_Info *info, XkbFile *file)
 {
     bool ok;
 
-    free(info->name);
-    info->name = strdup_safe(file->name);
+    حرر(info->name);
+    info->name = strdup_خوندي(file->name);
 
-    for (ParseCommon *stmt = file->defs; stmt; stmt = stmt->next) {
-        switch (stmt->type) {
-        case STMT_INCLUDE:
-            ok = HandleIncludeKeyTypes(info, (IncludeStmt *) stmt);
-            break;
-        case STMT_TYPE:
-            ok = HandleKeyTypeDef(info, (KeyTypeDef *) stmt);
-            break;
-        case STMT_VAR:
+    لكل (ParseCommon *stmt = file->defs; stmt; stmt = stmt->بل) {
+        بدل (stmt->type) {
+        حالة STMT_INCLUDE:
+            ok = Handle_Include_کلی_Types(info, (IncludeStmt *) stmt);
+            اكسر;
+        حالة STMT_TYPE:
+            ok = Handle_کلی_Type_Def(info, (کلی_Type_Def *) stmt);
+            اكسر;
+        حالة STMT_VAR:
             ok = HandleGlobalVar(info, (VarDef*) stmt);
-            break;
-        case STMT_VMOD:
+            اكسر;
+        حالة STMT_VMOD:
             ok = HandleVModDef(info->ctx, &info->mods, (VModDef *) stmt);
-            break;
-        case STMT_UNKNOWN_DECLARATION:
-        case STMT_UNKNOWN_COMPOUND:
+            اكسر;
+        حالة STMT_UNKNOWN_DECLARATION:
+        حالة STMT_UNKNOWN_COMPOUND:
             log_err(info->ctx, XKB_ERROR_UNKNOWN_STATEMENT,
                     "Unsupported types %s statement \"%s\"; Ignoring\n",
                     (stmt->type == STMT_UNKNOWN_COMPOUND
                         ? "compound" : "declaration"),
                     ((UnknownStatement *)stmt)->name);
             ok = !(info->keymap_info->strict & PARSER_NO_UNKNOWN_STATEMENTS);
-            break;
-        default:
+            اكسر;
+        افتراضي:
             log_err(info->ctx, XKB_ERROR_WRONG_STATEMENT_TYPE,
                     "Key type files may not include other declarations; "
-                    "Ignoring %s\n", stmt_type_to_string(stmt->type));
+                    "Ignoring %s\n", stmt_type_منزل_string(stmt->type));
             ok = false;
-            break;
+            اكسر;
         }
 
-        if (!ok)
-            info->errorCount++;
+        إذا (!ok)
+            info->error_شمېر++;
 
-        if (info->errorCount > 10) {
+        إذا (info->error_شمېر > 10) {
             log_err(info->ctx, XKB_ERROR_INVALID_XKB_SYNTAX,
                     "Abandoning keytypes file \"%s\"\n",
-                    safe_map_name(file->name));
-            break;
+                    خوندي_map_name(file->name));
+            اكسر;
         }
     }
 }
 
 /***====================================================================***/
 
-static bool
-CopyKeyTypesToKeymap(struct xkb_keymap *keymap, KeyTypesInfo *info)
+ساكن bool
+Copy_کلی_Types_منزل_Keymap(بنية xkb_keymap *keymap, کلی_Types_Info *info)
 {
-    const darray_size_t num_types = darray_empty(info->types)
+    ثابت darray_اندازه_t عدد_types = darray_تشه(info->types)
                                   ? 1
-                                  : darray_size(info->types);
-    struct xkb_key_type *types = calloc(num_types, sizeof(*types));
-    if (!types)
-        return false;
+                                  : darray_اندازه(info->types);
+    بنية xkb_کلی_type *types = حافظه_صفر_ورکړه(عدد_types, حجم(*types));
+    إذا (!types)
+        أرجع false;
 
     /*
      * The following types are called “Canonical Key Types” and the XKB protocol
@@ -804,85 +804,85 @@ CopyKeyTypesToKeymap(struct xkb_keymap *keymap, KeyTypesInfo *info)
      * If no types were specified, a default ONE_LEVEL type is
      * used for all keys.
      */
-    if (darray_empty(info->types)) {
-        struct xkb_key_type *type = &types[0];
+    إذا (darray_تشه(info->types)) {
+        بنية xkb_کلی_type *type = &types[0];
 
         type->mods.mods = 0;
-        type->num_levels = 1;
-        type->entries = NULL;
-        type->num_entries = 0;
+        type->عدد_پوړونه = 1;
+        type->entries = عدم;
+        type->عدد_entries = 0;
         type->name = xkb_atom_intern_literal(keymap->ctx, "ONE_LEVEL");
-        type->level_names = NULL;
-        type->num_level_names = 0;
+        type->level_نومونه = عدم;
+        type->عدد_level_نومونه = 0;
         type->required = true;
     }
-    else {
+    وإلا {
         /* HACK to circumvent Xorg bugs (see comment above) */
-        const xkb_atom_t canonical_types[] = {
+        ثابت xkb_atom_t canonical_types[] = {
             xkb_atom_intern_literal(keymap->ctx, "ONE_LEVEL"),
             xkb_atom_intern_literal(keymap->ctx, "TWO_LEVEL"),
             xkb_atom_intern_literal(keymap->ctx, "ALPHABETIC"),
             xkb_atom_intern_literal(keymap->ctx, "KEYPAD"),
         };
 
-        for (darray_size_t i = 0; i < num_types; i++) {
-            KeyTypeInfo *def = &darray_item(info->types, i);
-            struct xkb_key_type *type = &types[i];
+        لكل (darray_اندازه_t i = 0; i < عدد_types; i++) {
+            کلی_Type_Info *def = &darray_توکی(info->types, i);
+            بنية xkb_کلی_type *type = &types[i];
 
             type->name = def->name;
             type->mods.mods = def->mods;
-            type->num_levels = def->num_levels;
-            type->num_level_names =
-                (xkb_level_index_t) darray_size(def->level_names);
-            darray_steal(def->level_names, &type->level_names, NULL);
-            darray_steal(def->entries, &type->entries, &type->num_entries);
+            type->عدد_پوړونه = def->عدد_پوړونه;
+            type->عدد_level_نومونه =
+                (xkb_level_شاخص_t) darray_اندازه(def->level_نومونه);
+            darray_steal(def->level_نومونه, &type->level_نومونه, عدم);
+            darray_steal(def->entries, &type->entries, &type->عدد_entries);
             type->required = false;
 
             /* HACK: Never drop canonical XKB key types (see comment above) */
-            if (type->num_levels <= 2) {
-                for (uint8_t t = 0;
-                     t < (uint8_t) ARRAY_SIZE(canonical_types);
+            إذا (type->عدد_پوړونه <= 2) {
+                لكل (uint8_t t = 0;
+                     t < (uint8_t) ARRAY_اندازه(canonical_types);
                      t++) {
-                        if (type->name == canonical_types[t]) {
+                        إذا (type->name == canonical_types[t]) {
                             type->required = true;
-                            break;
+                            اكسر;
                         }
                 }
             }
         }
     }
 
-    keymap->types_section_name = strdup_safe(info->name);
+    keymap->types_section_name = strdup_خوندي(info->name);
     XkbEscapeMapName(keymap->types_section_name);
-    keymap->num_types = num_types;
+    keymap->عدد_types = عدد_types;
     keymap->types = types;
     keymap->mods = info->mods;
-    return true;
+    أرجع true;
 }
 
 /***====================================================================***/
 
 bool
-CompileKeyTypes(XkbFile *file, struct xkb_keymap_info *keymap_info)
+Compile_کلی_Types(XkbFile *file, بنية xkb_keymap_info *keymap_info)
 {
-    KeyTypesInfo info;
+    کلی_Types_Info info;
 
-    InitKeyTypesInfo(&info, keymap_info, 0,
+    Init_کلی_Types_Info(&info, keymap_info, 0,
                      &keymap_info->keymap.mods);
 
-    if (file != NULL)
-        HandleKeyTypesFile(&info, file);
+    إذا (file != عدم)
+        Handle_کلی_Types_File(&info, file);
 
-    if (info.errorCount != 0)
-        goto err_info;
+    إذا (info.error_شمېر != 0)
+        اذهب err_info;
 
-    if (!CopyKeyTypesToKeymap(&keymap_info->keymap, &info))
-        goto err_info;
+    إذا (!Copy_کلی_Types_منزل_Keymap(&keymap_info->keymap, &info))
+        اذهب err_info;
 
-    ClearKeyTypesInfo(&info);
-    return true;
+    Clear_کلی_Types_Info(&info);
+    أرجع true;
 
 err_info:
-    ClearKeyTypesInfo(&info);
-    return false;
+    Clear_کلی_Types_Info(&info);
+    أرجع false;
 }

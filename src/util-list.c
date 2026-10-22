@@ -5,72 +5,72 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <assert.h>
-#include <stddef.h>
-#include <stdbool.h>
+#ضمن <assert.h>
+#ضمن <stddef.h>
+#ضمن <stdbool.h>
 
-#include "util-list.h"
+#ضمن "util-list.h"
 
-void
-list_init(struct list *list)
+فراغ
+list_init(بنية list *list)
 {
 	list->prev = list;
-	list->next = list;
+	list->بل = list;
 }
 
-void
-list_insert(struct list *list, struct list *elm)
+فراغ
+list_ورننباسه(بنية list *list, بنية list *elm)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	أكد((list->بل != عدم && list->prev != عدم) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
-	assert(((elm->next == NULL && elm->prev == NULL) || list_empty(elm)) ||
+	أكد(((elm->بل == عدم && elm->prev == عدم) || list_تشه(elm)) ||
 	       !"elm->next|prev is not NULL, list node used twice?");
 
 	elm->prev = list;
-	elm->next = list->next;
-	list->next = elm;
-	elm->next->prev = elm;
+	elm->بل = list->بل;
+	list->بل = elm;
+	elm->بل->prev = elm;
 }
 
-void
-list_append(struct list *list, struct list *elm)
+فراغ
+list_append(بنية list *list, بنية list *elm)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	أكد((list->بل != عدم && list->prev != عدم) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
-	assert(((elm->next == NULL && elm->prev == NULL) || list_empty(elm)) ||
+	أكد(((elm->بل == عدم && elm->prev == عدم) || list_تشه(elm)) ||
 	       !"elm->next|prev is not NULL, list node used twice?");
 
-	elm->next = list;
+	elm->بل = list;
 	elm->prev = list->prev;
 	list->prev = elm;
-	elm->prev->next = elm;
+	elm->prev->بل = elm;
 }
 
-void
-list_remove(struct list *elm)
+فراغ
+list_remove(بنية list *elm)
 {
-	assert((elm->next != NULL && elm->prev != NULL) ||
+	أكد((elm->بل != عدم && elm->prev != عدم) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
 
-	elm->prev->next = elm->next;
-	elm->next->prev = elm->prev;
-	elm->next = NULL;
-	elm->prev = NULL;
+	elm->prev->بل = elm->بل;
+	elm->بل->prev = elm->prev;
+	elm->بل = عدم;
+	elm->prev = عدم;
 }
 
 bool
-list_empty(const struct list *list)
+list_تشه(ثابت بنية list *list)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	أكد((list->بل != عدم && list->prev != عدم) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
 
-	return list->next == list;
+	أرجع list->بل == list;
 }
 
 bool
-list_is_last(const struct list *list, const struct list *elm)
+list_is_وروستی(ثابت بنية list *list, ثابت بنية list *elm)
 {
-	return elm->next == list;
+	أرجع elm->بل == list;
 }

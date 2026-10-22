@@ -4,21 +4,21 @@
  * You can always fetch the latest version from:
  * https://raw.github.com/xkbcommon/libxkbcommon/master/src/keysym-names.h
  */
-#pragma once
+#لارښوونه once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <stddef.h>
-#include <stdint.h>
+#ضمن <stddef.h>
+#ضمن <stdint.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "utils.h"
+#ضمن "xkbcommon/xkbcommon.h"
+#ضمن "utils.h"
 
-#ifdef __GNUC__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Woverlength-strings"
-#endif
-static const char *keysym_names =
+#که_تعریف_شوی __GNUC__
+#لارښوونه GCC diagnostic ټېل
+#لارښوونه GCC diagnostic ignored "-Woverlength-strings"
+#د_که_پای
+ساكن ثابت حرف *keysym_نومونه =
     "0\0"
     "1\0"
     "2\0"
@@ -2658,11 +2658,11 @@ static const char *keysym_names =
     "Zstroke\0"
     "zstroke\0"
 ;
-#ifdef __GNUC__
-#pragma GCC diagnostic pop
-#endif
+#که_تعریف_شوی __GNUC__
+#لارښوونه GCC diagnostic راوباسه
+#د_که_پای
 
-static const uint16_t keysym_name_G[] = {
+ساكن ثابت uint16_t keysym_name_G[] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2508,
     0, 0, 0, 0, 0, 0, 3350, 0, 0, 0, 0, 0, 0, 0, 2987, 2941, 0, 0, 0, 1606,
     2880, 0, 170, 0, 0, 2634, 0, 0, 0, 0, 1265, 0, 2777, 0, 0, 0, 0, 0, 0,
@@ -2970,27 +2970,27 @@ static const uint16_t keysym_name_G[] = {
     600, 2354, 277, 2185, 0
 };
 
-static inline size_t
-keysym_name_perfect_hash(const char *key)
+ساكن مضمن اندازه_t
+keysym_name_perfect_hash(ثابت حرف *کلی)
 {
-    const char *T1 = "mGfOhSKH0Is7uINY8QVfaJ9N0Fe0yHYu";
-    const char *T2 = "nXsEsvAWpmIhmalLNlkBZssDXdmoTYKy";
-    size_t h1 = 0;
-    size_t h2 = 0;
-    for (size_t i = 0; key[i] != '\0'; i++) {
-        h1 += (size_t) (T1[i % 32] * key[i]);
-        h2 += (size_t) (T2[i % 32] * key[i]);
+    ثابت حرف *T1 = "mGfOhSKH0Is7uINY8QVfaJ9N0Fe0yHYu";
+    ثابت حرف *T2 = "nXsEsvAWpmIhmalLNlkBZssDXdmoTYKy";
+    اندازه_t h1 = 0;
+    اندازه_t h2 = 0;
+    لكل (اندازه_t i = 0; کلی[i] != '\0'; i++) {
+        h1 += (اندازه_t) (T1[i % 32] * کلی[i]);
+        h2 += (اندازه_t) (T2[i % 32] * کلی[i]);
     }
-    return (keysym_name_G[h1 % 4731] + keysym_name_G[h2 % 4731]) % 4731;
+    أرجع (keysym_name_G[h1 % 4731] + keysym_name_G[h2 % 4731]) % 4731;
 }
 
 
-struct name_keysym {
+بنية name_keysym {
     xkb_keysym_t keysym;
-    uint16_t offset;
+    uint16_t دننه_واټن;
 };
 
-static const struct name_keysym name_to_keysym[] = {
+ساكن ثابت بنية name_keysym name_منزل_keysym[] = {
     { 0x00000030, 0 }, /* 0 */
     { 0x00000031, 2 }, /* 1 */
     { 0x00000032, 4 }, /* 2 */
@@ -3274,7 +3274,7 @@ static const struct name_keysym name_to_keysym[] = {
     { 0x01002235, 3396 }, /* because */
     { 0x0000ff58, 3404 }, /* Begin */
     { 0x000009df, 3410 }, /* blank */
-    { 0x100000fc, 3416 }, /* block */
+    { 0x100000fc, 3416 }, /*بلاک*/
     { 0x000008a5, 3422 }, /* botintegral */
     { 0x000008ac, 3434 }, /* botleftparens */
     { 0x000008a8, 3448 }, /* botleftsqbracket */
@@ -3798,7 +3798,7 @@ static const struct name_keysym name_to_keysym[] = {
     { 0x000001bd, 11414 }, /* doubleacute */
     { 0x00000af2, 11426 }, /* doubledagger */
     { 0x00000afe, 11439 }, /* doublelowquotemark */
-    { 0x0000ff54, 11458 }, /* Down */
+    { 0x0000ff54, 11458 }, /*ښکته*/
     { 0x000008fe, 11463 }, /* downarrow */
     { 0x00000ba8, 11473 }, /* downcaret */
     { 0x00000bd6, 11483 }, /* downshoe */
@@ -3855,7 +3855,7 @@ static const struct name_keysym name_to_keysym[] = {
     { 0x00000acf, 12034 }, /* emopenrectangle */
     { 0x01002205, 12050 }, /* emptyset */
     { 0x00000aa1, 12059 }, /* emspace */
-    { 0x0000ff57, 12067 }, /* End */
+    { 0x0000ff57, 12067 }, /*پای_ټکی*/
     { 0x00000aaa, 12071 }, /* endash */
     { 0x00000ae6, 12078 }, /* enfilledcircbullet */
     { 0x00000ae7, 12097 }, /* enfilledsqbullet */
@@ -3940,7 +3940,7 @@ static const struct name_keysym name_to_keysym[] = {
     { 0x00000add, 12603 }, /* filledrighttribullet */
     { 0x00000ae9, 12624 }, /* filledtribulletdown */
     { 0x00000ae8, 12644 }, /* filledtribulletup */
-    { 0x0000ff68, 12662 }, /* Find */
+    { 0x0000ff68, 12662 }, /*پیدا_کړه*/
     { 0x0000fed0, 12667 }, /* First_Virtual_Screen */
     { 0x00000ac5, 12688 }, /* fiveeighths */
     { 0x00000ab7, 12700 }, /* fivesixths */
@@ -4302,11 +4302,11 @@ static const struct name_keysym name_to_keysym[] = {
     { 0x01001ec9, 17385 }, /* ihook */
     { 0x000003cf, 17391 }, /* Imacron */
     { 0x000003ef, 17399 }, /* imacron */
-    { 0x000008ce, 17407 }, /* implies */
+    { 0x000008ce, 17407 }, /*پایله_ورکوي*/
     { 0x000008da, 17415 }, /* includedin */
     { 0x000008db, 17426 }, /* includes */
     { 0x000008c2, 17435 }, /* infinity */
-    { 0x0000ff63, 17444 }, /* Insert */
+    { 0x0000ff63, 17444 }, /*ورننباسه*/
     { 0x1000ff72, 17451 }, /* InsertChar */
     { 0x1000ff70, 17462 }, /* InsertLine */
     { 0x000008bf, 17473 }, /* integral */
@@ -4499,7 +4499,7 @@ static const struct name_keysym name_to_keysym[] = {
     { 0x000001b5, 19379 }, /* lcaron */
     { 0x000003a6, 19386 }, /* Lcedilla */
     { 0x000003b6, 19395 }, /* lcedilla */
-    { 0x0000ff51, 19404 }, /* Left */
+    { 0x0000ff51, 19404 }, /*کیڼ*/
     { 0x00000abc, 19409 }, /* leftanglebracket */
     { 0x000008fb, 19426 }, /* leftarrow */
     { 0x00000ba3, 19436 }, /* leftcaret */
@@ -4575,7 +4575,7 @@ static const struct name_keysym name_to_keysym[] = {
     { 0x000003d1, 20176 }, /* Ncedilla */
     { 0x000003f1, 20185 }, /* ncedilla */
     { 0x010020aa, 20194 }, /* NewSheqelSign */
-    { 0x0000ff56, 20208 }, /* Next */
+    { 0x0000ff56, 20208 }, /*بل*/
     { 0x0000fed2, 20213 }, /* Next_Virtual_Screen */
     { 0x01002089, 20233 }, /* ninesubscript */
     { 0x01002079, 20247 }, /* ninesuperior */
@@ -4757,7 +4757,7 @@ static const struct name_keysym name_to_keysym[] = {
     { 0x0000fed1, 22278 }, /* Prev_Virtual_Screen */
     { 0x0000ff3e, 22298 }, /* PreviousCandidate */
     { 0x0000ff61, 22316 }, /* Print */
-    { 0x0000ff55, 22322 }, /* Prior */
+    { 0x0000ff55, 22322 }, /*مخکینی*/
     { 0x000004b0, 22328 }, /* prolongedsound */
     { 0x00000aa6, 22343 }, /* punctspace */
     { 0x00000051, 22354 }, /* Q */
@@ -4797,7 +4797,7 @@ static const struct name_keysym name_to_keysym[] = {
     { 0x0000fe72, 22540 }, /* RepeatKeys_Enable */
     { 0x1000ff6c, 22558 }, /* Reset */
     { 0x0000ff0d, 22564 }, /* Return */
-    { 0x0000ff53, 22571 }, /* Right */
+    { 0x0000ff53, 22571 }, /*ښی*/
     { 0x00000abe, 22577 }, /* rightanglebracket */
     { 0x000008fd, 22595 }, /* rightarrow */
     { 0x00000ba6, 22606 }, /* rightcaret */
@@ -5163,7 +5163,7 @@ static const struct name_keysym name_to_keysym[] = {
     { 0x000008dd, 26593 }, /* union */
     { 0x000003d9, 26599 }, /* Uogonek */
     { 0x000003f9, 26607 }, /* uogonek */
-    { 0x0000ff52, 26615 }, /* Up */
+    { 0x0000ff52, 26615 }, /*پورته*/
     { 0x000008fc, 26618 }, /* uparrow */
     { 0x00000ba9, 26626 }, /* upcaret */
     { 0x000009ec, 26634 }, /* upleftcorner */
@@ -5631,7 +5631,7 @@ static const struct name_keysym name_to_keysym[] = {
     { 0x010001b6, 32872 }, /* zstroke */
 };
 
-static const struct name_keysym keysym_to_name[] = {
+ساكن ثابت بنية name_keysym keysym_منزل_name[] = {
     { 0x00000000, 20276 }, /* NoSymbol */
     { 0x00000020, 24027 }, /* space */
     { 0x00000021, 12230 }, /* exclam */
@@ -6250,7 +6250,7 @@ static const struct name_keysym keysym_to_name[] = {
     { 0x000008c8, 954 }, /* approximate */
     { 0x000008c9, 23223 }, /* similarequal */
     { 0x000008cd, 17356 }, /* ifonlyif */
-    { 0x000008ce, 17407 }, /* implies */
+    { 0x000008ce, 17407 }, /*پایله_ورکوي*/
     { 0x000008cf, 17315 }, /* identical */
     { 0x000008d6, 22484 }, /* radical */
     { 0x000008da, 17415 }, /* includedin */
@@ -6813,22 +6813,22 @@ static const struct name_keysym keysym_to_name[] = {
     { 0x0000ff3e, 22298 }, /* PreviousCandidate */
     { 0x0000ff3f, 15834 }, /* Hangul_Special */
     { 0x0000ff50, 16822 }, /* Home */
-    { 0x0000ff51, 19404 }, /* Left */
-    { 0x0000ff52, 26615 }, /* Up */
-    { 0x0000ff53, 22571 }, /* Right */
-    { 0x0000ff54, 11458 }, /* Down */
-    { 0x0000ff55, 22322 }, /* Prior */
-    { 0x0000ff56, 20208 }, /* Next */
-    { 0x0000ff57, 12067 }, /* End */
+    { 0x0000ff51, 19404 }, /*کیڼ*/
+    { 0x0000ff52, 26615 }, /*پورته*/
+    { 0x0000ff53, 22571 }, /*ښی*/
+    { 0x0000ff54, 11458 }, /*ښکته*/
+    { 0x0000ff55, 22322 }, /*مخکینی*/
+    { 0x0000ff56, 20208 }, /*بل*/
+    { 0x0000ff57, 12067 }, /*پای_ټکی*/
     { 0x0000ff58, 3404 }, /* Begin */
     { 0x0000ff60, 22951 }, /* Select */
     { 0x0000ff61, 22316 }, /* Print */
     { 0x0000ff62, 12248 }, /* Execute */
-    { 0x0000ff63, 17444 }, /* Insert */
+    { 0x0000ff63, 17444 }, /*ورننباسه*/
     { 0x0000ff65, 26588 }, /* Undo */
     { 0x0000ff66, 22524 }, /* Redo */
     { 0x0000ff67, 19890 }, /* Menu */
-    { 0x0000ff68, 12662 }, /* Find */
+    { 0x0000ff68, 12662 }, /*پیدا_کړه*/
     { 0x0000ff69, 8489 }, /* Cancel */
     { 0x0000ff6a, 16762 }, /* Help */
     { 0x0000ff6b, 8377 }, /* Break */
@@ -8139,18 +8139,18 @@ static const struct name_keysym keysym_to_name[] = {
     { 0x1008ffb8, 28756 }, /* XF86FullScreen */
 };
 
-#define UNICODE_KEYSYM    0xfffe
-#define DEPRECATED_KEYSYM 0xffff
+#تعریف_کړه UNICODE_KEYSYM    0xfffe
+#تعریف_کړه DEPRECATED_KEYSYM 0xffff
 
-struct deprecated_keysym {
+بنية deprecated_keysym {
     xkb_keysym_t keysym;
-    uint16_t offset;
+    uint16_t دننه_واټن;
     /* Explicit deprecated aliases start index & count */
-    uint8_t explicit_index;
-    uint8_t explicit_count;
+    uint8_t explicit_شاخص;
+    uint8_t explicit_شمېر;
 };
 
-static const struct deprecated_keysym deprecated_keysyms[] = {
+ساكن ثابت بنية deprecated_keysym deprecated_keysyms[] = {
     { 0x00000027, 934              , 0, 0 }, /* Reference: apostrophe. Deprecated: quoteright */
     { 0x00000060, 13397            , 0, 0 }, /* Reference: grave. Deprecated: quoteleft */
     { 0x000000ab, 14480            , 0, 0 }, /* Reference: guillemetleft. Deprecated: guillemotleft */
@@ -8310,9 +8310,9 @@ static const struct deprecated_keysym deprecated_keysyms[] = {
     { 0x100810f4, 30581            , 0, 0 }, /* Reference: XF86MonBrightnessAuto. Deprecated: XF86BrightnessAuto */
 };
 
-static const uint32_t explicit_deprecated_aliases[] = {
+ساكن ثابت uint32_t explicit_deprecated_aliases[] = {
     24103,
 };
 
-static_assert(ARRAY_SIZE(explicit_deprecated_aliases) < UINT8_MAX,
+static_assert(ARRAY_اندازه(explicit_deprecated_aliases) < UINT8_MAX,
               "Cannot encode index and count in deprecated_keysym::explicit_*");

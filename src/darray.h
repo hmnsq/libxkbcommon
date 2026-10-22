@@ -2,50 +2,50 @@
  * Copyright (C) 2011 Joseph Adams <joeyadams3.14159@gmail.com>
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#لارښوونه once
 
-#include "config.h"
+#ضمن "config.h"
 
 /* Originally taken from: https://ccodearchive.net/info/darray.html
  * But modified for xkbcommon. */
 
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
-#include <limits.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <assert.h>
+#ضمن <limits.h>
 
-#include "utils.h"
+#ضمن "utils.h"
 
-typedef unsigned int darray_size_t;
-#define DARRAY_SIZE_T_WIDTH (sizeof(darray_size_t) * CHAR_BIT)
-#define DARRAY_SIZE_MAX UINT_MAX
+تعريفنوع بینښه صحيح darray_اندازه_t;
+#تعریف_کړه DARRAY_اندازه_T_پلنوالی (حجم(darray_اندازه_t) * CHAR_BIT)
+#تعریف_کړه DARRAY_اندازه_MAX UINT_MAX
 
-#define darray(type) struct {         \
+#تعریف_کړه darray(type) بنية {         \
     /** Current size */               \
-    darray_size_t size;               \
+    darray_اندازه_t اندازه;               \
     /** Count of allocated items */   \
-    darray_size_t alloc;              \
+    darray_اندازه_t alloc;              \
     /** Array of items */             \
-    type *item ATTR_COUNTED_BY(size); \
+    type *توکی ATTR_COUNTED_BY(اندازه); \
 }
 
-#define darray_new() { 0, 0, 0 }
+#تعریف_کړه darray_new() { 0, 0, 0 }
 
-#define darray_init(arr) do { \
-    (arr).item = 0; (arr).size = 0; (arr).alloc = 0; \
-} while (0)
+#تعریف_کړه darray_init(arr) افعل { \
+    (arr).توکی = 0; (arr).اندازه = 0; (arr).alloc = 0; \
+} طالما (0)
 
-#define darray_free(arr) do { \
-    free((arr).item); \
+#تعریف_کړه darray_free(arr) افعل { \
+    حرر((arr).توکی); \
     darray_init(arr); \
-} while (0)
+} طالما (0)
 
-#define darray_steal(arr, to, to_size) do { \
-    *(to) = (arr).item; \
-    if (to_size) \
-        *(darray_size_t *) (to_size) = (arr).size; \
+#تعریف_کړه darray_steal(arr, منزل, منزل_اندازه) افعل { \
+    *(منزل) = (arr).توکی; \
+    إذا (منزل_اندازه) \
+        *(darray_اندازه_t *) (منزل_اندازه) = (arr).اندازه; \
     darray_init(arr); \
-} while (0)
+} طالما (0)
 
 /*
  * Typedefs for darrays of common types.  These are useful
@@ -64,204 +64,204 @@ typedef unsigned int darray_size_t;
  *     foo(&arr);
  */
 
-typedef darray (char)           darray_char;
-typedef darray (signed char)    darray_schar;
-typedef darray (unsigned char)  darray_uchar;
+تعريفنوع darray (حرف)           darray_char;
+تعريفنوع darray (نښهدار حرف)    darray_schar;
+تعريفنوع darray (بینښه حرف)  darray_uchar;
 
-typedef darray (char *)         darray_string;
+تعريفنوع darray (حرف *)         darray_string;
 
-typedef darray (short)          darray_short;
-typedef darray (int)            darray_int;
-typedef darray (long)           darray_long;
+تعريفنوع darray (لنډ)          darray_short;
+تعريفنوع darray (صحيح)            darray_int;
+تعريفنوع darray (اوږد)           darray_long;
 
-typedef darray (unsigned short) darray_ushort;
-typedef darray (unsigned int)   darray_uint;
-typedef darray (unsigned long)  darray_ulong;
+تعريفنوع darray (بینښه لنډ) darray_ushort;
+تعريفنوع darray (بینښه صحيح)   darray_uint;
+تعريفنوع darray (بینښه اوږد)  darray_ulong;
 
 /*** Access ***/
 
-#define darray_item(arr, i)     ((arr).item[i])
-#define darray_items(arr)       ((arr).item)
-#define darray_size(arr)        ((arr).size)
-#define darray_empty(arr)       ((arr).size == 0)
+#تعریف_کړه darray_توکی(arr, i)     ((arr).توکی[i])
+#تعریف_کړه darray_توکي(arr)       ((arr).توکی)
+#تعریف_کړه darray_اندازه(arr)        ((arr).اندازه)
+#تعریف_کړه darray_تشه(arr)       ((arr).اندازه == 0)
 
-#define darray_last(arr, fallback) ( \
-    !(arr).size \
+#تعریف_کړه darray_وروستی(arr, fallback) ( \
+    !(arr).اندازه \
         ? (fallback) \
-        : (arr).item[(arr).size - 1] \
+        : (arr).توکی[(arr).اندازه - 1] \
 )
 
 /*** Insertion (single item) ***/
 
-#define darray_append(arr, ...)  do { \
-    darray_resize(arr, (arr).size + 1); \
-    (arr).item[(arr).size - 1] = (__VA_ARGS__); \
-} while (0)
+#تعریف_کړه darray_append(arr, ...)  افعل { \
+    darray_resize(arr, (arr).اندازه + 1); \
+    (arr).توکی[(arr).اندازه - 1] = (__VA_ARGS__); \
+} طالما (0)
 
-#define darray_insert(arr, i, ...) do { \
-    darray_size_t __index = (i); \
-    darray_resize(arr, (arr).size+1); \
+#تعریف_کړه darray_ورننباسه(arr, i, ...) افعل { \
+    darray_اندازه_t __index = (i); \
+    darray_resize(arr, (arr).اندازه+1); \
     memmove( \
-        (arr).item + __index + 1, \
-        (arr).item + __index, \
-        ((arr).size - __index - 1) * sizeof(*(arr).item) \
+        (arr).توکی + __index + 1, \
+        (arr).توکی + __index, \
+        ((arr).اندازه - __index - 1) * حجم(*(arr).توکی) \
     ); \
-    (arr).item[__index] = (__VA_ARGS__); \
-} while(0)
+    (arr).توکی[__index] = (__VA_ARGS__); \
+} طالما(0)
 
 /*** Insertion (multiple items) ***/
 
-#define darray_append_items(arr, items, count) do { \
-    darray_size_t __count = (count), __oldSize = (arr).size; \
+#تعریف_کړه darray_append_توکي(arr, توکي, شمېر) افعل { \
+    darray_اندازه_t __count = (شمېر), __oldSize = (arr).اندازه; \
     darray_resize(arr, __oldSize + __count); \
-    memcpy((arr).item + __oldSize, items, __count * sizeof(*(arr).item)); \
-} while (0)
+    حافظه_نقل((arr).توکی + __oldSize, توکي, __count * حجم(*(arr).توکی)); \
+} طالما (0)
 
-#define darray_from_items(arr, items, count) do { \
-    darray_size_t __count = (count); \
+#تعریف_کړه darray_from_توکي(arr, توکي, شمېر) افعل { \
+    darray_اندازه_t __count = (شمېر); \
     darray_resize(arr, __count); \
-    if (__count != 0) \
-        memcpy((arr).item, items, __count * sizeof(*(arr).item)); \
-} while (0)
+    إذا (__count != 0) \
+        حافظه_نقل((arr).توکی, توکي, __count * حجم(*(arr).توکی)); \
+} طالما (0)
 
-#define darray_copy(arr_to, arr_from) \
-    darray_from_items((arr_to), (arr_from).item, (arr_from).size)
+#تعریف_کړه darray_copy(arr_منزل, arr_from) \
+    darray_from_توکي((arr_منزل), (arr_from).توکی, (arr_from).اندازه)
 
-#define darray_concat(arr_to, arr_from) do { \
-    if ((arr_from).size > 0) \
-        darray_append_items((arr_to), (arr_from).item, (arr_from).size); \
-} while (0)
+#تعریف_کړه darray_concat(arr_منزل, arr_from) افعل { \
+    إذا ((arr_from).اندازه > 0) \
+        darray_append_توکي((arr_منزل), (arr_from).توکی, (arr_from).اندازه); \
+} طالما (0)
 
 /*** Removal ***/
 
 /* Warning: Do not call darray_remove_last on an empty darray. */
-#define darray_remove_last(arr) (--(arr).size)
+#تعریف_کړه darray_remove_وروستی(arr) (--(arr).اندازه)
 
 /* Warning, slow: Requires copying all elements after removed item. */
-#define darray_remove(arr, i) do { \
-    darray_size_t __index = (i); \
-    if (__index < (arr).size-1) \
+#تعریف_کړه darray_remove(arr, i) افعل { \
+    darray_اندازه_t __index = (i); \
+    إذا (__index < (arr).اندازه-1) \
         memmove( \
-            &(arr).item[__index], \
-            &(arr).item[__index + 1], \
-            ((arr).size -1 - __index) * sizeof(*(arr).item) \
+            &(arr).توکی[__index], \
+            &(arr).توکی[__index + 1], \
+            ((arr).اندازه -1 - __index) * حجم(*(arr).توکی) \
         ); \
-    (arr).size--; \
-} while(0)
+    (arr).اندازه--; \
+} طالما(0)
 
 /*** String buffer ***/
 
-#define darray_append_string(arr, str) do { \
-    const char *__str = (str); \
-    darray_append_items(arr, __str, (darray_size_t) strlen(__str) + 1); \
-    (arr).size--; \
-} while (0)
+#تعریف_کړه darray_append_string(arr, str) افعل { \
+    ثابت حرف *__str = (str); \
+    darray_append_توکي(arr, __str, (darray_اندازه_t) مزي_اوږدوالی(__str) + 1); \
+    (arr).اندازه--; \
+} طالما (0)
 
 /* Same as `darray_append_string` but do count the final '\0' in the size */
-#define darray_append_string0(arr, string) \
-    darray_append_items((arr), (string), (darray_size_t)strlen(string) + 1)
+#تعریف_کړه darray_append_string0(arr, string) \
+    darray_append_توکي((arr), (string), (darray_اندازه_t)مزي_اوږدوالی(string) + 1)
 
-#define darray_append_lit(arr, stringLiteral) do { \
-    darray_append_items(arr, stringLiteral, \
-                        (darray_size_t) sizeof(stringLiteral)); \
-    (arr).size--; \
-} while (0)
+#تعریف_کړه darray_append_lit(arr, stringLiteral) افعل { \
+    darray_append_توکي(arr, stringLiteral, \
+                        (darray_اندازه_t) حجم(stringLiteral)); \
+    (arr).اندازه--; \
+} طالما (0)
 
-#define darray_appends_nullterminate(arr, items, count) do { \
-    darray_size_t __count = (count), __oldSize = (arr).size; \
+#تعریف_کړه darray_appends_nullterminate(arr, توکي, شمېر) افعل { \
+    darray_اندازه_t __count = (شمېر), __oldSize = (arr).اندازه; \
     darray_resize(arr, __oldSize + __count + 1); \
-    memcpy((arr).item + __oldSize, items, __count * sizeof(*(arr).item)); \
-    (arr).item[(arr).size - 1] = 0; \
-    (arr).size--; \
-} while (0)
+    حافظه_نقل((arr).توکی + __oldSize, توکي, __count * حجم(*(arr).توکی)); \
+    (arr).توکی[(arr).اندازه - 1] = 0; \
+    (arr).اندازه--; \
+} طالما (0)
 
-#define darray_prepends_nullterminate(arr, items, count) do { \
-    darray_size_t __count = (count), __oldSize = (arr).size; \
+#تعریف_کړه darray_prepends_nullterminate(arr, توکي, شمېر) افعل { \
+    darray_اندازه_t __count = (شمېر), __oldSize = (arr).اندازه; \
     darray_resize(arr, __count + __oldSize + 1); \
-    memmove((arr).item + __count, (arr).item, \
-            __oldSize * sizeof(*(arr).item)); \
-    memcpy((arr).item, items, __count * sizeof(*(arr).item)); \
-    (arr).item[(arr).size - 1] = 0; \
-    (arr).size--; \
-} while (0)
+    memmove((arr).توکی + __count, (arr).توکی, \
+            __oldSize * حجم(*(arr).توکی)); \
+    حافظه_نقل((arr).توکی, توکي, __count * حجم(*(arr).توکی)); \
+    (arr).توکی[(arr).اندازه - 1] = 0; \
+    (arr).اندازه--; \
+} طالما (0)
 
 /*** Size management ***/
 
-#define darray_resize(arr, newSize) \
-    darray_growalloc(arr, (arr).size = (newSize))
+#تعریف_کړه darray_resize(arr, new_اندازه) \
+    darray_growalloc(arr, (arr).اندازه = (new_اندازه))
 
-#define darray_resize0(arr, newSize) do { \
-    darray_size_t __oldSize = (arr).size, __newSize = (newSize); \
-    (arr).size = __newSize; \
-    if (__newSize > __oldSize) { \
+#تعریف_کړه darray_resize0(arr, new_اندازه) افعل { \
+    darray_اندازه_t __oldSize = (arr).اندازه, __newSize = (new_اندازه); \
+    (arr).اندازه = __newSize; \
+    إذا (__newSize > __oldSize) { \
         darray_growalloc(arr, __newSize); \
-        memset(&(arr).item[__oldSize], 0, \
-               (__newSize - __oldSize) * sizeof(*(arr).item)); \
+        memset(&(arr).توکی[__oldSize], 0, \
+               (__newSize - __oldSize) * حجم(*(arr).توکی)); \
     } \
-} while (0)
+} طالما (0)
 
-#define darray_realloc(arr, newAlloc) do { \
-    (arr).item = realloc((arr).item, \
-                         ((arr).alloc = (newAlloc)) * sizeof(*(arr).item)); \
-} while (0)
+#تعریف_کړه darray_realloc(arr, newAlloc) افعل { \
+    (arr).توکی = realloc((arr).توکی, \
+                         ((arr).alloc = (newAlloc)) * حجم(*(arr).توکی)); \
+} طالما (0)
 
-#define darray_growalloc(arr, need)   do { \
-    darray_size_t __need = (need); \
-    if (__need > (arr).alloc) \
-        darray_realloc(arr, darray_next_alloc((arr).alloc, __need, \
-                                              sizeof(*(arr).item))); \
-} while (0)
+#تعریف_کړه darray_growalloc(arr, need)   افعل { \
+    darray_اندازه_t __need = (need); \
+    إذا (__need > (arr).alloc) \
+        darray_realloc(arr, darray_بل_alloc((arr).alloc, __need, \
+                                              حجم(*(arr).توکی))); \
+} طالما (0)
 
-#define darray_shrink(arr) do { \
-    if ((arr).size > 0) \
-        (arr).item = realloc((arr).item, \
-                             ((arr).alloc = (arr).size) * sizeof(*(arr).item)); \
-} while (0)
+#تعریف_کړه darray_shrink(arr) افعل { \
+    إذا ((arr).اندازه > 0) \
+        (arr).توکی = realloc((arr).توکی, \
+                             ((arr).alloc = (arr).اندازه) * حجم(*(arr).توکی)); \
+} طالما (0)
 
-#define darray_max_alloc(itemSize) (UINT_MAX / (itemSize))
+#تعریف_کړه darray_max_alloc(توکی_اندازه) (UINT_MAX / (توکی_اندازه))
 
-static inline darray_size_t
-darray_next_alloc(darray_size_t alloc, darray_size_t need, size_t itemSize)
+ساكن مضمن darray_اندازه_t
+darray_بل_alloc(darray_اندازه_t alloc, darray_اندازه_t need, اندازه_t توکی_اندازه)
 {
-    assert(need < darray_max_alloc(itemSize) / 2); /* Overflow. */
-    if (alloc == 0)
+    أكد(need < darray_max_alloc(توکی_اندازه) / 2); /* Overflow. */
+    إذا (alloc == 0)
         alloc = 4;
-    while (alloc < need)
+    طالما (alloc < need)
         alloc *= 2;
-    return alloc;
+    أرجع alloc;
 }
 
 /*** Traversal ***/
 
-#define darray_foreach(i, arr) \
-    if ((arr).item) \
-    for ((i) = &(arr).item[0]; (i) < &(arr).item[(arr).size]; (i)++)
+#تعریف_کړه darray_foreach(i, arr) \
+    إذا ((arr).توکی) \
+    لكل ((i) = &(arr).توکی[0]; (i) < &(arr).توکی[(arr).اندازه]; (i)++)
 
-#define darray_foreach_from(i, arr, from) \
-    if ((arr).item) \
-    for ((i) = &(arr).item[from]; (i) < &(arr).item[(arr).size]; (i)++)
+#تعریف_کړه darray_foreach_from(i, arr, from) \
+    إذا ((arr).توکی) \
+    لكل ((i) = &(arr).توکی[from]; (i) < &(arr).توکی[(arr).اندازه]; (i)++)
 
 /* Iterate on index and value at the same time, like Python's enumerate. */
-#define darray_enumerate(idx, val, arr) \
-    if ((arr).item) \
-    for ((idx) = 0, (val) = &(arr).item[0]; \
-         (idx) < (arr).size; \
+#تعریف_کړه darray_enumerate(idx, val, arr) \
+    إذا ((arr).توکی) \
+    لكل ((idx) = 0, (val) = &(arr).توکی[0]; \
+         (idx) < (arr).اندازه; \
          (idx)++, (val)++)
 
-#define darray_enumerate_from(idx, val, arr, from) \
-    if ((arr).item) \
-    for ((idx) = (from), (val) = &(arr).item[from]; \
-         (idx) < (arr).size; \
+#تعریف_کړه darray_enumerate_from(idx, val, arr, from) \
+    إذا ((arr).توکی) \
+    لكل ((idx) = (from), (val) = &(arr).توکی[from]; \
+         (idx) < (arr).اندازه; \
          (idx)++, (val)++)
 
-#define darray_foreach_reverse(i, arr) \
-    if ((arr).item && (arr).size) \
-    for ((i) = &(arr).item[(arr).size - 1]; \
-         (i) >= &(arr).item[0]; \
+#تعریف_کړه darray_foreach_سرچپه(i, arr) \
+    إذا ((arr).توکی && (arr).اندازه) \
+    لكل ((i) = &(arr).توکی[(arr).اندازه - 1]; \
+         (i) >= &(arr).توکی[0]; \
          (i)--)
 
-#define darray_enumerate_reverse(idx, val, arr) \
-    if ((arr).item && (arr).size) \
-    for ((idx) = (arr).size - 1, (val) = &(arr).item[(arr).size - 1]; \
-         (val) >= &(arr).item[0]; \
+#تعریف_کړه darray_enumerate_سرچپه(idx, val, arr) \
+    إذا ((arr).توکی && (arr).اندازه) \
+    لكل ((idx) = (arr).اندازه - 1, (val) = &(arr).توکی[(arr).اندازه - 1]; \
+         (val) >= &(arr).توکی[0]; \
          (idx)--, (val)--)

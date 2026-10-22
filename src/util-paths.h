@@ -2,23 +2,23 @@
  * Copyright © 2024 Pierre Le Marre
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#لارښوونه once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <stdbool.h>
+#ضمن <stdbool.h>
 
-#include "utils.h"
+#ضمن "utils.h"
 
-#ifdef _WIN32
-#define PATH_SEPARATOR '\\'
-#define ALT_PATH_SEPARATOR '/'
-#define is_path_separator(s) \
-    ((s) == PATH_SEPARATOR || (s) == ALT_PATH_SEPARATOR)
-#else
-#define PATH_SEPARATOR '/'
-#define is_path_separator(s) ((s) == PATH_SEPARATOR)
-#endif
+#که_تعریف_شوی _WIN32
+#تعریف_کړه لار_SEPARATOR '\\'
+#تعریف_کړه ALT_لار_SEPARATOR '/'
+#تعریف_کړه is_لار_separator(s) \
+    ((s) == لار_SEPARATOR || (s) == ALT_لار_SEPARATOR)
+#وإلا
+#تعریف_کړه لار_SEPARATOR '/'
+#تعریف_کړه is_لار_separator(s) ((s) == لار_SEPARATOR)
+#د_که_پای
 
-XKB_EXPORT_PRIVATE bool
-is_absolute_path(const char *path);
+XKB_EXPORT_شخصي bool
+is_absolute_لار(ثابت حرف *لار);

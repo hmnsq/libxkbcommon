@@ -42,33 +42,33 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY__XKBCOMMON_SRC_XKBCOMP_PARSER_H_INCLUDED
+#که_نه_تعریف_شوی YY__XKBCOMMON_SRC_XKBCOMP_PARSER_H_INCLUDED
 # define YY__XKBCOMMON_SRC_XKBCOMP_PARSER_H_INCLUDED
 /* Debug traces.  */
-#ifndef YYDEBUG
+#که_نه_تعریف_شوی YYDEBUG
 # define YYDEBUG 0
-#endif
-#if YYDEBUG
-extern int _xkbcommon_debug;
-#endif
+#د_که_پای
+#إذا YYDEBUG
+خارجي صحيح _xkbcommon_debug;
+#د_که_پای
 /* "%code requires" blocks.  */
-#line 14 "src/xkbcomp/parser.y"
+#کرښه 14 "src/xkbcomp/parser.y"
 
-#include "config.h"
+#ضمن "config.h"
 
-#include "scanner-utils.h"
-#include "xkbcomp/ast.h"
-#include "xkbcomp/xkbcomp-priv.h"
+#ضمن "scanner-utils.h"
+#ضمن "xkbcomp/ast.h"
+#ضمن "xkbcomp/xkbcomp-priv.h"
 
-#line 57 "src/xkbcomp/parser.h"
+#کرښه 57 "src/xkbcomp/parser.h"
 
 /* Token kinds.  */
-#ifndef YYTOKENTYPE
+#که_نه_تعریف_شوی YYTOKENTYPE
 # define YYTOKENTYPE
-  enum yytokentype
+  تعداد yytokentype
   {
     YYEMPTY = -2,
-    END_OF_FILE = 0,               /* "end of file"  */
+    پای_ټکی_د_FILE = 0,               /* "end of file"  */
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
     ERROR_TOK = 255,               /* "invalid token"  */
@@ -89,17 +89,17 @@ extern int _xkbcommon_debug;
     TYPE = 21,                     /* "type"  */
     INTERPRET = 22,                /* "interpret"  */
     ACTION_TOK = 23,               /* "action"  */
-    KEY = 24,                      /* "key"  */
+    کلی_3 = 24,                      /* "key"  */
     ALIAS = 25,                    /* "alias"  */
-    GROUP = 26,                    /* "group"  */
+    ډله_2 = 26,                    /* "group"  */
     MODIFIER_MAP = 27,             /* "modifier_map"  */
     INDICATOR = 28,                /* "indicator"  */
     SHAPE = 29,                    /* "shape"  */
-    KEYS = 30,                     /* "keys"  */
-    ROW = 31,                      /* "row"  */
+    کلیګانې_2 = 30,                     /* "keys"  */
+    لیکه = 31,                      /* "row"  */
     SECTION = 32,                  /* "section"  */
     OVERLAY = 33,                  /* "overlay"  */
-    TEXT = 34,                     /* "text"  */
+    متن = 34,                     /* "text"  */
     OUTLINE = 35,                  /* "outline"  */
     SOLID = 36,                    /* "solid"  */
     LOGO = 37,                     /* "logo"  */
@@ -129,65 +129,65 @@ extern int _xkbcommon_debug;
     PARTIAL = 70,                  /* "partial"  */
     DEFAULT = 71,                  /* "default"  */
     HIDDEN = 72,                   /* "hidden"  */
-    ALPHANUMERIC_KEYS = 73,        /* "alphanumeric_keys"  */
-    MODIFIER_KEYS = 74,            /* "modifier_keys"  */
-    KEYPAD_KEYS = 75,              /* "keypad_keys"  */
-    FUNCTION_KEYS = 76,            /* "function_keys"  */
-    ALTERNATE_GROUP = 77,          /* "alternate_group"  */
+    ALPHANUMERIC_کلیګانې = 73,        /* "alphanumeric_keys"  */
+    MODIFIER_کلیګانې = 74,            /* "modifier_keys"  */
+    KEYPAD_کلیګانې = 75,              /* "keypad_keys"  */
+    FUNCTION_کلیګانې = 76,            /* "function_keys"  */
+    ALTERNATE_ډله = 77,          /* "alternate_group"  */
     DEPRECATED = 78                /* "deprecated"  */
   };
-  typedef enum yytokentype yytoken_kind_t;
-#endif
+  تعريفنوع تعداد yytokentype yytoken_ډول_t;
+#د_که_پای
 
 /* Value type.  */
-#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-union YYSTYPE
+#إذا ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
+اتحاد YYSTYPE
 {
-#line 177 "src/xkbcomp/parser.y"
+#کرښه 177 "src/xkbcomp/parser.y"
 
-        int64_t          num;
-        enum xkb_file_type file_type;
-        char            *str;
-        struct sval     sval;
+        int64_t          عدد;
+        تعداد xkb_file_type file_type;
+        حرف            *str;
+        بنية sval     sval;
         xkb_atom_t      atom;
-        enum merge_mode merge;
-        enum xkb_map_flags mapFlags;
+        تعداد یوځای_ډېرپېښ یوځای;
+        تعداد xkb_map_flags mapFlags;
         xkb_keysym_t    keysym;
         ParseCommon     *any;
-        struct { ParseCommon *head; ParseCommon *last; } anyList;
-        uint32_t        noSymbolOrActionList;
-        ExprDef         *expr;
-        struct { ExprDef *head; ExprDef *last; } exprList;
+        بنية { ParseCommon *سر; ParseCommon *وروستی; } anyList;
+        uint32_t        no_نښه_Or_Action_List;
+        بیان_Def         *بیان;
+        بنية { بیان_Def *سر; بیان_Def *وروستی; } بیان_List;
         VarDef          *var;
-        struct { VarDef *head; VarDef *last; } varList;
+        بنية { VarDef *سر; VarDef *وروستی; } varList;
         VModDef         *vmod;
-        struct { VModDef *head; VModDef *last; } vmodList;
+        بنية { VModDef *سر; VModDef *وروستی; } vmodList;
         InterpDef       *interp;
-        KeyTypeDef      *keyType;
+        کلی_Type_Def      *کلی_Type;
         SymbolsDef      *syms;
-        ModMapDef       *modMask;
-        GroupCompatDef  *groupCompat;
+        ModMapDef       *mod_ماسک_2;
+        ډله_Compat_Def  *ډله_Compat;
         LedMapDef       *ledMap;
         LedNameDef      *ledName;
-        KeycodeDef      *keyCode;
-        KeyAliasDef     *keyAlias;
+        KeycodeDef      *کلی_کوډ;
+        کلی_Alias_Def     *کلی_Alias;
         UnknownStatement *unknown;
-        void            *geom;
+        فراغ            *geom;
         XkbFile         *file;
-        struct { XkbFile *head; XkbFile *last; } fileList;
+        بنية { XkbFile *سر; XkbFile *وروستی; } fileList;
 
-#line 173 "src/xkbcomp/parser.h"
+#کرښه 173 "src/xkbcomp/parser.h"
 
 };
-typedef union YYSTYPE YYSTYPE;
+تعريفنوع اتحاد YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
-#endif
+#د_که_پای
 
 
 
 
-int _xkbcommon_parse (struct parser_param *param);
+صحيح _xkbcommon_parse (بنية parser_param *param);
 
 
-#endif /* !YY__XKBCOMMON_SRC_XKBCOMP_PARSER_H_INCLUDED  */
+#د_که_پای /* !YY__XKBCOMMON_SRC_XKBCOMP_PARSER_H_INCLUDED  */

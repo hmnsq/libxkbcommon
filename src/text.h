@@ -2,76 +2,76 @@
  * Copyright © 2009 Dan Nicholson
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#لارښوونه once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <stdbool.h>
+#ضمن <stdbool.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "atom.h"
-#include "keymap.h"
+#ضمن "xkbcommon/xkbcommon.h"
+#ضمن "atom.h"
+#ضمن "keymap.h"
 
 /** LUT entry */
-typedef struct {
-    const char *name;
-    uint32_t value;
-} LookupEntry;
+تعريفنوع بنية {
+    ثابت حرف *name;
+    uint32_t ارزښت;
+} Lookup_ثبت;
 
 bool
-LookupString(const LookupEntry tab[], const char *string,
-              unsigned int *value_rtrn);
+LookupString(ثابت Lookup_ثبت tab[], ثابت حرف *string,
+              بینښه صحيح *ارزښت_rtrn);
 
-const char *
-LookupValue(const LookupEntry tab[], unsigned int value);
+ثابت حرف *
+Lookup_ارزښت(ثابت Lookup_ثبت tab[], بینښه صحيح ارزښت);
 
-#define GROUP_LAST_INDEX_NAME "last"
-enum {
-    CONTROL_NAMES_MIN_V1_INDEX = 7,
-    CONTROL_NAMES_MIN_V2_INDEX = 0,
+#تعریف_کړه ډله_وروستی_شاخص_NAME "last"
+تعداد {
+    CONTROL_نومونه_MIN_V1_شاخص = 7,
+    CONTROL_نومونه_MIN_V2_شاخص = 0,
 };
 
-static inline uint8_t
-format_control_names_offset(enum xkb_keymap_format format)
+ساكن مضمن uint8_t
+format_control_نومونه_دننه_واټن(تعداد xkb_keymap_format format)
 {
-    return (format == XKB_KEYMAP_FORMAT_TEXT_V1)
-        ? CONTROL_NAMES_MIN_V1_INDEX
-        : CONTROL_NAMES_MIN_V2_INDEX;
+    أرجع (format == XKB_KEYMAP_FORMAT_متن_V1)
+        ? CONTROL_نومونه_MIN_V1_شاخص
+        : CONTROL_نومونه_MIN_V2_شاخص;
 }
 
-extern const LookupEntry ctrlMaskNames[];
-extern const LookupEntry modComponentMaskNames[];
-extern const LookupEntry groupComponentMaskNames[];
-extern const LookupEntry groupMaskNames[];
-extern const LookupEntry buttonNames[];
-extern const LookupEntry useModMapValueNames[];
-extern const LookupEntry actionTypeNames[];
-extern const LookupEntry symInterpretMatchMaskNames[];
+خارجي ثابت Lookup_ثبت ctrl_ماسک_نومونه[];
+خارجي ثابت Lookup_ثبت mod_Component_ماسک_نومونه[];
+خارجي ثابت Lookup_ثبت ډله_Component_ماسک_نومونه[];
+خارجي ثابت Lookup_ثبت ډله_ماسک_نومونه[];
+خارجي ثابت Lookup_ثبت button_نومونه[];
+خارجي ثابت Lookup_ثبت use_Mod_Map_ارزښت_نومونه[];
+خارجي ثابت Lookup_ثبت action_Type_نومونه[];
+خارجي ثابت Lookup_ثبت sym_Interpret_سمون_ماسک_نومونه[];
 
-const char *
-ModMaskText(struct xkb_context *ctx, enum mod_type type,
-            const struct xkb_mod_set *mods, xkb_mod_mask_t mask);
+ثابت حرف *
+Mod_ماسک_متن(بنية xkb_context *ctx, تعداد mod_type type,
+            ثابت بنية xkb_mod_سېټ *mods, xkb_mod_ماسک_t ماسک);
 
-const char *
-ModIndexText(struct xkb_context *ctx, const struct xkb_mod_set *mods,
-             xkb_mod_index_t ndx);
+ثابت حرف *
+Mod_شاخص_متن(بنية xkb_context *ctx, ثابت بنية xkb_mod_سېټ *mods,
+             xkb_mod_شاخص_t ndx);
 
-const char *
-ActionTypeText(enum xkb_action_type type);
+ثابت حرف *
+Action_Type_متن(تعداد xkb_action_type type);
 
-const char *
-KeysymText(struct xkb_context *ctx, xkb_keysym_t sym);
+ثابت حرف *
+Keysym_متن(بنية xkb_context *ctx, xkb_keysym_t sym);
 
-const char *
-KeyNameText(struct xkb_context *ctx, xkb_atom_t name);
+ثابت حرف *
+کلی_Name_متن(بنية xkb_context *ctx, xkb_atom_t name);
 
-const char *
-SIMatchText(enum xkb_match_operation type);
+ثابت حرف *
+SIMatch_متن(تعداد xkb_سمون_operation type);
 
-const char *
-LedStateMaskText(struct xkb_context *ctx, const LookupEntry *lookup,
-                 enum xkb_state_component mask);
+ثابت حرف *
+Led_State_ماسک_متن(بنية xkb_context *ctx, ثابت Lookup_ثبت *lookup,
+                 تعداد xkb_state_component ماسک);
 
-const char *
-ControlMaskText(struct xkb_context *ctx, enum xkb_keymap_format format,
-                enum xkb_action_controls mask);
+ثابت حرف *
+Control_ماسک_متن(بنية xkb_context *ctx, تعداد xkb_keymap_format format,
+                تعداد xkb_action_controls ماسک);
