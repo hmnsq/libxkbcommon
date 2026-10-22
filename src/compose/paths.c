@@ -3,29 +3,29 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <locale.h>
+#ضمن <locale.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "messages-codes.h"
-#include "utils.h"
-#include "util-paths.h"
-#include "context.h"
-#include "paths.h"
+#ضمن "xkbcommon/xkbcommon.h"
+#ضمن "messages-codes.h"
+#ضمن "utils.h"
+#ضمن "util-paths.h"
+#ضمن "context.h"
+#ضمن "paths.h"
 
-enum resolve_name_direction {
+تعداد resolve_name_direction {
     LEFT_TO_RIGHT,
     RIGHT_TO_LEFT,
 };
 
-const char *
-get_xlocaledir_path(struct xkb_context *ctx)
+ثابت حرف *
+get_xlocaledir_path(بنية xkb_context *ctx)
 {
-    const char *dir = xkb_context_getenv(ctx, "XLOCALEDIR");
-    if (!dir)
+    ثابت حرف *dir = xkb_context_getenv(ctx, "XLOCALEDIR");
+    ܐܢ (!dir)
         dir = XLOCALEDIR;
-    return dir;
+    ܦܢܐ dir;
 }
 
 /*
@@ -33,142 +33,142 @@ get_xlocaledir_path(struct xkb_context *ctx)
  * such a file and return its matching value, according to @direction.
  * @filename is relative to the xlocaledir.
  */
-static char *
-resolve_name(struct xkb_context *ctx, const char *filename,
-             enum resolve_name_direction direction, const char *name)
+ساكن حرف *
+resolve_name(بنية xkb_context *ctx, ثابت حرف *filename,
+             تعداد resolve_name_direction direction, ثابت حرف *name)
 {
-    int ret;
+    صحيح ret;
     bool ok;
-    const char *xlocaledir;
-    char path[512];
+    ثابت حرف *xlocaledir;
+    حرف path[512];
     FILE *file;
-    char *string;
+    حرف *string;
     size_t string_size;
-    const char *end;
-    const char *s, *left, *right;
-    char *match;
+    ثابت حرف *end;
+    ثابت حرف *s, *left, *right;
+    حرف *match;
     size_t left_len, right_len, name_len;
 
     xlocaledir = get_xlocaledir_path(ctx);
 
-    ret = snprintf(path, sizeof(path), "%s/%s", xlocaledir, filename);
-    if (ret < 0 || (size_t) ret >= sizeof(path))
-        return NULL;
+    ret = snprintf(path, حجم(path), "%s/%s", xlocaledir, filename);
+    ܐܢ (ret < 0 || (size_t) ret >= حجم(path))
+        ܦܢܐ عدم;
 
     file = fopen(path, "rb");
-    if (!file)
-        return NULL;
+    ܐܢ (!file)
+        ܦܢܐ عدم;
 
     ok = map_file(file, &string, &string_size);
     fclose(file);
-    if (!ok)
-        return NULL;
+    ܐܢ (!ok)
+        ܦܢܐ عدم;
 
     s = string;
     end = string + string_size;
     name_len = strlen(name);
-    match = NULL;
+    match = عدم;
 
-    while (s < end) {
+    ܟܡܐ (s < end) {
         /* Skip spaces. */
-        while (s < end && is_space(*s))
+        ܟܡܐ (s < end && is_space(*s))
             s++;
 
         /* Skip comments. */
-        if (s < end && *s == '#') {
-            while (s < end && *s != '\n')
+        ܐܢ (s < end && *s == '#') {
+            ܟܡܐ (s < end && *s != '\n')
                 s++;
-            continue;
+            استمر;
         }
 
         /* Get the left value. */
         left = s;
-        while (s < end && !is_space(*s) && *s != ':')
+        ܟܡܐ (s < end && !is_space(*s) && *s != ':')
             s++;
         left_len = (size_t)(s - left);
 
         /* There's an optional colon between left and right. */
-        if (s < end && *s == ':')
+        ܐܢ (s < end && *s == ':')
             s++;
 
         /* Skip spaces. */
-        while (s < end && is_space(*s))
+        ܟܡܐ (s < end && is_space(*s))
             s++;
 
         /* Get the right value. */
         right = s;
-        while (s < end && !is_space(*s))
+        ܟܡܐ (s < end && !is_space(*s))
             s++;
         right_len = (size_t)(s - right);
 
         /* Discard rest of line. */
-        while (s < end && *s != '\n')
+        ܟܡܐ (s < end && *s != '\n')
             s++;
 
-        if (direction == LEFT_TO_RIGHT) {
-            if (left_len == name_len && memcmp(left, name, left_len) == 0) {
+        ܐܢ (direction == LEFT_TO_RIGHT) {
+            ܐܢ (left_len == name_len && memcmp(left, name, left_len) == 0) {
                 match = strndup(right, right_len);
-                break;
+                اكسر;
             }
-        } else if (direction == RIGHT_TO_LEFT &&
+        } ܐܚܪܢܐ ܐܢ (direction == RIGHT_TO_LEFT &&
                    right_len == name_len &&
                    memcmp(right, name, right_len) == 0) {
             match = strndup(left, left_len);
-            break;
+            اكسر;
         }
     }
 
     unmap_file(string, string_size);
-    return match;
+    ܦܢܐ match;
 }
 
-char *
-resolve_locale(struct xkb_context *ctx, const char *locale)
+حرف *
+resolve_locale(بنية xkb_context *ctx, ثابت حرف *locale)
 {
-    char *alias = resolve_name(ctx, "locale.alias", LEFT_TO_RIGHT, locale);
-    return alias ? alias : strdup(locale);
+    حرف *alias = resolve_name(ctx, "locale.alias", LEFT_TO_RIGHT, locale);
+    ܦܢܐ alias ? alias : strdup(locale);
 }
 
-char *
-get_xcomposefile_path(struct xkb_context *ctx)
+حرف *
+get_xcomposefile_path(بنية xkb_context *ctx)
 {
-    return strdup_safe(xkb_context_getenv(ctx, "XCOMPOSEFILE"));
+    ܦܢܐ strdup_safe(xkb_context_getenv(ctx, "XCOMPOSEFILE"));
 }
 
-char *
-get_xdg_xcompose_file_path(struct xkb_context *ctx)
+حرف *
+get_xdg_xcompose_file_path(بنية xkb_context *ctx)
 {
-    const char *xdg_config_home;
-    const char *home;
+    ثابت حرف *xdg_config_home;
+    ثابت حرف *home;
 
     xdg_config_home = xkb_context_getenv(ctx, "XDG_CONFIG_HOME");
-    if (!xdg_config_home || !is_absolute_path(xdg_config_home)) {
+    ܐܢ (!xdg_config_home || !is_absolute_path(xdg_config_home)) {
         home = xkb_context_getenv(ctx, "HOME");
-        if (!home)
-            return NULL;
-        return asprintf_safe("%s/.config/XCompose", home);
+        ܐܢ (!home)
+            ܦܢܐ عدم;
+        ܦܢܐ asprintf_safe("%s/.config/XCompose", home);
     }
 
-    return asprintf_safe("%s/XCompose", xdg_config_home);
+    ܦܢܐ asprintf_safe("%s/XCompose", xdg_config_home);
 }
 
-char *
-get_home_xcompose_file_path(struct xkb_context *ctx)
+حرف *
+get_home_xcompose_file_path(بنية xkb_context *ctx)
 {
-    const char *home;
+    ثابت حرف *home;
 
     home = xkb_context_getenv(ctx, "HOME");
-    if (!home)
-        return NULL;
+    ܐܢ (!home)
+        ܦܢܐ عدم;
 
-    return asprintf_safe("%s/.XCompose", home);
+    ܦܢܐ asprintf_safe("%s/.XCompose", home);
 }
 
-char *
-get_locale_compose_file_path(struct xkb_context *ctx, const char *locale)
+حرف *
+get_locale_compose_file_path(بنية xkb_context *ctx, ثابت حرف *locale)
 {
-    char *resolved;
-    char *path;
+    حرف *resolved;
+    حرف *path;
 
     /*
      * WARNING: Random workaround ahead.
@@ -181,14 +181,14 @@ get_locale_compose_file_path(struct xkb_context *ctx, const char *locale)
      * is UTF-8 based, and since 99% of the time a C locale is really just
      * a misconfiguration for UTF-8, let's do the most helpful thing.
      */
-    static const char * const fallback = "en_US.UTF-8";
-    static const char * const registry = "compose.dir";
-    if (streq(locale, "C"))
+    ساكن ثابت حرف * ثابت fallback = "en_US.UTF-8";
+    ساكن ثابت حرف * ثابت registry = "compose.dir";
+    ܐܢ (streq(locale, "C"))
         locale = fallback;
 
     resolved = resolve_name(ctx, registry, RIGHT_TO_LEFT, locale);
-    if (!resolved) {
-#if HAVE_NEWLOCALE
+    ܐܢ (!resolved) {
+#ܐܢ HAVE_NEWLOCALE
         /*
          * There is no extension mechanism for X11 Compose locales.
          * Instead of failing, we just use `en_US.UTF-8` as a fallback because
@@ -197,42 +197,42 @@ get_locale_compose_file_path(struct xkb_context *ctx, const char *locale)
          * so that we can catch missing system locales and typos.
          */
         locale_t loc = newlocale(LC_ALL_MASK, locale, (locale_t) 0);
-        if (loc == (locale_t) 0) {
+        ܐܢ (loc == (locale_t) 0) {
             log_err(ctx, XKB_ERROR_INVALID_COMPOSE_LOCALE,
                     "No Compose file for locale \"%s\": "
                     "locale is either invalid or not installed\n", locale);
-            return NULL;
-        } else {
+            ܦܢܐ عدم;
+        } ܐܚܪܢܐ {
             /*
              * The locale is legit but have no entry in the X11 Compose registry,
              * so use the `en_US.UTF-8` fallback.
              */
             freelocale(loc);
             resolved = resolve_name(ctx, registry, RIGHT_TO_LEFT, fallback);
-            if (!resolved) {
+            ܐܢ (!resolved) {
                 log_err(ctx, XKB_ERROR_INVALID_COMPOSE_LOCALE,
                         "No Compose file for locale \"%s\": "
                         "failed to use fallback \"%s\"\n", locale, fallback);
-                return NULL;
-            } else {
+                ܦܢܐ عدم;
+            } ܐܚܪܢܐ {
                 log_warn(ctx, XKB_ERROR_INVALID_COMPOSE_LOCALE,
                          "No Compose file for locale \"%s\": "
                          "using locale fallback \"%s\"\n", locale, fallback);
             }
         }
-#else
-        return NULL;
+#ܐܚܪܢܐ
+        ܦܢܐ عدم;
 #endif
     }
 
-    if (is_absolute_path(resolved)) {
+    ܐܢ (is_absolute_path(resolved)) {
         path = resolved;
     }
-    else {
-        const char *xlocaledir = get_xlocaledir_path(ctx);
+    ܐܚܪܢܐ {
+        ثابت حرف *xlocaledir = get_xlocaledir_path(ctx);
         path = asprintf_safe("%s/%s", xlocaledir, resolved);
-        free(resolved);
+        حرر(resolved);
     }
 
-    return path;
+    ܦܢܐ path;
 }
