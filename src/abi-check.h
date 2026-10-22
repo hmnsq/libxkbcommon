@@ -3,26 +3,26 @@
  * SPDX-License-Identifier: MIT
  */
 
-#pragma once
+#ಸೂಚನೆ once
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include <assert.h>
+#ಅನ್ತರ್ಭಾವ <assert.h>
 
-#include "xkbcommon/xkbcommon.h"
+#ಅನ್ತರ್ಭಾವ "xkbcommon/xkbcommon.h"
 
-enum {
+ಎಣಿಕೆ {
     /** Use a reasonable upper size limit to avoid malicious caller values */
-    XKB_ABI_MAX_SIZE = 4096,
+    XKB_ABI_MAX_ಗಾತ್ರ = 4096,
 };
 
 /**
  * Check that field `f` in compound type `T` must be contiguous with either the
  * next field (3rd argument) or the struct end (when using only 2 arguments).
  */
-#define assert_no_padding(T, f, ...) static_assert(      \
-    offsetof(T, f) + sizeof(((T){0}).f) ==               \
-    __VA_OPT__(offsetof(T, __VA_ARGS__) + 0 *) sizeof(T),\
+#ವ್ಯಾಖ್ಯಾನಿಸು assert_no_padding(T, f, ...) static_assert(      \
+    offsetof(T, f) + ಗಾತ್ರ(((T){0}).f) ==               \
+    __VA_OPT__(offsetof(T, __VA_ARGS__) + 0 *) ಗಾತ್ರ(T),\
     #T " has implicit padding after " #f                 \
 )
 
@@ -30,9 +30,9 @@ enum {
  * Check that the offset, size and alignment of a field are identical
  * in 2 structs.
  */
-#define assert_same_field(T, suffix, f) static_assert(                         \
+#ವ್ಯಾಖ್ಯಾನಿಸು assert_same_ಕ್ಷೇತ್ರ(T, suffix, f) static_assert(                         \
     offsetof(T, f) == offsetof(T##suffix, f) &&                                \
-    sizeof(((T){0}).f) == sizeof(((T##suffix){0}).f) &&                        \
+    ಗಾತ್ರ(((T){0}).f) == ಗಾತ್ರ(((T##suffix){0}).f) &&                        \
     alignof(__typeof__(((T){0}).f)) == alignof(__typeof__(((T##suffix){0}).f)),\
     "Field " #f " is different in " #T " and " #T #suffix                      \
 )
@@ -57,27 +57,27 @@ enum {
  * @returns `::XKB_SUCCESS` if the struct is valid and safe to use, otherwise
  * an error code indicating the kind of ABI violation.
  */
-static inline enum xkb_status
-xkb_check_versioned_struct_size_(size_t v1_size, size_t min_size,
-                                 size_t callee_meaningful_bytes,
-                                 size_t callee_size, size_t caller_size,
-                                 const void *caller_data)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಎಣಿಕೆ xkb_ಸ್ಥಿತಿ
+xkb_check_versioned_struct_ಗಾತ್ರ(ಗಾತ್ರ_t v1_ಗಾತ್ರ, ಗಾತ್ರ_t min_ಗಾತ್ರ,
+                                 ಗಾತ್ರ_t callee_meaningful_ಬೈಟುಗಳು,
+                                 ಗಾತ್ರ_t callee_ಗಾತ್ರ, ಗಾತ್ರ_t caller_ಗಾತ್ರ,
+                                 ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *caller_ದತ್ತಾಂಶ)
 {
-    static const size_t max_size = (size_t)XKB_ABI_MAX_SIZE;
+    ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಗಾತ್ರ_t max_ಗಾತ್ರ = (ಗಾತ್ರ_t)XKB_ABI_MAX_ಗಾತ್ರ;
 
     /* Check internal misuse */
-    assert(v1_size <= min_size);
-    assert(min_size <= callee_size);
-    assert(callee_meaningful_bytes <= callee_size);
-    assert(callee_size <= max_size);
+    ಪ್ರತಿಜ್ಞಾ(v1_ಗಾತ್ರ <= min_ಗಾತ್ರ);
+    ಪ್ರತಿಜ್ಞಾ(min_ಗಾತ್ರ <= callee_ಗಾತ್ರ);
+    ಪ್ರತಿಜ್ಞಾ(callee_meaningful_ಬೈಟುಗಳು <= callee_ಗಾತ್ರ);
+    ಪ್ರತಿಜ್ಞಾ(callee_ಗಾತ್ರ <= max_ಗಾತ್ರ);
 
-    if (caller_size < v1_size || caller_size > max_size || !caller_data)
-        return XKB_ERROR_ABI_INVALID_STRUCT_SIZE;
+    ಆದರೆ (caller_ಗಾತ್ರ < v1_ಗಾತ್ರ || caller_ಗಾತ್ರ > max_ಗಾತ್ರ || !caller_ದತ್ತಾಂಶ)
+        ಹಿಂತಿರುಗಿ XKB_ERROR_ABI_INVALID_STRUCT_ಗಾತ್ರ;
 
-    if (caller_size < min_size)
-        return XKB_ERROR_ABI_BACKWARD_COMPAT;
+    ಆದರೆ (caller_ಗಾತ್ರ < min_ಗಾತ್ರ)
+        ಹಿಂತಿರುಗಿ XKB_ERROR_ABI_BACKWARD_COMPAT;
 
-    if (caller_size <= callee_meaningful_bytes) {
+    ಆದರೆ (caller_ಗಾತ್ರ <= callee_meaningful_ಬೈಟುಗಳು) {
         /*
          * Caller's data does not reach beyond the callee meaningful region:
          * nothing to check, missing bytes default to 0.
@@ -85,7 +85,7 @@ xkb_check_versioned_struct_size_(size_t v1_size, size_t min_size,
          * E.g.: caller has older or same callee struct, without explicit
          * trailing padding.
          */
-        return XKB_SUCCESS;
+        ಹಿಂತಿರುಗಿ XKB_SUCCESS;
     }
 
     /*
@@ -95,24 +95,24 @@ xkb_check_versioned_struct_size_(size_t v1_size, size_t min_size,
      * E.g.: callee struct with explicit trailing padding, new struct using
      * callee reserved field, caller newer struct with greater size.
      */
-    const unsigned char *p =
-        (const unsigned char *)caller_data + callee_meaningful_bytes;
-    const unsigned char *end = (const unsigned char *)caller_data + caller_size;
+    ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *p =
+        (ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *)caller_ದತ್ತಾಂಶ + callee_meaningful_ಬೈಟುಗಳು;
+    ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *ಕೊನೆ = (ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *)caller_ದತ್ತಾಂಶ + caller_ಗಾತ್ರ;
 
-    while (p < end) {
-        if (*(p++) != 0)
-            return XKB_ERROR_ABI_FORWARD_COMPAT;
+    ಆಗ (p < ಕೊನೆ) {
+        ಆದರೆ (*(p++) != 0)
+            ಹಿಂತಿರುಗಿ XKB_ERROR_ABI_FORWARD_COMPAT;
     }
 
-    return XKB_SUCCESS;
+    ಹಿಂತಿರುಗಿ XKB_SUCCESS;
 }
 
-#define xkb_check_versioned_struct_size(v1_size, min_size, \
-                                        callee_meaningful_bytes, x) \
-    xkb_check_versioned_struct_size_(v1_size, min_size, \
-                                     callee_meaningful_bytes, \
-                                     sizeof(*(x)), (x)->size, x)
+#ವ್ಯಾಖ್ಯಾನಿಸು xkb_check_versioned_struct_ಗಾತ್ರ_2(v1_ಗಾತ್ರ, min_ಗಾತ್ರ, \
+                                        callee_meaningful_ಬೈಟುಗಳು, x) \
+    xkb_check_versioned_struct_ಗಾತ್ರ(v1_ಗಾತ್ರ, min_ಗಾತ್ರ, \
+                                     callee_meaningful_ಬೈಟುಗಳು, \
+                                     ಗಾತ್ರ(*(x)), (x)->ಗಾತ್ರ_2, x)
 
-void
-xkb_log_abi_error(struct xkb_context * restrict ctx,
-                  const char * restrict func, enum xkb_status status);
+ಶೂನ್ಯ
+xkb_log_abi_error(ರಚನೆ xkb_context * ಸೀಮಿತ ctx,
+                  ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ * ಸೀಮಿತ func, ಎಣಿಕೆ xkb_ಸ್ಥಿತಿ ಸ್ಥಿತಿ_2);

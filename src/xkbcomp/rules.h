@@ -2,25 +2,25 @@
  * Copyright © 2009 Dan Nicholson
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#ಸೂಚನೆ once
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
 
-#include "xkbcomp-priv.h"
-#include "rmlvo.h"
+#ಅನ್ತರ್ಭಾವ "xkbcomp-priv.h"
+#ಅನ್ತರ್ಭಾವ "rmlvo.h"
 
-XKB_EXPORT_PRIVATE bool
-xkb_components_from_rmlvo_builder(const struct xkb_rmlvo_builder *rmlvo,
-                                  struct xkb_component_names *out,
-                                  xkb_layout_index_t *explicit_layouts);
+XKB_EXPORT_ಖಾಸಗಿ bool
+xkb_components_from_rmlvo_builder(ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_rmlvo_builder *rmlvo,
+                                  ರಚನೆ xkb_component_ಹೆಸರುಗಳು *ಹೊರಹೋಗು,
+                                  xkb_layout_ಸೂಚ್ಯಂಕ_t *explicit_layouts);
 
-XKB_EXPORT_PRIVATE bool
-xkb_components_from_rules_names(struct xkb_context *ctx,
-                                const struct xkb_rule_names *rmlvo,
-                                struct xkb_component_names *out,
-                                xkb_layout_index_t *explicit_layouts);
+XKB_EXPORT_ಖಾಸಗಿ bool
+xkb_components_from_ನಿಯಮಗಳು_ಹೆಸರುಗಳು(ರಚನೆ xkb_context *ctx,
+                                ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_ನಿಯಮ_ಹೆಸರುಗಳು *rmlvo,
+                                ರಚನೆ xkb_component_ಹೆಸರುಗಳು *ಹೊರಹೋಗು,
+                                xkb_layout_ಸೂಚ್ಯಂಕ_t *explicit_layouts);
 
 /* Maximum length of a layout index string:
  *
@@ -28,8 +28,8 @@ xkb_components_from_rules_names(struct xkb_context *ctx,
  *        < ceiling (bitsize(xkb_layout_index_t) * 5 / 16)
  *        < 1 + floor (bitsize(xkb_layout_index_t) * 5 / 16)
  */
-#define MAX_LAYOUT_INDEX_STR_LENGTH \
-        (1 + ((sizeof(xkb_layout_index_t) * CHAR_BIT * 5) >> 4))
-static_assert(MAX_LAYOUT_INDEX_STR_LENGTH == sizeof("4294967295"), "");
+#ವ್ಯಾಖ್ಯಾನಿಸು MAX_LAYOUT_ಸೂಚ್ಯಂಕ_STR_ಉದ್ದಳತೆ \
+        (1 + ((ಗಾತ್ರ(xkb_layout_ಸೂಚ್ಯಂಕ_t) * CHAR_BIT * 5) >> 4))
+static_assert(MAX_LAYOUT_ಸೂಚ್ಯಂಕ_STR_ಉದ್ದಳತೆ == ಗಾತ್ರ("4294967295"), "");
 
-#define OPTIONS_GROUP_SPECIFIER_PREFIX '!'
+#ವ್ಯಾಖ್ಯಾನಿಸು OPTIONS_ಗುಂಪು_SPECIFIER_ಪೂರ್ವಪ್ರತ್ಯಯ '!'

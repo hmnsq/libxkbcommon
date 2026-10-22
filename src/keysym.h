@@ -12,15 +12,15 @@
  *
  * SPDX-License-Identifier: MIT-open-group AND MIT
  */
-#pragma once
+#ಸೂಚನೆ once
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
 
-#include "xkbcommon/xkbcommon.h"
+#ಅನ್ತರ್ಭಾವ "xkbcommon/xkbcommon.h"
 
-#include "utils.h"
+#ಅನ್ತರ್ಭಾವ "utils.h"
 
 /*
  * NOTE: this is not defined in xkbcommon.h, because if we did, it may add
@@ -28,97 +28,97 @@
  * check min keysym when previously there was no reason to.
  */
 /** Minimum keysym value */
-#define XKB_KEYSYM_MIN            0x00000000
+#ವ್ಯಾಖ್ಯಾನಿಸು XKB_KEYSYM_MIN            0x00000000
 /** Minimum keysym value assigned */
-#define XKB_KEYSYM_MIN_ASSIGNED   ((xkb_keysym_t)0x00000000)
+#ವ್ಯಾಖ್ಯಾನಿಸು XKB_KEYSYM_MIN_ASSIGNED   ((xkb_keysym_t)0x00000000)
 /** Maximum keysym value assigned */
-#define XKB_KEYSYM_MAX_ASSIGNED   0x1008ffb8
+#ವ್ಯಾಖ್ಯಾನಿಸು XKB_KEYSYM_MAX_ASSIGNED   0x1008ffb8
 /** Minimum keysym value with explicit name */
-#define XKB_KEYSYM_MIN_EXPLICIT   0x00000000
+#ವ್ಯಾಖ್ಯಾನಿಸು XKB_KEYSYM_MIN_EXPLICIT   0x00000000
 /** Maximum keysym value with explicit name */
-#define XKB_KEYSYM_MAX_EXPLICIT   0x1008ffb8
+#ವ್ಯಾಖ್ಯಾನಿಸು XKB_KEYSYM_MAX_EXPLICIT   0x1008ffb8
 /** Count of keysym value with explicit name */
-#define XKB_KEYSYM_COUNT_EXPLICIT 2505
+#ವ್ಯಾಖ್ಯಾನಿಸು XKB_KEYSYM_ಎಣಿಕೆ_EXPLICIT 2505
 /** Offset to use when converting a Unicode code point to a keysym */
-#define XKB_KEYSYM_UNICODE_OFFSET 0x01000000
+#ವ್ಯಾಖ್ಯಾನಿಸು XKB_KEYSYM_UNICODE_ಸ್ಥಾನಾಂತರ 0x01000000
 /** Minimum Unicode keysym. NOTE: code points in 0..0xff cannot be converted. */
-#define XKB_KEYSYM_UNICODE_MIN    0x01000100
+#ವ್ಯಾಖ್ಯಾನಿಸು XKB_KEYSYM_UNICODE_MIN    0x01000100
 /** Minimum Unicode surrogate keysym */
-#define XKB_KEYSYM_UNICODE_SURROGATE_MIN 0x0100d800
+#ವ್ಯಾಖ್ಯಾನಿಸು XKB_KEYSYM_UNICODE_SURROGATE_MIN 0x0100d800
 /** Maximum Unicode surrogate keysym */
-#define XKB_KEYSYM_UNICODE_SURROGATE_MAX 0x0100dfff
+#ವ್ಯಾಖ್ಯಾನಿಸು XKB_KEYSYM_UNICODE_SURROGATE_MAX 0x0100dfff
 /** Maximum Unicode keysym, corresponding to the maximum Unicode code point */
-#define XKB_KEYSYM_UNICODE_MAX    0x0110ffff
+#ವ್ಯಾಖ್ಯಾನಿಸು XKB_KEYSYM_UNICODE_MAX    0x0110ffff
 /** Unicode version used for case mappings */
-#define XKB_KEYSYM_UNICODE_VERSION { 18, 0, 0, 0 }
+#ವ್ಯಾಖ್ಯಾನಿಸು XKB_KEYSYM_UNICODE_ಆವೃತ್ತಿ { 18, 0, 0, 0 }
 /** Maximum keysym canonical name length, plus terminating NULL byte */
-#define XKB_KEYSYM_NAME_MAX_SIZE  31
+#ವ್ಯಾಖ್ಯಾನಿಸು XKB_KEYSYM_NAME_MAX_ಗಾತ್ರ  31
 /** Longest keysym canonical name */
-#define XKB_KEYSYM_LONGEST_CANONICAL_NAME XF86ElectronicPrivacyScreenOff
+#ವ್ಯಾಖ್ಯಾನಿಸು XKB_KEYSYM_LONGEST_CANONICAL_NAME XF86ElectronicPrivacyScreenOff
 /** Longest keysym name */
-#define XKB_KEYSYM_LONGEST_NAME XF86ElectronicPrivacyScreenOff
+#ವ್ಯಾಖ್ಯಾನಿಸು XKB_KEYSYM_LONGEST_NAME XF86ElectronicPrivacyScreenOff
 /** Maximum of distinct explicit names for a keysym */
-#define XKB_KEYSYM_EXPLICIT_ALIASES_MAX 9
+#ವ್ಯಾಖ್ಯಾನಿಸು XKB_KEYSYM_EXPLICIT_ALIASES_MAX 9
 /** Maximum bytes to encode the Unicode representation of a keysym in UTF-8:
  * 4 bytes + NULL-terminating byte */
-#define XKB_KEYSYM_UTF8_MAX_SIZE  5
+#ವ್ಯಾಖ್ಯಾನಿಸು XKB_KEYSYM_UTF8_MAX_ಗಾತ್ರ  5
 
-XKB_EXPORT_PRIVATE bool
+XKB_EXPORT_ಖಾಸಗಿ bool
 xkb_keysym_is_assigned(xkb_keysym_t ks);
 
-XKB_EXPORT_PRIVATE int
-xkb_keysym_get_explicit_names(xkb_keysym_t ks, const char **buffer, size_t size);
+XKB_EXPORT_ಖಾಸಗಿ ಪೂರ್ಣಾಂಕ
+xkb_keysym_get_explicit_ಹೆಸರುಗಳು(xkb_keysym_t ks, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ **ಬಫರ್, ಗಾತ್ರ_t ಗಾತ್ರ_2);
 
-struct xkb_keysym_iterator;
+ರಚನೆ xkb_keysym_iterator;
 
-XKB_EXPORT_PRIVATE struct xkb_keysym_iterator*
+XKB_EXPORT_ಖಾಸಗಿ ರಚನೆ xkb_keysym_iterator*
 xkb_keysym_iterator_new(bool explicit);
 
-XKB_EXPORT_PRIVATE struct xkb_keysym_iterator*
-xkb_keysym_iterator_unref(struct xkb_keysym_iterator *iter);
+XKB_EXPORT_ಖಾಸಗಿ ರಚನೆ xkb_keysym_iterator*
+xkb_keysym_iterator_unref(ರಚನೆ xkb_keysym_iterator *iter);
 
-XKB_EXPORT_PRIVATE bool
-xkb_keysym_iterator_next(struct xkb_keysym_iterator *iter);
+XKB_EXPORT_ಖಾಸಗಿ bool
+xkb_keysym_iterator_ಮುಂದಿನ(ರಚನೆ xkb_keysym_iterator *iter);
 
-XKB_EXPORT_PRIVATE xkb_keysym_t
-xkb_keysym_iterator_get_keysym(struct xkb_keysym_iterator *iter);
+XKB_EXPORT_ಖಾಸಗಿ xkb_keysym_t
+xkb_keysym_iterator_get_keysym(ರಚನೆ xkb_keysym_iterator *iter);
 
-XKB_EXPORT_PRIVATE int
-xkb_keysym_iterator_get_name(struct xkb_keysym_iterator *iter,
-                             char *buffer, size_t size);
+XKB_EXPORT_ಖಾಸಗಿ ಪೂರ್ಣಾಂಕ
+xkb_keysym_iterator_get_name(ರಚನೆ xkb_keysym_iterator *iter,
+                             ಅಕ್ಷರ *ಬಫರ್, ಗಾತ್ರ_t ಗಾತ್ರ_2);
 
-XKB_EXPORT_PRIVATE bool
-xkb_keysym_iterator_is_explicitly_named(struct xkb_keysym_iterator *iter);
+XKB_EXPORT_ಖಾಸಗಿ bool
+xkb_keysym_iterator_is_explicitly_named(ರಚನೆ xkb_keysym_iterator *iter);
 
-XKB_EXPORT_PRIVATE bool
+XKB_EXPORT_ಖಾಸಗಿ bool
 xkb_keysym_is_deprecated(xkb_keysym_t keysym,
-                         const char *name,
-                         const char **reference_name);
+                         ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name,
+                         ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ **reference_name);
 
-#define XKB_MIN_VERBOSITY_DEPRECATED_KEYSYM 2
-#define check_deprecated_keysyms(log_func, log_param, ctx, keysym, name, token, format, end) \
-    if (unlikely((ctx)->log_verbosity >= XKB_MIN_VERBOSITY_DEPRECATED_KEYSYM)) {             \
-        const char *ref_name = NULL;                                                         \
-        if (xkb_keysym_is_deprecated(keysym, name, &ref_name)) {                             \
-            if (ref_name == NULL)                                                            \
+#ವ್ಯಾಖ್ಯಾನಿಸು XKB_MIN_VERBOSITY_DEPRECATED_KEYSYM 2
+#ವ್ಯಾಖ್ಯಾನಿಸು check_deprecated_keysyms(log_func, log_param, ctx, keysym, name, token, format, ಕೊನೆ) \
+    ಆದರೆ (unlikely((ctx)->log_verbosity >= XKB_MIN_VERBOSITY_DEPRECATED_KEYSYM)) {             \
+        ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ref_name = ಖಾಲಿ;                                                         \
+        ಆದರೆ (xkb_keysym_is_deprecated(keysym, name, &ref_name)) {                             \
+            ಆದರೆ (ref_name == ಖಾಲಿ)                                                            \
                 log_func(log_param, XKB_WARNING_DEPRECATED_KEYSYM,                           \
-                         "deprecated keysym \"" format "\"." end, token);                    \
-            else                                                                             \
+                         "deprecated keysym \"" format "\"." ಕೊನೆ, token);                    \
+            ಇಲ್ಲದಿದ್ದರೆ                                                                             \
                 log_func(log_param, XKB_WARNING_DEPRECATED_KEYSYM_NAME,                      \
                          "deprecated keysym name \"" format "\"; "                           \
-                         "please use \"%s\" instead." end,                                   \
+                         "please use \"%s\" instead." ಕೊನೆ,                                   \
                          token, ref_name);                                                   \
         }                                                                                    \
     }
 
-XKB_EXPORT_PRIVATE bool
-xkb_keysym_is_lower(xkb_keysym_t keysym);
+XKB_EXPORT_ಖಾಸಗಿ bool
+xkb_keysym_is_ಅಧೋ(xkb_keysym_t keysym);
 
-XKB_EXPORT_PRIVATE bool
-xkb_keysym_is_upper_or_title(xkb_keysym_t keysym);
+XKB_EXPORT_ಖಾಸಗಿ bool
+xkb_keysym_is_ಊರ್ಧ್ವ_or_title(xkb_keysym_t keysym);
 
-XKB_EXPORT_PRIVATE bool
+XKB_EXPORT_ಖಾಸಗಿ bool
 xkb_keysym_is_keypad(xkb_keysym_t keysym);
 
-XKB_EXPORT_PRIVATE bool
+XKB_EXPORT_ಖಾಸಗಿ bool
 xkb_keysym_is_modifier(xkb_keysym_t keysym);

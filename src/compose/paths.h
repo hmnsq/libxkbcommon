@@ -3,26 +3,26 @@
  * SPDX-License-Identifier: MIT
  */
 
-#pragma once
+#ಸೂಚನೆ once
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include "xkbcommon/xkbcommon.h"
+#ಅನ್ತರ್ಭಾವ "xkbcommon/xkbcommon.h"
 
-char *
-resolve_locale(struct xkb_context *ctx, const char *locale);
+ಅಕ್ಷರ *
+resolve_locale(ರಚನೆ xkb_context *ctx, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *locale);
 
-const char *
-get_xlocaledir_path(struct xkb_context *ctx);
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *
+get_xlocaledir_ಮಾರ್ಗ(ರಚನೆ xkb_context *ctx);
 
-char *
-get_xcomposefile_path(struct xkb_context *ctx);
+ಅಕ್ಷರ *
+get_xcomposefile_ಮಾರ್ಗ(ರಚನೆ xkb_context *ctx);
 
-char *
-get_xdg_xcompose_file_path(struct xkb_context *ctx);
+ಅಕ್ಷರ *
+get_xdg_xcompose_file_ಮಾರ್ಗ(ರಚನೆ xkb_context *ctx);
 
-char *
-get_home_xcompose_file_path(struct xkb_context *ctx);
+ಅಕ್ಷರ *
+get_home_xcompose_file_ಮಾರ್ಗ(ರಚನೆ xkb_context *ctx);
 
-char *
-get_locale_compose_file_path(struct xkb_context *ctx, const char *locale);
+ಅಕ್ಷರ *
+get_locale_compose_file_ಮಾರ್ಗ(ರಚನೆ xkb_context *ctx, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *locale);

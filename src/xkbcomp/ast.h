@@ -7,16 +7,16 @@
  *
  * SPDX-License-Identifier: HPND AND MIT
  */
-#pragma once
+#ಸೂಚನೆ once
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include "xkbcommon/xkbcommon.h"
+#ಅನ್ತರ್ಭಾವ "xkbcommon/xkbcommon.h"
 
-#include "atom.h"
-#include "darray.h"
+#ಅನ್ತರ್ಭಾವ "atom.h"
+#ಅನ್ತರ್ಭಾವ "darray.h"
 
-enum xkb_file_type {
+ಎಣಿಕೆ xkb_file_type {
     /* Component files, by order of compilation. */
     FILE_TYPE_KEYCODES = 0,
     FILE_TYPE_TYPES = 1,
@@ -24,8 +24,8 @@ enum xkb_file_type {
     FILE_TYPE_SYMBOLS = 3,
 
     /* File types which must be found in a keymap file. */
-    FIRST_KEYMAP_FILE_TYPE = FILE_TYPE_KEYCODES,
-    LAST_KEYMAP_FILE_TYPE = FILE_TYPE_SYMBOLS,
+    ಮೊದಲ_KEYMAP_FILE_TYPE = FILE_TYPE_KEYCODES,
+    ಕೊನೆಯ_KEYMAP_FILE_TYPE = FILE_TYPE_SYMBOLS,
 
     /* Geometry is not compiled any more. */
     FILE_TYPE_GEOMETRY = 4,
@@ -35,275 +35,275 @@ enum xkb_file_type {
 
 
     /* This one doesn't mix with the others, but useful here as well. */
-    FILE_TYPE_RULES,
+    FILE_TYPE_ನಿಯಮಗಳು,
 
-    _FILE_TYPE_NUM_ENTRIES,
-    FILE_TYPE_INVALID = _FILE_TYPE_NUM_ENTRIES
+    FILE_TYPE_ಅಂಕೆ_ENTRIES,
+    FILE_TYPE_INVALID = FILE_TYPE_ಅಂಕೆ_ENTRIES
 };
 
-enum stmt_type {
+ಎಣಿಕೆ stmt_type {
     STMT_UNKNOWN = 0,
     STMT_INCLUDE,
     STMT_KEYCODE,
     STMT_ALIAS,
-    STMT_EXPR_STRING_LITERAL,
-    STMT_EXPR_INTEGER_LITERAL,
-    STMT_EXPR_FLOAT_LITERAL,
-    STMT_EXPR_BOOLEAN_LITERAL,
-    STMT_EXPR_KEYNAME_LITERAL,
-    STMT_EXPR_KEYSYM_LITERAL,
-    STMT_EXPR_IDENT,
-    STMT_EXPR_ACTION_DECL,
-    STMT_EXPR_FIELD_REF,
-    STMT_EXPR_ARRAY_REF,
+    STMT_ಅಭಿವ್ಯಕ್ತಿ_STRING_LITERAL,
+    STMT_ಅಭಿವ್ಯಕ್ತಿ_INTEGER_LITERAL,
+    STMT_ಅಭಿವ್ಯಕ್ತಿ_FLOAT_LITERAL,
+    STMT_ಅಭಿವ್ಯಕ್ತಿ_BOOLEAN_LITERAL,
+    STMT_ಅಭಿವ್ಯಕ್ತಿ_KEYNAME_LITERAL,
+    STMT_ಅಭಿವ್ಯಕ್ತಿ_KEYSYM_LITERAL,
+    STMT_ಅಭಿವ್ಯಕ್ತಿ_IDENT,
+    STMT_ಅಭಿವ್ಯಕ್ತಿ_ACTION_DECL,
+    STMT_ಅಭಿವ್ಯಕ್ತಿ_ಕ್ಷೇತ್ರ_REF,
+    STMT_ಅಭಿವ್ಯಕ್ತಿ_ARRAY_REF,
     /* Needed because of the ambiguity between keysym and action empty lists */
-    STMT_EXPR_EMPTY_LIST,
-    STMT_EXPR_KEYSYM_LIST,
-    STMT_EXPR_ACTION_LIST,
-    STMT_EXPR_ADD,
-    STMT_EXPR_SUBTRACT,
-    STMT_EXPR_MULTIPLY,
-    STMT_EXPR_DIVIDE,
-    STMT_EXPR_ASSIGN,
-    STMT_EXPR_NOT,
-    STMT_EXPR_NEGATE,
-    STMT_EXPR_INVERT,
-    STMT_EXPR_UNARY_PLUS,
+    STMT_ಅಭಿವ್ಯಕ್ತಿ_ಖಾಲಿಗಳು_LIST,
+    STMT_ಅಭಿವ್ಯಕ್ತಿ_KEYSYM_LIST,
+    STMT_ಅಭಿವ್ಯಕ್ತಿ_ACTION_LIST,
+    STMT_ಅಭಿವ್ಯಕ್ತಿ_ಕೂಡಿಸು,
+    STMT_ಅಭಿವ್ಯಕ್ತಿ_ಕಳೆ,
+    STMT_ಅಭಿವ್ಯಕ್ತಿ_MULTIPLY,
+    STMT_ಅಭಿವ್ಯಕ್ತಿ_DIVIDE,
+    STMT_ಅಭಿವ್ಯಕ್ತಿ_ನಿಯೋಜಿಸು,
+    STMT_ಅಭಿವ್ಯಕ್ತಿ_NOT,
+    STMT_ಅಭಿವ್ಯಕ್ತಿ_NEGATE,
+    STMT_ಅಭಿವ್ಯಕ್ತಿ_INVERT,
+    STMT_ಅಭಿವ್ಯಕ್ತಿ_UNARY_PLUS,
     STMT_VAR,
     STMT_TYPE,
     STMT_INTERP,
     STMT_VMOD,
     STMT_SYMBOLS,
     STMT_MODMAP,
-    STMT_GROUP_COMPAT,
+    STMT_ಗುಂಪು_COMPAT,
     STMT_LED_MAP,
     STMT_LED_NAME,
     STMT_UNKNOWN_DECLARATION,
     STMT_UNKNOWN_COMPOUND,
 
-    _STMT_NUM_VALUES
+    STMT_ಅಂಕೆ_ಮೌಲ್ಯಗಳು
 };
 
-enum merge_mode {
-    MERGE_DEFAULT,
-    MERGE_AUGMENT,
-    MERGE_OVERRIDE,
-    MERGE_REPLACE,
-    _MERGE_MODE_NUM_ENTRIES,
+ಎಣಿಕೆ ವಿಲೀನ_ಬಹುಲಕ {
+    ವಿಲೀನ_DEFAULT,
+    ವಿಲೀನ_AUGMENT,
+    ವಿಲೀನ_OVERRIDE,
+    ವಿಲೀನ_REPLACE,
+    ವಿಲೀನ_ಬಹುಲಕ_ಅಂಕೆ_ENTRIES,
 };
-enum { MERGE_MODE_MIN_WIDTH = 3 /* 2 bits + sign */ };
-static_assert(_MERGE_MODE_NUM_ENTRIES - 1 <= (1 << (MERGE_MODE_MIN_WIDTH - 1)) - 1,
+ಎಣಿಕೆ { ವಿಲೀನ_ಬಹುಲಕ_MIN_ಅಗಲ = 3 /* 2 bits + sign */ };
+static_assert(ವಿಲೀನ_ಬಹುಲಕ_ಅಂಕೆ_ENTRIES - 1 <= (1 << (ವಿಲೀನ_ಬಹುಲಕ_MIN_ಅಗಲ - 1)) - 1,
               "Cannot encode merge mode");
 
-const char *
-xkb_file_type_to_string(enum xkb_file_type type);
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *
+xkb_file_type_ಗಮ್ಯ_string(ಎಣಿಕೆ xkb_file_type type);
 
-const char *
-stmt_type_to_string(enum stmt_type type);
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *
+stmt_type_ಗಮ್ಯ_string(ಎಣಿಕೆ stmt_type type);
 
-char
-stmt_type_to_operator_char(enum stmt_type type);
+ಅಕ್ಷರ
+stmt_type_ಗಮ್ಯ_operator_char(ಎಣಿಕೆ stmt_type type);
 
-typedef struct _ParseCommon  {
-    struct _ParseCommon *next;
-    enum stmt_type type;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ _ParseCommon  {
+    ರಚನೆ _ParseCommon *ಮುಂದಿನ;
+    ಎಣಿಕೆ stmt_type type;
 } ParseCommon;
 
-typedef struct _IncludeStmt {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ _IncludeStmt {
     ParseCommon common;
-    enum merge_mode merge;
-    char *stmt;
-    char *file;
-    char *map;
-    char *modifier;
-    struct _IncludeStmt *next_incl;
+    ಎಣಿಕೆ ವಿಲೀನ_ಬಹುಲಕ ವಿಲೀನ;
+    ಅಕ್ಷರ *stmt;
+    ಅಕ್ಷರ *file;
+    ಅಕ್ಷರ *map;
+    ಅಕ್ಷರ *modifier;
+    ರಚನೆ _IncludeStmt *ಮುಂದಿನ_incl;
 } IncludeStmt;
 
-typedef union ExprDef ExprDef;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಒಕ್ಕೂಟ ಅಭಿವ್ಯಕ್ತಿ_Def ಅಭಿವ್ಯಕ್ತಿ_Def;
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     ParseCommon common;
     xkb_atom_t ident;
-} ExprIdent;
+} ಅಭಿವ್ಯಕ್ತಿ_Ident;
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     ParseCommon common;
     xkb_atom_t str;
-} ExprString;
+} ಅಭಿವ್ಯಕ್ತಿ_String;
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     ParseCommon common;
-    bool set;
-} ExprBoolean;
+    bool ಗಣ;
+} ಅಭಿವ್ಯಕ್ತಿ_Boolean;
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     ParseCommon common;
     int64_t ival;
-} ExprInteger;
+} ಅಭಿವ್ಯಕ್ತಿ_Integer;
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     ParseCommon common;
     /* We don't support floats, but we still represnt them in the AST, in
      * order to provide proper error messages. */
-} ExprFloat;
+} ಅಭಿವ್ಯಕ್ತಿ_Float;
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     ParseCommon common;
-    xkb_atom_t key_name;
-} ExprKeyName;
+    xkb_atom_t ಕೀಲಿ_name;
+} ಅಭಿವ್ಯಕ್ತಿ_ಕೀಲಿ_Name;
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     ParseCommon common;
     /* Keysyms are resolved early, so this might contain `NoSymbol` in case of
      * failure, to enable error recovery. */
     xkb_keysym_t keysym;
-} ExprKeySym;
+} ಅಭಿವ್ಯಕ್ತಿ_ಕೀಲಿ_Sym;
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     ParseCommon common;
-    ExprDef *left;
-    ExprDef *right;
-} ExprBinary;
+    ಅಭಿವ್ಯಕ್ತಿ_Def *ಎಡ;
+    ಅಭಿವ್ಯಕ್ತಿ_Def *ಬಲ;
+} ಅಭಿವ್ಯಕ್ತಿ_ದ್ವಿಮಾನ;
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     ParseCommon common;
-    ExprDef *child;
-} ExprUnary;
+    ಅಭಿವ್ಯಕ್ತಿ_Def *ಮಗು;
+} ಅಭಿವ್ಯಕ್ತಿ_Unary;
 
-typedef struct {
-    ParseCommon common;
-    xkb_atom_t element;
-    xkb_atom_t field;
-} ExprFieldRef;
-
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     ParseCommon common;
     xkb_atom_t element;
-    xkb_atom_t field;
-    ExprDef *entry;
-} ExprArrayRef;
+    xkb_atom_t ಕ್ಷೇತ್ರ_2;
+} ಅಭಿವ್ಯಕ್ತಿ_ಕ್ಷೇತ್ರ_Ref;
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
+    ParseCommon common;
+    xkb_atom_t element;
+    xkb_atom_t ಕ್ಷೇತ್ರ_2;
+    ಅಭಿವ್ಯಕ್ತಿ_Def *ನಮೂದು;
+} ಅಭಿವ್ಯಕ್ತಿ_Array_Ref;
+
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     ParseCommon common;
     xkb_atom_t name;
-    ExprDef *args;
-} ExprAction;
+    ಅಭಿವ್ಯಕ್ತಿ_Def *ವಾದಗಳು;
+} ಅಭಿವ್ಯಕ್ತಿ_Action;
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     ParseCommon common;
     /* List of actions for a single level. */
-    ExprDef *actions;
-} ExprActionList;
+    ಅಭಿವ್ಯಕ್ತಿ_Def *actions;
+} ಅಭಿವ್ಯಕ್ತಿ_Action_List;
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     ParseCommon common;
     /* List of keysym for a single level. */
     darray(xkb_keysym_t) syms;
-} ExprKeysymList;
+} ಅಭಿವ್ಯಕ್ತಿ_Keysym_List;
 
-union ExprDef {
+ಒಕ್ಕೂಟ ಅಭಿವ್ಯಕ್ತಿ_Def {
     ParseCommon common;
-    ExprIdent ident;
-    ExprString string;
-    ExprBoolean boolean;
-    ExprInteger integer;
-    ExprKeyName key_name;
-    ExprKeySym keysym;
-    ExprBinary binary;
-    ExprUnary unary;
-    ExprFieldRef field_ref;
-    ExprArrayRef array_ref;
-    ExprAction action;
-    ExprActionList actions;
-    ExprKeysymList keysym_list;
+    ಅಭಿವ್ಯಕ್ತಿ_Ident ident;
+    ಅಭಿವ್ಯಕ್ತಿ_String string;
+    ಅಭಿವ್ಯಕ್ತಿ_Boolean boolean;
+    ಅಭಿವ್ಯಕ್ತಿ_Integer integer;
+    ಅಭಿವ್ಯಕ್ತಿ_ಕೀಲಿ_Name ಕೀಲಿ_name;
+    ಅಭಿವ್ಯಕ್ತಿ_ಕೀಲಿ_Sym keysym;
+    ಅಭಿವ್ಯಕ್ತಿ_ದ್ವಿಮಾನ ದ್ವಿಮಾನ;
+    ಅಭಿವ್ಯಕ್ತಿ_Unary unary;
+    ಅಭಿವ್ಯಕ್ತಿ_ಕ್ಷೇತ್ರ_Ref ಕ್ಷೇತ್ರ_ref;
+    ಅಭಿವ್ಯಕ್ತಿ_Array_Ref array_ref;
+    ಅಭಿವ್ಯಕ್ತಿ_Action action;
+    ಅಭಿವ್ಯಕ್ತಿ_Action_List actions;
+    ಅಭಿವ್ಯಕ್ತಿ_Keysym_List keysym_list;
 };
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     ParseCommon common;
-    enum merge_mode merge;
-    ExprDef *name;
-    ExprDef *value;
+    ಎಣಿಕೆ ವಿಲೀನ_ಬಹುಲಕ ವಿಲೀನ;
+    ಅಭಿವ್ಯಕ್ತಿ_Def *name;
+    ಅಭಿವ್ಯಕ್ತಿ_Def *ಮೌಲ್ಯ;
 } VarDef;
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     ParseCommon common;
-    enum merge_mode merge;
+    ಎಣಿಕೆ ವಿಲೀನ_ಬಹುಲಕ ವಿಲೀನ;
     xkb_atom_t name;
-    ExprDef *value;
+    ಅಭಿವ್ಯಕ್ತಿ_Def *ಮೌಲ್ಯ;
 } VModDef;
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     ParseCommon common;
-    enum merge_mode merge;
+    ಎಣಿಕೆ ವಿಲೀನ_ಬಹುಲಕ ವಿಲೀನ;
     xkb_atom_t name;
-    int64_t value;
+    int64_t ಮೌಲ್ಯ;
 } KeycodeDef;
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     ParseCommon common;
-    enum merge_mode merge;
+    ಎಣಿಕೆ ವಿಲೀನ_ಬಹುಲಕ ವಿಲೀನ;
     xkb_atom_t alias;
     xkb_atom_t real;
-} KeyAliasDef;
+} ಕೀಲಿ_Alias_Def;
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     ParseCommon common;
-    enum merge_mode merge;
+    ಎಣಿಕೆ ವಿಲೀನ_ಬಹುಲಕ ವಿಲೀನ;
     xkb_atom_t name;
     VarDef *body;
-} KeyTypeDef;
+} ಕೀಲಿ_Type_Def;
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     ParseCommon common;
-    enum merge_mode merge;
-    xkb_atom_t keyName;
+    ಎಣಿಕೆ ವಿಲೀನ_ಬಹುಲಕ ವಿಲೀನ;
+    xkb_atom_t ಕೀಲಿ_Name;
     VarDef *symbols;
 } SymbolsDef;
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     ParseCommon common;
-    enum merge_mode merge;
+    ಎಣಿಕೆ ವಿಲೀನ_ಬಹುಲಕ ವಿಲೀನ;
     // NOTE: Can also be “None”, rather than a modifier name.
-    ExprDef *modifiers;
-    ExprDef *keys;
+    ಅಭಿವ್ಯಕ್ತಿ_Def *modifiers;
+    ಅಭಿವ್ಯಕ್ತಿ_Def *ಕೀಲಿಗಳು;
 } ModMapDef;
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     ParseCommon common;
-    enum merge_mode merge;
-    int64_t group;
-    ExprDef *def;
-} GroupCompatDef;
+    ಎಣಿಕೆ ವಿಲೀನ_ಬಹುಲಕ ವಿಲೀನ;
+    int64_t ಗುಂಪು;
+    ಅಭಿವ್ಯಕ್ತಿ_Def *def;
+} ಗುಂಪು_Compat_Def;
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     ParseCommon common;
-    enum merge_mode merge;
+    ಎಣಿಕೆ ವಿಲೀನ_ಬಹುಲಕ ವಿಲೀನ;
     xkb_keysym_t sym;
-    ExprDef *match;
+    ಅಭಿವ್ಯಕ್ತಿ_Def *ಹೊಂದಿಕೆ;
     VarDef *def;
 } InterpDef;
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     ParseCommon common;
-    enum merge_mode merge;
-    bool virtual;
+    ಎಣಿಕೆ ವಿಲೀನ_ಬಹುಲಕ ವಿಲೀನ;
+    bool ವಾಸ್ತವಿಕ;
     int64_t ndx;
-    ExprDef *name;
+    ಅಭಿವ್ಯಕ್ತಿ_Def *name;
 } LedNameDef;
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     ParseCommon common;
-    enum merge_mode merge;
+    ಎಣಿಕೆ ವಿಲೀನ_ಬಹುಲಕ ವಿಲೀನ;
     xkb_atom_t name;
     VarDef *body;
 } LedMapDef;
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     ParseCommon common;
-    char *name;
+    ಅಕ್ಷರ *name;
 } UnknownStatement;
 
-enum xkb_map_flags {
+ಎಣಿಕೆ xkb_map_flags {
     MAP_NO_FLAG = 0,
     MAP_IS_DEFAULT = (1 << 0),
     MAP_IS_PARTIAL = (1 << 1),
@@ -316,10 +316,10 @@ enum xkb_map_flags {
     MAP_IS_DEPRECATED = (1 << 8),
 };
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     ParseCommon common;
-    char *name;
+    ಅಕ್ಷರ *name;
     ParseCommon *defs;
-    enum xkb_file_type file_type;
-    enum xkb_map_flags flags;
+    ಎಣಿಕೆ xkb_file_type file_type;
+    ಎಣಿಕೆ xkb_map_flags flags;
 } XkbFile;

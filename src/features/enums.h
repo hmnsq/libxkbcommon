@@ -9,130 +9,130 @@
  * SPDX-License-Identifier: MIT
  */
 
-#pragma once
+#ಸೂಚನೆ once
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include <assert.h>
-#include <limits.h>
-#include <stdint.h>
+#ಅನ್ತರ್ಭಾವ <assert.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-compose.h"
-#include "xkbcommon/xkbcommon-status.h"
-#include "xkbcommon/xkbcommon-features.h"
+#ಅನ್ತರ್ಭಾವ "xkbcommon/xkbcommon.h"
+#ಅನ್ತರ್ಭಾವ "xkbcommon/xkbcommon-compose.h"
+#ಅನ್ತರ್ಭಾವ "xkbcommon/xkbcommon-status.h"
+#ಅನ್ತರ್ಭಾವ "xkbcommon/xkbcommon-features.h"
 
-#ifndef UINT32_WIDTH
-#define UINT32_WIDTH (sizeof(uint32_t) * CHAR_BIT)
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ UINT32_ಅಗಲ
+#ವ್ಯಾಖ್ಯಾನಿಸು UINT32_ಅಗಲ (ಗಾತ್ರ(uint32_t) * CHAR_BIT)
+#ಆದರೆ_ಅಂತ್ಯ
 
 /*
  * Enumerations whose values can be ORed
  */
 
-static_assert(XKB_KEYMAP_FORMAT_TEXT_V1 >= 0 &&
-              XKB_KEYMAP_FORMAT_TEXT_V1 < UINT32_WIDTH, "");
-static_assert(XKB_KEYMAP_FORMAT_TEXT_V2 >= 0 &&
-              XKB_KEYMAP_FORMAT_TEXT_V2 < UINT32_WIDTH, "");
-static_assert(XKB_KEY_UP >= 0 &&
-              XKB_KEY_UP < UINT32_WIDTH, "");
-static_assert(XKB_KEY_DOWN >= 0 &&
-              XKB_KEY_DOWN < UINT32_WIDTH, "");
-static_assert(XKB_KEY_REPEATED >= 0 &&
-              XKB_KEY_REPEATED < UINT32_WIDTH, "");
+static_assert(XKB_KEYMAP_FORMAT_ಪಠ್ಯ_V1 >= 0 &&
+              XKB_KEYMAP_FORMAT_ಪಠ್ಯ_V1 < UINT32_ಅಗಲ, "");
+static_assert(XKB_KEYMAP_FORMAT_ಪಠ್ಯ_V2 >= 0 &&
+              XKB_KEYMAP_FORMAT_ಪಠ್ಯ_V2 < UINT32_ಅಗಲ, "");
+static_assert(XKB_ಕೀಲಿ_ಮೇಲೆ >= 0 &&
+              XKB_ಕೀಲಿ_ಮೇಲೆ < UINT32_ಅಗಲ, "");
+static_assert(XKB_ಕೀಲಿ_ಕೆಳಕ್ಕೆ >= 0 &&
+              XKB_ಕೀಲಿ_ಕೆಳಕ್ಕೆ < UINT32_ಅಗಲ, "");
+static_assert(XKB_ಕೀಲಿ_REPEATED >= 0 &&
+              XKB_ಕೀಲಿ_REPEATED < UINT32_ಅಗಲ, "");
 static_assert(XKB_EVENT_TYPE_INVALID >= 0 &&
-              XKB_EVENT_TYPE_INVALID < UINT32_WIDTH, "");
-static_assert(XKB_EVENT_TYPE_FRAME >= 0 &&
-              XKB_EVENT_TYPE_FRAME < UINT32_WIDTH, "");
-static_assert(XKB_EVENT_TYPE_KEY >= 0 &&
-              XKB_EVENT_TYPE_KEY < UINT32_WIDTH, "");
+              XKB_EVENT_TYPE_INVALID < UINT32_ಅಗಲ, "");
+static_assert(XKB_EVENT_TYPE_ಚೌಕಟ್ಟು >= 0 &&
+              XKB_EVENT_TYPE_ಚೌಕಟ್ಟು < UINT32_ಅಗಲ, "");
+static_assert(XKB_EVENT_TYPE_ಕೀಲಿ >= 0 &&
+              XKB_EVENT_TYPE_ಕೀಲಿ < UINT32_ಅಗಲ, "");
 static_assert(XKB_EVENT_TYPE_STATE_COMPONENTS >= 0 &&
-              XKB_EVENT_TYPE_STATE_COMPONENTS < UINT32_WIDTH, "");
-static_assert(XKB_EVENT_TYPE_POINTER_MOTION >= 0 &&
-              XKB_EVENT_TYPE_POINTER_MOTION < UINT32_WIDTH, "");
-static_assert(XKB_EVENT_TYPE_POINTER_BUTTON >= 0 &&
-              XKB_EVENT_TYPE_POINTER_BUTTON < UINT32_WIDTH, "");
+              XKB_EVENT_TYPE_STATE_COMPONENTS < UINT32_ಅಗಲ, "");
+static_assert(XKB_EVENT_TYPE_ಸೂಚಕ_MOTION >= 0 &&
+              XKB_EVENT_TYPE_ಸೂಚಕ_MOTION < UINT32_ಅಗಲ, "");
+static_assert(XKB_EVENT_TYPE_ಸೂಚಕ_BUTTON >= 0 &&
+              XKB_EVENT_TYPE_ಸೂಚಕ_BUTTON < UINT32_ಅಗಲ, "");
 static_assert(XKB_EVENT_TYPE_TERMINATE_DISPLAY_SERVER >= 0 &&
-              XKB_EVENT_TYPE_TERMINATE_DISPLAY_SERVER < UINT32_WIDTH, "");
+              XKB_EVENT_TYPE_TERMINATE_DISPLAY_SERVER < UINT32_ಅಗಲ, "");
 static_assert(XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE >= 0 &&
-              XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE < UINT32_WIDTH, "");
-static_assert(XKB_POINTER_BUTTON_RELEASED >= 0 &&
-              XKB_POINTER_BUTTON_RELEASED < UINT32_WIDTH, "");
-static_assert(XKB_POINTER_BUTTON_PRESSED >= 0 &&
-              XKB_POINTER_BUTTON_PRESSED < UINT32_WIDTH, "");
-static_assert(XKB_LAYOUT_OUT_OF_RANGE_WRAP >= 0 &&
-              XKB_LAYOUT_OUT_OF_RANGE_WRAP < UINT32_WIDTH, "");
-static_assert(XKB_LAYOUT_OUT_OF_RANGE_CLAMP >= 0 &&
-              XKB_LAYOUT_OUT_OF_RANGE_CLAMP < UINT32_WIDTH, "");
-static_assert(XKB_LAYOUT_OUT_OF_RANGE_REDIRECT >= 0 &&
-              XKB_LAYOUT_OUT_OF_RANGE_REDIRECT < UINT32_WIDTH, "");
-static_assert(XKB_STATE_MODE_CLIENT >= 0 &&
-              XKB_STATE_MODE_CLIENT < UINT32_WIDTH, "");
-static_assert(XKB_STATE_MODE_SERVER_QUERY >= 0 &&
-              XKB_STATE_MODE_SERVER_QUERY < UINT32_WIDTH, "");
-static_assert(XKB_STATE_MODE_SERVER >= 0 &&
-              XKB_STATE_MODE_SERVER < UINT32_WIDTH, "");
-static_assert(XKB_CONSUMED_MODE_XKB >= 0 &&
-              XKB_CONSUMED_MODE_XKB < UINT32_WIDTH, "");
-static_assert(XKB_CONSUMED_MODE_GTK >= 0 &&
-              XKB_CONSUMED_MODE_GTK < UINT32_WIDTH, "");
-static_assert(XKB_COMPOSE_FORMAT_TEXT_V1 >= 0 &&
-              XKB_COMPOSE_FORMAT_TEXT_V1 < UINT32_WIDTH, "");
+              XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE < UINT32_ಅಗಲ, "");
+static_assert(XKB_ಸೂಚಕ_BUTTON_RELEASED >= 0 &&
+              XKB_ಸೂಚಕ_BUTTON_RELEASED < UINT32_ಅಗಲ, "");
+static_assert(XKB_ಸೂಚಕ_BUTTON_PRESSED >= 0 &&
+              XKB_ಸೂಚಕ_BUTTON_PRESSED < UINT32_ಅಗಲ, "");
+static_assert(XKB_LAYOUT_ಹೊರಹೋಗು_ದ_RANGE_WRAP >= 0 &&
+              XKB_LAYOUT_ಹೊರಹೋಗು_ದ_RANGE_WRAP < UINT32_ಅಗಲ, "");
+static_assert(XKB_LAYOUT_ಹೊರಹೋಗು_ದ_RANGE_CLAMP >= 0 &&
+              XKB_LAYOUT_ಹೊರಹೋಗು_ದ_RANGE_CLAMP < UINT32_ಅಗಲ, "");
+static_assert(XKB_LAYOUT_ಹೊರಹೋಗು_ದ_RANGE_REDIRECT >= 0 &&
+              XKB_LAYOUT_ಹೊರಹೋಗು_ದ_RANGE_REDIRECT < UINT32_ಅಗಲ, "");
+static_assert(XKB_STATE_ಬಹುಲಕ_CLIENT >= 0 &&
+              XKB_STATE_ಬಹುಲಕ_CLIENT < UINT32_ಅಗಲ, "");
+static_assert(XKB_STATE_ಬಹುಲಕ_SERVER_QUERY >= 0 &&
+              XKB_STATE_ಬಹುಲಕ_SERVER_QUERY < UINT32_ಅಗಲ, "");
+static_assert(XKB_STATE_ಬಹುಲಕ_SERVER >= 0 &&
+              XKB_STATE_ಬಹುಲಕ_SERVER < UINT32_ಅಗಲ, "");
+static_assert(XKB_CONSUMED_ಬಹುಲಕ_XKB >= 0 &&
+              XKB_CONSUMED_ಬಹುಲಕ_XKB < UINT32_ಅಗಲ, "");
+static_assert(XKB_CONSUMED_ಬಹುಲಕ_GTK >= 0 &&
+              XKB_CONSUMED_ಬಹುಲಕ_GTK < UINT32_ಅಗಲ, "");
+static_assert(XKB_COMPOSE_FORMAT_ಪಠ್ಯ_V1 >= 0 &&
+              XKB_COMPOSE_FORMAT_ಪಠ್ಯ_V1 < UINT32_ಅಗಲ, "");
 static_assert(XKB_COMPOSE_NOTHING >= 0 &&
-              XKB_COMPOSE_NOTHING < UINT32_WIDTH, "");
+              XKB_COMPOSE_NOTHING < UINT32_ಅಗಲ, "");
 static_assert(XKB_COMPOSE_COMPOSING >= 0 &&
-              XKB_COMPOSE_COMPOSING < UINT32_WIDTH, "");
+              XKB_COMPOSE_COMPOSING < UINT32_ಅಗಲ, "");
 static_assert(XKB_COMPOSE_COMPOSED >= 0 &&
-              XKB_COMPOSE_COMPOSED < UINT32_WIDTH, "");
+              XKB_COMPOSE_COMPOSED < UINT32_ಅಗಲ, "");
 static_assert(XKB_COMPOSE_CANCELLED >= 0 &&
-              XKB_COMPOSE_CANCELLED < UINT32_WIDTH, "");
+              XKB_COMPOSE_CANCELLED < UINT32_ಅಗಲ, "");
 static_assert(XKB_COMPOSE_FEED_IGNORED >= 0 &&
-              XKB_COMPOSE_FEED_IGNORED < UINT32_WIDTH, "");
+              XKB_COMPOSE_FEED_IGNORED < UINT32_ಅಗಲ, "");
 static_assert(XKB_COMPOSE_FEED_ACCEPTED >= 0 &&
-              XKB_COMPOSE_FEED_ACCEPTED < UINT32_WIDTH, "");
+              XKB_COMPOSE_FEED_ACCEPTED < UINT32_ಅಗಲ, "");
 
-enum xkb_enumerations_values {
-    XKB_RMLVO_BUILDER_FLAGS_VALUES
+ಎಣಿಕೆ xkb_enumerations_ಮೌಲ್ಯಗಳು {
+    XKB_RMLVO_BUILDER_FLAGS_ಮೌಲ್ಯಗಳು
         = XKB_RMLVO_BUILDER_NO_FLAGS
     ,
-    XKB_KEYSYM_FLAGS_VALUES
+    XKB_KEYSYM_FLAGS_ಮೌಲ್ಯಗಳು
         = XKB_KEYSYM_NO_FLAGS
         | XKB_KEYSYM_CASE_INSENSITIVE
     ,
-    XKB_CONTEXT_FLAGS_VALUES
+    XKB_CONTEXT_FLAGS_ಮೌಲ್ಯಗಳು
         = XKB_CONTEXT_NO_FLAGS
         | XKB_CONTEXT_NO_DEFAULT_INCLUDES
-        | XKB_CONTEXT_NO_ENVIRONMENT_NAMES
+        | XKB_CONTEXT_NO_ENVIRONMENT_ಹೆಸರುಗಳು
         | XKB_CONTEXT_NO_SECURE_GETENV
     ,
-    XKB_KEYMAP_COMPILE_FLAGS_VALUES
+    XKB_KEYMAP_COMPILE_FLAGS_ಮೌಲ್ಯಗಳು
         = XKB_KEYMAP_COMPILE_NO_FLAGS
-        | XKB_KEYMAP_COMPILE_STRICT_MODE
+        | XKB_KEYMAP_COMPILE_STRICT_ಬಹುಲಕ
     ,
-    XKB_KEYMAP_FORMAT_VALUES
-        = (1u << XKB_KEYMAP_FORMAT_TEXT_V1)
-        | (1u << XKB_KEYMAP_FORMAT_TEXT_V2)
+    XKB_KEYMAP_FORMAT_ಮೌಲ್ಯಗಳು
+        = (1u << XKB_KEYMAP_FORMAT_ಪಠ್ಯ_V1)
+        | (1u << XKB_KEYMAP_FORMAT_ಪಠ್ಯ_V2)
     ,
-    XKB_KEYMAP_SERIALIZE_FLAGS_VALUES
+    XKB_KEYMAP_SERIALIZE_FLAGS_ಮೌಲ್ಯಗಳು
         = XKB_KEYMAP_SERIALIZE_NO_FLAGS
         | XKB_KEYMAP_SERIALIZE_PRETTY
-        | XKB_KEYMAP_SERIALIZE_KEEP_UNUSED
-        | XKB_KEYMAP_SERIALIZE_STRICT_MODE
-        | XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_VALUES
+        | XKB_KEYMAP_SERIALIZE_KEEP_ಬಳಸದ
+        | XKB_KEYMAP_SERIALIZE_STRICT_ಬಹುಲಕ
+        | XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_ಮೌಲ್ಯಗಳು
         | XKB_KEYMAP_SERIALIZE_EXPLICIT_VMODS
-        | XKB_KEYMAP_SERIALIZE_EXPLICIT_KEY_VALUES
+        | XKB_KEYMAP_SERIALIZE_EXPLICIT_ಕೀಲಿ_ಮೌಲ್ಯಗಳು
     ,
-    XKB_KEYMAP_KEY_ITERATOR_FLAGS_VALUES
-        = XKB_KEYMAP_KEY_ITERATOR_NO_FLAGS
-        | XKB_KEYMAP_KEY_ITERATOR_DESCENDING_ORDER
-        | XKB_KEYMAP_KEY_ITERATOR_INCLUDE_UNBOUND
+    XKB_KEYMAP_ಕೀಲಿ_ITERATOR_FLAGS_ಮೌಲ್ಯಗಳು
+        = XKB_KEYMAP_ಕೀಲಿ_ITERATOR_NO_FLAGS
+        | XKB_KEYMAP_ಕೀಲಿ_ITERATOR_DESCENDING_ಕ್ರಮ
+        | XKB_KEYMAP_ಕೀಲಿ_ITERATOR_INCLUDE_UNBOUND
     ,
-    XKB_KEY_DIRECTION_VALUES
-        = (1u << XKB_KEY_UP)
-        | (1u << XKB_KEY_DOWN)
-        | (1u << XKB_KEY_REPEATED)
+    XKB_ಕೀಲಿ_DIRECTION_ಮೌಲ್ಯಗಳು
+        = (1u << XKB_ಕೀಲಿ_ಮೇಲೆ)
+        | (1u << XKB_ಕೀಲಿ_ಕೆಳಕ್ಕೆ)
+        | (1u << XKB_ಕೀಲಿ_REPEATED)
     ,
-    XKB_STATE_COMPONENT_VALUES
+    XKB_STATE_COMPONENT_ಮೌಲ್ಯಗಳು
         = XKB_STATE_NO_COMPONENT
         | XKB_STATE_MODS_DEPRESSED
         | XKB_STATE_MODS_LATCHED
@@ -145,134 +145,134 @@ enum xkb_enumerations_values {
         | XKB_STATE_LEDS
         | XKB_STATE_CONTROLS_EFFECTIVE
     ,
-    XKB_KEYBOARD_CONTROL_FLAGS_VALUES
+    XKB_KEYBOARD_CONTROL_FLAGS_ಮೌಲ್ಯಗಳು
         = XKB_KEYBOARD_CONTROL_NO_FLAGS
-        | XKB_KEYBOARD_CONTROL_A11Y_STICKY_KEYS
-        | XKB_KEYBOARD_CONTROL_MOUSE_KEYS
+        | XKB_KEYBOARD_CONTROL_A11_Y_STICKY_ಕೀಲಿಗಳು
+        | XKB_KEYBOARD_CONTROL_MOUSE_ಕೀಲಿಗಳು
     ,
-    XKB_EVENT_TYPE_VALUES
+    XKB_EVENT_TYPE_ಮೌಲ್ಯಗಳು
         = (1u << XKB_EVENT_TYPE_INVALID)
-        | (1u << XKB_EVENT_TYPE_FRAME)
-        | (1u << XKB_EVENT_TYPE_KEY)
+        | (1u << XKB_EVENT_TYPE_ಚೌಕಟ್ಟು)
+        | (1u << XKB_EVENT_TYPE_ಕೀಲಿ)
         | (1u << XKB_EVENT_TYPE_STATE_COMPONENTS)
-        | (1u << XKB_EVENT_TYPE_POINTER_MOTION)
-        | (1u << XKB_EVENT_TYPE_POINTER_BUTTON)
+        | (1u << XKB_EVENT_TYPE_ಸೂಚಕ_MOTION)
+        | (1u << XKB_EVENT_TYPE_ಸೂಚಕ_BUTTON)
         | (1u << XKB_EVENT_TYPE_TERMINATE_DISPLAY_SERVER)
         | (1u << XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE)
     ,
-    XKB_POINTER_MOTION_FLAGS_VALUES
-        = XKB_POINTER_MOTION_NO_FLAGS
-        | XKB_POINTER_MOTION_REPEATS
-        | XKB_POINTER_MOTION_ABSOLUTE_X
-        | XKB_POINTER_MOTION_ABSOLUTE_Y
+    XKB_ಸೂಚಕ_MOTION_FLAGS_ಮೌಲ್ಯಗಳು
+        = XKB_ಸೂಚಕ_MOTION_NO_FLAGS
+        | XKB_ಸೂಚಕ_MOTION_REPEATS
+        | XKB_ಸೂಚಕ_MOTION_ABSOLUTE_X
+        | XKB_ಸೂಚಕ_MOTION_ABSOLUTE_Y
     ,
-    XKB_POINTER_BUTTON_STATE_VALUES
-        = (1u << XKB_POINTER_BUTTON_RELEASED)
-        | (1u << XKB_POINTER_BUTTON_PRESSED)
+    XKB_ಸೂಚಕ_BUTTON_STATE_ಮೌಲ್ಯಗಳು
+        = (1u << XKB_ಸೂಚಕ_BUTTON_RELEASED)
+        | (1u << XKB_ಸೂಚಕ_BUTTON_PRESSED)
     ,
-    XKB_EVENTS_FLAGS_VALUES
+    XKB_EVENTS_FLAGS_ಮೌಲ್ಯಗಳು
         = XKB_EVENTS_NO_FLAGS
     ,
-    XKB_MACHINE_BUILDER_FLAGS_VALUES
+    XKB_MACHINE_BUILDER_FLAGS_ಮೌಲ್ಯಗಳು
         = XKB_MACHINE_BUILDER_NO_FLAGS
     ,
-    XKB_MACHINE_FLAGS_VALUES
+    XKB_MACHINE_FLAGS_ಮೌಲ್ಯಗಳು
         = XKB_MACHINE_NO_FLAGS
         | XKB_MACHINE_SERVER_ACTIONS
-        | XKB_MACHINE_DISABLE_LAYOUT_SWITCH_ON_MODIFIER_KEY_FIX
+        | XKB_MACHINE_DISABLE_LAYOUT_SWITCH_ON_MODIFIER_ಕೀಲಿ_FIX
         | XKB_MACHINE_UNLOCK_MODS_ON_PRESS
     ,
-    XKB_A11Y_FLAGS_VALUES
+    XKB_A11_Y_FLAGS_ಮೌಲ್ಯಗಳು
         = XKB_A11Y_NO_FLAGS
-        | XKB_A11Y_STICKY_KEYS_NO_SIMULTANEOUS_KEYS
-        | XKB_A11Y_STICKY_KEYS_LATCH_TO_LOCK
-        | XKB_A11Y_LATCH_SIMULTANEOUS_KEYS
+        | XKB_A11_Y_STICKY_ಕೀಲಿಗಳು_NO_ಏಕಕಾಲಿಕ_ಕೀಲಿಗಳು
+        | XKB_A11_Y_STICKY_ಕೀಲಿಗಳು_LATCH_ಗಮ್ಯ_ಬೀಗ
+        | XKB_A11_Y_LATCH_ಏಕಕಾಲಿಕ_ಕೀಲಿಗಳು
     ,
-    XKB_LAYOUT_OUT_OF_RANGE_POLICY_VALUES
-        = (1u << XKB_LAYOUT_OUT_OF_RANGE_WRAP)
-        | (1u << XKB_LAYOUT_OUT_OF_RANGE_CLAMP)
-        | (1u << XKB_LAYOUT_OUT_OF_RANGE_REDIRECT)
+    XKB_LAYOUT_ಹೊರಹೋಗು_ದ_RANGE_POLICY_ಮೌಲ್ಯಗಳು
+        = (1u << XKB_LAYOUT_ಹೊರಹೋಗು_ದ_RANGE_WRAP)
+        | (1u << XKB_LAYOUT_ಹೊರಹೋಗು_ದ_RANGE_CLAMP)
+        | (1u << XKB_LAYOUT_ಹೊರಹೋಗು_ದ_RANGE_REDIRECT)
     ,
-    XKB_STATE_MODE_VALUES
-        = (1u << XKB_STATE_MODE_CLIENT)
-        | (1u << XKB_STATE_MODE_SERVER_QUERY)
-        | (1u << XKB_STATE_MODE_SERVER)
+    XKB_STATE_ಬಹುಲಕ_ಮೌಲ್ಯಗಳು
+        = (1u << XKB_STATE_ಬಹುಲಕ_CLIENT)
+        | (1u << XKB_STATE_ಬಹುಲಕ_SERVER_QUERY)
+        | (1u << XKB_STATE_ಬಹುಲಕ_SERVER)
     ,
-    XKB_STATE_MATCH_VALUES
-        = XKB_STATE_MATCH_ANY
-        | XKB_STATE_MATCH_ALL
-        | XKB_STATE_MATCH_NON_EXCLUSIVE
+    XKB_STATE_ಹೊಂದಿಕೆ_ಮೌಲ್ಯಗಳು
+        = XKB_STATE_ಹೊಂದಿಕೆ_ANY
+        | XKB_STATE_ಹೊಂದಿಕೆ_ALL
+        | XKB_STATE_ಹೊಂದಿಕೆ_NON_EXCLUSIVE
     ,
-    XKB_CONSUMED_MODE_VALUES
-        = (1u << XKB_CONSUMED_MODE_XKB)
-        | (1u << XKB_CONSUMED_MODE_GTK)
+    XKB_CONSUMED_ಬಹುಲಕ_ಮೌಲ್ಯಗಳು
+        = (1u << XKB_CONSUMED_ಬಹುಲಕ_XKB)
+        | (1u << XKB_CONSUMED_ಬಹುಲಕ_GTK)
     ,
-    XKB_COMPOSE_COMPILE_FLAGS_VALUES
+    XKB_COMPOSE_COMPILE_FLAGS_ಮೌಲ್ಯಗಳು
         = XKB_COMPOSE_COMPILE_NO_FLAGS
     ,
-    XKB_COMPOSE_FORMAT_VALUES
-        = (1u << XKB_COMPOSE_FORMAT_TEXT_V1)
+    XKB_COMPOSE_FORMAT_ಮೌಲ್ಯಗಳು
+        = (1u << XKB_COMPOSE_FORMAT_ಪಠ್ಯ_V1)
     ,
-    XKB_COMPOSE_STATE_FLAGS_VALUES
+    XKB_COMPOSE_STATE_FLAGS_ಮೌಲ್ಯಗಳು
         = XKB_COMPOSE_STATE_NO_FLAGS
     ,
-    XKB_COMPOSE_STATUS_VALUES
+    XKB_COMPOSE_ಸ್ಥಿತಿ_ಮೌಲ್ಯಗಳು
         = (1u << XKB_COMPOSE_NOTHING)
         | (1u << XKB_COMPOSE_COMPOSING)
         | (1u << XKB_COMPOSE_COMPOSED)
         | (1u << XKB_COMPOSE_CANCELLED)
     ,
-    XKB_COMPOSE_FEED_RESULT_VALUES
+    XKB_COMPOSE_FEED_ಫಲಿತಾಂಶ_ಮೌಲ್ಯಗಳು
         = (1u << XKB_COMPOSE_FEED_IGNORED)
         | (1u << XKB_COMPOSE_FEED_ACCEPTED)
     ,
-    ENUM_LOWEST_VALUE = XKB_ERROR_INVALID,
-    ENUM_LOWEST_FLAG_VALUE = XKB_RMLVO_BUILDER_NO_FLAGS,
-    ENUM_HIGHEST_VALUE = XKB_STATE_MATCH_NON_EXCLUSIVE,
-    ENUM_HIGHEST_FLAG_VALUE = XKB_STATE_MATCH_NON_EXCLUSIVE,
+    ENUM_ಅತಿಕಡಿಮೆ_ಮೌಲ್ಯ = XKB_ERROR_INVALID,
+    ENUM_ಅತಿಕಡಿಮೆ_FLAG_ಮೌಲ್ಯ = XKB_RMLVO_BUILDER_NO_FLAGS,
+    ENUM_HIGHEST_ಮೌಲ್ಯ = XKB_STATE_ಹೊಂದಿಕೆ_NON_EXCLUSIVE,
+    ENUM_HIGHEST_FLAG_ಮೌಲ್ಯ = XKB_STATE_ಹೊಂದಿಕೆ_NON_EXCLUSIVE,
 };
 
 /*
  * Explicit and implict values of enumerations
  */
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_rmlvo_builder_flags_values[] = {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_ಖಾಸಗಿ_APIS
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_rmlvo_builder_flags_ಮೌಲ್ಯಗಳು[] = {
     XKB_RMLVO_BUILDER_NO_FLAGS,
 };
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-enum xkb_rmlvo_builder_flags_bounds {
+ಎಣಿಕೆ xkb_rmlvo_builder_flags_bounds {
     _XKB_RMLVO_BUILDER_FLAGS_MIN = XKB_RMLVO_BUILDER_NO_FLAGS,
     _XKB_RMLVO_BUILDER_FLAGS_MAX = XKB_RMLVO_BUILDER_NO_FLAGS,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_keysym_flags_values[] = {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_ಖಾಸಗಿ_APIS
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_keysym_flags_ಮೌಲ್ಯಗಳು[] = {
     XKB_KEYSYM_NO_FLAGS,
     XKB_KEYSYM_CASE_INSENSITIVE,
 };
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-enum xkb_keysym_flags_bounds {
+ಎಣಿಕೆ xkb_keysym_flags_bounds {
     _XKB_KEYSYM_FLAGS_MIN = XKB_KEYSYM_NO_FLAGS,
     _XKB_KEYSYM_FLAGS_MAX = XKB_KEYSYM_CASE_INSENSITIVE,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_context_flags_values[] = {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_ಖಾಸಗಿ_APIS
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_context_flags_ಮೌಲ್ಯಗಳು[] = {
     XKB_CONTEXT_NO_FLAGS,
     XKB_CONTEXT_NO_DEFAULT_INCLUDES,
-    XKB_CONTEXT_NO_ENVIRONMENT_NAMES,
+    XKB_CONTEXT_NO_ENVIRONMENT_ಹೆಸರುಗಳು,
     XKB_CONTEXT_NO_SECURE_GETENV,
 };
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-enum xkb_context_flags_bounds {
+ಎಣಿಕೆ xkb_context_flags_bounds {
     _XKB_CONTEXT_FLAGS_MIN = XKB_CONTEXT_NO_FLAGS,
     _XKB_CONTEXT_FLAGS_MAX = XKB_CONTEXT_NO_SECURE_GETENV,
 };
-static const uint32_t xkb_log_level_values[] = {
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_log_level_ಮೌಲ್ಯಗಳು[] = {
     XKB_LOG_LEVEL_CRITICAL,
     XKB_LOG_LEVEL_ERROR,
     XKB_LOG_LEVEL_WARNING,
@@ -280,83 +280,83 @@ static const uint32_t xkb_log_level_values[] = {
     XKB_LOG_LEVEL_DEBUG,
 };
 
-enum xkb_log_level_bounds {
+ಎಣಿಕೆ xkb_log_level_bounds {
     _XKB_LOG_LEVEL_MIN = XKB_LOG_LEVEL_CRITICAL,
     _XKB_LOG_LEVEL_MAX = XKB_LOG_LEVEL_DEBUG,
-    _XKB_LOG_LEVEL_NUM = 5,
+    XKB_LOG_LEVEL_ಅಂಕೆ = 5,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_keymap_compile_flags_values[] = {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_ಖಾಸಗಿ_APIS
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_keymap_compile_flags_ಮೌಲ್ಯಗಳು[] = {
     XKB_KEYMAP_COMPILE_NO_FLAGS,
-    XKB_KEYMAP_COMPILE_STRICT_MODE,
+    XKB_KEYMAP_COMPILE_STRICT_ಬಹುಲಕ,
 };
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-enum xkb_keymap_compile_flags_bounds {
+ಎಣಿಕೆ xkb_keymap_compile_flags_bounds {
     _XKB_KEYMAP_COMPILE_FLAGS_MIN = XKB_KEYMAP_COMPILE_NO_FLAGS,
-    _XKB_KEYMAP_COMPILE_FLAGS_MAX = XKB_KEYMAP_COMPILE_STRICT_MODE,
+    _XKB_KEYMAP_COMPILE_FLAGS_MAX = XKB_KEYMAP_COMPILE_STRICT_ಬಹುಲಕ,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_keymap_format_values[] = {
-    XKB_KEYMAP_FORMAT_TEXT_V1,
-    XKB_KEYMAP_FORMAT_TEXT_V2,
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_ಖಾಸಗಿ_APIS
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_keymap_format_ಮೌಲ್ಯಗಳು[] = {
+    XKB_KEYMAP_FORMAT_ಪಠ್ಯ_V1,
+    XKB_KEYMAP_FORMAT_ಪಠ್ಯ_V2,
 };
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-enum xkb_keymap_format_bounds {
-    _XKB_KEYMAP_FORMAT_MIN = XKB_KEYMAP_FORMAT_TEXT_V1,
-    _XKB_KEYMAP_FORMAT_MAX = XKB_KEYMAP_FORMAT_TEXT_V2,
-    _XKB_KEYMAP_FORMAT_NUM = 2,
+ಎಣಿಕೆ xkb_keymap_format_bounds {
+    _XKB_KEYMAP_FORMAT_MIN = XKB_KEYMAP_FORMAT_ಪಠ್ಯ_V1,
+    _XKB_KEYMAP_FORMAT_MAX = XKB_KEYMAP_FORMAT_ಪಠ್ಯ_V2,
+    XKB_KEYMAP_FORMAT_ಅಂಕೆ = 2,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_keymap_serialize_flags_values[] = {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_ಖಾಸಗಿ_APIS
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_keymap_serialize_flags_ಮೌಲ್ಯಗಳು[] = {
     XKB_KEYMAP_SERIALIZE_NO_FLAGS,
     XKB_KEYMAP_SERIALIZE_PRETTY,
-    XKB_KEYMAP_SERIALIZE_KEEP_UNUSED,
-    XKB_KEYMAP_SERIALIZE_STRICT_MODE,
-    XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_VALUES,
+    XKB_KEYMAP_SERIALIZE_KEEP_ಬಳಸದ,
+    XKB_KEYMAP_SERIALIZE_STRICT_ಬಹುಲಕ,
+    XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_ಮೌಲ್ಯಗಳು,
     XKB_KEYMAP_SERIALIZE_EXPLICIT_VMODS,
-    XKB_KEYMAP_SERIALIZE_EXPLICIT_KEY_VALUES,
+    XKB_KEYMAP_SERIALIZE_EXPLICIT_ಕೀಲಿ_ಮೌಲ್ಯಗಳು,
 };
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-enum xkb_keymap_serialize_flags_bounds {
+ಎಣಿಕೆ xkb_keymap_serialize_flags_bounds {
     _XKB_KEYMAP_SERIALIZE_FLAGS_MIN = XKB_KEYMAP_SERIALIZE_NO_FLAGS,
-    _XKB_KEYMAP_SERIALIZE_FLAGS_MAX = XKB_KEYMAP_SERIALIZE_EXPLICIT_KEY_VALUES,
+    _XKB_KEYMAP_SERIALIZE_FLAGS_MAX = XKB_KEYMAP_SERIALIZE_EXPLICIT_ಕೀಲಿ_ಮೌಲ್ಯಗಳು,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_keymap_key_iterator_flags_values[] = {
-    XKB_KEYMAP_KEY_ITERATOR_NO_FLAGS,
-    XKB_KEYMAP_KEY_ITERATOR_DESCENDING_ORDER,
-    XKB_KEYMAP_KEY_ITERATOR_INCLUDE_UNBOUND,
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_ಖಾಸಗಿ_APIS
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_keymap_ಕೀಲಿ_iterator_flags_ಮೌಲ್ಯಗಳು[] = {
+    XKB_KEYMAP_ಕೀಲಿ_ITERATOR_NO_FLAGS,
+    XKB_KEYMAP_ಕೀಲಿ_ITERATOR_DESCENDING_ಕ್ರಮ,
+    XKB_KEYMAP_ಕೀಲಿ_ITERATOR_INCLUDE_UNBOUND,
 };
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-enum xkb_keymap_key_iterator_flags_bounds {
-    _XKB_KEYMAP_KEY_ITERATOR_FLAGS_MIN = XKB_KEYMAP_KEY_ITERATOR_NO_FLAGS,
-    _XKB_KEYMAP_KEY_ITERATOR_FLAGS_MAX = XKB_KEYMAP_KEY_ITERATOR_INCLUDE_UNBOUND,
-};
-
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_key_direction_values[] = {
-    XKB_KEY_UP,
-    XKB_KEY_DOWN,
-    XKB_KEY_REPEATED,
-};
-#endif
-
-enum xkb_key_direction_bounds {
-    _XKB_KEY_DIRECTION_MIN = XKB_KEY_UP,
-    _XKB_KEY_DIRECTION_MAX = XKB_KEY_REPEATED,
-    _XKB_KEY_DIRECTION_NUM = 3,
+ಎಣಿಕೆ xkb_keymap_ಕೀಲಿ_iterator_flags_bounds {
+    XKB_KEYMAP_ಕೀಲಿ_ITERATOR_FLAGS_MIN = XKB_KEYMAP_ಕೀಲಿ_ITERATOR_NO_FLAGS,
+    XKB_KEYMAP_ಕೀಲಿ_ITERATOR_FLAGS_MAX = XKB_KEYMAP_ಕೀಲಿ_ITERATOR_INCLUDE_UNBOUND,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_state_component_values[] = {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_ಖಾಸಗಿ_APIS
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_ಕೀಲಿ_direction_ಮೌಲ್ಯಗಳು[] = {
+    XKB_ಕೀಲಿ_ಮೇಲೆ,
+    XKB_ಕೀಲಿ_ಕೆಳಕ್ಕೆ,
+    XKB_ಕೀಲಿ_REPEATED,
+};
+#ಆದರೆ_ಅಂತ್ಯ
+
+ಎಣಿಕೆ xkb_ಕೀಲಿ_direction_bounds {
+    XKB_ಕೀಲಿ_DIRECTION_MIN = XKB_ಕೀಲಿ_ಮೇಲೆ,
+    XKB_ಕೀಲಿ_DIRECTION_MAX = XKB_ಕೀಲಿ_REPEATED,
+    XKB_ಕೀಲಿ_DIRECTION_ಅಂಕೆ = 3,
+};
+
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_ಖಾಸಗಿ_APIS
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_state_component_ಮೌಲ್ಯಗಳು[] = {
     XKB_STATE_NO_COMPONENT,
     XKB_STATE_MODS_DEPRESSED,
     XKB_STATE_MODS_LATCHED,
@@ -369,253 +369,253 @@ static const uint32_t xkb_state_component_values[] = {
     XKB_STATE_LEDS,
     XKB_STATE_CONTROLS_EFFECTIVE,
 };
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-enum xkb_state_component_bounds {
+ಎಣಿಕೆ xkb_state_component_bounds {
     _XKB_STATE_COMPONENT_MIN = 0 /* implicit minimum */,
     _XKB_STATE_COMPONENT_MAX = XKB_STATE_CONTROLS_EFFECTIVE,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_keyboard_control_flags_values[] = {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_ಖಾಸಗಿ_APIS
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_keyboard_control_flags_ಮೌಲ್ಯಗಳು[] = {
     XKB_KEYBOARD_CONTROL_NO_FLAGS,
-    XKB_KEYBOARD_CONTROL_A11Y_STICKY_KEYS,
-    XKB_KEYBOARD_CONTROL_MOUSE_KEYS,
+    XKB_KEYBOARD_CONTROL_A11_Y_STICKY_ಕೀಲಿಗಳು,
+    XKB_KEYBOARD_CONTROL_MOUSE_ಕೀಲಿಗಳು,
 };
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-enum xkb_keyboard_control_flags_bounds {
+ಎಣಿಕೆ xkb_keyboard_control_flags_bounds {
     _XKB_KEYBOARD_CONTROL_FLAGS_MIN = XKB_KEYBOARD_CONTROL_NO_FLAGS,
-    _XKB_KEYBOARD_CONTROL_FLAGS_MAX = XKB_KEYBOARD_CONTROL_MOUSE_KEYS,
+    _XKB_KEYBOARD_CONTROL_FLAGS_MAX = XKB_KEYBOARD_CONTROL_MOUSE_ಕೀಲಿಗಳು,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_event_type_values[] = {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_ಖಾಸಗಿ_APIS
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_event_type_ಮೌಲ್ಯಗಳು[] = {
     XKB_EVENT_TYPE_INVALID,
-    XKB_EVENT_TYPE_FRAME,
-    XKB_EVENT_TYPE_KEY,
+    XKB_EVENT_TYPE_ಚೌಕಟ್ಟು,
+    XKB_EVENT_TYPE_ಕೀಲಿ,
     XKB_EVENT_TYPE_STATE_COMPONENTS,
-    XKB_EVENT_TYPE_POINTER_MOTION,
-    XKB_EVENT_TYPE_POINTER_BUTTON,
+    XKB_EVENT_TYPE_ಸೂಚಕ_MOTION,
+    XKB_EVENT_TYPE_ಸೂಚಕ_BUTTON,
     XKB_EVENT_TYPE_TERMINATE_DISPLAY_SERVER,
     XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE,
 };
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-enum xkb_event_type_bounds {
+ಎಣಿಕೆ xkb_event_type_bounds {
     _XKB_EVENT_TYPE_MIN = XKB_EVENT_TYPE_INVALID,
     _XKB_EVENT_TYPE_MAX = XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE,
-    _XKB_EVENT_TYPE_NUM = 8,
+    XKB_EVENT_TYPE_ಅಂಕೆ = 8,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_pointer_motion_flags_values[] = {
-    XKB_POINTER_MOTION_NO_FLAGS,
-    XKB_POINTER_MOTION_REPEATS,
-    XKB_POINTER_MOTION_ABSOLUTE_X,
-    XKB_POINTER_MOTION_ABSOLUTE_Y,
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_ಖಾಸಗಿ_APIS
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_ಸೂಚಕ_motion_flags_ಮೌಲ್ಯಗಳು[] = {
+    XKB_ಸೂಚಕ_MOTION_NO_FLAGS,
+    XKB_ಸೂಚಕ_MOTION_REPEATS,
+    XKB_ಸೂಚಕ_MOTION_ABSOLUTE_X,
+    XKB_ಸೂಚಕ_MOTION_ABSOLUTE_Y,
 };
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-enum xkb_pointer_motion_flags_bounds {
-    _XKB_POINTER_MOTION_FLAGS_MIN = XKB_POINTER_MOTION_NO_FLAGS,
-    _XKB_POINTER_MOTION_FLAGS_MAX = XKB_POINTER_MOTION_ABSOLUTE_Y,
-};
-
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_pointer_button_state_values[] = {
-    XKB_POINTER_BUTTON_RELEASED,
-    XKB_POINTER_BUTTON_PRESSED,
-};
-#endif
-
-enum xkb_pointer_button_state_bounds {
-    _XKB_POINTER_BUTTON_STATE_MIN = XKB_POINTER_BUTTON_RELEASED,
-    _XKB_POINTER_BUTTON_STATE_MAX = XKB_POINTER_BUTTON_PRESSED,
-    _XKB_POINTER_BUTTON_STATE_NUM = 2,
+ಎಣಿಕೆ xkb_ಸೂಚಕ_motion_flags_bounds {
+    XKB_ಸೂಚಕ_MOTION_FLAGS_MIN = XKB_ಸೂಚಕ_MOTION_NO_FLAGS,
+    XKB_ಸೂಚಕ_MOTION_FLAGS_MAX = XKB_ಸೂಚಕ_MOTION_ABSOLUTE_Y,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_events_flags_values[] = {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_ಖಾಸಗಿ_APIS
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_ಸೂಚಕ_button_state_ಮೌಲ್ಯಗಳು[] = {
+    XKB_ಸೂಚಕ_BUTTON_RELEASED,
+    XKB_ಸೂಚಕ_BUTTON_PRESSED,
+};
+#ಆದರೆ_ಅಂತ್ಯ
+
+ಎಣಿಕೆ xkb_ಸೂಚಕ_button_state_bounds {
+    XKB_ಸೂಚಕ_BUTTON_STATE_MIN = XKB_ಸೂಚಕ_BUTTON_RELEASED,
+    XKB_ಸೂಚಕ_BUTTON_STATE_MAX = XKB_ಸೂಚಕ_BUTTON_PRESSED,
+    XKB_ಸೂಚಕ_BUTTON_STATE_ಅಂಕೆ = 2,
+};
+
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_ಖಾಸಗಿ_APIS
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_events_flags_ಮೌಲ್ಯಗಳು[] = {
     XKB_EVENTS_NO_FLAGS,
 };
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-enum xkb_events_flags_bounds {
+ಎಣಿಕೆ xkb_events_flags_bounds {
     _XKB_EVENTS_FLAGS_MIN = XKB_EVENTS_NO_FLAGS,
     _XKB_EVENTS_FLAGS_MAX = XKB_EVENTS_NO_FLAGS,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_machine_builder_flags_values[] = {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_ಖಾಸಗಿ_APIS
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_machine_builder_flags_ಮೌಲ್ಯಗಳು[] = {
     XKB_MACHINE_BUILDER_NO_FLAGS,
 };
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-enum xkb_machine_builder_flags_bounds {
+ಎಣಿಕೆ xkb_machine_builder_flags_bounds {
     _XKB_MACHINE_BUILDER_FLAGS_MIN = XKB_MACHINE_BUILDER_NO_FLAGS,
     _XKB_MACHINE_BUILDER_FLAGS_MAX = XKB_MACHINE_BUILDER_NO_FLAGS,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_machine_flags_values[] = {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_ಖಾಸಗಿ_APIS
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_machine_flags_ಮೌಲ್ಯಗಳು[] = {
     XKB_MACHINE_NO_FLAGS,
     XKB_MACHINE_SERVER_ACTIONS,
-    XKB_MACHINE_DISABLE_LAYOUT_SWITCH_ON_MODIFIER_KEY_FIX,
+    XKB_MACHINE_DISABLE_LAYOUT_SWITCH_ON_MODIFIER_ಕೀಲಿ_FIX,
     XKB_MACHINE_UNLOCK_MODS_ON_PRESS,
 };
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-enum xkb_machine_flags_bounds {
+ಎಣಿಕೆ xkb_machine_flags_bounds {
     _XKB_MACHINE_FLAGS_MIN = XKB_MACHINE_NO_FLAGS,
     _XKB_MACHINE_FLAGS_MAX = XKB_MACHINE_UNLOCK_MODS_ON_PRESS,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_a11y_flags_values[] = {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_ಖಾಸಗಿ_APIS
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_a11y_flags_ಮೌಲ್ಯಗಳು[] = {
     XKB_A11Y_NO_FLAGS,
-    XKB_A11Y_STICKY_KEYS_NO_SIMULTANEOUS_KEYS,
-    XKB_A11Y_STICKY_KEYS_LATCH_TO_LOCK,
-    XKB_A11Y_LATCH_SIMULTANEOUS_KEYS,
+    XKB_A11_Y_STICKY_ಕೀಲಿಗಳು_NO_ಏಕಕಾಲಿಕ_ಕೀಲಿಗಳು,
+    XKB_A11_Y_STICKY_ಕೀಲಿಗಳು_LATCH_ಗಮ್ಯ_ಬೀಗ,
+    XKB_A11_Y_LATCH_ಏಕಕಾಲಿಕ_ಕೀಲಿಗಳು,
 };
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-enum xkb_a11y_flags_bounds {
+ಎಣಿಕೆ xkb_a11y_flags_bounds {
     _XKB_A11Y_FLAGS_MIN = XKB_A11Y_NO_FLAGS,
-    _XKB_A11Y_FLAGS_MAX = XKB_A11Y_LATCH_SIMULTANEOUS_KEYS,
+    _XKB_A11Y_FLAGS_MAX = XKB_A11_Y_LATCH_ಏಕಕಾಲಿಕ_ಕೀಲಿಗಳು,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_layout_out_of_range_policy_values[] = {
-    XKB_LAYOUT_OUT_OF_RANGE_WRAP,
-    XKB_LAYOUT_OUT_OF_RANGE_CLAMP,
-    XKB_LAYOUT_OUT_OF_RANGE_REDIRECT,
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_ಖಾಸಗಿ_APIS
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_layout_ಹೊರಹೋಗು_ದ_range_policy_ಮೌಲ್ಯಗಳು[] = {
+    XKB_LAYOUT_ಹೊರಹೋಗು_ದ_RANGE_WRAP,
+    XKB_LAYOUT_ಹೊರಹೋಗು_ದ_RANGE_CLAMP,
+    XKB_LAYOUT_ಹೊರಹೋಗು_ದ_RANGE_REDIRECT,
 };
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-enum xkb_layout_out_of_range_policy_bounds {
-    _XKB_LAYOUT_OUT_OF_RANGE_POLICY_MIN = XKB_LAYOUT_OUT_OF_RANGE_WRAP,
-    _XKB_LAYOUT_OUT_OF_RANGE_POLICY_MAX = XKB_LAYOUT_OUT_OF_RANGE_REDIRECT,
-    _XKB_LAYOUT_OUT_OF_RANGE_POLICY_NUM = 3,
-};
-
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_state_mode_values[] = {
-    XKB_STATE_MODE_CLIENT,
-    XKB_STATE_MODE_SERVER_QUERY,
-    XKB_STATE_MODE_SERVER,
-};
-#endif
-
-enum xkb_state_mode_bounds {
-    _XKB_STATE_MODE_MIN = XKB_STATE_MODE_CLIENT,
-    _XKB_STATE_MODE_MAX = XKB_STATE_MODE_SERVER,
-    _XKB_STATE_MODE_NUM = 3,
+ಎಣಿಕೆ xkb_layout_ಹೊರಹೋಗು_ದ_range_policy_bounds {
+    XKB_LAYOUT_ಹೊರಹೋಗು_ದ_RANGE_POLICY_MIN = XKB_LAYOUT_ಹೊರಹೋಗು_ದ_RANGE_WRAP,
+    XKB_LAYOUT_ಹೊರಹೋಗು_ದ_RANGE_POLICY_MAX = XKB_LAYOUT_ಹೊರಹೋಗು_ದ_RANGE_REDIRECT,
+    XKB_LAYOUT_ಹೊರಹೋಗು_ದ_RANGE_POLICY_ಅಂಕೆ = 3,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_state_match_values[] = {
-    XKB_STATE_MATCH_ANY,
-    XKB_STATE_MATCH_ALL,
-    XKB_STATE_MATCH_NON_EXCLUSIVE,
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_ಖಾಸಗಿ_APIS
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_state_ಬಹುಲಕ_ಮೌಲ್ಯಗಳು[] = {
+    XKB_STATE_ಬಹುಲಕ_CLIENT,
+    XKB_STATE_ಬಹುಲಕ_SERVER_QUERY,
+    XKB_STATE_ಬಹುಲಕ_SERVER,
 };
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-enum xkb_state_match_bounds {
-    _XKB_STATE_MATCH_MIN = 0 /* implicit minimum */,
-    _XKB_STATE_MATCH_MAX = XKB_STATE_MATCH_NON_EXCLUSIVE,
-};
-
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_consumed_mode_values[] = {
-    XKB_CONSUMED_MODE_XKB,
-    XKB_CONSUMED_MODE_GTK,
-};
-#endif
-
-enum xkb_consumed_mode_bounds {
-    _XKB_CONSUMED_MODE_MIN = XKB_CONSUMED_MODE_XKB,
-    _XKB_CONSUMED_MODE_MAX = XKB_CONSUMED_MODE_GTK,
-    _XKB_CONSUMED_MODE_NUM = 2,
+ಎಣಿಕೆ xkb_state_ಬಹುಲಕ_bounds {
+    XKB_STATE_ಬಹುಲಕ_MIN = XKB_STATE_ಬಹುಲಕ_CLIENT,
+    XKB_STATE_ಬಹುಲಕ_MAX = XKB_STATE_ಬಹುಲಕ_SERVER,
+    XKB_STATE_ಬಹುಲಕ_ಅಂಕೆ = 3,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_compose_compile_flags_values[] = {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_ಖಾಸಗಿ_APIS
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_state_ಹೊಂದಿಕೆ_ಮೌಲ್ಯಗಳು[] = {
+    XKB_STATE_ಹೊಂದಿಕೆ_ANY,
+    XKB_STATE_ಹೊಂದಿಕೆ_ALL,
+    XKB_STATE_ಹೊಂದಿಕೆ_NON_EXCLUSIVE,
+};
+#ಆದರೆ_ಅಂತ್ಯ
+
+ಎಣಿಕೆ xkb_state_ಹೊಂದಿಕೆ_bounds {
+    XKB_STATE_ಹೊಂದಿಕೆ_MIN = 0 /* implicit minimum */,
+    XKB_STATE_ಹೊಂದಿಕೆ_MAX = XKB_STATE_ಹೊಂದಿಕೆ_NON_EXCLUSIVE,
+};
+
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_ಖಾಸಗಿ_APIS
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_consumed_ಬಹುಲಕ_ಮೌಲ್ಯಗಳು[] = {
+    XKB_CONSUMED_ಬಹುಲಕ_XKB,
+    XKB_CONSUMED_ಬಹುಲಕ_GTK,
+};
+#ಆದರೆ_ಅಂತ್ಯ
+
+ಎಣಿಕೆ xkb_consumed_ಬಹುಲಕ_bounds {
+    XKB_CONSUMED_ಬಹುಲಕ_MIN = XKB_CONSUMED_ಬಹುಲಕ_XKB,
+    XKB_CONSUMED_ಬಹುಲಕ_MAX = XKB_CONSUMED_ಬಹುಲಕ_GTK,
+    XKB_CONSUMED_ಬಹುಲಕ_ಅಂಕೆ = 2,
+};
+
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_ಖಾಸಗಿ_APIS
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_compose_compile_flags_ಮೌಲ್ಯಗಳು[] = {
     XKB_COMPOSE_COMPILE_NO_FLAGS,
 };
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-enum xkb_compose_compile_flags_bounds {
+ಎಣಿಕೆ xkb_compose_compile_flags_bounds {
     _XKB_COMPOSE_COMPILE_FLAGS_MIN = XKB_COMPOSE_COMPILE_NO_FLAGS,
     _XKB_COMPOSE_COMPILE_FLAGS_MAX = XKB_COMPOSE_COMPILE_NO_FLAGS,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_compose_format_values[] = {
-    XKB_COMPOSE_FORMAT_TEXT_V1,
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_ಖಾಸಗಿ_APIS
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_compose_format_ಮೌಲ್ಯಗಳು[] = {
+    XKB_COMPOSE_FORMAT_ಪಠ್ಯ_V1,
 };
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-enum xkb_compose_format_bounds {
-    _XKB_COMPOSE_FORMAT_MIN = XKB_COMPOSE_FORMAT_TEXT_V1,
-    _XKB_COMPOSE_FORMAT_MAX = XKB_COMPOSE_FORMAT_TEXT_V1,
-    _XKB_COMPOSE_FORMAT_NUM = 1,
+ಎಣಿಕೆ xkb_compose_format_bounds {
+    _XKB_COMPOSE_FORMAT_MIN = XKB_COMPOSE_FORMAT_ಪಠ್ಯ_V1,
+    _XKB_COMPOSE_FORMAT_MAX = XKB_COMPOSE_FORMAT_ಪಠ್ಯ_V1,
+    XKB_COMPOSE_FORMAT_ಅಂಕೆ = 1,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_compose_state_flags_values[] = {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_ಖಾಸಗಿ_APIS
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_compose_state_flags_ಮೌಲ್ಯಗಳು[] = {
     XKB_COMPOSE_STATE_NO_FLAGS,
 };
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-enum xkb_compose_state_flags_bounds {
+ಎಣಿಕೆ xkb_compose_state_flags_bounds {
     _XKB_COMPOSE_STATE_FLAGS_MIN = XKB_COMPOSE_STATE_NO_FLAGS,
     _XKB_COMPOSE_STATE_FLAGS_MAX = XKB_COMPOSE_STATE_NO_FLAGS,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_compose_status_values[] = {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_ಖಾಸಗಿ_APIS
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_compose_ಸ್ಥಿತಿ_ಮೌಲ್ಯಗಳು[] = {
     XKB_COMPOSE_NOTHING,
     XKB_COMPOSE_COMPOSING,
     XKB_COMPOSE_COMPOSED,
     XKB_COMPOSE_CANCELLED,
 };
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-enum xkb_compose_status_bounds {
-    _XKB_COMPOSE_STATUS_MIN = XKB_COMPOSE_NOTHING,
-    _XKB_COMPOSE_STATUS_MAX = XKB_COMPOSE_CANCELLED,
-    _XKB_COMPOSE_STATUS_NUM = 4,
+ಎಣಿಕೆ xkb_compose_ಸ್ಥಿತಿ_bounds {
+    XKB_COMPOSE_ಸ್ಥಿತಿ_MIN = XKB_COMPOSE_NOTHING,
+    XKB_COMPOSE_ಸ್ಥಿತಿ_MAX = XKB_COMPOSE_CANCELLED,
+    XKB_COMPOSE_ಸ್ಥಿತಿ_ಅಂಕೆ = 4,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_compose_feed_result_values[] = {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_ಖಾಸಗಿ_APIS
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_compose_feed_ಫಲಿತಾಂಶ_ಮೌಲ್ಯಗಳು[] = {
     XKB_COMPOSE_FEED_IGNORED,
     XKB_COMPOSE_FEED_ACCEPTED,
 };
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-enum xkb_compose_feed_result_bounds {
-    _XKB_COMPOSE_FEED_RESULT_MIN = XKB_COMPOSE_FEED_IGNORED,
-    _XKB_COMPOSE_FEED_RESULT_MAX = XKB_COMPOSE_FEED_ACCEPTED,
-    _XKB_COMPOSE_FEED_RESULT_NUM = 2,
+ಎಣಿಕೆ xkb_compose_feed_ಫಲಿತಾಂಶ_bounds {
+    XKB_COMPOSE_FEED_ಫಲಿತಾಂಶ_MIN = XKB_COMPOSE_FEED_IGNORED,
+    XKB_COMPOSE_FEED_ಫಲಿತಾಂಶ_MAX = XKB_COMPOSE_FEED_ACCEPTED,
+    XKB_COMPOSE_FEED_ಫಲಿತಾಂಶ_ಅಂಕೆ = 2,
 };
-static const uint32_t xkb_status_values[] = {
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_ಸ್ಥಿತಿ_ಮೌಲ್ಯಗಳು[] = {
     (uint32_t)XKB_ERROR_INVALID,
     XKB_SUCCESS,
-    XKB_ERROR_UNSUPPORTED_MODIFIER_MASK,
-    XKB_ERROR_UNSUPPORTED_STATE_MODE,
+    XKB_ERROR_UNSUPPORTED_MODIFIER_ಮುಖವಾಡ,
+    XKB_ERROR_UNSUPPORTED_STATE_ಬಹುಲಕ,
     XKB_ERROR_EVENT_TYPE_MISMATCH,
-    XKB_ERROR_UNSUPPORTED_KEY_ITERATOR_FLAGS,
-    XKB_ERROR_UNSUPPORTED_LAYOUT_OUT_OF_RANGE_POLICY,
-    XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX,
+    XKB_ERROR_UNSUPPORTED_ಕೀಲಿ_ITERATOR_FLAGS,
+    XKB_ERROR_UNSUPPORTED_LAYOUT_ಹೊರಹೋಗು_ದ_RANGE_POLICY,
+    XKB_ERROR_UNSUPPORTED_LAYOUT_ಸೂಚ್ಯಂಕ,
     XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT,
-    XKB_ERROR_LAYOUT_COUNT_LIMIT_EXCEEDED,
+    XKB_ERROR_LAYOUT_ಎಣಿಕೆ_ಎಲ್ಲೆ_EXCEEDED,
     XKB_ERROR_UNSUPPORTED_A11Y_FLAGS,
-    XKB_ERROR_UNEXPECTED_STATE_MODE,
-    XKB_ERROR_ABI_INVALID_STRUCT_SIZE,
+    XKB_ERROR_UNEXPECTED_STATE_ಬಹುಲಕ,
+    XKB_ERROR_ABI_INVALID_STRUCT_ಗಾತ್ರ,
     XKB_ERROR_INVALID_KEYCODE,
-    XKB_ERROR_ALLOCATION_FAILURE,
+    XKB_ERROR_ಹಂಚಿಕೆ_FAILURE,
     XKB_ERROR_UNSUPPORTED_EVENTS_FLAGS,
     XKB_ERROR_UNSUPPORTED_MACHINE_FLAGS,
     XKB_ERROR_UNSUPPORTED_KEYMAP_SERIALIZATION_FLAGS,
@@ -624,14 +624,14 @@ static const uint32_t xkb_status_values[] = {
     XKB_ERROR_ABI_BACKWARD_COMPAT,
 };
 
-enum xkb_status_bounds {
-    _XKB_STATUS_MIN = XKB_ERROR_INVALID,
-    _XKB_STATUS_MAX = XKB_ERROR_ABI_BACKWARD_COMPAT,
-    _XKB_STATUS_NUM = 21,
+ಎಣಿಕೆ xkb_ಸ್ಥಿತಿ_bounds {
+    XKB_ಸ್ಥಿತಿ_MIN = XKB_ERROR_INVALID,
+    XKB_ಸ್ಥಿತಿ_MAX = XKB_ERROR_ABI_BACKWARD_COMPAT,
+    XKB_ಸ್ಥಿತಿ_ಅಂಕೆ = 21,
 };
-static const uint32_t xkb_feature_values[] = {
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ uint32_t xkb_feature_ಮೌಲ್ಯಗಳು[] = {
     XKB_FEATURE_ENUM_FEATURE,
-    XKB_FEATURE_ENUM_STATUS,
+    XKB_FEATURE_ENUM_ಸ್ಥಿತಿ,
     XKB_FEATURE_ENUM_CONTEXT_FLAGS,
     XKB_FEATURE_ENUM_LOG_LEVEL,
     XKB_FEATURE_ENUM_KEYSYM_FLAGS,
@@ -639,30 +639,30 @@ static const uint32_t xkb_feature_values[] = {
     XKB_FEATURE_ENUM_KEYMAP_FORMAT,
     XKB_FEATURE_ENUM_KEYMAP_COMPILE_FLAGS,
     XKB_FEATURE_ENUM_KEYMAP_SERIALIZE_FLAGS,
-    XKB_FEATURE_ENUM_KEYMAP_KEY_ITERATOR_FLAGS,
+    XKB_FEATURE_ENUM_KEYMAP_ಕೀಲಿ_ITERATOR_FLAGS,
     XKB_FEATURE_ENUM_STATE_COMPONENT,
-    XKB_FEATURE_ENUM_LAYOUT_OUT_OF_RANGE_POLICY,
+    XKB_FEATURE_ENUM_LAYOUT_ಹೊರಹೋಗು_ದ_RANGE_POLICY,
     XKB_FEATURE_ENUM_A11Y_FLAGS,
     XKB_FEATURE_ENUM_KEYBOARD_CONTROL_FLAGS,
-    XKB_FEATURE_ENUM_STATE_MODE,
-    XKB_FEATURE_ENUM_STATE_MATCH,
-    XKB_FEATURE_ENUM_CONSUMED_MODE,
+    XKB_FEATURE_ENUM_STATE_ಬಹುಲಕ,
+    XKB_FEATURE_ENUM_STATE_ಹೊಂದಿಕೆ,
+    XKB_FEATURE_ENUM_CONSUMED_ಬಹುಲಕ,
     XKB_FEATURE_ENUM_MACHINE_BUILDER_FLAGS,
     XKB_FEATURE_ENUM_MACHINE_FLAGS,
     XKB_FEATURE_ENUM_EVENT_TYPE,
-    XKB_FEATURE_ENUM_KEY_DIRECTION,
-    XKB_FEATURE_ENUM_POINTER_MOTION_FLAGS,
-    XKB_FEATURE_ENUM_POINTER_BUTTON_STATE,
+    XKB_FEATURE_ENUM_ಕೀಲಿ_DIRECTION,
+    XKB_FEATURE_ENUM_ಸೂಚಕ_MOTION_FLAGS,
+    XKB_FEATURE_ENUM_ಸೂಚಕ_BUTTON_STATE,
     XKB_FEATURE_ENUM_EVENTS_FLAGS,
     XKB_FEATURE_ENUM_COMPOSE_FORMAT,
     XKB_FEATURE_ENUM_COMPOSE_COMPILE_FLAGS,
-    XKB_FEATURE_ENUM_COMPOSE_STATUS,
+    XKB_FEATURE_ENUM_COMPOSE_ಸ್ಥಿತಿ,
     XKB_FEATURE_ENUM_COMPOSE_STATE_FLAGS,
-    XKB_FEATURE_ENUM_COMPOSE_FEED_RESULT,
+    XKB_FEATURE_ENUM_COMPOSE_FEED_ಫಲಿತಾಂಶ,
 };
 
-enum xkb_feature_bounds {
+ಎಣಿಕೆ xkb_feature_bounds {
     _XKB_FEATURE_MIN = XKB_FEATURE_ENUM_FEATURE,
-    _XKB_FEATURE_MAX = XKB_FEATURE_ENUM_COMPOSE_FEED_RESULT,
-    _XKB_FEATURE_NUM = 29,
+    _XKB_FEATURE_MAX = XKB_FEATURE_ENUM_COMPOSE_FEED_ಫಲಿತಾಂಶ,
+    XKB_FEATURE_ಅಂಕೆ = 29,
 };

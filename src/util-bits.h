@@ -3,28 +3,28 @@
  * SPDX-License-Identifier: MIT
  */
 
-#pragma once
+#ಸೂಚನೆ once
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include <assert.h>
-#include <limits.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stddef.h>
+#ಅನ್ತರ್ಭಾವ <assert.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <stddef.h>
 
 /*
  * Bit array using native pointer-width word for optimal performance
  */
 
-#define BIT_ARRAY_UINTPTR_WIDTH (sizeof(uintptr_t) * CHAR_BIT)
+#ವ್ಯಾಖ್ಯಾನಿಸು ಬಿಟ್_ARRAY_UINTPTR_ಅಗಲ (ಗಾತ್ರ(uintptr_t) * CHAR_BIT)
 
 /* Compile-time sanity checks */
-#ifdef UINTPTR_WIDTH
-static_assert(UINTPTR_WIDTH == BIT_ARRAY_UINTPTR_WIDTH,
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ UINTPTR_ಅಗಲ
+static_assert(UINTPTR_ಅಗಲ == ಬಿಟ್_ARRAY_UINTPTR_ಅಗಲ,
               "uintptr_t contains padding bits!");
-#endif
-static_assert((BIT_ARRAY_UINTPTR_WIDTH & (BIT_ARRAY_UINTPTR_WIDTH - 1)) == 0,
+#ಆದರೆ_ಅಂತ್ಯ
+static_assert((ಬಿಟ್_ARRAY_UINTPTR_ಅಗಲ & (ಬಿಟ್_ARRAY_UINTPTR_ಅಗಲ - 1)) == 0,
               "BIT_ARRAY_UINTPTR_WIDTH must be a power of 2!");
 
 /**
@@ -33,9 +33,9 @@ static_assert((BIT_ARRAY_UINTPTR_WIDTH & (BIT_ARRAY_UINTPTR_WIDTH - 1)) == 0,
  * @param num_bits  Number of bits to store.
  * @return Number of `uintptr_t` words required.
  */
-static inline size_t bit_array_words(size_t num_bits) {
-    return num_bits / BIT_ARRAY_UINTPTR_WIDTH +
-          (num_bits % BIT_ARRAY_UINTPTR_WIDTH != 0);
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಗಾತ್ರ_t ಬಿಟ್_array_ಪದಗಳು(ಗಾತ್ರ_t ಅಂಕೆ_ಬಿಟ್ಟುಗಳು) {
+    ಹಿಂತಿರುಗಿ ಅಂಕೆ_ಬಿಟ್ಟುಗಳು / ಬಿಟ್_ARRAY_UINTPTR_ಅಗಲ +
+          (ಅಂಕೆ_ಬಿಟ್ಟುಗಳು % ಬಿಟ್_ARRAY_UINTPTR_ಅಗಲ != 0);
 }
 
 /**
@@ -43,10 +43,10 @@ static inline size_t bit_array_words(size_t num_bits) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline bool bit_array_get(const uintptr_t *arr, size_t index) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
-    return (arr[word_idx] >> bit_idx) & (uintptr_t)1;
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool ಬಿಟ್_array_get(ಸ್ಥಿರಾಂಕ uintptr_t *arr, ಗಾತ್ರ_t ಸೂಚ್ಯಂಕ) {
+    ಸ್ಥಿರಾಂಕ ಗಾತ್ರ_t ಶಬ್ದ_idx = ಸೂಚ್ಯಂಕ / ಬಿಟ್_ARRAY_UINTPTR_ಅಗಲ;
+    ಸ್ಥಿರಾಂಕ ಗಾತ್ರ_t ಬಿಟ್_idx  = ಸೂಚ್ಯಂಕ % ಬಿಟ್_ARRAY_UINTPTR_ಅಗಲ;
+    ಹಿಂತಿರುಗಿ (arr[ಶಬ್ದ_idx] >> ಬಿಟ್_idx) & (uintptr_t)1;
 }
 
 /**
@@ -54,10 +54,10 @@ static inline bool bit_array_get(const uintptr_t *arr, size_t index) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline void bit_array_set(uintptr_t *arr, size_t index) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
-    arr[word_idx] |= ((uintptr_t)1 << bit_idx);
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ ಬಿಟ್_array_ಗಣ(uintptr_t *arr, ಗಾತ್ರ_t ಸೂಚ್ಯಂಕ) {
+    ಸ್ಥಿರಾಂಕ ಗಾತ್ರ_t ಶಬ್ದ_idx = ಸೂಚ್ಯಂಕ / ಬಿಟ್_ARRAY_UINTPTR_ಅಗಲ;
+    ಸ್ಥಿರಾಂಕ ಗಾತ್ರ_t ಬಿಟ್_idx  = ಸೂಚ್ಯಂಕ % ಬಿಟ್_ARRAY_UINTPTR_ಅಗಲ;
+    arr[ಶಬ್ದ_idx] |= ((uintptr_t)1 << ಬಿಟ್_idx);
 }
 
 /**
@@ -65,10 +65,10 @@ static inline void bit_array_set(uintptr_t *arr, size_t index) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline void bit_array_clear(uintptr_t *arr, size_t index) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
-    arr[word_idx] &= ~((uintptr_t)1 << bit_idx);
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ ಬಿಟ್_array_clear(uintptr_t *arr, ಗಾತ್ರ_t ಸೂಚ್ಯಂಕ) {
+    ಸ್ಥಿರಾಂಕ ಗಾತ್ರ_t ಶಬ್ದ_idx = ಸೂಚ್ಯಂಕ / ಬಿಟ್_ARRAY_UINTPTR_ಅಗಲ;
+    ಸ್ಥಿರಾಂಕ ಗಾತ್ರ_t ಬಿಟ್_idx  = ಸೂಚ್ಯಂಕ % ಬಿಟ್_ARRAY_UINTPTR_ಅಗಲ;
+    arr[ಶಬ್ದ_idx] &= ~((uintptr_t)1 << ಬಿಟ್_idx);
 }
 
 /**
@@ -76,10 +76,10 @@ static inline void bit_array_clear(uintptr_t *arr, size_t index) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline void bit_array_toggle(uintptr_t *arr, size_t index) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
-    arr[word_idx] ^= ((uintptr_t)1 << bit_idx);
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ ಬಿಟ್_array_toggle(uintptr_t *arr, ಗಾತ್ರ_t ಸೂಚ್ಯಂಕ) {
+    ಸ್ಥಿರಾಂಕ ಗಾತ್ರ_t ಶಬ್ದ_idx = ಸೂಚ್ಯಂಕ / ಬಿಟ್_ARRAY_UINTPTR_ಅಗಲ;
+    ಸ್ಥಿರಾಂಕ ಗಾತ್ರ_t ಬಿಟ್_idx  = ಸೂಚ್ಯಂಕ % ಬಿಟ್_ARRAY_UINTPTR_ಅಗಲ;
+    arr[ಶಬ್ದ_idx] ^= ((uintptr_t)1 << ಬಿಟ್_idx);
 }
 
 /**
@@ -87,12 +87,12 @@ static inline void bit_array_toggle(uintptr_t *arr, size_t index) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline void bit_array_assign(uintptr_t *arr, size_t index, bool val) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
-    uintptr_t mask = (uintptr_t)1 << bit_idx;
-    arr[word_idx] = (arr[word_idx] & ~mask)     /* clear bit */
-                  | ((-(uintptr_t)val) & mask); /* set bit */
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ ಬಿಟ್_array_ನಿಯೋಜಿಸು(uintptr_t *arr, ಗಾತ್ರ_t ಸೂಚ್ಯಂಕ, bool val) {
+    ಸ್ಥಿರಾಂಕ ಗಾತ್ರ_t ಶಬ್ದ_idx = ಸೂಚ್ಯಂಕ / ಬಿಟ್_ARRAY_UINTPTR_ಅಗಲ;
+    ಸ್ಥಿರಾಂಕ ಗಾತ್ರ_t ಬಿಟ್_idx  = ಸೂಚ್ಯಂಕ % ಬಿಟ್_ARRAY_UINTPTR_ಅಗಲ;
+    uintptr_t ಮುಖವಾಡ = (uintptr_t)1 << ಬಿಟ್_idx;
+    arr[ಶಬ್ದ_idx] = (arr[ಶಬ್ದ_idx] & ~ಮುಖವಾಡ)     /* clear bit */
+                  | ((-(uintptr_t)val) & ಮುಖವಾಡ); /* set bit */
 }
 
-#undef BIT_ARRAY_UINTPTR_WIDTH
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು ಬಿಟ್_ARRAY_UINTPTR_ಅಗಲ

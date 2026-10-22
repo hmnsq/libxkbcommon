@@ -3,20 +3,20 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include <assert.h>
+#ಅನ್ತರ್ಭಾವ <assert.h>
 
-#include "context.h"
-#include "features/enums.h"
-#include "keysym.h"
-#include "table.h"
-#include "utils.h"
+#ಅನ್ತರ್ಭಾವ "context.h"
+#ಅನ್ತರ್ಭಾವ "features/enums.h"
+#ಅನ್ತರ್ಭಾವ "keysym.h"
+#ಅನ್ತರ್ಭಾವ "table.h"
+#ಅನ್ತರ್ಭಾವ "utils.h"
 
-struct xkb_compose_state {
-    int refcnt;
-    enum xkb_compose_state_flags flags;
-    struct xkb_compose_table *table;
+ರಚನೆ xkb_compose_state {
+    ಪೂರ್ಣಾಂಕ refcnt;
+    ಎಣಿಕೆ xkb_compose_state_flags flags;
+    ರಚನೆ xkb_compose_ಕೋಷ್ಟಕ *ಕೋಷ್ಟಕ;
 
     /*
      * Offsets into xkb_compose_table::nodes.
@@ -31,63 +31,63 @@ struct xkb_compose_state {
     uint32_t context;
 };
 
-struct xkb_compose_state *
-xkb_compose_state_new(struct xkb_compose_table *table,
-                      enum xkb_compose_state_flags flags)
+ರಚನೆ xkb_compose_state *
+xkb_compose_state_new(ರಚನೆ xkb_compose_ಕೋಷ್ಟಕ *ಕೋಷ್ಟಕ,
+                      ಎಣಿಕೆ xkb_compose_state_flags flags)
 {
-    const enum xkb_compose_state_flags invalid_flags =
-        (flags & ~(enum xkb_compose_state_flags)XKB_COMPOSE_STATE_FLAGS_VALUES);
-    if (invalid_flags) {
-        log_err_func(table->ctx, XKB_LOG_MESSAGE_NO_ID,
+    ಸ್ಥಿರಾಂಕ ಎಣಿಕೆ xkb_compose_state_flags invalid_flags =
+        (flags & ~(ಎಣಿಕೆ xkb_compose_state_flags)XKB_COMPOSE_STATE_FLAGS_ಮೌಲ್ಯಗಳು);
+    ಆದರೆ (invalid_flags) {
+        log_err_func(ಕೋಷ್ಟಕ->ctx, XKB_LOG_ಸಂದೇಶ_NO_ID,
                      "Unsupported compose state flags: %#x\n",
                      invalid_flags);
-        return NULL;
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
-    struct xkb_compose_state * const state = calloc(1, sizeof(*state));
-    if (!state)
-        return NULL;
+    ರಚನೆ xkb_compose_state * ಸ್ಥಿರಾಂಕ state = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ಗಾತ್ರ(*state));
+    ಆದರೆ (!state)
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
     state->refcnt = 1;
-    state->table = xkb_compose_table_ref(table);
+    state->ಕೋಷ್ಟಕ = xkb_compose_ಕೋಷ್ಟಕ_ref(ಕೋಷ್ಟಕ);
 
     state->flags = flags;
     state->prev_context = 0;
     state->context = 0;
 
-    return state;
+    ಹಿಂತಿರುಗಿ state;
 }
 
-struct xkb_compose_state *
-xkb_compose_state_ref(struct xkb_compose_state *state)
+ರಚನೆ xkb_compose_state *
+xkb_compose_state_ref(ರಚನೆ xkb_compose_state *state)
 {
-    assert(state->refcnt > 0);
+    ಪ್ರತಿಜ್ಞಾ(state->refcnt > 0);
     state->refcnt++;
-    return state;
+    ಹಿಂತಿರುಗಿ state;
 }
 
-void
-xkb_compose_state_unref(struct xkb_compose_state *state)
+ಶೂನ್ಯ
+xkb_compose_state_unref(ರಚನೆ xkb_compose_state *state)
 {
-    assert(!state || state->refcnt > 0);
-    if (!state || --state->refcnt > 0)
-        return;
+    ಪ್ರತಿಜ್ಞಾ(!state || state->refcnt > 0);
+    ಆದರೆ (!state || --state->refcnt > 0)
+        ಹಿಂತಿರುಗಿ;
 
-    xkb_compose_table_unref(state->table);
-    free(state);
+    xkb_compose_ಕೋಷ್ಟಕ_unref(state->ಕೋಷ್ಟಕ);
+    ಬಿಡುಗಡೆ(state);
 }
 
-struct xkb_compose_table *
-xkb_compose_state_get_compose_table(struct xkb_compose_state *state)
+ರಚನೆ xkb_compose_ಕೋಷ್ಟಕ *
+xkb_compose_state_get_compose_ಕೋಷ್ಟಕ(ರಚನೆ xkb_compose_state *state)
 {
-    return state->table;
+    ಹಿಂತಿರುಗಿ state->ಕೋಷ್ಟಕ;
 }
 
-enum xkb_compose_feed_result
-xkb_compose_state_feed(struct xkb_compose_state *state, xkb_keysym_t keysym)
+ಎಣಿಕೆ xkb_compose_feed_ಫಲಿತಾಂಶ
+xkb_compose_state_feed(ರಚನೆ xkb_compose_state *state, xkb_keysym_t keysym)
 {
     uint32_t context;
-    const struct compose_node *node;
+    ಸ್ಥಿರಾಂಕ ರಚನೆ compose_ಗಂಟು *ಗಂಟು;
 
     /*
      * Modifiers do not affect the sequence directly.  In particular,
@@ -99,98 +99,98 @@ xkb_compose_state_feed(struct xkb_compose_state *state, xkb_keysym_t keysym)
      * have it here.  However, this is (approximately) what libX11 does
      * as well.
      */
-    if (xkb_keysym_is_modifier(keysym))
-        return XKB_COMPOSE_FEED_IGNORED;
+    ಆದರೆ (xkb_keysym_is_modifier(keysym))
+        ಹಿಂತಿರುಗಿ XKB_COMPOSE_FEED_IGNORED;
 
-    node = &darray_item(state->table->nodes, state->context);
+    ಗಂಟು = &darray_ಅಂಶ(state->ಕೋಷ್ಟಕ->nodes, state->context);
 
-    context = (node->is_leaf ? 1 : node->internal.eqkid);
-    if (context == 1 && darray_size(state->table->nodes) == 1)
+    context = (ಗಂಟು->is_ಎಲೆ ? 1 : ಗಂಟು->ಆಂತರಿಕ.eqkid);
+    ಆದರೆ (context == 1 && darray_ಗಾತ್ರ(state->ಕೋಷ್ಟಕ->nodes) == 1)
         context = 0;
 
-    while (context != 0) {
-        node = &darray_item(state->table->nodes, context);
-        if (keysym < node->keysym)
-            context = node->lokid;
-        else if (keysym > node->keysym)
-            context = node->hikid;
-        else
-            break;
+    ಆಗ (context != 0) {
+        ಗಂಟು = &darray_ಅಂಶ(state->ಕೋಷ್ಟಕ->nodes, context);
+        ಆದರೆ (keysym < ಗಂಟು->keysym)
+            context = ಗಂಟು->lokid;
+        ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (keysym > ಗಂಟು->keysym)
+            context = ಗಂಟು->hikid;
+        ಇಲ್ಲದಿದ್ದರೆ
+            ನಿಲ್ಲಿಸು;
     }
 
     state->prev_context = state->context;
     state->context = context;
-    return XKB_COMPOSE_FEED_ACCEPTED;
+    ಹಿಂತಿರುಗಿ XKB_COMPOSE_FEED_ACCEPTED;
 }
 
-void
-xkb_compose_state_reset(struct xkb_compose_state *state)
+ಶೂನ್ಯ
+xkb_compose_state_reset(ರಚನೆ xkb_compose_state *state)
 {
     state->prev_context = 0;
     state->context = 0;
 }
 
-enum xkb_compose_status
-xkb_compose_state_get_status(struct xkb_compose_state *state)
+ಎಣಿಕೆ xkb_compose_ಸ್ಥಿತಿ
+xkb_compose_state_get_ಸ್ಥಿತಿ(ರಚನೆ xkb_compose_state *state)
 {
-    const struct compose_node *prev_node, *node;
+    ಸ್ಥಿರಾಂಕ ರಚನೆ compose_ಗಂಟು *prev_ಗಂಟು, *ಗಂಟು;
 
-    prev_node = &darray_item(state->table->nodes, state->prev_context);
-    node = &darray_item(state->table->nodes, state->context);
+    prev_ಗಂಟು = &darray_ಅಂಶ(state->ಕೋಷ್ಟಕ->nodes, state->prev_context);
+    ಗಂಟು = &darray_ಅಂಶ(state->ಕೋಷ್ಟಕ->nodes, state->context);
 
-    if (state->context == 0 && !prev_node->is_leaf)
-        return XKB_COMPOSE_CANCELLED;
+    ಆದರೆ (state->context == 0 && !prev_ಗಂಟು->is_ಎಲೆ)
+        ಹಿಂತಿರುಗಿ XKB_COMPOSE_CANCELLED;
 
-    if (state->context == 0)
-        return XKB_COMPOSE_NOTHING;
+    ಆದರೆ (state->context == 0)
+        ಹಿಂತಿರುಗಿ XKB_COMPOSE_NOTHING;
 
-    if (!node->is_leaf)
-        return XKB_COMPOSE_COMPOSING;
+    ಆದರೆ (!ಗಂಟು->is_ಎಲೆ)
+        ಹಿಂತಿರುಗಿ XKB_COMPOSE_COMPOSING;
 
-    return XKB_COMPOSE_COMPOSED;
+    ಹಿಂತಿರುಗಿ XKB_COMPOSE_COMPOSED;
 }
 
-int
-xkb_compose_state_get_utf8(struct xkb_compose_state *state,
-                           char *buffer, size_t size)
+ಪೂರ್ಣಾಂಕ
+xkb_compose_state_get_utf8(ರಚನೆ xkb_compose_state *state,
+                           ಅಕ್ಷರ *ಬಫರ್, ಗಾತ್ರ_t ಗಾತ್ರ_2)
 {
-    const struct compose_node *node =
-        &darray_item(state->table->nodes, state->context);
+    ಸ್ಥಿರಾಂಕ ರಚನೆ compose_ಗಂಟು *ಗಂಟು =
+        &darray_ಅಂಶ(state->ಕೋಷ್ಟಕ->nodes, state->context);
 
-    if (!node->is_leaf)
-        goto fail;
+    ಆದರೆ (!ಗಂಟು->is_ಎಲೆ)
+        ಹೋಗು fail;
 
     /* If there's no string specified, but only a keysym, try to do the
      * most helpful thing. */
-    if (node->leaf.utf8 == 0 && node->leaf.keysym != XKB_KEY_NoSymbol) {
-        char utf8[XKB_KEYSYM_UTF8_MAX_SIZE];
-        int ret;
+    ಆದರೆ (ಗಂಟು->ಎಲೆ.utf8 == 0 && ಗಂಟು->ಎಲೆ.keysym != XKB_ಕೀಲಿ_No_ಚಿಹ್ನೆ) {
+        ಅಕ್ಷರ utf8[XKB_KEYSYM_UTF8_MAX_ಗಾತ್ರ];
+        ಪೂರ್ಣಾಂಕ ret;
 
-        ret = xkb_keysym_to_utf8(node->leaf.keysym, utf8, sizeof(utf8));
-        if (ret < 0 || ret == 0) {
+        ret = xkb_keysym_ಗಮ್ಯ_utf8(ಗಂಟು->ಎಲೆ.keysym, utf8, ಗಾತ್ರ(utf8));
+        ಆದರೆ (ret < 0 || ret == 0) {
             /* ret < 0 is impossible.
              * ret == 0 means the keysym has no string representation. */
-            goto fail;
+            ಹೋಗು fail;
         }
 
-        return snprintf(buffer, size, "%s", utf8);
+        ಹಿಂತಿರುಗಿ snprintf(ಬಫರ್, ಗಾತ್ರ_2, "%s", utf8);
     }
 
-    return snprintf(buffer, size, "%s",
-                    &darray_item(state->table->utf8, node->leaf.utf8));
+    ಹಿಂತಿರುಗಿ snprintf(ಬಫರ್, ಗಾತ್ರ_2, "%s",
+                    &darray_ಅಂಶ(state->ಕೋಷ್ಟಕ->utf8, ಗಂಟು->ಎಲೆ.utf8));
 
 fail:
-    if (size > 0)
-        buffer[0] = '\0';
-    return 0;
+    ಆದರೆ (ಗಾತ್ರ_2 > 0)
+        ಬಫರ್[0] = '\0';
+    ಹಿಂತಿರುಗಿ 0;
 }
 
 xkb_keysym_t
-xkb_compose_state_get_one_sym(struct xkb_compose_state *state)
+xkb_compose_state_get_one_sym(ರಚನೆ xkb_compose_state *state)
 {
-    const struct compose_node *node =
-        &darray_item(state->table->nodes, state->context);
-    if (!node->is_leaf)
-        return XKB_KEY_NoSymbol;
-    return node->leaf.keysym;
+    ಸ್ಥಿರಾಂಕ ರಚನೆ compose_ಗಂಟು *ಗಂಟು =
+        &darray_ಅಂಶ(state->ಕೋಷ್ಟಕ->nodes, state->context);
+    ಆದರೆ (!ಗಂಟು->is_ಎಲೆ)
+        ಹಿಂತಿರುಗಿ XKB_ಕೀಲಿ_No_ಚಿಹ್ನೆ;
+    ಹಿಂತಿರುಗಿ ಗಂಟು->ಎಲೆ.keysym;
 }

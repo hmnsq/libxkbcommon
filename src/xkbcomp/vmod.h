@@ -2,23 +2,23 @@
  * Copyright (c) 1994 by Silicon Graphics Computer Systems, Inc.
  * SPDX-License-Identifier: HPND
  */
-#pragma once
+#ಸೂಚನೆ once
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include "xkbcommon/xkbcommon.h"
+#ಅನ್ತರ್ಭಾವ "xkbcommon/xkbcommon.h"
 
-#include <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
 
-#include "ast.h"
-#include "keymap.h"
+#ಅನ್ತರ್ಭಾವ "ast.h"
+#ಅನ್ತರ್ಭಾವ "keymap.h"
 
-void
-InitVMods(struct xkb_mod_set *info, const struct xkb_mod_set *mods, bool reset);
+ಶೂನ್ಯ
+InitVMods(ರಚನೆ xkb_mod_ಗಣ *info, ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_mod_ಗಣ *mods, bool reset);
 
-void
-MergeModSets(struct xkb_context *ctx, struct xkb_mod_set *into,
-             const struct xkb_mod_set *from, enum merge_mode merge);
+ಶೂನ್ಯ
+ವಿಲೀನ_Mod_Sets(ರಚನೆ xkb_context *ctx, ರಚನೆ xkb_mod_ಗಣ *into,
+             ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_mod_ಗಣ *from, ಎಣಿಕೆ ವಿಲೀನ_ಬಹುಲಕ ವಿಲೀನ);
 
 bool
-HandleVModDef(struct xkb_context *ctx, struct xkb_mod_set *mods, VModDef *stmt);
+HandleVModDef(ರಚನೆ xkb_context *ctx, ರಚನೆ xkb_mod_ಗಣ *mods, VModDef *stmt);

@@ -2,27 +2,27 @@
  * Copyright © 2013 Ran Benita <ran234@gmail.com>
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#ಸೂಚನೆ once
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <stddef.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-compose.h"
+#ಅನ್ತರ್ಭಾವ "xkbcommon/xkbcommon.h"
+#ಅನ್ತರ್ಭಾವ "xkbcommon/xkbcommon-compose.h"
 
-#include "src/utils.h"
+#ಅನ್ತರ್ಭಾವ "src/utils.h"
 
-XKB_EXPORT_PRIVATE char *
-parse_string_literal(struct xkb_context *ctx, const char *string);
-
-bool
-parse_string(struct xkb_compose_table *table,
-             const char *string, size_t len,
-             const char *file_name);
+XKB_EXPORT_ಖಾಸಗಿ ಅಕ್ಷರ *
+parse_string_literal(ರಚನೆ xkb_context *ctx, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *string);
 
 bool
-parse_file(struct xkb_compose_table *table,
-           FILE *file, const char *file_name);
+parse_string(ರಚನೆ xkb_compose_ಕೋಷ್ಟಕ *ಕೋಷ್ಟಕ,
+             ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *string, ಗಾತ್ರ_t len,
+             ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *file_name);
+
+bool
+parse_file(ರಚನೆ xkb_compose_ಕೋಷ್ಟಕ *ಕೋಷ್ಟಕ,
+           FILE *file, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *file_name);

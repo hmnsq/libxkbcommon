@@ -3,262 +3,262 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include <assert.h>
-#include <stdint.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <assert.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-status.h"
-#include "context.h"
-#include "features/enums.h"
-#include "keymap.h"
-#include "messages-codes.h"
-#include "rmlvo.h"
-#include "darray.h"
-#include "utils.h"
-#include "xkbcomp/rules.h"
+#ಅನ್ತರ್ಭಾವ "xkbcommon/xkbcommon.h"
+#ಅನ್ತರ್ಭಾವ "xkbcommon/xkbcommon-status.h"
+#ಅನ್ತರ್ಭಾವ "context.h"
+#ಅನ್ತರ್ಭಾವ "features/enums.h"
+#ಅನ್ತರ್ಭಾವ "keymap.h"
+#ಅನ್ತರ್ಭಾವ "messages-codes.h"
+#ಅನ್ತರ್ಭಾವ "rmlvo.h"
+#ಅನ್ತರ್ಭಾವ "darray.h"
+#ಅನ್ತರ್ಭಾವ "utils.h"
+#ಅನ್ತರ್ಭಾವ "xkbcomp/rules.h"
 
-struct xkb_rmlvo_builder*
-xkb_rmlvo_builder_new(struct xkb_context *context,
-                      const char *rules, const char *model,
-                      enum xkb_rmlvo_builder_flags flags)
+ರಚನೆ xkb_rmlvo_builder*
+xkb_rmlvo_builder_new(ರಚನೆ xkb_context *context,
+                      ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ನಿಯಮಗಳು, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *model,
+                      ಎಣಿಕೆ xkb_rmlvo_builder_flags flags)
 {
-    const enum xkb_rmlvo_builder_flags invalid_flags =
-        (flags & ~(enum xkb_rmlvo_builder_flags)XKB_RMLVO_BUILDER_FLAGS_VALUES);
-    if (invalid_flags) {
-        log_err_func(context, XKB_LOG_MESSAGE_NO_ID,
+    ಸ್ಥಿರಾಂಕ ಎಣಿಕೆ xkb_rmlvo_builder_flags invalid_flags =
+        (flags & ~(ಎಣಿಕೆ xkb_rmlvo_builder_flags)XKB_RMLVO_BUILDER_FLAGS_ಮೌಲ್ಯಗಳು);
+    ಆದರೆ (invalid_flags) {
+        log_err_func(context, XKB_LOG_ಸಂದೇಶ_NO_ID,
                      "Unsupported RMLVO flags: 0x%x\n",
                      invalid_flags);
-        return NULL;
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
-    struct xkb_rmlvo_builder * const builder = calloc(1, sizeof(*builder));
-    if (!builder)
-        goto error;
+    ರಚನೆ xkb_rmlvo_builder * ಸ್ಥಿರಾಂಕ builder = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ಗಾತ್ರ(*builder));
+    ಆದರೆ (!builder)
+        ಹೋಗು error;
 
     builder->refcnt = 1;
     builder->ctx = xkb_context_ref(context);
 
-    builder->rules = strdup_safe(rules);
-    if (!builder->rules && rules)
-        goto error;
+    builder->ನಿಯಮಗಳು = strdup_ಸುರಕ್ಷಿತ(ನಿಯಮಗಳು);
+    ಆದರೆ (!builder->ನಿಯಮಗಳು && ನಿಯಮಗಳು)
+        ಹೋಗು error;
 
-    builder->model = strdup_safe(model);
-    if (!builder->model && model)
-        goto error;
+    builder->model = strdup_ಸುರಕ್ಷಿತ(model);
+    ಆದರೆ (!builder->model && model)
+        ಹೋಗು error;
 
     darray_init(builder->layouts);
     darray_init(builder->options);
 
-    return builder;
+    ಹಿಂತಿರುಗಿ builder;
 
 error:
-    log_err(context, XKB_ERROR_ALLOCATION_FAILURE_,
+    log_err(context, XKB_ERROR_ಹಂಚಿಕೆ_FAILURE_2,
             "Cannot allocate a RMLVO builder.\n");
     xkb_rmlvo_builder_unref(builder);
-    return NULL;
+    ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
-static enum xkb_status
-rmlvo_builder_append_option(struct xkb_rmlvo_builder *rmlvo,
-                            const char *option, xkb_layout_mask_t layouts)
+ಸ್ಥಿರ ಎಣಿಕೆ xkb_ಸ್ಥಿತಿ
+rmlvo_builder_append_option(ರಚನೆ xkb_rmlvo_builder *rmlvo,
+                            ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *option, xkb_layout_ಮುಖವಾಡ_t layouts)
 {
-    if (isempty(option))
-        return XKB_ERROR_INVALID;
+    ಆದರೆ (isempty(option))
+        ಹಿಂತಿರುಗಿ XKB_ERROR_INVALID;
 
     /* Check for previous entry */
-    struct xkb_rmlvo_builder_option *prev;
+    ರಚನೆ xkb_rmlvo_builder_option *prev;
     darray_foreach(prev, rmlvo->options) {
-        if (streq(prev->option, option)) {
+        ಆದರೆ (streq(prev->option, option)) {
             /* Merge with previous entry */
-            if (layouts == (xkb_layout_mask_t)XKB_OPTION_LAYOUT_MASK_GLOBAL) {
+            ಆದರೆ (layouts == (xkb_layout_ಮುಖವಾಡ_t)XKB_OPTION_LAYOUT_ಮುಖವಾಡ_GLOBAL) {
                 /* Global option overrides layout-specific ones */
                 prev->layouts = layouts;
-            } else if (prev->layouts != (xkb_layout_mask_t)
-                       XKB_OPTION_LAYOUT_MASK_GLOBAL) {
+            } ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (prev->layouts != (xkb_layout_ಮುಖವಾಡ_t)
+                       XKB_OPTION_LAYOUT_ಮುಖವಾಡ_GLOBAL) {
                 /* Layout-specific option cannot override global */
                 prev->layouts |= layouts;
             }
-            return XKB_SUCCESS;
+            ಹಿಂತಿರುಗಿ XKB_SUCCESS;
         }
     }
 
     /* Append new entry */
-    const struct xkb_rmlvo_builder_option new = {
-        .option = strdup_safe(option),
+    ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_rmlvo_builder_option new = {
+        .option = strdup_ಸುರಕ್ಷಿತ(option),
         .layouts = layouts
     };
-    if (!new.option) {
-        log_err(rmlvo->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
+    ಆದರೆ (!new.option) {
+        log_err(rmlvo->ctx, XKB_ERROR_ಹಂಚಿಕೆ_FAILURE_2,
                 "Cannot allocate option \"%s\" to the RMLVO builder.\n",
                 option);
-        return XKB_ERROR_ALLOCATION_FAILURE;
+        ಹಿಂತಿರುಗಿ XKB_ERROR_ಹಂಚಿಕೆ_FAILURE;
     }
     darray_append(rmlvo->options, new);
-    return XKB_SUCCESS;
+    ಹಿಂತಿರುಗಿ XKB_SUCCESS;
 }
 
 bool
-xkb_rmlvo_builder_append_layout(struct xkb_rmlvo_builder *rmlvo,
-                                const char *layout, const char *variant,
-                                const char* const* options, size_t options_len)
+xkb_rmlvo_builder_append_layout(ರಚನೆ xkb_rmlvo_builder *rmlvo,
+                                ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *layout, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *variant,
+                                ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* ಸ್ಥಿರಾಂಕ* options, ಗಾತ್ರ_t options_len)
 {
-    const xkb_layout_index_t idx = (xkb_layout_index_t)
-                                   darray_size(rmlvo->layouts);
+    ಸ್ಥಿರಾಂಕ xkb_layout_ಸೂಚ್ಯಂಕ_t idx = (xkb_layout_ಸೂಚ್ಯಂಕ_t)
+                                   darray_ಗಾತ್ರ(rmlvo->layouts);
 
     static_assert(XKB_MAX_GROUPS == 32, "Invalid shift for layout mask");
-    if (idx >= XKB_MAX_GROUPS) {
-        log_err(rmlvo->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
+    ಆದರೆ (idx >= XKB_MAX_GROUPS) {
+        log_err(rmlvo->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_ಸೂಚ್ಯಂಕ_2,
                 "Maximum layout count reached: %u; "
                 "cannot add layout \"%s(%s)\" to the RMLVO builder.\n",
                 XKB_MAX_GROUPS, layout, (variant) ? variant : "");
-        return false;
+        ಹಿಂತಿರುಗಿ false;
     }
 
     /* Append layout entry */
-    const struct xkb_rmlvo_builder_layout new = {
-        .layout = strdup_safe(layout),
-        .variant = strdup_safe(variant)
+    ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_rmlvo_builder_layout new = {
+        .layout = strdup_ಸುರಕ್ಷಿತ(layout),
+        .variant = strdup_ಸುರಕ್ಷಿತ(variant)
     };
 
-    if (!new.layout || (!new.variant && variant)) {
-        free(new.layout);
-        free(new.variant);
-        log_err(rmlvo->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
+    ಆದರೆ (!new.layout || (!new.variant && variant)) {
+        ಬಿಡುಗಡೆ(new.layout);
+        ಬಿಡುಗಡೆ(new.variant);
+        log_err(rmlvo->ctx, XKB_ERROR_ಹಂಚಿಕೆ_FAILURE_2,
                 "Cannot allocate layout \"%s(%s)\" to the RMLVO builder.\n",
                 layout, (variant) ? variant : "");
-        return false;
+        ಹಿಂತಿರುಗಿ false;
     }
 
     darray_append(rmlvo->layouts, new);
 
-    if (!options)
+    ಆದರೆ (!options)
         options_len = 0;
 
-    const xkb_layout_mask_t layout_mask = (UINT32_C(1) << idx);
+    ಸ್ಥಿರಾಂಕ xkb_layout_ಮುಖವಾಡ_t layout_ಮುಖವಾಡ = (UINT32_C(1) << idx);
 
     /* Append layout-specific options entries */
-    for (size_t k = 0; k < options_len; k++) {
-        const enum xkb_status status =
-            rmlvo_builder_append_option(rmlvo, options[k], layout_mask);
+    ಗಾಗಿ (ಗಾತ್ರ_t k = 0; k < options_len; k++) {
+        ಸ್ಥಿರಾಂಕ ಎಣಿಕೆ xkb_ಸ್ಥಿತಿ ಸ್ಥಿತಿ_2 =
+            rmlvo_builder_append_option(rmlvo, options[k], layout_ಮುಖವಾಡ);
 
-        if (status == XKB_ERROR_ALLOCATION_FAILURE)
-            return false;
+        ಆದರೆ (ಸ್ಥಿತಿ_2 == XKB_ERROR_ಹಂಚಿಕೆ_FAILURE)
+            ಹಿಂತಿರುಗಿ false;
     }
 
-    return true;
+    ಹಿಂತಿರುಗಿ true;
 }
 
 bool
-xkb_rmlvo_builder_append_option(struct xkb_rmlvo_builder *rmlvo,
-                                const char *option)
+xkb_rmlvo_builder_append_option(ರಚನೆ xkb_rmlvo_builder *rmlvo,
+                                ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *option)
 {
-    const enum xkb_status status = rmlvo_builder_append_option(
-        rmlvo, option, (xkb_layout_mask_t)XKB_OPTION_LAYOUT_MASK_GLOBAL
+    ಸ್ಥಿರಾಂಕ ಎಣಿಕೆ xkb_ಸ್ಥಿತಿ ಸ್ಥಿತಿ_2 = rmlvo_builder_append_option(
+        rmlvo, option, (xkb_layout_ಮುಖವಾಡ_t)XKB_OPTION_LAYOUT_ಮುಖವಾಡ_GLOBAL
     );
-    return (status == XKB_SUCCESS);
+    ಹಿಂತಿರುಗಿ (ಸ್ಥಿತಿ_2 == XKB_SUCCESS);
 }
 
-struct xkb_rmlvo_builder *
-xkb_rmlvo_builder_ref(struct xkb_rmlvo_builder *rmlvo)
+ರಚನೆ xkb_rmlvo_builder *
+xkb_rmlvo_builder_ref(ರಚನೆ xkb_rmlvo_builder *rmlvo)
 {
-    assert(rmlvo->refcnt > 0);
+    ಪ್ರತಿಜ್ಞಾ(rmlvo->refcnt > 0);
     rmlvo->refcnt++;
-    return rmlvo;
+    ಹಿಂತಿರುಗಿ rmlvo;
 }
 
-void
-xkb_rmlvo_builder_unref(struct xkb_rmlvo_builder *rmlvo)
+ಶೂನ್ಯ
+xkb_rmlvo_builder_unref(ರಚನೆ xkb_rmlvo_builder *rmlvo)
 {
-    assert(!rmlvo || rmlvo->refcnt > 0);
-    if (!rmlvo || --rmlvo->refcnt > 0)
-        return;
+    ಪ್ರತಿಜ್ಞಾ(!rmlvo || rmlvo->refcnt > 0);
+    ಆದರೆ (!rmlvo || --rmlvo->refcnt > 0)
+        ಹಿಂತಿರುಗಿ;
 
-    free(rmlvo->rules);
-    free(rmlvo->model);
+    ಬಿಡುಗಡೆ(rmlvo->ನಿಯಮಗಳು);
+    ಬಿಡುಗಡೆ(rmlvo->model);
 
-    const struct xkb_rmlvo_builder_layout *layout;
+    ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_rmlvo_builder_layout *layout;
     darray_foreach(layout, rmlvo->layouts) {
-        free(layout->layout);
-        free(layout->variant);
+        ಬಿಡುಗಡೆ(layout->layout);
+        ಬಿಡುಗಡೆ(layout->variant);
     }
     darray_free(rmlvo->layouts);
 
-    const struct xkb_rmlvo_builder_option *option;
+    ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_rmlvo_builder_option *option;
     darray_foreach(option, rmlvo->options)
-        free(option->option);
+        ಬಿಡುಗಡೆ(option->option);
     darray_free(rmlvo->options);
 
     xkb_context_unref(rmlvo->ctx);
-    free(rmlvo);
+    ಬಿಡುಗಡೆ(rmlvo);
 }
 
 /* NOTE: the converse function, `xkb_rules_names_to_rmlvo_builder`, is currently
  * only used in tests */
 bool
-xkb_rmlvo_builder_to_rules_names(const struct xkb_rmlvo_builder *builder,
-                                 struct xkb_rule_names *rmlvo,
-                                 char *buf, size_t buf_size)
+xkb_rmlvo_builder_ಗಮ್ಯ_ನಿಯಮಗಳು_ಹೆಸರುಗಳು(ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_rmlvo_builder *builder,
+                                 ರಚನೆ xkb_ನಿಯಮ_ಹೆಸರುಗಳು *rmlvo,
+                                 ಅಕ್ಷರ *buf, ಗಾತ್ರ_t buf_ಗಾತ್ರ)
 {
-    rmlvo->rules = builder->rules;
+    rmlvo->ನಿಯಮಗಳು = builder->ನಿಯಮಗಳು;
     rmlvo->model = builder->model;
 
-    char *start = buf;
-    rmlvo->layout = start;
-    darray_size_t k;
-    const struct xkb_rmlvo_builder_layout *layout;
+    ಅಕ್ಷರ *ಆರಂಭ = buf;
+    rmlvo->layout = ಆರಂಭ;
+    darray_ಗಾತ್ರ_t k;
+    ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_rmlvo_builder_layout *layout;
     darray_enumerate(k, layout, builder->layouts) {
-        int count = snprintf(start, buf_size, "%s%s",
+        ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2 = snprintf(ಆರಂಭ, buf_ಗಾತ್ರ, "%s%s",
                              (k > 0 ? "," : ""), layout->layout);
-        if (count < 0 || (size_t)count >= buf_size)
-            return false;
-        buf_size -= (size_t)count;
-        start += count;
+        ಆದರೆ (ಎಣಿಕೆ_2 < 0 || (ಗಾತ್ರ_t)ಎಣಿಕೆ_2 >= buf_ಗಾತ್ರ)
+            ಹಿಂತಿರುಗಿ false;
+        buf_ಗಾತ್ರ -= (ಗಾತ್ರ_t)ಎಣಿಕೆ_2;
+        ಆರಂಭ += ಎಣಿಕೆ_2;
     }
-    if (buf_size <= 1)
-        return false;
-    *start = '\0';
-    start++;
-    buf_size--;
+    ಆದರೆ (buf_ಗಾತ್ರ <= 1)
+        ಹಿಂತಿರುಗಿ false;
+    *ಆರಂಭ = '\0';
+    ಆರಂಭ++;
+    buf_ಗಾತ್ರ--;
 
-    rmlvo->variant = start;
+    rmlvo->variant = ಆರಂಭ;
     darray_enumerate(k, layout, builder->layouts) {
-        int count = snprintf(start, buf_size, "%s%s",
+        ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2 = snprintf(ಆರಂಭ, buf_ಗಾತ್ರ, "%s%s",
                              (k > 0 ? "," : ""),
                              (layout->variant ? layout->variant : ""));
-        if (count < 0 || (size_t) count >= buf_size)
-            return false;
-        buf_size -= (size_t)count;
-        start += count;
+        ಆದರೆ (ಎಣಿಕೆ_2 < 0 || (ಗಾತ್ರ_t) ಎಣಿಕೆ_2 >= buf_ಗಾತ್ರ)
+            ಹಿಂತಿರುಗಿ false;
+        buf_ಗಾತ್ರ -= (ಗಾತ್ರ_t)ಎಣಿಕೆ_2;
+        ಆರಂಭ += ಎಣಿಕೆ_2;
     }
-    if (buf_size <= 1)
-        return false;
-    *start = '\0';
-    start++;
-    buf_size--;
+    ಆದರೆ (buf_ಗಾತ್ರ <= 1)
+        ಹಿಂತಿರುಗಿ false;
+    *ಆರಂಭ = '\0';
+    ಆರಂಭ++;
+    buf_ಗಾತ್ರ--;
 
-    rmlvo->options = start;
-    const struct xkb_rmlvo_builder_option *option;
+    rmlvo->options = ಆರಂಭ;
+    ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_rmlvo_builder_option *option;
     darray_enumerate(k, option, builder->options) {
-        int count = snprintf(start, buf_size, "%s%s",
+        ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2 = snprintf(ಆರಂಭ, buf_ಗಾತ್ರ, "%s%s",
                              (k > 0 ? "," : ""), option->option);
-        if (count < 0 || (size_t) count >= buf_size)
-            return false;
-        buf_size -= (size_t)count;
-        start += count;
-        if (option->layouts != XKB_LAYOUT_INVALID) {
-            count = snprintf(start, buf_size, "%c%"PRIu32,
-                             OPTIONS_GROUP_SPECIFIER_PREFIX, option->layouts);
-            if (count < 0 || (size_t) count >= buf_size)
-                return false;
-            buf_size -= (size_t)count;
-            start += count;
+        ಆದರೆ (ಎಣಿಕೆ_2 < 0 || (ಗಾತ್ರ_t) ಎಣಿಕೆ_2 >= buf_ಗಾತ್ರ)
+            ಹಿಂತಿರುಗಿ false;
+        buf_ಗಾತ್ರ -= (ಗಾತ್ರ_t)ಎಣಿಕೆ_2;
+        ಆರಂಭ += ಎಣಿಕೆ_2;
+        ಆದರೆ (option->layouts != XKB_LAYOUT_INVALID) {
+            ಎಣಿಕೆ_2 = snprintf(ಆರಂಭ, buf_ಗಾತ್ರ, "%c%"PRIu32,
+                             OPTIONS_ಗುಂಪು_SPECIFIER_ಪೂರ್ವಪ್ರತ್ಯಯ, option->layouts);
+            ಆದರೆ (ಎಣಿಕೆ_2 < 0 || (ಗಾತ್ರ_t) ಎಣಿಕೆ_2 >= buf_ಗಾತ್ರ)
+                ಹಿಂತಿರುಗಿ false;
+            buf_ಗಾತ್ರ -= (ಗಾತ್ರ_t)ಎಣಿಕೆ_2;
+            ಆರಂಭ += ಎಣಿಕೆ_2;
         }
     }
-    if (buf_size == 0)
-        return false;
-    *start = '\0';
-    return true;
+    ಆದರೆ (buf_ಗಾತ್ರ == 0)
+        ಹಿಂತಿರುಗಿ false;
+    *ಆರಂಭ = '\0';
+    ಹಿಂತಿರುಗಿ true;
 }

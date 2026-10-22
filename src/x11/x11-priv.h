@@ -2,62 +2,62 @@
  * Copyright © 2013 Ran Benita
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#ಸೂಚನೆ once
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include <xcb/xkb.h>
+#ಅನ್ತರ್ಭಾವ <xcb/xkb.h>
 
-#include "keymap.h"
-#include "xkbcommon/xkbcommon-x11.h"
+#ಅನ್ತರ್ಭಾವ "keymap.h"
+#ಅನ್ತರ್ಭಾವ "xkbcommon/xkbcommon-x11.h"
 
-struct x11_atom_interner {
-    struct xkb_context *ctx;
+ರಚನೆ x11_atom_interner {
+    ರಚನೆ xkb_context *ctx;
     xcb_connection_t *conn;
     bool had_error;
     /* Atoms for which we send a GetAtomName request */
-    struct {
+    ರಚನೆ {
         xcb_atom_t from;
-        xkb_atom_t *out;
+        xkb_atom_t *ಹೊರಹೋಗು;
         xcb_get_atom_name_cookie_t cookie;
     } pending[128];
-    size_t num_pending;
+    ಗಾತ್ರ_t ಅಂಕೆ_pending;
     /* Atoms which were already pending but queried again */
-    struct {
+    ರಚನೆ {
         xcb_atom_t from;
-        xkb_atom_t *out;
+        xkb_atom_t *ಹೊರಹೋಗು;
     } copies[128];
-    size_t num_copies;
+    ಗಾತ್ರ_t ಅಂಕೆ_copies;
     /* These are not interned, but saved directly (after XkbEscapeMapName) */
-    struct {
+    ರಚನೆ {
         xcb_get_atom_name_cookie_t cookie;
-        char **out;
+        ಅಕ್ಷರ **ಹೊರಹೋಗು;
     } escaped[4];
-    size_t num_escaped;
+    ಗಾತ್ರ_t ಅಂಕೆ_escaped;
 };
 
-void
-x11_atom_interner_init(struct x11_atom_interner *interner,
-                       struct xkb_context *ctx, xcb_connection_t *conn);
+ಶೂನ್ಯ
+x11_atom_interner_init(ರಚನೆ x11_atom_interner *interner,
+                       ರಚನೆ xkb_context *ctx, xcb_connection_t *conn);
 
-void
-x11_atom_interner_round_trip(struct x11_atom_interner *interner);
+ಶೂನ್ಯ
+x11_atom_interner_ಸುತ್ತು_trip(ರಚನೆ x11_atom_interner *interner);
 
 /*
  * Make an xkb_atom_t's from X atoms. The actual write is delayed until the next
  * call to x11_atom_interner_round_trip() or when too many atoms are pending.
  */
-void
-x11_atom_interner_adopt_atom(struct x11_atom_interner *interner,
-                             const xcb_atom_t atom, xkb_atom_t *out);
+ಶೂನ್ಯ
+x11_atom_interner_adopt_atom(ರಚನೆ x11_atom_interner *interner,
+                             ಸ್ಥಿರಾಂಕ xcb_atom_t atom, xkb_atom_t *ಹೊರಹೋಗು);
 
 /*
  * Get a strdup'd and XkbEscapeMapName'd name of an X atom. The actual write is
  * delayed until the next call to x11_atom_interner_round_trip().
  */
-void
-x11_atom_interner_get_escaped_atom_name(struct x11_atom_interner *interner,
-                                        xcb_atom_t atom, char **out);
+ಶೂನ್ಯ
+x11_atom_interner_get_escaped_atom_name(ರಚನೆ x11_atom_interner *interner,
+                                        xcb_atom_t atom, ಅಕ್ಷರ **ಹೊರಹೋಗು);
 
-enum xkb_action_controls
-translate_controls_mask(uint32_t wire);
+ಎಣಿಕೆ xkb_action_controls
+translate_controls_ಮುಖವಾಡ(uint32_t wire);

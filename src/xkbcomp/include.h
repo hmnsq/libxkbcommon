@@ -2,48 +2,48 @@
  * Copyright (c) 1994 by Silicon Graphics Computer Systems, Inc.
  * SPDX-License-Identifier: HPND
  */
-#pragma once
+#ಸೂಚನೆ once
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include "ast.h"
-#include "utils.h"
-#include "xkbcomp-priv.h"
+#ಅನ್ತರ್ಭಾವ "ast.h"
+#ಅನ್ತರ್ಭಾವ "utils.h"
+#ಅನ್ತರ್ಭಾವ "xkbcomp-priv.h"
 
 /* Reasonable threshold, with plenty of margin for keymaps in the wild */
-#define INCLUDE_MAX_DEPTH 15
+#ವ್ಯಾಖ್ಯಾನಿಸು INCLUDE_MAX_ಆಳ 15
 
-#define MERGE_OVERRIDE_PREFIX '+'
-#define MERGE_AUGMENT_PREFIX  '|'
-#define MERGE_REPLACE_PREFIX  '^'
-#define MERGE_DEFAULT_PREFIX  MERGE_OVERRIDE_PREFIX
-#define is_merge_mode_prefix(ch) \
-    ((ch) == MERGE_OVERRIDE_PREFIX || (ch) == MERGE_AUGMENT_PREFIX || \
-     (ch) == MERGE_REPLACE_PREFIX)
-static const char MERGE_MODE_PREFIXES[] =
-    { MERGE_OVERRIDE_PREFIX, MERGE_AUGMENT_PREFIX, MERGE_REPLACE_PREFIX, 0 };
+#ವ್ಯಾಖ್ಯಾನಿಸು ವಿಲೀನ_OVERRIDE_ಪೂರ್ವಪ್ರತ್ಯಯ '+'
+#ವ್ಯಾಖ್ಯಾನಿಸು ವಿಲೀನ_AUGMENT_ಪೂರ್ವಪ್ರತ್ಯಯ  '|'
+#ವ್ಯಾಖ್ಯಾನಿಸು ವಿಲೀನ_REPLACE_ಪೂರ್ವಪ್ರತ್ಯಯ  '^'
+#ವ್ಯಾಖ್ಯಾನಿಸು ವಿಲೀನ_DEFAULT_ಪೂರ್ವಪ್ರತ್ಯಯ  ವಿಲೀನ_OVERRIDE_ಪೂರ್ವಪ್ರತ್ಯಯ
+#ವ್ಯಾಖ್ಯಾನಿಸು is_ವಿಲೀನ_ಬಹುಲಕ_ಪೂರ್ವಪ್ರತ್ಯಯ(ch) \
+    ((ch) == ವಿಲೀನ_OVERRIDE_ಪೂರ್ವಪ್ರತ್ಯಯ || (ch) == ವಿಲೀನ_AUGMENT_ಪೂರ್ವಪ್ರತ್ಯಯ || \
+     (ch) == ವಿಲೀನ_REPLACE_ಪೂರ್ವಪ್ರತ್ಯಯ)
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ ವಿಲೀನ_ಬಹುಲಕ_PREFIXES[] =
+    { ವಿಲೀನ_OVERRIDE_ಪೂರ್ವಪ್ರತ್ಯಯ, ವಿಲೀನ_AUGMENT_ಪೂರ್ವಪ್ರತ್ಯಯ, ವಿಲೀನ_REPLACE_ಪೂರ್ವಪ್ರತ್ಯಯ, 0 };
 
 
 bool
-ParseIncludeMap(char **str_inout, char **file_rtrn, char **map_rtrn,
-                char *nextop_rtrn, char **extra_data);
+ParseIncludeMap(ಅಕ್ಷರ **str_inout, ಅಕ್ಷರ **file_rtrn, ಅಕ್ಷರ **map_rtrn,
+                ಅಕ್ಷರ *nextop_rtrn, ಅಕ್ಷರ **extra_ದತ್ತಾಂಶ);
 
 ssize_t
-expand_path(struct xkb_context *ctx, const char* parent_file_name,
-            const char *name, size_t name_len, enum xkb_file_type type,
-            char *buf, size_t buf_size);
+expand_ಮಾರ್ಗ(ರಚನೆ xkb_context *ctx, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* ಪೋಷಕ_file_name,
+            ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name, ಗಾತ್ರ_t name_len, ಎಣಿಕೆ xkb_file_type type,
+            ಅಕ್ಷರ *buf, ಗಾತ್ರ_t buf_ಗಾತ್ರ);
 
 FILE *
-FindFileInXkbPath(struct xkb_context *ctx, const char* parent_file_name,
-                  const char *name, size_t name_len, enum xkb_file_type type,
-                  char *buf, size_t buf_size, unsigned int *offset,
+ಕಂಡುಹಿಡಿ_File_ಒಳ_Xkb_ಮಾರ್ಗ(ರಚನೆ xkb_context *ctx, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* ಪೋಷಕ_file_name,
+                  ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name, ಗಾತ್ರ_t name_len, ಎಣಿಕೆ xkb_file_type type,
+                  ಅಕ್ಷರ *buf, ಗಾತ್ರ_t buf_ಗಾತ್ರ, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ *ಸ್ಥಾನಾಂತರ,
                   bool required);
 
 bool
-ExceedsIncludeMaxDepth(struct xkb_context *ctx, unsigned int include_depth);
+Exceeds_Include_Max_ಆಳ(ರಚನೆ xkb_context *ctx, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ include_ಆಳ);
 
 XkbFile *
-ProcessIncludeFile(struct xkb_context *ctx,
-                   const struct parser_keymap_config *config,
-                   const IncludeStmt *stmt,
-                   enum xkb_file_type file_type, char *path, size_t path_size);
+ProcessIncludeFile(ರಚನೆ xkb_context *ctx,
+                   ಸ್ಥಿರಾಂಕ ರಚನೆ parser_keymap_config *config,
+                   ಸ್ಥಿರಾಂಕ IncludeStmt *stmt,
+                   ಎಣಿಕೆ xkb_file_type file_type, ಅಕ್ಷರ *ಮಾರ್ಗ, ಗಾತ್ರ_t ಮಾರ್ಗ_ಗಾತ್ರ);

@@ -5,49 +5,49 @@
  * SPDX-License-Identifier: MIT
  */
 
-#pragma once
+#ಸೂಚನೆ once
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include <stdbool.h>
-#include <stddef.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <stddef.h>
 
 /*
  * This list data structure is a verbatim copy from wayland-util.h from the
  * Wayland project; except that wl_ prefix has been removed.
  */
 
-struct list {
-	struct list *prev;
-	struct list *next;
+ರಚನೆ list {
+	ರಚನೆ list *prev;
+	ರಚನೆ list *ಮುಂದಿನ;
 };
 
-void list_init(struct list *list);
-void list_insert(struct list *list, struct list *elm);
-void list_append(struct list *list, struct list *elm);
-void list_remove(struct list *elm);
-bool list_empty(const struct list *list);
-bool list_is_last(const struct list *list, const struct list *elm);
+ಶೂನ್ಯ list_init(ರಚನೆ list *list);
+ಶೂನ್ಯ list_ಸೇರಿಸು(ರಚನೆ list *list, ರಚನೆ list *elm);
+ಶೂನ್ಯ list_append(ರಚನೆ list *list, ರಚನೆ list *elm);
+ಶೂನ್ಯ list_remove(ರಚನೆ list *elm);
+bool list_ಖಾಲಿಗಳು(ಸ್ಥಿರಾಂಕ ರಚನೆ list *list);
+bool list_is_ಕೊನೆಯ(ಸ್ಥಿರಾಂಕ ರಚನೆ list *list, ಸ್ಥಿರಾಂಕ ರಚನೆ list *elm);
 
-#define container_of(ptr, type, member)					\
-	(__typeof__(type) *)((char *)(ptr) -				\
+#ವ್ಯಾಖ್ಯಾನಿಸು container_ದ(ptr, type, member)					\
+	(__typeof__(type) *)((ಅಕ್ಷರ *)(ptr) -				\
 		 offsetof(__typeof__(type), member))
 
-#define list_first_entry(head, pos, member)				\
-	container_of((head)->next, __typeof__(*(pos)), member)
+#ವ್ಯಾಖ್ಯಾನಿಸು list_ಮೊದಲ_ನಮೂದು(ತಲೆ, pos, member)				\
+	container_ದ((ತಲೆ)->ಮುಂದಿನ, __typeof__(*(pos)), member)
 
-#define list_last_entry(head, pos, member)				\
-	container_of((head)->prev, __typeof__(*(pos)), member)
+#ವ್ಯಾಖ್ಯಾನಿಸು list_ಕೊನೆಯ_ನಮೂದು(ತಲೆ, pos, member)				\
+	container_ದ((ತಲೆ)->prev, __typeof__(*(pos)), member)
 
-#define list_for_each(pos, head, member)				\
-	for ((pos) = 0, (pos) = list_first_entry(head, pos, member);	\
-	     &(pos)->member != (head);					\
-	     (pos) = list_first_entry(&(pos)->member, pos, member))
+#ವ್ಯಾಖ್ಯಾನಿಸು list_for_each(pos, ತಲೆ, member)				\
+	ಗಾಗಿ ((pos) = 0, (pos) = list_ಮೊದಲ_ನಮೂದು(ತಲೆ, pos, member);	\
+	     &(pos)->member != (ತಲೆ);					\
+	     (pos) = list_ಮೊದಲ_ನಮೂದು(&(pos)->member, pos, member))
 
-#define list_for_each_safe(pos, tmp, head, member)			\
-	for ((pos) = 0, (tmp) = 0,						\
-	     (pos) = list_first_entry(head, pos, member),			\
-	     (tmp) = list_first_entry(&(pos)->member, tmp, member);		\
-	     &(pos)->member != (head);					\
+#ವ್ಯಾಖ್ಯಾನಿಸು list_for_each_ಸುರಕ್ಷಿತ(pos, tmp, ತಲೆ, member)			\
+	ಗಾಗಿ ((pos) = 0, (tmp) = 0,						\
+	     (pos) = list_ಮೊದಲ_ನಮೂದು(ತಲೆ, pos, member),			\
+	     (tmp) = list_ಮೊದಲ_ನಮೂದು(&(pos)->member, tmp, member);		\
+	     &(pos)->member != (ತಲೆ);					\
 	     (pos) = (tmp),							\
-	     (tmp) = list_first_entry(&(pos)->member, tmp, member))
+	     (tmp) = list_ಮೊದಲ_ನಮೂದು(&(pos)->member, tmp, member))

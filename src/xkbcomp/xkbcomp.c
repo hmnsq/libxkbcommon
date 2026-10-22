@@ -9,242 +9,242 @@
  * Author: Daniel Stone <daniel@fooishbar.org>
  */
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
 
-#include "darray.h"
-#include "utils.h"
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcomp-priv.h"
-#include "keymap.h"
-#include "rules.h"
-#include "rmlvo.h"
+#ಅನ್ತರ್ಭಾವ "darray.h"
+#ಅನ್ತರ್ಭಾವ "utils.h"
+#ಅನ್ತರ್ಭಾವ "xkbcommon/xkbcommon.h"
+#ಅನ್ತರ್ಭಾವ "xkbcomp-priv.h"
+#ಅನ್ತರ್ಭಾವ "keymap.h"
+#ಅನ್ತರ್ಭಾವ "rules.h"
+#ಅನ್ತರ್ಭಾವ "rmlvo.h"
 
 bool
-xkb_components_names_from_rules(struct xkb_context *ctx,
-                                const struct xkb_rule_names *rmlvo_in,
-                                struct xkb_rule_names *rmlvo_out,
-                                struct xkb_component_names *components_out)
+xkb_components_ಹೆಸರುಗಳು_from_ನಿಯಮಗಳು(ರಚನೆ xkb_context *ctx,
+                                ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_ನಿಯಮ_ಹೆಸರುಗಳು *rmlvo_ಒಳ,
+                                ರಚನೆ xkb_ನಿಯಮ_ಹೆಸರುಗಳು *rmlvo_ಹೊರಹೋಗು,
+                                ರಚನೆ xkb_component_ಹೆಸರುಗಳು *components_ಹೊರಹೋಗು)
 {
     /* Resolve default RMLVO values. We need a mutable copy of the input. */
-    struct xkb_rule_names rmlvo = *rmlvo_in;
-    xkb_context_sanitize_rule_names(ctx, &rmlvo);
+    ರಚನೆ xkb_ನಿಯಮ_ಹೆಸರುಗಳು rmlvo = *rmlvo_ಒಳ;
+    xkb_context_sanitize_ನಿಯಮ_ಹೆಸರುಗಳು(ctx, &rmlvo);
 
-    if (rmlvo_out) {
+    ಆದರೆ (rmlvo_ಹೊರಹೋಗು) {
         /* Copy the sanitized RMLVO, if required. */
-        *rmlvo_out = rmlvo;
+        *rmlvo_ಹೊರಹೋಗು = rmlvo;
     }
-    if (!components_out) {
+    ಆದರೆ (!components_ಹೊರಹೋಗು) {
         /* KcCGST not required.
          * While RMLVO and KcCGST outputs are both optional, at least one must
          * be provided. */
-        return !!rmlvo_out;
+        ಹಿಂತಿರುಗಿ !!rmlvo_ಹೊರಹೋಗು;
     }
 
     /* Resolve the RMLVO names to KcCGST components */
-    *components_out = (struct xkb_component_names){ 0 };
-    return xkb_components_from_rules_names(ctx, &rmlvo, components_out, NULL);
+    *components_ಹೊರಹೋಗು = (ರಚನೆ xkb_component_ಹೆಸರುಗಳು){ 0 };
+    ಹಿಂತಿರುಗಿ xkb_components_from_ನಿಯಮಗಳು_ಹೆಸರುಗಳು(ctx, &rmlvo, components_ಹೊರಹೋಗು, ಖಾಲಿ);
 }
 
-static bool
-compile_keymap_file(struct xkb_keymap *keymap, XkbFile *file)
+ಸ್ಥಿರ bool
+compile_keymap_file(ರಚನೆ xkb_keymap *keymap, XkbFile *file)
 {
-    if (file->file_type != FILE_TYPE_KEYMAP) {
+    ಆದರೆ (file->file_type != FILE_TYPE_KEYMAP) {
         log_err(keymap->ctx, XKB_ERROR_KEYMAP_COMPILATION_FAILED,
                 "Cannot compile a %s file alone into a keymap\n",
-                xkb_file_type_to_string(file->file_type));
-        return false;
+                xkb_file_type_ಗಮ್ಯ_string(file->file_type));
+        ಹಿಂತಿರುಗಿ false;
     }
 
-    if (!CompileKeymap(file, keymap)) {
+    ಆದರೆ (!CompileKeymap(file, keymap)) {
         log_err(keymap->ctx, XKB_ERROR_KEYMAP_COMPILATION_FAILED,
                 "Failed to compile keymap\n");
-        return false;
+        ಹಿಂತಿರುಗಿ false;
     }
 
-    return true;
+    ಹಿಂತಿರುಗಿ true;
 }
 
-static bool
-text_v1_keymap_new_from_rmlvo(struct xkb_keymap *keymap,
-                              const struct xkb_rmlvo_builder *rmlvo)
+ಸ್ಥಿರ bool
+ಪಠ್ಯ_v1_keymap_new_from_rmlvo(ರಚನೆ xkb_keymap *keymap,
+                              ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_rmlvo_builder *rmlvo)
 {
     bool ok;
-    struct xkb_component_names kccgst;
+    ರಚನೆ xkb_component_ಹೆಸರುಗಳು kccgst;
     XkbFile *file;
 
-    if (keymap->ctx->log_level >= XKB_LOG_LEVEL_DEBUG) {
-        struct xkb_rule_names names = { 0 };
-        const size_t buf_size = sizeof(rmlvo->ctx->text_buffer) - 1;
-        char *buf = xkb_context_get_buffer(rmlvo->ctx, buf_size);
-        if (unlikely(!buf))
-            return false;
-        ok = xkb_rmlvo_builder_to_rules_names(rmlvo, &names, buf, buf_size);
-        if (unlikely(!ok))
-            return false;
-        log_dbg(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
+    ಆದರೆ (keymap->ctx->log_level >= XKB_LOG_LEVEL_DEBUG) {
+        ರಚನೆ xkb_ನಿಯಮ_ಹೆಸರುಗಳು ಹೆಸರುಗಳು = { 0 };
+        ಸ್ಥಿರಾಂಕ ಗಾತ್ರ_t buf_ಗಾತ್ರ = ಗಾತ್ರ(rmlvo->ctx->ಪಠ್ಯ_ಬಫರ್) - 1;
+        ಅಕ್ಷರ *buf = xkb_context_get_ಬಫರ್(rmlvo->ctx, buf_ಗಾತ್ರ);
+        ಆದರೆ (unlikely(!buf))
+            ಹಿಂತಿರುಗಿ false;
+        ok = xkb_rmlvo_builder_ಗಮ್ಯ_ನಿಯಮಗಳು_ಹೆಸರುಗಳು(rmlvo, &ಹೆಸರುಗಳು, buf, buf_ಗಾತ್ರ);
+        ಆದರೆ (unlikely(!ok))
+            ಹಿಂತಿರುಗಿ false;
+        log_dbg(keymap->ctx, XKB_LOG_ಸಂದೇಶ_NO_ID,
                 "Compiling from RMLVO builder: rules '%s', model '%s', layout '%s', "
                 "variant '%s', options '%s'\n",
-                names.rules, names.model, names.layout, names.variant,
-                names.options);
+                ಹೆಸರುಗಳು.ನಿಯಮಗಳು, ಹೆಸರುಗಳು.model, ಹೆಸರುಗಳು.layout, ಹೆಸರುಗಳು.variant,
+                ಹೆಸರುಗಳು.options);
     }
 
     /* Resolve the RMLVO components to KcCGST components and get the
      * expected number of layouts */
-    ok = xkb_components_from_rmlvo_builder(rmlvo, &kccgst, &keymap->num_groups);
-    if (!ok) {
-        struct xkb_rule_names names = { 0 };
-        const size_t buf_size = sizeof(rmlvo->ctx->text_buffer);
-        char *buf = xkb_context_get_buffer(rmlvo->ctx, buf_size);
-        if (unlikely(!buf))
-            return false;
-        ok = xkb_rmlvo_builder_to_rules_names(rmlvo, &names, buf, buf_size);
-        if (unlikely(!ok))
-            return false;
+    ok = xkb_components_from_rmlvo_builder(rmlvo, &kccgst, &keymap->ಅಂಕೆ_groups);
+    ಆದರೆ (!ok) {
+        ರಚನೆ xkb_ನಿಯಮ_ಹೆಸರುಗಳು ಹೆಸರುಗಳು = { 0 };
+        ಸ್ಥಿರಾಂಕ ಗಾತ್ರ_t buf_ಗಾತ್ರ = ಗಾತ್ರ(rmlvo->ctx->ಪಠ್ಯ_ಬಫರ್);
+        ಅಕ್ಷರ *buf = xkb_context_get_ಬಫರ್(rmlvo->ctx, buf_ಗಾತ್ರ);
+        ಆದರೆ (unlikely(!buf))
+            ಹಿಂತಿರುಗಿ false;
+        ok = xkb_rmlvo_builder_ಗಮ್ಯ_ನಿಯಮಗಳು_ಹೆಸರುಗಳು(rmlvo, &ಹೆಸರುಗಳು, buf, buf_ಗಾತ್ರ);
+        ಆದರೆ (unlikely(!ok))
+            ಹಿಂತಿರುಗಿ false;
         log_err(keymap->ctx, XKB_ERROR_KEYMAP_COMPILATION_FAILED,
                 "Couldn't look up rules '%s', model '%s', layout '%s', "
                 "variant '%s', options '%s'\n",
-                names.rules, names.model, names.layout, names.variant,
-                names.options);
-        return false;
+                ಹೆಸರುಗಳು.ನಿಯಮಗಳು, ಹೆಸರುಗಳು.model, ಹೆಸರುಗಳು.layout, ಹೆಸರುಗಳು.variant,
+                ಹೆಸರುಗಳು.options);
+        ಹಿಂತಿರುಗಿ false;
     }
 
-    const xkb_layout_index_t max_groups = format_max_groups(keymap->format);
-    if (keymap->num_groups > max_groups)
-        keymap->num_groups = max_groups;
+    ಸ್ಥಿರಾಂಕ xkb_layout_ಸೂಚ್ಯಂಕ_t max_groups = format_max_groups(keymap->format);
+    ಆದರೆ (keymap->ಅಂಕೆ_groups > max_groups)
+        keymap->ಅಂಕೆ_groups = max_groups;
 
-    log_dbg(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
+    log_dbg(keymap->ctx, XKB_LOG_ಸಂದೇಶ_NO_ID,
             "Compiling from KcCGST: keycodes '%s', types '%s', "
             "compat '%s', symbols '%s'\n",
             kccgst.keycodes, kccgst.types, kccgst.compatibility, kccgst.symbols);
 
     file = XkbFileFromComponents(keymap->ctx, &kccgst);
 
-    free(kccgst.keycodes);
-    free(kccgst.types);
-    free(kccgst.compatibility);
-    free(kccgst.symbols);
-    free(kccgst.geometry);
+    ಬಿಡುಗಡೆ(kccgst.keycodes);
+    ಬಿಡುಗಡೆ(kccgst.types);
+    ಬಿಡುಗಡೆ(kccgst.compatibility);
+    ಬಿಡುಗಡೆ(kccgst.symbols);
+    ಬಿಡುಗಡೆ(kccgst.geometry);
 
-    if (!file) {
+    ಆದರೆ (!file) {
         log_err(keymap->ctx, XKB_ERROR_KEYMAP_COMPILATION_FAILED,
                 "Failed to generate parsed XKB file from components\n");
-        return false;
+        ಹಿಂತಿರುಗಿ false;
     }
 
     ok = compile_keymap_file(keymap, file);
     FreeXkbFile(file);
-    return ok;
+    ಹಿಂತಿರುಗಿ ok;
 }
 
-static bool
-text_v1_keymap_new_from_names(struct xkb_keymap *keymap,
-                              const struct xkb_rule_names *rmlvo)
+ಸ್ಥಿರ bool
+ಪಠ್ಯ_v1_keymap_new_from_ಹೆಸರುಗಳು(ರಚನೆ xkb_keymap *keymap,
+                              ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_ನಿಯಮ_ಹೆಸರುಗಳು *rmlvo)
 {
     bool ok;
-    struct xkb_component_names kccgst;
+    ರಚನೆ xkb_component_ಹೆಸರುಗಳು kccgst;
     XkbFile *file;
 
-    log_dbg(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
+    log_dbg(keymap->ctx, XKB_LOG_ಸಂದೇಶ_NO_ID,
             "Compiling from RMLVO: rules '%s', model '%s', layout '%s', "
             "variant '%s', options '%s'\n",
-            rmlvo->rules, rmlvo->model, rmlvo->layout, rmlvo->variant,
+            rmlvo->ನಿಯಮಗಳು, rmlvo->model, rmlvo->layout, rmlvo->variant,
             rmlvo->options);
 
     /* Resolve the RMLVO components to KcCGST components and get the
      * expected number of layouts */
-    ok = xkb_components_from_rules_names(keymap->ctx, rmlvo, &kccgst,
-                                         &keymap->num_groups);
-    if (!ok) {
+    ok = xkb_components_from_ನಿಯಮಗಳು_ಹೆಸರುಗಳು(keymap->ctx, rmlvo, &kccgst,
+                                         &keymap->ಅಂಕೆ_groups);
+    ಆದರೆ (!ok) {
         log_err(keymap->ctx, XKB_ERROR_KEYMAP_COMPILATION_FAILED,
                 "Couldn't look up rules '%s', model '%s', layout '%s', "
                 "variant '%s', options '%s'\n",
-                rmlvo->rules, rmlvo->model, rmlvo->layout, rmlvo->variant,
+                rmlvo->ನಿಯಮಗಳು, rmlvo->model, rmlvo->layout, rmlvo->variant,
                 rmlvo->options);
-        return false;
+        ಹಿಂತಿರುಗಿ false;
     }
 
-    const xkb_layout_index_t max_groups = format_max_groups(keymap->format);
-    if (keymap->num_groups > max_groups)
-        keymap->num_groups = max_groups;
+    ಸ್ಥಿರಾಂಕ xkb_layout_ಸೂಚ್ಯಂಕ_t max_groups = format_max_groups(keymap->format);
+    ಆದರೆ (keymap->ಅಂಕೆ_groups > max_groups)
+        keymap->ಅಂಕೆ_groups = max_groups;
 
-    log_dbg(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
+    log_dbg(keymap->ctx, XKB_LOG_ಸಂದೇಶ_NO_ID,
             "Compiling from KcCGST: keycodes '%s', types '%s', "
             "compat '%s', symbols '%s'\n",
             kccgst.keycodes, kccgst.types, kccgst.compatibility, kccgst.symbols);
 
     file = XkbFileFromComponents(keymap->ctx, &kccgst);
 
-    free(kccgst.keycodes);
-    free(kccgst.types);
-    free(kccgst.compatibility);
-    free(kccgst.symbols);
-    free(kccgst.geometry);
+    ಬಿಡುಗಡೆ(kccgst.keycodes);
+    ಬಿಡುಗಡೆ(kccgst.types);
+    ಬಿಡುಗಡೆ(kccgst.compatibility);
+    ಬಿಡುಗಡೆ(kccgst.symbols);
+    ಬಿಡುಗಡೆ(kccgst.geometry);
 
-    if (!file) {
+    ಆದರೆ (!file) {
         log_err(keymap->ctx, XKB_ERROR_KEYMAP_COMPILATION_FAILED,
                 "Failed to generate parsed XKB file from components\n");
-        return false;
+        ಹಿಂತಿರುಗಿ false;
     }
 
     ok = compile_keymap_file(keymap, file);
     FreeXkbFile(file);
-    return ok;
+    ಹಿಂತಿರುಗಿ ok;
 }
 
-static bool
-text_v1_keymap_new_from_string(struct xkb_keymap *keymap,
-                               const char *string, size_t len)
+ಸ್ಥಿರ bool
+ಪಠ್ಯ_v1_keymap_new_from_string(ರಚನೆ xkb_keymap *keymap,
+                               ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *string, ಗಾತ್ರ_t len)
 {
     bool ok;
     XkbFile *xkb_file;
 
-    const struct parser_keymap_config config = {
+    ಸ್ಥಿರಾಂಕ ರಚನೆ parser_keymap_config config = {
         .format = keymap->format,
         .strict = parser_strict_flags_from_keymap(keymap)
     };
 
     xkb_file = XkbParseString(keymap->ctx, &config,
-                              string, len, "(input string)", NULL);
-    if (!xkb_file) {
+                              string, len, "(input string)", ಖಾಲಿ);
+    ಆದರೆ (!xkb_file) {
         log_err(keymap->ctx, XKB_ERROR_KEYMAP_COMPILATION_FAILED,
                 "Failed to parse input xkb string\n");
-        return false;
+        ಹಿಂತಿರುಗಿ false;
     }
 
     ok = compile_keymap_file(keymap, xkb_file);
     FreeXkbFile(xkb_file);
-    return ok;
+    ಹಿಂತಿರುಗಿ ok;
 }
 
-static bool
-text_v1_keymap_new_from_file(struct xkb_keymap *keymap, FILE *file)
+ಸ್ಥಿರ bool
+ಪಠ್ಯ_v1_keymap_new_from_file(ರಚನೆ xkb_keymap *keymap, FILE *file)
 {
     bool ok;
     XkbFile *xkb_file;
 
-    const struct parser_keymap_config config = {
+    ಸ್ಥಿರಾಂಕ ರಚನೆ parser_keymap_config config = {
         .format = keymap->format,
         .strict = parser_strict_flags_from_keymap(keymap)
     };
 
-    xkb_file = XkbParseFile(keymap->ctx, &config, file, "(unknown file)", NULL);
-    if (!xkb_file) {
+    xkb_file = XkbParseFile(keymap->ctx, &config, file, "(unknown file)", ಖಾಲಿ);
+    ಆದರೆ (!xkb_file) {
         log_err(keymap->ctx, XKB_ERROR_KEYMAP_COMPILATION_FAILED,
                 "Failed to parse input xkb file\n");
-        return false;
+        ಹಿಂತಿರುಗಿ false;
     }
 
     ok = compile_keymap_file(keymap, xkb_file);
     FreeXkbFile(xkb_file);
-    return ok;
+    ಹಿಂತಿರುಗಿ ok;
 }
 
-const struct xkb_keymap_format_ops text_v1_keymap_format_ops = {
-    .keymap_new_from_rmlvo = text_v1_keymap_new_from_rmlvo,
-    .keymap_new_from_names = text_v1_keymap_new_from_names,
-    .keymap_new_from_string = text_v1_keymap_new_from_string,
-    .keymap_new_from_file = text_v1_keymap_new_from_file,
-    .keymap_serialize = text_v1_keymap_serialize,
+ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_keymap_format_ops ಪಠ್ಯ_v1_keymap_format_ops = {
+    .keymap_new_from_rmlvo = ಪಠ್ಯ_v1_keymap_new_from_rmlvo,
+    .keymap_new_from_ಹೆಸರುಗಳು = ಪಠ್ಯ_v1_keymap_new_from_ಹೆಸರುಗಳು,
+    .keymap_new_from_string = ಪಠ್ಯ_v1_keymap_new_from_string,
+    .keymap_new_from_file = ಪಠ್ಯ_v1_keymap_new_from_file,
+    .keymap_serialize = ಪಠ್ಯ_v1_keymap_serialize,
 };

@@ -3,29 +3,29 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include <locale.h>
+#ಅನ್ತರ್ಭಾವ <locale.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "messages-codes.h"
-#include "utils.h"
-#include "util-paths.h"
-#include "context.h"
-#include "paths.h"
+#ಅನ್ತರ್ಭಾವ "xkbcommon/xkbcommon.h"
+#ಅನ್ತರ್ಭಾವ "messages-codes.h"
+#ಅನ್ತರ್ಭಾವ "utils.h"
+#ಅನ್ತರ್ಭಾವ "util-paths.h"
+#ಅನ್ತರ್ಭಾವ "context.h"
+#ಅನ್ತರ್ಭಾವ "paths.h"
 
-enum resolve_name_direction {
-    LEFT_TO_RIGHT,
-    RIGHT_TO_LEFT,
+ಎಣಿಕೆ resolve_name_direction {
+    ಎಡ_ಗಮ್ಯ_ಬಲ,
+    ಬಲ_ಗಮ್ಯ_ಎಡ,
 };
 
-const char *
-get_xlocaledir_path(struct xkb_context *ctx)
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *
+get_xlocaledir_ಮಾರ್ಗ(ರಚನೆ xkb_context *ctx)
 {
-    const char *dir = xkb_context_getenv(ctx, "XLOCALEDIR");
-    if (!dir)
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *dir = xkb_context_getenv(ctx, "XLOCALEDIR");
+    ಆದರೆ (!dir)
         dir = XLOCALEDIR;
-    return dir;
+    ಹಿಂತಿರುಗಿ dir;
 }
 
 /*
@@ -33,142 +33,142 @@ get_xlocaledir_path(struct xkb_context *ctx)
  * such a file and return its matching value, according to @direction.
  * @filename is relative to the xlocaledir.
  */
-static char *
-resolve_name(struct xkb_context *ctx, const char *filename,
-             enum resolve_name_direction direction, const char *name)
+ಸ್ಥಿರ ಅಕ್ಷರ *
+resolve_name(ರಚನೆ xkb_context *ctx, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *filename,
+             ಎಣಿಕೆ resolve_name_direction direction, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name)
 {
-    int ret;
+    ಪೂರ್ಣಾಂಕ ret;
     bool ok;
-    const char *xlocaledir;
-    char path[512];
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *xlocaledir;
+    ಅಕ್ಷರ ಮಾರ್ಗ[512];
     FILE *file;
-    char *string;
-    size_t string_size;
-    const char *end;
-    const char *s, *left, *right;
-    char *match;
-    size_t left_len, right_len, name_len;
+    ಅಕ್ಷರ *string;
+    ಗಾತ್ರ_t string_ಗಾತ್ರ;
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಕೊನೆ;
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s, *ಎಡ, *ಬಲ;
+    ಅಕ್ಷರ *ಹೊಂದಿಕೆ;
+    ಗಾತ್ರ_t ಎಡ_len, ಬಲ_len, name_len;
 
-    xlocaledir = get_xlocaledir_path(ctx);
+    xlocaledir = get_xlocaledir_ಮಾರ್ಗ(ctx);
 
-    ret = snprintf(path, sizeof(path), "%s/%s", xlocaledir, filename);
-    if (ret < 0 || (size_t) ret >= sizeof(path))
-        return NULL;
+    ret = snprintf(ಮಾರ್ಗ, ಗಾತ್ರ(ಮಾರ್ಗ), "%s/%s", xlocaledir, filename);
+    ಆದರೆ (ret < 0 || (ಗಾತ್ರ_t) ret >= ಗಾತ್ರ(ಮಾರ್ಗ))
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
-    file = fopen(path, "rb");
-    if (!file)
-        return NULL;
+    file = fopen(ಮಾರ್ಗ, "rb");
+    ಆದರೆ (!file)
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
-    ok = map_file(file, &string, &string_size);
+    ok = map_file(file, &string, &string_ಗಾತ್ರ);
     fclose(file);
-    if (!ok)
-        return NULL;
+    ಆದರೆ (!ok)
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
     s = string;
-    end = string + string_size;
-    name_len = strlen(name);
-    match = NULL;
+    ಕೊನೆ = string + string_ಗಾತ್ರ;
+    name_len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(name);
+    ಹೊಂದಿಕೆ = ಖಾಲಿ;
 
-    while (s < end) {
+    ಆಗ (s < ಕೊನೆ) {
         /* Skip spaces. */
-        while (s < end && is_space(*s))
+        ಆಗ (s < ಕೊನೆ && is_space(*s))
             s++;
 
         /* Skip comments. */
-        if (s < end && *s == '#') {
-            while (s < end && *s != '\n')
+        ಆದರೆ (s < ಕೊನೆ && *s == '#') {
+            ಆಗ (s < ಕೊನೆ && *s != '\n')
                 s++;
-            continue;
+            ಮುಂದುವರಿ;
         }
 
         /* Get the left value. */
-        left = s;
-        while (s < end && !is_space(*s) && *s != ':')
+        ಎಡ = s;
+        ಆಗ (s < ಕೊನೆ && !is_space(*s) && *s != ':')
             s++;
-        left_len = (size_t)(s - left);
+        ಎಡ_len = (ಗಾತ್ರ_t)(s - ಎಡ);
 
         /* There's an optional colon between left and right. */
-        if (s < end && *s == ':')
+        ಆದರೆ (s < ಕೊನೆ && *s == ':')
             s++;
 
         /* Skip spaces. */
-        while (s < end && is_space(*s))
+        ಆಗ (s < ಕೊನೆ && is_space(*s))
             s++;
 
         /* Get the right value. */
-        right = s;
-        while (s < end && !is_space(*s))
+        ಬಲ = s;
+        ಆಗ (s < ಕೊನೆ && !is_space(*s))
             s++;
-        right_len = (size_t)(s - right);
+        ಬಲ_len = (ಗಾತ್ರ_t)(s - ಬಲ);
 
         /* Discard rest of line. */
-        while (s < end && *s != '\n')
+        ಆಗ (s < ಕೊನೆ && *s != '\n')
             s++;
 
-        if (direction == LEFT_TO_RIGHT) {
-            if (left_len == name_len && memcmp(left, name, left_len) == 0) {
-                match = strndup(right, right_len);
-                break;
+        ಆದರೆ (direction == ಎಡ_ಗಮ್ಯ_ಬಲ) {
+            ಆದರೆ (ಎಡ_len == name_len && memcmp(ಎಡ, name, ಎಡ_len) == 0) {
+                ಹೊಂದಿಕೆ = strndup(ಬಲ, ಬಲ_len);
+                ನಿಲ್ಲಿಸು;
             }
-        } else if (direction == RIGHT_TO_LEFT &&
-                   right_len == name_len &&
-                   memcmp(right, name, right_len) == 0) {
-            match = strndup(left, left_len);
-            break;
+        } ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (direction == ಬಲ_ಗಮ್ಯ_ಎಡ &&
+                   ಬಲ_len == name_len &&
+                   memcmp(ಬಲ, name, ಬಲ_len) == 0) {
+            ಹೊಂದಿಕೆ = strndup(ಎಡ, ಎಡ_len);
+            ನಿಲ್ಲಿಸು;
         }
     }
 
-    unmap_file(string, string_size);
-    return match;
+    unmap_file(string, string_ಗಾತ್ರ);
+    ಹಿಂತಿರುಗಿ ಹೊಂದಿಕೆ;
 }
 
-char *
-resolve_locale(struct xkb_context *ctx, const char *locale)
+ಅಕ್ಷರ *
+resolve_locale(ರಚನೆ xkb_context *ctx, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *locale)
 {
-    char *alias = resolve_name(ctx, "locale.alias", LEFT_TO_RIGHT, locale);
-    return alias ? alias : strdup(locale);
+    ಅಕ್ಷರ *alias = resolve_name(ctx, "locale.alias", ಎಡ_ಗಮ್ಯ_ಬಲ, locale);
+    ಹಿಂತಿರುಗಿ alias ? alias : strdup(locale);
 }
 
-char *
-get_xcomposefile_path(struct xkb_context *ctx)
+ಅಕ್ಷರ *
+get_xcomposefile_ಮಾರ್ಗ(ರಚನೆ xkb_context *ctx)
 {
-    return strdup_safe(xkb_context_getenv(ctx, "XCOMPOSEFILE"));
+    ಹಿಂತಿರುಗಿ strdup_ಸುರಕ್ಷಿತ(xkb_context_getenv(ctx, "XCOMPOSEFILE"));
 }
 
-char *
-get_xdg_xcompose_file_path(struct xkb_context *ctx)
+ಅಕ್ಷರ *
+get_xdg_xcompose_file_ಮಾರ್ಗ(ರಚನೆ xkb_context *ctx)
 {
-    const char *xdg_config_home;
-    const char *home;
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *xdg_config_home;
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *home;
 
     xdg_config_home = xkb_context_getenv(ctx, "XDG_CONFIG_HOME");
-    if (!xdg_config_home || !is_absolute_path(xdg_config_home)) {
+    ಆದರೆ (!xdg_config_home || !is_absolute_ಮಾರ್ಗ(xdg_config_home)) {
         home = xkb_context_getenv(ctx, "HOME");
-        if (!home)
-            return NULL;
-        return asprintf_safe("%s/.config/XCompose", home);
+        ಆದರೆ (!home)
+            ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+        ಹಿಂತಿರುಗಿ asprintf_ಸುರಕ್ಷಿತ("%s/.config/XCompose", home);
     }
 
-    return asprintf_safe("%s/XCompose", xdg_config_home);
+    ಹಿಂತಿರುಗಿ asprintf_ಸುರಕ್ಷಿತ("%s/XCompose", xdg_config_home);
 }
 
-char *
-get_home_xcompose_file_path(struct xkb_context *ctx)
+ಅಕ್ಷರ *
+get_home_xcompose_file_ಮಾರ್ಗ(ರಚನೆ xkb_context *ctx)
 {
-    const char *home;
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *home;
 
     home = xkb_context_getenv(ctx, "HOME");
-    if (!home)
-        return NULL;
+    ಆದರೆ (!home)
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
-    return asprintf_safe("%s/.XCompose", home);
+    ಹಿಂತಿರುಗಿ asprintf_ಸುರಕ್ಷಿತ("%s/.XCompose", home);
 }
 
-char *
-get_locale_compose_file_path(struct xkb_context *ctx, const char *locale)
+ಅಕ್ಷರ *
+get_locale_compose_file_ಮಾರ್ಗ(ರಚನೆ xkb_context *ctx, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *locale)
 {
-    char *resolved;
-    char *path;
+    ಅಕ್ಷರ *resolved;
+    ಅಕ್ಷರ *ಮಾರ್ಗ;
 
     /*
      * WARNING: Random workaround ahead.
@@ -181,14 +181,14 @@ get_locale_compose_file_path(struct xkb_context *ctx, const char *locale)
      * is UTF-8 based, and since 99% of the time a C locale is really just
      * a misconfiguration for UTF-8, let's do the most helpful thing.
      */
-    static const char * const fallback = "en_US.UTF-8";
-    static const char * const registry = "compose.dir";
-    if (streq(locale, "C"))
+    ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ * ಸ್ಥಿರಾಂಕ fallback = "en_US.UTF-8";
+    ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ * ಸ್ಥಿರಾಂಕ registry = "compose.dir";
+    ಆದರೆ (streq(locale, "C"))
         locale = fallback;
 
-    resolved = resolve_name(ctx, registry, RIGHT_TO_LEFT, locale);
-    if (!resolved) {
-#if HAVE_NEWLOCALE
+    resolved = resolve_name(ctx, registry, ಬಲ_ಗಮ್ಯ_ಎಡ, locale);
+    ಆದರೆ (!resolved) {
+#ಆದರೆ HAVE_NEWLOCALE
         /*
          * There is no extension mechanism for X11 Compose locales.
          * Instead of failing, we just use `en_US.UTF-8` as a fallback because
@@ -197,42 +197,42 @@ get_locale_compose_file_path(struct xkb_context *ctx, const char *locale)
          * so that we can catch missing system locales and typos.
          */
         locale_t loc = newlocale(LC_ALL_MASK, locale, (locale_t) 0);
-        if (loc == (locale_t) 0) {
+        ಆದರೆ (loc == (locale_t) 0) {
             log_err(ctx, XKB_ERROR_INVALID_COMPOSE_LOCALE,
                     "No Compose file for locale \"%s\": "
                     "locale is either invalid or not installed\n", locale);
-            return NULL;
-        } else {
+            ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+        } ಇಲ್ಲದಿದ್ದರೆ {
             /*
              * The locale is legit but have no entry in the X11 Compose registry,
              * so use the `en_US.UTF-8` fallback.
              */
             freelocale(loc);
-            resolved = resolve_name(ctx, registry, RIGHT_TO_LEFT, fallback);
-            if (!resolved) {
+            resolved = resolve_name(ctx, registry, ಬಲ_ಗಮ್ಯ_ಎಡ, fallback);
+            ಆದರೆ (!resolved) {
                 log_err(ctx, XKB_ERROR_INVALID_COMPOSE_LOCALE,
                         "No Compose file for locale \"%s\": "
                         "failed to use fallback \"%s\"\n", locale, fallback);
-                return NULL;
-            } else {
+                ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+            } ಇಲ್ಲದಿದ್ದರೆ {
                 log_warn(ctx, XKB_ERROR_INVALID_COMPOSE_LOCALE,
                          "No Compose file for locale \"%s\": "
                          "using locale fallback \"%s\"\n", locale, fallback);
             }
         }
-#else
-        return NULL;
-#endif
+#ಇಲ್ಲದಿದ್ದರೆ
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+#ಆದರೆ_ಅಂತ್ಯ
     }
 
-    if (is_absolute_path(resolved)) {
-        path = resolved;
+    ಆದರೆ (is_absolute_ಮಾರ್ಗ(resolved)) {
+        ಮಾರ್ಗ = resolved;
     }
-    else {
-        const char *xlocaledir = get_xlocaledir_path(ctx);
-        path = asprintf_safe("%s/%s", xlocaledir, resolved);
-        free(resolved);
+    ಇಲ್ಲದಿದ್ದರೆ {
+        ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *xlocaledir = get_xlocaledir_ಮಾರ್ಗ(ctx);
+        ಮಾರ್ಗ = asprintf_ಸುರಕ್ಷಿತ("%s/%s", xlocaledir, resolved);
+        ಬಿಡುಗಡೆ(resolved);
     }
 
-    return path;
+    ಹಿಂತಿರುಗಿ ಮಾರ್ಗ;
 }

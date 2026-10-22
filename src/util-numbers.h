@@ -2,19 +2,19 @@
  * Copyright © 2025 Pierre Le Marre <dev@wismill.eu>
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#ಸೂಚನೆ once
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include <limits.h>
-#include <stdbool.h>
-#include <stdint.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
 
-#if defined(_MSC_VER)
+#ಆದರೆ defined(_MSC_VER)
 # include <intrin.h>
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "utils.h"
+#ಅನ್ತರ್ಭಾವ "utils.h"
 
 /*
  * Define various parsers to avoid the use of strto* -- it’s slower and accepts
@@ -26,24 +26,24 @@
  * the parsers will *always* stop on a NULL character.
  */
 
-#define MAKE_PARSE_DEC_TO(type, max)                         \
-static inline int                                            \
-parse_dec_to_##type(const char *s, size_t len, type (*out))  \
+#ವ್ಯಾಖ್ಯಾನಿಸು MAKE_PARSE_DEC_ಗಮ್ಯ(type, max)                         \
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ                                            \
+parse_dec_ಗಮ್ಯ##type(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s, ಗಾತ್ರ_t len, type (*ಹೊರಹೋಗು))  \
 {                                                            \
-    type result = 0;                                         \
-    size_t i;                                                \
-    for (i = 0;                                              \
-         i < len && (unsigned char)(s[i] - '0') < 10U &&     \
-         result <= (max) / 10 &&                             \
-         result * 10 <= (max) - (unsigned char) (s[i] - '0');\
+    type ಫಲಿತಾಂಶ = 0;                                         \
+    ಗಾತ್ರ_t i;                                                \
+    ಗಾಗಿ (i = 0;                                              \
+         i < len && (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)(s[i] - '0') < 10U &&     \
+         ಫಲಿತಾಂಶ <= (max) / 10 &&                             \
+         ಫಲಿತಾಂಶ * 10 <= (max) - (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ) (s[i] - '0');\
          i++) {                                              \
-        result = result * 10 + (type)(s[i] - '0');           \
+        ಫಲಿತಾಂಶ = ಫಲಿತಾಂಶ * 10 + (type)(s[i] - '0');           \
     }                                                        \
-    *out = result;                                           \
+    *ಹೊರಹೋಗು = ಫಲಿತಾಂಶ;                                           \
     /* Check if there is more to parse */                    \
     /* We can safely convert the length to int on success */ \
-    return (i >= len || (unsigned char)(s[i] - '0') >= 10U)  \
-           ? (int) i                                         \
+    ಹಿಂತಿರುಗಿ (i >= len || (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)(s[i] - '0') >= 10U)  \
+           ? (ಪೂರ್ಣಾಂಕ) i                                         \
            : -1;                                             \
 }
 
@@ -52,18 +52,18 @@ parse_dec_to_##type(const char *s, size_t len, type (*out))  \
  *
  * @returns -1 on error (overflow) or the count of characters parsed.
  */
-MAKE_PARSE_DEC_TO(uint32_t, UINT32_MAX)
+MAKE_PARSE_DEC_ಗಮ್ಯ(uint32_t, UINT32_MAX)
 
 /**
  * Parse a `uint64_t` in decimal format.
  *
  * @returns -1 on error (overflow) or the count of characters parsed.
  */
-MAKE_PARSE_DEC_TO(uint64_t, UINT64_MAX)
+MAKE_PARSE_DEC_ಗಮ್ಯ(uint64_t, UINT64_MAX)
 
-#undef MAKE_PARSE_DEC_TO
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು MAKE_PARSE_DEC_ಗಮ್ಯ
 
-static const unsigned char digits__[] = {
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ digits__[] = {
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
@@ -88,21 +88,21 @@ static const unsigned char digits__[] = {
     0xff, 0xff, 0xff, 0xff
 };
 
-#define MAKE_PARSE_HEX_TO(type, max)                           \
-static inline int                                              \
-parse_hex_to_##type(const char *s, size_t len, type (*out))    \
+#ವ್ಯಾಖ್ಯಾನಿಸು MAKE_PARSE_HEX_ಗಮ್ಯ(type, max)                           \
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ                                              \
+parse_hex_ಗಮ್ಯ##type(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s, ಗಾತ್ರ_t len, type (*ಹೊರಹೋಗು))    \
 {                                                              \
-    type result = 0;                                           \
-    size_t i = 0;                                              \
-    for (; i < len && digits__[(unsigned char) s[i]] < 16u &&  \
-         result <= (max) >> 4;                                 \
+    type ಫಲಿತಾಂಶ = 0;                                           \
+    ಗಾತ್ರ_t i = 0;                                              \
+    ಗಾಗಿ (; i < len && digits__[(ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ) s[i]] < 16u &&  \
+         ಫಲಿತಾಂಶ <= (max) >> 4;                                 \
          i++) {                                                \
-        result = result * 16 + digits__[(unsigned char) s[i]]; \
+        ಫಲಿತಾಂಶ = ಫಲಿತಾಂಶ * 16 + digits__[(ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ) s[i]]; \
     }                                                          \
-    *out = result;                                             \
+    *ಹೊರಹೋಗು = ಫಲಿತಾಂಶ;                                             \
     /* Check if there is more to parse */                      \
     /* We can safely convert the length to int on success */   \
-    return (i >= len || !is_xdigit(s[i])) ? (int) i : -1;      \
+    ಹಿಂತಿರುಗಿ (i >= len || !is_xdigit(s[i])) ? (ಪೂರ್ಣಾಂಕ) i : -1;      \
 }
 
 /**
@@ -110,115 +110,115 @@ parse_hex_to_##type(const char *s, size_t len, type (*out))    \
  *
  * @returns -1 on error (overflow) or the count of characters parsed.
  */
-MAKE_PARSE_HEX_TO(uint32_t, UINT32_MAX)
+MAKE_PARSE_HEX_ಗಮ್ಯ(uint32_t, UINT32_MAX)
 
 /**
  * Parse a `uint64_t` in hexdecimal format.
  *
  * @returns -1 on error (overflow) or the count of characters parsed.
  */
-MAKE_PARSE_HEX_TO(uint64_t, UINT64_MAX)
+MAKE_PARSE_HEX_ಗಮ್ಯ(uint64_t, UINT64_MAX)
 
-#undef MAKE_PARSE_HEX_TO
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು MAKE_PARSE_HEX_ಗಮ್ಯ
 
-static inline unsigned int
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ
 popcount32(uint32_t x)
 {
-#if defined(__GNUC__) || defined(__clang__)
-    return (unsigned int)__builtin_popcountl(x);
-#elif defined(_MSC_VER)
-    return __popcnt(x);
-#else
+#ಆದರೆ defined(__GNUC__) || defined(__clang__)
+    ಹಿಂತಿರುಗಿ (ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ)__builtin_popcountl(x);
+#ಅಥವಾಆದರೆ defined(_MSC_VER)
+    ಹಿಂತಿರುಗಿ __popcnt(x);
+#ಇಲ್ಲದಿದ್ದರೆ
     /* Fallback (Brian Kernighan’s method) */
-    unsigned int count = 0;
-    while (x) {
+    ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2 = 0;
+    ಆಗ (x) {
         x &= x - 1;
-        count++;
+        ಎಣಿಕೆ_2++;
     }
-    return count;
-#endif
+    ಹಿಂತಿರುಗಿ ಎಣಿಕೆ_2;
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
-static inline unsigned int
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ
 ctz32(uint32_t x)
 {
-    if (x == 0)
-        return 32;
+    ಆದರೆ (x == 0)
+        ಹಿಂತಿರುಗಿ 32;
 
-#if defined(__GNUC__) || defined(__clang__)
-    return _Generic(
+#ಆದರೆ defined(__GNUC__) || defined(__clang__)
+    ಹಿಂತಿರುಗಿ _Generic(
         x,
-        unsigned int: (unsigned int)__builtin_ctz(x),
-        unsigned long: (unsigned int)__builtin_ctzl(x),
-        unsigned long long: (unsigned int)__builtin_ctzll(x)
+        ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ: (ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ)__builtin_ctz(x),
+        ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ: (ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ)__builtin_ctzl(x),
+        ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ: (ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ)__builtin_ctzll(x)
     );
-#elif defined(_MSC_VER)
-    unsigned long index;
-    _BitScanForward(&index, x);
-    return (unsigned int)index;
-#else
+#ಅಥವಾಆದರೆ defined(_MSC_VER)
+    ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ಸೂಚ್ಯಂಕ;
+    ಬಿಟ್_ಪರಿಶೀಲನೆ_Forward(&ಸೂಚ್ಯಂಕ, x);
+    ಹಿಂತಿರುಗಿ (ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ)ಸೂಚ್ಯಂಕ;
+#ಇಲ್ಲದಿದ್ದರೆ
     /* Fallback: De Bruijn sequence algorithm for 32-bit integers */
-    static const unsigned int debruijn32[32] = {
+    ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ debruijn32[32] = {
         0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8,
         31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9
     };
-    return debruijn32[((x & -x) * UINT32_C(0x077cb531)) >> 27];
-#endif
+    ಹಿಂತಿರುಗಿ debruijn32[((x & -x) * UINT32_C(0x077cb531)) >> 27];
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
-static inline unsigned int
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ
 clz32(uint32_t x)
 {
-    if (x == 0)
-        return 32;
+    ಆದರೆ (x == 0)
+        ಹಿಂತಿರುಗಿ 32;
 
-#if defined(__GNUC__) || defined(__clang__)
-    return _Generic(
+#ಆದರೆ defined(__GNUC__) || defined(__clang__)
+    ಹಿಂತಿರುಗಿ _Generic(
         x,
-        unsigned int:
-            (unsigned int)__builtin_clz(x) -
-            (unsigned int)((sizeof(unsigned int) * CHAR_BIT) - 32),
-        unsigned long:
-            (unsigned int)__builtin_clzl(x) -
-            (unsigned int)((sizeof(unsigned long) * CHAR_BIT) - 32),
-        unsigned long long:
-            (unsigned int)__builtin_clzll(x) -
-            (unsigned int)((sizeof(unsigned long long) * CHAR_BIT) - 32)
+        ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ:
+            (ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ)__builtin_clz(x) -
+            (ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ)((ಗಾತ್ರ(ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ) * CHAR_BIT) - 32),
+        ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ:
+            (ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ)__builtin_clzl(x) -
+            (ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ)((ಗಾತ್ರ(ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ) * CHAR_BIT) - 32),
+        ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ:
+            (ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ)__builtin_clzll(x) -
+            (ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ)((ಗಾತ್ರ(ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ) * CHAR_BIT) - 32)
     );
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
     // Efficient binary search fallback for 32-bit integers
-    unsigned int count = 0;
-    if ((x & 0xffff0000) == 0) { count += 16; x <<= 16; }
-    if ((x & 0xff000000) == 0) { count += 8;  x <<= 8;  }
-    if ((x & 0xf0000000) == 0) { count += 4;  x <<= 4;  }
-    if ((x & 0xc0000000) == 0) { count += 2;  x <<= 2;  }
-    if ((x & 0x80000000) == 0) { count += 1; }
-    return count;
-#endif
+    ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2 = 0;
+    ಆದರೆ ((x & 0xffff0000) == 0) { ಎಣಿಕೆ_2 += 16; x <<= 16; }
+    ಆದರೆ ((x & 0xff000000) == 0) { ಎಣಿಕೆ_2 += 8;  x <<= 8;  }
+    ಆದರೆ ((x & 0xf0000000) == 0) { ಎಣಿಕೆ_2 += 4;  x <<= 4;  }
+    ಆದರೆ ((x & 0xc0000000) == 0) { ಎಣಿಕೆ_2 += 2;  x <<= 2;  }
+    ಆದರೆ ((x & 0x80000000) == 0) { ಎಣಿಕೆ_2 += 1; }
+    ಹಿಂತಿರುಗಿ ಎಣಿಕೆ_2;
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
-static inline unsigned int
-next_pow2(unsigned int x)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ
+ಮುಂದಿನ_pow2(ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ x)
 {
-#if defined(__GNUC__) || defined(__clang__)
-    if (x <= 1) return 1u;
-    return 1u << ((int)sizeof(unsigned) * CHAR_BIT - __builtin_clz(x - 1));
-#else
-    if (x <= 1u) return 1u;
+#ಆದರೆ defined(__GNUC__) || defined(__clang__)
+    ಆದರೆ (x <= 1) ಹಿಂತಿರುಗಿ 1u;
+    ಹಿಂತಿರುಗಿ 1u << ((ಪೂರ್ಣಾಂಕ)ಗಾತ್ರ(ಚಿಹ್ನೆರಹಿತ) * CHAR_BIT - __builtin_clz(x - 1));
+#ಇಲ್ಲದಿದ್ದರೆ
+    ಆದರೆ (x <= 1u) ಹಿಂತಿರುಗಿ 1u;
     x--;
-    for (unsigned s = 1; s < (unsigned)sizeof(x)*CHAR_BIT; s <<= 1)
+    ಗಾಗಿ (ಚಿಹ್ನೆರಹಿತ s = 1; s < (ಚಿಹ್ನೆರಹಿತ)ಗಾತ್ರ(x)*CHAR_BIT; s <<= 1)
         x |= x >> s;
-    return x + 1u;
-#endif
+    ಹಿಂತಿರುಗಿ x + 1u;
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
-static inline uint32_t
-keep_lowest_n_set_bits(uint32_t mask, unsigned int n) {
-    const uint32_t original = mask;
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ uint32_t
+keep_ಅತಿಕಡಿಮೆ_n_ಗಣ_ಬಿಟ್ಟುಗಳು(uint32_t ಮುಖವಾಡ, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ n) {
+    ಸ್ಥಿರಾಂಕ uint32_t original = ಮುಖವಾಡ;
 
     /* Clear the lowest set bit n times */
-    while (n-- && mask)
-        mask &= (mask - 1);
+    ಆಗ (n-- && ಮುಖವಾಡ)
+        ಮುಖವಾಡ &= (ಮುಖವಾಡ - 1);
 
-    return original ^ mask;
+    ಹಿಂತಿರುಗಿ original ^ ಮುಖವಾಡ;
 }

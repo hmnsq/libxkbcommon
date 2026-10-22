@@ -2,23 +2,23 @@
  * Copyright © 2024 Pierre Le Marre
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#ಸೂಚನೆ once
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
 
-#include "utils.h"
+#ಅನ್ತರ್ಭಾವ "utils.h"
 
-#ifdef _WIN32
-#define PATH_SEPARATOR '\\'
-#define ALT_PATH_SEPARATOR '/'
-#define is_path_separator(s) \
-    ((s) == PATH_SEPARATOR || (s) == ALT_PATH_SEPARATOR)
-#else
-#define PATH_SEPARATOR '/'
-#define is_path_separator(s) ((s) == PATH_SEPARATOR)
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ _WIN32
+#ವ್ಯಾಖ್ಯಾನಿಸು ಮಾರ್ಗ_SEPARATOR '\\'
+#ವ್ಯಾಖ್ಯಾನಿಸು ALT_ಮಾರ್ಗ_SEPARATOR '/'
+#ವ್ಯಾಖ್ಯಾನಿಸು is_ಮಾರ್ಗ_separator(s) \
+    ((s) == ಮಾರ್ಗ_SEPARATOR || (s) == ALT_ಮಾರ್ಗ_SEPARATOR)
+#ಇಲ್ಲದಿದ್ದರೆ
+#ವ್ಯಾಖ್ಯಾನಿಸು ಮಾರ್ಗ_SEPARATOR '/'
+#ವ್ಯಾಖ್ಯಾನಿಸು is_ಮಾರ್ಗ_separator(s) ((s) == ಮಾರ್ಗ_SEPARATOR)
+#ಆದರೆ_ಅಂತ್ಯ
 
-XKB_EXPORT_PRIVATE bool
-is_absolute_path(const char *path);
+XKB_EXPORT_ಖಾಸಗಿ bool
+is_absolute_ಮಾರ್ಗ(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ);

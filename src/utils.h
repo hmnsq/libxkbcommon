@@ -2,29 +2,29 @@
  * Copyright © 2012 Ran Benita <ran234@gmail.com>
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#ಸೂಚನೆ once
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include <assert.h>
-#include <errno.h>
-#include <inttypes.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#if HAVE_UNISTD_H
+#ಅನ್ತರ್ಭಾವ <assert.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <inttypes.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಆದರೆ HAVE_UNISTD_H
 # include <unistd.h>
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 /* Required on Windows where unistd.h doesn't exist */
 # define R_OK    4               /* Test for read permission.  */
 # define W_OK    2               /* Test for write permission.  */
 # define X_OK    1               /* Test for execute permission.  */
 # define F_OK    0               /* Test for existence.  */
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef _WIN32
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ _WIN32
 # include <direct.h>
 # include <io.h>
 # include <BaseTsd.h>
@@ -37,205 +37,205 @@
 # ifndef STDIN_FILENO
 #  define STDIN_FILENO 0
 # endif
-#ifdef _MSC_VER
-typedef SSIZE_T ssize_t;
-#endif
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ _MSC_VER
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ SSIZE_T ssize_t;
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ_ಅಂತ್ಯ
 
-static inline bool
-is_aligned(const void *restrict pointer, size_t byte_count)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+is_aligned(ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *ಸೀಮಿತ ಸೂಚಕ, ಗಾತ್ರ_t byte_ಎಣಿಕೆ)
 {
-    return (uintptr_t) pointer % byte_count == 0;
+    ಹಿಂತಿರುಗಿ (uintptr_t) ಸೂಚಕ % byte_ಎಣಿಕೆ == 0;
 }
 
 
-#define ARRAY_SIZE(arr) ((sizeof(arr) / sizeof(*(arr))))
+#ವ್ಯಾಖ್ಯಾನಿಸು ARRAY_ಗಾತ್ರ(arr) ((ಗಾತ್ರ(arr) / ಗಾತ್ರ(*(arr))))
 
-#define MIN(a, b) ((a) < (b) ? (a) : (b))
-#define MAX(a, b) ((a) > (b) ? (a) : (b))
+#ವ್ಯಾಖ್ಯಾನಿಸು MIN(a, b) ((a) < (b) ? (a) : (b))
+#ವ್ಯಾಖ್ಯಾನಿಸು MAX(a, b) ((a) > (b) ? (a) : (b))
 
 /* Round up @a so it's divisible by @b. */
-#define ROUNDUP(a, b) (((a) + (b) - 1) / (b) * (b))
+#ವ್ಯಾಖ್ಯಾನಿಸು ROUNDUP(a, b) (((a) + (b) - 1) / (b) * (b))
 
-#define STRINGIFY(x) #x
-#define STRINGIFY2(x) STRINGIFY(x)
-#define CONCAT(x,y) x ## y
-#define CONCAT2(x,y) CONCAT(x,y)
+#ವ್ಯಾಖ್ಯಾನಿಸು STRINGIFY(x) #x
+#ವ್ಯಾಖ್ಯಾನಿಸು STRINGIFY2(x) STRINGIFY(x)
+#ವ್ಯಾಖ್ಯಾನಿಸು CONCAT(x,y) x ## y
+#ವ್ಯಾಖ್ಯಾನಿಸು CONCAT2(x,y) CONCAT(x,y)
 
 /* Check if a Unicode code point is valid in a string literal */
-static inline bool
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
 is_valid_char(uint32_t cp)
 {
     /* Currently we only check for NULL character, but this could be extended
      * in the future to further ASCII control characters. */
-    return cp != 0;
+    ಹಿಂತಿರುಗಿ cp != 0;
 }
 
 /* Check if a Unicode code point is a surrogate.
  * Those code points are used only in UTF-16 encodings. */
-static inline bool
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
 is_surrogate(uint32_t cp)
 {
-    return (cp >= 0xd800 && cp <= 0xdfff);
+    ಹಿಂತಿರುಗಿ (cp >= 0xd800 && cp <= 0xdfff);
 }
 
-char
-to_lower(char c);
+ಅಕ್ಷರ
+ಗಮ್ಯ_ಅಧೋ(ಅಕ್ಷರ c);
 
-int
-istrcmp(const char *a, const char *b);
+ಪೂರ್ಣಾಂಕ
+istrcmp(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *a, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *b);
 
-int
-istrncmp(const char *a, const char *b, size_t n);
+ಪೂರ್ಣಾಂಕ
+istrncmp(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *a, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *b, ಗಾತ್ರ_t n);
 
-static inline bool
-streq(const char *s1, const char *s2)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+streq(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s1, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s2)
 {
-    assert(s1 && s2);
-    return strcmp(s1, s2) == 0;
+    ಪ್ರತಿಜ್ಞಾ(s1 && s2);
+    ಹಿಂತಿರುಗಿ strcmp(s1, s2) == 0;
 }
 
-static inline bool
-streq_null(const char *s1, const char *s2)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+streq_null(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s1, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s2)
 {
-    if (s1 == NULL || s2 == NULL)
-        return s1 == s2;
-    return streq(s1, s2);
+    ಆದರೆ (s1 == ಖಾಲಿ || s2 == ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ s1 == s2;
+    ಹಿಂತಿರುಗಿ streq(s1, s2);
 }
 
-static inline bool
-streq_not_null(const char *s1, const char *s2)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+streq_not_null(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s1, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s2)
 {
-    if (!s1 || !s2)
-        return false;
-    return streq(s1, s2);
+    ಆದರೆ (!s1 || !s2)
+        ಹಿಂತಿರುಗಿ false;
+    ಹಿಂತಿರುಗಿ streq(s1, s2);
 }
 
-static inline bool
-istreq(const char *s1, const char *s2)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+istreq(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s1, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s2)
 {
-    return istrcmp(s1, s2) == 0;
+    ಹಿಂತಿರುಗಿ istrcmp(s1, s2) == 0;
 }
 
-static inline bool
-istrneq(const char *s1, const char *s2, size_t len)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+istrneq(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s1, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s2, ಗಾತ್ರ_t len)
 {
-    return istrncmp(s1, s2, len) == 0;
+    ಹಿಂತಿರುಗಿ istrncmp(s1, s2, len) == 0;
 }
 
-#define istreq_prefix(s1, s2) istrneq(s1, s2, sizeof(s1) - 1)
+#ವ್ಯಾಖ್ಯಾನಿಸು istreq_ಪೂರ್ವಪ್ರತ್ಯಯ(s1, s2) istrneq(s1, s2, ಗಾತ್ರ(s1) - 1)
 
-static inline char *
-strcpy_safe(char *dest, size_t size, const char *src) {
-    if (!dest || !size || !src)
-        return NULL;
-    const char * const limit = dest + size - 1;
-    while (dest < limit && *src) {
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಅಕ್ಷರ *
+strcpy_ಸುರಕ್ಷಿತ(ಅಕ್ಷರ *dest, ಗಾತ್ರ_t ಗಾತ್ರ_2, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *src) {
+    ಆದರೆ (!dest || !ಗಾತ್ರ_2 || !src)
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ * ಸ್ಥಿರಾಂಕ ಎಲ್ಲೆ = dest + ಗಾತ್ರ_2 - 1;
+    ಆಗ (dest < ಎಲ್ಲೆ && *src) {
         *dest++ = *src++;
     }
     *dest = '\0';
-    return *src ? NULL : dest;
+    ಹಿಂತಿರುಗಿ *src ? ಖಾಲಿ : dest;
 }
 
-static inline char *
-strdup_safe(const char *s)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಅಕ್ಷರ *
+strdup_ಸುರಕ್ಷಿತ(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s)
 {
-    return s ? strdup(s) : NULL;
+    ಹಿಂತಿರುಗಿ s ? strdup(s) : ಖಾಲಿ;
 }
 
-static inline size_t
-strlen_safe(const char *s)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಗಾತ್ರ_t
+strlen_ಸುರಕ್ಷಿತ(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s)
 {
-    return s ? strlen(s) : 0;
+    ಹಿಂತಿರುಗಿ s ? ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(s) : 0;
 }
 
-static inline bool
-isempty(const char *s)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+isempty(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s)
 {
-    return s == NULL || s[0] == '\0';
+    ಹಿಂತಿರುಗಿ s == ಖಾಲಿ || s[0] == '\0';
 }
 
-static inline const char *
-strnull(const char *s)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *
+strnull(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s)
 {
-    return s ? s : "(null)";
+    ಹಿಂತಿರುಗಿ s ? s : "(null)";
 }
 
-static inline const char *
-strempty(const char *s)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *
+strempty(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s)
 {
-    return s ? s : "";
+    ಹಿಂತಿರುಗಿ s ? s : "";
 }
 
-static inline void *
-memdup(const void *mem, size_t nmemb, size_t size)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ *
+memdup(ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *mem, ಗಾತ್ರ_t nmemb, ಗಾತ್ರ_t ಗಾತ್ರ_2)
 {
-    void *p = calloc(nmemb, size);
-    if (p)
-        memcpy(p, mem, nmemb * size);
-    return p;
+    ಶೂನ್ಯ *p = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(nmemb, ಗಾತ್ರ_2);
+    ಆದರೆ (p)
+        ಸ್ಮರಣೆ_ನಕಲು(p, mem, nmemb * ಗಾತ್ರ_2);
+    ಹಿಂತಿರುಗಿ p;
 }
 
-#if !(defined(HAVE_STRNDUP) && HAVE_STRNDUP)
-static inline char *
-strndup(const char *s, size_t n)
+#ಆದರೆ !(defined(HAVE_STRNDUP) && HAVE_STRNDUP)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಅಕ್ಷರ *
+strndup(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s, ಗಾತ್ರ_t n)
 {
-    size_t slen = strlen(s);
-    size_t len = MIN(slen, n);
-    char *p = malloc(len + 1);
-    if (!p)
-        return NULL;
-    memcpy(p, s, len);
+    ಗಾತ್ರ_t slen = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(s);
+    ಗಾತ್ರ_t len = MIN(slen, n);
+    ಅಕ್ಷರ *p = ಸ್ಮರಣೆ_ಕೊಡು(len + 1);
+    ಆದರೆ (!p)
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+    ಸ್ಮರಣೆ_ನಕಲು(p, s, len);
     p[len] = '\0';
-    return p;
+    ಹಿಂತಿರುಗಿ p;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 /* ctype.h is locale-dependent and has other oddities. */
-static inline bool
-is_ascii(char ch)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+is_ascii(ಅಕ್ಷರ ch)
 {
-    return (ch & ~0x7f) == 0;
+    ಹಿಂತಿರುಗಿ (ch & ~0x7f) == 0;
 }
 
-static inline bool
-is_space(char ch)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+is_space(ಅಕ್ಷರ ch)
 {
-    return ch == ' ' || (ch >= '\t' && ch <= '\r');
+    ಹಿಂತಿರುಗಿ ch == ' ' || (ch >= '\t' && ch <= '\r');
 }
 
-static inline bool
-is_alpha(char ch)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+is_alpha(ಅಕ್ಷರ ch)
 {
-    return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
+    ಹಿಂತಿರುಗಿ (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
 }
 
-static inline bool
-is_digit(char ch)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+is_digit(ಅಕ್ಷರ ch)
 {
-    return ch >= '0' && ch <= '9';
+    ಹಿಂತಿರುಗಿ ch >= '0' && ch <= '9';
 }
 
-static inline bool
-is_alnum(char ch)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+is_alnum(ಅಕ್ಷರ ch)
 {
-    return is_alpha(ch) || is_digit(ch);
+    ಹಿಂತಿರುಗಿ is_alpha(ch) || is_digit(ch);
 }
 
-static inline bool
-is_xdigit(char ch)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+is_xdigit(ಅಕ್ಷರ ch)
 {
-    return
+    ಹಿಂತಿರುಗಿ
         (ch >= '0' && ch <= '9') ||
         (ch >= 'a' && ch <= 'f') ||
         (ch >= 'A' && ch <= 'F');
 }
 
-static inline bool
-is_graph(char ch)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+is_ನಕ್ಷೆ(ಅಕ್ಷರ ch)
 {
     /* See table in ascii(7). */
-    return ch >= '!' && ch <= '~';
+    ಹಿಂತಿರುಗಿ ch >= '!' && ch <= '~';
 }
 
 /*
@@ -243,191 +243,191 @@ is_graph(char ch)
  * Note: this is 1-based! It's more useful this way, and returns 0 when
  * mask is all 0s.
  */
-static inline unsigned int
-msb_pos(uint32_t mask)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ
+msb_pos(uint32_t ಮುಖವಾಡ)
 {
-    unsigned int pos = 0;
-    while (mask) {
+    ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ pos = 0;
+    ಆಗ (ಮುಖವಾಡ) {
         pos++;
-        mask >>= 1u;
+        ಮುಖವಾಡ >>= 1u;
     }
-    return pos;
+    ಹಿಂತಿರುಗಿ pos;
 }
 
-static inline int
-one_bit_set(uint32_t x)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ
+one_ಬಿಟ್_ಗಣ(uint32_t x)
 {
-    return x && (x & (x - 1)) == 0;
+    ಹಿಂತಿರುಗಿ x && (x & (x - 1)) == 0;
 }
 
 bool
-map_file(FILE *file, char **string_out, size_t *size_out);
+map_file(FILE *file, ಅಕ್ಷರ **string_ಹೊರಹೋಗು, ಗಾತ್ರ_t *ಗಾತ್ರ_ಹೊರಹೋಗು);
 
-void
-unmap_file(char *string, size_t size);
+ಶೂನ್ಯ
+unmap_file(ಅಕ್ಷರ *string, ಗಾತ್ರ_t ಗಾತ್ರ_2);
 
-static inline bool
-check_eaccess(const char *path, int mode)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+check_eaccess(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ, ಪೂರ್ಣಾಂಕ ಬಹುಲಕ)
 {
-#if defined(HAVE_EACCESS)
-    if (eaccess(path, mode) != 0)
-        return false;
-#elif defined(HAVE_EUIDACCESS)
-    if (euidaccess(path, mode) != 0)
-        return false;
-#endif
+#ಆದರೆ defined(HAVE_EACCESS)
+    ಆದರೆ (eaccess(ಮಾರ್ಗ, ಬಹುಲಕ) != 0)
+        ಹಿಂತಿರುಗಿ false;
+#ಅಥವಾಆದರೆ defined(HAVE_EUIDACCESS)
+    ಆದರೆ (euidaccess(ಮಾರ್ಗ, ಬಹುಲಕ) != 0)
+        ಹಿಂತಿರುಗಿ false;
+#ಆದರೆ_ಅಂತ್ಯ
 
-    return true;
+    ಹಿಂತಿರುಗಿ true;
 }
 
 FILE*
-open_file(const char *path);
+open_file(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ);
 
-#if defined(HAVE_SECURE_GETENV)
+#ಆದರೆ defined(HAVE_SECURE_GETENV)
 # define secure_getenv secure_getenv
-#elif defined(HAVE___SECURE_GETENV)
+#ಅಥವಾಆದರೆ defined(HAVE___SECURE_GETENV)
 # define secure_getenv __secure_getenv
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 # define secure_getenv getenv
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if defined(HAVE___BUILTIN_EXPECT)
+#ಆದರೆ defined(HAVE___BUILTIN_EXPECT)
 # define likely(x)   __builtin_expect(!!(x), 1)
 # define unlikely(x) __builtin_expect(!!(x), 0)
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 # define likely(x)   (x)
 # define unlikely(x) (x)
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 /* Compiler Attributes */
 
 /* Private functions only exposed in tests. */
-#ifdef ENABLE_PRIVATE_APIS
-# if defined(__GNUC__) && !defined(__CYGWIN__)
-#  define XKB_EXPORT_PRIVATE __attribute__((visibility("default")))
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ENABLE_ಖಾಸಗಿ_APIS
+# ಆದರೆ defined(__GNUC__) && !defined(__CYGWIN__)
+#  define XKB_EXPORT_ಖಾಸಗಿ __attribute__((visibility("default")))
 # elif defined(_WIN32)
-#  define XKB_EXPORT_PRIVATE __declspec(dllexport)
-# else
-#  define XKB_EXPORT_PRIVATE
+#  define XKB_EXPORT_ಖಾಸಗಿ __declspec(dllexport)
+# ಇಲ್ಲದಿದ್ದರೆ
+#  define XKB_EXPORT_ಖಾಸಗಿ
 # endif
-#else
-# define XKB_EXPORT_PRIVATE
-#endif
+#ಇಲ್ಲದಿದ್ದರೆ
+# define XKB_EXPORT_ಖಾಸಗಿ
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if defined(__MINGW32__)
+#ಆದರೆ defined(__MINGW32__)
 # define ATTR_PRINTF(x,y) __attribute__((__format__(__MINGW_PRINTF_FORMAT, x, y)))
-#elif defined(__GNUC__)
+#ಅಥವಾಆದರೆ defined(__GNUC__)
 # define ATTR_PRINTF(x,y) __attribute__((__format__(__printf__, x, y)))
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 # define ATTR_PRINTF(x,y)
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if defined(__GNUC__)
+#ಆದರೆ defined(__GNUC__)
 # define ATTR_NORETURN __attribute__((__noreturn__))
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 # define ATTR_NORETURN
-#endif /* GNUC  */
+#ಆದರೆ_ಅಂತ್ಯ /* GNUC  */
 
-#if defined(__GNUC__)
-#define ATTR_MALLOC  __attribute__((__malloc__))
-#else
-#define ATTR_MALLOC
-#endif
+#ಆದರೆ defined(__GNUC__)
+#ವ್ಯಾಖ್ಯಾನಿಸು ATTR_MALLOC  __attribute__((__malloc__))
+#ಇಲ್ಲದಿದ್ದರೆ
+#ವ್ಯಾಖ್ಯಾನಿಸು ATTR_MALLOC
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if defined(__GNUC__)
+#ಆದರೆ defined(__GNUC__)
 # define ATTR_NULL_SENTINEL __attribute__((__sentinel__))
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 # define ATTR_NULL_SENTINEL
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if defined(__GNUC__)
-#define ATTR_PACKED  __attribute__((__packed__))
-#else
-#define ATTR_PACKED
-#endif
+#ಆದರೆ defined(__GNUC__)
+#ವ್ಯಾಖ್ಯಾನಿಸು ATTR_PACKED  __attribute__((__packed__))
+#ಇಲ್ಲದಿದ್ದರೆ
+#ವ್ಯಾಖ್ಯಾನಿಸು ATTR_PACKED
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if defined(HAVE_ATTR_COUNTED_BY) && HAVE_ATTR_COUNTED_BY
-# define ATTR_COUNTED_BY(count) __attribute__((counted_by(count)))
-#else
-# define ATTR_COUNTED_BY(count)
-#endif
+#ಆದರೆ defined(HAVE_ATTR_COUNTED_BY) && HAVE_ATTR_COUNTED_BY
+# define ATTR_COUNTED_BY(ಎಣಿಕೆ_2) __attribute__((counted_by(ಎಣಿಕೆ_2)))
+#ಇಲ್ಲದಿದ್ದರೆ
+# define ATTR_COUNTED_BY(ಎಣಿಕೆ_2)
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
-XKB_EXPORT_PRIVATE int asprintf(char **strp, const char *fmt, ...) ATTR_PRINTF(2, 3);
-# if !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
+#ಆದರೆ !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
+XKB_EXPORT_ಖಾಸಗಿ ಪೂರ್ಣಾಂಕ asprintf(ಅಕ್ಷರ **strp, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt, ...) ATTR_PRINTF(2, 3);
+# ಆದರೆ !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
 #  include <stdarg.h>
-XKB_EXPORT_PRIVATE int vasprintf(char **strp, const char *fmt, va_list ap);
+XKB_EXPORT_ಖಾಸಗಿ ಪೂರ್ಣಾಂಕ vasprintf(ಅಕ್ಷರ **strp, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt, va_list ap);
 # endif /* !HAVE_VASPRINTF */
-#endif /* !HAVE_ASPRINTF */
+#ಆದರೆ_ಅಂತ್ಯ /* !HAVE_ASPRINTF */
 
-static inline bool
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
 ATTR_PRINTF(3, 4)
-snprintf_safe(char *buf, size_t sz, const char *format, ...)
+snprintf_ಸುರಕ್ಷಿತ(ಅಕ್ಷರ *buf, ಗಾತ್ರ_t sz, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *format, ...)
 {
     va_list ap;
-    int rc;
+    ಪೂರ್ಣಾಂಕ rc;
 
-    va_start(ap, format);
+    va_ಆರಂಭ(ap, format);
     rc = vsnprintf(buf, sz, format, ap);
-    va_end(ap);
+    va_ಕೊನೆ(ap);
 
-    return rc >= 0 && (size_t)rc < sz;
+    ಹಿಂತಿರುಗಿ rc >= 0 && (ಗಾತ್ರ_t)rc < sz;
 }
 
-static inline char *
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಅಕ್ಷರ *
 ATTR_PRINTF(1, 0)
-vasprintf_safe(const char *fmt, va_list args)
+vasprintf_ಸುರಕ್ಷಿತ(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt, va_list ವಾದಗಳು)
 {
-    char *str;
-    int len;
+    ಅಕ್ಷರ *str;
+    ಪೂರ್ಣಾಂಕ len;
 
-    len = vasprintf(&str, fmt, args);
+    len = vasprintf(&str, fmt, ವಾದಗಳು);
 
-    if (len == -1)
-        return NULL;
+    ಆದರೆ (len == -1)
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
-    return str;
+    ಹಿಂತಿರುಗಿ str;
 }
 
 /**
  * A version of asprintf that returns the allocated string or NULL on error.
  */
-static inline char *
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಅಕ್ಷರ *
 ATTR_PRINTF(1, 2)
-asprintf_safe(const char *fmt, ...)
+asprintf_ಸುರಕ್ಷಿತ(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt, ...)
 {
-    va_list args;
-    char *str;
+    va_list ವಾದಗಳು;
+    ಅಕ್ಷರ *str;
 
-    va_start(args, fmt);
-    str = vasprintf_safe(fmt, args);
-    va_end(args);
+    va_ಆರಂಭ(ವಾದಗಳು, fmt);
+    str = vasprintf_ಸುರಕ್ಷಿತ(fmt, ವಾದಗಳು);
+    va_ಕೊನೆ(ವಾದಗಳು);
 
-    return str;
+    ಹಿಂತಿರುಗಿ str;
 }
 
-#ifdef NDEBUG
-    #if defined(__GNUC__) || defined(__clang__)
-        #define PANIC_UNREACHABLE() __builtin_unreachable()
-    #elif defined(_MSC_VER)
-        #define PANIC_UNREACHABLE() __assume(0)
-    #else
-        #define PANIC_UNREACHABLE() abort()
-    #endif
-#else
-    #define PANIC_UNREACHABLE() \
-        do { \
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ NDEBUG
+    #ಆದರೆ defined(__GNUC__) || defined(__clang__)
+        #ವ್ಯಾಖ್ಯಾನಿಸು PANIC_UNREACHABLE() __builtin_unreachable()
+    #ಅಥವಾಆದರೆ defined(_MSC_VER)
+        #ವ್ಯಾಖ್ಯಾನಿಸು PANIC_UNREACHABLE() __assume(0)
+    #ಇಲ್ಲದಿದ್ದರೆ
+        #ವ್ಯಾಖ್ಯಾನಿಸು PANIC_UNREACHABLE() abort()
+    #ಆದರೆ_ಅಂತ್ಯ
+#ಇಲ್ಲದಿದ್ದರೆ
+    #ವ್ಯಾಖ್ಯಾನಿಸು PANIC_UNREACHABLE() \
+        ಮಾಡು { \
             fprintf(stderr, "Critical Error: Reached unreachable line in %s at %d\n", __FILE__, __LINE__); \
             abort(); \
-        } while (0)
-#endif
+        } ಆಗ (0)
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
+#ಆದರೆ defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
 #  define NOINLINE [[noinline]]
-#elif defined(__GNUC__) || defined(__clang__)
+#ಅಥವಾಆದರೆ defined(__GNUC__) || defined(__clang__)
 #  define NOINLINE __attribute__((noinline))
-#elif defined(_MSC_VER)
+#ಅಥವಾಆದರೆ defined(_MSC_VER)
 #  define NOINLINE __declspec(noinline)
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 #  define NOINLINE
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

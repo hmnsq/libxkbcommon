@@ -12,22 +12,22 @@
  * Author: Kazunori Nishihara    Fuji Xerox
  */
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include <errno.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#include "xkbcommon/xkbcommon-keysyms.h"
-#include "darray.h"
-#include "messages-codes.h"
-#include "utils.h"
-#include "constants.h"
-#include "table.h"
-#include "scanner-utils.h"
-#include "paths.h"
-#include "utf8.h"
-#include "parser.h"
-#include "keysym.h"
+#ಅನ್ತರ್ಭಾವ "xkbcommon/xkbcommon-keysyms.h"
+#ಅನ್ತರ್ಭಾವ "darray.h"
+#ಅನ್ತರ್ಭಾವ "messages-codes.h"
+#ಅನ್ತರ್ಭಾವ "utils.h"
+#ಅನ್ತರ್ಭಾವ "constants.h"
+#ಅನ್ತರ್ಭಾವ "table.h"
+#ಅನ್ತರ್ಭಾವ "scanner-utils.h"
+#ಅನ್ತರ್ಭಾವ "paths.h"
+#ಅನ್ತರ್ಭಾವ "utf8.h"
+#ಅನ್ತರ್ಭಾವ "parser.h"
+#ಅನ್ತರ್ಭಾವ "keysym.h"
 
 /*
  * Grammar adapted from libX11/modules/im/ximcp/imLcPrs.c.
@@ -61,9 +61,9 @@
  *          "/usr/share/X11/locale").
  */
 
-enum rules_token {
-    TOK_END_OF_FILE = 0,
-    TOK_END_OF_LINE,
+ಎಣಿಕೆ ನಿಯಮಗಳು_token {
+    TOK_ಕೊನೆ_ದ_FILE = 0,
+    TOK_ಕೊನೆ_ದ_ಸಾಲು,
     TOK_INCLUDE,
     TOK_INCLUDE_STRING,
     TOK_LHS_KEYSYM,
@@ -76,268 +76,268 @@ enum rules_token {
 };
 
 /* Values returned with some tokens, like yylval. */
-union lvalue {
-    struct {
+ಒಕ್ಕೂಟ lvalue {
+    ರಚನೆ {
         /* Still \0-terminated. */
-        const char *str;
-        size_t len;
+        ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *str;
+        ಗಾತ್ರ_t len;
     } string;
 };
 
-static enum rules_token
-lex(struct scanner *s, union lvalue *val)
+ಸ್ಥಿರ ಎಣಿಕೆ ನಿಯಮಗಳು_token
+lex(ರಚನೆ scanner *s, ಒಕ್ಕೂಟ lvalue *val)
 {
-skip_more_whitespace_and_comments:
+skip_ಇನ್ನಷ್ಟು_whitespace_and_comments:
     /* Skip spaces. */
-    while (is_space(scanner_peek(s)))
-        if (scanner_next(s) == '\n')
-            return TOK_END_OF_LINE;
+    ಆಗ (is_space(scanner_peek(s)))
+        ಆದರೆ (scanner_ಮುಂದಿನ(s) == '\n')
+            ಹಿಂತಿರುಗಿ TOK_ಕೊನೆ_ದ_ಸಾಲು;
 
     /* Skip comments. */
-    if (scanner_chr(s, '#')) {
-        scanner_skip_to_eol(s);
-        goto skip_more_whitespace_and_comments;
+    ಆದರೆ (scanner_chr(s, '#')) {
+        scanner_skip_ಗಮ್ಯ_eol(s);
+        ಹೋಗು skip_ಇನ್ನಷ್ಟು_whitespace_and_comments;
     }
 
     /* See if we're done. */
-    if (scanner_eof(s)) return TOK_END_OF_FILE;
+    ಆದರೆ (scanner_eof(s)) ಹಿಂತಿರುಗಿ TOK_ಕೊನೆ_ದ_FILE;
 
     /* New token. */
     s->token_pos = s->pos;
     s->buf_pos = 0;
 
     /* LHS Keysym. */
-    if (scanner_chr(s, '<')) {
-        while (scanner_peek(s) != '>' && !scanner_eol(s) && !scanner_eof(s))
-            scanner_buf_append(s, scanner_next(s));
-        if (!scanner_chr(s, '>')) {
+    ಆದರೆ (scanner_chr(s, '<')) {
+        ಆಗ (scanner_peek(s) != '>' && !scanner_eol(s) && !scanner_eof(s))
+            scanner_buf_append(s, scanner_ಮುಂದಿನ(s));
+        ಆದರೆ (!scanner_chr(s, '>')) {
             scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                         "unterminated keysym literal");
-            return TOK_ERROR;
+            ಹಿಂತಿರುಗಿ TOK_ERROR;
         }
-        if (!scanner_buf_append(s, '\0')) {
+        ಆದರೆ (!scanner_buf_append(s, '\0')) {
             scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                         "keysym literal is too long");
-            return TOK_ERROR;
+            ಹಿಂತಿರುಗಿ TOK_ERROR;
         }
         val->string.str = s->buf;
         val->string.len = s->buf_pos;
-        return TOK_LHS_KEYSYM;
+        ಹಿಂತಿರುಗಿ TOK_LHS_KEYSYM;
     }
 
     /* Colon. */
-    if (scanner_chr(s, ':'))
-        return TOK_COLON;
-    if (scanner_chr(s, '!'))
-        return TOK_BANG;
-    if (scanner_chr(s, '~'))
-        return TOK_TILDE;
+    ಆದರೆ (scanner_chr(s, ':'))
+        ಹಿಂತಿರುಗಿ TOK_COLON;
+    ಆದರೆ (scanner_chr(s, '!'))
+        ಹಿಂತಿರುಗಿ TOK_BANG;
+    ಆದರೆ (scanner_chr(s, '~'))
+        ಹಿಂತಿರುಗಿ TOK_TILDE;
 
     /* String literal. */
-    if (scanner_chr(s, '\"')) {
-        while (!scanner_eof(s) && !scanner_eol(s) && scanner_peek(s) != '\"') {
-            if (scanner_chr(s, '\\')) {
+    ಆದರೆ (scanner_chr(s, '\"')) {
+        ಆಗ (!scanner_eof(s) && !scanner_eol(s) && scanner_peek(s) != '\"') {
+            ಆದರೆ (scanner_chr(s, '\\')) {
                 uint8_t o;
-                size_t start_pos = s->pos;
-                if (scanner_chr(s, '\\')) {
+                ಗಾತ್ರ_t ಆರಂಭ_pos = s->pos;
+                ಆದರೆ (scanner_chr(s, '\\')) {
                     scanner_buf_append(s, '\\');
                 }
-                else if (scanner_chr(s, '"')) {
+                ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (scanner_chr(s, '"')) {
                     scanner_buf_append(s, '"');
                 }
-                else if (scanner_chr(s, 'x') || scanner_chr(s, 'X')) {
-                    if (scanner_hex(s, &o) && is_valid_char((uint32_t) o)) {
-                        scanner_buf_append(s, (char) o);
-                    } else {
+                ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (scanner_chr(s, 'x') || scanner_chr(s, 'X')) {
+                    ಆದರೆ (scanner_hex(s, &o) && is_valid_char((uint32_t) o)) {
+                        scanner_buf_append(s, (ಅಕ್ಷರ) o);
+                    } ಇಲ್ಲದಿದ್ದರೆ {
                         scanner_warn(s, XKB_WARNING_INVALID_ESCAPE_SEQUENCE,
                                      "illegal hexadecimal escape sequence "
                                      "\"%.*s\" in string literal",
-                                     (int) (s->pos - start_pos + 1),
-                                     &s->s[start_pos - 1]);
+                                     (ಪೂರ್ಣಾಂಕ) (s->pos - ಆರಂಭ_pos + 1),
+                                     &s->s[ಆರಂಭ_pos - 1]);
                     }
                 }
-                else if (scanner_oct(s, &o) && is_valid_char((uint32_t) o)) {
-                    scanner_buf_append(s, (char) o);
+                ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (scanner_oct(s, &o) && is_valid_char((uint32_t) o)) {
+                    scanner_buf_append(s, (ಅಕ್ಷರ) o);
                 }
-                else if (s->pos > start_pos) {
+                ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (s->pos > ಆರಂಭ_pos) {
                     scanner_warn(s, XKB_WARNING_INVALID_ESCAPE_SEQUENCE,
                                  "illegal octal escape sequence \"%.*s\" "
                                  "in string literal",
-                                 (int) (s->pos - start_pos + 1),
-                                 &s->s[start_pos - 1]);
+                                 (ಪೂರ್ಣಾಂಕ) (s->pos - ಆರಂಭ_pos + 1),
+                                 &s->s[ಆರಂಭ_pos - 1]);
                     /* Ignore. */
                 }
-                else {
+                ಇಲ್ಲದಿದ್ದರೆ {
                     scanner_warn(s, XKB_WARNING_UNKNOWN_CHAR_ESCAPE_SEQUENCE,
                                  "unknown escape sequence \"\\%c\" "
                                  "in string literal",
                                  scanner_peek(s));
                     /* Ignore. */
                 }
-            } else {
-                scanner_buf_append(s, scanner_next(s));
+            } ಇಲ್ಲದಿದ್ದರೆ {
+                scanner_buf_append(s, scanner_ಮುಂದಿನ(s));
             }
         }
-        if (!scanner_chr(s, '\"')) {
+        ಆದರೆ (!scanner_chr(s, '\"')) {
             scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                         "unterminated string literal");
-            return TOK_ERROR;
+            ಹಿಂತಿರುಗಿ TOK_ERROR;
         }
-        if (!scanner_buf_append(s, '\0')) {
+        ಆದರೆ (!scanner_buf_append(s, '\0')) {
             scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                         "string literal is too long");
-            return TOK_ERROR;
+            ಹಿಂತಿರುಗಿ TOK_ERROR;
         }
-        if (!is_valid_utf8(s->buf, s->buf_pos - 1)) {
+        ಆದರೆ (!is_valid_utf8(s->buf, s->buf_pos - 1)) {
             scanner_err(s, XKB_ERROR_INVALID_FILE_ENCODING,
                         "string literal is not a valid UTF-8 string");
-            return TOK_ERROR;
+            ಹಿಂತಿರುಗಿ TOK_ERROR;
         }
         val->string.str = s->buf;
         val->string.len = s->buf_pos;
-        return TOK_STRING;
+        ಹಿಂತಿರುಗಿ TOK_STRING;
     }
 
     /* Identifier or include. */
-    if (is_alpha(scanner_peek(s)) || scanner_peek(s) == '_') {
+    ಆದರೆ (is_alpha(scanner_peek(s)) || scanner_peek(s) == '_') {
         s->buf_pos = 0;
-        while (is_alnum(scanner_peek(s)) || scanner_peek(s) == '_')
-            scanner_buf_append(s, scanner_next(s));
-        if (!scanner_buf_append(s, '\0')) {
+        ಆಗ (is_alnum(scanner_peek(s)) || scanner_peek(s) == '_')
+            scanner_buf_append(s, scanner_ಮುಂದಿನ(s));
+        ಆದರೆ (!scanner_buf_append(s, '\0')) {
             scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                         "identifier is too long");
-            return TOK_ERROR;
+            ಹಿಂತಿರುಗಿ TOK_ERROR;
         }
 
-        if (streq(s->buf, "include"))
-            return TOK_INCLUDE;
+        ಆದರೆ (streq(s->buf, "include"))
+            ಹಿಂತಿರುಗಿ TOK_INCLUDE;
 
         val->string.str = s->buf;
         val->string.len = s->buf_pos;
-        return TOK_IDENT;
+        ಹಿಂತಿರುಗಿ TOK_IDENT;
     }
 
     scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                 "unrecognized token");
     /* Discard rest of line. */
-    scanner_skip_to_eol(s);
-    return TOK_ERROR;
+    scanner_skip_ಗಮ್ಯ_eol(s);
+    ಹಿಂತಿರುಗಿ TOK_ERROR;
 }
 
-static enum rules_token
-lex_include_string(struct scanner *s, struct xkb_compose_table *table,
-                   union lvalue *val_out)
+ಸ್ಥಿರ ಎಣಿಕೆ ನಿಯಮಗಳು_token
+lex_include_string(ರಚನೆ scanner *s, ರಚನೆ xkb_compose_ಕೋಷ್ಟಕ *ಕೋಷ್ಟಕ,
+                   ಒಕ್ಕೂಟ lvalue *val_ಹೊರಹೋಗು)
 {
-    while (is_space(scanner_peek(s)))
-        if (scanner_next(s) == '\n')
-            return TOK_END_OF_LINE;
+    ಆಗ (is_space(scanner_peek(s)))
+        ಆದರೆ (scanner_ಮುಂದಿನ(s) == '\n')
+            ಹಿಂತಿರುಗಿ TOK_ಕೊನೆ_ದ_ಸಾಲು;
 
     s->token_pos = s->pos;
     s->buf_pos = 0;
 
-    if (!scanner_chr(s, '\"')) {
+    ಆದರೆ (!scanner_chr(s, '\"')) {
         scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                     "include statement must be followed by a path");
-        return TOK_ERROR;
+        ಹಿಂತಿರುಗಿ TOK_ERROR;
     }
 
-    while (!scanner_eof(s) && !scanner_eol(s) && scanner_peek(s) != '\"') {
-        if (scanner_chr(s, '%')) {
-            if (scanner_chr(s, '%')) {
+    ಆಗ (!scanner_eof(s) && !scanner_eol(s) && scanner_peek(s) != '\"') {
+        ಆದರೆ (scanner_chr(s, '%')) {
+            ಆದರೆ (scanner_chr(s, '%')) {
                 scanner_buf_append(s, '%');
             }
-            else if (scanner_chr(s, 'H')) {
-                const char *home = xkb_context_getenv(table->ctx, "HOME");
-                if (!home) {
-                    scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
+            ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (scanner_chr(s, 'H')) {
+                ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *home = xkb_context_getenv(ಕೋಷ್ಟಕ->ctx, "HOME");
+                ಆದರೆ (!home) {
+                    scanner_err(s, XKB_LOG_ಸಂದೇಶ_NO_ID,
                                 "%%H was used in an include statement, "
                                 "but the HOME environment variable is not set");
-                    return TOK_ERROR;
+                    ಹಿಂತಿರುಗಿ TOK_ERROR;
                 }
-                if (!scanner_buf_appends(s, home)) {
-                    scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
+                ಆದರೆ (!scanner_buf_appends(s, home)) {
+                    scanner_err(s, XKB_LOG_ಸಂದೇಶ_NO_ID,
                                 "include path after expanding %%H is too long");
-                    return TOK_ERROR;
+                    ಹಿಂತಿರುಗಿ TOK_ERROR;
                 }
             }
-            else if (scanner_chr(s, 'L')) {
-                char *path = get_locale_compose_file_path(table->ctx, table->locale);
-                if (!path) {
+            ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (scanner_chr(s, 'L')) {
+                ಅಕ್ಷರ *ಮಾರ್ಗ = get_locale_compose_file_ಮಾರ್ಗ(ಕೋಷ್ಟಕ->ctx, ಕೋಷ್ಟಕ->locale);
+                ಆದರೆ (!ಮಾರ್ಗ) {
                     scanner_err(s, XKB_ERROR_INVALID_COMPOSE_LOCALE,
                                 "failed to expand %%L to the locale Compose file");
-                    return TOK_ERROR;
+                    ಹಿಂತಿರುಗಿ TOK_ERROR;
                 }
-                if (!scanner_buf_appends(s, path)) {
-                    free(path);
-                    scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
+                ಆದರೆ (!scanner_buf_appends(s, ಮಾರ್ಗ)) {
+                    ಬಿಡುಗಡೆ(ಮಾರ್ಗ);
+                    scanner_err(s, XKB_LOG_ಸಂದೇಶ_NO_ID,
                                 "include path after expanding %%L is too long");
-                    return TOK_ERROR;
+                    ಹಿಂತಿರುಗಿ TOK_ERROR;
                 }
-                free(path);
+                ಬಿಡುಗಡೆ(ಮಾರ್ಗ);
             }
-            else if (scanner_chr(s, 'S')) {
-                const char *xlocaledir = get_xlocaledir_path(table->ctx);
-                if (!scanner_buf_appends(s, xlocaledir)) {
-                    scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
+            ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (scanner_chr(s, 'S')) {
+                ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *xlocaledir = get_xlocaledir_ಮಾರ್ಗ(ಕೋಷ್ಟಕ->ctx);
+                ಆದರೆ (!scanner_buf_appends(s, xlocaledir)) {
+                    scanner_err(s, XKB_LOG_ಸಂದೇಶ_NO_ID,
                                 "include path after expanding %%S is too long");
-                    return TOK_ERROR;
+                    ಹಿಂತಿರುಗಿ TOK_ERROR;
                 }
             }
-            else {
+            ಇಲ್ಲದಿದ್ದರೆ {
                 scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                             "unknown %% format (%c) in include statement", scanner_peek(s));
-                return TOK_ERROR;
+                ಹಿಂತಿರುಗಿ TOK_ERROR;
             }
-        } else {
-            scanner_buf_append(s, scanner_next(s));
+        } ಇಲ್ಲದಿದ್ದರೆ {
+            scanner_buf_append(s, scanner_ಮುಂದಿನ(s));
         }
     }
-    if (!scanner_chr(s, '\"')) {
+    ಆದರೆ (!scanner_chr(s, '\"')) {
         scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                     "unterminated include statement");
-        return TOK_ERROR;
+        ಹಿಂತಿರುಗಿ TOK_ERROR;
     }
-    if (!scanner_buf_append(s, '\0')) {
-        scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
+    ಆದರೆ (!scanner_buf_append(s, '\0')) {
+        scanner_err(s, XKB_LOG_ಸಂದೇಶ_NO_ID,
                     "include path is too long");
-        return TOK_ERROR;
+        ಹಿಂತಿರುಗಿ TOK_ERROR;
     }
-    val_out->string.str = s->buf;
-    val_out->string.len = s->buf_pos;
-    return TOK_INCLUDE_STRING;
+    val_ಹೊರಹೋಗು->string.str = s->buf;
+    val_ಹೊರಹೋಗು->string.len = s->buf_pos;
+    ಹಿಂತಿರುಗಿ TOK_INCLUDE_STRING;
 }
 
-struct production {
+ರಚನೆ production {
     xkb_keysym_t lhs[COMPOSE_MAX_LHS_LEN];
-    unsigned int len;
+    ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ len;
     xkb_keysym_t keysym;
-    char string[XKB_COMPOSE_MAX_STRING_SIZE];
+    ಅಕ್ಷರ string[XKB_COMPOSE_MAX_STRING_ಗಾತ್ರ];
     /* At least one of these is true. */
     bool has_keysym;
     bool has_string;
 
     /* The matching is as follows: (active_mods & modmask) == mods. */
-    xkb_mod_mask_t modmask;
-    xkb_mod_mask_t mods;
+    xkb_mod_ಮುಖವಾಡ_t modmask;
+    xkb_mod_ಮುಖವಾಡ_t mods;
 };
 
-static void
-add_production(struct xkb_compose_table *table, struct scanner *s,
-               const struct production *production)
+ಸ್ಥಿರ ಶೂನ್ಯ
+ಕೂಡಿಸು_production(ರಚನೆ xkb_compose_ಕೋಷ್ಟಕ *ಕೋಷ್ಟಕ, ರಚನೆ scanner *s,
+               ಸ್ಥಿರಾಂಕ ರಚನೆ production *production)
 {
-    unsigned int lhs_pos = 0;
-    uint32_t curr = darray_size(table->nodes) == 1 ? 0 : 1;
-    uint32_t *pptr = NULL;
-    struct compose_node *node = NULL;
+    ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ lhs_pos = 0;
+    uint32_t curr = darray_ಗಾತ್ರ(ಕೋಷ್ಟಕ->nodes) == 1 ? 0 : 1;
+    uint32_t *pptr = ಖಾಲಿ;
+    ರಚನೆ compose_ಗಂಟು *ಗಂಟು = ಖಾಲಿ;
 
     /* Warn before potentially going over the limit, discard silently after. */
-    if (darray_size(table->nodes) + production->len + COMPOSE_MAX_LHS_LEN >
+    ಆದರೆ (darray_ಗಾತ್ರ(ಕೋಷ್ಟಕ->nodes) + production->len + COMPOSE_MAX_LHS_LEN >
         MAX_COMPOSE_NODES)
-        scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
+        scanner_warn(s, XKB_LOG_ಸಂದೇಶ_NO_ID,
                      "too many sequences for one Compose file; "
                      "will ignore further lines");
-    if (darray_size(table->nodes) + production->len >= MAX_COMPOSE_NODES)
-        return;
+    ಆದರೆ (darray_ಗಾತ್ರ(ಕೋಷ್ಟಕ->nodes) + production->len >= MAX_COMPOSE_NODES)
+        ಹಿಂತಿರುಗಿ;
 
     /*
      * Insert the sequence to the ternary search tree, creating new nodes as
@@ -347,125 +347,125 @@ add_production(struct xkb_compose_table *table, struct scanner *s,
      * long O(n) chains, which results in total O(n^2) parsing time. We should
      * ensure the tree is reasonably balanced somehow.
      */
-    while (true) {
-        const xkb_keysym_t keysym = production->lhs[lhs_pos];
-        const bool last = lhs_pos + 1 == production->len;
+    ಆಗ (true) {
+        ಸ್ಥಿರಾಂಕ xkb_keysym_t keysym = production->lhs[lhs_pos];
+        ಸ್ಥಿರಾಂಕ bool ಕೊನೆಯ = lhs_pos + 1 == production->len;
 
-        if (curr == 0) {
+        ಆದರೆ (curr == 0) {
             /*
              * Create a new node and update the parent pointer to it.
              * Update the pointer first because the append invalidates it.
              */
-            struct compose_node new = {
+            ರಚನೆ compose_ಗಂಟು new = {
                 .keysym = keysym,
                 .lokid = 0,
                 .hikid = 0,
-                .internal = {
+                .ಆಂತರಿಕ = {
                     .eqkid = 0,
-                    .is_leaf = false,
+                    .is_ಎಲೆ = false,
                 },
             };
-            curr = darray_size(table->nodes);
-            if (pptr != NULL) {
+            curr = darray_ಗಾತ್ರ(ಕೋಷ್ಟಕ->nodes);
+            ಆದರೆ (pptr != ಖಾಲಿ) {
                 *pptr = curr;
-                pptr = NULL;
+                pptr = ಖಾಲಿ;
             }
-            darray_append(table->nodes, new);
+            darray_append(ಕೋಷ್ಟಕ->nodes, new);
         }
 
-        node = &darray_item(table->nodes, curr);
+        ಗಂಟು = &darray_ಅಂಶ(ಕೋಷ್ಟಕ->nodes, curr);
 
-        if (keysym < node->keysym) {
-            pptr = &node->lokid;
-            curr = node->lokid;
-        } else if (keysym > node->keysym) {
-            pptr = &node->hikid;
-            curr = node->hikid;
-        } else if (!last) {
-            if (node->is_leaf) {
-                scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
+        ಆದರೆ (keysym < ಗಂಟು->keysym) {
+            pptr = &ಗಂಟು->lokid;
+            curr = ಗಂಟು->lokid;
+        } ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (keysym > ಗಂಟು->keysym) {
+            pptr = &ಗಂಟು->hikid;
+            curr = ಗಂಟು->hikid;
+        } ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (!ಕೊನೆಯ) {
+            ಆದರೆ (ಗಂಟು->is_ಎಲೆ) {
+                scanner_warn(s, XKB_LOG_ಸಂದೇಶ_NO_ID,
                              "a sequence already exists which is a prefix of "
                              "this sequence; overriding");
-                node->internal.eqkid = 0;
-                node->internal.is_leaf = false;
+                ಗಂಟು->ಆಂತರಿಕ.eqkid = 0;
+                ಗಂಟು->ಆಂತರಿಕ.is_ಎಲೆ = false;
             }
             lhs_pos++;
-            pptr = &node->internal.eqkid;
-            curr = node->internal.eqkid;
-        } else {
-            if (node->is_leaf) {
+            pptr = &ಗಂಟು->ಆಂತರಿಕ.eqkid;
+            curr = ಗಂಟು->ಆಂತರಿಕ.eqkid;
+        } ಇಲ್ಲದಿದ್ದರೆ {
+            ಆದರೆ (ಗಂಟು->is_ಎಲೆ) {
                 bool same_string =
-                    (node->leaf.utf8 == 0 && !production->has_string) ||
+                    (ಗಂಟು->ಎಲೆ.utf8 == 0 && !production->has_string) ||
                     (
-                        node->leaf.utf8 != 0 && production->has_string &&
-                        streq(&darray_item(table->utf8, node->leaf.utf8),
+                        ಗಂಟು->ಎಲೆ.utf8 != 0 && production->has_string &&
+                        streq(&darray_ಅಂಶ(ಕೋಷ್ಟಕ->utf8, ಗಂಟು->ಎಲೆ.utf8),
                               production->string)
                     );
                 bool same_keysym =
-                    (node->leaf.keysym == XKB_KEY_NoSymbol && !production->has_keysym) ||
+                    (ಗಂಟು->ಎಲೆ.keysym == XKB_ಕೀಲಿ_No_ಚಿಹ್ನೆ && !production->has_keysym) ||
                     (
-                        node->leaf.keysym != XKB_KEY_NoSymbol && production->has_keysym &&
-                        node->leaf.keysym == production->keysym
+                        ಗಂಟು->ಎಲೆ.keysym != XKB_ಕೀಲಿ_No_ಚಿಹ್ನೆ && production->has_keysym &&
+                        ಗಂಟು->ಎಲೆ.keysym == production->keysym
                     );
-                if (same_string && same_keysym) {
-                    scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
+                ಆದರೆ (same_string && same_keysym) {
+                    scanner_warn(s, XKB_LOG_ಸಂದೇಶ_NO_ID,
                                  "this compose sequence is a duplicate of another; "
                                  "skipping line");
-                    return;
-                } else {
-                    scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
+                    ಹಿಂತಿರುಗಿ;
+                } ಇಲ್ಲದಿದ್ದರೆ {
+                    scanner_warn(s, XKB_LOG_ಸಂದೇಶ_NO_ID,
                                  "this compose sequence already exists; overriding");
                 }
-            } else if (node->internal.eqkid != 0) {
-                scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
+            } ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ಗಂಟು->ಆಂತರಿಕ.eqkid != 0) {
+                scanner_warn(s, XKB_LOG_ಸಂದೇಶ_NO_ID,
                              "this compose sequence is a prefix of another; "
                              "overriding");
-                node->internal.eqkid = 0;
+                ಗಂಟು->ಆಂತರಿಕ.eqkid = 0;
             }
 
             /* NOTE: If there was a previous entry, its string may *not* be
              * reused in the UTF8 table and the corresponding memory is then
              * wasted! */
-            if (production->has_string) {
-                const size_t len = strlen(production->string);
-                if (node->is_leaf && node->leaf.utf8 &&
-                    len <= strlen(&darray_item(table->utf8, node->leaf.utf8))) {
+            ಆದರೆ (production->has_string) {
+                ಸ್ಥಿರಾಂಕ ಗಾತ್ರ_t len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(production->string);
+                ಆದರೆ (ಗಂಟು->is_ಎಲೆ && ಗಂಟು->ಎಲೆ.utf8 &&
+                    len <= ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(&darray_ಅಂಶ(ಕೋಷ್ಟಕ->utf8, ಗಂಟು->ಎಲೆ.utf8))) {
                     /* There is a previous entry with an overwritable string */
-                    memcpy(&darray_item(table->utf8, node->leaf.utf8),
+                    ಸ್ಮರಣೆ_ನಕಲು(&darray_ಅಂಶ(ಕೋಷ್ಟಕ->utf8, ಗಂಟು->ಎಲೆ.utf8),
                            production->string, len + 1);
-                } else {
+                } ಇಲ್ಲದಿದ್ದರೆ {
                     /* Cannot reuse string: allocate new one */
-                    node->leaf.utf8 = darray_size(table->utf8);
-                    darray_append_items(table->utf8, production->string,
-                                        (darray_size_t)strlen(production->string) + 1);
+                    ಗಂಟು->ಎಲೆ.utf8 = darray_ಗಾತ್ರ(ಕೋಷ್ಟಕ->utf8);
+                    darray_append_ವಸ್ತುಗಳು(ಕೋಷ್ಟಕ->utf8, production->string,
+                                        (darray_ಗಾತ್ರ_t)ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(production->string) + 1);
                 }
-            } else {
+            } ಇಲ್ಲದಿದ್ದರೆ {
                 /* Ensure we reset possible previous entry */
-                node->leaf.utf8 = 0;
+                ಗಂಟು->ಎಲೆ.utf8 = 0;
             }
 
-            if (production->has_keysym) {
-                node->leaf.keysym = production->keysym;
-            } else {
+            ಆದರೆ (production->has_keysym) {
+                ಗಂಟು->ಎಲೆ.keysym = production->keysym;
+            } ಇಲ್ಲದಿದ್ದರೆ {
                 /* Ensure we reset possible previous entry */
-                node->leaf.keysym = XKB_KEY_NoSymbol;
+                ಗಂಟು->ಎಲೆ.keysym = XKB_ಕೀಲಿ_No_ಚಿಹ್ನೆ;
             }
 
-            node->is_leaf = true;
-            return;
+            ಗಂಟು->is_ಎಲೆ = true;
+            ಹಿಂತಿರುಗಿ;
         }
     }
 }
 
 /* Should match resolve_modifier(). */
-#define ALL_MODS_MASK ((1u << 0) | (1u << 1) | (1u << 2) | (1u << 3))
+#ವ್ಯಾಖ್ಯಾನಿಸು ALL_MODS_ಮುಖವಾಡ ((1u << 0) | (1u << 1) | (1u << 2) | (1u << 3))
 
-static xkb_mod_index_t
-resolve_modifier(const char *name)
+ಸ್ಥಿರ xkb_mod_ಸೂಚ್ಯಂಕ_t
+resolve_modifier(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name)
 {
-    static const struct {
-        const char *name;
-        xkb_mod_index_t mod;
+    ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ರಚನೆ {
+        ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name;
+        xkb_mod_ಸೂಚ್ಯಂಕ_t mod;
     } mods[] = {
         { "Shift", 0 },
         { "Ctrl", 2 },
@@ -475,100 +475,100 @@ resolve_modifier(const char *name)
         { "Caps", 1 },
     };
 
-    for (unsigned int i = 0; i < ARRAY_SIZE(mods); i++)
-        if (streq(name, mods[i].name))
-            return mods[i].mod;
+    ಗಾಗಿ (ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ i = 0; i < ARRAY_ಗಾತ್ರ(mods); i++)
+        ಆದರೆ (streq(name, mods[i].name))
+            ಹಿಂತಿರುಗಿ mods[i].mod;
 
-    return XKB_MOD_INVALID;
+    ಹಿಂತಿರುಗಿ XKB_MOD_INVALID;
 }
 
 /* Parse a string literal ("...") and return the corresponding unescaped string,
  * or NULL if it fails.
  * This is aimed only for testing (un)escaping characters. */
-char *
-parse_string_literal(struct xkb_context *ctx, const char *string)
+ಅಕ್ಷರ *
+parse_string_literal(ರಚನೆ xkb_context *ctx, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *string)
 {
-    struct scanner s;
-    union lvalue val;
-    scanner_init(&s, ctx, string, strlen(string), "(unnamed)", NULL);
-    if (lex(&s, &val) == TOK_STRING) {
-        return strdup(val.string.str);
-    } else {
+    ರಚನೆ scanner s;
+    ಒಕ್ಕೂಟ lvalue val;
+    scanner_init(&s, ctx, string, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(string), "(unnamed)", ಖಾಲಿ);
+    ಆದರೆ (lex(&s, &val) == TOK_STRING) {
+        ಹಿಂತಿರುಗಿ strdup(val.string.str);
+    } ಇಲ್ಲದಿದ್ದರೆ {
         fprintf(stderr, "ERROR: %s\n", s.s);
-        return NULL;
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 }
 
-static bool
-parse(struct xkb_compose_table *table, struct scanner *s,
-      unsigned int include_depth);
+ಸ್ಥಿರ bool
+parse(ರಚನೆ xkb_compose_ಕೋಷ್ಟಕ *ಕೋಷ್ಟಕ, ರಚನೆ scanner *s,
+      ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ include_ಆಳ);
 
-static bool
-do_include(struct xkb_compose_table *table, struct scanner *s,
-           const char *path, unsigned int include_depth)
+ಸ್ಥಿರ bool
+do_include(ರಚನೆ xkb_compose_ಕೋಷ್ಟಕ *ಕೋಷ್ಟಕ, ರಚನೆ scanner *s,
+           ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ include_ಆಳ)
 {
     FILE *file;
     bool ok;
-    char *string;
-    size_t size;
-    struct scanner new_s;
+    ಅಕ್ಷರ *string;
+    ಗಾತ್ರ_t ಗಾತ್ರ_2;
+    ರಚನೆ scanner new_s;
 
-    if (include_depth >= COMPOSE_MAX_INCLUDE_DEPTH) {
-        scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
+    ಆದರೆ (include_ಆಳ >= COMPOSE_MAX_INCLUDE_ಆಳ) {
+        scanner_err(s, XKB_LOG_ಸಂದೇಶ_NO_ID,
                     "maximum include depth (%u) exceeded; maybe there is an include loop?",
-                    COMPOSE_MAX_INCLUDE_DEPTH);
-        return false;
+                    COMPOSE_MAX_INCLUDE_ಆಳ);
+        ಹಿಂತಿರುಗಿ false;
     }
 
-    file = fopen(path, "rb");
-    if (!file) {
-        scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
+    file = fopen(ಮಾರ್ಗ, "rb");
+    ಆದರೆ (!file) {
+        scanner_err(s, XKB_LOG_ಸಂದೇಶ_NO_ID,
                     "failed to open included Compose file \"%s\": %s",
-                    path, strerror(errno));
-        return false;
+                    ಮಾರ್ಗ, strerror(errno));
+        ಹಿಂತಿರುಗಿ false;
     }
 
-    ok = map_file(file, &string, &size);
-    if (!ok) {
-        scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
+    ok = map_file(file, &string, &ಗಾತ್ರ_2);
+    ಆದರೆ (!ok) {
+        scanner_err(s, XKB_LOG_ಸಂದೇಶ_NO_ID,
                     "failed to read included Compose file \"%s\": %s",
-                    path, strerror(errno));
-        goto err_file;
+                    ಮಾರ್ಗ, strerror(errno));
+        ಹೋಗು err_file;
     }
 
-    scanner_init(&new_s, table->ctx, string, size, path, s->priv);
+    scanner_init(&new_s, ಕೋಷ್ಟಕ->ctx, string, ಗಾತ್ರ_2, ಮಾರ್ಗ, s->priv);
 
-    ok = parse(table, &new_s, include_depth + 1);
-    if (!ok)
-        goto err_unmap;
+    ok = parse(ಕೋಷ್ಟಕ, &new_s, include_ಆಳ + 1);
+    ಆದರೆ (!ok)
+        ಹೋಗು err_unmap;
 
 err_unmap:
-    unmap_file(string, size);
+    unmap_file(string, ಗಾತ್ರ_2);
 err_file:
     fclose(file);
-    return ok;
+    ಹಿಂತಿರುಗಿ ok;
 }
 
 // NOLINTBEGIN(readability-trivial-switch)
-static bool
-parse(struct xkb_compose_table *table, struct scanner *s,
-      unsigned int include_depth)
+ಸ್ಥಿರ bool
+parse(ರಚನೆ xkb_compose_ಕೋಷ್ಟಕ *ಕೋಷ್ಟಕ, ರಚನೆ scanner *s,
+      ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ include_ಆಳ)
 {
-    enum rules_token tok;
-    union lvalue val;
+    ಎಣಿಕೆ ನಿಯಮಗಳು_token tok;
+    ಒಕ್ಕೂಟ lvalue val;
     xkb_keysym_t keysym;
-    struct production production;
-    enum { MAX_ERRORS = 10 };
-    int num_errors = 0;
+    ರಚನೆ production production;
+    ಎಣಿಕೆ { MAX_ERRORS = 10 };
+    ಪೂರ್ಣಾಂಕ ಅಂಕೆ_errors = 0;
 
     /* Basic detection of wrong character encoding.
        The first character relevant to the grammar must be ASCII:
        whitespace, include, modifier list, keysym, comment */
-    if (!scanner_check_supported_char_encoding(s)) {
+    ಆದರೆ (!scanner_check_supported_char_encoding(s)) {
         scanner_err(s, XKB_ERROR_INVALID_FILE_ENCODING,
                     "This could be a file encoding issue. "
                     "Supported file encodings are ASCII and UTF-8.");
-        goto fail;
+        ಹೋಗು fail;
     }
 
 initial:
@@ -581,241 +581,241 @@ initial:
     /* fallthrough */
 
 initial_eol:
-    switch (tok = lex(s, &val)) {
-    case TOK_END_OF_LINE:
-        goto initial_eol;
-    case TOK_END_OF_FILE:
-        goto finished;
-    case TOK_INCLUDE:
-        goto include;
-    default:
-        goto lhs_tok;
+    ಆಯ್ಕೆ (tok = lex(s, &val)) {
+    ಸ್ಥಿತಿ TOK_ಕೊನೆ_ದ_ಸಾಲು:
+        ಹೋಗು initial_eol;
+    ಸ್ಥಿತಿ TOK_ಕೊನೆ_ದ_FILE:
+        ಹೋಗು ಪೂರ್ಣಗೊಂಡ;
+    ಸ್ಥಿತಿ TOK_INCLUDE:
+        ಹೋಗು include;
+    ಪೂರ್ವನಿಯೋಜಿತ:
+        ಹೋಗು lhs_tok;
     }
 
 include:
-    switch (tok = lex_include_string(s, table, &val)) {
-    case TOK_INCLUDE_STRING:
-        goto include_eol;
-    default:
-        goto unexpected;
+    ಆಯ್ಕೆ (tok = lex_include_string(s, ಕೋಷ್ಟಕ, &val)) {
+    ಸ್ಥಿತಿ TOK_INCLUDE_STRING:
+        ಹೋಗು include_eol;
+    ಪೂರ್ವನಿಯೋಜಿತ:
+        ಹೋಗು unexpected;
     }
 
 include_eol:
-    switch (tok = lex(s, &val)) {
-    case TOK_END_OF_LINE:
-        if (!do_include(table, s, val.string.str, include_depth))
-            goto fail;
-        goto initial;
-    default:
-        goto unexpected;
+    ಆಯ್ಕೆ (tok = lex(s, &val)) {
+    ಸ್ಥಿತಿ TOK_ಕೊನೆ_ದ_ಸಾಲು:
+        ಆದರೆ (!do_include(ಕೋಷ್ಟಕ, s, val.string.str, include_ಆಳ))
+            ಹೋಗು fail;
+        ಹೋಗು initial;
+    ಪೂರ್ವನಿಯೋಜಿತ:
+        ಹೋಗು unexpected;
     }
 
 lhs:
     tok = lex(s, &val);
 lhs_tok:
-    switch (tok) {
-    case TOK_COLON:
-        if (production.len <= 0) {
-            scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
+    ಆಯ್ಕೆ (tok) {
+    ಸ್ಥಿತಿ TOK_COLON:
+        ಆದರೆ (production.len <= 0) {
+            scanner_warn(s, XKB_LOG_ಸಂದೇಶ_NO_ID,
                          "expected at least one keysym on left-hand side; "
                          "skipping line");
-            goto skip;
+            ಹೋಗು skip;
         }
-        goto rhs;
-    case TOK_IDENT:
-        if (streq(val.string.str, "None")) {
+        ಹೋಗು rhs;
+    ಸ್ಥಿತಿ TOK_IDENT:
+        ಆದರೆ (streq(val.string.str, "None")) {
             production.mods = 0;
-            production.modmask = ALL_MODS_MASK;
-            goto lhs_keysym;
+            production.modmask = ALL_MODS_ಮುಖವಾಡ;
+            ಹೋಗು lhs_keysym;
         }
-        goto lhs_mod_list_tok;
-    case TOK_TILDE:
-        goto lhs_mod_list_tok;
-    case TOK_BANG:
-        production.modmask = ALL_MODS_MASK;
-        goto lhs_mod_list;
-    default:
-        goto lhs_keysym_tok;
+        ಹೋಗು lhs_mod_list_tok;
+    ಸ್ಥಿತಿ TOK_TILDE:
+        ಹೋಗು lhs_mod_list_tok;
+    ಸ್ಥಿತಿ TOK_BANG:
+        production.modmask = ALL_MODS_ಮುಖವಾಡ;
+        ಹೋಗು lhs_mod_list;
+    ಪೂರ್ವನಿಯೋಜಿತ:
+        ಹೋಗು lhs_keysym_tok;
     }
 
 lhs_keysym:
     tok = lex(s, &val);
 lhs_keysym_tok:
-    switch (tok) {
-    case TOK_LHS_KEYSYM:
+    ಆಯ್ಕೆ (tok) {
+    ಸ್ಥಿತಿ TOK_LHS_KEYSYM:
         keysym = xkb_keysym_from_name(val.string.str, XKB_KEYSYM_NO_FLAGS);
-        if (keysym == XKB_KEY_NoSymbol) {
-            scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
+        ಆದರೆ (keysym == XKB_ಕೀಲಿ_No_ಚಿಹ್ನೆ) {
+            scanner_err(s, XKB_LOG_ಸಂದೇಶ_NO_ID,
                         "unrecognized keysym \"%s\" on left-hand side",
                         val.string.str);
-            goto error;
+            ಹೋಗು error;
         }
         check_deprecated_keysyms(scanner_warn, s, s->ctx,
                                  keysym, val.string.str, val.string.str, "%s", "");
-        if (production.len + 1 > COMPOSE_MAX_LHS_LEN) {
+        ಆದರೆ (production.len + 1 > COMPOSE_MAX_LHS_LEN) {
             scanner_warn(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                          "too many keysyms (%u) on left-hand side; skipping line",
                          COMPOSE_MAX_LHS_LEN + 1);
-            goto skip;
+            ಹೋಗು skip;
         }
         production.lhs[production.len++] = keysym;
         production.mods = 0;
         production.modmask = 0;
-        goto lhs;
-    default:
-        goto unexpected;
+        ಹೋಗು lhs;
+    ಪೂರ್ವನಿಯೋಜಿತ:
+        ಹೋಗು unexpected;
     }
 
 lhs_mod_list:
     tok = lex(s, &val);
 lhs_mod_list_tok: {
         bool tilde = false;
-        xkb_mod_index_t mod;
+        xkb_mod_ಸೂಚ್ಯಂಕ_t mod;
 
-        if (tok != TOK_TILDE && tok != TOK_IDENT)
-            goto lhs_keysym_tok;
+        ಆದರೆ (tok != TOK_TILDE && tok != TOK_IDENT)
+            ಹೋಗು lhs_keysym_tok;
 
-        if (tok == TOK_TILDE) {
+        ಆದರೆ (tok == TOK_TILDE) {
             tilde = true;
             tok = lex(s, &val);
         }
 
-        if (tok != TOK_IDENT)
-            goto unexpected;
+        ಆದರೆ (tok != TOK_IDENT)
+            ಹೋಗು unexpected;
 
         mod = resolve_modifier(val.string.str);
-        if (mod == XKB_MOD_INVALID) {
+        ಆದರೆ (mod == XKB_MOD_INVALID) {
             scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                         "unrecognized modifier \"%s\"",
                         val.string.str);
-            goto error;
+            ಹೋಗು error;
         }
 
         production.modmask |= UINT32_C(1) << mod;
-        if (tilde)
+        ಆದರೆ (tilde)
             production.mods &= ~(UINT32_C(1) << mod);
-        else
+        ಇಲ್ಲದಿದ್ದರೆ
             production.mods |= UINT32_C(1) << mod;
 
-        goto lhs_mod_list;
+        ಹೋಗು lhs_mod_list;
     }
 
 rhs:
-    switch (tok = lex(s, &val)) {
-    case TOK_STRING:
-        if (production.has_string) {
-            scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
+    ಆಯ್ಕೆ (tok = lex(s, &val)) {
+    ಸ್ಥಿತಿ TOK_STRING:
+        ಆದರೆ (production.has_string) {
+            scanner_warn(s, XKB_LOG_ಸಂದೇಶ_NO_ID,
                          "right-hand side can have at most one string; "
                          "skipping line");
-            goto skip;
+            ಹೋಗು skip;
         }
-        if (val.string.len <= 0) {
-            scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
+        ಆದರೆ (val.string.len <= 0) {
+            scanner_warn(s, XKB_LOG_ಸಂದೇಶ_NO_ID,
                          "right-hand side string must not be empty; "
                          "skipping line");
-            goto skip;
+            ಹೋಗು skip;
         }
-        if (val.string.len > sizeof(production.string)) {
-            scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
+        ಆದರೆ (val.string.len > ಗಾತ್ರ(production.string)) {
+            scanner_warn(s, XKB_LOG_ಸಂದೇಶ_NO_ID,
                          "right-hand side string is too long: "
                          "expected max: %zu, got: %zu; skipping line",
-                         sizeof(production.string) - 1,
+                         ಗಾತ್ರ(production.string) - 1,
                          val.string.len - 1);
-            goto skip;
+            ಹೋಗು skip;
         }
-        memcpy(production.string, val.string.str, val.string.len);
+        ಸ್ಮರಣೆ_ನಕಲು(production.string, val.string.str, val.string.len);
         production.has_string = true;
-        goto rhs;
-    case TOK_IDENT:
+        ಹೋಗು rhs;
+    ಸ್ಥಿತಿ TOK_IDENT:
         keysym = xkb_keysym_from_name(val.string.str, XKB_KEYSYM_NO_FLAGS);
-        if (keysym == XKB_KEY_NoSymbol) {
-            scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
+        ಆದರೆ (keysym == XKB_ಕೀಲಿ_No_ಚಿಹ್ನೆ) {
+            scanner_err(s, XKB_LOG_ಸಂದೇಶ_NO_ID,
                         "unrecognized keysym \"%s\" on right-hand side",
                         val.string.str);
-            goto error;
+            ಹೋಗು error;
         }
         check_deprecated_keysyms(scanner_warn, s, s->ctx,
                                  keysym, val.string.str, val.string.str, "%s", "");
-        if (production.has_keysym) {
+        ಆದರೆ (production.has_keysym) {
             scanner_warn(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                          "right-hand side can have at most one keysym; "
                          "skipping line");
-            goto skip;
+            ಹೋಗು skip;
         }
         production.keysym = keysym;
         production.has_keysym = true;
         /* fallthrough */
-    case TOK_END_OF_LINE:
-        if (!production.has_string && !production.has_keysym) {
+    ಸ್ಥಿತಿ TOK_ಕೊನೆ_ದ_ಸಾಲು:
+        ಆದರೆ (!production.has_string && !production.has_keysym) {
             scanner_warn(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                          "right-hand side must have at least one of string "
                          "or keysym; skipping line");
-            goto skip;
+            ಹೋಗು skip;
         }
-        add_production(table, s, &production);
-        goto initial;
-    default:
-        goto unexpected;
+        ಕೂಡಿಸು_production(ಕೋಷ್ಟಕ, s, &production);
+        ಹೋಗು initial;
+    ಪೂರ್ವನಿಯೋಜಿತ:
+        ಹೋಗು unexpected;
     }
 
 unexpected:
-    if (tok != TOK_ERROR)
+    ಆದರೆ (tok != TOK_ERROR)
         scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                     "unexpected token");
 error:
-    num_errors++;
-    if (num_errors <= MAX_ERRORS)
-        goto skip;
+    ಅಂಕೆ_errors++;
+    ಆದರೆ (ಅಂಕೆ_errors <= MAX_ERRORS)
+        ಹೋಗು skip;
 
-    scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
+    scanner_err(s, XKB_LOG_ಸಂದೇಶ_NO_ID,
                 "too many errors");
-    goto fail;
+    ಹೋಗು fail;
 
 fail:
-    scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
+    scanner_err(s, XKB_LOG_ಸಂದೇಶ_NO_ID,
                 "failed to parse file");
-    return false;
+    ಹಿಂತಿರುಗಿ false;
 
 skip:
-    while (tok != TOK_END_OF_LINE && tok != TOK_END_OF_FILE)
+    ಆಗ (tok != TOK_ಕೊನೆ_ದ_ಸಾಲು && tok != TOK_ಕೊನೆ_ದ_FILE)
         tok = lex(s, &val);
-    goto initial;
+    ಹೋಗು initial;
 
-finished:
-    return true;
+ಪೂರ್ಣಗೊಂಡ:
+    ಹಿಂತಿರುಗಿ true;
 }
 // NOLINTEND(readability-trivial-switch)
 
 bool
-parse_string(struct xkb_compose_table *table, const char *string, size_t len,
-             const char *file_name)
+parse_string(ರಚನೆ xkb_compose_ಕೋಷ್ಟಕ *ಕೋಷ್ಟಕ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *string, ಗಾತ್ರ_t len,
+             ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *file_name)
 {
-    struct scanner s;
-    scanner_init(&s, table->ctx, string, len, file_name, NULL);
-    if (!parse(table, &s, 0))
-        return false;
+    ರಚನೆ scanner s;
+    scanner_init(&s, ಕೋಷ್ಟಕ->ctx, string, len, file_name, ಖಾಲಿ);
+    ಆದರೆ (!parse(ಕೋಷ್ಟಕ, &s, 0))
+        ಹಿಂತಿರುಗಿ false;
     /* Maybe the allocator can use the excess space. */
-    darray_shrink(table->nodes);
-    darray_shrink(table->utf8);
-    return true;
+    darray_shrink(ಕೋಷ್ಟಕ->nodes);
+    darray_shrink(ಕೋಷ್ಟಕ->utf8);
+    ಹಿಂತಿರುಗಿ true;
 }
 
 bool
-parse_file(struct xkb_compose_table *table, FILE *file, const char *file_name)
+parse_file(ರಚನೆ xkb_compose_ಕೋಷ್ಟಕ *ಕೋಷ್ಟಕ, FILE *file, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *file_name)
 {
     bool ok;
-    char *string;
-    size_t size;
+    ಅಕ್ಷರ *string;
+    ಗಾತ್ರ_t ಗಾತ್ರ_2;
 
-    ok = map_file(file, &string, &size);
-    if (!ok) {
-        log_err(table->ctx, XKB_LOG_MESSAGE_NO_ID,
+    ok = map_file(file, &string, &ಗಾತ್ರ_2);
+    ಆದರೆ (!ok) {
+        log_err(ಕೋಷ್ಟಕ->ctx, XKB_LOG_ಸಂದೇಶ_NO_ID,
                 "Couldn't read Compose file %s: %s\n",
                 file_name, strerror(errno));
-        return false;
+        ಹಿಂತಿರುಗಿ false;
     }
 
-    ok = parse_string(table, string, size, file_name);
-    unmap_file(string, size);
-    return ok;
+    ok = parse_string(ಕೋಷ್ಟಕ, string, ಗಾತ್ರ_2, file_name);
+    unmap_file(string, ಗಾತ್ರ_2);
+    ಹಿಂತಿರುಗಿ ok;
 }

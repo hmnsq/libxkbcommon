@@ -6,205 +6,205 @@
  * Author: Daniel Stone <daniel@fooishbar.org>
  */
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "atom.h"
-#include "darray.h"
-#include "context.h"
-#include "rmlvo.h"
-#include "utils.h"
+#ಅನ್ತರ್ಭಾವ "xkbcommon/xkbcommon.h"
+#ಅನ್ತರ್ಭಾವ "atom.h"
+#ಅನ್ತರ್ಭಾವ "darray.h"
+#ಅನ್ತರ್ಭಾವ "context.h"
+#ಅನ್ತರ್ಭಾವ "rmlvo.h"
+#ಅನ್ತರ್ಭಾವ "utils.h"
 
-char *
-xkb_context_getenv(struct xkb_context *ctx, const char *name)
+ಅಕ್ಷರ *
+xkb_context_getenv(ರಚನೆ xkb_context *ctx, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name)
 {
-    if (ctx->use_secure_getenv) {
-        return secure_getenv(name);
-    } else {
-        return getenv(name);
+    ಆದರೆ (ctx->use_secure_getenv) {
+        ಹಿಂತಿರುಗಿ secure_getenv(name);
+    } ಇಲ್ಲದಿದ್ದರೆ {
+        ಹಿಂತಿರುಗಿ getenv(name);
     }
 }
 
 bool
-xkb_context_init_includes(struct xkb_context *ctx)
+xkb_context_init_includes(ರಚನೆ xkb_context *ctx)
 {
-    if (ctx->pending_default_includes) {
-        if (darray_empty(ctx->failed_includes)) {
-            if (!xkb_context_include_path_append_default(ctx)) {
-                log_err(ctx, XKB_ERROR_NO_VALID_DEFAULT_INCLUDE_PATH,
+    ಆದರೆ (ctx->pending_default_includes) {
+        ಆದರೆ (darray_ಖಾಲಿಗಳು(ctx->failed_includes)) {
+            ಆದರೆ (!xkb_context_include_ಮಾರ್ಗ_append_default(ctx)) {
+                log_err(ctx, XKB_ERROR_NO_VALID_DEFAULT_INCLUDE_ಮಾರ್ಗ,
                         "Failed to add any default include path "
                         "(system path: %s)\n",
-                        xkb_context_include_path_get_system_path(ctx));
-                return false;
+                        xkb_context_include_ಮಾರ್ಗ_get_system_ಮಾರ್ಗ(ctx));
+                ಹಿಂತಿರುಗಿ false;
             }
             ctx->pending_default_includes = false;
-        } else {
+        } ಇಲ್ಲದಿದ್ದರೆ {
             /*
              * If there are failed includes then we already tried to load
              * default include paths, so avoid further attempts.
              */
-            return false;
+            ಹಿಂತಿರುಗಿ false;
         }
     }
-    return true;
+    ಹಿಂತಿರುಗಿ true;
 }
 
-darray_size_t
-xkb_context_num_failed_include_paths(struct xkb_context *ctx)
+darray_ಗಾತ್ರ_t
+xkb_context_ಅಂಕೆ_failed_include_paths(ರಚನೆ xkb_context *ctx)
 {
-    return (xkb_context_init_includes(ctx))
-        ? darray_size(ctx->failed_includes)
+    ಹಿಂತಿರುಗಿ (xkb_context_init_includes(ctx))
+        ? darray_ಗಾತ್ರ(ctx->failed_includes)
         : 0;
 }
 
-const char *
-xkb_context_failed_include_path_get(struct xkb_context *ctx,
-                                    darray_size_t idx)
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *
+xkb_context_failed_include_ಮಾರ್ಗ_get(ರಚನೆ xkb_context *ctx,
+                                    darray_ಗಾತ್ರ_t idx)
 {
-    if (idx >= xkb_context_num_failed_include_paths(ctx))
-        return NULL;
+    ಆದರೆ (idx >= xkb_context_ಅಂಕೆ_failed_include_paths(ctx))
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
-    return darray_item(ctx->failed_includes, idx);
+    ಹಿಂತಿರುಗಿ darray_ಅಂಶ(ctx->failed_includes, idx);
 }
 
-darray_size_t
-xkb_atom_table_size(struct xkb_context *ctx)
+darray_ಗಾತ್ರ_t
+xkb_atom_ಕೋಷ್ಟಕ_ಗಾತ್ರ(ರಚನೆ xkb_context *ctx)
 {
-    return atom_table_size(ctx->atom_table);
-}
-
-xkb_atom_t
-xkb_atom_lookup(struct xkb_context *ctx, const char *string)
-{
-    return atom_intern(ctx->atom_table, string, strlen(string), false);
+    ಹಿಂತಿರುಗಿ atom_ಕೋಷ್ಟಕ_ಗಾತ್ರ(ctx->atom_ಕೋಷ್ಟಕ);
 }
 
 xkb_atom_t
-xkb_atom_intern(struct xkb_context *ctx, const char *string, size_t len)
+xkb_atom_lookup(ರಚನೆ xkb_context *ctx, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *string)
 {
-    return atom_intern(ctx->atom_table, string, len, true);
+    ಹಿಂತಿರುಗಿ atom_intern(ctx->atom_ಕೋಷ್ಟಕ, string, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(string), false);
 }
 
-const char *
-xkb_atom_text(struct xkb_context *ctx, xkb_atom_t atom)
+xkb_atom_t
+xkb_atom_intern(ರಚನೆ xkb_context *ctx, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *string, ಗಾತ್ರ_t len)
 {
-    return atom_text(ctx->atom_table, atom);
+    ಹಿಂತಿರುಗಿ atom_intern(ctx->atom_ಕೋಷ್ಟಕ, string, len, true);
 }
 
-void
-xkb_log(struct xkb_context *ctx, enum xkb_log_level level, int verbosity,
-        const char *fmt, ...)
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *
+xkb_atom_ಪಠ್ಯ(ರಚನೆ xkb_context *ctx, xkb_atom_t atom)
 {
-    va_list args;
-
-    if (ctx->log_level < level || ctx->log_verbosity < verbosity)
-        return;
-
-    va_start(args, fmt);
-    ctx->log_fn(ctx, level, fmt, args);
-    va_end(args);
+    ಹಿಂತಿರುಗಿ atom_ಪಠ್ಯ(ctx->atom_ಕೋಷ್ಟಕ, atom);
 }
 
-char *
-xkb_context_get_buffer(struct xkb_context *ctx, size_t size)
+ಶೂನ್ಯ
+xkb_log(ರಚನೆ xkb_context *ctx, ಎಣಿಕೆ xkb_log_level level, ಪೂರ್ಣಾಂಕ verbosity,
+        ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt, ...)
 {
-    char *rtrn;
+    va_list ವಾದಗಳು;
 
-    if (size >= sizeof(ctx->text_buffer))
-        return NULL;
+    ಆದರೆ (ctx->log_level < level || ctx->log_verbosity < verbosity)
+        ಹಿಂತಿರುಗಿ;
 
-    if (sizeof(ctx->text_buffer) - ctx->text_next <= size)
-        ctx->text_next = 0;
-
-    rtrn = &ctx->text_buffer[ctx->text_next];
-    ctx->text_next += size;
-
-    return rtrn;
+    va_ಆರಂಭ(ವಾದಗಳು, fmt);
+    ctx->log_fn(ctx, level, fmt, ವಾದಗಳು);
+    va_ಕೊನೆ(ವಾದಗಳು);
 }
 
-static const char *
-xkb_context_get_default_rules(struct xkb_context *ctx)
+ಅಕ್ಷರ *
+xkb_context_get_ಬಫರ್(ರಚನೆ xkb_context *ctx, ಗಾತ್ರ_t ಗಾತ್ರ_2)
 {
-    const char *env = NULL;
+    ಅಕ್ಷರ *rtrn;
 
-    if (ctx->use_environment_names)
+    ಆದರೆ (ಗಾತ್ರ_2 >= ಗಾತ್ರ(ctx->ಪಠ್ಯ_ಬಫರ್))
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+
+    ಆದರೆ (ಗಾತ್ರ(ctx->ಪಠ್ಯ_ಬಫರ್) - ctx->ಪಠ್ಯ_ಮುಂದಿನ <= ಗಾತ್ರ_2)
+        ctx->ಪಠ್ಯ_ಮುಂದಿನ = 0;
+
+    rtrn = &ctx->ಪಠ್ಯ_ಬಫರ್[ctx->ಪಠ್ಯ_ಮುಂದಿನ];
+    ctx->ಪಠ್ಯ_ಮುಂದಿನ += ಗಾತ್ರ_2;
+
+    ಹಿಂತಿರುಗಿ rtrn;
+}
+
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *
+xkb_context_get_default_ನಿಯಮಗಳು(ರಚನೆ xkb_context *ctx)
+{
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *env = ಖಾಲಿ;
+
+    ಆದರೆ (ctx->use_environment_ಹೆಸರುಗಳು)
         env = xkb_context_getenv(ctx, "XKB_DEFAULT_RULES");
 
-    return env ? env : DEFAULT_XKB_RULES;
+    ಹಿಂತಿರುಗಿ env ? env : DEFAULT_XKB_ನಿಯಮಗಳು;
 }
 
-static const char *
-xkb_context_get_default_model(struct xkb_context *ctx)
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *
+xkb_context_get_default_model(ರಚನೆ xkb_context *ctx)
 {
-    const char *env = NULL;
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *env = ಖಾಲಿ;
 
-    if (ctx->use_environment_names)
+    ಆದರೆ (ctx->use_environment_ಹೆಸರುಗಳು)
         env = xkb_context_getenv(ctx, "XKB_DEFAULT_MODEL");
 
-    return env ? env : DEFAULT_XKB_MODEL;
+    ಹಿಂತಿರುಗಿ env ? env : DEFAULT_XKB_MODEL;
 }
 
-static const char *
-xkb_context_get_default_layout(struct xkb_context *ctx)
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *
+xkb_context_get_default_layout(ರಚನೆ xkb_context *ctx)
 {
-    const char *env = NULL;
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *env = ಖಾಲಿ;
 
-    if (ctx->use_environment_names)
+    ಆದರೆ (ctx->use_environment_ಹೆಸರುಗಳು)
         env = xkb_context_getenv(ctx, "XKB_DEFAULT_LAYOUT");
 
-    return env ? env : DEFAULT_XKB_LAYOUT;
+    ಹಿಂತಿರುಗಿ env ? env : DEFAULT_XKB_LAYOUT;
 }
 
-static const char *
-xkb_context_get_default_variant(struct xkb_context *ctx)
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *
+xkb_context_get_default_variant(ರಚನೆ xkb_context *ctx)
 {
-    const char *env = NULL;
-    const char *layout = xkb_context_getenv(ctx, "XKB_DEFAULT_LAYOUT");
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *env = ಖಾಲಿ;
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *layout = xkb_context_getenv(ctx, "XKB_DEFAULT_LAYOUT");
 
     /* We don't want to inherit the variant if they haven't also set a
      * layout, since they're so closely paired. */
-    if (layout && ctx->use_environment_names)
+    ಆದರೆ (layout && ctx->use_environment_ಹೆಸರುಗಳು)
         env = xkb_context_getenv(ctx, "XKB_DEFAULT_VARIANT");
 
-    return env ? env : DEFAULT_XKB_VARIANT;
+    ಹಿಂತಿರುಗಿ env ? env : DEFAULT_XKB_VARIANT;
 }
 
-static const char *
-xkb_context_get_default_options(struct xkb_context *ctx)
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *
+xkb_context_get_default_options(ರಚನೆ xkb_context *ctx)
 {
-    const char *env = NULL;
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *env = ಖಾಲಿ;
 
-    if (ctx->use_environment_names)
+    ಆದರೆ (ctx->use_environment_ಹೆಸರುಗಳು)
         env = xkb_context_getenv(ctx, "XKB_DEFAULT_OPTIONS");
 
-    return env ? env : DEFAULT_XKB_OPTIONS;
+    ಹಿಂತಿರುಗಿ env ? env : DEFAULT_XKB_OPTIONS;
 }
 
-enum RMLVO
-xkb_context_sanitize_rule_names(struct xkb_context *ctx,
-                                struct xkb_rule_names *rmlvo)
+ಎಣಿಕೆ RMLVO
+xkb_context_sanitize_ನಿಯಮ_ಹೆಸರುಗಳು(ರಚನೆ xkb_context *ctx,
+                                ರಚನೆ xkb_ನಿಯಮ_ಹೆಸರುಗಳು *rmlvo)
 {
-    enum RMLVO modified = 0;
+    ಎಣಿಕೆ RMLVO modified = 0;
 
-    if (isempty(rmlvo->rules)) {
-        rmlvo->rules = xkb_context_get_default_rules(ctx);
-        modified |= RMLVO_RULES;
+    ಆದರೆ (isempty(rmlvo->ನಿಯಮಗಳು)) {
+        rmlvo->ನಿಯಮಗಳು = xkb_context_get_default_ನಿಯಮಗಳು(ctx);
+        modified |= RMLVO_ನಿಯಮಗಳು;
     }
-    if (isempty(rmlvo->model)) {
+    ಆದರೆ (isempty(rmlvo->model)) {
         rmlvo->model = xkb_context_get_default_model(ctx);
         modified |= RMLVO_MODEL;
     }
     /* Layout and variant are tied together, so don't try to use one from
      * the caller and one from the environment. */
-    if (isempty(rmlvo->layout)) {
+    ಆದರೆ (isempty(rmlvo->layout)) {
         rmlvo->layout = xkb_context_get_default_layout(ctx);
         modified |= RMLVO_LAYOUT;
-        const char * const variant = xkb_context_get_default_variant(ctx);
-        if (!isempty(rmlvo->variant)) {
-            log_warn(ctx, XKB_LOG_MESSAGE_NO_ID,
+        ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ * ಸ್ಥಿರಾಂಕ variant = xkb_context_get_default_variant(ctx);
+        ಆದರೆ (!isempty(rmlvo->variant)) {
+            log_warn(ctx, XKB_LOG_ಸಂದೇಶ_NO_ID,
                      "Layout not provided, but variant set to \"%s\": "
                      "ignoring variant and using defaults for both: "
                      "layout=\"%s\", variant=\"%s\".\n",
@@ -216,10 +216,10 @@ xkb_context_sanitize_rule_names(struct xkb_context *ctx,
         modified |= RMLVO_VARIANT;
     }
     /* Options can be empty, so respect that if passed in. */
-    if (rmlvo->options == NULL) {
+    ಆದರೆ (rmlvo->options == ಖಾಲಿ) {
         rmlvo->options = xkb_context_get_default_options(ctx);
         modified |= RMLVO_OPTIONS;
     }
 
-    return modified;
+    ಹಿಂತಿರುಗಿ modified;
 }

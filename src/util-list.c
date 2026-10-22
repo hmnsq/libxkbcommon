@@ -5,72 +5,72 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include <assert.h>
-#include <stddef.h>
-#include <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <assert.h>
+#ಅನ್ತರ್ಭಾವ <stddef.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
 
-#include "util-list.h"
+#ಅನ್ತರ್ಭಾವ "util-list.h"
 
-void
-list_init(struct list *list)
+ಶೂನ್ಯ
+list_init(ರಚನೆ list *list)
 {
 	list->prev = list;
-	list->next = list;
+	list->ಮುಂದಿನ = list;
 }
 
-void
-list_insert(struct list *list, struct list *elm)
+ಶೂನ್ಯ
+list_ಸೇರಿಸು(ರಚನೆ list *list, ರಚನೆ list *elm)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	ಪ್ರತಿಜ್ಞಾ((list->ಮುಂದಿನ != ಖಾಲಿ && list->prev != ಖಾಲಿ) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
-	assert(((elm->next == NULL && elm->prev == NULL) || list_empty(elm)) ||
+	ಪ್ರತಿಜ್ಞಾ(((elm->ಮುಂದಿನ == ಖಾಲಿ && elm->prev == ಖಾಲಿ) || list_ಖಾಲಿಗಳು(elm)) ||
 	       !"elm->next|prev is not NULL, list node used twice?");
 
 	elm->prev = list;
-	elm->next = list->next;
-	list->next = elm;
-	elm->next->prev = elm;
+	elm->ಮುಂದಿನ = list->ಮುಂದಿನ;
+	list->ಮುಂದಿನ = elm;
+	elm->ಮುಂದಿನ->prev = elm;
 }
 
-void
-list_append(struct list *list, struct list *elm)
+ಶೂನ್ಯ
+list_append(ರಚನೆ list *list, ರಚನೆ list *elm)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	ಪ್ರತಿಜ್ಞಾ((list->ಮುಂದಿನ != ಖಾಲಿ && list->prev != ಖಾಲಿ) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
-	assert(((elm->next == NULL && elm->prev == NULL) || list_empty(elm)) ||
+	ಪ್ರತಿಜ್ಞಾ(((elm->ಮುಂದಿನ == ಖಾಲಿ && elm->prev == ಖಾಲಿ) || list_ಖಾಲಿಗಳು(elm)) ||
 	       !"elm->next|prev is not NULL, list node used twice?");
 
-	elm->next = list;
+	elm->ಮುಂದಿನ = list;
 	elm->prev = list->prev;
 	list->prev = elm;
-	elm->prev->next = elm;
+	elm->prev->ಮುಂದಿನ = elm;
 }
 
-void
-list_remove(struct list *elm)
+ಶೂನ್ಯ
+list_remove(ರಚನೆ list *elm)
 {
-	assert((elm->next != NULL && elm->prev != NULL) ||
+	ಪ್ರತಿಜ್ಞಾ((elm->ಮುಂದಿನ != ಖಾಲಿ && elm->prev != ಖಾಲಿ) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
 
-	elm->prev->next = elm->next;
-	elm->next->prev = elm->prev;
-	elm->next = NULL;
-	elm->prev = NULL;
+	elm->prev->ಮುಂದಿನ = elm->ಮುಂದಿನ;
+	elm->ಮುಂದಿನ->prev = elm->prev;
+	elm->ಮುಂದಿನ = ಖಾಲಿ;
+	elm->prev = ಖಾಲಿ;
 }
 
 bool
-list_empty(const struct list *list)
+list_ಖಾಲಿಗಳು(ಸ್ಥಿರಾಂಕ ರಚನೆ list *list)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	ಪ್ರತಿಜ್ಞಾ((list->ಮುಂದಿನ != ಖಾಲಿ && list->prev != ಖಾಲಿ) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
 
-	return list->next == list;
+	ಹಿಂತಿರುಗಿ list->ಮುಂದಿನ == list;
 }
 
 bool
-list_is_last(const struct list *list, const struct list *elm)
+list_is_ಕೊನೆಯ(ಸ್ಥಿರಾಂಕ ರಚನೆ list *list, ಸ್ಥಿರಾಂಕ ರಚನೆ list *elm)
 {
-	return elm->next == list;
+	ಹಿಂತಿರುಗಿ elm->ಮುಂದಿನ == list;
 }

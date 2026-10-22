@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: MIT
  */
 
-#pragma once
+#ಸೂಚನೆ once
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include <assert.h>
-#include <stdalign.h>
-#include <stddef.h>
+#ಅನ್ತರ್ಭಾವ <assert.h>
+#ಅನ್ತರ್ಭಾವ <stdalign.h>
+#ಅನ್ತರ್ಭಾವ <stddef.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "abi-check.h"
+#ಅನ್ತರ್ಭಾವ "xkbcommon/xkbcommon.h"
+#ಅನ್ತರ್ಭಾವ "abi-check.h"
 
 /******************************************************************************
  * xkb_keymap_serialize_config
@@ -23,30 +23,30 @@
  *
  * @since 1.14.0
  */
-struct xkb_keymap_serialize_config_v1 {
-    uint32_t size;
+ರಚನೆ xkb_keymap_serialize_config_v1 {
+    uint32_t ಗಾತ್ರ_2;
     uint32_t flags;
     uint32_t format;
-    xkb_layout_mask_t layouts;
+    xkb_layout_ಮುಖವಾಡ_t layouts;
 };
 
 /* Ensure there is no implicit padding */
-assert_no_padding(struct xkb_keymap_serialize_config, size, flags);
-assert_no_padding(struct xkb_keymap_serialize_config, flags, format);
-assert_no_padding(struct xkb_keymap_serialize_config, format, layouts);
-assert_no_padding(struct xkb_keymap_serialize_config, layouts);
+assert_no_padding(ರಚನೆ xkb_keymap_serialize_config, ಗಾತ್ರ_2, flags);
+assert_no_padding(ರಚನೆ xkb_keymap_serialize_config, flags, format);
+assert_no_padding(ರಚನೆ xkb_keymap_serialize_config, format, layouts);
+assert_no_padding(ರಚನೆ xkb_keymap_serialize_config, layouts);
 
 /* Current version is 1 */
-static_assert(sizeof(struct xkb_keymap_serialize_config) ==
-              sizeof(struct xkb_keymap_serialize_config_v1), "");
-assert_same_field(struct xkb_keymap_serialize_config, _v1, size);
-assert_same_field(struct xkb_keymap_serialize_config, _v1, flags);
-assert_same_field(struct xkb_keymap_serialize_config, _v1, format);
-assert_same_field(struct xkb_keymap_serialize_config, _v1, layouts);
+static_assert(ಗಾತ್ರ(ರಚನೆ xkb_keymap_serialize_config) ==
+              ಗಾತ್ರ(ರಚನೆ xkb_keymap_serialize_config_v1), "");
+assert_same_ಕ್ಷೇತ್ರ(ರಚನೆ xkb_keymap_serialize_config, _v1, ಗಾತ್ರ_2);
+assert_same_ಕ್ಷೇತ್ರ(ರಚನೆ xkb_keymap_serialize_config, _v1, flags);
+assert_same_ಕ್ಷೇತ್ರ(ರಚನೆ xkb_keymap_serialize_config, _v1, format);
+assert_same_ಕ್ಷೇತ್ರ(ರಚನೆ xkb_keymap_serialize_config, _v1, layouts);
 
 /* Ensure reasonable margin to the upper size limit */
-static_assert(sizeof(struct xkb_keymap_serialize_config) * 30 <=
-              (size_t)XKB_ABI_MAX_SIZE, "");
+static_assert(ಗಾತ್ರ(ರಚನೆ xkb_keymap_serialize_config) * 30 <=
+              (ಗಾತ್ರ_t)XKB_ABI_MAX_ಗಾತ್ರ, "");
 
 /******************************************************************************
  * xkb_keymap_serialize_result
@@ -57,32 +57,32 @@ static_assert(sizeof(struct xkb_keymap_serialize_config) * 30 <=
  *
  * @since 1.14.0
  */
-struct xkb_keymap_serialize_result_v1 {
-    uint32_t size;
-    xkb_layout_mask_t layouts;
-    char *serialized;
-    size_t length;
+ರಚನೆ xkb_keymap_serialize_ಫಲಿತಾಂಶ_v1 {
+    uint32_t ಗಾತ್ರ_2;
+    xkb_layout_ಮುಖವಾಡ_t layouts;
+    ಅಕ್ಷರ *serialized;
+    ಗಾತ್ರ_t ಉದ್ದಳತೆ;
 };
 
 /* Ensure there is no implicit padding */
-assert_no_padding(struct xkb_keymap_serialize_result, size, layouts);
-assert_no_padding(struct xkb_keymap_serialize_result, layouts, serialized);
-assert_no_padding(struct xkb_keymap_serialize_result, serialized, length);
-assert_no_padding(struct xkb_keymap_serialize_result, length);
+assert_no_padding(ರಚನೆ xkb_keymap_serialize_ಫಲಿತಾಂಶ, ಗಾತ್ರ_2, layouts);
+assert_no_padding(ರಚನೆ xkb_keymap_serialize_ಫಲಿತಾಂಶ, layouts, serialized);
+assert_no_padding(ರಚನೆ xkb_keymap_serialize_ಫಲಿತಾಂಶ, serialized, ಉದ್ದಳತೆ);
+assert_no_padding(ರಚನೆ xkb_keymap_serialize_ಫಲಿತಾಂಶ, ಉದ್ದಳತೆ);
 
 /* Current version is 1 */
-static_assert(sizeof(struct xkb_keymap_serialize_result) ==
-              sizeof(struct xkb_keymap_serialize_result_v1), "");
-assert_same_field(struct xkb_keymap_serialize_result, _v1, size);
+static_assert(ಗಾತ್ರ(ರಚನೆ xkb_keymap_serialize_ಫಲಿತಾಂಶ) ==
+              ಗಾತ್ರ(ರಚನೆ xkb_keymap_serialize_ಫಲಿತಾಂಶ_v1), "");
+assert_same_ಕ್ಷೇತ್ರ(ರಚನೆ xkb_keymap_serialize_ಫಲಿತಾಂಶ, _v1, ಗಾತ್ರ_2);
 // NOLINTBEGIN(bugprone-sizeof-expression)
-assert_same_field(struct xkb_keymap_serialize_result, _v1, serialized);
+assert_same_ಕ್ಷೇತ್ರ(ರಚನೆ xkb_keymap_serialize_ಫಲಿತಾಂಶ, _v1, serialized);
 // NOLINTEND(bugprone-sizeof-expression)
-assert_same_field(struct xkb_keymap_serialize_result, _v1, length);
-assert_same_field(struct xkb_keymap_serialize_result, _v1, layouts);
+assert_same_ಕ್ಷೇತ್ರ(ರಚನೆ xkb_keymap_serialize_ಫಲಿತಾಂಶ, _v1, ಉದ್ದಳತೆ);
+assert_same_ಕ್ಷೇತ್ರ(ರಚನೆ xkb_keymap_serialize_ಫಲಿತಾಂಶ, _v1, layouts);
 
 /* Ensure reasonable margin to the upper size limit */
-static_assert(sizeof(struct xkb_keymap_serialize_result) * 30 <=
-              (size_t)XKB_ABI_MAX_SIZE, "");
+static_assert(ಗಾತ್ರ(ರಚನೆ xkb_keymap_serialize_ಫಲಿತಾಂಶ) * 30 <=
+              (ಗಾತ್ರ_t)XKB_ABI_MAX_ಗಾತ್ರ, "");
 
 /******************************************************************************
  * xkb_keymap_key_iterator_config
@@ -93,102 +93,102 @@ static_assert(sizeof(struct xkb_keymap_serialize_result) * 30 <=
  *
  * @since 1.14.0
  */
-struct xkb_keymap_key_iterator_config_v1 {
-    uint32_t size;
+ರಚನೆ xkb_keymap_ಕೀಲಿ_iterator_config_v1 {
+    uint32_t ಗಾತ್ರ_2;
     uint32_t flags;
-    xkb_keycode_t start;
+    xkb_keycode_t ಆರಂಭ;
 };
 
 /* Ensure there is no implicit padding */
-assert_no_padding(struct xkb_keymap_key_iterator_config, size, flags);
-assert_no_padding(struct xkb_keymap_key_iterator_config, flags, start);
-assert_no_padding(struct xkb_keymap_key_iterator_config, start);
+assert_no_padding(ರಚನೆ xkb_keymap_ಕೀಲಿ_iterator_config, ಗಾತ್ರ_2, flags);
+assert_no_padding(ರಚನೆ xkb_keymap_ಕೀಲಿ_iterator_config, flags, ಆರಂಭ);
+assert_no_padding(ರಚನೆ xkb_keymap_ಕೀಲಿ_iterator_config, ಆರಂಭ);
 
 /* Current version is 1 */
-static_assert(sizeof(struct xkb_keymap_key_iterator_config) ==
-              sizeof(struct xkb_keymap_key_iterator_config_v1), "");
-assert_same_field(struct xkb_keymap_key_iterator_config, _v1, size);
-assert_same_field(struct xkb_keymap_key_iterator_config, _v1, flags);
-assert_same_field(struct xkb_keymap_key_iterator_config, _v1, start);
+static_assert(ಗಾತ್ರ(ರಚನೆ xkb_keymap_ಕೀಲಿ_iterator_config) ==
+              ಗಾತ್ರ(ರಚನೆ xkb_keymap_ಕೀಲಿ_iterator_config_v1), "");
+assert_same_ಕ್ಷೇತ್ರ(ರಚನೆ xkb_keymap_ಕೀಲಿ_iterator_config, _v1, ಗಾತ್ರ_2);
+assert_same_ಕ್ಷೇತ್ರ(ರಚನೆ xkb_keymap_ಕೀಲಿ_iterator_config, _v1, flags);
+assert_same_ಕ್ಷೇತ್ರ(ರಚನೆ xkb_keymap_ಕೀಲಿ_iterator_config, _v1, ಆರಂಭ);
 
 /* Ensure reasonable margin to the upper size limit */
-static_assert(sizeof(struct xkb_keymap_key_iterator_config) * 30 <=
-              (size_t)XKB_ABI_MAX_SIZE, "");
+static_assert(ಗಾತ್ರ(ರಚನೆ xkb_keymap_ಕೀಲಿ_iterator_config) * 30 <=
+              (ಗಾತ್ರ_t)XKB_ABI_MAX_ಗಾತ್ರ, "");
 
 /******************************************************************************
  * Utils
  *****************************************************************************/
 
 /** Size of the *first version* of the struct */
-#define xkb_versioned_struct_size_v1(x) _Generic(        \
+#ವ್ಯಾಖ್ಯಾನಿಸು xkb_versioned_struct_ಗಾತ್ರ_v1(x) _Generic(        \
     (x),                                                 \
-    const struct xkb_keymap_serialize_config *:          \
-        sizeof(struct xkb_keymap_serialize_config_v1),   \
-    const struct xkb_keymap_serialize_result *:          \
-        sizeof(struct xkb_keymap_serialize_result_v1),   \
-    const struct xkb_keymap_key_iterator_config *:      \
-        sizeof(struct xkb_keymap_key_iterator_config_v1)\
+    ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_keymap_serialize_config *:          \
+        ಗಾತ್ರ(ರಚನೆ xkb_keymap_serialize_config_v1),   \
+    ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_keymap_serialize_ಫಲಿತಾಂಶ *:          \
+        ಗಾತ್ರ(ರಚನೆ xkb_keymap_serialize_ಫಲಿತಾಂಶ_v1),   \
+    ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_keymap_ಕೀಲಿ_iterator_config *:      \
+        ಗಾತ್ರ(ರಚನೆ xkb_keymap_ಕೀಲಿ_iterator_config_v1)\
 )
 
 /** Minimal *current* valid size of the struct */
-#define xkb_versioned_struct_size_min(x) _Generic(       \
+#ವ್ಯಾಖ್ಯಾನಿಸು xkb_versioned_struct_ಗಾತ್ರ_min(x) _Generic(       \
     (x),                                                 \
-    const struct xkb_keymap_serialize_config *:          \
-        sizeof(struct xkb_keymap_serialize_config_v1),   \
-    const struct xkb_keymap_serialize_result *:          \
-        sizeof(struct xkb_keymap_serialize_result_v1),   \
-    const struct xkb_keymap_key_iterator_config *:      \
-        sizeof(struct xkb_keymap_key_iterator_config_v1)\
+    ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_keymap_serialize_config *:          \
+        ಗಾತ್ರ(ರಚನೆ xkb_keymap_serialize_config_v1),   \
+    ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_keymap_serialize_ಫಲಿತಾಂಶ *:          \
+        ಗಾತ್ರ(ರಚನೆ xkb_keymap_serialize_ಫಲಿತಾಂಶ_v1),   \
+    ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_keymap_ಕೀಲಿ_iterator_config *:      \
+        ಗಾತ್ರ(ರಚನೆ xkb_keymap_ಕೀಲಿ_iterator_config_v1)\
 )
 
 /** Offset of the last meaningful field of the current struct */
-#define xkb_versioned_struct_reserved_offset(x) _Generic(\
+#ವ್ಯಾಖ್ಯಾನಿಸು xkb_versioned_struct_reserved_ಸ್ಥಾನಾಂತರ(x) _Generic(\
     (x),                                                 \
-    const struct xkb_keymap_serialize_config *:          \
-        sizeof(struct xkb_keymap_serialize_config),      \
-    const struct xkb_keymap_serialize_result *:          \
-        sizeof(struct xkb_keymap_serialize_result),      \
-    const struct xkb_keymap_key_iterator_config *:      \
-        sizeof(struct xkb_keymap_key_iterator_config)   \
+    ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_keymap_serialize_config *:          \
+        ಗಾತ್ರ(ರಚನೆ xkb_keymap_serialize_config),      \
+    ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_keymap_serialize_ಫಲಿತಾಂಶ *:          \
+        ಗಾತ್ರ(ರಚನೆ xkb_keymap_serialize_ಫಲಿತಾಂಶ),      \
+    ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_keymap_ಕೀಲಿ_iterator_config *:      \
+        ಗಾತ್ರ(ರಚನೆ xkb_keymap_ಕೀಲಿ_iterator_config)   \
 )
 
 /* V1 is the smallest struct version */
 static_assert(
-    xkb_versioned_struct_size_v1(((const struct xkb_keymap_serialize_config *)NULL)) <=
-    xkb_versioned_struct_size_min(((const struct xkb_keymap_serialize_config *)NULL)),
+    xkb_versioned_struct_ಗಾತ್ರ_v1(((ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_keymap_serialize_config *)ಖಾಲಿ)) <=
+    xkb_versioned_struct_ಗಾತ್ರ_min(((ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_keymap_serialize_config *)ಖಾಲಿ)),
     ""
 );
 static_assert(
-    xkb_versioned_struct_size_v1(((const struct xkb_keymap_serialize_result *)NULL)) <=
-    xkb_versioned_struct_size_min(((const struct xkb_keymap_serialize_result *)NULL)),
+    xkb_versioned_struct_ಗಾತ್ರ_v1(((ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_keymap_serialize_ಫಲಿತಾಂಶ *)ಖಾಲಿ)) <=
+    xkb_versioned_struct_ಗಾತ್ರ_min(((ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_keymap_serialize_ಫಲಿತಾಂಶ *)ಖಾಲಿ)),
     ""
 );
 static_assert(
-    xkb_versioned_struct_size_v1(((const struct xkb_keymap_key_iterator_config *)NULL)) <=
-    xkb_versioned_struct_size_min(((const struct xkb_keymap_key_iterator_config *)NULL)),
+    xkb_versioned_struct_ಗಾತ್ರ_v1(((ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_keymap_ಕೀಲಿ_iterator_config *)ಖಾಲಿ)) <=
+    xkb_versioned_struct_ಗಾತ್ರ_min(((ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_keymap_ಕೀಲಿ_iterator_config *)ಖಾಲಿ)),
     ""
 );
 
 /* Minimal size is lower or equal to the current size */
 static_assert(
-    xkb_versioned_struct_size_min(((const struct xkb_keymap_serialize_config *)NULL)) <=
-    sizeof(const struct xkb_keymap_serialize_config),
+    xkb_versioned_struct_ಗಾತ್ರ_min(((ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_keymap_serialize_config *)ಖಾಲಿ)) <=
+    ಗಾತ್ರ(ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_keymap_serialize_config),
     ""
 );
 static_assert(
-    xkb_versioned_struct_size_min(((const struct xkb_keymap_serialize_result *)NULL)) <=
-    sizeof(const struct xkb_keymap_serialize_result),
+    xkb_versioned_struct_ಗಾತ್ರ_min(((ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_keymap_serialize_ಫಲಿತಾಂಶ *)ಖಾಲಿ)) <=
+    ಗಾತ್ರ(ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_keymap_serialize_ಫಲಿತಾಂಶ),
     ""
 );
 static_assert(
-    xkb_versioned_struct_size_min(((const struct xkb_keymap_key_iterator_config *)NULL)) <=
-    sizeof(const struct xkb_keymap_key_iterator_config),
+    xkb_versioned_struct_ಗಾತ್ರ_min(((ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_keymap_ಕೀಲಿ_iterator_config *)ಖಾಲಿ)) <=
+    ಗಾತ್ರ(ಸ್ಥಿರಾಂಕ ರಚನೆ xkb_keymap_ಕೀಲಿ_iterator_config),
     ""
 );
 
-#define xkb_check_keymap_abi(x) xkb_check_versioned_struct_size( \
-    xkb_versioned_struct_size_v1(x),                                               \
-    xkb_versioned_struct_size_min(x),                                              \
-    xkb_versioned_struct_reserved_offset(x),                                       \
+#ವ್ಯಾಖ್ಯಾನಿಸು xkb_check_keymap_abi(x) xkb_check_versioned_struct_ಗಾತ್ರ_2( \
+    xkb_versioned_struct_ಗಾತ್ರ_v1(x),                                               \
+    xkb_versioned_struct_ಗಾತ್ರ_min(x),                                              \
+    xkb_versioned_struct_reserved_ಸ್ಥಾನಾಂತರ(x),                                       \
     (x)                                                                            \
 )

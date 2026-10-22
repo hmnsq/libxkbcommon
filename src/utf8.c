@@ -6,10 +6,10 @@
  * Author: Rob Bradford <rob@linux.intel.com>
  */
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include "utils.h"
-#include "utf8.h"
+#ಅನ್ತರ್ಭಾವ "utils.h"
+#ಅನ್ತರ್ಭಾವ "utf8.h"
 
 /* Conformant encoding form conversion from UTF-32 to UTF-8.
  *
@@ -17,119 +17,119 @@
  * for further details.
 */
 uint8_t
-utf32_to_utf8(uint32_t unichar, char *buffer)
+utf32_ಗಮ್ಯ_utf8(uint32_t unichar, ಅಕ್ಷರ *ಬಫರ್)
 {
-    uint8_t length, head;
+    uint8_t ಉದ್ದಳತೆ, ತಲೆ;
 
     /* NOLINTBEGIN(bugprone-branch-clone) */
-    if (unichar <= 0x007f) {
-        buffer[0] = (char) unichar;
-        buffer[1] = '\0';
-        return 2;
+    ಆದರೆ (unichar <= 0x007f) {
+        ಬಫರ್[0] = (ಅಕ್ಷರ) unichar;
+        ಬಫರ್[1] = '\0';
+        ಹಿಂತಿರುಗಿ 2;
     }
-    else if (unichar <= 0x07FF) {
-        length = 2;
-        head = 0xc0;
+    ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (unichar <= 0x07FF) {
+        ಉದ್ದಳತೆ = 2;
+        ತಲೆ = 0xc0;
     }
     /* Handle surrogates */
-    else if (is_surrogate(unichar)) {
-        goto ill_formed_code_unit_subsequence;
+    ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (is_surrogate(unichar)) {
+        ಹೋಗು ill_formed_ಸಂಕೇತ_unit_subsequence;
     }
-    else if (unichar <= 0xffff) {
-        length = 3;
-        head = 0xe0;
+    ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (unichar <= 0xffff) {
+        ಉದ್ದಳತೆ = 3;
+        ತಲೆ = 0xe0;
     }
-    else if (unichar <= 0x10ffff) {
-        length = 4;
-        head = 0xf0;
+    ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (unichar <= 0x10ffff) {
+        ಉದ್ದಳತೆ = 4;
+        ತಲೆ = 0xf0;
     }
-    else {
-        goto ill_formed_code_unit_subsequence;
+    ಇಲ್ಲದಿದ್ದರೆ {
+        ಹೋಗು ill_formed_ಸಂಕೇತ_unit_subsequence;
     }
     /* NOLINTEND(bugprone-branch-clone) */
 
-    uint8_t shift = 0;
-    for (unsigned int count = length - 1; count > 0; count--, shift += 6)
-        buffer[count] = (char)(0x80 | ((unichar >> shift) & 0x3f));
+    uint8_t ಸರಿಸು = 0;
+    ಗಾಗಿ (ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2 = ಉದ್ದಳತೆ - 1; ಎಣಿಕೆ_2 > 0; ಎಣಿಕೆ_2--, ಸರಿಸು += 6)
+        ಬಫರ್[ಎಣಿಕೆ_2] = (ಅಕ್ಷರ)(0x80 | ((unichar >> ಸರಿಸು) & 0x3f));
 
-    buffer[0] = (char)(head | ((unichar >> shift) & 0x3f));
-    buffer[length] = '\0';
+    ಬಫರ್[0] = (ಅಕ್ಷರ)(ತಲೆ | ((unichar >> ಸರಿಸು) & 0x3f));
+    ಬಫರ್[ಉದ್ದಳತೆ] = '\0';
 
-    return length + 1;
+    ಹಿಂತಿರುಗಿ ಉದ್ದಳತೆ + 1;
 
-ill_formed_code_unit_subsequence:
-    buffer[0] = '\0';
-    return 0;
+ill_formed_ಸಂಕೇತ_unit_subsequence:
+    ಬಫರ್[0] = '\0';
+    ಹಿಂತಿರುಗಿ 0;
 }
 
 bool
-is_valid_utf8(const char *ss, size_t len)
+is_valid_utf8(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ss, ಗಾತ್ರ_t len)
 {
-    size_t i = 0;
-    size_t tail_bytes = 0;
-    const uint8_t *s = (const uint8_t *) ss;
+    ಗಾತ್ರ_t i = 0;
+    ಗಾತ್ರ_t ಬಾಲ_ಬೈಟುಗಳು = 0;
+    ಸ್ಥಿರಾಂಕ uint8_t *s = (ಸ್ಥಿರಾಂಕ uint8_t *) ss;
 
     /* This beauty is from:
      *  The Unicode Standard Version 6.2 - Core Specification, Table 3.7
      *  https://www.unicode.org/versions/Unicode6.2.0/ch03.pdf#G7404
      * We can optimize if needed. */
-    while (i < len)
+    ಆಗ (i < len)
     {
         /* NOLINTBEGIN(bugprone-branch-clone) */
-        if (s[i] <= 0x7F) {
-            tail_bytes = 0;
+        ಆದರೆ (s[i] <= 0x7F) {
+            ಬಾಲ_ಬೈಟುಗಳು = 0;
         }
-        else if (s[i] >= 0xC2 && s[i] <= 0xDF) {
-            tail_bytes = 1;
+        ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (s[i] >= 0xC2 && s[i] <= 0xDF) {
+            ಬಾಲ_ಬೈಟುಗಳು = 1;
         }
-        else if (s[i] == 0xE0) {
+        ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (s[i] == 0xE0) {
             i++;
-            if (i >= len || !(s[i] >= 0xA0 && s[i] <= 0xBF))
-                return false;
-            tail_bytes = 1;
+            ಆದರೆ (i >= len || !(s[i] >= 0xA0 && s[i] <= 0xBF))
+                ಹಿಂತಿರುಗಿ false;
+            ಬಾಲ_ಬೈಟುಗಳು = 1;
         }
-        else if (s[i] >= 0xE1 && s[i] <= 0xEC) {
-            tail_bytes = 2;
+        ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (s[i] >= 0xE1 && s[i] <= 0xEC) {
+            ಬಾಲ_ಬೈಟುಗಳು = 2;
         }
-        else if (s[i] == 0xED) {
+        ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (s[i] == 0xED) {
             i++;
-            if (i >= len || !(s[i] >= 0x80 && s[i] <= 0x9F))
-                return false;
-            tail_bytes = 1;
+            ಆದರೆ (i >= len || !(s[i] >= 0x80 && s[i] <= 0x9F))
+                ಹಿಂತಿರುಗಿ false;
+            ಬಾಲ_ಬೈಟುಗಳು = 1;
         }
-        else if (s[i] >= 0xEE && s[i] <= 0xEF) {
-            tail_bytes = 2;
+        ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (s[i] >= 0xEE && s[i] <= 0xEF) {
+            ಬಾಲ_ಬೈಟುಗಳು = 2;
         }
-        else if (s[i] == 0xF0) {
+        ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (s[i] == 0xF0) {
             i++;
-            if (i >= len || !(s[i] >= 0x90 && s[i] <= 0xBF))
-                return false;
-            tail_bytes = 2;
+            ಆದರೆ (i >= len || !(s[i] >= 0x90 && s[i] <= 0xBF))
+                ಹಿಂತಿರುಗಿ false;
+            ಬಾಲ_ಬೈಟುಗಳು = 2;
         }
-        else if (s[i] >= 0xF1 && s[i] <= 0xF3) {
-            tail_bytes = 3;
+        ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (s[i] >= 0xF1 && s[i] <= 0xF3) {
+            ಬಾಲ_ಬೈಟುಗಳು = 3;
         }
-        else if (s[i] == 0xF4) {
+        ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (s[i] == 0xF4) {
             i++;
-            if (i >= len || !(s[i] >= 0x80 && s[i] <= 0x8F))
-                return false;
-            tail_bytes = 2;
+            ಆದರೆ (i >= len || !(s[i] >= 0x80 && s[i] <= 0x8F))
+                ಹಿಂತಿರುಗಿ false;
+            ಬಾಲ_ಬೈಟುಗಳು = 2;
         }
-        else {
-            return false;
+        ಇಲ್ಲದಿದ್ದರೆ {
+            ಹಿಂತಿರುಗಿ false;
         }
         /* NOLINTEND(bugprone-branch-clone) */
 
         i++;
 
-        while (i < len && tail_bytes > 0 && s[i] >= 0x80 && s[i] <= 0xBF) {
+        ಆಗ (i < len && ಬಾಲ_ಬೈಟುಗಳು > 0 && s[i] >= 0x80 && s[i] <= 0xBF) {
             i++;
-            tail_bytes--;
+            ಬಾಲ_ಬೈಟುಗಳು--;
         }
 
-        if (tail_bytes != 0)
-            return false;
+        ಆದರೆ (ಬಾಲ_ಬೈಟುಗಳು != 0)
+            ಹಿಂತಿರುಗಿ false;
     }
 
-    return true;
+    ಹಿಂತಿರುಗಿ true;
 }

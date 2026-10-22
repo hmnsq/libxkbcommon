@@ -2,297 +2,297 @@
  * Copyright © 2012 Ran Benita <ran234@gmail.com>
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#ಸೂಚನೆ once
 
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <stddef.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#include "context.h"
-#include "darray.h"
-#include "messages-codes.h"
-#include "utils.h"
-#include "util-numbers.h"
-#include "utf8.h"
+#ಅನ್ತರ್ಭಾವ "context.h"
+#ಅನ್ತರ್ಭಾವ "darray.h"
+#ಅನ್ತರ್ಭಾವ "messages-codes.h"
+#ಅನ್ತರ್ಭಾವ "utils.h"
+#ಅನ್ತರ್ಭಾವ "util-numbers.h"
+#ಅನ್ತರ್ಭಾವ "utf8.h"
 
 /* Point to some substring in the file; used to avoid copying. */
-struct sval {
-    size_t len;
-    const char *start ATTR_COUNTED_BY(len);
+ರಚನೆ sval {
+    ಗಾತ್ರ_t len;
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಆರಂಭ ATTR_COUNTED_BY(len);
 };
-typedef darray(struct sval) darray_sval;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ darray(ರಚನೆ sval) darray_sval;
 
-static inline bool
-svaleq(struct sval s1, struct sval s2)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+svaleq(ರಚನೆ sval s1, ರಚನೆ sval s2)
 {
-    return s1.len == s2.len && memcmp(s1.start, s2.start, s1.len) == 0;
+    ಹಿಂತಿರುಗಿ s1.len == s2.len && memcmp(s1.ಆರಂಭ, s2.ಆರಂಭ, s1.len) == 0;
 }
 
-static inline bool
-isvaleq(struct sval s1, struct sval s2)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+isvaleq(ರಚನೆ sval s1, ರಚನೆ sval s2)
 {
-    return s1.len == s2.len && istrncmp(s1.start, s2.start, s1.len) == 0;
+    ಹಿಂತಿರುಗಿ s1.len == s2.len && istrncmp(s1.ಆರಂಭ, s2.ಆರಂಭ, s1.len) == 0;
 }
 
-static inline bool
-svaleq_prefix(struct sval s1, struct sval s2)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+svaleq_ಪೂರ್ವಪ್ರತ್ಯಯ(ರಚನೆ sval s1, ರಚನೆ sval s2)
 {
-    return s1.len <= s2.len && memcmp(s1.start, s2.start, s1.len) == 0;
+    ಹಿಂತಿರುಗಿ s1.len <= s2.len && memcmp(s1.ಆರಂಭ, s2.ಆರಂಭ, s1.len) == 0;
 }
 
-#define SVAL(__start, __len) (struct sval){ .start = (__start), .len = (__len) }
-#define SVAL_LIT(literal) SVAL(literal, sizeof(literal) - 1)
-#define SVAL_INIT(literal) { .start = (literal), .len = sizeof(literal) - 1 }
+#ವ್ಯಾಖ್ಯಾನಿಸು SVAL(__start, __len) (ರಚನೆ sval){ .ಆರಂಭ = (__start), .len = (__len) }
+#ವ್ಯಾಖ್ಯಾನಿಸು SVAL_LIT(literal) SVAL(literal, ಗಾತ್ರ(literal) - 1)
+#ವ್ಯಾಖ್ಯಾನಿಸು SVAL_INIT(literal) { .ಆರಂಭ = (literal), .len = ಗಾತ್ರ(literal) - 1 }
 
 /* A line:column location in the input string (1-based). */
-struct scanner_loc {
-    size_t line, column;
+ರಚನೆ scanner_loc {
+    ಗಾತ್ರ_t ಸಾಲು, ಸ್ತಂಭ;
 };
 
-struct scanner {
-    size_t pos;
-    size_t len;
-    const char *s ATTR_COUNTED_BY(len);
+ರಚನೆ scanner {
+    ಗಾತ್ರ_t pos;
+    ಗಾತ್ರ_t len;
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s ATTR_COUNTED_BY(len);
     /*
      * Internal buffer.
      * Since this is used to handle paths that are possibly absolute, in theory
      * we should size it to PATH_MAX. However it is very unlikely to reach such
      * long paths in our context.
      */
-    char buf[1024];
-    size_t buf_pos;
+    ಅಕ್ಷರ buf[1024];
+    ಗಾತ್ರ_t buf_pos;
     /* The position of the start of the current token. */
-    size_t token_pos;
+    ಗಾತ್ರ_t token_pos;
     /* Cached values used by scanner_token_location. */
-    size_t cached_pos;
-    struct scanner_loc cached_loc;
-    const char *file_name;
-    struct xkb_context *ctx;
-    void *priv;
+    ಗಾತ್ರ_t cached_pos;
+    ರಚನೆ scanner_loc cached_loc;
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *file_name;
+    ರಚನೆ xkb_context *ctx;
+    ಶೂನ್ಯ *priv;
 };
 
 /* Compute the line:column location for the current token (slow). */
-struct scanner_loc
-scanner_token_location(struct scanner *s);
+ರಚನೆ scanner_loc
+scanner_token_location(ರಚನೆ scanner *s);
 
-#define scanner_log_with_code(scanner, level, verbosity, log_msg_id, fmt, ...) do { \
-    struct scanner_loc loc = scanner_token_location((scanner));                     \
-    xkb_log_with_code((scanner)->ctx, (level), verbosity, log_msg_id,               \
+#ವ್ಯಾಖ್ಯಾನಿಸು scanner_log_with_ಸಂಕೇತ(scanner, level, verbosity, log_ಸಂದೇಶ_id, fmt, ...) ಮಾಡು { \
+    ರಚನೆ scanner_loc loc = scanner_token_location((scanner));                     \
+    xkb_log_with_ಸಂಕೇತ((scanner)->ctx, (level), verbosity, log_ಸಂದೇಶ_id,               \
                       "%s:%zu:%zu: " fmt "\n",                                      \
                       (scanner)->file_name,                                         \
-                      loc.line,                                                     \
-                      loc.column, ##__VA_ARGS__);                                   \
-} while(0)
+                      loc.ಸಾಲು,                                                     \
+                      loc.ಸ್ತಂಭ, ##__VA_ARGS__);                                   \
+} ಆಗ(0)
 
-#define scanner_err(scanner, id, fmt, ...)              \
-    scanner_log_with_code(scanner, XKB_LOG_LEVEL_ERROR, \
-                          XKB_LOG_VERBOSITY_MINIMAL, id, fmt, ##__VA_ARGS__)
+#ವ್ಯಾಖ್ಯಾನಿಸು scanner_err(scanner, id, fmt, ...)              \
+    scanner_log_with_ಸಂಕೇತ(scanner, XKB_LOG_LEVEL_ERROR, \
+                          XKB_LOG_VERBOSITY_ಕನಿಷ್ಠತಮ, id, fmt, ##__VA_ARGS__)
 
-#define scanner_warn(scanner, id, fmt, ...)               \
-    scanner_log_with_code(scanner, XKB_LOG_LEVEL_WARNING, \
-                          XKB_LOG_VERBOSITY_MINIMAL, id, fmt, ##__VA_ARGS__)
+#ವ್ಯಾಖ್ಯಾನಿಸು scanner_warn(scanner, id, fmt, ...)               \
+    scanner_log_with_ಸಂಕೇತ(scanner, XKB_LOG_LEVEL_WARNING, \
+                          XKB_LOG_VERBOSITY_ಕನಿಷ್ಠತಮ, id, fmt, ##__VA_ARGS__)
 
-#define scanner_vrb(scanner, verbosity, id, fmt, ...)                    \
-    scanner_log_with_code(scanner, XKB_LOG_LEVEL_WARNING, verbosity, id, \
+#ವ್ಯಾಖ್ಯಾನಿಸು scanner_vrb(scanner, verbosity, id, fmt, ...)                    \
+    scanner_log_with_ಸಂಕೇತ(scanner, XKB_LOG_LEVEL_WARNING, verbosity, id, \
                           fmt, ##__VA_ARGS__)
 
-static inline void
-scanner_init(struct scanner *s, struct xkb_context *ctx,
-             const char *string, size_t len, const char *file_name,
-             void *priv)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ
+scanner_init(ರಚನೆ scanner *s, ರಚನೆ xkb_context *ctx,
+             ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *string, ಗಾತ್ರ_t len, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *file_name,
+             ಶೂನ್ಯ *priv)
 {
     s->s = string;
     s->len = len;
     s->pos = 0;
     s->token_pos = 0;
     s->cached_pos = 0;
-    s->cached_loc.line = s->cached_loc.column = 1;
+    s->cached_loc.ಸಾಲು = s->cached_loc.ಸ್ತಂಭ = 1;
     s->file_name = file_name;
     s->ctx = ctx;
     s->priv = priv;
 }
 
-static inline char
-scanner_peek(struct scanner *s)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಅಕ್ಷರ
+scanner_peek(ರಚನೆ scanner *s)
 {
-    if (unlikely(s->pos >= s->len))
-        return '\0';
-    return s->s[s->pos];
+    ಆದರೆ (unlikely(s->pos >= s->len))
+        ಹಿಂತಿರುಗಿ '\0';
+    ಹಿಂತಿರುಗಿ s->s[s->pos];
 }
 
-static inline bool
-scanner_eof(struct scanner *s)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+scanner_eof(ರಚನೆ scanner *s)
 {
-    return s->pos >= s->len;
+    ಹಿಂತಿರುಗಿ s->pos >= s->len;
 }
 
-static inline bool
-scanner_eol(struct scanner *s)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+scanner_eol(ರಚನೆ scanner *s)
 {
-    return scanner_peek(s) == '\n';
+    ಹಿಂತಿರುಗಿ scanner_peek(s) == '\n';
 }
 
-static inline void
-scanner_skip_to_eol(struct scanner *s)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ
+scanner_skip_ಗಮ್ಯ_eol(ರಚನೆ scanner *s)
 {
-    const char *nl = memchr(s->s + s->pos, '\n', s->len - s->pos);
-    const size_t new_pos = nl ? (size_t) (nl - s->s) : s->len;
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *nl = memchr(s->s + s->pos, '\n', s->len - s->pos);
+    ಸ್ಥಿರಾಂಕ ಗಾತ್ರ_t new_pos = nl ? (ಗಾತ್ರ_t) (nl - s->s) : s->len;
     s->pos = new_pos;
 }
 
-static inline char
-scanner_next(struct scanner *s)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಅಕ್ಷರ
+scanner_ಮುಂದಿನ(ರಚನೆ scanner *s)
 {
-    if (unlikely(scanner_eof(s)))
-        return '\0';
-    return s->s[s->pos++];
+    ಆದರೆ (unlikely(scanner_eof(s)))
+        ಹಿಂತಿರುಗಿ '\0';
+    ಹಿಂತಿರುಗಿ s->s[s->pos++];
 }
 
-static inline bool
-scanner_chr(struct scanner *s, char ch)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+scanner_chr(ರಚನೆ scanner *s, ಅಕ್ಷರ ch)
 {
-    if (likely(scanner_peek(s) != ch))
-        return false;
+    ಆದರೆ (likely(scanner_peek(s) != ch))
+        ಹಿಂತಿರುಗಿ false;
     s->pos++;
-    return true;
+    ಹಿಂತಿರುಗಿ true;
 }
 
-static inline bool
-scanner_str(struct scanner *s, const char *string, size_t len)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+scanner_str(ರಚನೆ scanner *s, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *string, ಗಾತ್ರ_t len)
 {
-    if (s->len - s->pos < len)
-        return false;
-    if (memcmp(s->s + s->pos, string, len) != 0)
-        return false;
+    ಆದರೆ (s->len - s->pos < len)
+        ಹಿಂತಿರುಗಿ false;
+    ಆದರೆ (memcmp(s->s + s->pos, string, len) != 0)
+        ಹಿಂತಿರುಗಿ false;
     s->pos += len;
-    return true;
+    ಹಿಂತಿರುಗಿ true;
 }
 
-#define scanner_lit(s, literal) scanner_str(s, literal, sizeof(literal) - 1)
+#ವ್ಯಾಖ್ಯಾನಿಸು scanner_lit(s, literal) scanner_str(s, literal, ಗಾತ್ರ(literal) - 1)
 
-static inline bool
-scanner_rules_is_ident(char ch)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+scanner_ನಿಯಮಗಳು_is_ident(ಅಕ್ಷರ ch)
 {
-    return is_graph(ch) && ch != '\\';
+    ಹಿಂತಿರುಗಿ is_ನಕ್ಷೆ(ch) && ch != '\\';
 }
 
 /*
  * A keyword/operator is only valid when it is followed by a character
  * which cannot continue the token.
  */
-static inline bool
-scanner_rules_str_token(struct scanner *s, const char *string, size_t len)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+scanner_ನಿಯಮಗಳು_str_token(ರಚನೆ scanner *s, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *string, ಗಾತ್ರ_t len)
 {
-    if (!scanner_str(s, string, len)) {
-        return false;
+    ಆದರೆ (!scanner_str(s, string, len)) {
+        ಹಿಂತಿರುಗಿ false;
     }
-    if (scanner_rules_is_ident(scanner_peek(s))) {
+    ಆದರೆ (scanner_ನಿಯಮಗಳು_is_ident(scanner_peek(s))) {
         /* Backtrack */
         s->pos -= len;
-        return false;
+        ಹಿಂತಿರುಗಿ false;
     }
-    return true;
+    ಹಿಂತಿರುಗಿ true;
 }
 
-#define scanner_rules_lit_token(s, literal) \
-    scanner_rules_str_token((s), (literal), sizeof(literal) - 1)
+#ವ್ಯಾಖ್ಯಾನಿಸು scanner_ನಿಯಮಗಳು_lit_token(s, literal) \
+    scanner_ನಿಯಮಗಳು_str_token((s), (literal), ಗಾತ್ರ(literal) - 1)
 
-static inline size_t
-scanner_rules_ident_token(struct scanner *s)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಗಾತ್ರ_t
+scanner_ನಿಯಮಗಳು_ident_token(ರಚನೆ scanner *s)
 {
-    size_t len = 0;
-    while (!scanner_eof(s) && scanner_rules_is_ident(s->s[s->pos])) {
+    ಗಾತ್ರ_t len = 0;
+    ಆಗ (!scanner_eof(s) && scanner_ನಿಯಮಗಳು_is_ident(s->s[s->pos])) {
         s->pos++;
         len++;
     }
-    return len;
+    ಹಿಂತಿರುಗಿ len;
 }
 
-static inline bool
-scanner_buf_append(struct scanner *s, char ch)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+scanner_buf_append(ರಚನೆ scanner *s, ಅಕ್ಷರ ch)
 {
-    if (s->buf_pos + 1 >= sizeof(s->buf))
-        return false;
+    ಆದರೆ (s->buf_pos + 1 >= ಗಾತ್ರ(s->buf))
+        ಹಿಂತಿರುಗಿ false;
     s->buf[s->buf_pos++] = ch;
-    return true;
+    ಹಿಂತಿರುಗಿ true;
 }
 
-static inline bool
-scanner_buf_appends(struct scanner *s, const char *str)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+scanner_buf_appends(ರಚನೆ scanner *s, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *str)
 {
-    const int ret = snprintf(s->buf + s->buf_pos,
-                             sizeof(s->buf) - s->buf_pos,
+    ಸ್ಥಿರಾಂಕ ಪೂರ್ಣಾಂಕ ret = snprintf(s->buf + s->buf_pos,
+                             ಗಾತ್ರ(s->buf) - s->buf_pos,
                              "%s", str);
-    if (ret < 0 || (size_t)ret >= sizeof(s->buf) - s->buf_pos)
-        return false;
-    s->buf_pos += (size_t)ret;
-    return true;
+    ಆದರೆ (ret < 0 || (ಗಾತ್ರ_t)ret >= ಗಾತ್ರ(s->buf) - s->buf_pos)
+        ಹಿಂತಿರುಗಿ false;
+    s->buf_pos += (ಗಾತ್ರ_t)ret;
+    ಹಿಂತಿರುಗಿ true;
 }
 
-static inline bool
-scanner_buf_appends_code_point(struct scanner *s, uint32_t c)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+scanner_buf_appends_ಸಂಕೇತ_ಬಿಂದು(ರಚನೆ scanner *s, uint32_t c)
 {
     /* Up to 4 bytes + NULL */
-    if (s->buf_pos + 5 <= sizeof(s->buf)) {
-        uint8_t count = utf32_to_utf8(c, s->buf + s->buf_pos);
-        if (count == 0) {
+    ಆದರೆ (s->buf_pos + 5 <= ಗಾತ್ರ(s->buf)) {
+        uint8_t ಎಣಿಕೆ_2 = utf32_ಗಮ್ಯ_utf8(c, s->buf + s->buf_pos);
+        ಆದರೆ (ಎಣಿಕೆ_2 == 0) {
             /* Handle encoding failure with U+FFFD REPLACEMENT CHARACTER */
-            count = utf32_to_utf8(0xfffd, s->buf + s->buf_pos);
+            ಎಣಿಕೆ_2 = utf32_ಗಮ್ಯ_utf8(0xfffd, s->buf + s->buf_pos);
         }
-        if (count == 0)
-            return false;
+        ಆದರೆ (ಎಣಿಕೆ_2 == 0)
+            ಹಿಂತಿರುಗಿ false;
         /* `count` counts the NULL byte */
-        s->buf_pos += (size_t)count - 1;
-        return true;
-    } else {
-        return false;
+        s->buf_pos += (ಗಾತ್ರ_t)ಎಣಿಕೆ_2 - 1;
+        ಹಿಂತಿರುಗಿ true;
+    } ಇಲ್ಲದಿದ್ದರೆ {
+        ಹಿಂತಿರುಗಿ false;
     }
 }
 
-static inline bool
-scanner_oct(struct scanner *s, uint8_t *out)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+scanner_oct(ರಚನೆ scanner *s, uint8_t *ಹೊರಹೋಗು)
 {
     uint8_t i = 0;
     uint8_t c = 0;
-    for (; scanner_peek(s) >= '0' && scanner_peek(s) <= '7' && i < 4; i++) {
+    ಗಾಗಿ (; scanner_peek(s) >= '0' && scanner_peek(s) <= '7' && i < 4; i++) {
         /* Test overflow */
-        if (c < 040) {
-            c = c * 8 + (uint8_t)(scanner_next(s) - '0');
-        } else {
+        ಆದರೆ (c < 040) {
+            c = c * 8 + (uint8_t)(scanner_ಮುಂದಿನ(s) - '0');
+        } ಇಲ್ಲದಿದ್ದರೆ {
             /* Consume valid digit, but mark result as invalid */
-            scanner_next(s);
-            *out = c;
-            return false;
+            scanner_ಮುಂದಿನ(s);
+            *ಹೊರಹೋಗು = c;
+            ಹಿಂತಿರುಗಿ false;
         }
     }
-    *out = c;
-    return i > 0;
+    *ಹೊರಹೋಗು = c;
+    ಹಿಂತಿರುಗಿ i > 0;
 }
 
-static inline bool
-scanner_hex(struct scanner *s, uint8_t *out)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+scanner_hex(ರಚನೆ scanner *s, uint8_t *ಹೊರಹೋಗು)
 {
     uint8_t i;
-    for (i = 0, *out = 0; is_xdigit(scanner_peek(s)) && i < 2; i++) {
-        const char c = scanner_next(s);
-        const char offset = (char) (c >= '0' && c <= '9' ? '0' :
+    ಗಾಗಿ (i = 0, *ಹೊರಹೋಗು = 0; is_xdigit(scanner_peek(s)) && i < 2; i++) {
+        ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ c = scanner_ಮುಂದಿನ(s);
+        ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ ಸ್ಥಾನಾಂತರ = (ಅಕ್ಷರ) (c >= '0' && c <= '9' ? '0' :
                                     c >= 'a' && c <= 'f' ? 'a' - 10
                                                          : 'A' - 10);
-        *out = *out * 16 + (uint8_t)(c - offset);
+        *ಹೊರಹೋಗು = *ಹೊರಹೋಗು * 16 + (uint8_t)(c - ಸ್ಥಾನಾಂತರ);
     }
-    return i > 0;
+    ಹಿಂತಿರುಗಿ i > 0;
 }
 
-static inline int
-scanner_dec_int64(struct scanner *s, int64_t *out)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ
+scanner_dec_int64(ರಚನೆ scanner *s, int64_t *ಹೊರಹೋಗು)
 {
     uint64_t val = 0;
-    const int count =
-        parse_dec_to_uint64_t(s->s + s->pos, s->len - s->pos, &val);
-    if (count > 0) {
+    ಸ್ಥಿರಾಂಕ ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2 =
+        parse_dec_ಗಮ್ಯ_uint64_t(s->s + s->pos, s->len - s->pos, &val);
+    ಆದರೆ (ಎಣಿಕೆ_2 > 0) {
         /*
          * NOTE: Since the sign is handled as a token, we parse only *positive*
          *       values here. So that means that *we cannot parse INT64_MIN*,
@@ -302,86 +302,86 @@ scanner_dec_int64(struct scanner *s, int64_t *out)
          *       to parse only 32 bits integers in realistic keymap files and
          *       the limitation should not be an issue.
          */
-        if (val > INT64_MAX)
-            return -1;
-        s->pos += (size_t)count;
-        *out = (int64_t)val;
+        ಆದರೆ (val > INT64_MAX)
+            ಹಿಂತಿರುಗಿ -1;
+        s->pos += (ಗಾತ್ರ_t)ಎಣಿಕೆ_2;
+        *ಹೊರಹೋಗು = (int64_t)val;
     }
-    return count;
+    ಹಿಂತಿರುಗಿ ಎಣಿಕೆ_2;
 }
 
-static inline int
-scanner_hex_int64(struct scanner *s, int64_t *out)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ
+scanner_hex_int64(ರಚನೆ scanner *s, int64_t *ಹೊರಹೋಗು)
 {
     uint64_t val = 0;
-    const int count =
-        parse_hex_to_uint64_t(s->s + s->pos, s->len - s->pos, &val);
-    if (count > 0) {
+    ಸ್ಥಿರಾಂಕ ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2 =
+        parse_hex_ಗಮ್ಯ_uint64_t(s->s + s->pos, s->len - s->pos, &val);
+    ಆದರೆ (ಎಣಿಕೆ_2 > 0) {
         /* See comment in `scanner_dec_int64()` above */
-        if (val > INT64_MAX)
-            return -1;
-        s->pos += (size_t)count;
-        *out = (int64_t) val;
+        ಆದರೆ (val > INT64_MAX)
+            ಹಿಂತಿರುಗಿ -1;
+        s->pos += (ಗಾತ್ರ_t)ಎಣಿಕೆ_2;
+        *ಹೊರಹೋಗು = (int64_t) val;
     }
-    return count;
+    ಹಿಂತಿರುಗಿ ಎಣಿಕೆ_2;
 }
 
 /** Parser for the {NNNN} part of a Unicode escape sequences */
-static inline bool
-scanner_unicode_code_point(struct scanner *s, uint32_t *out)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+scanner_unicode_ಸಂಕೇತ_ಬಿಂದು(ರಚನೆ scanner *s, uint32_t *ಹೊರಹೋಗು)
 {
-    if (!scanner_chr(s, '{'))
-        return false;
+    ಆದರೆ (!scanner_chr(s, '{'))
+        ಹಿಂತಿರುಗಿ false;
 
     uint32_t cp = 0;
-    const int count =
-        parse_hex_to_uint32_t(s->s + s->pos, s->len - s->pos, &cp);
-    if (count > 0)
-        s->pos += (size_t)count;
+    ಸ್ಥಿರಾಂಕ ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2 =
+        parse_hex_ಗಮ್ಯ_uint32_t(s->s + s->pos, s->len - s->pos, &cp);
+    ಆದರೆ (ಎಣಿಕೆ_2 > 0)
+        s->pos += (ಗಾತ್ರ_t)ಎಣಿಕೆ_2;
 
     /* Try to consume everything within the string until the next `}` */
-    const size_t last_valid = s->pos;
-    while (!scanner_eof(s) && !scanner_eol(s) && scanner_peek(s) != '"' &&
+    ಸ್ಥಿರಾಂಕ ಗಾತ್ರ_t ಕೊನೆಯ_valid = s->pos;
+    ಆಗ (!scanner_eof(s) && !scanner_eol(s) && scanner_peek(s) != '"' &&
            scanner_peek(s) != '}') {
-        scanner_next(s);
+        scanner_ಮುಂದಿನ(s);
     }
 
-    if (scanner_chr(s, '}')) {
+    ಆದರೆ (scanner_chr(s, '}')) {
         /* End of the escape sequence; code point may be invalid */
-        *out = cp;
-        return (count > 0 && s->pos == last_valid + 1 && cp <= 0x10ffff);
+        *ಹೊರಹೋಗು = cp;
+        ಹಿಂತಿರುಗಿ (ಎಣಿಕೆ_2 > 0 && s->pos == ಕೊನೆಯ_valid + 1 && cp <= 0x10ffff);
     }
 
     /* No closing `}` within the string: rollback to last valid position */
-    s->pos = last_valid;
-    return false;
+    s->pos = ಕೊನೆಯ_valid;
+    ಹಿಂತಿರುಗಿ false;
 }
 
 /* Basic detection of wrong character encoding based on the first bytes */
-static inline bool
-scanner_check_supported_char_encoding(struct scanner *scanner)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool
+scanner_check_supported_char_encoding(ರಚನೆ scanner *scanner)
 {
     /* Skip UTF-8 encoded BOM (U+FEFF)
      * See: https://www.unicode.org/faq/utf_bom.html#bom5 */
-    if (scanner_str(scanner, "\xef\xbb\xbf", 3) || scanner->len < 2) {
+    ಆದರೆ (scanner_str(scanner, "\xef\xbb\xbf", 3) || scanner->len < 2) {
         /* Assume UTF-8 encoding or trivial short input */
-        return true;
+        ಹಿಂತಿರುಗಿ true;
     }
 
     /* Early detection of wrong file encoding, e.g. UTF-16 or UTF-32 */
-    if (scanner->s[0] == '\0' || scanner->s[1] == '\0') {
+    ಆದರೆ (scanner->s[0] == '\0' || scanner->s[1] == '\0') {
         scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                     "unexpected NULL character.");
-        return false;
+        ಹಿಂತಿರುಗಿ false;
     }
     /* Enforce the first character to be ASCII.
        See the note before the use of this function, that explains the relevant
        parts of the grammars of rules, keymap components and Compose. */
-    if (!is_ascii(scanner->s[0])) {
+    ಆದರೆ (!is_ascii(scanner->s[0])) {
         scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                     "unexpected non-ASCII character.");
-        return false;
+        ಹಿಂತಿರುಗಿ false;
     }
 
-    return true;
+    ಹಿಂತಿರುಗಿ true;
 }
