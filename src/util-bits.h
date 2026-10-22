@@ -5,19 +5,19 @@
 
 #pragma once
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include <assert.h>
-#include <limits.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stddef.h>
+#अन्तर्भाव <assert.h>
+#अन्तर्भाव <limits.h>
+#अन्तर्भाव <stdbool.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <stddef.h>
 
 /*
  * Bit array using native pointer-width word for optimal performance
  */
 
-#define BIT_ARRAY_UINTPTR_WIDTH (sizeof(uintptr_t) * CHAR_BIT)
+#define BIT_ARRAY_UINTPTR_WIDTH (परिमाण(uintptr_t) * अक्षर_बिट)
 
 /* Compile-time sanity checks */
 #ifdef UINTPTR_WIDTH
@@ -33,9 +33,9 @@ static_assert((BIT_ARRAY_UINTPTR_WIDTH & (BIT_ARRAY_UINTPTR_WIDTH - 1)) == 0,
  * @param num_bits  Number of bits to store.
  * @return Number of `uintptr_t` words required.
  */
-static inline size_t bit_array_words(size_t num_bits) {
-    return num_bits / BIT_ARRAY_UINTPTR_WIDTH +
-          (num_bits % BIT_ARRAY_UINTPTR_WIDTH != 0);
+स्थिर अन्तःस्थ माप_प्रकार bit_array_शब्दगण(माप_प्रकार अंक_bits) {
+    प्रत्यागम अंक_bits / BIT_ARRAY_UINTPTR_WIDTH +
+          (अंक_bits % BIT_ARRAY_UINTPTR_WIDTH != 0);
 }
 
 /**
@@ -43,10 +43,10 @@ static inline size_t bit_array_words(size_t num_bits) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline bool bit_array_get(const uintptr_t *arr, size_t index) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
-    return (arr[word_idx] >> bit_idx) & (uintptr_t)1;
+स्थिर अन्तःस्थ bool bit_array_get(ध्रुव uintptr_t *arr, माप_प्रकार index) {
+    ध्रुव माप_प्रकार word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
+    ध्रुव माप_प्रकार bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
+    प्रत्यागम (arr[word_idx] >> bit_idx) & (uintptr_t)1;
 }
 
 /**
@@ -54,9 +54,9 @@ static inline bool bit_array_get(const uintptr_t *arr, size_t index) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline void bit_array_set(uintptr_t *arr, size_t index) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
+स्थिर अन्तःस्थ शून्य bit_array_set(uintptr_t *arr, माप_प्रकार index) {
+    ध्रुव माप_प्रकार word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
+    ध्रुव माप_प्रकार bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
     arr[word_idx] |= ((uintptr_t)1 << bit_idx);
 }
 
@@ -65,9 +65,9 @@ static inline void bit_array_set(uintptr_t *arr, size_t index) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline void bit_array_clear(uintptr_t *arr, size_t index) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
+स्थिर अन्तःस्थ शून्य bit_array_clear(uintptr_t *arr, माप_प्रकार index) {
+    ध्रुव माप_प्रकार word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
+    ध्रुव माप_प्रकार bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
     arr[word_idx] &= ~((uintptr_t)1 << bit_idx);
 }
 
@@ -76,9 +76,9 @@ static inline void bit_array_clear(uintptr_t *arr, size_t index) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline void bit_array_toggle(uintptr_t *arr, size_t index) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
+स्थिर अन्तःस्थ शून्य bit_array_toggle(uintptr_t *arr, माप_प्रकार index) {
+    ध्रुव माप_प्रकार word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
+    ध्रुव माप_प्रकार bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
     arr[word_idx] ^= ((uintptr_t)1 << bit_idx);
 }
 
@@ -87,9 +87,9 @@ static inline void bit_array_toggle(uintptr_t *arr, size_t index) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline void bit_array_assign(uintptr_t *arr, size_t index, bool val) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
+स्थिर अन्तःस्थ शून्य bit_array_assign(uintptr_t *arr, माप_प्रकार index, bool val) {
+    ध्रुव माप_प्रकार word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
+    ध्रुव माप_प्रकार bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
     uintptr_t mask = (uintptr_t)1 << bit_idx;
     arr[word_idx] = (arr[word_idx] & ~mask)     /* clear bit */
                   | ((-(uintptr_t)val) & mask); /* set bit */
