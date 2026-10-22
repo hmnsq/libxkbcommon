@@ -4,17 +4,17 @@
  */
 #pragma once
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include <limits.h>
-#include <stdbool.h>
-#include <stdint.h>
+#अन्तर्भाव <limits.h>
+#अन्तर्भाव <stdbool.h>
+#अन्तर्भाव <stdint.h>
 
-#if defined(_MSC_VER)
+#यदि defined(_MSC_VER)
 # include <intrin.h>
 #endif
 
-#include "utils.h"
+#अन्तर्भाव "utils.h"
 
 /*
  * Define various parsers to avoid the use of strto* -- it’s slower and accepts
@@ -27,23 +27,23 @@
  */
 
 #define MAKE_PARSE_DEC_TO(type, max)                         \
-static inline int                                            \
-parse_dec_to_##type(const char *s, size_t len, type (*out))  \
+स्थिर अन्तःस्थ पूर्णाङ्क                                            \
+parse_dec_to_##type(अचर वर्ण *s, माप_प्रकार len, type (*out))  \
 {                                                            \
     type result = 0;                                         \
-    size_t i;                                                \
-    for (i = 0;                                              \
-         i < len && (unsigned char)(s[i] - '0') < 10U &&     \
+    माप_प्रकार i;                                                \
+    लागि (i = 0;                                              \
+         i < len && (अचिन्हित वर्ण)(s[i] - '0') < 10U &&     \
          result <= (max) / 10 &&                             \
-         result * 10 <= (max) - (unsigned char) (s[i] - '0');\
+         result * 10 <= (max) - (अचिन्हित वर्ण) (s[i] - '0');\
          i++) {                                              \
         result = result * 10 + (type)(s[i] - '0');           \
     }                                                        \
     *out = result;                                           \
     /* Check if there is more to parse */                    \
     /* We can safely convert the length to int on success */ \
-    return (i >= len || (unsigned char)(s[i] - '0') >= 10U)  \
-           ? (int) i                                         \
+    फर्काऊ (i >= len || (अचिन्हित वर्ण)(s[i] - '0') >= 10U)  \
+           ? (पूर्णाङ्क) i                                         \
            : -1;                                             \
 }
 
@@ -63,7 +63,7 @@ MAKE_PARSE_DEC_TO(uint64_t, UINT64_MAX)
 
 #undef MAKE_PARSE_DEC_TO
 
-static const unsigned char digits__[] = {
+स्थिर अचर अचिन्हित वर्ण digits__[] = {
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
@@ -89,20 +89,20 @@ static const unsigned char digits__[] = {
 };
 
 #define MAKE_PARSE_HEX_TO(type, max)                           \
-static inline int                                              \
-parse_hex_to_##type(const char *s, size_t len, type (*out))    \
+स्थिर अन्तःस्थ पूर्णाङ्क                                              \
+parse_hex_to_##type(अचर वर्ण *s, माप_प्रकार len, type (*out))    \
 {                                                              \
     type result = 0;                                           \
-    size_t i = 0;                                              \
-    for (; i < len && digits__[(unsigned char) s[i]] < 16u &&  \
+    माप_प्रकार i = 0;                                              \
+    लागि (; i < len && digits__[(अचिन्हित वर्ण) s[i]] < 16u &&  \
          result <= (max) >> 4;                                 \
          i++) {                                                \
-        result = result * 16 + digits__[(unsigned char) s[i]]; \
+        result = result * 16 + digits__[(अचिन्हित वर्ण) s[i]]; \
     }                                                          \
     *out = result;                                             \
     /* Check if there is more to parse */                      \
     /* We can safely convert the length to int on success */   \
-    return (i >= len || !is_xdigit(s[i])) ? (int) i : -1;      \
+    फर्काऊ (i >= len || !is_xdigit(s[i])) ? (पूर्णाङ्क) i : -1;      \
 }
 
 /**
@@ -121,104 +121,104 @@ MAKE_PARSE_HEX_TO(uint64_t, UINT64_MAX)
 
 #undef MAKE_PARSE_HEX_TO
 
-static inline unsigned int
+स्थिर अन्तःस्थ अचिन्हित पूर्णाङ्क
 popcount32(uint32_t x)
 {
-#if defined(__GNUC__) || defined(__clang__)
-    return (unsigned int)__builtin_popcountl(x);
-#elif defined(_MSC_VER)
-    return __popcnt(x);
-#else
+#यदि defined(__GNUC__) || defined(__clang__)
+    फर्काऊ (अचिन्हित पूर्णाङ्क)__builtin_popcountl(x);
+#अथवायदि defined(_MSC_VER)
+    फर्काऊ __popcnt(x);
+#अन्यथा
     /* Fallback (Brian Kernighan’s method) */
-    unsigned int count = 0;
-    while (x) {
+    अचिन्हित पूर्णाङ्क गन्ती = 0;
+    जबसम्म (x) {
         x &= x - 1;
-        count++;
+        गन्ती++;
     }
-    return count;
+    फर्काऊ गन्ती;
 #endif
 }
 
-static inline unsigned int
+स्थिर अन्तःस्थ अचिन्हित पूर्णाङ्क
 ctz32(uint32_t x)
 {
-    if (x == 0)
-        return 32;
+    यदि (x == 0)
+        फर्काऊ 32;
 
-#if defined(__GNUC__) || defined(__clang__)
-    return _Generic(
+#यदि defined(__GNUC__) || defined(__clang__)
+    फर्काऊ _Generic(
         x,
-        unsigned int: (unsigned int)__builtin_ctz(x),
-        unsigned long: (unsigned int)__builtin_ctzl(x),
-        unsigned long long: (unsigned int)__builtin_ctzll(x)
+        अचिन्हित पूर्णाङ्क: (अचिन्हित पूर्णाङ्क)__builtin_ctz(x),
+        अचिन्हित दीर्घ: (अचिन्हित पूर्णाङ्क)__builtin_ctzl(x),
+        अचिन्हित दीर्घ दीर्घ: (अचिन्हित पूर्णाङ्क)__builtin_ctzll(x)
     );
-#elif defined(_MSC_VER)
-    unsigned long index;
+#अथवायदि defined(_MSC_VER)
+    अचिन्हित दीर्घ index;
     _BitScanForward(&index, x);
-    return (unsigned int)index;
-#else
+    फर्काऊ (अचिन्हित पूर्णाङ्क)index;
+#अन्यथा
     /* Fallback: De Bruijn sequence algorithm for 32-bit integers */
-    static const unsigned int debruijn32[32] = {
+    स्थिर अचर अचिन्हित पूर्णाङ्क debruijn32[32] = {
         0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8,
         31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9
     };
-    return debruijn32[((x & -x) * UINT32_C(0x077cb531)) >> 27];
+    फर्काऊ debruijn32[((x & -x) * UINT32_C(0x077cb531)) >> 27];
 #endif
 }
 
-static inline unsigned int
+स्थिर अन्तःस्थ अचिन्हित पूर्णाङ्क
 clz32(uint32_t x)
 {
-    if (x == 0)
-        return 32;
+    यदि (x == 0)
+        फर्काऊ 32;
 
-#if defined(__GNUC__) || defined(__clang__)
-    return _Generic(
+#यदि defined(__GNUC__) || defined(__clang__)
+    फर्काऊ _Generic(
         x,
-        unsigned int:
-            (unsigned int)__builtin_clz(x) -
-            (unsigned int)((sizeof(unsigned int) * CHAR_BIT) - 32),
-        unsigned long:
-            (unsigned int)__builtin_clzl(x) -
-            (unsigned int)((sizeof(unsigned long) * CHAR_BIT) - 32),
-        unsigned long long:
-            (unsigned int)__builtin_clzll(x) -
-            (unsigned int)((sizeof(unsigned long long) * CHAR_BIT) - 32)
+        अचिन्हित पूर्णाङ्क:
+            (अचिन्हित पूर्णाङ्क)__builtin_clz(x) -
+            (अचिन्हित पूर्णाङ्क)((परिमाण(अचिन्हित पूर्णाङ्क) * अक्षर_बिट) - 32),
+        अचिन्हित दीर्घ:
+            (अचिन्हित पूर्णाङ्क)__builtin_clzl(x) -
+            (अचिन्हित पूर्णाङ्क)((परिमाण(अचिन्हित दीर्घ) * अक्षर_बिट) - 32),
+        अचिन्हित दीर्घ दीर्घ:
+            (अचिन्हित पूर्णाङ्क)__builtin_clzll(x) -
+            (अचिन्हित पूर्णाङ्क)((परिमाण(अचिन्हित दीर्घ दीर्घ) * अक्षर_बिट) - 32)
     );
-#else
+#अन्यथा
     // Efficient binary search fallback for 32-bit integers
-    unsigned int count = 0;
-    if ((x & 0xffff0000) == 0) { count += 16; x <<= 16; }
-    if ((x & 0xff000000) == 0) { count += 8;  x <<= 8;  }
-    if ((x & 0xf0000000) == 0) { count += 4;  x <<= 4;  }
-    if ((x & 0xc0000000) == 0) { count += 2;  x <<= 2;  }
-    if ((x & 0x80000000) == 0) { count += 1; }
-    return count;
+    अचिन्हित पूर्णाङ्क गन्ती = 0;
+    यदि ((x & 0xffff0000) == 0) { गन्ती += 16; x <<= 16; }
+    यदि ((x & 0xff000000) == 0) { गन्ती += 8;  x <<= 8;  }
+    यदि ((x & 0xf0000000) == 0) { गन्ती += 4;  x <<= 4;  }
+    यदि ((x & 0xc0000000) == 0) { गन्ती += 2;  x <<= 2;  }
+    यदि ((x & 0x80000000) == 0) { गन्ती += 1; }
+    फर्काऊ गन्ती;
 #endif
 }
 
-static inline unsigned int
-next_pow2(unsigned int x)
+स्थिर अन्तःस्थ अचिन्हित पूर्णाङ्क
+next_pow2(अचिन्हित पूर्णाङ्क x)
 {
-#if defined(__GNUC__) || defined(__clang__)
-    if (x <= 1) return 1u;
-    return 1u << ((int)sizeof(unsigned) * CHAR_BIT - __builtin_clz(x - 1));
-#else
-    if (x <= 1u) return 1u;
+#यदि defined(__GNUC__) || defined(__clang__)
+    यदि (x <= 1) फर्काऊ 1u;
+    फर्काऊ 1u << ((पूर्णाङ्क)परिमाण(अचिन्हित) * अक्षर_बिट - __builtin_clz(x - 1));
+#अन्यथा
+    यदि (x <= 1u) फर्काऊ 1u;
     x--;
-    for (unsigned s = 1; s < (unsigned)sizeof(x)*CHAR_BIT; s <<= 1)
+    लागि (अचिन्हित s = 1; s < (अचिन्हित)परिमाण(x)*अक्षर_बिट; s <<= 1)
         x |= x >> s;
-    return x + 1u;
+    फर्काऊ x + 1u;
 #endif
 }
 
-static inline uint32_t
-keep_lowest_n_set_bits(uint32_t mask, unsigned int n) {
-    const uint32_t original = mask;
+स्थिर अन्तःस्थ uint32_t
+keep_lowest_n_set_bits(uint32_t mask, अचिन्हित पूर्णाङ्क n) {
+    अचर uint32_t original = mask;
 
     /* Clear the lowest set bit n times */
-    while (n-- && mask)
+    जबसम्म (n-- && mask)
         mask &= (mask - 1);
 
-    return original ^ mask;
+    फर्काऊ original ^ mask;
 }

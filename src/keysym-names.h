@@ -6,19 +6,19 @@
  */
 #pragma once
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include <stddef.h>
-#include <stdint.h>
+#अन्तर्भाव <stddef.h>
+#अन्तर्भाव <stdint.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "utils.h"
+#अन्तर्भाव "xkbcommon/xkbcommon.h"
+#अन्तर्भाव "utils.h"
 
 #ifdef __GNUC__
-#pragma GCC diagnostic push
+#pragma GCC diagnostic थप
 #pragma GCC diagnostic ignored "-Woverlength-strings"
 #endif
-static const char *keysym_names =
+स्थिर अचर वर्ण *keysym_names =
     "0\0"
     "1\0"
     "2\0"
@@ -2659,10 +2659,10 @@ static const char *keysym_names =
     "zstroke\0"
 ;
 #ifdef __GNUC__
-#pragma GCC diagnostic pop
+#pragma GCC diagnostic झिक
 #endif
 
-static const uint16_t keysym_name_G[] = {
+स्थिर अचर uint16_t keysym_name_G[] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2508,
     0, 0, 0, 0, 0, 0, 3350, 0, 0, 0, 0, 0, 0, 0, 2987, 2941, 0, 0, 0, 1606,
     2880, 0, 170, 0, 0, 2634, 0, 0, 0, 0, 1265, 0, 2777, 0, 0, 0, 0, 0, 0,
@@ -2970,27 +2970,27 @@ static const uint16_t keysym_name_G[] = {
     600, 2354, 277, 2185, 0
 };
 
-static inline size_t
-keysym_name_perfect_hash(const char *key)
+स्थिर अन्तःस्थ माप_प्रकार
+keysym_name_perfect_hash(अचर वर्ण *साँचो)
 {
-    const char *T1 = "mGfOhSKH0Is7uINY8QVfaJ9N0Fe0yHYu";
-    const char *T2 = "nXsEsvAWpmIhmalLNlkBZssDXdmoTYKy";
-    size_t h1 = 0;
-    size_t h2 = 0;
-    for (size_t i = 0; key[i] != '\0'; i++) {
-        h1 += (size_t) (T1[i % 32] * key[i]);
-        h2 += (size_t) (T2[i % 32] * key[i]);
+    अचर वर्ण *T1 = "mGfOhSKH0Is7uINY8QVfaJ9N0Fe0yHYu";
+    अचर वर्ण *T2 = "nXsEsvAWpmIhmalLNlkBZssDXdmoTYKy";
+    माप_प्रकार h1 = 0;
+    माप_प्रकार h2 = 0;
+    लागि (माप_प्रकार i = 0; साँचो[i] != '\0'; i++) {
+        h1 += (माप_प्रकार) (T1[i % 32] * साँचो[i]);
+        h2 += (माप_प्रकार) (T2[i % 32] * साँचो[i]);
     }
-    return (keysym_name_G[h1 % 4731] + keysym_name_G[h2 % 4731]) % 4731;
+    फर्काऊ (keysym_name_G[h1 % 4731] + keysym_name_G[h2 % 4731]) % 4731;
 }
 
 
-struct name_keysym {
+संरचना name_keysym {
     xkb_keysym_t keysym;
     uint16_t offset;
 };
 
-static const struct name_keysym name_to_keysym[] = {
+स्थिर अचर संरचना name_keysym name_to_keysym[] = {
     { 0x00000030, 0 }, /* 0 */
     { 0x00000031, 2 }, /* 1 */
     { 0x00000032, 4 }, /* 2 */
@@ -4306,7 +4306,7 @@ static const struct name_keysym name_to_keysym[] = {
     { 0x000008da, 17415 }, /* includedin */
     { 0x000008db, 17426 }, /* includes */
     { 0x000008c2, 17435 }, /* infinity */
-    { 0x0000ff63, 17444 }, /* Insert */
+    { 0x0000ff63, 17444 }, /*घुसाउ*/
     { 0x1000ff72, 17451 }, /* InsertChar */
     { 0x1000ff70, 17462 }, /* InsertLine */
     { 0x000008bf, 17473 }, /* integral */
@@ -4499,7 +4499,7 @@ static const struct name_keysym name_to_keysym[] = {
     { 0x000001b5, 19379 }, /* lcaron */
     { 0x000003a6, 19386 }, /* Lcedilla */
     { 0x000003b6, 19395 }, /* lcedilla */
-    { 0x0000ff51, 19404 }, /* Left */
+    { 0x0000ff51, 19404 }, /*बायाँ*/
     { 0x00000abc, 19409 }, /* leftanglebracket */
     { 0x000008fb, 19426 }, /* leftarrow */
     { 0x00000ba3, 19436 }, /* leftcaret */
@@ -4797,7 +4797,7 @@ static const struct name_keysym name_to_keysym[] = {
     { 0x0000fe72, 22540 }, /* RepeatKeys_Enable */
     { 0x1000ff6c, 22558 }, /* Reset */
     { 0x0000ff0d, 22564 }, /* Return */
-    { 0x0000ff53, 22571 }, /* Right */
+    { 0x0000ff53, 22571 }, /*दायाँ*/
     { 0x00000abe, 22577 }, /* rightanglebracket */
     { 0x000008fd, 22595 }, /* rightarrow */
     { 0x00000ba6, 22606 }, /* rightcaret */
@@ -5631,7 +5631,7 @@ static const struct name_keysym name_to_keysym[] = {
     { 0x010001b6, 32872 }, /* zstroke */
 };
 
-static const struct name_keysym keysym_to_name[] = {
+स्थिर अचर संरचना name_keysym keysym_to_name[] = {
     { 0x00000000, 20276 }, /* NoSymbol */
     { 0x00000020, 24027 }, /* space */
     { 0x00000021, 12230 }, /* exclam */
@@ -6813,9 +6813,9 @@ static const struct name_keysym keysym_to_name[] = {
     { 0x0000ff3e, 22298 }, /* PreviousCandidate */
     { 0x0000ff3f, 15834 }, /* Hangul_Special */
     { 0x0000ff50, 16822 }, /* Home */
-    { 0x0000ff51, 19404 }, /* Left */
+    { 0x0000ff51, 19404 }, /*बायाँ*/
     { 0x0000ff52, 26615 }, /* Up */
-    { 0x0000ff53, 22571 }, /* Right */
+    { 0x0000ff53, 22571 }, /*दायाँ*/
     { 0x0000ff54, 11458 }, /* Down */
     { 0x0000ff55, 22322 }, /* Prior */
     { 0x0000ff56, 20208 }, /* Next */
@@ -6824,7 +6824,7 @@ static const struct name_keysym keysym_to_name[] = {
     { 0x0000ff60, 22951 }, /* Select */
     { 0x0000ff61, 22316 }, /* Print */
     { 0x0000ff62, 12248 }, /* Execute */
-    { 0x0000ff63, 17444 }, /* Insert */
+    { 0x0000ff63, 17444 }, /*घुसाउ*/
     { 0x0000ff65, 26588 }, /* Undo */
     { 0x0000ff66, 22524 }, /* Redo */
     { 0x0000ff67, 19890 }, /* Menu */
@@ -8142,15 +8142,15 @@ static const struct name_keysym keysym_to_name[] = {
 #define UNICODE_KEYSYM    0xfffe
 #define DEPRECATED_KEYSYM 0xffff
 
-struct deprecated_keysym {
+संरचना deprecated_keysym {
     xkb_keysym_t keysym;
     uint16_t offset;
     /* Explicit deprecated aliases start index & count */
     uint8_t explicit_index;
-    uint8_t explicit_count;
+    uint8_t explicit_गन्ती;
 };
 
-static const struct deprecated_keysym deprecated_keysyms[] = {
+स्थिर अचर संरचना deprecated_keysym deprecated_keysyms[] = {
     { 0x00000027, 934              , 0, 0 }, /* Reference: apostrophe. Deprecated: quoteright */
     { 0x00000060, 13397            , 0, 0 }, /* Reference: grave. Deprecated: quoteleft */
     { 0x000000ab, 14480            , 0, 0 }, /* Reference: guillemetleft. Deprecated: guillemotleft */
@@ -8310,7 +8310,7 @@ static const struct deprecated_keysym deprecated_keysyms[] = {
     { 0x100810f4, 30581            , 0, 0 }, /* Reference: XF86MonBrightnessAuto. Deprecated: XF86BrightnessAuto */
 };
 
-static const uint32_t explicit_deprecated_aliases[] = {
+स्थिर अचर uint32_t explicit_deprecated_aliases[] = {
     24103,
 };
 
