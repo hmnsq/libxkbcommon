@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include "x11-priv.h"
+#अन्तर्भाव "x11-priv.h"
 
-int
+पूर्णाङ्क
 xkb_x11_setup_xkb_extension(xcb_connection_t *conn,
                             uint16_t major_xkb_version,
                             uint16_t minor_xkb_version,
-                            enum xkb_x11_setup_xkb_extension_flags flags,
+                            गणना xkb_x11_setup_xkb_extension_flags flags,
                             uint16_t *major_xkb_version_out,
                             uint16_t *minor_xkb_version_out,
                             uint8_t *base_event_out,
@@ -20,25 +20,25 @@ xkb_x11_setup_xkb_extension(xcb_connection_t *conn,
     uint8_t base_event, base_error;
     uint16_t server_major, server_minor;
 
-    static const enum xkb_x11_setup_xkb_extension_flags
+    स्थिर ध्रुव गणना xkb_x11_setup_xkb_extension_flags
         XKB_X11_SETUP_XKB_EXTENSION_FLAGS = XKB_X11_SETUP_XKB_EXTENSION_NO_FLAGS;
 
-    if (flags & ~XKB_X11_SETUP_XKB_EXTENSION_FLAGS) {
+    यदि (flags & ~XKB_X11_SETUP_XKB_EXTENSION_FLAGS) {
         /* log_err_func(ctx, "unrecognized flags: %#x\n", flags); */
-        return 0;
+        प्रत्यागम 0;
     }
 
     {
-        const xcb_query_extension_reply_t *reply =
+        ध्रुव xcb_query_extension_reply_t *reply =
             xcb_get_extension_data(conn, &xcb_xkb_id);
-        if (!reply) {
+        यदि (!reply) {
             /* log_err_func(ctx, "failed to query for XKB extension\n"); */
-            return 0;
+            प्रत्यागम 0;
         }
 
-        if (!reply->present) {
+        यदि (!reply->present) {
             /* log_err_func(ctx, "failed to start using XKB extension: not available in server\n"); */
-            return 0;
+            प्रत्यागम 0;
         }
 
         base_event = reply->first_event;
@@ -46,32 +46,32 @@ xkb_x11_setup_xkb_extension(xcb_connection_t *conn,
     }
 
     {
-        xcb_generic_error_t *error = NULL;
+        xcb_generic_error_t *error = रिक्त;
         xcb_xkb_use_extension_cookie_t cookie =
             xcb_xkb_use_extension(conn, major_xkb_version, minor_xkb_version);
         xcb_xkb_use_extension_reply_t *reply =
             xcb_xkb_use_extension_reply(conn, cookie, &error);
 
-        if (!reply) {
+        यदि (!reply) {
             /* log_err_func(ctx, */
             /*              "failed to start using XKB extension: error code %d\n", */
             /*              error ? error->error_code : -1); */
-            free(error);
-            return 0;
+            मुक्त(error);
+            प्रत्यागम 0;
         }
 
-        if (!reply->supported) {
+        यदि (!reply->supported) {
             /* log_err_func(ctx, */
             /*              "failed to start using XKB extension: server doesn't support version %d.%d\n", */
             /*              major_xkb_version, minor_xkb_version); */
-            free(reply);
-            return 0;
+            मुक्त(reply);
+            प्रत्यागम 0;
         }
 
         server_major = reply->serverMajor;
         server_minor = reply->serverMinor;
 
-        free(reply);
+        मुक्त(reply);
     }
 
     /*
@@ -79,16 +79,16 @@ xkb_x11_setup_xkb_extension(xcb_connection_t *conn,
     * it doesn't seem like any of it is useful to us.
     */
 
-    if (major_xkb_version_out)
+    यदि (major_xkb_version_out)
         *major_xkb_version_out = server_major;
-    if (minor_xkb_version_out)
+    यदि (minor_xkb_version_out)
         *minor_xkb_version_out = server_minor;
-    if (base_event_out)
+    यदि (base_event_out)
         *base_event_out = base_event;
-    if (base_error_out)
+    यदि (base_error_out)
         *base_error_out = base_error;
 
-    return 1;
+    प्रत्यागम 1;
 }
 
 int32_t
@@ -99,130 +99,130 @@ xkb_x11_get_core_keyboard_device_id(xcb_connection_t *conn)
         xcb_xkb_get_device_info(conn, XCB_XKB_ID_USE_CORE_KBD,
                                 0, 0, 0, 0, 0, 0);
     xcb_xkb_get_device_info_reply_t *reply =
-        xcb_xkb_get_device_info_reply(conn, cookie, NULL);
+        xcb_xkb_get_device_info_reply(conn, cookie, रिक्त);
 
-    if (!reply)
-        return -1;
+    यदि (!reply)
+        प्रत्यागम -1;
 
     device_id = reply->deviceID;
-    free(reply);
-    return device_id;
+    मुक्त(reply);
+    प्रत्यागम device_id;
 }
 
-struct x11_atom_cache {
+संरचना x11_atom_cache {
     /*
      * Invalidate the cache based on the XCB connection.
      * X11 atoms are actually not per connection or client, but per X server
      * session. But better be safe just in case we survive an X server restart.
      */
     xcb_connection_t *conn;
-    struct {
+    संरचना {
         xcb_atom_t from;
         xkb_atom_t to;
     } cache[256];
     size_t len;
 };
 
-static struct x11_atom_cache *
-get_cache(struct xkb_context *ctx, xcb_connection_t *conn)
+स्थिर संरचना x11_atom_cache *
+get_cache(संरचना xkb_context *ctx, xcb_connection_t *conn)
 {
-    if (!ctx->x11_atom_cache) {
-        ctx->x11_atom_cache = calloc(1, sizeof(struct x11_atom_cache));
+    यदि (!ctx->x11_atom_cache) {
+        ctx->x11_atom_cache = calloc(1, परिमाण(संरचना x11_atom_cache));
     }
     /* Can be NULL in case the malloc failed. */
-    struct x11_atom_cache *cache = ctx->x11_atom_cache;
-    if (cache && cache->conn != conn) {
+    संरचना x11_atom_cache *cache = ctx->x11_atom_cache;
+    यदि (cache && cache->conn != conn) {
         cache->conn = conn;
         cache->len = 0;
     }
-    return cache;
+    प्रत्यागम cache;
 }
 
-void
-x11_atom_interner_init(struct x11_atom_interner *interner,
-                       struct xkb_context *ctx, xcb_connection_t *conn)
+शून्य
+x11_atom_interner_init(संरचना x11_atom_interner *interner,
+                       संरचना xkb_context *ctx, xcb_connection_t *conn)
 {
     interner->had_error = false;
     interner->ctx = ctx;
     interner->conn = conn;
-    interner->num_pending = 0;
-    interner->num_copies = 0;
-    interner->num_escaped = 0;
+    interner->अंक_pending = 0;
+    interner->अंक_copies = 0;
+    interner->अंक_escaped = 0;
 }
 
-void
-x11_atom_interner_adopt_atom(struct x11_atom_interner *interner,
-                             const xcb_atom_t atom, xkb_atom_t *out)
+शून्य
+x11_atom_interner_adopt_atom(संरचना x11_atom_interner *interner,
+                             ध्रुव xcb_atom_t atom, xkb_atom_t *out)
 {
     *out = XKB_ATOM_NONE;
 
-    if (atom == XCB_ATOM_NONE)
-        return;
+    यदि (atom == XCB_ATOM_NONE)
+        प्रत्यागम;
 
     /* Can be NULL in case the malloc failed. */
-    struct x11_atom_cache *cache = get_cache(interner->ctx, interner->conn);
+    संरचना x11_atom_cache *cache = get_cache(interner->ctx, interner->conn);
 
 retry:
 
     /* Already in the cache? */
-    if (cache) {
-        for (size_t c = 0; c < cache->len; c++) {
-            if (cache->cache[c].from == atom) {
+    यदि (cache) {
+        प्रति (size_t c = 0; c < cache->len; c++) {
+            यदि (cache->cache[c].from == atom) {
                 *out = cache->cache[c].to;
-                return;
+                प्रत्यागम;
             }
         }
     }
 
     /* Already pending? */
-    for (size_t i = 0; i < interner->num_pending; i++) {
-        if (interner->pending[i].from == atom) {
-            if (interner->num_copies == ARRAY_SIZE(interner->copies)) {
+    प्रति (size_t i = 0; i < interner->अंक_pending; i++) {
+        यदि (interner->pending[i].from == atom) {
+            यदि (interner->अंक_copies == ARRAY_SIZE(interner->copies)) {
                 x11_atom_interner_round_trip(interner);
-                goto retry;
+                गच्छ retry;
             }
 
-            size_t idx = interner->num_copies++;
+            size_t idx = interner->अंक_copies++;
             interner->copies[idx].from = atom;
             interner->copies[idx].out = out;
-            return;
+            प्रत्यागम;
         }
     }
 
     /* We have to send a GetAtomName request */
-    if (interner->num_pending == ARRAY_SIZE(interner->pending)) {
+    यदि (interner->अंक_pending == ARRAY_SIZE(interner->pending)) {
         x11_atom_interner_round_trip(interner);
-        assert(interner->num_pending < ARRAY_SIZE(interner->pending));
+        प्रतिज्ञा(interner->अंक_pending < ARRAY_SIZE(interner->pending));
     }
-    size_t idx = interner->num_pending++;
+    size_t idx = interner->अंक_pending++;
     interner->pending[idx].from = atom;
     interner->pending[idx].out = out;
     interner->pending[idx].cookie = xcb_get_atom_name(interner->conn, atom);
 }
 
-void
-x11_atom_interner_round_trip(struct x11_atom_interner *interner) {
-    struct xkb_context *ctx = interner->ctx;
+शून्य
+x11_atom_interner_round_trip(संरचना x11_atom_interner *interner) {
+    संरचना xkb_context *ctx = interner->ctx;
     xcb_connection_t *conn = interner->conn;
 
     /* Can be NULL in case the malloc failed. */
-    struct x11_atom_cache *cache = get_cache(ctx, conn);
+    संरचना x11_atom_cache *cache = get_cache(ctx, conn);
 
-    for (size_t i = 0; i < interner->num_pending; i++) {
+    प्रति (size_t i = 0; i < interner->अंक_pending; i++) {
         xcb_get_atom_name_reply_t *reply;
 
-        reply = xcb_get_atom_name_reply(conn, interner->pending[i].cookie, NULL);
-        if (!reply) {
+        reply = xcb_get_atom_name_reply(conn, interner->pending[i].cookie, रिक्त);
+        यदि (!reply) {
             interner->had_error = true;
-            continue;
+            अनुवर्त;
         }
         xcb_atom_t x11_atom = interner->pending[i].from;
         xkb_atom_t atom = xkb_atom_intern(ctx,
                                           xcb_get_atom_name_name(reply),
                                           xcb_get_atom_name_name_length(reply));
-        free(reply);
+        मुक्त(reply);
 
-        if (cache && cache->len < ARRAY_SIZE(cache->cache)) {
+        यदि (cache && cache->len < ARRAY_SIZE(cache->cache)) {
             size_t idx = cache->len++;
             cache->cache[idx].from = x11_atom;
             cache->cache[idx].to = atom;
@@ -230,54 +230,54 @@ x11_atom_interner_round_trip(struct x11_atom_interner *interner) {
 
         *interner->pending[i].out = atom;
 
-        for (size_t j = 0; j < interner->num_copies; j++) {
-            if (interner->copies[j].from == x11_atom)
+        प्रति (size_t j = 0; j < interner->अंक_copies; j++) {
+            यदि (interner->copies[j].from == x11_atom)
                 *interner->copies[j].out = atom;
         }
     }
 
-    for (size_t i = 0; i < interner->num_escaped; i++) {
+    प्रति (size_t i = 0; i < interner->अंक_escaped; i++) {
         xcb_get_atom_name_reply_t *reply;
-        int length;
-        char *name;
-        char **out = interner->escaped[i].out;
+        पूर्णाङ्क length;
+        वर्ण *name;
+        वर्ण **out = interner->escaped[i].out;
 
-        reply = xcb_get_atom_name_reply(conn, interner->escaped[i].cookie, NULL);
-        *interner->escaped[i].out = NULL;
-        if (!reply) {
+        reply = xcb_get_atom_name_reply(conn, interner->escaped[i].cookie, रिक्त);
+        *interner->escaped[i].out = रिक्त;
+        यदि (!reply) {
             interner->had_error = true;
-        } else {
+        } अन्यथा {
             length = xcb_get_atom_name_name_length(reply);
             name = xcb_get_atom_name_name(reply);
 
             *out = strndup(name, (size_t)length);
-            free(reply);
-            if (*out == NULL) {
+            मुक्त(reply);
+            यदि (*out == रिक्त) {
                 interner->had_error = true;
-            } else {
+            } अन्यथा {
                 XkbEscapeMapName(*out);
             }
         }
     }
 
-    interner->num_pending = 0;
-    interner->num_copies = 0;
-    interner->num_escaped = 0;
+    interner->अंक_pending = 0;
+    interner->अंक_copies = 0;
+    interner->अंक_escaped = 0;
 }
 
-void
-x11_atom_interner_get_escaped_atom_name(struct x11_atom_interner *interner,
-                                        xcb_atom_t atom, char **out)
+शून्य
+x11_atom_interner_get_escaped_atom_name(संरचना x11_atom_interner *interner,
+                                        xcb_atom_t atom, वर्ण **out)
 {
-    if (atom == 0) {
-        *out = NULL;
-        return;
+    यदि (atom == 0) {
+        *out = रिक्त;
+        प्रत्यागम;
     }
-    size_t idx = interner->num_escaped++;
+    size_t idx = interner->अंक_escaped++;
     /* There can only be a fixed number of calls to this function "in-flight",
      * thus we assert this number. Increase the array size if this assert fails.
      */
-    assert(idx < ARRAY_SIZE(interner->escaped));
+    प्रतिज्ञा(idx < ARRAY_SIZE(interner->escaped));
     interner->escaped[idx].out = out;
     interner->escaped[idx].cookie = xcb_get_atom_name(interner->conn, atom);
 }
