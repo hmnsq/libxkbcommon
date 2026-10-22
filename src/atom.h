@@ -4,33 +4,33 @@
  */
 #pragma once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
+#ضمن <stddef.h>
+#ضمن <stdint.h>
+#ضمن <stdbool.h>
 
-#include "darray.h"
-#include "utils.h"
+#ضمن "darray.h"
+#ضمن "utils.h"
 
 /** Atoms are indexes into a `darray` */
-typedef darray_size_t xkb_atom_t;
+تعريفنوع darray_size_t xkb_atom_t;
 
 #define XKB_ATOM_NONE 0
 
-struct atom_table;
+بنية atom_table;
 
-XKB_EXPORT_PRIVATE struct atom_table *
-atom_table_new(void);
+XKB_EXPORT_PRIVATE بنية atom_table *
+atom_table_new(فراغ);
 
-XKB_EXPORT_PRIVATE void
-atom_table_free(struct atom_table *table);
+XKB_EXPORT_PRIVATE فراغ
+atom_table_free(بنية atom_table *table);
 
 XKB_EXPORT_PRIVATE darray_size_t
-atom_table_size(struct atom_table *table);
+atom_table_size(بنية atom_table *table);
 
 XKB_EXPORT_PRIVATE xkb_atom_t
-atom_intern(struct atom_table *table, const char *string, size_t len, bool add);
+atom_intern(بنية atom_table *table, ثابت حرف *string, size_t len, bool add);
 
-XKB_EXPORT_PRIVATE const char *
-atom_text(struct atom_table *table, xkb_atom_t atom);
+XKB_EXPORT_PRIVATE ثابت حرف *
+atom_text(بنية atom_table *table, xkb_atom_t atom);

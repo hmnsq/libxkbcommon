@@ -4,111 +4,111 @@
  */
 #pragma once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include "ast.h"
-#include "scanner-utils.h"
+#ضمن "ast.h"
+#ضمن "scanner-utils.h"
 
-ExprDef *
-ExprCreateString(xkb_atom_t str);
+تعبير_Def *
+تعبير_Create_String(xkb_atom_t str);
 
-ExprDef *
-ExprCreateInteger(int64_t ival);
+تعبير_Def *
+تعبير_Create_Integer(int64_t ival);
 
-ExprDef *
-ExprCreateFloat(void);
+تعبير_Def *
+تعبير_Create_Float(فراغ);
 
-ExprDef *
-ExprCreateBoolean(bool set);
+تعبير_Def *
+تعبير_Create_Boolean(bool set);
 
-ExprDef *
-ExprCreateKeyName(xkb_atom_t key_name);
+تعبير_Def *
+تعبير_Create_مفتاح_Name(xkb_atom_t مفتاح_name);
 
-ExprDef *
-ExprCreateKeySym(xkb_keysym_t keysym);
+تعبير_Def *
+تعبير_Create_مفتاح_Sym(xkb_keysym_t keysym);
 
-ExprDef *
-ExprCreateIdent(xkb_atom_t ident);
+تعبير_Def *
+تعبير_Create_Ident(xkb_atom_t ident);
 
-ExprDef *
-ExprCreateUnary(enum stmt_type op, ExprDef *child);
+تعبير_Def *
+تعبير_Create_Unary(تعداد stmt_type op, تعبير_Def *child);
 
-ExprDef *
-ExprCreateBinary(enum stmt_type op, ExprDef *left, ExprDef *right);
+تعبير_Def *
+تعبير_Create_ثنائي(تعداد stmt_type op, تعبير_Def *يسار, تعبير_Def *يمين);
 
-ExprDef *
-ExprCreateFieldRef(xkb_atom_t element, xkb_atom_t field);
+تعبير_Def *
+تعبير_Create_Field_Ref(xkb_atom_t element, xkb_atom_t field);
 
-ExprDef *
-ExprCreateArrayRef(xkb_atom_t element, xkb_atom_t field, ExprDef *entry);
+تعبير_Def *
+تعبير_Create_Array_Ref(xkb_atom_t element, xkb_atom_t field, تعبير_Def *entry);
 
-ExprDef *
-ExprEmptyList(void);
+تعبير_Def *
+تعبير_Empty_List(فراغ);
 
-ExprDef *
-ExprCreateAction(xkb_atom_t name, ExprDef *args);
+تعبير_Def *
+تعبير_Create_Action(xkb_atom_t name, تعبير_Def *وسائط);
 
-ExprDef *
-ExprCreateActionList(ExprDef *actions);
+تعبير_Def *
+تعبير_Create_Action_List(تعبير_Def *actions);
 
-ExprDef *
-ExprCreateKeySymList(xkb_keysym_t sym);
+تعبير_Def *
+تعبير_Create_مفتاح_Sym_List(xkb_keysym_t sym);
 
-ExprDef *
-ExprAppendKeySymList(ExprDef *list, xkb_keysym_t sym);
+تعبير_Def *
+تعبير_Append_مفتاح_Sym_List(تعبير_Def *list, xkb_keysym_t sym);
 
-ExprDef *
-ExprKeySymListAppendString(struct scanner *param,
-                           ExprDef *expr, const char *string);
+تعبير_Def *
+تعبير_مفتاح_Sym_List_Append_String(بنية scanner *param,
+                           تعبير_Def *تعبير, ثابت حرف *string);
 
 xkb_keysym_t
-KeysymParseString(struct scanner *scanner, const char *string);
+KeysymParseString(بنية scanner *scanner, ثابت حرف *string);
 
 KeycodeDef *
-KeycodeCreate(xkb_atom_t name, int64_t value);
+KeycodeCreate(xkb_atom_t name, int64_t قيمة);
 
-KeyAliasDef *
-KeyAliasCreate(xkb_atom_t alias, xkb_atom_t real);
+مفتاح_Alias_Def *
+مفتاح_Alias_Create(xkb_atom_t alias, xkb_atom_t real);
 
 VModDef *
-VModCreate(xkb_atom_t name, ExprDef *value);
+VModCreate(xkb_atom_t name, تعبير_Def *قيمة);
 
 VarDef *
-VarCreate(ExprDef *name, ExprDef *value);
+VarCreate(تعبير_Def *name, تعبير_Def *قيمة);
 
 VarDef *
 BoolVarCreate(xkb_atom_t ident, bool set);
 
 InterpDef *
-InterpCreate(xkb_keysym_t sym, ExprDef *match);
+InterpCreate(xkb_keysym_t sym, تعبير_Def *match);
 
-KeyTypeDef *
-KeyTypeCreate(xkb_atom_t name, VarDef *body);
+مفتاح_Type_Def *
+مفتاح_Type_Create(xkb_atom_t name, VarDef *body);
 
 SymbolsDef *
-SymbolsCreate(xkb_atom_t keyName, VarDef *symbols);
+SymbolsCreate(xkb_atom_t مفتاح_Name, VarDef *symbols);
 
 GroupCompatDef *
-GroupCompatCreate(int64_t group, ExprDef *def);
+GroupCompatCreate(int64_t group, تعبير_Def *def);
 
 ModMapDef *
-ModMapCreate(ExprDef *modifiers, ExprDef *keys);
+ModMapCreate(تعبير_Def *modifiers, تعبير_Def *مفاتيح);
 
 LedMapDef *
 LedMapCreate(xkb_atom_t name, VarDef *body);
 
 LedNameDef *
-LedNameCreate(int64_t ndx, ExprDef *name, bool virtual);
+LedNameCreate(int64_t ndx, تعبير_Def *name, bool virtual);
 
 UnknownStatement *
-UnknownStatementCreate(enum stmt_type, struct sval name);
+UnknownStatementCreate(تعداد stmt_type, بنية sval name);
 
 IncludeStmt *
-IncludeCreate(struct xkb_context *ctx, char *str, enum merge_mode merge);
+IncludeCreate(بنية xkb_context *ctx, حرف *str, تعداد merge_mode merge);
 
 XkbFile *
-XkbFileCreate(enum xkb_file_type type, char *name, ParseCommon *defs,
-              enum xkb_map_flags flags);
+XkbFileCreate(تعداد xkb_file_type type, حرف *name, ParseCommon *defs,
+              تعداد xkb_map_flags flags);
 
-void
+فراغ
 FreeStmt(ParseCommon *stmt);
