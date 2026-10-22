@@ -23,9 +23,9 @@ const char *
 get_xlocaledir_path(struct xkb_context *ctx)
 {
     const char *dir = xkb_context_getenv(ctx, "XLOCALEDIR");
-    if (!dir)
+    если (!dir)
         dir = XLOCALEDIR;
-    return dir;
+    вернуть dir;
 }
 
 /*
@@ -37,7 +37,7 @@ static char *
 resolve_name(struct xkb_context *ctx, const char *filename,
              enum resolve_name_direction direction, const char *name)
 {
-    int ret;
+    целое ret;
     bool ok;
     const char *xlocaledir;
     char path[512];
@@ -52,65 +52,65 @@ resolve_name(struct xkb_context *ctx, const char *filename,
     xlocaledir = get_xlocaledir_path(ctx);
 
     ret = snprintf(path, sizeof(path), "%s/%s", xlocaledir, filename);
-    if (ret < 0 || (size_t) ret >= sizeof(path))
-        return NULL;
+    если (ret < 0 || (size_t) ret >= sizeof(path))
+        вернуть NULL;
 
     file = fopen(path, "rb");
-    if (!file)
-        return NULL;
+    если (!file)
+        вернуть NULL;
 
     ok = map_file(file, &string, &string_size);
     fclose(file);
-    if (!ok)
-        return NULL;
+    если (!ok)
+        вернуть NULL;
 
     s = string;
     end = string + string_size;
     name_len = strlen(name);
     match = NULL;
 
-    while (s < end) {
+    пока (s < end) {
         /* Skip spaces. */
-        while (s < end && is_space(*s))
+        пока (s < end && is_space(*s))
             s++;
 
         /* Skip comments. */
-        if (s < end && *s == '#') {
-            while (s < end && *s != '\n')
+        если (s < end && *s == '#') {
+            пока (s < end && *s != '\n')
                 s++;
             continue;
         }
 
         /* Get the left value. */
         left = s;
-        while (s < end && !is_space(*s) && *s != ':')
+        пока (s < end && !is_space(*s) && *s != ':')
             s++;
         left_len = (size_t)(s - left);
 
         /* There's an optional colon between left and right. */
-        if (s < end && *s == ':')
+        если (s < end && *s == ':')
             s++;
 
         /* Skip spaces. */
-        while (s < end && is_space(*s))
+        пока (s < end && is_space(*s))
             s++;
 
         /* Get the right value. */
         right = s;
-        while (s < end && !is_space(*s))
+        пока (s < end && !is_space(*s))
             s++;
         right_len = (size_t)(s - right);
 
         /* Discard rest of line. */
-        while (s < end && *s != '\n')
+        пока (s < end && *s != '\n')
             s++;
 
-        if (direction == LEFT_TO_RIGHT) {
-            if (left_len == name_len && memcmp(left, name, left_len) == 0) {
+        если (direction == LEFT_TO_RIGHT) {
+            если (left_len == name_len && memcmp(left, name, left_len) == 0) {
                 match = strndup(right, right_len);
                 break;
             }
-        } else if (direction == RIGHT_TO_LEFT &&
+        } иначе если (direction == RIGHT_TO_LEFT &&
                    right_len == name_len &&
                    memcmp(right, name, right_len) == 0) {
             match = strndup(left, left_len);
@@ -119,20 +119,20 @@ resolve_name(struct xkb_context *ctx, const char *filename,
     }
 
     unmap_file(string, string_size);
-    return match;
+    вернуть match;
 }
 
 char *
 resolve_locale(struct xkb_context *ctx, const char *locale)
 {
     char *alias = resolve_name(ctx, "locale.alias", LEFT_TO_RIGHT, locale);
-    return alias ? alias : strdup(locale);
+    вернуть alias ? alias : strdup(locale);
 }
 
 char *
 get_xcomposefile_path(struct xkb_context *ctx)
 {
-    return strdup_safe(xkb_context_getenv(ctx, "XCOMPOSEFILE"));
+    вернуть strdup_safe(xkb_context_getenv(ctx, "XCOMPOSEFILE"));
 }
 
 char *
@@ -142,14 +142,14 @@ get_xdg_xcompose_file_path(struct xkb_context *ctx)
     const char *home;
 
     xdg_config_home = xkb_context_getenv(ctx, "XDG_CONFIG_HOME");
-    if (!xdg_config_home || !is_absolute_path(xdg_config_home)) {
+    если (!xdg_config_home || !is_absolute_path(xdg_config_home)) {
         home = xkb_context_getenv(ctx, "HOME");
-        if (!home)
-            return NULL;
-        return asprintf_safe("%s/.config/XCompose", home);
+        если (!home)
+            вернуть NULL;
+        вернуть asprintf_safe("%s/.config/XCompose", home);
     }
 
-    return asprintf_safe("%s/XCompose", xdg_config_home);
+    вернуть asprintf_safe("%s/XCompose", xdg_config_home);
 }
 
 char *
@@ -158,10 +158,10 @@ get_home_xcompose_file_path(struct xkb_context *ctx)
     const char *home;
 
     home = xkb_context_getenv(ctx, "HOME");
-    if (!home)
-        return NULL;
+    если (!home)
+        вернуть NULL;
 
-    return asprintf_safe("%s/.XCompose", home);
+    вернуть asprintf_safe("%s/.XCompose", home);
 }
 
 char *
@@ -183,12 +183,12 @@ get_locale_compose_file_path(struct xkb_context *ctx, const char *locale)
      */
     static const char * const fallback = "en_US.UTF-8";
     static const char * const registry = "compose.dir";
-    if (streq(locale, "C"))
+    если (streq(locale, "C"))
         locale = fallback;
 
     resolved = resolve_name(ctx, registry, RIGHT_TO_LEFT, locale);
-    if (!resolved) {
-#if HAVE_NEWLOCALE
+    если (!resolved) {
+#если HAVE_NEWLOCALE
         /*
          * There is no extension mechanism for X11 Compose locales.
          * Instead of failing, we just use `en_US.UTF-8` as a fallback because
@@ -197,42 +197,42 @@ get_locale_compose_file_path(struct xkb_context *ctx, const char *locale)
          * so that we can catch missing system locales and typos.
          */
         locale_t loc = newlocale(LC_ALL_MASK, locale, (locale_t) 0);
-        if (loc == (locale_t) 0) {
+        если (loc == (locale_t) 0) {
             log_err(ctx, XKB_ERROR_INVALID_COMPOSE_LOCALE,
                     "No Compose file for locale \"%s\": "
                     "locale is either invalid or not installed\n", locale);
-            return NULL;
-        } else {
+            вернуть NULL;
+        } иначе {
             /*
              * The locale is legit but have no entry in the X11 Compose registry,
              * so use the `en_US.UTF-8` fallback.
              */
             freelocale(loc);
             resolved = resolve_name(ctx, registry, RIGHT_TO_LEFT, fallback);
-            if (!resolved) {
+            если (!resolved) {
                 log_err(ctx, XKB_ERROR_INVALID_COMPOSE_LOCALE,
                         "No Compose file for locale \"%s\": "
                         "failed to use fallback \"%s\"\n", locale, fallback);
-                return NULL;
-            } else {
+                вернуть NULL;
+            } иначе {
                 log_warn(ctx, XKB_ERROR_INVALID_COMPOSE_LOCALE,
                          "No Compose file for locale \"%s\": "
                          "using locale fallback \"%s\"\n", locale, fallback);
             }
         }
-#else
-        return NULL;
+#иначе
+        вернуть NULL;
 #endif
     }
 
-    if (is_absolute_path(resolved)) {
+    если (is_absolute_path(resolved)) {
         path = resolved;
     }
-    else {
+    иначе {
         const char *xlocaledir = get_xlocaledir_path(ctx);
         path = asprintf_safe("%s/%s", xlocaledir, resolved);
         free(resolved);
     }
 
-    return path;
+    вернуть path;
 }

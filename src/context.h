@@ -19,13 +19,13 @@
 #include "utils.h"
 
 struct xkb_context {
-    int refcnt;
+    целое refcnt;
 
     ATTR_PRINTF(3, 0) void (*log_fn)(struct xkb_context *ctx,
                                      enum xkb_log_level level,
                                      const char *fmt, va_list args);
     enum xkb_log_level log_level;
-    int log_verbosity;
+    целое log_verbosity;
     void *user_data;
 
     struct xkb_rule_names names_dflt;
@@ -104,7 +104,7 @@ char *
 xkb_context_get_buffer(struct xkb_context *ctx, size_t size);
 
 XKB_EXPORT_PRIVATE ATTR_PRINTF(4, 5) void
-xkb_log(struct xkb_context *ctx, enum xkb_log_level level, int verbosity,
+xkb_log(struct xkb_context *ctx, enum xkb_log_level level, целое verbosity,
         const char *fmt, ...);
 
 enum RMLVO

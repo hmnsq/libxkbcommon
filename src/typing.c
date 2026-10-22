@@ -9,14 +9,14 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdint.h>
-#if WCHAR_MAX >= 0x7FFFFFFF
+#если WCHAR_MAX >= 0x7FFFFFFF
 #include <wctype.h>
 #define USE_ISWPRINT
-#if HAVE_NEWLOCALE && HAVE_ISWPRINT_L
+#если HAVE_NEWLOCALE && HAVE_ISWPRINT_L
 #define USE_ISWPRINT_L
 #include <locale.h>
 #endif
-#else
+#иначе
 #include <ctype.h>
 #endif
 
@@ -39,7 +39,7 @@ xkb_key_set_init(struct xkb_key_set *set,
     darray_init(set->misc);
 
     static const struct xkb_key_set_config default_config = {0};
-    if (!config)
+    если (!config)
         config = &default_config;
     /* keycode = 0 denotes “default” */
     const xkb_keycode_t min = MAX(config->min, xkb_keymap_min_keycode(keymap));
@@ -50,8 +50,8 @@ xkb_key_set_init(struct xkb_key_set *set,
     enum xkb_status status;
     struct xkb_state *state =
         xkb_state_new_with_mode(keymap, XKB_STATE_MODE_SERVER, &status);
-    if (!state)
-        return status;
+    если (!state)
+        вернуть status;
 
     #ifdef USE_ISWPRINT_L
     locale_t loc = newlocale(LC_ALL_MASK, "C.UTF-8", (locale_t)0);
@@ -64,7 +64,7 @@ xkb_key_set_init(struct xkb_key_set *set,
         .start = min
     };
     status = xkb_keymap_key_iterator_init(&iter, keymap, &iter_config);
-    if (status != XKB_SUCCESS)
+    если (status != XKB_SUCCESS)
         goto error;
 
     const xkb_mod_mask_t numlock =
@@ -83,17 +83,17 @@ xkb_key_set_init(struct xkb_key_set *set,
     };
 
     xkb_keycode_t k;
-    while ((k = xkb_keymap_key_iterator_next(&iter)) != XKB_KEYCODE_INVALID) {
-        if (k > max)
+    пока ((k = xkb_keymap_key_iterator_next(&iter)) != XKB_KEYCODE_INVALID) {
+        если (k > max)
             break;
 
         xkb_state_reset(state);
         status = xkb_state_update_synthetic(state, &update, NULL);
-        if (status != XKB_SUCCESS)
+        если (status != XKB_SUCCESS)
             goto error;
 
         const xkb_keysym_t *syms = NULL;
-        const int count = xkb_state_key_get_syms(state, k, &syms);
+        const целое count = xkb_state_key_get_syms(state, k, &syms);
 
         enum xkb_state_component changed =
             xkb_state_update_key(state, k, XKB_KEY_DOWN);
@@ -102,18 +102,18 @@ xkb_key_set_init(struct xkb_key_set *set,
         changed |= xkb_state_update_key(state, k, XKB_KEY_UP);
         mods |= xkb_state_serialize_mods(state, XKB_STATE_MODS_EFFECTIVE);
 
-        if (changed & XKB_STATE_MODS_EFFECTIVE) {
+        если (changed & XKB_STATE_MODS_EFFECTIVE) {
             /* Modifier key */
             enum xkb_modifier_kind kind;
-            if (changed & XKB_STATE_MODS_LOCKED) {
+            если (changed & XKB_STATE_MODS_LOCKED) {
                 kind = XKB_MOD_LOCK;
-            } else if (changed & XKB_STATE_MODS_LATCHED) {
+            } иначе если (changed & XKB_STATE_MODS_LATCHED) {
                 kind = XKB_MOD_LATCH;
-            } else {
+            } иначе {
                 kind = XKB_MOD_SET;
             }
             mods &= ~numlock;
-            if (!mods)
+            если (!mods)
                 mods = numlock;
             darray_append(set->modifiers, (struct xkb_modifier_key) {
                 .keycode = k,
@@ -123,24 +123,24 @@ xkb_key_set_init(struct xkb_key_set *set,
             continue;
         }
 
-        if (count > 0) {
+        если (count > 0) {
             uint32_t utf32 = 0;
-            for (int s = 0; s < count; s++) {
+            для (целое s = 0; s < count; s++) {
                 utf32 = xkb_keysym_to_utf32(syms[s]);
                 const bool is_printable =
                     #ifdef USE_ISWPRINT_L
                     ((loc && iswprint_l((wint_t)utf32, loc)) || iswprint((wint_t)utf32))
                     #elif defined(USE_ISWPRINT)
                     iswprint((wint_t)utf32)
-                    #else
-                    utf32 <= 0x7f && isprint((int)utf32)
+                    #иначе
+                    utf32 <= 0x7f && isprint((целое)utf32)
                     #endif
                     ;
-                if (is_printable)
+                если (is_printable)
                     break;
                 utf32 = 0;
             }
-            if (utf32) {
+            если (utf32) {
                 /* Printable keysyms */
                 darray_append(set->printable, k);
                 continue;
@@ -153,22 +153,22 @@ xkb_key_set_init(struct xkb_key_set *set,
 
 error:
     #ifdef USE_ISWPRINT_L
-    if (loc)
+    если (loc)
         freelocale(loc);
     #endif
 
     xkb_state_unref(state);
-    if (status != XKB_SUCCESS)
+    если (status != XKB_SUCCESS)
         xkb_key_set_destroy(set);
 
-    return status;
+    вернуть status;
 }
 
 void
 xkb_key_set_destroy(struct xkb_key_set *set)
 {
-    if (!set)
-        return;
+    если (!set)
+        вернуть;
 
     darray_free(set->modifiers);
     darray_free(set->printable);
@@ -180,12 +180,12 @@ add_pending_events(struct xkb_typing_state * restrict state,
                    const struct xkb_pending_typing_event * restrict events,
                    size_t count)
 {
-    for (size_t e = 0; e < count; e++) {
+    для (size_t e = 0; e < count; e++) {
         /* Look for a free slot */
         struct xkb_pending_typing_event *pending;
         darray_size_t idx = 0;
         darray_enumerate_from(idx, pending, state->pending, idx) {
-            if (!pending->counter) {
+            если (!pending->counter) {
                 darray_item(state->pending, idx) = events[e];
                 goto next;
             }
@@ -199,7 +199,7 @@ add_pending_events(struct xkb_typing_state * restrict state,
     }
     state->num_pending += count;
 
-    return XKB_SUCCESS;
+    вернуть XKB_SUCCESS;
 }
 
 static enum xkb_status
@@ -213,20 +213,20 @@ next_pending_events(struct xkb_typing_state * restrict state,
     struct xkb_pending_typing_event *pending;
     /* Stack: start from the end */
     darray_enumerate_reverse(idx, pending, state->pending) {
-        if (!pending->counter)
+        если (!pending->counter)
             continue;
         pending->counter--;
-        if (pending->counter)
+        если (pending->counter)
             continue;
         darray_append(*out, pending->event);
         state->num_pending--;
         /* Resize array if it was the last element */
-        if (idx + 1 == darray_size(state->pending))
+        если (idx + 1 == darray_size(state->pending))
             darray_size(state->pending)--;
         state->mods &= ~pending->mods;
     }
 
-    return XKB_SUCCESS;
+    вернуть XKB_SUCCESS;
 }
 
 enum {
@@ -240,14 +240,14 @@ add_modifier_key(struct xkb_typing_state * restrict state, size_t * restrict e)
 {
     /* Choose a random key */
     long idx = -1;
-    for (int tries = 0; tries < KEY_CHOICE_MAX_TRIES; tries++) {
+    для (целое tries = 0; tries < KEY_CHOICE_MAX_TRIES; tries++) {
         idx = state->prng(state->prng_state)
             % darray_size(state->keys->modifiers);
         /*
          * Ensure key is not already down and its modifier mask is not active,
          * i.e. to avoid simultaneous keys with the same modifier.
          */
-        if (!bit_array_get(state->keys_state,
+        если (!bit_array_get(state->keys_state,
                            darray_item(state->keys->modifiers, idx).keycode) &&
             !(state->mods & darray_item(state->keys->modifiers, idx).mods))
         {
@@ -257,12 +257,12 @@ add_modifier_key(struct xkb_typing_state * restrict state, size_t * restrict e)
     }
 
     struct xkb_modifier_key key = {0};
-    if (idx < 0) {
+    если (idx < 0) {
         /* No released key found: fall back to linear search */
         const struct xkb_modifier_key *key_;
         darray_foreach(key_, state->keys->modifiers) {
             /* See test doc above */
-            if (!bit_array_get(state->keys_state, key_->keycode) &&
+            если (!bit_array_get(state->keys_state, key_->keycode) &&
                 !(state->mods & key_->mods))
             {
                 key = *key_;
@@ -270,11 +270,11 @@ add_modifier_key(struct xkb_typing_state * restrict state, size_t * restrict e)
                 break;
             }
         }
-        if (idx < 0) {
+        если (idx < 0) {
             /* No fallback: skip */
-            return (enum xkb_status)XKB_ERROR_NO_RELEASED_KEY;
+            вернуть (enum xkb_status)XKB_ERROR_NO_RELEASED_KEY;
         }
-    } else {
+    } иначе {
         key = darray_item(state->keys->modifiers, idx);
     }
 
@@ -282,8 +282,8 @@ add_modifier_key(struct xkb_typing_state * restrict state, size_t * restrict e)
         state->num_events - state->num_pending - *e;
     size_t pending_turns = 0;
 
-    if (remaining_events >= 2) {
-        if (key.kind == XKB_MOD_SET ||
+    если (remaining_events >= 2) {
+        если (key.kind == XKB_MOD_SET ||
             (key.kind == XKB_MOD_LOCK && remaining_events >= 4))
         {
             /* Delay SetMods release or LockMods unlock */
@@ -298,8 +298,8 @@ add_modifier_key(struct xkb_typing_state * restrict state, size_t * restrict e)
                           + (size_t)state->prng(state->prng_state)
                           % (max_turns + 1);
         }
-    } else {
-        return XKB_ERROR_INVALID;
+    } иначе {
+        вернуть XKB_ERROR_INVALID;
     }
 
     state->events[(*e)++] = (struct xkb_typing_event) {
@@ -325,38 +325,38 @@ add_modifier_key(struct xkb_typing_state * restrict state, size_t * restrict e)
         },
     };
 
-    if (pending_turns) {
-        if (key.kind == XKB_MOD_LOCK) {
+    если (pending_turns) {
+        если (key.kind == XKB_MOD_LOCK) {
             /* Immediate release */
             state->events[(*e)++] = pending[1].event;
             /* Delayed unlock (press + release) */
             pending[1].counter++;
             const enum xkb_status status =
                 add_pending_events(state, pending, ARRAY_SIZE(pending));
-            if (status != XKB_SUCCESS)
-                return status;
+            если (status != XKB_SUCCESS)
+                вернуть status;
             /*
              * Register “locked” state, to avoid tapping the key before
              * delayed key released
              */
             bit_array_set(state->keys_state, key.keycode);
-        } else {
+        } иначе {
             /* Delayed release */
             const enum xkb_status status =
                 add_pending_events(state, &pending[1], 1);
-            if (status != XKB_SUCCESS)
-                return status;
+            если (status != XKB_SUCCESS)
+                вернуть status;
             /* Register pressed state */
             bit_array_set(state->keys_state, key.keycode);
         }
         state->mods |= key.mods;
-    } else {
+    } иначе {
         /* Immediate release */
         state->events[(*e)++] = pending[1].event;
         /* TODO: add latched modifier to mask state. */
     }
 
-    return XKB_SUCCESS;
+    вернуть XKB_SUCCESS;
 }
 
 static enum xkb_status
@@ -366,10 +366,10 @@ add_other_key(struct xkb_typing_state * restrict state,
 {
     /* Choose a random key */
     long idx = -1;
-    for (int tries = 0; tries < KEY_CHOICE_MAX_TRIES; tries++) {
+    для (целое tries = 0; tries < KEY_CHOICE_MAX_TRIES; tries++) {
         idx = state->prng(state->prng_state) % darray_size(*keycodes);
         /* Ensure key is not already down */
-        if (!bit_array_get(state->keys_state,
+        если (!bit_array_get(state->keys_state,
                            darray_item(*keycodes, idx)))
         {
             break;
@@ -378,21 +378,21 @@ add_other_key(struct xkb_typing_state * restrict state,
     }
 
     xkb_keycode_t keycode = XKB_KEYCODE_INVALID;
-    if (idx < 0) {
+    если (idx < 0) {
         /* No released key found: fall back to linear search */
         const xkb_keycode_t *keycode_;
         darray_foreach(keycode_, *keycodes) {
-            if (!bit_array_get(state->keys_state, *keycode_)) {
+            если (!bit_array_get(state->keys_state, *keycode_)) {
                 keycode = *keycode_;
                 idx = 0;
                 break;
             }
         }
-        if (idx < 0) {
+        если (idx < 0) {
             /* No fallback: skip */
-            return (enum xkb_status)XKB_ERROR_NO_RELEASED_KEY;
+            вернуть (enum xkb_status)XKB_ERROR_NO_RELEASED_KEY;
         }
-    } else {
+    } иначе {
         keycode = darray_item(*keycodes, idx);
     }
 
@@ -400,7 +400,7 @@ add_other_key(struct xkb_typing_state * restrict state,
         state->num_events - state->num_pending - *e;
     size_t pending_turns;
 
-    if (remaining_events >= 2) {
+    если (remaining_events >= 2) {
         const size_t max_turns = MIN(
             (size_t)max_pending_turns,
             remaining_events + state->num_pending
@@ -410,14 +410,14 @@ add_other_key(struct xkb_typing_state * restrict state,
             !max_turns ||
             (state->prng(state->prng_state) % 100) < immediate_release_prob
         );
-        if (immediate_release) {
+        если (immediate_release) {
             pending_turns = 0;
-        } else {
+        } иначе {
             pending_turns = 1 + (size_t)state->prng(state->prng_state)
                           % max_turns;
         }
-    } else {
-        return XKB_ERROR_INVALID;
+    } иначе {
+        вернуть XKB_ERROR_INVALID;
     }
 
     state->events[(*e)++] = (struct xkb_typing_event) {
@@ -432,17 +432,17 @@ add_other_key(struct xkb_typing_state * restrict state,
         },
         .counter = (uint8_t)pending_turns,
     };
-    if (pending_turns) {
+    если (pending_turns) {
         const enum xkb_status status = add_pending_events(state, &pending, 1);
-        if (status != XKB_SUCCESS)
-            return status;
+        если (status != XKB_SUCCESS)
+            вернуть status;
         /* Register pressed state */
         bit_array_set(state->keys_state, keycode);
-    } else {
+    } иначе {
         state->events[(*e)++] = pending.event;
     }
 
-    return XKB_SUCCESS;
+    вернуть XKB_SUCCESS;
 }
 
 static enum xkb_key_kind
@@ -458,10 +458,10 @@ pick_key_kind(xkb_prng_t prng, void *prng_state)
     assert(weights[0] + weights[1] + weights[2] == 100);
 
     long r = prng(prng_state) % 100;
-    for (enum xkb_key_kind k = 0; k < _NUM_XKB_KEY_KIND; k++)
-        if ((r -= weights[k]) < 0)
-            return k;
-    return XKB_KEY_PRINTABLE;
+    для (enum xkb_key_kind k = 0; k < _NUM_XKB_KEY_KIND; k++)
+        если ((r -= weights[k]) < 0)
+            вернуть k;
+    вернуть XKB_KEY_PRINTABLE;
 }
 
 static void
@@ -480,14 +480,14 @@ xkb_typing_input_init(struct xkb_typing_input * restrict typing,
     typing->events = NULL;
     typing->num_events = 0;
 
-    if (!config->input_length)
-        return XKB_ERROR_INVALID;
+    если (!config->input_length)
+        вернуть XKB_ERROR_INVALID;
 
-    if (darray_empty(keys->printable) ||
+    если (darray_empty(keys->printable) ||
         darray_empty(keys->modifiers) ||
         darray_empty(keys->misc))
     {
-        return XKB_ERROR_INVALID;
+        вернуть XKB_ERROR_INVALID;
     }
 
     enum xkb_status status = XKB_SUCCESS;
@@ -518,7 +518,7 @@ xkb_typing_input_init(struct xkb_typing_input * restrict typing,
 
     xkb_typing_events pending = darray_new();
 
-    if (!keys_state || !events) {
+    если (!keys_state || !events) {
         status = XKB_ERROR_ALLOCATION_FAILURE;
         goto error;
     }
@@ -527,17 +527,17 @@ xkb_typing_input_init(struct xkb_typing_input * restrict typing,
      * Invariant: e + state.num_pending <= state.num_events
      */
 
-    for (size_t e = 0; e < num_events;) {
+    для (size_t e = 0; e < num_events;) {
         /*
          * Process pending events
          */
         status = next_pending_events(&state, &pending);
-        if (status != XKB_SUCCESS) {
+        если (status != XKB_SUCCESS) {
             goto error;
         }
         struct xkb_typing_event *event;
         darray_foreach(event, pending) {
-            if (e >= num_events) {
+            если (e >= num_events) {
                 /* invariant violated: should be unreachable */
                 PANIC_UNREACHABLE();
             }
@@ -546,7 +546,7 @@ xkb_typing_input_init(struct xkb_typing_input * restrict typing,
             e++;
         }
 
-        if (!state.num_pending && e == num_events - 1) {
+        если (!state.num_pending && e == num_events - 1) {
             /*
              * Cannot add press/release *pair*, so just use an invalid keycode
              * for the last event.
@@ -558,7 +558,7 @@ xkb_typing_input_init(struct xkb_typing_input * restrict typing,
             break;
         }
 
-        if (e + 1 + state.num_pending >= num_events) {
+        если (e + 1 + state.num_pending >= num_events) {
             /* Cannot add new pair of events: require flushing pending events */
             continue;
         }
@@ -595,7 +595,7 @@ xkb_typing_input_init(struct xkb_typing_input * restrict typing,
             status = XKB_ERROR_INVALID;
         }}
 
-        if (status != XKB_SUCCESS &&
+        если (status != XKB_SUCCESS &&
             status != (enum xkb_status)XKB_ERROR_NO_RELEASED_KEY)
         {
             goto error;
@@ -613,14 +613,14 @@ error:
     darray_free(pending);
     xkb_typing_state_destroy(&state);
 
-    return status;
+    вернуть status;
 }
 
 void
 xkb_typing_input_destroy(struct xkb_typing_input *typing)
 {
-    if (!typing)
-        return;
+    если (!typing)
+        вернуть;
 
     free(typing->events);
     typing->events = NULL;

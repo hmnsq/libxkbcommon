@@ -66,11 +66,11 @@ list_empty(const struct list *list)
 	assert((list->next != NULL && list->prev != NULL) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
 
-	return list->next == list;
+	вернуть list->next == list;
 }
 
 bool
 list_is_last(const struct list *list, const struct list *elm)
 {
-	return elm->next == list;
+	вернуть elm->next == list;
 }

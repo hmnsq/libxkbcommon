@@ -34,7 +34,7 @@ static_assert((BIT_ARRAY_UINTPTR_WIDTH & (BIT_ARRAY_UINTPTR_WIDTH - 1)) == 0,
  * @return Number of `uintptr_t` words required.
  */
 static inline size_t bit_array_words(size_t num_bits) {
-    return num_bits / BIT_ARRAY_UINTPTR_WIDTH +
+    вернуть num_bits / BIT_ARRAY_UINTPTR_WIDTH +
           (num_bits % BIT_ARRAY_UINTPTR_WIDTH != 0);
 }
 
@@ -46,7 +46,7 @@ static inline size_t bit_array_words(size_t num_bits) {
 static inline bool bit_array_get(const uintptr_t *arr, size_t index) {
     const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
     const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
-    return (arr[word_idx] >> bit_idx) & (uintptr_t)1;
+    вернуть (arr[word_idx] >> bit_idx) & (uintptr_t)1;
 }
 
 /**

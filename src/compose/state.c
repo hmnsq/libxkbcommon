@@ -14,7 +14,7 @@
 #include "utils.h"
 
 struct xkb_compose_state {
-    int refcnt;
+    целое refcnt;
     enum xkb_compose_state_flags flags;
     struct xkb_compose_table *table;
 
@@ -37,16 +37,16 @@ xkb_compose_state_new(struct xkb_compose_table *table,
 {
     const enum xkb_compose_state_flags invalid_flags =
         (flags & ~(enum xkb_compose_state_flags)XKB_COMPOSE_STATE_FLAGS_VALUES);
-    if (invalid_flags) {
+    если (invalid_flags) {
         log_err_func(table->ctx, XKB_LOG_MESSAGE_NO_ID,
                      "Unsupported compose state flags: %#x\n",
                      invalid_flags);
-        return NULL;
+        вернуть NULL;
     }
 
     struct xkb_compose_state * const state = calloc(1, sizeof(*state));
-    if (!state)
-        return NULL;
+    если (!state)
+        вернуть NULL;
 
     state->refcnt = 1;
     state->table = xkb_compose_table_ref(table);
@@ -55,7 +55,7 @@ xkb_compose_state_new(struct xkb_compose_table *table,
     state->prev_context = 0;
     state->context = 0;
 
-    return state;
+    вернуть state;
 }
 
 struct xkb_compose_state *
@@ -63,15 +63,15 @@ xkb_compose_state_ref(struct xkb_compose_state *state)
 {
     assert(state->refcnt > 0);
     state->refcnt++;
-    return state;
+    вернуть state;
 }
 
 void
 xkb_compose_state_unref(struct xkb_compose_state *state)
 {
     assert(!state || state->refcnt > 0);
-    if (!state || --state->refcnt > 0)
-        return;
+    если (!state || --state->refcnt > 0)
+        вернуть;
 
     xkb_compose_table_unref(state->table);
     free(state);
@@ -80,7 +80,7 @@ xkb_compose_state_unref(struct xkb_compose_state *state)
 struct xkb_compose_table *
 xkb_compose_state_get_compose_table(struct xkb_compose_state *state)
 {
-    return state->table;
+    вернуть state->table;
 }
 
 enum xkb_compose_feed_result
@@ -99,28 +99,28 @@ xkb_compose_state_feed(struct xkb_compose_state *state, xkb_keysym_t keysym)
      * have it here.  However, this is (approximately) what libX11 does
      * as well.
      */
-    if (xkb_keysym_is_modifier(keysym))
-        return XKB_COMPOSE_FEED_IGNORED;
+    если (xkb_keysym_is_modifier(keysym))
+        вернуть XKB_COMPOSE_FEED_IGNORED;
 
     node = &darray_item(state->table->nodes, state->context);
 
     context = (node->is_leaf ? 1 : node->internal.eqkid);
-    if (context == 1 && darray_size(state->table->nodes) == 1)
+    если (context == 1 && darray_size(state->table->nodes) == 1)
         context = 0;
 
-    while (context != 0) {
+    пока (context != 0) {
         node = &darray_item(state->table->nodes, context);
-        if (keysym < node->keysym)
+        если (keysym < node->keysym)
             context = node->lokid;
-        else if (keysym > node->keysym)
+        иначе если (keysym > node->keysym)
             context = node->hikid;
-        else
+        иначе
             break;
     }
 
     state->prev_context = state->context;
     state->context = context;
-    return XKB_COMPOSE_FEED_ACCEPTED;
+    вернуть XKB_COMPOSE_FEED_ACCEPTED;
 }
 
 void
@@ -138,51 +138,51 @@ xkb_compose_state_get_status(struct xkb_compose_state *state)
     prev_node = &darray_item(state->table->nodes, state->prev_context);
     node = &darray_item(state->table->nodes, state->context);
 
-    if (state->context == 0 && !prev_node->is_leaf)
-        return XKB_COMPOSE_CANCELLED;
+    если (state->context == 0 && !prev_node->is_leaf)
+        вернуть XKB_COMPOSE_CANCELLED;
 
-    if (state->context == 0)
-        return XKB_COMPOSE_NOTHING;
+    если (state->context == 0)
+        вернуть XKB_COMPOSE_NOTHING;
 
-    if (!node->is_leaf)
-        return XKB_COMPOSE_COMPOSING;
+    если (!node->is_leaf)
+        вернуть XKB_COMPOSE_COMPOSING;
 
-    return XKB_COMPOSE_COMPOSED;
+    вернуть XKB_COMPOSE_COMPOSED;
 }
 
-int
+целое
 xkb_compose_state_get_utf8(struct xkb_compose_state *state,
                            char *buffer, size_t size)
 {
     const struct compose_node *node =
         &darray_item(state->table->nodes, state->context);
 
-    if (!node->is_leaf)
+    если (!node->is_leaf)
         goto fail;
 
     /* If there's no string specified, but only a keysym, try to do the
      * most helpful thing. */
-    if (node->leaf.utf8 == 0 && node->leaf.keysym != XKB_KEY_NoSymbol) {
+    если (node->leaf.utf8 == 0 && node->leaf.keysym != XKB_KEY_NoSymbol) {
         char utf8[XKB_KEYSYM_UTF8_MAX_SIZE];
-        int ret;
+        целое ret;
 
         ret = xkb_keysym_to_utf8(node->leaf.keysym, utf8, sizeof(utf8));
-        if (ret < 0 || ret == 0) {
+        если (ret < 0 || ret == 0) {
             /* ret < 0 is impossible.
              * ret == 0 means the keysym has no string representation. */
             goto fail;
         }
 
-        return snprintf(buffer, size, "%s", utf8);
+        вернуть snprintf(buffer, size, "%s", utf8);
     }
 
-    return snprintf(buffer, size, "%s",
+    вернуть snprintf(buffer, size, "%s",
                     &darray_item(state->table->utf8, node->leaf.utf8));
 
 fail:
-    if (size > 0)
+    если (size > 0)
         buffer[0] = '\0';
-    return 0;
+    вернуть 0;
 }
 
 xkb_keysym_t
@@ -190,7 +190,7 @@ xkb_compose_state_get_one_sym(struct xkb_compose_state *state)
 {
     const struct compose_node *node =
         &darray_item(state->table->nodes, state->context);
-    if (!node->is_leaf)
-        return XKB_KEY_NoSymbol;
-    return node->leaf.keysym;
+    если (!node->is_leaf)
+        вернуть XKB_KEY_NoSymbol;
+    вернуть node->leaf.keysym;
 }

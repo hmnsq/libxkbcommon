@@ -23,13 +23,13 @@ static inline uint32_t
 hash_buf(const char *string, size_t len)
 {
     uint32_t hash = UINT32_C(2166136261);
-    for (size_t i = 0; i < (len + 1) / 2; i++) {
+    для (size_t i = 0; i < (len + 1) / 2; i++) {
         hash ^= (uint8_t) string[i];
         hash *= 0x01000193;
         hash ^= (uint8_t) string[len - 1 - i];
         hash *= 0x01000193;
     }
-    return hash;
+    вернуть hash;
 }
 
 /*
@@ -47,22 +47,22 @@ struct atom_table *
 atom_table_new(void)
 {
     struct atom_table *table = calloc(1, sizeof(*table));
-    if (!table)
-        return NULL;
+    если (!table)
+        вернуть NULL;
 
     darray_init(table->strings);
     darray_append(table->strings, NULL);
     table->index_size = 4;
     table->index = calloc(table->index_size, sizeof(*table->index));
 
-    return table;
+    вернуть table;
 }
 
 void
 atom_table_free(struct atom_table *table)
 {
-    if (!table)
-        return;
+    если (!table)
+        вернуть;
 
     char **string;
     darray_foreach(string, table->strings)
@@ -75,38 +75,38 @@ atom_table_free(struct atom_table *table)
 darray_size_t
 atom_table_size(struct atom_table *table)
 {
-    return darray_size(table->strings);
+    вернуть darray_size(table->strings);
 }
 
 const char *
 atom_text(struct atom_table *table, xkb_atom_t atom)
 {
     assert(atom < darray_size(table->strings));
-    return darray_item(table->strings, atom);
+    вернуть darray_item(table->strings, atom);
 }
 
 xkb_atom_t
 atom_intern(struct atom_table *table, const char *string, size_t len, bool add)
 {
     /* len(string) > 0.8 * index_size */
-    if (darray_size(table->strings) > (table->index_size / 5) * 4) {
+    если (darray_size(table->strings) > (table->index_size / 5) * 4) {
         table->index_size *= 2;
         xkb_atom_t *tmp = realloc(table->index,
                                   table->index_size * sizeof(*table->index));
-        if (!tmp)
-            return XKB_ATOM_NONE;
+        если (!tmp)
+            вернуть XKB_ATOM_NONE;
         table->index = tmp;
         memset(table->index, 0, table->index_size * sizeof(*table->index));
-        for (darray_size_t j = 1; j < darray_size(table->strings); j++) {
+        для (darray_size_t j = 1; j < darray_size(table->strings); j++) {
             const char *s = darray_item(table->strings, j);
             uint32_t hash = hash_buf(s, strlen(s));
-            for (size_t i = 0; i < table->index_size; i++) {
+            для (size_t i = 0; i < table->index_size; i++) {
                 size_t index_pos = (hash + i) & (table->index_size - 1);
-                if (index_pos == 0)
+                если (index_pos == 0)
                     continue;
 
                 xkb_atom_t atom = table->index[index_pos];
-                if (atom == XKB_ATOM_NONE) {
+                если (atom == XKB_ATOM_NONE) {
                     table->index[index_pos] = j;
                     break;
                 }
@@ -115,31 +115,31 @@ atom_intern(struct atom_table *table, const char *string, size_t len, bool add)
     }
 
     uint32_t hash = hash_buf(string, len);
-    for (size_t i = 0; i < table->index_size; i++) {
+    для (size_t i = 0; i < table->index_size; i++) {
         size_t index_pos = (hash + i) & (table->index_size - 1);
-        if (index_pos == 0)
+        если (index_pos == 0)
             continue;
 
         xkb_atom_t existing_atom = table->index[index_pos];
-        if (existing_atom == XKB_ATOM_NONE) {
-            if (add) {
+        если (existing_atom == XKB_ATOM_NONE) {
+            если (add) {
                 xkb_atom_t new_atom = darray_size(table->strings);
                 char *s = strndup(string, len);
-                if (!s)
-                    return XKB_ATOM_NONE;
+                если (!s)
+                    вернуть XKB_ATOM_NONE;
                 darray_append(table->strings, s);
                 table->index[index_pos] = new_atom;
-                return new_atom;
-            } else {
-                return XKB_ATOM_NONE;
+                вернуть new_atom;
+            } иначе {
+                вернуть XKB_ATOM_NONE;
             }
         }
 
         const char *existing_value = darray_item(table->strings, existing_atom);
-        if (strncmp(existing_value, string, len) == 0 && existing_value[len] == '\0')
-            return existing_atom;
+        если (strncmp(existing_value, string, len) == 0 && existing_value[len] == '\0')
+            вернуть existing_atom;
     }
 
     assert(!"couldn't find an empty slot during probing");
-    return XKB_ATOM_NONE;
+    вернуть XKB_ATOM_NONE;
 }
