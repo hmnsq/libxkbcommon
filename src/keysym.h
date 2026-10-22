@@ -14,13 +14,13 @@
  */
 #pragma once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <stdbool.h>
+#ضمن <stdbool.h>
 
-#include "xkbcommon/xkbcommon.h"
+#ضمن "xkbcommon/xkbcommon.h"
 
-#include "utils.h"
+#ضمن "utils.h"
 
 /*
  * NOTE: this is not defined in xkbcommon.h, because if we did, it may add
@@ -38,7 +38,7 @@
 /** Maximum keysym value with explicit name */
 #define XKB_KEYSYM_MAX_EXPLICIT   0x1008ffb8
 /** Count of keysym value with explicit name */
-#define XKB_KEYSYM_COUNT_EXPLICIT 2505
+#define XKB_KEYSYM_ژماردن_EXPLICIT 2505
 /** Offset to use when converting a Unicode code point to a keysym */
 #define XKB_KEYSYM_UNICODE_OFFSET 0x01000000
 /** Minimum Unicode keysym. NOTE: code points in 0..0xff cannot be converted. */
@@ -66,44 +66,44 @@
 XKB_EXPORT_PRIVATE bool
 xkb_keysym_is_assigned(xkb_keysym_t ks);
 
-XKB_EXPORT_PRIVATE int
-xkb_keysym_get_explicit_names(xkb_keysym_t ks, const char **buffer, size_t size);
+XKB_EXPORT_PRIVATE صحيح
+xkb_keysym_get_explicit_names(xkb_keysym_t ks, ثابت حرف **buffer, size_t size);
 
-struct xkb_keysym_iterator;
+بنية xkb_keysym_iterator;
 
-XKB_EXPORT_PRIVATE struct xkb_keysym_iterator*
+XKB_EXPORT_PRIVATE بنية xkb_keysym_iterator*
 xkb_keysym_iterator_new(bool explicit);
 
-XKB_EXPORT_PRIVATE struct xkb_keysym_iterator*
-xkb_keysym_iterator_unref(struct xkb_keysym_iterator *iter);
+XKB_EXPORT_PRIVATE بنية xkb_keysym_iterator*
+xkb_keysym_iterator_unref(بنية xkb_keysym_iterator *iter);
 
 XKB_EXPORT_PRIVATE bool
-xkb_keysym_iterator_next(struct xkb_keysym_iterator *iter);
+xkb_keysym_iterator_next(بنية xkb_keysym_iterator *iter);
 
 XKB_EXPORT_PRIVATE xkb_keysym_t
-xkb_keysym_iterator_get_keysym(struct xkb_keysym_iterator *iter);
+xkb_keysym_iterator_get_keysym(بنية xkb_keysym_iterator *iter);
 
-XKB_EXPORT_PRIVATE int
-xkb_keysym_iterator_get_name(struct xkb_keysym_iterator *iter,
-                             char *buffer, size_t size);
+XKB_EXPORT_PRIVATE صحيح
+xkb_keysym_iterator_get_name(بنية xkb_keysym_iterator *iter,
+                             حرف *buffer, size_t size);
 
 XKB_EXPORT_PRIVATE bool
-xkb_keysym_iterator_is_explicitly_named(struct xkb_keysym_iterator *iter);
+xkb_keysym_iterator_is_explicitly_named(بنية xkb_keysym_iterator *iter);
 
 XKB_EXPORT_PRIVATE bool
 xkb_keysym_is_deprecated(xkb_keysym_t keysym,
-                         const char *name,
-                         const char **reference_name);
+                         ثابت حرف *name,
+                         ثابت حرف **reference_name);
 
 #define XKB_MIN_VERBOSITY_DEPRECATED_KEYSYM 2
 #define check_deprecated_keysyms(log_func, log_param, ctx, keysym, name, token, format, end) \
-    if (unlikely((ctx)->log_verbosity >= XKB_MIN_VERBOSITY_DEPRECATED_KEYSYM)) {             \
-        const char *ref_name = NULL;                                                         \
-        if (xkb_keysym_is_deprecated(keysym, name, &ref_name)) {                             \
-            if (ref_name == NULL)                                                            \
+    إذا (unlikely((ctx)->log_verbosity >= XKB_MIN_VERBOSITY_DEPRECATED_KEYSYM)) {             \
+        ثابت حرف *ref_name = عدم;                                                         \
+        إذا (xkb_keysym_is_deprecated(keysym, name, &ref_name)) {                             \
+            إذا (ref_name == عدم)                                                            \
                 log_func(log_param, XKB_WARNING_DEPRECATED_KEYSYM,                           \
                          "deprecated keysym \"" format "\"." end, token);                    \
-            else                                                                             \
+            وإلا                                                                             \
                 log_func(log_param, XKB_WARNING_DEPRECATED_KEYSYM_NAME,                      \
                          "deprecated keysym name \"" format "\"; "                           \
                          "please use \"%s\" instead." end,                                   \

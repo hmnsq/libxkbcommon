@@ -9,140 +9,140 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <stdint.h>
+#ضمن <stdint.h>
 
-#include "xkbcommon/xkbcommon-features.h"
-#include "features/enums.h"
-#include "utils.h"
+#ضمن "xkbcommon/xkbcommon-features.h"
+#ضمن "features/enums.h"
+#ضمن "utils.h"
 
-static bool
-is_supported_enum_value_mask(enum xkb_enumerations_values values, uint32_t value)
+ساكن bool
+is_supported_enum_بەها_mask(تعداد xkb_enumerations_بەهاکان بەهاکان, uint32_t بەها)
 {
-    return (value < UINT32_WIDTH && (values & (UINT32_C(1) << value)));
+    أرجع (بەها < UINT32_WIDTH && (بەهاکان & (UINT32_C(1) << بەها)));
 }
 
-static bool
-is_supported_enum_value_array(const uint32_t *values, size_t size, uint32_t value)
+ساكن bool
+is_supported_enum_بەها_array(ثابت uint32_t *بەهاکان, size_t size, uint32_t بەها)
 {
-    for (size_t v = 0; v < size; v++) {
-        if (values[v] == value) {
-            return true;
+    لكل (size_t v = 0; v < size; v++) {
+        إذا (بەهاکان[v] == بەها) {
+            أرجع true;
         }
     }
-    return false;
+    أرجع false;
 }
 
-static inline bool
-is_supported_flag_value(enum xkb_enumerations_values values,
-                        bool accept_zero, uint32_t value)
+ساكن مضمن bool
+is_supported_flag_بەها(تعداد xkb_enumerations_بەهاکان بەهاکان,
+                        bool accept_zero, uint32_t بەها)
 {
-    return (accept_zero || value) && ((uint32_t) values & value) == value;
+    أرجع (accept_zero || بەها) && ((uint32_t) بەهاکان & بەها) == بەها;
 }
 
 bool
-xkb_feature_supported(enum xkb_feature feature, uint32_t value)
+xkb_feature_supported(تعداد xkb_feature feature, uint32_t بەها)
 {
-    switch (feature) {
-    case XKB_FEATURE_ENUM_FEATURE:
-        return is_supported_enum_value_array(
-            xkb_feature_values, ARRAY_SIZE(xkb_feature_values), value
+    بدل (feature) {
+    حالة XKB_FEATURE_ENUM_FEATURE:
+        أرجع is_supported_enum_بەها_array(
+            xkb_feature_بەهاکان, ARRAY_SIZE(xkb_feature_بەهاکان), بەها
         );
-    case XKB_FEATURE_ENUM_STATUS:
-        return is_supported_enum_value_array(
-            xkb_status_values, ARRAY_SIZE(xkb_status_values), value
+    حالة XKB_FEATURE_ENUM_STATUS:
+        أرجع is_supported_enum_بەها_array(
+            xkb_status_بەهاکان, ARRAY_SIZE(xkb_status_بەهاکان), بەها
         );
-    case XKB_FEATURE_ENUM_CONTEXT_FLAGS:
-        return is_supported_flag_value(
-            XKB_CONTEXT_FLAGS_VALUES, true, value
+    حالة XKB_FEATURE_ENUM_CONTEXT_FLAGS:
+        أرجع is_supported_flag_بەها(
+            XKB_CONTEXT_FLAGS_بەهاکان, true, بەها
         );
-    case XKB_FEATURE_ENUM_LOG_LEVEL:
-        return is_supported_enum_value_array(
-            xkb_log_level_values, ARRAY_SIZE(xkb_log_level_values), value
+    حالة XKB_FEATURE_ENUM_LOG_LEVEL:
+        أرجع is_supported_enum_بەها_array(
+            xkb_log_level_بەهاکان, ARRAY_SIZE(xkb_log_level_بەهاکان), بەها
         );
-    case XKB_FEATURE_ENUM_KEYSYM_FLAGS:
-        return is_supported_flag_value(
-            XKB_KEYSYM_FLAGS_VALUES, true, value
+    حالة XKB_FEATURE_ENUM_KEYSYM_FLAGS:
+        أرجع is_supported_flag_بەها(
+            XKB_KEYSYM_FLAGS_بەهاکان, true, بەها
         );
-    case XKB_FEATURE_ENUM_RMLVO_BUILDER_FLAGS:
-        return is_supported_flag_value(
-            XKB_RMLVO_BUILDER_FLAGS_VALUES, true, value
+    حالة XKB_FEATURE_ENUM_RMLVO_BUILDER_FLAGS:
+        أرجع is_supported_flag_بەها(
+            XKB_RMLVO_BUILDER_FLAGS_بەهاکان, true, بەها
         );
-    case XKB_FEATURE_ENUM_KEYMAP_FORMAT:
-        return is_supported_enum_value_mask(XKB_KEYMAP_FORMAT_VALUES, value);
-    case XKB_FEATURE_ENUM_KEYMAP_COMPILE_FLAGS:
-        return is_supported_flag_value(
-            XKB_KEYMAP_COMPILE_FLAGS_VALUES, true, value
+    حالة XKB_FEATURE_ENUM_KEYMAP_FORMAT:
+        أرجع is_supported_enum_بەها_mask(XKB_KEYMAP_FORMAT_بەهاکان, بەها);
+    حالة XKB_FEATURE_ENUM_KEYMAP_COMPILE_FLAGS:
+        أرجع is_supported_flag_بەها(
+            XKB_KEYMAP_COMPILE_FLAGS_بەهاکان, true, بەها
         );
-    case XKB_FEATURE_ENUM_KEYMAP_SERIALIZE_FLAGS:
-        return is_supported_flag_value(
-            XKB_KEYMAP_SERIALIZE_FLAGS_VALUES, true, value
+    حالة XKB_FEATURE_ENUM_KEYMAP_SERIALIZE_FLAGS:
+        أرجع is_supported_flag_بەها(
+            XKB_KEYMAP_SERIALIZE_FLAGS_بەهاکان, true, بەها
         );
-    case XKB_FEATURE_ENUM_KEYMAP_KEY_ITERATOR_FLAGS:
-        return is_supported_flag_value(
-            XKB_KEYMAP_KEY_ITERATOR_FLAGS_VALUES, true, value
+    حالة XKB_FEATURE_ENUM_KEYMAP_کلیل_ITERATOR_FLAGS:
+        أرجع is_supported_flag_بەها(
+            XKB_KEYMAP_کلیل_ITERATOR_FLAGS_بەهاکان, true, بەها
         );
-    case XKB_FEATURE_ENUM_STATE_COMPONENT:
-        return is_supported_flag_value(
-            XKB_STATE_COMPONENT_VALUES, true, value
+    حالة XKB_FEATURE_ENUM_STATE_COMPONENT:
+        أرجع is_supported_flag_بەها(
+            XKB_STATE_COMPONENT_بەهاکان, true, بەها
         );
-    case XKB_FEATURE_ENUM_LAYOUT_OUT_OF_RANGE_POLICY:
-        return is_supported_enum_value_mask(XKB_LAYOUT_OUT_OF_RANGE_POLICY_VALUES, value);
-    case XKB_FEATURE_ENUM_A11Y_FLAGS:
-        return is_supported_flag_value(
-            XKB_A11Y_FLAGS_VALUES, true, value
+    حالة XKB_FEATURE_ENUM_LAYOUT_OUT_OF_RANGE_POLICY:
+        أرجع is_supported_enum_بەها_mask(XKB_LAYOUT_OUT_OF_RANGE_POLICY_بەهاکان, بەها);
+    حالة XKB_FEATURE_ENUM_A11Y_FLAGS:
+        أرجع is_supported_flag_بەها(
+            XKB_A11_Y_FLAGS_بەهاکان, true, بەها
         );
-    case XKB_FEATURE_ENUM_KEYBOARD_CONTROL_FLAGS:
-        return is_supported_flag_value(
-            XKB_KEYBOARD_CONTROL_FLAGS_VALUES, true, value
+    حالة XKB_FEATURE_ENUM_KEYBOARD_CONTROL_FLAGS:
+        أرجع is_supported_flag_بەها(
+            XKB_KEYBOARD_CONTROL_FLAGS_بەهاکان, true, بەها
         );
-    case XKB_FEATURE_ENUM_STATE_MODE:
-        return is_supported_enum_value_mask(XKB_STATE_MODE_VALUES, value);
-    case XKB_FEATURE_ENUM_STATE_MATCH:
-        return is_supported_flag_value(
-            XKB_STATE_MATCH_VALUES, false, value
+    حالة XKB_FEATURE_ENUM_STATE_MODE:
+        أرجع is_supported_enum_بەها_mask(XKB_STATE_MODE_بەهاکان, بەها);
+    حالة XKB_FEATURE_ENUM_STATE_MATCH:
+        أرجع is_supported_flag_بەها(
+            XKB_STATE_MATCH_بەهاکان, false, بەها
         );
-    case XKB_FEATURE_ENUM_CONSUMED_MODE:
-        return is_supported_enum_value_mask(XKB_CONSUMED_MODE_VALUES, value);
-    case XKB_FEATURE_ENUM_MACHINE_BUILDER_FLAGS:
-        return is_supported_flag_value(
-            XKB_MACHINE_BUILDER_FLAGS_VALUES, true, value
+    حالة XKB_FEATURE_ENUM_CONSUMED_MODE:
+        أرجع is_supported_enum_بەها_mask(XKB_CONSUMED_MODE_بەهاکان, بەها);
+    حالة XKB_FEATURE_ENUM_MACHINE_BUILDER_FLAGS:
+        أرجع is_supported_flag_بەها(
+            XKB_MACHINE_BUILDER_FLAGS_بەهاکان, true, بەها
         );
-    case XKB_FEATURE_ENUM_MACHINE_FLAGS:
-        return is_supported_flag_value(
-            XKB_MACHINE_FLAGS_VALUES, true, value
+    حالة XKB_FEATURE_ENUM_MACHINE_FLAGS:
+        أرجع is_supported_flag_بەها(
+            XKB_MACHINE_FLAGS_بەهاکان, true, بەها
         );
-    case XKB_FEATURE_ENUM_EVENT_TYPE:
-        return is_supported_enum_value_mask(XKB_EVENT_TYPE_VALUES, value);
-    case XKB_FEATURE_ENUM_KEY_DIRECTION:
-        return is_supported_enum_value_mask(XKB_KEY_DIRECTION_VALUES, value);
-    case XKB_FEATURE_ENUM_POINTER_MOTION_FLAGS:
-        return is_supported_flag_value(
-            XKB_POINTER_MOTION_FLAGS_VALUES, true, value
+    حالة XKB_FEATURE_ENUM_EVENT_TYPE:
+        أرجع is_supported_enum_بەها_mask(XKB_EVENT_TYPE_بەهاکان, بەها);
+    حالة XKB_FEATURE_ENUM_کلیل_DIRECTION:
+        أرجع is_supported_enum_بەها_mask(XKB_کلیل_DIRECTION_بەهاکان, بەها);
+    حالة XKB_FEATURE_ENUM_POINTER_MOTION_FLAGS:
+        أرجع is_supported_flag_بەها(
+            XKB_POINTER_MOTION_FLAGS_بەهاکان, true, بەها
         );
-    case XKB_FEATURE_ENUM_POINTER_BUTTON_STATE:
-        return is_supported_enum_value_mask(XKB_POINTER_BUTTON_STATE_VALUES, value);
-    case XKB_FEATURE_ENUM_EVENTS_FLAGS:
-        return is_supported_flag_value(
-            XKB_EVENTS_FLAGS_VALUES, true, value
+    حالة XKB_FEATURE_ENUM_POINTER_BUTTON_STATE:
+        أرجع is_supported_enum_بەها_mask(XKB_POINTER_BUTTON_STATE_بەهاکان, بەها);
+    حالة XKB_FEATURE_ENUM_EVENTS_FLAGS:
+        أرجع is_supported_flag_بەها(
+            XKB_EVENTS_FLAGS_بەهاکان, true, بەها
         );
-    case XKB_FEATURE_ENUM_COMPOSE_FORMAT:
-        return is_supported_enum_value_mask(XKB_COMPOSE_FORMAT_VALUES, value);
-    case XKB_FEATURE_ENUM_COMPOSE_COMPILE_FLAGS:
-        return is_supported_flag_value(
-            XKB_COMPOSE_COMPILE_FLAGS_VALUES, true, value
+    حالة XKB_FEATURE_ENUM_COMPOSE_FORMAT:
+        أرجع is_supported_enum_بەها_mask(XKB_COMPOSE_FORMAT_بەهاکان, بەها);
+    حالة XKB_FEATURE_ENUM_COMPOSE_COMPILE_FLAGS:
+        أرجع is_supported_flag_بەها(
+            XKB_COMPOSE_COMPILE_FLAGS_بەهاکان, true, بەها
         );
-    case XKB_FEATURE_ENUM_COMPOSE_STATUS:
-        return is_supported_enum_value_mask(XKB_COMPOSE_STATUS_VALUES, value);
-    case XKB_FEATURE_ENUM_COMPOSE_STATE_FLAGS:
-        return is_supported_flag_value(
-            XKB_COMPOSE_STATE_FLAGS_VALUES, true, value
+    حالة XKB_FEATURE_ENUM_COMPOSE_STATUS:
+        أرجع is_supported_enum_بەها_mask(XKB_COMPOSE_STATUS_بەهاکان, بەها);
+    حالة XKB_FEATURE_ENUM_COMPOSE_STATE_FLAGS:
+        أرجع is_supported_flag_بەها(
+            XKB_COMPOSE_STATE_FLAGS_بەهاکان, true, بەها
         );
-    case XKB_FEATURE_ENUM_COMPOSE_FEED_RESULT:
-        return is_supported_enum_value_mask(XKB_COMPOSE_FEED_RESULT_VALUES, value);
-    default:
+    حالة XKB_FEATURE_ENUM_COMPOSE_FEED_RESULT:
+        أرجع is_supported_enum_بەها_mask(XKB_COMPOSE_FEED_RESULT_بەهاکان, بەها);
+    افتراضي:
         /* Invalid feature */
-        return false;
+        أرجع false;
     }
 }
