@@ -5,27 +5,27 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include <assert.h>
-#include <stddef.h>
-#include <stdbool.h>
+#अन्तर्भाव <assert.h>
+#अन्तर्भाव <stddef.h>
+#अन्तर्भाव <stdbool.h>
 
-#include "util-list.h"
+#अन्तर्भाव "util-list.h"
 
-void
-list_init(struct list *list)
+शून्य
+list_init(संरचना list *list)
 {
 	list->prev = list;
 	list->next = list;
 }
 
-void
-list_insert(struct list *list, struct list *elm)
+शून्य
+list_घाला(संरचना list *list, संरचना list *elm)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	प्रतिज्ञा((list->next != रिक्त && list->prev != रिक्त) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
-	assert(((elm->next == NULL && elm->prev == NULL) || list_empty(elm)) ||
+	प्रतिज्ञा(((elm->next == रिक्त && elm->prev == रिक्त) || list_empty(elm)) ||
 	       !"elm->next|prev is not NULL, list node used twice?");
 
 	elm->prev = list;
@@ -34,12 +34,12 @@ list_insert(struct list *list, struct list *elm)
 	elm->next->prev = elm;
 }
 
-void
-list_append(struct list *list, struct list *elm)
+शून्य
+list_append(संरचना list *list, संरचना list *elm)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	प्रतिज्ञा((list->next != रिक्त && list->prev != रिक्त) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
-	assert(((elm->next == NULL && elm->prev == NULL) || list_empty(elm)) ||
+	प्रतिज्ञा(((elm->next == रिक्त && elm->prev == रिक्त) || list_empty(elm)) ||
 	       !"elm->next|prev is not NULL, list node used twice?");
 
 	elm->next = list;
@@ -48,29 +48,29 @@ list_append(struct list *list, struct list *elm)
 	elm->prev->next = elm;
 }
 
-void
-list_remove(struct list *elm)
+शून्य
+list_remove(संरचना list *elm)
 {
-	assert((elm->next != NULL && elm->prev != NULL) ||
+	प्रतिज्ञा((elm->next != रिक्त && elm->prev != रिक्त) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
 
 	elm->prev->next = elm->next;
 	elm->next->prev = elm->prev;
-	elm->next = NULL;
-	elm->prev = NULL;
+	elm->next = रिक्त;
+	elm->prev = रिक्त;
 }
 
 bool
-list_empty(const struct list *list)
+list_empty(ध्रुव संरचना list *list)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	प्रतिज्ञा((list->next != रिक्त && list->prev != रिक्त) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
 
-	return list->next == list;
+	प्रत्यागम list->next == list;
 }
 
 bool
-list_is_last(const struct list *list, const struct list *elm)
+list_is_last(ध्रुव संरचना list *list, ध्रुव संरचना list *elm)
 {
-	return elm->next == list;
+	प्रत्यागम elm->next == list;
 }

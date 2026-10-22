@@ -9,14 +9,14 @@
  */
 #pragma once
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include "xkbcommon/xkbcommon.h"
+#अन्तर्भाव "xkbcommon/xkbcommon.h"
 
-#include "atom.h"
-#include "darray.h"
+#अन्तर्भाव "atom.h"
+#अन्तर्भाव "darray.h"
 
-enum xkb_file_type {
+गणना xkb_file_type {
     /* Component files, by order of compilation. */
     FILE_TYPE_KEYCODES = 0,
     FILE_TYPE_TYPES = 1,
@@ -37,38 +37,38 @@ enum xkb_file_type {
     /* This one doesn't mix with the others, but useful here as well. */
     FILE_TYPE_RULES,
 
-    _FILE_TYPE_NUM_ENTRIES,
-    FILE_TYPE_INVALID = _FILE_TYPE_NUM_ENTRIES
+    FILE_TYPE_अंक_ENTRIES,
+    FILE_TYPE_INVALID = FILE_TYPE_अंक_ENTRIES
 };
 
-enum stmt_type {
+गणना stmt_type {
     STMT_UNKNOWN = 0,
     STMT_INCLUDE,
     STMT_KEYCODE,
     STMT_ALIAS,
-    STMT_EXPR_STRING_LITERAL,
-    STMT_EXPR_INTEGER_LITERAL,
-    STMT_EXPR_FLOAT_LITERAL,
-    STMT_EXPR_BOOLEAN_LITERAL,
-    STMT_EXPR_KEYNAME_LITERAL,
-    STMT_EXPR_KEYSYM_LITERAL,
-    STMT_EXPR_IDENT,
-    STMT_EXPR_ACTION_DECL,
-    STMT_EXPR_FIELD_REF,
-    STMT_EXPR_ARRAY_REF,
+    STMT_अभिव्यक्ती_STRING_LITERAL,
+    STMT_अभिव्यक्ती_INTEGER_LITERAL,
+    STMT_अभिव्यक्ती_FLOAT_LITERAL,
+    STMT_अभिव्यक्ती_BOOLEAN_LITERAL,
+    STMT_अभिव्यक्ती_KEYNAME_LITERAL,
+    STMT_अभिव्यक्ती_KEYSYM_LITERAL,
+    STMT_अभिव्यक्ती_IDENT,
+    STMT_अभिव्यक्ती_ACTION_DECL,
+    STMT_अभिव्यक्ती_FIELD_REF,
+    STMT_अभिव्यक्ती_ARRAY_REF,
     /* Needed because of the ambiguity between keysym and action empty lists */
-    STMT_EXPR_EMPTY_LIST,
-    STMT_EXPR_KEYSYM_LIST,
-    STMT_EXPR_ACTION_LIST,
-    STMT_EXPR_ADD,
-    STMT_EXPR_SUBTRACT,
-    STMT_EXPR_MULTIPLY,
-    STMT_EXPR_DIVIDE,
-    STMT_EXPR_ASSIGN,
-    STMT_EXPR_NOT,
-    STMT_EXPR_NEGATE,
-    STMT_EXPR_INVERT,
-    STMT_EXPR_UNARY_PLUS,
+    STMT_अभिव्यक्ती_EMPTY_LIST,
+    STMT_अभिव्यक्ती_KEYSYM_LIST,
+    STMT_अभिव्यक्ती_ACTION_LIST,
+    STMT_अभिव्यक्ती_ADD,
+    STMT_अभिव्यक्ती_SUBTRACT,
+    STMT_अभिव्यक्ती_MULTIPLY,
+    STMT_अभिव्यक्ती_DIVIDE,
+    STMT_अभिव्यक्ती_ASSIGN,
+    STMT_अभिव्यक्ती_NOT,
+    STMT_अभिव्यक्ती_NEGATE,
+    STMT_अभिव्यक्ती_INVERT,
+    STMT_अभिव्यक्ती_UNARY_PLUS,
     STMT_VAR,
     STMT_TYPE,
     STMT_INTERP,
@@ -81,229 +81,229 @@ enum stmt_type {
     STMT_UNKNOWN_DECLARATION,
     STMT_UNKNOWN_COMPOUND,
 
-    _STMT_NUM_VALUES
+    STMT_अंक_मूल्ये
 };
 
-enum merge_mode {
+गणना merge_mode {
     MERGE_DEFAULT,
     MERGE_AUGMENT,
     MERGE_OVERRIDE,
     MERGE_REPLACE,
-    _MERGE_MODE_NUM_ENTRIES,
+    MERGE_MODE_अंक_ENTRIES,
 };
-enum { MERGE_MODE_MIN_WIDTH = 3 /* 2 bits + sign */ };
-static_assert(_MERGE_MODE_NUM_ENTRIES - 1 <= (1 << (MERGE_MODE_MIN_WIDTH - 1)) - 1,
+गणना { MERGE_MODE_MIN_WIDTH = 3 /* 2 bits + sign */ };
+static_assert(MERGE_MODE_अंक_ENTRIES - 1 <= (1 << (MERGE_MODE_MIN_WIDTH - 1)) - 1,
               "Cannot encode merge mode");
 
-const char *
-xkb_file_type_to_string(enum xkb_file_type type);
+ध्रुव वर्ण *
+xkb_file_type_to_string(गणना xkb_file_type type);
 
-const char *
-stmt_type_to_string(enum stmt_type type);
+ध्रुव वर्ण *
+stmt_type_to_string(गणना stmt_type type);
 
-char
-stmt_type_to_operator_char(enum stmt_type type);
+वर्ण
+stmt_type_to_operator_char(गणना stmt_type type);
 
-typedef struct _ParseCommon  {
-    struct _ParseCommon *next;
-    enum stmt_type type;
+प्रकारनिर्देश संरचना _ParseCommon  {
+    संरचना _ParseCommon *next;
+    गणना stmt_type type;
 } ParseCommon;
 
-typedef struct _IncludeStmt {
+प्रकारनिर्देश संरचना _IncludeStmt {
     ParseCommon common;
-    enum merge_mode merge;
-    char *stmt;
-    char *file;
-    char *map;
-    char *modifier;
-    struct _IncludeStmt *next_incl;
+    गणना merge_mode merge;
+    वर्ण *stmt;
+    वर्ण *file;
+    वर्ण *map;
+    वर्ण *modifier;
+    संरचना _IncludeStmt *next_incl;
 } IncludeStmt;
 
-typedef union ExprDef ExprDef;
+प्रकारनिर्देश सङ्घ अभिव्यक्ती_Def अभिव्यक्ती_Def;
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     ParseCommon common;
     xkb_atom_t ident;
-} ExprIdent;
+} अभिव्यक्ती_Ident;
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     ParseCommon common;
     xkb_atom_t str;
-} ExprString;
+} अभिव्यक्ती_String;
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     ParseCommon common;
     bool set;
-} ExprBoolean;
+} अभिव्यक्ती_Boolean;
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     ParseCommon common;
     int64_t ival;
-} ExprInteger;
+} अभिव्यक्ती_Integer;
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     ParseCommon common;
     /* We don't support floats, but we still represnt them in the AST, in
      * order to provide proper error messages. */
-} ExprFloat;
+} अभिव्यक्ती_Float;
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     ParseCommon common;
-    xkb_atom_t key_name;
-} ExprKeyName;
+    xkb_atom_t किल्ली_name;
+} अभिव्यक्ती_किल्ली_Name;
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     ParseCommon common;
     /* Keysyms are resolved early, so this might contain `NoSymbol` in case of
      * failure, to enable error recovery. */
     xkb_keysym_t keysym;
-} ExprKeySym;
+} अभिव्यक्ती_किल्ली_Sym;
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     ParseCommon common;
-    ExprDef *left;
-    ExprDef *right;
-} ExprBinary;
+    अभिव्यक्ती_Def *डावा;
+    अभिव्यक्ती_Def *उजवा;
+} अभिव्यक्ती_द्विमान;
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     ParseCommon common;
-    ExprDef *child;
-} ExprUnary;
+    अभिव्यक्ती_Def *child;
+} अभिव्यक्ती_Unary;
 
-typedef struct {
-    ParseCommon common;
-    xkb_atom_t element;
-    xkb_atom_t field;
-} ExprFieldRef;
-
-typedef struct {
+प्रकारनिर्देश संरचना {
     ParseCommon common;
     xkb_atom_t element;
     xkb_atom_t field;
-    ExprDef *entry;
-} ExprArrayRef;
+} अभिव्यक्ती_Field_Ref;
 
-typedef struct {
+प्रकारनिर्देश संरचना {
+    ParseCommon common;
+    xkb_atom_t element;
+    xkb_atom_t field;
+    अभिव्यक्ती_Def *entry;
+} अभिव्यक्ती_Array_Ref;
+
+प्रकारनिर्देश संरचना {
     ParseCommon common;
     xkb_atom_t name;
-    ExprDef *args;
-} ExprAction;
+    अभिव्यक्ती_Def *args;
+} अभिव्यक्ती_Action;
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     ParseCommon common;
     /* List of actions for a single level. */
-    ExprDef *actions;
-} ExprActionList;
+    अभिव्यक्ती_Def *actions;
+} अभिव्यक्ती_Action_List;
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     ParseCommon common;
     /* List of keysym for a single level. */
     darray(xkb_keysym_t) syms;
-} ExprKeysymList;
+} अभिव्यक्ती_Keysym_List;
 
-union ExprDef {
+सङ्घ अभिव्यक्ती_Def {
     ParseCommon common;
-    ExprIdent ident;
-    ExprString string;
-    ExprBoolean boolean;
-    ExprInteger integer;
-    ExprKeyName key_name;
-    ExprKeySym keysym;
-    ExprBinary binary;
-    ExprUnary unary;
-    ExprFieldRef field_ref;
-    ExprArrayRef array_ref;
-    ExprAction action;
-    ExprActionList actions;
-    ExprKeysymList keysym_list;
+    अभिव्यक्ती_Ident ident;
+    अभिव्यक्ती_String string;
+    अभिव्यक्ती_Boolean boolean;
+    अभिव्यक्ती_Integer integer;
+    अभिव्यक्ती_किल्ली_Name किल्ली_name;
+    अभिव्यक्ती_किल्ली_Sym keysym;
+    अभिव्यक्ती_द्विमान द्विमान;
+    अभिव्यक्ती_Unary unary;
+    अभिव्यक्ती_Field_Ref field_ref;
+    अभिव्यक्ती_Array_Ref array_ref;
+    अभिव्यक्ती_Action action;
+    अभिव्यक्ती_Action_List actions;
+    अभिव्यक्ती_Keysym_List keysym_list;
 };
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     ParseCommon common;
-    enum merge_mode merge;
-    ExprDef *name;
-    ExprDef *value;
+    गणना merge_mode merge;
+    अभिव्यक्ती_Def *name;
+    अभिव्यक्ती_Def *मूल्य;
 } VarDef;
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     ParseCommon common;
-    enum merge_mode merge;
+    गणना merge_mode merge;
     xkb_atom_t name;
-    ExprDef *value;
+    अभिव्यक्ती_Def *मूल्य;
 } VModDef;
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     ParseCommon common;
-    enum merge_mode merge;
+    गणना merge_mode merge;
     xkb_atom_t name;
-    int64_t value;
+    int64_t मूल्य;
 } KeycodeDef;
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     ParseCommon common;
-    enum merge_mode merge;
+    गणना merge_mode merge;
     xkb_atom_t alias;
     xkb_atom_t real;
-} KeyAliasDef;
+} किल्ली_Alias_Def;
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     ParseCommon common;
-    enum merge_mode merge;
+    गणना merge_mode merge;
     xkb_atom_t name;
     VarDef *body;
-} KeyTypeDef;
+} किल्ली_Type_Def;
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     ParseCommon common;
-    enum merge_mode merge;
-    xkb_atom_t keyName;
+    गणना merge_mode merge;
+    xkb_atom_t किल्ली_Name;
     VarDef *symbols;
 } SymbolsDef;
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     ParseCommon common;
-    enum merge_mode merge;
+    गणना merge_mode merge;
     // NOTE: Can also be “None”, rather than a modifier name.
-    ExprDef *modifiers;
-    ExprDef *keys;
+    अभिव्यक्ती_Def *modifiers;
+    अभिव्यक्ती_Def *किल्ल्या;
 } ModMapDef;
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     ParseCommon common;
-    enum merge_mode merge;
+    गणना merge_mode merge;
     int64_t group;
-    ExprDef *def;
+    अभिव्यक्ती_Def *def;
 } GroupCompatDef;
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     ParseCommon common;
-    enum merge_mode merge;
+    गणना merge_mode merge;
     xkb_keysym_t sym;
-    ExprDef *match;
+    अभिव्यक्ती_Def *match;
     VarDef *def;
 } InterpDef;
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     ParseCommon common;
-    enum merge_mode merge;
-    bool virtual;
+    गणना merge_mode merge;
+    bool आभास;
     int64_t ndx;
-    ExprDef *name;
+    अभिव्यक्ती_Def *name;
 } LedNameDef;
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     ParseCommon common;
-    enum merge_mode merge;
+    गणना merge_mode merge;
     xkb_atom_t name;
     VarDef *body;
 } LedMapDef;
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     ParseCommon common;
-    char *name;
+    वर्ण *name;
 } UnknownStatement;
 
-enum xkb_map_flags {
+गणना xkb_map_flags {
     MAP_NO_FLAG = 0,
     MAP_IS_DEFAULT = (1 << 0),
     MAP_IS_PARTIAL = (1 << 1),
@@ -316,10 +316,10 @@ enum xkb_map_flags {
     MAP_IS_DEPRECATED = (1 << 8),
 };
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     ParseCommon common;
-    char *name;
+    वर्ण *name;
     ParseCommon *defs;
-    enum xkb_file_type file_type;
-    enum xkb_map_flags flags;
+    गणना xkb_file_type file_type;
+    गणना xkb_map_flags flags;
 } XkbFile;

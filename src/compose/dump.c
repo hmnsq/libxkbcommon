@@ -4,70 +4,70 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include <stdio.h>
-#include <stdbool.h>
-#include <string.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdbool.h>
+#अन्तर्भाव <string.h>
 
-#include "xkbcommon/xkbcommon-compose.h"
-#include "darray.h"
-#include "parser.h"
-#include "escape.h"
-#include "dump.h"
-#include "src/keysym.h"
+#अन्तर्भाव "xkbcommon/xkbcommon-compose.h"
+#अन्तर्भाव "darray.h"
+#अन्तर्भाव "parser.h"
+#अन्तर्भाव "escape.h"
+#अन्तर्भाव "dump.h"
+#अन्तर्भाव "src/keysym.h"
 
 bool
-print_compose_table_entry(FILE *file, struct xkb_compose_table_entry *entry)
+print_compose_table_entry(FILE *file, संरचना xkb_compose_table_entry *entry)
 {
     size_t nsyms;
-    const xkb_keysym_t *syms = xkb_compose_table_entry_sequence(entry, &nsyms);
-    char buf[XKB_KEYSYM_NAME_MAX_SIZE];
-    for (size_t i = 0; i < nsyms; i++) {
-        xkb_keysym_get_name(syms[i], buf, sizeof(buf));
+    ध्रुव xkb_keysym_t *syms = xkb_compose_table_entry_sequence(entry, &nsyms);
+    वर्ण buf[XKB_KEYSYM_NAME_MAX_SIZE];
+    प्रति (size_t i = 0; i < nsyms; i++) {
+        xkb_keysym_get_name(syms[i], buf, परिमाण(buf));
         fprintf(file, "<%s>", buf);
-        if (i + 1 < nsyms) {
+        यदि (i + 1 < nsyms) {
             fprintf(file, " ");
         }
     }
     fprintf(file, " : ");
-    const char *utf8 = xkb_compose_table_entry_utf8(entry);
-    if (*utf8 != '\0') {
-        char *escaped = escape_utf8_string_literal(utf8);
-        if (!escaped) {
+    ध्रुव वर्ण *utf8 = xkb_compose_table_entry_utf8(entry);
+    यदि (*utf8 != '\0') {
+        वर्ण *escaped = escape_utf8_string_literal(utf8);
+        यदि (!escaped) {
             fprintf(stderr, "ERROR: Cannot escape the string: allocation error\n");
-            return false;
-        } else {
+            प्रत्यागम false;
+        } अन्यथा {
             fprintf(file, " \"%s\"", escaped);
-            free(escaped);
+            मुक्त(escaped);
         }
     }
-    const xkb_keysym_t keysym = xkb_compose_table_entry_keysym(entry);
-    if (keysym != XKB_KEY_NoSymbol) {
-        xkb_keysym_get_name(keysym, buf, sizeof(buf));
+    ध्रुव xkb_keysym_t keysym = xkb_compose_table_entry_keysym(entry);
+    यदि (keysym != XKB_किल्ली_No_चिन्ह) {
+        xkb_keysym_get_name(keysym, buf, परिमाण(buf));
         fprintf(file, " %s", buf);
     }
     fprintf(file, "\n");
-    return true;
+    प्रत्यागम true;
 }
 
 bool
-xkb_compose_table_dump(FILE *file, struct xkb_compose_table *table)
+xkb_compose_table_dump(FILE *file, संरचना xkb_compose_table *table)
 {
-    struct xkb_compose_table_entry *entry;
-    struct xkb_compose_table_iterator *iter = xkb_compose_table_iterator_new(table);
+    संरचना xkb_compose_table_entry *entry;
+    संरचना xkb_compose_table_iterator *iter = xkb_compose_table_iterator_new(table);
 
-    if (!iter)
-        return false;
+    यदि (!iter)
+        प्रत्यागम false;
 
     bool ok = true;
-    while ((entry = xkb_compose_table_iterator_next(iter))) {
-        if (!print_compose_table_entry(file, entry)) {
+    यावत् ((entry = xkb_compose_table_iterator_next(iter))) {
+        यदि (!print_compose_table_entry(file, entry)) {
             ok = false;
-            break;
+            भङ्ग;
         }
     }
 
     xkb_compose_table_iterator_free(iter);
-    return ok;
+    प्रत्यागम ok;
 }
