@@ -14,13 +14,13 @@
  */
 #pragma once
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <stdbool.h>
+#അന്തര്ഭാവ <stdbool.h>
 
-#include "xkbcommon/xkbcommon.h"
+#അന്തര്ഭാവ "xkbcommon/xkbcommon.h"
 
-#include "utils.h"
+#അന്തര്ഭാവ "utils.h"
 
 /*
  * NOTE: this is not defined in xkbcommon.h, because if we did, it may add
@@ -38,7 +38,7 @@
 /** Maximum keysym value with explicit name */
 #define XKB_KEYSYM_MAX_EXPLICIT   0x1008ffb8
 /** Count of keysym value with explicit name */
-#define XKB_KEYSYM_COUNT_EXPLICIT 2505
+#define XKB_KEYSYM_എണ്ണം_EXPLICIT 2505
 /** Offset to use when converting a Unicode code point to a keysym */
 #define XKB_KEYSYM_UNICODE_OFFSET 0x01000000
 /** Minimum Unicode keysym. NOTE: code points in 0..0xff cannot be converted. */
@@ -66,44 +66,44 @@
 XKB_EXPORT_PRIVATE bool
 xkb_keysym_is_assigned(xkb_keysym_t ks);
 
-XKB_EXPORT_PRIVATE int
-xkb_keysym_get_explicit_names(xkb_keysym_t ks, const char **buffer, size_t size);
+XKB_EXPORT_PRIVATE പൂർണ്ണസംഖ്യ
+xkb_keysym_get_explicit_names(xkb_keysym_t ks, സ്ഥിരം അക്ഷരം **buffer, size_t size);
 
-struct xkb_keysym_iterator;
+ഘടന xkb_keysym_iterator;
 
-XKB_EXPORT_PRIVATE struct xkb_keysym_iterator*
+XKB_EXPORT_PRIVATE ഘടന xkb_keysym_iterator*
 xkb_keysym_iterator_new(bool explicit);
 
-XKB_EXPORT_PRIVATE struct xkb_keysym_iterator*
-xkb_keysym_iterator_unref(struct xkb_keysym_iterator *iter);
+XKB_EXPORT_PRIVATE ഘടന xkb_keysym_iterator*
+xkb_keysym_iterator_unref(ഘടന xkb_keysym_iterator *iter);
 
 XKB_EXPORT_PRIVATE bool
-xkb_keysym_iterator_next(struct xkb_keysym_iterator *iter);
+xkb_keysym_iterator_next(ഘടന xkb_keysym_iterator *iter);
 
 XKB_EXPORT_PRIVATE xkb_keysym_t
-xkb_keysym_iterator_get_keysym(struct xkb_keysym_iterator *iter);
+xkb_keysym_iterator_get_keysym(ഘടന xkb_keysym_iterator *iter);
 
-XKB_EXPORT_PRIVATE int
-xkb_keysym_iterator_get_name(struct xkb_keysym_iterator *iter,
-                             char *buffer, size_t size);
+XKB_EXPORT_PRIVATE പൂർണ്ണസംഖ്യ
+xkb_keysym_iterator_get_name(ഘടന xkb_keysym_iterator *iter,
+                             അക്ഷരം *buffer, size_t size);
 
 XKB_EXPORT_PRIVATE bool
-xkb_keysym_iterator_is_explicitly_named(struct xkb_keysym_iterator *iter);
+xkb_keysym_iterator_is_explicitly_named(ഘടന xkb_keysym_iterator *iter);
 
 XKB_EXPORT_PRIVATE bool
 xkb_keysym_is_deprecated(xkb_keysym_t keysym,
-                         const char *name,
-                         const char **reference_name);
+                         സ്ഥിരം അക്ഷരം *name,
+                         സ്ഥിരം അക്ഷരം **reference_name);
 
 #define XKB_MIN_VERBOSITY_DEPRECATED_KEYSYM 2
 #define check_deprecated_keysyms(log_func, log_param, ctx, keysym, name, token, format, end) \
-    if (unlikely((ctx)->log_verbosity >= XKB_MIN_VERBOSITY_DEPRECATED_KEYSYM)) {             \
-        const char *ref_name = NULL;                                                         \
-        if (xkb_keysym_is_deprecated(keysym, name, &ref_name)) {                             \
-            if (ref_name == NULL)                                                            \
+    എങ്കിൽ (unlikely((ctx)->log_verbosity >= XKB_MIN_VERBOSITY_DEPRECATED_KEYSYM)) {             \
+        സ്ഥിരം അക്ഷരം *ref_name = ശൂന്യ;                                                         \
+        എങ്കിൽ (xkb_keysym_is_deprecated(keysym, name, &ref_name)) {                             \
+            എങ്കിൽ (ref_name == ശൂന്യ)                                                            \
                 log_func(log_param, XKB_WARNING_DEPRECATED_KEYSYM,                           \
                          "deprecated keysym \"" format "\"." end, token);                    \
-            else                                                                             \
+            അല്ലെങ്കിൽ                                                                             \
                 log_func(log_param, XKB_WARNING_DEPRECATED_KEYSYM_NAME,                      \
                          "deprecated keysym name \"" format "\"; "                           \
                          "please use \"%s\" instead." end,                                   \

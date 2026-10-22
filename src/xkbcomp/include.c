@@ -8,19 +8,19 @@
  * SPDX-License-Identifier: HPND AND MIT
  */
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <errno.h>
-#include <limits.h>
-#include <stdio.h>
-#include <string.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <limits.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <string.h>
 
-#include "messages-codes.h"
-#include "utils.h"
-#include "xkbcomp-priv.h"
-#include "include.h"
-#include "scanner-utils.h"
-#include "util-paths.h"
+#അന്തര്ഭാവ "messages-codes.h"
+#അന്തര്ഭാവ "utils.h"
+#അന്തര്ഭാവ "xkbcomp-priv.h"
+#അന്തര്ഭാവ "include.h"
+#അന്തര്ഭാവ "scanner-utils.h"
+#അന്തര്ഭാവ "util-paths.h"
 
 /**
  * Parse an include statement. Each call returns a file name, along with
@@ -66,10 +66,10 @@
  *
  */
 bool
-ParseIncludeMap(char **str_inout, char **file_rtrn, char **map_rtrn,
-                char *nextop_rtrn, char **extra_data)
+ParseIncludeMap(അക്ഷരം **str_inout, അക്ഷരം **file_rtrn, അക്ഷരം **map_rtrn,
+                അക്ഷരം *nextop_rtrn, അക്ഷരം **extra_data)
 {
-    char *tmp, *str, *next;
+    അക്ഷരം *tmp, *str, *next;
 
     str = *str_inout;
 
@@ -78,16 +78,16 @@ ParseIncludeMap(char **str_inout, char **file_rtrn, char **map_rtrn,
      * if there is more than one left in the statement.
      */
     next = strpbrk(str, MERGE_MODE_PREFIXES);
-    if (next) {
+    എങ്കിൽ (next) {
         /* Got more files, this function will be called again. */
         *nextop_rtrn = *next;
         /* Separate the string, for strchr etc. to work on this file only. */
         *next++ = '\0';
     }
-    else {
+    അല്ലെങ്കിൽ {
         /* This is the last file in this statement, won't be called again. */
         *nextop_rtrn = '\0';
-        next = NULL;
+        next = ശൂന്യ;
     }
 
     /*
@@ -95,53 +95,53 @@ ParseIncludeMap(char **str_inout, char **file_rtrn, char **map_rtrn,
      * it goes after the file name and map.
      */
     tmp = strchr(str, ':');
-    if (tmp != NULL) {
+    എങ്കിൽ (tmp != ശൂന്യ) {
         *tmp++ = '\0';
         *extra_data = strdup(tmp);
     }
-    else {
-        *extra_data = NULL;
+    അല്ലെങ്കിൽ {
+        *extra_data = ശൂന്യ;
     }
 
     /* Look for a map, if any. */
     tmp = strchr(str, '(');
-    if (tmp == NULL) {
+    എങ്കിൽ (tmp == ശൂന്യ) {
         /* No map. */
         *file_rtrn = strdup(str);
-        *map_rtrn = NULL;
+        *map_rtrn = ശൂന്യ;
     }
-    else if (str[0] == '(') {
+    അല്ലെങ്കിൽ എങ്കിൽ (str[0] == '(') {
         /* Map without file - invalid. */
-        free(*extra_data);
-        return false;
+        സ്വതന്ത്രം(*extra_data);
+        തിരികെ false;
     }
-    else {
+    അല്ലെങ്കിൽ {
         /* Got a map; separate the file and the map for the strdup's. */
         *tmp++ = '\0';
         *file_rtrn = strdup(str);
         str = tmp;
         tmp = strchr(str, ')');
-        if (tmp == NULL || tmp[1] != '\0') {
-            free(*file_rtrn);
-            free(*extra_data);
-            return false;
+        എങ്കിൽ (tmp == ശൂന്യ || tmp[1] != '\0') {
+            സ്വതന്ത്രം(*file_rtrn);
+            സ്വതന്ത്രം(*extra_data);
+            തിരികെ false;
         }
         *tmp++ = '\0';
         *map_rtrn = strdup(str);
     }
 
     /* Set up the next file for the next call, if any. */
-    if (*nextop_rtrn == '\0')
-        *str_inout = NULL;
-    else if (is_merge_mode_prefix(*nextop_rtrn))
+    എങ്കിൽ (*nextop_rtrn == '\0')
+        *str_inout = ശൂന്യ;
+    അല്ലെങ്കിൽ എങ്കിൽ (is_merge_mode_prefix(*nextop_rtrn))
         *str_inout = next;
-    else
-        return false;
+    അല്ലെങ്കിൽ
+        തിരികെ false;
 
-    return true;
+    തിരികെ true;
 }
 
-static const char *xkb_file_type_include_dirs[_FILE_TYPE_NUM_ENTRIES] = {
+സ്ഥിതം സ്ഥിരം അക്ഷരം *xkb_file_type_include_dirs[FILE_TYPE_അക്കം_ENTRIES] = {
     [FILE_TYPE_KEYCODES] = "keycodes",
     [FILE_TYPE_TYPES] = "types",
     [FILE_TYPE_COMPAT] = "compat",
@@ -154,37 +154,37 @@ static const char *xkb_file_type_include_dirs[_FILE_TYPE_NUM_ENTRIES] = {
 /**
  * Return the xkb directory based on the type.
  */
-static const char *
-DirectoryForInclude(enum xkb_file_type type)
+സ്ഥിതം സ്ഥിരം അക്ഷരം *
+DirectoryForInclude(എണ്ണൽ xkb_file_type type)
 {
-    if (type >= _FILE_TYPE_NUM_ENTRIES)
-        return "";
-    return xkb_file_type_include_dirs[type];
+    എങ്കിൽ (type >= FILE_TYPE_അക്കം_ENTRIES)
+        തിരികെ "";
+    തിരികെ xkb_file_type_include_dirs[type];
 }
 
-static void
-LogIncludePaths(struct xkb_context *ctx)
+സ്ഥിതം ശൂന്യം
+LogIncludePaths(ഘടന xkb_context *ctx)
 {
-    if (xkb_context_num_include_paths(ctx) > 0) {
+    എങ്കിൽ (xkb_context_അക്കം_include_paths(ctx) > 0) {
         log_err(ctx, XKB_ERROR_INCLUDED_FILE_NOT_FOUND,
                 "%u include paths searched:\n",
-                xkb_context_num_include_paths(ctx));
-        for (unsigned int i = 0; i < xkb_context_num_include_paths(ctx); i++)
+                xkb_context_അക്കം_include_paths(ctx));
+        വേണ്ടി (unsigned പൂർണ്ണസംഖ്യ i = 0; i < xkb_context_അക്കം_include_paths(ctx); i++)
             log_err(ctx, XKB_ERROR_INCLUDED_FILE_NOT_FOUND,
                     "\t%s\n",
                     xkb_context_include_path_get(ctx, i));
     }
-    else {
+    അല്ലെങ്കിൽ {
         log_err(ctx, XKB_ERROR_INCLUDED_FILE_NOT_FOUND,
                 "There are no include paths to search\n");
     }
 
-    if (xkb_context_num_failed_include_paths(ctx) > 0) {
+    എങ്കിൽ (xkb_context_അക്കം_failed_include_paths(ctx) > 0) {
         log_err(ctx, XKB_ERROR_INCLUDED_FILE_NOT_FOUND,
                 "%u include paths could not be added:\n",
-                xkb_context_num_failed_include_paths(ctx));
-        for (darray_size_t i = 0;
-             i < xkb_context_num_failed_include_paths(ctx);
+                xkb_context_അക്കം_failed_include_paths(ctx));
+        വേണ്ടി (darray_size_t i = 0;
+             i < xkb_context_അക്കം_failed_include_paths(ctx);
              i++)
             log_err(ctx, XKB_ERROR_INCLUDED_FILE_NOT_FOUND,
                     "\t%s\n",
@@ -192,119 +192,119 @@ LogIncludePaths(struct xkb_context *ctx)
     }
 }
 
-static size_t
-expand_percent(struct xkb_context *ctx, const char* parent_file_name,
-               const char* typeDir, char *buf, size_t buf_size,
-               const char *name, size_t name_len)
+സ്ഥിതം size_t
+expand_percent(ഘടന xkb_context *ctx, സ്ഥിരം അക്ഷരം* parent_file_name,
+               സ്ഥിരം അക്ഷരം* typeDir, അക്ഷരം *buf, size_t buf_size,
+               സ്ഥിരം അക്ഷരം *name, size_t name_len)
 {
-    struct scanner s;
-    scanner_init(&s, ctx, name, name_len, parent_file_name, NULL);
+    ഘടന scanner s;
+    scanner_init(&s, ctx, name, name_len, parent_file_name, ശൂന്യ);
     s.buf_pos = 0;
 
-    while (!scanner_eof(&s) && !scanner_eol(&s)) {
-        if (scanner_chr(&s, '%')) {
-            if (scanner_chr(&s, '%')) {
+    ആകുമ്പോൾ (!scanner_eof(&s) && !scanner_eol(&s)) {
+        എങ്കിൽ (scanner_chr(&s, '%')) {
+            എങ്കിൽ (scanner_chr(&s, '%')) {
                 scanner_buf_append(&s, '%');
             }
-            else if (scanner_chr(&s, 'H')) {
-                const char *home = xkb_context_getenv(ctx, "HOME");
-                if (!home) {
+            അല്ലെങ്കിൽ എങ്കിൽ (scanner_chr(&s, 'H')) {
+                സ്ഥിരം അക്ഷരം *home = xkb_context_getenv(ctx, "HOME");
+                എങ്കിൽ (!home) {
                     scanner_err(&s, XKB_LOG_MESSAGE_NO_ID,
                                 "%%H was used in an include statement, but the "
                                 "HOME environment variable is not set");
-                    return 0;
+                    തിരികെ 0;
                 }
-                if (!scanner_buf_appends(&s, home)) {
+                എങ്കിൽ (!scanner_buf_appends(&s, home)) {
                     scanner_err(&s, XKB_ERROR_INSUFFICIENT_BUFFER_SIZE,
                                 "include path after expanding %%H is too long");
-                    return 0;
+                    തിരികെ 0;
                 }
             }
-            else if (scanner_chr(&s, 'S')) {
-                const char *default_root =
+            അല്ലെങ്കിൽ എങ്കിൽ (scanner_chr(&s, 'S')) {
+                സ്ഥിരം അക്ഷരം *default_വേര് =
                     xkb_context_include_path_get_system_path(ctx);
-                if (!scanner_buf_appends(&s, default_root) ||
+                എങ്കിൽ (!scanner_buf_appends(&s, default_വേര്) ||
                     !scanner_buf_append(&s, '/') ||
                     !scanner_buf_appends(&s, typeDir)) {
                     scanner_err(&s, XKB_ERROR_INSUFFICIENT_BUFFER_SIZE,
                                 "include path after expanding %%S is too long");
-                    return 0;
+                    തിരികെ 0;
                 }
             }
-            else if (scanner_chr(&s, 'E')) {
-                const char *default_root =
+            അല്ലെങ്കിൽ എങ്കിൽ (scanner_chr(&s, 'E')) {
+                സ്ഥിരം അക്ഷരം *default_വേര് =
                     xkb_context_include_path_get_extra_path(ctx);
-                if (!scanner_buf_appends(&s, default_root) ||
+                എങ്കിൽ (!scanner_buf_appends(&s, default_വേര്) ||
                     !scanner_buf_append(&s, '/') ||
                     !scanner_buf_appends(&s, typeDir)) {
                     scanner_err(&s, XKB_ERROR_INSUFFICIENT_BUFFER_SIZE,
                                 "include path after expanding %%E is too long");
-                    return 0;
+                    തിരികെ 0;
                 }
             }
-            else {
+            അല്ലെങ്കിൽ {
                 scanner_err(&s, XKB_ERROR_INSUFFICIENT_BUFFER_SIZE,
                             "unknown %% format (%c) in include statement",
                             scanner_peek(&s));
-                return 0;
+                തിരികെ 0;
             }
         }
-        else {
+        അല്ലെങ്കിൽ {
             scanner_buf_append(&s, scanner_next(&s));
         }
     }
-    if (!scanner_buf_append(&s, '\0')) {
+    എങ്കിൽ (!scanner_buf_append(&s, '\0')) {
         scanner_err(&s, XKB_ERROR_INSUFFICIENT_BUFFER_SIZE,
-                    "include path is too long; max: %zu", sizeof(s.buf));
-        return 0;
+                    "include path is too long; max: %zu", വലുപ്പം(s.buf));
+        തിരികെ 0;
     }
-    if (unlikely(s.buf_pos > buf_size)) {
+    എങ്കിൽ (unlikely(s.buf_pos > buf_size)) {
         scanner_err(&s, XKB_ERROR_INSUFFICIENT_BUFFER_SIZE,
                     "include path is too long: %zu > %zu", s.buf_pos, buf_size);
-        return 0;
+        തിരികെ 0;
     }
     memcpy(buf, s.buf, s.buf_pos);
-    return s.buf_pos;
+    തിരികെ s.buf_pos;
 }
 
 ssize_t
-expand_path(struct xkb_context *ctx, const char* parent_file_name,
-            const char *name, size_t name_len, enum xkb_file_type type,
-            char *buf, size_t buf_size)
+expand_path(ഘടന xkb_context *ctx, സ്ഥിരം അക്ഷരം* parent_file_name,
+            സ്ഥിരം അക്ഷരം *name, size_t name_len, എണ്ണൽ xkb_file_type type,
+            അക്ഷരം *buf, size_t buf_size)
 {
     /* Detect %-expansion */
     size_t k;
-    for (k = 0; k < name_len; k++) {
-        if (name[k] == '%') {
-            goto expand;
+    വേണ്ടി (k = 0; k < name_len; k++) {
+        എങ്കിൽ (name[k] == '%') {
+            പോകുക expand;
         }
     }
 
-    return 0;
+    തിരികെ 0;
 
 expand:
     /* Process %-expansion */
 
     /* Copy prefix (usual case: k == 0) */
-    if (unlikely(k >= buf_size)) {
+    എങ്കിൽ (unlikely(k >= buf_size)) {
         log_err(ctx, XKB_ERROR_INVALID_PATH,
                 "Path is too long: %zu > %zu, "
                 "got raw path: %.*s\n",
-                k, buf_size, (unsigned int) name_len, name);
-        return -1;
+                k, buf_size, (unsigned പൂർണ്ണസംഖ്യ) name_len, name);
+        തിരികെ -1;
     }
     memcpy(buf, name, k);
 
     /* Proceed to %-expansion */
-    const char *typeDir = DirectoryForInclude(type);
-    size_t count = expand_percent(ctx, parent_file_name, typeDir,
+    സ്ഥിരം അക്ഷരം *typeDir = DirectoryForInclude(type);
+    size_t എണ്ണം = expand_percent(ctx, parent_file_name, typeDir,
                                   buf + k, buf_size - k,
                                   name + k, name_len - k);
-    if (!count)
-        return -1;
-    count += k;
-    assert(buf[count - 1] == '\0');
-    return (ssize_t) count - 1;
+    എങ്കിൽ (!എണ്ണം)
+        തിരികെ -1;
+    എണ്ണം += k;
+    പ്രതിജ്ഞാ(buf[എണ്ണം - 1] == '\0');
+    തിരികെ (ssize_t) എണ്ണം - 1;
 }
 
 /**
@@ -318,68 +318,68 @@ expand:
  * If this function returns NULL, no more files are available.
  */
 FILE *
-FindFileInXkbPath(struct xkb_context *ctx, const char* parent_file_name,
-                  const char *name, size_t name_len, enum xkb_file_type type,
-                  char *buf, size_t buf_size, unsigned int *offset,
+FindFileInXkbPath(ഘടന xkb_context *ctx, സ്ഥിരം അക്ഷരം* parent_file_name,
+                  സ്ഥിരം അക്ഷരം *name, size_t name_len, എണ്ണൽ xkb_file_type type,
+                  അക്ഷരം *buf, size_t buf_size, unsigned പൂർണ്ണസംഖ്യ *offset,
                   bool required)
 {
     /* We do not handle absolute paths here */
-    assert(!is_absolute_path(name));
+    പ്രതിജ്ഞാ(!is_absolute_path(name));
 
-    FILE *file = NULL;
-    char *name_buffer = NULL;
-    const char *typeDir = DirectoryForInclude(type);
+    FILE *file = ശൂന്യ;
+    അക്ഷരം *name_buffer = ശൂന്യ;
+    സ്ഥിരം അക്ഷരം *typeDir = DirectoryForInclude(type);
 
-    for (unsigned int i = *offset; i < xkb_context_num_include_paths(ctx); i++) {
-        if (!snprintf_safe(buf, buf_size, "%s/%s/%.*s",
+    വേണ്ടി (unsigned പൂർണ്ണസംഖ്യ i = *offset; i < xkb_context_അക്കം_include_paths(ctx); i++) {
+        എങ്കിൽ (!snprintf_safe(buf, buf_size, "%s/%s/%.*s",
                            xkb_context_include_path_get(ctx, i),
-                           typeDir, (unsigned int) name_len, name)) {
+                           typeDir, (unsigned പൂർണ്ണസംഖ്യ) name_len, name)) {
             log_err(ctx, XKB_ERROR_INVALID_PATH,
                     "Path is too long: expected max length of %zu, "
                     "got: %s/%s/%.*s\n",
                     buf_size, xkb_context_include_path_get(ctx, i),
-                    typeDir, (unsigned int) name_len, name);
-            continue;
+                    typeDir, (unsigned പൂർണ്ണസംഖ്യ) name_len, name);
+            തുടരുക;
         }
 
         file = fopen(buf, "rb");
-        if (file) {
+        എങ്കിൽ (file) {
             *offset = i;
-            goto out;
+            പോകുക out;
         }
     }
 
     /* We only print warnings if we can’t find the file on the first lookup */
-    if (required && *offset == 0) {
+    എങ്കിൽ (required && *offset == 0) {
         log_err(ctx, XKB_ERROR_INCLUDED_FILE_NOT_FOUND,
                 "Couldn't find file \"%s/%.*s\" in include paths\n",
-                typeDir, (unsigned int) name_len, name);
+                typeDir, (unsigned പൂർണ്ണസംഖ്യ) name_len, name);
         LogIncludePaths(ctx);
     }
 
 out:
-    free(name_buffer);
-    return file;
+    സ്വതന്ത്രം(name_buffer);
+    തിരികെ file;
 }
 
 bool
-ExceedsIncludeMaxDepth(struct xkb_context *ctx, unsigned int include_depth)
+ExceedsIncludeMaxDepth(ഘടന xkb_context *ctx, unsigned പൂർണ്ണസംഖ്യ include_depth)
 {
-    if (include_depth >= INCLUDE_MAX_DEPTH) {
+    എങ്കിൽ (include_depth >= INCLUDE_MAX_DEPTH) {
         log_err(ctx, XKB_ERROR_RECURSIVE_INCLUDE,
                 "Exceeded include depth threshold (%u)",
                 INCLUDE_MAX_DEPTH);
-        return true;
-    } else {
-        return false;
+        തിരികെ true;
+    } അല്ലെങ്കിൽ {
+        തിരികെ false;
     }
 }
 
 XkbFile *
-ProcessIncludeFile(struct xkb_context *ctx,
-                   const struct parser_keymap_config *config,
-                   const IncludeStmt *stmt,
-                   enum xkb_file_type file_type, char *path, size_t path_size)
+ProcessIncludeFile(ഘടന xkb_context *ctx,
+                   സ്ഥിരം ഘടന parser_keymap_config *config,
+                   സ്ഥിരം IncludeStmt *stmt,
+                   എണ്ണൽ xkb_file_type file_type, അക്ഷരം *path, size_t path_size)
 {
     /*
      * Resolve include statement:
@@ -388,38 +388,38 @@ ProcessIncludeFile(struct xkb_context *ctx,
      *   `default`: exact match), else fallback to the first *implicit* default
      *   map (weak match).
      */
-    XkbFile *xkb_file = NULL;  /* Exact match */
-    XkbFile *candidate = NULL; /* Weak match */
+    XkbFile *xkb_file = ശൂന്യ;  /* Exact match */
+    XkbFile *candidate = ശൂന്യ; /* Weak match */
 
-    const char *stmt_file = stmt->file;
+    സ്ഥിരം അക്ഷരം *stmt_file = stmt->file;
     size_t stmt_file_len = strlen(stmt_file);
 
     /* Process %-expansion, if any */
     // FIXME: use parent file name instead of “(unknow)”.
-    const ssize_t expanded = expand_path(ctx, "(unknown)",
+    സ്ഥിരം ssize_t expanded = expand_path(ctx, "(unknown)",
                                          stmt_file, stmt_file_len, file_type,
                                          path, path_size);
-    if (expanded < 0) {
+    എങ്കിൽ (expanded < 0) {
         /* Error */
-        return NULL;
-    } else if (expanded > 0) {
+        തിരികെ ശൂന്യ;
+    } അല്ലെങ്കിൽ എങ്കിൽ (expanded > 0) {
         /* %-expanded */
         stmt_file = path;
         stmt_file_len = (size_t) expanded;
-        assert(stmt_file[stmt_file_len] == '\0');
+        പ്രതിജ്ഞാ(stmt_file[stmt_file_len] == '\0');
     }
 
     /* Lookup the first candidate */
     FILE* file;
-    unsigned int offset = 0;
-    const bool absolute_path = is_absolute_path(stmt_file);
-    if (absolute_path) {
+    unsigned പൂർണ്ണസംഖ്യ offset = 0;
+    സ്ഥിരം bool absolute_path = is_absolute_path(stmt_file);
+    എങ്കിൽ (absolute_path) {
         /* Absolute path: no need for lookup in XKB paths */
-        assert(stmt_file[stmt_file_len] == '\0');
+        പ്രതിജ്ഞാ(stmt_file[stmt_file_len] == '\0');
         file = fopen(stmt_file, "rb");
-    } else {
+    } അല്ലെങ്കിൽ {
         /* Relative path: lookup the first XKB path */
-        if (unlikely(expanded)) {
+        എങ്കിൽ (unlikely(expanded)) {
             /*
              * Relative path after expansion
              *
@@ -432,8 +432,8 @@ ProcessIncludeFile(struct xkb_context *ctx,
              * - this is an edge case;
              * we simply make the lookup fail.
              */
-            file = NULL;
-        } else {
+            file = ശൂന്യ;
+        } അല്ലെങ്കിൽ {
             // FIXME: use parent file name instead of “(unknow)”.
             file = FindFileInXkbPath(ctx, "(unknown)",
                                      stmt_file, stmt_file_len, file_type,
@@ -441,46 +441,46 @@ ProcessIncludeFile(struct xkb_context *ctx,
         }
     }
 
-    while (file) {
+    ആകുമ്പോൾ (file) {
         xkb_file = XkbParseFile(ctx, config, file, stmt->file, stmt->map);
         fclose(file);
 
-        if (xkb_file) {
-            if (xkb_file->file_type != file_type) {
+        എങ്കിൽ (xkb_file) {
+            എങ്കിൽ (xkb_file->file_type != file_type) {
                 log_err(ctx, XKB_ERROR_INVALID_INCLUDED_FILE,
                         "Include file of wrong type (expected %s, got %s); "
                         "Include file \"%s\" ignored\n",
                         xkb_file_type_to_string(file_type),
                         xkb_file_type_to_string(xkb_file->file_type), stmt->file);
                 FreeXkbFile(xkb_file);
-                xkb_file = NULL;
-            } else if (stmt->map || (xkb_file->flags & MAP_IS_DEFAULT)) {
+                xkb_file = ശൂന്യ;
+            } അല്ലെങ്കിൽ എങ്കിൽ (stmt->map || (xkb_file->flags & MAP_IS_DEFAULT)) {
                 /*
                  * Exact match: explicit map name or explicit default map.
                  * Lookup stops here.
                  */
-                break;
-            } else if (!candidate) {
+                നിർത്തുക;
+            } അല്ലെങ്കിൽ എങ്കിൽ (!candidate) {
                 /*
                  * Weak match: looking for an explicit default map, but found
                  * only the first *implicit* default map (e.g. first map of the
                  * file). Use as fallback, but keep looking for an exact match.
                  */
                 candidate = xkb_file;
-                xkb_file = NULL;
-            } else {
+                xkb_file = ശൂന്യ;
+            } അല്ലെങ്കിൽ {
                 /*
                  * Weak match, but we already have a previous candidate.
                  * Keep looking for an exact match.
                  */
                 FreeXkbFile(xkb_file);
-                xkb_file = NULL;
+                xkb_file = ശൂന്യ;
             }
         }
 
-        if (absolute_path) {
+        എങ്കിൽ (absolute_path) {
             /* There is no point to search further if the path is absolute */
-            break;
+            നിർത്തുക;
         }
 
         offset++;
@@ -489,24 +489,24 @@ ProcessIncludeFile(struct xkb_context *ctx,
                                  path, path_size, &offset, true);
     }
 
-    if (!xkb_file) {
+    എങ്കിൽ (!xkb_file) {
         /* No exact match: use weak match, if any */
         xkb_file = candidate;
-    } else {
+    } അല്ലെങ്കിൽ {
         /* Found exact match: discard weak match, if any */
         FreeXkbFile(candidate);
     }
 
-    if (!xkb_file) {
-        if (stmt->map)
+    എങ്കിൽ (!xkb_file) {
+        എങ്കിൽ (stmt->map)
             log_err(ctx, XKB_ERROR_INVALID_INCLUDED_FILE,
                     "Couldn't process include statement for '%s(%s)'\n",
                     stmt->file, stmt->map);
-        else
+        അല്ലെങ്കിൽ
             log_err(ctx, XKB_ERROR_INVALID_INCLUDED_FILE,
                     "Couldn't process include statement for '%s'\n",
                     stmt->file);
     }
 
-    return xkb_file;
+    തിരികെ xkb_file;
 }

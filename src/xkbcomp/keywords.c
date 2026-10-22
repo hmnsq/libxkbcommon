@@ -3,7 +3,7 @@
 /* Command-line: gperf src/xkbcomp/keywords.gperf  */
 /* Computed positions: -k'5,$' */
 
-#if !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
+#എങ്കിൽ !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
       && ('%' == 37) && ('&' == 38) && ('\'' == 39) && ('(' == 40) \
       && (')' == 41) && ('*' == 42) && ('+' == 43) && (',' == 44) \
       && ('-' == 45) && ('.' == 46) && ('/' == 47) && ('0' == 48) \
@@ -32,21 +32,21 @@
 
 #line 1 "src/xkbcomp/keywords.gperf"
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include "xkbcomp-priv.h"
-#include "parser-priv.h"
+#അന്തര്ഭാവ "xkbcomp-priv.h"
+#അന്തര്ഭാവ "parser-priv.h"
 
-static const struct keyword_tok *
-keyword_gperf_lookup (register const char *str, register size_t len);
+സ്ഥിതം സ്ഥിരം ഘടന keyword_tok *
+keyword_gperf_lookup (രജിസ്റ്റർ സ്ഥിരം അക്ഷരം *str, രജിസ്റ്റർ size_t len);
 #line 11 "src/xkbcomp/keywords.gperf"
-struct keyword_tok { int name; int tok; };
-#include <string.h>
+ഘടന keyword_tok { പൂർണ്ണസംഖ്യ name; പൂർണ്ണസംഖ്യ tok; };
+#അന്തര്ഭാവ <string.h>
 /* maximum key range = 85, duplicates = 0 */
 
 #ifndef GPERF_DOWNCASE
 #define GPERF_DOWNCASE 1
-static const unsigned char gperf_downcase[256] =
+സ്ഥിതം സ്ഥിരം unsigned അക്ഷരം gperf_downcase[256] =
   {
       0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14,
      15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  26,  27,  28,  29,
@@ -71,35 +71,35 @@ static const unsigned char gperf_downcase[256] =
 
 #ifndef GPERF_CASE_MEMCMP
 #define GPERF_CASE_MEMCMP 1
-static int
-gperf_case_memcmp (register const char *s1, register const char *s2, register size_t n)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+gperf_case_memcmp (രജിസ്റ്റർ സ്ഥിരം അക്ഷരം *s1, രജിസ്റ്റർ സ്ഥിരം അക്ഷരം *s2, രജിസ്റ്റർ size_t n)
 {
-  for (; n > 0;)
+  വേണ്ടി (; n > 0;)
     {
-      unsigned char c1 = gperf_downcase[(unsigned char)*s1++];
-      unsigned char c2 = gperf_downcase[(unsigned char)*s2++];
-      if (c1 == c2)
+      unsigned അക്ഷരം c1 = gperf_downcase[(unsigned അക്ഷരം)*s1++];
+      unsigned അക്ഷരം c2 = gperf_downcase[(unsigned അക്ഷരം)*s2++];
+      എങ്കിൽ (c1 == c2)
         {
           n--;
-          continue;
+          തുടരുക;
         }
-      return (int)c1 - (int)c2;
+      തിരികെ (പൂർണ്ണസംഖ്യ)c1 - (പൂർണ്ണസംഖ്യ)c2;
     }
-  return 0;
+  തിരികെ 0;
 }
 #endif
 
 #ifdef __GNUC__
 __inline
-#else
+#അല്ലെങ്കിൽ
 #ifdef __cplusplus
-inline
+വരിയിൽ
 #endif
 #endif
-static unsigned int
-keyword_gperf_hash (register const char *str, register size_t len)
+സ്ഥിതം unsigned പൂർണ്ണസംഖ്യ
+keyword_gperf_hash (രജിസ്റ്റർ സ്ഥിരം അക്ഷരം *str, രജിസ്റ്റർ size_t len)
 {
-  static const unsigned char asso_values[] =
+  സ്ഥിതം സ്ഥിരം unsigned അക്ഷരം asso_മൂല്യങ്ങൾ[] =
     {
       88, 88, 88, 88, 88, 88, 88, 88, 88, 88,
       88, 88, 88, 88, 88, 88, 88, 88, 88, 88,
@@ -128,75 +128,75 @@ keyword_gperf_hash (register const char *str, register size_t len)
       88, 88, 88, 88, 88, 88, 88, 88, 88, 88,
       88, 88, 88, 88, 88, 88
     };
-  register unsigned int hval = len;
+  രജിസ്റ്റർ unsigned പൂർണ്ണസംഖ്യ hval = len;
 
-  switch (hval)
+  തിരഞ്ഞെടുപ്പ് (hval)
     {
-      default:
-        hval += asso_values[(unsigned char)str[4]];
-#if (defined __cplusplus && (__cplusplus >= 201703L || (__cplusplus >= 201103L && defined __clang__ && __clang_major__ + (__clang_minor__ >= 9) > 3))) || (defined __STDC_VERSION__ && __STDC_VERSION__ >= 202000L && ((defined __GNUC__ && __GNUC__ >= 10) || (defined __clang__ && __clang_major__ >= 9)))
+      സ്ഥിരസ്ഥിതി:
+        hval += asso_മൂല്യങ്ങൾ[(unsigned അക്ഷരം)str[4]];
+#എങ്കിൽ (defined __cplusplus && (__cplusplus >= 201703L || (__cplusplus >= 201103L && defined __clang__ && __clang_major__ + (__clang_minor__ >= 9) > 3))) || (defined __STDC_VERSION__ && __STDC_VERSION__ >= 202000L && ((defined __GNUC__ && __GNUC__ >= 10) || (defined __clang__ && __clang_major__ >= 9)))
       [[fallthrough]];
-#elif (defined __GNUC__ && __GNUC__ >= 7) || (defined __clang__ && __clang_major__ >= 10)
+#അല്ലെങ്കിലെങ്കിൽ (defined __GNUC__ && __GNUC__ >= 7) || (defined __clang__ && __clang_major__ >= 10)
       __attribute__ ((__fallthrough__));
 #endif
       /*FALLTHROUGH*/
-      case 4:
-      case 3:
-        break;
+      അവസ്ഥ 4:
+      അവസ്ഥ 3:
+        നിർത്തുക;
     }
-  return hval + asso_values[(unsigned char)str[len - 1]];
+  തിരികെ hval + asso_മൂല്യങ്ങൾ[(unsigned അക്ഷരം)str[len - 1]];
 }
 
-struct stringpool_t
+ഘടന stringpool_t
   {
-    char stringpool_str3[sizeof("row")];
-    char stringpool_str4[sizeof("keys")];
-    char stringpool_str5[sizeof("alias")];
-    char stringpool_str9[sizeof("type")];
-    char stringpool_str11[sizeof("xkb_symbols")];
-    char stringpool_str12[sizeof("xkb_keycodes")];
-    char stringpool_str13[sizeof("xkb_semantics")];
-    char stringpool_str14[sizeof("logo")];
-    char stringpool_str15[sizeof("shape")];
-    char stringpool_str16[sizeof("keypad_keys")];
-    char stringpool_str17[sizeof("replace")];
-    char stringpool_str19[sizeof("text")];
-    char stringpool_str20[sizeof("xkb_keymap")];
-    char stringpool_str21[sizeof("modmap")];
-    char stringpool_str22[sizeof("alphanumeric_keys")];
-    char stringpool_str24[sizeof("xkb_types")];
-    char stringpool_str25[sizeof("group")];
-    char stringpool_str27[sizeof("augment")];
-    char stringpool_str28[sizeof("function_keys")];
-    char stringpool_str30[sizeof("deprecated")];
-    char stringpool_str32[sizeof("include")];
-    char stringpool_str33[sizeof("override")];
-    char stringpool_str34[sizeof("alternate")];
-    char stringpool_str35[sizeof("solid")];
-    char stringpool_str36[sizeof("hidden")];
-    char stringpool_str37[sizeof("virtual_modifiers")];
-    char stringpool_str38[sizeof("key")];
-    char stringpool_str41[sizeof("action")];
-    char stringpool_str42[sizeof("default")];
-    char stringpool_str43[sizeof("modifier_keys")];
-    char stringpool_str44[sizeof("interpret")];
-    char stringpool_str45[sizeof("alternate_group")];
-    char stringpool_str47[sizeof("mod_map")];
-    char stringpool_str49[sizeof("xkb_compat_map")];
-    char stringpool_str50[sizeof("xkb_compat")];
-    char stringpool_str52[sizeof("modifier_map")];
-    char stringpool_str54[sizeof("indicator")];
-    char stringpool_str55[sizeof("xkb_layout")];
-    char stringpool_str56[sizeof("xkb_compatibility_map")];
-    char stringpool_str57[sizeof("virtual")];
-    char stringpool_str62[sizeof("outline")];
-    char stringpool_str67[sizeof("xkb_geometry")];
-    char stringpool_str72[sizeof("overlay")];
-    char stringpool_str77[sizeof("xkb_compatibility")];
-    char stringpool_str82[sizeof("section")];
-    char stringpool_str87[sizeof("partial")];
+    അക്ഷരം stringpool_str3[വലുപ്പം("row")];
+    അക്ഷരം stringpool_str4[വലുപ്പം("keys")];
+    അക്ഷരം stringpool_str5[വലുപ്പം("alias")];
+    അക്ഷരം stringpool_str9[വലുപ്പം("type")];
+    അക്ഷരം stringpool_str11[വലുപ്പം("xkb_symbols")];
+    അക്ഷരം stringpool_str12[വലുപ്പം("xkb_keycodes")];
+    അക്ഷരം stringpool_str13[വലുപ്പം("xkb_semantics")];
+    അക്ഷരം stringpool_str14[വലുപ്പം("logo")];
+    അക്ഷരം stringpool_str15[വലുപ്പം("shape")];
+    അക്ഷരം stringpool_str16[വലുപ്പം("keypad_keys")];
+    അക്ഷരം stringpool_str17[വലുപ്പം("replace")];
+    അക്ഷരം stringpool_str19[വലുപ്പം("text")];
+    അക്ഷരം stringpool_str20[വലുപ്പം("xkb_keymap")];
+    അക്ഷരം stringpool_str21[വലുപ്പം("modmap")];
+    അക്ഷരം stringpool_str22[വലുപ്പം("alphanumeric_keys")];
+    അക്ഷരം stringpool_str24[വലുപ്പം("xkb_types")];
+    അക്ഷരം stringpool_str25[വലുപ്പം("group")];
+    അക്ഷരം stringpool_str27[വലുപ്പം("augment")];
+    അക്ഷരം stringpool_str28[വലുപ്പം("function_keys")];
+    അക്ഷരം stringpool_str30[വലുപ്പം("deprecated")];
+    അക്ഷരം stringpool_str32[വലുപ്പം("include")];
+    അക്ഷരം stringpool_str33[വലുപ്പം("override")];
+    അക്ഷരം stringpool_str34[വലുപ്പം("alternate")];
+    അക്ഷരം stringpool_str35[വലുപ്പം("solid")];
+    അക്ഷരം stringpool_str36[വലുപ്പം("hidden")];
+    അക്ഷരം stringpool_str37[വലുപ്പം("virtual_modifiers")];
+    അക്ഷരം stringpool_str38[വലുപ്പം("key")];
+    അക്ഷരം stringpool_str41[വലുപ്പം("action")];
+    അക്ഷരം stringpool_str42[വലുപ്പം("default")];
+    അക്ഷരം stringpool_str43[വലുപ്പം("modifier_keys")];
+    അക്ഷരം stringpool_str44[വലുപ്പം("interpret")];
+    അക്ഷരം stringpool_str45[വലുപ്പം("alternate_group")];
+    അക്ഷരം stringpool_str47[വലുപ്പം("mod_map")];
+    അക്ഷരം stringpool_str49[വലുപ്പം("xkb_compat_map")];
+    അക്ഷരം stringpool_str50[വലുപ്പം("xkb_compat")];
+    അക്ഷരം stringpool_str52[വലുപ്പം("modifier_map")];
+    അക്ഷരം stringpool_str54[വലുപ്പം("indicator")];
+    അക്ഷരം stringpool_str55[വലുപ്പം("xkb_layout")];
+    അക്ഷരം stringpool_str56[വലുപ്പം("xkb_compatibility_map")];
+    അക്ഷരം stringpool_str57[വലുപ്പം("virtual")];
+    അക്ഷരം stringpool_str62[വലുപ്പം("outline")];
+    അക്ഷരം stringpool_str67[വലുപ്പം("xkb_geometry")];
+    അക്ഷരം stringpool_str72[വലുപ്പം("overlay")];
+    അക്ഷരം stringpool_str77[വലുപ്പം("xkb_compatibility")];
+    അക്ഷരം stringpool_str82[വലുപ്പം("section")];
+    അക്ഷരം stringpool_str87[വലുപ്പം("partial")];
   };
-static const struct stringpool_t stringpool_contents =
+സ്ഥിതം സ്ഥിരം ഘടന stringpool_t stringpool_contents =
   {
     "row",
     "keys",
@@ -245,20 +245,20 @@ static const struct stringpool_t stringpool_contents =
     "section",
     "partial"
   };
-#define stringpool ((const char *) &stringpool_contents)
-const struct keyword_tok *
-keyword_gperf_lookup (register const char *str, register size_t len)
+#define stringpool ((സ്ഥിരം അക്ഷരം *) &stringpool_contents)
+സ്ഥിരം ഘടന keyword_tok *
+keyword_gperf_lookup (രജിസ്റ്റർ സ്ഥിരം അക്ഷരം *str, രജിസ്റ്റർ size_t len)
 {
-  enum
+  എണ്ണൽ
     {
       TOTAL_KEYWORDS = 46,
       MIN_WORD_LENGTH = 3,
       MAX_WORD_LENGTH = 21,
-      MIN_HASH_VALUE = 3,
-      MAX_HASH_VALUE = 87
+      MIN_HASH_മൂല്യം = 3,
+      MAX_HASH_മൂല്യം = 87
     };
 
-  static const unsigned char lengthtable[] =
+  സ്ഥിതം സ്ഥിരം unsigned അക്ഷരം lengthtable[] =
     {
        0,  0,  0,  3,  4,  5,  0,  0,  0,  4,  0, 11, 12, 13,
        4,  5, 11,  7,  0,  4, 10,  6, 17,  0,  9,  5,  0,  7,
@@ -268,152 +268,152 @@ keyword_gperf_lookup (register const char *str, register size_t len)
        0,  0,  7,  0,  0,  0,  0, 17,  0,  0,  0,  0,  7,  0,
        0,  0,  0,  7
     };
-#if (defined __GNUC__ && __GNUC__ + (__GNUC_MINOR__ >= 6) > 4) || (defined __clang__ && __clang_major__ >= 3)
-#pragma GCC diagnostic push
+#എങ്കിൽ (defined __GNUC__ && __GNUC__ + (__GNUC_MINOR__ >= 6) > 4) || (defined __clang__ && __clang_major__ >= 3)
+#pragma GCC diagnostic തള്ളുക
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 #endif
-  static const struct keyword_tok wordlist[] =
+  സ്ഥിതം സ്ഥിരം ഘടന keyword_tok wordlist[] =
     {
       {-1}, {-1}, {-1},
 #line 51 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str3,                    ROW},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str3,                    ROW},
 #line 40 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str4,                   KEYS},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str4,                   താക്കോലുകൾ_2},
 #line 25 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str5,                  ALIAS},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str5,                  ALIAS},
       {-1}, {-1}, {-1},
 #line 56 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str9,                   TYPE},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str9,                   TYPE},
       {-1},
 #line 68 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str11,            XKB_SYMBOLS},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str11,            XKB_SYMBOLS},
 #line 64 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str12,           XKB_KEYCODES},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str12,           XKB_KEYCODES},
 #line 67 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str13,          XKB_SEMANTICS},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str13,          XKB_SEMANTICS},
 #line 41 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str14,                   LOGO},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str14,                   LOGO},
 #line 53 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str15,                  SHAPE},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str15,                  SHAPE},
 #line 38 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str16,            KEYPAD_KEYS},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str16,            KEYPAD_താക്കോലുകൾ},
 #line 50 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str17,                REPLACE},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str17,                REPLACE},
       {-1},
 #line 55 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str19,                   TEXT},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str19,                   TEXT},
 #line 65 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str20,             XKB_KEYMAP},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str20,             XKB_KEYMAP},
 #line 45 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str21,                 MODIFIER_MAP},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str21,                 MODIFIER_MAP},
 #line 26 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str22,      ALPHANUMERIC_KEYS},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str22,      ALPHANUMERIC_താക്കോലുകൾ},
       {-1},
 #line 69 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str24,              XKB_TYPES},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str24,              XKB_TYPES},
 #line 33 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str25,                  GROUP},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str25,                  GROUP},
       {-1},
 #line 29 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str27,                AUGMENT},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str27,                AUGMENT},
 #line 32 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str28,          FUNCTION_KEYS},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str28,          FUNCTION_താക്കോലുകൾ},
       {-1},
 #line 31 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str30,             DEPRECATED},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str30,             DEPRECATED},
       {-1},
 #line 35 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str32,                INCLUDE},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str32,                INCLUDE},
 #line 48 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str33,               OVERRIDE},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str33,               OVERRIDE},
 #line 28 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str34,              ALTERNATE},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str34,              ALTERNATE},
 #line 54 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str35,                  SOLID},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str35,                  SOLID},
 #line 34 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str36,                 HIDDEN},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str36,                 HIDDEN},
 #line 57 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str37,      VIRTUAL_MODS},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str37,      VIRTUAL_MODS},
 #line 39 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str38,                    KEY},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str38,                    താക്കോൽ_3},
       {-1}, {-1},
 #line 24 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str41,                 ACTION_TOK},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str41,                 ACTION_TOK},
 #line 30 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str42,                DEFAULT},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str42,                DEFAULT},
 #line 42 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str43,          MODIFIER_KEYS},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str43,          MODIFIER_താക്കോലുകൾ},
 #line 37 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str44,              INTERPRET},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str44,              INTERPRET},
 #line 27 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str45,        ALTERNATE_GROUP},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str45,        ALTERNATE_GROUP},
       {-1},
 #line 44 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str47,                MODIFIER_MAP},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str47,                MODIFIER_MAP},
       {-1},
 #line 61 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str49,         XKB_COMPATMAP},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str49,         XKB_COMPATMAP},
 #line 62 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str50,             XKB_COMPATMAP},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str50,             XKB_COMPATMAP},
       {-1},
 #line 43 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str52,           MODIFIER_MAP},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str52,           MODIFIER_MAP},
       {-1},
 #line 36 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str54,              INDICATOR},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str54,              INDICATOR},
 #line 66 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str55,             XKB_LAYOUT},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str55,             XKB_LAYOUT},
 #line 59 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str56,  XKB_COMPATMAP},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str56,  XKB_COMPATMAP},
 #line 58 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str57,                VIRTUAL},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str57,                VIRTUAL},
       {-1}, {-1}, {-1}, {-1},
 #line 46 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str62,                OUTLINE},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str62,                OUTLINE},
       {-1}, {-1}, {-1}, {-1},
 #line 63 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str67,           XKB_GEOMETRY},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str67,           XKB_GEOMETRY},
       {-1}, {-1}, {-1}, {-1},
 #line 47 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str72,                OVERLAY},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str72,                OVERLAY},
       {-1}, {-1}, {-1}, {-1},
 #line 60 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str77,      XKB_COMPATMAP},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str77,      XKB_COMPATMAP},
       {-1}, {-1}, {-1}, {-1},
 #line 52 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str82,                SECTION},
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str82,                SECTION},
       {-1}, {-1}, {-1}, {-1},
 #line 49 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str87,                PARTIAL}
+      {(പൂർണ്ണസംഖ്യ)(size_t)&((ഘടന stringpool_t *)0)->stringpool_str87,                PARTIAL}
     };
-#if (defined __GNUC__ && __GNUC__ + (__GNUC_MINOR__ >= 6) > 4) || (defined __clang__ && __clang_major__ >= 3)
-#pragma GCC diagnostic pop
+#എങ്കിൽ (defined __GNUC__ && __GNUC__ + (__GNUC_MINOR__ >= 6) > 4) || (defined __clang__ && __clang_major__ >= 3)
+#pragma GCC diagnostic എടുക്കുക
 #endif
 
-  if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
+  എങ്കിൽ (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
     {
-      register unsigned int key = keyword_gperf_hash (str, len);
+      രജിസ്റ്റർ unsigned പൂർണ്ണസംഖ്യ താക്കോൽ = keyword_gperf_hash (str, len);
 
-      if (key <= MAX_HASH_VALUE)
-        if (len == lengthtable[key])
+      എങ്കിൽ (താക്കോൽ <= MAX_HASH_മൂല്യം)
+        എങ്കിൽ (len == lengthtable[താക്കോൽ])
           {
-            register const char *s = wordlist[key].name + stringpool;
+            രജിസ്റ്റർ സ്ഥിരം അക്ഷരം *s = wordlist[താക്കോൽ].name + stringpool;
 
-            if ((((unsigned char)*str ^ (unsigned char)*s) & ~32) == 0 && !gperf_case_memcmp (str, s, len))
-              return &wordlist[key];
+            എങ്കിൽ ((((unsigned അക്ഷരം)*str ^ (unsigned അക്ഷരം)*s) & ~32) == 0 && !gperf_case_memcmp (str, s, len))
+              തിരികെ &wordlist[താക്കോൽ];
           }
     }
-  return (struct keyword_tok *) 0;
+  തിരികെ (ഘടന keyword_tok *) 0;
 }
 #line 70 "src/xkbcomp/keywords.gperf"
 
 
-int
-keyword_to_token(const char *string, size_t len)
+പൂർണ്ണസംഖ്യ
+keyword_to_token(സ്ഥിരം അക്ഷരം *string, size_t len)
 {
-    const struct keyword_tok *kt = keyword_gperf_lookup(string, len);
-    if (!kt)
-        return -1;
-    return kt->tok;
+    സ്ഥിരം ഘടന keyword_tok *kt = keyword_gperf_lookup(string, len);
+    എങ്കിൽ (!kt)
+        തിരികെ -1;
+    തിരികെ kt->tok;
 }
 // NOLINTEND

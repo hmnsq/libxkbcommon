@@ -4,11 +4,11 @@
  */
 #pragma once
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <stdlib.h>
+#അന്തര്ഭാവ <stdlib.h>
 
-#include "src/utils.h"
+#അന്തര്ഭാവ "src/utils.h"
 
 /* Ad-hoc escaping for UTF-8 string
  *
@@ -19,22 +19,22 @@
  * In the latter string there is no ambiguity and no need to know the maximum
  * number of digits supported by the escape sequence.
  */
-static inline char*
-escape_utf8_string_literal(const char *from)
+സ്ഥിതം വരിയിൽ അക്ഷരം*
+escape_utf8_string_literal(സ്ഥിരം അക്ഷരം *from)
 {
-    const size_t length = strlen(from);
+    സ്ഥിരം size_t length = strlen(from);
     /* Longest escape is converting ASCII character to "\xNN" */
-    char* to = calloc(4 * length + 1, sizeof(*to));
-    if (!to)
-        return NULL;
+    അക്ഷരം* to = calloc(4 * length + 1, വലുപ്പം(*to));
+    എങ്കിൽ (!to)
+        തിരികെ ശൂന്യ;
 
     size_t t = 0;
     bool previous_is_hex_escape = false;
     uint8_t nbytes = 0;
-    for (size_t f = 0; f < length;) {
-        if ((unsigned char) from[f] < 0x80) {
+    വേണ്ടി (size_t f = 0; f < length;) {
+        എങ്കിൽ ((unsigned അക്ഷരം) from[f] < 0x80) {
             /* ASCII */
-            if (from[f] <= 0x10 || from[f] == 0x7f ||
+            എങ്കിൽ (from[f] <= 0x10 || from[f] == 0x7f ||
                 (is_xdigit(from[f]) && previous_is_hex_escape))
             {
                 /* Control character or
@@ -42,25 +42,25 @@ escape_utf8_string_literal(const char *from)
                 snprintf_safe(&to[t], 5, "\\x%02x", from[f]);
                 t += 4;
                 previous_is_hex_escape = true;
-            } else if (from[f] == '"' || from[f] == '\\') {
+            } അല്ലെങ്കിൽ എങ്കിൽ (from[f] == '"' || from[f] == '\\') {
                 /* Quote and backslash */
                 snprintf_safe(&to[t], 3, "\\%c", from[f]);
                 t += 2;
                 previous_is_hex_escape = false;
-            } else {
+            } അല്ലെങ്കിൽ {
                 /* Other characters */
                 to[t++] = from[f];
                 previous_is_hex_escape = false;
             }
             f++;
-            continue;
+            തുടരുക;
         }
         /* Test next byte for the next Unicode codepoint’s bytes count */
-        else if ((unsigned char) from[f] < 0xe0)
+        അല്ലെങ്കിൽ എങ്കിൽ ((unsigned അക്ഷരം) from[f] < 0xe0)
             nbytes = 2;
-        else if ((unsigned char) from[f] < 0xf0)
+        അല്ലെങ്കിൽ എങ്കിൽ ((unsigned അക്ഷരം) from[f] < 0xf0)
             nbytes = 3;
-        else
+        അല്ലെങ്കിൽ
             nbytes = 4;
         memcpy(&to[t], &from[f], nbytes);
         t += nbytes;
@@ -68,8 +68,8 @@ escape_utf8_string_literal(const char *from)
         previous_is_hex_escape = false;
     }
     to[t++] = '\0';
-    char* ret = realloc(to, t);
-    if (!ret)
-        free(to);
-    return ret;
+    അക്ഷരം* ret = realloc(to, t);
+    എങ്കിൽ (!ret)
+        സ്വതന്ത്രം(to);
+    തിരികെ ret;
 }

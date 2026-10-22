@@ -3,20 +3,20 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <assert.h>
+#അന്തര്ഭാവ <assert.h>
 
-#include "context.h"
-#include "features/enums.h"
-#include "keysym.h"
-#include "table.h"
-#include "utils.h"
+#അന്തര്ഭാവ "context.h"
+#അന്തര്ഭാവ "features/enums.h"
+#അന്തര്ഭാവ "keysym.h"
+#അന്തര്ഭാവ "table.h"
+#അന്തര്ഭാവ "utils.h"
 
-struct xkb_compose_state {
-    int refcnt;
-    enum xkb_compose_state_flags flags;
-    struct xkb_compose_table *table;
+ഘടന xkb_compose_state {
+    പൂർണ്ണസംഖ്യ refcnt;
+    എണ്ണൽ xkb_compose_state_flags flags;
+    ഘടന xkb_compose_table *table;
 
     /*
      * Offsets into xkb_compose_table::nodes.
@@ -31,22 +31,22 @@ struct xkb_compose_state {
     uint32_t context;
 };
 
-struct xkb_compose_state *
-xkb_compose_state_new(struct xkb_compose_table *table,
-                      enum xkb_compose_state_flags flags)
+ഘടന xkb_compose_state *
+xkb_compose_state_new(ഘടന xkb_compose_table *table,
+                      എണ്ണൽ xkb_compose_state_flags flags)
 {
-    const enum xkb_compose_state_flags invalid_flags =
-        (flags & ~(enum xkb_compose_state_flags)XKB_COMPOSE_STATE_FLAGS_VALUES);
-    if (invalid_flags) {
+    സ്ഥിരം എണ്ണൽ xkb_compose_state_flags invalid_flags =
+        (flags & ~(എണ്ണൽ xkb_compose_state_flags)XKB_COMPOSE_STATE_FLAGS_മൂല്യങ്ങൾ);
+    എങ്കിൽ (invalid_flags) {
         log_err_func(table->ctx, XKB_LOG_MESSAGE_NO_ID,
                      "Unsupported compose state flags: %#x\n",
                      invalid_flags);
-        return NULL;
+        തിരികെ ശൂന്യ;
     }
 
-    struct xkb_compose_state * const state = calloc(1, sizeof(*state));
-    if (!state)
-        return NULL;
+    ഘടന xkb_compose_state * സ്ഥിരം state = calloc(1, വലുപ്പം(*state));
+    എങ്കിൽ (!state)
+        തിരികെ ശൂന്യ;
 
     state->refcnt = 1;
     state->table = xkb_compose_table_ref(table);
@@ -55,39 +55,39 @@ xkb_compose_state_new(struct xkb_compose_table *table,
     state->prev_context = 0;
     state->context = 0;
 
-    return state;
+    തിരികെ state;
 }
 
-struct xkb_compose_state *
-xkb_compose_state_ref(struct xkb_compose_state *state)
+ഘടന xkb_compose_state *
+xkb_compose_state_ref(ഘടന xkb_compose_state *state)
 {
-    assert(state->refcnt > 0);
+    പ്രതിജ്ഞാ(state->refcnt > 0);
     state->refcnt++;
-    return state;
+    തിരികെ state;
 }
 
-void
-xkb_compose_state_unref(struct xkb_compose_state *state)
+ശൂന്യം
+xkb_compose_state_unref(ഘടന xkb_compose_state *state)
 {
-    assert(!state || state->refcnt > 0);
-    if (!state || --state->refcnt > 0)
-        return;
+    പ്രതിജ്ഞാ(!state || state->refcnt > 0);
+    എങ്കിൽ (!state || --state->refcnt > 0)
+        തിരികെ;
 
     xkb_compose_table_unref(state->table);
-    free(state);
+    സ്വതന്ത്രം(state);
 }
 
-struct xkb_compose_table *
-xkb_compose_state_get_compose_table(struct xkb_compose_state *state)
+ഘടന xkb_compose_table *
+xkb_compose_state_get_compose_table(ഘടന xkb_compose_state *state)
 {
-    return state->table;
+    തിരികെ state->table;
 }
 
-enum xkb_compose_feed_result
-xkb_compose_state_feed(struct xkb_compose_state *state, xkb_keysym_t keysym)
+എണ്ണൽ xkb_compose_feed_result
+xkb_compose_state_feed(ഘടന xkb_compose_state *state, xkb_keysym_t keysym)
 {
     uint32_t context;
-    const struct compose_node *node;
+    സ്ഥിരം ഘടന compose_കണ്ണി *കണ്ണി;
 
     /*
      * Modifiers do not affect the sequence directly.  In particular,
@@ -99,98 +99,98 @@ xkb_compose_state_feed(struct xkb_compose_state *state, xkb_keysym_t keysym)
      * have it here.  However, this is (approximately) what libX11 does
      * as well.
      */
-    if (xkb_keysym_is_modifier(keysym))
-        return XKB_COMPOSE_FEED_IGNORED;
+    എങ്കിൽ (xkb_keysym_is_modifier(keysym))
+        തിരികെ XKB_COMPOSE_FEED_IGNORED;
 
-    node = &darray_item(state->table->nodes, state->context);
+    കണ്ണി = &darray_item(state->table->nodes, state->context);
 
-    context = (node->is_leaf ? 1 : node->internal.eqkid);
-    if (context == 1 && darray_size(state->table->nodes) == 1)
+    context = (കണ്ണി->is_leaf ? 1 : കണ്ണി->internal.eqkid);
+    എങ്കിൽ (context == 1 && darray_size(state->table->nodes) == 1)
         context = 0;
 
-    while (context != 0) {
-        node = &darray_item(state->table->nodes, context);
-        if (keysym < node->keysym)
-            context = node->lokid;
-        else if (keysym > node->keysym)
-            context = node->hikid;
-        else
-            break;
+    ആകുമ്പോൾ (context != 0) {
+        കണ്ണി = &darray_item(state->table->nodes, context);
+        എങ്കിൽ (keysym < കണ്ണി->keysym)
+            context = കണ്ണി->lokid;
+        അല്ലെങ്കിൽ എങ്കിൽ (keysym > കണ്ണി->keysym)
+            context = കണ്ണി->hikid;
+        അല്ലെങ്കിൽ
+            നിർത്തുക;
     }
 
     state->prev_context = state->context;
     state->context = context;
-    return XKB_COMPOSE_FEED_ACCEPTED;
+    തിരികെ XKB_COMPOSE_FEED_ACCEPTED;
 }
 
-void
-xkb_compose_state_reset(struct xkb_compose_state *state)
+ശൂന്യം
+xkb_compose_state_reset(ഘടന xkb_compose_state *state)
 {
     state->prev_context = 0;
     state->context = 0;
 }
 
-enum xkb_compose_status
-xkb_compose_state_get_status(struct xkb_compose_state *state)
+എണ്ണൽ xkb_compose_status
+xkb_compose_state_get_status(ഘടന xkb_compose_state *state)
 {
-    const struct compose_node *prev_node, *node;
+    സ്ഥിരം ഘടന compose_കണ്ണി *prev_കണ്ണി, *കണ്ണി;
 
-    prev_node = &darray_item(state->table->nodes, state->prev_context);
-    node = &darray_item(state->table->nodes, state->context);
+    prev_കണ്ണി = &darray_item(state->table->nodes, state->prev_context);
+    കണ്ണി = &darray_item(state->table->nodes, state->context);
 
-    if (state->context == 0 && !prev_node->is_leaf)
-        return XKB_COMPOSE_CANCELLED;
+    എങ്കിൽ (state->context == 0 && !prev_കണ്ണി->is_leaf)
+        തിരികെ XKB_COMPOSE_CANCELLED;
 
-    if (state->context == 0)
-        return XKB_COMPOSE_NOTHING;
+    എങ്കിൽ (state->context == 0)
+        തിരികെ XKB_COMPOSE_NOTHING;
 
-    if (!node->is_leaf)
-        return XKB_COMPOSE_COMPOSING;
+    എങ്കിൽ (!കണ്ണി->is_leaf)
+        തിരികെ XKB_COMPOSE_COMPOSING;
 
-    return XKB_COMPOSE_COMPOSED;
+    തിരികെ XKB_COMPOSE_COMPOSED;
 }
 
-int
-xkb_compose_state_get_utf8(struct xkb_compose_state *state,
-                           char *buffer, size_t size)
+പൂർണ്ണസംഖ്യ
+xkb_compose_state_get_utf8(ഘടന xkb_compose_state *state,
+                           അക്ഷരം *buffer, size_t size)
 {
-    const struct compose_node *node =
+    സ്ഥിരം ഘടന compose_കണ്ണി *കണ്ണി =
         &darray_item(state->table->nodes, state->context);
 
-    if (!node->is_leaf)
-        goto fail;
+    എങ്കിൽ (!കണ്ണി->is_leaf)
+        പോകുക fail;
 
     /* If there's no string specified, but only a keysym, try to do the
      * most helpful thing. */
-    if (node->leaf.utf8 == 0 && node->leaf.keysym != XKB_KEY_NoSymbol) {
-        char utf8[XKB_KEYSYM_UTF8_MAX_SIZE];
-        int ret;
+    എങ്കിൽ (കണ്ണി->leaf.utf8 == 0 && കണ്ണി->leaf.keysym != XKB_താക്കോൽ_No_ചിഹ്നം) {
+        അക്ഷരം utf8[XKB_KEYSYM_UTF8_MAX_SIZE];
+        പൂർണ്ണസംഖ്യ ret;
 
-        ret = xkb_keysym_to_utf8(node->leaf.keysym, utf8, sizeof(utf8));
-        if (ret < 0 || ret == 0) {
+        ret = xkb_keysym_to_utf8(കണ്ണി->leaf.keysym, utf8, വലുപ്പം(utf8));
+        എങ്കിൽ (ret < 0 || ret == 0) {
             /* ret < 0 is impossible.
              * ret == 0 means the keysym has no string representation. */
-            goto fail;
+            പോകുക fail;
         }
 
-        return snprintf(buffer, size, "%s", utf8);
+        തിരികെ snprintf(buffer, size, "%s", utf8);
     }
 
-    return snprintf(buffer, size, "%s",
-                    &darray_item(state->table->utf8, node->leaf.utf8));
+    തിരികെ snprintf(buffer, size, "%s",
+                    &darray_item(state->table->utf8, കണ്ണി->leaf.utf8));
 
 fail:
-    if (size > 0)
+    എങ്കിൽ (size > 0)
         buffer[0] = '\0';
-    return 0;
+    തിരികെ 0;
 }
 
 xkb_keysym_t
-xkb_compose_state_get_one_sym(struct xkb_compose_state *state)
+xkb_compose_state_get_one_sym(ഘടന xkb_compose_state *state)
 {
-    const struct compose_node *node =
+    സ്ഥിരം ഘടന compose_കണ്ണി *കണ്ണി =
         &darray_item(state->table->nodes, state->context);
-    if (!node->is_leaf)
-        return XKB_KEY_NoSymbol;
-    return node->leaf.keysym;
+    എങ്കിൽ (!കണ്ണി->is_leaf)
+        തിരികെ XKB_താക്കോൽ_No_ചിഹ്നം;
+    തിരികെ കണ്ണി->leaf.keysym;
 }

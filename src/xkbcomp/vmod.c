@@ -3,27 +3,27 @@
  * SPDX-License-Identifier: HPND
  */
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <stdint.h>
+#അന്തര്ഭാവ <stdint.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "atom.h"
-#include "keymap.h"
-#include "text.h"
-#include "expr.h"
-#include "xkbcomp/ast.h"
-#include "vmod.h"
+#അന്തര്ഭാവ "xkbcommon/xkbcommon.h"
+#അന്തര്ഭാവ "atom.h"
+#അന്തര്ഭാവ "keymap.h"
+#അന്തര്ഭാവ "text.h"
+#അന്തര്ഭാവ "expr.h"
+#അന്തര്ഭാവ "xkbcomp/ast.h"
+#അന്തര്ഭാവ "vmod.h"
 
-void
-InitVMods(struct xkb_mod_set *info, const struct xkb_mod_set *mods, bool reset)
+ശൂന്യം
+InitVMods(ഘടന xkb_mod_set *info, സ്ഥിരം ഘടന xkb_mod_set *mods, bool reset)
 {
     *info = *mods;
 
-    if (!reset)
-        return;
+    എങ്കിൽ (!reset)
+        തിരികെ;
 
-    struct xkb_mod *mod;
+    ഘടന xkb_mod *mod;
     xkb_mod_index_t vmod = 0;
     xkb_mods_enumerate(vmod, mod, info) {
         mod->mapping = 0;
@@ -31,55 +31,55 @@ InitVMods(struct xkb_mod_set *info, const struct xkb_mod_set *mods, bool reset)
     info->explicit_vmods = 0;
 }
 
-void
-MergeModSets(struct xkb_context *ctx, struct xkb_mod_set *into,
-             const struct xkb_mod_set *from, enum merge_mode merge) {
-    const bool clobber = (merge != MERGE_AUGMENT);
+ശൂന്യം
+MergeModSets(ഘടന xkb_context *ctx, ഘടന xkb_mod_set *into,
+             സ്ഥിരം ഘടന xkb_mod_set *from, എണ്ണൽ merge_mode merge) {
+    സ്ഥിരം bool clobber = (merge != MERGE_AUGMENT);
     xkb_mod_index_t vmod;
-    const struct xkb_mod *mod;
-    assert(into->num_mods <= from->num_mods);
+    സ്ഥിരം ഘടന xkb_mod *mod;
+    പ്രതിജ്ഞാ(into->അക്കം_mods <= from->അക്കം_mods);
     xkb_mods_enumerate(vmod, mod, from) {
-        const xkb_mod_mask_t mask = UINT32_C(1) << vmod;
+        സ്ഥിരം xkb_mod_mask_t mask = UINT32_C(1) << vmod;
 
-        if ((mod->type != MOD_VIRT)) {
+        എങ്കിൽ ((mod->type != MOD_VIRT)) {
             /* No modifier in `from` or real modifier: nothing to do */
-            assert((mod->type == 0 &&
+            പ്രതിജ്ഞാ((mod->type == 0 &&
                     mod->name == XKB_ATOM_NONE) ||
                    ((mod->type & MOD_REAL) &&
                     into->mods[vmod].type == mod->type &&
                     mod->name != XKB_ATOM_NONE &&
                     into->mods[vmod].name == mod->name));
-            continue;
-        } else if (into->mods[vmod].type == 0) {
+            തുടരുക;
+        } അല്ലെങ്കിൽ എങ്കിൽ (into->mods[vmod].type == 0) {
             /* No modifier in `into`: copy the whole modifier definition */
-            assert(into->mods[vmod].name == XKB_ATOM_NONE);
-            assert(mod->type == MOD_VIRT);
-            assert(mod->name != XKB_ATOM_NONE);
-            assert(vmod >= into->num_mods);
+            പ്രതിജ്ഞാ(into->mods[vmod].name == XKB_ATOM_NONE);
+            പ്രതിജ്ഞാ(mod->type == MOD_VIRT);
+            പ്രതിജ്ഞാ(mod->name != XKB_ATOM_NONE);
+            പ്രതിജ്ഞാ(vmod >= into->അക്കം_mods);
             into->mods[vmod] = *mod;
-            if (from->explicit_vmods & mask)
+            എങ്കിൽ (from->explicit_vmods & mask)
                 into->explicit_vmods |= mask;
-        } else {
+        } അല്ലെങ്കിൽ {
             /* Modifier exists in both */
-            assert(mod->type == MOD_VIRT);
-            assert(mod->name != XKB_ATOM_NONE);
-            assert(into->mods[vmod].type == mod->type);
-            assert(into->mods[vmod].name == mod->name);
+            പ്രതിജ്ഞാ(mod->type == MOD_VIRT);
+            പ്രതിജ്ഞാ(mod->name != XKB_ATOM_NONE);
+            പ്രതിജ്ഞാ(into->mods[vmod].type == mod->type);
+            പ്രതിജ്ഞാ(into->mods[vmod].name == mod->name);
 
-            if (!(from->explicit_vmods & mask)) {
+            എങ്കിൽ (!(from->explicit_vmods & mask)) {
                 /* Implicit mapping in `from`: do nothing */
-                assert(mod->mapping == 0);
-            } else if (!(into->explicit_vmods & mask)) {
+                പ്രതിജ്ഞാ(mod->mapping == 0);
+            } അല്ലെങ്കിൽ എങ്കിൽ (!(into->explicit_vmods & mask)) {
                 /* Implicit mapping in `into`: replace */
-                assert(into->mods[vmod].mapping == 0);
+                പ്രതിജ്ഞാ(into->mods[vmod].mapping == 0);
                 into->mods[vmod].mapping = mod->mapping;
                 into->explicit_vmods |= mask;
-            } else if (mod->mapping != into->mods[vmod].mapping) {
+            } അല്ലെങ്കിൽ എങ്കിൽ (mod->mapping != into->mods[vmod].mapping) {
                 /* Handle conflicting mappings */
-                const xkb_mod_mask_t use = (clobber)
+                സ്ഥിരം xkb_mod_mask_t use = (clobber)
                     ? mod->mapping
                     : into->mods[vmod].mapping;
-                const xkb_mod_mask_t ignore = (clobber)
+                സ്ഥിരം xkb_mod_mask_t ignore = (clobber)
                     ? into->mods[vmod].mapping
                     : mod->mapping;
 
@@ -94,54 +94,54 @@ MergeModSets(struct xkb_context *ctx, struct xkb_mod_set *into,
             }
         }
     }
-    into->num_mods = from->num_mods;
+    into->അക്കം_mods = from->അക്കം_mods;
 }
 
 bool
-HandleVModDef(struct xkb_context *ctx, struct xkb_mod_set *mods, VModDef *stmt)
+HandleVModDef(ഘടന xkb_context *ctx, ഘടന xkb_mod_set *mods, VModDef *stmt)
 {
     xkb_mod_mask_t mapping = 0;
-    if (stmt->value &&
+    എങ്കിൽ (stmt->മൂല്യം &&
         /*
          * This is a statement such as 'virtualModifiers NumLock = Mod1';
          * it initialize the vmod-to-real-mod[s] mapping before going
          * through modifier_map.
          */
-        !ExprResolveModMask(ctx, stmt->value, MOD_REAL, mods, &mapping))
+        !വ്യഞ്ജകം_Resolve_Mod_Mask(ctx, stmt->മൂല്യം, MOD_REAL, mods, &mapping))
     {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "Declaration of %s ignored\n",
                 xkb_atom_text(ctx, stmt->name));
-        return false;
+        തിരികെ false;
     }
 
     xkb_mod_index_t vmod;
-    struct xkb_mod *mod;
+    ഘടന xkb_mod *mod;
     xkb_mods_enumerate(vmod, mod, mods) {
-        if (mod->name == stmt->name) {
-            if (mod->type != MOD_VIRT) {
+        എങ്കിൽ (mod->name == stmt->name) {
+            എങ്കിൽ (mod->type != MOD_VIRT) {
                 log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                         "Can't add a virtual modifier named \"%s\"; there is "
                         "already a non-virtual modifier with this name! "
                         "Ignored\n",
                         xkb_atom_text(ctx, mod->name));
-                return false;
+                തിരികെ false;
             }
 
-            const xkb_mod_mask_t mask = UINT32_C(1) << vmod;
+            സ്ഥിരം xkb_mod_mask_t mask = UINT32_C(1) << vmod;
 
-            if (!stmt->value) {
+            എങ്കിൽ (!stmt->മൂല്യം) {
                 /* No new explicit mapping: do nothing */
-                return true;
-            } else if (!(mods->explicit_vmods & mask)) {
+                തിരികെ true;
+            } അല്ലെങ്കിൽ എങ്കിൽ (!(mods->explicit_vmods & mask)) {
                 /* No previous explicit mapping: add mapping */
                 mod->mapping = mapping;
-            } else if (mod->mapping != mapping) {
+            } അല്ലെങ്കിൽ എങ്കിൽ (mod->mapping != mapping) {
                 /* Handle conflicting mappings */
-                const bool clobber = (stmt->merge != MERGE_AUGMENT);
-                const xkb_mod_mask_t use =
+                സ്ഥിരം bool clobber = (stmt->merge != MERGE_AUGMENT);
+                സ്ഥിരം xkb_mod_mask_t use =
                     (clobber ? mapping : mod->mapping);
-                const xkb_mod_mask_t ignore =
+                സ്ഥിരം xkb_mod_mask_t ignore =
                     (clobber ? mod->mapping : mapping);
 
                 log_warn(ctx, XKB_LOG_MESSAGE_NO_ID,
@@ -156,25 +156,25 @@ HandleVModDef(struct xkb_context *ctx, struct xkb_mod_set *mods, VModDef *stmt)
 
             mods->explicit_vmods |= mask;
 
-            return true;
+            തിരികെ true;
         }
     }
 
-    if (mods->num_mods >= XKB_MAX_MODS) {
+    എങ്കിൽ (mods->അക്കം_mods >= XKB_MAX_MODS) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "Cannot define virtual modifier %s: "
                 "too many modifiers defined (maximum %"PRIu32")\n",
                 xkb_atom_text(ctx, stmt->name), XKB_MAX_MODS);
-        return false;
+        തിരികെ false;
     }
 
-    mods->mods[mods->num_mods].name = stmt->name;
-    mods->mods[mods->num_mods].type = MOD_VIRT;
-    mods->mods[mods->num_mods].mapping = mapping;
-    if (stmt->value) {
-        const xkb_mod_mask_t mask = UINT32_C(1) << mods->num_mods;
+    mods->mods[mods->അക്കം_mods].name = stmt->name;
+    mods->mods[mods->അക്കം_mods].type = MOD_VIRT;
+    mods->mods[mods->അക്കം_mods].mapping = mapping;
+    എങ്കിൽ (stmt->മൂല്യം) {
+        സ്ഥിരം xkb_mod_mask_t mask = UINT32_C(1) << mods->അക്കം_mods;
         mods->explicit_vmods |= mask;
     }
-    mods->num_mods++;
-    return true;
+    mods->അക്കം_mods++;
+    തിരികെ true;
 }

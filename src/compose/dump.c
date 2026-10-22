@@ -4,70 +4,70 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <stdio.h>
-#include <stdbool.h>
-#include <string.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdbool.h>
+#അന്തര്ഭാവ <string.h>
 
-#include "xkbcommon/xkbcommon-compose.h"
-#include "darray.h"
-#include "parser.h"
-#include "escape.h"
-#include "dump.h"
-#include "src/keysym.h"
+#അന്തര്ഭാവ "xkbcommon/xkbcommon-compose.h"
+#അന്തര്ഭാവ "darray.h"
+#അന്തര്ഭാവ "parser.h"
+#അന്തര്ഭാവ "escape.h"
+#അന്തര്ഭാവ "dump.h"
+#അന്തര്ഭാവ "src/keysym.h"
 
 bool
-print_compose_table_entry(FILE *file, struct xkb_compose_table_entry *entry)
+print_compose_table_entry(FILE *file, ഘടന xkb_compose_table_entry *entry)
 {
     size_t nsyms;
-    const xkb_keysym_t *syms = xkb_compose_table_entry_sequence(entry, &nsyms);
-    char buf[XKB_KEYSYM_NAME_MAX_SIZE];
-    for (size_t i = 0; i < nsyms; i++) {
-        xkb_keysym_get_name(syms[i], buf, sizeof(buf));
+    സ്ഥിരം xkb_keysym_t *syms = xkb_compose_table_entry_sequence(entry, &nsyms);
+    അക്ഷരം buf[XKB_KEYSYM_NAME_MAX_SIZE];
+    വേണ്ടി (size_t i = 0; i < nsyms; i++) {
+        xkb_keysym_get_name(syms[i], buf, വലുപ്പം(buf));
         fprintf(file, "<%s>", buf);
-        if (i + 1 < nsyms) {
+        എങ്കിൽ (i + 1 < nsyms) {
             fprintf(file, " ");
         }
     }
     fprintf(file, " : ");
-    const char *utf8 = xkb_compose_table_entry_utf8(entry);
-    if (*utf8 != '\0') {
-        char *escaped = escape_utf8_string_literal(utf8);
-        if (!escaped) {
+    സ്ഥിരം അക്ഷരം *utf8 = xkb_compose_table_entry_utf8(entry);
+    എങ്കിൽ (*utf8 != '\0') {
+        അക്ഷരം *escaped = escape_utf8_string_literal(utf8);
+        എങ്കിൽ (!escaped) {
             fprintf(stderr, "ERROR: Cannot escape the string: allocation error\n");
-            return false;
-        } else {
+            തിരികെ false;
+        } അല്ലെങ്കിൽ {
             fprintf(file, " \"%s\"", escaped);
-            free(escaped);
+            സ്വതന്ത്രം(escaped);
         }
     }
-    const xkb_keysym_t keysym = xkb_compose_table_entry_keysym(entry);
-    if (keysym != XKB_KEY_NoSymbol) {
-        xkb_keysym_get_name(keysym, buf, sizeof(buf));
+    സ്ഥിരം xkb_keysym_t keysym = xkb_compose_table_entry_keysym(entry);
+    എങ്കിൽ (keysym != XKB_താക്കോൽ_No_ചിഹ്നം) {
+        xkb_keysym_get_name(keysym, buf, വലുപ്പം(buf));
         fprintf(file, " %s", buf);
     }
     fprintf(file, "\n");
-    return true;
+    തിരികെ true;
 }
 
 bool
-xkb_compose_table_dump(FILE *file, struct xkb_compose_table *table)
+xkb_compose_table_dump(FILE *file, ഘടന xkb_compose_table *table)
 {
-    struct xkb_compose_table_entry *entry;
-    struct xkb_compose_table_iterator *iter = xkb_compose_table_iterator_new(table);
+    ഘടന xkb_compose_table_entry *entry;
+    ഘടന xkb_compose_table_iterator *iter = xkb_compose_table_iterator_new(table);
 
-    if (!iter)
-        return false;
+    എങ്കിൽ (!iter)
+        തിരികെ false;
 
     bool ok = true;
-    while ((entry = xkb_compose_table_iterator_next(iter))) {
-        if (!print_compose_table_entry(file, entry)) {
+    ആകുമ്പോൾ ((entry = xkb_compose_table_iterator_next(iter))) {
+        എങ്കിൽ (!print_compose_table_entry(file, entry)) {
             ok = false;
-            break;
+            നിർത്തുക;
         }
     }
 
     xkb_compose_table_iterator_free(iter);
-    return ok;
+    തിരികെ ok;
 }

@@ -6,204 +6,204 @@
  * Author: Daniel Stone <daniel@fooishbar.org>
  */
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <sys/stat.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "atom.h"
-#include "darray.h"
-#include "context.h"
-#include "rmlvo.h"
-#include "utils.h"
+#അന്തര്ഭാവ "xkbcommon/xkbcommon.h"
+#അന്തര്ഭാവ "atom.h"
+#അന്തര്ഭാവ "darray.h"
+#അന്തര്ഭാവ "context.h"
+#അന്തര്ഭാവ "rmlvo.h"
+#അന്തര്ഭാവ "utils.h"
 
-char *
-xkb_context_getenv(struct xkb_context *ctx, const char *name)
+അക്ഷരം *
+xkb_context_getenv(ഘടന xkb_context *ctx, സ്ഥിരം അക്ഷരം *name)
 {
-    if (ctx->use_secure_getenv) {
-        return secure_getenv(name);
-    } else {
-        return getenv(name);
+    എങ്കിൽ (ctx->use_secure_getenv) {
+        തിരികെ secure_getenv(name);
+    } അല്ലെങ്കിൽ {
+        തിരികെ getenv(name);
     }
 }
 
 bool
-xkb_context_init_includes(struct xkb_context *ctx)
+xkb_context_init_includes(ഘടന xkb_context *ctx)
 {
-    if (ctx->pending_default_includes) {
-        if (darray_empty(ctx->failed_includes)) {
-            if (!xkb_context_include_path_append_default(ctx)) {
+    എങ്കിൽ (ctx->pending_default_includes) {
+        എങ്കിൽ (darray_empty(ctx->failed_includes)) {
+            എങ്കിൽ (!xkb_context_include_path_append_default(ctx)) {
                 log_err(ctx, XKB_ERROR_NO_VALID_DEFAULT_INCLUDE_PATH,
                         "Failed to add any default include path "
                         "(system path: %s)\n",
                         xkb_context_include_path_get_system_path(ctx));
-                return false;
+                തിരികെ false;
             }
             ctx->pending_default_includes = false;
-        } else {
+        } അല്ലെങ്കിൽ {
             /*
              * If there are failed includes then we already tried to load
              * default include paths, so avoid further attempts.
              */
-            return false;
+            തിരികെ false;
         }
     }
-    return true;
+    തിരികെ true;
 }
 
 darray_size_t
-xkb_context_num_failed_include_paths(struct xkb_context *ctx)
+xkb_context_അക്കം_failed_include_paths(ഘടന xkb_context *ctx)
 {
-    return (xkb_context_init_includes(ctx))
+    തിരികെ (xkb_context_init_includes(ctx))
         ? darray_size(ctx->failed_includes)
         : 0;
 }
 
-const char *
-xkb_context_failed_include_path_get(struct xkb_context *ctx,
+സ്ഥിരം അക്ഷരം *
+xkb_context_failed_include_path_get(ഘടന xkb_context *ctx,
                                     darray_size_t idx)
 {
-    if (idx >= xkb_context_num_failed_include_paths(ctx))
-        return NULL;
+    എങ്കിൽ (idx >= xkb_context_അക്കം_failed_include_paths(ctx))
+        തിരികെ ശൂന്യ;
 
-    return darray_item(ctx->failed_includes, idx);
+    തിരികെ darray_item(ctx->failed_includes, idx);
 }
 
 darray_size_t
-xkb_atom_table_size(struct xkb_context *ctx)
+xkb_atom_table_size(ഘടന xkb_context *ctx)
 {
-    return atom_table_size(ctx->atom_table);
+    തിരികെ atom_table_size(ctx->atom_table);
 }
 
 xkb_atom_t
-xkb_atom_lookup(struct xkb_context *ctx, const char *string)
+xkb_atom_lookup(ഘടന xkb_context *ctx, സ്ഥിരം അക്ഷരം *string)
 {
-    return atom_intern(ctx->atom_table, string, strlen(string), false);
+    തിരികെ atom_intern(ctx->atom_table, string, strlen(string), false);
 }
 
 xkb_atom_t
-xkb_atom_intern(struct xkb_context *ctx, const char *string, size_t len)
+xkb_atom_intern(ഘടന xkb_context *ctx, സ്ഥിരം അക്ഷരം *string, size_t len)
 {
-    return atom_intern(ctx->atom_table, string, len, true);
+    തിരികെ atom_intern(ctx->atom_table, string, len, true);
 }
 
-const char *
-xkb_atom_text(struct xkb_context *ctx, xkb_atom_t atom)
+സ്ഥിരം അക്ഷരം *
+xkb_atom_text(ഘടന xkb_context *ctx, xkb_atom_t atom)
 {
-    return atom_text(ctx->atom_table, atom);
+    തിരികെ atom_text(ctx->atom_table, atom);
 }
 
-void
-xkb_log(struct xkb_context *ctx, enum xkb_log_level level, int verbosity,
-        const char *fmt, ...)
+ശൂന്യം
+xkb_log(ഘടന xkb_context *ctx, എണ്ണൽ xkb_log_level level, പൂർണ്ണസംഖ്യ verbosity,
+        സ്ഥിരം അക്ഷരം *fmt, ...)
 {
     va_list args;
 
-    if (ctx->log_level < level || ctx->log_verbosity < verbosity)
-        return;
+    എങ്കിൽ (ctx->log_level < level || ctx->log_verbosity < verbosity)
+        തിരികെ;
 
     va_start(args, fmt);
     ctx->log_fn(ctx, level, fmt, args);
     va_end(args);
 }
 
-char *
-xkb_context_get_buffer(struct xkb_context *ctx, size_t size)
+അക്ഷരം *
+xkb_context_get_buffer(ഘടന xkb_context *ctx, size_t size)
 {
-    char *rtrn;
+    അക്ഷരം *rtrn;
 
-    if (size >= sizeof(ctx->text_buffer))
-        return NULL;
+    എങ്കിൽ (size >= വലുപ്പം(ctx->text_buffer))
+        തിരികെ ശൂന്യ;
 
-    if (sizeof(ctx->text_buffer) - ctx->text_next <= size)
+    എങ്കിൽ (വലുപ്പം(ctx->text_buffer) - ctx->text_next <= size)
         ctx->text_next = 0;
 
     rtrn = &ctx->text_buffer[ctx->text_next];
     ctx->text_next += size;
 
-    return rtrn;
+    തിരികെ rtrn;
 }
 
-static const char *
-xkb_context_get_default_rules(struct xkb_context *ctx)
+സ്ഥിതം സ്ഥിരം അക്ഷരം *
+xkb_context_get_default_rules(ഘടന xkb_context *ctx)
 {
-    const char *env = NULL;
+    സ്ഥിരം അക്ഷരം *env = ശൂന്യ;
 
-    if (ctx->use_environment_names)
+    എങ്കിൽ (ctx->use_environment_names)
         env = xkb_context_getenv(ctx, "XKB_DEFAULT_RULES");
 
-    return env ? env : DEFAULT_XKB_RULES;
+    തിരികെ env ? env : DEFAULT_XKB_RULES;
 }
 
-static const char *
-xkb_context_get_default_model(struct xkb_context *ctx)
+സ്ഥിതം സ്ഥിരം അക്ഷരം *
+xkb_context_get_default_model(ഘടന xkb_context *ctx)
 {
-    const char *env = NULL;
+    സ്ഥിരം അക്ഷരം *env = ശൂന്യ;
 
-    if (ctx->use_environment_names)
+    എങ്കിൽ (ctx->use_environment_names)
         env = xkb_context_getenv(ctx, "XKB_DEFAULT_MODEL");
 
-    return env ? env : DEFAULT_XKB_MODEL;
+    തിരികെ env ? env : DEFAULT_XKB_MODEL;
 }
 
-static const char *
-xkb_context_get_default_layout(struct xkb_context *ctx)
+സ്ഥിതം സ്ഥിരം അക്ഷരം *
+xkb_context_get_default_layout(ഘടന xkb_context *ctx)
 {
-    const char *env = NULL;
+    സ്ഥിരം അക്ഷരം *env = ശൂന്യ;
 
-    if (ctx->use_environment_names)
+    എങ്കിൽ (ctx->use_environment_names)
         env = xkb_context_getenv(ctx, "XKB_DEFAULT_LAYOUT");
 
-    return env ? env : DEFAULT_XKB_LAYOUT;
+    തിരികെ env ? env : DEFAULT_XKB_LAYOUT;
 }
 
-static const char *
-xkb_context_get_default_variant(struct xkb_context *ctx)
+സ്ഥിതം സ്ഥിരം അക്ഷരം *
+xkb_context_get_default_variant(ഘടന xkb_context *ctx)
 {
-    const char *env = NULL;
-    const char *layout = xkb_context_getenv(ctx, "XKB_DEFAULT_LAYOUT");
+    സ്ഥിരം അക്ഷരം *env = ശൂന്യ;
+    സ്ഥിരം അക്ഷരം *layout = xkb_context_getenv(ctx, "XKB_DEFAULT_LAYOUT");
 
     /* We don't want to inherit the variant if they haven't also set a
      * layout, since they're so closely paired. */
-    if (layout && ctx->use_environment_names)
+    എങ്കിൽ (layout && ctx->use_environment_names)
         env = xkb_context_getenv(ctx, "XKB_DEFAULT_VARIANT");
 
-    return env ? env : DEFAULT_XKB_VARIANT;
+    തിരികെ env ? env : DEFAULT_XKB_VARIANT;
 }
 
-static const char *
-xkb_context_get_default_options(struct xkb_context *ctx)
+സ്ഥിതം സ്ഥിരം അക്ഷരം *
+xkb_context_get_default_options(ഘടന xkb_context *ctx)
 {
-    const char *env = NULL;
+    സ്ഥിരം അക്ഷരം *env = ശൂന്യ;
 
-    if (ctx->use_environment_names)
+    എങ്കിൽ (ctx->use_environment_names)
         env = xkb_context_getenv(ctx, "XKB_DEFAULT_OPTIONS");
 
-    return env ? env : DEFAULT_XKB_OPTIONS;
+    തിരികെ env ? env : DEFAULT_XKB_OPTIONS;
 }
 
-enum RMLVO
-xkb_context_sanitize_rule_names(struct xkb_context *ctx,
-                                struct xkb_rule_names *rmlvo)
+എണ്ണൽ RMLVO
+xkb_context_sanitize_rule_names(ഘടന xkb_context *ctx,
+                                ഘടന xkb_rule_names *rmlvo)
 {
-    enum RMLVO modified = 0;
+    എണ്ണൽ RMLVO modified = 0;
 
-    if (isempty(rmlvo->rules)) {
+    എങ്കിൽ (isempty(rmlvo->rules)) {
         rmlvo->rules = xkb_context_get_default_rules(ctx);
         modified |= RMLVO_RULES;
     }
-    if (isempty(rmlvo->model)) {
+    എങ്കിൽ (isempty(rmlvo->model)) {
         rmlvo->model = xkb_context_get_default_model(ctx);
         modified |= RMLVO_MODEL;
     }
     /* Layout and variant are tied together, so don't try to use one from
      * the caller and one from the environment. */
-    if (isempty(rmlvo->layout)) {
+    എങ്കിൽ (isempty(rmlvo->layout)) {
         rmlvo->layout = xkb_context_get_default_layout(ctx);
         modified |= RMLVO_LAYOUT;
-        const char * const variant = xkb_context_get_default_variant(ctx);
-        if (!isempty(rmlvo->variant)) {
+        സ്ഥിരം അക്ഷരം * സ്ഥിരം variant = xkb_context_get_default_variant(ctx);
+        എങ്കിൽ (!isempty(rmlvo->variant)) {
             log_warn(ctx, XKB_LOG_MESSAGE_NO_ID,
                      "Layout not provided, but variant set to \"%s\": "
                      "ignoring variant and using defaults for both: "
@@ -216,10 +216,10 @@ xkb_context_sanitize_rule_names(struct xkb_context *ctx,
         modified |= RMLVO_VARIANT;
     }
     /* Options can be empty, so respect that if passed in. */
-    if (rmlvo->options == NULL) {
+    എങ്കിൽ (rmlvo->options == ശൂന്യ) {
         rmlvo->options = xkb_context_get_default_options(ctx);
         modified |= RMLVO_OPTIONS;
     }
 
-    return modified;
+    തിരികെ modified;
 }

@@ -5,16 +5,16 @@
 
 #pragma once
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <stddef.h>
-#include <stdint.h>
+#അന്തര്ഭാവ <stddef.h>
+#അന്തര്ഭാവ <stdint.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-status.h"
-#include "darray.h"
+#അന്തര്ഭാവ "xkbcommon/xkbcommon.h"
+#അന്തര്ഭാവ "xkbcommon/xkbcommon-status.h"
+#അന്തര്ഭാവ "darray.h"
 
-enum xkb_modifier_kind {
+എണ്ണൽ xkb_modifier_kind {
     /** Shift, Ctrl, Alt: press — other key(s) — release */
     XKB_MOD_SET,
     /** sticky-keys tap: press — release — exactly one other key */
@@ -23,79 +23,79 @@ enum xkb_modifier_kind {
     XKB_MOD_LOCK,
 };
 
-enum xkb_key_kind {
-    XKB_KEY_PRINTABLE,
-    XKB_KEY_MODIFIER,
-    XKB_KEY_MISC,
-    _NUM_XKB_KEY_KIND,
+എണ്ണൽ xkb_താക്കോൽ_kind {
+    XKB_താക്കോൽ_PRINTABLE,
+    XKB_താക്കോൽ_MODIFIER,
+    XKB_താക്കോൽ_MISC,
+    അക്കം_XKB_താക്കോൽ_KIND,
 };
 
-struct xkb_modifier_key {
+ഘടന xkb_modifier_താക്കോൽ {
     xkb_keycode_t keycode;
     xkb_mod_mask_t mods;
-    enum xkb_modifier_kind kind;
+    എണ്ണൽ xkb_modifier_kind kind;
 };
 
-typedef darray(xkb_keycode_t) xkb_keycodes_t;
+തരനിർവചനം darray(xkb_keycode_t) xkb_keycodes_t;
 
 /** Keys classified by category */
-struct xkb_key_set {
+ഘടന xkb_താക്കോൽ_set {
     /** Printable keys: alphanum, punctuation, symbols, etc. */
     xkb_keycodes_t printable;
     /** Modifier keys */
-    darray(struct xkb_modifier_key) modifiers;
+    darray(ഘടന xkb_modifier_താക്കോൽ) modifiers;
     /** Miscellaneous: arrows, editing, functions, system, etc. */
     xkb_keycodes_t misc;
 };
 
-struct xkb_key_set_config {
+ഘടന xkb_താക്കോൽ_set_config {
     xkb_keycode_t min;
     xkb_keycode_t max;
 };
 
-enum xkb_status
-xkb_key_set_init(struct xkb_key_set *set,
-                 struct xkb_keymap *keymap,
-                 const struct xkb_key_set_config *config);
+എണ്ണൽ xkb_status
+xkb_താക്കോൽ_set_init(ഘടന xkb_താക്കോൽ_set *set,
+                 ഘടന xkb_keymap *keymap,
+                 സ്ഥിരം ഘടന xkb_താക്കോൽ_set_config *config);
 
-void
-xkb_key_set_destroy(struct xkb_key_set *set);
+ശൂന്യം
+xkb_താക്കോൽ_set_destroy(ഘടന xkb_താക്കോൽ_set *set);
 
-struct xkb_typing_event {
+ഘടന xkb_typing_event {
     xkb_keycode_t keycode;
-    enum xkb_key_direction direction;
+    എണ്ണൽ xkb_താക്കോൽ_direction direction;
 };
 
-typedef darray(struct xkb_typing_event) xkb_typing_events;
+തരനിർവചനം darray(ഘടന xkb_typing_event) xkb_typing_events;
 
-struct xkb_pending_typing_event {
-    struct xkb_typing_event event;
+ഘടന xkb_pending_typing_event {
+    ഘടന xkb_typing_event event;
     xkb_mod_mask_t mods;
     uint8_t counter;
 };
 
 /** PRNG: return values must be between 0 and 2^31 - 1 (see random()) */
-typedef long (*xkb_prng_t)(void *);
+തരനിർവചനം long (*xkb_prng_t)(ശൂന്യം *);
 
-struct xkb_typing_state {
+ഘടന xkb_typing_state {
     /** Keys used for typing, classified by category. Borrowed */
-    const struct xkb_key_set *keys;
+    സ്ഥിരം ഘടന xkb_താക്കോൽ_set *താക്കോലുകൾ;
     /** Keys state: pressed (1) or released (0) */
-    uintptr_t *keys_state;
+    uintptr_t *താക്കോലുകൾ_state;
     xkb_prng_t prng;
     /** Borrowed */
-    void *prng_state;
-    size_t num_events;
+    ശൂന്യം *prng_state;
+    size_t അക്കം_events;
     /** Realistic typing events */
-    struct xkb_typing_event *events ATTR_COUNTED_BY(num_events);
+    ഘടന xkb_typing_event *events ATTR_COUNTED_BY(അക്കം_events);
     /** Pending events */
-    darray(struct xkb_pending_typing_event) pending;
-    darray_size_t num_pending;
+    darray(ഘടന xkb_pending_typing_event) pending;
+    darray_size_t അക്കം_pending;
     /** Effective mods */
     xkb_mod_mask_t mods;
 };
 
-enum {
+എണ്ണൽ {
     XKB_TYPING_EVENT_PRINTABLE_IMMEDIATE_RELEASE_PERCENT = 75,
     XKB_TYPING_EVENT_PRINTABLE_MAX_PENDING_TURNS = 1,
     XKB_TYPING_EVENT_MODIFIER_MIN_PENDING_TURNS = 2,
@@ -104,21 +104,21 @@ enum {
     XKB_TYPING_EVENT_MISC_MAX_PENDING_TURNS = 0,
 };
 
-struct xkb_typing_input {
-    struct xkb_typing_event *events;
-    size_t num_events;
+ഘടന xkb_typing_നിവേശം {
+    ഘടന xkb_typing_event *events;
+    size_t അക്കം_events;
 };
 
-struct xkb_typing_input_config {
+ഘടന xkb_typing_നിവേശം_config {
     xkb_prng_t prng;
-    void *prng_state;
-    size_t input_length;
+    ശൂന്യം *prng_state;
+    size_t നിവേശം_length;
 };
 
-enum xkb_status
-xkb_typing_input_init(struct xkb_typing_input *typing,
-                      const struct xkb_key_set *keys,
-                      const struct xkb_typing_input_config *config);
+എണ്ണൽ xkb_status
+xkb_typing_നിവേശം_init(ഘടന xkb_typing_നിവേശം *typing,
+                      സ്ഥിരം ഘടന xkb_താക്കോൽ_set *താക്കോലുകൾ,
+                      സ്ഥിരം ഘടന xkb_typing_നിവേശം_config *config);
 
-void
-xkb_typing_input_destroy(struct xkb_typing_input *typing);
+ശൂന്യം
+xkb_typing_നിവേശം_destroy(ഘടന xkb_typing_നിവേശം *typing);

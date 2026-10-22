@@ -11,342 +11,342 @@
  * Author: Daniel Stone <daniel@fooishbar.org>
  */
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <assert.h>
-#include <stdint.h>
-#include <string.h>
+#അന്തര്ഭാവ <assert.h>
+#അന്തര്ഭാവ <stdint.h>
+#അന്തര്ഭാവ <string.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "abi-check.h"
-#include "atom.h"
-#include "context.h"
-#include "features/enums.h"
-#include "keymap.h"
-#include "keymap-priv.h"
-#include "messages-codes.h"
-#include "text.h"
-#include "util-mem.h"
-#include "util-numbers.h"
+#അന്തര്ഭാവ "xkbcommon/xkbcommon.h"
+#അന്തര്ഭാവ "abi-check.h"
+#അന്തര്ഭാവ "atom.h"
+#അന്തര്ഭാവ "context.h"
+#അന്തര്ഭാവ "features/enums.h"
+#അന്തര്ഭാവ "keymap.h"
+#അന്തര്ഭാവ "keymap-priv.h"
+#അന്തര്ഭാവ "messages-codes.h"
+#അന്തര്ഭാവ "text.h"
+#അന്തര്ഭാവ "util-mem.h"
+#അന്തര്ഭാവ "util-numbers.h"
 
-struct xkb_keymap *
-xkb_keymap_ref(struct xkb_keymap *keymap)
+ഘടന xkb_keymap *
+xkb_keymap_ref(ഘടന xkb_keymap *keymap)
 {
-    assert(keymap->refcnt > 0);
+    പ്രതിജ്ഞാ(keymap->refcnt > 0);
     keymap->refcnt++;
-    return keymap;
+    തിരികെ keymap;
 }
 
-void
-clear_level(struct xkb_level *leveli)
+ശൂന്യം
+clear_level(ഘടന xkb_level *leveli)
 {
-    if (leveli->num_syms > 1)
-        free(leveli->s.syms);
-    if (leveli->num_actions > 1)
-        free(leveli->a.actions);
+    എങ്കിൽ (leveli->അക്കം_syms > 1)
+        സ്വതന്ത്രം(leveli->s.syms);
+    എങ്കിൽ (leveli->അക്കം_actions > 1)
+        സ്വതന്ത്രം(leveli->a.actions);
 }
 
-static void
-clear_interpret(struct xkb_sym_interpret *interp)
+സ്ഥിതം ശൂന്യം
+clear_interpret(ഘടന xkb_sym_interpret *interp)
 {
-    if (interp->num_actions > 1)
-        free(interp->a.actions);
+    എങ്കിൽ (interp->അക്കം_actions > 1)
+        സ്വതന്ത്രം(interp->a.actions);
 }
 
-void
-xkb_keymap_unref(struct xkb_keymap *keymap)
+ശൂന്യം
+xkb_keymap_unref(ഘടന xkb_keymap *keymap)
 {
-    assert(!keymap || keymap->refcnt > 0);
-    if (!keymap || --keymap->refcnt > 0)
-        return;
+    പ്രതിജ്ഞാ(!keymap || keymap->refcnt > 0);
+    എങ്കിൽ (!keymap || --keymap->refcnt > 0)
+        തിരികെ;
 
-    if (keymap->keys) {
-        struct xkb_key *key;
-        xkb_keys_foreach(key, keymap) {
-            if (key->groups) {
-                for (xkb_layout_index_t i = 0; i < key->num_groups; i++) {
-                    if (key->groups[i].levels) {
-                        for (xkb_level_index_t j = 0;
-                             j < XkbKeyNumLevels(key, i);
+    എങ്കിൽ (keymap->താക്കോലുകൾ) {
+        ഘടന xkb_താക്കോൽ *താക്കോൽ;
+        xkb_താക്കോലുകൾ_foreach(താക്കോൽ, keymap) {
+            എങ്കിൽ (താക്കോൽ->groups) {
+                വേണ്ടി (xkb_layout_index_t i = 0; i < താക്കോൽ->അക്കം_groups; i++) {
+                    എങ്കിൽ (താക്കോൽ->groups[i].levels) {
+                        വേണ്ടി (xkb_level_index_t j = 0;
+                             j < Xkb_താക്കോൽ_അക്കം_Levels(താക്കോൽ, i);
                              j++)
-                            clear_level(&key->groups[i].levels[j]);
-                        free(key->groups[i].levels);
+                            clear_level(&താക്കോൽ->groups[i].levels[j]);
+                        സ്വതന്ത്രം(താക്കോൽ->groups[i].levels);
                     }
                 }
-                free(key->groups);
+                സ്വതന്ത്രം(താക്കോൽ->groups);
             }
-            if (!key->overlays_inline && key->overlays_keys) {
-                free((void *)key->overlays_keys);
+            എങ്കിൽ (!താക്കോൽ->overlays_inline && താക്കോൽ->overlays_താക്കോലുകൾ) {
+                സ്വതന്ത്രം((ശൂന്യം *)താക്കോൽ->overlays_താക്കോലുകൾ);
             }
         }
-        free(keymap->keys);
+        സ്വതന്ത്രം(keymap->താക്കോലുകൾ);
     }
-    if (keymap->types) {
-        for (darray_size_t i = 0; i < keymap->num_types; i++) {
-            free(keymap->types[i].entries);
-            free(keymap->types[i].level_names);
+    എങ്കിൽ (keymap->types) {
+        വേണ്ടി (darray_size_t i = 0; i < keymap->അക്കം_types; i++) {
+            സ്വതന്ത്രം(keymap->types[i].entries);
+            സ്വതന്ത്രം(keymap->types[i].level_names);
         }
-        free(keymap->types);
+        സ്വതന്ത്രം(keymap->types);
     }
-    for (darray_size_t k = 0; k < keymap->num_sym_interprets; k++) {
+    വേണ്ടി (darray_size_t k = 0; k < keymap->അക്കം_sym_interprets; k++) {
         clear_interpret(&keymap->sym_interprets[k]);
     }
-    free(keymap->sym_interprets);
-    free(keymap->modmaps);
-    free(keymap->key_aliases);
-    free(keymap->group_names);
-    free(keymap->keycodes_section_name);
-    free(keymap->symbols_section_name);
-    free(keymap->types_section_name);
-    free(keymap->compat_section_name);
+    സ്വതന്ത്രം(keymap->sym_interprets);
+    സ്വതന്ത്രം(keymap->modmaps);
+    സ്വതന്ത്രം(keymap->താക്കോൽ_aliases);
+    സ്വതന്ത്രം(keymap->group_names);
+    സ്വതന്ത്രം(keymap->keycodes_section_name);
+    സ്വതന്ത്രം(keymap->symbols_section_name);
+    സ്വതന്ത്രം(keymap->types_section_name);
+    സ്വതന്ത്രം(keymap->compat_section_name);
     xkb_context_unref(keymap->ctx);
-    free(keymap);
+    സ്വതന്ത്രം(keymap);
 }
 
-static const struct xkb_keymap_format_ops *
-get_keymap_format_ops(enum xkb_keymap_format format)
+സ്ഥിതം സ്ഥിരം ഘടന xkb_keymap_format_ops *
+get_keymap_format_ops(എണ്ണൽ xkb_keymap_format format)
 {
-    static const struct xkb_keymap_format_ops *keymap_format_ops[] = {
+    സ്ഥിതം സ്ഥിരം ഘടന xkb_keymap_format_ops *keymap_format_ops[] = {
         [XKB_KEYMAP_FORMAT_TEXT_V1] = &text_v1_keymap_format_ops,
         [XKB_KEYMAP_FORMAT_TEXT_V2] = &text_v1_keymap_format_ops,
     };
 
-    if ((int) format < 0 || (int) format >= (int) ARRAY_SIZE(keymap_format_ops))
-        return NULL;
+    എങ്കിൽ ((പൂർണ്ണസംഖ്യ) format < 0 || (പൂർണ്ണസംഖ്യ) format >= (പൂർണ്ണസംഖ്യ) ARRAY_SIZE(keymap_format_ops))
+        തിരികെ ശൂന്യ;
 
-    return keymap_format_ops[(int) format];
+    തിരികെ keymap_format_ops[(പൂർണ്ണസംഖ്യ) format];
 }
 
-struct xkb_keymap *
-xkb_keymap_new_from_rmlvo(const struct xkb_rmlvo_builder *rmlvo,
-                          enum xkb_keymap_format format,
-                          enum xkb_keymap_compile_flags flags)
+ഘടന xkb_keymap *
+xkb_keymap_new_from_rmlvo(സ്ഥിരം ഘടന xkb_rmlvo_builder *rmlvo,
+                          എണ്ണൽ xkb_keymap_format format,
+                          എണ്ണൽ xkb_keymap_compile_flags flags)
 {
-    const struct xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
-    if (!ops || !ops->keymap_new_from_rmlvo) {
+    സ്ഥിരം ഘടന xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
+    എങ്കിൽ (!ops || !ops->keymap_new_from_rmlvo) {
         log_err_func(rmlvo->ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", format);
-        return NULL;
+        തിരികെ ശൂന്യ;
     }
 
-    struct xkb_keymap *keymap = xkb_keymap_new(rmlvo->ctx, __func__, format,
+    ഘടന xkb_keymap *keymap = xkb_keymap_new(rmlvo->ctx, __func__, format,
                                                flags);
-    if (!keymap)
-        return NULL;
+    എങ്കിൽ (!keymap)
+        തിരികെ ശൂന്യ;
 
-    if (!ops->keymap_new_from_rmlvo(keymap, rmlvo)) {
+    എങ്കിൽ (!ops->keymap_new_from_rmlvo(keymap, rmlvo)) {
         xkb_keymap_unref(keymap);
-        return NULL;
+        തിരികെ ശൂന്യ;
     }
 
-    return keymap;
+    തിരികെ keymap;
 }
 
-struct xkb_keymap *
-xkb_keymap_new_from_names2(struct xkb_context *ctx,
-                           const struct xkb_rule_names *rmlvo_in,
-                           enum xkb_keymap_format format,
-                           enum xkb_keymap_compile_flags flags)
+ഘടന xkb_keymap *
+xkb_keymap_new_from_names2(ഘടന xkb_context *ctx,
+                           സ്ഥിരം ഘടന xkb_rule_names *rmlvo_in,
+                           എണ്ണൽ xkb_keymap_format format,
+                           എണ്ണൽ xkb_keymap_compile_flags flags)
 {
-    const struct xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
-    if (!ops || !ops->keymap_new_from_names) {
+    സ്ഥിരം ഘടന xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
+    എങ്കിൽ (!ops || !ops->keymap_new_from_names) {
         log_err_func(ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", format);
-        return NULL;
+        തിരികെ ശൂന്യ;
     }
 
-    struct xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
-    if (!keymap)
-        return NULL;
+    ഘടന xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
+    എങ്കിൽ (!keymap)
+        തിരികെ ശൂന്യ;
 
-    struct xkb_rule_names rmlvo = {0};
-    if (rmlvo_in)
+    ഘടന xkb_rule_names rmlvo = {0};
+    എങ്കിൽ (rmlvo_in)
         rmlvo = *rmlvo_in;
     xkb_context_sanitize_rule_names(ctx, &rmlvo);
 
-    if (!ops->keymap_new_from_names(keymap, &rmlvo)) {
+    എങ്കിൽ (!ops->keymap_new_from_names(keymap, &rmlvo)) {
         xkb_keymap_unref(keymap);
-        return NULL;
+        തിരികെ ശൂന്യ;
     }
 
-    return keymap;
+    തിരികെ keymap;
 }
 
 
-struct xkb_keymap *
-xkb_keymap_new_from_names(struct xkb_context *ctx,
-                          const struct xkb_rule_names *rmlvo_in,
-                          enum xkb_keymap_compile_flags flags)
+ഘടന xkb_keymap *
+xkb_keymap_new_from_names(ഘടന xkb_context *ctx,
+                          സ്ഥിരം ഘടന xkb_rule_names *rmlvo_in,
+                          എണ്ണൽ xkb_keymap_compile_flags flags)
 {
-    return xkb_keymap_new_from_names2(ctx, rmlvo_in,
+    തിരികെ xkb_keymap_new_from_names2(ctx, rmlvo_in,
                                       XKB_KEYMAP_FORMAT_TEXT_V2, flags);
 }
 
-struct xkb_keymap *
-xkb_keymap_new_from_string(struct xkb_context *ctx,
-                           const char *string,
-                           enum xkb_keymap_format format,
-                           enum xkb_keymap_compile_flags flags)
+ഘടന xkb_keymap *
+xkb_keymap_new_from_string(ഘടന xkb_context *ctx,
+                           സ്ഥിരം അക്ഷരം *string,
+                           എണ്ണൽ xkb_keymap_format format,
+                           എണ്ണൽ xkb_keymap_compile_flags flags)
 {
-    return xkb_keymap_new_from_buffer(ctx, string, strlen(string),
+    തിരികെ xkb_keymap_new_from_buffer(ctx, string, strlen(string),
                                       format, flags);
 }
 
-struct xkb_keymap *
-xkb_keymap_new_from_buffer(struct xkb_context *ctx,
-                           const char *buffer, size_t length,
-                           enum xkb_keymap_format format,
-                           enum xkb_keymap_compile_flags flags)
+ഘടന xkb_keymap *
+xkb_keymap_new_from_buffer(ഘടന xkb_context *ctx,
+                           സ്ഥിരം അക്ഷരം *buffer, size_t length,
+                           എണ്ണൽ xkb_keymap_format format,
+                           എണ്ണൽ xkb_keymap_compile_flags flags)
 {
-    const struct xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
-    if (!ops || !ops->keymap_new_from_string) {
+    സ്ഥിരം ഘടന xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
+    എങ്കിൽ (!ops || !ops->keymap_new_from_string) {
         log_err_func(ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", format);
-        return NULL;
+        തിരികെ ശൂന്യ;
     }
 
-    if (!buffer) {
+    എങ്കിൽ (!buffer) {
         log_err_func1(ctx, XKB_LOG_MESSAGE_NO_ID,
                       "no buffer specified\n");
-        return NULL;
+        തിരികെ ശൂന്യ;
     }
 
-    struct xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
-    if (!keymap)
-        return NULL;
+    ഘടന xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
+    എങ്കിൽ (!keymap)
+        തിരികെ ശൂന്യ;
 
     /* Allow a zero-terminated string as a buffer */
-    if (length > 0 && buffer[length - 1] == '\0')
+    എങ്കിൽ (length > 0 && buffer[length - 1] == '\0')
         length--;
 
-    if (!ops->keymap_new_from_string(keymap, buffer, length)) {
+    എങ്കിൽ (!ops->keymap_new_from_string(keymap, buffer, length)) {
         xkb_keymap_unref(keymap);
-        return NULL;
+        തിരികെ ശൂന്യ;
     }
 
-    return keymap;
+    തിരികെ keymap;
 }
 
-struct xkb_keymap *
-xkb_keymap_new_from_file(struct xkb_context *ctx,
+ഘടന xkb_keymap *
+xkb_keymap_new_from_file(ഘടന xkb_context *ctx,
                          FILE *file,
-                         enum xkb_keymap_format format,
-                         enum xkb_keymap_compile_flags flags)
+                         എണ്ണൽ xkb_keymap_format format,
+                         എണ്ണൽ xkb_keymap_compile_flags flags)
 {
-    const struct xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
-    if (!ops || !ops->keymap_new_from_file) {
+    സ്ഥിരം ഘടന xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
+    എങ്കിൽ (!ops || !ops->keymap_new_from_file) {
         log_err_func(ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", format);
-        return NULL;
+        തിരികെ ശൂന്യ;
     }
 
-    if (!file) {
+    എങ്കിൽ (!file) {
         log_err_func1(ctx, XKB_LOG_MESSAGE_NO_ID,
                       "no file specified\n");
-        return NULL;
+        തിരികെ ശൂന്യ;
     }
 
-    struct xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
-    if (!keymap)
-        return NULL;
+    ഘടന xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
+    എങ്കിൽ (!keymap)
+        തിരികെ ശൂന്യ;
 
-    if (!ops->keymap_new_from_file(keymap, file)) {
+    എങ്കിൽ (!ops->keymap_new_from_file(keymap, file)) {
         xkb_keymap_unref(keymap);
-        return NULL;
+        തിരികെ ശൂന്യ;
     }
 
-    return keymap;
+    തിരികെ keymap;
 }
 
 /** Check ABI compatibility */
 // NOLINTBEGIN(bugprone-assignment-in-selection-statement)
-static enum xkb_status
+സ്ഥിതം എണ്ണൽ xkb_status
 check_keymap_serialize_abi(
-    struct xkb_context * restrict ctx,
-    const char * restrict func,
-    const struct xkb_keymap_serialize_config * restrict config,
-    const struct xkb_keymap_serialize_result * restrict result
+    ഘടന xkb_context * restrict ctx,
+    സ്ഥിരം അക്ഷരം * restrict func,
+    സ്ഥിരം ഘടന xkb_keymap_serialize_config * restrict config,
+    സ്ഥിരം ഘടന xkb_keymap_serialize_result * restrict result
 )
 {
-    enum xkb_status status;
-    if ((status = xkb_check_keymap_abi(config)) ||
+    എണ്ണൽ xkb_status status;
+    എങ്കിൽ ((status = xkb_check_keymap_abi(config)) ||
         (status = xkb_check_keymap_abi(result))) {
         xkb_log_abi_error(ctx, func, status);
     }
-    return status;
+    തിരികെ status;
 }
 // NOLINTEND(bugprone-assignment-in-selection-statement)
 
-enum xkb_status
-xkb_keymap_serialize(const struct xkb_keymap *keymap,
-                     const struct xkb_keymap_serialize_config *config,
-                     struct xkb_keymap_serialize_result *result)
+എണ്ണൽ xkb_status
+xkb_keymap_serialize(സ്ഥിരം ഘടന xkb_keymap *keymap,
+                     സ്ഥിരം ഘടന xkb_keymap_serialize_config *config,
+                     ഘടന xkb_keymap_serialize_result *result)
 {
     /* Check ABI compatibility */
-    const enum xkb_status status =
+    സ്ഥിരം എണ്ണൽ xkb_status status =
         check_keymap_serialize_abi(keymap->ctx, __func__, config, result);
-    if (status != XKB_SUCCESS)
-        return status;
+    എങ്കിൽ (status != XKB_SUCCESS)
+        തിരികെ status;
 
-    struct xkb_keymap_serialize_config new_config = *config;
+    ഘടന xkb_keymap_serialize_config new_config = *config;
 
-    const enum xkb_keymap_serialize_flags invalid_flags = (
+    സ്ഥിരം എണ്ണൽ xkb_keymap_serialize_flags invalid_flags = (
         new_config.flags &
-        ~(enum xkb_keymap_serialize_flags)XKB_KEYMAP_SERIALIZE_FLAGS_VALUES
+        ~(എണ്ണൽ xkb_keymap_serialize_flags)XKB_KEYMAP_SERIALIZE_FLAGS_മൂല്യങ്ങൾ
     );
-    if (invalid_flags) {
+    എങ്കിൽ (invalid_flags) {
         log_err_func(keymap->ctx,
                      XKB_ERROR_UNSUPPORTED_KEYMAP_SERIALIZATION_FLAGS_,
                      "unrecognized serialization flags: %#x\n",
                      invalid_flags);
-        return XKB_ERROR_UNSUPPORTED_KEYMAP_SERIALIZATION_FLAGS;
+        തിരികെ XKB_ERROR_UNSUPPORTED_KEYMAP_SERIALIZATION_FLAGS;
     }
 
-    if (new_config.format == XKB_KEYMAP_USE_ORIGINAL_FORMAT)
+    എങ്കിൽ (new_config.format == XKB_KEYMAP_USE_ORIGINAL_FORMAT)
         new_config.format = keymap->format;
 
-    const struct xkb_keymap_format_ops * const ops =
+    സ്ഥിരം ഘടന xkb_keymap_format_ops * സ്ഥിരം ops =
         get_keymap_format_ops(new_config.format);
-    if (!ops || !ops->keymap_serialize) {
+    എങ്കിൽ (!ops || !ops->keymap_serialize) {
         log_err_func(keymap->ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", new_config.format);
-        return XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT;
+        തിരികെ XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT;
     }
 
-    const xkb_layout_mask_t all_layouts =
-        (xkb_layout_mask_t)((UINT64_C(1) << keymap->num_groups) - 1);
-    if (!new_config.layouts) {
+    സ്ഥിരം xkb_layout_mask_t all_layouts =
+        (xkb_layout_mask_t)((UINT64_C(1) << keymap->അക്കം_groups) - 1);
+    എങ്കിൽ (!new_config.layouts) {
         new_config.layouts = all_layouts;
     }
 
-    if (new_config.layouts & ~all_layouts) {
+    എങ്കിൽ (new_config.layouts & ~all_layouts) {
         log_err_func(keymap->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                      "unsupported layout mask: "
                      "expected subset of 0x%08"PRIx32", got: 0x%08"PRIx32"\n",
                      all_layouts, new_config.layouts);
-        return XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX;
+        തിരികെ XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX;
     }
 
-    const xkb_layout_index_t max_groups = format_max_groups(config->format);
-    const xkb_layout_index_t num_groups =
+    സ്ഥിരം xkb_layout_index_t max_groups = format_max_groups(config->format);
+    സ്ഥിരം xkb_layout_index_t അക്കം_groups =
         (xkb_layout_index_t)popcount32(new_config.layouts);
 
-    if (num_groups > max_groups) {
-        const bool strict =
+    എങ്കിൽ (അക്കം_groups > max_groups) {
+        സ്ഥിരം bool strict =
             (new_config.flags & XKB_KEYMAP_SERIALIZE_STRICT_MODE);
         xkb_log_with_code(
             keymap->ctx,
             (strict ? XKB_LOG_LEVEL_ERROR : XKB_LOG_LEVEL_WARNING),
             XKB_LOG_VERBOSITY_MINIMAL,
-            XKB_ERROR_LAYOUT_COUNT_LIMIT_EXCEEDED_,
+            XKB_ERROR_LAYOUT_എണ്ണം_LIMIT_EXCEEDED_2,
             "Cannot serialize %"PRIu32" groups in keymap format %d: "
             "maximum is %"PRIu32"%s\n",
-            num_groups, config->format, max_groups,
+            അക്കം_groups, config->format, max_groups,
             (strict ? "" : "; discarding unsupported groups")
         );
-        if (strict) {
-            return XKB_ERROR_LAYOUT_COUNT_LIMIT_EXCEEDED;
-        } else {
+        എങ്കിൽ (strict) {
+            തിരികെ XKB_ERROR_LAYOUT_എണ്ണം_LIMIT_EXCEEDED;
+        } അല്ലെങ്കിൽ {
             new_config.layouts =
                 keep_lowest_n_set_bits(new_config.layouts, max_groups);
         }
@@ -354,44 +354,44 @@ xkb_keymap_serialize(const struct xkb_keymap *keymap,
 
     log_dbg(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
             "Serializing group mask 0x%"PRIx32" (total: %"PRIu32")\n",
-            new_config.layouts, num_groups);
+            new_config.layouts, അക്കം_groups);
 
-    if (new_config.layouts != all_layouts) {
+    എങ്കിൽ (new_config.layouts != all_layouts) {
         /*
          * If some layouts are discarded, then interprets may not trigger
          * properly. Avoid this by requiring explicit values.
          */
-        new_config.flags |= (XKB_KEYMAP_SERIALIZE_EXPLICIT_KEY_VALUES |
+        new_config.flags |= (XKB_KEYMAP_SERIALIZE_EXPLICIT_താക്കോൽ_മൂല്യങ്ങൾ |
                              XKB_KEYMAP_SERIALIZE_EXPLICIT_VMODS);
     }
 
-    return ops->keymap_serialize(keymap, &new_config, result);
+    തിരികെ ops->keymap_serialize(keymap, &new_config, result);
 }
 
-char *
-xkb_keymap_get_as_string2(struct xkb_keymap *keymap,
-                          enum xkb_keymap_format format,
-                          enum xkb_keymap_serialize_flags flags)
+അക്ഷരം *
+xkb_keymap_get_as_string2(ഘടന xkb_keymap *keymap,
+                          എണ്ണൽ xkb_keymap_format format,
+                          എണ്ണൽ xkb_keymap_serialize_flags flags)
 {
-    const struct xkb_keymap_serialize_config config = {
-        .size = sizeof(config),
+    സ്ഥിരം ഘടന xkb_keymap_serialize_config config = {
+        .size = വലുപ്പം(config),
         .flags = flags,
         .format = format,
         .layouts = 0,
     };
 
-    struct xkb_keymap_serialize_result result = { .size = sizeof(result) };
+    ഘടന xkb_keymap_serialize_result result = { .size = വലുപ്പം(result) };
 
-    return (xkb_keymap_serialize(keymap, &config, &result) == XKB_SUCCESS)
+    തിരികെ (xkb_keymap_serialize(keymap, &config, &result) == XKB_SUCCESS)
         ? result.serialized
-        : NULL;
+        : ശൂന്യ;
 }
 
-char *
-xkb_keymap_get_as_string(struct xkb_keymap *keymap,
-                         enum xkb_keymap_format format)
+അക്ഷരം *
+xkb_keymap_get_as_string(ഘടന xkb_keymap *keymap,
+                         എണ്ണൽ xkb_keymap_format format)
 {
-    return xkb_keymap_get_as_string2(keymap, format,
+    തിരികെ xkb_keymap_get_as_string2(keymap, format,
                                      XKB_KEYMAP_SERIALIZE_NO_FLAGS);
 }
 
@@ -399,31 +399,31 @@ xkb_keymap_get_as_string(struct xkb_keymap *keymap,
  * Returns the total number of modifiers active in the keymap.
  */
 xkb_mod_index_t
-xkb_keymap_num_mods(struct xkb_keymap *keymap)
+xkb_keymap_അക്കം_mods(ഘടന xkb_keymap *keymap)
 {
-    return keymap->mods.num_mods;
+    തിരികെ keymap->mods.അക്കം_mods;
 }
 
 /**
  * Return the name for a given modifier.
  */
-const char *
-xkb_keymap_mod_get_name(struct xkb_keymap *keymap, xkb_mod_index_t idx)
+സ്ഥിരം അക്ഷരം *
+xkb_keymap_mod_get_name(ഘടന xkb_keymap *keymap, xkb_mod_index_t idx)
 {
-    if (idx >= keymap->mods.num_mods)
-        return NULL;
+    എങ്കിൽ (idx >= keymap->mods.അക്കം_mods)
+        തിരികെ ശൂന്യ;
 
-    return xkb_atom_text(keymap->ctx, keymap->mods.mods[idx].name);
+    തിരികെ xkb_atom_text(keymap->ctx, keymap->mods.mods[idx].name);
 }
 
 /**
  * Returns the index for a named modifier.
  */
 xkb_mod_index_t
-xkb_keymap_mod_get_index(struct xkb_keymap *keymap, const char *name)
+xkb_keymap_mod_get_index(ഘടന xkb_keymap *keymap, സ്ഥിരം അക്ഷരം *name)
 {
-    const xkb_atom_t atom = xkb_atom_lookup(keymap->ctx, name);
-    return (atom == XKB_ATOM_NONE)
+    സ്ഥിരം xkb_atom_t atom = xkb_atom_lookup(keymap->ctx, name);
+    തിരികെ (atom == XKB_ATOM_NONE)
         ? XKB_MOD_INVALID
         : XkbModNameToIndex(&keymap->mods, atom, MOD_BOTH);
 }
@@ -432,10 +432,10 @@ xkb_keymap_mod_get_index(struct xkb_keymap *keymap, const char *name)
  * Return the canonical mapping of a named modifier.
  */
 xkb_mod_mask_t
-xkb_keymap_mod_get_mask(struct xkb_keymap *keymap, const char* name)
+xkb_keymap_mod_get_mask(ഘടന xkb_keymap *keymap, സ്ഥിരം അക്ഷരം* name)
 {
-    const xkb_mod_index_t idx = xkb_keymap_mod_get_index(keymap, name);
-    return (idx >= keymap->mods.num_mods)
+    സ്ഥിരം xkb_mod_index_t idx = xkb_keymap_mod_get_index(keymap, name);
+    തിരികെ (idx >= keymap->mods.അക്കം_mods)
         ? 0
         : keymap->mods.mods[idx].mapping;
 }
@@ -444,9 +444,9 @@ xkb_keymap_mod_get_mask(struct xkb_keymap *keymap, const char* name)
  * Return the canonical mapping of a given modifier.
  */
 xkb_mod_mask_t
-xkb_keymap_mod_get_mask2(struct xkb_keymap *keymap, xkb_mod_index_t idx)
+xkb_keymap_mod_get_mask2(ഘടന xkb_keymap *keymap, xkb_mod_index_t idx)
 {
-    return (idx >= keymap->mods.num_mods)
+    തിരികെ (idx >= keymap->mods.അക്കം_mods)
         ? 0
         : keymap->mods.mods[idx].mapping;
 }
@@ -455,138 +455,138 @@ xkb_keymap_mod_get_mask2(struct xkb_keymap *keymap, xkb_mod_index_t idx)
  * Return the total number of active groups in the keymap.
  */
 xkb_layout_index_t
-xkb_keymap_num_layouts(struct xkb_keymap *keymap)
+xkb_keymap_അക്കം_layouts(ഘടന xkb_keymap *keymap)
 {
-    return keymap->num_groups;
+    തിരികെ keymap->അക്കം_groups;
 }
 
 /**
  * Returns the name for a given group.
  */
-const char *
-xkb_keymap_layout_get_name(struct xkb_keymap *keymap, xkb_layout_index_t idx)
+സ്ഥിരം അക്ഷരം *
+xkb_keymap_layout_get_name(ഘടന xkb_keymap *keymap, xkb_layout_index_t idx)
 {
-    if (idx >= keymap->num_group_names)
-        return NULL;
+    എങ്കിൽ (idx >= keymap->അക്കം_group_names)
+        തിരികെ ശൂന്യ;
 
-    return xkb_atom_text(keymap->ctx, keymap->group_names[idx]);
+    തിരികെ xkb_atom_text(keymap->ctx, keymap->group_names[idx]);
 }
 
 /**
  * Returns the index for a named layout.
  */
 xkb_layout_index_t
-xkb_keymap_layout_get_index(struct xkb_keymap *keymap, const char *name)
+xkb_keymap_layout_get_index(ഘടന xkb_keymap *keymap, സ്ഥിരം അക്ഷരം *name)
 {
     xkb_atom_t atom = xkb_atom_lookup(keymap->ctx, name);
     xkb_layout_index_t i;
 
-    if (atom == XKB_ATOM_NONE)
-        return XKB_LAYOUT_INVALID;
+    എങ്കിൽ (atom == XKB_ATOM_NONE)
+        തിരികെ XKB_LAYOUT_INVALID;
 
-    for (i = 0; i < keymap->num_group_names; i++)
-        if (keymap->group_names[i] == atom)
-            return i;
+    വേണ്ടി (i = 0; i < keymap->അക്കം_group_names; i++)
+        എങ്കിൽ (keymap->group_names[i] == atom)
+            തിരികെ i;
 
-    return XKB_LAYOUT_INVALID;
+    തിരികെ XKB_LAYOUT_INVALID;
 }
 
 /**
  * Returns the number of layouts active for a particular key.
  */
 xkb_layout_index_t
-xkb_keymap_num_layouts_for_key(struct xkb_keymap *keymap, xkb_keycode_t kc)
+xkb_keymap_അക്കം_layouts_for_താക്കോൽ(ഘടന xkb_keymap *keymap, xkb_keycode_t kc)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    സ്ഥിരം ഘടന xkb_താക്കോൽ *താക്കോൽ = Xkb_താക്കോൽ(keymap, kc);
 
-    if (!key)
-        return 0;
+    എങ്കിൽ (!താക്കോൽ)
+        തിരികെ 0;
 
-    return key->num_groups;
+    തിരികെ താക്കോൽ->അക്കം_groups;
 }
 
 /**
  * Returns the number of levels active for a particular key and layout.
  */
 xkb_level_index_t
-xkb_keymap_num_levels_for_key(struct xkb_keymap *keymap, xkb_keycode_t kc,
+xkb_keymap_അക്കം_levels_for_താക്കോൽ(ഘടന xkb_keymap *keymap, xkb_keycode_t kc,
                               xkb_layout_index_t layout)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    സ്ഥിരം ഘടന xkb_താക്കോൽ *താക്കോൽ = Xkb_താക്കോൽ(keymap, kc);
 
-    if (!key)
-        return 0;
+    എങ്കിൽ (!താക്കോൽ)
+        തിരികെ 0;
 
-    layout = xkb_keymap_key_effective_layout(key, layout);
-    if (layout == XKB_LAYOUT_INVALID)
-        return 0;
+    layout = xkb_keymap_താക്കോൽ_effective_layout(താക്കോൽ, layout);
+    എങ്കിൽ (layout == XKB_LAYOUT_INVALID)
+        തിരികെ 0;
 
-    return XkbKeyNumLevels(key, layout);
+    തിരികെ Xkb_താക്കോൽ_അക്കം_Levels(താക്കോൽ, layout);
 }
 
 /**
  * Return the total number of LEDs in the keymap.
  */
 xkb_led_index_t
-xkb_keymap_num_leds(struct xkb_keymap *keymap)
+xkb_keymap_അക്കം_leds(ഘടന xkb_keymap *keymap)
 {
-    return keymap->num_leds;
+    തിരികെ keymap->അക്കം_leds;
 }
 
 /**
  * Returns the name for a given LED.
  */
-const char *
-xkb_keymap_led_get_name(struct xkb_keymap *keymap, xkb_led_index_t idx)
+സ്ഥിരം അക്ഷരം *
+xkb_keymap_led_get_name(ഘടന xkb_keymap *keymap, xkb_led_index_t idx)
 {
-    if (idx >= keymap->num_leds)
-        return NULL;
+    എങ്കിൽ (idx >= keymap->അക്കം_leds)
+        തിരികെ ശൂന്യ;
 
-    return xkb_atom_text(keymap->ctx, keymap->leds[idx].name);
+    തിരികെ xkb_atom_text(keymap->ctx, keymap->leds[idx].name);
 }
 
 /**
  * Returns the index for a named LED.
  */
 xkb_led_index_t
-xkb_keymap_led_get_index(struct xkb_keymap *keymap, const char *name)
+xkb_keymap_led_get_index(ഘടന xkb_keymap *keymap, സ്ഥിരം അക്ഷരം *name)
 {
     xkb_atom_t atom = xkb_atom_lookup(keymap->ctx, name);
     xkb_led_index_t i;
-    const struct xkb_led *led;
+    സ്ഥിരം ഘടന xkb_led *led;
 
-    if (atom == XKB_ATOM_NONE)
-        return XKB_LED_INVALID;
+    എങ്കിൽ (atom == XKB_ATOM_NONE)
+        തിരികെ XKB_LED_INVALID;
 
     xkb_leds_enumerate(i, led, keymap)
-        if (led->name == atom)
-            return i;
+        എങ്കിൽ (led->name == atom)
+            തിരികെ i;
 
-    return XKB_LED_INVALID;
+    തിരികെ XKB_LED_INVALID;
 }
 
 size_t
-xkb_keymap_key_get_mods_for_level(struct xkb_keymap *keymap,
+xkb_keymap_താക്കോൽ_get_mods_for_level(ഘടന xkb_keymap *keymap,
                                   xkb_keycode_t kc,
                                   xkb_layout_index_t layout,
                                   xkb_level_index_t level,
                                   xkb_mod_mask_t *masks_out,
                                   size_t masks_size)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
-    if (!key)
-        return 0;
+    സ്ഥിരം ഘടന xkb_താക്കോൽ *താക്കോൽ = Xkb_താക്കോൽ(keymap, kc);
+    എങ്കിൽ (!താക്കോൽ)
+        തിരികെ 0;
 
-    layout = xkb_keymap_key_effective_layout(key, layout);
-    if (layout == XKB_LAYOUT_INVALID)
-        return 0;
+    layout = xkb_keymap_താക്കോൽ_effective_layout(താക്കോൽ, layout);
+    എങ്കിൽ (layout == XKB_LAYOUT_INVALID)
+        തിരികെ 0;
 
-    if (level >= XkbKeyNumLevels(key, layout))
-        return 0;
+    എങ്കിൽ (level >= Xkb_താക്കോൽ_അക്കം_Levels(താക്കോൽ, layout))
+        തിരികെ 0;
 
-    const struct xkb_key_type *type = key->groups[layout].type;
+    സ്ഥിരം ഘടന xkb_താക്കോൽ_type *type = താക്കോൽ->groups[layout].type;
 
-    size_t count = 0;
+    size_t എണ്ണം = 0;
 
     /*
      * If the active set of modifiers doesn't match any explicit entry of
@@ -599,244 +599,244 @@ xkb_keymap_key_get_mods_for_level(struct xkb_keymap *keymap,
      * This is almost always what we want. If applicable, given it priority
      * over other ways to generate the level.
      */
-    if (level == 0) {
+    എങ്കിൽ (level == 0) {
         bool empty_mapped = false;
-        for (darray_size_t i = 0; i < type->num_entries && count < masks_size; i++)
-            if (entry_is_active(&type->entries[i]) &&
+        വേണ്ടി (darray_size_t i = 0; i < type->അക്കം_entries && എണ്ണം < masks_size; i++)
+            എങ്കിൽ (entry_is_active(&type->entries[i]) &&
                 type->entries[i].mods.mask == 0) {
                 empty_mapped = true;
-                break;
+                നിർത്തുക;
             }
-        if (!empty_mapped && count < masks_size) {
-            masks_out[count++] = 0;
+        എങ്കിൽ (!empty_mapped && എണ്ണം < masks_size) {
+            masks_out[എണ്ണം++] = 0;
         }
     }
 
     /* Now search explicit mappings. */
-    for (darray_size_t i = 0; i < type->num_entries && count < masks_size; i++) {
-        if (entry_is_active(&type->entries[i]) &&
+    വേണ്ടി (darray_size_t i = 0; i < type->അക്കം_entries && എണ്ണം < masks_size; i++) {
+        എങ്കിൽ (entry_is_active(&type->entries[i]) &&
             type->entries[i].level == level) {
-            masks_out[count++] = type->entries[i].mods.mask;
+            masks_out[എണ്ണം++] = type->entries[i].mods.mask;
         }
     }
 
-    return count;
+    തിരികെ എണ്ണം;
 }
 
-struct xkb_level *
-xkb_keymap_key_get_level(struct xkb_keymap *keymap, const struct xkb_key *key,
+ഘടന xkb_level *
+xkb_keymap_താക്കോൽ_get_level(ഘടന xkb_keymap *keymap, സ്ഥിരം ഘടന xkb_താക്കോൽ *താക്കോൽ,
                          xkb_layout_index_t layout, xkb_level_index_t level)
 {
-    layout = xkb_keymap_key_effective_layout(key, layout);
-    if (layout == XKB_LAYOUT_INVALID)
-        return NULL;
+    layout = xkb_keymap_താക്കോൽ_effective_layout(താക്കോൽ, layout);
+    എങ്കിൽ (layout == XKB_LAYOUT_INVALID)
+        തിരികെ ശൂന്യ;
 
-    if (level >= XkbKeyNumLevels(key, layout))
-        return NULL;
+    എങ്കിൽ (level >= Xkb_താക്കോൽ_അക്കം_Levels(താക്കോൽ, layout))
+        തിരികെ ശൂന്യ;
 
-    return &key->groups[layout].levels[level];
+    തിരികെ &താക്കോൽ->groups[layout].levels[level];
 }
 
 /**
  * As below, but takes an explicit layout/level rather than state.
  */
-int
-xkb_keymap_key_get_syms_by_level(struct xkb_keymap *keymap,
+പൂർണ്ണസംഖ്യ
+xkb_keymap_താക്കോൽ_get_syms_by_level(ഘടന xkb_keymap *keymap,
                                  xkb_keycode_t kc,
                                  xkb_layout_index_t layout,
                                  xkb_level_index_t level,
-                                 const xkb_keysym_t **syms_out)
+                                 സ്ഥിരം xkb_keysym_t **syms_out)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    സ്ഥിരം ഘടന xkb_താക്കോൽ *താക്കോൽ = Xkb_താക്കോൽ(keymap, kc);
 
-    if (!key)
-        goto err;
+    എങ്കിൽ (!താക്കോൽ)
+        പോകുക err;
 
-    const struct xkb_level* const leveli =
-        xkb_keymap_key_get_level(keymap, key, layout, level);
+    സ്ഥിരം ഘടന xkb_level* സ്ഥിരം leveli =
+        xkb_keymap_താക്കോൽ_get_level(keymap, താക്കോൽ, layout, level);
 
-    if (!leveli)
-        goto err;
+    എങ്കിൽ (!leveli)
+        പോകുക err;
 
-    const xkb_keysym_count_t num_syms = leveli->num_syms;
-    if (num_syms == 0)
-        goto err;
+    സ്ഥിരം xkb_keysym_എണ്ണം_t അക്കം_syms = leveli->അക്കം_syms;
+    എങ്കിൽ (അക്കം_syms == 0)
+        പോകുക err;
 
-    if (num_syms == 1)
+    എങ്കിൽ (അക്കം_syms == 1)
         *syms_out = &leveli->s.sym;
-    else
+    അല്ലെങ്കിൽ
         *syms_out = leveli->s.syms;
 
-    return (int) num_syms;
+    തിരികെ (പൂർണ്ണസംഖ്യ) അക്കം_syms;
 
 err:
-    *syms_out = NULL;
-    return 0;
+    *syms_out = ശൂന്യ;
+    തിരികെ 0;
 }
 
 xkb_keycode_t
-xkb_keymap_min_keycode(struct xkb_keymap *keymap)
+xkb_keymap_min_keycode(ഘടന xkb_keymap *keymap)
 {
-    return keymap->min_key_code;
+    തിരികെ keymap->min_താക്കോൽ_code;
 }
 
 xkb_keycode_t
-xkb_keymap_max_keycode(struct xkb_keymap *keymap)
+xkb_keymap_max_keycode(ഘടന xkb_keymap *keymap)
 {
-    return keymap->max_key_code;
+    തിരികെ keymap->max_താക്കോൽ_code;
 }
 
-static enum xkb_status
-keymap_key_iterator_config_check(
-    struct xkb_context * restrict ctx,
-    const char *func,
-    const struct xkb_keymap_key_iterator_config * restrict config
+സ്ഥിതം എണ്ണൽ xkb_status
+keymap_താക്കോൽ_iterator_config_check(
+    ഘടന xkb_context * restrict ctx,
+    സ്ഥിരം അക്ഷരം *func,
+    സ്ഥിരം ഘടന xkb_keymap_താക്കോൽ_iterator_config * restrict config
 )
 {
     /* Check ABI compatibility */
-    const enum xkb_status abi_error = xkb_check_keymap_abi(config);
-    if (abi_error) {
+    സ്ഥിരം എണ്ണൽ xkb_status abi_error = xkb_check_keymap_abi(config);
+    എങ്കിൽ (abi_error) {
         xkb_log_abi_error(ctx, func, abi_error);
-        return abi_error;
+        തിരികെ abi_error;
     }
 
     /* Sanitize input: flags */
-    const uint32_t invalid_flags =
-        (config->flags & ~(uint32_t)XKB_KEYMAP_KEY_ITERATOR_FLAGS_VALUES);
-    if (invalid_flags) {
-        log_err(ctx, XKB_ERROR_UNSUPPORTED_KEY_ITERATOR_FLAGS_,
+    സ്ഥിരം uint32_t invalid_flags =
+        (config->flags & ~(uint32_t)XKB_KEYMAP_താക്കോൽ_ITERATOR_FLAGS_മൂല്യങ്ങൾ);
+    എങ്കിൽ (invalid_flags) {
+        log_err(ctx, XKB_ERROR_UNSUPPORTED_താക്കോൽ_ITERATOR_FLAGS_2,
                 "%s: Unsupported keymap iterator flags: 0x%"PRIx32"\n",
                 func, invalid_flags);
-        return XKB_ERROR_UNSUPPORTED_KEY_ITERATOR_FLAGS;
+        തിരികെ XKB_ERROR_UNSUPPORTED_താക്കോൽ_ITERATOR_FLAGS;
     }
 
     /* Sanitize input: start */
-    if (config->start > XKB_KEYCODE_MAX)
-        return XKB_ERROR_INVALID_KEYCODE;
+    എങ്കിൽ (config->start > XKB_KEYCODE_MAX)
+        തിരികെ XKB_ERROR_INVALID_KEYCODE;
 
-    return XKB_SUCCESS;
+    തിരികെ XKB_SUCCESS;
 }
 
-static_assert(XKB_KEYMAP_KEY_ITERATOR_FLAGS_VALUES <=
-              (int)XKB_POINTER_TAG_MASK,
+static_assert(XKB_KEYMAP_താക്കോൽ_ITERATOR_FLAGS_മൂല്യങ്ങൾ <=
+              (പൂർണ്ണസംഖ്യ)XKB_POINTER_TAG_MASK,
               "Cannot tag cursor pointer with flags");
 
 #define iter_init_keymap(i, ptr, flags) {          \
     (i)->opaque0 = xkb_pointer_tag((ptr), (flags));\
 }
 #define iter_get_keymap(i) (                                  \
-    (const struct xkb_keymap *)xkb_pointer_untag((i)->opaque0)\
+    (സ്ഥിരം ഘടന xkb_keymap *)xkb_pointer_untag((i)->opaque0)\
 )
-#define iter_get_next(i) ((const struct xkb_key *)(i)->opaque1)
-#define iter_set_next(i, ptr) {(i)->opaque1 = (const void *)(ptr);}
+#define iter_get_next(i) ((സ്ഥിരം ഘടന xkb_താക്കോൽ *)(i)->opaque1)
+#define iter_set_next(i, ptr) {(i)->opaque1 = (സ്ഥിരം ശൂന്യം *)(ptr);}
 #define iter_get_descending_order(i) (                  \
     xkb_pointer_get_tag((i)->opaque0) &                 \
-    (uintptr_t)XKB_KEYMAP_KEY_ITERATOR_DESCENDING_ORDER \
+    (uintptr_t)XKB_KEYMAP_താക്കോൽ_ITERATOR_DESCENDING_ORDER \
 )
 #define iter_get_include_unbound(i) (                  \
     xkb_pointer_get_tag((i)->opaque0) &                \
-    (uintptr_t)XKB_KEYMAP_KEY_ITERATOR_INCLUDE_UNBOUND \
+    (uintptr_t)XKB_KEYMAP_താക്കോൽ_ITERATOR_INCLUDE_UNBOUND \
 )
 
-enum xkb_status
-xkb_keymap_key_iterator_init(
-    struct xkb_keymap_key_iterator * restrict iter,
-    const struct xkb_keymap * restrict keymap,
-    const struct xkb_keymap_key_iterator_config * restrict config
+എണ്ണൽ xkb_status
+xkb_keymap_താക്കോൽ_iterator_init(
+    ഘടന xkb_keymap_താക്കോൽ_iterator * restrict iter,
+    സ്ഥിരം ഘടന xkb_keymap * restrict keymap,
+    സ്ഥിരം ഘടന xkb_keymap_താക്കോൽ_iterator_config * restrict config
 )
 {
     /* Handle default configuration */
-    static const struct xkb_keymap_key_iterator_config default_config = {
-        .size = sizeof(default_config)
+    സ്ഥിതം സ്ഥിരം ഘടന xkb_keymap_താക്കോൽ_iterator_config default_config = {
+        .size = വലുപ്പം(default_config)
     };
-    if (!config)
+    എങ്കിൽ (!config)
         config = &default_config;
 
     /* Check input */
-    const enum xkb_status status =
-        keymap_key_iterator_config_check(keymap->ctx, __func__, config);
-    if (status != XKB_SUCCESS) {
-        return status;
+    സ്ഥിരം എണ്ണൽ xkb_status status =
+        keymap_താക്കോൽ_iterator_config_check(keymap->ctx, __func__, config);
+    എങ്കിൽ (status != XKB_SUCCESS) {
+        തിരികെ status;
     }
 
     /*
      * Initialization
      */
 
-    memset(iter, 0, sizeof(*iter));
+    memset(iter, 0, വലുപ്പം(*iter));
 
     /* Borrow keymap */
     iter_init_keymap(iter, keymap, config->flags);
 
-    if (keymap->num_keys == 0) {
-        iter_set_next(iter, NULL);
-        return XKB_SUCCESS;
+    എങ്കിൽ (keymap->അക്കം_താക്കോലുകൾ == 0) {
+        iter_set_next(iter, ശൂന്യ);
+        തിരികെ XKB_SUCCESS;
     }
 
     /* Borrow key */
-    const struct xkb_key *next;
-    if (config->flags & XKB_KEYMAP_KEY_ITERATOR_DESCENDING_ORDER) {
-        if (!config->start || config->start > keymap->max_key_code) {
-            next = &keymap->keys[keymap->num_keys - 1];
-        } else {
+    സ്ഥിരം ഘടന xkb_താക്കോൽ *next;
+    എങ്കിൽ (config->flags & XKB_KEYMAP_താക്കോൽ_ITERATOR_DESCENDING_ORDER) {
+        എങ്കിൽ (!config->start || config->start > keymap->max_താക്കോൽ_code) {
+            next = &keymap->താക്കോലുകൾ[keymap->അക്കം_താക്കോലുകൾ - 1];
+        } അല്ലെങ്കിൽ {
             /*
              * May still fail *safely* if start < keymap->min_key_code:
              * there will be simply no key to iterate over.
              */
-            next = xkb_keymap_get_next_defined_key(keymap, false, config->start);
+            next = xkb_keymap_get_next_defined_താക്കോൽ(keymap, false, config->start);
         }
-    } else {
-        if (!config->start || config->start < keymap->min_key_code) {
-            next = (keymap->num_keys_low)
-                ? &keymap->keys[keymap->min_key_code]
-                : &keymap->keys[0];
-        } else {
+    } അല്ലെങ്കിൽ {
+        എങ്കിൽ (!config->start || config->start < keymap->min_താക്കോൽ_code) {
+            next = (keymap->അക്കം_താക്കോലുകൾ_താഴെയുള്ള)
+                ? &keymap->താക്കോലുകൾ[keymap->min_താക്കോൽ_code]
+                : &keymap->താക്കോലുകൾ[0];
+        } അല്ലെങ്കിൽ {
             /*
              * May still fail *safely* if start > keymap->max_key_code:
              * there will be simply no key to iterate over.
              */
-            next = xkb_keymap_get_next_defined_key(keymap, true, config->start);
+            next = xkb_keymap_get_next_defined_താക്കോൽ(keymap, true, config->start);
         }
     };
     iter_set_next(iter, next);
 
-    return XKB_SUCCESS;
+    തിരികെ XKB_SUCCESS;
 }
 
 xkb_keycode_t
-xkb_keymap_key_iterator_next(struct xkb_keymap_key_iterator *iter)
+xkb_keymap_താക്കോൽ_iterator_next(ഘടന xkb_keymap_താക്കോൽ_iterator *iter)
 {
-    const struct xkb_key *next = iter_get_next(iter);
-    if (!next)
-        return XKB_KEYCODE_INVALID;
+    സ്ഥിരം ഘടന xkb_താക്കോൽ *next = iter_get_next(iter);
+    എങ്കിൽ (!next)
+        തിരികെ XKB_KEYCODE_INVALID;
 
-    const struct xkb_keymap *keymap = iter_get_keymap(iter);
-    assert(keymap->num_keys);
+    സ്ഥിരം ഘടന xkb_keymap *keymap = iter_get_keymap(iter);
+    പ്രതിജ്ഞാ(keymap->അക്കം_താക്കോലുകൾ);
 
-    const bool descending = iter_get_descending_order(iter);
-    const bool skip_unbound = !iter_get_include_unbound(iter);
-    const struct xkb_key *last = descending
-        ? (keymap->num_keys_low)
-            ? &keymap->keys[keymap->min_key_code]
-            : &keymap->keys[0]
-        : &keymap->keys[keymap->num_keys - 1];
-    const ptrdiff_t step = descending ? -1 : 1;
+    സ്ഥിരം bool descending = iter_get_descending_order(iter);
+    സ്ഥിരം bool skip_unbound = !iter_get_include_unbound(iter);
+    സ്ഥിരം ഘടന xkb_താക്കോൽ *last = descending
+        ? (keymap->അക്കം_താക്കോലുകൾ_താഴെയുള്ള)
+            ? &keymap->താക്കോലുകൾ[keymap->min_താക്കോൽ_code]
+            : &keymap->താക്കോലുകൾ[0]
+        : &keymap->താക്കോലുകൾ[keymap->അക്കം_താക്കോലുകൾ - 1];
+    സ്ഥിരം ptrdiff_t step = descending ? -1 : 1;
 
     /* Skip undefined keys (no name) and optionally unbound keys */
-    for (;;) {
-        const bool iter_end = descending ? (next <= last) : (next >= last);
-        const bool skip = (
+    വേണ്ടി (;;) {
+        സ്ഥിരം bool iter_end = descending ? (next <= last) : (next >= last);
+        സ്ഥിരം bool skip = (
             next->name == XKB_ATOM_NONE ||
-            (skip_unbound && (next->num_groups == 0))
+            (skip_unbound && (next->അക്കം_groups == 0))
         );
-        if (!skip) {
-            const xkb_keycode_t ret = next->keycode;
-            iter_set_next(iter, iter_end ? NULL : next + step);
-            return ret;
+        എങ്കിൽ (!skip) {
+            സ്ഥിരം xkb_keycode_t ret = next->keycode;
+            iter_set_next(iter, iter_end ? ശൂന്യ : next + step);
+            തിരികെ ret;
         }
-        if (iter_end) {
-            iter_set_next(iter, NULL);
-            return XKB_KEYCODE_INVALID;
+        എങ്കിൽ (iter_end) {
+            iter_set_next(iter, ശൂന്യ);
+            തിരികെ XKB_KEYCODE_INVALID;
         }
         next += step;
     }
@@ -849,60 +849,60 @@ xkb_keymap_key_iterator_next(struct xkb_keymap_key_iterator *iter)
 #undef iter_get_descending_order
 #undef iter_get_include_unbound
 
-void
-xkb_keymap_key_for_each(struct xkb_keymap *keymap, xkb_keymap_key_iter_t iter,
-                        void *data)
+ശൂന്യം
+xkb_keymap_താക്കോൽ_for_each(ഘടന xkb_keymap *keymap, xkb_keymap_താക്കോൽ_iter_t iter,
+                        ശൂന്യം *data)
 {
-    struct xkb_key *key;
+    ഘടന xkb_താക്കോൽ *താക്കോൽ;
 
-    xkb_keys_foreach(key, keymap)
-        iter(keymap, key->keycode, data);
+    xkb_താക്കോലുകൾ_foreach(താക്കോൽ, keymap)
+        iter(keymap, താക്കോൽ->keycode, data);
 }
 
-const char *
-xkb_keymap_key_get_name(struct xkb_keymap *keymap, xkb_keycode_t kc)
+സ്ഥിരം അക്ഷരം *
+xkb_keymap_താക്കോൽ_get_name(ഘടന xkb_keymap *keymap, xkb_keycode_t kc)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    സ്ഥിരം ഘടന xkb_താക്കോൽ *താക്കോൽ = Xkb_താക്കോൽ(keymap, kc);
 
-    if (!key)
-        return NULL;
+    എങ്കിൽ (!താക്കോൽ)
+        തിരികെ ശൂന്യ;
 
-    return xkb_atom_text(keymap->ctx, key->name);
+    തിരികെ xkb_atom_text(keymap->ctx, താക്കോൽ->name);
 }
 
 xkb_keycode_t
-xkb_keymap_key_by_name(struct xkb_keymap *keymap, const char *name)
+xkb_keymap_താക്കോൽ_by_name(ഘടന xkb_keymap *keymap, സ്ഥിരം അക്ഷരം *name)
 {
-    struct xkb_key *key;
+    ഘടന xkb_താക്കോൽ *താക്കോൽ;
     xkb_atom_t atom;
 
     atom = xkb_atom_lookup(keymap->ctx, name);
-    if (atom) {
-        for (darray_size_t i = 0; i < keymap->num_key_aliases; i++)
-            if (keymap->key_aliases[i].alias == atom)
-                atom = keymap->key_aliases[i].real;
+    എങ്കിൽ (atom) {
+        വേണ്ടി (darray_size_t i = 0; i < keymap->അക്കം_താക്കോൽ_aliases; i++)
+            എങ്കിൽ (keymap->താക്കോൽ_aliases[i].alias == atom)
+                atom = keymap->താക്കോൽ_aliases[i].real;
     }
-    if (!atom)
-        return XKB_KEYCODE_INVALID;
+    എങ്കിൽ (!atom)
+        തിരികെ XKB_KEYCODE_INVALID;
 
-    xkb_keys_foreach(key, keymap) {
-        if (key->name == atom)
-            return key->keycode;
+    xkb_താക്കോലുകൾ_foreach(താക്കോൽ, keymap) {
+        എങ്കിൽ (താക്കോൽ->name == atom)
+            തിരികെ താക്കോൽ->keycode;
     }
 
-    return XKB_KEYCODE_INVALID;
+    തിരികെ XKB_KEYCODE_INVALID;
 }
 
 /**
  * Simple boolean specifying whether or not the key should repeat.
  */
-int
-xkb_keymap_key_repeats(struct xkb_keymap *keymap, xkb_keycode_t kc)
+പൂർണ്ണസംഖ്യ
+xkb_keymap_താക്കോൽ_repeats(ഘടന xkb_keymap *keymap, xkb_keycode_t kc)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    സ്ഥിരം ഘടന xkb_താക്കോൽ *താക്കോൽ = Xkb_താക്കോൽ(keymap, kc);
 
-    if (!key)
-        return 0;
+    എങ്കിൽ (!താക്കോൽ)
+        തിരികെ 0;
 
-    return key->repeats;
+    തിരികെ താക്കോൽ->repeats;
 }

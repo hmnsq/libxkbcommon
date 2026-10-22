@@ -3,52 +3,52 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <assert.h>
+#അന്തര്ഭാവ <assert.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "features/enums.h"
-#include "constants.h"
-#include "messages-codes.h"
-#include "parser.h"
-#include "paths.h"
-#include "table.h"
-#include "utils.h"
+#അന്തര്ഭാവ "xkbcommon/xkbcommon.h"
+#അന്തര്ഭാവ "features/enums.h"
+#അന്തര്ഭാവ "constants.h"
+#അന്തര്ഭാവ "messages-codes.h"
+#അന്തര്ഭാവ "parser.h"
+#അന്തര്ഭാവ "paths.h"
+#അന്തര്ഭാവ "table.h"
+#അന്തര്ഭാവ "utils.h"
 
-static struct xkb_compose_table *
-xkb_compose_table_new(struct xkb_context *ctx, const char *func,
-                      const char *locale,
-                      enum xkb_compose_format format,
-                      enum xkb_compose_compile_flags flags)
+സ്ഥിതം ഘടന xkb_compose_table *
+xkb_compose_table_new(ഘടന xkb_context *ctx, സ്ഥിരം അക്ഷരം *func,
+                      സ്ഥിരം അക്ഷരം *locale,
+                      എണ്ണൽ xkb_compose_format format,
+                      എണ്ണൽ xkb_compose_compile_flags flags)
 {
-    const enum xkb_compose_compile_flags invalid_flags = (
-        flags & ~(enum xkb_compose_compile_flags)XKB_COMPOSE_COMPILE_FLAGS_VALUES
+    സ്ഥിരം എണ്ണൽ xkb_compose_compile_flags invalid_flags = (
+        flags & ~(എണ്ണൽ xkb_compose_compile_flags)XKB_COMPOSE_COMPILE_FLAGS_മൂല്യങ്ങൾ
     );
-    if (invalid_flags) {
+    എങ്കിൽ (invalid_flags) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "%s: unrecognized flags: %#x\n", func, invalid_flags);
-        return NULL;
+        തിരികെ ശൂന്യ;
     }
 
-    if (format != XKB_COMPOSE_FORMAT_TEXT_V1) {
+    എങ്കിൽ (format != XKB_COMPOSE_FORMAT_TEXT_V1) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "%s: unsupported compose format: %d\n", func, format);
-        return NULL;
+        തിരികെ ശൂന്യ;
     }
 
-    char *resolved_locale;
-    struct xkb_compose_table *table;
-    struct compose_node dummy = {0};
+    അക്ഷരം *resolved_locale;
+    ഘടന xkb_compose_table *table;
+    ഘടന compose_കണ്ണി dummy = {0};
 
     resolved_locale = resolve_locale(ctx, locale);
-    if (!resolved_locale)
-        return NULL;
+    എങ്കിൽ (!resolved_locale)
+        തിരികെ ശൂന്യ;
 
-    table = calloc(1, sizeof(*table));
-    if (!table) {
-        free(resolved_locale);
-        return NULL;
+    table = calloc(1, വലുപ്പം(*table));
+    എങ്കിൽ (!table) {
+        സ്വതന്ത്രം(resolved_locale);
+        തിരികെ ശൂന്യ;
     }
 
     table->refcnt = 1;
@@ -61,228 +61,228 @@ xkb_compose_table_new(struct xkb_context *ctx, const char *func,
     darray_init(table->nodes);
     darray_init(table->utf8);
 
-    dummy.keysym = XKB_KEY_NoSymbol;
+    dummy.keysym = XKB_താക്കോൽ_No_ചിഹ്നം;
     dummy.leaf.is_leaf = true;
     dummy.leaf.utf8 = 0;
-    dummy.leaf.keysym = XKB_KEY_NoSymbol;
+    dummy.leaf.keysym = XKB_താക്കോൽ_No_ചിഹ്നം;
     darray_append(table->nodes, dummy);
 
     darray_append(table->utf8, '\0');
 
-    return table;
+    തിരികെ table;
 }
 
-struct xkb_compose_table *
-xkb_compose_table_ref(struct xkb_compose_table *table)
+ഘടന xkb_compose_table *
+xkb_compose_table_ref(ഘടന xkb_compose_table *table)
 {
-    assert(table->refcnt > 0);
+    പ്രതിജ്ഞാ(table->refcnt > 0);
     table->refcnt++;
-    return table;
+    തിരികെ table;
 }
 
-void
-xkb_compose_table_unref(struct xkb_compose_table *table)
+ശൂന്യം
+xkb_compose_table_unref(ഘടന xkb_compose_table *table)
 {
-    assert(!table || table->refcnt > 0);
-    if (!table || --table->refcnt > 0)
-        return;
-    free(table->locale);
+    പ്രതിജ്ഞാ(!table || table->refcnt > 0);
+    എങ്കിൽ (!table || --table->refcnt > 0)
+        തിരികെ;
+    സ്വതന്ത്രം(table->locale);
     darray_free(table->nodes);
     darray_free(table->utf8);
     xkb_context_unref(table->ctx);
-    free(table);
+    സ്വതന്ത്രം(table);
 }
 
-struct xkb_compose_table *
-xkb_compose_table_new_from_file(struct xkb_context *ctx,
+ഘടന xkb_compose_table *
+xkb_compose_table_new_from_file(ഘടന xkb_context *ctx,
                                 FILE *file,
-                                const char *locale,
-                                enum xkb_compose_format format,
-                                enum xkb_compose_compile_flags flags)
+                                സ്ഥിരം അക്ഷരം *locale,
+                                എണ്ണൽ xkb_compose_format format,
+                                എണ്ണൽ xkb_compose_compile_flags flags)
 {
-    struct xkb_compose_table * const table =
+    ഘടന xkb_compose_table * സ്ഥിരം table =
         xkb_compose_table_new(ctx, __func__, locale, format, flags);
-    if (!table)
-        return NULL;
+    എങ്കിൽ (!table)
+        തിരികെ ശൂന്യ;
 
-    if (!parse_file(table, file, "(unknown file)")) {
+    എങ്കിൽ (!parse_file(table, file, "(unknown file)")) {
         xkb_compose_table_unref(table);
-        return NULL;
+        തിരികെ ശൂന്യ;
     }
 
-    return table;
+    തിരികെ table;
 }
 
-struct xkb_compose_table *
-xkb_compose_table_new_from_buffer(struct xkb_context *ctx,
-                                  const char *buffer, size_t length,
-                                  const char *locale,
-                                  enum xkb_compose_format format,
-                                  enum xkb_compose_compile_flags flags)
+ഘടന xkb_compose_table *
+xkb_compose_table_new_from_buffer(ഘടന xkb_context *ctx,
+                                  സ്ഥിരം അക്ഷരം *buffer, size_t length,
+                                  സ്ഥിരം അക്ഷരം *locale,
+                                  എണ്ണൽ xkb_compose_format format,
+                                  എണ്ണൽ xkb_compose_compile_flags flags)
 {
-    struct xkb_compose_table * const table =
+    ഘടന xkb_compose_table * സ്ഥിരം table =
         xkb_compose_table_new(ctx, __func__, locale, format, flags);
-    if (!table)
-        return NULL;
+    എങ്കിൽ (!table)
+        തിരികെ ശൂന്യ;
 
-    if (!parse_string(table, buffer, length, "(input string)")) {
+    എങ്കിൽ (!parse_string(table, buffer, length, "(input string)")) {
         xkb_compose_table_unref(table);
-        return NULL;
+        തിരികെ ശൂന്യ;
     }
 
-    return table;
+    തിരികെ table;
 }
 
-struct xkb_compose_table *
-xkb_compose_table_new_from_locale(struct xkb_context *ctx,
-                                  const char *locale,
-                                  enum xkb_compose_compile_flags flags)
+ഘടന xkb_compose_table *
+xkb_compose_table_new_from_locale(ഘടന xkb_context *ctx,
+                                  സ്ഥിരം അക്ഷരം *locale,
+                                  എണ്ണൽ xkb_compose_compile_flags flags)
 {
-    static const enum xkb_compose_format format = XKB_COMPOSE_FORMAT_TEXT_V1;
-    struct xkb_compose_table * const table =
+    സ്ഥിതം സ്ഥിരം എണ്ണൽ xkb_compose_format format = XKB_COMPOSE_FORMAT_TEXT_V1;
+    ഘടന xkb_compose_table * സ്ഥിരം table =
         xkb_compose_table_new(ctx, __func__, locale, format, flags);
-    if (!table)
-        return NULL;
+    എങ്കിൽ (!table)
+        തിരികെ ശൂന്യ;
 
-    char *path = get_xcomposefile_path(ctx);
+    അക്ഷരം *path = get_xcomposefile_path(ctx);
     FILE *file = open_file(path);
-    if (file)
-        goto found_path;
-    free(path);
+    എങ്കിൽ (file)
+        പോകുക found_path;
+    സ്വതന്ത്രം(path);
 
     path = get_xdg_xcompose_file_path(ctx);
     file = open_file(path);
-    if (file)
-        goto found_path;
-    free(path);
+    എങ്കിൽ (file)
+        പോകുക found_path;
+    സ്വതന്ത്രം(path);
 
     path = get_home_xcompose_file_path(ctx);
     file = open_file(path);
-    if (file)
-        goto found_path;
-    free(path);
+    എങ്കിൽ (file)
+        പോകുക found_path;
+    സ്വതന്ത്രം(path);
 
     path = get_locale_compose_file_path(ctx, table->locale);
     file = open_file(path);
-    if (file)
-        goto found_path;
-    free(path);
+    എങ്കിൽ (file)
+        പോകുക found_path;
+    സ്വതന്ത്രം(path);
 
     log_err(ctx, XKB_ERROR_INVALID_COMPOSE_LOCALE,
             "couldn't find a Compose file for locale \"%s\" (mapped to \"%s\")\n",
             locale, table->locale);
     xkb_compose_table_unref(table);
-    return NULL;
+    തിരികെ ശൂന്യ;
 
 found_path:
     {} /* Label followed by a declaration is a C23 extension */
-    const bool ok = parse_file(table, file, path);
+    സ്ഥിരം bool ok = parse_file(table, file, path);
     fclose(file);
-    if (!ok) {
-        free(path);
+    എങ്കിൽ (!ok) {
+        സ്വതന്ത്രം(path);
         xkb_compose_table_unref(table);
-        return NULL;
+        തിരികെ ശൂന്യ;
     }
 
     log_dbg(ctx, XKB_LOG_MESSAGE_NO_ID,
             "created compose table from locale %s with path %s\n",
             table->locale, path);
 
-    free(path);
-    return table;
+    സ്വതന്ത്രം(path);
+    തിരികെ table;
 }
 
-const xkb_keysym_t *
-xkb_compose_table_entry_sequence(struct xkb_compose_table_entry *entry,
+സ്ഥിരം xkb_keysym_t *
+xkb_compose_table_entry_sequence(ഘടന xkb_compose_table_entry *entry,
                                  size_t *sequence_length)
 {
     *sequence_length = entry->sequence_length;
-    return entry->sequence;
+    തിരികെ entry->sequence;
 }
 
 xkb_keysym_t
-xkb_compose_table_entry_keysym(struct xkb_compose_table_entry *entry)
+xkb_compose_table_entry_keysym(ഘടന xkb_compose_table_entry *entry)
 {
-    return entry->keysym;
+    തിരികെ entry->keysym;
 }
 
-const char *
-xkb_compose_table_entry_utf8(struct xkb_compose_table_entry *entry)
+സ്ഥിരം അക്ഷരം *
+xkb_compose_table_entry_utf8(ഘടന xkb_compose_table_entry *entry)
 {
-    return entry->utf8;
+    തിരികെ entry->utf8;
 }
 
-#if MAX_COMPOSE_NODES_LOG2 > 31
+#എങ്കിൽ MAX_COMPOSE_NODES_LOG2 > 31
 #error "Cannot implement bit field xkb_compose_table_iterator_pending_node.offset"
 #endif
 
-struct xkb_compose_table_iterator_pending_node {
+ഘടന xkb_compose_table_iterator_pending_കണ്ണി {
     uint32_t offset:31;
     bool processed:1;
 };
 
-struct xkb_compose_table_iterator {
-    struct xkb_compose_table *table;
+ഘടന xkb_compose_table_iterator {
+    ഘടന xkb_compose_table *table;
     /* Current entry */
-    struct xkb_compose_table_entry entry;
+    ഘടന xkb_compose_table_entry entry;
     /* Stack of pending nodes to process */
-    darray(struct xkb_compose_table_iterator_pending_node) pending_nodes;
+    darray(ഘടന xkb_compose_table_iterator_pending_കണ്ണി) pending_nodes;
 };
 
-struct xkb_compose_table_iterator *
-xkb_compose_table_iterator_new(struct xkb_compose_table *table)
+ഘടന xkb_compose_table_iterator *
+xkb_compose_table_iterator_new(ഘടന xkb_compose_table *table)
 {
-    struct xkb_compose_table_iterator *iter;
+    ഘടന xkb_compose_table_iterator *iter;
     xkb_keysym_t *sequence;
 
-    iter = calloc(1, sizeof(*iter));
-    if (!iter) {
-        return NULL;
+    iter = calloc(1, വലുപ്പം(*iter));
+    എങ്കിൽ (!iter) {
+        തിരികെ ശൂന്യ;
     }
     iter->table = xkb_compose_table_ref(table);
-    sequence = calloc(COMPOSE_MAX_LHS_LEN, sizeof(xkb_keysym_t));
-    if (!sequence) {
-        free(iter);
-        return NULL;
+    sequence = calloc(COMPOSE_MAX_LHS_LEN, വലുപ്പം(xkb_keysym_t));
+    എങ്കിൽ (!sequence) {
+        സ്വതന്ത്രം(iter);
+        തിരികെ ശൂന്യ;
     }
     iter->entry.sequence = sequence;
     iter->entry.sequence_length = 0;
 
     darray_init(iter->pending_nodes);
     /* Short-circuit if table contains only the dummy entry */
-    if (darray_size(table->nodes) == 1) {
-        return iter;
+    എങ്കിൽ (darray_size(table->nodes) == 1) {
+        തിരികെ iter;
     }
     /* Add root node */
-    struct xkb_compose_table_iterator_pending_node pending = {
+    ഘടന xkb_compose_table_iterator_pending_കണ്ണി pending = {
         .offset = 1,
         .processed = false
     };
     darray_append(iter->pending_nodes, pending);
-    const struct compose_node *node = &darray_item(iter->table->nodes,
+    സ്ഥിരം ഘടന compose_കണ്ണി *കണ്ണി = &darray_item(iter->table->nodes,
                                                    pending.offset);
 
     /* Find the first left-most node and store intermediate nodes as pending */
-    while (node->lokid) {
-        pending.offset = node->lokid;
+    ആകുമ്പോൾ (കണ്ണി->lokid) {
+        pending.offset = കണ്ണി->lokid;
         darray_append(iter->pending_nodes, pending);
-        node = &darray_item(iter->table->nodes, pending.offset);
+        കണ്ണി = &darray_item(iter->table->nodes, pending.offset);
     };
 
-    return iter;
+    തിരികെ iter;
 }
 
-void
-xkb_compose_table_iterator_free(struct xkb_compose_table_iterator *iter)
+ശൂന്യം
+xkb_compose_table_iterator_free(ഘടന xkb_compose_table_iterator *iter)
 {
     xkb_compose_table_unref(iter->table);
     darray_free(iter->pending_nodes);
-    free(iter->entry.sequence);
-    free(iter);
+    സ്വതന്ത്രം(iter->entry.sequence);
+    സ്വതന്ത്രം(iter);
 }
 
-struct xkb_compose_table_entry *
-xkb_compose_table_iterator_next(struct xkb_compose_table_iterator *iter)
+ഘടന xkb_compose_table_entry *
+xkb_compose_table_iterator_next(ഘടന xkb_compose_table_iterator *iter)
 {
     /* Traversal algorithm (simplified):
      * 1. Resume last pending node from the stack as the current pending node.
@@ -298,75 +298,75 @@ xkb_compose_table_iterator_next(struct xkb_compose_table_iterator *iter)
      * 7. Go to 5.
      */
 
-    struct xkb_compose_table_iterator_pending_node *pending;
-    const struct compose_node *node;
+    ഘടന xkb_compose_table_iterator_pending_കണ്ണി *pending;
+    സ്ഥിരം ഘടന compose_കണ്ണി *കണ്ണി;
 
     /* Iterator is empty if there is no pending nodes */
-    if (unlikely(darray_empty(iter->pending_nodes))) {
-        return NULL;
+    എങ്കിൽ (unlikely(darray_empty(iter->pending_nodes))) {
+        തിരികെ ശൂന്യ;
     }
 
     /* Resume to the last element in the stack */
     pending = &darray_item(iter->pending_nodes,
                            darray_size(iter->pending_nodes) - 1);
-    node = &darray_item(iter->table->nodes, pending->offset);
+    കണ്ണി = &darray_item(iter->table->nodes, pending->offset);
 
-    struct xkb_compose_table_iterator_pending_node new = {
+    ഘടന xkb_compose_table_iterator_pending_കണ്ണി new = {
         .processed = false,
         .offset = 0
     };
 
     /* Remove processed leaves until an unprocessed right arrow or parent
      * is found, then update entry accordingly */
-    while (pending->processed) {
+    ആകുമ്പോൾ (pending->processed) {
         /* Remove last keysym */
         iter->entry.sequence_length--;
-        if (node->hikid) {
+        എങ്കിൽ (കണ്ണി->hikid) {
             /* Follow right arrow: replace current pending node */
             pending->processed = false;
-            pending->offset = node->hikid;
+            pending->offset = കണ്ണി->hikid;
             /* Process child’s left arrow */
-            goto node_left;
-        } else {
+            പോകുക കണ്ണി_ഇടത്;
+        } അല്ലെങ്കിൽ {
             /* Remove processed node */
             darray_remove_last(iter->pending_nodes);
-            if (unlikely(darray_empty(iter->pending_nodes))) {
+            എങ്കിൽ (unlikely(darray_empty(iter->pending_nodes))) {
                 /* No more nodes to process */
-                return NULL;
+                തിരികെ ശൂന്യ;
             }
             /* Get parent node */
             pending = &darray_item(iter->pending_nodes,
                                    darray_size(iter->pending_nodes) - 1);
-            node = &darray_item(iter->table->nodes, pending->offset);
+            കണ്ണി = &darray_item(iter->table->nodes, pending->offset);
         }
     }
 
-    while (1) {
+    ആകുമ്പോൾ (1) {
         /* Follow down arrow */
         pending->processed = true;
         iter->entry.sequence_length++;
-        iter->entry.sequence[iter->entry.sequence_length - 1] = node->keysym;
-        if (node->is_leaf) {
+        iter->entry.sequence[iter->entry.sequence_length - 1] = കണ്ണി->keysym;
+        എങ്കിൽ (കണ്ണി->is_leaf) {
             /* Leaf: return entry */
-            iter->entry.keysym = node->leaf.keysym;
-            iter->entry.utf8 = &darray_item(iter->table->utf8, node->leaf.utf8);
-            return &iter->entry;
+            iter->entry.keysym = കണ്ണി->leaf.keysym;
+            iter->entry.utf8 = &darray_item(iter->table->utf8, കണ്ണി->leaf.utf8);
+            തിരികെ &iter->entry;
         }
         /* Not a leaf: process child node */
-        new.offset = node->internal.eqkid;
+        new.offset = കണ്ണി->internal.eqkid;
         darray_append(iter->pending_nodes, new);
         pending = &darray_item(iter->pending_nodes,
                                darray_size(iter->pending_nodes) - 1);
-node_left:
-        node = &darray_item(iter->table->nodes, pending->offset);
+കണ്ണി_ഇടത്:
+        കണ്ണി = &darray_item(iter->table->nodes, pending->offset);
         /* Find the next left-most arrow and store intermediate pending nodes */
-        while (node->lokid) {
+        ആകുമ്പോൾ (കണ്ണി->lokid) {
             /* Follow left arrow */
-            new.offset = node->lokid;
+            new.offset = കണ്ണി->lokid;
             darray_append(iter->pending_nodes, new);
             pending = &darray_item(iter->pending_nodes,
                                    darray_size(iter->pending_nodes) - 1);
-            node = &darray_item(iter->table->nodes, new.offset);
+            കണ്ണി = &darray_item(iter->table->nodes, new.offset);
         }
     }
 }

@@ -4,33 +4,33 @@
  */
 #pragma once
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
+#അന്തര്ഭാവ <stddef.h>
+#അന്തര്ഭാവ <stdint.h>
+#അന്തര്ഭാവ <stdbool.h>
 
-#include "darray.h"
-#include "utils.h"
+#അന്തര്ഭാവ "darray.h"
+#അന്തര്ഭാവ "utils.h"
 
 /** Atoms are indexes into a `darray` */
-typedef darray_size_t xkb_atom_t;
+തരനിർവചനം darray_size_t xkb_atom_t;
 
 #define XKB_ATOM_NONE 0
 
-struct atom_table;
+ഘടന atom_table;
 
-XKB_EXPORT_PRIVATE struct atom_table *
-atom_table_new(void);
+XKB_EXPORT_PRIVATE ഘടന atom_table *
+atom_table_new(ശൂന്യം);
 
-XKB_EXPORT_PRIVATE void
-atom_table_free(struct atom_table *table);
+XKB_EXPORT_PRIVATE ശൂന്യം
+atom_table_free(ഘടന atom_table *table);
 
 XKB_EXPORT_PRIVATE darray_size_t
-atom_table_size(struct atom_table *table);
+atom_table_size(ഘടന atom_table *table);
 
 XKB_EXPORT_PRIVATE xkb_atom_t
-atom_intern(struct atom_table *table, const char *string, size_t len, bool add);
+atom_intern(ഘടന atom_table *table, സ്ഥിരം അക്ഷരം *string, size_t len, bool add);
 
-XKB_EXPORT_PRIVATE const char *
-atom_text(struct atom_table *table, xkb_atom_t atom);
+XKB_EXPORT_PRIVATE സ്ഥിരം അക്ഷരം *
+atom_text(ഘടന atom_table *table, xkb_atom_t atom);

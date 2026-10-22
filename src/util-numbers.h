@@ -4,17 +4,17 @@
  */
 #pragma once
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <limits.h>
-#include <stdbool.h>
-#include <stdint.h>
+#അന്തര്ഭാവ <limits.h>
+#അന്തര്ഭാവ <stdbool.h>
+#അന്തര്ഭാവ <stdint.h>
 
-#if defined(_MSC_VER)
+#എങ്കിൽ defined(_MSC_VER)
 # include <intrin.h>
 #endif
 
-#include "utils.h"
+#അന്തര്ഭാവ "utils.h"
 
 /*
  * Define various parsers to avoid the use of strto* -- it’s slower and accepts
@@ -27,23 +27,23 @@
  */
 
 #define MAKE_PARSE_DEC_TO(type, max)                         \
-static inline int                                            \
-parse_dec_to_##type(const char *s, size_t len, type (*out))  \
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ                                            \
+parse_dec_to_##type(സ്ഥിരം അക്ഷരം *s, size_t len, type (*out))  \
 {                                                            \
     type result = 0;                                         \
     size_t i;                                                \
-    for (i = 0;                                              \
-         i < len && (unsigned char)(s[i] - '0') < 10U &&     \
+    വേണ്ടി (i = 0;                                              \
+         i < len && (unsigned അക്ഷരം)(s[i] - '0') < 10U &&     \
          result <= (max) / 10 &&                             \
-         result * 10 <= (max) - (unsigned char) (s[i] - '0');\
+         result * 10 <= (max) - (unsigned അക്ഷരം) (s[i] - '0');\
          i++) {                                              \
         result = result * 10 + (type)(s[i] - '0');           \
     }                                                        \
     *out = result;                                           \
     /* Check if there is more to parse */                    \
     /* We can safely convert the length to int on success */ \
-    return (i >= len || (unsigned char)(s[i] - '0') >= 10U)  \
-           ? (int) i                                         \
+    തിരികെ (i >= len || (unsigned അക്ഷരം)(s[i] - '0') >= 10U)  \
+           ? (പൂർണ്ണസംഖ്യ) i                                         \
            : -1;                                             \
 }
 
@@ -63,7 +63,7 @@ MAKE_PARSE_DEC_TO(uint64_t, UINT64_MAX)
 
 #undef MAKE_PARSE_DEC_TO
 
-static const unsigned char digits__[] = {
+സ്ഥിതം സ്ഥിരം unsigned അക്ഷരം digits__[] = {
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
@@ -89,20 +89,20 @@ static const unsigned char digits__[] = {
 };
 
 #define MAKE_PARSE_HEX_TO(type, max)                           \
-static inline int                                              \
-parse_hex_to_##type(const char *s, size_t len, type (*out))    \
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ                                              \
+parse_hex_to_##type(സ്ഥിരം അക്ഷരം *s, size_t len, type (*out))    \
 {                                                              \
     type result = 0;                                           \
     size_t i = 0;                                              \
-    for (; i < len && digits__[(unsigned char) s[i]] < 16u &&  \
+    വേണ്ടി (; i < len && digits__[(unsigned അക്ഷരം) s[i]] < 16u &&  \
          result <= (max) >> 4;                                 \
          i++) {                                                \
-        result = result * 16 + digits__[(unsigned char) s[i]]; \
+        result = result * 16 + digits__[(unsigned അക്ഷരം) s[i]]; \
     }                                                          \
     *out = result;                                             \
     /* Check if there is more to parse */                      \
     /* We can safely convert the length to int on success */   \
-    return (i >= len || !is_xdigit(s[i])) ? (int) i : -1;      \
+    തിരികെ (i >= len || !is_xdigit(s[i])) ? (പൂർണ്ണസംഖ്യ) i : -1;      \
 }
 
 /**
@@ -121,104 +121,104 @@ MAKE_PARSE_HEX_TO(uint64_t, UINT64_MAX)
 
 #undef MAKE_PARSE_HEX_TO
 
-static inline unsigned int
+സ്ഥിതം വരിയിൽ unsigned പൂർണ്ണസംഖ്യ
 popcount32(uint32_t x)
 {
-#if defined(__GNUC__) || defined(__clang__)
-    return (unsigned int)__builtin_popcountl(x);
-#elif defined(_MSC_VER)
-    return __popcnt(x);
-#else
+#എങ്കിൽ defined(__GNUC__) || defined(__clang__)
+    തിരികെ (unsigned പൂർണ്ണസംഖ്യ)__builtin_popcountl(x);
+#അല്ലെങ്കിലെങ്കിൽ defined(_MSC_VER)
+    തിരികെ __popcnt(x);
+#അല്ലെങ്കിൽ
     /* Fallback (Brian Kernighan’s method) */
-    unsigned int count = 0;
-    while (x) {
+    unsigned പൂർണ്ണസംഖ്യ എണ്ണം = 0;
+    ആകുമ്പോൾ (x) {
         x &= x - 1;
-        count++;
+        എണ്ണം++;
     }
-    return count;
+    തിരികെ എണ്ണം;
 #endif
 }
 
-static inline unsigned int
+സ്ഥിതം വരിയിൽ unsigned പൂർണ്ണസംഖ്യ
 ctz32(uint32_t x)
 {
-    if (x == 0)
-        return 32;
+    എങ്കിൽ (x == 0)
+        തിരികെ 32;
 
-#if defined(__GNUC__) || defined(__clang__)
-    return _Generic(
+#എങ്കിൽ defined(__GNUC__) || defined(__clang__)
+    തിരികെ _Generic(
         x,
-        unsigned int: (unsigned int)__builtin_ctz(x),
-        unsigned long: (unsigned int)__builtin_ctzl(x),
-        unsigned long long: (unsigned int)__builtin_ctzll(x)
+        unsigned പൂർണ്ണസംഖ്യ: (unsigned പൂർണ്ണസംഖ്യ)__builtin_ctz(x),
+        unsigned long: (unsigned പൂർണ്ണസംഖ്യ)__builtin_ctzl(x),
+        unsigned long long: (unsigned പൂർണ്ണസംഖ്യ)__builtin_ctzll(x)
     );
-#elif defined(_MSC_VER)
+#അല്ലെങ്കിലെങ്കിൽ defined(_MSC_VER)
     unsigned long index;
     _BitScanForward(&index, x);
-    return (unsigned int)index;
-#else
+    തിരികെ (unsigned പൂർണ്ണസംഖ്യ)index;
+#അല്ലെങ്കിൽ
     /* Fallback: De Bruijn sequence algorithm for 32-bit integers */
-    static const unsigned int debruijn32[32] = {
+    സ്ഥിതം സ്ഥിരം unsigned പൂർണ്ണസംഖ്യ debruijn32[32] = {
         0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8,
         31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9
     };
-    return debruijn32[((x & -x) * UINT32_C(0x077cb531)) >> 27];
+    തിരികെ debruijn32[((x & -x) * UINT32_C(0x077cb531)) >> 27];
 #endif
 }
 
-static inline unsigned int
+സ്ഥിതം വരിയിൽ unsigned പൂർണ്ണസംഖ്യ
 clz32(uint32_t x)
 {
-    if (x == 0)
-        return 32;
+    എങ്കിൽ (x == 0)
+        തിരികെ 32;
 
-#if defined(__GNUC__) || defined(__clang__)
-    return _Generic(
+#എങ്കിൽ defined(__GNUC__) || defined(__clang__)
+    തിരികെ _Generic(
         x,
-        unsigned int:
-            (unsigned int)__builtin_clz(x) -
-            (unsigned int)((sizeof(unsigned int) * CHAR_BIT) - 32),
+        unsigned പൂർണ്ണസംഖ്യ:
+            (unsigned പൂർണ്ണസംഖ്യ)__builtin_clz(x) -
+            (unsigned പൂർണ്ണസംഖ്യ)((വലുപ്പം(unsigned പൂർണ്ണസംഖ്യ) * CHAR_BIT) - 32),
         unsigned long:
-            (unsigned int)__builtin_clzl(x) -
-            (unsigned int)((sizeof(unsigned long) * CHAR_BIT) - 32),
+            (unsigned പൂർണ്ണസംഖ്യ)__builtin_clzl(x) -
+            (unsigned പൂർണ്ണസംഖ്യ)((വലുപ്പം(unsigned long) * CHAR_BIT) - 32),
         unsigned long long:
-            (unsigned int)__builtin_clzll(x) -
-            (unsigned int)((sizeof(unsigned long long) * CHAR_BIT) - 32)
+            (unsigned പൂർണ്ണസംഖ്യ)__builtin_clzll(x) -
+            (unsigned പൂർണ്ണസംഖ്യ)((വലുപ്പം(unsigned long long) * CHAR_BIT) - 32)
     );
-#else
+#അല്ലെങ്കിൽ
     // Efficient binary search fallback for 32-bit integers
-    unsigned int count = 0;
-    if ((x & 0xffff0000) == 0) { count += 16; x <<= 16; }
-    if ((x & 0xff000000) == 0) { count += 8;  x <<= 8;  }
-    if ((x & 0xf0000000) == 0) { count += 4;  x <<= 4;  }
-    if ((x & 0xc0000000) == 0) { count += 2;  x <<= 2;  }
-    if ((x & 0x80000000) == 0) { count += 1; }
-    return count;
+    unsigned പൂർണ്ണസംഖ്യ എണ്ണം = 0;
+    എങ്കിൽ ((x & 0xffff0000) == 0) { എണ്ണം += 16; x <<= 16; }
+    എങ്കിൽ ((x & 0xff000000) == 0) { എണ്ണം += 8;  x <<= 8;  }
+    എങ്കിൽ ((x & 0xf0000000) == 0) { എണ്ണം += 4;  x <<= 4;  }
+    എങ്കിൽ ((x & 0xc0000000) == 0) { എണ്ണം += 2;  x <<= 2;  }
+    എങ്കിൽ ((x & 0x80000000) == 0) { എണ്ണം += 1; }
+    തിരികെ എണ്ണം;
 #endif
 }
 
-static inline unsigned int
-next_pow2(unsigned int x)
+സ്ഥിതം വരിയിൽ unsigned പൂർണ്ണസംഖ്യ
+next_pow2(unsigned പൂർണ്ണസംഖ്യ x)
 {
-#if defined(__GNUC__) || defined(__clang__)
-    if (x <= 1) return 1u;
-    return 1u << ((int)sizeof(unsigned) * CHAR_BIT - __builtin_clz(x - 1));
-#else
-    if (x <= 1u) return 1u;
+#എങ്കിൽ defined(__GNUC__) || defined(__clang__)
+    എങ്കിൽ (x <= 1) തിരികെ 1u;
+    തിരികെ 1u << ((പൂർണ്ണസംഖ്യ)വലുപ്പം(unsigned) * CHAR_BIT - __builtin_clz(x - 1));
+#അല്ലെങ്കിൽ
+    എങ്കിൽ (x <= 1u) തിരികെ 1u;
     x--;
-    for (unsigned s = 1; s < (unsigned)sizeof(x)*CHAR_BIT; s <<= 1)
+    വേണ്ടി (unsigned s = 1; s < (unsigned)വലുപ്പം(x)*CHAR_BIT; s <<= 1)
         x |= x >> s;
-    return x + 1u;
+    തിരികെ x + 1u;
 #endif
 }
 
-static inline uint32_t
-keep_lowest_n_set_bits(uint32_t mask, unsigned int n) {
-    const uint32_t original = mask;
+സ്ഥിതം വരിയിൽ uint32_t
+keep_lowest_n_set_bits(uint32_t mask, unsigned പൂർണ്ണസംഖ്യ n) {
+    സ്ഥിരം uint32_t original = mask;
 
     /* Clear the lowest set bit n times */
-    while (n-- && mask)
+    ആകുമ്പോൾ (n-- && mask)
         mask &= (mask - 1);
 
-    return original ^ mask;
+    തിരികെ original ^ mask;
 }

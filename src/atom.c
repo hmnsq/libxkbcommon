@@ -9,27 +9,27 @@
  * SPDX-License-Identifier: MIT-open-group AND HPND
  */
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <assert.h>
-#include <string.h>
+#അന്തര്ഭാവ <assert.h>
+#അന്തര്ഭാവ <string.h>
 
-#include "atom.h"
-#include "darray.h"
-#include "utils.h"
+#അന്തര്ഭാവ "atom.h"
+#അന്തര്ഭാവ "darray.h"
+#അന്തര്ഭാവ "utils.h"
 
 /* FNV-1a (http://www.isthe.com/chongo/tech/comp/fnv/). */
-static inline uint32_t
-hash_buf(const char *string, size_t len)
+സ്ഥിതം വരിയിൽ uint32_t
+hash_buf(സ്ഥിരം അക്ഷരം *string, size_t len)
 {
     uint32_t hash = UINT32_C(2166136261);
-    for (size_t i = 0; i < (len + 1) / 2; i++) {
+    വേണ്ടി (size_t i = 0; i < (len + 1) / 2; i++) {
         hash ^= (uint8_t) string[i];
         hash *= 0x01000193;
         hash ^= (uint8_t) string[len - 1 - i];
         hash *= 0x01000193;
     }
-    return hash;
+    തിരികെ hash;
 }
 
 /*
@@ -37,109 +37,109 @@ hash_buf(const char *string, size_t len)
  * mapping strings to atoms. Another array maps the atoms to
  * strings. The atom value is the position in the strings array.
  */
-struct atom_table {
+ഘടന atom_table {
     xkb_atom_t *index;
     size_t index_size;
-    darray(char *) strings;
+    darray(അക്ഷരം *) strings;
 };
 
-struct atom_table *
-atom_table_new(void)
+ഘടന atom_table *
+atom_table_new(ശൂന്യം)
 {
-    struct atom_table *table = calloc(1, sizeof(*table));
-    if (!table)
-        return NULL;
+    ഘടന atom_table *table = calloc(1, വലുപ്പം(*table));
+    എങ്കിൽ (!table)
+        തിരികെ ശൂന്യ;
 
     darray_init(table->strings);
-    darray_append(table->strings, NULL);
+    darray_append(table->strings, ശൂന്യ);
     table->index_size = 4;
-    table->index = calloc(table->index_size, sizeof(*table->index));
+    table->index = calloc(table->index_size, വലുപ്പം(*table->index));
 
-    return table;
+    തിരികെ table;
 }
 
-void
-atom_table_free(struct atom_table *table)
+ശൂന്യം
+atom_table_free(ഘടന atom_table *table)
 {
-    if (!table)
-        return;
+    എങ്കിൽ (!table)
+        തിരികെ;
 
-    char **string;
+    അക്ഷരം **string;
     darray_foreach(string, table->strings)
-        free(*string);
+        സ്വതന്ത്രം(*string);
     darray_free(table->strings);
-    free(table->index);
-    free(table);
+    സ്വതന്ത്രം(table->index);
+    സ്വതന്ത്രം(table);
 }
 
 darray_size_t
-atom_table_size(struct atom_table *table)
+atom_table_size(ഘടന atom_table *table)
 {
-    return darray_size(table->strings);
+    തിരികെ darray_size(table->strings);
 }
 
-const char *
-atom_text(struct atom_table *table, xkb_atom_t atom)
+സ്ഥിരം അക്ഷരം *
+atom_text(ഘടന atom_table *table, xkb_atom_t atom)
 {
-    assert(atom < darray_size(table->strings));
-    return darray_item(table->strings, atom);
+    പ്രതിജ്ഞാ(atom < darray_size(table->strings));
+    തിരികെ darray_item(table->strings, atom);
 }
 
 xkb_atom_t
-atom_intern(struct atom_table *table, const char *string, size_t len, bool add)
+atom_intern(ഘടന atom_table *table, സ്ഥിരം അക്ഷരം *string, size_t len, bool add)
 {
     /* len(string) > 0.8 * index_size */
-    if (darray_size(table->strings) > (table->index_size / 5) * 4) {
+    എങ്കിൽ (darray_size(table->strings) > (table->index_size / 5) * 4) {
         table->index_size *= 2;
         xkb_atom_t *tmp = realloc(table->index,
-                                  table->index_size * sizeof(*table->index));
-        if (!tmp)
-            return XKB_ATOM_NONE;
+                                  table->index_size * വലുപ്പം(*table->index));
+        എങ്കിൽ (!tmp)
+            തിരികെ XKB_ATOM_NONE;
         table->index = tmp;
-        memset(table->index, 0, table->index_size * sizeof(*table->index));
-        for (darray_size_t j = 1; j < darray_size(table->strings); j++) {
-            const char *s = darray_item(table->strings, j);
+        memset(table->index, 0, table->index_size * വലുപ്പം(*table->index));
+        വേണ്ടി (darray_size_t j = 1; j < darray_size(table->strings); j++) {
+            സ്ഥിരം അക്ഷരം *s = darray_item(table->strings, j);
             uint32_t hash = hash_buf(s, strlen(s));
-            for (size_t i = 0; i < table->index_size; i++) {
+            വേണ്ടി (size_t i = 0; i < table->index_size; i++) {
                 size_t index_pos = (hash + i) & (table->index_size - 1);
-                if (index_pos == 0)
-                    continue;
+                എങ്കിൽ (index_pos == 0)
+                    തുടരുക;
 
                 xkb_atom_t atom = table->index[index_pos];
-                if (atom == XKB_ATOM_NONE) {
+                എങ്കിൽ (atom == XKB_ATOM_NONE) {
                     table->index[index_pos] = j;
-                    break;
+                    നിർത്തുക;
                 }
             }
         }
     }
 
     uint32_t hash = hash_buf(string, len);
-    for (size_t i = 0; i < table->index_size; i++) {
+    വേണ്ടി (size_t i = 0; i < table->index_size; i++) {
         size_t index_pos = (hash + i) & (table->index_size - 1);
-        if (index_pos == 0)
-            continue;
+        എങ്കിൽ (index_pos == 0)
+            തുടരുക;
 
         xkb_atom_t existing_atom = table->index[index_pos];
-        if (existing_atom == XKB_ATOM_NONE) {
-            if (add) {
+        എങ്കിൽ (existing_atom == XKB_ATOM_NONE) {
+            എങ്കിൽ (add) {
                 xkb_atom_t new_atom = darray_size(table->strings);
-                char *s = strndup(string, len);
-                if (!s)
-                    return XKB_ATOM_NONE;
+                അക്ഷരം *s = strndup(string, len);
+                എങ്കിൽ (!s)
+                    തിരികെ XKB_ATOM_NONE;
                 darray_append(table->strings, s);
                 table->index[index_pos] = new_atom;
-                return new_atom;
-            } else {
-                return XKB_ATOM_NONE;
+                തിരികെ new_atom;
+            } അല്ലെങ്കിൽ {
+                തിരികെ XKB_ATOM_NONE;
             }
         }
 
-        const char *existing_value = darray_item(table->strings, existing_atom);
-        if (strncmp(existing_value, string, len) == 0 && existing_value[len] == '\0')
-            return existing_atom;
+        സ്ഥിരം അക്ഷരം *existing_മൂല്യം = darray_item(table->strings, existing_atom);
+        എങ്കിൽ (strncmp(existing_മൂല്യം, string, len) == 0 && existing_മൂല്യം[len] == '\0')
+            തിരികെ existing_atom;
     }
 
-    assert(!"couldn't find an empty slot during probing");
-    return XKB_ATOM_NONE;
+    പ്രതിജ്ഞാ(!"couldn't find an empty slot during probing");
+    തിരികെ XKB_ATOM_NONE;
 }

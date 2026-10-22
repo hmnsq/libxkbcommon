@@ -3,50 +3,50 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include "x11-priv.h"
-#include "xkbcommon/xkbcommon.h"
+#അന്തര്ഭാവ "x11-priv.h"
+#അന്തര്ഭാവ "xkbcommon/xkbcommon.h"
 
 /* Some macros. Not very nice but it'd be worse without them. */
 
-#define FAIL_IF_BAD_REPLY(ctx, reply, request_name) do {    \
-    if (!(reply)) {                                         \
+#define FAIL_IF_BAD_REPLY(ctx, reply, request_name) ചെയ്യുക {    \
+    എങ്കിൽ (!(reply)) {                                         \
         log_err((ctx), XKB_LOG_MESSAGE_NO_ID,               \
                 "x11: failed to get keymap from X server: " \
                 "%s request failed\n",                      \
                 (request_name));                            \
-        goto fail;                                          \
+        പോകുക fail;                                          \
     }                                                       \
-} while (0)
+} ആകുമ്പോൾ (0)
 
-static bool
-update_initial_state(struct xkb_state *state, xcb_connection_t *conn,
-                     uint16_t device_id, enum xkb_action_controls controls)
+സ്ഥിതം bool
+update_initial_state(ഘടന xkb_state *state, xcb_connection_t *conn,
+                     uint16_t device_id, എണ്ണൽ xkb_action_controls controls)
 {
     xcb_xkb_get_state_cookie_t cookie =
         xcb_xkb_get_state(conn, device_id);
     xcb_xkb_get_state_reply_t *reply =
-        xcb_xkb_get_state_reply(conn, cookie, NULL);
+        xcb_xkb_get_state_reply(conn, cookie, ശൂന്യ);
 
-    if (!reply)
-        return false;
+    എങ്കിൽ (!reply)
+        തിരികെ false;
 
     /* NOTE: Use the public API with private enum values */
-    const struct xkb_state_components_update components = {
-        .size = sizeof(components),
+    സ്ഥിരം ഘടന xkb_state_components_update components = {
+        .size = വലുപ്പം(components),
         .components = XKB_STATE_CONTROLS_EFFECTIVE,
-        .affect_controls = (enum xkb_keyboard_control_flags) controls,
-        .controls = (enum xkb_keyboard_control_flags) controls,
+        .affect_controls = (എണ്ണൽ xkb_keyboard_control_flags) controls,
+        .controls = (എണ്ണൽ xkb_keyboard_control_flags) controls,
     };
-    const struct xkb_synthetic_update update = {
-        .size = sizeof(update),
+    സ്ഥിരം ഘടന xkb_synthetic_update update = {
+        .size = വലുപ്പം(update),
         .components = &components,
     };
-    const enum xkb_status status =
-        xkb_state_update_synthetic(state, &update, NULL);
-    if (status != XKB_SUCCESS)
-        return false;
+    സ്ഥിരം എണ്ണൽ xkb_status status =
+        xkb_state_update_synthetic(state, &update, ശൂന്യ);
+    എങ്കിൽ (status != XKB_SUCCESS)
+        തിരികെ false;
 
     xkb_state_update_mask(state,
                           reply->baseMods,
@@ -56,71 +56,71 @@ update_initial_state(struct xkb_state *state, xcb_connection_t *conn,
                           reply->latchedGroup,
                           reply->lockedGroup);
 
-    free(reply);
-    return true;
+    സ്വതന്ത്രം(reply);
+    തിരികെ true;
 }
 
 // NOLINTNEXTLINE(readability-avoid-unconditional-preprocessor-if)
-#if 0
+#എങ്കിൽ 0
 // TODO: currently unused
-static enum xkb_a11y_flags
-translate_state_accessibility_flags(const xcb_xkb_get_controls_reply_t *reply)
+സ്ഥിതം എണ്ണൽ xkb_a11y_flags
+translate_state_accessibility_flags(സ്ഥിരം xcb_xkb_get_controls_reply_t *reply)
 {
-    enum xkb_a11y_flags flags = XKB_A11Y_NO_FLAGS;
-    if (reply->accessXOption & XCB_XKB_AX_OPTION_LATCH_TO_LOCK) {
-        flags |= XKB_A11Y_STICKY_KEYS_LATCH_TO_LOCK;
+    എണ്ണൽ xkb_a11y_flags flags = XKB_A11Y_NO_FLAGS;
+    എങ്കിൽ (reply->accessXOption & XCB_XKB_AX_OPTION_LATCH_TO_LOCK) {
+        flags |= XKB_A11_Y_STICKY_താക്കോലുകൾ_LATCH_TO_LOCK;
     }
-    return flags;
+    തിരികെ flags;
 }
 #endif
 
-static bool
-get_controls(struct xkb_context *ctx, xcb_connection_t *conn, int32_t device_id,
-             enum xkb_action_controls *controls)
+സ്ഥിതം bool
+get_controls(ഘടന xkb_context *ctx, xcb_connection_t *conn, int32_t device_id,
+             എണ്ണൽ xkb_action_controls *controls)
 {
     xcb_xkb_get_controls_cookie_t cookie = xcb_xkb_get_controls(conn, device_id);
     xcb_xkb_get_controls_reply_t *reply =
-        xcb_xkb_get_controls_reply(conn, cookie, NULL);
+        xcb_xkb_get_controls_reply(conn, cookie, ശൂന്യ);
 
     FAIL_IF_BAD_REPLY(ctx, reply, "XkbGetControls");
 
     // TODO: translate_state_accessibility_flags(reply);
     *controls = translate_controls_mask(reply->enabledControls);
 
-    free(reply);
-    return true;
+    സ്വതന്ത്രം(reply);
+    തിരികെ true;
 
 fail:
-    free(reply);
-    return false;
+    സ്വതന്ത്രം(reply);
+    തിരികെ false;
 }
 
-struct xkb_state *
-xkb_x11_state_new_from_device(struct xkb_keymap *keymap,
+ഘടന xkb_state *
+xkb_x11_state_new_from_device(ഘടന xkb_keymap *keymap,
                               xcb_connection_t *conn, int32_t device_id)
 {
-    if (device_id < 0 || device_id > 255) {
+    എങ്കിൽ (device_id < 0 || device_id > 255) {
         log_err_func(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
                      "illegal device ID: %"PRId32, device_id);
-        return NULL;
+        തിരികെ ശൂന്യ;
     }
 
-    enum xkb_action_controls controls = 0;
-    if (!get_controls(keymap->ctx, conn, device_id, &controls))
-        return NULL;
+    എണ്ണൽ xkb_action_controls controls = 0;
+    എങ്കിൽ (!get_controls(keymap->ctx, conn, device_id, &controls))
+        തിരികെ ശൂന്യ;
 
     /*
      * Use the legacy state mode for compatibility, as there is no plan
      * to change the xkbcommon-x11 API.
      */
-    struct xkb_state * const state = xkb_state_new(keymap);
-    if (!state)
-        return NULL;
+    ഘടന xkb_state * സ്ഥിരം state = xkb_state_new(keymap);
+    എങ്കിൽ (!state)
+        തിരികെ ശൂന്യ;
 
-    if (!update_initial_state(state, conn, device_id, controls)) {
+    എങ്കിൽ (!update_initial_state(state, conn, device_id, controls)) {
         xkb_state_unref(state);
-        return NULL;
+        തിരികെ ശൂന്യ;
     }
 
-    return state;
+    തിരികെ state;
 }

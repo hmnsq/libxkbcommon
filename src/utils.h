@@ -4,19 +4,19 @@
  */
 #pragma once
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <assert.h>
-#include <errno.h>
-#include <inttypes.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#if HAVE_UNISTD_H
+#അന്തര്ഭാവ <assert.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <inttypes.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <stdbool.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
+#എങ്കിൽ HAVE_UNISTD_H
 # include <unistd.h>
-#else
+#അല്ലെങ്കിൽ
 /* Required on Windows where unistd.h doesn't exist */
 # define R_OK    4               /* Test for read permission.  */
 # define W_OK    2               /* Test for write permission.  */
@@ -38,18 +38,18 @@
 #  define STDIN_FILENO 0
 # endif
 #ifdef _MSC_VER
-typedef SSIZE_T ssize_t;
+തരനിർവചനം SSIZE_T ssize_t;
 #endif
 #endif
 
-static inline bool
-is_aligned(const void *restrict pointer, size_t byte_count)
+സ്ഥിതം വരിയിൽ bool
+is_aligned(സ്ഥിരം ശൂന്യം *restrict pointer, size_t byte_എണ്ണം)
 {
-    return (uintptr_t) pointer % byte_count == 0;
+    തിരികെ (uintptr_t) pointer % byte_എണ്ണം == 0;
 }
 
 
-#define ARRAY_SIZE(arr) ((sizeof(arr) / sizeof(*(arr))))
+#define ARRAY_SIZE(arr) ((വലുപ്പം(arr) / വലുപ്പം(*(arr))))
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
@@ -63,179 +63,179 @@ is_aligned(const void *restrict pointer, size_t byte_count)
 #define CONCAT2(x,y) CONCAT(x,y)
 
 /* Check if a Unicode code point is valid in a string literal */
-static inline bool
+സ്ഥിതം വരിയിൽ bool
 is_valid_char(uint32_t cp)
 {
     /* Currently we only check for NULL character, but this could be extended
      * in the future to further ASCII control characters. */
-    return cp != 0;
+    തിരികെ cp != 0;
 }
 
 /* Check if a Unicode code point is a surrogate.
  * Those code points are used only in UTF-16 encodings. */
-static inline bool
+സ്ഥിതം വരിയിൽ bool
 is_surrogate(uint32_t cp)
 {
-    return (cp >= 0xd800 && cp <= 0xdfff);
+    തിരികെ (cp >= 0xd800 && cp <= 0xdfff);
 }
 
-char
-to_lower(char c);
+അക്ഷരം
+to_lower(അക്ഷരം c);
 
-int
-istrcmp(const char *a, const char *b);
+പൂർണ്ണസംഖ്യ
+istrcmp(സ്ഥിരം അക്ഷരം *a, സ്ഥിരം അക്ഷരം *b);
 
-int
-istrncmp(const char *a, const char *b, size_t n);
+പൂർണ്ണസംഖ്യ
+istrncmp(സ്ഥിരം അക്ഷരം *a, സ്ഥിരം അക്ഷരം *b, size_t n);
 
-static inline bool
-streq(const char *s1, const char *s2)
+സ്ഥിതം വരിയിൽ bool
+streq(സ്ഥിരം അക്ഷരം *s1, സ്ഥിരം അക്ഷരം *s2)
 {
-    assert(s1 && s2);
-    return strcmp(s1, s2) == 0;
+    പ്രതിജ്ഞാ(s1 && s2);
+    തിരികെ strcmp(s1, s2) == 0;
 }
 
-static inline bool
-streq_null(const char *s1, const char *s2)
+സ്ഥിതം വരിയിൽ bool
+streq_null(സ്ഥിരം അക്ഷരം *s1, സ്ഥിരം അക്ഷരം *s2)
 {
-    if (s1 == NULL || s2 == NULL)
-        return s1 == s2;
-    return streq(s1, s2);
+    എങ്കിൽ (s1 == ശൂന്യ || s2 == ശൂന്യ)
+        തിരികെ s1 == s2;
+    തിരികെ streq(s1, s2);
 }
 
-static inline bool
-streq_not_null(const char *s1, const char *s2)
+സ്ഥിതം വരിയിൽ bool
+streq_not_null(സ്ഥിരം അക്ഷരം *s1, സ്ഥിരം അക്ഷരം *s2)
 {
-    if (!s1 || !s2)
-        return false;
-    return streq(s1, s2);
+    എങ്കിൽ (!s1 || !s2)
+        തിരികെ false;
+    തിരികെ streq(s1, s2);
 }
 
-static inline bool
-istreq(const char *s1, const char *s2)
+സ്ഥിതം വരിയിൽ bool
+istreq(സ്ഥിരം അക്ഷരം *s1, സ്ഥിരം അക്ഷരം *s2)
 {
-    return istrcmp(s1, s2) == 0;
+    തിരികെ istrcmp(s1, s2) == 0;
 }
 
-static inline bool
-istrneq(const char *s1, const char *s2, size_t len)
+സ്ഥിതം വരിയിൽ bool
+istrneq(സ്ഥിരം അക്ഷരം *s1, സ്ഥിരം അക്ഷരം *s2, size_t len)
 {
-    return istrncmp(s1, s2, len) == 0;
+    തിരികെ istrncmp(s1, s2, len) == 0;
 }
 
-#define istreq_prefix(s1, s2) istrneq(s1, s2, sizeof(s1) - 1)
+#define istreq_prefix(s1, s2) istrneq(s1, s2, വലുപ്പം(s1) - 1)
 
-static inline char *
-strcpy_safe(char *dest, size_t size, const char *src) {
-    if (!dest || !size || !src)
-        return NULL;
-    const char * const limit = dest + size - 1;
-    while (dest < limit && *src) {
+സ്ഥിതം വരിയിൽ അക്ഷരം *
+strcpy_safe(അക്ഷരം *dest, size_t size, സ്ഥിരം അക്ഷരം *src) {
+    എങ്കിൽ (!dest || !size || !src)
+        തിരികെ ശൂന്യ;
+    സ്ഥിരം അക്ഷരം * സ്ഥിരം limit = dest + size - 1;
+    ആകുമ്പോൾ (dest < limit && *src) {
         *dest++ = *src++;
     }
     *dest = '\0';
-    return *src ? NULL : dest;
+    തിരികെ *src ? ശൂന്യ : dest;
 }
 
-static inline char *
-strdup_safe(const char *s)
+സ്ഥിതം വരിയിൽ അക്ഷരം *
+strdup_safe(സ്ഥിരം അക്ഷരം *s)
 {
-    return s ? strdup(s) : NULL;
+    തിരികെ s ? strdup(s) : ശൂന്യ;
 }
 
-static inline size_t
-strlen_safe(const char *s)
+സ്ഥിതം വരിയിൽ size_t
+strlen_safe(സ്ഥിരം അക്ഷരം *s)
 {
-    return s ? strlen(s) : 0;
+    തിരികെ s ? strlen(s) : 0;
 }
 
-static inline bool
-isempty(const char *s)
+സ്ഥിതം വരിയിൽ bool
+isempty(സ്ഥിരം അക്ഷരം *s)
 {
-    return s == NULL || s[0] == '\0';
+    തിരികെ s == ശൂന്യ || s[0] == '\0';
 }
 
-static inline const char *
-strnull(const char *s)
+സ്ഥിതം വരിയിൽ സ്ഥിരം അക്ഷരം *
+strnull(സ്ഥിരം അക്ഷരം *s)
 {
-    return s ? s : "(null)";
+    തിരികെ s ? s : "(null)";
 }
 
-static inline const char *
-strempty(const char *s)
+സ്ഥിതം വരിയിൽ സ്ഥിരം അക്ഷരം *
+strempty(സ്ഥിരം അക്ഷരം *s)
 {
-    return s ? s : "";
+    തിരികെ s ? s : "";
 }
 
-static inline void *
-memdup(const void *mem, size_t nmemb, size_t size)
+സ്ഥിതം വരിയിൽ ശൂന്യം *
+memdup(സ്ഥിരം ശൂന്യം *mem, size_t nmemb, size_t size)
 {
-    void *p = calloc(nmemb, size);
-    if (p)
+    ശൂന്യം *p = calloc(nmemb, size);
+    എങ്കിൽ (p)
         memcpy(p, mem, nmemb * size);
-    return p;
+    തിരികെ p;
 }
 
-#if !(defined(HAVE_STRNDUP) && HAVE_STRNDUP)
-static inline char *
-strndup(const char *s, size_t n)
+#എങ്കിൽ !(defined(HAVE_STRNDUP) && HAVE_STRNDUP)
+സ്ഥിതം വരിയിൽ അക്ഷരം *
+strndup(സ്ഥിരം അക്ഷരം *s, size_t n)
 {
     size_t slen = strlen(s);
     size_t len = MIN(slen, n);
-    char *p = malloc(len + 1);
-    if (!p)
-        return NULL;
+    അക്ഷരം *p = malloc(len + 1);
+    എങ്കിൽ (!p)
+        തിരികെ ശൂന്യ;
     memcpy(p, s, len);
     p[len] = '\0';
-    return p;
+    തിരികെ p;
 }
 #endif
 
 /* ctype.h is locale-dependent and has other oddities. */
-static inline bool
-is_ascii(char ch)
+സ്ഥിതം വരിയിൽ bool
+is_ascii(അക്ഷരം ch)
 {
-    return (ch & ~0x7f) == 0;
+    തിരികെ (ch & ~0x7f) == 0;
 }
 
-static inline bool
-is_space(char ch)
+സ്ഥിതം വരിയിൽ bool
+is_space(അക്ഷരം ch)
 {
-    return ch == ' ' || (ch >= '\t' && ch <= '\r');
+    തിരികെ ch == ' ' || (ch >= '\t' && ch <= '\r');
 }
 
-static inline bool
-is_alpha(char ch)
+സ്ഥിതം വരിയിൽ bool
+is_alpha(അക്ഷരം ch)
 {
-    return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
+    തിരികെ (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
 }
 
-static inline bool
-is_digit(char ch)
+സ്ഥിതം വരിയിൽ bool
+is_digit(അക്ഷരം ch)
 {
-    return ch >= '0' && ch <= '9';
+    തിരികെ ch >= '0' && ch <= '9';
 }
 
-static inline bool
-is_alnum(char ch)
+സ്ഥിതം വരിയിൽ bool
+is_alnum(അക്ഷരം ch)
 {
-    return is_alpha(ch) || is_digit(ch);
+    തിരികെ is_alpha(ch) || is_digit(ch);
 }
 
-static inline bool
-is_xdigit(char ch)
+സ്ഥിതം വരിയിൽ bool
+is_xdigit(അക്ഷരം ch)
 {
-    return
+    തിരികെ
         (ch >= '0' && ch <= '9') ||
         (ch >= 'a' && ch <= 'f') ||
         (ch >= 'A' && ch <= 'F');
 }
 
-static inline bool
-is_graph(char ch)
+സ്ഥിതം വരിയിൽ bool
+is_graph(അക്ഷരം ch)
 {
     /* See table in ascii(7). */
-    return ch >= '!' && ch <= '~';
+    തിരികെ ch >= '!' && ch <= '~';
 }
 
 /*
@@ -243,58 +243,58 @@ is_graph(char ch)
  * Note: this is 1-based! It's more useful this way, and returns 0 when
  * mask is all 0s.
  */
-static inline unsigned int
+സ്ഥിതം വരിയിൽ unsigned പൂർണ്ണസംഖ്യ
 msb_pos(uint32_t mask)
 {
-    unsigned int pos = 0;
-    while (mask) {
+    unsigned പൂർണ്ണസംഖ്യ pos = 0;
+    ആകുമ്പോൾ (mask) {
         pos++;
         mask >>= 1u;
     }
-    return pos;
+    തിരികെ pos;
 }
 
-static inline int
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ
 one_bit_set(uint32_t x)
 {
-    return x && (x & (x - 1)) == 0;
+    തിരികെ x && (x & (x - 1)) == 0;
 }
 
 bool
-map_file(FILE *file, char **string_out, size_t *size_out);
+map_file(FILE *file, അക്ഷരം **string_out, size_t *size_out);
 
-void
-unmap_file(char *string, size_t size);
+ശൂന്യം
+unmap_file(അക്ഷരം *string, size_t size);
 
-static inline bool
-check_eaccess(const char *path, int mode)
+സ്ഥിതം വരിയിൽ bool
+check_eaccess(സ്ഥിരം അക്ഷരം *path, പൂർണ്ണസംഖ്യ mode)
 {
-#if defined(HAVE_EACCESS)
-    if (eaccess(path, mode) != 0)
-        return false;
-#elif defined(HAVE_EUIDACCESS)
-    if (euidaccess(path, mode) != 0)
-        return false;
+#എങ്കിൽ defined(HAVE_EACCESS)
+    എങ്കിൽ (eaccess(path, mode) != 0)
+        തിരികെ false;
+#അല്ലെങ്കിലെങ്കിൽ defined(HAVE_EUIDACCESS)
+    എങ്കിൽ (euidaccess(path, mode) != 0)
+        തിരികെ false;
 #endif
 
-    return true;
+    തിരികെ true;
 }
 
 FILE*
-open_file(const char *path);
+open_file(സ്ഥിരം അക്ഷരം *path);
 
-#if defined(HAVE_SECURE_GETENV)
+#എങ്കിൽ defined(HAVE_SECURE_GETENV)
 # define secure_getenv secure_getenv
-#elif defined(HAVE___SECURE_GETENV)
+#അല്ലെങ്കിലെങ്കിൽ defined(HAVE___SECURE_GETENV)
 # define secure_getenv __secure_getenv
-#else
+#അല്ലെങ്കിൽ
 # define secure_getenv getenv
 #endif
 
-#if defined(HAVE___BUILTIN_EXPECT)
+#എങ്കിൽ defined(HAVE___BUILTIN_EXPECT)
 # define likely(x)   __builtin_expect(!!(x), 1)
 # define unlikely(x) __builtin_expect(!!(x), 0)
-#else
+#അല്ലെങ്കിൽ
 # define likely(x)   (x)
 # define unlikely(x) (x)
 #endif
@@ -303,131 +303,131 @@ open_file(const char *path);
 
 /* Private functions only exposed in tests. */
 #ifdef ENABLE_PRIVATE_APIS
-# if defined(__GNUC__) && !defined(__CYGWIN__)
+# എങ്കിൽ defined(__GNUC__) && !defined(__CYGWIN__)
 #  define XKB_EXPORT_PRIVATE __attribute__((visibility("default")))
 # elif defined(_WIN32)
 #  define XKB_EXPORT_PRIVATE __declspec(dllexport)
-# else
+# അല്ലെങ്കിൽ
 #  define XKB_EXPORT_PRIVATE
 # endif
-#else
+#അല്ലെങ്കിൽ
 # define XKB_EXPORT_PRIVATE
 #endif
 
-#if defined(__MINGW32__)
+#എങ്കിൽ defined(__MINGW32__)
 # define ATTR_PRINTF(x,y) __attribute__((__format__(__MINGW_PRINTF_FORMAT, x, y)))
-#elif defined(__GNUC__)
+#അല്ലെങ്കിലെങ്കിൽ defined(__GNUC__)
 # define ATTR_PRINTF(x,y) __attribute__((__format__(__printf__, x, y)))
-#else
+#അല്ലെങ്കിൽ
 # define ATTR_PRINTF(x,y)
 #endif
 
-#if defined(__GNUC__)
+#എങ്കിൽ defined(__GNUC__)
 # define ATTR_NORETURN __attribute__((__noreturn__))
-#else
+#അല്ലെങ്കിൽ
 # define ATTR_NORETURN
 #endif /* GNUC  */
 
-#if defined(__GNUC__)
+#എങ്കിൽ defined(__GNUC__)
 #define ATTR_MALLOC  __attribute__((__malloc__))
-#else
+#അല്ലെങ്കിൽ
 #define ATTR_MALLOC
 #endif
 
-#if defined(__GNUC__)
+#എങ്കിൽ defined(__GNUC__)
 # define ATTR_NULL_SENTINEL __attribute__((__sentinel__))
-#else
+#അല്ലെങ്കിൽ
 # define ATTR_NULL_SENTINEL
 #endif
 
-#if defined(__GNUC__)
+#എങ്കിൽ defined(__GNUC__)
 #define ATTR_PACKED  __attribute__((__packed__))
-#else
+#അല്ലെങ്കിൽ
 #define ATTR_PACKED
 #endif
 
-#if defined(HAVE_ATTR_COUNTED_BY) && HAVE_ATTR_COUNTED_BY
-# define ATTR_COUNTED_BY(count) __attribute__((counted_by(count)))
-#else
-# define ATTR_COUNTED_BY(count)
+#എങ്കിൽ defined(HAVE_ATTR_COUNTED_BY) && HAVE_ATTR_COUNTED_BY
+# define ATTR_COUNTED_BY(എണ്ണം) __attribute__((counted_by(എണ്ണം)))
+#അല്ലെങ്കിൽ
+# define ATTR_COUNTED_BY(എണ്ണം)
 #endif
 
-#if !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
-XKB_EXPORT_PRIVATE int asprintf(char **strp, const char *fmt, ...) ATTR_PRINTF(2, 3);
-# if !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
+#എങ്കിൽ !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
+XKB_EXPORT_PRIVATE പൂർണ്ണസംഖ്യ asprintf(അക്ഷരം **strp, സ്ഥിരം അക്ഷരം *fmt, ...) ATTR_PRINTF(2, 3);
+# എങ്കിൽ !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
 #  include <stdarg.h>
-XKB_EXPORT_PRIVATE int vasprintf(char **strp, const char *fmt, va_list ap);
+XKB_EXPORT_PRIVATE പൂർണ്ണസംഖ്യ vasprintf(അക്ഷരം **strp, സ്ഥിരം അക്ഷരം *fmt, va_list ap);
 # endif /* !HAVE_VASPRINTF */
 #endif /* !HAVE_ASPRINTF */
 
-static inline bool
+സ്ഥിതം വരിയിൽ bool
 ATTR_PRINTF(3, 4)
-snprintf_safe(char *buf, size_t sz, const char *format, ...)
+snprintf_safe(അക്ഷരം *buf, size_t sz, സ്ഥിരം അക്ഷരം *format, ...)
 {
     va_list ap;
-    int rc;
+    പൂർണ്ണസംഖ്യ rc;
 
     va_start(ap, format);
     rc = vsnprintf(buf, sz, format, ap);
     va_end(ap);
 
-    return rc >= 0 && (size_t)rc < sz;
+    തിരികെ rc >= 0 && (size_t)rc < sz;
 }
 
-static inline char *
+സ്ഥിതം വരിയിൽ അക്ഷരം *
 ATTR_PRINTF(1, 0)
-vasprintf_safe(const char *fmt, va_list args)
+vasprintf_safe(സ്ഥിരം അക്ഷരം *fmt, va_list args)
 {
-    char *str;
-    int len;
+    അക്ഷരം *str;
+    പൂർണ്ണസംഖ്യ len;
 
     len = vasprintf(&str, fmt, args);
 
-    if (len == -1)
-        return NULL;
+    എങ്കിൽ (len == -1)
+        തിരികെ ശൂന്യ;
 
-    return str;
+    തിരികെ str;
 }
 
 /**
  * A version of asprintf that returns the allocated string or NULL on error.
  */
-static inline char *
+സ്ഥിതം വരിയിൽ അക്ഷരം *
 ATTR_PRINTF(1, 2)
-asprintf_safe(const char *fmt, ...)
+asprintf_safe(സ്ഥിരം അക്ഷരം *fmt, ...)
 {
     va_list args;
-    char *str;
+    അക്ഷരം *str;
 
     va_start(args, fmt);
     str = vasprintf_safe(fmt, args);
     va_end(args);
 
-    return str;
+    തിരികെ str;
 }
 
 #ifdef NDEBUG
-    #if defined(__GNUC__) || defined(__clang__)
+    #എങ്കിൽ defined(__GNUC__) || defined(__clang__)
         #define PANIC_UNREACHABLE() __builtin_unreachable()
-    #elif defined(_MSC_VER)
+    #അല്ലെങ്കിലെങ്കിൽ defined(_MSC_VER)
         #define PANIC_UNREACHABLE() __assume(0)
-    #else
+    #അല്ലെങ്കിൽ
         #define PANIC_UNREACHABLE() abort()
     #endif
-#else
+#അല്ലെങ്കിൽ
     #define PANIC_UNREACHABLE() \
-        do { \
+        ചെയ്യുക { \
             fprintf(stderr, "Critical Error: Reached unreachable line in %s at %d\n", __FILE__, __LINE__); \
             abort(); \
-        } while (0)
+        } ആകുമ്പോൾ (0)
 #endif
 
-#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
+#എങ്കിൽ defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
 #  define NOINLINE [[noinline]]
-#elif defined(__GNUC__) || defined(__clang__)
+#അല്ലെങ്കിലെങ്കിൽ defined(__GNUC__) || defined(__clang__)
 #  define NOINLINE __attribute__((noinline))
-#elif defined(_MSC_VER)
+#അല്ലെങ്കിലെങ്കിൽ defined(_MSC_VER)
 #  define NOINLINE __declspec(noinline)
-#else
+#അല്ലെങ്കിൽ
 #  define NOINLINE
 #endif

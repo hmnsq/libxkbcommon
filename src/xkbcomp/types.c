@@ -3,196 +3,196 @@
  * SPDX-License-Identifier: HPND
  */
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <limits.h>
+#അന്തര്ഭാവ <limits.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-status.h"
-#include "xkbcomp-priv.h"
-#include "text.h"
-#include "vmod.h"
-#include "expr.h"
-#include "include.h"
-#include "utils.h"
-#include "util-mem.h"
+#അന്തര്ഭാവ "xkbcommon/xkbcommon.h"
+#അന്തര്ഭാവ "xkbcommon/xkbcommon-status.h"
+#അന്തര്ഭാവ "xkbcomp-priv.h"
+#അന്തര്ഭാവ "text.h"
+#അന്തര്ഭാവ "vmod.h"
+#അന്തര്ഭാവ "expr.h"
+#അന്തര്ഭാവ "include.h"
+#അന്തര്ഭാവ "utils.h"
+#അന്തര്ഭാവ "util-mem.h"
 
-enum type_field {
+എണ്ണൽ type_field {
     TYPE_FIELD_MASK = (1 << 0),
     TYPE_FIELD_MAP = (1 << 1),
     TYPE_FIELD_PRESERVE = (1 << 2),
     TYPE_FIELD_LEVEL_NAME = (1 << 3),
 };
 
-typedef struct {
-    enum type_field defined;
-    enum merge_mode merge;
+തരനിർവചനം ഘടന {
+    എണ്ണൽ type_field defined;
+    എണ്ണൽ merge_mode merge;
 
     xkb_atom_t name;
     xkb_mod_mask_t mods;
-    xkb_level_index_t num_levels;
-    darray(struct xkb_key_type_entry) entries;
+    xkb_level_index_t അക്കം_levels;
+    darray(ഘടന xkb_താക്കോൽ_type_entry) entries;
     darray(xkb_atom_t) level_names;
-} KeyTypeInfo;
+} താക്കോൽ_Type_Info;
 
-typedef struct {
-    char *name;
-    int errorCount;
-    unsigned int include_depth;
+തരനിർവചനം ഘടന {
+    അക്ഷരം *name;
+    പൂർണ്ണസംഖ്യ error_എണ്ണം;
+    unsigned പൂർണ്ണസംഖ്യ include_depth;
 
-    darray(KeyTypeInfo) types;
-    struct xkb_mod_set mods;
+    darray(താക്കോൽ_Type_Info) types;
+    ഘടന xkb_mod_set mods;
 
-    struct xkb_context *ctx;
-    const struct xkb_keymap_info *keymap_info;
-} KeyTypesInfo;
+    ഘടന xkb_context *ctx;
+    സ്ഥിരം ഘടന xkb_keymap_info *keymap_info;
+} താക്കോൽ_Types_Info;
 
 /***====================================================================***/
 
-static inline const char *
-MapEntryTxt(KeyTypesInfo *info, struct xkb_key_type_entry *entry)
+സ്ഥിതം വരിയിൽ സ്ഥിരം അക്ഷരം *
+MapEntryTxt(താക്കോൽ_Types_Info *info, ഘടന xkb_താക്കോൽ_type_entry *entry)
 {
-    return ModMaskText(info->ctx, MOD_BOTH, &info->mods, entry->mods.mods);
+    തിരികെ ModMaskText(info->ctx, MOD_BOTH, &info->mods, entry->mods.mods);
 }
 
-static inline const char *
-TypeTxt(KeyTypesInfo *info, KeyTypeInfo *type)
+സ്ഥിതം വരിയിൽ സ്ഥിരം അക്ഷരം *
+TypeTxt(താക്കോൽ_Types_Info *info, താക്കോൽ_Type_Info *type)
 {
-    return xkb_atom_text(info->ctx, type->name);
+    തിരികെ xkb_atom_text(info->ctx, type->name);
 }
 
-static inline const char *
-TypeMaskTxt(KeyTypesInfo *info, KeyTypeInfo *type)
+സ്ഥിതം വരിയിൽ സ്ഥിരം അക്ഷരം *
+TypeMaskTxt(താക്കോൽ_Types_Info *info, താക്കോൽ_Type_Info *type)
 {
-    return ModMaskText(info->ctx, MOD_BOTH, &info->mods, type->mods);
+    തിരികെ ModMaskText(info->ctx, MOD_BOTH, &info->mods, type->mods);
 }
 
-static inline bool
-ReportTypeShouldBeArray(KeyTypesInfo *info, KeyTypeInfo *type,
-                        const char *field)
+സ്ഥിതം വരിയിൽ bool
+ReportTypeShouldBeArray(താക്കോൽ_Types_Info *info, താക്കോൽ_Type_Info *type,
+                        സ്ഥിരം അക്ഷരം *field)
 {
-    return ReportShouldBeArray(info->ctx, "key type", field,
+    തിരികെ ReportShouldBeArray(info->ctx, "key type", field,
                                TypeTxt(info, type));
 }
 
-static inline bool
-ReportTypeBadType(KeyTypesInfo *info, enum xkb_message_code code,
-                  KeyTypeInfo *type, const char *field, const char *wanted)
+സ്ഥിതം വരിയിൽ bool
+ReportTypeBadType(താക്കോൽ_Types_Info *info, എണ്ണൽ xkb_message_code code,
+                  താക്കോൽ_Type_Info *type, സ്ഥിരം അക്ഷരം *field, സ്ഥിരം അക്ഷരം *wanted)
 {
-    return ReportBadType(info->ctx, code, "key type", field,
+    തിരികെ ReportBadType(info->ctx, code, "key type", field,
                          TypeTxt(info, type), wanted);
 }
 
 /***====================================================================***/
 
-static void
-InitKeyTypesInfo(KeyTypesInfo *info, const struct xkb_keymap_info *keymap_info,
-                 unsigned int include_depth,
-                 const struct xkb_mod_set *mods)
+സ്ഥിതം ശൂന്യം
+Init_താക്കോൽ_Types_Info(താക്കോൽ_Types_Info *info, സ്ഥിരം ഘടന xkb_keymap_info *keymap_info,
+                 unsigned പൂർണ്ണസംഖ്യ include_depth,
+                 സ്ഥിരം ഘടന xkb_mod_set *mods)
 {
-    memset(info, 0, sizeof(*info));
+    memset(info, 0, വലുപ്പം(*info));
     info->ctx = keymap_info->keymap.ctx;
     info->keymap_info = keymap_info;
     info->include_depth = include_depth;
     InitVMods(&info->mods, mods, include_depth > 0);
 }
 
-static void
-ClearKeyTypeInfo(KeyTypeInfo *type)
+സ്ഥിതം ശൂന്യം
+Clear_താക്കോൽ_Type_Info(താക്കോൽ_Type_Info *type)
 {
     darray_free(type->entries);
     darray_free(type->level_names);
 }
 
-static void
-ClearKeyTypesInfo(KeyTypesInfo *info)
+സ്ഥിതം ശൂന്യം
+Clear_താക്കോൽ_Types_Info(താക്കോൽ_Types_Info *info)
 {
-    free(info->name);
-    KeyTypeInfo *type;
+    സ്വതന്ത്രം(info->name);
+    താക്കോൽ_Type_Info *type;
     darray_foreach(type, info->types)
-        ClearKeyTypeInfo(type);
+        Clear_താക്കോൽ_Type_Info(type);
     darray_free(info->types);
 }
 
-static KeyTypeInfo *
-FindMatchingKeyType(KeyTypesInfo *info, xkb_atom_t name)
+സ്ഥിതം താക്കോൽ_Type_Info *
+Find_Matching_താക്കോൽ_Type(താക്കോൽ_Types_Info *info, xkb_atom_t name)
 {
-    KeyTypeInfo *old;
+    താക്കോൽ_Type_Info *old;
 
     darray_foreach(old, info->types)
-        if (old->name == name)
-            return old;
+        എങ്കിൽ (old->name == name)
+            തിരികെ old;
 
-    return NULL;
+    തിരികെ ശൂന്യ;
 }
 
-static bool
-AddKeyType(KeyTypesInfo *info, KeyTypeInfo *new, bool same_file)
+സ്ഥിതം bool
+Add_താക്കോൽ_Type(താക്കോൽ_Types_Info *info, താക്കോൽ_Type_Info *new, bool same_file)
 {
-    KeyTypeInfo *old;
-    const int verbosity = xkb_context_get_log_verbosity(info->ctx);
+    താക്കോൽ_Type_Info *old;
+    സ്ഥിരം പൂർണ്ണസംഖ്യ verbosity = xkb_context_get_log_verbosity(info->ctx);
 
-    old = FindMatchingKeyType(info, new->name);
-    if (old) {
-        if (new->merge != MERGE_AUGMENT) {
-            if ((same_file && verbosity > 0) || verbosity > 9) {
+    old = Find_Matching_താക്കോൽ_Type(info, new->name);
+    എങ്കിൽ (old) {
+        എങ്കിൽ (new->merge != MERGE_AUGMENT) {
+            എങ്കിൽ ((same_file && verbosity > 0) || verbosity > 9) {
                 log_warn(info->ctx,
-                         XKB_WARNING_CONFLICTING_KEY_TYPE_DEFINITIONS,
+                         XKB_WARNING_CONFLICTING_താക്കോൽ_TYPE_DEFINITIONS,
                          "Multiple definitions of the %s key type; "
                          "Earlier definition ignored\n",
                          xkb_atom_text(info->ctx, new->name));
             }
 
-            ClearKeyTypeInfo(old);
+            Clear_താക്കോൽ_Type_Info(old);
             *old = *new;
             darray_init(new->entries);
             darray_init(new->level_names);
-            return true;
+            തിരികെ true;
         }
 
-        if (same_file)
+        എങ്കിൽ (same_file)
             log_vrb(info->ctx, XKB_LOG_VERBOSITY_DETAILED,
-                    XKB_WARNING_CONFLICTING_KEY_TYPE_DEFINITIONS,
+                    XKB_WARNING_CONFLICTING_താക്കോൽ_TYPE_DEFINITIONS,
                     "Multiple definitions of the %s key type; "
                     "Later definition ignored\n",
                     xkb_atom_text(info->ctx, new->name));
 
-        ClearKeyTypeInfo(new);
-        return true;
+        Clear_താക്കോൽ_Type_Info(new);
+        തിരികെ true;
     }
 
     darray_append(info->types, *new);
-    return true;
+    തിരികെ true;
 }
 
 /***====================================================================***/
 
-static void
-MergeIncludedKeyTypes(KeyTypesInfo *into, KeyTypesInfo *from,
-                      enum merge_mode merge)
+സ്ഥിതം ശൂന്യം
+Merge_Included_താക്കോൽ_Types(താക്കോൽ_Types_Info *into, താക്കോൽ_Types_Info *from,
+                      എണ്ണൽ merge_mode merge)
 {
-    if (from->errorCount > 0) {
-        into->errorCount += from->errorCount;
-        return;
+    എങ്കിൽ (from->error_എണ്ണം > 0) {
+        into->error_എണ്ണം += from->error_എണ്ണം;
+        തിരികെ;
     }
 
     MergeModSets(into->ctx, &into->mods, &from->mods, merge);
 
-    if (into->name == NULL) {
+    എങ്കിൽ (into->name == ശൂന്യ) {
         into->name = steal(&from->name);
     }
 
-    if (darray_empty(into->types)) {
+    എങ്കിൽ (darray_empty(into->types)) {
         into->types = from->types;
         /* Types stolen via shallow copy, so reinitialize the array */
         darray_init(from->types);
     }
-    else {
-        KeyTypeInfo *type;
+    അല്ലെങ്കിൽ {
+        താക്കോൽ_Type_Info *type;
         darray_foreach(type, from->types) {
             type->merge = merge;
-            if (!AddKeyType(into, type, false))
-                into->errorCount++;
+            എങ്കിൽ (!Add_താക്കോൽ_Type(into, type, false))
+                into->error_എണ്ണം++;
         }
         /* Types were either shallow copied or reinitialized individually
            in `AddKeyType`, so we only need to free the array */
@@ -200,166 +200,166 @@ MergeIncludedKeyTypes(KeyTypesInfo *into, KeyTypesInfo *from,
     }
 }
 
-static void
-HandleKeyTypesFile(KeyTypesInfo *info, XkbFile *file);
+സ്ഥിതം ശൂന്യം
+Handle_താക്കോൽ_Types_File(താക്കോൽ_Types_Info *info, XkbFile *file);
 
-static bool
-HandleIncludeKeyTypes(KeyTypesInfo *info, IncludeStmt *include)
+സ്ഥിതം bool
+Handle_Include_താക്കോൽ_Types(താക്കോൽ_Types_Info *info, IncludeStmt *include)
 {
-    KeyTypesInfo included;
+    താക്കോൽ_Types_Info included;
 
-    if (ExceedsIncludeMaxDepth(info->ctx, info->include_depth)) {
-        info->errorCount += 10;
-        return false;
+    എങ്കിൽ (ExceedsIncludeMaxDepth(info->ctx, info->include_depth)) {
+        info->error_എണ്ണം += 10;
+        തിരികെ false;
     }
 
-    InitKeyTypesInfo(&included, info->keymap_info, info->include_depth + 1,
+    Init_താക്കോൽ_Types_Info(&included, info->keymap_info, info->include_depth + 1,
                      &info->mods);
     included.name = steal(&include->stmt);
 
-    const struct parser_keymap_config config = {
+    സ്ഥിരം ഘടന parser_keymap_config config = {
         .format = info->keymap_info->keymap.format,
         .strict = info->keymap_info->strict
     };
 
-    for (IncludeStmt *stmt = include; stmt; stmt = stmt->next_incl) {
-        KeyTypesInfo next_incl;
+    വേണ്ടി (IncludeStmt *stmt = include; stmt; stmt = stmt->next_incl) {
+        താക്കോൽ_Types_Info next_incl;
         XkbFile *file;
 
-        char path[PATH_MAX];
+        അക്ഷരം path[PATH_MAX];
         file = ProcessIncludeFile(info->ctx, &config, stmt, FILE_TYPE_TYPES,
-                                  path, sizeof(path));
-        if (!file) {
-            info->errorCount += 10;
-            ClearKeyTypesInfo(&included);
-            return false;
+                                  path, വലുപ്പം(path));
+        എങ്കിൽ (!file) {
+            info->error_എണ്ണം += 10;
+            Clear_താക്കോൽ_Types_Info(&included);
+            തിരികെ false;
         }
 
-        InitKeyTypesInfo(&next_incl, info->keymap_info, info->include_depth + 1,
+        Init_താക്കോൽ_Types_Info(&next_incl, info->keymap_info, info->include_depth + 1,
                          &included.mods);
 
-        HandleKeyTypesFile(&next_incl, file);
+        Handle_താക്കോൽ_Types_File(&next_incl, file);
 
-        MergeIncludedKeyTypes(&included, &next_incl, stmt->merge);
+        Merge_Included_താക്കോൽ_Types(&included, &next_incl, stmt->merge);
 
-        ClearKeyTypesInfo(&next_incl);
+        Clear_താക്കോൽ_Types_Info(&next_incl);
         FreeXkbFile(file);
     }
 
-    MergeIncludedKeyTypes(info, &included, include->merge);
-    ClearKeyTypesInfo(&included);
+    Merge_Included_താക്കോൽ_Types(info, &included, include->merge);
+    Clear_താക്കോൽ_Types_Info(&included);
 
-    return (info->errorCount == 0);
+    തിരികെ (info->error_എണ്ണം == 0);
 }
 
 /***====================================================================***/
 
-static bool
-SetModifiers(KeyTypesInfo *info, KeyTypeInfo *type, ExprDef *arrayNdx,
-             ExprDef *value)
+സ്ഥിതം bool
+SetModifiers(താക്കോൽ_Types_Info *info, താക്കോൽ_Type_Info *type, വ്യഞ്ജകം_Def *arrayNdx,
+             വ്യഞ്ജകം_Def *മൂല്യം)
 {
     xkb_mod_mask_t mods = 0;
 
-    if (arrayNdx) {
+    എങ്കിൽ (arrayNdx) {
         log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                 "The modifiers field of a key type is not an array; "
                 "Illegal array subscript ignored\n");
-        return false;
+        തിരികെ false;
     }
 
-    if (!ExprResolveModMask(info->ctx, value, MOD_BOTH, &info->mods, &mods)) {
+    എങ്കിൽ (!വ്യഞ്ജകം_Resolve_Mod_Mask(info->ctx, മൂല്യം, MOD_BOTH, &info->mods, &mods)) {
         log_err(info->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK,
                 "Key type mask field must be a modifier mask; "
                 "Key type definition ignored\n");
-        return false;
+        തിരികെ false;
     }
 
-    if (type->defined & TYPE_FIELD_MASK) {
+    എങ്കിൽ (type->defined & TYPE_FIELD_MASK) {
         log_warn(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                  "Multiple modifier mask definitions for key type %s; "
                  "Using %s, ignoring %s\n",
                  xkb_atom_text(info->ctx, type->name),
                  TypeMaskTxt(info, type),
                  ModMaskText(info->ctx, MOD_BOTH, &info->mods, mods));
-        return false;
+        തിരികെ false;
     }
 
     type->mods = mods;
-    return true;
+    തിരികെ true;
 }
 
 /***====================================================================***/
 
-static struct xkb_key_type_entry *
-FindMatchingMapEntry(KeyTypeInfo *type, xkb_mod_mask_t mods)
+സ്ഥിതം ഘടന xkb_താക്കോൽ_type_entry *
+FindMatchingMapEntry(താക്കോൽ_Type_Info *type, xkb_mod_mask_t mods)
 {
-    struct xkb_key_type_entry *entry;
+    ഘടന xkb_താക്കോൽ_type_entry *entry;
 
     darray_foreach(entry, type->entries)
-        if (entry->mods.mods == mods)
-            return entry;
+        എങ്കിൽ (entry->mods.mods == mods)
+            തിരികെ entry;
 
-    return NULL;
+    തിരികെ ശൂന്യ;
 }
 
-static bool
-AddMapEntry(KeyTypesInfo *info, KeyTypeInfo *type,
-            struct xkb_key_type_entry *new, bool clobber, bool report)
+സ്ഥിതം bool
+AddMapEntry(താക്കോൽ_Types_Info *info, താക്കോൽ_Type_Info *type,
+            ഘടന xkb_താക്കോൽ_type_entry *new, bool clobber, bool report)
 {
-    struct xkb_key_type_entry *old;
+    ഘടന xkb_താക്കോൽ_type_entry *old;
 
     old = FindMatchingMapEntry(type, new->mods.mods);
-    if (old) {
-        if (report && old->level != new->level) {
-            log_warn(info->ctx, XKB_WARNING_CONFLICTING_KEY_TYPE_MAP_ENTRY,
+    എങ്കിൽ (old) {
+        എങ്കിൽ (report && old->level != new->level) {
+            log_warn(info->ctx, XKB_WARNING_CONFLICTING_താക്കോൽ_TYPE_MAP_ENTRY,
                      "Multiple map entries for %s in %s; "
                      "Using %"PRIu32", ignoring %"PRIu32"\n",
                      MapEntryTxt(info, new), TypeTxt(info, type),
                      (clobber ? new->level : old->level) + 1,
                      (clobber ? old->level : new->level) + 1);
         }
-        else {
+        അല്ലെങ്കിൽ {
             log_vrb(info->ctx, XKB_LOG_VERBOSITY_VERBOSE,
-                    XKB_WARNING_CONFLICTING_KEY_TYPE_MAP_ENTRY,
+                    XKB_WARNING_CONFLICTING_താക്കോൽ_TYPE_MAP_ENTRY,
                     "Multiple occurrences of map[%s]= %"PRIu32" in %s; Ignored\n",
                     MapEntryTxt(info, new), new->level + 1,
                     TypeTxt(info, type));
-            return true;
+            തിരികെ true;
         }
 
-        if (clobber) {
-            if (new->level >= type->num_levels)
-                type->num_levels = new->level + 1;
+        എങ്കിൽ (clobber) {
+            എങ്കിൽ (new->level >= type->അക്കം_levels)
+                type->അക്കം_levels = new->level + 1;
             old->level = new->level;
         }
 
-        return true;
+        തിരികെ true;
     }
 
-    if (new->level >= type->num_levels)
-        type->num_levels = new->level + 1;
+    എങ്കിൽ (new->level >= type->അക്കം_levels)
+        type->അക്കം_levels = new->level + 1;
 
     darray_append(type->entries, *new);
-    return true;
+    തിരികെ true;
 }
 
-static bool
-SetMapEntry(KeyTypesInfo *info, KeyTypeInfo *type, ExprDef *arrayNdx,
-            ExprDef *value)
+സ്ഥിതം bool
+SetMapEntry(താക്കോൽ_Types_Info *info, താക്കോൽ_Type_Info *type, വ്യഞ്ജകം_Def *arrayNdx,
+            വ്യഞ്ജകം_Def *മൂല്യം)
 {
-    struct xkb_key_type_entry entry;
+    ഘടന xkb_താക്കോൽ_type_entry entry;
 
-    if (arrayNdx == NULL)
-        return ReportTypeShouldBeArray(info, type, "map entry");
+    എങ്കിൽ (arrayNdx == ശൂന്യ)
+        തിരികെ ReportTypeShouldBeArray(info, type, "map entry");
 
-    if (!ExprResolveModMask(info->ctx, arrayNdx, MOD_BOTH, &info->mods,
+    എങ്കിൽ (!വ്യഞ്ജകം_Resolve_Mod_Mask(info->ctx, arrayNdx, MOD_BOTH, &info->mods,
                             &entry.mods.mods))
-        return ReportTypeBadType(info, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK_,
+        തിരികെ ReportTypeBadType(info, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK_,
                                  type, "map entry", "modifier mask");
 
-    if (entry.mods.mods & (~type->mods)) {
+    എങ്കിൽ (entry.mods.mods & (~type->mods)) {
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
-                XKB_WARNING_UNDECLARED_MODIFIERS_IN_KEY_TYPE,
+                XKB_WARNING_UNDECLARED_MODIFIERS_IN_താക്കോൽ_TYPE,
                 "Map entry for modifiers not used by type %s; "
                 "Using %s instead of %s\n",
                 TypeTxt(info, type),
@@ -369,50 +369,50 @@ SetMapEntry(KeyTypesInfo *info, KeyTypeInfo *type, ExprDef *arrayNdx,
         entry.mods.mods &= type->mods;
     }
 
-    if (!ExprResolveLevel(info->ctx, value, &entry.level)) {
+    എങ്കിൽ (!വ്യഞ്ജകം_Resolve_Level(info->ctx, മൂല്യം, &entry.level)) {
         log_err(info->ctx, XKB_ERROR_UNSUPPORTED_SHIFT_LEVEL,
                           "Level specifications in a key type must be integer; "
                           "Ignoring malformed level specification\n");
-        return false;
+        തിരികെ false;
     }
 
     entry.preserve.mods = 0;
 
-    return AddMapEntry(info, type, &entry, true, true);
+    തിരികെ AddMapEntry(info, type, &entry, true, true);
 }
 
 /***====================================================================***/
 
-static bool
-AddPreserve(KeyTypesInfo *info, KeyTypeInfo *type,
+സ്ഥിതം bool
+AddPreserve(താക്കോൽ_Types_Info *info, താക്കോൽ_Type_Info *type,
             xkb_mod_mask_t mods, xkb_mod_mask_t preserve_mods)
 {
-    struct xkb_key_type_entry *entry;
+    ഘടന xkb_താക്കോൽ_type_entry *entry;
 
     darray_foreach(entry, type->entries) {
-        if (entry->mods.mods != mods)
-            continue;
+        എങ്കിൽ (entry->mods.mods != mods)
+            തുടരുക;
 
         /* Map exists without previous preserve (or "None"); override. */
-        if (entry->preserve.mods == 0) {
+        എങ്കിൽ (entry->preserve.mods == 0) {
             entry->preserve.mods = preserve_mods;
-            return true;
+            തിരികെ true;
         }
 
         /* Map exists with same preserve; do nothing. */
-        if (entry->preserve.mods == preserve_mods) {
+        എങ്കിൽ (entry->preserve.mods == preserve_mods) {
             log_vrb(info->ctx, XKB_LOG_VERBOSITY_VERBOSE,
                     XKB_WARNING_DUPLICATE_ENTRY,
                     "Identical definitions for preserve[%s] in %s; "
                     "Ignored\n",
                     ModMaskText(info->ctx, MOD_BOTH, &info->mods, mods),
                     TypeTxt(info, type));
-            return true;
+            തിരികെ true;
         }
 
         /* Map exists with different preserve; latter wins. */
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
-                XKB_WARNING_CONFLICTING_KEY_TYPE_PRESERVE_ENTRIES,
+                XKB_WARNING_CONFLICTING_താക്കോൽ_TYPE_PRESERVE_ENTRIES,
                 "Multiple definitions for preserve[%s] in %s; "
                 "Using %s, ignoring %s\n",
                 ModMaskText(info->ctx, MOD_BOTH, &info->mods, mods),
@@ -422,7 +422,7 @@ AddPreserve(KeyTypesInfo *info, KeyTypeInfo *type,
                             entry->preserve.mods));
 
         entry->preserve.mods = preserve_mods;
-        return true;
+        തിരികെ true;
     }
 
     /*
@@ -430,164 +430,164 @@ AddPreserve(KeyTypesInfo *info, KeyTypeInfo *type,
      * Create a map with the specified mask mapping to Level1. The level
      * may be overridden later with an explicit map[] statement.
      */
-    const struct xkb_key_type_entry new = {
+    സ്ഥിരം ഘടന xkb_താക്കോൽ_type_entry new = {
         .level = 0,
         .mods = { .mods = mods },
         .preserve = { .mods = preserve_mods },
     };
     darray_append(type->entries, new);
-    return true;
+    തിരികെ true;
 }
 
-static bool
-SetPreserve(KeyTypesInfo *info, KeyTypeInfo *type, ExprDef *arrayNdx,
-            ExprDef *value)
+സ്ഥിതം bool
+SetPreserve(താക്കോൽ_Types_Info *info, താക്കോൽ_Type_Info *type, വ്യഞ്ജകം_Def *arrayNdx,
+            വ്യഞ്ജകം_Def *മൂല്യം)
 {
 
-    if (arrayNdx == NULL)
-        return ReportTypeShouldBeArray(info, type, "preserve entry");
+    എങ്കിൽ (arrayNdx == ശൂന്യ)
+        തിരികെ ReportTypeShouldBeArray(info, type, "preserve entry");
 
     xkb_mod_mask_t mods = 0;
-    if (!ExprResolveModMask(info->ctx, arrayNdx, MOD_BOTH, &info->mods, &mods))
-        return ReportTypeBadType(info, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK_,
+    എങ്കിൽ (!വ്യഞ്ജകം_Resolve_Mod_Mask(info->ctx, arrayNdx, MOD_BOTH, &info->mods, &mods))
+        തിരികെ ReportTypeBadType(info, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK_,
                                  type, "preserve entry", "modifier mask");
 
-    if (mods & ~type->mods) {
-        const char *before, *after;
+    എങ്കിൽ (mods & ~type->mods) {
+        സ്ഥിരം അക്ഷരം *before, *after;
 
         before = ModMaskText(info->ctx, MOD_BOTH, &info->mods, mods);
         mods &= type->mods;
         after = ModMaskText(info->ctx, MOD_BOTH, &info->mods, mods);
 
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
-                XKB_WARNING_UNDECLARED_MODIFIERS_IN_KEY_TYPE,
+                XKB_WARNING_UNDECLARED_MODIFIERS_IN_താക്കോൽ_TYPE,
                 "Preserve entry for modifiers not used by the %s type; "
                 "Index %s converted to %s\n",
                 TypeTxt(info, type), before, after);
     }
 
     xkb_mod_mask_t preserve_mods = 0;
-    if (!ExprResolveModMask(info->ctx, value, MOD_BOTH, &info->mods,
+    എങ്കിൽ (!വ്യഞ്ജകം_Resolve_Mod_Mask(info->ctx, മൂല്യം, MOD_BOTH, &info->mods,
                             &preserve_mods)) {
         log_err(info->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK,
                 "Preserve value in a key type is not a modifier mask; "
                 "Ignoring preserve[%s] in type %s\n",
                 ModMaskText(info->ctx, MOD_BOTH, &info->mods, mods),
                 TypeTxt(info, type));
-        return false;
+        തിരികെ false;
     }
 
-    if (preserve_mods & ~mods) {
-        const char *before, *after;
+    എങ്കിൽ (preserve_mods & ~mods) {
+        സ്ഥിരം അക്ഷരം *before, *after;
 
         before = ModMaskText(info->ctx, MOD_BOTH, &info->mods, preserve_mods);
         preserve_mods &= mods;
         after = ModMaskText(info->ctx, MOD_BOTH, &info->mods, preserve_mods);
 
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
-                XKB_WARNING_ILLEGAL_KEY_TYPE_PRESERVE_RESULT,
+                XKB_WARNING_ILLEGAL_താക്കോൽ_TYPE_PRESERVE_RESULT,
                 "Illegal value for preserve[%s] in type %s; "
                 "Converted %s to %s\n",
                 ModMaskText(info->ctx, MOD_BOTH, &info->mods, mods),
                 TypeTxt(info, type), before, after);
     }
 
-    return AddPreserve(info, type, mods, preserve_mods);
+    തിരികെ AddPreserve(info, type, mods, preserve_mods);
 }
 
 /***====================================================================***/
 
-static bool
-AddLevelName(KeyTypesInfo *info, KeyTypeInfo *type,
+സ്ഥിതം bool
+AddLevelName(താക്കോൽ_Types_Info *info, താക്കോൽ_Type_Info *type,
              xkb_level_index_t level, xkb_atom_t name, bool clobber)
 {
     /* New name. */
-    if (level >= darray_size(type->level_names)) {
+    എങ്കിൽ (level >= darray_size(type->level_names)) {
         darray_resize0(type->level_names, level + 1);
-        goto finish;
+        പോകുക finish;
     }
 
     /* Same level, same name. */
-    if (darray_item(type->level_names, level) == name) {
+    എങ്കിൽ (darray_item(type->level_names, level) == name) {
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_VERBOSE, XKB_WARNING_DUPLICATE_ENTRY,
                 "Duplicate names for level %"PRIu32" of key type %s; Ignored\n",
                 level + 1, TypeTxt(info, type));
-        return true;
+        തിരികെ true;
     }
 
     /* Same level, different name. */
-    if (darray_item(type->level_names, level) != XKB_ATOM_NONE) {
-        const char *old, *new;
+    എങ്കിൽ (darray_item(type->level_names, level) != XKB_ATOM_NONE) {
+        സ്ഥിരം അക്ഷരം *old, *new;
         old = xkb_atom_text(info->ctx,
                             darray_item(type->level_names, level));
         new = xkb_atom_text(info->ctx, name);
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
-                XKB_WARNING_CONFLICTING_KEY_TYPE_LEVEL_NAMES,
+                XKB_WARNING_CONFLICTING_താക്കോൽ_TYPE_LEVEL_NAMES,
                 "Multiple names for level %"PRIu32" of key type %s; "
                 "Using %s, ignoring %s\n",
                 level + 1, TypeTxt(info, type),
                 (clobber ? new : old), (clobber ? old : new));
 
-        if (!clobber)
-            return true;
+        എങ്കിൽ (!clobber)
+            തിരികെ true;
     }
 
     /* FIXME: What about different level, same name? */
 
 finish:
     darray_item(type->level_names, level) = name;
-    return true;
+    തിരികെ true;
 }
 
-static bool
-SetLevelName(KeyTypesInfo *info, KeyTypeInfo *type, ExprDef *arrayNdx,
-             ExprDef *value)
+സ്ഥിതം bool
+SetLevelName(താക്കോൽ_Types_Info *info, താക്കോൽ_Type_Info *type, വ്യഞ്ജകം_Def *arrayNdx,
+             വ്യഞ്ജകം_Def *മൂല്യം)
 {
-    if (arrayNdx == NULL)
-        return ReportTypeShouldBeArray(info, type, "level name");
+    എങ്കിൽ (arrayNdx == ശൂന്യ)
+        തിരികെ ReportTypeShouldBeArray(info, type, "level name");
 
     xkb_level_index_t level = 0;
-    if (!ExprResolveLevel(info->ctx, arrayNdx, &level))
-        return ReportTypeBadType(info, XKB_ERROR_UNSUPPORTED_SHIFT_LEVEL,
+    എങ്കിൽ (!വ്യഞ്ജകം_Resolve_Level(info->ctx, arrayNdx, &level))
+        തിരികെ ReportTypeBadType(info, XKB_ERROR_UNSUPPORTED_SHIFT_LEVEL,
                                  type, "level name", "integer");
 
     xkb_atom_t level_name = XKB_ATOM_NONE;
-    if (!ExprResolveString(info->ctx, value, &level_name)) {
+    എങ്കിൽ (!വ്യഞ്ജകം_Resolve_String(info->ctx, മൂല്യം, &level_name)) {
         log_err(info->ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Non-string name for level %"PRIu32" in key type %s; "
                 "Ignoring illegal level name definition\n",
                 level + 1, xkb_atom_text(info->ctx, type->name));
-        return false;
+        തിരികെ false;
     }
 
-    return AddLevelName(info, type, level, level_name, true);
+    തിരികെ AddLevelName(info, type, level, level_name, true);
 }
 
 /***====================================================================***/
 
-static bool
-SetKeyTypeField(KeyTypesInfo *info, KeyTypeInfo *type,
-                const char *field, ExprDef *arrayNdx, ExprDef *value)
+സ്ഥിതം bool
+Set_താക്കോൽ_Type_Field(താക്കോൽ_Types_Info *info, താക്കോൽ_Type_Info *type,
+                സ്ഥിരം അക്ഷരം *field, വ്യഞ്ജകം_Def *arrayNdx, വ്യഞ്ജകം_Def *മൂല്യം)
 {
     bool ok = false;
-    enum type_field type_field = 0;
+    എണ്ണൽ type_field type_field = 0;
 
-    if (istreq(field, "modifiers")) {
+    എങ്കിൽ (istreq(field, "modifiers")) {
         type_field = TYPE_FIELD_MASK;
-        ok = SetModifiers(info, type, arrayNdx, value);
+        ok = SetModifiers(info, type, arrayNdx, മൂല്യം);
     }
-    else if (istreq(field, "map")) {
+    അല്ലെങ്കിൽ എങ്കിൽ (istreq(field, "map")) {
         type_field = TYPE_FIELD_MAP;
-        ok = SetMapEntry(info, type, arrayNdx, value);
+        ok = SetMapEntry(info, type, arrayNdx, മൂല്യം);
     }
-    else if (istreq(field, "preserve")) {
+    അല്ലെങ്കിൽ എങ്കിൽ (istreq(field, "preserve")) {
         type_field = TYPE_FIELD_PRESERVE;
-        ok = SetPreserve(info, type, arrayNdx, value);
+        ok = SetPreserve(info, type, arrayNdx, മൂല്യം);
     }
-    else if (istreq(field, "levelname") || istreq(field, "level_name")) {
+    അല്ലെങ്കിൽ എങ്കിൽ (istreq(field, "levelname") || istreq(field, "level_name")) {
         type_field = TYPE_FIELD_LEVEL_NAME;
-        ok = SetLevelName(info, type, arrayNdx, value);
-    } else {
+        ok = SetLevelName(info, type, arrayNdx, മൂല്യം);
+    } അല്ലെങ്കിൽ {
         log_err(info->ctx, XKB_ERROR_UNKNOWN_FIELD,
                 "Unknown field \"%s\" in key type \"%s\"; Definition ignored\n",
                 field, TypeTxt(info, type));
@@ -595,31 +595,31 @@ SetKeyTypeField(KeyTypesInfo *info, KeyTypeInfo *type,
     }
 
     type->defined |= type_field;
-    return ok;
+    തിരികെ ok;
 }
 
-static bool
-HandleKeyTypeBody(KeyTypesInfo *info, VarDef *def, KeyTypeInfo *type)
+സ്ഥിതം bool
+Handle_താക്കോൽ_Type_Body(താക്കോൽ_Types_Info *info, VarDef *def, താക്കോൽ_Type_Info *type)
 {
     bool ok = true;
-    const char *elem, *field;
-    ExprDef *arrayNdx;
+    സ്ഥിരം അക്ഷരം *elem, *field;
+    വ്യഞ്ജകം_Def *arrayNdx;
 
-    for (; def; def = (VarDef *) def->common.next) {
-        if (!ExprResolveLhs(info->ctx, def->name, &elem, &field,
+    വേണ്ടി (; def; def = (VarDef *) def->common.next) {
+        എങ്കിൽ (!വ്യഞ്ജകം_Resolve_Lhs(info->ctx, def->name, &elem, &field,
                             &arrayNdx)) {
             /* internal error, already reported */
             ok = false;
-            continue;
+            തുടരുക;
         }
 
-        if (elem) {
-            if (istreq(elem, "type")) {
+        എങ്കിൽ (elem) {
+            എങ്കിൽ (istreq(elem, "type")) {
                 log_err(info->ctx, XKB_ERROR_INVALID_SET_DEFAULT_STATEMENT,
                         "Support for changing the default type has been removed; "
                         "Statement \"%s.%s\" ignored.\n", elem, field);
             }
-            else {
+            അല്ലെങ്കിൽ {
                 log_err(info->ctx, XKB_ERROR_GLOBAL_DEFAULTS_WRONG_SCOPE,
                         "Cannot set global defaults for \"%s\" element within "
                         "a key type statement: move statements to the global "
@@ -627,135 +627,135 @@ HandleKeyTypeBody(KeyTypesInfo *info, VarDef *def, KeyTypeInfo *type)
                         elem, elem, field);
                 ok = false;
             }
-            continue;
+            തുടരുക;
         }
 
-        if (!SetKeyTypeField(info, type, field, arrayNdx, def->value))
+        എങ്കിൽ (!Set_താക്കോൽ_Type_Field(info, type, field, arrayNdx, def->മൂല്യം))
             ok = false;
     }
 
-    return ok;
+    തിരികെ ok;
 }
 
-static bool
-HandleKeyTypeDef(KeyTypesInfo *info, KeyTypeDef *def)
+സ്ഥിതം bool
+Handle_താക്കോൽ_Type_Def(താക്കോൽ_Types_Info *info, താക്കോൽ_Type_Def *def)
 {
-    KeyTypeInfo type = {
+    താക്കോൽ_Type_Info type = {
         .defined = 0,
         .merge = def->merge,
         .name = def->name,
         .mods = 0,
-        .num_levels = 1,
+        .അക്കം_levels = 1,
         .entries = darray_new(),
         .level_names = darray_new(),
     };
 
-    if (!HandleKeyTypeBody(info, def->body, &type) ||
-        !AddKeyType(info, &type, true))
+    എങ്കിൽ (!Handle_താക്കോൽ_Type_Body(info, def->body, &type) ||
+        !Add_താക്കോൽ_Type(info, &type, true))
     {
-        info->errorCount++;
-        ClearKeyTypeInfo(&type);
-        return false;
+        info->error_എണ്ണം++;
+        Clear_താക്കോൽ_Type_Info(&type);
+        തിരികെ false;
     }
 
     /* Type has been either stolen via shallow copy or reinitialized in
        `AddKeyType`: no need to free the arrays */
-    return true;
+    തിരികെ true;
 }
 
-static bool
-HandleGlobalVar(KeyTypesInfo *info, VarDef *stmt)
+സ്ഥിതം bool
+HandleGlobalVar(താക്കോൽ_Types_Info *info, VarDef *stmt)
 {
-    const char *elem, *field;
-    ExprDef *arrayNdx;
+    സ്ഥിരം അക്ഷരം *elem, *field;
+    വ്യഞ്ജകം_Def *arrayNdx;
 
-    if (!ExprResolveLhs(info->ctx, stmt->name, &elem, &field,
+    എങ്കിൽ (!വ്യഞ്ജകം_Resolve_Lhs(info->ctx, stmt->name, &elem, &field,
                         &arrayNdx)) {
-        return false;           /* internal error, already reported */
+        തിരികെ false;           /* internal error, already reported */
     }
-    else if (elem && istreq(elem, "type")) {
+    അല്ലെങ്കിൽ എങ്കിൽ (elem && istreq(elem, "type")) {
         log_err(info->ctx, XKB_ERROR_WRONG_STATEMENT_TYPE,
                 "Support for changing the default type has been removed; "
                 "Statement ignored\n");
-        return true;
+        തിരികെ true;
     }
-    else if (elem) {
+    അല്ലെങ്കിൽ എങ്കിൽ (elem) {
         log_err(info->ctx, XKB_ERROR_UNKNOWN_DEFAULT_FIELD,
                 "Default defined for unknown element \"%s\"; "
                 "Value for field \"%s.%s\" ignored\n", elem, elem, field);
-        return !(info->keymap_info->strict & PARSER_NO_UNKNOWN_STATEMENTS);
+        തിരികെ !(info->keymap_info->strict & PARSER_NO_UNKNOWN_STATEMENTS);
     }
-    else if (field) {
+    അല്ലെങ്കിൽ എങ്കിൽ (field) {
         log_err(info->ctx, XKB_ERROR_UNKNOWN_DEFAULT_FIELD,
                 "Default defined for unknown field \"%s\"; Ignored\n", field);
-        return !(info->keymap_info->strict &
+        തിരികെ !(info->keymap_info->strict &
                  PARSER_NO_UNKNOWN_TYPES_GLOBAL_FIELDS);
     }
-    return false;
+    തിരികെ false;
 }
 
-static void
-HandleKeyTypesFile(KeyTypesInfo *info, XkbFile *file)
+സ്ഥിതം ശൂന്യം
+Handle_താക്കോൽ_Types_File(താക്കോൽ_Types_Info *info, XkbFile *file)
 {
     bool ok;
 
-    free(info->name);
+    സ്വതന്ത്രം(info->name);
     info->name = strdup_safe(file->name);
 
-    for (ParseCommon *stmt = file->defs; stmt; stmt = stmt->next) {
-        switch (stmt->type) {
-        case STMT_INCLUDE:
-            ok = HandleIncludeKeyTypes(info, (IncludeStmt *) stmt);
-            break;
-        case STMT_TYPE:
-            ok = HandleKeyTypeDef(info, (KeyTypeDef *) stmt);
-            break;
-        case STMT_VAR:
+    വേണ്ടി (ParseCommon *stmt = file->defs; stmt; stmt = stmt->next) {
+        തിരഞ്ഞെടുപ്പ് (stmt->type) {
+        അവസ്ഥ STMT_INCLUDE:
+            ok = Handle_Include_താക്കോൽ_Types(info, (IncludeStmt *) stmt);
+            നിർത്തുക;
+        അവസ്ഥ STMT_TYPE:
+            ok = Handle_താക്കോൽ_Type_Def(info, (താക്കോൽ_Type_Def *) stmt);
+            നിർത്തുക;
+        അവസ്ഥ STMT_VAR:
             ok = HandleGlobalVar(info, (VarDef*) stmt);
-            break;
-        case STMT_VMOD:
+            നിർത്തുക;
+        അവസ്ഥ STMT_VMOD:
             ok = HandleVModDef(info->ctx, &info->mods, (VModDef *) stmt);
-            break;
-        case STMT_UNKNOWN_DECLARATION:
-        case STMT_UNKNOWN_COMPOUND:
+            നിർത്തുക;
+        അവസ്ഥ STMT_UNKNOWN_DECLARATION:
+        അവസ്ഥ STMT_UNKNOWN_COMPOUND:
             log_err(info->ctx, XKB_ERROR_UNKNOWN_STATEMENT,
                     "Unsupported types %s statement \"%s\"; Ignoring\n",
                     (stmt->type == STMT_UNKNOWN_COMPOUND
                         ? "compound" : "declaration"),
                     ((UnknownStatement *)stmt)->name);
             ok = !(info->keymap_info->strict & PARSER_NO_UNKNOWN_STATEMENTS);
-            break;
-        default:
+            നിർത്തുക;
+        സ്ഥിരസ്ഥിതി:
             log_err(info->ctx, XKB_ERROR_WRONG_STATEMENT_TYPE,
                     "Key type files may not include other declarations; "
                     "Ignoring %s\n", stmt_type_to_string(stmt->type));
             ok = false;
-            break;
+            നിർത്തുക;
         }
 
-        if (!ok)
-            info->errorCount++;
+        എങ്കിൽ (!ok)
+            info->error_എണ്ണം++;
 
-        if (info->errorCount > 10) {
+        എങ്കിൽ (info->error_എണ്ണം > 10) {
             log_err(info->ctx, XKB_ERROR_INVALID_XKB_SYNTAX,
                     "Abandoning keytypes file \"%s\"\n",
                     safe_map_name(file->name));
-            break;
+            നിർത്തുക;
         }
     }
 }
 
 /***====================================================================***/
 
-static bool
-CopyKeyTypesToKeymap(struct xkb_keymap *keymap, KeyTypesInfo *info)
+സ്ഥിതം bool
+Copy_താക്കോൽ_Types_To_Keymap(ഘടന xkb_keymap *keymap, താക്കോൽ_Types_Info *info)
 {
-    const darray_size_t num_types = darray_empty(info->types)
+    സ്ഥിരം darray_size_t അക്കം_types = darray_empty(info->types)
                                   ? 1
                                   : darray_size(info->types);
-    struct xkb_key_type *types = calloc(num_types, sizeof(*types));
-    if (!types)
-        return false;
+    ഘടന xkb_താക്കോൽ_type *types = calloc(അക്കം_types, വലുപ്പം(*types));
+    എങ്കിൽ (!types)
+        തിരികെ false;
 
     /*
      * The following types are called “Canonical Key Types” and the XKB protocol
@@ -804,48 +804,48 @@ CopyKeyTypesToKeymap(struct xkb_keymap *keymap, KeyTypesInfo *info)
      * If no types were specified, a default ONE_LEVEL type is
      * used for all keys.
      */
-    if (darray_empty(info->types)) {
-        struct xkb_key_type *type = &types[0];
+    എങ്കിൽ (darray_empty(info->types)) {
+        ഘടന xkb_താക്കോൽ_type *type = &types[0];
 
         type->mods.mods = 0;
-        type->num_levels = 1;
-        type->entries = NULL;
-        type->num_entries = 0;
+        type->അക്കം_levels = 1;
+        type->entries = ശൂന്യ;
+        type->അക്കം_entries = 0;
         type->name = xkb_atom_intern_literal(keymap->ctx, "ONE_LEVEL");
-        type->level_names = NULL;
-        type->num_level_names = 0;
+        type->level_names = ശൂന്യ;
+        type->അക്കം_level_names = 0;
         type->required = true;
     }
-    else {
+    അല്ലെങ്കിൽ {
         /* HACK to circumvent Xorg bugs (see comment above) */
-        const xkb_atom_t canonical_types[] = {
+        സ്ഥിരം xkb_atom_t canonical_types[] = {
             xkb_atom_intern_literal(keymap->ctx, "ONE_LEVEL"),
             xkb_atom_intern_literal(keymap->ctx, "TWO_LEVEL"),
             xkb_atom_intern_literal(keymap->ctx, "ALPHABETIC"),
             xkb_atom_intern_literal(keymap->ctx, "KEYPAD"),
         };
 
-        for (darray_size_t i = 0; i < num_types; i++) {
-            KeyTypeInfo *def = &darray_item(info->types, i);
-            struct xkb_key_type *type = &types[i];
+        വേണ്ടി (darray_size_t i = 0; i < അക്കം_types; i++) {
+            താക്കോൽ_Type_Info *def = &darray_item(info->types, i);
+            ഘടന xkb_താക്കോൽ_type *type = &types[i];
 
             type->name = def->name;
             type->mods.mods = def->mods;
-            type->num_levels = def->num_levels;
-            type->num_level_names =
+            type->അക്കം_levels = def->അക്കം_levels;
+            type->അക്കം_level_names =
                 (xkb_level_index_t) darray_size(def->level_names);
-            darray_steal(def->level_names, &type->level_names, NULL);
-            darray_steal(def->entries, &type->entries, &type->num_entries);
+            darray_steal(def->level_names, &type->level_names, ശൂന്യ);
+            darray_steal(def->entries, &type->entries, &type->അക്കം_entries);
             type->required = false;
 
             /* HACK: Never drop canonical XKB key types (see comment above) */
-            if (type->num_levels <= 2) {
-                for (uint8_t t = 0;
+            എങ്കിൽ (type->അക്കം_levels <= 2) {
+                വേണ്ടി (uint8_t t = 0;
                      t < (uint8_t) ARRAY_SIZE(canonical_types);
                      t++) {
-                        if (type->name == canonical_types[t]) {
+                        എങ്കിൽ (type->name == canonical_types[t]) {
                             type->required = true;
-                            break;
+                            നിർത്തുക;
                         }
                 }
             }
@@ -854,35 +854,35 @@ CopyKeyTypesToKeymap(struct xkb_keymap *keymap, KeyTypesInfo *info)
 
     keymap->types_section_name = strdup_safe(info->name);
     XkbEscapeMapName(keymap->types_section_name);
-    keymap->num_types = num_types;
+    keymap->അക്കം_types = അക്കം_types;
     keymap->types = types;
     keymap->mods = info->mods;
-    return true;
+    തിരികെ true;
 }
 
 /***====================================================================***/
 
 bool
-CompileKeyTypes(XkbFile *file, struct xkb_keymap_info *keymap_info)
+Compile_താക്കോൽ_Types(XkbFile *file, ഘടന xkb_keymap_info *keymap_info)
 {
-    KeyTypesInfo info;
+    താക്കോൽ_Types_Info info;
 
-    InitKeyTypesInfo(&info, keymap_info, 0,
+    Init_താക്കോൽ_Types_Info(&info, keymap_info, 0,
                      &keymap_info->keymap.mods);
 
-    if (file != NULL)
-        HandleKeyTypesFile(&info, file);
+    എങ്കിൽ (file != ശൂന്യ)
+        Handle_താക്കോൽ_Types_File(&info, file);
 
-    if (info.errorCount != 0)
-        goto err_info;
+    എങ്കിൽ (info.error_എണ്ണം != 0)
+        പോകുക err_info;
 
-    if (!CopyKeyTypesToKeymap(&keymap_info->keymap, &info))
-        goto err_info;
+    എങ്കിൽ (!Copy_താക്കോൽ_Types_To_Keymap(&keymap_info->keymap, &info))
+        പോകുക err_info;
 
-    ClearKeyTypesInfo(&info);
-    return true;
+    Clear_താക്കോൽ_Types_Info(&info);
+    തിരികെ true;
 
 err_info:
-    ClearKeyTypesInfo(&info);
-    return false;
+    Clear_താക്കോൽ_Types_Info(&info);
+    തിരികെ false;
 }

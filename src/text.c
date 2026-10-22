@@ -3,43 +3,43 @@
  * SPDX-License-Identifier: HPND
  */
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <assert.h>
+#അന്തര്ഭാവ <assert.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "keymap.h"
-#include "keysym.h"
-#include "text.h"
+#അന്തര്ഭാവ "xkbcommon/xkbcommon.h"
+#അന്തര്ഭാവ "keymap.h"
+#അന്തര്ഭാവ "keysym.h"
+#അന്തര്ഭാവ "text.h"
 
 bool
-LookupString(const LookupEntry tab[], const char *string,
-              unsigned int *value_rtrn)
+LookupString(സ്ഥിരം LookupEntry tab[], സ്ഥിരം അക്ഷരം *string,
+              unsigned പൂർണ്ണസംഖ്യ *മൂല്യം_rtrn)
 {
-    if (!string)
-        return false;
+    എങ്കിൽ (!string)
+        തിരികെ false;
 
-    for (const LookupEntry *entry = tab; entry->name; entry++) {
-        if (istreq(entry->name, string)) {
-            *value_rtrn = entry->value;
-            return true;
+    വേണ്ടി (സ്ഥിരം LookupEntry *entry = tab; entry->name; entry++) {
+        എങ്കിൽ (istreq(entry->name, string)) {
+            *മൂല്യം_rtrn = entry->മൂല്യം;
+            തിരികെ true;
         }
     }
 
-    return false;
+    തിരികെ false;
 }
 
-const char *
-LookupValue(const LookupEntry tab[], unsigned int value)
+സ്ഥിരം അക്ഷരം *
+Lookup_മൂല്യം(സ്ഥിരം LookupEntry tab[], unsigned പൂർണ്ണസംഖ്യ മൂല്യം)
 {
-    for (const LookupEntry *entry = tab; entry->name; entry++)
-        if (entry->value == value)
-            return entry->name;
+    വേണ്ടി (സ്ഥിരം LookupEntry *entry = tab; entry->name; entry++)
+        എങ്കിൽ (entry->മൂല്യം == മൂല്യം)
+            തിരികെ entry->name;
 
-    return NULL;
+    തിരികെ ശൂന്യ;
 }
 
-const LookupEntry ctrlMaskNames[25] = {
+സ്ഥിരം LookupEntry ctrlMaskNames[25] = {
     /* v2 keymap format only */
     { "Overlay3", CONTROL_OVERLAY3 },
     { "Overlay4", CONTROL_OVERLAY4 },
@@ -54,9 +54,9 @@ const LookupEntry ctrlMaskNames[25] = {
     { "AutoRepeat", CONTROL_REPEAT },
     { "SlowKeys", CONTROL_SLOW },
     { "BounceKeys", CONTROL_DEBOUNCE },
-    { "StickyKeys", CONTROL_STICKY_KEYS },
-    { "MouseKeys", CONTROL_MOUSE_KEYS },
-    { "MouseKeysAccel", CONTROL_MOUSE_KEYS_ACCEL },
+    { "StickyKeys", CONTROL_STICKY_താക്കോലുകൾ },
+    { "MouseKeys", CONTROL_MOUSE_താക്കോലുകൾ },
+    { "MouseKeysAccel", CONTROL_MOUSE_താക്കോലുകൾ_ACCEL },
     { "AccessXKeys", CONTROL_AX },
     { "AccessXTimeout", CONTROL_AX_TIMEOUT },
     { "AccessXFeedback", CONTROL_AX_FEEDBACK },
@@ -66,10 +66,10 @@ const LookupEntry ctrlMaskNames[25] = {
     { "Overlay2", CONTROL_OVERLAY2 },
     { "all", CONTROL_ALL_BOOLEAN_V1 }, /* duplicate, matches only v1 */
     { "none", 0 },
-    { NULL, 0 }
+    { ശൂന്യ, 0 }
 };
 
-const LookupEntry modComponentMaskNames[] = {
+സ്ഥിരം LookupEntry modComponentMaskNames[] = {
     { "base", XKB_STATE_MODS_DEPRESSED },
     { "latched", XKB_STATE_MODS_LATCHED },
     { "locked", XKB_STATE_MODS_LOCKED },
@@ -77,45 +77,45 @@ const LookupEntry modComponentMaskNames[] = {
     { "compat", XKB_STATE_MODS_EFFECTIVE },
     { "any", XKB_STATE_MODS_EFFECTIVE },
     { "none", 0 },
-    { NULL, 0 }
+    { ശൂന്യ, 0 }
 };
 
-const LookupEntry groupComponentMaskNames[] = {
+സ്ഥിരം LookupEntry groupComponentMaskNames[] = {
     { "base", XKB_STATE_LAYOUT_DEPRESSED },
     { "latched", XKB_STATE_LAYOUT_LATCHED },
     { "locked", XKB_STATE_LAYOUT_LOCKED },
     { "effective", XKB_STATE_LAYOUT_EFFECTIVE },
     { "any", XKB_STATE_LAYOUT_EFFECTIVE },
     { "none", 0 },
-    { NULL, 0 }
+    { ശൂന്യ, 0 }
 };
 
-const LookupEntry groupMaskNames[] = {
+സ്ഥിരം LookupEntry groupMaskNames[] = {
     { "none", 0x00 },
     /* "first" is omitted for compatibility reasons */
     { "all", XKB_ALL_GROUPS },
-    { NULL, 0 }
+    { ശൂന്യ, 0 }
 };
 
-const LookupEntry buttonNames[] = {
+സ്ഥിരം LookupEntry buttonNames[] = {
     { "Button1", 1 },
     { "Button2", 2 },
     { "Button3", 3 },
     { "Button4", 4 },
     { "Button5", 5 },
     { "default", 0 },
-    { NULL, 0 }
+    { ശൂന്യ, 0 }
 };
 
-const LookupEntry useModMapValueNames[] = {
+സ്ഥിരം LookupEntry use_Mod_Map_മൂല്യം_Names[] = {
     { "LevelOne", 1 },
     { "Level1", 1 },
     { "AnyLevel", 0 },
     { "any", 0 },
-    { NULL, 0 }
+    { ശൂന്യ, 0 }
 };
 
-const LookupEntry actionTypeNames[] = {
+സ്ഥിരം LookupEntry actionTypeNames[] = {
     { "NoAction", ACTION_TYPE_NONE },
     { "VoidAction", ACTION_TYPE_VOID },
     { "SetMods", ACTION_TYPE_MOD_SET },
@@ -139,8 +139,8 @@ const LookupEntry actionTypeNames[] = {
     { "SwitchScreen", ACTION_TYPE_SWITCH_VT },
     { "SetControls", ACTION_TYPE_CTRL_SET },
     { "LockControls", ACTION_TYPE_CTRL_LOCK },
-    { "RedirectKey", ACTION_TYPE_REDIRECT_KEY },
-    { "Redirect", ACTION_TYPE_REDIRECT_KEY },
+    { "RedirectKey", ACTION_TYPE_REDIRECT_താക്കോൽ },
+    { "Redirect", ACTION_TYPE_REDIRECT_താക്കോൽ },
     { "Private", ACTION_TYPE_PRIVATE },
     /* deprecated actions below here - unused */
     { "ISOLock", ACTION_TYPE_UNSUPPORTED_LEGACY },
@@ -159,176 +159,176 @@ const LookupEntry actionTypeNames[] = {
     { "DevVal", ACTION_TYPE_UNSUPPORTED_LEGACY },
     { "DeviceVal", ACTION_TYPE_UNSUPPORTED_LEGACY },
     { "DevValuator", ACTION_TYPE_UNSUPPORTED_LEGACY },
-    { NULL, 0 },
+    { ശൂന്യ, 0 },
 };
 
-const LookupEntry symInterpretMatchMaskNames[] = {
+സ്ഥിരം LookupEntry symInterpretMatchMaskNames[] = {
     { "NoneOf", MATCH_NONE },
     { "AnyOfOrNone", MATCH_ANY_OR_NONE },
     { "AnyOf", MATCH_ANY },
     { "AllOf", MATCH_ALL },
     { "Exactly", MATCH_EXACTLY },
-    { NULL, 0 },
+    { ശൂന്യ, 0 },
 };
 
-const char *
-ModIndexText(struct xkb_context *ctx, const struct xkb_mod_set *mods,
+സ്ഥിരം അക്ഷരം *
+ModIndexText(ഘടന xkb_context *ctx, സ്ഥിരം ഘടന xkb_mod_set *mods,
              xkb_mod_index_t ndx)
 {
-    if (ndx == XKB_MOD_INVALID)
-        return "none";
+    എങ്കിൽ (ndx == XKB_MOD_INVALID)
+        തിരികെ "none";
 
-    if (ndx == XKB_MOD_NONE)
-        return "None";
+    എങ്കിൽ (ndx == XKB_MOD_NONE)
+        തിരികെ "None";
 
-    if (ndx >= mods->num_mods)
-        return NULL;
+    എങ്കിൽ (ndx >= mods->അക്കം_mods)
+        തിരികെ ശൂന്യ;
 
-    return xkb_atom_text(ctx, mods->mods[ndx].name);
+    തിരികെ xkb_atom_text(ctx, mods->mods[ndx].name);
 }
 
-const char *
-ActionTypeText(enum xkb_action_type type)
+സ്ഥിരം അക്ഷരം *
+ActionTypeText(എണ്ണൽ xkb_action_type type)
 {
-    const char *name = LookupValue(actionTypeNames, type);
-    return name ? name : "Private";
+    സ്ഥിരം അക്ഷരം *name = Lookup_മൂല്യം(actionTypeNames, type);
+    തിരികെ name ? name : "Private";
 }
 
-const char *
-KeysymText(struct xkb_context *ctx, xkb_keysym_t sym)
+സ്ഥിരം അക്ഷരം *
+KeysymText(ഘടന xkb_context *ctx, xkb_keysym_t sym)
 {
-    char *buffer = xkb_context_get_buffer(ctx, XKB_KEYSYM_NAME_MAX_SIZE);
+    അക്ഷരം *buffer = xkb_context_get_buffer(ctx, XKB_KEYSYM_NAME_MAX_SIZE);
     xkb_keysym_get_name(sym, buffer, XKB_KEYSYM_NAME_MAX_SIZE);
-    return buffer;
+    തിരികെ buffer;
 }
 
-const char *
-KeyNameText(struct xkb_context *ctx, xkb_atom_t name)
+സ്ഥിരം അക്ഷരം *
+താക്കോൽ_Name_Text(ഘടന xkb_context *ctx, xkb_atom_t name)
 {
-    const char *sname = xkb_atom_text(ctx, name);
+    സ്ഥിരം അക്ഷരം *sname = xkb_atom_text(ctx, name);
     size_t len = strlen_safe(sname) + 3;
-    char *buf = xkb_context_get_buffer(ctx, len);
+    അക്ഷരം *buf = xkb_context_get_buffer(ctx, len);
     snprintf(buf, len, "<%s>", strempty(sname));
-    return buf;
+    തിരികെ buf;
 }
 
-const char *
-SIMatchText(enum xkb_match_operation type)
+സ്ഥിരം അക്ഷരം *
+SIMatchText(എണ്ണൽ xkb_match_operation type)
 {
-    return LookupValue(symInterpretMatchMaskNames, type);
+    തിരികെ Lookup_മൂല്യം(symInterpretMatchMaskNames, type);
 }
 
-const char *
-ModMaskText(struct xkb_context *ctx, enum mod_type type,
-            const struct xkb_mod_set *mods, xkb_mod_mask_t mask)
+സ്ഥിരം അക്ഷരം *
+ModMaskText(ഘടന xkb_context *ctx, എണ്ണൽ mod_type type,
+            സ്ഥിരം ഘടന xkb_mod_set *mods, xkb_mod_mask_t mask)
 {
-    char buf[1024] = {0};
+    അക്ഷരം buf[1024] = {0};
     size_t pos = 0;
-    const struct xkb_mod *mod;
+    സ്ഥിരം ഘടന xkb_mod *mod;
 
     /* We want to avoid boolean blindness, but we expected only 2 values */
-    assert(type == MOD_REAL || type == MOD_BOTH);
+    പ്രതിജ്ഞാ(type == MOD_REAL || type == MOD_BOTH);
 
-    if (mask == 0)
-        return "none";
+    എങ്കിൽ (mask == 0)
+        തിരികെ "none";
 
-    if (mask == MOD_REAL_MASK_ALL)
-        return "all";
+    എങ്കിൽ (mask == MOD_REAL_MASK_ALL)
+        തിരികെ "all";
 
-    if ((type == MOD_REAL && (mask & ~MOD_REAL_MASK_ALL)) ||
-        unlikely(mask & ~((UINT64_C(1) << mods->num_mods) - 1))) {
+    എങ്കിൽ ((type == MOD_REAL && (mask & ~MOD_REAL_MASK_ALL)) ||
+        unlikely(mask & ~((UINT64_C(1) << mods->അക്കം_mods) - 1))) {
         /* If we get a mask that cannot be expressed with the known modifiers
          * of the given type, print it as hexadecimal */
-        const int ret = snprintf(buf, sizeof(buf), "0x%"PRIx32, mask);
-        static_assert(sizeof(mask) == 4 && sizeof(buf) >= sizeof("0xffffffff"),
+        സ്ഥിരം പൂർണ്ണസംഖ്യ ret = snprintf(buf, വലുപ്പം(buf), "0x%"PRIx32, mask);
+        static_assert(വലുപ്പം(mask) == 4 && വലുപ്പം(buf) >= വലുപ്പം("0xffffffff"),
                       "Buffer too small");
-        assert(ret >= 0 && (size_t) ret < sizeof(buf));
+        പ്രതിജ്ഞാ(ret >= 0 && (size_t) ret < വലുപ്പം(buf));
         pos = (size_t) ret;
-    } else {
+    } അല്ലെങ്കിൽ {
         /* Print known mods */
         xkb_mods_mask_foreach(mask, mod, mods) {
-            int ret = snprintf(buf + pos, sizeof(buf) - pos, "%s%s",
+            പൂർണ്ണസംഖ്യ ret = snprintf(buf + pos, വലുപ്പം(buf) - pos, "%s%s",
                                pos == 0 ? "" : "+",
                                xkb_atom_text(ctx, mod->name));
-            if (ret <= 0 || pos + (size_t)ret >= sizeof(buf))
-                break;
-            else
+            എങ്കിൽ (ret <= 0 || pos + (size_t)ret >= വലുപ്പം(buf))
+                നിർത്തുക;
+            അല്ലെങ്കിൽ
                 pos += (size_t)ret;
         }
     }
     pos++;
 
-    return memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
+    തിരികെ memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
 }
 
-const char *
-LedStateMaskText(struct xkb_context *ctx, const LookupEntry *lookup,
-                 enum xkb_state_component mask)
+സ്ഥിരം അക്ഷരം *
+LedStateMaskText(ഘടന xkb_context *ctx, സ്ഥിരം LookupEntry *lookup,
+                 എണ്ണൽ xkb_state_component mask)
 {
-    char buf[1024];
+    അക്ഷരം buf[1024];
     size_t pos = 0;
 
-    if (mask == 0)
-        return "0";
+    എങ്കിൽ (mask == 0)
+        തിരികെ "0";
 
-    for (unsigned int i = 0; mask; i++) {
-        int ret;
+    വേണ്ടി (unsigned പൂർണ്ണസംഖ്യ i = 0; mask; i++) {
+        പൂർണ്ണസംഖ്യ ret;
 
-        if (!(mask & (1u << i)))
-            continue;
+        എങ്കിൽ (!(mask & (1u << i)))
+            തുടരുക;
 
         mask &= ~(1u << i);
 
-        const char* const maskText = LookupValue(lookup, 1u << i);
-        assert(maskText != NULL);
-        ret = snprintf(buf + pos, sizeof(buf) - pos, "%s%s",
+        സ്ഥിരം അക്ഷരം* സ്ഥിരം maskText = Lookup_മൂല്യം(lookup, 1u << i);
+        പ്രതിജ്ഞാ(maskText != ശൂന്യ);
+        ret = snprintf(buf + pos, വലുപ്പം(buf) - pos, "%s%s",
                        pos == 0 ? "" : "+", maskText);
-        if (ret <= 0 || pos + (size_t)ret >= sizeof(buf))
-            break;
-        else
+        എങ്കിൽ (ret <= 0 || pos + (size_t)ret >= വലുപ്പം(buf))
+            നിർത്തുക;
+        അല്ലെങ്കിൽ
             pos += (size_t)ret;
     }
     pos++;
 
-    return memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
+    തിരികെ memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
 }
 
-const char *
-ControlMaskText(struct xkb_context *ctx, enum xkb_keymap_format format,
-                enum xkb_action_controls mask)
+സ്ഥിരം അക്ഷരം *
+ControlMaskText(ഘടന xkb_context *ctx, എണ്ണൽ xkb_keymap_format format,
+                എണ്ണൽ xkb_action_controls mask)
 {
-    char buf[1024];
+    അക്ഷരം buf[1024];
     size_t pos = 0;
 
-    const enum xkb_action_controls all_ctrls = format_boolean_controls(format);
+    സ്ഥിരം എണ്ണൽ xkb_action_controls all_ctrls = format_boolean_controls(format);
     mask &= all_ctrls;
 
-    if (mask == 0)
-        return "none";
+    എങ്കിൽ (mask == 0)
+        തിരികെ "none";
 
-    if (mask == all_ctrls)
-        return "all";
+    എങ്കിൽ (mask == all_ctrls)
+        തിരികെ "all";
 
-    const uint8_t control_names_offset = format_control_names_offset(format);
-    for (unsigned int i = 0; mask; i++) {
-        int ret;
+    സ്ഥിരം uint8_t control_names_offset = format_control_names_offset(format);
+    വേണ്ടി (unsigned പൂർണ്ണസംഖ്യ i = 0; mask; i++) {
+        പൂർണ്ണസംഖ്യ ret;
 
-        if (!(mask & (1u << i)))
-            continue;
+        എങ്കിൽ (!(mask & (1u << i)))
+            തുടരുക;
 
         mask &= ~(1u << i);
 
-        const char* const maskText =
-            LookupValue(ctrlMaskNames + control_names_offset, 1u << i);
-        assert(maskText);
-        ret = snprintf(buf + pos, sizeof(buf) - pos, "%s%s",
+        സ്ഥിരം അക്ഷരം* സ്ഥിരം maskText =
+            Lookup_മൂല്യം(ctrlMaskNames + control_names_offset, 1u << i);
+        പ്രതിജ്ഞാ(maskText);
+        ret = snprintf(buf + pos, വലുപ്പം(buf) - pos, "%s%s",
                        pos == 0 ? "" : "+", maskText);
-        if (ret <= 0 || pos + (size_t)ret >= sizeof(buf))
-            break;
-        else
+        എങ്കിൽ (ret <= 0 || pos + (size_t)ret >= വലുപ്പം(buf))
+            നിർത്തുക;
+        അല്ലെങ്കിൽ
             pos += (size_t)ret;
     }
     pos++;
 
-    return memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
+    തിരികെ memcpy(xkb_context_get_buffer(ctx, pos), buf, pos);
 }

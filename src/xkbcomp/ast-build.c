@@ -12,503 +12,503 @@
  * Author: Ran Benita <ran234@gmail.com>
  */
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <stdint.h>
-#include <string.h>
+#അന്തര്ഭാവ <stdint.h>
+#അന്തര്ഭാവ <string.h>
 
-#include "xkbcommon/xkbcommon-keysyms.h"
-#include "messages-codes.h"
-#include "xkbcomp-priv.h"
-#include "ast.h"
-#include "ast-build.h"
-#include "include.h"
-#include "keysym.h"
-#include "utf8-decoding.h"
+#അന്തര്ഭാവ "xkbcommon/xkbcommon-keysyms.h"
+#അന്തര്ഭാവ "messages-codes.h"
+#അന്തര്ഭാവ "xkbcomp-priv.h"
+#അന്തര്ഭാവ "ast.h"
+#അന്തര്ഭാവ "ast-build.h"
+#അന്തര്ഭാവ "include.h"
+#അന്തര്ഭാവ "keysym.h"
+#അന്തര്ഭാവ "utf8-decoding.h"
 
-static ExprDef *
-ExprCreate(enum stmt_type op)
+സ്ഥിതം വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create(എണ്ണൽ stmt_type op)
 {
-    ExprDef *expr = malloc(sizeof(*expr));
-    if (!expr)
-        return NULL;
+    വ്യഞ്ജകം_Def *വ്യഞ്ജകം = malloc(വലുപ്പം(*വ്യഞ്ജകം));
+    എങ്കിൽ (!വ്യഞ്ജകം)
+        തിരികെ ശൂന്യ;
 
-    expr->common.type = op;
-    expr->common.next = NULL;
+    വ്യഞ്ജകം->common.type = op;
+    വ്യഞ്ജകം->common.next = ശൂന്യ;
 
-    return expr;
+    തിരികെ വ്യഞ്ജകം;
 }
 
-ExprDef *
-ExprCreateString(xkb_atom_t str)
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create_String(xkb_atom_t str)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_STRING_LITERAL);
-    if (!expr)
-        return NULL;
-    expr->string.str = str;
-    return expr;
+    വ്യഞ്ജകം_Def *വ്യഞ്ജകം = വ്യഞ്ജകം_Create(STMT_വ്യഞ്ജകം_STRING_LITERAL);
+    എങ്കിൽ (!വ്യഞ്ജകം)
+        തിരികെ ശൂന്യ;
+    വ്യഞ്ജകം->string.str = str;
+    തിരികെ വ്യഞ്ജകം;
 }
 
-ExprDef *
-ExprCreateInteger(int64_t ival)
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create_Integer(int64_t ival)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_INTEGER_LITERAL);
-    if (!expr)
-        return NULL;
-    expr->integer.ival = ival;
-    return expr;
+    വ്യഞ്ജകം_Def *വ്യഞ്ജകം = വ്യഞ്ജകം_Create(STMT_വ്യഞ്ജകം_INTEGER_LITERAL);
+    എങ്കിൽ (!വ്യഞ്ജകം)
+        തിരികെ ശൂന്യ;
+    വ്യഞ്ജകം->integer.ival = ival;
+    തിരികെ വ്യഞ്ജകം;
 }
 
-ExprDef *
-ExprCreateFloat(void)
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create_Float(ശൂന്യം)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_FLOAT_LITERAL);
-    if (!expr)
-        return NULL;
-    return expr;
+    വ്യഞ്ജകം_Def *വ്യഞ്ജകം = വ്യഞ്ജകം_Create(STMT_വ്യഞ്ജകം_FLOAT_LITERAL);
+    എങ്കിൽ (!വ്യഞ്ജകം)
+        തിരികെ ശൂന്യ;
+    തിരികെ വ്യഞ്ജകം;
 }
 
-ExprDef *
-ExprCreateBoolean(bool set)
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create_Boolean(bool set)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_BOOLEAN_LITERAL);
-    if (!expr)
-        return NULL;
-    expr->boolean.set = set;
-    return expr;
+    വ്യഞ്ജകം_Def *വ്യഞ്ജകം = വ്യഞ്ജകം_Create(STMT_വ്യഞ്ജകം_BOOLEAN_LITERAL);
+    എങ്കിൽ (!വ്യഞ്ജകം)
+        തിരികെ ശൂന്യ;
+    വ്യഞ്ജകം->boolean.set = set;
+    തിരികെ വ്യഞ്ജകം;
 }
 
-ExprDef *
-ExprCreateKeyName(xkb_atom_t key_name)
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create_താക്കോൽ_Name(xkb_atom_t താക്കോൽ_name)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_KEYNAME_LITERAL);
-    if (!expr)
-        return NULL;
-    expr->key_name.key_name = key_name;
-    return expr;
+    വ്യഞ്ജകം_Def *വ്യഞ്ജകം = വ്യഞ്ജകം_Create(STMT_വ്യഞ്ജകം_KEYNAME_LITERAL);
+    എങ്കിൽ (!വ്യഞ്ജകം)
+        തിരികെ ശൂന്യ;
+    വ്യഞ്ജകം->താക്കോൽ_name.താക്കോൽ_name = താക്കോൽ_name;
+    തിരികെ വ്യഞ്ജകം;
 }
 
-ExprDef *
-ExprCreateKeySym(xkb_keysym_t keysym)
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create_താക്കോൽ_Sym(xkb_keysym_t keysym)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_KEYSYM_LITERAL);
-    if (!expr)
-        return NULL;
-    expr->keysym.keysym = keysym;
-    return expr;
+    വ്യഞ്ജകം_Def *വ്യഞ്ജകം = വ്യഞ്ജകം_Create(STMT_വ്യഞ്ജകം_KEYSYM_LITERAL);
+    എങ്കിൽ (!വ്യഞ്ജകം)
+        തിരികെ ശൂന്യ;
+    വ്യഞ്ജകം->keysym.keysym = keysym;
+    തിരികെ വ്യഞ്ജകം;
 }
 
-ExprDef *
-ExprCreateIdent(xkb_atom_t ident)
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create_Ident(xkb_atom_t ident)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_IDENT);
-    if (!expr)
-        return NULL;
-    expr->ident.ident = ident;
-    return expr;
+    വ്യഞ്ജകം_Def *വ്യഞ്ജകം = വ്യഞ്ജകം_Create(STMT_വ്യഞ്ജകം_IDENT);
+    എങ്കിൽ (!വ്യഞ്ജകം)
+        തിരികെ ശൂന്യ;
+    വ്യഞ്ജകം->ident.ident = ident;
+    തിരികെ വ്യഞ്ജകം;
 }
 
-ExprDef *
-ExprCreateUnary(enum stmt_type op, ExprDef *child)
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create_Unary(എണ്ണൽ stmt_type op, വ്യഞ്ജകം_Def *child)
 {
-    ExprDef *expr = ExprCreate(op);
-    if (!expr)
-        return NULL;
-    expr->unary.child = child;
-    return expr;
+    വ്യഞ്ജകം_Def *വ്യഞ്ജകം = വ്യഞ്ജകം_Create(op);
+    എങ്കിൽ (!വ്യഞ്ജകം)
+        തിരികെ ശൂന്യ;
+    വ്യഞ്ജകം->unary.child = child;
+    തിരികെ വ്യഞ്ജകം;
 }
 
-ExprDef *
-ExprCreateBinary(enum stmt_type op, ExprDef *left, ExprDef *right)
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create_ദ്വിമാന(എണ്ണൽ stmt_type op, വ്യഞ്ജകം_Def *ഇടത്, വ്യഞ്ജകം_Def *വലത്)
 {
-    ExprDef *expr = ExprCreate(op);
-    if (!expr)
-        return NULL;
+    വ്യഞ്ജകം_Def *വ്യഞ്ജകം = വ്യഞ്ജകം_Create(op);
+    എങ്കിൽ (!വ്യഞ്ജകം)
+        തിരികെ ശൂന്യ;
 
-    expr->binary.left = left;
-    expr->binary.right = right;
+    വ്യഞ്ജകം->ദ്വിമാന.ഇടത് = ഇടത്;
+    വ്യഞ്ജകം->ദ്വിമാന.വലത് = വലത്;
 
-    return expr;
+    തിരികെ വ്യഞ്ജകം;
 }
 
-ExprDef *
-ExprCreateFieldRef(xkb_atom_t element, xkb_atom_t field)
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create_Field_Ref(xkb_atom_t element, xkb_atom_t field)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_FIELD_REF);
-    if (!expr)
-        return NULL;
-    expr->field_ref.element = element;
-    expr->field_ref.field = field;
-    return expr;
+    വ്യഞ്ജകം_Def *വ്യഞ്ജകം = വ്യഞ്ജകം_Create(STMT_വ്യഞ്ജകം_FIELD_REF);
+    എങ്കിൽ (!വ്യഞ്ജകം)
+        തിരികെ ശൂന്യ;
+    വ്യഞ്ജകം->field_ref.element = element;
+    വ്യഞ്ജകം->field_ref.field = field;
+    തിരികെ വ്യഞ്ജകം;
 }
 
-ExprDef *
-ExprCreateArrayRef(xkb_atom_t element, xkb_atom_t field, ExprDef *entry)
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create_Array_Ref(xkb_atom_t element, xkb_atom_t field, വ്യഞ്ജകം_Def *entry)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_ARRAY_REF);
-    if (!expr)
-        return NULL;
-    expr->array_ref.element = element;
-    expr->array_ref.field = field;
-    expr->array_ref.entry = entry;
-    return expr;
+    വ്യഞ്ജകം_Def *വ്യഞ്ജകം = വ്യഞ്ജകം_Create(STMT_വ്യഞ്ജകം_ARRAY_REF);
+    എങ്കിൽ (!വ്യഞ്ജകം)
+        തിരികെ ശൂന്യ;
+    വ്യഞ്ജകം->array_ref.element = element;
+    വ്യഞ്ജകം->array_ref.field = field;
+    വ്യഞ്ജകം->array_ref.entry = entry;
+    തിരികെ വ്യഞ്ജകം;
 }
 
-ExprDef *
-ExprEmptyList(void)
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Empty_List(ശൂന്യം)
 {
-    return ExprCreate(STMT_EXPR_EMPTY_LIST);
+    തിരികെ വ്യഞ്ജകം_Create(STMT_വ്യഞ്ജകം_EMPTY_LIST);
 }
 
-ExprDef *
-ExprCreateAction(xkb_atom_t name, ExprDef *args)
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create_Action(xkb_atom_t name, വ്യഞ്ജകം_Def *args)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_ACTION_DECL);
-    if (!expr)
-        return NULL;
-    expr->action.name = name;
-    expr->action.args = args;
-    return expr;
+    വ്യഞ്ജകം_Def *വ്യഞ്ജകം = വ്യഞ്ജകം_Create(STMT_വ്യഞ്ജകം_ACTION_DECL);
+    എങ്കിൽ (!വ്യഞ്ജകം)
+        തിരികെ ശൂന്യ;
+    വ്യഞ്ജകം->action.name = name;
+    വ്യഞ്ജകം->action.args = args;
+    തിരികെ വ്യഞ്ജകം;
 }
 
-ExprDef *
-ExprCreateActionList(ExprDef *actions)
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create_Action_List(വ്യഞ്ജകം_Def *actions)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_ACTION_LIST);
-    if (!expr)
-        return NULL;
-    expr->actions.actions = actions;
-    return expr;
+    വ്യഞ്ജകം_Def *വ്യഞ്ജകം = വ്യഞ്ജകം_Create(STMT_വ്യഞ്ജകം_ACTION_LIST);
+    എങ്കിൽ (!വ്യഞ്ജകം)
+        തിരികെ ശൂന്യ;
+    വ്യഞ്ജകം->actions.actions = actions;
+    തിരികെ വ്യഞ്ജകം;
 }
 
-ExprDef *
-ExprCreateKeySymList(xkb_keysym_t sym)
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create_താക്കോൽ_Sym_List(xkb_keysym_t sym)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_KEYSYM_LIST);
-    if (!expr)
-        return NULL;
-    darray_init(expr->keysym_list.syms);
-    if (sym == XKB_KEY_NoSymbol) {
+    വ്യഞ്ജകം_Def *വ്യഞ്ജകം = വ്യഞ്ജകം_Create(STMT_വ്യഞ്ജകം_KEYSYM_LIST);
+    എങ്കിൽ (!വ്യഞ്ജകം)
+        തിരികെ ശൂന്യ;
+    darray_init(വ്യഞ്ജകം->keysym_list.syms);
+    എങ്കിൽ (sym == XKB_താക്കോൽ_No_ചിഹ്നം) {
         /* Discard NoSymbol */
-    } else {
-        darray_append(expr->keysym_list.syms, sym);
+    } അല്ലെങ്കിൽ {
+        darray_append(വ്യഞ്ജകം->keysym_list.syms, sym);
     }
-    return expr;
+    തിരികെ വ്യഞ്ജകം;
 }
 
-ExprDef *
-ExprAppendKeySymList(ExprDef *expr, xkb_keysym_t sym)
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Append_താക്കോൽ_Sym_List(വ്യഞ്ജകം_Def *വ്യഞ്ജകം, xkb_keysym_t sym)
 {
-    if (sym == XKB_KEY_NoSymbol) {
+    എങ്കിൽ (sym == XKB_താക്കോൽ_No_ചിഹ്നം) {
         /* Discard NoSymbol */
-    } else {
-        darray_append(expr->keysym_list.syms, sym);
+    } അല്ലെങ്കിൽ {
+        darray_append(വ്യഞ്ജകം->keysym_list.syms, sym);
     }
-    return expr;
+    തിരികെ വ്യഞ്ജകം;
 }
 
-ExprDef *
-ExprKeySymListAppendString(struct scanner *scanner,
-                           ExprDef *expr, const char *string)
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_താക്കോൽ_Sym_List_Append_String(ഘടന scanner *scanner,
+                           വ്യഞ്ജകം_Def *വ്യഞ്ജകം, സ്ഥിരം അക്ഷരം *string)
 {
     /* TODO: use strnlen with max len = 4 * MAX_KEYSYMS_LIST_LENGTH */
-    const size_t len = strlen(string);
+    സ്ഥിരം size_t len = strlen(string);
     size_t idx = 0;
     size_t idx_cp = 1;
-    while (idx < len) {
-        size_t count = 0;
-        uint32_t cp = utf8_next_code_point(string + idx, len - idx, &count);
-        if (cp == INVALID_UTF8_CODE_POINT) {
+    ആകുമ്പോൾ (idx < len) {
+        size_t എണ്ണം = 0;
+        uint32_t cp = utf8_next_code_point(string + idx, len - idx, &എണ്ണം);
+        എങ്കിൽ (cp == INVALID_UTF8_CODE_POINT) {
             scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                         "Cannot convert string to keysyms: "
                         "Invalid UTF-8 encoding starting at byte position %zu "
                         "(code point position: %zu).",
                         idx + 1, idx_cp);
-            goto error;
+            പോകുക error;
         }
-        const xkb_keysym_t sym = xkb_utf32_to_keysym(cp);
-        if (sym == XKB_KEY_NoSymbol) {
+        സ്ഥിരം xkb_keysym_t sym = xkb_utf32_to_keysym(cp);
+        എങ്കിൽ (sym == XKB_താക്കോൽ_No_ചിഹ്നം) {
             scanner_err(scanner, XKB_LOG_MESSAGE_NO_ID,
                         "Cannot convert string to keysyms: Unicode code point "
                         "U+04%"PRIX32" has no keysym equivalent"
                         "(byte position: %zu, code point position: %zu).",
                         cp, idx + 1, idx_cp);
-            goto error;
+            പോകുക error;
         }
-        darray_append(expr->keysym_list.syms, sym);
-        idx += count;
+        darray_append(വ്യഞ്ജകം->keysym_list.syms, sym);
+        idx += എണ്ണം;
         idx_cp++;
     }
-    assert(string[idx] == '\0');
-    return expr;
+    പ്രതിജ്ഞാ(string[idx] == '\0');
+    തിരികെ വ്യഞ്ജകം;
 error:
-    FreeStmt((ParseCommon*) expr);
-    return NULL;
+    FreeStmt((ParseCommon*) വ്യഞ്ജകം);
+    തിരികെ ശൂന്യ;
 }
 
 xkb_keysym_t
-KeysymParseString(struct scanner *scanner, const char *string)
+KeysymParseString(ഘടന scanner *scanner, സ്ഥിരം അക്ഷരം *string)
 {
-    const size_t len = strlen(string);
-    if (len == 0) {
+    സ്ഥിരം size_t len = strlen(string);
+    എങ്കിൽ (len == 0) {
         scanner_err(scanner, XKB_LOG_MESSAGE_NO_ID,
                     "Cannot convert string to single keysym: empty string.");
-        return XKB_KEY_NoSymbol;
+        തിരികെ XKB_താക്കോൽ_No_ചിഹ്നം;
     }
-    size_t count = 0;
-    const uint32_t cp = utf8_next_code_point(string, len, &count);
-    if (cp == INVALID_UTF8_CODE_POINT) {
+    size_t എണ്ണം = 0;
+    സ്ഥിരം uint32_t cp = utf8_next_code_point(string, len, &എണ്ണം);
+    എങ്കിൽ (cp == INVALID_UTF8_CODE_POINT) {
         scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                     "Cannot convert string to single keysym: "
                     "Invalid UTF-8 encoding.");
-        return XKB_KEY_NoSymbol;
-    } else if (count != len) {
+        തിരികെ XKB_താക്കോൽ_No_ചിഹ്നം;
+    } അല്ലെങ്കിൽ എങ്കിൽ (എണ്ണം != len) {
         scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                     "Cannot convert string to single keysym: "
                     "Expected a single Unicode code point, got: \"%s\".",
                     string);
-        return XKB_KEY_NoSymbol;
+        തിരികെ XKB_താക്കോൽ_No_ചിഹ്നം;
     }
-    const xkb_keysym_t sym = xkb_utf32_to_keysym(cp);
-    if (sym == XKB_KEY_NoSymbol) {
+    സ്ഥിരം xkb_keysym_t sym = xkb_utf32_to_keysym(cp);
+    എങ്കിൽ (sym == XKB_താക്കോൽ_No_ചിഹ്നം) {
         scanner_err(scanner, XKB_LOG_MESSAGE_NO_ID,
                     "Cannot convert string to single keysym: Unicode "
                     "code point U+%04"PRIX32" has no keysym equivalent.",
                     cp);
     }
-    return sym;
+    തിരികെ sym;
 }
 
 KeycodeDef *
-KeycodeCreate(xkb_atom_t name, int64_t value)
+KeycodeCreate(xkb_atom_t name, int64_t മൂല്യം)
 {
-    KeycodeDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    KeycodeDef *def = malloc(വലുപ്പം(*def));
+    എങ്കിൽ (!def)
+        തിരികെ ശൂന്യ;
 
     def->common.type = STMT_KEYCODE;
-    def->common.next = NULL;
+    def->common.next = ശൂന്യ;
     def->name = name;
-    def->value = value;
+    def->മൂല്യം = മൂല്യം;
 
-    return def;
+    തിരികെ def;
 }
 
-KeyAliasDef *
-KeyAliasCreate(xkb_atom_t alias, xkb_atom_t real)
+താക്കോൽ_Alias_Def *
+താക്കോൽ_Alias_Create(xkb_atom_t alias, xkb_atom_t real)
 {
-    KeyAliasDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    താക്കോൽ_Alias_Def *def = malloc(വലുപ്പം(*def));
+    എങ്കിൽ (!def)
+        തിരികെ ശൂന്യ;
 
     def->common.type = STMT_ALIAS;
-    def->common.next = NULL;
+    def->common.next = ശൂന്യ;
     def->alias = alias;
     def->real = real;
 
-    return def;
+    തിരികെ def;
 }
 
 VModDef *
-VModCreate(xkb_atom_t name, ExprDef *value)
+VModCreate(xkb_atom_t name, വ്യഞ്ജകം_Def *മൂല്യം)
 {
-    VModDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    VModDef *def = malloc(വലുപ്പം(*def));
+    എങ്കിൽ (!def)
+        തിരികെ ശൂന്യ;
 
     def->common.type = STMT_VMOD;
-    def->common.next = NULL;
+    def->common.next = ശൂന്യ;
     def->name = name;
-    def->value = value;
+    def->മൂല്യം = മൂല്യം;
 
-    return def;
+    തിരികെ def;
 }
 
 VarDef *
-VarCreate(ExprDef *name, ExprDef *value)
+VarCreate(വ്യഞ്ജകം_Def *name, വ്യഞ്ജകം_Def *മൂല്യം)
 {
-    VarDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    VarDef *def = malloc(വലുപ്പം(*def));
+    എങ്കിൽ (!def)
+        തിരികെ ശൂന്യ;
 
     def->common.type = STMT_VAR;
-    def->common.next = NULL;
+    def->common.next = ശൂന്യ;
     def->name = name;
-    def->value = value;
+    def->മൂല്യം = മൂല്യം;
 
-    return def;
+    തിരികെ def;
 }
 
 VarDef *
 BoolVarCreate(xkb_atom_t ident, bool set)
 {
-    ExprDef *name, *value;
+    വ്യഞ്ജകം_Def *name, *മൂല്യം;
     VarDef *def;
-    if (!(name = ExprCreateIdent(ident))) {
-        return NULL;
+    എങ്കിൽ (!(name = വ്യഞ്ജകം_Create_Ident(ident))) {
+        തിരികെ ശൂന്യ;
     }
-    if (!(value = ExprCreateBoolean(set))) {
+    എങ്കിൽ (!(മൂല്യം = വ്യഞ്ജകം_Create_Boolean(set))) {
         FreeStmt((ParseCommon *) name);
-        return NULL;
+        തിരികെ ശൂന്യ;
     }
-    if (!(def = VarCreate(name, value))) {
+    എങ്കിൽ (!(def = VarCreate(name, മൂല്യം))) {
         FreeStmt((ParseCommon *) name);
-        FreeStmt((ParseCommon *) value);
-        return NULL;
+        FreeStmt((ParseCommon *) മൂല്യം);
+        തിരികെ ശൂന്യ;
     }
-    return def;
+    തിരികെ def;
 }
 
 InterpDef *
-InterpCreate(xkb_keysym_t sym, ExprDef *match)
+InterpCreate(xkb_keysym_t sym, വ്യഞ്ജകം_Def *match)
 {
-    InterpDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    InterpDef *def = malloc(വലുപ്പം(*def));
+    എങ്കിൽ (!def)
+        തിരികെ ശൂന്യ;
 
     def->common.type = STMT_INTERP;
-    def->common.next = NULL;
+    def->common.next = ശൂന്യ;
     def->sym = sym;
     def->match = match;
-    def->def = NULL;
+    def->def = ശൂന്യ;
 
-    return def;
+    തിരികെ def;
 }
 
-KeyTypeDef *
-KeyTypeCreate(xkb_atom_t name, VarDef *body)
+താക്കോൽ_Type_Def *
+താക്കോൽ_Type_Create(xkb_atom_t name, VarDef *body)
 {
-    KeyTypeDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    താക്കോൽ_Type_Def *def = malloc(വലുപ്പം(*def));
+    എങ്കിൽ (!def)
+        തിരികെ ശൂന്യ;
 
     def->common.type = STMT_TYPE;
-    def->common.next = NULL;
+    def->common.next = ശൂന്യ;
     def->merge = MERGE_DEFAULT;
     def->name = name;
     def->body = body;
 
-    return def;
+    തിരികെ def;
 }
 
 SymbolsDef *
-SymbolsCreate(xkb_atom_t keyName, VarDef *symbols)
+SymbolsCreate(xkb_atom_t താക്കോൽ_Name, VarDef *symbols)
 {
-    SymbolsDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    SymbolsDef *def = malloc(വലുപ്പം(*def));
+    എങ്കിൽ (!def)
+        തിരികെ ശൂന്യ;
 
     def->common.type = STMT_SYMBOLS;
-    def->common.next = NULL;
+    def->common.next = ശൂന്യ;
     def->merge = MERGE_DEFAULT;
-    def->keyName = keyName;
+    def->താക്കോൽ_Name = താക്കോൽ_Name;
     def->symbols = symbols;
 
-    return def;
+    തിരികെ def;
 }
 
 GroupCompatDef *
-GroupCompatCreate(int64_t group, ExprDef *val)
+GroupCompatCreate(int64_t group, വ്യഞ്ജകം_Def *val)
 {
-    GroupCompatDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    GroupCompatDef *def = malloc(വലുപ്പം(*def));
+    എങ്കിൽ (!def)
+        തിരികെ ശൂന്യ;
 
     def->common.type = STMT_GROUP_COMPAT;
-    def->common.next = NULL;
+    def->common.next = ശൂന്യ;
     def->merge = MERGE_DEFAULT;
     def->group = group;
     def->def = val;
 
-    return def;
+    തിരികെ def;
 }
 
 ModMapDef *
-ModMapCreate(ExprDef *modifiers, ExprDef *keys)
+ModMapCreate(വ്യഞ്ജകം_Def *modifiers, വ്യഞ്ജകം_Def *താക്കോലുകൾ)
 {
-    ModMapDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    ModMapDef *def = malloc(വലുപ്പം(*def));
+    എങ്കിൽ (!def)
+        തിരികെ ശൂന്യ;
 
     def->common.type = STMT_MODMAP;
-    def->common.next = NULL;
+    def->common.next = ശൂന്യ;
     def->merge = MERGE_DEFAULT;
     def->modifiers = modifiers;
-    def->keys = keys;
+    def->താക്കോലുകൾ = താക്കോലുകൾ;
 
-    return def;
+    തിരികെ def;
 }
 
 LedMapDef *
 LedMapCreate(xkb_atom_t name, VarDef *body)
 {
-    LedMapDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    LedMapDef *def = malloc(വലുപ്പം(*def));
+    എങ്കിൽ (!def)
+        തിരികെ ശൂന്യ;
 
     def->common.type = STMT_LED_MAP;
-    def->common.next = NULL;
+    def->common.next = ശൂന്യ;
     def->merge = MERGE_DEFAULT;
     def->name = name;
     def->body = body;
 
-    return def;
+    തിരികെ def;
 }
 
 LedNameDef *
-LedNameCreate(int64_t ndx, ExprDef *name, bool virtual)
+LedNameCreate(int64_t ndx, വ്യഞ്ജകം_Def *name, bool മായാ)
 {
-    LedNameDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    LedNameDef *def = malloc(വലുപ്പം(*def));
+    എങ്കിൽ (!def)
+        തിരികെ ശൂന്യ;
 
     def->common.type = STMT_LED_NAME;
-    def->common.next = NULL;
+    def->common.next = ശൂന്യ;
     def->merge = MERGE_DEFAULT;
     def->ndx = ndx;
     def->name = name;
-    def->virtual = virtual;
+    def->മായാ = മായാ;
 
-    return def;
+    തിരികെ def;
 }
 
 UnknownStatement *
-UnknownStatementCreate(enum stmt_type type, struct sval name)
+UnknownStatementCreate(എണ്ണൽ stmt_type type, ഘടന sval name)
 {
-    UnknownStatement *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    UnknownStatement *def = malloc(വലുപ്പം(*def));
+    എങ്കിൽ (!def)
+        തിരികെ ശൂന്യ;
 
     def->common.type = type;
-    def->common.next = NULL;
+    def->common.next = ശൂന്യ;
     def->name = strndup(name.start, name.len);
-    if (!def->name) {
-        free(def);
-        return NULL;
+    എങ്കിൽ (!def->name) {
+        സ്വതന്ത്രം(def);
+        തിരികെ ശൂന്യ;
     }
 
-    return def;
+    തിരികെ def;
 }
 
-static void
+സ്ഥിതം ശൂന്യം
 FreeInclude(IncludeStmt *incl);
 
 IncludeStmt *
-IncludeCreate(struct xkb_context *ctx, char *str, enum merge_mode merge)
+IncludeCreate(ഘടന xkb_context *ctx, അക്ഷരം *str, എണ്ണൽ merge_mode merge)
 {
     IncludeStmt *incl, *first;
-    char *stmt, *tmp;
-    char nextop;
+    അക്ഷരം *stmt, *tmp;
+    അക്ഷരം nextop;
 
-    incl = first = NULL;
+    incl = first = ശൂന്യ;
     tmp = str;
     stmt = strdup_safe(str);
-    while (tmp && *tmp)
+    ആകുമ്പോൾ (tmp && *tmp)
     {
-        char *file = NULL, *map = NULL, *extra_data = NULL;
+        അക്ഷരം *file = ശൂന്യ, *map = ശൂന്യ, *extra_data = ശൂന്യ;
 
-        if (!ParseIncludeMap(&tmp, &file, &map, &nextop, &extra_data))
-            goto err;
+        എങ്കിൽ (!ParseIncludeMap(&tmp, &file, &map, &nextop, &extra_data))
+            പോകുക err;
 
         /*
          * Given an RMLVO (here layout) like 'us,,fr', the rules parser
@@ -516,72 +516,72 @@ IncludeCreate(struct xkb_context *ctx, char *str, enum merge_mode merge)
          * We should just skip the ':2' in this case and leave it to the
          * appropriate section to deal with the empty group.
          */
-        if (isempty(file)) {
-            free(file);
-            free(map);
-            free(extra_data);
-            continue;
+        എങ്കിൽ (isempty(file)) {
+            സ്വതന്ത്രം(file);
+            സ്വതന്ത്രം(map);
+            സ്വതന്ത്രം(extra_data);
+            തുടരുക;
         }
 
-        if (first == NULL) {
-            first = incl = malloc(sizeof(*first));
-        } else {
-            incl->next_incl = malloc(sizeof(*first));
+        എങ്കിൽ (first == ശൂന്യ) {
+            first = incl = malloc(വലുപ്പം(*first));
+        } അല്ലെങ്കിൽ {
+            incl->next_incl = malloc(വലുപ്പം(*first));
             incl = incl->next_incl;
         }
 
-        if (!incl) {
-            free(file);
-            free(map);
-            free(extra_data);
-            break;
+        എങ്കിൽ (!incl) {
+            സ്വതന്ത്രം(file);
+            സ്വതന്ത്രം(map);
+            സ്വതന്ത്രം(extra_data);
+            നിർത്തുക;
         }
 
         incl->common.type = STMT_INCLUDE;
-        incl->common.next = NULL;
+        incl->common.next = ശൂന്യ;
         incl->merge = merge;
-        incl->stmt = NULL;
+        incl->stmt = ശൂന്യ;
         incl->file = file;
         incl->map = map;
         incl->modifier = extra_data;
-        incl->next_incl = NULL;
+        incl->next_incl = ശൂന്യ;
 
-        switch (nextop) {
-        case MERGE_AUGMENT_PREFIX:
+        തിരഞ്ഞെടുപ്പ് (nextop) {
+        അവസ്ഥ MERGE_AUGMENT_PREFIX:
             merge = MERGE_AUGMENT;
-            break;
-        case MERGE_REPLACE_PREFIX:
+            നിർത്തുക;
+        അവസ്ഥ MERGE_REPLACE_PREFIX:
             merge = MERGE_REPLACE;
-            break;
-        default:
+            നിർത്തുക;
+        സ്ഥിരസ്ഥിതി:
             merge = MERGE_OVERRIDE;
         }
     }
 
-    if (first)
+    എങ്കിൽ (first)
         first->stmt = stmt;
-    else
-        free(stmt);
+    അല്ലെങ്കിൽ
+        സ്വതന്ത്രം(stmt);
 
-    return first;
+    തിരികെ first;
 
 err:
     log_err(ctx, XKB_ERROR_INVALID_INCLUDE_STATEMENT,
             "Illegal include statement \"%s\"; Ignored\n", stmt);
     FreeInclude(first);
-    free(stmt);
-    return NULL;
+    സ്വതന്ത്രം(stmt);
+    തിരികെ ശൂന്യ;
 }
 
 XkbFile *
-XkbFileCreate(enum xkb_file_type type, char *name, ParseCommon *defs,
-              enum xkb_map_flags flags)
+XkbFileCreate(എണ്ണൽ xkb_file_type type, അക്ഷരം *name, ParseCommon *defs,
+              എണ്ണൽ xkb_map_flags flags)
 {
     XkbFile *file;
 
-    file = calloc(1, sizeof(*file));
-    if (!file)
-        return NULL;
+    file = calloc(1, വലുപ്പം(*file));
+    എങ്കിൽ (!file)
+        തിരികെ ശൂന്യ;
 
     XkbEscapeMapName(name);
     file->file_type = type;
@@ -589,197 +589,197 @@ XkbFileCreate(enum xkb_file_type type, char *name, ParseCommon *defs,
     file->defs = defs;
     file->flags = flags;
 
-    return file;
+    തിരികെ file;
 }
 
 XkbFile *
-XkbFileFromComponents(struct xkb_context *ctx,
-                      const struct xkb_component_names *kkctgs)
+XkbFileFromComponents(ഘടന xkb_context *ctx,
+                      സ്ഥിരം ഘടന xkb_component_names *kkctgs)
 {
-    char *const components[] = {
+    അക്ഷരം *സ്ഥിരം components[] = {
         kkctgs->keycodes, kkctgs->types,
         kkctgs->compatibility, kkctgs->symbols,
     };
-    enum xkb_file_type type;
-    IncludeStmt *include = NULL;
-    XkbFile *file = NULL;
-    ParseCommon *defs = NULL, *defsLast = NULL;
+    എണ്ണൽ xkb_file_type type;
+    IncludeStmt *include = ശൂന്യ;
+    XkbFile *file = ശൂന്യ;
+    ParseCommon *defs = ശൂന്യ, *defsLast = ശൂന്യ;
 
-    for (type = FIRST_KEYMAP_FILE_TYPE; type <= LAST_KEYMAP_FILE_TYPE; type++) {
+    വേണ്ടി (type = FIRST_KEYMAP_FILE_TYPE; type <= LAST_KEYMAP_FILE_TYPE; type++) {
         include = IncludeCreate(ctx, components[type], MERGE_DEFAULT);
-        if (!include)
-            goto err;
+        എങ്കിൽ (!include)
+            പോകുക err;
 
-        file = XkbFileCreate(type, NULL, (ParseCommon *) include, 0);
-        if (!file) {
+        file = XkbFileCreate(type, ശൂന്യ, (ParseCommon *) include, 0);
+        എങ്കിൽ (!file) {
             FreeInclude(include);
-            goto err;
+            പോകുക err;
         }
 
-        if (!defs)
+        എങ്കിൽ (!defs)
             defsLast = defs = &file->common;
-        else
+        അല്ലെങ്കിൽ
             defsLast = defsLast->next = &file->common;
     }
 
-    file = XkbFileCreate(FILE_TYPE_KEYMAP, NULL, defs, 0);
-    if (!file)
-        goto err;
+    file = XkbFileCreate(FILE_TYPE_KEYMAP, ശൂന്യ, defs, 0);
+    എങ്കിൽ (!file)
+        പോകുക err;
 
-    return file;
+    തിരികെ file;
 
 err:
     FreeXkbFile((XkbFile *) defs);
-    return NULL;
+    തിരികെ ശൂന്യ;
 }
 
-static void
+സ്ഥിതം ശൂന്യം
 FreeInclude(IncludeStmt *incl)
 {
     IncludeStmt *next;
 
-    while (incl)
+    ആകുമ്പോൾ (incl)
     {
         next = incl->next_incl;
 
-        free(incl->file);
-        free(incl->map);
-        free(incl->modifier);
-        free(incl->stmt);
+        സ്വതന്ത്രം(incl->file);
+        സ്വതന്ത്രം(incl->map);
+        സ്വതന്ത്രം(incl->modifier);
+        സ്വതന്ത്രം(incl->stmt);
 
-        free(incl);
+        സ്വതന്ത്രം(incl);
         incl = next;
     }
 }
 
-void
+ശൂന്യം
 FreeStmt(ParseCommon *stmt)
 {
     ParseCommon *next;
 
-    while (stmt)
+    ആകുമ്പോൾ (stmt)
     {
         next = stmt->next;
 
-        switch (stmt->type) {
-        case STMT_INCLUDE:
+        തിരഞ്ഞെടുപ്പ് (stmt->type) {
+        അവസ്ഥ STMT_INCLUDE:
             FreeInclude((IncludeStmt *) stmt);
             /* stmt is already free'd here. */
-            stmt = NULL;
-            break;
+            stmt = ശൂന്യ;
+            നിർത്തുക;
 
-        case STMT_EXPR_NEGATE:
-        case STMT_EXPR_UNARY_PLUS:
-        case STMT_EXPR_NOT:
-        case STMT_EXPR_INVERT:
-            FreeStmt((ParseCommon *) ((ExprUnary *) stmt)->child);
-            break;
+        അവസ്ഥ STMT_വ്യഞ്ജകം_NEGATE:
+        അവസ്ഥ STMT_വ്യഞ്ജകം_UNARY_PLUS:
+        അവസ്ഥ STMT_വ്യഞ്ജകം_NOT:
+        അവസ്ഥ STMT_വ്യഞ്ജകം_INVERT:
+            FreeStmt((ParseCommon *) ((വ്യഞ്ജകം_Unary *) stmt)->child);
+            നിർത്തുക;
 
-        case STMT_EXPR_DIVIDE:
-        case STMT_EXPR_ADD:
-        case STMT_EXPR_SUBTRACT:
-        case STMT_EXPR_MULTIPLY:
-        case STMT_EXPR_ASSIGN:
-            FreeStmt((ParseCommon *) ((ExprBinary *) stmt)->left);
-            FreeStmt((ParseCommon *) ((ExprBinary *) stmt)->right);
-            break;
+        അവസ്ഥ STMT_വ്യഞ്ജകം_DIVIDE:
+        അവസ്ഥ STMT_വ്യഞ്ജകം_ADD:
+        അവസ്ഥ STMT_വ്യഞ്ജകം_SUBTRACT:
+        അവസ്ഥ STMT_വ്യഞ്ജകം_MULTIPLY:
+        അവസ്ഥ STMT_വ്യഞ്ജകം_ASSIGN:
+            FreeStmt((ParseCommon *) ((വ്യഞ്ജകം_ദ്വിമാന *) stmt)->ഇടത്);
+            FreeStmt((ParseCommon *) ((വ്യഞ്ജകം_ദ്വിമാന *) stmt)->വലത്);
+            നിർത്തുക;
 
-        case STMT_EXPR_ACTION_DECL:
-            FreeStmt((ParseCommon *) ((ExprAction *) stmt)->args);
-            break;
+        അവസ്ഥ STMT_വ്യഞ്ജകം_ACTION_DECL:
+            FreeStmt((ParseCommon *) ((വ്യഞ്ജകം_Action *) stmt)->args);
+            നിർത്തുക;
 
-        case STMT_EXPR_ACTION_LIST:
-            FreeStmt((ParseCommon *) ((ExprActionList *) stmt)->actions);
-            break;
+        അവസ്ഥ STMT_വ്യഞ്ജകം_ACTION_LIST:
+            FreeStmt((ParseCommon *) ((വ്യഞ്ജകം_Action_List *) stmt)->actions);
+            നിർത്തുക;
 
-        case STMT_EXPR_ARRAY_REF:
-            FreeStmt((ParseCommon *) ((ExprArrayRef *) stmt)->entry);
-            break;
+        അവസ്ഥ STMT_വ്യഞ്ജകം_ARRAY_REF:
+            FreeStmt((ParseCommon *) ((വ്യഞ്ജകം_Array_Ref *) stmt)->entry);
+            നിർത്തുക;
 
-        case STMT_EXPR_KEYSYM_LIST:
-            darray_free(((ExprKeysymList *) stmt)->syms);
-            break;
+        അവസ്ഥ STMT_വ്യഞ്ജകം_KEYSYM_LIST:
+            darray_free(((വ്യഞ്ജകം_Keysym_List *) stmt)->syms);
+            നിർത്തുക;
 
-        case STMT_VAR:
+        അവസ്ഥ STMT_VAR:
             FreeStmt((ParseCommon *) ((VarDef *) stmt)->name);
-            FreeStmt((ParseCommon *) ((VarDef *) stmt)->value);
-            break;
-        case STMT_TYPE:
-            FreeStmt((ParseCommon *) ((KeyTypeDef *) stmt)->body);
-            break;
-        case STMT_INTERP:
+            FreeStmt((ParseCommon *) ((VarDef *) stmt)->മൂല്യം);
+            നിർത്തുക;
+        അവസ്ഥ STMT_TYPE:
+            FreeStmt((ParseCommon *) ((താക്കോൽ_Type_Def *) stmt)->body);
+            നിർത്തുക;
+        അവസ്ഥ STMT_INTERP:
             FreeStmt((ParseCommon *) ((InterpDef *) stmt)->match);
             FreeStmt((ParseCommon *) ((InterpDef *) stmt)->def);
-            break;
-        case STMT_VMOD:
-            FreeStmt((ParseCommon *) ((VModDef *) stmt)->value);
-            break;
-        case STMT_SYMBOLS:
+            നിർത്തുക;
+        അവസ്ഥ STMT_VMOD:
+            FreeStmt((ParseCommon *) ((VModDef *) stmt)->മൂല്യം);
+            നിർത്തുക;
+        അവസ്ഥ STMT_SYMBOLS:
             FreeStmt((ParseCommon *) ((SymbolsDef *) stmt)->symbols);
-            break;
-        case STMT_MODMAP:
+            നിർത്തുക;
+        അവസ്ഥ STMT_MODMAP:
             FreeStmt((ParseCommon *) ((ModMapDef *) stmt)->modifiers);
-            FreeStmt((ParseCommon *) ((ModMapDef *) stmt)->keys);
-            break;
-        case STMT_GROUP_COMPAT:
+            FreeStmt((ParseCommon *) ((ModMapDef *) stmt)->താക്കോലുകൾ);
+            നിർത്തുക;
+        അവസ്ഥ STMT_GROUP_COMPAT:
             FreeStmt((ParseCommon *) ((GroupCompatDef *) stmt)->def);
-            break;
-        case STMT_LED_MAP:
+            നിർത്തുക;
+        അവസ്ഥ STMT_LED_MAP:
             FreeStmt((ParseCommon *) ((LedMapDef *) stmt)->body);
-            break;
-        case STMT_LED_NAME:
+            നിർത്തുക;
+        അവസ്ഥ STMT_LED_NAME:
             FreeStmt((ParseCommon *) ((LedNameDef *) stmt)->name);
-            break;
-        case STMT_UNKNOWN_DECLARATION:
-        case STMT_UNKNOWN_COMPOUND:
-            free(((UnknownStatement *) stmt)->name);
-            break;
-        default:
+            നിർത്തുക;
+        അവസ്ഥ STMT_UNKNOWN_DECLARATION:
+        അവസ്ഥ STMT_UNKNOWN_COMPOUND:
+            സ്വതന്ത്രം(((UnknownStatement *) stmt)->name);
+            നിർത്തുക;
+        സ്ഥിരസ്ഥിതി:
             {} /* Label followed by declaration requires C23 */
-            static_assert(_STMT_NUM_VALUES == 37 &&
-                          _STMT_NUM_VALUES == STMT_UNKNOWN_COMPOUND + 1,
+            static_assert(STMT_അക്കം_മൂല്യങ്ങൾ == 37 &&
+                          STMT_അക്കം_മൂല്യങ്ങൾ == STMT_UNKNOWN_COMPOUND + 1,
                           "Missing statement type");
-            break;
+            നിർത്തുക;
         }
 
-        free(stmt);
+        സ്വതന്ത്രം(stmt);
         stmt = next;
     }
 }
 
-void
+ശൂന്യം
 FreeXkbFile(XkbFile *file)
 {
     XkbFile *next;
 
-    while (file)
+    ആകുമ്പോൾ (file)
     {
         next = (XkbFile *) file->common.next;
 
-        switch (file->file_type) {
-        case FILE_TYPE_KEYMAP:
+        തിരഞ്ഞെടുപ്പ് (file->file_type) {
+        അവസ്ഥ FILE_TYPE_KEYMAP:
             FreeXkbFile((XkbFile *) file->defs);
-            break;
+            നിർത്തുക;
 
-        case FILE_TYPE_TYPES:
-        case FILE_TYPE_COMPAT:
-        case FILE_TYPE_SYMBOLS:
-        case FILE_TYPE_KEYCODES:
-        case FILE_TYPE_GEOMETRY:
+        അവസ്ഥ FILE_TYPE_TYPES:
+        അവസ്ഥ FILE_TYPE_COMPAT:
+        അവസ്ഥ FILE_TYPE_SYMBOLS:
+        അവസ്ഥ FILE_TYPE_KEYCODES:
+        അവസ്ഥ FILE_TYPE_GEOMETRY:
             FreeStmt(file->defs);
-            break;
+            നിർത്തുക;
 
-        default:
-            break;
+        സ്ഥിരസ്ഥിതി:
+            നിർത്തുക;
         }
 
-        free(file->name);
-        free(file);
+        സ്വതന്ത്രം(file->name);
+        സ്വതന്ത്രം(file);
         file = next;
     }
 }
 
-static const char *xkb_file_type_strings[_FILE_TYPE_NUM_ENTRIES] = {
+സ്ഥിതം സ്ഥിരം അക്ഷരം *xkb_file_type_strings[FILE_TYPE_അക്കം_ENTRIES] = {
     [FILE_TYPE_KEYCODES] = "xkb_keycodes",
     [FILE_TYPE_TYPES] = "xkb_types",
     [FILE_TYPE_COMPAT] = "xkb_compatibility",
@@ -789,41 +789,41 @@ static const char *xkb_file_type_strings[_FILE_TYPE_NUM_ENTRIES] = {
     [FILE_TYPE_RULES] = "rules",
 };
 
-const char *
-xkb_file_type_to_string(enum xkb_file_type type)
+സ്ഥിരം അക്ഷരം *
+xkb_file_type_to_string(എണ്ണൽ xkb_file_type type)
 {
-    if (type >= _FILE_TYPE_NUM_ENTRIES)
-        return "unknown";
-    return xkb_file_type_strings[type];
+    എങ്കിൽ (type >= FILE_TYPE_അക്കം_ENTRIES)
+        തിരികെ "unknown";
+    തിരികെ xkb_file_type_strings[type];
 }
 
-static const char *stmt_type_strings[_STMT_NUM_VALUES] = {
+സ്ഥിതം സ്ഥിരം അക്ഷരം *stmt_type_strings[STMT_അക്കം_മൂല്യങ്ങൾ] = {
     [STMT_UNKNOWN] = "unknown statement",
     [STMT_INCLUDE] = "include statement",
     [STMT_KEYCODE] = "key name definition",
     [STMT_ALIAS] = "key alias definition",
-    [STMT_EXPR_STRING_LITERAL] = "string literal expression",
-    [STMT_EXPR_INTEGER_LITERAL] = "integer literal expression",
-    [STMT_EXPR_FLOAT_LITERAL] = "float literal expression",
-    [STMT_EXPR_BOOLEAN_LITERAL] = "boolean literal expression",
-    [STMT_EXPR_KEYNAME_LITERAL] = "key name expression",
-    [STMT_EXPR_KEYSYM_LITERAL] = "keysym expression",
-    [STMT_EXPR_IDENT] = "identifier expression",
-    [STMT_EXPR_ACTION_DECL] = "action declaration expression",
-    [STMT_EXPR_FIELD_REF] = "field reference expression",
-    [STMT_EXPR_ARRAY_REF] = "array reference expression",
-    [STMT_EXPR_EMPTY_LIST] = "empty list expression",
-    [STMT_EXPR_KEYSYM_LIST] = "keysym list expression",
-    [STMT_EXPR_ACTION_LIST] = "action list expression",
-    [STMT_EXPR_ADD] = "addition expression",
-    [STMT_EXPR_SUBTRACT] = "substraction expression",
-    [STMT_EXPR_MULTIPLY] = "multiplication expression",
-    [STMT_EXPR_DIVIDE] = "division expression",
-    [STMT_EXPR_ASSIGN] = "assignment expression",
-    [STMT_EXPR_NOT] = "logical negation expression",
-    [STMT_EXPR_NEGATE] = "arithmetic negation expression",
-    [STMT_EXPR_INVERT] = "bitwise inversion expression",
-    [STMT_EXPR_UNARY_PLUS] = "unary plus expression",
+    [STMT_വ്യഞ്ജകം_STRING_LITERAL] = "string literal expression",
+    [STMT_വ്യഞ്ജകം_INTEGER_LITERAL] = "integer literal expression",
+    [STMT_വ്യഞ്ജകം_FLOAT_LITERAL] = "float literal expression",
+    [STMT_വ്യഞ്ജകം_BOOLEAN_LITERAL] = "boolean literal expression",
+    [STMT_വ്യഞ്ജകം_KEYNAME_LITERAL] = "key name expression",
+    [STMT_വ്യഞ്ജകം_KEYSYM_LITERAL] = "keysym expression",
+    [STMT_വ്യഞ്ജകം_IDENT] = "identifier expression",
+    [STMT_വ്യഞ്ജകം_ACTION_DECL] = "action declaration expression",
+    [STMT_വ്യഞ്ജകം_FIELD_REF] = "field reference expression",
+    [STMT_വ്യഞ്ജകം_ARRAY_REF] = "array reference expression",
+    [STMT_വ്യഞ്ജകം_EMPTY_LIST] = "empty list expression",
+    [STMT_വ്യഞ്ജകം_KEYSYM_LIST] = "keysym list expression",
+    [STMT_വ്യഞ്ജകം_ACTION_LIST] = "action list expression",
+    [STMT_വ്യഞ്ജകം_ADD] = "addition expression",
+    [STMT_വ്യഞ്ജകം_SUBTRACT] = "substraction expression",
+    [STMT_വ്യഞ്ജകം_MULTIPLY] = "multiplication expression",
+    [STMT_വ്യഞ്ജകം_DIVIDE] = "division expression",
+    [STMT_വ്യഞ്ജകം_ASSIGN] = "assignment expression",
+    [STMT_വ്യഞ്ജകം_NOT] = "logical negation expression",
+    [STMT_വ്യഞ്ജകം_NEGATE] = "arithmetic negation expression",
+    [STMT_വ്യഞ്ജകം_INVERT] = "bitwise inversion expression",
+    [STMT_വ്യഞ്ജകം_UNARY_PLUS] = "unary plus expression",
     [STMT_VAR] = "variable definition",
     [STMT_TYPE] = "key type definition",
     [STMT_INTERP] = "symbol interpretation definition",
@@ -836,39 +836,39 @@ static const char *stmt_type_strings[_STMT_NUM_VALUES] = {
     [STMT_UNKNOWN_DECLARATION] = "unknown declaration statement",
     [STMT_UNKNOWN_COMPOUND] = "unknown compound statement",
 };
-static_assert(_STMT_NUM_VALUES == 37 &&
-              _STMT_NUM_VALUES == STMT_UNKNOWN_COMPOUND + 1,
+static_assert(STMT_അക്കം_മൂല്യങ്ങൾ == 37 &&
+              STMT_അക്കം_മൂല്യങ്ങൾ == STMT_UNKNOWN_COMPOUND + 1,
               "Missing statement type");
 
-const char *
-stmt_type_to_string(enum stmt_type type)
+സ്ഥിരം അക്ഷരം *
+stmt_type_to_string(എണ്ണൽ stmt_type type)
 {
-    if (type >= _STMT_NUM_VALUES)
-        return NULL;
-    return stmt_type_strings[type];
+    എങ്കിൽ (type >= STMT_അക്കം_മൂല്യങ്ങൾ)
+        തിരികെ ശൂന്യ;
+    തിരികെ stmt_type_strings[type];
 }
 
-char
-stmt_type_to_operator_char(enum stmt_type type)
+അക്ഷരം
+stmt_type_to_operator_char(എണ്ണൽ stmt_type type)
 {
-    switch (type) {
-    case STMT_EXPR_ADD:
-        return '+';
-    case STMT_EXPR_SUBTRACT:
-        return '-';
-    case STMT_EXPR_MULTIPLY:
-        return '*';
-    case STMT_EXPR_DIVIDE:
-        return '/';
-    case STMT_EXPR_NOT:
-        return '!';
-    case STMT_EXPR_NEGATE:
-        return '-';
-    case STMT_EXPR_INVERT:
-        return '~';
-    case STMT_EXPR_UNARY_PLUS:
-        return '+';
-    default:
-        return '\0';
+    തിരഞ്ഞെടുപ്പ് (type) {
+    അവസ്ഥ STMT_വ്യഞ്ജകം_ADD:
+        തിരികെ '+';
+    അവസ്ഥ STMT_വ്യഞ്ജകം_SUBTRACT:
+        തിരികെ '-';
+    അവസ്ഥ STMT_വ്യഞ്ജകം_MULTIPLY:
+        തിരികെ '*';
+    അവസ്ഥ STMT_വ്യഞ്ജകം_DIVIDE:
+        തിരികെ '/';
+    അവസ്ഥ STMT_വ്യഞ്ജകം_NOT:
+        തിരികെ '!';
+    അവസ്ഥ STMT_വ്യഞ്ജകം_NEGATE:
+        തിരികെ '-';
+    അവസ്ഥ STMT_വ്യഞ്ജകം_INVERT:
+        തിരികെ '~';
+    അവസ്ഥ STMT_വ്യഞ്ജകം_UNARY_PLUS:
+        തിരികെ '+';
+    സ്ഥിരസ്ഥിതി:
+        തിരികെ '\0';
     }
 }

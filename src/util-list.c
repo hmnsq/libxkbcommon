@@ -5,27 +5,27 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <assert.h>
-#include <stddef.h>
-#include <stdbool.h>
+#അന്തര്ഭാവ <assert.h>
+#അന്തര്ഭാവ <stddef.h>
+#അന്തര്ഭാവ <stdbool.h>
 
-#include "util-list.h"
+#അന്തര്ഭാവ "util-list.h"
 
-void
-list_init(struct list *list)
+ശൂന്യം
+list_init(ഘടന list *list)
 {
 	list->prev = list;
 	list->next = list;
 }
 
-void
-list_insert(struct list *list, struct list *elm)
+ശൂന്യം
+list_തിരുകുക(ഘടന list *list, ഘടന list *elm)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	പ്രതിജ്ഞാ((list->next != ശൂന്യ && list->prev != ശൂന്യ) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
-	assert(((elm->next == NULL && elm->prev == NULL) || list_empty(elm)) ||
+	പ്രതിജ്ഞാ(((elm->next == ശൂന്യ && elm->prev == ശൂന്യ) || list_empty(elm)) ||
 	       !"elm->next|prev is not NULL, list node used twice?");
 
 	elm->prev = list;
@@ -34,12 +34,12 @@ list_insert(struct list *list, struct list *elm)
 	elm->next->prev = elm;
 }
 
-void
-list_append(struct list *list, struct list *elm)
+ശൂന്യം
+list_append(ഘടന list *list, ഘടന list *elm)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	പ്രതിജ്ഞാ((list->next != ശൂന്യ && list->prev != ശൂന്യ) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
-	assert(((elm->next == NULL && elm->prev == NULL) || list_empty(elm)) ||
+	പ്രതിജ്ഞാ(((elm->next == ശൂന്യ && elm->prev == ശൂന്യ) || list_empty(elm)) ||
 	       !"elm->next|prev is not NULL, list node used twice?");
 
 	elm->next = list;
@@ -48,29 +48,29 @@ list_append(struct list *list, struct list *elm)
 	elm->prev->next = elm;
 }
 
-void
-list_remove(struct list *elm)
+ശൂന്യം
+list_remove(ഘടന list *elm)
 {
-	assert((elm->next != NULL && elm->prev != NULL) ||
+	പ്രതിജ്ഞാ((elm->next != ശൂന്യ && elm->prev != ശൂന്യ) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
 
 	elm->prev->next = elm->next;
 	elm->next->prev = elm->prev;
-	elm->next = NULL;
-	elm->prev = NULL;
+	elm->next = ശൂന്യ;
+	elm->prev = ശൂന്യ;
 }
 
 bool
-list_empty(const struct list *list)
+list_empty(സ്ഥിരം ഘടന list *list)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	പ്രതിജ്ഞാ((list->next != ശൂന്യ && list->prev != ശൂന്യ) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
 
-	return list->next == list;
+	തിരികെ list->next == list;
 }
 
 bool
-list_is_last(const struct list *list, const struct list *elm)
+list_is_last(സ്ഥിരം ഘടന list *list, സ്ഥിരം ഘടന list *elm)
 {
-	return elm->next == list;
+	തിരികെ elm->next == list;
 }

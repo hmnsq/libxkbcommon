@@ -3,409 +3,409 @@
  * SPDX-License-Identifier: HPND
  */
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <stdint.h>
+#അന്തര്ഭാവ <stdint.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcomp-priv.h"
-#include "expr.h"
-#include "keymap.h"
-#include "keysym.h"
-#include "messages-codes.h"
-#include "text.h"
-#include "xkbcomp/ast.h"
-#include "utils.h"
-#include "util-numbers.h"
-#include "util-checked-arithmetic.h"
+#അന്തര്ഭാവ "xkbcommon/xkbcommon.h"
+#അന്തര്ഭാവ "xkbcomp-priv.h"
+#അന്തര്ഭാവ "expr.h"
+#അന്തര്ഭാവ "keymap.h"
+#അന്തര്ഭാവ "keysym.h"
+#അന്തര്ഭാവ "messages-codes.h"
+#അന്തര്ഭാവ "text.h"
+#അന്തര്ഭാവ "xkbcomp/ast.h"
+#അന്തര്ഭാവ "utils.h"
+#അന്തര്ഭാവ "util-numbers.h"
+#അന്തര്ഭാവ "util-checked-arithmetic.h"
 
-typedef bool (*IdentLookupFunc)(struct xkb_context *ctx, const void *priv,
+തരനിർവചനം bool (*IdentLookupFunc)(ഘടന xkb_context *ctx, സ്ഥിരം ശൂന്യം *priv,
                                 xkb_atom_t field, uint32_t *val_rtrn,
                                 bool *pending);
 
 bool
-ExprResolveLhs(struct xkb_context *ctx, const ExprDef *expr,
-               const char **elem_rtrn, const char **field_rtrn,
-               ExprDef **index_rtrn)
+വ്യഞ്ജകം_Resolve_Lhs(ഘടന xkb_context *ctx, സ്ഥിരം വ്യഞ്ജകം_Def *വ്യഞ്ജകം,
+               സ്ഥിരം അക്ഷരം **elem_rtrn, സ്ഥിരം അക്ഷരം **field_rtrn,
+               വ്യഞ്ജകം_Def **index_rtrn)
 {
-    switch (expr->common.type) {
-    case STMT_EXPR_IDENT:
-        *elem_rtrn = NULL;
-        *field_rtrn = xkb_atom_text(ctx, expr->ident.ident);
-        *index_rtrn = NULL;
-        return (*field_rtrn != NULL);
-    case STMT_EXPR_FIELD_REF:
-        *elem_rtrn = xkb_atom_text(ctx, expr->field_ref.element);
-        *field_rtrn = xkb_atom_text(ctx, expr->field_ref.field);
-        *index_rtrn = NULL;
-        return (*elem_rtrn != NULL && *field_rtrn != NULL);
-    case STMT_EXPR_ARRAY_REF:
-        *elem_rtrn = xkb_atom_text(ctx, expr->array_ref.element);
-        *field_rtrn = xkb_atom_text(ctx, expr->array_ref.field);
-        *index_rtrn = expr->array_ref.entry;
-        if (expr->array_ref.element != XKB_ATOM_NONE && *elem_rtrn == NULL)
-            return false;
-        if (*field_rtrn == NULL)
-            return false;
-        return true;
-    default:
-        break;
+    തിരഞ്ഞെടുപ്പ് (വ്യഞ്ജകം->common.type) {
+    അവസ്ഥ STMT_വ്യഞ്ജകം_IDENT:
+        *elem_rtrn = ശൂന്യ;
+        *field_rtrn = xkb_atom_text(ctx, വ്യഞ്ജകം->ident.ident);
+        *index_rtrn = ശൂന്യ;
+        തിരികെ (*field_rtrn != ശൂന്യ);
+    അവസ്ഥ STMT_വ്യഞ്ജകം_FIELD_REF:
+        *elem_rtrn = xkb_atom_text(ctx, വ്യഞ്ജകം->field_ref.element);
+        *field_rtrn = xkb_atom_text(ctx, വ്യഞ്ജകം->field_ref.field);
+        *index_rtrn = ശൂന്യ;
+        തിരികെ (*elem_rtrn != ശൂന്യ && *field_rtrn != ശൂന്യ);
+    അവസ്ഥ STMT_വ്യഞ്ജകം_ARRAY_REF:
+        *elem_rtrn = xkb_atom_text(ctx, വ്യഞ്ജകം->array_ref.element);
+        *field_rtrn = xkb_atom_text(ctx, വ്യഞ്ജകം->array_ref.field);
+        *index_rtrn = വ്യഞ്ജകം->array_ref.entry;
+        എങ്കിൽ (വ്യഞ്ജകം->array_ref.element != XKB_ATOM_NONE && *elem_rtrn == ശൂന്യ)
+            തിരികെ false;
+        എങ്കിൽ (*field_rtrn == ശൂന്യ)
+            തിരികെ false;
+        തിരികെ true;
+    സ്ഥിരസ്ഥിതി:
+        നിർത്തുക;
     }
     log_wsgo(ctx,
              XKB_ERROR_INVALID_XKB_SYNTAX,
-             "Unexpected operator %d in ResolveLhs\n", expr->common.type);
-    return false;
+             "Unexpected operator %d in ResolveLhs\n", വ്യഞ്ജകം->common.type);
+    തിരികെ false;
 }
 
-static bool
-SimpleLookup(struct xkb_context *ctx, const void *priv, xkb_atom_t field,
+സ്ഥിതം bool
+SimpleLookup(ഘടന xkb_context *ctx, സ്ഥിരം ശൂന്യം *priv, xkb_atom_t field,
              uint32_t *val_rtrn, bool *pending_rtrn)
 {
-    if (!priv || field == XKB_ATOM_NONE)
-        return false;
+    എങ്കിൽ (!priv || field == XKB_ATOM_NONE)
+        തിരികെ false;
 
-    const char *str = xkb_atom_text(ctx, field);
-    for (const LookupEntry *entry = priv; entry && entry->name; entry++) {
-        if (istreq(str, entry->name)) {
-            *val_rtrn = entry->value;
-            return true;
+    സ്ഥിരം അക്ഷരം *str = xkb_atom_text(ctx, field);
+    വേണ്ടി (സ്ഥിരം LookupEntry *entry = priv; entry && entry->name; entry++) {
+        എങ്കിൽ (istreq(str, entry->name)) {
+            *val_rtrn = entry->മൂല്യം;
+            തിരികെ true;
         }
     }
 
-    return false;
+    തിരികെ false;
 }
 
-struct named_integer_pattern {
-    const char *prefix;
+ഘടന named_integer_pattern {
+    സ്ഥിരം അക്ഷരം *prefix;
     size_t prefix_length;
     uint32_t min;
     uint32_t max;
-    const LookupEntry *entries;
-    const LookupEntry *pending_entries;
+    സ്ഥിരം LookupEntry *entries;
+    സ്ഥിരം LookupEntry *pending_entries;
     bool is_mask;
-    enum xkb_message_code error_id;
+    എണ്ണൽ xkb_message_code error_id;
 };
 
 /* Parse a number expressed with the pattern `<prefix><decimal number>` */
-static bool
-NamedIntegerPatternLookup(struct xkb_context *ctx, const void *priv,
+സ്ഥിതം bool
+NamedIntegerPatternLookup(ഘടന xkb_context *ctx, സ്ഥിരം ശൂന്യം *priv,
                           xkb_atom_t field, uint32_t *val_rtrn,
                           bool *pending_rtrn)
 {
-    if (!priv || field == XKB_ATOM_NONE)
-        return false;
+    എങ്കിൽ (!priv || field == XKB_ATOM_NONE)
+        തിരികെ false;
 
-    const char * const str = xkb_atom_text(ctx, field);
-    const struct named_integer_pattern * const pattern = priv;
+    സ്ഥിരം അക്ഷരം * സ്ഥിരം str = xkb_atom_text(ctx, field);
+    സ്ഥിരം ഘടന named_integer_pattern * സ്ഥിരം pattern = priv;
 
-    const int count = (istrneq(str, pattern->prefix, pattern->prefix_length))
+    സ്ഥിരം പൂർണ്ണസംഖ്യ എണ്ണം = (istrneq(str, pattern->prefix, pattern->prefix_length))
         ? parse_dec_to_uint32_t(str + pattern->prefix_length, SIZE_MAX, val_rtrn)
         : 0;
 
-    if (count > 0 && *(str + pattern->prefix_length + count) == '\0') {
-        if (*val_rtrn < pattern->min || *val_rtrn > pattern->max) {
+    എങ്കിൽ (എണ്ണം > 0 && *(str + pattern->prefix_length + എണ്ണം) == '\0') {
+        എങ്കിൽ (*val_rtrn < pattern->min || *val_rtrn > pattern->max) {
             log_err(ctx, pattern->error_id,
                     "%s index %"PRIu32" is out of range (%"PRIu32"..%"PRIu32")\n",
                     pattern->prefix, *val_rtrn, pattern->min, pattern->max);
-            return false;
+            തിരികെ false;
         }
-        if (pattern->is_mask) {
+        എങ്കിൽ (pattern->is_mask) {
             /* Compute mask (bit 0 = min index) */
-            assert(*val_rtrn - pattern->min < 32);
+            പ്രതിജ്ഞാ(*val_rtrn - pattern->min < 32);
             *val_rtrn = UINT32_C(1) << (*val_rtrn - pattern->min);
         }
-        return true;
-    } else {
-        if (pattern->entries &&
-            SimpleLookup(ctx, pattern->entries, field, val_rtrn, NULL)) {
-            return true;
+        തിരികെ true;
+    } അല്ലെങ്കിൽ {
+        എങ്കിൽ (pattern->entries &&
+            SimpleLookup(ctx, pattern->entries, field, val_rtrn, ശൂന്യ)) {
+            തിരികെ true;
         }
-        if (pattern->pending_entries && pending_rtrn &&
-            SimpleLookup(ctx, pattern->pending_entries, field, val_rtrn, NULL)) {
+        എങ്കിൽ (pattern->pending_entries && pending_rtrn &&
+            SimpleLookup(ctx, pattern->pending_entries, field, val_rtrn, ശൂന്യ)) {
             *pending_rtrn = true;
-            return true;
+            തിരികെ true;
         }
-        return false;
+        തിരികെ false;
     }
 }
 
 /* Data passed in the *priv argument for LookupModMask. */
-typedef struct {
-    const struct xkb_mod_set *mods;
-    enum mod_type mod_type;
+തരനിർവചനം ഘടന {
+    സ്ഥിരം ഘടന xkb_mod_set *mods;
+    എണ്ണൽ mod_type mod_type;
 } LookupModMaskPriv;
 
-static bool
-LookupModMask(struct xkb_context *ctx, const void *priv, xkb_atom_t field,
+സ്ഥിതം bool
+LookupModMask(ഘടന xkb_context *ctx, സ്ഥിരം ശൂന്യം *priv, xkb_atom_t field,
               xkb_mod_mask_t *val_rtrn, bool *pending_rtrn)
 {
-    const char *str = xkb_atom_text(ctx, field);
-    if (!str)
-        return false;
+    സ്ഥിരം അക്ഷരം *str = xkb_atom_text(ctx, field);
+    എങ്കിൽ (!str)
+        തിരികെ false;
 
-    if (istreq(str, "all")) {
+    എങ്കിൽ (istreq(str, "all")) {
         *val_rtrn  = MOD_REAL_MASK_ALL;
-        return true;
+        തിരികെ true;
     }
 
-    if (istreq(str, "none")) {
+    എങ്കിൽ (istreq(str, "none")) {
         *val_rtrn = 0;
-        return true;
+        തിരികെ true;
     }
 
-    const LookupModMaskPriv *arg = priv;
-    const struct xkb_mod_set *mods = arg->mods;
-    const enum mod_type mod_type = arg->mod_type;
-    const xkb_mod_index_t ndx = XkbModNameToIndex(mods, field, mod_type);
-    if (ndx == XKB_MOD_INVALID)
-        return false;
+    സ്ഥിരം LookupModMaskPriv *arg = priv;
+    സ്ഥിരം ഘടന xkb_mod_set *mods = arg->mods;
+    സ്ഥിരം എണ്ണൽ mod_type mod_type = arg->mod_type;
+    സ്ഥിരം xkb_mod_index_t ndx = XkbModNameToIndex(mods, field, mod_type);
+    എങ്കിൽ (ndx == XKB_MOD_INVALID)
+        തിരികെ false;
 
     *val_rtrn = (UINT32_C(1) << ndx);
-    return true;
+    തിരികെ true;
 }
 
 bool
-ExprResolveBoolean(struct xkb_context *ctx, const ExprDef *expr,
+വ്യഞ്ജകം_Resolve_Boolean(ഘടന xkb_context *ctx, സ്ഥിരം വ്യഞ്ജകം_Def *വ്യഞ്ജകം,
                    bool *set_rtrn)
 {
     bool ok = false;
-    const char *ident;
+    സ്ഥിരം അക്ഷരം *ident;
 
-    switch (expr->common.type) {
-    case STMT_EXPR_BOOLEAN_LITERAL:
-        *set_rtrn = expr->boolean.set;
-        return true;
+    തിരഞ്ഞെടുപ്പ് (വ്യഞ്ജകം->common.type) {
+    അവസ്ഥ STMT_വ്യഞ്ജകം_BOOLEAN_LITERAL:
+        *set_rtrn = വ്യഞ്ജകം->boolean.set;
+        തിരികെ true;
 
-    case STMT_EXPR_STRING_LITERAL:
-    case STMT_EXPR_INTEGER_LITERAL:
-    case STMT_EXPR_FLOAT_LITERAL:
-    case STMT_EXPR_KEYNAME_LITERAL:
-    case STMT_EXPR_KEYSYM_LITERAL:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_STRING_LITERAL:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_INTEGER_LITERAL:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_FLOAT_LITERAL:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_KEYNAME_LITERAL:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_KEYSYM_LITERAL:
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found %s where boolean was expected\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_to_string(വ്യഞ്ജകം->common.type));
+        തിരികെ false;
 
-    case STMT_EXPR_IDENT:
-        ident = xkb_atom_text(ctx, expr->ident.ident);
-        if (ident) {
-            if (istreq(ident, "true") ||
+    അവസ്ഥ STMT_വ്യഞ്ജകം_IDENT:
+        ident = xkb_atom_text(ctx, വ്യഞ്ജകം->ident.ident);
+        എങ്കിൽ (ident) {
+            എങ്കിൽ (istreq(ident, "true") ||
                 istreq(ident, "yes") ||
                 istreq(ident, "on")) {
                 *set_rtrn = true;
-                return true;
+                തിരികെ true;
             }
-            else if (istreq(ident, "false") ||
+            അല്ലെങ്കിൽ എങ്കിൽ (istreq(ident, "false") ||
                      istreq(ident, "no") ||
                      istreq(ident, "off")) {
                 *set_rtrn = false;
-                return true;
+                തിരികെ true;
             }
         }
         log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                 "Identifier \"%s\" of type boolean is unknown\n", ident);
-        return false;
+        തിരികെ false;
 
-    case STMT_EXPR_FIELD_REF:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_FIELD_REF:
         log_err(ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
                 "Default \"%s.%s\" of type boolean is unknown\n",
-                xkb_atom_text(ctx, expr->field_ref.element),
-                xkb_atom_text(ctx, expr->field_ref.field));
-        return false;
+                xkb_atom_text(ctx, വ്യഞ്ജകം->field_ref.element),
+                xkb_atom_text(ctx, വ്യഞ്ജകം->field_ref.field));
+        തിരികെ false;
 
-    case STMT_EXPR_INVERT:
-    case STMT_EXPR_NOT:
-        ok = ExprResolveBoolean(ctx, expr->unary.child, set_rtrn);
-        if (ok)
+    അവസ്ഥ STMT_വ്യഞ്ജകം_INVERT:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_NOT:
+        ok = വ്യഞ്ജകം_Resolve_Boolean(ctx, വ്യഞ്ജകം->unary.child, set_rtrn);
+        എങ്കിൽ (ok)
             *set_rtrn = !*set_rtrn;
-        return ok;
-    case STMT_EXPR_ADD:
-    case STMT_EXPR_SUBTRACT:
-    case STMT_EXPR_MULTIPLY:
-    case STMT_EXPR_DIVIDE:
-    case STMT_EXPR_ASSIGN:
-    case STMT_EXPR_NEGATE:
-    case STMT_EXPR_UNARY_PLUS:
-    case STMT_EXPR_EMPTY_LIST:
-    case STMT_EXPR_ACTION_DECL:
-    case STMT_EXPR_ACTION_LIST:
-    case STMT_EXPR_KEYSYM_LIST:
+        തിരികെ ok;
+    അവസ്ഥ STMT_വ്യഞ്ജകം_ADD:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_SUBTRACT:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_MULTIPLY:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_DIVIDE:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_ASSIGN:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_NEGATE:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_UNARY_PLUS:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_EMPTY_LIST:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_ACTION_DECL:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_ACTION_LIST:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_KEYSYM_LIST:
         log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                 "%s of boolean values not permitted\n",
-                stmt_type_to_string(expr->common.type));
-        break;
+                stmt_type_to_string(വ്യഞ്ജകം->common.type));
+        നിർത്തുക;
 
-    default:
+    സ്ഥിരസ്ഥിതി:
         log_wsgo(ctx, XKB_ERROR_UNKNOWN_OPERATOR,
                  "Unknown operator %d in ResolveBoolean\n",
-                 expr->common.type);
-        break;
+                 വ്യഞ്ജകം->common.type);
+        നിർത്തുക;
     }
 
-    return false;
+    തിരികെ false;
 }
 
-static bool
-ExprResolveIntegerLookup(struct xkb_context *ctx, const ExprDef *expr,
+സ്ഥിതം bool
+വ്യഞ്ജകം_Resolve_Integer_Lookup(ഘടന xkb_context *ctx, സ്ഥിരം വ്യഞ്ജകം_Def *വ്യഞ്ജകം,
                          int64_t *val_rtrn, bool *pending,
-                         IdentLookupFunc lookup, const void *lookupPriv)
+                         IdentLookupFunc lookup, സ്ഥിരം ശൂന്യം *lookupPriv)
 {
     bool ok = false;
     int64_t l = 0, r = 0;
     uint32_t u = 0;
-    ExprDef *left, *right;
+    വ്യഞ്ജകം_Def *ഇടത്, *വലത്;
 
-    switch (expr->common.type) {
-    case STMT_EXPR_INTEGER_LITERAL:
-        *val_rtrn = expr->integer.ival;
-        return true;
+    തിരഞ്ഞെടുപ്പ് (വ്യഞ്ജകം->common.type) {
+    അവസ്ഥ STMT_വ്യഞ്ജകം_INTEGER_LITERAL:
+        *val_rtrn = വ്യഞ്ജകം->integer.ival;
+        തിരികെ true;
 
-    case STMT_EXPR_STRING_LITERAL:
-    case STMT_EXPR_FLOAT_LITERAL:
-    case STMT_EXPR_BOOLEAN_LITERAL:
-    case STMT_EXPR_KEYNAME_LITERAL:
-    case STMT_EXPR_KEYSYM_LITERAL:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_STRING_LITERAL:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_FLOAT_LITERAL:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_BOOLEAN_LITERAL:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_KEYNAME_LITERAL:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_KEYSYM_LITERAL:
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found %s where an int was expected\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_to_string(വ്യഞ്ജകം->common.type));
+        തിരികെ false;
 
-    case STMT_EXPR_IDENT:
-        if (lookup)
-            ok = lookup(ctx, lookupPriv, expr->ident.ident, &u, pending);
+    അവസ്ഥ STMT_വ്യഞ്ജകം_IDENT:
+        എങ്കിൽ (lookup)
+            ok = lookup(ctx, lookupPriv, വ്യഞ്ജകം->ident.ident, &u, pending);
 
-        if (!ok)
+        എങ്കിൽ (!ok)
             log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                     "Identifier \"%s\" of type int is unknown\n",
-                    xkb_atom_text(ctx, expr->ident.ident));
-        else
+                    xkb_atom_text(ctx, വ്യഞ്ജകം->ident.ident));
+        അല്ലെങ്കിൽ
             *val_rtrn = (int64_t) u;
 
-        if (pending && *pending) {
+        എങ്കിൽ (pending && *pending) {
             /* Postpone computation */
-            return false;
+            തിരികെ false;
         }
 
-        return ok;
+        തിരികെ ok;
 
-    case STMT_EXPR_FIELD_REF:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_FIELD_REF:
         log_err(ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
                 "Default \"%s.%s\" of type int is unknown\n",
-                xkb_atom_text(ctx, expr->field_ref.element),
-                xkb_atom_text(ctx, expr->field_ref.field));
-        return false;
+                xkb_atom_text(ctx, വ്യഞ്ജകം->field_ref.element),
+                xkb_atom_text(ctx, വ്യഞ്ജകം->field_ref.field));
+        തിരികെ false;
 
-    case STMT_EXPR_ADD:
-    case STMT_EXPR_SUBTRACT:
-    case STMT_EXPR_MULTIPLY:
-    case STMT_EXPR_DIVIDE:
-        left = expr->binary.left;
-        right = expr->binary.right;
-        if (!ExprResolveIntegerLookup(ctx, left, &l, pending, lookup, lookupPriv) ||
-            !ExprResolveIntegerLookup(ctx, right, &r, pending, lookup, lookupPriv))
-            return false;
+    അവസ്ഥ STMT_വ്യഞ്ജകം_ADD:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_SUBTRACT:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_MULTIPLY:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_DIVIDE:
+        ഇടത് = വ്യഞ്ജകം->ദ്വിമാന.ഇടത്;
+        വലത് = വ്യഞ്ജകം->ദ്വിമാന.വലത്;
+        എങ്കിൽ (!വ്യഞ്ജകം_Resolve_Integer_Lookup(ctx, ഇടത്, &l, pending, lookup, lookupPriv) ||
+            !വ്യഞ്ജകം_Resolve_Integer_Lookup(ctx, വലത്, &r, pending, lookup, lookupPriv))
+            തിരികെ false;
 
-        switch (expr->common.type) {
-        case STMT_EXPR_ADD:
-            if (ckd_add(val_rtrn, l, r)) {
+        തിരഞ്ഞെടുപ്പ് (വ്യഞ്ജകം->common.type) {
+        അവസ്ഥ STMT_വ്യഞ്ജകം_ADD:
+            എങ്കിൽ (ckd_add(val_rtrn, l, r)) {
                 log_err(ctx, XKB_ERROR_INTEGER_OVERFLOW,
                         "Addition %"PRId64" + %"PRId64" has an invalid "
                         "mathematical result: %"PRId64"\n",
                         l, r, *val_rtrn);
-                return false;
+                തിരികെ false;
             }
-            break;
-        case STMT_EXPR_SUBTRACT:
-            if (ckd_sub(val_rtrn, l, r)) {
+            നിർത്തുക;
+        അവസ്ഥ STMT_വ്യഞ്ജകം_SUBTRACT:
+            എങ്കിൽ (ckd_sub(val_rtrn, l, r)) {
                 log_err(ctx, XKB_ERROR_INTEGER_OVERFLOW,
                         "Substraction %"PRId64" - %"PRId64" has an invalid "
                         "mathematical result: %"PRId64"\n",
                         l, r, *val_rtrn);
-                return false;
+                തിരികെ false;
             }
-            break;
-        case STMT_EXPR_MULTIPLY:
-            if (ckd_mul(val_rtrn, l, r)) {
+            നിർത്തുക;
+        അവസ്ഥ STMT_വ്യഞ്ജകം_MULTIPLY:
+            എങ്കിൽ (ckd_mul(val_rtrn, l, r)) {
                 log_err(ctx, XKB_ERROR_INTEGER_OVERFLOW,
                         "Multiplication %"PRId64" * %"PRId64" has an invalid "
                         "mathematical result: %"PRId64"\n",
                         l, r, *val_rtrn);
-                return false;
+                തിരികെ false;
             }
-            break;
-        case STMT_EXPR_DIVIDE:
-            if (r == 0) {
+            നിർത്തുക;
+        അവസ്ഥ STMT_വ്യഞ്ജകം_DIVIDE:
+            എങ്കിൽ (r == 0) {
                 log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                         "Cannot divide by zero: %"PRId64" / %"PRId64"\n", l, r);
-                return false;
+                തിരികെ false;
             }
             *val_rtrn = l / r;
-            break;
-        default:
+            നിർത്തുക;
+        സ്ഥിരസ്ഥിതി:
             log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                     "%s of integers not permitted\n",
-                    stmt_type_to_string(expr->common.type));
-            return false;
+                    stmt_type_to_string(വ്യഞ്ജകം->common.type));
+            തിരികെ false;
         }
 
-        return true;
+        തിരികെ true;
 
-    case STMT_EXPR_ASSIGN:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_ASSIGN:
         log_wsgo(ctx,
                  XKB_ERROR_INVALID_OPERATION,
                  "Assignment operator not implemented yet\n");
-        break;
+        നിർത്തുക;
 
-    case STMT_EXPR_NOT:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_NOT:
         log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                 "The ! operator cannot be applied to an integer\n");
-        return false;
+        തിരികെ false;
 
-    case STMT_EXPR_INVERT:
-    case STMT_EXPR_NEGATE:
-        left = expr->unary.child;
-        if (!ExprResolveIntegerLookup(ctx, left, &l, pending, lookup, lookupPriv))
-            return false;
+    അവസ്ഥ STMT_വ്യഞ്ജകം_INVERT:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_NEGATE:
+        ഇടത് = വ്യഞ്ജകം->unary.child;
+        എങ്കിൽ (!വ്യഞ്ജകം_Resolve_Integer_Lookup(ctx, ഇടത്, &l, pending, lookup, lookupPriv))
+            തിരികെ false;
 
-        *val_rtrn = (expr->common.type == STMT_EXPR_NEGATE ? -l : ~l);
-        return true;
+        *val_rtrn = (വ്യഞ്ജകം->common.type == STMT_വ്യഞ്ജകം_NEGATE ? -l : ~l);
+        തിരികെ true;
 
-    case STMT_EXPR_UNARY_PLUS:
-        left = expr->unary.child;
-        return ExprResolveIntegerLookup(ctx, left, val_rtrn, pending, lookup,
+    അവസ്ഥ STMT_വ്യഞ്ജകം_UNARY_PLUS:
+        ഇടത് = വ്യഞ്ജകം->unary.child;
+        തിരികെ വ്യഞ്ജകം_Resolve_Integer_Lookup(ctx, ഇടത്, val_rtrn, pending, lookup,
                                         lookupPriv);
 
-    default:
+    സ്ഥിരസ്ഥിതി:
         log_wsgo(ctx, XKB_ERROR_UNKNOWN_OPERATOR,
                  "Unknown operator %d in ResolveInteger\n",
-                 expr->common.type);
-        break;
+                 വ്യഞ്ജകം->common.type);
+        നിർത്തുക;
     }
 
-    return false;
+    തിരികെ false;
 }
 
 bool
-ExprResolveInteger(struct xkb_context *ctx, const ExprDef *expr,
+വ്യഞ്ജകം_Resolve_Integer(ഘടന xkb_context *ctx, സ്ഥിരം വ്യഞ്ജകം_Def *വ്യഞ്ജകം,
                    int64_t *val_rtrn)
 {
-    return ExprResolveIntegerLookup(ctx, expr, val_rtrn, NULL, NULL, NULL);
+    തിരികെ വ്യഞ്ജകം_Resolve_Integer_Lookup(ctx, വ്യഞ്ജകം, val_rtrn, ശൂന്യ, ശൂന്യ, ശൂന്യ);
 }
 
-enum xkb_parser_error
-ExprResolveGroup(const struct xkb_keymap_info *keymap_info,
-                 const ExprDef *expr, bool absolute,
+എണ്ണൽ xkb_parser_error
+വ്യഞ്ജകം_Resolve_Group(സ്ഥിരം ഘടന xkb_keymap_info *keymap_info,
+                 സ്ഥിരം വ്യഞ്ജകം_Def *വ്യഞ്ജകം, bool absolute,
                  xkb_layout_index_t *group_rtrn, bool *pending)
 {
-    static const LookupEntry pendingGroupIndexNames[] = {
+    സ്ഥിതം സ്ഥിരം LookupEntry pendingGroupIndexNames[] = {
         { GROUP_LAST_INDEX_NAME, 0 },
-        { NULL, 0 }
+        { ശൂന്യ, 0 }
     };
 
-    const struct named_integer_pattern group_name_pattern = {
+    സ്ഥിരം ഘടന named_integer_pattern group_name_pattern = {
         /* Prefix is title-cased, because it is also used in error messages */
         .prefix = "Group",
-        .prefix_length = sizeof("Group") - 1,
+        .prefix_length = വലുപ്പം("Group") - 1,
         .min = 1,
         .max = keymap_info->features.max_groups,
         .is_mask = false,
@@ -415,338 +415,338 @@ ExprResolveGroup(const struct xkb_keymap_info *keymap_info,
     };
 
     int64_t result = 0;
-    if (!ExprResolveIntegerLookup(keymap_info->keymap.ctx, expr, &result, pending,
+    എങ്കിൽ (!വ്യഞ്ജകം_Resolve_Integer_Lookup(keymap_info->keymap.ctx, വ്യഞ്ജകം, &result, pending,
                                   NamedIntegerPatternLookup, &group_name_pattern))
-        return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+        തിരികെ (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
             ? PARSER_FATAL_ERROR
             : PARSER_RECOVERABLE_ERROR;
 
-    if (result < (int64_t)absolute || result > keymap_info->features.max_groups) {
+    എങ്കിൽ (result < (int64_t)absolute || result > keymap_info->features.max_groups) {
         log_err(keymap_info->keymap.ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                 "Group index %"PRId64" is out of range (%u..%"PRIu32")\n",
                 result, absolute, keymap_info->features.max_groups);
-        return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+        തിരികെ (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
             ? PARSER_FATAL_ERROR
             : PARSER_RECOVERABLE_ERROR;
     }
 
     *group_rtrn = (xkb_layout_index_t) result;
-    return PARSER_SUCCESS;
+    തിരികെ PARSER_SUCCESS;
 }
 
 bool
-ExprResolveLevel(struct xkb_context *ctx, const ExprDef *expr,
+വ്യഞ്ജകം_Resolve_Level(ഘടന xkb_context *ctx, സ്ഥിരം വ്യഞ്ജകം_Def *വ്യഞ്ജകം,
                  xkb_level_index_t *level_rtrn)
 {
-    static const struct named_integer_pattern level_name_pattern = {
+    സ്ഥിതം സ്ഥിരം ഘടന named_integer_pattern level_name_pattern = {
         /* Prefix is title-cased, because it is also used in error messages */
         .prefix = "Level",
-        .prefix_length = sizeof("Level") - 1,
+        .prefix_length = വലുപ്പം("Level") - 1,
         .min = 1,
         .max = XKB_LEVEL_MAX_IMPL,
         .is_mask = false,
-        .entries = NULL,
+        .entries = ശൂന്യ,
         .error_id = XKB_ERROR_UNSUPPORTED_SHIFT_LEVEL,
     };
     int64_t result = 0;
-    if (!ExprResolveIntegerLookup(ctx, expr, &result, NULL,
+    എങ്കിൽ (!വ്യഞ്ജകം_Resolve_Integer_Lookup(ctx, വ്യഞ്ജകം, &result, ശൂന്യ,
                                   NamedIntegerPatternLookup,
                                   &level_name_pattern))
-        return false;
+        തിരികെ false;
 
-    if (result < 1 || result > XKB_LEVEL_MAX_IMPL) {
+    എങ്കിൽ (result < 1 || result > XKB_LEVEL_MAX_IMPL) {
         log_err(ctx, XKB_ERROR_UNSUPPORTED_SHIFT_LEVEL,
                 "Shift level %"PRId64" is out of range (1..%u)\n",
                 result, XKB_LEVEL_MAX_IMPL);
-        return false;
+        തിരികെ false;
     }
 
     /* Level is zero-indexed from now on. */
     *level_rtrn = (xkb_level_index_t) (result - 1);
-    return true;
+    തിരികെ true;
 }
 
 bool
-ExprResolveButton(struct xkb_context *ctx, const ExprDef *expr, int64_t *btn_rtrn)
+വ്യഞ്ജകം_Resolve_Button(ഘടന xkb_context *ctx, സ്ഥിരം വ്യഞ്ജകം_Def *വ്യഞ്ജകം, int64_t *btn_rtrn)
 {
-    return ExprResolveIntegerLookup(ctx, expr, btn_rtrn, NULL, SimpleLookup,
+    തിരികെ വ്യഞ്ജകം_Resolve_Integer_Lookup(ctx, വ്യഞ്ജകം, btn_rtrn, ശൂന്യ, SimpleLookup,
                                     buttonNames);
 }
 
 bool
-ExprResolveString(struct xkb_context *ctx, const ExprDef *expr,
+വ്യഞ്ജകം_Resolve_String(ഘടന xkb_context *ctx, സ്ഥിരം വ്യഞ്ജകം_Def *വ്യഞ്ജകം,
                   xkb_atom_t *val_rtrn)
 {
-    switch (expr->common.type) {
-    case STMT_EXPR_STRING_LITERAL:
-        *val_rtrn = expr->string.str;
-        return true;
+    തിരഞ്ഞെടുപ്പ് (വ്യഞ്ജകം->common.type) {
+    അവസ്ഥ STMT_വ്യഞ്ജകം_STRING_LITERAL:
+        *val_rtrn = വ്യഞ്ജകം->string.str;
+        തിരികെ true;
 
-    case STMT_EXPR_INTEGER_LITERAL:
-    case STMT_EXPR_FLOAT_LITERAL:
-    case STMT_EXPR_BOOLEAN_LITERAL:
-    case STMT_EXPR_KEYNAME_LITERAL:
-    case STMT_EXPR_KEYSYM_LITERAL:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_INTEGER_LITERAL:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_FLOAT_LITERAL:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_BOOLEAN_LITERAL:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_KEYNAME_LITERAL:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_KEYSYM_LITERAL:
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found %s, expected a string\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_to_string(വ്യഞ്ജകം->common.type));
+        തിരികെ false;
 
-    case STMT_EXPR_IDENT:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_IDENT:
         log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                 "Identifier \"%s\" of type string not found\n",
-                xkb_atom_text(ctx, expr->ident.ident));
-        return false;
+                xkb_atom_text(ctx, വ്യഞ്ജകം->ident.ident));
+        തിരികെ false;
 
-    case STMT_EXPR_FIELD_REF:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_FIELD_REF:
         log_err(ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
                 "Default \"%s.%s\" of type string not found\n",
-                xkb_atom_text(ctx, expr->field_ref.element),
-                xkb_atom_text(ctx, expr->field_ref.field));
-        return false;
+                xkb_atom_text(ctx, വ്യഞ്ജകം->field_ref.element),
+                xkb_atom_text(ctx, വ്യഞ്ജകം->field_ref.field));
+        തിരികെ false;
 
-    case STMT_EXPR_ADD:
-    case STMT_EXPR_SUBTRACT:
-    case STMT_EXPR_MULTIPLY:
-    case STMT_EXPR_DIVIDE:
-    case STMT_EXPR_ASSIGN:
-    case STMT_EXPR_NEGATE:
-    case STMT_EXPR_INVERT:
-    case STMT_EXPR_NOT:
-    case STMT_EXPR_UNARY_PLUS:
-    case STMT_EXPR_EMPTY_LIST:
-    case STMT_EXPR_ACTION_DECL:
-    case STMT_EXPR_ACTION_LIST:
-    case STMT_EXPR_KEYSYM_LIST:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_ADD:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_SUBTRACT:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_MULTIPLY:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_DIVIDE:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_ASSIGN:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_NEGATE:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_INVERT:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_NOT:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_UNARY_PLUS:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_EMPTY_LIST:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_ACTION_DECL:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_ACTION_LIST:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_KEYSYM_LIST:
         log_err(ctx, XKB_ERROR_INVALID_XKB_SYNTAX,
                 "%s of strings not permitted\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_to_string(വ്യഞ്ജകം->common.type));
+        തിരികെ false;
 
-    default:
+    സ്ഥിരസ്ഥിതി:
         log_wsgo(ctx, XKB_ERROR_UNKNOWN_OPERATOR,
                  "Unknown operator %d in ResolveString\n",
-                 expr->common.type);
-        break;
+                 വ്യഞ്ജകം->common.type);
+        നിർത്തുക;
     }
-    return false;
+    തിരികെ false;
 }
 
 bool
-ExprResolveEnum(struct xkb_context *ctx, const ExprDef *expr,
-                uint32_t *val_rtrn, const LookupEntry *values)
+വ്യഞ്ജകം_Resolve_Enum(ഘടന xkb_context *ctx, സ്ഥിരം വ്യഞ്ജകം_Def *വ്യഞ്ജകം,
+                uint32_t *val_rtrn, സ്ഥിരം LookupEntry *മൂല്യങ്ങൾ)
 {
-    if (expr->common.type != STMT_EXPR_IDENT) {
+    എങ്കിൽ (വ്യഞ്ജകം->common.type != STMT_വ്യഞ്ജകം_IDENT) {
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found a %s where an enumerated value was expected\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_to_string(വ്യഞ്ജകം->common.type));
+        തിരികെ false;
     }
 
-    if (!SimpleLookup(ctx, values, expr->ident.ident, val_rtrn, NULL)) {
+    എങ്കിൽ (!SimpleLookup(ctx, മൂല്യങ്ങൾ, വ്യഞ്ജകം->ident.ident, val_rtrn, ശൂന്യ)) {
         log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                 "Illegal identifier %s; expected one of:\n",
-                xkb_atom_text(ctx, expr->ident.ident));
-        while (values && values->name)
+                xkb_atom_text(ctx, വ്യഞ്ജകം->ident.ident));
+        ആകുമ്പോൾ (മൂല്യങ്ങൾ && മൂല്യങ്ങൾ->name)
         {
-            log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER, "\t%s\n", values->name);
-            values++;
+            log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER, "\t%s\n", മൂല്യങ്ങൾ->name);
+            മൂല്യങ്ങൾ++;
         }
-        return false;
+        തിരികെ false;
     }
 
-    return true;
+    തിരികെ true;
 }
 
-static bool
-ExprResolveMaskLookup(struct xkb_context *ctx, const ExprDef *expr,
+സ്ഥിതം bool
+വ്യഞ്ജകം_Resolve_Mask_Lookup(ഘടന xkb_context *ctx, സ്ഥിരം വ്യഞ്ജകം_Def *വ്യഞ്ജകം,
                       uint32_t *val_rtrn, bool *pending,
-                      IdentLookupFunc lookup, const void *lookupPriv)
+                      IdentLookupFunc lookup, സ്ഥിരം ശൂന്യം *lookupPriv)
 {
     bool ok = false;
     uint32_t l = 0, r = 0;
     int64_t v = 0;
-    ExprDef *left, *right;
-    const char *bogus = NULL;
+    വ്യഞ്ജകം_Def *ഇടത്, *വലത്;
+    സ്ഥിരം അക്ഷരം *bogus = ശൂന്യ;
 
-    switch (expr->common.type) {
-    case STMT_EXPR_INTEGER_LITERAL:
-        if (expr->integer.ival < 0 || expr->integer.ival > UINT32_MAX) {
+    തിരഞ്ഞെടുപ്പ് (വ്യഞ്ജകം->common.type) {
+    അവസ്ഥ STMT_വ്യഞ്ജകം_INTEGER_LITERAL:
+        എങ്കിൽ (വ്യഞ്ജകം->integer.ival < 0 || വ്യഞ്ജകം->integer.ival > UINT32_MAX) {
             log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Mask %s%#"PRIxMAX" is out of range (0..%#"PRIx32")\n",
-                    expr->integer.ival < 0 ? "-" : "",
-                    imaxabs(expr->integer.ival),
+                    വ്യഞ്ജകം->integer.ival < 0 ? "-" : "",
+                    imaxabs(വ്യഞ്ജകം->integer.ival),
                     UINT32_MAX);
-            return false;
+            തിരികെ false;
         }
-        *val_rtrn = (uint32_t) expr->integer.ival;
-        return true;
+        *val_rtrn = (uint32_t) വ്യഞ്ജകം->integer.ival;
+        തിരികെ true;
 
-    case STMT_EXPR_STRING_LITERAL:
-    case STMT_EXPR_FLOAT_LITERAL:
-    case STMT_EXPR_BOOLEAN_LITERAL:
-    case STMT_EXPR_KEYNAME_LITERAL:
-    case STMT_EXPR_KEYSYM_LITERAL:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_STRING_LITERAL:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_FLOAT_LITERAL:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_BOOLEAN_LITERAL:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_KEYNAME_LITERAL:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_KEYSYM_LITERAL:
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found %s where a mask was expected\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_to_string(വ്യഞ്ജകം->common.type));
+        തിരികെ false;
 
-    case STMT_EXPR_IDENT:
-        ok = lookup(ctx, lookupPriv, expr->ident.ident, val_rtrn, pending);
-        if (!ok)
+    അവസ്ഥ STMT_വ്യഞ്ജകം_IDENT:
+        ok = lookup(ctx, lookupPriv, വ്യഞ്ജകം->ident.ident, val_rtrn, pending);
+        എങ്കിൽ (!ok)
             log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                     "Identifier \"%s\" of type int is unknown\n",
-                    xkb_atom_text(ctx, expr->ident.ident));
-        if (pending && *pending) {
+                    xkb_atom_text(ctx, വ്യഞ്ജകം->ident.ident));
+        എങ്കിൽ (pending && *pending) {
             /* Postpone computation */
-            return false;
+            തിരികെ false;
         }
-        return ok;
+        തിരികെ ok;
 
-    case STMT_EXPR_FIELD_REF:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_FIELD_REF:
         log_err(ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
                 "Default \"%s.%s\" of type int is unknown\n",
-                xkb_atom_text(ctx, expr->field_ref.element),
-                xkb_atom_text(ctx, expr->field_ref.field));
-        return false;
+                xkb_atom_text(ctx, വ്യഞ്ജകം->field_ref.element),
+                xkb_atom_text(ctx, വ്യഞ്ജകം->field_ref.field));
+        തിരികെ false;
 
-    case STMT_EXPR_ARRAY_REF:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_ARRAY_REF:
         bogus = "array reference";
         /* fallthrough */
-    case STMT_EXPR_ACTION_DECL:
-        if (bogus == NULL)
+    അവസ്ഥ STMT_വ്യഞ്ജകം_ACTION_DECL:
+        എങ്കിൽ (bogus == ശൂന്യ)
             bogus = "function use";
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Unexpected %s in mask expression; Expression Ignored\n",
                 bogus);
-        return false;
+        തിരികെ false;
 
-    case STMT_EXPR_ADD:
-    case STMT_EXPR_SUBTRACT:
-    case STMT_EXPR_MULTIPLY:
-    case STMT_EXPR_DIVIDE:
-        left = expr->binary.left;
-        right = expr->binary.right;
-        if (!ExprResolveMaskLookup(ctx, left, &l, pending, lookup, lookupPriv) ||
-            !ExprResolveMaskLookup(ctx, right, &r, pending, lookup, lookupPriv))
-            return false;
+    അവസ്ഥ STMT_വ്യഞ്ജകം_ADD:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_SUBTRACT:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_MULTIPLY:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_DIVIDE:
+        ഇടത് = വ്യഞ്ജകം->ദ്വിമാന.ഇടത്;
+        വലത് = വ്യഞ്ജകം->ദ്വിമാന.വലത്;
+        എങ്കിൽ (!വ്യഞ്ജകം_Resolve_Mask_Lookup(ctx, ഇടത്, &l, pending, lookup, lookupPriv) ||
+            !വ്യഞ്ജകം_Resolve_Mask_Lookup(ctx, വലത്, &r, pending, lookup, lookupPriv))
+            തിരികെ false;
 
-        switch (expr->common.type) {
-        case STMT_EXPR_ADD:
+        തിരഞ്ഞെടുപ്പ് (വ്യഞ്ജകം->common.type) {
+        അവസ്ഥ STMT_വ്യഞ്ജകം_ADD:
             *val_rtrn = l | r;
-            break;
-        case STMT_EXPR_SUBTRACT:
+            നിർത്തുക;
+        അവസ്ഥ STMT_വ്യഞ്ജകം_SUBTRACT:
             *val_rtrn = l & (~r);
-            break;
-        case STMT_EXPR_MULTIPLY:
-        case STMT_EXPR_DIVIDE:
+            നിർത്തുക;
+        അവസ്ഥ STMT_വ്യഞ്ജകം_MULTIPLY:
+        അവസ്ഥ STMT_വ്യഞ്ജകം_DIVIDE:
             log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                     "Cannot %s masks; Illegal operation ignored\n",
-                    (expr->common.type == STMT_EXPR_DIVIDE ? "divide" : "multiply"));
-            return false;
-        default:
-            break;
+                    (വ്യഞ്ജകം->common.type == STMT_വ്യഞ്ജകം_DIVIDE ? "divide" : "multiply"));
+            തിരികെ false;
+        സ്ഥിരസ്ഥിതി:
+            നിർത്തുക;
         }
 
-        return true;
+        തിരികെ true;
 
-    case STMT_EXPR_ASSIGN:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_ASSIGN:
         log_wsgo(ctx, XKB_ERROR_INVALID_OPERATION,
                  "Assignment operator not implemented yet\n");
-        break;
+        നിർത്തുക;
 
-    case STMT_EXPR_INVERT:
-        left = expr->unary.child;
-        if (!ExprResolveIntegerLookup(ctx, left, &v, pending, lookup, lookupPriv))
-            return false;
-        if (v < 0 || v > UINT32_MAX) {
+    അവസ്ഥ STMT_വ്യഞ്ജകം_INVERT:
+        ഇടത് = വ്യഞ്ജകം->unary.child;
+        എങ്കിൽ (!വ്യഞ്ജകം_Resolve_Integer_Lookup(ctx, ഇടത്, &v, pending, lookup, lookupPriv))
+            തിരികെ false;
+        എങ്കിൽ (v < 0 || v > UINT32_MAX) {
             log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Mask %s%#"PRIxMAX" is out of range (0..%#"PRIx32")\n",
                     v < 0 ? "-" : "", imaxabs(v), UINT32_MAX);
-            return false;
+            തിരികെ false;
         }
         *val_rtrn = ~(uint32_t) v;
-        return true;
+        തിരികെ true;
 
-    case STMT_EXPR_UNARY_PLUS:
-    case STMT_EXPR_NEGATE:
-    case STMT_EXPR_NOT:
-        left = expr->unary.child;
-        if (!ExprResolveIntegerLookup(ctx, left, &v, pending, lookup, lookupPriv))
-            return false;
+    അവസ്ഥ STMT_വ്യഞ്ജകം_UNARY_PLUS:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_NEGATE:
+    അവസ്ഥ STMT_വ്യഞ്ജകം_NOT:
+        ഇടത് = വ്യഞ്ജകം->unary.child;
+        എങ്കിൽ (!വ്യഞ്ജകം_Resolve_Integer_Lookup(ctx, ഇടത്, &v, pending, lookup, lookupPriv))
+            തിരികെ false;
         log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                 "The '%c' unary operator cannot be used with a mask\n",
-                stmt_type_to_operator_char(expr->common.type));
-        return false;
+                stmt_type_to_operator_char(വ്യഞ്ജകം->common.type));
+        തിരികെ false;
 
-    default:
+    സ്ഥിരസ്ഥിതി:
         log_wsgo(ctx, XKB_ERROR_UNKNOWN_OPERATOR,
                  "Unknown operator type %d in ResolveMask\n",
-                 expr->common.type);
-        break;
+                 വ്യഞ്ജകം->common.type);
+        നിർത്തുക;
     }
 
-    return false;
+    തിരികെ false;
 }
 
 bool
-ExprResolveMask(struct xkb_context *ctx, const ExprDef *expr,
-                uint32_t *mask_rtrn, const LookupEntry *values)
+വ്യഞ്ജകം_Resolve_Mask(ഘടന xkb_context *ctx, സ്ഥിരം വ്യഞ്ജകം_Def *വ്യഞ്ജകം,
+                uint32_t *mask_rtrn, സ്ഥിരം LookupEntry *മൂല്യങ്ങൾ)
 {
-    return ExprResolveMaskLookup(ctx, expr, mask_rtrn, NULL, SimpleLookup, values);
+    തിരികെ വ്യഞ്ജകം_Resolve_Mask_Lookup(ctx, വ്യഞ്ജകം, mask_rtrn, ശൂന്യ, SimpleLookup, മൂല്യങ്ങൾ);
 }
 
 bool
-ExprResolveModMask(struct xkb_context *ctx, const ExprDef *expr,
-                   enum mod_type mod_type, const struct xkb_mod_set *mods,
+വ്യഞ്ജകം_Resolve_Mod_Mask(ഘടന xkb_context *ctx, സ്ഥിരം വ്യഞ്ജകം_Def *വ്യഞ്ജകം,
+                   എണ്ണൽ mod_type mod_type, സ്ഥിരം ഘടന xkb_mod_set *mods,
                    xkb_mod_mask_t *mask_rtrn)
 {
     LookupModMaskPriv priv = { .mods = mods, .mod_type = mod_type };
-    return ExprResolveMaskLookup(ctx, expr, mask_rtrn, NULL, LookupModMask, &priv);
+    തിരികെ വ്യഞ്ജകം_Resolve_Mask_Lookup(ctx, വ്യഞ്ജകം, mask_rtrn, ശൂന്യ, LookupModMask, &priv);
 }
 
 bool
-ExprResolveMod(struct xkb_context *ctx, const ExprDef *def,
-               enum mod_type mod_type, const struct xkb_mod_set *mods,
+വ്യഞ്ജകം_Resolve_Mod(ഘടന xkb_context *ctx, സ്ഥിരം വ്യഞ്ജകം_Def *def,
+               എണ്ണൽ mod_type mod_type, സ്ഥിരം ഘടന xkb_mod_set *mods,
                xkb_mod_index_t *ndx_rtrn)
 {
-    if (def->common.type != STMT_EXPR_IDENT) {
+    എങ്കിൽ (def->common.type != STMT_വ്യഞ്ജകം_IDENT) {
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Cannot resolve virtual modifier: "
                 "found %s where a virtual modifier name was expected\n",
                 stmt_type_to_string(def->common.type));
-        return false;
+        തിരികെ false;
     }
 
     xkb_atom_t name = def->ident.ident;
     xkb_mod_index_t ndx = XkbModNameToIndex(mods, name, mod_type);
-    if (ndx == XKB_MOD_INVALID) {
+    എങ്കിൽ (ndx == XKB_MOD_INVALID) {
         log_err(ctx, XKB_ERROR_UNDECLARED_VIRTUAL_MODIFIER,
                 "Cannot resolve virtual modifier: "
                 "\"%s\" was not previously declared\n",
                 xkb_atom_text(ctx, name));
-        return false;
+        തിരികെ false;
     }
 
     *ndx_rtrn = ndx;
-    return true;
+    തിരികെ true;
 }
 
 bool
-ExprResolveGroupMask(const struct xkb_keymap_info *keymap_info,
-                     const ExprDef *expr, xkb_layout_mask_t *group_rtrn,
+വ്യഞ്ജകം_Resolve_Group_Mask(സ്ഥിരം ഘടന xkb_keymap_info *keymap_info,
+                     സ്ഥിരം വ്യഞ്ജകം_Def *വ്യഞ്ജകം, xkb_layout_mask_t *group_rtrn,
                      bool *pending_rtrn)
 {
-    static const LookupEntry pendingGroupMaskNames[] = {
+    സ്ഥിതം സ്ഥിരം LookupEntry pendingGroupMaskNames[] = {
         { GROUP_LAST_INDEX_NAME, 0 },
-        { NULL, 0 }
+        { ശൂന്യ, 0 }
     };
 
-    const struct named_integer_pattern group_name_pattern = {
+    സ്ഥിരം ഘടന named_integer_pattern group_name_pattern = {
         /* Prefix is title-cased, because it is also used in error messages */
         .prefix = "Group",
-        .prefix_length = sizeof("Group") - 1,
+        .prefix_length = വലുപ്പം("Group") - 1,
         .min = 1,
         .max = keymap_info->features.max_groups,
         .is_mask = true,
@@ -755,7 +755,7 @@ ExprResolveGroupMask(const struct xkb_keymap_info *keymap_info,
         .error_id = XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_
     };
 
-    return ExprResolveMaskLookup(keymap_info->keymap.ctx, expr, group_rtrn,
+    തിരികെ വ്യഞ്ജകം_Resolve_Mask_Lookup(keymap_info->keymap.ctx, വ്യഞ്ജകം, group_rtrn,
                                  pending_rtrn, NamedIntegerPatternLookup,
                                  &group_name_pattern);
 }

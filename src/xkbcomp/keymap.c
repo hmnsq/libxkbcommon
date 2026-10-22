@@ -9,91 +9,91 @@
  * Author: Ran Benita <ran234@gmail.com>
  */
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <string.h>
-#include <stdbool.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <stdbool.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "ast-build.h"
-#include "darray.h"
-#include "expr.h"
-#include "keymap.h"
-#include "text.h"
-#include "utils.h"
-#include "xkbcomp-priv.h"
+#അന്തര്ഭാവ "xkbcommon/xkbcommon.h"
+#അന്തര്ഭാവ "ast-build.h"
+#അന്തര്ഭാവ "darray.h"
+#അന്തര്ഭാവ "expr.h"
+#അന്തര്ഭാവ "keymap.h"
+#അന്തര്ഭാവ "text.h"
+#അന്തര്ഭാവ "utils.h"
+#അന്തര്ഭാവ "xkbcomp-priv.h"
 
-static bool
-has_unbound_vmods(struct xkb_keymap *keymap, xkb_mod_mask_t mask)
+സ്ഥിതം bool
+has_unbound_vmods(ഘടന xkb_keymap *keymap, xkb_mod_mask_t mask)
 {
     xkb_mod_index_t k;
-    struct xkb_mod *mod;
+    ഘടന xkb_mod *mod;
     xkb_vmods_enumerate(k, mod, &keymap->mods)
-        if ((mask & (UINT32_C(1) << k)) && mod->mapping == 0)
-            return true;
-    return false;
+        എങ്കിൽ ((mask & (UINT32_C(1) << k)) && mod->mapping == 0)
+            തിരികെ true;
+    തിരികെ false;
 }
 
-static inline void
-ComputeEffectiveMask(struct xkb_keymap *keymap, struct xkb_mods *mods)
+സ്ഥിതം വരിയിൽ ശൂന്യം
+ComputeEffectiveMask(ഘടന xkb_keymap *keymap, ഘടന xkb_mods *mods)
 {
     /*
      * Since we accept numeric values for the vmod mask in the keymap, we may
      * have extra bits set that encode no real/virtual modifier. Keep them
      * unchanged for consistency.
      */
-    const xkb_mod_mask_t unknown_mods = ~(xkb_mod_mask_t)
-        ((UINT64_C(1) << keymap->mods.num_mods) - UINT64_C(1));
+    സ്ഥിരം xkb_mod_mask_t unknown_mods = ~(xkb_mod_mask_t)
+        ((UINT64_C(1) << keymap->mods.അക്കം_mods) - UINT64_C(1));
     mods->mask = mod_mask_get_effective(keymap, mods->mods)
                | (mods->mods & unknown_mods);
 }
 
-static void
-UpdateActionMods(struct xkb_keymap *keymap, union xkb_action *act,
+സ്ഥിതം ശൂന്യം
+UpdateActionMods(ഘടന xkb_keymap *keymap, സംഘം xkb_action *act,
                  xkb_mod_mask_t modmap)
 {
-    switch (act->type) {
-    case ACTION_TYPE_MOD_SET:
-    case ACTION_TYPE_MOD_LATCH:
-    case ACTION_TYPE_MOD_LOCK:
-        if (act->mods.flags & ACTION_MODS_LOOKUP_MODMAP)
+    തിരഞ്ഞെടുപ്പ് (act->type) {
+    അവസ്ഥ ACTION_TYPE_MOD_SET:
+    അവസ്ഥ ACTION_TYPE_MOD_LATCH:
+    അവസ്ഥ ACTION_TYPE_MOD_LOCK:
+        എങ്കിൽ (act->mods.flags & ACTION_MODS_LOOKUP_MODMAP)
             act->mods.mods.mods = modmap;
         ComputeEffectiveMask(keymap, &act->mods.mods);
-        break;
-    default:
-        break;
+        നിർത്തുക;
+    സ്ഥിരസ്ഥിതി:
+        നിർത്തുക;
     }
 }
 
-static const struct xkb_sym_interpret default_interpret = {
-    .sym = XKB_KEY_NoSymbol /* unused */,
+സ്ഥിതം സ്ഥിരം ഘടന xkb_sym_interpret default_interpret = {
+    .sym = XKB_താക്കോൽ_No_ചിഹ്നം /* unused */,
     .match = MATCH_ANY_OR_NONE,
     .mods = 0,
-    .repeat = DEFAULT_INTERPRET_KEY_REPEAT,
+    .repeat = DEFAULT_INTERPRET_താക്കോൽ_REPEAT,
     .virtual_mod = (xkb_mod_index_t) DEFAULT_INTERPRET_VMOD,
-    .num_actions = 0,
+    .അക്കം_actions = 0,
     .a = { .action = { .type = ACTION_TYPE_NONE } },
 };
 
-typedef darray(const struct xkb_sym_interpret*) xkb_sym_interprets;
+തരനിർവചനം darray(സ്ഥിരം ഘടന xkb_sym_interpret*) xkb_sym_interprets;
 
 /**
  * Find an interpretation which applies to this particular level, either by
  * finding an exact match for the symbol and modifier combination, or a
  * generic XKB_KEY_NoSymbol match.
  */
-static bool
-FindInterpForKey(struct xkb_keymap *keymap, const struct xkb_key *key,
+സ്ഥിതം bool
+Find_Interp_For_താക്കോൽ(ഘടന xkb_keymap *keymap, സ്ഥിരം ഘടന xkb_താക്കോൽ *താക്കോൽ,
                  xkb_layout_index_t group, xkb_level_index_t level,
                  xkb_sym_interprets *interprets)
 {
-    const xkb_keysym_t *syms;
-    int num_syms;
+    സ്ഥിരം xkb_keysym_t *syms;
+    പൂർണ്ണസംഖ്യ അക്കം_syms;
 
-    num_syms = xkb_keymap_key_get_syms_by_level(keymap, key->keycode, group,
+    അക്കം_syms = xkb_keymap_താക്കോൽ_get_syms_by_level(keymap, താക്കോൽ->keycode, group,
                                                 level, &syms);
-    if (num_syms <= 0)
-        return false;
+    എങ്കിൽ (അക്കം_syms <= 0)
+        തിരികെ false;
 
     /*
      * There may be multiple matchings interprets; we should always return
@@ -101,41 +101,41 @@ FindInterpForKey(struct xkb_keymap *keymap, const struct xkb_key *key,
      * sym_interprets array from the most specific to the least specific,
      * such that when we find a match we return immediately.
      */
-    for (int s = 0; s < num_syms; s++) {
+    വേണ്ടി (പൂർണ്ണസംഖ്യ s = 0; s < അക്കം_syms; s++) {
         bool found = false;
-        for (darray_size_t i = 0; i < keymap->num_sym_interprets; i++) {
-            struct xkb_sym_interpret * const interp = &keymap->sym_interprets[i];
+        വേണ്ടി (darray_size_t i = 0; i < keymap->അക്കം_sym_interprets; i++) {
+            ഘടന xkb_sym_interpret * സ്ഥിരം interp = &keymap->sym_interprets[i];
             xkb_mod_mask_t mods;
 
             found = false;
 
-            if (interp->sym != syms[s] && interp->sym != XKB_KEY_NoSymbol)
-                continue;
+            എങ്കിൽ (interp->sym != syms[s] && interp->sym != XKB_താക്കോൽ_No_ചിഹ്നം)
+                തുടരുക;
 
-            if (interp->level_one_only && level != 0)
+            എങ്കിൽ (interp->level_one_only && level != 0)
                 mods = 0;
-            else
-                mods = key->modmap;
+            അല്ലെങ്കിൽ
+                mods = താക്കോൽ->modmap;
 
-            switch (interp->match) {
-            case MATCH_NONE:
+            തിരഞ്ഞെടുപ്പ് (interp->match) {
+            അവസ്ഥ MATCH_NONE:
                 found = !(interp->mods & mods);
-                break;
-            case MATCH_ANY_OR_NONE:
+                നിർത്തുക;
+            അവസ്ഥ MATCH_ANY_OR_NONE:
                 found = (!mods || (interp->mods & mods));
-                break;
-            case MATCH_ANY:
+                നിർത്തുക;
+            അവസ്ഥ MATCH_ANY:
                 found = (interp->mods & mods);
-                break;
-            case MATCH_ALL:
+                നിർത്തുക;
+            അവസ്ഥ MATCH_ALL:
                 found = ((interp->mods & mods) == interp->mods);
-                break;
-            case MATCH_EXACTLY:
+                നിർത്തുക;
+            അവസ്ഥ MATCH_EXACTLY:
                 found = (interp->mods == mods);
-                break;
+                നിർത്തുക;
             }
 
-            if (found && i > 0 && interp->sym == XKB_KEY_NoSymbol) {
+            എങ്കിൽ (found && i > 0 && interp->sym == XKB_താക്കോൽ_No_ചിഹ്നം) {
                 /*
                  * For an interpretation matching Any keysym, we may get the
                  * same interpretation for multiple keysyms. This may result in
@@ -143,9 +143,9 @@ FindInterpForKey(struct xkb_keymap *keymap, const struct xkb_key *key,
                  * if no previous keysym was matched with this interpret at this
                  * level, else set the default interpretation.
                  */
-                struct xkb_sym_interpret const **previous_interp;
+                ഘടന xkb_sym_interpret സ്ഥിരം **previous_interp;
                 darray_foreach(previous_interp, *interprets) {
-                    if (*previous_interp == interp) {
+                    എങ്കിൽ (*previous_interp == interp) {
                         /* Keep as a safeguard against refactoring
                          * NOLINTNEXTLINE(clang-analyzer-deadcode.DeadStores) */
                         found = false;
@@ -155,146 +155,146 @@ FindInterpForKey(struct xkb_keymap *keymap, const struct xkb_key *key,
                                  "on key %s.\n",
                                  s + 1, KeysymText(keymap->ctx, syms[s]),
                                  level + 1, group + 1,
-                                 KeyNameText(keymap->ctx, key->name));
-                        goto not_found;
+                                 താക്കോൽ_Name_Text(keymap->ctx, താക്കോൽ->name));
+                        പോകുക not_found;
                     }
                 }
             }
-            if (found) {
+            എങ്കിൽ (found) {
                 darray_append(*interprets, interp);
                 interp->required = true;
-                break;
+                നിർത്തുക;
             }
         }
-        if (!found)
+        എങ്കിൽ (!found)
 not_found:
             darray_append(*interprets, &default_interpret);
     }
-    return true;
+    തിരികെ true;
 }
 
-static bool
-ApplyInterpsToKey(struct xkb_keymap *keymap, struct xkb_key *key)
+സ്ഥിതം bool
+Apply_Interps_To_താക്കോൽ(ഘടന xkb_keymap *keymap, ഘടന xkb_താക്കോൽ *താക്കോൽ)
 {
     xkb_mod_mask_t vmodmap = 0;
     xkb_level_index_t level;
     // FIXME: do not use darray, add actions directly in FindInterpForKey
     xkb_sym_interprets interprets = darray_new();
-    darray(union xkb_action) actions = darray_new();
+    darray(സംഘം xkb_action) actions = darray_new();
 
-    for (xkb_layout_index_t group = 0; group < key->num_groups; group++) {
+    വേണ്ടി (xkb_layout_index_t group = 0; group < താക്കോൽ->അക്കം_groups; group++) {
         /* Skip any interpretation for this group if it has explicit actions */
-        if (key->groups[group].explicit_actions)
-            continue;
+        എങ്കിൽ (താക്കോൽ->groups[group].explicit_actions)
+            തുടരുക;
 
-        for (level = 0; level < XkbKeyNumLevels(key, group); level++) {
-            assert(key->groups[group].levels[level].num_actions == 0);
+        വേണ്ടി (level = 0; level < Xkb_താക്കോൽ_അക്കം_Levels(താക്കോൽ, group); level++) {
+            പ്രതിജ്ഞാ(താക്കോൽ->groups[group].levels[level].അക്കം_actions == 0);
 
-            const struct xkb_sym_interpret **interp_iter;
-            const struct xkb_sym_interpret *interp;
+            സ്ഥിരം ഘടന xkb_sym_interpret **interp_iter;
+            സ്ഥിരം ഘടന xkb_sym_interpret *interp;
             size_t k;
             darray_resize(interprets, 0);
 
-            const bool found = FindInterpForKey(keymap, key, group, level, &interprets);
-            if (!found)
-                continue;
+            സ്ഥിരം bool found = Find_Interp_For_താക്കോൽ(keymap, താക്കോൽ, group, level, &interprets);
+            എങ്കിൽ (!found)
+                തുടരുക;
 
             darray_enumerate(k, interp_iter, interprets) {
                 interp = *interp_iter;
                 /* Infer default key behaviours from the base level. */
-                if (group == 0 && level == 0 &&
-                    !(key->explicit & EXPLICIT_REPEAT) && interp->repeat)
+                എങ്കിൽ (group == 0 && level == 0 &&
+                    !(താക്കോൽ->explicit & EXPLICIT_REPEAT) && interp->repeat)
                 {
-                    key->repeats = true;
+                    താക്കോൽ->repeats = true;
                 }
 
-                if ((group == 0 && level == 0) || !interp->level_one_only) {
+                എങ്കിൽ ((group == 0 && level == 0) || !interp->level_one_only) {
                     static_assert((uint32_t)DEFAULT_INTERPRET_VMOD ==
                                   (uint32_t)XKB_MOD_INVALID, "");
                     static_assert(!DEFAULT_INTERPRET_VMODMAP, "");
-                    if (interp->virtual_mod != XKB_MOD_INVALID)
+                    എങ്കിൽ (interp->virtual_mod != XKB_MOD_INVALID)
                         vmodmap |= (UINT32_C(1) << interp->virtual_mod);
                 }
 
-                switch (interp->num_actions) {
-                case 0:
-                    break;
-                case 1:
+                തിരഞ്ഞെടുപ്പ് (interp->അക്കം_actions) {
+                അവസ്ഥ 0:
+                    നിർത്തുക;
+                അവസ്ഥ 1:
                     darray_append(actions, interp->a.action);
-                    break;
-                default:
-                    darray_append_items(actions, interp->a.actions,
-                                        interp->num_actions);
+                    നിർത്തുക;
+                സ്ഥിരസ്ഥിതി:
+                    darray_append_ഇനങ്ങൾ(actions, interp->a.actions,
+                                        interp->അക്കം_actions);
                 }
             }
 
             /* Copy the actions */
-            if (unlikely(darray_size(actions)) > MAX_ACTIONS_PER_LEVEL) {
+            എങ്കിൽ (unlikely(darray_size(actions)) > MAX_ACTIONS_PER_LEVEL) {
                 log_warn(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
                          "Could not append interpret actions to key %s: "
                          "maximum is %u, got: %u. Dropping excessive actions\n",
-                         KeyNameText(keymap->ctx, key->name),
+                         താക്കോൽ_Name_Text(keymap->ctx, താക്കോൽ->name),
                          MAX_ACTIONS_PER_LEVEL, darray_size(actions));
-                key->groups[group].levels[level].num_actions =
+                താക്കോൽ->groups[group].levels[level].അക്കം_actions =
                     MAX_ACTIONS_PER_LEVEL;
-            } else {
-                key->groups[group].levels[level].num_actions =
-                    (xkb_action_count_t) darray_size(actions);
+            } അല്ലെങ്കിൽ {
+                താക്കോൽ->groups[group].levels[level].അക്കം_actions =
+                    (xkb_action_എണ്ണം_t) darray_size(actions);
             }
-            switch (darray_size(actions)) {
-                case 0:
-                    key->groups[group].levels[level].a.action =
-                        (union xkb_action) { .type = ACTION_TYPE_NONE };
-                    break;
-                case 1:
-                    key->groups[group].levels[level].a.action =
+            തിരഞ്ഞെടുപ്പ് (darray_size(actions)) {
+                അവസ്ഥ 0:
+                    താക്കോൽ->groups[group].levels[level].a.action =
+                        (സംഘം xkb_action) { .type = ACTION_TYPE_NONE };
+                    നിർത്തുക;
+                അവസ്ഥ 1:
+                    താക്കോൽ->groups[group].levels[level].a.action =
                         darray_item(actions, 0);
-                    break;
-                default:
-                    key->groups[group].levels[level].a.actions =
-                        memdup(darray_items(actions),
-                               key->groups[group].levels[level].num_actions,
-                               sizeof(*darray_items(actions)));
-                    if (!key->groups[group].levels[level].a.actions) {
+                    നിർത്തുക;
+                സ്ഥിരസ്ഥിതി:
+                    താക്കോൽ->groups[group].levels[level].a.actions =
+                        memdup(darray_ഇനങ്ങൾ(actions),
+                               താക്കോൽ->groups[group].levels[level].അക്കം_actions,
+                               വലുപ്പം(*darray_ഇനങ്ങൾ(actions)));
+                    എങ്കിൽ (!താക്കോൽ->groups[group].levels[level].a.actions) {
                         log_err(keymap->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
                                 "Could not allocate interpret actions\n");
                         darray_free(actions);
                         darray_free(interprets);
-                        return false;
+                        തിരികെ false;
                     }
             }
 
-            if (!darray_empty(actions))
-                key->groups[group].implicit_actions = true;
+            എങ്കിൽ (!darray_empty(actions))
+                താക്കോൽ->groups[group].implicit_actions = true;
 
             /* Do not free here */
             darray_resize(actions, 0);
         }
 
-        if (key->groups[group].implicit_actions)
-            key->implicit_actions = true;
+        എങ്കിൽ (താക്കോൽ->groups[group].implicit_actions)
+            താക്കോൽ->implicit_actions = true;
     }
     darray_free(actions);
     darray_free(interprets);
 
-    if (!(key->explicit & EXPLICIT_VMODMAP))
-        key->vmodmap = vmodmap;
+    എങ്കിൽ (!(താക്കോൽ->explicit & EXPLICIT_VMODMAP))
+        താക്കോൽ->vmodmap = vmodmap;
 
-    return true;
+    തിരികെ true;
 }
 
-static inline bool
-is_mod_action(union xkb_action *action)
+സ്ഥിതം വരിയിൽ bool
+is_mod_action(സംഘം xkb_action *action)
 {
-    return action->type == ACTION_TYPE_MOD_SET ||
+    തിരികെ action->type == ACTION_TYPE_MOD_SET ||
            action->type == ACTION_TYPE_MOD_LATCH ||
            action->type == ACTION_TYPE_MOD_LOCK;
 }
 
-static inline bool
-is_group_action(union xkb_action *action)
+സ്ഥിതം വരിയിൽ bool
+is_group_action(സംഘം xkb_action *action)
 {
-    return action->type == ACTION_TYPE_GROUP_SET ||
+    തിരികെ action->type == ACTION_TYPE_GROUP_SET ||
            action->type == ACTION_TYPE_GROUP_LATCH ||
            action->type == ACTION_TYPE_GROUP_LOCK;
 }
@@ -302,28 +302,28 @@ is_group_action(union xkb_action *action)
 /* Check for mixing actions of the same category.
  * We do not support that yet, because it needs a careful refactor of the state
  * handling. See: `xkb_filter_apply_all`. */
-static void
-CheckMultipleActionsCategories(struct xkb_keymap *keymap, struct xkb_key *key)
+സ്ഥിതം ശൂന്യം
+CheckMultipleActionsCategories(ഘടന xkb_keymap *keymap, ഘടന xkb_താക്കോൽ *താക്കോൽ)
 {
-    for (xkb_layout_index_t g = 0; g < key->num_groups; g++) {
-        for (xkb_level_index_t l = 0; l < XkbKeyNumLevels(key, g); l++) {
-            struct xkb_level *level = &key->groups[g].levels[l];
-            if (level->num_actions <= 1)
-                continue;
-            for (xkb_action_count_t i = 0; i < level->num_actions; i++) {
-                union xkb_action *action1 = &level->a.actions[i];
+    വേണ്ടി (xkb_layout_index_t g = 0; g < താക്കോൽ->അക്കം_groups; g++) {
+        വേണ്ടി (xkb_level_index_t l = 0; l < Xkb_താക്കോൽ_അക്കം_Levels(താക്കോൽ, g); l++) {
+            ഘടന xkb_level *level = &താക്കോൽ->groups[g].levels[l];
+            എങ്കിൽ (level->അക്കം_actions <= 1)
+                തുടരുക;
+            വേണ്ടി (xkb_action_എണ്ണം_t i = 0; i < level->അക്കം_actions; i++) {
+                സംഘം xkb_action *action1 = &level->a.actions[i];
                 bool mod_action = is_mod_action(action1);
                 bool group_action = is_group_action(action1);
-                if (!(mod_action || group_action ||
-                      action1->type == ACTION_TYPE_REDIRECT_KEY))
-                    continue;
-                for (xkb_action_count_t j = i + 1; j < level->num_actions; j++) {
-                    union xkb_action *action2 = &level->a.actions[j];
-                    if (action1->type == action2->type ||
+                എങ്കിൽ (!(mod_action || group_action ||
+                      action1->type == ACTION_TYPE_REDIRECT_താക്കോൽ))
+                    തുടരുക;
+                വേണ്ടി (xkb_action_എണ്ണം_t j = i + 1; j < level->അക്കം_actions; j++) {
+                    സംഘം xkb_action *action2 = &level->a.actions[j];
+                    എങ്കിൽ (action1->type == action2->type ||
                         (mod_action && is_mod_action(action2)) ||
                         (group_action && is_group_action(action2)))
                     {
-                        const char * const type = (mod_action)
+                        സ്ഥിരം അക്ഷരം * സ്ഥിരം type = (mod_action)
                             ? "modifiers"
                             : (group_action
                                 ? "group"
@@ -333,7 +333,7 @@ CheckMultipleActionsCategories(struct xkb_keymap *keymap, struct xkb_key *key)
                                 "in the same level. Action #%u "
                                 "for key %s in group %"PRIu32"/level %"PRIu32" "
                                 "ignored.\n", type,
-                                j + 1, KeyNameText(keymap->ctx, key->name),
+                                j + 1, താക്കോൽ_Name_Text(keymap->ctx, താക്കോൽ->name),
                                 g + 1, l + 1);
                         action2->type = ACTION_TYPE_NONE;
                     }
@@ -343,14 +343,14 @@ CheckMultipleActionsCategories(struct xkb_keymap *keymap, struct xkb_key *key)
     }
 }
 
-static void
-add_key_aliases(struct xkb_keymap *keymap, darray_size_t min, darray_size_t max,
-                struct xkb_key_alias *aliases)
+സ്ഥിതം ശൂന്യം
+add_താക്കോൽ_aliases(ഘടന xkb_keymap *keymap, darray_size_t min, darray_size_t max,
+                ഘടന xkb_താക്കോൽ_alias *aliases)
 {
-    for (darray_size_t alias = min; alias <= max; alias++) {
-        const KeycodeMatch entry = keymap->key_names[alias];
-        if (entry.is_alias && entry.found) {
-            *aliases = (struct xkb_key_alias) {
+    വേണ്ടി (darray_size_t alias = min; alias <= max; alias++) {
+        സ്ഥിരം KeycodeMatch entry = keymap->താക്കോൽ_names[alias];
+        എങ്കിൽ (entry.is_alias && entry.found) {
+            *aliases = (ഘടന xkb_താക്കോൽ_alias) {
                 .alias = alias,
                 .real = entry.alias.real
             };
@@ -359,140 +359,140 @@ add_key_aliases(struct xkb_keymap *keymap, darray_size_t min, darray_size_t max,
     }
 }
 
-static bool
-update_pending_key_fields(struct xkb_keymap_info *info, struct xkb_key *key)
+സ്ഥിതം bool
+update_pending_താക്കോൽ_fields(ഘടന xkb_keymap_info *info, ഘടന xkb_താക്കോൽ *താക്കോൽ)
 {
-    if (key->out_of_range_pending_group) {
-        struct pending_computation * const pc = &darray_item(
-            *info->pending_computations, key->out_of_range_group_number
+    എങ്കിൽ (താക്കോൽ->out_of_range_pending_group) {
+        ഘടന pending_computation * സ്ഥിരം pc = &darray_item(
+            *info->pending_computations, താക്കോൽ->out_of_range_group_സംഖ്യ
         );
-        if (!pc->computed) {
+        എങ്കിൽ (!pc->computed) {
             xkb_layout_index_t group = 0;
-            switch (ExprResolveGroup(info, pc->expr, true, &group, NULL)) {
-            case PARSER_SUCCESS:
+            തിരഞ്ഞെടുപ്പ് (വ്യഞ്ജകം_Resolve_Group(info, pc->വ്യഞ്ജകം, true, &group, ശൂന്യ)) {
+            അവസ്ഥ PARSER_SUCCESS:
                 pc->computed = true;
-                pc->value = group - 1;
-                break;
-            case PARSER_FATAL_ERROR:
+                pc->മൂല്യം = group - 1;
+                നിർത്തുക;
+            അവസ്ഥ PARSER_FATAL_ERROR:
                 log_err(info->keymap.ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                         "Invalid key redirect group index\n");
-                return (info->strict & PARSER_NO_FIELD_TYPE_MISMATCH);
-            default:
+                തിരികെ (info->strict & PARSER_NO_FIELD_TYPE_MISMATCH);
+            സ്ഥിരസ്ഥിതി:
                 /* Recover from error: ignore */;
             }
         }
-        key->out_of_range_pending_group = false;
-        key->out_of_range_group_number = pc->value;
+        താക്കോൽ->out_of_range_pending_group = false;
+        താക്കോൽ->out_of_range_group_സംഖ്യ = pc->മൂല്യം;
     }
-    return true;
+    തിരികെ true;
 }
 
-static bool
-update_pending_action_fields(struct xkb_keymap_info *info,
-                             xkb_keycode_t keycode, union xkb_action *act)
+സ്ഥിതം bool
+update_pending_action_fields(ഘടന xkb_keymap_info *info,
+                             xkb_keycode_t keycode, സംഘം xkb_action *act)
 {
-    switch (act->type) {
-    case ACTION_TYPE_GROUP_SET:
-    case ACTION_TYPE_GROUP_LATCH:
-    case ACTION_TYPE_GROUP_LOCK:
-        if (act->group.flags & ACTION_PENDING_COMPUTATION) {
-            struct pending_computation * const pc =
+    തിരഞ്ഞെടുപ്പ് (act->type) {
+    അവസ്ഥ ACTION_TYPE_GROUP_SET:
+    അവസ്ഥ ACTION_TYPE_GROUP_LATCH:
+    അവസ്ഥ ACTION_TYPE_GROUP_LOCK:
+        എങ്കിൽ (act->group.flags & ACTION_PENDING_COMPUTATION) {
+            ഘടന pending_computation * സ്ഥിരം pc =
                 &darray_item(*info->pending_computations, act->group.group);
-            if (!pc->computed) {
+            എങ്കിൽ (!pc->computed) {
                 xkb_layout_index_t group = 0;
-                const bool absolute =
+                സ്ഥിരം bool absolute =
                     (act->group.flags & ACTION_ABSOLUTE_SWITCH);
-                switch (ExprResolveGroup(info, pc->expr, absolute, &group, NULL)) {
-                case PARSER_FATAL_ERROR:
+                തിരഞ്ഞെടുപ്പ് (വ്യഞ്ജകം_Resolve_Group(info, pc->വ്യഞ്ജകം, absolute, &group, ശൂന്യ)) {
+                അവസ്ഥ PARSER_FATAL_ERROR:
                     log_err(info->keymap.ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                             "Invalid action group index\n");
-                    return false;
-                case PARSER_RECOVERABLE_ERROR:
+                    തിരികെ false;
+                അവസ്ഥ PARSER_RECOVERABLE_ERROR:
                     /* ignore */
-                    break;
-                default:
+                    നിർത്തുക;
+                സ്ഥിരസ്ഥിതി:
                     pc->computed = true;
-                    if (absolute) {
-                        pc->value = group - 1;
-                    } else {
-                        pc->value = group;
-                        if (pc->expr->common.type == STMT_EXPR_NEGATE)
-                            pc->value = (uint32_t) (-(int32_t) pc->value);
+                    എങ്കിൽ (absolute) {
+                        pc->മൂല്യം = group - 1;
+                    } അല്ലെങ്കിൽ {
+                        pc->മൂല്യം = group;
+                        എങ്കിൽ (pc->വ്യഞ്ജകം->common.type == STMT_വ്യഞ്ജകം_NEGATE)
+                            pc->മൂല്യം = (uint32_t) (-(int32_t) pc->മൂല്യം);
                     }
                 }
             }
-            act->group.group = (int32_t) pc->value;
+            act->group.group = (int32_t) pc->മൂല്യം;
             act->group.flags &= ~ACTION_PENDING_COMPUTATION;
         }
-        return true;
-    case ACTION_TYPE_REDIRECT_KEY: {
-        if (keycode == XKB_KEYCODE_INVALID ||
-            act->redirect.keycode != info->keymap.redirect_key_auto) {
+        തിരികെ true;
+    അവസ്ഥ ACTION_TYPE_REDIRECT_താക്കോൽ: {
+        എങ്കിൽ (keycode == XKB_KEYCODE_INVALID ||
+            act->redirect.keycode != info->keymap.redirect_താക്കോൽ_auto) {
             /* No auto value to set */
-            return true;
-        } else {
+            തിരികെ true;
+        } അല്ലെങ്കിൽ {
             /*
              * Auto value: use the provided keycode to redirect to the key
              * where the action is defined
              */
             act->redirect.keycode = keycode;
         }
-        return true;
+        തിരികെ true;
     }
-    default:
-        return true;
+    സ്ഥിരസ്ഥിതി:
+        തിരികെ true;
     }
 }
 
-static bool
-update_pending_led_fields(struct xkb_keymap_info *info, struct xkb_led *led)
+സ്ഥിതം bool
+update_pending_led_fields(ഘടന xkb_keymap_info *info, ഘടന xkb_led *led)
 {
-    if (led->pending_groups) {
-        struct pending_computation * const pc =
+    എങ്കിൽ (led->pending_groups) {
+        ഘടന pending_computation * സ്ഥിരം pc =
             &darray_item(*info->pending_computations, led->groups);
-        if (!pc->computed) {
+        എങ്കിൽ (!pc->computed) {
             xkb_layout_mask_t mask = 0;
-            if (!ExprResolveGroupMask(info, pc->expr, &mask, NULL)) {
+            എങ്കിൽ (!വ്യഞ്ജകം_Resolve_Group_Mask(info, pc->വ്യഞ്ജകം, &mask, ശൂന്യ)) {
                 log_err(info->keymap.ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                         "Invalid LED group mask\n");
-                return false;
+                തിരികെ false;
             }
             pc->computed = true;
-            pc->value = mask;
+            pc->മൂല്യം = mask;
         }
         led->pending_groups = false;
-        led->groups = pc->value;
+        led->groups = pc->മൂല്യം;
     }
-    return true;
+    തിരികെ true;
 }
 
 /** Indices for the array "groupIndexNames" */
-enum {
+എണ്ണൽ {
     GROUP_INDEX_NAME_LAST = 1,
 };
 
 /** Indices for the array "groupMaskNames" */
-enum {
+എണ്ണൽ {
     GROUP_MASK_NAME_LAST = 3,
 };
 
-static void
-update_auto_group_lock_on_modifier_release(struct xkb_level * restrict level0,
+സ്ഥിതം ശൂന്യം
+update_auto_group_lock_on_modifier_release(ഘടന xkb_level * restrict level0,
                                            xkb_level_index_t l,
-                                           union xkb_action * restrict action)
+                                           സംഘം xkb_action * restrict action)
 {
-    if (!(/* Must be level index 1+ */
+    എങ്കിൽ (!(/* Must be level index 1+ */
         l > 0 &&
         /* level has a single action: LockGroup() */
-        level0[l].num_actions == 1 &&
+        level0[l].അക്കം_actions == 1 &&
         action->type == ACTION_TYPE_GROUP_LOCK &&
         /* lockOnRelease not set explicitly */
         !(action->group.flags & ACTION_EXPLICIT_LOCK_ON_RELEASE) &&
         /* level 0 has a single action: SetMods() */
-        level0->num_actions == 1 &&
+        level0->അക്കം_actions == 1 &&
         level0->a.action.type ==  ACTION_TYPE_MOD_SET))
     {
-        return;
+        തിരികെ;
     }
 
     action->group.flags |= ACTION_AUTO_GROUP_LOCK_ON_MODIFIER_RELEASE;
@@ -504,10 +504,10 @@ update_auto_group_lock_on_modifier_release(struct xkb_level * restrict level0,
  * your actions and types are a lot more useful when any of your modifiers
  * other than Shift actually do something ...
  */
-static bool
-UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
+സ്ഥിതം bool
+UpdateDerivedKeymapFields(ഘടന xkb_keymap_info *info)
 {
-    struct xkb_keymap * restrict const keymap = &info->keymap;
+    ഘടന xkb_keymap * restrict സ്ഥിരം keymap = &info->keymap;
 
     /**
      * Create the key alias list
@@ -523,23 +523,23 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
      */
 #ifdef _WIN32
     /* Bit fields are not packed on Windows as efficiently as other platforms */
-    static_assert(sizeof(struct xkb_key_alias) == sizeof(KeycodeMatch), "");
-#else
-    static_assert(sizeof(struct xkb_key_alias) == 2 * sizeof(KeycodeMatch), "");
+    static_assert(വലുപ്പം(ഘടന xkb_താക്കോൽ_alias) == വലുപ്പം(KeycodeMatch), "");
+#അല്ലെങ്കിൽ
+    static_assert(വലുപ്പം(ഘടന xkb_താക്കോൽ_alias) == 2 * വലുപ്പം(KeycodeMatch), "");
 #endif
-    darray_size_t num_key_aliases = 0;
+    darray_size_t അക്കം_താക്കോൽ_aliases = 0;
     darray_size_t min_alias = 0;
     darray_size_t max_alias = 0;
-    for (xkb_atom_t alias = 0; alias < keymap->num_key_names; alias++) {
-        const KeycodeMatch entry = keymap->key_names[alias];
-        if (entry.is_alias && entry.found) {
-            if (!num_key_aliases)
+    വേണ്ടി (xkb_atom_t alias = 0; alias < keymap->അക്കം_താക്കോൽ_names; alias++) {
+        സ്ഥിരം KeycodeMatch entry = keymap->താക്കോൽ_names[alias];
+        എങ്കിൽ (entry.is_alias && entry.found) {
+            എങ്കിൽ (!അക്കം_താക്കോൽ_aliases)
                 min_alias = alias;
             max_alias = alias;
-            num_key_aliases++;
+            അക്കം_താക്കോൽ_aliases++;
         }
     }
-    if (num_key_aliases) {
+    എങ്കിൽ (അക്കം_താക്കോൽ_aliases) {
         /*
          * No fancy algorithm used here: either we can trivially write the whole
          * range of `xkb_key_aliases` without overlapping with the `KeycodeMatch`
@@ -547,110 +547,110 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
          * In practice no new allocation is needed and it performs better than
          * using a buffer to handle overlaps.
          */
-        const darray_size_t required_space = sizeof(struct xkb_key_alias)
-                                           / sizeof(KeycodeMatch)
-                                           * num_key_aliases;
-        assert(num_key_aliases <= keymap->num_key_names);
-        if (min_alias >= required_space) {
+        സ്ഥിരം darray_size_t required_space = വലുപ്പം(ഘടന xkb_താക്കോൽ_alias)
+                                           / വലുപ്പം(KeycodeMatch)
+                                           * അക്കം_താക്കോൽ_aliases;
+        പ്രതിജ്ഞാ(അക്കം_താക്കോൽ_aliases <= keymap->അക്കം_താക്കോൽ_names);
+        എങ്കിൽ (min_alias >= required_space) {
             /* Overwrite before the *first* alias entry */
-            add_key_aliases(keymap, min_alias, max_alias, keymap->key_aliases);
+            add_താക്കോൽ_aliases(keymap, min_alias, max_alias, keymap->താക്കോൽ_aliases);
             /* Shrink */
-            struct xkb_key_alias * const r =
-                realloc(keymap->key_aliases,
-                        num_key_aliases * sizeof(*keymap->key_aliases));
-            if (!r)
-                return false;
-            keymap->key_aliases = r;
-        } else if (keymap->num_key_names - max_alias - 1 > required_space) {
+            ഘടന xkb_താക്കോൽ_alias * സ്ഥിരം r =
+                realloc(keymap->താക്കോൽ_aliases,
+                        അക്കം_താക്കോൽ_aliases * വലുപ്പം(*keymap->താക്കോൽ_aliases));
+            എങ്കിൽ (!r)
+                തിരികെ false;
+            keymap->താക്കോൽ_aliases = r;
+        } അല്ലെങ്കിൽ എങ്കിൽ (keymap->അക്കം_താക്കോൽ_names - max_alias - 1 > required_space) {
             /* Overwrite after the *last* alias entry */
-            struct xkb_key_alias * const aliases = (struct xkb_key_alias *) (
-                keymap->key_names + max_alias + 1 +
-                !is_aligned(keymap->key_names + max_alias + 1, sizeof(*aliases))
+            ഘടന xkb_താക്കോൽ_alias * സ്ഥിരം aliases = (ഘടന xkb_താക്കോൽ_alias *) (
+                keymap->താക്കോൽ_names + max_alias + 1 +
+                !is_aligned(keymap->താക്കോൽ_names + max_alias + 1, വലുപ്പം(*aliases))
             );
-            add_key_aliases(keymap, min_alias, max_alias, aliases);
+            add_താക്കോൽ_aliases(keymap, min_alias, max_alias, aliases);
             /* Move to the start */
-            memcpy(keymap->key_aliases, aliases,
-                   num_key_aliases * sizeof(*keymap->key_aliases));
+            memcpy(keymap->താക്കോൽ_aliases, aliases,
+                   അക്കം_താക്കോൽ_aliases * വലുപ്പം(*keymap->താക്കോൽ_aliases));
             /* Shrink */
-            struct xkb_key_alias * const r =
-                realloc(keymap->key_aliases,
-                        num_key_aliases * sizeof(*keymap->key_aliases));
-            if (!r)
-                return false;
-            keymap->key_aliases = r;
-        } else {
+            ഘടന xkb_താക്കോൽ_alias * സ്ഥിരം r =
+                realloc(keymap->താക്കോൽ_aliases,
+                        അക്കം_താക്കോൽ_aliases * വലുപ്പം(*keymap->താക്കോൽ_aliases));
+            എങ്കിൽ (!r)
+                തിരികെ false;
+            keymap->താക്കോൽ_aliases = r;
+        } അല്ലെങ്കിൽ {
             /*
              * No space trivially available: instead of processing the LUT with
              * a buffer to handle overlaps, we simply allocate a dedicated array
              */
-            struct xkb_key_alias * const aliases = calloc(num_key_aliases,
-                                                          sizeof(*aliases));
-            if (!aliases)
-                return false;
-            add_key_aliases(keymap, min_alias, max_alias, aliases);
-            free(keymap->key_names);
-            keymap->key_aliases = aliases;
+            ഘടന xkb_താക്കോൽ_alias * സ്ഥിരം aliases = calloc(അക്കം_താക്കോൽ_aliases,
+                                                          വലുപ്പം(*aliases));
+            എങ്കിൽ (!aliases)
+                തിരികെ false;
+            add_താക്കോൽ_aliases(keymap, min_alias, max_alias, aliases);
+            സ്വതന്ത്രം(keymap->താക്കോൽ_names);
+            keymap->താക്കോൽ_aliases = aliases;
         }
     }
-    keymap->num_key_aliases = num_key_aliases;
+    keymap->അക്കം_താക്കോൽ_aliases = അക്കം_താക്കോൽ_aliases;
 
     /* Find maximum number of groups out of all keys in the keymap. */
-    struct xkb_key *key;
-    xkb_keys_foreach(key, keymap)
-        keymap->num_groups = MAX(keymap->num_groups, key->num_groups);
+    ഘടന xkb_താക്കോൽ *താക്കോൽ;
+    xkb_താക്കോലുകൾ_foreach(താക്കോൽ, keymap)
+        keymap->അക്കം_groups = MAX(keymap->അക്കം_groups, താക്കോൽ->അക്കം_groups);
 
-    const bool pending_computations = !darray_empty(*info->pending_computations);
+    സ്ഥിരം bool pending_computations = !darray_empty(*info->pending_computations);
 
-    if (pending_computations) {
+    എങ്കിൽ (pending_computations) {
         /*
          * Update non-static LUTs for pending computations:
          * - enable entry by setting a non-null name
          * - update the corresponding value
          */
-        const xkb_layout_index_t num_groups
-            = (keymap->num_groups)
-            ? keymap->num_groups
+        സ്ഥിരം xkb_layout_index_t അക്കം_groups
+            = (keymap->അക്കം_groups)
+            ? keymap->അക്കം_groups
             : 1; /* default to the “first” layout */
         info->lookup.groupIndexNames[GROUP_INDEX_NAME_LAST] =
             (LookupEntry) {
                 .name = GROUP_LAST_INDEX_NAME,
-                .value = num_groups
+                .മൂല്യം = അക്കം_groups
             };
         static_assert(XKB_MAX_GROUPS == 32, "Guard left shift");
         info->lookup.groupMaskNames[GROUP_MASK_NAME_LAST] =
             (LookupEntry) {
                 .name = GROUP_LAST_INDEX_NAME,
-                .value = UINT32_C(1) << (num_groups - 1)
+                .മൂല്യം = UINT32_C(1) << (അക്കം_groups - 1)
             };
 
         /* Update interpret fields with pending computations */
-        for (darray_size_t i = 0; i < keymap->num_sym_interprets; i++) {
-            struct xkb_sym_interpret * restrict const interp =
+        വേണ്ടി (darray_size_t i = 0; i < keymap->അക്കം_sym_interprets; i++) {
+            ഘടന xkb_sym_interpret * restrict സ്ഥിരം interp =
                 &keymap->sym_interprets[i];
             xkb_level_foreach_action(act, interp) {
-                if (!update_pending_action_fields(info, XKB_KEYCODE_INVALID, act))
-                    return false;
+                എങ്കിൽ (!update_pending_action_fields(info, XKB_KEYCODE_INVALID, act))
+                    തിരികെ false;
             }
         }
     }
 
     /* Find all the interprets for the key and bind them to actions,
      * which will also update the vmodmap. */
-    xkb_keys_foreach(key, keymap) {
-        if (!ApplyInterpsToKey(keymap, key))
-            return false;
-        CheckMultipleActionsCategories(keymap, key);
+    xkb_താക്കോലുകൾ_foreach(താക്കോൽ, keymap) {
+        എങ്കിൽ (!Apply_Interps_To_താക്കോൽ(keymap, താക്കോൽ))
+            തിരികെ false;
+        CheckMultipleActionsCategories(keymap, താക്കോൽ);
     }
 
     /* Update keymap->mods, the virtual -> real mod mapping. */
     xkb_mod_index_t idx;
-    struct xkb_mod *mod;
-    xkb_keys_foreach(key, keymap)
+    ഘടന xkb_mod *mod;
+    xkb_താക്കോലുകൾ_foreach(താക്കോൽ, keymap)
         xkb_vmods_enumerate(idx, mod, &keymap->mods)
-            if (key->vmodmap & (UINT32_C(1) << idx))
-                mod->mapping |= key->modmap;
+            എങ്കിൽ (താക്കോൽ->vmodmap & (UINT32_C(1) << idx))
+                mod->mapping |= താക്കോൽ->modmap;
 
-    if (keymap->format >= XKB_KEYMAP_FORMAT_TEXT_V2) {
+    എങ്കിൽ (keymap->format >= XKB_KEYMAP_FORMAT_TEXT_V2) {
         /*
          * XKB extension: canonical virtual modifiers (incompatible with X11)
          *
@@ -663,8 +663,8 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
          *   usual X11 way used in xkeyboard-config.
          */
         xkb_vmods_enumerate(idx, mod, &keymap->mods) {
-            const xkb_mod_mask_t mask = UINT32_C(1) << idx;
-            if (mod->mapping == 0 && !(keymap->mods.explicit_vmods & mask)) {
+            സ്ഥിരം xkb_mod_mask_t mask = UINT32_C(1) << idx;
+            എങ്കിൽ (mod->mapping == 0 && !(keymap->mods.explicit_vmods & mask)) {
                 mod->mapping = mask;
                 /*
                  * Make the mapping explicit, so that it is interoperable
@@ -677,7 +677,7 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
     }
 
     /* Update the canonical modifiers state mask */
-    assert(keymap->canonical_state_mask == MOD_REAL_MASK_ALL);
+    പ്രതിജ്ഞാ(keymap->canonical_state_mask == MOD_REAL_MASK_ALL);
     xkb_mod_mask_t extra_canonical_mods = 0;
     xkb_vmods_enumerate(idx, mod, &keymap->mods) {
         extra_canonical_mods |= mod->mapping;
@@ -685,11 +685,11 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
     keymap->canonical_state_mask |= extra_canonical_mods;
 
     /* Now update the level masks for all the types to reflect the vmods. */
-    for (darray_size_t i = 0; i < keymap->num_types; i++) {
+    വേണ്ടി (darray_size_t i = 0; i < keymap->അക്കം_types; i++) {
         ComputeEffectiveMask(keymap, &keymap->types[i].mods);
 
-        for (darray_size_t j = 0; j < keymap->types[i].num_entries; j++) {
-            if (has_unbound_vmods(keymap,
+        വേണ്ടി (darray_size_t j = 0; j < keymap->types[i].അക്കം_entries; j++) {
+            എങ്കിൽ (has_unbound_vmods(keymap,
                                   keymap->types[i].entries[j].mods.mods)) {
                 /*
                  * Map entries which specify unbound virtual modifiers are not
@@ -702,7 +702,7 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
                  * See also: `entry_is_active`.
                  */
                 keymap->types[i].entries[j].mods.mask = 0;
-                continue;
+                തുടരുക;
             }
             ComputeEffectiveMask(keymap, &keymap->types[i].entries[j].mods);
             ComputeEffectiveMask(keymap, &keymap->types[i].entries[j].preserve);
@@ -710,22 +710,22 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
     }
 
     /* Update action modifiers and fields with pending computations. */
-    xkb_keys_foreach(key, keymap) {
-        if (!update_pending_key_fields(info, key))
-            return false;
-        for (xkb_layout_index_t i = 0; i < key->num_groups; i++) {
-            for (xkb_level_index_t j = 0; j < XkbKeyNumLevels(key, i); j++) {
-                struct xkb_level * const level = &key->groups[i].levels[j];
+    xkb_താക്കോലുകൾ_foreach(താക്കോൽ, keymap) {
+        എങ്കിൽ (!update_pending_താക്കോൽ_fields(info, താക്കോൽ))
+            തിരികെ false;
+        വേണ്ടി (xkb_layout_index_t i = 0; i < താക്കോൽ->അക്കം_groups; i++) {
+            വേണ്ടി (xkb_level_index_t j = 0; j < Xkb_താക്കോൽ_അക്കം_Levels(താക്കോൽ, i); j++) {
+                ഘടന xkb_level * സ്ഥിരം level = &താക്കോൽ->groups[i].levels[j];
                 xkb_level_foreach_action(act, level) {
-                    UpdateActionMods(keymap, act, key->modmap);
-                    if ((pending_computations ||
-                         act->type == ACTION_TYPE_REDIRECT_KEY) &&
-                        !update_pending_action_fields(info, key->keycode, act))
+                    UpdateActionMods(keymap, act, താക്കോൽ->modmap);
+                    എങ്കിൽ ((pending_computations ||
+                         act->type == ACTION_TYPE_REDIRECT_താക്കോൽ) &&
+                        !update_pending_action_fields(info, താക്കോൽ->keycode, act))
                     {
-                        return false;
+                        തിരികെ false;
                     }
                     update_auto_group_lock_on_modifier_release(
-                        key->groups[i].levels, j, act
+                        താക്കോൽ->groups[i].levels, j, act
                     );
                 }
             }
@@ -733,65 +733,65 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
     }
 
     /* Update LEDs */
-    struct xkb_led *led;
+    ഘടന xkb_led *led;
     xkb_leds_foreach(led, keymap) {
         ComputeEffectiveMask(keymap, &led->mods); /* vmod -> led maps */
-        if (pending_computations &&
+        എങ്കിൽ (pending_computations &&
             !update_pending_led_fields(info, led))
-            return false;
+            തിരികെ false;
     }
 
-    return true;
+    തിരികെ true;
 }
 
-typedef bool (*compile_file_fn)(XkbFile *file, struct xkb_keymap_info *info);
+തരനിർവചനം bool (*compile_file_fn)(XkbFile *file, ഘടന xkb_keymap_info *info);
 
-static const compile_file_fn compile_file_fns[LAST_KEYMAP_FILE_TYPE + 1] = {
+സ്ഥിതം സ്ഥിരം compile_file_fn compile_file_fns[LAST_KEYMAP_FILE_TYPE + 1] = {
     [FILE_TYPE_KEYCODES] = CompileKeycodes,
-    [FILE_TYPE_TYPES] = CompileKeyTypes,
+    [FILE_TYPE_TYPES] = Compile_താക്കോൽ_Types,
     [FILE_TYPE_COMPAT] = CompileCompatMap,
     [FILE_TYPE_SYMBOLS] = CompileSymbols,
 };
 
-static void
+സ്ഥിതം ശൂന്യം
 pending_computations_array_free(pending_computation_array *p)
 {
-    struct pending_computation *pc;
+    ഘടന pending_computation *pc;
     darray_foreach(pc, *p)
-        FreeStmt((ParseCommon*) pc->expr);
+        FreeStmt((ParseCommon*) pc->വ്യഞ്ജകം);
     darray_free(*p);
 }
 
 bool
-CompileKeymap(XkbFile *file, struct xkb_keymap *keymap)
+CompileKeymap(XkbFile *file, ഘടന xkb_keymap *keymap)
 {
-    XkbFile *files[LAST_KEYMAP_FILE_TYPE + 1] = { NULL };
-    enum xkb_file_type type;
-    struct xkb_context *ctx = keymap->ctx;
+    XkbFile *files[LAST_KEYMAP_FILE_TYPE + 1] = { ശൂന്യ };
+    എണ്ണൽ xkb_file_type type;
+    ഘടന xkb_context *ctx = keymap->ctx;
 
     /* Collect section files and check for duplicates. */
-    for (file = (XkbFile *) file->defs; file;
+    വേണ്ടി (file = (XkbFile *) file->defs; file;
          file = (XkbFile *) file->common.next) {
-        if (file->file_type < FIRST_KEYMAP_FILE_TYPE ||
+        എങ്കിൽ (file->file_type < FIRST_KEYMAP_FILE_TYPE ||
             file->file_type > LAST_KEYMAP_FILE_TYPE) {
-            if (file->file_type == FILE_TYPE_GEOMETRY) {
+            എങ്കിൽ (file->file_type == FILE_TYPE_GEOMETRY) {
                 log_vrb(ctx, XKB_LOG_VERBOSITY_BRIEF,
                         XKB_WARNING_UNSUPPORTED_GEOMETRY_SECTION,
                         "Geometry sections are not supported; ignoring\n");
-            } else {
+            } അല്ലെങ്കിൽ {
                 log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                         "Cannot define %s in a keymap file\n",
                         xkb_file_type_to_string(file->file_type));
             }
-            continue;
+            തുടരുക;
         }
 
-        if (files[file->file_type]) {
+        എങ്കിൽ (files[file->file_type]) {
             log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "More than one %s section in keymap file; "
                     "All sections after the first ignored\n",
                     xkb_file_type_to_string(file->file_type));
-            continue;
+            തുടരുക;
         }
 
         files[file->file_type] = file;
@@ -801,7 +801,7 @@ CompileKeymap(XkbFile *file, struct xkb_keymap *keymap)
      * Keymap augmented with compilation-specific data
      */
     pending_computation_array pending_computations = darray_new();
-    struct xkb_keymap_info info = {
+    ഘടന xkb_keymap_info info = {
         /* Copy the keymap */
         .keymap = *keymap,
         .strict = parser_strict_flags_from_keymap(keymap),
@@ -835,10 +835,10 @@ CompileKeymap(XkbFile *file, struct xkb_keymap *keymap)
                  * key is disallowed in an xkb_symbols section.
                  */
                 [GROUP_INDEX_NAME_LAST] = {
-                    keymap->num_groups ? GROUP_LAST_INDEX_NAME : NULL,
-                    keymap->num_groups /* 1-indexed */
+                    keymap->അക്കം_groups ? GROUP_LAST_INDEX_NAME : ശൂന്യ,
+                    keymap->അക്കം_groups /* 1-indexed */
                 },
-                { NULL, 0 }
+                { ശൂന്യ, 0 }
             },
             .groupMaskNames = {
                 { "none", 0x00 },
@@ -853,13 +853,13 @@ CompileKeymap(XkbFile *file, struct xkb_keymap *keymap)
                  * key is disallowed in an xkb_symbols section.
                  */
                 [GROUP_MASK_NAME_LAST] = {
-                    keymap->num_groups ? GROUP_LAST_INDEX_NAME : NULL,
+                    keymap->അക്കം_groups ? GROUP_LAST_INDEX_NAME : ശൂന്യ,
                     /* Be extra cautious */
-                    keymap->num_groups && keymap->num_groups <= XKB_MAX_GROUPS
-                        ? (UINT32_C(1) << (keymap->num_groups - 1))
+                    keymap->അക്കം_groups && keymap->അക്കം_groups <= XKB_MAX_GROUPS
+                        ? (UINT32_C(1) << (keymap->അക്കം_groups - 1))
                         : 0
                 },
-                { NULL, 0 }
+                { ശൂന്യ, 0 }
             },
         },
         .pending_computations = &pending_computations,
@@ -870,14 +870,14 @@ CompileKeymap(XkbFile *file, struct xkb_keymap *keymap)
      *
      * NOTE: Any component is optional.
      */
-    for (type = FIRST_KEYMAP_FILE_TYPE;
+    വേണ്ടി (type = FIRST_KEYMAP_FILE_TYPE;
          type <= LAST_KEYMAP_FILE_TYPE;
          type++) {
-        if (files[type] == NULL) {
+        എങ്കിൽ (files[type] == ശൂന്യ) {
             log_dbg(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Component %s not provided in keymap\n",
                     xkb_file_type_to_string(type));
-        } else {
+        } അല്ലെങ്കിൽ {
             log_dbg(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Compiling %s \"%s\"\n",
                     xkb_file_type_to_string(type),
@@ -885,21 +885,21 @@ CompileKeymap(XkbFile *file, struct xkb_keymap *keymap)
         }
 
         /* Missing components are initialized with defaults */
-        const bool ok = compile_file_fns[type](files[type], &info);
-        if (!ok) {
+        സ്ഥിരം bool ok = compile_file_fns[type](files[type], &info);
+        എങ്കിൽ (!ok) {
             log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Failed to compile %s\n",
                     xkb_file_type_to_string(type));
             /* Copy back to the keymap, so that all can be properly freed */
             *keymap = info.keymap;
             pending_computations_array_free(&pending_computations);
-            return false;
+            തിരികെ false;
         }
     }
 
-    const bool ok = UpdateDerivedKeymapFields(&info);
+    സ്ഥിരം bool ok = UpdateDerivedKeymapFields(&info);
     /* Copy back the keymap */
     *keymap = info.keymap;
     pending_computations_array_free(&pending_computations);
-    return ok;
+    തിരികെ ok;
 }

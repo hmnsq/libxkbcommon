@@ -6,23 +6,23 @@
  * Author: Daniel Stone <daniel@fooishbar.org>
  */
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <assert.h>
-#include <stdint.h>
-#include <string.h>
+#അന്തര്ഭാവ <assert.h>
+#അന്തര്ഭാവ <stdint.h>
+#അന്തര്ഭാവ <string.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-names.h"
-#include "features/enums.h"
-#include "keymap.h"
-#include "messages-codes.h"
+#അന്തര്ഭാവ "xkbcommon/xkbcommon.h"
+#അന്തര്ഭാവ "xkbcommon/xkbcommon-names.h"
+#അന്തര്ഭാവ "features/enums.h"
+#അന്തര്ഭാവ "keymap.h"
+#അന്തര്ഭാവ "messages-codes.h"
 
-static void
-update_builtin_keymap_fields(struct xkb_keymap *keymap)
+സ്ഥിതം ശൂന്യം
+update_builtin_keymap_fields(ഘടന xkb_keymap *keymap)
 {
     /* Predefined (AKA real, core, X11) modifiers. The order is important! */
-    static const char *const builtin_mods[] = {
+    സ്ഥിതം സ്ഥിരം അക്ഷരം *സ്ഥിരം builtin_mods[] = {
         [XKB_MOD_INDEX_SHIFT] = XKB_MOD_NAME_SHIFT,
         [XKB_MOD_INDEX_CAPS]  = XKB_MOD_NAME_CAPS,
         [XKB_MOD_INDEX_CTRL]  = XKB_MOD_NAME_CTRL,
@@ -33,7 +33,7 @@ update_builtin_keymap_fields(struct xkb_keymap *keymap)
         [XKB_MOD_INDEX_MOD5]  = XKB_MOD_NAME_MOD5
     };
 
-    for (xkb_mod_index_t i = 0; i < ARRAY_SIZE(builtin_mods); i++) {
+    വേണ്ടി (xkb_mod_index_t i = 0; i < ARRAY_SIZE(builtin_mods); i++) {
         keymap->mods.mods[i].name = xkb_atom_intern(keymap->ctx,
                                                     builtin_mods[i],
                                                     strlen(builtin_mods[i]));
@@ -41,28 +41,28 @@ update_builtin_keymap_fields(struct xkb_keymap *keymap)
         /* Real modifiers have a canonical mapping */
         keymap->mods.mods[i].mapping = UINT32_C(1) << i;
     }
-    keymap->mods.num_mods = ARRAY_SIZE(builtin_mods);
+    keymap->mods.അക്കം_mods = ARRAY_SIZE(builtin_mods);
     keymap->canonical_state_mask = MOD_REAL_MASK_ALL;
 }
 
-struct xkb_keymap *
-xkb_keymap_new(struct xkb_context *ctx, const char *func,
-               enum xkb_keymap_format format,
-               enum xkb_keymap_compile_flags flags)
+ഘടന xkb_keymap *
+xkb_keymap_new(ഘടന xkb_context *ctx, സ്ഥിരം അക്ഷരം *func,
+               എണ്ണൽ xkb_keymap_format format,
+               എണ്ണൽ xkb_keymap_compile_flags flags)
 {
-    const enum xkb_keymap_compile_flags invalid_flags = (
-        flags & ~(enum xkb_keymap_compile_flags)XKB_KEYMAP_COMPILE_FLAGS_VALUES
+    സ്ഥിരം എണ്ണൽ xkb_keymap_compile_flags invalid_flags = (
+        flags & ~(എണ്ണൽ xkb_keymap_compile_flags)XKB_KEYMAP_COMPILE_FLAGS_മൂല്യങ്ങൾ
     );
-    if (invalid_flags) {
+    എങ്കിൽ (invalid_flags) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "%s: unrecognized keymap compilation flags: 0x%x\n",
                 func, invalid_flags);
-        return NULL;
+        തിരികെ ശൂന്യ;
     }
 
-    struct xkb_keymap * const keymap = calloc(1, sizeof(*keymap));
-    if (!keymap)
-        return NULL;
+    ഘടന xkb_keymap * സ്ഥിരം keymap = calloc(1, വലുപ്പം(*keymap));
+    എങ്കിൽ (!keymap)
+        തിരികെ ശൂന്യ;
 
     keymap->refcnt = 1;
     keymap->ctx = xkb_context_ref(ctx);
@@ -72,163 +72,163 @@ xkb_keymap_new(struct xkb_context *ctx, const char *func,
 
     update_builtin_keymap_fields(keymap);
 
-    return keymap;
+    തിരികെ keymap;
 }
 
-void
-XkbEscapeMapName(char *name)
+ശൂന്യം
+XkbEscapeMapName(അക്ഷരം *name)
 {
     /*
      * All latin-1 alphanumerics, plus parens, slash, minus, underscore and
      * wildcards.
      */
-    static const unsigned char legal[] = {
+    സ്ഥിതം സ്ഥിരം unsigned അക്ഷരം legal[] = {
         0x00, 0x00, 0x00, 0x00, 0x00, 0xa7, 0xff, 0x83,
         0xfe, 0xff, 0xff, 0x87, 0xfe, 0xff, 0xff, 0x07,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0xff, 0xff, 0x7f, 0xff, 0xff, 0xff, 0x7f, 0xff
     };
 
-    if (!name)
-        return;
+    എങ്കിൽ (!name)
+        തിരികെ;
 
-    while (*name) {
-        unsigned char c = (unsigned char)*name;
-        if (!(legal[c / 8] & (1u << (c % 8))))
+    ആകുമ്പോൾ (*name) {
+        unsigned അക്ഷരം c = (unsigned അക്ഷരം)*name;
+        എങ്കിൽ (!(legal[c / 8] & (1u << (c % 8))))
             *name = '_';
         name++;
     }
 }
 
 xkb_mod_index_t
-XkbModNameToIndex(const struct xkb_mod_set *mods, xkb_atom_t name,
-                  enum mod_type type)
+XkbModNameToIndex(സ്ഥിരം ഘടന xkb_mod_set *mods, xkb_atom_t name,
+                  എണ്ണൽ mod_type type)
 {
     xkb_mod_index_t i;
-    const struct xkb_mod *mod;
+    സ്ഥിരം ഘടന xkb_mod *mod;
 
     xkb_mods_enumerate(i, mod, mods)
-        if ((mod->type & type) && name == mod->name)
-            return i;
+        എങ്കിൽ ((mod->type & type) && name == mod->name)
+            തിരികെ i;
 
-    return XKB_MOD_INVALID;
+    തിരികെ XKB_MOD_INVALID;
 }
 
 bool
-XkbLevelsSameSyms(const struct xkb_level *a, const struct xkb_level *b)
+XkbLevelsSameSyms(സ്ഥിരം ഘടന xkb_level *a, സ്ഥിരം ഘടന xkb_level *b)
 {
-    if (a->num_syms != b->num_syms)
-        return false;
-    if (a->num_syms <= 1)
-        return a->s.sym == b->s.sym;
-    return memcmp(a->s.syms, b->s.syms, sizeof(*a->s.syms) * a->num_syms) == 0;
+    എങ്കിൽ (a->അക്കം_syms != b->അക്കം_syms)
+        തിരികെ false;
+    എങ്കിൽ (a->അക്കം_syms <= 1)
+        തിരികെ a->s.sym == b->s.sym;
+    തിരികെ memcmp(a->s.syms, b->s.syms, വലുപ്പം(*a->s.syms) * a->അക്കം_syms) == 0;
 }
 
 bool
-action_equal(const union xkb_action *a, const union xkb_action *b)
+action_equal(സ്ഥിരം സംഘം xkb_action *a, സ്ഥിരം സംഘം xkb_action *b)
 {
-    if (a->type != b->type)
-        return false;
+    എങ്കിൽ (a->type != b->type)
+        തിരികെ false;
 
-    switch (a->type) {
-    case ACTION_TYPE_NONE:
-    case ACTION_TYPE_VOID:
-        return true;
-    case ACTION_TYPE_MOD_SET:
-    case ACTION_TYPE_MOD_LATCH:
-    case ACTION_TYPE_MOD_LOCK:
-        return (a->mods.flags == b->mods.flags &&
+    തിരഞ്ഞെടുപ്പ് (a->type) {
+    അവസ്ഥ ACTION_TYPE_NONE:
+    അവസ്ഥ ACTION_TYPE_VOID:
+        തിരികെ true;
+    അവസ്ഥ ACTION_TYPE_MOD_SET:
+    അവസ്ഥ ACTION_TYPE_MOD_LATCH:
+    അവസ്ഥ ACTION_TYPE_MOD_LOCK:
+        തിരികെ (a->mods.flags == b->mods.flags &&
                 a->mods.mods.mask == b->mods.mods.mask &&
                 a->mods.mods.mods == b->mods.mods.mods);
-    case ACTION_TYPE_GROUP_SET:
-    case ACTION_TYPE_GROUP_LATCH:
-    case ACTION_TYPE_GROUP_LOCK:
-        return (a->group.flags == b->group.flags &&
+    അവസ്ഥ ACTION_TYPE_GROUP_SET:
+    അവസ്ഥ ACTION_TYPE_GROUP_LATCH:
+    അവസ്ഥ ACTION_TYPE_GROUP_LOCK:
+        തിരികെ (a->group.flags == b->group.flags &&
                 a->group.group == b->group.group);
-    case ACTION_TYPE_PTR_MOVE:
-        return (a->ptr.flags == b->ptr.flags &&
+    അവസ്ഥ ACTION_TYPE_PTR_MOVE:
+        തിരികെ (a->ptr.flags == b->ptr.flags &&
                 a->ptr.x == b->ptr.x &&
                 a->ptr.y == b->ptr.y);
-    case ACTION_TYPE_PTR_BUTTON:
-    case ACTION_TYPE_PTR_LOCK:
-        return (a->btn.flags == b->btn.flags &&
+    അവസ്ഥ ACTION_TYPE_PTR_BUTTON:
+    അവസ്ഥ ACTION_TYPE_PTR_LOCK:
+        തിരികെ (a->btn.flags == b->btn.flags &&
                 a->btn.button == b->btn.button &&
-                a->btn.count == b->btn.count);
-    case ACTION_TYPE_PTR_DEFAULT:
-        return (a->dflt.flags == b->dflt.flags &&
-                a->dflt.value == b->dflt.value);
-    case ACTION_TYPE_TERMINATE:
-        return true;
-    case ACTION_TYPE_SWITCH_VT:
-        return (a->screen.flags == b->screen.flags &&
+                a->btn.എണ്ണം == b->btn.എണ്ണം);
+    അവസ്ഥ ACTION_TYPE_PTR_DEFAULT:
+        തിരികെ (a->dflt.flags == b->dflt.flags &&
+                a->dflt.മൂല്യം == b->dflt.മൂല്യം);
+    അവസ്ഥ ACTION_TYPE_TERMINATE:
+        തിരികെ true;
+    അവസ്ഥ ACTION_TYPE_SWITCH_VT:
+        തിരികെ (a->screen.flags == b->screen.flags &&
                 a->screen.screen == b->screen.screen);
-    case ACTION_TYPE_CTRL_SET:
-    case ACTION_TYPE_CTRL_LOCK:
-        return (a->ctrls.flags == b->ctrls.flags &&
+    അവസ്ഥ ACTION_TYPE_CTRL_SET:
+    അവസ്ഥ ACTION_TYPE_CTRL_LOCK:
+        തിരികെ (a->ctrls.flags == b->ctrls.flags &&
                 a->ctrls.ctrls == b->ctrls.ctrls);
-    case ACTION_TYPE_REDIRECT_KEY:
-        return (a->redirect.keycode == b->redirect.keycode &&
+    അവസ്ഥ ACTION_TYPE_REDIRECT_താക്കോൽ:
+        തിരികെ (a->redirect.keycode == b->redirect.keycode &&
                 a->redirect.affect_mods == b->redirect.affect_mods &&
                 a->redirect.mods == b->redirect.mods);
-    case ACTION_TYPE_UNSUPPORTED_LEGACY:
-    case ACTION_TYPE_UNKNOWN:
-        return true;
+    അവസ്ഥ ACTION_TYPE_UNSUPPORTED_LEGACY:
+    അവസ്ഥ ACTION_TYPE_UNKNOWN:
+        തിരികെ true;
     /* ACTION_TYPE_PRIVATE processed in the default case */
-    case ACTION_TYPE_INTERNAL:
-        return (a->internal.flags == b->internal.flags) &&
+    അവസ്ഥ ACTION_TYPE_INTERNAL:
+        തിരികെ (a->internal.flags == b->internal.flags) &&
                (a->internal.clear_latched_mods == b->internal.clear_latched_mods);
-    default:
+    സ്ഥിരസ്ഥിതി:
         {} /* Label followed by declaration requires C23 */
         /* Ensure to not miss `xkb_action_type` updates */
         static_assert(ACTION_TYPE_INTERNAL == 20 &&
-                      ACTION_TYPE_INTERNAL + 1 == _ACTION_TYPE_NUM_ENTRIES,
+                      ACTION_TYPE_INTERNAL + 1 == ACTION_TYPE_അക്കം_ENTRIES,
                       "Missing action type");
         /* Private/custom action */
-        return memcmp(a->priv.data, b->priv.data, sizeof(a->priv.data)) == 0;
+        തിരികെ memcmp(a->priv.data, b->priv.data, വലുപ്പം(a->priv.data)) == 0;
     }
 }
 
 bool
-XkbLevelsSameActions(const struct xkb_level *a, const struct xkb_level *b)
+XkbLevelsSameActions(സ്ഥിരം ഘടന xkb_level *a, സ്ഥിരം ഘടന xkb_level *b)
 {
-    if (a->num_actions != b->num_actions)
-        return false;
-    if (a->num_actions <= 1)
-        return action_equal(&a->a.action, &b->a.action);
-    for (xkb_action_count_t k = 0; k < a->num_actions; k++) {
-        if (!action_equal(&a->a.actions[k], &b->a.actions[k]))
-            return false;
+    എങ്കിൽ (a->അക്കം_actions != b->അക്കം_actions)
+        തിരികെ false;
+    എങ്കിൽ (a->അക്കം_actions <= 1)
+        തിരികെ action_equal(&a->a.action, &b->a.action);
+    വേണ്ടി (xkb_action_എണ്ണം_t k = 0; k < a->അക്കം_actions; k++) {
+        എങ്കിൽ (!action_equal(&a->a.actions[k], &b->a.actions[k]))
+            തിരികെ false;
     }
-    return true;
+    തിരികെ true;
 }
 
 /* See: XkbAdjustGroup in Xorg xserver */
 xkb_layout_index_t
 XkbWrapGroupIntoRange(int32_t group,
-                      xkb_layout_index_t num_groups,
-                      enum xkb_layout_out_of_range_policy out_of_range_group_policy,
-                      xkb_layout_index_t out_of_range_group_number)
+                      xkb_layout_index_t അക്കം_groups,
+                      എണ്ണൽ xkb_layout_out_of_range_policy out_of_range_group_policy,
+                      xkb_layout_index_t out_of_range_group_സംഖ്യ)
 {
-    if (num_groups == 0)
-        return XKB_LAYOUT_INVALID;
+    എങ്കിൽ (അക്കം_groups == 0)
+        തിരികെ XKB_LAYOUT_INVALID;
 
-    if (group >= 0 && (xkb_layout_index_t)group < num_groups)
-        return (xkb_layout_index_t)group;
+    എങ്കിൽ (group >= 0 && (xkb_layout_index_t)group < അക്കം_groups)
+        തിരികെ (xkb_layout_index_t)group;
 
-    switch (out_of_range_group_policy) {
-    case XKB_LAYOUT_OUT_OF_RANGE_REDIRECT:
-        if (out_of_range_group_number >= num_groups)
-            return 0;
-        return out_of_range_group_number;
+    തിരഞ്ഞെടുപ്പ് (out_of_range_group_policy) {
+    അവസ്ഥ XKB_LAYOUT_OUT_OF_RANGE_REDIRECT:
+        എങ്കിൽ (out_of_range_group_സംഖ്യ >= അക്കം_groups)
+            തിരികെ 0;
+        തിരികെ out_of_range_group_സംഖ്യ;
 
-    case XKB_LAYOUT_OUT_OF_RANGE_CLAMP:
-        if (group < 0)
-            return 0;
-        else
-            return num_groups - 1;
+    അവസ്ഥ XKB_LAYOUT_OUT_OF_RANGE_CLAMP:
+        എങ്കിൽ (group < 0)
+            തിരികെ 0;
+        അല്ലെങ്കിൽ
+            തിരികെ അക്കം_groups - 1;
 
-    case XKB_LAYOUT_OUT_OF_RANGE_WRAP:
-    default: {
+    അവസ്ഥ XKB_LAYOUT_OUT_OF_RANGE_WRAP:
+    സ്ഥിരസ്ഥിതി: {
         /*
          * Ensure conversion xkb_layout_index_t → int32_t is lossless.
          *
@@ -245,45 +245,45 @@ XkbWrapGroupIntoRange(int32_t group,
          * positive. So if the remainder is negative, we must add `num_groups`
          * to get the modulus.
          */
-        const int32_t rem = group % (int32_t) num_groups;
-        return (rem >= 0)
+        സ്ഥിരം int32_t rem = group % (int32_t) അക്കം_groups;
+        തിരികെ (rem >= 0)
             ? (xkb_layout_index_t)rem
-            : (xkb_layout_index_t)(rem + (int32_t)num_groups);
+            : (xkb_layout_index_t)(rem + (int32_t)അക്കം_groups);
     }
     }
 }
 
-xkb_action_count_t
-xkb_keymap_key_get_actions_by_level(const struct xkb_keymap *keymap,
-                                    const struct xkb_key *key,
+xkb_action_എണ്ണം_t
+xkb_keymap_താക്കോൽ_get_actions_by_level(സ്ഥിരം ഘടന xkb_keymap *keymap,
+                                    സ്ഥിരം ഘടന xkb_താക്കോൽ *താക്കോൽ,
                                     xkb_layout_index_t layout,
                                     xkb_level_index_t level,
-                                    const union xkb_action **actions)
+                                    സ്ഥിരം സംഘം xkb_action **actions)
 {
-    if (!key)
-        goto err;
+    എങ്കിൽ (!താക്കോൽ)
+        പോകുക err;
 
-    layout = xkb_keymap_key_effective_layout(key, layout);
-    if (layout == XKB_LAYOUT_INVALID)
-        goto err;
+    layout = xkb_keymap_താക്കോൽ_effective_layout(താക്കോൽ, layout);
+    എങ്കിൽ (layout == XKB_LAYOUT_INVALID)
+        പോകുക err;
 
-    if (level >= XkbKeyNumLevels(key, layout))
-        goto err;
+    എങ്കിൽ (level >= Xkb_താക്കോൽ_അക്കം_Levels(താക്കോൽ, layout))
+        പോകുക err;
 
-    const xkb_action_count_t count =
-        key->groups[layout].levels[level].num_actions;
-    switch (count) {
-        case 0:
-            goto err;
-        case 1:
-            *actions = &key->groups[layout].levels[level].a.action;
-            break;
-        default:
-            *actions = key->groups[layout].levels[level].a.actions;
+    സ്ഥിരം xkb_action_എണ്ണം_t എണ്ണം =
+        താക്കോൽ->groups[layout].levels[level].അക്കം_actions;
+    തിരഞ്ഞെടുപ്പ് (എണ്ണം) {
+        അവസ്ഥ 0:
+            പോകുക err;
+        അവസ്ഥ 1:
+            *actions = &താക്കോൽ->groups[layout].levels[level].a.action;
+            നിർത്തുക;
+        സ്ഥിരസ്ഥിതി:
+            *actions = താക്കോൽ->groups[layout].levels[level].a.actions;
     }
-    return count;
+    തിരികെ എണ്ണം;
 
 err:
-    *actions = NULL;
-    return 0;
+    *actions = ശൂന്യ;
+    തിരികെ 0;
 }

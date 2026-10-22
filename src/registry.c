@@ -3,138 +3,138 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <assert.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdint.h>
-#include <libxml/parser.h>
+#അന്തര്ഭാവ <assert.h>
+#അന്തര്ഭാവ <sys/stat.h>
+#അന്തര്ഭാവ <fcntl.h>
+#അന്തര്ഭാവ <stdbool.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <stdint.h>
+#അന്തര്ഭാവ <libxml/parser.h>
 
-#if HAVE_XKB_EXTENSIONS_DIRECTORIES
-    #include <limits.h>
-    #if HAVE_UNISTD_H && HAVE_DIRENT_H
-        #include <dirent.h>
-        #include <unistd.h>
+#എങ്കിൽ HAVE_XKB_EXTENSIONS_DIRECTORIES
+    #അന്തര്ഭാവ <limits.h>
+    #എങ്കിൽ HAVE_UNISTD_H && HAVE_DIRENT_H
+        #അന്തര്ഭാവ <dirent.h>
+        #അന്തര്ഭാവ <unistd.h>
     #endif
 #endif
 
-#include "xkbcommon/xkbregistry.h"
-#include "messages-codes.h"
-#include "darray.h"
-#include "utils.h"
-#include "util-list.h"
-#include "util-mem.h"
+#അന്തര്ഭാവ "xkbcommon/xkbregistry.h"
+#അന്തര്ഭാവ "messages-codes.h"
+#അന്തര്ഭാവ "darray.h"
+#അന്തര്ഭാവ "utils.h"
+#അന്തര്ഭാവ "util-list.h"
+#അന്തര്ഭാവ "util-mem.h"
 
-struct rxkb_object;
+ഘടന rxkb_object;
 
 /**
  * All our objects are refcounted and are linked to iterate through them.
  * Abstract those bits away into a shared parent class so we can generate
  * most of the functions through macros.
  */
-struct rxkb_object {
-    struct rxkb_object *parent;
+ഘടന rxkb_object {
+    ഘടന rxkb_object *parent;
     uint32_t refcount;
-    struct list link;
+    ഘടന list link;
 };
 
-struct rxkb_iso639_code {
-    struct rxkb_object base;
-    char *code;
+ഘടന rxkb_iso639_code {
+    ഘടന rxkb_object base;
+    അക്ഷരം *code;
 };
 
-struct rxkb_iso3166_code {
-    struct rxkb_object base;
-    char *code;
+ഘടന rxkb_iso3166_code {
+    ഘടന rxkb_object base;
+    അക്ഷരം *code;
 };
 
-enum context_state {
+എണ്ണൽ context_state {
     CONTEXT_NEW,
     CONTEXT_PARSED,
     CONTEXT_FAILED,
 };
 
-struct rxkb_context {
-    struct rxkb_object base;
-    enum context_state context_state;
+ഘടന rxkb_context {
+    ഘടന rxkb_object base;
+    എണ്ണൽ context_state context_state;
 
     bool load_extra_rules_files;
     bool use_secure_getenv;
 
-    struct list models;         /* list of struct rxkb_models */
-    struct list layouts;        /* list of struct rxkb_layouts */
-    struct list option_groups;  /* list of struct rxkb_option_group */
+    ഘടന list models;         /* list of struct rxkb_models */
+    ഘടന list layouts;        /* list of struct rxkb_layouts */
+    ഘടന list option_groups;  /* list of struct rxkb_option_group */
 
-    darray(char *) includes;
+    darray(അക്ഷരം *) includes;
 
 
-    ATTR_PRINTF(3, 0) void (*log_fn)(struct rxkb_context *ctx,
-                                     enum rxkb_log_level level,
-                                     const char *fmt, va_list args);
-    enum rxkb_log_level log_level;
+    ATTR_PRINTF(3, 0) ശൂന്യം (*log_fn)(ഘടന rxkb_context *ctx,
+                                     എണ്ണൽ rxkb_log_level level,
+                                     സ്ഥിരം അക്ഷരം *fmt, va_list args);
+    എണ്ണൽ rxkb_log_level log_level;
 
-    void *userdata;
+    ശൂന്യം *userdata;
 };
 
-struct rxkb_model {
-    struct rxkb_object base;
+ഘടന rxkb_model {
+    ഘടന rxkb_object base;
 
-    char *name;
-    char *vendor;
-    char *description;
-    enum rxkb_popularity popularity;
+    അക്ഷരം *name;
+    അക്ഷരം *vendor;
+    അക്ഷരം *description;
+    എണ്ണൽ rxkb_popularity popularity;
 };
 
-struct rxkb_layout {
-    struct rxkb_object base;
+ഘടന rxkb_layout {
+    ഘടന rxkb_object base;
 
-    char *name;
-    char *brief;
-    char *description;
-    char *variant;
-    enum rxkb_popularity popularity;
+    അക്ഷരം *name;
+    അക്ഷരം *brief;
+    അക്ഷരം *description;
+    അക്ഷരം *variant;
+    എണ്ണൽ rxkb_popularity popularity;
 
-    struct list iso639s;  /* list of struct rxkb_iso639_code */
-    struct list iso3166s; /* list of struct rxkb_iso3166_code */
+    ഘടന list iso639s;  /* list of struct rxkb_iso639_code */
+    ഘടന list iso3166s; /* list of struct rxkb_iso3166_code */
 };
 
-struct rxkb_option_group {
-    struct rxkb_object base;
+ഘടന rxkb_option_group {
+    ഘടന rxkb_object base;
 
     bool allow_multiple;
-    struct list options; /* list of struct rxkb_options */
-    char *name;
-    char *description;
-    enum rxkb_popularity popularity;
+    ഘടന list options; /* list of struct rxkb_options */
+    അക്ഷരം *name;
+    അക്ഷരം *description;
+    എണ്ണൽ rxkb_popularity popularity;
 };
 
-struct rxkb_option {
-    struct rxkb_object base;
+ഘടന rxkb_option {
+    ഘടന rxkb_object base;
 
-    char *name;
-    char *brief;
-    char *description;
-    enum rxkb_popularity popularity;
+    അക്ഷരം *name;
+    അക്ഷരം *brief;
+    അക്ഷരം *description;
+    എണ്ണൽ rxkb_popularity popularity;
     bool layout_specific;
 };
 
-static bool
-parse(struct rxkb_context *ctx, const char *path,
-      enum rxkb_popularity popularity);
+സ്ഥിതം bool
+parse(ഘടന rxkb_context *ctx, സ്ഥിരം അക്ഷരം *path,
+      എണ്ണൽ rxkb_popularity popularity);
 
 ATTR_PRINTF(3, 4)
-static void
-rxkb_log(struct rxkb_context *ctx, enum rxkb_log_level level,
-         const char *fmt, ...)
+സ്ഥിതം ശൂന്യം
+rxkb_log(ഘടന rxkb_context *ctx, എണ്ണൽ rxkb_log_level level,
+         സ്ഥിരം അക്ഷരം *fmt, ...)
 {
     va_list args;
 
-    if (ctx->log_level < level)
-        return;
+    എങ്കിൽ (ctx->log_level < level)
+        തിരികെ;
 
     va_start(args, fmt);
     ctx->log_fn(ctx, level, fmt, args);
@@ -147,8 +147,8 @@ rxkb_log(struct rxkb_context *ctx, enum rxkb_log_level level,
  * format is supplied without arguments. Not supplying it would still
  * result in an error, though.
  */
-#define rxkb_log_with_code(ctx, level, msg_id, fmt, ...) \
-    rxkb_log(ctx, level, PREPEND_MESSAGE_ID(msg_id, fmt), ##__VA_ARGS__)
+#define rxkb_log_with_code(ctx, level, സന്ദേശം_id, fmt, ...) \
+    rxkb_log(ctx, level, PREPEND_MESSAGE_ID(സന്ദേശം_id, fmt), ##__VA_ARGS__)
 #define log_dbg(ctx, ...) \
     rxkb_log((ctx), RXKB_LOG_LEVEL_DEBUG, __VA_ARGS__)
 #define log_info(ctx, id, ...) \
@@ -162,152 +162,152 @@ rxkb_log(struct rxkb_context *ctx, enum rxkb_log_level level,
 
 
 #define DECLARE_REF_UNREF_FOR_TYPE(type_) \
-struct type_ * type_##_ref(struct type_ *object) { \
+ഘടന type_ * type_##_ref(ഘടന type_ *object) { \
     rxkb_object_ref(&object->base); \
-    return object; \
+    തിരികെ object; \
 } \
-struct type_ * type_##_unref(struct type_ *object) { \
-    if (!object) return NULL; \
-    assert(object->base.refcount >= 1); \
-    if (--object->base.refcount == 0) {\
+ഘടന type_ * type_##_unref(ഘടന type_ *object) { \
+    എങ്കിൽ (!object) തിരികെ ശൂന്യ; \
+    പ്രതിജ്ഞാ(object->base.refcount >= 1); \
+    എങ്കിൽ (--object->base.refcount == 0) {\
         type_##_destroy(object); \
         list_remove(&object->base.link);\
-        free(object); \
+        സ്വതന്ത്രം(object); \
     } \
-    return NULL;\
+    തിരികെ ശൂന്യ;\
 }
 
 #define DECLARE_CREATE_FOR_TYPE(type_) \
-static inline struct type_ * type_##_create(struct rxkb_object *parent) { \
-    struct type_ *t = calloc(1, sizeof *t); \
-    if (t) \
+സ്ഥിതം വരിയിൽ ഘടന type_ * type_##_create(ഘടന rxkb_object *parent) { \
+    ഘടന type_ *t = calloc(1, വലുപ്പം *t); \
+    എങ്കിൽ (t) \
         rxkb_object_init(&t->base, parent); \
-    return t; \
+    തിരികെ t; \
 }
 
 #define DECLARE_TYPED_GETTER_FOR_TYPE(type_, field_, rtype_) \
-rtype_ type_##_get_##field_(struct type_ *object) { \
-    return object->field_; \
+rtype_ type_##_get_##field_(ഘടന type_ *object) { \
+    തിരികെ object->field_; \
 }
 
 #define DECLARE_GETTER_FOR_TYPE(type_, field_) \
-   DECLARE_TYPED_GETTER_FOR_TYPE(type_, field_, const char*)
+   DECLARE_TYPED_GETTER_FOR_TYPE(type_, field_, സ്ഥിരം അക്ഷരം*)
 
 #define DECLARE_FIRST_NEXT_FOR_TYPE(type_, parent_type_, parent_field_) \
-struct type_ * type_##_first(struct parent_type_ *parent) { \
-    struct type_ *o = NULL; \
-    if (!list_empty(&parent->parent_field_)) \
+ഘടന type_ * type_##_first(ഘടന parent_type_ *parent) { \
+    ഘടന type_ *o = ശൂന്യ; \
+    എങ്കിൽ (!list_empty(&parent->parent_field_)) \
         o = list_first_entry(&parent->parent_field_, o, base.link); \
-    return o; \
+    തിരികെ o; \
 } \
-struct type_ * \
-type_##_next(struct type_ *o) \
+ഘടന type_ * \
+type_##_next(ഘടന type_ *o) \
 { \
-    struct parent_type_ *parent; \
-    struct type_ *next; \
-    parent = container_of(o->base.parent, struct parent_type_, base); \
+    ഘടന parent_type_ *parent; \
+    ഘടന type_ *next; \
+    parent = container_of(o->base.parent, ഘടന parent_type_, base); \
     next = list_first_entry(&o->base.link, o, base.link); \
-    if (list_is_last(&parent->parent_field_, &o->base.link)) \
-        return NULL; \
-    return next; \
+    എങ്കിൽ (list_is_last(&parent->parent_field_, &o->base.link)) \
+        തിരികെ ശൂന്യ; \
+    തിരികെ next; \
 }
 
-static void
-rxkb_object_init(struct rxkb_object *object, struct rxkb_object *parent)
+സ്ഥിതം ശൂന്യം
+rxkb_object_init(ഘടന rxkb_object *object, ഘടന rxkb_object *parent)
 {
     object->refcount = 1;
     object->parent = parent;
     list_init(&object->link);
 }
 
-static void *
-rxkb_object_ref(struct rxkb_object *object)
+സ്ഥിതം ശൂന്യം *
+rxkb_object_ref(ഘടന rxkb_object *object)
 {
-    assert(object->refcount >= 1);
+    പ്രതിജ്ഞാ(object->refcount >= 1);
     ++object->refcount;
-    return object;
+    തിരികെ object;
 }
 
-static void
-rxkb_iso639_code_destroy(struct rxkb_iso639_code *code)
+സ്ഥിതം ശൂന്യം
+rxkb_iso639_code_destroy(ഘടന rxkb_iso639_code *code)
 {
-    free(code->code);
+    സ്വതന്ത്രം(code->code);
 }
 
-struct rxkb_iso639_code *
-rxkb_layout_get_iso639_first(struct rxkb_layout *layout)
+ഘടന rxkb_iso639_code *
+rxkb_layout_get_iso639_first(ഘടന rxkb_layout *layout)
 {
-    struct rxkb_iso639_code *code = NULL;
+    ഘടന rxkb_iso639_code *code = ശൂന്യ;
 
-    if (!list_empty(&layout->iso639s))
+    എങ്കിൽ (!list_empty(&layout->iso639s))
         code = list_first_entry(&layout->iso639s, code, base.link);
 
-    return code;
+    തിരികെ code;
 }
 
-struct rxkb_iso639_code *
-rxkb_iso639_code_next(struct rxkb_iso639_code *code)
+ഘടന rxkb_iso639_code *
+rxkb_iso639_code_next(ഘടന rxkb_iso639_code *code)
 {
-    struct rxkb_iso639_code *next = NULL;
-    struct rxkb_layout *layout;
+    ഘടന rxkb_iso639_code *next = ശൂന്യ;
+    ഘടന rxkb_layout *layout;
 
-    layout = container_of(code->base.parent, struct rxkb_layout, base);
+    layout = container_of(code->base.parent, ഘടന rxkb_layout, base);
 
-    if (list_is_last(&layout->iso639s, &code->base.link))
-        return NULL;
+    എങ്കിൽ (list_is_last(&layout->iso639s, &code->base.link))
+        തിരികെ ശൂന്യ;
 
     next = list_first_entry(&code->base.link, code, base.link);
 
-    return next;
+    തിരികെ next;
 }
 
 DECLARE_REF_UNREF_FOR_TYPE(rxkb_iso639_code);
 DECLARE_CREATE_FOR_TYPE(rxkb_iso639_code);
 DECLARE_GETTER_FOR_TYPE(rxkb_iso639_code, code);
 
-static void
-rxkb_iso3166_code_destroy(struct rxkb_iso3166_code *code)
+സ്ഥിതം ശൂന്യം
+rxkb_iso3166_code_destroy(ഘടന rxkb_iso3166_code *code)
 {
-    free(code->code);
+    സ്വതന്ത്രം(code->code);
 }
 
-struct rxkb_iso3166_code *
-rxkb_layout_get_iso3166_first(struct rxkb_layout *layout)
+ഘടന rxkb_iso3166_code *
+rxkb_layout_get_iso3166_first(ഘടന rxkb_layout *layout)
 {
-    struct rxkb_iso3166_code *code = NULL;
+    ഘടന rxkb_iso3166_code *code = ശൂന്യ;
 
-    if (!list_empty(&layout->iso3166s))
+    എങ്കിൽ (!list_empty(&layout->iso3166s))
         code = list_first_entry(&layout->iso3166s, code, base.link);
 
-    return code;
+    തിരികെ code;
 }
 
-struct rxkb_iso3166_code *
-rxkb_iso3166_code_next(struct rxkb_iso3166_code *code)
+ഘടന rxkb_iso3166_code *
+rxkb_iso3166_code_next(ഘടന rxkb_iso3166_code *code)
 {
-    struct rxkb_iso3166_code *next = NULL;
-    struct rxkb_layout *layout;
+    ഘടന rxkb_iso3166_code *next = ശൂന്യ;
+    ഘടന rxkb_layout *layout;
 
-    layout = container_of(code->base.parent, struct rxkb_layout, base);
+    layout = container_of(code->base.parent, ഘടന rxkb_layout, base);
 
-    if (list_is_last(&layout->iso3166s, &code->base.link))
-        return NULL;
+    എങ്കിൽ (list_is_last(&layout->iso3166s, &code->base.link))
+        തിരികെ ശൂന്യ;
 
     next = list_first_entry(&code->base.link, code, base.link);
 
-    return next;
+    തിരികെ next;
 }
 
 DECLARE_REF_UNREF_FOR_TYPE(rxkb_iso3166_code);
 DECLARE_CREATE_FOR_TYPE(rxkb_iso3166_code);
 DECLARE_GETTER_FOR_TYPE(rxkb_iso3166_code, code);
 
-static void
-rxkb_option_destroy(struct rxkb_option *o)
+സ്ഥിതം ശൂന്യം
+rxkb_option_destroy(ഘടന rxkb_option *o)
 {
-    free(o->name);
-    free(o->brief);
-    free(o->description);
+    സ്വതന്ത്രം(o->name);
+    സ്വതന്ത്രം(o->brief);
+    സ്വതന്ത്രം(o->description);
 }
 
 DECLARE_REF_UNREF_FOR_TYPE(rxkb_option);
@@ -315,22 +315,22 @@ DECLARE_CREATE_FOR_TYPE(rxkb_option);
 DECLARE_GETTER_FOR_TYPE(rxkb_option, name);
 DECLARE_GETTER_FOR_TYPE(rxkb_option, brief);
 DECLARE_GETTER_FOR_TYPE(rxkb_option, description);
-DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_option, popularity, enum rxkb_popularity);
-bool rxkb_option_is_layout_specific(struct rxkb_option *object) {
-    return object->layout_specific;
+DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_option, popularity, എണ്ണൽ rxkb_popularity);
+bool rxkb_option_is_layout_specific(ഘടന rxkb_option *object) {
+    തിരികെ object->layout_specific;
 }
 DECLARE_FIRST_NEXT_FOR_TYPE(rxkb_option, rxkb_option_group, options);
 
-static void
-rxkb_layout_destroy(struct rxkb_layout *l)
+സ്ഥിതം ശൂന്യം
+rxkb_layout_destroy(ഘടന rxkb_layout *l)
 {
-    struct rxkb_iso639_code *iso639, *tmp_639;
-    struct rxkb_iso3166_code *iso3166, *tmp_3166;
+    ഘടന rxkb_iso639_code *iso639, *tmp_639;
+    ഘടന rxkb_iso3166_code *iso3166, *tmp_3166;
 
-    free(l->name);
-    free(l->brief);
-    free(l->description);
-    free(l->variant);
+    സ്വതന്ത്രം(l->name);
+    സ്വതന്ത്രം(l->brief);
+    സ്വതന്ത്രം(l->description);
+    സ്വതന്ത്രം(l->variant);
 
     list_for_each_safe(iso639, tmp_639, &l->iso639s, base.link) {
         rxkb_iso639_code_unref(iso639);
@@ -346,15 +346,15 @@ DECLARE_GETTER_FOR_TYPE(rxkb_layout, name);
 DECLARE_GETTER_FOR_TYPE(rxkb_layout, brief);
 DECLARE_GETTER_FOR_TYPE(rxkb_layout, description);
 DECLARE_GETTER_FOR_TYPE(rxkb_layout, variant);
-DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_layout, popularity, enum rxkb_popularity);
+DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_layout, popularity, എണ്ണൽ rxkb_popularity);
 DECLARE_FIRST_NEXT_FOR_TYPE(rxkb_layout, rxkb_context, layouts);
 
-static void
-rxkb_model_destroy(struct rxkb_model *m)
+സ്ഥിതം ശൂന്യം
+rxkb_model_destroy(ഘടന rxkb_model *m)
 {
-    free(m->name);
-    free(m->vendor);
-    free(m->description);
+    സ്വതന്ത്രം(m->name);
+    സ്വതന്ത്രം(m->vendor);
+    സ്വതന്ത്രം(m->description);
 }
 
 DECLARE_REF_UNREF_FOR_TYPE(rxkb_model);
@@ -362,16 +362,16 @@ DECLARE_CREATE_FOR_TYPE(rxkb_model);
 DECLARE_GETTER_FOR_TYPE(rxkb_model, name);
 DECLARE_GETTER_FOR_TYPE(rxkb_model, vendor);
 DECLARE_GETTER_FOR_TYPE(rxkb_model, description);
-DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_model, popularity, enum rxkb_popularity);
+DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_model, popularity, എണ്ണൽ rxkb_popularity);
 DECLARE_FIRST_NEXT_FOR_TYPE(rxkb_model, rxkb_context, models);
 
-static void
-rxkb_option_group_destroy(struct rxkb_option_group *og)
+സ്ഥിതം ശൂന്യം
+rxkb_option_group_destroy(ഘടന rxkb_option_group *og)
 {
-    struct rxkb_option *o, *otmp;
+    ഘടന rxkb_option *o, *otmp;
 
-    free(og->name);
-    free(og->description);
+    സ്വതന്ത്രം(og->name);
+    സ്വതന്ത്രം(og->description);
 
     list_for_each_safe(o, otmp, &og->options, base.link) {
         rxkb_option_unref(o);
@@ -379,127 +379,127 @@ rxkb_option_group_destroy(struct rxkb_option_group *og)
 }
 
 bool
-rxkb_option_group_allows_multiple(struct rxkb_option_group *g)
+rxkb_option_group_allows_multiple(ഘടന rxkb_option_group *g)
 {
-    return g->allow_multiple;
+    തിരികെ g->allow_multiple;
 }
 
 DECLARE_REF_UNREF_FOR_TYPE(rxkb_option_group);
 DECLARE_CREATE_FOR_TYPE(rxkb_option_group);
 DECLARE_GETTER_FOR_TYPE(rxkb_option_group, name);
 DECLARE_GETTER_FOR_TYPE(rxkb_option_group, description);
-DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_option_group, popularity, enum rxkb_popularity);
+DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_option_group, popularity, എണ്ണൽ rxkb_popularity);
 DECLARE_FIRST_NEXT_FOR_TYPE(rxkb_option_group, rxkb_context, option_groups);
 
-static void
-rxkb_context_destroy(struct rxkb_context *ctx)
+സ്ഥിതം ശൂന്യം
+rxkb_context_destroy(ഘടന rxkb_context *ctx)
 {
-    struct rxkb_model *m, *mtmp;
-    struct rxkb_layout *l, *ltmp;
-    struct rxkb_option_group *og, *ogtmp;
-    char **path;
+    ഘടന rxkb_model *m, *mtmp;
+    ഘടന rxkb_layout *l, *ltmp;
+    ഘടന rxkb_option_group *og, *ogtmp;
+    അക്ഷരം **path;
 
     list_for_each_safe(m, mtmp, &ctx->models, base.link)
         rxkb_model_unref(m);
-    assert(list_empty(&ctx->models));
+    പ്രതിജ്ഞാ(list_empty(&ctx->models));
 
     list_for_each_safe(l, ltmp, &ctx->layouts, base.link)
         rxkb_layout_unref(l);
-    assert(list_empty(&ctx->layouts));
+    പ്രതിജ്ഞാ(list_empty(&ctx->layouts));
 
     list_for_each_safe(og, ogtmp, &ctx->option_groups, base.link)
         rxkb_option_group_unref(og);
-    assert(list_empty(&ctx->option_groups));
+    പ്രതിജ്ഞാ(list_empty(&ctx->option_groups));
 
     darray_foreach(path, ctx->includes)
-        free(*path);
+        സ്വതന്ത്രം(*path);
     darray_free(ctx->includes);
 
-    assert(darray_empty(ctx->includes));
+    പ്രതിജ്ഞാ(darray_empty(ctx->includes));
 }
 
 DECLARE_REF_UNREF_FOR_TYPE(rxkb_context);
 DECLARE_CREATE_FOR_TYPE(rxkb_context);
-DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_context, log_level, enum rxkb_log_level);
+DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_context, log_level, എണ്ണൽ rxkb_log_level);
 
-static char *
-rxkb_context_getenv(struct rxkb_context *ctx, const char *name)
+സ്ഥിതം അക്ഷരം *
+rxkb_context_getenv(ഘടന rxkb_context *ctx, സ്ഥിരം അക്ഷരം *name)
 {
-    if (ctx->use_secure_getenv) {
-        return secure_getenv(name);
-    } else {
-        return getenv(name);
+    എങ്കിൽ (ctx->use_secure_getenv) {
+        തിരികെ secure_getenv(name);
+    } അല്ലെങ്കിൽ {
+        തിരികെ getenv(name);
     }
 }
 
 
-void
-rxkb_context_set_log_level(struct rxkb_context *ctx,
-                           enum rxkb_log_level level)
+ശൂന്യം
+rxkb_context_set_log_level(ഘടന rxkb_context *ctx,
+                           എണ്ണൽ rxkb_log_level level)
 {
     ctx->log_level = level;
 }
 
-static const char *
-log_level_to_prefix(enum rxkb_log_level level)
+സ്ഥിതം സ്ഥിരം അക്ഷരം *
+log_level_to_prefix(എണ്ണൽ rxkb_log_level level)
 {
-    switch (level) {
-    case RXKB_LOG_LEVEL_DEBUG:
-        return "xkbregistry: DEBUG: ";
-    case RXKB_LOG_LEVEL_INFO:
-        return "xkbregistry: INFO: ";
-    case RXKB_LOG_LEVEL_WARNING:
-        return "xkbregistry: WARNING: ";
-    case RXKB_LOG_LEVEL_ERROR:
-        return "xkbregistry: ERROR: ";
-    case RXKB_LOG_LEVEL_CRITICAL:
-        return "xkbregistry: CRITICAL: ";
-    default:
-        return NULL;
+    തിരഞ്ഞെടുപ്പ് (level) {
+    അവസ്ഥ RXKB_LOG_LEVEL_DEBUG:
+        തിരികെ "xkbregistry: DEBUG: ";
+    അവസ്ഥ RXKB_LOG_LEVEL_INFO:
+        തിരികെ "xkbregistry: INFO: ";
+    അവസ്ഥ RXKB_LOG_LEVEL_WARNING:
+        തിരികെ "xkbregistry: WARNING: ";
+    അവസ്ഥ RXKB_LOG_LEVEL_ERROR:
+        തിരികെ "xkbregistry: ERROR: ";
+    അവസ്ഥ RXKB_LOG_LEVEL_CRITICAL:
+        തിരികെ "xkbregistry: CRITICAL: ";
+    സ്ഥിരസ്ഥിതി:
+        തിരികെ ശൂന്യ;
     }
 }
 
-ATTR_PRINTF(3, 0) static void
-default_log_fn(struct rxkb_context *ctx, enum rxkb_log_level level,
-               const char *fmt, va_list args)
+ATTR_PRINTF(3, 0) സ്ഥിതം ശൂന്യം
+default_log_fn(ഘടന rxkb_context *ctx, എണ്ണൽ rxkb_log_level level,
+               സ്ഥിരം അക്ഷരം *fmt, va_list args)
 {
-    const char *prefix = log_level_to_prefix(level);
+    സ്ഥിരം അക്ഷരം *prefix = log_level_to_prefix(level);
 
-    if (prefix)
+    എങ്കിൽ (prefix)
         fprintf(stderr, "%s", prefix);
     vfprintf(stderr, fmt, args);
 }
 
-static enum rxkb_log_level
-log_level(const char *level) {
+സ്ഥിതം എണ്ണൽ rxkb_log_level
+log_level(സ്ഥിരം അക്ഷരം *level) {
     errno = 0;
-    char *endptr;
-    const long lvl = strtol(level, &endptr, 10);
-    if (errno == 0 && (endptr[0] == '\0' || is_space(endptr[0])))
-        return (enum rxkb_log_level)lvl;
+    അക്ഷരം *endptr;
+    സ്ഥിരം long lvl = strtol(level, &endptr, 10);
+    എങ്കിൽ (errno == 0 && (endptr[0] == '\0' || is_space(endptr[0])))
+        തിരികെ (എണ്ണൽ rxkb_log_level)lvl;
 
-    if (istreq_prefix("crit", level))
-        return RXKB_LOG_LEVEL_CRITICAL;
-    if (istreq_prefix("err", level))
-        return RXKB_LOG_LEVEL_ERROR;
-    if (istreq_prefix("warn", level))
-        return RXKB_LOG_LEVEL_WARNING;
-    if (istreq_prefix("info", level))
-        return RXKB_LOG_LEVEL_INFO;
-    if (istreq_prefix("debug", level) || istreq_prefix("dbg", level))
-        return RXKB_LOG_LEVEL_DEBUG;
+    എങ്കിൽ (istreq_prefix("crit", level))
+        തിരികെ RXKB_LOG_LEVEL_CRITICAL;
+    എങ്കിൽ (istreq_prefix("err", level))
+        തിരികെ RXKB_LOG_LEVEL_ERROR;
+    എങ്കിൽ (istreq_prefix("warn", level))
+        തിരികെ RXKB_LOG_LEVEL_WARNING;
+    എങ്കിൽ (istreq_prefix("info", level))
+        തിരികെ RXKB_LOG_LEVEL_INFO;
+    എങ്കിൽ (istreq_prefix("debug", level) || istreq_prefix("dbg", level))
+        തിരികെ RXKB_LOG_LEVEL_DEBUG;
 
-    return RXKB_LOG_LEVEL_ERROR;
+    തിരികെ RXKB_LOG_LEVEL_ERROR;
 }
 
-struct rxkb_context *
-rxkb_context_new(enum rxkb_context_flags flags)
+ഘടന rxkb_context *
+rxkb_context_new(എണ്ണൽ rxkb_context_flags flags)
 {
-    struct rxkb_context *ctx = rxkb_context_create(NULL);
-    const char *env;
+    ഘടന rxkb_context *ctx = rxkb_context_create(ശൂന്യ);
+    സ്ഥിരം അക്ഷരം *env;
 
-    if (!ctx)
-        return NULL;
+    എങ്കിൽ (!ctx)
+        തിരികെ ശൂന്യ;
 
     ctx->context_state = CONTEXT_NEW;
     ctx->load_extra_rules_files = flags & RXKB_CONTEXT_LOAD_EXOTIC_RULES;
@@ -509,73 +509,73 @@ rxkb_context_new(enum rxkb_context_flags flags)
 
     /* Environment overwrites defaults. */
     env = rxkb_context_getenv(ctx, "RXKB_LOG_LEVEL");
-    if (env)
+    എങ്കിൽ (env)
         rxkb_context_set_log_level(ctx, log_level(env));
 
-    static const enum rxkb_context_flags  RXKB_CONTEXT_FLAGS
+    സ്ഥിതം സ്ഥിരം എണ്ണൽ rxkb_context_flags  RXKB_CONTEXT_FLAGS
         = RXKB_CONTEXT_NO_DEFAULT_INCLUDES
         | RXKB_CONTEXT_LOAD_EXOTIC_RULES
         | RXKB_CONTEXT_NO_SECURE_GETENV;
 
-    if (flags & ~RXKB_CONTEXT_FLAGS) {
+    എങ്കിൽ (flags & ~RXKB_CONTEXT_FLAGS) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "%s: Invalid context flags: 0x%x\n", __func__,
                 (flags & ~RXKB_CONTEXT_FLAGS));
-        free(ctx);
-        return NULL;
+        സ്വതന്ത്രം(ctx);
+        തിരികെ ശൂന്യ;
     }
 
     list_init(&ctx->models);
     list_init(&ctx->layouts);
     list_init(&ctx->option_groups);
 
-    if (!(flags & RXKB_CONTEXT_NO_DEFAULT_INCLUDES) &&
+    എങ്കിൽ (!(flags & RXKB_CONTEXT_NO_DEFAULT_INCLUDES) &&
         !rxkb_context_include_path_append_default(ctx)) {
         log_err(ctx, XKB_ERROR_NO_VALID_DEFAULT_INCLUDE_PATH,
                 "Failed to add any default include path "
                 "(default system path: %s)\n",
-                DFLT_XKB_CONFIG_ROOT);
+                DFLT_XKB_CONFIG_വേര്);
         rxkb_context_unref(ctx);
-        return NULL;
+        തിരികെ ശൂന്യ;
     }
 
-    return ctx;
+    തിരികെ ctx;
 }
 
-void
-rxkb_context_set_log_fn(struct rxkb_context *ctx,
-                        void (*log_fn)(struct rxkb_context *ctx,
-                                       enum rxkb_log_level level,
-                                       const char *fmt, va_list args))
+ശൂന്യം
+rxkb_context_set_log_fn(ഘടന rxkb_context *ctx,
+                        ശൂന്യം (*log_fn)(ഘടന rxkb_context *ctx,
+                                       എണ്ണൽ rxkb_log_level level,
+                                       സ്ഥിരം അക്ഷരം *fmt, va_list args))
 {
     ctx->log_fn = (log_fn ? log_fn : default_log_fn);
 }
 
 bool
-rxkb_context_include_path_append(struct rxkb_context *ctx, const char *path)
+rxkb_context_include_path_append(ഘടന rxkb_context *ctx, സ്ഥിരം അക്ഷരം *path)
 {
-    int err = 0;
+    പൂർണ്ണസംഖ്യ err = 0;
 
-    if (ctx->context_state != CONTEXT_NEW) {
+    എങ്കിൽ (ctx->context_state != CONTEXT_NEW) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "include paths can only be appended to a new context\n");
-        goto error;
+        പോകുക error;
     }
 
-    struct stat stat_buf;
+    ഘടന stat stat_buf;
     err = stat(path, &stat_buf);
-    if (err != 0) {
+    എങ്കിൽ (err != 0) {
         err = errno;
-        goto error;
+        പോകുക error;
     }
-    if (!S_ISDIR(stat_buf.st_mode)) {
+    എങ്കിൽ (!S_ISDIR(stat_buf.st_mode)) {
         err = ENOTDIR;
-        goto error;
+        പോകുക error;
     }
 
-    if (!check_eaccess(path, R_OK | X_OK)) {
+    എങ്കിൽ (!check_eaccess(path, R_OK | X_OK)) {
         err = EACCES;
-        goto error;
+        പോകുക error;
     }
 
     /*
@@ -583,27 +583,27 @@ rxkb_context_include_path_append(struct rxkb_context *ctx, const char *path)
      * path, complain here instead of during parsing later. The niche cases
      * where this is the wrong behaviour aren’t worth worrying about.
      */
-    char rules[PATH_MAX];
-    if (!snprintf_safe(rules, sizeof(rules), "%s/rules/%s.xml",
+    അക്ഷരം rules[PATH_MAX];
+    എങ്കിൽ (!snprintf_safe(rules, വലുപ്പം(rules), "%s/rules/%s.xml",
                        path, DEFAULT_XKB_RULES)) {
         log_err(ctx, XKB_ERROR_INVALID_PATH,
                 "Path is too long: expected max length of %zu, "
                 "got: %s/rules/%s.xml\n",
-                sizeof(rules), path, DEFAULT_XKB_RULES);
-        goto error;
+                വലുപ്പം(rules), path, DEFAULT_XKB_RULES);
+        പോകുക error;
     }
 
-    char * const tmp = strdup(path);
-    if (!tmp) {
+    അക്ഷരം * സ്ഥിരം tmp = strdup(path);
+    എങ്കിൽ (!tmp) {
         err = ENOMEM;
-        goto error;
+        പോകുക error;
     }
 
     darray_append(ctx->includes, tmp);
     /* Use “info” log level to facilitate bug reporting. */
     log_info(ctx, XKB_LOG_MESSAGE_NO_ID, "Include path added: %s\n", tmp);
 
-    return true;
+    തിരികെ true;
 
 error:
     /*
@@ -612,78 +612,78 @@ error:
      */
     log_info(ctx, XKB_LOG_MESSAGE_NO_ID,
              "Include path failed: \"%s\" (%s)\n", path, strerror(err));
-    return false;
+    തിരികെ false;
 }
 
-#if HAVE_XKB_EXTENSIONS_DIRECTORIES
+#എങ്കിൽ HAVE_XKB_EXTENSIONS_DIRECTORIES
 
-static int
-compare_str(const void *a, const void *b)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+compare_str(സ്ഥിരം ശൂന്യം *a, സ്ഥിരം ശൂന്യം *b)
 {
-    return strcmp(*(char **)a, *(char **) b);
+    തിരികെ strcmp(*(അക്ഷരം **)a, *(അക്ഷരം **) b);
 }
 
-static int
-add_direct_subdirectories(struct rxkb_context *ctx, const char *path,
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+add_direct_subdirectories(ഘടന rxkb_context *ctx, സ്ഥിരം അക്ഷരം *path,
                           darray_string *extensions,
-                          darray_size_t versioned_count,
+                          darray_size_t versioned_എണ്ണം,
                           size_t versioned_path_length)
 {
-    int ret = 0;
-    int err = ENOMEM;
-    DIR *dir = NULL;
+    പൂർണ്ണസംഖ്യ ret = 0;
+    പൂർണ്ണസംഖ്യ err = ENOMEM;
+    DIR *dir = ശൂന്യ;
 
     /* Check extensions parent directory */
-    struct stat stat_buf;
+    ഘടന stat stat_buf;
     err = stat(path, &stat_buf);
-    if (err != 0) {
+    എങ്കിൽ (err != 0) {
         err = errno;
-        goto err;
+        പോകുക err;
     }
-    if (!S_ISDIR(stat_buf.st_mode)) {
+    എങ്കിൽ (!S_ISDIR(stat_buf.st_mode)) {
         err = ENOTDIR;
-        goto err;
+        പോകുക err;
     }
-    if (!check_eaccess(path, R_OK | X_OK)) {
+    എങ്കിൽ (!check_eaccess(path, R_OK | X_OK)) {
         err = EACCES;
-        goto err;
+        പോകുക err;
     }
 
     dir = opendir(path);
-    if (dir == NULL) {
+    എങ്കിൽ (dir == ശൂന്യ) {
         err = EACCES;
-        goto err;
+        പോകുക err;
     }
 
-    struct dirent *entry;
-    char path_buf[PATH_MAX] = "";
+    ഘടന dirent *entry;
+    അക്ഷരം path_buf[PATH_MAX] = "";
     versioned_path_length++; /* Additional final ‘/’ */
-    while ((entry = readdir(dir)) != NULL) {
-        const char *name = entry->d_name;
+    ആകുമ്പോൾ ((entry = readdir(dir)) != ശൂന്യ) {
+        സ്ഥിരം അക്ഷരം *name = entry->d_name;
 
         /* Skip special entries */
-        if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
-            continue;
+        എങ്കിൽ (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
+            തുടരുക;
 
-        if (!snprintf_safe(path_buf, sizeof(path_buf), "%s/%s", path, name)) {
+        എങ്കിൽ (!snprintf_safe(path_buf, വലുപ്പം(path_buf), "%s/%s", path, name)) {
             err = ENOMEM;
-            goto err;
+            പോകുക err;
         }
-        if (stat(path_buf, &stat_buf) != 0 || !S_ISDIR(stat_buf.st_mode))
-            continue;
+        എങ്കിൽ (stat(path_buf, &stat_buf) != 0 || !S_ISDIR(stat_buf.st_mode))
+            തുടരുക;
 
         /* Skip if the corresponding versioned directory is already included */
-        for (darray_size_t i = 0; i < versioned_count; i++) {
-            const char * const prev_name = darray_item(*extensions, i)
+        വേണ്ടി (darray_size_t i = 0; i < versioned_എണ്ണം; i++) {
+            സ്ഥിരം അക്ഷരം * സ്ഥിരം prev_name = darray_item(*extensions, i)
                                          + versioned_path_length;
-            if (strcmp(name, prev_name) == 0)
-                goto next;
+            എങ്കിൽ (strcmp(name, prev_name) == 0)
+                പോകുക next;
         }
 
-        char *ext_path = strdup_safe(path_buf);
-        if (!ext_path) {
+        അക്ഷരം *ext_path = strdup_safe(path_buf);
+        എങ്കിൽ (!ext_path) {
             err = ENOMEM;
-            goto err;
+            പോകുക err;
         }
 
         darray_append(*extensions, ext_path);
@@ -693,79 +693,79 @@ next:
 
     closedir(dir);
 
-    if (darray_size(*extensions) > versioned_count) {
+    എങ്കിൽ (darray_size(*extensions) > versioned_എണ്ണം) {
         /* Sort the entries, so that they are appended in lexicographic order */
-        qsort(darray_items(*extensions) + versioned_count,
-              darray_size(*extensions) - versioned_count,
-              sizeof(*darray_items(*extensions)), &compare_str);
-        char **ext_path;
-        darray_foreach_from(ext_path, *extensions, versioned_count) {
+        qsort(darray_ഇനങ്ങൾ(*extensions) + versioned_എണ്ണം,
+              darray_size(*extensions) - versioned_എണ്ണം,
+              വലുപ്പം(*darray_ഇനങ്ങൾ(*extensions)), &compare_str);
+        അക്ഷരം **ext_path;
+        darray_foreach_from(ext_path, *extensions, versioned_എണ്ണം) {
             ret |= rxkb_context_include_path_append(ctx, *ext_path);
         }
     }
 
-    return ret;
+    തിരികെ ret;
 
 err:
     log_dbg(ctx,
             "Include extensions path failed: %s (%s)\n", path, strerror(err));
-    if (dir)
+    എങ്കിൽ (dir)
         closedir(dir);
 
-    return ret;
+    തിരികെ ret;
 }
 #endif
 
 bool
-rxkb_context_include_path_append_default(struct rxkb_context *ctx)
+rxkb_context_include_path_append_default(ഘടന rxkb_context *ctx)
 {
-    char user_path[PATH_MAX];
+    അക്ഷരം user_path[PATH_MAX];
     bool ret = false;
 
-    if (ctx->context_state != CONTEXT_NEW) {
+    എങ്കിൽ (ctx->context_state != CONTEXT_NEW) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "include paths can only be appended to a new context\n");
-        return false;
+        തിരികെ false;
     }
 
-    const char * const home = rxkb_context_getenv(ctx, "HOME");
-    const char * const xdg = rxkb_context_getenv(ctx, "XDG_CONFIG_HOME");
+    സ്ഥിരം അക്ഷരം * സ്ഥിരം home = rxkb_context_getenv(ctx, "HOME");
+    സ്ഥിരം അക്ഷരം * സ്ഥിരം xdg = rxkb_context_getenv(ctx, "XDG_CONFIG_HOME");
     /* Accept empty string, which may be unintentional and should be reported */
-    if (xdg != NULL) {
-        if (snprintf_safe(user_path, sizeof(user_path), "%s/xkb", xdg))
+    എങ്കിൽ (xdg != ശൂന്യ) {
+        എങ്കിൽ (snprintf_safe(user_path, വലുപ്പം(user_path), "%s/xkb", xdg))
             ret |= rxkb_context_include_path_append(ctx, user_path);
-    } else if (home != NULL) {
+    } അല്ലെങ്കിൽ എങ്കിൽ (home != ശൂന്യ) {
         /* XDG_CONFIG_HOME fallback is $HOME/.config/ */
-        if (snprintf_safe(user_path, sizeof(user_path), "%s/.config/xkb", home))
+        എങ്കിൽ (snprintf_safe(user_path, വലുപ്പം(user_path), "%s/.config/xkb", home))
             ret |= rxkb_context_include_path_append(ctx, user_path);
     }
 
-    if (home != NULL) {
-        if (snprintf_safe(user_path, sizeof(user_path), "%s/.xkb", home))
+    എങ്കിൽ (home != ശൂന്യ) {
+        എങ്കിൽ (snprintf_safe(user_path, വലുപ്പം(user_path), "%s/.xkb", home))
             ret |= rxkb_context_include_path_append(ctx, user_path);
     }
 
-    const char * const extra = rxkb_context_getenv(ctx, "XKB_CONFIG_EXTRA_PATH");
+    സ്ഥിരം അക്ഷരം * സ്ഥിരം extra = rxkb_context_getenv(ctx, "XKB_CONFIG_EXTRA_PATH");
     /*
      * Only use default if path is undefined, but accept empty string, which may
      * be unintentional and should be reported.
      */
     ret |= rxkb_context_include_path_append(
-        ctx, ((extra != NULL) ? extra : DFLT_XKB_CONFIG_EXTRA_PATH)
+        ctx, ((extra != ശൂന്യ) ? extra : DFLT_XKB_CONFIG_EXTRA_PATH)
     );
 
-#if HAVE_XKB_EXTENSIONS_DIRECTORIES
+#എങ്കിൽ HAVE_XKB_EXTENSIONS_DIRECTORIES
     darray_string extensions = darray_new();
 
     /* Versioned extensions directory */
-    const char *extensions_path =
+    സ്ഥിരം അക്ഷരം *extensions_path =
         rxkb_context_getenv(ctx, "XKB_CONFIG_VERSIONED_EXTENSIONS_PATH");
 #ifdef DFLT_XKB_CONFIG_VERSIONED_EXTENSIONS_PATH
-    if (extensions_path == NULL)
+    എങ്കിൽ (extensions_path == ശൂന്യ)
         extensions_path = DFLT_XKB_CONFIG_VERSIONED_EXTENSIONS_PATH;
 #endif
     size_t versioned_path_length = 0;
-    if (extensions_path != NULL) {
+    എങ്കിൽ (extensions_path != ശൂന്യ) {
         /* Add direct subdirectories */
         ret |= add_direct_subdirectories(ctx, extensions_path,
                                          &extensions, 0, 0);
@@ -776,10 +776,10 @@ rxkb_context_include_path_append_default(struct rxkb_context *ctx)
     extensions_path =
         rxkb_context_getenv(ctx, "XKB_CONFIG_UNVERSIONED_EXTENSIONS_PATH");
 #ifdef DFLT_XKB_CONFIG_UNVERSIONED_EXTENSIONS_PATH
-    if (extensions_path == NULL)
+    എങ്കിൽ (extensions_path == ശൂന്യ)
         extensions_path = DFLT_XKB_CONFIG_UNVERSIONED_EXTENSIONS_PATH;
 #endif
-    if (extensions_path != NULL) {
+    എങ്കിൽ (extensions_path != ശൂന്യ) {
         /*
          * Add direct subdirectories, except those already added from the
          * *versioned* extensions path hereinabove.
@@ -789,23 +789,23 @@ rxkb_context_include_path_append_default(struct rxkb_context *ctx)
                                          versioned_path_length);
     }
 
-    char **ext_path;
+    അക്ഷരം **ext_path;
     darray_foreach(ext_path, extensions) {
-        free(*ext_path);
+        സ്വതന്ത്രം(*ext_path);
     }
     darray_free(extensions);
 #endif
 
     /* Canonical XKB root */
-    const char * const root = rxkb_context_getenv(ctx, "XKB_CONFIG_ROOT");
+    സ്ഥിരം അക്ഷരം * സ്ഥിരം വേര് = rxkb_context_getenv(ctx, "XKB_CONFIG_ROOT");
     /*
      * Only use default if path is undefined, but accept empty string, which may
      * be unintentional and should be reported.
      */
-    const bool has_root = rxkb_context_include_path_append(
-        ctx, ((root != NULL) ? root: DFLT_XKB_CONFIG_ROOT)
+    സ്ഥിരം bool has_വേര് = rxkb_context_include_path_append(
+        ctx, ((വേര് != ശൂന്യ) ? വേര്: DFLT_XKB_CONFIG_വേര്)
     );
-    ret |= has_root;
+    ret |= has_വേര്;
 
     /*
      * Fallback for misconfigured setups.
@@ -816,195 +816,195 @@ rxkb_context_include_path_append_default(struct rxkb_context *ctx)
      * This fallback can still be skipped if deliberately using an empty string
      * for the canonical XKB root hereinabove.
      */
-    if (!has_root && (root == NULL || root[0] != '\0')) {
+    എങ്കിൽ (!has_വേര് && (വേര് == ശൂന്യ || വേര്[0] != '\0')) {
         log_warn(ctx, XKB_LOG_MESSAGE_NO_ID,
                  "Root include path failed; fallback to \"%s\". "
                  "The setup is probably misconfigured. "
                  "Please ensure that \"%s\" is available in the environment.\n",
-                 DFLT_XKB_LEGACY_ROOT,
-                 ((root == NULL) ? DFLT_XKB_CONFIG_ROOT : root));
-        ret |= rxkb_context_include_path_append(ctx, DFLT_XKB_LEGACY_ROOT);
+                 DFLT_XKB_LEGACY_വേര്,
+                 ((വേര് == ശൂന്യ) ? DFLT_XKB_CONFIG_വേര് : വേര്));
+        ret |= rxkb_context_include_path_append(ctx, DFLT_XKB_LEGACY_വേര്);
     }
 
-    return ret;
+    തിരികെ ret;
 }
 
 bool
-rxkb_context_parse_default_ruleset(struct rxkb_context *ctx)
+rxkb_context_parse_default_ruleset(ഘടന rxkb_context *ctx)
 {
-    return rxkb_context_parse(ctx, DEFAULT_XKB_RULES);
+    തിരികെ rxkb_context_parse(ctx, DEFAULT_XKB_RULES);
 }
 
 bool
-rxkb_context_parse(struct rxkb_context *ctx, const char *ruleset)
+rxkb_context_parse(ഘടന rxkb_context *ctx, സ്ഥിരം അക്ഷരം *ruleset)
 {
-    char **path;
+    അക്ഷരം **path;
     bool success = false;
 
-    if (ctx->context_state != CONTEXT_NEW) {
+    എങ്കിൽ (ctx->context_state != CONTEXT_NEW) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "parse must only be called on a new context\n");
-        return false;
+        തിരികെ false;
     }
 
     darray_foreach_reverse(path, ctx->includes) {
-        char rules[PATH_MAX];
+        അക്ഷരം rules[PATH_MAX];
 
-        if (snprintf_safe(rules, sizeof(rules), "%s/rules/%s.xml",
+        എങ്കിൽ (snprintf_safe(rules, വലുപ്പം(rules), "%s/rules/%s.xml",
                            *path, ruleset)) {
             log_dbg(ctx, "Parsing %s\n", rules);
-            if (parse(ctx, rules, RXKB_POPULARITY_STANDARD))
+            എങ്കിൽ (parse(ctx, rules, RXKB_POPULARITY_STANDARD))
                 success = true;
         }
 
-        if (ctx->load_extra_rules_files &&
-            snprintf_safe(rules, sizeof(rules), "%s/rules/%s.extras.xml",
+        എങ്കിൽ (ctx->load_extra_rules_files &&
+            snprintf_safe(rules, വലുപ്പം(rules), "%s/rules/%s.extras.xml",
                           *path, ruleset)) {
             log_dbg(ctx, "Parsing %s\n", rules);
-            if (parse(ctx, rules, RXKB_POPULARITY_EXOTIC))
+            എങ്കിൽ (parse(ctx, rules, RXKB_POPULARITY_EXOTIC))
                 success = true;
         }
     }
 
     ctx->context_state = success ? CONTEXT_PARSED : CONTEXT_FAILED;
 
-    return success;
+    തിരികെ success;
 }
 
 
-void
-rxkb_context_set_user_data(struct rxkb_context *ctx, void *userdata)
+ശൂന്യം
+rxkb_context_set_user_data(ഘടന rxkb_context *ctx, ശൂന്യം *userdata)
 {
     ctx->userdata = userdata;
 }
 
-void *
-rxkb_context_get_user_data(struct rxkb_context *ctx)
+ശൂന്യം *
+rxkb_context_get_user_data(ഘടന rxkb_context *ctx)
 {
-    return ctx->userdata;
+    തിരികെ ctx->userdata;
 }
 
-static inline bool
-is_node(xmlNode *node, const char *name)
+സ്ഥിതം വരിയിൽ bool
+is_കണ്ണി(xml_കണ്ണി *കണ്ണി, സ്ഥിരം അക്ഷരം *name)
 {
-    return node->type == XML_ELEMENT_NODE &&
-        xmlStrEqual(node->name, (const xmlChar*)name);
+    തിരികെ കണ്ണി->type == XML_ELEMENT_കണ്ണി &&
+        xmlStrEqual(കണ്ണി->name, (സ്ഥിരം xmlChar*)name);
 }
 
 /* return a copy of the text content from the first text node of this node */
-static char *
-extract_text(xmlNode *node)
+സ്ഥിതം അക്ഷരം *
+extract_text(xml_കണ്ണി *കണ്ണി)
 {
-    xmlNode *n;
+    xml_കണ്ണി *n;
 
-    for (n = node->children; n; n = n->next) {
-        if (n->type == XML_TEXT_NODE)
-            return (char *)xmlStrdup(n->content);
+    വേണ്ടി (n = കണ്ണി->children; n; n = n->next) {
+        എങ്കിൽ (n->type == XML_TEXT_കണ്ണി)
+            തിരികെ (അക്ഷരം *)xmlStrdup(n->content);
     }
-    return NULL;
+    തിരികെ ശൂന്യ;
 }
 
 /* Data from “configItem” node */
-struct config_item {
-    char *name;
-    char *description;
-    char *brief;
-    char *vendor;
-    enum rxkb_popularity popularity;
+ഘടന config_item {
+    അക്ഷരം *name;
+    അക്ഷരം *description;
+    അക്ഷരം *brief;
+    അക്ഷരം *vendor;
+    എണ്ണൽ rxkb_popularity popularity;
     bool layout_specific;
 };
 
 #define config_item_new(popularity_) { \
-    .name = NULL, \
-    .description = NULL, \
-    .brief = NULL, \
-    .vendor = NULL, \
+    .name = ശൂന്യ, \
+    .description = ശൂന്യ, \
+    .brief = ശൂന്യ, \
+    .vendor = ശൂന്യ, \
     .popularity = (popularity_), \
     .layout_specific = false \
 }
 
-static void
-config_item_free(struct config_item *config) {
-    free(config->name);
-    free(config->description);
-    free(config->brief);
-    free(config->vendor);
+സ്ഥിതം ശൂന്യം
+config_item_free(ഘടന config_item *config) {
+    സ്വതന്ത്രം(config->name);
+    സ്വതന്ത്രം(config->description);
+    സ്വതന്ത്രം(config->brief);
+    സ്വതന്ത്രം(config->vendor);
 }
 
-static bool
-parse_config_item(struct rxkb_context *ctx, xmlNode *parent,
-                  struct config_item *config)
+സ്ഥിതം bool
+parse_config_item(ഘടന rxkb_context *ctx, xml_കണ്ണി *parent,
+                  ഘടന config_item *config)
 {
-    xmlNode *node = NULL;
-    xmlNode *ci = NULL;
+    xml_കണ്ണി *കണ്ണി = ശൂന്യ;
+    xml_കണ്ണി *ci = ശൂന്യ;
 
-    for (ci = parent->children; ci; ci = ci->next) {
-        if (is_node(ci, "configItem")) {
+    വേണ്ടി (ci = parent->children; ci; ci = ci->next) {
+        എങ്കിൽ (is_കണ്ണി(ci, "configItem")) {
             /* Process attributes */
-            xmlChar *raw_popularity = xmlGetProp(ci, (const xmlChar*)"popularity");
-            if (raw_popularity) {
-                if (xmlStrEqual(raw_popularity, (const xmlChar*)"standard"))
+            xmlChar *raw_popularity = xmlGetProp(ci, (സ്ഥിരം xmlChar*)"popularity");
+            എങ്കിൽ (raw_popularity) {
+                എങ്കിൽ (xmlStrEqual(raw_popularity, (സ്ഥിരം xmlChar*)"standard"))
                     config->popularity = RXKB_POPULARITY_STANDARD;
-                else if (xmlStrEqual(raw_popularity, (const xmlChar*)"exotic"))
+                അല്ലെങ്കിൽ എങ്കിൽ (xmlStrEqual(raw_popularity, (സ്ഥിരം xmlChar*)"exotic"))
                     config->popularity = RXKB_POPULARITY_EXOTIC;
-                else
+                അല്ലെങ്കിൽ
                     log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                             "xml:%u: invalid popularity attribute: expected "
                             "'standard' or 'exotic', got: '%s'\n",
-                            ci->line, raw_popularity);
+                            ci->വരി, raw_popularity);
             }
             xmlFree(raw_popularity);
 
             /* Note: this is only useful for options */
             xmlChar *raw_layout_specific =
-                xmlGetProp(ci, (const xmlChar*)"layout-specific");
-            if (raw_layout_specific &&
-                xmlStrEqual(raw_layout_specific, (const xmlChar*)"true"))
+                xmlGetProp(ci, (സ്ഥിരം xmlChar*)"layout-specific");
+            എങ്കിൽ (raw_layout_specific &&
+                xmlStrEqual(raw_layout_specific, (സ്ഥിരം xmlChar*)"true"))
                 config->layout_specific = true;
             xmlFree(raw_layout_specific);
 
             /* Process children */
-            for (node = ci->children; node; node = node->next) {
-                if (is_node(node, "name"))
-                    config->name = extract_text(node);
-                else if (is_node(node, "description"))
-                    config->description = extract_text(node);
-                else if (is_node(node, "shortDescription"))
-                    config->brief = extract_text(node);
-                else if (is_node(node, "vendor"))
-                    config->vendor = extract_text(node);
+            വേണ്ടി (കണ്ണി = ci->children; കണ്ണി; കണ്ണി = കണ്ണി->next) {
+                എങ്കിൽ (is_കണ്ണി(കണ്ണി, "name"))
+                    config->name = extract_text(കണ്ണി);
+                അല്ലെങ്കിൽ എങ്കിൽ (is_കണ്ണി(കണ്ണി, "description"))
+                    config->description = extract_text(കണ്ണി);
+                അല്ലെങ്കിൽ എങ്കിൽ (is_കണ്ണി(കണ്ണി, "shortDescription"))
+                    config->brief = extract_text(കണ്ണി);
+                അല്ലെങ്കിൽ എങ്കിൽ (is_കണ്ണി(കണ്ണി, "vendor"))
+                    config->vendor = extract_text(കണ്ണി);
                 /* Note: the DTD allows for vendor + brief but models only use
                  * vendor and everything else only uses shortDescription */
             }
 
-            if (!config->name || !strlen(config->name))  {
+            എങ്കിൽ (!config->name || !strlen(config->name))  {
                 log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                         "xml:%u: missing required element 'name'\n",
-                        ci->line);
+                        ci->വരി);
                 config_item_free(config);
-                return false;
+                തിരികെ false;
             }
 
-            return true; /* only one configItem allowed in the dtd */
+            തിരികെ true; /* only one configItem allowed in the dtd */
         }
     }
 
-    return false;
+    തിരികെ false;
 }
 
-static void
-parse_model(struct rxkb_context *ctx, xmlNode *model,
-            enum rxkb_popularity popularity)
+സ്ഥിതം ശൂന്യം
+parse_model(ഘടന rxkb_context *ctx, xml_കണ്ണി *model,
+            എണ്ണൽ rxkb_popularity popularity)
 {
-    struct config_item config = config_item_new(popularity);
+    ഘടന config_item config = config_item_new(popularity);
 
-    if (parse_config_item(ctx, model, &config)) {
-        struct rxkb_model *m;
+    എങ്കിൽ (parse_config_item(ctx, model, &config)) {
+        ഘടന rxkb_model *m;
 
         list_for_each(m, &ctx->models, base.link) {
-            if (streq(m->name, config.name)) {
+            എങ്കിൽ (streq(m->name, config.name)) {
                 config_item_free(&config);
-                return;
+                തിരികെ;
             }
         }
 
@@ -1018,32 +1018,32 @@ parse_model(struct rxkb_context *ctx, xmlNode *model,
     }
 }
 
-static void
-parse_model_list(struct rxkb_context *ctx, xmlNode *model_list,
-                 enum rxkb_popularity popularity)
+സ്ഥിതം ശൂന്യം
+parse_model_list(ഘടന rxkb_context *ctx, xml_കണ്ണി *model_list,
+                 എണ്ണൽ rxkb_popularity popularity)
 {
-    xmlNode *node = NULL;
+    xml_കണ്ണി *കണ്ണി = ശൂന്യ;
 
-    for (node = model_list->children; node; node = node->next) {
-        if (is_node(node, "model"))
-            parse_model(ctx, node, popularity);
+    വേണ്ടി (കണ്ണി = model_list->children; കണ്ണി; കണ്ണി = കണ്ണി->next) {
+        എങ്കിൽ (is_കണ്ണി(കണ്ണി, "model"))
+            parse_model(ctx, കണ്ണി, popularity);
     }
 }
 
-static void
-parse_language_list(xmlNode *language_list, struct rxkb_layout *layout)
+സ്ഥിതം ശൂന്യം
+parse_language_list(xml_കണ്ണി *language_list, ഘടന rxkb_layout *layout)
 {
-    xmlNode *node = NULL;
-    struct rxkb_iso639_code *code;
+    xml_കണ്ണി *കണ്ണി = ശൂന്യ;
+    ഘടന rxkb_iso639_code *code;
 
-    for (node = language_list->children; node; node = node->next) {
-        if (is_node(node, "iso639Id")) {
-            char *str = extract_text(node);
-            struct rxkb_object *parent;
+    വേണ്ടി (കണ്ണി = language_list->children; കണ്ണി; കണ്ണി = കണ്ണി->next) {
+        എങ്കിൽ (is_കണ്ണി(കണ്ണി, "iso639Id")) {
+            അക്ഷരം *str = extract_text(കണ്ണി);
+            ഘടന rxkb_object *parent;
 
-            if (!str || strlen(str) != 3) {
-                free(str);
-                continue;
+            എങ്കിൽ (!str || strlen(str) != 3) {
+                സ്വതന്ത്രം(str);
+                തുടരുക;
             }
 
             parent = &layout->base;
@@ -1054,20 +1054,20 @@ parse_language_list(xmlNode *language_list, struct rxkb_layout *layout)
     }
 }
 
-static void
-parse_country_list(xmlNode *country_list, struct rxkb_layout *layout)
+സ്ഥിതം ശൂന്യം
+parse_country_list(xml_കണ്ണി *country_list, ഘടന rxkb_layout *layout)
 {
-    xmlNode *node = NULL;
-    struct rxkb_iso3166_code *code;
+    xml_കണ്ണി *കണ്ണി = ശൂന്യ;
+    ഘടന rxkb_iso3166_code *code;
 
-    for (node = country_list->children; node; node = node->next) {
-        if (is_node(node, "iso3166Id")) {
-            char *str = extract_text(node);
-            struct rxkb_object *parent;
+    വേണ്ടി (കണ്ണി = country_list->children; കണ്ണി; കണ്ണി = കണ്ണി->next) {
+        എങ്കിൽ (is_കണ്ണി(കണ്ണി, "iso3166Id")) {
+            അക്ഷരം *str = extract_text(കണ്ണി);
+            ഘടന rxkb_object *parent;
 
-            if (!str || strlen(str) != 2) {
-                free(str);
-                continue;
+            എങ്കിൽ (!str || strlen(str) != 2) {
+                സ്വതന്ത്രം(str);
+                തുടരുക;
             }
 
             parent = &layout->base;
@@ -1078,26 +1078,26 @@ parse_country_list(xmlNode *country_list, struct rxkb_layout *layout)
     }
 }
 
-static void
-parse_variant(struct rxkb_context *ctx, struct rxkb_layout *l,
-              xmlNode *variant, enum rxkb_popularity popularity)
+സ്ഥിതം ശൂന്യം
+parse_variant(ഘടന rxkb_context *ctx, ഘടന rxkb_layout *l,
+              xml_കണ്ണി *variant, എണ്ണൽ rxkb_popularity popularity)
 {
-    xmlNode *ci;
-    struct config_item config = config_item_new(popularity);
+    xml_കണ്ണി *ci;
+    ഘടന config_item config = config_item_new(popularity);
 
-    if (parse_config_item(ctx, variant, &config)) {
-        struct rxkb_layout *v;
+    എങ്കിൽ (parse_config_item(ctx, variant, &config)) {
+        ഘടന rxkb_layout *v;
         bool exists = false;
 
         list_for_each(v, &ctx->layouts, base.link) {
-            if (streq_null(v->variant, config.name) &&
+            എങ്കിൽ (streq_null(v->variant, config.name) &&
                 streq(v->name, l->name)) {
                 exists = true;
-                break;
+                നിർത്തുക;
             }
         }
 
-        if (!exists) {
+        എങ്കിൽ (!exists) {
             v = rxkb_layout_create(&ctx->base);
             list_init(&v->iso639s);
             list_init(&v->iso3166s);
@@ -1105,139 +1105,139 @@ parse_variant(struct rxkb_context *ctx, struct rxkb_layout *l,
             v->variant = steal(&config.name);
             v->description = steal(&config.description);
             // if variant omits brief, inherit from parent layout.
-            v->brief = config.brief == NULL ? strdup_safe(l->brief) : steal(&config.brief);
+            v->brief = config.brief == ശൂന്യ ? strdup_safe(l->brief) : steal(&config.brief);
             v->popularity = config.popularity;
             list_append(&ctx->layouts, &v->base.link);
 
-            for (ci = variant->children; ci; ci = ci->next) {
-                xmlNode *node;
+            വേണ്ടി (ci = variant->children; ci; ci = ci->next) {
+                xml_കണ്ണി *കണ്ണി;
 
-                if (!is_node(ci, "configItem"))
-                    continue;
+                എങ്കിൽ (!is_കണ്ണി(ci, "configItem"))
+                    തുടരുക;
 
                 bool found_language_list = false;
                 bool found_country_list = false;
-                for (node = ci->children; node; node = node->next) {
-                    if (is_node(node, "languageList")) {
-                        parse_language_list(node, v);
+                വേണ്ടി (കണ്ണി = ci->children; കണ്ണി; കണ്ണി = കണ്ണി->next) {
+                    എങ്കിൽ (is_കണ്ണി(കണ്ണി, "languageList")) {
+                        parse_language_list(കണ്ണി, v);
                         found_language_list = true;
                     }
-                    if (is_node(node, "countryList")) {
-                        parse_country_list(node, v);
+                    എങ്കിൽ (is_കണ്ണി(കണ്ണി, "countryList")) {
+                        parse_country_list(കണ്ണി, v);
                         found_country_list = true;
                     }
                 }
-                if (!found_language_list) {
+                എങ്കിൽ (!found_language_list) {
                     // inherit from parent layout
-                    struct rxkb_iso639_code* x;
+                    ഘടന rxkb_iso639_code* x;
                     list_for_each(x, &l->iso639s, base.link) {
-                        struct rxkb_iso639_code* code = rxkb_iso639_code_create(&v->base);
+                        ഘടന rxkb_iso639_code* code = rxkb_iso639_code_create(&v->base);
                         code->code = strdup(x->code);
                         list_append(&v->iso639s, &code->base.link);
                     }
                 }
-                if (!found_country_list) {
+                എങ്കിൽ (!found_country_list) {
                     // inherit from parent layout
-                    struct rxkb_iso3166_code* x;
+                    ഘടന rxkb_iso3166_code* x;
                     list_for_each(x, &l->iso3166s, base.link) {
-                        struct rxkb_iso3166_code* code = rxkb_iso3166_code_create(&v->base);
+                        ഘടന rxkb_iso3166_code* code = rxkb_iso3166_code_create(&v->base);
                         code->code = strdup(x->code);
                         list_append(&v->iso3166s, &code->base.link);
                     }
                 }
             }
-        } else {
+        } അല്ലെങ്കിൽ {
             config_item_free(&config);
         }
     }
 }
 
-static void
-parse_variant_list(struct rxkb_context *ctx, struct rxkb_layout *l,
-                   xmlNode *variant_list, enum rxkb_popularity popularity)
+സ്ഥിതം ശൂന്യം
+parse_variant_list(ഘടന rxkb_context *ctx, ഘടന rxkb_layout *l,
+                   xml_കണ്ണി *variant_list, എണ്ണൽ rxkb_popularity popularity)
 {
-    xmlNode *node = NULL;
+    xml_കണ്ണി *കണ്ണി = ശൂന്യ;
 
-    for (node = variant_list->children; node; node = node->next) {
-        if (is_node(node, "variant"))
-            parse_variant(ctx, l, node, popularity);
+    വേണ്ടി (കണ്ണി = variant_list->children; കണ്ണി; കണ്ണി = കണ്ണി->next) {
+        എങ്കിൽ (is_കണ്ണി(കണ്ണി, "variant"))
+            parse_variant(ctx, l, കണ്ണി, popularity);
     }
 }
 
-static void
-parse_layout(struct rxkb_context *ctx, xmlNode *layout,
-             enum rxkb_popularity popularity)
+സ്ഥിതം ശൂന്യം
+parse_layout(ഘടന rxkb_context *ctx, xml_കണ്ണി *layout,
+             എണ്ണൽ rxkb_popularity popularity)
 {
-    struct config_item config = config_item_new(popularity);
-    struct rxkb_layout *l;
-    xmlNode *node = NULL;
+    ഘടന config_item config = config_item_new(popularity);
+    ഘടന rxkb_layout *l;
+    xml_കണ്ണി *കണ്ണി = ശൂന്യ;
     bool exists = false;
 
-    if (!parse_config_item(ctx, layout, &config))
-        return;
+    എങ്കിൽ (!parse_config_item(ctx, layout, &config))
+        തിരികെ;
 
     list_for_each(l, &ctx->layouts, base.link) {
-        if (streq(l->name, config.name) && l->variant == NULL) {
+        എങ്കിൽ (streq(l->name, config.name) && l->variant == ശൂന്യ) {
             exists = true;
-            break;
+            നിർത്തുക;
         }
     }
 
-    if (!exists) {
+    എങ്കിൽ (!exists) {
         l = rxkb_layout_create(&ctx->base);
         list_init(&l->iso639s);
         list_init(&l->iso3166s);
         l->name = steal(&config.name);
-        l->variant = NULL;
+        l->variant = ശൂന്യ;
         l->description = steal(&config.description);
         l->brief = steal(&config.brief);
         l->popularity = config.popularity;
         list_append(&ctx->layouts, &l->base.link);
-    } else {
+    } അല്ലെങ്കിൽ {
         config_item_free(&config);
     }
 
-    for (node = layout->children; node; node = node->next) {
-        if (is_node(node, "variantList")) {
-            parse_variant_list(ctx, l, node, popularity);
+    വേണ്ടി (കണ്ണി = layout->children; കണ്ണി; കണ്ണി = കണ്ണി->next) {
+        എങ്കിൽ (is_കണ്ണി(കണ്ണി, "variantList")) {
+            parse_variant_list(ctx, l, കണ്ണി, popularity);
         }
-        if (!exists && is_node(node, "configItem")) {
-            xmlNode *ll;
-            for (ll = node->children; ll; ll = ll->next) {
-                if (is_node(ll, "languageList"))
+        എങ്കിൽ (!exists && is_കണ്ണി(കണ്ണി, "configItem")) {
+            xml_കണ്ണി *ll;
+            വേണ്ടി (ll = കണ്ണി->children; ll; ll = ll->next) {
+                എങ്കിൽ (is_കണ്ണി(ll, "languageList"))
                     parse_language_list(ll, l);
-                if (is_node(ll, "countryList"))
+                എങ്കിൽ (is_കണ്ണി(ll, "countryList"))
                     parse_country_list(ll, l);
             }
         }
     }
 }
 
-static void
-parse_layout_list(struct rxkb_context *ctx, xmlNode *layout_list,
-                  enum rxkb_popularity popularity)
+സ്ഥിതം ശൂന്യം
+parse_layout_list(ഘടന rxkb_context *ctx, xml_കണ്ണി *layout_list,
+                  എണ്ണൽ rxkb_popularity popularity)
 {
-    xmlNode *node = NULL;
+    xml_കണ്ണി *കണ്ണി = ശൂന്യ;
 
-    for (node = layout_list->children; node; node = node->next) {
-        if (is_node(node, "layout"))
-            parse_layout(ctx, node, popularity);
+    വേണ്ടി (കണ്ണി = layout_list->children; കണ്ണി; കണ്ണി = കണ്ണി->next) {
+        എങ്കിൽ (is_കണ്ണി(കണ്ണി, "layout"))
+            parse_layout(ctx, കണ്ണി, popularity);
     }
 }
 
-static void
-parse_option(struct rxkb_context *ctx, struct rxkb_option_group *group,
-             xmlNode *option, enum rxkb_popularity popularity)
+സ്ഥിതം ശൂന്യം
+parse_option(ഘടന rxkb_context *ctx, ഘടന rxkb_option_group *group,
+             xml_കണ്ണി *option, എണ്ണൽ rxkb_popularity popularity)
 {
-    struct config_item config = config_item_new(popularity);
+    ഘടന config_item config = config_item_new(popularity);
 
-    if (parse_config_item(ctx, option, &config)) {
-        struct rxkb_option *o;
+    എങ്കിൽ (parse_config_item(ctx, option, &config)) {
+        ഘടന rxkb_option *o;
 
         list_for_each(o, &group->options, base.link) {
-            if (streq(o->name, config.name)) {
+            എങ്കിൽ (streq(o->name, config.name)) {
                 config_item_free(&config);
-                return;
+                തിരികെ;
             }
         }
 
@@ -1250,122 +1250,122 @@ parse_option(struct rxkb_context *ctx, struct rxkb_option_group *group,
     }
 }
 
-static void
-parse_group(struct rxkb_context *ctx, xmlNode *group,
-            enum rxkb_popularity popularity)
+സ്ഥിതം ശൂന്യം
+parse_group(ഘടന rxkb_context *ctx, xml_കണ്ണി *group,
+            എണ്ണൽ rxkb_popularity popularity)
 {
-    struct config_item config = config_item_new(popularity);
-    struct rxkb_option_group *g;
-    xmlNode *node = NULL;
+    ഘടന config_item config = config_item_new(popularity);
+    ഘടന rxkb_option_group *g;
+    xml_കണ്ണി *കണ്ണി = ശൂന്യ;
     xmlChar *multiple;
     bool exists = false;
 
-    if (!parse_config_item(ctx, group, &config))
-        return;
+    എങ്കിൽ (!parse_config_item(ctx, group, &config))
+        തിരികെ;
 
     list_for_each(g, &ctx->option_groups, base.link) {
-        if (streq(g->name, config.name)) {
+        എങ്കിൽ (streq(g->name, config.name)) {
             exists = true;
-            break;
+            നിർത്തുക;
         }
     }
 
-    if (!exists) {
+    എങ്കിൽ (!exists) {
         g = rxkb_option_group_create(&ctx->base);
         g->name = steal(&config.name);
         g->description = steal(&config.description);
         g->popularity = config.popularity;
 
-        multiple = xmlGetProp(group, (const xmlChar*)"allowMultipleSelection");
-        if (multiple && xmlStrEqual(multiple, (const xmlChar*)"true"))
+        multiple = xmlGetProp(group, (സ്ഥിരം xmlChar*)"allowMultipleSelection");
+        എങ്കിൽ (multiple && xmlStrEqual(multiple, (സ്ഥിരം xmlChar*)"true"))
             g->allow_multiple = true;
         xmlFree(multiple);
 
         list_init(&g->options);
         list_append(&ctx->option_groups, &g->base.link);
-    } else {
+    } അല്ലെങ്കിൽ {
         config_item_free(&config);
     }
 
-    for (node = group->children; node; node = node->next) {
-        if (is_node(node, "option"))
-            parse_option(ctx, g, node, popularity);
+    വേണ്ടി (കണ്ണി = group->children; കണ്ണി; കണ്ണി = കണ്ണി->next) {
+        എങ്കിൽ (is_കണ്ണി(കണ്ണി, "option"))
+            parse_option(ctx, g, കണ്ണി, popularity);
     }
 }
 
-static void
-parse_option_list(struct rxkb_context *ctx, xmlNode *option_list,
-                  enum rxkb_popularity popularity)
+സ്ഥിതം ശൂന്യം
+parse_option_list(ഘടന rxkb_context *ctx, xml_കണ്ണി *option_list,
+                  എണ്ണൽ rxkb_popularity popularity)
 {
-    xmlNode *node = NULL;
+    xml_കണ്ണി *കണ്ണി = ശൂന്യ;
 
-    for (node = option_list->children; node; node = node->next) {
-        if (is_node(node, "group"))
-            parse_group(ctx, node, popularity);
+    വേണ്ടി (കണ്ണി = option_list->children; കണ്ണി; കണ്ണി = കണ്ണി->next) {
+        എങ്കിൽ (is_കണ്ണി(കണ്ണി, "group"))
+            parse_group(ctx, കണ്ണി, popularity);
     }
 }
 
-static void
-parse_rules_xml(struct rxkb_context *ctx, xmlNode *root,
-                enum rxkb_popularity popularity)
+സ്ഥിതം ശൂന്യം
+parse_rules_xml(ഘടന rxkb_context *ctx, xml_കണ്ണി *വേര്,
+                എണ്ണൽ rxkb_popularity popularity)
 {
-    xmlNode *node = NULL;
+    xml_കണ്ണി *കണ്ണി = ശൂന്യ;
 
-    for (node = root->children; node; node = node->next) {
-        if (is_node(node, "modelList"))
-            parse_model_list(ctx, node, popularity);
-        else if (is_node(node, "layoutList"))
-            parse_layout_list(ctx, node, popularity);
-        else if (is_node(node, "optionList"))
-            parse_option_list(ctx, node, popularity);
+    വേണ്ടി (കണ്ണി = വേര്->children; കണ്ണി; കണ്ണി = കണ്ണി->next) {
+        എങ്കിൽ (is_കണ്ണി(കണ്ണി, "modelList"))
+            parse_model_list(ctx, കണ്ണി, popularity);
+        അല്ലെങ്കിൽ എങ്കിൽ (is_കണ്ണി(കണ്ണി, "layoutList"))
+            parse_layout_list(ctx, കണ്ണി, popularity);
+        അല്ലെങ്കിൽ എങ്കിൽ (is_കണ്ണി(കണ്ണി, "optionList"))
+            parse_option_list(ctx, കണ്ണി, popularity);
     }
 }
 
-static void
+സ്ഥിതം ശൂന്യം
 ATTR_PRINTF(2, 0)
-xml_error_func(void *ctx, const char *msg, ...)
+xml_error_func(ശൂന്യം *ctx, സ്ഥിരം അക്ഷരം *സന്ദേശം, ...)
 {
-    static char buf[PATH_MAX];
-    static size_t slen = 0;
+    സ്ഥിതം അക്ഷരം buf[PATH_MAX];
+    സ്ഥിതം size_t slen = 0;
     va_list args;
-    int rc;
+    പൂർണ്ണസംഖ്യ rc;
 
     /* libxml2 prints IO errors from bad includes paths by
      * calling the error function once per word. So we get to
      * re-assemble the message here and print it when we get
      * the line break. My enthusiasm about this is indescribable.
      */
-    va_start(args, msg);
-    rc = vsnprintf(&buf[slen], sizeof(buf) - slen, msg, args);
+    va_start(args, സന്ദേശം);
+    rc = vsnprintf(&buf[slen], വലുപ്പം(buf) - slen, സന്ദേശം, args);
     va_end(args);
 
     /* This shouldn't really happen */
-    if (rc < 0) {
+    എങ്കിൽ (rc < 0) {
         log_err(ctx, XKB_ERROR_INSUFFICIENT_BUFFER_SIZE,
                 "+++ out of cheese error. redo from start +++\n");
         slen = 0;
-        memset(buf, 0, sizeof(buf));
-        return;
+        memset(buf, 0, വലുപ്പം(buf));
+        തിരികെ;
     }
 
     slen += (size_t)rc;
-    if (slen >= sizeof(buf)) {
+    എങ്കിൽ (slen >= വലുപ്പം(buf)) {
         /* truncated, let's flush this */
-        buf[sizeof(buf) - 1] = '\n';
-        slen = sizeof(buf);
+        buf[വലുപ്പം(buf) - 1] = '\n';
+        slen = വലുപ്പം(buf);
     }
 
     /* We're assuming here that the last character is \n. */
-    if (buf[slen - 1] == '\n') {
+    എങ്കിൽ (buf[slen - 1] == '\n') {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID, "%s", buf);
-        memset(buf, 0, sizeof(buf));
+        memset(buf, 0, വലുപ്പം(buf));
         slen = 0;
     }
 }
 
-#if HAVE_XML_CTXT_SET_ERRORHANDLER
-static void
-xml_structured_error_func(void *userData, const xmlError * error)
+#എങ്കിൽ HAVE_XML_CTXT_SET_ERRORHANDLER
+സ്ഥിതം ശൂന്യം
+xml_structured_error_func(ശൂന്യം *userData, സ്ഥിരം xmlError * error)
 {
     xmlFormatError(error, xml_error_func, userData);
 }
@@ -1373,12 +1373,12 @@ xml_structured_error_func(void *userData, const xmlError * error)
 
 #ifdef XML_PARSE_NO_XXE
 #define _XML_OPTIONS (XML_PARSE_NONET | XML_PARSE_NOENT | XML_PARSE_NO_XXE)
-#else
+#അല്ലെങ്കിൽ
 #define _XML_OPTIONS (XML_PARSE_NONET)
 #endif
 
-static bool
-validate(struct rxkb_context *ctx, xmlDoc *doc)
+സ്ഥിതം bool
+validate(ഘടന rxkb_context *ctx, xmlDoc *doc)
 {
     bool success = false;
     /* This is a modified version of the xkeyboard-config xkb.dtd:
@@ -1388,7 +1388,7 @@ validate(struct rxkb_context *ctx, xmlDoc *doc)
      *   but we set this value depending if we are currently parsing an
      *   “extras” rule file.
      */
-    const char dtdstr[] =
+    സ്ഥിരം അക്ഷരം dtdstr[] =
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         "<!ELEMENT xkbConfigRegistry (modelList?, layoutList?, optionList?)>\n"
         "<!ATTLIST xkbConfigRegistry version CDATA \"1.1\">\n"
@@ -1416,48 +1416,48 @@ validate(struct rxkb_context *ctx, xmlDoc *doc)
         "<!ELEMENT hwList (hwId+)>\n"
         "<!ELEMENT hwId (#PCDATA)>\n";
 
-#if HAVE_XML_CTXT_PARSE_DTD
+#എങ്കിൽ HAVE_XML_CTXT_PARSE_DTD
     /* Use safer function with context if available, and set
      * the contextual error handler. */
     xmlParserCtxtPtr xmlCtxt = xmlNewParserCtxt();
-    if (!xmlCtxt)
-        return false;
+    എങ്കിൽ (!xmlCtxt)
+        തിരികെ false;
     static_assert(HAVE_XML_CTXT_SET_ERRORHANDLER,
                   "xmlCtxtSetErrorHandler (2.13) introduced before "
                   "xmlCtxtParseDtd (2.14)");
     xmlCtxtSetErrorHandler(xmlCtxt, xml_structured_error_func, ctx);
     xmlCtxtSetOptions(xmlCtxt, _XML_OPTIONS | XML_PARSE_DTDLOAD);
 
-    xmlParserInputPtr pinput =
-        xmlNewInputFromMemory(NULL, dtdstr, ARRAY_SIZE(dtdstr) - 1,
-                              XML_INPUT_BUF_STATIC);
-    if (!pinput)
-        goto dtd_error;
+    xml_Parser_നിവേശം_Ptr pinput =
+        xml_New_നിവേശം_From_Memory(ശൂന്യ, dtdstr, ARRAY_SIZE(dtdstr) - 1,
+                              XML_നിവേശം_BUF_STATIC);
+    എങ്കിൽ (!pinput)
+        പോകുക dtd_error;
 
-    xmlDtd *dtd = xmlCtxtParseDtd(xmlCtxt, pinput, NULL, NULL);
-#else
+    xmlDtd *dtd = xmlCtxtParseDtd(xmlCtxt, pinput, ശൂന്യ, ശൂന്യ);
+#അല്ലെങ്കിൽ
     /* Note: do not use xmlParserInputBufferCreateStatic, it generates random
      * DTD validity errors for unknown reasons */
-    xmlParserInputBufferPtr buf =
-        xmlParserInputBufferCreateMem(dtdstr, ARRAY_SIZE(dtdstr) - 1,
+    xml_Parser_നിവേശം_Buffer_Ptr buf =
+        xml_Parser_നിവേശം_Buffer_Create_Mem(dtdstr, ARRAY_SIZE(dtdstr) - 1,
                                       XML_CHAR_ENCODING_NONE);
-    if (!buf)
-        goto dtd_error;
-    xmlDtd *dtd = xmlIOParseDTD(NULL, buf, XML_CHAR_ENCODING_UTF8);
+    എങ്കിൽ (!buf)
+        പോകുക dtd_error;
+    xmlDtd *dtd = xmlIOParseDTD(ശൂന്യ, buf, XML_CHAR_ENCODING_UTF8);
 #endif
 
-    if (!dtd) {
+    എങ്കിൽ (!dtd) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID, "Failed to load DTD\n");
-        goto dtd_error;
+        പോകുക dtd_error;
     }
 
-#if HAVE_XML_CTXT_PARSE_DTD
+#എങ്കിൽ HAVE_XML_CTXT_PARSE_DTD
     success = xmlCtxtValidateDtd(xmlCtxt, doc, dtd);
-#else
+#അല്ലെങ്കിൽ
     xmlValidCtxt *dtdvalid = xmlNewValidCtxt();
-    if (!dtdvalid) {
+    എങ്കിൽ (!dtdvalid) {
         success = false;
-        goto ctx_error;
+        പോകുക ctx_error;
     }
     dtdvalid->error = &xml_error_func;
     dtdvalid->userData = ctx;
@@ -1469,65 +1469,65 @@ ctx_error:
     xmlFreeDtd(dtd);
 
 dtd_error:
-#if HAVE_XML_CTXT_PARSE_DTD
+#എങ്കിൽ HAVE_XML_CTXT_PARSE_DTD
     xmlFreeParserCtxt(xmlCtxt);
 #endif
-    return success;
+    തിരികെ success;
 }
 
-static bool
-parse(struct rxkb_context *ctx, const char *path,
-      enum rxkb_popularity popularity)
+സ്ഥിതം bool
+parse(ഘടന rxkb_context *ctx, സ്ഥിരം അക്ഷരം *path,
+      എണ്ണൽ rxkb_popularity popularity)
 {
     bool success = false;
-    xmlDoc *doc = NULL;
-    xmlNode *root = NULL;
+    xmlDoc *doc = ശൂന്യ;
+    xml_കണ്ണി *വേര് = ശൂന്യ;
 
-    if (!check_eaccess(path, R_OK))
-        return false;
+    എങ്കിൽ (!check_eaccess(path, R_OK))
+        തിരികെ false;
 
     LIBXML_TEST_VERSION
 
     xmlParserCtxtPtr xmlCtxt = xmlNewParserCtxt();
-    if (!xmlCtxt)
-        return false;
+    എങ്കിൽ (!xmlCtxt)
+        തിരികെ false;
 
 #ifdef XML_PARSE_NO_XXE
 #define _XML_OPTIONS (XML_PARSE_NONET | XML_PARSE_NOENT | XML_PARSE_NO_XXE)
-#else
+#അല്ലെങ്കിൽ
 #define _XML_OPTIONS (XML_PARSE_NONET)
 #endif
     xmlCtxtUseOptions(xmlCtxt, _XML_OPTIONS);
 
-#if HAVE_XML_CTXT_SET_ERRORHANDLER
+#എങ്കിൽ HAVE_XML_CTXT_SET_ERRORHANDLER
     /* Prefer contextual handler whenever possible. It takes precedence over
      * the global generic handler. */
     xmlCtxtSetErrorHandler(xmlCtxt, xml_structured_error_func, ctx);
 #endif
-#if !HAVE_XML_CTXT_PARSE_DTD
+#എങ്കിൽ !HAVE_XML_CTXT_PARSE_DTD
     /* This is needed for the DTD validation */
     xmlSetGenericErrorFunc(ctx, xml_error_func);
 #endif
 
-    doc = xmlCtxtReadFile(xmlCtxt, path, NULL, 0);
-    if (!doc)
-        goto parse_error;
+    doc = xmlCtxtReadFile(xmlCtxt, path, ശൂന്യ, 0);
+    എങ്കിൽ (!doc)
+        പോകുക parse_error;
 
-    if (!validate(ctx, doc)) {
+    എങ്കിൽ (!validate(ctx, doc)) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "XML error: failed to validate document at %s\n", path);
-        goto validate_error;
+        പോകുക validate_error;
     }
 
-    root = xmlDocGetRootElement(doc);
-    parse_rules_xml(ctx, root, popularity);
+    വേര് = xml_Doc_Get_വേര്_Element(doc);
+    parse_rules_xml(ctx, വേര്, popularity);
 
     success = true;
 validate_error:
     xmlFreeDoc(doc);
 parse_error:
 
-#if !HAVE_XML_CTXT_PARSE_DTD
+#എങ്കിൽ !HAVE_XML_CTXT_PARSE_DTD
     /*
      * Reset the default libxml2 error handler to default, because this handler
      * is global and may be used on an invalid rxkb_context, e.g. *after* the
@@ -1537,12 +1537,12 @@ parse_error:
      *     rxkb_context_parse();
      *     rxkb_context_unref();
      */
-    xmlSetGenericErrorFunc(NULL, NULL);
+    xmlSetGenericErrorFunc(ശൂന്യ, ശൂന്യ);
 #endif
-#if HAVE_XML_CTXT_SET_ERRORHANDLER
-    xmlCtxtSetErrorHandler(xmlCtxt, NULL, NULL);
+#എങ്കിൽ HAVE_XML_CTXT_SET_ERRORHANDLER
+    xmlCtxtSetErrorHandler(xmlCtxt, ശൂന്യ, ശൂന്യ);
 #endif
     xmlFreeParserCtxt(xmlCtxt);
 
-    return success;
+    തിരികെ success;
 }

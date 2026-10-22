@@ -3,34 +3,34 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <assert.h>
+#അന്തര്ഭാവ <assert.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "abi-check.h"
-#include "context.h"
+#അന്തര്ഭാവ "xkbcommon/xkbcommon.h"
+#അന്തര്ഭാവ "abi-check.h"
+#അന്തര്ഭാവ "context.h"
 
-void
-xkb_log_abi_error(struct xkb_context * restrict ctx,
-                  const char * restrict func, enum xkb_status status)
+ശൂന്യം
+xkb_log_abi_error(ഘടന xkb_context * restrict ctx,
+                  സ്ഥിരം അക്ഷരം * restrict func, എണ്ണൽ xkb_status status)
 {
-    switch (status) {
-    case XKB_ERROR_ABI_INVALID_STRUCT_SIZE:
+    തിരഞ്ഞെടുപ്പ് (status) {
+    അവസ്ഥ XKB_ERROR_ABI_INVALID_STRUCT_SIZE:
         log_err(ctx, XKB_ERROR_ABI_INVALID_STRUCT_SIZE,
                 "%s: ABI error: unsupported versioned struct\n", func);
-        break;
-    case XKB_ERROR_ABI_BACKWARD_COMPAT:
+        നിർത്തുക;
+    അവസ്ഥ XKB_ERROR_ABI_BACKWARD_COMPAT:
         log_err(ctx, XKB_ERROR_ABI_BACKWARD_COMPAT,
                 "%s: ABI version mismatch: missing newer required fields\n",
                 func);
-        break;
-    case XKB_ERROR_ABI_FORWARD_COMPAT:
+        നിർത്തുക;
+    അവസ്ഥ XKB_ERROR_ABI_FORWARD_COMPAT:
         log_err(ctx, XKB_ERROR_ABI_FORWARD_COMPAT,
                 "%s: ABI version mismatch: cannot use newer fields\n", func);
-        break;
-    default:
+        നിർത്തുക;
+    സ്ഥിരസ്ഥിതി:
         /* unreachable */
-        assert(false);
+        പ്രതിജ്ഞാ(false);
     }
 }

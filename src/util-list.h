@@ -7,30 +7,30 @@
 
 #pragma once
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <stdbool.h>
-#include <stddef.h>
+#അന്തര്ഭാവ <stdbool.h>
+#അന്തര്ഭാവ <stddef.h>
 
 /*
  * This list data structure is a verbatim copy from wayland-util.h from the
  * Wayland project; except that wl_ prefix has been removed.
  */
 
-struct list {
-	struct list *prev;
-	struct list *next;
+ഘടന list {
+	ഘടന list *prev;
+	ഘടന list *next;
 };
 
-void list_init(struct list *list);
-void list_insert(struct list *list, struct list *elm);
-void list_append(struct list *list, struct list *elm);
-void list_remove(struct list *elm);
-bool list_empty(const struct list *list);
-bool list_is_last(const struct list *list, const struct list *elm);
+ശൂന്യം list_init(ഘടന list *list);
+ശൂന്യം list_തിരുകുക(ഘടന list *list, ഘടന list *elm);
+ശൂന്യം list_append(ഘടന list *list, ഘടന list *elm);
+ശൂന്യം list_remove(ഘടന list *elm);
+bool list_empty(സ്ഥിരം ഘടന list *list);
+bool list_is_last(സ്ഥിരം ഘടന list *list, സ്ഥിരം ഘടന list *elm);
 
 #define container_of(ptr, type, member)					\
-	(__typeof__(type) *)((char *)(ptr) -				\
+	(__typeof__(type) *)((അക്ഷരം *)(ptr) -				\
 		 offsetof(__typeof__(type), member))
 
 #define list_first_entry(head, pos, member)				\
@@ -40,12 +40,12 @@ bool list_is_last(const struct list *list, const struct list *elm);
 	container_of((head)->prev, __typeof__(*(pos)), member)
 
 #define list_for_each(pos, head, member)				\
-	for ((pos) = 0, (pos) = list_first_entry(head, pos, member);	\
+	വേണ്ടി ((pos) = 0, (pos) = list_first_entry(head, pos, member);	\
 	     &(pos)->member != (head);					\
 	     (pos) = list_first_entry(&(pos)->member, pos, member))
 
 #define list_for_each_safe(pos, tmp, head, member)			\
-	for ((pos) = 0, (tmp) = 0,						\
+	വേണ്ടി ((pos) = 0, (tmp) = 0,						\
 	     (pos) = list_first_entry(head, pos, member),			\
 	     (tmp) = list_first_entry(&(pos)->member, tmp, member);		\
 	     &(pos)->member != (head);					\

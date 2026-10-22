@@ -4,17 +4,17 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <stdint.h>
-#include <string.h>
+#അന്തര്ഭാവ <stdint.h>
+#അന്തര്ഭാവ <string.h>
 
-#include "utils.h"
-#include "keymap-formats.h"
-#include "util-numbers.h"
+#അന്തര്ഭാവ "utils.h"
+#അന്തര്ഭാവ "keymap-formats.h"
+#അന്തര്ഭാവ "util-numbers.h"
 
 /* [WARNING] Must be in ascending order */
-static const enum xkb_keymap_format keymap_formats[] = {
+സ്ഥിതം സ്ഥിരം എണ്ണൽ xkb_keymap_format keymap_formats[] = {
     XKB_KEYMAP_FORMAT_TEXT_V1,
     XKB_KEYMAP_FORMAT_TEXT_V2,
 };
@@ -27,12 +27,12 @@ static const enum xkb_keymap_format keymap_formats[] = {
  * may change in the future. Indeed, `xkb_keymap_format` encoding may change
  * (although we avoit it) while the corresponding labels remain unchanged.
  */
-struct format_label {
-    const char* label;
-    enum xkb_keymap_format format;
+ഘടന format_label {
+    സ്ഥിരം അക്ഷരം* label;
+    എണ്ണൽ xkb_keymap_format format;
 };
 /* [WARNING] Must be in ascending order of the keymap format. */
-static const struct format_label keymap_formats_labels [] = {
+സ്ഥിതം സ്ഥിരം ഘടന format_label keymap_formats_labels [] = {
     { "xkb_v1", XKB_KEYMAP_FORMAT_TEXT_V1 },
     { "v1",     XKB_KEYMAP_FORMAT_TEXT_V1 },
     { "xkb_v2", XKB_KEYMAP_FORMAT_TEXT_V2 },
@@ -40,66 +40,66 @@ static const struct format_label keymap_formats_labels [] = {
 };
 
 size_t
-xkb_keymap_supported_formats(const enum xkb_keymap_format **formats)
+xkb_keymap_supported_formats(സ്ഥിരം എണ്ണൽ xkb_keymap_format **formats)
 {
     *formats = keymap_formats;
-    return ARRAY_SIZE(keymap_formats);
+    തിരികെ ARRAY_SIZE(keymap_formats);
 }
 
 bool
-xkb_keymap_is_supported_format(enum xkb_keymap_format format)
+xkb_keymap_is_supported_format(എണ്ണൽ xkb_keymap_format format)
 {
-    if (format < keymap_formats[0]) {
+    എങ്കിൽ (format < keymap_formats[0]) {
         /* Short-circuit because array is sorted */
-        return false;
+        തിരികെ false;
     }
 
-    for (size_t k = 0; k < ARRAY_SIZE(keymap_formats); k++) {
-        if (keymap_formats[k] == format)
-            return true;
+    വേണ്ടി (size_t k = 0; k < ARRAY_SIZE(keymap_formats); k++) {
+        എങ്കിൽ (keymap_formats[k] == format)
+            തിരികെ true;
         /* Short-circuit because array is sorted */
-        if (keymap_formats[k] > format)
-            return false;
+        എങ്കിൽ (keymap_formats[k] > format)
+            തിരികെ false;
     }
 
-    return false;
+    തിരികെ false;
 }
 
-enum xkb_keymap_format
-xkb_keymap_parse_format(const char *raw)
+എണ്ണൽ xkb_keymap_format
+xkb_keymap_parse_format(സ്ഥിരം അക്ഷരം *raw)
 {
-    if (!raw)
-        return 0;
+    എങ്കിൽ (!raw)
+        തിരികെ 0;
 
     uint32_t format = 0;
-    if (parse_hex_to_uint32_t(raw, SIZE_MAX, &format) > 0) {
+    എങ്കിൽ (parse_hex_to_uint32_t(raw, SIZE_MAX, &format) > 0) {
         /* Numeric format */
-        return (xkb_keymap_is_supported_format(format)) ? format : 0;
-    } else {
+        തിരികെ (xkb_keymap_is_supported_format(format)) ? format : 0;
+    } അല്ലെങ്കിൽ {
         /* Parse label: e.g. “xkb_vXXXX” and “vXXX” */
-        for (size_t k = 0; k < ARRAY_SIZE(keymap_formats_labels); k++) {
-            if (strcmp(raw, keymap_formats_labels[k].label) == 0)
-                return keymap_formats_labels[k].format;
+        വേണ്ടി (size_t k = 0; k < ARRAY_SIZE(keymap_formats_labels); k++) {
+            എങ്കിൽ (strcmp(raw, keymap_formats_labels[k].label) == 0)
+                തിരികെ keymap_formats_labels[k].format;
         }
-        return 0;
+        തിരികെ 0;
     }
 }
 
-const char *
-xkb_keymap_get_format_label(enum xkb_keymap_format format)
+സ്ഥിരം അക്ഷരം *
+xkb_keymap_get_format_label(എണ്ണൽ xkb_keymap_format format)
 {
-    if (format < keymap_formats_labels[0].format) {
+    എങ്കിൽ (format < keymap_formats_labels[0].format) {
         /* Short-circuit because array is sorted */
-        return NULL;
+        തിരികെ ശൂന്യ;
     }
 
-    for (size_t k = 0; k < ARRAY_SIZE(keymap_formats_labels); k++) {
-        if (keymap_formats_labels[k].format == format)
-            return keymap_formats_labels[k].label;
+    വേണ്ടി (size_t k = 0; k < ARRAY_SIZE(keymap_formats_labels); k++) {
+        എങ്കിൽ (keymap_formats_labels[k].format == format)
+            തിരികെ keymap_formats_labels[k].label;
         /* Short-circuit because array is sorted */
-        if (keymap_formats_labels[k].format > format)
-            return NULL;
+        എങ്കിൽ (keymap_formats_labels[k].format > format)
+            തിരികെ ശൂന്യ;
     }
 
-    return NULL;
+    തിരികെ ശൂന്യ;
 }

@@ -3,92 +3,92 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <sys/stat.h>
-#include <fcntl.h>
-#include "utils.h"
+#അന്തര്ഭാവ <sys/stat.h>
+#അന്തര്ഭാവ <fcntl.h>
+#അന്തര്ഭാവ "utils.h"
 
-#if HAVE_MMAP
+#എങ്കിൽ HAVE_MMAP
 
-#include <unistd.h>
-#include <sys/mman.h>
-#include <sys/types.h>
+#അന്തര്ഭാവ <unistd.h>
+#അന്തര്ഭാവ <sys/mman.h>
+#അന്തര്ഭാവ <sys/types.h>
 
 bool
-map_file(FILE *file, char **string_out, size_t *size_out)
+map_file(FILE *file, അക്ഷരം **string_out, size_t *size_out)
 {
-    struct stat stat_buf;
-    int fd;
-    char *string;
+    ഘടന stat stat_buf;
+    പൂർണ്ണസംഖ്യ fd;
+    അക്ഷരം *string;
 
     /* Make sure to keep the errno on failure! */
     fd = fileno(file);
-    if (fd < 0)
-        return false;
+    എങ്കിൽ (fd < 0)
+        തിരികെ false;
 
-    if (fstat(fd, &stat_buf) != 0)
-        return false;
+    എങ്കിൽ (fstat(fd, &stat_buf) != 0)
+        തിരികെ false;
 
-    string = mmap(NULL, (size_t)stat_buf.st_size, PROT_READ, MAP_SHARED, fd, 0);
-    if (string == MAP_FAILED)
-        return false;
+    string = mmap(ശൂന്യ, (size_t)stat_buf.st_size, PROT_READ, MAP_SHARED, fd, 0);
+    എങ്കിൽ (string == MAP_FAILED)
+        തിരികെ false;
 
     *string_out = string;
     *size_out = (size_t)stat_buf.st_size;
-    return true;
+    തിരികെ true;
 }
 
-void
-unmap_file(char *str, size_t size)
+ശൂന്യം
+unmap_file(അക്ഷരം *str, size_t size)
 {
     munmap(str, size);
 }
 
-#else
+#അല്ലെങ്കിൽ
 
 bool
-map_file(FILE *file, char **string_out, size_t *size_out)
+map_file(FILE *file, അക്ഷരം **string_out, size_t *size_out)
 {
     long ret;
     size_t ret_s;
-    char *string;
+    അക്ഷരം *string;
     size_t size;
 
     /* Make sure to keep the errno on failure! */
 
     ret = fseek(file, 0, SEEK_END);
-    if (ret != 0)
-        return false;
+    എങ്കിൽ (ret != 0)
+        തിരികെ false;
 
     ret = ftell(file);
-    if (ret < 0)
-        return false;
+    എങ്കിൽ (ret < 0)
+        തിരികെ false;
     size = (size_t) ret;
 
     ret = fseek(file, 0, SEEK_SET);
-    if (ret < 0)
-        return false;
+    എങ്കിൽ (ret < 0)
+        തിരികെ false;
 
     string = malloc(size);
-    if (!string)
-        return false;
+    എങ്കിൽ (!string)
+        തിരികെ false;
 
     ret_s = fread(string, 1, size, file);
-    if (ret_s < size) {
-        free(string);
-        return false;
+    എങ്കിൽ (ret_s < size) {
+        സ്വതന്ത്രം(string);
+        തിരികെ false;
     }
 
     *string_out = string;
     *size_out = size;
-    return true;
+    തിരികെ true;
 }
 
-void
-unmap_file(char *str, size_t size)
+ശൂന്യം
+unmap_file(അക്ഷരം *str, size_t size)
 {
-    free(str);
+    സ്വതന്ത്രം(str);
 }
 
 #endif
@@ -96,21 +96,21 @@ unmap_file(char *str, size_t size)
 /* Open a file and ensure it is a regular file.
  * Returns NULL in case of error. */
 FILE*
-open_file(const char *path)
+open_file(സ്ഥിരം അക്ഷരം *path)
 {
-    if (!path)
-        return NULL;
+    എങ്കിൽ (!path)
+        തിരികെ ശൂന്യ;
 
-    int fd = open(path, O_RDONLY);
-    if (fd < 0)
-        return NULL;
+    പൂർണ്ണസംഖ്യ fd = open(path, O_RDONLY);
+    എങ്കിൽ (fd < 0)
+        തിരികെ ശൂന്യ;
 
-    struct stat stat_buf;
-    int err = fstat(fd, &stat_buf);
+    ഘടന stat stat_buf;
+    പൂർണ്ണസംഖ്യ err = fstat(fd, &stat_buf);
 
-    if (err != 0 || !S_ISREG(stat_buf.st_mode)) {
+    എങ്കിൽ (err != 0 || !S_ISREG(stat_buf.st_mode)) {
         close(fd);
-        return NULL;
+        തിരികെ ശൂന്യ;
     }
 
     /* While unlikely to happen, if `fp` is NULL then we must close the file
@@ -118,15 +118,15 @@ open_file(const char *path)
      * https://www.ibm.com/docs/en/i/7.3?topic=functions-fdopen-associates-stream-file-descriptor)
      * Confirmed by Peter to be necessary in glibc. */
     FILE *fp = fdopen(fd, "rb");
-    if (fp == NULL) {
+    എങ്കിൽ (fp == ശൂന്യ) {
         close(fd);
     }
 
-    return fp;
+    തിരികെ fp;
 }
 
 // ASCII lower-case map.
-static const unsigned char lower_map[] = {
+സ്ഥിതം സ്ഥിരം unsigned അക്ഷരം lower_map[] = {
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
     21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
     40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58,
@@ -146,56 +146,56 @@ static const unsigned char lower_map[] = {
 };
 
 // ASCII tolower (to avoid locale issues).
-char
-to_lower(char c)
+അക്ഷരം
+to_lower(അക്ഷരം c)
 {
-    return (char) lower_map[(unsigned char) c];
+    തിരികെ (അക്ഷരം) lower_map[(unsigned അക്ഷരം) c];
 }
 
 // ASCII strcasecmp (to avoid locale issues).
-int
-istrcmp(const char *a, const char *b)
+പൂർണ്ണസംഖ്യ
+istrcmp(സ്ഥിരം അക്ഷരം *a, സ്ഥിരം അക്ഷരം *b)
 {
-    for (size_t i = 0; ; i++) {
-        if (to_lower(a[i]) != to_lower(b[i]))
-            return (int) to_lower(a[i]) - (int) to_lower(b[i]);
-        if (!a[i])
-            break;
+    വേണ്ടി (size_t i = 0; ; i++) {
+        എങ്കിൽ (to_lower(a[i]) != to_lower(b[i]))
+            തിരികെ (പൂർണ്ണസംഖ്യ) to_lower(a[i]) - (പൂർണ്ണസംഖ്യ) to_lower(b[i]);
+        എങ്കിൽ (!a[i])
+            നിർത്തുക;
     }
-    return 0;
+    തിരികെ 0;
 }
 
 // ASCII strncasecmp (to avoid locale issues).
-int
-istrncmp(const char *a, const char *b, size_t n)
+പൂർണ്ണസംഖ്യ
+istrncmp(സ്ഥിരം അക്ഷരം *a, സ്ഥിരം അക്ഷരം *b, size_t n)
 {
-    for (size_t i = 0; i < n; i++) {
-        if (to_lower(a[i]) != to_lower(b[i]))
-            return (int) to_lower(a[i]) - (int) to_lower(b[i]);
-        if (!a[i])
-            break;
+    വേണ്ടി (size_t i = 0; i < n; i++) {
+        എങ്കിൽ (to_lower(a[i]) != to_lower(b[i]))
+            തിരികെ (പൂർണ്ണസംഖ്യ) to_lower(a[i]) - (പൂർണ്ണസംഖ്യ) to_lower(b[i]);
+        എങ്കിൽ (!a[i])
+            നിർത്തുക;
     }
-    return 0;
+    തിരികെ 0;
 }
 
-#if !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
-int
-asprintf(char **strp, const char *fmt, ...)
+#എങ്കിൽ !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
+പൂർണ്ണസംഖ്യ
+asprintf(അക്ഷരം **strp, സ്ഥിരം അക്ഷരം *fmt, ...)
 {
-    int ret;
+    പൂർണ്ണസംഖ്യ ret;
     va_list ap;
     va_start(ap, fmt);
     ret = vasprintf(strp, fmt, ap);
     va_end(ap);
-    return ret;
+    തിരികെ ret;
 }
 
-# if !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
-int
-vasprintf(char **strp, const char *fmt, va_list ap)
+# എങ്കിൽ !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
+പൂർണ്ണസംഖ്യ
+vasprintf(അക്ഷരം **strp, സ്ഥിരം അക്ഷരം *fmt, va_list ap)
 {
-    int ret;
-    char *buf;
+    പൂർണ്ണസംഖ്യ ret;
+    അക്ഷരം *buf;
     va_list ap_copy;
 
     /*
@@ -203,22 +203,22 @@ vasprintf(char **strp, const char *fmt, va_list ap)
      * vsnprintf() returns: pass a copy to make sure "ap" remains valid.
      */
     va_copy(ap_copy, ap);
-    ret = vsnprintf(NULL, 0, fmt, ap_copy);
+    ret = vsnprintf(ശൂന്യ, 0, fmt, ap_copy);
     va_end(ap_copy);
 
-    if (ret < 0)
-        return ret;
+    എങ്കിൽ (ret < 0)
+        തിരികെ ret;
 
-    if (!(buf = malloc(ret + 1)))
-        return -1;
+    എങ്കിൽ (!(buf = malloc(ret + 1)))
+        തിരികെ -1;
 
-    if ((ret = vsnprintf(buf, ret + 1, fmt, ap)) < 0) {
-        free(buf);
-        return ret;
+    എങ്കിൽ ((ret = vsnprintf(buf, ret + 1, fmt, ap)) < 0) {
+        സ്വതന്ത്രം(buf);
+        തിരികെ ret;
     }
 
     *strp = buf;
-    return ret;
+    തിരികെ ret;
 }
 # endif /* !HAVE_VASPRINTF */
 #endif /* !HAVE_ASPRINTF */

@@ -4,111 +4,111 @@
  */
 #pragma once
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include "ast.h"
-#include "scanner-utils.h"
+#അന്തര്ഭാവ "ast.h"
+#അന്തര്ഭാവ "scanner-utils.h"
 
-ExprDef *
-ExprCreateString(xkb_atom_t str);
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create_String(xkb_atom_t str);
 
-ExprDef *
-ExprCreateInteger(int64_t ival);
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create_Integer(int64_t ival);
 
-ExprDef *
-ExprCreateFloat(void);
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create_Float(ശൂന്യം);
 
-ExprDef *
-ExprCreateBoolean(bool set);
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create_Boolean(bool set);
 
-ExprDef *
-ExprCreateKeyName(xkb_atom_t key_name);
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create_താക്കോൽ_Name(xkb_atom_t താക്കോൽ_name);
 
-ExprDef *
-ExprCreateKeySym(xkb_keysym_t keysym);
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create_താക്കോൽ_Sym(xkb_keysym_t keysym);
 
-ExprDef *
-ExprCreateIdent(xkb_atom_t ident);
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create_Ident(xkb_atom_t ident);
 
-ExprDef *
-ExprCreateUnary(enum stmt_type op, ExprDef *child);
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create_Unary(എണ്ണൽ stmt_type op, വ്യഞ്ജകം_Def *child);
 
-ExprDef *
-ExprCreateBinary(enum stmt_type op, ExprDef *left, ExprDef *right);
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create_ദ്വിമാന(എണ്ണൽ stmt_type op, വ്യഞ്ജകം_Def *ഇടത്, വ്യഞ്ജകം_Def *വലത്);
 
-ExprDef *
-ExprCreateFieldRef(xkb_atom_t element, xkb_atom_t field);
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create_Field_Ref(xkb_atom_t element, xkb_atom_t field);
 
-ExprDef *
-ExprCreateArrayRef(xkb_atom_t element, xkb_atom_t field, ExprDef *entry);
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create_Array_Ref(xkb_atom_t element, xkb_atom_t field, വ്യഞ്ജകം_Def *entry);
 
-ExprDef *
-ExprEmptyList(void);
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Empty_List(ശൂന്യം);
 
-ExprDef *
-ExprCreateAction(xkb_atom_t name, ExprDef *args);
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create_Action(xkb_atom_t name, വ്യഞ്ജകം_Def *args);
 
-ExprDef *
-ExprCreateActionList(ExprDef *actions);
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create_Action_List(വ്യഞ്ജകം_Def *actions);
 
-ExprDef *
-ExprCreateKeySymList(xkb_keysym_t sym);
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Create_താക്കോൽ_Sym_List(xkb_keysym_t sym);
 
-ExprDef *
-ExprAppendKeySymList(ExprDef *list, xkb_keysym_t sym);
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_Append_താക്കോൽ_Sym_List(വ്യഞ്ജകം_Def *list, xkb_keysym_t sym);
 
-ExprDef *
-ExprKeySymListAppendString(struct scanner *param,
-                           ExprDef *expr, const char *string);
+വ്യഞ്ജകം_Def *
+വ്യഞ്ജകം_താക്കോൽ_Sym_List_Append_String(ഘടന scanner *param,
+                           വ്യഞ്ജകം_Def *വ്യഞ്ജകം, സ്ഥിരം അക്ഷരം *string);
 
 xkb_keysym_t
-KeysymParseString(struct scanner *scanner, const char *string);
+KeysymParseString(ഘടന scanner *scanner, സ്ഥിരം അക്ഷരം *string);
 
 KeycodeDef *
-KeycodeCreate(xkb_atom_t name, int64_t value);
+KeycodeCreate(xkb_atom_t name, int64_t മൂല്യം);
 
-KeyAliasDef *
-KeyAliasCreate(xkb_atom_t alias, xkb_atom_t real);
+താക്കോൽ_Alias_Def *
+താക്കോൽ_Alias_Create(xkb_atom_t alias, xkb_atom_t real);
 
 VModDef *
-VModCreate(xkb_atom_t name, ExprDef *value);
+VModCreate(xkb_atom_t name, വ്യഞ്ജകം_Def *മൂല്യം);
 
 VarDef *
-VarCreate(ExprDef *name, ExprDef *value);
+VarCreate(വ്യഞ്ജകം_Def *name, വ്യഞ്ജകം_Def *മൂല്യം);
 
 VarDef *
 BoolVarCreate(xkb_atom_t ident, bool set);
 
 InterpDef *
-InterpCreate(xkb_keysym_t sym, ExprDef *match);
+InterpCreate(xkb_keysym_t sym, വ്യഞ്ജകം_Def *match);
 
-KeyTypeDef *
-KeyTypeCreate(xkb_atom_t name, VarDef *body);
+താക്കോൽ_Type_Def *
+താക്കോൽ_Type_Create(xkb_atom_t name, VarDef *body);
 
 SymbolsDef *
-SymbolsCreate(xkb_atom_t keyName, VarDef *symbols);
+SymbolsCreate(xkb_atom_t താക്കോൽ_Name, VarDef *symbols);
 
 GroupCompatDef *
-GroupCompatCreate(int64_t group, ExprDef *def);
+GroupCompatCreate(int64_t group, വ്യഞ്ജകം_Def *def);
 
 ModMapDef *
-ModMapCreate(ExprDef *modifiers, ExprDef *keys);
+ModMapCreate(വ്യഞ്ജകം_Def *modifiers, വ്യഞ്ജകം_Def *താക്കോലുകൾ);
 
 LedMapDef *
 LedMapCreate(xkb_atom_t name, VarDef *body);
 
 LedNameDef *
-LedNameCreate(int64_t ndx, ExprDef *name, bool virtual);
+LedNameCreate(int64_t ndx, വ്യഞ്ജകം_Def *name, bool മായാ);
 
 UnknownStatement *
-UnknownStatementCreate(enum stmt_type, struct sval name);
+UnknownStatementCreate(എണ്ണൽ stmt_type, ഘടന sval name);
 
 IncludeStmt *
-IncludeCreate(struct xkb_context *ctx, char *str, enum merge_mode merge);
+IncludeCreate(ഘടന xkb_context *ctx, അക്ഷരം *str, എണ്ണൽ merge_mode merge);
 
 XkbFile *
-XkbFileCreate(enum xkb_file_type type, char *name, ParseCommon *defs,
-              enum xkb_map_flags flags);
+XkbFileCreate(എണ്ണൽ xkb_file_type type, അക്ഷരം *name, ParseCommon *defs,
+              എണ്ണൽ xkb_map_flags flags);
 
-void
+ശൂന്യം
 FreeStmt(ParseCommon *stmt);

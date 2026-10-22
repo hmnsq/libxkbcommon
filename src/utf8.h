@@ -7,16 +7,16 @@
  */
 #pragma once
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
+#അന്തര്ഭാവ <stdbool.h>
+#അന്തര്ഭാവ <stddef.h>
+#അന്തര്ഭാവ <stdint.h>
 
-#include "utils.h"
+#അന്തര്ഭാവ "utils.h"
 
 XKB_EXPORT_PRIVATE uint8_t
-utf32_to_utf8(uint32_t unichar, char *buffer);
+utf32_to_utf8(uint32_t unichar, അക്ഷരം *buffer);
 
 XKB_EXPORT_PRIVATE bool
-is_valid_utf8(const char *ss, size_t len);
+is_valid_utf8(സ്ഥിരം അക്ഷരം *ss, size_t len);

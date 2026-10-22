@@ -4,88 +4,88 @@
  */
 #pragma once
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <string.h>
+#അന്തര്ഭാവ <stdbool.h>
+#അന്തര്ഭാവ <stddef.h>
+#അന്തര്ഭാവ <stdint.h>
+#അന്തര്ഭാവ <string.h>
 
-#include "context.h"
-#include "darray.h"
-#include "messages-codes.h"
-#include "utils.h"
-#include "util-numbers.h"
-#include "utf8.h"
+#അന്തര്ഭാവ "context.h"
+#അന്തര്ഭാവ "darray.h"
+#അന്തര്ഭാവ "messages-codes.h"
+#അന്തര്ഭാവ "utils.h"
+#അന്തര്ഭാവ "util-numbers.h"
+#അന്തര്ഭാവ "utf8.h"
 
 /* Point to some substring in the file; used to avoid copying. */
-struct sval {
+ഘടന sval {
     size_t len;
-    const char *start ATTR_COUNTED_BY(len);
+    സ്ഥിരം അക്ഷരം *start ATTR_COUNTED_BY(len);
 };
-typedef darray(struct sval) darray_sval;
+തരനിർവചനം darray(ഘടന sval) darray_sval;
 
-static inline bool
-svaleq(struct sval s1, struct sval s2)
+സ്ഥിതം വരിയിൽ bool
+svaleq(ഘടന sval s1, ഘടന sval s2)
 {
-    return s1.len == s2.len && memcmp(s1.start, s2.start, s1.len) == 0;
+    തിരികെ s1.len == s2.len && memcmp(s1.start, s2.start, s1.len) == 0;
 }
 
-static inline bool
-isvaleq(struct sval s1, struct sval s2)
+സ്ഥിതം വരിയിൽ bool
+isvaleq(ഘടന sval s1, ഘടന sval s2)
 {
-    return s1.len == s2.len && istrncmp(s1.start, s2.start, s1.len) == 0;
+    തിരികെ s1.len == s2.len && istrncmp(s1.start, s2.start, s1.len) == 0;
 }
 
-static inline bool
-svaleq_prefix(struct sval s1, struct sval s2)
+സ്ഥിതം വരിയിൽ bool
+svaleq_prefix(ഘടന sval s1, ഘടന sval s2)
 {
-    return s1.len <= s2.len && memcmp(s1.start, s2.start, s1.len) == 0;
+    തിരികെ s1.len <= s2.len && memcmp(s1.start, s2.start, s1.len) == 0;
 }
 
-#define SVAL(__start, __len) (struct sval){ .start = (__start), .len = (__len) }
-#define SVAL_LIT(literal) SVAL(literal, sizeof(literal) - 1)
-#define SVAL_INIT(literal) { .start = (literal), .len = sizeof(literal) - 1 }
+#define SVAL(__start, __len) (ഘടന sval){ .start = (__start), .len = (__len) }
+#define SVAL_LIT(literal) SVAL(literal, വലുപ്പം(literal) - 1)
+#define SVAL_INIT(literal) { .start = (literal), .len = വലുപ്പം(literal) - 1 }
 
 /* A line:column location in the input string (1-based). */
-struct scanner_loc {
-    size_t line, column;
+ഘടന scanner_loc {
+    size_t വരി, column;
 };
 
-struct scanner {
+ഘടന scanner {
     size_t pos;
     size_t len;
-    const char *s ATTR_COUNTED_BY(len);
+    സ്ഥിരം അക്ഷരം *s ATTR_COUNTED_BY(len);
     /*
      * Internal buffer.
      * Since this is used to handle paths that are possibly absolute, in theory
      * we should size it to PATH_MAX. However it is very unlikely to reach such
      * long paths in our context.
      */
-    char buf[1024];
+    അക്ഷരം buf[1024];
     size_t buf_pos;
     /* The position of the start of the current token. */
     size_t token_pos;
     /* Cached values used by scanner_token_location. */
     size_t cached_pos;
-    struct scanner_loc cached_loc;
-    const char *file_name;
-    struct xkb_context *ctx;
-    void *priv;
+    ഘടന scanner_loc cached_loc;
+    സ്ഥിരം അക്ഷരം *file_name;
+    ഘടന xkb_context *ctx;
+    ശൂന്യം *priv;
 };
 
 /* Compute the line:column location for the current token (slow). */
-struct scanner_loc
-scanner_token_location(struct scanner *s);
+ഘടന scanner_loc
+scanner_token_location(ഘടന scanner *s);
 
-#define scanner_log_with_code(scanner, level, verbosity, log_msg_id, fmt, ...) do { \
-    struct scanner_loc loc = scanner_token_location((scanner));                     \
-    xkb_log_with_code((scanner)->ctx, (level), verbosity, log_msg_id,               \
+#define scanner_log_with_code(scanner, level, verbosity, log_സന്ദേശം_id, fmt, ...) ചെയ്യുക { \
+    ഘടന scanner_loc loc = scanner_token_location((scanner));                     \
+    xkb_log_with_code((scanner)->ctx, (level), verbosity, log_സന്ദേശം_id,               \
                       "%s:%zu:%zu: " fmt "\n",                                      \
                       (scanner)->file_name,                                         \
-                      loc.line,                                                     \
+                      loc.വരി,                                                     \
                       loc.column, ##__VA_ARGS__);                                   \
-} while(0)
+} ആകുമ്പോൾ(0)
 
 #define scanner_err(scanner, id, fmt, ...)              \
     scanner_log_with_code(scanner, XKB_LOG_LEVEL_ERROR, \
@@ -99,200 +99,200 @@ scanner_token_location(struct scanner *s);
     scanner_log_with_code(scanner, XKB_LOG_LEVEL_WARNING, verbosity, id, \
                           fmt, ##__VA_ARGS__)
 
-static inline void
-scanner_init(struct scanner *s, struct xkb_context *ctx,
-             const char *string, size_t len, const char *file_name,
-             void *priv)
+സ്ഥിതം വരിയിൽ ശൂന്യം
+scanner_init(ഘടന scanner *s, ഘടന xkb_context *ctx,
+             സ്ഥിരം അക്ഷരം *string, size_t len, സ്ഥിരം അക്ഷരം *file_name,
+             ശൂന്യം *priv)
 {
     s->s = string;
     s->len = len;
     s->pos = 0;
     s->token_pos = 0;
     s->cached_pos = 0;
-    s->cached_loc.line = s->cached_loc.column = 1;
+    s->cached_loc.വരി = s->cached_loc.column = 1;
     s->file_name = file_name;
     s->ctx = ctx;
     s->priv = priv;
 }
 
-static inline char
-scanner_peek(struct scanner *s)
+സ്ഥിതം വരിയിൽ അക്ഷരം
+scanner_peek(ഘടന scanner *s)
 {
-    if (unlikely(s->pos >= s->len))
-        return '\0';
-    return s->s[s->pos];
+    എങ്കിൽ (unlikely(s->pos >= s->len))
+        തിരികെ '\0';
+    തിരികെ s->s[s->pos];
 }
 
-static inline bool
-scanner_eof(struct scanner *s)
+സ്ഥിതം വരിയിൽ bool
+scanner_eof(ഘടന scanner *s)
 {
-    return s->pos >= s->len;
+    തിരികെ s->pos >= s->len;
 }
 
-static inline bool
-scanner_eol(struct scanner *s)
+സ്ഥിതം വരിയിൽ bool
+scanner_eol(ഘടന scanner *s)
 {
-    return scanner_peek(s) == '\n';
+    തിരികെ scanner_peek(s) == '\n';
 }
 
-static inline void
-scanner_skip_to_eol(struct scanner *s)
+സ്ഥിതം വരിയിൽ ശൂന്യം
+scanner_skip_to_eol(ഘടന scanner *s)
 {
-    const char *nl = memchr(s->s + s->pos, '\n', s->len - s->pos);
-    const size_t new_pos = nl ? (size_t) (nl - s->s) : s->len;
+    സ്ഥിരം അക്ഷരം *nl = memchr(s->s + s->pos, '\n', s->len - s->pos);
+    സ്ഥിരം size_t new_pos = nl ? (size_t) (nl - s->s) : s->len;
     s->pos = new_pos;
 }
 
-static inline char
-scanner_next(struct scanner *s)
+സ്ഥിതം വരിയിൽ അക്ഷരം
+scanner_next(ഘടന scanner *s)
 {
-    if (unlikely(scanner_eof(s)))
-        return '\0';
-    return s->s[s->pos++];
+    എങ്കിൽ (unlikely(scanner_eof(s)))
+        തിരികെ '\0';
+    തിരികെ s->s[s->pos++];
 }
 
-static inline bool
-scanner_chr(struct scanner *s, char ch)
+സ്ഥിതം വരിയിൽ bool
+scanner_chr(ഘടന scanner *s, അക്ഷരം ch)
 {
-    if (likely(scanner_peek(s) != ch))
-        return false;
+    എങ്കിൽ (likely(scanner_peek(s) != ch))
+        തിരികെ false;
     s->pos++;
-    return true;
+    തിരികെ true;
 }
 
-static inline bool
-scanner_str(struct scanner *s, const char *string, size_t len)
+സ്ഥിതം വരിയിൽ bool
+scanner_str(ഘടന scanner *s, സ്ഥിരം അക്ഷരം *string, size_t len)
 {
-    if (s->len - s->pos < len)
-        return false;
-    if (memcmp(s->s + s->pos, string, len) != 0)
-        return false;
+    എങ്കിൽ (s->len - s->pos < len)
+        തിരികെ false;
+    എങ്കിൽ (memcmp(s->s + s->pos, string, len) != 0)
+        തിരികെ false;
     s->pos += len;
-    return true;
+    തിരികെ true;
 }
 
-#define scanner_lit(s, literal) scanner_str(s, literal, sizeof(literal) - 1)
+#define scanner_lit(s, literal) scanner_str(s, literal, വലുപ്പം(literal) - 1)
 
-static inline bool
-scanner_rules_is_ident(char ch)
+സ്ഥിതം വരിയിൽ bool
+scanner_rules_is_ident(അക്ഷരം ch)
 {
-    return is_graph(ch) && ch != '\\';
+    തിരികെ is_graph(ch) && ch != '\\';
 }
 
 /*
  * A keyword/operator is only valid when it is followed by a character
  * which cannot continue the token.
  */
-static inline bool
-scanner_rules_str_token(struct scanner *s, const char *string, size_t len)
+സ്ഥിതം വരിയിൽ bool
+scanner_rules_str_token(ഘടന scanner *s, സ്ഥിരം അക്ഷരം *string, size_t len)
 {
-    if (!scanner_str(s, string, len)) {
-        return false;
+    എങ്കിൽ (!scanner_str(s, string, len)) {
+        തിരികെ false;
     }
-    if (scanner_rules_is_ident(scanner_peek(s))) {
+    എങ്കിൽ (scanner_rules_is_ident(scanner_peek(s))) {
         /* Backtrack */
         s->pos -= len;
-        return false;
+        തിരികെ false;
     }
-    return true;
+    തിരികെ true;
 }
 
 #define scanner_rules_lit_token(s, literal) \
-    scanner_rules_str_token((s), (literal), sizeof(literal) - 1)
+    scanner_rules_str_token((s), (literal), വലുപ്പം(literal) - 1)
 
-static inline size_t
-scanner_rules_ident_token(struct scanner *s)
+സ്ഥിതം വരിയിൽ size_t
+scanner_rules_ident_token(ഘടന scanner *s)
 {
     size_t len = 0;
-    while (!scanner_eof(s) && scanner_rules_is_ident(s->s[s->pos])) {
+    ആകുമ്പോൾ (!scanner_eof(s) && scanner_rules_is_ident(s->s[s->pos])) {
         s->pos++;
         len++;
     }
-    return len;
+    തിരികെ len;
 }
 
-static inline bool
-scanner_buf_append(struct scanner *s, char ch)
+സ്ഥിതം വരിയിൽ bool
+scanner_buf_append(ഘടന scanner *s, അക്ഷരം ch)
 {
-    if (s->buf_pos + 1 >= sizeof(s->buf))
-        return false;
+    എങ്കിൽ (s->buf_pos + 1 >= വലുപ്പം(s->buf))
+        തിരികെ false;
     s->buf[s->buf_pos++] = ch;
-    return true;
+    തിരികെ true;
 }
 
-static inline bool
-scanner_buf_appends(struct scanner *s, const char *str)
+സ്ഥിതം വരിയിൽ bool
+scanner_buf_appends(ഘടന scanner *s, സ്ഥിരം അക്ഷരം *str)
 {
-    const int ret = snprintf(s->buf + s->buf_pos,
-                             sizeof(s->buf) - s->buf_pos,
+    സ്ഥിരം പൂർണ്ണസംഖ്യ ret = snprintf(s->buf + s->buf_pos,
+                             വലുപ്പം(s->buf) - s->buf_pos,
                              "%s", str);
-    if (ret < 0 || (size_t)ret >= sizeof(s->buf) - s->buf_pos)
-        return false;
+    എങ്കിൽ (ret < 0 || (size_t)ret >= വലുപ്പം(s->buf) - s->buf_pos)
+        തിരികെ false;
     s->buf_pos += (size_t)ret;
-    return true;
+    തിരികെ true;
 }
 
-static inline bool
-scanner_buf_appends_code_point(struct scanner *s, uint32_t c)
+സ്ഥിതം വരിയിൽ bool
+scanner_buf_appends_code_point(ഘടന scanner *s, uint32_t c)
 {
     /* Up to 4 bytes + NULL */
-    if (s->buf_pos + 5 <= sizeof(s->buf)) {
-        uint8_t count = utf32_to_utf8(c, s->buf + s->buf_pos);
-        if (count == 0) {
+    എങ്കിൽ (s->buf_pos + 5 <= വലുപ്പം(s->buf)) {
+        uint8_t എണ്ണം = utf32_to_utf8(c, s->buf + s->buf_pos);
+        എങ്കിൽ (എണ്ണം == 0) {
             /* Handle encoding failure with U+FFFD REPLACEMENT CHARACTER */
-            count = utf32_to_utf8(0xfffd, s->buf + s->buf_pos);
+            എണ്ണം = utf32_to_utf8(0xfffd, s->buf + s->buf_pos);
         }
-        if (count == 0)
-            return false;
+        എങ്കിൽ (എണ്ണം == 0)
+            തിരികെ false;
         /* `count` counts the NULL byte */
-        s->buf_pos += (size_t)count - 1;
-        return true;
-    } else {
-        return false;
+        s->buf_pos += (size_t)എണ്ണം - 1;
+        തിരികെ true;
+    } അല്ലെങ്കിൽ {
+        തിരികെ false;
     }
 }
 
-static inline bool
-scanner_oct(struct scanner *s, uint8_t *out)
+സ്ഥിതം വരിയിൽ bool
+scanner_oct(ഘടന scanner *s, uint8_t *out)
 {
     uint8_t i = 0;
     uint8_t c = 0;
-    for (; scanner_peek(s) >= '0' && scanner_peek(s) <= '7' && i < 4; i++) {
+    വേണ്ടി (; scanner_peek(s) >= '0' && scanner_peek(s) <= '7' && i < 4; i++) {
         /* Test overflow */
-        if (c < 040) {
+        എങ്കിൽ (c < 040) {
             c = c * 8 + (uint8_t)(scanner_next(s) - '0');
-        } else {
+        } അല്ലെങ്കിൽ {
             /* Consume valid digit, but mark result as invalid */
             scanner_next(s);
             *out = c;
-            return false;
+            തിരികെ false;
         }
     }
     *out = c;
-    return i > 0;
+    തിരികെ i > 0;
 }
 
-static inline bool
-scanner_hex(struct scanner *s, uint8_t *out)
+സ്ഥിതം വരിയിൽ bool
+scanner_hex(ഘടന scanner *s, uint8_t *out)
 {
     uint8_t i;
-    for (i = 0, *out = 0; is_xdigit(scanner_peek(s)) && i < 2; i++) {
-        const char c = scanner_next(s);
-        const char offset = (char) (c >= '0' && c <= '9' ? '0' :
+    വേണ്ടി (i = 0, *out = 0; is_xdigit(scanner_peek(s)) && i < 2; i++) {
+        സ്ഥിരം അക്ഷരം c = scanner_next(s);
+        സ്ഥിരം അക്ഷരം offset = (അക്ഷരം) (c >= '0' && c <= '9' ? '0' :
                                     c >= 'a' && c <= 'f' ? 'a' - 10
                                                          : 'A' - 10);
         *out = *out * 16 + (uint8_t)(c - offset);
     }
-    return i > 0;
+    തിരികെ i > 0;
 }
 
-static inline int
-scanner_dec_int64(struct scanner *s, int64_t *out)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ
+scanner_dec_int64(ഘടന scanner *s, int64_t *out)
 {
     uint64_t val = 0;
-    const int count =
+    സ്ഥിരം പൂർണ്ണസംഖ്യ എണ്ണം =
         parse_dec_to_uint64_t(s->s + s->pos, s->len - s->pos, &val);
-    if (count > 0) {
+    എങ്കിൽ (എണ്ണം > 0) {
         /*
          * NOTE: Since the sign is handled as a token, we parse only *positive*
          *       values here. So that means that *we cannot parse INT64_MIN*,
@@ -302,86 +302,86 @@ scanner_dec_int64(struct scanner *s, int64_t *out)
          *       to parse only 32 bits integers in realistic keymap files and
          *       the limitation should not be an issue.
          */
-        if (val > INT64_MAX)
-            return -1;
-        s->pos += (size_t)count;
+        എങ്കിൽ (val > INT64_MAX)
+            തിരികെ -1;
+        s->pos += (size_t)എണ്ണം;
         *out = (int64_t)val;
     }
-    return count;
+    തിരികെ എണ്ണം;
 }
 
-static inline int
-scanner_hex_int64(struct scanner *s, int64_t *out)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ
+scanner_hex_int64(ഘടന scanner *s, int64_t *out)
 {
     uint64_t val = 0;
-    const int count =
+    സ്ഥിരം പൂർണ്ണസംഖ്യ എണ്ണം =
         parse_hex_to_uint64_t(s->s + s->pos, s->len - s->pos, &val);
-    if (count > 0) {
+    എങ്കിൽ (എണ്ണം > 0) {
         /* See comment in `scanner_dec_int64()` above */
-        if (val > INT64_MAX)
-            return -1;
-        s->pos += (size_t)count;
+        എങ്കിൽ (val > INT64_MAX)
+            തിരികെ -1;
+        s->pos += (size_t)എണ്ണം;
         *out = (int64_t) val;
     }
-    return count;
+    തിരികെ എണ്ണം;
 }
 
 /** Parser for the {NNNN} part of a Unicode escape sequences */
-static inline bool
-scanner_unicode_code_point(struct scanner *s, uint32_t *out)
+സ്ഥിതം വരിയിൽ bool
+scanner_unicode_code_point(ഘടന scanner *s, uint32_t *out)
 {
-    if (!scanner_chr(s, '{'))
-        return false;
+    എങ്കിൽ (!scanner_chr(s, '{'))
+        തിരികെ false;
 
     uint32_t cp = 0;
-    const int count =
+    സ്ഥിരം പൂർണ്ണസംഖ്യ എണ്ണം =
         parse_hex_to_uint32_t(s->s + s->pos, s->len - s->pos, &cp);
-    if (count > 0)
-        s->pos += (size_t)count;
+    എങ്കിൽ (എണ്ണം > 0)
+        s->pos += (size_t)എണ്ണം;
 
     /* Try to consume everything within the string until the next `}` */
-    const size_t last_valid = s->pos;
-    while (!scanner_eof(s) && !scanner_eol(s) && scanner_peek(s) != '"' &&
+    സ്ഥിരം size_t last_valid = s->pos;
+    ആകുമ്പോൾ (!scanner_eof(s) && !scanner_eol(s) && scanner_peek(s) != '"' &&
            scanner_peek(s) != '}') {
         scanner_next(s);
     }
 
-    if (scanner_chr(s, '}')) {
+    എങ്കിൽ (scanner_chr(s, '}')) {
         /* End of the escape sequence; code point may be invalid */
         *out = cp;
-        return (count > 0 && s->pos == last_valid + 1 && cp <= 0x10ffff);
+        തിരികെ (എണ്ണം > 0 && s->pos == last_valid + 1 && cp <= 0x10ffff);
     }
 
     /* No closing `}` within the string: rollback to last valid position */
     s->pos = last_valid;
-    return false;
+    തിരികെ false;
 }
 
 /* Basic detection of wrong character encoding based on the first bytes */
-static inline bool
-scanner_check_supported_char_encoding(struct scanner *scanner)
+സ്ഥിതം വരിയിൽ bool
+scanner_check_supported_char_encoding(ഘടന scanner *scanner)
 {
     /* Skip UTF-8 encoded BOM (U+FEFF)
      * See: https://www.unicode.org/faq/utf_bom.html#bom5 */
-    if (scanner_str(scanner, "\xef\xbb\xbf", 3) || scanner->len < 2) {
+    എങ്കിൽ (scanner_str(scanner, "\xef\xbb\xbf", 3) || scanner->len < 2) {
         /* Assume UTF-8 encoding or trivial short input */
-        return true;
+        തിരികെ true;
     }
 
     /* Early detection of wrong file encoding, e.g. UTF-16 or UTF-32 */
-    if (scanner->s[0] == '\0' || scanner->s[1] == '\0') {
+    എങ്കിൽ (scanner->s[0] == '\0' || scanner->s[1] == '\0') {
         scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                     "unexpected NULL character.");
-        return false;
+        തിരികെ false;
     }
     /* Enforce the first character to be ASCII.
        See the note before the use of this function, that explains the relevant
        parts of the grammars of rules, keymap components and Compose. */
-    if (!is_ascii(scanner->s[0])) {
+    എങ്കിൽ (!is_ascii(scanner->s[0])) {
         scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                     "unexpected non-ASCII character.");
-        return false;
+        തിരികെ false;
     }
 
-    return true;
+    തിരികെ true;
 }

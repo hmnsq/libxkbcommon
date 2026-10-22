@@ -4,32 +4,32 @@
  */
 #pragma once
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 
-#include <stdlib.h>
+#അന്തര്ഭാവ <stdlib.h>
 
-#if !HAVE_RANDOM
+#എങ്കിൽ !HAVE_RANDOM
 
 /* Simple random() fallback based on rand() */
 
-#include <stdint.h>
+#അന്തര്ഭാവ <stdint.h>
 
-static inline void
-srandom(unsigned int seed)
+സ്ഥിതം വരിയിൽ ശൂന്യം
+srandom(unsigned പൂർണ്ണസംഖ്യ seed)
 {
     srand(seed);
 }
 
-static inline long
-random(void)
+സ്ഥിതം വരിയിൽ long
+random(ശൂന്യം)
 {
     /* rand() is only guaranteed to cover [0, 32767] (15 bits), so
      * combine three calls to safely fill 31 bits regardless of the
      * platform's actual RAND_MAX. */
-    const long r = ((long)rand() & 0x7fffU)
+    സ്ഥിരം long r = ((long)rand() & 0x7fffU)
                  | (((long)rand() & 0x7fffU) << 15)
                  | (((long)rand() & 0x7fffU) << 30);
 
-    return r & 0x7fffffffL;
+    തിരികെ r & 0x7fffffffL;
 }
 #endif
