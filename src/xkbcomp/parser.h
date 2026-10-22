@@ -48,24 +48,24 @@
 #ifndef YYDEBUG
 # define YYDEBUG 0
 #endif
-#if YYDEBUG
-extern int _xkbcommon_debug;
+#إذا YYDEBUG
+خارجي صحيح _xkbcommon_debug;
 #endif
 /* "%code requires" blocks.  */
 #line 14 "src/xkbcomp/parser.y"
 
-#include "config.h"
+#ضمن "config.h"
 
-#include "scanner-utils.h"
-#include "xkbcomp/ast.h"
-#include "xkbcomp/xkbcomp-priv.h"
+#ضمن "scanner-utils.h"
+#ضمن "xkbcomp/ast.h"
+#ضمن "xkbcomp/xkbcomp-priv.h"
 
 #line 57 "src/xkbcomp/parser.h"
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
-  enum yytokentype
+  تعداد yytokentype
   {
     YYEMPTY = -2,
     END_OF_FILE = 0,               /* "end of file"  */
@@ -89,13 +89,13 @@ extern int _xkbcommon_debug;
     TYPE = 21,                     /* "type"  */
     INTERPRET = 22,                /* "interpret"  */
     ACTION_TOK = 23,               /* "action"  */
-    KEY = 24,                      /* "key"  */
+    کونچي_3 = 24,                      /* "key"  */
     ALIAS = 25,                    /* "alias"  */
     GROUP = 26,                    /* "group"  */
     MODIFIER_MAP = 27,             /* "modifier_map"  */
     INDICATOR = 28,                /* "indicator"  */
     SHAPE = 29,                    /* "shape"  */
-    KEYS = 30,                     /* "keys"  */
+    کونچي_سموا_2 = 30,                     /* "keys"  */
     ROW = 31,                      /* "row"  */
     SECTION = 32,                  /* "section"  */
     OVERLAY = 33,                  /* "overlay"  */
@@ -129,57 +129,57 @@ extern int _xkbcommon_debug;
     PARTIAL = 70,                  /* "partial"  */
     DEFAULT = 71,                  /* "default"  */
     HIDDEN = 72,                   /* "hidden"  */
-    ALPHANUMERIC_KEYS = 73,        /* "alphanumeric_keys"  */
-    MODIFIER_KEYS = 74,            /* "modifier_keys"  */
-    KEYPAD_KEYS = 75,              /* "keypad_keys"  */
-    FUNCTION_KEYS = 76,            /* "function_keys"  */
+    ALPHANUMERIC_کونچي_سموا = 73,        /* "alphanumeric_keys"  */
+    MODIFIER_کونچي_سموا = 74,            /* "modifier_keys"  */
+    KEYPAD_کونچي_سموا = 75,              /* "keypad_keys"  */
+    FUNCTION_کونچي_سموا = 76,            /* "function_keys"  */
     ALTERNATE_GROUP = 77,          /* "alternate_group"  */
     DEPRECATED = 78                /* "deprecated"  */
   };
-  typedef enum yytokentype yytoken_kind_t;
+  تعريفنوع تعداد yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */
-#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-union YYSTYPE
+#إذا ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
+اتحاد YYSTYPE
 {
 #line 177 "src/xkbcomp/parser.y"
 
-        int64_t          num;
-        enum xkb_file_type file_type;
-        char            *str;
-        struct sval     sval;
+        int64_t          اڠک;
+        تعداد xkb_file_type file_type;
+        حرف            *str;
+        بنية sval     sval;
         xkb_atom_t      atom;
-        enum merge_mode merge;
-        enum xkb_map_flags mapFlags;
+        تعداد merge_mode merge;
+        تعداد xkb_map_flags mapFlags;
         xkb_keysym_t    keysym;
         ParseCommon     *any;
-        struct { ParseCommon *head; ParseCommon *last; } anyList;
-        uint32_t        noSymbolOrActionList;
-        ExprDef         *expr;
-        struct { ExprDef *head; ExprDef *last; } exprList;
+        بنية { ParseCommon *head; ParseCommon *last; } anyList;
+        uint32_t        no_سيمبول_Or_Action_List;
+        اوڠکاڤن_Def         *اوڠکاڤن;
+        بنية { اوڠکاڤن_Def *head; اوڠکاڤن_Def *last; } اوڠکاڤن_List;
         VarDef          *var;
-        struct { VarDef *head; VarDef *last; } varList;
+        بنية { VarDef *head; VarDef *last; } varList;
         VModDef         *vmod;
-        struct { VModDef *head; VModDef *last; } vmodList;
+        بنية { VModDef *head; VModDef *last; } vmodList;
         InterpDef       *interp;
-        KeyTypeDef      *keyType;
+        کونچي_Type_Def      *کونچي_Type;
         SymbolsDef      *syms;
         ModMapDef       *modMask;
         GroupCompatDef  *groupCompat;
         LedMapDef       *ledMap;
         LedNameDef      *ledName;
-        KeycodeDef      *keyCode;
-        KeyAliasDef     *keyAlias;
+        KeycodeDef      *کونچي_Code;
+        کونچي_Alias_Def     *کونچي_Alias;
         UnknownStatement *unknown;
-        void            *geom;
+        فراغ            *geom;
         XkbFile         *file;
-        struct { XkbFile *head; XkbFile *last; } fileList;
+        بنية { XkbFile *head; XkbFile *last; } fileList;
 
 #line 173 "src/xkbcomp/parser.h"
 
 };
-typedef union YYSTYPE YYSTYPE;
+تعريفنوع اتحاد YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
@@ -187,7 +187,7 @@ typedef union YYSTYPE YYSTYPE;
 
 
 
-int _xkbcommon_parse (struct parser_param *param);
+صحيح _xkbcommon_parse (بنية parser_param *param);
 
 
 #endif /* !YY__XKBCOMMON_SRC_XKBCOMP_PARSER_H_INCLUDED  */
