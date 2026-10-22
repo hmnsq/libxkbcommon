@@ -25,16 +25,16 @@ xkb_compose_table_new(struct xkb_context *ctx, const char *func,
     const enum xkb_compose_compile_flags invalid_flags = (
         flags & ~(enum xkb_compose_compile_flags)XKB_COMPOSE_COMPILE_FLAGS_VALUES
     );
-    if (invalid_flags) {
+    如果 (invalid_flags) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "%s: unrecognized flags: %#x\n", func, invalid_flags);
-        return NULL;
+        返回 NULL;
     }
 
-    if (format != XKB_COMPOSE_FORMAT_TEXT_V1) {
+    如果 (format != XKB_COMPOSE_FORMAT_TEXT_V1) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "%s: unsupported compose format: %d\n", func, format);
-        return NULL;
+        返回 NULL;
     }
 
     char *resolved_locale;
@@ -42,13 +42,13 @@ xkb_compose_table_new(struct xkb_context *ctx, const char *func,
     struct compose_node dummy = {0};
 
     resolved_locale = resolve_locale(ctx, locale);
-    if (!resolved_locale)
-        return NULL;
+    如果 (!resolved_locale)
+        返回 NULL;
 
     table = calloc(1, sizeof(*table));
-    if (!table) {
+    如果 (!table) {
         free(resolved_locale);
-        return NULL;
+        返回 NULL;
     }
 
     table->refcnt = 1;
@@ -69,7 +69,7 @@ xkb_compose_table_new(struct xkb_context *ctx, const char *func,
 
     darray_append(table->utf8, '\0');
 
-    return table;
+    返回 table;
 }
 
 struct xkb_compose_table *
@@ -77,15 +77,15 @@ xkb_compose_table_ref(struct xkb_compose_table *table)
 {
     assert(table->refcnt > 0);
     table->refcnt++;
-    return table;
+    返回 table;
 }
 
 void
 xkb_compose_table_unref(struct xkb_compose_table *table)
 {
     assert(!table || table->refcnt > 0);
-    if (!table || --table->refcnt > 0)
-        return;
+    如果 (!table || --table->refcnt > 0)
+        返回;
     free(table->locale);
     darray_free(table->nodes);
     darray_free(table->utf8);
@@ -102,15 +102,15 @@ xkb_compose_table_new_from_file(struct xkb_context *ctx,
 {
     struct xkb_compose_table * const table =
         xkb_compose_table_new(ctx, __func__, locale, format, flags);
-    if (!table)
-        return NULL;
+    如果 (!table)
+        返回 NULL;
 
-    if (!parse_file(table, file, "(unknown file)")) {
+    如果 (!parse_file(table, file, "(unknown file)")) {
         xkb_compose_table_unref(table);
-        return NULL;
+        返回 NULL;
     }
 
-    return table;
+    返回 table;
 }
 
 struct xkb_compose_table *
@@ -122,15 +122,15 @@ xkb_compose_table_new_from_buffer(struct xkb_context *ctx,
 {
     struct xkb_compose_table * const table =
         xkb_compose_table_new(ctx, __func__, locale, format, flags);
-    if (!table)
-        return NULL;
+    如果 (!table)
+        返回 NULL;
 
-    if (!parse_string(table, buffer, length, "(input string)")) {
+    如果 (!parse_string(table, buffer, length, "(input string)")) {
         xkb_compose_table_unref(table);
-        return NULL;
+        返回 NULL;
     }
 
-    return table;
+    返回 table;
 }
 
 struct xkb_compose_table *
@@ -141,30 +141,30 @@ xkb_compose_table_new_from_locale(struct xkb_context *ctx,
     static const enum xkb_compose_format format = XKB_COMPOSE_FORMAT_TEXT_V1;
     struct xkb_compose_table * const table =
         xkb_compose_table_new(ctx, __func__, locale, format, flags);
-    if (!table)
-        return NULL;
+    如果 (!table)
+        返回 NULL;
 
     char *path = get_xcomposefile_path(ctx);
     FILE *file = open_file(path);
-    if (file)
+    如果 (file)
         goto found_path;
     free(path);
 
     path = get_xdg_xcompose_file_path(ctx);
     file = open_file(path);
-    if (file)
+    如果 (file)
         goto found_path;
     free(path);
 
     path = get_home_xcompose_file_path(ctx);
     file = open_file(path);
-    if (file)
+    如果 (file)
         goto found_path;
     free(path);
 
     path = get_locale_compose_file_path(ctx, table->locale);
     file = open_file(path);
-    if (file)
+    如果 (file)
         goto found_path;
     free(path);
 
@@ -172,16 +172,16 @@ xkb_compose_table_new_from_locale(struct xkb_context *ctx,
             "couldn't find a Compose file for locale \"%s\" (mapped to \"%s\")\n",
             locale, table->locale);
     xkb_compose_table_unref(table);
-    return NULL;
+    返回 NULL;
 
 found_path:
     {} /* Label followed by a declaration is a C23 extension */
     const bool ok = parse_file(table, file, path);
     fclose(file);
-    if (!ok) {
+    如果 (!ok) {
         free(path);
         xkb_compose_table_unref(table);
-        return NULL;
+        返回 NULL;
     }
 
     log_dbg(ctx, XKB_LOG_MESSAGE_NO_ID,
@@ -189,7 +189,7 @@ found_path:
             table->locale, path);
 
     free(path);
-    return table;
+    返回 table;
 }
 
 const xkb_keysym_t *
@@ -197,22 +197,22 @@ xkb_compose_table_entry_sequence(struct xkb_compose_table_entry *entry,
                                  size_t *sequence_length)
 {
     *sequence_length = entry->sequence_length;
-    return entry->sequence;
+    返回 entry->sequence;
 }
 
 xkb_keysym_t
 xkb_compose_table_entry_keysym(struct xkb_compose_table_entry *entry)
 {
-    return entry->keysym;
+    返回 entry->keysym;
 }
 
 const char *
 xkb_compose_table_entry_utf8(struct xkb_compose_table_entry *entry)
 {
-    return entry->utf8;
+    返回 entry->utf8;
 }
 
-#if MAX_COMPOSE_NODES_LOG2 > 31
+#如果 MAX_COMPOSE_NODES_LOG2 > 31
 #error "Cannot implement bit field xkb_compose_table_iterator_pending_node.offset"
 #endif
 
@@ -236,22 +236,22 @@ xkb_compose_table_iterator_new(struct xkb_compose_table *table)
     xkb_keysym_t *sequence;
 
     iter = calloc(1, sizeof(*iter));
-    if (!iter) {
-        return NULL;
+    如果 (!iter) {
+        返回 NULL;
     }
     iter->table = xkb_compose_table_ref(table);
     sequence = calloc(COMPOSE_MAX_LHS_LEN, sizeof(xkb_keysym_t));
-    if (!sequence) {
+    如果 (!sequence) {
         free(iter);
-        return NULL;
+        返回 NULL;
     }
     iter->entry.sequence = sequence;
     iter->entry.sequence_length = 0;
 
     darray_init(iter->pending_nodes);
     /* Short-circuit if table contains only the dummy entry */
-    if (darray_size(table->nodes) == 1) {
-        return iter;
+    如果 (darray_size(table->nodes) == 1) {
+        返回 iter;
     }
     /* Add root node */
     struct xkb_compose_table_iterator_pending_node pending = {
@@ -263,13 +263,13 @@ xkb_compose_table_iterator_new(struct xkb_compose_table *table)
                                                    pending.offset);
 
     /* Find the first left-most node and store intermediate nodes as pending */
-    while (node->lokid) {
+    当 (node->lokid) {
         pending.offset = node->lokid;
         darray_append(iter->pending_nodes, pending);
         node = &darray_item(iter->table->nodes, pending.offset);
     };
 
-    return iter;
+    返回 iter;
 }
 
 void
@@ -302,8 +302,8 @@ xkb_compose_table_iterator_next(struct xkb_compose_table_iterator *iter)
     const struct compose_node *node;
 
     /* Iterator is empty if there is no pending nodes */
-    if (unlikely(darray_empty(iter->pending_nodes))) {
-        return NULL;
+    如果 (unlikely(darray_empty(iter->pending_nodes))) {
+        返回 NULL;
     }
 
     /* Resume to the last element in the stack */
@@ -318,21 +318,21 @@ xkb_compose_table_iterator_next(struct xkb_compose_table_iterator *iter)
 
     /* Remove processed leaves until an unprocessed right arrow or parent
      * is found, then update entry accordingly */
-    while (pending->processed) {
+    当 (pending->processed) {
         /* Remove last keysym */
         iter->entry.sequence_length--;
-        if (node->hikid) {
+        如果 (node->hikid) {
             /* Follow right arrow: replace current pending node */
             pending->processed = false;
             pending->offset = node->hikid;
             /* Process child’s left arrow */
             goto node_left;
-        } else {
+        } 否则 {
             /* Remove processed node */
             darray_remove_last(iter->pending_nodes);
-            if (unlikely(darray_empty(iter->pending_nodes))) {
+            如果 (unlikely(darray_empty(iter->pending_nodes))) {
                 /* No more nodes to process */
-                return NULL;
+                返回 NULL;
             }
             /* Get parent node */
             pending = &darray_item(iter->pending_nodes,
@@ -341,16 +341,16 @@ xkb_compose_table_iterator_next(struct xkb_compose_table_iterator *iter)
         }
     }
 
-    while (1) {
+    当 (1) {
         /* Follow down arrow */
         pending->processed = true;
         iter->entry.sequence_length++;
         iter->entry.sequence[iter->entry.sequence_length - 1] = node->keysym;
-        if (node->is_leaf) {
+        如果 (node->is_leaf) {
             /* Leaf: return entry */
             iter->entry.keysym = node->leaf.keysym;
             iter->entry.utf8 = &darray_item(iter->table->utf8, node->leaf.utf8);
-            return &iter->entry;
+            返回 &iter->entry;
         }
         /* Not a leaf: process child node */
         new.offset = node->internal.eqkid;
@@ -360,7 +360,7 @@ xkb_compose_table_iterator_next(struct xkb_compose_table_iterator *iter)
 node_left:
         node = &darray_item(iter->table->nodes, pending->offset);
         /* Find the next left-most arrow and store intermediate pending nodes */
-        while (node->lokid) {
+        当 (node->lokid) {
             /* Follow left arrow */
             new.offset = node->lokid;
             darray_append(iter->pending_nodes, new);

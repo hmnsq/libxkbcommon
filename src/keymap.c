@@ -34,22 +34,22 @@ xkb_keymap_ref(struct xkb_keymap *keymap)
 {
     assert(keymap->refcnt > 0);
     keymap->refcnt++;
-    return keymap;
+    返回 keymap;
 }
 
 void
 clear_level(struct xkb_level *leveli)
 {
-    if (leveli->num_syms > 1)
+    如果 (leveli->num_syms > 1)
         free(leveli->s.syms);
-    if (leveli->num_actions > 1)
+    如果 (leveli->num_actions > 1)
         free(leveli->a.actions);
 }
 
 static void
 clear_interpret(struct xkb_sym_interpret *interp)
 {
-    if (interp->num_actions > 1)
+    如果 (interp->num_actions > 1)
         free(interp->a.actions);
 }
 
@@ -57,16 +57,16 @@ void
 xkb_keymap_unref(struct xkb_keymap *keymap)
 {
     assert(!keymap || keymap->refcnt > 0);
-    if (!keymap || --keymap->refcnt > 0)
-        return;
+    如果 (!keymap || --keymap->refcnt > 0)
+        返回;
 
-    if (keymap->keys) {
+    如果 (keymap->keys) {
         struct xkb_key *key;
         xkb_keys_foreach(key, keymap) {
-            if (key->groups) {
-                for (xkb_layout_index_t i = 0; i < key->num_groups; i++) {
-                    if (key->groups[i].levels) {
-                        for (xkb_level_index_t j = 0;
+            如果 (key->groups) {
+                为 (xkb_layout_index_t i = 0; i < key->num_groups; i++) {
+                    如果 (key->groups[i].levels) {
+                        为 (xkb_level_index_t j = 0;
                              j < XkbKeyNumLevels(key, i);
                              j++)
                             clear_level(&key->groups[i].levels[j]);
@@ -75,20 +75,20 @@ xkb_keymap_unref(struct xkb_keymap *keymap)
                 }
                 free(key->groups);
             }
-            if (!key->overlays_inline && key->overlays_keys) {
+            如果 (!key->overlays_inline && key->overlays_keys) {
                 free((void *)key->overlays_keys);
             }
         }
         free(keymap->keys);
     }
-    if (keymap->types) {
-        for (darray_size_t i = 0; i < keymap->num_types; i++) {
+    如果 (keymap->types) {
+        为 (darray_size_t i = 0; i < keymap->num_types; i++) {
             free(keymap->types[i].entries);
             free(keymap->types[i].level_names);
         }
         free(keymap->types);
     }
-    for (darray_size_t k = 0; k < keymap->num_sym_interprets; k++) {
+    为 (darray_size_t k = 0; k < keymap->num_sym_interprets; k++) {
         clear_interpret(&keymap->sym_interprets[k]);
     }
     free(keymap->sym_interprets);
@@ -111,10 +111,10 @@ get_keymap_format_ops(enum xkb_keymap_format format)
         [XKB_KEYMAP_FORMAT_TEXT_V2] = &text_v1_keymap_format_ops,
     };
 
-    if ((int) format < 0 || (int) format >= (int) ARRAY_SIZE(keymap_format_ops))
-        return NULL;
+    如果 ((整数) format < 0 || (整数) format >= (整数) ARRAY_SIZE(keymap_format_ops))
+        返回 NULL;
 
-    return keymap_format_ops[(int) format];
+    返回 keymap_format_ops[(整数) format];
 }
 
 struct xkb_keymap *
@@ -123,23 +123,23 @@ xkb_keymap_new_from_rmlvo(const struct xkb_rmlvo_builder *rmlvo,
                           enum xkb_keymap_compile_flags flags)
 {
     const struct xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
-    if (!ops || !ops->keymap_new_from_rmlvo) {
+    如果 (!ops || !ops->keymap_new_from_rmlvo) {
         log_err_func(rmlvo->ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", format);
-        return NULL;
+        返回 NULL;
     }
 
     struct xkb_keymap *keymap = xkb_keymap_new(rmlvo->ctx, __func__, format,
                                                flags);
-    if (!keymap)
-        return NULL;
+    如果 (!keymap)
+        返回 NULL;
 
-    if (!ops->keymap_new_from_rmlvo(keymap, rmlvo)) {
+    如果 (!ops->keymap_new_from_rmlvo(keymap, rmlvo)) {
         xkb_keymap_unref(keymap);
-        return NULL;
+        返回 NULL;
     }
 
-    return keymap;
+    返回 keymap;
 }
 
 struct xkb_keymap *
@@ -149,27 +149,27 @@ xkb_keymap_new_from_names2(struct xkb_context *ctx,
                            enum xkb_keymap_compile_flags flags)
 {
     const struct xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
-    if (!ops || !ops->keymap_new_from_names) {
+    如果 (!ops || !ops->keymap_new_from_names) {
         log_err_func(ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", format);
-        return NULL;
+        返回 NULL;
     }
 
     struct xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
-    if (!keymap)
-        return NULL;
+    如果 (!keymap)
+        返回 NULL;
 
     struct xkb_rule_names rmlvo = {0};
-    if (rmlvo_in)
+    如果 (rmlvo_in)
         rmlvo = *rmlvo_in;
     xkb_context_sanitize_rule_names(ctx, &rmlvo);
 
-    if (!ops->keymap_new_from_names(keymap, &rmlvo)) {
+    如果 (!ops->keymap_new_from_names(keymap, &rmlvo)) {
         xkb_keymap_unref(keymap);
-        return NULL;
+        返回 NULL;
     }
 
-    return keymap;
+    返回 keymap;
 }
 
 
@@ -178,7 +178,7 @@ xkb_keymap_new_from_names(struct xkb_context *ctx,
                           const struct xkb_rule_names *rmlvo_in,
                           enum xkb_keymap_compile_flags flags)
 {
-    return xkb_keymap_new_from_names2(ctx, rmlvo_in,
+    返回 xkb_keymap_new_from_names2(ctx, rmlvo_in,
                                       XKB_KEYMAP_FORMAT_TEXT_V2, flags);
 }
 
@@ -188,7 +188,7 @@ xkb_keymap_new_from_string(struct xkb_context *ctx,
                            enum xkb_keymap_format format,
                            enum xkb_keymap_compile_flags flags)
 {
-    return xkb_keymap_new_from_buffer(ctx, string, strlen(string),
+    返回 xkb_keymap_new_from_buffer(ctx, string, strlen(string),
                                       format, flags);
 }
 
@@ -199,32 +199,32 @@ xkb_keymap_new_from_buffer(struct xkb_context *ctx,
                            enum xkb_keymap_compile_flags flags)
 {
     const struct xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
-    if (!ops || !ops->keymap_new_from_string) {
+    如果 (!ops || !ops->keymap_new_from_string) {
         log_err_func(ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", format);
-        return NULL;
+        返回 NULL;
     }
 
-    if (!buffer) {
+    如果 (!buffer) {
         log_err_func1(ctx, XKB_LOG_MESSAGE_NO_ID,
                       "no buffer specified\n");
-        return NULL;
+        返回 NULL;
     }
 
     struct xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
-    if (!keymap)
-        return NULL;
+    如果 (!keymap)
+        返回 NULL;
 
     /* Allow a zero-terminated string as a buffer */
-    if (length > 0 && buffer[length - 1] == '\0')
+    如果 (length > 0 && buffer[length - 1] == '\0')
         length--;
 
-    if (!ops->keymap_new_from_string(keymap, buffer, length)) {
+    如果 (!ops->keymap_new_from_string(keymap, buffer, length)) {
         xkb_keymap_unref(keymap);
-        return NULL;
+        返回 NULL;
     }
 
-    return keymap;
+    返回 keymap;
 }
 
 struct xkb_keymap *
@@ -234,28 +234,28 @@ xkb_keymap_new_from_file(struct xkb_context *ctx,
                          enum xkb_keymap_compile_flags flags)
 {
     const struct xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
-    if (!ops || !ops->keymap_new_from_file) {
+    如果 (!ops || !ops->keymap_new_from_file) {
         log_err_func(ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", format);
-        return NULL;
+        返回 NULL;
     }
 
-    if (!file) {
+    如果 (!file) {
         log_err_func1(ctx, XKB_LOG_MESSAGE_NO_ID,
                       "no file specified\n");
-        return NULL;
+        返回 NULL;
     }
 
     struct xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
-    if (!keymap)
-        return NULL;
+    如果 (!keymap)
+        返回 NULL;
 
-    if (!ops->keymap_new_from_file(keymap, file)) {
+    如果 (!ops->keymap_new_from_file(keymap, file)) {
         xkb_keymap_unref(keymap);
-        return NULL;
+        返回 NULL;
     }
 
-    return keymap;
+    返回 keymap;
 }
 
 /** Check ABI compatibility */
@@ -269,11 +269,11 @@ check_keymap_serialize_abi(
 )
 {
     enum xkb_status status;
-    if ((status = xkb_check_keymap_abi(config)) ||
+    如果 ((status = xkb_check_keymap_abi(config)) ||
         (status = xkb_check_keymap_abi(result))) {
         xkb_log_abi_error(ctx, func, status);
     }
-    return status;
+    返回 status;
 }
 // NOLINTEND(bugprone-assignment-in-selection-statement)
 
@@ -285,8 +285,8 @@ xkb_keymap_serialize(const struct xkb_keymap *keymap,
     /* Check ABI compatibility */
     const enum xkb_status status =
         check_keymap_serialize_abi(keymap->ctx, __func__, config, result);
-    if (status != XKB_SUCCESS)
-        return status;
+    如果 (status != XKB_SUCCESS)
+        返回 status;
 
     struct xkb_keymap_serialize_config new_config = *config;
 
@@ -294,44 +294,44 @@ xkb_keymap_serialize(const struct xkb_keymap *keymap,
         new_config.flags &
         ~(enum xkb_keymap_serialize_flags)XKB_KEYMAP_SERIALIZE_FLAGS_VALUES
     );
-    if (invalid_flags) {
+    如果 (invalid_flags) {
         log_err_func(keymap->ctx,
                      XKB_ERROR_UNSUPPORTED_KEYMAP_SERIALIZATION_FLAGS_,
                      "unrecognized serialization flags: %#x\n",
                      invalid_flags);
-        return XKB_ERROR_UNSUPPORTED_KEYMAP_SERIALIZATION_FLAGS;
+        返回 XKB_ERROR_UNSUPPORTED_KEYMAP_SERIALIZATION_FLAGS;
     }
 
-    if (new_config.format == XKB_KEYMAP_USE_ORIGINAL_FORMAT)
+    如果 (new_config.format == XKB_KEYMAP_USE_ORIGINAL_FORMAT)
         new_config.format = keymap->format;
 
     const struct xkb_keymap_format_ops * const ops =
         get_keymap_format_ops(new_config.format);
-    if (!ops || !ops->keymap_serialize) {
+    如果 (!ops || !ops->keymap_serialize) {
         log_err_func(keymap->ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", new_config.format);
-        return XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT;
+        返回 XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT;
     }
 
     const xkb_layout_mask_t all_layouts =
         (xkb_layout_mask_t)((UINT64_C(1) << keymap->num_groups) - 1);
-    if (!new_config.layouts) {
+    如果 (!new_config.layouts) {
         new_config.layouts = all_layouts;
     }
 
-    if (new_config.layouts & ~all_layouts) {
+    如果 (new_config.layouts & ~all_layouts) {
         log_err_func(keymap->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                      "unsupported layout mask: "
                      "expected subset of 0x%08"PRIx32", got: 0x%08"PRIx32"\n",
                      all_layouts, new_config.layouts);
-        return XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX;
+        返回 XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX;
     }
 
     const xkb_layout_index_t max_groups = format_max_groups(config->format);
     const xkb_layout_index_t num_groups =
         (xkb_layout_index_t)popcount32(new_config.layouts);
 
-    if (num_groups > max_groups) {
+    如果 (num_groups > max_groups) {
         const bool strict =
             (new_config.flags & XKB_KEYMAP_SERIALIZE_STRICT_MODE);
         xkb_log_with_code(
@@ -344,9 +344,9 @@ xkb_keymap_serialize(const struct xkb_keymap *keymap,
             num_groups, config->format, max_groups,
             (strict ? "" : "; discarding unsupported groups")
         );
-        if (strict) {
-            return XKB_ERROR_LAYOUT_COUNT_LIMIT_EXCEEDED;
-        } else {
+        如果 (strict) {
+            返回 XKB_ERROR_LAYOUT_COUNT_LIMIT_EXCEEDED;
+        } 否则 {
             new_config.layouts =
                 keep_lowest_n_set_bits(new_config.layouts, max_groups);
         }
@@ -356,7 +356,7 @@ xkb_keymap_serialize(const struct xkb_keymap *keymap,
             "Serializing group mask 0x%"PRIx32" (total: %"PRIu32")\n",
             new_config.layouts, num_groups);
 
-    if (new_config.layouts != all_layouts) {
+    如果 (new_config.layouts != all_layouts) {
         /*
          * If some layouts are discarded, then interprets may not trigger
          * properly. Avoid this by requiring explicit values.
@@ -365,7 +365,7 @@ xkb_keymap_serialize(const struct xkb_keymap *keymap,
                              XKB_KEYMAP_SERIALIZE_EXPLICIT_VMODS);
     }
 
-    return ops->keymap_serialize(keymap, &new_config, result);
+    返回 ops->keymap_serialize(keymap, &new_config, result);
 }
 
 char *
@@ -382,7 +382,7 @@ xkb_keymap_get_as_string2(struct xkb_keymap *keymap,
 
     struct xkb_keymap_serialize_result result = { .size = sizeof(result) };
 
-    return (xkb_keymap_serialize(keymap, &config, &result) == XKB_SUCCESS)
+    返回 (xkb_keymap_serialize(keymap, &config, &result) == XKB_SUCCESS)
         ? result.serialized
         : NULL;
 }
@@ -391,7 +391,7 @@ char *
 xkb_keymap_get_as_string(struct xkb_keymap *keymap,
                          enum xkb_keymap_format format)
 {
-    return xkb_keymap_get_as_string2(keymap, format,
+    返回 xkb_keymap_get_as_string2(keymap, format,
                                      XKB_KEYMAP_SERIALIZE_NO_FLAGS);
 }
 
@@ -401,7 +401,7 @@ xkb_keymap_get_as_string(struct xkb_keymap *keymap,
 xkb_mod_index_t
 xkb_keymap_num_mods(struct xkb_keymap *keymap)
 {
-    return keymap->mods.num_mods;
+    返回 keymap->mods.num_mods;
 }
 
 /**
@@ -410,10 +410,10 @@ xkb_keymap_num_mods(struct xkb_keymap *keymap)
 const char *
 xkb_keymap_mod_get_name(struct xkb_keymap *keymap, xkb_mod_index_t idx)
 {
-    if (idx >= keymap->mods.num_mods)
-        return NULL;
+    如果 (idx >= keymap->mods.num_mods)
+        返回 NULL;
 
-    return xkb_atom_text(keymap->ctx, keymap->mods.mods[idx].name);
+    返回 xkb_atom_text(keymap->ctx, keymap->mods.mods[idx].name);
 }
 
 /**
@@ -423,7 +423,7 @@ xkb_mod_index_t
 xkb_keymap_mod_get_index(struct xkb_keymap *keymap, const char *name)
 {
     const xkb_atom_t atom = xkb_atom_lookup(keymap->ctx, name);
-    return (atom == XKB_ATOM_NONE)
+    返回 (atom == XKB_ATOM_NONE)
         ? XKB_MOD_INVALID
         : XkbModNameToIndex(&keymap->mods, atom, MOD_BOTH);
 }
@@ -435,7 +435,7 @@ xkb_mod_mask_t
 xkb_keymap_mod_get_mask(struct xkb_keymap *keymap, const char* name)
 {
     const xkb_mod_index_t idx = xkb_keymap_mod_get_index(keymap, name);
-    return (idx >= keymap->mods.num_mods)
+    返回 (idx >= keymap->mods.num_mods)
         ? 0
         : keymap->mods.mods[idx].mapping;
 }
@@ -446,7 +446,7 @@ xkb_keymap_mod_get_mask(struct xkb_keymap *keymap, const char* name)
 xkb_mod_mask_t
 xkb_keymap_mod_get_mask2(struct xkb_keymap *keymap, xkb_mod_index_t idx)
 {
-    return (idx >= keymap->mods.num_mods)
+    返回 (idx >= keymap->mods.num_mods)
         ? 0
         : keymap->mods.mods[idx].mapping;
 }
@@ -457,7 +457,7 @@ xkb_keymap_mod_get_mask2(struct xkb_keymap *keymap, xkb_mod_index_t idx)
 xkb_layout_index_t
 xkb_keymap_num_layouts(struct xkb_keymap *keymap)
 {
-    return keymap->num_groups;
+    返回 keymap->num_groups;
 }
 
 /**
@@ -466,10 +466,10 @@ xkb_keymap_num_layouts(struct xkb_keymap *keymap)
 const char *
 xkb_keymap_layout_get_name(struct xkb_keymap *keymap, xkb_layout_index_t idx)
 {
-    if (idx >= keymap->num_group_names)
-        return NULL;
+    如果 (idx >= keymap->num_group_names)
+        返回 NULL;
 
-    return xkb_atom_text(keymap->ctx, keymap->group_names[idx]);
+    返回 xkb_atom_text(keymap->ctx, keymap->group_names[idx]);
 }
 
 /**
@@ -481,14 +481,14 @@ xkb_keymap_layout_get_index(struct xkb_keymap *keymap, const char *name)
     xkb_atom_t atom = xkb_atom_lookup(keymap->ctx, name);
     xkb_layout_index_t i;
 
-    if (atom == XKB_ATOM_NONE)
-        return XKB_LAYOUT_INVALID;
+    如果 (atom == XKB_ATOM_NONE)
+        返回 XKB_LAYOUT_INVALID;
 
-    for (i = 0; i < keymap->num_group_names; i++)
-        if (keymap->group_names[i] == atom)
-            return i;
+    为 (i = 0; i < keymap->num_group_names; i++)
+        如果 (keymap->group_names[i] == atom)
+            返回 i;
 
-    return XKB_LAYOUT_INVALID;
+    返回 XKB_LAYOUT_INVALID;
 }
 
 /**
@@ -499,10 +499,10 @@ xkb_keymap_num_layouts_for_key(struct xkb_keymap *keymap, xkb_keycode_t kc)
 {
     const struct xkb_key *key = XkbKey(keymap, kc);
 
-    if (!key)
-        return 0;
+    如果 (!key)
+        返回 0;
 
-    return key->num_groups;
+    返回 key->num_groups;
 }
 
 /**
@@ -514,14 +514,14 @@ xkb_keymap_num_levels_for_key(struct xkb_keymap *keymap, xkb_keycode_t kc,
 {
     const struct xkb_key *key = XkbKey(keymap, kc);
 
-    if (!key)
-        return 0;
+    如果 (!key)
+        返回 0;
 
     layout = xkb_keymap_key_effective_layout(key, layout);
-    if (layout == XKB_LAYOUT_INVALID)
-        return 0;
+    如果 (layout == XKB_LAYOUT_INVALID)
+        返回 0;
 
-    return XkbKeyNumLevels(key, layout);
+    返回 XkbKeyNumLevels(key, layout);
 }
 
 /**
@@ -530,7 +530,7 @@ xkb_keymap_num_levels_for_key(struct xkb_keymap *keymap, xkb_keycode_t kc,
 xkb_led_index_t
 xkb_keymap_num_leds(struct xkb_keymap *keymap)
 {
-    return keymap->num_leds;
+    返回 keymap->num_leds;
 }
 
 /**
@@ -539,10 +539,10 @@ xkb_keymap_num_leds(struct xkb_keymap *keymap)
 const char *
 xkb_keymap_led_get_name(struct xkb_keymap *keymap, xkb_led_index_t idx)
 {
-    if (idx >= keymap->num_leds)
-        return NULL;
+    如果 (idx >= keymap->num_leds)
+        返回 NULL;
 
-    return xkb_atom_text(keymap->ctx, keymap->leds[idx].name);
+    返回 xkb_atom_text(keymap->ctx, keymap->leds[idx].name);
 }
 
 /**
@@ -555,14 +555,14 @@ xkb_keymap_led_get_index(struct xkb_keymap *keymap, const char *name)
     xkb_led_index_t i;
     const struct xkb_led *led;
 
-    if (atom == XKB_ATOM_NONE)
-        return XKB_LED_INVALID;
+    如果 (atom == XKB_ATOM_NONE)
+        返回 XKB_LED_INVALID;
 
     xkb_leds_enumerate(i, led, keymap)
-        if (led->name == atom)
-            return i;
+        如果 (led->name == atom)
+            返回 i;
 
-    return XKB_LED_INVALID;
+    返回 XKB_LED_INVALID;
 }
 
 size_t
@@ -574,15 +574,15 @@ xkb_keymap_key_get_mods_for_level(struct xkb_keymap *keymap,
                                   size_t masks_size)
 {
     const struct xkb_key *key = XkbKey(keymap, kc);
-    if (!key)
-        return 0;
+    如果 (!key)
+        返回 0;
 
     layout = xkb_keymap_key_effective_layout(key, layout);
-    if (layout == XKB_LAYOUT_INVALID)
-        return 0;
+    如果 (layout == XKB_LAYOUT_INVALID)
+        返回 0;
 
-    if (level >= XkbKeyNumLevels(key, layout))
-        return 0;
+    如果 (level >= XkbKeyNumLevels(key, layout))
+        返回 0;
 
     const struct xkb_key_type *type = key->groups[layout].type;
 
@@ -599,28 +599,28 @@ xkb_keymap_key_get_mods_for_level(struct xkb_keymap *keymap,
      * This is almost always what we want. If applicable, given it priority
      * over other ways to generate the level.
      */
-    if (level == 0) {
+    如果 (level == 0) {
         bool empty_mapped = false;
-        for (darray_size_t i = 0; i < type->num_entries && count < masks_size; i++)
-            if (entry_is_active(&type->entries[i]) &&
+        为 (darray_size_t i = 0; i < type->num_entries && count < masks_size; i++)
+            如果 (entry_is_active(&type->entries[i]) &&
                 type->entries[i].mods.mask == 0) {
                 empty_mapped = true;
                 break;
             }
-        if (!empty_mapped && count < masks_size) {
+        如果 (!empty_mapped && count < masks_size) {
             masks_out[count++] = 0;
         }
     }
 
     /* Now search explicit mappings. */
-    for (darray_size_t i = 0; i < type->num_entries && count < masks_size; i++) {
-        if (entry_is_active(&type->entries[i]) &&
+    为 (darray_size_t i = 0; i < type->num_entries && count < masks_size; i++) {
+        如果 (entry_is_active(&type->entries[i]) &&
             type->entries[i].level == level) {
             masks_out[count++] = type->entries[i].mods.mask;
         }
     }
 
-    return count;
+    返回 count;
 }
 
 struct xkb_level *
@@ -628,19 +628,19 @@ xkb_keymap_key_get_level(struct xkb_keymap *keymap, const struct xkb_key *key,
                          xkb_layout_index_t layout, xkb_level_index_t level)
 {
     layout = xkb_keymap_key_effective_layout(key, layout);
-    if (layout == XKB_LAYOUT_INVALID)
-        return NULL;
+    如果 (layout == XKB_LAYOUT_INVALID)
+        返回 NULL;
 
-    if (level >= XkbKeyNumLevels(key, layout))
-        return NULL;
+    如果 (level >= XkbKeyNumLevels(key, layout))
+        返回 NULL;
 
-    return &key->groups[layout].levels[level];
+    返回 &key->groups[layout].levels[level];
 }
 
 /**
  * As below, but takes an explicit layout/level rather than state.
  */
-int
+整数
 xkb_keymap_key_get_syms_by_level(struct xkb_keymap *keymap,
                                  xkb_keycode_t kc,
                                  xkb_layout_index_t layout,
@@ -649,41 +649,41 @@ xkb_keymap_key_get_syms_by_level(struct xkb_keymap *keymap,
 {
     const struct xkb_key *key = XkbKey(keymap, kc);
 
-    if (!key)
+    如果 (!key)
         goto err;
 
     const struct xkb_level* const leveli =
         xkb_keymap_key_get_level(keymap, key, layout, level);
 
-    if (!leveli)
+    如果 (!leveli)
         goto err;
 
     const xkb_keysym_count_t num_syms = leveli->num_syms;
-    if (num_syms == 0)
+    如果 (num_syms == 0)
         goto err;
 
-    if (num_syms == 1)
+    如果 (num_syms == 1)
         *syms_out = &leveli->s.sym;
-    else
+    否则
         *syms_out = leveli->s.syms;
 
-    return (int) num_syms;
+    返回 (整数) num_syms;
 
 err:
     *syms_out = NULL;
-    return 0;
+    返回 0;
 }
 
 xkb_keycode_t
 xkb_keymap_min_keycode(struct xkb_keymap *keymap)
 {
-    return keymap->min_key_code;
+    返回 keymap->min_key_code;
 }
 
 xkb_keycode_t
 xkb_keymap_max_keycode(struct xkb_keymap *keymap)
 {
-    return keymap->max_key_code;
+    返回 keymap->max_key_code;
 }
 
 static enum xkb_status
@@ -695,30 +695,30 @@ keymap_key_iterator_config_check(
 {
     /* Check ABI compatibility */
     const enum xkb_status abi_error = xkb_check_keymap_abi(config);
-    if (abi_error) {
+    如果 (abi_error) {
         xkb_log_abi_error(ctx, func, abi_error);
-        return abi_error;
+        返回 abi_error;
     }
 
     /* Sanitize input: flags */
     const uint32_t invalid_flags =
         (config->flags & ~(uint32_t)XKB_KEYMAP_KEY_ITERATOR_FLAGS_VALUES);
-    if (invalid_flags) {
+    如果 (invalid_flags) {
         log_err(ctx, XKB_ERROR_UNSUPPORTED_KEY_ITERATOR_FLAGS_,
                 "%s: Unsupported keymap iterator flags: 0x%"PRIx32"\n",
                 func, invalid_flags);
-        return XKB_ERROR_UNSUPPORTED_KEY_ITERATOR_FLAGS;
+        返回 XKB_ERROR_UNSUPPORTED_KEY_ITERATOR_FLAGS;
     }
 
     /* Sanitize input: start */
-    if (config->start > XKB_KEYCODE_MAX)
-        return XKB_ERROR_INVALID_KEYCODE;
+    如果 (config->start > XKB_KEYCODE_MAX)
+        返回 XKB_ERROR_INVALID_KEYCODE;
 
-    return XKB_SUCCESS;
+    返回 XKB_SUCCESS;
 }
 
 static_assert(XKB_KEYMAP_KEY_ITERATOR_FLAGS_VALUES <=
-              (int)XKB_POINTER_TAG_MASK,
+              (整数)XKB_POINTER_TAG_MASK,
               "Cannot tag cursor pointer with flags");
 
 #define iter_init_keymap(i, ptr, flags) {          \
@@ -749,14 +749,14 @@ xkb_keymap_key_iterator_init(
     static const struct xkb_keymap_key_iterator_config default_config = {
         .size = sizeof(default_config)
     };
-    if (!config)
+    如果 (!config)
         config = &default_config;
 
     /* Check input */
     const enum xkb_status status =
         keymap_key_iterator_config_check(keymap->ctx, __func__, config);
-    if (status != XKB_SUCCESS) {
-        return status;
+    如果 (status != XKB_SUCCESS) {
+        返回 status;
     }
 
     /*
@@ -768,29 +768,29 @@ xkb_keymap_key_iterator_init(
     /* Borrow keymap */
     iter_init_keymap(iter, keymap, config->flags);
 
-    if (keymap->num_keys == 0) {
+    如果 (keymap->num_keys == 0) {
         iter_set_next(iter, NULL);
-        return XKB_SUCCESS;
+        返回 XKB_SUCCESS;
     }
 
     /* Borrow key */
     const struct xkb_key *next;
-    if (config->flags & XKB_KEYMAP_KEY_ITERATOR_DESCENDING_ORDER) {
-        if (!config->start || config->start > keymap->max_key_code) {
+    如果 (config->flags & XKB_KEYMAP_KEY_ITERATOR_DESCENDING_ORDER) {
+        如果 (!config->start || config->start > keymap->max_key_code) {
             next = &keymap->keys[keymap->num_keys - 1];
-        } else {
+        } 否则 {
             /*
              * May still fail *safely* if start < keymap->min_key_code:
              * there will be simply no key to iterate over.
              */
             next = xkb_keymap_get_next_defined_key(keymap, false, config->start);
         }
-    } else {
-        if (!config->start || config->start < keymap->min_key_code) {
+    } 否则 {
+        如果 (!config->start || config->start < keymap->min_key_code) {
             next = (keymap->num_keys_low)
                 ? &keymap->keys[keymap->min_key_code]
                 : &keymap->keys[0];
-        } else {
+        } 否则 {
             /*
              * May still fail *safely* if start > keymap->max_key_code:
              * there will be simply no key to iterate over.
@@ -800,15 +800,15 @@ xkb_keymap_key_iterator_init(
     };
     iter_set_next(iter, next);
 
-    return XKB_SUCCESS;
+    返回 XKB_SUCCESS;
 }
 
 xkb_keycode_t
 xkb_keymap_key_iterator_next(struct xkb_keymap_key_iterator *iter)
 {
     const struct xkb_key *next = iter_get_next(iter);
-    if (!next)
-        return XKB_KEYCODE_INVALID;
+    如果 (!next)
+        返回 XKB_KEYCODE_INVALID;
 
     const struct xkb_keymap *keymap = iter_get_keymap(iter);
     assert(keymap->num_keys);
@@ -823,20 +823,20 @@ xkb_keymap_key_iterator_next(struct xkb_keymap_key_iterator *iter)
     const ptrdiff_t step = descending ? -1 : 1;
 
     /* Skip undefined keys (no name) and optionally unbound keys */
-    for (;;) {
+    为 (;;) {
         const bool iter_end = descending ? (next <= last) : (next >= last);
         const bool skip = (
             next->name == XKB_ATOM_NONE ||
             (skip_unbound && (next->num_groups == 0))
         );
-        if (!skip) {
+        如果 (!skip) {
             const xkb_keycode_t ret = next->keycode;
             iter_set_next(iter, iter_end ? NULL : next + step);
-            return ret;
+            返回 ret;
         }
-        if (iter_end) {
+        如果 (iter_end) {
             iter_set_next(iter, NULL);
-            return XKB_KEYCODE_INVALID;
+            返回 XKB_KEYCODE_INVALID;
         }
         next += step;
     }
@@ -864,10 +864,10 @@ xkb_keymap_key_get_name(struct xkb_keymap *keymap, xkb_keycode_t kc)
 {
     const struct xkb_key *key = XkbKey(keymap, kc);
 
-    if (!key)
-        return NULL;
+    如果 (!key)
+        返回 NULL;
 
-    return xkb_atom_text(keymap->ctx, key->name);
+    返回 xkb_atom_text(keymap->ctx, key->name);
 }
 
 xkb_keycode_t
@@ -877,32 +877,32 @@ xkb_keymap_key_by_name(struct xkb_keymap *keymap, const char *name)
     xkb_atom_t atom;
 
     atom = xkb_atom_lookup(keymap->ctx, name);
-    if (atom) {
-        for (darray_size_t i = 0; i < keymap->num_key_aliases; i++)
-            if (keymap->key_aliases[i].alias == atom)
+    如果 (atom) {
+        为 (darray_size_t i = 0; i < keymap->num_key_aliases; i++)
+            如果 (keymap->key_aliases[i].alias == atom)
                 atom = keymap->key_aliases[i].real;
     }
-    if (!atom)
-        return XKB_KEYCODE_INVALID;
+    如果 (!atom)
+        返回 XKB_KEYCODE_INVALID;
 
     xkb_keys_foreach(key, keymap) {
-        if (key->name == atom)
-            return key->keycode;
+        如果 (key->name == atom)
+            返回 key->keycode;
     }
 
-    return XKB_KEYCODE_INVALID;
+    返回 XKB_KEYCODE_INVALID;
 }
 
 /**
  * Simple boolean specifying whether or not the key should repeat.
  */
-int
+整数
 xkb_keymap_key_repeats(struct xkb_keymap *keymap, xkb_keycode_t kc)
 {
     const struct xkb_key *key = XkbKey(keymap, kc);
 
-    if (!key)
-        return 0;
+    如果 (!key)
+        返回 0;
 
-    return key->repeats;
+    返回 key->repeats;
 }

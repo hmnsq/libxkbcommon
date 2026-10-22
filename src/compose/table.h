@@ -91,7 +91,7 @@ struct compose_node {
 };
 
 struct xkb_compose_table {
-    int refcnt;
+    整数 refcnt;
     enum xkb_compose_format format;
     enum xkb_compose_compile_flags flags;
     struct xkb_context *ctx;

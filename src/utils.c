@@ -9,7 +9,7 @@
 #include <fcntl.h>
 #include "utils.h"
 
-#if HAVE_MMAP
+#如果 HAVE_MMAP
 
 #include <unistd.h>
 #include <sys/mman.h>
@@ -19,24 +19,24 @@ bool
 map_file(FILE *file, char **string_out, size_t *size_out)
 {
     struct stat stat_buf;
-    int fd;
+    整数 fd;
     char *string;
 
     /* Make sure to keep the errno on failure! */
     fd = fileno(file);
-    if (fd < 0)
-        return false;
+    如果 (fd < 0)
+        返回 false;
 
-    if (fstat(fd, &stat_buf) != 0)
-        return false;
+    如果 (fstat(fd, &stat_buf) != 0)
+        返回 false;
 
     string = mmap(NULL, (size_t)stat_buf.st_size, PROT_READ, MAP_SHARED, fd, 0);
-    if (string == MAP_FAILED)
-        return false;
+    如果 (string == MAP_FAILED)
+        返回 false;
 
     *string_out = string;
     *size_out = (size_t)stat_buf.st_size;
-    return true;
+    返回 true;
 }
 
 void
@@ -45,7 +45,7 @@ unmap_file(char *str, size_t size)
     munmap(str, size);
 }
 
-#else
+#否则
 
 bool
 map_file(FILE *file, char **string_out, size_t *size_out)
@@ -58,31 +58,31 @@ map_file(FILE *file, char **string_out, size_t *size_out)
     /* Make sure to keep the errno on failure! */
 
     ret = fseek(file, 0, SEEK_END);
-    if (ret != 0)
-        return false;
+    如果 (ret != 0)
+        返回 false;
 
     ret = ftell(file);
-    if (ret < 0)
-        return false;
+    如果 (ret < 0)
+        返回 false;
     size = (size_t) ret;
 
     ret = fseek(file, 0, SEEK_SET);
-    if (ret < 0)
-        return false;
+    如果 (ret < 0)
+        返回 false;
 
     string = malloc(size);
-    if (!string)
-        return false;
+    如果 (!string)
+        返回 false;
 
     ret_s = fread(string, 1, size, file);
-    if (ret_s < size) {
+    如果 (ret_s < size) {
         free(string);
-        return false;
+        返回 false;
     }
 
     *string_out = string;
     *size_out = size;
-    return true;
+    返回 true;
 }
 
 void
@@ -98,19 +98,19 @@ unmap_file(char *str, size_t size)
 FILE*
 open_file(const char *path)
 {
-    if (!path)
-        return NULL;
+    如果 (!path)
+        返回 NULL;
 
-    int fd = open(path, O_RDONLY);
-    if (fd < 0)
-        return NULL;
+    整数 fd = open(path, O_RDONLY);
+    如果 (fd < 0)
+        返回 NULL;
 
     struct stat stat_buf;
-    int err = fstat(fd, &stat_buf);
+    整数 err = fstat(fd, &stat_buf);
 
-    if (err != 0 || !S_ISREG(stat_buf.st_mode)) {
+    如果 (err != 0 || !S_ISREG(stat_buf.st_mode)) {
         close(fd);
-        return NULL;
+        返回 NULL;
     }
 
     /* While unlikely to happen, if `fp` is NULL then we must close the file
@@ -118,11 +118,11 @@ open_file(const char *path)
      * https://www.ibm.com/docs/en/i/7.3?topic=functions-fdopen-associates-stream-file-descriptor)
      * Confirmed by Peter to be necessary in glibc. */
     FILE *fp = fdopen(fd, "rb");
-    if (fp == NULL) {
+    如果 (fp == NULL) {
         close(fd);
     }
 
-    return fp;
+    返回 fp;
 }
 
 // ASCII lower-case map.
@@ -149,52 +149,52 @@ static const unsigned char lower_map[] = {
 char
 to_lower(char c)
 {
-    return (char) lower_map[(unsigned char) c];
+    返回 (char) lower_map[(unsigned char) c];
 }
 
 // ASCII strcasecmp (to avoid locale issues).
-int
+整数
 istrcmp(const char *a, const char *b)
 {
-    for (size_t i = 0; ; i++) {
-        if (to_lower(a[i]) != to_lower(b[i]))
-            return (int) to_lower(a[i]) - (int) to_lower(b[i]);
-        if (!a[i])
+    为 (size_t i = 0; ; i++) {
+        如果 (to_lower(a[i]) != to_lower(b[i]))
+            返回 (整数) to_lower(a[i]) - (整数) to_lower(b[i]);
+        如果 (!a[i])
             break;
     }
-    return 0;
+    返回 0;
 }
 
 // ASCII strncasecmp (to avoid locale issues).
-int
+整数
 istrncmp(const char *a, const char *b, size_t n)
 {
-    for (size_t i = 0; i < n; i++) {
-        if (to_lower(a[i]) != to_lower(b[i]))
-            return (int) to_lower(a[i]) - (int) to_lower(b[i]);
-        if (!a[i])
+    为 (size_t i = 0; i < n; i++) {
+        如果 (to_lower(a[i]) != to_lower(b[i]))
+            返回 (整数) to_lower(a[i]) - (整数) to_lower(b[i]);
+        如果 (!a[i])
             break;
     }
-    return 0;
+    返回 0;
 }
 
-#if !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
-int
+#如果 !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
+整数
 asprintf(char **strp, const char *fmt, ...)
 {
-    int ret;
+    整数 ret;
     va_list ap;
     va_start(ap, fmt);
     ret = vasprintf(strp, fmt, ap);
     va_end(ap);
-    return ret;
+    返回 ret;
 }
 
-# if !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
-int
+# 如果 !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
+整数
 vasprintf(char **strp, const char *fmt, va_list ap)
 {
-    int ret;
+    整数 ret;
     char *buf;
     va_list ap_copy;
 
@@ -206,19 +206,19 @@ vasprintf(char **strp, const char *fmt, va_list ap)
     ret = vsnprintf(NULL, 0, fmt, ap_copy);
     va_end(ap_copy);
 
-    if (ret < 0)
-        return ret;
+    如果 (ret < 0)
+        返回 ret;
 
-    if (!(buf = malloc(ret + 1)))
-        return -1;
+    如果 (!(buf = malloc(ret + 1)))
+        返回 -1;
 
-    if ((ret = vsnprintf(buf, ret + 1, fmt, ap)) < 0) {
+    如果 ((ret = vsnprintf(buf, ret + 1, fmt, ap)) < 0) {
         free(buf);
-        return ret;
+        返回 ret;
     }
 
     *strp = buf;
-    return ret;
+    返回 ret;
 }
 # endif /* !HAVE_VASPRINTF */
 #endif /* !HAVE_ASPRINTF */

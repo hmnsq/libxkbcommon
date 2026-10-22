@@ -44,7 +44,7 @@ struct xkb_rmlvo_builder {
     xkb_rmlvo_builder_layouts layouts;
     xkb_rmlvo_builder_options options;
 
-    int refcnt;
+    整数 refcnt;
     struct xkb_context *ctx;
 };
 

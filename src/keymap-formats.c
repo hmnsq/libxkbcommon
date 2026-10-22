@@ -43,63 +43,63 @@ size_t
 xkb_keymap_supported_formats(const enum xkb_keymap_format **formats)
 {
     *formats = keymap_formats;
-    return ARRAY_SIZE(keymap_formats);
+    返回 ARRAY_SIZE(keymap_formats);
 }
 
 bool
 xkb_keymap_is_supported_format(enum xkb_keymap_format format)
 {
-    if (format < keymap_formats[0]) {
+    如果 (format < keymap_formats[0]) {
         /* Short-circuit because array is sorted */
-        return false;
+        返回 false;
     }
 
-    for (size_t k = 0; k < ARRAY_SIZE(keymap_formats); k++) {
-        if (keymap_formats[k] == format)
-            return true;
+    为 (size_t k = 0; k < ARRAY_SIZE(keymap_formats); k++) {
+        如果 (keymap_formats[k] == format)
+            返回 true;
         /* Short-circuit because array is sorted */
-        if (keymap_formats[k] > format)
-            return false;
+        如果 (keymap_formats[k] > format)
+            返回 false;
     }
 
-    return false;
+    返回 false;
 }
 
 enum xkb_keymap_format
 xkb_keymap_parse_format(const char *raw)
 {
-    if (!raw)
-        return 0;
+    如果 (!raw)
+        返回 0;
 
     uint32_t format = 0;
-    if (parse_hex_to_uint32_t(raw, SIZE_MAX, &format) > 0) {
+    如果 (parse_hex_to_uint32_t(raw, SIZE_MAX, &format) > 0) {
         /* Numeric format */
-        return (xkb_keymap_is_supported_format(format)) ? format : 0;
-    } else {
+        返回 (xkb_keymap_is_supported_format(format)) ? format : 0;
+    } 否则 {
         /* Parse label: e.g. “xkb_vXXXX” and “vXXX” */
-        for (size_t k = 0; k < ARRAY_SIZE(keymap_formats_labels); k++) {
-            if (strcmp(raw, keymap_formats_labels[k].label) == 0)
-                return keymap_formats_labels[k].format;
+        为 (size_t k = 0; k < ARRAY_SIZE(keymap_formats_labels); k++) {
+            如果 (strcmp(raw, keymap_formats_labels[k].label) == 0)
+                返回 keymap_formats_labels[k].format;
         }
-        return 0;
+        返回 0;
     }
 }
 
 const char *
 xkb_keymap_get_format_label(enum xkb_keymap_format format)
 {
-    if (format < keymap_formats_labels[0].format) {
+    如果 (format < keymap_formats_labels[0].format) {
         /* Short-circuit because array is sorted */
-        return NULL;
+        返回 NULL;
     }
 
-    for (size_t k = 0; k < ARRAY_SIZE(keymap_formats_labels); k++) {
-        if (keymap_formats_labels[k].format == format)
-            return keymap_formats_labels[k].label;
+    为 (size_t k = 0; k < ARRAY_SIZE(keymap_formats_labels); k++) {
+        如果 (keymap_formats_labels[k].format == format)
+            返回 keymap_formats_labels[k].label;
         /* Short-circuit because array is sorted */
-        if (keymap_formats_labels[k].format > format)
-            return NULL;
+        如果 (keymap_formats_labels[k].format > format)
+            返回 NULL;
     }
 
-    return NULL;
+    返回 NULL;
 }

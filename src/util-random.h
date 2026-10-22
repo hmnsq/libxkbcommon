@@ -8,14 +8,14 @@
 
 #include <stdlib.h>
 
-#if !HAVE_RANDOM
+#如果 !HAVE_RANDOM
 
 /* Simple random() fallback based on rand() */
 
 #include <stdint.h>
 
 static inline void
-srandom(unsigned int seed)
+srandom(unsigned 整数 seed)
 {
     srand(seed);
 }
@@ -30,6 +30,6 @@ random(void)
                  | (((long)rand() & 0x7fffU) << 15)
                  | (((long)rand() & 0x7fffU) << 30);
 
-    return r & 0x7fffffffL;
+    返回 r & 0x7fffffffL;
 }
 #endif

@@ -2977,11 +2977,11 @@ keysym_name_perfect_hash(const char *key)
     const char *T2 = "nXsEsvAWpmIhmalLNlkBZssDXdmoTYKy";
     size_t h1 = 0;
     size_t h2 = 0;
-    for (size_t i = 0; key[i] != '\0'; i++) {
+    为 (size_t i = 0; key[i] != '\0'; i++) {
         h1 += (size_t) (T1[i % 32] * key[i]);
         h2 += (size_t) (T2[i % 32] * key[i]);
     }
-    return (keysym_name_G[h1 % 4731] + keysym_name_G[h2 % 4731]) % 4731;
+    返回 (keysym_name_G[h1 % 4731] + keysym_name_G[h2 % 4731]) % 4731;
 }
 
 
