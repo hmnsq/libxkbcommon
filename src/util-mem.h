@@ -5,29 +5,29 @@
 
 #pragma once
 
-#include "config.h"
+#અન્તર્ભાવ "config.h"
 
-#include <assert.h>
-#include <stdalign.h>
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
+#અન્તર્ભાવ <assert.h>
+#અન્તર્ભાવ <stdalign.h>
+#અન્તર્ભાવ <stdbool.h>
+#અન્તર્ભાવ <stddef.h>
+#અન્તર્ભાવ <stdint.h>
+#અન્તર્ભાવ <stdlib.h>
 
-#if !HAVE_MAX_ALIGN_T
+#જો !HAVE_MAX_ALIGN_T
 /* Fallback for legacy compilers or older C modes on MSVC */
-typedef struct {
+પ્રકારવ્યાખ્યા સંરચના {
     long long __max_align_ll;
-    long double __max_align_ld;
+    long દ્વિગુણ __max_align_ld;
 } max_align_t;
 #endif
 
-static inline void*
-_steal(void *ptr) {
-    void **original = (void**)ptr;
-    void *swapped = *original;
-    *original = NULL;
-    return swapped;
+સ્થિર અંતઃરેખ શૂન્ય*
+_steal(શૂન્ય *ptr) {
+    શૂન્ય **original = (શૂન્ય**)ptr;
+    શૂન્ય *swapped = *original;
+    *original = ખાલી;
+    પાછા swapped;
 }
 
 /**
@@ -36,7 +36,7 @@ _steal(void *ptr) {
 #ifdef _WIN32
 #define steal(ptr_) \
     _steal(ptr_)
-#else
+#નહીંતર
 #define steal(ptr_) \
     (__typeof__(*(ptr_)))_steal(ptr_)
 #endif
@@ -48,29 +48,29 @@ static_assert(alignof(max_align_t) >= 4,
               "Pointer alignment insufficient for tagging");
 
 /** Pack @p ptr and a 0-3 @p tag. */
-static inline const void *
-xkb_pointer_tag(const void *ptr, uintptr_t tag)
+સ્થિર અંતઃરેખ અચલ શૂન્ય *
+xkb_pointer_tag(અચલ શૂન્ય *ptr, uintptr_t tag)
 {
     uintptr_t addr = (uintptr_t)ptr;
-    assert(tag <= XKB_POINTER_TAG_MASK &&
+    પ્રતિજ્ઞા(tag <= XKB_POINTER_TAG_MASK &&
            "tag exceeds available bits");
-    assert((addr & XKB_POINTER_TAG_MASK) == 0 &&
+    પ્રતિજ્ઞા((addr & XKB_POINTER_TAG_MASK) == 0 &&
            "pointer not sufficiently aligned for tagging");
     /* NOLINTNEXTLINE(performance-no-int-to-ptr) */
-    return (const void *)(addr | tag);
+    પાછા (અચલ શૂન્ય *)(addr | tag);
 }
 
 /** Recover the original pointer from a tagged pointer. */
-static inline const void *
-xkb_pointer_untag(const void *ptr)
+સ્થિર અંતઃરેખ અચલ શૂન્ય *
+xkb_pointer_untag(અચલ શૂન્ય *ptr)
 {
     /* NOLINTNEXTLINE(performance-no-int-to-ptr) */
-    return (const void *)((uintptr_t)ptr & ~XKB_POINTER_TAG_MASK);
+    પાછા (અચલ શૂન્ય *)((uintptr_t)ptr & ~XKB_POINTER_TAG_MASK);
 }
 
 /* Recover just the tag bits from a tagged pointer. */
-static inline uintptr_t
-xkb_pointer_get_tag(const void *ptr)
+સ્થિર અંતઃરેખ uintptr_t
+xkb_pointer_get_tag(અચલ શૂન્ય *ptr)
 {
-    return ((uintptr_t)ptr & XKB_POINTER_TAG_MASK);
+    પાછા ((uintptr_t)ptr & XKB_POINTER_TAG_MASK);
 }

@@ -4,16 +4,16 @@
  */
 #pragma once
 
-#include "config.h"
+#અન્તર્ભાવ "config.h"
 
-#include "xkbcommon/xkbcommon.h"
-#include "ast.h"
-#include "darray.h"
-#include "keymap.h"
-#include "scanner-utils.h"
-#include "text.h"
+#અન્તર્ભાવ "xkbcommon/xkbcommon.h"
+#અન્તર્ભાવ "ast.h"
+#અન્તર્ભાવ "darray.h"
+#અન્તર્ભાવ "keymap.h"
+#અન્તર્ભાવ "scanner-utils.h"
+#અન્તર્ભાવ "text.h"
 
-enum xkb_parser_error {
+ગણના xkb_parser_error {
     PARSER_SUCCESS = 0,
     PARSER_RECOVERABLE_ERROR,
     PARSER_FATAL_ERROR
@@ -25,11 +25,11 @@ enum xkb_parser_error {
  * This is probably overkill, but it could enable fine grained control
  * depending of the keymap format or other factors.
  */
-enum xkb_parser_strict_flags {
+ગણના xkb_parser_strict_flags {
     PARSER_NO_STRICT_FLAGS = 0,
     PARSER_NO_UNKNOWN_STATEMENTS = (1 << 0),
     PARSER_NO_FIELD_TYPE_MISMATCH = (1 << 1),
-    PARSER_NO_FIELD_VALUE_MISMATCH = (1 << 2),
+    PARSER_NO_FIELD_કિંમત_MISMATCH = (1 << 2),
 
     PARSER_NO_UNKNOWN_KEYCODES_GLOBAL_FIELDS = (1 << 3),
 
@@ -41,7 +41,7 @@ enum xkb_parser_strict_flags {
     PARSER_NO_UNKNOWN_LED_FIELDS = (1 << 8),
 
     PARSER_NO_UNKNOWN_SYMBOLS_GLOBAL_FIELDS = (1 << 9),
-    PARSER_NO_UNKNOWN_KEY_FIELDS = (1 << 10),
+    PARSER_NO_UNKNOWN_ચાવી_FIELDS = (1 << 10),
 
     PARSER_NO_UNKNOWN_ACTION = (1 << 11),
     PARSER_NO_UNKNOWN_ACTION_FIELDS = (1 << 12),
@@ -54,24 +54,24 @@ enum xkb_parser_strict_flags {
     PARSER_V1_STRICT_FLAGS = PARSER_STRICT_FLAGS_ALL,
     /* Limited flexibility */
     PARSER_V1_LAX_FLAGS = (PARSER_V1_STRICT_FLAGS &
-                           ~PARSER_NO_FIELD_VALUE_MISMATCH),
+                           ~PARSER_NO_FIELD_કિંમત_MISMATCH),
 
     PARSER_V2_STRICT_FLAGS = PARSER_STRICT_FLAGS_ALL,
     PARSER_V2_LAX_FLAGS = PARSER_NO_STRICT_FLAGS,
 };
 
-static inline enum xkb_parser_strict_flags
-parser_strict_flags_from_keymap_format(enum xkb_keymap_format format)
+સ્થિર અંતઃરેખ ગણના xkb_parser_strict_flags
+parser_strict_flags_from_keymap_format(ગણના xkb_keymap_format format)
 {
-    return (format == XKB_KEYMAP_FORMAT_TEXT_V1)
+    પાછા (format == XKB_KEYMAP_FORMAT_TEXT_V1)
             ? PARSER_V1_LAX_FLAGS
             : PARSER_V2_LAX_FLAGS;
 }
 
-static inline enum xkb_parser_strict_flags
-parser_strict_flags_from_keymap(const struct xkb_keymap *keymap)
+સ્થિર અંતઃરેખ ગણના xkb_parser_strict_flags
+parser_strict_flags_from_keymap(અચલ સંરચના xkb_keymap *keymap)
 {
-    return (keymap->format == XKB_KEYMAP_FORMAT_TEXT_V1)
+    પાછા (keymap->format == XKB_KEYMAP_FORMAT_TEXT_V1)
             ? (keymap->flags & XKB_KEYMAP_COMPILE_STRICT_MODE
                 ? PARSER_V1_STRICT_FLAGS
                 : PARSER_V1_LAX_FLAGS)
@@ -80,29 +80,29 @@ parser_strict_flags_from_keymap(const struct xkb_keymap *keymap)
                 : PARSER_V2_LAX_FLAGS);
 }
 
-struct parser_keymap_config {
-    enum xkb_keymap_format format;
-    enum xkb_parser_strict_flags strict;
+સંરચના parser_keymap_config {
+    ગણના xkb_keymap_format format;
+    ગણના xkb_parser_strict_flags strict;
 };
 
-typedef union ExprDef ExprDef;
-struct pending_computation {
-    ExprDef * expr;
+પ્રકારવ્યાખ્યા સંઘ પદાવલિ_Def પદાવલિ_Def;
+સંરચના pending_computation {
+    પદાવલિ_Def * પદાવલિ;
     bool computed;
-    uint32_t value;
+    uint32_t કિંમત;
 };
-typedef darray(struct pending_computation) pending_computation_array;
+પ્રકારવ્યાખ્યા darray(સંરચના pending_computation) pending_computation_array;
 
 /** Keymap augmented with miscellaneous data used during compilation */
-struct xkb_keymap_info {
+સંરચના xkb_keymap_info {
     /** The keymap being compiled */
-    struct xkb_keymap keymap;
+    સંરચના xkb_keymap keymap;
 
     /** Flags of the strict mode */
-    enum xkb_parser_strict_flags strict;
+    ગણના xkb_parser_strict_flags strict;
 
     /** Features */
-    struct {
+    સંરચના {
         /** Maximum groups for the keymap format */
         xkb_layout_index_t max_groups;
         /** Maximum overlays for the keymap format */
@@ -118,7 +118,7 @@ struct xkb_keymap_info {
     } features;
 
     /* Non-static LUTs */
-    struct {
+    સંરચના {
         LookupEntry groupIndexNames[3];
         LookupEntry groupMaskNames[5];
     } lookup;
@@ -127,104 +127,104 @@ struct xkb_keymap_info {
     pending_computation_array *pending_computations;
 };
 
-enum xkb_status
+ગણના xkb_status
 text_v1_keymap_serialize(
-        const struct xkb_keymap *keymap,
-        const struct xkb_keymap_serialize_config *config,
-        struct xkb_keymap_serialize_result *result
+        અચલ સંરચના xkb_keymap *keymap,
+        અચલ સંરચના xkb_keymap_serialize_config *config,
+        સંરચના xkb_keymap_serialize_result *result
 );
 
 XkbFile *
-XkbParseFile(struct xkb_context *ctx,
-             const struct parser_keymap_config *config,
-             FILE *file, const char *file_name, const char *map);
+XkbParseFile(સંરચના xkb_context *ctx,
+             અચલ સંરચના parser_keymap_config *config,
+             FILE *file, અચલ અક્ષર *file_name, અચલ અક્ષર *map);
 bool
-XkbParseStringInit(struct xkb_context *ctx, struct scanner *scanner,
-                   const char *string, size_t len,
-                   const char *file_name, const char *map);
+XkbParseStringInit(સંરચના xkb_context *ctx, સંરચના scanner *scanner,
+                   અચલ અક્ષર *string, size_t len,
+                   અચલ અક્ષર *file_name, અચલ અક્ષર *map);
 
 XkbFile *
-XkbParseString(struct xkb_context *ctx,
-               const struct parser_keymap_config *config,
-               const char *string, size_t len,
-               const char *file_name, const char *map);
+XkbParseString(સંરચના xkb_context *ctx,
+               અચલ સંરચના parser_keymap_config *config,
+               અચલ અક્ષર *string, size_t len,
+               અચલ અક્ષર *file_name, અચલ અક્ષર *map);
 
 bool
-XkbParseStringNext(struct xkb_context *ctx,
-                   const struct parser_keymap_config *config,
-                   struct scanner *scanner, const char *map, XkbFile **out);
+XkbParseStringNext(સંરચના xkb_context *ctx,
+                   અચલ સંરચના parser_keymap_config *config,
+                   સંરચના scanner *scanner, અચલ અક્ષર *map, XkbFile **out);
 
-void
+શૂન્ય
 FreeXkbFile(XkbFile *file);
 
 XkbFile *
-XkbFileFromComponents(struct xkb_context *ctx,
-                      const struct xkb_component_names *kkctgs);
+XkbFileFromComponents(સંરચના xkb_context *ctx,
+                      અચલ સંરચના xkb_component_names *kkctgs);
 
 bool
-CompileKeycodes(XkbFile *file, struct xkb_keymap_info *keymap_info);
+CompileKeycodes(XkbFile *file, સંરચના xkb_keymap_info *keymap_info);
 
 bool
-CompileKeyTypes(XkbFile *file, struct xkb_keymap_info *keymap_info);
+Compile_ચાવી_Types(XkbFile *file, સંરચના xkb_keymap_info *keymap_info);
 
 bool
-CompileCompatMap(XkbFile *file, struct xkb_keymap_info *keymap_info);
+CompileCompatMap(XkbFile *file, સંરચના xkb_keymap_info *keymap_info);
 
 bool
-CompileSymbols(XkbFile *file, struct xkb_keymap_info *keymap_info);
+CompileSymbols(XkbFile *file, સંરચના xkb_keymap_info *keymap_info);
 
 bool
-CompileKeymap(XkbFile *file, struct xkb_keymap *keymap);
+CompileKeymap(XkbFile *file, સંરચના xkb_keymap *keymap);
 
 /***====================================================================***/
 
-static inline bool
-ReportNotArray(struct xkb_context *ctx, const char *type, const char *field,
-               const char *name)
+સ્થિર અંતઃરેખ bool
+ReportNotArray(સંરચના xkb_context *ctx, અચલ અક્ષર *type, અચલ અક્ષર *field,
+               અચલ અક્ષર *name)
 {
     log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
             "The %s %s field is not an array; "
             "Ignoring illegal assignment in %s\n",
             type, field, name);
-    return false;
+    પાછા false;
 }
 
-static inline bool
-ReportShouldBeArray(struct xkb_context *ctx, const char *type,
-                    const char *field, const char *name)
+સ્થિર અંતઃરેખ bool
+ReportShouldBeArray(સંરચના xkb_context *ctx, અચલ અક્ષર *type,
+                    અચલ અક્ષર *field, અચલ અક્ષર *name)
 {
     log_err(ctx, XKB_ERROR_EXPECTED_ARRAY_ENTRY,
             "Missing subscript for %s %s; "
             "Ignoring illegal assignment in %s\n",
             type, field, name);
-    return false;
+    પાછા false;
 }
 
-static inline bool
-ReportBadType(struct xkb_context *ctx, enum xkb_message_code code,
-              const char *type, const char *field, const char *name,
-              const char *wanted)
+સ્થિર અંતઃરેખ bool
+ReportBadType(સંરચના xkb_context *ctx, ગણના xkb_message_code code,
+              અચલ અક્ષર *type, અચલ અક્ષર *field, અચલ અક્ષર *name,
+              અચલ અક્ષર *wanted)
 {
     log_err(ctx, code,
             "The %s %s field must be a %s; "
             "Ignoring illegal assignment in %s\n",
             type, field, wanted, name);
-    return false;
+    પાછા false;
 }
 
-static inline bool
-ReportBadField(struct xkb_context *ctx, const char *type, const char *field,
-               const char *name)
+સ્થિર અંતઃરેખ bool
+ReportBadField(સંરચના xkb_context *ctx, અચલ અક્ષર *type, અચલ અક્ષર *field,
+               અચલ અક્ષર *name)
 {
     log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
             "Unknown %s field \"%s\" in %s; "
             "Ignoring assignment to unknown field in %s\n",
             type, field, name, name);
-    return false;
+    પાછા false;
 }
 
-static inline const char*
-safe_map_name(const char* name)
+સ્થિર અંતઃરેખ અચલ અક્ષર*
+safe_map_name(અચલ અક્ષર* name)
 {
-    return name ? name : "(unnamed map)";
+    પાછા name ? name : "(unnamed map)";
 }

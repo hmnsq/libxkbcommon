@@ -4,14 +4,14 @@
  */
 #pragma once
 
-#include "config.h"
+#અન્તર્ભાવ "config.h"
 
-#include <stdbool.h>
+#અન્તર્ભાવ <stdbool.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "darray.h"
+#અન્તર્ભાવ "xkbcommon/xkbcommon.h"
+#અન્તર્ભાવ "darray.h"
 
-enum RMLVO {
+ગણના RMLVO {
     RMLVO_RULES = (1 << 0),
     RMLVO_MODEL = (1 << 1),
     RMLVO_LAYOUT = (1 << 2),
@@ -19,36 +19,36 @@ enum RMLVO {
     RMLVO_OPTIONS = (1 << 4)
 };
 
-enum {
+ગણના {
     /** Value of the layout mask for layout-independent options */
     XKB_OPTION_LAYOUT_MASK_GLOBAL = 0
 };
 
-struct xkb_rmlvo_builder_layout {
-    char *layout;
-    char *variant;
+સંરચના xkb_rmlvo_builder_layout {
+    અક્ષર *layout;
+    અક્ષર *variant;
 };
 
-typedef darray(struct xkb_rmlvo_builder_layout) xkb_rmlvo_builder_layouts;
+પ્રકારવ્યાખ્યા darray(સંરચના xkb_rmlvo_builder_layout) xkb_rmlvo_builder_layouts;
 
-struct xkb_rmlvo_builder_option {
-    char *option;
+સંરચના xkb_rmlvo_builder_option {
+    અક્ષર *option;
     xkb_layout_mask_t layouts;
 };
 
-typedef darray(struct xkb_rmlvo_builder_option) xkb_rmlvo_builder_options;
+પ્રકારવ્યાખ્યા darray(સંરચના xkb_rmlvo_builder_option) xkb_rmlvo_builder_options;
 
-struct xkb_rmlvo_builder {
-    char *rules;
-    char *model;
+સંરચના xkb_rmlvo_builder {
+    અક્ષર *rules;
+    અક્ષર *model;
     xkb_rmlvo_builder_layouts layouts;
     xkb_rmlvo_builder_options options;
 
-    int refcnt;
-    struct xkb_context *ctx;
+    પૂર્ણાંક refcnt;
+    સંરચના xkb_context *ctx;
 };
 
 bool
-xkb_rmlvo_builder_to_rules_names(const struct xkb_rmlvo_builder *builder,
-                                 struct xkb_rule_names *rmlvo,
-                                 char *buf, size_t buf_size);
+xkb_rmlvo_builder_to_rules_names(અચલ સંરચના xkb_rmlvo_builder *builder,
+                                 સંરચના xkb_rule_names *rmlvo,
+                                 અક્ષર *buf, size_t buf_size);

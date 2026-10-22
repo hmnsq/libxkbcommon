@@ -3,409 +3,409 @@
  * SPDX-License-Identifier: HPND
  */
 
-#include "config.h"
+#અન્તર્ભાવ "config.h"
 
-#include <stdint.h>
+#અન્તર્ભાવ <stdint.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcomp-priv.h"
-#include "expr.h"
-#include "keymap.h"
-#include "keysym.h"
-#include "messages-codes.h"
-#include "text.h"
-#include "xkbcomp/ast.h"
-#include "utils.h"
-#include "util-numbers.h"
-#include "util-checked-arithmetic.h"
+#અન્તર્ભાવ "xkbcommon/xkbcommon.h"
+#અન્તર્ભાવ "xkbcomp-priv.h"
+#અન્તર્ભાવ "expr.h"
+#અન્તર્ભાવ "keymap.h"
+#અન્તર્ભાવ "keysym.h"
+#અન્તર્ભાવ "messages-codes.h"
+#અન્તર્ભાવ "text.h"
+#અન્તર્ભાવ "xkbcomp/ast.h"
+#અન્તર્ભાવ "utils.h"
+#અન્તર્ભાવ "util-numbers.h"
+#અન્તર્ભાવ "util-checked-arithmetic.h"
 
-typedef bool (*IdentLookupFunc)(struct xkb_context *ctx, const void *priv,
+પ્રકારવ્યાખ્યા bool (*IdentLookupFunc)(સંરચના xkb_context *ctx, અચલ શૂન્ય *priv,
                                 xkb_atom_t field, uint32_t *val_rtrn,
                                 bool *pending);
 
 bool
-ExprResolveLhs(struct xkb_context *ctx, const ExprDef *expr,
-               const char **elem_rtrn, const char **field_rtrn,
-               ExprDef **index_rtrn)
+પદાવલિ_Resolve_Lhs(સંરચના xkb_context *ctx, અચલ પદાવલિ_Def *પદાવલિ,
+               અચલ અક્ષર **elem_rtrn, અચલ અક્ષર **field_rtrn,
+               પદાવલિ_Def **index_rtrn)
 {
-    switch (expr->common.type) {
-    case STMT_EXPR_IDENT:
-        *elem_rtrn = NULL;
-        *field_rtrn = xkb_atom_text(ctx, expr->ident.ident);
-        *index_rtrn = NULL;
-        return (*field_rtrn != NULL);
-    case STMT_EXPR_FIELD_REF:
-        *elem_rtrn = xkb_atom_text(ctx, expr->field_ref.element);
-        *field_rtrn = xkb_atom_text(ctx, expr->field_ref.field);
-        *index_rtrn = NULL;
-        return (*elem_rtrn != NULL && *field_rtrn != NULL);
-    case STMT_EXPR_ARRAY_REF:
-        *elem_rtrn = xkb_atom_text(ctx, expr->array_ref.element);
-        *field_rtrn = xkb_atom_text(ctx, expr->array_ref.field);
-        *index_rtrn = expr->array_ref.entry;
-        if (expr->array_ref.element != XKB_ATOM_NONE && *elem_rtrn == NULL)
-            return false;
-        if (*field_rtrn == NULL)
-            return false;
-        return true;
-    default:
-        break;
+    પસંદગી (પદાવલિ->common.type) {
+    સ્થિતિ STMT_પદાવલિ_IDENT:
+        *elem_rtrn = ખાલી;
+        *field_rtrn = xkb_atom_text(ctx, પદાવલિ->ident.ident);
+        *index_rtrn = ખાલી;
+        પાછા (*field_rtrn != ખાલી);
+    સ્થિતિ STMT_પદાવલિ_FIELD_REF:
+        *elem_rtrn = xkb_atom_text(ctx, પદાવલિ->field_ref.element);
+        *field_rtrn = xkb_atom_text(ctx, પદાવલિ->field_ref.field);
+        *index_rtrn = ખાલી;
+        પાછા (*elem_rtrn != ખાલી && *field_rtrn != ખાલી);
+    સ્થિતિ STMT_પદાવલિ_ARRAY_REF:
+        *elem_rtrn = xkb_atom_text(ctx, પદાવલિ->array_ref.element);
+        *field_rtrn = xkb_atom_text(ctx, પદાવલિ->array_ref.field);
+        *index_rtrn = પદાવલિ->array_ref.entry;
+        જો (પદાવલિ->array_ref.element != XKB_ATOM_NONE && *elem_rtrn == ખાલી)
+            પાછા false;
+        જો (*field_rtrn == ખાલી)
+            પાછા false;
+        પાછા true;
+    મૂળભૂત:
+        તોડો;
     }
     log_wsgo(ctx,
              XKB_ERROR_INVALID_XKB_SYNTAX,
-             "Unexpected operator %d in ResolveLhs\n", expr->common.type);
-    return false;
+             "Unexpected operator %d in ResolveLhs\n", પદાવલિ->common.type);
+    પાછા false;
 }
 
-static bool
-SimpleLookup(struct xkb_context *ctx, const void *priv, xkb_atom_t field,
+સ્થિર bool
+SimpleLookup(સંરચના xkb_context *ctx, અચલ શૂન્ય *priv, xkb_atom_t field,
              uint32_t *val_rtrn, bool *pending_rtrn)
 {
-    if (!priv || field == XKB_ATOM_NONE)
-        return false;
+    જો (!priv || field == XKB_ATOM_NONE)
+        પાછા false;
 
-    const char *str = xkb_atom_text(ctx, field);
-    for (const LookupEntry *entry = priv; entry && entry->name; entry++) {
-        if (istreq(str, entry->name)) {
-            *val_rtrn = entry->value;
-            return true;
+    અચલ અક્ષર *str = xkb_atom_text(ctx, field);
+    માટે (અચલ LookupEntry *entry = priv; entry && entry->name; entry++) {
+        જો (istreq(str, entry->name)) {
+            *val_rtrn = entry->કિંમત;
+            પાછા true;
         }
     }
 
-    return false;
+    પાછા false;
 }
 
-struct named_integer_pattern {
-    const char *prefix;
+સંરચના named_integer_pattern {
+    અચલ અક્ષર *prefix;
     size_t prefix_length;
     uint32_t min;
     uint32_t max;
-    const LookupEntry *entries;
-    const LookupEntry *pending_entries;
+    અચલ LookupEntry *entries;
+    અચલ LookupEntry *pending_entries;
     bool is_mask;
-    enum xkb_message_code error_id;
+    ગણના xkb_message_code error_id;
 };
 
 /* Parse a number expressed with the pattern `<prefix><decimal number>` */
-static bool
-NamedIntegerPatternLookup(struct xkb_context *ctx, const void *priv,
+સ્થિર bool
+NamedIntegerPatternLookup(સંરચના xkb_context *ctx, અચલ શૂન્ય *priv,
                           xkb_atom_t field, uint32_t *val_rtrn,
                           bool *pending_rtrn)
 {
-    if (!priv || field == XKB_ATOM_NONE)
-        return false;
+    જો (!priv || field == XKB_ATOM_NONE)
+        પાછા false;
 
-    const char * const str = xkb_atom_text(ctx, field);
-    const struct named_integer_pattern * const pattern = priv;
+    અચલ અક્ષર * અચલ str = xkb_atom_text(ctx, field);
+    અચલ સંરચના named_integer_pattern * અચલ pattern = priv;
 
-    const int count = (istrneq(str, pattern->prefix, pattern->prefix_length))
+    અચલ પૂર્ણાંક ગણતરી = (istrneq(str, pattern->prefix, pattern->prefix_length))
         ? parse_dec_to_uint32_t(str + pattern->prefix_length, SIZE_MAX, val_rtrn)
         : 0;
 
-    if (count > 0 && *(str + pattern->prefix_length + count) == '\0') {
-        if (*val_rtrn < pattern->min || *val_rtrn > pattern->max) {
+    જો (ગણતરી > 0 && *(str + pattern->prefix_length + ગણતરી) == '\0') {
+        જો (*val_rtrn < pattern->min || *val_rtrn > pattern->max) {
             log_err(ctx, pattern->error_id,
                     "%s index %"PRIu32" is out of range (%"PRIu32"..%"PRIu32")\n",
                     pattern->prefix, *val_rtrn, pattern->min, pattern->max);
-            return false;
+            પાછા false;
         }
-        if (pattern->is_mask) {
+        જો (pattern->is_mask) {
             /* Compute mask (bit 0 = min index) */
-            assert(*val_rtrn - pattern->min < 32);
+            પ્રતિજ્ઞા(*val_rtrn - pattern->min < 32);
             *val_rtrn = UINT32_C(1) << (*val_rtrn - pattern->min);
         }
-        return true;
-    } else {
-        if (pattern->entries &&
-            SimpleLookup(ctx, pattern->entries, field, val_rtrn, NULL)) {
-            return true;
+        પાછા true;
+    } નહીંતર {
+        જો (pattern->entries &&
+            SimpleLookup(ctx, pattern->entries, field, val_rtrn, ખાલી)) {
+            પાછા true;
         }
-        if (pattern->pending_entries && pending_rtrn &&
-            SimpleLookup(ctx, pattern->pending_entries, field, val_rtrn, NULL)) {
+        જો (pattern->pending_entries && pending_rtrn &&
+            SimpleLookup(ctx, pattern->pending_entries, field, val_rtrn, ખાલી)) {
             *pending_rtrn = true;
-            return true;
+            પાછા true;
         }
-        return false;
+        પાછા false;
     }
 }
 
 /* Data passed in the *priv argument for LookupModMask. */
-typedef struct {
-    const struct xkb_mod_set *mods;
-    enum mod_type mod_type;
+પ્રકારવ્યાખ્યા સંરચના {
+    અચલ સંરચના xkb_mod_set *mods;
+    ગણના mod_type mod_type;
 } LookupModMaskPriv;
 
-static bool
-LookupModMask(struct xkb_context *ctx, const void *priv, xkb_atom_t field,
+સ્થિર bool
+LookupModMask(સંરચના xkb_context *ctx, અચલ શૂન્ય *priv, xkb_atom_t field,
               xkb_mod_mask_t *val_rtrn, bool *pending_rtrn)
 {
-    const char *str = xkb_atom_text(ctx, field);
-    if (!str)
-        return false;
+    અચલ અક્ષર *str = xkb_atom_text(ctx, field);
+    જો (!str)
+        પાછા false;
 
-    if (istreq(str, "all")) {
+    જો (istreq(str, "all")) {
         *val_rtrn  = MOD_REAL_MASK_ALL;
-        return true;
+        પાછા true;
     }
 
-    if (istreq(str, "none")) {
+    જો (istreq(str, "none")) {
         *val_rtrn = 0;
-        return true;
+        પાછા true;
     }
 
-    const LookupModMaskPriv *arg = priv;
-    const struct xkb_mod_set *mods = arg->mods;
-    const enum mod_type mod_type = arg->mod_type;
-    const xkb_mod_index_t ndx = XkbModNameToIndex(mods, field, mod_type);
-    if (ndx == XKB_MOD_INVALID)
-        return false;
+    અચલ LookupModMaskPriv *arg = priv;
+    અચલ સંરચના xkb_mod_set *mods = arg->mods;
+    અચલ ગણના mod_type mod_type = arg->mod_type;
+    અચલ xkb_mod_index_t ndx = XkbModNameToIndex(mods, field, mod_type);
+    જો (ndx == XKB_MOD_INVALID)
+        પાછા false;
 
     *val_rtrn = (UINT32_C(1) << ndx);
-    return true;
+    પાછા true;
 }
 
 bool
-ExprResolveBoolean(struct xkb_context *ctx, const ExprDef *expr,
+પદાવલિ_Resolve_Boolean(સંરચના xkb_context *ctx, અચલ પદાવલિ_Def *પદાવલિ,
                    bool *set_rtrn)
 {
     bool ok = false;
-    const char *ident;
+    અચલ અક્ષર *ident;
 
-    switch (expr->common.type) {
-    case STMT_EXPR_BOOLEAN_LITERAL:
-        *set_rtrn = expr->boolean.set;
-        return true;
+    પસંદગી (પદાવલિ->common.type) {
+    સ્થિતિ STMT_પદાવલિ_BOOLEAN_LITERAL:
+        *set_rtrn = પદાવલિ->boolean.set;
+        પાછા true;
 
-    case STMT_EXPR_STRING_LITERAL:
-    case STMT_EXPR_INTEGER_LITERAL:
-    case STMT_EXPR_FLOAT_LITERAL:
-    case STMT_EXPR_KEYNAME_LITERAL:
-    case STMT_EXPR_KEYSYM_LITERAL:
+    સ્થિતિ STMT_પદાવલિ_STRING_LITERAL:
+    સ્થિતિ STMT_પદાવલિ_INTEGER_LITERAL:
+    સ્થિતિ STMT_પદાવલિ_FLOAT_LITERAL:
+    સ્થિતિ STMT_પદાવલિ_KEYNAME_LITERAL:
+    સ્થિતિ STMT_પદાવલિ_KEYSYM_LITERAL:
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found %s where boolean was expected\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_to_string(પદાવલિ->common.type));
+        પાછા false;
 
-    case STMT_EXPR_IDENT:
-        ident = xkb_atom_text(ctx, expr->ident.ident);
-        if (ident) {
-            if (istreq(ident, "true") ||
+    સ્થિતિ STMT_પદાવલિ_IDENT:
+        ident = xkb_atom_text(ctx, પદાવલિ->ident.ident);
+        જો (ident) {
+            જો (istreq(ident, "true") ||
                 istreq(ident, "yes") ||
                 istreq(ident, "on")) {
                 *set_rtrn = true;
-                return true;
+                પાછા true;
             }
-            else if (istreq(ident, "false") ||
+            નહીંતર જો (istreq(ident, "false") ||
                      istreq(ident, "no") ||
                      istreq(ident, "off")) {
                 *set_rtrn = false;
-                return true;
+                પાછા true;
             }
         }
         log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                 "Identifier \"%s\" of type boolean is unknown\n", ident);
-        return false;
+        પાછા false;
 
-    case STMT_EXPR_FIELD_REF:
+    સ્થિતિ STMT_પદાવલિ_FIELD_REF:
         log_err(ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
                 "Default \"%s.%s\" of type boolean is unknown\n",
-                xkb_atom_text(ctx, expr->field_ref.element),
-                xkb_atom_text(ctx, expr->field_ref.field));
-        return false;
+                xkb_atom_text(ctx, પદાવલિ->field_ref.element),
+                xkb_atom_text(ctx, પદાવલિ->field_ref.field));
+        પાછા false;
 
-    case STMT_EXPR_INVERT:
-    case STMT_EXPR_NOT:
-        ok = ExprResolveBoolean(ctx, expr->unary.child, set_rtrn);
-        if (ok)
+    સ્થિતિ STMT_પદાવલિ_INVERT:
+    સ્થિતિ STMT_પદાવલિ_NOT:
+        ok = પદાવલિ_Resolve_Boolean(ctx, પદાવલિ->unary.child, set_rtrn);
+        જો (ok)
             *set_rtrn = !*set_rtrn;
-        return ok;
-    case STMT_EXPR_ADD:
-    case STMT_EXPR_SUBTRACT:
-    case STMT_EXPR_MULTIPLY:
-    case STMT_EXPR_DIVIDE:
-    case STMT_EXPR_ASSIGN:
-    case STMT_EXPR_NEGATE:
-    case STMT_EXPR_UNARY_PLUS:
-    case STMT_EXPR_EMPTY_LIST:
-    case STMT_EXPR_ACTION_DECL:
-    case STMT_EXPR_ACTION_LIST:
-    case STMT_EXPR_KEYSYM_LIST:
+        પાછા ok;
+    સ્થિતિ STMT_પદાવલિ_ADD:
+    સ્થિતિ STMT_પદાવલિ_SUBTRACT:
+    સ્થિતિ STMT_પદાવલિ_MULTIPLY:
+    સ્થિતિ STMT_પદાવલિ_DIVIDE:
+    સ્થિતિ STMT_પદાવલિ_ASSIGN:
+    સ્થિતિ STMT_પદાવલિ_NEGATE:
+    સ્થિતિ STMT_પદાવલિ_UNARY_PLUS:
+    સ્થિતિ STMT_પદાવલિ_EMPTY_LIST:
+    સ્થિતિ STMT_પદાવલિ_ACTION_DECL:
+    સ્થિતિ STMT_પદાવલિ_ACTION_LIST:
+    સ્થિતિ STMT_પદાવલિ_KEYSYM_LIST:
         log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                 "%s of boolean values not permitted\n",
-                stmt_type_to_string(expr->common.type));
-        break;
+                stmt_type_to_string(પદાવલિ->common.type));
+        તોડો;
 
-    default:
+    મૂળભૂત:
         log_wsgo(ctx, XKB_ERROR_UNKNOWN_OPERATOR,
                  "Unknown operator %d in ResolveBoolean\n",
-                 expr->common.type);
-        break;
+                 પદાવલિ->common.type);
+        તોડો;
     }
 
-    return false;
+    પાછા false;
 }
 
-static bool
-ExprResolveIntegerLookup(struct xkb_context *ctx, const ExprDef *expr,
+સ્થિર bool
+પદાવલિ_Resolve_Integer_Lookup(સંરચના xkb_context *ctx, અચલ પદાવલિ_Def *પદાવલિ,
                          int64_t *val_rtrn, bool *pending,
-                         IdentLookupFunc lookup, const void *lookupPriv)
+                         IdentLookupFunc lookup, અચલ શૂન્ય *lookupPriv)
 {
     bool ok = false;
     int64_t l = 0, r = 0;
     uint32_t u = 0;
-    ExprDef *left, *right;
+    પદાવલિ_Def *ડાબું, *જમણું;
 
-    switch (expr->common.type) {
-    case STMT_EXPR_INTEGER_LITERAL:
-        *val_rtrn = expr->integer.ival;
-        return true;
+    પસંદગી (પદાવલિ->common.type) {
+    સ્થિતિ STMT_પદાવલિ_INTEGER_LITERAL:
+        *val_rtrn = પદાવલિ->integer.ival;
+        પાછા true;
 
-    case STMT_EXPR_STRING_LITERAL:
-    case STMT_EXPR_FLOAT_LITERAL:
-    case STMT_EXPR_BOOLEAN_LITERAL:
-    case STMT_EXPR_KEYNAME_LITERAL:
-    case STMT_EXPR_KEYSYM_LITERAL:
+    સ્થિતિ STMT_પદાવલિ_STRING_LITERAL:
+    સ્થિતિ STMT_પદાવલિ_FLOAT_LITERAL:
+    સ્થિતિ STMT_પદાવલિ_BOOLEAN_LITERAL:
+    સ્થિતિ STMT_પદાવલિ_KEYNAME_LITERAL:
+    સ્થિતિ STMT_પદાવલિ_KEYSYM_LITERAL:
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found %s where an int was expected\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_to_string(પદાવલિ->common.type));
+        પાછા false;
 
-    case STMT_EXPR_IDENT:
-        if (lookup)
-            ok = lookup(ctx, lookupPriv, expr->ident.ident, &u, pending);
+    સ્થિતિ STMT_પદાવલિ_IDENT:
+        જો (lookup)
+            ok = lookup(ctx, lookupPriv, પદાવલિ->ident.ident, &u, pending);
 
-        if (!ok)
+        જો (!ok)
             log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                     "Identifier \"%s\" of type int is unknown\n",
-                    xkb_atom_text(ctx, expr->ident.ident));
-        else
+                    xkb_atom_text(ctx, પદાવલિ->ident.ident));
+        નહીંતર
             *val_rtrn = (int64_t) u;
 
-        if (pending && *pending) {
+        જો (pending && *pending) {
             /* Postpone computation */
-            return false;
+            પાછા false;
         }
 
-        return ok;
+        પાછા ok;
 
-    case STMT_EXPR_FIELD_REF:
+    સ્થિતિ STMT_પદાવલિ_FIELD_REF:
         log_err(ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
                 "Default \"%s.%s\" of type int is unknown\n",
-                xkb_atom_text(ctx, expr->field_ref.element),
-                xkb_atom_text(ctx, expr->field_ref.field));
-        return false;
+                xkb_atom_text(ctx, પદાવલિ->field_ref.element),
+                xkb_atom_text(ctx, પદાવલિ->field_ref.field));
+        પાછા false;
 
-    case STMT_EXPR_ADD:
-    case STMT_EXPR_SUBTRACT:
-    case STMT_EXPR_MULTIPLY:
-    case STMT_EXPR_DIVIDE:
-        left = expr->binary.left;
-        right = expr->binary.right;
-        if (!ExprResolveIntegerLookup(ctx, left, &l, pending, lookup, lookupPriv) ||
-            !ExprResolveIntegerLookup(ctx, right, &r, pending, lookup, lookupPriv))
-            return false;
+    સ્થિતિ STMT_પદાવલિ_ADD:
+    સ્થિતિ STMT_પદાવલિ_SUBTRACT:
+    સ્થિતિ STMT_પદાવલિ_MULTIPLY:
+    સ્થિતિ STMT_પદાવલિ_DIVIDE:
+        ડાબું = પદાવલિ->દ્વિઅંકી.ડાબું;
+        જમણું = પદાવલિ->દ્વિઅંકી.જમણું;
+        જો (!પદાવલિ_Resolve_Integer_Lookup(ctx, ડાબું, &l, pending, lookup, lookupPriv) ||
+            !પદાવલિ_Resolve_Integer_Lookup(ctx, જમણું, &r, pending, lookup, lookupPriv))
+            પાછા false;
 
-        switch (expr->common.type) {
-        case STMT_EXPR_ADD:
-            if (ckd_add(val_rtrn, l, r)) {
+        પસંદગી (પદાવલિ->common.type) {
+        સ્થિતિ STMT_પદાવલિ_ADD:
+            જો (ckd_add(val_rtrn, l, r)) {
                 log_err(ctx, XKB_ERROR_INTEGER_OVERFLOW,
                         "Addition %"PRId64" + %"PRId64" has an invalid "
                         "mathematical result: %"PRId64"\n",
                         l, r, *val_rtrn);
-                return false;
+                પાછા false;
             }
-            break;
-        case STMT_EXPR_SUBTRACT:
-            if (ckd_sub(val_rtrn, l, r)) {
+            તોડો;
+        સ્થિતિ STMT_પદાવલિ_SUBTRACT:
+            જો (ckd_sub(val_rtrn, l, r)) {
                 log_err(ctx, XKB_ERROR_INTEGER_OVERFLOW,
                         "Substraction %"PRId64" - %"PRId64" has an invalid "
                         "mathematical result: %"PRId64"\n",
                         l, r, *val_rtrn);
-                return false;
+                પાછા false;
             }
-            break;
-        case STMT_EXPR_MULTIPLY:
-            if (ckd_mul(val_rtrn, l, r)) {
+            તોડો;
+        સ્થિતિ STMT_પદાવલિ_MULTIPLY:
+            જો (ckd_mul(val_rtrn, l, r)) {
                 log_err(ctx, XKB_ERROR_INTEGER_OVERFLOW,
                         "Multiplication %"PRId64" * %"PRId64" has an invalid "
                         "mathematical result: %"PRId64"\n",
                         l, r, *val_rtrn);
-                return false;
+                પાછા false;
             }
-            break;
-        case STMT_EXPR_DIVIDE:
-            if (r == 0) {
+            તોડો;
+        સ્થિતિ STMT_પદાવલિ_DIVIDE:
+            જો (r == 0) {
                 log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                         "Cannot divide by zero: %"PRId64" / %"PRId64"\n", l, r);
-                return false;
+                પાછા false;
             }
             *val_rtrn = l / r;
-            break;
-        default:
+            તોડો;
+        મૂળભૂત:
             log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                     "%s of integers not permitted\n",
-                    stmt_type_to_string(expr->common.type));
-            return false;
+                    stmt_type_to_string(પદાવલિ->common.type));
+            પાછા false;
         }
 
-        return true;
+        પાછા true;
 
-    case STMT_EXPR_ASSIGN:
+    સ્થિતિ STMT_પદાવલિ_ASSIGN:
         log_wsgo(ctx,
                  XKB_ERROR_INVALID_OPERATION,
                  "Assignment operator not implemented yet\n");
-        break;
+        તોડો;
 
-    case STMT_EXPR_NOT:
+    સ્થિતિ STMT_પદાવલિ_NOT:
         log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                 "The ! operator cannot be applied to an integer\n");
-        return false;
+        પાછા false;
 
-    case STMT_EXPR_INVERT:
-    case STMT_EXPR_NEGATE:
-        left = expr->unary.child;
-        if (!ExprResolveIntegerLookup(ctx, left, &l, pending, lookup, lookupPriv))
-            return false;
+    સ્થિતિ STMT_પદાવલિ_INVERT:
+    સ્થિતિ STMT_પદાવલિ_NEGATE:
+        ડાબું = પદાવલિ->unary.child;
+        જો (!પદાવલિ_Resolve_Integer_Lookup(ctx, ડાબું, &l, pending, lookup, lookupPriv))
+            પાછા false;
 
-        *val_rtrn = (expr->common.type == STMT_EXPR_NEGATE ? -l : ~l);
-        return true;
+        *val_rtrn = (પદાવલિ->common.type == STMT_પદાવલિ_NEGATE ? -l : ~l);
+        પાછા true;
 
-    case STMT_EXPR_UNARY_PLUS:
-        left = expr->unary.child;
-        return ExprResolveIntegerLookup(ctx, left, val_rtrn, pending, lookup,
+    સ્થિતિ STMT_પદાવલિ_UNARY_PLUS:
+        ડાબું = પદાવલિ->unary.child;
+        પાછા પદાવલિ_Resolve_Integer_Lookup(ctx, ડાબું, val_rtrn, pending, lookup,
                                         lookupPriv);
 
-    default:
+    મૂળભૂત:
         log_wsgo(ctx, XKB_ERROR_UNKNOWN_OPERATOR,
                  "Unknown operator %d in ResolveInteger\n",
-                 expr->common.type);
-        break;
+                 પદાવલિ->common.type);
+        તોડો;
     }
 
-    return false;
+    પાછા false;
 }
 
 bool
-ExprResolveInteger(struct xkb_context *ctx, const ExprDef *expr,
+પદાવલિ_Resolve_Integer(સંરચના xkb_context *ctx, અચલ પદાવલિ_Def *પદાવલિ,
                    int64_t *val_rtrn)
 {
-    return ExprResolveIntegerLookup(ctx, expr, val_rtrn, NULL, NULL, NULL);
+    પાછા પદાવલિ_Resolve_Integer_Lookup(ctx, પદાવલિ, val_rtrn, ખાલી, ખાલી, ખાલી);
 }
 
-enum xkb_parser_error
-ExprResolveGroup(const struct xkb_keymap_info *keymap_info,
-                 const ExprDef *expr, bool absolute,
+ગણના xkb_parser_error
+પદાવલિ_Resolve_Group(અચલ સંરચના xkb_keymap_info *keymap_info,
+                 અચલ પદાવલિ_Def *પદાવલિ, bool absolute,
                  xkb_layout_index_t *group_rtrn, bool *pending)
 {
-    static const LookupEntry pendingGroupIndexNames[] = {
+    સ્થિર અચલ LookupEntry pendingGroupIndexNames[] = {
         { GROUP_LAST_INDEX_NAME, 0 },
-        { NULL, 0 }
+        { ખાલી, 0 }
     };
 
-    const struct named_integer_pattern group_name_pattern = {
+    અચલ સંરચના named_integer_pattern group_name_pattern = {
         /* Prefix is title-cased, because it is also used in error messages */
         .prefix = "Group",
-        .prefix_length = sizeof("Group") - 1,
+        .prefix_length = કદ("Group") - 1,
         .min = 1,
         .max = keymap_info->features.max_groups,
         .is_mask = false,
@@ -415,338 +415,338 @@ ExprResolveGroup(const struct xkb_keymap_info *keymap_info,
     };
 
     int64_t result = 0;
-    if (!ExprResolveIntegerLookup(keymap_info->keymap.ctx, expr, &result, pending,
+    જો (!પદાવલિ_Resolve_Integer_Lookup(keymap_info->keymap.ctx, પદાવલિ, &result, pending,
                                   NamedIntegerPatternLookup, &group_name_pattern))
-        return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+        પાછા (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
             ? PARSER_FATAL_ERROR
             : PARSER_RECOVERABLE_ERROR;
 
-    if (result < (int64_t)absolute || result > keymap_info->features.max_groups) {
+    જો (result < (int64_t)absolute || result > keymap_info->features.max_groups) {
         log_err(keymap_info->keymap.ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                 "Group index %"PRId64" is out of range (%u..%"PRIu32")\n",
                 result, absolute, keymap_info->features.max_groups);
-        return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+        પાછા (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
             ? PARSER_FATAL_ERROR
             : PARSER_RECOVERABLE_ERROR;
     }
 
     *group_rtrn = (xkb_layout_index_t) result;
-    return PARSER_SUCCESS;
+    પાછા PARSER_SUCCESS;
 }
 
 bool
-ExprResolveLevel(struct xkb_context *ctx, const ExprDef *expr,
+પદાવલિ_Resolve_Level(સંરચના xkb_context *ctx, અચલ પદાવલિ_Def *પદાવલિ,
                  xkb_level_index_t *level_rtrn)
 {
-    static const struct named_integer_pattern level_name_pattern = {
+    સ્થિર અચલ સંરચના named_integer_pattern level_name_pattern = {
         /* Prefix is title-cased, because it is also used in error messages */
         .prefix = "Level",
-        .prefix_length = sizeof("Level") - 1,
+        .prefix_length = કદ("Level") - 1,
         .min = 1,
         .max = XKB_LEVEL_MAX_IMPL,
         .is_mask = false,
-        .entries = NULL,
+        .entries = ખાલી,
         .error_id = XKB_ERROR_UNSUPPORTED_SHIFT_LEVEL,
     };
     int64_t result = 0;
-    if (!ExprResolveIntegerLookup(ctx, expr, &result, NULL,
+    જો (!પદાવલિ_Resolve_Integer_Lookup(ctx, પદાવલિ, &result, ખાલી,
                                   NamedIntegerPatternLookup,
                                   &level_name_pattern))
-        return false;
+        પાછા false;
 
-    if (result < 1 || result > XKB_LEVEL_MAX_IMPL) {
+    જો (result < 1 || result > XKB_LEVEL_MAX_IMPL) {
         log_err(ctx, XKB_ERROR_UNSUPPORTED_SHIFT_LEVEL,
                 "Shift level %"PRId64" is out of range (1..%u)\n",
                 result, XKB_LEVEL_MAX_IMPL);
-        return false;
+        પાછા false;
     }
 
     /* Level is zero-indexed from now on. */
     *level_rtrn = (xkb_level_index_t) (result - 1);
-    return true;
+    પાછા true;
 }
 
 bool
-ExprResolveButton(struct xkb_context *ctx, const ExprDef *expr, int64_t *btn_rtrn)
+પદાવલિ_Resolve_Button(સંરચના xkb_context *ctx, અચલ પદાવલિ_Def *પદાવલિ, int64_t *btn_rtrn)
 {
-    return ExprResolveIntegerLookup(ctx, expr, btn_rtrn, NULL, SimpleLookup,
+    પાછા પદાવલિ_Resolve_Integer_Lookup(ctx, પદાવલિ, btn_rtrn, ખાલી, SimpleLookup,
                                     buttonNames);
 }
 
 bool
-ExprResolveString(struct xkb_context *ctx, const ExprDef *expr,
+પદાવલિ_Resolve_String(સંરચના xkb_context *ctx, અચલ પદાવલિ_Def *પદાવલિ,
                   xkb_atom_t *val_rtrn)
 {
-    switch (expr->common.type) {
-    case STMT_EXPR_STRING_LITERAL:
-        *val_rtrn = expr->string.str;
-        return true;
+    પસંદગી (પદાવલિ->common.type) {
+    સ્થિતિ STMT_પદાવલિ_STRING_LITERAL:
+        *val_rtrn = પદાવલિ->string.str;
+        પાછા true;
 
-    case STMT_EXPR_INTEGER_LITERAL:
-    case STMT_EXPR_FLOAT_LITERAL:
-    case STMT_EXPR_BOOLEAN_LITERAL:
-    case STMT_EXPR_KEYNAME_LITERAL:
-    case STMT_EXPR_KEYSYM_LITERAL:
+    સ્થિતિ STMT_પદાવલિ_INTEGER_LITERAL:
+    સ્થિતિ STMT_પદાવલિ_FLOAT_LITERAL:
+    સ્થિતિ STMT_પદાવલિ_BOOLEAN_LITERAL:
+    સ્થિતિ STMT_પદાવલિ_KEYNAME_LITERAL:
+    સ્થિતિ STMT_પદાવલિ_KEYSYM_LITERAL:
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found %s, expected a string\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_to_string(પદાવલિ->common.type));
+        પાછા false;
 
-    case STMT_EXPR_IDENT:
+    સ્થિતિ STMT_પદાવલિ_IDENT:
         log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                 "Identifier \"%s\" of type string not found\n",
-                xkb_atom_text(ctx, expr->ident.ident));
-        return false;
+                xkb_atom_text(ctx, પદાવલિ->ident.ident));
+        પાછા false;
 
-    case STMT_EXPR_FIELD_REF:
+    સ્થિતિ STMT_પદાવલિ_FIELD_REF:
         log_err(ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
                 "Default \"%s.%s\" of type string not found\n",
-                xkb_atom_text(ctx, expr->field_ref.element),
-                xkb_atom_text(ctx, expr->field_ref.field));
-        return false;
+                xkb_atom_text(ctx, પદાવલિ->field_ref.element),
+                xkb_atom_text(ctx, પદાવલિ->field_ref.field));
+        પાછા false;
 
-    case STMT_EXPR_ADD:
-    case STMT_EXPR_SUBTRACT:
-    case STMT_EXPR_MULTIPLY:
-    case STMT_EXPR_DIVIDE:
-    case STMT_EXPR_ASSIGN:
-    case STMT_EXPR_NEGATE:
-    case STMT_EXPR_INVERT:
-    case STMT_EXPR_NOT:
-    case STMT_EXPR_UNARY_PLUS:
-    case STMT_EXPR_EMPTY_LIST:
-    case STMT_EXPR_ACTION_DECL:
-    case STMT_EXPR_ACTION_LIST:
-    case STMT_EXPR_KEYSYM_LIST:
+    સ્થિતિ STMT_પદાવલિ_ADD:
+    સ્થિતિ STMT_પદાવલિ_SUBTRACT:
+    સ્થિતિ STMT_પદાવલિ_MULTIPLY:
+    સ્થિતિ STMT_પદાવલિ_DIVIDE:
+    સ્થિતિ STMT_પદાવલિ_ASSIGN:
+    સ્થિતિ STMT_પદાવલિ_NEGATE:
+    સ્થિતિ STMT_પદાવલિ_INVERT:
+    સ્થિતિ STMT_પદાવલિ_NOT:
+    સ્થિતિ STMT_પદાવલિ_UNARY_PLUS:
+    સ્થિતિ STMT_પદાવલિ_EMPTY_LIST:
+    સ્થિતિ STMT_પદાવલિ_ACTION_DECL:
+    સ્થિતિ STMT_પદાવલિ_ACTION_LIST:
+    સ્થિતિ STMT_પદાવલિ_KEYSYM_LIST:
         log_err(ctx, XKB_ERROR_INVALID_XKB_SYNTAX,
                 "%s of strings not permitted\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_to_string(પદાવલિ->common.type));
+        પાછા false;
 
-    default:
+    મૂળભૂત:
         log_wsgo(ctx, XKB_ERROR_UNKNOWN_OPERATOR,
                  "Unknown operator %d in ResolveString\n",
-                 expr->common.type);
-        break;
+                 પદાવલિ->common.type);
+        તોડો;
     }
-    return false;
+    પાછા false;
 }
 
 bool
-ExprResolveEnum(struct xkb_context *ctx, const ExprDef *expr,
-                uint32_t *val_rtrn, const LookupEntry *values)
+પદાવલિ_Resolve_Enum(સંરચના xkb_context *ctx, અચલ પદાવલિ_Def *પદાવલિ,
+                uint32_t *val_rtrn, અચલ LookupEntry *કિંમતો)
 {
-    if (expr->common.type != STMT_EXPR_IDENT) {
+    જો (પદાવલિ->common.type != STMT_પદાવલિ_IDENT) {
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found a %s where an enumerated value was expected\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_to_string(પદાવલિ->common.type));
+        પાછા false;
     }
 
-    if (!SimpleLookup(ctx, values, expr->ident.ident, val_rtrn, NULL)) {
+    જો (!SimpleLookup(ctx, કિંમતો, પદાવલિ->ident.ident, val_rtrn, ખાલી)) {
         log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                 "Illegal identifier %s; expected one of:\n",
-                xkb_atom_text(ctx, expr->ident.ident));
-        while (values && values->name)
+                xkb_atom_text(ctx, પદાવલિ->ident.ident));
+        જ્યારે (કિંમતો && કિંમતો->name)
         {
-            log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER, "\t%s\n", values->name);
-            values++;
+            log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER, "\t%s\n", કિંમતો->name);
+            કિંમતો++;
         }
-        return false;
+        પાછા false;
     }
 
-    return true;
+    પાછા true;
 }
 
-static bool
-ExprResolveMaskLookup(struct xkb_context *ctx, const ExprDef *expr,
+સ્થિર bool
+પદાવલિ_Resolve_Mask_Lookup(સંરચના xkb_context *ctx, અચલ પદાવલિ_Def *પદાવલિ,
                       uint32_t *val_rtrn, bool *pending,
-                      IdentLookupFunc lookup, const void *lookupPriv)
+                      IdentLookupFunc lookup, અચલ શૂન્ય *lookupPriv)
 {
     bool ok = false;
     uint32_t l = 0, r = 0;
     int64_t v = 0;
-    ExprDef *left, *right;
-    const char *bogus = NULL;
+    પદાવલિ_Def *ડાબું, *જમણું;
+    અચલ અક્ષર *bogus = ખાલી;
 
-    switch (expr->common.type) {
-    case STMT_EXPR_INTEGER_LITERAL:
-        if (expr->integer.ival < 0 || expr->integer.ival > UINT32_MAX) {
+    પસંદગી (પદાવલિ->common.type) {
+    સ્થિતિ STMT_પદાવલિ_INTEGER_LITERAL:
+        જો (પદાવલિ->integer.ival < 0 || પદાવલિ->integer.ival > UINT32_MAX) {
             log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Mask %s%#"PRIxMAX" is out of range (0..%#"PRIx32")\n",
-                    expr->integer.ival < 0 ? "-" : "",
-                    imaxabs(expr->integer.ival),
+                    પદાવલિ->integer.ival < 0 ? "-" : "",
+                    imaxabs(પદાવલિ->integer.ival),
                     UINT32_MAX);
-            return false;
+            પાછા false;
         }
-        *val_rtrn = (uint32_t) expr->integer.ival;
-        return true;
+        *val_rtrn = (uint32_t) પદાવલિ->integer.ival;
+        પાછા true;
 
-    case STMT_EXPR_STRING_LITERAL:
-    case STMT_EXPR_FLOAT_LITERAL:
-    case STMT_EXPR_BOOLEAN_LITERAL:
-    case STMT_EXPR_KEYNAME_LITERAL:
-    case STMT_EXPR_KEYSYM_LITERAL:
+    સ્થિતિ STMT_પદાવલિ_STRING_LITERAL:
+    સ્થિતિ STMT_પદાવલિ_FLOAT_LITERAL:
+    સ્થિતિ STMT_પદાવલિ_BOOLEAN_LITERAL:
+    સ્થિતિ STMT_પદાવલિ_KEYNAME_LITERAL:
+    સ્થિતિ STMT_પદાવલિ_KEYSYM_LITERAL:
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found %s where a mask was expected\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_to_string(પદાવલિ->common.type));
+        પાછા false;
 
-    case STMT_EXPR_IDENT:
-        ok = lookup(ctx, lookupPriv, expr->ident.ident, val_rtrn, pending);
-        if (!ok)
+    સ્થિતિ STMT_પદાવલિ_IDENT:
+        ok = lookup(ctx, lookupPriv, પદાવલિ->ident.ident, val_rtrn, pending);
+        જો (!ok)
             log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                     "Identifier \"%s\" of type int is unknown\n",
-                    xkb_atom_text(ctx, expr->ident.ident));
-        if (pending && *pending) {
+                    xkb_atom_text(ctx, પદાવલિ->ident.ident));
+        જો (pending && *pending) {
             /* Postpone computation */
-            return false;
+            પાછા false;
         }
-        return ok;
+        પાછા ok;
 
-    case STMT_EXPR_FIELD_REF:
+    સ્થિતિ STMT_પદાવલિ_FIELD_REF:
         log_err(ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
                 "Default \"%s.%s\" of type int is unknown\n",
-                xkb_atom_text(ctx, expr->field_ref.element),
-                xkb_atom_text(ctx, expr->field_ref.field));
-        return false;
+                xkb_atom_text(ctx, પદાવલિ->field_ref.element),
+                xkb_atom_text(ctx, પદાવલિ->field_ref.field));
+        પાછા false;
 
-    case STMT_EXPR_ARRAY_REF:
+    સ્થિતિ STMT_પદાવલિ_ARRAY_REF:
         bogus = "array reference";
         /* fallthrough */
-    case STMT_EXPR_ACTION_DECL:
-        if (bogus == NULL)
+    સ્થિતિ STMT_પદાવલિ_ACTION_DECL:
+        જો (bogus == ખાલી)
             bogus = "function use";
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Unexpected %s in mask expression; Expression Ignored\n",
                 bogus);
-        return false;
+        પાછા false;
 
-    case STMT_EXPR_ADD:
-    case STMT_EXPR_SUBTRACT:
-    case STMT_EXPR_MULTIPLY:
-    case STMT_EXPR_DIVIDE:
-        left = expr->binary.left;
-        right = expr->binary.right;
-        if (!ExprResolveMaskLookup(ctx, left, &l, pending, lookup, lookupPriv) ||
-            !ExprResolveMaskLookup(ctx, right, &r, pending, lookup, lookupPriv))
-            return false;
+    સ્થિતિ STMT_પદાવલિ_ADD:
+    સ્થિતિ STMT_પદાવલિ_SUBTRACT:
+    સ્થિતિ STMT_પદાવલિ_MULTIPLY:
+    સ્થિતિ STMT_પદાવલિ_DIVIDE:
+        ડાબું = પદાવલિ->દ્વિઅંકી.ડાબું;
+        જમણું = પદાવલિ->દ્વિઅંકી.જમણું;
+        જો (!પદાવલિ_Resolve_Mask_Lookup(ctx, ડાબું, &l, pending, lookup, lookupPriv) ||
+            !પદાવલિ_Resolve_Mask_Lookup(ctx, જમણું, &r, pending, lookup, lookupPriv))
+            પાછા false;
 
-        switch (expr->common.type) {
-        case STMT_EXPR_ADD:
+        પસંદગી (પદાવલિ->common.type) {
+        સ્થિતિ STMT_પદાવલિ_ADD:
             *val_rtrn = l | r;
-            break;
-        case STMT_EXPR_SUBTRACT:
+            તોડો;
+        સ્થિતિ STMT_પદાવલિ_SUBTRACT:
             *val_rtrn = l & (~r);
-            break;
-        case STMT_EXPR_MULTIPLY:
-        case STMT_EXPR_DIVIDE:
+            તોડો;
+        સ્થિતિ STMT_પદાવલિ_MULTIPLY:
+        સ્થિતિ STMT_પદાવલિ_DIVIDE:
             log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                     "Cannot %s masks; Illegal operation ignored\n",
-                    (expr->common.type == STMT_EXPR_DIVIDE ? "divide" : "multiply"));
-            return false;
-        default:
-            break;
+                    (પદાવલિ->common.type == STMT_પદાવલિ_DIVIDE ? "divide" : "multiply"));
+            પાછા false;
+        મૂળભૂત:
+            તોડો;
         }
 
-        return true;
+        પાછા true;
 
-    case STMT_EXPR_ASSIGN:
+    સ્થિતિ STMT_પદાવલિ_ASSIGN:
         log_wsgo(ctx, XKB_ERROR_INVALID_OPERATION,
                  "Assignment operator not implemented yet\n");
-        break;
+        તોડો;
 
-    case STMT_EXPR_INVERT:
-        left = expr->unary.child;
-        if (!ExprResolveIntegerLookup(ctx, left, &v, pending, lookup, lookupPriv))
-            return false;
-        if (v < 0 || v > UINT32_MAX) {
+    સ્થિતિ STMT_પદાવલિ_INVERT:
+        ડાબું = પદાવલિ->unary.child;
+        જો (!પદાવલિ_Resolve_Integer_Lookup(ctx, ડાબું, &v, pending, lookup, lookupPriv))
+            પાછા false;
+        જો (v < 0 || v > UINT32_MAX) {
             log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Mask %s%#"PRIxMAX" is out of range (0..%#"PRIx32")\n",
                     v < 0 ? "-" : "", imaxabs(v), UINT32_MAX);
-            return false;
+            પાછા false;
         }
         *val_rtrn = ~(uint32_t) v;
-        return true;
+        પાછા true;
 
-    case STMT_EXPR_UNARY_PLUS:
-    case STMT_EXPR_NEGATE:
-    case STMT_EXPR_NOT:
-        left = expr->unary.child;
-        if (!ExprResolveIntegerLookup(ctx, left, &v, pending, lookup, lookupPriv))
-            return false;
+    સ્થિતિ STMT_પદાવલિ_UNARY_PLUS:
+    સ્થિતિ STMT_પદાવલિ_NEGATE:
+    સ્થિતિ STMT_પદાવલિ_NOT:
+        ડાબું = પદાવલિ->unary.child;
+        જો (!પદાવલિ_Resolve_Integer_Lookup(ctx, ડાબું, &v, pending, lookup, lookupPriv))
+            પાછા false;
         log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                 "The '%c' unary operator cannot be used with a mask\n",
-                stmt_type_to_operator_char(expr->common.type));
-        return false;
+                stmt_type_to_operator_char(પદાવલિ->common.type));
+        પાછા false;
 
-    default:
+    મૂળભૂત:
         log_wsgo(ctx, XKB_ERROR_UNKNOWN_OPERATOR,
                  "Unknown operator type %d in ResolveMask\n",
-                 expr->common.type);
-        break;
+                 પદાવલિ->common.type);
+        તોડો;
     }
 
-    return false;
+    પાછા false;
 }
 
 bool
-ExprResolveMask(struct xkb_context *ctx, const ExprDef *expr,
-                uint32_t *mask_rtrn, const LookupEntry *values)
+પદાવલિ_Resolve_Mask(સંરચના xkb_context *ctx, અચલ પદાવલિ_Def *પદાવલિ,
+                uint32_t *mask_rtrn, અચલ LookupEntry *કિંમતો)
 {
-    return ExprResolveMaskLookup(ctx, expr, mask_rtrn, NULL, SimpleLookup, values);
+    પાછા પદાવલિ_Resolve_Mask_Lookup(ctx, પદાવલિ, mask_rtrn, ખાલી, SimpleLookup, કિંમતો);
 }
 
 bool
-ExprResolveModMask(struct xkb_context *ctx, const ExprDef *expr,
-                   enum mod_type mod_type, const struct xkb_mod_set *mods,
+પદાવલિ_Resolve_Mod_Mask(સંરચના xkb_context *ctx, અચલ પદાવલિ_Def *પદાવલિ,
+                   ગણના mod_type mod_type, અચલ સંરચના xkb_mod_set *mods,
                    xkb_mod_mask_t *mask_rtrn)
 {
     LookupModMaskPriv priv = { .mods = mods, .mod_type = mod_type };
-    return ExprResolveMaskLookup(ctx, expr, mask_rtrn, NULL, LookupModMask, &priv);
+    પાછા પદાવલિ_Resolve_Mask_Lookup(ctx, પદાવલિ, mask_rtrn, ખાલી, LookupModMask, &priv);
 }
 
 bool
-ExprResolveMod(struct xkb_context *ctx, const ExprDef *def,
-               enum mod_type mod_type, const struct xkb_mod_set *mods,
+પદાવલિ_Resolve_Mod(સંરચના xkb_context *ctx, અચલ પદાવલિ_Def *def,
+               ગણના mod_type mod_type, અચલ સંરચના xkb_mod_set *mods,
                xkb_mod_index_t *ndx_rtrn)
 {
-    if (def->common.type != STMT_EXPR_IDENT) {
+    જો (def->common.type != STMT_પદાવલિ_IDENT) {
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Cannot resolve virtual modifier: "
                 "found %s where a virtual modifier name was expected\n",
                 stmt_type_to_string(def->common.type));
-        return false;
+        પાછા false;
     }
 
     xkb_atom_t name = def->ident.ident;
     xkb_mod_index_t ndx = XkbModNameToIndex(mods, name, mod_type);
-    if (ndx == XKB_MOD_INVALID) {
+    જો (ndx == XKB_MOD_INVALID) {
         log_err(ctx, XKB_ERROR_UNDECLARED_VIRTUAL_MODIFIER,
                 "Cannot resolve virtual modifier: "
                 "\"%s\" was not previously declared\n",
                 xkb_atom_text(ctx, name));
-        return false;
+        પાછા false;
     }
 
     *ndx_rtrn = ndx;
-    return true;
+    પાછા true;
 }
 
 bool
-ExprResolveGroupMask(const struct xkb_keymap_info *keymap_info,
-                     const ExprDef *expr, xkb_layout_mask_t *group_rtrn,
+પદાવલિ_Resolve_Group_Mask(અચલ સંરચના xkb_keymap_info *keymap_info,
+                     અચલ પદાવલિ_Def *પદાવલિ, xkb_layout_mask_t *group_rtrn,
                      bool *pending_rtrn)
 {
-    static const LookupEntry pendingGroupMaskNames[] = {
+    સ્થિર અચલ LookupEntry pendingGroupMaskNames[] = {
         { GROUP_LAST_INDEX_NAME, 0 },
-        { NULL, 0 }
+        { ખાલી, 0 }
     };
 
-    const struct named_integer_pattern group_name_pattern = {
+    અચલ સંરચના named_integer_pattern group_name_pattern = {
         /* Prefix is title-cased, because it is also used in error messages */
         .prefix = "Group",
-        .prefix_length = sizeof("Group") - 1,
+        .prefix_length = કદ("Group") - 1,
         .min = 1,
         .max = keymap_info->features.max_groups,
         .is_mask = true,
@@ -755,7 +755,7 @@ ExprResolveGroupMask(const struct xkb_keymap_info *keymap_info,
         .error_id = XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_
     };
 
-    return ExprResolveMaskLookup(keymap_info->keymap.ctx, expr, group_rtrn,
+    પાછા પદાવલિ_Resolve_Mask_Lookup(keymap_info->keymap.ctx, પદાવલિ, group_rtrn,
                                  pending_rtrn, NamedIntegerPatternLookup,
                                  &group_name_pattern);
 }

@@ -12,33 +12,33 @@
 
 /* The following goes in the header */
 %code requires {
-#include "config.h"
+#અન્તર્ભાવ "config.h"
 
-#include "scanner-utils.h"
-#include "xkbcomp/ast.h"
-#include "xkbcomp/xkbcomp-priv.h"
+#અન્તર્ભાવ "scanner-utils.h"
+#અન્તર્ભાવ "xkbcomp/ast.h"
+#અન્તર્ભાવ "xkbcomp/xkbcomp-priv.h"
 }
 
 %{
-#include "config.h"
+#અન્તર્ભાવ "config.h"
 
-#include <assert.h>
+#અન્તર્ભાવ <assert.h>
 
-#include "keysym.h"
-#include "xkbcomp/xkbcomp-priv.h"
-#include "xkbcomp/parser-priv.h"
-#include "xkbcomp/ast-build.h"
+#અન્તર્ભાવ "keysym.h"
+#અન્તર્ભાવ "xkbcomp/xkbcomp-priv.h"
+#અન્તર્ભાવ "xkbcomp/parser-priv.h"
+#અન્તર્ભાવ "xkbcomp/ast-build.h"
 
-struct parser_param {
-    struct xkb_context *ctx;
-    struct scanner *scanner;
+સંરચના parser_param {
+    સંરચના xkb_context *ctx;
+    સંરચના scanner *scanner;
     XkbFile *rtrn;
-    struct parser_keymap_config config;
+    સંરચના parser_keymap_config config;
     bool more_maps;
 };
 
-#define parser_log_with_code(param, level, verbosity, log_msg_id, fmt, ...)   \
-    scanner_log_with_code((param)->scanner, level, verbosity, log_msg_id, fmt,\
+#define parser_log_with_code(param, level, verbosity, log_સંદેશ_id, fmt, ...)   \
+    scanner_log_with_code((param)->scanner, level, verbosity, log_સંદેશ_id, fmt,\
                           ##__VA_ARGS__)
 
 #define parser_err(param, error_id, fmt, ...) \
@@ -50,52 +50,52 @@ struct parser_param {
 #define parser_vrb(param, verbosity, warning_id, fmt, ...) \
     scanner_vrb((param)->scanner, verbosity, warning_id, fmt, ##__VA_ARGS__)
 
-static void
-_xkbcommon_error(struct parser_param *param, const char *msg)
+સ્થિર શૂન્ય
+_xkbcommon_error(સંરચના parser_param *param, અચલ અક્ષર *સંદેશ)
 {
-    parser_err(param, XKB_ERROR_INVALID_XKB_SYNTAX, "%s", msg);
+    parser_err(param, XKB_ERROR_INVALID_XKB_SYNTAX, "%s", સંદેશ);
 }
 
-static bool
-resolve_keysym(struct parser_param *param, struct sval name, xkb_keysym_t *sym_rtrn)
+સ્થિર bool
+resolve_keysym(સંરચના parser_param *param, સંરચના sval name, xkb_keysym_t *sym_rtrn)
 {
     xkb_keysym_t sym;
 
-    if (isvaleq(name, SVAL_LIT("any")) || isvaleq(name, SVAL_LIT("nosymbol"))) {
-        *sym_rtrn = XKB_KEY_NoSymbol;
-        return true;
+    જો (isvaleq(name, SVAL_LIT("any")) || isvaleq(name, SVAL_LIT("nosymbol"))) {
+        *sym_rtrn = XKB_ચાવી_No_પ્રતીક;
+        પાછા true;
     }
 
-    if (isvaleq(name, SVAL_LIT("none")) || isvaleq(name, SVAL_LIT("voidsymbol"))) {
-        *sym_rtrn = XKB_KEY_VoidSymbol;
-        return true;
+    જો (isvaleq(name, SVAL_LIT("none")) || isvaleq(name, SVAL_LIT("voidsymbol"))) {
+        *sym_rtrn = XKB_ચાવી_Void_પ્રતીક;
+        પાછા true;
     }
 
     /* xkb_keysym_from_name needs a C string. */
-    char buf[XKB_KEYSYM_NAME_MAX_SIZE];
-    if (name.len >= sizeof(buf)) {
-        return false;
+    અક્ષર buf[XKB_KEYSYM_NAME_MAX_SIZE];
+    જો (name.len >= કદ(buf)) {
+        પાછા false;
     }
     memcpy(buf, name.start, name.len);
     buf[name.len] = '\0';
 
     sym = xkb_keysym_from_name(buf, XKB_KEYSYM_NO_FLAGS);
-    if (sym != XKB_KEY_NoSymbol) {
+    જો (sym != XKB_ચાવી_No_પ્રતીક) {
         *sym_rtrn = sym;
         check_deprecated_keysyms(parser_warn, param, param->ctx,
                                  sym, buf, buf, "%s", "");
-        return true;
+        પાછા true;
     }
 
-    return false;
+    પાછા false;
 }
 
 #define param_scanner param->scanner
 %}
 
 %define api.pure
-%lex-param      { struct scanner *param_scanner }
-%parse-param    { struct parser_param *param }
+%lex-param      { સંરચના scanner *param_scanner }
+%parse-param    { સંરચના parser_param *param }
 
 %define parse.error detailed
 
@@ -119,13 +119,13 @@ resolve_keysym(struct parser_param *param, struct sval name, xkb_keysym_t *sym_r
         TYPE            21 "type"
         INTERPRET       22 "interpret"
         ACTION_TOK      23 "action"
-        KEY             24 "key"
+        ચાવી_3             24 "key"
         ALIAS           25 "alias"
         GROUP           26 "group"
         MODIFIER_MAP    27 "modifier_map"
         INDICATOR       28 "indicator"
         SHAPE           29 "shape"
-        KEYS            30 "keys"
+        ચાવીઓ_2            30 "keys"
         ROW             31 "row"
         SECTION         32 "section"
         OVERLAY         33 "overlay"
@@ -159,10 +159,10 @@ resolve_keysym(struct parser_param *param, struct sval name, xkb_keysym_t *sym_r
         PARTIAL         70 "partial"
         DEFAULT         71 "default"
         HIDDEN          72 "hidden"
-        ALPHANUMERIC_KEYS       73 "alphanumeric_keys"
-        MODIFIER_KEYS           74 "modifier_keys"
-        KEYPAD_KEYS             75 "keypad_keys"
-        FUNCTION_KEYS           76 "function_keys"
+        ALPHANUMERIC_ચાવીઓ       73 "alphanumeric_keys"
+        MODIFIER_ચાવીઓ           74 "modifier_keys"
+        KEYPAD_ચાવીઓ             75 "keypad_keys"
+        FUNCTION_ચાવીઓ           76 "function_keys"
         ALTERNATE_GROUP         77 "alternate_group"
         DEPRECATED              78 "deprecated"
 
@@ -174,89 +174,89 @@ resolve_keysym(struct parser_param *param, struct sval name, xkb_keysym_t *sym_r
 
 %start  XkbFile
 
-%union  {
-        int64_t          num;
-        enum xkb_file_type file_type;
-        char            *str;
-        struct sval     sval;
+%સંઘ  {
+        int64_t          અંક;
+        ગણના xkb_file_type file_type;
+        અક્ષર            *str;
+        સંરચના sval     sval;
         xkb_atom_t      atom;
-        enum merge_mode merge;
-        enum xkb_map_flags mapFlags;
+        ગણના merge_mode merge;
+        ગણના xkb_map_flags mapFlags;
         xkb_keysym_t    keysym;
         ParseCommon     *any;
-        struct { ParseCommon *head; ParseCommon *last; } anyList;
-        uint32_t        noSymbolOrActionList;
-        ExprDef         *expr;
-        struct { ExprDef *head; ExprDef *last; } exprList;
+        સંરચના { ParseCommon *head; ParseCommon *last; } anyList;
+        uint32_t        no_પ્રતીક_Or_Action_List;
+        પદાવલિ_Def         *પદાવલિ;
+        સંરચના { પદાવલિ_Def *head; પદાવલિ_Def *last; } પદાવલિ_List;
         VarDef          *var;
-        struct { VarDef *head; VarDef *last; } varList;
+        સંરચના { VarDef *head; VarDef *last; } varList;
         VModDef         *vmod;
-        struct { VModDef *head; VModDef *last; } vmodList;
+        સંરચના { VModDef *head; VModDef *last; } vmodList;
         InterpDef       *interp;
-        KeyTypeDef      *keyType;
+        ચાવી_Type_Def      *ચાવી_Type;
         SymbolsDef      *syms;
         ModMapDef       *modMask;
         GroupCompatDef  *groupCompat;
         LedMapDef       *ledMap;
         LedNameDef      *ledName;
-        KeycodeDef      *keyCode;
-        KeyAliasDef     *keyAlias;
+        KeycodeDef      *ચાવી_Code;
+        ચાવી_Alias_Def     *ચાવી_Alias;
         UnknownStatement *unknown;
-        void            *geom;
+        શૂન્ય            *geom;
         XkbFile         *file;
-        struct { XkbFile *head; XkbFile *last; } fileList;
+        સંરચના { XkbFile *head; XkbFile *last; } fileList;
 }
 
-%type <num>     DECIMAL_DIGIT INTEGER FLOAT
-%type <str>     STRING
-%type <sval>    IDENT
-%type <atom>    KEYNAME
-%type <num>     KeyCode Number Integer Float SignedNumber DoodadType
-%type <merge>   MergeMode OptMergeMode
-%type <file_type> XkbCompositeType FileType
-%type <mapFlags> Flag Flags OptFlags
-%type <str>     MapName OptMapName
-%type <atom>    FieldSpec Ident Element String
-%type <keysym>  KeySym KeySymLit
-%type <noSymbolOrActionList> NoSymbolOrActionList
-%type <any>     Decl
-%type <anyList> DeclList
-%type <expr>    Expr Term Lhs Terminal OptTerminal Coord CoordList
-%type <expr>    MultiKeySymOrActionList NonEmptyActions Actions Action
-%type <expr>    KeySyms NonEmptyKeySyms KeySymList KeyOrKeySym
-%type <exprList> ExprList KeyOrKeySymList
-%type <exprList> ActionList MultiActionList MultiKeySymList
-%type <var>     VarDecl SymbolsVarDecl
-%type <varList> VarDeclList SymbolsBody OptSymbolsBody
-%type <vmod>    VModDef
-%type <vmodList> VModDefList VModDecl
-%type <interp>  InterpretDecl InterpretMatch
-%type <keyType> KeyTypeDecl
-%type <syms>    SymbolsDecl
-%type <modMask> ModMapDecl
-%type <groupCompat> GroupCompatDecl
-%type <ledMap>  LedMapDecl
-%type <ledName> LedNameDecl
-%type <keyCode> KeyNameDecl
-%type <keyAlias> KeyAliasDecl
-%type <geom>    ShapeDecl SectionDecl SectionBody SectionBodyItem RowBody RowBodyItem
-%type <geom>    Keys Key OverlayDecl OverlayKeyList OverlayKey OutlineList OutlineInList
-%type <geom>    DoodadDecl
-%type <unknown> UnknownDecl UnknownCompoundStatementDecl
-%type <file>    XkbFile XkbMapConfig
-%type <fileList> XkbMapConfigList
-%type <file>    XkbCompositeMap
+%પ્રકાર <અંક>     DECIMAL_DIGIT INTEGER FLOAT
+%પ્રકાર <str>     STRING
+%પ્રકાર <sval>    IDENT
+%પ્રકાર <atom>    KEYNAME
+%પ્રકાર <અંક>     ચાવી_Code_2 સંખ્યા Integer Float Signed_સંખ્યા DoodadType
+%પ્રકાર <merge>   MergeMode OptMergeMode
+%પ્રકાર <file_type> XkbCompositeType FileType
+%પ્રકાર <mapFlags> Flag Flags OptFlags
+%પ્રકાર <str>     MapName OptMapName
+%પ્રકાર <atom>    FieldSpec Ident Element String
+%પ્રકાર <keysym>  ચાવી_Sym_2 ચાવી_Sym_Lit
+%પ્રકાર <no_પ્રતીક_Or_Action_List> No_પ્રતીક_Or_Action_List
+%પ્રકાર <any>     Decl
+%પ્રકાર <anyList> DeclList
+%પ્રકાર <પદાવલિ>    પદાવલિ_2 Term Lhs Terminal OptTerminal Coord CoordList
+%પ્રકાર <પદાવલિ>    Multi_ચાવી_Sym_Or_Action_List NonEmptyActions Actions Action
+%પ્રકાર <પદાવલિ>    ચાવી_Syms Non_Empty_ચાવી_Syms ચાવી_Sym_List ચાવી_Or_ચાવી_Sym
+%પ્રકાર <પદાવલિ_List> પદાવલિ_List_2 ચાવી_Or_ચાવી_Sym_List
+%પ્રકાર <પદાવલિ_List> ActionList MultiActionList Multi_ચાવી_Sym_List
+%પ્રકાર <var>     VarDecl SymbolsVarDecl
+%પ્રકાર <varList> VarDeclList SymbolsBody OptSymbolsBody
+%પ્રકાર <vmod>    VModDef
+%પ્રકાર <vmodList> VModDefList VModDecl
+%પ્રકાર <interp>  InterpretDecl InterpretMatch
+%પ્રકાર <ચાવી_Type> ચાવી_Type_Decl
+%પ્રકાર <syms>    SymbolsDecl
+%પ્રકાર <modMask> ModMapDecl
+%પ્રકાર <groupCompat> GroupCompatDecl
+%પ્રકાર <ledMap>  LedMapDecl
+%પ્રકાર <ledName> LedNameDecl
+%પ્રકાર <ચાવી_Code> ચાવી_Name_Decl
+%પ્રકાર <ચાવી_Alias> ચાવી_Alias_Decl
+%પ્રકાર <geom>    ShapeDecl SectionDecl SectionBody SectionBodyItem RowBody RowBodyItem
+%પ્રકાર <geom>    ચાવીઓ_3 ચાવી_4 OverlayDecl Overlay_ચાવી_List Overlay_ચાવી OutlineList OutlineInList
+%પ્રકાર <geom>    DoodadDecl
+%પ્રકાર <unknown> UnknownDecl UnknownCompoundStatementDecl
+%પ્રકાર <file>    XkbFile XkbMapConfig
+%પ્રકાર <fileList> XkbMapConfigList
+%પ્રકાર <file>    XkbCompositeMap
 
 %destructor { FreeStmt((ParseCommon *) $$); }
-    <any> <expr> <var> <vmod> <interp> <keyType> <syms> <modMask> <groupCompat>
-    <ledMap> <ledName> <keyCode> <keyAlias>
+    <any> <પદાવલિ> <var> <vmod> <interp> <ચાવી_Type> <syms> <modMask> <groupCompat>
+    <ledMap> <ledName> <ચાવી_Code> <ચાવી_Alias>
 %destructor { FreeStmt((ParseCommon *) $$.head); }
-    <anyList> <exprList> <varList> <vmodList>
+    <anyList> <પદાવલિ_List> <varList> <vmodList>
 /* The destructor also runs on the start symbol when the parser *succeeds*.
  * The `if` here catches this case. */
-%destructor { if (!param->rtrn) FreeXkbFile($$); } <file>
+%destructor { જો (!param->rtrn) FreeXkbFile($$); } <file>
 %destructor { FreeXkbFile($$.head); } <fileList>
-%destructor { free($$); } <str>
+%destructor { મુક્ત($$); } <str>
 
 %%
 
@@ -273,11 +273,11 @@ resolve_keysym(struct parser_param *param, struct sval name, xkb_keysym_t *sym_r
  */
 
 XkbFile         :       XkbCompositeMap
-                        { $$ = param->rtrn = $1; param->more_maps = !!param->rtrn; (void) yynerrs; }
+                        { $$ = param->rtrn = $1; param->more_maps = !!param->rtrn; (શૂન્ય) yynerrs; }
                 |       XkbMapConfig
                         { $$ = param->rtrn = $1; param->more_maps = !!param->rtrn; YYACCEPT; }
                 |       END_OF_FILE
-                        { $$ = param->rtrn = NULL; param->more_maps = false; }
+                        { $$ = param->rtrn = ખાલી; param->more_maps = false; }
                 ;
 
 XkbCompositeMap :       OptFlags XkbCompositeType OptMapName OBRACE
@@ -296,24 +296,24 @@ XkbCompositeType:       XKB_KEYMAP      { $$ = FILE_TYPE_KEYMAP; }
  */
 XkbMapConfigList :      XkbMapConfigList XkbMapConfig
                         {
-                            if ($2) {
-                                if ($1.head) {
+                            જો ($2) {
+                                જો ($1.head) {
                                     $$.head = $1.head;
                                     $$.last->common.next = &$2->common;
                                     $$.last = $2;
-                                } else {
+                                } નહીંતર {
                                     $$.head = $$.last = $2;
                                 }
                             }
                         }
-                |       { $$.head = $$.last = NULL; }
+                |       { $$.head = $$.last = ખાલી; }
                 ;
 
 XkbMapConfig    :       OptFlags FileType OptMapName OBRACE
                             DeclList
                         CBRACE SEMI
                         {
-                            if ($1 & MAP_IS_DEPRECATED) {
+                            જો ($1 & MAP_IS_DEPRECATED) {
                                 parser_warn(param, XKB_WARNING_DEPRECATED_SECTION,
                                             "deprecated section: \"%s\"",
                                             safe_map_name($3));
@@ -340,15 +340,15 @@ Flags           :       Flags Flag              { $$ = ($1 | $2); }
 Flag            :       PARTIAL                 { $$ = MAP_IS_PARTIAL; }
                 |       DEFAULT                 { $$ = MAP_IS_DEFAULT; }
                 |       HIDDEN                  { $$ = MAP_IS_HIDDEN; }
-                |       ALPHANUMERIC_KEYS       { $$ = MAP_HAS_ALPHANUMERIC; }
-                |       MODIFIER_KEYS           { $$ = MAP_HAS_MODIFIER; }
-                |       KEYPAD_KEYS             { $$ = MAP_HAS_KEYPAD; }
-                |       FUNCTION_KEYS           { $$ = MAP_HAS_FN; }
+                |       ALPHANUMERIC_ચાવીઓ       { $$ = MAP_HAS_ALPHANUMERIC; }
+                |       MODIFIER_ચાવીઓ           { $$ = MAP_HAS_MODIFIER; }
+                |       KEYPAD_ચાવીઓ             { $$ = MAP_HAS_KEYPAD; }
+                |       FUNCTION_ચાવીઓ           { $$ = MAP_HAS_FN; }
                 |       ALTERNATE_GROUP         { $$ = MAP_IS_ALTGR; }
                 |       DEPRECATED              { $$ = MAP_IS_DEPRECATED; }
                 |       IDENT
                         {
-                            const bool error = (param->config.strict & PARSER_NO_UNKNOWN_SECTION_FLAGS);
+                            અચલ bool error = (param->config.strict & PARSER_NO_UNKNOWN_SECTION_FLAGS);
                             parser_log_with_code(
                                 param, (error ? XKB_LOG_LEVEL_ERROR : XKB_LOG_LEVEL_WARNING),
                                 XKB_LOG_VERBOSITY_MINIMAL,
@@ -357,7 +357,7 @@ Flag            :       PARTIAL                 { $$ = MAP_IS_PARTIAL; }
                                 (unsigned)$1.len, $1.start,
                                 (error ? "" : "; ignored")
                             );
-                            if (error)
+                            જો (error)
                                 YYABORT;
                             $$ = 0;
                         }
@@ -365,10 +365,10 @@ Flag            :       PARTIAL                 { $$ = MAP_IS_PARTIAL; }
 
 DeclList        :       DeclList Decl
                         {
-                            if ($2) {
-                                if ($1.head) {
+                            જો ($2) {
+                                જો ($1.head) {
                                     $$.head = $1.head; $1.last->next = $2; $$.last = $2;
-                                } else {
+                                } નહીંતર {
                                     $$.head = $$.last = $2;
                                 }
                             }
@@ -380,15 +380,15 @@ DeclList        :       DeclList Decl
                          */
                 |       DeclList OptMergeMode VModDecl
                         {
-                            for (VModDef *vmod = $3.head; vmod; vmod = (VModDef *) vmod->common.next)
+                            માટે (VModDef *vmod = $3.head; vmod; vmod = (VModDef *) vmod->common.next)
                                 vmod->merge = $2;
-                            if ($1.head) {
+                            જો ($1.head) {
                                 $$.head = $1.head; $1.last->next = &$3.head->common; $$.last = &$3.last->common;
-                            } else {
+                            } નહીંતર {
                                 $$.head = &$3.head->common; $$.last = &$3.last->common;
                             }
                         }
-                |       { $$.head = $$.last = NULL; }
+                |       { $$.head = $$.last = ખાલી; }
                 ;
 
 Decl            :       OptMergeMode VarDecl
@@ -402,17 +402,17 @@ Decl            :       OptMergeMode VarDecl
                             $2->merge = $1;
                             $$ = (ParseCommon *) $2;
                         }
-                |       OptMergeMode KeyNameDecl
+                |       OptMergeMode ચાવી_Name_Decl
                         {
                             $2->merge = $1;
                             $$ = (ParseCommon *) $2;
                         }
-                |       OptMergeMode KeyAliasDecl
+                |       OptMergeMode ચાવી_Alias_Decl
                         {
                             $2->merge = $1;
                             $$ = (ParseCommon *) $2;
                         }
-                |       OptMergeMode KeyTypeDecl
+                |       OptMergeMode ચાવી_Type_Decl
                         {
                             $2->merge = $1;
                             $$ = (ParseCommon *) $2;
@@ -442,9 +442,9 @@ Decl            :       OptMergeMode VarDecl
                             $2->merge = $1;
                             $$ = (ParseCommon *) $2;
                         }
-                |       OptMergeMode ShapeDecl          { $$ = NULL; }
-                |       OptMergeMode SectionDecl        { $$ = NULL; }
-                |       OptMergeMode DoodadDecl         { $$ = NULL; }
+                |       OptMergeMode ShapeDecl          { $$ = ખાલી; }
+                |       OptMergeMode SectionDecl        { $$ = ખાલી; }
+                |       OptMergeMode DoodadDecl         { $$ = ખાલી; }
                 |       OptMergeMode UnknownDecl
                             { $$ = (ParseCommon *) $2; }
                 |       OptMergeMode UnknownCompoundStatementDecl
@@ -452,11 +452,11 @@ Decl            :       OptMergeMode VarDecl
                 |       MergeMode STRING
                         {
                             $$ = (ParseCommon *) IncludeCreate(param->ctx, $2, $1);
-                            free($2);
+                            મુક્ત($2);
                         }
                 ;
 
-VarDecl         :       Lhs EQUALS Expr SEMI
+VarDecl         :       Lhs EQUALS પદાવલિ_2 SEMI
                         { $$ = VarCreate($1, $3); }
                 |       Ident SEMI
                         { $$ = BoolVarCreate($1, true); }
@@ -464,12 +464,12 @@ VarDecl         :       Lhs EQUALS Expr SEMI
                         { $$ = BoolVarCreate($2, false); }
                 ;
 
-KeyNameDecl     :       KEYNAME EQUALS KeyCode SEMI
+ચાવી_Name_Decl     :       KEYNAME EQUALS ચાવી_Code_2 SEMI
                         { $$ = KeycodeCreate($1, $3); }
                 ;
 
-KeyAliasDecl    :       ALIAS KEYNAME EQUALS KEYNAME SEMI
-                        { $$ = KeyAliasCreate($2, $4); }
+ચાવી_Alias_Decl    :       ALIAS KEYNAME EQUALS KEYNAME SEMI
+                        { $$ = ચાવી_Alias_Create($2, $4); }
                 ;
 
 VModDecl        :       VIRTUAL_MODS VModDefList SEMI
@@ -483,8 +483,8 @@ VModDefList     :       VModDefList COMMA VModDef
                 ;
 
 VModDef         :       Ident
-                        { $$ = VModCreate($1, NULL); }
-                |       Ident EQUALS Expr
+                        { $$ = VModCreate($1, ખાલી); }
+                |       Ident EQUALS પદાવલિ_2
                         { $$ = VModCreate($1, $3); }
                 ;
 
@@ -494,41 +494,41 @@ InterpretDecl   :       INTERPRET InterpretMatch OBRACE
                         { $2->def = $4.head; $$ = $2; }
                 ;
 
-InterpretMatch  :       KeySym PLUS Expr
+InterpretMatch  :       ચાવી_Sym_2 PLUS પદાવલિ_2
                         { $$ = InterpCreate($1, $3); }
-                |       KeySym
-                        { $$ = InterpCreate($1, NULL); }
+                |       ચાવી_Sym_2
+                        { $$ = InterpCreate($1, ખાલી); }
                 ;
 
 VarDeclList     :       VarDeclList VarDecl
                         {
-                            if ($2) {
-                                if ($1.head) {
+                            જો ($2) {
+                                જો ($1.head) {
                                     $$.head = $1.head;
                                     $$.last->common.next = &$2->common;
                                     $$.last = $2;
-                                } else {
+                                } નહીંતર {
                                     $$.head = $$.last = $2;
                                 }
                             }
                         }
-                |       { $$.head = $$.last = NULL; }
+                |       { $$.head = $$.last = ખાલી; }
                 ;
 
-KeyTypeDecl     :       TYPE String OBRACE
+ચાવી_Type_Decl     :       TYPE String OBRACE
                             VarDeclList
                         CBRACE SEMI
-                        { $$ = KeyTypeCreate($2, $4.head); }
+                        { $$ = ચાવી_Type_Create($2, $4.head); }
                 ;
 
-SymbolsDecl     :       KEY KEYNAME OBRACE
+SymbolsDecl     :       ચાવી_3 KEYNAME OBRACE
                             OptSymbolsBody
                         CBRACE SEMI
                         { $$ = SymbolsCreate($2, $4.head); }
                 ;
 
 OptSymbolsBody  :       SymbolsBody { $$ = $1; }
-                |                   { $$.head = $$.last = NULL; }
+                |                   { $$.head = $$.last = ખાલી; }
                 ;
 
 SymbolsBody     :       SymbolsBody COMMA SymbolsVarDecl
@@ -537,11 +537,11 @@ SymbolsBody     :       SymbolsBody COMMA SymbolsVarDecl
                         { $$.head = $$.last = $1; }
                 ;
 
-SymbolsVarDecl  :       Lhs EQUALS Expr         { $$ = VarCreate($1, $3); }
-                |       Lhs EQUALS MultiKeySymOrActionList { $$ = VarCreate($1, $3); }
+SymbolsVarDecl  :       Lhs EQUALS પદાવલિ_2         { $$ = VarCreate($1, $3); }
+                |       Lhs EQUALS Multi_ચાવી_Sym_Or_Action_List { $$ = VarCreate($1, $3); }
                 |       Ident                   { $$ = BoolVarCreate($1, true); }
                 |       EXCLAM Ident            { $$ = BoolVarCreate($2, false); }
-                |       MultiKeySymOrActionList { $$ = VarCreate(NULL, $1); }
+                |       Multi_ચાવી_Sym_Or_Action_List { $$ = VarCreate(ખાલી, $1); }
                 ;
 
 /*
@@ -555,19 +555,19 @@ SymbolsVarDecl  :       Lhs EQUALS Expr         { $$ = VarCreate($1, $3); }
  * ambiguity is solved. If not, this is a list of empties of *some* type: we
  * drop those empties and delegate the type resolution using `ExprEmptyList()`.
  */
-MultiKeySymOrActionList
-                :       OBRACKET MultiKeySymList CBRACKET
+Multi_ચાવી_Sym_Or_Action_List
+                :       OBRACKET Multi_ચાવી_Sym_List CBRACKET
                         { $$ = $2.head; }
-                |       OBRACKET NoSymbolOrActionList COMMA MultiKeySymList CBRACKET
+                |       OBRACKET No_પ્રતીક_Or_Action_List COMMA Multi_ચાવી_Sym_List CBRACKET
                         {
                             /* Prepend n times NoSymbol */
-                            struct {ExprDef *head; ExprDef *last;} list = {
+                            સંરચના {પદાવલિ_Def *head; પદાવલિ_Def *last;} list = {
                                 .head = $4.head, .last = $4.last
                             };
-                            for (uint32_t k = 0; k < $2; k++) {
-                                ExprDef* const syms =
-                                    ExprCreateKeySymList(XKB_KEY_NoSymbol);
-                                if (!syms) {
+                            માટે (uint32_t k = 0; k < $2; k++) {
+                                પદાવલિ_Def* અચલ syms =
+                                    પદાવલિ_Create_ચાવી_Sym_List(XKB_ચાવી_No_પ્રતીક);
+                                જો (!syms) {
                                     /* TODO: Use Bison’s more appropriate YYNOMEM */
                                     YYABORT;
                                 }
@@ -578,15 +578,15 @@ MultiKeySymOrActionList
                         }
                 |       OBRACKET MultiActionList CBRACKET
                         { $$ = $2.head; }
-                |       OBRACKET NoSymbolOrActionList COMMA MultiActionList CBRACKET
+                |       OBRACKET No_પ્રતીક_Or_Action_List COMMA MultiActionList CBRACKET
                         {
                             /* Prepend n times NoAction() */
-                            struct {ExprDef *head; ExprDef *last;} list = {
+                            સંરચના {પદાવલિ_Def *head; પદાવલિ_Def *last;} list = {
                                 .head = $4.head, .last = $4.last
                             };
-                            for (uint32_t k = 0; k < $2; k++) {
-                                ExprDef* const acts = ExprCreateActionList(NULL);
-                                if (!acts) {
+                            માટે (uint32_t k = 0; k < $2; k++) {
+                                પદાવલિ_Def* અચલ acts = પદાવલિ_Create_Action_List(ખાલી);
+                                જો (!acts) {
                                     /* TODO: Use Bison’s more appropriate YYNOMEM */
                                     YYABORT;
                                 }
@@ -600,27 +600,27 @@ MultiKeySymOrActionList
                          * There is not enough context here to decide if it is
                          * a `MultiKeySymList` or a `MultiActionList`.
                          */
-                |       OBRACKET NoSymbolOrActionList CBRACKET
-                        { $$ = ExprEmptyList(); }
+                |       OBRACKET No_પ્રતીક_Or_Action_List CBRACKET
+                        { $$ = પદાવલિ_Empty_List(); }
                 ;
 
 /* A list of `{}`, which remains ambiguous until reaching a keysym or action list */
-NoSymbolOrActionList
-                :       NoSymbolOrActionList COMMA OBRACE CBRACE
+No_પ્રતીક_Or_Action_List
+                :       No_પ્રતીક_Or_Action_List COMMA OBRACE CBRACE
                         { $$ = $1 + 1; }
                 |       OBRACE CBRACE
                         { $$ = 1; }
                 |       { $$ = 0; }
                 ;
 
-GroupCompatDecl :       GROUP Integer EQUALS Expr SEMI
+GroupCompatDecl :       GROUP Integer EQUALS પદાવલિ_2 SEMI
                         { $$ = GroupCompatCreate($2, $4); }
                 ;
 
-ModMapDecl      :       MODIFIER_MAP Expr OBRACE KeyOrKeySymList CBRACE SEMI
+ModMapDecl      :       MODIFIER_MAP પદાવલિ_2 OBRACE ચાવી_Or_ચાવી_Sym_List CBRACE SEMI
                         {
-                            if (param->config.format == XKB_KEYMAP_FORMAT_TEXT_V1 &&
-                                $2->common.type != STMT_EXPR_IDENT) {
+                            જો (param->config.format == XKB_KEYMAP_FORMAT_TEXT_V1 &&
+                                $2->common.પ્રકાર != STMT_પદાવલિ_IDENT) {
                                     parser_err(
                                         param, XKB_ERROR_INVALID_MODIFIER_MAP_MASK,
                                         "Invalid real modifier mask in modifier "
@@ -634,29 +634,29 @@ ModMapDecl      :       MODIFIER_MAP Expr OBRACE KeyOrKeySymList CBRACE SEMI
                         }
                 ;
 
-KeyOrKeySymList :       KeyOrKeySymList COMMA KeyOrKeySym
+ચાવી_Or_ચાવી_Sym_List :       ચાવી_Or_ચાવી_Sym_List COMMA ચાવી_Or_ચાવી_Sym
                         { $$.head = $1.head; $$.last->common.next = &$3->common; $$.last = $3; }
-                |       KeyOrKeySym
+                |       ચાવી_Or_ચાવી_Sym
                         { $$.head = $$.last = $1; }
                 ;
 
-KeyOrKeySym     :       KEYNAME
-                        { $$ = ExprCreateKeyName($1); }
-                |       KeySym
-                        { $$ = ExprCreateKeySym($1); }
+ચાવી_Or_ચાવી_Sym     :       KEYNAME
+                        { $$ = પદાવલિ_Create_ચાવી_Name($1); }
+                |       ચાવી_Sym_2
+                        { $$ = પદાવલિ_Create_ચાવી_Sym($1); }
                 ;
 
 LedMapDecl:             INDICATOR String OBRACE VarDeclList CBRACE SEMI
                         { $$ = LedMapCreate($2, $4.head); }
                 ;
 
-LedNameDecl:            INDICATOR Integer EQUALS Expr SEMI
+LedNameDecl:            INDICATOR Integer EQUALS પદાવલિ_2 SEMI
                         { $$ = LedNameCreate($2, $4, false); }
-                |       VIRTUAL INDICATOR Integer EQUALS Expr SEMI
+                |       VIRTUAL INDICATOR Integer EQUALS પદાવલિ_2 SEMI
                         { $$ = LedNameCreate($3, $5, true); }
                 ;
 
-UnknownDecl     :       IDENT Terminal EQUALS Expr SEMI
+UnknownDecl     :       IDENT Terminal EQUALS પદાવલિ_2 SEMI
                         {
                             FreeStmt((ParseCommon *) $2);
                             FreeStmt((ParseCommon *) $4);
@@ -674,87 +674,87 @@ UnknownCompoundStatementDecl:
                 ;
 
 ShapeDecl       :       SHAPE String OBRACE OutlineList CBRACE SEMI
-                        { $$ = NULL; }
+                        { $$ = ખાલી; }
                 |       SHAPE String OBRACE CoordList CBRACE SEMI
-                        { (void) $4; $$ = NULL; }
+                        { (શૂન્ય) $4; $$ = ખાલી; }
                 ;
 
 SectionDecl     :       SECTION String OBRACE SectionBody CBRACE SEMI
-                        { $$ = NULL; }
+                        { $$ = ખાલી; }
                 ;
 
-SectionBody     :       SectionBody SectionBodyItem     { $$ = NULL;}
-                |       SectionBodyItem                 { $$ = NULL; }
+SectionBody     :       SectionBody SectionBodyItem     { $$ = ખાલી;}
+                |       SectionBodyItem                 { $$ = ખાલી; }
                 ;
 
 SectionBodyItem :       ROW OBRACE RowBody CBRACE SEMI
-                        { $$ = NULL; }
+                        { $$ = ખાલી; }
                 |       VarDecl
-                        { FreeStmt((ParseCommon *) $1); $$ = NULL; }
+                        { FreeStmt((ParseCommon *) $1); $$ = ખાલી; }
                 |       DoodadDecl
-                        { $$ = NULL; }
+                        { $$ = ખાલી; }
                 |       LedMapDecl
-                        { FreeStmt((ParseCommon *) $1); $$ = NULL; }
+                        { FreeStmt((ParseCommon *) $1); $$ = ખાલી; }
                 |       OverlayDecl
-                        { $$ = NULL; }
+                        { $$ = ખાલી; }
                 ;
 
-RowBody         :       RowBody RowBodyItem     { $$ = NULL;}
-                |       RowBodyItem             { $$ = NULL; }
+RowBody         :       RowBody RowBodyItem     { $$ = ખાલી;}
+                |       RowBodyItem             { $$ = ખાલી; }
                 ;
 
-RowBodyItem     :       KEYS OBRACE Keys CBRACE SEMI { $$ = NULL; }
+RowBodyItem     :       ચાવીઓ_2 OBRACE ચાવીઓ_3 CBRACE SEMI { $$ = ખાલી; }
                 |       VarDecl
-                        { FreeStmt((ParseCommon *) $1); $$ = NULL; }
+                        { FreeStmt((ParseCommon *) $1); $$ = ખાલી; }
                 ;
 
-Keys            :       Keys COMMA Key          { $$ = NULL; }
-                |       Key                     { $$ = NULL; }
+ચાવીઓ_3            :       ચાવીઓ_3 COMMA ચાવી_4          { $$ = ખાલી; }
+                |       ચાવી_4                     { $$ = ખાલી; }
                 ;
 
-Key             :       KEYNAME
-                        { $$ = NULL; }
-                |       OBRACE ExprList CBRACE
-                        { FreeStmt((ParseCommon *) $2.head); $$ = NULL; }
+ચાવી_4             :       KEYNAME
+                        { $$ = ખાલી; }
+                |       OBRACE પદાવલિ_List_2 CBRACE
+                        { FreeStmt((ParseCommon *) $2.head); $$ = ખાલી; }
                 ;
 
-OverlayDecl     :       OVERLAY String OBRACE OverlayKeyList CBRACE SEMI
-                        { $$ = NULL; }
+OverlayDecl     :       OVERLAY String OBRACE Overlay_ચાવી_List CBRACE SEMI
+                        { $$ = ખાલી; }
                 ;
 
-OverlayKeyList  :       OverlayKeyList COMMA OverlayKey { $$ = NULL; }
-                |       OverlayKey                      { $$ = NULL; }
+Overlay_ચાવી_List  :       Overlay_ચાવી_List COMMA Overlay_ચાવી { $$ = ખાલી; }
+                |       Overlay_ચાવી                      { $$ = ખાલી; }
                 ;
 
-OverlayKey      :       KEYNAME EQUALS KEYNAME          { $$ = NULL; }
+Overlay_ચાવી      :       KEYNAME EQUALS KEYNAME          { $$ = ખાલી; }
                 ;
 
 OutlineList     :       OutlineList COMMA OutlineInList
-                        { $$ = NULL;}
+                        { $$ = ખાલી;}
                 |       OutlineInList
-                        { $$ = NULL; }
+                        { $$ = ખાલી; }
                 ;
 
 OutlineInList   :       OBRACE CoordList CBRACE
-                        { (void) $2; $$ = NULL; }
+                        { (શૂન્ય) $2; $$ = ખાલી; }
                 |       Ident EQUALS OBRACE CoordList CBRACE
-                        { (void) $4; $$ = NULL; }
-                |       Ident EQUALS Expr
-                        { FreeStmt((ParseCommon *) $3); $$ = NULL; }
+                        { (શૂન્ય) $4; $$ = ખાલી; }
+                |       Ident EQUALS પદાવલિ_2
+                        { FreeStmt((ParseCommon *) $3); $$ = ખાલી; }
                 ;
 
 CoordList       :       CoordList COMMA Coord
-                        { (void) $1; (void) $3; $$ = NULL; }
+                        { (શૂન્ય) $1; (શૂન્ય) $3; $$ = ખાલી; }
                 |       Coord
-                        { (void) $1; $$ = NULL; }
+                        { (શૂન્ય) $1; $$ = ખાલી; }
                 ;
 
-Coord           :       OBRACKET SignedNumber COMMA SignedNumber CBRACKET
-                        { $$ = NULL; }
+Coord           :       OBRACKET Signed_સંખ્યા COMMA Signed_સંખ્યા CBRACKET
+                        { $$ = ખાલી; }
                 ;
 
 DoodadDecl      :       DoodadType String OBRACE VarDeclList CBRACE SEMI
-                        { FreeStmt((ParseCommon *) $4.head); $$ = NULL; }
+                        { FreeStmt((ParseCommon *) $4.head); $$ = ખાલી; }
                 ;
 
 DoodadType      :       TEXT    { $$ = 0; }
@@ -773,7 +773,7 @@ Element         :       ACTION_TOK
                         { $$ = xkb_atom_intern_literal(param->ctx, "interpret"); }
                 |       TYPE
                         { $$ = xkb_atom_intern_literal(param->ctx, "type"); }
-                |       KEY
+                |       ચાવી_3
                         { $$ = xkb_atom_intern_literal(param->ctx, "key"); }
                 |       GROUP
                         { $$ = xkb_atom_intern_literal(param->ctx, "group"); }
@@ -811,67 +811,67 @@ MergeMode       :       INCLUDE         { $$ = MERGE_DEFAULT; }
                 }
                 ;
 
-ExprList        :       ExprList COMMA Expr
+પદાવલિ_List_2        :       પદાવલિ_List_2 COMMA પદાવલિ_2
                         {
-                            if ($3) {
-                                if ($1.head) {
+                            જો ($3) {
+                                જો ($1.head) {
                                     $$.head = $1.head;
                                     $$.last->common.next = &$3->common;
                                     $$.last = $3;
-                                } else {
+                                } નહીંતર {
                                     $$.head = $$.last = $3;
                                 }
                             }
                         }
-                |       Expr
+                |       પદાવલિ_2
                         { $$.head = $$.last = $1; }
-                |       { $$.head = $$.last = NULL; }
+                |       { $$.head = $$.last = ખાલી; }
                 ;
 
-Expr            :       Expr DIVIDE Expr
-                        { $$ = ExprCreateBinary(STMT_EXPR_DIVIDE, $1, $3); }
-                |       Expr PLUS Expr
-                        { $$ = ExprCreateBinary(STMT_EXPR_ADD, $1, $3); }
-                |       Expr MINUS Expr
-                        { $$ = ExprCreateBinary(STMT_EXPR_SUBTRACT, $1, $3); }
-                |       Expr TIMES Expr
-                        { $$ = ExprCreateBinary(STMT_EXPR_MULTIPLY, $1, $3); }
-                |       Lhs EQUALS Expr
-                        { $$ = ExprCreateBinary(STMT_EXPR_ASSIGN, $1, $3); }
+પદાવલિ_2            :       પદાવલિ_2 DIVIDE પદાવલિ_2
+                        { $$ = પદાવલિ_Create_દ્વિઅંકી(STMT_પદાવલિ_DIVIDE, $1, $3); }
+                |       પદાવલિ_2 PLUS પદાવલિ_2
+                        { $$ = પદાવલિ_Create_દ્વિઅંકી(STMT_પદાવલિ_ADD, $1, $3); }
+                |       પદાવલિ_2 MINUS પદાવલિ_2
+                        { $$ = પદાવલિ_Create_દ્વિઅંકી(STMT_પદાવલિ_SUBTRACT, $1, $3); }
+                |       પદાવલિ_2 TIMES પદાવલિ_2
+                        { $$ = પદાવલિ_Create_દ્વિઅંકી(STMT_પદાવલિ_MULTIPLY, $1, $3); }
+                |       Lhs EQUALS પદાવલિ_2
+                        { $$ = પદાવલિ_Create_દ્વિઅંકી(STMT_પદાવલિ_ASSIGN, $1, $3); }
                 |       Term
                         { $$ = $1; }
                 ;
 
 Term            :       MINUS Term
-                        { $$ = ExprCreateUnary(STMT_EXPR_NEGATE, $2); }
+                        { $$ = પદાવલિ_Create_Unary(STMT_પદાવલિ_NEGATE, $2); }
                 |       PLUS Term
-                        { $$ = ExprCreateUnary(STMT_EXPR_UNARY_PLUS, $2); }
+                        { $$ = પદાવલિ_Create_Unary(STMT_પદાવલિ_UNARY_PLUS, $2); }
                 |       EXCLAM Term
-                        { $$ = ExprCreateUnary(STMT_EXPR_NOT, $2); }
+                        { $$ = પદાવલિ_Create_Unary(STMT_પદાવલિ_NOT, $2); }
                 |       INVERT Term
-                        { $$ = ExprCreateUnary(STMT_EXPR_INVERT, $2); }
+                        { $$ = પદાવલિ_Create_Unary(STMT_પદાવલિ_INVERT, $2); }
                 |       Lhs
                         { $$ = $1; }
-                |       FieldSpec OPAREN ExprList CPAREN %prec OPAREN
-                        { $$ = ExprCreateAction($1, $3.head); }
+                |       FieldSpec OPAREN પદાવલિ_List_2 CPAREN %prec OPAREN
+                        { $$ = પદાવલિ_Create_Action($1, $3.head); }
                 |       Actions
                         { $$ = $1; }
                 |       Terminal
                         { $$ = $1; }
-                |       OPAREN Expr CPAREN
+                |       OPAREN પદાવલિ_2 CPAREN
                         { $$ = $2; }
                 ;
 
 MultiActionList :       MultiActionList COMMA Action
                         {
-                            ExprDef *expr = ExprCreateActionList($3);
+                            પદાવલિ_Def *પદાવલિ = પદાવલિ_Create_Action_List($3);
                             $$ = $1;
-                            $$.last->common.next = &expr->common; $$.last = expr;
+                            $$.last->common.next = &પદાવલિ->common; $$.last = પદાવલિ;
                         }
                 |       MultiActionList COMMA Actions
                         { $$ = $1; $$.last->common.next = &$3->common; $$.last = $3; }
                 |       Action
-                        { $$.head = $$.last = ExprCreateActionList($1); }
+                        { $$.head = $$.last = પદાવલિ_Create_Action_List($1); }
                 |       NonEmptyActions
                         { $$.head = $$.last = $1; }
                 ;
@@ -883,130 +883,130 @@ ActionList      :       ActionList COMMA Action
                 ;
 
 NonEmptyActions :       OBRACE ActionList CBRACE
-                        { $$ = ExprCreateActionList($2.head); }
+                        { $$ = પદાવલિ_Create_Action_List($2.head); }
                 ;
 
 Actions         :       NonEmptyActions
                         { $$ = $1; }
                 |       OBRACE CBRACE
-                        { $$ = ExprCreateActionList(NULL); }
+                        { $$ = પદાવલિ_Create_Action_List(ખાલી); }
                 ;
 
-Action          :       FieldSpec OPAREN ExprList CPAREN
-                        { $$ = ExprCreateAction($1, $3.head); }
+Action          :       FieldSpec OPAREN પદાવલિ_List_2 CPAREN
+                        { $$ = પદાવલિ_Create_Action($1, $3.head); }
                 ;
 
 Lhs             :       FieldSpec
-                        { $$ = ExprCreateIdent($1); }
+                        { $$ = પદાવલિ_Create_Ident($1); }
                 |       FieldSpec DOT FieldSpec
-                        { $$ = ExprCreateFieldRef($1, $3); }
-                |       FieldSpec OBRACKET Expr CBRACKET
-                        { $$ = ExprCreateArrayRef(XKB_ATOM_NONE, $1, $3); }
-                |       FieldSpec DOT FieldSpec OBRACKET Expr CBRACKET
-                        { $$ = ExprCreateArrayRef($1, $3, $5); }
+                        { $$ = પદાવલિ_Create_Field_Ref($1, $3); }
+                |       FieldSpec OBRACKET પદાવલિ_2 CBRACKET
+                        { $$ = પદાવલિ_Create_Array_Ref(XKB_ATOM_NONE, $1, $3); }
+                |       FieldSpec DOT FieldSpec OBRACKET પદાવલિ_2 CBRACKET
+                        { $$ = પદાવલિ_Create_Array_Ref($1, $3, $5); }
                 ;
 
 OptTerminal     :       Terminal
                         { $$ = $1; }
-                |       { $$ = NULL; }
+                |       { $$ = ખાલી; }
                 ;
 
 Terminal        :       String
-                        { $$ = ExprCreateString($1); }
+                        { $$ = પદાવલિ_Create_String($1); }
                 |       Integer
-                        { $$ = ExprCreateInteger($1); }
+                        { $$ = પદાવલિ_Create_Integer($1); }
                 |       Float
-                        { $$ = ExprCreateFloat(/* Discard $1 */); }
+                        { $$ = પદાવલિ_Create_Float(/* Discard $1 */); }
                 |       KEYNAME
-                        { $$ = ExprCreateKeyName($1); }
+                        { $$ = પદાવલિ_Create_ચાવી_Name($1); }
                 ;
 
-MultiKeySymList :       MultiKeySymList COMMA KeySymLit
+Multi_ચાવી_Sym_List :       Multi_ચાવી_Sym_List COMMA ચાવી_Sym_Lit
                         {
-                            ExprDef *expr = ExprCreateKeySymList($3);
+                            પદાવલિ_Def *પદાવલિ = પદાવલિ_Create_ચાવી_Sym_List($3);
                             $$ = $1;
-                            $$.last->common.next = &expr->common; $$.last = expr;
+                            $$.last->common.next = &પદાવલિ->common; $$.last = પદાવલિ;
                         }
-                |       MultiKeySymList COMMA KeySyms
+                |       Multi_ચાવી_Sym_List COMMA ચાવી_Syms
                         { $$ = $1; $$.last->common.next = &$3->common; $$.last = $3; }
-                |       KeySymLit
-                        { $$.head = $$.last = ExprCreateKeySymList($1); }
-                |       NonEmptyKeySyms
+                |       ચાવી_Sym_Lit
+                        { $$.head = $$.last = પદાવલિ_Create_ચાવી_Sym_List($1); }
+                |       Non_Empty_ચાવી_Syms
                         { $$.head = $$.last = $1; }
                 ;
 
-KeySymList      :       KeySymList COMMA KeySymLit
-                        { $$ = ExprAppendKeySymList($1, $3); }
-                |       KeySymList COMMA STRING
+ચાવી_Sym_List      :       ચાવી_Sym_List COMMA ચાવી_Sym_Lit
+                        { $$ = પદાવલિ_Append_ચાવી_Sym_List($1, $3); }
+                |       ચાવી_Sym_List COMMA STRING
                         {
-                            $$ = ExprKeySymListAppendString(param->scanner, $1, $3);
-                            free($3);
-                            if (!$$)
+                            $$ = પદાવલિ_ચાવી_Sym_List_Append_String(param->scanner, $1, $3);
+                            મુક્ત($3);
+                            જો (!$$)
                                 YYERROR;
                         }
-                |       KeySymLit
+                |       ચાવી_Sym_Lit
                         {
-                            $$ = ExprCreateKeySymList($1);
-                            if (!$$)
+                            $$ = પદાવલિ_Create_ચાવી_Sym_List($1);
+                            જો (!$$)
                                 YYERROR;
                         }
                 |       STRING
                         {
-                            $$ = ExprCreateKeySymList(XKB_KEY_NoSymbol);
-                            if (!$$)
+                            $$ = પદાવલિ_Create_ચાવી_Sym_List(XKB_ચાવી_No_પ્રતીક);
+                            જો (!$$)
                                 YYERROR;
-                            $$ = ExprKeySymListAppendString(param->scanner, $$, $1);
-                            free($1);
-                            if (!$$)
+                            $$ = પદાવલિ_ચાવી_Sym_List_Append_String(param->scanner, $$, $1);
+                            મુક્ત($1);
+                            જો (!$$)
                                 YYERROR;
                         }
                 ;
 
-NonEmptyKeySyms :       OBRACE KeySymList CBRACE
+Non_Empty_ચાવી_Syms :       OBRACE ચાવી_Sym_List CBRACE
                         { $$ = $2; }
                 |       STRING
                         {
-                            $$ = ExprCreateKeySymList(XKB_KEY_NoSymbol);
-                            if (!$$)
+                            $$ = પદાવલિ_Create_ચાવી_Sym_List(XKB_ચાવી_No_પ્રતીક);
+                            જો (!$$)
                                 YYERROR;
-                            $$ = ExprKeySymListAppendString(param->scanner, $$, $1);
-                            free($1);
-                            if (!$$)
+                            $$ = પદાવલિ_ચાવી_Sym_List_Append_String(param->scanner, $$, $1);
+                            મુક્ત($1);
+                            જો (!$$)
                                 YYERROR;
                         }
                 ;
 
-KeySyms         :       NonEmptyKeySyms
+ચાવી_Syms         :       Non_Empty_ચાવી_Syms
                         { $$ = $1; }
                 |       OBRACE CBRACE
-                        { $$ = ExprCreateKeySymList(XKB_KEY_NoSymbol); }
+                        { $$ = પદાવલિ_Create_ચાવી_Sym_List(XKB_ચાવી_No_પ્રતીક); }
                 ;
 
-KeySym          :       KeySymLit
+ચાવી_Sym_2          :       ચાવી_Sym_Lit
                         { $$ = $1; }
                 |       STRING
                         {
                             $$ = KeysymParseString(param->scanner, $1);
-                            free($1);
-                            if ($$ == XKB_KEY_NoSymbol)
+                            મુક્ત($1);
+                            જો ($$ == XKB_ચાવી_No_પ્રતીક)
                                 YYERROR;
                         }
                 ;
 
-KeySymLit       :       IDENT
+ચાવી_Sym_Lit       :       IDENT
                         {
-                            if (!resolve_keysym(param, $1, &$$)) {
+                            જો (!resolve_keysym(param, $1, &$$)) {
                                 parser_warn(
                                     param,
                                     XKB_WARNING_UNRECOGNIZED_KEYSYM,
                                     "unrecognized keysym \"%.*s\"",
-                                    (unsigned int) $1.len, $1.start
+                                    (unsigned પૂર્ણાંક) $1.len, $1.start
                                 );
-                                $$ = XKB_KEY_NoSymbol;
+                                $$ = XKB_ચાવી_No_પ્રતીક;
                             }
                         }
                         /* Handle keysym that is also a keyword  */
-                |       SECTION { $$ = XKB_KEY_section; }
+                |       SECTION { $$ = XKB_ચાવી_section; }
                 |       DECIMAL_DIGIT
                         {
                             /*
@@ -1014,11 +1014,11 @@ KeySymLit       :       IDENT
                              * map to XKB_KEY_0 .. XKB_KEY_9, consistent with
                              * other keysym names: <name> → XKB_KEY_<name>.
                              */
-                            $$ = XKB_KEY_0 + (xkb_keysym_t) $1;
+                            $$ = XKB_ચાવી_0 + (xkb_keysym_t) $1;
                         }
                 |       INTEGER
                         {
-                            if ($1 < XKB_KEYSYM_MIN) {
+                            જો ($1 < XKB_KEYSYM_MIN) {
                                 /* Negative value */
                                 static_assert(XKB_KEYSYM_MIN == 0,
                                               "Keysyms are positive");
@@ -1029,7 +1029,7 @@ KeySymLit       :       IDENT
                                     " (%"PRId64")",
                                     -$1, $1
                                 );
-                                $$ = XKB_KEY_NoSymbol;
+                                $$ = XKB_ચાવી_No_પ્રતીક;
                             }
                             /*
                              * Integers 0..9 are handled with DECIMAL_DIGIT if
@@ -1039,9 +1039,9 @@ KeySymLit       :       IDENT
                              * the keysym 0x0001, while `1` is interpreted as
                              * XKB_KEY_1.
                              */
-                            else {
+                            નહીંતર {
                                 /* Any other numeric value */
-                                if ($1 <= XKB_KEYSYM_MAX) {
+                                જો ($1 <= XKB_KEYSYM_MAX) {
                                     /*
                                      * Valid keysym
                                      * No normalization is performed and value
@@ -1050,15 +1050,15 @@ KeySymLit       :       IDENT
                                     $$ = (xkb_keysym_t) $1;
                                     check_deprecated_keysyms(
                                         parser_warn, param, param->ctx,
-                                        $$, NULL, $$, "%#06"PRIx32, "");
-                                } else {
+                                        $$, ખાલી, $$, "%#06"PRIx32, "");
+                                } નહીંતર {
                                     /* Invalid keysym */
                                     parser_warn(
                                         param, XKB_ERROR_INVALID_NUMERIC_KEYSYM,
                                         "unrecognized keysym \"%#06"PRIx64"\" "
                                         "(%"PRId64")", $1, $1
                                     );
-                                    $$ = XKB_KEY_NoSymbol;
+                                    $$ = XKB_ચાવી_No_પ્રતીક;
                                 }
                                 parser_vrb(
                                     /*
@@ -1076,11 +1076,11 @@ KeySymLit       :       IDENT
                         }
                 ;
 
-SignedNumber    :       MINUS Number    { $$ = -$2; }
-                |       Number          { $$ = $1; }
+Signed_સંખ્યા    :       MINUS સંખ્યા    { $$ = -$2; }
+                |       સંખ્યા          { $$ = $1; }
                 ;
 
-Number          :       FLOAT         { $$ = $1; }
+સંખ્યા          :       FLOAT         { $$ = $1; }
                 |       DECIMAL_DIGIT { $$ = $1; }
                 |       INTEGER       { $$ = $1; }
                 ;
@@ -1092,7 +1092,7 @@ Integer         :       INTEGER       { $$ = $1; }
                 |       DECIMAL_DIGIT { $$ = $1; }
                 ;
 
-KeyCode         :       INTEGER       { $$ = $1; }
+ચાવી_Code_2         :       INTEGER       { $$ = $1; }
                 |       DECIMAL_DIGIT { $$ = $1; }
                 ;
 
@@ -1100,11 +1100,11 @@ Ident           :       IDENT   { $$ = xkb_atom_intern(param->ctx, $1.start, $1.
                 |       DEFAULT { $$ = xkb_atom_intern_literal(param->ctx, "default"); }
                 ;
 
-String          :       STRING  { $$ = xkb_atom_intern(param->ctx, $1, strlen($1)); free($1); }
+String          :       STRING  { $$ = xkb_atom_intern(param->ctx, $1, strlen($1)); મુક્ત($1); }
                 ;
 
 OptMapName      :       MapName { $$ = $1; }
-                |               { $$ = NULL; }
+                |               { $$ = ખાલી; }
                 ;
 
 MapName         :       STRING  { $$ = $1; }
@@ -1114,15 +1114,15 @@ MapName         :       STRING  { $$ = $1; }
 
 /* Parse a specific section */
 XkbFile *
-parse(struct xkb_context *ctx, const struct parser_keymap_config *config,
-      struct scanner *scanner, const char *map)
+parse(સંરચના xkb_context *ctx, અચલ સંરચના parser_keymap_config *config,
+      સંરચના scanner *scanner, અચલ અક્ષર *map)
 {
-    int ret;
-    XkbFile *first = NULL;
-    struct parser_param param = {
+    પૂર્ણાંક ret;
+    XkbFile *first = ખાલી;
+    સંરચના parser_param param = {
         .scanner = scanner,
         .ctx = ctx,
-        .rtrn = NULL,
+        .rtrn = ખાલી,
         .config = *config,
         .more_maps = false,
     };
@@ -1135,70 +1135,70 @@ parse(struct xkb_context *ctx, const struct parser_keymap_config *config,
      * the first map in the file.
      */
 
-    while ((ret = yyparse(&param)) == 0 && param.more_maps) {
-        if (map) {
-            if (streq_not_null(map, param.rtrn->name))
-                return param.rtrn;
-            else
+    જ્યારે ((ret = yyparse(&param)) == 0 && param.more_maps) {
+        જો (map) {
+            જો (streq_not_null(map, param.rtrn->name))
+                પાછા param.rtrn;
+            નહીંતર
                 FreeXkbFile(param.rtrn);
         }
-        else {
-            if (param.rtrn->flags & MAP_IS_DEFAULT) {
+        નહીંતર {
+            જો (param.rtrn->flags & MAP_IS_DEFAULT) {
                 FreeXkbFile(first);
-                return param.rtrn;
+                પાછા param.rtrn;
             }
-            else if (!first) {
+            નહીંતર જો (!first) {
                 first = param.rtrn;
             }
-            else {
+            નહીંતર {
                 FreeXkbFile(param.rtrn);
             }
         }
-        param.rtrn = NULL;
+        param.rtrn = ખાલી;
     }
 
-    if (ret != 0) {
+    જો (ret != 0) {
         /* Some error happend; clear the Xkbfiles parsed so far */
         FreeXkbFile(first);
         FreeXkbFile(param.rtrn);
-        return NULL;
+        પાછા ખાલી;
     }
 
     /*
      * Warn about implicit default section,
      * but only if not a keymap: multiple keymaps per file not supported
      */
-    if (first && first->file_type != FILE_TYPE_KEYMAP)
+    જો (first && first->file_type != FILE_TYPE_KEYMAP)
         log_vrb(ctx, XKB_LOG_VERBOSITY_DETAILED,
                 XKB_WARNING_MISSING_DEFAULT_SECTION,
                 "No section name in include statement, but \"%s\" contains several; "
                 "Using first defined section, \"%s\"\n",
                 scanner->file_name, safe_map_name(first->name));
 
-    return first;
+    પાછા first;
 }
 
 /* Parse the next section */
 bool
-parse_next(struct xkb_context *ctx,
-           const struct parser_keymap_config *config,
-           struct scanner *scanner, XkbFile **xkb_file)
+parse_next(સંરચના xkb_context *ctx,
+           અચલ સંરચના parser_keymap_config *config,
+           સંરચના scanner *scanner, XkbFile **xkb_file)
 {
-    int ret;
-    struct parser_param param = {
+    પૂર્ણાંક ret;
+    સંરચના parser_param param = {
         .scanner = scanner,
         .ctx = ctx,
-        .rtrn = NULL,
+        .rtrn = ખાલી,
         .config = *config,
         .more_maps = false,
     };
 
-    if ((ret = yyparse(&param)) == 0 && param.more_maps) {
+    જો ((ret = yyparse(&param)) == 0 && param.more_maps) {
         *xkb_file = param.rtrn;
-        return true;
-    } else {
+        પાછા true;
+    } નહીંતર {
         FreeXkbFile(param.rtrn);
-        *xkb_file = NULL;
-        return (ret == 0);
+        *xkb_file = ખાલી;
+        પાછા (ret == 0);
     }
 }

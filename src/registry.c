@@ -3,138 +3,138 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#અન્તર્ભાવ "config.h"
 
-#include <assert.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdint.h>
-#include <libxml/parser.h>
+#અન્તર્ભાવ <assert.h>
+#અન્તર્ભાવ <sys/stat.h>
+#અન્તર્ભાવ <fcntl.h>
+#અન્તર્ભાવ <stdbool.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <string.h>
+#અન્તર્ભાવ <stdint.h>
+#અન્તર્ભાવ <libxml/parser.h>
 
-#if HAVE_XKB_EXTENSIONS_DIRECTORIES
-    #include <limits.h>
-    #if HAVE_UNISTD_H && HAVE_DIRENT_H
-        #include <dirent.h>
-        #include <unistd.h>
+#જો HAVE_XKB_EXTENSIONS_DIRECTORIES
+    #અન્તર્ભાવ <limits.h>
+    #જો HAVE_UNISTD_H && HAVE_DIRENT_H
+        #અન્તર્ભાવ <dirent.h>
+        #અન્તર્ભાવ <unistd.h>
     #endif
 #endif
 
-#include "xkbcommon/xkbregistry.h"
-#include "messages-codes.h"
-#include "darray.h"
-#include "utils.h"
-#include "util-list.h"
-#include "util-mem.h"
+#અન્તર્ભાવ "xkbcommon/xkbregistry.h"
+#અન્તર્ભાવ "messages-codes.h"
+#અન્તર્ભાવ "darray.h"
+#અન્તર્ભાવ "utils.h"
+#અન્તર્ભાવ "util-list.h"
+#અન્તર્ભાવ "util-mem.h"
 
-struct rxkb_object;
+સંરચના rxkb_object;
 
 /**
  * All our objects are refcounted and are linked to iterate through them.
  * Abstract those bits away into a shared parent class so we can generate
  * most of the functions through macros.
  */
-struct rxkb_object {
-    struct rxkb_object *parent;
+સંરચના rxkb_object {
+    સંરચના rxkb_object *parent;
     uint32_t refcount;
-    struct list link;
+    સંરચના list link;
 };
 
-struct rxkb_iso639_code {
-    struct rxkb_object base;
-    char *code;
+સંરચના rxkb_iso639_code {
+    સંરચના rxkb_object base;
+    અક્ષર *code;
 };
 
-struct rxkb_iso3166_code {
-    struct rxkb_object base;
-    char *code;
+સંરચના rxkb_iso3166_code {
+    સંરચના rxkb_object base;
+    અક્ષર *code;
 };
 
-enum context_state {
+ગણના context_state {
     CONTEXT_NEW,
     CONTEXT_PARSED,
     CONTEXT_FAILED,
 };
 
-struct rxkb_context {
-    struct rxkb_object base;
-    enum context_state context_state;
+સંરચના rxkb_context {
+    સંરચના rxkb_object base;
+    ગણના context_state context_state;
 
     bool load_extra_rules_files;
     bool use_secure_getenv;
 
-    struct list models;         /* list of struct rxkb_models */
-    struct list layouts;        /* list of struct rxkb_layouts */
-    struct list option_groups;  /* list of struct rxkb_option_group */
+    સંરચના list models;         /* list of struct rxkb_models */
+    સંરચના list layouts;        /* list of struct rxkb_layouts */
+    સંરચના list option_groups;  /* list of struct rxkb_option_group */
 
-    darray(char *) includes;
+    darray(અક્ષર *) includes;
 
 
-    ATTR_PRINTF(3, 0) void (*log_fn)(struct rxkb_context *ctx,
-                                     enum rxkb_log_level level,
-                                     const char *fmt, va_list args);
-    enum rxkb_log_level log_level;
+    ATTR_PRINTF(3, 0) શૂન્ય (*log_fn)(સંરચના rxkb_context *ctx,
+                                     ગણના rxkb_log_level level,
+                                     અચલ અક્ષર *fmt, va_list args);
+    ગણના rxkb_log_level log_level;
 
-    void *userdata;
+    શૂન્ય *userdata;
 };
 
-struct rxkb_model {
-    struct rxkb_object base;
+સંરચના rxkb_model {
+    સંરચના rxkb_object base;
 
-    char *name;
-    char *vendor;
-    char *description;
-    enum rxkb_popularity popularity;
+    અક્ષર *name;
+    અક્ષર *vendor;
+    અક્ષર *description;
+    ગણના rxkb_popularity popularity;
 };
 
-struct rxkb_layout {
-    struct rxkb_object base;
+સંરચના rxkb_layout {
+    સંરચના rxkb_object base;
 
-    char *name;
-    char *brief;
-    char *description;
-    char *variant;
-    enum rxkb_popularity popularity;
+    અક્ષર *name;
+    અક્ષર *brief;
+    અક્ષર *description;
+    અક્ષર *variant;
+    ગણના rxkb_popularity popularity;
 
-    struct list iso639s;  /* list of struct rxkb_iso639_code */
-    struct list iso3166s; /* list of struct rxkb_iso3166_code */
+    સંરચના list iso639s;  /* list of struct rxkb_iso639_code */
+    સંરચના list iso3166s; /* list of struct rxkb_iso3166_code */
 };
 
-struct rxkb_option_group {
-    struct rxkb_object base;
+સંરચના rxkb_option_group {
+    સંરચના rxkb_object base;
 
     bool allow_multiple;
-    struct list options; /* list of struct rxkb_options */
-    char *name;
-    char *description;
-    enum rxkb_popularity popularity;
+    સંરચના list options; /* list of struct rxkb_options */
+    અક્ષર *name;
+    અક્ષર *description;
+    ગણના rxkb_popularity popularity;
 };
 
-struct rxkb_option {
-    struct rxkb_object base;
+સંરચના rxkb_option {
+    સંરચના rxkb_object base;
 
-    char *name;
-    char *brief;
-    char *description;
-    enum rxkb_popularity popularity;
+    અક્ષર *name;
+    અક્ષર *brief;
+    અક્ષર *description;
+    ગણના rxkb_popularity popularity;
     bool layout_specific;
 };
 
-static bool
-parse(struct rxkb_context *ctx, const char *path,
-      enum rxkb_popularity popularity);
+સ્થિર bool
+parse(સંરચના rxkb_context *ctx, અચલ અક્ષર *path,
+      ગણના rxkb_popularity popularity);
 
 ATTR_PRINTF(3, 4)
-static void
-rxkb_log(struct rxkb_context *ctx, enum rxkb_log_level level,
-         const char *fmt, ...)
+સ્થિર શૂન્ય
+rxkb_log(સંરચના rxkb_context *ctx, ગણના rxkb_log_level level,
+         અચલ અક્ષર *fmt, ...)
 {
     va_list args;
 
-    if (ctx->log_level < level)
-        return;
+    જો (ctx->log_level < level)
+        પાછા;
 
     va_start(args, fmt);
     ctx->log_fn(ctx, level, fmt, args);
@@ -147,8 +147,8 @@ rxkb_log(struct rxkb_context *ctx, enum rxkb_log_level level,
  * format is supplied without arguments. Not supplying it would still
  * result in an error, though.
  */
-#define rxkb_log_with_code(ctx, level, msg_id, fmt, ...) \
-    rxkb_log(ctx, level, PREPEND_MESSAGE_ID(msg_id, fmt), ##__VA_ARGS__)
+#define rxkb_log_with_code(ctx, level, સંદેશ_id, fmt, ...) \
+    rxkb_log(ctx, level, PREPEND_MESSAGE_ID(સંદેશ_id, fmt), ##__VA_ARGS__)
 #define log_dbg(ctx, ...) \
     rxkb_log((ctx), RXKB_LOG_LEVEL_DEBUG, __VA_ARGS__)
 #define log_info(ctx, id, ...) \
@@ -162,152 +162,152 @@ rxkb_log(struct rxkb_context *ctx, enum rxkb_log_level level,
 
 
 #define DECLARE_REF_UNREF_FOR_TYPE(type_) \
-struct type_ * type_##_ref(struct type_ *object) { \
+સંરચના type_ * type_##_ref(સંરચના type_ *object) { \
     rxkb_object_ref(&object->base); \
-    return object; \
+    પાછા object; \
 } \
-struct type_ * type_##_unref(struct type_ *object) { \
-    if (!object) return NULL; \
-    assert(object->base.refcount >= 1); \
-    if (--object->base.refcount == 0) {\
+સંરચના type_ * type_##_unref(સંરચના type_ *object) { \
+    જો (!object) પાછા ખાલી; \
+    પ્રતિજ્ઞા(object->base.refcount >= 1); \
+    જો (--object->base.refcount == 0) {\
         type_##_destroy(object); \
         list_remove(&object->base.link);\
-        free(object); \
+        મુક્ત(object); \
     } \
-    return NULL;\
+    પાછા ખાલી;\
 }
 
 #define DECLARE_CREATE_FOR_TYPE(type_) \
-static inline struct type_ * type_##_create(struct rxkb_object *parent) { \
-    struct type_ *t = calloc(1, sizeof *t); \
-    if (t) \
+સ્થિર અંતઃરેખ સંરચના type_ * type_##_create(સંરચના rxkb_object *parent) { \
+    સંરચના type_ *t = calloc(1, કદ *t); \
+    જો (t) \
         rxkb_object_init(&t->base, parent); \
-    return t; \
+    પાછા t; \
 }
 
 #define DECLARE_TYPED_GETTER_FOR_TYPE(type_, field_, rtype_) \
-rtype_ type_##_get_##field_(struct type_ *object) { \
-    return object->field_; \
+rtype_ type_##_get_##field_(સંરચના type_ *object) { \
+    પાછા object->field_; \
 }
 
 #define DECLARE_GETTER_FOR_TYPE(type_, field_) \
-   DECLARE_TYPED_GETTER_FOR_TYPE(type_, field_, const char*)
+   DECLARE_TYPED_GETTER_FOR_TYPE(type_, field_, અચલ અક્ષર*)
 
 #define DECLARE_FIRST_NEXT_FOR_TYPE(type_, parent_type_, parent_field_) \
-struct type_ * type_##_first(struct parent_type_ *parent) { \
-    struct type_ *o = NULL; \
-    if (!list_empty(&parent->parent_field_)) \
+સંરચના type_ * type_##_first(સંરચના parent_type_ *parent) { \
+    સંરચના type_ *o = ખાલી; \
+    જો (!list_empty(&parent->parent_field_)) \
         o = list_first_entry(&parent->parent_field_, o, base.link); \
-    return o; \
+    પાછા o; \
 } \
-struct type_ * \
-type_##_next(struct type_ *o) \
+સંરચના type_ * \
+type_##_next(સંરચના type_ *o) \
 { \
-    struct parent_type_ *parent; \
-    struct type_ *next; \
-    parent = container_of(o->base.parent, struct parent_type_, base); \
+    સંરચના parent_type_ *parent; \
+    સંરચના type_ *next; \
+    parent = container_of(o->base.parent, સંરચના parent_type_, base); \
     next = list_first_entry(&o->base.link, o, base.link); \
-    if (list_is_last(&parent->parent_field_, &o->base.link)) \
-        return NULL; \
-    return next; \
+    જો (list_is_last(&parent->parent_field_, &o->base.link)) \
+        પાછા ખાલી; \
+    પાછા next; \
 }
 
-static void
-rxkb_object_init(struct rxkb_object *object, struct rxkb_object *parent)
+સ્થિર શૂન્ય
+rxkb_object_init(સંરચના rxkb_object *object, સંરચના rxkb_object *parent)
 {
     object->refcount = 1;
     object->parent = parent;
     list_init(&object->link);
 }
 
-static void *
-rxkb_object_ref(struct rxkb_object *object)
+સ્થિર શૂન્ય *
+rxkb_object_ref(સંરચના rxkb_object *object)
 {
-    assert(object->refcount >= 1);
+    પ્રતિજ્ઞા(object->refcount >= 1);
     ++object->refcount;
-    return object;
+    પાછા object;
 }
 
-static void
-rxkb_iso639_code_destroy(struct rxkb_iso639_code *code)
+સ્થિર શૂન્ય
+rxkb_iso639_code_destroy(સંરચના rxkb_iso639_code *code)
 {
-    free(code->code);
+    મુક્ત(code->code);
 }
 
-struct rxkb_iso639_code *
-rxkb_layout_get_iso639_first(struct rxkb_layout *layout)
+સંરચના rxkb_iso639_code *
+rxkb_layout_get_iso639_first(સંરચના rxkb_layout *layout)
 {
-    struct rxkb_iso639_code *code = NULL;
+    સંરચના rxkb_iso639_code *code = ખાલી;
 
-    if (!list_empty(&layout->iso639s))
+    જો (!list_empty(&layout->iso639s))
         code = list_first_entry(&layout->iso639s, code, base.link);
 
-    return code;
+    પાછા code;
 }
 
-struct rxkb_iso639_code *
-rxkb_iso639_code_next(struct rxkb_iso639_code *code)
+સંરચના rxkb_iso639_code *
+rxkb_iso639_code_next(સંરચના rxkb_iso639_code *code)
 {
-    struct rxkb_iso639_code *next = NULL;
-    struct rxkb_layout *layout;
+    સંરચના rxkb_iso639_code *next = ખાલી;
+    સંરચના rxkb_layout *layout;
 
-    layout = container_of(code->base.parent, struct rxkb_layout, base);
+    layout = container_of(code->base.parent, સંરચના rxkb_layout, base);
 
-    if (list_is_last(&layout->iso639s, &code->base.link))
-        return NULL;
+    જો (list_is_last(&layout->iso639s, &code->base.link))
+        પાછા ખાલી;
 
     next = list_first_entry(&code->base.link, code, base.link);
 
-    return next;
+    પાછા next;
 }
 
 DECLARE_REF_UNREF_FOR_TYPE(rxkb_iso639_code);
 DECLARE_CREATE_FOR_TYPE(rxkb_iso639_code);
 DECLARE_GETTER_FOR_TYPE(rxkb_iso639_code, code);
 
-static void
-rxkb_iso3166_code_destroy(struct rxkb_iso3166_code *code)
+સ્થિર શૂન્ય
+rxkb_iso3166_code_destroy(સંરચના rxkb_iso3166_code *code)
 {
-    free(code->code);
+    મુક્ત(code->code);
 }
 
-struct rxkb_iso3166_code *
-rxkb_layout_get_iso3166_first(struct rxkb_layout *layout)
+સંરચના rxkb_iso3166_code *
+rxkb_layout_get_iso3166_first(સંરચના rxkb_layout *layout)
 {
-    struct rxkb_iso3166_code *code = NULL;
+    સંરચના rxkb_iso3166_code *code = ખાલી;
 
-    if (!list_empty(&layout->iso3166s))
+    જો (!list_empty(&layout->iso3166s))
         code = list_first_entry(&layout->iso3166s, code, base.link);
 
-    return code;
+    પાછા code;
 }
 
-struct rxkb_iso3166_code *
-rxkb_iso3166_code_next(struct rxkb_iso3166_code *code)
+સંરચના rxkb_iso3166_code *
+rxkb_iso3166_code_next(સંરચના rxkb_iso3166_code *code)
 {
-    struct rxkb_iso3166_code *next = NULL;
-    struct rxkb_layout *layout;
+    સંરચના rxkb_iso3166_code *next = ખાલી;
+    સંરચના rxkb_layout *layout;
 
-    layout = container_of(code->base.parent, struct rxkb_layout, base);
+    layout = container_of(code->base.parent, સંરચના rxkb_layout, base);
 
-    if (list_is_last(&layout->iso3166s, &code->base.link))
-        return NULL;
+    જો (list_is_last(&layout->iso3166s, &code->base.link))
+        પાછા ખાલી;
 
     next = list_first_entry(&code->base.link, code, base.link);
 
-    return next;
+    પાછા next;
 }
 
 DECLARE_REF_UNREF_FOR_TYPE(rxkb_iso3166_code);
 DECLARE_CREATE_FOR_TYPE(rxkb_iso3166_code);
 DECLARE_GETTER_FOR_TYPE(rxkb_iso3166_code, code);
 
-static void
-rxkb_option_destroy(struct rxkb_option *o)
+સ્થિર શૂન્ય
+rxkb_option_destroy(સંરચના rxkb_option *o)
 {
-    free(o->name);
-    free(o->brief);
-    free(o->description);
+    મુક્ત(o->name);
+    મુક્ત(o->brief);
+    મુક્ત(o->description);
 }
 
 DECLARE_REF_UNREF_FOR_TYPE(rxkb_option);
@@ -315,22 +315,22 @@ DECLARE_CREATE_FOR_TYPE(rxkb_option);
 DECLARE_GETTER_FOR_TYPE(rxkb_option, name);
 DECLARE_GETTER_FOR_TYPE(rxkb_option, brief);
 DECLARE_GETTER_FOR_TYPE(rxkb_option, description);
-DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_option, popularity, enum rxkb_popularity);
-bool rxkb_option_is_layout_specific(struct rxkb_option *object) {
-    return object->layout_specific;
+DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_option, popularity, ગણના rxkb_popularity);
+bool rxkb_option_is_layout_specific(સંરચના rxkb_option *object) {
+    પાછા object->layout_specific;
 }
 DECLARE_FIRST_NEXT_FOR_TYPE(rxkb_option, rxkb_option_group, options);
 
-static void
-rxkb_layout_destroy(struct rxkb_layout *l)
+સ્થિર શૂન્ય
+rxkb_layout_destroy(સંરચના rxkb_layout *l)
 {
-    struct rxkb_iso639_code *iso639, *tmp_639;
-    struct rxkb_iso3166_code *iso3166, *tmp_3166;
+    સંરચના rxkb_iso639_code *iso639, *tmp_639;
+    સંરચના rxkb_iso3166_code *iso3166, *tmp_3166;
 
-    free(l->name);
-    free(l->brief);
-    free(l->description);
-    free(l->variant);
+    મુક્ત(l->name);
+    મુક્ત(l->brief);
+    મુક્ત(l->description);
+    મુક્ત(l->variant);
 
     list_for_each_safe(iso639, tmp_639, &l->iso639s, base.link) {
         rxkb_iso639_code_unref(iso639);
@@ -346,15 +346,15 @@ DECLARE_GETTER_FOR_TYPE(rxkb_layout, name);
 DECLARE_GETTER_FOR_TYPE(rxkb_layout, brief);
 DECLARE_GETTER_FOR_TYPE(rxkb_layout, description);
 DECLARE_GETTER_FOR_TYPE(rxkb_layout, variant);
-DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_layout, popularity, enum rxkb_popularity);
+DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_layout, popularity, ગણના rxkb_popularity);
 DECLARE_FIRST_NEXT_FOR_TYPE(rxkb_layout, rxkb_context, layouts);
 
-static void
-rxkb_model_destroy(struct rxkb_model *m)
+સ્થિર શૂન્ય
+rxkb_model_destroy(સંરચના rxkb_model *m)
 {
-    free(m->name);
-    free(m->vendor);
-    free(m->description);
+    મુક્ત(m->name);
+    મુક્ત(m->vendor);
+    મુક્ત(m->description);
 }
 
 DECLARE_REF_UNREF_FOR_TYPE(rxkb_model);
@@ -362,16 +362,16 @@ DECLARE_CREATE_FOR_TYPE(rxkb_model);
 DECLARE_GETTER_FOR_TYPE(rxkb_model, name);
 DECLARE_GETTER_FOR_TYPE(rxkb_model, vendor);
 DECLARE_GETTER_FOR_TYPE(rxkb_model, description);
-DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_model, popularity, enum rxkb_popularity);
+DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_model, popularity, ગણના rxkb_popularity);
 DECLARE_FIRST_NEXT_FOR_TYPE(rxkb_model, rxkb_context, models);
 
-static void
-rxkb_option_group_destroy(struct rxkb_option_group *og)
+સ્થિર શૂન્ય
+rxkb_option_group_destroy(સંરચના rxkb_option_group *og)
 {
-    struct rxkb_option *o, *otmp;
+    સંરચના rxkb_option *o, *otmp;
 
-    free(og->name);
-    free(og->description);
+    મુક્ત(og->name);
+    મુક્ત(og->description);
 
     list_for_each_safe(o, otmp, &og->options, base.link) {
         rxkb_option_unref(o);
@@ -379,127 +379,127 @@ rxkb_option_group_destroy(struct rxkb_option_group *og)
 }
 
 bool
-rxkb_option_group_allows_multiple(struct rxkb_option_group *g)
+rxkb_option_group_allows_multiple(સંરચના rxkb_option_group *g)
 {
-    return g->allow_multiple;
+    પાછા g->allow_multiple;
 }
 
 DECLARE_REF_UNREF_FOR_TYPE(rxkb_option_group);
 DECLARE_CREATE_FOR_TYPE(rxkb_option_group);
 DECLARE_GETTER_FOR_TYPE(rxkb_option_group, name);
 DECLARE_GETTER_FOR_TYPE(rxkb_option_group, description);
-DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_option_group, popularity, enum rxkb_popularity);
+DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_option_group, popularity, ગણના rxkb_popularity);
 DECLARE_FIRST_NEXT_FOR_TYPE(rxkb_option_group, rxkb_context, option_groups);
 
-static void
-rxkb_context_destroy(struct rxkb_context *ctx)
+સ્થિર શૂન્ય
+rxkb_context_destroy(સંરચના rxkb_context *ctx)
 {
-    struct rxkb_model *m, *mtmp;
-    struct rxkb_layout *l, *ltmp;
-    struct rxkb_option_group *og, *ogtmp;
-    char **path;
+    સંરચના rxkb_model *m, *mtmp;
+    સંરચના rxkb_layout *l, *ltmp;
+    સંરચના rxkb_option_group *og, *ogtmp;
+    અક્ષર **path;
 
     list_for_each_safe(m, mtmp, &ctx->models, base.link)
         rxkb_model_unref(m);
-    assert(list_empty(&ctx->models));
+    પ્રતિજ્ઞા(list_empty(&ctx->models));
 
     list_for_each_safe(l, ltmp, &ctx->layouts, base.link)
         rxkb_layout_unref(l);
-    assert(list_empty(&ctx->layouts));
+    પ્રતિજ્ઞા(list_empty(&ctx->layouts));
 
     list_for_each_safe(og, ogtmp, &ctx->option_groups, base.link)
         rxkb_option_group_unref(og);
-    assert(list_empty(&ctx->option_groups));
+    પ્રતિજ્ઞા(list_empty(&ctx->option_groups));
 
     darray_foreach(path, ctx->includes)
-        free(*path);
+        મુક્ત(*path);
     darray_free(ctx->includes);
 
-    assert(darray_empty(ctx->includes));
+    પ્રતિજ્ઞા(darray_empty(ctx->includes));
 }
 
 DECLARE_REF_UNREF_FOR_TYPE(rxkb_context);
 DECLARE_CREATE_FOR_TYPE(rxkb_context);
-DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_context, log_level, enum rxkb_log_level);
+DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_context, log_level, ગણના rxkb_log_level);
 
-static char *
-rxkb_context_getenv(struct rxkb_context *ctx, const char *name)
+સ્થિર અક્ષર *
+rxkb_context_getenv(સંરચના rxkb_context *ctx, અચલ અક્ષર *name)
 {
-    if (ctx->use_secure_getenv) {
-        return secure_getenv(name);
-    } else {
-        return getenv(name);
+    જો (ctx->use_secure_getenv) {
+        પાછા secure_getenv(name);
+    } નહીંતર {
+        પાછા getenv(name);
     }
 }
 
 
-void
-rxkb_context_set_log_level(struct rxkb_context *ctx,
-                           enum rxkb_log_level level)
+શૂન્ય
+rxkb_context_set_log_level(સંરચના rxkb_context *ctx,
+                           ગણના rxkb_log_level level)
 {
     ctx->log_level = level;
 }
 
-static const char *
-log_level_to_prefix(enum rxkb_log_level level)
+સ્થિર અચલ અક્ષર *
+log_level_to_prefix(ગણના rxkb_log_level level)
 {
-    switch (level) {
-    case RXKB_LOG_LEVEL_DEBUG:
-        return "xkbregistry: DEBUG: ";
-    case RXKB_LOG_LEVEL_INFO:
-        return "xkbregistry: INFO: ";
-    case RXKB_LOG_LEVEL_WARNING:
-        return "xkbregistry: WARNING: ";
-    case RXKB_LOG_LEVEL_ERROR:
-        return "xkbregistry: ERROR: ";
-    case RXKB_LOG_LEVEL_CRITICAL:
-        return "xkbregistry: CRITICAL: ";
-    default:
-        return NULL;
+    પસંદગી (level) {
+    સ્થિતિ RXKB_LOG_LEVEL_DEBUG:
+        પાછા "xkbregistry: DEBUG: ";
+    સ્થિતિ RXKB_LOG_LEVEL_INFO:
+        પાછા "xkbregistry: INFO: ";
+    સ્થિતિ RXKB_LOG_LEVEL_WARNING:
+        પાછા "xkbregistry: WARNING: ";
+    સ્થિતિ RXKB_LOG_LEVEL_ERROR:
+        પાછા "xkbregistry: ERROR: ";
+    સ્થિતિ RXKB_LOG_LEVEL_CRITICAL:
+        પાછા "xkbregistry: CRITICAL: ";
+    મૂળભૂત:
+        પાછા ખાલી;
     }
 }
 
-ATTR_PRINTF(3, 0) static void
-default_log_fn(struct rxkb_context *ctx, enum rxkb_log_level level,
-               const char *fmt, va_list args)
+ATTR_PRINTF(3, 0) સ્થિર શૂન્ય
+default_log_fn(સંરચના rxkb_context *ctx, ગણના rxkb_log_level level,
+               અચલ અક્ષર *fmt, va_list args)
 {
-    const char *prefix = log_level_to_prefix(level);
+    અચલ અક્ષર *prefix = log_level_to_prefix(level);
 
-    if (prefix)
+    જો (prefix)
         fprintf(stderr, "%s", prefix);
     vfprintf(stderr, fmt, args);
 }
 
-static enum rxkb_log_level
-log_level(const char *level) {
+સ્થિર ગણના rxkb_log_level
+log_level(અચલ અક્ષર *level) {
     errno = 0;
-    char *endptr;
-    const long lvl = strtol(level, &endptr, 10);
-    if (errno == 0 && (endptr[0] == '\0' || is_space(endptr[0])))
-        return (enum rxkb_log_level)lvl;
+    અક્ષર *endptr;
+    અચલ long lvl = strtol(level, &endptr, 10);
+    જો (errno == 0 && (endptr[0] == '\0' || is_space(endptr[0])))
+        પાછા (ગણના rxkb_log_level)lvl;
 
-    if (istreq_prefix("crit", level))
-        return RXKB_LOG_LEVEL_CRITICAL;
-    if (istreq_prefix("err", level))
-        return RXKB_LOG_LEVEL_ERROR;
-    if (istreq_prefix("warn", level))
-        return RXKB_LOG_LEVEL_WARNING;
-    if (istreq_prefix("info", level))
-        return RXKB_LOG_LEVEL_INFO;
-    if (istreq_prefix("debug", level) || istreq_prefix("dbg", level))
-        return RXKB_LOG_LEVEL_DEBUG;
+    જો (istreq_prefix("crit", level))
+        પાછા RXKB_LOG_LEVEL_CRITICAL;
+    જો (istreq_prefix("err", level))
+        પાછા RXKB_LOG_LEVEL_ERROR;
+    જો (istreq_prefix("warn", level))
+        પાછા RXKB_LOG_LEVEL_WARNING;
+    જો (istreq_prefix("info", level))
+        પાછા RXKB_LOG_LEVEL_INFO;
+    જો (istreq_prefix("debug", level) || istreq_prefix("dbg", level))
+        પાછા RXKB_LOG_LEVEL_DEBUG;
 
-    return RXKB_LOG_LEVEL_ERROR;
+    પાછા RXKB_LOG_LEVEL_ERROR;
 }
 
-struct rxkb_context *
-rxkb_context_new(enum rxkb_context_flags flags)
+સંરચના rxkb_context *
+rxkb_context_new(ગણના rxkb_context_flags flags)
 {
-    struct rxkb_context *ctx = rxkb_context_create(NULL);
-    const char *env;
+    સંરચના rxkb_context *ctx = rxkb_context_create(ખાલી);
+    અચલ અક્ષર *env;
 
-    if (!ctx)
-        return NULL;
+    જો (!ctx)
+        પાછા ખાલી;
 
     ctx->context_state = CONTEXT_NEW;
     ctx->load_extra_rules_files = flags & RXKB_CONTEXT_LOAD_EXOTIC_RULES;
@@ -509,73 +509,73 @@ rxkb_context_new(enum rxkb_context_flags flags)
 
     /* Environment overwrites defaults. */
     env = rxkb_context_getenv(ctx, "RXKB_LOG_LEVEL");
-    if (env)
+    જો (env)
         rxkb_context_set_log_level(ctx, log_level(env));
 
-    static const enum rxkb_context_flags  RXKB_CONTEXT_FLAGS
+    સ્થિર અચલ ગણના rxkb_context_flags  RXKB_CONTEXT_FLAGS
         = RXKB_CONTEXT_NO_DEFAULT_INCLUDES
         | RXKB_CONTEXT_LOAD_EXOTIC_RULES
         | RXKB_CONTEXT_NO_SECURE_GETENV;
 
-    if (flags & ~RXKB_CONTEXT_FLAGS) {
+    જો (flags & ~RXKB_CONTEXT_FLAGS) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "%s: Invalid context flags: 0x%x\n", __func__,
                 (flags & ~RXKB_CONTEXT_FLAGS));
-        free(ctx);
-        return NULL;
+        મુક્ત(ctx);
+        પાછા ખાલી;
     }
 
     list_init(&ctx->models);
     list_init(&ctx->layouts);
     list_init(&ctx->option_groups);
 
-    if (!(flags & RXKB_CONTEXT_NO_DEFAULT_INCLUDES) &&
+    જો (!(flags & RXKB_CONTEXT_NO_DEFAULT_INCLUDES) &&
         !rxkb_context_include_path_append_default(ctx)) {
         log_err(ctx, XKB_ERROR_NO_VALID_DEFAULT_INCLUDE_PATH,
                 "Failed to add any default include path "
                 "(default system path: %s)\n",
-                DFLT_XKB_CONFIG_ROOT);
+                DFLT_XKB_CONFIG_મૂળ);
         rxkb_context_unref(ctx);
-        return NULL;
+        પાછા ખાલી;
     }
 
-    return ctx;
+    પાછા ctx;
 }
 
-void
-rxkb_context_set_log_fn(struct rxkb_context *ctx,
-                        void (*log_fn)(struct rxkb_context *ctx,
-                                       enum rxkb_log_level level,
-                                       const char *fmt, va_list args))
+શૂન્ય
+rxkb_context_set_log_fn(સંરચના rxkb_context *ctx,
+                        શૂન્ય (*log_fn)(સંરચના rxkb_context *ctx,
+                                       ગણના rxkb_log_level level,
+                                       અચલ અક્ષર *fmt, va_list args))
 {
     ctx->log_fn = (log_fn ? log_fn : default_log_fn);
 }
 
 bool
-rxkb_context_include_path_append(struct rxkb_context *ctx, const char *path)
+rxkb_context_include_path_append(સંરચના rxkb_context *ctx, અચલ અક્ષર *path)
 {
-    int err = 0;
+    પૂર્ણાંક err = 0;
 
-    if (ctx->context_state != CONTEXT_NEW) {
+    જો (ctx->context_state != CONTEXT_NEW) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "include paths can only be appended to a new context\n");
-        goto error;
+        જાઓ error;
     }
 
-    struct stat stat_buf;
+    સંરચના stat stat_buf;
     err = stat(path, &stat_buf);
-    if (err != 0) {
+    જો (err != 0) {
         err = errno;
-        goto error;
+        જાઓ error;
     }
-    if (!S_ISDIR(stat_buf.st_mode)) {
+    જો (!S_ISDIR(stat_buf.st_mode)) {
         err = ENOTDIR;
-        goto error;
+        જાઓ error;
     }
 
-    if (!check_eaccess(path, R_OK | X_OK)) {
+    જો (!check_eaccess(path, R_OK | X_OK)) {
         err = EACCES;
-        goto error;
+        જાઓ error;
     }
 
     /*
@@ -583,27 +583,27 @@ rxkb_context_include_path_append(struct rxkb_context *ctx, const char *path)
      * path, complain here instead of during parsing later. The niche cases
      * where this is the wrong behaviour aren’t worth worrying about.
      */
-    char rules[PATH_MAX];
-    if (!snprintf_safe(rules, sizeof(rules), "%s/rules/%s.xml",
+    અક્ષર rules[PATH_MAX];
+    જો (!snprintf_safe(rules, કદ(rules), "%s/rules/%s.xml",
                        path, DEFAULT_XKB_RULES)) {
         log_err(ctx, XKB_ERROR_INVALID_PATH,
                 "Path is too long: expected max length of %zu, "
                 "got: %s/rules/%s.xml\n",
-                sizeof(rules), path, DEFAULT_XKB_RULES);
-        goto error;
+                કદ(rules), path, DEFAULT_XKB_RULES);
+        જાઓ error;
     }
 
-    char * const tmp = strdup(path);
-    if (!tmp) {
+    અક્ષર * અચલ tmp = strdup(path);
+    જો (!tmp) {
         err = ENOMEM;
-        goto error;
+        જાઓ error;
     }
 
     darray_append(ctx->includes, tmp);
     /* Use “info” log level to facilitate bug reporting. */
     log_info(ctx, XKB_LOG_MESSAGE_NO_ID, "Include path added: %s\n", tmp);
 
-    return true;
+    પાછા true;
 
 error:
     /*
@@ -612,78 +612,78 @@ error:
      */
     log_info(ctx, XKB_LOG_MESSAGE_NO_ID,
              "Include path failed: \"%s\" (%s)\n", path, strerror(err));
-    return false;
+    પાછા false;
 }
 
-#if HAVE_XKB_EXTENSIONS_DIRECTORIES
+#જો HAVE_XKB_EXTENSIONS_DIRECTORIES
 
-static int
-compare_str(const void *a, const void *b)
+સ્થિર પૂર્ણાંક
+compare_str(અચલ શૂન્ય *a, અચલ શૂન્ય *b)
 {
-    return strcmp(*(char **)a, *(char **) b);
+    પાછા strcmp(*(અક્ષર **)a, *(અક્ષર **) b);
 }
 
-static int
-add_direct_subdirectories(struct rxkb_context *ctx, const char *path,
+સ્થિર પૂર્ણાંક
+add_direct_subdirectories(સંરચના rxkb_context *ctx, અચલ અક્ષર *path,
                           darray_string *extensions,
-                          darray_size_t versioned_count,
+                          darray_size_t versioned_ગણતરી,
                           size_t versioned_path_length)
 {
-    int ret = 0;
-    int err = ENOMEM;
-    DIR *dir = NULL;
+    પૂર્ણાંક ret = 0;
+    પૂર્ણાંક err = ENOMEM;
+    DIR *dir = ખાલી;
 
     /* Check extensions parent directory */
-    struct stat stat_buf;
+    સંરચના stat stat_buf;
     err = stat(path, &stat_buf);
-    if (err != 0) {
+    જો (err != 0) {
         err = errno;
-        goto err;
+        જાઓ err;
     }
-    if (!S_ISDIR(stat_buf.st_mode)) {
+    જો (!S_ISDIR(stat_buf.st_mode)) {
         err = ENOTDIR;
-        goto err;
+        જાઓ err;
     }
-    if (!check_eaccess(path, R_OK | X_OK)) {
+    જો (!check_eaccess(path, R_OK | X_OK)) {
         err = EACCES;
-        goto err;
+        જાઓ err;
     }
 
     dir = opendir(path);
-    if (dir == NULL) {
+    જો (dir == ખાલી) {
         err = EACCES;
-        goto err;
+        જાઓ err;
     }
 
-    struct dirent *entry;
-    char path_buf[PATH_MAX] = "";
+    સંરચના dirent *entry;
+    અક્ષર path_buf[PATH_MAX] = "";
     versioned_path_length++; /* Additional final ‘/’ */
-    while ((entry = readdir(dir)) != NULL) {
-        const char *name = entry->d_name;
+    જ્યારે ((entry = readdir(dir)) != ખાલી) {
+        અચલ અક્ષર *name = entry->d_name;
 
         /* Skip special entries */
-        if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
-            continue;
+        જો (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
+            ચાલુ;
 
-        if (!snprintf_safe(path_buf, sizeof(path_buf), "%s/%s", path, name)) {
+        જો (!snprintf_safe(path_buf, કદ(path_buf), "%s/%s", path, name)) {
             err = ENOMEM;
-            goto err;
+            જાઓ err;
         }
-        if (stat(path_buf, &stat_buf) != 0 || !S_ISDIR(stat_buf.st_mode))
-            continue;
+        જો (stat(path_buf, &stat_buf) != 0 || !S_ISDIR(stat_buf.st_mode))
+            ચાલુ;
 
         /* Skip if the corresponding versioned directory is already included */
-        for (darray_size_t i = 0; i < versioned_count; i++) {
-            const char * const prev_name = darray_item(*extensions, i)
+        માટે (darray_size_t i = 0; i < versioned_ગણતરી; i++) {
+            અચલ અક્ષર * અચલ prev_name = darray_item(*extensions, i)
                                          + versioned_path_length;
-            if (strcmp(name, prev_name) == 0)
-                goto next;
+            જો (strcmp(name, prev_name) == 0)
+                જાઓ next;
         }
 
-        char *ext_path = strdup_safe(path_buf);
-        if (!ext_path) {
+        અક્ષર *ext_path = strdup_safe(path_buf);
+        જો (!ext_path) {
             err = ENOMEM;
-            goto err;
+            જાઓ err;
         }
 
         darray_append(*extensions, ext_path);
@@ -693,79 +693,79 @@ next:
 
     closedir(dir);
 
-    if (darray_size(*extensions) > versioned_count) {
+    જો (darray_size(*extensions) > versioned_ગણતરી) {
         /* Sort the entries, so that they are appended in lexicographic order */
-        qsort(darray_items(*extensions) + versioned_count,
-              darray_size(*extensions) - versioned_count,
-              sizeof(*darray_items(*extensions)), &compare_str);
-        char **ext_path;
-        darray_foreach_from(ext_path, *extensions, versioned_count) {
+        qsort(darray_વસ્તુઓ(*extensions) + versioned_ગણતરી,
+              darray_size(*extensions) - versioned_ગણતરી,
+              કદ(*darray_વસ્તુઓ(*extensions)), &compare_str);
+        અક્ષર **ext_path;
+        darray_foreach_from(ext_path, *extensions, versioned_ગણતરી) {
             ret |= rxkb_context_include_path_append(ctx, *ext_path);
         }
     }
 
-    return ret;
+    પાછા ret;
 
 err:
     log_dbg(ctx,
             "Include extensions path failed: %s (%s)\n", path, strerror(err));
-    if (dir)
+    જો (dir)
         closedir(dir);
 
-    return ret;
+    પાછા ret;
 }
 #endif
 
 bool
-rxkb_context_include_path_append_default(struct rxkb_context *ctx)
+rxkb_context_include_path_append_default(સંરચના rxkb_context *ctx)
 {
-    char user_path[PATH_MAX];
+    અક્ષર user_path[PATH_MAX];
     bool ret = false;
 
-    if (ctx->context_state != CONTEXT_NEW) {
+    જો (ctx->context_state != CONTEXT_NEW) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "include paths can only be appended to a new context\n");
-        return false;
+        પાછા false;
     }
 
-    const char * const home = rxkb_context_getenv(ctx, "HOME");
-    const char * const xdg = rxkb_context_getenv(ctx, "XDG_CONFIG_HOME");
+    અચલ અક્ષર * અચલ home = rxkb_context_getenv(ctx, "HOME");
+    અચલ અક્ષર * અચલ xdg = rxkb_context_getenv(ctx, "XDG_CONFIG_HOME");
     /* Accept empty string, which may be unintentional and should be reported */
-    if (xdg != NULL) {
-        if (snprintf_safe(user_path, sizeof(user_path), "%s/xkb", xdg))
+    જો (xdg != ખાલી) {
+        જો (snprintf_safe(user_path, કદ(user_path), "%s/xkb", xdg))
             ret |= rxkb_context_include_path_append(ctx, user_path);
-    } else if (home != NULL) {
+    } નહીંતર જો (home != ખાલી) {
         /* XDG_CONFIG_HOME fallback is $HOME/.config/ */
-        if (snprintf_safe(user_path, sizeof(user_path), "%s/.config/xkb", home))
+        જો (snprintf_safe(user_path, કદ(user_path), "%s/.config/xkb", home))
             ret |= rxkb_context_include_path_append(ctx, user_path);
     }
 
-    if (home != NULL) {
-        if (snprintf_safe(user_path, sizeof(user_path), "%s/.xkb", home))
+    જો (home != ખાલી) {
+        જો (snprintf_safe(user_path, કદ(user_path), "%s/.xkb", home))
             ret |= rxkb_context_include_path_append(ctx, user_path);
     }
 
-    const char * const extra = rxkb_context_getenv(ctx, "XKB_CONFIG_EXTRA_PATH");
+    અચલ અક્ષર * અચલ extra = rxkb_context_getenv(ctx, "XKB_CONFIG_EXTRA_PATH");
     /*
      * Only use default if path is undefined, but accept empty string, which may
      * be unintentional and should be reported.
      */
     ret |= rxkb_context_include_path_append(
-        ctx, ((extra != NULL) ? extra : DFLT_XKB_CONFIG_EXTRA_PATH)
+        ctx, ((extra != ખાલી) ? extra : DFLT_XKB_CONFIG_EXTRA_PATH)
     );
 
-#if HAVE_XKB_EXTENSIONS_DIRECTORIES
+#જો HAVE_XKB_EXTENSIONS_DIRECTORIES
     darray_string extensions = darray_new();
 
     /* Versioned extensions directory */
-    const char *extensions_path =
+    અચલ અક્ષર *extensions_path =
         rxkb_context_getenv(ctx, "XKB_CONFIG_VERSIONED_EXTENSIONS_PATH");
 #ifdef DFLT_XKB_CONFIG_VERSIONED_EXTENSIONS_PATH
-    if (extensions_path == NULL)
+    જો (extensions_path == ખાલી)
         extensions_path = DFLT_XKB_CONFIG_VERSIONED_EXTENSIONS_PATH;
 #endif
     size_t versioned_path_length = 0;
-    if (extensions_path != NULL) {
+    જો (extensions_path != ખાલી) {
         /* Add direct subdirectories */
         ret |= add_direct_subdirectories(ctx, extensions_path,
                                          &extensions, 0, 0);
@@ -776,10 +776,10 @@ rxkb_context_include_path_append_default(struct rxkb_context *ctx)
     extensions_path =
         rxkb_context_getenv(ctx, "XKB_CONFIG_UNVERSIONED_EXTENSIONS_PATH");
 #ifdef DFLT_XKB_CONFIG_UNVERSIONED_EXTENSIONS_PATH
-    if (extensions_path == NULL)
+    જો (extensions_path == ખાલી)
         extensions_path = DFLT_XKB_CONFIG_UNVERSIONED_EXTENSIONS_PATH;
 #endif
-    if (extensions_path != NULL) {
+    જો (extensions_path != ખાલી) {
         /*
          * Add direct subdirectories, except those already added from the
          * *versioned* extensions path hereinabove.
@@ -789,23 +789,23 @@ rxkb_context_include_path_append_default(struct rxkb_context *ctx)
                                          versioned_path_length);
     }
 
-    char **ext_path;
+    અક્ષર **ext_path;
     darray_foreach(ext_path, extensions) {
-        free(*ext_path);
+        મુક્ત(*ext_path);
     }
     darray_free(extensions);
 #endif
 
     /* Canonical XKB root */
-    const char * const root = rxkb_context_getenv(ctx, "XKB_CONFIG_ROOT");
+    અચલ અક્ષર * અચલ મૂળ = rxkb_context_getenv(ctx, "XKB_CONFIG_ROOT");
     /*
      * Only use default if path is undefined, but accept empty string, which may
      * be unintentional and should be reported.
      */
-    const bool has_root = rxkb_context_include_path_append(
-        ctx, ((root != NULL) ? root: DFLT_XKB_CONFIG_ROOT)
+    અચલ bool has_મૂળ = rxkb_context_include_path_append(
+        ctx, ((મૂળ != ખાલી) ? મૂળ: DFLT_XKB_CONFIG_મૂળ)
     );
-    ret |= has_root;
+    ret |= has_મૂળ;
 
     /*
      * Fallback for misconfigured setups.
@@ -816,195 +816,195 @@ rxkb_context_include_path_append_default(struct rxkb_context *ctx)
      * This fallback can still be skipped if deliberately using an empty string
      * for the canonical XKB root hereinabove.
      */
-    if (!has_root && (root == NULL || root[0] != '\0')) {
+    જો (!has_મૂળ && (મૂળ == ખાલી || મૂળ[0] != '\0')) {
         log_warn(ctx, XKB_LOG_MESSAGE_NO_ID,
                  "Root include path failed; fallback to \"%s\". "
                  "The setup is probably misconfigured. "
                  "Please ensure that \"%s\" is available in the environment.\n",
-                 DFLT_XKB_LEGACY_ROOT,
-                 ((root == NULL) ? DFLT_XKB_CONFIG_ROOT : root));
-        ret |= rxkb_context_include_path_append(ctx, DFLT_XKB_LEGACY_ROOT);
+                 DFLT_XKB_LEGACY_મૂળ,
+                 ((મૂળ == ખાલી) ? DFLT_XKB_CONFIG_મૂળ : મૂળ));
+        ret |= rxkb_context_include_path_append(ctx, DFLT_XKB_LEGACY_મૂળ);
     }
 
-    return ret;
+    પાછા ret;
 }
 
 bool
-rxkb_context_parse_default_ruleset(struct rxkb_context *ctx)
+rxkb_context_parse_default_ruleset(સંરચના rxkb_context *ctx)
 {
-    return rxkb_context_parse(ctx, DEFAULT_XKB_RULES);
+    પાછા rxkb_context_parse(ctx, DEFAULT_XKB_RULES);
 }
 
 bool
-rxkb_context_parse(struct rxkb_context *ctx, const char *ruleset)
+rxkb_context_parse(સંરચના rxkb_context *ctx, અચલ અક્ષર *ruleset)
 {
-    char **path;
+    અક્ષર **path;
     bool success = false;
 
-    if (ctx->context_state != CONTEXT_NEW) {
+    જો (ctx->context_state != CONTEXT_NEW) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "parse must only be called on a new context\n");
-        return false;
+        પાછા false;
     }
 
     darray_foreach_reverse(path, ctx->includes) {
-        char rules[PATH_MAX];
+        અક્ષર rules[PATH_MAX];
 
-        if (snprintf_safe(rules, sizeof(rules), "%s/rules/%s.xml",
+        જો (snprintf_safe(rules, કદ(rules), "%s/rules/%s.xml",
                            *path, ruleset)) {
             log_dbg(ctx, "Parsing %s\n", rules);
-            if (parse(ctx, rules, RXKB_POPULARITY_STANDARD))
+            જો (parse(ctx, rules, RXKB_POPULARITY_STANDARD))
                 success = true;
         }
 
-        if (ctx->load_extra_rules_files &&
-            snprintf_safe(rules, sizeof(rules), "%s/rules/%s.extras.xml",
+        જો (ctx->load_extra_rules_files &&
+            snprintf_safe(rules, કદ(rules), "%s/rules/%s.extras.xml",
                           *path, ruleset)) {
             log_dbg(ctx, "Parsing %s\n", rules);
-            if (parse(ctx, rules, RXKB_POPULARITY_EXOTIC))
+            જો (parse(ctx, rules, RXKB_POPULARITY_EXOTIC))
                 success = true;
         }
     }
 
     ctx->context_state = success ? CONTEXT_PARSED : CONTEXT_FAILED;
 
-    return success;
+    પાછા success;
 }
 
 
-void
-rxkb_context_set_user_data(struct rxkb_context *ctx, void *userdata)
+શૂન્ય
+rxkb_context_set_user_data(સંરચના rxkb_context *ctx, શૂન્ય *userdata)
 {
     ctx->userdata = userdata;
 }
 
-void *
-rxkb_context_get_user_data(struct rxkb_context *ctx)
+શૂન્ય *
+rxkb_context_get_user_data(સંરચના rxkb_context *ctx)
 {
-    return ctx->userdata;
+    પાછા ctx->userdata;
 }
 
-static inline bool
-is_node(xmlNode *node, const char *name)
+સ્થિર અંતઃરેખ bool
+is_ગાંઠ(xml_ગાંઠ *ગાંઠ, અચલ અક્ષર *name)
 {
-    return node->type == XML_ELEMENT_NODE &&
-        xmlStrEqual(node->name, (const xmlChar*)name);
+    પાછા ગાંઠ->type == XML_ELEMENT_ગાંઠ &&
+        xmlStrEqual(ગાંઠ->name, (અચલ xmlChar*)name);
 }
 
 /* return a copy of the text content from the first text node of this node */
-static char *
-extract_text(xmlNode *node)
+સ્થિર અક્ષર *
+extract_text(xml_ગાંઠ *ગાંઠ)
 {
-    xmlNode *n;
+    xml_ગાંઠ *n;
 
-    for (n = node->children; n; n = n->next) {
-        if (n->type == XML_TEXT_NODE)
-            return (char *)xmlStrdup(n->content);
+    માટે (n = ગાંઠ->children; n; n = n->next) {
+        જો (n->type == XML_TEXT_ગાંઠ)
+            પાછા (અક્ષર *)xmlStrdup(n->content);
     }
-    return NULL;
+    પાછા ખાલી;
 }
 
 /* Data from “configItem” node */
-struct config_item {
-    char *name;
-    char *description;
-    char *brief;
-    char *vendor;
-    enum rxkb_popularity popularity;
+સંરચના config_item {
+    અક્ષર *name;
+    અક્ષર *description;
+    અક્ષર *brief;
+    અક્ષર *vendor;
+    ગણના rxkb_popularity popularity;
     bool layout_specific;
 };
 
 #define config_item_new(popularity_) { \
-    .name = NULL, \
-    .description = NULL, \
-    .brief = NULL, \
-    .vendor = NULL, \
+    .name = ખાલી, \
+    .description = ખાલી, \
+    .brief = ખાલી, \
+    .vendor = ખાલી, \
     .popularity = (popularity_), \
     .layout_specific = false \
 }
 
-static void
-config_item_free(struct config_item *config) {
-    free(config->name);
-    free(config->description);
-    free(config->brief);
-    free(config->vendor);
+સ્થિર શૂન્ય
+config_item_free(સંરચના config_item *config) {
+    મુક્ત(config->name);
+    મુક્ત(config->description);
+    મુક્ત(config->brief);
+    મુક્ત(config->vendor);
 }
 
-static bool
-parse_config_item(struct rxkb_context *ctx, xmlNode *parent,
-                  struct config_item *config)
+સ્થિર bool
+parse_config_item(સંરચના rxkb_context *ctx, xml_ગાંઠ *parent,
+                  સંરચના config_item *config)
 {
-    xmlNode *node = NULL;
-    xmlNode *ci = NULL;
+    xml_ગાંઠ *ગાંઠ = ખાલી;
+    xml_ગાંઠ *ci = ખાલી;
 
-    for (ci = parent->children; ci; ci = ci->next) {
-        if (is_node(ci, "configItem")) {
+    માટે (ci = parent->children; ci; ci = ci->next) {
+        જો (is_ગાંઠ(ci, "configItem")) {
             /* Process attributes */
-            xmlChar *raw_popularity = xmlGetProp(ci, (const xmlChar*)"popularity");
-            if (raw_popularity) {
-                if (xmlStrEqual(raw_popularity, (const xmlChar*)"standard"))
+            xmlChar *raw_popularity = xmlGetProp(ci, (અચલ xmlChar*)"popularity");
+            જો (raw_popularity) {
+                જો (xmlStrEqual(raw_popularity, (અચલ xmlChar*)"standard"))
                     config->popularity = RXKB_POPULARITY_STANDARD;
-                else if (xmlStrEqual(raw_popularity, (const xmlChar*)"exotic"))
+                નહીંતર જો (xmlStrEqual(raw_popularity, (અચલ xmlChar*)"exotic"))
                     config->popularity = RXKB_POPULARITY_EXOTIC;
-                else
+                નહીંતર
                     log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                             "xml:%u: invalid popularity attribute: expected "
                             "'standard' or 'exotic', got: '%s'\n",
-                            ci->line, raw_popularity);
+                            ci->લીટી, raw_popularity);
             }
             xmlFree(raw_popularity);
 
             /* Note: this is only useful for options */
             xmlChar *raw_layout_specific =
-                xmlGetProp(ci, (const xmlChar*)"layout-specific");
-            if (raw_layout_specific &&
-                xmlStrEqual(raw_layout_specific, (const xmlChar*)"true"))
+                xmlGetProp(ci, (અચલ xmlChar*)"layout-specific");
+            જો (raw_layout_specific &&
+                xmlStrEqual(raw_layout_specific, (અચલ xmlChar*)"true"))
                 config->layout_specific = true;
             xmlFree(raw_layout_specific);
 
             /* Process children */
-            for (node = ci->children; node; node = node->next) {
-                if (is_node(node, "name"))
-                    config->name = extract_text(node);
-                else if (is_node(node, "description"))
-                    config->description = extract_text(node);
-                else if (is_node(node, "shortDescription"))
-                    config->brief = extract_text(node);
-                else if (is_node(node, "vendor"))
-                    config->vendor = extract_text(node);
+            માટે (ગાંઠ = ci->children; ગાંઠ; ગાંઠ = ગાંઠ->next) {
+                જો (is_ગાંઠ(ગાંઠ, "name"))
+                    config->name = extract_text(ગાંઠ);
+                નહીંતર જો (is_ગાંઠ(ગાંઠ, "description"))
+                    config->description = extract_text(ગાંઠ);
+                નહીંતર જો (is_ગાંઠ(ગાંઠ, "shortDescription"))
+                    config->brief = extract_text(ગાંઠ);
+                નહીંતર જો (is_ગાંઠ(ગાંઠ, "vendor"))
+                    config->vendor = extract_text(ગાંઠ);
                 /* Note: the DTD allows for vendor + brief but models only use
                  * vendor and everything else only uses shortDescription */
             }
 
-            if (!config->name || !strlen(config->name))  {
+            જો (!config->name || !strlen(config->name))  {
                 log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                         "xml:%u: missing required element 'name'\n",
-                        ci->line);
+                        ci->લીટી);
                 config_item_free(config);
-                return false;
+                પાછા false;
             }
 
-            return true; /* only one configItem allowed in the dtd */
+            પાછા true; /* only one configItem allowed in the dtd */
         }
     }
 
-    return false;
+    પાછા false;
 }
 
-static void
-parse_model(struct rxkb_context *ctx, xmlNode *model,
-            enum rxkb_popularity popularity)
+સ્થિર શૂન્ય
+parse_model(સંરચના rxkb_context *ctx, xml_ગાંઠ *model,
+            ગણના rxkb_popularity popularity)
 {
-    struct config_item config = config_item_new(popularity);
+    સંરચના config_item config = config_item_new(popularity);
 
-    if (parse_config_item(ctx, model, &config)) {
-        struct rxkb_model *m;
+    જો (parse_config_item(ctx, model, &config)) {
+        સંરચના rxkb_model *m;
 
         list_for_each(m, &ctx->models, base.link) {
-            if (streq(m->name, config.name)) {
+            જો (streq(m->name, config.name)) {
                 config_item_free(&config);
-                return;
+                પાછા;
             }
         }
 
@@ -1018,32 +1018,32 @@ parse_model(struct rxkb_context *ctx, xmlNode *model,
     }
 }
 
-static void
-parse_model_list(struct rxkb_context *ctx, xmlNode *model_list,
-                 enum rxkb_popularity popularity)
+સ્થિર શૂન્ય
+parse_model_list(સંરચના rxkb_context *ctx, xml_ગાંઠ *model_list,
+                 ગણના rxkb_popularity popularity)
 {
-    xmlNode *node = NULL;
+    xml_ગાંઠ *ગાંઠ = ખાલી;
 
-    for (node = model_list->children; node; node = node->next) {
-        if (is_node(node, "model"))
-            parse_model(ctx, node, popularity);
+    માટે (ગાંઠ = model_list->children; ગાંઠ; ગાંઠ = ગાંઠ->next) {
+        જો (is_ગાંઠ(ગાંઠ, "model"))
+            parse_model(ctx, ગાંઠ, popularity);
     }
 }
 
-static void
-parse_language_list(xmlNode *language_list, struct rxkb_layout *layout)
+સ્થિર શૂન્ય
+parse_language_list(xml_ગાંઠ *language_list, સંરચના rxkb_layout *layout)
 {
-    xmlNode *node = NULL;
-    struct rxkb_iso639_code *code;
+    xml_ગાંઠ *ગાંઠ = ખાલી;
+    સંરચના rxkb_iso639_code *code;
 
-    for (node = language_list->children; node; node = node->next) {
-        if (is_node(node, "iso639Id")) {
-            char *str = extract_text(node);
-            struct rxkb_object *parent;
+    માટે (ગાંઠ = language_list->children; ગાંઠ; ગાંઠ = ગાંઠ->next) {
+        જો (is_ગાંઠ(ગાંઠ, "iso639Id")) {
+            અક્ષર *str = extract_text(ગાંઠ);
+            સંરચના rxkb_object *parent;
 
-            if (!str || strlen(str) != 3) {
-                free(str);
-                continue;
+            જો (!str || strlen(str) != 3) {
+                મુક્ત(str);
+                ચાલુ;
             }
 
             parent = &layout->base;
@@ -1054,20 +1054,20 @@ parse_language_list(xmlNode *language_list, struct rxkb_layout *layout)
     }
 }
 
-static void
-parse_country_list(xmlNode *country_list, struct rxkb_layout *layout)
+સ્થિર શૂન્ય
+parse_country_list(xml_ગાંઠ *country_list, સંરચના rxkb_layout *layout)
 {
-    xmlNode *node = NULL;
-    struct rxkb_iso3166_code *code;
+    xml_ગાંઠ *ગાંઠ = ખાલી;
+    સંરચના rxkb_iso3166_code *code;
 
-    for (node = country_list->children; node; node = node->next) {
-        if (is_node(node, "iso3166Id")) {
-            char *str = extract_text(node);
-            struct rxkb_object *parent;
+    માટે (ગાંઠ = country_list->children; ગાંઠ; ગાંઠ = ગાંઠ->next) {
+        જો (is_ગાંઠ(ગાંઠ, "iso3166Id")) {
+            અક્ષર *str = extract_text(ગાંઠ);
+            સંરચના rxkb_object *parent;
 
-            if (!str || strlen(str) != 2) {
-                free(str);
-                continue;
+            જો (!str || strlen(str) != 2) {
+                મુક્ત(str);
+                ચાલુ;
             }
 
             parent = &layout->base;
@@ -1078,26 +1078,26 @@ parse_country_list(xmlNode *country_list, struct rxkb_layout *layout)
     }
 }
 
-static void
-parse_variant(struct rxkb_context *ctx, struct rxkb_layout *l,
-              xmlNode *variant, enum rxkb_popularity popularity)
+સ્થિર શૂન્ય
+parse_variant(સંરચના rxkb_context *ctx, સંરચના rxkb_layout *l,
+              xml_ગાંઠ *variant, ગણના rxkb_popularity popularity)
 {
-    xmlNode *ci;
-    struct config_item config = config_item_new(popularity);
+    xml_ગાંઠ *ci;
+    સંરચના config_item config = config_item_new(popularity);
 
-    if (parse_config_item(ctx, variant, &config)) {
-        struct rxkb_layout *v;
+    જો (parse_config_item(ctx, variant, &config)) {
+        સંરચના rxkb_layout *v;
         bool exists = false;
 
         list_for_each(v, &ctx->layouts, base.link) {
-            if (streq_null(v->variant, config.name) &&
+            જો (streq_null(v->variant, config.name) &&
                 streq(v->name, l->name)) {
                 exists = true;
-                break;
+                તોડો;
             }
         }
 
-        if (!exists) {
+        જો (!exists) {
             v = rxkb_layout_create(&ctx->base);
             list_init(&v->iso639s);
             list_init(&v->iso3166s);
@@ -1105,139 +1105,139 @@ parse_variant(struct rxkb_context *ctx, struct rxkb_layout *l,
             v->variant = steal(&config.name);
             v->description = steal(&config.description);
             // if variant omits brief, inherit from parent layout.
-            v->brief = config.brief == NULL ? strdup_safe(l->brief) : steal(&config.brief);
+            v->brief = config.brief == ખાલી ? strdup_safe(l->brief) : steal(&config.brief);
             v->popularity = config.popularity;
             list_append(&ctx->layouts, &v->base.link);
 
-            for (ci = variant->children; ci; ci = ci->next) {
-                xmlNode *node;
+            માટે (ci = variant->children; ci; ci = ci->next) {
+                xml_ગાંઠ *ગાંઠ;
 
-                if (!is_node(ci, "configItem"))
-                    continue;
+                જો (!is_ગાંઠ(ci, "configItem"))
+                    ચાલુ;
 
                 bool found_language_list = false;
                 bool found_country_list = false;
-                for (node = ci->children; node; node = node->next) {
-                    if (is_node(node, "languageList")) {
-                        parse_language_list(node, v);
+                માટે (ગાંઠ = ci->children; ગાંઠ; ગાંઠ = ગાંઠ->next) {
+                    જો (is_ગાંઠ(ગાંઠ, "languageList")) {
+                        parse_language_list(ગાંઠ, v);
                         found_language_list = true;
                     }
-                    if (is_node(node, "countryList")) {
-                        parse_country_list(node, v);
+                    જો (is_ગાંઠ(ગાંઠ, "countryList")) {
+                        parse_country_list(ગાંઠ, v);
                         found_country_list = true;
                     }
                 }
-                if (!found_language_list) {
+                જો (!found_language_list) {
                     // inherit from parent layout
-                    struct rxkb_iso639_code* x;
+                    સંરચના rxkb_iso639_code* x;
                     list_for_each(x, &l->iso639s, base.link) {
-                        struct rxkb_iso639_code* code = rxkb_iso639_code_create(&v->base);
+                        સંરચના rxkb_iso639_code* code = rxkb_iso639_code_create(&v->base);
                         code->code = strdup(x->code);
                         list_append(&v->iso639s, &code->base.link);
                     }
                 }
-                if (!found_country_list) {
+                જો (!found_country_list) {
                     // inherit from parent layout
-                    struct rxkb_iso3166_code* x;
+                    સંરચના rxkb_iso3166_code* x;
                     list_for_each(x, &l->iso3166s, base.link) {
-                        struct rxkb_iso3166_code* code = rxkb_iso3166_code_create(&v->base);
+                        સંરચના rxkb_iso3166_code* code = rxkb_iso3166_code_create(&v->base);
                         code->code = strdup(x->code);
                         list_append(&v->iso3166s, &code->base.link);
                     }
                 }
             }
-        } else {
+        } નહીંતર {
             config_item_free(&config);
         }
     }
 }
 
-static void
-parse_variant_list(struct rxkb_context *ctx, struct rxkb_layout *l,
-                   xmlNode *variant_list, enum rxkb_popularity popularity)
+સ્થિર શૂન્ય
+parse_variant_list(સંરચના rxkb_context *ctx, સંરચના rxkb_layout *l,
+                   xml_ગાંઠ *variant_list, ગણના rxkb_popularity popularity)
 {
-    xmlNode *node = NULL;
+    xml_ગાંઠ *ગાંઠ = ખાલી;
 
-    for (node = variant_list->children; node; node = node->next) {
-        if (is_node(node, "variant"))
-            parse_variant(ctx, l, node, popularity);
+    માટે (ગાંઠ = variant_list->children; ગાંઠ; ગાંઠ = ગાંઠ->next) {
+        જો (is_ગાંઠ(ગાંઠ, "variant"))
+            parse_variant(ctx, l, ગાંઠ, popularity);
     }
 }
 
-static void
-parse_layout(struct rxkb_context *ctx, xmlNode *layout,
-             enum rxkb_popularity popularity)
+સ્થિર શૂન્ય
+parse_layout(સંરચના rxkb_context *ctx, xml_ગાંઠ *layout,
+             ગણના rxkb_popularity popularity)
 {
-    struct config_item config = config_item_new(popularity);
-    struct rxkb_layout *l;
-    xmlNode *node = NULL;
+    સંરચના config_item config = config_item_new(popularity);
+    સંરચના rxkb_layout *l;
+    xml_ગાંઠ *ગાંઠ = ખાલી;
     bool exists = false;
 
-    if (!parse_config_item(ctx, layout, &config))
-        return;
+    જો (!parse_config_item(ctx, layout, &config))
+        પાછા;
 
     list_for_each(l, &ctx->layouts, base.link) {
-        if (streq(l->name, config.name) && l->variant == NULL) {
+        જો (streq(l->name, config.name) && l->variant == ખાલી) {
             exists = true;
-            break;
+            તોડો;
         }
     }
 
-    if (!exists) {
+    જો (!exists) {
         l = rxkb_layout_create(&ctx->base);
         list_init(&l->iso639s);
         list_init(&l->iso3166s);
         l->name = steal(&config.name);
-        l->variant = NULL;
+        l->variant = ખાલી;
         l->description = steal(&config.description);
         l->brief = steal(&config.brief);
         l->popularity = config.popularity;
         list_append(&ctx->layouts, &l->base.link);
-    } else {
+    } નહીંતર {
         config_item_free(&config);
     }
 
-    for (node = layout->children; node; node = node->next) {
-        if (is_node(node, "variantList")) {
-            parse_variant_list(ctx, l, node, popularity);
+    માટે (ગાંઠ = layout->children; ગાંઠ; ગાંઠ = ગાંઠ->next) {
+        જો (is_ગાંઠ(ગાંઠ, "variantList")) {
+            parse_variant_list(ctx, l, ગાંઠ, popularity);
         }
-        if (!exists && is_node(node, "configItem")) {
-            xmlNode *ll;
-            for (ll = node->children; ll; ll = ll->next) {
-                if (is_node(ll, "languageList"))
+        જો (!exists && is_ગાંઠ(ગાંઠ, "configItem")) {
+            xml_ગાંઠ *ll;
+            માટે (ll = ગાંઠ->children; ll; ll = ll->next) {
+                જો (is_ગાંઠ(ll, "languageList"))
                     parse_language_list(ll, l);
-                if (is_node(ll, "countryList"))
+                જો (is_ગાંઠ(ll, "countryList"))
                     parse_country_list(ll, l);
             }
         }
     }
 }
 
-static void
-parse_layout_list(struct rxkb_context *ctx, xmlNode *layout_list,
-                  enum rxkb_popularity popularity)
+સ્થિર શૂન્ય
+parse_layout_list(સંરચના rxkb_context *ctx, xml_ગાંઠ *layout_list,
+                  ગણના rxkb_popularity popularity)
 {
-    xmlNode *node = NULL;
+    xml_ગાંઠ *ગાંઠ = ખાલી;
 
-    for (node = layout_list->children; node; node = node->next) {
-        if (is_node(node, "layout"))
-            parse_layout(ctx, node, popularity);
+    માટે (ગાંઠ = layout_list->children; ગાંઠ; ગાંઠ = ગાંઠ->next) {
+        જો (is_ગાંઠ(ગાંઠ, "layout"))
+            parse_layout(ctx, ગાંઠ, popularity);
     }
 }
 
-static void
-parse_option(struct rxkb_context *ctx, struct rxkb_option_group *group,
-             xmlNode *option, enum rxkb_popularity popularity)
+સ્થિર શૂન્ય
+parse_option(સંરચના rxkb_context *ctx, સંરચના rxkb_option_group *group,
+             xml_ગાંઠ *option, ગણના rxkb_popularity popularity)
 {
-    struct config_item config = config_item_new(popularity);
+    સંરચના config_item config = config_item_new(popularity);
 
-    if (parse_config_item(ctx, option, &config)) {
-        struct rxkb_option *o;
+    જો (parse_config_item(ctx, option, &config)) {
+        સંરચના rxkb_option *o;
 
         list_for_each(o, &group->options, base.link) {
-            if (streq(o->name, config.name)) {
+            જો (streq(o->name, config.name)) {
                 config_item_free(&config);
-                return;
+                પાછા;
             }
         }
 
@@ -1250,122 +1250,122 @@ parse_option(struct rxkb_context *ctx, struct rxkb_option_group *group,
     }
 }
 
-static void
-parse_group(struct rxkb_context *ctx, xmlNode *group,
-            enum rxkb_popularity popularity)
+સ્થિર શૂન્ય
+parse_group(સંરચના rxkb_context *ctx, xml_ગાંઠ *group,
+            ગણના rxkb_popularity popularity)
 {
-    struct config_item config = config_item_new(popularity);
-    struct rxkb_option_group *g;
-    xmlNode *node = NULL;
+    સંરચના config_item config = config_item_new(popularity);
+    સંરચના rxkb_option_group *g;
+    xml_ગાંઠ *ગાંઠ = ખાલી;
     xmlChar *multiple;
     bool exists = false;
 
-    if (!parse_config_item(ctx, group, &config))
-        return;
+    જો (!parse_config_item(ctx, group, &config))
+        પાછા;
 
     list_for_each(g, &ctx->option_groups, base.link) {
-        if (streq(g->name, config.name)) {
+        જો (streq(g->name, config.name)) {
             exists = true;
-            break;
+            તોડો;
         }
     }
 
-    if (!exists) {
+    જો (!exists) {
         g = rxkb_option_group_create(&ctx->base);
         g->name = steal(&config.name);
         g->description = steal(&config.description);
         g->popularity = config.popularity;
 
-        multiple = xmlGetProp(group, (const xmlChar*)"allowMultipleSelection");
-        if (multiple && xmlStrEqual(multiple, (const xmlChar*)"true"))
+        multiple = xmlGetProp(group, (અચલ xmlChar*)"allowMultipleSelection");
+        જો (multiple && xmlStrEqual(multiple, (અચલ xmlChar*)"true"))
             g->allow_multiple = true;
         xmlFree(multiple);
 
         list_init(&g->options);
         list_append(&ctx->option_groups, &g->base.link);
-    } else {
+    } નહીંતર {
         config_item_free(&config);
     }
 
-    for (node = group->children; node; node = node->next) {
-        if (is_node(node, "option"))
-            parse_option(ctx, g, node, popularity);
+    માટે (ગાંઠ = group->children; ગાંઠ; ગાંઠ = ગાંઠ->next) {
+        જો (is_ગાંઠ(ગાંઠ, "option"))
+            parse_option(ctx, g, ગાંઠ, popularity);
     }
 }
 
-static void
-parse_option_list(struct rxkb_context *ctx, xmlNode *option_list,
-                  enum rxkb_popularity popularity)
+સ્થિર શૂન્ય
+parse_option_list(સંરચના rxkb_context *ctx, xml_ગાંઠ *option_list,
+                  ગણના rxkb_popularity popularity)
 {
-    xmlNode *node = NULL;
+    xml_ગાંઠ *ગાંઠ = ખાલી;
 
-    for (node = option_list->children; node; node = node->next) {
-        if (is_node(node, "group"))
-            parse_group(ctx, node, popularity);
+    માટે (ગાંઠ = option_list->children; ગાંઠ; ગાંઠ = ગાંઠ->next) {
+        જો (is_ગાંઠ(ગાંઠ, "group"))
+            parse_group(ctx, ગાંઠ, popularity);
     }
 }
 
-static void
-parse_rules_xml(struct rxkb_context *ctx, xmlNode *root,
-                enum rxkb_popularity popularity)
+સ્થિર શૂન્ય
+parse_rules_xml(સંરચના rxkb_context *ctx, xml_ગાંઠ *મૂળ,
+                ગણના rxkb_popularity popularity)
 {
-    xmlNode *node = NULL;
+    xml_ગાંઠ *ગાંઠ = ખાલી;
 
-    for (node = root->children; node; node = node->next) {
-        if (is_node(node, "modelList"))
-            parse_model_list(ctx, node, popularity);
-        else if (is_node(node, "layoutList"))
-            parse_layout_list(ctx, node, popularity);
-        else if (is_node(node, "optionList"))
-            parse_option_list(ctx, node, popularity);
+    માટે (ગાંઠ = મૂળ->children; ગાંઠ; ગાંઠ = ગાંઠ->next) {
+        જો (is_ગાંઠ(ગાંઠ, "modelList"))
+            parse_model_list(ctx, ગાંઠ, popularity);
+        નહીંતર જો (is_ગાંઠ(ગાંઠ, "layoutList"))
+            parse_layout_list(ctx, ગાંઠ, popularity);
+        નહીંતર જો (is_ગાંઠ(ગાંઠ, "optionList"))
+            parse_option_list(ctx, ગાંઠ, popularity);
     }
 }
 
-static void
+સ્થિર શૂન્ય
 ATTR_PRINTF(2, 0)
-xml_error_func(void *ctx, const char *msg, ...)
+xml_error_func(શૂન્ય *ctx, અચલ અક્ષર *સંદેશ, ...)
 {
-    static char buf[PATH_MAX];
-    static size_t slen = 0;
+    સ્થિર અક્ષર buf[PATH_MAX];
+    સ્થિર size_t slen = 0;
     va_list args;
-    int rc;
+    પૂર્ણાંક rc;
 
     /* libxml2 prints IO errors from bad includes paths by
      * calling the error function once per word. So we get to
      * re-assemble the message here and print it when we get
      * the line break. My enthusiasm about this is indescribable.
      */
-    va_start(args, msg);
-    rc = vsnprintf(&buf[slen], sizeof(buf) - slen, msg, args);
+    va_start(args, સંદેશ);
+    rc = vsnprintf(&buf[slen], કદ(buf) - slen, સંદેશ, args);
     va_end(args);
 
     /* This shouldn't really happen */
-    if (rc < 0) {
+    જો (rc < 0) {
         log_err(ctx, XKB_ERROR_INSUFFICIENT_BUFFER_SIZE,
                 "+++ out of cheese error. redo from start +++\n");
         slen = 0;
-        memset(buf, 0, sizeof(buf));
-        return;
+        memset(buf, 0, કદ(buf));
+        પાછા;
     }
 
     slen += (size_t)rc;
-    if (slen >= sizeof(buf)) {
+    જો (slen >= કદ(buf)) {
         /* truncated, let's flush this */
-        buf[sizeof(buf) - 1] = '\n';
-        slen = sizeof(buf);
+        buf[કદ(buf) - 1] = '\n';
+        slen = કદ(buf);
     }
 
     /* We're assuming here that the last character is \n. */
-    if (buf[slen - 1] == '\n') {
+    જો (buf[slen - 1] == '\n') {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID, "%s", buf);
-        memset(buf, 0, sizeof(buf));
+        memset(buf, 0, કદ(buf));
         slen = 0;
     }
 }
 
-#if HAVE_XML_CTXT_SET_ERRORHANDLER
-static void
-xml_structured_error_func(void *userData, const xmlError * error)
+#જો HAVE_XML_CTXT_SET_ERRORHANDLER
+સ્થિર શૂન્ય
+xml_structured_error_func(શૂન્ય *userData, અચલ xmlError * error)
 {
     xmlFormatError(error, xml_error_func, userData);
 }
@@ -1373,12 +1373,12 @@ xml_structured_error_func(void *userData, const xmlError * error)
 
 #ifdef XML_PARSE_NO_XXE
 #define _XML_OPTIONS (XML_PARSE_NONET | XML_PARSE_NOENT | XML_PARSE_NO_XXE)
-#else
+#નહીંતર
 #define _XML_OPTIONS (XML_PARSE_NONET)
 #endif
 
-static bool
-validate(struct rxkb_context *ctx, xmlDoc *doc)
+સ્થિર bool
+validate(સંરચના rxkb_context *ctx, xmlDoc *doc)
 {
     bool success = false;
     /* This is a modified version of the xkeyboard-config xkb.dtd:
@@ -1388,7 +1388,7 @@ validate(struct rxkb_context *ctx, xmlDoc *doc)
      *   but we set this value depending if we are currently parsing an
      *   “extras” rule file.
      */
-    const char dtdstr[] =
+    અચલ અક્ષર dtdstr[] =
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         "<!ELEMENT xkbConfigRegistry (modelList?, layoutList?, optionList?)>\n"
         "<!ATTLIST xkbConfigRegistry version CDATA \"1.1\">\n"
@@ -1416,48 +1416,48 @@ validate(struct rxkb_context *ctx, xmlDoc *doc)
         "<!ELEMENT hwList (hwId+)>\n"
         "<!ELEMENT hwId (#PCDATA)>\n";
 
-#if HAVE_XML_CTXT_PARSE_DTD
+#જો HAVE_XML_CTXT_PARSE_DTD
     /* Use safer function with context if available, and set
      * the contextual error handler. */
     xmlParserCtxtPtr xmlCtxt = xmlNewParserCtxt();
-    if (!xmlCtxt)
-        return false;
+    જો (!xmlCtxt)
+        પાછા false;
     static_assert(HAVE_XML_CTXT_SET_ERRORHANDLER,
                   "xmlCtxtSetErrorHandler (2.13) introduced before "
                   "xmlCtxtParseDtd (2.14)");
     xmlCtxtSetErrorHandler(xmlCtxt, xml_structured_error_func, ctx);
     xmlCtxtSetOptions(xmlCtxt, _XML_OPTIONS | XML_PARSE_DTDLOAD);
 
-    xmlParserInputPtr pinput =
-        xmlNewInputFromMemory(NULL, dtdstr, ARRAY_SIZE(dtdstr) - 1,
-                              XML_INPUT_BUF_STATIC);
-    if (!pinput)
-        goto dtd_error;
+    xml_Parser_આગત_Ptr pinput =
+        xml_New_આગત_From_Memory(ખાલી, dtdstr, ARRAY_SIZE(dtdstr) - 1,
+                              XML_આગત_BUF_STATIC);
+    જો (!pinput)
+        જાઓ dtd_error;
 
-    xmlDtd *dtd = xmlCtxtParseDtd(xmlCtxt, pinput, NULL, NULL);
-#else
+    xmlDtd *dtd = xmlCtxtParseDtd(xmlCtxt, pinput, ખાલી, ખાલી);
+#નહીંતર
     /* Note: do not use xmlParserInputBufferCreateStatic, it generates random
      * DTD validity errors for unknown reasons */
-    xmlParserInputBufferPtr buf =
-        xmlParserInputBufferCreateMem(dtdstr, ARRAY_SIZE(dtdstr) - 1,
+    xml_Parser_આગત_Buffer_Ptr buf =
+        xml_Parser_આગત_Buffer_Create_Mem(dtdstr, ARRAY_SIZE(dtdstr) - 1,
                                       XML_CHAR_ENCODING_NONE);
-    if (!buf)
-        goto dtd_error;
-    xmlDtd *dtd = xmlIOParseDTD(NULL, buf, XML_CHAR_ENCODING_UTF8);
+    જો (!buf)
+        જાઓ dtd_error;
+    xmlDtd *dtd = xmlIOParseDTD(ખાલી, buf, XML_CHAR_ENCODING_UTF8);
 #endif
 
-    if (!dtd) {
+    જો (!dtd) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID, "Failed to load DTD\n");
-        goto dtd_error;
+        જાઓ dtd_error;
     }
 
-#if HAVE_XML_CTXT_PARSE_DTD
+#જો HAVE_XML_CTXT_PARSE_DTD
     success = xmlCtxtValidateDtd(xmlCtxt, doc, dtd);
-#else
+#નહીંતર
     xmlValidCtxt *dtdvalid = xmlNewValidCtxt();
-    if (!dtdvalid) {
+    જો (!dtdvalid) {
         success = false;
-        goto ctx_error;
+        જાઓ ctx_error;
     }
     dtdvalid->error = &xml_error_func;
     dtdvalid->userData = ctx;
@@ -1469,65 +1469,65 @@ ctx_error:
     xmlFreeDtd(dtd);
 
 dtd_error:
-#if HAVE_XML_CTXT_PARSE_DTD
+#જો HAVE_XML_CTXT_PARSE_DTD
     xmlFreeParserCtxt(xmlCtxt);
 #endif
-    return success;
+    પાછા success;
 }
 
-static bool
-parse(struct rxkb_context *ctx, const char *path,
-      enum rxkb_popularity popularity)
+સ્થિર bool
+parse(સંરચના rxkb_context *ctx, અચલ અક્ષર *path,
+      ગણના rxkb_popularity popularity)
 {
     bool success = false;
-    xmlDoc *doc = NULL;
-    xmlNode *root = NULL;
+    xmlDoc *doc = ખાલી;
+    xml_ગાંઠ *મૂળ = ખાલી;
 
-    if (!check_eaccess(path, R_OK))
-        return false;
+    જો (!check_eaccess(path, R_OK))
+        પાછા false;
 
     LIBXML_TEST_VERSION
 
     xmlParserCtxtPtr xmlCtxt = xmlNewParserCtxt();
-    if (!xmlCtxt)
-        return false;
+    જો (!xmlCtxt)
+        પાછા false;
 
 #ifdef XML_PARSE_NO_XXE
 #define _XML_OPTIONS (XML_PARSE_NONET | XML_PARSE_NOENT | XML_PARSE_NO_XXE)
-#else
+#નહીંતર
 #define _XML_OPTIONS (XML_PARSE_NONET)
 #endif
     xmlCtxtUseOptions(xmlCtxt, _XML_OPTIONS);
 
-#if HAVE_XML_CTXT_SET_ERRORHANDLER
+#જો HAVE_XML_CTXT_SET_ERRORHANDLER
     /* Prefer contextual handler whenever possible. It takes precedence over
      * the global generic handler. */
     xmlCtxtSetErrorHandler(xmlCtxt, xml_structured_error_func, ctx);
 #endif
-#if !HAVE_XML_CTXT_PARSE_DTD
+#જો !HAVE_XML_CTXT_PARSE_DTD
     /* This is needed for the DTD validation */
     xmlSetGenericErrorFunc(ctx, xml_error_func);
 #endif
 
-    doc = xmlCtxtReadFile(xmlCtxt, path, NULL, 0);
-    if (!doc)
-        goto parse_error;
+    doc = xmlCtxtReadFile(xmlCtxt, path, ખાલી, 0);
+    જો (!doc)
+        જાઓ parse_error;
 
-    if (!validate(ctx, doc)) {
+    જો (!validate(ctx, doc)) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "XML error: failed to validate document at %s\n", path);
-        goto validate_error;
+        જાઓ validate_error;
     }
 
-    root = xmlDocGetRootElement(doc);
-    parse_rules_xml(ctx, root, popularity);
+    મૂળ = xml_Doc_Get_મૂળ_Element(doc);
+    parse_rules_xml(ctx, મૂળ, popularity);
 
     success = true;
 validate_error:
     xmlFreeDoc(doc);
 parse_error:
 
-#if !HAVE_XML_CTXT_PARSE_DTD
+#જો !HAVE_XML_CTXT_PARSE_DTD
     /*
      * Reset the default libxml2 error handler to default, because this handler
      * is global and may be used on an invalid rxkb_context, e.g. *after* the
@@ -1537,12 +1537,12 @@ parse_error:
      *     rxkb_context_parse();
      *     rxkb_context_unref();
      */
-    xmlSetGenericErrorFunc(NULL, NULL);
+    xmlSetGenericErrorFunc(ખાલી, ખાલી);
 #endif
-#if HAVE_XML_CTXT_SET_ERRORHANDLER
-    xmlCtxtSetErrorHandler(xmlCtxt, NULL, NULL);
+#જો HAVE_XML_CTXT_SET_ERRORHANDLER
+    xmlCtxtSetErrorHandler(xmlCtxt, ખાલી, ખાલી);
 #endif
     xmlFreeParserCtxt(xmlCtxt);
 
-    return success;
+    પાછા success;
 }

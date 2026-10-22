@@ -9,14 +9,14 @@
  */
 #pragma once
 
-#include "config.h"
+#અન્તર્ભાવ "config.h"
 
-#include "xkbcommon/xkbcommon.h"
+#અન્તર્ભાવ "xkbcommon/xkbcommon.h"
 
-#include "atom.h"
-#include "darray.h"
+#અન્તર્ભાવ "atom.h"
+#અન્તર્ભાવ "darray.h"
 
-enum xkb_file_type {
+ગણના xkb_file_type {
     /* Component files, by order of compilation. */
     FILE_TYPE_KEYCODES = 0,
     FILE_TYPE_TYPES = 1,
@@ -37,38 +37,38 @@ enum xkb_file_type {
     /* This one doesn't mix with the others, but useful here as well. */
     FILE_TYPE_RULES,
 
-    _FILE_TYPE_NUM_ENTRIES,
-    FILE_TYPE_INVALID = _FILE_TYPE_NUM_ENTRIES
+    FILE_TYPE_અંક_ENTRIES,
+    FILE_TYPE_INVALID = FILE_TYPE_અંક_ENTRIES
 };
 
-enum stmt_type {
+ગણના stmt_type {
     STMT_UNKNOWN = 0,
     STMT_INCLUDE,
     STMT_KEYCODE,
     STMT_ALIAS,
-    STMT_EXPR_STRING_LITERAL,
-    STMT_EXPR_INTEGER_LITERAL,
-    STMT_EXPR_FLOAT_LITERAL,
-    STMT_EXPR_BOOLEAN_LITERAL,
-    STMT_EXPR_KEYNAME_LITERAL,
-    STMT_EXPR_KEYSYM_LITERAL,
-    STMT_EXPR_IDENT,
-    STMT_EXPR_ACTION_DECL,
-    STMT_EXPR_FIELD_REF,
-    STMT_EXPR_ARRAY_REF,
+    STMT_પદાવલિ_STRING_LITERAL,
+    STMT_પદાવલિ_INTEGER_LITERAL,
+    STMT_પદાવલિ_FLOAT_LITERAL,
+    STMT_પદાવલિ_BOOLEAN_LITERAL,
+    STMT_પદાવલિ_KEYNAME_LITERAL,
+    STMT_પદાવલિ_KEYSYM_LITERAL,
+    STMT_પદાવલિ_IDENT,
+    STMT_પદાવલિ_ACTION_DECL,
+    STMT_પદાવલિ_FIELD_REF,
+    STMT_પદાવલિ_ARRAY_REF,
     /* Needed because of the ambiguity between keysym and action empty lists */
-    STMT_EXPR_EMPTY_LIST,
-    STMT_EXPR_KEYSYM_LIST,
-    STMT_EXPR_ACTION_LIST,
-    STMT_EXPR_ADD,
-    STMT_EXPR_SUBTRACT,
-    STMT_EXPR_MULTIPLY,
-    STMT_EXPR_DIVIDE,
-    STMT_EXPR_ASSIGN,
-    STMT_EXPR_NOT,
-    STMT_EXPR_NEGATE,
-    STMT_EXPR_INVERT,
-    STMT_EXPR_UNARY_PLUS,
+    STMT_પદાવલિ_EMPTY_LIST,
+    STMT_પદાવલિ_KEYSYM_LIST,
+    STMT_પદાવલિ_ACTION_LIST,
+    STMT_પદાવલિ_ADD,
+    STMT_પદાવલિ_SUBTRACT,
+    STMT_પદાવલિ_MULTIPLY,
+    STMT_પદાવલિ_DIVIDE,
+    STMT_પદાવલિ_ASSIGN,
+    STMT_પદાવલિ_NOT,
+    STMT_પદાવલિ_NEGATE,
+    STMT_પદાવલિ_INVERT,
+    STMT_પદાવલિ_UNARY_PLUS,
     STMT_VAR,
     STMT_TYPE,
     STMT_INTERP,
@@ -81,229 +81,229 @@ enum stmt_type {
     STMT_UNKNOWN_DECLARATION,
     STMT_UNKNOWN_COMPOUND,
 
-    _STMT_NUM_VALUES
+    STMT_અંક_કિંમતો
 };
 
-enum merge_mode {
+ગણના merge_mode {
     MERGE_DEFAULT,
     MERGE_AUGMENT,
     MERGE_OVERRIDE,
     MERGE_REPLACE,
-    _MERGE_MODE_NUM_ENTRIES,
+    MERGE_MODE_અંક_ENTRIES,
 };
-enum { MERGE_MODE_MIN_WIDTH = 3 /* 2 bits + sign */ };
-static_assert(_MERGE_MODE_NUM_ENTRIES - 1 <= (1 << (MERGE_MODE_MIN_WIDTH - 1)) - 1,
+ગણના { MERGE_MODE_MIN_WIDTH = 3 /* 2 bits + sign */ };
+static_assert(MERGE_MODE_અંક_ENTRIES - 1 <= (1 << (MERGE_MODE_MIN_WIDTH - 1)) - 1,
               "Cannot encode merge mode");
 
-const char *
-xkb_file_type_to_string(enum xkb_file_type type);
+અચલ અક્ષર *
+xkb_file_type_to_string(ગણના xkb_file_type type);
 
-const char *
-stmt_type_to_string(enum stmt_type type);
+અચલ અક્ષર *
+stmt_type_to_string(ગણના stmt_type type);
 
-char
-stmt_type_to_operator_char(enum stmt_type type);
+અક્ષર
+stmt_type_to_operator_char(ગણના stmt_type type);
 
-typedef struct _ParseCommon  {
-    struct _ParseCommon *next;
-    enum stmt_type type;
+પ્રકારવ્યાખ્યા સંરચના _ParseCommon  {
+    સંરચના _ParseCommon *next;
+    ગણના stmt_type type;
 } ParseCommon;
 
-typedef struct _IncludeStmt {
+પ્રકારવ્યાખ્યા સંરચના _IncludeStmt {
     ParseCommon common;
-    enum merge_mode merge;
-    char *stmt;
-    char *file;
-    char *map;
-    char *modifier;
-    struct _IncludeStmt *next_incl;
+    ગણના merge_mode merge;
+    અક્ષર *stmt;
+    અક્ષર *file;
+    અક્ષર *map;
+    અક્ષર *modifier;
+    સંરચના _IncludeStmt *next_incl;
 } IncludeStmt;
 
-typedef union ExprDef ExprDef;
+પ્રકારવ્યાખ્યા સંઘ પદાવલિ_Def પદાવલિ_Def;
 
-typedef struct {
+પ્રકારવ્યાખ્યા સંરચના {
     ParseCommon common;
     xkb_atom_t ident;
-} ExprIdent;
+} પદાવલિ_Ident;
 
-typedef struct {
+પ્રકારવ્યાખ્યા સંરચના {
     ParseCommon common;
     xkb_atom_t str;
-} ExprString;
+} પદાવલિ_String;
 
-typedef struct {
+પ્રકારવ્યાખ્યા સંરચના {
     ParseCommon common;
     bool set;
-} ExprBoolean;
+} પદાવલિ_Boolean;
 
-typedef struct {
+પ્રકારવ્યાખ્યા સંરચના {
     ParseCommon common;
     int64_t ival;
-} ExprInteger;
+} પદાવલિ_Integer;
 
-typedef struct {
+પ્રકારવ્યાખ્યા સંરચના {
     ParseCommon common;
     /* We don't support floats, but we still represnt them in the AST, in
      * order to provide proper error messages. */
-} ExprFloat;
+} પદાવલિ_Float;
 
-typedef struct {
+પ્રકારવ્યાખ્યા સંરચના {
     ParseCommon common;
-    xkb_atom_t key_name;
-} ExprKeyName;
+    xkb_atom_t ચાવી_name;
+} પદાવલિ_ચાવી_Name;
 
-typedef struct {
+પ્રકારવ્યાખ્યા સંરચના {
     ParseCommon common;
     /* Keysyms are resolved early, so this might contain `NoSymbol` in case of
      * failure, to enable error recovery. */
     xkb_keysym_t keysym;
-} ExprKeySym;
+} પદાવલિ_ચાવી_Sym;
 
-typedef struct {
+પ્રકારવ્યાખ્યા સંરચના {
     ParseCommon common;
-    ExprDef *left;
-    ExprDef *right;
-} ExprBinary;
+    પદાવલિ_Def *ડાબું;
+    પદાવલિ_Def *જમણું;
+} પદાવલિ_દ્વિઅંકી;
 
-typedef struct {
+પ્રકારવ્યાખ્યા સંરચના {
     ParseCommon common;
-    ExprDef *child;
-} ExprUnary;
+    પદાવલિ_Def *child;
+} પદાવલિ_Unary;
 
-typedef struct {
-    ParseCommon common;
-    xkb_atom_t element;
-    xkb_atom_t field;
-} ExprFieldRef;
-
-typedef struct {
+પ્રકારવ્યાખ્યા સંરચના {
     ParseCommon common;
     xkb_atom_t element;
     xkb_atom_t field;
-    ExprDef *entry;
-} ExprArrayRef;
+} પદાવલિ_Field_Ref;
 
-typedef struct {
+પ્રકારવ્યાખ્યા સંરચના {
+    ParseCommon common;
+    xkb_atom_t element;
+    xkb_atom_t field;
+    પદાવલિ_Def *entry;
+} પદાવલિ_Array_Ref;
+
+પ્રકારવ્યાખ્યા સંરચના {
     ParseCommon common;
     xkb_atom_t name;
-    ExprDef *args;
-} ExprAction;
+    પદાવલિ_Def *args;
+} પદાવલિ_Action;
 
-typedef struct {
+પ્રકારવ્યાખ્યા સંરચના {
     ParseCommon common;
     /* List of actions for a single level. */
-    ExprDef *actions;
-} ExprActionList;
+    પદાવલિ_Def *actions;
+} પદાવલિ_Action_List;
 
-typedef struct {
+પ્રકારવ્યાખ્યા સંરચના {
     ParseCommon common;
     /* List of keysym for a single level. */
     darray(xkb_keysym_t) syms;
-} ExprKeysymList;
+} પદાવલિ_Keysym_List;
 
-union ExprDef {
+સંઘ પદાવલિ_Def {
     ParseCommon common;
-    ExprIdent ident;
-    ExprString string;
-    ExprBoolean boolean;
-    ExprInteger integer;
-    ExprKeyName key_name;
-    ExprKeySym keysym;
-    ExprBinary binary;
-    ExprUnary unary;
-    ExprFieldRef field_ref;
-    ExprArrayRef array_ref;
-    ExprAction action;
-    ExprActionList actions;
-    ExprKeysymList keysym_list;
+    પદાવલિ_Ident ident;
+    પદાવલિ_String string;
+    પદાવલિ_Boolean boolean;
+    પદાવલિ_Integer integer;
+    પદાવલિ_ચાવી_Name ચાવી_name;
+    પદાવલિ_ચાવી_Sym keysym;
+    પદાવલિ_દ્વિઅંકી દ્વિઅંકી;
+    પદાવલિ_Unary unary;
+    પદાવલિ_Field_Ref field_ref;
+    પદાવલિ_Array_Ref array_ref;
+    પદાવલિ_Action action;
+    પદાવલિ_Action_List actions;
+    પદાવલિ_Keysym_List keysym_list;
 };
 
-typedef struct {
+પ્રકારવ્યાખ્યા સંરચના {
     ParseCommon common;
-    enum merge_mode merge;
-    ExprDef *name;
-    ExprDef *value;
+    ગણના merge_mode merge;
+    પદાવલિ_Def *name;
+    પદાવલિ_Def *કિંમત;
 } VarDef;
 
-typedef struct {
+પ્રકારવ્યાખ્યા સંરચના {
     ParseCommon common;
-    enum merge_mode merge;
+    ગણના merge_mode merge;
     xkb_atom_t name;
-    ExprDef *value;
+    પદાવલિ_Def *કિંમત;
 } VModDef;
 
-typedef struct {
+પ્રકારવ્યાખ્યા સંરચના {
     ParseCommon common;
-    enum merge_mode merge;
+    ગણના merge_mode merge;
     xkb_atom_t name;
-    int64_t value;
+    int64_t કિંમત;
 } KeycodeDef;
 
-typedef struct {
+પ્રકારવ્યાખ્યા સંરચના {
     ParseCommon common;
-    enum merge_mode merge;
+    ગણના merge_mode merge;
     xkb_atom_t alias;
     xkb_atom_t real;
-} KeyAliasDef;
+} ચાવી_Alias_Def;
 
-typedef struct {
+પ્રકારવ્યાખ્યા સંરચના {
     ParseCommon common;
-    enum merge_mode merge;
+    ગણના merge_mode merge;
     xkb_atom_t name;
     VarDef *body;
-} KeyTypeDef;
+} ચાવી_Type_Def;
 
-typedef struct {
+પ્રકારવ્યાખ્યા સંરચના {
     ParseCommon common;
-    enum merge_mode merge;
-    xkb_atom_t keyName;
+    ગણના merge_mode merge;
+    xkb_atom_t ચાવી_Name;
     VarDef *symbols;
 } SymbolsDef;
 
-typedef struct {
+પ્રકારવ્યાખ્યા સંરચના {
     ParseCommon common;
-    enum merge_mode merge;
+    ગણના merge_mode merge;
     // NOTE: Can also be “None”, rather than a modifier name.
-    ExprDef *modifiers;
-    ExprDef *keys;
+    પદાવલિ_Def *modifiers;
+    પદાવલિ_Def *ચાવીઓ;
 } ModMapDef;
 
-typedef struct {
+પ્રકારવ્યાખ્યા સંરચના {
     ParseCommon common;
-    enum merge_mode merge;
+    ગણના merge_mode merge;
     int64_t group;
-    ExprDef *def;
+    પદાવલિ_Def *def;
 } GroupCompatDef;
 
-typedef struct {
+પ્રકારવ્યાખ્યા સંરચના {
     ParseCommon common;
-    enum merge_mode merge;
+    ગણના merge_mode merge;
     xkb_keysym_t sym;
-    ExprDef *match;
+    પદાવલિ_Def *match;
     VarDef *def;
 } InterpDef;
 
-typedef struct {
+પ્રકારવ્યાખ્યા સંરચના {
     ParseCommon common;
-    enum merge_mode merge;
-    bool virtual;
+    ગણના merge_mode merge;
+    bool આભાસી;
     int64_t ndx;
-    ExprDef *name;
+    પદાવલિ_Def *name;
 } LedNameDef;
 
-typedef struct {
+પ્રકારવ્યાખ્યા સંરચના {
     ParseCommon common;
-    enum merge_mode merge;
+    ગણના merge_mode merge;
     xkb_atom_t name;
     VarDef *body;
 } LedMapDef;
 
-typedef struct {
+પ્રકારવ્યાખ્યા સંરચના {
     ParseCommon common;
-    char *name;
+    અક્ષર *name;
 } UnknownStatement;
 
-enum xkb_map_flags {
+ગણના xkb_map_flags {
     MAP_NO_FLAG = 0,
     MAP_IS_DEFAULT = (1 << 0),
     MAP_IS_PARTIAL = (1 << 1),
@@ -316,10 +316,10 @@ enum xkb_map_flags {
     MAP_IS_DEPRECATED = (1 << 8),
 };
 
-typedef struct {
+પ્રકારવ્યાખ્યા સંરચના {
     ParseCommon common;
-    char *name;
+    અક્ષર *name;
     ParseCommon *defs;
-    enum xkb_file_type file_type;
-    enum xkb_map_flags flags;
+    ગણના xkb_file_type file_type;
+    ગણના xkb_map_flags flags;
 } XkbFile;

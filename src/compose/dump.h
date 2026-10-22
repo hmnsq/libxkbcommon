@@ -5,12 +5,12 @@
  */
 #pragma once
 
-#include "config.h"
+#અન્તર્ભાવ "config.h"
 
-#include "table.h"
-
-bool
-print_compose_table_entry(FILE *file, struct xkb_compose_table_entry *entry);
+#અન્તર્ભાવ "table.h"
 
 bool
-xkb_compose_table_dump(FILE *file, struct xkb_compose_table *table);
+print_compose_table_entry(FILE *file, સંરચના xkb_compose_table_entry *entry);
+
+bool
+xkb_compose_table_dump(FILE *file, સંરચના xkb_compose_table *table);

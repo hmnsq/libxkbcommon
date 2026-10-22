@@ -4,111 +4,111 @@
  */
 #pragma once
 
-#include "config.h"
+#અન્તર્ભાવ "config.h"
 
-#include "ast.h"
-#include "scanner-utils.h"
+#અન્તર્ભાવ "ast.h"
+#અન્તર્ભાવ "scanner-utils.h"
 
-ExprDef *
-ExprCreateString(xkb_atom_t str);
+પદાવલિ_Def *
+પદાવલિ_Create_String(xkb_atom_t str);
 
-ExprDef *
-ExprCreateInteger(int64_t ival);
+પદાવલિ_Def *
+પદાવલિ_Create_Integer(int64_t ival);
 
-ExprDef *
-ExprCreateFloat(void);
+પદાવલિ_Def *
+પદાવલિ_Create_Float(શૂન્ય);
 
-ExprDef *
-ExprCreateBoolean(bool set);
+પદાવલિ_Def *
+પદાવલિ_Create_Boolean(bool set);
 
-ExprDef *
-ExprCreateKeyName(xkb_atom_t key_name);
+પદાવલિ_Def *
+પદાવલિ_Create_ચાવી_Name(xkb_atom_t ચાવી_name);
 
-ExprDef *
-ExprCreateKeySym(xkb_keysym_t keysym);
+પદાવલિ_Def *
+પદાવલિ_Create_ચાવી_Sym(xkb_keysym_t keysym);
 
-ExprDef *
-ExprCreateIdent(xkb_atom_t ident);
+પદાવલિ_Def *
+પદાવલિ_Create_Ident(xkb_atom_t ident);
 
-ExprDef *
-ExprCreateUnary(enum stmt_type op, ExprDef *child);
+પદાવલિ_Def *
+પદાવલિ_Create_Unary(ગણના stmt_type op, પદાવલિ_Def *child);
 
-ExprDef *
-ExprCreateBinary(enum stmt_type op, ExprDef *left, ExprDef *right);
+પદાવલિ_Def *
+પદાવલિ_Create_દ્વિઅંકી(ગણના stmt_type op, પદાવલિ_Def *ડાબું, પદાવલિ_Def *જમણું);
 
-ExprDef *
-ExprCreateFieldRef(xkb_atom_t element, xkb_atom_t field);
+પદાવલિ_Def *
+પદાવલિ_Create_Field_Ref(xkb_atom_t element, xkb_atom_t field);
 
-ExprDef *
-ExprCreateArrayRef(xkb_atom_t element, xkb_atom_t field, ExprDef *entry);
+પદાવલિ_Def *
+પદાવલિ_Create_Array_Ref(xkb_atom_t element, xkb_atom_t field, પદાવલિ_Def *entry);
 
-ExprDef *
-ExprEmptyList(void);
+પદાવલિ_Def *
+પદાવલિ_Empty_List(શૂન્ય);
 
-ExprDef *
-ExprCreateAction(xkb_atom_t name, ExprDef *args);
+પદાવલિ_Def *
+પદાવલિ_Create_Action(xkb_atom_t name, પદાવલિ_Def *args);
 
-ExprDef *
-ExprCreateActionList(ExprDef *actions);
+પદાવલિ_Def *
+પદાવલિ_Create_Action_List(પદાવલિ_Def *actions);
 
-ExprDef *
-ExprCreateKeySymList(xkb_keysym_t sym);
+પદાવલિ_Def *
+પદાવલિ_Create_ચાવી_Sym_List(xkb_keysym_t sym);
 
-ExprDef *
-ExprAppendKeySymList(ExprDef *list, xkb_keysym_t sym);
+પદાવલિ_Def *
+પદાવલિ_Append_ચાવી_Sym_List(પદાવલિ_Def *list, xkb_keysym_t sym);
 
-ExprDef *
-ExprKeySymListAppendString(struct scanner *param,
-                           ExprDef *expr, const char *string);
+પદાવલિ_Def *
+પદાવલિ_ચાવી_Sym_List_Append_String(સંરચના scanner *param,
+                           પદાવલિ_Def *પદાવલિ, અચલ અક્ષર *string);
 
 xkb_keysym_t
-KeysymParseString(struct scanner *scanner, const char *string);
+KeysymParseString(સંરચના scanner *scanner, અચલ અક્ષર *string);
 
 KeycodeDef *
-KeycodeCreate(xkb_atom_t name, int64_t value);
+KeycodeCreate(xkb_atom_t name, int64_t કિંમત);
 
-KeyAliasDef *
-KeyAliasCreate(xkb_atom_t alias, xkb_atom_t real);
+ચાવી_Alias_Def *
+ચાવી_Alias_Create(xkb_atom_t alias, xkb_atom_t real);
 
 VModDef *
-VModCreate(xkb_atom_t name, ExprDef *value);
+VModCreate(xkb_atom_t name, પદાવલિ_Def *કિંમત);
 
 VarDef *
-VarCreate(ExprDef *name, ExprDef *value);
+VarCreate(પદાવલિ_Def *name, પદાવલિ_Def *કિંમત);
 
 VarDef *
 BoolVarCreate(xkb_atom_t ident, bool set);
 
 InterpDef *
-InterpCreate(xkb_keysym_t sym, ExprDef *match);
+InterpCreate(xkb_keysym_t sym, પદાવલિ_Def *match);
 
-KeyTypeDef *
-KeyTypeCreate(xkb_atom_t name, VarDef *body);
+ચાવી_Type_Def *
+ચાવી_Type_Create(xkb_atom_t name, VarDef *body);
 
 SymbolsDef *
-SymbolsCreate(xkb_atom_t keyName, VarDef *symbols);
+SymbolsCreate(xkb_atom_t ચાવી_Name, VarDef *symbols);
 
 GroupCompatDef *
-GroupCompatCreate(int64_t group, ExprDef *def);
+GroupCompatCreate(int64_t group, પદાવલિ_Def *def);
 
 ModMapDef *
-ModMapCreate(ExprDef *modifiers, ExprDef *keys);
+ModMapCreate(પદાવલિ_Def *modifiers, પદાવલિ_Def *ચાવીઓ);
 
 LedMapDef *
 LedMapCreate(xkb_atom_t name, VarDef *body);
 
 LedNameDef *
-LedNameCreate(int64_t ndx, ExprDef *name, bool virtual);
+LedNameCreate(int64_t ndx, પદાવલિ_Def *name, bool આભાસી);
 
 UnknownStatement *
-UnknownStatementCreate(enum stmt_type, struct sval name);
+UnknownStatementCreate(ગણના stmt_type, સંરચના sval name);
 
 IncludeStmt *
-IncludeCreate(struct xkb_context *ctx, char *str, enum merge_mode merge);
+IncludeCreate(સંરચના xkb_context *ctx, અક્ષર *str, ગણના merge_mode merge);
 
 XkbFile *
-XkbFileCreate(enum xkb_file_type type, char *name, ParseCommon *defs,
-              enum xkb_map_flags flags);
+XkbFileCreate(ગણના xkb_file_type type, અક્ષર *name, ParseCommon *defs,
+              ગણના xkb_map_flags flags);
 
-void
+શૂન્ય
 FreeStmt(ParseCommon *stmt);

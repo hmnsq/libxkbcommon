@@ -4,64 +4,64 @@
  */
 #pragma once
 
-#include "config.h"
+#અન્તર્ભાવ "config.h"
 
-#include "xkbcommon/xkbcommon.h"
+#અન્તર્ભાવ "xkbcommon/xkbcommon.h"
 
-#include "ast.h"
-#include "keymap.h"
-#include "text.h"
-#include "xkbcomp-priv.h"
-
-bool
-ExprResolveLhs(struct xkb_context *ctx, const ExprDef *expr,
-               const char **elem_rtrn, const char **field_rtrn,
-               ExprDef **index_rtrn);
+#અન્તર્ભાવ "ast.h"
+#અન્તર્ભાવ "keymap.h"
+#અન્તર્ભાવ "text.h"
+#અન્તર્ભાવ "xkbcomp-priv.h"
 
 bool
-ExprResolveModMask(struct xkb_context *ctx, const ExprDef *expr,
-                   enum mod_type mod_type, const struct xkb_mod_set *mods,
+પદાવલિ_Resolve_Lhs(સંરચના xkb_context *ctx, અચલ પદાવલિ_Def *પદાવલિ,
+               અચલ અક્ષર **elem_rtrn, અચલ અક્ષર **field_rtrn,
+               પદાવલિ_Def **index_rtrn);
+
+bool
+પદાવલિ_Resolve_Mod_Mask(સંરચના xkb_context *ctx, અચલ પદાવલિ_Def *પદાવલિ,
+                   ગણના mod_type mod_type, અચલ સંરચના xkb_mod_set *mods,
                    xkb_mod_mask_t *mask_rtrn);
 
 bool
-ExprResolveMod(struct xkb_context *ctx, const ExprDef *def,
-               enum mod_type mod_type, const struct xkb_mod_set *mods,
+પદાવલિ_Resolve_Mod(સંરચના xkb_context *ctx, અચલ પદાવલિ_Def *def,
+               ગણના mod_type mod_type, અચલ સંરચના xkb_mod_set *mods,
                xkb_mod_index_t *ndx_rtrn);
 
 bool
-ExprResolveBoolean(struct xkb_context *ctx, const ExprDef *expr,
+પદાવલિ_Resolve_Boolean(સંરચના xkb_context *ctx, અચલ પદાવલિ_Def *પદાવલિ,
                    bool *set_rtrn);
 
 bool
-ExprResolveInteger(struct xkb_context *ctx, const ExprDef *expr,
+પદાવલિ_Resolve_Integer(સંરચના xkb_context *ctx, અચલ પદાવલિ_Def *પદાવલિ,
                    int64_t *val_rtrn);
 
 bool
-ExprResolveLevel(struct xkb_context *ctx, const ExprDef *expr,
+પદાવલિ_Resolve_Level(સંરચના xkb_context *ctx, અચલ પદાવલિ_Def *પદાવલિ,
                  xkb_level_index_t *level_rtrn);
 
-enum xkb_parser_error
-ExprResolveGroup(const struct xkb_keymap_info *keymap_info,
-                 const ExprDef *expr, bool absolute,
+ગણના xkb_parser_error
+પદાવલિ_Resolve_Group(અચલ સંરચના xkb_keymap_info *keymap_info,
+                 અચલ પદાવલિ_Def *પદાવલિ, bool absolute,
                  xkb_layout_index_t *group_rtrn, bool *pending_rtrn);
 
 bool
-ExprResolveGroupMask(const struct xkb_keymap_info *keymap_info,
-                     const ExprDef *expr, xkb_layout_mask_t *group_rtrn,
+પદાવલિ_Resolve_Group_Mask(અચલ સંરચના xkb_keymap_info *keymap_info,
+                     અચલ પદાવલિ_Def *પદાવલિ, xkb_layout_mask_t *group_rtrn,
                      bool *pending_rtrn);
 
 bool
-ExprResolveButton(struct xkb_context *ctx, const ExprDef *expr,
+પદાવલિ_Resolve_Button(સંરચના xkb_context *ctx, અચલ પદાવલિ_Def *પદાવલિ,
                   int64_t *btn_rtrn);
 
 bool
-ExprResolveString(struct xkb_context *ctx, const ExprDef *expr,
+પદાવલિ_Resolve_String(સંરચના xkb_context *ctx, અચલ પદાવલિ_Def *પદાવલિ,
                   xkb_atom_t *val_rtrn);
 
 bool
-ExprResolveEnum(struct xkb_context *ctx, const ExprDef *expr,
-                uint32_t *val_rtrn, const LookupEntry *values);
+પદાવલિ_Resolve_Enum(સંરચના xkb_context *ctx, અચલ પદાવલિ_Def *પદાવલિ,
+                uint32_t *val_rtrn, અચલ LookupEntry *કિંમતો);
 
 bool
-ExprResolveMask(struct xkb_context *ctx, const ExprDef *expr,
-                uint32_t *mask_rtrn, const LookupEntry *values);
+પદાવલિ_Resolve_Mask(સંરચના xkb_context *ctx, અચલ પદાવલિ_Def *પદાવલિ,
+                uint32_t *mask_rtrn, અચલ LookupEntry *કિંમતો);

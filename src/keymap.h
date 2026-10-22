@@ -20,21 +20,21 @@
  /* Don't use compat names in internal code. */
 #define _XKBCOMMON_COMPAT_H
 
-#include "config.h"
+#અન્તર્ભાવ "config.h"
 
-#include <assert.h>
-#include <limits.h>
-#include <stdint.h>
-#include <stdbool.h>
+#અન્તર્ભાવ <assert.h>
+#અન્તર્ભાવ <limits.h>
+#અન્તર્ભાવ <stdint.h>
+#અન્તર્ભાવ <stdbool.h>
 
-#include "xkbcommon/xkbcommon.h"
+#અન્તર્ભાવ "xkbcommon/xkbcommon.h"
 
-#include "atom.h"
-#include "context.h"
-#include "darray.h"
-#include "rmlvo.h"
-#include "utils.h"
-#include "xkbcomp/ast.h"
+#અન્તર્ભાવ "atom.h"
+#અન્તર્ભાવ "context.h"
+#અન્તર્ભાવ "darray.h"
+#અન્તર્ભાવ "rmlvo.h"
+#અન્તર્ભાવ "utils.h"
+#અન્તર્ભાવ "xkbcomp/ast.h"
 
 /* Note: imposed by the size of the xkb_layout_mask_t type (32).
  * This is more than enough though. */
@@ -43,21 +43,21 @@
 /* Limit imposed by X11 */
 #define XKB_MAX_GROUPS_X11 4
 
-static inline xkb_layout_index_t
-format_max_groups(enum xkb_keymap_format format)
+સ્થિર અંતઃરેખ xkb_layout_index_t
+format_max_groups(ગણના xkb_keymap_format format)
 {
-    return (format == XKB_KEYMAP_FORMAT_TEXT_V1)
+    પાછા (format == XKB_KEYMAP_FORMAT_TEXT_V1)
         ? XKB_MAX_GROUPS_X11
         : XKB_MAX_GROUPS;
 }
 
 /* Don't allow more leds than we can hold in xkb_led_mask_t. */
-#define XKB_MAX_LEDS ((xkb_led_index_t) (sizeof(xkb_led_mask_t) * CHAR_BIT))
+#define XKB_MAX_LEDS ((xkb_led_index_t) (કદ(xkb_led_mask_t) * CHAR_BIT))
 
 /* Don't allow more modifiers than we can hold in xkb_mod_mask_t. */
-#define XKB_MAX_MODS ((xkb_mod_index_t) (sizeof(xkb_mod_mask_t) * CHAR_BIT))
+#define XKB_MAX_MODS ((xkb_mod_index_t) (કદ(xkb_mod_mask_t) * CHAR_BIT))
 
-enum {
+ગણના {
     /** Mask of all possible modifiers */
     XKB_MOD_ALL = UINT32_MAX,
 };
@@ -65,7 +65,7 @@ enum {
 /* Special value to handle modMap None {…} */
 #define XKB_MOD_NONE 0xffffffffU
 
-enum mod_type {
+ગણના mod_type {
     /** X11 core modifier */
     MOD_REAL = (1 << 0),
     /** A non-X11 core modifier */
@@ -76,7 +76,7 @@ enum mod_type {
 #define MOD_REAL_MASK_ALL ((xkb_mod_mask_t) 0x000000ff)
 
 /** Predefined (AKA real, core, X11) modifiers. The order is important! */
-enum real_mod_index {
+ગણના real_mod_index {
     XKB_MOD_INDEX_SHIFT = 0,
     XKB_MOD_INDEX_CAPS,
     XKB_MOD_INDEX_CTRL,
@@ -85,11 +85,11 @@ enum real_mod_index {
     XKB_MOD_INDEX_MOD3,
     XKB_MOD_INDEX_MOD4,
     XKB_MOD_INDEX_MOD5,
-    _XKB_MOD_INDEX_NUM_ENTRIES
+    XKB_MOD_INDEX_અંક_ENTRIES
 };
-static_assert(_XKB_MOD_INDEX_NUM_ENTRIES == 8, "Invalid X11 core modifiers");
+static_assert(XKB_MOD_INDEX_અંક_ENTRIES == 8, "Invalid X11 core modifiers");
 
-enum xkb_action_type {
+ગણના xkb_action_type {
     ACTION_TYPE_NONE = 0,
     ACTION_TYPE_VOID, /* xkbcommon extension */
     ACTION_TYPE_MOD_SET,
@@ -106,15 +106,15 @@ enum xkb_action_type {
     ACTION_TYPE_SWITCH_VT,
     ACTION_TYPE_CTRL_SET,
     ACTION_TYPE_CTRL_LOCK,
-    ACTION_TYPE_REDIRECT_KEY,
+    ACTION_TYPE_REDIRECT_ચાવી,
     ACTION_TYPE_UNSUPPORTED_LEGACY,
     ACTION_TYPE_UNKNOWN,
     ACTION_TYPE_PRIVATE,
     ACTION_TYPE_INTERNAL, /* Action specific and internal to xkbcommon */
-    _ACTION_TYPE_NUM_ENTRIES
+    ACTION_TYPE_અંક_ENTRIES
 };
 
-enum xkb_action_flags {
+ગણના xkb_action_flags {
     ACTION_LOCK_CLEAR = (1 << 0),
     ACTION_LATCH_TO_LOCK = (1 << 1),
     ACTION_LOCK_NO_LOCK = (1 << 2),
@@ -150,7 +150,7 @@ enum xkb_action_flags {
     ACTION_AUTO_GROUP_LOCK_ON_MODIFIER_RELEASE = (1 << 16),
 };
 
-enum {
+ગણના {
     CONTROL_OVERLAY1_LOG2 = 23,
     CONTROL_OVERLAY2_LOG2,
     CONTROL_OVERLAY3_LOG2,
@@ -170,11 +170,11 @@ enum {
  *
  * @warning Encoding is different from X11.
  */
-enum xkb_action_controls {
+ગણના xkb_action_controls {
     CONTROL_NONE = 0,
     /* Public API */
-    CONTROL_STICKY_KEYS = (1 << 0),
-    CONTROL_MOUSE_KEYS = (1 << 1),
+    CONTROL_STICKY_ચાવીઓ = (1 << 0),
+    CONTROL_MOUSE_ચાવીઓ = (1 << 1),
 
     /* Range (1 << 2) .. (1 << 8) for future public controls */
 
@@ -183,7 +183,7 @@ enum xkb_action_controls {
     CONTROL_REPEAT = (1 << 10),
     CONTROL_SLOW = (1 << 11),
     CONTROL_DEBOUNCE = (1 << 12),
-    CONTROL_MOUSE_KEYS_ACCEL = (1 << 15),
+    CONTROL_MOUSE_ચાવીઓ_ACCEL = (1 << 15),
     CONTROL_AX = (1 << 16),
     CONTROL_AX_TIMEOUT = (1 << 17),
     CONTROL_AX_FEEDBACK = (1 << 18),
@@ -206,7 +206,7 @@ enum xkb_action_controls {
      */
     CONTROL_ALL_V1 = \
         (CONTROL_REPEAT | CONTROL_SLOW | CONTROL_DEBOUNCE | \
-         CONTROL_STICKY_KEYS | CONTROL_MOUSE_KEYS | CONTROL_MOUSE_KEYS_ACCEL | \
+         CONTROL_STICKY_ચાવીઓ | CONTROL_MOUSE_ચાવીઓ | CONTROL_MOUSE_ચાવીઓ_ACCEL | \
          CONTROL_AX | CONTROL_AX_TIMEOUT | CONTROL_AX_FEEDBACK | \
          CONTROL_BELL | CONTROL_OVERLAY1 | CONTROL_OVERLAY2 |
          CONTROL_IGNORE_GROUP_LOCK | CONTROL_GROUPS_WRAP),
@@ -217,7 +217,7 @@ enum xkb_action_controls {
     /* All the boolean controls */
     CONTROL_ALL_BOOLEAN_V1 = \
         (CONTROL_REPEAT | CONTROL_SLOW | CONTROL_DEBOUNCE | \
-         CONTROL_STICKY_KEYS | CONTROL_MOUSE_KEYS | CONTROL_MOUSE_KEYS_ACCEL | \
+         CONTROL_STICKY_ચાવીઓ | CONTROL_MOUSE_ચાવીઓ | CONTROL_MOUSE_ચાવીઓ_ACCEL | \
          CONTROL_AX | CONTROL_AX_TIMEOUT | CONTROL_AX_FEEDBACK | \
          CONTROL_BELL | CONTROL_OVERLAY1 | CONTROL_OVERLAY2 | \
          CONTROL_IGNORE_GROUP_LOCK),
@@ -227,32 +227,32 @@ enum xkb_action_controls {
          CONTROL_OVERLAY6 | CONTROL_OVERLAY7 | CONTROL_OVERLAY8),
 };
 
-static_assert(sizeof(enum xkb_action_controls) >= 3, "truncated enum");
+static_assert(કદ(ગણના xkb_action_controls) >= 3, "truncated enum");
 static_assert((uint32_t)_LAST_CONTROL < (UINT32_C(1) << 31),
               "Cannot ensure enum portability");
 
-static inline enum xkb_action_controls
-format_boolean_controls(enum xkb_keymap_format format)
+સ્થિર અંતઃરેખ ગણના xkb_action_controls
+format_boolean_controls(ગણના xkb_keymap_format format)
 {
-    return (format == XKB_KEYMAP_FORMAT_TEXT_V1)
+    પાછા (format == XKB_KEYMAP_FORMAT_TEXT_V1)
         ? CONTROL_ALL_BOOLEAN_V1
         : CONTROL_ALL_BOOLEAN;
 }
 
 static_assert(
-    CONTROL_STICKY_KEYS ==
-    (enum xkb_action_controls) XKB_KEYBOARD_CONTROL_A11Y_STICKY_KEYS,
+    CONTROL_STICKY_ચાવીઓ ==
+    (ગણના xkb_action_controls) XKB_KEYBOARD_CONTROL_A11_Y_STICKY_ચાવીઓ,
     "Private value should match public API"
 );
 
 static_assert(
-    CONTROL_MOUSE_KEYS ==
-    (enum xkb_action_controls) XKB_KEYBOARD_CONTROL_MOUSE_KEYS,
+    CONTROL_MOUSE_ચાવીઓ ==
+    (ગણના xkb_action_controls) XKB_KEYBOARD_CONTROL_MOUSE_ચાવીઓ,
     "Private value should match public API"
 );
 
 
-enum xkb_match_operation {
+ગણના xkb_match_operation {
     MATCH_NONE,
     MATCH_ANY_OR_NONE,
     MATCH_ANY,
@@ -260,38 +260,38 @@ enum xkb_match_operation {
     MATCH_EXACTLY,
 };
 
-struct xkb_mods {
+સંરચના xkb_mods {
     xkb_mod_mask_t mods;       /* original real+virtual mods in definition */
     xkb_mod_mask_t mask;       /* computed effective mask */
 };
 
-struct xkb_mod_action {
-    enum xkb_action_type type;
-    enum xkb_action_flags flags;
-    struct xkb_mods mods;
+સંરચના xkb_mod_action {
+    ગણના xkb_action_type type;
+    ગણના xkb_action_flags flags;
+    સંરચના xkb_mods mods;
 };
 
-struct xkb_group_action {
-    enum xkb_action_type type;
-    enum xkb_action_flags flags;
+સંરચના xkb_group_action {
+    ગણના xkb_action_type type;
+    ગણના xkb_action_flags flags;
     int32_t group;
 };
 
 /** Keyboard overlay index or count */
-typedef uint8_t xkb_overlay_index_t;
+પ્રકારવ્યાખ્યા uint8_t xkb_overlay_index_t;
 /** Keyboard overlay mask */
-typedef uint8_t xkb_overlay_mask_t;
-enum {
+પ્રકારવ્યાખ્યા uint8_t xkb_overlay_mask_t;
+ગણના {
     /* Indices */
 
     /** Maximum number of keymap v1 overlays (X11 limit) */
-    XKB_OVERLAY_COUNT_X11 = 2,
+    XKB_OVERLAY_ગણતરી_X11 = 2,
     /** Maximum number of keymap v2+ overlays */
-    XKB_OVERLAY_COUNT = (sizeof(xkb_overlay_mask_t) * CHAR_BIT),
+    XKB_OVERLAY_ગણતરી = (કદ(xkb_overlay_mask_t) * CHAR_BIT),
     /** Minimum overlay index */
     XKB_OVERLAY_MIN = 0,
     /** Maximum overlay index */
-    XKB_OVERLAY_MAX = XKB_OVERLAY_COUNT - 1,
+    XKB_OVERLAY_MAX = XKB_OVERLAY_ગણતરી - 1,
     /** Invalid overlay index */
     XKB_OVERLAY_INVALID = UINT8_MAX,
     /** Min bits required to store overlays indices */
@@ -300,9 +300,9 @@ enum {
     /* Masks */
 
     /** Mask of all valid keymap v1 overlays (X11 limit) */
-    XKB_OVERLAY_ALL_X11 = ((UINT8_C(1) << XKB_OVERLAY_COUNT_X11) - 1),
+    XKB_OVERLAY_ALL_X11 = ((UINT8_C(1) << XKB_OVERLAY_ગણતરી_X11) - 1),
     /** Mask of all valid keymap v2+ overlays */
-    XKB_OVERLAY_ALL = ((UINT64_C(1) << XKB_OVERLAY_COUNT) - 1),
+    XKB_OVERLAY_ALL = ((UINT64_C(1) << XKB_OVERLAY_ગણતરી) - 1),
 };
 
 static_assert(CONTROL_OVERLAY1 == (1u << CONTROL_OVERLAY1_LOG2) &&
@@ -312,56 +312,56 @@ static_assert(CONTROL_OVERLAY8_LOG2 == _MAX_CONTROL_OVERLAY_LOG2 - 1,
               "Maximum of overlays changed");
 static_assert(XKB_OVERLAY_MIN ==
               (_MAX_CONTROL_OVERLAY_LOG2 - CONTROL_OVERLAY8_LOG2 - 1) &&
-              XKB_OVERLAY_COUNT ==
+              XKB_OVERLAY_ગણતરી ==
               (_MAX_CONTROL_OVERLAY_LOG2 - CONTROL_OVERLAY1_LOG2),
               "Overlays types do not match with overlays enum constants in "
               "xkb_action_controls");
-static_assert(XKB_OVERLAY_COUNT < XKB_OVERLAY_INVALID,
+static_assert(XKB_OVERLAY_ગણતરી < XKB_OVERLAY_INVALID,
               "Cannot encode XKB_OVERLAY_INVALID");
-static_assert(XKB_OVERLAY_COUNT <= (1u << XKB_OVERLAY_INDEX_MIN_WIDTH) - 1,
+static_assert(XKB_OVERLAY_ગણતરી <= (1u << XKB_OVERLAY_INDEX_MIN_WIDTH) - 1,
               "Cannot encode overlay index or count in a nibble");
 
-static inline xkb_overlay_mask_t
-overlays_from_controls(enum xkb_action_controls controls)
+સ્થિર અંતઃરેખ xkb_overlay_mask_t
+overlays_from_controls(ગણના xkb_action_controls controls)
 {
-    return (xkb_overlay_mask_t)(
+    પાછા (xkb_overlay_mask_t)(
         (controls >> CONTROL_OVERLAY1_LOG2) &
         XKB_OVERLAY_ALL
     );
 }
 
-static inline enum xkb_action_controls
+સ્થિર અંતઃરેખ ગણના xkb_action_controls
 overlays_to_controls(xkb_overlay_mask_t overlays)
 {
-    return (enum xkb_action_controls)(
+    પાછા (ગણના xkb_action_controls)(
         (overlays & XKB_OVERLAY_ALL) << CONTROL_OVERLAY1_LOG2
     );
 }
 
-static inline xkb_overlay_index_t
-format_max_overlays(enum xkb_keymap_format format)
+સ્થિર અંતઃરેખ xkb_overlay_index_t
+format_max_overlays(ગણના xkb_keymap_format format)
 {
-    return (format == XKB_KEYMAP_FORMAT_TEXT_V1)
-        ? XKB_OVERLAY_COUNT_X11
-        : XKB_OVERLAY_COUNT;
+    પાછા (format == XKB_KEYMAP_FORMAT_TEXT_V1)
+        ? XKB_OVERLAY_ગણતરી_X11
+        : XKB_OVERLAY_ગણતરી;
 }
 
-struct xkb_controls_action {
-    enum xkb_action_type type;
-    enum xkb_action_flags flags;
-    enum xkb_action_controls ctrls;
+સંરચના xkb_controls_action {
+    ગણના xkb_action_type type;
+    ગણના xkb_action_flags flags;
+    ગણના xkb_action_controls ctrls;
 };
 
-typedef uint8_t xkb_pointer_button_index_t;
-typedef uint8_t xkb_pointer_button_mask_t;
+પ્રકારવ્યાખ્યા uint8_t xkb_pointer_button_index_t;
+પ્રકારવ્યાખ્યા uint8_t xkb_pointer_button_mask_t;
 
-enum {
+ગણના {
     XKB_POINTER_BUTTON_INDEX_WIDTH =
-        sizeof(xkb_pointer_button_index_t) * CHAR_BIT,
+        કદ(xkb_pointer_button_index_t) * CHAR_BIT,
     XKB_POINTER_BUTTON_INDEX_MAX =
         (1 << XKB_POINTER_BUTTON_INDEX_WIDTH) - 1,
     XKB_POINTER_BUTTON_MASK_WIDTH =
-        sizeof(xkb_pointer_button_mask_t) * CHAR_BIT,
+        કદ(xkb_pointer_button_mask_t) * CHAR_BIT,
     XKB_POINTER_BUTTON_DEFAULT = 0,
     XKB_POINTER_BUTTON_MIN = 1,
     XKB_POINTER_BUTTON_MAX = 5,
@@ -373,46 +373,46 @@ static_assert(XKB_POINTER_BUTTON_MAX <= XKB_POINTER_BUTTON_INDEX_MAX,
 static_assert(XKB_POINTER_BUTTON_MAX <= XKB_POINTER_BUTTON_MASK_WIDTH,
               "xkb_pointer_button_mask_t cannot store button mask");
 
-struct xkb_pointer_default_action {
-    enum xkb_action_type type;
-    enum xkb_action_flags flags;
-    int8_t value;
+સંરચના xkb_pointer_default_action {
+    ગણના xkb_action_type type;
+    ગણના xkb_action_flags flags;
+    int8_t કિંમત;
 };
 
-enum {
-    XKB_POINTER_DEFAULT_ACTION_VALUE_WIDTH =
-        sizeof(((struct xkb_pointer_default_action*)0)->value) * CHAR_BIT,
-    XKB_POINTER_DEFAULT_ACTION_VALUE_MAX =
+ગણના {
+    XKB_POINTER_DEFAULT_ACTION_કિંમત_WIDTH =
+        કદ(((સંરચના xkb_pointer_default_action*)0)->કિંમત) * CHAR_BIT,
+    XKB_POINTER_DEFAULT_ACTION_કિંમત_MAX =
         /* NOTE: signed integer */
-        (UINT32_C(1) << (XKB_POINTER_DEFAULT_ACTION_VALUE_WIDTH - 1)) - 1,
+        (UINT32_C(1) << (XKB_POINTER_DEFAULT_ACTION_કિંમત_WIDTH - 1)) - 1,
 };
 
 static_assert((uint32_t)XKB_POINTER_BUTTON_MAX <=
-              (uint32_t)XKB_POINTER_DEFAULT_ACTION_VALUE_MAX,
+              (uint32_t)XKB_POINTER_DEFAULT_ACTION_કિંમત_MAX,
               "Cannot store button in xkb_pointer_default_action::value");
 
-struct xkb_pointer_motion_action {
-    enum xkb_action_type type;
-    enum xkb_action_flags flags;
+સંરચના xkb_pointer_motion_action {
+    ગણના xkb_action_type type;
+    ગણના xkb_action_flags flags;
     int16_t x;
     int16_t y;
 };
 
-struct xkb_pointer_button_action {
-    enum xkb_action_type type;
-    enum xkb_action_flags flags;
-    uint8_t count;
+સંરચના xkb_pointer_button_action {
+    ગણના xkb_action_type type;
+    ગણના xkb_action_flags flags;
+    uint8_t ગણતરી;
     xkb_pointer_button_index_t button;
 };
 
-struct xkb_switch_screen_action {
-    enum xkb_action_type type;
-    enum xkb_action_flags flags;
+સંરચના xkb_switch_screen_action {
+    ગણના xkb_action_type type;
+    ગણના xkb_action_flags flags;
     int8_t screen;
 };
 
-struct xkb_redirect_key_action {
-    enum xkb_action_type type;
+સંરચના xkb_redirect_ચાવી_action {
+    ગણના xkb_action_type type;
     xkb_keycode_t keycode;
     /*
      * Next 2 fields are only used for parsing and serializing.
@@ -430,115 +430,115 @@ struct xkb_redirect_key_action {
     xkb_mod_mask_t mods;
 };
 
-struct xkb_private_action {
-    enum xkb_action_type type;
+સંરચના xkb_private_action {
+    ગણના xkb_action_type type;
     uint8_t data[7];
 };
 
-enum xkb_internal_action_flags {
+ગણના xkb_internal_action_flags {
     INTERNAL_BREAKS_GROUP_LATCH = (1 << 0),
     INTERNAL_BREAKS_MOD_LATCH = (1 << 1),
 };
 
 /* Action specific and internal to xkbcommon */
-struct xkb_internal_action {
-    enum xkb_action_type type;
-    enum xkb_internal_action_flags flags;
-    union {
+સંરચના xkb_internal_action {
+    ગણના xkb_action_type type;
+    ગણના xkb_internal_action_flags flags;
+    સંઘ {
         /* flag == INTERNAL_BREAKS_MOD_LATCH */
         xkb_mod_mask_t clear_latched_mods;
     };
 };
 
-union xkb_action {
-    enum xkb_action_type type;
-    struct xkb_mod_action mods;
-    struct xkb_group_action group;
-    struct xkb_controls_action ctrls;
-    struct xkb_redirect_key_action redirect;
-    struct xkb_pointer_default_action dflt;
-    struct xkb_pointer_motion_action ptr;
-    struct xkb_pointer_button_action btn;
-    struct xkb_switch_screen_action screen;
-    struct xkb_private_action priv;
-    struct xkb_internal_action internal;
+સંઘ xkb_action {
+    ગણના xkb_action_type type;
+    સંરચના xkb_mod_action mods;
+    સંરચના xkb_group_action group;
+    સંરચના xkb_controls_action ctrls;
+    સંરચના xkb_redirect_ચાવી_action redirect;
+    સંરચના xkb_pointer_default_action dflt;
+    સંરચના xkb_pointer_motion_action ptr;
+    સંરચના xkb_pointer_button_action btn;
+    સંરચના xkb_switch_screen_action screen;
+    સંરચના xkb_private_action priv;
+    સંરચના xkb_internal_action internal;
 };
 
-struct xkb_key_type_entry {
+સંરચના xkb_ચાવી_type_entry {
     xkb_level_index_t level;
-    struct xkb_mods mods;
-    struct xkb_mods preserve;
+    સંરચના xkb_mods mods;
+    સંરચના xkb_mods preserve;
 };
 
-struct xkb_key_type {
+સંરચના xkb_ચાવી_type {
     xkb_atom_t name;
-    struct xkb_mods mods;
+    સંરચના xkb_mods mods;
     bool required;
-    xkb_level_index_t num_levels;
-    xkb_level_index_t num_level_names;
-    xkb_atom_t *level_names ATTR_COUNTED_BY(num_level_names);
-    darray_size_t num_entries;
-    struct xkb_key_type_entry *entries ATTR_COUNTED_BY(num_entries);
+    xkb_level_index_t અંક_levels;
+    xkb_level_index_t અંક_level_names;
+    xkb_atom_t *level_names ATTR_COUNTED_BY(અંક_level_names);
+    darray_size_t અંક_entries;
+    સંરચના xkb_ચાવી_type_entry *entries ATTR_COUNTED_BY(અંક_entries);
 };
 
-typedef uint16_t xkb_action_count_t;
+પ્રકારવ્યાખ્યા uint16_t xkb_action_ગણતરી_t;
 #define MAX_ACTIONS_PER_LEVEL UINT16_MAX
 
-struct xkb_sym_interpret {
+સંરચના xkb_sym_interpret {
     xkb_keysym_t sym;
-    enum xkb_match_operation match;
+    ગણના xkb_match_operation match;
     xkb_mod_mask_t mods;
     xkb_mod_index_t virtual_mod;
     bool level_one_only;
     bool repeat:1;
     bool required:1;
-    xkb_action_count_t num_actions;
-    union {
+    xkb_action_ગણતરી_t અંક_actions;
+    સંઘ {
         /* num_actions <= 1 */
-        union xkb_action action;
+        સંઘ xkb_action action;
         /* num_actions >  1 */
-        union xkb_action *actions;
+        સંઘ xkb_action *actions;
     } a;
 };
 
-enum {XKB_STATE_COMPONENT_WIDTH = (sizeof(enum xkb_state_component) * CHAR_BIT)};
+ગણના {XKB_STATE_COMPONENT_WIDTH = (કદ(ગણના xkb_state_component) * CHAR_BIT)};
 static_assert(
     (UINT64_C(1) << XKB_STATE_COMPONENT_WIDTH) - 1 > XKB_STATE_CONTROLS_EFFECTIVE,
     "Cannot encode xkb_led::pending_groups"
 );
 
-struct xkb_led {
+સંરચના xkb_led {
     xkb_atom_t name;
-    enum xkb_state_component which_groups:(XKB_STATE_COMPONENT_WIDTH - 1);
+    ગણના xkb_state_component which_groups:(XKB_STATE_COMPONENT_WIDTH - 1);
     bool pending_groups:1;
     xkb_layout_mask_t groups;
-    enum xkb_state_component which_mods;
-    struct xkb_mods mods;
-    enum xkb_action_controls ctrls;
+    ગણના xkb_state_component which_mods;
+    સંરચના xkb_mods mods;
+    ગણના xkb_action_controls ctrls;
 };
 
-struct xkb_key_alias {
+સંરચના xkb_ચાવી_alias {
     xkb_atom_t real;
     xkb_atom_t alias;
 };
 
-struct xkb_controls {
-    unsigned char groups_wrap;
-    struct xkb_mods internal;
-    struct xkb_mods ignore_lock;
+સંરચના xkb_controls {
+    unsigned અક્ષર groups_wrap;
+    સંરચના xkb_mods internal;
+    સંરચના xkb_mods ignore_lock;
     unsigned short repeat_delay;
     unsigned short repeat_interval;
-    unsigned short slow_keys_delay;
+    unsigned short slow_ચાવીઓ_delay;
     unsigned short debounce_delay;
     unsigned short ax_options;
     unsigned short ax_timeout;
     unsigned short axt_opts_mask;
-    unsigned short axt_opts_values;
-    unsigned int axt_ctrls_mask;
-    unsigned int axt_ctrls_values;
+    unsigned short axt_opts_કિંમતો;
+    unsigned પૂર્ણાંક axt_ctrls_mask;
+    unsigned પૂર્ણાંક axt_ctrls_કિંમતો;
 };
 
-enum xkb_explicit_components {
+ગણના xkb_explicit_components {
     EXPLICIT_NONE = 0,
     EXPLICIT_SYMBOLS = (1 << 0),
     EXPLICIT_INTERP = (1 << 1),
@@ -548,17 +548,17 @@ enum xkb_explicit_components {
     EXPLICIT_OVERLAY = (1 << 5),
 };
 
-typedef uint16_t xkb_keysym_count_t;
+પ્રકારવ્યાખ્યા uint16_t xkb_keysym_ગણતરી_t;
 #define MAX_KEYSYMS_PER_LEVEL UINT16_MAX
 
 /** A key level */
-struct xkb_level {
+સંરચના xkb_level {
     /** Count of keysyms */
-    xkb_keysym_count_t num_syms;
+    xkb_keysym_ગણતરી_t અંક_syms;
     /** Count of actions */
-    xkb_action_count_t num_actions;
+    xkb_action_ગણતરી_t અંક_actions;
     /** Upper keysym */
-    union {
+    સંઘ {
         /** num_syms == 1: Upper keysym */
         xkb_keysym_t upper;
         /** num_syms >  1: Indicate if `syms` contains the upper case keysyms
@@ -566,21 +566,21 @@ struct xkb_level {
         bool has_upper;
     };
     /** Keysyms */
-    union {
+    સંઘ {
         xkb_keysym_t sym;          /* num_syms == 1 */
         xkb_keysym_t *syms;        /* num_syms > 1  */
     } s;
     /** Actions */
-    union {
-        union xkb_action action;   /* num_actions == 1 */
-        union xkb_action *actions; /* num_actions >  1 */
+    સંઘ {
+        સંઘ xkb_action action;   /* num_actions == 1 */
+        સંઘ xkb_action *actions; /* num_actions >  1 */
     } a;
 };
 
 /**
  * Group in a key
  */
-struct xkb_group {
+સંરચના xkb_group {
     /** Flag that indicates whether a group has some *explicit* symbols */
     bool explicit_symbols:1;
     /**
@@ -599,36 +599,36 @@ struct xkb_group {
     /**
      * Key type of the group. Points to an entry in keymap->types.
      */
-    const struct xkb_key_type *type;
+    અચલ સંરચના xkb_ચાવી_type *type;
     /**
      * Array of group levels. Use `XkbKeyNumLevels` for the number of levels.
      */
-    struct xkb_level *levels;
+    સંરચના xkb_level *levels;
 };
 
-enum {
-    DEFAULT_KEY_REPEAT = false,
+ગણના {
+    DEFAULT_ચાવી_REPEAT = false,
     /**
      * Any key with no explicit key repeat value that trigger the default
      * interpret, e.g. some explicit symbols in a group with no action that do
      * not trigger any explicit interpret.
      */
-    DEFAULT_INTERPRET_KEY_REPEAT = true,
-    FALLBACK_INTERPRET_KEY_REPEAT = DEFAULT_KEY_REPEAT
+    DEFAULT_INTERPRET_ચાવી_REPEAT = true,
+    FALLBACK_INTERPRET_ચાવી_REPEAT = DEFAULT_ચાવી_REPEAT
 };
 
-enum {
-    DEFAULT_KEY_VMODMAP = 0,
+ગણના {
+    DEFAULT_ચાવી_VMODMAP = 0,
     DEFAULT_INTERPRET_VMOD = XKB_MOD_INVALID,
-    DEFAULT_INTERPRET_VMODMAP = DEFAULT_KEY_VMODMAP,
-    FALLBACK_INTERPRET_VMODMAP = DEFAULT_KEY_VMODMAP
+    DEFAULT_INTERPRET_VMODMAP = DEFAULT_ચાવી_VMODMAP,
+    FALLBACK_INTERPRET_VMODMAP = DEFAULT_ચાવી_VMODMAP
 };
 
-struct xkb_key {
+સંરચના xkb_ચાવી {
     xkb_keycode_t keycode;
     xkb_atom_t name;
 
-    enum xkb_explicit_components explicit;
+    ગણના xkb_explicit_components explicit;
 
     xkb_mod_mask_t modmap;
     xkb_mod_mask_t vmodmap;
@@ -641,20 +641,20 @@ struct xkb_key {
     bool implicit_actions:1;
 
     bool out_of_range_pending_group:1;
-    enum xkb_layout_out_of_range_policy out_of_range_group_policy:4;
-    xkb_layout_index_t out_of_range_group_number:8;
+    ગણના xkb_layout_out_of_range_policy out_of_range_group_policy:4;
+    xkb_layout_index_t out_of_range_group_સંખ્યા:8;
 
-    xkb_layout_index_t num_groups:8;
-    struct xkb_group *groups ATTR_COUNTED_BY(num_groups);
+    xkb_layout_index_t અંક_groups:8;
+    સંરચના xkb_group *groups ATTR_COUNTED_BY(અંક_groups);
     /**
      * Target overlays keys, if any.
      *
      * For 0 or 1 elements storage is inline in the struct; for 2 or more a
      * heap sparse array is used.
      */
-    union {
+    સંઘ {
         /** Inlined if at most one overlay is set (overlays_inline = true) */
-        const struct xkb_key *overlay_key;
+        અચલ સંરચના xkb_ચાવી *overlay_ચાવી;
         /**
          * Allocated if 2 or more overlays are defined (overlays_inline = false).
          *
@@ -663,19 +663,19 @@ struct xkb_key {
          * ascending overlay order, and a value’s position in storage equals the
          * popcount of all mask bits strictly below its overlay — its rank.
          */
-        const struct xkb_key **overlays_keys;
+        અચલ સંરચના xkb_ચાવી **overlays_ચાવીઓ;
     };
 };
 
-struct xkb_mod {
+સંરચના xkb_mod {
     xkb_atom_t name;
-    enum mod_type type;
+    ગણના mod_type type;
     xkb_mod_mask_t mapping; /* vmod -> real mod mapping */
 };
 
-struct xkb_mod_set {
-    struct xkb_mod mods[XKB_MAX_MODS];
-    xkb_mod_index_t num_mods;
+સંરચના xkb_mod_set {
+    સંરચના xkb_mod mods[XKB_MAX_MODS];
+    xkb_mod_index_t અંક_mods;
     xkb_mod_mask_t explicit_vmods;
 };
 
@@ -693,9 +693,9 @@ struct xkb_mod_set {
 #define XKB_KEYCODE_MAX_CONTIGUOUS 0xfff
 static_assert(XKB_KEYCODE_MAX_CONTIGUOUS < XKB_KEYCODE_MAX,
               "Valid keycodes");
-static_assert(XKB_KEYCODE_MAX_CONTIGUOUS < darray_max_alloc(sizeof(xkb_atom_t)),
+static_assert(XKB_KEYCODE_MAX_CONTIGUOUS < darray_max_alloc(કદ(xkb_atom_t)),
               "Max keycodes names");
-static_assert(XKB_KEYCODE_MAX_CONTIGUOUS < darray_max_alloc(sizeof(struct xkb_key)),
+static_assert(XKB_KEYCODE_MAX_CONTIGUOUS < darray_max_alloc(કદ(સંરચના xkb_ચાવી)),
               "Max keymap keys");
 
 /*
@@ -708,9 +708,9 @@ static_assert(XKB_KEYCODE_MAX_CONTIGUOUS < darray_max_alloc(sizeof(struct xkb_ke
 #define XKB_LEVEL_MAX_IMPL 2048
 static_assert(XKB_LEVEL_MAX_IMPL < XKB_LEVEL_INVALID,
               "Valid levels");
-static_assert(XKB_LEVEL_MAX_IMPL < darray_max_alloc(sizeof(xkb_atom_t)),
+static_assert(XKB_LEVEL_MAX_IMPL < darray_max_alloc(કદ(xkb_atom_t)),
               "Max key types level names");
-static_assert(XKB_LEVEL_MAX_IMPL < darray_max_alloc(sizeof(struct xkb_level)),
+static_assert(XKB_LEVEL_MAX_IMPL < darray_max_alloc(કદ(સંરચના xkb_level)),
               "Max keys levels");
 
 static_assert((1LLU << (DARRAY_SIZE_T_WIDTH - 3)) - 1 >=
@@ -718,8 +718,8 @@ static_assert((1LLU << (DARRAY_SIZE_T_WIDTH - 3)) - 1 >=
               "Cannot store low keycodes");
 
 /** Keycode store lookup result */
-typedef union {
-    struct {
+પ્રકારવ્યાખ્યા સંઘ {
+    સંરચના {
         /** If true, the index is valid */
         bool found:1;
         bool:1;
@@ -728,22 +728,22 @@ typedef union {
         darray_size_t:(DARRAY_SIZE_T_WIDTH - 3);
     };
     /* Only if is_alias = false, for better semantics */
-    struct {
+    સંરચના {
         bool found:1;
         /**
          * Whether the corresponding entry is stored in the low or high table
          * of the keycode store
          */
-        bool low:1;
+        bool નીચલું:1;
         bool is_alias:1;
         /**
          * - xkb_keycodes: index of the entry in the keycode store
          * - xkb_symbols: index of the entry in xkb_keymap::keys array
          */
         darray_size_t index:(DARRAY_SIZE_T_WIDTH - 3);
-    } key;
+    } ચાવી;
     /* Only if is_alias = true, for better semantics */
-    struct {
+    સંરચના {
         bool found:1;
         bool:1;
         bool is_alias:1;
@@ -752,36 +752,36 @@ typedef union {
     } alias;
 } KeycodeMatch;
 
-typedef struct {
-    union {
+પ્રકારવ્યાખ્યા સંરચના {
+    સંઘ {
         /** Used for parsing */
-        enum merge_mode merge;
+        ગણના merge_mode merge;
         /** Used for serializing */
-        xkb_keycode_t keyCode;
+        xkb_keycode_t ચાવી_Code;
     };
-    bool haveSymbol;
+    bool have_પ્રતીક;
     /** NOTE: 0 means: “remove the key or keysym from the modmap” */
     xkb_mod_mask_t mods;
-    union {
-        xkb_keysym_t keySym;
-        xkb_atom_t keyName;
+    સંઘ {
+        xkb_keysym_t ચાવી_Sym;
+        xkb_atom_t ચાવી_Name;
     } u;
 } ModMapEntry;
 
 /** Common keyboard description structure */
-struct xkb_keymap {
-    struct xkb_context *ctx;
+સંરચના xkb_keymap {
+    સંરચના xkb_context *ctx;
 
-    int refcnt;
-    enum xkb_keymap_compile_flags flags;
-    enum xkb_keymap_format format;
+    પૂર્ણાંક refcnt;
+    ગણના xkb_keymap_compile_flags flags;
+    ગણના xkb_keymap_format format;
 
-    xkb_led_index_t num_leds;
-    struct xkb_led leds[XKB_MAX_LEDS];
+    xkb_led_index_t અંક_leds;
+    સંરચના xkb_led leds[XKB_MAX_LEDS];
 
-    xkb_keycode_t min_key_code;
-    xkb_keycode_t max_key_code;
-    xkb_keycode_t num_keys;
+    xkb_keycode_t min_ચાવી_code;
+    xkb_keycode_t max_ચાવી_code;
+    xkb_keycode_t અંક_ચાવીઓ;
     /*
      * Keys are divided into 2 ordered (possibly empty) lists:
      *
@@ -792,10 +792,10 @@ struct xkb_keymap {
      *     Stored noncontiguously at indexes [num_keys_low..num_keys).
      *     Slow access via a binary search.
      */
-    xkb_keycode_t num_keys_low;
-    struct xkb_key *keys ATTR_COUNTED_BY(num_keys);
+    xkb_keycode_t અંક_ચાવીઓ_નીચલું;
+    સંરચના xkb_ચાવી *ચાવીઓ ATTR_COUNTED_BY(અંક_ચાવીઓ);
 
-    union {
+    સંઘ {
         /**
          * Keycode name atom -> key index lookup table
          *
@@ -807,29 +807,29 @@ struct xkb_keymap {
          * then the first atoms will be mostly the keycodes and their aliases,
          * so we can achieve O(1) lookup of the key names by using a simple array.
          */
-        struct {
-            darray_size_t num_key_names;
-            KeycodeMatch *key_names;
+        સંરચના {
+            darray_size_t અંક_ચાવી_names;
+            KeycodeMatch *ચાવી_names;
         };
         /**
          * Aliases in no particular order
          *
          * ⚠️ Used only *after* compilation
          */
-        struct {
-            darray_size_t num_key_aliases;
-            struct xkb_key_alias *key_aliases;
+        સંરચના {
+            darray_size_t અંક_ચાવી_aliases;
+            સંરચના xkb_ચાવી_alias *ચાવી_aliases;
         };
     };
 
-    struct xkb_key_type *types;
-    darray_size_t num_types;
+    સંરચના xkb_ચાવી_type *types;
+    darray_size_t અંક_types;
 
-    darray_size_t num_sym_interprets;
-    struct xkb_sym_interpret *sym_interprets;
+    darray_size_t અંક_sym_interprets;
+    સંરચના xkb_sym_interpret *sym_interprets;
 
     darray_size_t _padding;
-    darray_size_t num_modmaps;
+    darray_size_t અંક_modmaps;
     ModMapEntry *modmaps;
 
     /**
@@ -839,7 +839,7 @@ struct xkb_keymap {
      *   1. the order of the parsing of the keymap components;
      *   2. the order of the virtual modifiers declarations;
      */
-    struct xkb_mod_set mods;
+    સંરચના xkb_mod_set mods;
     /**
      * Modifier mask of the *canonical* state, i.e. the mask with the *smallest*
      * population count that denotes all bits used to encode the modifiers in
@@ -865,132 +865,132 @@ struct xkb_keymap {
     xkb_mod_mask_t canonical_state_mask;
 
     /** Encode the “auto” special value of RedirectKey() */
-    xkb_keycode_t redirect_key_auto;
+    xkb_keycode_t redirect_ચાવી_auto;
 
     /* This field has 2 uses:
      * • During parsing: Expected layouts count after RMLVO resolution, if any;
      * • After parsing: Number of groups in the key with the most groups. */
-    xkb_layout_index_t num_groups;
+    xkb_layout_index_t અંક_groups;
     /* Not all groups must have names. */
-    xkb_layout_index_t num_group_names;
-    xkb_atom_t *group_names ATTR_COUNTED_BY(num_group_names);
+    xkb_layout_index_t અંક_group_names;
+    xkb_atom_t *group_names ATTR_COUNTED_BY(અંક_group_names);
 
-    char *keycodes_section_name;
-    char *symbols_section_name;
-    char *types_section_name;
-    char *compat_section_name;
+    અક્ષર *keycodes_section_name;
+    અક્ષર *symbols_section_name;
+    અક્ષર *types_section_name;
+    અક્ષર *compat_section_name;
 };
 
-#define xkb_keys_foreach(iter, keymap) \
+#define xkb_ચાવીઓ_foreach(iter, keymap) \
     /*
      * Start at the first defined low or high keycode:
      * - if there are some low keycodes, the index is min_key_code, because we
      *   skip the previous undefined keycodes;
      * - else the first item is the first high keycode.
      */ \
-    for ((iter) = (keymap)->keys + \
-                  ((keymap)->num_keys_low == 0 ? 0 : (keymap)->min_key_code); \
-         (iter) < (keymap)->keys + (keymap)->num_keys; \
+    માટે ((iter) = (keymap)->ચાવીઓ + \
+                  ((keymap)->અંક_ચાવીઓ_નીચલું == 0 ? 0 : (keymap)->min_ચાવી_code); \
+         (iter) < (keymap)->ચાવીઓ + (keymap)->અંક_ચાવીઓ; \
          (iter)++)
 
 #define xkb_level_foreach_action(iter, level)                 \
-    for (union xkb_action                                     \
-         *(iter) = (likely((level)->num_actions <= 1)         \
+    માટે (સંઘ xkb_action                                     \
+         *(iter) = (likely((level)->અંક_actions <= 1)         \
                  ? &(level)->a.action                         \
                  : (level)->a.actions),                       \
          /* NOTE: loop is skipped if num_actions == 0 */      \
-         * const iter##_last_ = (iter) + (level)->num_actions;\
+         * અચલ iter##_last_ = (iter) + (level)->અંક_actions;\
         (iter) < iter##_last_;                                \
         (iter)++)
 
 #define xkb_mods_foreach(iter, mods_) \
-    for ((iter) = (mods_)->mods; \
-         (iter) < (mods_)->mods + (mods_)->num_mods; \
+    માટે ((iter) = (mods_)->mods; \
+         (iter) < (mods_)->mods + (mods_)->અંક_mods; \
          (iter)++)
 
 #define xkb_mods_mask_foreach(mask, iter, mods_) \
-    for ((iter) = (mods_)->mods; \
-         (mask) && (iter) < (mods_)->mods + (mods_)->num_mods; \
+    માટે ((iter) = (mods_)->mods; \
+         (mask) && (iter) < (mods_)->mods + (mods_)->અંક_mods; \
          (iter)++, (mask) >>= 1) \
-        if ((mask) & 0x1)
+        જો ((mask) & 0x1)
 
 /** Enumerate all modifiers */
 #define xkb_mods_enumerate(idx, iter, mods_) \
-    for ((idx) = 0, (iter) = (mods_)->mods; \
-         (idx) < (mods_)->num_mods; \
+    માટે ((idx) = 0, (iter) = (mods_)->mods; \
+         (idx) < (mods_)->અંક_mods; \
          (idx)++, (iter)++)
 
 /** Enumerate only real modifiers */
 #define xkb_rmods_enumerate(idx, iter, mods_) \
-    for ((idx) = 0, (iter) = (mods_)->mods; \
-         (idx) < _XKB_MOD_INDEX_NUM_ENTRIES; \
+    માટે ((idx) = 0, (iter) = (mods_)->mods; \
+         (idx) < XKB_MOD_INDEX_અંક_ENTRIES; \
          (idx)++, (iter)++)
 
 /** Enumerate only virtual modifiers */
 #define xkb_vmods_enumerate(idx, iter, mods_) \
-    for ((idx) = _XKB_MOD_INDEX_NUM_ENTRIES, \
-         (iter) = &(mods_)->mods[_XKB_MOD_INDEX_NUM_ENTRIES]; \
-         (idx) < (mods_)->num_mods; \
+    માટે ((idx) = XKB_MOD_INDEX_અંક_ENTRIES, \
+         (iter) = &(mods_)->mods[XKB_MOD_INDEX_અંક_ENTRIES]; \
+         (idx) < (mods_)->અંક_mods; \
          (idx)++, (iter)++)
 
 #define xkb_leds_foreach(iter, keymap) \
-    for ((iter) = (keymap)->leds; \
-         (iter) < (keymap)->leds + (keymap)->num_leds; \
+    માટે ((iter) = (keymap)->leds; \
+         (iter) < (keymap)->leds + (keymap)->અંક_leds; \
          (iter)++)
 
 #define xkb_leds_enumerate(idx, iter, keymap) \
-    for ((idx) = 0, (iter) = (keymap)->leds; \
-         (idx) < (keymap)->num_leds; \
+    માટે ((idx) = 0, (iter) = (keymap)->leds; \
+         (idx) < (keymap)->અંક_leds; \
          (idx)++, (iter)++)
 
-void
-clear_level(struct xkb_level *leveli);
+શૂન્ય
+clear_level(સંરચના xkb_level *leveli);
 
 /* ⚠️ Only valid before copying symbols to keymap */
-static inline struct xkb_key *
-XkbKeyByName(const struct xkb_keymap *keymap, xkb_atom_t name, bool use_aliases)
+સ્થિર અંતઃરેખ સંરચના xkb_ચાવી *
+Xkb_ચાવી_By_Name(અચલ સંરચના xkb_keymap *keymap, xkb_atom_t name, bool use_aliases)
 {
-    if (name < keymap->num_key_names) {
-        const KeycodeMatch match = keymap->key_names[name];
-        if (match.found) {
-            if (!match.is_alias) {
-                assert(name == keymap->keys[match.key.index].name);
-                return &keymap->keys[match.key.index];
-            } else if (use_aliases) {
-                assert(match.alias.real ==
-                       keymap->keys[keymap->key_names[match.alias.real].key.index].name);
-                return &keymap->keys[keymap->key_names[match.alias.real].key.index];
+    જો (name < keymap->અંક_ચાવી_names) {
+        અચલ KeycodeMatch match = keymap->ચાવી_names[name];
+        જો (match.found) {
+            જો (!match.is_alias) {
+                પ્રતિજ્ઞા(name == keymap->ચાવીઓ[match.ચાવી.index].name);
+                પાછા &keymap->ચાવીઓ[match.ચાવી.index];
+            } નહીંતર જો (use_aliases) {
+                પ્રતિજ્ઞા(match.alias.real ==
+                       keymap->ચાવીઓ[keymap->ચાવી_names[match.alias.real].ચાવી.index].name);
+                પાછા &keymap->ચાવીઓ[keymap->ચાવી_names[match.alias.real].ચાવી.index];
             }
         }
     }
-    return NULL;
+    પાછા ખાલી;
 }
 
-static inline const struct xkb_key *
-XkbKey(const struct xkb_keymap *keymap, xkb_keycode_t kc)
+સ્થિર અંતઃરેખ અચલ સંરચના xkb_ચાવી *
+Xkb_ચાવી(અચલ સંરચના xkb_keymap *keymap, xkb_keycode_t kc)
 {
-    if (kc < keymap->min_key_code || kc > keymap->max_key_code) {
+    જો (kc < keymap->min_ચાવી_code || kc > keymap->max_ચાવી_code) {
         /* Unsupported keycode */
-        return NULL;
-    } else if (kc < keymap->num_keys_low) {
+        પાછા ખાલી;
+    } નહીંતર જો (kc < keymap->અંક_ચાવીઓ_નીચલું) {
         /* Low keycodes */
-        return &keymap->keys[kc];
-    } else {
+        પાછા &keymap->ચાવીઓ[kc];
+    } નહીંતર {
         /* High keycodes: use binary search */
-        xkb_keycode_t lower = keymap->num_keys_low;
-        xkb_keycode_t upper = keymap->num_keys;
-        while (lower < upper) {
-            const xkb_keycode_t mid = lower + (upper - 1 - lower) / 2;
-            const struct xkb_key * const key = &keymap->keys[mid];
-            if (key->keycode < kc) {
+        xkb_keycode_t lower = keymap->અંક_ચાવીઓ_નીચલું;
+        xkb_keycode_t upper = keymap->અંક_ચાવીઓ;
+        જ્યારે (lower < upper) {
+            અચલ xkb_keycode_t mid = lower + (upper - 1 - lower) / 2;
+            અચલ સંરચના xkb_ચાવી * અચલ ચાવી = &keymap->ચાવીઓ[mid];
+            જો (ચાવી->keycode < kc) {
                 lower = mid + 1;
-            } else if (key->keycode > kc) {
+            } નહીંતર જો (ચાવી->keycode > kc) {
                 upper = mid;
-            } else {
-                return key;
+            } નહીંતર {
+                પાછા ચાવી;
             }
         }
-        return NULL;
+        પાછા ખાલી;
     }
 }
 
@@ -1002,68 +1002,68 @@ XkbKey(const struct xkb_keymap *keymap, xkb_keycode_t kc)
  *
  * Returns NULL if no such key exists.
  */
-static inline const struct xkb_key *
-xkb_keymap_get_next_defined_key(const struct xkb_keymap *keymap,
+સ્થિર અંતઃરેખ અચલ સંરચના xkb_ચાવી *
+xkb_keymap_get_next_defined_ચાવી(અચલ સંરચના xkb_keymap *keymap,
                                 bool ascending, xkb_keycode_t kc)
 {
     /* Unsupported keycodes */
-    if (!keymap->num_keys || kc > XKB_KEYCODE_MAX) {
-        return NULL;
-    } else if (kc < keymap->min_key_code) {
-        kc = keymap->min_key_code;
-    } else if (kc > keymap->max_key_code) {
-        kc = keymap->max_key_code;
+    જો (!keymap->અંક_ચાવીઓ || kc > XKB_KEYCODE_MAX) {
+        પાછા ખાલી;
+    } નહીંતર જો (kc < keymap->min_ચાવી_code) {
+        kc = keymap->min_ચાવી_code;
+    } નહીંતર જો (kc > keymap->max_ચાવી_code) {
+        kc = keymap->max_ચાવી_code;
     }
 
-    if (kc < keymap->num_keys_low) {
+    જો (kc < keymap->અંક_ચાવીઓ_નીચલું) {
         /* Low keycodes */
-        const struct xkb_key *key = &keymap->keys[kc];
-        if (ascending) {
-            const struct xkb_key *end = &keymap->keys[keymap->num_keys_low - 1];
-            while (key->name == XKB_ATOM_NONE && key < end) key++;
-        } else {
-            const struct xkb_key *end = &keymap->keys[keymap->min_key_code];
-            while (key->name == XKB_ATOM_NONE && key > end) key--;
+        અચલ સંરચના xkb_ચાવી *ચાવી = &keymap->ચાવીઓ[kc];
+        જો (ascending) {
+            અચલ સંરચના xkb_ચાવી *end = &keymap->ચાવીઓ[keymap->અંક_ચાવીઓ_નીચલું - 1];
+            જ્યારે (ચાવી->name == XKB_ATOM_NONE && ચાવી < end) ચાવી++;
+        } નહીંતર {
+            અચલ સંરચના xkb_ચાવી *end = &keymap->ચાવીઓ[keymap->min_ચાવી_code];
+            જ્યારે (ચાવી->name == XKB_ATOM_NONE && ચાવી > end) ચાવી--;
         }
-        return (key->name == XKB_ATOM_NONE) ? NULL : key;
-    } else {
+        પાછા (ચાવી->name == XKB_ATOM_NONE) ? ખાલી : ચાવી;
+    } નહીંતર {
         /* High keycodes: use binary search */
-        xkb_keycode_t lower = keymap->num_keys_low
-            ? keymap->num_keys_low - 1 /* Last low keycode */
+        xkb_keycode_t lower = keymap->અંક_ચાવીઓ_નીચલું
+            ? keymap->અંક_ચાવીઓ_નીચલું - 1 /* Last low keycode */
             : 0;                       /* First high keycode */
-        xkb_keycode_t upper = keymap->num_keys - 1;
-        const struct xkb_key * candidate = NULL;
-        while (lower <= upper) {
-            const xkb_keycode_t mid = lower + (upper - lower) / 2;
-            const struct xkb_key * const key = &keymap->keys[mid];
-            if (key->keycode == kc) {
-                return key;
-            } else if (ascending) {
+        xkb_keycode_t upper = keymap->અંક_ચાવીઓ - 1;
+        અચલ સંરચના xkb_ચાવી * candidate = ખાલી;
+        જ્યારે (lower <= upper) {
+            અચલ xkb_keycode_t mid = lower + (upper - lower) / 2;
+            અચલ સંરચના xkb_ચાવી * અચલ ચાવી = &keymap->ચાવીઓ[mid];
+            જો (ચાવી->keycode == kc) {
+                પાછા ચાવી;
+            } નહીંતર જો (ascending) {
                 /* Looking for the *smallest* defined keycode >= kc */
-                if (key->keycode >= kc) {
-                    candidate = key;
+                જો (ચાવી->keycode >= kc) {
+                    candidate = ચાવી;
                     upper = mid - 1;
-                } else {
+                } નહીંતર {
                     lower = mid + 1;
                 }
-            } else {
+            } નહીંતર {
                 /* Looking for the *smallest* defined keycode <= kc */
-                if (key->keycode <= kc) {
-                    candidate = key;
+                જો (ચાવી->keycode <= kc) {
+                    candidate = ચાવી;
                     lower = mid + 1;
-                } else if (key->keycode > kc) {
+                } નહીંતર જો (ચાવી->keycode > kc) {
                     upper = mid - 1;
                 }
             }
         }
-        return candidate;
+        પાછા candidate;
     }
 }
 
-static inline xkb_level_index_t
-XkbKeyNumLevels(const struct xkb_key *key, xkb_layout_index_t layout)
+સ્થિર અંતઃરેખ xkb_level_index_t
+Xkb_ચાવી_અંક_Levels(અચલ સંરચના xkb_ચાવી *ચાવી, xkb_layout_index_t layout)
 {
-    return key->groups[layout].type->num_levels;
+    પાછા ચાવી->groups[layout].type->અંક_levels;
 }
 
 /*
@@ -1073,105 +1073,105 @@ XkbKeyNumLevels(const struct xkb_key *key, xkb_layout_index_t layout)
  *
  * xserver does this with cached entry->active field.
  */
-static inline bool
-entry_is_active(const struct xkb_key_type_entry *entry)
+સ્થિર અંતઃરેખ bool
+entry_is_active(અચલ સંરચના xkb_ચાવી_type_entry *entry)
 {
-    return entry->mods.mods == 0 || entry->mods.mask != 0;
+    પાછા entry->mods.mods == 0 || entry->mods.mask != 0;
 }
 
-struct xkb_keymap *
-xkb_keymap_new(struct xkb_context *ctx, const char* func,
-               enum xkb_keymap_format format,
-               enum xkb_keymap_compile_flags flags);
+સંરચના xkb_keymap *
+xkb_keymap_new(સંરચના xkb_context *ctx, અચલ અક્ષર* func,
+               ગણના xkb_keymap_format format,
+               ગણના xkb_keymap_compile_flags flags);
 
-void
-XkbEscapeMapName(char *name);
+શૂન્ય
+XkbEscapeMapName(અક્ષર *name);
 
 xkb_mod_index_t
-XkbModNameToIndex(const struct xkb_mod_set *mods, xkb_atom_t name,
-                  enum mod_type type);
+XkbModNameToIndex(અચલ સંરચના xkb_mod_set *mods, xkb_atom_t name,
+                  ગણના mod_type type);
 
 bool
-XkbLevelsSameSyms(const struct xkb_level *a, const struct xkb_level *b);
+XkbLevelsSameSyms(અચલ સંરચના xkb_level *a, અચલ સંરચના xkb_level *b);
 
 bool
-action_equal(const union xkb_action *a, const union xkb_action *b);
+action_equal(અચલ સંઘ xkb_action *a, અચલ સંઘ xkb_action *b);
 
 bool
-XkbLevelsSameActions(const struct xkb_level *a, const struct xkb_level *b);
+XkbLevelsSameActions(અચલ સંરચના xkb_level *a, અચલ સંરચના xkb_level *b);
 
 xkb_layout_index_t
 XkbWrapGroupIntoRange(int32_t group,
-                      xkb_layout_index_t num_groups,
-                      enum xkb_layout_out_of_range_policy out_of_range_group_policy,
-                      xkb_layout_index_t out_of_range_group_number);
+                      xkb_layout_index_t અંક_groups,
+                      ગણના xkb_layout_out_of_range_policy out_of_range_group_policy,
+                      xkb_layout_index_t out_of_range_group_સંખ્યા);
 
-static inline xkb_layout_index_t
-xkb_keymap_key_effective_layout(const struct xkb_key *key,
+સ્થિર અંતઃરેખ xkb_layout_index_t
+xkb_keymap_ચાવી_effective_layout(અચલ સંરચના xkb_ચાવી *ચાવી,
                                 xkb_layout_index_t layout)
 {
     static_assert(XKB_MAX_GROUPS < INT32_MAX, "Max groups don't fit");
-    return XkbWrapGroupIntoRange((int32_t) layout,
-                                 key->num_groups,
-                                 key->out_of_range_group_policy,
-                                 key->out_of_range_group_number);
+    પાછા XkbWrapGroupIntoRange((int32_t) layout,
+                                 ચાવી->અંક_groups,
+                                 ચાવી->out_of_range_group_policy,
+                                 ચાવી->out_of_range_group_સંખ્યા);
 }
 
 XKB_EXPORT_PRIVATE xkb_mod_mask_t
-mod_mask_get_effective(struct xkb_keymap *keymap, xkb_mod_mask_t mods);
+mod_mask_get_effective(સંરચના xkb_keymap *keymap, xkb_mod_mask_t mods);
 
-struct xkb_level *
-xkb_keymap_key_get_level(struct xkb_keymap *keymap, const struct xkb_key *key,
+સંરચના xkb_level *
+xkb_keymap_ચાવી_get_level(સંરચના xkb_keymap *keymap, અચલ સંરચના xkb_ચાવી *ચાવી,
                          xkb_layout_index_t layout, xkb_level_index_t level);
 
-xkb_action_count_t
-xkb_keymap_key_get_actions_by_level(const struct xkb_keymap *keymap,
-                                    const struct xkb_key *key,
+xkb_action_ગણતરી_t
+xkb_keymap_ચાવી_get_actions_by_level(અચલ સંરચના xkb_keymap *keymap,
+                                    અચલ સંરચના xkb_ચાવી *ચાવી,
                                     xkb_layout_index_t layout,
                                     xkb_level_index_t level,
-                                    const union xkb_action **actions);
+                                    અચલ સંઘ xkb_action **actions);
 
-struct xkb_keymap_format_ops {
-    bool (*keymap_new_from_rmlvo)(struct xkb_keymap *keymap,
-                                  const struct xkb_rmlvo_builder *rmlvo);
-    bool (*keymap_new_from_names)(struct xkb_keymap *keymap,
-                                  const struct xkb_rule_names *names);
-    bool (*keymap_new_from_string)(struct xkb_keymap *keymap,
-                                   const char *string, size_t length);
-    bool (*keymap_new_from_file)(struct xkb_keymap *keymap, FILE *file);
-    enum xkb_status (*keymap_serialize)(
-        const struct xkb_keymap *keymap,
-        const struct xkb_keymap_serialize_config *config,
-        struct xkb_keymap_serialize_result *result
+સંરચના xkb_keymap_format_ops {
+    bool (*keymap_new_from_rmlvo)(સંરચના xkb_keymap *keymap,
+                                  અચલ સંરચના xkb_rmlvo_builder *rmlvo);
+    bool (*keymap_new_from_names)(સંરચના xkb_keymap *keymap,
+                                  અચલ સંરચના xkb_rule_names *names);
+    bool (*keymap_new_from_string)(સંરચના xkb_keymap *keymap,
+                                   અચલ અક્ષર *string, size_t length);
+    bool (*keymap_new_from_file)(સંરચના xkb_keymap *keymap, FILE *file);
+    ગણના xkb_status (*keymap_serialize)(
+        અચલ સંરચના xkb_keymap *keymap,
+        અચલ સંરચના xkb_keymap_serialize_config *config,
+        સંરચના xkb_keymap_serialize_result *result
     );
 };
 
-extern const struct xkb_keymap_format_ops text_v1_keymap_format_ops;
+બાહ્ય અચલ સંરચના xkb_keymap_format_ops text_v1_keymap_format_ops;
 
-static inline bool
-isModsUnLockOnPressSupported(enum xkb_keymap_format format)
+સ્થિર અંતઃરેખ bool
+isModsUnLockOnPressSupported(ગણના xkb_keymap_format format)
 {
     /* Lax bound */
-    return format >= XKB_KEYMAP_FORMAT_TEXT_V2;
+    પાછા format >= XKB_KEYMAP_FORMAT_TEXT_V2;
 }
 
-static inline bool
-isGroupLockOnReleaseSupported(enum xkb_keymap_format format)
+સ્થિર અંતઃરેખ bool
+isGroupLockOnReleaseSupported(ગણના xkb_keymap_format format)
 {
     /* Lax bound */
-    return format >= XKB_KEYMAP_FORMAT_TEXT_V2;
+    પાછા format >= XKB_KEYMAP_FORMAT_TEXT_V2;
 }
 
-static inline bool
-isModsLatchOnPressSupported(enum xkb_keymap_format format)
+સ્થિર અંતઃરેખ bool
+isModsLatchOnPressSupported(ગણના xkb_keymap_format format)
 {
     /* Lax bound */
-    return format >= XKB_KEYMAP_FORMAT_TEXT_V2;
+    પાછા format >= XKB_KEYMAP_FORMAT_TEXT_V2;
 }
 
-static inline bool
-areOverlappingOverlaysSupported(enum xkb_keymap_format format)
+સ્થિર અંતઃરેખ bool
+areOverlappingOverlaysSupported(ગણના xkb_keymap_format format)
 {
     /* Lax bound */
-    return format >= XKB_KEYMAP_FORMAT_TEXT_V2;
+    પાછા format >= XKB_KEYMAP_FORMAT_TEXT_V2;
 }

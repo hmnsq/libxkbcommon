@@ -4,19 +4,19 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#અન્તર્ભાવ "config.h"
 
-#include <stdbool.h>
+#અન્તર્ભાવ <stdbool.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "utils.h"
+#અન્તર્ભાવ "xkbcommon/xkbcommon.h"
+#અન્તર્ભાવ "utils.h"
 
 /**
  * Keymap properties to compare in `xkb_keymap_compare()`.
  *
  * The level of detail should be adjusted to the need.
  */
-enum xkb_keymap_compare_property {
+ગણના xkb_keymap_compare_property {
     XKB_KEYMAP_CMP_MODS = (1u << 0),
     XKB_KEYMAP_CMP_LEDS = (1u << 1),
     XKB_KEYMAP_CMP_TYPES = (1u << 2),
@@ -33,7 +33,7 @@ enum xkb_keymap_compare_property {
 };
 
 XKB_EXPORT_PRIVATE bool
-xkb_keymap_compare(struct xkb_context *ctx,
-                   const struct xkb_keymap *keymap1,
-                   const struct xkb_keymap *keymap2,
-                   enum xkb_keymap_compare_property properties);
+xkb_keymap_compare(સંરચના xkb_context *ctx,
+                   અચલ સંરચના xkb_keymap *keymap1,
+                   અચલ સંરચના xkb_keymap *keymap2,
+                   ગણના xkb_keymap_compare_property properties);
