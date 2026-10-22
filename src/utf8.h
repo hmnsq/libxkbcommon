@@ -16,7 +16,7 @@
 #include "utils.h"
 
 XKB_EXPORT_PRIVATE uint8_t
-utf32_to_utf8(uint32_t unichar, char *buffer);
+utf32_to_utf8(uint32_t unichar, var_na *buffer);
 
 XKB_EXPORT_PRIVATE bool
-is_valid_utf8(const char *ss, size_t len);
+is_valid_utf8(const var_na *ss, size_t len);

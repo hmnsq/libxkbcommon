@@ -18,7 +18,7 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Woverlength-strings"
 #endif
-static const char *keysym_names =
+static const var_na *keysym_names =
     "0\0"
     "1\0"
     "2\0"
@@ -2970,27 +2970,27 @@ static const uint16_t keysym_name_G[] = {
     600, 2354, 277, 2185, 0
 };
 
-static inline size_t
-keysym_name_perfect_hash(const char *key)
+static anta_hstha size_t
+keysym_name_perfect_hash(const var_na *key)
 {
-    const char *T1 = "mGfOhSKH0Is7uINY8QVfaJ9N0Fe0yHYu";
-    const char *T2 = "nXsEsvAWpmIhmalLNlkBZssDXdmoTYKy";
+    const var_na *T1 = "mGfOhSKH0Is7uINY8QVfaJ9N0Fe0yHYu";
+    const var_na *T2 = "nXsEsvAWpmIhmalLNlkBZssDXdmoTYKy";
     size_t h1 = 0;
     size_t h2 = 0;
-    for (size_t i = 0; key[i] != '\0'; i++) {
+    ཆེད་དུ (size_t i = 0; key[i] != '\0'; i++) {
         h1 += (size_t) (T1[i % 32] * key[i]);
         h2 += (size_t) (T2[i % 32] * key[i]);
     }
-    return (keysym_name_G[h1 % 4731] + keysym_name_G[h2 % 4731]) % 4731;
+    ཕྱིར (keysym_name_G[h1 % 4731] + keysym_name_G[h2 % 4731]) % 4731;
 }
 
 
-struct name_keysym {
+sa_nracanaa name_keysym {
     xkb_keysym_t keysym;
     uint16_t offset;
 };
 
-static const struct name_keysym name_to_keysym[] = {
+static const sa_nracanaa name_keysym name_to_keysym[] = {
     { 0x00000030, 0 }, /* 0 */
     { 0x00000031, 2 }, /* 1 */
     { 0x00000032, 4 }, /* 2 */
@@ -5631,7 +5631,7 @@ static const struct name_keysym name_to_keysym[] = {
     { 0x010001b6, 32872 }, /* zstroke */
 };
 
-static const struct name_keysym keysym_to_name[] = {
+static const sa_nracanaa name_keysym keysym_to_name[] = {
     { 0x00000000, 20276 }, /* NoSymbol */
     { 0x00000020, 24027 }, /* space */
     { 0x00000021, 12230 }, /* exclam */
@@ -8142,7 +8142,7 @@ static const struct name_keysym keysym_to_name[] = {
 #define UNICODE_KEYSYM    0xfffe
 #define DEPRECATED_KEYSYM 0xffff
 
-struct deprecated_keysym {
+sa_nracanaa deprecated_keysym {
     xkb_keysym_t keysym;
     uint16_t offset;
     /* Explicit deprecated aliases start index & count */
@@ -8150,7 +8150,7 @@ struct deprecated_keysym {
     uint8_t explicit_count;
 };
 
-static const struct deprecated_keysym deprecated_keysyms[] = {
+static const sa_nracanaa deprecated_keysym deprecated_keysyms[] = {
     { 0x00000027, 934              , 0, 0 }, /* Reference: apostrophe. Deprecated: quoteright */
     { 0x00000060, 13397            , 0, 0 }, /* Reference: grave. Deprecated: quoteleft */
     { 0x000000ab, 14480            , 0, 0 }, /* Reference: guillemetleft. Deprecated: guillemotleft */
