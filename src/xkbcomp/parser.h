@@ -42,33 +42,33 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY__XKBCOMMON_SRC_XKBCOMP_PARSER_H_INCLUDED
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ YY__XKBCOMMON_SRC_XKBCOMP_PARSER_H_INCLUDED
 # define YY__XKBCOMMON_SRC_XKBCOMP_PARSER_H_INCLUDED
 /* Debug traces.  */
-#ifndef YYDEBUG
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ YYDEBUG
 # define YYDEBUG 0
-#endif
-#if YYDEBUG
-extern int _xkbcommon_debug;
-#endif
+#ਜੇ_ਅੰਤ
+#ਜੇ YYDEBUG
+ਬਾਹਰੀ ਪੂਰਨ _xkbcommon_debug;
+#ਜੇ_ਅੰਤ
 /* "%code requires" blocks.  */
-#line 14 "src/xkbcomp/parser.y"
+#ਸਤਰ 14 "src/xkbcomp/parser.y"
 
-#include "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
 
-#include "scanner-utils.h"
-#include "xkbcomp/ast.h"
-#include "xkbcomp/xkbcomp-priv.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "scanner-utils.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xkbcomp/ast.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xkbcomp/xkbcomp-priv.h"
 
-#line 57 "src/xkbcomp/parser.h"
+#ਸਤਰ 57 "src/xkbcomp/parser.h"
 
 /* Token kinds.  */
-#ifndef YYTOKENTYPE
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ YYTOKENTYPE
 # define YYTOKENTYPE
-  enum yytokentype
+  ਗਿਣਤੀ yytokentype
   {
     YYEMPTY = -2,
-    END_OF_FILE = 0,               /* "end of file"  */
+    ਸਿਰਾ_ਦਾ_FILE = 0,               /* "end of file"  */
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
     ERROR_TOK = 255,               /* "invalid token"  */
@@ -89,17 +89,17 @@ extern int _xkbcommon_debug;
     TYPE = 21,                     /* "type"  */
     INTERPRET = 22,                /* "interpret"  */
     ACTION_TOK = 23,               /* "action"  */
-    KEY = 24,                      /* "key"  */
+    ਕੁੰਜੀ_3 = 24,                      /* "key"  */
     ALIAS = 25,                    /* "alias"  */
-    GROUP = 26,                    /* "group"  */
+    ਸਮੂਹ_2 = 26,                    /* "group"  */
     MODIFIER_MAP = 27,             /* "modifier_map"  */
     INDICATOR = 28,                /* "indicator"  */
     SHAPE = 29,                    /* "shape"  */
-    KEYS = 30,                     /* "keys"  */
-    ROW = 31,                      /* "row"  */
+    ਕੁੰਜੀਆਂ_2 = 30,                     /* "keys"  */
+    ਪੰਕਤੀ = 31,                      /* "row"  */
     SECTION = 32,                  /* "section"  */
     OVERLAY = 33,                  /* "overlay"  */
-    TEXT = 34,                     /* "text"  */
+    ਪਾਠ = 34,                     /* "text"  */
     OUTLINE = 35,                  /* "outline"  */
     SOLID = 36,                    /* "solid"  */
     LOGO = 37,                     /* "logo"  */
@@ -129,65 +129,65 @@ extern int _xkbcommon_debug;
     PARTIAL = 70,                  /* "partial"  */
     DEFAULT = 71,                  /* "default"  */
     HIDDEN = 72,                   /* "hidden"  */
-    ALPHANUMERIC_KEYS = 73,        /* "alphanumeric_keys"  */
-    MODIFIER_KEYS = 74,            /* "modifier_keys"  */
-    KEYPAD_KEYS = 75,              /* "keypad_keys"  */
-    FUNCTION_KEYS = 76,            /* "function_keys"  */
-    ALTERNATE_GROUP = 77,          /* "alternate_group"  */
+    ALPHANUMERIC_ਕੁੰਜੀਆਂ = 73,        /* "alphanumeric_keys"  */
+    MODIFIER_ਕੁੰਜੀਆਂ = 74,            /* "modifier_keys"  */
+    KEYPAD_ਕੁੰਜੀਆਂ = 75,              /* "keypad_keys"  */
+    FUNCTION_ਕੁੰਜੀਆਂ = 76,            /* "function_keys"  */
+    ALTERNATE_ਸਮੂਹ = 77,          /* "alternate_group"  */
     DEPRECATED = 78                /* "deprecated"  */
   };
-  typedef enum yytokentype yytoken_kind_t;
-#endif
+  ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਗਿਣਤੀ yytokentype yytoken_ਕਿਸਮ_t;
+#ਜੇ_ਅੰਤ
 
 /* Value type.  */
-#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-union YYSTYPE
+#ਜੇ ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
+ਸੰਘ YYSTYPE
 {
-#line 177 "src/xkbcomp/parser.y"
+#ਸਤਰ 177 "src/xkbcomp/parser.y"
 
-        int64_t          num;
-        enum xkb_file_type file_type;
-        char            *str;
-        struct sval     sval;
+        int64_t          ਅੰਕ;
+        ਗਿਣਤੀ xkb_file_type file_type;
+        ਅੱਖਰ            *str;
+        ਬਣਤਰ sval     sval;
         xkb_atom_t      atom;
-        enum merge_mode merge;
-        enum xkb_map_flags mapFlags;
+        ਗਿਣਤੀ ਮਿਲਾਓ_ਬਹੁਲਕ ਮਿਲਾਓ;
+        ਗਿਣਤੀ xkb_map_flags mapFlags;
         xkb_keysym_t    keysym;
         ParseCommon     *any;
-        struct { ParseCommon *head; ParseCommon *last; } anyList;
-        uint32_t        noSymbolOrActionList;
-        ExprDef         *expr;
-        struct { ExprDef *head; ExprDef *last; } exprList;
+        ਬਣਤਰ { ParseCommon *ਸਿਰ; ParseCommon *ਆਖਰੀ; } anyList;
+        uint32_t        no_ਚਿੰਨ੍ਹ_Or_Action_List;
+        ਵਿਅੰਜਕ_Def         *ਵਿਅੰਜਕ;
+        ਬਣਤਰ { ਵਿਅੰਜਕ_Def *ਸਿਰ; ਵਿਅੰਜਕ_Def *ਆਖਰੀ; } ਵਿਅੰਜਕ_List;
         VarDef          *var;
-        struct { VarDef *head; VarDef *last; } varList;
+        ਬਣਤਰ { VarDef *ਸਿਰ; VarDef *ਆਖਰੀ; } varList;
         VModDef         *vmod;
-        struct { VModDef *head; VModDef *last; } vmodList;
+        ਬਣਤਰ { VModDef *ਸਿਰ; VModDef *ਆਖਰੀ; } vmodList;
         InterpDef       *interp;
-        KeyTypeDef      *keyType;
+        ਕੁੰਜੀ_Type_Def      *ਕੁੰਜੀ_Type;
         SymbolsDef      *syms;
-        ModMapDef       *modMask;
-        GroupCompatDef  *groupCompat;
+        ModMapDef       *mod_ਨਕਾਬ_2;
+        ਸਮੂਹ_Compat_Def  *ਸਮੂਹ_Compat;
         LedMapDef       *ledMap;
         LedNameDef      *ledName;
-        KeycodeDef      *keyCode;
-        KeyAliasDef     *keyAlias;
+        KeycodeDef      *ਕੁੰਜੀ_ਕੋਡ;
+        ਕੁੰਜੀ_Alias_Def     *ਕੁੰਜੀ_Alias;
         UnknownStatement *unknown;
-        void            *geom;
+        ਖਾਲੀ            *geom;
         XkbFile         *file;
-        struct { XkbFile *head; XkbFile *last; } fileList;
+        ਬਣਤਰ { XkbFile *ਸਿਰ; XkbFile *ਆਖਰੀ; } fileList;
 
-#line 173 "src/xkbcomp/parser.h"
+#ਸਤਰ 173 "src/xkbcomp/parser.h"
 
 };
-typedef union YYSTYPE YYSTYPE;
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਸੰਘ YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
-#endif
+#ਜੇ_ਅੰਤ
 
 
 
 
-int _xkbcommon_parse (struct parser_param *param);
+ਪੂਰਨ _xkbcommon_parse (ਬਣਤਰ parser_param *param);
 
 
-#endif /* !YY__XKBCOMMON_SRC_XKBCOMP_PARSER_H_INCLUDED  */
+#ਜੇ_ਅੰਤ /* !YY__XKBCOMMON_SRC_XKBCOMP_PARSER_H_INCLUDED  */

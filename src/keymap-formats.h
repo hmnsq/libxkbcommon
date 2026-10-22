@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: MIT
  */
 
-#pragma once
+#ਹਦਾਇਤ once
 
-#include "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
 
-#include "xkbcommon/xkbcommon.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xkbcommon/xkbcommon.h"
 
-#define DEFAULT_INPUT_KEYMAP_FORMAT  XKB_KEYMAP_FORMAT_TEXT_V2
-#define DEFAULT_OUTPUT_KEYMAP_FORMAT XKB_KEYMAP_USE_ORIGINAL_FORMAT
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DEFAULT_ਨਿਵੇਸ਼_KEYMAP_FORMAT  XKB_KEYMAP_FORMAT_ਪਾਠ_V2
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DEFAULT_OUTPUT_KEYMAP_FORMAT XKB_KEYMAP_USE_ORIGINAL_FORMAT
 
 /**
  * Provide an array of the supported keymap formats, sorted in ascending order
@@ -23,8 +23,8 @@
  *
  * @memberof xkb_keymap
  */
-size_t
-xkb_keymap_supported_formats(const enum xkb_keymap_format **formats);
+ਮਾਪ_t
+xkb_keymap_supported_formats(ਅਚਲ ਗਿਣਤੀ xkb_keymap_format **formats);
 
 /**
  * Check if the given keymap format is supported.
@@ -34,7 +34,7 @@ xkb_keymap_supported_formats(const enum xkb_keymap_format **formats);
  * @memberof xkb_keymap
  */
 bool
-xkb_keymap_is_supported_format(enum xkb_keymap_format format);
+xkb_keymap_is_supported_format(ਗਿਣਤੀ xkb_keymap_format format);
 
 /**
  * Parse a keymap version.
@@ -44,8 +44,8 @@ xkb_keymap_is_supported_format(enum xkb_keymap_format format);
  *
  * @return The corresponding format or 0 on error.
  */
-enum xkb_keymap_format
-xkb_keymap_parse_format(const char *raw);
+ਗਿਣਤੀ xkb_keymap_format
+xkb_keymap_parse_format(ਅਚਲ ਅੱਖਰ *raw);
 
 /**
  * Return a human-friendly label for the keymap format.
@@ -54,5 +54,5 @@ xkb_keymap_parse_format(const char *raw);
  *
  * @return The label corresponding to the format, or `NULL` if not supported.
  */
-const char *
-xkb_keymap_get_format_label(enum xkb_keymap_format format);
+ਅਚਲ ਅੱਖਰ *
+xkb_keymap_get_format_label(ਗਿਣਤੀ xkb_keymap_format format);

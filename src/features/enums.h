@@ -9,130 +9,130 @@
  * SPDX-License-Identifier: MIT
  */
 
-#pragma once
+#ਹਦਾਇਤ once
 
-#include "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
 
-#include <assert.h>
-#include <limits.h>
-#include <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <assert.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <limits.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-compose.h"
-#include "xkbcommon/xkbcommon-status.h"
-#include "xkbcommon/xkbcommon-features.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xkbcommon/xkbcommon.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xkbcommon/xkbcommon-compose.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xkbcommon/xkbcommon-status.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xkbcommon/xkbcommon-features.h"
 
-#ifndef UINT32_WIDTH
-#define UINT32_WIDTH (sizeof(uint32_t) * CHAR_BIT)
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ UINT32_ਚੌੜਾਈ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ UINT32_ਚੌੜਾਈ (ਆਕਾਰ(uint32_t) * CHAR_BIT)
+#ਜੇ_ਅੰਤ
 
 /*
  * Enumerations whose values can be ORed
  */
 
-static_assert(XKB_KEYMAP_FORMAT_TEXT_V1 >= 0 &&
-              XKB_KEYMAP_FORMAT_TEXT_V1 < UINT32_WIDTH, "");
-static_assert(XKB_KEYMAP_FORMAT_TEXT_V2 >= 0 &&
-              XKB_KEYMAP_FORMAT_TEXT_V2 < UINT32_WIDTH, "");
-static_assert(XKB_KEY_UP >= 0 &&
-              XKB_KEY_UP < UINT32_WIDTH, "");
-static_assert(XKB_KEY_DOWN >= 0 &&
-              XKB_KEY_DOWN < UINT32_WIDTH, "");
-static_assert(XKB_KEY_REPEATED >= 0 &&
-              XKB_KEY_REPEATED < UINT32_WIDTH, "");
+static_assert(XKB_KEYMAP_FORMAT_ਪਾਠ_V1 >= 0 &&
+              XKB_KEYMAP_FORMAT_ਪਾਠ_V1 < UINT32_ਚੌੜਾਈ, "");
+static_assert(XKB_KEYMAP_FORMAT_ਪਾਠ_V2 >= 0 &&
+              XKB_KEYMAP_FORMAT_ਪਾਠ_V2 < UINT32_ਚੌੜਾਈ, "");
+static_assert(XKB_ਕੁੰਜੀ_ਉੱਪਰ >= 0 &&
+              XKB_ਕੁੰਜੀ_ਉੱਪਰ < UINT32_ਚੌੜਾਈ, "");
+static_assert(XKB_ਕੁੰਜੀ_ਥੱਲੇ >= 0 &&
+              XKB_ਕੁੰਜੀ_ਥੱਲੇ < UINT32_ਚੌੜਾਈ, "");
+static_assert(XKB_ਕੁੰਜੀ_REPEATED >= 0 &&
+              XKB_ਕੁੰਜੀ_REPEATED < UINT32_ਚੌੜਾਈ, "");
 static_assert(XKB_EVENT_TYPE_INVALID >= 0 &&
-              XKB_EVENT_TYPE_INVALID < UINT32_WIDTH, "");
-static_assert(XKB_EVENT_TYPE_FRAME >= 0 &&
-              XKB_EVENT_TYPE_FRAME < UINT32_WIDTH, "");
-static_assert(XKB_EVENT_TYPE_KEY >= 0 &&
-              XKB_EVENT_TYPE_KEY < UINT32_WIDTH, "");
+              XKB_EVENT_TYPE_INVALID < UINT32_ਚੌੜਾਈ, "");
+static_assert(XKB_EVENT_TYPE_ਚੌਖਟਾ >= 0 &&
+              XKB_EVENT_TYPE_ਚੌਖਟਾ < UINT32_ਚੌੜਾਈ, "");
+static_assert(XKB_EVENT_TYPE_ਕੁੰਜੀ >= 0 &&
+              XKB_EVENT_TYPE_ਕੁੰਜੀ < UINT32_ਚੌੜਾਈ, "");
 static_assert(XKB_EVENT_TYPE_STATE_COMPONENTS >= 0 &&
-              XKB_EVENT_TYPE_STATE_COMPONENTS < UINT32_WIDTH, "");
-static_assert(XKB_EVENT_TYPE_POINTER_MOTION >= 0 &&
-              XKB_EVENT_TYPE_POINTER_MOTION < UINT32_WIDTH, "");
-static_assert(XKB_EVENT_TYPE_POINTER_BUTTON >= 0 &&
-              XKB_EVENT_TYPE_POINTER_BUTTON < UINT32_WIDTH, "");
+              XKB_EVENT_TYPE_STATE_COMPONENTS < UINT32_ਚੌੜਾਈ, "");
+static_assert(XKB_EVENT_TYPE_ਸੂਚਕ_MOTION >= 0 &&
+              XKB_EVENT_TYPE_ਸੂਚਕ_MOTION < UINT32_ਚੌੜਾਈ, "");
+static_assert(XKB_EVENT_TYPE_ਸੂਚਕ_BUTTON >= 0 &&
+              XKB_EVENT_TYPE_ਸੂਚਕ_BUTTON < UINT32_ਚੌੜਾਈ, "");
 static_assert(XKB_EVENT_TYPE_TERMINATE_DISPLAY_SERVER >= 0 &&
-              XKB_EVENT_TYPE_TERMINATE_DISPLAY_SERVER < UINT32_WIDTH, "");
+              XKB_EVENT_TYPE_TERMINATE_DISPLAY_SERVER < UINT32_ਚੌੜਾਈ, "");
 static_assert(XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE >= 0 &&
-              XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE < UINT32_WIDTH, "");
-static_assert(XKB_POINTER_BUTTON_RELEASED >= 0 &&
-              XKB_POINTER_BUTTON_RELEASED < UINT32_WIDTH, "");
-static_assert(XKB_POINTER_BUTTON_PRESSED >= 0 &&
-              XKB_POINTER_BUTTON_PRESSED < UINT32_WIDTH, "");
-static_assert(XKB_LAYOUT_OUT_OF_RANGE_WRAP >= 0 &&
-              XKB_LAYOUT_OUT_OF_RANGE_WRAP < UINT32_WIDTH, "");
-static_assert(XKB_LAYOUT_OUT_OF_RANGE_CLAMP >= 0 &&
-              XKB_LAYOUT_OUT_OF_RANGE_CLAMP < UINT32_WIDTH, "");
-static_assert(XKB_LAYOUT_OUT_OF_RANGE_REDIRECT >= 0 &&
-              XKB_LAYOUT_OUT_OF_RANGE_REDIRECT < UINT32_WIDTH, "");
-static_assert(XKB_STATE_MODE_CLIENT >= 0 &&
-              XKB_STATE_MODE_CLIENT < UINT32_WIDTH, "");
-static_assert(XKB_STATE_MODE_SERVER_QUERY >= 0 &&
-              XKB_STATE_MODE_SERVER_QUERY < UINT32_WIDTH, "");
-static_assert(XKB_STATE_MODE_SERVER >= 0 &&
-              XKB_STATE_MODE_SERVER < UINT32_WIDTH, "");
-static_assert(XKB_CONSUMED_MODE_XKB >= 0 &&
-              XKB_CONSUMED_MODE_XKB < UINT32_WIDTH, "");
-static_assert(XKB_CONSUMED_MODE_GTK >= 0 &&
-              XKB_CONSUMED_MODE_GTK < UINT32_WIDTH, "");
-static_assert(XKB_COMPOSE_FORMAT_TEXT_V1 >= 0 &&
-              XKB_COMPOSE_FORMAT_TEXT_V1 < UINT32_WIDTH, "");
+              XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE < UINT32_ਚੌੜਾਈ, "");
+static_assert(XKB_ਸੂਚਕ_BUTTON_RELEASED >= 0 &&
+              XKB_ਸੂਚਕ_BUTTON_RELEASED < UINT32_ਚੌੜਾਈ, "");
+static_assert(XKB_ਸੂਚਕ_BUTTON_PRESSED >= 0 &&
+              XKB_ਸੂਚਕ_BUTTON_PRESSED < UINT32_ਚੌੜਾਈ, "");
+static_assert(XKB_LAYOUT_ਬਾਹਰਲਾ_ਦਾ_RANGE_WRAP >= 0 &&
+              XKB_LAYOUT_ਬਾਹਰਲਾ_ਦਾ_RANGE_WRAP < UINT32_ਚੌੜਾਈ, "");
+static_assert(XKB_LAYOUT_ਬਾਹਰਲਾ_ਦਾ_RANGE_CLAMP >= 0 &&
+              XKB_LAYOUT_ਬਾਹਰਲਾ_ਦਾ_RANGE_CLAMP < UINT32_ਚੌੜਾਈ, "");
+static_assert(XKB_LAYOUT_ਬਾਹਰਲਾ_ਦਾ_RANGE_REDIRECT >= 0 &&
+              XKB_LAYOUT_ਬਾਹਰਲਾ_ਦਾ_RANGE_REDIRECT < UINT32_ਚੌੜਾਈ, "");
+static_assert(XKB_STATE_ਬਹੁਲਕ_CLIENT >= 0 &&
+              XKB_STATE_ਬਹੁਲਕ_CLIENT < UINT32_ਚੌੜਾਈ, "");
+static_assert(XKB_STATE_ਬਹੁਲਕ_SERVER_QUERY >= 0 &&
+              XKB_STATE_ਬਹੁਲਕ_SERVER_QUERY < UINT32_ਚੌੜਾਈ, "");
+static_assert(XKB_STATE_ਬਹੁਲਕ_SERVER >= 0 &&
+              XKB_STATE_ਬਹੁਲਕ_SERVER < UINT32_ਚੌੜਾਈ, "");
+static_assert(XKB_CONSUMED_ਬਹੁਲਕ_XKB >= 0 &&
+              XKB_CONSUMED_ਬਹੁਲਕ_XKB < UINT32_ਚੌੜਾਈ, "");
+static_assert(XKB_CONSUMED_ਬਹੁਲਕ_GTK >= 0 &&
+              XKB_CONSUMED_ਬਹੁਲਕ_GTK < UINT32_ਚੌੜਾਈ, "");
+static_assert(XKB_COMPOSE_FORMAT_ਪਾਠ_V1 >= 0 &&
+              XKB_COMPOSE_FORMAT_ਪਾਠ_V1 < UINT32_ਚੌੜਾਈ, "");
 static_assert(XKB_COMPOSE_NOTHING >= 0 &&
-              XKB_COMPOSE_NOTHING < UINT32_WIDTH, "");
+              XKB_COMPOSE_NOTHING < UINT32_ਚੌੜਾਈ, "");
 static_assert(XKB_COMPOSE_COMPOSING >= 0 &&
-              XKB_COMPOSE_COMPOSING < UINT32_WIDTH, "");
+              XKB_COMPOSE_COMPOSING < UINT32_ਚੌੜਾਈ, "");
 static_assert(XKB_COMPOSE_COMPOSED >= 0 &&
-              XKB_COMPOSE_COMPOSED < UINT32_WIDTH, "");
+              XKB_COMPOSE_COMPOSED < UINT32_ਚੌੜਾਈ, "");
 static_assert(XKB_COMPOSE_CANCELLED >= 0 &&
-              XKB_COMPOSE_CANCELLED < UINT32_WIDTH, "");
+              XKB_COMPOSE_CANCELLED < UINT32_ਚੌੜਾਈ, "");
 static_assert(XKB_COMPOSE_FEED_IGNORED >= 0 &&
-              XKB_COMPOSE_FEED_IGNORED < UINT32_WIDTH, "");
+              XKB_COMPOSE_FEED_IGNORED < UINT32_ਚੌੜਾਈ, "");
 static_assert(XKB_COMPOSE_FEED_ACCEPTED >= 0 &&
-              XKB_COMPOSE_FEED_ACCEPTED < UINT32_WIDTH, "");
+              XKB_COMPOSE_FEED_ACCEPTED < UINT32_ਚੌੜਾਈ, "");
 
-enum xkb_enumerations_values {
-    XKB_RMLVO_BUILDER_FLAGS_VALUES
+ਗਿਣਤੀ xkb_enumerations_ਮੁੱਲਾਂ {
+    XKB_RMLVO_BUILDER_FLAGS_ਮੁੱਲਾਂ
         = XKB_RMLVO_BUILDER_NO_FLAGS
     ,
-    XKB_KEYSYM_FLAGS_VALUES
+    XKB_KEYSYM_FLAGS_ਮੁੱਲਾਂ
         = XKB_KEYSYM_NO_FLAGS
         | XKB_KEYSYM_CASE_INSENSITIVE
     ,
-    XKB_CONTEXT_FLAGS_VALUES
+    XKB_CONTEXT_FLAGS_ਮੁੱਲਾਂ
         = XKB_CONTEXT_NO_FLAGS
         | XKB_CONTEXT_NO_DEFAULT_INCLUDES
-        | XKB_CONTEXT_NO_ENVIRONMENT_NAMES
+        | XKB_CONTEXT_NO_ENVIRONMENT_ਨਾਂ
         | XKB_CONTEXT_NO_SECURE_GETENV
     ,
-    XKB_KEYMAP_COMPILE_FLAGS_VALUES
+    XKB_KEYMAP_COMPILE_FLAGS_ਮੁੱਲਾਂ
         = XKB_KEYMAP_COMPILE_NO_FLAGS
-        | XKB_KEYMAP_COMPILE_STRICT_MODE
+        | XKB_KEYMAP_COMPILE_STRICT_ਬਹੁਲਕ
     ,
-    XKB_KEYMAP_FORMAT_VALUES
-        = (1u << XKB_KEYMAP_FORMAT_TEXT_V1)
-        | (1u << XKB_KEYMAP_FORMAT_TEXT_V2)
+    XKB_KEYMAP_FORMAT_ਮੁੱਲਾਂ
+        = (1u << XKB_KEYMAP_FORMAT_ਪਾਠ_V1)
+        | (1u << XKB_KEYMAP_FORMAT_ਪਾਠ_V2)
     ,
-    XKB_KEYMAP_SERIALIZE_FLAGS_VALUES
+    XKB_KEYMAP_SERIALIZE_FLAGS_ਮੁੱਲਾਂ
         = XKB_KEYMAP_SERIALIZE_NO_FLAGS
         | XKB_KEYMAP_SERIALIZE_PRETTY
-        | XKB_KEYMAP_SERIALIZE_KEEP_UNUSED
-        | XKB_KEYMAP_SERIALIZE_STRICT_MODE
-        | XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_VALUES
+        | XKB_KEYMAP_SERIALIZE_KEEP_ਅਣਵਰਤਿਆ
+        | XKB_KEYMAP_SERIALIZE_STRICT_ਬਹੁਲਕ
+        | XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_ਮੁੱਲਾਂ
         | XKB_KEYMAP_SERIALIZE_EXPLICIT_VMODS
-        | XKB_KEYMAP_SERIALIZE_EXPLICIT_KEY_VALUES
+        | XKB_KEYMAP_SERIALIZE_EXPLICIT_ਕੁੰਜੀ_ਮੁੱਲਾਂ
     ,
-    XKB_KEYMAP_KEY_ITERATOR_FLAGS_VALUES
-        = XKB_KEYMAP_KEY_ITERATOR_NO_FLAGS
-        | XKB_KEYMAP_KEY_ITERATOR_DESCENDING_ORDER
-        | XKB_KEYMAP_KEY_ITERATOR_INCLUDE_UNBOUND
+    XKB_KEYMAP_ਕੁੰਜੀ_ITERATOR_FLAGS_ਮੁੱਲਾਂ
+        = XKB_KEYMAP_ਕੁੰਜੀ_ITERATOR_NO_FLAGS
+        | XKB_KEYMAP_ਕੁੰਜੀ_ITERATOR_DESCENDING_ਕ੍ਰਮ
+        | XKB_KEYMAP_ਕੁੰਜੀ_ITERATOR_INCLUDE_UNBOUND
     ,
-    XKB_KEY_DIRECTION_VALUES
-        = (1u << XKB_KEY_UP)
-        | (1u << XKB_KEY_DOWN)
-        | (1u << XKB_KEY_REPEATED)
+    XKB_ਕੁੰਜੀ_DIRECTION_ਮੁੱਲਾਂ
+        = (1u << XKB_ਕੁੰਜੀ_ਉੱਪਰ)
+        | (1u << XKB_ਕੁੰਜੀ_ਥੱਲੇ)
+        | (1u << XKB_ਕੁੰਜੀ_REPEATED)
     ,
-    XKB_STATE_COMPONENT_VALUES
+    XKB_STATE_COMPONENT_ਮੁੱਲਾਂ
         = XKB_STATE_NO_COMPONENT
         | XKB_STATE_MODS_DEPRESSED
         | XKB_STATE_MODS_LATCHED
@@ -145,134 +145,134 @@ enum xkb_enumerations_values {
         | XKB_STATE_LEDS
         | XKB_STATE_CONTROLS_EFFECTIVE
     ,
-    XKB_KEYBOARD_CONTROL_FLAGS_VALUES
+    XKB_KEYBOARD_CONTROL_FLAGS_ਮੁੱਲਾਂ
         = XKB_KEYBOARD_CONTROL_NO_FLAGS
-        | XKB_KEYBOARD_CONTROL_A11Y_STICKY_KEYS
-        | XKB_KEYBOARD_CONTROL_MOUSE_KEYS
+        | XKB_KEYBOARD_CONTROL_A11_Y_STICKY_ਕੁੰਜੀਆਂ
+        | XKB_KEYBOARD_CONTROL_MOUSE_ਕੁੰਜੀਆਂ
     ,
-    XKB_EVENT_TYPE_VALUES
+    XKB_EVENT_TYPE_ਮੁੱਲਾਂ
         = (1u << XKB_EVENT_TYPE_INVALID)
-        | (1u << XKB_EVENT_TYPE_FRAME)
-        | (1u << XKB_EVENT_TYPE_KEY)
+        | (1u << XKB_EVENT_TYPE_ਚੌਖਟਾ)
+        | (1u << XKB_EVENT_TYPE_ਕੁੰਜੀ)
         | (1u << XKB_EVENT_TYPE_STATE_COMPONENTS)
-        | (1u << XKB_EVENT_TYPE_POINTER_MOTION)
-        | (1u << XKB_EVENT_TYPE_POINTER_BUTTON)
+        | (1u << XKB_EVENT_TYPE_ਸੂਚਕ_MOTION)
+        | (1u << XKB_EVENT_TYPE_ਸੂਚਕ_BUTTON)
         | (1u << XKB_EVENT_TYPE_TERMINATE_DISPLAY_SERVER)
         | (1u << XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE)
     ,
-    XKB_POINTER_MOTION_FLAGS_VALUES
-        = XKB_POINTER_MOTION_NO_FLAGS
-        | XKB_POINTER_MOTION_REPEATS
-        | XKB_POINTER_MOTION_ABSOLUTE_X
-        | XKB_POINTER_MOTION_ABSOLUTE_Y
+    XKB_ਸੂਚਕ_MOTION_FLAGS_ਮੁੱਲਾਂ
+        = XKB_ਸੂਚਕ_MOTION_NO_FLAGS
+        | XKB_ਸੂਚਕ_MOTION_REPEATS
+        | XKB_ਸੂਚਕ_MOTION_ABSOLUTE_X
+        | XKB_ਸੂਚਕ_MOTION_ABSOLUTE_Y
     ,
-    XKB_POINTER_BUTTON_STATE_VALUES
-        = (1u << XKB_POINTER_BUTTON_RELEASED)
-        | (1u << XKB_POINTER_BUTTON_PRESSED)
+    XKB_ਸੂਚਕ_BUTTON_STATE_ਮੁੱਲਾਂ
+        = (1u << XKB_ਸੂਚਕ_BUTTON_RELEASED)
+        | (1u << XKB_ਸੂਚਕ_BUTTON_PRESSED)
     ,
-    XKB_EVENTS_FLAGS_VALUES
+    XKB_EVENTS_FLAGS_ਮੁੱਲਾਂ
         = XKB_EVENTS_NO_FLAGS
     ,
-    XKB_MACHINE_BUILDER_FLAGS_VALUES
+    XKB_MACHINE_BUILDER_FLAGS_ਮੁੱਲਾਂ
         = XKB_MACHINE_BUILDER_NO_FLAGS
     ,
-    XKB_MACHINE_FLAGS_VALUES
+    XKB_MACHINE_FLAGS_ਮੁੱਲਾਂ
         = XKB_MACHINE_NO_FLAGS
         | XKB_MACHINE_SERVER_ACTIONS
-        | XKB_MACHINE_DISABLE_LAYOUT_SWITCH_ON_MODIFIER_KEY_FIX
+        | XKB_MACHINE_DISABLE_LAYOUT_SWITCH_ON_MODIFIER_ਕੁੰਜੀ_FIX
         | XKB_MACHINE_UNLOCK_MODS_ON_PRESS
     ,
-    XKB_A11Y_FLAGS_VALUES
+    XKB_A11_Y_FLAGS_ਮੁੱਲਾਂ
         = XKB_A11Y_NO_FLAGS
-        | XKB_A11Y_STICKY_KEYS_NO_SIMULTANEOUS_KEYS
-        | XKB_A11Y_STICKY_KEYS_LATCH_TO_LOCK
-        | XKB_A11Y_LATCH_SIMULTANEOUS_KEYS
+        | XKB_A11_Y_STICKY_ਕੁੰਜੀਆਂ_NO_ਇੱਕੋ_ਵੇਲੇ_ਕੁੰਜੀਆਂ
+        | XKB_A11_Y_STICKY_ਕੁੰਜੀਆਂ_LATCH_ਮੰਜ਼ਿਲ_ਤਾਲਾ
+        | XKB_A11_Y_LATCH_ਇੱਕੋ_ਵੇਲੇ_ਕੁੰਜੀਆਂ
     ,
-    XKB_LAYOUT_OUT_OF_RANGE_POLICY_VALUES
-        = (1u << XKB_LAYOUT_OUT_OF_RANGE_WRAP)
-        | (1u << XKB_LAYOUT_OUT_OF_RANGE_CLAMP)
-        | (1u << XKB_LAYOUT_OUT_OF_RANGE_REDIRECT)
+    XKB_LAYOUT_ਬਾਹਰਲਾ_ਦਾ_RANGE_POLICY_ਮੁੱਲਾਂ
+        = (1u << XKB_LAYOUT_ਬਾਹਰਲਾ_ਦਾ_RANGE_WRAP)
+        | (1u << XKB_LAYOUT_ਬਾਹਰਲਾ_ਦਾ_RANGE_CLAMP)
+        | (1u << XKB_LAYOUT_ਬਾਹਰਲਾ_ਦਾ_RANGE_REDIRECT)
     ,
-    XKB_STATE_MODE_VALUES
-        = (1u << XKB_STATE_MODE_CLIENT)
-        | (1u << XKB_STATE_MODE_SERVER_QUERY)
-        | (1u << XKB_STATE_MODE_SERVER)
+    XKB_STATE_ਬਹੁਲਕ_ਮੁੱਲਾਂ
+        = (1u << XKB_STATE_ਬਹੁਲਕ_CLIENT)
+        | (1u << XKB_STATE_ਬਹੁਲਕ_SERVER_QUERY)
+        | (1u << XKB_STATE_ਬਹੁਲਕ_SERVER)
     ,
-    XKB_STATE_MATCH_VALUES
-        = XKB_STATE_MATCH_ANY
-        | XKB_STATE_MATCH_ALL
-        | XKB_STATE_MATCH_NON_EXCLUSIVE
+    XKB_STATE_ਮੇਲ_ਮੁੱਲਾਂ
+        = XKB_STATE_ਮੇਲ_ANY
+        | XKB_STATE_ਮੇਲ_ALL
+        | XKB_STATE_ਮੇਲ_NON_EXCLUSIVE
     ,
-    XKB_CONSUMED_MODE_VALUES
-        = (1u << XKB_CONSUMED_MODE_XKB)
-        | (1u << XKB_CONSUMED_MODE_GTK)
+    XKB_CONSUMED_ਬਹੁਲਕ_ਮੁੱਲਾਂ
+        = (1u << XKB_CONSUMED_ਬਹੁਲਕ_XKB)
+        | (1u << XKB_CONSUMED_ਬਹੁਲਕ_GTK)
     ,
-    XKB_COMPOSE_COMPILE_FLAGS_VALUES
+    XKB_COMPOSE_COMPILE_FLAGS_ਮੁੱਲਾਂ
         = XKB_COMPOSE_COMPILE_NO_FLAGS
     ,
-    XKB_COMPOSE_FORMAT_VALUES
-        = (1u << XKB_COMPOSE_FORMAT_TEXT_V1)
+    XKB_COMPOSE_FORMAT_ਮੁੱਲਾਂ
+        = (1u << XKB_COMPOSE_FORMAT_ਪਾਠ_V1)
     ,
-    XKB_COMPOSE_STATE_FLAGS_VALUES
+    XKB_COMPOSE_STATE_FLAGS_ਮੁੱਲਾਂ
         = XKB_COMPOSE_STATE_NO_FLAGS
     ,
-    XKB_COMPOSE_STATUS_VALUES
+    XKB_COMPOSE_ਸਥਿਤੀ_ਮੁੱਲਾਂ
         = (1u << XKB_COMPOSE_NOTHING)
         | (1u << XKB_COMPOSE_COMPOSING)
         | (1u << XKB_COMPOSE_COMPOSED)
         | (1u << XKB_COMPOSE_CANCELLED)
     ,
-    XKB_COMPOSE_FEED_RESULT_VALUES
+    XKB_COMPOSE_FEED_ਨਤੀਜਾ_ਮੁੱਲਾਂ
         = (1u << XKB_COMPOSE_FEED_IGNORED)
         | (1u << XKB_COMPOSE_FEED_ACCEPTED)
     ,
-    ENUM_LOWEST_VALUE = XKB_ERROR_INVALID,
-    ENUM_LOWEST_FLAG_VALUE = XKB_RMLVO_BUILDER_NO_FLAGS,
-    ENUM_HIGHEST_VALUE = XKB_STATE_MATCH_NON_EXCLUSIVE,
-    ENUM_HIGHEST_FLAG_VALUE = XKB_STATE_MATCH_NON_EXCLUSIVE,
+    ENUM_ਸਭ_ਤੋਂ_ਨੀਵਾਂ_ਮੁੱਲ = XKB_ERROR_INVALID,
+    ENUM_ਸਭ_ਤੋਂ_ਨੀਵਾਂ_FLAG_ਮੁੱਲ = XKB_RMLVO_BUILDER_NO_FLAGS,
+    ENUM_HIGHEST_ਮੁੱਲ = XKB_STATE_ਮੇਲ_NON_EXCLUSIVE,
+    ENUM_HIGHEST_FLAG_ਮੁੱਲ = XKB_STATE_ਮੇਲ_NON_EXCLUSIVE,
 };
 
 /*
  * Explicit and implict values of enumerations
  */
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_rmlvo_builder_flags_values[] = {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_ਨਿੱਜੀ_APIS
+ਸਥਿਰ ਅਚਲ uint32_t xkb_rmlvo_builder_flags_ਮੁੱਲਾਂ[] = {
     XKB_RMLVO_BUILDER_NO_FLAGS,
 };
-#endif
+#ਜੇ_ਅੰਤ
 
-enum xkb_rmlvo_builder_flags_bounds {
+ਗਿਣਤੀ xkb_rmlvo_builder_flags_bounds {
     _XKB_RMLVO_BUILDER_FLAGS_MIN = XKB_RMLVO_BUILDER_NO_FLAGS,
     _XKB_RMLVO_BUILDER_FLAGS_MAX = XKB_RMLVO_BUILDER_NO_FLAGS,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_keysym_flags_values[] = {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_ਨਿੱਜੀ_APIS
+ਸਥਿਰ ਅਚਲ uint32_t xkb_keysym_flags_ਮੁੱਲਾਂ[] = {
     XKB_KEYSYM_NO_FLAGS,
     XKB_KEYSYM_CASE_INSENSITIVE,
 };
-#endif
+#ਜੇ_ਅੰਤ
 
-enum xkb_keysym_flags_bounds {
+ਗਿਣਤੀ xkb_keysym_flags_bounds {
     _XKB_KEYSYM_FLAGS_MIN = XKB_KEYSYM_NO_FLAGS,
     _XKB_KEYSYM_FLAGS_MAX = XKB_KEYSYM_CASE_INSENSITIVE,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_context_flags_values[] = {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_ਨਿੱਜੀ_APIS
+ਸਥਿਰ ਅਚਲ uint32_t xkb_context_flags_ਮੁੱਲਾਂ[] = {
     XKB_CONTEXT_NO_FLAGS,
     XKB_CONTEXT_NO_DEFAULT_INCLUDES,
-    XKB_CONTEXT_NO_ENVIRONMENT_NAMES,
+    XKB_CONTEXT_NO_ENVIRONMENT_ਨਾਂ,
     XKB_CONTEXT_NO_SECURE_GETENV,
 };
-#endif
+#ਜੇ_ਅੰਤ
 
-enum xkb_context_flags_bounds {
+ਗਿਣਤੀ xkb_context_flags_bounds {
     _XKB_CONTEXT_FLAGS_MIN = XKB_CONTEXT_NO_FLAGS,
     _XKB_CONTEXT_FLAGS_MAX = XKB_CONTEXT_NO_SECURE_GETENV,
 };
-static const uint32_t xkb_log_level_values[] = {
+ਸਥਿਰ ਅਚਲ uint32_t xkb_log_level_ਮੁੱਲਾਂ[] = {
     XKB_LOG_LEVEL_CRITICAL,
     XKB_LOG_LEVEL_ERROR,
     XKB_LOG_LEVEL_WARNING,
@@ -280,83 +280,83 @@ static const uint32_t xkb_log_level_values[] = {
     XKB_LOG_LEVEL_DEBUG,
 };
 
-enum xkb_log_level_bounds {
+ਗਿਣਤੀ xkb_log_level_bounds {
     _XKB_LOG_LEVEL_MIN = XKB_LOG_LEVEL_CRITICAL,
     _XKB_LOG_LEVEL_MAX = XKB_LOG_LEVEL_DEBUG,
-    _XKB_LOG_LEVEL_NUM = 5,
+    XKB_LOG_LEVEL_ਅੰਕ = 5,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_keymap_compile_flags_values[] = {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_ਨਿੱਜੀ_APIS
+ਸਥਿਰ ਅਚਲ uint32_t xkb_keymap_compile_flags_ਮੁੱਲਾਂ[] = {
     XKB_KEYMAP_COMPILE_NO_FLAGS,
-    XKB_KEYMAP_COMPILE_STRICT_MODE,
+    XKB_KEYMAP_COMPILE_STRICT_ਬਹੁਲਕ,
 };
-#endif
+#ਜੇ_ਅੰਤ
 
-enum xkb_keymap_compile_flags_bounds {
+ਗਿਣਤੀ xkb_keymap_compile_flags_bounds {
     _XKB_KEYMAP_COMPILE_FLAGS_MIN = XKB_KEYMAP_COMPILE_NO_FLAGS,
-    _XKB_KEYMAP_COMPILE_FLAGS_MAX = XKB_KEYMAP_COMPILE_STRICT_MODE,
+    _XKB_KEYMAP_COMPILE_FLAGS_MAX = XKB_KEYMAP_COMPILE_STRICT_ਬਹੁਲਕ,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_keymap_format_values[] = {
-    XKB_KEYMAP_FORMAT_TEXT_V1,
-    XKB_KEYMAP_FORMAT_TEXT_V2,
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_ਨਿੱਜੀ_APIS
+ਸਥਿਰ ਅਚਲ uint32_t xkb_keymap_format_ਮੁੱਲਾਂ[] = {
+    XKB_KEYMAP_FORMAT_ਪਾਠ_V1,
+    XKB_KEYMAP_FORMAT_ਪਾਠ_V2,
 };
-#endif
+#ਜੇ_ਅੰਤ
 
-enum xkb_keymap_format_bounds {
-    _XKB_KEYMAP_FORMAT_MIN = XKB_KEYMAP_FORMAT_TEXT_V1,
-    _XKB_KEYMAP_FORMAT_MAX = XKB_KEYMAP_FORMAT_TEXT_V2,
-    _XKB_KEYMAP_FORMAT_NUM = 2,
+ਗਿਣਤੀ xkb_keymap_format_bounds {
+    _XKB_KEYMAP_FORMAT_MIN = XKB_KEYMAP_FORMAT_ਪਾਠ_V1,
+    _XKB_KEYMAP_FORMAT_MAX = XKB_KEYMAP_FORMAT_ਪਾਠ_V2,
+    XKB_KEYMAP_FORMAT_ਅੰਕ = 2,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_keymap_serialize_flags_values[] = {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_ਨਿੱਜੀ_APIS
+ਸਥਿਰ ਅਚਲ uint32_t xkb_keymap_serialize_flags_ਮੁੱਲਾਂ[] = {
     XKB_KEYMAP_SERIALIZE_NO_FLAGS,
     XKB_KEYMAP_SERIALIZE_PRETTY,
-    XKB_KEYMAP_SERIALIZE_KEEP_UNUSED,
-    XKB_KEYMAP_SERIALIZE_STRICT_MODE,
-    XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_VALUES,
+    XKB_KEYMAP_SERIALIZE_KEEP_ਅਣਵਰਤਿਆ,
+    XKB_KEYMAP_SERIALIZE_STRICT_ਬਹੁਲਕ,
+    XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_ਮੁੱਲਾਂ,
     XKB_KEYMAP_SERIALIZE_EXPLICIT_VMODS,
-    XKB_KEYMAP_SERIALIZE_EXPLICIT_KEY_VALUES,
+    XKB_KEYMAP_SERIALIZE_EXPLICIT_ਕੁੰਜੀ_ਮੁੱਲਾਂ,
 };
-#endif
+#ਜੇ_ਅੰਤ
 
-enum xkb_keymap_serialize_flags_bounds {
+ਗਿਣਤੀ xkb_keymap_serialize_flags_bounds {
     _XKB_KEYMAP_SERIALIZE_FLAGS_MIN = XKB_KEYMAP_SERIALIZE_NO_FLAGS,
-    _XKB_KEYMAP_SERIALIZE_FLAGS_MAX = XKB_KEYMAP_SERIALIZE_EXPLICIT_KEY_VALUES,
+    _XKB_KEYMAP_SERIALIZE_FLAGS_MAX = XKB_KEYMAP_SERIALIZE_EXPLICIT_ਕੁੰਜੀ_ਮੁੱਲਾਂ,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_keymap_key_iterator_flags_values[] = {
-    XKB_KEYMAP_KEY_ITERATOR_NO_FLAGS,
-    XKB_KEYMAP_KEY_ITERATOR_DESCENDING_ORDER,
-    XKB_KEYMAP_KEY_ITERATOR_INCLUDE_UNBOUND,
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_ਨਿੱਜੀ_APIS
+ਸਥਿਰ ਅਚਲ uint32_t xkb_keymap_ਕੁੰਜੀ_iterator_flags_ਮੁੱਲਾਂ[] = {
+    XKB_KEYMAP_ਕੁੰਜੀ_ITERATOR_NO_FLAGS,
+    XKB_KEYMAP_ਕੁੰਜੀ_ITERATOR_DESCENDING_ਕ੍ਰਮ,
+    XKB_KEYMAP_ਕੁੰਜੀ_ITERATOR_INCLUDE_UNBOUND,
 };
-#endif
+#ਜੇ_ਅੰਤ
 
-enum xkb_keymap_key_iterator_flags_bounds {
-    _XKB_KEYMAP_KEY_ITERATOR_FLAGS_MIN = XKB_KEYMAP_KEY_ITERATOR_NO_FLAGS,
-    _XKB_KEYMAP_KEY_ITERATOR_FLAGS_MAX = XKB_KEYMAP_KEY_ITERATOR_INCLUDE_UNBOUND,
-};
-
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_key_direction_values[] = {
-    XKB_KEY_UP,
-    XKB_KEY_DOWN,
-    XKB_KEY_REPEATED,
-};
-#endif
-
-enum xkb_key_direction_bounds {
-    _XKB_KEY_DIRECTION_MIN = XKB_KEY_UP,
-    _XKB_KEY_DIRECTION_MAX = XKB_KEY_REPEATED,
-    _XKB_KEY_DIRECTION_NUM = 3,
+ਗਿਣਤੀ xkb_keymap_ਕੁੰਜੀ_iterator_flags_bounds {
+    XKB_KEYMAP_ਕੁੰਜੀ_ITERATOR_FLAGS_MIN = XKB_KEYMAP_ਕੁੰਜੀ_ITERATOR_NO_FLAGS,
+    XKB_KEYMAP_ਕੁੰਜੀ_ITERATOR_FLAGS_MAX = XKB_KEYMAP_ਕੁੰਜੀ_ITERATOR_INCLUDE_UNBOUND,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_state_component_values[] = {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_ਨਿੱਜੀ_APIS
+ਸਥਿਰ ਅਚਲ uint32_t xkb_ਕੁੰਜੀ_direction_ਮੁੱਲਾਂ[] = {
+    XKB_ਕੁੰਜੀ_ਉੱਪਰ,
+    XKB_ਕੁੰਜੀ_ਥੱਲੇ,
+    XKB_ਕੁੰਜੀ_REPEATED,
+};
+#ਜੇ_ਅੰਤ
+
+ਗਿਣਤੀ xkb_ਕੁੰਜੀ_direction_bounds {
+    XKB_ਕੁੰਜੀ_DIRECTION_MIN = XKB_ਕੁੰਜੀ_ਉੱਪਰ,
+    XKB_ਕੁੰਜੀ_DIRECTION_MAX = XKB_ਕੁੰਜੀ_REPEATED,
+    XKB_ਕੁੰਜੀ_DIRECTION_ਅੰਕ = 3,
+};
+
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_ਨਿੱਜੀ_APIS
+ਸਥਿਰ ਅਚਲ uint32_t xkb_state_component_ਮੁੱਲਾਂ[] = {
     XKB_STATE_NO_COMPONENT,
     XKB_STATE_MODS_DEPRESSED,
     XKB_STATE_MODS_LATCHED,
@@ -369,253 +369,253 @@ static const uint32_t xkb_state_component_values[] = {
     XKB_STATE_LEDS,
     XKB_STATE_CONTROLS_EFFECTIVE,
 };
-#endif
+#ਜੇ_ਅੰਤ
 
-enum xkb_state_component_bounds {
+ਗਿਣਤੀ xkb_state_component_bounds {
     _XKB_STATE_COMPONENT_MIN = 0 /* implicit minimum */,
     _XKB_STATE_COMPONENT_MAX = XKB_STATE_CONTROLS_EFFECTIVE,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_keyboard_control_flags_values[] = {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_ਨਿੱਜੀ_APIS
+ਸਥਿਰ ਅਚਲ uint32_t xkb_keyboard_control_flags_ਮੁੱਲਾਂ[] = {
     XKB_KEYBOARD_CONTROL_NO_FLAGS,
-    XKB_KEYBOARD_CONTROL_A11Y_STICKY_KEYS,
-    XKB_KEYBOARD_CONTROL_MOUSE_KEYS,
+    XKB_KEYBOARD_CONTROL_A11_Y_STICKY_ਕੁੰਜੀਆਂ,
+    XKB_KEYBOARD_CONTROL_MOUSE_ਕੁੰਜੀਆਂ,
 };
-#endif
+#ਜੇ_ਅੰਤ
 
-enum xkb_keyboard_control_flags_bounds {
+ਗਿਣਤੀ xkb_keyboard_control_flags_bounds {
     _XKB_KEYBOARD_CONTROL_FLAGS_MIN = XKB_KEYBOARD_CONTROL_NO_FLAGS,
-    _XKB_KEYBOARD_CONTROL_FLAGS_MAX = XKB_KEYBOARD_CONTROL_MOUSE_KEYS,
+    _XKB_KEYBOARD_CONTROL_FLAGS_MAX = XKB_KEYBOARD_CONTROL_MOUSE_ਕੁੰਜੀਆਂ,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_event_type_values[] = {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_ਨਿੱਜੀ_APIS
+ਸਥਿਰ ਅਚਲ uint32_t xkb_event_type_ਮੁੱਲਾਂ[] = {
     XKB_EVENT_TYPE_INVALID,
-    XKB_EVENT_TYPE_FRAME,
-    XKB_EVENT_TYPE_KEY,
+    XKB_EVENT_TYPE_ਚੌਖਟਾ,
+    XKB_EVENT_TYPE_ਕੁੰਜੀ,
     XKB_EVENT_TYPE_STATE_COMPONENTS,
-    XKB_EVENT_TYPE_POINTER_MOTION,
-    XKB_EVENT_TYPE_POINTER_BUTTON,
+    XKB_EVENT_TYPE_ਸੂਚਕ_MOTION,
+    XKB_EVENT_TYPE_ਸੂਚਕ_BUTTON,
     XKB_EVENT_TYPE_TERMINATE_DISPLAY_SERVER,
     XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE,
 };
-#endif
+#ਜੇ_ਅੰਤ
 
-enum xkb_event_type_bounds {
+ਗਿਣਤੀ xkb_event_type_bounds {
     _XKB_EVENT_TYPE_MIN = XKB_EVENT_TYPE_INVALID,
     _XKB_EVENT_TYPE_MAX = XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE,
-    _XKB_EVENT_TYPE_NUM = 8,
+    XKB_EVENT_TYPE_ਅੰਕ = 8,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_pointer_motion_flags_values[] = {
-    XKB_POINTER_MOTION_NO_FLAGS,
-    XKB_POINTER_MOTION_REPEATS,
-    XKB_POINTER_MOTION_ABSOLUTE_X,
-    XKB_POINTER_MOTION_ABSOLUTE_Y,
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_ਨਿੱਜੀ_APIS
+ਸਥਿਰ ਅਚਲ uint32_t xkb_ਸੂਚਕ_motion_flags_ਮੁੱਲਾਂ[] = {
+    XKB_ਸੂਚਕ_MOTION_NO_FLAGS,
+    XKB_ਸੂਚਕ_MOTION_REPEATS,
+    XKB_ਸੂਚਕ_MOTION_ABSOLUTE_X,
+    XKB_ਸੂਚਕ_MOTION_ABSOLUTE_Y,
 };
-#endif
+#ਜੇ_ਅੰਤ
 
-enum xkb_pointer_motion_flags_bounds {
-    _XKB_POINTER_MOTION_FLAGS_MIN = XKB_POINTER_MOTION_NO_FLAGS,
-    _XKB_POINTER_MOTION_FLAGS_MAX = XKB_POINTER_MOTION_ABSOLUTE_Y,
-};
-
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_pointer_button_state_values[] = {
-    XKB_POINTER_BUTTON_RELEASED,
-    XKB_POINTER_BUTTON_PRESSED,
-};
-#endif
-
-enum xkb_pointer_button_state_bounds {
-    _XKB_POINTER_BUTTON_STATE_MIN = XKB_POINTER_BUTTON_RELEASED,
-    _XKB_POINTER_BUTTON_STATE_MAX = XKB_POINTER_BUTTON_PRESSED,
-    _XKB_POINTER_BUTTON_STATE_NUM = 2,
+ਗਿਣਤੀ xkb_ਸੂਚਕ_motion_flags_bounds {
+    XKB_ਸੂਚਕ_MOTION_FLAGS_MIN = XKB_ਸੂਚਕ_MOTION_NO_FLAGS,
+    XKB_ਸੂਚਕ_MOTION_FLAGS_MAX = XKB_ਸੂਚਕ_MOTION_ABSOLUTE_Y,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_events_flags_values[] = {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_ਨਿੱਜੀ_APIS
+ਸਥਿਰ ਅਚਲ uint32_t xkb_ਸੂਚਕ_button_state_ਮੁੱਲਾਂ[] = {
+    XKB_ਸੂਚਕ_BUTTON_RELEASED,
+    XKB_ਸੂਚਕ_BUTTON_PRESSED,
+};
+#ਜੇ_ਅੰਤ
+
+ਗਿਣਤੀ xkb_ਸੂਚਕ_button_state_bounds {
+    XKB_ਸੂਚਕ_BUTTON_STATE_MIN = XKB_ਸੂਚਕ_BUTTON_RELEASED,
+    XKB_ਸੂਚਕ_BUTTON_STATE_MAX = XKB_ਸੂਚਕ_BUTTON_PRESSED,
+    XKB_ਸੂਚਕ_BUTTON_STATE_ਅੰਕ = 2,
+};
+
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_ਨਿੱਜੀ_APIS
+ਸਥਿਰ ਅਚਲ uint32_t xkb_events_flags_ਮੁੱਲਾਂ[] = {
     XKB_EVENTS_NO_FLAGS,
 };
-#endif
+#ਜੇ_ਅੰਤ
 
-enum xkb_events_flags_bounds {
+ਗਿਣਤੀ xkb_events_flags_bounds {
     _XKB_EVENTS_FLAGS_MIN = XKB_EVENTS_NO_FLAGS,
     _XKB_EVENTS_FLAGS_MAX = XKB_EVENTS_NO_FLAGS,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_machine_builder_flags_values[] = {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_ਨਿੱਜੀ_APIS
+ਸਥਿਰ ਅਚਲ uint32_t xkb_machine_builder_flags_ਮੁੱਲਾਂ[] = {
     XKB_MACHINE_BUILDER_NO_FLAGS,
 };
-#endif
+#ਜੇ_ਅੰਤ
 
-enum xkb_machine_builder_flags_bounds {
+ਗਿਣਤੀ xkb_machine_builder_flags_bounds {
     _XKB_MACHINE_BUILDER_FLAGS_MIN = XKB_MACHINE_BUILDER_NO_FLAGS,
     _XKB_MACHINE_BUILDER_FLAGS_MAX = XKB_MACHINE_BUILDER_NO_FLAGS,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_machine_flags_values[] = {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_ਨਿੱਜੀ_APIS
+ਸਥਿਰ ਅਚਲ uint32_t xkb_machine_flags_ਮੁੱਲਾਂ[] = {
     XKB_MACHINE_NO_FLAGS,
     XKB_MACHINE_SERVER_ACTIONS,
-    XKB_MACHINE_DISABLE_LAYOUT_SWITCH_ON_MODIFIER_KEY_FIX,
+    XKB_MACHINE_DISABLE_LAYOUT_SWITCH_ON_MODIFIER_ਕੁੰਜੀ_FIX,
     XKB_MACHINE_UNLOCK_MODS_ON_PRESS,
 };
-#endif
+#ਜੇ_ਅੰਤ
 
-enum xkb_machine_flags_bounds {
+ਗਿਣਤੀ xkb_machine_flags_bounds {
     _XKB_MACHINE_FLAGS_MIN = XKB_MACHINE_NO_FLAGS,
     _XKB_MACHINE_FLAGS_MAX = XKB_MACHINE_UNLOCK_MODS_ON_PRESS,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_a11y_flags_values[] = {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_ਨਿੱਜੀ_APIS
+ਸਥਿਰ ਅਚਲ uint32_t xkb_a11y_flags_ਮੁੱਲਾਂ[] = {
     XKB_A11Y_NO_FLAGS,
-    XKB_A11Y_STICKY_KEYS_NO_SIMULTANEOUS_KEYS,
-    XKB_A11Y_STICKY_KEYS_LATCH_TO_LOCK,
-    XKB_A11Y_LATCH_SIMULTANEOUS_KEYS,
+    XKB_A11_Y_STICKY_ਕੁੰਜੀਆਂ_NO_ਇੱਕੋ_ਵੇਲੇ_ਕੁੰਜੀਆਂ,
+    XKB_A11_Y_STICKY_ਕੁੰਜੀਆਂ_LATCH_ਮੰਜ਼ਿਲ_ਤਾਲਾ,
+    XKB_A11_Y_LATCH_ਇੱਕੋ_ਵੇਲੇ_ਕੁੰਜੀਆਂ,
 };
-#endif
+#ਜੇ_ਅੰਤ
 
-enum xkb_a11y_flags_bounds {
+ਗਿਣਤੀ xkb_a11y_flags_bounds {
     _XKB_A11Y_FLAGS_MIN = XKB_A11Y_NO_FLAGS,
-    _XKB_A11Y_FLAGS_MAX = XKB_A11Y_LATCH_SIMULTANEOUS_KEYS,
+    _XKB_A11Y_FLAGS_MAX = XKB_A11_Y_LATCH_ਇੱਕੋ_ਵੇਲੇ_ਕੁੰਜੀਆਂ,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_layout_out_of_range_policy_values[] = {
-    XKB_LAYOUT_OUT_OF_RANGE_WRAP,
-    XKB_LAYOUT_OUT_OF_RANGE_CLAMP,
-    XKB_LAYOUT_OUT_OF_RANGE_REDIRECT,
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_ਨਿੱਜੀ_APIS
+ਸਥਿਰ ਅਚਲ uint32_t xkb_layout_ਬਾਹਰਲਾ_ਦਾ_range_policy_ਮੁੱਲਾਂ[] = {
+    XKB_LAYOUT_ਬਾਹਰਲਾ_ਦਾ_RANGE_WRAP,
+    XKB_LAYOUT_ਬਾਹਰਲਾ_ਦਾ_RANGE_CLAMP,
+    XKB_LAYOUT_ਬਾਹਰਲਾ_ਦਾ_RANGE_REDIRECT,
 };
-#endif
+#ਜੇ_ਅੰਤ
 
-enum xkb_layout_out_of_range_policy_bounds {
-    _XKB_LAYOUT_OUT_OF_RANGE_POLICY_MIN = XKB_LAYOUT_OUT_OF_RANGE_WRAP,
-    _XKB_LAYOUT_OUT_OF_RANGE_POLICY_MAX = XKB_LAYOUT_OUT_OF_RANGE_REDIRECT,
-    _XKB_LAYOUT_OUT_OF_RANGE_POLICY_NUM = 3,
-};
-
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_state_mode_values[] = {
-    XKB_STATE_MODE_CLIENT,
-    XKB_STATE_MODE_SERVER_QUERY,
-    XKB_STATE_MODE_SERVER,
-};
-#endif
-
-enum xkb_state_mode_bounds {
-    _XKB_STATE_MODE_MIN = XKB_STATE_MODE_CLIENT,
-    _XKB_STATE_MODE_MAX = XKB_STATE_MODE_SERVER,
-    _XKB_STATE_MODE_NUM = 3,
+ਗਿਣਤੀ xkb_layout_ਬਾਹਰਲਾ_ਦਾ_range_policy_bounds {
+    XKB_LAYOUT_ਬਾਹਰਲਾ_ਦਾ_RANGE_POLICY_MIN = XKB_LAYOUT_ਬਾਹਰਲਾ_ਦਾ_RANGE_WRAP,
+    XKB_LAYOUT_ਬਾਹਰਲਾ_ਦਾ_RANGE_POLICY_MAX = XKB_LAYOUT_ਬਾਹਰਲਾ_ਦਾ_RANGE_REDIRECT,
+    XKB_LAYOUT_ਬਾਹਰਲਾ_ਦਾ_RANGE_POLICY_ਅੰਕ = 3,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_state_match_values[] = {
-    XKB_STATE_MATCH_ANY,
-    XKB_STATE_MATCH_ALL,
-    XKB_STATE_MATCH_NON_EXCLUSIVE,
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_ਨਿੱਜੀ_APIS
+ਸਥਿਰ ਅਚਲ uint32_t xkb_state_ਬਹੁਲਕ_ਮੁੱਲਾਂ[] = {
+    XKB_STATE_ਬਹੁਲਕ_CLIENT,
+    XKB_STATE_ਬਹੁਲਕ_SERVER_QUERY,
+    XKB_STATE_ਬਹੁਲਕ_SERVER,
 };
-#endif
+#ਜੇ_ਅੰਤ
 
-enum xkb_state_match_bounds {
-    _XKB_STATE_MATCH_MIN = 0 /* implicit minimum */,
-    _XKB_STATE_MATCH_MAX = XKB_STATE_MATCH_NON_EXCLUSIVE,
-};
-
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_consumed_mode_values[] = {
-    XKB_CONSUMED_MODE_XKB,
-    XKB_CONSUMED_MODE_GTK,
-};
-#endif
-
-enum xkb_consumed_mode_bounds {
-    _XKB_CONSUMED_MODE_MIN = XKB_CONSUMED_MODE_XKB,
-    _XKB_CONSUMED_MODE_MAX = XKB_CONSUMED_MODE_GTK,
-    _XKB_CONSUMED_MODE_NUM = 2,
+ਗਿਣਤੀ xkb_state_ਬਹੁਲਕ_bounds {
+    XKB_STATE_ਬਹੁਲਕ_MIN = XKB_STATE_ਬਹੁਲਕ_CLIENT,
+    XKB_STATE_ਬਹੁਲਕ_MAX = XKB_STATE_ਬਹੁਲਕ_SERVER,
+    XKB_STATE_ਬਹੁਲਕ_ਅੰਕ = 3,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_compose_compile_flags_values[] = {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_ਨਿੱਜੀ_APIS
+ਸਥਿਰ ਅਚਲ uint32_t xkb_state_ਮੇਲ_ਮੁੱਲਾਂ[] = {
+    XKB_STATE_ਮੇਲ_ANY,
+    XKB_STATE_ਮੇਲ_ALL,
+    XKB_STATE_ਮੇਲ_NON_EXCLUSIVE,
+};
+#ਜੇ_ਅੰਤ
+
+ਗਿਣਤੀ xkb_state_ਮੇਲ_bounds {
+    XKB_STATE_ਮੇਲ_MIN = 0 /* implicit minimum */,
+    XKB_STATE_ਮੇਲ_MAX = XKB_STATE_ਮੇਲ_NON_EXCLUSIVE,
+};
+
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_ਨਿੱਜੀ_APIS
+ਸਥਿਰ ਅਚਲ uint32_t xkb_consumed_ਬਹੁਲਕ_ਮੁੱਲਾਂ[] = {
+    XKB_CONSUMED_ਬਹੁਲਕ_XKB,
+    XKB_CONSUMED_ਬਹੁਲਕ_GTK,
+};
+#ਜੇ_ਅੰਤ
+
+ਗਿਣਤੀ xkb_consumed_ਬਹੁਲਕ_bounds {
+    XKB_CONSUMED_ਬਹੁਲਕ_MIN = XKB_CONSUMED_ਬਹੁਲਕ_XKB,
+    XKB_CONSUMED_ਬਹੁਲਕ_MAX = XKB_CONSUMED_ਬਹੁਲਕ_GTK,
+    XKB_CONSUMED_ਬਹੁਲਕ_ਅੰਕ = 2,
+};
+
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_ਨਿੱਜੀ_APIS
+ਸਥਿਰ ਅਚਲ uint32_t xkb_compose_compile_flags_ਮੁੱਲਾਂ[] = {
     XKB_COMPOSE_COMPILE_NO_FLAGS,
 };
-#endif
+#ਜੇ_ਅੰਤ
 
-enum xkb_compose_compile_flags_bounds {
+ਗਿਣਤੀ xkb_compose_compile_flags_bounds {
     _XKB_COMPOSE_COMPILE_FLAGS_MIN = XKB_COMPOSE_COMPILE_NO_FLAGS,
     _XKB_COMPOSE_COMPILE_FLAGS_MAX = XKB_COMPOSE_COMPILE_NO_FLAGS,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_compose_format_values[] = {
-    XKB_COMPOSE_FORMAT_TEXT_V1,
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_ਨਿੱਜੀ_APIS
+ਸਥਿਰ ਅਚਲ uint32_t xkb_compose_format_ਮੁੱਲਾਂ[] = {
+    XKB_COMPOSE_FORMAT_ਪਾਠ_V1,
 };
-#endif
+#ਜੇ_ਅੰਤ
 
-enum xkb_compose_format_bounds {
-    _XKB_COMPOSE_FORMAT_MIN = XKB_COMPOSE_FORMAT_TEXT_V1,
-    _XKB_COMPOSE_FORMAT_MAX = XKB_COMPOSE_FORMAT_TEXT_V1,
-    _XKB_COMPOSE_FORMAT_NUM = 1,
+ਗਿਣਤੀ xkb_compose_format_bounds {
+    _XKB_COMPOSE_FORMAT_MIN = XKB_COMPOSE_FORMAT_ਪਾਠ_V1,
+    _XKB_COMPOSE_FORMAT_MAX = XKB_COMPOSE_FORMAT_ਪਾਠ_V1,
+    XKB_COMPOSE_FORMAT_ਅੰਕ = 1,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_compose_state_flags_values[] = {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_ਨਿੱਜੀ_APIS
+ਸਥਿਰ ਅਚਲ uint32_t xkb_compose_state_flags_ਮੁੱਲਾਂ[] = {
     XKB_COMPOSE_STATE_NO_FLAGS,
 };
-#endif
+#ਜੇ_ਅੰਤ
 
-enum xkb_compose_state_flags_bounds {
+ਗਿਣਤੀ xkb_compose_state_flags_bounds {
     _XKB_COMPOSE_STATE_FLAGS_MIN = XKB_COMPOSE_STATE_NO_FLAGS,
     _XKB_COMPOSE_STATE_FLAGS_MAX = XKB_COMPOSE_STATE_NO_FLAGS,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_compose_status_values[] = {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_ਨਿੱਜੀ_APIS
+ਸਥਿਰ ਅਚਲ uint32_t xkb_compose_ਸਥਿਤੀ_ਮੁੱਲਾਂ[] = {
     XKB_COMPOSE_NOTHING,
     XKB_COMPOSE_COMPOSING,
     XKB_COMPOSE_COMPOSED,
     XKB_COMPOSE_CANCELLED,
 };
-#endif
+#ਜੇ_ਅੰਤ
 
-enum xkb_compose_status_bounds {
-    _XKB_COMPOSE_STATUS_MIN = XKB_COMPOSE_NOTHING,
-    _XKB_COMPOSE_STATUS_MAX = XKB_COMPOSE_CANCELLED,
-    _XKB_COMPOSE_STATUS_NUM = 4,
+ਗਿਣਤੀ xkb_compose_ਸਥਿਤੀ_bounds {
+    XKB_COMPOSE_ਸਥਿਤੀ_MIN = XKB_COMPOSE_NOTHING,
+    XKB_COMPOSE_ਸਥਿਤੀ_MAX = XKB_COMPOSE_CANCELLED,
+    XKB_COMPOSE_ਸਥਿਤੀ_ਅੰਕ = 4,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_compose_feed_result_values[] = {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_ਨਿੱਜੀ_APIS
+ਸਥਿਰ ਅਚਲ uint32_t xkb_compose_feed_ਨਤੀਜਾ_ਮੁੱਲਾਂ[] = {
     XKB_COMPOSE_FEED_IGNORED,
     XKB_COMPOSE_FEED_ACCEPTED,
 };
-#endif
+#ਜੇ_ਅੰਤ
 
-enum xkb_compose_feed_result_bounds {
-    _XKB_COMPOSE_FEED_RESULT_MIN = XKB_COMPOSE_FEED_IGNORED,
-    _XKB_COMPOSE_FEED_RESULT_MAX = XKB_COMPOSE_FEED_ACCEPTED,
-    _XKB_COMPOSE_FEED_RESULT_NUM = 2,
+ਗਿਣਤੀ xkb_compose_feed_ਨਤੀਜਾ_bounds {
+    XKB_COMPOSE_FEED_ਨਤੀਜਾ_MIN = XKB_COMPOSE_FEED_IGNORED,
+    XKB_COMPOSE_FEED_ਨਤੀਜਾ_MAX = XKB_COMPOSE_FEED_ACCEPTED,
+    XKB_COMPOSE_FEED_ਨਤੀਜਾ_ਅੰਕ = 2,
 };
-static const uint32_t xkb_status_values[] = {
+ਸਥਿਰ ਅਚਲ uint32_t xkb_ਸਥਿਤੀ_ਮੁੱਲਾਂ[] = {
     (uint32_t)XKB_ERROR_INVALID,
     XKB_SUCCESS,
-    XKB_ERROR_UNSUPPORTED_MODIFIER_MASK,
-    XKB_ERROR_UNSUPPORTED_STATE_MODE,
+    XKB_ERROR_UNSUPPORTED_MODIFIER_ਨਕਾਬ,
+    XKB_ERROR_UNSUPPORTED_STATE_ਬਹੁਲਕ,
     XKB_ERROR_EVENT_TYPE_MISMATCH,
-    XKB_ERROR_UNSUPPORTED_KEY_ITERATOR_FLAGS,
-    XKB_ERROR_UNSUPPORTED_LAYOUT_OUT_OF_RANGE_POLICY,
-    XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX,
+    XKB_ERROR_UNSUPPORTED_ਕੁੰਜੀ_ITERATOR_FLAGS,
+    XKB_ERROR_UNSUPPORTED_LAYOUT_ਬਾਹਰਲਾ_ਦਾ_RANGE_POLICY,
+    XKB_ERROR_UNSUPPORTED_LAYOUT_ਸੂਚਕਾਂਕ,
     XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT,
-    XKB_ERROR_LAYOUT_COUNT_LIMIT_EXCEEDED,
+    XKB_ERROR_LAYOUT_ਗਿਣਤੀ_ਹੱਦਬੰਦੀ_EXCEEDED,
     XKB_ERROR_UNSUPPORTED_A11Y_FLAGS,
-    XKB_ERROR_UNEXPECTED_STATE_MODE,
-    XKB_ERROR_ABI_INVALID_STRUCT_SIZE,
+    XKB_ERROR_UNEXPECTED_STATE_ਬਹੁਲਕ,
+    XKB_ERROR_ABI_INVALID_STRUCT_ਮਾਪ,
     XKB_ERROR_INVALID_KEYCODE,
-    XKB_ERROR_ALLOCATION_FAILURE,
+    XKB_ERROR_ਵੰਡ_FAILURE,
     XKB_ERROR_UNSUPPORTED_EVENTS_FLAGS,
     XKB_ERROR_UNSUPPORTED_MACHINE_FLAGS,
     XKB_ERROR_UNSUPPORTED_KEYMAP_SERIALIZATION_FLAGS,
@@ -624,14 +624,14 @@ static const uint32_t xkb_status_values[] = {
     XKB_ERROR_ABI_BACKWARD_COMPAT,
 };
 
-enum xkb_status_bounds {
-    _XKB_STATUS_MIN = XKB_ERROR_INVALID,
-    _XKB_STATUS_MAX = XKB_ERROR_ABI_BACKWARD_COMPAT,
-    _XKB_STATUS_NUM = 21,
+ਗਿਣਤੀ xkb_ਸਥਿਤੀ_bounds {
+    XKB_ਸਥਿਤੀ_MIN = XKB_ERROR_INVALID,
+    XKB_ਸਥਿਤੀ_MAX = XKB_ERROR_ABI_BACKWARD_COMPAT,
+    XKB_ਸਥਿਤੀ_ਅੰਕ = 21,
 };
-static const uint32_t xkb_feature_values[] = {
+ਸਥਿਰ ਅਚਲ uint32_t xkb_feature_ਮੁੱਲਾਂ[] = {
     XKB_FEATURE_ENUM_FEATURE,
-    XKB_FEATURE_ENUM_STATUS,
+    XKB_FEATURE_ENUM_ਸਥਿਤੀ,
     XKB_FEATURE_ENUM_CONTEXT_FLAGS,
     XKB_FEATURE_ENUM_LOG_LEVEL,
     XKB_FEATURE_ENUM_KEYSYM_FLAGS,
@@ -639,30 +639,30 @@ static const uint32_t xkb_feature_values[] = {
     XKB_FEATURE_ENUM_KEYMAP_FORMAT,
     XKB_FEATURE_ENUM_KEYMAP_COMPILE_FLAGS,
     XKB_FEATURE_ENUM_KEYMAP_SERIALIZE_FLAGS,
-    XKB_FEATURE_ENUM_KEYMAP_KEY_ITERATOR_FLAGS,
+    XKB_FEATURE_ENUM_KEYMAP_ਕੁੰਜੀ_ITERATOR_FLAGS,
     XKB_FEATURE_ENUM_STATE_COMPONENT,
-    XKB_FEATURE_ENUM_LAYOUT_OUT_OF_RANGE_POLICY,
+    XKB_FEATURE_ENUM_LAYOUT_ਬਾਹਰਲਾ_ਦਾ_RANGE_POLICY,
     XKB_FEATURE_ENUM_A11Y_FLAGS,
     XKB_FEATURE_ENUM_KEYBOARD_CONTROL_FLAGS,
-    XKB_FEATURE_ENUM_STATE_MODE,
-    XKB_FEATURE_ENUM_STATE_MATCH,
-    XKB_FEATURE_ENUM_CONSUMED_MODE,
+    XKB_FEATURE_ENUM_STATE_ਬਹੁਲਕ,
+    XKB_FEATURE_ENUM_STATE_ਮੇਲ,
+    XKB_FEATURE_ENUM_CONSUMED_ਬਹੁਲਕ,
     XKB_FEATURE_ENUM_MACHINE_BUILDER_FLAGS,
     XKB_FEATURE_ENUM_MACHINE_FLAGS,
     XKB_FEATURE_ENUM_EVENT_TYPE,
-    XKB_FEATURE_ENUM_KEY_DIRECTION,
-    XKB_FEATURE_ENUM_POINTER_MOTION_FLAGS,
-    XKB_FEATURE_ENUM_POINTER_BUTTON_STATE,
+    XKB_FEATURE_ENUM_ਕੁੰਜੀ_DIRECTION,
+    XKB_FEATURE_ENUM_ਸੂਚਕ_MOTION_FLAGS,
+    XKB_FEATURE_ENUM_ਸੂਚਕ_BUTTON_STATE,
     XKB_FEATURE_ENUM_EVENTS_FLAGS,
     XKB_FEATURE_ENUM_COMPOSE_FORMAT,
     XKB_FEATURE_ENUM_COMPOSE_COMPILE_FLAGS,
-    XKB_FEATURE_ENUM_COMPOSE_STATUS,
+    XKB_FEATURE_ENUM_COMPOSE_ਸਥਿਤੀ,
     XKB_FEATURE_ENUM_COMPOSE_STATE_FLAGS,
-    XKB_FEATURE_ENUM_COMPOSE_FEED_RESULT,
+    XKB_FEATURE_ENUM_COMPOSE_FEED_ਨਤੀਜਾ,
 };
 
-enum xkb_feature_bounds {
+ਗਿਣਤੀ xkb_feature_bounds {
     _XKB_FEATURE_MIN = XKB_FEATURE_ENUM_FEATURE,
-    _XKB_FEATURE_MAX = XKB_FEATURE_ENUM_COMPOSE_FEED_RESULT,
-    _XKB_FEATURE_NUM = 29,
+    _XKB_FEATURE_MAX = XKB_FEATURE_ENUM_COMPOSE_FEED_ਨਤੀਜਾ,
+    XKB_FEATURE_ਅੰਕ = 29,
 };

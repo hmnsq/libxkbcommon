@@ -2,66 +2,66 @@
  * Copyright (c) 1994 by Silicon Graphics Computer Systems, Inc.
  * SPDX-License-Identifier: HPND
  */
-#pragma once
+#ਹਦਾਇਤ once
 
-#include "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
 
-#include "xkbcommon/xkbcommon.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xkbcommon/xkbcommon.h"
 
-#include "ast.h"
-#include "keymap.h"
-#include "text.h"
-#include "xkbcomp-priv.h"
-
-bool
-ExprResolveLhs(struct xkb_context *ctx, const ExprDef *expr,
-               const char **elem_rtrn, const char **field_rtrn,
-               ExprDef **index_rtrn);
+#ਅਨ੍ਤਰ੍ਭਾਵ "ast.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "keymap.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "text.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xkbcomp-priv.h"
 
 bool
-ExprResolveModMask(struct xkb_context *ctx, const ExprDef *expr,
-                   enum mod_type mod_type, const struct xkb_mod_set *mods,
-                   xkb_mod_mask_t *mask_rtrn);
+ਵਿਅੰਜਕ_Resolve_Lhs(ਬਣਤਰ xkb_context *ctx, ਅਚਲ ਵਿਅੰਜਕ_Def *ਵਿਅੰਜਕ,
+               ਅਚਲ ਅੱਖਰ **elem_rtrn, ਅਚਲ ਅੱਖਰ **ਖੇਤਰ_rtrn,
+               ਵਿਅੰਜਕ_Def **ਸੂਚਕਾਂਕ_rtrn);
 
 bool
-ExprResolveMod(struct xkb_context *ctx, const ExprDef *def,
-               enum mod_type mod_type, const struct xkb_mod_set *mods,
-               xkb_mod_index_t *ndx_rtrn);
+ਵਿਅੰਜਕ_Resolve_Mod_ਨਕਾਬ(ਬਣਤਰ xkb_context *ctx, ਅਚਲ ਵਿਅੰਜਕ_Def *ਵਿਅੰਜਕ,
+                   ਗਿਣਤੀ mod_type mod_type, ਅਚਲ ਬਣਤਰ xkb_mod_ਸੈੱਟ *mods,
+                   xkb_mod_ਨਕਾਬ_t *ਨਕਾਬ_rtrn);
 
 bool
-ExprResolveBoolean(struct xkb_context *ctx, const ExprDef *expr,
-                   bool *set_rtrn);
+ਵਿਅੰਜਕ_Resolve_Mod(ਬਣਤਰ xkb_context *ctx, ਅਚਲ ਵਿਅੰਜਕ_Def *def,
+               ਗਿਣਤੀ mod_type mod_type, ਅਚਲ ਬਣਤਰ xkb_mod_ਸੈੱਟ *mods,
+               xkb_mod_ਸੂਚਕਾਂਕ_t *ndx_rtrn);
 
 bool
-ExprResolveInteger(struct xkb_context *ctx, const ExprDef *expr,
+ਵਿਅੰਜਕ_Resolve_Boolean(ਬਣਤਰ xkb_context *ctx, ਅਚਲ ਵਿਅੰਜਕ_Def *ਵਿਅੰਜਕ,
+                   bool *ਸੈੱਟ_rtrn);
+
+bool
+ਵਿਅੰਜਕ_Resolve_Integer(ਬਣਤਰ xkb_context *ctx, ਅਚਲ ਵਿਅੰਜਕ_Def *ਵਿਅੰਜਕ,
                    int64_t *val_rtrn);
 
 bool
-ExprResolveLevel(struct xkb_context *ctx, const ExprDef *expr,
-                 xkb_level_index_t *level_rtrn);
+ਵਿਅੰਜਕ_Resolve_Level(ਬਣਤਰ xkb_context *ctx, ਅਚਲ ਵਿਅੰਜਕ_Def *ਵਿਅੰਜਕ,
+                 xkb_level_ਸੂਚਕਾਂਕ_t *level_rtrn);
 
-enum xkb_parser_error
-ExprResolveGroup(const struct xkb_keymap_info *keymap_info,
-                 const ExprDef *expr, bool absolute,
-                 xkb_layout_index_t *group_rtrn, bool *pending_rtrn);
+ਗਿਣਤੀ xkb_parser_error
+ਵਿਅੰਜਕ_Resolve_ਸਮੂਹ(ਅਚਲ ਬਣਤਰ xkb_keymap_info *keymap_info,
+                 ਅਚਲ ਵਿਅੰਜਕ_Def *ਵਿਅੰਜਕ, bool absolute,
+                 xkb_layout_ਸੂਚਕਾਂਕ_t *ਸਮੂਹ_rtrn, bool *pending_rtrn);
 
 bool
-ExprResolveGroupMask(const struct xkb_keymap_info *keymap_info,
-                     const ExprDef *expr, xkb_layout_mask_t *group_rtrn,
+ਵਿਅੰਜਕ_Resolve_ਸਮੂਹ_ਨਕਾਬ(ਅਚਲ ਬਣਤਰ xkb_keymap_info *keymap_info,
+                     ਅਚਲ ਵਿਅੰਜਕ_Def *ਵਿਅੰਜਕ, xkb_layout_ਨਕਾਬ_t *ਸਮੂਹ_rtrn,
                      bool *pending_rtrn);
 
 bool
-ExprResolveButton(struct xkb_context *ctx, const ExprDef *expr,
+ਵਿਅੰਜਕ_Resolve_Button(ਬਣਤਰ xkb_context *ctx, ਅਚਲ ਵਿਅੰਜਕ_Def *ਵਿਅੰਜਕ,
                   int64_t *btn_rtrn);
 
 bool
-ExprResolveString(struct xkb_context *ctx, const ExprDef *expr,
+ਵਿਅੰਜਕ_Resolve_String(ਬਣਤਰ xkb_context *ctx, ਅਚਲ ਵਿਅੰਜਕ_Def *ਵਿਅੰਜਕ,
                   xkb_atom_t *val_rtrn);
 
 bool
-ExprResolveEnum(struct xkb_context *ctx, const ExprDef *expr,
-                uint32_t *val_rtrn, const LookupEntry *values);
+ਵਿਅੰਜਕ_Resolve_Enum(ਬਣਤਰ xkb_context *ctx, ਅਚਲ ਵਿਅੰਜਕ_Def *ਵਿਅੰਜਕ,
+                uint32_t *val_rtrn, ਅਚਲ Lookup_ਇੰਦਰਾਜ *ਮੁੱਲਾਂ);
 
 bool
-ExprResolveMask(struct xkb_context *ctx, const ExprDef *expr,
-                uint32_t *mask_rtrn, const LookupEntry *values);
+ਵਿਅੰਜਕ_Resolve_ਨਕਾਬ(ਬਣਤਰ xkb_context *ctx, ਅਚਲ ਵਿਅੰਜਕ_Def *ਵਿਅੰਜਕ,
+                uint32_t *ਨਕਾਬ_rtrn, ਅਚਲ Lookup_ਇੰਦਰਾਜ *ਮੁੱਲਾਂ);

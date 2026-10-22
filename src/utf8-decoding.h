@@ -2,19 +2,19 @@
  * Copyright © 2024 Pierre Le Marre <dev@wismill.eu>
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#ਹਦਾਇਤ once
 
-#include "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
 
-#include <stddef.h>
-#include <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stddef.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
 
 /* Check if a char is the start of a UTF-8 sequence */
-#define is_utf8_start(c) (((c) & 0xc0) != 0x80)
-#define INVALID_UTF8_CODE_POINT UINT32_MAX
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ is_utf8_ਸ਼ੁਰੂ(c) (((c) & 0xc0) != 0x80)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ INVALID_UTF8_ਕੋਡ_ਬਿੰਦੂ UINT32_MAX
 
 uint8_t
-utf8_sequence_length(const char *s);
+utf8_sequence_ਲੰਮਾਈ(ਅਚਲ ਅੱਖਰ *s);
 
 uint32_t
-utf8_next_code_point(const char *s, size_t max_size, size_t *size_out);
+utf8_ਅਗਲਾ_ਕੋਡ_ਬਿੰਦੂ(ਅਚਲ ਅੱਖਰ *s, ਮਾਪ_t max_ਮਾਪ, ਮਾਪ_t *ਮਾਪ_ਬਾਹਰਲਾ);

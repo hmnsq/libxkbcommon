@@ -9,27 +9,27 @@
  * SPDX-License-Identifier: MIT-open-group AND HPND
  */
 
-#include "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
 
-#include <assert.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <assert.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
-#include "atom.h"
-#include "darray.h"
-#include "utils.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "atom.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "darray.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils.h"
 
 /* FNV-1a (http://www.isthe.com/chongo/tech/comp/fnv/). */
-static inline uint32_t
-hash_buf(const char *string, size_t len)
+ਸਥਿਰ ਸਤਰਅੰਦਰ uint32_t
+hash_buf(ਅਚਲ ਅੱਖਰ *string, ਮਾਪ_t len)
 {
     uint32_t hash = UINT32_C(2166136261);
-    for (size_t i = 0; i < (len + 1) / 2; i++) {
+    ਲਈ (ਮਾਪ_t i = 0; i < (len + 1) / 2; i++) {
         hash ^= (uint8_t) string[i];
         hash *= 0x01000193;
         hash ^= (uint8_t) string[len - 1 - i];
         hash *= 0x01000193;
     }
-    return hash;
+    ਵਾਪਸ hash;
 }
 
 /*
@@ -37,109 +37,109 @@ hash_buf(const char *string, size_t len)
  * mapping strings to atoms. Another array maps the atoms to
  * strings. The atom value is the position in the strings array.
  */
-struct atom_table {
-    xkb_atom_t *index;
-    size_t index_size;
-    darray(char *) strings;
+ਬਣਤਰ atom_ਸਾਰਣੀ {
+    xkb_atom_t *ਸੂਚਕਾਂਕ;
+    ਮਾਪ_t ਸੂਚਕਾਂਕ_ਮਾਪ;
+    darray(ਅੱਖਰ *) ਲੜੀਆਂ;
 };
 
-struct atom_table *
-atom_table_new(void)
+ਬਣਤਰ atom_ਸਾਰਣੀ *
+atom_ਸਾਰਣੀ_new(ਖਾਲੀ)
 {
-    struct atom_table *table = calloc(1, sizeof(*table));
-    if (!table)
-        return NULL;
+    ਬਣਤਰ atom_ਸਾਰਣੀ *ਸਾਰਣੀ = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, ਆਕਾਰ(*ਸਾਰਣੀ));
+    ਜੇ (!ਸਾਰਣੀ)
+        ਵਾਪਸ ਨਿਰਾ;
 
-    darray_init(table->strings);
-    darray_append(table->strings, NULL);
-    table->index_size = 4;
-    table->index = calloc(table->index_size, sizeof(*table->index));
+    darray_init(ਸਾਰਣੀ->ਲੜੀਆਂ);
+    darray_append(ਸਾਰਣੀ->ਲੜੀਆਂ, ਨਿਰਾ);
+    ਸਾਰਣੀ->ਸੂਚਕਾਂਕ_ਮਾਪ = 4;
+    ਸਾਰਣੀ->ਸੂਚਕਾਂਕ = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਸਾਰਣੀ->ਸੂਚਕਾਂਕ_ਮਾਪ, ਆਕਾਰ(*ਸਾਰਣੀ->ਸੂਚਕਾਂਕ));
 
-    return table;
+    ਵਾਪਸ ਸਾਰਣੀ;
 }
 
-void
-atom_table_free(struct atom_table *table)
+ਖਾਲੀ
+atom_ਸਾਰਣੀ_free(ਬਣਤਰ atom_ਸਾਰਣੀ *ਸਾਰਣੀ)
 {
-    if (!table)
-        return;
+    ਜੇ (!ਸਾਰਣੀ)
+        ਵਾਪਸ;
 
-    char **string;
-    darray_foreach(string, table->strings)
-        free(*string);
-    darray_free(table->strings);
-    free(table->index);
-    free(table);
+    ਅੱਖਰ **string;
+    darray_foreach(string, ਸਾਰਣੀ->ਲੜੀਆਂ)
+        ਮੁਕਤ(*string);
+    darray_free(ਸਾਰਣੀ->ਲੜੀਆਂ);
+    ਮੁਕਤ(ਸਾਰਣੀ->ਸੂਚਕਾਂਕ);
+    ਮੁਕਤ(ਸਾਰਣੀ);
 }
 
-darray_size_t
-atom_table_size(struct atom_table *table)
+darray_ਮਾਪ_t
+atom_ਸਾਰਣੀ_ਮਾਪ(ਬਣਤਰ atom_ਸਾਰਣੀ *ਸਾਰਣੀ)
 {
-    return darray_size(table->strings);
+    ਵਾਪਸ darray_ਮਾਪ(ਸਾਰਣੀ->ਲੜੀਆਂ);
 }
 
-const char *
-atom_text(struct atom_table *table, xkb_atom_t atom)
+ਅਚਲ ਅੱਖਰ *
+atom_ਪਾਠ(ਬਣਤਰ atom_ਸਾਰਣੀ *ਸਾਰਣੀ, xkb_atom_t atom)
 {
-    assert(atom < darray_size(table->strings));
-    return darray_item(table->strings, atom);
+    ਪ੍ਰਤਿਜ੍ਞਾ(atom < darray_ਮਾਪ(ਸਾਰਣੀ->ਲੜੀਆਂ));
+    ਵਾਪਸ darray_ਵਸਤੂ(ਸਾਰਣੀ->ਲੜੀਆਂ, atom);
 }
 
 xkb_atom_t
-atom_intern(struct atom_table *table, const char *string, size_t len, bool add)
+atom_intern(ਬਣਤਰ atom_ਸਾਰਣੀ *ਸਾਰਣੀ, ਅਚਲ ਅੱਖਰ *string, ਮਾਪ_t len, bool ਜੋੜੋ)
 {
     /* len(string) > 0.8 * index_size */
-    if (darray_size(table->strings) > (table->index_size / 5) * 4) {
-        table->index_size *= 2;
-        xkb_atom_t *tmp = realloc(table->index,
-                                  table->index_size * sizeof(*table->index));
-        if (!tmp)
-            return XKB_ATOM_NONE;
-        table->index = tmp;
-        memset(table->index, 0, table->index_size * sizeof(*table->index));
-        for (darray_size_t j = 1; j < darray_size(table->strings); j++) {
-            const char *s = darray_item(table->strings, j);
-            uint32_t hash = hash_buf(s, strlen(s));
-            for (size_t i = 0; i < table->index_size; i++) {
-                size_t index_pos = (hash + i) & (table->index_size - 1);
-                if (index_pos == 0)
-                    continue;
+    ਜੇ (darray_ਮਾਪ(ਸਾਰਣੀ->ਲੜੀਆਂ) > (ਸਾਰਣੀ->ਸੂਚਕਾਂਕ_ਮਾਪ / 5) * 4) {
+        ਸਾਰਣੀ->ਸੂਚਕਾਂਕ_ਮਾਪ *= 2;
+        xkb_atom_t *tmp = realloc(ਸਾਰਣੀ->ਸੂਚਕਾਂਕ,
+                                  ਸਾਰਣੀ->ਸੂਚਕਾਂਕ_ਮਾਪ * ਆਕਾਰ(*ਸਾਰਣੀ->ਸੂਚਕਾਂਕ));
+        ਜੇ (!tmp)
+            ਵਾਪਸ XKB_ATOM_NONE;
+        ਸਾਰਣੀ->ਸੂਚਕਾਂਕ = tmp;
+        memset(ਸਾਰਣੀ->ਸੂਚਕਾਂਕ, 0, ਸਾਰਣੀ->ਸੂਚਕਾਂਕ_ਮਾਪ * ਆਕਾਰ(*ਸਾਰਣੀ->ਸੂਚਕਾਂਕ));
+        ਲਈ (darray_ਮਾਪ_t j = 1; j < darray_ਮਾਪ(ਸਾਰਣੀ->ਲੜੀਆਂ); j++) {
+            ਅਚਲ ਅੱਖਰ *s = darray_ਵਸਤੂ(ਸਾਰਣੀ->ਲੜੀਆਂ, j);
+            uint32_t hash = hash_buf(s, ਲੜੀ_ਲੰਬਾਈ(s));
+            ਲਈ (ਮਾਪ_t i = 0; i < ਸਾਰਣੀ->ਸੂਚਕਾਂਕ_ਮਾਪ; i++) {
+                ਮਾਪ_t ਸੂਚਕਾਂਕ_pos = (hash + i) & (ਸਾਰਣੀ->ਸੂਚਕਾਂਕ_ਮਾਪ - 1);
+                ਜੇ (ਸੂਚਕਾਂਕ_pos == 0)
+                    ਜਾਰੀ;
 
-                xkb_atom_t atom = table->index[index_pos];
-                if (atom == XKB_ATOM_NONE) {
-                    table->index[index_pos] = j;
-                    break;
+                xkb_atom_t atom = ਸਾਰਣੀ->ਸੂਚਕਾਂਕ[ਸੂਚਕਾਂਕ_pos];
+                ਜੇ (atom == XKB_ATOM_NONE) {
+                    ਸਾਰਣੀ->ਸੂਚਕਾਂਕ[ਸੂਚਕਾਂਕ_pos] = j;
+                    ਰੋਕੋ;
                 }
             }
         }
     }
 
     uint32_t hash = hash_buf(string, len);
-    for (size_t i = 0; i < table->index_size; i++) {
-        size_t index_pos = (hash + i) & (table->index_size - 1);
-        if (index_pos == 0)
-            continue;
+    ਲਈ (ਮਾਪ_t i = 0; i < ਸਾਰਣੀ->ਸੂਚਕਾਂਕ_ਮਾਪ; i++) {
+        ਮਾਪ_t ਸੂਚਕਾਂਕ_pos = (hash + i) & (ਸਾਰਣੀ->ਸੂਚਕਾਂਕ_ਮਾਪ - 1);
+        ਜੇ (ਸੂਚਕਾਂਕ_pos == 0)
+            ਜਾਰੀ;
 
-        xkb_atom_t existing_atom = table->index[index_pos];
-        if (existing_atom == XKB_ATOM_NONE) {
-            if (add) {
-                xkb_atom_t new_atom = darray_size(table->strings);
-                char *s = strndup(string, len);
-                if (!s)
-                    return XKB_ATOM_NONE;
-                darray_append(table->strings, s);
-                table->index[index_pos] = new_atom;
-                return new_atom;
-            } else {
-                return XKB_ATOM_NONE;
+        xkb_atom_t existing_atom = ਸਾਰਣੀ->ਸੂਚਕਾਂਕ[ਸੂਚਕਾਂਕ_pos];
+        ਜੇ (existing_atom == XKB_ATOM_NONE) {
+            ਜੇ (ਜੋੜੋ) {
+                xkb_atom_t new_atom = darray_ਮਾਪ(ਸਾਰਣੀ->ਲੜੀਆਂ);
+                ਅੱਖਰ *s = strndup(string, len);
+                ਜੇ (!s)
+                    ਵਾਪਸ XKB_ATOM_NONE;
+                darray_append(ਸਾਰਣੀ->ਲੜੀਆਂ, s);
+                ਸਾਰਣੀ->ਸੂਚਕਾਂਕ[ਸੂਚਕਾਂਕ_pos] = new_atom;
+                ਵਾਪਸ new_atom;
+            } ਨਹੀਂਤਾਂ {
+                ਵਾਪਸ XKB_ATOM_NONE;
             }
         }
 
-        const char *existing_value = darray_item(table->strings, existing_atom);
-        if (strncmp(existing_value, string, len) == 0 && existing_value[len] == '\0')
-            return existing_atom;
+        ਅਚਲ ਅੱਖਰ *existing_ਮੁੱਲ = darray_ਵਸਤੂ(ਸਾਰਣੀ->ਲੜੀਆਂ, existing_atom);
+        ਜੇ (ਲੜੀ_ਤੁਲਨਾ(existing_ਮੁੱਲ, string, len) == 0 && existing_ਮੁੱਲ[len] == '\0')
+            ਵਾਪਸ existing_atom;
     }
 
-    assert(!"couldn't find an empty slot during probing");
-    return XKB_ATOM_NONE;
+    ਪ੍ਰਤਿਜ੍ਞਾ(!"couldn't find an empty slot during probing");
+    ਵਾਪਸ XKB_ATOM_NONE;
 }

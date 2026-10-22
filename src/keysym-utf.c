@@ -35,25 +35,25 @@
  *
  */
 
-#include "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
 
-#include <stdbool.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdbool.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "utils.h"
-#include "utf8.h"
-#include "keysym.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xkbcommon/xkbcommon.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utf8.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "keysym.h"
 
-#define NO_KEYSYM_UNICODE_CONVERSION 0
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NO_KEYSYM_UNICODE_CONVERSION 0
 
 /* We don't use the uint32_t types here, to save some space. */
-struct codepair {
+ਬਣਤਰ codepair {
     uint16_t keysym:15;
     bool deprecated:1;
     uint16_t ucs;
 };
 
-static const struct codepair keysymtab[] = {
+ਸਥਿਰ ਅਚਲ ਬਣਤਰ codepair keysymtab[] = {
     { 0x01a1, false, 0x0104 }, /*                     Aogonek Ą LATIN CAPITAL LETTER A WITH OGONEK */
     { 0x01a2, false, 0x02d8 }, /*                       breve ˘ BREVE */
     { 0x01a3, false, 0x0141 }, /*                     Lstroke Ł LATIN CAPITAL LETTER L WITH STROKE */
@@ -832,49 +832,49 @@ static const struct codepair keysymtab[] = {
 };
 
 /* binary search with range check */
-static uint32_t
-bin_search(const struct codepair *table, size_t length, xkb_keysym_t keysym)
+ਸਥਿਰ uint32_t
+bin_ਖੋਜ(ਅਚਲ ਬਣਤਰ codepair *ਸਾਰਣੀ, ਮਾਪ_t ਲੰਮਾਈ, xkb_keysym_t keysym)
 {
-    size_t first = 0;
-    size_t last = length;
+    ਮਾਪ_t ਪਹਿਲਾ = 0;
+    ਮਾਪ_t ਆਖਰੀ = ਲੰਮਾਈ;
 
-    if (keysym < table[0].keysym  || keysym > table[length].keysym)
-        return 0;
+    ਜੇ (keysym < ਸਾਰਣੀ[0].keysym  || keysym > ਸਾਰਣੀ[ਲੰਮਾਈ].keysym)
+        ਵਾਪਸ 0;
 
     /* binary search in table */
-    while (last >= first) {
-        size_t mid = (first + last) / 2;
-        if (table[mid].keysym < keysym)
-            first = mid + 1;
-        else if (table[mid].keysym > keysym)
-            last = mid - 1;
-        else /* found it */
-            return table[mid].ucs;
+    ਜਦੋਂ (ਆਖਰੀ >= ਪਹਿਲਾ) {
+        ਮਾਪ_t mid = (ਪਹਿਲਾ + ਆਖਰੀ) / 2;
+        ਜੇ (ਸਾਰਣੀ[mid].keysym < keysym)
+            ਪਹਿਲਾ = mid + 1;
+        ਨਹੀਂਤਾਂ ਜੇ (ਸਾਰਣੀ[mid].keysym > keysym)
+            ਆਖਰੀ = mid - 1;
+        ਨਹੀਂਤਾਂ /* found it */
+            ਵਾਪਸ ਸਾਰਣੀ[mid].ucs;
     }
 
     /* no matching Unicode value found in table */
-    return NO_KEYSYM_UNICODE_CONVERSION;
+    ਵਾਪਸ NO_KEYSYM_UNICODE_CONVERSION;
 }
 
 uint32_t
-xkb_keysym_to_utf32(xkb_keysym_t keysym)
+xkb_keysym_ਮੰਜ਼ਿਲ_utf32(xkb_keysym_t keysym)
 {
     /* first check for Latin-1 characters (1:1 mapping) */
-    if ((keysym >= 0x0020 && keysym <= 0x007e) ||
+    ਜੇ ((keysym >= 0x0020 && keysym <= 0x007e) ||
         (keysym >= 0x00a0 && keysym <= 0x00ff))
-        return keysym;
+        ਵਾਪਸ keysym;
 
     /* patch encoding botch */
-    if (keysym == XKB_KEY_KP_Space)
-        return XKB_KEY_space & 0x7f;
+    ਜੇ (keysym == XKB_ਕੁੰਜੀ_KP_Space)
+        ਵਾਪਸ XKB_ਕੁੰਜੀ_space & 0x7f;
 
     /* special keysyms */
-    if ((keysym >= XKB_KEY_BackSpace && keysym <= XKB_KEY_Clear) ||
-        (keysym >= XKB_KEY_KP_Multiply && keysym <= XKB_KEY_KP_9) ||
-        keysym == XKB_KEY_Return || keysym == XKB_KEY_Escape ||
-        keysym == XKB_KEY_Delete || keysym == XKB_KEY_KP_Tab ||
-        keysym == XKB_KEY_KP_Enter || keysym == XKB_KEY_KP_Equal)
-        return keysym & 0x7f;
+    ਜੇ ((keysym >= XKB_ਕੁੰਜੀ_ਪਿੱਠ_Space && keysym <= XKB_ਕੁੰਜੀ_Clear) ||
+        (keysym >= XKB_ਕੁੰਜੀ_KP_Multiply && keysym <= XKB_ਕੁੰਜੀ_KP_9) ||
+        keysym == XKB_ਕੁੰਜੀ_Return || keysym == XKB_ਕੁੰਜੀ_Escape ||
+        keysym == XKB_ਕੁੰਜੀ_Delete || keysym == XKB_ਕੁੰਜੀ_KP_Tab ||
+        keysym == XKB_ਕੁੰਜੀ_KP_Enter || keysym == XKB_ਕੁੰਜੀ_KP_Equal)
+        ਵਾਪਸ keysym & 0x7f;
 
     /* also check for directly encoded Unicode codepoints */
 
@@ -882,46 +882,46 @@ xkb_keysym_to_utf32(xkb_keysym_t keysym)
      * See https://www.unicode.org/versions/Unicode15.0.0/ch03.pdf#G28875
      * for further details.
      */
-    if (keysym >= XKB_KEYSYM_UNICODE_SURROGATE_MIN &&
+    ਜੇ (keysym >= XKB_KEYSYM_UNICODE_SURROGATE_MIN &&
         keysym <= XKB_KEYSYM_UNICODE_SURROGATE_MAX)
-        return NO_KEYSYM_UNICODE_CONVERSION;
+        ਵਾਪਸ NO_KEYSYM_UNICODE_CONVERSION;
     /*
      * In theory, this is supposed to start from 0x100100, such that the ASCII
      * range, which is already covered by 0x00-0xff, can't be encoded in two
      * ways. However, changing this after a couple of decades probably won't
      * go well, so it stays as it is.
      */
-    if (XKB_KEYSYM_UNICODE_OFFSET <= keysym && keysym <= XKB_KEYSYM_UNICODE_MAX)
-        return keysym - XKB_KEYSYM_UNICODE_OFFSET;
+    ਜੇ (XKB_KEYSYM_UNICODE_ਵਿੱਥ <= keysym && keysym <= XKB_KEYSYM_UNICODE_MAX)
+        ਵਾਪਸ keysym - XKB_KEYSYM_UNICODE_ਵਿੱਥ;
 
     /* Some EVDEV keysyms that do not fit in `keysymtab` */
-    if (keysym >= XKB_KEY_XF86Numeric0 && keysym <= XKB_KEY_XF86Numeric9)
-        return keysym - XKB_KEY_XF86Numeric0 + 0x30;
-    switch (keysym) {
-    case XKB_KEY_XF86NumericStar:
-        return 0x2a; /* * */
-    case XKB_KEY_XF86NumericPound:
-        return 0x23; /* # */
-    default:
+    ਜੇ (keysym >= XKB_ਕੁੰਜੀ_XF86_Numeric0 && keysym <= XKB_ਕੁੰਜੀ_XF86_Numeric9)
+        ਵਾਪਸ keysym - XKB_ਕੁੰਜੀ_XF86_Numeric0 + 0x30;
+    ਚੋਣ (keysym) {
+    ਹਾਲਤ XKB_ਕੁੰਜੀ_XF86_Numeric_ਤਾਰਾ:
+        ਵਾਪਸ 0x2a; /* * */
+    ਹਾਲਤ XKB_ਕੁੰਜੀ_XF86_Numeric_Pound:
+        ਵਾਪਸ 0x23; /* # */
+    ਮੂਲ:
         /* search main table */
-        return bin_search(keysymtab, ARRAY_SIZE(keysymtab) - 1, keysym);
+        ਵਾਪਸ bin_ਖੋਜ(keysymtab, ARRAY_ਮਾਪ(keysymtab) - 1, keysym);
     }
 }
 
 xkb_keysym_t
-xkb_utf32_to_keysym(uint32_t ucs)
+xkb_utf32_ਮੰਜ਼ਿਲ_keysym(uint32_t ucs)
 {
     /* first check for Latin-1 characters (1:1 mapping) */
-    if ((ucs >= 0x0020 && ucs <= 0x007e) ||
+    ਜੇ ((ucs >= 0x0020 && ucs <= 0x007e) ||
         (ucs >= 0x00a0 && ucs <= 0x00ff))
-        return ucs;
+        ਵਾਪਸ ucs;
 
     /* special keysyms */
-    if ((ucs >= (XKB_KEY_BackSpace & 0x7f) && ucs <= (XKB_KEY_Clear & 0x7f)) ||
-        ucs == (XKB_KEY_Return & 0x7f) || ucs == (XKB_KEY_Escape & 0x7f))
-        return ucs | 0xff00;
-    if (ucs == (XKB_KEY_Delete & 0x7f))
-        return XKB_KEY_Delete;
+    ਜੇ ((ucs >= (XKB_ਕੁੰਜੀ_ਪਿੱਠ_Space & 0x7f) && ucs <= (XKB_ਕੁੰਜੀ_Clear & 0x7f)) ||
+        ucs == (XKB_ਕੁੰਜੀ_Return & 0x7f) || ucs == (XKB_ਕੁੰਜੀ_Escape & 0x7f))
+        ਵਾਪਸ ucs | 0xff00;
+    ਜੇ (ucs == (XKB_ਕੁੰਜੀ_Delete & 0x7f))
+        ਵਾਪਸ XKB_ਕੁੰਜੀ_Delete;
 
     /*
      * U+0000 NULL and invalid Unicode code points.
@@ -929,18 +929,18 @@ xkb_utf32_to_keysym(uint32_t ucs)
      * See https://www.unicode.org/versions/Unicode15.0.0/ch03.pdf#G28875
      * for further details.
      */
-    if (unlikely(ucs == 0 || is_surrogate(ucs) || ucs > 0x10ffff))
-        return XKB_KEY_NoSymbol;
+    ਜੇ (unlikely(ucs == 0 || is_surrogate(ucs) || ucs > 0x10ffff))
+        ਵਾਪਸ XKB_ਕੁੰਜੀ_No_ਚਿੰਨ੍ਹ;
 
     /* search main table */
-    for (size_t i = 0; i < ARRAY_SIZE(keysymtab); i++) {
+    ਲਈ (ਮਾਪ_t i = 0; i < ARRAY_ਮਾਪ(keysymtab); i++) {
         /* Do not use deprecated keysyms */
-        if (keysymtab[i].ucs == ucs && !keysymtab[i].deprecated)
-            return keysymtab[i].keysym;
+        ਜੇ (keysymtab[i].ucs == ucs && !keysymtab[i].deprecated)
+            ਵਾਪਸ keysymtab[i].keysym;
     }
 
     /* Use direct encoding if everything else failed */
-    return ucs | XKB_KEYSYM_UNICODE_OFFSET;
+    ਵਾਪਸ ucs | XKB_KEYSYM_UNICODE_ਵਿੱਥ;
 }
 
 /*
@@ -951,22 +951,22 @@ xkb_utf32_to_keysym(uint32_t ucs)
  * Author: Rob Bradford <rob@linux.intel.com>
  */
 
-int
-xkb_keysym_to_utf8(xkb_keysym_t keysym, char *buffer, size_t size)
+ਪੂਰਨ
+xkb_keysym_ਮੰਜ਼ਿਲ_utf8(xkb_keysym_t keysym, ਅੱਖਰ *ਬਫਰ, ਮਾਪ_t ਮਾਪ)
 {
     uint32_t codepoint;
 
     /* Unicode code point takes up to 4 bytes in UTF-8, plus the
      * NULL-terminating byte. */
-    if (size < XKB_KEYSYM_UTF8_MAX_SIZE)
-        return -1;
+    ਜੇ (ਮਾਪ < XKB_KEYSYM_UTF8_MAX_ਮਾਪ)
+        ਵਾਪਸ -1;
 
-    codepoint = xkb_keysym_to_utf32(keysym);
+    codepoint = xkb_keysym_ਮੰਜ਼ਿਲ_utf32(keysym);
 
-    if (codepoint == NO_KEYSYM_UNICODE_CONVERSION)
-        return 0;
+    ਜੇ (codepoint == NO_KEYSYM_UNICODE_CONVERSION)
+        ਵਾਪਸ 0;
 
-    return (int)utf32_to_utf8(codepoint, buffer);
+    ਵਾਪਸ (ਪੂਰਨ)utf32_ਮੰਜ਼ਿਲ_utf8(codepoint, ਬਫਰ);
 }
 
 /* SPDX-SnippetEnd */

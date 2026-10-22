@@ -3,196 +3,196 @@
  * SPDX-License-Identifier: HPND
  */
 
-#include "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
 
-#include <limits.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <limits.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-status.h"
-#include "xkbcomp-priv.h"
-#include "text.h"
-#include "vmod.h"
-#include "expr.h"
-#include "include.h"
-#include "utils.h"
-#include "util-mem.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xkbcommon/xkbcommon.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xkbcommon/xkbcommon-status.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xkbcomp-priv.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "text.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "vmod.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "expr.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "include.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "util-mem.h"
 
-enum type_field {
-    TYPE_FIELD_MASK = (1 << 0),
-    TYPE_FIELD_MAP = (1 << 1),
-    TYPE_FIELD_PRESERVE = (1 << 2),
-    TYPE_FIELD_LEVEL_NAME = (1 << 3),
+ਗਿਣਤੀ type_ਖੇਤਰ {
+    TYPE_ਖੇਤਰ_ਨਕਾਬ = (1 << 0),
+    TYPE_ਖੇਤਰ_MAP = (1 << 1),
+    TYPE_ਖੇਤਰ_PRESERVE = (1 << 2),
+    TYPE_ਖੇਤਰ_LEVEL_NAME = (1 << 3),
 };
 
-typedef struct {
-    enum type_field defined;
-    enum merge_mode merge;
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
+    ਗਿਣਤੀ type_ਖੇਤਰ defined;
+    ਗਿਣਤੀ ਮਿਲਾਓ_ਬਹੁਲਕ ਮਿਲਾਓ;
 
     xkb_atom_t name;
-    xkb_mod_mask_t mods;
-    xkb_level_index_t num_levels;
-    darray(struct xkb_key_type_entry) entries;
-    darray(xkb_atom_t) level_names;
-} KeyTypeInfo;
+    xkb_mod_ਨਕਾਬ_t mods;
+    xkb_level_ਸੂਚਕਾਂਕ_t ਅੰਕ_ਪੱਧਰ;
+    darray(ਬਣਤਰ xkb_ਕੁੰਜੀ_type_ਇੰਦਰਾਜ) entries;
+    darray(xkb_atom_t) level_ਨਾਂ;
+} ਕੁੰਜੀ_Type_Info;
 
-typedef struct {
-    char *name;
-    int errorCount;
-    unsigned int include_depth;
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
+    ਅੱਖਰ *name;
+    ਪੂਰਨ error_ਗਿਣਤੀ;
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ include_ਡੂੰਘਾਈ;
 
-    darray(KeyTypeInfo) types;
-    struct xkb_mod_set mods;
+    darray(ਕੁੰਜੀ_Type_Info) types;
+    ਬਣਤਰ xkb_mod_ਸੈੱਟ mods;
 
-    struct xkb_context *ctx;
-    const struct xkb_keymap_info *keymap_info;
-} KeyTypesInfo;
+    ਬਣਤਰ xkb_context *ctx;
+    ਅਚਲ ਬਣਤਰ xkb_keymap_info *keymap_info;
+} ਕੁੰਜੀ_Types_Info;
 
 /***====================================================================***/
 
-static inline const char *
-MapEntryTxt(KeyTypesInfo *info, struct xkb_key_type_entry *entry)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਅਚਲ ਅੱਖਰ *
+Map_ਇੰਦਰਾਜ_Txt(ਕੁੰਜੀ_Types_Info *info, ਬਣਤਰ xkb_ਕੁੰਜੀ_type_ਇੰਦਰਾਜ *ਇੰਦਰਾਜ)
 {
-    return ModMaskText(info->ctx, MOD_BOTH, &info->mods, entry->mods.mods);
+    ਵਾਪਸ Mod_ਨਕਾਬ_ਪਾਠ(info->ctx, MOD_BOTH, &info->mods, ਇੰਦਰਾਜ->mods.mods);
 }
 
-static inline const char *
-TypeTxt(KeyTypesInfo *info, KeyTypeInfo *type)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਅਚਲ ਅੱਖਰ *
+TypeTxt(ਕੁੰਜੀ_Types_Info *info, ਕੁੰਜੀ_Type_Info *type)
 {
-    return xkb_atom_text(info->ctx, type->name);
+    ਵਾਪਸ xkb_atom_ਪਾਠ(info->ctx, type->name);
 }
 
-static inline const char *
-TypeMaskTxt(KeyTypesInfo *info, KeyTypeInfo *type)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਅਚਲ ਅੱਖਰ *
+Type_ਨਕਾਬ_Txt(ਕੁੰਜੀ_Types_Info *info, ਕੁੰਜੀ_Type_Info *type)
 {
-    return ModMaskText(info->ctx, MOD_BOTH, &info->mods, type->mods);
+    ਵਾਪਸ Mod_ਨਕਾਬ_ਪਾਠ(info->ctx, MOD_BOTH, &info->mods, type->mods);
 }
 
-static inline bool
-ReportTypeShouldBeArray(KeyTypesInfo *info, KeyTypeInfo *type,
-                        const char *field)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool
+ReportTypeShouldBeArray(ਕੁੰਜੀ_Types_Info *info, ਕੁੰਜੀ_Type_Info *type,
+                        ਅਚਲ ਅੱਖਰ *ਖੇਤਰ_2)
 {
-    return ReportShouldBeArray(info->ctx, "key type", field,
+    ਵਾਪਸ ReportShouldBeArray(info->ctx, "key type", ਖੇਤਰ_2,
                                TypeTxt(info, type));
 }
 
-static inline bool
-ReportTypeBadType(KeyTypesInfo *info, enum xkb_message_code code,
-                  KeyTypeInfo *type, const char *field, const char *wanted)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool
+ReportTypeBadType(ਕੁੰਜੀ_Types_Info *info, ਗਿਣਤੀ xkb_ਸੁਨੇਹਾ_ਕੋਡ ਕੋਡ,
+                  ਕੁੰਜੀ_Type_Info *type, ਅਚਲ ਅੱਖਰ *ਖੇਤਰ_2, ਅਚਲ ਅੱਖਰ *wanted)
 {
-    return ReportBadType(info->ctx, code, "key type", field,
+    ਵਾਪਸ ReportBadType(info->ctx, ਕੋਡ, "key type", ਖੇਤਰ_2,
                          TypeTxt(info, type), wanted);
 }
 
 /***====================================================================***/
 
-static void
-InitKeyTypesInfo(KeyTypesInfo *info, const struct xkb_keymap_info *keymap_info,
-                 unsigned int include_depth,
-                 const struct xkb_mod_set *mods)
+ਸਥਿਰ ਖਾਲੀ
+Init_ਕੁੰਜੀ_Types_Info(ਕੁੰਜੀ_Types_Info *info, ਅਚਲ ਬਣਤਰ xkb_keymap_info *keymap_info,
+                 ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ include_ਡੂੰਘਾਈ,
+                 ਅਚਲ ਬਣਤਰ xkb_mod_ਸੈੱਟ *mods)
 {
-    memset(info, 0, sizeof(*info));
+    memset(info, 0, ਆਕਾਰ(*info));
     info->ctx = keymap_info->keymap.ctx;
     info->keymap_info = keymap_info;
-    info->include_depth = include_depth;
-    InitVMods(&info->mods, mods, include_depth > 0);
+    info->include_ਡੂੰਘਾਈ = include_ਡੂੰਘਾਈ;
+    InitVMods(&info->mods, mods, include_ਡੂੰਘਾਈ > 0);
 }
 
-static void
-ClearKeyTypeInfo(KeyTypeInfo *type)
+ਸਥਿਰ ਖਾਲੀ
+Clear_ਕੁੰਜੀ_Type_Info(ਕੁੰਜੀ_Type_Info *type)
 {
     darray_free(type->entries);
-    darray_free(type->level_names);
+    darray_free(type->level_ਨਾਂ);
 }
 
-static void
-ClearKeyTypesInfo(KeyTypesInfo *info)
+ਸਥਿਰ ਖਾਲੀ
+Clear_ਕੁੰਜੀ_Types_Info(ਕੁੰਜੀ_Types_Info *info)
 {
-    free(info->name);
-    KeyTypeInfo *type;
+    ਮੁਕਤ(info->name);
+    ਕੁੰਜੀ_Type_Info *type;
     darray_foreach(type, info->types)
-        ClearKeyTypeInfo(type);
+        Clear_ਕੁੰਜੀ_Type_Info(type);
     darray_free(info->types);
 }
 
-static KeyTypeInfo *
-FindMatchingKeyType(KeyTypesInfo *info, xkb_atom_t name)
+ਸਥਿਰ ਕੁੰਜੀ_Type_Info *
+ਲੱਭੋ_Matching_ਕੁੰਜੀ_Type(ਕੁੰਜੀ_Types_Info *info, xkb_atom_t name)
 {
-    KeyTypeInfo *old;
+    ਕੁੰਜੀ_Type_Info *old;
 
     darray_foreach(old, info->types)
-        if (old->name == name)
-            return old;
+        ਜੇ (old->name == name)
+            ਵਾਪਸ old;
 
-    return NULL;
+    ਵਾਪਸ ਨਿਰਾ;
 }
 
-static bool
-AddKeyType(KeyTypesInfo *info, KeyTypeInfo *new, bool same_file)
+ਸਥਿਰ bool
+ਜੋੜੋ_ਕੁੰਜੀ_Type(ਕੁੰਜੀ_Types_Info *info, ਕੁੰਜੀ_Type_Info *new, bool same_file)
 {
-    KeyTypeInfo *old;
-    const int verbosity = xkb_context_get_log_verbosity(info->ctx);
+    ਕੁੰਜੀ_Type_Info *old;
+    ਅਚਲ ਪੂਰਨ verbosity = xkb_context_get_log_verbosity(info->ctx);
 
-    old = FindMatchingKeyType(info, new->name);
-    if (old) {
-        if (new->merge != MERGE_AUGMENT) {
-            if ((same_file && verbosity > 0) || verbosity > 9) {
+    old = ਲੱਭੋ_Matching_ਕੁੰਜੀ_Type(info, new->name);
+    ਜੇ (old) {
+        ਜੇ (new->ਮਿਲਾਓ != ਮਿਲਾਓ_AUGMENT) {
+            ਜੇ ((same_file && verbosity > 0) || verbosity > 9) {
                 log_warn(info->ctx,
-                         XKB_WARNING_CONFLICTING_KEY_TYPE_DEFINITIONS,
+                         XKB_WARNING_CONFLICTING_ਕੁੰਜੀ_TYPE_DEFINITIONS,
                          "Multiple definitions of the %s key type; "
                          "Earlier definition ignored\n",
-                         xkb_atom_text(info->ctx, new->name));
+                         xkb_atom_ਪਾਠ(info->ctx, new->name));
             }
 
-            ClearKeyTypeInfo(old);
+            Clear_ਕੁੰਜੀ_Type_Info(old);
             *old = *new;
             darray_init(new->entries);
-            darray_init(new->level_names);
-            return true;
+            darray_init(new->level_ਨਾਂ);
+            ਵਾਪਸ true;
         }
 
-        if (same_file)
+        ਜੇ (same_file)
             log_vrb(info->ctx, XKB_LOG_VERBOSITY_DETAILED,
-                    XKB_WARNING_CONFLICTING_KEY_TYPE_DEFINITIONS,
+                    XKB_WARNING_CONFLICTING_ਕੁੰਜੀ_TYPE_DEFINITIONS,
                     "Multiple definitions of the %s key type; "
                     "Later definition ignored\n",
-                    xkb_atom_text(info->ctx, new->name));
+                    xkb_atom_ਪਾਠ(info->ctx, new->name));
 
-        ClearKeyTypeInfo(new);
-        return true;
+        Clear_ਕੁੰਜੀ_Type_Info(new);
+        ਵਾਪਸ true;
     }
 
     darray_append(info->types, *new);
-    return true;
+    ਵਾਪਸ true;
 }
 
 /***====================================================================***/
 
-static void
-MergeIncludedKeyTypes(KeyTypesInfo *into, KeyTypesInfo *from,
-                      enum merge_mode merge)
+ਸਥਿਰ ਖਾਲੀ
+ਮਿਲਾਓ_Included_ਕੁੰਜੀ_Types(ਕੁੰਜੀ_Types_Info *into, ਕੁੰਜੀ_Types_Info *from,
+                      ਗਿਣਤੀ ਮਿਲਾਓ_ਬਹੁਲਕ ਮਿਲਾਓ)
 {
-    if (from->errorCount > 0) {
-        into->errorCount += from->errorCount;
-        return;
+    ਜੇ (from->error_ਗਿਣਤੀ > 0) {
+        into->error_ਗਿਣਤੀ += from->error_ਗਿਣਤੀ;
+        ਵਾਪਸ;
     }
 
-    MergeModSets(into->ctx, &into->mods, &from->mods, merge);
+    ਮਿਲਾਓ_Mod_Sets(into->ctx, &into->mods, &from->mods, ਮਿਲਾਓ);
 
-    if (into->name == NULL) {
+    ਜੇ (into->name == ਨਿਰਾ) {
         into->name = steal(&from->name);
     }
 
-    if (darray_empty(into->types)) {
+    ਜੇ (darray_ਖਾਲੀ_ਥਾਵਾਂ(into->types)) {
         into->types = from->types;
         /* Types stolen via shallow copy, so reinitialize the array */
         darray_init(from->types);
     }
-    else {
-        KeyTypeInfo *type;
+    ਨਹੀਂਤਾਂ {
+        ਕੁੰਜੀ_Type_Info *type;
         darray_foreach(type, from->types) {
-            type->merge = merge;
-            if (!AddKeyType(into, type, false))
-                into->errorCount++;
+            type->ਮਿਲਾਓ = ਮਿਲਾਓ;
+            ਜੇ (!ਜੋੜੋ_ਕੁੰਜੀ_Type(into, type, false))
+                into->error_ਗਿਣਤੀ++;
         }
         /* Types were either shallow copied or reinitialized individually
            in `AddKeyType`, so we only need to free the array */
@@ -200,229 +200,229 @@ MergeIncludedKeyTypes(KeyTypesInfo *into, KeyTypesInfo *from,
     }
 }
 
-static void
-HandleKeyTypesFile(KeyTypesInfo *info, XkbFile *file);
+ਸਥਿਰ ਖਾਲੀ
+Handle_ਕੁੰਜੀ_Types_File(ਕੁੰਜੀ_Types_Info *info, XkbFile *file);
 
-static bool
-HandleIncludeKeyTypes(KeyTypesInfo *info, IncludeStmt *include)
+ਸਥਿਰ bool
+Handle_Include_ਕੁੰਜੀ_Types(ਕੁੰਜੀ_Types_Info *info, IncludeStmt *include)
 {
-    KeyTypesInfo included;
+    ਕੁੰਜੀ_Types_Info included;
 
-    if (ExceedsIncludeMaxDepth(info->ctx, info->include_depth)) {
-        info->errorCount += 10;
-        return false;
+    ਜੇ (Exceeds_Include_Max_ਡੂੰਘਾਈ(info->ctx, info->include_ਡੂੰਘਾਈ)) {
+        info->error_ਗਿਣਤੀ += 10;
+        ਵਾਪਸ false;
     }
 
-    InitKeyTypesInfo(&included, info->keymap_info, info->include_depth + 1,
+    Init_ਕੁੰਜੀ_Types_Info(&included, info->keymap_info, info->include_ਡੂੰਘਾਈ + 1,
                      &info->mods);
     included.name = steal(&include->stmt);
 
-    const struct parser_keymap_config config = {
+    ਅਚਲ ਬਣਤਰ parser_keymap_config config = {
         .format = info->keymap_info->keymap.format,
         .strict = info->keymap_info->strict
     };
 
-    for (IncludeStmt *stmt = include; stmt; stmt = stmt->next_incl) {
-        KeyTypesInfo next_incl;
+    ਲਈ (IncludeStmt *stmt = include; stmt; stmt = stmt->ਅਗਲਾ_incl) {
+        ਕੁੰਜੀ_Types_Info ਅਗਲਾ_incl;
         XkbFile *file;
 
-        char path[PATH_MAX];
+        ਅੱਖਰ ਰਸਤਾ[PATH_MAX];
         file = ProcessIncludeFile(info->ctx, &config, stmt, FILE_TYPE_TYPES,
-                                  path, sizeof(path));
-        if (!file) {
-            info->errorCount += 10;
-            ClearKeyTypesInfo(&included);
-            return false;
+                                  ਰਸਤਾ, ਆਕਾਰ(ਰਸਤਾ));
+        ਜੇ (!file) {
+            info->error_ਗਿਣਤੀ += 10;
+            Clear_ਕੁੰਜੀ_Types_Info(&included);
+            ਵਾਪਸ false;
         }
 
-        InitKeyTypesInfo(&next_incl, info->keymap_info, info->include_depth + 1,
+        Init_ਕੁੰਜੀ_Types_Info(&ਅਗਲਾ_incl, info->keymap_info, info->include_ਡੂੰਘਾਈ + 1,
                          &included.mods);
 
-        HandleKeyTypesFile(&next_incl, file);
+        Handle_ਕੁੰਜੀ_Types_File(&ਅਗਲਾ_incl, file);
 
-        MergeIncludedKeyTypes(&included, &next_incl, stmt->merge);
+        ਮਿਲਾਓ_Included_ਕੁੰਜੀ_Types(&included, &ਅਗਲਾ_incl, stmt->ਮਿਲਾਓ);
 
-        ClearKeyTypesInfo(&next_incl);
+        Clear_ਕੁੰਜੀ_Types_Info(&ਅਗਲਾ_incl);
         FreeXkbFile(file);
     }
 
-    MergeIncludedKeyTypes(info, &included, include->merge);
-    ClearKeyTypesInfo(&included);
+    ਮਿਲਾਓ_Included_ਕੁੰਜੀ_Types(info, &included, include->ਮਿਲਾਓ);
+    Clear_ਕੁੰਜੀ_Types_Info(&included);
 
-    return (info->errorCount == 0);
+    ਵਾਪਸ (info->error_ਗਿਣਤੀ == 0);
 }
 
 /***====================================================================***/
 
-static bool
-SetModifiers(KeyTypesInfo *info, KeyTypeInfo *type, ExprDef *arrayNdx,
-             ExprDef *value)
+ਸਥਿਰ bool
+ਸੈੱਟ_Modifiers(ਕੁੰਜੀ_Types_Info *info, ਕੁੰਜੀ_Type_Info *type, ਵਿਅੰਜਕ_Def *arrayNdx,
+             ਵਿਅੰਜਕ_Def *ਮੁੱਲ)
 {
-    xkb_mod_mask_t mods = 0;
+    xkb_mod_ਨਕਾਬ_t mods = 0;
 
-    if (arrayNdx) {
-        log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+    ਜੇ (arrayNdx) {
+        log_err(info->ctx, XKB_LOG_ਸੁਨੇਹਾ_NO_ID,
                 "The modifiers field of a key type is not an array; "
                 "Illegal array subscript ignored\n");
-        return false;
+        ਵਾਪਸ false;
     }
 
-    if (!ExprResolveModMask(info->ctx, value, MOD_BOTH, &info->mods, &mods)) {
-        log_err(info->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK,
+    ਜੇ (!ਵਿਅੰਜਕ_Resolve_Mod_ਨਕਾਬ(info->ctx, ਮੁੱਲ, MOD_BOTH, &info->mods, &mods)) {
+        log_err(info->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_ਨਕਾਬ,
                 "Key type mask field must be a modifier mask; "
                 "Key type definition ignored\n");
-        return false;
+        ਵਾਪਸ false;
     }
 
-    if (type->defined & TYPE_FIELD_MASK) {
-        log_warn(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+    ਜੇ (type->defined & TYPE_ਖੇਤਰ_ਨਕਾਬ) {
+        log_warn(info->ctx, XKB_LOG_ਸੁਨੇਹਾ_NO_ID,
                  "Multiple modifier mask definitions for key type %s; "
                  "Using %s, ignoring %s\n",
-                 xkb_atom_text(info->ctx, type->name),
-                 TypeMaskTxt(info, type),
-                 ModMaskText(info->ctx, MOD_BOTH, &info->mods, mods));
-        return false;
+                 xkb_atom_ਪਾਠ(info->ctx, type->name),
+                 Type_ਨਕਾਬ_Txt(info, type),
+                 Mod_ਨਕਾਬ_ਪਾਠ(info->ctx, MOD_BOTH, &info->mods, mods));
+        ਵਾਪਸ false;
     }
 
     type->mods = mods;
-    return true;
+    ਵਾਪਸ true;
 }
 
 /***====================================================================***/
 
-static struct xkb_key_type_entry *
-FindMatchingMapEntry(KeyTypeInfo *type, xkb_mod_mask_t mods)
+ਸਥਿਰ ਬਣਤਰ xkb_ਕੁੰਜੀ_type_ਇੰਦਰਾਜ *
+ਲੱਭੋ_Matching_Map_ਇੰਦਰਾਜ(ਕੁੰਜੀ_Type_Info *type, xkb_mod_ਨਕਾਬ_t mods)
 {
-    struct xkb_key_type_entry *entry;
+    ਬਣਤਰ xkb_ਕੁੰਜੀ_type_ਇੰਦਰਾਜ *ਇੰਦਰਾਜ;
 
-    darray_foreach(entry, type->entries)
-        if (entry->mods.mods == mods)
-            return entry;
+    darray_foreach(ਇੰਦਰਾਜ, type->entries)
+        ਜੇ (ਇੰਦਰਾਜ->mods.mods == mods)
+            ਵਾਪਸ ਇੰਦਰਾਜ;
 
-    return NULL;
+    ਵਾਪਸ ਨਿਰਾ;
 }
 
-static bool
-AddMapEntry(KeyTypesInfo *info, KeyTypeInfo *type,
-            struct xkb_key_type_entry *new, bool clobber, bool report)
+ਸਥਿਰ bool
+ਜੋੜੋ_Map_ਇੰਦਰਾਜ(ਕੁੰਜੀ_Types_Info *info, ਕੁੰਜੀ_Type_Info *type,
+            ਬਣਤਰ xkb_ਕੁੰਜੀ_type_ਇੰਦਰਾਜ *new, bool clobber, bool report)
 {
-    struct xkb_key_type_entry *old;
+    ਬਣਤਰ xkb_ਕੁੰਜੀ_type_ਇੰਦਰਾਜ *old;
 
-    old = FindMatchingMapEntry(type, new->mods.mods);
-    if (old) {
-        if (report && old->level != new->level) {
-            log_warn(info->ctx, XKB_WARNING_CONFLICTING_KEY_TYPE_MAP_ENTRY,
+    old = ਲੱਭੋ_Matching_Map_ਇੰਦਰਾਜ(type, new->mods.mods);
+    ਜੇ (old) {
+        ਜੇ (report && old->level != new->level) {
+            log_warn(info->ctx, XKB_WARNING_CONFLICTING_ਕੁੰਜੀ_TYPE_MAP_ਇੰਦਰਾਜ,
                      "Multiple map entries for %s in %s; "
                      "Using %"PRIu32", ignoring %"PRIu32"\n",
-                     MapEntryTxt(info, new), TypeTxt(info, type),
+                     Map_ਇੰਦਰਾਜ_Txt(info, new), TypeTxt(info, type),
                      (clobber ? new->level : old->level) + 1,
                      (clobber ? old->level : new->level) + 1);
         }
-        else {
+        ਨਹੀਂਤਾਂ {
             log_vrb(info->ctx, XKB_LOG_VERBOSITY_VERBOSE,
-                    XKB_WARNING_CONFLICTING_KEY_TYPE_MAP_ENTRY,
+                    XKB_WARNING_CONFLICTING_ਕੁੰਜੀ_TYPE_MAP_ਇੰਦਰਾਜ,
                     "Multiple occurrences of map[%s]= %"PRIu32" in %s; Ignored\n",
-                    MapEntryTxt(info, new), new->level + 1,
+                    Map_ਇੰਦਰਾਜ_Txt(info, new), new->level + 1,
                     TypeTxt(info, type));
-            return true;
+            ਵਾਪਸ true;
         }
 
-        if (clobber) {
-            if (new->level >= type->num_levels)
-                type->num_levels = new->level + 1;
+        ਜੇ (clobber) {
+            ਜੇ (new->level >= type->ਅੰਕ_ਪੱਧਰ)
+                type->ਅੰਕ_ਪੱਧਰ = new->level + 1;
             old->level = new->level;
         }
 
-        return true;
+        ਵਾਪਸ true;
     }
 
-    if (new->level >= type->num_levels)
-        type->num_levels = new->level + 1;
+    ਜੇ (new->level >= type->ਅੰਕ_ਪੱਧਰ)
+        type->ਅੰਕ_ਪੱਧਰ = new->level + 1;
 
     darray_append(type->entries, *new);
-    return true;
+    ਵਾਪਸ true;
 }
 
-static bool
-SetMapEntry(KeyTypesInfo *info, KeyTypeInfo *type, ExprDef *arrayNdx,
-            ExprDef *value)
+ਸਥਿਰ bool
+ਸੈੱਟ_Map_ਇੰਦਰਾਜ(ਕੁੰਜੀ_Types_Info *info, ਕੁੰਜੀ_Type_Info *type, ਵਿਅੰਜਕ_Def *arrayNdx,
+            ਵਿਅੰਜਕ_Def *ਮੁੱਲ)
 {
-    struct xkb_key_type_entry entry;
+    ਬਣਤਰ xkb_ਕੁੰਜੀ_type_ਇੰਦਰਾਜ ਇੰਦਰਾਜ;
 
-    if (arrayNdx == NULL)
-        return ReportTypeShouldBeArray(info, type, "map entry");
+    ਜੇ (arrayNdx == ਨਿਰਾ)
+        ਵਾਪਸ ReportTypeShouldBeArray(info, type, "map entry");
 
-    if (!ExprResolveModMask(info->ctx, arrayNdx, MOD_BOTH, &info->mods,
-                            &entry.mods.mods))
-        return ReportTypeBadType(info, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK_,
+    ਜੇ (!ਵਿਅੰਜਕ_Resolve_Mod_ਨਕਾਬ(info->ctx, arrayNdx, MOD_BOTH, &info->mods,
+                            &ਇੰਦਰਾਜ.mods.mods))
+        ਵਾਪਸ ReportTypeBadType(info, XKB_ERROR_UNSUPPORTED_MODIFIER_ਨਕਾਬ_2,
                                  type, "map entry", "modifier mask");
 
-    if (entry.mods.mods & (~type->mods)) {
+    ਜੇ (ਇੰਦਰਾਜ.mods.mods & (~type->mods)) {
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
-                XKB_WARNING_UNDECLARED_MODIFIERS_IN_KEY_TYPE,
+                XKB_WARNING_UNDECLARED_MODIFIERS_ਵਿੱਚ_ਕੁੰਜੀ_TYPE,
                 "Map entry for modifiers not used by type %s; "
                 "Using %s instead of %s\n",
                 TypeTxt(info, type),
-                ModMaskText(info->ctx, MOD_BOTH, &info->mods,
-                            entry.mods.mods & type->mods),
-                MapEntryTxt(info, &entry));
-        entry.mods.mods &= type->mods;
+                Mod_ਨਕਾਬ_ਪਾਠ(info->ctx, MOD_BOTH, &info->mods,
+                            ਇੰਦਰਾਜ.mods.mods & type->mods),
+                Map_ਇੰਦਰਾਜ_Txt(info, &ਇੰਦਰਾਜ));
+        ਇੰਦਰਾਜ.mods.mods &= type->mods;
     }
 
-    if (!ExprResolveLevel(info->ctx, value, &entry.level)) {
-        log_err(info->ctx, XKB_ERROR_UNSUPPORTED_SHIFT_LEVEL,
+    ਜੇ (!ਵਿਅੰਜਕ_Resolve_Level(info->ctx, ਮੁੱਲ, &ਇੰਦਰਾਜ.level)) {
+        log_err(info->ctx, XKB_ERROR_UNSUPPORTED_ਖਿਸਕਾਓ_LEVEL,
                           "Level specifications in a key type must be integer; "
                           "Ignoring malformed level specification\n");
-        return false;
+        ਵਾਪਸ false;
     }
 
-    entry.preserve.mods = 0;
+    ਇੰਦਰਾਜ.preserve.mods = 0;
 
-    return AddMapEntry(info, type, &entry, true, true);
+    ਵਾਪਸ ਜੋੜੋ_Map_ਇੰਦਰਾਜ(info, type, &ਇੰਦਰਾਜ, true, true);
 }
 
 /***====================================================================***/
 
-static bool
-AddPreserve(KeyTypesInfo *info, KeyTypeInfo *type,
-            xkb_mod_mask_t mods, xkb_mod_mask_t preserve_mods)
+ਸਥਿਰ bool
+ਜੋੜੋ_Preserve(ਕੁੰਜੀ_Types_Info *info, ਕੁੰਜੀ_Type_Info *type,
+            xkb_mod_ਨਕਾਬ_t mods, xkb_mod_ਨਕਾਬ_t preserve_mods)
 {
-    struct xkb_key_type_entry *entry;
+    ਬਣਤਰ xkb_ਕੁੰਜੀ_type_ਇੰਦਰਾਜ *ਇੰਦਰਾਜ;
 
-    darray_foreach(entry, type->entries) {
-        if (entry->mods.mods != mods)
-            continue;
+    darray_foreach(ਇੰਦਰਾਜ, type->entries) {
+        ਜੇ (ਇੰਦਰਾਜ->mods.mods != mods)
+            ਜਾਰੀ;
 
         /* Map exists without previous preserve (or "None"); override. */
-        if (entry->preserve.mods == 0) {
-            entry->preserve.mods = preserve_mods;
-            return true;
+        ਜੇ (ਇੰਦਰਾਜ->preserve.mods == 0) {
+            ਇੰਦਰਾਜ->preserve.mods = preserve_mods;
+            ਵਾਪਸ true;
         }
 
         /* Map exists with same preserve; do nothing. */
-        if (entry->preserve.mods == preserve_mods) {
+        ਜੇ (ਇੰਦਰਾਜ->preserve.mods == preserve_mods) {
             log_vrb(info->ctx, XKB_LOG_VERBOSITY_VERBOSE,
-                    XKB_WARNING_DUPLICATE_ENTRY,
+                    XKB_WARNING_DUPLICATE_ਇੰਦਰਾਜ,
                     "Identical definitions for preserve[%s] in %s; "
                     "Ignored\n",
-                    ModMaskText(info->ctx, MOD_BOTH, &info->mods, mods),
+                    Mod_ਨਕਾਬ_ਪਾਠ(info->ctx, MOD_BOTH, &info->mods, mods),
                     TypeTxt(info, type));
-            return true;
+            ਵਾਪਸ true;
         }
 
         /* Map exists with different preserve; latter wins. */
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
-                XKB_WARNING_CONFLICTING_KEY_TYPE_PRESERVE_ENTRIES,
+                XKB_WARNING_CONFLICTING_ਕੁੰਜੀ_TYPE_PRESERVE_ENTRIES,
                 "Multiple definitions for preserve[%s] in %s; "
                 "Using %s, ignoring %s\n",
-                ModMaskText(info->ctx, MOD_BOTH, &info->mods, mods),
+                Mod_ਨਕਾਬ_ਪਾਠ(info->ctx, MOD_BOTH, &info->mods, mods),
                 TypeTxt(info, type),
-                ModMaskText(info->ctx, MOD_BOTH, &info->mods, preserve_mods),
-                ModMaskText(info->ctx, MOD_BOTH, &info->mods,
-                            entry->preserve.mods));
+                Mod_ਨਕਾਬ_ਪਾਠ(info->ctx, MOD_BOTH, &info->mods, preserve_mods),
+                Mod_ਨਕਾਬ_ਪਾਠ(info->ctx, MOD_BOTH, &info->mods,
+                            ਇੰਦਰਾਜ->preserve.mods));
 
-        entry->preserve.mods = preserve_mods;
-        return true;
+        ਇੰਦਰਾਜ->preserve.mods = preserve_mods;
+        ਵਾਪਸ true;
     }
 
     /*
@@ -430,332 +430,332 @@ AddPreserve(KeyTypesInfo *info, KeyTypeInfo *type,
      * Create a map with the specified mask mapping to Level1. The level
      * may be overridden later with an explicit map[] statement.
      */
-    const struct xkb_key_type_entry new = {
+    ਅਚਲ ਬਣਤਰ xkb_ਕੁੰਜੀ_type_ਇੰਦਰਾਜ new = {
         .level = 0,
         .mods = { .mods = mods },
         .preserve = { .mods = preserve_mods },
     };
     darray_append(type->entries, new);
-    return true;
+    ਵਾਪਸ true;
 }
 
-static bool
-SetPreserve(KeyTypesInfo *info, KeyTypeInfo *type, ExprDef *arrayNdx,
-            ExprDef *value)
+ਸਥਿਰ bool
+ਸੈੱਟ_Preserve(ਕੁੰਜੀ_Types_Info *info, ਕੁੰਜੀ_Type_Info *type, ਵਿਅੰਜਕ_Def *arrayNdx,
+            ਵਿਅੰਜਕ_Def *ਮੁੱਲ)
 {
 
-    if (arrayNdx == NULL)
-        return ReportTypeShouldBeArray(info, type, "preserve entry");
+    ਜੇ (arrayNdx == ਨਿਰਾ)
+        ਵਾਪਸ ReportTypeShouldBeArray(info, type, "preserve entry");
 
-    xkb_mod_mask_t mods = 0;
-    if (!ExprResolveModMask(info->ctx, arrayNdx, MOD_BOTH, &info->mods, &mods))
-        return ReportTypeBadType(info, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK_,
+    xkb_mod_ਨਕਾਬ_t mods = 0;
+    ਜੇ (!ਵਿਅੰਜਕ_Resolve_Mod_ਨਕਾਬ(info->ctx, arrayNdx, MOD_BOTH, &info->mods, &mods))
+        ਵਾਪਸ ReportTypeBadType(info, XKB_ERROR_UNSUPPORTED_MODIFIER_ਨਕਾਬ_2,
                                  type, "preserve entry", "modifier mask");
 
-    if (mods & ~type->mods) {
-        const char *before, *after;
+    ਜੇ (mods & ~type->mods) {
+        ਅਚਲ ਅੱਖਰ *before, *after;
 
-        before = ModMaskText(info->ctx, MOD_BOTH, &info->mods, mods);
+        before = Mod_ਨਕਾਬ_ਪਾਠ(info->ctx, MOD_BOTH, &info->mods, mods);
         mods &= type->mods;
-        after = ModMaskText(info->ctx, MOD_BOTH, &info->mods, mods);
+        after = Mod_ਨਕਾਬ_ਪਾਠ(info->ctx, MOD_BOTH, &info->mods, mods);
 
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
-                XKB_WARNING_UNDECLARED_MODIFIERS_IN_KEY_TYPE,
+                XKB_WARNING_UNDECLARED_MODIFIERS_ਵਿੱਚ_ਕੁੰਜੀ_TYPE,
                 "Preserve entry for modifiers not used by the %s type; "
                 "Index %s converted to %s\n",
                 TypeTxt(info, type), before, after);
     }
 
-    xkb_mod_mask_t preserve_mods = 0;
-    if (!ExprResolveModMask(info->ctx, value, MOD_BOTH, &info->mods,
+    xkb_mod_ਨਕਾਬ_t preserve_mods = 0;
+    ਜੇ (!ਵਿਅੰਜਕ_Resolve_Mod_ਨਕਾਬ(info->ctx, ਮੁੱਲ, MOD_BOTH, &info->mods,
                             &preserve_mods)) {
-        log_err(info->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK,
+        log_err(info->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_ਨਕਾਬ,
                 "Preserve value in a key type is not a modifier mask; "
                 "Ignoring preserve[%s] in type %s\n",
-                ModMaskText(info->ctx, MOD_BOTH, &info->mods, mods),
+                Mod_ਨਕਾਬ_ਪਾਠ(info->ctx, MOD_BOTH, &info->mods, mods),
                 TypeTxt(info, type));
-        return false;
+        ਵਾਪਸ false;
     }
 
-    if (preserve_mods & ~mods) {
-        const char *before, *after;
+    ਜੇ (preserve_mods & ~mods) {
+        ਅਚਲ ਅੱਖਰ *before, *after;
 
-        before = ModMaskText(info->ctx, MOD_BOTH, &info->mods, preserve_mods);
+        before = Mod_ਨਕਾਬ_ਪਾਠ(info->ctx, MOD_BOTH, &info->mods, preserve_mods);
         preserve_mods &= mods;
-        after = ModMaskText(info->ctx, MOD_BOTH, &info->mods, preserve_mods);
+        after = Mod_ਨਕਾਬ_ਪਾਠ(info->ctx, MOD_BOTH, &info->mods, preserve_mods);
 
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
-                XKB_WARNING_ILLEGAL_KEY_TYPE_PRESERVE_RESULT,
+                XKB_WARNING_ILLEGAL_ਕੁੰਜੀ_TYPE_PRESERVE_ਨਤੀਜਾ,
                 "Illegal value for preserve[%s] in type %s; "
                 "Converted %s to %s\n",
-                ModMaskText(info->ctx, MOD_BOTH, &info->mods, mods),
+                Mod_ਨਕਾਬ_ਪਾਠ(info->ctx, MOD_BOTH, &info->mods, mods),
                 TypeTxt(info, type), before, after);
     }
 
-    return AddPreserve(info, type, mods, preserve_mods);
+    ਵਾਪਸ ਜੋੜੋ_Preserve(info, type, mods, preserve_mods);
 }
 
 /***====================================================================***/
 
-static bool
-AddLevelName(KeyTypesInfo *info, KeyTypeInfo *type,
-             xkb_level_index_t level, xkb_atom_t name, bool clobber)
+ਸਥਿਰ bool
+ਜੋੜੋ_Level_Name(ਕੁੰਜੀ_Types_Info *info, ਕੁੰਜੀ_Type_Info *type,
+             xkb_level_ਸੂਚਕਾਂਕ_t level, xkb_atom_t name, bool clobber)
 {
     /* New name. */
-    if (level >= darray_size(type->level_names)) {
-        darray_resize0(type->level_names, level + 1);
-        goto finish;
+    ਜੇ (level >= darray_ਮਾਪ(type->level_ਨਾਂ)) {
+        darray_resize0(type->level_ਨਾਂ, level + 1);
+        ਜਾਓ ਅੰਤ;
     }
 
     /* Same level, same name. */
-    if (darray_item(type->level_names, level) == name) {
-        log_vrb(info->ctx, XKB_LOG_VERBOSITY_VERBOSE, XKB_WARNING_DUPLICATE_ENTRY,
+    ਜੇ (darray_ਵਸਤੂ(type->level_ਨਾਂ, level) == name) {
+        log_vrb(info->ctx, XKB_LOG_VERBOSITY_VERBOSE, XKB_WARNING_DUPLICATE_ਇੰਦਰਾਜ,
                 "Duplicate names for level %"PRIu32" of key type %s; Ignored\n",
                 level + 1, TypeTxt(info, type));
-        return true;
+        ਵਾਪਸ true;
     }
 
     /* Same level, different name. */
-    if (darray_item(type->level_names, level) != XKB_ATOM_NONE) {
-        const char *old, *new;
-        old = xkb_atom_text(info->ctx,
-                            darray_item(type->level_names, level));
-        new = xkb_atom_text(info->ctx, name);
+    ਜੇ (darray_ਵਸਤੂ(type->level_ਨਾਂ, level) != XKB_ATOM_NONE) {
+        ਅਚਲ ਅੱਖਰ *old, *new;
+        old = xkb_atom_ਪਾਠ(info->ctx,
+                            darray_ਵਸਤੂ(type->level_ਨਾਂ, level));
+        new = xkb_atom_ਪਾਠ(info->ctx, name);
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
-                XKB_WARNING_CONFLICTING_KEY_TYPE_LEVEL_NAMES,
+                XKB_WARNING_CONFLICTING_ਕੁੰਜੀ_TYPE_LEVEL_ਨਾਂ,
                 "Multiple names for level %"PRIu32" of key type %s; "
                 "Using %s, ignoring %s\n",
                 level + 1, TypeTxt(info, type),
                 (clobber ? new : old), (clobber ? old : new));
 
-        if (!clobber)
-            return true;
+        ਜੇ (!clobber)
+            ਵਾਪਸ true;
     }
 
     /* FIXME: What about different level, same name? */
 
-finish:
-    darray_item(type->level_names, level) = name;
-    return true;
+ਅੰਤ:
+    darray_ਵਸਤੂ(type->level_ਨਾਂ, level) = name;
+    ਵਾਪਸ true;
 }
 
-static bool
-SetLevelName(KeyTypesInfo *info, KeyTypeInfo *type, ExprDef *arrayNdx,
-             ExprDef *value)
+ਸਥਿਰ bool
+ਸੈੱਟ_Level_Name(ਕੁੰਜੀ_Types_Info *info, ਕੁੰਜੀ_Type_Info *type, ਵਿਅੰਜਕ_Def *arrayNdx,
+             ਵਿਅੰਜਕ_Def *ਮੁੱਲ)
 {
-    if (arrayNdx == NULL)
-        return ReportTypeShouldBeArray(info, type, "level name");
+    ਜੇ (arrayNdx == ਨਿਰਾ)
+        ਵਾਪਸ ReportTypeShouldBeArray(info, type, "level name");
 
-    xkb_level_index_t level = 0;
-    if (!ExprResolveLevel(info->ctx, arrayNdx, &level))
-        return ReportTypeBadType(info, XKB_ERROR_UNSUPPORTED_SHIFT_LEVEL,
+    xkb_level_ਸੂਚਕਾਂਕ_t level = 0;
+    ਜੇ (!ਵਿਅੰਜਕ_Resolve_Level(info->ctx, arrayNdx, &level))
+        ਵਾਪਸ ReportTypeBadType(info, XKB_ERROR_UNSUPPORTED_ਖਿਸਕਾਓ_LEVEL,
                                  type, "level name", "integer");
 
     xkb_atom_t level_name = XKB_ATOM_NONE;
-    if (!ExprResolveString(info->ctx, value, &level_name)) {
-        log_err(info->ctx, XKB_ERROR_WRONG_FIELD_TYPE,
+    ਜੇ (!ਵਿਅੰਜਕ_Resolve_String(info->ctx, ਮੁੱਲ, &level_name)) {
+        log_err(info->ctx, XKB_ERROR_WRONG_ਖੇਤਰ_TYPE,
                 "Non-string name for level %"PRIu32" in key type %s; "
                 "Ignoring illegal level name definition\n",
-                level + 1, xkb_atom_text(info->ctx, type->name));
-        return false;
+                level + 1, xkb_atom_ਪਾਠ(info->ctx, type->name));
+        ਵਾਪਸ false;
     }
 
-    return AddLevelName(info, type, level, level_name, true);
+    ਵਾਪਸ ਜੋੜੋ_Level_Name(info, type, level, level_name, true);
 }
 
 /***====================================================================***/
 
-static bool
-SetKeyTypeField(KeyTypesInfo *info, KeyTypeInfo *type,
-                const char *field, ExprDef *arrayNdx, ExprDef *value)
+ਸਥਿਰ bool
+ਸੈੱਟ_ਕੁੰਜੀ_Type_ਖੇਤਰ(ਕੁੰਜੀ_Types_Info *info, ਕੁੰਜੀ_Type_Info *type,
+                ਅਚਲ ਅੱਖਰ *ਖੇਤਰ_2, ਵਿਅੰਜਕ_Def *arrayNdx, ਵਿਅੰਜਕ_Def *ਮੁੱਲ)
 {
     bool ok = false;
-    enum type_field type_field = 0;
+    ਗਿਣਤੀ type_ਖੇਤਰ type_ਖੇਤਰ = 0;
 
-    if (istreq(field, "modifiers")) {
-        type_field = TYPE_FIELD_MASK;
-        ok = SetModifiers(info, type, arrayNdx, value);
+    ਜੇ (istreq(ਖੇਤਰ_2, "modifiers")) {
+        type_ਖੇਤਰ = TYPE_ਖੇਤਰ_ਨਕਾਬ;
+        ok = ਸੈੱਟ_Modifiers(info, type, arrayNdx, ਮੁੱਲ);
     }
-    else if (istreq(field, "map")) {
-        type_field = TYPE_FIELD_MAP;
-        ok = SetMapEntry(info, type, arrayNdx, value);
+    ਨਹੀਂਤਾਂ ਜੇ (istreq(ਖੇਤਰ_2, "map")) {
+        type_ਖੇਤਰ = TYPE_ਖੇਤਰ_MAP;
+        ok = ਸੈੱਟ_Map_ਇੰਦਰਾਜ(info, type, arrayNdx, ਮੁੱਲ);
     }
-    else if (istreq(field, "preserve")) {
-        type_field = TYPE_FIELD_PRESERVE;
-        ok = SetPreserve(info, type, arrayNdx, value);
+    ਨਹੀਂਤਾਂ ਜੇ (istreq(ਖੇਤਰ_2, "preserve")) {
+        type_ਖੇਤਰ = TYPE_ਖੇਤਰ_PRESERVE;
+        ok = ਸੈੱਟ_Preserve(info, type, arrayNdx, ਮੁੱਲ);
     }
-    else if (istreq(field, "levelname") || istreq(field, "level_name")) {
-        type_field = TYPE_FIELD_LEVEL_NAME;
-        ok = SetLevelName(info, type, arrayNdx, value);
-    } else {
-        log_err(info->ctx, XKB_ERROR_UNKNOWN_FIELD,
+    ਨਹੀਂਤਾਂ ਜੇ (istreq(ਖੇਤਰ_2, "levelname") || istreq(ਖੇਤਰ_2, "level_name")) {
+        type_ਖੇਤਰ = TYPE_ਖੇਤਰ_LEVEL_NAME;
+        ok = ਸੈੱਟ_Level_Name(info, type, arrayNdx, ਮੁੱਲ);
+    } ਨਹੀਂਤਾਂ {
+        log_err(info->ctx, XKB_ERROR_UNKNOWN_ਖੇਤਰ,
                 "Unknown field \"%s\" in key type \"%s\"; Definition ignored\n",
-                field, TypeTxt(info, type));
+                ਖੇਤਰ_2, TypeTxt(info, type));
         ok = !(info->keymap_info->strict & PARSER_NO_UNKNOWN_TYPE_FIELDS);
     }
 
-    type->defined |= type_field;
-    return ok;
+    type->defined |= type_ਖੇਤਰ;
+    ਵਾਪਸ ok;
 }
 
-static bool
-HandleKeyTypeBody(KeyTypesInfo *info, VarDef *def, KeyTypeInfo *type)
+ਸਥਿਰ bool
+Handle_ਕੁੰਜੀ_Type_Body(ਕੁੰਜੀ_Types_Info *info, VarDef *def, ਕੁੰਜੀ_Type_Info *type)
 {
     bool ok = true;
-    const char *elem, *field;
-    ExprDef *arrayNdx;
+    ਅਚਲ ਅੱਖਰ *elem, *ਖੇਤਰ_2;
+    ਵਿਅੰਜਕ_Def *arrayNdx;
 
-    for (; def; def = (VarDef *) def->common.next) {
-        if (!ExprResolveLhs(info->ctx, def->name, &elem, &field,
+    ਲਈ (; def; def = (VarDef *) def->common.ਅਗਲਾ) {
+        ਜੇ (!ਵਿਅੰਜਕ_Resolve_Lhs(info->ctx, def->name, &elem, &ਖੇਤਰ_2,
                             &arrayNdx)) {
             /* internal error, already reported */
             ok = false;
-            continue;
+            ਜਾਰੀ;
         }
 
-        if (elem) {
-            if (istreq(elem, "type")) {
-                log_err(info->ctx, XKB_ERROR_INVALID_SET_DEFAULT_STATEMENT,
+        ਜੇ (elem) {
+            ਜੇ (istreq(elem, "type")) {
+                log_err(info->ctx, XKB_ERROR_INVALID_ਸੈੱਟ_DEFAULT_STATEMENT,
                         "Support for changing the default type has been removed; "
-                        "Statement \"%s.%s\" ignored.\n", elem, field);
+                        "Statement \"%s.%s\" ignored.\n", elem, ਖੇਤਰ_2);
             }
-            else {
+            ਨਹੀਂਤਾਂ {
                 log_err(info->ctx, XKB_ERROR_GLOBAL_DEFAULTS_WRONG_SCOPE,
                         "Cannot set global defaults for \"%s\" element within "
                         "a key type statement: move statements to the global "
                         "file scope. Assignment to \"%s.%s\" ignored.\n",
-                        elem, elem, field);
+                        elem, elem, ਖੇਤਰ_2);
                 ok = false;
             }
-            continue;
+            ਜਾਰੀ;
         }
 
-        if (!SetKeyTypeField(info, type, field, arrayNdx, def->value))
+        ਜੇ (!ਸੈੱਟ_ਕੁੰਜੀ_Type_ਖੇਤਰ(info, type, ਖੇਤਰ_2, arrayNdx, def->ਮੁੱਲ))
             ok = false;
     }
 
-    return ok;
+    ਵਾਪਸ ok;
 }
 
-static bool
-HandleKeyTypeDef(KeyTypesInfo *info, KeyTypeDef *def)
+ਸਥਿਰ bool
+Handle_ਕੁੰਜੀ_Type_Def(ਕੁੰਜੀ_Types_Info *info, ਕੁੰਜੀ_Type_Def *def)
 {
-    KeyTypeInfo type = {
+    ਕੁੰਜੀ_Type_Info type = {
         .defined = 0,
-        .merge = def->merge,
+        .ਮਿਲਾਓ = def->ਮਿਲਾਓ,
         .name = def->name,
         .mods = 0,
-        .num_levels = 1,
+        .ਅੰਕ_ਪੱਧਰ = 1,
         .entries = darray_new(),
-        .level_names = darray_new(),
+        .level_ਨਾਂ = darray_new(),
     };
 
-    if (!HandleKeyTypeBody(info, def->body, &type) ||
-        !AddKeyType(info, &type, true))
+    ਜੇ (!Handle_ਕੁੰਜੀ_Type_Body(info, def->body, &type) ||
+        !ਜੋੜੋ_ਕੁੰਜੀ_Type(info, &type, true))
     {
-        info->errorCount++;
-        ClearKeyTypeInfo(&type);
-        return false;
+        info->error_ਗਿਣਤੀ++;
+        Clear_ਕੁੰਜੀ_Type_Info(&type);
+        ਵਾਪਸ false;
     }
 
     /* Type has been either stolen via shallow copy or reinitialized in
        `AddKeyType`: no need to free the arrays */
-    return true;
+    ਵਾਪਸ true;
 }
 
-static bool
-HandleGlobalVar(KeyTypesInfo *info, VarDef *stmt)
+ਸਥਿਰ bool
+HandleGlobalVar(ਕੁੰਜੀ_Types_Info *info, VarDef *stmt)
 {
-    const char *elem, *field;
-    ExprDef *arrayNdx;
+    ਅਚਲ ਅੱਖਰ *elem, *ਖੇਤਰ_2;
+    ਵਿਅੰਜਕ_Def *arrayNdx;
 
-    if (!ExprResolveLhs(info->ctx, stmt->name, &elem, &field,
+    ਜੇ (!ਵਿਅੰਜਕ_Resolve_Lhs(info->ctx, stmt->name, &elem, &ਖੇਤਰ_2,
                         &arrayNdx)) {
-        return false;           /* internal error, already reported */
+        ਵਾਪਸ false;           /* internal error, already reported */
     }
-    else if (elem && istreq(elem, "type")) {
+    ਨਹੀਂਤਾਂ ਜੇ (elem && istreq(elem, "type")) {
         log_err(info->ctx, XKB_ERROR_WRONG_STATEMENT_TYPE,
                 "Support for changing the default type has been removed; "
                 "Statement ignored\n");
-        return true;
+        ਵਾਪਸ true;
     }
-    else if (elem) {
-        log_err(info->ctx, XKB_ERROR_UNKNOWN_DEFAULT_FIELD,
+    ਨਹੀਂਤਾਂ ਜੇ (elem) {
+        log_err(info->ctx, XKB_ERROR_UNKNOWN_DEFAULT_ਖੇਤਰ,
                 "Default defined for unknown element \"%s\"; "
-                "Value for field \"%s.%s\" ignored\n", elem, elem, field);
-        return !(info->keymap_info->strict & PARSER_NO_UNKNOWN_STATEMENTS);
+                "Value for field \"%s.%s\" ignored\n", elem, elem, ਖੇਤਰ_2);
+        ਵਾਪਸ !(info->keymap_info->strict & PARSER_NO_UNKNOWN_STATEMENTS);
     }
-    else if (field) {
-        log_err(info->ctx, XKB_ERROR_UNKNOWN_DEFAULT_FIELD,
-                "Default defined for unknown field \"%s\"; Ignored\n", field);
-        return !(info->keymap_info->strict &
+    ਨਹੀਂਤਾਂ ਜੇ (ਖੇਤਰ_2) {
+        log_err(info->ctx, XKB_ERROR_UNKNOWN_DEFAULT_ਖੇਤਰ,
+                "Default defined for unknown field \"%s\"; Ignored\n", ਖੇਤਰ_2);
+        ਵਾਪਸ !(info->keymap_info->strict &
                  PARSER_NO_UNKNOWN_TYPES_GLOBAL_FIELDS);
     }
-    return false;
+    ਵਾਪਸ false;
 }
 
-static void
-HandleKeyTypesFile(KeyTypesInfo *info, XkbFile *file)
+ਸਥਿਰ ਖਾਲੀ
+Handle_ਕੁੰਜੀ_Types_File(ਕੁੰਜੀ_Types_Info *info, XkbFile *file)
 {
     bool ok;
 
-    free(info->name);
-    info->name = strdup_safe(file->name);
+    ਮੁਕਤ(info->name);
+    info->name = strdup_ਸੁਰੱਖਿਅਤ(file->name);
 
-    for (ParseCommon *stmt = file->defs; stmt; stmt = stmt->next) {
-        switch (stmt->type) {
-        case STMT_INCLUDE:
-            ok = HandleIncludeKeyTypes(info, (IncludeStmt *) stmt);
-            break;
-        case STMT_TYPE:
-            ok = HandleKeyTypeDef(info, (KeyTypeDef *) stmt);
-            break;
-        case STMT_VAR:
+    ਲਈ (ParseCommon *stmt = file->defs; stmt; stmt = stmt->ਅਗਲਾ) {
+        ਚੋਣ (stmt->type) {
+        ਹਾਲਤ STMT_INCLUDE:
+            ok = Handle_Include_ਕੁੰਜੀ_Types(info, (IncludeStmt *) stmt);
+            ਰੋਕੋ;
+        ਹਾਲਤ STMT_TYPE:
+            ok = Handle_ਕੁੰਜੀ_Type_Def(info, (ਕੁੰਜੀ_Type_Def *) stmt);
+            ਰੋਕੋ;
+        ਹਾਲਤ STMT_VAR:
             ok = HandleGlobalVar(info, (VarDef*) stmt);
-            break;
-        case STMT_VMOD:
+            ਰੋਕੋ;
+        ਹਾਲਤ STMT_VMOD:
             ok = HandleVModDef(info->ctx, &info->mods, (VModDef *) stmt);
-            break;
-        case STMT_UNKNOWN_DECLARATION:
-        case STMT_UNKNOWN_COMPOUND:
+            ਰੋਕੋ;
+        ਹਾਲਤ STMT_UNKNOWN_DECLARATION:
+        ਹਾਲਤ STMT_UNKNOWN_COMPOUND:
             log_err(info->ctx, XKB_ERROR_UNKNOWN_STATEMENT,
                     "Unsupported types %s statement \"%s\"; Ignoring\n",
                     (stmt->type == STMT_UNKNOWN_COMPOUND
                         ? "compound" : "declaration"),
                     ((UnknownStatement *)stmt)->name);
             ok = !(info->keymap_info->strict & PARSER_NO_UNKNOWN_STATEMENTS);
-            break;
-        default:
+            ਰੋਕੋ;
+        ਮੂਲ:
             log_err(info->ctx, XKB_ERROR_WRONG_STATEMENT_TYPE,
                     "Key type files may not include other declarations; "
-                    "Ignoring %s\n", stmt_type_to_string(stmt->type));
+                    "Ignoring %s\n", stmt_type_ਮੰਜ਼ਿਲ_string(stmt->type));
             ok = false;
-            break;
+            ਰੋਕੋ;
         }
 
-        if (!ok)
-            info->errorCount++;
+        ਜੇ (!ok)
+            info->error_ਗਿਣਤੀ++;
 
-        if (info->errorCount > 10) {
+        ਜੇ (info->error_ਗਿਣਤੀ > 10) {
             log_err(info->ctx, XKB_ERROR_INVALID_XKB_SYNTAX,
                     "Abandoning keytypes file \"%s\"\n",
-                    safe_map_name(file->name));
-            break;
+                    ਸੁਰੱਖਿਅਤ_map_name(file->name));
+            ਰੋਕੋ;
         }
     }
 }
 
 /***====================================================================***/
 
-static bool
-CopyKeyTypesToKeymap(struct xkb_keymap *keymap, KeyTypesInfo *info)
+ਸਥਿਰ bool
+Copy_ਕੁੰਜੀ_Types_ਮੰਜ਼ਿਲ_Keymap(ਬਣਤਰ xkb_keymap *keymap, ਕੁੰਜੀ_Types_Info *info)
 {
-    const darray_size_t num_types = darray_empty(info->types)
+    ਅਚਲ darray_ਮਾਪ_t ਅੰਕ_types = darray_ਖਾਲੀ_ਥਾਵਾਂ(info->types)
                                   ? 1
-                                  : darray_size(info->types);
-    struct xkb_key_type *types = calloc(num_types, sizeof(*types));
-    if (!types)
-        return false;
+                                  : darray_ਮਾਪ(info->types);
+    ਬਣਤਰ xkb_ਕੁੰਜੀ_type *types = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਅੰਕ_types, ਆਕਾਰ(*types));
+    ਜੇ (!types)
+        ਵਾਪਸ false;
 
     /*
      * The following types are called “Canonical Key Types” and the XKB protocol
@@ -804,85 +804,85 @@ CopyKeyTypesToKeymap(struct xkb_keymap *keymap, KeyTypesInfo *info)
      * If no types were specified, a default ONE_LEVEL type is
      * used for all keys.
      */
-    if (darray_empty(info->types)) {
-        struct xkb_key_type *type = &types[0];
+    ਜੇ (darray_ਖਾਲੀ_ਥਾਵਾਂ(info->types)) {
+        ਬਣਤਰ xkb_ਕੁੰਜੀ_type *type = &types[0];
 
         type->mods.mods = 0;
-        type->num_levels = 1;
-        type->entries = NULL;
-        type->num_entries = 0;
+        type->ਅੰਕ_ਪੱਧਰ = 1;
+        type->entries = ਨਿਰਾ;
+        type->ਅੰਕ_entries = 0;
         type->name = xkb_atom_intern_literal(keymap->ctx, "ONE_LEVEL");
-        type->level_names = NULL;
-        type->num_level_names = 0;
+        type->level_ਨਾਂ = ਨਿਰਾ;
+        type->ਅੰਕ_level_ਨਾਂ = 0;
         type->required = true;
     }
-    else {
+    ਨਹੀਂਤਾਂ {
         /* HACK to circumvent Xorg bugs (see comment above) */
-        const xkb_atom_t canonical_types[] = {
+        ਅਚਲ xkb_atom_t canonical_types[] = {
             xkb_atom_intern_literal(keymap->ctx, "ONE_LEVEL"),
             xkb_atom_intern_literal(keymap->ctx, "TWO_LEVEL"),
             xkb_atom_intern_literal(keymap->ctx, "ALPHABETIC"),
             xkb_atom_intern_literal(keymap->ctx, "KEYPAD"),
         };
 
-        for (darray_size_t i = 0; i < num_types; i++) {
-            KeyTypeInfo *def = &darray_item(info->types, i);
-            struct xkb_key_type *type = &types[i];
+        ਲਈ (darray_ਮਾਪ_t i = 0; i < ਅੰਕ_types; i++) {
+            ਕੁੰਜੀ_Type_Info *def = &darray_ਵਸਤੂ(info->types, i);
+            ਬਣਤਰ xkb_ਕੁੰਜੀ_type *type = &types[i];
 
             type->name = def->name;
             type->mods.mods = def->mods;
-            type->num_levels = def->num_levels;
-            type->num_level_names =
-                (xkb_level_index_t) darray_size(def->level_names);
-            darray_steal(def->level_names, &type->level_names, NULL);
-            darray_steal(def->entries, &type->entries, &type->num_entries);
+            type->ਅੰਕ_ਪੱਧਰ = def->ਅੰਕ_ਪੱਧਰ;
+            type->ਅੰਕ_level_ਨਾਂ =
+                (xkb_level_ਸੂਚਕਾਂਕ_t) darray_ਮਾਪ(def->level_ਨਾਂ);
+            darray_steal(def->level_ਨਾਂ, &type->level_ਨਾਂ, ਨਿਰਾ);
+            darray_steal(def->entries, &type->entries, &type->ਅੰਕ_entries);
             type->required = false;
 
             /* HACK: Never drop canonical XKB key types (see comment above) */
-            if (type->num_levels <= 2) {
-                for (uint8_t t = 0;
-                     t < (uint8_t) ARRAY_SIZE(canonical_types);
+            ਜੇ (type->ਅੰਕ_ਪੱਧਰ <= 2) {
+                ਲਈ (uint8_t t = 0;
+                     t < (uint8_t) ARRAY_ਮਾਪ(canonical_types);
                      t++) {
-                        if (type->name == canonical_types[t]) {
+                        ਜੇ (type->name == canonical_types[t]) {
                             type->required = true;
-                            break;
+                            ਰੋਕੋ;
                         }
                 }
             }
         }
     }
 
-    keymap->types_section_name = strdup_safe(info->name);
+    keymap->types_section_name = strdup_ਸੁਰੱਖਿਅਤ(info->name);
     XkbEscapeMapName(keymap->types_section_name);
-    keymap->num_types = num_types;
+    keymap->ਅੰਕ_types = ਅੰਕ_types;
     keymap->types = types;
     keymap->mods = info->mods;
-    return true;
+    ਵਾਪਸ true;
 }
 
 /***====================================================================***/
 
 bool
-CompileKeyTypes(XkbFile *file, struct xkb_keymap_info *keymap_info)
+Compile_ਕੁੰਜੀ_Types(XkbFile *file, ਬਣਤਰ xkb_keymap_info *keymap_info)
 {
-    KeyTypesInfo info;
+    ਕੁੰਜੀ_Types_Info info;
 
-    InitKeyTypesInfo(&info, keymap_info, 0,
+    Init_ਕੁੰਜੀ_Types_Info(&info, keymap_info, 0,
                      &keymap_info->keymap.mods);
 
-    if (file != NULL)
-        HandleKeyTypesFile(&info, file);
+    ਜੇ (file != ਨਿਰਾ)
+        Handle_ਕੁੰਜੀ_Types_File(&info, file);
 
-    if (info.errorCount != 0)
-        goto err_info;
+    ਜੇ (info.error_ਗਿਣਤੀ != 0)
+        ਜਾਓ err_info;
 
-    if (!CopyKeyTypesToKeymap(&keymap_info->keymap, &info))
-        goto err_info;
+    ਜੇ (!Copy_ਕੁੰਜੀ_Types_ਮੰਜ਼ਿਲ_Keymap(&keymap_info->keymap, &info))
+        ਜਾਓ err_info;
 
-    ClearKeyTypesInfo(&info);
-    return true;
+    Clear_ਕੁੰਜੀ_Types_Info(&info);
+    ਵਾਪਸ true;
 
 err_info:
-    ClearKeyTypesInfo(&info);
-    return false;
+    Clear_ਕੁੰਜੀ_Types_Info(&info);
+    ਵਾਪਸ false;
 }

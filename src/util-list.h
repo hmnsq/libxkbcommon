@@ -5,49 +5,49 @@
  * SPDX-License-Identifier: MIT
  */
 
-#pragma once
+#ਹਦਾਇਤ once
 
-#include "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
 
-#include <stdbool.h>
-#include <stddef.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdbool.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stddef.h>
 
 /*
  * This list data structure is a verbatim copy from wayland-util.h from the
  * Wayland project; except that wl_ prefix has been removed.
  */
 
-struct list {
-	struct list *prev;
-	struct list *next;
+ਬਣਤਰ list {
+	ਬਣਤਰ list *prev;
+	ਬਣਤਰ list *ਅਗਲਾ;
 };
 
-void list_init(struct list *list);
-void list_insert(struct list *list, struct list *elm);
-void list_append(struct list *list, struct list *elm);
-void list_remove(struct list *elm);
-bool list_empty(const struct list *list);
-bool list_is_last(const struct list *list, const struct list *elm);
+ਖਾਲੀ list_init(ਬਣਤਰ list *list);
+ਖਾਲੀ list_ਪਾਓ(ਬਣਤਰ list *list, ਬਣਤਰ list *elm);
+ਖਾਲੀ list_append(ਬਣਤਰ list *list, ਬਣਤਰ list *elm);
+ਖਾਲੀ list_remove(ਬਣਤਰ list *elm);
+bool list_ਖਾਲੀ_ਥਾਵਾਂ(ਅਚਲ ਬਣਤਰ list *list);
+bool list_is_ਆਖਰੀ(ਅਚਲ ਬਣਤਰ list *list, ਅਚਲ ਬਣਤਰ list *elm);
 
-#define container_of(ptr, type, member)					\
-	(__typeof__(type) *)((char *)(ptr) -				\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ container_ਦਾ(ptr, type, member)					\
+	(__typeof__(type) *)((ਅੱਖਰ *)(ptr) -				\
 		 offsetof(__typeof__(type), member))
 
-#define list_first_entry(head, pos, member)				\
-	container_of((head)->next, __typeof__(*(pos)), member)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ list_ਪਹਿਲਾ_ਇੰਦਰਾਜ(ਸਿਰ, pos, member)				\
+	container_ਦਾ((ਸਿਰ)->ਅਗਲਾ, __typeof__(*(pos)), member)
 
-#define list_last_entry(head, pos, member)				\
-	container_of((head)->prev, __typeof__(*(pos)), member)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ list_ਆਖਰੀ_ਇੰਦਰਾਜ(ਸਿਰ, pos, member)				\
+	container_ਦਾ((ਸਿਰ)->prev, __typeof__(*(pos)), member)
 
-#define list_for_each(pos, head, member)				\
-	for ((pos) = 0, (pos) = list_first_entry(head, pos, member);	\
-	     &(pos)->member != (head);					\
-	     (pos) = list_first_entry(&(pos)->member, pos, member))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ list_for_each(pos, ਸਿਰ, member)				\
+	ਲਈ ((pos) = 0, (pos) = list_ਪਹਿਲਾ_ਇੰਦਰਾਜ(ਸਿਰ, pos, member);	\
+	     &(pos)->member != (ਸਿਰ);					\
+	     (pos) = list_ਪਹਿਲਾ_ਇੰਦਰਾਜ(&(pos)->member, pos, member))
 
-#define list_for_each_safe(pos, tmp, head, member)			\
-	for ((pos) = 0, (tmp) = 0,						\
-	     (pos) = list_first_entry(head, pos, member),			\
-	     (tmp) = list_first_entry(&(pos)->member, tmp, member);		\
-	     &(pos)->member != (head);					\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ list_for_each_ਸੁਰੱਖਿਅਤ(pos, tmp, ਸਿਰ, member)			\
+	ਲਈ ((pos) = 0, (tmp) = 0,						\
+	     (pos) = list_ਪਹਿਲਾ_ਇੰਦਰਾਜ(ਸਿਰ, pos, member),			\
+	     (tmp) = list_ਪਹਿਲਾ_ਇੰਦਰਾਜ(&(pos)->member, tmp, member);		\
+	     &(pos)->member != (ਸਿਰ);					\
 	     (pos) = (tmp),							\
-	     (tmp) = list_first_entry(&(pos)->member, tmp, member))
+	     (tmp) = list_ਪਹਿਲਾ_ਇੰਦਰਾਜ(&(pos)->member, tmp, member))

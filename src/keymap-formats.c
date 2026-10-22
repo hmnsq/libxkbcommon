@@ -4,19 +4,19 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
 
-#include <stdint.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
-#include "utils.h"
-#include "keymap-formats.h"
-#include "util-numbers.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "keymap-formats.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "util-numbers.h"
 
 /* [WARNING] Must be in ascending order */
-static const enum xkb_keymap_format keymap_formats[] = {
-    XKB_KEYMAP_FORMAT_TEXT_V1,
-    XKB_KEYMAP_FORMAT_TEXT_V2,
+ਸਥਿਰ ਅਚਲ ਗਿਣਤੀ xkb_keymap_format keymap_formats[] = {
+    XKB_KEYMAP_FORMAT_ਪਾਠ_V1,
+    XKB_KEYMAP_FORMAT_ਪਾਠ_V2,
 };
 
 /*
@@ -27,79 +27,79 @@ static const enum xkb_keymap_format keymap_formats[] = {
  * may change in the future. Indeed, `xkb_keymap_format` encoding may change
  * (although we avoit it) while the corresponding labels remain unchanged.
  */
-struct format_label {
-    const char* label;
-    enum xkb_keymap_format format;
+ਬਣਤਰ format_label {
+    ਅਚਲ ਅੱਖਰ* label;
+    ਗਿਣਤੀ xkb_keymap_format format;
 };
 /* [WARNING] Must be in ascending order of the keymap format. */
-static const struct format_label keymap_formats_labels [] = {
-    { "xkb_v1", XKB_KEYMAP_FORMAT_TEXT_V1 },
-    { "v1",     XKB_KEYMAP_FORMAT_TEXT_V1 },
-    { "xkb_v2", XKB_KEYMAP_FORMAT_TEXT_V2 },
-    { "v2",     XKB_KEYMAP_FORMAT_TEXT_V2 },
+ਸਥਿਰ ਅਚਲ ਬਣਤਰ format_label keymap_formats_labels [] = {
+    { "xkb_v1", XKB_KEYMAP_FORMAT_ਪਾਠ_V1 },
+    { "v1",     XKB_KEYMAP_FORMAT_ਪਾਠ_V1 },
+    { "xkb_v2", XKB_KEYMAP_FORMAT_ਪਾਠ_V2 },
+    { "v2",     XKB_KEYMAP_FORMAT_ਪਾਠ_V2 },
 };
 
-size_t
-xkb_keymap_supported_formats(const enum xkb_keymap_format **formats)
+ਮਾਪ_t
+xkb_keymap_supported_formats(ਅਚਲ ਗਿਣਤੀ xkb_keymap_format **formats)
 {
     *formats = keymap_formats;
-    return ARRAY_SIZE(keymap_formats);
+    ਵਾਪਸ ARRAY_ਮਾਪ(keymap_formats);
 }
 
 bool
-xkb_keymap_is_supported_format(enum xkb_keymap_format format)
+xkb_keymap_is_supported_format(ਗਿਣਤੀ xkb_keymap_format format)
 {
-    if (format < keymap_formats[0]) {
+    ਜੇ (format < keymap_formats[0]) {
         /* Short-circuit because array is sorted */
-        return false;
+        ਵਾਪਸ false;
     }
 
-    for (size_t k = 0; k < ARRAY_SIZE(keymap_formats); k++) {
-        if (keymap_formats[k] == format)
-            return true;
+    ਲਈ (ਮਾਪ_t k = 0; k < ARRAY_ਮਾਪ(keymap_formats); k++) {
+        ਜੇ (keymap_formats[k] == format)
+            ਵਾਪਸ true;
         /* Short-circuit because array is sorted */
-        if (keymap_formats[k] > format)
-            return false;
+        ਜੇ (keymap_formats[k] > format)
+            ਵਾਪਸ false;
     }
 
-    return false;
+    ਵਾਪਸ false;
 }
 
-enum xkb_keymap_format
-xkb_keymap_parse_format(const char *raw)
+ਗਿਣਤੀ xkb_keymap_format
+xkb_keymap_parse_format(ਅਚਲ ਅੱਖਰ *raw)
 {
-    if (!raw)
-        return 0;
+    ਜੇ (!raw)
+        ਵਾਪਸ 0;
 
     uint32_t format = 0;
-    if (parse_hex_to_uint32_t(raw, SIZE_MAX, &format) > 0) {
+    ਜੇ (parse_hex_ਮੰਜ਼ਿਲ_uint32_t(raw, SIZE_MAX, &format) > 0) {
         /* Numeric format */
-        return (xkb_keymap_is_supported_format(format)) ? format : 0;
-    } else {
+        ਵਾਪਸ (xkb_keymap_is_supported_format(format)) ? format : 0;
+    } ਨਹੀਂਤਾਂ {
         /* Parse label: e.g. “xkb_vXXXX” and “vXXX” */
-        for (size_t k = 0; k < ARRAY_SIZE(keymap_formats_labels); k++) {
-            if (strcmp(raw, keymap_formats_labels[k].label) == 0)
-                return keymap_formats_labels[k].format;
+        ਲਈ (ਮਾਪ_t k = 0; k < ARRAY_ਮਾਪ(keymap_formats_labels); k++) {
+            ਜੇ (strcmp(raw, keymap_formats_labels[k].label) == 0)
+                ਵਾਪਸ keymap_formats_labels[k].format;
         }
-        return 0;
+        ਵਾਪਸ 0;
     }
 }
 
-const char *
-xkb_keymap_get_format_label(enum xkb_keymap_format format)
+ਅਚਲ ਅੱਖਰ *
+xkb_keymap_get_format_label(ਗਿਣਤੀ xkb_keymap_format format)
 {
-    if (format < keymap_formats_labels[0].format) {
+    ਜੇ (format < keymap_formats_labels[0].format) {
         /* Short-circuit because array is sorted */
-        return NULL;
+        ਵਾਪਸ ਨਿਰਾ;
     }
 
-    for (size_t k = 0; k < ARRAY_SIZE(keymap_formats_labels); k++) {
-        if (keymap_formats_labels[k].format == format)
-            return keymap_formats_labels[k].label;
+    ਲਈ (ਮਾਪ_t k = 0; k < ARRAY_ਮਾਪ(keymap_formats_labels); k++) {
+        ਜੇ (keymap_formats_labels[k].format == format)
+            ਵਾਪਸ keymap_formats_labels[k].label;
         /* Short-circuit because array is sorted */
-        if (keymap_formats_labels[k].format > format)
-            return NULL;
+        ਜੇ (keymap_formats_labels[k].format > format)
+            ਵਾਪਸ ਨਿਰਾ;
     }
 
-    return NULL;
+    ਵਾਪਸ ਨਿਰਾ;
 }

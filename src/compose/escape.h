@@ -2,13 +2,13 @@
  * Copyright © 2023 Pierre Le Marre <dev@wismill.eu>
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#ਹਦਾਇਤ once
 
-#include "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
 
-#include <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
 
-#include "src/utils.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "src/utils.h"
 
 /* Ad-hoc escaping for UTF-8 string
  *
@@ -19,57 +19,57 @@
  * In the latter string there is no ambiguity and no need to know the maximum
  * number of digits supported by the escape sequence.
  */
-static inline char*
-escape_utf8_string_literal(const char *from)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਅੱਖਰ*
+escape_utf8_string_literal(ਅਚਲ ਅੱਖਰ *from)
 {
-    const size_t length = strlen(from);
+    ਅਚਲ ਮਾਪ_t ਲੰਮਾਈ = ਲੜੀ_ਲੰਬਾਈ(from);
     /* Longest escape is converting ASCII character to "\xNN" */
-    char* to = calloc(4 * length + 1, sizeof(*to));
-    if (!to)
-        return NULL;
+    ਅੱਖਰ* ਮੰਜ਼ਿਲ = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(4 * ਲੰਮਾਈ + 1, ਆਕਾਰ(*ਮੰਜ਼ਿਲ));
+    ਜੇ (!ਮੰਜ਼ਿਲ)
+        ਵਾਪਸ ਨਿਰਾ;
 
-    size_t t = 0;
-    bool previous_is_hex_escape = false;
+    ਮਾਪ_t t = 0;
+    bool ਪਿਛਲਾ_is_hex_escape = false;
     uint8_t nbytes = 0;
-    for (size_t f = 0; f < length;) {
-        if ((unsigned char) from[f] < 0x80) {
+    ਲਈ (ਮਾਪ_t f = 0; f < ਲੰਮਾਈ;) {
+        ਜੇ ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ) from[f] < 0x80) {
             /* ASCII */
-            if (from[f] <= 0x10 || from[f] == 0x7f ||
-                (is_xdigit(from[f]) && previous_is_hex_escape))
+            ਜੇ (from[f] <= 0x10 || from[f] == 0x7f ||
+                (is_xdigit(from[f]) && ਪਿਛਲਾ_is_hex_escape))
             {
                 /* Control character or
                    hexadecimal digit following an hexadecimal escape */
-                snprintf_safe(&to[t], 5, "\\x%02x", from[f]);
+                snprintf_ਸੁਰੱਖਿਅਤ(&ਮੰਜ਼ਿਲ[t], 5, "\\x%02x", from[f]);
                 t += 4;
-                previous_is_hex_escape = true;
-            } else if (from[f] == '"' || from[f] == '\\') {
+                ਪਿਛਲਾ_is_hex_escape = true;
+            } ਨਹੀਂਤਾਂ ਜੇ (from[f] == '"' || from[f] == '\\') {
                 /* Quote and backslash */
-                snprintf_safe(&to[t], 3, "\\%c", from[f]);
+                snprintf_ਸੁਰੱਖਿਅਤ(&ਮੰਜ਼ਿਲ[t], 3, "\\%c", from[f]);
                 t += 2;
-                previous_is_hex_escape = false;
-            } else {
+                ਪਿਛਲਾ_is_hex_escape = false;
+            } ਨਹੀਂਤਾਂ {
                 /* Other characters */
-                to[t++] = from[f];
-                previous_is_hex_escape = false;
+                ਮੰਜ਼ਿਲ[t++] = from[f];
+                ਪਿਛਲਾ_is_hex_escape = false;
             }
             f++;
-            continue;
+            ਜਾਰੀ;
         }
         /* Test next byte for the next Unicode codepoint’s bytes count */
-        else if ((unsigned char) from[f] < 0xe0)
+        ਨਹੀਂਤਾਂ ਜੇ ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ) from[f] < 0xe0)
             nbytes = 2;
-        else if ((unsigned char) from[f] < 0xf0)
+        ਨਹੀਂਤਾਂ ਜੇ ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ) from[f] < 0xf0)
             nbytes = 3;
-        else
+        ਨਹੀਂਤਾਂ
             nbytes = 4;
-        memcpy(&to[t], &from[f], nbytes);
+        ਸਮ੍ਰਿਤੀ_ਨਕਲ(&ਮੰਜ਼ਿਲ[t], &from[f], nbytes);
         t += nbytes;
         f += nbytes;
-        previous_is_hex_escape = false;
+        ਪਿਛਲਾ_is_hex_escape = false;
     }
-    to[t++] = '\0';
-    char* ret = realloc(to, t);
-    if (!ret)
-        free(to);
-    return ret;
+    ਮੰਜ਼ਿਲ[t++] = '\0';
+    ਅੱਖਰ* ret = realloc(ਮੰਜ਼ਿਲ, t);
+    ਜੇ (!ret)
+        ਮੁਕਤ(ਮੰਜ਼ਿਲ);
+    ਵਾਪਸ ret;
 }

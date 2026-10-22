@@ -3,30 +3,30 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
 
-#include <limits.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <limits.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "context.h"
-#include "darray.h"
-#include "include.h"
-#include "keymap-formats.h"
-#include "keymap-file-iterator.h"
-#include "messages-codes.h"
-#include "utils.h"
-#include "util-paths.h"
-#include "xkbcomp-priv.h"
-#include "xkbcomp/ast.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xkbcommon/xkbcommon.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "context.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "darray.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "include.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "keymap-formats.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "keymap-file-iterator.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "messages-codes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "util-paths.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xkbcomp-priv.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xkbcomp/ast.h"
 
-const char *
-xkb_file_type_name(enum xkb_file_type type)
+ਅਚਲ ਅੱਖਰ *
+xkb_file_type_name(ਗਿਣਤੀ xkb_file_type type)
 {
-    if (type > FILE_TYPE_KEYMAP)
-        return "unknown";
+    ਜੇ (type > FILE_TYPE_KEYMAP)
+        ਵਾਪਸ "unknown";
 
-    static const char *xkb_file_type_strings[_FILE_TYPE_NUM_ENTRIES] = {
+    ਸਥਿਰ ਅਚਲ ਅੱਖਰ *xkb_file_type_ਲੜੀਆਂ[FILE_TYPE_ਅੰਕ_ENTRIES] = {
         [FILE_TYPE_KEYCODES] = "keycodes",
         [FILE_TYPE_TYPES] = "types",
         [FILE_TYPE_COMPAT] = "compatibility",
@@ -34,35 +34,35 @@ xkb_file_type_name(enum xkb_file_type type)
         [FILE_TYPE_GEOMETRY] = "geometry",
         [FILE_TYPE_KEYMAP] = "keymap",
     };
-    return xkb_file_type_strings[type];
+    ਵਾਪਸ xkb_file_type_ਲੜੀਆਂ[type];
 }
 
-const char *
-xkb_merge_mode_name(enum merge_mode merge)
+ਅਚਲ ਅੱਖਰ *
+xkb_ਮਿਲਾਓ_ਬਹੁਲਕ_name(ਗਿਣਤੀ ਮਿਲਾਓ_ਬਹੁਲਕ ਮਿਲਾਓ)
 {
-    if (merge >= _MERGE_MODE_NUM_ENTRIES)
-        return "unknown";
+    ਜੇ (ਮਿਲਾਓ >= ਮਿਲਾਓ_ਬਹੁਲਕ_ਅੰਕ_ENTRIES)
+        ਵਾਪਸ "unknown";
 
-    static const char *merge_mode_strings[_MERGE_MODE_NUM_ENTRIES] = {
-        [MERGE_DEFAULT] = "default",
-        [MERGE_AUGMENT] = "augment",
-        [MERGE_OVERRIDE] = "override",
-        [MERGE_REPLACE] = "replace",
+    ਸਥਿਰ ਅਚਲ ਅੱਖਰ *ਮਿਲਾਓ_ਬਹੁਲਕ_ਲੜੀਆਂ[ਮਿਲਾਓ_ਬਹੁਲਕ_ਅੰਕ_ENTRIES] = {
+        [ਮਿਲਾਓ_DEFAULT] = "default",
+        [ਮਿਲਾਓ_AUGMENT] = "augment",
+        [ਮਿਲਾਓ_OVERRIDE] = "override",
+        [ਮਿਲਾਓ_REPLACE] = "replace",
     };
-    return merge_mode_strings[merge];
+    ਵਾਪਸ ਮਿਲਾਓ_ਬਹੁਲਕ_ਲੜੀਆਂ[ਮਿਲਾਓ];
 }
 
 /* Stateful lookup of map flags names */
-const char *
-xkb_map_flags_string_iter(unsigned int *index, enum xkb_map_flags flags)
+ਅਚਲ ਅੱਖਰ *
+xkb_map_flags_string_iter(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ *ਸੂਚਕਾਂਕ, ਗਿਣਤੀ xkb_map_flags flags)
 {
-    if (!flags)
-        return NULL;
+    ਜੇ (!flags)
+        ਵਾਪਸ ਨਿਰਾ;
 
-    static const struct {
-        enum xkb_map_flags flag;
-        const char *name;
-    } names[] = {
+    ਸਥਿਰ ਅਚਲ ਬਣਤਰ {
+        ਗਿਣਤੀ xkb_map_flags flag;
+        ਅਚਲ ਅੱਖਰ *name;
+    } ਨਾਂ[] = {
         { MAP_IS_DEFAULT, "default" },
         { MAP_IS_PARTIAL, "partial" },
         { MAP_IS_HIDDEN, "hidden" },
@@ -74,412 +74,412 @@ xkb_map_flags_string_iter(unsigned int *index, enum xkb_map_flags flags)
         { MAP_IS_DEPRECATED, "deprecated" },
     };
 
-    while (*index < ARRAY_SIZE(names)) {
-        if (flags & names[*index].flag)
-            return names[(*index)++].name;
-        (*index)++;
+    ਜਦੋਂ (*ਸੂਚਕਾਂਕ < ARRAY_ਮਾਪ(ਨਾਂ)) {
+        ਜੇ (flags & ਨਾਂ[*ਸੂਚਕਾਂਕ].flag)
+            ਵਾਪਸ ਨਾਂ[(*ਸੂਚਕਾਂਕ)++].name;
+        (*ਸੂਚਕਾਂਕ)++;
     }
 
-    return NULL;
+    ਵਾਪਸ ਨਿਰਾ;
 };
 
 FILE *
-xkb_resolve_file(struct xkb_context *ctx,
-                 enum xkb_file_type file_type,
-                 const char *path, const char *map,
-                 char *resolved_path, size_t resolved_path_size,
-                 char *resolved_map, size_t resolved_map_size)
+xkb_resolve_file(ਬਣਤਰ xkb_context *ctx,
+                 ਗਿਣਤੀ xkb_file_type file_type,
+                 ਅਚਲ ਅੱਖਰ *ਰਸਤਾ, ਅਚਲ ਅੱਖਰ *map,
+                 ਅੱਖਰ *resolved_ਰਸਤਾ, ਮਾਪ_t resolved_ਰਸਤਾ_ਮਾਪ,
+                 ਅੱਖਰ *resolved_map, ਮਾਪ_t resolved_map_ਮਾਪ)
 {
-    unsigned int offset = 0;
-    FILE *file = NULL; /* Exact match */
-    FILE *candidate = NULL; /* Weak match */
-    const size_t path_len = strlen(path);
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਵਿੱਥ = 0;
+    FILE *file = ਨਿਰਾ; /* Exact match */
+    FILE *candidate = ਨਿਰਾ; /* Weak match */
+    ਅਚਲ ਮਾਪ_t ਰਸਤਾ_len = ਲੜੀ_ਲੰਬਾਈ(ਰਸਤਾ);
 
-    const bool absolute_path = is_absolute_path(path);
-    if (absolute_path) {
+    ਅਚਲ bool absolute_ਰਸਤਾ = is_absolute_ਰਸਤਾ(ਰਸਤਾ);
+    ਜੇ (absolute_ਰਸਤਾ) {
         /* Absolute path: no need for lookup in XKB paths */
-        file = fopen(path, "rb");
-    } else {
+        file = fopen(ਰਸਤਾ, "rb");
+    } ਨਹੀਂਤਾਂ {
         /* Relative path: lookup the first XKB path */
-        file = FindFileInXkbPath(ctx, "(unknown)", path, path_len, file_type,
-                                 resolved_path, resolved_path_size, &offset,
+        file = ਲੱਭੋ_File_ਵਿੱਚ_Xkb_ਰਸਤਾ(ctx, "(unknown)", ਰਸਤਾ, ਰਸਤਾ_len, file_type,
+                                 resolved_ਰਸਤਾ, resolved_ਰਸਤਾ_ਮਾਪ, &ਵਿੱਥ,
                                  true);
     }
 
-    const enum xkb_keymap_format format = DEFAULT_INPUT_KEYMAP_FORMAT;
-    const struct parser_keymap_config config = {
+    ਅਚਲ ਗਿਣਤੀ xkb_keymap_format format = DEFAULT_ਨਿਵੇਸ਼_KEYMAP_FORMAT;
+    ਅਚਲ ਬਣਤਰ parser_keymap_config config = {
         .format = format,
         .strict = parser_strict_flags_from_keymap_format(format)
     };
 
-    while (file) {
-        XkbFile * const xkb_file = XkbParseFile(ctx, &config, file, path, map);
-        if (xkb_file) {
-            if (file_type < _FILE_TYPE_NUM_ENTRIES &&
+    ਜਦੋਂ (file) {
+        XkbFile * ਅਚਲ xkb_file = XkbParseFile(ctx, &config, file, ਰਸਤਾ, map);
+        ਜੇ (xkb_file) {
+            ਜੇ (file_type < FILE_TYPE_ਅੰਕ_ENTRIES &&
                 xkb_file->file_type != file_type) {
-                log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+                log_err(ctx, XKB_LOG_ਸੁਨੇਹਾ_NO_ID,
                         "File of wrong type (expected %s, got %s); "
                         "file \"%s\" ignored\n",
-                        xkb_file_type_to_string(file_type),
-                        xkb_file_type_to_string(xkb_file->file_type),
-                        (absolute_path ? path : resolved_path));
-                goto invalid_file;
-            } else if (map || (xkb_file->flags && MAP_IS_DEFAULT)) {
+                        xkb_file_type_ਮੰਜ਼ਿਲ_string(file_type),
+                        xkb_file_type_ਮੰਜ਼ਿਲ_string(xkb_file->file_type),
+                        (absolute_ਰਸਤਾ ? ਰਸਤਾ : resolved_ਰਸਤਾ));
+                ਜਾਓ invalid_file;
+            } ਨਹੀਂਤਾਂ ਜੇ (map || (xkb_file->flags && MAP_IS_DEFAULT)) {
                 /*
                  * Exact match: explicit map name or explicit default map.
                  * Lookup stops in this iteration.
                  */
-                if (!strcpy_safe(resolved_map, resolved_map_size,
+                ਜੇ (!strcpy_ਸੁਰੱਖਿਅਤ(resolved_map, resolved_map_ਮਾਪ,
                                  (xkb_file->name ? xkb_file->name : ""))) {
                     FreeXkbFile(xkb_file);
-                    goto error;
+                    ਜਾਓ error;
                 }
-            } else if (!candidate) {
+            } ਨਹੀਂਤਾਂ ਜੇ (!candidate) {
                 /*
                  * Weak match: looking for an explicit default map, but found
                  * only the first *implicit* default map (e.g. first map of the
                  * file). Use as fallback, but keep looking for an exact match.
                  */
                 candidate = file;
-                if (!strcpy_safe(resolved_map, resolved_map_size,
+                ਜੇ (!strcpy_ਸੁਰੱਖਿਅਤ(resolved_map, resolved_map_ਮਾਪ,
                                  (xkb_file->name ? xkb_file->name : ""))) {
                     FreeXkbFile(xkb_file);
-                    goto error;
+                    ਜਾਓ error;
                 }
-            } else {
+            } ਨਹੀਂਤਾਂ {
                 /*
                  * Weak match, but we already have a previous candidate.
                  * Keep looking for an exact match.
                  */
-                goto invalid_file;
+                ਜਾਓ invalid_file;
             }
-        } else {
+        } ਨਹੀਂਤਾਂ {
 invalid_file:
             fclose(file);
-            file = NULL;
+            file = ਨਿਰਾ;
         }
 
         FreeXkbFile(xkb_file);
 
-        if (file != NULL || absolute_path) {
+        ਜੇ (file != ਨਿਰਾ || absolute_ਰਸਤਾ) {
             /* Exact match or absolute path with no further file to search */
-            break;
+            ਰੋਕੋ;
         }
 
-        offset++;
-        file = FindFileInXkbPath(ctx, "(unknown)",
-                                 path, path_len, file_type,
-                                 resolved_path, resolved_path_size,
-                                 &offset, true);
+        ਵਿੱਥ++;
+        file = ਲੱਭੋ_File_ਵਿੱਚ_Xkb_ਰਸਤਾ(ctx, "(unknown)",
+                                 ਰਸਤਾ, ਰਸਤਾ_len, file_type,
+                                 resolved_ਰਸਤਾ, resolved_ਰਸਤਾ_ਮਾਪ,
+                                 &ਵਿੱਥ, true);
     }
 
-    if (!file) {
+    ਜੇ (!file) {
         /* No exact match: use weak match, if any */
         file = candidate;
-    } else if (candidate) {
+    } ਨਹੀਂਤਾਂ ਜੇ (candidate) {
         /* Found exact match: discard weak match, if any */
         fclose(candidate);
     }
 
-    if (absolute_path && file &&
-        !strcpy_safe(resolved_path, resolved_path_size, path)) {
-        goto error;
+    ਜੇ (absolute_ਰਸਤਾ && file &&
+        !strcpy_ਸੁਰੱਖਿਅਤ(resolved_ਰਸਤਾ, resolved_ਰਸਤਾ_ਮਾਪ, ਰਸਤਾ)) {
+        ਜਾਓ error;
     }
 
-    return file;
+    ਵਾਪਸ file;
 
 error:
-    log_err(ctx, XKB_ERROR_INSUFFICIENT_BUFFER_SIZE,
+    log_err(ctx, XKB_ERROR_INSUFFICIENT_ਬਫਰ_ਮਾਪ,
             "Cannot copy resolved path or section\n");
     fclose(file);
-    return NULL;
+    ਵਾਪਸ ਨਿਰਾ;
 }
 
-void
-xkb_file_section_init(struct xkb_file_section *section)
+ਖਾਲੀ
+xkb_file_section_init(ਬਣਤਰ xkb_file_section *section)
 {
     darray_init(section->include_groups);
     darray_init(section->includes);
-    darray_init(section->buffer);
-    darray_append(section->buffer, '\0');
+    darray_init(section->ਬਫਰ);
+    darray_append(section->ਬਫਰ, '\0');
 }
 
-static void
-xkb_file_section_reset(struct xkb_file_section *section)
+ਸਥਿਰ ਖਾਲੀ
+xkb_file_section_reset(ਬਣਤਰ xkb_file_section *section)
 {
-    darray_size(section->include_groups) = 0;
-    darray_size(section->includes) = 0;
-    darray_size(section->buffer) = 1; /* keep the dummy string */
+    darray_ਮਾਪ(section->include_groups) = 0;
+    darray_ਮਾਪ(section->includes) = 0;
+    darray_ਮਾਪ(section->ਬਫਰ) = 1; /* keep the dummy string */
 }
 
-void
-xkb_file_section_free(struct xkb_file_section *section)
+ਖਾਲੀ
+xkb_file_section_free(ਬਣਤਰ xkb_file_section *section)
 {
-    if (!section)
-        return;
+    ਜੇ (!section)
+        ਵਾਪਸ;
 
     darray_free(section->include_groups);
     darray_free(section->includes);
-    darray_free(section->buffer);
+    darray_free(section->ਬਫਰ);
 }
 
-static bool
-xkb_file_section_set_meta_data(struct xkb_context *ctx,
-                               struct xkb_file_section *section,
-                               const XkbFile *xkb_file)
+ਸਥਿਰ bool
+xkb_file_section_ਸੈੱਟ_meta_ਅੰਕੜੇ(ਬਣਤਰ xkb_context *ctx,
+                               ਬਣਤਰ xkb_file_section *section,
+                               ਅਚਲ XkbFile *xkb_file)
 {
     section->file_type = xkb_file->file_type;
     section->flags = xkb_file->flags;
-    if (xkb_file->name) {
-        darray_size_t idx = darray_size(section->buffer);
-        darray_append_string0(section->buffer, xkb_file->name);
+    ਜੇ (xkb_file->name) {
+        darray_ਮਾਪ_t idx = darray_ਮਾਪ(section->ਬਫਰ);
+        darray_append_string0(section->ਬਫਰ, xkb_file->name);
         section->name = idx;
-    } else {
+    } ਨਹੀਂਤਾਂ {
         section->name = 0;
     }
-    return true;
+    ਵਾਪਸ true;
 }
 
 /** Process a list of include statements */
-static bool
-xkb_file_section_append_includes(struct xkb_context *ctx,
-                                 enum xkb_file_iterator_flags flags,
-                                 const struct parser_keymap_config *config,
-                                 const char *section_path,
-                                 struct xkb_file_section *section,
-                                 enum xkb_file_type file_type,
+ਸਥਿਰ bool
+xkb_file_section_append_includes(ਬਣਤਰ xkb_context *ctx,
+                                 ਗਿਣਤੀ xkb_file_iterator_flags flags,
+                                 ਅਚਲ ਬਣਤਰ parser_keymap_config *config,
+                                 ਅਚਲ ਅੱਖਰ *section_ਰਸਤਾ,
+                                 ਬਣਤਰ xkb_file_section *section,
+                                 ਗਿਣਤੀ xkb_file_type file_type,
                                  IncludeStmt * include)
 {
-    struct xkb_file_include_group *group = NULL;
+    ਬਣਤਰ xkb_file_include_ਸਮੂਹ *ਸਮੂਹ = ਨਿਰਾ;
     /* Note: this will flatten statements such as `include "pc+de"` */
-    for (IncludeStmt *stmt = include; stmt; stmt = stmt->next_incl) {
-        char buf[PATH_MAX];
+    ਲਈ (IncludeStmt *stmt = include; stmt; stmt = stmt->ਅਗਲਾ_incl) {
+        ਅੱਖਰ buf[PATH_MAX];
         /* Parse the included file to check the include validity */
         XkbFile *xkb_file = ProcessIncludeFile(ctx, config, stmt, file_type,
-                                               buf, sizeof(buf));
-        const bool valid = (xkb_file != NULL);
-        if (valid || !(flags & XKB_FILE_ITERATOR_FAIL_ON_INCLUDE_ERROR)) {
+                                               buf, ਆਕਾਰ(buf));
+        ਅਚਲ bool valid = (xkb_file != ਨਿਰਾ);
+        ਜੇ (valid || !(flags & XKB_FILE_ITERATOR_FAIL_ON_INCLUDE_ERROR)) {
             /* Collect the strings of the statement properties */
 
-            const darray_size_t path = darray_size(section->buffer);
-            darray_append_string0(section->buffer, buf);
+            ਅਚਲ darray_ਮਾਪ_t ਰਸਤਾ = darray_ਮਾਪ(section->ਬਫਰ);
+            darray_append_string0(section->ਬਫਰ, buf);
 
-            const darray_size_t file = darray_size(section->buffer);
-            darray_append_string0(section->buffer, stmt->file);
+            ਅਚਲ darray_ਮਾਪ_t file = darray_ਮਾਪ(section->ਬਫਰ);
+            darray_append_string0(section->ਬਫਰ, stmt->file);
 
-            const darray_size_t section_name =
-                (stmt->map != NULL || (valid && xkb_file->name))
-                    ? darray_size(section->buffer)
+            ਅਚਲ darray_ਮਾਪ_t section_name =
+                (stmt->map != ਨਿਰਾ || (valid && xkb_file->name))
+                    ? darray_ਮਾਪ(section->ਬਫਰ)
                     : 0;
-            if (section_name) {
-                darray_append_string0(section->buffer,
+            ਜੇ (section_name) {
+                darray_append_string0(section->ਬਫਰ,
                                       (stmt->map) ? stmt->map : xkb_file->name);
             }
 
-            const darray_size_t modifier = (stmt->modifier)
-                ? darray_size(section->buffer)
+            ਅਚਲ darray_ਮਾਪ_t modifier = (stmt->modifier)
+                ? darray_ਮਾਪ(section->ਬਫਰ)
                 : 0;
-            if (modifier) {
-                darray_append_string0(section->buffer, stmt->modifier);
+            ਜੇ (modifier) {
+                darray_append_string0(section->ਬਫਰ, stmt->modifier);
             }
 
-            const enum xkb_map_flags section_flags = (valid)
+            ਅਚਲ ਗਿਣਤੀ xkb_map_flags section_flags = (valid)
                 ? xkb_file->flags
                 : 0;
 
             /* Create and append the include statement */
-            const struct xkb_file_include inc = {
+            ਅਚਲ ਬਣਤਰ xkb_file_include inc = {
                 .valid = valid,
-                .explicit_section = (stmt->map != NULL),
-                .merge = stmt->merge,
-                .path = path,
+                .explicit_section = (stmt->map != ਨਿਰਾ),
+                .ਮਿਲਾਓ = stmt->ਮਿਲਾਓ,
+                .ਰਸਤਾ = ਰਸਤਾ,
                 .file = file,
                 .section = section_name,
                 .modifier = modifier,
                 .flags = section_flags
             };
-            const darray_size_t idx = darray_size(section->includes);
+            ਅਚਲ darray_ਮਾਪ_t idx = darray_ਮਾਪ(section->includes);
             darray_append(section->includes, inc);
 
             /* Update include group */
-            if (group == NULL) {
-                const darray_size_t group_idx =
-                    darray_size(section->include_groups);
+            ਜੇ (ਸਮੂਹ == ਨਿਰਾ) {
+                ਅਚਲ darray_ਮਾਪ_t ਸਮੂਹ_idx =
+                    darray_ਮਾਪ(section->include_groups);
                 darray_append(
                     section->include_groups,
-                    (struct xkb_file_include_group) {.start = idx, .end = idx}
+                    (ਬਣਤਰ xkb_file_include_ਸਮੂਹ) {.ਸ਼ੁਰੂ = idx, .ਸਿਰਾ = idx}
                 );
-                group = &darray_item(section->include_groups, group_idx);
-            } else {
-                group->end = idx;
+                ਸਮੂਹ = &darray_ਵਸਤੂ(section->include_groups, ਸਮੂਹ_idx);
+            } ਨਹੀਂਤਾਂ {
+                ਸਮੂਹ->ਸਿਰਾ = idx;
             }
 
             FreeXkbFile(xkb_file);
-        } else {
-            const char * const name =
+        } ਨਹੀਂਤਾਂ {
+            ਅਚਲ ਅੱਖਰ * ਅਚਲ name =
                 xkb_file_section_get_string(section, section->name);
-            log_err(ctx, XKB_ERROR_INCLUDED_FILE_NOT_FOUND,
+            log_err(ctx, XKB_ERROR_INCLUDED_FILE_NOT_ਮਿਲਿਆ,
                     "%s include failure in: %s%s%s%s\n",
-                    xkb_file_type_name(file_type), section_path,
+                    xkb_file_type_name(file_type), section_ਰਸਤਾ,
                     (section->name ? " (section: \"": ""), name,
                     (section->name ? "\")": ""));
             FreeXkbFile(xkb_file);
-            return false;
+            ਵਾਪਸ false;
         }
     };
-    return true;
+    ਵਾਪਸ true;
 }
 
 /* Process the AST of a section */
-static bool
-xkb_file_section_process(struct xkb_context *ctx,
-                         enum xkb_file_iterator_flags flags,
-                         const struct parser_keymap_config *config,
-                         const char *path,
-                         struct xkb_file_section *section,
-                         const XkbFile *xkb_file)
+ਸਥਿਰ bool
+xkb_file_section_process(ਬਣਤਰ xkb_context *ctx,
+                         ਗਿਣਤੀ xkb_file_iterator_flags flags,
+                         ਅਚਲ ਬਣਤਰ parser_keymap_config *config,
+                         ਅਚਲ ਅੱਖਰ *ਰਸਤਾ,
+                         ਬਣਤਰ xkb_file_section *section,
+                         ਅਚਲ XkbFile *xkb_file)
 {
     bool ok = true;
-    for (ParseCommon *stmt = xkb_file->defs; stmt; stmt = stmt->next) {
-        if (stmt->type == STMT_INCLUDE) {
-            ok = xkb_file_section_append_includes(ctx, flags, config, path,
+    ਲਈ (ParseCommon *stmt = xkb_file->defs; stmt; stmt = stmt->ਅਗਲਾ) {
+        ਜੇ (stmt->type == STMT_INCLUDE) {
+            ok = xkb_file_section_append_includes(ctx, flags, config, ਰਸਤਾ,
                                                   section, xkb_file->file_type,
                                                   (IncludeStmt *) stmt);
-            if (!ok)
-                break;
+            ਜੇ (!ok)
+                ਰੋਕੋ;
         }
     }
-    return ok;
+    ਵਾਪਸ ok;
 }
 
 bool
-xkb_file_section_parse(struct xkb_context *ctx,
-                       enum xkb_file_iterator_flags iterator_flags,
-                       enum xkb_keymap_format format,
-                       enum xkb_keymap_compile_flags compile_flags,
-                       unsigned int include_depth,
-                       const char *path, const char *map,
-                       struct xkb_file_section *section)
+xkb_file_section_parse(ਬਣਤਰ xkb_context *ctx,
+                       ਗਿਣਤੀ xkb_file_iterator_flags iterator_flags,
+                       ਗਿਣਤੀ xkb_keymap_format format,
+                       ਗਿਣਤੀ xkb_keymap_compile_flags compile_flags,
+                       ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ include_ਡੂੰਘਾਈ,
+                       ਅਚਲ ਅੱਖਰ *ਰਸਤਾ, ਅਚਲ ਅੱਖਰ *map,
+                       ਬਣਤਰ xkb_file_section *section)
 {
-    if (ExceedsIncludeMaxDepth(ctx, include_depth))
-        return false;
+    ਜੇ (Exceeds_Include_Max_ਡੂੰਘਾਈ(ctx, include_ਡੂੰਘਾਈ))
+        ਵਾਪਸ false;
 
-    FILE *file = fopen(path, "rb");
-    if (!file) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
-                "Cannot open file: %s\n", path);
-        return false;
+    FILE *file = fopen(ਰਸਤਾ, "rb");
+    ਜੇ (!file) {
+        log_err(ctx, XKB_LOG_ਸੁਨੇਹਾ_NO_ID,
+                "Cannot open file: %s\n", ਰਸਤਾ);
+        ਵਾਪਸ false;
     }
 
-    const struct parser_keymap_config config = {
+    ਅਚਲ ਬਣਤਰ parser_keymap_config config = {
         .format = format,
         .strict = parser_strict_flags_from_keymap_format(format)
     };
 
-    XkbFile *xkb_file = XkbParseFile(ctx, &config, file, path, map);
+    XkbFile *xkb_file = XkbParseFile(ctx, &config, file, ਰਸਤਾ, map);
     fclose(file);
-    if (!xkb_file) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    ਜੇ (!xkb_file) {
+        log_err(ctx, XKB_LOG_ਸੁਨੇਹਾ_NO_ID,
                 "Cannot parse map \"%s\" in file: %s\n",
-                (map ? map : "(no map)"), path);
-        return false;
+                (map ? map : "(no map)"), ਰਸਤਾ);
+        ਵਾਪਸ false;
     }
 
     xkb_file_section_reset(section);
-    const bool no_includes = iterator_flags & XKB_FILE_ITERATOR_NO_INCLUDES;
-    const bool ok = (
-        xkb_file_section_set_meta_data(ctx, section, xkb_file) &&
+    ਅਚਲ bool no_includes = iterator_flags & XKB_FILE_ITERATOR_NO_INCLUDES;
+    ਅਚਲ bool ok = (
+        xkb_file_section_ਸੈੱਟ_meta_ਅੰਕੜੇ(ctx, section, xkb_file) &&
         (no_includes ||
-         xkb_file_section_process(ctx, iterator_flags, &config, path, section,
+         xkb_file_section_process(ctx, iterator_flags, &config, ਰਸਤਾ, section,
                                   xkb_file))
     );
     FreeXkbFile(xkb_file);
-    return ok;
+    ਵਾਪਸ ok;
 }
 
-struct xkb_file_iterator *
-xkb_file_iterator_new_from_buffer(struct xkb_context *ctx,
-                                  enum xkb_file_iterator_flags iterator_flags,
-                                  enum xkb_keymap_format format,
-                                  enum xkb_keymap_compile_flags compile_flags,
-                                  const char *path, const char *map,
-                                  enum xkb_file_type file_type,
-                                  const char *string, size_t length)
+ਬਣਤਰ xkb_file_iterator *
+xkb_file_iterator_new_from_ਬਫਰ(ਬਣਤਰ xkb_context *ctx,
+                                  ਗਿਣਤੀ xkb_file_iterator_flags iterator_flags,
+                                  ਗਿਣਤੀ xkb_keymap_format format,
+                                  ਗਿਣਤੀ xkb_keymap_compile_flags compile_flags,
+                                  ਅਚਲ ਅੱਖਰ *ਰਸਤਾ, ਅਚਲ ਅੱਖਰ *map,
+                                  ਗਿਣਤੀ xkb_file_type file_type,
+                                  ਅਚਲ ਅੱਖਰ *string, ਮਾਪ_t ਲੰਮਾਈ)
 {
-    struct xkb_file_iterator * const iter = calloc(1, sizeof(*iter));
-    if (!iter) {
-        log_err(ctx, XKB_ERROR_ALLOCATION_FAILURE_,
+    ਬਣਤਰ xkb_file_iterator * ਅਚਲ iter = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, ਆਕਾਰ(*iter));
+    ਜੇ (!iter) {
+        log_err(ctx, XKB_ERROR_ਵੰਡ_FAILURE_2,
                 "Cannot allocate file iterator\n");
-        return NULL;
+        ਵਾਪਸ ਨਿਰਾ;
     }
 
     iter->flags = iterator_flags;
     iter->ctx = ctx;
-    iter->path = path;
+    iter->ਰਸਤਾ = ਰਸਤਾ;
     iter->map = map;
     iter->type = file_type;
-    iter->parser_config = (struct parser_keymap_config) {
+    iter->parser_config = (ਬਣਤਰ parser_keymap_config) {
         .format = format,
         .strict = parser_strict_flags_from_keymap_format(format)
     };
     xkb_file_section_init(&iter->section);
 
-    if (!XkbParseStringInit(ctx, &iter->scanner, string, length, path, NULL)) {
+    ਜੇ (!XkbParseStringInit(ctx, &iter->scanner, string, ਲੰਮਾਈ, ਰਸਤਾ, ਨਿਰਾ)) {
         xkb_file_iterator_free(iter);
-        return NULL;
+        ਵਾਪਸ ਨਿਰਾ;
     }
 
-    return iter;
+    ਵਾਪਸ iter;
 }
 
-void
-xkb_file_iterator_free(struct xkb_file_iterator *iter)
+ਖਾਲੀ
+xkb_file_iterator_free(ਬਣਤਰ xkb_file_iterator *iter)
 {
-    if (!iter)
-        return;
+    ਜੇ (!iter)
+        ਵਾਪਸ;
 
     xkb_file_section_free(&iter->section);
     FreeXkbFile(iter->pending_xkb_file);
-    free(iter);
+    ਮੁਕਤ(iter);
 }
 
 bool
-xkb_file_iterator_next(struct xkb_file_iterator *iter,
-                       const struct xkb_file_section **section)
+xkb_file_iterator_ਅਗਲਾ(ਬਣਤਰ xkb_file_iterator *iter,
+                       ਅਚਲ ਬਣਤਰ xkb_file_section **section)
 {
-    if (iter->finished) {
-        *section = NULL;
-        return true;
+    ਜੇ (iter->ਮੁਕੰਮਲ) {
+        *section = ਨਿਰਾ;
+        ਵਾਪਸ true;
     }
 
-next:
+ਅਗਲਾ:
     { /* C11 compatibility: label cannot be followed by a declaration */ }
     /* Parse next section in the file */
-    XkbFile *xkb_file = NULL;
+    XkbFile *xkb_file = ਨਿਰਾ;
 
-    if (iter->pending_xkb_file) {
+    ਜੇ (iter->pending_xkb_file) {
         /* We are parsing the components of a keymap */
-        if (iter->pending_section) {
+        ਜੇ (iter->pending_section) {
             /* Parse next component */
             xkb_file = iter->pending_section;
-            goto parse_components;
-        } else {
+            ਜਾਓ parse_components;
+        } ਨਹੀਂਤਾਂ {
             /* No more components, try next keymap */
             FreeXkbFile(iter->pending_xkb_file);
-            iter->pending_xkb_file = NULL;
+            iter->pending_xkb_file = ਨਿਰਾ;
         }
     }
 
-    if (!XkbParseStringNext(iter->ctx, &iter->parser_config, &iter->scanner,
+    ਜੇ (!Xkb_Parse_String_ਅਗਲਾ(iter->ctx, &iter->parser_config, &iter->scanner,
                             iter->map, &xkb_file)) {
-        log_err(iter->ctx, XKB_LOG_MESSAGE_NO_ID,
-                "Error while parsing section in file: %s\n", iter->path);
-        goto error;
-    } else if (!xkb_file) {
+        log_err(iter->ctx, XKB_LOG_ਸੁਨੇਹਾ_NO_ID,
+                "Error while parsing section in file: %s\n", iter->ਰਸਤਾ);
+        ਜਾਓ error;
+    } ਨਹੀਂਤਾਂ ਜੇ (!xkb_file) {
         /* No more sections */
-        iter->finished = true;
-        *section = NULL;
-        return true;
+        iter->ਮੁਕੰਮਲ = true;
+        *section = ਨਿਰਾ;
+        ਵਾਪਸ true;
     }
 
 parse_components:
@@ -487,67 +487,67 @@ parse_components:
     xkb_file_section_reset(&iter->section);
 
     /* Meta data */
-    if (!xkb_file_section_set_meta_data(iter->ctx, &iter->section, xkb_file))
-        goto error;
+    ਜੇ (!xkb_file_section_ਸੈੱਟ_meta_ਅੰਕੜੇ(iter->ctx, &iter->section, xkb_file))
+        ਜਾਓ error;
 
     /* Return current section */
     *section = &iter->section;
 
-    if (xkb_file->file_type == FILE_TYPE_KEYMAP) {
+    ਜੇ (xkb_file->file_type == FILE_TYPE_KEYMAP) {
         /*
          * If it’s a keymap, then stop here.
          * Next iteration will process its components.
          */
         iter->pending_xkb_file = xkb_file;
         iter->pending_section = (XkbFile *) xkb_file->defs;
-        iter->map = NULL;
-        return true;
-    } else {
-        if (iter->type != FILE_TYPE_INVALID &&
+        iter->map = ਨਿਰਾ;
+        ਵਾਪਸ true;
+    } ਨਹੀਂਤਾਂ {
+        ਜੇ (iter->type != FILE_TYPE_INVALID &&
             xkb_file->file_type != iter->type) {
-            if (iter->pending_xkb_file) {
+            ਜੇ (iter->pending_xkb_file) {
                 /* Within a keymap: filter out component */
-                iter->pending_section = (XkbFile *) xkb_file->common.next;
-                goto next;
-            } else {
+                iter->pending_section = (XkbFile *) xkb_file->common.ਅਗਲਾ;
+                ਜਾਓ ਅਗਲਾ;
+            } ਨਹੀਂਤਾਂ {
                 /* Component-specific file: type mismatch */
-                log_err(iter->ctx, XKB_LOG_MESSAGE_NO_ID,
+                log_err(iter->ctx, XKB_LOG_ਸੁਨੇਹਾ_NO_ID,
                         "File type mismatch: %s, section: %s\n",
-                        iter->path,
+                        iter->ਰਸਤਾ,
                         (xkb_file->name ? xkb_file->name : "(no name)"));
-                goto error;
+                ਜਾਓ error;
             }
         }
-        if (iter->map) {
-            iter->finished = true;
+        ਜੇ (iter->map) {
+            iter->ਮੁਕੰਮਲ = true;
         }
     }
 
     /* Collect include statements of current section */
-    const bool process_includes = !(iter->flags & XKB_FILE_ITERATOR_NO_INCLUDES);
-    if (process_includes &&
+    ਅਚਲ bool process_includes = !(iter->flags & XKB_FILE_ITERATOR_NO_INCLUDES);
+    ਜੇ (process_includes &&
         !xkb_file_section_process(iter->ctx, iter->flags, &iter->parser_config,
-                                  iter->path, &iter->section, xkb_file)) {
-        goto error;
-    } else if (iter->pending_section) {
+                                  iter->ਰਸਤਾ, &iter->section, xkb_file)) {
+        ਜਾਓ error;
+    } ਨਹੀਂਤਾਂ ਜੇ (iter->pending_section) {
         /* Next component */
-        iter->pending_section = (XkbFile *) xkb_file->common.next;
-    } else {
+        iter->pending_section = (XkbFile *) xkb_file->common.ਅਗਲਾ;
+    } ਨਹੀਂਤਾਂ {
         /* No more component, free the file containing the components */
         FreeXkbFile(xkb_file);
     }
 
-    return true;
+    ਵਾਪਸ true;
 
 error:
     FreeXkbFile(xkb_file);
-    *section = NULL;
-    return false;
+    *section = ਨਿਰਾ;
+    ਵਾਪਸ false;
 }
 
 /* Lookup a string by its index */
-const char *
-xkb_file_section_get_string(const struct xkb_file_section *section, darray_size_t idx)
+ਅਚਲ ਅੱਖਰ *
+xkb_file_section_get_string(ਅਚਲ ਬਣਤਰ xkb_file_section *section, darray_ਮਾਪ_t idx)
 {
-    return &darray_item(section->buffer, idx);
+    ਵਾਪਸ &darray_ਵਸਤੂ(section->ਬਫਰ, idx);
 }

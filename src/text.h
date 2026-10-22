@@ -2,76 +2,76 @@
  * Copyright © 2009 Dan Nicholson
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#ਹਦਾਇਤ once
 
-#include "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
 
-#include <stdbool.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdbool.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "atom.h"
-#include "keymap.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xkbcommon/xkbcommon.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "atom.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "keymap.h"
 
 /** LUT entry */
-typedef struct {
-    const char *name;
-    uint32_t value;
-} LookupEntry;
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
+    ਅਚਲ ਅੱਖਰ *name;
+    uint32_t ਮੁੱਲ;
+} Lookup_ਇੰਦਰਾਜ;
 
 bool
-LookupString(const LookupEntry tab[], const char *string,
-              unsigned int *value_rtrn);
+LookupString(ਅਚਲ Lookup_ਇੰਦਰਾਜ tab[], ਅਚਲ ਅੱਖਰ *string,
+              ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ *ਮੁੱਲ_rtrn);
 
-const char *
-LookupValue(const LookupEntry tab[], unsigned int value);
+ਅਚਲ ਅੱਖਰ *
+Lookup_ਮੁੱਲ(ਅਚਲ Lookup_ਇੰਦਰਾਜ tab[], ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਮੁੱਲ);
 
-#define GROUP_LAST_INDEX_NAME "last"
-enum {
-    CONTROL_NAMES_MIN_V1_INDEX = 7,
-    CONTROL_NAMES_MIN_V2_INDEX = 0,
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਸਮੂਹ_ਆਖਰੀ_ਸੂਚਕਾਂਕ_NAME "last"
+ਗਿਣਤੀ {
+    CONTROL_ਨਾਂ_MIN_V1_ਸੂਚਕਾਂਕ = 7,
+    CONTROL_ਨਾਂ_MIN_V2_ਸੂਚਕਾਂਕ = 0,
 };
 
-static inline uint8_t
-format_control_names_offset(enum xkb_keymap_format format)
+ਸਥਿਰ ਸਤਰਅੰਦਰ uint8_t
+format_control_ਨਾਂ_ਵਿੱਥ(ਗਿਣਤੀ xkb_keymap_format format)
 {
-    return (format == XKB_KEYMAP_FORMAT_TEXT_V1)
-        ? CONTROL_NAMES_MIN_V1_INDEX
-        : CONTROL_NAMES_MIN_V2_INDEX;
+    ਵਾਪਸ (format == XKB_KEYMAP_FORMAT_ਪਾਠ_V1)
+        ? CONTROL_ਨਾਂ_MIN_V1_ਸੂਚਕਾਂਕ
+        : CONTROL_ਨਾਂ_MIN_V2_ਸੂਚਕਾਂਕ;
 }
 
-extern const LookupEntry ctrlMaskNames[];
-extern const LookupEntry modComponentMaskNames[];
-extern const LookupEntry groupComponentMaskNames[];
-extern const LookupEntry groupMaskNames[];
-extern const LookupEntry buttonNames[];
-extern const LookupEntry useModMapValueNames[];
-extern const LookupEntry actionTypeNames[];
-extern const LookupEntry symInterpretMatchMaskNames[];
+ਬਾਹਰੀ ਅਚਲ Lookup_ਇੰਦਰਾਜ ctrl_ਨਕਾਬ_ਨਾਂ[];
+ਬਾਹਰੀ ਅਚਲ Lookup_ਇੰਦਰਾਜ mod_Component_ਨਕਾਬ_ਨਾਂ[];
+ਬਾਹਰੀ ਅਚਲ Lookup_ਇੰਦਰਾਜ ਸਮੂਹ_Component_ਨਕਾਬ_ਨਾਂ[];
+ਬਾਹਰੀ ਅਚਲ Lookup_ਇੰਦਰਾਜ ਸਮੂਹ_ਨਕਾਬ_ਨਾਂ[];
+ਬਾਹਰੀ ਅਚਲ Lookup_ਇੰਦਰਾਜ button_ਨਾਂ[];
+ਬਾਹਰੀ ਅਚਲ Lookup_ਇੰਦਰਾਜ use_Mod_Map_ਮੁੱਲ_ਨਾਂ[];
+ਬਾਹਰੀ ਅਚਲ Lookup_ਇੰਦਰਾਜ action_Type_ਨਾਂ[];
+ਬਾਹਰੀ ਅਚਲ Lookup_ਇੰਦਰਾਜ sym_Interpret_ਮੇਲ_ਨਕਾਬ_ਨਾਂ[];
 
-const char *
-ModMaskText(struct xkb_context *ctx, enum mod_type type,
-            const struct xkb_mod_set *mods, xkb_mod_mask_t mask);
+ਅਚਲ ਅੱਖਰ *
+Mod_ਨਕਾਬ_ਪਾਠ(ਬਣਤਰ xkb_context *ctx, ਗਿਣਤੀ mod_type type,
+            ਅਚਲ ਬਣਤਰ xkb_mod_ਸੈੱਟ *mods, xkb_mod_ਨਕਾਬ_t ਨਕਾਬ);
 
-const char *
-ModIndexText(struct xkb_context *ctx, const struct xkb_mod_set *mods,
-             xkb_mod_index_t ndx);
+ਅਚਲ ਅੱਖਰ *
+Mod_ਸੂਚਕਾਂਕ_ਪਾਠ(ਬਣਤਰ xkb_context *ctx, ਅਚਲ ਬਣਤਰ xkb_mod_ਸੈੱਟ *mods,
+             xkb_mod_ਸੂਚਕਾਂਕ_t ndx);
 
-const char *
-ActionTypeText(enum xkb_action_type type);
+ਅਚਲ ਅੱਖਰ *
+Action_Type_ਪਾਠ(ਗਿਣਤੀ xkb_action_type type);
 
-const char *
-KeysymText(struct xkb_context *ctx, xkb_keysym_t sym);
+ਅਚਲ ਅੱਖਰ *
+Keysym_ਪਾਠ(ਬਣਤਰ xkb_context *ctx, xkb_keysym_t sym);
 
-const char *
-KeyNameText(struct xkb_context *ctx, xkb_atom_t name);
+ਅਚਲ ਅੱਖਰ *
+ਕੁੰਜੀ_Name_ਪਾਠ(ਬਣਤਰ xkb_context *ctx, xkb_atom_t name);
 
-const char *
-SIMatchText(enum xkb_match_operation type);
+ਅਚਲ ਅੱਖਰ *
+SIMatch_ਪਾਠ(ਗਿਣਤੀ xkb_ਮੇਲ_operation type);
 
-const char *
-LedStateMaskText(struct xkb_context *ctx, const LookupEntry *lookup,
-                 enum xkb_state_component mask);
+ਅਚਲ ਅੱਖਰ *
+Led_State_ਨਕਾਬ_ਪਾਠ(ਬਣਤਰ xkb_context *ctx, ਅਚਲ Lookup_ਇੰਦਰਾਜ *lookup,
+                 ਗਿਣਤੀ xkb_state_component ਨਕਾਬ);
 
-const char *
-ControlMaskText(struct xkb_context *ctx, enum xkb_keymap_format format,
-                enum xkb_action_controls mask);
+ਅਚਲ ਅੱਖਰ *
+Control_ਨਕਾਬ_ਪਾਠ(ਬਣਤਰ xkb_context *ctx, ਗਿਣਤੀ xkb_keymap_format format,
+                ਗਿਣਤੀ xkb_action_controls ਨਕਾਬ);

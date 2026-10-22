@@ -7,16 +7,16 @@
  *
  * SPDX-License-Identifier: HPND AND MIT
  */
-#pragma once
+#ਹਦਾਇਤ once
 
-#include "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
 
-#include "xkbcommon/xkbcommon.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xkbcommon/xkbcommon.h"
 
-#include "atom.h"
-#include "darray.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "atom.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "darray.h"
 
-enum xkb_file_type {
+ਗਿਣਤੀ xkb_file_type {
     /* Component files, by order of compilation. */
     FILE_TYPE_KEYCODES = 0,
     FILE_TYPE_TYPES = 1,
@@ -24,8 +24,8 @@ enum xkb_file_type {
     FILE_TYPE_SYMBOLS = 3,
 
     /* File types which must be found in a keymap file. */
-    FIRST_KEYMAP_FILE_TYPE = FILE_TYPE_KEYCODES,
-    LAST_KEYMAP_FILE_TYPE = FILE_TYPE_SYMBOLS,
+    ਪਹਿਲਾ_KEYMAP_FILE_TYPE = FILE_TYPE_KEYCODES,
+    ਆਖਰੀ_KEYMAP_FILE_TYPE = FILE_TYPE_SYMBOLS,
 
     /* Geometry is not compiled any more. */
     FILE_TYPE_GEOMETRY = 4,
@@ -35,275 +35,275 @@ enum xkb_file_type {
 
 
     /* This one doesn't mix with the others, but useful here as well. */
-    FILE_TYPE_RULES,
+    FILE_TYPE_ਨਿਯਮਾਂ,
 
-    _FILE_TYPE_NUM_ENTRIES,
-    FILE_TYPE_INVALID = _FILE_TYPE_NUM_ENTRIES
+    FILE_TYPE_ਅੰਕ_ENTRIES,
+    FILE_TYPE_INVALID = FILE_TYPE_ਅੰਕ_ENTRIES
 };
 
-enum stmt_type {
+ਗਿਣਤੀ stmt_type {
     STMT_UNKNOWN = 0,
     STMT_INCLUDE,
     STMT_KEYCODE,
     STMT_ALIAS,
-    STMT_EXPR_STRING_LITERAL,
-    STMT_EXPR_INTEGER_LITERAL,
-    STMT_EXPR_FLOAT_LITERAL,
-    STMT_EXPR_BOOLEAN_LITERAL,
-    STMT_EXPR_KEYNAME_LITERAL,
-    STMT_EXPR_KEYSYM_LITERAL,
-    STMT_EXPR_IDENT,
-    STMT_EXPR_ACTION_DECL,
-    STMT_EXPR_FIELD_REF,
-    STMT_EXPR_ARRAY_REF,
+    STMT_ਵਿਅੰਜਕ_STRING_LITERAL,
+    STMT_ਵਿਅੰਜਕ_INTEGER_LITERAL,
+    STMT_ਵਿਅੰਜਕ_FLOAT_LITERAL,
+    STMT_ਵਿਅੰਜਕ_BOOLEAN_LITERAL,
+    STMT_ਵਿਅੰਜਕ_KEYNAME_LITERAL,
+    STMT_ਵਿਅੰਜਕ_KEYSYM_LITERAL,
+    STMT_ਵਿਅੰਜਕ_IDENT,
+    STMT_ਵਿਅੰਜਕ_ACTION_DECL,
+    STMT_ਵਿਅੰਜਕ_ਖੇਤਰ_REF,
+    STMT_ਵਿਅੰਜਕ_ARRAY_REF,
     /* Needed because of the ambiguity between keysym and action empty lists */
-    STMT_EXPR_EMPTY_LIST,
-    STMT_EXPR_KEYSYM_LIST,
-    STMT_EXPR_ACTION_LIST,
-    STMT_EXPR_ADD,
-    STMT_EXPR_SUBTRACT,
-    STMT_EXPR_MULTIPLY,
-    STMT_EXPR_DIVIDE,
-    STMT_EXPR_ASSIGN,
-    STMT_EXPR_NOT,
-    STMT_EXPR_NEGATE,
-    STMT_EXPR_INVERT,
-    STMT_EXPR_UNARY_PLUS,
+    STMT_ਵਿਅੰਜਕ_ਖਾਲੀ_ਥਾਵਾਂ_LIST,
+    STMT_ਵਿਅੰਜਕ_KEYSYM_LIST,
+    STMT_ਵਿਅੰਜਕ_ACTION_LIST,
+    STMT_ਵਿਅੰਜਕ_ਜੋੜੋ,
+    STMT_ਵਿਅੰਜਕ_ਘਟਾਓ,
+    STMT_ਵਿਅੰਜਕ_MULTIPLY,
+    STMT_ਵਿਅੰਜਕ_DIVIDE,
+    STMT_ਵਿਅੰਜਕ_ਸੌਂਪੋ,
+    STMT_ਵਿਅੰਜਕ_NOT,
+    STMT_ਵਿਅੰਜਕ_NEGATE,
+    STMT_ਵਿਅੰਜਕ_INVERT,
+    STMT_ਵਿਅੰਜਕ_UNARY_PLUS,
     STMT_VAR,
     STMT_TYPE,
     STMT_INTERP,
     STMT_VMOD,
     STMT_SYMBOLS,
     STMT_MODMAP,
-    STMT_GROUP_COMPAT,
+    STMT_ਸਮੂਹ_COMPAT,
     STMT_LED_MAP,
     STMT_LED_NAME,
     STMT_UNKNOWN_DECLARATION,
     STMT_UNKNOWN_COMPOUND,
 
-    _STMT_NUM_VALUES
+    STMT_ਅੰਕ_ਮੁੱਲਾਂ
 };
 
-enum merge_mode {
-    MERGE_DEFAULT,
-    MERGE_AUGMENT,
-    MERGE_OVERRIDE,
-    MERGE_REPLACE,
-    _MERGE_MODE_NUM_ENTRIES,
+ਗਿਣਤੀ ਮਿਲਾਓ_ਬਹੁਲਕ {
+    ਮਿਲਾਓ_DEFAULT,
+    ਮਿਲਾਓ_AUGMENT,
+    ਮਿਲਾਓ_OVERRIDE,
+    ਮਿਲਾਓ_REPLACE,
+    ਮਿਲਾਓ_ਬਹੁਲਕ_ਅੰਕ_ENTRIES,
 };
-enum { MERGE_MODE_MIN_WIDTH = 3 /* 2 bits + sign */ };
-static_assert(_MERGE_MODE_NUM_ENTRIES - 1 <= (1 << (MERGE_MODE_MIN_WIDTH - 1)) - 1,
+ਗਿਣਤੀ { ਮਿਲਾਓ_ਬਹੁਲਕ_MIN_ਚੌੜਾਈ = 3 /* 2 bits + sign */ };
+static_assert(ਮਿਲਾਓ_ਬਹੁਲਕ_ਅੰਕ_ENTRIES - 1 <= (1 << (ਮਿਲਾਓ_ਬਹੁਲਕ_MIN_ਚੌੜਾਈ - 1)) - 1,
               "Cannot encode merge mode");
 
-const char *
-xkb_file_type_to_string(enum xkb_file_type type);
+ਅਚਲ ਅੱਖਰ *
+xkb_file_type_ਮੰਜ਼ਿਲ_string(ਗਿਣਤੀ xkb_file_type type);
 
-const char *
-stmt_type_to_string(enum stmt_type type);
+ਅਚਲ ਅੱਖਰ *
+stmt_type_ਮੰਜ਼ਿਲ_string(ਗਿਣਤੀ stmt_type type);
 
-char
-stmt_type_to_operator_char(enum stmt_type type);
+ਅੱਖਰ
+stmt_type_ਮੰਜ਼ਿਲ_operator_char(ਗਿਣਤੀ stmt_type type);
 
-typedef struct _ParseCommon  {
-    struct _ParseCommon *next;
-    enum stmt_type type;
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ _ParseCommon  {
+    ਬਣਤਰ _ParseCommon *ਅਗਲਾ;
+    ਗਿਣਤੀ stmt_type type;
 } ParseCommon;
 
-typedef struct _IncludeStmt {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ _IncludeStmt {
     ParseCommon common;
-    enum merge_mode merge;
-    char *stmt;
-    char *file;
-    char *map;
-    char *modifier;
-    struct _IncludeStmt *next_incl;
+    ਗਿਣਤੀ ਮਿਲਾਓ_ਬਹੁਲਕ ਮਿਲਾਓ;
+    ਅੱਖਰ *stmt;
+    ਅੱਖਰ *file;
+    ਅੱਖਰ *map;
+    ਅੱਖਰ *modifier;
+    ਬਣਤਰ _IncludeStmt *ਅਗਲਾ_incl;
 } IncludeStmt;
 
-typedef union ExprDef ExprDef;
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਸੰਘ ਵਿਅੰਜਕ_Def ਵਿਅੰਜਕ_Def;
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     ParseCommon common;
     xkb_atom_t ident;
-} ExprIdent;
+} ਵਿਅੰਜਕ_Ident;
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     ParseCommon common;
     xkb_atom_t str;
-} ExprString;
+} ਵਿਅੰਜਕ_String;
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     ParseCommon common;
-    bool set;
-} ExprBoolean;
+    bool ਸੈੱਟ;
+} ਵਿਅੰਜਕ_Boolean;
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     ParseCommon common;
     int64_t ival;
-} ExprInteger;
+} ਵਿਅੰਜਕ_Integer;
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     ParseCommon common;
     /* We don't support floats, but we still represnt them in the AST, in
      * order to provide proper error messages. */
-} ExprFloat;
+} ਵਿਅੰਜਕ_Float;
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     ParseCommon common;
-    xkb_atom_t key_name;
-} ExprKeyName;
+    xkb_atom_t ਕੁੰਜੀ_name;
+} ਵਿਅੰਜਕ_ਕੁੰਜੀ_Name;
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     ParseCommon common;
     /* Keysyms are resolved early, so this might contain `NoSymbol` in case of
      * failure, to enable error recovery. */
     xkb_keysym_t keysym;
-} ExprKeySym;
+} ਵਿਅੰਜਕ_ਕੁੰਜੀ_Sym;
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     ParseCommon common;
-    ExprDef *left;
-    ExprDef *right;
-} ExprBinary;
+    ਵਿਅੰਜਕ_Def *ਖੱਬਾ;
+    ਵਿਅੰਜਕ_Def *ਸੱਜਾ;
+} ਵਿਅੰਜਕ_ਦੁਆਧਾਰੀ;
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     ParseCommon common;
-    ExprDef *child;
-} ExprUnary;
+    ਵਿਅੰਜਕ_Def *ਬੱਚਾ;
+} ਵਿਅੰਜਕ_Unary;
 
-typedef struct {
-    ParseCommon common;
-    xkb_atom_t element;
-    xkb_atom_t field;
-} ExprFieldRef;
-
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     ParseCommon common;
     xkb_atom_t element;
-    xkb_atom_t field;
-    ExprDef *entry;
-} ExprArrayRef;
+    xkb_atom_t ਖੇਤਰ_2;
+} ਵਿਅੰਜਕ_ਖੇਤਰ_Ref;
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
+    ParseCommon common;
+    xkb_atom_t element;
+    xkb_atom_t ਖੇਤਰ_2;
+    ਵਿਅੰਜਕ_Def *ਇੰਦਰਾਜ;
+} ਵਿਅੰਜਕ_Array_Ref;
+
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     ParseCommon common;
     xkb_atom_t name;
-    ExprDef *args;
-} ExprAction;
+    ਵਿਅੰਜਕ_Def *ਦਲੀਲਾਂ;
+} ਵਿਅੰਜਕ_Action;
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     ParseCommon common;
     /* List of actions for a single level. */
-    ExprDef *actions;
-} ExprActionList;
+    ਵਿਅੰਜਕ_Def *actions;
+} ਵਿਅੰਜਕ_Action_List;
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     ParseCommon common;
     /* List of keysym for a single level. */
     darray(xkb_keysym_t) syms;
-} ExprKeysymList;
+} ਵਿਅੰਜਕ_Keysym_List;
 
-union ExprDef {
+ਸੰਘ ਵਿਅੰਜਕ_Def {
     ParseCommon common;
-    ExprIdent ident;
-    ExprString string;
-    ExprBoolean boolean;
-    ExprInteger integer;
-    ExprKeyName key_name;
-    ExprKeySym keysym;
-    ExprBinary binary;
-    ExprUnary unary;
-    ExprFieldRef field_ref;
-    ExprArrayRef array_ref;
-    ExprAction action;
-    ExprActionList actions;
-    ExprKeysymList keysym_list;
+    ਵਿਅੰਜਕ_Ident ident;
+    ਵਿਅੰਜਕ_String string;
+    ਵਿਅੰਜਕ_Boolean boolean;
+    ਵਿਅੰਜਕ_Integer integer;
+    ਵਿਅੰਜਕ_ਕੁੰਜੀ_Name ਕੁੰਜੀ_name;
+    ਵਿਅੰਜਕ_ਕੁੰਜੀ_Sym keysym;
+    ਵਿਅੰਜਕ_ਦੁਆਧਾਰੀ ਦੁਆਧਾਰੀ;
+    ਵਿਅੰਜਕ_Unary unary;
+    ਵਿਅੰਜਕ_ਖੇਤਰ_Ref ਖੇਤਰ_ref;
+    ਵਿਅੰਜਕ_Array_Ref array_ref;
+    ਵਿਅੰਜਕ_Action action;
+    ਵਿਅੰਜਕ_Action_List actions;
+    ਵਿਅੰਜਕ_Keysym_List keysym_list;
 };
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     ParseCommon common;
-    enum merge_mode merge;
-    ExprDef *name;
-    ExprDef *value;
+    ਗਿਣਤੀ ਮਿਲਾਓ_ਬਹੁਲਕ ਮਿਲਾਓ;
+    ਵਿਅੰਜਕ_Def *name;
+    ਵਿਅੰਜਕ_Def *ਮੁੱਲ;
 } VarDef;
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     ParseCommon common;
-    enum merge_mode merge;
+    ਗਿਣਤੀ ਮਿਲਾਓ_ਬਹੁਲਕ ਮਿਲਾਓ;
     xkb_atom_t name;
-    ExprDef *value;
+    ਵਿਅੰਜਕ_Def *ਮੁੱਲ;
 } VModDef;
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     ParseCommon common;
-    enum merge_mode merge;
+    ਗਿਣਤੀ ਮਿਲਾਓ_ਬਹੁਲਕ ਮਿਲਾਓ;
     xkb_atom_t name;
-    int64_t value;
+    int64_t ਮੁੱਲ;
 } KeycodeDef;
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     ParseCommon common;
-    enum merge_mode merge;
+    ਗਿਣਤੀ ਮਿਲਾਓ_ਬਹੁਲਕ ਮਿਲਾਓ;
     xkb_atom_t alias;
     xkb_atom_t real;
-} KeyAliasDef;
+} ਕੁੰਜੀ_Alias_Def;
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     ParseCommon common;
-    enum merge_mode merge;
+    ਗਿਣਤੀ ਮਿਲਾਓ_ਬਹੁਲਕ ਮਿਲਾਓ;
     xkb_atom_t name;
     VarDef *body;
-} KeyTypeDef;
+} ਕੁੰਜੀ_Type_Def;
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     ParseCommon common;
-    enum merge_mode merge;
-    xkb_atom_t keyName;
+    ਗਿਣਤੀ ਮਿਲਾਓ_ਬਹੁਲਕ ਮਿਲਾਓ;
+    xkb_atom_t ਕੁੰਜੀ_Name;
     VarDef *symbols;
 } SymbolsDef;
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     ParseCommon common;
-    enum merge_mode merge;
+    ਗਿਣਤੀ ਮਿਲਾਓ_ਬਹੁਲਕ ਮਿਲਾਓ;
     // NOTE: Can also be “None”, rather than a modifier name.
-    ExprDef *modifiers;
-    ExprDef *keys;
+    ਵਿਅੰਜਕ_Def *modifiers;
+    ਵਿਅੰਜਕ_Def *ਕੁੰਜੀਆਂ;
 } ModMapDef;
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     ParseCommon common;
-    enum merge_mode merge;
-    int64_t group;
-    ExprDef *def;
-} GroupCompatDef;
+    ਗਿਣਤੀ ਮਿਲਾਓ_ਬਹੁਲਕ ਮਿਲਾਓ;
+    int64_t ਸਮੂਹ;
+    ਵਿਅੰਜਕ_Def *def;
+} ਸਮੂਹ_Compat_Def;
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     ParseCommon common;
-    enum merge_mode merge;
+    ਗਿਣਤੀ ਮਿਲਾਓ_ਬਹੁਲਕ ਮਿਲਾਓ;
     xkb_keysym_t sym;
-    ExprDef *match;
+    ਵਿਅੰਜਕ_Def *ਮੇਲ;
     VarDef *def;
 } InterpDef;
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     ParseCommon common;
-    enum merge_mode merge;
-    bool virtual;
+    ਗਿਣਤੀ ਮਿਲਾਓ_ਬਹੁਲਕ ਮਿਲਾਓ;
+    bool ਆਭਾਸੀ;
     int64_t ndx;
-    ExprDef *name;
+    ਵਿਅੰਜਕ_Def *name;
 } LedNameDef;
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     ParseCommon common;
-    enum merge_mode merge;
+    ਗਿਣਤੀ ਮਿਲਾਓ_ਬਹੁਲਕ ਮਿਲਾਓ;
     xkb_atom_t name;
     VarDef *body;
 } LedMapDef;
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     ParseCommon common;
-    char *name;
+    ਅੱਖਰ *name;
 } UnknownStatement;
 
-enum xkb_map_flags {
+ਗਿਣਤੀ xkb_map_flags {
     MAP_NO_FLAG = 0,
     MAP_IS_DEFAULT = (1 << 0),
     MAP_IS_PARTIAL = (1 << 1),
@@ -316,10 +316,10 @@ enum xkb_map_flags {
     MAP_IS_DEPRECATED = (1 << 8),
 };
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     ParseCommon common;
-    char *name;
+    ਅੱਖਰ *name;
     ParseCommon *defs;
-    enum xkb_file_type file_type;
-    enum xkb_map_flags flags;
+    ਗਿਣਤੀ xkb_file_type file_type;
+    ਗਿਣਤੀ xkb_map_flags flags;
 } XkbFile;

@@ -3,74 +3,74 @@
  * SPDX-License-Identifier: MIT
  */
 
-#pragma once
+#ਹਦਾਇਤ once
 
-#include "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
 
-#include <assert.h>
-#include <stdalign.h>
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <assert.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdalign.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdbool.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stddef.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
 
-#if !HAVE_MAX_ALIGN_T
+#ਜੇ !HAVE_MAX_ALIGN_T
 /* Fallback for legacy compilers or older C modes on MSVC */
-typedef struct {
-    long long __max_align_ll;
-    long double __max_align_ld;
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
+    ਲੰਮਾ ਲੰਮਾ __max_align_ll;
+    ਲੰਮਾ ਦੁੱਗਣਾ __max_align_ld;
 } max_align_t;
-#endif
+#ਜੇ_ਅੰਤ
 
-static inline void*
-_steal(void *ptr) {
-    void **original = (void**)ptr;
-    void *swapped = *original;
-    *original = NULL;
-    return swapped;
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ*
+_steal(ਖਾਲੀ *ptr) {
+    ਖਾਲੀ **original = (ਖਾਲੀ**)ptr;
+    ਖਾਲੀ *swapped = *original;
+    *original = ਨਿਰਾ;
+    ਵਾਪਸ swapped;
 }
 
 /**
  * Resets the pointer content and resets the data to NULL.
  */
-#ifdef _WIN32
-#define steal(ptr_) \
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ _WIN32
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ steal(ptr_) \
     _steal(ptr_)
-#else
-#define steal(ptr_) \
+#ਨਹੀਂਤਾਂ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ steal(ptr_) \
     (__typeof__(*(ptr_)))_steal(ptr_)
-#endif
+#ਜੇ_ਅੰਤ
 
-#define XKB_POINTER_TAG_BITS  2
-#define XKB_POINTER_TAG_MASK  ((uintptr_t)((1u << XKB_POINTER_TAG_BITS) - 1u))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ XKB_ਸੂਚਕ_ਟੈਗ_ਬਿੱਟ  2
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ XKB_ਸੂਚਕ_ਟੈਗ_ਨਕਾਬ  ((uintptr_t)((1u << XKB_ਸੂਚਕ_ਟੈਗ_ਬਿੱਟ) - 1u))
 
 static_assert(alignof(max_align_t) >= 4,
               "Pointer alignment insufficient for tagging");
 
 /** Pack @p ptr and a 0-3 @p tag. */
-static inline const void *
-xkb_pointer_tag(const void *ptr, uintptr_t tag)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਅਚਲ ਖਾਲੀ *
+xkb_ਸੂਚਕ_ਟੈਗ(ਅਚਲ ਖਾਲੀ *ptr, uintptr_t ਟੈਗ)
 {
     uintptr_t addr = (uintptr_t)ptr;
-    assert(tag <= XKB_POINTER_TAG_MASK &&
+    ਪ੍ਰਤਿਜ੍ਞਾ(ਟੈਗ <= XKB_ਸੂਚਕ_ਟੈਗ_ਨਕਾਬ &&
            "tag exceeds available bits");
-    assert((addr & XKB_POINTER_TAG_MASK) == 0 &&
+    ਪ੍ਰਤਿਜ੍ਞਾ((addr & XKB_ਸੂਚਕ_ਟੈਗ_ਨਕਾਬ) == 0 &&
            "pointer not sufficiently aligned for tagging");
     /* NOLINTNEXTLINE(performance-no-int-to-ptr) */
-    return (const void *)(addr | tag);
+    ਵਾਪਸ (ਅਚਲ ਖਾਲੀ *)(addr | ਟੈਗ);
 }
 
 /** Recover the original pointer from a tagged pointer. */
-static inline const void *
-xkb_pointer_untag(const void *ptr)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਅਚਲ ਖਾਲੀ *
+xkb_ਸੂਚਕ_untag(ਅਚਲ ਖਾਲੀ *ptr)
 {
     /* NOLINTNEXTLINE(performance-no-int-to-ptr) */
-    return (const void *)((uintptr_t)ptr & ~XKB_POINTER_TAG_MASK);
+    ਵਾਪਸ (ਅਚਲ ਖਾਲੀ *)((uintptr_t)ptr & ~XKB_ਸੂਚਕ_ਟੈਗ_ਨਕਾਬ);
 }
 
 /* Recover just the tag bits from a tagged pointer. */
-static inline uintptr_t
-xkb_pointer_get_tag(const void *ptr)
+ਸਥਿਰ ਸਤਰਅੰਦਰ uintptr_t
+xkb_ਸੂਚਕ_get_ਟੈਗ(ਅਚਲ ਖਾਲੀ *ptr)
 {
-    return ((uintptr_t)ptr & XKB_POINTER_TAG_MASK);
+    ਵਾਪਸ ((uintptr_t)ptr & XKB_ਸੂਚਕ_ਟੈਗ_ਨਕਾਬ);
 }

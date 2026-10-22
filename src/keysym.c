@@ -8,23 +8,23 @@
  * SPDX-License-Identifier: MIT-open-group AND MIT
  */
 
-#include "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
 
-#include <assert.h>
-#include <stdint.h>
-#include <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <assert.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
 
-#include "xkbcommon/xkbcommon-keysyms.h"
-#include "xkbcommon/xkbcommon.h"
-#include "features/enums.h"
-#include "keysym.h"
-#include "keysym-names.h"
-#include "utf8-decoding.h"
-#include "utils.h"
-#include "util-numbers.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xkbcommon/xkbcommon-keysyms.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xkbcommon/xkbcommon.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "features/enums.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "keysym.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "keysym-names.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utf8-decoding.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "util-numbers.h"
 
-static ssize_t
-find_keysym_index(xkb_keysym_t ks)
+ਸਥਿਰ ssize_t
+ਲੱਭੋ_keysym_ਸੂਚਕਾਂਕ(xkb_keysym_t ks)
 {
     /* Lower bound:
      * keysym_to_name[0].keysym
@@ -35,50 +35,50 @@ find_keysym_index(xkb_keysym_t ks)
      * keysym_to_name[ARRAY_SIZE(keysym_to_name) - 1].keysym
      * == XKB_KEYSYM_MAX_EXPLICIT <= XKB_KEYSYM_MAX
      */
-    if (ks > XKB_KEYSYM_MAX_EXPLICIT)
-        return -1;
+    ਜੇ (ks > XKB_KEYSYM_MAX_EXPLICIT)
+        ਵਾਪਸ -1;
 
-    ssize_t lo = 0, hi = ARRAY_SIZE(keysym_to_name) - 1;
-    while (hi >= lo) {
+    ssize_t lo = 0, hi = ARRAY_ਮਾਪ(keysym_ਮੰਜ਼ਿਲ_name) - 1;
+    ਜਦੋਂ (hi >= lo) {
         ssize_t mid = (lo + hi) / 2;
-        if (ks > keysym_to_name[mid].keysym) {
+        ਜੇ (ks > keysym_ਮੰਜ਼ਿਲ_name[mid].keysym) {
             lo = mid + 1;
-        } else if (ks < keysym_to_name[mid].keysym) {
+        } ਨਹੀਂਤਾਂ ਜੇ (ks < keysym_ਮੰਜ਼ਿਲ_name[mid].keysym) {
             hi = mid - 1;
-        } else {
-            return mid;
+        } ਨਹੀਂਤਾਂ {
+            ਵਾਪਸ mid;
         }
     }
 
-    return -1;
+    ਵਾਪਸ -1;
 }
 
-#define get_name_by_index(index) (keysym_names + (index))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ get_name_by_ਸੂਚਕਾਂਕ(ਸੂਚਕਾਂਕ) (keysym_ਨਾਂ + (ਸੂਚਕਾਂਕ))
 
-static inline const char *
-get_name(const struct name_keysym *entry)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਅਚਲ ਅੱਖਰ *
+get_name(ਅਚਲ ਬਣਤਰ name_keysym *ਇੰਦਰਾਜ)
 {
-    return get_name_by_index(entry->offset);
+    ਵਾਪਸ get_name_by_ਸੂਚਕਾਂਕ(ਇੰਦਰਾਜ->ਵਿੱਥ);
 }
 
 /* Unnamed Unicode codepoint. */
-static inline int
-get_unicode_name(xkb_keysym_t ks, char *buffer, size_t size)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ
+get_unicode_name(xkb_keysym_t ks, ਅੱਖਰ *ਬਫਰ, ਮਾਪ_t ਮਾਪ)
 {
-    return snprintf(buffer, size, "U%04"PRIX32, ks & UINT32_C(0xffffff));
+    ਵਾਪਸ snprintf(ਬਫਰ, ਮਾਪ, "U%04"PRIX32, ks & UINT32_C(0xffffff));
 }
 
-int
-xkb_keysym_get_name(xkb_keysym_t ks, char *buffer, size_t size)
+ਪੂਰਨ
+xkb_keysym_get_name(xkb_keysym_t ks, ਅੱਖਰ *ਬਫਰ, ਮਾਪ_t ਮਾਪ)
 {
-    if (ks > XKB_KEYSYM_MAX) {
-        snprintf(buffer, size, "Invalid");
-        return -1;
+    ਜੇ (ks > XKB_KEYSYM_MAX) {
+        snprintf(ਬਫਰ, ਮਾਪ, "Invalid");
+        ਵਾਪਸ -1;
     }
 
-    ssize_t index = find_keysym_index(ks);
-    if (index != -1)
-        return snprintf(buffer, size, "%s", get_name(&keysym_to_name[index]));
+    ssize_t ਸੂਚਕਾਂਕ = ਲੱਭੋ_keysym_ਸੂਚਕਾਂਕ(ks);
+    ਜੇ (ਸੂਚਕਾਂਕ != -1)
+        ਵਾਪਸ snprintf(ਬਫਰ, ਮਾਪ, "%s", get_name(&keysym_ਮੰਜ਼ਿਲ_name[ਸੂਚਕਾਂਕ]));
 
     /*
      * Unnamed Unicode codepoint.
@@ -88,64 +88,64 @@ xkb_keysym_get_name(xkb_keysym_t ks, char *buffer, size_t size)
      *   `xkb_utf32_to_keysym` with the corresponding code point may return a
      *   different keysym or fail (e.g. surrogates are invalid in UTF-32).
      */
-    if (ks >= XKB_KEYSYM_UNICODE_MIN && ks <= XKB_KEYSYM_UNICODE_MAX)
-        return get_unicode_name(ks, buffer, size);
+    ਜੇ (ks >= XKB_KEYSYM_UNICODE_MIN && ks <= XKB_KEYSYM_UNICODE_MAX)
+        ਵਾਪਸ get_unicode_name(ks, ਬਫਰ, ਮਾਪ);
 
     /* Unnamed, non-Unicode, symbol (shouldn't generally happen). */
-    return snprintf(buffer, size, "0x%08"PRIx32, ks);
+    ਵਾਪਸ snprintf(ਬਫਰ, ਮਾਪ, "0x%08"PRIx32, ks);
 }
 
 bool
 xkb_keysym_is_assigned(xkb_keysym_t ks)
 {
-    return (XKB_KEYSYM_UNICODE_MIN <= ks && ks <= XKB_KEYSYM_UNICODE_MAX) ||
-           find_keysym_index(ks) != -1;
+    ਵਾਪਸ (XKB_KEYSYM_UNICODE_MIN <= ks && ks <= XKB_KEYSYM_UNICODE_MAX) ||
+           ਲੱਭੋ_keysym_ਸੂਚਕਾਂਕ(ks) != -1;
 }
 
-int
-xkb_keysym_get_explicit_names(xkb_keysym_t ks, const char **buffer, size_t size)
+ਪੂਰਨ
+xkb_keysym_get_explicit_ਨਾਂ(xkb_keysym_t ks, ਅਚਲ ਅੱਖਰ **ਬਫਰ, ਮਾਪ_t ਮਾਪ)
 {
-    if (ks > XKB_KEYSYM_MAX)
-        return -1;
-    const ssize_t index = find_keysym_index(ks);
-    if (index < 0)
-        return 0;
-    const uint16_t canonical = keysym_to_name[index].offset;
-    if (size > 0)
-        buffer[0] = get_name(&keysym_to_name[index]);
-    int count = 1;
-    for (size_t pos = 0; pos < ARRAY_SIZE(name_to_keysym); pos++) {
-        if (name_to_keysym[pos].keysym == ks &&
-            name_to_keysym[pos].offset != canonical) {
-            if ((size_t) count < size) {
-                buffer[count] = get_name(&name_to_keysym[pos]);
+    ਜੇ (ks > XKB_KEYSYM_MAX)
+        ਵਾਪਸ -1;
+    ਅਚਲ ssize_t ਸੂਚਕਾਂਕ = ਲੱਭੋ_keysym_ਸੂਚਕਾਂਕ(ks);
+    ਜੇ (ਸੂਚਕਾਂਕ < 0)
+        ਵਾਪਸ 0;
+    ਅਚਲ uint16_t canonical = keysym_ਮੰਜ਼ਿਲ_name[ਸੂਚਕਾਂਕ].ਵਿੱਥ;
+    ਜੇ (ਮਾਪ > 0)
+        ਬਫਰ[0] = get_name(&keysym_ਮੰਜ਼ਿਲ_name[ਸੂਚਕਾਂਕ]);
+    ਪੂਰਨ ਗਿਣਤੀ_2 = 1;
+    ਲਈ (ਮਾਪ_t pos = 0; pos < ARRAY_ਮਾਪ(name_ਮੰਜ਼ਿਲ_keysym); pos++) {
+        ਜੇ (name_ਮੰਜ਼ਿਲ_keysym[pos].keysym == ks &&
+            name_ਮੰਜ਼ਿਲ_keysym[pos].ਵਿੱਥ != canonical) {
+            ਜੇ ((ਮਾਪ_t) ਗਿਣਤੀ_2 < ਮਾਪ) {
+                ਬਫਰ[ਗਿਣਤੀ_2] = get_name(&name_ਮੰਜ਼ਿਲ_keysym[pos]);
             }
-            count++;
+            ਗਿਣਤੀ_2++;
         }
     }
-    return count;
+    ਵਾਪਸ ਗਿਣਤੀ_2;
 }
 
-struct xkb_keysym_iterator {
+ਬਣਤਰ xkb_keysym_iterator {
     bool explicit;       /* If true, traverse only explicitly named keysyms */
-    int32_t index;       /* Current index in `keysym_to_name` */
+    int32_t ਸੂਚਕਾਂਕ;       /* Current index in `keysym_to_name` */
     xkb_keysym_t keysym; /* Current keysym */
 };
 
-struct xkb_keysym_iterator*
+ਬਣਤਰ xkb_keysym_iterator*
 xkb_keysym_iterator_new(bool iterate_only_explicit_keysyms)
 {
-    struct xkb_keysym_iterator* iter = calloc(1, sizeof(*iter));
-    if (!iter)
-        return NULL;
+    ਬਣਤਰ xkb_keysym_iterator* iter = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, ਆਕਾਰ(*iter));
+    ਜੇ (!iter)
+        ਵਾਪਸ ਨਿਰਾ;
     iter->explicit = iterate_only_explicit_keysyms;
-    iter->index = -1;
+    iter->ਸੂਚਕਾਂਕ = -1;
     iter->keysym = XKB_KEYSYM_UNICODE_MAX;
-    return iter;
+    ਵਾਪਸ iter;
 }
 
-struct xkb_keysym_iterator*
-xkb_keysym_iterator_unref(struct xkb_keysym_iterator *iter)
+ਬਣਤਰ xkb_keysym_iterator*
+xkb_keysym_iterator_unref(ਬਣਤਰ xkb_keysym_iterator *iter)
 {
     /*
      * [NOTE] If we ever make this API public, add:
@@ -153,36 +153,36 @@ xkb_keysym_iterator_unref(struct xkb_keysym_iterator *iter)
      * - `xkb_keysym_iterator_ref()`,
      * - `assert(!iter || iter->refcnt > 0)`.
      */
-    if (iter)
-        free(iter);
-    return NULL;
+    ਜੇ (iter)
+        ਮੁਕਤ(iter);
+    ਵਾਪਸ ਨਿਰਾ;
 }
 
 xkb_keysym_t
-xkb_keysym_iterator_get_keysym(struct xkb_keysym_iterator *iter)
+xkb_keysym_iterator_get_keysym(ਬਣਤਰ xkb_keysym_iterator *iter)
 {
-    return iter->keysym;
+    ਵਾਪਸ iter->keysym;
 }
 
 bool
-xkb_keysym_iterator_is_explicitly_named(struct xkb_keysym_iterator *iter)
+xkb_keysym_iterator_is_explicitly_named(ਬਣਤਰ xkb_keysym_iterator *iter)
 {
-    return iter->index >= 0 &&
-           iter->index < (int32_t)ARRAY_SIZE(keysym_to_name) &&
+    ਵਾਪਸ iter->ਸੂਚਕਾਂਕ >= 0 &&
+           iter->ਸੂਚਕਾਂਕ < (int32_t)ARRAY_ਮਾਪ(keysym_ਮੰਜ਼ਿਲ_name) &&
            (iter->explicit ||
-            iter->keysym == keysym_to_name[iter->index].keysym);
+            iter->keysym == keysym_ਮੰਜ਼ਿਲ_name[iter->ਸੂਚਕਾਂਕ].keysym);
 }
 
-int
-xkb_keysym_iterator_get_name(struct xkb_keysym_iterator *iter,
-                             char *buffer, size_t size)
+ਪੂਰਨ
+xkb_keysym_iterator_get_name(ਬਣਤਰ xkb_keysym_iterator *iter,
+                             ਅੱਖਰ *ਬਫਰ, ਮਾਪ_t ਮਾਪ)
 {
-    if (iter->index < 0 || iter->index >= (int32_t)ARRAY_SIZE(keysym_to_name))
-        return -1;
-    if (iter->explicit || iter->keysym == keysym_to_name[iter->index].keysym)
-        return snprintf(buffer, size, "%s",
-                        get_name(&keysym_to_name[iter->index]));
-    return get_unicode_name(iter->keysym, buffer, size);
+    ਜੇ (iter->ਸੂਚਕਾਂਕ < 0 || iter->ਸੂਚਕਾਂਕ >= (int32_t)ARRAY_ਮਾਪ(keysym_ਮੰਜ਼ਿਲ_name))
+        ਵਾਪਸ -1;
+    ਜੇ (iter->explicit || iter->keysym == keysym_ਮੰਜ਼ਿਲ_name[iter->ਸੂਚਕਾਂਕ].keysym)
+        ਵਾਪਸ snprintf(ਬਫਰ, ਮਾਪ, "%s",
+                        get_name(&keysym_ਮੰਜ਼ਿਲ_name[iter->ਸੂਚਕਾਂਕ]));
+    ਵਾਪਸ get_unicode_name(iter->keysym, ਬਫਰ, ਮਾਪ);
 }
 
 /* Iterate over the *assigned* keysyms.
@@ -198,53 +198,53 @@ xkb_keysym_iterator_get_name(struct xkb_keysym_iterator *iter,
  * ```
  */
 bool
-xkb_keysym_iterator_next(struct xkb_keysym_iterator *iter)
+xkb_keysym_iterator_ਅਗਲਾ(ਬਣਤਰ xkb_keysym_iterator *iter)
 {
-    if (iter->index >= (int32_t)ARRAY_SIZE(keysym_to_name) - 1)
-        return false;
+    ਜੇ (iter->ਸੂਚਕਾਂਕ >= (int32_t)ARRAY_ਮਾਪ(keysym_ਮੰਜ਼ਿਲ_name) - 1)
+        ਵਾਪਸ false;
 
     /* Next keysym */
-    if (iter->explicit || iter->keysym >= XKB_KEYSYM_UNICODE_MAX ||
-        keysym_to_name[iter->index + 1].keysym < XKB_KEYSYM_UNICODE_MIN) {
+    ਜੇ (iter->explicit || iter->keysym >= XKB_KEYSYM_UNICODE_MAX ||
+        keysym_ਮੰਜ਼ਿਲ_name[iter->ਸੂਚਕਾਂਕ + 1].keysym < XKB_KEYSYM_UNICODE_MIN) {
         /* Explicitly named keysyms only */
-        iter->keysym = keysym_to_name[++iter->index].keysym;
-        assert(iter->explicit ||
+        iter->keysym = keysym_ਮੰਜ਼ਿਲ_name[++iter->ਸੂਚਕਾਂਕ].keysym;
+        ਪ੍ਰਤਿਜ੍ਞਾ(iter->explicit ||
                iter->keysym <= XKB_KEYSYM_UNICODE_MIN ||
                iter->keysym >= XKB_KEYSYM_UNICODE_MAX);
-    } else {
+    } ਨਹੀਂਤਾਂ {
         /* Unicode keysyms
          * NOTE: Unicode keysyms are within keysym_to_name keysyms range. */
-        if (iter->keysym >= keysym_to_name[iter->index].keysym)
-            iter->index++;
-        if (iter->keysym >= XKB_KEYSYM_UNICODE_MIN) {
+        ਜੇ (iter->keysym >= keysym_ਮੰਜ਼ਿਲ_name[iter->ਸੂਚਕਾਂਕ].keysym)
+            iter->ਸੂਚਕਾਂਕ++;
+        ਜੇ (iter->keysym >= XKB_KEYSYM_UNICODE_MIN) {
             /* Continue Unicode keysyms */
             iter->keysym++;
-        } else {
+        } ਨਹੀਂਤਾਂ {
             /* Start Unicode keysyms */
             iter->keysym = XKB_KEYSYM_UNICODE_MIN;
         }
     }
-    return true;
+    ਵਾਪਸ true;
 }
 
 /* Parse the numeric part of a 0xXXXX and UXXXX keysym. */
-static bool
-parse_keysym_hex(const char *s, uint32_t *out)
+ਸਥਿਰ bool
+parse_keysym_hex(ਅਚਲ ਅੱਖਰ *s, uint32_t *ਬਾਹਰਲਾ)
 {
     /* We expect a NULL-terminated string of length up to 8 */
-    const int count = parse_hex_to_uint32_t(s, 8, out);
+    ਅਚਲ ਪੂਰਨ ਗਿਣਤੀ_2 = parse_hex_ਮੰਜ਼ਿਲ_uint32_t(s, 8, ਬਾਹਰਲਾ);
     /* Check that some value was parsed and we reached the end of the string */
-    return (count > 0 && s[count] == '\0');
+    ਵਾਪਸ (ਗਿਣਤੀ_2 > 0 && s[ਗਿਣਤੀ_2] == '\0');
 }
 
 xkb_keysym_t
-xkb_keysym_from_name(const char *name, enum xkb_keysym_flags flags)
+xkb_keysym_from_name(ਅਚਲ ਅੱਖਰ *name, ਗਿਣਤੀ xkb_keysym_flags flags)
 {
-    if (flags & ~(enum xkb_keysym_flags)XKB_KEYSYM_FLAGS_VALUES)
-        return XKB_KEY_NoSymbol;
+    ਜੇ (flags & ~(ਗਿਣਤੀ xkb_keysym_flags)XKB_KEYSYM_FLAGS_ਮੁੱਲਾਂ)
+        ਵਾਪਸ XKB_ਕੁੰਜੀ_No_ਚਿੰਨ੍ਹ;
 
-    const struct name_keysym *entry = NULL;
-    char *tmp;
+    ਅਚਲ ਬਣਤਰ name_keysym *ਇੰਦਰਾਜ = ਨਿਰਾ;
+    ਅੱਖਰ *tmp;
     uint32_t val;
     bool icase = (flags & XKB_KEYSYM_CASE_INSENSITIVE);
 
@@ -252,12 +252,12 @@ xkb_keysym_from_name(const char *name, enum xkb_keysym_flags flags)
      * We need to !icase case to be fast, for e.g. Compose file parsing.
      * So do it in a fast path.
      */
-    if (!icase) {
-        size_t pos = keysym_name_perfect_hash(name);
-        if (pos < ARRAY_SIZE(name_to_keysym)) {
-            const char *s = get_name(&name_to_keysym[pos]);
-            if (strcmp(name, s) == 0)
-                return name_to_keysym[pos].keysym;
+    ਜੇ (!icase) {
+        ਮਾਪ_t pos = keysym_name_perfect_hash(name);
+        ਜੇ (pos < ARRAY_ਮਾਪ(name_ਮੰਜ਼ਿਲ_keysym)) {
+            ਅਚਲ ਅੱਖਰ *s = get_name(&name_ਮੰਜ਼ਿਲ_keysym[pos]);
+            ਜੇ (strcmp(name, s) == 0)
+                ਵਾਪਸ name_ਮੰਜ਼ਿਲ_keysym[pos].keysym;
         }
     }
     /*
@@ -279,93 +279,93 @@ xkb_keysym_from_name(const char *name, enum xkb_keysym_flags flags)
     *
     * There are some exceptions, e.g. `XF86Screensaver` and `XF86ScreenSaver`.
     */
-    else {
-        int32_t lo = 0, hi = ARRAY_SIZE(name_to_keysym) - 1;
-        while (hi >= lo) {
+    ਨਹੀਂਤਾਂ {
+        int32_t lo = 0, hi = ARRAY_ਮਾਪ(name_ਮੰਜ਼ਿਲ_keysym) - 1;
+        ਜਦੋਂ (hi >= lo) {
             int32_t mid = (lo + hi) / 2;
-            int cmp = istrcmp(name, get_name(&name_to_keysym[mid]));
-            if (cmp > 0) {
+            ਪੂਰਨ cmp = istrcmp(name, get_name(&name_ਮੰਜ਼ਿਲ_keysym[mid]));
+            ਜੇ (cmp > 0) {
                 lo = mid + 1;
-            } else if (cmp < 0) {
+            } ਨਹੀਂਤਾਂ ਜੇ (cmp < 0) {
                 hi = mid - 1;
-            } else {
-                entry = &name_to_keysym[mid];
-                break;
+            } ਨਹੀਂਤਾਂ {
+                ਇੰਦਰਾਜ = &name_ਮੰਜ਼ਿਲ_keysym[mid];
+                ਰੋਕੋ;
             }
         }
-        if (entry) {
-            const struct name_keysym *last;
-            last = name_to_keysym + ARRAY_SIZE(name_to_keysym) - 1;
+        ਜੇ (ਇੰਦਰਾਜ) {
+            ਅਚਲ ਬਣਤਰ name_keysym *ਆਖਰੀ;
+            ਆਖਰੀ = name_ਮੰਜ਼ਿਲ_keysym + ARRAY_ਮਾਪ(name_ਮੰਜ਼ਿਲ_keysym) - 1;
             /* Keep going until we reach end of array
              * or non case-insensitve match */
-            while (entry < last &&
-                   istrcmp(get_name(entry + 1), get_name(entry)) == 0) {
-                entry++;
+            ਜਦੋਂ (ਇੰਦਰਾਜ < ਆਖਰੀ &&
+                   istrcmp(get_name(ਇੰਦਰਾਜ + 1), get_name(ਇੰਦਰਾਜ)) == 0) {
+                ਇੰਦਰਾਜ++;
             }
-            return entry->keysym;
+            ਵਾਪਸ ਇੰਦਰਾਜ->keysym;
         }
     }
 
-    if (*name == 'U' || (icase && *name == 'u')) {
+    ਜੇ (*name == 'U' || (icase && *name == 'u')) {
         /* Parse Unicode notation */
-        if (!parse_keysym_hex(&name[1], &val))
-            return XKB_KEY_NoSymbol;
-        return (val > 0xff && val <= 0x10ffff)
+        ਜੇ (!parse_keysym_hex(&name[1], &val))
+            ਵਾਪਸ XKB_ਕੁੰਜੀ_No_ਚਿੰਨ੍ਹ;
+        ਵਾਪਸ (val > 0xff && val <= 0x10ffff)
             /*
              * No normalization.
              *
              * NOTE: It allows surrogates, as we are dealing with Unicode
              * *code points* here, not Unicode *scalars*.
              */
-            ? XKB_KEYSYM_UNICODE_OFFSET + val
+            ? XKB_KEYSYM_UNICODE_ਵਿੱਥ + val
             /*
              * Normalize ISO-8859-1 (Latin-1 + C0 and C1 control code)
              *
              * These code points require special processing to ensure
              * backward compatibility with legacy keysyms.
              */
-            : xkb_utf32_to_keysym(val);
+            : xkb_utf32_ਮੰਜ਼ਿਲ_keysym(val);
     }
-    else if (name[0] == '0' && (name[1] == 'x' || (icase && name[1] == 'X'))) {
+    ਨਹੀਂਤਾਂ ਜੇ (name[0] == '0' && (name[1] == 'x' || (icase && name[1] == 'X'))) {
         /*
          * Parse numeric hexadecimal notation without any normalization, in
          * in order to be consistent with the keymap files parsing.
          */
-        if (!parse_keysym_hex(&name[2], &val) || val > XKB_KEYSYM_MAX)
-            return XKB_KEY_NoSymbol;
-        return (xkb_keysym_t) val;
+        ਜੇ (!parse_keysym_hex(&name[2], &val) || val > XKB_KEYSYM_MAX)
+            ਵਾਪਸ XKB_ਕੁੰਜੀ_No_ਚਿੰਨ੍ਹ;
+        ਵਾਪਸ (xkb_keysym_t) val;
     }
 
     /* Stupid inconsistency between the headers and XKeysymDB: the former has
      * no separating underscore, while some XF86* syms in the latter did.
      * As a last ditch effort, try without. */
-    if (strncmp(name, "XF86_", 5) == 0 ||
+    ਜੇ (ਲੜੀ_ਤੁਲਨਾ(name, "XF86_", 5) == 0 ||
         (icase && istrncmp(name, "XF86_", 5) == 0)) {
         xkb_keysym_t ret;
         tmp = strdup(name);
-        if (!tmp)
-            return XKB_KEY_NoSymbol;
-        memmove(&tmp[4], &tmp[5], strlen(name) - 5 + 1);
+        ਜੇ (!tmp)
+            ਵਾਪਸ XKB_ਕੁੰਜੀ_No_ਚਿੰਨ੍ਹ;
+        memmove(&tmp[4], &tmp[5], ਲੜੀ_ਲੰਬਾਈ(name) - 5 + 1);
         ret = xkb_keysym_from_name(tmp, flags);
-        free(tmp);
-        return ret;
+        ਮੁਕਤ(tmp);
+        ਵਾਪਸ ret;
     }
 
-    return XKB_KEY_NoSymbol;
+    ਵਾਪਸ XKB_ਕੁੰਜੀ_No_ਚਿੰਨ੍ਹ;
 }
 
 xkb_keysym_t
-xkb_utf8_to_keysym(const char *buffer, size_t size)
+xkb_utf8_ਮੰਜ਼ਿਲ_keysym(ਅਚਲ ਅੱਖਰ *ਬਫਰ, ਮਾਪ_t ਮਾਪ)
 {
-    if (!buffer || !size)
-        return 0;
+    ਜੇ (!ਬਫਰ || !ਮਾਪ)
+        ਵਾਪਸ 0;
 
     /* Try to parse the parameter as a single UTF-8 encoded character */
-    size_t length = 0;
-    const uint32_t codepoint = utf8_next_code_point(buffer, size, &length);
-    return (codepoint == INVALID_UTF8_CODE_POINT || length == 0)
-        ? XKB_KEY_NoSymbol
-        : xkb_utf32_to_keysym(codepoint);
+    ਮਾਪ_t ਲੰਮਾਈ = 0;
+    ਅਚਲ uint32_t codepoint = utf8_ਅਗਲਾ_ਕੋਡ_ਬਿੰਦੂ(ਬਫਰ, ਮਾਪ, &ਲੰਮਾਈ);
+    ਵਾਪਸ (codepoint == INVALID_UTF8_ਕੋਡ_ਬਿੰਦੂ || ਲੰਮਾਈ == 0)
+        ? XKB_ਕੁੰਜੀ_No_ਚਿੰਨ੍ਹ
+        : xkb_utf32_ਮੰਜ਼ਿਲ_keysym(codepoint);
 }
 
 /*
@@ -383,93 +383,93 @@ xkb_utf8_to_keysym(const char *buffer, size_t size)
  */
 bool
 xkb_keysym_is_deprecated(xkb_keysym_t keysym,
-                         const char *name,
-                         const char **reference_name)
+                         ਅਚਲ ਅੱਖਰ *name,
+                         ਅਚਲ ਅੱਖਰ **reference_name)
 {
-    if (keysym > XKB_KEYSYM_MAX) {
+    ਜੇ (keysym > XKB_KEYSYM_MAX) {
         /* Invalid keysym */
-        *reference_name = NULL;
-        return false;
+        *reference_name = ਨਿਰਾ;
+        ਵਾਪਸ false;
     }
     /* [WARNING] We do not check that name, if defined, is a valid for keysym */
 
-    int32_t lo = 0, hi = ARRAY_SIZE(deprecated_keysyms) - 1;
-    while (hi >= lo) {
+    int32_t lo = 0, hi = ARRAY_ਮਾਪ(deprecated_keysyms) - 1;
+    ਜਦੋਂ (hi >= lo) {
         int32_t mid = (lo + hi) / 2;
-        if (keysym > deprecated_keysyms[mid].keysym) {
+        ਜੇ (keysym > deprecated_keysyms[mid].keysym) {
             lo = mid + 1;
-        } else if (keysym < deprecated_keysyms[mid].keysym) {
+        } ਨਹੀਂਤਾਂ ਜੇ (keysym < deprecated_keysyms[mid].keysym) {
             hi = mid - 1;
-        } else {
+        } ਨਹੀਂਤਾਂ {
             /* Keysym have some deprecated names */
-            if (deprecated_keysyms[mid].offset == DEPRECATED_KEYSYM) {
+            ਜੇ (deprecated_keysyms[mid].ਵਿੱਥ == DEPRECATED_KEYSYM) {
                 /* All names are deprecated */
-                *reference_name = NULL;
-                return true;
-            } else if (deprecated_keysyms[mid].offset == UNICODE_KEYSYM) {
+                *reference_name = ਨਿਰਾ;
+                ਵਾਪਸ true;
+            } ਨਹੀਂਤਾਂ ਜੇ (deprecated_keysyms[mid].ਵਿੱਥ == UNICODE_KEYSYM) {
                 /* All names are deprecated, but Unicode notation is valid */
-                *reference_name = NULL;
-                if (name == NULL)
-                    return false;
-                if (name[0] != 'U')
-                    return true;
+                *reference_name = ਨਿਰਾ;
+                ਜੇ (name == ਨਿਰਾ)
+                    ਵਾਪਸ false;
+                ਜੇ (name[0] != 'U')
+                    ਵਾਪਸ true;
                 /* Since the current function is internal, assume the name
                  * corresponds to the keysym value and just check its syntax. */
-                const char *start = name + 1;
-                while (is_xdigit(*start))
-                    start++;
-                return *start != '\0' && start > name + 1;
+                ਅਚਲ ਅੱਖਰ *ਸ਼ੁਰੂ = name + 1;
+                ਜਦੋਂ (is_xdigit(*ਸ਼ੁਰੂ))
+                    ਸ਼ੁਰੂ++;
+                ਵਾਪਸ *ਸ਼ੁਰੂ != '\0' && ਸ਼ੁਰੂ > name + 1;
             }
             /* There is a reference name that is not deprecated */
-            *reference_name = get_name_by_index(deprecated_keysyms[mid].offset);
-            if (!name) {
+            *reference_name = get_name_by_ਸੂਚਕਾਂਕ(deprecated_keysyms[mid].ਵਿੱਥ);
+            ਜੇ (!name) {
                 /* No name to check: indicate not deprecated */
-                return false;
+                ਵਾਪਸ false;
             }
-            if (deprecated_keysyms[mid].explicit_count) {
+            ਜੇ (deprecated_keysyms[mid].explicit_ਗਿਣਤੀ) {
                 /* Only some explicit names are deprecated */
-                const uint8_t k_max = deprecated_keysyms[mid].explicit_index
-                                    + deprecated_keysyms[mid].explicit_count;
-                assert(k_max <= ARRAY_SIZE(explicit_deprecated_aliases));
+                ਅਚਲ uint8_t k_max = deprecated_keysyms[mid].explicit_ਸੂਚਕਾਂਕ
+                                    + deprecated_keysyms[mid].explicit_ਗਿਣਤੀ;
+                ਪ੍ਰਤਿਜ੍ਞਾ(k_max <= ARRAY_ਮਾਪ(explicit_deprecated_aliases));
                 /* Check every deprecated alias */
-                for (uint8_t k = deprecated_keysyms[mid].explicit_index;
+                ਲਈ (uint8_t k = deprecated_keysyms[mid].explicit_ਸੂਚਕਾਂਕ;
                      k < k_max; k++) {
-                    #ifdef __clang__
+                    #ਜੇ_ਪਰਿਭਾਸ਼ਿਤ __clang__
                     /* Make clang-tidy happy */
                     __builtin_assume(k_max <=
-                                     ARRAY_SIZE(explicit_deprecated_aliases));
-                    #endif
-                    const char *alias =
-                        get_name_by_index(explicit_deprecated_aliases[k]);
-                    if (strcmp(name, alias) == 0)
-                        return true;
+                                     ARRAY_ਮਾਪ(explicit_deprecated_aliases));
+                    #ਜੇ_ਅੰਤ
+                    ਅਚਲ ਅੱਖਰ *alias =
+                        get_name_by_ਸੂਚਕਾਂਕ(explicit_deprecated_aliases[k]);
+                    ਜੇ (strcmp(name, alias) == 0)
+                        ਵਾਪਸ true;
                 }
-                return false;
-            } else {
+                ਵਾਪਸ false;
+            } ਨਹੀਂਤਾਂ {
                 /* All names but the reference one are deprecated */
-                return strcmp(name, *reference_name) != 0;
+                ਵਾਪਸ strcmp(name, *reference_name) != 0;
             }
         }
     }
 
     /* Keysym has no deprecated names */
-    *reference_name = NULL;
-    return false;
+    *reference_name = ਨਿਰਾ;
+    ਵਾਪਸ false;
 }
 
 bool
 xkb_keysym_is_keypad(xkb_keysym_t keysym)
 {
-    return keysym >= XKB_KEY_KP_Space && keysym <= XKB_KEY_KP_Equal;
+    ਵਾਪਸ keysym >= XKB_ਕੁੰਜੀ_KP_Space && keysym <= XKB_ਕੁੰਜੀ_KP_Equal;
 }
 
 
 bool
 xkb_keysym_is_modifier(xkb_keysym_t keysym)
 {
-    return
-        (keysym >= XKB_KEY_Shift_L && keysym <= XKB_KEY_Hyper_R) ||
-        (keysym >= XKB_KEY_ISO_Lock && keysym <= XKB_KEY_ISO_Level5_Lock) ||
-        keysym == XKB_KEY_Mode_switch ||
-        keysym == XKB_KEY_Num_Lock;
+    ਵਾਪਸ
+        (keysym >= XKB_ਕੁੰਜੀ_ਖਿਸਕਾਓ_L && keysym <= XKB_ਕੁੰਜੀ_Hyper_R) ||
+        (keysym >= XKB_ਕੁੰਜੀ_ISO_ਤਾਲਾ && keysym <= XKB_ਕੁੰਜੀ_ISO_Level5_ਤਾਲਾ) ||
+        keysym == XKB_ਕੁੰਜੀ_ਬਹੁਲਕ_switch ||
+        keysym == XKB_ਕੁੰਜੀ_ਅੰਕ_ਤਾਲਾ;
 }

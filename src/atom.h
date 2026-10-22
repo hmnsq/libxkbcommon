@@ -2,35 +2,35 @@
  * Copyright © 2009 Dan Nicholson
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#ਹਦਾਇਤ once
 
-#include "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stddef.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdbool.h>
 
-#include "darray.h"
-#include "utils.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "darray.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils.h"
 
 /** Atoms are indexes into a `darray` */
-typedef darray_size_t xkb_atom_t;
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ darray_ਮਾਪ_t xkb_atom_t;
 
-#define XKB_ATOM_NONE 0
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ XKB_ATOM_NONE 0
 
-struct atom_table;
+ਬਣਤਰ atom_ਸਾਰਣੀ;
 
-XKB_EXPORT_PRIVATE struct atom_table *
-atom_table_new(void);
+XKB_EXPORT_ਨਿੱਜੀ ਬਣਤਰ atom_ਸਾਰਣੀ *
+atom_ਸਾਰਣੀ_new(ਖਾਲੀ);
 
-XKB_EXPORT_PRIVATE void
-atom_table_free(struct atom_table *table);
+XKB_EXPORT_ਨਿੱਜੀ ਖਾਲੀ
+atom_ਸਾਰਣੀ_free(ਬਣਤਰ atom_ਸਾਰਣੀ *ਸਾਰਣੀ);
 
-XKB_EXPORT_PRIVATE darray_size_t
-atom_table_size(struct atom_table *table);
+XKB_EXPORT_ਨਿੱਜੀ darray_ਮਾਪ_t
+atom_ਸਾਰਣੀ_ਮਾਪ(ਬਣਤਰ atom_ਸਾਰਣੀ *ਸਾਰਣੀ);
 
-XKB_EXPORT_PRIVATE xkb_atom_t
-atom_intern(struct atom_table *table, const char *string, size_t len, bool add);
+XKB_EXPORT_ਨਿੱਜੀ xkb_atom_t
+atom_intern(ਬਣਤਰ atom_ਸਾਰਣੀ *ਸਾਰਣੀ, ਅਚਲ ਅੱਖਰ *string, ਮਾਪ_t len, bool ਜੋੜੋ);
 
-XKB_EXPORT_PRIVATE const char *
-atom_text(struct atom_table *table, xkb_atom_t atom);
+XKB_EXPORT_ਨਿੱਜੀ ਅਚਲ ਅੱਖਰ *
+atom_ਪਾਠ(ਬਣਤਰ atom_ਸਾਰਣੀ *ਸਾਰਣੀ, xkb_atom_t atom);

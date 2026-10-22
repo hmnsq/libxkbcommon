@@ -5,72 +5,72 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
 
-#include <assert.h>
-#include <stddef.h>
-#include <stdbool.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <assert.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stddef.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdbool.h>
 
-#include "util-list.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "util-list.h"
 
-void
-list_init(struct list *list)
+ਖਾਲੀ
+list_init(ਬਣਤਰ list *list)
 {
 	list->prev = list;
-	list->next = list;
+	list->ਅਗਲਾ = list;
 }
 
-void
-list_insert(struct list *list, struct list *elm)
+ਖਾਲੀ
+list_ਪਾਓ(ਬਣਤਰ list *list, ਬਣਤਰ list *elm)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	ਪ੍ਰਤਿਜ੍ਞਾ((list->ਅਗਲਾ != ਨਿਰਾ && list->prev != ਨਿਰਾ) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
-	assert(((elm->next == NULL && elm->prev == NULL) || list_empty(elm)) ||
+	ਪ੍ਰਤਿਜ੍ਞਾ(((elm->ਅਗਲਾ == ਨਿਰਾ && elm->prev == ਨਿਰਾ) || list_ਖਾਲੀ_ਥਾਵਾਂ(elm)) ||
 	       !"elm->next|prev is not NULL, list node used twice?");
 
 	elm->prev = list;
-	elm->next = list->next;
-	list->next = elm;
-	elm->next->prev = elm;
+	elm->ਅਗਲਾ = list->ਅਗਲਾ;
+	list->ਅਗਲਾ = elm;
+	elm->ਅਗਲਾ->prev = elm;
 }
 
-void
-list_append(struct list *list, struct list *elm)
+ਖਾਲੀ
+list_append(ਬਣਤਰ list *list, ਬਣਤਰ list *elm)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	ਪ੍ਰਤਿਜ੍ਞਾ((list->ਅਗਲਾ != ਨਿਰਾ && list->prev != ਨਿਰਾ) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
-	assert(((elm->next == NULL && elm->prev == NULL) || list_empty(elm)) ||
+	ਪ੍ਰਤਿਜ੍ਞਾ(((elm->ਅਗਲਾ == ਨਿਰਾ && elm->prev == ਨਿਰਾ) || list_ਖਾਲੀ_ਥਾਵਾਂ(elm)) ||
 	       !"elm->next|prev is not NULL, list node used twice?");
 
-	elm->next = list;
+	elm->ਅਗਲਾ = list;
 	elm->prev = list->prev;
 	list->prev = elm;
-	elm->prev->next = elm;
+	elm->prev->ਅਗਲਾ = elm;
 }
 
-void
-list_remove(struct list *elm)
+ਖਾਲੀ
+list_remove(ਬਣਤਰ list *elm)
 {
-	assert((elm->next != NULL && elm->prev != NULL) ||
+	ਪ੍ਰਤਿਜ੍ਞਾ((elm->ਅਗਲਾ != ਨਿਰਾ && elm->prev != ਨਿਰਾ) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
 
-	elm->prev->next = elm->next;
-	elm->next->prev = elm->prev;
-	elm->next = NULL;
-	elm->prev = NULL;
+	elm->prev->ਅਗਲਾ = elm->ਅਗਲਾ;
+	elm->ਅਗਲਾ->prev = elm->prev;
+	elm->ਅਗਲਾ = ਨਿਰਾ;
+	elm->prev = ਨਿਰਾ;
 }
 
 bool
-list_empty(const struct list *list)
+list_ਖਾਲੀ_ਥਾਵਾਂ(ਅਚਲ ਬਣਤਰ list *list)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	ਪ੍ਰਤਿਜ੍ਞਾ((list->ਅਗਲਾ != ਨਿਰਾ && list->prev != ਨਿਰਾ) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
 
-	return list->next == list;
+	ਵਾਪਸ list->ਅਗਲਾ == list;
 }
 
 bool
-list_is_last(const struct list *list, const struct list *elm)
+list_is_ਆਖਰੀ(ਅਚਲ ਬਣਤਰ list *list, ਅਚਲ ਬਣਤਰ list *elm)
 {
-	return elm->next == list;
+	ਵਾਪਸ elm->ਅਗਲਾ == list;
 }

@@ -3,28 +3,28 @@
  * SPDX-License-Identifier: MIT
  */
 
-#pragma once
+#ਹਦਾਇਤ once
 
-#include "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
 
-#include <assert.h>
-#include <limits.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stddef.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <assert.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <limits.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdbool.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stddef.h>
 
 /*
  * Bit array using native pointer-width word for optimal performance
  */
 
-#define BIT_ARRAY_UINTPTR_WIDTH (sizeof(uintptr_t) * CHAR_BIT)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਦੋਆਧਾਰੀ_ਅੰਕ_ARRAY_UINTPTR_ਚੌੜਾਈ (ਆਕਾਰ(uintptr_t) * CHAR_BIT)
 
 /* Compile-time sanity checks */
-#ifdef UINTPTR_WIDTH
-static_assert(UINTPTR_WIDTH == BIT_ARRAY_UINTPTR_WIDTH,
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ UINTPTR_ਚੌੜਾਈ
+static_assert(UINTPTR_ਚੌੜਾਈ == ਦੋਆਧਾਰੀ_ਅੰਕ_ARRAY_UINTPTR_ਚੌੜਾਈ,
               "uintptr_t contains padding bits!");
-#endif
-static_assert((BIT_ARRAY_UINTPTR_WIDTH & (BIT_ARRAY_UINTPTR_WIDTH - 1)) == 0,
+#ਜੇ_ਅੰਤ
+static_assert((ਦੋਆਧਾਰੀ_ਅੰਕ_ARRAY_UINTPTR_ਚੌੜਾਈ & (ਦੋਆਧਾਰੀ_ਅੰਕ_ARRAY_UINTPTR_ਚੌੜਾਈ - 1)) == 0,
               "BIT_ARRAY_UINTPTR_WIDTH must be a power of 2!");
 
 /**
@@ -33,9 +33,9 @@ static_assert((BIT_ARRAY_UINTPTR_WIDTH & (BIT_ARRAY_UINTPTR_WIDTH - 1)) == 0,
  * @param num_bits  Number of bits to store.
  * @return Number of `uintptr_t` words required.
  */
-static inline size_t bit_array_words(size_t num_bits) {
-    return num_bits / BIT_ARRAY_UINTPTR_WIDTH +
-          (num_bits % BIT_ARRAY_UINTPTR_WIDTH != 0);
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਮਾਪ_t ਦੋਆਧਾਰੀ_ਅੰਕ_array_ਸ਼ਬਦ(ਮਾਪ_t ਅੰਕ_ਬਿੱਟ) {
+    ਵਾਪਸ ਅੰਕ_ਬਿੱਟ / ਦੋਆਧਾਰੀ_ਅੰਕ_ARRAY_UINTPTR_ਚੌੜਾਈ +
+          (ਅੰਕ_ਬਿੱਟ % ਦੋਆਧਾਰੀ_ਅੰਕ_ARRAY_UINTPTR_ਚੌੜਾਈ != 0);
 }
 
 /**
@@ -43,10 +43,10 @@ static inline size_t bit_array_words(size_t num_bits) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline bool bit_array_get(const uintptr_t *arr, size_t index) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
-    return (arr[word_idx] >> bit_idx) & (uintptr_t)1;
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool ਦੋਆਧਾਰੀ_ਅੰਕ_array_get(ਅਚਲ uintptr_t *arr, ਮਾਪ_t ਸੂਚਕਾਂਕ) {
+    ਅਚਲ ਮਾਪ_t ਸ਼ਬਦ_idx = ਸੂਚਕਾਂਕ / ਦੋਆਧਾਰੀ_ਅੰਕ_ARRAY_UINTPTR_ਚੌੜਾਈ;
+    ਅਚਲ ਮਾਪ_t ਦੋਆਧਾਰੀ_ਅੰਕ_idx  = ਸੂਚਕਾਂਕ % ਦੋਆਧਾਰੀ_ਅੰਕ_ARRAY_UINTPTR_ਚੌੜਾਈ;
+    ਵਾਪਸ (arr[ਸ਼ਬਦ_idx] >> ਦੋਆਧਾਰੀ_ਅੰਕ_idx) & (uintptr_t)1;
 }
 
 /**
@@ -54,10 +54,10 @@ static inline bool bit_array_get(const uintptr_t *arr, size_t index) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline void bit_array_set(uintptr_t *arr, size_t index) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
-    arr[word_idx] |= ((uintptr_t)1 << bit_idx);
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ ਦੋਆਧਾਰੀ_ਅੰਕ_array_ਸੈੱਟ(uintptr_t *arr, ਮਾਪ_t ਸੂਚਕਾਂਕ) {
+    ਅਚਲ ਮਾਪ_t ਸ਼ਬਦ_idx = ਸੂਚਕਾਂਕ / ਦੋਆਧਾਰੀ_ਅੰਕ_ARRAY_UINTPTR_ਚੌੜਾਈ;
+    ਅਚਲ ਮਾਪ_t ਦੋਆਧਾਰੀ_ਅੰਕ_idx  = ਸੂਚਕਾਂਕ % ਦੋਆਧਾਰੀ_ਅੰਕ_ARRAY_UINTPTR_ਚੌੜਾਈ;
+    arr[ਸ਼ਬਦ_idx] |= ((uintptr_t)1 << ਦੋਆਧਾਰੀ_ਅੰਕ_idx);
 }
 
 /**
@@ -65,10 +65,10 @@ static inline void bit_array_set(uintptr_t *arr, size_t index) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline void bit_array_clear(uintptr_t *arr, size_t index) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
-    arr[word_idx] &= ~((uintptr_t)1 << bit_idx);
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ ਦੋਆਧਾਰੀ_ਅੰਕ_array_clear(uintptr_t *arr, ਮਾਪ_t ਸੂਚਕਾਂਕ) {
+    ਅਚਲ ਮਾਪ_t ਸ਼ਬਦ_idx = ਸੂਚਕਾਂਕ / ਦੋਆਧਾਰੀ_ਅੰਕ_ARRAY_UINTPTR_ਚੌੜਾਈ;
+    ਅਚਲ ਮਾਪ_t ਦੋਆਧਾਰੀ_ਅੰਕ_idx  = ਸੂਚਕਾਂਕ % ਦੋਆਧਾਰੀ_ਅੰਕ_ARRAY_UINTPTR_ਚੌੜਾਈ;
+    arr[ਸ਼ਬਦ_idx] &= ~((uintptr_t)1 << ਦੋਆਧਾਰੀ_ਅੰਕ_idx);
 }
 
 /**
@@ -76,10 +76,10 @@ static inline void bit_array_clear(uintptr_t *arr, size_t index) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline void bit_array_toggle(uintptr_t *arr, size_t index) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
-    arr[word_idx] ^= ((uintptr_t)1 << bit_idx);
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ ਦੋਆਧਾਰੀ_ਅੰਕ_array_toggle(uintptr_t *arr, ਮਾਪ_t ਸੂਚਕਾਂਕ) {
+    ਅਚਲ ਮਾਪ_t ਸ਼ਬਦ_idx = ਸੂਚਕਾਂਕ / ਦੋਆਧਾਰੀ_ਅੰਕ_ARRAY_UINTPTR_ਚੌੜਾਈ;
+    ਅਚਲ ਮਾਪ_t ਦੋਆਧਾਰੀ_ਅੰਕ_idx  = ਸੂਚਕਾਂਕ % ਦੋਆਧਾਰੀ_ਅੰਕ_ARRAY_UINTPTR_ਚੌੜਾਈ;
+    arr[ਸ਼ਬਦ_idx] ^= ((uintptr_t)1 << ਦੋਆਧਾਰੀ_ਅੰਕ_idx);
 }
 
 /**
@@ -87,12 +87,12 @@ static inline void bit_array_toggle(uintptr_t *arr, size_t index) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline void bit_array_assign(uintptr_t *arr, size_t index, bool val) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
-    uintptr_t mask = (uintptr_t)1 << bit_idx;
-    arr[word_idx] = (arr[word_idx] & ~mask)     /* clear bit */
-                  | ((-(uintptr_t)val) & mask); /* set bit */
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ ਦੋਆਧਾਰੀ_ਅੰਕ_array_ਸੌਂਪੋ(uintptr_t *arr, ਮਾਪ_t ਸੂਚਕਾਂਕ, bool val) {
+    ਅਚਲ ਮਾਪ_t ਸ਼ਬਦ_idx = ਸੂਚਕਾਂਕ / ਦੋਆਧਾਰੀ_ਅੰਕ_ARRAY_UINTPTR_ਚੌੜਾਈ;
+    ਅਚਲ ਮਾਪ_t ਦੋਆਧਾਰੀ_ਅੰਕ_idx  = ਸੂਚਕਾਂਕ % ਦੋਆਧਾਰੀ_ਅੰਕ_ARRAY_UINTPTR_ਚੌੜਾਈ;
+    uintptr_t ਨਕਾਬ = (uintptr_t)1 << ਦੋਆਧਾਰੀ_ਅੰਕ_idx;
+    arr[ਸ਼ਬਦ_idx] = (arr[ਸ਼ਬਦ_idx] & ~ਨਕਾਬ)     /* clear bit */
+                  | ((-(uintptr_t)val) & ਨਕਾਬ); /* set bit */
 }
 
-#undef BIT_ARRAY_UINTPTR_WIDTH
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ ਦੋਆਧਾਰੀ_ਅੰਕ_ARRAY_UINTPTR_ਚੌੜਾਈ

@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-#pragma once
+#ਹਦਾਇਤ once
 
-#define COMPOSE_MAX_LHS_LEN 10
-#define COMPOSE_MAX_INCLUDE_DEPTH 5
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ COMPOSE_MAX_LHS_LEN 10
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ COMPOSE_MAX_INCLUDE_ਡੂੰਘਾਈ 5
 /** Maximum size of the string returned by xkb_compose_state_get_utf8() */
-#define XKB_COMPOSE_MAX_STRING_SIZE 256
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ XKB_COMPOSE_MAX_STRING_ਮਾਪ 256

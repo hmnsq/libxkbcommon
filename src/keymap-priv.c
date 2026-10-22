@@ -6,63 +6,63 @@
  * Author: Daniel Stone <daniel@fooishbar.org>
  */
 
-#include "config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
 
-#include <assert.h>
-#include <stdint.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <assert.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-names.h"
-#include "features/enums.h"
-#include "keymap.h"
-#include "messages-codes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xkbcommon/xkbcommon.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xkbcommon/xkbcommon-names.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "features/enums.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "keymap.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "messages-codes.h"
 
-static void
-update_builtin_keymap_fields(struct xkb_keymap *keymap)
+ਸਥਿਰ ਖਾਲੀ
+update_builtin_keymap_fields(ਬਣਤਰ xkb_keymap *keymap)
 {
     /* Predefined (AKA real, core, X11) modifiers. The order is important! */
-    static const char *const builtin_mods[] = {
-        [XKB_MOD_INDEX_SHIFT] = XKB_MOD_NAME_SHIFT,
-        [XKB_MOD_INDEX_CAPS]  = XKB_MOD_NAME_CAPS,
-        [XKB_MOD_INDEX_CTRL]  = XKB_MOD_NAME_CTRL,
-        [XKB_MOD_INDEX_MOD1]  = XKB_MOD_NAME_MOD1,
-        [XKB_MOD_INDEX_MOD2]  = XKB_MOD_NAME_MOD2,
-        [XKB_MOD_INDEX_MOD3]  = XKB_MOD_NAME_MOD3,
-        [XKB_MOD_INDEX_MOD4]  = XKB_MOD_NAME_MOD4,
-        [XKB_MOD_INDEX_MOD5]  = XKB_MOD_NAME_MOD5
+    ਸਥਿਰ ਅਚਲ ਅੱਖਰ *ਅਚਲ builtin_mods[] = {
+        [XKB_MOD_ਸੂਚਕਾਂਕ_ਖਿਸਕਾਓ] = XKB_MOD_NAME_ਖਿਸਕਾਓ,
+        [XKB_MOD_ਸੂਚਕਾਂਕ_CAPS]  = XKB_MOD_NAME_CAPS,
+        [XKB_MOD_ਸੂਚਕਾਂਕ_CTRL]  = XKB_MOD_NAME_CTRL,
+        [XKB_MOD_ਸੂਚਕਾਂਕ_MOD1]  = XKB_MOD_NAME_MOD1,
+        [XKB_MOD_ਸੂਚਕਾਂਕ_MOD2]  = XKB_MOD_NAME_MOD2,
+        [XKB_MOD_ਸੂਚਕਾਂਕ_MOD3]  = XKB_MOD_NAME_MOD3,
+        [XKB_MOD_ਸੂਚਕਾਂਕ_MOD4]  = XKB_MOD_NAME_MOD4,
+        [XKB_MOD_ਸੂਚਕਾਂਕ_MOD5]  = XKB_MOD_NAME_MOD5
     };
 
-    for (xkb_mod_index_t i = 0; i < ARRAY_SIZE(builtin_mods); i++) {
+    ਲਈ (xkb_mod_ਸੂਚਕਾਂਕ_t i = 0; i < ARRAY_ਮਾਪ(builtin_mods); i++) {
         keymap->mods.mods[i].name = xkb_atom_intern(keymap->ctx,
                                                     builtin_mods[i],
-                                                    strlen(builtin_mods[i]));
+                                                    ਲੜੀ_ਲੰਬਾਈ(builtin_mods[i]));
         keymap->mods.mods[i].type = MOD_REAL;
         /* Real modifiers have a canonical mapping */
         keymap->mods.mods[i].mapping = UINT32_C(1) << i;
     }
-    keymap->mods.num_mods = ARRAY_SIZE(builtin_mods);
-    keymap->canonical_state_mask = MOD_REAL_MASK_ALL;
+    keymap->mods.ਅੰਕ_mods = ARRAY_ਮਾਪ(builtin_mods);
+    keymap->canonical_state_ਨਕਾਬ = MOD_REAL_ਨਕਾਬ_ALL;
 }
 
-struct xkb_keymap *
-xkb_keymap_new(struct xkb_context *ctx, const char *func,
-               enum xkb_keymap_format format,
-               enum xkb_keymap_compile_flags flags)
+ਬਣਤਰ xkb_keymap *
+xkb_keymap_new(ਬਣਤਰ xkb_context *ctx, ਅਚਲ ਅੱਖਰ *func,
+               ਗਿਣਤੀ xkb_keymap_format format,
+               ਗਿਣਤੀ xkb_keymap_compile_flags flags)
 {
-    const enum xkb_keymap_compile_flags invalid_flags = (
-        flags & ~(enum xkb_keymap_compile_flags)XKB_KEYMAP_COMPILE_FLAGS_VALUES
+    ਅਚਲ ਗਿਣਤੀ xkb_keymap_compile_flags invalid_flags = (
+        flags & ~(ਗਿਣਤੀ xkb_keymap_compile_flags)XKB_KEYMAP_COMPILE_FLAGS_ਮੁੱਲਾਂ
     );
-    if (invalid_flags) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    ਜੇ (invalid_flags) {
+        log_err(ctx, XKB_LOG_ਸੁਨੇਹਾ_NO_ID,
                 "%s: unrecognized keymap compilation flags: 0x%x\n",
                 func, invalid_flags);
-        return NULL;
+        ਵਾਪਸ ਨਿਰਾ;
     }
 
-    struct xkb_keymap * const keymap = calloc(1, sizeof(*keymap));
-    if (!keymap)
-        return NULL;
+    ਬਣਤਰ xkb_keymap * ਅਚਲ keymap = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, ਆਕਾਰ(*keymap));
+    ਜੇ (!keymap)
+        ਵਾਪਸ ਨਿਰਾ;
 
     keymap->refcnt = 1;
     keymap->ctx = xkb_context_ref(ctx);
@@ -72,163 +72,163 @@ xkb_keymap_new(struct xkb_context *ctx, const char *func,
 
     update_builtin_keymap_fields(keymap);
 
-    return keymap;
+    ਵਾਪਸ keymap;
 }
 
-void
-XkbEscapeMapName(char *name)
+ਖਾਲੀ
+XkbEscapeMapName(ਅੱਖਰ *name)
 {
     /*
      * All latin-1 alphanumerics, plus parens, slash, minus, underscore and
      * wildcards.
      */
-    static const unsigned char legal[] = {
+    ਸਥਿਰ ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ legal[] = {
         0x00, 0x00, 0x00, 0x00, 0x00, 0xa7, 0xff, 0x83,
         0xfe, 0xff, 0xff, 0x87, 0xfe, 0xff, 0xff, 0x07,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0xff, 0xff, 0x7f, 0xff, 0xff, 0xff, 0x7f, 0xff
     };
 
-    if (!name)
-        return;
+    ਜੇ (!name)
+        ਵਾਪਸ;
 
-    while (*name) {
-        unsigned char c = (unsigned char)*name;
-        if (!(legal[c / 8] & (1u << (c % 8))))
+    ਜਦੋਂ (*name) {
+        ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ c = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ)*name;
+        ਜੇ (!(legal[c / 8] & (1u << (c % 8))))
             *name = '_';
         name++;
     }
 }
 
-xkb_mod_index_t
-XkbModNameToIndex(const struct xkb_mod_set *mods, xkb_atom_t name,
-                  enum mod_type type)
+xkb_mod_ਸੂਚਕਾਂਕ_t
+Xkb_Mod_Name_ਮੰਜ਼ਿਲ_ਸੂਚਕਾਂਕ(ਅਚਲ ਬਣਤਰ xkb_mod_ਸੈੱਟ *mods, xkb_atom_t name,
+                  ਗਿਣਤੀ mod_type type)
 {
-    xkb_mod_index_t i;
-    const struct xkb_mod *mod;
+    xkb_mod_ਸੂਚਕਾਂਕ_t i;
+    ਅਚਲ ਬਣਤਰ xkb_mod *mod;
 
     xkb_mods_enumerate(i, mod, mods)
-        if ((mod->type & type) && name == mod->name)
-            return i;
+        ਜੇ ((mod->type & type) && name == mod->name)
+            ਵਾਪਸ i;
 
-    return XKB_MOD_INVALID;
+    ਵਾਪਸ XKB_MOD_INVALID;
 }
 
 bool
-XkbLevelsSameSyms(const struct xkb_level *a, const struct xkb_level *b)
+Xkb_ਪੱਧਰ_Same_Syms(ਅਚਲ ਬਣਤਰ xkb_level *a, ਅਚਲ ਬਣਤਰ xkb_level *b)
 {
-    if (a->num_syms != b->num_syms)
-        return false;
-    if (a->num_syms <= 1)
-        return a->s.sym == b->s.sym;
-    return memcmp(a->s.syms, b->s.syms, sizeof(*a->s.syms) * a->num_syms) == 0;
+    ਜੇ (a->ਅੰਕ_syms != b->ਅੰਕ_syms)
+        ਵਾਪਸ false;
+    ਜੇ (a->ਅੰਕ_syms <= 1)
+        ਵਾਪਸ a->s.sym == b->s.sym;
+    ਵਾਪਸ memcmp(a->s.syms, b->s.syms, ਆਕਾਰ(*a->s.syms) * a->ਅੰਕ_syms) == 0;
 }
 
 bool
-action_equal(const union xkb_action *a, const union xkb_action *b)
+action_equal(ਅਚਲ ਸੰਘ xkb_action *a, ਅਚਲ ਸੰਘ xkb_action *b)
 {
-    if (a->type != b->type)
-        return false;
+    ਜੇ (a->type != b->type)
+        ਵਾਪਸ false;
 
-    switch (a->type) {
-    case ACTION_TYPE_NONE:
-    case ACTION_TYPE_VOID:
-        return true;
-    case ACTION_TYPE_MOD_SET:
-    case ACTION_TYPE_MOD_LATCH:
-    case ACTION_TYPE_MOD_LOCK:
-        return (a->mods.flags == b->mods.flags &&
-                a->mods.mods.mask == b->mods.mods.mask &&
+    ਚੋਣ (a->type) {
+    ਹਾਲਤ ACTION_TYPE_NONE:
+    ਹਾਲਤ ACTION_TYPE_VOID:
+        ਵਾਪਸ true;
+    ਹਾਲਤ ACTION_TYPE_MOD_ਸੈੱਟ:
+    ਹਾਲਤ ACTION_TYPE_MOD_LATCH:
+    ਹਾਲਤ ACTION_TYPE_MOD_ਤਾਲਾ:
+        ਵਾਪਸ (a->mods.flags == b->mods.flags &&
+                a->mods.mods.ਨਕਾਬ == b->mods.mods.ਨਕਾਬ &&
                 a->mods.mods.mods == b->mods.mods.mods);
-    case ACTION_TYPE_GROUP_SET:
-    case ACTION_TYPE_GROUP_LATCH:
-    case ACTION_TYPE_GROUP_LOCK:
-        return (a->group.flags == b->group.flags &&
-                a->group.group == b->group.group);
-    case ACTION_TYPE_PTR_MOVE:
-        return (a->ptr.flags == b->ptr.flags &&
+    ਹਾਲਤ ACTION_TYPE_ਸਮੂਹ_ਸੈੱਟ:
+    ਹਾਲਤ ACTION_TYPE_ਸਮੂਹ_LATCH:
+    ਹਾਲਤ ACTION_TYPE_ਸਮੂਹ_ਤਾਲਾ:
+        ਵਾਪਸ (a->ਸਮੂਹ.flags == b->ਸਮੂਹ.flags &&
+                a->ਸਮੂਹ.ਸਮੂਹ == b->ਸਮੂਹ.ਸਮੂਹ);
+    ਹਾਲਤ ACTION_TYPE_PTR_MOVE:
+        ਵਾਪਸ (a->ptr.flags == b->ptr.flags &&
                 a->ptr.x == b->ptr.x &&
                 a->ptr.y == b->ptr.y);
-    case ACTION_TYPE_PTR_BUTTON:
-    case ACTION_TYPE_PTR_LOCK:
-        return (a->btn.flags == b->btn.flags &&
+    ਹਾਲਤ ACTION_TYPE_PTR_BUTTON:
+    ਹਾਲਤ ACTION_TYPE_PTR_ਤਾਲਾ:
+        ਵਾਪਸ (a->btn.flags == b->btn.flags &&
                 a->btn.button == b->btn.button &&
-                a->btn.count == b->btn.count);
-    case ACTION_TYPE_PTR_DEFAULT:
-        return (a->dflt.flags == b->dflt.flags &&
-                a->dflt.value == b->dflt.value);
-    case ACTION_TYPE_TERMINATE:
-        return true;
-    case ACTION_TYPE_SWITCH_VT:
-        return (a->screen.flags == b->screen.flags &&
+                a->btn.ਗਿਣਤੀ_2 == b->btn.ਗਿਣਤੀ_2);
+    ਹਾਲਤ ACTION_TYPE_PTR_DEFAULT:
+        ਵਾਪਸ (a->dflt.flags == b->dflt.flags &&
+                a->dflt.ਮੁੱਲ == b->dflt.ਮੁੱਲ);
+    ਹਾਲਤ ACTION_TYPE_TERMINATE:
+        ਵਾਪਸ true;
+    ਹਾਲਤ ACTION_TYPE_SWITCH_VT:
+        ਵਾਪਸ (a->screen.flags == b->screen.flags &&
                 a->screen.screen == b->screen.screen);
-    case ACTION_TYPE_CTRL_SET:
-    case ACTION_TYPE_CTRL_LOCK:
-        return (a->ctrls.flags == b->ctrls.flags &&
+    ਹਾਲਤ ACTION_TYPE_CTRL_ਸੈੱਟ:
+    ਹਾਲਤ ACTION_TYPE_CTRL_ਤਾਲਾ:
+        ਵਾਪਸ (a->ctrls.flags == b->ctrls.flags &&
                 a->ctrls.ctrls == b->ctrls.ctrls);
-    case ACTION_TYPE_REDIRECT_KEY:
-        return (a->redirect.keycode == b->redirect.keycode &&
+    ਹਾਲਤ ACTION_TYPE_REDIRECT_ਕੁੰਜੀ:
+        ਵਾਪਸ (a->redirect.keycode == b->redirect.keycode &&
                 a->redirect.affect_mods == b->redirect.affect_mods &&
                 a->redirect.mods == b->redirect.mods);
-    case ACTION_TYPE_UNSUPPORTED_LEGACY:
-    case ACTION_TYPE_UNKNOWN:
-        return true;
+    ਹਾਲਤ ACTION_TYPE_UNSUPPORTED_LEGACY:
+    ਹਾਲਤ ACTION_TYPE_UNKNOWN:
+        ਵਾਪਸ true;
     /* ACTION_TYPE_PRIVATE processed in the default case */
-    case ACTION_TYPE_INTERNAL:
-        return (a->internal.flags == b->internal.flags) &&
-               (a->internal.clear_latched_mods == b->internal.clear_latched_mods);
-    default:
+    ਹਾਲਤ ACTION_TYPE_ਅੰਦਰੂਨੀ:
+        ਵਾਪਸ (a->ਅੰਦਰੂਨੀ.flags == b->ਅੰਦਰੂਨੀ.flags) &&
+               (a->ਅੰਦਰੂਨੀ.clear_latched_mods == b->ਅੰਦਰੂਨੀ.clear_latched_mods);
+    ਮੂਲ:
         {} /* Label followed by declaration requires C23 */
         /* Ensure to not miss `xkb_action_type` updates */
-        static_assert(ACTION_TYPE_INTERNAL == 20 &&
-                      ACTION_TYPE_INTERNAL + 1 == _ACTION_TYPE_NUM_ENTRIES,
+        static_assert(ACTION_TYPE_ਅੰਦਰੂਨੀ == 20 &&
+                      ACTION_TYPE_ਅੰਦਰੂਨੀ + 1 == ACTION_TYPE_ਅੰਕ_ENTRIES,
                       "Missing action type");
         /* Private/custom action */
-        return memcmp(a->priv.data, b->priv.data, sizeof(a->priv.data)) == 0;
+        ਵਾਪਸ memcmp(a->priv.ਅੰਕੜੇ, b->priv.ਅੰਕੜੇ, ਆਕਾਰ(a->priv.ਅੰਕੜੇ)) == 0;
     }
 }
 
 bool
-XkbLevelsSameActions(const struct xkb_level *a, const struct xkb_level *b)
+Xkb_ਪੱਧਰ_Same_Actions(ਅਚਲ ਬਣਤਰ xkb_level *a, ਅਚਲ ਬਣਤਰ xkb_level *b)
 {
-    if (a->num_actions != b->num_actions)
-        return false;
-    if (a->num_actions <= 1)
-        return action_equal(&a->a.action, &b->a.action);
-    for (xkb_action_count_t k = 0; k < a->num_actions; k++) {
-        if (!action_equal(&a->a.actions[k], &b->a.actions[k]))
-            return false;
+    ਜੇ (a->ਅੰਕ_actions != b->ਅੰਕ_actions)
+        ਵਾਪਸ false;
+    ਜੇ (a->ਅੰਕ_actions <= 1)
+        ਵਾਪਸ action_equal(&a->a.action, &b->a.action);
+    ਲਈ (xkb_action_ਗਿਣਤੀ_t k = 0; k < a->ਅੰਕ_actions; k++) {
+        ਜੇ (!action_equal(&a->a.actions[k], &b->a.actions[k]))
+            ਵਾਪਸ false;
     }
-    return true;
+    ਵਾਪਸ true;
 }
 
 /* See: XkbAdjustGroup in Xorg xserver */
-xkb_layout_index_t
-XkbWrapGroupIntoRange(int32_t group,
-                      xkb_layout_index_t num_groups,
-                      enum xkb_layout_out_of_range_policy out_of_range_group_policy,
-                      xkb_layout_index_t out_of_range_group_number)
+xkb_layout_ਸੂਚਕਾਂਕ_t
+Xkb_Wrap_ਸਮੂਹ_Into_Range(int32_t ਸਮੂਹ,
+                      xkb_layout_ਸੂਚਕਾਂਕ_t ਅੰਕ_groups,
+                      ਗਿਣਤੀ xkb_layout_ਬਾਹਰਲਾ_ਦਾ_range_policy ਬਾਹਰਲਾ_ਦਾ_range_ਸਮੂਹ_policy,
+                      xkb_layout_ਸੂਚਕਾਂਕ_t ਬਾਹਰਲਾ_ਦਾ_range_ਸਮੂਹ_ਸੰਖਿਆ)
 {
-    if (num_groups == 0)
-        return XKB_LAYOUT_INVALID;
+    ਜੇ (ਅੰਕ_groups == 0)
+        ਵਾਪਸ XKB_LAYOUT_INVALID;
 
-    if (group >= 0 && (xkb_layout_index_t)group < num_groups)
-        return (xkb_layout_index_t)group;
+    ਜੇ (ਸਮੂਹ >= 0 && (xkb_layout_ਸੂਚਕਾਂਕ_t)ਸਮੂਹ < ਅੰਕ_groups)
+        ਵਾਪਸ (xkb_layout_ਸੂਚਕਾਂਕ_t)ਸਮੂਹ;
 
-    switch (out_of_range_group_policy) {
-    case XKB_LAYOUT_OUT_OF_RANGE_REDIRECT:
-        if (out_of_range_group_number >= num_groups)
-            return 0;
-        return out_of_range_group_number;
+    ਚੋਣ (ਬਾਹਰਲਾ_ਦਾ_range_ਸਮੂਹ_policy) {
+    ਹਾਲਤ XKB_LAYOUT_ਬਾਹਰਲਾ_ਦਾ_RANGE_REDIRECT:
+        ਜੇ (ਬਾਹਰਲਾ_ਦਾ_range_ਸਮੂਹ_ਸੰਖਿਆ >= ਅੰਕ_groups)
+            ਵਾਪਸ 0;
+        ਵਾਪਸ ਬਾਹਰਲਾ_ਦਾ_range_ਸਮੂਹ_ਸੰਖਿਆ;
 
-    case XKB_LAYOUT_OUT_OF_RANGE_CLAMP:
-        if (group < 0)
-            return 0;
-        else
-            return num_groups - 1;
+    ਹਾਲਤ XKB_LAYOUT_ਬਾਹਰਲਾ_ਦਾ_RANGE_CLAMP:
+        ਜੇ (ਸਮੂਹ < 0)
+            ਵਾਪਸ 0;
+        ਨਹੀਂਤਾਂ
+            ਵਾਪਸ ਅੰਕ_groups - 1;
 
-    case XKB_LAYOUT_OUT_OF_RANGE_WRAP:
-    default: {
+    ਹਾਲਤ XKB_LAYOUT_ਬਾਹਰਲਾ_ਦਾ_RANGE_WRAP:
+    ਮੂਲ: {
         /*
          * Ensure conversion xkb_layout_index_t → int32_t is lossless.
          *
@@ -245,45 +245,45 @@ XkbWrapGroupIntoRange(int32_t group,
          * positive. So if the remainder is negative, we must add `num_groups`
          * to get the modulus.
          */
-        const int32_t rem = group % (int32_t) num_groups;
-        return (rem >= 0)
-            ? (xkb_layout_index_t)rem
-            : (xkb_layout_index_t)(rem + (int32_t)num_groups);
+        ਅਚਲ int32_t rem = ਸਮੂਹ % (int32_t) ਅੰਕ_groups;
+        ਵਾਪਸ (rem >= 0)
+            ? (xkb_layout_ਸੂਚਕਾਂਕ_t)rem
+            : (xkb_layout_ਸੂਚਕਾਂਕ_t)(rem + (int32_t)ਅੰਕ_groups);
     }
     }
 }
 
-xkb_action_count_t
-xkb_keymap_key_get_actions_by_level(const struct xkb_keymap *keymap,
-                                    const struct xkb_key *key,
-                                    xkb_layout_index_t layout,
-                                    xkb_level_index_t level,
-                                    const union xkb_action **actions)
+xkb_action_ਗਿਣਤੀ_t
+xkb_keymap_ਕੁੰਜੀ_get_actions_by_level(ਅਚਲ ਬਣਤਰ xkb_keymap *keymap,
+                                    ਅਚਲ ਬਣਤਰ xkb_ਕੁੰਜੀ *ਕੁੰਜੀ,
+                                    xkb_layout_ਸੂਚਕਾਂਕ_t layout,
+                                    xkb_level_ਸੂਚਕਾਂਕ_t level,
+                                    ਅਚਲ ਸੰਘ xkb_action **actions)
 {
-    if (!key)
-        goto err;
+    ਜੇ (!ਕੁੰਜੀ)
+        ਜਾਓ err;
 
-    layout = xkb_keymap_key_effective_layout(key, layout);
-    if (layout == XKB_LAYOUT_INVALID)
-        goto err;
+    layout = xkb_keymap_ਕੁੰਜੀ_effective_layout(ਕੁੰਜੀ, layout);
+    ਜੇ (layout == XKB_LAYOUT_INVALID)
+        ਜਾਓ err;
 
-    if (level >= XkbKeyNumLevels(key, layout))
-        goto err;
+    ਜੇ (level >= Xkb_ਕੁੰਜੀ_ਅੰਕ_ਪੱਧਰ(ਕੁੰਜੀ, layout))
+        ਜਾਓ err;
 
-    const xkb_action_count_t count =
-        key->groups[layout].levels[level].num_actions;
-    switch (count) {
-        case 0:
-            goto err;
-        case 1:
-            *actions = &key->groups[layout].levels[level].a.action;
-            break;
-        default:
-            *actions = key->groups[layout].levels[level].a.actions;
+    ਅਚਲ xkb_action_ਗਿਣਤੀ_t ਗਿਣਤੀ_2 =
+        ਕੁੰਜੀ->groups[layout].ਪੱਧਰ[level].ਅੰਕ_actions;
+    ਚੋਣ (ਗਿਣਤੀ_2) {
+        ਹਾਲਤ 0:
+            ਜਾਓ err;
+        ਹਾਲਤ 1:
+            *actions = &ਕੁੰਜੀ->groups[layout].ਪੱਧਰ[level].a.action;
+            ਰੋਕੋ;
+        ਮੂਲ:
+            *actions = ਕੁੰਜੀ->groups[layout].ਪੱਧਰ[level].a.actions;
     }
-    return count;
+    ਵਾਪਸ ਗਿਣਤੀ_2;
 
 err:
-    *actions = NULL;
-    return 0;
+    *actions = ਨਿਰਾ;
+    ਵਾਪਸ 0;
 }
