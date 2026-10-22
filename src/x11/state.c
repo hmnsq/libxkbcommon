@@ -3,50 +3,50 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#অন্তর্ভাৱ "config.h"
 
-#include "x11-priv.h"
-#include "xkbcommon/xkbcommon.h"
+#অন্তর্ভাৱ "x11-priv.h"
+#অন্তর্ভাৱ "xkbcommon/xkbcommon.h"
 
 /* Some macros. Not very nice but it'd be worse without them. */
 
-#define FAIL_IF_BAD_REPLY(ctx, reply, request_name) do {    \
-    if (!(reply)) {                                         \
+#define FAIL_IF_BAD_REPLY(ctx, reply, request_name) কৰা {    \
+    যদি (!(reply)) {                                         \
         log_err((ctx), XKB_LOG_MESSAGE_NO_ID,               \
                 "x11: failed to get keymap from X server: " \
                 "%s request failed\n",                      \
                 (request_name));                            \
-        goto fail;                                          \
+        গচ্ছ fail;                                          \
     }                                                       \
-} while (0)
+} যেতিয়ালৈ (0)
 
-static bool
-update_initial_state(struct xkb_state *state, xcb_connection_t *conn,
-                     uint16_t device_id, enum xkb_action_controls controls)
+স্থির bool
+update_initial_state(সংরচনা xkb_state *state, xcb_connection_t *conn,
+                     uint16_t device_id, গণনা xkb_action_controls controls)
 {
     xcb_xkb_get_state_cookie_t cookie =
         xcb_xkb_get_state(conn, device_id);
     xcb_xkb_get_state_reply_t *reply =
-        xcb_xkb_get_state_reply(conn, cookie, NULL);
+        xcb_xkb_get_state_reply(conn, cookie, রিক্ত);
 
-    if (!reply)
-        return false;
+    যদি (!reply)
+        ঘূৰাই false;
 
     /* NOTE: Use the public API with private enum values */
-    const struct xkb_state_components_update components = {
-        .size = sizeof(components),
+    ধ্রুৱ সংরচনা xkb_state_components_update components = {
+        .size = পরিমাণ(components),
         .components = XKB_STATE_CONTROLS_EFFECTIVE,
-        .affect_controls = (enum xkb_keyboard_control_flags) controls,
-        .controls = (enum xkb_keyboard_control_flags) controls,
+        .affect_controls = (গণনা xkb_keyboard_control_flags) controls,
+        .controls = (গণনা xkb_keyboard_control_flags) controls,
     };
-    const struct xkb_synthetic_update update = {
-        .size = sizeof(update),
+    ধ্রুৱ সংরচনা xkb_synthetic_update update = {
+        .size = পরিমাণ(update),
         .components = &components,
     };
-    const enum xkb_status status =
-        xkb_state_update_synthetic(state, &update, NULL);
-    if (status != XKB_SUCCESS)
-        return false;
+    ধ্রুৱ গণনা xkb_status status =
+        xkb_state_update_synthetic(state, &update, রিক্ত);
+    যদি (status != XKB_SUCCESS)
+        ঘূৰাই false;
 
     xkb_state_update_mask(state,
                           reply->baseMods,
@@ -56,71 +56,71 @@ update_initial_state(struct xkb_state *state, xcb_connection_t *conn,
                           reply->latchedGroup,
                           reply->lockedGroup);
 
-    free(reply);
-    return true;
+    মুক্ত(reply);
+    ঘূৰাই true;
 }
 
 // NOLINTNEXTLINE(readability-avoid-unconditional-preprocessor-if)
-#if 0
+#যদি 0
 // TODO: currently unused
-static enum xkb_a11y_flags
-translate_state_accessibility_flags(const xcb_xkb_get_controls_reply_t *reply)
+স্থির গণনা xkb_a11y_flags
+translate_state_accessibility_flags(ধ্রুৱ xcb_xkb_get_controls_reply_t *reply)
 {
-    enum xkb_a11y_flags flags = XKB_A11Y_NO_FLAGS;
-    if (reply->accessXOption & XCB_XKB_AX_OPTION_LATCH_TO_LOCK) {
-        flags |= XKB_A11Y_STICKY_KEYS_LATCH_TO_LOCK;
+    গণনা xkb_a11y_flags flags = XKB_A11Y_NO_FLAGS;
+    যদি (reply->accessXOption & XCB_XKB_AX_OPTION_LATCH_TO_LOCK) {
+        flags |= XKB_A11_Y_STICKY_চাবিগুলি_LATCH_TO_LOCK;
     }
-    return flags;
+    ঘূৰাই flags;
 }
 #endif
 
-static bool
-get_controls(struct xkb_context *ctx, xcb_connection_t *conn, int32_t device_id,
-             enum xkb_action_controls *controls)
+স্থির bool
+get_controls(সংরচনা xkb_context *ctx, xcb_connection_t *conn, int32_t device_id,
+             গণনা xkb_action_controls *controls)
 {
     xcb_xkb_get_controls_cookie_t cookie = xcb_xkb_get_controls(conn, device_id);
     xcb_xkb_get_controls_reply_t *reply =
-        xcb_xkb_get_controls_reply(conn, cookie, NULL);
+        xcb_xkb_get_controls_reply(conn, cookie, রিক্ত);
 
     FAIL_IF_BAD_REPLY(ctx, reply, "XkbGetControls");
 
     // TODO: translate_state_accessibility_flags(reply);
     *controls = translate_controls_mask(reply->enabledControls);
 
-    free(reply);
-    return true;
+    মুক্ত(reply);
+    ঘূৰাই true;
 
 fail:
-    free(reply);
-    return false;
+    মুক্ত(reply);
+    ঘূৰাই false;
 }
 
-struct xkb_state *
-xkb_x11_state_new_from_device(struct xkb_keymap *keymap,
+সংরচনা xkb_state *
+xkb_x11_state_new_from_device(সংরচনা xkb_keymap *keymap,
                               xcb_connection_t *conn, int32_t device_id)
 {
-    if (device_id < 0 || device_id > 255) {
+    যদি (device_id < 0 || device_id > 255) {
         log_err_func(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
                      "illegal device ID: %"PRId32, device_id);
-        return NULL;
+        ঘূৰাই রিক্ত;
     }
 
-    enum xkb_action_controls controls = 0;
-    if (!get_controls(keymap->ctx, conn, device_id, &controls))
-        return NULL;
+    গণনা xkb_action_controls controls = 0;
+    যদি (!get_controls(keymap->ctx, conn, device_id, &controls))
+        ঘূৰাই রিক্ত;
 
     /*
      * Use the legacy state mode for compatibility, as there is no plan
      * to change the xkbcommon-x11 API.
      */
-    struct xkb_state * const state = xkb_state_new(keymap);
-    if (!state)
-        return NULL;
+    সংরচনা xkb_state * ধ্রুৱ state = xkb_state_new(keymap);
+    যদি (!state)
+        ঘূৰাই রিক্ত;
 
-    if (!update_initial_state(state, conn, device_id, controls)) {
+    যদি (!update_initial_state(state, conn, device_id, controls)) {
         xkb_state_unref(state);
-        return NULL;
+        ঘূৰাই রিক্ত;
     }
 
-    return state;
+    ঘূৰাই state;
 }

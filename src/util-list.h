@@ -7,30 +7,30 @@
 
 #pragma once
 
-#include "config.h"
+#অন্তর্ভাৱ "config.h"
 
-#include <stdbool.h>
-#include <stddef.h>
+#অন্তর্ভাৱ <stdbool.h>
+#অন্তর্ভাৱ <stddef.h>
 
 /*
  * This list data structure is a verbatim copy from wayland-util.h from the
  * Wayland project; except that wl_ prefix has been removed.
  */
 
-struct list {
-	struct list *prev;
-	struct list *next;
+সংরচনা list {
+	সংরচনা list *prev;
+	সংরচনা list *next;
 };
 
-void list_init(struct list *list);
-void list_insert(struct list *list, struct list *elm);
-void list_append(struct list *list, struct list *elm);
-void list_remove(struct list *elm);
-bool list_empty(const struct list *list);
-bool list_is_last(const struct list *list, const struct list *elm);
+শূন্য list_init(সংরচনা list *list);
+শূন্য list_ঢোকাও(সংরচনা list *list, সংরচনা list *elm);
+শূন্য list_append(সংরচনা list *list, সংরচনা list *elm);
+শূন্য list_remove(সংরচনা list *elm);
+bool list_empty(ধ্রুৱ সংরচনা list *list);
+bool list_is_last(ধ্রুৱ সংরচনা list *list, ধ্রুৱ সংরচনা list *elm);
 
 #define container_of(ptr, type, member)					\
-	(__typeof__(type) *)((char *)(ptr) -				\
+	(__typeof__(type) *)((ৱর্ণ *)(ptr) -				\
 		 offsetof(__typeof__(type), member))
 
 #define list_first_entry(head, pos, member)				\
@@ -40,12 +40,12 @@ bool list_is_last(const struct list *list, const struct list *elm);
 	container_of((head)->prev, __typeof__(*(pos)), member)
 
 #define list_for_each(pos, head, member)				\
-	for ((pos) = 0, (pos) = list_first_entry(head, pos, member);	\
+	বাবে ((pos) = 0, (pos) = list_first_entry(head, pos, member);	\
 	     &(pos)->member != (head);					\
 	     (pos) = list_first_entry(&(pos)->member, pos, member))
 
 #define list_for_each_safe(pos, tmp, head, member)			\
-	for ((pos) = 0, (tmp) = 0,						\
+	বাবে ((pos) = 0, (tmp) = 0,						\
 	     (pos) = list_first_entry(head, pos, member),			\
 	     (tmp) = list_first_entry(&(pos)->member, tmp, member);		\
 	     &(pos)->member != (head);					\

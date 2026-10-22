@@ -8,146 +8,146 @@
  * SPDX-License-Identifier: HPND AND MIT
  */
 
-#include "config.h"
+#অন্তর্ভাৱ "config.h"
 
-#include <assert.h>
-#include <limits.h>
+#অন্তর্ভাৱ <assert.h>
+#অন্তর্ভাৱ <limits.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "darray.h"
-#include "keymap.h"
-#include "xkbcomp-priv.h"
-#include "ast.h"
-#include "action.h"
-#include "expr.h"
-#include "include.h"
-#include "text.h"
-#include "vmod.h"
-#include "util-mem.h"
+#অন্তর্ভাৱ "xkbcommon/xkbcommon.h"
+#অন্তর্ভাৱ "darray.h"
+#অন্তর্ভাৱ "keymap.h"
+#অন্তর্ভাৱ "xkbcomp-priv.h"
+#অন্তর্ভাৱ "ast.h"
+#অন্তর্ভাৱ "action.h"
+#অন্তর্ভাৱ "expr.h"
+#অন্তর্ভাৱ "include.h"
+#অন্তর্ভাৱ "text.h"
+#অন্তর্ভাৱ "vmod.h"
+#অন্তর্ভাৱ "util-mem.h"
 
-enum si_field {
+গণনা si_field {
     SI_FIELD_VIRTUAL_MOD = (1 << 0),
     SI_FIELD_ACTION = (1 << 1),
     SI_FIELD_AUTO_REPEAT = (1 << 2),
     SI_FIELD_LEVEL_ONE_ONLY = (1 << 3),
 };
 
-typedef struct {
-    enum si_field defined;
-    enum merge_mode merge;
+প্রকারনির্দেশ সংরচনা {
+    গণনা si_field defined;
+    গণনা merge_mode merge;
 
-    struct xkb_sym_interpret interp;
+    সংরচনা xkb_sym_interpret interp;
 } SymInterpInfo;
 
-enum led_field {
+গণনা led_field {
     LED_FIELD_MODS = (1 << 0),
     LED_FIELD_GROUPS = (1 << 1),
     LED_FIELD_CTRLS = (1 << 2),
 };
 
-typedef struct {
-    enum led_field defined;
-    enum merge_mode merge;
+প্রকারনির্দেশ সংরচনা {
+    গণনা led_field defined;
+    গণনা merge_mode merge;
 
-    struct xkb_led led;
+    সংরচনা xkb_led led;
 } LedInfo;
 
-typedef struct {
-    char *name;
-    int errorCount;
-    unsigned int include_depth;
+প্রকারনির্দেশ সংরচনা {
+    ৱর্ণ *name;
+    পূর্ণাঙ্ক error_গুনতি;
+    unsigned পূর্ণাঙ্ক include_depth;
     SymInterpInfo default_interp;
     darray(SymInterpInfo) interps;
     LedInfo default_led;
     LedInfo leds[XKB_MAX_LEDS];
-    xkb_led_index_t num_leds;
+    xkb_led_index_t অঙ্ক_leds;
     ActionsInfo default_actions;
-    struct xkb_mod_set mods;
+    সংরচনা xkb_mod_set mods;
 
-    const struct xkb_keymap_info *keymap_info;
-    struct xkb_context *ctx;
+    ধ্রুৱ সংরচনা xkb_keymap_info *keymap_info;
+    সংরচনা xkb_context *ctx;
 } CompatInfo;
 
-static const char *
+স্থির ধ্রুৱ ৱর্ণ *
 siText(SymInterpInfo *si, CompatInfo *info)
 {
-    char *buf = xkb_context_get_buffer(info->ctx, 128);
+    ৱর্ণ *buf = xkb_context_get_buffer(info->ctx, 128);
 
-    if (si == &info->default_interp)
-        return "default";
+    যদি (si == &info->default_interp)
+        ঘূৰাই "default";
 
     snprintf(buf, 128, "%s+%s(%s)",
              KeysymText(info->ctx, si->interp.sym),
              SIMatchText(si->interp.match),
              ModMaskText(info->ctx, MOD_BOTH, &info->mods, si->interp.mods));
 
-    return buf;
+    ঘূৰাই buf;
 }
 
-static inline bool
-ReportSINotArray(CompatInfo *info, SymInterpInfo *si, const char *field)
+স্থির অন্তঃস্থ bool
+ReportSINotArray(CompatInfo *info, SymInterpInfo *si, ধ্রুৱ ৱর্ণ *field)
 {
-    return ReportNotArray(info->ctx, "symbol interpretation", field,
+    ঘূৰাই ReportNotArray(info->ctx, "symbol interpretation", field,
                           siText(si, info));
 }
 
-static inline bool
-ReportSIBadType(CompatInfo *info, SymInterpInfo *si, const char *field,
-                const char *wanted)
+স্থির অন্তঃস্থ bool
+ReportSIBadType(CompatInfo *info, SymInterpInfo *si, ধ্রুৱ ৱর্ণ *field,
+                ধ্রুৱ ৱর্ণ *wanted)
 {
-    return ReportBadType(info->ctx, XKB_ERROR_WRONG_FIELD_TYPE,
+    ঘূৰাই ReportBadType(info->ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                          "symbol interpretation", field,
                          siText(si, info), wanted);
 }
 
-static const char*
+স্থির ধ্রুৱ ৱর্ণ*
 LEDText(CompatInfo *info, LedInfo *ledi)
 {
-    if (ledi == &info->default_led) {
-        assert(xkb_atom_text(info->ctx, ledi->led.name) == NULL);
-        return "default";
-    } else {
-        assert(xkb_atom_text(info->ctx, ledi->led.name) != NULL);
-        return xkb_atom_text(info->ctx, ledi->led.name);
+    যদি (ledi == &info->default_led) {
+        প্রতিজ্ঞা(xkb_atom_text(info->ctx, ledi->led.name) == রিক্ত);
+        ঘূৰাই "default";
+    } অন্যথা {
+        প্রতিজ্ঞা(xkb_atom_text(info->ctx, ledi->led.name) != রিক্ত);
+        ঘূৰাই xkb_atom_text(info->ctx, ledi->led.name);
     }
 }
 
-static inline bool
-ReportLedBadType(CompatInfo *info, LedInfo *ledi, const char *field,
-                 const char *wanted)
+স্থির অন্তঃস্থ bool
+ReportLedBadType(CompatInfo *info, LedInfo *ledi, ধ্রুৱ ৱর্ণ *field,
+                 ধ্রুৱ ৱর্ণ *wanted)
 {
-    return ReportBadType(info->ctx, XKB_ERROR_WRONG_FIELD_TYPE,
+    ঘূৰাই ReportBadType(info->ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                          "indicator map",
                          field, LEDText(info, ledi), wanted);
 }
 
-static inline bool
-ReportLedNotArray(CompatInfo *info, LedInfo *ledi, const char *field)
+স্থির অন্তঃস্থ bool
+ReportLedNotArray(CompatInfo *info, LedInfo *ledi, ধ্রুৱ ৱর্ণ *field)
 {
-    return ReportNotArray(info->ctx, "indicator map", field,
+    ঘূৰাই ReportNotArray(info->ctx, "indicator map", field,
                           LEDText(info, ledi));
 }
 
-static inline void
+স্থির অন্তঃস্থ শূন্য
 InitInterp(SymInterpInfo *info)
 {
     info->merge = MERGE_DEFAULT; /* Unused */
     info->interp.virtual_mod = XKB_MOD_INVALID;
-    static_assert(!DEFAULT_KEY_VMODMAP, "invalid initial value");
-    static_assert(!DEFAULT_KEY_REPEAT, "invalid initial value");
+    static_assert(!DEFAULT_চাবি_VMODMAP, "invalid initial value");
+    static_assert(!DEFAULT_চাবি_REPEAT, "invalid initial value");
 }
 
-static inline void
+স্থির অন্তঃস্থ শূন্য
 InitLED(LedInfo *info)
 {
     info->merge = MERGE_DEFAULT; /* Unused */
 }
 
-static void
-InitCompatInfo(CompatInfo *info, const struct xkb_keymap_info *keymap_info,
-               unsigned int include_depth, const struct xkb_mod_set *mods)
+স্থির শূন্য
+InitCompatInfo(CompatInfo *info, ধ্রুৱ সংরচনা xkb_keymap_info *keymap_info,
+               unsigned পূর্ণাঙ্ক include_depth, ধ্রুৱ সংরচনা xkb_mod_set *mods)
 {
-    memset(info, 0, sizeof(*info));
+    memset(info, 0, পরিমাণ(*info));
     info->ctx = keymap_info->keymap.ctx;
     info->keymap_info = keymap_info;
     info->include_depth = include_depth;
@@ -157,96 +157,96 @@ InitCompatInfo(CompatInfo *info, const struct xkb_keymap_info *keymap_info,
     InitLED(&info->default_led);
 }
 
-static void
+স্থির শূন্য
 ClearCompatInfo(CompatInfo *info)
 {
-    free(info->name);
+    মুক্ত(info->name);
     darray_free(info->interps);
 }
 
-static SymInterpInfo *
+স্থির SymInterpInfo *
 FindMatchingInterp(CompatInfo *info, SymInterpInfo *new)
 {
     SymInterpInfo *old;
 
     darray_foreach(old, info->interps)
-        if (old->interp.sym == new->interp.sym &&
+        যদি (old->interp.sym == new->interp.sym &&
             old->interp.mods == new->interp.mods &&
             old->interp.match == new->interp.match)
-            return old;
+            ঘূৰাই old;
 
-    return NULL;
+    ঘূৰাই রিক্ত;
 }
 
-static bool
-UseNewInterpField(enum si_field field, enum si_field old, enum si_field new,
-                  bool clobber, bool report, enum si_field *collide)
+স্থির bool
+UseNewInterpField(গণনা si_field field, গণনা si_field old, গণনা si_field new,
+                  bool clobber, bool report, গণনা si_field *collide)
 {
-    if (!(old & field))
-        return (new & field);
+    যদি (!(old & field))
+        ঘূৰাই (new & field);
 
-    if (new & field) {
-        if (report)
+    যদি (new & field) {
+        যদি (report)
             *collide |= field;
 
-        return clobber;
+        ঘূৰাই clobber;
     }
 
-    return false;
+    ঘূৰাই false;
 }
 
-static bool
+স্থির bool
 MergeInterp(CompatInfo *info, SymInterpInfo *old, SymInterpInfo *new,
             bool same_file)
 {
-    const bool clobber = (new->merge != MERGE_AUGMENT);
-    const int verbosity = xkb_context_get_log_verbosity(info->ctx);
-    const bool report = (same_file && verbosity > 0) || verbosity > 9;
-    enum si_field collide = 0;
+    ধ্রুৱ bool clobber = (new->merge != MERGE_AUGMENT);
+    ধ্রুৱ পূর্ণাঙ্ক verbosity = xkb_context_get_log_verbosity(info->ctx);
+    ধ্রুৱ bool report = (same_file && verbosity > 0) || verbosity > 9;
+    গণনা si_field collide = 0;
 
-    if (new->merge == MERGE_REPLACE) {
-        if (report)
+    যদি (new->merge == MERGE_REPLACE) {
+        যদি (report)
             log_warn(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                      "Multiple definitions for \"%s\"; "
                      "Earlier interpretation ignored\n",
                      siText(new, info));
         *old = *new;
-        return true;
+        ঘূৰাই true;
     }
 
-    if (UseNewInterpField(SI_FIELD_VIRTUAL_MOD, old->defined, new->defined,
+    যদি (UseNewInterpField(SI_FIELD_VIRTUAL_MOD, old->defined, new->defined,
                           clobber, report, &collide)) {
         old->interp.virtual_mod = new->interp.virtual_mod;
         old->defined |= SI_FIELD_VIRTUAL_MOD;
     }
-    if (UseNewInterpField(SI_FIELD_ACTION, old->defined, new->defined,
+    যদি (UseNewInterpField(SI_FIELD_ACTION, old->defined, new->defined,
                           clobber, report, &collide)) {
-        if (old->interp.num_actions > 1) {
-                free(old->interp.a.actions);
+        যদি (old->interp.অঙ্ক_actions > 1) {
+                মুক্ত(old->interp.a.actions);
             }
-            old->interp.num_actions = new->interp.num_actions;
-            if (new->interp.num_actions > 1) {
+            old->interp.অঙ্ক_actions = new->interp.অঙ্ক_actions;
+            যদি (new->interp.অঙ্ক_actions > 1) {
                 old->interp.a.actions = new->interp.a.actions;
                 new->interp.a.action =
-                    (union xkb_action) { .type = ACTION_TYPE_NONE };
-                new->interp.num_actions = 0;
-            } else {
+                    (সঙ্ঘ xkb_action) { .type = ACTION_TYPE_NONE };
+                new->interp.অঙ্ক_actions = 0;
+            } অন্যথা {
                 old->interp.a.action = new->interp.a.action;
             }
         old->defined |= SI_FIELD_ACTION;
     }
-    if (UseNewInterpField(SI_FIELD_AUTO_REPEAT, old->defined, new->defined,
+    যদি (UseNewInterpField(SI_FIELD_AUTO_REPEAT, old->defined, new->defined,
                           clobber, report, &collide)) {
         old->interp.repeat = new->interp.repeat;
         old->defined |= SI_FIELD_AUTO_REPEAT;
     }
-    if (UseNewInterpField(SI_FIELD_LEVEL_ONE_ONLY, old->defined, new->defined,
+    যদি (UseNewInterpField(SI_FIELD_LEVEL_ONE_ONLY, old->defined, new->defined,
                           clobber, report, &collide)) {
         old->interp.level_one_only = new->interp.level_one_only;
         old->defined |= SI_FIELD_LEVEL_ONE_ONLY;
     }
 
-    if (collide) {
+    যদি (collide) {
         log_warn(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                  "Multiple interpretations of \"%s\"; "
                  "Using %s definition for duplicate fields\n",
@@ -254,234 +254,234 @@ MergeInterp(CompatInfo *info, SymInterpInfo *old, SymInterpInfo *new,
                  (clobber ? "last" : "first"));
     }
 
-    return true;
+    ঘূৰাই true;
 }
 
-static bool
+স্থির bool
 AddInterp(CompatInfo *info, SymInterpInfo *new, bool same_file)
 {
     SymInterpInfo *old = FindMatchingInterp(info, new);
-    if (old)
-        return MergeInterp(info, old, new, same_file);
+    যদি (old)
+        ঘূৰাই MergeInterp(info, old, new, same_file);
 
     darray_append(info->interps, *new);
-    return true;
+    ঘূৰাই true;
 }
 
 /***====================================================================***/
 
 // TODO: more lenient?
-static bool
-ResolveStateAndPredicate(ExprDef *expr, enum xkb_match_operation *pred_rtrn,
+স্থির bool
+ResolveStateAndPredicate(ৰাশিমালা_Def *ৰাশিমালা, গণনা xkb_match_operation *pred_rtrn,
                          xkb_mod_mask_t *mods_rtrn, CompatInfo *info)
 {
-    if (expr == NULL) {
+    যদি (ৰাশিমালা == রিক্ত) {
         *pred_rtrn = MATCH_ANY_OR_NONE;
         *mods_rtrn = MOD_REAL_MASK_ALL;
-        return true;
+        ঘূৰাই true;
     }
 
     *pred_rtrn = MATCH_EXACTLY;
-    if (expr->common.type == STMT_EXPR_ACTION_DECL) {
-        const char *pred_txt = xkb_atom_text(info->ctx, expr->action.name);
-        unsigned int pred = 0;
-        if (!LookupString(symInterpretMatchMaskNames, pred_txt, &pred) ||
-            !expr->action.args || expr->action.args->common.next) {
+    যদি (ৰাশিমালা->common.type == STMT_ৰাশিমালা_ACTION_DECL) {
+        ধ্রুৱ ৱর্ণ *pred_txt = xkb_atom_text(info->ctx, ৰাশিমালা->action.name);
+        unsigned পূর্ণাঙ্ক pred = 0;
+        যদি (!LookupString(symInterpretMatchMaskNames, pred_txt, &pred) ||
+            !ৰাশিমালা->action.args || ৰাশিমালা->action.args->common.next) {
             log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Illegal modifier predicate \"%s\"; Ignored\n", pred_txt);
-            return false;
+            ঘূৰাই false;
         }
-        *pred_rtrn = (enum xkb_match_operation) pred;
-        expr = expr->action.args;
+        *pred_rtrn = (গণনা xkb_match_operation) pred;
+        ৰাশিমালা = ৰাশিমালা->action.args;
     }
-    else if (expr->common.type == STMT_EXPR_IDENT) {
-        const char *pred_txt = xkb_atom_text(info->ctx, expr->ident.ident);
-        if (pred_txt && istreq(pred_txt, "any")) {
+    অন্যথা যদি (ৰাশিমালা->common.type == STMT_ৰাশিমালা_IDENT) {
+        ধ্রুৱ ৱর্ণ *pred_txt = xkb_atom_text(info->ctx, ৰাশিমালা->ident.ident);
+        যদি (pred_txt && istreq(pred_txt, "any")) {
             *pred_rtrn = MATCH_ANY;
             *mods_rtrn = MOD_REAL_MASK_ALL;
-            return true;
+            ঘূৰাই true;
         }
     }
 
-    return ExprResolveModMask(info->ctx, expr, MOD_REAL, &info->mods,
+    ঘূৰাই ৰাশিমালা_Resolve_Mod_Mask(info->ctx, ৰাশিমালা, MOD_REAL, &info->mods,
                               mods_rtrn);
 }
 
 /***====================================================================***/
 
-static bool
-UseNewLEDField(enum led_field field, enum led_field old, enum led_field new,
-               bool clobber, bool report, enum led_field *collide)
+স্থির bool
+UseNewLEDField(গণনা led_field field, গণনা led_field old, গণনা led_field new,
+               bool clobber, bool report, গণনা led_field *collide)
 {
-    if (!(old & field))
-        return (new & field);
+    যদি (!(old & field))
+        ঘূৰাই (new & field);
 
-    if (new & field) {
-        if (report)
+    যদি (new & field) {
+        যদি (report)
             *collide |= field;
 
-        return clobber;
+        ঘূৰাই clobber;
     }
 
-    return false;
+    ঘূৰাই false;
 }
 
-static bool
+স্থির bool
 MergeLedMap(CompatInfo *info, LedInfo *old, LedInfo *new, bool same_file)
 {
-    enum led_field collide;
-    const bool clobber = (new->merge != MERGE_AUGMENT);
-    const int verbosity = xkb_context_get_log_verbosity(info->ctx);
-    const bool report = (same_file && verbosity > 0) || verbosity > 9;
+    গণনা led_field collide;
+    ধ্রুৱ bool clobber = (new->merge != MERGE_AUGMENT);
+    ধ্রুৱ পূর্ণাঙ্ক verbosity = xkb_context_get_log_verbosity(info->ctx);
+    ধ্রুৱ bool report = (same_file && verbosity > 0) || verbosity > 9;
 
-    if (old->led.mods.mods == new->led.mods.mods &&
+    যদি (old->led.mods.mods == new->led.mods.mods &&
         old->led.pending_groups == new->led.pending_groups &&
         old->led.groups == new->led.groups &&
         old->led.ctrls == new->led.ctrls &&
         old->led.which_mods == new->led.which_mods &&
         old->led.which_groups == new->led.which_groups) {
         old->defined |= new->defined;
-        return true;
+        ঘূৰাই true;
     }
 
-    if (new->merge == MERGE_REPLACE) {
-        if (report)
+    যদি (new->merge == MERGE_REPLACE) {
+        যদি (report)
             log_warn(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                      "Map for indicator %s redefined; "
                      "Earlier definition ignored\n",
                      LEDText(info, old));
         *old = *new;
-        return true;
+        ঘূৰাই true;
     }
 
     collide = 0;
-    if (UseNewLEDField(LED_FIELD_MODS, old->defined, new->defined,
+    যদি (UseNewLEDField(LED_FIELD_MODS, old->defined, new->defined,
                        clobber, report, &collide)) {
         old->led.which_mods = new->led.which_mods;
         old->led.mods = new->led.mods;
         old->defined |= LED_FIELD_MODS;
     }
-    if (UseNewLEDField(LED_FIELD_GROUPS, old->defined, new->defined,
+    যদি (UseNewLEDField(LED_FIELD_GROUPS, old->defined, new->defined,
                        clobber, report, &collide)) {
         old->led.which_groups = new->led.which_groups;
         old->led.groups = new->led.groups;
         old->led.pending_groups = new->led.pending_groups;
         old->defined |= LED_FIELD_GROUPS;
     }
-    if (UseNewLEDField(LED_FIELD_CTRLS, old->defined, new->defined,
+    যদি (UseNewLEDField(LED_FIELD_CTRLS, old->defined, new->defined,
                        clobber, report, &collide)) {
         old->led.ctrls = new->led.ctrls;
         old->defined |= LED_FIELD_CTRLS;
     }
 
-    if (collide) {
+    যদি (collide) {
         log_warn(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                  "Map for indicator %s redefined; "
                  "Using %s definition for duplicate fields\n",
                  LEDText(info, old), (clobber ? "last" : "first"));
     }
 
-    return true;
+    ঘূৰাই true;
 }
 
-static bool
+স্থির bool
 AddLedMap(CompatInfo *info, LedInfo *new, bool same_file)
 {
-    for (xkb_led_index_t i = 0; i < info->num_leds; i++) {
+    বাবে (xkb_led_index_t i = 0; i < info->অঙ্ক_leds; i++) {
         LedInfo *old = &info->leds[i];
 
-        if (old->led.name != new->led.name)
-            continue;
+        যদি (old->led.name != new->led.name)
+            অনুৱর্ত;
 
-        return MergeLedMap(info, old, new, same_file);
+        ঘূৰাই MergeLedMap(info, old, new, same_file);
     }
 
-    if (info->num_leds >= XKB_MAX_LEDS) {
+    যদি (info->অঙ্ক_leds >= XKB_MAX_LEDS) {
         log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                 "Too many LEDs defined (maximum %"PRIu32")\n",
                 XKB_MAX_LEDS);
-        return false;
+        ঘূৰাই false;
     }
-    info->leds[info->num_leds++] = *new;
-    return true;
+    info->leds[info->অঙ্ক_leds++] = *new;
+    ঘূৰাই true;
 }
 
-static void
+স্থির শূন্য
 MergeIncludedCompatMaps(CompatInfo *into, CompatInfo *from,
-                        enum merge_mode merge)
+                        গণনা merge_mode merge)
 {
-    if (from->errorCount > 0) {
-        into->errorCount += from->errorCount;
-        return;
+    যদি (from->error_গুনতি > 0) {
+        into->error_গুনতি += from->error_গুনতি;
+        ঘূৰাই;
     }
 
     MergeModSets(into->ctx, &into->mods, &from->mods, merge);
 
-    if (into->name == NULL) {
+    যদি (into->name == রিক্ত) {
         into->name = steal(&from->name);
     }
 
-    if (darray_empty(into->interps)) {
+    যদি (darray_empty(into->interps)) {
         into->interps = from->interps;
         darray_init(from->interps);
     }
-    else {
+    অন্যথা {
         SymInterpInfo *si;
         darray_foreach(si, from->interps) {
             si->merge = merge;
-            if (!AddInterp(into, si, false))
-                into->errorCount++;
+            যদি (!AddInterp(into, si, false))
+                into->error_গুনতি++;
         }
     }
 
-    if (into->num_leds == 0) {
-        memcpy(into->leds, from->leds, sizeof(*from->leds) * from->num_leds);
-        into->num_leds = from->num_leds;
-        from->num_leds = 0;
+    যদি (into->অঙ্ক_leds == 0) {
+        memcpy(into->leds, from->leds, পরিমাণ(*from->leds) * from->অঙ্ক_leds);
+        into->অঙ্ক_leds = from->অঙ্ক_leds;
+        from->অঙ্ক_leds = 0;
     }
-    else {
-        for (xkb_led_index_t i = 0; i < from->num_leds; i++) {
+    অন্যথা {
+        বাবে (xkb_led_index_t i = 0; i < from->অঙ্ক_leds; i++) {
             LedInfo *ledi = &from->leds[i];
             ledi->merge = merge;
-            if (!AddLedMap(into, ledi, false))
-                into->errorCount++;
+            যদি (!AddLedMap(into, ledi, false))
+                into->error_গুনতি++;
         }
     }
 }
 
-static void
+স্থির শূন্য
 HandleCompatMapFile(CompatInfo *info, XkbFile *file);
 
-static bool
+স্থির bool
 HandleIncludeCompatMap(CompatInfo *info, IncludeStmt *include)
 {
     CompatInfo included;
 
-    if (ExceedsIncludeMaxDepth(info->ctx, info->include_depth)) {
-        info->errorCount += 10;
-        return false;
+    যদি (ExceedsIncludeMaxDepth(info->ctx, info->include_depth)) {
+        info->error_গুনতি += 10;
+        ঘূৰাই false;
     }
 
     InitCompatInfo(&included, info->keymap_info, info->include_depth + 1,
                    &info->mods);
     included.name = steal(&include->stmt);
 
-    const struct parser_keymap_config config = {
+    ধ্রুৱ সংরচনা parser_keymap_config config = {
         .format = info->keymap_info->keymap.format,
         .strict = info->keymap_info->strict
     };
 
-    for (IncludeStmt *stmt = include; stmt; stmt = stmt->next_incl) {
+    বাবে (IncludeStmt *stmt = include; stmt; stmt = stmt->next_incl) {
         CompatInfo next_incl;
         XkbFile *file;
 
-        char path[PATH_MAX];
+        ৱর্ণ path[PATH_MAX];
         file = ProcessIncludeFile(info->ctx, &config, stmt, FILE_TYPE_COMPAT,
-                                  path, sizeof(path));
-        if (!file) {
-            info->errorCount += 10;
+                                  path, পরিমাণ(path));
+        যদি (!file) {
+            info->error_গুনতি += 10;
             ClearCompatInfo(&included);
-            return false;
+            ঘূৰাই false;
         }
 
         InitCompatInfo(&next_incl, info->keymap_info, info->include_depth + 1,
@@ -500,246 +500,246 @@ HandleIncludeCompatMap(CompatInfo *info, IncludeStmt *include)
     MergeIncludedCompatMaps(info, &included, include->merge);
     ClearCompatInfo(&included);
 
-    return (info->errorCount == 0);
+    ঘূৰাই (info->error_গুনতি == 0);
 }
 
-static bool
-SetInterpField(CompatInfo *info, SymInterpInfo *si, const char *field,
-               ExprDef *arrayNdx, ExprDef *value)
+স্থির bool
+SetInterpField(CompatInfo *info, SymInterpInfo *si, ধ্রুৱ ৱর্ণ *field,
+               ৰাশিমালা_Def *arrayNdx, ৰাশিমালা_Def *মান)
 {
-    if (istreq(field, "action")) {
-        if (arrayNdx)
-            return ReportSINotArray(info, si, field);
+    যদি (istreq(field, "action")) {
+        যদি (arrayNdx)
+            ঘূৰাই ReportSINotArray(info, si, field);
 
-        if (value->common.type == STMT_EXPR_ACTION_LIST) {
-            unsigned int num_actions = 0;
-            for (ExprDef *act = value->actions.actions;
-                 act; act = (ExprDef *) act->common.next)
-                 num_actions++;
+        যদি (মান->common.type == STMT_ৰাশিমালা_ACTION_LIST) {
+            unsigned পূর্ণাঙ্ক অঙ্ক_actions = 0;
+            বাবে (ৰাশিমালা_Def *act = মান->actions.actions;
+                 act; act = (ৰাশিমালা_Def *) act->common.next)
+                 অঙ্ক_actions++;
 
-            if (num_actions > MAX_ACTIONS_PER_LEVEL) {
+            যদি (অঙ্ক_actions > MAX_ACTIONS_PER_LEVEL) {
                 log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                         "Interpret %s has too many actions; "
                         "expected max %u, got: %u\n",
-                        siText(si, info), MAX_ACTIONS_PER_LEVEL, num_actions);
-                return false;
+                        siText(si, info), MAX_ACTIONS_PER_LEVEL, অঙ্ক_actions);
+                ঘূৰাই false;
             }
 
-            si->interp.num_actions = 0;
+            si->interp.অঙ্ক_actions = 0;
             si->interp.a.action.type = ACTION_TYPE_NONE;
 
             /* Parse actions and add only defined actions */
-            darray(union xkb_action) actions = darray_new();
-            for (ExprDef *act = value->actions.actions;
-                 act; act = (ExprDef *) act->common.next) {
-                union xkb_action toAct = { 0 };
-                switch (HandleActionDef(info->keymap_info,
+            darray(সঙ্ঘ xkb_action) actions = darray_new();
+            বাবে (ৰাশিমালা_Def *act = মান->actions.actions;
+                 act; act = (ৰাশিমালা_Def *) act->common.next) {
+                সঙ্ঘ xkb_action toAct = { 0 };
+                ৱিকল্প (HandleActionDef(info->keymap_info,
                                         &info->default_actions,
                                         &info->mods, act, &toAct)) {
-                case PARSER_RECOVERABLE_ERROR:
+                পক্ষ PARSER_RECOVERABLE_ERROR:
                     toAct.type = ACTION_TYPE_NONE;
-                    break;
-                case PARSER_FATAL_ERROR:
+                    ভঙ্গ;
+                পক্ষ PARSER_FATAL_ERROR:
                     darray_free(actions);
-                    return false;
-                default:
+                    ঘূৰাই false;
+                স্ৱভাৱ:
                     ;
                 }
-                if (toAct.type == ACTION_TYPE_NONE) {
+                যদি (toAct.type == ACTION_TYPE_NONE) {
                     /* Drop action */
-                } else if (likely(num_actions == 1)) {
+                } অন্যথা যদি (likely(অঙ্ক_actions == 1)) {
                     /* Only one action: do not allocate */
-                    si->interp.num_actions = 1;
+                    si->interp.অঙ্ক_actions = 1;
                     si->interp.a.action = toAct;
-                } else {
+                } অন্যথা {
                     darray_append(actions, toAct);
                 }
             }
-            switch (darray_size(actions)) {
-            case 0:
+            ৱিকল্প (darray_size(actions)) {
+            পক্ষ 0:
                 /* No action or exactly one action: already processed */
-                assert(si->interp.num_actions <= 1);
-                break;
-            case 1:
+                প্রতিজ্ঞা(si->interp.অঙ্ক_actions <= 1);
+                ভঙ্গ;
+            পক্ষ 1:
                 /* One action: some actions were dropped */
-                si->interp.num_actions = 1;
+                si->interp.অঙ্ক_actions = 1;
                 si->interp.a.action = darray_item(actions, 1);
                 darray_free(actions);
-                break;
-            default:
+                ভঙ্গ;
+            স্ৱভাৱ:
                 /* Multiple actions; no NoAction() left */
                 darray_shrink(actions);
-                si->interp.num_actions =
-                    (xkb_action_count_t) darray_size(actions);
-                darray_steal(actions, &si->interp.a.actions, NULL);
+                si->interp.অঙ্ক_actions =
+                    (xkb_action_গুনতি_t) darray_size(actions);
+                darray_steal(actions, &si->interp.a.actions, রিক্ত);
             }
         }
-        else {
-            switch (HandleActionDef(info->keymap_info,
+        অন্যথা {
+            ৱিকল্প (HandleActionDef(info->keymap_info,
                                     &info->default_actions,
-                                    &info->mods, value, &si->interp.a.action)) {
-            case PARSER_RECOVERABLE_ERROR:
+                                    &info->mods, মান, &si->interp.a.action)) {
+            পক্ষ PARSER_RECOVERABLE_ERROR:
                 si->interp.a.action.type = ACTION_TYPE_NONE;
-                si->interp.num_actions = 0;
-                break;
-            case PARSER_FATAL_ERROR:
-                return false;
-            default:
-                si->interp.num_actions =
+                si->interp.অঙ্ক_actions = 0;
+                ভঙ্গ;
+            পক্ষ PARSER_FATAL_ERROR:
+                ঘূৰাই false;
+            স্ৱভাৱ:
+                si->interp.অঙ্ক_actions =
                     (si->interp.a.action.type != ACTION_TYPE_NONE);
             }
         }
 
         si->defined |= SI_FIELD_ACTION;
     }
-    else if (istreq(field, "virtualmodifier") ||
+    অন্যথা যদি (istreq(field, "virtualmodifier") ||
              istreq(field, "virtualmod")) {
-        if (arrayNdx)
-            return ReportSINotArray(info, si, field);
+        যদি (arrayNdx)
+            ঘূৰাই ReportSINotArray(info, si, field);
 
         xkb_mod_index_t ndx = 0;
-        if (!ExprResolveMod(info->ctx, value, MOD_VIRT, &info->mods, &ndx))
-            return ReportSIBadType(info, si, field, "virtual modifier");
+        যদি (!ৰাশিমালা_Resolve_Mod(info->ctx, মান, MOD_VIRT, &info->mods, &ndx))
+            ঘূৰাই ReportSIBadType(info, si, field, "virtual modifier");
 
         si->interp.virtual_mod = ndx;
         si->defined |= SI_FIELD_VIRTUAL_MOD;
     }
-    else if (istreq(field, "repeat")) {
+    অন্যথা যদি (istreq(field, "repeat")) {
         bool set = false;
 
-        if (arrayNdx)
-            return ReportSINotArray(info, si, field);
+        যদি (arrayNdx)
+            ঘূৰাই ReportSINotArray(info, si, field);
 
-        if (!ExprResolveBoolean(info->ctx, value, &set))
-            return ReportSIBadType(info, si, field, "boolean");
+        যদি (!ৰাশিমালা_Resolve_Boolean(info->ctx, মান, &set))
+            ঘূৰাই ReportSIBadType(info, si, field, "boolean");
 
         si->interp.repeat = set;
 
         si->defined |= SI_FIELD_AUTO_REPEAT;
     }
-    else if (istreq(field, "locking")) {
+    অন্যথা যদি (istreq(field, "locking")) {
         log_dbg(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                 "The \"locking\" field in symbol interpretation is unsupported; "
                 "Ignored\n");
     }
-    else if (istreq(field, "usemodmap") ||
+    অন্যথা যদি (istreq(field, "usemodmap") ||
              istreq(field, "usemodmapmods")) {
         uint32_t val = 0;
 
-        if (arrayNdx)
-            return ReportSINotArray(info, si, field);
+        যদি (arrayNdx)
+            ঘূৰাই ReportSINotArray(info, si, field);
 
-        if (!ExprResolveEnum(info->ctx, value, &val, useModMapValueNames))
-            return ReportSIBadType(info, si, field, "level specification");
+        যদি (!ৰাশিমালা_Resolve_Enum(info->ctx, মান, &val, use_Mod_Map_মান_Names))
+            ঘূৰাই ReportSIBadType(info, si, field, "level specification");
 
         si->interp.level_one_only = val;
         si->defined |= SI_FIELD_LEVEL_ONE_ONLY;
     }
-    else {
+    অন্যথা {
         ReportBadField(info->ctx, "symbol interpretation", field,
                        siText(si, info));
-        return !(info->keymap_info->strict & PARSER_NO_UNKNOWN_INTERPRET_FIELDS);
+        ঘূৰাই !(info->keymap_info->strict & PARSER_NO_UNKNOWN_INTERPRET_FIELDS);
     }
 
-    return true;
+    ঘূৰাই true;
 }
 
-static bool
-SetLedMapField(CompatInfo *info, LedInfo *ledi, const char *field,
-               ExprDef *arrayNdx, ExprDef **value_ptr)
+স্থির bool
+SetLedMapField(CompatInfo *info, LedInfo *ledi, ধ্রুৱ ৱর্ণ *field,
+               ৰাশিমালা_Def *arrayNdx, ৰাশিমালা_Def **মান_ptr)
 {
-    ExprDef * restrict const value = *value_ptr;
+    ৰাশিমালা_Def * restrict ধ্রুৱ মান = *মান_ptr;
 
-    if (istreq(field, "modifiers") || istreq(field, "mods")) {
-        if (arrayNdx)
-            return ReportLedNotArray(info, ledi, field);
+    যদি (istreq(field, "modifiers") || istreq(field, "mods")) {
+        যদি (arrayNdx)
+            ঘূৰাই ReportLedNotArray(info, ledi, field);
 
-        if (!ExprResolveModMask(info->ctx, value, MOD_BOTH,
+        যদি (!ৰাশিমালা_Resolve_Mod_Mask(info->ctx, মান, MOD_BOTH,
                                 &info->mods, &ledi->led.mods.mods))
-            return ReportLedBadType(info, ledi, field, "modifier mask");
+            ঘূৰাই ReportLedBadType(info, ledi, field, "modifier mask");
 
         ledi->defined |= LED_FIELD_MODS;
     }
-    else if (istreq(field, "groups")) {
+    অন্যথা যদি (istreq(field, "groups")) {
         xkb_layout_mask_t mask = 0;
 
-        if (arrayNdx)
-            return ReportLedNotArray(info, ledi, field);
+        যদি (arrayNdx)
+            ঘূৰাই ReportLedNotArray(info, ledi, field);
 
         bool pending = false;
-        if (!ExprResolveGroupMask(info->keymap_info, value, &mask, &pending)) {
-            if (pending) {
+        যদি (!ৰাশিমালা_Resolve_Group_Mask(info->keymap_info, মান, &mask, &pending)) {
+            যদি (pending) {
                 ledi->led.pending_groups = true;
-                const darray_size_t pending_index =
+                ধ্রুৱ darray_size_t pending_index =
                     darray_size(*info->keymap_info->pending_computations);
                 darray_append(
                     *info->keymap_info->pending_computations,
-                    (struct pending_computation) {
-                        .expr = *value_ptr,
+                    (সংরচনা pending_computation) {
+                        .ৰাশিমালা = *মান_ptr,
                         .computed = false,
-                        .value = 0,
+                        .মান = 0,
                     }
                 );
-                *value_ptr = NULL;
-                static_assert(sizeof(pending_index) == sizeof(mask),
+                *মান_ptr = রিক্ত;
+                static_assert(পরিমাণ(pending_index) == পরিমাণ(mask),
                               "Cannot save pending computation");
                 mask = pending_index;
-            } else {
-                return ReportLedBadType(info, ledi, field, "group mask");
+            } অন্যথা {
+                ঘূৰাই ReportLedBadType(info, ledi, field, "group mask");
             }
-        } else {
+        } অন্যথা {
             ledi->led.pending_groups = false;
         }
 
         ledi->led.groups = mask;
         ledi->defined |= LED_FIELD_GROUPS;
     }
-    else if (istreq(field, "controls") || istreq(field, "ctrls")) {
+    অন্যথা যদি (istreq(field, "controls") || istreq(field, "ctrls")) {
         uint32_t mask = 0;
 
-        if (arrayNdx)
-            return ReportLedNotArray(info, ledi, field);
+        যদি (arrayNdx)
+            ঘূৰাই ReportLedNotArray(info, ledi, field);
 
-        const uint8_t offset = info->keymap_info->features.controls_name_offset;
-        if (!ExprResolveMask(info->ctx, value, &mask, ctrlMaskNames + offset))
-            return ReportLedBadType(info, ledi, field, "controls mask");
+        ধ্রুৱ uint8_t offset = info->keymap_info->features.controls_name_offset;
+        যদি (!ৰাশিমালা_Resolve_Mask(info->ctx, মান, &mask, ctrlMaskNames + offset))
+            ঘূৰাই ReportLedBadType(info, ledi, field, "controls mask");
 
         ledi->led.ctrls = mask;
         ledi->defined |= LED_FIELD_CTRLS;
     }
-    else if (istreq(field, "allowexplicit")) {
+    অন্যথা যদি (istreq(field, "allowexplicit")) {
         log_dbg(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                 "The \"allowExplicit\" field in indicator statements is unsupported; "
                 "Ignored\n");
     }
-    else if (istreq(field, "whichmodstate") ||
+    অন্যথা যদি (istreq(field, "whichmodstate") ||
              istreq(field, "whichmodifierstate")) {
         uint32_t mask = 0;
 
-        if (arrayNdx)
-            return ReportLedNotArray(info, ledi, field);
+        যদি (arrayNdx)
+            ঘূৰাই ReportLedNotArray(info, ledi, field);
 
-        if (!ExprResolveMask(info->ctx, value, &mask,
+        যদি (!ৰাশিমালা_Resolve_Mask(info->ctx, মান, &mask,
                              modComponentMaskNames))
-            return ReportLedBadType(info, ledi, field,
+            ঘূৰাই ReportLedBadType(info, ledi, field,
                                     "mask of modifier state components");
 
         ledi->led.which_mods = mask;
     }
-    else if (istreq(field, "whichgroupstate")) {
+    অন্যথা যদি (istreq(field, "whichgroupstate")) {
         uint32_t mask = 0;
 
-        if (arrayNdx)
-            return ReportLedNotArray(info, ledi, field);
+        যদি (arrayNdx)
+            ঘূৰাই ReportLedNotArray(info, ledi, field);
 
-        if (!ExprResolveMask(info->ctx, value, &mask,
+        যদি (!ৰাশিমালা_Resolve_Mask(info->ctx, মান, &mask,
                              groupComponentMaskNames))
-            return ReportLedBadType(info, ledi, field,
+            ঘূৰাই ReportLedBadType(info, ledi, field,
                                     "mask of group state components");
 
         ledi->led.which_groups = mask;
     }
-    else if (istreq(field, "driveskbd") ||
+    অন্যথা যদি (istreq(field, "driveskbd") ||
              istreq(field, "driveskeyboard") ||
              istreq(field, "leddriveskbd") ||
              istreq(field, "leddriveskeyboard") ||
@@ -749,110 +749,110 @@ SetLedMapField(CompatInfo *info, LedInfo *ledi, const char *field,
                 "The \"%s\" field in indicator statements is unsupported; "
                 "Ignored\n", field);
     }
-    else if (istreq(field, "index")) {
+    অন্যথা যদি (istreq(field, "index")) {
         /* Users should see this, it might cause unexpected behavior. */
         log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                 "The \"index\" field in indicator statements is unsupported; "
                 "Ignored\n");
     }
-    else {
+    অন্যথা {
         log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                 "Unknown field \"%s\" in map for %s indicator; "
                 "Definition ignored\n",
                 field, LEDText(info, ledi));
-        return !(info->keymap_info->strict & PARSER_NO_UNKNOWN_LED_FIELDS);
+        ঘূৰাই !(info->keymap_info->strict & PARSER_NO_UNKNOWN_LED_FIELDS);
     }
 
-    return true;
+    ঘূৰাই true;
 }
 
-static bool
+স্থির bool
 HandleGlobalVar(CompatInfo *info, VarDef *stmt)
 {
-    const char *elem, *field;
-    ExprDef *ndx;
+    ধ্রুৱ ৱর্ণ *elem, *field;
+    ৰাশিমালা_Def *ndx;
     bool ret;
 
-    if (!ExprResolveLhs(info->ctx, stmt->name, &elem, &field, &ndx)) {
+    যদি (!ৰাশিমালা_Resolve_Lhs(info->ctx, stmt->name, &elem, &field, &ndx)) {
         ret = false;
     }
-    else if (elem && istreq(elem, "interpret")) {
+    অন্যথা যদি (elem && istreq(elem, "interpret")) {
         SymInterpInfo temp = {0};
         InitInterp(&temp);
         /* Do not replace the whole interpret, only the current field */
         temp.merge = (temp.merge == MERGE_REPLACE)
             ? MERGE_OVERRIDE
             : stmt->merge;
-        ret = SetInterpField(info, &temp, field, ndx, stmt->value);
-        if (ret)
+        ret = SetInterpField(info, &temp, field, ndx, stmt->মান);
+        যদি (ret)
             MergeInterp(info, &info->default_interp, &temp, true);
     }
-    else if (elem && istreq(elem, "indicator")) {
+    অন্যথা যদি (elem && istreq(elem, "indicator")) {
         LedInfo temp = {0};
         InitLED(&temp);
         /* Do not replace the whole LED, only the current field */
         temp.merge = (temp.merge == MERGE_REPLACE)
             ? MERGE_OVERRIDE
             : stmt->merge;
-        ret = SetLedMapField(info, &temp, field, ndx, &stmt->value);
-        if (ret)
+        ret = SetLedMapField(info, &temp, field, ndx, &stmt->মান);
+        যদি (ret)
             MergeLedMap(info, &info->default_led, &temp, true);
     }
-    else if (elem) {
+    অন্যথা যদি (elem) {
         ret = (SetDefaultActionField(info->keymap_info, &info->default_actions,
                                      &info->mods, elem, field, ndx,
-                                     &stmt->value, stmt->merge) !=
+                                     &stmt->মান, stmt->merge) !=
                PARSER_FATAL_ERROR);
     }
-    else {
+    অন্যথা {
         log_err(info->ctx, XKB_ERROR_UNKNOWN_DEFAULT_FIELD,
                 "Default defined for unknown field \"%s\"; Ignored\n", field);
-        return !(info->keymap_info->strict &
+        ঘূৰাই !(info->keymap_info->strict &
                  PARSER_NO_UNKNOWN_COMPAT_GLOBAL_FIELDS);
     }
-    return ret;
+    ঘূৰাই ret;
 }
 
-static bool
+স্থির bool
 HandleInterpBody(CompatInfo *info, VarDef *def, SymInterpInfo *si)
 {
     bool ok = true;
-    const char *elem, *field;
-    ExprDef *arrayNdx;
+    ধ্রুৱ ৱর্ণ *elem, *field;
+    ৰাশিমালা_Def *arrayNdx;
 
-    for (; def; def = (VarDef *) def->common.next) {
-        if (!ExprResolveLhs(info->ctx, def->name, &elem, &field, &arrayNdx)) {
+    বাবে (; def; def = (VarDef *) def->common.next) {
+        যদি (!ৰাশিমালা_Resolve_Lhs(info->ctx, def->name, &elem, &field, &arrayNdx)) {
             ok = false;
-            continue;
+            অনুৱর্ত;
         }
-        if (elem) {
+        যদি (elem) {
             log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Cannot set a global default value for \"%s\" element from "
                     "within an interpret statement; "
                     "Move assignment to \"%s.%s\" to the global file scope\n",
                     elem, elem, field);
             ok = false;
-            continue;
+            অনুৱর্ত;
         }
-        if (!SetInterpField(info, si, field, arrayNdx, def->value))
+        যদি (!SetInterpField(info, si, field, arrayNdx, def->মান))
             ok = false;
     }
 
-    return ok;
+    ঘূৰাই ok;
 }
 
-static bool
+স্থির bool
 HandleInterpDef(CompatInfo *info, InterpDef *def)
 {
-    enum xkb_match_operation pred;
+    গণনা xkb_match_operation pred;
     xkb_mod_mask_t mods;
     SymInterpInfo si;
 
-    if (!ResolveStateAndPredicate(def->match, &pred, &mods, info)) {
+    যদি (!ResolveStateAndPredicate(def->match, &pred, &mods, info)) {
         log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                 "Couldn't determine matching modifiers; "
                 "Symbol interpretation ignored\n");
-        return false;
+        ঘূৰাই false;
     }
 
     si = info->default_interp;
@@ -861,20 +861,20 @@ HandleInterpDef(CompatInfo *info, InterpDef *def)
     si.interp.match = pred;
     si.interp.mods = mods;
 
-    if (!HandleInterpBody(info, def->def, &si)) {
-        info->errorCount++;
-        return false;
+    যদি (!HandleInterpBody(info, def->def, &si)) {
+        info->error_গুনতি++;
+        ঘূৰাই false;
     }
 
-    if (!AddInterp(info, &si, true)) {
-        info->errorCount++;
-        return false;
+    যদি (!AddInterp(info, &si, true)) {
+        info->error_গুনতি++;
+        ঘূৰাই false;
     }
 
-    return true;
+    ঘূৰাই true;
 }
 
-static bool
+স্থির bool
 HandleLedMapDef(CompatInfo *info, LedMapDef *def)
 {
     LedInfo ledi = info->default_led;
@@ -882,167 +882,167 @@ HandleLedMapDef(CompatInfo *info, LedMapDef *def)
     ledi.led.name = def->name;
 
     bool ok = true;
-    for (VarDef *var = def->body; var != NULL; var = (VarDef *) var->common.next) {
-        const char *elem, *field;
-        ExprDef *arrayNdx;
-        if (!ExprResolveLhs(info->ctx, var->name, &elem, &field, &arrayNdx)) {
+    বাবে (VarDef *var = def->body; var != রিক্ত; var = (VarDef *) var->common.next) {
+        ধ্রুৱ ৱর্ণ *elem, *field;
+        ৰাশিমালা_Def *arrayNdx;
+        যদি (!ৰাশিমালা_Resolve_Lhs(info->ctx, var->name, &elem, &field, &arrayNdx)) {
             ok = false;
-            continue;
+            অনুৱর্ত;
         }
 
-        if (elem) {
+        যদি (elem) {
             log_err(info->ctx, XKB_ERROR_GLOBAL_DEFAULTS_WRONG_SCOPE,
                     "Cannot set defaults for \"%s\" element in indicator map; "
                     "Assignment to %s.%s ignored\n", elem, elem, field);
             ok = false;
         }
-        else {
-            if (!SetLedMapField(info, &ledi, field, arrayNdx, &var->value))
+        অন্যথা {
+            যদি (!SetLedMapField(info, &ledi, field, arrayNdx, &var->মান))
                 ok = false;
         }
     }
 
-    return ok && AddLedMap(info, &ledi, true);
+    ঘূৰাই ok && AddLedMap(info, &ledi, true);
 }
 
-static void
+স্থির শূন্য
 HandleCompatMapFile(CompatInfo *info, XkbFile *file)
 {
     bool ok;
 
-    free(info->name);
+    মুক্ত(info->name);
     info->name = strdup_safe(file->name);
 
-    for (ParseCommon *stmt = file->defs; stmt; stmt = stmt->next) {
-        switch (stmt->type) {
-        case STMT_INCLUDE:
+    বাবে (ParseCommon *stmt = file->defs; stmt; stmt = stmt->next) {
+        ৱিকল্প (stmt->type) {
+        পক্ষ STMT_INCLUDE:
             ok = HandleIncludeCompatMap(info, (IncludeStmt *) stmt);
-            break;
-        case STMT_INTERP:
+            ভঙ্গ;
+        পক্ষ STMT_INTERP:
             ok = HandleInterpDef(info, (InterpDef *) stmt);
-            break;
-        case STMT_GROUP_COMPAT:
+            ভঙ্গ;
+        পক্ষ STMT_GROUP_COMPAT:
             log_dbg(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                     "The \"group\" statement in compat is unsupported; "
                     "Ignored\n");
             ok = true;
-            break;
-        case STMT_LED_MAP:
+            ভঙ্গ;
+        পক্ষ STMT_LED_MAP:
             ok = HandleLedMapDef(info, (LedMapDef *) stmt);
-            break;
-        case STMT_VAR:
+            ভঙ্গ;
+        পক্ষ STMT_VAR:
             ok = HandleGlobalVar(info, (VarDef *) stmt);
-            break;
-        case STMT_VMOD:
+            ভঙ্গ;
+        পক্ষ STMT_VMOD:
             ok = HandleVModDef(info->ctx, &info->mods, (VModDef *) stmt);
-            break;
-        case STMT_UNKNOWN_DECLARATION:
-        case STMT_UNKNOWN_COMPOUND:
+            ভঙ্গ;
+        পক্ষ STMT_UNKNOWN_DECLARATION:
+        পক্ষ STMT_UNKNOWN_COMPOUND:
             log_err(info->ctx, XKB_ERROR_UNKNOWN_STATEMENT,
                     "Unsupported compatibility %s statement \"%s\"; Ignoring\n",
                     (stmt->type == STMT_UNKNOWN_COMPOUND
                         ? "compound" : "declaration"),
                     ((UnknownStatement *)stmt)->name);
             ok = !(info->keymap_info->strict & PARSER_NO_UNKNOWN_STATEMENTS);
-            break;
-        default:
+            ভঙ্গ;
+        স্ৱভাৱ:
             log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Compat files may not include other types; "
                     "Ignoring %s\n", stmt_type_to_string(stmt->type));
             ok = false;
-            break;
+            ভঙ্গ;
         }
 
-        if (!ok)
-            info->errorCount++;
+        যদি (!ok)
+            info->error_গুনতি++;
 
-        if (info->errorCount > 10) {
+        যদি (info->error_গুনতি > 10) {
             log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Abandoning compatibility map \"%s\"\n",
                     safe_map_name(file->name));
-            break;
+            ভঙ্গ;
         }
     }
 }
 
 /* Temporary struct for CopyInterps. */
-struct collect {
-    darray(struct xkb_sym_interpret) sym_interprets;
+সংরচনা collect {
+    darray(সংরচনা xkb_sym_interpret) sym_interprets;
 };
 
-static void
-CopyInterps(CompatInfo *info, bool needSymbol, enum xkb_match_operation pred,
-            struct collect *collect)
+স্থির শূন্য
+CopyInterps(CompatInfo *info, bool need_প্ৰতীক, গণনা xkb_match_operation pred,
+            সংরচনা collect *collect)
 {
     SymInterpInfo *si;
 
     darray_foreach(si, info->interps)
-        if (si->interp.match == pred &&
-            (si->interp.sym != XKB_KEY_NoSymbol) == needSymbol)
+        যদি (si->interp.match == pred &&
+            (si->interp.sym != XKB_চাবি_No_প্ৰতীক) == need_প্ৰতীক)
             darray_append(collect->sym_interprets, si->interp);
 }
 
-static void
-CopyLedMapDefsToKeymap(struct xkb_keymap *keymap, CompatInfo *info)
+স্থির শূন্য
+CopyLedMapDefsToKeymap(সংরচনা xkb_keymap *keymap, CompatInfo *info)
 {
-    for (xkb_led_index_t idx = 0; idx < info->num_leds; idx++) {
+    বাবে (xkb_led_index_t idx = 0; idx < info->অঙ্ক_leds; idx++) {
         LedInfo *ledi = &info->leds[idx];
         xkb_led_index_t i;
-        struct xkb_led *led;
+        সংরচনা xkb_led *led;
 
         /*
          * Find the LED with the given name, if it was already declared
          * in keycodes.
          */
         xkb_leds_enumerate(i, led, keymap)
-            if (led->name == ledi->led.name)
-                break;
+            যদি (led->name == ledi->led.name)
+                ভঙ্গ;
 
         /* Not previously declared; create it with next free index. */
-        if (i >= keymap->num_leds) {
+        যদি (i >= keymap->অঙ্ক_leds) {
             log_dbg(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Indicator name \"%s\" was not declared in the keycodes "
                     "section; Adding new indicator\n",
                     LEDText(info, ledi));
 
             xkb_leds_enumerate(i, led, keymap)
-                if (led->name == XKB_ATOM_NONE)
-                    break;
+                যদি (led->name == XKB_ATOM_NONE)
+                    ভঙ্গ;
 
-            if (i >= keymap->num_leds) {
+            যদি (i >= keymap->অঙ্ক_leds) {
                 /* Not place to put it; ignore. */
-                if (i >= XKB_MAX_LEDS) {
+                যদি (i >= XKB_MAX_LEDS) {
                     log_err(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
                             "Too many indicators (maximum is %"PRIu32"); "
                             "Indicator name \"%s\" ignored\n",
                             XKB_MAX_LEDS, LEDText(info, ledi));
-                    continue;
+                    অনুৱর্ত;
                 }
 
                 /* Add a new LED. */
-                led = &keymap->leds[keymap->num_leds++];
+                led = &keymap->leds[keymap->অঙ্ক_leds++];
             }
         }
 
         *led = ledi->led;
         /* Assume pending `groups` computation does not result in 0 */
-        if (led->which_groups == 0 && (led->groups != 0 || led->pending_groups))
+        যদি (led->which_groups == 0 && (led->groups != 0 || led->pending_groups))
             led->which_groups = XKB_STATE_LAYOUT_EFFECTIVE;
-        if (led->which_mods == 0 && led->mods.mods != 0)
+        যদি (led->which_mods == 0 && led->mods.mods != 0)
             led->which_mods = XKB_STATE_MODS_EFFECTIVE;
     }
 }
 
-static bool
-CopyCompatToKeymap(struct xkb_keymap *keymap, CompatInfo *info)
+স্থির bool
+CopyCompatToKeymap(সংরচনা xkb_keymap *keymap, CompatInfo *info)
 {
     keymap->compat_section_name = strdup_safe(info->name);
     XkbEscapeMapName(keymap->compat_section_name);
 
     keymap->mods = info->mods;
 
-    if (!darray_empty(info->interps)) {
-        struct collect collect;
+    যদি (!darray_empty(info->interps)) {
+        সংরচনা collect collect;
         darray_init(collect.sym_interprets);
 
         /* Most specific to least specific. */
@@ -1058,34 +1058,34 @@ CopyCompatToKeymap(struct xkb_keymap *keymap, CompatInfo *info)
         CopyInterps(info, false, MATCH_ANY_OR_NONE, &collect);
 
         darray_steal(collect.sym_interprets,
-                     &keymap->sym_interprets, &keymap->num_sym_interprets);
+                     &keymap->sym_interprets, &keymap->অঙ্ক_sym_interprets);
     }
 
     CopyLedMapDefsToKeymap(keymap, info);
 
-    return true;
+    ঘূৰাই true;
 }
 
 bool
-CompileCompatMap(XkbFile *file, struct xkb_keymap_info *keymap_info)
+CompileCompatMap(XkbFile *file, সংরচনা xkb_keymap_info *keymap_info)
 {
     CompatInfo info;
 
     InitCompatInfo(&info, keymap_info, 0, &keymap_info->keymap.mods);
 
-    if (file != NULL)
+    যদি (file != রিক্ত)
         HandleCompatMapFile(&info, file);
 
-    if (info.errorCount != 0)
-        goto err_info;
+    যদি (info.error_গুনতি != 0)
+        গচ্ছ err_info;
 
-    if (!CopyCompatToKeymap(&keymap_info->keymap, &info))
-        goto err_info;
+    যদি (!CopyCompatToKeymap(&keymap_info->keymap, &info))
+        গচ্ছ err_info;
 
     ClearCompatInfo(&info);
-    return true;
+    ঘূৰাই true;
 
 err_info:
     ClearCompatInfo(&info);
-    return false;
+    ঘূৰাই false;
 }

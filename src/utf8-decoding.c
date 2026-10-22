@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#অন্তর্ভাৱ "config.h"
 
-#include "utils.h"
-#include "utf8-decoding.h"
+#অন্তর্ভাৱ "utils.h"
+#অন্তর্ভাৱ "utf8-decoding.h"
 
 /* Array mapping the leading byte to the length of a UTF-8 sequence.
  * A value of zero indicates that the byte can not begin a UTF-8 sequence. */
-static const uint8_t utf8_sequence_length_by_leading_byte[256] = {
+স্থির ধ্রুৱ uint8_t utf8_sequence_length_by_leading_byte[256] = {
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /* 0x00-0x0F */
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /* 0x10-0x1F */
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /* 0x20-0x2F */
@@ -31,52 +31,52 @@ static const uint8_t utf8_sequence_length_by_leading_byte[256] = {
 
 /* Length of next utf-8 sequence */
 uint8_t
-utf8_sequence_length(const char *s)
+utf8_sequence_length(ধ্রুৱ ৱর্ণ *s)
 {
-    return utf8_sequence_length_by_leading_byte[(unsigned char)s[0]];
+    ঘূৰাই utf8_sequence_length_by_leading_byte[(unsigned ৱর্ণ)s[0]];
 }
 
 /* Reads the next UTF-8 sequence in a string */
 uint32_t
-utf8_next_code_point(const char *s, size_t max_size, size_t *size_out)
+utf8_next_code_point(ধ্রুৱ ৱর্ণ *s, size_t max_size, size_t *size_out)
 {
     uint32_t cp = 0;
     uint8_t len = utf8_sequence_length(s);
     *size_out = 0;
 
-    if (!max_size || len > max_size)
-        return INVALID_UTF8_CODE_POINT;
+    যদি (!max_size || len > max_size)
+        ঘূৰাই INVALID_UTF8_CODE_POINT;
 
     /* Handle leading byte */
-    switch (len) {
-    case 1:
+    ৱিকল্প (len) {
+    পক্ষ 1:
         *size_out = 1;
-        return (uint32_t)s[0];
-    case 2:
+        ঘূৰাই (uint32_t)s[0];
+    পক্ষ 2:
         cp = (uint32_t)s[0] & 0x1f;
-        break;
-    case 3:
+        ভঙ্গ;
+    পক্ষ 3:
         cp = (uint32_t)s[0] & 0x0f;
-        break;
-    case 4:
+        ভঙ্গ;
+    পক্ষ 4:
         cp = (uint32_t)s[0] & 0x07;
-        break;
-    default:
-        return INVALID_UTF8_CODE_POINT;
+        ভঙ্গ;
+    স্ৱভাৱ:
+        ঘূৰাই INVALID_UTF8_CODE_POINT;
     }
 
     /* Process remaining bytes of the UTF-8 sequence */
-    for (size_t k = 1; k < len; k++) {
-        if (((uint32_t)s[k] & 0xc0) != 0x80)
-            return INVALID_UTF8_CODE_POINT;
+    বাবে (size_t k = 1; k < len; k++) {
+        যদি (((uint32_t)s[k] & 0xc0) != 0x80)
+            ঘূৰাই INVALID_UTF8_CODE_POINT;
         cp <<= 6;
         cp |= (uint32_t)s[k] & 0x3f;
     }
 
     /* Check surrogates */
-    if (is_surrogate(cp))
-        return INVALID_UTF8_CODE_POINT;
+    যদি (is_surrogate(cp))
+        ঘূৰাই INVALID_UTF8_CODE_POINT;
 
     *size_out = len;
-    return cp;
+    ঘূৰাই cp;
 }

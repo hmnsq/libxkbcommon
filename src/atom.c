@@ -9,27 +9,27 @@
  * SPDX-License-Identifier: MIT-open-group AND HPND
  */
 
-#include "config.h"
+#অন্তর্ভাৱ "config.h"
 
-#include <assert.h>
-#include <string.h>
+#অন্তর্ভাৱ <assert.h>
+#অন্তর্ভাৱ <string.h>
 
-#include "atom.h"
-#include "darray.h"
-#include "utils.h"
+#অন্তর্ভাৱ "atom.h"
+#অন্তর্ভাৱ "darray.h"
+#অন্তর্ভাৱ "utils.h"
 
 /* FNV-1a (http://www.isthe.com/chongo/tech/comp/fnv/). */
-static inline uint32_t
-hash_buf(const char *string, size_t len)
+স্থির অন্তঃস্থ uint32_t
+hash_buf(ধ্রুৱ ৱর্ণ *string, size_t len)
 {
     uint32_t hash = UINT32_C(2166136261);
-    for (size_t i = 0; i < (len + 1) / 2; i++) {
+    বাবে (size_t i = 0; i < (len + 1) / 2; i++) {
         hash ^= (uint8_t) string[i];
         hash *= 0x01000193;
         hash ^= (uint8_t) string[len - 1 - i];
         hash *= 0x01000193;
     }
-    return hash;
+    ঘূৰাই hash;
 }
 
 /*
@@ -37,109 +37,109 @@ hash_buf(const char *string, size_t len)
  * mapping strings to atoms. Another array maps the atoms to
  * strings. The atom value is the position in the strings array.
  */
-struct atom_table {
+সংরচনা atom_table {
     xkb_atom_t *index;
     size_t index_size;
-    darray(char *) strings;
+    darray(ৱর্ণ *) strings;
 };
 
-struct atom_table *
-atom_table_new(void)
+সংরচনা atom_table *
+atom_table_new(শূন্য)
 {
-    struct atom_table *table = calloc(1, sizeof(*table));
-    if (!table)
-        return NULL;
+    সংরচনা atom_table *table = calloc(1, পরিমাণ(*table));
+    যদি (!table)
+        ঘূৰাই রিক্ত;
 
     darray_init(table->strings);
-    darray_append(table->strings, NULL);
+    darray_append(table->strings, রিক্ত);
     table->index_size = 4;
-    table->index = calloc(table->index_size, sizeof(*table->index));
+    table->index = calloc(table->index_size, পরিমাণ(*table->index));
 
-    return table;
+    ঘূৰাই table;
 }
 
-void
-atom_table_free(struct atom_table *table)
+শূন্য
+atom_table_free(সংরচনা atom_table *table)
 {
-    if (!table)
-        return;
+    যদি (!table)
+        ঘূৰাই;
 
-    char **string;
+    ৱর্ণ **string;
     darray_foreach(string, table->strings)
-        free(*string);
+        মুক্ত(*string);
     darray_free(table->strings);
-    free(table->index);
-    free(table);
+    মুক্ত(table->index);
+    মুক্ত(table);
 }
 
 darray_size_t
-atom_table_size(struct atom_table *table)
+atom_table_size(সংরচনা atom_table *table)
 {
-    return darray_size(table->strings);
+    ঘূৰাই darray_size(table->strings);
 }
 
-const char *
-atom_text(struct atom_table *table, xkb_atom_t atom)
+ধ্রুৱ ৱর্ণ *
+atom_text(সংরচনা atom_table *table, xkb_atom_t atom)
 {
-    assert(atom < darray_size(table->strings));
-    return darray_item(table->strings, atom);
+    প্রতিজ্ঞা(atom < darray_size(table->strings));
+    ঘূৰাই darray_item(table->strings, atom);
 }
 
 xkb_atom_t
-atom_intern(struct atom_table *table, const char *string, size_t len, bool add)
+atom_intern(সংরচনা atom_table *table, ধ্রুৱ ৱর্ণ *string, size_t len, bool add)
 {
     /* len(string) > 0.8 * index_size */
-    if (darray_size(table->strings) > (table->index_size / 5) * 4) {
+    যদি (darray_size(table->strings) > (table->index_size / 5) * 4) {
         table->index_size *= 2;
         xkb_atom_t *tmp = realloc(table->index,
-                                  table->index_size * sizeof(*table->index));
-        if (!tmp)
-            return XKB_ATOM_NONE;
+                                  table->index_size * পরিমাণ(*table->index));
+        যদি (!tmp)
+            ঘূৰাই XKB_ATOM_NONE;
         table->index = tmp;
-        memset(table->index, 0, table->index_size * sizeof(*table->index));
-        for (darray_size_t j = 1; j < darray_size(table->strings); j++) {
-            const char *s = darray_item(table->strings, j);
+        memset(table->index, 0, table->index_size * পরিমাণ(*table->index));
+        বাবে (darray_size_t j = 1; j < darray_size(table->strings); j++) {
+            ধ্রুৱ ৱর্ণ *s = darray_item(table->strings, j);
             uint32_t hash = hash_buf(s, strlen(s));
-            for (size_t i = 0; i < table->index_size; i++) {
+            বাবে (size_t i = 0; i < table->index_size; i++) {
                 size_t index_pos = (hash + i) & (table->index_size - 1);
-                if (index_pos == 0)
-                    continue;
+                যদি (index_pos == 0)
+                    অনুৱর্ত;
 
                 xkb_atom_t atom = table->index[index_pos];
-                if (atom == XKB_ATOM_NONE) {
+                যদি (atom == XKB_ATOM_NONE) {
                     table->index[index_pos] = j;
-                    break;
+                    ভঙ্গ;
                 }
             }
         }
     }
 
     uint32_t hash = hash_buf(string, len);
-    for (size_t i = 0; i < table->index_size; i++) {
+    বাবে (size_t i = 0; i < table->index_size; i++) {
         size_t index_pos = (hash + i) & (table->index_size - 1);
-        if (index_pos == 0)
-            continue;
+        যদি (index_pos == 0)
+            অনুৱর্ত;
 
         xkb_atom_t existing_atom = table->index[index_pos];
-        if (existing_atom == XKB_ATOM_NONE) {
-            if (add) {
+        যদি (existing_atom == XKB_ATOM_NONE) {
+            যদি (add) {
                 xkb_atom_t new_atom = darray_size(table->strings);
-                char *s = strndup(string, len);
-                if (!s)
-                    return XKB_ATOM_NONE;
+                ৱর্ণ *s = strndup(string, len);
+                যদি (!s)
+                    ঘূৰাই XKB_ATOM_NONE;
                 darray_append(table->strings, s);
                 table->index[index_pos] = new_atom;
-                return new_atom;
-            } else {
-                return XKB_ATOM_NONE;
+                ঘূৰাই new_atom;
+            } অন্যথা {
+                ঘূৰাই XKB_ATOM_NONE;
             }
         }
 
-        const char *existing_value = darray_item(table->strings, existing_atom);
-        if (strncmp(existing_value, string, len) == 0 && existing_value[len] == '\0')
-            return existing_atom;
+        ধ্রুৱ ৱর্ণ *existing_মান = darray_item(table->strings, existing_atom);
+        যদি (strncmp(existing_মান, string, len) == 0 && existing_মান[len] == '\0')
+            ঘূৰাই existing_atom;
     }
 
-    assert(!"couldn't find an empty slot during probing");
-    return XKB_ATOM_NONE;
+    প্রতিজ্ঞা(!"couldn't find an empty slot during probing");
+    ঘূৰাই XKB_ATOM_NONE;
 }

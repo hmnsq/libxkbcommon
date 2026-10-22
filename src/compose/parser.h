@@ -4,25 +4,25 @@
  */
 #pragma once
 
-#include "config.h"
+#অন্তর্ভাৱ "config.h"
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdio.h>
+#অন্তর্ভাৱ <stdbool.h>
+#অন্তর্ভাৱ <stddef.h>
+#অন্তর্ভাৱ <stdio.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-compose.h"
+#অন্তর্ভাৱ "xkbcommon/xkbcommon.h"
+#অন্তর্ভাৱ "xkbcommon/xkbcommon-compose.h"
 
-#include "src/utils.h"
+#অন্তর্ভাৱ "src/utils.h"
 
-XKB_EXPORT_PRIVATE char *
-parse_string_literal(struct xkb_context *ctx, const char *string);
-
-bool
-parse_string(struct xkb_compose_table *table,
-             const char *string, size_t len,
-             const char *file_name);
+XKB_EXPORT_PRIVATE ৱর্ণ *
+parse_string_literal(সংরচনা xkb_context *ctx, ধ্রুৱ ৱর্ণ *string);
 
 bool
-parse_file(struct xkb_compose_table *table,
-           FILE *file, const char *file_name);
+parse_string(সংরচনা xkb_compose_table *table,
+             ধ্রুৱ ৱর্ণ *string, size_t len,
+             ধ্রুৱ ৱর্ণ *file_name);
+
+bool
+parse_file(সংরচনা xkb_compose_table *table,
+           FILE *file, ধ্রুৱ ৱর্ণ *file_name);
