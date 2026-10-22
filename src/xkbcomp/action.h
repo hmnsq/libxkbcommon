@@ -4,32 +4,32 @@
  */
 #pragma once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include "xkbcommon/xkbcommon.h"
-#include "ast.h"
-#include "keymap.h"
-#include "xkbcomp-priv.h"
+#ضمن "xkbcommon/xkbcommon.h"
+#ضمن "ast.h"
+#ضمن "keymap.h"
+#ضمن "xkbcomp-priv.h"
 
 /*
  * This struct contains the default values which every new action
  * (e.g. in an interpret statement) starts off with. It can be
  * modified within the files (see calls to SetDefaultActionField).
  */
-typedef struct {
-    union xkb_action actions[_ACTION_TYPE_NUM_ENTRIES];
+تعريفنوع بنية {
+    اتحاد xkb_action actions[ACTION_TYPE_عدد_ENTRIES];
 } ActionsInfo;
 
-void
-InitActionsInfo(const struct xkb_keymap *keymap, ActionsInfo *info);
+فراغ
+InitActionsInfo(ثابت بنية xkb_keymap *keymap, ActionsInfo *info);
 
-enum xkb_parser_error
-HandleActionDef(const struct xkb_keymap_info *keymap_info, ActionsInfo *info,
-                const struct xkb_mod_set *mods, ExprDef *def,
-                union xkb_action *action);
+تعداد xkb_parser_error
+HandleActionDef(ثابت بنية xkb_keymap_info *keymap_info, ActionsInfo *info,
+                ثابت بنية xkb_mod_set *mods, اظہاریہ_Def *def,
+                اتحاد xkb_action *action);
 
-enum xkb_parser_error
-SetDefaultActionField(const struct xkb_keymap_info *keymap_info,
-                      ActionsInfo *info, struct xkb_mod_set *mods,
-                      const char *elem, const char *field, ExprDef *array_ndx,
-                      ExprDef **value_ptr, enum merge_mode merge);
+تعداد xkb_parser_error
+SetDefaultActionField(ثابت بنية xkb_keymap_info *keymap_info,
+                      ActionsInfo *info, بنية xkb_mod_set *mods,
+                      ثابت حرف *elem, ثابت حرف *field, اظہاریہ_Def *array_ndx,
+                      اظہاریہ_Def **قدر_ptr, تعداد merge_mode merge);
