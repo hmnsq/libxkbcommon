@@ -3,262 +3,262 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <assert.h>
-#include <stdint.h>
-#include <string.h>
+#ضمن <assert.h>
+#ضمن <stdint.h>
+#ضمن <string.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-status.h"
-#include "context.h"
-#include "features/enums.h"
-#include "keymap.h"
-#include "messages-codes.h"
-#include "rmlvo.h"
-#include "darray.h"
-#include "utils.h"
-#include "xkbcomp/rules.h"
+#ضمن "xkbcommon/xkbcommon.h"
+#ضمن "xkbcommon/xkbcommon-status.h"
+#ضمن "context.h"
+#ضمن "features/enums.h"
+#ضمن "keymap.h"
+#ضمن "messages-codes.h"
+#ضمن "rmlvo.h"
+#ضمن "darray.h"
+#ضمن "utils.h"
+#ضمن "xkbcomp/rules.h"
 
-struct xkb_rmlvo_builder*
-xkb_rmlvo_builder_new(struct xkb_context *context,
-                      const char *rules, const char *model,
-                      enum xkb_rmlvo_builder_flags flags)
+بنية xkb_rmlvo_builder*
+xkb_rmlvo_builder_new(بنية xkb_context *context,
+                      ثابت حرف *قاعدا, ثابت حرف *model,
+                      تعداد xkb_rmlvo_builder_flags flags)
 {
-    const enum xkb_rmlvo_builder_flags invalid_flags =
-        (flags & ~(enum xkb_rmlvo_builder_flags)XKB_RMLVO_BUILDER_FLAGS_VALUES);
-    if (invalid_flags) {
-        log_err_func(context, XKB_LOG_MESSAGE_NO_ID,
+    ثابت تعداد xkb_rmlvo_builder_flags invalid_flags =
+        (flags & ~(تعداد xkb_rmlvo_builder_flags)XKB_RMLVO_BUILDER_FLAGS_قدرون);
+    إذا (invalid_flags) {
+        log_err_func(context, XKB_LOG_پيغام_NO_ID,
                      "Unsupported RMLVO flags: 0x%x\n",
                      invalid_flags);
-        return NULL;
+        أرجع عدم;
     }
 
-    struct xkb_rmlvo_builder * const builder = calloc(1, sizeof(*builder));
-    if (!builder)
-        goto error;
+    بنية xkb_rmlvo_builder * ثابت builder = صفر_يادگيري_ڏيو(1, حجم(*builder));
+    إذا (!builder)
+        اذهب error;
 
     builder->refcnt = 1;
     builder->ctx = xkb_context_ref(context);
 
-    builder->rules = strdup_safe(rules);
-    if (!builder->rules && rules)
-        goto error;
+    builder->قاعدا = strdup_محفوظ(قاعدا);
+    إذا (!builder->قاعدا && قاعدا)
+        اذهب error;
 
-    builder->model = strdup_safe(model);
-    if (!builder->model && model)
-        goto error;
+    builder->model = strdup_محفوظ(model);
+    إذا (!builder->model && model)
+        اذهب error;
 
     darray_init(builder->layouts);
     darray_init(builder->options);
 
-    return builder;
+    أرجع builder;
 
 error:
-    log_err(context, XKB_ERROR_ALLOCATION_FAILURE_,
+    log_err(context, XKB_ERROR_ورهاست_FAILURE_2,
             "Cannot allocate a RMLVO builder.\n");
     xkb_rmlvo_builder_unref(builder);
-    return NULL;
+    أرجع عدم;
 }
 
-static enum xkb_status
-rmlvo_builder_append_option(struct xkb_rmlvo_builder *rmlvo,
-                            const char *option, xkb_layout_mask_t layouts)
+ساكن تعداد xkb_حالت
+rmlvo_builder_append_option(بنية xkb_rmlvo_builder *rmlvo,
+                            ثابت حرف *option, xkb_layout_نقاب_t layouts)
 {
-    if (isempty(option))
-        return XKB_ERROR_INVALID;
+    إذا (isempty(option))
+        أرجع XKB_ERROR_INVALID;
 
     /* Check for previous entry */
-    struct xkb_rmlvo_builder_option *prev;
+    بنية xkb_rmlvo_builder_option *prev;
     darray_foreach(prev, rmlvo->options) {
-        if (streq(prev->option, option)) {
+        إذا (streq(prev->option, option)) {
             /* Merge with previous entry */
-            if (layouts == (xkb_layout_mask_t)XKB_OPTION_LAYOUT_MASK_GLOBAL) {
+            إذا (layouts == (xkb_layout_نقاب_t)XKB_OPTION_LAYOUT_نقاب_GLOBAL) {
                 /* Global option overrides layout-specific ones */
                 prev->layouts = layouts;
-            } else if (prev->layouts != (xkb_layout_mask_t)
-                       XKB_OPTION_LAYOUT_MASK_GLOBAL) {
+            } وإلا إذا (prev->layouts != (xkb_layout_نقاب_t)
+                       XKB_OPTION_LAYOUT_نقاب_GLOBAL) {
                 /* Layout-specific option cannot override global */
                 prev->layouts |= layouts;
             }
-            return XKB_SUCCESS;
+            أرجع XKB_SUCCESS;
         }
     }
 
     /* Append new entry */
-    const struct xkb_rmlvo_builder_option new = {
-        .option = strdup_safe(option),
+    ثابت بنية xkb_rmlvo_builder_option new = {
+        .option = strdup_محفوظ(option),
         .layouts = layouts
     };
-    if (!new.option) {
-        log_err(rmlvo->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
+    إذا (!new.option) {
+        log_err(rmlvo->ctx, XKB_ERROR_ورهاست_FAILURE_2,
                 "Cannot allocate option \"%s\" to the RMLVO builder.\n",
                 option);
-        return XKB_ERROR_ALLOCATION_FAILURE;
+        أرجع XKB_ERROR_ورهاست_FAILURE;
     }
     darray_append(rmlvo->options, new);
-    return XKB_SUCCESS;
+    أرجع XKB_SUCCESS;
 }
 
 bool
-xkb_rmlvo_builder_append_layout(struct xkb_rmlvo_builder *rmlvo,
-                                const char *layout, const char *variant,
-                                const char* const* options, size_t options_len)
+xkb_rmlvo_builder_append_layout(بنية xkb_rmlvo_builder *rmlvo,
+                                ثابت حرف *layout, ثابت حرف *variant,
+                                ثابت حرف* ثابت* options, سائيز_t options_len)
 {
-    const xkb_layout_index_t idx = (xkb_layout_index_t)
-                                   darray_size(rmlvo->layouts);
+    ثابت xkb_layout_اشاريو_t idx = (xkb_layout_اشاريو_t)
+                                   darray_سائيز(rmlvo->layouts);
 
     static_assert(XKB_MAX_GROUPS == 32, "Invalid shift for layout mask");
-    if (idx >= XKB_MAX_GROUPS) {
-        log_err(rmlvo->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
+    إذا (idx >= XKB_MAX_GROUPS) {
+        log_err(rmlvo->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_اشاريو_2,
                 "Maximum layout count reached: %u; "
                 "cannot add layout \"%s(%s)\" to the RMLVO builder.\n",
                 XKB_MAX_GROUPS, layout, (variant) ? variant : "");
-        return false;
+        أرجع false;
     }
 
     /* Append layout entry */
-    const struct xkb_rmlvo_builder_layout new = {
-        .layout = strdup_safe(layout),
-        .variant = strdup_safe(variant)
+    ثابت بنية xkb_rmlvo_builder_layout new = {
+        .layout = strdup_محفوظ(layout),
+        .variant = strdup_محفوظ(variant)
     };
 
-    if (!new.layout || (!new.variant && variant)) {
-        free(new.layout);
-        free(new.variant);
-        log_err(rmlvo->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
+    إذا (!new.layout || (!new.variant && variant)) {
+        حرر(new.layout);
+        حرر(new.variant);
+        log_err(rmlvo->ctx, XKB_ERROR_ورهاست_FAILURE_2,
                 "Cannot allocate layout \"%s(%s)\" to the RMLVO builder.\n",
                 layout, (variant) ? variant : "");
-        return false;
+        أرجع false;
     }
 
     darray_append(rmlvo->layouts, new);
 
-    if (!options)
+    إذا (!options)
         options_len = 0;
 
-    const xkb_layout_mask_t layout_mask = (UINT32_C(1) << idx);
+    ثابت xkb_layout_نقاب_t layout_نقاب = (UINT32_C(1) << idx);
 
     /* Append layout-specific options entries */
-    for (size_t k = 0; k < options_len; k++) {
-        const enum xkb_status status =
-            rmlvo_builder_append_option(rmlvo, options[k], layout_mask);
+    لكل (سائيز_t k = 0; k < options_len; k++) {
+        ثابت تعداد xkb_حالت حالت =
+            rmlvo_builder_append_option(rmlvo, options[k], layout_نقاب);
 
-        if (status == XKB_ERROR_ALLOCATION_FAILURE)
-            return false;
+        إذا (حالت == XKB_ERROR_ورهاست_FAILURE)
+            أرجع false;
     }
 
-    return true;
+    أرجع true;
 }
 
 bool
-xkb_rmlvo_builder_append_option(struct xkb_rmlvo_builder *rmlvo,
-                                const char *option)
+xkb_rmlvo_builder_append_option(بنية xkb_rmlvo_builder *rmlvo,
+                                ثابت حرف *option)
 {
-    const enum xkb_status status = rmlvo_builder_append_option(
-        rmlvo, option, (xkb_layout_mask_t)XKB_OPTION_LAYOUT_MASK_GLOBAL
+    ثابت تعداد xkb_حالت حالت = rmlvo_builder_append_option(
+        rmlvo, option, (xkb_layout_نقاب_t)XKB_OPTION_LAYOUT_نقاب_GLOBAL
     );
-    return (status == XKB_SUCCESS);
+    أرجع (حالت == XKB_SUCCESS);
 }
 
-struct xkb_rmlvo_builder *
-xkb_rmlvo_builder_ref(struct xkb_rmlvo_builder *rmlvo)
+بنية xkb_rmlvo_builder *
+xkb_rmlvo_builder_ref(بنية xkb_rmlvo_builder *rmlvo)
 {
-    assert(rmlvo->refcnt > 0);
+    أكد(rmlvo->refcnt > 0);
     rmlvo->refcnt++;
-    return rmlvo;
+    أرجع rmlvo;
 }
 
-void
-xkb_rmlvo_builder_unref(struct xkb_rmlvo_builder *rmlvo)
+فراغ
+xkb_rmlvo_builder_unref(بنية xkb_rmlvo_builder *rmlvo)
 {
-    assert(!rmlvo || rmlvo->refcnt > 0);
-    if (!rmlvo || --rmlvo->refcnt > 0)
-        return;
+    أكد(!rmlvo || rmlvo->refcnt > 0);
+    إذا (!rmlvo || --rmlvo->refcnt > 0)
+        أرجع;
 
-    free(rmlvo->rules);
-    free(rmlvo->model);
+    حرر(rmlvo->قاعدا);
+    حرر(rmlvo->model);
 
-    const struct xkb_rmlvo_builder_layout *layout;
+    ثابت بنية xkb_rmlvo_builder_layout *layout;
     darray_foreach(layout, rmlvo->layouts) {
-        free(layout->layout);
-        free(layout->variant);
+        حرر(layout->layout);
+        حرر(layout->variant);
     }
     darray_free(rmlvo->layouts);
 
-    const struct xkb_rmlvo_builder_option *option;
+    ثابت بنية xkb_rmlvo_builder_option *option;
     darray_foreach(option, rmlvo->options)
-        free(option->option);
+        حرر(option->option);
     darray_free(rmlvo->options);
 
     xkb_context_unref(rmlvo->ctx);
-    free(rmlvo);
+    حرر(rmlvo);
 }
 
 /* NOTE: the converse function, `xkb_rules_names_to_rmlvo_builder`, is currently
  * only used in tests */
 bool
-xkb_rmlvo_builder_to_rules_names(const struct xkb_rmlvo_builder *builder,
-                                 struct xkb_rule_names *rmlvo,
-                                 char *buf, size_t buf_size)
+xkb_rmlvo_builder_منزل_قاعدا_نالا(ثابت بنية xkb_rmlvo_builder *builder,
+                                 بنية xkb_قاعدو_نالا *rmlvo,
+                                 حرف *buf, سائيز_t buf_سائيز)
 {
-    rmlvo->rules = builder->rules;
+    rmlvo->قاعدا = builder->قاعدا;
     rmlvo->model = builder->model;
 
-    char *start = buf;
-    rmlvo->layout = start;
-    darray_size_t k;
-    const struct xkb_rmlvo_builder_layout *layout;
+    حرف *شروعات = buf;
+    rmlvo->layout = شروعات;
+    darray_سائيز_t k;
+    ثابت بنية xkb_rmlvo_builder_layout *layout;
     darray_enumerate(k, layout, builder->layouts) {
-        int count = snprintf(start, buf_size, "%s%s",
+        صحيح ڳڻپ = snprintf(شروعات, buf_سائيز, "%s%s",
                              (k > 0 ? "," : ""), layout->layout);
-        if (count < 0 || (size_t)count >= buf_size)
-            return false;
-        buf_size -= (size_t)count;
-        start += count;
+        إذا (ڳڻپ < 0 || (سائيز_t)ڳڻپ >= buf_سائيز)
+            أرجع false;
+        buf_سائيز -= (سائيز_t)ڳڻپ;
+        شروعات += ڳڻپ;
     }
-    if (buf_size <= 1)
-        return false;
-    *start = '\0';
-    start++;
-    buf_size--;
+    إذا (buf_سائيز <= 1)
+        أرجع false;
+    *شروعات = '\0';
+    شروعات++;
+    buf_سائيز--;
 
-    rmlvo->variant = start;
+    rmlvo->variant = شروعات;
     darray_enumerate(k, layout, builder->layouts) {
-        int count = snprintf(start, buf_size, "%s%s",
+        صحيح ڳڻپ = snprintf(شروعات, buf_سائيز, "%s%s",
                              (k > 0 ? "," : ""),
                              (layout->variant ? layout->variant : ""));
-        if (count < 0 || (size_t) count >= buf_size)
-            return false;
-        buf_size -= (size_t)count;
-        start += count;
+        إذا (ڳڻپ < 0 || (سائيز_t) ڳڻپ >= buf_سائيز)
+            أرجع false;
+        buf_سائيز -= (سائيز_t)ڳڻپ;
+        شروعات += ڳڻپ;
     }
-    if (buf_size <= 1)
-        return false;
-    *start = '\0';
-    start++;
-    buf_size--;
+    إذا (buf_سائيز <= 1)
+        أرجع false;
+    *شروعات = '\0';
+    شروعات++;
+    buf_سائيز--;
 
-    rmlvo->options = start;
-    const struct xkb_rmlvo_builder_option *option;
+    rmlvo->options = شروعات;
+    ثابت بنية xkb_rmlvo_builder_option *option;
     darray_enumerate(k, option, builder->options) {
-        int count = snprintf(start, buf_size, "%s%s",
+        صحيح ڳڻپ = snprintf(شروعات, buf_سائيز, "%s%s",
                              (k > 0 ? "," : ""), option->option);
-        if (count < 0 || (size_t) count >= buf_size)
-            return false;
-        buf_size -= (size_t)count;
-        start += count;
-        if (option->layouts != XKB_LAYOUT_INVALID) {
-            count = snprintf(start, buf_size, "%c%"PRIu32,
-                             OPTIONS_GROUP_SPECIFIER_PREFIX, option->layouts);
-            if (count < 0 || (size_t) count >= buf_size)
-                return false;
-            buf_size -= (size_t)count;
-            start += count;
+        إذا (ڳڻپ < 0 || (سائيز_t) ڳڻپ >= buf_سائيز)
+            أرجع false;
+        buf_سائيز -= (سائيز_t)ڳڻپ;
+        شروعات += ڳڻپ;
+        إذا (option->layouts != XKB_LAYOUT_INVALID) {
+            ڳڻپ = snprintf(شروعات, buf_سائيز, "%c%"PRIu32,
+                             OPTIONS_گروهه_SPECIFIER_اڳياڙي, option->layouts);
+            إذا (ڳڻپ < 0 || (سائيز_t) ڳڻپ >= buf_سائيز)
+                أرجع false;
+            buf_سائيز -= (سائيز_t)ڳڻپ;
+            شروعات += ڳڻپ;
         }
     }
-    if (buf_size == 0)
-        return false;
-    *start = '\0';
-    return true;
+    إذا (buf_سائيز == 0)
+        أرجع false;
+    *شروعات = '\0';
+    أرجع true;
 }

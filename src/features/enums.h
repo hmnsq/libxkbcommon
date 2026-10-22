@@ -9,130 +9,130 @@
  * SPDX-License-Identifier: MIT
  */
 
-#pragma once
+#هدايت once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <assert.h>
-#include <limits.h>
-#include <stdint.h>
+#ضمن <assert.h>
+#ضمن <limits.h>
+#ضمن <stdint.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-compose.h"
-#include "xkbcommon/xkbcommon-status.h"
-#include "xkbcommon/xkbcommon-features.h"
+#ضمن "xkbcommon/xkbcommon.h"
+#ضمن "xkbcommon/xkbcommon-compose.h"
+#ضمن "xkbcommon/xkbcommon-status.h"
+#ضمن "xkbcommon/xkbcommon-features.h"
 
-#ifndef UINT32_WIDTH
-#define UINT32_WIDTH (sizeof(uint32_t) * CHAR_BIT)
-#endif
+#جيڪڏهن_وصف_نه_ٿيل UINT32_ويڪر
+#وصف_ڪريو UINT32_ويڪر (حجم(uint32_t) * CHAR_BIT)
+#جيڪڏهن_پورو
 
 /*
  * Enumerations whose values can be ORed
  */
 
-static_assert(XKB_KEYMAP_FORMAT_TEXT_V1 >= 0 &&
-              XKB_KEYMAP_FORMAT_TEXT_V1 < UINT32_WIDTH, "");
-static_assert(XKB_KEYMAP_FORMAT_TEXT_V2 >= 0 &&
-              XKB_KEYMAP_FORMAT_TEXT_V2 < UINT32_WIDTH, "");
-static_assert(XKB_KEY_UP >= 0 &&
-              XKB_KEY_UP < UINT32_WIDTH, "");
-static_assert(XKB_KEY_DOWN >= 0 &&
-              XKB_KEY_DOWN < UINT32_WIDTH, "");
-static_assert(XKB_KEY_REPEATED >= 0 &&
-              XKB_KEY_REPEATED < UINT32_WIDTH, "");
+static_assert(XKB_KEYMAP_FORMAT_متن_V1 >= 0 &&
+              XKB_KEYMAP_FORMAT_متن_V1 < UINT32_ويڪر, "");
+static_assert(XKB_KEYMAP_FORMAT_متن_V2 >= 0 &&
+              XKB_KEYMAP_FORMAT_متن_V2 < UINT32_ويڪر, "");
+static_assert(XKB_ڪنجي_مٿي >= 0 &&
+              XKB_ڪنجي_مٿي < UINT32_ويڪر, "");
+static_assert(XKB_ڪنجي_هيٺ_ڏانهن >= 0 &&
+              XKB_ڪنجي_هيٺ_ڏانهن < UINT32_ويڪر, "");
+static_assert(XKB_ڪنجي_REPEATED >= 0 &&
+              XKB_ڪنجي_REPEATED < UINT32_ويڪر, "");
 static_assert(XKB_EVENT_TYPE_INVALID >= 0 &&
-              XKB_EVENT_TYPE_INVALID < UINT32_WIDTH, "");
-static_assert(XKB_EVENT_TYPE_FRAME >= 0 &&
-              XKB_EVENT_TYPE_FRAME < UINT32_WIDTH, "");
-static_assert(XKB_EVENT_TYPE_KEY >= 0 &&
-              XKB_EVENT_TYPE_KEY < UINT32_WIDTH, "");
+              XKB_EVENT_TYPE_INVALID < UINT32_ويڪر, "");
+static_assert(XKB_EVENT_TYPE_چوکٺو >= 0 &&
+              XKB_EVENT_TYPE_چوکٺو < UINT32_ويڪر, "");
+static_assert(XKB_EVENT_TYPE_ڪنجي >= 0 &&
+              XKB_EVENT_TYPE_ڪنجي < UINT32_ويڪر, "");
 static_assert(XKB_EVENT_TYPE_STATE_COMPONENTS >= 0 &&
-              XKB_EVENT_TYPE_STATE_COMPONENTS < UINT32_WIDTH, "");
-static_assert(XKB_EVENT_TYPE_POINTER_MOTION >= 0 &&
-              XKB_EVENT_TYPE_POINTER_MOTION < UINT32_WIDTH, "");
-static_assert(XKB_EVENT_TYPE_POINTER_BUTTON >= 0 &&
-              XKB_EVENT_TYPE_POINTER_BUTTON < UINT32_WIDTH, "");
+              XKB_EVENT_TYPE_STATE_COMPONENTS < UINT32_ويڪر, "");
+static_assert(XKB_EVENT_TYPE_اشارو_MOTION >= 0 &&
+              XKB_EVENT_TYPE_اشارو_MOTION < UINT32_ويڪر, "");
+static_assert(XKB_EVENT_TYPE_اشارو_BUTTON >= 0 &&
+              XKB_EVENT_TYPE_اشارو_BUTTON < UINT32_ويڪر, "");
 static_assert(XKB_EVENT_TYPE_TERMINATE_DISPLAY_SERVER >= 0 &&
-              XKB_EVENT_TYPE_TERMINATE_DISPLAY_SERVER < UINT32_WIDTH, "");
+              XKB_EVENT_TYPE_TERMINATE_DISPLAY_SERVER < UINT32_ويڪر, "");
 static_assert(XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE >= 0 &&
-              XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE < UINT32_WIDTH, "");
-static_assert(XKB_POINTER_BUTTON_RELEASED >= 0 &&
-              XKB_POINTER_BUTTON_RELEASED < UINT32_WIDTH, "");
-static_assert(XKB_POINTER_BUTTON_PRESSED >= 0 &&
-              XKB_POINTER_BUTTON_PRESSED < UINT32_WIDTH, "");
-static_assert(XKB_LAYOUT_OUT_OF_RANGE_WRAP >= 0 &&
-              XKB_LAYOUT_OUT_OF_RANGE_WRAP < UINT32_WIDTH, "");
-static_assert(XKB_LAYOUT_OUT_OF_RANGE_CLAMP >= 0 &&
-              XKB_LAYOUT_OUT_OF_RANGE_CLAMP < UINT32_WIDTH, "");
-static_assert(XKB_LAYOUT_OUT_OF_RANGE_REDIRECT >= 0 &&
-              XKB_LAYOUT_OUT_OF_RANGE_REDIRECT < UINT32_WIDTH, "");
-static_assert(XKB_STATE_MODE_CLIENT >= 0 &&
-              XKB_STATE_MODE_CLIENT < UINT32_WIDTH, "");
-static_assert(XKB_STATE_MODE_SERVER_QUERY >= 0 &&
-              XKB_STATE_MODE_SERVER_QUERY < UINT32_WIDTH, "");
-static_assert(XKB_STATE_MODE_SERVER >= 0 &&
-              XKB_STATE_MODE_SERVER < UINT32_WIDTH, "");
-static_assert(XKB_CONSUMED_MODE_XKB >= 0 &&
-              XKB_CONSUMED_MODE_XKB < UINT32_WIDTH, "");
-static_assert(XKB_CONSUMED_MODE_GTK >= 0 &&
-              XKB_CONSUMED_MODE_GTK < UINT32_WIDTH, "");
-static_assert(XKB_COMPOSE_FORMAT_TEXT_V1 >= 0 &&
-              XKB_COMPOSE_FORMAT_TEXT_V1 < UINT32_WIDTH, "");
+              XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE < UINT32_ويڪر, "");
+static_assert(XKB_اشارو_BUTTON_RELEASED >= 0 &&
+              XKB_اشارو_BUTTON_RELEASED < UINT32_ويڪر, "");
+static_assert(XKB_اشارو_BUTTON_PRESSED >= 0 &&
+              XKB_اشارو_BUTTON_PRESSED < UINT32_ويڪر, "");
+static_assert(XKB_LAYOUT_ٻاهريون_جو_RANGE_WRAP >= 0 &&
+              XKB_LAYOUT_ٻاهريون_جو_RANGE_WRAP < UINT32_ويڪر, "");
+static_assert(XKB_LAYOUT_ٻاهريون_جو_RANGE_CLAMP >= 0 &&
+              XKB_LAYOUT_ٻاهريون_جو_RANGE_CLAMP < UINT32_ويڪر, "");
+static_assert(XKB_LAYOUT_ٻاهريون_جو_RANGE_REDIRECT >= 0 &&
+              XKB_LAYOUT_ٻاهريون_جو_RANGE_REDIRECT < UINT32_ويڪر, "");
+static_assert(XKB_STATE_گهڻائي_CLIENT >= 0 &&
+              XKB_STATE_گهڻائي_CLIENT < UINT32_ويڪر, "");
+static_assert(XKB_STATE_گهڻائي_SERVER_QUERY >= 0 &&
+              XKB_STATE_گهڻائي_SERVER_QUERY < UINT32_ويڪر, "");
+static_assert(XKB_STATE_گهڻائي_SERVER >= 0 &&
+              XKB_STATE_گهڻائي_SERVER < UINT32_ويڪر, "");
+static_assert(XKB_CONSUMED_گهڻائي_XKB >= 0 &&
+              XKB_CONSUMED_گهڻائي_XKB < UINT32_ويڪر, "");
+static_assert(XKB_CONSUMED_گهڻائي_GTK >= 0 &&
+              XKB_CONSUMED_گهڻائي_GTK < UINT32_ويڪر, "");
+static_assert(XKB_COMPOSE_FORMAT_متن_V1 >= 0 &&
+              XKB_COMPOSE_FORMAT_متن_V1 < UINT32_ويڪر, "");
 static_assert(XKB_COMPOSE_NOTHING >= 0 &&
-              XKB_COMPOSE_NOTHING < UINT32_WIDTH, "");
+              XKB_COMPOSE_NOTHING < UINT32_ويڪر, "");
 static_assert(XKB_COMPOSE_COMPOSING >= 0 &&
-              XKB_COMPOSE_COMPOSING < UINT32_WIDTH, "");
+              XKB_COMPOSE_COMPOSING < UINT32_ويڪر, "");
 static_assert(XKB_COMPOSE_COMPOSED >= 0 &&
-              XKB_COMPOSE_COMPOSED < UINT32_WIDTH, "");
+              XKB_COMPOSE_COMPOSED < UINT32_ويڪر, "");
 static_assert(XKB_COMPOSE_CANCELLED >= 0 &&
-              XKB_COMPOSE_CANCELLED < UINT32_WIDTH, "");
+              XKB_COMPOSE_CANCELLED < UINT32_ويڪر, "");
 static_assert(XKB_COMPOSE_FEED_IGNORED >= 0 &&
-              XKB_COMPOSE_FEED_IGNORED < UINT32_WIDTH, "");
+              XKB_COMPOSE_FEED_IGNORED < UINT32_ويڪر, "");
 static_assert(XKB_COMPOSE_FEED_ACCEPTED >= 0 &&
-              XKB_COMPOSE_FEED_ACCEPTED < UINT32_WIDTH, "");
+              XKB_COMPOSE_FEED_ACCEPTED < UINT32_ويڪر, "");
 
-enum xkb_enumerations_values {
-    XKB_RMLVO_BUILDER_FLAGS_VALUES
+تعداد xkb_enumerations_قدرون {
+    XKB_RMLVO_BUILDER_FLAGS_قدرون
         = XKB_RMLVO_BUILDER_NO_FLAGS
     ,
-    XKB_KEYSYM_FLAGS_VALUES
+    XKB_KEYSYM_FLAGS_قدرون
         = XKB_KEYSYM_NO_FLAGS
         | XKB_KEYSYM_CASE_INSENSITIVE
     ,
-    XKB_CONTEXT_FLAGS_VALUES
+    XKB_CONTEXT_FLAGS_قدرون
         = XKB_CONTEXT_NO_FLAGS
         | XKB_CONTEXT_NO_DEFAULT_INCLUDES
-        | XKB_CONTEXT_NO_ENVIRONMENT_NAMES
+        | XKB_CONTEXT_NO_ENVIRONMENT_نالا
         | XKB_CONTEXT_NO_SECURE_GETENV
     ,
-    XKB_KEYMAP_COMPILE_FLAGS_VALUES
+    XKB_KEYMAP_COMPILE_FLAGS_قدرون
         = XKB_KEYMAP_COMPILE_NO_FLAGS
-        | XKB_KEYMAP_COMPILE_STRICT_MODE
+        | XKB_KEYMAP_COMPILE_STRICT_گهڻائي
     ,
-    XKB_KEYMAP_FORMAT_VALUES
-        = (1u << XKB_KEYMAP_FORMAT_TEXT_V1)
-        | (1u << XKB_KEYMAP_FORMAT_TEXT_V2)
+    XKB_KEYMAP_FORMAT_قدرون
+        = (1u << XKB_KEYMAP_FORMAT_متن_V1)
+        | (1u << XKB_KEYMAP_FORMAT_متن_V2)
     ,
-    XKB_KEYMAP_SERIALIZE_FLAGS_VALUES
+    XKB_KEYMAP_SERIALIZE_FLAGS_قدرون
         = XKB_KEYMAP_SERIALIZE_NO_FLAGS
         | XKB_KEYMAP_SERIALIZE_PRETTY
-        | XKB_KEYMAP_SERIALIZE_KEEP_UNUSED
-        | XKB_KEYMAP_SERIALIZE_STRICT_MODE
-        | XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_VALUES
+        | XKB_KEYMAP_SERIALIZE_KEEP_اڻ_استعمال_ٿيل
+        | XKB_KEYMAP_SERIALIZE_STRICT_گهڻائي
+        | XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_قدرون
         | XKB_KEYMAP_SERIALIZE_EXPLICIT_VMODS
-        | XKB_KEYMAP_SERIALIZE_EXPLICIT_KEY_VALUES
+        | XKB_KEYMAP_SERIALIZE_EXPLICIT_ڪنجي_قدرون
     ,
-    XKB_KEYMAP_KEY_ITERATOR_FLAGS_VALUES
-        = XKB_KEYMAP_KEY_ITERATOR_NO_FLAGS
-        | XKB_KEYMAP_KEY_ITERATOR_DESCENDING_ORDER
-        | XKB_KEYMAP_KEY_ITERATOR_INCLUDE_UNBOUND
+    XKB_KEYMAP_ڪنجي_ITERATOR_FLAGS_قدرون
+        = XKB_KEYMAP_ڪنجي_ITERATOR_NO_FLAGS
+        | XKB_KEYMAP_ڪنجي_ITERATOR_DESCENDING_ترتيب
+        | XKB_KEYMAP_ڪنجي_ITERATOR_INCLUDE_UNBOUND
     ,
-    XKB_KEY_DIRECTION_VALUES
-        = (1u << XKB_KEY_UP)
-        | (1u << XKB_KEY_DOWN)
-        | (1u << XKB_KEY_REPEATED)
+    XKB_ڪنجي_DIRECTION_قدرون
+        = (1u << XKB_ڪنجي_مٿي)
+        | (1u << XKB_ڪنجي_هيٺ_ڏانهن)
+        | (1u << XKB_ڪنجي_REPEATED)
     ,
-    XKB_STATE_COMPONENT_VALUES
+    XKB_STATE_COMPONENT_قدرون
         = XKB_STATE_NO_COMPONENT
         | XKB_STATE_MODS_DEPRESSED
         | XKB_STATE_MODS_LATCHED
@@ -145,134 +145,134 @@ enum xkb_enumerations_values {
         | XKB_STATE_LEDS
         | XKB_STATE_CONTROLS_EFFECTIVE
     ,
-    XKB_KEYBOARD_CONTROL_FLAGS_VALUES
+    XKB_KEYBOARD_CONTROL_FLAGS_قدرون
         = XKB_KEYBOARD_CONTROL_NO_FLAGS
-        | XKB_KEYBOARD_CONTROL_A11Y_STICKY_KEYS
-        | XKB_KEYBOARD_CONTROL_MOUSE_KEYS
+        | XKB_KEYBOARD_CONTROL_A11_Y_STICKY_ڪنجيون
+        | XKB_KEYBOARD_CONTROL_MOUSE_ڪنجيون
     ,
-    XKB_EVENT_TYPE_VALUES
+    XKB_EVENT_TYPE_قدرون
         = (1u << XKB_EVENT_TYPE_INVALID)
-        | (1u << XKB_EVENT_TYPE_FRAME)
-        | (1u << XKB_EVENT_TYPE_KEY)
+        | (1u << XKB_EVENT_TYPE_چوکٺو)
+        | (1u << XKB_EVENT_TYPE_ڪنجي)
         | (1u << XKB_EVENT_TYPE_STATE_COMPONENTS)
-        | (1u << XKB_EVENT_TYPE_POINTER_MOTION)
-        | (1u << XKB_EVENT_TYPE_POINTER_BUTTON)
+        | (1u << XKB_EVENT_TYPE_اشارو_MOTION)
+        | (1u << XKB_EVENT_TYPE_اشارو_BUTTON)
         | (1u << XKB_EVENT_TYPE_TERMINATE_DISPLAY_SERVER)
         | (1u << XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE)
     ,
-    XKB_POINTER_MOTION_FLAGS_VALUES
-        = XKB_POINTER_MOTION_NO_FLAGS
-        | XKB_POINTER_MOTION_REPEATS
-        | XKB_POINTER_MOTION_ABSOLUTE_X
-        | XKB_POINTER_MOTION_ABSOLUTE_Y
+    XKB_اشارو_MOTION_FLAGS_قدرون
+        = XKB_اشارو_MOTION_NO_FLAGS
+        | XKB_اشارو_MOTION_REPEATS
+        | XKB_اشارو_MOTION_ABSOLUTE_X
+        | XKB_اشارو_MOTION_ABSOLUTE_Y
     ,
-    XKB_POINTER_BUTTON_STATE_VALUES
-        = (1u << XKB_POINTER_BUTTON_RELEASED)
-        | (1u << XKB_POINTER_BUTTON_PRESSED)
+    XKB_اشارو_BUTTON_STATE_قدرون
+        = (1u << XKB_اشارو_BUTTON_RELEASED)
+        | (1u << XKB_اشارو_BUTTON_PRESSED)
     ,
-    XKB_EVENTS_FLAGS_VALUES
+    XKB_EVENTS_FLAGS_قدرون
         = XKB_EVENTS_NO_FLAGS
     ,
-    XKB_MACHINE_BUILDER_FLAGS_VALUES
+    XKB_MACHINE_BUILDER_FLAGS_قدرون
         = XKB_MACHINE_BUILDER_NO_FLAGS
     ,
-    XKB_MACHINE_FLAGS_VALUES
+    XKB_MACHINE_FLAGS_قدرون
         = XKB_MACHINE_NO_FLAGS
         | XKB_MACHINE_SERVER_ACTIONS
-        | XKB_MACHINE_DISABLE_LAYOUT_SWITCH_ON_MODIFIER_KEY_FIX
+        | XKB_MACHINE_DISABLE_LAYOUT_SWITCH_ON_MODIFIER_ڪنجي_FIX
         | XKB_MACHINE_UNLOCK_MODS_ON_PRESS
     ,
-    XKB_A11Y_FLAGS_VALUES
+    XKB_A11_Y_FLAGS_قدرون
         = XKB_A11Y_NO_FLAGS
-        | XKB_A11Y_STICKY_KEYS_NO_SIMULTANEOUS_KEYS
-        | XKB_A11Y_STICKY_KEYS_LATCH_TO_LOCK
-        | XKB_A11Y_LATCH_SIMULTANEOUS_KEYS
+        | XKB_A11_Y_STICKY_ڪنجيون_NO_گڏو_گڏ_ڪنجيون
+        | XKB_A11_Y_STICKY_ڪنجيون_LATCH_منزل_تالو
+        | XKB_A11_Y_LATCH_گڏو_گڏ_ڪنجيون
     ,
-    XKB_LAYOUT_OUT_OF_RANGE_POLICY_VALUES
-        = (1u << XKB_LAYOUT_OUT_OF_RANGE_WRAP)
-        | (1u << XKB_LAYOUT_OUT_OF_RANGE_CLAMP)
-        | (1u << XKB_LAYOUT_OUT_OF_RANGE_REDIRECT)
+    XKB_LAYOUT_ٻاهريون_جو_RANGE_POLICY_قدرون
+        = (1u << XKB_LAYOUT_ٻاهريون_جو_RANGE_WRAP)
+        | (1u << XKB_LAYOUT_ٻاهريون_جو_RANGE_CLAMP)
+        | (1u << XKB_LAYOUT_ٻاهريون_جو_RANGE_REDIRECT)
     ,
-    XKB_STATE_MODE_VALUES
-        = (1u << XKB_STATE_MODE_CLIENT)
-        | (1u << XKB_STATE_MODE_SERVER_QUERY)
-        | (1u << XKB_STATE_MODE_SERVER)
+    XKB_STATE_گهڻائي_قدرون
+        = (1u << XKB_STATE_گهڻائي_CLIENT)
+        | (1u << XKB_STATE_گهڻائي_SERVER_QUERY)
+        | (1u << XKB_STATE_گهڻائي_SERVER)
     ,
-    XKB_STATE_MATCH_VALUES
-        = XKB_STATE_MATCH_ANY
-        | XKB_STATE_MATCH_ALL
-        | XKB_STATE_MATCH_NON_EXCLUSIVE
+    XKB_STATE_ميلاپ_قدرون
+        = XKB_STATE_ميلاپ_ANY
+        | XKB_STATE_ميلاپ_ALL
+        | XKB_STATE_ميلاپ_NON_EXCLUSIVE
     ,
-    XKB_CONSUMED_MODE_VALUES
-        = (1u << XKB_CONSUMED_MODE_XKB)
-        | (1u << XKB_CONSUMED_MODE_GTK)
+    XKB_CONSUMED_گهڻائي_قدرون
+        = (1u << XKB_CONSUMED_گهڻائي_XKB)
+        | (1u << XKB_CONSUMED_گهڻائي_GTK)
     ,
-    XKB_COMPOSE_COMPILE_FLAGS_VALUES
+    XKB_COMPOSE_COMPILE_FLAGS_قدرون
         = XKB_COMPOSE_COMPILE_NO_FLAGS
     ,
-    XKB_COMPOSE_FORMAT_VALUES
-        = (1u << XKB_COMPOSE_FORMAT_TEXT_V1)
+    XKB_COMPOSE_FORMAT_قدرون
+        = (1u << XKB_COMPOSE_FORMAT_متن_V1)
     ,
-    XKB_COMPOSE_STATE_FLAGS_VALUES
+    XKB_COMPOSE_STATE_FLAGS_قدرون
         = XKB_COMPOSE_STATE_NO_FLAGS
     ,
-    XKB_COMPOSE_STATUS_VALUES
+    XKB_COMPOSE_حالت_قدرون
         = (1u << XKB_COMPOSE_NOTHING)
         | (1u << XKB_COMPOSE_COMPOSING)
         | (1u << XKB_COMPOSE_COMPOSED)
         | (1u << XKB_COMPOSE_CANCELLED)
     ,
-    XKB_COMPOSE_FEED_RESULT_VALUES
+    XKB_COMPOSE_FEED_نتيجو_قدرون
         = (1u << XKB_COMPOSE_FEED_IGNORED)
         | (1u << XKB_COMPOSE_FEED_ACCEPTED)
     ,
-    ENUM_LOWEST_VALUE = XKB_ERROR_INVALID,
-    ENUM_LOWEST_FLAG_VALUE = XKB_RMLVO_BUILDER_NO_FLAGS,
-    ENUM_HIGHEST_VALUE = XKB_STATE_MATCH_NON_EXCLUSIVE,
-    ENUM_HIGHEST_FLAG_VALUE = XKB_STATE_MATCH_NON_EXCLUSIVE,
+    ENUM_سڀ_کان_هيٺ_قدر = XKB_ERROR_INVALID,
+    ENUM_سڀ_کان_هيٺ_FLAG_قدر = XKB_RMLVO_BUILDER_NO_FLAGS,
+    ENUM_HIGHEST_قدر = XKB_STATE_ميلاپ_NON_EXCLUSIVE,
+    ENUM_HIGHEST_FLAG_قدر = XKB_STATE_ميلاپ_NON_EXCLUSIVE,
 };
 
 /*
  * Explicit and implict values of enumerations
  */
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_rmlvo_builder_flags_values[] = {
+#جيڪڏهن_وصف_ٿيل ENABLE_ذاتي_APIS
+ساكن ثابت uint32_t xkb_rmlvo_builder_flags_قدرون[] = {
     XKB_RMLVO_BUILDER_NO_FLAGS,
 };
-#endif
+#جيڪڏهن_پورو
 
-enum xkb_rmlvo_builder_flags_bounds {
+تعداد xkb_rmlvo_builder_flags_bounds {
     _XKB_RMLVO_BUILDER_FLAGS_MIN = XKB_RMLVO_BUILDER_NO_FLAGS,
     _XKB_RMLVO_BUILDER_FLAGS_MAX = XKB_RMLVO_BUILDER_NO_FLAGS,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_keysym_flags_values[] = {
+#جيڪڏهن_وصف_ٿيل ENABLE_ذاتي_APIS
+ساكن ثابت uint32_t xkb_keysym_flags_قدرون[] = {
     XKB_KEYSYM_NO_FLAGS,
     XKB_KEYSYM_CASE_INSENSITIVE,
 };
-#endif
+#جيڪڏهن_پورو
 
-enum xkb_keysym_flags_bounds {
+تعداد xkb_keysym_flags_bounds {
     _XKB_KEYSYM_FLAGS_MIN = XKB_KEYSYM_NO_FLAGS,
     _XKB_KEYSYM_FLAGS_MAX = XKB_KEYSYM_CASE_INSENSITIVE,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_context_flags_values[] = {
+#جيڪڏهن_وصف_ٿيل ENABLE_ذاتي_APIS
+ساكن ثابت uint32_t xkb_context_flags_قدرون[] = {
     XKB_CONTEXT_NO_FLAGS,
     XKB_CONTEXT_NO_DEFAULT_INCLUDES,
-    XKB_CONTEXT_NO_ENVIRONMENT_NAMES,
+    XKB_CONTEXT_NO_ENVIRONMENT_نالا,
     XKB_CONTEXT_NO_SECURE_GETENV,
 };
-#endif
+#جيڪڏهن_پورو
 
-enum xkb_context_flags_bounds {
+تعداد xkb_context_flags_bounds {
     _XKB_CONTEXT_FLAGS_MIN = XKB_CONTEXT_NO_FLAGS,
     _XKB_CONTEXT_FLAGS_MAX = XKB_CONTEXT_NO_SECURE_GETENV,
 };
-static const uint32_t xkb_log_level_values[] = {
+ساكن ثابت uint32_t xkb_log_level_قدرون[] = {
     XKB_LOG_LEVEL_CRITICAL,
     XKB_LOG_LEVEL_ERROR,
     XKB_LOG_LEVEL_WARNING,
@@ -280,83 +280,83 @@ static const uint32_t xkb_log_level_values[] = {
     XKB_LOG_LEVEL_DEBUG,
 };
 
-enum xkb_log_level_bounds {
+تعداد xkb_log_level_bounds {
     _XKB_LOG_LEVEL_MIN = XKB_LOG_LEVEL_CRITICAL,
     _XKB_LOG_LEVEL_MAX = XKB_LOG_LEVEL_DEBUG,
-    _XKB_LOG_LEVEL_NUM = 5,
+    XKB_LOG_LEVEL_انگ = 5,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_keymap_compile_flags_values[] = {
+#جيڪڏهن_وصف_ٿيل ENABLE_ذاتي_APIS
+ساكن ثابت uint32_t xkb_keymap_compile_flags_قدرون[] = {
     XKB_KEYMAP_COMPILE_NO_FLAGS,
-    XKB_KEYMAP_COMPILE_STRICT_MODE,
+    XKB_KEYMAP_COMPILE_STRICT_گهڻائي,
 };
-#endif
+#جيڪڏهن_پورو
 
-enum xkb_keymap_compile_flags_bounds {
+تعداد xkb_keymap_compile_flags_bounds {
     _XKB_KEYMAP_COMPILE_FLAGS_MIN = XKB_KEYMAP_COMPILE_NO_FLAGS,
-    _XKB_KEYMAP_COMPILE_FLAGS_MAX = XKB_KEYMAP_COMPILE_STRICT_MODE,
+    _XKB_KEYMAP_COMPILE_FLAGS_MAX = XKB_KEYMAP_COMPILE_STRICT_گهڻائي,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_keymap_format_values[] = {
-    XKB_KEYMAP_FORMAT_TEXT_V1,
-    XKB_KEYMAP_FORMAT_TEXT_V2,
+#جيڪڏهن_وصف_ٿيل ENABLE_ذاتي_APIS
+ساكن ثابت uint32_t xkb_keymap_format_قدرون[] = {
+    XKB_KEYMAP_FORMAT_متن_V1,
+    XKB_KEYMAP_FORMAT_متن_V2,
 };
-#endif
+#جيڪڏهن_پورو
 
-enum xkb_keymap_format_bounds {
-    _XKB_KEYMAP_FORMAT_MIN = XKB_KEYMAP_FORMAT_TEXT_V1,
-    _XKB_KEYMAP_FORMAT_MAX = XKB_KEYMAP_FORMAT_TEXT_V2,
-    _XKB_KEYMAP_FORMAT_NUM = 2,
+تعداد xkb_keymap_format_bounds {
+    _XKB_KEYMAP_FORMAT_MIN = XKB_KEYMAP_FORMAT_متن_V1,
+    _XKB_KEYMAP_FORMAT_MAX = XKB_KEYMAP_FORMAT_متن_V2,
+    XKB_KEYMAP_FORMAT_انگ = 2,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_keymap_serialize_flags_values[] = {
+#جيڪڏهن_وصف_ٿيل ENABLE_ذاتي_APIS
+ساكن ثابت uint32_t xkb_keymap_serialize_flags_قدرون[] = {
     XKB_KEYMAP_SERIALIZE_NO_FLAGS,
     XKB_KEYMAP_SERIALIZE_PRETTY,
-    XKB_KEYMAP_SERIALIZE_KEEP_UNUSED,
-    XKB_KEYMAP_SERIALIZE_STRICT_MODE,
-    XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_VALUES,
+    XKB_KEYMAP_SERIALIZE_KEEP_اڻ_استعمال_ٿيل,
+    XKB_KEYMAP_SERIALIZE_STRICT_گهڻائي,
+    XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_قدرون,
     XKB_KEYMAP_SERIALIZE_EXPLICIT_VMODS,
-    XKB_KEYMAP_SERIALIZE_EXPLICIT_KEY_VALUES,
+    XKB_KEYMAP_SERIALIZE_EXPLICIT_ڪنجي_قدرون,
 };
-#endif
+#جيڪڏهن_پورو
 
-enum xkb_keymap_serialize_flags_bounds {
+تعداد xkb_keymap_serialize_flags_bounds {
     _XKB_KEYMAP_SERIALIZE_FLAGS_MIN = XKB_KEYMAP_SERIALIZE_NO_FLAGS,
-    _XKB_KEYMAP_SERIALIZE_FLAGS_MAX = XKB_KEYMAP_SERIALIZE_EXPLICIT_KEY_VALUES,
+    _XKB_KEYMAP_SERIALIZE_FLAGS_MAX = XKB_KEYMAP_SERIALIZE_EXPLICIT_ڪنجي_قدرون,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_keymap_key_iterator_flags_values[] = {
-    XKB_KEYMAP_KEY_ITERATOR_NO_FLAGS,
-    XKB_KEYMAP_KEY_ITERATOR_DESCENDING_ORDER,
-    XKB_KEYMAP_KEY_ITERATOR_INCLUDE_UNBOUND,
+#جيڪڏهن_وصف_ٿيل ENABLE_ذاتي_APIS
+ساكن ثابت uint32_t xkb_keymap_ڪنجي_iterator_flags_قدرون[] = {
+    XKB_KEYMAP_ڪنجي_ITERATOR_NO_FLAGS,
+    XKB_KEYMAP_ڪنجي_ITERATOR_DESCENDING_ترتيب,
+    XKB_KEYMAP_ڪنجي_ITERATOR_INCLUDE_UNBOUND,
 };
-#endif
+#جيڪڏهن_پورو
 
-enum xkb_keymap_key_iterator_flags_bounds {
-    _XKB_KEYMAP_KEY_ITERATOR_FLAGS_MIN = XKB_KEYMAP_KEY_ITERATOR_NO_FLAGS,
-    _XKB_KEYMAP_KEY_ITERATOR_FLAGS_MAX = XKB_KEYMAP_KEY_ITERATOR_INCLUDE_UNBOUND,
-};
-
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_key_direction_values[] = {
-    XKB_KEY_UP,
-    XKB_KEY_DOWN,
-    XKB_KEY_REPEATED,
-};
-#endif
-
-enum xkb_key_direction_bounds {
-    _XKB_KEY_DIRECTION_MIN = XKB_KEY_UP,
-    _XKB_KEY_DIRECTION_MAX = XKB_KEY_REPEATED,
-    _XKB_KEY_DIRECTION_NUM = 3,
+تعداد xkb_keymap_ڪنجي_iterator_flags_bounds {
+    XKB_KEYMAP_ڪنجي_ITERATOR_FLAGS_MIN = XKB_KEYMAP_ڪنجي_ITERATOR_NO_FLAGS,
+    XKB_KEYMAP_ڪنجي_ITERATOR_FLAGS_MAX = XKB_KEYMAP_ڪنجي_ITERATOR_INCLUDE_UNBOUND,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_state_component_values[] = {
+#جيڪڏهن_وصف_ٿيل ENABLE_ذاتي_APIS
+ساكن ثابت uint32_t xkb_ڪنجي_direction_قدرون[] = {
+    XKB_ڪنجي_مٿي,
+    XKB_ڪنجي_هيٺ_ڏانهن,
+    XKB_ڪنجي_REPEATED,
+};
+#جيڪڏهن_پورو
+
+تعداد xkb_ڪنجي_direction_bounds {
+    XKB_ڪنجي_DIRECTION_MIN = XKB_ڪنجي_مٿي,
+    XKB_ڪنجي_DIRECTION_MAX = XKB_ڪنجي_REPEATED,
+    XKB_ڪنجي_DIRECTION_انگ = 3,
+};
+
+#جيڪڏهن_وصف_ٿيل ENABLE_ذاتي_APIS
+ساكن ثابت uint32_t xkb_state_component_قدرون[] = {
     XKB_STATE_NO_COMPONENT,
     XKB_STATE_MODS_DEPRESSED,
     XKB_STATE_MODS_LATCHED,
@@ -369,253 +369,253 @@ static const uint32_t xkb_state_component_values[] = {
     XKB_STATE_LEDS,
     XKB_STATE_CONTROLS_EFFECTIVE,
 };
-#endif
+#جيڪڏهن_پورو
 
-enum xkb_state_component_bounds {
+تعداد xkb_state_component_bounds {
     _XKB_STATE_COMPONENT_MIN = 0 /* implicit minimum */,
     _XKB_STATE_COMPONENT_MAX = XKB_STATE_CONTROLS_EFFECTIVE,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_keyboard_control_flags_values[] = {
+#جيڪڏهن_وصف_ٿيل ENABLE_ذاتي_APIS
+ساكن ثابت uint32_t xkb_keyboard_control_flags_قدرون[] = {
     XKB_KEYBOARD_CONTROL_NO_FLAGS,
-    XKB_KEYBOARD_CONTROL_A11Y_STICKY_KEYS,
-    XKB_KEYBOARD_CONTROL_MOUSE_KEYS,
+    XKB_KEYBOARD_CONTROL_A11_Y_STICKY_ڪنجيون,
+    XKB_KEYBOARD_CONTROL_MOUSE_ڪنجيون,
 };
-#endif
+#جيڪڏهن_پورو
 
-enum xkb_keyboard_control_flags_bounds {
+تعداد xkb_keyboard_control_flags_bounds {
     _XKB_KEYBOARD_CONTROL_FLAGS_MIN = XKB_KEYBOARD_CONTROL_NO_FLAGS,
-    _XKB_KEYBOARD_CONTROL_FLAGS_MAX = XKB_KEYBOARD_CONTROL_MOUSE_KEYS,
+    _XKB_KEYBOARD_CONTROL_FLAGS_MAX = XKB_KEYBOARD_CONTROL_MOUSE_ڪنجيون,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_event_type_values[] = {
+#جيڪڏهن_وصف_ٿيل ENABLE_ذاتي_APIS
+ساكن ثابت uint32_t xkb_event_type_قدرون[] = {
     XKB_EVENT_TYPE_INVALID,
-    XKB_EVENT_TYPE_FRAME,
-    XKB_EVENT_TYPE_KEY,
+    XKB_EVENT_TYPE_چوکٺو,
+    XKB_EVENT_TYPE_ڪنجي,
     XKB_EVENT_TYPE_STATE_COMPONENTS,
-    XKB_EVENT_TYPE_POINTER_MOTION,
-    XKB_EVENT_TYPE_POINTER_BUTTON,
+    XKB_EVENT_TYPE_اشارو_MOTION,
+    XKB_EVENT_TYPE_اشارو_BUTTON,
     XKB_EVENT_TYPE_TERMINATE_DISPLAY_SERVER,
     XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE,
 };
-#endif
+#جيڪڏهن_پورو
 
-enum xkb_event_type_bounds {
+تعداد xkb_event_type_bounds {
     _XKB_EVENT_TYPE_MIN = XKB_EVENT_TYPE_INVALID,
     _XKB_EVENT_TYPE_MAX = XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE,
-    _XKB_EVENT_TYPE_NUM = 8,
+    XKB_EVENT_TYPE_انگ = 8,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_pointer_motion_flags_values[] = {
-    XKB_POINTER_MOTION_NO_FLAGS,
-    XKB_POINTER_MOTION_REPEATS,
-    XKB_POINTER_MOTION_ABSOLUTE_X,
-    XKB_POINTER_MOTION_ABSOLUTE_Y,
+#جيڪڏهن_وصف_ٿيل ENABLE_ذاتي_APIS
+ساكن ثابت uint32_t xkb_اشارو_motion_flags_قدرون[] = {
+    XKB_اشارو_MOTION_NO_FLAGS,
+    XKB_اشارو_MOTION_REPEATS,
+    XKB_اشارو_MOTION_ABSOLUTE_X,
+    XKB_اشارو_MOTION_ABSOLUTE_Y,
 };
-#endif
+#جيڪڏهن_پورو
 
-enum xkb_pointer_motion_flags_bounds {
-    _XKB_POINTER_MOTION_FLAGS_MIN = XKB_POINTER_MOTION_NO_FLAGS,
-    _XKB_POINTER_MOTION_FLAGS_MAX = XKB_POINTER_MOTION_ABSOLUTE_Y,
-};
-
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_pointer_button_state_values[] = {
-    XKB_POINTER_BUTTON_RELEASED,
-    XKB_POINTER_BUTTON_PRESSED,
-};
-#endif
-
-enum xkb_pointer_button_state_bounds {
-    _XKB_POINTER_BUTTON_STATE_MIN = XKB_POINTER_BUTTON_RELEASED,
-    _XKB_POINTER_BUTTON_STATE_MAX = XKB_POINTER_BUTTON_PRESSED,
-    _XKB_POINTER_BUTTON_STATE_NUM = 2,
+تعداد xkb_اشارو_motion_flags_bounds {
+    XKB_اشارو_MOTION_FLAGS_MIN = XKB_اشارو_MOTION_NO_FLAGS,
+    XKB_اشارو_MOTION_FLAGS_MAX = XKB_اشارو_MOTION_ABSOLUTE_Y,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_events_flags_values[] = {
+#جيڪڏهن_وصف_ٿيل ENABLE_ذاتي_APIS
+ساكن ثابت uint32_t xkb_اشارو_button_state_قدرون[] = {
+    XKB_اشارو_BUTTON_RELEASED,
+    XKB_اشارو_BUTTON_PRESSED,
+};
+#جيڪڏهن_پورو
+
+تعداد xkb_اشارو_button_state_bounds {
+    XKB_اشارو_BUTTON_STATE_MIN = XKB_اشارو_BUTTON_RELEASED,
+    XKB_اشارو_BUTTON_STATE_MAX = XKB_اشارو_BUTTON_PRESSED,
+    XKB_اشارو_BUTTON_STATE_انگ = 2,
+};
+
+#جيڪڏهن_وصف_ٿيل ENABLE_ذاتي_APIS
+ساكن ثابت uint32_t xkb_events_flags_قدرون[] = {
     XKB_EVENTS_NO_FLAGS,
 };
-#endif
+#جيڪڏهن_پورو
 
-enum xkb_events_flags_bounds {
+تعداد xkb_events_flags_bounds {
     _XKB_EVENTS_FLAGS_MIN = XKB_EVENTS_NO_FLAGS,
     _XKB_EVENTS_FLAGS_MAX = XKB_EVENTS_NO_FLAGS,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_machine_builder_flags_values[] = {
+#جيڪڏهن_وصف_ٿيل ENABLE_ذاتي_APIS
+ساكن ثابت uint32_t xkb_machine_builder_flags_قدرون[] = {
     XKB_MACHINE_BUILDER_NO_FLAGS,
 };
-#endif
+#جيڪڏهن_پورو
 
-enum xkb_machine_builder_flags_bounds {
+تعداد xkb_machine_builder_flags_bounds {
     _XKB_MACHINE_BUILDER_FLAGS_MIN = XKB_MACHINE_BUILDER_NO_FLAGS,
     _XKB_MACHINE_BUILDER_FLAGS_MAX = XKB_MACHINE_BUILDER_NO_FLAGS,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_machine_flags_values[] = {
+#جيڪڏهن_وصف_ٿيل ENABLE_ذاتي_APIS
+ساكن ثابت uint32_t xkb_machine_flags_قدرون[] = {
     XKB_MACHINE_NO_FLAGS,
     XKB_MACHINE_SERVER_ACTIONS,
-    XKB_MACHINE_DISABLE_LAYOUT_SWITCH_ON_MODIFIER_KEY_FIX,
+    XKB_MACHINE_DISABLE_LAYOUT_SWITCH_ON_MODIFIER_ڪنجي_FIX,
     XKB_MACHINE_UNLOCK_MODS_ON_PRESS,
 };
-#endif
+#جيڪڏهن_پورو
 
-enum xkb_machine_flags_bounds {
+تعداد xkb_machine_flags_bounds {
     _XKB_MACHINE_FLAGS_MIN = XKB_MACHINE_NO_FLAGS,
     _XKB_MACHINE_FLAGS_MAX = XKB_MACHINE_UNLOCK_MODS_ON_PRESS,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_a11y_flags_values[] = {
+#جيڪڏهن_وصف_ٿيل ENABLE_ذاتي_APIS
+ساكن ثابت uint32_t xkb_a11y_flags_قدرون[] = {
     XKB_A11Y_NO_FLAGS,
-    XKB_A11Y_STICKY_KEYS_NO_SIMULTANEOUS_KEYS,
-    XKB_A11Y_STICKY_KEYS_LATCH_TO_LOCK,
-    XKB_A11Y_LATCH_SIMULTANEOUS_KEYS,
+    XKB_A11_Y_STICKY_ڪنجيون_NO_گڏو_گڏ_ڪنجيون,
+    XKB_A11_Y_STICKY_ڪنجيون_LATCH_منزل_تالو,
+    XKB_A11_Y_LATCH_گڏو_گڏ_ڪنجيون,
 };
-#endif
+#جيڪڏهن_پورو
 
-enum xkb_a11y_flags_bounds {
+تعداد xkb_a11y_flags_bounds {
     _XKB_A11Y_FLAGS_MIN = XKB_A11Y_NO_FLAGS,
-    _XKB_A11Y_FLAGS_MAX = XKB_A11Y_LATCH_SIMULTANEOUS_KEYS,
+    _XKB_A11Y_FLAGS_MAX = XKB_A11_Y_LATCH_گڏو_گڏ_ڪنجيون,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_layout_out_of_range_policy_values[] = {
-    XKB_LAYOUT_OUT_OF_RANGE_WRAP,
-    XKB_LAYOUT_OUT_OF_RANGE_CLAMP,
-    XKB_LAYOUT_OUT_OF_RANGE_REDIRECT,
+#جيڪڏهن_وصف_ٿيل ENABLE_ذاتي_APIS
+ساكن ثابت uint32_t xkb_layout_ٻاهريون_جو_range_policy_قدرون[] = {
+    XKB_LAYOUT_ٻاهريون_جو_RANGE_WRAP,
+    XKB_LAYOUT_ٻاهريون_جو_RANGE_CLAMP,
+    XKB_LAYOUT_ٻاهريون_جو_RANGE_REDIRECT,
 };
-#endif
+#جيڪڏهن_پورو
 
-enum xkb_layout_out_of_range_policy_bounds {
-    _XKB_LAYOUT_OUT_OF_RANGE_POLICY_MIN = XKB_LAYOUT_OUT_OF_RANGE_WRAP,
-    _XKB_LAYOUT_OUT_OF_RANGE_POLICY_MAX = XKB_LAYOUT_OUT_OF_RANGE_REDIRECT,
-    _XKB_LAYOUT_OUT_OF_RANGE_POLICY_NUM = 3,
-};
-
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_state_mode_values[] = {
-    XKB_STATE_MODE_CLIENT,
-    XKB_STATE_MODE_SERVER_QUERY,
-    XKB_STATE_MODE_SERVER,
-};
-#endif
-
-enum xkb_state_mode_bounds {
-    _XKB_STATE_MODE_MIN = XKB_STATE_MODE_CLIENT,
-    _XKB_STATE_MODE_MAX = XKB_STATE_MODE_SERVER,
-    _XKB_STATE_MODE_NUM = 3,
+تعداد xkb_layout_ٻاهريون_جو_range_policy_bounds {
+    XKB_LAYOUT_ٻاهريون_جو_RANGE_POLICY_MIN = XKB_LAYOUT_ٻاهريون_جو_RANGE_WRAP,
+    XKB_LAYOUT_ٻاهريون_جو_RANGE_POLICY_MAX = XKB_LAYOUT_ٻاهريون_جو_RANGE_REDIRECT,
+    XKB_LAYOUT_ٻاهريون_جو_RANGE_POLICY_انگ = 3,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_state_match_values[] = {
-    XKB_STATE_MATCH_ANY,
-    XKB_STATE_MATCH_ALL,
-    XKB_STATE_MATCH_NON_EXCLUSIVE,
+#جيڪڏهن_وصف_ٿيل ENABLE_ذاتي_APIS
+ساكن ثابت uint32_t xkb_state_گهڻائي_قدرون[] = {
+    XKB_STATE_گهڻائي_CLIENT,
+    XKB_STATE_گهڻائي_SERVER_QUERY,
+    XKB_STATE_گهڻائي_SERVER,
 };
-#endif
+#جيڪڏهن_پورو
 
-enum xkb_state_match_bounds {
-    _XKB_STATE_MATCH_MIN = 0 /* implicit minimum */,
-    _XKB_STATE_MATCH_MAX = XKB_STATE_MATCH_NON_EXCLUSIVE,
-};
-
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_consumed_mode_values[] = {
-    XKB_CONSUMED_MODE_XKB,
-    XKB_CONSUMED_MODE_GTK,
-};
-#endif
-
-enum xkb_consumed_mode_bounds {
-    _XKB_CONSUMED_MODE_MIN = XKB_CONSUMED_MODE_XKB,
-    _XKB_CONSUMED_MODE_MAX = XKB_CONSUMED_MODE_GTK,
-    _XKB_CONSUMED_MODE_NUM = 2,
+تعداد xkb_state_گهڻائي_bounds {
+    XKB_STATE_گهڻائي_MIN = XKB_STATE_گهڻائي_CLIENT,
+    XKB_STATE_گهڻائي_MAX = XKB_STATE_گهڻائي_SERVER,
+    XKB_STATE_گهڻائي_انگ = 3,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_compose_compile_flags_values[] = {
+#جيڪڏهن_وصف_ٿيل ENABLE_ذاتي_APIS
+ساكن ثابت uint32_t xkb_state_ميلاپ_قدرون[] = {
+    XKB_STATE_ميلاپ_ANY,
+    XKB_STATE_ميلاپ_ALL,
+    XKB_STATE_ميلاپ_NON_EXCLUSIVE,
+};
+#جيڪڏهن_پورو
+
+تعداد xkb_state_ميلاپ_bounds {
+    XKB_STATE_ميلاپ_MIN = 0 /* implicit minimum */,
+    XKB_STATE_ميلاپ_MAX = XKB_STATE_ميلاپ_NON_EXCLUSIVE,
+};
+
+#جيڪڏهن_وصف_ٿيل ENABLE_ذاتي_APIS
+ساكن ثابت uint32_t xkb_consumed_گهڻائي_قدرون[] = {
+    XKB_CONSUMED_گهڻائي_XKB,
+    XKB_CONSUMED_گهڻائي_GTK,
+};
+#جيڪڏهن_پورو
+
+تعداد xkb_consumed_گهڻائي_bounds {
+    XKB_CONSUMED_گهڻائي_MIN = XKB_CONSUMED_گهڻائي_XKB,
+    XKB_CONSUMED_گهڻائي_MAX = XKB_CONSUMED_گهڻائي_GTK,
+    XKB_CONSUMED_گهڻائي_انگ = 2,
+};
+
+#جيڪڏهن_وصف_ٿيل ENABLE_ذاتي_APIS
+ساكن ثابت uint32_t xkb_compose_compile_flags_قدرون[] = {
     XKB_COMPOSE_COMPILE_NO_FLAGS,
 };
-#endif
+#جيڪڏهن_پورو
 
-enum xkb_compose_compile_flags_bounds {
+تعداد xkb_compose_compile_flags_bounds {
     _XKB_COMPOSE_COMPILE_FLAGS_MIN = XKB_COMPOSE_COMPILE_NO_FLAGS,
     _XKB_COMPOSE_COMPILE_FLAGS_MAX = XKB_COMPOSE_COMPILE_NO_FLAGS,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_compose_format_values[] = {
-    XKB_COMPOSE_FORMAT_TEXT_V1,
+#جيڪڏهن_وصف_ٿيل ENABLE_ذاتي_APIS
+ساكن ثابت uint32_t xkb_compose_format_قدرون[] = {
+    XKB_COMPOSE_FORMAT_متن_V1,
 };
-#endif
+#جيڪڏهن_پورو
 
-enum xkb_compose_format_bounds {
-    _XKB_COMPOSE_FORMAT_MIN = XKB_COMPOSE_FORMAT_TEXT_V1,
-    _XKB_COMPOSE_FORMAT_MAX = XKB_COMPOSE_FORMAT_TEXT_V1,
-    _XKB_COMPOSE_FORMAT_NUM = 1,
+تعداد xkb_compose_format_bounds {
+    _XKB_COMPOSE_FORMAT_MIN = XKB_COMPOSE_FORMAT_متن_V1,
+    _XKB_COMPOSE_FORMAT_MAX = XKB_COMPOSE_FORMAT_متن_V1,
+    XKB_COMPOSE_FORMAT_انگ = 1,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_compose_state_flags_values[] = {
+#جيڪڏهن_وصف_ٿيل ENABLE_ذاتي_APIS
+ساكن ثابت uint32_t xkb_compose_state_flags_قدرون[] = {
     XKB_COMPOSE_STATE_NO_FLAGS,
 };
-#endif
+#جيڪڏهن_پورو
 
-enum xkb_compose_state_flags_bounds {
+تعداد xkb_compose_state_flags_bounds {
     _XKB_COMPOSE_STATE_FLAGS_MIN = XKB_COMPOSE_STATE_NO_FLAGS,
     _XKB_COMPOSE_STATE_FLAGS_MAX = XKB_COMPOSE_STATE_NO_FLAGS,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_compose_status_values[] = {
+#جيڪڏهن_وصف_ٿيل ENABLE_ذاتي_APIS
+ساكن ثابت uint32_t xkb_compose_حالت_قدرون[] = {
     XKB_COMPOSE_NOTHING,
     XKB_COMPOSE_COMPOSING,
     XKB_COMPOSE_COMPOSED,
     XKB_COMPOSE_CANCELLED,
 };
-#endif
+#جيڪڏهن_پورو
 
-enum xkb_compose_status_bounds {
-    _XKB_COMPOSE_STATUS_MIN = XKB_COMPOSE_NOTHING,
-    _XKB_COMPOSE_STATUS_MAX = XKB_COMPOSE_CANCELLED,
-    _XKB_COMPOSE_STATUS_NUM = 4,
+تعداد xkb_compose_حالت_bounds {
+    XKB_COMPOSE_حالت_MIN = XKB_COMPOSE_NOTHING,
+    XKB_COMPOSE_حالت_MAX = XKB_COMPOSE_CANCELLED,
+    XKB_COMPOSE_حالت_انگ = 4,
 };
 
-#ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_compose_feed_result_values[] = {
+#جيڪڏهن_وصف_ٿيل ENABLE_ذاتي_APIS
+ساكن ثابت uint32_t xkb_compose_feed_نتيجو_قدرون[] = {
     XKB_COMPOSE_FEED_IGNORED,
     XKB_COMPOSE_FEED_ACCEPTED,
 };
-#endif
+#جيڪڏهن_پورو
 
-enum xkb_compose_feed_result_bounds {
-    _XKB_COMPOSE_FEED_RESULT_MIN = XKB_COMPOSE_FEED_IGNORED,
-    _XKB_COMPOSE_FEED_RESULT_MAX = XKB_COMPOSE_FEED_ACCEPTED,
-    _XKB_COMPOSE_FEED_RESULT_NUM = 2,
+تعداد xkb_compose_feed_نتيجو_bounds {
+    XKB_COMPOSE_FEED_نتيجو_MIN = XKB_COMPOSE_FEED_IGNORED,
+    XKB_COMPOSE_FEED_نتيجو_MAX = XKB_COMPOSE_FEED_ACCEPTED,
+    XKB_COMPOSE_FEED_نتيجو_انگ = 2,
 };
-static const uint32_t xkb_status_values[] = {
+ساكن ثابت uint32_t xkb_حالت_قدرون[] = {
     (uint32_t)XKB_ERROR_INVALID,
     XKB_SUCCESS,
-    XKB_ERROR_UNSUPPORTED_MODIFIER_MASK,
-    XKB_ERROR_UNSUPPORTED_STATE_MODE,
+    XKB_ERROR_UNSUPPORTED_MODIFIER_نقاب,
+    XKB_ERROR_UNSUPPORTED_STATE_گهڻائي,
     XKB_ERROR_EVENT_TYPE_MISMATCH,
-    XKB_ERROR_UNSUPPORTED_KEY_ITERATOR_FLAGS,
-    XKB_ERROR_UNSUPPORTED_LAYOUT_OUT_OF_RANGE_POLICY,
-    XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX,
+    XKB_ERROR_UNSUPPORTED_ڪنجي_ITERATOR_FLAGS,
+    XKB_ERROR_UNSUPPORTED_LAYOUT_ٻاهريون_جو_RANGE_POLICY,
+    XKB_ERROR_UNSUPPORTED_LAYOUT_اشاريو,
     XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT,
-    XKB_ERROR_LAYOUT_COUNT_LIMIT_EXCEEDED,
+    XKB_ERROR_LAYOUT_ڳڻپ_حد_بندي_EXCEEDED,
     XKB_ERROR_UNSUPPORTED_A11Y_FLAGS,
-    XKB_ERROR_UNEXPECTED_STATE_MODE,
-    XKB_ERROR_ABI_INVALID_STRUCT_SIZE,
+    XKB_ERROR_UNEXPECTED_STATE_گهڻائي,
+    XKB_ERROR_ABI_INVALID_STRUCT_سائيز,
     XKB_ERROR_INVALID_KEYCODE,
-    XKB_ERROR_ALLOCATION_FAILURE,
+    XKB_ERROR_ورهاست_FAILURE,
     XKB_ERROR_UNSUPPORTED_EVENTS_FLAGS,
     XKB_ERROR_UNSUPPORTED_MACHINE_FLAGS,
     XKB_ERROR_UNSUPPORTED_KEYMAP_SERIALIZATION_FLAGS,
@@ -624,14 +624,14 @@ static const uint32_t xkb_status_values[] = {
     XKB_ERROR_ABI_BACKWARD_COMPAT,
 };
 
-enum xkb_status_bounds {
-    _XKB_STATUS_MIN = XKB_ERROR_INVALID,
-    _XKB_STATUS_MAX = XKB_ERROR_ABI_BACKWARD_COMPAT,
-    _XKB_STATUS_NUM = 21,
+تعداد xkb_حالت_bounds {
+    XKB_حالت_MIN = XKB_ERROR_INVALID,
+    XKB_حالت_MAX = XKB_ERROR_ABI_BACKWARD_COMPAT,
+    XKB_حالت_انگ = 21,
 };
-static const uint32_t xkb_feature_values[] = {
+ساكن ثابت uint32_t xkb_feature_قدرون[] = {
     XKB_FEATURE_ENUM_FEATURE,
-    XKB_FEATURE_ENUM_STATUS,
+    XKB_FEATURE_ENUM_حالت,
     XKB_FEATURE_ENUM_CONTEXT_FLAGS,
     XKB_FEATURE_ENUM_LOG_LEVEL,
     XKB_FEATURE_ENUM_KEYSYM_FLAGS,
@@ -639,30 +639,30 @@ static const uint32_t xkb_feature_values[] = {
     XKB_FEATURE_ENUM_KEYMAP_FORMAT,
     XKB_FEATURE_ENUM_KEYMAP_COMPILE_FLAGS,
     XKB_FEATURE_ENUM_KEYMAP_SERIALIZE_FLAGS,
-    XKB_FEATURE_ENUM_KEYMAP_KEY_ITERATOR_FLAGS,
+    XKB_FEATURE_ENUM_KEYMAP_ڪنجي_ITERATOR_FLAGS,
     XKB_FEATURE_ENUM_STATE_COMPONENT,
-    XKB_FEATURE_ENUM_LAYOUT_OUT_OF_RANGE_POLICY,
+    XKB_FEATURE_ENUM_LAYOUT_ٻاهريون_جو_RANGE_POLICY,
     XKB_FEATURE_ENUM_A11Y_FLAGS,
     XKB_FEATURE_ENUM_KEYBOARD_CONTROL_FLAGS,
-    XKB_FEATURE_ENUM_STATE_MODE,
-    XKB_FEATURE_ENUM_STATE_MATCH,
-    XKB_FEATURE_ENUM_CONSUMED_MODE,
+    XKB_FEATURE_ENUM_STATE_گهڻائي,
+    XKB_FEATURE_ENUM_STATE_ميلاپ,
+    XKB_FEATURE_ENUM_CONSUMED_گهڻائي,
     XKB_FEATURE_ENUM_MACHINE_BUILDER_FLAGS,
     XKB_FEATURE_ENUM_MACHINE_FLAGS,
     XKB_FEATURE_ENUM_EVENT_TYPE,
-    XKB_FEATURE_ENUM_KEY_DIRECTION,
-    XKB_FEATURE_ENUM_POINTER_MOTION_FLAGS,
-    XKB_FEATURE_ENUM_POINTER_BUTTON_STATE,
+    XKB_FEATURE_ENUM_ڪنجي_DIRECTION,
+    XKB_FEATURE_ENUM_اشارو_MOTION_FLAGS,
+    XKB_FEATURE_ENUM_اشارو_BUTTON_STATE,
     XKB_FEATURE_ENUM_EVENTS_FLAGS,
     XKB_FEATURE_ENUM_COMPOSE_FORMAT,
     XKB_FEATURE_ENUM_COMPOSE_COMPILE_FLAGS,
-    XKB_FEATURE_ENUM_COMPOSE_STATUS,
+    XKB_FEATURE_ENUM_COMPOSE_حالت,
     XKB_FEATURE_ENUM_COMPOSE_STATE_FLAGS,
-    XKB_FEATURE_ENUM_COMPOSE_FEED_RESULT,
+    XKB_FEATURE_ENUM_COMPOSE_FEED_نتيجو,
 };
 
-enum xkb_feature_bounds {
+تعداد xkb_feature_bounds {
     _XKB_FEATURE_MIN = XKB_FEATURE_ENUM_FEATURE,
-    _XKB_FEATURE_MAX = XKB_FEATURE_ENUM_COMPOSE_FEED_RESULT,
-    _XKB_FEATURE_NUM = 29,
+    _XKB_FEATURE_MAX = XKB_FEATURE_ENUM_COMPOSE_FEED_نتيجو,
+    XKB_FEATURE_انگ = 29,
 };

@@ -2,29 +2,29 @@
  * Copyright © 2012 Ran Benita <ran234@gmail.com>
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#هدايت once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <assert.h>
-#include <errno.h>
-#include <inttypes.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#if HAVE_UNISTD_H
+#ضمن <assert.h>
+#ضمن <errno.h>
+#ضمن <inttypes.h>
+#ضمن <stdarg.h>
+#ضمن <stdbool.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#إذا HAVE_UNISTD_H
 # include <unistd.h>
-#else
+#وإلا
 /* Required on Windows where unistd.h doesn't exist */
 # define R_OK    4               /* Test for read permission.  */
 # define W_OK    2               /* Test for write permission.  */
 # define X_OK    1               /* Test for execute permission.  */
 # define F_OK    0               /* Test for existence.  */
-#endif
+#جيڪڏهن_پورو
 
-#ifdef _WIN32
+#جيڪڏهن_وصف_ٿيل _WIN32
 # include <direct.h>
 # include <io.h>
 # include <BaseTsd.h>
@@ -37,205 +37,205 @@
 # ifndef STDIN_FILENO
 #  define STDIN_FILENO 0
 # endif
-#ifdef _MSC_VER
-typedef SSIZE_T ssize_t;
-#endif
-#endif
+#جيڪڏهن_وصف_ٿيل _MSC_VER
+تعريفنوع SSIZE_T ssize_t;
+#جيڪڏهن_پورو
+#جيڪڏهن_پورو
 
-static inline bool
-is_aligned(const void *restrict pointer, size_t byte_count)
+ساكن مضمن bool
+is_aligned(ثابت فراغ *محدود اشارو, سائيز_t byte_ڳڻپ)
 {
-    return (uintptr_t) pointer % byte_count == 0;
+    أرجع (uintptr_t) اشارو % byte_ڳڻپ == 0;
 }
 
 
-#define ARRAY_SIZE(arr) ((sizeof(arr) / sizeof(*(arr))))
+#وصف_ڪريو ARRAY_سائيز(arr) ((حجم(arr) / حجم(*(arr))))
 
-#define MIN(a, b) ((a) < (b) ? (a) : (b))
-#define MAX(a, b) ((a) > (b) ? (a) : (b))
+#وصف_ڪريو MIN(a, b) ((a) < (b) ? (a) : (b))
+#وصف_ڪريو MAX(a, b) ((a) > (b) ? (a) : (b))
 
 /* Round up @a so it's divisible by @b. */
-#define ROUNDUP(a, b) (((a) + (b) - 1) / (b) * (b))
+#وصف_ڪريو ROUNDUP(a, b) (((a) + (b) - 1) / (b) * (b))
 
-#define STRINGIFY(x) #x
-#define STRINGIFY2(x) STRINGIFY(x)
-#define CONCAT(x,y) x ## y
-#define CONCAT2(x,y) CONCAT(x,y)
+#وصف_ڪريو STRINGIFY(x) #x
+#وصف_ڪريو STRINGIFY2(x) STRINGIFY(x)
+#وصف_ڪريو CONCAT(x,y) x ## y
+#وصف_ڪريو CONCAT2(x,y) CONCAT(x,y)
 
 /* Check if a Unicode code point is valid in a string literal */
-static inline bool
+ساكن مضمن bool
 is_valid_char(uint32_t cp)
 {
     /* Currently we only check for NULL character, but this could be extended
      * in the future to further ASCII control characters. */
-    return cp != 0;
+    أرجع cp != 0;
 }
 
 /* Check if a Unicode code point is a surrogate.
  * Those code points are used only in UTF-16 encodings. */
-static inline bool
+ساكن مضمن bool
 is_surrogate(uint32_t cp)
 {
-    return (cp >= 0xd800 && cp <= 0xdfff);
+    أرجع (cp >= 0xd800 && cp <= 0xdfff);
 }
 
-char
-to_lower(char c);
+حرف
+منزل_هيٺاهون(حرف c);
 
-int
-istrcmp(const char *a, const char *b);
+صحيح
+istrcmp(ثابت حرف *a, ثابت حرف *b);
 
-int
-istrncmp(const char *a, const char *b, size_t n);
+صحيح
+istrncmp(ثابت حرف *a, ثابت حرف *b, سائيز_t n);
 
-static inline bool
-streq(const char *s1, const char *s2)
+ساكن مضمن bool
+streq(ثابت حرف *s1, ثابت حرف *s2)
 {
-    assert(s1 && s2);
-    return strcmp(s1, s2) == 0;
+    أكد(s1 && s2);
+    أرجع strcmp(s1, s2) == 0;
 }
 
-static inline bool
-streq_null(const char *s1, const char *s2)
+ساكن مضمن bool
+streq_null(ثابت حرف *s1, ثابت حرف *s2)
 {
-    if (s1 == NULL || s2 == NULL)
-        return s1 == s2;
-    return streq(s1, s2);
+    إذا (s1 == عدم || s2 == عدم)
+        أرجع s1 == s2;
+    أرجع streq(s1, s2);
 }
 
-static inline bool
-streq_not_null(const char *s1, const char *s2)
+ساكن مضمن bool
+streq_not_null(ثابت حرف *s1, ثابت حرف *s2)
 {
-    if (!s1 || !s2)
-        return false;
-    return streq(s1, s2);
+    إذا (!s1 || !s2)
+        أرجع false;
+    أرجع streq(s1, s2);
 }
 
-static inline bool
-istreq(const char *s1, const char *s2)
+ساكن مضمن bool
+istreq(ثابت حرف *s1, ثابت حرف *s2)
 {
-    return istrcmp(s1, s2) == 0;
+    أرجع istrcmp(s1, s2) == 0;
 }
 
-static inline bool
-istrneq(const char *s1, const char *s2, size_t len)
+ساكن مضمن bool
+istrneq(ثابت حرف *s1, ثابت حرف *s2, سائيز_t len)
 {
-    return istrncmp(s1, s2, len) == 0;
+    أرجع istrncmp(s1, s2, len) == 0;
 }
 
-#define istreq_prefix(s1, s2) istrneq(s1, s2, sizeof(s1) - 1)
+#وصف_ڪريو istreq_اڳياڙي(s1, s2) istrneq(s1, s2, حجم(s1) - 1)
 
-static inline char *
-strcpy_safe(char *dest, size_t size, const char *src) {
-    if (!dest || !size || !src)
-        return NULL;
-    const char * const limit = dest + size - 1;
-    while (dest < limit && *src) {
+ساكن مضمن حرف *
+strcpy_محفوظ(حرف *dest, سائيز_t سائيز, ثابت حرف *src) {
+    إذا (!dest || !سائيز || !src)
+        أرجع عدم;
+    ثابت حرف * ثابت حد_بندي = dest + سائيز - 1;
+    طالما (dest < حد_بندي && *src) {
         *dest++ = *src++;
     }
     *dest = '\0';
-    return *src ? NULL : dest;
+    أرجع *src ? عدم : dest;
 }
 
-static inline char *
-strdup_safe(const char *s)
+ساكن مضمن حرف *
+strdup_محفوظ(ثابت حرف *s)
 {
-    return s ? strdup(s) : NULL;
+    أرجع s ? strdup(s) : عدم;
 }
 
-static inline size_t
-strlen_safe(const char *s)
+ساكن مضمن سائيز_t
+strlen_محفوظ(ثابت حرف *s)
 {
-    return s ? strlen(s) : 0;
+    أرجع s ? لڙي_ڊيگهه(s) : 0;
 }
 
-static inline bool
-isempty(const char *s)
+ساكن مضمن bool
+isempty(ثابت حرف *s)
 {
-    return s == NULL || s[0] == '\0';
+    أرجع s == عدم || s[0] == '\0';
 }
 
-static inline const char *
-strnull(const char *s)
+ساكن مضمن ثابت حرف *
+strnull(ثابت حرف *s)
 {
-    return s ? s : "(null)";
+    أرجع s ? s : "(null)";
 }
 
-static inline const char *
-strempty(const char *s)
+ساكن مضمن ثابت حرف *
+strempty(ثابت حرف *s)
 {
-    return s ? s : "";
+    أرجع s ? s : "";
 }
 
-static inline void *
-memdup(const void *mem, size_t nmemb, size_t size)
+ساكن مضمن فراغ *
+memdup(ثابت فراغ *mem, سائيز_t nmemb, سائيز_t سائيز)
 {
-    void *p = calloc(nmemb, size);
-    if (p)
-        memcpy(p, mem, nmemb * size);
-    return p;
+    فراغ *p = صفر_يادگيري_ڏيو(nmemb, سائيز);
+    إذا (p)
+        يادگيري_نقل(p, mem, nmemb * سائيز);
+    أرجع p;
 }
 
-#if !(defined(HAVE_STRNDUP) && HAVE_STRNDUP)
-static inline char *
-strndup(const char *s, size_t n)
+#إذا !(defined(HAVE_STRNDUP) && HAVE_STRNDUP)
+ساكن مضمن حرف *
+strndup(ثابت حرف *s, سائيز_t n)
 {
-    size_t slen = strlen(s);
-    size_t len = MIN(slen, n);
-    char *p = malloc(len + 1);
-    if (!p)
-        return NULL;
-    memcpy(p, s, len);
+    سائيز_t slen = لڙي_ڊيگهه(s);
+    سائيز_t len = MIN(slen, n);
+    حرف *p = يادگيري_ڏيو(len + 1);
+    إذا (!p)
+        أرجع عدم;
+    يادگيري_نقل(p, s, len);
     p[len] = '\0';
-    return p;
+    أرجع p;
 }
-#endif
+#جيڪڏهن_پورو
 
 /* ctype.h is locale-dependent and has other oddities. */
-static inline bool
-is_ascii(char ch)
+ساكن مضمن bool
+is_ascii(حرف ch)
 {
-    return (ch & ~0x7f) == 0;
+    أرجع (ch & ~0x7f) == 0;
 }
 
-static inline bool
-is_space(char ch)
+ساكن مضمن bool
+is_space(حرف ch)
 {
-    return ch == ' ' || (ch >= '\t' && ch <= '\r');
+    أرجع ch == ' ' || (ch >= '\t' && ch <= '\r');
 }
 
-static inline bool
-is_alpha(char ch)
+ساكن مضمن bool
+is_alpha(حرف ch)
 {
-    return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
+    أرجع (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
 }
 
-static inline bool
-is_digit(char ch)
+ساكن مضمن bool
+is_digit(حرف ch)
 {
-    return ch >= '0' && ch <= '9';
+    أرجع ch >= '0' && ch <= '9';
 }
 
-static inline bool
-is_alnum(char ch)
+ساكن مضمن bool
+is_alnum(حرف ch)
 {
-    return is_alpha(ch) || is_digit(ch);
+    أرجع is_alpha(ch) || is_digit(ch);
 }
 
-static inline bool
-is_xdigit(char ch)
+ساكن مضمن bool
+is_xdigit(حرف ch)
 {
-    return
+    أرجع
         (ch >= '0' && ch <= '9') ||
         (ch >= 'a' && ch <= 'f') ||
         (ch >= 'A' && ch <= 'F');
 }
 
-static inline bool
-is_graph(char ch)
+ساكن مضمن bool
+is_گراف(حرف ch)
 {
     /* See table in ascii(7). */
-    return ch >= '!' && ch <= '~';
+    أرجع ch >= '!' && ch <= '~';
 }
 
 /*
@@ -243,191 +243,191 @@ is_graph(char ch)
  * Note: this is 1-based! It's more useful this way, and returns 0 when
  * mask is all 0s.
  */
-static inline unsigned int
-msb_pos(uint32_t mask)
+ساكن مضمن بنانشان صحيح
+msb_pos(uint32_t نقاب)
 {
-    unsigned int pos = 0;
-    while (mask) {
+    بنانشان صحيح pos = 0;
+    طالما (نقاب) {
         pos++;
-        mask >>= 1u;
+        نقاب >>= 1u;
     }
-    return pos;
+    أرجع pos;
 }
 
-static inline int
-one_bit_set(uint32_t x)
+ساكن مضمن صحيح
+one_ٻٽو_انگ_سيٽ(uint32_t x)
 {
-    return x && (x & (x - 1)) == 0;
+    أرجع x && (x & (x - 1)) == 0;
 }
 
 bool
-map_file(FILE *file, char **string_out, size_t *size_out);
+map_file(FILE *file, حرف **string_ٻاهريون, سائيز_t *سائيز_ٻاهريون);
 
-void
-unmap_file(char *string, size_t size);
+فراغ
+unmap_file(حرف *string, سائيز_t سائيز);
 
-static inline bool
-check_eaccess(const char *path, int mode)
+ساكن مضمن bool
+check_eaccess(ثابت حرف *رستو, صحيح گهڻائي)
 {
-#if defined(HAVE_EACCESS)
-    if (eaccess(path, mode) != 0)
-        return false;
-#elif defined(HAVE_EUIDACCESS)
-    if (euidaccess(path, mode) != 0)
-        return false;
-#endif
+#إذا defined(HAVE_EACCESS)
+    إذا (eaccess(رستو, گهڻائي) != 0)
+        أرجع false;
+#وإلاإذا defined(HAVE_EUIDACCESS)
+    إذا (euidaccess(رستو, گهڻائي) != 0)
+        أرجع false;
+#جيڪڏهن_پورو
 
-    return true;
+    أرجع true;
 }
 
 FILE*
-open_file(const char *path);
+open_file(ثابت حرف *رستو);
 
-#if defined(HAVE_SECURE_GETENV)
+#إذا defined(HAVE_SECURE_GETENV)
 # define secure_getenv secure_getenv
-#elif defined(HAVE___SECURE_GETENV)
+#وإلاإذا defined(HAVE___SECURE_GETENV)
 # define secure_getenv __secure_getenv
-#else
+#وإلا
 # define secure_getenv getenv
-#endif
+#جيڪڏهن_پورو
 
-#if defined(HAVE___BUILTIN_EXPECT)
+#إذا defined(HAVE___BUILTIN_EXPECT)
 # define likely(x)   __builtin_expect(!!(x), 1)
 # define unlikely(x) __builtin_expect(!!(x), 0)
-#else
+#وإلا
 # define likely(x)   (x)
 # define unlikely(x) (x)
-#endif
+#جيڪڏهن_پورو
 
 /* Compiler Attributes */
 
 /* Private functions only exposed in tests. */
-#ifdef ENABLE_PRIVATE_APIS
-# if defined(__GNUC__) && !defined(__CYGWIN__)
-#  define XKB_EXPORT_PRIVATE __attribute__((visibility("default")))
+#جيڪڏهن_وصف_ٿيل ENABLE_ذاتي_APIS
+# إذا defined(__GNUC__) && !defined(__CYGWIN__)
+#  define XKB_EXPORT_ذاتي __attribute__((visibility("default")))
 # elif defined(_WIN32)
-#  define XKB_EXPORT_PRIVATE __declspec(dllexport)
-# else
-#  define XKB_EXPORT_PRIVATE
+#  define XKB_EXPORT_ذاتي __declspec(dllexport)
+# وإلا
+#  define XKB_EXPORT_ذاتي
 # endif
-#else
-# define XKB_EXPORT_PRIVATE
-#endif
+#وإلا
+# define XKB_EXPORT_ذاتي
+#جيڪڏهن_پورو
 
-#if defined(__MINGW32__)
+#إذا defined(__MINGW32__)
 # define ATTR_PRINTF(x,y) __attribute__((__format__(__MINGW_PRINTF_FORMAT, x, y)))
-#elif defined(__GNUC__)
+#وإلاإذا defined(__GNUC__)
 # define ATTR_PRINTF(x,y) __attribute__((__format__(__printf__, x, y)))
-#else
+#وإلا
 # define ATTR_PRINTF(x,y)
-#endif
+#جيڪڏهن_پورو
 
-#if defined(__GNUC__)
+#إذا defined(__GNUC__)
 # define ATTR_NORETURN __attribute__((__noreturn__))
-#else
+#وإلا
 # define ATTR_NORETURN
-#endif /* GNUC  */
+#جيڪڏهن_پورو /* GNUC  */
 
-#if defined(__GNUC__)
-#define ATTR_MALLOC  __attribute__((__malloc__))
-#else
-#define ATTR_MALLOC
-#endif
+#إذا defined(__GNUC__)
+#وصف_ڪريو ATTR_MALLOC  __attribute__((__malloc__))
+#وإلا
+#وصف_ڪريو ATTR_MALLOC
+#جيڪڏهن_پورو
 
-#if defined(__GNUC__)
+#إذا defined(__GNUC__)
 # define ATTR_NULL_SENTINEL __attribute__((__sentinel__))
-#else
+#وإلا
 # define ATTR_NULL_SENTINEL
-#endif
+#جيڪڏهن_پورو
 
-#if defined(__GNUC__)
-#define ATTR_PACKED  __attribute__((__packed__))
-#else
-#define ATTR_PACKED
-#endif
+#إذا defined(__GNUC__)
+#وصف_ڪريو ATTR_PACKED  __attribute__((__packed__))
+#وإلا
+#وصف_ڪريو ATTR_PACKED
+#جيڪڏهن_پورو
 
-#if defined(HAVE_ATTR_COUNTED_BY) && HAVE_ATTR_COUNTED_BY
-# define ATTR_COUNTED_BY(count) __attribute__((counted_by(count)))
-#else
-# define ATTR_COUNTED_BY(count)
-#endif
+#إذا defined(HAVE_ATTR_COUNTED_BY) && HAVE_ATTR_COUNTED_BY
+# define ATTR_COUNTED_BY(ڳڻپ) __attribute__((counted_by(ڳڻپ)))
+#وإلا
+# define ATTR_COUNTED_BY(ڳڻپ)
+#جيڪڏهن_پورو
 
-#if !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
-XKB_EXPORT_PRIVATE int asprintf(char **strp, const char *fmt, ...) ATTR_PRINTF(2, 3);
-# if !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
+#إذا !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
+XKB_EXPORT_ذاتي صحيح asprintf(حرف **strp, ثابت حرف *fmt, ...) ATTR_PRINTF(2, 3);
+# إذا !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
 #  include <stdarg.h>
-XKB_EXPORT_PRIVATE int vasprintf(char **strp, const char *fmt, va_list ap);
+XKB_EXPORT_ذاتي صحيح vasprintf(حرف **strp, ثابت حرف *fmt, va_list ap);
 # endif /* !HAVE_VASPRINTF */
-#endif /* !HAVE_ASPRINTF */
+#جيڪڏهن_پورو /* !HAVE_ASPRINTF */
 
-static inline bool
+ساكن مضمن bool
 ATTR_PRINTF(3, 4)
-snprintf_safe(char *buf, size_t sz, const char *format, ...)
+snprintf_محفوظ(حرف *buf, سائيز_t sz, ثابت حرف *format, ...)
 {
     va_list ap;
-    int rc;
+    صحيح rc;
 
-    va_start(ap, format);
+    va_شروعات(ap, format);
     rc = vsnprintf(buf, sz, format, ap);
-    va_end(ap);
+    va_پڇاڙي(ap);
 
-    return rc >= 0 && (size_t)rc < sz;
+    أرجع rc >= 0 && (سائيز_t)rc < sz;
 }
 
-static inline char *
+ساكن مضمن حرف *
 ATTR_PRINTF(1, 0)
-vasprintf_safe(const char *fmt, va_list args)
+vasprintf_محفوظ(ثابت حرف *fmt, va_list دليلون)
 {
-    char *str;
-    int len;
+    حرف *str;
+    صحيح len;
 
-    len = vasprintf(&str, fmt, args);
+    len = vasprintf(&str, fmt, دليلون);
 
-    if (len == -1)
-        return NULL;
+    إذا (len == -1)
+        أرجع عدم;
 
-    return str;
+    أرجع str;
 }
 
 /**
  * A version of asprintf that returns the allocated string or NULL on error.
  */
-static inline char *
+ساكن مضمن حرف *
 ATTR_PRINTF(1, 2)
-asprintf_safe(const char *fmt, ...)
+asprintf_محفوظ(ثابت حرف *fmt, ...)
 {
-    va_list args;
-    char *str;
+    va_list دليلون;
+    حرف *str;
 
-    va_start(args, fmt);
-    str = vasprintf_safe(fmt, args);
-    va_end(args);
+    va_شروعات(دليلون, fmt);
+    str = vasprintf_محفوظ(fmt, دليلون);
+    va_پڇاڙي(دليلون);
 
-    return str;
+    أرجع str;
 }
 
-#ifdef NDEBUG
-    #if defined(__GNUC__) || defined(__clang__)
-        #define PANIC_UNREACHABLE() __builtin_unreachable()
-    #elif defined(_MSC_VER)
-        #define PANIC_UNREACHABLE() __assume(0)
-    #else
-        #define PANIC_UNREACHABLE() abort()
-    #endif
-#else
-    #define PANIC_UNREACHABLE() \
-        do { \
+#جيڪڏهن_وصف_ٿيل NDEBUG
+    #إذا defined(__GNUC__) || defined(__clang__)
+        #وصف_ڪريو PANIC_UNREACHABLE() __builtin_unreachable()
+    #وإلاإذا defined(_MSC_VER)
+        #وصف_ڪريو PANIC_UNREACHABLE() __assume(0)
+    #وإلا
+        #وصف_ڪريو PANIC_UNREACHABLE() abort()
+    #جيڪڏهن_پورو
+#وإلا
+    #وصف_ڪريو PANIC_UNREACHABLE() \
+        افعل { \
             fprintf(stderr, "Critical Error: Reached unreachable line in %s at %d\n", __FILE__, __LINE__); \
             abort(); \
-        } while (0)
-#endif
+        } طالما (0)
+#جيڪڏهن_پورو
 
-#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
+#إذا defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
 #  define NOINLINE [[noinline]]
-#elif defined(__GNUC__) || defined(__clang__)
+#وإلاإذا defined(__GNUC__) || defined(__clang__)
 #  define NOINLINE __attribute__((noinline))
-#elif defined(_MSC_VER)
+#وإلاإذا defined(_MSC_VER)
 #  define NOINLINE __declspec(noinline)
-#else
+#وإلا
 #  define NOINLINE
-#endif
+#جيڪڏهن_پورو

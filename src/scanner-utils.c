@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#ضمن "config.h"
 
-#include "scanner-utils.h"
+#ضمن "scanner-utils.h"
 
-struct scanner_loc
-scanner_token_location(struct scanner *s)
+بنية scanner_loc
+scanner_token_location(بنية scanner *s)
 {
     /*
      * The following article and accompying code compares some algorithms:
@@ -20,27 +20,27 @@ scanner_token_location(struct scanner *s)
      * and start from that on the next call. This is effective as long as the
      * tokens go forward.
      */
-    size_t line, column;
-    size_t line_pos = 0;
-    if (s->cached_pos > s->token_pos) {
+    سائيز_t سٽ, ڪالم;
+    سائيز_t سٽ_pos = 0;
+    إذا (s->cached_pos > s->token_pos) {
         s->cached_pos = 0;
-        s->cached_loc.line = s->cached_loc.column = 1;
+        s->cached_loc.سٽ = s->cached_loc.ڪالم = 1;
     }
-    line = s->cached_loc.line;
-    const char *ptr = s->s + s->cached_pos;
-    const char *last = s->s + s->token_pos;
-    while ((ptr = memchr(ptr, '\n', (size_t)(last - ptr)))) {
-        line++;
+    سٽ = s->cached_loc.سٽ;
+    ثابت حرف *ptr = s->s + s->cached_pos;
+    ثابت حرف *آخري = s->s + s->token_pos;
+    طالما ((ptr = memchr(ptr, '\n', (سائيز_t)(آخري - ptr)))) {
+        سٽ++;
         ptr++;
-        line_pos = (size_t)(ptr - s->s);
+        سٽ_pos = (سائيز_t)(ptr - s->s);
     }
-    if (line == s->cached_loc.line) {
-        column = s->cached_loc.column + (s->token_pos - s->cached_pos);
-    } else {
-        column = s->token_pos - line_pos + 1;
+    إذا (سٽ == s->cached_loc.سٽ) {
+        ڪالم = s->cached_loc.ڪالم + (s->token_pos - s->cached_pos);
+    } وإلا {
+        ڪالم = s->token_pos - سٽ_pos + 1;
     }
-    struct scanner_loc loc = {.line = line, .column = column};
+    بنية scanner_loc loc = {.سٽ = سٽ, .ڪالم = ڪالم};
     s->cached_pos = s->token_pos;
     s->cached_loc = loc;
-    return loc;
+    أرجع loc;
 }

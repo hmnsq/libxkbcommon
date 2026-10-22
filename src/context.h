@@ -4,89 +4,89 @@
  *
  * Author: Daniel Stone <daniel@fooishbar.org>
  */
-#pragma once
+#هدايت once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <stdbool.h>
-#include <stddef.h>
+#ضمن <stdbool.h>
+#ضمن <stddef.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "atom.h"
-#include "darray.h"
-#include "messages-codes.h"
-#include "rmlvo.h"
-#include "utils.h"
+#ضمن "xkbcommon/xkbcommon.h"
+#ضمن "atom.h"
+#ضمن "darray.h"
+#ضمن "messages-codes.h"
+#ضمن "rmlvo.h"
+#ضمن "utils.h"
 
-struct xkb_context {
-    int refcnt;
+بنية xkb_context {
+    صحيح refcnt;
 
-    ATTR_PRINTF(3, 0) void (*log_fn)(struct xkb_context *ctx,
-                                     enum xkb_log_level level,
-                                     const char *fmt, va_list args);
-    enum xkb_log_level log_level;
-    int log_verbosity;
-    void *user_data;
+    ATTR_PRINTF(3, 0) فراغ (*log_fn)(بنية xkb_context *ctx,
+                                     تعداد xkb_log_level level,
+                                     ثابت حرف *fmt, va_list دليلون);
+    تعداد xkb_log_level log_level;
+    صحيح log_verbosity;
+    فراغ *user_معلومات;
 
-    struct xkb_rule_names names_dflt;
+    بنية xkb_قاعدو_نالا نالا_dflt;
 
-    darray(char *) includes;
-    darray(char *) failed_includes;
+    darray(حرف *) includes;
+    darray(حرف *) failed_includes;
 
-    struct atom_table *atom_table;
+    بنية atom_جدول *atom_جدول;
 
     /* Used and allocated by xkbcommon-x11, free()d with the context. */
-    void *x11_atom_cache;
+    فراغ *x11_atom_cache;
 
     /* Buffer for the *Text() functions. */
-    char text_buffer[2048];
-    size_t text_next;
+    حرف متن_بفر[2048];
+    سائيز_t متن_ايندڙ;
 
-    bool use_environment_names : 1;
+    bool use_environment_نالا : 1;
     bool use_secure_getenv : 1;
     bool pending_default_includes : 1;
 };
 
-char *
-xkb_context_getenv(struct xkb_context *ctx, const char *name);
+حرف *
+xkb_context_getenv(بنية xkb_context *ctx, ثابت حرف *name);
 
-darray_size_t
-xkb_context_num_failed_include_paths(struct xkb_context *ctx);
+darray_سائيز_t
+xkb_context_انگ_failed_include_paths(بنية xkb_context *ctx);
 
 bool
-xkb_context_init_includes(struct xkb_context *ctx);
+xkb_context_init_includes(بنية xkb_context *ctx);
 
-const char *
-xkb_context_failed_include_path_get(struct xkb_context *ctx,
-                                    darray_size_t idx);
+ثابت حرف *
+xkb_context_failed_include_رستو_get(بنية xkb_context *ctx,
+                                    darray_سائيز_t idx);
 
-const char *
-xkb_context_include_path_get_extra_path(struct xkb_context *ctx);
+ثابت حرف *
+xkb_context_include_رستو_get_extra_رستو(بنية xkb_context *ctx);
 
-const char *
-xkb_context_include_path_get_unversioned_extensions_path(struct xkb_context *ctx);
+ثابت حرف *
+xkb_context_include_رستو_get_unversioned_extensions_رستو(بنية xkb_context *ctx);
 
-const char *
-xkb_context_include_path_get_versioned_extensions_path(struct xkb_context *ctx);
+ثابت حرف *
+xkb_context_include_رستو_get_versioned_extensions_رستو(بنية xkb_context *ctx);
 
-const char *
-xkb_context_include_path_get_system_path(struct xkb_context *ctx);
+ثابت حرف *
+xkb_context_include_رستو_get_system_رستو(بنية xkb_context *ctx);
 
-XKB_EXPORT_PRIVATE darray_size_t
-xkb_atom_table_size(struct xkb_context *ctx);
+XKB_EXPORT_ذاتي darray_سائيز_t
+xkb_atom_جدول_سائيز(بنية xkb_context *ctx);
 
 /*
  * Returns XKB_ATOM_NONE if @string was not previously interned,
  * otherwise returns the atom.
  */
 xkb_atom_t
-xkb_atom_lookup(struct xkb_context *ctx, const char *string);
+xkb_atom_lookup(بنية xkb_context *ctx, ثابت حرف *string);
 
-XKB_EXPORT_PRIVATE xkb_atom_t
-xkb_atom_intern(struct xkb_context *ctx, const char *string, size_t len);
+XKB_EXPORT_ذاتي xkb_atom_t
+xkb_atom_intern(بنية xkb_context *ctx, ثابت حرف *string, سائيز_t len);
 
-#define xkb_atom_intern_literal(ctx, literal) \
-    xkb_atom_intern((ctx), (literal), sizeof(literal) - 1)
+#وصف_ڪريو xkb_atom_intern_literal(ctx, literal) \
+    xkb_atom_intern((ctx), (literal), حجم(literal) - 1)
 
 /**
  * If @string is dynamically allocated, NUL-terminated, free'd immediately
@@ -95,21 +95,21 @@ xkb_atom_intern(struct xkb_context *ctx, const char *string, size_t len);
  * The caller should not use or free the passed in string afterwards.
  */
 xkb_atom_t
-xkb_atom_steal(struct xkb_context *ctx, char *string);
+xkb_atom_steal(بنية xkb_context *ctx, حرف *string);
 
-XKB_EXPORT_PRIVATE const char *
-xkb_atom_text(struct xkb_context *ctx, xkb_atom_t atom);
+XKB_EXPORT_ذاتي ثابت حرف *
+xkb_atom_متن(بنية xkb_context *ctx, xkb_atom_t atom);
 
-char *
-xkb_context_get_buffer(struct xkb_context *ctx, size_t size);
+حرف *
+xkb_context_get_بفر(بنية xkb_context *ctx, سائيز_t سائيز);
 
-XKB_EXPORT_PRIVATE ATTR_PRINTF(4, 5) void
-xkb_log(struct xkb_context *ctx, enum xkb_log_level level, int verbosity,
-        const char *fmt, ...);
+XKB_EXPORT_ذاتي ATTR_PRINTF(4, 5) فراغ
+xkb_log(بنية xkb_context *ctx, تعداد xkb_log_level level, صحيح verbosity,
+        ثابت حرف *fmt, ...);
 
-enum RMLVO
-xkb_context_sanitize_rule_names(struct xkb_context *ctx,
-                                struct xkb_rule_names *rmlvo);
+تعداد RMLVO
+xkb_context_sanitize_قاعدو_نالا(بنية xkb_context *ctx,
+                                بنية xkb_قاعدو_نالا *rmlvo);
 
 /*
  * The format is not part of the argument list in order to avoid the
@@ -117,29 +117,29 @@ xkb_context_sanitize_rule_names(struct xkb_context *ctx,
  * format is supplied without arguments. Not supplying it would still
  * result in an error, though.
  */
-#define xkb_log_with_code(ctx, level, verbosity, msg_id, fmt, ...) \
-    xkb_log(ctx, level, verbosity, PREPEND_MESSAGE_ID(msg_id, fmt), ##__VA_ARGS__)
-#define log_dbg(ctx, id, ...) \
-    xkb_log_with_code((ctx), XKB_LOG_LEVEL_DEBUG, XKB_LOG_VERBOSITY_MINIMAL, id, __VA_ARGS__)
-#define log_info(ctx, id, ...) \
-    xkb_log_with_code((ctx), XKB_LOG_LEVEL_INFO, XKB_LOG_VERBOSITY_MINIMAL, id, __VA_ARGS__)
-#define log_warn(ctx, id, ...) \
-    xkb_log_with_code((ctx), XKB_LOG_LEVEL_WARNING, XKB_LOG_VERBOSITY_MINIMAL, id, __VA_ARGS__)
-#define log_vrb(ctx, vrb, id, ...) \
-    xkb_log_with_code((ctx), XKB_LOG_LEVEL_WARNING, (vrb), id, __VA_ARGS__)
-#define log_err(ctx, id, ...) \
-    xkb_log_with_code((ctx), XKB_LOG_LEVEL_ERROR, XKB_LOG_VERBOSITY_MINIMAL, id, __VA_ARGS__)
-#define log_wsgo(ctx, id, ...) \
-    xkb_log_with_code((ctx), XKB_LOG_LEVEL_CRITICAL, XKB_LOG_VERBOSITY_MINIMAL, id, __VA_ARGS__)
+#وصف_ڪريو xkb_log_with_ڪوڊ(ctx, level, verbosity, نياپو_id, fmt, ...) \
+    xkb_log(ctx, level, verbosity, PREPEND_پيغام_ID(نياپو_id, fmt), ##__VA_ARGS__)
+#وصف_ڪريو log_dbg(ctx, id, ...) \
+    xkb_log_with_ڪوڊ((ctx), XKB_LOG_LEVEL_DEBUG, XKB_LOG_VERBOSITY_گهٽتر, id, __VA_ARGS__)
+#وصف_ڪريو log_info(ctx, id, ...) \
+    xkb_log_with_ڪوڊ((ctx), XKB_LOG_LEVEL_INFO, XKB_LOG_VERBOSITY_گهٽتر, id, __VA_ARGS__)
+#وصف_ڪريو log_warn(ctx, id, ...) \
+    xkb_log_with_ڪوڊ((ctx), XKB_LOG_LEVEL_WARNING, XKB_LOG_VERBOSITY_گهٽتر, id, __VA_ARGS__)
+#وصف_ڪريو log_vrb(ctx, vrb, id, ...) \
+    xkb_log_with_ڪوڊ((ctx), XKB_LOG_LEVEL_WARNING, (vrb), id, __VA_ARGS__)
+#وصف_ڪريو log_err(ctx, id, ...) \
+    xkb_log_with_ڪوڊ((ctx), XKB_LOG_LEVEL_ERROR, XKB_LOG_VERBOSITY_گهٽتر, id, __VA_ARGS__)
+#وصف_ڪريو log_wsgo(ctx, id, ...) \
+    xkb_log_with_ڪوڊ((ctx), XKB_LOG_LEVEL_CRITICAL, XKB_LOG_VERBOSITY_گهٽتر, id, __VA_ARGS__)
 
 /*
  * Variants which are prefixed by the name of the function they're
  * called from.
  * Here we must have the silly 1 variant.
  */
-#define log_warn_func(ctx, id, fmt, ...) \
+#وصف_ڪريو log_warn_func(ctx, id, fmt, ...) \
     log_warn(ctx, id, "%s: " fmt, __func__, __VA_ARGS__)
-#define log_err_func(ctx, id, fmt, ...) \
+#وصف_ڪريو log_err_func(ctx, id, fmt, ...) \
     log_err(ctx, id, "%s: " fmt, __func__, __VA_ARGS__)
-#define log_err_func1(ctx, id, fmt) \
+#وصف_ڪريو log_err_func1(ctx, id, fmt) \
     log_err(ctx, id, "%s: " fmt, __func__)

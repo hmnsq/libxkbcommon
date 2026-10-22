@@ -9,27 +9,27 @@
  * SPDX-License-Identifier: MIT-open-group AND HPND
  */
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <assert.h>
-#include <string.h>
+#ضمن <assert.h>
+#ضمن <string.h>
 
-#include "atom.h"
-#include "darray.h"
-#include "utils.h"
+#ضمن "atom.h"
+#ضمن "darray.h"
+#ضمن "utils.h"
 
 /* FNV-1a (http://www.isthe.com/chongo/tech/comp/fnv/). */
-static inline uint32_t
-hash_buf(const char *string, size_t len)
+ساكن مضمن uint32_t
+hash_buf(ثابت حرف *string, سائيز_t len)
 {
     uint32_t hash = UINT32_C(2166136261);
-    for (size_t i = 0; i < (len + 1) / 2; i++) {
+    لكل (سائيز_t i = 0; i < (len + 1) / 2; i++) {
         hash ^= (uint8_t) string[i];
         hash *= 0x01000193;
         hash ^= (uint8_t) string[len - 1 - i];
         hash *= 0x01000193;
     }
-    return hash;
+    أرجع hash;
 }
 
 /*
@@ -37,109 +37,109 @@ hash_buf(const char *string, size_t len)
  * mapping strings to atoms. Another array maps the atoms to
  * strings. The atom value is the position in the strings array.
  */
-struct atom_table {
-    xkb_atom_t *index;
-    size_t index_size;
-    darray(char *) strings;
+بنية atom_جدول {
+    xkb_atom_t *اشاريو;
+    سائيز_t اشاريو_سائيز;
+    darray(حرف *) لڙيون;
 };
 
-struct atom_table *
-atom_table_new(void)
+بنية atom_جدول *
+atom_جدول_new(فراغ)
 {
-    struct atom_table *table = calloc(1, sizeof(*table));
-    if (!table)
-        return NULL;
+    بنية atom_جدول *جدول = صفر_يادگيري_ڏيو(1, حجم(*جدول));
+    إذا (!جدول)
+        أرجع عدم;
 
-    darray_init(table->strings);
-    darray_append(table->strings, NULL);
-    table->index_size = 4;
-    table->index = calloc(table->index_size, sizeof(*table->index));
+    darray_init(جدول->لڙيون);
+    darray_append(جدول->لڙيون, عدم);
+    جدول->اشاريو_سائيز = 4;
+    جدول->اشاريو = صفر_يادگيري_ڏيو(جدول->اشاريو_سائيز, حجم(*جدول->اشاريو));
 
-    return table;
+    أرجع جدول;
 }
 
-void
-atom_table_free(struct atom_table *table)
+فراغ
+atom_جدول_free(بنية atom_جدول *جدول)
 {
-    if (!table)
-        return;
+    إذا (!جدول)
+        أرجع;
 
-    char **string;
-    darray_foreach(string, table->strings)
-        free(*string);
-    darray_free(table->strings);
-    free(table->index);
-    free(table);
+    حرف **string;
+    darray_foreach(string, جدول->لڙيون)
+        حرر(*string);
+    darray_free(جدول->لڙيون);
+    حرر(جدول->اشاريو);
+    حرر(جدول);
 }
 
-darray_size_t
-atom_table_size(struct atom_table *table)
+darray_سائيز_t
+atom_جدول_سائيز(بنية atom_جدول *جدول)
 {
-    return darray_size(table->strings);
+    أرجع darray_سائيز(جدول->لڙيون);
 }
 
-const char *
-atom_text(struct atom_table *table, xkb_atom_t atom)
+ثابت حرف *
+atom_متن(بنية atom_جدول *جدول, xkb_atom_t atom)
 {
-    assert(atom < darray_size(table->strings));
-    return darray_item(table->strings, atom);
+    أكد(atom < darray_سائيز(جدول->لڙيون));
+    أرجع darray_شي(جدول->لڙيون, atom);
 }
 
 xkb_atom_t
-atom_intern(struct atom_table *table, const char *string, size_t len, bool add)
+atom_intern(بنية atom_جدول *جدول, ثابت حرف *string, سائيز_t len, bool جوڙيو)
 {
     /* len(string) > 0.8 * index_size */
-    if (darray_size(table->strings) > (table->index_size / 5) * 4) {
-        table->index_size *= 2;
-        xkb_atom_t *tmp = realloc(table->index,
-                                  table->index_size * sizeof(*table->index));
-        if (!tmp)
-            return XKB_ATOM_NONE;
-        table->index = tmp;
-        memset(table->index, 0, table->index_size * sizeof(*table->index));
-        for (darray_size_t j = 1; j < darray_size(table->strings); j++) {
-            const char *s = darray_item(table->strings, j);
-            uint32_t hash = hash_buf(s, strlen(s));
-            for (size_t i = 0; i < table->index_size; i++) {
-                size_t index_pos = (hash + i) & (table->index_size - 1);
-                if (index_pos == 0)
-                    continue;
+    إذا (darray_سائيز(جدول->لڙيون) > (جدول->اشاريو_سائيز / 5) * 4) {
+        جدول->اشاريو_سائيز *= 2;
+        xkb_atom_t *tmp = realloc(جدول->اشاريو,
+                                  جدول->اشاريو_سائيز * حجم(*جدول->اشاريو));
+        إذا (!tmp)
+            أرجع XKB_ATOM_NONE;
+        جدول->اشاريو = tmp;
+        memset(جدول->اشاريو, 0, جدول->اشاريو_سائيز * حجم(*جدول->اشاريو));
+        لكل (darray_سائيز_t j = 1; j < darray_سائيز(جدول->لڙيون); j++) {
+            ثابت حرف *s = darray_شي(جدول->لڙيون, j);
+            uint32_t hash = hash_buf(s, لڙي_ڊيگهه(s));
+            لكل (سائيز_t i = 0; i < جدول->اشاريو_سائيز; i++) {
+                سائيز_t اشاريو_pos = (hash + i) & (جدول->اشاريو_سائيز - 1);
+                إذا (اشاريو_pos == 0)
+                    استمر;
 
-                xkb_atom_t atom = table->index[index_pos];
-                if (atom == XKB_ATOM_NONE) {
-                    table->index[index_pos] = j;
-                    break;
+                xkb_atom_t atom = جدول->اشاريو[اشاريو_pos];
+                إذا (atom == XKB_ATOM_NONE) {
+                    جدول->اشاريو[اشاريو_pos] = j;
+                    اكسر;
                 }
             }
         }
     }
 
     uint32_t hash = hash_buf(string, len);
-    for (size_t i = 0; i < table->index_size; i++) {
-        size_t index_pos = (hash + i) & (table->index_size - 1);
-        if (index_pos == 0)
-            continue;
+    لكل (سائيز_t i = 0; i < جدول->اشاريو_سائيز; i++) {
+        سائيز_t اشاريو_pos = (hash + i) & (جدول->اشاريو_سائيز - 1);
+        إذا (اشاريو_pos == 0)
+            استمر;
 
-        xkb_atom_t existing_atom = table->index[index_pos];
-        if (existing_atom == XKB_ATOM_NONE) {
-            if (add) {
-                xkb_atom_t new_atom = darray_size(table->strings);
-                char *s = strndup(string, len);
-                if (!s)
-                    return XKB_ATOM_NONE;
-                darray_append(table->strings, s);
-                table->index[index_pos] = new_atom;
-                return new_atom;
-            } else {
-                return XKB_ATOM_NONE;
+        xkb_atom_t existing_atom = جدول->اشاريو[اشاريو_pos];
+        إذا (existing_atom == XKB_ATOM_NONE) {
+            إذا (جوڙيو) {
+                xkb_atom_t new_atom = darray_سائيز(جدول->لڙيون);
+                حرف *s = strndup(string, len);
+                إذا (!s)
+                    أرجع XKB_ATOM_NONE;
+                darray_append(جدول->لڙيون, s);
+                جدول->اشاريو[اشاريو_pos] = new_atom;
+                أرجع new_atom;
+            } وإلا {
+                أرجع XKB_ATOM_NONE;
             }
         }
 
-        const char *existing_value = darray_item(table->strings, existing_atom);
-        if (strncmp(existing_value, string, len) == 0 && existing_value[len] == '\0')
-            return existing_atom;
+        ثابت حرف *existing_قدر = darray_شي(جدول->لڙيون, existing_atom);
+        إذا (لڙي_ڀيٽ(existing_قدر, string, len) == 0 && existing_قدر[len] == '\0')
+            أرجع existing_atom;
     }
 
-    assert(!"couldn't find an empty slot during probing");
-    return XKB_ATOM_NONE;
+    أكد(!"couldn't find an empty slot during probing");
+    أرجع XKB_ATOM_NONE;
 }

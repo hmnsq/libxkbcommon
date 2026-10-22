@@ -3,286 +3,286 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <assert.h>
+#ضمن <assert.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "features/enums.h"
-#include "constants.h"
-#include "messages-codes.h"
-#include "parser.h"
-#include "paths.h"
-#include "table.h"
-#include "utils.h"
+#ضمن "xkbcommon/xkbcommon.h"
+#ضمن "features/enums.h"
+#ضمن "constants.h"
+#ضمن "messages-codes.h"
+#ضمن "parser.h"
+#ضمن "paths.h"
+#ضمن "table.h"
+#ضمن "utils.h"
 
-static struct xkb_compose_table *
-xkb_compose_table_new(struct xkb_context *ctx, const char *func,
-                      const char *locale,
-                      enum xkb_compose_format format,
-                      enum xkb_compose_compile_flags flags)
+ساكن بنية xkb_compose_جدول *
+xkb_compose_جدول_new(بنية xkb_context *ctx, ثابت حرف *func,
+                      ثابت حرف *locale,
+                      تعداد xkb_compose_format format,
+                      تعداد xkb_compose_compile_flags flags)
 {
-    const enum xkb_compose_compile_flags invalid_flags = (
-        flags & ~(enum xkb_compose_compile_flags)XKB_COMPOSE_COMPILE_FLAGS_VALUES
+    ثابت تعداد xkb_compose_compile_flags invalid_flags = (
+        flags & ~(تعداد xkb_compose_compile_flags)XKB_COMPOSE_COMPILE_FLAGS_قدرون
     );
-    if (invalid_flags) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    إذا (invalid_flags) {
+        log_err(ctx, XKB_LOG_پيغام_NO_ID,
                 "%s: unrecognized flags: %#x\n", func, invalid_flags);
-        return NULL;
+        أرجع عدم;
     }
 
-    if (format != XKB_COMPOSE_FORMAT_TEXT_V1) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    إذا (format != XKB_COMPOSE_FORMAT_متن_V1) {
+        log_err(ctx, XKB_LOG_پيغام_NO_ID,
                 "%s: unsupported compose format: %d\n", func, format);
-        return NULL;
+        أرجع عدم;
     }
 
-    char *resolved_locale;
-    struct xkb_compose_table *table;
-    struct compose_node dummy = {0};
+    حرف *resolved_locale;
+    بنية xkb_compose_جدول *جدول;
+    بنية compose_ڳنڍ dummy = {0};
 
     resolved_locale = resolve_locale(ctx, locale);
-    if (!resolved_locale)
-        return NULL;
+    إذا (!resolved_locale)
+        أرجع عدم;
 
-    table = calloc(1, sizeof(*table));
-    if (!table) {
-        free(resolved_locale);
-        return NULL;
+    جدول = صفر_يادگيري_ڏيو(1, حجم(*جدول));
+    إذا (!جدول) {
+        حرر(resolved_locale);
+        أرجع عدم;
     }
 
-    table->refcnt = 1;
-    table->ctx = xkb_context_ref(ctx);
+    جدول->refcnt = 1;
+    جدول->ctx = xkb_context_ref(ctx);
 
-    table->locale = resolved_locale;
-    table->format = format;
-    table->flags = flags;
+    جدول->locale = resolved_locale;
+    جدول->format = format;
+    جدول->flags = flags;
 
-    darray_init(table->nodes);
-    darray_init(table->utf8);
+    darray_init(جدول->nodes);
+    darray_init(جدول->utf8);
 
-    dummy.keysym = XKB_KEY_NoSymbol;
-    dummy.leaf.is_leaf = true;
-    dummy.leaf.utf8 = 0;
-    dummy.leaf.keysym = XKB_KEY_NoSymbol;
-    darray_append(table->nodes, dummy);
+    dummy.keysym = XKB_ڪنجي_No_نشان;
+    dummy.پن.is_پن = true;
+    dummy.پن.utf8 = 0;
+    dummy.پن.keysym = XKB_ڪنجي_No_نشان;
+    darray_append(جدول->nodes, dummy);
 
-    darray_append(table->utf8, '\0');
+    darray_append(جدول->utf8, '\0');
 
-    return table;
+    أرجع جدول;
 }
 
-struct xkb_compose_table *
-xkb_compose_table_ref(struct xkb_compose_table *table)
+بنية xkb_compose_جدول *
+xkb_compose_جدول_ref(بنية xkb_compose_جدول *جدول)
 {
-    assert(table->refcnt > 0);
-    table->refcnt++;
-    return table;
+    أكد(جدول->refcnt > 0);
+    جدول->refcnt++;
+    أرجع جدول;
 }
 
-void
-xkb_compose_table_unref(struct xkb_compose_table *table)
+فراغ
+xkb_compose_جدول_unref(بنية xkb_compose_جدول *جدول)
 {
-    assert(!table || table->refcnt > 0);
-    if (!table || --table->refcnt > 0)
-        return;
-    free(table->locale);
-    darray_free(table->nodes);
-    darray_free(table->utf8);
-    xkb_context_unref(table->ctx);
-    free(table);
+    أكد(!جدول || جدول->refcnt > 0);
+    إذا (!جدول || --جدول->refcnt > 0)
+        أرجع;
+    حرر(جدول->locale);
+    darray_free(جدول->nodes);
+    darray_free(جدول->utf8);
+    xkb_context_unref(جدول->ctx);
+    حرر(جدول);
 }
 
-struct xkb_compose_table *
-xkb_compose_table_new_from_file(struct xkb_context *ctx,
+بنية xkb_compose_جدول *
+xkb_compose_جدول_new_from_file(بنية xkb_context *ctx,
                                 FILE *file,
-                                const char *locale,
-                                enum xkb_compose_format format,
-                                enum xkb_compose_compile_flags flags)
+                                ثابت حرف *locale,
+                                تعداد xkb_compose_format format,
+                                تعداد xkb_compose_compile_flags flags)
 {
-    struct xkb_compose_table * const table =
-        xkb_compose_table_new(ctx, __func__, locale, format, flags);
-    if (!table)
-        return NULL;
+    بنية xkb_compose_جدول * ثابت جدول =
+        xkb_compose_جدول_new(ctx, __func__, locale, format, flags);
+    إذا (!جدول)
+        أرجع عدم;
 
-    if (!parse_file(table, file, "(unknown file)")) {
-        xkb_compose_table_unref(table);
-        return NULL;
+    إذا (!parse_file(جدول, file, "(unknown file)")) {
+        xkb_compose_جدول_unref(جدول);
+        أرجع عدم;
     }
 
-    return table;
+    أرجع جدول;
 }
 
-struct xkb_compose_table *
-xkb_compose_table_new_from_buffer(struct xkb_context *ctx,
-                                  const char *buffer, size_t length,
-                                  const char *locale,
-                                  enum xkb_compose_format format,
-                                  enum xkb_compose_compile_flags flags)
+بنية xkb_compose_جدول *
+xkb_compose_جدول_new_from_بفر(بنية xkb_context *ctx,
+                                  ثابت حرف *بفر, سائيز_t ڊيگهائي,
+                                  ثابت حرف *locale,
+                                  تعداد xkb_compose_format format,
+                                  تعداد xkb_compose_compile_flags flags)
 {
-    struct xkb_compose_table * const table =
-        xkb_compose_table_new(ctx, __func__, locale, format, flags);
-    if (!table)
-        return NULL;
+    بنية xkb_compose_جدول * ثابت جدول =
+        xkb_compose_جدول_new(ctx, __func__, locale, format, flags);
+    إذا (!جدول)
+        أرجع عدم;
 
-    if (!parse_string(table, buffer, length, "(input string)")) {
-        xkb_compose_table_unref(table);
-        return NULL;
+    إذا (!parse_string(جدول, بفر, ڊيگهائي, "(input string)")) {
+        xkb_compose_جدول_unref(جدول);
+        أرجع عدم;
     }
 
-    return table;
+    أرجع جدول;
 }
 
-struct xkb_compose_table *
-xkb_compose_table_new_from_locale(struct xkb_context *ctx,
-                                  const char *locale,
-                                  enum xkb_compose_compile_flags flags)
+بنية xkb_compose_جدول *
+xkb_compose_جدول_new_from_locale(بنية xkb_context *ctx,
+                                  ثابت حرف *locale,
+                                  تعداد xkb_compose_compile_flags flags)
 {
-    static const enum xkb_compose_format format = XKB_COMPOSE_FORMAT_TEXT_V1;
-    struct xkb_compose_table * const table =
-        xkb_compose_table_new(ctx, __func__, locale, format, flags);
-    if (!table)
-        return NULL;
+    ساكن ثابت تعداد xkb_compose_format format = XKB_COMPOSE_FORMAT_متن_V1;
+    بنية xkb_compose_جدول * ثابت جدول =
+        xkb_compose_جدول_new(ctx, __func__, locale, format, flags);
+    إذا (!جدول)
+        أرجع عدم;
 
-    char *path = get_xcomposefile_path(ctx);
-    FILE *file = open_file(path);
-    if (file)
-        goto found_path;
-    free(path);
+    حرف *رستو = get_xcomposefile_رستو(ctx);
+    FILE *file = open_file(رستو);
+    إذا (file)
+        اذهب مليو_رستو;
+    حرر(رستو);
 
-    path = get_xdg_xcompose_file_path(ctx);
-    file = open_file(path);
-    if (file)
-        goto found_path;
-    free(path);
+    رستو = get_xdg_xcompose_file_رستو(ctx);
+    file = open_file(رستو);
+    إذا (file)
+        اذهب مليو_رستو;
+    حرر(رستو);
 
-    path = get_home_xcompose_file_path(ctx);
-    file = open_file(path);
-    if (file)
-        goto found_path;
-    free(path);
+    رستو = get_home_xcompose_file_رستو(ctx);
+    file = open_file(رستو);
+    إذا (file)
+        اذهب مليو_رستو;
+    حرر(رستو);
 
-    path = get_locale_compose_file_path(ctx, table->locale);
-    file = open_file(path);
-    if (file)
-        goto found_path;
-    free(path);
+    رستو = get_locale_compose_file_رستو(ctx, جدول->locale);
+    file = open_file(رستو);
+    إذا (file)
+        اذهب مليو_رستو;
+    حرر(رستو);
 
     log_err(ctx, XKB_ERROR_INVALID_COMPOSE_LOCALE,
             "couldn't find a Compose file for locale \"%s\" (mapped to \"%s\")\n",
-            locale, table->locale);
-    xkb_compose_table_unref(table);
-    return NULL;
+            locale, جدول->locale);
+    xkb_compose_جدول_unref(جدول);
+    أرجع عدم;
 
-found_path:
+مليو_رستو:
     {} /* Label followed by a declaration is a C23 extension */
-    const bool ok = parse_file(table, file, path);
+    ثابت bool ok = parse_file(جدول, file, رستو);
     fclose(file);
-    if (!ok) {
-        free(path);
-        xkb_compose_table_unref(table);
-        return NULL;
+    إذا (!ok) {
+        حرر(رستو);
+        xkb_compose_جدول_unref(جدول);
+        أرجع عدم;
     }
 
-    log_dbg(ctx, XKB_LOG_MESSAGE_NO_ID,
+    log_dbg(ctx, XKB_LOG_پيغام_NO_ID,
             "created compose table from locale %s with path %s\n",
-            table->locale, path);
+            جدول->locale, رستو);
 
-    free(path);
-    return table;
+    حرر(رستو);
+    أرجع جدول;
 }
 
-const xkb_keysym_t *
-xkb_compose_table_entry_sequence(struct xkb_compose_table_entry *entry,
-                                 size_t *sequence_length)
+ثابت xkb_keysym_t *
+xkb_compose_جدول_داخلا_sequence(بنية xkb_compose_جدول_داخلا *داخلا,
+                                 سائيز_t *sequence_ڊيگهائي)
 {
-    *sequence_length = entry->sequence_length;
-    return entry->sequence;
+    *sequence_ڊيگهائي = داخلا->sequence_ڊيگهائي;
+    أرجع داخلا->sequence;
 }
 
 xkb_keysym_t
-xkb_compose_table_entry_keysym(struct xkb_compose_table_entry *entry)
+xkb_compose_جدول_داخلا_keysym(بنية xkb_compose_جدول_داخلا *داخلا)
 {
-    return entry->keysym;
+    أرجع داخلا->keysym;
 }
 
-const char *
-xkb_compose_table_entry_utf8(struct xkb_compose_table_entry *entry)
+ثابت حرف *
+xkb_compose_جدول_داخلا_utf8(بنية xkb_compose_جدول_داخلا *داخلا)
 {
-    return entry->utf8;
+    أرجع داخلا->utf8;
 }
 
-#if MAX_COMPOSE_NODES_LOG2 > 31
-#error "Cannot implement bit field xkb_compose_table_iterator_pending_node.offset"
-#endif
+#إذا MAX_COMPOSE_NODES_LOG2 > 31
+#غلطي "Cannot implement bit field xkb_compose_table_iterator_pending_node.offset"
+#جيڪڏهن_پورو
 
-struct xkb_compose_table_iterator_pending_node {
-    uint32_t offset:31;
+بنية xkb_compose_جدول_iterator_pending_ڳنڍ {
+    uint32_t وٿي:31;
     bool processed:1;
 };
 
-struct xkb_compose_table_iterator {
-    struct xkb_compose_table *table;
+بنية xkb_compose_جدول_iterator {
+    بنية xkb_compose_جدول *جدول;
     /* Current entry */
-    struct xkb_compose_table_entry entry;
+    بنية xkb_compose_جدول_داخلا داخلا;
     /* Stack of pending nodes to process */
-    darray(struct xkb_compose_table_iterator_pending_node) pending_nodes;
+    darray(بنية xkb_compose_جدول_iterator_pending_ڳنڍ) pending_nodes;
 };
 
-struct xkb_compose_table_iterator *
-xkb_compose_table_iterator_new(struct xkb_compose_table *table)
+بنية xkb_compose_جدول_iterator *
+xkb_compose_جدول_iterator_new(بنية xkb_compose_جدول *جدول)
 {
-    struct xkb_compose_table_iterator *iter;
+    بنية xkb_compose_جدول_iterator *iter;
     xkb_keysym_t *sequence;
 
-    iter = calloc(1, sizeof(*iter));
-    if (!iter) {
-        return NULL;
+    iter = صفر_يادگيري_ڏيو(1, حجم(*iter));
+    إذا (!iter) {
+        أرجع عدم;
     }
-    iter->table = xkb_compose_table_ref(table);
-    sequence = calloc(COMPOSE_MAX_LHS_LEN, sizeof(xkb_keysym_t));
-    if (!sequence) {
-        free(iter);
-        return NULL;
+    iter->جدول = xkb_compose_جدول_ref(جدول);
+    sequence = صفر_يادگيري_ڏيو(COMPOSE_MAX_LHS_LEN, حجم(xkb_keysym_t));
+    إذا (!sequence) {
+        حرر(iter);
+        أرجع عدم;
     }
-    iter->entry.sequence = sequence;
-    iter->entry.sequence_length = 0;
+    iter->داخلا.sequence = sequence;
+    iter->داخلا.sequence_ڊيگهائي = 0;
 
     darray_init(iter->pending_nodes);
     /* Short-circuit if table contains only the dummy entry */
-    if (darray_size(table->nodes) == 1) {
-        return iter;
+    إذا (darray_سائيز(جدول->nodes) == 1) {
+        أرجع iter;
     }
     /* Add root node */
-    struct xkb_compose_table_iterator_pending_node pending = {
-        .offset = 1,
+    بنية xkb_compose_جدول_iterator_pending_ڳنڍ pending = {
+        .وٿي = 1,
         .processed = false
     };
     darray_append(iter->pending_nodes, pending);
-    const struct compose_node *node = &darray_item(iter->table->nodes,
-                                                   pending.offset);
+    ثابت بنية compose_ڳنڍ *ڳنڍ = &darray_شي(iter->جدول->nodes,
+                                                   pending.وٿي);
 
     /* Find the first left-most node and store intermediate nodes as pending */
-    while (node->lokid) {
-        pending.offset = node->lokid;
+    طالما (ڳنڍ->lokid) {
+        pending.وٿي = ڳنڍ->lokid;
         darray_append(iter->pending_nodes, pending);
-        node = &darray_item(iter->table->nodes, pending.offset);
+        ڳنڍ = &darray_شي(iter->جدول->nodes, pending.وٿي);
     };
 
-    return iter;
+    أرجع iter;
 }
 
-void
-xkb_compose_table_iterator_free(struct xkb_compose_table_iterator *iter)
+فراغ
+xkb_compose_جدول_iterator_free(بنية xkb_compose_جدول_iterator *iter)
 {
-    xkb_compose_table_unref(iter->table);
+    xkb_compose_جدول_unref(iter->جدول);
     darray_free(iter->pending_nodes);
-    free(iter->entry.sequence);
-    free(iter);
+    حرر(iter->داخلا.sequence);
+    حرر(iter);
 }
 
-struct xkb_compose_table_entry *
-xkb_compose_table_iterator_next(struct xkb_compose_table_iterator *iter)
+بنية xkb_compose_جدول_داخلا *
+xkb_compose_جدول_iterator_ايندڙ(بنية xkb_compose_جدول_iterator *iter)
 {
     /* Traversal algorithm (simplified):
      * 1. Resume last pending node from the stack as the current pending node.
@@ -298,75 +298,75 @@ xkb_compose_table_iterator_next(struct xkb_compose_table_iterator *iter)
      * 7. Go to 5.
      */
 
-    struct xkb_compose_table_iterator_pending_node *pending;
-    const struct compose_node *node;
+    بنية xkb_compose_جدول_iterator_pending_ڳنڍ *pending;
+    ثابت بنية compose_ڳنڍ *ڳنڍ;
 
     /* Iterator is empty if there is no pending nodes */
-    if (unlikely(darray_empty(iter->pending_nodes))) {
-        return NULL;
+    إذا (unlikely(darray_خالي_جايون(iter->pending_nodes))) {
+        أرجع عدم;
     }
 
     /* Resume to the last element in the stack */
-    pending = &darray_item(iter->pending_nodes,
-                           darray_size(iter->pending_nodes) - 1);
-    node = &darray_item(iter->table->nodes, pending->offset);
+    pending = &darray_شي(iter->pending_nodes,
+                           darray_سائيز(iter->pending_nodes) - 1);
+    ڳنڍ = &darray_شي(iter->جدول->nodes, pending->وٿي);
 
-    struct xkb_compose_table_iterator_pending_node new = {
+    بنية xkb_compose_جدول_iterator_pending_ڳنڍ new = {
         .processed = false,
-        .offset = 0
+        .وٿي = 0
     };
 
     /* Remove processed leaves until an unprocessed right arrow or parent
      * is found, then update entry accordingly */
-    while (pending->processed) {
+    طالما (pending->processed) {
         /* Remove last keysym */
-        iter->entry.sequence_length--;
-        if (node->hikid) {
+        iter->داخلا.sequence_ڊيگهائي--;
+        إذا (ڳنڍ->hikid) {
             /* Follow right arrow: replace current pending node */
             pending->processed = false;
-            pending->offset = node->hikid;
+            pending->وٿي = ڳنڍ->hikid;
             /* Process child’s left arrow */
-            goto node_left;
-        } else {
+            اذهب ڳنڍ_کاٻو;
+        } وإلا {
             /* Remove processed node */
-            darray_remove_last(iter->pending_nodes);
-            if (unlikely(darray_empty(iter->pending_nodes))) {
+            darray_remove_آخري(iter->pending_nodes);
+            إذا (unlikely(darray_خالي_جايون(iter->pending_nodes))) {
                 /* No more nodes to process */
-                return NULL;
+                أرجع عدم;
             }
             /* Get parent node */
-            pending = &darray_item(iter->pending_nodes,
-                                   darray_size(iter->pending_nodes) - 1);
-            node = &darray_item(iter->table->nodes, pending->offset);
+            pending = &darray_شي(iter->pending_nodes,
+                                   darray_سائيز(iter->pending_nodes) - 1);
+            ڳنڍ = &darray_شي(iter->جدول->nodes, pending->وٿي);
         }
     }
 
-    while (1) {
+    طالما (1) {
         /* Follow down arrow */
         pending->processed = true;
-        iter->entry.sequence_length++;
-        iter->entry.sequence[iter->entry.sequence_length - 1] = node->keysym;
-        if (node->is_leaf) {
+        iter->داخلا.sequence_ڊيگهائي++;
+        iter->داخلا.sequence[iter->داخلا.sequence_ڊيگهائي - 1] = ڳنڍ->keysym;
+        إذا (ڳنڍ->is_پن) {
             /* Leaf: return entry */
-            iter->entry.keysym = node->leaf.keysym;
-            iter->entry.utf8 = &darray_item(iter->table->utf8, node->leaf.utf8);
-            return &iter->entry;
+            iter->داخلا.keysym = ڳنڍ->پن.keysym;
+            iter->داخلا.utf8 = &darray_شي(iter->جدول->utf8, ڳنڍ->پن.utf8);
+            أرجع &iter->داخلا;
         }
         /* Not a leaf: process child node */
-        new.offset = node->internal.eqkid;
+        new.وٿي = ڳنڍ->اندروني.eqkid;
         darray_append(iter->pending_nodes, new);
-        pending = &darray_item(iter->pending_nodes,
-                               darray_size(iter->pending_nodes) - 1);
-node_left:
-        node = &darray_item(iter->table->nodes, pending->offset);
+        pending = &darray_شي(iter->pending_nodes,
+                               darray_سائيز(iter->pending_nodes) - 1);
+ڳنڍ_کاٻو:
+        ڳنڍ = &darray_شي(iter->جدول->nodes, pending->وٿي);
         /* Find the next left-most arrow and store intermediate pending nodes */
-        while (node->lokid) {
+        طالما (ڳنڍ->lokid) {
             /* Follow left arrow */
-            new.offset = node->lokid;
+            new.وٿي = ڳنڍ->lokid;
             darray_append(iter->pending_nodes, new);
-            pending = &darray_item(iter->pending_nodes,
-                                   darray_size(iter->pending_nodes) - 1);
-            node = &darray_item(iter->table->nodes, new.offset);
+            pending = &darray_شي(iter->pending_nodes,
+                                   darray_سائيز(iter->pending_nodes) - 1);
+            ڳنڍ = &darray_شي(iter->جدول->nodes, new.وٿي);
         }
     }
 }
