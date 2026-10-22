@@ -10,158 +10,158 @@
  * Author: Daniel Stone <daniel@fooishbar.org>
  */
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include <assert.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
+#अन्तर्भाव <assert.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdlib.h>
 
-#include "xkbcommon/xkbcommon-status.h"
-#include "xkbcommon/xkbcommon-keysyms.h"
-#include "xkbcommon/xkbcommon.h"
-#include "atom.h"
-#include "action.h"
-#include "context.h"
-#include "darray.h"
-#include "keymap.h"
-#include "messages-codes.h"
-#include "text.h"
-#include "util-numbers.h"
-#include "xkbcomp-priv.h"
+#अन्तर्भाव "xkbcommon/xkbcommon-status.h"
+#अन्तर्भाव "xkbcommon/xkbcommon-keysyms.h"
+#अन्तर्भाव "xkbcommon/xkbcommon.h"
+#अन्तर्भाव "atom.h"
+#अन्तर्भाव "action.h"
+#अन्तर्भाव "context.h"
+#अन्तर्भाव "darray.h"
+#अन्तर्भाव "keymap.h"
+#अन्तर्भाव "messages-codes.h"
+#अन्तर्भाव "text.h"
+#अन्तर्भाव "util-numbers.h"
+#अन्तर्भाव "xkbcomp-priv.h"
 
 #define BUF_CHUNK_SIZE 4096
 
-struct buf {
-    char *buf;
-    size_t size;
-    size_t alloc;
+संरचना buf {
+    अक्षर *buf;
+    माप_प्रकार size;
+    माप_प्रकार alloc;
 };
 
 #define xkb_abs(n) _Generic((n),                \
-                            int: abs,           \
-                            long int: labs,     \
-                            default: llabs )((n))
+                            पूर्णांक: असल,           \
+                            दीर्घ पूर्णांक: द_असल,     \
+                            पूर्वनिर्धारित: llabs )((n))
 
-static bool
-do_realloc(struct buf *buf, size_t at_least)
+स्थिर bool
+do_realloc(संरचना buf *buf, माप_प्रकार at_least)
 {
     buf->alloc += BUF_CHUNK_SIZE;
-    if (at_least >= BUF_CHUNK_SIZE)
+    जर (at_least >= BUF_CHUNK_SIZE)
         buf->alloc += at_least;
 
-    char *const new = realloc(buf->buf, buf->alloc);
-    if (!new)
-        return false;
+    अक्षर *स्थिरांक new = पुनः_स्मृति(buf->buf, buf->alloc);
+    जर (!new)
+        परत false;
 
     buf->buf = new;
-    return true;
+    परत true;
 }
 
-ATTR_PRINTF(2, 3) static bool
-check_write_buf(struct buf *buf, const char *fmt, ...)
+ATTR_PRINTF(2, 3) स्थिर bool
+check_write_buf(संरचना buf *buf, स्थिरांक अक्षर *fmt, ...)
 {
-    va_list args;
-    int printed;
-    size_t available;
+    बहु_सूची args;
+    पूर्णांक printed;
+    माप_प्रकार available;
 
     available = buf->alloc - buf->size;
     /* Try to write to the buffer and get the required min size (without the
      * final null byte).
      * C11 states that if `available` is 0, then the pointer may be null. */
-    assert(buf->buf || available == 0);
-    va_start(args, fmt);
+    प्रतिज्ञा(buf->buf || available == 0);
+    बहु_शुरू(args, fmt);
     printed = vsnprintf(buf->buf ? buf->buf + buf->size : buf->buf, available,
                         fmt, args);
-    va_end(args);
+    बहु_पूर्ण(args);
 
-    if (printed < 0) {
+    जर (printed < 0) {
         /* Some error */
-        goto err;
-    } else if ((size_t)printed >= available) {
+        जा err;
+    } अन्यथा जर ((माप_प्रकार)printed >= available) {
         /* Not enough space: need to realloc */
-        if (!do_realloc(buf, (size_t)printed + 1))
-            goto err;
+        जर (!do_realloc(buf, (माप_प्रकार)printed + 1))
+            जा err;
 
         /* The buffer has enough space now. */
         available = buf->alloc - buf->size;
-        assert(buf->buf && (size_t) printed < available);
-        va_start(args, fmt);
+        प्रतिज्ञा(buf->buf && (माप_प्रकार) printed < available);
+        बहु_शुरू(args, fmt);
         printed = vsnprintf(buf->buf + buf->size, available, fmt, args);
-        va_end(args);
+        बहु_पूर्ण(args);
 
-        if (printed < 0 || (size_t) printed >= available)
-            goto err;
+        जर (printed < 0 || (माप_प्रकार) printed >= available)
+            जा err;
     }
 
-    buf->size += (size_t)printed;
-    return true;
+    buf->size += (माप_प्रकार)printed;
+    परत true;
 
 err:
-    free(buf->buf);
-    buf->buf = NULL;
-    return false;
+    मुक्त(buf->buf);
+    buf->buf = रिक्त;
+    परत false;
 }
 
-#define write_buf(buf, ...) do { \
-    if (!check_write_buf(buf, __VA_ARGS__)) \
-        return false; \
-} while (0)
+#define write_buf(buf, ...) करा { \
+    जर (!check_write_buf(buf, __VA_ARGS__)) \
+        परत false; \
+} पर्यंत (0)
 
-static bool
-check_copy_to_buf(struct buf *buf, const char* source, size_t len)
+स्थिर bool
+check_copy_to_buf(संरचना buf *buf, स्थिरांक अक्षर* source, माप_प्रकार len)
 {
-    if (len == 0)
-        return true;
+    जर (len == 0)
+        परत true;
 
-    const size_t available = buf->alloc - buf->size;
-    if (len >= available &&
+    स्थिरांक माप_प्रकार available = buf->alloc - buf->size;
+    जर (len >= available &&
         /* len + 1 (terminating NULL) */
         !do_realloc(buf, len + 1))
     {
-        free(buf->buf);
-        buf->buf = NULL;
-        return false;
+        मुक्त(buf->buf);
+        buf->buf = रिक्त;
+        परत false;
     }
 
-    memcpy(buf->buf + buf->size, source, len);
+    स_नकल(buf->buf + buf->size, source, len);
     buf->size += len;
     /* Append NULL byte */
     buf->buf[buf->size] = '\0';
-    return true;
+    परत true;
 }
 
-#define copy_to_buf_len(buf, source, len) do { \
-    if (!check_copy_to_buf(buf, source, len)) \
-        return false; \
-} while (0)
+#define copy_to_buf_len(buf, source, len) करा { \
+    जर (!check_copy_to_buf(buf, source, len)) \
+        परत false; \
+} पर्यंत (0)
 
 #define copy_to_buf(buf, source) \
-    copy_to_buf_len(buf, source, sizeof(source) - 1)
+    copy_to_buf_len(buf, source, आकार(source) - 1)
 
-static bool
-check_write_string_literal(struct buf *buf, const char* string)
+स्थिर bool
+check_write_string_literal(संरचना buf *buf, स्थिरांक अक्षर* string)
 {
     copy_to_buf(buf, "\"");
 
     /* Write chunks, separated by characters requiring escape sequence */
-    size_t pending_start = 0;
-    size_t current = 0;
-    char escape_buffer[] = {'\\', '0', '0', '0', '0'};
-    for (; string[current] != '\0'; current++) {
+    माप_प्रकार pending_start = 0;
+    माप_प्रकार current = 0;
+    अक्षर escape_buffer[] = {'\\', '0', '0', '0', '0'};
+    साठी (; string[current] != '\0'; current++) {
         uint8_t escape_len;
-        switch (string[current]) {
-        case '\n':
+        निवड (string[current]) {
+        स्थिती '\n':
             /* `\n` would break strings */
             escape_buffer[1] = 'n';
             escape_len = 2;
-            break;
-        case '\\':
+            थांबा;
+        स्थिती '\\':
             /* `\` would create escape sequences */
             escape_buffer[1] = '\\';
             escape_len = 2;
-            break;
-        default:
+            थांबा;
+        पूर्वनिर्धारित:
             /*
              * Handle `"` (would break strings) and ASCII control characters
              * with an octal escape sequence. Xorg xkbcomp does not parse the
@@ -177,47 +177,47 @@ check_write_string_literal(struct buf *buf, const char* string)
              * although it will not raise an error: e.g. the escape for `"`,
              * `\0042`, would be parsed as `\004` + `2`.
              */
-            if (unlikely((unsigned char)string[current] < 0x20U ||
+            जर (unlikely((अचिन्हित अक्षर)string[current] < 0x20U ||
                          string[current] == '"')) {
                 escape_buffer[1] = '0';
                 escape_buffer[2] = '0';
-                escape_buffer[3] = (char)('0' + (string[current] >> 3));
-                escape_buffer[4] = (char)('0' + (string[current] & 0x7));
+                escape_buffer[3] = (अक्षर)('0' + (string[current] >> 3));
+                escape_buffer[4] = (अक्षर)('0' + (string[current] & 0x7));
                 escape_len = 5;
-            } else {
+            } अन्यथा {
                 /* Expand the chunk */
-                continue;
+                सुरूठेवा;
             }
         }
         /* Write pending chunk */
-        assert(current >= pending_start);
+        प्रतिज्ञा(current >= pending_start);
         copy_to_buf_len(buf, string + pending_start, current - pending_start);
         /* Write escape sequence */
         copy_to_buf_len(buf, escape_buffer, escape_len);
         pending_start = current + 1;
     }
     /* Write remaining chunk */
-    assert(current >= pending_start);
+    प्रतिज्ञा(current >= pending_start);
     copy_to_buf_len(buf, string + pending_start, current - pending_start);
 
     copy_to_buf(buf, "\"");
-    return true;
+    परत true;
 }
 
-#define write_buf_string_literal(buf, string) do { \
-    if (!check_write_string_literal(buf, string)) \
-        return false; \
-} while (0)
+#define write_buf_string_literal(buf, string) करा { \
+    जर (!check_write_string_literal(buf, string)) \
+        परत false; \
+} पर्यंत (0)
 
-static void
-delete_last_char(struct buf *buf, char c)
+स्थिर शून्य
+delete_last_char(संरचना buf *buf, अक्षर c)
 {
-    if (buf->size && buf->buf[buf->size - 1] == c)
+    जर (buf->size && buf->buf[buf->size - 1] == c)
         buf->buf[--buf->size] = '\0';
 }
 
 /** Entry for a name substituion LUT */
-struct key_name_substitution {
+संरचना किल्ली_name_substitution {
     xkb_atom_t source;
     xkb_atom_t target;
     /** Used for intuitive renaming */
@@ -225,40 +225,40 @@ struct key_name_substitution {
 };
 
 /** Compare 2 key name substitution entries by they original name (atom) */
-static int
-cmp_key_name_substitution(const void *a, const void *b)
+स्थिर पूर्णांक
+cmp_किल्ली_name_substitution(स्थिरांक शून्य *a, स्थिरांक शून्य *b)
 {
-    const xkb_atom_t s1 = ((struct key_name_substitution *) a)->source;
-    const xkb_atom_t s2 = ((struct key_name_substitution *) b)->source;
-    return (s1 < s2) ? -1 : ((s1 > s2) ? 1 : 0);
+    स्थिरांक xkb_atom_t s1 = ((संरचना किल्ली_name_substitution *) a)->source;
+    स्थिरांक xkb_atom_t s2 = ((संरचना किल्ली_name_substitution *) b)->source;
+    परत (s1 < s2) ? -1 : ((s1 > s2) ? 1 : 0);
 }
 
-typedef darray(struct key_name_substitution) key_name_substitutions;
+प्रकारव्याख्या darray(संरचना किल्ली_name_substitution) किल्ली_name_substitutions;
 
 /**
  * Rename keys that are not compatible with the original XKB protocol,
  * i.e. more that 4 bytes. The new name will be formed as prefix + 3-digit
  * hexadecimal number.
  */
-static bool
-rename_long_keys(const struct xkb_keymap *keymap,
-                 key_name_substitutions *substitutions)
+स्थिर bool
+rename_long_किल्ल्या(स्थिरांक संरचना xkb_keymap *keymap,
+                 किल्ली_name_substitutions *substitutions)
 {
     /*
      * Prefixes we want to use for the new names: ASCII range `!`..`0`.
      * They are really unlikely to be used in usual keymaps.
      * NULL denotes an unavailable prefix.
      */
-    enum {
+    गणना {
         first = '!',
         last = '0',
         invalid = '\0'
     };
-    char prefixes[] = {
+    अक्षर prefixes[] = {
         first, invalid /* skip ‘"’, which would look buggy otherwise */,
         '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.', '/', last
     };
-    static_assert(sizeof(prefixes) == last - first + 1, "invalid range");
+    static_assert(आकार(prefixes) == last - first + 1, "invalid range");
 
     /*
      * Traverse all the keys and aliases:
@@ -269,47 +269,47 @@ rename_long_keys(const struct xkb_keymap *keymap,
      */
 
     /* Check key names */
-    const struct xkb_key *key;
-    xkb_keys_foreach(key, keymap) {
-        if (key->name == XKB_ATOM_NONE)
-            continue;
+    स्थिरांक संरचना xkb_किल्ली *किल्ली;
+    xkb_किल्ल्या_foreach(किल्ली, keymap) {
+        जर (किल्ली->name == XKB_ATOM_NONE)
+            सुरूठेवा;
 
-        const char * const name = xkb_atom_text(keymap->ctx, key->name);
-        const size_t len = strlen_safe(name);
-        if (len > 4) {
+        स्थिरांक अक्षर * स्थिरांक name = xkb_atom_text(keymap->ctx, किल्ली->name);
+        स्थिरांक माप_प्रकार len = strlen_safe(name);
+        जर (len > 4) {
             /* Key name too long: append key, pending for renaming */
-            darray_append(*substitutions, (struct key_name_substitution) {
-                .source = key->name,
-                .keycode = key->keycode,
-                .target = key->name
+            darray_append(*substitutions, (संरचना किल्ली_name_substitution) {
+                .source = किल्ली->name,
+                .keycode = किल्ली->keycode,
+                .target = किल्ली->name
             });
-        } else if (len == 4 && name[0] >= first && name[0] <= last) {
+        } अन्यथा जर (len == 4 && name[0] >= first && name[0] <= last) {
             /* Potential name conflict: deactivate this prefix */
             prefixes[name[0] - first] = invalid;
         }
     }
 
     /* Check aliases */
-    for (darray_size_t a = 0; a < keymap->num_key_aliases; a++) {
-        const struct xkb_key_alias * const alias = &keymap->key_aliases[a];
-        const char * const name = xkb_atom_text(keymap->ctx, alias->alias);
-        const size_t len = strlen_safe(name);
-        if (len > 4) {
+    साठी (darray_size_t a = 0; a < keymap->अंक_किल्ली_aliases; a++) {
+        स्थिरांक संरचना xkb_किल्ली_alias * स्थिरांक alias = &keymap->किल्ली_aliases[a];
+        स्थिरांक अक्षर * स्थिरांक name = xkb_atom_text(keymap->ctx, alias->alias);
+        स्थिरांक माप_प्रकार len = strlen_safe(name);
+        जर (len > 4) {
             /* Alias name too long: append alias, pending for renaming */
-            darray_append(*substitutions, (struct key_name_substitution) {
+            darray_append(*substitutions, (संरचना किल्ली_name_substitution) {
                 .source = alias->alias,
                 .keycode = XKB_KEYCODE_INVALID, /* Too expensive to lookup */
                 .target = alias->alias
             });
-        } else if (len == 4 && name[0] >= first && name[0] <= last) {
+        } अन्यथा जर (len == 4 && name[0] >= first && name[0] <= last) {
             /* Potential conflict with names substitutes: deactivate prefix */
             prefixes[name[0] - first] = invalid;
         }
     }
 
-    if darray_empty(*substitutions) {
+    जर darray_empty(*substitutions) {
         /* Nothing to do */
-        return true;
+        परत true;
     }
 
     /*
@@ -323,70 +323,70 @@ rename_long_keys(const struct xkb_keymap *keymap,
      */
 
     /* Get first available prefix */
-    char *prefix = prefixes;
-    const char *prefix_max = prefixes + sizeof(prefixes) - 1;
-    while (*prefix == invalid && prefix < prefix_max)
+    अक्षर *prefix = prefixes;
+    स्थिरांक अक्षर *prefix_max = prefixes + आकार(prefixes) - 1;
+    पर्यंत (*prefix == invalid && prefix < prefix_max)
         prefix++;
 
     /* Keycode prefix: prefer ‘0’ if available */
-    char keycode_prefix;
-    if (prefixes[last - first] == '0') {
+    अक्षर keycode_prefix;
+    जर (prefixes[last - first] == '0') {
         /* ‘0’ is available: use it then mark it unavailable for further use */
         keycode_prefix = last;
         prefixes[last - first] = invalid;
-    } else {
+    } अन्यथा {
         /* ‘0’ is unavailable: use first available prefix */
         keycode_prefix = *prefix;
-        if (unlikely(keycode_prefix == invalid)) {
+        जर (unlikely(keycode_prefix == invalid)) {
             /*
              * Abort: no prefix available (very unlikely).
              * Do not error though: Wayland clients can still parse the keymap.
              */
             darray_free(*substitutions);
-            return true;
+            परत true;
         }
         /* Update current prefix */
         *prefix = invalid;
-        while (*prefix == invalid && prefix < prefix_max)
+        पर्यंत (*prefix == invalid && prefix < prefix_max)
             prefix++;
     }
 
     /* Proceed renaming */
     uint16_t next_id = 1;
-    struct key_name_substitution *sub;
-    char buf[6] = {0}; /* 5 would suffice, but generates a compiler warning */
+    संरचना किल्ली_name_substitution *sub;
+    अक्षर buf[6] = {0}; /* 5 would suffice, but generates a compiler warning */
     darray_foreach(sub, *substitutions) {
         static_assert(XKB_KEYCODE_INVALID > 0xfff, "Invalid keys filtered out");
-        if (sub->keycode <= 0xfff) {
+        जर (sub->keycode <= 0xfff) {
             /*
              * Try nice formatting with the hexadecimal keycode.
              * We use lower case to reduce possible conflict because the
              * traditional key names are upper-cased.
              */
-            snprintf(buf, sizeof(buf), "%c%03"PRIx32,
+            snprintf(buf, आकार(buf), "%c%03"PRIx32,
                      keycode_prefix, sub->keycode);
-            const xkb_atom_t target = xkb_atom_intern(keymap->ctx,
-                                                      buf, sizeof(buf) - 2);
-            if (target == XKB_ATOM_NONE)
-                goto error;
+            स्थिरांक xkb_atom_t target = xkb_atom_intern(keymap->ctx,
+                                                      buf, आकार(buf) - 2);
+            जर (target == XKB_ATOM_NONE)
+                जा error;
             sub->target = target;
-        } else if (*prefix != invalid) {
+        } अन्यथा जर (*prefix != invalid) {
             /* Cannot use keycode for formatting: generate next arbitrary ID */
-            snprintf(buf, sizeof(buf), "%c%03"PRIx16, *prefix, next_id);
-            const xkb_atom_t target = xkb_atom_intern(keymap->ctx,
-                                                      buf, sizeof(buf) - 2);
-            if (target == XKB_ATOM_NONE)
-                goto error;
+            snprintf(buf, आकार(buf), "%c%03"PRIx16, *prefix, next_id);
+            स्थिरांक xkb_atom_t target = xkb_atom_intern(keymap->ctx,
+                                                      buf, आकार(buf) - 2);
+            जर (target == XKB_ATOM_NONE)
+                जा error;
             sub->target = target;
-            if (++next_id > 0xfff) {
+            जर (++next_id > 0xfff) {
                 *prefix = invalid;
                 /* Get next available prefix */
-                while (*prefix == invalid && prefix < prefix_max)
+                पर्यंत (*prefix == invalid && prefix < prefix_max)
                     prefix++;
                 /* Reset counter */
                 next_id = 1;
             }
-        } else {
+        } अन्यथा {
             /*
              * No prefix available: skip substitution (very unlikely).
              * Do not error though: Wayland clients can still parse the keymap.
@@ -396,55 +396,55 @@ rename_long_keys(const struct xkb_keymap *keymap,
     }
 
     /* Now sort by the source names so we can do a binary search */
-    qsort(darray_items(*substitutions), darray_size(*substitutions),
-          sizeof(*darray_items(*substitutions)), &cmp_key_name_substitution);
+    क्विक(darray_वस्तुसंच(*substitutions), darray_size(*substitutions),
+          आकार(*darray_वस्तुसंच(*substitutions)), &cmp_किल्ली_name_substitution);
 
-    return true;
+    परत true;
 
 error:
     darray_free(*substitutions);
     /* There was a memory error */
     log_err(keymap->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
             "Cannot allocate key name substitution\n");
-    return false;
+    परत false;
 }
 
 /** Substitute a key name with a valid X11 key name */
-static xkb_atom_t
-substitute_name(const key_name_substitutions *substitutions, xkb_atom_t name)
+स्थिर xkb_atom_t
+substitute_name(स्थिरांक किल्ली_name_substitutions *substitutions, xkb_atom_t name)
 {
-    /* Binary search */
+    /*द्विमान शोध*/
     darray_size_t first = 0;
     darray_size_t last = darray_size(*substitutions);
 
-    while (last > first) {
+    पर्यंत (last > first) {
         darray_size_t mid = first + (last - 1 - first) / 2;
-        const xkb_atom_t source = darray_item(*substitutions, mid).source;
-        if (source < name)
+        स्थिरांक xkb_atom_t source = darray_item(*substitutions, mid).source;
+        जर (source < name)
             first = mid + 1;
-        else if (source > name)
+        अन्यथा जर (source > name)
             last = mid;
-        else /* found it */
-            return darray_item(*substitutions, mid).target;
+        अन्यथा /* found it */
+            परत darray_item(*substitutions, mid).target;
     }
 
     /* No name substitution: return original name */
-    return name;
+    परत name;
 }
 
-static bool
-write_vmods(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
-            bool explicit, struct buf *buf)
+स्थिर bool
+write_vmods(स्थिरांक संरचना xkb_keymap *keymap, गणना xkb_keymap_format format,
+            bool explicit, संरचना buf *buf)
 {
-    const struct xkb_mod *mod;
+    स्थिरांक संरचना xkb_mod *mod;
     xkb_mod_index_t vmod = 0;
     bool has_some = false;
 
     xkb_vmods_enumerate(vmod, mod, &keymap->mods) {
-        if (!has_some) {
+        जर (!has_some) {
             copy_to_buf(buf, "\tvirtual_modifiers ");
             has_some = true;
-        } else {
+        } अन्यथा {
             copy_to_buf(buf, ",");
         }
         write_buf(buf, "%s", xkb_atom_text(keymap->ctx, mod->name));
@@ -465,9 +465,9 @@ write_vmods(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
          * mapping to prevent triggering the auto canonical mapping presented
          * above.
          */
-        const bool auto_canonical_mods = (format >= XKB_KEYMAP_FORMAT_TEXT_V2);
+        स्थिरांक bool auto_canonical_mods = (format >= XKB_KEYMAP_FORMAT_TEXT_V2);
 
-        if ((keymap->mods.explicit_vmods & (UINT32_C(1) << vmod) ||
+        जर ((keymap->mods.explicit_vmods & (UINT32_C(1) << vmod) ||
              explicit) &&
             (auto_canonical_mods || mod->mapping != 0)) {
             /*
@@ -480,27 +480,27 @@ write_vmods(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
         }
     }
 
-    if (has_some)
+    जर (has_some)
         copy_to_buf(buf, ";\n\n");
 
-    return true;
+    परत true;
 }
 
-static bool
-write_keycodes(const struct xkb_keymap *keymap,
-               const key_name_substitutions *substitutions,
-               enum xkb_keymap_serialize_flags flags, struct buf *buf)
+स्थिर bool
+write_keycodes(स्थिरांक संरचना xkb_keymap *keymap,
+               स्थिरांक किल्ली_name_substitutions *substitutions,
+               गणना xkb_keymap_serialize_flags flags, संरचना buf *buf)
 {
-    const struct xkb_key *key;
+    स्थिरांक संरचना xkb_किल्ली *किल्ली;
     xkb_led_index_t idx;
-    const struct xkb_led *led;
+    स्थिरांक संरचना xkb_led *led;
 
-    const bool pretty = !!(flags & XKB_KEYMAP_SERIALIZE_PRETTY);
+    स्थिरांक bool pretty = !!(flags & XKB_KEYMAP_SERIALIZE_PRETTY);
 
-    if (keymap->keycodes_section_name)
+    जर (keymap->keycodes_section_name)
         write_buf(buf, "xkb_keycodes \"%s\" {\n",
                   keymap->keycodes_section_name);
-    else
+    अन्यथा
         copy_to_buf(buf, "xkb_keycodes {\n");
 
     /* NOTE: there is no support for default values */
@@ -509,73 +509,73 @@ write_keycodes(const struct xkb_keymap *keymap,
      * a maximum of at least 255, else XWayland really starts hating life.
      * If this is a problem and people really need strictly bounded keymaps,
      * we should probably control this with a flag. */
-    write_buf(buf, "\tminimum = %"PRIu32";\n", MIN(keymap->min_key_code, 8));
-    write_buf(buf, "\tmaximum = %"PRIu32";\n", MAX(keymap->max_key_code, 255));
+    write_buf(buf, "\tminimum = %"PRIu32";\n", MIN(keymap->min_किल्ली_code, 8));
+    write_buf(buf, "\tmaximum = %"PRIu32";\n", MAX(keymap->max_किल्ली_code, 255));
 
-    xkb_keys_foreach(key, keymap) {
-        if (key->name == XKB_ATOM_NONE)
-            continue;
+    xkb_किल्ल्या_foreach(किल्ली, keymap) {
+        जर (किल्ली->name == XKB_ATOM_NONE)
+            सुरूठेवा;
 
-        const xkb_atom_t name = (substitutions == NULL)
-            ? key->name
-            : substitute_name(substitutions, key->name);
-        if (pretty)
-            write_buf(buf, "\t%-20s", KeyNameText(keymap->ctx, name));
-        else
-            write_buf(buf, "\t%s", KeyNameText(keymap->ctx, name));
-        write_buf(buf, " = %"PRIu32";\n", key->keycode);
+        स्थिरांक xkb_atom_t name = (substitutions == रिक्त)
+            ? किल्ली->name
+            : substitute_name(substitutions, किल्ली->name);
+        जर (pretty)
+            write_buf(buf, "\t%-20s", किल्ली_Name_Text(keymap->ctx, name));
+        अन्यथा
+            write_buf(buf, "\t%s", किल्ली_Name_Text(keymap->ctx, name));
+        write_buf(buf, " = %"PRIu32";\n", किल्ली->keycode);
     }
 
     xkb_leds_enumerate(idx, led, keymap)
-        if (led->name != XKB_ATOM_NONE) {
+        जर (led->name != XKB_ATOM_NONE) {
             write_buf(buf, "\tindicator %"PRIu32" = ", idx + 1);
             write_buf_string_literal(buf, xkb_atom_text(keymap->ctx, led->name));
             copy_to_buf(buf, ";\n");
         }
 
-    for (darray_size_t i = 0; i < keymap->num_key_aliases; i++) {
-        const xkb_atom_t alias = (substitutions == NULL)
-            ? keymap->key_aliases[i].alias
-            : substitute_name(substitutions, keymap->key_aliases[i].alias);
-        const xkb_atom_t real = (substitutions == NULL)
-            ? keymap->key_aliases[i].real
-            : substitute_name(substitutions, keymap->key_aliases[i].real);
+    साठी (darray_size_t i = 0; i < keymap->अंक_किल्ली_aliases; i++) {
+        स्थिरांक xkb_atom_t alias = (substitutions == रिक्त)
+            ? keymap->किल्ली_aliases[i].alias
+            : substitute_name(substitutions, keymap->किल्ली_aliases[i].alias);
+        स्थिरांक xkb_atom_t real = (substitutions == रिक्त)
+            ? keymap->किल्ली_aliases[i].real
+            : substitute_name(substitutions, keymap->किल्ली_aliases[i].real);
 
-        if (pretty)
+        जर (pretty)
             write_buf(buf, "\talias %-14s",
-                      KeyNameText(keymap->ctx, alias));
-        else
+                      किल्ली_Name_Text(keymap->ctx, alias));
+        अन्यथा
             write_buf(buf, "\talias %s",
-                      KeyNameText(keymap->ctx, alias));
+                      किल्ली_Name_Text(keymap->ctx, alias));
         write_buf(buf, " = %s;\n",
-                  KeyNameText(keymap->ctx, real));
+                  किल्ली_Name_Text(keymap->ctx, real));
     }
 
     copy_to_buf(buf, "};\n\n");
-    return true;
+    परत true;
 }
 
-static bool
-write_types(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
-            enum xkb_keymap_serialize_flags flags, struct buf *buf)
+स्थिर bool
+write_types(स्थिरांक संरचना xkb_keymap *keymap, गणना xkb_keymap_format format,
+            गणना xkb_keymap_serialize_flags flags, संरचना buf *buf)
 {
-    if (keymap->types_section_name)
+    जर (keymap->types_section_name)
         write_buf(buf, "xkb_types \"%s\" {\n",
                   keymap->types_section_name);
-    else
+    अन्यथा
         copy_to_buf(buf, "xkb_types {\n");
 
     /* NOTE: support for default values has been removed */
 
-    if (!write_vmods(keymap, format,
+    जर (!write_vmods(keymap, format,
                      (flags & XKB_KEYMAP_SERIALIZE_EXPLICIT_VMODS), buf))
-        return false;
+        परत false;
 
-    const bool drop_unused = !(flags & XKB_KEYMAP_SERIALIZE_KEEP_UNUSED);
-    for (darray_size_t i = 0; i < keymap->num_types; i++) {
-        const struct xkb_key_type * const type = &keymap->types[i];
-        if (!type->required && drop_unused)
-            continue;
+    स्थिरांक bool drop_unused = !(flags & XKB_KEYMAP_SERIALIZE_KEEP_UNUSED);
+    साठी (darray_size_t i = 0; i < keymap->अंक_types; i++) {
+        स्थिरांक संरचना xkb_किल्ली_type * स्थिरांक type = &keymap->types[i];
+        जर (!type->required && drop_unused)
+            सुरूठेवा;
 
         copy_to_buf(buf, "\ttype ");
         write_buf_string_literal(buf, xkb_atom_text(keymap->ctx, type->name));
@@ -585,31 +585,31 @@ write_types(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
                   ModMaskText(keymap->ctx, MOD_BOTH, &keymap->mods,
                               type->mods.mods));
 
-        for (darray_size_t j = 0; j < type->num_entries; j++) {
-            const char *str;
-            const struct xkb_key_type_entry *entry = &type->entries[j];
+        साठी (darray_size_t j = 0; j < type->अंक_entries; j++) {
+            स्थिरांक अक्षर *str;
+            स्थिरांक संरचना xkb_किल्ली_type_entry *entry = &type->entries[j];
 
             /*
              * Printing level 1 entries is redundant, it's the default,
              * unless there's preserve info.
              */
-            if (entry->level == 0 && entry->preserve.mods == 0 &&
-                !(flags & XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_VALUES))
-                continue;
+            जर (entry->level == 0 && entry->preserve.mods == 0 &&
+                !(flags & XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_मूल्ये))
+                सुरूठेवा;
 
             str = ModMaskText(keymap->ctx, MOD_BOTH, &keymap->mods,
                               entry->mods.mods);
             write_buf(buf, "\t\tmap[%s]= %"PRIu32";\n",
                       str, entry->level + 1);
 
-            if (entry->preserve.mods)
+            जर (entry->preserve.mods)
                 write_buf(buf, "\t\tpreserve[%s]= %s;\n",
                           str, ModMaskText(keymap->ctx, MOD_BOTH, &keymap->mods,
                                            entry->preserve.mods));
         }
 
-        for (xkb_level_index_t n = 0; n < type->num_level_names; n++)
-            if (type->level_names[n]) {
+        साठी (xkb_level_index_t n = 0; n < type->अंक_level_names; n++)
+            जर (type->level_names[n]) {
                 write_buf(buf, "\t\tlevel_name[%"PRIu32"]= ", n + 1);
                 write_buf_string_literal(
                     buf, xkb_atom_text(keymap->ctx, type->level_names[n]));
@@ -620,19 +620,19 @@ write_types(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
     }
 
     copy_to_buf(buf, "};\n\n");
-    return true;
+    परत true;
 }
 
-static bool
-write_led_map(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
-              bool defaults, struct buf *buf, const struct xkb_led *led)
+स्थिर bool
+write_led_map(स्थिरांक संरचना xkb_keymap *keymap, गणना xkb_keymap_format format,
+              bool defaults, संरचना buf *buf, स्थिरांक संरचना xkb_led *led)
 {
     copy_to_buf(buf, "\tindicator ");
     write_buf_string_literal(buf, xkb_atom_text(keymap->ctx, led->name));
     copy_to_buf(buf, " {\n");
 
-    if (led->which_groups) {
-        if (led->which_groups != XKB_STATE_LAYOUT_EFFECTIVE || defaults) {
+    जर (led->which_groups) {
+        जर (led->which_groups != XKB_STATE_LAYOUT_EFFECTIVE || defaults) {
             write_buf(buf, "\t\twhichGroupState= %s;\n",
                       LedStateMaskText(keymap->ctx, groupComponentMaskNames,
                                        led->which_groups));
@@ -641,8 +641,8 @@ write_led_map(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
                   led->groups);
     }
 
-    if (led->which_mods) {
-        if (led->which_mods != XKB_STATE_MODS_EFFECTIVE || defaults) {
+    जर (led->which_mods) {
+        जर (led->which_mods != XKB_STATE_MODS_EFFECTIVE || defaults) {
             write_buf(buf, "\t\twhichModState= %s;\n",
                       LedStateMaskText(keymap->ctx, modComponentMaskNames,
                                        led->which_mods));
@@ -652,62 +652,62 @@ write_led_map(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
                               led->mods.mods));
     }
 
-    if (led->ctrls) {
+    जर (led->ctrls) {
         write_buf(buf, "\t\tcontrols= %s;\n",
                   ControlMaskText(keymap->ctx, format, led->ctrls));
     }
 
     copy_to_buf(buf, "\t};\n");
-    return true;
+    परत true;
 }
 
-static const char *
-affect_lock_text(enum xkb_action_flags flags, bool show_both)
+स्थिर स्थिरांक अक्षर *
+affect_lock_text(गणना xkb_action_flags flags, bool show_both)
 {
-    switch (flags & (ACTION_LOCK_NO_LOCK | ACTION_LOCK_NO_UNLOCK)) {
-    case 0:
-        return show_both ? ",affect=both" : "";
-    case ACTION_LOCK_NO_UNLOCK:
-        return ",affect=lock";
-    case ACTION_LOCK_NO_LOCK:
-        return ",affect=unlock";
-    case ACTION_LOCK_NO_LOCK | ACTION_LOCK_NO_UNLOCK:
-        return ",affect=neither";
-    default:
-        return "";
+    निवड (flags & (ACTION_LOCK_NO_LOCK | ACTION_LOCK_NO_UNLOCK)) {
+    स्थिती 0:
+        परत show_both ? ",affect=both" : "";
+    स्थिती ACTION_LOCK_NO_UNLOCK:
+        परत ",affect=lock";
+    स्थिती ACTION_LOCK_NO_LOCK:
+        परत ",affect=unlock";
+    स्थिती ACTION_LOCK_NO_LOCK | ACTION_LOCK_NO_UNLOCK:
+        परत ",affect=neither";
+    पूर्वनिर्धारित:
+        परत "";
     }
 }
 
-#define SYMBOL_PADDING 15
+#define चिन्ह_PADDING 15
 #define ACTION_PADDING 30
 
-static bool
-write_action(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
-             xkb_layout_index_t max_groups, struct buf *buf,
-             const union xkb_action *action,
-             const char *prefix, const char *suffix)
+स्थिर bool
+write_action(स्थिरांक संरचना xkb_keymap *keymap, गणना xkb_keymap_format format,
+             xkb_layout_index_t max_groups, संरचना buf *buf,
+             स्थिरांक संघ xkb_action *action,
+             स्थिरांक अक्षर *prefix, स्थिरांक अक्षर *suffix)
 {
-    const char *type;
-    const char *args = NULL;
+    स्थिरांक अक्षर *type;
+    स्थिरांक अक्षर *args = रिक्त;
 
-    if (!prefix)
+    जर (!prefix)
         prefix = "";
-    if (!suffix)
+    जर (!suffix)
         suffix = "";
 
     type = ActionTypeText(action->type);
 
-    switch (action->type) {
-    case ACTION_TYPE_MOD_SET:
-    case ACTION_TYPE_MOD_LATCH:
-    case ACTION_TYPE_MOD_LOCK:
-        if (action->mods.flags & ACTION_MODS_LOOKUP_MODMAP)
+    निवड (action->type) {
+    स्थिती ACTION_TYPE_MOD_SET:
+    स्थिती ACTION_TYPE_MOD_LATCH:
+    स्थिती ACTION_TYPE_MOD_LOCK:
+        जर (action->mods.flags & ACTION_MODS_LOOKUP_MODMAP)
             args = "modMapMods";
-        else
+        अन्यथा
             args = ModMaskText(keymap->ctx, MOD_BOTH, &keymap->mods,
                                action->mods.mods.mods);
         bool unlockOnPress = (action->mods.flags & ACTION_UNLOCK_ON_PRESS);
-        if (unlockOnPress && !isModsUnLockOnPressSupported(format)) {
+        जर (unlockOnPress && !isModsUnLockOnPressSupported(format)) {
             log_err(keymap->ctx, XKB_ERROR_INCOMPATIBLE_KEYMAP_TEXT_FORMAT,
                     "Cannot use \"%s(unlockOnPress=true)\" in keymap format %d\n",
                     ActionTypeText(action->type), format);
@@ -715,7 +715,7 @@ write_action(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
         }
         bool latchOnPress = action->type == ACTION_TYPE_MOD_LATCH &&
                             (action->group.flags & ACTION_LATCH_ON_PRESS);
-        if (latchOnPress && !isModsLatchOnPressSupported(format)) {
+        जर (latchOnPress && !isModsLatchOnPressSupported(format)) {
             log_err(keymap->ctx, XKB_ERROR_INCOMPATIBLE_KEYMAP_TEXT_FORMAT,
                     "Cannot use \"LatchMods(latchOnPress=true)\" "
                     "in keymap format %d\n", format);
@@ -728,16 +728,16 @@ write_action(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
                   (unlockOnPress) ? ",unlockOnPress" : "",
                   (latchOnPress) ? ",latchOnPress" : "",
                   suffix);
-        break;
+        थांबा;
 
-    case ACTION_TYPE_GROUP_SET:
-    case ACTION_TYPE_GROUP_LATCH:
-    case ACTION_TYPE_GROUP_LOCK:
-        if ((uint32_t) xkb_abs(action->group.group) <
+    स्थिती ACTION_TYPE_GROUP_SET:
+    स्थिती ACTION_TYPE_GROUP_LATCH:
+    स्थिती ACTION_TYPE_GROUP_LOCK:
+        जर ((uint32_t) xkb_abs(action->group.group) <
             (max_groups + !(action->group.flags & ACTION_ABSOLUTE_SWITCH))) {
             bool lockOnRelease = action->type == ACTION_TYPE_GROUP_LOCK &&
                                  (action->group.flags & ACTION_LOCK_ON_RELEASE);
-            if (lockOnRelease && !isGroupLockOnReleaseSupported(format)) {
+            जर (lockOnRelease && !isGroupLockOnReleaseSupported(format)) {
                 log_err(keymap->ctx, XKB_ERROR_INCOMPATIBLE_KEYMAP_TEXT_FORMAT,
                         "Cannot use \"GroupLock(lockOnRelease=true)\" "
                         "in keymap format %d\n", format);
@@ -750,22 +750,22 @@ write_action(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
                       (action->type == ACTION_TYPE_GROUP_LATCH && (action->group.flags & ACTION_LATCH_TO_LOCK)) ? ",latchToLock" : "",
                       (lockOnRelease) ? ",lockOnRelease" : "",
                       suffix);
-        } else {
+        } अन्यथा {
             /* Unsupported group index: degrade to VoidAction() */
             log_warn(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
                      "Unsupported group index %"PRIu32" for action %s()\n",
                       (action->group.group +
                        !!(action->group.flags & ACTION_ABSOLUTE_SWITCH)),
                      type);
-            goto void_action;
+            जा void_action;
         }
-        break;
+        थांबा;
 
-    case ACTION_TYPE_TERMINATE:
+    स्थिती ACTION_TYPE_TERMINATE:
         write_buf(buf, "%s%s()%s", prefix, type, suffix);
-        break;
+        थांबा;
 
-    case ACTION_TYPE_PTR_MOVE:
+    स्थिती ACTION_TYPE_PTR_MOVE:
         write_buf(buf, "%s%s(x=%s%d,y=%s%d%s)%s", prefix, type,
                   (!(action->ptr.flags & ACTION_ABSOLUTE_X) && action->ptr.x >= 0) ? "+" : "",
                   action->ptr.x,
@@ -773,81 +773,81 @@ write_action(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
                   action->ptr.y,
                   (action->ptr.flags & ACTION_REPEAT) ? "" : ",!repeat",
                   suffix);
-        break;
+        थांबा;
 
-    case ACTION_TYPE_PTR_LOCK:
+    स्थिती ACTION_TYPE_PTR_LOCK:
         args = affect_lock_text(action->btn.flags, true);
         /* fallthrough */
-    case ACTION_TYPE_PTR_BUTTON:
+    स्थिती ACTION_TYPE_PTR_BUTTON:
         write_buf(buf, "%s%s(button=", prefix, type);
         static_assert(XKB_POINTER_BUTTON_DEFAULT < XKB_POINTER_BUTTON_MIN, "");
-        if (action->btn.button > XKB_POINTER_BUTTON_DEFAULT &&
+        जर (action->btn.button > XKB_POINTER_BUTTON_DEFAULT &&
             action->btn.button <= XKB_POINTER_BUTTON_MAX)
             write_buf(buf, "%"PRIu8, action->btn.button);
-        else
+        अन्यथा
             copy_to_buf(buf, "default");
-        if (action->btn.count) {
-            assert(action->type != ACTION_TYPE_PTR_LOCK);
-            write_buf(buf, ",count=%u", action->btn.count);
+        जर (action->btn.मोजणी) {
+            प्रतिज्ञा(action->type != ACTION_TYPE_PTR_LOCK);
+            write_buf(buf, ",count=%u", action->btn.मोजणी);
         }
-        if (args)
+        जर (args)
             write_buf(buf, "%s", args);
         write_buf(buf, ")%s", suffix);
-        break;
+        थांबा;
 
-    case ACTION_TYPE_PTR_DEFAULT:
+    स्थिती ACTION_TYPE_PTR_DEFAULT:
         write_buf(buf, "%s%s(", prefix, type);
         write_buf(buf, "affect=button,button=%s%"PRId8,
-                  (!(action->dflt.flags & ACTION_ABSOLUTE_SWITCH) && action->dflt.value >= 0) ? "+" : "",
-                  action->dflt.value);
+                  (!(action->dflt.flags & ACTION_ABSOLUTE_SWITCH) && action->dflt.मूल्य >= 0) ? "+" : "",
+                  action->dflt.मूल्य);
         write_buf(buf, ")%s", suffix);
-        break;
+        थांबा;
 
-    case ACTION_TYPE_SWITCH_VT:
+    स्थिती ACTION_TYPE_SWITCH_VT:
         write_buf(buf, "%s%s(screen=%s%d,%ssame)%s", prefix, type,
                   (!(action->screen.flags & ACTION_ABSOLUTE_SWITCH) && action->screen.screen >= 0) ? "+" : "",
                   action->screen.screen,
                   (action->screen.flags & ACTION_SAME_SCREEN) ? "" : "!",
                   suffix);
-        break;
+        थांबा;
 
-    case ACTION_TYPE_CTRL_SET:
-    case ACTION_TYPE_CTRL_LOCK:
+    स्थिती ACTION_TYPE_CTRL_SET:
+    स्थिती ACTION_TYPE_CTRL_LOCK:
         write_buf(buf, "%s%s(controls=%s%s)%s", prefix, type,
                   ControlMaskText(keymap->ctx, format, action->ctrls.ctrls),
                   (action->type == ACTION_TYPE_CTRL_LOCK
                     ? affect_lock_text(action->ctrls.flags, false)
                     : ""),
                   suffix);
-        break;
+        थांबा;
 
-    case ACTION_TYPE_REDIRECT_KEY: {
+    स्थिती ACTION_TYPE_REDIRECT_किल्ली: {
         write_buf(buf, "%s%s(", prefix, type);
-        const struct xkb_key * const key = XkbKey(keymap, action->redirect.keycode);
+        स्थिरांक संरचना xkb_किल्ली * स्थिरांक किल्ली = Xkb_किल्ली(keymap, action->redirect.keycode);
         /* Can fail if the keycode was not initialized */
-        if (key)
-            write_buf(buf, "keycode=%s", KeyNameText(keymap->ctx, key->name));
-        if (action->redirect.affect_mods) {
+        जर (किल्ली)
+            write_buf(buf, "keycode=%s", किल्ली_Name_Text(keymap->ctx, किल्ली->name));
+        जर (action->redirect.affect_mods) {
             xkb_mod_mask_t mask;
             mask = (action->redirect.affect_mods & action->redirect.mods);
-            if (mask)
+            जर (mask)
                 write_buf(buf, ",modifiers=%s",
                           ModMaskText(keymap->ctx, MOD_BOTH, &keymap->mods, mask));
             mask = (action->redirect.affect_mods & ~action->redirect.mods);
-            if (mask)
+            जर (mask)
                 write_buf(buf, ",clearMods=%s",
                           ModMaskText(keymap->ctx, MOD_BOTH, &keymap->mods, mask));
         }
         write_buf(buf, ")%s", suffix);
-        break;
+        थांबा;
     }
 
-    case ACTION_TYPE_UNKNOWN:
-    case ACTION_TYPE_NONE:
+    स्थिती ACTION_TYPE_UNKNOWN:
+    स्थिती ACTION_TYPE_NONE:
         write_buf(buf, "%sNoAction()%s", prefix, suffix);
-        break;
+        थांबा;
 
-    case ACTION_TYPE_VOID:
+    स्थिती ACTION_TYPE_VOID:
 void_action:
         /*
          * VoidAction() is an xkbcommon extension.
@@ -857,21 +857,21 @@ void_action:
          * We better not use `Private` either, because it could still be
          * interpreted by X11.
          */
-        if (format == XKB_KEYMAP_FORMAT_TEXT_V1)
+        जर (format == XKB_KEYMAP_FORMAT_TEXT_V1)
             write_buf(buf, "%sLockControls(controls=none,affect=neither)%s",
                       prefix, suffix);
-        else
+        अन्यथा
             write_buf(buf, "%sVoidAction()%s", prefix, suffix);
-        break;
+        थांबा;
 
-    default:
+    पूर्वनिर्धारित:
         {} /* Label followed by declaration requires C23 */
         /* Ensure to not miss `xkb_action_type` updates */
         static_assert(ACTION_TYPE_INTERNAL == 20 &&
-                      ACTION_TYPE_INTERNAL + 1 == _ACTION_TYPE_NUM_ENTRIES,
+                      ACTION_TYPE_INTERNAL + 1 == ACTION_TYPE_अंक_ENTRIES,
                       "Missing action type");
         /* Unsupported legacy actions should have degraded to NoAction */
-        assert(action->type != ACTION_TYPE_UNSUPPORTED_LEGACY);
+        प्रतिज्ञा(action->type != ACTION_TYPE_UNSUPPORTED_LEGACY);
         write_buf(buf,
                   "%s%s(type=0x%02x,data[0]=0x%02x,data[1]=0x%02x,data[2]=0x%02x,data[3]=0x%02x,data[4]=0x%02x,data[5]=0x%02x,data[6]=0x%02x)%s",
                   prefix, type, action->type, action->priv.data[0],
@@ -879,276 +879,276 @@ void_action:
                   action->priv.data[3], action->priv.data[4],
                   action->priv.data[5], action->priv.data[6],
                   suffix);
-        break;
+        थांबा;
     }
 
-    return true;
+    परत true;
 }
 
-static const union xkb_action void_actions[] = {
+स्थिर स्थिरांक संघ xkb_action void_actions[] = {
     { .type = ACTION_TYPE_VOID }
 };
 
-static bool
-write_actions(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
-              xkb_layout_index_t max_groups, struct buf *buf, struct buf *buf2,
-              const struct xkb_key *key, xkb_layout_index_t group)
+स्थिर bool
+write_actions(स्थिरांक संरचना xkb_keymap *keymap, गणना xkb_keymap_format format,
+              xkb_layout_index_t max_groups, संरचना buf *buf, संरचना buf *buf2,
+              स्थिरांक संरचना xkb_किल्ली *किल्ली, xkb_layout_index_t group)
 {
-    static const union xkb_action noAction = { .type = ACTION_TYPE_NONE };
+    स्थिर स्थिरांक संघ xkb_action noAction = { .type = ACTION_TYPE_NONE };
 
-    for (xkb_level_index_t level = 0; level < XkbKeyNumLevels(key, group);
+    साठी (xkb_level_index_t level = 0; level < Xkb_किल्ली_अंक_Levels(किल्ली, group);
          level++) {
 
-        if (level != 0)
+        जर (level != 0)
             copy_to_buf(buf, ", ");
 
-        const union xkb_action *actions = NULL;
-        xkb_action_count_t count = xkb_keymap_key_get_actions_by_level(
-            keymap, key, group, level, &actions
+        स्थिरांक संघ xkb_action *actions = रिक्त;
+        xkb_action_मोजणी_t मोजणी = xkb_keymap_किल्ली_get_actions_by_level(
+            keymap, किल्ली, group, level, &actions
         );
 
-        if (count > 1 && format < XKB_KEYMAP_FORMAT_TEXT_V2) {
+        जर (मोजणी > 1 && format < XKB_KEYMAP_FORMAT_TEXT_V2) {
             /* V1: Degrade multiple actions to VoidAction() */
             actions = void_actions;
-            count = 1;
+            मोजणी = 1;
             log_err(keymap->ctx, XKB_ERROR_INCOMPATIBLE_KEYMAP_TEXT_FORMAT,
                     "Cannot serialize multiple actions per level "
                     "in keymap format %d; degrade to VoidAction()\n", format);
         }
 
         buf2->size = 0;
-        if (count == 0) {
-            if (!write_action(keymap, format, max_groups,
-                              buf2, &noAction, NULL, NULL))
-                return false;
+        जर (मोजणी == 0) {
+            जर (!write_action(keymap, format, max_groups,
+                              buf2, &noAction, रिक्त, रिक्त))
+                परत false;
             write_buf(buf, "%*s", ACTION_PADDING, buf2->buf);
         }
-        else if (count == 1) {
-            if (!write_action(keymap, format, max_groups,
-                              buf2, &(actions[0]), NULL, NULL))
-                return false;
+        अन्यथा जर (मोजणी == 1) {
+            जर (!write_action(keymap, format, max_groups,
+                              buf2, &(actions[0]), रिक्त, रिक्त))
+                परत false;
             write_buf(buf, "%*s", ACTION_PADDING, buf2->buf);
         }
-        else {
+        अन्यथा {
             copy_to_buf(buf2, "{ ");
-            for (xkb_action_count_t k = 0; k < count; k++) {
-                if (k != 0)
+            साठी (xkb_action_मोजणी_t k = 0; k < मोजणी; k++) {
+                जर (k != 0)
                     copy_to_buf(buf2, ", ");
-                size_t old_size = buf2->size;
-                if (!write_action(keymap, format, max_groups,
-                                  buf2, &(actions[k]), NULL, NULL))
-                    return false;
+                माप_प्रकार old_size = buf2->size;
+                जर (!write_action(keymap, format, max_groups,
+                                  buf2, &(actions[k]), रिक्त, रिक्त))
+                    परत false;
                 /* Check if padding is necessary */
-                if (buf2->size >= old_size + ACTION_PADDING)
-                    continue;
+                जर (buf2->size >= old_size + ACTION_PADDING)
+                    सुरूठेवा;
                 /* Compute and write padding, then write the action again */
-                const int padding = (int)(old_size + ACTION_PADDING - buf2->size);
+                स्थिरांक पूर्णांक padding = (पूर्णांक)(old_size + ACTION_PADDING - buf2->size);
                 buf2->size = old_size;
                 write_buf(buf2, "%*s", padding, "");
-                if (!write_action(keymap, format, max_groups,
-                                  buf2, &(actions[k]), NULL, NULL))
-                    return false;
+                जर (!write_action(keymap, format, max_groups,
+                                  buf2, &(actions[k]), रिक्त, रिक्त))
+                    परत false;
             }
             copy_to_buf(buf2, " }");
             write_buf(buf, "%*s", ACTION_PADDING, buf2->buf);
         }
     }
 
-    return true;
+    परत true;
 }
 
-static bool
-write_action_defaults(const struct xkb_keymap *keymap,
-                      enum xkb_keymap_format format,
-                      const union xkb_action *action,
-                      struct buf *buf)
+स्थिर bool
+write_action_defaults(स्थिरांक संरचना xkb_keymap *keymap,
+                      गणना xkb_keymap_format format,
+                      स्थिरांक संघ xkb_action *action,
+                      संरचना buf *buf)
 {
-    const char *type = ActionTypeText(action->type);
+    स्थिरांक अक्षर *type = ActionTypeText(action->type);
 
 #define PREFIX "\t"
 
-    switch (action->type) {
-    case ACTION_TYPE_MOD_SET:
-    case ACTION_TYPE_MOD_LATCH:
-    case ACTION_TYPE_MOD_LOCK:
-        assert(action->mods.flags == 0);
-        assert(action->mods.mods.mods == 0);
+    निवड (action->type) {
+    स्थिती ACTION_TYPE_MOD_SET:
+    स्थिती ACTION_TYPE_MOD_LATCH:
+    स्थिती ACTION_TYPE_MOD_LOCK:
+        प्रतिज्ञा(action->mods.flags == 0);
+        प्रतिज्ञा(action->mods.mods.mods == 0);
         write_buf(buf, PREFIX"%s.modifiers = 0;\n", type);
-        if (action->type != ACTION_TYPE_MOD_LOCK)
+        जर (action->type != ACTION_TYPE_MOD_LOCK)
             write_buf(buf, PREFIX"%s.clearLocks = false;\n", type);
-        if (action->type == ACTION_TYPE_MOD_LATCH &&
+        जर (action->type == ACTION_TYPE_MOD_LATCH &&
             isModsLatchOnPressSupported(format))
             write_buf(buf, PREFIX"%s.latchOnPress = false;\n", type);
-        if (action->type == ACTION_TYPE_MOD_LATCH)
+        जर (action->type == ACTION_TYPE_MOD_LATCH)
             write_buf(buf, PREFIX"%s.latchToLock = false;\n", type);
-        if (action->type == ACTION_TYPE_MOD_LOCK)
+        जर (action->type == ACTION_TYPE_MOD_LOCK)
             write_buf(buf, PREFIX"%s.affect = both;\n", type);
-        if (isModsUnLockOnPressSupported(format))
+        जर (isModsUnLockOnPressSupported(format))
             write_buf(buf, PREFIX"%s.unlockOnPress = false;\n", type);
-        break;
+        थांबा;
 
-    case ACTION_TYPE_GROUP_SET:
-    case ACTION_TYPE_GROUP_LATCH:
-    case ACTION_TYPE_GROUP_LOCK:
-        assert(action->group.flags == 0);
-        assert(action->group.group == 0);
+    स्थिती ACTION_TYPE_GROUP_SET:
+    स्थिती ACTION_TYPE_GROUP_LATCH:
+    स्थिती ACTION_TYPE_GROUP_LOCK:
+        प्रतिज्ञा(action->group.flags == 0);
+        प्रतिज्ञा(action->group.group == 0);
         /* Explicit sign to avoid setting ACTION_ABSOLUTE_SWITCH */
         write_buf(buf, PREFIX"%s.group = +0;\n", type);
-        if (action->type != ACTION_TYPE_GROUP_LOCK)
+        जर (action->type != ACTION_TYPE_GROUP_LOCK)
             write_buf(buf, PREFIX"%s.clearLocks = false;\n", type);
-        if (action->type == ACTION_TYPE_GROUP_LATCH)
+        जर (action->type == ACTION_TYPE_GROUP_LATCH)
             write_buf(buf, PREFIX"%s.latchToLock = false;\n", type);
-        if (action->type == ACTION_TYPE_GROUP_LOCK &&
+        जर (action->type == ACTION_TYPE_GROUP_LOCK &&
             isGroupLockOnReleaseSupported(format))
             write_buf(buf, PREFIX"%s.lockOnRelease = false;\n", type);
-        break;
+        थांबा;
 
 
-    case ACTION_TYPE_PTR_MOVE:
-        assert(action->ptr.x == 0);
-        assert(action->ptr.y == 0);
-        assert(action->ptr.flags == ACTION_REPEAT);
+    स्थिती ACTION_TYPE_PTR_MOVE:
+        प्रतिज्ञा(action->ptr.x == 0);
+        प्रतिज्ञा(action->ptr.y == 0);
+        प्रतिज्ञा(action->ptr.flags == ACTION_REPEAT);
         /* Explicit sign to avoid setting ACTION_ABSOLUTE_SWITCH */
         write_buf(buf, PREFIX"%s.x = +0;\n", type);
         write_buf(buf, PREFIX"%s.y = +0;\n", type);
         write_buf(buf, PREFIX"%s.accel = true;\n", type);
-        break;
+        थांबा;
 
-    case ACTION_TYPE_PTR_LOCK:
-    case ACTION_TYPE_PTR_BUTTON:
-        assert(action->btn.flags == 0);
-        assert(action->btn.button == 0);
-        assert(action->btn.count == 0);
+    स्थिती ACTION_TYPE_PTR_LOCK:
+    स्थिती ACTION_TYPE_PTR_BUTTON:
+        प्रतिज्ञा(action->btn.flags == 0);
+        प्रतिज्ञा(action->btn.button == 0);
+        प्रतिज्ञा(action->btn.मोजणी == 0);
         write_buf(buf, PREFIX"%s.button = 0;\n", type);
         write_buf(buf, PREFIX"%s.count = 0;\n", type);
-        if (action->type == ACTION_TYPE_PTR_LOCK)
+        जर (action->type == ACTION_TYPE_PTR_LOCK)
             write_buf(buf, PREFIX"%s.affect = both;\n", type);
-        break;
+        थांबा;
 
-    case ACTION_TYPE_PTR_DEFAULT:
-        assert(action->dflt.flags == 0);
-        assert(action->dflt.value == 1);
+    स्थिती ACTION_TYPE_PTR_DEFAULT:
+        प्रतिज्ञा(action->dflt.flags == 0);
+        प्रतिज्ञा(action->dflt.मूल्य == 1);
         /* Explicit sign to avoid setting ACTION_ABSOLUTE_SWITCH */
         write_buf(buf, PREFIX"%s.button = +1;\n", type);
-        break;
+        थांबा;
 
-    case ACTION_TYPE_SWITCH_VT:
-        assert(action->screen.flags == ACTION_SAME_SCREEN);
-        assert(action->screen.screen == 0);
+    स्थिती ACTION_TYPE_SWITCH_VT:
+        प्रतिज्ञा(action->screen.flags == ACTION_SAME_SCREEN);
+        प्रतिज्ञा(action->screen.screen == 0);
         /* Explicit sign to avoid setting ACTION_ABSOLUTE_SWITCH */
         write_buf(buf, PREFIX"%s.screen = +0;\n", type);
         write_buf(buf, PREFIX"%s.same = true;\n", type);
-        break;
+        थांबा;
 
-    case ACTION_TYPE_CTRL_SET:
-    case ACTION_TYPE_CTRL_LOCK:
-        assert(action->ctrls.flags == 0);
-        assert(action->ctrls.ctrls == 0);
+    स्थिती ACTION_TYPE_CTRL_SET:
+    स्थिती ACTION_TYPE_CTRL_LOCK:
+        प्रतिज्ञा(action->ctrls.flags == 0);
+        प्रतिज्ञा(action->ctrls.ctrls == 0);
         write_buf(buf, PREFIX"%s.controls = 0;\n", type);
-        if (action->type == ACTION_TYPE_CTRL_LOCK)
+        जर (action->type == ACTION_TYPE_CTRL_LOCK)
             write_buf(buf, PREFIX"%s.affect = both;\n", type);
-        break;
+        थांबा;
 
-    case ACTION_TYPE_REDIRECT_KEY:
-        assert(action->redirect.keycode == keymap->redirect_key_auto);
-        assert(action->redirect.affect_mods == 0);
-        assert(action->redirect.mods == 0);
+    स्थिती ACTION_TYPE_REDIRECT_किल्ली:
+        प्रतिज्ञा(action->redirect.keycode == keymap->redirect_किल्ली_auto);
+        प्रतिज्ञा(action->redirect.affect_mods == 0);
+        प्रतिज्ञा(action->redirect.mods == 0);
         write_buf(buf, PREFIX"%s.keycode = auto;\n", type);
         write_buf(buf, PREFIX"%s.modifiers = 0;\n", type);
         write_buf(buf, PREFIX"%s.clearMods = 0;\n", type);
-        break;
+        थांबा;
 
-    default:
+    पूर्वनिर्धारित:
         {} /* Label followed by declaration requires C23 */
         /* Ensure to not miss `xkb_action_type` updates */
         static_assert(ACTION_TYPE_INTERNAL == 20 &&
-                      ACTION_TYPE_INTERNAL + 1 == _ACTION_TYPE_NUM_ENTRIES,
+                      ACTION_TYPE_INTERNAL + 1 == ACTION_TYPE_अंक_ENTRIES,
                       "Missing action type");
     }
 
 #undef PREFIX
 
-    return true;
+    परत true;
 }
 
-static bool
-write_actions_defaults(const struct xkb_keymap *keymap,
-                       enum xkb_keymap_format format, struct buf *buf)
+स्थिर bool
+write_actions_defaults(स्थिरांक संरचना xkb_keymap *keymap,
+                       गणना xkb_keymap_format format, संरचना buf *buf)
 {
     ActionsInfo defaults = {0};
     InitActionsInfo(keymap, &defaults);
 
-    for (uint8_t a = 0; a < (uint8_t) _ACTION_TYPE_NUM_ENTRIES; a++) {
-        const union xkb_action * restrict const action = &defaults.actions[a];
-        if (!write_action_defaults(keymap, format, action, buf))
-            return false;
+    साठी (uint8_t a = 0; a < (uint8_t) ACTION_TYPE_अंक_ENTRIES; a++) {
+        स्थिरांक संघ xkb_action * restrict स्थिरांक action = &defaults.actions[a];
+        जर (!write_action_defaults(keymap, format, action, buf))
+            परत false;
     }
     copy_to_buf(buf, "\n");
 
-    return true;
+    परत true;
 }
 
-static const struct xkb_sym_interpret fallback_interpret = {
-    .sym = XKB_KEY_VoidSymbol,
+स्थिर स्थिरांक संरचना xkb_sym_interpret fallback_interpret = {
+    .sym = XKB_किल्ली_Void_चिन्ह,
     .required = true,
-    .repeat = FALLBACK_INTERPRET_KEY_REPEAT,
+    .repeat = FALLBACK_INTERPRET_किल्ली_REPEAT,
     .match = MATCH_ANY_OR_NONE,
     .mods = 0,
     .virtual_mod = (xkb_mod_index_t) DEFAULT_INTERPRET_VMOD,
-    .num_actions = 0,
+    .अंक_actions = 0,
     .a = { .action = { .type = ACTION_TYPE_NONE } },
 };
 
-static bool
-write_compat(const struct xkb_keymap * restrict keymap,
-             enum xkb_keymap_format format, xkb_layout_index_t max_groups,
-             enum xkb_keymap_serialize_flags flags, bool * restrict some_interp,
-             struct buf *buf)
+स्थिर bool
+write_compat(स्थिरांक संरचना xkb_keymap * restrict keymap,
+             गणना xkb_keymap_format format, xkb_layout_index_t max_groups,
+             गणना xkb_keymap_serialize_flags flags, bool * restrict some_interp,
+             संरचना buf *buf)
 {
-    const bool pretty = (flags & XKB_KEYMAP_SERIALIZE_PRETTY);
-    const bool defaults = (flags & XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_VALUES);
-    const bool drop_unused = !(flags & XKB_KEYMAP_SERIALIZE_KEEP_UNUSED);
-    const bool drop_interprets =
-        ((flags & XKB_KEYMAP_SERIALIZE_EXPLICIT_KEY_VALUES) && drop_unused);
+    स्थिरांक bool pretty = (flags & XKB_KEYMAP_SERIALIZE_PRETTY);
+    स्थिरांक bool defaults = (flags & XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_मूल्ये);
+    स्थिरांक bool drop_unused = !(flags & XKB_KEYMAP_SERIALIZE_KEEP_UNUSED);
+    स्थिरांक bool drop_interprets =
+        ((flags & XKB_KEYMAP_SERIALIZE_EXPLICIT_किल्ली_मूल्ये) && drop_unused);
     /* TODO: print all default values if the explicit flag is set */
 
-    if (keymap->compat_section_name)
+    जर (keymap->compat_section_name)
         write_buf(buf, "xkb_compatibility \"%s\" {\n",
                   keymap->compat_section_name);
-    else
+    अन्यथा
         copy_to_buf(buf, "xkb_compatibility {\n");
 
-    if (!write_vmods(keymap, format,
+    जर (!write_vmods(keymap, format,
                      (flags & XKB_KEYMAP_SERIALIZE_EXPLICIT_VMODS), buf))
-        return false;
+        परत false;
 
-    if (defaults && !write_actions_defaults(keymap, format, buf))
-        return false;
+    जर (defaults && !write_actions_defaults(keymap, format, buf))
+        परत false;
 
     copy_to_buf(buf, "\tinterpret.useModMapMods= AnyLevel;\n");
     copy_to_buf(buf, "\tinterpret.repeat= False;\n");
 
     /* xkbcomp requires at least one interpret entry. */
-    const bool use_fallback_interpret =
-        (!keymap->num_sym_interprets || drop_interprets);
-    const darray_size_t num_sym_interprets =
-        (use_fallback_interpret ? 1 : keymap->num_sym_interprets);
-    const struct xkb_sym_interpret* const sym_interprets =
+    स्थिरांक bool use_fallback_interpret =
+        (!keymap->अंक_sym_interprets || drop_interprets);
+    स्थिरांक darray_size_t अंक_sym_interprets =
+        (use_fallback_interpret ? 1 : keymap->अंक_sym_interprets);
+    स्थिरांक संरचना xkb_sym_interpret* स्थिरांक sym_interprets =
         (use_fallback_interpret ? &fallback_interpret : keymap->sym_interprets);
 
-    for (darray_size_t i = 0; i < num_sym_interprets; i++) {
-        const struct xkb_sym_interpret *si = &sym_interprets[i];
-        if (!si->required && drop_unused)
-            continue;
+    साठी (darray_size_t i = 0; i < अंक_sym_interprets; i++) {
+        स्थिरांक संरचना xkb_sym_interpret *si = &sym_interprets[i];
+        जर (!si->required && drop_unused)
+            सुरूठेवा;
 
         *some_interp = true;
 
         copy_to_buf(buf, "\tinterpret ");
-        if (!si->sym) {
+        जर (!si->sym) {
             copy_to_buf(buf, "Any");
-        } else if (pretty) {
+        } अन्यथा जर (pretty) {
             write_buf(buf, "%s", KeysymText(keymap->ctx, si->sym));
-        } else {
+        } अन्यथा {
             write_buf(buf, "0x%"PRIx32, si->sym);
         }
         write_buf(buf, "+%s(%s) {",
@@ -1157,57 +1157,57 @@ write_compat(const struct xkb_keymap * restrict keymap,
 
         bool has_explicit_properties = false;
 
-        if (si->virtual_mod != XKB_MOD_INVALID) {
+        जर (si->virtual_mod != XKB_MOD_INVALID) {
             write_buf(buf, "\n\t\tvirtualModifier= %s;",
                       ModIndexText(keymap->ctx, &keymap->mods,
                                    si->virtual_mod));
             has_explicit_properties = true;
         }
 
-        if (si->level_one_only) {
+        जर (si->level_one_only) {
             copy_to_buf(buf, "\n\t\tuseModMapMods=level1;");
             has_explicit_properties = true;
-        } else if (defaults) {
+        } अन्यथा जर (defaults) {
             copy_to_buf(buf, "\n\t\tuseModMapMods=AnyLevel;");
             has_explicit_properties = true;
         }
 
-        if (si->repeat) {
+        जर (si->repeat) {
             copy_to_buf(buf, "\n\t\trepeat= True;");
             has_explicit_properties = true;
-        } else if (defaults) {
+        } अन्यथा जर (defaults) {
             copy_to_buf(buf, "\n\t\trepeat= False;");
             has_explicit_properties = true;
         }
 
-        const union xkb_action *action = NULL;
-        xkb_action_count_t action_count = si->num_actions;
-        if (action_count <= 1) {
+        स्थिरांक संघ xkb_action *action = रिक्त;
+        xkb_action_मोजणी_t action_मोजणी = si->अंक_actions;
+        जर (action_मोजणी <= 1) {
             action = &si->a.action;
-        } else if (format < XKB_KEYMAP_FORMAT_TEXT_V2) {
+        } अन्यथा जर (format < XKB_KEYMAP_FORMAT_TEXT_V2) {
             /* V1: Degrade multiple actions to VoidAction() */
             action = &void_actions[0];
-            action_count = 1;
+            action_मोजणी = 1;
             log_err(keymap->ctx, XKB_ERROR_INCOMPATIBLE_KEYMAP_TEXT_FORMAT,
                     "Cannot serialize multiple actions per level "
                     "in keymap format %d; degrade to VoidAction()\n", format);
         }
 
-        if (action_count > 1) {
+        जर (action_मोजणी > 1) {
             copy_to_buf(buf, "\n\t\taction= {");
-            const char suffix[] = ", ";
-            for (xkb_action_count_t k = 0; k < si->num_actions; k++) {
-                if (!write_action(keymap, format, max_groups,
+            स्थिरांक अक्षर suffix[] = ", ";
+            साठी (xkb_action_मोजणी_t k = 0; k < si->अंक_actions; k++) {
+                जर (!write_action(keymap, format, max_groups,
                                   buf, &si->a.actions[k], "", suffix))
-                    return false;
+                    परत false;
             }
-            buf->size -= sizeof(suffix) - 1; /* trailing comma */
+            buf->size -= आकार(suffix) - 1; /* trailing comma */
             copy_to_buf(buf, "};");
             has_explicit_properties = true;
-        } else if (action_count == 1) {
-            if (!write_action(keymap, format, max_groups, buf, action,
+        } अन्यथा जर (action_मोजणी == 1) {
+            जर (!write_action(keymap, format, max_groups, buf, action,
                               "\n\t\taction= ", ";"))
-                return false;
+                परत false;
             has_explicit_properties = true;
         }
         write_buf(buf, (has_explicit_properties
@@ -1217,62 +1217,62 @@ write_compat(const struct xkb_keymap * restrict keymap,
                         : "\n\t\taction= NoAction();\n\t};\n"));
     }
 
-    if (use_fallback_interpret || (
+    जर (use_fallback_interpret || (
         /* Detect previous interpret fallback */
-        num_sym_interprets == 1 && *some_interp &&
+        अंक_sym_interprets == 1 && *some_interp &&
         sym_interprets[0].sym == fallback_interpret.sym &&
         sym_interprets[0].match == fallback_interpret.match &&
         sym_interprets[0].mods == fallback_interpret.mods &&
         sym_interprets[0].repeat == fallback_interpret.repeat &&
         sym_interprets[0].virtual_mod == fallback_interpret.virtual_mod &&
         sym_interprets[0].level_one_only == fallback_interpret.level_one_only &&
-        sym_interprets[0].num_actions == fallback_interpret.num_actions
+        sym_interprets[0].अंक_actions == fallback_interpret.अंक_actions
         /* `required` field is not compared */
     ))
         *some_interp = false;
 
-    const struct xkb_led *led;
+    स्थिरांक संरचना xkb_led *led;
     xkb_leds_foreach(led, keymap) {
-        if ((led->which_groups || led->groups ||
+        जर ((led->which_groups || led->groups ||
              led->which_mods || led->mods.mods || led->ctrls) &&
             !write_led_map(keymap, format, defaults, buf, led))
         {
-            return false;
+            परत false;
         }
     }
 
     copy_to_buf(buf, "};\n\n");
 
-    return true;
+    परत true;
 }
 
-static bool
-write_keysyms(const struct xkb_keymap *keymap,
-              struct buf *buf, struct buf *buf2,
-              const struct xkb_key *key, xkb_layout_index_t group,
+स्थिर bool
+write_keysyms(स्थिरांक संरचना xkb_keymap *keymap,
+              संरचना buf *buf, संरचना buf *buf2,
+              स्थिरांक संरचना xkb_किल्ली *किल्ली, xkb_layout_index_t group,
               bool pretty, bool show_actions)
 {
-    const unsigned int padding = (pretty)
-        ? ((show_actions) ? ACTION_PADDING : SYMBOL_PADDING)
+    स्थिरांक अचिन्हित पूर्णांक padding = (pretty)
+        ? ((show_actions) ? ACTION_PADDING : चिन्ह_PADDING)
         : 0;
-    for (xkb_level_index_t level = 0; level < XkbKeyNumLevels(key, group);
+    साठी (xkb_level_index_t level = 0; level < Xkb_किल्ली_अंक_Levels(किल्ली, group);
          level++) {
-        const xkb_keysym_t *syms;
-        int num_syms;
+        स्थिरांक xkb_keysym_t *syms;
+        पूर्णांक अंक_syms;
 
-        if (level != 0)
+        जर (level != 0)
             copy_to_buf(buf, ", ");
 
-        num_syms = xkb_keymap_key_get_syms_by_level(
+        अंक_syms = xkb_keymap_किल्ली_get_syms_by_level(
             /* remove `const` constraint to use the dated public API */
-            (struct xkb_keymap *)keymap,
-            key->keycode, group, level, &syms
+            (संरचना xkb_keymap *)keymap,
+            किल्ली->keycode, group, level, &syms
         );
 
-        const xkb_keysym_t no_symbol = XKB_KEY_NoSymbol;
-        if (num_syms == 0) {
-            num_syms = 1;
-            syms = &no_symbol;
+        स्थिरांक xkb_keysym_t no_चिन्ह = XKB_किल्ली_No_चिन्ह;
+        जर (अंक_syms == 0) {
+            अंक_syms = 1;
+            syms = &no_चिन्ह;
         }
 
         /*
@@ -1280,31 +1280,31 @@ write_keysyms(const struct xkb_keymap *keymap,
          * with xkbcomp and xkbcommon < 1.12
          */
 
-        if (num_syms == 1) {
-            if (pretty || syms[0] == XKB_KEY_NoSymbol)
+        जर (अंक_syms == 1) {
+            जर (pretty || syms[0] == XKB_किल्ली_No_चिन्ह)
                 write_buf(buf, "%*s", padding, KeysymText(keymap->ctx, syms[0]));
-            else
+            अन्यथा
                 write_buf(buf, "0x%"PRIx32, syms[0]);
-        } else {
-            if (pretty) {
+        } अन्यथा {
+            जर (pretty) {
                 buf2->size = 0;
                 copy_to_buf(buf2, "{ ");
-                for (int s = 0; s < num_syms; s++) {
-                    if (s != 0)
+                साठी (पूर्णांक s = 0; s < अंक_syms; s++) {
+                    जर (s != 0)
                         copy_to_buf(buf2, ", ");
                     write_buf(buf2, "%*s", (show_actions ? padding : 0),
                               KeysymText(keymap->ctx, syms[s]));
                 }
                 copy_to_buf(buf2, " }");
                 write_buf(buf, "%*s", padding, buf2->buf);
-            } else {
+            } अन्यथा {
                 copy_to_buf(buf, "{");
-                for (int s = 0; s < num_syms; s++) {
-                    if (s != 0)
+                साठी (पूर्णांक s = 0; s < अंक_syms; s++) {
+                    जर (s != 0)
                         copy_to_buf(buf, ",");
-                    if (syms[s] == XKB_KEY_NoSymbol)
+                    जर (syms[s] == XKB_किल्ली_No_चिन्ह)
                         copy_to_buf(buf, "NoSymbol");
-                    else
+                    अन्यथा
                         write_buf(buf, "0x%"PRIx32, syms[s]);
                 }
                 copy_to_buf(buf, "}");
@@ -1312,84 +1312,84 @@ write_keysyms(const struct xkb_keymap *keymap,
         }
     }
 
-    return true;
+    परत true;
 }
 
-static bool
-write_key(const struct xkb_keymap *keymap,
-          const struct xkb_keymap_serialize_config *config,
-          const key_name_substitutions *substitutions,
+स्थिर bool
+write_किल्ली(स्थिरांक संरचना xkb_keymap *keymap,
+          स्थिरांक संरचना xkb_keymap_serialize_config *config,
+          स्थिरांक किल्ली_name_substitutions *substitutions,
           xkb_layout_index_t max_groups, bool some_interprets,
           bool drop_interprets, bool explicit, bool pretty,
-          struct buf *buf, struct buf *buf2, const struct xkb_key *key)
+          संरचना buf *buf, संरचना buf *buf2, स्थिरांक संरचना xkb_किल्ली *किल्ली)
 {
     bool simple = true;
 
     xkb_layout_mask_t layouts = config->layouts;
-    if (popcount32(layouts) != keymap->num_groups) {
+    जर (popcount32(layouts) != keymap->अंक_groups) {
         /* Subset of layouts: use out-of-range key policy */
         xkb_layout_index_t l = 0;
-        for (xkb_layout_mask_t ls = layouts; ls; ls >>= 1, l++) {
-            if (ls & 0x1) {
+        साठी (xkb_layout_mask_t ls = layouts; ls; ls >>= 1, l++) {
+            जर (ls & 0x1) {
                 /* Replace target layout with its effective layout, if valid */
                 layouts &= ~(UINT32_C(1) << l);
-                const xkb_layout_index_t effective =
-                    xkb_keymap_key_effective_layout(key, l);
-                if (effective != XKB_LAYOUT_INVALID)
+                स्थिरांक xkb_layout_index_t effective =
+                    xkb_keymap_किल्ली_effective_layout(किल्ली, l);
+                जर (effective != XKB_LAYOUT_INVALID)
                     layouts |= (UINT32_C(1) << effective);
             }
         }
-    } else {
-        layouts &= ((UINT64_C(1) << key->num_groups) - 1);
+    } अन्यथा {
+        layouts &= ((UINT64_C(1) << किल्ली->अंक_groups) - 1);
     }
-    const xkb_layout_index_t groups_count = popcount32(layouts);
+    स्थिरांक xkb_layout_index_t groups_मोजणी = popcount32(layouts);
 
-    const xkb_atom_t name = (substitutions == NULL)
-        ? key->name
-        : substitute_name(substitutions, key->name);
+    स्थिरांक xkb_atom_t name = (substitutions == रिक्त)
+        ? किल्ली->name
+        : substitute_name(substitutions, किल्ली->name);
 
-    if (pretty)
-        write_buf(buf, "\tkey %-20s {", KeyNameText(keymap->ctx, name));
-    else
-        write_buf(buf, "\tkey %s {", KeyNameText(keymap->ctx, name));
+    जर (pretty)
+        write_buf(buf, "\tkey %-20s {", किल्ली_Name_Text(keymap->ctx, name));
+    अन्यथा
+        write_buf(buf, "\tkey %s {", किल्ली_Name_Text(keymap->ctx, name));
 
-    if ((key->explicit & EXPLICIT_TYPES) || explicit) {
+    जर ((किल्ली->explicit & EXPLICIT_TYPES) || explicit) {
         simple = false;
 
         bool multi_type = explicit;
         /* Check for distinct key types only if not requiring explicit values */
-        if (!explicit) {
-            for (xkb_layout_index_t group = 1; group < key->num_groups; group++) {
-                if (!((UINT32_C(1) << group) & layouts))
-                    continue;
+        जर (!explicit) {
+            साठी (xkb_layout_index_t group = 1; group < किल्ली->अंक_groups; group++) {
+                जर (!((UINT32_C(1) << group) & layouts))
+                    सुरूठेवा;
 
-                if (key->groups[group].type != key->groups[0].type) {
+                जर (किल्ली->groups[group].type != किल्ली->groups[0].type) {
                     multi_type = true;
-                    break;
+                    थांबा;
                 }
             }
         }
 
-        if (multi_type) {
+        जर (multi_type) {
             xkb_layout_index_t new_group = (xkb_layout_index_t)-1;
-            for (xkb_layout_index_t group = 0; group < key->num_groups; group++) {
-                if (!((UINT32_C(1) << group) & layouts))
-                    continue;
+            साठी (xkb_layout_index_t group = 0; group < किल्ली->अंक_groups; group++) {
+                जर (!((UINT32_C(1) << group) & layouts))
+                    सुरूठेवा;
 
                 new_group++;
 
-                if (!key->groups[group].explicit_type && !explicit)
-                    continue;
+                जर (!किल्ली->groups[group].explicit_type && !explicit)
+                    सुरूठेवा;
 
-                const struct xkb_key_type * const type = key->groups[group].type;
+                स्थिरांक संरचना xkb_किल्ली_type * स्थिरांक type = किल्ली->groups[group].type;
                 write_buf(buf, "\n\t\ttype[%"PRIu32"]= ", new_group + 1);
                 write_buf_string_literal(
                   buf, xkb_atom_text(keymap->ctx, type->name));
                 copy_to_buf(buf, ",");
             }
         }
-        else {
-            const struct xkb_key_type * const type = key->groups[0].type;
+        अन्यथा {
+            स्थिरांक संरचना xkb_किल्ली_type * स्थिरांक type = किल्ली->groups[0].type;
             write_buf(buf, "\n\t\ttype= ");
             write_buf_string_literal(
                 buf, xkb_atom_text(keymap->ctx, type->name));
@@ -1406,13 +1406,13 @@ write_key(const struct xkb_keymap *keymap,
      * One side effect is that no interpretation will be run on this key anymore,
      * so we may have to set some extra fields explicitly: repeat, virtualMods.
      */
-    const bool explicit_actions = (key->explicit & EXPLICIT_INTERP);
+    स्थिरांक bool explicit_actions = (किल्ली->explicit & EXPLICIT_INTERP);
 
     /* Check if an explicit value is required */
-    #define require_explicit(key, prop,                                       \
-                             value, initial_value, default_interpret_value) ( \
+    #define require_explicit(किल्ली, prop,                                       \
+                             मूल्य, initial_मूल्य, default_interpret_मूल्य) ( \
         /* Explicit value in the source */                                    \
-        ((key)->explicit & (prop)) ||                                         \
+        ((किल्ली)->explicit & (prop)) ||                                         \
         /* Explicit serialization flag */                                     \
         explicit ||                                                           \
         (                                                                     \
@@ -1423,51 +1423,51 @@ write_key(const struct xkb_keymap *keymap,
                  * print the value if it is not the default interpret value,  \
                  * unless it cannot trigger due to implicit actions forcibly  \
                  * made explicit */                                           \
-                ((key)->implicit_actions && !some_interprets)                 \
+                ((किल्ली)->implicit_actions && !some_interprets)                 \
             ) && (                                                            \
                 /* Non-initial value */                                       \
-                (value) != (initial_value) ||                                 \
+                (मूल्य) != (initial_मूल्य) ||                                 \
                 /* Force initial value for clarity */                         \
-                (initial_value) != (default_interpret_value)                  \
+                (initial_मूल्य) != (default_interpret_मूल्य)                  \
             )                                                                 \
         )                                                                     \
     )
 
-    if (require_explicit(key, EXPLICIT_REPEAT, key->repeats,
-                         DEFAULT_KEY_REPEAT, DEFAULT_INTERPRET_KEY_REPEAT)) {
-        if (key->repeats)
+    जर (require_explicit(किल्ली, EXPLICIT_REPEAT, किल्ली->repeats,
+                         DEFAULT_किल्ली_REPEAT, DEFAULT_INTERPRET_किल्ली_REPEAT)) {
+        जर (किल्ली->repeats)
             copy_to_buf(buf, "\n\t\trepeat= Yes,");
-        else
+        अन्यथा
             copy_to_buf(buf, "\n\t\trepeat= No,");
         simple = false;
     }
 
-    if (require_explicit(key, EXPLICIT_VMODMAP, key->vmodmap,
-                         (xkb_mod_mask_t) DEFAULT_KEY_VMODMAP,
+    जर (require_explicit(किल्ली, EXPLICIT_VMODMAP, किल्ली->vmodmap,
+                         (xkb_mod_mask_t) DEFAULT_किल्ली_VMODMAP,
                          (xkb_mod_mask_t) DEFAULT_INTERPRET_VMODMAP)) {
         write_buf(buf, "\n\t\tvirtualMods= %s,",
                   ModMaskText(keymap->ctx, MOD_BOTH, &keymap->mods,
-                              key->vmodmap));
+                              किल्ली->vmodmap));
         simple = false;
     }
 
     #undef require_explicit
 
-    switch (key->out_of_range_group_policy) {
-    case XKB_LAYOUT_OUT_OF_RANGE_CLAMP:
+    निवड (किल्ली->out_of_range_group_policy) {
+    स्थिती XKB_LAYOUT_OUT_OF_RANGE_CLAMP:
         copy_to_buf(buf, "\n\t\tgroupsClamp,");
         simple = false;
-        break;
+        थांबा;
 
-    case XKB_LAYOUT_OUT_OF_RANGE_REDIRECT: {
-        if (!groups_count) {
+    स्थिती XKB_LAYOUT_OUT_OF_RANGE_REDIRECT: {
+        जर (!groups_मोजणी) {
             /* No layout to redirect to: skip */
-            break;
+            थांबा;
         }
 
         xkb_layout_mask_t layout_mask =
-            (UINT32_C(1) << key->out_of_range_group_number);
-        if (!(layouts & layout_mask)) {
+            (UINT32_C(1) << किल्ली->out_of_range_group_संख्या);
+        जर (!(layouts & layout_mask)) {
             /*
              * Layout is not included: default to first layout
              * See: XkbWrapGroupIntoRange
@@ -1475,257 +1475,257 @@ write_key(const struct xkb_keymap *keymap,
             log_warn(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
                      "key %s: groupsRedirect=%"PRIu32" converted to "
                      "groupsRedirect=1\n",
-                     KeyNameText(keymap->ctx, name),
-                     key->out_of_range_group_number + 1);
+                     किल्ली_Name_Text(keymap->ctx, name),
+                     किल्ली->out_of_range_group_संख्या + 1);
             layout_mask = 0x1;
         }
 
         /* In case some lower layouts were discarded, update the group index */
-        const xkb_layout_mask_t low = (layouts & (layout_mask - 1));
-        const xkb_layout_index_t new = popcount32(low);
+        स्थिरांक xkb_layout_mask_t खालचा = (layouts & (layout_mask - 1));
+        स्थिरांक xkb_layout_index_t new = popcount32(खालचा);
         write_buf(buf, "\n\t\tgroupsRedirect= %"PRIu32",", new + 1);
         simple = false;
-        break;
+        थांबा;
     }
 
-    case XKB_LAYOUT_OUT_OF_RANGE_WRAP:
-    default:
-        break;
+    स्थिती XKB_LAYOUT_OUT_OF_RANGE_WRAP:
+    पूर्वनिर्धारित:
+        थांबा;
     }
 
-    if (key->overlays) {
-        xkb_overlay_mask_t remaining = key->overlays;
+    जर (किल्ली->overlays) {
+        xkb_overlay_mask_t remaining = किल्ली->overlays;
 
-        const xkb_overlay_index_t overlay_max =
+        स्थिरांक xkb_overlay_index_t overlay_max =
             format_max_overlays(config->format);
-        static_assert(XKB_OVERLAY_COUNT == 8, "invalid right shift");
-        const xkb_overlay_mask_t valid =
+        static_assert(XKB_OVERLAY_मोजणी == 8, "invalid right shift");
+        स्थिरांक xkb_overlay_mask_t valid =
             (xkb_overlay_mask_t)((1u << overlay_max) - 1u);
         remaining &= valid;
-        if (remaining != key->overlays) {
+        जर (remaining != किल्ली->overlays) {
             log_warn(keymap->ctx, XKB_ERROR_UNSUPPORTED_OVERLAY_INDEX,
                      "Overlays indices > %u in %s require using "
                      "keymap format >= v2; "
                      "keep overlays 0x%08x and discard overlays 0x%08x\n",
-                     overlay_max, KeyNameText(keymap->ctx, name),
-                     remaining, key->overlays & ~valid);
+                     overlay_max, किल्ली_Name_Text(keymap->ctx, name),
+                     remaining, किल्ली->overlays & ~valid);
         }
 
-        if (remaining && !key->overlays_inline &&
+        जर (remaining && !किल्ली->overlays_inline &&
             !areOverlappingOverlaysSupported(config->format)) {
             /* isolate lowest set bit */
-            const xkb_overlay_mask_t lsb = (xkb_overlay_mask_t)(
+            स्थिरांक xkb_overlay_mask_t lsb = (xkb_overlay_mask_t)(
                 remaining &
-                (xkb_overlay_mask_t)((unsigned)~remaining + 1u)
+                (xkb_overlay_mask_t)((अचिन्हित)~remaining + 1u)
             );
             /* get its index */
-            const xkb_overlay_index_t overlay =
+            स्थिरांक xkb_overlay_index_t overlay =
                 (xkb_overlay_index_t)popcount32(lsb - 1u);
             log_warn(keymap->ctx, XKB_ERROR_OVERLAPPING_OVERLAY,
                      "Overlapping overlays in %s require using "
                      "keymap format >= v2; "
                      "keep overlay %u and discard overlays 0x%x\n",
-                     KeyNameText(keymap->ctx, name), overlay, remaining & ~lsb);
+                     किल्ली_Name_Text(keymap->ctx, name), overlay, remaining & ~lsb);
             remaining = lsb;
         }
 
-        if (remaining)
+        जर (remaining)
             simple = false;
 
-        const struct xkb_key * const *overlays_keys = (key->overlays_inline)
-                                                    ? &key->overlay_key
-                                                    : key->overlays_keys;
-        while (remaining) {
+        स्थिरांक संरचना xkb_किल्ली * स्थिरांक *overlays_किल्ल्या = (किल्ली->overlays_inline)
+                                                    ? &किल्ली->overlay_किल्ली
+                                                    : किल्ली->overlays_किल्ल्या;
+        पर्यंत (remaining) {
             /* isolate lowest set bit */
-            const xkb_overlay_mask_t lsb = (xkb_overlay_mask_t)(
+            स्थिरांक xkb_overlay_mask_t lsb = (xkb_overlay_mask_t)(
                 remaining &
-                (xkb_overlay_mask_t)((unsigned)~remaining + 1u)
+                (xkb_overlay_mask_t)((अचिन्हित)~remaining + 1u)
             );
             /* get its index */
-            const xkb_overlay_index_t overlay =
+            स्थिरांक xkb_overlay_index_t overlay =
                 (xkb_overlay_index_t)popcount32(lsb - 1u);
             remaining = (remaining & ~lsb);
 
             /* pop current value */
-            if (key->overlays_inline && remaining)
+            जर (किल्ली->overlays_inline && remaining)
                 PANIC_UNREACHABLE();
-            const struct xkb_key *overlay_key = *(overlays_keys++);
+            स्थिरांक संरचना xkb_किल्ली *overlay_किल्ली = *(overlays_किल्ल्या++);
 
-            const xkb_atom_t overlay_key_name = (substitutions == NULL)
-                ? overlay_key->name
-                : substitute_name(substitutions, overlay_key->name);
+            स्थिरांक xkb_atom_t overlay_किल्ली_name = (substitutions == रिक्त)
+                ? overlay_किल्ली->name
+                : substitute_name(substitutions, overlay_किल्ली->name);
             write_buf(buf, "\n\t\toverlay%u= %s,",
-                      overlay + 1, KeyNameText(keymap->ctx, overlay_key_name));
+                      overlay + 1, किल्ली_Name_Text(keymap->ctx, overlay_किल्ली_name));
         }
     }
 
-    if (groups_count > 1 || explicit_actions || explicit)
+    जर (groups_मोजणी > 1 || explicit_actions || explicit)
         simple = false;
 
-    if (simple) {
-        if (groups_count == 0) {
+    जर (simple) {
+        जर (groups_मोजणी == 0) {
             /* Remove trailing comma */
             delete_last_char(buf, ',');
-            if (buf->buf[buf->size - 1] == ',')
+            जर (buf->buf[buf->size - 1] == ',')
                 buf->size--;
-        } else {
+        } अन्यथा {
             copy_to_buf(buf, "\t[ ");
             /* Get the single group index */
             xkb_mod_index_t group = ctz32(layouts);
             /* The group may not be defined for this key if it is not the first one */
-            group = xkb_keymap_key_effective_layout(key, group);
-            if (!write_keysyms(keymap, buf, buf2, key, group, pretty, false))
-                return false;
+            group = xkb_keymap_किल्ली_effective_layout(किल्ली, group);
+            जर (!write_keysyms(keymap, buf, buf2, किल्ली, group, pretty, false))
+                परत false;
             copy_to_buf(buf, " ]");
         }
         copy_to_buf(buf, " };\n");
     }
-    else {
+    अन्यथा {
         xkb_layout_index_t new_group = (xkb_layout_index_t)-1;
-        for (xkb_layout_index_t group = 0; group < key->num_groups; group++) {
-            if (!((UINT32_C(1) << group) & layouts))
-                continue;
+        साठी (xkb_layout_index_t group = 0; group < किल्ली->अंक_groups; group++) {
+            जर (!((UINT32_C(1) << group) & layouts))
+                सुरूठेवा;
 
             new_group++;
 
-            const bool print_actions =
+            स्थिरांक bool print_actions =
                 /* Group has explicit actions */
-                key->groups[group].explicit_actions ||
+                किल्ली->groups[group].explicit_actions ||
                 /* Explicit values are required */
                 explicit ||
                 /* Group has symbols but no explicit actions and key has explicit
                  * actions in another group: ensure compatibility with xkbcomp
                  * and all xkbcommon versions */
-                (key->groups[group].explicit_symbols &&
+                (किल्ली->groups[group].explicit_symbols &&
                  explicit_actions && some_interprets) ||
                 /* Group has implicit actions but no interpret can set them, so
                  * the actions must be made explicit */
-                (key->groups[group].implicit_actions && !some_interprets);
+                (किल्ली->groups[group].implicit_actions && !some_interprets);
 
-            if (new_group != 0)
+            जर (new_group != 0)
                 copy_to_buf(buf, ",");
             write_buf(buf, "\n\t\tsymbols[%"PRIu32"]= [ ", new_group + 1);
 
-            if (!write_keysyms(keymap, buf, buf2, key, group,
+            जर (!write_keysyms(keymap, buf, buf2, किल्ली, group,
                                pretty, print_actions))
-                return false;
+                परत false;
             copy_to_buf(buf, " ]");
-            if (print_actions) {
+            जर (print_actions) {
                 write_buf(buf, ",\n\t\tactions[%"PRIu32"]= [ ", new_group + 1);
-                if (!write_actions(keymap, config->format, max_groups,
-                                   buf, buf2, key, group))
-                    return false;
+                जर (!write_actions(keymap, config->format, max_groups,
+                                   buf, buf2, किल्ली, group))
+                    परत false;
                 copy_to_buf(buf, " ]");
             }
         }
-        if (!groups_count)
+        जर (!groups_मोजणी)
             delete_last_char(buf, ',');
         copy_to_buf(buf, "\n\t};\n");
     }
 
-    return true;
+    परत true;
 }
 
 
-static int
-cmp_modmap_step_1(const void *a, const void *b)
+स्थिर पूर्णांक
+cmp_modmap_step_1(स्थिरांक शून्य *a, स्थिरांक शून्य *b)
 {
-    const ModMapEntry *m1 = (const ModMapEntry *)a;
-    const ModMapEntry *m2 = (const ModMapEntry *)b;
+    स्थिरांक ModMapEntry *m1 = (स्थिरांक ModMapEntry *)a;
+    स्थिरांक ModMapEntry *m2 = (स्थिरांक ModMapEntry *)b;
 
-    if (!m1->mods) {
-        if (!m2->mods) {
+    जर (!m1->mods) {
+        जर (!m2->mods) {
             /* Entry will be dropped: do not care about the other fields */
-            return 0;
+            परत 0;
         }
-        return +1;
-    } else if (!m2->mods) {
-        return -1;
+        परत +1;
+    } अन्यथा जर (!m2->mods) {
+        परत -1;
     }
 
     /* Valid only on step 1 */
-    if (m1->keyCode < m2->keyCode)
-        return -1;
-    else if (m1->keyCode > m2->keyCode)
-        return +1;
+    जर (m1->किल्ली_Code < m2->किल्ली_Code)
+        परत -1;
+    अन्यथा जर (m1->किल्ली_Code > m2->किल्ली_Code)
+        परत +1;
 
-    if (m1->mods < m2->mods)
-        return -1;
-    else if (m1->mods > m2->mods)
-        return +1;
+    जर (m1->mods < m2->mods)
+        परत -1;
+    अन्यथा जर (m1->mods > m2->mods)
+        परत +1;
 
-    if (m1->haveSymbol < m2->haveSymbol)
-        return +1;
-    else if (m1->haveSymbol > m2->haveSymbol)
-        return -1;
+    जर (m1->have_चिन्ह < m2->have_चिन्ह)
+        परत +1;
+    अन्यथा जर (m1->have_चिन्ह > m2->have_चिन्ह)
+        परत -1;
 
-    if (m1->haveSymbol) {
-        if (m1->u.keySym < m2->u.keySym)
-            return -1;
-        if (m1->u.keySym > m2->u.keySym)
-            return +1;
-    } else {
-        if (m1->u.keyName < m2->u.keyName)
-            return -1;
-        if (m1->u.keyName > m2->u.keyName)
-            return +1;
+    जर (m1->have_चिन्ह) {
+        जर (m1->u.किल्ली_Sym < m2->u.किल्ली_Sym)
+            परत -1;
+        जर (m1->u.किल्ली_Sym > m2->u.किल्ली_Sym)
+            परत +1;
+    } अन्यथा {
+        जर (m1->u.किल्ली_Name < m2->u.किल्ली_Name)
+            परत -1;
+        जर (m1->u.किल्ली_Name > m2->u.किल्ली_Name)
+            परत +1;
     }
 
-    return 0;
+    परत 0;
 }
 
-static int
-cmp_modmap_step_2(const void *a, const void *b)
+स्थिर पूर्णांक
+cmp_modmap_step_2(स्थिरांक शून्य *a, स्थिरांक शून्य *b)
 {
-    const ModMapEntry *m1 = (const ModMapEntry *)a;
-    const ModMapEntry *m2 = (const ModMapEntry *)b;
+    स्थिरांक ModMapEntry *m1 = (स्थिरांक ModMapEntry *)a;
+    स्थिरांक ModMapEntry *m2 = (स्थिरांक ModMapEntry *)b;
 
-    if (m1->mods < m2->mods)
-        return -1;
-    if (m1->mods > m2->mods)
-        return +1;
+    जर (m1->mods < m2->mods)
+        परत -1;
+    जर (m1->mods > m2->mods)
+        परत +1;
 
-    if (m1->haveSymbol < m2->haveSymbol)
-        return -1;
-    if (m1->haveSymbol > m2->haveSymbol)
-        return +1;
+    जर (m1->have_चिन्ह < m2->have_चिन्ह)
+        परत -1;
+    जर (m1->have_चिन्ह > m2->have_चिन्ह)
+        परत +1;
 
-    if (m1->haveSymbol) {
-        if (m1->u.keySym < m2->u.keySym)
-            return -1;
-        if (m1->u.keySym > m2->u.keySym)
-            return +1;
-    } else {
-        if (m1->keyCode < m2->keyCode)
-            return -1;
-        if (m1->keyCode > m2->keyCode)
-            return +1;
+    जर (m1->have_चिन्ह) {
+        जर (m1->u.किल्ली_Sym < m2->u.किल्ली_Sym)
+            परत -1;
+        जर (m1->u.किल्ली_Sym > m2->u.किल्ली_Sym)
+            परत +1;
+    } अन्यथा {
+        जर (m1->किल्ली_Code < m2->किल्ली_Code)
+            परत -1;
+        जर (m1->किल्ली_Code > m2->किल्ली_Code)
+            परत +1;
     }
 
-    return 0;
+    परत 0;
 }
 
-static bool
-write_modmaps(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
-              const key_name_substitutions *substitutions,
-              bool pretty, bool drop_interprets, struct buf *buf)
+स्थिर bool
+write_modmaps(स्थिरांक संरचना xkb_keymap *keymap, गणना xkb_keymap_format format,
+              स्थिरांक किल्ली_name_substitutions *substitutions,
+              bool pretty, bool drop_interprets, संरचना buf *buf)
 {
-    if (!keymap->num_modmaps)
-        return true;
+    जर (!keymap->अंक_modmaps)
+        परत true;
 
     darray(ModMapEntry) modmaps = darray_new();
-    darray_from_items(modmaps, keymap->modmaps, keymap->num_modmaps);
-    if (!darray_items(modmaps))
-        return false;
+    darray_from_वस्तुसंच(modmaps, keymap->modmaps, keymap->अंक_modmaps);
+    जर (!darray_वस्तुसंच(modmaps))
+        परत false;
 
     /* Sort entries by key code */
-    qsort(darray_items(modmaps), darray_size(modmaps),
-          sizeof(*darray_items(modmaps)), &cmp_modmap_step_1);
+    क्विक(darray_वस्तुसंच(modmaps), darray_size(modmaps),
+          आकार(*darray_वस्तुसंच(modmaps)), &cmp_modmap_step_1);
 
     /* Drop disabled entries at the end */
-    for (darray_size_t m = darray_size(modmaps); m-- > 0;) {
-        if (darray_item(modmaps, m).mods)
-            break;
+    साठी (darray_size_t m = darray_size(modmaps); m-- > 0;) {
+        जर (darray_item(modmaps, m).mods)
+            थांबा;
         darray_size(modmaps)--;
     }
 
@@ -1738,136 +1738,136 @@ write_modmaps(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
      */
     xkb_keycode_t current_keycode = XKB_KEYCODE_INVALID;
     bool convert_to_v1_compatibility_entry = false;
-    for (darray_size_t m = darray_size(modmaps); m-- > 0;) {
+    साठी (darray_size_t m = darray_size(modmaps); m-- > 0;) {
         ModMapEntry *mm = &darray_item(modmaps, m);
-        assert(mm->mods);
+        प्रतिज्ञा(mm->mods);
 
-        if (mm->keyCode == current_keycode) {
+        जर (mm->किल्ली_Code == current_keycode) {
             /*
              * Keycode already processed: either drop next key code entries
              * or convert them to keymap format v1
              */
-            const xkb_mod_mask_t core_mods = (mm->mods & MOD_REAL_MASK_ALL);
-            if (convert_to_v1_compatibility_entry && core_mods) {
+            स्थिरांक xkb_mod_mask_t core_mods = (mm->mods & MOD_REAL_MASK_ALL);
+            जर (convert_to_v1_compatibility_entry && core_mods) {
                 /*
                  * Convert to keymap format V1-specific entry:
                  * keep only the highest core modifier
                  */
                 mm->mods = UINT32_C(1) << (XKB_MAX_MODS - 1 - clz32(core_mods));
-            } else {
+            } अन्यथा {
                 /*
                  * Drop if there is a previous entry for all keymap formats or
                  * if the current entry is incompatible with V1 keymap format.
                  */
                 mm->mods = 0;
             }
-            continue;
+            सुरूठेवा;
         }
 
-        current_keycode = mm->keyCode;
-        const struct xkb_key *key = XkbKey(keymap, mm->keyCode);
+        current_keycode = mm->किल्ली_Code;
+        स्थिरांक संरचना xkb_किल्ली *किल्ली = Xkb_किल्ली(keymap, mm->किल्ली_Code);
 
-        const xkb_mod_mask_t core_mods = (key->modmap & MOD_REAL_MASK_ALL);
-        if (format == XKB_KEYMAP_FORMAT_TEXT_V1 &&
-            ((key->modmap & (key->modmap - 1)) || key->modmap != core_mods)) {
+        स्थिरांक xkb_mod_mask_t core_mods = (किल्ली->modmap & MOD_REAL_MASK_ALL);
+        जर (format == XKB_KEYMAP_FORMAT_TEXT_V1 &&
+            ((किल्ली->modmap & (किल्ली->modmap - 1)) || किल्ली->modmap != core_mods)) {
             /* V1 entry with multiple modifiers or non X11 core modifiers */
             m++; /* process in next iteration */
             convert_to_v1_compatibility_entry = true;
             log_err(keymap->ctx, XKB_ERROR_INVALID_MODIFIER_MAP_MASK,
                     "Cannot serialize modifier map of key %s: modifiers mask "
                     "0x%"PRIx32" incompatible with keymap format v1\n",
-                    KeyNameText(keymap->ctx, key->name), key->modmap);
-        } else {
+                    किल्ली_Name_Text(keymap->ctx, किल्ली->name), किल्ली->modmap);
+        } अन्यथा {
             /* V2 format or V1 format with a single core modifier */
-            assert(key->modmap);
-            mm->mods = key->modmap;
+            प्रतिज्ञा(किल्ली->modmap);
+            mm->mods = किल्ली->modmap;
             /* Force key name */
-            mm->haveSymbol = false;
-            mm->u.keyName = key->name;
+            mm->have_चिन्ह = false;
+            mm->u.किल्ली_Name = किल्ली->name;
             convert_to_v1_compatibility_entry = false;
         }
     }
 
-    if (darray_empty(modmaps))
-        goto exit;
+    जर (darray_empty(modmaps))
+        जा निकास;
 
     /* Sort entries by modifier mask */
-    qsort(darray_items(modmaps), darray_size(modmaps),
-          sizeof(*darray_items(modmaps)), &cmp_modmap_step_2);
+    क्विक(darray_वस्तुसंच(modmaps), darray_size(modmaps),
+          आकार(*darray_वस्तुसंच(modmaps)), &cmp_modmap_step_2);
 
     /*
      * Serialize modmaps
      */
 
     xkb_mod_mask_t current_mods = 0;
-    const ModMapEntry *entry;
+    स्थिरांक ModMapEntry *entry;
     darray_foreach(entry, modmaps) {
-        if (!entry->mods)
-            continue;
+        जर (!entry->mods)
+            सुरूठेवा;
 
-        if (current_mods != entry->mods) {
-            if (current_mods) {
+        जर (current_mods != entry->mods) {
+            जर (current_mods) {
                 copy_to_buf(buf, " };\n");
             }
             current_mods = entry->mods;
             write_buf(buf, "\tmodifier_map %s { ",
                       ModMaskText(keymap->ctx, MOD_REAL, &keymap->mods,
                                   current_mods));
-        } else {
+        } अन्यथा {
             copy_to_buf(buf, ", ");
         }
 
-        if (entry->haveSymbol) {
-            if (pretty || entry->u.keySym == XKB_KEY_NoSymbol)
-                write_buf(buf, "%s", KeysymText(keymap->ctx, entry->u.keySym));
-            else
-                write_buf(buf, "0x%"PRIx32, entry->u.keySym);
-        } else {
-            const xkb_atom_t name = (substitutions == NULL)
-                ? entry->u.keyName
-                : substitute_name(substitutions, entry->u.keyName);
-            write_buf(buf, "%s", KeyNameText(keymap->ctx, name));
+        जर (entry->have_चिन्ह) {
+            जर (pretty || entry->u.किल्ली_Sym == XKB_किल्ली_No_चिन्ह)
+                write_buf(buf, "%s", KeysymText(keymap->ctx, entry->u.किल्ली_Sym));
+            अन्यथा
+                write_buf(buf, "0x%"PRIx32, entry->u.किल्ली_Sym);
+        } अन्यथा {
+            स्थिरांक xkb_atom_t name = (substitutions == रिक्त)
+                ? entry->u.किल्ली_Name
+                : substitute_name(substitutions, entry->u.किल्ली_Name);
+            write_buf(buf, "%s", किल्ली_Name_Text(keymap->ctx, name));
         }
     }
-    if (current_mods) {
+    जर (current_mods) {
         copy_to_buf(buf, " };\n");
     }
 
-exit:
+निकास:
     darray_free(modmaps);
-    return true;
+    परत true;
 }
 
-static bool
-write_symbols(const struct xkb_keymap *keymap,
-              const struct xkb_keymap_serialize_config *config,
-              const key_name_substitutions *substitutions,
+स्थिर bool
+write_symbols(स्थिरांक संरचना xkb_keymap *keymap,
+              स्थिरांक संरचना xkb_keymap_serialize_config *config,
+              स्थिरांक किल्ली_name_substitutions *substitutions,
               xkb_layout_index_t max_groups, bool some_interp,
-              struct buf *buf)
+              संरचना buf *buf)
 {
-    const bool pretty = (config->flags & XKB_KEYMAP_SERIALIZE_PRETTY);
-    const bool defaults =
-        (config->flags & XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_VALUES);
-    const bool explicit_key_values =
-        (config->flags & XKB_KEYMAP_SERIALIZE_EXPLICIT_KEY_VALUES);
-    const bool drop_unused = !(config->flags & XKB_KEYMAP_SERIALIZE_KEEP_UNUSED);
-    const bool drop_interprets = (explicit_key_values && drop_unused);
+    स्थिरांक bool pretty = (config->flags & XKB_KEYMAP_SERIALIZE_PRETTY);
+    स्थिरांक bool defaults =
+        (config->flags & XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_मूल्ये);
+    स्थिरांक bool explicit_किल्ली_मूल्ये =
+        (config->flags & XKB_KEYMAP_SERIALIZE_EXPLICIT_किल्ली_मूल्ये);
+    स्थिरांक bool drop_unused = !(config->flags & XKB_KEYMAP_SERIALIZE_KEEP_UNUSED);
+    स्थिरांक bool drop_interprets = (explicit_किल्ली_मूल्ये && drop_unused);
     /* TODO: print all default values if explicit flag is set */
 
-    if (keymap->symbols_section_name)
+    जर (keymap->symbols_section_name)
         write_buf(buf, "xkb_symbols \"%s\" {\n", keymap->symbols_section_name);
-    else
+    अन्यथा
         copy_to_buf(buf, "xkb_symbols {\n");
 
     bool has_group_names = false;
     xkb_layout_index_t new_group = (xkb_layout_index_t)-1;
-    for (xkb_layout_index_t group = 0; group < keymap->num_group_names; group++) {
-        if (!((UINT32_C(1) << group) & config->layouts))
-            continue;
+    साठी (xkb_layout_index_t group = 0; group < keymap->अंक_group_names; group++) {
+        जर (!((UINT32_C(1) << group) & config->layouts))
+            सुरूठेवा;
 
         new_group++;
 
-        if (keymap->group_names[group]) {
+        जर (keymap->group_names[group]) {
             write_buf(buf, "\tname[%"PRIu32"]=", new_group + 1);
             write_buf_string_literal(
                 buf, xkb_atom_text(keymap->ctx, keymap->group_names[group]));
@@ -1875,54 +1875,54 @@ write_symbols(const struct xkb_keymap *keymap,
             has_group_names = true;
         }
     }
-    if (has_group_names)
+    जर (has_group_names)
         copy_to_buf(buf, "\n");
 
-    if (defaults && !write_actions_defaults(keymap, config->format, buf))
-        return false;
+    जर (defaults && !write_actions_defaults(keymap, config->format, buf))
+        परत false;
 
-    struct buf buf2 = { NULL, 0, 0 };
-    const struct xkb_key *key;
-    xkb_keys_foreach(key, keymap) {
+    संरचना buf buf2 = { रिक्त, 0, 0 };
+    स्थिरांक संरचना xkb_किल्ली *किल्ली;
+    xkb_किल्ल्या_foreach(किल्ली, keymap) {
         /* Skip keys with no explicit values */
-        if (key->explicit &&
-            !write_key(keymap, config, substitutions, max_groups, some_interp,
-                       drop_interprets, explicit_key_values, pretty, buf,
-                       &buf2, key))
+        जर (किल्ली->explicit &&
+            !write_किल्ली(keymap, config, substitutions, max_groups, some_interp,
+                       drop_interprets, explicit_किल्ली_मूल्ये, pretty, buf,
+                       &buf2, किल्ली))
         {
-            free(buf2.buf);
-            return false;
+            मुक्त(buf2.buf);
+            परत false;
         }
     }
-    free(buf2.buf);
+    मुक्त(buf2.buf);
 
-    if (!write_modmaps(keymap, config->format, substitutions,
+    जर (!write_modmaps(keymap, config->format, substitutions,
                        pretty, drop_interprets, buf))
-        return false;
+        परत false;
 
     copy_to_buf(buf, "};\n\n");
-    return true;
+    परत true;
 }
 
-static enum xkb_status
-write_keymap(const struct xkb_keymap *keymap,
-             const struct xkb_keymap_serialize_config *config,
-             struct buf *buf, struct xkb_keymap_serialize_result *result)
+स्थिर गणना xkb_status
+write_keymap(स्थिरांक संरचना xkb_keymap *keymap,
+             स्थिरांक संरचना xkb_keymap_serialize_config *config,
+             संरचना buf *buf, संरचना xkb_keymap_serialize_result *result)
 {
-    key_name_substitutions substitutions = darray_new();
-    if (config->format == XKB_KEYMAP_FORMAT_TEXT_V1 &&
-        !rename_long_keys(keymap, &substitutions))
+    किल्ली_name_substitutions substitutions = darray_new();
+    जर (config->format == XKB_KEYMAP_FORMAT_TEXT_V1 &&
+        !rename_long_किल्ल्या(keymap, &substitutions))
     {
-        return false;
+        परत false;
     }
 
-    const key_name_substitutions * const substitutions_ptr =
-        (darray_empty(substitutions)) ? NULL : &substitutions;
+    स्थिरांक किल्ली_name_substitutions * स्थिरांक substitutions_ptr =
+        (darray_empty(substitutions)) ? रिक्त : &substitutions;
 
-    const xkb_layout_index_t max_groups = format_max_groups(config->format);
+    स्थिरांक xkb_layout_index_t max_groups = format_max_groups(config->format);
 
     bool some_interp = false;
-    const bool ok = (
+    स्थिरांक bool ok = (
         check_write_buf(buf, "xkb_keymap {\n") &&
         write_keycodes(keymap, substitutions_ptr, config->flags, buf) &&
         write_types(keymap, config->format, config->flags, buf) &&
@@ -1934,29 +1934,29 @@ write_keymap(const struct xkb_keymap *keymap,
     );
 
     darray_free(substitutions);
-    return ok ? XKB_SUCCESS : -1;
+    परत ok ? XKB_SUCCESS : -1;
 }
 
-enum xkb_status
+गणना xkb_status
 text_v1_keymap_serialize(
-        const struct xkb_keymap *keymap,
-        const struct xkb_keymap_serialize_config *config,
-        struct xkb_keymap_serialize_result *result
+        स्थिरांक संरचना xkb_keymap *keymap,
+        स्थिरांक संरचना xkb_keymap_serialize_config *config,
+        संरचना xkb_keymap_serialize_result *result
 )
 {
-    struct buf buf = { NULL, 0, 0 };
+    संरचना buf buf = { रिक्त, 0, 0 };
 
-    const enum xkb_status status =
+    स्थिरांक गणना xkb_status status =
         write_keymap(keymap, config, &buf, result);
-    if (status != XKB_SUCCESS) {
-        free(buf.buf);
-        result->serialized = NULL;
-        return status;
+    जर (status != XKB_SUCCESS) {
+        मुक्त(buf.buf);
+        result->serialized = रिक्त;
+        परत status;
     }
 
     result->serialized = buf.buf;
     result->length = buf.size + 1;
     result->layouts = config->layouts;
 
-    return XKB_SUCCESS;
+    परत XKB_SUCCESS;
 }

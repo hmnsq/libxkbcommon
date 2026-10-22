@@ -4,27 +4,27 @@
  */
 #pragma once
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include <stdbool.h>
+#अन्तर्भाव <stdbool.h>
 
-struct parser_param;
-struct scanner;
+संरचना parser_param;
+संरचना scanner;
 
-#include "scanner-utils.h"
-#include "parser.h"
+#अन्तर्भाव "scanner-utils.h"
+#अन्तर्भाव "parser.h"
 
-int
-_xkbcommon_lex(YYSTYPE *yylval, struct scanner *scanner);
+पूर्णांक
+_xkbcommon_lex(YYSTYPE *yylval, संरचना scanner *scanner);
 
 XkbFile *
-parse(struct xkb_context *ctx, const struct parser_keymap_config *config,
-      struct scanner *scanner, const char *map);
+parse(संरचना xkb_context *ctx, स्थिरांक संरचना parser_keymap_config *config,
+      संरचना scanner *scanner, स्थिरांक अक्षर *map);
 
 bool
-parse_next(struct xkb_context *ctx,
-           const struct parser_keymap_config *config,
-           struct scanner *scanner, XkbFile **xkb_file);
+parse_next(संरचना xkb_context *ctx,
+           स्थिरांक संरचना parser_keymap_config *config,
+           संरचना scanner *scanner, XkbFile **xkb_file);
 
-int
-keyword_to_token(const char *string, size_t len);
+पूर्णांक
+keyword_to_token(स्थिरांक अक्षर *string, माप_प्रकार len);

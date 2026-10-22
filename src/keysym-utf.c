@@ -35,25 +35,25 @@
  *
  */
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include <stdbool.h>
+#अन्तर्भाव <stdbool.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "utils.h"
-#include "utf8.h"
-#include "keysym.h"
+#अन्तर्भाव "xkbcommon/xkbcommon.h"
+#अन्तर्भाव "utils.h"
+#अन्तर्भाव "utf8.h"
+#अन्तर्भाव "keysym.h"
 
 #define NO_KEYSYM_UNICODE_CONVERSION 0
 
 /* We don't use the uint32_t types here, to save some space. */
-struct codepair {
+संरचना codepair {
     uint16_t keysym:15;
     bool deprecated:1;
     uint16_t ucs;
 };
 
-static const struct codepair keysymtab[] = {
+स्थिर स्थिरांक संरचना codepair keysymtab[] = {
     { 0x01a1, false, 0x0104 }, /*                     Aogonek Ą LATIN CAPITAL LETTER A WITH OGONEK */
     { 0x01a2, false, 0x02d8 }, /*                       breve ˘ BREVE */
     { 0x01a3, false, 0x0141 }, /*                     Lstroke Ł LATIN CAPITAL LETTER L WITH STROKE */
@@ -832,49 +832,49 @@ static const struct codepair keysymtab[] = {
 };
 
 /* binary search with range check */
-static uint32_t
-bin_search(const struct codepair *table, size_t length, xkb_keysym_t keysym)
+स्थिर uint32_t
+bin_शोध(स्थिरांक संरचना codepair *table, माप_प्रकार length, xkb_keysym_t keysym)
 {
-    size_t first = 0;
-    size_t last = length;
+    माप_प्रकार first = 0;
+    माप_प्रकार last = length;
 
-    if (keysym < table[0].keysym  || keysym > table[length].keysym)
-        return 0;
+    जर (keysym < table[0].keysym  || keysym > table[length].keysym)
+        परत 0;
 
     /* binary search in table */
-    while (last >= first) {
-        size_t mid = (first + last) / 2;
-        if (table[mid].keysym < keysym)
+    पर्यंत (last >= first) {
+        माप_प्रकार mid = (first + last) / 2;
+        जर (table[mid].keysym < keysym)
             first = mid + 1;
-        else if (table[mid].keysym > keysym)
+        अन्यथा जर (table[mid].keysym > keysym)
             last = mid - 1;
-        else /* found it */
-            return table[mid].ucs;
+        अन्यथा /* found it */
+            परत table[mid].ucs;
     }
 
     /* no matching Unicode value found in table */
-    return NO_KEYSYM_UNICODE_CONVERSION;
+    परत NO_KEYSYM_UNICODE_CONVERSION;
 }
 
 uint32_t
 xkb_keysym_to_utf32(xkb_keysym_t keysym)
 {
     /* first check for Latin-1 characters (1:1 mapping) */
-    if ((keysym >= 0x0020 && keysym <= 0x007e) ||
+    जर ((keysym >= 0x0020 && keysym <= 0x007e) ||
         (keysym >= 0x00a0 && keysym <= 0x00ff))
-        return keysym;
+        परत keysym;
 
     /* patch encoding botch */
-    if (keysym == XKB_KEY_KP_Space)
-        return XKB_KEY_space & 0x7f;
+    जर (keysym == XKB_किल्ली_KP_Space)
+        परत XKB_किल्ली_space & 0x7f;
 
     /* special keysyms */
-    if ((keysym >= XKB_KEY_BackSpace && keysym <= XKB_KEY_Clear) ||
-        (keysym >= XKB_KEY_KP_Multiply && keysym <= XKB_KEY_KP_9) ||
-        keysym == XKB_KEY_Return || keysym == XKB_KEY_Escape ||
-        keysym == XKB_KEY_Delete || keysym == XKB_KEY_KP_Tab ||
-        keysym == XKB_KEY_KP_Enter || keysym == XKB_KEY_KP_Equal)
-        return keysym & 0x7f;
+    जर ((keysym >= XKB_किल्ली_Back_Space && keysym <= XKB_किल्ली_Clear) ||
+        (keysym >= XKB_किल्ली_KP_Multiply && keysym <= XKB_किल्ली_KP_9) ||
+        keysym == XKB_किल्ली_Return || keysym == XKB_किल्ली_Escape ||
+        keysym == XKB_किल्ली_Delete || keysym == XKB_किल्ली_KP_Tab ||
+        keysym == XKB_किल्ली_KP_Enter || keysym == XKB_किल्ली_KP_Equal)
+        परत keysym & 0x7f;
 
     /* also check for directly encoded Unicode codepoints */
 
@@ -882,29 +882,29 @@ xkb_keysym_to_utf32(xkb_keysym_t keysym)
      * See https://www.unicode.org/versions/Unicode15.0.0/ch03.pdf#G28875
      * for further details.
      */
-    if (keysym >= XKB_KEYSYM_UNICODE_SURROGATE_MIN &&
+    जर (keysym >= XKB_KEYSYM_UNICODE_SURROGATE_MIN &&
         keysym <= XKB_KEYSYM_UNICODE_SURROGATE_MAX)
-        return NO_KEYSYM_UNICODE_CONVERSION;
+        परत NO_KEYSYM_UNICODE_CONVERSION;
     /*
      * In theory, this is supposed to start from 0x100100, such that the ASCII
      * range, which is already covered by 0x00-0xff, can't be encoded in two
      * ways. However, changing this after a couple of decades probably won't
      * go well, so it stays as it is.
      */
-    if (XKB_KEYSYM_UNICODE_OFFSET <= keysym && keysym <= XKB_KEYSYM_UNICODE_MAX)
-        return keysym - XKB_KEYSYM_UNICODE_OFFSET;
+    जर (XKB_KEYSYM_UNICODE_OFFSET <= keysym && keysym <= XKB_KEYSYM_UNICODE_MAX)
+        परत keysym - XKB_KEYSYM_UNICODE_OFFSET;
 
     /* Some EVDEV keysyms that do not fit in `keysymtab` */
-    if (keysym >= XKB_KEY_XF86Numeric0 && keysym <= XKB_KEY_XF86Numeric9)
-        return keysym - XKB_KEY_XF86Numeric0 + 0x30;
-    switch (keysym) {
-    case XKB_KEY_XF86NumericStar:
-        return 0x2a; /* * */
-    case XKB_KEY_XF86NumericPound:
-        return 0x23; /* # */
-    default:
+    जर (keysym >= XKB_किल्ली_XF86_Numeric0 && keysym <= XKB_किल्ली_XF86_Numeric9)
+        परत keysym - XKB_किल्ली_XF86_Numeric0 + 0x30;
+    निवड (keysym) {
+    स्थिती XKB_किल्ली_XF86_Numeric_Star:
+        परत 0x2a; /* * */
+    स्थिती XKB_किल्ली_XF86_Numeric_Pound:
+        परत 0x23; /* # */
+    पूर्वनिर्धारित:
         /* search main table */
-        return bin_search(keysymtab, ARRAY_SIZE(keysymtab) - 1, keysym);
+        परत bin_शोध(keysymtab, ARRAY_SIZE(keysymtab) - 1, keysym);
     }
 }
 
@@ -912,16 +912,16 @@ xkb_keysym_t
 xkb_utf32_to_keysym(uint32_t ucs)
 {
     /* first check for Latin-1 characters (1:1 mapping) */
-    if ((ucs >= 0x0020 && ucs <= 0x007e) ||
+    जर ((ucs >= 0x0020 && ucs <= 0x007e) ||
         (ucs >= 0x00a0 && ucs <= 0x00ff))
-        return ucs;
+        परत ucs;
 
     /* special keysyms */
-    if ((ucs >= (XKB_KEY_BackSpace & 0x7f) && ucs <= (XKB_KEY_Clear & 0x7f)) ||
-        ucs == (XKB_KEY_Return & 0x7f) || ucs == (XKB_KEY_Escape & 0x7f))
-        return ucs | 0xff00;
-    if (ucs == (XKB_KEY_Delete & 0x7f))
-        return XKB_KEY_Delete;
+    जर ((ucs >= (XKB_किल्ली_Back_Space & 0x7f) && ucs <= (XKB_किल्ली_Clear & 0x7f)) ||
+        ucs == (XKB_किल्ली_Return & 0x7f) || ucs == (XKB_किल्ली_Escape & 0x7f))
+        परत ucs | 0xff00;
+    जर (ucs == (XKB_किल्ली_Delete & 0x7f))
+        परत XKB_किल्ली_Delete;
 
     /*
      * U+0000 NULL and invalid Unicode code points.
@@ -929,18 +929,18 @@ xkb_utf32_to_keysym(uint32_t ucs)
      * See https://www.unicode.org/versions/Unicode15.0.0/ch03.pdf#G28875
      * for further details.
      */
-    if (unlikely(ucs == 0 || is_surrogate(ucs) || ucs > 0x10ffff))
-        return XKB_KEY_NoSymbol;
+    जर (unlikely(ucs == 0 || is_surrogate(ucs) || ucs > 0x10ffff))
+        परत XKB_किल्ली_No_चिन्ह;
 
     /* search main table */
-    for (size_t i = 0; i < ARRAY_SIZE(keysymtab); i++) {
+    साठी (माप_प्रकार i = 0; i < ARRAY_SIZE(keysymtab); i++) {
         /* Do not use deprecated keysyms */
-        if (keysymtab[i].ucs == ucs && !keysymtab[i].deprecated)
-            return keysymtab[i].keysym;
+        जर (keysymtab[i].ucs == ucs && !keysymtab[i].deprecated)
+            परत keysymtab[i].keysym;
     }
 
     /* Use direct encoding if everything else failed */
-    return ucs | XKB_KEYSYM_UNICODE_OFFSET;
+    परत ucs | XKB_KEYSYM_UNICODE_OFFSET;
 }
 
 /*
@@ -951,22 +951,22 @@ xkb_utf32_to_keysym(uint32_t ucs)
  * Author: Rob Bradford <rob@linux.intel.com>
  */
 
-int
-xkb_keysym_to_utf8(xkb_keysym_t keysym, char *buffer, size_t size)
+पूर्णांक
+xkb_keysym_to_utf8(xkb_keysym_t keysym, अक्षर *buffer, माप_प्रकार size)
 {
     uint32_t codepoint;
 
     /* Unicode code point takes up to 4 bytes in UTF-8, plus the
      * NULL-terminating byte. */
-    if (size < XKB_KEYSYM_UTF8_MAX_SIZE)
-        return -1;
+    जर (size < XKB_KEYSYM_UTF8_MAX_SIZE)
+        परत -1;
 
     codepoint = xkb_keysym_to_utf32(keysym);
 
-    if (codepoint == NO_KEYSYM_UNICODE_CONVERSION)
-        return 0;
+    जर (codepoint == NO_KEYSYM_UNICODE_CONVERSION)
+        परत 0;
 
-    return (int)utf32_to_utf8(codepoint, buffer);
+    परत (पूर्णांक)utf32_to_utf8(codepoint, buffer);
 }
 
 /* SPDX-SnippetEnd */

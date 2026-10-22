@@ -4,19 +4,19 @@
  */
 #pragma once
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include <assert.h>
-#include <errno.h>
-#include <inttypes.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#if HAVE_UNISTD_H
+#अन्तर्भाव <assert.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <inttypes.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <stdbool.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
+#जर HAVE_UNISTD_H
 # include <unistd.h>
-#else
+#अन्यथा
 /* Required on Windows where unistd.h doesn't exist */
 # define R_OK    4               /* Test for read permission.  */
 # define W_OK    2               /* Test for write permission.  */
@@ -38,18 +38,18 @@
 #  define STDIN_FILENO 0
 # endif
 #ifdef _MSC_VER
-typedef SSIZE_T ssize_t;
+प्रकारव्याख्या SSIZE_T ssize_t;
 #endif
 #endif
 
-static inline bool
-is_aligned(const void *restrict pointer, size_t byte_count)
+स्थिर ओळीत bool
+is_aligned(स्थिरांक शून्य *restrict pointer, माप_प्रकार byte_मोजणी)
 {
-    return (uintptr_t) pointer % byte_count == 0;
+    परत (uintptr_t) pointer % byte_मोजणी == 0;
 }
 
 
-#define ARRAY_SIZE(arr) ((sizeof(arr) / sizeof(*(arr))))
+#define ARRAY_SIZE(arr) ((आकार(arr) / आकार(*(arr))))
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
@@ -63,179 +63,179 @@ is_aligned(const void *restrict pointer, size_t byte_count)
 #define CONCAT2(x,y) CONCAT(x,y)
 
 /* Check if a Unicode code point is valid in a string literal */
-static inline bool
+स्थिर ओळीत bool
 is_valid_char(uint32_t cp)
 {
     /* Currently we only check for NULL character, but this could be extended
      * in the future to further ASCII control characters. */
-    return cp != 0;
+    परत cp != 0;
 }
 
 /* Check if a Unicode code point is a surrogate.
  * Those code points are used only in UTF-16 encodings. */
-static inline bool
+स्थिर ओळीत bool
 is_surrogate(uint32_t cp)
 {
-    return (cp >= 0xd800 && cp <= 0xdfff);
+    परत (cp >= 0xd800 && cp <= 0xdfff);
 }
 
-char
-to_lower(char c);
+अक्षर
+to_lower(अक्षर c);
 
-int
-istrcmp(const char *a, const char *b);
+पूर्णांक
+istrcmp(स्थिरांक अक्षर *a, स्थिरांक अक्षर *b);
 
-int
-istrncmp(const char *a, const char *b, size_t n);
+पूर्णांक
+istrncmp(स्थिरांक अक्षर *a, स्थिरांक अक्षर *b, माप_प्रकार n);
 
-static inline bool
-streq(const char *s1, const char *s2)
+स्थिर ओळीत bool
+streq(स्थिरांक अक्षर *s1, स्थिरांक अक्षर *s2)
 {
-    assert(s1 && s2);
-    return strcmp(s1, s2) == 0;
+    प्रतिज्ञा(s1 && s2);
+    परत म_भेद(s1, s2) == 0;
 }
 
-static inline bool
-streq_null(const char *s1, const char *s2)
+स्थिर ओळीत bool
+streq_null(स्थिरांक अक्षर *s1, स्थिरांक अक्षर *s2)
 {
-    if (s1 == NULL || s2 == NULL)
-        return s1 == s2;
-    return streq(s1, s2);
+    जर (s1 == रिक्त || s2 == रिक्त)
+        परत s1 == s2;
+    परत streq(s1, s2);
 }
 
-static inline bool
-streq_not_null(const char *s1, const char *s2)
+स्थिर ओळीत bool
+streq_not_null(स्थिरांक अक्षर *s1, स्थिरांक अक्षर *s2)
 {
-    if (!s1 || !s2)
-        return false;
-    return streq(s1, s2);
+    जर (!s1 || !s2)
+        परत false;
+    परत streq(s1, s2);
 }
 
-static inline bool
-istreq(const char *s1, const char *s2)
+स्थिर ओळीत bool
+istreq(स्थिरांक अक्षर *s1, स्थिरांक अक्षर *s2)
 {
-    return istrcmp(s1, s2) == 0;
+    परत istrcmp(s1, s2) == 0;
 }
 
-static inline bool
-istrneq(const char *s1, const char *s2, size_t len)
+स्थिर ओळीत bool
+istrneq(स्थिरांक अक्षर *s1, स्थिरांक अक्षर *s2, माप_प्रकार len)
 {
-    return istrncmp(s1, s2, len) == 0;
+    परत istrncmp(s1, s2, len) == 0;
 }
 
-#define istreq_prefix(s1, s2) istrneq(s1, s2, sizeof(s1) - 1)
+#define istreq_prefix(s1, s2) istrneq(s1, s2, आकार(s1) - 1)
 
-static inline char *
-strcpy_safe(char *dest, size_t size, const char *src) {
-    if (!dest || !size || !src)
-        return NULL;
-    const char * const limit = dest + size - 1;
-    while (dest < limit && *src) {
+स्थिर ओळीत अक्षर *
+strcpy_safe(अक्षर *dest, माप_प्रकार size, स्थिरांक अक्षर *src) {
+    जर (!dest || !size || !src)
+        परत रिक्त;
+    स्थिरांक अक्षर * स्थिरांक limit = dest + size - 1;
+    पर्यंत (dest < limit && *src) {
         *dest++ = *src++;
     }
     *dest = '\0';
-    return *src ? NULL : dest;
+    परत *src ? रिक्त : dest;
 }
 
-static inline char *
-strdup_safe(const char *s)
+स्थिर ओळीत अक्षर *
+strdup_safe(स्थिरांक अक्षर *s)
 {
-    return s ? strdup(s) : NULL;
+    परत s ? strdup(s) : रिक्त;
 }
 
-static inline size_t
-strlen_safe(const char *s)
+स्थिर ओळीत माप_प्रकार
+strlen_safe(स्थिरांक अक्षर *s)
 {
-    return s ? strlen(s) : 0;
+    परत s ? म_माप(s) : 0;
 }
 
-static inline bool
-isempty(const char *s)
+स्थिर ओळीत bool
+isempty(स्थिरांक अक्षर *s)
 {
-    return s == NULL || s[0] == '\0';
+    परत s == रिक्त || s[0] == '\0';
 }
 
-static inline const char *
-strnull(const char *s)
+स्थिर ओळीत स्थिरांक अक्षर *
+strnull(स्थिरांक अक्षर *s)
 {
-    return s ? s : "(null)";
+    परत s ? s : "(null)";
 }
 
-static inline const char *
-strempty(const char *s)
+स्थिर ओळीत स्थिरांक अक्षर *
+strempty(स्थिरांक अक्षर *s)
 {
-    return s ? s : "";
+    परत s ? s : "";
 }
 
-static inline void *
-memdup(const void *mem, size_t nmemb, size_t size)
+स्थिर ओळीत शून्य *
+memdup(स्थिरांक शून्य *mem, माप_प्रकार nmemb, माप_प्रकार size)
 {
-    void *p = calloc(nmemb, size);
-    if (p)
-        memcpy(p, mem, nmemb * size);
-    return p;
+    शून्य *p = सुस्मृति(nmemb, size);
+    जर (p)
+        स_नकल(p, mem, nmemb * size);
+    परत p;
 }
 
-#if !(defined(HAVE_STRNDUP) && HAVE_STRNDUP)
-static inline char *
-strndup(const char *s, size_t n)
+#जर !(defined(HAVE_STRNDUP) && HAVE_STRNDUP)
+स्थिर ओळीत अक्षर *
+strndup(स्थिरांक अक्षर *s, माप_प्रकार n)
 {
-    size_t slen = strlen(s);
-    size_t len = MIN(slen, n);
-    char *p = malloc(len + 1);
-    if (!p)
-        return NULL;
-    memcpy(p, s, len);
+    माप_प्रकार slen = म_माप(s);
+    माप_प्रकार len = MIN(slen, n);
+    अक्षर *p = दो_स्मृति(len + 1);
+    जर (!p)
+        परत रिक्त;
+    स_नकल(p, s, len);
     p[len] = '\0';
-    return p;
+    परत p;
 }
 #endif
 
 /* ctype.h is locale-dependent and has other oddities. */
-static inline bool
-is_ascii(char ch)
+स्थिर ओळीत bool
+is_ascii(अक्षर ch)
 {
-    return (ch & ~0x7f) == 0;
+    परत (ch & ~0x7f) == 0;
 }
 
-static inline bool
-is_space(char ch)
+स्थिर ओळीत bool
+is_space(अक्षर ch)
 {
-    return ch == ' ' || (ch >= '\t' && ch <= '\r');
+    परत ch == ' ' || (ch >= '\t' && ch <= '\r');
 }
 
-static inline bool
-is_alpha(char ch)
+स्थिर ओळीत bool
+is_alpha(अक्षर ch)
 {
-    return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
+    परत (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
 }
 
-static inline bool
-is_digit(char ch)
+स्थिर ओळीत bool
+is_digit(अक्षर ch)
 {
-    return ch >= '0' && ch <= '9';
+    परत ch >= '0' && ch <= '9';
 }
 
-static inline bool
-is_alnum(char ch)
+स्थिर ओळीत bool
+is_alnum(अक्षर ch)
 {
-    return is_alpha(ch) || is_digit(ch);
+    परत is_alpha(ch) || is_digit(ch);
 }
 
-static inline bool
-is_xdigit(char ch)
+स्थिर ओळीत bool
+is_xdigit(अक्षर ch)
 {
-    return
+    परत
         (ch >= '0' && ch <= '9') ||
         (ch >= 'a' && ch <= 'f') ||
         (ch >= 'A' && ch <= 'F');
 }
 
-static inline bool
-is_graph(char ch)
+स्थिर ओळीत bool
+is_graph(अक्षर ch)
 {
     /* See table in ascii(7). */
-    return ch >= '!' && ch <= '~';
+    परत ch >= '!' && ch <= '~';
 }
 
 /*
@@ -243,58 +243,58 @@ is_graph(char ch)
  * Note: this is 1-based! It's more useful this way, and returns 0 when
  * mask is all 0s.
  */
-static inline unsigned int
+स्थिर ओळीत अचिन्हित पूर्णांक
 msb_pos(uint32_t mask)
 {
-    unsigned int pos = 0;
-    while (mask) {
+    अचिन्हित पूर्णांक pos = 0;
+    पर्यंत (mask) {
         pos++;
         mask >>= 1u;
     }
-    return pos;
+    परत pos;
 }
 
-static inline int
+स्थिर ओळीत पूर्णांक
 one_bit_set(uint32_t x)
 {
-    return x && (x & (x - 1)) == 0;
+    परत x && (x & (x - 1)) == 0;
 }
 
 bool
-map_file(FILE *file, char **string_out, size_t *size_out);
+map_file(खाता *file, अक्षर **string_out, माप_प्रकार *size_out);
 
-void
-unmap_file(char *string, size_t size);
+शून्य
+unmap_file(अक्षर *string, माप_प्रकार size);
 
-static inline bool
-check_eaccess(const char *path, int mode)
+स्थिर ओळीत bool
+check_eaccess(स्थिरांक अक्षर *path, पूर्णांक mode)
 {
-#if defined(HAVE_EACCESS)
-    if (eaccess(path, mode) != 0)
-        return false;
-#elif defined(HAVE_EUIDACCESS)
-    if (euidaccess(path, mode) != 0)
-        return false;
+#जर defined(HAVE_EACCESS)
+    जर (eaccess(path, mode) != 0)
+        परत false;
+#किंवाजर defined(HAVE_EUIDACCESS)
+    जर (euidaccess(path, mode) != 0)
+        परत false;
 #endif
 
-    return true;
+    परत true;
 }
 
-FILE*
-open_file(const char *path);
+खाता*
+open_file(स्थिरांक अक्षर *path);
 
-#if defined(HAVE_SECURE_GETENV)
+#जर defined(HAVE_SECURE_GETENV)
 # define secure_getenv secure_getenv
-#elif defined(HAVE___SECURE_GETENV)
+#किंवाजर defined(HAVE___SECURE_GETENV)
 # define secure_getenv __secure_getenv
-#else
-# define secure_getenv getenv
+#अन्यथा
+# define secure_getenv दो_पर्या
 #endif
 
-#if defined(HAVE___BUILTIN_EXPECT)
+#जर defined(HAVE___BUILTIN_EXPECT)
 # define likely(x)   __builtin_expect(!!(x), 1)
 # define unlikely(x) __builtin_expect(!!(x), 0)
-#else
+#अन्यथा
 # define likely(x)   (x)
 # define unlikely(x) (x)
 #endif
@@ -303,131 +303,131 @@ open_file(const char *path);
 
 /* Private functions only exposed in tests. */
 #ifdef ENABLE_PRIVATE_APIS
-# if defined(__GNUC__) && !defined(__CYGWIN__)
+# जर defined(__GNUC__) && !defined(__CYGWIN__)
 #  define XKB_EXPORT_PRIVATE __attribute__((visibility("default")))
 # elif defined(_WIN32)
 #  define XKB_EXPORT_PRIVATE __declspec(dllexport)
-# else
+# अन्यथा
 #  define XKB_EXPORT_PRIVATE
 # endif
-#else
+#अन्यथा
 # define XKB_EXPORT_PRIVATE
 #endif
 
-#if defined(__MINGW32__)
+#जर defined(__MINGW32__)
 # define ATTR_PRINTF(x,y) __attribute__((__format__(__MINGW_PRINTF_FORMAT, x, y)))
-#elif defined(__GNUC__)
+#किंवाजर defined(__GNUC__)
 # define ATTR_PRINTF(x,y) __attribute__((__format__(__printf__, x, y)))
-#else
+#अन्यथा
 # define ATTR_PRINTF(x,y)
 #endif
 
-#if defined(__GNUC__)
+#जर defined(__GNUC__)
 # define ATTR_NORETURN __attribute__((__noreturn__))
-#else
+#अन्यथा
 # define ATTR_NORETURN
 #endif /* GNUC  */
 
-#if defined(__GNUC__)
+#जर defined(__GNUC__)
 #define ATTR_MALLOC  __attribute__((__malloc__))
-#else
+#अन्यथा
 #define ATTR_MALLOC
 #endif
 
-#if defined(__GNUC__)
+#जर defined(__GNUC__)
 # define ATTR_NULL_SENTINEL __attribute__((__sentinel__))
-#else
+#अन्यथा
 # define ATTR_NULL_SENTINEL
 #endif
 
-#if defined(__GNUC__)
+#जर defined(__GNUC__)
 #define ATTR_PACKED  __attribute__((__packed__))
-#else
+#अन्यथा
 #define ATTR_PACKED
 #endif
 
-#if defined(HAVE_ATTR_COUNTED_BY) && HAVE_ATTR_COUNTED_BY
-# define ATTR_COUNTED_BY(count) __attribute__((counted_by(count)))
-#else
-# define ATTR_COUNTED_BY(count)
+#जर defined(HAVE_ATTR_COUNTED_BY) && HAVE_ATTR_COUNTED_BY
+# define ATTR_COUNTED_BY(मोजणी) __attribute__((counted_by(मोजणी)))
+#अन्यथा
+# define ATTR_COUNTED_BY(मोजणी)
 #endif
 
-#if !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
-XKB_EXPORT_PRIVATE int asprintf(char **strp, const char *fmt, ...) ATTR_PRINTF(2, 3);
-# if !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
+#जर !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
+XKB_EXPORT_PRIVATE पूर्णांक asprintf(अक्षर **strp, स्थिरांक अक्षर *fmt, ...) ATTR_PRINTF(2, 3);
+# जर !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
 #  include <stdarg.h>
-XKB_EXPORT_PRIVATE int vasprintf(char **strp, const char *fmt, va_list ap);
+XKB_EXPORT_PRIVATE पूर्णांक vasprintf(अक्षर **strp, स्थिरांक अक्षर *fmt, बहु_सूची ap);
 # endif /* !HAVE_VASPRINTF */
 #endif /* !HAVE_ASPRINTF */
 
-static inline bool
+स्थिर ओळीत bool
 ATTR_PRINTF(3, 4)
-snprintf_safe(char *buf, size_t sz, const char *format, ...)
+snprintf_safe(अक्षर *buf, माप_प्रकार sz, स्थिरांक अक्षर *format, ...)
 {
-    va_list ap;
-    int rc;
+    बहु_सूची ap;
+    पूर्णांक rc;
 
-    va_start(ap, format);
+    बहु_शुरू(ap, format);
     rc = vsnprintf(buf, sz, format, ap);
-    va_end(ap);
+    बहु_पूर्ण(ap);
 
-    return rc >= 0 && (size_t)rc < sz;
+    परत rc >= 0 && (माप_प्रकार)rc < sz;
 }
 
-static inline char *
+स्थिर ओळीत अक्षर *
 ATTR_PRINTF(1, 0)
-vasprintf_safe(const char *fmt, va_list args)
+vasprintf_safe(स्थिरांक अक्षर *fmt, बहु_सूची args)
 {
-    char *str;
-    int len;
+    अक्षर *str;
+    पूर्णांक len;
 
     len = vasprintf(&str, fmt, args);
 
-    if (len == -1)
-        return NULL;
+    जर (len == -1)
+        परत रिक्त;
 
-    return str;
+    परत str;
 }
 
 /**
  * A version of asprintf that returns the allocated string or NULL on error.
  */
-static inline char *
+स्थिर ओळीत अक्षर *
 ATTR_PRINTF(1, 2)
-asprintf_safe(const char *fmt, ...)
+asprintf_safe(स्थिरांक अक्षर *fmt, ...)
 {
-    va_list args;
-    char *str;
+    बहु_सूची args;
+    अक्षर *str;
 
-    va_start(args, fmt);
+    बहु_शुरू(args, fmt);
     str = vasprintf_safe(fmt, args);
-    va_end(args);
+    बहु_पूर्ण(args);
 
-    return str;
+    परत str;
 }
 
-#ifdef NDEBUG
-    #if defined(__GNUC__) || defined(__clang__)
+#ifdef न_संशोधन
+    #जर defined(__GNUC__) || defined(__clang__)
         #define PANIC_UNREACHABLE() __builtin_unreachable()
-    #elif defined(_MSC_VER)
+    #किंवाजर defined(_MSC_VER)
         #define PANIC_UNREACHABLE() __assume(0)
-    #else
-        #define PANIC_UNREACHABLE() abort()
+    #अन्यथा
+        #define PANIC_UNREACHABLE() पात()
     #endif
-#else
+#अन्यथा
     #define PANIC_UNREACHABLE() \
-        do { \
-            fprintf(stderr, "Critical Error: Reached unreachable line in %s at %d\n", __FILE__, __LINE__); \
-            abort(); \
-        } while (0)
+        करा { \
+            ख_लिखो(मानक_त्रुटि, "Critical Error: Reached unreachable line in %s at %d\n", __FILE__, __LINE__); \
+            पात(); \
+        } पर्यंत (0)
 #endif
 
-#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
+#जर defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
 #  define NOINLINE [[noinline]]
-#elif defined(__GNUC__) || defined(__clang__)
+#किंवाजर defined(__GNUC__) || defined(__clang__)
 #  define NOINLINE __attribute__((noinline))
-#elif defined(_MSC_VER)
+#किंवाजर defined(_MSC_VER)
 #  define NOINLINE __declspec(noinline)
-#else
+#अन्यथा
 #  define NOINLINE
 #endif

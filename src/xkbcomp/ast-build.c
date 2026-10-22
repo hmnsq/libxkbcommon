@@ -12,503 +12,503 @@
  * Author: Ran Benita <ran234@gmail.com>
  */
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include <stdint.h>
-#include <string.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <string.h>
 
-#include "xkbcommon/xkbcommon-keysyms.h"
-#include "messages-codes.h"
-#include "xkbcomp-priv.h"
-#include "ast.h"
-#include "ast-build.h"
-#include "include.h"
-#include "keysym.h"
-#include "utf8-decoding.h"
+#अन्तर्भाव "xkbcommon/xkbcommon-keysyms.h"
+#अन्तर्भाव "messages-codes.h"
+#अन्तर्भाव "xkbcomp-priv.h"
+#अन्तर्भाव "ast.h"
+#अन्तर्भाव "ast-build.h"
+#अन्तर्भाव "include.h"
+#अन्तर्भाव "keysym.h"
+#अन्तर्भाव "utf8-decoding.h"
 
-static ExprDef *
-ExprCreate(enum stmt_type op)
+स्थिर अभिव्यक्ती_Def *
+अभिव्यक्ती_Create(गणना stmt_type op)
 {
-    ExprDef *expr = malloc(sizeof(*expr));
-    if (!expr)
-        return NULL;
+    अभिव्यक्ती_Def *अभिव्यक्ती = दो_स्मृति(आकार(*अभिव्यक्ती));
+    जर (!अभिव्यक्ती)
+        परत रिक्त;
 
-    expr->common.type = op;
-    expr->common.next = NULL;
+    अभिव्यक्ती->common.type = op;
+    अभिव्यक्ती->common.next = रिक्त;
 
-    return expr;
+    परत अभिव्यक्ती;
 }
 
-ExprDef *
-ExprCreateString(xkb_atom_t str)
+अभिव्यक्ती_Def *
+अभिव्यक्ती_Create_String(xkb_atom_t str)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_STRING_LITERAL);
-    if (!expr)
-        return NULL;
-    expr->string.str = str;
-    return expr;
+    अभिव्यक्ती_Def *अभिव्यक्ती = अभिव्यक्ती_Create(STMT_अभिव्यक्ती_STRING_LITERAL);
+    जर (!अभिव्यक्ती)
+        परत रिक्त;
+    अभिव्यक्ती->string.str = str;
+    परत अभिव्यक्ती;
 }
 
-ExprDef *
-ExprCreateInteger(int64_t ival)
+अभिव्यक्ती_Def *
+अभिव्यक्ती_Create_Integer(int64_t ival)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_INTEGER_LITERAL);
-    if (!expr)
-        return NULL;
-    expr->integer.ival = ival;
-    return expr;
+    अभिव्यक्ती_Def *अभिव्यक्ती = अभिव्यक्ती_Create(STMT_अभिव्यक्ती_INTEGER_LITERAL);
+    जर (!अभिव्यक्ती)
+        परत रिक्त;
+    अभिव्यक्ती->integer.ival = ival;
+    परत अभिव्यक्ती;
 }
 
-ExprDef *
-ExprCreateFloat(void)
+अभिव्यक्ती_Def *
+अभिव्यक्ती_Create_Float(शून्य)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_FLOAT_LITERAL);
-    if (!expr)
-        return NULL;
-    return expr;
+    अभिव्यक्ती_Def *अभिव्यक्ती = अभिव्यक्ती_Create(STMT_अभिव्यक्ती_FLOAT_LITERAL);
+    जर (!अभिव्यक्ती)
+        परत रिक्त;
+    परत अभिव्यक्ती;
 }
 
-ExprDef *
-ExprCreateBoolean(bool set)
+अभिव्यक्ती_Def *
+अभिव्यक्ती_Create_Boolean(bool set)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_BOOLEAN_LITERAL);
-    if (!expr)
-        return NULL;
-    expr->boolean.set = set;
-    return expr;
+    अभिव्यक्ती_Def *अभिव्यक्ती = अभिव्यक्ती_Create(STMT_अभिव्यक्ती_BOOLEAN_LITERAL);
+    जर (!अभिव्यक्ती)
+        परत रिक्त;
+    अभिव्यक्ती->boolean.set = set;
+    परत अभिव्यक्ती;
 }
 
-ExprDef *
-ExprCreateKeyName(xkb_atom_t key_name)
+अभिव्यक्ती_Def *
+अभिव्यक्ती_Create_किल्ली_Name(xkb_atom_t किल्ली_name)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_KEYNAME_LITERAL);
-    if (!expr)
-        return NULL;
-    expr->key_name.key_name = key_name;
-    return expr;
+    अभिव्यक्ती_Def *अभिव्यक्ती = अभिव्यक्ती_Create(STMT_अभिव्यक्ती_KEYNAME_LITERAL);
+    जर (!अभिव्यक्ती)
+        परत रिक्त;
+    अभिव्यक्ती->किल्ली_name.किल्ली_name = किल्ली_name;
+    परत अभिव्यक्ती;
 }
 
-ExprDef *
-ExprCreateKeySym(xkb_keysym_t keysym)
+अभिव्यक्ती_Def *
+अभिव्यक्ती_Create_किल्ली_Sym(xkb_keysym_t keysym)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_KEYSYM_LITERAL);
-    if (!expr)
-        return NULL;
-    expr->keysym.keysym = keysym;
-    return expr;
+    अभिव्यक्ती_Def *अभिव्यक्ती = अभिव्यक्ती_Create(STMT_अभिव्यक्ती_KEYSYM_LITERAL);
+    जर (!अभिव्यक्ती)
+        परत रिक्त;
+    अभिव्यक्ती->keysym.keysym = keysym;
+    परत अभिव्यक्ती;
 }
 
-ExprDef *
-ExprCreateIdent(xkb_atom_t ident)
+अभिव्यक्ती_Def *
+अभिव्यक्ती_Create_Ident(xkb_atom_t ident)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_IDENT);
-    if (!expr)
-        return NULL;
-    expr->ident.ident = ident;
-    return expr;
+    अभिव्यक्ती_Def *अभिव्यक्ती = अभिव्यक्ती_Create(STMT_अभिव्यक्ती_IDENT);
+    जर (!अभिव्यक्ती)
+        परत रिक्त;
+    अभिव्यक्ती->ident.ident = ident;
+    परत अभिव्यक्ती;
 }
 
-ExprDef *
-ExprCreateUnary(enum stmt_type op, ExprDef *child)
+अभिव्यक्ती_Def *
+अभिव्यक्ती_Create_Unary(गणना stmt_type op, अभिव्यक्ती_Def *child)
 {
-    ExprDef *expr = ExprCreate(op);
-    if (!expr)
-        return NULL;
-    expr->unary.child = child;
-    return expr;
+    अभिव्यक्ती_Def *अभिव्यक्ती = अभिव्यक्ती_Create(op);
+    जर (!अभिव्यक्ती)
+        परत रिक्त;
+    अभिव्यक्ती->unary.child = child;
+    परत अभिव्यक्ती;
 }
 
-ExprDef *
-ExprCreateBinary(enum stmt_type op, ExprDef *left, ExprDef *right)
+अभिव्यक्ती_Def *
+अभिव्यक्ती_Create_द्विमान(गणना stmt_type op, अभिव्यक्ती_Def *डावा, अभिव्यक्ती_Def *उजवा)
 {
-    ExprDef *expr = ExprCreate(op);
-    if (!expr)
-        return NULL;
+    अभिव्यक्ती_Def *अभिव्यक्ती = अभिव्यक्ती_Create(op);
+    जर (!अभिव्यक्ती)
+        परत रिक्त;
 
-    expr->binary.left = left;
-    expr->binary.right = right;
+    अभिव्यक्ती->द्विमान.डावा = डावा;
+    अभिव्यक्ती->द्विमान.उजवा = उजवा;
 
-    return expr;
+    परत अभिव्यक्ती;
 }
 
-ExprDef *
-ExprCreateFieldRef(xkb_atom_t element, xkb_atom_t field)
+अभिव्यक्ती_Def *
+अभिव्यक्ती_Create_Field_Ref(xkb_atom_t element, xkb_atom_t field)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_FIELD_REF);
-    if (!expr)
-        return NULL;
-    expr->field_ref.element = element;
-    expr->field_ref.field = field;
-    return expr;
+    अभिव्यक्ती_Def *अभिव्यक्ती = अभिव्यक्ती_Create(STMT_अभिव्यक्ती_FIELD_REF);
+    जर (!अभिव्यक्ती)
+        परत रिक्त;
+    अभिव्यक्ती->field_ref.element = element;
+    अभिव्यक्ती->field_ref.field = field;
+    परत अभिव्यक्ती;
 }
 
-ExprDef *
-ExprCreateArrayRef(xkb_atom_t element, xkb_atom_t field, ExprDef *entry)
+अभिव्यक्ती_Def *
+अभिव्यक्ती_Create_Array_Ref(xkb_atom_t element, xkb_atom_t field, अभिव्यक्ती_Def *entry)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_ARRAY_REF);
-    if (!expr)
-        return NULL;
-    expr->array_ref.element = element;
-    expr->array_ref.field = field;
-    expr->array_ref.entry = entry;
-    return expr;
+    अभिव्यक्ती_Def *अभिव्यक्ती = अभिव्यक्ती_Create(STMT_अभिव्यक्ती_ARRAY_REF);
+    जर (!अभिव्यक्ती)
+        परत रिक्त;
+    अभिव्यक्ती->array_ref.element = element;
+    अभिव्यक्ती->array_ref.field = field;
+    अभिव्यक्ती->array_ref.entry = entry;
+    परत अभिव्यक्ती;
 }
 
-ExprDef *
-ExprEmptyList(void)
+अभिव्यक्ती_Def *
+अभिव्यक्ती_Empty_List(शून्य)
 {
-    return ExprCreate(STMT_EXPR_EMPTY_LIST);
+    परत अभिव्यक्ती_Create(STMT_अभिव्यक्ती_EMPTY_LIST);
 }
 
-ExprDef *
-ExprCreateAction(xkb_atom_t name, ExprDef *args)
+अभिव्यक्ती_Def *
+अभिव्यक्ती_Create_Action(xkb_atom_t name, अभिव्यक्ती_Def *args)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_ACTION_DECL);
-    if (!expr)
-        return NULL;
-    expr->action.name = name;
-    expr->action.args = args;
-    return expr;
+    अभिव्यक्ती_Def *अभिव्यक्ती = अभिव्यक्ती_Create(STMT_अभिव्यक्ती_ACTION_DECL);
+    जर (!अभिव्यक्ती)
+        परत रिक्त;
+    अभिव्यक्ती->action.name = name;
+    अभिव्यक्ती->action.args = args;
+    परत अभिव्यक्ती;
 }
 
-ExprDef *
-ExprCreateActionList(ExprDef *actions)
+अभिव्यक्ती_Def *
+अभिव्यक्ती_Create_Action_List(अभिव्यक्ती_Def *actions)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_ACTION_LIST);
-    if (!expr)
-        return NULL;
-    expr->actions.actions = actions;
-    return expr;
+    अभिव्यक्ती_Def *अभिव्यक्ती = अभिव्यक्ती_Create(STMT_अभिव्यक्ती_ACTION_LIST);
+    जर (!अभिव्यक्ती)
+        परत रिक्त;
+    अभिव्यक्ती->actions.actions = actions;
+    परत अभिव्यक्ती;
 }
 
-ExprDef *
-ExprCreateKeySymList(xkb_keysym_t sym)
+अभिव्यक्ती_Def *
+अभिव्यक्ती_Create_किल्ली_Sym_List(xkb_keysym_t sym)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_KEYSYM_LIST);
-    if (!expr)
-        return NULL;
-    darray_init(expr->keysym_list.syms);
-    if (sym == XKB_KEY_NoSymbol) {
+    अभिव्यक्ती_Def *अभिव्यक्ती = अभिव्यक्ती_Create(STMT_अभिव्यक्ती_KEYSYM_LIST);
+    जर (!अभिव्यक्ती)
+        परत रिक्त;
+    darray_init(अभिव्यक्ती->keysym_list.syms);
+    जर (sym == XKB_किल्ली_No_चिन्ह) {
         /* Discard NoSymbol */
-    } else {
-        darray_append(expr->keysym_list.syms, sym);
+    } अन्यथा {
+        darray_append(अभिव्यक्ती->keysym_list.syms, sym);
     }
-    return expr;
+    परत अभिव्यक्ती;
 }
 
-ExprDef *
-ExprAppendKeySymList(ExprDef *expr, xkb_keysym_t sym)
+अभिव्यक्ती_Def *
+अभिव्यक्ती_Append_किल्ली_Sym_List(अभिव्यक्ती_Def *अभिव्यक्ती, xkb_keysym_t sym)
 {
-    if (sym == XKB_KEY_NoSymbol) {
+    जर (sym == XKB_किल्ली_No_चिन्ह) {
         /* Discard NoSymbol */
-    } else {
-        darray_append(expr->keysym_list.syms, sym);
+    } अन्यथा {
+        darray_append(अभिव्यक्ती->keysym_list.syms, sym);
     }
-    return expr;
+    परत अभिव्यक्ती;
 }
 
-ExprDef *
-ExprKeySymListAppendString(struct scanner *scanner,
-                           ExprDef *expr, const char *string)
+अभिव्यक्ती_Def *
+अभिव्यक्ती_किल्ली_Sym_List_Append_String(संरचना scanner *scanner,
+                           अभिव्यक्ती_Def *अभिव्यक्ती, स्थिरांक अक्षर *string)
 {
     /* TODO: use strnlen with max len = 4 * MAX_KEYSYMS_LIST_LENGTH */
-    const size_t len = strlen(string);
-    size_t idx = 0;
-    size_t idx_cp = 1;
-    while (idx < len) {
-        size_t count = 0;
-        uint32_t cp = utf8_next_code_point(string + idx, len - idx, &count);
-        if (cp == INVALID_UTF8_CODE_POINT) {
+    स्थिरांक माप_प्रकार len = म_माप(string);
+    माप_प्रकार idx = 0;
+    माप_प्रकार idx_cp = 1;
+    पर्यंत (idx < len) {
+        माप_प्रकार मोजणी = 0;
+        uint32_t cp = utf8_next_code_point(string + idx, len - idx, &मोजणी);
+        जर (cp == INVALID_UTF8_CODE_POINT) {
             scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                         "Cannot convert string to keysyms: "
                         "Invalid UTF-8 encoding starting at byte position %zu "
                         "(code point position: %zu).",
                         idx + 1, idx_cp);
-            goto error;
+            जा error;
         }
-        const xkb_keysym_t sym = xkb_utf32_to_keysym(cp);
-        if (sym == XKB_KEY_NoSymbol) {
+        स्थिरांक xkb_keysym_t sym = xkb_utf32_to_keysym(cp);
+        जर (sym == XKB_किल्ली_No_चिन्ह) {
             scanner_err(scanner, XKB_LOG_MESSAGE_NO_ID,
                         "Cannot convert string to keysyms: Unicode code point "
                         "U+04%"PRIX32" has no keysym equivalent"
                         "(byte position: %zu, code point position: %zu).",
                         cp, idx + 1, idx_cp);
-            goto error;
+            जा error;
         }
-        darray_append(expr->keysym_list.syms, sym);
-        idx += count;
+        darray_append(अभिव्यक्ती->keysym_list.syms, sym);
+        idx += मोजणी;
         idx_cp++;
     }
-    assert(string[idx] == '\0');
-    return expr;
+    प्रतिज्ञा(string[idx] == '\0');
+    परत अभिव्यक्ती;
 error:
-    FreeStmt((ParseCommon*) expr);
-    return NULL;
+    FreeStmt((ParseCommon*) अभिव्यक्ती);
+    परत रिक्त;
 }
 
 xkb_keysym_t
-KeysymParseString(struct scanner *scanner, const char *string)
+KeysymParseString(संरचना scanner *scanner, स्थिरांक अक्षर *string)
 {
-    const size_t len = strlen(string);
-    if (len == 0) {
+    स्थिरांक माप_प्रकार len = म_माप(string);
+    जर (len == 0) {
         scanner_err(scanner, XKB_LOG_MESSAGE_NO_ID,
                     "Cannot convert string to single keysym: empty string.");
-        return XKB_KEY_NoSymbol;
+        परत XKB_किल्ली_No_चिन्ह;
     }
-    size_t count = 0;
-    const uint32_t cp = utf8_next_code_point(string, len, &count);
-    if (cp == INVALID_UTF8_CODE_POINT) {
+    माप_प्रकार मोजणी = 0;
+    स्थिरांक uint32_t cp = utf8_next_code_point(string, len, &मोजणी);
+    जर (cp == INVALID_UTF8_CODE_POINT) {
         scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                     "Cannot convert string to single keysym: "
                     "Invalid UTF-8 encoding.");
-        return XKB_KEY_NoSymbol;
-    } else if (count != len) {
+        परत XKB_किल्ली_No_चिन्ह;
+    } अन्यथा जर (मोजणी != len) {
         scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                     "Cannot convert string to single keysym: "
                     "Expected a single Unicode code point, got: \"%s\".",
                     string);
-        return XKB_KEY_NoSymbol;
+        परत XKB_किल्ली_No_चिन्ह;
     }
-    const xkb_keysym_t sym = xkb_utf32_to_keysym(cp);
-    if (sym == XKB_KEY_NoSymbol) {
+    स्थिरांक xkb_keysym_t sym = xkb_utf32_to_keysym(cp);
+    जर (sym == XKB_किल्ली_No_चिन्ह) {
         scanner_err(scanner, XKB_LOG_MESSAGE_NO_ID,
                     "Cannot convert string to single keysym: Unicode "
                     "code point U+%04"PRIX32" has no keysym equivalent.",
                     cp);
     }
-    return sym;
+    परत sym;
 }
 
 KeycodeDef *
-KeycodeCreate(xkb_atom_t name, int64_t value)
+KeycodeCreate(xkb_atom_t name, int64_t मूल्य)
 {
-    KeycodeDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    KeycodeDef *def = दो_स्मृति(आकार(*def));
+    जर (!def)
+        परत रिक्त;
 
     def->common.type = STMT_KEYCODE;
-    def->common.next = NULL;
+    def->common.next = रिक्त;
     def->name = name;
-    def->value = value;
+    def->मूल्य = मूल्य;
 
-    return def;
+    परत def;
 }
 
-KeyAliasDef *
-KeyAliasCreate(xkb_atom_t alias, xkb_atom_t real)
+किल्ली_Alias_Def *
+किल्ली_Alias_Create(xkb_atom_t alias, xkb_atom_t real)
 {
-    KeyAliasDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    किल्ली_Alias_Def *def = दो_स्मृति(आकार(*def));
+    जर (!def)
+        परत रिक्त;
 
     def->common.type = STMT_ALIAS;
-    def->common.next = NULL;
+    def->common.next = रिक्त;
     def->alias = alias;
     def->real = real;
 
-    return def;
+    परत def;
 }
 
 VModDef *
-VModCreate(xkb_atom_t name, ExprDef *value)
+VModCreate(xkb_atom_t name, अभिव्यक्ती_Def *मूल्य)
 {
-    VModDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    VModDef *def = दो_स्मृति(आकार(*def));
+    जर (!def)
+        परत रिक्त;
 
     def->common.type = STMT_VMOD;
-    def->common.next = NULL;
+    def->common.next = रिक्त;
     def->name = name;
-    def->value = value;
+    def->मूल्य = मूल्य;
 
-    return def;
+    परत def;
 }
 
 VarDef *
-VarCreate(ExprDef *name, ExprDef *value)
+VarCreate(अभिव्यक्ती_Def *name, अभिव्यक्ती_Def *मूल्य)
 {
-    VarDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    VarDef *def = दो_स्मृति(आकार(*def));
+    जर (!def)
+        परत रिक्त;
 
     def->common.type = STMT_VAR;
-    def->common.next = NULL;
+    def->common.next = रिक्त;
     def->name = name;
-    def->value = value;
+    def->मूल्य = मूल्य;
 
-    return def;
+    परत def;
 }
 
 VarDef *
 BoolVarCreate(xkb_atom_t ident, bool set)
 {
-    ExprDef *name, *value;
+    अभिव्यक्ती_Def *name, *मूल्य;
     VarDef *def;
-    if (!(name = ExprCreateIdent(ident))) {
-        return NULL;
+    जर (!(name = अभिव्यक्ती_Create_Ident(ident))) {
+        परत रिक्त;
     }
-    if (!(value = ExprCreateBoolean(set))) {
+    जर (!(मूल्य = अभिव्यक्ती_Create_Boolean(set))) {
         FreeStmt((ParseCommon *) name);
-        return NULL;
+        परत रिक्त;
     }
-    if (!(def = VarCreate(name, value))) {
+    जर (!(def = VarCreate(name, मूल्य))) {
         FreeStmt((ParseCommon *) name);
-        FreeStmt((ParseCommon *) value);
-        return NULL;
+        FreeStmt((ParseCommon *) मूल्य);
+        परत रिक्त;
     }
-    return def;
+    परत def;
 }
 
 InterpDef *
-InterpCreate(xkb_keysym_t sym, ExprDef *match)
+InterpCreate(xkb_keysym_t sym, अभिव्यक्ती_Def *match)
 {
-    InterpDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    InterpDef *def = दो_स्मृति(आकार(*def));
+    जर (!def)
+        परत रिक्त;
 
     def->common.type = STMT_INTERP;
-    def->common.next = NULL;
+    def->common.next = रिक्त;
     def->sym = sym;
     def->match = match;
-    def->def = NULL;
+    def->def = रिक्त;
 
-    return def;
+    परत def;
 }
 
-KeyTypeDef *
-KeyTypeCreate(xkb_atom_t name, VarDef *body)
+किल्ली_Type_Def *
+किल्ली_Type_Create(xkb_atom_t name, VarDef *body)
 {
-    KeyTypeDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    किल्ली_Type_Def *def = दो_स्मृति(आकार(*def));
+    जर (!def)
+        परत रिक्त;
 
     def->common.type = STMT_TYPE;
-    def->common.next = NULL;
+    def->common.next = रिक्त;
     def->merge = MERGE_DEFAULT;
     def->name = name;
     def->body = body;
 
-    return def;
+    परत def;
 }
 
 SymbolsDef *
-SymbolsCreate(xkb_atom_t keyName, VarDef *symbols)
+SymbolsCreate(xkb_atom_t किल्ली_Name, VarDef *symbols)
 {
-    SymbolsDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    SymbolsDef *def = दो_स्मृति(आकार(*def));
+    जर (!def)
+        परत रिक्त;
 
     def->common.type = STMT_SYMBOLS;
-    def->common.next = NULL;
+    def->common.next = रिक्त;
     def->merge = MERGE_DEFAULT;
-    def->keyName = keyName;
+    def->किल्ली_Name = किल्ली_Name;
     def->symbols = symbols;
 
-    return def;
+    परत def;
 }
 
 GroupCompatDef *
-GroupCompatCreate(int64_t group, ExprDef *val)
+GroupCompatCreate(int64_t group, अभिव्यक्ती_Def *val)
 {
-    GroupCompatDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    GroupCompatDef *def = दो_स्मृति(आकार(*def));
+    जर (!def)
+        परत रिक्त;
 
     def->common.type = STMT_GROUP_COMPAT;
-    def->common.next = NULL;
+    def->common.next = रिक्त;
     def->merge = MERGE_DEFAULT;
     def->group = group;
     def->def = val;
 
-    return def;
+    परत def;
 }
 
 ModMapDef *
-ModMapCreate(ExprDef *modifiers, ExprDef *keys)
+ModMapCreate(अभिव्यक्ती_Def *modifiers, अभिव्यक्ती_Def *किल्ल्या)
 {
-    ModMapDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    ModMapDef *def = दो_स्मृति(आकार(*def));
+    जर (!def)
+        परत रिक्त;
 
     def->common.type = STMT_MODMAP;
-    def->common.next = NULL;
+    def->common.next = रिक्त;
     def->merge = MERGE_DEFAULT;
     def->modifiers = modifiers;
-    def->keys = keys;
+    def->किल्ल्या = किल्ल्या;
 
-    return def;
+    परत def;
 }
 
 LedMapDef *
 LedMapCreate(xkb_atom_t name, VarDef *body)
 {
-    LedMapDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    LedMapDef *def = दो_स्मृति(आकार(*def));
+    जर (!def)
+        परत रिक्त;
 
     def->common.type = STMT_LED_MAP;
-    def->common.next = NULL;
+    def->common.next = रिक्त;
     def->merge = MERGE_DEFAULT;
     def->name = name;
     def->body = body;
 
-    return def;
+    परत def;
 }
 
 LedNameDef *
-LedNameCreate(int64_t ndx, ExprDef *name, bool virtual)
+LedNameCreate(int64_t ndx, अभिव्यक्ती_Def *name, bool आभासी)
 {
-    LedNameDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    LedNameDef *def = दो_स्मृति(आकार(*def));
+    जर (!def)
+        परत रिक्त;
 
     def->common.type = STMT_LED_NAME;
-    def->common.next = NULL;
+    def->common.next = रिक्त;
     def->merge = MERGE_DEFAULT;
     def->ndx = ndx;
     def->name = name;
-    def->virtual = virtual;
+    def->आभासी = आभासी;
 
-    return def;
+    परत def;
 }
 
 UnknownStatement *
-UnknownStatementCreate(enum stmt_type type, struct sval name)
+UnknownStatementCreate(गणना stmt_type type, संरचना sval name)
 {
-    UnknownStatement *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    UnknownStatement *def = दो_स्मृति(आकार(*def));
+    जर (!def)
+        परत रिक्त;
 
     def->common.type = type;
-    def->common.next = NULL;
+    def->common.next = रिक्त;
     def->name = strndup(name.start, name.len);
-    if (!def->name) {
-        free(def);
-        return NULL;
+    जर (!def->name) {
+        मुक्त(def);
+        परत रिक्त;
     }
 
-    return def;
+    परत def;
 }
 
-static void
+स्थिर शून्य
 FreeInclude(IncludeStmt *incl);
 
 IncludeStmt *
-IncludeCreate(struct xkb_context *ctx, char *str, enum merge_mode merge)
+IncludeCreate(संरचना xkb_context *ctx, अक्षर *str, गणना merge_mode merge)
 {
     IncludeStmt *incl, *first;
-    char *stmt, *tmp;
-    char nextop;
+    अक्षर *stmt, *tmp;
+    अक्षर nextop;
 
-    incl = first = NULL;
+    incl = first = रिक्त;
     tmp = str;
     stmt = strdup_safe(str);
-    while (tmp && *tmp)
+    पर्यंत (tmp && *tmp)
     {
-        char *file = NULL, *map = NULL, *extra_data = NULL;
+        अक्षर *file = रिक्त, *map = रिक्त, *extra_data = रिक्त;
 
-        if (!ParseIncludeMap(&tmp, &file, &map, &nextop, &extra_data))
-            goto err;
+        जर (!ParseIncludeMap(&tmp, &file, &map, &nextop, &extra_data))
+            जा err;
 
         /*
          * Given an RMLVO (here layout) like 'us,,fr', the rules parser
@@ -516,72 +516,72 @@ IncludeCreate(struct xkb_context *ctx, char *str, enum merge_mode merge)
          * We should just skip the ':2' in this case and leave it to the
          * appropriate section to deal with the empty group.
          */
-        if (isempty(file)) {
-            free(file);
-            free(map);
-            free(extra_data);
-            continue;
+        जर (isempty(file)) {
+            मुक्त(file);
+            मुक्त(map);
+            मुक्त(extra_data);
+            सुरूठेवा;
         }
 
-        if (first == NULL) {
-            first = incl = malloc(sizeof(*first));
-        } else {
-            incl->next_incl = malloc(sizeof(*first));
+        जर (first == रिक्त) {
+            first = incl = दो_स्मृति(आकार(*first));
+        } अन्यथा {
+            incl->next_incl = दो_स्मृति(आकार(*first));
             incl = incl->next_incl;
         }
 
-        if (!incl) {
-            free(file);
-            free(map);
-            free(extra_data);
-            break;
+        जर (!incl) {
+            मुक्त(file);
+            मुक्त(map);
+            मुक्त(extra_data);
+            थांबा;
         }
 
         incl->common.type = STMT_INCLUDE;
-        incl->common.next = NULL;
+        incl->common.next = रिक्त;
         incl->merge = merge;
-        incl->stmt = NULL;
+        incl->stmt = रिक्त;
         incl->file = file;
         incl->map = map;
         incl->modifier = extra_data;
-        incl->next_incl = NULL;
+        incl->next_incl = रिक्त;
 
-        switch (nextop) {
-        case MERGE_AUGMENT_PREFIX:
+        निवड (nextop) {
+        स्थिती MERGE_AUGMENT_PREFIX:
             merge = MERGE_AUGMENT;
-            break;
-        case MERGE_REPLACE_PREFIX:
+            थांबा;
+        स्थिती MERGE_REPLACE_PREFIX:
             merge = MERGE_REPLACE;
-            break;
-        default:
+            थांबा;
+        पूर्वनिर्धारित:
             merge = MERGE_OVERRIDE;
         }
     }
 
-    if (first)
+    जर (first)
         first->stmt = stmt;
-    else
-        free(stmt);
+    अन्यथा
+        मुक्त(stmt);
 
-    return first;
+    परत first;
 
 err:
     log_err(ctx, XKB_ERROR_INVALID_INCLUDE_STATEMENT,
             "Illegal include statement \"%s\"; Ignored\n", stmt);
     FreeInclude(first);
-    free(stmt);
-    return NULL;
+    मुक्त(stmt);
+    परत रिक्त;
 }
 
 XkbFile *
-XkbFileCreate(enum xkb_file_type type, char *name, ParseCommon *defs,
-              enum xkb_map_flags flags)
+XkbFileCreate(गणना xkb_file_type type, अक्षर *name, ParseCommon *defs,
+              गणना xkb_map_flags flags)
 {
     XkbFile *file;
 
-    file = calloc(1, sizeof(*file));
-    if (!file)
-        return NULL;
+    file = सुस्मृति(1, आकार(*file));
+    जर (!file)
+        परत रिक्त;
 
     XkbEscapeMapName(name);
     file->file_type = type;
@@ -589,197 +589,197 @@ XkbFileCreate(enum xkb_file_type type, char *name, ParseCommon *defs,
     file->defs = defs;
     file->flags = flags;
 
-    return file;
+    परत file;
 }
 
 XkbFile *
-XkbFileFromComponents(struct xkb_context *ctx,
-                      const struct xkb_component_names *kkctgs)
+XkbFileFromComponents(संरचना xkb_context *ctx,
+                      स्थिरांक संरचना xkb_component_names *kkctgs)
 {
-    char *const components[] = {
+    अक्षर *स्थिरांक components[] = {
         kkctgs->keycodes, kkctgs->types,
         kkctgs->compatibility, kkctgs->symbols,
     };
-    enum xkb_file_type type;
-    IncludeStmt *include = NULL;
-    XkbFile *file = NULL;
-    ParseCommon *defs = NULL, *defsLast = NULL;
+    गणना xkb_file_type type;
+    IncludeStmt *include = रिक्त;
+    XkbFile *file = रिक्त;
+    ParseCommon *defs = रिक्त, *defsLast = रिक्त;
 
-    for (type = FIRST_KEYMAP_FILE_TYPE; type <= LAST_KEYMAP_FILE_TYPE; type++) {
+    साठी (type = FIRST_KEYMAP_FILE_TYPE; type <= LAST_KEYMAP_FILE_TYPE; type++) {
         include = IncludeCreate(ctx, components[type], MERGE_DEFAULT);
-        if (!include)
-            goto err;
+        जर (!include)
+            जा err;
 
-        file = XkbFileCreate(type, NULL, (ParseCommon *) include, 0);
-        if (!file) {
+        file = XkbFileCreate(type, रिक्त, (ParseCommon *) include, 0);
+        जर (!file) {
             FreeInclude(include);
-            goto err;
+            जा err;
         }
 
-        if (!defs)
+        जर (!defs)
             defsLast = defs = &file->common;
-        else
+        अन्यथा
             defsLast = defsLast->next = &file->common;
     }
 
-    file = XkbFileCreate(FILE_TYPE_KEYMAP, NULL, defs, 0);
-    if (!file)
-        goto err;
+    file = XkbFileCreate(FILE_TYPE_KEYMAP, रिक्त, defs, 0);
+    जर (!file)
+        जा err;
 
-    return file;
+    परत file;
 
 err:
     FreeXkbFile((XkbFile *) defs);
-    return NULL;
+    परत रिक्त;
 }
 
-static void
+स्थिर शून्य
 FreeInclude(IncludeStmt *incl)
 {
     IncludeStmt *next;
 
-    while (incl)
+    पर्यंत (incl)
     {
         next = incl->next_incl;
 
-        free(incl->file);
-        free(incl->map);
-        free(incl->modifier);
-        free(incl->stmt);
+        मुक्त(incl->file);
+        मुक्त(incl->map);
+        मुक्त(incl->modifier);
+        मुक्त(incl->stmt);
 
-        free(incl);
+        मुक्त(incl);
         incl = next;
     }
 }
 
-void
+शून्य
 FreeStmt(ParseCommon *stmt)
 {
     ParseCommon *next;
 
-    while (stmt)
+    पर्यंत (stmt)
     {
         next = stmt->next;
 
-        switch (stmt->type) {
-        case STMT_INCLUDE:
+        निवड (stmt->type) {
+        स्थिती STMT_INCLUDE:
             FreeInclude((IncludeStmt *) stmt);
             /* stmt is already free'd here. */
-            stmt = NULL;
-            break;
+            stmt = रिक्त;
+            थांबा;
 
-        case STMT_EXPR_NEGATE:
-        case STMT_EXPR_UNARY_PLUS:
-        case STMT_EXPR_NOT:
-        case STMT_EXPR_INVERT:
-            FreeStmt((ParseCommon *) ((ExprUnary *) stmt)->child);
-            break;
+        स्थिती STMT_अभिव्यक्ती_NEGATE:
+        स्थिती STMT_अभिव्यक्ती_UNARY_PLUS:
+        स्थिती STMT_अभिव्यक्ती_NOT:
+        स्थिती STMT_अभिव्यक्ती_INVERT:
+            FreeStmt((ParseCommon *) ((अभिव्यक्ती_Unary *) stmt)->child);
+            थांबा;
 
-        case STMT_EXPR_DIVIDE:
-        case STMT_EXPR_ADD:
-        case STMT_EXPR_SUBTRACT:
-        case STMT_EXPR_MULTIPLY:
-        case STMT_EXPR_ASSIGN:
-            FreeStmt((ParseCommon *) ((ExprBinary *) stmt)->left);
-            FreeStmt((ParseCommon *) ((ExprBinary *) stmt)->right);
-            break;
+        स्थिती STMT_अभिव्यक्ती_DIVIDE:
+        स्थिती STMT_अभिव्यक्ती_ADD:
+        स्थिती STMT_अभिव्यक्ती_SUBTRACT:
+        स्थिती STMT_अभिव्यक्ती_MULTIPLY:
+        स्थिती STMT_अभिव्यक्ती_ASSIGN:
+            FreeStmt((ParseCommon *) ((अभिव्यक्ती_द्विमान *) stmt)->डावा);
+            FreeStmt((ParseCommon *) ((अभिव्यक्ती_द्विमान *) stmt)->उजवा);
+            थांबा;
 
-        case STMT_EXPR_ACTION_DECL:
-            FreeStmt((ParseCommon *) ((ExprAction *) stmt)->args);
-            break;
+        स्थिती STMT_अभिव्यक्ती_ACTION_DECL:
+            FreeStmt((ParseCommon *) ((अभिव्यक्ती_Action *) stmt)->args);
+            थांबा;
 
-        case STMT_EXPR_ACTION_LIST:
-            FreeStmt((ParseCommon *) ((ExprActionList *) stmt)->actions);
-            break;
+        स्थिती STMT_अभिव्यक्ती_ACTION_LIST:
+            FreeStmt((ParseCommon *) ((अभिव्यक्ती_Action_List *) stmt)->actions);
+            थांबा;
 
-        case STMT_EXPR_ARRAY_REF:
-            FreeStmt((ParseCommon *) ((ExprArrayRef *) stmt)->entry);
-            break;
+        स्थिती STMT_अभिव्यक्ती_ARRAY_REF:
+            FreeStmt((ParseCommon *) ((अभिव्यक्ती_Array_Ref *) stmt)->entry);
+            थांबा;
 
-        case STMT_EXPR_KEYSYM_LIST:
-            darray_free(((ExprKeysymList *) stmt)->syms);
-            break;
+        स्थिती STMT_अभिव्यक्ती_KEYSYM_LIST:
+            darray_free(((अभिव्यक्ती_Keysym_List *) stmt)->syms);
+            थांबा;
 
-        case STMT_VAR:
+        स्थिती STMT_VAR:
             FreeStmt((ParseCommon *) ((VarDef *) stmt)->name);
-            FreeStmt((ParseCommon *) ((VarDef *) stmt)->value);
-            break;
-        case STMT_TYPE:
-            FreeStmt((ParseCommon *) ((KeyTypeDef *) stmt)->body);
-            break;
-        case STMT_INTERP:
+            FreeStmt((ParseCommon *) ((VarDef *) stmt)->मूल्य);
+            थांबा;
+        स्थिती STMT_TYPE:
+            FreeStmt((ParseCommon *) ((किल्ली_Type_Def *) stmt)->body);
+            थांबा;
+        स्थिती STMT_INTERP:
             FreeStmt((ParseCommon *) ((InterpDef *) stmt)->match);
             FreeStmt((ParseCommon *) ((InterpDef *) stmt)->def);
-            break;
-        case STMT_VMOD:
-            FreeStmt((ParseCommon *) ((VModDef *) stmt)->value);
-            break;
-        case STMT_SYMBOLS:
+            थांबा;
+        स्थिती STMT_VMOD:
+            FreeStmt((ParseCommon *) ((VModDef *) stmt)->मूल्य);
+            थांबा;
+        स्थिती STMT_SYMBOLS:
             FreeStmt((ParseCommon *) ((SymbolsDef *) stmt)->symbols);
-            break;
-        case STMT_MODMAP:
+            थांबा;
+        स्थिती STMT_MODMAP:
             FreeStmt((ParseCommon *) ((ModMapDef *) stmt)->modifiers);
-            FreeStmt((ParseCommon *) ((ModMapDef *) stmt)->keys);
-            break;
-        case STMT_GROUP_COMPAT:
+            FreeStmt((ParseCommon *) ((ModMapDef *) stmt)->किल्ल्या);
+            थांबा;
+        स्थिती STMT_GROUP_COMPAT:
             FreeStmt((ParseCommon *) ((GroupCompatDef *) stmt)->def);
-            break;
-        case STMT_LED_MAP:
+            थांबा;
+        स्थिती STMT_LED_MAP:
             FreeStmt((ParseCommon *) ((LedMapDef *) stmt)->body);
-            break;
-        case STMT_LED_NAME:
+            थांबा;
+        स्थिती STMT_LED_NAME:
             FreeStmt((ParseCommon *) ((LedNameDef *) stmt)->name);
-            break;
-        case STMT_UNKNOWN_DECLARATION:
-        case STMT_UNKNOWN_COMPOUND:
-            free(((UnknownStatement *) stmt)->name);
-            break;
-        default:
+            थांबा;
+        स्थिती STMT_UNKNOWN_DECLARATION:
+        स्थिती STMT_UNKNOWN_COMPOUND:
+            मुक्त(((UnknownStatement *) stmt)->name);
+            थांबा;
+        पूर्वनिर्धारित:
             {} /* Label followed by declaration requires C23 */
-            static_assert(_STMT_NUM_VALUES == 37 &&
-                          _STMT_NUM_VALUES == STMT_UNKNOWN_COMPOUND + 1,
+            static_assert(STMT_अंक_मूल्ये == 37 &&
+                          STMT_अंक_मूल्ये == STMT_UNKNOWN_COMPOUND + 1,
                           "Missing statement type");
-            break;
+            थांबा;
         }
 
-        free(stmt);
+        मुक्त(stmt);
         stmt = next;
     }
 }
 
-void
+शून्य
 FreeXkbFile(XkbFile *file)
 {
     XkbFile *next;
 
-    while (file)
+    पर्यंत (file)
     {
         next = (XkbFile *) file->common.next;
 
-        switch (file->file_type) {
-        case FILE_TYPE_KEYMAP:
+        निवड (file->file_type) {
+        स्थिती FILE_TYPE_KEYMAP:
             FreeXkbFile((XkbFile *) file->defs);
-            break;
+            थांबा;
 
-        case FILE_TYPE_TYPES:
-        case FILE_TYPE_COMPAT:
-        case FILE_TYPE_SYMBOLS:
-        case FILE_TYPE_KEYCODES:
-        case FILE_TYPE_GEOMETRY:
+        स्थिती FILE_TYPE_TYPES:
+        स्थिती FILE_TYPE_COMPAT:
+        स्थिती FILE_TYPE_SYMBOLS:
+        स्थिती FILE_TYPE_KEYCODES:
+        स्थिती FILE_TYPE_GEOMETRY:
             FreeStmt(file->defs);
-            break;
+            थांबा;
 
-        default:
-            break;
+        पूर्वनिर्धारित:
+            थांबा;
         }
 
-        free(file->name);
-        free(file);
+        मुक्त(file->name);
+        मुक्त(file);
         file = next;
     }
 }
 
-static const char *xkb_file_type_strings[_FILE_TYPE_NUM_ENTRIES] = {
+स्थिर स्थिरांक अक्षर *xkb_file_type_strings[FILE_TYPE_अंक_ENTRIES] = {
     [FILE_TYPE_KEYCODES] = "xkb_keycodes",
     [FILE_TYPE_TYPES] = "xkb_types",
     [FILE_TYPE_COMPAT] = "xkb_compatibility",
@@ -789,41 +789,41 @@ static const char *xkb_file_type_strings[_FILE_TYPE_NUM_ENTRIES] = {
     [FILE_TYPE_RULES] = "rules",
 };
 
-const char *
-xkb_file_type_to_string(enum xkb_file_type type)
+स्थिरांक अक्षर *
+xkb_file_type_to_string(गणना xkb_file_type type)
 {
-    if (type >= _FILE_TYPE_NUM_ENTRIES)
-        return "unknown";
-    return xkb_file_type_strings[type];
+    जर (type >= FILE_TYPE_अंक_ENTRIES)
+        परत "unknown";
+    परत xkb_file_type_strings[type];
 }
 
-static const char *stmt_type_strings[_STMT_NUM_VALUES] = {
+स्थिर स्थिरांक अक्षर *stmt_type_strings[STMT_अंक_मूल्ये] = {
     [STMT_UNKNOWN] = "unknown statement",
     [STMT_INCLUDE] = "include statement",
     [STMT_KEYCODE] = "key name definition",
     [STMT_ALIAS] = "key alias definition",
-    [STMT_EXPR_STRING_LITERAL] = "string literal expression",
-    [STMT_EXPR_INTEGER_LITERAL] = "integer literal expression",
-    [STMT_EXPR_FLOAT_LITERAL] = "float literal expression",
-    [STMT_EXPR_BOOLEAN_LITERAL] = "boolean literal expression",
-    [STMT_EXPR_KEYNAME_LITERAL] = "key name expression",
-    [STMT_EXPR_KEYSYM_LITERAL] = "keysym expression",
-    [STMT_EXPR_IDENT] = "identifier expression",
-    [STMT_EXPR_ACTION_DECL] = "action declaration expression",
-    [STMT_EXPR_FIELD_REF] = "field reference expression",
-    [STMT_EXPR_ARRAY_REF] = "array reference expression",
-    [STMT_EXPR_EMPTY_LIST] = "empty list expression",
-    [STMT_EXPR_KEYSYM_LIST] = "keysym list expression",
-    [STMT_EXPR_ACTION_LIST] = "action list expression",
-    [STMT_EXPR_ADD] = "addition expression",
-    [STMT_EXPR_SUBTRACT] = "substraction expression",
-    [STMT_EXPR_MULTIPLY] = "multiplication expression",
-    [STMT_EXPR_DIVIDE] = "division expression",
-    [STMT_EXPR_ASSIGN] = "assignment expression",
-    [STMT_EXPR_NOT] = "logical negation expression",
-    [STMT_EXPR_NEGATE] = "arithmetic negation expression",
-    [STMT_EXPR_INVERT] = "bitwise inversion expression",
-    [STMT_EXPR_UNARY_PLUS] = "unary plus expression",
+    [STMT_अभिव्यक्ती_STRING_LITERAL] = "string literal expression",
+    [STMT_अभिव्यक्ती_INTEGER_LITERAL] = "integer literal expression",
+    [STMT_अभिव्यक्ती_FLOAT_LITERAL] = "float literal expression",
+    [STMT_अभिव्यक्ती_BOOLEAN_LITERAL] = "boolean literal expression",
+    [STMT_अभिव्यक्ती_KEYNAME_LITERAL] = "key name expression",
+    [STMT_अभिव्यक्ती_KEYSYM_LITERAL] = "keysym expression",
+    [STMT_अभिव्यक्ती_IDENT] = "identifier expression",
+    [STMT_अभिव्यक्ती_ACTION_DECL] = "action declaration expression",
+    [STMT_अभिव्यक्ती_FIELD_REF] = "field reference expression",
+    [STMT_अभिव्यक्ती_ARRAY_REF] = "array reference expression",
+    [STMT_अभिव्यक्ती_EMPTY_LIST] = "empty list expression",
+    [STMT_अभिव्यक्ती_KEYSYM_LIST] = "keysym list expression",
+    [STMT_अभिव्यक्ती_ACTION_LIST] = "action list expression",
+    [STMT_अभिव्यक्ती_ADD] = "addition expression",
+    [STMT_अभिव्यक्ती_SUBTRACT] = "substraction expression",
+    [STMT_अभिव्यक्ती_MULTIPLY] = "multiplication expression",
+    [STMT_अभिव्यक्ती_DIVIDE] = "division expression",
+    [STMT_अभिव्यक्ती_ASSIGN] = "assignment expression",
+    [STMT_अभिव्यक्ती_NOT] = "logical negation expression",
+    [STMT_अभिव्यक्ती_NEGATE] = "arithmetic negation expression",
+    [STMT_अभिव्यक्ती_INVERT] = "bitwise inversion expression",
+    [STMT_अभिव्यक्ती_UNARY_PLUS] = "unary plus expression",
     [STMT_VAR] = "variable definition",
     [STMT_TYPE] = "key type definition",
     [STMT_INTERP] = "symbol interpretation definition",
@@ -836,39 +836,39 @@ static const char *stmt_type_strings[_STMT_NUM_VALUES] = {
     [STMT_UNKNOWN_DECLARATION] = "unknown declaration statement",
     [STMT_UNKNOWN_COMPOUND] = "unknown compound statement",
 };
-static_assert(_STMT_NUM_VALUES == 37 &&
-              _STMT_NUM_VALUES == STMT_UNKNOWN_COMPOUND + 1,
+static_assert(STMT_अंक_मूल्ये == 37 &&
+              STMT_अंक_मूल्ये == STMT_UNKNOWN_COMPOUND + 1,
               "Missing statement type");
 
-const char *
-stmt_type_to_string(enum stmt_type type)
+स्थिरांक अक्षर *
+stmt_type_to_string(गणना stmt_type type)
 {
-    if (type >= _STMT_NUM_VALUES)
-        return NULL;
-    return stmt_type_strings[type];
+    जर (type >= STMT_अंक_मूल्ये)
+        परत रिक्त;
+    परत stmt_type_strings[type];
 }
 
-char
-stmt_type_to_operator_char(enum stmt_type type)
+अक्षर
+stmt_type_to_operator_char(गणना stmt_type type)
 {
-    switch (type) {
-    case STMT_EXPR_ADD:
-        return '+';
-    case STMT_EXPR_SUBTRACT:
-        return '-';
-    case STMT_EXPR_MULTIPLY:
-        return '*';
-    case STMT_EXPR_DIVIDE:
-        return '/';
-    case STMT_EXPR_NOT:
-        return '!';
-    case STMT_EXPR_NEGATE:
-        return '-';
-    case STMT_EXPR_INVERT:
-        return '~';
-    case STMT_EXPR_UNARY_PLUS:
-        return '+';
-    default:
-        return '\0';
+    निवड (type) {
+    स्थिती STMT_अभिव्यक्ती_ADD:
+        परत '+';
+    स्थिती STMT_अभिव्यक्ती_SUBTRACT:
+        परत '-';
+    स्थिती STMT_अभिव्यक्ती_MULTIPLY:
+        परत '*';
+    स्थिती STMT_अभिव्यक्ती_DIVIDE:
+        परत '/';
+    स्थिती STMT_अभिव्यक्ती_NOT:
+        परत '!';
+    स्थिती STMT_अभिव्यक्ती_NEGATE:
+        परत '-';
+    स्थिती STMT_अभिव्यक्ती_INVERT:
+        परत '~';
+    स्थिती STMT_अभिव्यक्ती_UNARY_PLUS:
+        परत '+';
+    पूर्वनिर्धारित:
+        परत '\0';
     }
 }

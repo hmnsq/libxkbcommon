@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include "utils.h"
-#include "utf8-decoding.h"
+#अन्तर्भाव "utils.h"
+#अन्तर्भाव "utf8-decoding.h"
 
 /* Array mapping the leading byte to the length of a UTF-8 sequence.
  * A value of zero indicates that the byte can not begin a UTF-8 sequence. */
-static const uint8_t utf8_sequence_length_by_leading_byte[256] = {
+स्थिर स्थिरांक uint8_t utf8_sequence_length_by_leading_byte[256] = {
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /* 0x00-0x0F */
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /* 0x10-0x1F */
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /* 0x20-0x2F */
@@ -31,52 +31,52 @@ static const uint8_t utf8_sequence_length_by_leading_byte[256] = {
 
 /* Length of next utf-8 sequence */
 uint8_t
-utf8_sequence_length(const char *s)
+utf8_sequence_length(स्थिरांक अक्षर *s)
 {
-    return utf8_sequence_length_by_leading_byte[(unsigned char)s[0]];
+    परत utf8_sequence_length_by_leading_byte[(अचिन्हित अक्षर)s[0]];
 }
 
 /* Reads the next UTF-8 sequence in a string */
 uint32_t
-utf8_next_code_point(const char *s, size_t max_size, size_t *size_out)
+utf8_next_code_point(स्थिरांक अक्षर *s, माप_प्रकार max_size, माप_प्रकार *size_out)
 {
     uint32_t cp = 0;
     uint8_t len = utf8_sequence_length(s);
     *size_out = 0;
 
-    if (!max_size || len > max_size)
-        return INVALID_UTF8_CODE_POINT;
+    जर (!max_size || len > max_size)
+        परत INVALID_UTF8_CODE_POINT;
 
     /* Handle leading byte */
-    switch (len) {
-    case 1:
+    निवड (len) {
+    स्थिती 1:
         *size_out = 1;
-        return (uint32_t)s[0];
-    case 2:
+        परत (uint32_t)s[0];
+    स्थिती 2:
         cp = (uint32_t)s[0] & 0x1f;
-        break;
-    case 3:
+        थांबा;
+    स्थिती 3:
         cp = (uint32_t)s[0] & 0x0f;
-        break;
-    case 4:
+        थांबा;
+    स्थिती 4:
         cp = (uint32_t)s[0] & 0x07;
-        break;
-    default:
-        return INVALID_UTF8_CODE_POINT;
+        थांबा;
+    पूर्वनिर्धारित:
+        परत INVALID_UTF8_CODE_POINT;
     }
 
     /* Process remaining bytes of the UTF-8 sequence */
-    for (size_t k = 1; k < len; k++) {
-        if (((uint32_t)s[k] & 0xc0) != 0x80)
-            return INVALID_UTF8_CODE_POINT;
+    साठी (माप_प्रकार k = 1; k < len; k++) {
+        जर (((uint32_t)s[k] & 0xc0) != 0x80)
+            परत INVALID_UTF8_CODE_POINT;
         cp <<= 6;
         cp |= (uint32_t)s[k] & 0x3f;
     }
 
     /* Check surrogates */
-    if (is_surrogate(cp))
-        return INVALID_UTF8_CODE_POINT;
+    जर (is_surrogate(cp))
+        परत INVALID_UTF8_CODE_POINT;
 
     *size_out = len;
-    return cp;
+    परत cp;
 }

@@ -3,37 +3,37 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include "xkbcommon/xkbcommon.h"
+#अन्तर्भाव "xkbcommon/xkbcommon.h"
 
-#include "src/darray.h"
-#include "src/scanner-utils.h"
-#include "src/utils.h"
-#include "ast.h"
-#include "xkbcomp-priv.h"
+#अन्तर्भाव "src/darray.h"
+#अन्तर्भाव "src/scanner-utils.h"
+#अन्तर्भाव "src/utils.h"
+#अन्तर्भाव "ast.h"
+#अन्तर्भाव "xkbcomp-priv.h"
 
-XKB_EXPORT_PRIVATE const char *
-xkb_file_type_name(enum xkb_file_type type);
+XKB_EXPORT_PRIVATE स्थिरांक अक्षर *
+xkb_file_type_name(गणना xkb_file_type type);
 
-XKB_EXPORT_PRIVATE const char *
-xkb_merge_mode_name(enum merge_mode type);
+XKB_EXPORT_PRIVATE स्थिरांक अक्षर *
+xkb_merge_mode_name(गणना merge_mode type);
 
-XKB_EXPORT_PRIVATE const char *
-xkb_map_flags_string_iter(unsigned int *index, enum xkb_map_flags flags);
+XKB_EXPORT_PRIVATE स्थिरांक अक्षर *
+xkb_map_flags_string_iter(अचिन्हित पूर्णांक *index, गणना xkb_map_flags flags);
 
-XKB_EXPORT_PRIVATE FILE *
-xkb_resolve_file(struct xkb_context *ctx,
-                 enum xkb_file_type file_type,
-                 const char *path, const char *map,
-                 char *resolved_path, size_t resolved_path_size,
-                 char *resolved_map, size_t resolved_map_size);
+XKB_EXPORT_PRIVATE खाता *
+xkb_resolve_file(संरचना xkb_context *ctx,
+                 गणना xkb_file_type file_type,
+                 स्थिरांक अक्षर *path, स्थिरांक अक्षर *map,
+                 अक्षर *resolved_path, माप_प्रकार resolved_path_size,
+                 अक्षर *resolved_map, माप_प्रकार resolved_map_size);
 
 /** An atomic include entry */
-struct xkb_file_include {
+संरचना xkb_file_include {
     bool valid:1;
     bool explicit_section:1;
-    enum merge_mode merge;
+    गणना merge_mode merge;
     /*
      * The following are indices from `xkb_file_section::buffer`
      *
@@ -44,21 +44,21 @@ struct xkb_file_include {
     darray_size_t section;
     darray_size_t modifier;
     /* Flags of the included section, only set if valid = true */
-    enum xkb_map_flags flags;
+    गणना xkb_map_flags flags;
 };
 
-struct xkb_file_include_group {
+संरचना xkb_file_include_group {
     darray_size_t start;
     darray_size_t end;
 };
 
 /** A file section: `xkb_{keycodes,compat,geometry,symbols,types} */
-struct xkb_file_section {
+संरचना xkb_file_section {
     darray_size_t name;
-    enum xkb_file_type file_type;
-    enum xkb_map_flags flags;
-    darray(struct xkb_file_include_group) include_groups;
-    darray(struct xkb_file_include) includes;
+    गणना xkb_file_type file_type;
+    गणना xkb_map_flags flags;
+    darray(संरचना xkb_file_include_group) include_groups;
+    darray(संरचना xkb_file_include) includes;
     /**
      * Char array to store all the strings
      *
@@ -67,13 +67,13 @@ struct xkb_file_section {
     darray_char buffer;
 };
 
-XKB_EXPORT_PRIVATE void
-xkb_file_section_init(struct xkb_file_section *section);
+XKB_EXPORT_PRIVATE शून्य
+xkb_file_section_init(संरचना xkb_file_section *section);
 
-XKB_EXPORT_PRIVATE void
-xkb_file_section_free(struct xkb_file_section *section);
+XKB_EXPORT_PRIVATE शून्य
+xkb_file_section_free(संरचना xkb_file_section *section);
 
-enum xkb_file_iterator_flags {
+गणना xkb_file_iterator_flags {
     XKB_FILE_ITERATOR_NO_FLAG = 0,
     /** Include errors are fatal */
     XKB_FILE_ITERATOR_FAIL_ON_INCLUDE_ERROR = (1 << 0),
@@ -95,42 +95,42 @@ enum xkb_file_iterator_flags {
  * @returns `true` on success, else `false`
  */
 XKB_EXPORT_PRIVATE bool
-xkb_file_section_parse(struct xkb_context *ctx,
-                       enum xkb_file_iterator_flags iterator_flags,
-                       enum xkb_keymap_format format,
-                       enum xkb_keymap_compile_flags compile_flags,
-                       unsigned int include_depth,
-                       const char *path, const char *map,
-                       struct xkb_file_section *section);
+xkb_file_section_parse(संरचना xkb_context *ctx,
+                       गणना xkb_file_iterator_flags iterator_flags,
+                       गणना xkb_keymap_format format,
+                       गणना xkb_keymap_compile_flags compile_flags,
+                       अचिन्हित पूर्णांक include_depth,
+                       स्थिरांक अक्षर *path, स्थिरांक अक्षर *map,
+                       संरचना xkb_file_section *section);
 
-XKB_EXPORT_PRIVATE const char *
-xkb_file_section_get_string(const struct xkb_file_section *section,
+XKB_EXPORT_PRIVATE स्थिरांक अक्षर *
+xkb_file_section_get_string(स्थिरांक संरचना xkb_file_section *section,
                             darray_size_t idx);
 
 /** Iterator over the sections of a keymap file */
-struct xkb_file_iterator {
-    struct xkb_context *ctx;
+संरचना xkb_file_iterator {
+    संरचना xkb_context *ctx;
     /** File to analyze */
-    const char *path;
+    स्थिरांक अक्षर *path;
     /** Section to analyze; if NULL then iter over all the sections */
-    const char *map;
+    स्थिरांक अक्षर *map;
     /** Pending XKB file */
     XkbFile *pending_xkb_file;
     /** Pending component of the XKB file */
     XkbFile *pending_section;
 
     /** Scanner of the keymap file */
-    struct scanner scanner;
+    संरचना scanner scanner;
     /** Current section */
-    struct xkb_file_section section;
+    संरचना xkb_file_section section;
 
     /** Flags */
-    enum xkb_file_iterator_flags flags;
+    गणना xkb_file_iterator_flags flags;
     /** File type to check/filter */
-    enum xkb_file_type type;
+    गणना xkb_file_type type;
 
     /** Parser configuration */
-    struct parser_keymap_config parser_config;
+    संरचना parser_keymap_config parser_config;
 
     /** Indicate whether the iterator reached the end */
     bool finished;
@@ -153,18 +153,18 @@ struct xkb_file_iterator {
  *
  * @returns A `malloc`ed file iterator on success, else `NULL`.
  */
-XKB_EXPORT_PRIVATE struct xkb_file_iterator *
-xkb_file_iterator_new_from_buffer(struct xkb_context *ctx,
-                                  enum xkb_file_iterator_flags iterator_flags,
-                                  enum xkb_keymap_format format,
-                                  enum xkb_keymap_compile_flags compile_flags,
-                                  const char *path, const char *map,
-                                  enum xkb_file_type file_type,
-                                  const char *string, size_t length);
+XKB_EXPORT_PRIVATE संरचना xkb_file_iterator *
+xkb_file_iterator_new_from_buffer(संरचना xkb_context *ctx,
+                                  गणना xkb_file_iterator_flags iterator_flags,
+                                  गणना xkb_keymap_format format,
+                                  गणना xkb_keymap_compile_flags compile_flags,
+                                  स्थिरांक अक्षर *path, स्थिरांक अक्षर *map,
+                                  गणना xkb_file_type file_type,
+                                  स्थिरांक अक्षर *string, माप_प्रकार length);
 
-XKB_EXPORT_PRIVATE void
-xkb_file_iterator_free(struct xkb_file_iterator *iter);
+XKB_EXPORT_PRIVATE शून्य
+xkb_file_iterator_free(संरचना xkb_file_iterator *iter);
 
 XKB_EXPORT_PRIVATE bool
-xkb_file_iterator_next(struct xkb_file_iterator *iter,
-                       const struct xkb_file_section **section);
+xkb_file_iterator_next(संरचना xkb_file_iterator *iter,
+                       स्थिरांक संरचना xkb_file_section **section);

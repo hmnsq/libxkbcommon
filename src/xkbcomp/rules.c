@@ -8,38 +8,38 @@
  * SPDX-License-Identifier: HPND AND MIT
  */
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include <assert.h>
-#include <limits.h>
-#include <stdint.h>
+#अन्तर्भाव <assert.h>
+#अन्तर्भाव <limits.h>
+#अन्तर्भाव <stdint.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcomp-priv.h"
-#include "context.h"
-#include "keymap.h"
-#include "messages-codes.h"
-#include "rules.h"
-#include "rmlvo.h"
-#include "include.h"
-#include "scanner-utils.h"
-#include "darray.h"
-#include "utils.h"
-#include "util-numbers.h"
-#include "util-paths.h"
+#अन्तर्भाव "xkbcommon/xkbcommon.h"
+#अन्तर्भाव "xkbcomp-priv.h"
+#अन्तर्भाव "context.h"
+#अन्तर्भाव "keymap.h"
+#अन्तर्भाव "messages-codes.h"
+#अन्तर्भाव "rules.h"
+#अन्तर्भाव "rmlvo.h"
+#अन्तर्भाव "include.h"
+#अन्तर्भाव "scanner-utils.h"
+#अन्तर्भाव "darray.h"
+#अन्तर्भाव "utils.h"
+#अन्तर्भाव "util-numbers.h"
+#अन्तर्भाव "util-paths.h"
 
 #define MAX_INCLUDE_DEPTH 5
 
 /* Scanner / Lexer */
 
 /* Values returned with some tokens, like yylval. */
-union lvalue {
-    struct sval string;
+संघ lvalue {
+    संरचना sval string;
 };
 
-enum rules_token {
+गणना rules_token {
     TOK_END_OF_FILE = 0,
-    TOK_END_OF_LINE,
+    TOK_END_OF_ओळ,
     TOK_IDENTIFIER,
     TOK_GROUP_NAME,
     TOK_BANG,
@@ -52,93 +52,93 @@ enum rules_token {
     TOK_ERROR
 };
 
-static enum rules_token
-lex(struct scanner *s, union lvalue *val)
+स्थिर गणना rules_token
+lex(संरचना scanner *s, संघ lvalue *val)
 {
 skip_more_whitespace_and_comments:
     /* Skip spaces */
-    while (scanner_chr(s, ' ') || scanner_chr(s, '\t') || scanner_chr(s, '\r'));
+    पर्यंत (scanner_chr(s, ' ') || scanner_chr(s, '\t') || scanner_chr(s, '\r'));
 
     /* Skip comments */
-    if (scanner_lit(s, "//")) {
+    जर (scanner_lit(s, "//")) {
         scanner_skip_to_eol(s);
     }
 
     /* New line */
-    if (scanner_eol(s)) {
-        while (scanner_eol(s)) scanner_next(s);
-        return TOK_END_OF_LINE;
+    जर (scanner_eol(s)) {
+        पर्यंत (scanner_eol(s)) scanner_next(s);
+        परत TOK_END_OF_ओळ;
     }
 
     /* Escaped line continuation */
-    if (scanner_chr(s, '\\')) {
+    जर (scanner_chr(s, '\\')) {
         /* Optional \r. */
         scanner_chr(s, '\r');
-        if (!scanner_eol(s)) {
+        जर (!scanner_eol(s)) {
             scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                         "illegal new line escape; must appear at end of line");
-            return TOK_ERROR;
+            परत TOK_ERROR;
         }
         scanner_next(s);
-        goto skip_more_whitespace_and_comments;
+        जा skip_more_whitespace_and_comments;
     }
 
     /* See if we're done */
-    if (scanner_eof(s)) return TOK_END_OF_FILE;
+    जर (scanner_eof(s)) परत TOK_END_OF_FILE;
 
     /* New token */
     s->token_pos = s->pos;
-    enum rules_token token = TOK_IDENTIFIER;
+    गणना rules_token token = TOK_IDENTIFIER;
 
-    const char next = scanner_next(s);
-    switch (next) {
-    case '!':
-        return TOK_BANG;
-    case '$':
+    स्थिरांक अक्षर next = scanner_next(s);
+    निवड (next) {
+    स्थिती '!':
+        परत TOK_BANG;
+    स्थिती '$':
         /* Group */
         token = TOK_GROUP_NAME;
         val->string.len = 0;
-        break;
-    case '*':
-        if (scanner_rules_is_ident(scanner_peek(s))) {
+        थांबा;
+    स्थिती '*':
+        जर (scanner_rules_is_ident(scanner_peek(s))) {
             /* Backtrack */
             s->pos--;
-            break;
-        } else {
+            थांबा;
+        } अन्यथा {
             /* Legacy wild card */
-            return TOK_WILD_CARD_STAR;
+            परत TOK_WILD_CARD_STAR;
         }
-    case '<':
+    स्थिती '<':
         /* Extended wild cards */
-        if (scanner_rules_lit_token(s, "none>")) return TOK_WILD_CARD_NONE;
-        if (scanner_rules_lit_token(s, "some>")) return TOK_WILD_CARD_SOME;
-        if (scanner_rules_lit_token(s, "any>")) return TOK_WILD_CARD_ANY;
+        जर (scanner_rules_lit_token(s, "none>")) परत TOK_WILD_CARD_NONE;
+        जर (scanner_rules_lit_token(s, "some>")) परत TOK_WILD_CARD_SOME;
+        जर (scanner_rules_lit_token(s, "any>")) परत TOK_WILD_CARD_ANY;
         /* No match: continue lax parsing */
-        assert(scanner_rules_is_ident('<'));
+        प्रतिज्ञा(scanner_rules_is_ident('<'));
         val->string.len = 1;
-        break;
-    case '=':
-        if (scanner_rules_is_ident(scanner_peek(s))) {
+        थांबा;
+    स्थिती '=':
+        जर (scanner_rules_is_ident(scanner_peek(s))) {
             /* Backtrack */
             s->pos--;
-            break;
-        } else {
-            return TOK_EQUALS;
+            थांबा;
+        } अन्यथा {
+            परत TOK_EQUALS;
         }
-    case 'i':
-        if (scanner_rules_lit_token(s, "nclude")) {
+    स्थिती 'i':
+        जर (scanner_rules_lit_token(s, "nclude")) {
             /* Include statement */
-            return TOK_INCLUDE;
+            परत TOK_INCLUDE;
         }
         /* Identifier */
-        assert(scanner_rules_is_ident('i'));
+        प्रतिज्ञा(scanner_rules_is_ident('i'));
         val->string.len = 1;
-        break;
-    default:
-        if (likely(scanner_rules_is_ident(next))) {
+        थांबा;
+    पूर्वनिर्धारित:
+        जर (likely(scanner_rules_is_ident(next))) {
             /* Identifier */
             val->string.len = 1;
-        } else {
+        } अन्यथा {
             /* Invalid */
             s->pos--;
             val->string.len = 0;
@@ -148,65 +148,65 @@ skip_more_whitespace_and_comments:
     /* Identifier */
     val->string.start = s->s + s->pos - val->string.len;
     /* Ensure that we can parse KcCGST values with merge modes */
-    assert(scanner_rules_is_ident(MERGE_OVERRIDE_PREFIX));
-    assert(scanner_rules_is_ident(MERGE_AUGMENT_PREFIX));
-    assert(scanner_rules_is_ident(MERGE_REPLACE_PREFIX));
-    assert(scanner_rules_is_ident('('));
-    assert(scanner_rules_is_ident(')'));
+    प्रतिज्ञा(scanner_rules_is_ident(MERGE_OVERRIDE_PREFIX));
+    प्रतिज्ञा(scanner_rules_is_ident(MERGE_AUGMENT_PREFIX));
+    प्रतिज्ञा(scanner_rules_is_ident(MERGE_REPLACE_PREFIX));
+    प्रतिज्ञा(scanner_rules_is_ident('('));
+    प्रतिज्ञा(scanner_rules_is_ident(')'));
     val->string.len += scanner_rules_ident_token(s);
 
-    if (unlikely(val->string.len == 0)) {
-        if (token == TOK_GROUP_NAME) {
+    जर (unlikely(val->string.len == 0)) {
+        जर (token == TOK_GROUP_NAME) {
             scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                         "unexpected character after \'$\'; expected name");
-        } else {
+        } अन्यथा {
             scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                         "unrecognized token");
         }
-        return TOK_ERROR;
+        परत TOK_ERROR;
     }
 
-    return token;
+    परत token;
 }
 
 /***====================================================================***/
 
-enum rules_mlvo {
+गणना rules_mlvo {
     MLVO_MODEL,
     MLVO_LAYOUT,
     MLVO_VARIANT,
     MLVO_OPTION,
-    _MLVO_NUM_ENTRIES
+    MLVO_अंक_ENTRIES
 };
 
-enum {
+गणना {
     MLVO_LAYOUT_AND_VARIANT = ((1 << MLVO_LAYOUT) | (1 << MLVO_VARIANT))
 };
 
-typedef uint8_t mlvo_index_t;
-typedef uint8_t mlvo_mask_t;
+प्रकारव्याख्या uint8_t mlvo_index_t;
+प्रकारव्याख्या uint8_t mlvo_mask_t;
 
 
-static const struct sval rules_mlvo_svals[_MLVO_NUM_ENTRIES] = {
+स्थिर स्थिरांक संरचना sval rules_mlvo_svals[MLVO_अंक_ENTRIES] = {
     [MLVO_MODEL] = SVAL_INIT("model"),
     [MLVO_LAYOUT] = SVAL_INIT("layout"),
     [MLVO_VARIANT] = SVAL_INIT("variant"),
     [MLVO_OPTION] = SVAL_INIT("option"),
 };
 
-enum rules_kccgst {
+गणना rules_kccgst {
     KCCGST_KEYCODES,
     KCCGST_TYPES,
     KCCGST_COMPAT,
     KCCGST_SYMBOLS,
     KCCGST_GEOMETRY,
-    _KCCGST_NUM_ENTRIES
+    KCCGST_अंक_ENTRIES
 };
 
-typedef uint8_t kccgst_index_t;
-typedef uint8_t kccgst_mask_t;
+प्रकारव्याख्या uint8_t kccgst_index_t;
+प्रकारव्याख्या uint8_t kccgst_mask_t;
 
-static const struct sval rules_kccgst_svals[_KCCGST_NUM_ENTRIES] = {
+स्थिर स्थिरांक संरचना sval rules_kccgst_svals[KCCGST_अंक_ENTRIES] = {
     [KCCGST_KEYCODES] = SVAL_INIT("keycodes"),
     [KCCGST_TYPES] = SVAL_INIT("types"),
     [KCCGST_COMPAT] = SVAL_INIT("compat"),
@@ -214,7 +214,7 @@ static const struct sval rules_kccgst_svals[_KCCGST_NUM_ENTRIES] = {
     [KCCGST_GEOMETRY] = SVAL_INIT("geometry"),
 };
 
-enum {
+गणना {
     /** Value of the matched layout mask for layout-independent MLVO fields */
     GLOBAL_MATCHED_LAYOUTS = XKB_ALL_GROUPS,
 };
@@ -225,33 +225,33 @@ static_assert(~(xkb_layout_mask_t)XKB_OPTION_LAYOUT_MASK_GLOBAL ==
 
 /* We use this to keep score whether an mlvo was matched or not; if not,
  * we warn the user that their preference was ignored. */
-struct matched_sval {
-    struct sval sval;
+संरचना matched_sval {
+    संरचना sval sval;
     /** Used for layout-specific options */
     xkb_layout_mask_t layouts;
     xkb_layout_mask_t matched;
 };
-typedef darray(struct matched_sval) darray_matched_sval;
+प्रकारव्याख्या darray(संरचना matched_sval) darray_matched_sval;
 
 /*
  * A broken-down version of xkb_rule_names (without the rules,
  * obviously).
  */
-struct rule_names {
-    struct matched_sval model;
+संरचना rule_names {
+    संरचना matched_sval model;
     darray_matched_sval layouts;
     darray_matched_sval variants;
     darray_matched_sval options;
 };
 
-struct group {
-    struct sval name;
+संरचना group {
+    संरचना sval name;
     darray_sval elements;
 };
 
-struct mapping {
-    enum rules_mlvo mlvo_at_pos[_MLVO_NUM_ENTRIES];
-    mlvo_index_t num_mlvo;
+संरचना mapping {
+    गणना rules_mlvo mlvo_at_pos[MLVO_अंक_ENTRIES];
+    mlvo_index_t अंक_mlvo;
     mlvo_mask_t defined_mlvo_mask;
     bool has_layout_idx_range;
     bool has_multiple_layouts;
@@ -259,24 +259,24 @@ struct mapping {
      * • Keep track of layout and variant indices while parsing MLVO headers.
      * • Store layout/variant range afterwards.
      * Thus provide 2 structs to reflect these semantics in the code. */
-    union {
-        struct { xkb_layout_index_t layout_idx, variant_idx; };
-        struct { xkb_layout_index_t layout_idx_min, layout_idx_max; };
+    संघ {
+        संरचना { xkb_layout_index_t layout_idx, variant_idx; };
+        संरचना { xkb_layout_index_t layout_idx_min, layout_idx_max; };
     };
     /* This member has 2 uses:
      * • Check if the mapping is active by interpreting the value as a boolean.
      * • Keep track of the remaining layout indices to match.
      * Thus provide 2 names to reflect these semantics in the code. */
-    union {
+    संघ {
         xkb_layout_mask_t active;
         xkb_layout_mask_t layouts_candidates_mask;
     };
-    enum rules_kccgst kccgst_at_pos[_KCCGST_NUM_ENTRIES];
-    kccgst_index_t num_kccgst;
+    गणना rules_kccgst kccgst_at_pos[KCCGST_अंक_ENTRIES];
+    kccgst_index_t अंक_kccgst;
     kccgst_mask_t defined_kccgst_mask;
 };
 
-enum mlvo_match_type {
+गणना mlvo_match_type {
     /** Match the given plain value */
     MLVO_MATCH_NORMAL = 0,
     /** Match depending on the value of `wildcard_match_type` */
@@ -291,37 +291,37 @@ enum mlvo_match_type {
     MLVO_MATCH_GROUP,
 };
 
-enum wildcard_match_type {
+गणना wildcard_match_type {
     /** ‘*’ matches only non-empty strings */
     WILDCARD_MATCH_NONEMPTY = 0,
     /** ‘*’ matches all strings */
     WILDCARD_MATCH_ALL,
 };
 
-struct rule {
-    struct sval mlvo_value_at_pos[_MLVO_NUM_ENTRIES];
-    enum mlvo_match_type match_type_at_pos[_MLVO_NUM_ENTRIES];
-    struct sval kccgst_value_at_pos[_KCCGST_NUM_ENTRIES];
-    mlvo_index_t num_mlvo_values;
-    kccgst_index_t num_kccgst_values;
+संरचना rule {
+    संरचना sval mlvo_मूल्य_at_pos[MLVO_अंक_ENTRIES];
+    गणना mlvo_match_type match_type_at_pos[MLVO_अंक_ENTRIES];
+    संरचना sval kccgst_मूल्य_at_pos[KCCGST_अंक_ENTRIES];
+    mlvo_index_t अंक_mlvo_मूल्ये;
+    kccgst_index_t अंक_kccgst_मूल्ये;
     bool skip;
 };
 
 #define SLICE_KCCGST_BIT_FIELD_SIZE 4
 static_assert(!((1u << (SLICE_KCCGST_BIT_FIELD_SIZE - 1)) &
-                (_KCCGST_NUM_ENTRIES - 1)),
+                (KCCGST_अंक_ENTRIES - 1)),
               "Cannot encode KcCGST enum safely (need space for the sign)");
-struct kccgst_buffer_slice {
+संरचना kccgst_buffer_slice {
     uint32_t length:(32 - SLICE_KCCGST_BIT_FIELD_SIZE);
-    enum rules_kccgst kccgst:SLICE_KCCGST_BIT_FIELD_SIZE;
+    गणना rules_kccgst kccgst:SLICE_KCCGST_BIT_FIELD_SIZE;
     xkb_layout_index_t layout;
 };
 
 /* Buffer for pending KcCGST values */
-struct kccgst_buffer {
+संरचना kccgst_buffer {
     darray_char buffer;
     /* Slice corresponding to each value in the buffer */
-    darray(struct kccgst_buffer_slice) slices;
+    darray(संरचना kccgst_buffer_slice) slices;
 };
 
 /*
@@ -330,37 +330,37 @@ struct kccgst_buffer {
  * matching state machine, with tokens as transitions (see
  * matcher_match()).
  */
-struct matcher {
-    struct xkb_context *ctx;
+संरचना matcher {
+    संरचना xkb_context *ctx;
     /* Input.*/
-    struct rule_names rmlvo;
-    union lvalue val;
-    darray(struct group) groups;
+    संरचना rule_names rmlvo;
+    संघ lvalue val;
+    darray(संरचना group) groups;
     /* Current mapping. */
-    struct mapping mapping;
+    संरचना mapping mapping;
     /* Current rule. */
-    struct rule rule;
+    संरचना rule rule;
     /*
      * Buffers for pending KcCGST values. Required in case of using layout
      * index ranges, to ensure that the values are merged in the expected order.
      * See the note: “Layout index ranges and merging KcCGST values”.
      */
-    struct kccgst_buffer pending_kccgst;
+    संरचना kccgst_buffer pending_kccgst;
     /* Output. */
-    darray_char kccgst[_KCCGST_NUM_ENTRIES];
+    darray_char kccgst[KCCGST_अंक_ENTRIES];
 };
 
-static struct sval
-strip_spaces(struct sval v)
+स्थिर संरचना sval
+strip_spaces(संरचना sval v)
 {
-    while (v.len > 0 && is_space(v.start[0])) { v.len--; v.start++; }
-    while (v.len > 0 && is_space(v.start[v.len - 1])) v.len--;
-    return v;
+    पर्यंत (v.len > 0 && is_space(v.start[0])) { v.len--; v.start++; }
+    पर्यंत (v.len > 0 && is_space(v.start[v.len - 1])) v.len--;
+    परत v;
 }
 
-static darray_matched_sval
-split_comma_separated_mlvo(struct xkb_context *ctx,
-                           enum rules_mlvo mlvo, const char *s)
+स्थिर darray_matched_sval
+split_comma_separated_mlvo(संरचना xkb_context *ctx,
+                           गणना rules_mlvo mlvo, स्थिरांक अक्षर *s)
 {
     darray_matched_sval arr = darray_new();
 
@@ -369,155 +369,155 @@ split_comma_separated_mlvo(struct xkb_context *ctx,
      * least one value, e.g. "" -> { "" } and "," -> { "", "" }.
      */
 
-    if (!s) {
-        ensure_at_least_one_value:
+    जर (!s) {
+        ensure_at_least_one_मूल्य:
         /* Label followed by a declaration is a C23 extension */ ;
 
-        struct matched_sval val = {
-            .sval = SVAL(NULL, 0),
+        संरचना matched_sval val = {
+            .sval = SVAL(रिक्त, 0),
             .layouts = (xkb_layout_mask_t)XKB_OPTION_LAYOUT_MASK_GLOBAL,
             .matched = 0
         };
         darray_append(arr, val);
-        return arr;
+        परत arr;
     }
 
-    while (true) {
-        struct matched_sval val = {
+    पर्यंत (true) {
+        संरचना matched_sval val = {
             .sval = SVAL(s, 0),
             .layouts = (xkb_layout_mask_t)XKB_OPTION_LAYOUT_MASK_GLOBAL,
             .matched = 0,
         };
-        while (*s != '\0' && *s != ',' && *s != OPTIONS_GROUP_SPECIFIER_PREFIX) {
+        पर्यंत (*s != '\0' && *s != ',' && *s != OPTIONS_GROUP_SPECIFIER_PREFIX) {
             s++;
             val.sval.len++;
         }
         val.sval = strip_spaces(val.sval);
 
-        if (*s == OPTIONS_GROUP_SPECIFIER_PREFIX) {
+        जर (*s == OPTIONS_GROUP_SPECIFIER_PREFIX) {
             /* Handle numeric layout index */
             s++;
-            const char* const layout_start = s;
+            स्थिरांक अक्षर* स्थिरांक layout_start = s;
             xkb_layout_index_t layout = XKB_LAYOUT_INVALID;
 
-            int count = parse_dec_to_uint32_t(s, SIZE_MAX, &layout);
-            if (count > 0) {
+            पूर्णांक मोजणी = parse_dec_to_uint32_t(s, SIZE_MAX, &layout);
+            जर (मोजणी > 0) {
                 /* Note: 1-indexed layout */
-                s += count;
+                s += मोजणी;
                 static_assert(XKB_MAX_GROUPS == 32, "Invalid shift");
-                if (layout == 0 || layout > XKB_MAX_GROUPS) {
+                जर (layout == 0 || layout > XKB_MAX_GROUPS) {
                     log_err(ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                             "Invalid layout index %"PRIu32" "
                             "for the RMVLO component: \"%.*s\"\n", layout,
-                            (unsigned int) val.sval.len, val.sval.start);
-                } else if (mlvo != MLVO_OPTION) {
+                            (अचिन्हित पूर्णांक) val.sval.len, val.sval.start);
+                } अन्यथा जर (mlvo != MLVO_OPTION) {
                     log_warn(ctx, XKB_LOG_MESSAGE_NO_ID,
                              "Layout index %"PRIu32" is not supported for "
                              "the RMLVO component: \"%.*s\"\n", layout,
-                             (unsigned int) val.sval.len, val.sval.start);
-                } else {
+                             (अचिन्हित पूर्णांक) val.sval.len, val.sval.start);
+                } अन्यथा {
                     val.layouts = (UINT32_C(1) << (layout - 1));
                 }
             }
 
             /* Consume until reaching next item or end of string */
-            const char* const layout_index_end = s;
-            while (*s != '\0' && *s != ',') { s++; }
-            if (count <= 0 || layout_index_end != s) {
+            स्थिरांक अक्षर* स्थिरांक layout_index_end = s;
+            पर्यंत (*s != '\0' && *s != ',') { s++; }
+            जर (मोजणी <= 0 || layout_index_end != s) {
                 log_err(ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                         "Invalid layout index \"%.*s\" for the RMLVO "
                         "component \"%.*s\"; discarding specifier.\n",
-                        (unsigned int) (s - layout_start), layout_start,
-                        (unsigned int) val.sval.len, val.sval.start);
+                        (अचिन्हित पूर्णांक) (s - layout_start), layout_start,
+                        (अचिन्हित पूर्णांक) val.sval.len, val.sval.start);
             }
         }
 
-        if (val.sval.len || mlvo != MLVO_OPTION) {
-            if (mlvo == MLVO_OPTION) {
+        जर (val.sval.len || mlvo != MLVO_OPTION) {
+            जर (mlvo == MLVO_OPTION) {
                 /* Check for previous entry */
-                struct matched_sval *prev;
+                संरचना matched_sval *prev;
                 darray_foreach(prev, arr) {
-                    if (svaleq(prev->sval, val.sval)) {
+                    जर (svaleq(prev->sval, val.sval)) {
                         /* Merge options */
-                        if (val.layouts ==
+                        जर (val.layouts ==
                             (xkb_layout_mask_t)XKB_OPTION_LAYOUT_MASK_GLOBAL) {
                             /* Global option overrides layout-specific ones */
                             prev->layouts = val.layouts;
-                        } else if (prev->layouts != (xkb_layout_mask_t)
+                        } अन्यथा जर (prev->layouts != (xkb_layout_mask_t)
                                    XKB_OPTION_LAYOUT_MASK_GLOBAL) {
                             /* Layout-specific option cannot override global */
                             prev->layouts |= val.layouts;
                         }
-                        goto next_value;
+                        जा next_मूल्य;
                     }
                 }
             }
             darray_append(arr, val);
         }
 
-next_value:
-        if (*s == '\0') break;
-        if (*s == ',') s++;
+next_मूल्य:
+        जर (*s == '\0') थांबा;
+        जर (*s == ',') s++;
     }
 
-    if (darray_empty(arr))
-        goto ensure_at_least_one_value;
+    जर (darray_empty(arr))
+        जा ensure_at_least_one_मूल्य;
 
-    return arr;
+    परत arr;
 }
 
-static struct matcher *
-matcher_new_from_rmlvo(const struct xkb_rmlvo_builder *rmlvo, const char **rules)
+स्थिर संरचना matcher *
+matcher_new_from_rmlvo(स्थिरांक संरचना xkb_rmlvo_builder *rmlvo, स्थिरांक अक्षर **rules)
 {
-    struct matcher *m = calloc(1, sizeof(*m));
-    if (!m)
-        return NULL;
+    संरचना matcher *m = सुस्मृति(1, आकार(*m));
+    जर (!m)
+        परत रिक्त;
 
     m->ctx = rmlvo->ctx;
 
     /* Sanitize */
-    struct xkb_rule_names names = {
+    संरचना xkb_rule_names names = {
         .rules = rmlvo->rules,
         .model = rmlvo->model,
         /* Initial values only used to detect missing entries */
-        .layout = (darray_empty(rmlvo->layouts)) ? NULL : "x",
-        .variant = (darray_empty(rmlvo->layouts)) ? NULL : "x",
-        .options = (darray_empty(rmlvo->options)) ? NULL : "x",
+        .layout = (darray_empty(rmlvo->layouts)) ? रिक्त : "x",
+        .variant = (darray_empty(rmlvo->layouts)) ? रिक्त : "x",
+        .options = (darray_empty(rmlvo->options)) ? रिक्त : "x",
     };
-    const enum RMLVO changed = xkb_context_sanitize_rule_names(rmlvo->ctx,
+    स्थिरांक गणना RMLVO changed = xkb_context_sanitize_rule_names(rmlvo->ctx,
                                                                &names);
 
     /* Initialize matcher with sanitized names, if relevant */
-    if (changed & RMLVO_RULES) {
+    जर (changed & RMLVO_RULES) {
         *rules = names.rules;
-    } else {
+    } अन्यथा {
         *rules = rmlvo->rules;
     }
 
-    if (changed & RMLVO_MODEL) {
+    जर (changed & RMLVO_MODEL) {
         m->rmlvo.model.sval.start = names.model;
-    } else {
+    } अन्यथा {
         m->rmlvo.model.sval.start = rmlvo->model;
     }
     m->rmlvo.model.sval.len = strlen_safe(rmlvo->model);
     m->rmlvo.model.layouts = (xkb_layout_mask_t)XKB_OPTION_LAYOUT_MASK_GLOBAL;
 
-    assert((changed & RMLVO_LAYOUT) || !(changed & RMLVO_VARIANT));
-    if (changed & RMLVO_LAYOUT) {
+    प्रतिज्ञा((changed & RMLVO_LAYOUT) || !(changed & RMLVO_VARIANT));
+    जर (changed & RMLVO_LAYOUT) {
         /* Layout and variant are tied together */
         m->rmlvo.layouts = split_comma_separated_mlvo(rmlvo->ctx, MLVO_LAYOUT,
                                                       names.layout);
         m->rmlvo.variants = split_comma_separated_mlvo(rmlvo->ctx, MLVO_VARIANT,
                                                        names.variant);
-        if (darray_size(m->rmlvo.layouts) > darray_size(m->rmlvo.variants)) {
+        जर (darray_size(m->rmlvo.layouts) > darray_size(m->rmlvo.variants)) {
             /* Do not warn if no variants was provided */
-            if (!isempty(names.variant))
+            जर (!isempty(names.variant))
                 log_warn(m->ctx, XKB_LOG_MESSAGE_NO_ID,
                          "More layouts than variants: \"%s\" vs. \"%s\".\n",
                          names.layout ? names.layout : "(none)",
                          names.variant ? names.variant : "(none)");
             darray_resize0(m->rmlvo.variants, darray_size(m->rmlvo.layouts));
-        } else if (darray_size(m->rmlvo.layouts) < darray_size(m->rmlvo.variants)) {
+        } अन्यथा जर (darray_size(m->rmlvo.layouts) < darray_size(m->rmlvo.variants)) {
             log_err(m->ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Less layouts than variants: \"%s\" vs. \"%s\".\n",
                     names.layout ? names.layout : "(none)",
@@ -525,10 +525,10 @@ matcher_new_from_rmlvo(const struct xkb_rmlvo_builder *rmlvo, const char **rules
             darray_resize(m->rmlvo.variants, darray_size(m->rmlvo.layouts));
             darray_shrink(m->rmlvo.variants);
         }
-    } else {
-        struct xkb_rmlvo_builder_layout *layout;
+    } अन्यथा {
+        संरचना xkb_rmlvo_builder_layout *layout;
         darray_foreach(layout, rmlvo->layouts) {
-            struct matched_sval val = {
+            संरचना matched_sval val = {
                 .sval = SVAL(layout->layout, strlen_safe(layout->layout)),
                 .layouts = (xkb_layout_mask_t)XKB_OPTION_LAYOUT_MASK_GLOBAL,
                 .matched = 0
@@ -540,13 +540,13 @@ matcher_new_from_rmlvo(const struct xkb_rmlvo_builder *rmlvo, const char **rules
         }
     }
 
-    if (changed & RMLVO_OPTIONS) {
+    जर (changed & RMLVO_OPTIONS) {
         m->rmlvo.options = split_comma_separated_mlvo(rmlvo->ctx, MLVO_OPTION,
                                                       names.options);
-    } else {
-        struct xkb_rmlvo_builder_option *option;
+    } अन्यथा {
+        संरचना xkb_rmlvo_builder_option *option;
         darray_foreach(option, rmlvo->options) {
-            struct matched_sval val = {
+            संरचना matched_sval val = {
                 .sval = SVAL(option->option, strlen_safe(option->option)),
                 .layouts = option->layouts,
                 .matched = 0
@@ -555,16 +555,16 @@ matcher_new_from_rmlvo(const struct xkb_rmlvo_builder *rmlvo, const char **rules
         }
     }
 
-    return m;
+    परत m;
 }
 
-static struct matcher *
-matcher_new_from_names(struct xkb_context *ctx,
-            const struct xkb_rule_names *rmlvo)
+स्थिर संरचना matcher *
+matcher_new_from_names(संरचना xkb_context *ctx,
+            स्थिरांक संरचना xkb_rule_names *rmlvo)
 {
-    struct matcher *m = calloc(1, sizeof(*m));
-    if (!m)
-        return NULL;
+    संरचना matcher *m = सुस्मृति(1, आकार(*m));
+    जर (!m)
+        परत रिक्त;
 
     m->ctx = ctx;
     m->rmlvo.model.sval.start = rmlvo->model;
@@ -574,15 +574,15 @@ matcher_new_from_names(struct xkb_context *ctx,
     m->rmlvo.variants = split_comma_separated_mlvo(ctx, MLVO_VARIANT, rmlvo->variant);
     m->rmlvo.options = split_comma_separated_mlvo(ctx, MLVO_OPTION, rmlvo->options);
 
-    if (darray_size(m->rmlvo.layouts) > darray_size(m->rmlvo.variants)) {
+    जर (darray_size(m->rmlvo.layouts) > darray_size(m->rmlvo.variants)) {
         /* Do not warn if no variants was provided */
-        if (!isempty(rmlvo->variant))
+        जर (!isempty(rmlvo->variant))
             log_warn(ctx, XKB_LOG_MESSAGE_NO_ID,
                      "More layouts than variants: \"%s\" vs. \"%s\".\n",
                      rmlvo->layout ? rmlvo->layout : "(none)",
                      rmlvo->variant ? rmlvo->variant : "(none)");
         darray_resize0(m->rmlvo.variants, darray_size(m->rmlvo.layouts));
-    } else if (darray_size(m->rmlvo.layouts) < darray_size(m->rmlvo.variants)) {
+    } अन्यथा जर (darray_size(m->rmlvo.layouts) < darray_size(m->rmlvo.variants)) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "Less layouts than variants: \"%s\" vs. \"%s\".\n",
                 rmlvo->layout ? rmlvo->layout : "(none)",
@@ -591,109 +591,109 @@ matcher_new_from_names(struct xkb_context *ctx,
         darray_shrink(m->rmlvo.variants);
     }
 
-    return m;
+    परत m;
 }
 
-static void
-matcher_free(struct matcher *m)
+स्थिर शून्य
+matcher_free(संरचना matcher *m)
 {
-    if (!m)
-        return;
+    जर (!m)
+        परत;
     darray_free(m->rmlvo.layouts);
     darray_free(m->rmlvo.variants);
     darray_free(m->rmlvo.options);
-    struct group *group;
+    संरचना group *group;
     darray_foreach(group, m->groups)
         darray_free(group->elements);
     darray_free(m->pending_kccgst.buffer);
     darray_free(m->pending_kccgst.slices);
-    for (kccgst_index_t i = 0; i < (kccgst_index_t) _KCCGST_NUM_ENTRIES; i++)
+    साठी (kccgst_index_t i = 0; i < (kccgst_index_t) KCCGST_अंक_ENTRIES; i++)
         darray_free(m->kccgst[i]);
     darray_free(m->groups);
-    free(m);
+    मुक्त(m);
 }
 
-static void
-matcher_group_start_new(struct matcher *m, struct sval name)
+स्थिर शून्य
+matcher_group_start_new(संरचना matcher *m, संरचना sval name)
 {
-    struct group group = { .name = name, .elements = darray_new() };
+    संरचना group group = { .name = name, .elements = darray_new() };
     darray_append(m->groups, group);
 }
 
-static void
-matcher_group_add_element(struct matcher *m, struct scanner *s,
-                          struct sval element)
+स्थिर शून्य
+matcher_group_add_element(संरचना matcher *m, संरचना scanner *s,
+                          संरचना sval element)
 {
     darray_append(darray_item(m->groups, darray_size(m->groups) - 1).elements,
                   element);
 }
 
-static bool
-read_rules_file(struct xkb_context *ctx,
-                struct matcher *matcher,
-                unsigned int include_depth,
-                FILE *file,
-                const char *path);
+स्थिर bool
+read_rules_file(संरचना xkb_context *ctx,
+                संरचना matcher *matcher,
+                अचिन्हित पूर्णांक include_depth,
+                खाता *file,
+                स्थिरांक अक्षर *path);
 
-static void
-matcher_include(struct matcher *m, struct scanner *parent_scanner,
-                unsigned int include_depth,
-                struct sval inc)
+स्थिर शून्य
+matcher_include(संरचना matcher *m, संरचना scanner *parent_scanner,
+                अचिन्हित पूर्णांक include_depth,
+                संरचना sval inc)
 {
-    if (include_depth >= MAX_INCLUDE_DEPTH) {
+    जर (include_depth >= MAX_INCLUDE_DEPTH) {
         scanner_err(parent_scanner, XKB_LOG_MESSAGE_NO_ID,
                     "maximum include depth (%u) exceeded; "
                     "maybe there is an include loop?",
                     MAX_INCLUDE_DEPTH);
-        return;
+        परत;
     }
 
-    const char *stmt_file = inc.start;
-    size_t stmt_file_len = inc.len;
+    स्थिरांक अक्षर *stmt_file = inc.start;
+    माप_प्रकार stmt_file_len = inc.len;
 
     /* Process %-expansion, if any */
-    char buf[PATH_MAX] = {0};
-    const ssize_t expanded = expand_path(m->ctx, parent_scanner->file_name,
+    अक्षर buf[PATH_MAX] = {0};
+    स्थिरांक ssize_t expanded = expand_path(m->ctx, parent_scanner->file_name,
                                          stmt_file, stmt_file_len,
                                          FILE_TYPE_RULES,
-                                         buf, sizeof(buf));
-    if (expanded < 0) {
+                                         buf, आकार(buf));
+    जर (expanded < 0) {
         /* Error */
-        return;
-    } else if (expanded > 0) {
+        परत;
+    } अन्यथा जर (expanded > 0) {
         /* %-expanded */
         stmt_file = buf;
-        stmt_file_len = (size_t) expanded;
-        assert(stmt_file[stmt_file_len] == '\0');
+        stmt_file_len = (माप_प्रकार) expanded;
+        प्रतिज्ञा(stmt_file[stmt_file_len] == '\0');
     }
 
     /* Lookup the first candidate */
-    FILE* file;
-    unsigned int offset = 0;
-    const bool absolute_path = is_absolute_path(stmt_file);
-    if (absolute_path) {
+    खाता* file;
+    अचिन्हित पूर्णांक offset = 0;
+    स्थिरांक bool absolute_path = is_absolute_path(stmt_file);
+    जर (absolute_path) {
         /* Absolute path: no need for lookup in XKB paths */
-        if (!expanded) {
+        जर (!expanded) {
             /* No %expansion: ensure it’s NULL-terminated */
-            if (stmt_file_len < sizeof(buf)) {
-                memcpy(buf, stmt_file, stmt_file_len);
+            जर (stmt_file_len < आकार(buf)) {
+                स_नकल(buf, stmt_file, stmt_file_len);
                 buf[stmt_file_len] = '\0';
                 stmt_file = buf;
-            } else {
+            } अन्यथा {
                 log_err(m->ctx, XKB_ERROR_INVALID_PATH,
                         "Path is too long: %zu > %zu, got raw path: %.*s\n",
-                        stmt_file_len, sizeof(buf),
-                        (unsigned int) stmt_file_len, stmt_file);
-                return;
+                        stmt_file_len, आकार(buf),
+                        (अचिन्हित पूर्णांक) stmt_file_len, stmt_file);
+                परत;
             }
-        } else {
+        } अन्यथा {
             /* %-expansion is always NULL-terminated */
-            assert(stmt_file[stmt_file_len] == '\0');
+            प्रतिज्ञा(stmt_file[stmt_file_len] == '\0');
         }
-        file = fopen(stmt_file, "rb");
-    } else {
+        file = ख_खोलो(stmt_file, "rb");
+    } अन्यथा {
         /* Relative path: lookup the first XKB path */
-        if (unlikely(expanded)) {
+        जर (unlikely(expanded)) {
             /*
              * Relative path after expansion
              *
@@ -706,97 +706,97 @@ matcher_include(struct matcher *m, struct scanner *parent_scanner,
              * - this is an edge case;
              * we simply make the lookup fail.
              */
-            file = NULL;
-        } else {
+            file = रिक्त;
+        } अन्यथा {
             file = FindFileInXkbPath(m->ctx, parent_scanner->file_name,
                                      stmt_file, stmt_file_len, FILE_TYPE_RULES,
-                                     buf, sizeof(buf), &offset, true);
+                                     buf, आकार(buf), &offset, true);
         }
     }
 
-    while (file) {
-        assert(strlen_safe(buf) < sizeof(buf));
+    पर्यंत (file) {
+        प्रतिज्ञा(strlen_safe(buf) < आकार(buf));
         bool ret = read_rules_file(m->ctx, m, include_depth + 1, file, buf);
-        fclose(file);
-        if (ret)
-            return;
+        ख_बंद(file);
+        जर (ret)
+            परत;
         /* Failed to parse rules or get all the components */
         log_err(m->ctx, XKB_LOG_MESSAGE_NO_ID,
                 "No components returned from included XKB rules \"%s\"\n",
                 buf);
 
-        if (absolute_path) {
+        जर (absolute_path) {
             /* There is no point to search further if the path is absolute */
-            break;
+            थांबा;
         }
 
         /* Try next XKB path */
         offset++;
         file = FindFileInXkbPath(m->ctx, parent_scanner->file_name,
                                  stmt_file, stmt_file_len, FILE_TYPE_RULES,
-                                 buf, sizeof(buf), &offset, true);
+                                 buf, आकार(buf), &offset, true);
     }
 
     log_err(m->ctx, XKB_LOG_MESSAGE_NO_ID,
             "Failed to open included XKB rules \"%.*s\"\n",
-            (unsigned int) stmt_file_len, stmt_file);
+            (अचिन्हित पूर्णांक) stmt_file_len, stmt_file);
 }
 
-static void
-matcher_mapping_start_new(struct matcher *m)
+स्थिर शून्य
+matcher_mapping_start_new(संरचना matcher *m)
 {
-    for (mlvo_index_t i = 0; i < (mlvo_index_t) _MLVO_NUM_ENTRIES; i++)
-        m->mapping.mlvo_at_pos[i] = _MLVO_NUM_ENTRIES;
-    for (kccgst_index_t i = 0; i < (kccgst_index_t) _KCCGST_NUM_ENTRIES; i++)
-        m->mapping.kccgst_at_pos[i] = _KCCGST_NUM_ENTRIES;
+    साठी (mlvo_index_t i = 0; i < (mlvo_index_t) MLVO_अंक_ENTRIES; i++)
+        m->mapping.mlvo_at_pos[i] = MLVO_अंक_ENTRIES;
+    साठी (kccgst_index_t i = 0; i < (kccgst_index_t) KCCGST_अंक_ENTRIES; i++)
+        m->mapping.kccgst_at_pos[i] = KCCGST_अंक_ENTRIES;
     m->mapping.has_multiple_layouts = false;
     m->mapping.layout_idx = m->mapping.variant_idx = XKB_LAYOUT_INVALID;
-    m->mapping.num_mlvo = m->mapping.num_kccgst = 0;
+    m->mapping.अंक_mlvo = m->mapping.अंक_kccgst = 0;
     m->mapping.defined_mlvo_mask = 0;
     m->mapping.defined_kccgst_mask = 0;
     m->mapping.active = true;
 }
 
 /** Caller must check prefix `[` and initialize `out` to XKB_LAYOUT_INVALID */
-static int
-parse_layout_int_index_tail(const char *s, size_t max_len,
+स्थिर पूर्णांक
+parse_layout_int_index_tail(स्थिरांक अक्षर *s, माप_प्रकार max_len,
                             xkb_layout_index_t *out)
 {
-    if (max_len < 3)
-        return -1;
+    जर (max_len < 3)
+        परत -1;
     uint32_t val = 0;
-    const int count = parse_dec_to_uint32_t(&s[1], max_len - 2, &val);
-    if (count <= 0 || s[1 + count] != ']' || val == 0 || val > XKB_MAX_GROUPS)
-        return -1;
+    स्थिरांक पूर्णांक मोजणी = parse_dec_to_uint32_t(&s[1], max_len - 2, &val);
+    जर (मोजणी <= 0 || s[1 + मोजणी] != ']' || val == 0 || val > XKB_MAX_GROUPS)
+        परत -1;
     /* To zero-based index. */
     *out = val - 1;
-    return count + 2; /* == length "[index]" */
+    परत मोजणी + 2; /* == length "[index]" */
 }
 
 /* Parse Kccgst layout index:
  * "[%i]" or "[n]", where "n" is a decimal number */
-static int
-extract_layout_index(const char *s, size_t max_len, xkb_layout_index_t *out)
+स्थिर पूर्णांक
+extract_layout_index(स्थिरांक अक्षर *s, माप_प्रकार max_len, xkb_layout_index_t *out)
 {
     /* This function is pretty stupid, but works for now. */
     *out = XKB_LAYOUT_INVALID;
-    if (max_len < 3 || s[0] != '[')
-        return -1;
-    if (s[2] == ']' && s[1] >= '1' && s[1] <= '9') {
+    जर (max_len < 3 || s[0] != '[')
+        परत -1;
+    जर (s[2] == ']' && s[1] >= '1' && s[1] <= '9') {
         /* Small numeric index */
         *out = (xkb_layout_index_t)(s[1] - '1');
-        return 3;
+        परत 3;
     }
-    if (max_len > 3 && s[1] == '%' && s[2] == 'i' && s[3] == ']') {
+    जर (max_len > 3 && s[1] == '%' && s[2] == 'i' && s[3] == ']') {
         /* Special index: %i */
-        return 4; /* == length "[%i]" */
+        परत 4; /* == length "[%i]" */
     }
     /* Fallback: any numeric index (unlikely) */
-    return parse_layout_int_index_tail(s, max_len, out);
+    परत parse_layout_int_index_tail(s, max_len, out);
 }
 
 /* Special layout indices */
-enum layout_index_ranges {
+गणना layout_index_ranges {
     LAYOUT_INDEX_SINGLE = XKB_LAYOUT_INVALID - 5,
     LAYOUT_INDEX_FIRST,
     LAYOUT_INDEX_LATER,
@@ -820,30 +820,30 @@ static_assert((xkb_layout_index_t) LAYOUT_INDEX_SINGLE <
               "Special indices must respect certain order");
 
 /* Parse index of layout/variant in MLVO mapping */
-static bool
-extract_mapping_layout_index(const char *s, size_t max_len,
+स्थिर bool
+extract_mapping_layout_index(स्थिरांक अक्षर *s, माप_प्रकार max_len,
                              xkb_layout_index_t *out)
 {
     /* Check for minimal `[` + index + `]` */
-    if (max_len < 3 || s[0] != '[') {
+    जर (max_len < 3 || s[0] != '[') {
         *out = XKB_LAYOUT_INVALID;
-        return false;
+        परत false;
     }
 
     /* Small numeric index */
-    if (max_len == 3 && s[2] == ']' && s[1] >= '1' && s[1] <= '9') {
+    जर (max_len == 3 && s[2] == ']' && s[1] >= '1' && s[1] <= '9') {
         *out = (xkb_layout_index_t)(s[1] - '1');
-        return true;
+        परत true;
     }
 
     /* Named indices ranges */
-    static const struct {
-        const char* name;
-        size_t size;
-        xkb_layout_index_t value;
+    स्थिर स्थिरांक संरचना {
+        स्थिरांक अक्षर* name;
+        माप_प्रकार size;
+        xkb_layout_index_t मूल्य;
     } names[] = {
-        #define INDEX_RANGE(tail, value) \
-            { (tail), sizeof(tail), (xkb_layout_index_t)(value) }
+        #define INDEX_RANGE(tail, मूल्य) \
+            { (tail), आकार(tail), (xkb_layout_index_t)(मूल्य) }
         INDEX_RANGE("single]",   LAYOUT_INDEX_SINGLE),
         INDEX_RANGE("first]",    LAYOUT_INDEX_FIRST),
         INDEX_RANGE("later]",    LAYOUT_INDEX_LATER),
@@ -852,125 +852,125 @@ extract_mapping_layout_index(const char *s, size_t max_len,
         #undef INDEX_RANGE
     };
 
-    for (size_t k = 0; k < ARRAY_SIZE(names); k++) {
-        if (max_len == names[k].size &&
-            memcmp(&s[1], names[k].name, names[k].size - 1) == 0) {
-            *out = names[k].value;
-            return true;
+    साठी (माप_प्रकार k = 0; k < ARRAY_SIZE(names); k++) {
+        जर (max_len == names[k].size &&
+            स_भेद(&s[1], names[k].name, names[k].size - 1) == 0) {
+            *out = names[k].मूल्य;
+            परत true;
         }
     }
 
     /* Fallback: any numeric index (unlikely) */
     *out = XKB_LAYOUT_INVALID;
-    const int count = parse_layout_int_index_tail(s, max_len, out);
-    return count > 0 && (size_t)count == max_len;
+    स्थिरांक पूर्णांक मोजणी = parse_layout_int_index_tail(s, max_len, out);
+    परत मोजणी > 0 && (माप_प्रकार)मोजणी == max_len;
 }
 
-static inline bool
-is_mlvo_mask_defined(struct matcher *m, enum rules_mlvo mlvo)
+स्थिर ओळीत bool
+is_mlvo_mask_defined(संरचना matcher *m, गणना rules_mlvo mlvo)
 {
-    return m->mapping.defined_mlvo_mask & (1u << mlvo);
+    परत m->mapping.defined_mlvo_mask & (1u << mlvo);
 }
 
-static void
-matcher_mapping_set_mlvo(struct matcher *m, struct scanner *s,
-                         struct sval ident)
+स्थिर शून्य
+matcher_mapping_set_mlvo(संरचना matcher *m, संरचना scanner *s,
+                         संरचना sval ident)
 {
-    enum rules_mlvo mlvo;
-    struct sval mlvo_sval;
+    गणना rules_mlvo mlvo;
+    संरचना sval mlvo_sval;
 
-    for (mlvo = 0; mlvo < _MLVO_NUM_ENTRIES; mlvo++) {
+    साठी (mlvo = 0; mlvo < MLVO_अंक_ENTRIES; mlvo++) {
         mlvo_sval = rules_mlvo_svals[mlvo];
 
-        if (svaleq_prefix(mlvo_sval, ident))
-            break;
+        जर (svaleq_prefix(mlvo_sval, ident))
+            थांबा;
     }
 
     /* Not found. */
-    if (mlvo >= _MLVO_NUM_ENTRIES) {
+    जर (mlvo >= MLVO_अंक_ENTRIES) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid mapping: \"%.*s\" is not a valid value here; "
                     "ignoring rule set",
-                    (unsigned int) ident.len, ident.start);
+                    (अचिन्हित पूर्णांक) ident.len, ident.start);
         m->mapping.active = false;
-        return;
+        परत;
     }
 
-    if (is_mlvo_mask_defined(m, mlvo)) {
+    जर (is_mlvo_mask_defined(m, mlvo)) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid mapping: \"%.*s\" appears twice on the same line; "
                     "ignoring rule set",
-                    (unsigned int) mlvo_sval.len, mlvo_sval.start);
+                    (अचिन्हित पूर्णांक) mlvo_sval.len, mlvo_sval.start);
         m->mapping.active = false;
-        return;
+        परत;
     }
 
     /* If there are leftovers still, it must be an index. */
-    if (mlvo_sval.len < ident.len) {
+    जर (mlvo_sval.len < ident.len) {
         xkb_layout_index_t idx;
-        if (!extract_mapping_layout_index(ident.start + mlvo_sval.len,
+        जर (!extract_mapping_layout_index(ident.start + mlvo_sval.len,
                                           ident.len - mlvo_sval.len, &idx)) {
             scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                         "invalid mapping: \"%.*s\" may only be followed by a "
                         "valid group index; ignoring rule set",
-                        (unsigned int) mlvo_sval.len, mlvo_sval.start);
+                        (अचिन्हित पूर्णांक) mlvo_sval.len, mlvo_sval.start);
             m->mapping.active = false;
-            return;
+            परत;
         }
 
-        if (mlvo == MLVO_LAYOUT) {
+        जर (mlvo == MLVO_LAYOUT) {
             m->mapping.layout_idx = idx;
         }
-        else if (mlvo == MLVO_VARIANT) {
+        अन्यथा जर (mlvo == MLVO_VARIANT) {
             m->mapping.variant_idx = idx;
         }
-        else {
+        अन्यथा {
             scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                         "invalid mapping: \"%.*s\" cannot be followed by a group "
                         "index; ignoring rule set",
-                        (unsigned int) mlvo_sval.len, mlvo_sval.start);
+                        (अचिन्हित पूर्णांक) mlvo_sval.len, mlvo_sval.start);
             m->mapping.active = false;
-            return;
+            परत;
         }
-    } else if (mlvo == MLVO_LAYOUT) {
+    } अन्यथा जर (mlvo == MLVO_LAYOUT) {
         m->mapping.layout_idx = (xkb_layout_index_t) LAYOUT_INDEX_SINGLE;
-    } else if (mlvo == MLVO_VARIANT) {
+    } अन्यथा जर (mlvo == MLVO_VARIANT) {
         m->mapping.variant_idx = (xkb_layout_index_t) LAYOUT_INDEX_SINGLE;
     }
 
     /* Check that if both layout and variant are defined, then they must have
      * the same index */
-    if (((mlvo == MLVO_LAYOUT && is_mlvo_mask_defined(m, MLVO_VARIANT)) ||
+    जर (((mlvo == MLVO_LAYOUT && is_mlvo_mask_defined(m, MLVO_VARIANT)) ||
          (mlvo == MLVO_VARIANT && is_mlvo_mask_defined(m, MLVO_LAYOUT))) &&
         m->mapping.layout_idx != m->mapping.variant_idx) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid mapping: \"layout\" index must be the same as the "
                     "\"variant\" index");
         m->mapping.active = false;
-        return;
+        परत;
     }
 
-    m->mapping.mlvo_at_pos[m->mapping.num_mlvo] = mlvo;
+    m->mapping.mlvo_at_pos[m->mapping.अंक_mlvo] = mlvo;
     m->mapping.defined_mlvo_mask |= (mlvo_mask_t) 1u << mlvo;
-    m->mapping.num_mlvo++;
+    m->mapping.अंक_mlvo++;
 }
 
-static void
-matcher_mapping_set_layout_bounds(struct matcher *m)
+स्थिर शून्य
+matcher_mapping_set_layout_bounds(संरचना matcher *m)
 {
     /* Handle case where one of the index is XKB_LAYOUT_INVALID */
     xkb_layout_index_t idx = MIN(m->mapping.layout_idx, m->mapping.variant_idx);
-    switch (idx) {
-        case XKB_LAYOUT_INVALID:
+    निवड (idx) {
+        स्थिती XKB_LAYOUT_INVALID:
             /* No layout nor variant */
-            assert(!is_mlvo_mask_defined(m, MLVO_LAYOUT) &&
+            प्रतिज्ञा(!is_mlvo_mask_defined(m, MLVO_LAYOUT) &&
                    !is_mlvo_mask_defined(m, MLVO_VARIANT));
             m->mapping.has_layout_idx_range = false;
             m->mapping.layout_idx_min = XKB_LAYOUT_INVALID;
             m->mapping.layout_idx_max = m->mapping.layout_idx_min;
             m->mapping.layouts_candidates_mask = 0x1; /* active = true */
-            break;
-        case LAYOUT_INDEX_LATER:
+            थांबा;
+        स्थिती LAYOUT_INDEX_LATER:
             m->mapping.has_layout_idx_range = true;
             m->mapping.layout_idx_min = 1;
             m->mapping.layout_idx_max = MIN(XKB_MAX_GROUPS,
@@ -979,9 +979,9 @@ matcher_mapping_set_layout_bounds(struct matcher *m)
                 /* All but the first layout */
                 ((UINT64_C(1) << m->mapping.layout_idx_max) - UINT64_C(1)) &
                 ~UINT64_C(1);
-            break;
-        case LAYOUT_INDEX_MULTIPLE:
-        case LAYOUT_INDEX_ANY:
+            थांबा;
+        स्थिती LAYOUT_INDEX_MULTIPLE:
+        स्थिती LAYOUT_INDEX_ANY:
             m->mapping.has_layout_idx_range = true;
             m->mapping.layout_idx_min = 0;
             m->mapping.layout_idx_max = MIN(XKB_MAX_GROUPS,
@@ -989,13 +989,13 @@ matcher_mapping_set_layout_bounds(struct matcher *m)
             m->mapping.layouts_candidates_mask = (xkb_layout_mask_t)
                 /* All layouts */
                 (UINT64_C(1) << m->mapping.layout_idx_max) - UINT64_C(1);
-            break;
-        case LAYOUT_INDEX_SINGLE:
-        case LAYOUT_INDEX_FIRST:
+            थांबा;
+        स्थिती LAYOUT_INDEX_SINGLE:
+        स्थिती LAYOUT_INDEX_FIRST:
             /* No index or first index */
             idx = 0;
             /* fallthrough */
-        default:
+        पूर्वनिर्धारित:
             /* Mere layout index */
             m->mapping.has_layout_idx_range = false;
             m->mapping.layout_idx_min = idx;
@@ -1008,58 +1008,58 @@ matcher_mapping_set_layout_bounds(struct matcher *m)
     );
 }
 
-static void
-matcher_mapping_set_kccgst(struct matcher *m, struct scanner *s, struct sval ident)
+स्थिर शून्य
+matcher_mapping_set_kccgst(संरचना matcher *m, संरचना scanner *s, संरचना sval ident)
 {
-    enum rules_kccgst kccgst;
-    struct sval kccgst_sval;
+    गणना rules_kccgst kccgst;
+    संरचना sval kccgst_sval;
 
-    for (kccgst = 0; kccgst < _KCCGST_NUM_ENTRIES; kccgst++) {
+    साठी (kccgst = 0; kccgst < KCCGST_अंक_ENTRIES; kccgst++) {
         kccgst_sval = rules_kccgst_svals[kccgst];
 
-        if (svaleq(rules_kccgst_svals[kccgst], ident))
-            break;
+        जर (svaleq(rules_kccgst_svals[kccgst], ident))
+            थांबा;
     }
 
     /* Not found. */
-    if (kccgst >= _KCCGST_NUM_ENTRIES) {
+    जर (kccgst >= KCCGST_अंक_ENTRIES) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid mapping: \"%.*s\" is not a valid value here; "
                     "ignoring rule set",
-                    (unsigned int) ident.len, ident.start);
+                    (अचिन्हित पूर्णांक) ident.len, ident.start);
         m->mapping.active = false;
-        return;
+        परत;
     }
 
-    if (m->mapping.defined_kccgst_mask & (1u << kccgst)) {
+    जर (m->mapping.defined_kccgst_mask & (1u << kccgst)) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid mapping: \"%.*s\" appears twice on the same line; "
                     "ignoring rule set",
-                    (unsigned int) kccgst_sval.len, kccgst_sval.start);
+                    (अचिन्हित पूर्णांक) kccgst_sval.len, kccgst_sval.start);
         m->mapping.active = false;
-        return;
+        परत;
     }
 
-    m->mapping.kccgst_at_pos[m->mapping.num_kccgst] = kccgst;
+    m->mapping.kccgst_at_pos[m->mapping.अंक_kccgst] = kccgst;
     m->mapping.defined_kccgst_mask |= (kccgst_mask_t) 1u << kccgst;
-    m->mapping.num_kccgst++;
+    m->mapping.अंक_kccgst++;
 }
 
-static bool
-matcher_mapping_verify(struct matcher *m, struct scanner *s)
+स्थिर bool
+matcher_mapping_verify(संरचना matcher *m, संरचना scanner *s)
 {
-    if (m->mapping.num_mlvo == 0) {
+    जर (m->mapping.अंक_mlvo == 0) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid mapping: must have at least one value on the left "
                     "hand side; ignoring rule set");
-        goto skip;
+        जा skip;
     }
 
-    if (m->mapping.num_kccgst == 0) {
+    जर (m->mapping.अंक_kccgst == 0) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid mapping: must have at least one value on the right "
                     "hand side; ignoring rule set");
-        goto skip;
+        जा skip;
     }
 
     /*
@@ -1067,398 +1067,398 @@ matcher_mapping_verify(struct matcher *m, struct scanner *s)
      * See the "Notes" section in the overview above.
      */
 
-    if (is_mlvo_mask_defined(m, MLVO_LAYOUT)) {
-        assert(m->mapping.layout_idx != XKB_LAYOUT_INVALID);
-        switch (m->mapping.layout_idx) {
-            case LAYOUT_INDEX_SINGLE:
+    जर (is_mlvo_mask_defined(m, MLVO_LAYOUT)) {
+        प्रतिज्ञा(m->mapping.layout_idx != XKB_LAYOUT_INVALID);
+        निवड (m->mapping.layout_idx) {
+            स्थिती LAYOUT_INDEX_SINGLE:
                 /* Layout rule without index matches when
                  * exactly 1 layout is specified */
-                if (darray_size(m->rmlvo.layouts) > 1)
-                    goto skip;
-                break;
-            case LAYOUT_INDEX_MULTIPLE:
-            case LAYOUT_INDEX_LATER:
+                जर (darray_size(m->rmlvo.layouts) > 1)
+                    जा skip;
+                थांबा;
+            स्थिती LAYOUT_INDEX_MULTIPLE:
+            स्थिती LAYOUT_INDEX_LATER:
                 /* Layout rule matches when at least 2 layouts are specified */
-                if (darray_size(m->rmlvo.layouts) < 2)
-                    goto skip;
-                break;
-            case LAYOUT_INDEX_ANY:
-            case LAYOUT_INDEX_FIRST:
+                जर (darray_size(m->rmlvo.layouts) < 2)
+                    जा skip;
+                थांबा;
+            स्थिती LAYOUT_INDEX_ANY:
+            स्थिती LAYOUT_INDEX_FIRST:
                 /* No restrictions */
-                break;
-            default:
+                थांबा;
+            पूर्वनिर्धारित:
                 /* Layout rule with index matches when at least 2 layouts are
                  * specified. Index must be in valid range. */
-                if (darray_size(m->rmlvo.layouts) < 2 ||
+                जर (darray_size(m->rmlvo.layouts) < 2 ||
                     m->mapping.layout_idx >= darray_size(m->rmlvo.layouts))
-                    goto skip;
+                    जा skip;
         }
     }
 
-    if (is_mlvo_mask_defined(m, MLVO_VARIANT)) {
-        assert(m->mapping.variant_idx != XKB_LAYOUT_INVALID);
-        switch (m->mapping.variant_idx) {
-            case LAYOUT_INDEX_SINGLE:
+    जर (is_mlvo_mask_defined(m, MLVO_VARIANT)) {
+        प्रतिज्ञा(m->mapping.variant_idx != XKB_LAYOUT_INVALID);
+        निवड (m->mapping.variant_idx) {
+            स्थिती LAYOUT_INDEX_SINGLE:
                 /* Variant rule without index matches
                  * when exactly 1 variant is specified */
-                if (darray_size(m->rmlvo.variants) > 1)
-                    goto skip;
-                break;
-            case LAYOUT_INDEX_ANY:
-            case LAYOUT_INDEX_LATER:
-            case LAYOUT_INDEX_FIRST:
+                जर (darray_size(m->rmlvo.variants) > 1)
+                    जा skip;
+                थांबा;
+            स्थिती LAYOUT_INDEX_ANY:
+            स्थिती LAYOUT_INDEX_LATER:
+            स्थिती LAYOUT_INDEX_FIRST:
                 /* No restriction */
-                break;
-            default:
+                थांबा;
+            पूर्वनिर्धारित:
                 /* Variant rule with index matches when at least 2 variants are
                  * specified. Index must be in valid range. */
-                if (darray_size(m->rmlvo.variants) < 2 ||
+                जर (darray_size(m->rmlvo.variants) < 2 ||
                     m->mapping.variant_idx >= darray_size(m->rmlvo.variants))
-                    goto skip;
+                    जा skip;
         }
     }
 
-    return true;
+    परत true;
 
 skip:
     m->mapping.active = false;
-    return false;
+    परत false;
 }
 
-static void
-matcher_rule_start_new(struct matcher *m)
+स्थिर शून्य
+matcher_rule_start_new(संरचना matcher *m)
 {
-    memset(&m->rule, 0, sizeof(m->rule));
+    स_रखो(&m->rule, 0, आकार(m->rule));
     m->rule.skip = !m->mapping.active;
 }
 
-static void
-matcher_rule_set_mlvo_common(struct matcher *m, struct scanner *s,
-                             struct sval ident,
-                             enum mlvo_match_type match_type)
+स्थिर शून्य
+matcher_rule_set_mlvo_common(संरचना matcher *m, संरचना scanner *s,
+                             संरचना sval ident,
+                             गणना mlvo_match_type match_type)
 {
-    if (m->rule.num_mlvo_values >= m->mapping.num_mlvo) {
+    जर (m->rule.अंक_mlvo_मूल्ये >= m->mapping.अंक_mlvo) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid rule: has more values than the mapping line; "
                     "ignoring rule");
         m->rule.skip = true;
-        return;
+        परत;
     }
-    m->rule.match_type_at_pos[m->rule.num_mlvo_values] = match_type;
-    m->rule.mlvo_value_at_pos[m->rule.num_mlvo_values] = ident;
-    m->rule.num_mlvo_values++;
+    m->rule.match_type_at_pos[m->rule.अंक_mlvo_मूल्ये] = match_type;
+    m->rule.mlvo_मूल्य_at_pos[m->rule.अंक_mlvo_मूल्ये] = ident;
+    m->rule.अंक_mlvo_मूल्ये++;
 }
 
-static void
-matcher_rule_set_mlvo_wildcard(struct matcher *m, struct scanner *s,
-                               enum mlvo_match_type match_type)
+स्थिर शून्य
+matcher_rule_set_mlvo_wildcard(संरचना matcher *m, संरचना scanner *s,
+                               गणना mlvo_match_type match_type)
 {
-    struct sval dummy = SVAL(NULL, 0);
+    संरचना sval dummy = SVAL(रिक्त, 0);
     matcher_rule_set_mlvo_common(m, s, dummy, match_type);
 }
 
-static void
-matcher_rule_set_mlvo_group(struct matcher *m, struct scanner *s,
-                            struct sval ident)
+स्थिर शून्य
+matcher_rule_set_mlvo_group(संरचना matcher *m, संरचना scanner *s,
+                            संरचना sval ident)
 {
     matcher_rule_set_mlvo_common(m, s, ident, MLVO_MATCH_GROUP);
 }
 
-static void
-matcher_rule_set_mlvo(struct matcher *m, struct scanner *s,
-                      struct sval ident)
+स्थिर शून्य
+matcher_rule_set_mlvo(संरचना matcher *m, संरचना scanner *s,
+                      संरचना sval ident)
 {
     matcher_rule_set_mlvo_common(m, s, ident, MLVO_MATCH_NORMAL);
 }
 
-static void
-matcher_rule_set_kccgst(struct matcher *m, struct scanner *s,
-                        struct sval ident)
+स्थिर शून्य
+matcher_rule_set_kccgst(संरचना matcher *m, संरचना scanner *s,
+                        संरचना sval ident)
 {
-    if (m->rule.num_kccgst_values >= m->mapping.num_kccgst) {
+    जर (m->rule.अंक_kccgst_मूल्ये >= m->mapping.अंक_kccgst) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid rule: has more values than the mapping line; "
                     "ignoring rule");
         m->rule.skip = true;
-        return;
+        परत;
     }
-    m->rule.kccgst_value_at_pos[m->rule.num_kccgst_values] = ident;
-    m->rule.num_kccgst_values++;
+    m->rule.kccgst_मूल्य_at_pos[m->rule.अंक_kccgst_मूल्ये] = ident;
+    m->rule.अंक_kccgst_मूल्ये++;
 }
 
-static bool
-match_group(struct matcher *m, struct sval group_name, struct sval to)
+स्थिर bool
+match_group(संरचना matcher *m, संरचना sval group_name, संरचना sval to)
 {
-    struct group *group = NULL;
-    struct sval *element;
+    संरचना group *group = रिक्त;
+    संरचना sval *element;
     bool found = false;
 
     darray_foreach(group, m->groups) {
-        if (svaleq(group->name, group_name)) {
+        जर (svaleq(group->name, group_name)) {
             found = true;
-            break;
+            थांबा;
         }
     }
 
-    if (!found) {
+    जर (!found) {
         /*
          * rules/evdev intentionally uses some undeclared group names
          * in rules (e.g. commented group definitions which may be
          * uncommented if needed). So we continue silently.
          */
-        return false;
+        परत false;
     }
 
     darray_foreach(element, group->elements)
-        if (svaleq(to, *element))
-            return true;
+        जर (svaleq(to, *element))
+            परत true;
 
-    return false;
+    परत false;
 }
 
-static bool
-match_value(struct matcher *m, const struct sval val, const struct sval to,
-            enum mlvo_match_type match_type,
-            enum wildcard_match_type wildcard_type)
+स्थिर bool
+match_मूल्य(संरचना matcher *m, स्थिरांक संरचना sval val, स्थिरांक संरचना sval to,
+            गणना mlvo_match_type match_type,
+            गणना wildcard_match_type wildcard_type)
 {
-    switch (match_type) {
-        case MLVO_MATCH_WILDCARD_LEGACY:
+    निवड (match_type) {
+        स्थिती MLVO_MATCH_WILDCARD_LEGACY:
             /* Match empty values only if explicitly required */
-            return wildcard_type == WILDCARD_MATCH_ALL || !!to.len;
-        case MLVO_MATCH_WILDCARD_NONE:
-            return !to.len;
-        case MLVO_MATCH_WILDCARD_SOME:
-            return !!to.len;
-        case MLVO_MATCH_WILDCARD_ANY:
+            परत wildcard_type == WILDCARD_MATCH_ALL || !!to.len;
+        स्थिती MLVO_MATCH_WILDCARD_NONE:
+            परत !to.len;
+        स्थिती MLVO_MATCH_WILDCARD_SOME:
+            परत !!to.len;
+        स्थिती MLVO_MATCH_WILDCARD_ANY:
             /* Contrary to the legacy ‘*’, this wild card *always* matches */
-            return true;
-        case MLVO_MATCH_GROUP:
-            return match_group(m, val, to);
-        default:
-            assert(match_type == MLVO_MATCH_NORMAL);
-            return svaleq(val, to);
+            परत true;
+        स्थिती MLVO_MATCH_GROUP:
+            परत match_group(m, val, to);
+        पूर्वनिर्धारित:
+            प्रतिज्ञा(match_type == MLVO_MATCH_NORMAL);
+            परत svaleq(val, to);
     }
 }
 
-static bool
-match_value_and_mark(struct matcher *m, const struct sval val,
-                     struct matched_sval *to, enum mlvo_match_type match_type,
-                     enum wildcard_match_type wildcard_type,
+स्थिर bool
+match_मूल्य_and_mark(संरचना matcher *m, स्थिरांक संरचना sval val,
+                     संरचना matched_sval *to, गणना mlvo_match_type match_type,
+                     गणना wildcard_match_type wildcard_type,
                      xkb_layout_mask_t layouts)
 {
-    bool matched = match_value(m, val, to->sval, match_type, wildcard_type);
-    if (matched)
+    bool matched = match_मूल्य(m, val, to->sval, match_type, wildcard_type);
+    जर (matched)
         to->matched |= layouts;
-    return matched;
+    परत matched;
 }
 
 /*
  * This function performs %-expansion on @value (see overview above),
  * and appends the result to @expanded.
  */
-static bool
-expand_rmlvo_in_kccgst_value(struct matcher *m, struct scanner *s,
-                             struct sval value, xkb_layout_index_t layout_idx,
-                             darray_char *expanded, size_t *i)
+स्थिर bool
+expand_rmlvo_in_kccgst_मूल्य(संरचना matcher *m, संरचना scanner *s,
+                             संरचना sval मूल्य, xkb_layout_index_t layout_idx,
+                             darray_char *expanded, माप_प्रकार *i)
 {
-    const char *str = value.start;
+    स्थिरांक अक्षर *str = मूल्य.start;
 
     /*
      * Some ugly hand-lexing here, but going through the scanner is more
      * trouble than it's worth, and the format is ugly on its own merit.
      */
-    enum rules_mlvo mlv;
+    गणना rules_mlvo mlv;
     xkb_layout_index_t idx;
-    char pfx, sfx;
-    struct matched_sval *expanded_value;
+    अक्षर pfx, sfx;
+    संरचना matched_sval *expanded_मूल्य;
 
     /* %i not as layout/variant index "%l[%i]" but as qualifier ":%i" */
-    if (str[*i] == 'i' &&
-        (*i + 1 == value.len || is_merge_mode_prefix(str[*i + 1])))
+    जर (str[*i] == 'i' &&
+        (*i + 1 == मूल्य.len || is_merge_mode_prefix(str[*i + 1])))
     {
-        if (layout_idx == XKB_LAYOUT_INVALID) {
+        जर (layout_idx == XKB_LAYOUT_INVALID) {
             scanner_err(
                 s, XKB_ERROR_RULES_INVALID_LAYOUT_INDEX_PERCENT_EXPANSION,
                 "Invalid %%i in %%-expansion: there is no corresponding "
                 "layout nor variant in the MLVO fields of the rules header."
             );
-            goto error;
+            जा error;
         }
         (*i)++;
-        char index_str[MAX_LAYOUT_INDEX_STR_LENGTH + 1];
-        const int count = snprintf(index_str, sizeof(index_str), "%"PRIu32,
+        अक्षर index_str[MAX_LAYOUT_INDEX_STR_LENGTH + 1];
+        स्थिरांक पूर्णांक मोजणी = snprintf(index_str, आकार(index_str), "%"PRIu32,
                                    layout_idx + 1);
-        assert(count > 0); /* See MAX_LAYOUT_INDEX_STR_LENGTH */
-        darray_appends_nullterminate(*expanded, index_str, (darray_size_t)count);
-        return true;
+        प्रतिज्ञा(मोजणी > 0); /* See MAX_LAYOUT_INDEX_STR_LENGTH */
+        darray_appends_nullterminate(*expanded, index_str, (darray_size_t)मोजणी);
+        परत true;
     }
 
     pfx = sfx = 0;
 
     /* Check for prefix. */
-    if (str[*i] == '(' ||
+    जर (str[*i] == '(' ||
         is_merge_mode_prefix(str[*i]) ||
         str[*i] == '_' || str[*i] == '-') {
         pfx = str[*i];
-        if (str[*i] == '(') sfx = ')';
-        if (++(*i) >= value.len) goto error;
+        जर (str[*i] == '(') sfx = ')';
+        जर (++(*i) >= मूल्य.len) जा error;
     }
 
     /* Mandatory model/layout/variant specifier. */
-    switch (str[(*i)++]) {
-    case 'm': mlv = MLVO_MODEL; break;
-    case 'l': mlv = MLVO_LAYOUT; break;
-    case 'v': mlv = MLVO_VARIANT; break;
-    default: goto error;
+    निवड (str[(*i)++]) {
+    स्थिती 'm': mlv = MLVO_MODEL; थांबा;
+    स्थिती 'l': mlv = MLVO_LAYOUT; थांबा;
+    स्थिती 'v': mlv = MLVO_VARIANT; थांबा;
+    पूर्वनिर्धारित: जा error;
     }
 
     /* Check for index. */
     idx = XKB_LAYOUT_INVALID;
     bool variable_index = false;
-    if (*i < value.len && str[*i] == '[') {
-        if (mlv != MLVO_LAYOUT && mlv != MLVO_VARIANT) {
+    जर (*i < मूल्य.len && str[*i] == '[') {
+        जर (mlv != MLVO_LAYOUT && mlv != MLVO_VARIANT) {
             scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                         "invalid index in %%-expansion; "
                         "may only index layout or variant");
-            goto error;
+            जा error;
         }
 
-        int consumed = extract_layout_index(str + (*i), value.len - (*i), &idx);
-        if (consumed <= 0) goto error;
-        if (idx == XKB_LAYOUT_INVALID) {
+        पूर्णांक consumed = extract_layout_index(str + (*i), मूल्य.len - (*i), &idx);
+        जर (consumed <= 0) जा error;
+        जर (idx == XKB_LAYOUT_INVALID) {
             /* %i encountered */
-            assert(layout_idx != XKB_LAYOUT_INVALID);
+            प्रतिज्ञा(layout_idx != XKB_LAYOUT_INVALID);
             idx = layout_idx;
             variable_index = true;
         }
-        *i += (size_t)consumed;
+        *i += (माप_प्रकार)consumed;
     }
 
     /* Check for suffix, if there supposed to be one. */
-    if (sfx != 0) {
-        if (*i >= value.len) goto error;
-        if (str[(*i)++] != sfx) goto error;
+    जर (sfx != 0) {
+        जर (*i >= मूल्य.len) जा error;
+        जर (str[(*i)++] != sfx) जा error;
     }
 
     /* Get the expanded value. */
-    expanded_value = NULL;
+    expanded_मूल्य = रिक्त;
 
-    if (mlv == MLVO_LAYOUT) {
-        if (idx == XKB_LAYOUT_INVALID) {
+    जर (mlv == MLVO_LAYOUT) {
+        जर (idx == XKB_LAYOUT_INVALID) {
             /* No index provided: match only if single layout */
-            if (darray_size(m->rmlvo.layouts) == 1)
-                expanded_value = &darray_item(m->rmlvo.layouts, 0);
+            जर (darray_size(m->rmlvo.layouts) == 1)
+                expanded_मूल्य = &darray_item(m->rmlvo.layouts, 0);
         /* Some index provided: expand only if it is %i or
          * if there are multiple layouts */
-        } else if (idx < darray_size(m->rmlvo.layouts) &&
+        } अन्यथा जर (idx < darray_size(m->rmlvo.layouts) &&
                    (variable_index || darray_size(m->rmlvo.layouts) > 1)) {
-                expanded_value = &darray_item(m->rmlvo.layouts, idx);
+                expanded_मूल्य = &darray_item(m->rmlvo.layouts, idx);
         }
     }
-    else if (mlv == MLVO_VARIANT) {
-        if (idx == XKB_LAYOUT_INVALID) {
+    अन्यथा जर (mlv == MLVO_VARIANT) {
+        जर (idx == XKB_LAYOUT_INVALID) {
             /* No index provided: match only if single variant */
-            if (darray_size(m->rmlvo.variants) == 1)
-                expanded_value = &darray_item(m->rmlvo.variants, 0);
+            जर (darray_size(m->rmlvo.variants) == 1)
+                expanded_मूल्य = &darray_item(m->rmlvo.variants, 0);
         /* Some index provided: expand only if it is %i or
          * if there are multiple variants */
-        } else if (idx < darray_size(m->rmlvo.variants) &&
+        } अन्यथा जर (idx < darray_size(m->rmlvo.variants) &&
                    (variable_index || darray_size(m->rmlvo.variants) > 1)) {
-                expanded_value = &darray_item(m->rmlvo.variants, idx);
+                expanded_मूल्य = &darray_item(m->rmlvo.variants, idx);
         }
     }
-    else if (mlv == MLVO_MODEL) {
-        expanded_value = &m->rmlvo.model;
+    अन्यथा जर (mlv == MLVO_MODEL) {
+        expanded_मूल्य = &m->rmlvo.model;
     }
 
     /* If we didn't get one, skip silently. */
-    if (!expanded_value || expanded_value->sval.len == 0) {
-        return true;
+    जर (!expanded_मूल्य || expanded_मूल्य->sval.len == 0) {
+        परत true;
     }
 
-    if (pfx != 0)
+    जर (pfx != 0)
         darray_appends_nullterminate(*expanded, &pfx, 1);
     darray_appends_nullterminate(*expanded,
-                                 expanded_value->sval.start,
-                                 (darray_size_t) expanded_value->sval.len);
-    if (sfx != 0)
+                                 expanded_मूल्य->sval.start,
+                                 (darray_size_t) expanded_मूल्य->sval.len);
+    जर (sfx != 0)
         darray_appends_nullterminate(*expanded, &sfx, 1);
 
-    if (mlv != MLVO_LAYOUT && mlv != MLVO_VARIANT) {
+    जर (mlv != MLVO_LAYOUT && mlv != MLVO_VARIANT) {
         static_assert(XKB_MAX_GROUPS == 32 &&
                       XKB_MAX_GROUPS < XKB_LAYOUT_INVALID,
                       "Invalid shift");
-        const xkb_layout_mask_t layouts = (idx == XKB_LAYOUT_INVALID)
+        स्थिरांक xkb_layout_mask_t layouts = (idx == XKB_LAYOUT_INVALID)
             ? 0x1 /* default to first layout */
             : (UINT32_C(1) << idx);
-        expanded_value->matched |= layouts;
-    } else {
-        expanded_value->matched |= (xkb_layout_mask_t)GLOBAL_MATCHED_LAYOUTS;
+        expanded_मूल्य->matched |= layouts;
+    } अन्यथा {
+        expanded_मूल्य->matched |= (xkb_layout_mask_t)GLOBAL_MATCHED_LAYOUTS;
     }
 
-    return true;
+    परत true;
 
 error:
     scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                 "invalid %%-expansion in value; not used");
-    return false;
+    परत false;
 }
 
 /*
  * This function performs :all replacement on @value (see overview above),
  * and appends the result to @expanded.
  */
-static void
-expand_qualifier_in_kccgst_value(
-    struct matcher *m, struct scanner *s,
-    struct sval value, darray_char *expanded,
+स्थिर शून्य
+expand_qualifier_in_kccgst_मूल्य(
+    संरचना matcher *m, संरचना scanner *s,
+    संरचना sval मूल्य, darray_char *expanded,
     bool has_layout_idx_range, bool has_separator,
-    darray_size_t prefix_idx, size_t *i)
+    darray_size_t prefix_idx, माप_प्रकार *i)
 {
-    const char *str = value.start;
+    स्थिरांक अक्षर *str = मूल्य.start;
 
     /* “all” followed by nothing or by a layout separator */
-    if (*i + 2 < value.len &&
+    जर (*i + 2 < मूल्य.len &&
         str[*i] == 'a' && str[*i + 1] == 'l' && str[*i + 2] == 'l' &&
-        (*i + 3 == value.len || is_merge_mode_prefix(str[*i + 3]))) {
-        if (has_layout_idx_range)
+        (*i + 3 == मूल्य.len || is_merge_mode_prefix(str[*i + 3]))) {
+        जर (has_layout_idx_range)
             scanner_vrb(s, XKB_LOG_VERBOSITY_DETAILED, XKB_LOG_MESSAGE_NO_ID,
                         "Using :all qualifier with indices range "
                         "is not recommended.");
         /* Add at least one layout */
         darray_appends_nullterminate(*expanded, "1", 1);
         /* Check for more layouts (slow path) */
-        if (darray_size(m->rmlvo.layouts) > 1) {
-            char layout_index[MAX_LAYOUT_INDEX_STR_LENGTH + 1];
-            const darray_size_t prefix_length =
+        जर (darray_size(m->rmlvo.layouts) > 1) {
+            अक्षर layout_index[MAX_LAYOUT_INDEX_STR_LENGTH + 1];
+            स्थिरांक darray_size_t prefix_length =
                 darray_size(*expanded) - prefix_idx - 1;
-            for (xkb_layout_index_t l = 1;
+            साठी (xkb_layout_index_t l = 1;
                  l < MIN(XKB_MAX_GROUPS, darray_size(m->rmlvo.layouts));
                  l++)
             {
-                if (!has_separator)
+                जर (!has_separator)
                     darray_append(*expanded, MERGE_DEFAULT_PREFIX);
                 /* Append prefix */
                 darray_appends_nullterminate(*expanded,
                                              &darray_item(*expanded, prefix_idx),
                                              prefix_length);
                 /* Append index */
-                const int count = snprintf(layout_index, sizeof(layout_index),
+                स्थिरांक पूर्णांक मोजणी = snprintf(layout_index, आकार(layout_index),
                                            "%"PRIu32, l + 1);
-                assert(count > 0); /* See MAX_LAYOUT_INDEX_STR_LENGTH */
+                प्रतिज्ञा(मोजणी > 0); /* See MAX_LAYOUT_INDEX_STR_LENGTH */
                 darray_appends_nullterminate(*expanded, layout_index,
-                                             (darray_size_t)count);
+                                             (darray_size_t)मोजणी);
             }
         }
         *i += 3;
     }
 }
 
-static inline void
+स्थिर ओळीत शून्य
 #ifdef _MSC_VER
-concat_kccgst(darray_char *into, darray_size_t size, _In_reads_(size) const char* from)
-#else
-concat_kccgst(darray_char *into, darray_size_t size, const char from[static size])
+concat_kccgst(darray_char *into, darray_size_t size, _In_reads_(size) स्थिरांक अक्षर* from)
+#अन्यथा
+concat_kccgst(darray_char *into, darray_size_t size, स्थिरांक अक्षर from[स्थिर size])
 #endif
 {
     /*
@@ -1467,14 +1467,14 @@ concat_kccgst(darray_char *into, darray_size_t size, const char from[static size
      * Appending  bar to +foo ->  bar+foo
      * Appending +bar to +foo -> +foo+bar
      */
-    const bool from_plus = is_merge_mode_prefix(from[0]);
-    if (from_plus || darray_empty(*into)) {
+    स्थिरांक bool from_plus = is_merge_mode_prefix(from[0]);
+    जर (from_plus || darray_empty(*into)) {
         darray_appends_nullterminate(*into, from, size);
-    } else {
-        const char ch =
-            (char) (darray_empty(*into) ? '\0' : darray_item(*into, 0));
-        const bool into_plus = is_merge_mode_prefix(ch);
-        if (into_plus)
+    } अन्यथा {
+        स्थिरांक अक्षर ch =
+            (अक्षर) (darray_empty(*into) ? '\0' : darray_item(*into, 0));
+        स्थिरांक bool into_plus = is_merge_mode_prefix(ch);
+        जर (into_plus)
             darray_prepends_nullterminate(*into, from, size);
     }
 }
@@ -1483,105 +1483,105 @@ concat_kccgst(darray_char *into, darray_size_t size, const char from[static size
  * This function performs %-expansion and :all-expansion on @value
  * (see overview above), and appends the result to @to.
  */
-static bool
-append_expanded_kccgst_value(struct matcher *m, struct scanner *s,
-                             bool merge, darray_char *to, struct sval value,
+स्थिर bool
+append_expanded_kccgst_मूल्य(संरचना matcher *m, संरचना scanner *s,
+                             bool merge, darray_char *to, संरचना sval मूल्य,
                              xkb_layout_index_t layout_idx)
 {
-    const char *str = value.start;
+    स्थिरांक अक्षर *str = मूल्य.start;
     darray_char expanded = darray_new();
     darray_size_t last_item_idx = 0;
     bool has_separator = false;
 
-    for (size_t i = 0; i < value.len; ) {
+    साठी (माप_प्रकार i = 0; i < मूल्य.len; ) {
         /* Check if that's a start of an expansion or qualifier */
-        switch (str[i]) {
+        निवड (str[i]) {
             /* Qualifier */
-            case ':':
+            स्थिती ':':
                 darray_appends_nullterminate(expanded, &str[i++], 1);
-                expand_qualifier_in_kccgst_value(m, s, value, &expanded,
+                expand_qualifier_in_kccgst_मूल्य(m, s, मूल्य, &expanded,
                                                  m->mapping.has_layout_idx_range,
                                                  has_separator,
                                                  last_item_idx, &i);
-                break;
+                थांबा;
             /* Expansion */
-            case '%':
+            स्थिती '%':
                 i++;
-                if (i >= value.len ||
-                    !expand_rmlvo_in_kccgst_value(m, s, value, layout_idx,
+                जर (i >= मूल्य.len ||
+                    !expand_rmlvo_in_kccgst_मूल्य(m, s, मूल्य, layout_idx,
                                                   &expanded, &i))
-                        goto error;
-                break;
+                        जा error;
+                थांबा;
             /* New item */
-            case MERGE_OVERRIDE_PREFIX:
-            case MERGE_AUGMENT_PREFIX:
-            case MERGE_REPLACE_PREFIX:
+            स्थिती MERGE_OVERRIDE_PREFIX:
+            स्थिती MERGE_AUGMENT_PREFIX:
+            स्थिती MERGE_REPLACE_PREFIX:
                 darray_appends_nullterminate(expanded, &str[i++], 1);
                 last_item_idx = darray_size(expanded) - 1;
                 has_separator = true;
-                break;
+                थांबा;
             /* Just a normal character. */
-            default:
+            पूर्वनिर्धारित:
                 darray_appends_nullterminate(expanded, &str[i++], 1);
         }
     }
 
     /* See note: “Layout index ranges and merging KcCGST values” */
-    if (merge) {
-        if (!darray_empty(expanded))
-            concat_kccgst(to, darray_size(expanded), darray_items(expanded));
-    } else {
+    जर (merge) {
+        जर (!darray_empty(expanded))
+            concat_kccgst(to, darray_size(expanded), darray_वस्तुसंच(expanded));
+    } अन्यथा {
         darray_concat(*to, expanded);
     }
     darray_free(expanded);
-    return true;
+    परत true;
 
 error:
     darray_free(expanded);
-    return false;
+    परत false;
 }
 
-static bool
-matcher_append_pending_kccgst(struct matcher *m)
+स्थिर bool
+matcher_append_pending_kccgst(संरचना matcher *m)
 {
-    if (!m->mapping.has_multiple_layouts)
-        return true;
+    जर (!m->mapping.has_multiple_layouts)
+        परत true;
     /*
      * Handle pending KcCGST values
      * See note: “Layout index ranges and merging KcCGST values”
      */
-    for (kccgst_index_t i = 0; i < m->mapping.num_kccgst; i++) {
-        const enum rules_kccgst kccgst = m->mapping.kccgst_at_pos[i];
+    साठी (kccgst_index_t i = 0; i < m->mapping.अंक_kccgst; i++) {
+        स्थिरांक गणना rules_kccgst kccgst = m->mapping.kccgst_at_pos[i];
         /* For each relevant layout, append the relevant KcCGST values to
          * the output. */
-        for (xkb_layout_index_t layout = m->mapping.layout_idx_min;
+        साठी (xkb_layout_index_t layout = m->mapping.layout_idx_min;
              layout < m->mapping.layout_idx_max;
              layout++) {
             /* There may be multiple values to add if the rule set involved
              * options. Process them sequentially. */
-            register const struct kccgst_buffer* const buf = &m->pending_kccgst;
-            size_t offset = 0;
-            for (darray_size_t k = 0; k < darray_size(buf->slices); k++) {
-                register const struct kccgst_buffer_slice * const slice =
+            नोंदणी स्थिरांक संरचना kccgst_buffer* स्थिरांक buf = &m->pending_kccgst;
+            माप_प्रकार offset = 0;
+            साठी (darray_size_t k = 0; k < darray_size(buf->slices); k++) {
+                नोंदणी स्थिरांक संरचना kccgst_buffer_slice * स्थिरांक slice =
                     &darray_item(buf->slices, k);
-                if (slice->kccgst == kccgst && slice->layout == layout &&
+                जर (slice->kccgst == kccgst && slice->layout == layout &&
                     slice->length)
                     concat_kccgst(&m->kccgst[kccgst], slice->length,
-                                  darray_items(buf->buffer) + offset);
+                                  darray_वस्तुसंच(buf->buffer) + offset);
                 offset += slice->length;
             }
         }
     }
     /* Ensure we won’t come here before the next relevant rule set */
     m->mapping.has_multiple_layouts = false;
-    return true;
+    परत true;
 }
 
-static void
-matcher_rule_verify(struct matcher *m, struct scanner *s)
+स्थिर शून्य
+matcher_rule_verify(संरचना matcher *m, संरचना scanner *s)
 {
-    if (m->rule.num_mlvo_values != m->mapping.num_mlvo ||
-        m->rule.num_kccgst_values != m->mapping.num_kccgst) {
+    जर (m->rule.अंक_mlvo_मूल्ये != m->mapping.अंक_mlvo ||
+        m->rule.अंक_kccgst_मूल्ये != m->mapping.अंक_kccgst) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid rule: must have same number of values "
                     "as mapping line; ignoring rule");
@@ -1618,12 +1618,12 @@ matcher_rule_verify(struct matcher *m, struct scanner *s)
  *
  * `model` input is a single value.
  */
-static bool
-matcher_rule_match_model(struct matcher *m, const struct sval value,
-                         enum mlvo_match_type match_type)
+स्थिर bool
+matcher_rule_match_model(संरचना matcher *m, स्थिरांक संरचना sval मूल्य,
+                         गणना mlvo_match_type match_type)
 {
-    return match_value_and_mark(
-        m, value, &m->rmlvo.model, match_type, WILDCARD_MATCH_ALL,
+    परत match_मूल्य_and_mark(
+        m, मूल्य, &m->rmlvo.model, match_type, WILDCARD_MATCH_ALL,
         /* layout-independent */
         (xkb_layout_mask_t)GLOBAL_MATCHED_LAYOUTS
     );
@@ -1668,13 +1668,13 @@ matcher_rule_match_model(struct matcher *m, const struct sval value,
  * | `option`   | list of values (not layout-indexed) | many-to-many            |
  *
  */
-static bool
-matcher_rule_match_option(struct matcher *m, const struct sval value,
-                          enum mlvo_match_type match_type,
+स्थिर bool
+matcher_rule_match_option(संरचना matcher *m, स्थिरांक संरचना sval मूल्य,
+                          गणना mlvo_match_type match_type,
                           xkb_layout_mask_t *candidates)
 {
     /* There is always at least one value */
-    assert(!darray_empty(m->rmlvo.options));
+    प्रतिज्ञा(!darray_empty(m->rmlvo.options));
 
     /* Remaining layout indices to match if MLVO has a layout/variant field */
     xkb_layout_mask_t unmatched =
@@ -1683,9 +1683,9 @@ matcher_rule_match_option(struct matcher *m, const struct sval value,
             : 0;
 
     bool matched = false;
-    struct matched_sval *option;
+    संरचना matched_sval *option;
     darray_foreach(option, m->rmlvo.options) {
-        const xkb_layout_mask_t matchable = option->layouts
+        स्थिरांक xkb_layout_mask_t matchable = option->layouts
             /*
              * Layout-specific option; may match only if:
              * - there is a layout or variant field, and
@@ -1694,19 +1694,19 @@ matcher_rule_match_option(struct matcher *m, const struct sval value,
             ? (unmatched & option->layouts)
             /* Layout-generic option: no restriction */
             : (xkb_layout_mask_t)GLOBAL_MATCHED_LAYOUTS;
-        if (matchable && match_value_and_mark(m, value, option, match_type,
+        जर (matchable && match_मूल्य_and_mark(m, मूल्य, option, match_type,
                                               WILDCARD_MATCH_ALL, matchable)) {
             matched = true;
             unmatched &= ~matchable;
-            if (!unmatched)
-                break;
+            जर (!unmatched)
+                थांबा;
         }
     }
-    if (unmatched) {
+    जर (unmatched) {
         /* Remove unmatched layout indices */
         *candidates &= ~unmatched;
     }
-    return matched;
+    परत matched;
 }
 
 /**
@@ -1723,37 +1723,37 @@ matcher_rule_match_option(struct matcher *m, const struct sval value,
  * - An index that matches remains a candidate. Evaluation stops as soon as no
  *   candidates remain, since nothing left can satisfy the rule.
  */
-static bool
-matcher_rule_match_layout_or_variant(struct matcher *m,
-                                     darray_matched_sval *input,
-                                     const struct sval value,
-                                     enum mlvo_match_type match_type,
+स्थिर bool
+matcher_rule_match_layout_or_variant(संरचना matcher *m,
+                                     darray_matched_sval *आदान,
+                                     स्थिरांक संरचना sval मूल्य,
+                                     गणना mlvo_match_type match_type,
                                      xkb_layout_mask_t *candidates)
 {
     /* There is always at least one value */
-    assert(!darray_empty(*input));
+    प्रतिज्ञा(!darray_empty(*आदान));
 
     bool matched = false;
     /* Loop over the layout index range */
-    for (xkb_layout_index_t idx = m->mapping.layout_idx_min;
+    साठी (xkb_layout_index_t idx = m->mapping.layout_idx_min;
          idx < m->mapping.layout_idx_max && *candidates;
          idx++)
     {
         /* Process only if layout index is enabled */
-        const xkb_layout_mask_t layout = (UINT32_C(1) << idx);
-        if (layout & *candidates) {
-            struct matched_sval *to = &darray_item(*input, idx);
-            if (match_value_and_mark(m, value, to, match_type,
+        स्थिरांक xkb_layout_mask_t layout = (UINT32_C(1) << idx);
+        जर (layout & *candidates) {
+            संरचना matched_sval *to = &darray_item(*आदान, idx);
+            जर (match_मूल्य_and_mark(m, मूल्य, to, match_type,
                                      WILDCARD_MATCH_NONEMPTY, layout)) {
                 /* Matched, keep index */
                 matched = true;
-            } else {
+            } अन्यथा {
                 /* Not matched, remove index */
                 *candidates &= ~layout;
             }
         }
     }
-    return matched;
+    परत matched;
 }
 
 /**
@@ -1793,60 +1793,60 @@ matcher_rule_match_layout_or_variant(struct matcher *m,
  * The only exception is rules containing an `option` field, which do not
  * terminate the set so that additional matching options may contribute.
  */
-static void
-matcher_rule_apply_if_matches(struct matcher *m, struct scanner *s)
+स्थिर शून्य
+matcher_rule_apply_if_matches(संरचना matcher *m, संरचना scanner *s)
 {
     /* Initial candidates (used if MLVO has a layout or variant field) */
     xkb_layout_mask_t candidate_layouts = m->mapping.layouts_candidates_mask;
 
     /* Loop over MLVO pattern components */
-    for (mlvo_index_t i = 0; i < m->mapping.num_mlvo; i++) {
-        const enum rules_mlvo mlvo = m->mapping.mlvo_at_pos[i];
-        const struct sval value = m->rule.mlvo_value_at_pos[i];
-        const enum mlvo_match_type match_type = m->rule.match_type_at_pos[i];
+    साठी (mlvo_index_t i = 0; i < m->mapping.अंक_mlvo; i++) {
+        स्थिरांक गणना rules_mlvo mlvo = m->mapping.mlvo_at_pos[i];
+        स्थिरांक संरचना sval मूल्य = m->rule.mlvo_मूल्य_at_pos[i];
+        स्थिरांक गणना mlvo_match_type match_type = m->rule.match_type_at_pos[i];
         bool matched = false;
 
-        switch (mlvo) {
-        case MLVO_MODEL:
-            matched = matcher_rule_match_model(m, value, match_type);
-            break;
-        case MLVO_LAYOUT:
+        निवड (mlvo) {
+        स्थिती MLVO_MODEL:
+            matched = matcher_rule_match_model(m, मूल्य, match_type);
+            थांबा;
+        स्थिती MLVO_LAYOUT:
             matched = matcher_rule_match_layout_or_variant(
-                m, &m->rmlvo.layouts, value, match_type, &candidate_layouts
+                m, &m->rmlvo.layouts, मूल्य, match_type, &candidate_layouts
             );
-            break;
-        case MLVO_VARIANT:
+            थांबा;
+        स्थिती MLVO_VARIANT:
             matched = matcher_rule_match_layout_or_variant(
-                m, &m->rmlvo.variants, value, match_type, &candidate_layouts
+                m, &m->rmlvo.variants, मूल्य, match_type, &candidate_layouts
             );
-            break;
-        case MLVO_OPTION:
+            थांबा;
+        स्थिती MLVO_OPTION:
             matched = matcher_rule_match_option(
-                m, value, match_type, &candidate_layouts
+                m, मूल्य, match_type, &candidate_layouts
             );
-            break;
-        default: {
+            थांबा;
+        पूर्वनिर्धारित: {
             static_assert(MLVO_OPTION == 3 &&
-                          MLVO_OPTION == _MLVO_NUM_ENTRIES - 1,
+                          MLVO_OPTION == MLVO_अंक_ENTRIES - 1,
                           "Unexpected MLVO field");
-            assert(!"Unreachable");
+            प्रतिज्ञा(!"Unreachable");
         }
         }
 
-        if (!matched)
-            return;
+        जर (!matched)
+            परत;
     }
 
-    if (m->mapping.has_multiple_layouts) {
+    जर (m->mapping.has_multiple_layouts) {
         /* Special index: loop over the index range */
-        for (xkb_layout_index_t idx = m->mapping.layout_idx_min;
+        साठी (xkb_layout_index_t idx = m->mapping.layout_idx_min;
              idx < m->mapping.layout_idx_max;
              idx++)
         {
-            if (candidate_layouts & (UINT32_C(1) << idx)) {
-                for (kccgst_index_t i = 0; i < m->mapping.num_kccgst; i++) {
-                    const enum rules_kccgst kccgst = m->mapping.kccgst_at_pos[i];
-                    const struct sval value = m->rule.kccgst_value_at_pos[i];
+            जर (candidate_layouts & (UINT32_C(1) << idx)) {
+                साठी (kccgst_index_t i = 0; i < m->mapping.अंक_kccgst; i++) {
+                    स्थिरांक गणना rules_kccgst kccgst = m->mapping.kccgst_at_pos[i];
+                    स्थिरांक संरचना sval मूल्य = m->rule.kccgst_मूल्य_at_pos[i];
                     /*
                      * [NOTE] Layout index ranges and merging KcCGST values
                      *
@@ -1884,14 +1884,14 @@ matcher_rule_apply_if_matches(struct matcher *m, struct scanner *s)
                      * - the relative order of the options for layout C follows
                      *   the order within the rule set, not the order of RMLVO.
                      */
-                    struct kccgst_buffer * const buf = &m->pending_kccgst;
-                    const darray_size_t prev_buffer_length =
+                    संरचना kccgst_buffer * स्थिरांक buf = &m->pending_kccgst;
+                    स्थिरांक darray_size_t prev_buffer_length =
                         darray_size(buf->buffer);
-                    append_expanded_kccgst_value(m, s, false, &buf->buffer,
-                                                 value, idx);
-                    const uint32_t length = (uint32_t) (darray_size(buf->buffer)
+                    append_expanded_kccgst_मूल्य(m, s, false, &buf->buffer,
+                                                 मूल्य, idx);
+                    स्थिरांक uint32_t length = (uint32_t) (darray_size(buf->buffer)
                                           - prev_buffer_length);
-                    const struct kccgst_buffer_slice slice = {
+                    स्थिरांक संरचना kccgst_buffer_slice slice = {
                         .length = length,
                         .kccgst = kccgst,
                         .layout = idx
@@ -1900,12 +1900,12 @@ matcher_rule_apply_if_matches(struct matcher *m, struct scanner *s)
                 }
             }
         }
-    } else {
+    } अन्यथा {
         /* Numeric index or no index */
-        for (kccgst_index_t i = 0; i < m->mapping.num_kccgst; i++) {
-            enum rules_kccgst kccgst = m->mapping.kccgst_at_pos[i];
-            struct sval value = m->rule.kccgst_value_at_pos[i];
-            append_expanded_kccgst_value(m, s, true, &m->kccgst[kccgst], value,
+        साठी (kccgst_index_t i = 0; i < m->mapping.अंक_kccgst; i++) {
+            गणना rules_kccgst kccgst = m->mapping.kccgst_at_pos[i];
+            संरचना sval मूल्य = m->rule.kccgst_मूल्य_at_pos[i];
+            append_expanded_kccgst_मूल्य(m, s, true, &m->kccgst[kccgst], मूल्य,
                                          m->mapping.layout_idx_min);
         }
     }
@@ -1915,234 +1915,234 @@ matcher_rule_apply_if_matches(struct matcher *m, struct scanner *s)
      * skipped. However, rule sets matching against options may contain
      * several legitimate rules, so they are processed entirely.
      */
-    if (!(is_mlvo_mask_defined(m, MLVO_OPTION))) {
+    जर (!(is_mlvo_mask_defined(m, MLVO_OPTION))) {
         m->mapping.layouts_candidates_mask &= ~candidate_layouts;
     }
 }
 
-static enum rules_token
-gettok(struct matcher *m, struct scanner *s)
+स्थिर गणना rules_token
+gettok(संरचना matcher *m, संरचना scanner *s)
 {
-    return lex(s, &m->val);
+    परत lex(s, &m->val);
 }
 
 // NOLINTBEGIN(readability-trivial-switch)
-static bool
-matcher_match(struct matcher *m, struct scanner *s,
-              unsigned int include_depth,
-              const char *string, size_t len,
-              const char *file_name)
+स्थिर bool
+matcher_match(संरचना matcher *m, संरचना scanner *s,
+              अचिन्हित पूर्णांक include_depth,
+              स्थिरांक अक्षर *string, माप_प्रकार len,
+              स्थिरांक अक्षर *file_name)
 {
-    enum rules_token tok;
+    गणना rules_token tok;
 
-    if (!m)
-        return false;
+    जर (!m)
+        परत false;
 
 initial:
-    switch (tok = gettok(m, s)) {
-    case TOK_BANG:
-        goto bang;
-    case TOK_END_OF_LINE:
-        goto initial;
-    case TOK_END_OF_FILE:
-        goto finish;
-    default:
-        goto unexpected;
+    निवड (tok = gettok(m, s)) {
+    स्थिती TOK_BANG:
+        जा bang;
+    स्थिती TOK_END_OF_ओळ:
+        जा initial;
+    स्थिती TOK_END_OF_FILE:
+        जा finish;
+    पूर्वनिर्धारित:
+        जा unexpected;
     }
 
 bang:
-    switch (tok = gettok(m, s)) {
-    case TOK_GROUP_NAME:
+    निवड (tok = gettok(m, s)) {
+    स्थिती TOK_GROUP_NAME:
         matcher_group_start_new(m, m->val.string);
-        goto group_name;
-    case TOK_INCLUDE:
-        goto include_statement;
-    case TOK_IDENTIFIER:
+        जा group_name;
+    स्थिती TOK_INCLUDE:
+        जा include_statement;
+    स्थिती TOK_IDENTIFIER:
         matcher_mapping_start_new(m);
         matcher_mapping_set_mlvo(m, s, m->val.string);
-        goto mapping_mlvo;
-    default:
-        goto unexpected;
+        जा mapping_mlvo;
+    पूर्वनिर्धारित:
+        जा unexpected;
     }
 
 group_name:
-    switch (tok = gettok(m, s)) {
-    case TOK_EQUALS:
-        goto group_element;
-    default:
-        goto unexpected;
+    निवड (tok = gettok(m, s)) {
+    स्थिती TOK_EQUALS:
+        जा group_element;
+    पूर्वनिर्धारित:
+        जा unexpected;
     }
 
 group_element:
-    switch (tok = gettok(m, s)) {
-    case TOK_IDENTIFIER:
+    निवड (tok = gettok(m, s)) {
+    स्थिती TOK_IDENTIFIER:
         matcher_group_add_element(m, s, m->val.string);
-        goto group_element;
-    case TOK_END_OF_LINE:
-        goto initial;
-    default:
-        goto unexpected;
+        जा group_element;
+    स्थिती TOK_END_OF_ओळ:
+        जा initial;
+    पूर्वनिर्धारित:
+        जा unexpected;
     }
 
 include_statement:
-    switch (tok = gettok(m, s)) {
-    case TOK_IDENTIFIER:
+    निवड (tok = gettok(m, s)) {
+    स्थिती TOK_IDENTIFIER:
         matcher_include(m, s, include_depth, m->val.string);
-        goto include_statement_end;
-    default:
-        goto unexpected;
+        जा include_statement_end;
+    पूर्वनिर्धारित:
+        जा unexpected;
     }
 
 include_statement_end:
-    switch (tok = gettok(m, s)) {
-    case TOK_END_OF_LINE:
-        goto initial;
-    default:
-        goto unexpected;
+    निवड (tok = gettok(m, s)) {
+    स्थिती TOK_END_OF_ओळ:
+        जा initial;
+    पूर्वनिर्धारित:
+        जा unexpected;
     }
 
 mapping_mlvo:
-    switch (tok = gettok(m, s)) {
-    case TOK_IDENTIFIER:
-        if (m->mapping.active)
+    निवड (tok = gettok(m, s)) {
+    स्थिती TOK_IDENTIFIER:
+        जर (m->mapping.active)
             matcher_mapping_set_mlvo(m, s, m->val.string);
-        goto mapping_mlvo;
-    case TOK_EQUALS:
-        goto mapping_kccgst;
-    default:
-        goto unexpected;
+        जा mapping_mlvo;
+    स्थिती TOK_EQUALS:
+        जा mapping_kccgst;
+    पूर्वनिर्धारित:
+        जा unexpected;
     }
 
 mapping_kccgst:
-    switch (tok = gettok(m, s)) {
-    case TOK_IDENTIFIER:
-        if (m->mapping.active)
+    निवड (tok = gettok(m, s)) {
+    स्थिती TOK_IDENTIFIER:
+        जर (m->mapping.active)
             matcher_mapping_set_kccgst(m, s, m->val.string);
-        goto mapping_kccgst;
-    case TOK_END_OF_LINE:
-        if (m->mapping.active && matcher_mapping_verify(m, s)) {
+        जा mapping_kccgst;
+    स्थिती TOK_END_OF_ओळ:
+        जर (m->mapping.active && matcher_mapping_verify(m, s)) {
             matcher_mapping_set_layout_bounds(m);
-            if (m->mapping.has_multiple_layouts) {
+            जर (m->mapping.has_multiple_layouts) {
                 /* Lazily reset buffers for layout index ranges.
                  * We’ll reuse the allocations. */
                 darray_size(m->pending_kccgst.buffer) = 0;
                 darray_size(m->pending_kccgst.slices) = 0;
             }
         }
-        goto rule_mlvo_first;
-    default:
-        goto unexpected;
+        जा rule_mlvo_first;
+    पूर्वनिर्धारित:
+        जा unexpected;
     }
 
 rule_mlvo_first:
-    switch (tok = gettok(m, s)) {
-    case TOK_BANG:
+    निवड (tok = gettok(m, s)) {
+    स्थिती TOK_BANG:
         matcher_append_pending_kccgst(m);
-        goto bang;
-    case TOK_END_OF_LINE:
-        goto rule_mlvo_first;
-    case TOK_END_OF_FILE:
+        जा bang;
+    स्थिती TOK_END_OF_ओळ:
+        जा rule_mlvo_first;
+    स्थिती TOK_END_OF_FILE:
         matcher_append_pending_kccgst(m);
-        goto finish;
-    default:
+        जा finish;
+    पूर्वनिर्धारित:
         matcher_rule_start_new(m);
-        goto rule_mlvo_no_tok;
+        जा rule_mlvo_no_tok;
     }
 
 rule_mlvo:
     tok = gettok(m, s);
 rule_mlvo_no_tok:
-    switch (tok) {
-    case TOK_IDENTIFIER:
-        if (!m->rule.skip)
+    निवड (tok) {
+    स्थिती TOK_IDENTIFIER:
+        जर (!m->rule.skip)
             matcher_rule_set_mlvo(m, s, m->val.string);
-        goto rule_mlvo;
-    case TOK_WILD_CARD_STAR:
-        if (!m->rule.skip)
+        जा rule_mlvo;
+    स्थिती TOK_WILD_CARD_STAR:
+        जर (!m->rule.skip)
             matcher_rule_set_mlvo_wildcard(m, s, MLVO_MATCH_WILDCARD_LEGACY);
-        goto rule_mlvo;
-    case TOK_WILD_CARD_NONE:
-        if (!m->rule.skip)
+        जा rule_mlvo;
+    स्थिती TOK_WILD_CARD_NONE:
+        जर (!m->rule.skip)
             matcher_rule_set_mlvo_wildcard(m, s, MLVO_MATCH_WILDCARD_NONE);
-        goto rule_mlvo;
-    case TOK_WILD_CARD_SOME:
-        if (!m->rule.skip)
+        जा rule_mlvo;
+    स्थिती TOK_WILD_CARD_SOME:
+        जर (!m->rule.skip)
             matcher_rule_set_mlvo_wildcard(m, s, MLVO_MATCH_WILDCARD_SOME);
-        goto rule_mlvo;
-    case TOK_WILD_CARD_ANY:
-        if (!m->rule.skip)
+        जा rule_mlvo;
+    स्थिती TOK_WILD_CARD_ANY:
+        जर (!m->rule.skip)
             matcher_rule_set_mlvo_wildcard(m, s, MLVO_MATCH_WILDCARD_ANY);
-        goto rule_mlvo;
-    case TOK_GROUP_NAME:
-        if (!m->rule.skip)
+        जा rule_mlvo;
+    स्थिती TOK_GROUP_NAME:
+        जर (!m->rule.skip)
             matcher_rule_set_mlvo_group(m, s, m->val.string);
-        goto rule_mlvo;
-    case TOK_EQUALS:
-        goto rule_kccgst;
-    default:
-        goto unexpected;
+        जा rule_mlvo;
+    स्थिती TOK_EQUALS:
+        जा rule_kccgst;
+    पूर्वनिर्धारित:
+        जा unexpected;
     }
 
 rule_kccgst:
-    switch (tok = gettok(m, s)) {
-    case TOK_IDENTIFIER:
-        if (!m->rule.skip)
+    निवड (tok = gettok(m, s)) {
+    स्थिती TOK_IDENTIFIER:
+        जर (!m->rule.skip)
             matcher_rule_set_kccgst(m, s, m->val.string);
-        goto rule_kccgst;
-    case TOK_END_OF_LINE:
-        if (!m->rule.skip)
+        जा rule_kccgst;
+    स्थिती TOK_END_OF_ओळ:
+        जर (!m->rule.skip)
             matcher_rule_verify(m, s);
-        if (!m->rule.skip)
+        जर (!m->rule.skip)
             matcher_rule_apply_if_matches(m, s);
-        goto rule_mlvo_first;
-    default:
-        goto unexpected;
+        जा rule_mlvo_first;
+    पूर्वनिर्धारित:
+        जा unexpected;
     }
 
 unexpected:
-    switch (tok) {
-    case TOK_ERROR:
-        goto error;
-    default:
-        goto state_error;
+    निवड (tok) {
+    स्थिती TOK_ERROR:
+        जा error;
+    पूर्वनिर्धारित:
+        जा state_error;
     }
 
 finish:
-    return true;
+    परत true;
 
 state_error:
     scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                 "unexpected token (0x%x)", tok);
 error:
-    return false;
+    परत false;
 }
 // NOLINTEND(readability-trivial-switch)
 
-static bool
-read_rules_file(struct xkb_context *ctx,
-                struct matcher *matcher,
-                unsigned int include_depth,
-                FILE *file,
-                const char *path)
+स्थिर bool
+read_rules_file(संरचना xkb_context *ctx,
+                संरचना matcher *matcher,
+                अचिन्हित पूर्णांक include_depth,
+                खाता *file,
+                स्थिरांक अक्षर *path)
 {
     bool ret;
-    char *string;
-    size_t size;
-    struct scanner scanner;
+    अक्षर *string;
+    माप_प्रकार size;
+    संरचना scanner scanner;
 
-    if (!map_file(file, &string, &size)) {
+    जर (!map_file(file, &string, &size)) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "Couldn't read rules file \"%s\": %s\n",
-                path, strerror(errno));
-        return false;
+                path, म_त्रुटि(त्रुटि_सं));
+        परत false;
     }
 
-    scanner_init(&scanner, matcher->ctx, string, size, path, NULL);
+    scanner_init(&scanner, matcher->ctx, string, size, path, रिक्त);
 
     /* Basic detection of wrong character encoding.
        The first character relevant to the grammar must be ASCII:
        whitespace, !, / (for comment) */
-    if (!scanner_check_supported_char_encoding(&scanner)) {
+    जर (!scanner_check_supported_char_encoding(&scanner)) {
         scanner_err(&scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                     "This could be a file encoding issue. "
                     "Supported encodings must be backward compatible with ASCII.");
@@ -2150,12 +2150,12 @@ read_rules_file(struct xkb_context *ctx,
                     "E.g. ISO/CEI 8859 and UTF-8 are supported "
                     "but UTF-16, UTF-32 and CP1026 are not.");
         unmap_file(string, size);
-        return false;
+        परत false;
     }
 
     ret = matcher_match(matcher, &scanner, include_depth, string, size, path);
     unmap_file(string, size);
-    return ret;
+    परत ret;
 }
 
 /**
@@ -2164,61 +2164,61 @@ read_rules_file(struct xkb_context *ctx,
  * composition: rules files are just processed sequentially using the matcher
  * resulting from the previous file.
  */
-static bool
-xkb_resolve_partial_rules(struct xkb_context *ctx, char *path, size_t path_size,
-                          const char* rules, const char* suffix,
-                          struct matcher *matcher)
+स्थिर bool
+xkb_resolve_partial_rules(संरचना xkb_context *ctx, अक्षर *path, माप_प्रकार path_size,
+                          स्थिरांक अक्षर* rules, स्थिरांक अक्षर* suffix,
+                          संरचना matcher *matcher)
 {
     /* Set partial rules filename: canonical rules filename + suffix */
-    char partial_rules[60]; /* Arbitrary, but we do not expect long names */
-    if (unlikely(!snprintf_safe(partial_rules, sizeof(partial_rules),
+    अक्षर partial_rules[60]; /* Arbitrary, but we do not expect long names */
+    जर (unlikely(!snprintf_safe(partial_rules, आकार(partial_rules),
                                 "%s%s", rules, suffix))) {
         log_err(ctx, XKB_ERROR_CANNOT_RESOLVE_RMLVO,
                 "Cannot load XKB rules \"%s%s\"\n", rules, suffix);
-        return false;
+        परत false;
     }
 
     /*
      * Traverse all include paths and resolve all corresponding partial rules.
      * These files are optional, but required to be valid if present.
      */
-    unsigned int offset = 0;
-    FILE *file = NULL;
-    const size_t len = strlen(partial_rules);
-    while ((file = FindFileInXkbPath(ctx, "(unknown)",
+    अचिन्हित पूर्णांक offset = 0;
+    खाता *file = रिक्त;
+    स्थिरांक माप_प्रकार len = म_माप(partial_rules);
+    पर्यंत ((file = FindFileInXkbPath(ctx, "(unknown)",
                                      partial_rules, len, FILE_TYPE_RULES,
-                                     path, path_size, &offset, false)) != NULL) {
-        const bool ok = read_rules_file(ctx, matcher, 0, file, path);
-        fclose(file);
-        if (!ok) {
+                                     path, path_size, &offset, false)) != रिक्त) {
+        स्थिरांक bool ok = read_rules_file(ctx, matcher, 0, file, path);
+        ख_बंद(file);
+        जर (!ok) {
             log_err(ctx, XKB_ERROR_CANNOT_RESOLVE_RMLVO,
                     "Error while parsing XKB rules \"%s\"\n", path);
-            return false;
+            परत false;
         }
         offset++;
     }
 
-    return true;
+    परत true;
 }
 
-static bool
-xkb_resolve_rules(struct xkb_context *ctx,
-                  const char* rules, struct matcher *matcher,
-                  struct xkb_component_names *out,
+स्थिर bool
+xkb_resolve_rules(संरचना xkb_context *ctx,
+                  स्थिरांक अक्षर* rules, संरचना matcher *matcher,
+                  संरचना xkb_component_names *out,
                   xkb_layout_index_t *explicit_layouts)
 {
     bool ret = false;
 
     /* First check if the main rules file exists or error early */
-    unsigned int offset = 0;
-    char path[PATH_MAX];
-    FILE * const file = FindFileInXkbPath(ctx, "(unknown)",
-                                          rules, strlen(rules), FILE_TYPE_RULES,
-                                          path, sizeof(path), &offset, true);
-    if (!file) {
+    अचिन्हित पूर्णांक offset = 0;
+    अक्षर path[PATH_MAX];
+    खाता * स्थिरांक file = FindFileInXkbPath(ctx, "(unknown)",
+                                          rules, म_माप(rules), FILE_TYPE_RULES,
+                                          path, आकार(path), &offset, true);
+    जर (!file) {
         log_err(ctx, XKB_ERROR_CANNOT_RESOLVE_RMLVO,
                 "Cannot load XKB rules \"%s\"\n", rules);
-        goto err_out;
+        जा err_out;
     }
 
     /*
@@ -2234,27 +2234,27 @@ xkb_resolve_rules(struct xkb_context *ctx,
      */
 
     /* XKB extension: resolve optional <rules>.pre files */
-    ret = xkb_resolve_partial_rules(ctx, path, sizeof(path),
+    ret = xkb_resolve_partial_rules(ctx, path, आकार(path),
                                     rules, ".pre", matcher);
-    if (!ret)
-        goto err_out;
+    जर (!ret)
+        जा err_out;
 
     /* Resolve main <rules> file */
     ret = read_rules_file(ctx, matcher, 0, file, path);
-    if (!ret) {
+    जर (!ret) {
         log_err(ctx, XKB_ERROR_CANNOT_RESOLVE_RMLVO,
                 "Error while parsing XKB rules \"%s\"\n", path);
-        goto err_out;
+        जा err_out;
     }
 
     /* XKB extension: resolve optional <rules>.post files */
-    ret = xkb_resolve_partial_rules(ctx, path, sizeof(path),
+    ret = xkb_resolve_partial_rules(ctx, path, आकार(path),
                                     rules, ".post", matcher);
-    if (!ret)
-        goto err_out;
+    जर (!ret)
+        जा err_out;
 
     /* Check we got required components */
-    if (darray_empty(matcher->kccgst[KCCGST_KEYCODES]) ||
+    जर (darray_empty(matcher->kccgst[KCCGST_KEYCODES]) ||
         darray_empty(matcher->kccgst[KCCGST_TYPES]) ||
         darray_empty(matcher->kccgst[KCCGST_COMPAT]) ||
         /* darray_empty(matcher->kccgst[KCCGST_GEOMETRY]) || */
@@ -2262,112 +2262,112 @@ xkb_resolve_rules(struct xkb_context *ctx,
         log_err(ctx, XKB_ERROR_CANNOT_RESOLVE_RMLVO,
                 "No components returned from XKB rules \"%s\"\n", rules);
         ret = false;
-        goto err_out;
+        जा err_out;
     }
 
-    darray_steal(matcher->kccgst[KCCGST_KEYCODES], &out->keycodes, NULL);
-    darray_steal(matcher->kccgst[KCCGST_TYPES], &out->types, NULL);
-    darray_steal(matcher->kccgst[KCCGST_COMPAT], &out->compatibility, NULL);
-    darray_steal(matcher->kccgst[KCCGST_SYMBOLS], &out->symbols, NULL);
-    darray_steal(matcher->kccgst[KCCGST_GEOMETRY], &out->geometry, NULL);
+    darray_steal(matcher->kccgst[KCCGST_KEYCODES], &out->keycodes, रिक्त);
+    darray_steal(matcher->kccgst[KCCGST_TYPES], &out->types, रिक्त);
+    darray_steal(matcher->kccgst[KCCGST_COMPAT], &out->compatibility, रिक्त);
+    darray_steal(matcher->kccgst[KCCGST_SYMBOLS], &out->symbols, रिक्त);
+    darray_steal(matcher->kccgst[KCCGST_GEOMETRY], &out->geometry, रिक्त);
 
-    struct matched_sval *mval = &matcher->rmlvo.model;
-    if (!mval->matched && mval->sval.len > 0)
-        log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_VALUE,
+    संरचना matched_sval *mval = &matcher->rmlvo.model;
+    जर (!mval->matched && mval->sval.len > 0)
+        log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_मूल्य,
                 "RMLVO mismatch: unrecognized model \"%.*s\" "
                 "was ignored in rules \"%s\"\n",
-                (unsigned int) mval->sval.len, mval->sval.start, rules);
+                (अचिन्हित पूर्णांक) mval->sval.len, mval->sval.start, rules);
     darray_foreach(mval, matcher->rmlvo.layouts)
-        if (!mval->matched && mval->sval.len > 0)
-            log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_VALUE,
+        जर (!mval->matched && mval->sval.len > 0)
+            log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_मूल्य,
                     "RMLVO mismatch: unrecognized layout \"%.*s\" "
                     "was ignored in rules \"%s\"\n",
-                    (unsigned int) mval->sval.len, mval->sval.start, rules);
+                    (अचिन्हित पूर्णांक) mval->sval.len, mval->sval.start, rules);
     darray_foreach(mval, matcher->rmlvo.variants)
-        if (!mval->matched && mval->sval.len > 0)
-            log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_VALUE,
+        जर (!mval->matched && mval->sval.len > 0)
+            log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_मूल्य,
                     "RMLVO mismatch: unrecognized variant \"%.*s\" "
                     "was ignored in rules \"%s\"\n",
-                    (unsigned int) mval->sval.len, mval->sval.start, rules);
+                    (अचिन्हित पूर्णांक) mval->sval.len, mval->sval.start, rules);
     darray_foreach(mval, matcher->rmlvo.options) {
-        if (!mval->sval.len)
-            continue;
+        जर (!mval->sval.len)
+            सुरूठेवा;
 
-        if (!mval->matched) {
+        जर (!mval->matched) {
             /* No match (either layout-specific or layout-independent) */
-            log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_VALUE,
+            log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_मूल्य,
                     "RMLVO mismatch: unrecognized option \"%.*s\" "
                     "was ignored in rules \"%s\"\n",
-                    (unsigned int) mval->sval.len, mval->sval.start, rules);
-        } else if (mval->layouts && mval->layouts != mval->matched) {
+                    (अचिन्हित पूर्णांक) mval->sval.len, mval->sval.start, rules);
+        } अन्यथा जर (mval->layouts && mval->layouts != mval->matched) {
             /* Partial match (layout-specific) */
-            const xkb_layout_mask_t unmatched = (mval->layouts & ~mval->matched);
-            assert(unmatched);
-            log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_VALUE,
+            स्थिरांक xkb_layout_mask_t unmatched = (mval->layouts & ~mval->matched);
+            प्रतिज्ञा(unmatched);
+            log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_मूल्य,
                     "RMLVO mismatch: option \"%.*s\" with layout mask "
                     "0x%"PRIx32" was ignored in rules \"%s\"\n",
-                    (unsigned int)mval->sval.len, mval->sval.start,
+                    (अचिन्हित पूर्णांक)mval->sval.len, mval->sval.start,
                     unmatched, rules);
         }
     }
 
     /* Set the number of explicit layouts */
-    if (out->symbols != NULL && explicit_layouts != NULL) {
+    जर (out->symbols != रिक्त && explicit_layouts != रिक्त) {
         *explicit_layouts = 1; /* at least one group */
-        const char *symbols = out->symbols;
+        स्थिरांक अक्षर *symbols = out->symbols;
         /* Take the highest modifier */
-        while ((symbols = strchr(symbols, ':')) != NULL && symbols[1] != '\0') {
+        पर्यंत ((symbols = म_अक्षर(symbols, ':')) != रिक्त && symbols[1] != '\0') {
             xkb_layout_index_t group = 0;
-            const int count = parse_dec_to_uint32_t(++symbols, SIZE_MAX, &group);
+            स्थिरांक पूर्णांक मोजणी = parse_dec_to_uint32_t(++symbols, SIZE_MAX, &group);
             /* Update only when valid group index, but continue parsing
              * even on invalid ones, as we do not handle them here. */
-            if (count > 0 && (symbols[count] == '\0' ||
-                is_merge_mode_prefix(symbols[count])) &&
+            जर (मोजणी > 0 && (symbols[मोजणी] == '\0' ||
+                is_merge_mode_prefix(symbols[मोजणी])) &&
                 group > 0 && group <= XKB_MAX_GROUPS) {
                 *explicit_layouts = MAX(*explicit_layouts, group);
-                symbols += count;
+                symbols += मोजणी;
             }
         }
     }
 
 err_out:
-    if (file)
-        fclose(file);
+    जर (file)
+        ख_बंद(file);
 
-    return ret;
+    परत ret;
 }
 
 bool
-xkb_components_from_rmlvo_builder(const struct xkb_rmlvo_builder *rmlvo,
-                                  struct xkb_component_names *out,
+xkb_components_from_rmlvo_builder(स्थिरांक संरचना xkb_rmlvo_builder *rmlvo,
+                                  संरचना xkb_component_names *out,
                                   xkb_layout_index_t *explicit_layouts)
 {
-    const char *rules = rmlvo->rules;
-    struct matcher *matcher = matcher_new_from_rmlvo(rmlvo, &rules);
-    if (!matcher)
-        return false;
+    स्थिरांक अक्षर *rules = rmlvo->rules;
+    संरचना matcher *matcher = matcher_new_from_rmlvo(rmlvo, &rules);
+    जर (!matcher)
+        परत false;
 
-    const bool ret = xkb_resolve_rules(rmlvo->ctx, rules, matcher,
+    स्थिरांक bool ret = xkb_resolve_rules(rmlvo->ctx, rules, matcher,
                                        out, explicit_layouts);
 
     matcher_free(matcher);
-    return ret;
+    परत ret;
 }
 
 
 bool
-xkb_components_from_rules_names(struct xkb_context *ctx,
-                                const struct xkb_rule_names *rmlvo,
-                                struct xkb_component_names *out,
+xkb_components_from_rules_names(संरचना xkb_context *ctx,
+                                स्थिरांक संरचना xkb_rule_names *rmlvo,
+                                संरचना xkb_component_names *out,
                                 xkb_layout_index_t *explicit_layouts)
 {
-    struct matcher *matcher = matcher_new_from_names(ctx, rmlvo);
-    if (!matcher)
-        return false;
+    संरचना matcher *matcher = matcher_new_from_names(ctx, rmlvo);
+    जर (!matcher)
+        परत false;
 
-    const bool ret = xkb_resolve_rules(ctx, rmlvo->rules, matcher,
+    स्थिरांक bool ret = xkb_resolve_rules(ctx, rmlvo->rules, matcher,
                                        out, explicit_layouts);
 
     matcher_free(matcher);
-    return ret;
+    परत ret;
 }
