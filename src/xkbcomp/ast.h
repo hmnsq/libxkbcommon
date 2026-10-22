@@ -9,14 +9,14 @@
  */
 #pragma once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include "xkbcommon/xkbcommon.h"
+#ضمن "xkbcommon/xkbcommon.h"
 
-#include "atom.h"
-#include "darray.h"
+#ضمن "atom.h"
+#ضمن "darray.h"
 
-enum xkb_file_type {
+تعداد xkb_file_type {
     /* Component files, by order of compilation. */
     FILE_TYPE_KEYCODES = 0,
     FILE_TYPE_TYPES = 1,
@@ -37,38 +37,38 @@ enum xkb_file_type {
     /* This one doesn't mix with the others, but useful here as well. */
     FILE_TYPE_RULES,
 
-    _FILE_TYPE_NUM_ENTRIES,
-    FILE_TYPE_INVALID = _FILE_TYPE_NUM_ENTRIES
+    FILE_TYPE_رەقەم_ENTRIES,
+    FILE_TYPE_INVALID = FILE_TYPE_رەقەم_ENTRIES
 };
 
-enum stmt_type {
+تعداد stmt_type {
     STMT_UNKNOWN = 0,
     STMT_INCLUDE,
     STMT_KEYCODE,
     STMT_ALIAS,
-    STMT_EXPR_STRING_LITERAL,
-    STMT_EXPR_INTEGER_LITERAL,
-    STMT_EXPR_FLOAT_LITERAL,
-    STMT_EXPR_BOOLEAN_LITERAL,
-    STMT_EXPR_KEYNAME_LITERAL,
-    STMT_EXPR_KEYSYM_LITERAL,
-    STMT_EXPR_IDENT,
-    STMT_EXPR_ACTION_DECL,
-    STMT_EXPR_FIELD_REF,
-    STMT_EXPR_ARRAY_REF,
+    STMT_ئىپادە_STRING_LITERAL,
+    STMT_ئىپادە_INTEGER_LITERAL,
+    STMT_ئىپادە_FLOAT_LITERAL,
+    STMT_ئىپادە_BOOLEAN_LITERAL,
+    STMT_ئىپادە_KEYNAME_LITERAL,
+    STMT_ئىپادە_KEYSYM_LITERAL,
+    STMT_ئىپادە_IDENT,
+    STMT_ئىپادە_ACTION_DECL,
+    STMT_ئىپادە_FIELD_REF,
+    STMT_ئىپادە_ARRAY_REF,
     /* Needed because of the ambiguity between keysym and action empty lists */
-    STMT_EXPR_EMPTY_LIST,
-    STMT_EXPR_KEYSYM_LIST,
-    STMT_EXPR_ACTION_LIST,
-    STMT_EXPR_ADD,
-    STMT_EXPR_SUBTRACT,
-    STMT_EXPR_MULTIPLY,
-    STMT_EXPR_DIVIDE,
-    STMT_EXPR_ASSIGN,
-    STMT_EXPR_NOT,
-    STMT_EXPR_NEGATE,
-    STMT_EXPR_INVERT,
-    STMT_EXPR_UNARY_PLUS,
+    STMT_ئىپادە_EMPTY_LIST,
+    STMT_ئىپادە_KEYSYM_LIST,
+    STMT_ئىپادە_ACTION_LIST,
+    STMT_ئىپادە_ADD,
+    STMT_ئىپادە_SUBTRACT,
+    STMT_ئىپادە_MULTIPLY,
+    STMT_ئىپادە_DIVIDE,
+    STMT_ئىپادە_ASSIGN,
+    STMT_ئىپادە_NOT,
+    STMT_ئىپادە_NEGATE,
+    STMT_ئىپادە_INVERT,
+    STMT_ئىپادە_UNARY_PLUS,
     STMT_VAR,
     STMT_TYPE,
     STMT_INTERP,
@@ -81,229 +81,229 @@ enum stmt_type {
     STMT_UNKNOWN_DECLARATION,
     STMT_UNKNOWN_COMPOUND,
 
-    _STMT_NUM_VALUES
+    STMT_رەقەم_قىممەتلەر
 };
 
-enum merge_mode {
+تعداد merge_mode {
     MERGE_DEFAULT,
     MERGE_AUGMENT,
     MERGE_OVERRIDE,
     MERGE_REPLACE,
-    _MERGE_MODE_NUM_ENTRIES,
+    MERGE_MODE_رەقەم_ENTRIES,
 };
-enum { MERGE_MODE_MIN_WIDTH = 3 /* 2 bits + sign */ };
-static_assert(_MERGE_MODE_NUM_ENTRIES - 1 <= (1 << (MERGE_MODE_MIN_WIDTH - 1)) - 1,
+تعداد { MERGE_MODE_MIN_WIDTH = 3 /* 2 bits + sign */ };
+static_assert(MERGE_MODE_رەقەم_ENTRIES - 1 <= (1 << (MERGE_MODE_MIN_WIDTH - 1)) - 1,
               "Cannot encode merge mode");
 
-const char *
-xkb_file_type_to_string(enum xkb_file_type type);
+ثابت حرف *
+xkb_file_type_to_string(تعداد xkb_file_type type);
 
-const char *
-stmt_type_to_string(enum stmt_type type);
+ثابت حرف *
+stmt_type_to_string(تعداد stmt_type type);
 
-char
-stmt_type_to_operator_char(enum stmt_type type);
+حرف
+stmt_type_to_operator_char(تعداد stmt_type type);
 
-typedef struct _ParseCommon  {
-    struct _ParseCommon *next;
-    enum stmt_type type;
+تعريفنوع بنية _ParseCommon  {
+    بنية _ParseCommon *next;
+    تعداد stmt_type type;
 } ParseCommon;
 
-typedef struct _IncludeStmt {
+تعريفنوع بنية _IncludeStmt {
     ParseCommon common;
-    enum merge_mode merge;
-    char *stmt;
-    char *file;
-    char *map;
-    char *modifier;
-    struct _IncludeStmt *next_incl;
+    تعداد merge_mode merge;
+    حرف *stmt;
+    حرف *file;
+    حرف *map;
+    حرف *modifier;
+    بنية _IncludeStmt *next_incl;
 } IncludeStmt;
 
-typedef union ExprDef ExprDef;
+تعريفنوع اتحاد ئىپادە_Def ئىپادە_Def;
 
-typedef struct {
+تعريفنوع بنية {
     ParseCommon common;
     xkb_atom_t ident;
-} ExprIdent;
+} ئىپادە_Ident;
 
-typedef struct {
+تعريفنوع بنية {
     ParseCommon common;
     xkb_atom_t str;
-} ExprString;
+} ئىپادە_String;
 
-typedef struct {
+تعريفنوع بنية {
     ParseCommon common;
     bool set;
-} ExprBoolean;
+} ئىپادە_Boolean;
 
-typedef struct {
+تعريفنوع بنية {
     ParseCommon common;
     int64_t ival;
-} ExprInteger;
+} ئىپادە_Integer;
 
-typedef struct {
+تعريفنوع بنية {
     ParseCommon common;
     /* We don't support floats, but we still represnt them in the AST, in
      * order to provide proper error messages. */
-} ExprFloat;
+} ئىپادە_Float;
 
-typedef struct {
+تعريفنوع بنية {
     ParseCommon common;
-    xkb_atom_t key_name;
-} ExprKeyName;
+    xkb_atom_t ئاچقۇچ_name;
+} ئىپادە_ئاچقۇچ_Name;
 
-typedef struct {
+تعريفنوع بنية {
     ParseCommon common;
     /* Keysyms are resolved early, so this might contain `NoSymbol` in case of
      * failure, to enable error recovery. */
     xkb_keysym_t keysym;
-} ExprKeySym;
+} ئىپادە_ئاچقۇچ_Sym;
 
-typedef struct {
+تعريفنوع بنية {
     ParseCommon common;
-    ExprDef *left;
-    ExprDef *right;
-} ExprBinary;
+    ئىپادە_Def *سول;
+    ئىپادە_Def *ئوڭ;
+} ئىپادە_ئىككىلىك;
 
-typedef struct {
+تعريفنوع بنية {
     ParseCommon common;
-    ExprDef *child;
-} ExprUnary;
+    ئىپادە_Def *child;
+} ئىپادە_Unary;
 
-typedef struct {
-    ParseCommon common;
-    xkb_atom_t element;
-    xkb_atom_t field;
-} ExprFieldRef;
-
-typedef struct {
+تعريفنوع بنية {
     ParseCommon common;
     xkb_atom_t element;
     xkb_atom_t field;
-    ExprDef *entry;
-} ExprArrayRef;
+} ئىپادە_Field_Ref;
 
-typedef struct {
+تعريفنوع بنية {
+    ParseCommon common;
+    xkb_atom_t element;
+    xkb_atom_t field;
+    ئىپادە_Def *entry;
+} ئىپادە_Array_Ref;
+
+تعريفنوع بنية {
     ParseCommon common;
     xkb_atom_t name;
-    ExprDef *args;
-} ExprAction;
+    ئىپادە_Def *args;
+} ئىپادە_Action;
 
-typedef struct {
+تعريفنوع بنية {
     ParseCommon common;
     /* List of actions for a single level. */
-    ExprDef *actions;
-} ExprActionList;
+    ئىپادە_Def *actions;
+} ئىپادە_Action_List;
 
-typedef struct {
+تعريفنوع بنية {
     ParseCommon common;
     /* List of keysym for a single level. */
     darray(xkb_keysym_t) syms;
-} ExprKeysymList;
+} ئىپادە_Keysym_List;
 
-union ExprDef {
+اتحاد ئىپادە_Def {
     ParseCommon common;
-    ExprIdent ident;
-    ExprString string;
-    ExprBoolean boolean;
-    ExprInteger integer;
-    ExprKeyName key_name;
-    ExprKeySym keysym;
-    ExprBinary binary;
-    ExprUnary unary;
-    ExprFieldRef field_ref;
-    ExprArrayRef array_ref;
-    ExprAction action;
-    ExprActionList actions;
-    ExprKeysymList keysym_list;
+    ئىپادە_Ident ident;
+    ئىپادە_String string;
+    ئىپادە_Boolean boolean;
+    ئىپادە_Integer integer;
+    ئىپادە_ئاچقۇچ_Name ئاچقۇچ_name;
+    ئىپادە_ئاچقۇچ_Sym keysym;
+    ئىپادە_ئىككىلىك ئىككىلىك;
+    ئىپادە_Unary unary;
+    ئىپادە_Field_Ref field_ref;
+    ئىپادە_Array_Ref array_ref;
+    ئىپادە_Action action;
+    ئىپادە_Action_List actions;
+    ئىپادە_Keysym_List keysym_list;
 };
 
-typedef struct {
+تعريفنوع بنية {
     ParseCommon common;
-    enum merge_mode merge;
-    ExprDef *name;
-    ExprDef *value;
+    تعداد merge_mode merge;
+    ئىپادە_Def *name;
+    ئىپادە_Def *قىممەت;
 } VarDef;
 
-typedef struct {
+تعريفنوع بنية {
     ParseCommon common;
-    enum merge_mode merge;
+    تعداد merge_mode merge;
     xkb_atom_t name;
-    ExprDef *value;
+    ئىپادە_Def *قىممەت;
 } VModDef;
 
-typedef struct {
+تعريفنوع بنية {
     ParseCommon common;
-    enum merge_mode merge;
+    تعداد merge_mode merge;
     xkb_atom_t name;
-    int64_t value;
+    int64_t قىممەت;
 } KeycodeDef;
 
-typedef struct {
+تعريفنوع بنية {
     ParseCommon common;
-    enum merge_mode merge;
+    تعداد merge_mode merge;
     xkb_atom_t alias;
     xkb_atom_t real;
-} KeyAliasDef;
+} ئاچقۇچ_Alias_Def;
 
-typedef struct {
+تعريفنوع بنية {
     ParseCommon common;
-    enum merge_mode merge;
+    تعداد merge_mode merge;
     xkb_atom_t name;
     VarDef *body;
-} KeyTypeDef;
+} ئاچقۇچ_Type_Def;
 
-typedef struct {
+تعريفنوع بنية {
     ParseCommon common;
-    enum merge_mode merge;
-    xkb_atom_t keyName;
+    تعداد merge_mode merge;
+    xkb_atom_t ئاچقۇچ_Name;
     VarDef *symbols;
 } SymbolsDef;
 
-typedef struct {
+تعريفنوع بنية {
     ParseCommon common;
-    enum merge_mode merge;
+    تعداد merge_mode merge;
     // NOTE: Can also be “None”, rather than a modifier name.
-    ExprDef *modifiers;
-    ExprDef *keys;
+    ئىپادە_Def *modifiers;
+    ئىپادە_Def *ئاچقۇچلار;
 } ModMapDef;
 
-typedef struct {
+تعريفنوع بنية {
     ParseCommon common;
-    enum merge_mode merge;
+    تعداد merge_mode merge;
     int64_t group;
-    ExprDef *def;
+    ئىپادە_Def *def;
 } GroupCompatDef;
 
-typedef struct {
+تعريفنوع بنية {
     ParseCommon common;
-    enum merge_mode merge;
+    تعداد merge_mode merge;
     xkb_keysym_t sym;
-    ExprDef *match;
+    ئىپادە_Def *match;
     VarDef *def;
 } InterpDef;
 
-typedef struct {
+تعريفنوع بنية {
     ParseCommon common;
-    enum merge_mode merge;
+    تعداد merge_mode merge;
     bool virtual;
     int64_t ndx;
-    ExprDef *name;
+    ئىپادە_Def *name;
 } LedNameDef;
 
-typedef struct {
+تعريفنوع بنية {
     ParseCommon common;
-    enum merge_mode merge;
+    تعداد merge_mode merge;
     xkb_atom_t name;
     VarDef *body;
 } LedMapDef;
 
-typedef struct {
+تعريفنوع بنية {
     ParseCommon common;
-    char *name;
+    حرف *name;
 } UnknownStatement;
 
-enum xkb_map_flags {
+تعداد xkb_map_flags {
     MAP_NO_FLAG = 0,
     MAP_IS_DEFAULT = (1 << 0),
     MAP_IS_PARTIAL = (1 << 1),
@@ -316,10 +316,10 @@ enum xkb_map_flags {
     MAP_IS_DEPRECATED = (1 << 8),
 };
 
-typedef struct {
+تعريفنوع بنية {
     ParseCommon common;
-    char *name;
+    حرف *name;
     ParseCommon *defs;
-    enum xkb_file_type file_type;
-    enum xkb_map_flags flags;
+    تعداد xkb_file_type file_type;
+    تعداد xkb_map_flags flags;
 } XkbFile;

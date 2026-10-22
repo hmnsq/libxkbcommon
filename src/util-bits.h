@@ -5,19 +5,19 @@
 
 #pragma once
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <assert.h>
-#include <limits.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stddef.h>
+#ضمن <assert.h>
+#ضمن <limits.h>
+#ضمن <stdbool.h>
+#ضمن <stdint.h>
+#ضمن <stddef.h>
 
 /*
  * Bit array using native pointer-width word for optimal performance
  */
 
-#define BIT_ARRAY_UINTPTR_WIDTH (sizeof(uintptr_t) * CHAR_BIT)
+#define BIT_ARRAY_UINTPTR_WIDTH (حجم(uintptr_t) * CHAR_BIT)
 
 /* Compile-time sanity checks */
 #ifdef UINTPTR_WIDTH
@@ -33,9 +33,9 @@ static_assert((BIT_ARRAY_UINTPTR_WIDTH & (BIT_ARRAY_UINTPTR_WIDTH - 1)) == 0,
  * @param num_bits  Number of bits to store.
  * @return Number of `uintptr_t` words required.
  */
-static inline size_t bit_array_words(size_t num_bits) {
-    return num_bits / BIT_ARRAY_UINTPTR_WIDTH +
-          (num_bits % BIT_ARRAY_UINTPTR_WIDTH != 0);
+ساكن مضمن size_t bit_array_سۆزلەر(size_t رەقەم_bits) {
+    أرجع رەقەم_bits / BIT_ARRAY_UINTPTR_WIDTH +
+          (رەقەم_bits % BIT_ARRAY_UINTPTR_WIDTH != 0);
 }
 
 /**
@@ -43,10 +43,10 @@ static inline size_t bit_array_words(size_t num_bits) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline bool bit_array_get(const uintptr_t *arr, size_t index) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
-    return (arr[word_idx] >> bit_idx) & (uintptr_t)1;
+ساكن مضمن bool bit_array_get(ثابت uintptr_t *arr, size_t index) {
+    ثابت size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
+    ثابت size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
+    أرجع (arr[word_idx] >> bit_idx) & (uintptr_t)1;
 }
 
 /**
@@ -54,9 +54,9 @@ static inline bool bit_array_get(const uintptr_t *arr, size_t index) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline void bit_array_set(uintptr_t *arr, size_t index) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
+ساكن مضمن فراغ bit_array_set(uintptr_t *arr, size_t index) {
+    ثابت size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
+    ثابت size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
     arr[word_idx] |= ((uintptr_t)1 << bit_idx);
 }
 
@@ -65,9 +65,9 @@ static inline void bit_array_set(uintptr_t *arr, size_t index) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline void bit_array_clear(uintptr_t *arr, size_t index) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
+ساكن مضمن فراغ bit_array_clear(uintptr_t *arr, size_t index) {
+    ثابت size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
+    ثابت size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
     arr[word_idx] &= ~((uintptr_t)1 << bit_idx);
 }
 
@@ -76,9 +76,9 @@ static inline void bit_array_clear(uintptr_t *arr, size_t index) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline void bit_array_toggle(uintptr_t *arr, size_t index) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
+ساكن مضمن فراغ bit_array_toggle(uintptr_t *arr, size_t index) {
+    ثابت size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
+    ثابت size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
     arr[word_idx] ^= ((uintptr_t)1 << bit_idx);
 }
 
@@ -87,9 +87,9 @@ static inline void bit_array_toggle(uintptr_t *arr, size_t index) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline void bit_array_assign(uintptr_t *arr, size_t index, bool val) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
+ساكن مضمن فراغ bit_array_assign(uintptr_t *arr, size_t index, bool val) {
+    ثابت size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
+    ثابت size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
     uintptr_t mask = (uintptr_t)1 << bit_idx;
     arr[word_idx] = (arr[word_idx] & ~mask)     /* clear bit */
                   | ((-(uintptr_t)val) & mask); /* set bit */
