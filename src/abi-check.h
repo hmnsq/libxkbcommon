@@ -71,13 +71,13 @@ xkb_check_versioned_struct_size_(size_t v1_size, size_t min_size,
     assert(callee_meaningful_bytes <= callee_size);
     assert(callee_size <= max_size);
 
-    if (caller_size < v1_size || caller_size > max_size || !caller_data)
-        return XKB_ERROR_ABI_INVALID_STRUCT_SIZE;
+    もし (caller_size < v1_size || caller_size > max_size || !caller_data)
+        戻る XKB_ERROR_ABI_INVALID_STRUCT_SIZE;
 
-    if (caller_size < min_size)
-        return XKB_ERROR_ABI_BACKWARD_COMPAT;
+    もし (caller_size < min_size)
+        戻る XKB_ERROR_ABI_BACKWARD_COMPAT;
 
-    if (caller_size <= callee_meaningful_bytes) {
+    もし (caller_size <= callee_meaningful_bytes) {
         /*
          * Caller's data does not reach beyond the callee meaningful region:
          * nothing to check, missing bytes default to 0.
@@ -85,7 +85,7 @@ xkb_check_versioned_struct_size_(size_t v1_size, size_t min_size,
          * E.g.: caller has older or same callee struct, without explicit
          * trailing padding.
          */
-        return XKB_SUCCESS;
+        戻る XKB_SUCCESS;
     }
 
     /*
@@ -99,12 +99,12 @@ xkb_check_versioned_struct_size_(size_t v1_size, size_t min_size,
         (const unsigned char *)caller_data + callee_meaningful_bytes;
     const unsigned char *end = (const unsigned char *)caller_data + caller_size;
 
-    while (p < end) {
-        if (*(p++) != 0)
-            return XKB_ERROR_ABI_FORWARD_COMPAT;
+    ながら (p < end) {
+        もし (*(p++) != 0)
+            戻る XKB_ERROR_ABI_FORWARD_COMPAT;
     }
 
-    return XKB_SUCCESS;
+    戻る XKB_SUCCESS;
 }
 
 #define xkb_check_versioned_struct_size(v1_size, min_size, \

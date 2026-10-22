@@ -27,61 +27,61 @@ xkb_rmlvo_builder_new(struct xkb_context *context,
 {
     const enum xkb_rmlvo_builder_flags invalid_flags =
         (flags & ~(enum xkb_rmlvo_builder_flags)XKB_RMLVO_BUILDER_FLAGS_VALUES);
-    if (invalid_flags) {
+    もし (invalid_flags) {
         log_err_func(context, XKB_LOG_MESSAGE_NO_ID,
                      "Unsupported RMLVO flags: 0x%x\n",
                      invalid_flags);
-        return NULL;
+        戻る NULL;
     }
 
     struct xkb_rmlvo_builder * const builder = calloc(1, sizeof(*builder));
-    if (!builder)
+    もし (!builder)
         goto error;
 
     builder->refcnt = 1;
     builder->ctx = xkb_context_ref(context);
 
     builder->rules = strdup_safe(rules);
-    if (!builder->rules && rules)
+    もし (!builder->rules && rules)
         goto error;
 
     builder->model = strdup_safe(model);
-    if (!builder->model && model)
+    もし (!builder->model && model)
         goto error;
 
     darray_init(builder->layouts);
     darray_init(builder->options);
 
-    return builder;
+    戻る builder;
 
 error:
     log_err(context, XKB_ERROR_ALLOCATION_FAILURE_,
             "Cannot allocate a RMLVO builder.\n");
     xkb_rmlvo_builder_unref(builder);
-    return NULL;
+    戻る NULL;
 }
 
 static enum xkb_status
 rmlvo_builder_append_option(struct xkb_rmlvo_builder *rmlvo,
                             const char *option, xkb_layout_mask_t layouts)
 {
-    if (isempty(option))
-        return XKB_ERROR_INVALID;
+    もし (isempty(option))
+        戻る XKB_ERROR_INVALID;
 
     /* Check for previous entry */
     struct xkb_rmlvo_builder_option *prev;
     darray_foreach(prev, rmlvo->options) {
-        if (streq(prev->option, option)) {
+        もし (streq(prev->option, option)) {
             /* Merge with previous entry */
-            if (layouts == (xkb_layout_mask_t)XKB_OPTION_LAYOUT_MASK_GLOBAL) {
+            もし (layouts == (xkb_layout_mask_t)XKB_OPTION_LAYOUT_MASK_GLOBAL) {
                 /* Global option overrides layout-specific ones */
                 prev->layouts = layouts;
-            } else if (prev->layouts != (xkb_layout_mask_t)
+            } 否则 もし (prev->layouts != (xkb_layout_mask_t)
                        XKB_OPTION_LAYOUT_MASK_GLOBAL) {
                 /* Layout-specific option cannot override global */
                 prev->layouts |= layouts;
             }
-            return XKB_SUCCESS;
+            戻る XKB_SUCCESS;
         }
     }
 
@@ -90,14 +90,14 @@ rmlvo_builder_append_option(struct xkb_rmlvo_builder *rmlvo,
         .option = strdup_safe(option),
         .layouts = layouts
     };
-    if (!new.option) {
+    もし (!new.option) {
         log_err(rmlvo->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
                 "Cannot allocate option \"%s\" to the RMLVO builder.\n",
                 option);
-        return XKB_ERROR_ALLOCATION_FAILURE;
+        戻る XKB_ERROR_ALLOCATION_FAILURE;
     }
     darray_append(rmlvo->options, new);
-    return XKB_SUCCESS;
+    戻る XKB_SUCCESS;
 }
 
 bool
@@ -109,12 +109,12 @@ xkb_rmlvo_builder_append_layout(struct xkb_rmlvo_builder *rmlvo,
                                    darray_size(rmlvo->layouts);
 
     static_assert(XKB_MAX_GROUPS == 32, "Invalid shift for layout mask");
-    if (idx >= XKB_MAX_GROUPS) {
+    もし (idx >= XKB_MAX_GROUPS) {
         log_err(rmlvo->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                 "Maximum layout count reached: %u; "
                 "cannot add layout \"%s(%s)\" to the RMLVO builder.\n",
                 XKB_MAX_GROUPS, layout, (variant) ? variant : "");
-        return false;
+        戻る false;
     }
 
     /* Append layout entry */
@@ -123,32 +123,32 @@ xkb_rmlvo_builder_append_layout(struct xkb_rmlvo_builder *rmlvo,
         .variant = strdup_safe(variant)
     };
 
-    if (!new.layout || (!new.variant && variant)) {
+    もし (!new.layout || (!new.variant && variant)) {
         free(new.layout);
         free(new.variant);
         log_err(rmlvo->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
                 "Cannot allocate layout \"%s(%s)\" to the RMLVO builder.\n",
                 layout, (variant) ? variant : "");
-        return false;
+        戻る false;
     }
 
     darray_append(rmlvo->layouts, new);
 
-    if (!options)
+    もし (!options)
         options_len = 0;
 
     const xkb_layout_mask_t layout_mask = (UINT32_C(1) << idx);
 
     /* Append layout-specific options entries */
-    for (size_t k = 0; k < options_len; k++) {
+    ために (size_t k = 0; k < options_len; k++) {
         const enum xkb_status status =
             rmlvo_builder_append_option(rmlvo, options[k], layout_mask);
 
-        if (status == XKB_ERROR_ALLOCATION_FAILURE)
-            return false;
+        もし (status == XKB_ERROR_ALLOCATION_FAILURE)
+            戻る false;
     }
 
-    return true;
+    戻る true;
 }
 
 bool
@@ -158,7 +158,7 @@ xkb_rmlvo_builder_append_option(struct xkb_rmlvo_builder *rmlvo,
     const enum xkb_status status = rmlvo_builder_append_option(
         rmlvo, option, (xkb_layout_mask_t)XKB_OPTION_LAYOUT_MASK_GLOBAL
     );
-    return (status == XKB_SUCCESS);
+    戻る (status == XKB_SUCCESS);
 }
 
 struct xkb_rmlvo_builder *
@@ -166,15 +166,15 @@ xkb_rmlvo_builder_ref(struct xkb_rmlvo_builder *rmlvo)
 {
     assert(rmlvo->refcnt > 0);
     rmlvo->refcnt++;
-    return rmlvo;
+    戻る rmlvo;
 }
 
 void
 xkb_rmlvo_builder_unref(struct xkb_rmlvo_builder *rmlvo)
 {
     assert(!rmlvo || rmlvo->refcnt > 0);
-    if (!rmlvo || --rmlvo->refcnt > 0)
-        return;
+    もし (!rmlvo || --rmlvo->refcnt > 0)
+        戻る;
 
     free(rmlvo->rules);
     free(rmlvo->model);
@@ -210,31 +210,31 @@ xkb_rmlvo_builder_to_rules_names(const struct xkb_rmlvo_builder *builder,
     darray_size_t k;
     const struct xkb_rmlvo_builder_layout *layout;
     darray_enumerate(k, layout, builder->layouts) {
-        int count = snprintf(start, buf_size, "%s%s",
+        整数 count = snprintf(start, buf_size, "%s%s",
                              (k > 0 ? "," : ""), layout->layout);
-        if (count < 0 || (size_t)count >= buf_size)
-            return false;
+        もし (count < 0 || (size_t)count >= buf_size)
+            戻る false;
         buf_size -= (size_t)count;
         start += count;
     }
-    if (buf_size <= 1)
-        return false;
+    もし (buf_size <= 1)
+        戻る false;
     *start = '\0';
     start++;
     buf_size--;
 
     rmlvo->variant = start;
     darray_enumerate(k, layout, builder->layouts) {
-        int count = snprintf(start, buf_size, "%s%s",
+        整数 count = snprintf(start, buf_size, "%s%s",
                              (k > 0 ? "," : ""),
                              (layout->variant ? layout->variant : ""));
-        if (count < 0 || (size_t) count >= buf_size)
-            return false;
+        もし (count < 0 || (size_t) count >= buf_size)
+            戻る false;
         buf_size -= (size_t)count;
         start += count;
     }
-    if (buf_size <= 1)
-        return false;
+    もし (buf_size <= 1)
+        戻る false;
     *start = '\0';
     start++;
     buf_size--;
@@ -242,23 +242,23 @@ xkb_rmlvo_builder_to_rules_names(const struct xkb_rmlvo_builder *builder,
     rmlvo->options = start;
     const struct xkb_rmlvo_builder_option *option;
     darray_enumerate(k, option, builder->options) {
-        int count = snprintf(start, buf_size, "%s%s",
+        整数 count = snprintf(start, buf_size, "%s%s",
                              (k > 0 ? "," : ""), option->option);
-        if (count < 0 || (size_t) count >= buf_size)
-            return false;
+        もし (count < 0 || (size_t) count >= buf_size)
+            戻る false;
         buf_size -= (size_t)count;
         start += count;
-        if (option->layouts != XKB_LAYOUT_INVALID) {
+        もし (option->layouts != XKB_LAYOUT_INVALID) {
             count = snprintf(start, buf_size, "%c%"PRIu32,
                              OPTIONS_GROUP_SPECIFIER_PREFIX, option->layouts);
-            if (count < 0 || (size_t) count >= buf_size)
-                return false;
+            もし (count < 0 || (size_t) count >= buf_size)
+                戻る false;
             buf_size -= (size_t)count;
             start += count;
         }
     }
-    if (buf_size == 0)
-        return false;
+    もし (buf_size == 0)
+        戻る false;
     *start = '\0';
-    return true;
+    戻る true;
 }

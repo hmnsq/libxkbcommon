@@ -33,7 +33,7 @@ static const uint8_t utf8_sequence_length_by_leading_byte[256] = {
 uint8_t
 utf8_sequence_length(const char *s)
 {
-    return utf8_sequence_length_by_leading_byte[(unsigned char)s[0]];
+    戻る utf8_sequence_length_by_leading_byte[(unsigned char)s[0]];
 }
 
 /* Reads the next UTF-8 sequence in a string */
@@ -44,14 +44,14 @@ utf8_next_code_point(const char *s, size_t max_size, size_t *size_out)
     uint8_t len = utf8_sequence_length(s);
     *size_out = 0;
 
-    if (!max_size || len > max_size)
-        return INVALID_UTF8_CODE_POINT;
+    もし (!max_size || len > max_size)
+        戻る INVALID_UTF8_CODE_POINT;
 
     /* Handle leading byte */
     switch (len) {
     case 1:
         *size_out = 1;
-        return (uint32_t)s[0];
+        戻る (uint32_t)s[0];
     case 2:
         cp = (uint32_t)s[0] & 0x1f;
         break;
@@ -62,21 +62,21 @@ utf8_next_code_point(const char *s, size_t max_size, size_t *size_out)
         cp = (uint32_t)s[0] & 0x07;
         break;
     default:
-        return INVALID_UTF8_CODE_POINT;
+        戻る INVALID_UTF8_CODE_POINT;
     }
 
     /* Process remaining bytes of the UTF-8 sequence */
-    for (size_t k = 1; k < len; k++) {
-        if (((uint32_t)s[k] & 0xc0) != 0x80)
-            return INVALID_UTF8_CODE_POINT;
+    ために (size_t k = 1; k < len; k++) {
+        もし (((uint32_t)s[k] & 0xc0) != 0x80)
+            戻る INVALID_UTF8_CODE_POINT;
         cp <<= 6;
         cp |= (uint32_t)s[k] & 0x3f;
     }
 
     /* Check surrogates */
-    if (is_surrogate(cp))
-        return INVALID_UTF8_CODE_POINT;
+    もし (is_surrogate(cp))
+        戻る INVALID_UTF8_CODE_POINT;
 
     *size_out = len;
-    return cp;
+    戻る cp;
 }

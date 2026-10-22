@@ -63,7 +63,7 @@ enum xkb_parser_strict_flags {
 static inline enum xkb_parser_strict_flags
 parser_strict_flags_from_keymap_format(enum xkb_keymap_format format)
 {
-    return (format == XKB_KEYMAP_FORMAT_TEXT_V1)
+    戻る (format == XKB_KEYMAP_FORMAT_TEXT_V1)
             ? PARSER_V1_LAX_FLAGS
             : PARSER_V2_LAX_FLAGS;
 }
@@ -71,7 +71,7 @@ parser_strict_flags_from_keymap_format(enum xkb_keymap_format format)
 static inline enum xkb_parser_strict_flags
 parser_strict_flags_from_keymap(const struct xkb_keymap *keymap)
 {
-    return (keymap->format == XKB_KEYMAP_FORMAT_TEXT_V1)
+    戻る (keymap->format == XKB_KEYMAP_FORMAT_TEXT_V1)
             ? (keymap->flags & XKB_KEYMAP_COMPILE_STRICT_MODE
                 ? PARSER_V1_STRICT_FLAGS
                 : PARSER_V1_LAX_FLAGS)
@@ -186,7 +186,7 @@ ReportNotArray(struct xkb_context *ctx, const char *type, const char *field,
             "The %s %s field is not an array; "
             "Ignoring illegal assignment in %s\n",
             type, field, name);
-    return false;
+    戻る false;
 }
 
 static inline bool
@@ -197,7 +197,7 @@ ReportShouldBeArray(struct xkb_context *ctx, const char *type,
             "Missing subscript for %s %s; "
             "Ignoring illegal assignment in %s\n",
             type, field, name);
-    return false;
+    戻る false;
 }
 
 static inline bool
@@ -209,7 +209,7 @@ ReportBadType(struct xkb_context *ctx, enum xkb_message_code code,
             "The %s %s field must be a %s; "
             "Ignoring illegal assignment in %s\n",
             type, field, wanted, name);
-    return false;
+    戻る false;
 }
 
 static inline bool
@@ -220,11 +220,11 @@ ReportBadField(struct xkb_context *ctx, const char *type, const char *field,
             "Unknown %s field \"%s\" in %s; "
             "Ignoring assignment to unknown field in %s\n",
             type, field, name, name);
-    return false;
+    戻る false;
 }
 
 static inline const char*
 safe_map_name(const char* name)
 {
-    return name ? name : "(unnamed map)";
+    戻る name ? name : "(unnamed map)";
 }

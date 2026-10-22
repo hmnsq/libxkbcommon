@@ -122,33 +122,33 @@ resolve_keysym(struct parser_param *param, struct sval name, xkb_keysym_t *sym_r
 {
     xkb_keysym_t sym;
 
-    if (isvaleq(name, SVAL_LIT("any")) || isvaleq(name, SVAL_LIT("nosymbol"))) {
+    もし (isvaleq(name, SVAL_LIT("any")) || isvaleq(name, SVAL_LIT("nosymbol"))) {
         *sym_rtrn = XKB_KEY_NoSymbol;
-        return true;
+        戻る true;
     }
 
-    if (isvaleq(name, SVAL_LIT("none")) || isvaleq(name, SVAL_LIT("voidsymbol"))) {
+    もし (isvaleq(name, SVAL_LIT("none")) || isvaleq(name, SVAL_LIT("voidsymbol"))) {
         *sym_rtrn = XKB_KEY_VoidSymbol;
-        return true;
+        戻る true;
     }
 
     /* xkb_keysym_from_name needs a C string. */
     char buf[XKB_KEYSYM_NAME_MAX_SIZE];
-    if (name.len >= sizeof(buf)) {
-        return false;
+    もし (name.len >= sizeof(buf)) {
+        戻る false;
     }
     memcpy(buf, name.start, name.len);
     buf[name.len] = '\0';
 
     sym = xkb_keysym_from_name(buf, XKB_KEYSYM_NO_FLAGS);
-    if (sym != XKB_KEY_NoSymbol) {
+    もし (sym != XKB_KEY_NoSymbol) {
         *sym_rtrn = sym;
         check_deprecated_keysyms(parser_warn, param, param->ctx,
                                  sym, buf, buf, "%s", "");
-        return true;
+        戻る true;
     }
 
-    return false;
+    戻る false;
 }
 
 #define param_scanner param->scanner
@@ -159,19 +159,19 @@ resolve_keysym(struct parser_param *param, struct sval name, xkb_keysym_t *sym_r
 #  ifdef __cplusplus
 #   define YY_CAST(Type, Val) static_cast<Type> (Val)
 #   define YY_REINTERPRET_CAST(Type, Val) reinterpret_cast<Type> (Val)
-#  else
+#  否则
 #   define YY_CAST(Type, Val) ((Type) (Val))
 #   define YY_REINTERPRET_CAST(Type, Val) ((Type) (Val))
 #  endif
 # endif
 # ifndef YY_NULLPTR
-#  if defined __cplusplus
-#   if 201103L <= __cplusplus
+#  もし defined __cplusplus
+#   もし 201103L <= __cplusplus
 #    define YY_NULLPTR nullptr
-#   else
+#   否则
 #    define YY_NULLPTR 0
 #   endif
-#  else
+#  否则
 #   define YY_NULLPTR ((void*)0)
 #  endif
 # endif
@@ -347,7 +347,7 @@ typedef enum yysymbol_kind_t yysymbol_kind_t;
 
 #ifndef __PTRDIFF_MAX__
 # include <limits.h> /* INFRINGES ON USER NAME SPACE */
-# if defined __STDC_VERSION__ && 199901 <= __STDC_VERSION__
+# もし defined __STDC_VERSION__ && 199901 <= __STDC_VERSION__
 #  include <stdint.h> /* INFRINGES ON USER NAME SPACE */
 #  define YY_STDINT_H
 # endif
@@ -362,7 +362,7 @@ typedef enum yysymbol_kind_t yysymbol_kind_t;
 typedef __INT_LEAST8_TYPE__ yytype_int8;
 #elif defined YY_STDINT_H
 typedef int_least8_t yytype_int8;
-#else
+#否则
 typedef signed char yytype_int8;
 #endif
 
@@ -370,7 +370,7 @@ typedef signed char yytype_int8;
 typedef __INT_LEAST16_TYPE__ yytype_int16;
 #elif defined YY_STDINT_H
 typedef int_least16_t yytype_int16;
-#else
+#否则
 typedef short yytype_int16;
 #endif
 
@@ -386,30 +386,30 @@ typedef short yytype_int16;
 # define UINT_LEAST16_MAX 65535
 #endif
 
-#if defined __UINT_LEAST8_MAX__ && __UINT_LEAST8_MAX__ <= __INT_MAX__
+#もし defined __UINT_LEAST8_MAX__ && __UINT_LEAST8_MAX__ <= __INT_MAX__
 typedef __UINT_LEAST8_TYPE__ yytype_uint8;
 #elif (!defined __UINT_LEAST8_MAX__ && defined YY_STDINT_H \
        && UINT_LEAST8_MAX <= INT_MAX)
 typedef uint_least8_t yytype_uint8;
 #elif !defined __UINT_LEAST8_MAX__ && UCHAR_MAX <= INT_MAX
 typedef unsigned char yytype_uint8;
-#else
+#否则
 typedef short yytype_uint8;
 #endif
 
-#if defined __UINT_LEAST16_MAX__ && __UINT_LEAST16_MAX__ <= __INT_MAX__
+#もし defined __UINT_LEAST16_MAX__ && __UINT_LEAST16_MAX__ <= __INT_MAX__
 typedef __UINT_LEAST16_TYPE__ yytype_uint16;
 #elif (!defined __UINT_LEAST16_MAX__ && defined YY_STDINT_H \
        && UINT_LEAST16_MAX <= INT_MAX)
 typedef uint_least16_t yytype_uint16;
 #elif !defined __UINT_LEAST16_MAX__ && USHRT_MAX <= INT_MAX
 typedef unsigned short yytype_uint16;
-#else
-typedef int yytype_uint16;
+#否则
+typedef 整数 yytype_uint16;
 #endif
 
 #ifndef YYPTRDIFF_T
-# if defined __PTRDIFF_TYPE__ && defined __PTRDIFF_MAX__
+# もし defined __PTRDIFF_TYPE__ && defined __PTRDIFF_MAX__
 #  define YYPTRDIFF_T __PTRDIFF_TYPE__
 #  define YYPTRDIFF_MAXIMUM __PTRDIFF_MAX__
 # elif defined PTRDIFF_MAX
@@ -418,7 +418,7 @@ typedef int yytype_uint16;
 #  endif
 #  define YYPTRDIFF_T ptrdiff_t
 #  define YYPTRDIFF_MAXIMUM PTRDIFF_MAX
-# else
+# 否则
 #  define YYPTRDIFF_T long
 #  define YYPTRDIFF_MAXIMUM LONG_MAX
 # endif
@@ -432,7 +432,7 @@ typedef int yytype_uint16;
 # elif defined __STDC_VERSION__ && 199901 <= __STDC_VERSION__
 #  include <stddef.h> /* INFRINGES ON USER NAME SPACE */
 #  define YYSIZE_T size_t
-# else
+# 否则
 #  define YYSIZE_T unsigned
 # endif
 #endif
@@ -450,11 +450,11 @@ typedef int yytype_uint16;
 typedef yytype_int16 yy_state_t;
 
 /* State numbers in computations.  */
-typedef int yy_state_fast_t;
+typedef 整数 yy_state_fast_t;
 
 #ifndef YY_
-# if defined YYENABLE_NLS && YYENABLE_NLS
-#  if ENABLE_NLS
+# もし defined YYENABLE_NLS && YYENABLE_NLS
+#  もし ENABLE_NLS
 #   include <libintl.h> /* INFRINGES ON USER NAME SPACE */
 #   define YY_(Msgid) dgettext ("bison-runtime", Msgid)
 #  endif
@@ -466,35 +466,35 @@ typedef int yy_state_fast_t;
 
 
 #ifndef YY_ATTRIBUTE_PURE
-# if defined __GNUC__ && 2 < __GNUC__ + (96 <= __GNUC_MINOR__)
+# もし defined __GNUC__ && 2 < __GNUC__ + (96 <= __GNUC_MINOR__)
 #  define YY_ATTRIBUTE_PURE __attribute__ ((__pure__))
-# else
+# 否则
 #  define YY_ATTRIBUTE_PURE
 # endif
 #endif
 
 #ifndef YY_ATTRIBUTE_UNUSED
-# if defined __GNUC__ && 2 < __GNUC__ + (7 <= __GNUC_MINOR__)
+# もし defined __GNUC__ && 2 < __GNUC__ + (7 <= __GNUC_MINOR__)
 #  define YY_ATTRIBUTE_UNUSED __attribute__ ((__unused__))
-# else
+# 否则
 #  define YY_ATTRIBUTE_UNUSED
 # endif
 #endif
 
 /* Suppress unused-variable warnings by "using" E.  */
-#if ! defined lint || defined __GNUC__
+#もし ! defined lint || defined __GNUC__
 # define YY_USE(E) ((void) (E))
-#else
+#否则
 # define YY_USE(E) /* empty */
 #endif
 
 /* Suppress an incorrect diagnostic about yylval being uninitialized.  */
-#if defined __GNUC__ && ! defined __ICC && 406 <= __GNUC__ * 100 + __GNUC_MINOR__
-# if __GNUC__ * 100 + __GNUC_MINOR__ < 407
+#もし defined __GNUC__ && ! defined __ICC && 406 <= __GNUC__ * 100 + __GNUC_MINOR__
+# もし __GNUC__ * 100 + __GNUC_MINOR__ < 407
 #  define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN                           \
     _Pragma ("GCC diagnostic push")                                     \
     _Pragma ("GCC diagnostic ignored \"-Wuninitialized\"")
-# else
+# 否则
 #  define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN                           \
     _Pragma ("GCC diagnostic push")                                     \
     _Pragma ("GCC diagnostic ignored \"-Wuninitialized\"")              \
@@ -502,7 +502,7 @@ typedef int yy_state_fast_t;
 # endif
 # define YY_IGNORE_MAYBE_UNINITIALIZED_END      \
     _Pragma ("GCC diagnostic pop")
-#else
+#否则
 # define YY_INITIAL_VALUE(Value) Value
 #endif
 #ifndef YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
@@ -513,7 +513,7 @@ typedef int yy_state_fast_t;
 # define YY_INITIAL_VALUE(Value) /* Nothing. */
 #endif
 
-#if defined __cplusplus && defined __GNUC__ && ! defined __ICC && 6 <= __GNUC__
+#もし defined __cplusplus && defined __GNUC__ && ! defined __ICC && 6 <= __GNUC__
 # define YY_IGNORE_USELESS_CAST_BEGIN                          \
     _Pragma ("GCC diagnostic push")                            \
     _Pragma ("GCC diagnostic ignored \"-Wuseless-cast\"")
@@ -528,12 +528,12 @@ typedef int yy_state_fast_t;
 
 #define YY_ASSERT(E) ((void) (0 && (E)))
 
-#if 1
+#もし 1
 
 /* The parser invokes alloca or malloc; define the necessary symbols.  */
 
 # ifdef YYSTACK_USE_ALLOCA
-#  if YYSTACK_USE_ALLOCA
+#  もし YYSTACK_USE_ALLOCA
 #   ifdef __GNUC__
 #    define YYSTACK_ALLOC __builtin_alloca
 #   elif defined __BUILTIN_VA_ARG_INCR
@@ -543,9 +543,9 @@ typedef int yy_state_fast_t;
 #   elif defined _MSC_VER
 #    include <malloc.h> /* INFRINGES ON USER NAME SPACE */
 #    define alloca _alloca
-#   else
+#   否则
 #    define YYSTACK_ALLOC alloca
-#    if ! defined _ALLOCA_H && ! defined EXIT_SUCCESS
+#    もし ! defined _ALLOCA_H && ! defined EXIT_SUCCESS
 #     include <stdlib.h> /* INFRINGES ON USER NAME SPACE */
       /* Use EXIT_SUCCESS as a witness for stdlib.h.  */
 #     ifndef EXIT_SUCCESS
@@ -558,7 +558,7 @@ typedef int yy_state_fast_t;
 
 # ifdef YYSTACK_ALLOC
    /* Pacify GCC's 'empty if-body' warning.  */
-#  define YYSTACK_FREE(Ptr) do { /* empty */; } while (0)
+#  define YYSTACK_FREE(Ptr) do { /* empty */; } ながら (0)
 #  ifndef YYSTACK_ALLOC_MAXIMUM
     /* The OS might guarantee only one guard page at the bottom of the stack,
        and a page size can be as small as 4096 bytes.  So we cannot safely
@@ -566,13 +566,13 @@ typedef int yy_state_fast_t;
        to allow for a few compiler-allocated temporary stack slots.  */
 #   define YYSTACK_ALLOC_MAXIMUM 4032 /* reasonable circa 2006 */
 #  endif
-# else
+# 否则
 #  define YYSTACK_ALLOC YYMALLOC
 #  define YYSTACK_FREE YYFREE
 #  ifndef YYSTACK_ALLOC_MAXIMUM
 #   define YYSTACK_ALLOC_MAXIMUM YYSIZE_MAXIMUM
 #  endif
-#  if (defined __cplusplus && ! defined EXIT_SUCCESS \
+#  もし (defined __cplusplus && ! defined EXIT_SUCCESS \
        && ! ((defined YYMALLOC || defined malloc) \
              && (defined YYFREE || defined free)))
 #   include <stdlib.h> /* INFRINGES ON USER NAME SPACE */
@@ -582,20 +582,20 @@ typedef int yy_state_fast_t;
 #  endif
 #  ifndef YYMALLOC
 #   define YYMALLOC malloc
-#   if ! defined malloc && ! defined EXIT_SUCCESS
+#   もし ! defined malloc && ! defined EXIT_SUCCESS
 void *malloc (YYSIZE_T); /* INFRINGES ON USER NAME SPACE */
 #   endif
 #  endif
 #  ifndef YYFREE
 #   define YYFREE free
-#   if ! defined free && ! defined EXIT_SUCCESS
+#   もし ! defined free && ! defined EXIT_SUCCESS
 void free (void *); /* INFRINGES ON USER NAME SPACE */
 #   endif
 #  endif
 # endif
 #endif /* 1 */
 
-#if (! defined yyoverflow \
+#もし (! defined yyoverflow \
      && (! defined __cplusplus \
          || (defined YYSTYPE_IS_TRIVIAL && YYSTYPE_IS_TRIVIAL)))
 
@@ -631,26 +631,26 @@ union yyalloc
         yynewbytes = yystacksize * YYSIZEOF (*Stack) + YYSTACK_GAP_MAXIMUM; \
         yyptr += yynewbytes / YYSIZEOF (*yyptr);                        \
       }                                                                 \
-    while (0)
+    ながら (0)
 
 #endif
 
-#if defined YYCOPY_NEEDED && YYCOPY_NEEDED
+#もし defined YYCOPY_NEEDED && YYCOPY_NEEDED
 /* Copy COUNT objects from SRC to DST.  The source and destination do
    not overlap.  */
 # ifndef YYCOPY
-#  if defined __GNUC__ && 1 < __GNUC__
+#  もし defined __GNUC__ && 1 < __GNUC__
 #   define YYCOPY(Dst, Src, Count) \
       __builtin_memcpy (Dst, Src, YY_CAST (YYSIZE_T, (Count)) * sizeof (*(Src)))
-#  else
+#  否则
 #   define YYCOPY(Dst, Src, Count)              \
       do                                        \
         {                                       \
           YYPTRDIFF_T yyi;                      \
-          for (yyi = 0; yyi < (Count); yyi++)   \
+          ために (yyi = 0; yyi < (Count); yyi++)   \
             (Dst)[yyi] = (Src)[yyi];            \
         }                                       \
-      while (0)
+      ながら (0)
 #  endif
 # endif
 #endif /* !YYCOPY_NEEDED */
@@ -712,7 +712,7 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     3,     1,     2
 };
 
-#if YYDEBUG
+#もし YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
@@ -745,7 +745,7 @@ static const yytype_int16 yyrline[] =
 /** Accessing symbol of state STATE.  */
 #define YY_ACCESSING_SYMBOL(State) YY_CAST (yysymbol_kind_t, yystos[State])
 
-#if 1
+#もし 1
 /* The user-facing name of the symbol whose (internal) number is
    YYSYMBOL.  No bounds checking.  */
 static const char *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
@@ -785,7 +785,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
   "KeySymLit", "SignedNumber", "Number", "Float", "Integer", "KeyCode",
   "Ident", "String", "OptMapName", "MapName", YY_NULLPTR
   };
-  return yy_sname[yysymbol];
+  戻る yy_sname[yysymbol];
 }
 #endif
 
@@ -1236,7 +1236,7 @@ enum { YYENOMEM = -2 };
 
 #define YYBACKUP(Token, Value)                                    \
   do                                                              \
-    if (yychar == YYEMPTY)                                        \
+    もし (yychar == YYEMPTY)                                        \
       {                                                           \
         yychar = (Token);                                         \
         yylval = (Value);                                         \
@@ -1244,12 +1244,12 @@ enum { YYENOMEM = -2 };
         yystate = *yyssp;                                         \
         goto yybackup;                                            \
       }                                                           \
-    else                                                          \
+    否则                                                          \
       {                                                           \
         yyerror (param, YY_("syntax error: cannot back up")); \
         YYERROR;                                                  \
       }                                                           \
-  while (0)
+  ながら (0)
 
 /* Backward compatibility with an undocumented macro.
    Use YYerror or YYUNDEF. */
@@ -1257,7 +1257,7 @@ enum { YYENOMEM = -2 };
 
 
 /* Enable debugging if requested.  */
-#if YYDEBUG
+#もし YYDEBUG
 
 # ifndef YYFPRINTF
 #  include <stdio.h> /* INFRINGES ON USER NAME SPACE */
@@ -1266,23 +1266,23 @@ enum { YYENOMEM = -2 };
 
 # define YYDPRINTF(Args)                        \
 do {                                            \
-  if (yydebug)                                  \
+  もし (yydebug)                                  \
     YYFPRINTF Args;                             \
-} while (0)
+} ながら (0)
 
 
 
 
 # define YY_SYMBOL_PRINT(Title, Kind, Value, Location)                    \
 do {                                                                      \
-  if (yydebug)                                                            \
+  もし (yydebug)                                                            \
     {                                                                     \
       YYFPRINTF (stderr, "%s ", Title);                                   \
       yy_symbol_print (stderr,                                            \
                   Kind, Value, param); \
       YYFPRINTF (stderr, "\n");                                           \
     }                                                                     \
-} while (0)
+} ながら (0)
 
 
 /*-----------------------------------.
@@ -1296,8 +1296,8 @@ yy_symbol_value_print (FILE *yyo,
   FILE *yyoutput = yyo;
   YY_USE (yyoutput);
   YY_USE (param);
-  if (!yyvaluep)
-    return;
+  もし (!yyvaluep)
+    戻る;
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
   YY_USE (yykind);
   YY_IGNORE_MAYBE_UNINITIALIZED_END
@@ -1328,9 +1328,9 @@ static void
 yy_stack_print (yy_state_t *yybottom, yy_state_t *yytop)
 {
   YYFPRINTF (stderr, "Stack now");
-  for (; yybottom <= yytop; yybottom++)
+  ために (; yybottom <= yytop; yybottom++)
     {
-      int yybot = *yybottom;
+      整数 yybot = *yybottom;
       YYFPRINTF (stderr, " %d", yybot);
     }
   YYFPRINTF (stderr, "\n");
@@ -1338,9 +1338,9 @@ yy_stack_print (yy_state_t *yybottom, yy_state_t *yytop)
 
 # define YY_STACK_PRINT(Bottom, Top)                            \
 do {                                                            \
-  if (yydebug)                                                  \
+  もし (yydebug)                                                  \
     yy_stack_print ((Bottom), (Top));                           \
-} while (0)
+} ながら (0)
 
 
 /*------------------------------------------------.
@@ -1349,15 +1349,15 @@ do {                                                            \
 
 static void
 yy_reduce_print (yy_state_t *yyssp, YYSTYPE *yyvsp,
-                 int yyrule, struct parser_param *param)
+                 整数 yyrule, struct parser_param *param)
 {
-  int yylno = yyrline[yyrule];
-  int yynrhs = yyr2[yyrule];
-  int yyi;
+  整数 yylno = yyrline[yyrule];
+  整数 yynrhs = yyr2[yyrule];
+  整数 yyi;
   YYFPRINTF (stderr, "Reducing stack by rule %d (line %d):\n",
              yyrule - 1, yylno);
   /* The symbols being reduced.  */
-  for (yyi = 0; yyi < yynrhs; yyi++)
+  ために (yyi = 0; yyi < yynrhs; yyi++)
     {
       YYFPRINTF (stderr, "   $%d = ", yyi + 1);
       yy_symbol_print (stderr,
@@ -1369,14 +1369,14 @@ yy_reduce_print (yy_state_t *yyssp, YYSTYPE *yyvsp,
 
 # define YY_REDUCE_PRINT(Rule)          \
 do {                                    \
-  if (yydebug)                          \
+  もし (yydebug)                          \
     yy_reduce_print (yyssp, yyvsp, Rule, param); \
-} while (0)
+} ながら (0)
 
 /* Nonzero means print parse trace.  It is left uninitialized so that
    multiple parsers can coexist.  */
-int yydebug;
-#else /* !YYDEBUG */
+整数 yydebug;
+#否则 /* !YYDEBUG */
 # define YYDPRINTF(Args) ((void) 0)
 # define YY_SYMBOL_PRINT(Title, Kind, Value, Location)
 # define YY_STACK_PRINT(Bottom, Top)
@@ -1414,63 +1414,63 @@ typedef struct
    be less than YYNTOKENS).  Return YYENOMEM on memory exhaustion.
    Return 0 if there are more than YYARGN expected tokens, yet fill
    YYARG up to YYARGN. */
-static int
+static 整数
 yypcontext_expected_tokens (const yypcontext_t *yyctx,
-                            yysymbol_kind_t yyarg[], int yyargn)
+                            yysymbol_kind_t yyarg[], 整数 yyargn)
 {
   /* Actual size of YYARG. */
-  int yycount = 0;
-  int yyn = yypact[+*yyctx->yyssp];
-  if (!yypact_value_is_default (yyn))
+  整数 yycount = 0;
+  整数 yyn = yypact[+*yyctx->yyssp];
+  もし (!yypact_value_is_default (yyn))
     {
       /* Start YYX at -YYN if negative to avoid negative indexes in
          YYCHECK.  In other words, skip the first -YYN actions for
          this state because they are default actions.  */
-      int yyxbegin = yyn < 0 ? -yyn : 0;
+      整数 yyxbegin = yyn < 0 ? -yyn : 0;
       /* Stay within bounds of both yycheck and yytname.  */
-      int yychecklim = YYLAST - yyn + 1;
-      int yyxend = yychecklim < YYNTOKENS ? yychecklim : YYNTOKENS;
-      int yyx;
-      for (yyx = yyxbegin; yyx < yyxend; ++yyx)
-        if (yycheck[yyx + yyn] == yyx && yyx != YYSYMBOL_YYerror
+      整数 yychecklim = YYLAST - yyn + 1;
+      整数 yyxend = yychecklim < YYNTOKENS ? yychecklim : YYNTOKENS;
+      整数 yyx;
+      ために (yyx = yyxbegin; yyx < yyxend; ++yyx)
+        もし (yycheck[yyx + yyn] == yyx && yyx != YYSYMBOL_YYerror
             && !yytable_value_is_error (yytable[yyx + yyn]))
           {
-            if (!yyarg)
+            もし (!yyarg)
               ++yycount;
-            else if (yycount == yyargn)
-              return 0;
-            else
+            否则 もし (yycount == yyargn)
+              戻る 0;
+            否则
               yyarg[yycount++] = YY_CAST (yysymbol_kind_t, yyx);
           }
     }
-  if (yyarg && yycount == 0 && 0 < yyargn)
+  もし (yyarg && yycount == 0 && 0 < yyargn)
     yyarg[0] = YYSYMBOL_YYEMPTY;
-  return yycount;
+  戻る yycount;
 }
 
 
 
 
 #ifndef yystrlen
-# if defined __GLIBC__ && defined _STRING_H
+# もし defined __GLIBC__ && defined _STRING_H
 #  define yystrlen(S) (YY_CAST (YYPTRDIFF_T, strlen (S)))
-# else
+# 否则
 /* Return the length of YYSTR.  */
 static YYPTRDIFF_T
 yystrlen (const char *yystr)
 {
   YYPTRDIFF_T yylen;
-  for (yylen = 0; yystr[yylen]; yylen++)
+  ために (yylen = 0; yystr[yylen]; yylen++)
     continue;
-  return yylen;
+  戻る yylen;
 }
 # endif
 #endif
 
 #ifndef yystpcpy
-# if defined __GLIBC__ && defined _STRING_H && defined _GNU_SOURCE
+# もし defined __GLIBC__ && defined _STRING_H && defined _GNU_SOURCE
 #  define yystpcpy stpcpy
-# else
+# 否则
 /* Copy YYSRC to YYDEST, returning the address of the terminating '\0' in
    YYDEST.  */
 static char *
@@ -1479,22 +1479,22 @@ yystpcpy (char *yydest, const char *yysrc)
   char *yyd = yydest;
   const char *yys = yysrc;
 
-  while ((*yyd++ = *yys++) != '\0')
+  ながら ((*yyd++ = *yys++) != '\0')
     continue;
 
-  return yyd - 1;
+  戻る yyd - 1;
 }
 # endif
 #endif
 
 
 
-static int
+static 整数
 yy_syntax_error_arguments (const yypcontext_t *yyctx,
-                           yysymbol_kind_t yyarg[], int yyargn)
+                           yysymbol_kind_t yyarg[], 整数 yyargn)
 {
   /* Actual size of YYARG. */
-  int yycount = 0;
+  整数 yycount = 0;
   /* There are many possibilities here to consider:
      - If this state is a consistent state with a default action, then
        the only way this function was invoked is if the default action
@@ -1518,20 +1518,20 @@ yy_syntax_error_arguments (const yypcontext_t *yyctx,
        one exception: it will still contain any token that will not be
        accepted due to an error action in a later state.
   */
-  if (yyctx->yytoken != YYSYMBOL_YYEMPTY)
+  もし (yyctx->yytoken != YYSYMBOL_YYEMPTY)
     {
-      int yyn;
-      if (yyarg)
+      整数 yyn;
+      もし (yyarg)
         yyarg[yycount] = yyctx->yytoken;
       ++yycount;
       yyn = yypcontext_expected_tokens (yyctx,
                                         yyarg ? yyarg + 1 : yyarg, yyargn - 1);
-      if (yyn == YYENOMEM)
-        return YYENOMEM;
-      else
+      もし (yyn == YYENOMEM)
+        戻る YYENOMEM;
+      否则
         yycount += yyn;
     }
-  return yycount;
+  戻る yycount;
 }
 
 /* Copy into *YYMSG, which is of size *YYMSG_ALLOC, an error message
@@ -1542,7 +1542,7 @@ yy_syntax_error_arguments (const yypcontext_t *yyctx,
    not large enough to hold the message.  In that case, also set
    *YYMSG_ALLOC to the required number of bytes.  Return YYENOMEM if the
    required number of bytes is too large to store.  */
-static int
+static 整数
 yysyntax_error (YYPTRDIFF_T *yymsg_alloc, char **yymsg,
                 const yypcontext_t *yyctx)
 {
@@ -1556,9 +1556,9 @@ yysyntax_error (YYPTRDIFF_T *yymsg_alloc, char **yymsg,
   YYPTRDIFF_T yysize = 0;
 
   /* Actual size of YYARG. */
-  int yycount = yy_syntax_error_arguments (yyctx, yyarg, YYARGS_MAX);
-  if (yycount == YYENOMEM)
-    return YYENOMEM;
+  整数 yycount = yy_syntax_error_arguments (yyctx, yyarg, YYARGS_MAX);
+  もし (yycount == YYENOMEM)
+    戻る YYENOMEM;
 
   switch (yycount)
     {
@@ -1580,25 +1580,25 @@ yysyntax_error (YYPTRDIFF_T *yymsg_alloc, char **yymsg,
      room for the terminator.  */
   yysize = yystrlen (yyformat) - 2 * yycount + 1;
   {
-    int yyi;
-    for (yyi = 0; yyi < yycount; ++yyi)
+    整数 yyi;
+    ために (yyi = 0; yyi < yycount; ++yyi)
       {
         YYPTRDIFF_T yysize1
           = yysize + yystrlen (yysymbol_name (yyarg[yyi]));
-        if (yysize <= yysize1 && yysize1 <= YYSTACK_ALLOC_MAXIMUM)
+        もし (yysize <= yysize1 && yysize1 <= YYSTACK_ALLOC_MAXIMUM)
           yysize = yysize1;
-        else
-          return YYENOMEM;
+        否则
+          戻る YYENOMEM;
       }
   }
 
-  if (*yymsg_alloc < yysize)
+  もし (*yymsg_alloc < yysize)
     {
       *yymsg_alloc = 2 * yysize;
-      if (! (yysize <= *yymsg_alloc
+      もし (! (yysize <= *yymsg_alloc
              && *yymsg_alloc <= YYSTACK_ALLOC_MAXIMUM))
         *yymsg_alloc = YYSTACK_ALLOC_MAXIMUM;
-      return -1;
+      戻る -1;
     }
 
   /* Avoid sprintf, as that infringes on the user's name space.
@@ -1606,20 +1606,20 @@ yysyntax_error (YYPTRDIFF_T *yymsg_alloc, char **yymsg,
      produced a string with the wrong number of "%s"s.  */
   {
     char *yyp = *yymsg;
-    int yyi = 0;
-    while ((*yyp = *yyformat) != '\0')
-      if (*yyp == '%' && yyformat[1] == 's' && yyi < yycount)
+    整数 yyi = 0;
+    ながら ((*yyp = *yyformat) != '\0')
+      もし (*yyp == '%' && yyformat[1] == 's' && yyi < yycount)
         {
           yyp = yystpcpy (yyp, yysymbol_name (yyarg[yyi++]));
           yyformat += 2;
         }
-      else
+      否则
         {
           ++yyp;
           ++yyformat;
         }
   }
-  return 0;
+  戻る 0;
 }
 
 
@@ -1633,7 +1633,7 @@ yydestruct (const char *yymsg,
 {
   YY_USE (yyvaluep);
   YY_USE (param);
-  if (!yymsg)
+  もし (!yymsg)
     yymsg = "Deleting";
   YY_SYMBOL_PRINT (yymsg, yykind, yyvaluep, yylocationp);
 
@@ -1648,13 +1648,13 @@ yydestruct (const char *yymsg,
 
     case YYSYMBOL_XkbFile: /* XkbFile  */
 #line 257 "src/xkbcomp/parser.y"
-            { if (!param->rtrn) FreeXkbFile(((*yyvaluep).file)); }
+            { もし (!param->rtrn) FreeXkbFile(((*yyvaluep).file)); }
 #line 1646 "src/xkbcomp/parser.c"
         break;
 
     case YYSYMBOL_XkbCompositeMap: /* XkbCompositeMap  */
 #line 257 "src/xkbcomp/parser.y"
-            { if (!param->rtrn) FreeXkbFile(((*yyvaluep).file)); }
+            { もし (!param->rtrn) FreeXkbFile(((*yyvaluep).file)); }
 #line 1652 "src/xkbcomp/parser.c"
         break;
 
@@ -1666,7 +1666,7 @@ yydestruct (const char *yymsg,
 
     case YYSYMBOL_XkbMapConfig: /* XkbMapConfig  */
 #line 257 "src/xkbcomp/parser.y"
-            { if (!param->rtrn) FreeXkbFile(((*yyvaluep).file)); }
+            { もし (!param->rtrn) FreeXkbFile(((*yyvaluep).file)); }
 #line 1664 "src/xkbcomp/parser.c"
         break;
 
@@ -1937,11 +1937,11 @@ yydestruct (const char *yymsg,
 | yyparse.  |
 `----------*/
 
-int
+整数
 yyparse (struct parser_param *param)
 {
 /* Lookahead token kind.  */
-int yychar;
+整数 yychar;
 
 
 /* The semantic value of the lookahead symbol.  */
@@ -1951,11 +1951,11 @@ YY_INITIAL_VALUE (static YYSTYPE yyval_default;)
 YYSTYPE yylval YY_INITIAL_VALUE (= yyval_default);
 
     /* Number of syntax errors so far.  */
-    int yynerrs = 0;
+    整数 yynerrs = 0;
 
     yy_state_fast_t yystate = 0;
     /* Number of tokens to shift before error messages enabled.  */
-    int yyerrstatus = 0;
+    整数 yyerrstatus = 0;
 
     /* Refer to the stacks through separate pointers, to allow yyoverflow
        to reallocate them elsewhere.  */
@@ -1973,9 +1973,9 @@ YYSTYPE yylval YY_INITIAL_VALUE (= yyval_default);
     YYSTYPE *yyvs = yyvsa;
     YYSTYPE *yyvsp = yyvs;
 
-  int yyn;
+  整数 yyn;
   /* The return value of yyparse.  */
-  int yyresult;
+  整数 yyresult;
   /* Lookahead symbol kind.  */
   yysymbol_kind_t yytoken = YYSYMBOL_YYEMPTY;
   /* The variables used to return semantic value and location from the
@@ -1991,7 +1991,7 @@ YYSTYPE yylval YY_INITIAL_VALUE (= yyval_default);
 
   /* The number of symbols on the RHS of the reduced rule.
      Keep to zero when no symbol should be popped.  */
-  int yylen = 0;
+  整数 yylen = 0;
 
   YYDPRINTF ((stderr, "Starting parse\n"));
 
@@ -2020,15 +2020,15 @@ yysetstate:
   YY_IGNORE_USELESS_CAST_END
   YY_STACK_PRINT (yyss, yyssp);
 
-  if (yyss + yystacksize - 1 <= yyssp)
-#if !defined yyoverflow && !defined YYSTACK_RELOCATE
+  もし (yyss + yystacksize - 1 <= yyssp)
+#もし !defined yyoverflow && !defined YYSTACK_RELOCATE
     YYNOMEM;
-#else
+#否则
     {
       /* Get the current used size of the three stacks, in elements.  */
       YYPTRDIFF_T yysize = yyssp - yyss + 1;
 
-# if defined yyoverflow
+# もし defined yyoverflow
       {
         /* Give user a chance to reallocate the stack.  Use copies of
            these so that the &'s don't force the real ones into
@@ -2047,12 +2047,12 @@ yysetstate:
         yyss = yyss1;
         yyvs = yyvs1;
       }
-# else /* defined YYSTACK_RELOCATE */
+# 否则 /* defined YYSTACK_RELOCATE */
       /* Extend the stack our own way.  */
-      if (YYMAXDEPTH <= yystacksize)
+      もし (YYMAXDEPTH <= yystacksize)
         YYNOMEM;
       yystacksize *= 2;
-      if (YYMAXDEPTH < yystacksize)
+      もし (YYMAXDEPTH < yystacksize)
         yystacksize = YYMAXDEPTH;
 
       {
@@ -2060,12 +2060,12 @@ yysetstate:
         union yyalloc *yyptr =
           YY_CAST (union yyalloc *,
                    YYSTACK_ALLOC (YY_CAST (YYSIZE_T, YYSTACK_BYTES (yystacksize))));
-        if (! yyptr)
+        もし (! yyptr)
           YYNOMEM;
         YYSTACK_RELOCATE (yyss_alloc, yyss);
         YYSTACK_RELOCATE (yyvs_alloc, yyvs);
 #  undef YYSTACK_RELOCATE
-        if (yyss1 != yyssa)
+        もし (yyss1 != yyssa)
           YYSTACK_FREE (yyss1);
       }
 # endif
@@ -2078,13 +2078,13 @@ yysetstate:
                   YY_CAST (long, yystacksize)));
       YY_IGNORE_USELESS_CAST_END
 
-      if (yyss + yystacksize - 1 <= yyssp)
+      もし (yyss + yystacksize - 1 <= yyssp)
         YYABORT;
     }
 #endif /* !defined yyoverflow && !defined YYSTACK_RELOCATE */
 
 
-  if (yystate == YYFINAL)
+  もし (yystate == YYFINAL)
     YYACCEPT;
 
   goto yybackup;
@@ -2099,25 +2099,25 @@ yybackup:
 
   /* First try to decide what to do without reference to lookahead token.  */
   yyn = yypact[yystate];
-  if (yypact_value_is_default (yyn))
+  もし (yypact_value_is_default (yyn))
     goto yydefault;
 
   /* Not known => get a lookahead token if don't already have one.  */
 
   /* YYCHAR is either empty, or end-of-input, or a valid lookahead.  */
-  if (yychar == YYEMPTY)
+  もし (yychar == YYEMPTY)
     {
       YYDPRINTF ((stderr, "Reading a token\n"));
       yychar = yylex (&yylval, param_scanner);
     }
 
-  if (yychar <= END_OF_FILE)
+  もし (yychar <= END_OF_FILE)
     {
       yychar = END_OF_FILE;
       yytoken = YYSYMBOL_YYEOF;
       YYDPRINTF ((stderr, "Now at end of input.\n"));
     }
-  else if (yychar == YYerror)
+  否则 もし (yychar == YYerror)
     {
       /* The scanner already issued an error message, process directly
          to error recovery.  But do not keep the error token as
@@ -2127,7 +2127,7 @@ yybackup:
       yytoken = YYSYMBOL_YYerror;
       goto yyerrlab1;
     }
-  else
+  否则
     {
       yytoken = YYTRANSLATE (yychar);
       YY_SYMBOL_PRINT ("Next token is", yytoken, &yylval, &yylloc);
@@ -2136,12 +2136,12 @@ yybackup:
   /* If the proper action on seeing token YYTOKEN is to reduce or to
      detect an error, take that action.  */
   yyn += yytoken;
-  if (yyn < 0 || YYLAST < yyn || yycheck[yyn] != yytoken)
+  もし (yyn < 0 || YYLAST < yyn || yycheck[yyn] != yytoken)
     goto yydefault;
   yyn = yytable[yyn];
-  if (yyn <= 0)
+  もし (yyn <= 0)
     {
-      if (yytable_value_is_error (yyn))
+      もし (yytable_value_is_error (yyn))
         goto yyerrlab;
       yyn = -yyn;
       goto yyreduce;
@@ -2149,7 +2149,7 @@ yybackup:
 
   /* Count tokens shifted since error; after three, turn off error
      status.  */
-  if (yyerrstatus)
+  もし (yyerrstatus)
     yyerrstatus--;
 
   /* Shift the lookahead token.  */
@@ -2169,7 +2169,7 @@ yybackup:
 `-----------------------------------------------------------*/
 yydefault:
   yyn = yydefact[yystate];
-  if (yyn == 0)
+  もし (yyn == 0)
     goto yyerrlab;
   goto yyreduce;
 
@@ -2240,12 +2240,12 @@ yyreduce:
   case 9: /* XkbMapConfigList: XkbMapConfigList XkbMapConfig  */
 #line 298 "src/xkbcomp/parser.y"
                         {
-                            if ((yyvsp[0].file)) {
-                                if ((yyvsp[-1].fileList).head) {
+                            もし ((yyvsp[0].file)) {
+                                もし ((yyvsp[-1].fileList).head) {
                                     (yyval.fileList).head = (yyvsp[-1].fileList).head;
                                     (yyval.fileList).last->common.next = &(yyvsp[0].file)->common;
                                     (yyval.fileList).last = (yyvsp[0].file);
-                                } else {
+                                } 否则 {
                                     (yyval.fileList).head = (yyval.fileList).last = (yyvsp[0].file);
                                 }
                             }
@@ -2262,7 +2262,7 @@ yyreduce:
   case 11: /* XkbMapConfig: OptFlags FileType OptMapName "{" DeclList "}" ";"  */
 #line 315 "src/xkbcomp/parser.y"
                         {
-                            if ((yyvsp[-6].mapFlags) & MAP_IS_DEPRECATED) {
+                            もし ((yyvsp[-6].mapFlags) & MAP_IS_DEPRECATED) {
                                 parser_warn(param, XKB_WARNING_DEPRECATED_SECTION,
                                             "deprecated section: \"%s\"",
                                             safe_map_name((yyvsp[-4].str)));
@@ -2392,7 +2392,7 @@ yyreduce:
                                 (unsigned)(yyvsp[0].sval).len, (yyvsp[0].sval).start,
                                 (error ? "" : "; ignored")
                             );
-                            if (error)
+                            もし (error)
                                 YYABORT;
                             (yyval.mapFlags) = 0;
                         }
@@ -2402,10 +2402,10 @@ yyreduce:
   case 31: /* DeclList: DeclList Decl  */
 #line 367 "src/xkbcomp/parser.y"
                         {
-                            if ((yyvsp[0].any)) {
-                                if ((yyvsp[-1].anyList).head) {
+                            もし ((yyvsp[0].any)) {
+                                もし ((yyvsp[-1].anyList).head) {
                                     (yyval.anyList).head = (yyvsp[-1].anyList).head; (yyvsp[-1].anyList).last->next = (yyvsp[0].any); (yyval.anyList).last = (yyvsp[0].any);
-                                } else {
+                                } 否则 {
                                     (yyval.anyList).head = (yyval.anyList).last = (yyvsp[0].any);
                                 }
                             }
@@ -2416,11 +2416,11 @@ yyreduce:
   case 32: /* DeclList: DeclList OptMergeMode VModDecl  */
 #line 382 "src/xkbcomp/parser.y"
                         {
-                            for (VModDef *vmod = (yyvsp[0].vmodList).head; vmod; vmod = (VModDef *) vmod->common.next)
+                            ために (VModDef *vmod = (yyvsp[0].vmodList).head; vmod; vmod = (VModDef *) vmod->common.next)
                                 vmod->merge = (yyvsp[-1].merge);
-                            if ((yyvsp[-2].anyList).head) {
+                            もし ((yyvsp[-2].anyList).head) {
                                 (yyval.anyList).head = (yyvsp[-2].anyList).head; (yyvsp[-2].anyList).last->next = &(yyvsp[0].vmodList).head->common; (yyval.anyList).last = &(yyvsp[0].vmodList).last->common;
-                            } else {
+                            } 否则 {
                                 (yyval.anyList).head = &(yyvsp[0].vmodList).head->common; (yyval.anyList).last = &(yyvsp[0].vmodList).last->common;
                             }
                         }
@@ -2643,12 +2643,12 @@ yyreduce:
   case 63: /* VarDeclList: VarDeclList VarDecl  */
 #line 504 "src/xkbcomp/parser.y"
                         {
-                            if ((yyvsp[0].var)) {
-                                if ((yyvsp[-1].varList).head) {
+                            もし ((yyvsp[0].var)) {
+                                もし ((yyvsp[-1].varList).head) {
                                     (yyval.varList).head = (yyvsp[-1].varList).head;
                                     (yyval.varList).last->common.next = &(yyvsp[0].var)->common;
                                     (yyval.varList).last = (yyvsp[0].var);
-                                } else {
+                                } 否则 {
                                     (yyval.varList).head = (yyval.varList).last = (yyvsp[0].var);
                                 }
                             }
@@ -2741,10 +2741,10 @@ yyreduce:
                             struct {ExprDef *head; ExprDef *last;} list = {
                                 .head = (yyvsp[-1].exprList).head, .last = (yyvsp[-1].exprList).last
                             };
-                            for (uint32_t k = 0; k < (yyvsp[-3].noSymbolOrActionList); k++) {
+                            ために (uint32_t k = 0; k < (yyvsp[-3].noSymbolOrActionList); k++) {
                                 ExprDef* const syms =
                                     ExprCreateKeySymList(XKB_KEY_NoSymbol);
-                                if (!syms) {
+                                もし (!syms) {
                                     /* TODO: Use Bison’s more appropriate YYNOMEM */
                                     YYABORT;
                                 }
@@ -2769,9 +2769,9 @@ yyreduce:
                             struct {ExprDef *head; ExprDef *last;} list = {
                                 .head = (yyvsp[-1].exprList).head, .last = (yyvsp[-1].exprList).last
                             };
-                            for (uint32_t k = 0; k < (yyvsp[-3].noSymbolOrActionList); k++) {
+                            ために (uint32_t k = 0; k < (yyvsp[-3].noSymbolOrActionList); k++) {
                                 ExprDef* const acts = ExprCreateActionList(NULL);
-                                if (!acts) {
+                                もし (!acts) {
                                     /* TODO: Use Bison’s more appropriate YYNOMEM */
                                     YYABORT;
                                 }
@@ -2816,7 +2816,7 @@ yyreduce:
   case 85: /* ModMapDecl: "modifier_map" Expr "{" KeyOrKeySymList "}" ";"  */
 #line 621 "src/xkbcomp/parser.y"
                         {
-                            if (param->config.format == XKB_KEYMAP_FORMAT_TEXT_V1 &&
+                            もし (param->config.format == XKB_KEYMAP_FORMAT_TEXT_V1 &&
                                 (yyvsp[-4].expr)->common.type != STMT_EXPR_IDENT) {
                                     parser_err(
                                         param, XKB_ERROR_INVALID_MODIFIER_MAP_MASK,
@@ -3235,12 +3235,12 @@ yyreduce:
   case 150: /* ExprList: ExprList "," Expr  */
 #line 815 "src/xkbcomp/parser.y"
                         {
-                            if ((yyvsp[0].expr)) {
-                                if ((yyvsp[-2].exprList).head) {
+                            もし ((yyvsp[0].expr)) {
+                                もし ((yyvsp[-2].exprList).head) {
                                     (yyval.exprList).head = (yyvsp[-2].exprList).head;
                                     (yyval.exprList).last->common.next = &(yyvsp[0].expr)->common;
                                     (yyval.exprList).last = (yyvsp[0].expr);
-                                } else {
+                                } 否则 {
                                     (yyval.exprList).head = (yyval.exprList).last = (yyvsp[0].expr);
                                 }
                             }
@@ -3513,7 +3513,7 @@ yyreduce:
                         {
                             (yyval.expr) = ExprKeySymListAppendString(param->scanner, (yyvsp[-2].expr), (yyvsp[0].str));
                             free((yyvsp[0].str));
-                            if (!(yyval.expr))
+                            もし (!(yyval.expr))
                                 YYERROR;
                         }
 #line 3513 "src/xkbcomp/parser.c"
@@ -3523,7 +3523,7 @@ yyreduce:
 #line 948 "src/xkbcomp/parser.y"
                         {
                             (yyval.expr) = ExprCreateKeySymList((yyvsp[0].keysym));
-                            if (!(yyval.expr))
+                            もし (!(yyval.expr))
                                 YYERROR;
                         }
 #line 3523 "src/xkbcomp/parser.c"
@@ -3533,11 +3533,11 @@ yyreduce:
 #line 954 "src/xkbcomp/parser.y"
                         {
                             (yyval.expr) = ExprCreateKeySymList(XKB_KEY_NoSymbol);
-                            if (!(yyval.expr))
+                            もし (!(yyval.expr))
                                 YYERROR;
                             (yyval.expr) = ExprKeySymListAppendString(param->scanner, (yyval.expr), (yyvsp[0].str));
                             free((yyvsp[0].str));
-                            if (!(yyval.expr))
+                            もし (!(yyval.expr))
                                 YYERROR;
                         }
 #line 3537 "src/xkbcomp/parser.c"
@@ -3553,11 +3553,11 @@ yyreduce:
 #line 968 "src/xkbcomp/parser.y"
                         {
                             (yyval.expr) = ExprCreateKeySymList(XKB_KEY_NoSymbol);
-                            if (!(yyval.expr))
+                            もし (!(yyval.expr))
                                 YYERROR;
                             (yyval.expr) = ExprKeySymListAppendString(param->scanner, (yyval.expr), (yyvsp[0].str));
                             free((yyvsp[0].str));
-                            if (!(yyval.expr))
+                            もし (!(yyval.expr))
                                 YYERROR;
                         }
 #line 3557 "src/xkbcomp/parser.c"
@@ -3586,7 +3586,7 @@ yyreduce:
                         {
                             (yyval.keysym) = KeysymParseString(param->scanner, (yyvsp[0].str));
                             free((yyvsp[0].str));
-                            if ((yyval.keysym) == XKB_KEY_NoSymbol)
+                            もし ((yyval.keysym) == XKB_KEY_NoSymbol)
                                 YYERROR;
                         }
 #line 3586 "src/xkbcomp/parser.c"
@@ -3595,12 +3595,12 @@ yyreduce:
   case 202: /* KeySymLit: "identifier"  */
 #line 997 "src/xkbcomp/parser.y"
                         {
-                            if (!resolve_keysym(param, (yyvsp[0].sval), &(yyval.keysym))) {
+                            もし (!resolve_keysym(param, (yyvsp[0].sval), &(yyval.keysym))) {
                                 parser_warn(
                                     param,
                                     XKB_WARNING_UNRECOGNIZED_KEYSYM,
                                     "unrecognized keysym \"%.*s\"",
-                                    (unsigned int) (yyvsp[0].sval).len, (yyvsp[0].sval).start
+                                    (unsigned 整数) (yyvsp[0].sval).len, (yyvsp[0].sval).start
                                 );
                                 (yyval.keysym) = XKB_KEY_NoSymbol;
                             }
@@ -3630,7 +3630,7 @@ yyreduce:
   case 205: /* KeySymLit: "integer literal"  */
 #line 1020 "src/xkbcomp/parser.y"
                         {
-                            if ((yyvsp[0].num) < XKB_KEYSYM_MIN) {
+                            もし ((yyvsp[0].num) < XKB_KEYSYM_MIN) {
                                 /* Negative value */
                                 static_assert(XKB_KEYSYM_MIN == 0,
                                               "Keysyms are positive");
@@ -3651,9 +3651,9 @@ yyreduce:
                              * the keysym 0x0001, while `1` is interpreted as
                              * XKB_KEY_1.
                              */
-                            else {
+                            否则 {
                                 /* Any other numeric value */
-                                if ((yyvsp[0].num) <= XKB_KEYSYM_MAX) {
+                                もし ((yyvsp[0].num) <= XKB_KEYSYM_MAX) {
                                     /*
                                      * Valid keysym
                                      * No normalization is performed and value
@@ -3663,7 +3663,7 @@ yyreduce:
                                     check_deprecated_keysyms(
                                         parser_warn, param, param->ctx,
                                         (yyval.keysym), NULL, (yyval.keysym), "%#06"PRIx32, "");
-                                } else {
+                                } 否则 {
                                     /* Invalid keysym */
                                     parser_warn(
                                         param, XKB_ERROR_INVALID_NUMERIC_KEYSYM,
@@ -3812,8 +3812,8 @@ yyreduce:
      that goes to, based on the state we popped back to and the rule
      number reduced by.  */
   {
-    const int yylhs = yyr1[yyn] - YYNTOKENS;
-    const int yyi = yypgoto[yylhs] + *yyssp;
+    const 整数 yylhs = yyr1[yyn] - YYNTOKENS;
+    const 整数 yyi = yypgoto[yylhs] + *yyssp;
     yystate = (0 <= yyi && yyi <= YYLAST && yycheck[yyi] == *yyssp
                ? yytable[yyi]
                : yydefgoto[yylhs]);
@@ -3830,30 +3830,30 @@ yyerrlab:
      user semantic actions for why this is necessary.  */
   yytoken = yychar == YYEMPTY ? YYSYMBOL_YYEMPTY : YYTRANSLATE (yychar);
   /* If not already recovering from an error, report this error.  */
-  if (!yyerrstatus)
+  もし (!yyerrstatus)
     {
       ++yynerrs;
       {
         yypcontext_t yyctx
           = {yyssp, yytoken};
         char const *yymsgp = YY_("syntax error");
-        int yysyntax_error_status;
+        整数 yysyntax_error_status;
         yysyntax_error_status = yysyntax_error (&yymsg_alloc, &yymsg, &yyctx);
-        if (yysyntax_error_status == 0)
+        もし (yysyntax_error_status == 0)
           yymsgp = yymsg;
-        else if (yysyntax_error_status == -1)
+        否则 もし (yysyntax_error_status == -1)
           {
-            if (yymsg != yymsgbuf)
+            もし (yymsg != yymsgbuf)
               YYSTACK_FREE (yymsg);
             yymsg = YY_CAST (char *,
                              YYSTACK_ALLOC (YY_CAST (YYSIZE_T, yymsg_alloc)));
-            if (yymsg)
+            もし (yymsg)
               {
                 yysyntax_error_status
                   = yysyntax_error (&yymsg_alloc, &yymsg, &yyctx);
                 yymsgp = yymsg;
               }
-            else
+            否则
               {
                 yymsg = yymsgbuf;
                 yymsg_alloc = sizeof yymsgbuf;
@@ -3861,23 +3861,23 @@ yyerrlab:
               }
           }
         yyerror (param, yymsgp);
-        if (yysyntax_error_status == YYENOMEM)
+        もし (yysyntax_error_status == YYENOMEM)
           YYNOMEM;
       }
     }
 
-  if (yyerrstatus == 3)
+  もし (yyerrstatus == 3)
     {
       /* If just tried and failed to reuse lookahead token after an
          error, discard it.  */
 
-      if (yychar <= END_OF_FILE)
+      もし (yychar <= END_OF_FILE)
         {
           /* Return failure if at end of input.  */
-          if (yychar == END_OF_FILE)
+          もし (yychar == END_OF_FILE)
             YYABORT;
         }
-      else
+      否则
         {
           yydestruct ("Error: discarding",
                       yytoken, &yylval, param);
@@ -3896,7 +3896,7 @@ yyerrlab:
 yyerrorlab:
   /* Pacify compilers when the user code never invokes YYERROR and the
      label yyerrorlab therefore never appears in user code.  */
-  if (0)
+  もし (0)
     YYERROR;
   ++yynerrs;
 
@@ -3916,22 +3916,22 @@ yyerrlab1:
   yyerrstatus = 3;      /* Each real token shifted decrements this.  */
 
   /* Pop stack until we find a state that shifts the error token.  */
-  for (;;)
+  ために (;;)
     {
       yyn = yypact[yystate];
-      if (!yypact_value_is_default (yyn))
+      もし (!yypact_value_is_default (yyn))
         {
           yyn += YYSYMBOL_YYerror;
-          if (0 <= yyn && yyn <= YYLAST && yycheck[yyn] == YYSYMBOL_YYerror)
+          もし (0 <= yyn && yyn <= YYLAST && yycheck[yyn] == YYSYMBOL_YYerror)
             {
               yyn = yytable[yyn];
-              if (0 < yyn)
+              もし (0 < yyn)
                 break;
             }
         }
 
       /* Pop the current state because it cannot handle the error token.  */
-      if (yyssp == yyss)
+      もし (yyssp == yyss)
         YYABORT;
 
 
@@ -3983,7 +3983,7 @@ yyexhaustedlab:
 | yyreturnlab -- parsing is finished, clean up and return.  |
 `----------------------------------------------------------*/
 yyreturnlab:
-  if (yychar != YYEMPTY)
+  もし (yychar != YYEMPTY)
     {
       /* Make sure we have latest lookahead translation.  See comments at
          user semantic actions for why this is necessary.  */
@@ -3995,19 +3995,19 @@ yyreturnlab:
      this YYABORT or YYACCEPT.  */
   YYPOPSTACK (yylen);
   YY_STACK_PRINT (yyss, yyssp);
-  while (yyssp != yyss)
+  ながら (yyssp != yyss)
     {
       yydestruct ("Cleanup: popping",
                   YY_ACCESSING_SYMBOL (+*yyssp), yyvsp, param);
       YYPOPSTACK (1);
     }
 #ifndef yyoverflow
-  if (yyss != yyssa)
+  もし (yyss != yyssa)
     YYSTACK_FREE (yyss);
 #endif
-  if (yymsg != yymsgbuf)
+  もし (yymsg != yymsgbuf)
     YYSTACK_FREE (yymsg);
-  return yyresult;
+  戻る yyresult;
 }
 
 #line 1113 "src/xkbcomp/parser.y"
@@ -4018,7 +4018,7 @@ XkbFile *
 parse(struct xkb_context *ctx, const struct parser_keymap_config *config,
       struct scanner *scanner, const char *map)
 {
-    int ret;
+    整数 ret;
     XkbFile *first = NULL;
     struct parser_param param = {
         .scanner = scanner,
@@ -4036,47 +4036,47 @@ parse(struct xkb_context *ctx, const struct parser_keymap_config *config,
      * the first map in the file.
      */
 
-    while ((ret = yyparse(&param)) == 0 && param.more_maps) {
-        if (map) {
-            if (streq_not_null(map, param.rtrn->name))
-                return param.rtrn;
-            else
+    ながら ((ret = yyparse(&param)) == 0 && param.more_maps) {
+        もし (map) {
+            もし (streq_not_null(map, param.rtrn->name))
+                戻る param.rtrn;
+            否则
                 FreeXkbFile(param.rtrn);
         }
-        else {
-            if (param.rtrn->flags & MAP_IS_DEFAULT) {
+        否则 {
+            もし (param.rtrn->flags & MAP_IS_DEFAULT) {
                 FreeXkbFile(first);
-                return param.rtrn;
+                戻る param.rtrn;
             }
-            else if (!first) {
+            否则 もし (!first) {
                 first = param.rtrn;
             }
-            else {
+            否则 {
                 FreeXkbFile(param.rtrn);
             }
         }
         param.rtrn = NULL;
     }
 
-    if (ret != 0) {
+    もし (ret != 0) {
         /* Some error happend; clear the Xkbfiles parsed so far */
         FreeXkbFile(first);
         FreeXkbFile(param.rtrn);
-        return NULL;
+        戻る NULL;
     }
 
     /*
      * Warn about implicit default section,
      * but only if not a keymap: multiple keymaps per file not supported
      */
-    if (first && first->file_type != FILE_TYPE_KEYMAP)
+    もし (first && first->file_type != FILE_TYPE_KEYMAP)
         log_vrb(ctx, XKB_LOG_VERBOSITY_DETAILED,
                 XKB_WARNING_MISSING_DEFAULT_SECTION,
                 "No section name in include statement, but \"%s\" contains several; "
                 "Using first defined section, \"%s\"\n",
                 scanner->file_name, safe_map_name(first->name));
 
-    return first;
+    戻る first;
 }
 
 /* Parse the next section */
@@ -4085,7 +4085,7 @@ parse_next(struct xkb_context *ctx,
            const struct parser_keymap_config *config,
            struct scanner *scanner, XkbFile **xkb_file)
 {
-    int ret;
+    整数 ret;
     struct parser_param param = {
         .scanner = scanner,
         .ctx = ctx,
@@ -4094,12 +4094,12 @@ parse_next(struct xkb_context *ctx,
         .more_maps = false,
     };
 
-    if ((ret = yyparse(&param)) == 0 && param.more_maps) {
+    もし ((ret = yyparse(&param)) == 0 && param.more_maps) {
         *xkb_file = param.rtrn;
-        return true;
-    } else {
+        戻る true;
+    } 否则 {
         FreeXkbFile(param.rtrn);
         *xkb_file = NULL;
-        return (ret == 0);
+        戻る (ret == 0);
     }
 }

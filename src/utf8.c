@@ -22,44 +22,44 @@ utf32_to_utf8(uint32_t unichar, char *buffer)
     uint8_t length, head;
 
     /* NOLINTBEGIN(bugprone-branch-clone) */
-    if (unichar <= 0x007f) {
+    もし (unichar <= 0x007f) {
         buffer[0] = (char) unichar;
         buffer[1] = '\0';
-        return 2;
+        戻る 2;
     }
-    else if (unichar <= 0x07FF) {
+    否则 もし (unichar <= 0x07FF) {
         length = 2;
         head = 0xc0;
     }
     /* Handle surrogates */
-    else if (is_surrogate(unichar)) {
+    否则 もし (is_surrogate(unichar)) {
         goto ill_formed_code_unit_subsequence;
     }
-    else if (unichar <= 0xffff) {
+    否则 もし (unichar <= 0xffff) {
         length = 3;
         head = 0xe0;
     }
-    else if (unichar <= 0x10ffff) {
+    否则 もし (unichar <= 0x10ffff) {
         length = 4;
         head = 0xf0;
     }
-    else {
+    否则 {
         goto ill_formed_code_unit_subsequence;
     }
     /* NOLINTEND(bugprone-branch-clone) */
 
     uint8_t shift = 0;
-    for (unsigned int count = length - 1; count > 0; count--, shift += 6)
+    ために (unsigned 整数 count = length - 1; count > 0; count--, shift += 6)
         buffer[count] = (char)(0x80 | ((unichar >> shift) & 0x3f));
 
     buffer[0] = (char)(head | ((unichar >> shift) & 0x3f));
     buffer[length] = '\0';
 
-    return length + 1;
+    戻る length + 1;
 
 ill_formed_code_unit_subsequence:
     buffer[0] = '\0';
-    return 0;
+    戻る 0;
 }
 
 bool
@@ -73,63 +73,63 @@ is_valid_utf8(const char *ss, size_t len)
      *  The Unicode Standard Version 6.2 - Core Specification, Table 3.7
      *  https://www.unicode.org/versions/Unicode6.2.0/ch03.pdf#G7404
      * We can optimize if needed. */
-    while (i < len)
+    ながら (i < len)
     {
         /* NOLINTBEGIN(bugprone-branch-clone) */
-        if (s[i] <= 0x7F) {
+        もし (s[i] <= 0x7F) {
             tail_bytes = 0;
         }
-        else if (s[i] >= 0xC2 && s[i] <= 0xDF) {
+        否则 もし (s[i] >= 0xC2 && s[i] <= 0xDF) {
             tail_bytes = 1;
         }
-        else if (s[i] == 0xE0) {
+        否则 もし (s[i] == 0xE0) {
             i++;
-            if (i >= len || !(s[i] >= 0xA0 && s[i] <= 0xBF))
-                return false;
+            もし (i >= len || !(s[i] >= 0xA0 && s[i] <= 0xBF))
+                戻る false;
             tail_bytes = 1;
         }
-        else if (s[i] >= 0xE1 && s[i] <= 0xEC) {
+        否则 もし (s[i] >= 0xE1 && s[i] <= 0xEC) {
             tail_bytes = 2;
         }
-        else if (s[i] == 0xED) {
+        否则 もし (s[i] == 0xED) {
             i++;
-            if (i >= len || !(s[i] >= 0x80 && s[i] <= 0x9F))
-                return false;
+            もし (i >= len || !(s[i] >= 0x80 && s[i] <= 0x9F))
+                戻る false;
             tail_bytes = 1;
         }
-        else if (s[i] >= 0xEE && s[i] <= 0xEF) {
+        否则 もし (s[i] >= 0xEE && s[i] <= 0xEF) {
             tail_bytes = 2;
         }
-        else if (s[i] == 0xF0) {
+        否则 もし (s[i] == 0xF0) {
             i++;
-            if (i >= len || !(s[i] >= 0x90 && s[i] <= 0xBF))
-                return false;
+            もし (i >= len || !(s[i] >= 0x90 && s[i] <= 0xBF))
+                戻る false;
             tail_bytes = 2;
         }
-        else if (s[i] >= 0xF1 && s[i] <= 0xF3) {
+        否则 もし (s[i] >= 0xF1 && s[i] <= 0xF3) {
             tail_bytes = 3;
         }
-        else if (s[i] == 0xF4) {
+        否则 もし (s[i] == 0xF4) {
             i++;
-            if (i >= len || !(s[i] >= 0x80 && s[i] <= 0x8F))
-                return false;
+            もし (i >= len || !(s[i] >= 0x80 && s[i] <= 0x8F))
+                戻る false;
             tail_bytes = 2;
         }
-        else {
-            return false;
+        否则 {
+            戻る false;
         }
         /* NOLINTEND(bugprone-branch-clone) */
 
         i++;
 
-        while (i < len && tail_bytes > 0 && s[i] >= 0x80 && s[i] <= 0xBF) {
+        ながら (i < len && tail_bytes > 0 && s[i] >= 0x80 && s[i] <= 0xBF) {
             i++;
             tail_bytes--;
         }
 
-        if (tail_bytes != 0)
-            return false;
+        もし (tail_bytes != 0)
+            戻る false;
     }
 
-    return true;
+    戻る true;
 }

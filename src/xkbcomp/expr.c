@@ -33,46 +33,46 @@ ExprResolveLhs(struct xkb_context *ctx, const ExprDef *expr,
         *elem_rtrn = NULL;
         *field_rtrn = xkb_atom_text(ctx, expr->ident.ident);
         *index_rtrn = NULL;
-        return (*field_rtrn != NULL);
+        戻る (*field_rtrn != NULL);
     case STMT_EXPR_FIELD_REF:
         *elem_rtrn = xkb_atom_text(ctx, expr->field_ref.element);
         *field_rtrn = xkb_atom_text(ctx, expr->field_ref.field);
         *index_rtrn = NULL;
-        return (*elem_rtrn != NULL && *field_rtrn != NULL);
+        戻る (*elem_rtrn != NULL && *field_rtrn != NULL);
     case STMT_EXPR_ARRAY_REF:
         *elem_rtrn = xkb_atom_text(ctx, expr->array_ref.element);
         *field_rtrn = xkb_atom_text(ctx, expr->array_ref.field);
         *index_rtrn = expr->array_ref.entry;
-        if (expr->array_ref.element != XKB_ATOM_NONE && *elem_rtrn == NULL)
-            return false;
-        if (*field_rtrn == NULL)
-            return false;
-        return true;
+        もし (expr->array_ref.element != XKB_ATOM_NONE && *elem_rtrn == NULL)
+            戻る false;
+        もし (*field_rtrn == NULL)
+            戻る false;
+        戻る true;
     default:
         break;
     }
     log_wsgo(ctx,
              XKB_ERROR_INVALID_XKB_SYNTAX,
              "Unexpected operator %d in ResolveLhs\n", expr->common.type);
-    return false;
+    戻る false;
 }
 
 static bool
 SimpleLookup(struct xkb_context *ctx, const void *priv, xkb_atom_t field,
              uint32_t *val_rtrn, bool *pending_rtrn)
 {
-    if (!priv || field == XKB_ATOM_NONE)
-        return false;
+    もし (!priv || field == XKB_ATOM_NONE)
+        戻る false;
 
     const char *str = xkb_atom_text(ctx, field);
-    for (const LookupEntry *entry = priv; entry && entry->name; entry++) {
-        if (istreq(str, entry->name)) {
+    ために (const LookupEntry *entry = priv; entry && entry->name; entry++) {
+        もし (istreq(str, entry->name)) {
             *val_rtrn = entry->value;
-            return true;
+            戻る true;
         }
     }
 
-    return false;
+    戻る false;
 }
 
 struct named_integer_pattern {
@@ -92,40 +92,40 @@ NamedIntegerPatternLookup(struct xkb_context *ctx, const void *priv,
                           xkb_atom_t field, uint32_t *val_rtrn,
                           bool *pending_rtrn)
 {
-    if (!priv || field == XKB_ATOM_NONE)
-        return false;
+    もし (!priv || field == XKB_ATOM_NONE)
+        戻る false;
 
     const char * const str = xkb_atom_text(ctx, field);
     const struct named_integer_pattern * const pattern = priv;
 
-    const int count = (istrneq(str, pattern->prefix, pattern->prefix_length))
+    const 整数 count = (istrneq(str, pattern->prefix, pattern->prefix_length))
         ? parse_dec_to_uint32_t(str + pattern->prefix_length, SIZE_MAX, val_rtrn)
         : 0;
 
-    if (count > 0 && *(str + pattern->prefix_length + count) == '\0') {
-        if (*val_rtrn < pattern->min || *val_rtrn > pattern->max) {
+    もし (count > 0 && *(str + pattern->prefix_length + count) == '\0') {
+        もし (*val_rtrn < pattern->min || *val_rtrn > pattern->max) {
             log_err(ctx, pattern->error_id,
                     "%s index %"PRIu32" is out of range (%"PRIu32"..%"PRIu32")\n",
                     pattern->prefix, *val_rtrn, pattern->min, pattern->max);
-            return false;
+            戻る false;
         }
-        if (pattern->is_mask) {
+        もし (pattern->is_mask) {
             /* Compute mask (bit 0 = min index) */
             assert(*val_rtrn - pattern->min < 32);
             *val_rtrn = UINT32_C(1) << (*val_rtrn - pattern->min);
         }
-        return true;
-    } else {
-        if (pattern->entries &&
+        戻る true;
+    } 否则 {
+        もし (pattern->entries &&
             SimpleLookup(ctx, pattern->entries, field, val_rtrn, NULL)) {
-            return true;
+            戻る true;
         }
-        if (pattern->pending_entries && pending_rtrn &&
+        もし (pattern->pending_entries && pending_rtrn &&
             SimpleLookup(ctx, pattern->pending_entries, field, val_rtrn, NULL)) {
             *pending_rtrn = true;
-            return true;
+            戻る true;
         }
-        return false;
+        戻る false;
     }
 }
 
@@ -140,28 +140,28 @@ LookupModMask(struct xkb_context *ctx, const void *priv, xkb_atom_t field,
               xkb_mod_mask_t *val_rtrn, bool *pending_rtrn)
 {
     const char *str = xkb_atom_text(ctx, field);
-    if (!str)
-        return false;
+    もし (!str)
+        戻る false;
 
-    if (istreq(str, "all")) {
+    もし (istreq(str, "all")) {
         *val_rtrn  = MOD_REAL_MASK_ALL;
-        return true;
+        戻る true;
     }
 
-    if (istreq(str, "none")) {
+    もし (istreq(str, "none")) {
         *val_rtrn = 0;
-        return true;
+        戻る true;
     }
 
     const LookupModMaskPriv *arg = priv;
     const struct xkb_mod_set *mods = arg->mods;
     const enum mod_type mod_type = arg->mod_type;
     const xkb_mod_index_t ndx = XkbModNameToIndex(mods, field, mod_type);
-    if (ndx == XKB_MOD_INVALID)
-        return false;
+    もし (ndx == XKB_MOD_INVALID)
+        戻る false;
 
     *val_rtrn = (UINT32_C(1) << ndx);
-    return true;
+    戻る true;
 }
 
 bool
@@ -174,7 +174,7 @@ ExprResolveBoolean(struct xkb_context *ctx, const ExprDef *expr,
     switch (expr->common.type) {
     case STMT_EXPR_BOOLEAN_LITERAL:
         *set_rtrn = expr->boolean.set;
-        return true;
+        戻る true;
 
     case STMT_EXPR_STRING_LITERAL:
     case STMT_EXPR_INTEGER_LITERAL:
@@ -184,41 +184,41 @@ ExprResolveBoolean(struct xkb_context *ctx, const ExprDef *expr,
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found %s where boolean was expected\n",
                 stmt_type_to_string(expr->common.type));
-        return false;
+        戻る false;
 
     case STMT_EXPR_IDENT:
         ident = xkb_atom_text(ctx, expr->ident.ident);
-        if (ident) {
-            if (istreq(ident, "true") ||
+        もし (ident) {
+            もし (istreq(ident, "true") ||
                 istreq(ident, "yes") ||
                 istreq(ident, "on")) {
                 *set_rtrn = true;
-                return true;
+                戻る true;
             }
-            else if (istreq(ident, "false") ||
+            否则 もし (istreq(ident, "false") ||
                      istreq(ident, "no") ||
                      istreq(ident, "off")) {
                 *set_rtrn = false;
-                return true;
+                戻る true;
             }
         }
         log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                 "Identifier \"%s\" of type boolean is unknown\n", ident);
-        return false;
+        戻る false;
 
     case STMT_EXPR_FIELD_REF:
         log_err(ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
                 "Default \"%s.%s\" of type boolean is unknown\n",
                 xkb_atom_text(ctx, expr->field_ref.element),
                 xkb_atom_text(ctx, expr->field_ref.field));
-        return false;
+        戻る false;
 
     case STMT_EXPR_INVERT:
     case STMT_EXPR_NOT:
         ok = ExprResolveBoolean(ctx, expr->unary.child, set_rtrn);
-        if (ok)
+        もし (ok)
             *set_rtrn = !*set_rtrn;
-        return ok;
+        戻る ok;
     case STMT_EXPR_ADD:
     case STMT_EXPR_SUBTRACT:
     case STMT_EXPR_MULTIPLY:
@@ -242,7 +242,7 @@ ExprResolveBoolean(struct xkb_context *ctx, const ExprDef *expr,
         break;
     }
 
-    return false;
+    戻る false;
 }
 
 static bool
@@ -258,7 +258,7 @@ ExprResolveIntegerLookup(struct xkb_context *ctx, const ExprDef *expr,
     switch (expr->common.type) {
     case STMT_EXPR_INTEGER_LITERAL:
         *val_rtrn = expr->integer.ival;
-        return true;
+        戻る true;
 
     case STMT_EXPR_STRING_LITERAL:
     case STMT_EXPR_FLOAT_LITERAL:
@@ -268,32 +268,32 @@ ExprResolveIntegerLookup(struct xkb_context *ctx, const ExprDef *expr,
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found %s where an int was expected\n",
                 stmt_type_to_string(expr->common.type));
-        return false;
+        戻る false;
 
     case STMT_EXPR_IDENT:
-        if (lookup)
+        もし (lookup)
             ok = lookup(ctx, lookupPriv, expr->ident.ident, &u, pending);
 
-        if (!ok)
+        もし (!ok)
             log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                     "Identifier \"%s\" of type int is unknown\n",
                     xkb_atom_text(ctx, expr->ident.ident));
-        else
+        否则
             *val_rtrn = (int64_t) u;
 
-        if (pending && *pending) {
+        もし (pending && *pending) {
             /* Postpone computation */
-            return false;
+            戻る false;
         }
 
-        return ok;
+        戻る ok;
 
     case STMT_EXPR_FIELD_REF:
         log_err(ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
                 "Default \"%s.%s\" of type int is unknown\n",
                 xkb_atom_text(ctx, expr->field_ref.element),
                 xkb_atom_text(ctx, expr->field_ref.field));
-        return false;
+        戻る false;
 
     case STMT_EXPR_ADD:
     case STMT_EXPR_SUBTRACT:
@@ -301,43 +301,43 @@ ExprResolveIntegerLookup(struct xkb_context *ctx, const ExprDef *expr,
     case STMT_EXPR_DIVIDE:
         left = expr->binary.left;
         right = expr->binary.right;
-        if (!ExprResolveIntegerLookup(ctx, left, &l, pending, lookup, lookupPriv) ||
+        もし (!ExprResolveIntegerLookup(ctx, left, &l, pending, lookup, lookupPriv) ||
             !ExprResolveIntegerLookup(ctx, right, &r, pending, lookup, lookupPriv))
-            return false;
+            戻る false;
 
         switch (expr->common.type) {
         case STMT_EXPR_ADD:
-            if (ckd_add(val_rtrn, l, r)) {
+            もし (ckd_add(val_rtrn, l, r)) {
                 log_err(ctx, XKB_ERROR_INTEGER_OVERFLOW,
                         "Addition %"PRId64" + %"PRId64" has an invalid "
                         "mathematical result: %"PRId64"\n",
                         l, r, *val_rtrn);
-                return false;
+                戻る false;
             }
             break;
         case STMT_EXPR_SUBTRACT:
-            if (ckd_sub(val_rtrn, l, r)) {
+            もし (ckd_sub(val_rtrn, l, r)) {
                 log_err(ctx, XKB_ERROR_INTEGER_OVERFLOW,
                         "Substraction %"PRId64" - %"PRId64" has an invalid "
                         "mathematical result: %"PRId64"\n",
                         l, r, *val_rtrn);
-                return false;
+                戻る false;
             }
             break;
         case STMT_EXPR_MULTIPLY:
-            if (ckd_mul(val_rtrn, l, r)) {
+            もし (ckd_mul(val_rtrn, l, r)) {
                 log_err(ctx, XKB_ERROR_INTEGER_OVERFLOW,
                         "Multiplication %"PRId64" * %"PRId64" has an invalid "
                         "mathematical result: %"PRId64"\n",
                         l, r, *val_rtrn);
-                return false;
+                戻る false;
             }
             break;
         case STMT_EXPR_DIVIDE:
-            if (r == 0) {
+            もし (r == 0) {
                 log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                         "Cannot divide by zero: %"PRId64" / %"PRId64"\n", l, r);
-                return false;
+                戻る false;
             }
             *val_rtrn = l / r;
             break;
@@ -345,10 +345,10 @@ ExprResolveIntegerLookup(struct xkb_context *ctx, const ExprDef *expr,
             log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                     "%s of integers not permitted\n",
                     stmt_type_to_string(expr->common.type));
-            return false;
+            戻る false;
         }
 
-        return true;
+        戻る true;
 
     case STMT_EXPR_ASSIGN:
         log_wsgo(ctx,
@@ -359,20 +359,20 @@ ExprResolveIntegerLookup(struct xkb_context *ctx, const ExprDef *expr,
     case STMT_EXPR_NOT:
         log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                 "The ! operator cannot be applied to an integer\n");
-        return false;
+        戻る false;
 
     case STMT_EXPR_INVERT:
     case STMT_EXPR_NEGATE:
         left = expr->unary.child;
-        if (!ExprResolveIntegerLookup(ctx, left, &l, pending, lookup, lookupPriv))
-            return false;
+        もし (!ExprResolveIntegerLookup(ctx, left, &l, pending, lookup, lookupPriv))
+            戻る false;
 
         *val_rtrn = (expr->common.type == STMT_EXPR_NEGATE ? -l : ~l);
-        return true;
+        戻る true;
 
     case STMT_EXPR_UNARY_PLUS:
         left = expr->unary.child;
-        return ExprResolveIntegerLookup(ctx, left, val_rtrn, pending, lookup,
+        戻る ExprResolveIntegerLookup(ctx, left, val_rtrn, pending, lookup,
                                         lookupPriv);
 
     default:
@@ -382,14 +382,14 @@ ExprResolveIntegerLookup(struct xkb_context *ctx, const ExprDef *expr,
         break;
     }
 
-    return false;
+    戻る false;
 }
 
 bool
 ExprResolveInteger(struct xkb_context *ctx, const ExprDef *expr,
                    int64_t *val_rtrn)
 {
-    return ExprResolveIntegerLookup(ctx, expr, val_rtrn, NULL, NULL, NULL);
+    戻る ExprResolveIntegerLookup(ctx, expr, val_rtrn, NULL, NULL, NULL);
 }
 
 enum xkb_parser_error
@@ -415,23 +415,23 @@ ExprResolveGroup(const struct xkb_keymap_info *keymap_info,
     };
 
     int64_t result = 0;
-    if (!ExprResolveIntegerLookup(keymap_info->keymap.ctx, expr, &result, pending,
+    もし (!ExprResolveIntegerLookup(keymap_info->keymap.ctx, expr, &result, pending,
                                   NamedIntegerPatternLookup, &group_name_pattern))
-        return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+        戻る (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
             ? PARSER_FATAL_ERROR
             : PARSER_RECOVERABLE_ERROR;
 
-    if (result < (int64_t)absolute || result > keymap_info->features.max_groups) {
+    もし (result < (int64_t)absolute || result > keymap_info->features.max_groups) {
         log_err(keymap_info->keymap.ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                 "Group index %"PRId64" is out of range (%u..%"PRIu32")\n",
                 result, absolute, keymap_info->features.max_groups);
-        return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+        戻る (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
             ? PARSER_FATAL_ERROR
             : PARSER_RECOVERABLE_ERROR;
     }
 
     *group_rtrn = (xkb_layout_index_t) result;
-    return PARSER_SUCCESS;
+    戻る PARSER_SUCCESS;
 }
 
 bool
@@ -449,27 +449,27 @@ ExprResolveLevel(struct xkb_context *ctx, const ExprDef *expr,
         .error_id = XKB_ERROR_UNSUPPORTED_SHIFT_LEVEL,
     };
     int64_t result = 0;
-    if (!ExprResolveIntegerLookup(ctx, expr, &result, NULL,
+    もし (!ExprResolveIntegerLookup(ctx, expr, &result, NULL,
                                   NamedIntegerPatternLookup,
                                   &level_name_pattern))
-        return false;
+        戻る false;
 
-    if (result < 1 || result > XKB_LEVEL_MAX_IMPL) {
+    もし (result < 1 || result > XKB_LEVEL_MAX_IMPL) {
         log_err(ctx, XKB_ERROR_UNSUPPORTED_SHIFT_LEVEL,
                 "Shift level %"PRId64" is out of range (1..%u)\n",
                 result, XKB_LEVEL_MAX_IMPL);
-        return false;
+        戻る false;
     }
 
     /* Level is zero-indexed from now on. */
     *level_rtrn = (xkb_level_index_t) (result - 1);
-    return true;
+    戻る true;
 }
 
 bool
 ExprResolveButton(struct xkb_context *ctx, const ExprDef *expr, int64_t *btn_rtrn)
 {
-    return ExprResolveIntegerLookup(ctx, expr, btn_rtrn, NULL, SimpleLookup,
+    戻る ExprResolveIntegerLookup(ctx, expr, btn_rtrn, NULL, SimpleLookup,
                                     buttonNames);
 }
 
@@ -480,7 +480,7 @@ ExprResolveString(struct xkb_context *ctx, const ExprDef *expr,
     switch (expr->common.type) {
     case STMT_EXPR_STRING_LITERAL:
         *val_rtrn = expr->string.str;
-        return true;
+        戻る true;
 
     case STMT_EXPR_INTEGER_LITERAL:
     case STMT_EXPR_FLOAT_LITERAL:
@@ -490,20 +490,20 @@ ExprResolveString(struct xkb_context *ctx, const ExprDef *expr,
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found %s, expected a string\n",
                 stmt_type_to_string(expr->common.type));
-        return false;
+        戻る false;
 
     case STMT_EXPR_IDENT:
         log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                 "Identifier \"%s\" of type string not found\n",
                 xkb_atom_text(ctx, expr->ident.ident));
-        return false;
+        戻る false;
 
     case STMT_EXPR_FIELD_REF:
         log_err(ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
                 "Default \"%s.%s\" of type string not found\n",
                 xkb_atom_text(ctx, expr->field_ref.element),
                 xkb_atom_text(ctx, expr->field_ref.field));
-        return false;
+        戻る false;
 
     case STMT_EXPR_ADD:
     case STMT_EXPR_SUBTRACT:
@@ -521,7 +521,7 @@ ExprResolveString(struct xkb_context *ctx, const ExprDef *expr,
         log_err(ctx, XKB_ERROR_INVALID_XKB_SYNTAX,
                 "%s of strings not permitted\n",
                 stmt_type_to_string(expr->common.type));
-        return false;
+        戻る false;
 
     default:
         log_wsgo(ctx, XKB_ERROR_UNKNOWN_OPERATOR,
@@ -529,33 +529,33 @@ ExprResolveString(struct xkb_context *ctx, const ExprDef *expr,
                  expr->common.type);
         break;
     }
-    return false;
+    戻る false;
 }
 
 bool
 ExprResolveEnum(struct xkb_context *ctx, const ExprDef *expr,
                 uint32_t *val_rtrn, const LookupEntry *values)
 {
-    if (expr->common.type != STMT_EXPR_IDENT) {
+    もし (expr->common.type != STMT_EXPR_IDENT) {
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found a %s where an enumerated value was expected\n",
                 stmt_type_to_string(expr->common.type));
-        return false;
+        戻る false;
     }
 
-    if (!SimpleLookup(ctx, values, expr->ident.ident, val_rtrn, NULL)) {
+    もし (!SimpleLookup(ctx, values, expr->ident.ident, val_rtrn, NULL)) {
         log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                 "Illegal identifier %s; expected one of:\n",
                 xkb_atom_text(ctx, expr->ident.ident));
-        while (values && values->name)
+        ながら (values && values->name)
         {
             log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER, "\t%s\n", values->name);
             values++;
         }
-        return false;
+        戻る false;
     }
 
-    return true;
+    戻る true;
 }
 
 static bool
@@ -571,16 +571,16 @@ ExprResolveMaskLookup(struct xkb_context *ctx, const ExprDef *expr,
 
     switch (expr->common.type) {
     case STMT_EXPR_INTEGER_LITERAL:
-        if (expr->integer.ival < 0 || expr->integer.ival > UINT32_MAX) {
+        もし (expr->integer.ival < 0 || expr->integer.ival > UINT32_MAX) {
             log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Mask %s%#"PRIxMAX" is out of range (0..%#"PRIx32")\n",
                     expr->integer.ival < 0 ? "-" : "",
                     imaxabs(expr->integer.ival),
                     UINT32_MAX);
-            return false;
+            戻る false;
         }
         *val_rtrn = (uint32_t) expr->integer.ival;
-        return true;
+        戻る true;
 
     case STMT_EXPR_STRING_LITERAL:
     case STMT_EXPR_FLOAT_LITERAL:
@@ -590,37 +590,37 @@ ExprResolveMaskLookup(struct xkb_context *ctx, const ExprDef *expr,
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Found %s where a mask was expected\n",
                 stmt_type_to_string(expr->common.type));
-        return false;
+        戻る false;
 
     case STMT_EXPR_IDENT:
         ok = lookup(ctx, lookupPriv, expr->ident.ident, val_rtrn, pending);
-        if (!ok)
+        もし (!ok)
             log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                     "Identifier \"%s\" of type int is unknown\n",
                     xkb_atom_text(ctx, expr->ident.ident));
-        if (pending && *pending) {
+        もし (pending && *pending) {
             /* Postpone computation */
-            return false;
+            戻る false;
         }
-        return ok;
+        戻る ok;
 
     case STMT_EXPR_FIELD_REF:
         log_err(ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
                 "Default \"%s.%s\" of type int is unknown\n",
                 xkb_atom_text(ctx, expr->field_ref.element),
                 xkb_atom_text(ctx, expr->field_ref.field));
-        return false;
+        戻る false;
 
     case STMT_EXPR_ARRAY_REF:
         bogus = "array reference";
         /* fallthrough */
     case STMT_EXPR_ACTION_DECL:
-        if (bogus == NULL)
+        もし (bogus == NULL)
             bogus = "function use";
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Unexpected %s in mask expression; Expression Ignored\n",
                 bogus);
-        return false;
+        戻る false;
 
     case STMT_EXPR_ADD:
     case STMT_EXPR_SUBTRACT:
@@ -628,9 +628,9 @@ ExprResolveMaskLookup(struct xkb_context *ctx, const ExprDef *expr,
     case STMT_EXPR_DIVIDE:
         left = expr->binary.left;
         right = expr->binary.right;
-        if (!ExprResolveMaskLookup(ctx, left, &l, pending, lookup, lookupPriv) ||
+        もし (!ExprResolveMaskLookup(ctx, left, &l, pending, lookup, lookupPriv) ||
             !ExprResolveMaskLookup(ctx, right, &r, pending, lookup, lookupPriv))
-            return false;
+            戻る false;
 
         switch (expr->common.type) {
         case STMT_EXPR_ADD:
@@ -644,12 +644,12 @@ ExprResolveMaskLookup(struct xkb_context *ctx, const ExprDef *expr,
             log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                     "Cannot %s masks; Illegal operation ignored\n",
                     (expr->common.type == STMT_EXPR_DIVIDE ? "divide" : "multiply"));
-            return false;
+            戻る false;
         default:
             break;
         }
 
-        return true;
+        戻る true;
 
     case STMT_EXPR_ASSIGN:
         log_wsgo(ctx, XKB_ERROR_INVALID_OPERATION,
@@ -658,27 +658,27 @@ ExprResolveMaskLookup(struct xkb_context *ctx, const ExprDef *expr,
 
     case STMT_EXPR_INVERT:
         left = expr->unary.child;
-        if (!ExprResolveIntegerLookup(ctx, left, &v, pending, lookup, lookupPriv))
-            return false;
-        if (v < 0 || v > UINT32_MAX) {
+        もし (!ExprResolveIntegerLookup(ctx, left, &v, pending, lookup, lookupPriv))
+            戻る false;
+        もし (v < 0 || v > UINT32_MAX) {
             log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Mask %s%#"PRIxMAX" is out of range (0..%#"PRIx32")\n",
                     v < 0 ? "-" : "", imaxabs(v), UINT32_MAX);
-            return false;
+            戻る false;
         }
         *val_rtrn = ~(uint32_t) v;
-        return true;
+        戻る true;
 
     case STMT_EXPR_UNARY_PLUS:
     case STMT_EXPR_NEGATE:
     case STMT_EXPR_NOT:
         left = expr->unary.child;
-        if (!ExprResolveIntegerLookup(ctx, left, &v, pending, lookup, lookupPriv))
-            return false;
+        もし (!ExprResolveIntegerLookup(ctx, left, &v, pending, lookup, lookupPriv))
+            戻る false;
         log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                 "The '%c' unary operator cannot be used with a mask\n",
                 stmt_type_to_operator_char(expr->common.type));
-        return false;
+        戻る false;
 
     default:
         log_wsgo(ctx, XKB_ERROR_UNKNOWN_OPERATOR,
@@ -687,14 +687,14 @@ ExprResolveMaskLookup(struct xkb_context *ctx, const ExprDef *expr,
         break;
     }
 
-    return false;
+    戻る false;
 }
 
 bool
 ExprResolveMask(struct xkb_context *ctx, const ExprDef *expr,
                 uint32_t *mask_rtrn, const LookupEntry *values)
 {
-    return ExprResolveMaskLookup(ctx, expr, mask_rtrn, NULL, SimpleLookup, values);
+    戻る ExprResolveMaskLookup(ctx, expr, mask_rtrn, NULL, SimpleLookup, values);
 }
 
 bool
@@ -703,7 +703,7 @@ ExprResolveModMask(struct xkb_context *ctx, const ExprDef *expr,
                    xkb_mod_mask_t *mask_rtrn)
 {
     LookupModMaskPriv priv = { .mods = mods, .mod_type = mod_type };
-    return ExprResolveMaskLookup(ctx, expr, mask_rtrn, NULL, LookupModMask, &priv);
+    戻る ExprResolveMaskLookup(ctx, expr, mask_rtrn, NULL, LookupModMask, &priv);
 }
 
 bool
@@ -711,26 +711,26 @@ ExprResolveMod(struct xkb_context *ctx, const ExprDef *def,
                enum mod_type mod_type, const struct xkb_mod_set *mods,
                xkb_mod_index_t *ndx_rtrn)
 {
-    if (def->common.type != STMT_EXPR_IDENT) {
+    もし (def->common.type != STMT_EXPR_IDENT) {
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Cannot resolve virtual modifier: "
                 "found %s where a virtual modifier name was expected\n",
                 stmt_type_to_string(def->common.type));
-        return false;
+        戻る false;
     }
 
     xkb_atom_t name = def->ident.ident;
     xkb_mod_index_t ndx = XkbModNameToIndex(mods, name, mod_type);
-    if (ndx == XKB_MOD_INVALID) {
+    もし (ndx == XKB_MOD_INVALID) {
         log_err(ctx, XKB_ERROR_UNDECLARED_VIRTUAL_MODIFIER,
                 "Cannot resolve virtual modifier: "
                 "\"%s\" was not previously declared\n",
                 xkb_atom_text(ctx, name));
-        return false;
+        戻る false;
     }
 
     *ndx_rtrn = ndx;
-    return true;
+    戻る true;
 }
 
 bool
@@ -755,7 +755,7 @@ ExprResolveGroupMask(const struct xkb_keymap_info *keymap_info,
         .error_id = XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_
     };
 
-    return ExprResolveMaskLookup(keymap_info->keymap.ctx, expr, group_rtrn,
+    戻る ExprResolveMaskLookup(keymap_info->keymap.ctx, expr, group_rtrn,
                                  pending_rtrn, NamedIntegerPatternLookup,
                                  &group_name_pattern);
 }

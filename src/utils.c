@@ -9,7 +9,7 @@
 #include <fcntl.h>
 #include "utils.h"
 
-#if HAVE_MMAP
+#もし HAVE_MMAP
 
 #include <unistd.h>
 #include <sys/mman.h>
@@ -19,24 +19,24 @@ bool
 map_file(FILE *file, char **string_out, size_t *size_out)
 {
     struct stat stat_buf;
-    int fd;
+    整数 fd;
     char *string;
 
     /* Make sure to keep the errno on failure! */
     fd = fileno(file);
-    if (fd < 0)
-        return false;
+    もし (fd < 0)
+        戻る false;
 
-    if (fstat(fd, &stat_buf) != 0)
-        return false;
+    もし (fstat(fd, &stat_buf) != 0)
+        戻る false;
 
     string = mmap(NULL, (size_t)stat_buf.st_size, PROT_READ, MAP_SHARED, fd, 0);
-    if (string == MAP_FAILED)
-        return false;
+    もし (string == MAP_FAILED)
+        戻る false;
 
     *string_out = string;
     *size_out = (size_t)stat_buf.st_size;
-    return true;
+    戻る true;
 }
 
 void
@@ -45,7 +45,7 @@ unmap_file(char *str, size_t size)
     munmap(str, size);
 }
 
-#else
+#否则
 
 bool
 map_file(FILE *file, char **string_out, size_t *size_out)
@@ -58,31 +58,31 @@ map_file(FILE *file, char **string_out, size_t *size_out)
     /* Make sure to keep the errno on failure! */
 
     ret = fseek(file, 0, SEEK_END);
-    if (ret != 0)
-        return false;
+    もし (ret != 0)
+        戻る false;
 
     ret = ftell(file);
-    if (ret < 0)
-        return false;
+    もし (ret < 0)
+        戻る false;
     size = (size_t) ret;
 
     ret = fseek(file, 0, SEEK_SET);
-    if (ret < 0)
-        return false;
+    もし (ret < 0)
+        戻る false;
 
     string = malloc(size);
-    if (!string)
-        return false;
+    もし (!string)
+        戻る false;
 
     ret_s = fread(string, 1, size, file);
-    if (ret_s < size) {
+    もし (ret_s < size) {
         free(string);
-        return false;
+        戻る false;
     }
 
     *string_out = string;
     *size_out = size;
-    return true;
+    戻る true;
 }
 
 void
@@ -98,19 +98,19 @@ unmap_file(char *str, size_t size)
 FILE*
 open_file(const char *path)
 {
-    if (!path)
-        return NULL;
+    もし (!path)
+        戻る NULL;
 
-    int fd = open(path, O_RDONLY);
-    if (fd < 0)
-        return NULL;
+    整数 fd = open(path, O_RDONLY);
+    もし (fd < 0)
+        戻る NULL;
 
     struct stat stat_buf;
-    int err = fstat(fd, &stat_buf);
+    整数 err = fstat(fd, &stat_buf);
 
-    if (err != 0 || !S_ISREG(stat_buf.st_mode)) {
+    もし (err != 0 || !S_ISREG(stat_buf.st_mode)) {
         close(fd);
-        return NULL;
+        戻る NULL;
     }
 
     /* While unlikely to happen, if `fp` is NULL then we must close the file
@@ -118,11 +118,11 @@ open_file(const char *path)
      * https://www.ibm.com/docs/en/i/7.3?topic=functions-fdopen-associates-stream-file-descriptor)
      * Confirmed by Peter to be necessary in glibc. */
     FILE *fp = fdopen(fd, "rb");
-    if (fp == NULL) {
+    もし (fp == NULL) {
         close(fd);
     }
 
-    return fp;
+    戻る fp;
 }
 
 // ASCII lower-case map.
@@ -149,52 +149,52 @@ static const unsigned char lower_map[] = {
 char
 to_lower(char c)
 {
-    return (char) lower_map[(unsigned char) c];
+    戻る (char) lower_map[(unsigned char) c];
 }
 
 // ASCII strcasecmp (to avoid locale issues).
-int
+整数
 istrcmp(const char *a, const char *b)
 {
-    for (size_t i = 0; ; i++) {
-        if (to_lower(a[i]) != to_lower(b[i]))
-            return (int) to_lower(a[i]) - (int) to_lower(b[i]);
-        if (!a[i])
+    ために (size_t i = 0; ; i++) {
+        もし (to_lower(a[i]) != to_lower(b[i]))
+            戻る (整数) to_lower(a[i]) - (整数) to_lower(b[i]);
+        もし (!a[i])
             break;
     }
-    return 0;
+    戻る 0;
 }
 
 // ASCII strncasecmp (to avoid locale issues).
-int
+整数
 istrncmp(const char *a, const char *b, size_t n)
 {
-    for (size_t i = 0; i < n; i++) {
-        if (to_lower(a[i]) != to_lower(b[i]))
-            return (int) to_lower(a[i]) - (int) to_lower(b[i]);
-        if (!a[i])
+    ために (size_t i = 0; i < n; i++) {
+        もし (to_lower(a[i]) != to_lower(b[i]))
+            戻る (整数) to_lower(a[i]) - (整数) to_lower(b[i]);
+        もし (!a[i])
             break;
     }
-    return 0;
+    戻る 0;
 }
 
-#if !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
-int
+#もし !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
+整数
 asprintf(char **strp, const char *fmt, ...)
 {
-    int ret;
+    整数 ret;
     va_list ap;
     va_start(ap, fmt);
     ret = vasprintf(strp, fmt, ap);
     va_end(ap);
-    return ret;
+    戻る ret;
 }
 
-# if !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
-int
+# もし !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
+整数
 vasprintf(char **strp, const char *fmt, va_list ap)
 {
-    int ret;
+    整数 ret;
     char *buf;
     va_list ap_copy;
 
@@ -206,19 +206,19 @@ vasprintf(char **strp, const char *fmt, va_list ap)
     ret = vsnprintf(NULL, 0, fmt, ap_copy);
     va_end(ap_copy);
 
-    if (ret < 0)
-        return ret;
+    もし (ret < 0)
+        戻る ret;
 
-    if (!(buf = malloc(ret + 1)))
-        return -1;
+    もし (!(buf = malloc(ret + 1)))
+        戻る -1;
 
-    if ((ret = vsnprintf(buf, ret + 1, fmt, ap)) < 0) {
+    もし ((ret = vsnprintf(buf, ret + 1, fmt, ap)) < 0) {
         free(buf);
-        return ret;
+        戻る ret;
     }
 
     *strp = buf;
-    return ret;
+    戻る ret;
 }
 # endif /* !HAVE_VASPRINTF */
 #endif /* !HAVE_ASPRINTF */
