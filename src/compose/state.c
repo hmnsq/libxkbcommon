@@ -3,20 +3,20 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#ضمن "config.h"
 
-#include <assert.h>
+#ضمن <assert.h>
 
-#include "context.h"
-#include "features/enums.h"
-#include "keysym.h"
-#include "table.h"
-#include "utils.h"
+#ضمن "context.h"
+#ضمن "features/enums.h"
+#ضمن "keysym.h"
+#ضمن "table.h"
+#ضمن "utils.h"
 
-struct xkb_compose_state {
-    int refcnt;
-    enum xkb_compose_state_flags flags;
-    struct xkb_compose_table *table;
+بنية xkb_compose_state {
+    صحيح refcnt;
+    تعداد xkb_compose_state_flags flags;
+    بنية xkb_compose_table *table;
 
     /*
      * Offsets into xkb_compose_table::nodes.
@@ -31,22 +31,22 @@ struct xkb_compose_state {
     uint32_t context;
 };
 
-struct xkb_compose_state *
-xkb_compose_state_new(struct xkb_compose_table *table,
-                      enum xkb_compose_state_flags flags)
+بنية xkb_compose_state *
+xkb_compose_state_new(بنية xkb_compose_table *table,
+                      تعداد xkb_compose_state_flags flags)
 {
-    const enum xkb_compose_state_flags invalid_flags =
-        (flags & ~(enum xkb_compose_state_flags)XKB_COMPOSE_STATE_FLAGS_VALUES);
-    if (invalid_flags) {
+    ثابت تعداد xkb_compose_state_flags invalid_flags =
+        (flags & ~(تعداد xkb_compose_state_flags)XKB_COMPOSE_STATE_FLAGS_درجوجي);
+    إذا (invalid_flags) {
         log_err_func(table->ctx, XKB_LOG_MESSAGE_NO_ID,
                      "Unsupported compose state flags: %#x\n",
                      invalid_flags);
-        return NULL;
+        أرجع عدم;
     }
 
-    struct xkb_compose_state * const state = calloc(1, sizeof(*state));
-    if (!state)
-        return NULL;
+    بنية xkb_compose_state * ثابت state = calloc(1, حجم(*state));
+    إذا (!state)
+        أرجع عدم;
 
     state->refcnt = 1;
     state->table = xkb_compose_table_ref(table);
@@ -55,39 +55,39 @@ xkb_compose_state_new(struct xkb_compose_table *table,
     state->prev_context = 0;
     state->context = 0;
 
-    return state;
+    أرجع state;
 }
 
-struct xkb_compose_state *
-xkb_compose_state_ref(struct xkb_compose_state *state)
+بنية xkb_compose_state *
+xkb_compose_state_ref(بنية xkb_compose_state *state)
 {
-    assert(state->refcnt > 0);
+    أكد(state->refcnt > 0);
     state->refcnt++;
-    return state;
+    أرجع state;
 }
 
-void
-xkb_compose_state_unref(struct xkb_compose_state *state)
+فراغ
+xkb_compose_state_unref(بنية xkb_compose_state *state)
 {
-    assert(!state || state->refcnt > 0);
-    if (!state || --state->refcnt > 0)
-        return;
+    أكد(!state || state->refcnt > 0);
+    إذا (!state || --state->refcnt > 0)
+        أرجع;
 
     xkb_compose_table_unref(state->table);
-    free(state);
+    حرر(state);
 }
 
-struct xkb_compose_table *
-xkb_compose_state_get_compose_table(struct xkb_compose_state *state)
+بنية xkb_compose_table *
+xkb_compose_state_get_compose_table(بنية xkb_compose_state *state)
 {
-    return state->table;
+    أرجع state->table;
 }
 
-enum xkb_compose_feed_result
-xkb_compose_state_feed(struct xkb_compose_state *state, xkb_keysym_t keysym)
+تعداد xkb_compose_feed_result
+xkb_compose_state_feed(بنية xkb_compose_state *state, xkb_keysym_t keysym)
 {
     uint32_t context;
-    const struct compose_node *node;
+    ثابت بنية compose_كلي *كلي;
 
     /*
      * Modifiers do not affect the sequence directly.  In particular,
@@ -99,98 +99,98 @@ xkb_compose_state_feed(struct xkb_compose_state *state, xkb_keysym_t keysym)
      * have it here.  However, this is (approximately) what libX11 does
      * as well.
      */
-    if (xkb_keysym_is_modifier(keysym))
-        return XKB_COMPOSE_FEED_IGNORED;
+    إذا (xkb_keysym_is_modifier(keysym))
+        أرجع XKB_COMPOSE_FEED_IGNORED;
 
-    node = &darray_item(state->table->nodes, state->context);
+    كلي = &darray_item(state->table->nodes, state->context);
 
-    context = (node->is_leaf ? 1 : node->internal.eqkid);
-    if (context == 1 && darray_size(state->table->nodes) == 1)
+    context = (كلي->is_leaf ? 1 : كلي->internal.eqkid);
+    إذا (context == 1 && darray_size(state->table->nodes) == 1)
         context = 0;
 
-    while (context != 0) {
-        node = &darray_item(state->table->nodes, context);
-        if (keysym < node->keysym)
-            context = node->lokid;
-        else if (keysym > node->keysym)
-            context = node->hikid;
-        else
-            break;
+    طالما (context != 0) {
+        كلي = &darray_item(state->table->nodes, context);
+        إذا (keysym < كلي->keysym)
+            context = كلي->lokid;
+        وإلا إذا (keysym > كلي->keysym)
+            context = كلي->hikid;
+        وإلا
+            اكسر;
     }
 
     state->prev_context = state->context;
     state->context = context;
-    return XKB_COMPOSE_FEED_ACCEPTED;
+    أرجع XKB_COMPOSE_FEED_ACCEPTED;
 }
 
-void
-xkb_compose_state_reset(struct xkb_compose_state *state)
+فراغ
+xkb_compose_state_reset(بنية xkb_compose_state *state)
 {
     state->prev_context = 0;
     state->context = 0;
 }
 
-enum xkb_compose_status
-xkb_compose_state_get_status(struct xkb_compose_state *state)
+تعداد xkb_compose_status
+xkb_compose_state_get_status(بنية xkb_compose_state *state)
 {
-    const struct compose_node *prev_node, *node;
+    ثابت بنية compose_كلي *prev_كلي, *كلي;
 
-    prev_node = &darray_item(state->table->nodes, state->prev_context);
-    node = &darray_item(state->table->nodes, state->context);
+    prev_كلي = &darray_item(state->table->nodes, state->prev_context);
+    كلي = &darray_item(state->table->nodes, state->context);
 
-    if (state->context == 0 && !prev_node->is_leaf)
-        return XKB_COMPOSE_CANCELLED;
+    إذا (state->context == 0 && !prev_كلي->is_leaf)
+        أرجع XKB_COMPOSE_CANCELLED;
 
-    if (state->context == 0)
-        return XKB_COMPOSE_NOTHING;
+    إذا (state->context == 0)
+        أرجع XKB_COMPOSE_NOTHING;
 
-    if (!node->is_leaf)
-        return XKB_COMPOSE_COMPOSING;
+    إذا (!كلي->is_leaf)
+        أرجع XKB_COMPOSE_COMPOSING;
 
-    return XKB_COMPOSE_COMPOSED;
+    أرجع XKB_COMPOSE_COMPOSED;
 }
 
-int
-xkb_compose_state_get_utf8(struct xkb_compose_state *state,
-                           char *buffer, size_t size)
+صحيح
+xkb_compose_state_get_utf8(بنية xkb_compose_state *state,
+                           حرف *buffer, size_t size)
 {
-    const struct compose_node *node =
+    ثابت بنية compose_كلي *كلي =
         &darray_item(state->table->nodes, state->context);
 
-    if (!node->is_leaf)
-        goto fail;
+    إذا (!كلي->is_leaf)
+        اذهب fail;
 
     /* If there's no string specified, but only a keysym, try to do the
      * most helpful thing. */
-    if (node->leaf.utf8 == 0 && node->leaf.keysym != XKB_KEY_NoSymbol) {
-        char utf8[XKB_KEYSYM_UTF8_MAX_SIZE];
-        int ret;
+    إذا (كلي->leaf.utf8 == 0 && كلي->leaf.keysym != XKB_مبودي_No_علام) {
+        حرف utf8[XKB_KEYSYM_UTF8_MAX_SIZE];
+        صحيح ret;
 
-        ret = xkb_keysym_to_utf8(node->leaf.keysym, utf8, sizeof(utf8));
-        if (ret < 0 || ret == 0) {
+        ret = xkb_keysym_to_utf8(كلي->leaf.keysym, utf8, حجم(utf8));
+        إذا (ret < 0 || ret == 0) {
             /* ret < 0 is impossible.
              * ret == 0 means the keysym has no string representation. */
-            goto fail;
+            اذهب fail;
         }
 
-        return snprintf(buffer, size, "%s", utf8);
+        أرجع snprintf(buffer, size, "%s", utf8);
     }
 
-    return snprintf(buffer, size, "%s",
-                    &darray_item(state->table->utf8, node->leaf.utf8));
+    أرجع snprintf(buffer, size, "%s",
+                    &darray_item(state->table->utf8, كلي->leaf.utf8));
 
 fail:
-    if (size > 0)
+    إذا (size > 0)
         buffer[0] = '\0';
-    return 0;
+    أرجع 0;
 }
 
 xkb_keysym_t
-xkb_compose_state_get_one_sym(struct xkb_compose_state *state)
+xkb_compose_state_get_one_sym(بنية xkb_compose_state *state)
 {
-    const struct compose_node *node =
+    ثابت بنية compose_كلي *كلي =
         &darray_item(state->table->nodes, state->context);
-    if (!node->is_leaf)
-        return XKB_KEY_NoSymbol;
-    return node->leaf.keysym;
+    إذا (!كلي->is_leaf)
+        أرجع XKB_مبودي_No_علام;
+    أرجع كلي->leaf.keysym;
 }
