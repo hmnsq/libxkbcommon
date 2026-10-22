@@ -3,7 +3,7 @@
 /* Command-line: gperf src/xkbcomp/keywords.gperf  */
 /* Computed positions: -k'5,$' */
 
-#if !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
+#만약 !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
       && ('%' == 37) && ('&' == 38) && ('\'' == 39) && ('(' == 40) \
       && (')' == 41) && ('*' == 42) && ('+' == 43) && (',' == 44) \
       && ('-' == 45) && ('.' == 46) && ('/' == 47) && ('0' == 48) \
@@ -40,7 +40,7 @@
 static const struct keyword_tok *
 keyword_gperf_lookup (register const char *str, register size_t len);
 #line 11 "src/xkbcomp/keywords.gperf"
-struct keyword_tok { int name; int tok; };
+struct keyword_tok { 정수 name; 정수 tok; };
 #include <string.h>
 /* maximum key range = 85, duplicates = 0 */
 
@@ -71,32 +71,32 @@ static const unsigned char gperf_downcase[256] =
 
 #ifndef GPERF_CASE_MEMCMP
 #define GPERF_CASE_MEMCMP 1
-static int
+static 정수
 gperf_case_memcmp (register const char *s1, register const char *s2, register size_t n)
 {
-  for (; n > 0;)
+  위해 (; n > 0;)
     {
       unsigned char c1 = gperf_downcase[(unsigned char)*s1++];
       unsigned char c2 = gperf_downcase[(unsigned char)*s2++];
-      if (c1 == c2)
+      만약 (c1 == c2)
         {
           n--;
           continue;
         }
-      return (int)c1 - (int)c2;
+      반환 (정수)c1 - (정수)c2;
     }
-  return 0;
+  반환 0;
 }
 #endif
 
 #ifdef __GNUC__
 __inline
-#else
+#아니면
 #ifdef __cplusplus
 inline
 #endif
 #endif
-static unsigned int
+static unsigned 정수
 keyword_gperf_hash (register const char *str, register size_t len)
 {
   static const unsigned char asso_values[] =
@@ -128,13 +128,13 @@ keyword_gperf_hash (register const char *str, register size_t len)
       88, 88, 88, 88, 88, 88, 88, 88, 88, 88,
       88, 88, 88, 88, 88, 88
     };
-  register unsigned int hval = len;
+  register unsigned 정수 hval = len;
 
   switch (hval)
     {
       default:
         hval += asso_values[(unsigned char)str[4]];
-#if (defined __cplusplus && (__cplusplus >= 201703L || (__cplusplus >= 201103L && defined __clang__ && __clang_major__ + (__clang_minor__ >= 9) > 3))) || (defined __STDC_VERSION__ && __STDC_VERSION__ >= 202000L && ((defined __GNUC__ && __GNUC__ >= 10) || (defined __clang__ && __clang_major__ >= 9)))
+#만약 (defined __cplusplus && (__cplusplus >= 201703L || (__cplusplus >= 201103L && defined __clang__ && __clang_major__ + (__clang_minor__ >= 9) > 3))) || (defined __STDC_VERSION__ && __STDC_VERSION__ >= 202000L && ((defined __GNUC__ && __GNUC__ >= 10) || (defined __clang__ && __clang_major__ >= 9)))
       [[fallthrough]];
 #elif (defined __GNUC__ && __GNUC__ >= 7) || (defined __clang__ && __clang_major__ >= 10)
       __attribute__ ((__fallthrough__));
@@ -144,7 +144,7 @@ keyword_gperf_hash (register const char *str, register size_t len)
       case 3:
         break;
     }
-  return hval + asso_values[(unsigned char)str[len - 1]];
+  반환 hval + asso_values[(unsigned char)str[len - 1]];
 }
 
 struct stringpool_t
@@ -268,7 +268,7 @@ keyword_gperf_lookup (register const char *str, register size_t len)
        0,  0,  7,  0,  0,  0,  0, 17,  0,  0,  0,  0,  7,  0,
        0,  0,  0,  7
     };
-#if (defined __GNUC__ && __GNUC__ + (__GNUC_MINOR__ >= 6) > 4) || (defined __clang__ && __clang_major__ >= 3)
+#만약 (defined __GNUC__ && __GNUC__ + (__GNUC_MINOR__ >= 6) > 4) || (defined __clang__ && __clang_major__ >= 3)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 #endif
@@ -276,144 +276,144 @@ keyword_gperf_lookup (register const char *str, register size_t len)
     {
       {-1}, {-1}, {-1},
 #line 51 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str3,                    ROW},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str3,                    ROW},
 #line 40 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str4,                   KEYS},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str4,                   KEYS},
 #line 25 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str5,                  ALIAS},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str5,                  ALIAS},
       {-1}, {-1}, {-1},
 #line 56 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str9,                   TYPE},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str9,                   TYPE},
       {-1},
 #line 68 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str11,            XKB_SYMBOLS},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str11,            XKB_SYMBOLS},
 #line 64 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str12,           XKB_KEYCODES},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str12,           XKB_KEYCODES},
 #line 67 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str13,          XKB_SEMANTICS},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str13,          XKB_SEMANTICS},
 #line 41 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str14,                   LOGO},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str14,                   LOGO},
 #line 53 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str15,                  SHAPE},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str15,                  SHAPE},
 #line 38 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str16,            KEYPAD_KEYS},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str16,            KEYPAD_KEYS},
 #line 50 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str17,                REPLACE},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str17,                REPLACE},
       {-1},
 #line 55 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str19,                   TEXT},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str19,                   TEXT},
 #line 65 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str20,             XKB_KEYMAP},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str20,             XKB_KEYMAP},
 #line 45 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str21,                 MODIFIER_MAP},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str21,                 MODIFIER_MAP},
 #line 26 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str22,      ALPHANUMERIC_KEYS},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str22,      ALPHANUMERIC_KEYS},
       {-1},
 #line 69 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str24,              XKB_TYPES},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str24,              XKB_TYPES},
 #line 33 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str25,                  GROUP},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str25,                  GROUP},
       {-1},
 #line 29 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str27,                AUGMENT},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str27,                AUGMENT},
 #line 32 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str28,          FUNCTION_KEYS},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str28,          FUNCTION_KEYS},
       {-1},
 #line 31 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str30,             DEPRECATED},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str30,             DEPRECATED},
       {-1},
 #line 35 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str32,                INCLUDE},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str32,                INCLUDE},
 #line 48 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str33,               OVERRIDE},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str33,               OVERRIDE},
 #line 28 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str34,              ALTERNATE},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str34,              ALTERNATE},
 #line 54 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str35,                  SOLID},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str35,                  SOLID},
 #line 34 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str36,                 HIDDEN},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str36,                 HIDDEN},
 #line 57 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str37,      VIRTUAL_MODS},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str37,      VIRTUAL_MODS},
 #line 39 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str38,                    KEY},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str38,                    KEY},
       {-1}, {-1},
 #line 24 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str41,                 ACTION_TOK},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str41,                 ACTION_TOK},
 #line 30 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str42,                DEFAULT},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str42,                DEFAULT},
 #line 42 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str43,          MODIFIER_KEYS},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str43,          MODIFIER_KEYS},
 #line 37 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str44,              INTERPRET},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str44,              INTERPRET},
 #line 27 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str45,        ALTERNATE_GROUP},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str45,        ALTERNATE_GROUP},
       {-1},
 #line 44 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str47,                MODIFIER_MAP},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str47,                MODIFIER_MAP},
       {-1},
 #line 61 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str49,         XKB_COMPATMAP},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str49,         XKB_COMPATMAP},
 #line 62 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str50,             XKB_COMPATMAP},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str50,             XKB_COMPATMAP},
       {-1},
 #line 43 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str52,           MODIFIER_MAP},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str52,           MODIFIER_MAP},
       {-1},
 #line 36 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str54,              INDICATOR},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str54,              INDICATOR},
 #line 66 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str55,             XKB_LAYOUT},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str55,             XKB_LAYOUT},
 #line 59 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str56,  XKB_COMPATMAP},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str56,  XKB_COMPATMAP},
 #line 58 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str57,                VIRTUAL},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str57,                VIRTUAL},
       {-1}, {-1}, {-1}, {-1},
 #line 46 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str62,                OUTLINE},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str62,                OUTLINE},
       {-1}, {-1}, {-1}, {-1},
 #line 63 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str67,           XKB_GEOMETRY},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str67,           XKB_GEOMETRY},
       {-1}, {-1}, {-1}, {-1},
 #line 47 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str72,                OVERLAY},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str72,                OVERLAY},
       {-1}, {-1}, {-1}, {-1},
 #line 60 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str77,      XKB_COMPATMAP},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str77,      XKB_COMPATMAP},
       {-1}, {-1}, {-1}, {-1},
 #line 52 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str82,                SECTION},
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str82,                SECTION},
       {-1}, {-1}, {-1}, {-1},
 #line 49 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str87,                PARTIAL}
+      {(정수)(size_t)&((struct stringpool_t *)0)->stringpool_str87,                PARTIAL}
     };
-#if (defined __GNUC__ && __GNUC__ + (__GNUC_MINOR__ >= 6) > 4) || (defined __clang__ && __clang_major__ >= 3)
+#만약 (defined __GNUC__ && __GNUC__ + (__GNUC_MINOR__ >= 6) > 4) || (defined __clang__ && __clang_major__ >= 3)
 #pragma GCC diagnostic pop
 #endif
 
-  if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
+  만약 (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
     {
-      register unsigned int key = keyword_gperf_hash (str, len);
+      register unsigned 정수 key = keyword_gperf_hash (str, len);
 
-      if (key <= MAX_HASH_VALUE)
-        if (len == lengthtable[key])
+      만약 (key <= MAX_HASH_VALUE)
+        만약 (len == lengthtable[key])
           {
             register const char *s = wordlist[key].name + stringpool;
 
-            if ((((unsigned char)*str ^ (unsigned char)*s) & ~32) == 0 && !gperf_case_memcmp (str, s, len))
-              return &wordlist[key];
+            만약 ((((unsigned char)*str ^ (unsigned char)*s) & ~32) == 0 && !gperf_case_memcmp (str, s, len))
+              반환 &wordlist[key];
           }
     }
-  return (struct keyword_tok *) 0;
+  반환 (struct keyword_tok *) 0;
 }
 #line 70 "src/xkbcomp/keywords.gperf"
 
 
-int
+정수
 keyword_to_token(const char *string, size_t len)
 {
     const struct keyword_tok *kt = keyword_gperf_lookup(string, len);
-    if (!kt)
-        return -1;
-    return kt->tok;
+    만약 (!kt)
+        반환 -1;
+    반환 kt->tok;
 }
 // NOLINTEND

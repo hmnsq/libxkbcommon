@@ -14,7 +14,7 @@
 #include "utils.h"
 
 struct xkb_compose_state {
-    int refcnt;
+    정수 refcnt;
     enum xkb_compose_state_flags flags;
     struct xkb_compose_table *table;
 
@@ -37,16 +37,16 @@ xkb_compose_state_new(struct xkb_compose_table *table,
 {
     const enum xkb_compose_state_flags invalid_flags =
         (flags & ~(enum xkb_compose_state_flags)XKB_COMPOSE_STATE_FLAGS_VALUES);
-    if (invalid_flags) {
+    만약 (invalid_flags) {
         log_err_func(table->ctx, XKB_LOG_MESSAGE_NO_ID,
                      "Unsupported compose state flags: %#x\n",
                      invalid_flags);
-        return NULL;
+        반환 NULL;
     }
 
     struct xkb_compose_state * const state = calloc(1, sizeof(*state));
-    if (!state)
-        return NULL;
+    만약 (!state)
+        반환 NULL;
 
     state->refcnt = 1;
     state->table = xkb_compose_table_ref(table);
@@ -55,7 +55,7 @@ xkb_compose_state_new(struct xkb_compose_table *table,
     state->prev_context = 0;
     state->context = 0;
 
-    return state;
+    반환 state;
 }
 
 struct xkb_compose_state *
@@ -63,15 +63,15 @@ xkb_compose_state_ref(struct xkb_compose_state *state)
 {
     assert(state->refcnt > 0);
     state->refcnt++;
-    return state;
+    반환 state;
 }
 
 void
 xkb_compose_state_unref(struct xkb_compose_state *state)
 {
     assert(!state || state->refcnt > 0);
-    if (!state || --state->refcnt > 0)
-        return;
+    만약 (!state || --state->refcnt > 0)
+        반환;
 
     xkb_compose_table_unref(state->table);
     free(state);
@@ -80,7 +80,7 @@ xkb_compose_state_unref(struct xkb_compose_state *state)
 struct xkb_compose_table *
 xkb_compose_state_get_compose_table(struct xkb_compose_state *state)
 {
-    return state->table;
+    반환 state->table;
 }
 
 enum xkb_compose_feed_result
@@ -99,28 +99,28 @@ xkb_compose_state_feed(struct xkb_compose_state *state, xkb_keysym_t keysym)
      * have it here.  However, this is (approximately) what libX11 does
      * as well.
      */
-    if (xkb_keysym_is_modifier(keysym))
-        return XKB_COMPOSE_FEED_IGNORED;
+    만약 (xkb_keysym_is_modifier(keysym))
+        반환 XKB_COMPOSE_FEED_IGNORED;
 
     node = &darray_item(state->table->nodes, state->context);
 
     context = (node->is_leaf ? 1 : node->internal.eqkid);
-    if (context == 1 && darray_size(state->table->nodes) == 1)
+    만약 (context == 1 && darray_size(state->table->nodes) == 1)
         context = 0;
 
-    while (context != 0) {
+    동안 (context != 0) {
         node = &darray_item(state->table->nodes, context);
-        if (keysym < node->keysym)
+        만약 (keysym < node->keysym)
             context = node->lokid;
-        else if (keysym > node->keysym)
+        아니면 만약 (keysym > node->keysym)
             context = node->hikid;
-        else
+        아니면
             break;
     }
 
     state->prev_context = state->context;
     state->context = context;
-    return XKB_COMPOSE_FEED_ACCEPTED;
+    반환 XKB_COMPOSE_FEED_ACCEPTED;
 }
 
 void
@@ -138,51 +138,51 @@ xkb_compose_state_get_status(struct xkb_compose_state *state)
     prev_node = &darray_item(state->table->nodes, state->prev_context);
     node = &darray_item(state->table->nodes, state->context);
 
-    if (state->context == 0 && !prev_node->is_leaf)
-        return XKB_COMPOSE_CANCELLED;
+    만약 (state->context == 0 && !prev_node->is_leaf)
+        반환 XKB_COMPOSE_CANCELLED;
 
-    if (state->context == 0)
-        return XKB_COMPOSE_NOTHING;
+    만약 (state->context == 0)
+        반환 XKB_COMPOSE_NOTHING;
 
-    if (!node->is_leaf)
-        return XKB_COMPOSE_COMPOSING;
+    만약 (!node->is_leaf)
+        반환 XKB_COMPOSE_COMPOSING;
 
-    return XKB_COMPOSE_COMPOSED;
+    반환 XKB_COMPOSE_COMPOSED;
 }
 
-int
+정수
 xkb_compose_state_get_utf8(struct xkb_compose_state *state,
                            char *buffer, size_t size)
 {
     const struct compose_node *node =
         &darray_item(state->table->nodes, state->context);
 
-    if (!node->is_leaf)
+    만약 (!node->is_leaf)
         goto fail;
 
     /* If there's no string specified, but only a keysym, try to do the
      * most helpful thing. */
-    if (node->leaf.utf8 == 0 && node->leaf.keysym != XKB_KEY_NoSymbol) {
+    만약 (node->leaf.utf8 == 0 && node->leaf.keysym != XKB_KEY_NoSymbol) {
         char utf8[XKB_KEYSYM_UTF8_MAX_SIZE];
-        int ret;
+        정수 ret;
 
         ret = xkb_keysym_to_utf8(node->leaf.keysym, utf8, sizeof(utf8));
-        if (ret < 0 || ret == 0) {
+        만약 (ret < 0 || ret == 0) {
             /* ret < 0 is impossible.
              * ret == 0 means the keysym has no string representation. */
             goto fail;
         }
 
-        return snprintf(buffer, size, "%s", utf8);
+        반환 snprintf(buffer, size, "%s", utf8);
     }
 
-    return snprintf(buffer, size, "%s",
+    반환 snprintf(buffer, size, "%s",
                     &darray_item(state->table->utf8, node->leaf.utf8));
 
 fail:
-    if (size > 0)
+    만약 (size > 0)
         buffer[0] = '\0';
-    return 0;
+    반환 0;
 }
 
 xkb_keysym_t
@@ -190,7 +190,7 @@ xkb_compose_state_get_one_sym(struct xkb_compose_state *state)
 {
     const struct compose_node *node =
         &darray_item(state->table->nodes, state->context);
-    if (!node->is_leaf)
-        return XKB_KEY_NoSymbol;
-    return node->leaf.keysym;
+    만약 (!node->is_leaf)
+        반환 XKB_KEY_NoSymbol;
+    반환 node->leaf.keysym;
 }

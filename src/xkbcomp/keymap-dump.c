@@ -39,30 +39,30 @@ struct buf {
 };
 
 #define xkb_abs(n) _Generic((n),                \
-                            int: abs,           \
-                            long int: labs,     \
+                            정수: abs,           \
+                            long 정수: labs,     \
                             default: llabs )((n))
 
 static bool
 do_realloc(struct buf *buf, size_t at_least)
 {
     buf->alloc += BUF_CHUNK_SIZE;
-    if (at_least >= BUF_CHUNK_SIZE)
+    만약 (at_least >= BUF_CHUNK_SIZE)
         buf->alloc += at_least;
 
     char *const new = realloc(buf->buf, buf->alloc);
-    if (!new)
-        return false;
+    만약 (!new)
+        반환 false;
 
     buf->buf = new;
-    return true;
+    반환 true;
 }
 
 ATTR_PRINTF(2, 3) static bool
 check_write_buf(struct buf *buf, const char *fmt, ...)
 {
     va_list args;
-    int printed;
+    정수 printed;
     size_t available;
 
     available = buf->alloc - buf->size;
@@ -75,12 +75,12 @@ check_write_buf(struct buf *buf, const char *fmt, ...)
                         fmt, args);
     va_end(args);
 
-    if (printed < 0) {
+    만약 (printed < 0) {
         /* Some error */
         goto err;
-    } else if ((size_t)printed >= available) {
+    } 아니면 만약 ((size_t)printed >= available) {
         /* Not enough space: need to realloc */
-        if (!do_realloc(buf, (size_t)printed + 1))
+        만약 (!do_realloc(buf, (size_t)printed + 1))
             goto err;
 
         /* The buffer has enough space now. */
@@ -90,51 +90,51 @@ check_write_buf(struct buf *buf, const char *fmt, ...)
         printed = vsnprintf(buf->buf + buf->size, available, fmt, args);
         va_end(args);
 
-        if (printed < 0 || (size_t) printed >= available)
+        만약 (printed < 0 || (size_t) printed >= available)
             goto err;
     }
 
     buf->size += (size_t)printed;
-    return true;
+    반환 true;
 
 err:
     free(buf->buf);
     buf->buf = NULL;
-    return false;
+    반환 false;
 }
 
 #define write_buf(buf, ...) do { \
-    if (!check_write_buf(buf, __VA_ARGS__)) \
-        return false; \
-} while (0)
+    만약 (!check_write_buf(buf, __VA_ARGS__)) \
+        반환 false; \
+} 동안 (0)
 
 static bool
 check_copy_to_buf(struct buf *buf, const char* source, size_t len)
 {
-    if (len == 0)
-        return true;
+    만약 (len == 0)
+        반환 true;
 
     const size_t available = buf->alloc - buf->size;
-    if (len >= available &&
+    만약 (len >= available &&
         /* len + 1 (terminating NULL) */
         !do_realloc(buf, len + 1))
     {
         free(buf->buf);
         buf->buf = NULL;
-        return false;
+        반환 false;
     }
 
     memcpy(buf->buf + buf->size, source, len);
     buf->size += len;
     /* Append NULL byte */
     buf->buf[buf->size] = '\0';
-    return true;
+    반환 true;
 }
 
 #define copy_to_buf_len(buf, source, len) do { \
-    if (!check_copy_to_buf(buf, source, len)) \
-        return false; \
-} while (0)
+    만약 (!check_copy_to_buf(buf, source, len)) \
+        반환 false; \
+} 동안 (0)
 
 #define copy_to_buf(buf, source) \
     copy_to_buf_len(buf, source, sizeof(source) - 1)
@@ -148,7 +148,7 @@ check_write_string_literal(struct buf *buf, const char* string)
     size_t pending_start = 0;
     size_t current = 0;
     char escape_buffer[] = {'\\', '0', '0', '0', '0'};
-    for (; string[current] != '\0'; current++) {
+    위해 (; string[current] != '\0'; current++) {
         uint8_t escape_len;
         switch (string[current]) {
         case '\n':
@@ -177,14 +177,14 @@ check_write_string_literal(struct buf *buf, const char* string)
              * although it will not raise an error: e.g. the escape for `"`,
              * `\0042`, would be parsed as `\004` + `2`.
              */
-            if (unlikely((unsigned char)string[current] < 0x20U ||
+            만약 (unlikely((unsigned char)string[current] < 0x20U ||
                          string[current] == '"')) {
                 escape_buffer[1] = '0';
                 escape_buffer[2] = '0';
                 escape_buffer[3] = (char)('0' + (string[current] >> 3));
                 escape_buffer[4] = (char)('0' + (string[current] & 0x7));
                 escape_len = 5;
-            } else {
+            } 아니면 {
                 /* Expand the chunk */
                 continue;
             }
@@ -201,18 +201,18 @@ check_write_string_literal(struct buf *buf, const char* string)
     copy_to_buf_len(buf, string + pending_start, current - pending_start);
 
     copy_to_buf(buf, "\"");
-    return true;
+    반환 true;
 }
 
 #define write_buf_string_literal(buf, string) do { \
-    if (!check_write_string_literal(buf, string)) \
-        return false; \
-} while (0)
+    만약 (!check_write_string_literal(buf, string)) \
+        반환 false; \
+} 동안 (0)
 
 static void
 delete_last_char(struct buf *buf, char c)
 {
-    if (buf->size && buf->buf[buf->size - 1] == c)
+    만약 (buf->size && buf->buf[buf->size - 1] == c)
         buf->buf[--buf->size] = '\0';
 }
 
@@ -225,12 +225,12 @@ struct key_name_substitution {
 };
 
 /** Compare 2 key name substitution entries by they original name (atom) */
-static int
+static 정수
 cmp_key_name_substitution(const void *a, const void *b)
 {
     const xkb_atom_t s1 = ((struct key_name_substitution *) a)->source;
     const xkb_atom_t s2 = ((struct key_name_substitution *) b)->source;
-    return (s1 < s2) ? -1 : ((s1 > s2) ? 1 : 0);
+    반환 (s1 < s2) ? -1 : ((s1 > s2) ? 1 : 0);
 }
 
 typedef darray(struct key_name_substitution) key_name_substitutions;
@@ -271,45 +271,45 @@ rename_long_keys(const struct xkb_keymap *keymap,
     /* Check key names */
     const struct xkb_key *key;
     xkb_keys_foreach(key, keymap) {
-        if (key->name == XKB_ATOM_NONE)
+        만약 (key->name == XKB_ATOM_NONE)
             continue;
 
         const char * const name = xkb_atom_text(keymap->ctx, key->name);
         const size_t len = strlen_safe(name);
-        if (len > 4) {
+        만약 (len > 4) {
             /* Key name too long: append key, pending for renaming */
             darray_append(*substitutions, (struct key_name_substitution) {
                 .source = key->name,
                 .keycode = key->keycode,
                 .target = key->name
             });
-        } else if (len == 4 && name[0] >= first && name[0] <= last) {
+        } 아니면 만약 (len == 4 && name[0] >= first && name[0] <= last) {
             /* Potential name conflict: deactivate this prefix */
             prefixes[name[0] - first] = invalid;
         }
     }
 
     /* Check aliases */
-    for (darray_size_t a = 0; a < keymap->num_key_aliases; a++) {
+    위해 (darray_size_t a = 0; a < keymap->num_key_aliases; a++) {
         const struct xkb_key_alias * const alias = &keymap->key_aliases[a];
         const char * const name = xkb_atom_text(keymap->ctx, alias->alias);
         const size_t len = strlen_safe(name);
-        if (len > 4) {
+        만약 (len > 4) {
             /* Alias name too long: append alias, pending for renaming */
             darray_append(*substitutions, (struct key_name_substitution) {
                 .source = alias->alias,
                 .keycode = XKB_KEYCODE_INVALID, /* Too expensive to lookup */
                 .target = alias->alias
             });
-        } else if (len == 4 && name[0] >= first && name[0] <= last) {
+        } 아니면 만약 (len == 4 && name[0] >= first && name[0] <= last) {
             /* Potential conflict with names substitutes: deactivate prefix */
             prefixes[name[0] - first] = invalid;
         }
     }
 
-    if darray_empty(*substitutions) {
+    만약 darray_empty(*substitutions) {
         /* Nothing to do */
-        return true;
+        반환 true;
     }
 
     /*
@@ -325,29 +325,29 @@ rename_long_keys(const struct xkb_keymap *keymap,
     /* Get first available prefix */
     char *prefix = prefixes;
     const char *prefix_max = prefixes + sizeof(prefixes) - 1;
-    while (*prefix == invalid && prefix < prefix_max)
+    동안 (*prefix == invalid && prefix < prefix_max)
         prefix++;
 
     /* Keycode prefix: prefer ‘0’ if available */
     char keycode_prefix;
-    if (prefixes[last - first] == '0') {
+    만약 (prefixes[last - first] == '0') {
         /* ‘0’ is available: use it then mark it unavailable for further use */
         keycode_prefix = last;
         prefixes[last - first] = invalid;
-    } else {
+    } 아니면 {
         /* ‘0’ is unavailable: use first available prefix */
         keycode_prefix = *prefix;
-        if (unlikely(keycode_prefix == invalid)) {
+        만약 (unlikely(keycode_prefix == invalid)) {
             /*
              * Abort: no prefix available (very unlikely).
              * Do not error though: Wayland clients can still parse the keymap.
              */
             darray_free(*substitutions);
-            return true;
+            반환 true;
         }
         /* Update current prefix */
         *prefix = invalid;
-        while (*prefix == invalid && prefix < prefix_max)
+        동안 (*prefix == invalid && prefix < prefix_max)
             prefix++;
     }
 
@@ -357,7 +357,7 @@ rename_long_keys(const struct xkb_keymap *keymap,
     char buf[6] = {0}; /* 5 would suffice, but generates a compiler warning */
     darray_foreach(sub, *substitutions) {
         static_assert(XKB_KEYCODE_INVALID > 0xfff, "Invalid keys filtered out");
-        if (sub->keycode <= 0xfff) {
+        만약 (sub->keycode <= 0xfff) {
             /*
              * Try nice formatting with the hexadecimal keycode.
              * We use lower case to reduce possible conflict because the
@@ -367,26 +367,26 @@ rename_long_keys(const struct xkb_keymap *keymap,
                      keycode_prefix, sub->keycode);
             const xkb_atom_t target = xkb_atom_intern(keymap->ctx,
                                                       buf, sizeof(buf) - 2);
-            if (target == XKB_ATOM_NONE)
+            만약 (target == XKB_ATOM_NONE)
                 goto error;
             sub->target = target;
-        } else if (*prefix != invalid) {
+        } 아니면 만약 (*prefix != invalid) {
             /* Cannot use keycode for formatting: generate next arbitrary ID */
             snprintf(buf, sizeof(buf), "%c%03"PRIx16, *prefix, next_id);
             const xkb_atom_t target = xkb_atom_intern(keymap->ctx,
                                                       buf, sizeof(buf) - 2);
-            if (target == XKB_ATOM_NONE)
+            만약 (target == XKB_ATOM_NONE)
                 goto error;
             sub->target = target;
-            if (++next_id > 0xfff) {
+            만약 (++next_id > 0xfff) {
                 *prefix = invalid;
                 /* Get next available prefix */
-                while (*prefix == invalid && prefix < prefix_max)
+                동안 (*prefix == invalid && prefix < prefix_max)
                     prefix++;
                 /* Reset counter */
                 next_id = 1;
             }
-        } else {
+        } 아니면 {
             /*
              * No prefix available: skip substitution (very unlikely).
              * Do not error though: Wayland clients can still parse the keymap.
@@ -399,14 +399,14 @@ rename_long_keys(const struct xkb_keymap *keymap,
     qsort(darray_items(*substitutions), darray_size(*substitutions),
           sizeof(*darray_items(*substitutions)), &cmp_key_name_substitution);
 
-    return true;
+    반환 true;
 
 error:
     darray_free(*substitutions);
     /* There was a memory error */
     log_err(keymap->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
             "Cannot allocate key name substitution\n");
-    return false;
+    반환 false;
 }
 
 /** Substitute a key name with a valid X11 key name */
@@ -417,19 +417,19 @@ substitute_name(const key_name_substitutions *substitutions, xkb_atom_t name)
     darray_size_t first = 0;
     darray_size_t last = darray_size(*substitutions);
 
-    while (last > first) {
+    동안 (last > first) {
         darray_size_t mid = first + (last - 1 - first) / 2;
         const xkb_atom_t source = darray_item(*substitutions, mid).source;
-        if (source < name)
+        만약 (source < name)
             first = mid + 1;
-        else if (source > name)
+        아니면 만약 (source > name)
             last = mid;
-        else /* found it */
-            return darray_item(*substitutions, mid).target;
+        아니면 /* found it */
+            반환 darray_item(*substitutions, mid).target;
     }
 
     /* No name substitution: return original name */
-    return name;
+    반환 name;
 }
 
 static bool
@@ -441,10 +441,10 @@ write_vmods(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
     bool has_some = false;
 
     xkb_vmods_enumerate(vmod, mod, &keymap->mods) {
-        if (!has_some) {
+        만약 (!has_some) {
             copy_to_buf(buf, "\tvirtual_modifiers ");
             has_some = true;
-        } else {
+        } 아니면 {
             copy_to_buf(buf, ",");
         }
         write_buf(buf, "%s", xkb_atom_text(keymap->ctx, mod->name));
@@ -467,7 +467,7 @@ write_vmods(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
          */
         const bool auto_canonical_mods = (format >= XKB_KEYMAP_FORMAT_TEXT_V2);
 
-        if ((keymap->mods.explicit_vmods & (UINT32_C(1) << vmod) ||
+        만약 ((keymap->mods.explicit_vmods & (UINT32_C(1) << vmod) ||
              explicit) &&
             (auto_canonical_mods || mod->mapping != 0)) {
             /*
@@ -480,10 +480,10 @@ write_vmods(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
         }
     }
 
-    if (has_some)
+    만약 (has_some)
         copy_to_buf(buf, ";\n\n");
 
-    return true;
+    반환 true;
 }
 
 static bool
@@ -497,10 +497,10 @@ write_keycodes(const struct xkb_keymap *keymap,
 
     const bool pretty = !!(flags & XKB_KEYMAP_SERIALIZE_PRETTY);
 
-    if (keymap->keycodes_section_name)
+    만약 (keymap->keycodes_section_name)
         write_buf(buf, "xkb_keycodes \"%s\" {\n",
                   keymap->keycodes_section_name);
-    else
+    아니면
         copy_to_buf(buf, "xkb_keycodes {\n");
 
     /* NOTE: there is no support for default values */
@@ -513,27 +513,27 @@ write_keycodes(const struct xkb_keymap *keymap,
     write_buf(buf, "\tmaximum = %"PRIu32";\n", MAX(keymap->max_key_code, 255));
 
     xkb_keys_foreach(key, keymap) {
-        if (key->name == XKB_ATOM_NONE)
+        만약 (key->name == XKB_ATOM_NONE)
             continue;
 
         const xkb_atom_t name = (substitutions == NULL)
             ? key->name
             : substitute_name(substitutions, key->name);
-        if (pretty)
+        만약 (pretty)
             write_buf(buf, "\t%-20s", KeyNameText(keymap->ctx, name));
-        else
+        아니면
             write_buf(buf, "\t%s", KeyNameText(keymap->ctx, name));
         write_buf(buf, " = %"PRIu32";\n", key->keycode);
     }
 
     xkb_leds_enumerate(idx, led, keymap)
-        if (led->name != XKB_ATOM_NONE) {
+        만약 (led->name != XKB_ATOM_NONE) {
             write_buf(buf, "\tindicator %"PRIu32" = ", idx + 1);
             write_buf_string_literal(buf, xkb_atom_text(keymap->ctx, led->name));
             copy_to_buf(buf, ";\n");
         }
 
-    for (darray_size_t i = 0; i < keymap->num_key_aliases; i++) {
+    위해 (darray_size_t i = 0; i < keymap->num_key_aliases; i++) {
         const xkb_atom_t alias = (substitutions == NULL)
             ? keymap->key_aliases[i].alias
             : substitute_name(substitutions, keymap->key_aliases[i].alias);
@@ -541,10 +541,10 @@ write_keycodes(const struct xkb_keymap *keymap,
             ? keymap->key_aliases[i].real
             : substitute_name(substitutions, keymap->key_aliases[i].real);
 
-        if (pretty)
+        만약 (pretty)
             write_buf(buf, "\talias %-14s",
                       KeyNameText(keymap->ctx, alias));
-        else
+        아니면
             write_buf(buf, "\talias %s",
                       KeyNameText(keymap->ctx, alias));
         write_buf(buf, " = %s;\n",
@@ -552,29 +552,29 @@ write_keycodes(const struct xkb_keymap *keymap,
     }
 
     copy_to_buf(buf, "};\n\n");
-    return true;
+    반환 true;
 }
 
 static bool
 write_types(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
             enum xkb_keymap_serialize_flags flags, struct buf *buf)
 {
-    if (keymap->types_section_name)
+    만약 (keymap->types_section_name)
         write_buf(buf, "xkb_types \"%s\" {\n",
                   keymap->types_section_name);
-    else
+    아니면
         copy_to_buf(buf, "xkb_types {\n");
 
     /* NOTE: support for default values has been removed */
 
-    if (!write_vmods(keymap, format,
+    만약 (!write_vmods(keymap, format,
                      (flags & XKB_KEYMAP_SERIALIZE_EXPLICIT_VMODS), buf))
-        return false;
+        반환 false;
 
     const bool drop_unused = !(flags & XKB_KEYMAP_SERIALIZE_KEEP_UNUSED);
-    for (darray_size_t i = 0; i < keymap->num_types; i++) {
+    위해 (darray_size_t i = 0; i < keymap->num_types; i++) {
         const struct xkb_key_type * const type = &keymap->types[i];
-        if (!type->required && drop_unused)
+        만약 (!type->required && drop_unused)
             continue;
 
         copy_to_buf(buf, "\ttype ");
@@ -585,7 +585,7 @@ write_types(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
                   ModMaskText(keymap->ctx, MOD_BOTH, &keymap->mods,
                               type->mods.mods));
 
-        for (darray_size_t j = 0; j < type->num_entries; j++) {
+        위해 (darray_size_t j = 0; j < type->num_entries; j++) {
             const char *str;
             const struct xkb_key_type_entry *entry = &type->entries[j];
 
@@ -593,7 +593,7 @@ write_types(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
              * Printing level 1 entries is redundant, it's the default,
              * unless there's preserve info.
              */
-            if (entry->level == 0 && entry->preserve.mods == 0 &&
+            만약 (entry->level == 0 && entry->preserve.mods == 0 &&
                 !(flags & XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_VALUES))
                 continue;
 
@@ -602,14 +602,14 @@ write_types(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
             write_buf(buf, "\t\tmap[%s]= %"PRIu32";\n",
                       str, entry->level + 1);
 
-            if (entry->preserve.mods)
+            만약 (entry->preserve.mods)
                 write_buf(buf, "\t\tpreserve[%s]= %s;\n",
                           str, ModMaskText(keymap->ctx, MOD_BOTH, &keymap->mods,
                                            entry->preserve.mods));
         }
 
-        for (xkb_level_index_t n = 0; n < type->num_level_names; n++)
-            if (type->level_names[n]) {
+        위해 (xkb_level_index_t n = 0; n < type->num_level_names; n++)
+            만약 (type->level_names[n]) {
                 write_buf(buf, "\t\tlevel_name[%"PRIu32"]= ", n + 1);
                 write_buf_string_literal(
                     buf, xkb_atom_text(keymap->ctx, type->level_names[n]));
@@ -620,7 +620,7 @@ write_types(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
     }
 
     copy_to_buf(buf, "};\n\n");
-    return true;
+    반환 true;
 }
 
 static bool
@@ -631,8 +631,8 @@ write_led_map(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
     write_buf_string_literal(buf, xkb_atom_text(keymap->ctx, led->name));
     copy_to_buf(buf, " {\n");
 
-    if (led->which_groups) {
-        if (led->which_groups != XKB_STATE_LAYOUT_EFFECTIVE || defaults) {
+    만약 (led->which_groups) {
+        만약 (led->which_groups != XKB_STATE_LAYOUT_EFFECTIVE || defaults) {
             write_buf(buf, "\t\twhichGroupState= %s;\n",
                       LedStateMaskText(keymap->ctx, groupComponentMaskNames,
                                        led->which_groups));
@@ -641,8 +641,8 @@ write_led_map(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
                   led->groups);
     }
 
-    if (led->which_mods) {
-        if (led->which_mods != XKB_STATE_MODS_EFFECTIVE || defaults) {
+    만약 (led->which_mods) {
+        만약 (led->which_mods != XKB_STATE_MODS_EFFECTIVE || defaults) {
             write_buf(buf, "\t\twhichModState= %s;\n",
                       LedStateMaskText(keymap->ctx, modComponentMaskNames,
                                        led->which_mods));
@@ -652,13 +652,13 @@ write_led_map(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
                               led->mods.mods));
     }
 
-    if (led->ctrls) {
+    만약 (led->ctrls) {
         write_buf(buf, "\t\tcontrols= %s;\n",
                   ControlMaskText(keymap->ctx, format, led->ctrls));
     }
 
     copy_to_buf(buf, "\t};\n");
-    return true;
+    반환 true;
 }
 
 static const char *
@@ -666,15 +666,15 @@ affect_lock_text(enum xkb_action_flags flags, bool show_both)
 {
     switch (flags & (ACTION_LOCK_NO_LOCK | ACTION_LOCK_NO_UNLOCK)) {
     case 0:
-        return show_both ? ",affect=both" : "";
+        반환 show_both ? ",affect=both" : "";
     case ACTION_LOCK_NO_UNLOCK:
-        return ",affect=lock";
+        반환 ",affect=lock";
     case ACTION_LOCK_NO_LOCK:
-        return ",affect=unlock";
+        반환 ",affect=unlock";
     case ACTION_LOCK_NO_LOCK | ACTION_LOCK_NO_UNLOCK:
-        return ",affect=neither";
+        반환 ",affect=neither";
     default:
-        return "";
+        반환 "";
     }
 }
 
@@ -690,9 +690,9 @@ write_action(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
     const char *type;
     const char *args = NULL;
 
-    if (!prefix)
+    만약 (!prefix)
         prefix = "";
-    if (!suffix)
+    만약 (!suffix)
         suffix = "";
 
     type = ActionTypeText(action->type);
@@ -701,13 +701,13 @@ write_action(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
     case ACTION_TYPE_MOD_SET:
     case ACTION_TYPE_MOD_LATCH:
     case ACTION_TYPE_MOD_LOCK:
-        if (action->mods.flags & ACTION_MODS_LOOKUP_MODMAP)
+        만약 (action->mods.flags & ACTION_MODS_LOOKUP_MODMAP)
             args = "modMapMods";
-        else
+        아니면
             args = ModMaskText(keymap->ctx, MOD_BOTH, &keymap->mods,
                                action->mods.mods.mods);
         bool unlockOnPress = (action->mods.flags & ACTION_UNLOCK_ON_PRESS);
-        if (unlockOnPress && !isModsUnLockOnPressSupported(format)) {
+        만약 (unlockOnPress && !isModsUnLockOnPressSupported(format)) {
             log_err(keymap->ctx, XKB_ERROR_INCOMPATIBLE_KEYMAP_TEXT_FORMAT,
                     "Cannot use \"%s(unlockOnPress=true)\" in keymap format %d\n",
                     ActionTypeText(action->type), format);
@@ -715,7 +715,7 @@ write_action(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
         }
         bool latchOnPress = action->type == ACTION_TYPE_MOD_LATCH &&
                             (action->group.flags & ACTION_LATCH_ON_PRESS);
-        if (latchOnPress && !isModsLatchOnPressSupported(format)) {
+        만약 (latchOnPress && !isModsLatchOnPressSupported(format)) {
             log_err(keymap->ctx, XKB_ERROR_INCOMPATIBLE_KEYMAP_TEXT_FORMAT,
                     "Cannot use \"LatchMods(latchOnPress=true)\" "
                     "in keymap format %d\n", format);
@@ -733,11 +733,11 @@ write_action(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
     case ACTION_TYPE_GROUP_SET:
     case ACTION_TYPE_GROUP_LATCH:
     case ACTION_TYPE_GROUP_LOCK:
-        if ((uint32_t) xkb_abs(action->group.group) <
+        만약 ((uint32_t) xkb_abs(action->group.group) <
             (max_groups + !(action->group.flags & ACTION_ABSOLUTE_SWITCH))) {
             bool lockOnRelease = action->type == ACTION_TYPE_GROUP_LOCK &&
                                  (action->group.flags & ACTION_LOCK_ON_RELEASE);
-            if (lockOnRelease && !isGroupLockOnReleaseSupported(format)) {
+            만약 (lockOnRelease && !isGroupLockOnReleaseSupported(format)) {
                 log_err(keymap->ctx, XKB_ERROR_INCOMPATIBLE_KEYMAP_TEXT_FORMAT,
                         "Cannot use \"GroupLock(lockOnRelease=true)\" "
                         "in keymap format %d\n", format);
@@ -750,7 +750,7 @@ write_action(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
                       (action->type == ACTION_TYPE_GROUP_LATCH && (action->group.flags & ACTION_LATCH_TO_LOCK)) ? ",latchToLock" : "",
                       (lockOnRelease) ? ",lockOnRelease" : "",
                       suffix);
-        } else {
+        } 아니면 {
             /* Unsupported group index: degrade to VoidAction() */
             log_warn(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
                      "Unsupported group index %"PRIu32" for action %s()\n",
@@ -781,16 +781,16 @@ write_action(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
     case ACTION_TYPE_PTR_BUTTON:
         write_buf(buf, "%s%s(button=", prefix, type);
         static_assert(XKB_POINTER_BUTTON_DEFAULT < XKB_POINTER_BUTTON_MIN, "");
-        if (action->btn.button > XKB_POINTER_BUTTON_DEFAULT &&
+        만약 (action->btn.button > XKB_POINTER_BUTTON_DEFAULT &&
             action->btn.button <= XKB_POINTER_BUTTON_MAX)
             write_buf(buf, "%"PRIu8, action->btn.button);
-        else
+        아니면
             copy_to_buf(buf, "default");
-        if (action->btn.count) {
+        만약 (action->btn.count) {
             assert(action->type != ACTION_TYPE_PTR_LOCK);
             write_buf(buf, ",count=%u", action->btn.count);
         }
-        if (args)
+        만약 (args)
             write_buf(buf, "%s", args);
         write_buf(buf, ")%s", suffix);
         break;
@@ -825,16 +825,16 @@ write_action(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
         write_buf(buf, "%s%s(", prefix, type);
         const struct xkb_key * const key = XkbKey(keymap, action->redirect.keycode);
         /* Can fail if the keycode was not initialized */
-        if (key)
+        만약 (key)
             write_buf(buf, "keycode=%s", KeyNameText(keymap->ctx, key->name));
-        if (action->redirect.affect_mods) {
+        만약 (action->redirect.affect_mods) {
             xkb_mod_mask_t mask;
             mask = (action->redirect.affect_mods & action->redirect.mods);
-            if (mask)
+            만약 (mask)
                 write_buf(buf, ",modifiers=%s",
                           ModMaskText(keymap->ctx, MOD_BOTH, &keymap->mods, mask));
             mask = (action->redirect.affect_mods & ~action->redirect.mods);
-            if (mask)
+            만약 (mask)
                 write_buf(buf, ",clearMods=%s",
                           ModMaskText(keymap->ctx, MOD_BOTH, &keymap->mods, mask));
         }
@@ -857,10 +857,10 @@ void_action:
          * We better not use `Private` either, because it could still be
          * interpreted by X11.
          */
-        if (format == XKB_KEYMAP_FORMAT_TEXT_V1)
+        만약 (format == XKB_KEYMAP_FORMAT_TEXT_V1)
             write_buf(buf, "%sLockControls(controls=none,affect=neither)%s",
                       prefix, suffix);
-        else
+        아니면
             write_buf(buf, "%sVoidAction()%s", prefix, suffix);
         break;
 
@@ -882,7 +882,7 @@ void_action:
         break;
     }
 
-    return true;
+    반환 true;
 }
 
 static const union xkb_action void_actions[] = {
@@ -896,10 +896,10 @@ write_actions(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
 {
     static const union xkb_action noAction = { .type = ACTION_TYPE_NONE };
 
-    for (xkb_level_index_t level = 0; level < XkbKeyNumLevels(key, group);
+    위해 (xkb_level_index_t level = 0; level < XkbKeyNumLevels(key, group);
          level++) {
 
-        if (level != 0)
+        만약 (level != 0)
             copy_to_buf(buf, ", ");
 
         const union xkb_action *actions = NULL;
@@ -907,7 +907,7 @@ write_actions(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
             keymap, key, group, level, &actions
         );
 
-        if (count > 1 && format < XKB_KEYMAP_FORMAT_TEXT_V2) {
+        만약 (count > 1 && format < XKB_KEYMAP_FORMAT_TEXT_V2) {
             /* V1: Degrade multiple actions to VoidAction() */
             actions = void_actions;
             count = 1;
@@ -917,44 +917,44 @@ write_actions(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
         }
 
         buf2->size = 0;
-        if (count == 0) {
-            if (!write_action(keymap, format, max_groups,
+        만약 (count == 0) {
+            만약 (!write_action(keymap, format, max_groups,
                               buf2, &noAction, NULL, NULL))
-                return false;
+                반환 false;
             write_buf(buf, "%*s", ACTION_PADDING, buf2->buf);
         }
-        else if (count == 1) {
-            if (!write_action(keymap, format, max_groups,
+        아니면 만약 (count == 1) {
+            만약 (!write_action(keymap, format, max_groups,
                               buf2, &(actions[0]), NULL, NULL))
-                return false;
+                반환 false;
             write_buf(buf, "%*s", ACTION_PADDING, buf2->buf);
         }
-        else {
+        아니면 {
             copy_to_buf(buf2, "{ ");
-            for (xkb_action_count_t k = 0; k < count; k++) {
-                if (k != 0)
+            위해 (xkb_action_count_t k = 0; k < count; k++) {
+                만약 (k != 0)
                     copy_to_buf(buf2, ", ");
                 size_t old_size = buf2->size;
-                if (!write_action(keymap, format, max_groups,
+                만약 (!write_action(keymap, format, max_groups,
                                   buf2, &(actions[k]), NULL, NULL))
-                    return false;
+                    반환 false;
                 /* Check if padding is necessary */
-                if (buf2->size >= old_size + ACTION_PADDING)
+                만약 (buf2->size >= old_size + ACTION_PADDING)
                     continue;
                 /* Compute and write padding, then write the action again */
-                const int padding = (int)(old_size + ACTION_PADDING - buf2->size);
+                const 정수 padding = (정수)(old_size + ACTION_PADDING - buf2->size);
                 buf2->size = old_size;
                 write_buf(buf2, "%*s", padding, "");
-                if (!write_action(keymap, format, max_groups,
+                만약 (!write_action(keymap, format, max_groups,
                                   buf2, &(actions[k]), NULL, NULL))
-                    return false;
+                    반환 false;
             }
             copy_to_buf(buf2, " }");
             write_buf(buf, "%*s", ACTION_PADDING, buf2->buf);
         }
     }
 
-    return true;
+    반환 true;
 }
 
 static bool
@@ -974,16 +974,16 @@ write_action_defaults(const struct xkb_keymap *keymap,
         assert(action->mods.flags == 0);
         assert(action->mods.mods.mods == 0);
         write_buf(buf, PREFIX"%s.modifiers = 0;\n", type);
-        if (action->type != ACTION_TYPE_MOD_LOCK)
+        만약 (action->type != ACTION_TYPE_MOD_LOCK)
             write_buf(buf, PREFIX"%s.clearLocks = false;\n", type);
-        if (action->type == ACTION_TYPE_MOD_LATCH &&
+        만약 (action->type == ACTION_TYPE_MOD_LATCH &&
             isModsLatchOnPressSupported(format))
             write_buf(buf, PREFIX"%s.latchOnPress = false;\n", type);
-        if (action->type == ACTION_TYPE_MOD_LATCH)
+        만약 (action->type == ACTION_TYPE_MOD_LATCH)
             write_buf(buf, PREFIX"%s.latchToLock = false;\n", type);
-        if (action->type == ACTION_TYPE_MOD_LOCK)
+        만약 (action->type == ACTION_TYPE_MOD_LOCK)
             write_buf(buf, PREFIX"%s.affect = both;\n", type);
-        if (isModsUnLockOnPressSupported(format))
+        만약 (isModsUnLockOnPressSupported(format))
             write_buf(buf, PREFIX"%s.unlockOnPress = false;\n", type);
         break;
 
@@ -994,11 +994,11 @@ write_action_defaults(const struct xkb_keymap *keymap,
         assert(action->group.group == 0);
         /* Explicit sign to avoid setting ACTION_ABSOLUTE_SWITCH */
         write_buf(buf, PREFIX"%s.group = +0;\n", type);
-        if (action->type != ACTION_TYPE_GROUP_LOCK)
+        만약 (action->type != ACTION_TYPE_GROUP_LOCK)
             write_buf(buf, PREFIX"%s.clearLocks = false;\n", type);
-        if (action->type == ACTION_TYPE_GROUP_LATCH)
+        만약 (action->type == ACTION_TYPE_GROUP_LATCH)
             write_buf(buf, PREFIX"%s.latchToLock = false;\n", type);
-        if (action->type == ACTION_TYPE_GROUP_LOCK &&
+        만약 (action->type == ACTION_TYPE_GROUP_LOCK &&
             isGroupLockOnReleaseSupported(format))
             write_buf(buf, PREFIX"%s.lockOnRelease = false;\n", type);
         break;
@@ -1021,7 +1021,7 @@ write_action_defaults(const struct xkb_keymap *keymap,
         assert(action->btn.count == 0);
         write_buf(buf, PREFIX"%s.button = 0;\n", type);
         write_buf(buf, PREFIX"%s.count = 0;\n", type);
-        if (action->type == ACTION_TYPE_PTR_LOCK)
+        만약 (action->type == ACTION_TYPE_PTR_LOCK)
             write_buf(buf, PREFIX"%s.affect = both;\n", type);
         break;
 
@@ -1045,7 +1045,7 @@ write_action_defaults(const struct xkb_keymap *keymap,
         assert(action->ctrls.flags == 0);
         assert(action->ctrls.ctrls == 0);
         write_buf(buf, PREFIX"%s.controls = 0;\n", type);
-        if (action->type == ACTION_TYPE_CTRL_LOCK)
+        만약 (action->type == ACTION_TYPE_CTRL_LOCK)
             write_buf(buf, PREFIX"%s.affect = both;\n", type);
         break;
 
@@ -1068,7 +1068,7 @@ write_action_defaults(const struct xkb_keymap *keymap,
 
 #undef PREFIX
 
-    return true;
+    반환 true;
 }
 
 static bool
@@ -1078,14 +1078,14 @@ write_actions_defaults(const struct xkb_keymap *keymap,
     ActionsInfo defaults = {0};
     InitActionsInfo(keymap, &defaults);
 
-    for (uint8_t a = 0; a < (uint8_t) _ACTION_TYPE_NUM_ENTRIES; a++) {
+    위해 (uint8_t a = 0; a < (uint8_t) _ACTION_TYPE_NUM_ENTRIES; a++) {
         const union xkb_action * restrict const action = &defaults.actions[a];
-        if (!write_action_defaults(keymap, format, action, buf))
-            return false;
+        만약 (!write_action_defaults(keymap, format, action, buf))
+            반환 false;
     }
     copy_to_buf(buf, "\n");
 
-    return true;
+    반환 true;
 }
 
 static const struct xkb_sym_interpret fallback_interpret = {
@@ -1112,18 +1112,18 @@ write_compat(const struct xkb_keymap * restrict keymap,
         ((flags & XKB_KEYMAP_SERIALIZE_EXPLICIT_KEY_VALUES) && drop_unused);
     /* TODO: print all default values if the explicit flag is set */
 
-    if (keymap->compat_section_name)
+    만약 (keymap->compat_section_name)
         write_buf(buf, "xkb_compatibility \"%s\" {\n",
                   keymap->compat_section_name);
-    else
+    아니면
         copy_to_buf(buf, "xkb_compatibility {\n");
 
-    if (!write_vmods(keymap, format,
+    만약 (!write_vmods(keymap, format,
                      (flags & XKB_KEYMAP_SERIALIZE_EXPLICIT_VMODS), buf))
-        return false;
+        반환 false;
 
-    if (defaults && !write_actions_defaults(keymap, format, buf))
-        return false;
+    만약 (defaults && !write_actions_defaults(keymap, format, buf))
+        반환 false;
 
     copy_to_buf(buf, "\tinterpret.useModMapMods= AnyLevel;\n");
     copy_to_buf(buf, "\tinterpret.repeat= False;\n");
@@ -1136,19 +1136,19 @@ write_compat(const struct xkb_keymap * restrict keymap,
     const struct xkb_sym_interpret* const sym_interprets =
         (use_fallback_interpret ? &fallback_interpret : keymap->sym_interprets);
 
-    for (darray_size_t i = 0; i < num_sym_interprets; i++) {
+    위해 (darray_size_t i = 0; i < num_sym_interprets; i++) {
         const struct xkb_sym_interpret *si = &sym_interprets[i];
-        if (!si->required && drop_unused)
+        만약 (!si->required && drop_unused)
             continue;
 
         *some_interp = true;
 
         copy_to_buf(buf, "\tinterpret ");
-        if (!si->sym) {
+        만약 (!si->sym) {
             copy_to_buf(buf, "Any");
-        } else if (pretty) {
+        } 아니면 만약 (pretty) {
             write_buf(buf, "%s", KeysymText(keymap->ctx, si->sym));
-        } else {
+        } 아니면 {
             write_buf(buf, "0x%"PRIx32, si->sym);
         }
         write_buf(buf, "+%s(%s) {",
@@ -1157,34 +1157,34 @@ write_compat(const struct xkb_keymap * restrict keymap,
 
         bool has_explicit_properties = false;
 
-        if (si->virtual_mod != XKB_MOD_INVALID) {
+        만약 (si->virtual_mod != XKB_MOD_INVALID) {
             write_buf(buf, "\n\t\tvirtualModifier= %s;",
                       ModIndexText(keymap->ctx, &keymap->mods,
                                    si->virtual_mod));
             has_explicit_properties = true;
         }
 
-        if (si->level_one_only) {
+        만약 (si->level_one_only) {
             copy_to_buf(buf, "\n\t\tuseModMapMods=level1;");
             has_explicit_properties = true;
-        } else if (defaults) {
+        } 아니면 만약 (defaults) {
             copy_to_buf(buf, "\n\t\tuseModMapMods=AnyLevel;");
             has_explicit_properties = true;
         }
 
-        if (si->repeat) {
+        만약 (si->repeat) {
             copy_to_buf(buf, "\n\t\trepeat= True;");
             has_explicit_properties = true;
-        } else if (defaults) {
+        } 아니면 만약 (defaults) {
             copy_to_buf(buf, "\n\t\trepeat= False;");
             has_explicit_properties = true;
         }
 
         const union xkb_action *action = NULL;
         xkb_action_count_t action_count = si->num_actions;
-        if (action_count <= 1) {
+        만약 (action_count <= 1) {
             action = &si->a.action;
-        } else if (format < XKB_KEYMAP_FORMAT_TEXT_V2) {
+        } 아니면 만약 (format < XKB_KEYMAP_FORMAT_TEXT_V2) {
             /* V1: Degrade multiple actions to VoidAction() */
             action = &void_actions[0];
             action_count = 1;
@@ -1193,21 +1193,21 @@ write_compat(const struct xkb_keymap * restrict keymap,
                     "in keymap format %d; degrade to VoidAction()\n", format);
         }
 
-        if (action_count > 1) {
+        만약 (action_count > 1) {
             copy_to_buf(buf, "\n\t\taction= {");
             const char suffix[] = ", ";
-            for (xkb_action_count_t k = 0; k < si->num_actions; k++) {
-                if (!write_action(keymap, format, max_groups,
+            위해 (xkb_action_count_t k = 0; k < si->num_actions; k++) {
+                만약 (!write_action(keymap, format, max_groups,
                                   buf, &si->a.actions[k], "", suffix))
-                    return false;
+                    반환 false;
             }
             buf->size -= sizeof(suffix) - 1; /* trailing comma */
             copy_to_buf(buf, "};");
             has_explicit_properties = true;
-        } else if (action_count == 1) {
-            if (!write_action(keymap, format, max_groups, buf, action,
+        } 아니면 만약 (action_count == 1) {
+            만약 (!write_action(keymap, format, max_groups, buf, action,
                               "\n\t\taction= ", ";"))
-                return false;
+                반환 false;
             has_explicit_properties = true;
         }
         write_buf(buf, (has_explicit_properties
@@ -1217,7 +1217,7 @@ write_compat(const struct xkb_keymap * restrict keymap,
                         : "\n\t\taction= NoAction();\n\t};\n"));
     }
 
-    if (use_fallback_interpret || (
+    만약 (use_fallback_interpret || (
         /* Detect previous interpret fallback */
         num_sym_interprets == 1 && *some_interp &&
         sym_interprets[0].sym == fallback_interpret.sym &&
@@ -1233,17 +1233,17 @@ write_compat(const struct xkb_keymap * restrict keymap,
 
     const struct xkb_led *led;
     xkb_leds_foreach(led, keymap) {
-        if ((led->which_groups || led->groups ||
+        만약 ((led->which_groups || led->groups ||
              led->which_mods || led->mods.mods || led->ctrls) &&
             !write_led_map(keymap, format, defaults, buf, led))
         {
-            return false;
+            반환 false;
         }
     }
 
     copy_to_buf(buf, "};\n\n");
 
-    return true;
+    반환 true;
 }
 
 static bool
@@ -1252,15 +1252,15 @@ write_keysyms(const struct xkb_keymap *keymap,
               const struct xkb_key *key, xkb_layout_index_t group,
               bool pretty, bool show_actions)
 {
-    const unsigned int padding = (pretty)
+    const unsigned 정수 padding = (pretty)
         ? ((show_actions) ? ACTION_PADDING : SYMBOL_PADDING)
         : 0;
-    for (xkb_level_index_t level = 0; level < XkbKeyNumLevels(key, group);
+    위해 (xkb_level_index_t level = 0; level < XkbKeyNumLevels(key, group);
          level++) {
         const xkb_keysym_t *syms;
-        int num_syms;
+        정수 num_syms;
 
-        if (level != 0)
+        만약 (level != 0)
             copy_to_buf(buf, ", ");
 
         num_syms = xkb_keymap_key_get_syms_by_level(
@@ -1270,7 +1270,7 @@ write_keysyms(const struct xkb_keymap *keymap,
         );
 
         const xkb_keysym_t no_symbol = XKB_KEY_NoSymbol;
-        if (num_syms == 0) {
+        만약 (num_syms == 0) {
             num_syms = 1;
             syms = &no_symbol;
         }
@@ -1280,31 +1280,31 @@ write_keysyms(const struct xkb_keymap *keymap,
          * with xkbcomp and xkbcommon < 1.12
          */
 
-        if (num_syms == 1) {
-            if (pretty || syms[0] == XKB_KEY_NoSymbol)
+        만약 (num_syms == 1) {
+            만약 (pretty || syms[0] == XKB_KEY_NoSymbol)
                 write_buf(buf, "%*s", padding, KeysymText(keymap->ctx, syms[0]));
-            else
+            아니면
                 write_buf(buf, "0x%"PRIx32, syms[0]);
-        } else {
-            if (pretty) {
+        } 아니면 {
+            만약 (pretty) {
                 buf2->size = 0;
                 copy_to_buf(buf2, "{ ");
-                for (int s = 0; s < num_syms; s++) {
-                    if (s != 0)
+                위해 (정수 s = 0; s < num_syms; s++) {
+                    만약 (s != 0)
                         copy_to_buf(buf2, ", ");
                     write_buf(buf2, "%*s", (show_actions ? padding : 0),
                               KeysymText(keymap->ctx, syms[s]));
                 }
                 copy_to_buf(buf2, " }");
                 write_buf(buf, "%*s", padding, buf2->buf);
-            } else {
+            } 아니면 {
                 copy_to_buf(buf, "{");
-                for (int s = 0; s < num_syms; s++) {
-                    if (s != 0)
+                위해 (정수 s = 0; s < num_syms; s++) {
+                    만약 (s != 0)
                         copy_to_buf(buf, ",");
-                    if (syms[s] == XKB_KEY_NoSymbol)
+                    만약 (syms[s] == XKB_KEY_NoSymbol)
                         copy_to_buf(buf, "NoSymbol");
-                    else
+                    아니면
                         write_buf(buf, "0x%"PRIx32, syms[s]);
                 }
                 copy_to_buf(buf, "}");
@@ -1312,7 +1312,7 @@ write_keysyms(const struct xkb_keymap *keymap,
         }
     }
 
-    return true;
+    반환 true;
 }
 
 static bool
@@ -1326,20 +1326,20 @@ write_key(const struct xkb_keymap *keymap,
     bool simple = true;
 
     xkb_layout_mask_t layouts = config->layouts;
-    if (popcount32(layouts) != keymap->num_groups) {
+    만약 (popcount32(layouts) != keymap->num_groups) {
         /* Subset of layouts: use out-of-range key policy */
         xkb_layout_index_t l = 0;
-        for (xkb_layout_mask_t ls = layouts; ls; ls >>= 1, l++) {
-            if (ls & 0x1) {
+        위해 (xkb_layout_mask_t ls = layouts; ls; ls >>= 1, l++) {
+            만약 (ls & 0x1) {
                 /* Replace target layout with its effective layout, if valid */
                 layouts &= ~(UINT32_C(1) << l);
                 const xkb_layout_index_t effective =
                     xkb_keymap_key_effective_layout(key, l);
-                if (effective != XKB_LAYOUT_INVALID)
+                만약 (effective != XKB_LAYOUT_INVALID)
                     layouts |= (UINT32_C(1) << effective);
             }
         }
-    } else {
+    } 아니면 {
         layouts &= ((UINT64_C(1) << key->num_groups) - 1);
     }
     const xkb_layout_index_t groups_count = popcount32(layouts);
@@ -1348,37 +1348,37 @@ write_key(const struct xkb_keymap *keymap,
         ? key->name
         : substitute_name(substitutions, key->name);
 
-    if (pretty)
+    만약 (pretty)
         write_buf(buf, "\tkey %-20s {", KeyNameText(keymap->ctx, name));
-    else
+    아니면
         write_buf(buf, "\tkey %s {", KeyNameText(keymap->ctx, name));
 
-    if ((key->explicit & EXPLICIT_TYPES) || explicit) {
+    만약 ((key->explicit & EXPLICIT_TYPES) || explicit) {
         simple = false;
 
         bool multi_type = explicit;
         /* Check for distinct key types only if not requiring explicit values */
-        if (!explicit) {
-            for (xkb_layout_index_t group = 1; group < key->num_groups; group++) {
-                if (!((UINT32_C(1) << group) & layouts))
+        만약 (!explicit) {
+            위해 (xkb_layout_index_t group = 1; group < key->num_groups; group++) {
+                만약 (!((UINT32_C(1) << group) & layouts))
                     continue;
 
-                if (key->groups[group].type != key->groups[0].type) {
+                만약 (key->groups[group].type != key->groups[0].type) {
                     multi_type = true;
                     break;
                 }
             }
         }
 
-        if (multi_type) {
+        만약 (multi_type) {
             xkb_layout_index_t new_group = (xkb_layout_index_t)-1;
-            for (xkb_layout_index_t group = 0; group < key->num_groups; group++) {
-                if (!((UINT32_C(1) << group) & layouts))
+            위해 (xkb_layout_index_t group = 0; group < key->num_groups; group++) {
+                만약 (!((UINT32_C(1) << group) & layouts))
                     continue;
 
                 new_group++;
 
-                if (!key->groups[group].explicit_type && !explicit)
+                만약 (!key->groups[group].explicit_type && !explicit)
                     continue;
 
                 const struct xkb_key_type * const type = key->groups[group].type;
@@ -1388,7 +1388,7 @@ write_key(const struct xkb_keymap *keymap,
                 copy_to_buf(buf, ",");
             }
         }
-        else {
+        아니면 {
             const struct xkb_key_type * const type = key->groups[0].type;
             write_buf(buf, "\n\t\ttype= ");
             write_buf_string_literal(
@@ -1433,16 +1433,16 @@ write_key(const struct xkb_keymap *keymap,
         )                                                                     \
     )
 
-    if (require_explicit(key, EXPLICIT_REPEAT, key->repeats,
+    만약 (require_explicit(key, EXPLICIT_REPEAT, key->repeats,
                          DEFAULT_KEY_REPEAT, DEFAULT_INTERPRET_KEY_REPEAT)) {
-        if (key->repeats)
+        만약 (key->repeats)
             copy_to_buf(buf, "\n\t\trepeat= Yes,");
-        else
+        아니면
             copy_to_buf(buf, "\n\t\trepeat= No,");
         simple = false;
     }
 
-    if (require_explicit(key, EXPLICIT_VMODMAP, key->vmodmap,
+    만약 (require_explicit(key, EXPLICIT_VMODMAP, key->vmodmap,
                          (xkb_mod_mask_t) DEFAULT_KEY_VMODMAP,
                          (xkb_mod_mask_t) DEFAULT_INTERPRET_VMODMAP)) {
         write_buf(buf, "\n\t\tvirtualMods= %s,",
@@ -1460,14 +1460,14 @@ write_key(const struct xkb_keymap *keymap,
         break;
 
     case XKB_LAYOUT_OUT_OF_RANGE_REDIRECT: {
-        if (!groups_count) {
+        만약 (!groups_count) {
             /* No layout to redirect to: skip */
             break;
         }
 
         xkb_layout_mask_t layout_mask =
             (UINT32_C(1) << key->out_of_range_group_number);
-        if (!(layouts & layout_mask)) {
+        만약 (!(layouts & layout_mask)) {
             /*
              * Layout is not included: default to first layout
              * See: XkbWrapGroupIntoRange
@@ -1493,7 +1493,7 @@ write_key(const struct xkb_keymap *keymap,
         break;
     }
 
-    if (key->overlays) {
+    만약 (key->overlays) {
         xkb_overlay_mask_t remaining = key->overlays;
 
         const xkb_overlay_index_t overlay_max =
@@ -1502,7 +1502,7 @@ write_key(const struct xkb_keymap *keymap,
         const xkb_overlay_mask_t valid =
             (xkb_overlay_mask_t)((1u << overlay_max) - 1u);
         remaining &= valid;
-        if (remaining != key->overlays) {
+        만약 (remaining != key->overlays) {
             log_warn(keymap->ctx, XKB_ERROR_UNSUPPORTED_OVERLAY_INDEX,
                      "Overlays indices > %u in %s require using "
                      "keymap format >= v2; "
@@ -1511,7 +1511,7 @@ write_key(const struct xkb_keymap *keymap,
                      remaining, key->overlays & ~valid);
         }
 
-        if (remaining && !key->overlays_inline &&
+        만약 (remaining && !key->overlays_inline &&
             !areOverlappingOverlaysSupported(config->format)) {
             /* isolate lowest set bit */
             const xkb_overlay_mask_t lsb = (xkb_overlay_mask_t)(
@@ -1529,13 +1529,13 @@ write_key(const struct xkb_keymap *keymap,
             remaining = lsb;
         }
 
-        if (remaining)
+        만약 (remaining)
             simple = false;
 
         const struct xkb_key * const *overlays_keys = (key->overlays_inline)
                                                     ? &key->overlay_key
                                                     : key->overlays_keys;
-        while (remaining) {
+        동안 (remaining) {
             /* isolate lowest set bit */
             const xkb_overlay_mask_t lsb = (xkb_overlay_mask_t)(
                 remaining &
@@ -1547,7 +1547,7 @@ write_key(const struct xkb_keymap *keymap,
             remaining = (remaining & ~lsb);
 
             /* pop current value */
-            if (key->overlays_inline && remaining)
+            만약 (key->overlays_inline && remaining)
                 PANIC_UNREACHABLE();
             const struct xkb_key *overlay_key = *(overlays_keys++);
 
@@ -1559,31 +1559,31 @@ write_key(const struct xkb_keymap *keymap,
         }
     }
 
-    if (groups_count > 1 || explicit_actions || explicit)
+    만약 (groups_count > 1 || explicit_actions || explicit)
         simple = false;
 
-    if (simple) {
-        if (groups_count == 0) {
+    만약 (simple) {
+        만약 (groups_count == 0) {
             /* Remove trailing comma */
             delete_last_char(buf, ',');
-            if (buf->buf[buf->size - 1] == ',')
+            만약 (buf->buf[buf->size - 1] == ',')
                 buf->size--;
-        } else {
+        } 아니면 {
             copy_to_buf(buf, "\t[ ");
             /* Get the single group index */
             xkb_mod_index_t group = ctz32(layouts);
             /* The group may not be defined for this key if it is not the first one */
             group = xkb_keymap_key_effective_layout(key, group);
-            if (!write_keysyms(keymap, buf, buf2, key, group, pretty, false))
-                return false;
+            만약 (!write_keysyms(keymap, buf, buf2, key, group, pretty, false))
+                반환 false;
             copy_to_buf(buf, " ]");
         }
         copy_to_buf(buf, " };\n");
     }
-    else {
+    아니면 {
         xkb_layout_index_t new_group = (xkb_layout_index_t)-1;
-        for (xkb_layout_index_t group = 0; group < key->num_groups; group++) {
-            if (!((UINT32_C(1) << group) & layouts))
+        위해 (xkb_layout_index_t group = 0; group < key->num_groups; group++) {
+            만약 (!((UINT32_C(1) << group) & layouts))
                 continue;
 
             new_group++;
@@ -1602,107 +1602,107 @@ write_key(const struct xkb_keymap *keymap,
                  * the actions must be made explicit */
                 (key->groups[group].implicit_actions && !some_interprets);
 
-            if (new_group != 0)
+            만약 (new_group != 0)
                 copy_to_buf(buf, ",");
             write_buf(buf, "\n\t\tsymbols[%"PRIu32"]= [ ", new_group + 1);
 
-            if (!write_keysyms(keymap, buf, buf2, key, group,
+            만약 (!write_keysyms(keymap, buf, buf2, key, group,
                                pretty, print_actions))
-                return false;
+                반환 false;
             copy_to_buf(buf, " ]");
-            if (print_actions) {
+            만약 (print_actions) {
                 write_buf(buf, ",\n\t\tactions[%"PRIu32"]= [ ", new_group + 1);
-                if (!write_actions(keymap, config->format, max_groups,
+                만약 (!write_actions(keymap, config->format, max_groups,
                                    buf, buf2, key, group))
-                    return false;
+                    반환 false;
                 copy_to_buf(buf, " ]");
             }
         }
-        if (!groups_count)
+        만약 (!groups_count)
             delete_last_char(buf, ',');
         copy_to_buf(buf, "\n\t};\n");
     }
 
-    return true;
+    반환 true;
 }
 
 
-static int
+static 정수
 cmp_modmap_step_1(const void *a, const void *b)
 {
     const ModMapEntry *m1 = (const ModMapEntry *)a;
     const ModMapEntry *m2 = (const ModMapEntry *)b;
 
-    if (!m1->mods) {
-        if (!m2->mods) {
+    만약 (!m1->mods) {
+        만약 (!m2->mods) {
             /* Entry will be dropped: do not care about the other fields */
-            return 0;
+            반환 0;
         }
-        return +1;
-    } else if (!m2->mods) {
-        return -1;
+        반환 +1;
+    } 아니면 만약 (!m2->mods) {
+        반환 -1;
     }
 
     /* Valid only on step 1 */
-    if (m1->keyCode < m2->keyCode)
-        return -1;
-    else if (m1->keyCode > m2->keyCode)
-        return +1;
+    만약 (m1->keyCode < m2->keyCode)
+        반환 -1;
+    아니면 만약 (m1->keyCode > m2->keyCode)
+        반환 +1;
 
-    if (m1->mods < m2->mods)
-        return -1;
-    else if (m1->mods > m2->mods)
-        return +1;
+    만약 (m1->mods < m2->mods)
+        반환 -1;
+    아니면 만약 (m1->mods > m2->mods)
+        반환 +1;
 
-    if (m1->haveSymbol < m2->haveSymbol)
-        return +1;
-    else if (m1->haveSymbol > m2->haveSymbol)
-        return -1;
+    만약 (m1->haveSymbol < m2->haveSymbol)
+        반환 +1;
+    아니면 만약 (m1->haveSymbol > m2->haveSymbol)
+        반환 -1;
 
-    if (m1->haveSymbol) {
-        if (m1->u.keySym < m2->u.keySym)
-            return -1;
-        if (m1->u.keySym > m2->u.keySym)
-            return +1;
-    } else {
-        if (m1->u.keyName < m2->u.keyName)
-            return -1;
-        if (m1->u.keyName > m2->u.keyName)
-            return +1;
+    만약 (m1->haveSymbol) {
+        만약 (m1->u.keySym < m2->u.keySym)
+            반환 -1;
+        만약 (m1->u.keySym > m2->u.keySym)
+            반환 +1;
+    } 아니면 {
+        만약 (m1->u.keyName < m2->u.keyName)
+            반환 -1;
+        만약 (m1->u.keyName > m2->u.keyName)
+            반환 +1;
     }
 
-    return 0;
+    반환 0;
 }
 
-static int
+static 정수
 cmp_modmap_step_2(const void *a, const void *b)
 {
     const ModMapEntry *m1 = (const ModMapEntry *)a;
     const ModMapEntry *m2 = (const ModMapEntry *)b;
 
-    if (m1->mods < m2->mods)
-        return -1;
-    if (m1->mods > m2->mods)
-        return +1;
+    만약 (m1->mods < m2->mods)
+        반환 -1;
+    만약 (m1->mods > m2->mods)
+        반환 +1;
 
-    if (m1->haveSymbol < m2->haveSymbol)
-        return -1;
-    if (m1->haveSymbol > m2->haveSymbol)
-        return +1;
+    만약 (m1->haveSymbol < m2->haveSymbol)
+        반환 -1;
+    만약 (m1->haveSymbol > m2->haveSymbol)
+        반환 +1;
 
-    if (m1->haveSymbol) {
-        if (m1->u.keySym < m2->u.keySym)
-            return -1;
-        if (m1->u.keySym > m2->u.keySym)
-            return +1;
-    } else {
-        if (m1->keyCode < m2->keyCode)
-            return -1;
-        if (m1->keyCode > m2->keyCode)
-            return +1;
+    만약 (m1->haveSymbol) {
+        만약 (m1->u.keySym < m2->u.keySym)
+            반환 -1;
+        만약 (m1->u.keySym > m2->u.keySym)
+            반환 +1;
+    } 아니면 {
+        만약 (m1->keyCode < m2->keyCode)
+            반환 -1;
+        만약 (m1->keyCode > m2->keyCode)
+            반환 +1;
     }
 
-    return 0;
+    반환 0;
 }
 
 static bool
@@ -1710,21 +1710,21 @@ write_modmaps(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
               const key_name_substitutions *substitutions,
               bool pretty, bool drop_interprets, struct buf *buf)
 {
-    if (!keymap->num_modmaps)
-        return true;
+    만약 (!keymap->num_modmaps)
+        반환 true;
 
     darray(ModMapEntry) modmaps = darray_new();
     darray_from_items(modmaps, keymap->modmaps, keymap->num_modmaps);
-    if (!darray_items(modmaps))
-        return false;
+    만약 (!darray_items(modmaps))
+        반환 false;
 
     /* Sort entries by key code */
     qsort(darray_items(modmaps), darray_size(modmaps),
           sizeof(*darray_items(modmaps)), &cmp_modmap_step_1);
 
     /* Drop disabled entries at the end */
-    for (darray_size_t m = darray_size(modmaps); m-- > 0;) {
-        if (darray_item(modmaps, m).mods)
+    위해 (darray_size_t m = darray_size(modmaps); m-- > 0;) {
+        만약 (darray_item(modmaps, m).mods)
             break;
         darray_size(modmaps)--;
     }
@@ -1738,23 +1738,23 @@ write_modmaps(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
      */
     xkb_keycode_t current_keycode = XKB_KEYCODE_INVALID;
     bool convert_to_v1_compatibility_entry = false;
-    for (darray_size_t m = darray_size(modmaps); m-- > 0;) {
+    위해 (darray_size_t m = darray_size(modmaps); m-- > 0;) {
         ModMapEntry *mm = &darray_item(modmaps, m);
         assert(mm->mods);
 
-        if (mm->keyCode == current_keycode) {
+        만약 (mm->keyCode == current_keycode) {
             /*
              * Keycode already processed: either drop next key code entries
              * or convert them to keymap format v1
              */
             const xkb_mod_mask_t core_mods = (mm->mods & MOD_REAL_MASK_ALL);
-            if (convert_to_v1_compatibility_entry && core_mods) {
+            만약 (convert_to_v1_compatibility_entry && core_mods) {
                 /*
                  * Convert to keymap format V1-specific entry:
                  * keep only the highest core modifier
                  */
                 mm->mods = UINT32_C(1) << (XKB_MAX_MODS - 1 - clz32(core_mods));
-            } else {
+            } 아니면 {
                 /*
                  * Drop if there is a previous entry for all keymap formats or
                  * if the current entry is incompatible with V1 keymap format.
@@ -1768,7 +1768,7 @@ write_modmaps(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
         const struct xkb_key *key = XkbKey(keymap, mm->keyCode);
 
         const xkb_mod_mask_t core_mods = (key->modmap & MOD_REAL_MASK_ALL);
-        if (format == XKB_KEYMAP_FORMAT_TEXT_V1 &&
+        만약 (format == XKB_KEYMAP_FORMAT_TEXT_V1 &&
             ((key->modmap & (key->modmap - 1)) || key->modmap != core_mods)) {
             /* V1 entry with multiple modifiers or non X11 core modifiers */
             m++; /* process in next iteration */
@@ -1777,7 +1777,7 @@ write_modmaps(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
                     "Cannot serialize modifier map of key %s: modifiers mask "
                     "0x%"PRIx32" incompatible with keymap format v1\n",
                     KeyNameText(keymap->ctx, key->name), key->modmap);
-        } else {
+        } 아니면 {
             /* V2 format or V1 format with a single core modifier */
             assert(key->modmap);
             mm->mods = key->modmap;
@@ -1788,7 +1788,7 @@ write_modmaps(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
         }
     }
 
-    if (darray_empty(modmaps))
+    만약 (darray_empty(modmaps))
         goto exit;
 
     /* Sort entries by modifier mask */
@@ -1802,40 +1802,40 @@ write_modmaps(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
     xkb_mod_mask_t current_mods = 0;
     const ModMapEntry *entry;
     darray_foreach(entry, modmaps) {
-        if (!entry->mods)
+        만약 (!entry->mods)
             continue;
 
-        if (current_mods != entry->mods) {
-            if (current_mods) {
+        만약 (current_mods != entry->mods) {
+            만약 (current_mods) {
                 copy_to_buf(buf, " };\n");
             }
             current_mods = entry->mods;
             write_buf(buf, "\tmodifier_map %s { ",
                       ModMaskText(keymap->ctx, MOD_REAL, &keymap->mods,
                                   current_mods));
-        } else {
+        } 아니면 {
             copy_to_buf(buf, ", ");
         }
 
-        if (entry->haveSymbol) {
-            if (pretty || entry->u.keySym == XKB_KEY_NoSymbol)
+        만약 (entry->haveSymbol) {
+            만약 (pretty || entry->u.keySym == XKB_KEY_NoSymbol)
                 write_buf(buf, "%s", KeysymText(keymap->ctx, entry->u.keySym));
-            else
+            아니면
                 write_buf(buf, "0x%"PRIx32, entry->u.keySym);
-        } else {
+        } 아니면 {
             const xkb_atom_t name = (substitutions == NULL)
                 ? entry->u.keyName
                 : substitute_name(substitutions, entry->u.keyName);
             write_buf(buf, "%s", KeyNameText(keymap->ctx, name));
         }
     }
-    if (current_mods) {
+    만약 (current_mods) {
         copy_to_buf(buf, " };\n");
     }
 
 exit:
     darray_free(modmaps);
-    return true;
+    반환 true;
 }
 
 static bool
@@ -1854,20 +1854,20 @@ write_symbols(const struct xkb_keymap *keymap,
     const bool drop_interprets = (explicit_key_values && drop_unused);
     /* TODO: print all default values if explicit flag is set */
 
-    if (keymap->symbols_section_name)
+    만약 (keymap->symbols_section_name)
         write_buf(buf, "xkb_symbols \"%s\" {\n", keymap->symbols_section_name);
-    else
+    아니면
         copy_to_buf(buf, "xkb_symbols {\n");
 
     bool has_group_names = false;
     xkb_layout_index_t new_group = (xkb_layout_index_t)-1;
-    for (xkb_layout_index_t group = 0; group < keymap->num_group_names; group++) {
-        if (!((UINT32_C(1) << group) & config->layouts))
+    위해 (xkb_layout_index_t group = 0; group < keymap->num_group_names; group++) {
+        만약 (!((UINT32_C(1) << group) & config->layouts))
             continue;
 
         new_group++;
 
-        if (keymap->group_names[group]) {
+        만약 (keymap->group_names[group]) {
             write_buf(buf, "\tname[%"PRIu32"]=", new_group + 1);
             write_buf_string_literal(
                 buf, xkb_atom_text(keymap->ctx, keymap->group_names[group]));
@@ -1875,33 +1875,33 @@ write_symbols(const struct xkb_keymap *keymap,
             has_group_names = true;
         }
     }
-    if (has_group_names)
+    만약 (has_group_names)
         copy_to_buf(buf, "\n");
 
-    if (defaults && !write_actions_defaults(keymap, config->format, buf))
-        return false;
+    만약 (defaults && !write_actions_defaults(keymap, config->format, buf))
+        반환 false;
 
     struct buf buf2 = { NULL, 0, 0 };
     const struct xkb_key *key;
     xkb_keys_foreach(key, keymap) {
         /* Skip keys with no explicit values */
-        if (key->explicit &&
+        만약 (key->explicit &&
             !write_key(keymap, config, substitutions, max_groups, some_interp,
                        drop_interprets, explicit_key_values, pretty, buf,
                        &buf2, key))
         {
             free(buf2.buf);
-            return false;
+            반환 false;
         }
     }
     free(buf2.buf);
 
-    if (!write_modmaps(keymap, config->format, substitutions,
+    만약 (!write_modmaps(keymap, config->format, substitutions,
                        pretty, drop_interprets, buf))
-        return false;
+        반환 false;
 
     copy_to_buf(buf, "};\n\n");
-    return true;
+    반환 true;
 }
 
 static enum xkb_status
@@ -1910,10 +1910,10 @@ write_keymap(const struct xkb_keymap *keymap,
              struct buf *buf, struct xkb_keymap_serialize_result *result)
 {
     key_name_substitutions substitutions = darray_new();
-    if (config->format == XKB_KEYMAP_FORMAT_TEXT_V1 &&
+    만약 (config->format == XKB_KEYMAP_FORMAT_TEXT_V1 &&
         !rename_long_keys(keymap, &substitutions))
     {
-        return false;
+        반환 false;
     }
 
     const key_name_substitutions * const substitutions_ptr =
@@ -1934,7 +1934,7 @@ write_keymap(const struct xkb_keymap *keymap,
     );
 
     darray_free(substitutions);
-    return ok ? XKB_SUCCESS : -1;
+    반환 ok ? XKB_SUCCESS : -1;
 }
 
 enum xkb_status
@@ -1948,15 +1948,15 @@ text_v1_keymap_serialize(
 
     const enum xkb_status status =
         write_keymap(keymap, config, &buf, result);
-    if (status != XKB_SUCCESS) {
+    만약 (status != XKB_SUCCESS) {
         free(buf.buf);
         result->serialized = NULL;
-        return status;
+        반환 status;
     }
 
     result->serialized = buf.buf;
     result->length = buf.size + 1;
     result->layouts = config->layouts;
 
-    return XKB_SUCCESS;
+    반환 XKB_SUCCESS;
 }

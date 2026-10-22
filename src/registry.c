@@ -14,9 +14,9 @@
 #include <stdint.h>
 #include <libxml/parser.h>
 
-#if HAVE_XKB_EXTENSIONS_DIRECTORIES
+#만약 HAVE_XKB_EXTENSIONS_DIRECTORIES
     #include <limits.h>
-    #if HAVE_UNISTD_H && HAVE_DIRENT_H
+    #만약 HAVE_UNISTD_H && HAVE_DIRENT_H
         #include <dirent.h>
         #include <unistd.h>
     #endif
@@ -133,8 +133,8 @@ rxkb_log(struct rxkb_context *ctx, enum rxkb_log_level level,
 {
     va_list args;
 
-    if (ctx->log_level < level)
-        return;
+    만약 (ctx->log_level < level)
+        반환;
 
     va_start(args, fmt);
     ctx->log_fn(ctx, level, fmt, args);
@@ -164,30 +164,30 @@ rxkb_log(struct rxkb_context *ctx, enum rxkb_log_level level,
 #define DECLARE_REF_UNREF_FOR_TYPE(type_) \
 struct type_ * type_##_ref(struct type_ *object) { \
     rxkb_object_ref(&object->base); \
-    return object; \
+    반환 object; \
 } \
 struct type_ * type_##_unref(struct type_ *object) { \
-    if (!object) return NULL; \
+    만약 (!object) 반환 NULL; \
     assert(object->base.refcount >= 1); \
-    if (--object->base.refcount == 0) {\
+    만약 (--object->base.refcount == 0) {\
         type_##_destroy(object); \
         list_remove(&object->base.link);\
         free(object); \
     } \
-    return NULL;\
+    반환 NULL;\
 }
 
 #define DECLARE_CREATE_FOR_TYPE(type_) \
 static inline struct type_ * type_##_create(struct rxkb_object *parent) { \
     struct type_ *t = calloc(1, sizeof *t); \
-    if (t) \
+    만약 (t) \
         rxkb_object_init(&t->base, parent); \
-    return t; \
+    반환 t; \
 }
 
 #define DECLARE_TYPED_GETTER_FOR_TYPE(type_, field_, rtype_) \
 rtype_ type_##_get_##field_(struct type_ *object) { \
-    return object->field_; \
+    반환 object->field_; \
 }
 
 #define DECLARE_GETTER_FOR_TYPE(type_, field_) \
@@ -196,9 +196,9 @@ rtype_ type_##_get_##field_(struct type_ *object) { \
 #define DECLARE_FIRST_NEXT_FOR_TYPE(type_, parent_type_, parent_field_) \
 struct type_ * type_##_first(struct parent_type_ *parent) { \
     struct type_ *o = NULL; \
-    if (!list_empty(&parent->parent_field_)) \
+    만약 (!list_empty(&parent->parent_field_)) \
         o = list_first_entry(&parent->parent_field_, o, base.link); \
-    return o; \
+    반환 o; \
 } \
 struct type_ * \
 type_##_next(struct type_ *o) \
@@ -207,9 +207,9 @@ type_##_next(struct type_ *o) \
     struct type_ *next; \
     parent = container_of(o->base.parent, struct parent_type_, base); \
     next = list_first_entry(&o->base.link, o, base.link); \
-    if (list_is_last(&parent->parent_field_, &o->base.link)) \
-        return NULL; \
-    return next; \
+    만약 (list_is_last(&parent->parent_field_, &o->base.link)) \
+        반환 NULL; \
+    반환 next; \
 }
 
 static void
@@ -225,7 +225,7 @@ rxkb_object_ref(struct rxkb_object *object)
 {
     assert(object->refcount >= 1);
     ++object->refcount;
-    return object;
+    반환 object;
 }
 
 static void
@@ -239,10 +239,10 @@ rxkb_layout_get_iso639_first(struct rxkb_layout *layout)
 {
     struct rxkb_iso639_code *code = NULL;
 
-    if (!list_empty(&layout->iso639s))
+    만약 (!list_empty(&layout->iso639s))
         code = list_first_entry(&layout->iso639s, code, base.link);
 
-    return code;
+    반환 code;
 }
 
 struct rxkb_iso639_code *
@@ -253,12 +253,12 @@ rxkb_iso639_code_next(struct rxkb_iso639_code *code)
 
     layout = container_of(code->base.parent, struct rxkb_layout, base);
 
-    if (list_is_last(&layout->iso639s, &code->base.link))
-        return NULL;
+    만약 (list_is_last(&layout->iso639s, &code->base.link))
+        반환 NULL;
 
     next = list_first_entry(&code->base.link, code, base.link);
 
-    return next;
+    반환 next;
 }
 
 DECLARE_REF_UNREF_FOR_TYPE(rxkb_iso639_code);
@@ -276,10 +276,10 @@ rxkb_layout_get_iso3166_first(struct rxkb_layout *layout)
 {
     struct rxkb_iso3166_code *code = NULL;
 
-    if (!list_empty(&layout->iso3166s))
+    만약 (!list_empty(&layout->iso3166s))
         code = list_first_entry(&layout->iso3166s, code, base.link);
 
-    return code;
+    반환 code;
 }
 
 struct rxkb_iso3166_code *
@@ -290,12 +290,12 @@ rxkb_iso3166_code_next(struct rxkb_iso3166_code *code)
 
     layout = container_of(code->base.parent, struct rxkb_layout, base);
 
-    if (list_is_last(&layout->iso3166s, &code->base.link))
-        return NULL;
+    만약 (list_is_last(&layout->iso3166s, &code->base.link))
+        반환 NULL;
 
     next = list_first_entry(&code->base.link, code, base.link);
 
-    return next;
+    반환 next;
 }
 
 DECLARE_REF_UNREF_FOR_TYPE(rxkb_iso3166_code);
@@ -317,7 +317,7 @@ DECLARE_GETTER_FOR_TYPE(rxkb_option, brief);
 DECLARE_GETTER_FOR_TYPE(rxkb_option, description);
 DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_option, popularity, enum rxkb_popularity);
 bool rxkb_option_is_layout_specific(struct rxkb_option *object) {
-    return object->layout_specific;
+    반환 object->layout_specific;
 }
 DECLARE_FIRST_NEXT_FOR_TYPE(rxkb_option, rxkb_option_group, options);
 
@@ -381,7 +381,7 @@ rxkb_option_group_destroy(struct rxkb_option_group *og)
 bool
 rxkb_option_group_allows_multiple(struct rxkb_option_group *g)
 {
-    return g->allow_multiple;
+    반환 g->allow_multiple;
 }
 
 DECLARE_REF_UNREF_FOR_TYPE(rxkb_option_group);
@@ -425,10 +425,10 @@ DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_context, log_level, enum rxkb_log_level);
 static char *
 rxkb_context_getenv(struct rxkb_context *ctx, const char *name)
 {
-    if (ctx->use_secure_getenv) {
-        return secure_getenv(name);
-    } else {
-        return getenv(name);
+    만약 (ctx->use_secure_getenv) {
+        반환 secure_getenv(name);
+    } 아니면 {
+        반환 getenv(name);
     }
 }
 
@@ -445,17 +445,17 @@ log_level_to_prefix(enum rxkb_log_level level)
 {
     switch (level) {
     case RXKB_LOG_LEVEL_DEBUG:
-        return "xkbregistry: DEBUG: ";
+        반환 "xkbregistry: DEBUG: ";
     case RXKB_LOG_LEVEL_INFO:
-        return "xkbregistry: INFO: ";
+        반환 "xkbregistry: INFO: ";
     case RXKB_LOG_LEVEL_WARNING:
-        return "xkbregistry: WARNING: ";
+        반환 "xkbregistry: WARNING: ";
     case RXKB_LOG_LEVEL_ERROR:
-        return "xkbregistry: ERROR: ";
+        반환 "xkbregistry: ERROR: ";
     case RXKB_LOG_LEVEL_CRITICAL:
-        return "xkbregistry: CRITICAL: ";
+        반환 "xkbregistry: CRITICAL: ";
     default:
-        return NULL;
+        반환 NULL;
     }
 }
 
@@ -465,7 +465,7 @@ default_log_fn(struct rxkb_context *ctx, enum rxkb_log_level level,
 {
     const char *prefix = log_level_to_prefix(level);
 
-    if (prefix)
+    만약 (prefix)
         fprintf(stderr, "%s", prefix);
     vfprintf(stderr, fmt, args);
 }
@@ -475,21 +475,21 @@ log_level(const char *level) {
     errno = 0;
     char *endptr;
     const long lvl = strtol(level, &endptr, 10);
-    if (errno == 0 && (endptr[0] == '\0' || is_space(endptr[0])))
-        return (enum rxkb_log_level)lvl;
+    만약 (errno == 0 && (endptr[0] == '\0' || is_space(endptr[0])))
+        반환 (enum rxkb_log_level)lvl;
 
-    if (istreq_prefix("crit", level))
-        return RXKB_LOG_LEVEL_CRITICAL;
-    if (istreq_prefix("err", level))
-        return RXKB_LOG_LEVEL_ERROR;
-    if (istreq_prefix("warn", level))
-        return RXKB_LOG_LEVEL_WARNING;
-    if (istreq_prefix("info", level))
-        return RXKB_LOG_LEVEL_INFO;
-    if (istreq_prefix("debug", level) || istreq_prefix("dbg", level))
-        return RXKB_LOG_LEVEL_DEBUG;
+    만약 (istreq_prefix("crit", level))
+        반환 RXKB_LOG_LEVEL_CRITICAL;
+    만약 (istreq_prefix("err", level))
+        반환 RXKB_LOG_LEVEL_ERROR;
+    만약 (istreq_prefix("warn", level))
+        반환 RXKB_LOG_LEVEL_WARNING;
+    만약 (istreq_prefix("info", level))
+        반환 RXKB_LOG_LEVEL_INFO;
+    만약 (istreq_prefix("debug", level) || istreq_prefix("dbg", level))
+        반환 RXKB_LOG_LEVEL_DEBUG;
 
-    return RXKB_LOG_LEVEL_ERROR;
+    반환 RXKB_LOG_LEVEL_ERROR;
 }
 
 struct rxkb_context *
@@ -498,8 +498,8 @@ rxkb_context_new(enum rxkb_context_flags flags)
     struct rxkb_context *ctx = rxkb_context_create(NULL);
     const char *env;
 
-    if (!ctx)
-        return NULL;
+    만약 (!ctx)
+        반환 NULL;
 
     ctx->context_state = CONTEXT_NEW;
     ctx->load_extra_rules_files = flags & RXKB_CONTEXT_LOAD_EXOTIC_RULES;
@@ -509,7 +509,7 @@ rxkb_context_new(enum rxkb_context_flags flags)
 
     /* Environment overwrites defaults. */
     env = rxkb_context_getenv(ctx, "RXKB_LOG_LEVEL");
-    if (env)
+    만약 (env)
         rxkb_context_set_log_level(ctx, log_level(env));
 
     static const enum rxkb_context_flags  RXKB_CONTEXT_FLAGS
@@ -517,29 +517,29 @@ rxkb_context_new(enum rxkb_context_flags flags)
         | RXKB_CONTEXT_LOAD_EXOTIC_RULES
         | RXKB_CONTEXT_NO_SECURE_GETENV;
 
-    if (flags & ~RXKB_CONTEXT_FLAGS) {
+    만약 (flags & ~RXKB_CONTEXT_FLAGS) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "%s: Invalid context flags: 0x%x\n", __func__,
                 (flags & ~RXKB_CONTEXT_FLAGS));
         free(ctx);
-        return NULL;
+        반환 NULL;
     }
 
     list_init(&ctx->models);
     list_init(&ctx->layouts);
     list_init(&ctx->option_groups);
 
-    if (!(flags & RXKB_CONTEXT_NO_DEFAULT_INCLUDES) &&
+    만약 (!(flags & RXKB_CONTEXT_NO_DEFAULT_INCLUDES) &&
         !rxkb_context_include_path_append_default(ctx)) {
         log_err(ctx, XKB_ERROR_NO_VALID_DEFAULT_INCLUDE_PATH,
                 "Failed to add any default include path "
                 "(default system path: %s)\n",
                 DFLT_XKB_CONFIG_ROOT);
         rxkb_context_unref(ctx);
-        return NULL;
+        반환 NULL;
     }
 
-    return ctx;
+    반환 ctx;
 }
 
 void
@@ -554,9 +554,9 @@ rxkb_context_set_log_fn(struct rxkb_context *ctx,
 bool
 rxkb_context_include_path_append(struct rxkb_context *ctx, const char *path)
 {
-    int err = 0;
+    정수 err = 0;
 
-    if (ctx->context_state != CONTEXT_NEW) {
+    만약 (ctx->context_state != CONTEXT_NEW) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "include paths can only be appended to a new context\n");
         goto error;
@@ -564,16 +564,16 @@ rxkb_context_include_path_append(struct rxkb_context *ctx, const char *path)
 
     struct stat stat_buf;
     err = stat(path, &stat_buf);
-    if (err != 0) {
+    만약 (err != 0) {
         err = errno;
         goto error;
     }
-    if (!S_ISDIR(stat_buf.st_mode)) {
+    만약 (!S_ISDIR(stat_buf.st_mode)) {
         err = ENOTDIR;
         goto error;
     }
 
-    if (!check_eaccess(path, R_OK | X_OK)) {
+    만약 (!check_eaccess(path, R_OK | X_OK)) {
         err = EACCES;
         goto error;
     }
@@ -584,7 +584,7 @@ rxkb_context_include_path_append(struct rxkb_context *ctx, const char *path)
      * where this is the wrong behaviour aren’t worth worrying about.
      */
     char rules[PATH_MAX];
-    if (!snprintf_safe(rules, sizeof(rules), "%s/rules/%s.xml",
+    만약 (!snprintf_safe(rules, sizeof(rules), "%s/rules/%s.xml",
                        path, DEFAULT_XKB_RULES)) {
         log_err(ctx, XKB_ERROR_INVALID_PATH,
                 "Path is too long: expected max length of %zu, "
@@ -594,7 +594,7 @@ rxkb_context_include_path_append(struct rxkb_context *ctx, const char *path)
     }
 
     char * const tmp = strdup(path);
-    if (!tmp) {
+    만약 (!tmp) {
         err = ENOMEM;
         goto error;
     }
@@ -603,7 +603,7 @@ rxkb_context_include_path_append(struct rxkb_context *ctx, const char *path)
     /* Use “info” log level to facilitate bug reporting. */
     log_info(ctx, XKB_LOG_MESSAGE_NO_ID, "Include path added: %s\n", tmp);
 
-    return true;
+    반환 true;
 
 error:
     /*
@@ -612,45 +612,45 @@ error:
      */
     log_info(ctx, XKB_LOG_MESSAGE_NO_ID,
              "Include path failed: \"%s\" (%s)\n", path, strerror(err));
-    return false;
+    반환 false;
 }
 
-#if HAVE_XKB_EXTENSIONS_DIRECTORIES
+#만약 HAVE_XKB_EXTENSIONS_DIRECTORIES
 
-static int
+static 정수
 compare_str(const void *a, const void *b)
 {
-    return strcmp(*(char **)a, *(char **) b);
+    반환 strcmp(*(char **)a, *(char **) b);
 }
 
-static int
+static 정수
 add_direct_subdirectories(struct rxkb_context *ctx, const char *path,
                           darray_string *extensions,
                           darray_size_t versioned_count,
                           size_t versioned_path_length)
 {
-    int ret = 0;
-    int err = ENOMEM;
+    정수 ret = 0;
+    정수 err = ENOMEM;
     DIR *dir = NULL;
 
     /* Check extensions parent directory */
     struct stat stat_buf;
     err = stat(path, &stat_buf);
-    if (err != 0) {
+    만약 (err != 0) {
         err = errno;
         goto err;
     }
-    if (!S_ISDIR(stat_buf.st_mode)) {
+    만약 (!S_ISDIR(stat_buf.st_mode)) {
         err = ENOTDIR;
         goto err;
     }
-    if (!check_eaccess(path, R_OK | X_OK)) {
+    만약 (!check_eaccess(path, R_OK | X_OK)) {
         err = EACCES;
         goto err;
     }
 
     dir = opendir(path);
-    if (dir == NULL) {
+    만약 (dir == NULL) {
         err = EACCES;
         goto err;
     }
@@ -658,30 +658,30 @@ add_direct_subdirectories(struct rxkb_context *ctx, const char *path,
     struct dirent *entry;
     char path_buf[PATH_MAX] = "";
     versioned_path_length++; /* Additional final ‘/’ */
-    while ((entry = readdir(dir)) != NULL) {
+    동안 ((entry = readdir(dir)) != NULL) {
         const char *name = entry->d_name;
 
         /* Skip special entries */
-        if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
+        만약 (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
             continue;
 
-        if (!snprintf_safe(path_buf, sizeof(path_buf), "%s/%s", path, name)) {
+        만약 (!snprintf_safe(path_buf, sizeof(path_buf), "%s/%s", path, name)) {
             err = ENOMEM;
             goto err;
         }
-        if (stat(path_buf, &stat_buf) != 0 || !S_ISDIR(stat_buf.st_mode))
+        만약 (stat(path_buf, &stat_buf) != 0 || !S_ISDIR(stat_buf.st_mode))
             continue;
 
         /* Skip if the corresponding versioned directory is already included */
-        for (darray_size_t i = 0; i < versioned_count; i++) {
+        위해 (darray_size_t i = 0; i < versioned_count; i++) {
             const char * const prev_name = darray_item(*extensions, i)
                                          + versioned_path_length;
-            if (strcmp(name, prev_name) == 0)
+            만약 (strcmp(name, prev_name) == 0)
                 goto next;
         }
 
         char *ext_path = strdup_safe(path_buf);
-        if (!ext_path) {
+        만약 (!ext_path) {
             err = ENOMEM;
             goto err;
         }
@@ -693,7 +693,7 @@ next:
 
     closedir(dir);
 
-    if (darray_size(*extensions) > versioned_count) {
+    만약 (darray_size(*extensions) > versioned_count) {
         /* Sort the entries, so that they are appended in lexicographic order */
         qsort(darray_items(*extensions) + versioned_count,
               darray_size(*extensions) - versioned_count,
@@ -704,15 +704,15 @@ next:
         }
     }
 
-    return ret;
+    반환 ret;
 
 err:
     log_dbg(ctx,
             "Include extensions path failed: %s (%s)\n", path, strerror(err));
-    if (dir)
+    만약 (dir)
         closedir(dir);
 
-    return ret;
+    반환 ret;
 }
 #endif
 
@@ -722,26 +722,26 @@ rxkb_context_include_path_append_default(struct rxkb_context *ctx)
     char user_path[PATH_MAX];
     bool ret = false;
 
-    if (ctx->context_state != CONTEXT_NEW) {
+    만약 (ctx->context_state != CONTEXT_NEW) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "include paths can only be appended to a new context\n");
-        return false;
+        반환 false;
     }
 
     const char * const home = rxkb_context_getenv(ctx, "HOME");
     const char * const xdg = rxkb_context_getenv(ctx, "XDG_CONFIG_HOME");
     /* Accept empty string, which may be unintentional and should be reported */
-    if (xdg != NULL) {
-        if (snprintf_safe(user_path, sizeof(user_path), "%s/xkb", xdg))
+    만약 (xdg != NULL) {
+        만약 (snprintf_safe(user_path, sizeof(user_path), "%s/xkb", xdg))
             ret |= rxkb_context_include_path_append(ctx, user_path);
-    } else if (home != NULL) {
+    } 아니면 만약 (home != NULL) {
         /* XDG_CONFIG_HOME fallback is $HOME/.config/ */
-        if (snprintf_safe(user_path, sizeof(user_path), "%s/.config/xkb", home))
+        만약 (snprintf_safe(user_path, sizeof(user_path), "%s/.config/xkb", home))
             ret |= rxkb_context_include_path_append(ctx, user_path);
     }
 
-    if (home != NULL) {
-        if (snprintf_safe(user_path, sizeof(user_path), "%s/.xkb", home))
+    만약 (home != NULL) {
+        만약 (snprintf_safe(user_path, sizeof(user_path), "%s/.xkb", home))
             ret |= rxkb_context_include_path_append(ctx, user_path);
     }
 
@@ -754,18 +754,18 @@ rxkb_context_include_path_append_default(struct rxkb_context *ctx)
         ctx, ((extra != NULL) ? extra : DFLT_XKB_CONFIG_EXTRA_PATH)
     );
 
-#if HAVE_XKB_EXTENSIONS_DIRECTORIES
+#만약 HAVE_XKB_EXTENSIONS_DIRECTORIES
     darray_string extensions = darray_new();
 
     /* Versioned extensions directory */
     const char *extensions_path =
         rxkb_context_getenv(ctx, "XKB_CONFIG_VERSIONED_EXTENSIONS_PATH");
 #ifdef DFLT_XKB_CONFIG_VERSIONED_EXTENSIONS_PATH
-    if (extensions_path == NULL)
+    만약 (extensions_path == NULL)
         extensions_path = DFLT_XKB_CONFIG_VERSIONED_EXTENSIONS_PATH;
 #endif
     size_t versioned_path_length = 0;
-    if (extensions_path != NULL) {
+    만약 (extensions_path != NULL) {
         /* Add direct subdirectories */
         ret |= add_direct_subdirectories(ctx, extensions_path,
                                          &extensions, 0, 0);
@@ -776,10 +776,10 @@ rxkb_context_include_path_append_default(struct rxkb_context *ctx)
     extensions_path =
         rxkb_context_getenv(ctx, "XKB_CONFIG_UNVERSIONED_EXTENSIONS_PATH");
 #ifdef DFLT_XKB_CONFIG_UNVERSIONED_EXTENSIONS_PATH
-    if (extensions_path == NULL)
+    만약 (extensions_path == NULL)
         extensions_path = DFLT_XKB_CONFIG_UNVERSIONED_EXTENSIONS_PATH;
 #endif
-    if (extensions_path != NULL) {
+    만약 (extensions_path != NULL) {
         /*
          * Add direct subdirectories, except those already added from the
          * *versioned* extensions path hereinabove.
@@ -816,7 +816,7 @@ rxkb_context_include_path_append_default(struct rxkb_context *ctx)
      * This fallback can still be skipped if deliberately using an empty string
      * for the canonical XKB root hereinabove.
      */
-    if (!has_root && (root == NULL || root[0] != '\0')) {
+    만약 (!has_root && (root == NULL || root[0] != '\0')) {
         log_warn(ctx, XKB_LOG_MESSAGE_NO_ID,
                  "Root include path failed; fallback to \"%s\". "
                  "The setup is probably misconfigured. "
@@ -826,13 +826,13 @@ rxkb_context_include_path_append_default(struct rxkb_context *ctx)
         ret |= rxkb_context_include_path_append(ctx, DFLT_XKB_LEGACY_ROOT);
     }
 
-    return ret;
+    반환 ret;
 }
 
 bool
 rxkb_context_parse_default_ruleset(struct rxkb_context *ctx)
 {
-    return rxkb_context_parse(ctx, DEFAULT_XKB_RULES);
+    반환 rxkb_context_parse(ctx, DEFAULT_XKB_RULES);
 }
 
 bool
@@ -841,34 +841,34 @@ rxkb_context_parse(struct rxkb_context *ctx, const char *ruleset)
     char **path;
     bool success = false;
 
-    if (ctx->context_state != CONTEXT_NEW) {
+    만약 (ctx->context_state != CONTEXT_NEW) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "parse must only be called on a new context\n");
-        return false;
+        반환 false;
     }
 
     darray_foreach_reverse(path, ctx->includes) {
         char rules[PATH_MAX];
 
-        if (snprintf_safe(rules, sizeof(rules), "%s/rules/%s.xml",
+        만약 (snprintf_safe(rules, sizeof(rules), "%s/rules/%s.xml",
                            *path, ruleset)) {
             log_dbg(ctx, "Parsing %s\n", rules);
-            if (parse(ctx, rules, RXKB_POPULARITY_STANDARD))
+            만약 (parse(ctx, rules, RXKB_POPULARITY_STANDARD))
                 success = true;
         }
 
-        if (ctx->load_extra_rules_files &&
+        만약 (ctx->load_extra_rules_files &&
             snprintf_safe(rules, sizeof(rules), "%s/rules/%s.extras.xml",
                           *path, ruleset)) {
             log_dbg(ctx, "Parsing %s\n", rules);
-            if (parse(ctx, rules, RXKB_POPULARITY_EXOTIC))
+            만약 (parse(ctx, rules, RXKB_POPULARITY_EXOTIC))
                 success = true;
         }
     }
 
     ctx->context_state = success ? CONTEXT_PARSED : CONTEXT_FAILED;
 
-    return success;
+    반환 success;
 }
 
 
@@ -881,13 +881,13 @@ rxkb_context_set_user_data(struct rxkb_context *ctx, void *userdata)
 void *
 rxkb_context_get_user_data(struct rxkb_context *ctx)
 {
-    return ctx->userdata;
+    반환 ctx->userdata;
 }
 
 static inline bool
 is_node(xmlNode *node, const char *name)
 {
-    return node->type == XML_ELEMENT_NODE &&
+    반환 node->type == XML_ELEMENT_NODE &&
         xmlStrEqual(node->name, (const xmlChar*)name);
 }
 
@@ -897,11 +897,11 @@ extract_text(xmlNode *node)
 {
     xmlNode *n;
 
-    for (n = node->children; n; n = n->next) {
-        if (n->type == XML_TEXT_NODE)
-            return (char *)xmlStrdup(n->content);
+    위해 (n = node->children; n; n = n->next) {
+        만약 (n->type == XML_TEXT_NODE)
+            반환 (char *)xmlStrdup(n->content);
     }
-    return NULL;
+    반환 NULL;
 }
 
 /* Data from “configItem” node */
@@ -938,16 +938,16 @@ parse_config_item(struct rxkb_context *ctx, xmlNode *parent,
     xmlNode *node = NULL;
     xmlNode *ci = NULL;
 
-    for (ci = parent->children; ci; ci = ci->next) {
-        if (is_node(ci, "configItem")) {
+    위해 (ci = parent->children; ci; ci = ci->next) {
+        만약 (is_node(ci, "configItem")) {
             /* Process attributes */
             xmlChar *raw_popularity = xmlGetProp(ci, (const xmlChar*)"popularity");
-            if (raw_popularity) {
-                if (xmlStrEqual(raw_popularity, (const xmlChar*)"standard"))
+            만약 (raw_popularity) {
+                만약 (xmlStrEqual(raw_popularity, (const xmlChar*)"standard"))
                     config->popularity = RXKB_POPULARITY_STANDARD;
-                else if (xmlStrEqual(raw_popularity, (const xmlChar*)"exotic"))
+                아니면 만약 (xmlStrEqual(raw_popularity, (const xmlChar*)"exotic"))
                     config->popularity = RXKB_POPULARITY_EXOTIC;
-                else
+                아니면
                     log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                             "xml:%u: invalid popularity attribute: expected "
                             "'standard' or 'exotic', got: '%s'\n",
@@ -958,38 +958,38 @@ parse_config_item(struct rxkb_context *ctx, xmlNode *parent,
             /* Note: this is only useful for options */
             xmlChar *raw_layout_specific =
                 xmlGetProp(ci, (const xmlChar*)"layout-specific");
-            if (raw_layout_specific &&
+            만약 (raw_layout_specific &&
                 xmlStrEqual(raw_layout_specific, (const xmlChar*)"true"))
                 config->layout_specific = true;
             xmlFree(raw_layout_specific);
 
             /* Process children */
-            for (node = ci->children; node; node = node->next) {
-                if (is_node(node, "name"))
+            위해 (node = ci->children; node; node = node->next) {
+                만약 (is_node(node, "name"))
                     config->name = extract_text(node);
-                else if (is_node(node, "description"))
+                아니면 만약 (is_node(node, "description"))
                     config->description = extract_text(node);
-                else if (is_node(node, "shortDescription"))
+                아니면 만약 (is_node(node, "shortDescription"))
                     config->brief = extract_text(node);
-                else if (is_node(node, "vendor"))
+                아니면 만약 (is_node(node, "vendor"))
                     config->vendor = extract_text(node);
                 /* Note: the DTD allows for vendor + brief but models only use
                  * vendor and everything else only uses shortDescription */
             }
 
-            if (!config->name || !strlen(config->name))  {
+            만약 (!config->name || !strlen(config->name))  {
                 log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                         "xml:%u: missing required element 'name'\n",
                         ci->line);
                 config_item_free(config);
-                return false;
+                반환 false;
             }
 
-            return true; /* only one configItem allowed in the dtd */
+            반환 true; /* only one configItem allowed in the dtd */
         }
     }
 
-    return false;
+    반환 false;
 }
 
 static void
@@ -998,13 +998,13 @@ parse_model(struct rxkb_context *ctx, xmlNode *model,
 {
     struct config_item config = config_item_new(popularity);
 
-    if (parse_config_item(ctx, model, &config)) {
+    만약 (parse_config_item(ctx, model, &config)) {
         struct rxkb_model *m;
 
         list_for_each(m, &ctx->models, base.link) {
-            if (streq(m->name, config.name)) {
+            만약 (streq(m->name, config.name)) {
                 config_item_free(&config);
-                return;
+                반환;
             }
         }
 
@@ -1024,8 +1024,8 @@ parse_model_list(struct rxkb_context *ctx, xmlNode *model_list,
 {
     xmlNode *node = NULL;
 
-    for (node = model_list->children; node; node = node->next) {
-        if (is_node(node, "model"))
+    위해 (node = model_list->children; node; node = node->next) {
+        만약 (is_node(node, "model"))
             parse_model(ctx, node, popularity);
     }
 }
@@ -1036,12 +1036,12 @@ parse_language_list(xmlNode *language_list, struct rxkb_layout *layout)
     xmlNode *node = NULL;
     struct rxkb_iso639_code *code;
 
-    for (node = language_list->children; node; node = node->next) {
-        if (is_node(node, "iso639Id")) {
+    위해 (node = language_list->children; node; node = node->next) {
+        만약 (is_node(node, "iso639Id")) {
             char *str = extract_text(node);
             struct rxkb_object *parent;
 
-            if (!str || strlen(str) != 3) {
+            만약 (!str || strlen(str) != 3) {
                 free(str);
                 continue;
             }
@@ -1060,12 +1060,12 @@ parse_country_list(xmlNode *country_list, struct rxkb_layout *layout)
     xmlNode *node = NULL;
     struct rxkb_iso3166_code *code;
 
-    for (node = country_list->children; node; node = node->next) {
-        if (is_node(node, "iso3166Id")) {
+    위해 (node = country_list->children; node; node = node->next) {
+        만약 (is_node(node, "iso3166Id")) {
             char *str = extract_text(node);
             struct rxkb_object *parent;
 
-            if (!str || strlen(str) != 2) {
+            만약 (!str || strlen(str) != 2) {
                 free(str);
                 continue;
             }
@@ -1085,19 +1085,19 @@ parse_variant(struct rxkb_context *ctx, struct rxkb_layout *l,
     xmlNode *ci;
     struct config_item config = config_item_new(popularity);
 
-    if (parse_config_item(ctx, variant, &config)) {
+    만약 (parse_config_item(ctx, variant, &config)) {
         struct rxkb_layout *v;
         bool exists = false;
 
         list_for_each(v, &ctx->layouts, base.link) {
-            if (streq_null(v->variant, config.name) &&
+            만약 (streq_null(v->variant, config.name) &&
                 streq(v->name, l->name)) {
                 exists = true;
                 break;
             }
         }
 
-        if (!exists) {
+        만약 (!exists) {
             v = rxkb_layout_create(&ctx->base);
             list_init(&v->iso639s);
             list_init(&v->iso3166s);
@@ -1109,25 +1109,25 @@ parse_variant(struct rxkb_context *ctx, struct rxkb_layout *l,
             v->popularity = config.popularity;
             list_append(&ctx->layouts, &v->base.link);
 
-            for (ci = variant->children; ci; ci = ci->next) {
+            위해 (ci = variant->children; ci; ci = ci->next) {
                 xmlNode *node;
 
-                if (!is_node(ci, "configItem"))
+                만약 (!is_node(ci, "configItem"))
                     continue;
 
                 bool found_language_list = false;
                 bool found_country_list = false;
-                for (node = ci->children; node; node = node->next) {
-                    if (is_node(node, "languageList")) {
+                위해 (node = ci->children; node; node = node->next) {
+                    만약 (is_node(node, "languageList")) {
                         parse_language_list(node, v);
                         found_language_list = true;
                     }
-                    if (is_node(node, "countryList")) {
+                    만약 (is_node(node, "countryList")) {
                         parse_country_list(node, v);
                         found_country_list = true;
                     }
                 }
-                if (!found_language_list) {
+                만약 (!found_language_list) {
                     // inherit from parent layout
                     struct rxkb_iso639_code* x;
                     list_for_each(x, &l->iso639s, base.link) {
@@ -1136,7 +1136,7 @@ parse_variant(struct rxkb_context *ctx, struct rxkb_layout *l,
                         list_append(&v->iso639s, &code->base.link);
                     }
                 }
-                if (!found_country_list) {
+                만약 (!found_country_list) {
                     // inherit from parent layout
                     struct rxkb_iso3166_code* x;
                     list_for_each(x, &l->iso3166s, base.link) {
@@ -1146,7 +1146,7 @@ parse_variant(struct rxkb_context *ctx, struct rxkb_layout *l,
                     }
                 }
             }
-        } else {
+        } 아니면 {
             config_item_free(&config);
         }
     }
@@ -1158,8 +1158,8 @@ parse_variant_list(struct rxkb_context *ctx, struct rxkb_layout *l,
 {
     xmlNode *node = NULL;
 
-    for (node = variant_list->children; node; node = node->next) {
-        if (is_node(node, "variant"))
+    위해 (node = variant_list->children; node; node = node->next) {
+        만약 (is_node(node, "variant"))
             parse_variant(ctx, l, node, popularity);
     }
 }
@@ -1173,17 +1173,17 @@ parse_layout(struct rxkb_context *ctx, xmlNode *layout,
     xmlNode *node = NULL;
     bool exists = false;
 
-    if (!parse_config_item(ctx, layout, &config))
-        return;
+    만약 (!parse_config_item(ctx, layout, &config))
+        반환;
 
     list_for_each(l, &ctx->layouts, base.link) {
-        if (streq(l->name, config.name) && l->variant == NULL) {
+        만약 (streq(l->name, config.name) && l->variant == NULL) {
             exists = true;
             break;
         }
     }
 
-    if (!exists) {
+    만약 (!exists) {
         l = rxkb_layout_create(&ctx->base);
         list_init(&l->iso639s);
         list_init(&l->iso3166s);
@@ -1193,20 +1193,20 @@ parse_layout(struct rxkb_context *ctx, xmlNode *layout,
         l->brief = steal(&config.brief);
         l->popularity = config.popularity;
         list_append(&ctx->layouts, &l->base.link);
-    } else {
+    } 아니면 {
         config_item_free(&config);
     }
 
-    for (node = layout->children; node; node = node->next) {
-        if (is_node(node, "variantList")) {
+    위해 (node = layout->children; node; node = node->next) {
+        만약 (is_node(node, "variantList")) {
             parse_variant_list(ctx, l, node, popularity);
         }
-        if (!exists && is_node(node, "configItem")) {
+        만약 (!exists && is_node(node, "configItem")) {
             xmlNode *ll;
-            for (ll = node->children; ll; ll = ll->next) {
-                if (is_node(ll, "languageList"))
+            위해 (ll = node->children; ll; ll = ll->next) {
+                만약 (is_node(ll, "languageList"))
                     parse_language_list(ll, l);
-                if (is_node(ll, "countryList"))
+                만약 (is_node(ll, "countryList"))
                     parse_country_list(ll, l);
             }
         }
@@ -1219,8 +1219,8 @@ parse_layout_list(struct rxkb_context *ctx, xmlNode *layout_list,
 {
     xmlNode *node = NULL;
 
-    for (node = layout_list->children; node; node = node->next) {
-        if (is_node(node, "layout"))
+    위해 (node = layout_list->children; node; node = node->next) {
+        만약 (is_node(node, "layout"))
             parse_layout(ctx, node, popularity);
     }
 }
@@ -1231,13 +1231,13 @@ parse_option(struct rxkb_context *ctx, struct rxkb_option_group *group,
 {
     struct config_item config = config_item_new(popularity);
 
-    if (parse_config_item(ctx, option, &config)) {
+    만약 (parse_config_item(ctx, option, &config)) {
         struct rxkb_option *o;
 
         list_for_each(o, &group->options, base.link) {
-            if (streq(o->name, config.name)) {
+            만약 (streq(o->name, config.name)) {
                 config_item_free(&config);
-                return;
+                반환;
             }
         }
 
@@ -1260,35 +1260,35 @@ parse_group(struct rxkb_context *ctx, xmlNode *group,
     xmlChar *multiple;
     bool exists = false;
 
-    if (!parse_config_item(ctx, group, &config))
-        return;
+    만약 (!parse_config_item(ctx, group, &config))
+        반환;
 
     list_for_each(g, &ctx->option_groups, base.link) {
-        if (streq(g->name, config.name)) {
+        만약 (streq(g->name, config.name)) {
             exists = true;
             break;
         }
     }
 
-    if (!exists) {
+    만약 (!exists) {
         g = rxkb_option_group_create(&ctx->base);
         g->name = steal(&config.name);
         g->description = steal(&config.description);
         g->popularity = config.popularity;
 
         multiple = xmlGetProp(group, (const xmlChar*)"allowMultipleSelection");
-        if (multiple && xmlStrEqual(multiple, (const xmlChar*)"true"))
+        만약 (multiple && xmlStrEqual(multiple, (const xmlChar*)"true"))
             g->allow_multiple = true;
         xmlFree(multiple);
 
         list_init(&g->options);
         list_append(&ctx->option_groups, &g->base.link);
-    } else {
+    } 아니면 {
         config_item_free(&config);
     }
 
-    for (node = group->children; node; node = node->next) {
-        if (is_node(node, "option"))
+    위해 (node = group->children; node; node = node->next) {
+        만약 (is_node(node, "option"))
             parse_option(ctx, g, node, popularity);
     }
 }
@@ -1299,8 +1299,8 @@ parse_option_list(struct rxkb_context *ctx, xmlNode *option_list,
 {
     xmlNode *node = NULL;
 
-    for (node = option_list->children; node; node = node->next) {
-        if (is_node(node, "group"))
+    위해 (node = option_list->children; node; node = node->next) {
+        만약 (is_node(node, "group"))
             parse_group(ctx, node, popularity);
     }
 }
@@ -1311,12 +1311,12 @@ parse_rules_xml(struct rxkb_context *ctx, xmlNode *root,
 {
     xmlNode *node = NULL;
 
-    for (node = root->children; node; node = node->next) {
-        if (is_node(node, "modelList"))
+    위해 (node = root->children; node; node = node->next) {
+        만약 (is_node(node, "modelList"))
             parse_model_list(ctx, node, popularity);
-        else if (is_node(node, "layoutList"))
+        아니면 만약 (is_node(node, "layoutList"))
             parse_layout_list(ctx, node, popularity);
-        else if (is_node(node, "optionList"))
+        아니면 만약 (is_node(node, "optionList"))
             parse_option_list(ctx, node, popularity);
     }
 }
@@ -1328,7 +1328,7 @@ xml_error_func(void *ctx, const char *msg, ...)
     static char buf[PATH_MAX];
     static size_t slen = 0;
     va_list args;
-    int rc;
+    정수 rc;
 
     /* libxml2 prints IO errors from bad includes paths by
      * calling the error function once per word. So we get to
@@ -1340,30 +1340,30 @@ xml_error_func(void *ctx, const char *msg, ...)
     va_end(args);
 
     /* This shouldn't really happen */
-    if (rc < 0) {
+    만약 (rc < 0) {
         log_err(ctx, XKB_ERROR_INSUFFICIENT_BUFFER_SIZE,
                 "+++ out of cheese error. redo from start +++\n");
         slen = 0;
         memset(buf, 0, sizeof(buf));
-        return;
+        반환;
     }
 
     slen += (size_t)rc;
-    if (slen >= sizeof(buf)) {
+    만약 (slen >= sizeof(buf)) {
         /* truncated, let's flush this */
         buf[sizeof(buf) - 1] = '\n';
         slen = sizeof(buf);
     }
 
     /* We're assuming here that the last character is \n. */
-    if (buf[slen - 1] == '\n') {
+    만약 (buf[slen - 1] == '\n') {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID, "%s", buf);
         memset(buf, 0, sizeof(buf));
         slen = 0;
     }
 }
 
-#if HAVE_XML_CTXT_SET_ERRORHANDLER
+#만약 HAVE_XML_CTXT_SET_ERRORHANDLER
 static void
 xml_structured_error_func(void *userData, const xmlError * error)
 {
@@ -1373,7 +1373,7 @@ xml_structured_error_func(void *userData, const xmlError * error)
 
 #ifdef XML_PARSE_NO_XXE
 #define _XML_OPTIONS (XML_PARSE_NONET | XML_PARSE_NOENT | XML_PARSE_NO_XXE)
-#else
+#아니면
 #define _XML_OPTIONS (XML_PARSE_NONET)
 #endif
 
@@ -1416,12 +1416,12 @@ validate(struct rxkb_context *ctx, xmlDoc *doc)
         "<!ELEMENT hwList (hwId+)>\n"
         "<!ELEMENT hwId (#PCDATA)>\n";
 
-#if HAVE_XML_CTXT_PARSE_DTD
+#만약 HAVE_XML_CTXT_PARSE_DTD
     /* Use safer function with context if available, and set
      * the contextual error handler. */
     xmlParserCtxtPtr xmlCtxt = xmlNewParserCtxt();
-    if (!xmlCtxt)
-        return false;
+    만약 (!xmlCtxt)
+        반환 false;
     static_assert(HAVE_XML_CTXT_SET_ERRORHANDLER,
                   "xmlCtxtSetErrorHandler (2.13) introduced before "
                   "xmlCtxtParseDtd (2.14)");
@@ -1431,31 +1431,31 @@ validate(struct rxkb_context *ctx, xmlDoc *doc)
     xmlParserInputPtr pinput =
         xmlNewInputFromMemory(NULL, dtdstr, ARRAY_SIZE(dtdstr) - 1,
                               XML_INPUT_BUF_STATIC);
-    if (!pinput)
+    만약 (!pinput)
         goto dtd_error;
 
     xmlDtd *dtd = xmlCtxtParseDtd(xmlCtxt, pinput, NULL, NULL);
-#else
+#아니면
     /* Note: do not use xmlParserInputBufferCreateStatic, it generates random
      * DTD validity errors for unknown reasons */
     xmlParserInputBufferPtr buf =
         xmlParserInputBufferCreateMem(dtdstr, ARRAY_SIZE(dtdstr) - 1,
                                       XML_CHAR_ENCODING_NONE);
-    if (!buf)
+    만약 (!buf)
         goto dtd_error;
     xmlDtd *dtd = xmlIOParseDTD(NULL, buf, XML_CHAR_ENCODING_UTF8);
 #endif
 
-    if (!dtd) {
+    만약 (!dtd) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID, "Failed to load DTD\n");
         goto dtd_error;
     }
 
-#if HAVE_XML_CTXT_PARSE_DTD
+#만약 HAVE_XML_CTXT_PARSE_DTD
     success = xmlCtxtValidateDtd(xmlCtxt, doc, dtd);
-#else
+#아니면
     xmlValidCtxt *dtdvalid = xmlNewValidCtxt();
-    if (!dtdvalid) {
+    만약 (!dtdvalid) {
         success = false;
         goto ctx_error;
     }
@@ -1469,10 +1469,10 @@ ctx_error:
     xmlFreeDtd(dtd);
 
 dtd_error:
-#if HAVE_XML_CTXT_PARSE_DTD
+#만약 HAVE_XML_CTXT_PARSE_DTD
     xmlFreeParserCtxt(xmlCtxt);
 #endif
-    return success;
+    반환 success;
 }
 
 static bool
@@ -1483,37 +1483,37 @@ parse(struct rxkb_context *ctx, const char *path,
     xmlDoc *doc = NULL;
     xmlNode *root = NULL;
 
-    if (!check_eaccess(path, R_OK))
-        return false;
+    만약 (!check_eaccess(path, R_OK))
+        반환 false;
 
     LIBXML_TEST_VERSION
 
     xmlParserCtxtPtr xmlCtxt = xmlNewParserCtxt();
-    if (!xmlCtxt)
-        return false;
+    만약 (!xmlCtxt)
+        반환 false;
 
 #ifdef XML_PARSE_NO_XXE
 #define _XML_OPTIONS (XML_PARSE_NONET | XML_PARSE_NOENT | XML_PARSE_NO_XXE)
-#else
+#아니면
 #define _XML_OPTIONS (XML_PARSE_NONET)
 #endif
     xmlCtxtUseOptions(xmlCtxt, _XML_OPTIONS);
 
-#if HAVE_XML_CTXT_SET_ERRORHANDLER
+#만약 HAVE_XML_CTXT_SET_ERRORHANDLER
     /* Prefer contextual handler whenever possible. It takes precedence over
      * the global generic handler. */
     xmlCtxtSetErrorHandler(xmlCtxt, xml_structured_error_func, ctx);
 #endif
-#if !HAVE_XML_CTXT_PARSE_DTD
+#만약 !HAVE_XML_CTXT_PARSE_DTD
     /* This is needed for the DTD validation */
     xmlSetGenericErrorFunc(ctx, xml_error_func);
 #endif
 
     doc = xmlCtxtReadFile(xmlCtxt, path, NULL, 0);
-    if (!doc)
+    만약 (!doc)
         goto parse_error;
 
-    if (!validate(ctx, doc)) {
+    만약 (!validate(ctx, doc)) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "XML error: failed to validate document at %s\n", path);
         goto validate_error;
@@ -1527,7 +1527,7 @@ validate_error:
     xmlFreeDoc(doc);
 parse_error:
 
-#if !HAVE_XML_CTXT_PARSE_DTD
+#만약 !HAVE_XML_CTXT_PARSE_DTD
     /*
      * Reset the default libxml2 error handler to default, because this handler
      * is global and may be used on an invalid rxkb_context, e.g. *after* the
@@ -1539,10 +1539,10 @@ parse_error:
      */
     xmlSetGenericErrorFunc(NULL, NULL);
 #endif
-#if HAVE_XML_CTXT_SET_ERRORHANDLER
+#만약 HAVE_XML_CTXT_SET_ERRORHANDLER
     xmlCtxtSetErrorHandler(xmlCtxt, NULL, NULL);
 #endif
     xmlFreeParserCtxt(xmlCtxt);
 
-    return success;
+    반환 success;
 }

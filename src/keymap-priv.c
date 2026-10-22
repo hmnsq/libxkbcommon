@@ -33,7 +33,7 @@ update_builtin_keymap_fields(struct xkb_keymap *keymap)
         [XKB_MOD_INDEX_MOD5]  = XKB_MOD_NAME_MOD5
     };
 
-    for (xkb_mod_index_t i = 0; i < ARRAY_SIZE(builtin_mods); i++) {
+    위해 (xkb_mod_index_t i = 0; i < ARRAY_SIZE(builtin_mods); i++) {
         keymap->mods.mods[i].name = xkb_atom_intern(keymap->ctx,
                                                     builtin_mods[i],
                                                     strlen(builtin_mods[i]));
@@ -53,16 +53,16 @@ xkb_keymap_new(struct xkb_context *ctx, const char *func,
     const enum xkb_keymap_compile_flags invalid_flags = (
         flags & ~(enum xkb_keymap_compile_flags)XKB_KEYMAP_COMPILE_FLAGS_VALUES
     );
-    if (invalid_flags) {
+    만약 (invalid_flags) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "%s: unrecognized keymap compilation flags: 0x%x\n",
                 func, invalid_flags);
-        return NULL;
+        반환 NULL;
     }
 
     struct xkb_keymap * const keymap = calloc(1, sizeof(*keymap));
-    if (!keymap)
-        return NULL;
+    만약 (!keymap)
+        반환 NULL;
 
     keymap->refcnt = 1;
     keymap->ctx = xkb_context_ref(ctx);
@@ -72,7 +72,7 @@ xkb_keymap_new(struct xkb_context *ctx, const char *func,
 
     update_builtin_keymap_fields(keymap);
 
-    return keymap;
+    반환 keymap;
 }
 
 void
@@ -89,12 +89,12 @@ XkbEscapeMapName(char *name)
         0xff, 0xff, 0x7f, 0xff, 0xff, 0xff, 0x7f, 0xff
     };
 
-    if (!name)
-        return;
+    만약 (!name)
+        반환;
 
-    while (*name) {
+    동안 (*name) {
         unsigned char c = (unsigned char)*name;
-        if (!(legal[c / 8] & (1u << (c % 8))))
+        만약 (!(legal[c / 8] & (1u << (c % 8))))
             *name = '_';
         name++;
     }
@@ -108,74 +108,74 @@ XkbModNameToIndex(const struct xkb_mod_set *mods, xkb_atom_t name,
     const struct xkb_mod *mod;
 
     xkb_mods_enumerate(i, mod, mods)
-        if ((mod->type & type) && name == mod->name)
-            return i;
+        만약 ((mod->type & type) && name == mod->name)
+            반환 i;
 
-    return XKB_MOD_INVALID;
+    반환 XKB_MOD_INVALID;
 }
 
 bool
 XkbLevelsSameSyms(const struct xkb_level *a, const struct xkb_level *b)
 {
-    if (a->num_syms != b->num_syms)
-        return false;
-    if (a->num_syms <= 1)
-        return a->s.sym == b->s.sym;
-    return memcmp(a->s.syms, b->s.syms, sizeof(*a->s.syms) * a->num_syms) == 0;
+    만약 (a->num_syms != b->num_syms)
+        반환 false;
+    만약 (a->num_syms <= 1)
+        반환 a->s.sym == b->s.sym;
+    반환 memcmp(a->s.syms, b->s.syms, sizeof(*a->s.syms) * a->num_syms) == 0;
 }
 
 bool
 action_equal(const union xkb_action *a, const union xkb_action *b)
 {
-    if (a->type != b->type)
-        return false;
+    만약 (a->type != b->type)
+        반환 false;
 
     switch (a->type) {
     case ACTION_TYPE_NONE:
     case ACTION_TYPE_VOID:
-        return true;
+        반환 true;
     case ACTION_TYPE_MOD_SET:
     case ACTION_TYPE_MOD_LATCH:
     case ACTION_TYPE_MOD_LOCK:
-        return (a->mods.flags == b->mods.flags &&
+        반환 (a->mods.flags == b->mods.flags &&
                 a->mods.mods.mask == b->mods.mods.mask &&
                 a->mods.mods.mods == b->mods.mods.mods);
     case ACTION_TYPE_GROUP_SET:
     case ACTION_TYPE_GROUP_LATCH:
     case ACTION_TYPE_GROUP_LOCK:
-        return (a->group.flags == b->group.flags &&
+        반환 (a->group.flags == b->group.flags &&
                 a->group.group == b->group.group);
     case ACTION_TYPE_PTR_MOVE:
-        return (a->ptr.flags == b->ptr.flags &&
+        반환 (a->ptr.flags == b->ptr.flags &&
                 a->ptr.x == b->ptr.x &&
                 a->ptr.y == b->ptr.y);
     case ACTION_TYPE_PTR_BUTTON:
     case ACTION_TYPE_PTR_LOCK:
-        return (a->btn.flags == b->btn.flags &&
+        반환 (a->btn.flags == b->btn.flags &&
                 a->btn.button == b->btn.button &&
                 a->btn.count == b->btn.count);
     case ACTION_TYPE_PTR_DEFAULT:
-        return (a->dflt.flags == b->dflt.flags &&
+        반환 (a->dflt.flags == b->dflt.flags &&
                 a->dflt.value == b->dflt.value);
     case ACTION_TYPE_TERMINATE:
-        return true;
+        반환 true;
     case ACTION_TYPE_SWITCH_VT:
-        return (a->screen.flags == b->screen.flags &&
+        반환 (a->screen.flags == b->screen.flags &&
                 a->screen.screen == b->screen.screen);
     case ACTION_TYPE_CTRL_SET:
     case ACTION_TYPE_CTRL_LOCK:
-        return (a->ctrls.flags == b->ctrls.flags &&
+        반환 (a->ctrls.flags == b->ctrls.flags &&
                 a->ctrls.ctrls == b->ctrls.ctrls);
     case ACTION_TYPE_REDIRECT_KEY:
-        return (a->redirect.keycode == b->redirect.keycode &&
+        반환 (a->redirect.keycode == b->redirect.keycode &&
                 a->redirect.affect_mods == b->redirect.affect_mods &&
                 a->redirect.mods == b->redirect.mods);
     case ACTION_TYPE_UNSUPPORTED_LEGACY:
     case ACTION_TYPE_UNKNOWN:
-        return true;
+        반환 true;
     /* ACTION_TYPE_PRIVATE processed in the default case */
     case ACTION_TYPE_INTERNAL:
-        return (a->internal.flags == b->internal.flags) &&
+        반환 (a->internal.flags == b->internal.flags) &&
                (a->internal.clear_latched_mods == b->internal.clear_latched_mods);
     default:
         {} /* Label followed by declaration requires C23 */
@@ -184,22 +184,22 @@ action_equal(const union xkb_action *a, const union xkb_action *b)
                       ACTION_TYPE_INTERNAL + 1 == _ACTION_TYPE_NUM_ENTRIES,
                       "Missing action type");
         /* Private/custom action */
-        return memcmp(a->priv.data, b->priv.data, sizeof(a->priv.data)) == 0;
+        반환 memcmp(a->priv.data, b->priv.data, sizeof(a->priv.data)) == 0;
     }
 }
 
 bool
 XkbLevelsSameActions(const struct xkb_level *a, const struct xkb_level *b)
 {
-    if (a->num_actions != b->num_actions)
-        return false;
-    if (a->num_actions <= 1)
-        return action_equal(&a->a.action, &b->a.action);
-    for (xkb_action_count_t k = 0; k < a->num_actions; k++) {
-        if (!action_equal(&a->a.actions[k], &b->a.actions[k]))
-            return false;
+    만약 (a->num_actions != b->num_actions)
+        반환 false;
+    만약 (a->num_actions <= 1)
+        반환 action_equal(&a->a.action, &b->a.action);
+    위해 (xkb_action_count_t k = 0; k < a->num_actions; k++) {
+        만약 (!action_equal(&a->a.actions[k], &b->a.actions[k]))
+            반환 false;
     }
-    return true;
+    반환 true;
 }
 
 /* See: XkbAdjustGroup in Xorg xserver */
@@ -209,23 +209,23 @@ XkbWrapGroupIntoRange(int32_t group,
                       enum xkb_layout_out_of_range_policy out_of_range_group_policy,
                       xkb_layout_index_t out_of_range_group_number)
 {
-    if (num_groups == 0)
-        return XKB_LAYOUT_INVALID;
+    만약 (num_groups == 0)
+        반환 XKB_LAYOUT_INVALID;
 
-    if (group >= 0 && (xkb_layout_index_t)group < num_groups)
-        return (xkb_layout_index_t)group;
+    만약 (group >= 0 && (xkb_layout_index_t)group < num_groups)
+        반환 (xkb_layout_index_t)group;
 
     switch (out_of_range_group_policy) {
     case XKB_LAYOUT_OUT_OF_RANGE_REDIRECT:
-        if (out_of_range_group_number >= num_groups)
-            return 0;
-        return out_of_range_group_number;
+        만약 (out_of_range_group_number >= num_groups)
+            반환 0;
+        반환 out_of_range_group_number;
 
     case XKB_LAYOUT_OUT_OF_RANGE_CLAMP:
-        if (group < 0)
-            return 0;
-        else
-            return num_groups - 1;
+        만약 (group < 0)
+            반환 0;
+        아니면
+            반환 num_groups - 1;
 
     case XKB_LAYOUT_OUT_OF_RANGE_WRAP:
     default: {
@@ -246,7 +246,7 @@ XkbWrapGroupIntoRange(int32_t group,
          * to get the modulus.
          */
         const int32_t rem = group % (int32_t) num_groups;
-        return (rem >= 0)
+        반환 (rem >= 0)
             ? (xkb_layout_index_t)rem
             : (xkb_layout_index_t)(rem + (int32_t)num_groups);
     }
@@ -260,14 +260,14 @@ xkb_keymap_key_get_actions_by_level(const struct xkb_keymap *keymap,
                                     xkb_level_index_t level,
                                     const union xkb_action **actions)
 {
-    if (!key)
+    만약 (!key)
         goto err;
 
     layout = xkb_keymap_key_effective_layout(key, layout);
-    if (layout == XKB_LAYOUT_INVALID)
+    만약 (layout == XKB_LAYOUT_INVALID)
         goto err;
 
-    if (level >= XkbKeyNumLevels(key, layout))
+    만약 (level >= XkbKeyNumLevels(key, layout))
         goto err;
 
     const xkb_action_count_t count =
@@ -281,9 +281,9 @@ xkb_keymap_key_get_actions_by_level(const struct xkb_keymap *keymap,
         default:
             *actions = key->groups[layout].levels[level].a.actions;
     }
-    return count;
+    반환 count;
 
 err:
     *actions = NULL;
-    return 0;
+    반환 0;
 }

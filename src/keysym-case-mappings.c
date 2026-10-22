@@ -168,7 +168,7 @@ static const uint16_t legacy_keysym_offsets2[40] = {
 static inline const struct CaseMappings *
 get_legacy_keysym_entry(xkb_keysym_t ks)
 {
-    return &legacy_keysym_data[legacy_keysym_offsets1[legacy_keysym_offsets2[ks >> 7] + ((ks >> 1) & 0x3f)] + (ks & 0x01)];
+    반환 &legacy_keysym_data[legacy_keysym_offsets1[legacy_keysym_offsets2[ks >> 7] + ((ks >> 1) & 0x3f)] + (ks & 0x01)];
 }
 
 static const struct CaseMappings unicode_data[590] = {
@@ -561,44 +561,44 @@ static const uint16_t unicode_offsets2[498] = {
 static inline const struct CaseMappings *
 get_unicode_entry(xkb_keysym_t ks)
 {
-    return &unicode_data[unicode_offsets1[unicode_offsets2[ks >> 8] + ((ks >> 2) & 0x3f)] + (ks & 0x03)];
+    반환 &unicode_data[unicode_offsets1[unicode_offsets2[ks >> 8] + ((ks >> 2) & 0x3f)] + (ks & 0x03)];
 }
 
 xkb_keysym_t
 xkb_keysym_to_lower(xkb_keysym_t ks)
 {
-    if (ks <= 0x13be) {
+    만약 (ks <= 0x13be) {
         const struct CaseMappings *m = get_legacy_keysym_entry(ks);
-        return (m->lower) ? ks + (xkb_keysym_t)m->offset : ks;
-    } else if (XKB_KEYSYM_UNICODE_MIN <= ks && ks <= 0x0101f189) {
+        반환 (m->lower) ? ks + (xkb_keysym_t)m->offset : ks;
+    } 아니면 만약 (XKB_KEYSYM_UNICODE_MIN <= ks && ks <= 0x0101f189) {
         const struct CaseMappings *m = get_unicode_entry(ks - XKB_KEYSYM_UNICODE_OFFSET);
-        if (m->lower) {
+        만약 (m->lower) {
             ks = ks + (xkb_keysym_t)m->offset;
-            return (ks < XKB_KEYSYM_UNICODE_MIN) ? ks - XKB_KEYSYM_UNICODE_OFFSET : ks;
-        } else {
-            return ks;
+            반환 (ks < XKB_KEYSYM_UNICODE_MIN) ? ks - XKB_KEYSYM_UNICODE_OFFSET : ks;
+        } 아니면 {
+            반환 ks;
         }
-    } else {
-        return ks;
+    } 아니면 {
+        반환 ks;
     }
 }
 
 xkb_keysym_t
 xkb_keysym_to_upper(xkb_keysym_t ks)
 {
-    if (ks <= 0x13be) {
+    만약 (ks <= 0x13be) {
         const struct CaseMappings *m = get_legacy_keysym_entry(ks);
-        return (m->upper) ? ks - (xkb_keysym_t)m->offset : ks;
-    } else if (XKB_KEYSYM_UNICODE_MIN <= ks && ks <= 0x0101f189) {
+        반환 (m->upper) ? ks - (xkb_keysym_t)m->offset : ks;
+    } 아니면 만약 (XKB_KEYSYM_UNICODE_MIN <= ks && ks <= 0x0101f189) {
         const struct CaseMappings *m = get_unicode_entry(ks - XKB_KEYSYM_UNICODE_OFFSET);
-        if (m->upper) {
+        만약 (m->upper) {
             ks -= (xkb_keysym_t)m->offset;
-            return (ks < XKB_KEYSYM_UNICODE_MIN) ? ks - XKB_KEYSYM_UNICODE_OFFSET : ks;
-        } else {
-            return ks;
+            반환 (ks < XKB_KEYSYM_UNICODE_MIN) ? ks - XKB_KEYSYM_UNICODE_OFFSET : ks;
+        } 아니면 {
+            반환 ks;
         }
-    } else {
-        return ks;
+    } 아니면 {
+        반환 ks;
     }
 }
 
@@ -614,14 +614,14 @@ xkb_keysym_is_lower(xkb_keysym_t ks)
      * • U+01F2 ǲ: title case
      * • U+01F3 ǳ: lower case
      */
-    if (ks <= 0x13be) {
+    만약 (ks <= 0x13be) {
         const struct CaseMappings *m = get_legacy_keysym_entry(ks);
-        return m->upper && !m->lower;
-    } else if (XKB_KEYSYM_UNICODE_MIN <= ks && ks <= 0x0101f189) {
+        반환 m->upper && !m->lower;
+    } 아니면 만약 (XKB_KEYSYM_UNICODE_MIN <= ks && ks <= 0x0101f189) {
         const struct CaseMappings *m = get_unicode_entry(ks - XKB_KEYSYM_UNICODE_OFFSET);
-        return m->upper && !m->lower;
-    } else {
-        return false;
+        반환 m->upper && !m->lower;
+    } 아니면 {
+        반환 false;
     }
 }
 
@@ -632,11 +632,11 @@ xkb_keysym_is_upper_or_title(xkb_keysym_t ks)
      * having the Unicode properties “Uppercase” or General Category “Lt”.
      *
      * Here: a keysym is upper case or title case if it has a lower case. */
-    if (ks <= 0x13be) {
-        return get_legacy_keysym_entry(ks)->lower;
-    } else if (XKB_KEYSYM_UNICODE_MIN <= ks && ks <= 0x0101f189) {
-        return get_unicode_entry(ks - XKB_KEYSYM_UNICODE_OFFSET)->lower;
-    } else {
-        return false;
+    만약 (ks <= 0x13be) {
+        반환 get_legacy_keysym_entry(ks)->lower;
+    } 아니면 만약 (XKB_KEYSYM_UNICODE_MIN <= ks && ks <= 0x0101f189) {
+        반환 get_unicode_entry(ks - XKB_KEYSYM_UNICODE_OFFSET)->lower;
+    } 아니면 {
+        반환 false;
     }
 }

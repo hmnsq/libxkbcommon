@@ -22,9 +22,9 @@ is_absolute_path(const char *path)
      * - A single backslash, for example, "\directory" or "\file.txt".
      * See: https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file
      */
-    return is_path_separator(path[0]) ||
+    반환 is_path_separator(path[0]) ||
            (strlen_safe(path) >= 3 && path[1] == ':' && is_path_separator(path[2]));
-#else
-    return is_path_separator(path[0]);
+#아니면
+    반환 is_path_separator(path[0]);
 #endif
 }
