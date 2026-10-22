@@ -21,19 +21,19 @@ struct x11_atom_interner {
         xkb_atom_t *out;
         xcb_get_atom_name_cookie_t cookie;
     } pending[128];
-    size_t num_pending;
+    size_t नुमेरो_pending;
     /* Atoms which were already pending but queried again */
     struct {
         xcb_atom_t from;
         xkb_atom_t *out;
     } copies[128];
-    size_t num_copies;
+    size_t नुमेरो_copies;
     /* These are not interned, but saved directly (after XkbEscapeMapName) */
     struct {
         xcb_get_atom_name_cookie_t cookie;
         char **out;
     } escaped[4];
-    size_t num_escaped;
+    size_t नुमेरो_escaped;
 };
 
 void

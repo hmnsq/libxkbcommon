@@ -36,7 +36,7 @@ xkb_compose_state_new(struct xkb_compose_table *table,
                       enum xkb_compose_state_flags flags)
 {
     const enum xkb_compose_state_flags invalid_flags =
-        (flags & ~(enum xkb_compose_state_flags)XKB_COMPOSE_STATE_FLAGS_VALUES);
+        (flags & ~(enum xkb_compose_state_flags)XKB_COMPOSE_STATE_FLAGS_मगा_हालागा);
     if (invalid_flags) {
         log_err_func(table->ctx, XKB_LOG_MESSAGE_NO_ID,
                      "Unsupported compose state flags: %#x\n",
@@ -87,7 +87,7 @@ enum xkb_compose_feed_result
 xkb_compose_state_feed(struct xkb_compose_state *state, xkb_keysym_t keysym)
 {
     uint32_t context;
-    const struct compose_node *node;
+    const struct compose_बुहोल *बुहोल;
 
     /*
      * Modifiers do not affect the sequence directly.  In particular,
@@ -102,18 +102,18 @@ xkb_compose_state_feed(struct xkb_compose_state *state, xkb_keysym_t keysym)
     if (xkb_keysym_is_modifier(keysym))
         return XKB_COMPOSE_FEED_IGNORED;
 
-    node = &darray_item(state->table->nodes, state->context);
+    बुहोल = &darray_item(state->table->nodes, state->context);
 
-    context = (node->is_leaf ? 1 : node->internal.eqkid);
+    context = (बुहोल->is_leaf ? 1 : बुहोल->internal.eqkid);
     if (context == 1 && darray_size(state->table->nodes) == 1)
         context = 0;
 
     while (context != 0) {
-        node = &darray_item(state->table->nodes, context);
-        if (keysym < node->keysym)
-            context = node->lokid;
-        else if (keysym > node->keysym)
-            context = node->hikid;
+        बुहोल = &darray_item(state->table->nodes, context);
+        if (keysym < बुहोल->keysym)
+            context = बुहोल->lokid;
+        else if (keysym > बुहोल->keysym)
+            context = बुहोल->hikid;
         else
             break;
     }
@@ -133,18 +133,18 @@ xkb_compose_state_reset(struct xkb_compose_state *state)
 enum xkb_compose_status
 xkb_compose_state_get_status(struct xkb_compose_state *state)
 {
-    const struct compose_node *prev_node, *node;
+    const struct compose_बुहोल *prev_बुहोल, *बुहोल;
 
-    prev_node = &darray_item(state->table->nodes, state->prev_context);
-    node = &darray_item(state->table->nodes, state->context);
+    prev_बुहोल = &darray_item(state->table->nodes, state->prev_context);
+    बुहोल = &darray_item(state->table->nodes, state->context);
 
-    if (state->context == 0 && !prev_node->is_leaf)
+    if (state->context == 0 && !prev_बुहोल->is_leaf)
         return XKB_COMPOSE_CANCELLED;
 
     if (state->context == 0)
         return XKB_COMPOSE_NOTHING;
 
-    if (!node->is_leaf)
+    if (!बुहोल->is_leaf)
         return XKB_COMPOSE_COMPOSING;
 
     return XKB_COMPOSE_COMPOSED;
@@ -154,19 +154,19 @@ int
 xkb_compose_state_get_utf8(struct xkb_compose_state *state,
                            char *buffer, size_t size)
 {
-    const struct compose_node *node =
+    const struct compose_बुहोल *बुहोल =
         &darray_item(state->table->nodes, state->context);
 
-    if (!node->is_leaf)
+    if (!बुहोल->is_leaf)
         goto fail;
 
     /* If there's no string specified, but only a keysym, try to do the
      * most helpful thing. */
-    if (node->leaf.utf8 == 0 && node->leaf.keysym != XKB_KEY_NoSymbol) {
+    if (बुहोल->leaf.utf8 == 0 && बुहोल->leaf.keysym != XKB_सुसि_No_सिम्बोलो) {
         char utf8[XKB_KEYSYM_UTF8_MAX_SIZE];
         int ret;
 
-        ret = xkb_keysym_to_utf8(node->leaf.keysym, utf8, sizeof(utf8));
+        ret = xkb_keysym_to_utf8(बुहोल->leaf.keysym, utf8, sizeof(utf8));
         if (ret < 0 || ret == 0) {
             /* ret < 0 is impossible.
              * ret == 0 means the keysym has no string representation. */
@@ -177,7 +177,7 @@ xkb_compose_state_get_utf8(struct xkb_compose_state *state,
     }
 
     return snprintf(buffer, size, "%s",
-                    &darray_item(state->table->utf8, node->leaf.utf8));
+                    &darray_item(state->table->utf8, बुहोल->leaf.utf8));
 
 fail:
     if (size > 0)
@@ -188,9 +188,9 @@ fail:
 xkb_keysym_t
 xkb_compose_state_get_one_sym(struct xkb_compose_state *state)
 {
-    const struct compose_node *node =
+    const struct compose_बुहोल *बुहोल =
         &darray_item(state->table->nodes, state->context);
-    if (!node->is_leaf)
-        return XKB_KEY_NoSymbol;
-    return node->leaf.keysym;
+    if (!बुहोल->is_leaf)
+        return XKB_सुसि_No_सिम्बोलो;
+    return बुहोल->leaf.keysym;
 }

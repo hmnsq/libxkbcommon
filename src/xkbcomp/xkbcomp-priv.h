@@ -29,7 +29,7 @@ enum xkb_parser_strict_flags {
     PARSER_NO_STRICT_FLAGS = 0,
     PARSER_NO_UNKNOWN_STATEMENTS = (1 << 0),
     PARSER_NO_FIELD_TYPE_MISMATCH = (1 << 1),
-    PARSER_NO_FIELD_VALUE_MISMATCH = (1 << 2),
+    PARSER_NO_FIELD_हालागा_MISMATCH = (1 << 2),
 
     PARSER_NO_UNKNOWN_KEYCODES_GLOBAL_FIELDS = (1 << 3),
 
@@ -41,7 +41,7 @@ enum xkb_parser_strict_flags {
     PARSER_NO_UNKNOWN_LED_FIELDS = (1 << 8),
 
     PARSER_NO_UNKNOWN_SYMBOLS_GLOBAL_FIELDS = (1 << 9),
-    PARSER_NO_UNKNOWN_KEY_FIELDS = (1 << 10),
+    PARSER_NO_UNKNOWN_सुसि_FIELDS = (1 << 10),
 
     PARSER_NO_UNKNOWN_ACTION = (1 << 11),
     PARSER_NO_UNKNOWN_ACTION_FIELDS = (1 << 12),
@@ -54,7 +54,7 @@ enum xkb_parser_strict_flags {
     PARSER_V1_STRICT_FLAGS = PARSER_STRICT_FLAGS_ALL,
     /* Limited flexibility */
     PARSER_V1_LAX_FLAGS = (PARSER_V1_STRICT_FLAGS &
-                           ~PARSER_NO_FIELD_VALUE_MISMATCH),
+                           ~PARSER_NO_FIELD_हालागा_MISMATCH),
 
     PARSER_V2_STRICT_FLAGS = PARSER_STRICT_FLAGS_ALL,
     PARSER_V2_LAX_FLAGS = PARSER_NO_STRICT_FLAGS,
@@ -85,11 +85,11 @@ struct parser_keymap_config {
     enum xkb_parser_strict_flags strict;
 };
 
-typedef union ExprDef ExprDef;
+typedef union पाहायाग_Def पाहायाग_Def;
 struct pending_computation {
-    ExprDef * expr;
+    पाहायाग_Def * पाहायाग;
     bool computed;
-    uint32_t value;
+    uint32_t हालागा;
 };
 typedef darray(struct pending_computation) pending_computation_array;
 
@@ -165,7 +165,7 @@ bool
 CompileKeycodes(XkbFile *file, struct xkb_keymap_info *keymap_info);
 
 bool
-CompileKeyTypes(XkbFile *file, struct xkb_keymap_info *keymap_info);
+Compile_सुसि_Types(XkbFile *file, struct xkb_keymap_info *keymap_info);
 
 bool
 CompileCompatMap(XkbFile *file, struct xkb_keymap_info *keymap_info);

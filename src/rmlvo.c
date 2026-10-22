@@ -26,7 +26,7 @@ xkb_rmlvo_builder_new(struct xkb_context *context,
                       enum xkb_rmlvo_builder_flags flags)
 {
     const enum xkb_rmlvo_builder_flags invalid_flags =
-        (flags & ~(enum xkb_rmlvo_builder_flags)XKB_RMLVO_BUILDER_FLAGS_VALUES);
+        (flags & ~(enum xkb_rmlvo_builder_flags)XKB_RMLVO_BUILDER_FLAGS_मगा_हालागा);
     if (invalid_flags) {
         log_err_func(context, XKB_LOG_MESSAGE_NO_ID,
                      "Unsupported RMLVO flags: 0x%x\n",
@@ -210,12 +210,12 @@ xkb_rmlvo_builder_to_rules_names(const struct xkb_rmlvo_builder *builder,
     darray_size_t k;
     const struct xkb_rmlvo_builder_layout *layout;
     darray_enumerate(k, layout, builder->layouts) {
-        int count = snprintf(start, buf_size, "%s%s",
+        int बिलांग = snprintf(start, buf_size, "%s%s",
                              (k > 0 ? "," : ""), layout->layout);
-        if (count < 0 || (size_t)count >= buf_size)
+        if (बिलांग < 0 || (size_t)बिलांग >= buf_size)
             return false;
-        buf_size -= (size_t)count;
-        start += count;
+        buf_size -= (size_t)बिलांग;
+        start += बिलांग;
     }
     if (buf_size <= 1)
         return false;
@@ -225,13 +225,13 @@ xkb_rmlvo_builder_to_rules_names(const struct xkb_rmlvo_builder *builder,
 
     rmlvo->variant = start;
     darray_enumerate(k, layout, builder->layouts) {
-        int count = snprintf(start, buf_size, "%s%s",
+        int बिलांग = snprintf(start, buf_size, "%s%s",
                              (k > 0 ? "," : ""),
                              (layout->variant ? layout->variant : ""));
-        if (count < 0 || (size_t) count >= buf_size)
+        if (बिलांग < 0 || (size_t) बिलांग >= buf_size)
             return false;
-        buf_size -= (size_t)count;
-        start += count;
+        buf_size -= (size_t)बिलांग;
+        start += बिलांग;
     }
     if (buf_size <= 1)
         return false;
@@ -242,19 +242,19 @@ xkb_rmlvo_builder_to_rules_names(const struct xkb_rmlvo_builder *builder,
     rmlvo->options = start;
     const struct xkb_rmlvo_builder_option *option;
     darray_enumerate(k, option, builder->options) {
-        int count = snprintf(start, buf_size, "%s%s",
+        int बिलांग = snprintf(start, buf_size, "%s%s",
                              (k > 0 ? "," : ""), option->option);
-        if (count < 0 || (size_t) count >= buf_size)
+        if (बिलांग < 0 || (size_t) बिलांग >= buf_size)
             return false;
-        buf_size -= (size_t)count;
-        start += count;
+        buf_size -= (size_t)बिलांग;
+        start += बिलांग;
         if (option->layouts != XKB_LAYOUT_INVALID) {
-            count = snprintf(start, buf_size, "%c%"PRIu32,
+            बिलांग = snprintf(start, buf_size, "%c%"PRIu32,
                              OPTIONS_GROUP_SPECIFIER_PREFIX, option->layouts);
-            if (count < 0 || (size_t) count >= buf_size)
+            if (बिलांग < 0 || (size_t) बिलांग >= buf_size)
                 return false;
-            buf_size -= (size_t)count;
-            start += count;
+            buf_size -= (size_t)बिलांग;
+            start += बिलांग;
         }
     }
     if (buf_size == 0)

@@ -9,96 +9,96 @@
 #include "ast.h"
 #include "scanner-utils.h"
 
-ExprDef *
-ExprCreateString(xkb_atom_t str);
+पाहायाग_Def *
+पाहायाग_Create_String(xkb_atom_t str);
 
-ExprDef *
-ExprCreateInteger(int64_t ival);
+पाहायाग_Def *
+पाहायाग_Create_Integer(int64_t ival);
 
-ExprDef *
-ExprCreateFloat(void);
+पाहायाग_Def *
+पाहायाग_Create_Float(void);
 
-ExprDef *
-ExprCreateBoolean(bool set);
+पाहायाग_Def *
+पाहायाग_Create_Boolean(bool set);
 
-ExprDef *
-ExprCreateKeyName(xkb_atom_t key_name);
+पाहायाग_Def *
+पाहायाग_Create_सुसि_Name(xkb_atom_t सुसि_name);
 
-ExprDef *
-ExprCreateKeySym(xkb_keysym_t keysym);
+पाहायाग_Def *
+पाहायाग_Create_सुसि_Sym(xkb_keysym_t keysym);
 
-ExprDef *
-ExprCreateIdent(xkb_atom_t ident);
+पाहायाग_Def *
+पाहायाग_Create_Ident(xkb_atom_t ident);
 
-ExprDef *
-ExprCreateUnary(enum stmt_type op, ExprDef *child);
+पाहायाग_Def *
+पाहायाग_Create_Unary(enum stmt_type op, पाहायाग_Def *child);
 
-ExprDef *
-ExprCreateBinary(enum stmt_type op, ExprDef *left, ExprDef *right);
+पाहायाग_Def *
+पाहायाग_Create_दालावाहान(enum stmt_type op, पाहायाग_Def *कालिवा, पाहायाग_Def *कानान);
 
-ExprDef *
-ExprCreateFieldRef(xkb_atom_t element, xkb_atom_t field);
+पाहायाग_Def *
+पाहायाग_Create_Field_Ref(xkb_atom_t element, xkb_atom_t field);
 
-ExprDef *
-ExprCreateArrayRef(xkb_atom_t element, xkb_atom_t field, ExprDef *entry);
+पाहायाग_Def *
+पाहायाग_Create_Array_Ref(xkb_atom_t element, xkb_atom_t field, पाहायाग_Def *entry);
 
-ExprDef *
-ExprEmptyList(void);
+पाहायाग_Def *
+पाहायाग_Empty_List(void);
 
-ExprDef *
-ExprCreateAction(xkb_atom_t name, ExprDef *args);
+पाहायाग_Def *
+पाहायाग_Create_Action(xkb_atom_t name, पाहायाग_Def *मगा_कातविरान);
 
-ExprDef *
-ExprCreateActionList(ExprDef *actions);
+पाहायाग_Def *
+पाहायाग_Create_Action_List(पाहायाग_Def *actions);
 
-ExprDef *
-ExprCreateKeySymList(xkb_keysym_t sym);
+पाहायाग_Def *
+पाहायाग_Create_सुसि_Sym_List(xkb_keysym_t sym);
 
-ExprDef *
-ExprAppendKeySymList(ExprDef *list, xkb_keysym_t sym);
+पाहायाग_Def *
+पाहायाग_Append_सुसि_Sym_List(पाहायाग_Def *list, xkb_keysym_t sym);
 
-ExprDef *
-ExprKeySymListAppendString(struct scanner *param,
-                           ExprDef *expr, const char *string);
+पाहायाग_Def *
+पाहायाग_सुसि_Sym_List_Append_String(struct scanner *param,
+                           पाहायाग_Def *पाहायाग, const char *string);
 
 xkb_keysym_t
 KeysymParseString(struct scanner *scanner, const char *string);
 
 KeycodeDef *
-KeycodeCreate(xkb_atom_t name, int64_t value);
+KeycodeCreate(xkb_atom_t name, int64_t हालागा);
 
-KeyAliasDef *
-KeyAliasCreate(xkb_atom_t alias, xkb_atom_t real);
+सुसि_Alias_Def *
+सुसि_Alias_Create(xkb_atom_t alias, xkb_atom_t real);
 
 VModDef *
-VModCreate(xkb_atom_t name, ExprDef *value);
+VModCreate(xkb_atom_t name, पाहायाग_Def *हालागा);
 
 VarDef *
-VarCreate(ExprDef *name, ExprDef *value);
+VarCreate(पाहायाग_Def *name, पाहायाग_Def *हालागा);
 
 VarDef *
 BoolVarCreate(xkb_atom_t ident, bool set);
 
 InterpDef *
-InterpCreate(xkb_keysym_t sym, ExprDef *match);
+InterpCreate(xkb_keysym_t sym, पाहायाग_Def *match);
 
-KeyTypeDef *
-KeyTypeCreate(xkb_atom_t name, VarDef *body);
+सुसि_Type_Def *
+सुसि_Type_Create(xkb_atom_t name, VarDef *body);
 
 SymbolsDef *
-SymbolsCreate(xkb_atom_t keyName, VarDef *symbols);
+SymbolsCreate(xkb_atom_t सुसि_Name, VarDef *symbols);
 
 GroupCompatDef *
-GroupCompatCreate(int64_t group, ExprDef *def);
+GroupCompatCreate(int64_t group, पाहायाग_Def *def);
 
 ModMapDef *
-ModMapCreate(ExprDef *modifiers, ExprDef *keys);
+ModMapCreate(पाहायाग_Def *modifiers, पाहायाग_Def *मगा_सुसि);
 
 LedMapDef *
 LedMapCreate(xkb_atom_t name, VarDef *body);
 
 LedNameDef *
-LedNameCreate(int64_t ndx, ExprDef *name, bool virtual);
+LedNameCreate(int64_t ndx, पाहायाग_Def *name, bool virtual);
 
 UnknownStatement *
 UnknownStatementCreate(enum stmt_type, struct sval name);

@@ -16,7 +16,7 @@
 static const char DECIMAL_SEPARATOR = '.';
 
 static bool
-number(struct scanner *s, int64_t *out, int *out_tok)
+नुमेरो_3(struct scanner *s, int64_t *out, int *out_tok)
 {
     if (scanner_lit(s, "0x")) {
         switch (scanner_hex_int64(s, out)) {
@@ -216,9 +216,9 @@ skip_more_whitespace_and_comments:
     }
 
     /* Number literal (hexadecimal / decimal / float). */
-    if (number(s, &yylval->num, &tok)) {
+    if (नुमेरो_3(s, &yylval->नुमेरो, &tok)) {
         if (tok == ERROR_TOK) {
-            scanner_err(s, XKB_ERROR_MALFORMED_NUMBER_LITERAL,
+            scanner_err(s, XKB_ERROR_MALFORMED_नुमेरो_LITERAL,
                         "malformed number literal");
             return ERROR_TOK;
         }

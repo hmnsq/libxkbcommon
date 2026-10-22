@@ -39,7 +39,7 @@ union lvalue {
 
 enum rules_token {
     TOK_END_OF_FILE = 0,
-    TOK_END_OF_LINE,
+    TOK_END_OF_लिन्या,
     TOK_IDENTIFIER,
     TOK_GROUP_NAME,
     TOK_BANG,
@@ -67,7 +67,7 @@ skip_more_whitespace_and_comments:
     /* New line */
     if (scanner_eol(s)) {
         while (scanner_eol(s)) scanner_next(s);
-        return TOK_END_OF_LINE;
+        return TOK_END_OF_लिन्या;
     }
 
     /* Escaped line continuation */
@@ -176,7 +176,7 @@ enum rules_mlvo {
     MLVO_LAYOUT,
     MLVO_VARIANT,
     MLVO_OPTION,
-    _MLVO_NUM_ENTRIES
+    MLVO_नुमेरो_ENTRIES
 };
 
 enum {
@@ -187,7 +187,7 @@ typedef uint8_t mlvo_index_t;
 typedef uint8_t mlvo_mask_t;
 
 
-static const struct sval rules_mlvo_svals[_MLVO_NUM_ENTRIES] = {
+static const struct sval rules_mlvo_svals[MLVO_नुमेरो_ENTRIES] = {
     [MLVO_MODEL] = SVAL_INIT("model"),
     [MLVO_LAYOUT] = SVAL_INIT("layout"),
     [MLVO_VARIANT] = SVAL_INIT("variant"),
@@ -200,13 +200,13 @@ enum rules_kccgst {
     KCCGST_COMPAT,
     KCCGST_SYMBOLS,
     KCCGST_GEOMETRY,
-    _KCCGST_NUM_ENTRIES
+    KCCGST_नुमेरो_ENTRIES
 };
 
 typedef uint8_t kccgst_index_t;
 typedef uint8_t kccgst_mask_t;
 
-static const struct sval rules_kccgst_svals[_KCCGST_NUM_ENTRIES] = {
+static const struct sval rules_kccgst_svals[KCCGST_नुमेरो_ENTRIES] = {
     [KCCGST_KEYCODES] = SVAL_INIT("keycodes"),
     [KCCGST_TYPES] = SVAL_INIT("types"),
     [KCCGST_COMPAT] = SVAL_INIT("compat"),
@@ -250,8 +250,8 @@ struct group {
 };
 
 struct mapping {
-    enum rules_mlvo mlvo_at_pos[_MLVO_NUM_ENTRIES];
-    mlvo_index_t num_mlvo;
+    enum rules_mlvo mlvo_at_pos[MLVO_नुमेरो_ENTRIES];
+    mlvo_index_t नुमेरो_mlvo;
     mlvo_mask_t defined_mlvo_mask;
     bool has_layout_idx_range;
     bool has_multiple_layouts;
@@ -271,8 +271,8 @@ struct mapping {
         xkb_layout_mask_t active;
         xkb_layout_mask_t layouts_candidates_mask;
     };
-    enum rules_kccgst kccgst_at_pos[_KCCGST_NUM_ENTRIES];
-    kccgst_index_t num_kccgst;
+    enum rules_kccgst kccgst_at_pos[KCCGST_नुमेरो_ENTRIES];
+    kccgst_index_t नुमेरो_kccgst;
     kccgst_mask_t defined_kccgst_mask;
 };
 
@@ -299,17 +299,17 @@ enum wildcard_match_type {
 };
 
 struct rule {
-    struct sval mlvo_value_at_pos[_MLVO_NUM_ENTRIES];
-    enum mlvo_match_type match_type_at_pos[_MLVO_NUM_ENTRIES];
-    struct sval kccgst_value_at_pos[_KCCGST_NUM_ENTRIES];
-    mlvo_index_t num_mlvo_values;
-    kccgst_index_t num_kccgst_values;
+    struct sval mlvo_हालागा_at_pos[MLVO_नुमेरो_ENTRIES];
+    enum mlvo_match_type match_type_at_pos[MLVO_नुमेरो_ENTRIES];
+    struct sval kccgst_हालागा_at_pos[KCCGST_नुमेरो_ENTRIES];
+    mlvo_index_t नुमेरो_mlvo_मगा_हालागा;
+    kccgst_index_t नुमेरो_kccgst_मगा_हालागा;
     bool skip;
 };
 
 #define SLICE_KCCGST_BIT_FIELD_SIZE 4
 static_assert(!((1u << (SLICE_KCCGST_BIT_FIELD_SIZE - 1)) &
-                (_KCCGST_NUM_ENTRIES - 1)),
+                (KCCGST_नुमेरो_ENTRIES - 1)),
               "Cannot encode KcCGST enum safely (need space for the sign)");
 struct kccgst_buffer_slice {
     uint32_t length:(32 - SLICE_KCCGST_BIT_FIELD_SIZE);
@@ -347,7 +347,7 @@ struct matcher {
      */
     struct kccgst_buffer pending_kccgst;
     /* Output. */
-    darray_char kccgst[_KCCGST_NUM_ENTRIES];
+    darray_char kccgst[KCCGST_नुमेरो_ENTRIES];
 };
 
 static struct sval
@@ -370,7 +370,7 @@ split_comma_separated_mlvo(struct xkb_context *ctx,
      */
 
     if (!s) {
-        ensure_at_least_one_value:
+        ensure_at_least_one_हालागा:
         /* Label followed by a declaration is a C23 extension */ ;
 
         struct matched_sval val = {
@@ -400,10 +400,10 @@ split_comma_separated_mlvo(struct xkb_context *ctx,
             const char* const layout_start = s;
             xkb_layout_index_t layout = XKB_LAYOUT_INVALID;
 
-            int count = parse_dec_to_uint32_t(s, SIZE_MAX, &layout);
-            if (count > 0) {
+            int बिलांग = parse_dec_to_uint32_t(s, SIZE_MAX, &layout);
+            if (बिलांग > 0) {
                 /* Note: 1-indexed layout */
-                s += count;
+                s += बिलांग;
                 static_assert(XKB_MAX_GROUPS == 32, "Invalid shift");
                 if (layout == 0 || layout > XKB_MAX_GROUPS) {
                     log_err(ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
@@ -423,7 +423,7 @@ split_comma_separated_mlvo(struct xkb_context *ctx,
             /* Consume until reaching next item or end of string */
             const char* const layout_index_end = s;
             while (*s != '\0' && *s != ',') { s++; }
-            if (count <= 0 || layout_index_end != s) {
+            if (बिलांग <= 0 || layout_index_end != s) {
                 log_err(ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                         "Invalid layout index \"%.*s\" for the RMLVO "
                         "component \"%.*s\"; discarding specifier.\n",
@@ -448,20 +448,20 @@ split_comma_separated_mlvo(struct xkb_context *ctx,
                             /* Layout-specific option cannot override global */
                             prev->layouts |= val.layouts;
                         }
-                        goto next_value;
+                        goto next_हालागा;
                     }
                 }
             }
             darray_append(arr, val);
         }
 
-next_value:
+next_हालागा:
         if (*s == '\0') break;
         if (*s == ',') s++;
     }
 
     if (darray_empty(arr))
-        goto ensure_at_least_one_value;
+        goto ensure_at_least_one_हालागा;
 
     return arr;
 }
@@ -607,7 +607,7 @@ matcher_free(struct matcher *m)
         darray_free(group->elements);
     darray_free(m->pending_kccgst.buffer);
     darray_free(m->pending_kccgst.slices);
-    for (kccgst_index_t i = 0; i < (kccgst_index_t) _KCCGST_NUM_ENTRIES; i++)
+    for (kccgst_index_t i = 0; i < (kccgst_index_t) KCCGST_नुमेरो_ENTRIES; i++)
         darray_free(m->kccgst[i]);
     darray_free(m->groups);
     free(m);
@@ -745,13 +745,13 @@ matcher_include(struct matcher *m, struct scanner *parent_scanner,
 static void
 matcher_mapping_start_new(struct matcher *m)
 {
-    for (mlvo_index_t i = 0; i < (mlvo_index_t) _MLVO_NUM_ENTRIES; i++)
-        m->mapping.mlvo_at_pos[i] = _MLVO_NUM_ENTRIES;
-    for (kccgst_index_t i = 0; i < (kccgst_index_t) _KCCGST_NUM_ENTRIES; i++)
-        m->mapping.kccgst_at_pos[i] = _KCCGST_NUM_ENTRIES;
+    for (mlvo_index_t i = 0; i < (mlvo_index_t) MLVO_नुमेरो_ENTRIES; i++)
+        m->mapping.mlvo_at_pos[i] = MLVO_नुमेरो_ENTRIES;
+    for (kccgst_index_t i = 0; i < (kccgst_index_t) KCCGST_नुमेरो_ENTRIES; i++)
+        m->mapping.kccgst_at_pos[i] = KCCGST_नुमेरो_ENTRIES;
     m->mapping.has_multiple_layouts = false;
     m->mapping.layout_idx = m->mapping.variant_idx = XKB_LAYOUT_INVALID;
-    m->mapping.num_mlvo = m->mapping.num_kccgst = 0;
+    m->mapping.नुमेरो_mlvo = m->mapping.नुमेरो_kccgst = 0;
     m->mapping.defined_mlvo_mask = 0;
     m->mapping.defined_kccgst_mask = 0;
     m->mapping.active = true;
@@ -765,12 +765,12 @@ parse_layout_int_index_tail(const char *s, size_t max_len,
     if (max_len < 3)
         return -1;
     uint32_t val = 0;
-    const int count = parse_dec_to_uint32_t(&s[1], max_len - 2, &val);
-    if (count <= 0 || s[1 + count] != ']' || val == 0 || val > XKB_MAX_GROUPS)
+    const int बिलांग = parse_dec_to_uint32_t(&s[1], max_len - 2, &val);
+    if (बिलांग <= 0 || s[1 + बिलांग] != ']' || val == 0 || val > XKB_MAX_GROUPS)
         return -1;
     /* To zero-based index. */
     *out = val - 1;
-    return count + 2; /* == length "[index]" */
+    return बिलांग + 2; /* == length "[index]" */
 }
 
 /* Parse Kccgst layout index:
@@ -840,10 +840,10 @@ extract_mapping_layout_index(const char *s, size_t max_len,
     static const struct {
         const char* name;
         size_t size;
-        xkb_layout_index_t value;
+        xkb_layout_index_t हालागा;
     } names[] = {
-        #define INDEX_RANGE(tail, value) \
-            { (tail), sizeof(tail), (xkb_layout_index_t)(value) }
+        #define INDEX_RANGE(tail, हालागा) \
+            { (tail), sizeof(tail), (xkb_layout_index_t)(हालागा) }
         INDEX_RANGE("single]",   LAYOUT_INDEX_SINGLE),
         INDEX_RANGE("first]",    LAYOUT_INDEX_FIRST),
         INDEX_RANGE("later]",    LAYOUT_INDEX_LATER),
@@ -855,15 +855,15 @@ extract_mapping_layout_index(const char *s, size_t max_len,
     for (size_t k = 0; k < ARRAY_SIZE(names); k++) {
         if (max_len == names[k].size &&
             memcmp(&s[1], names[k].name, names[k].size - 1) == 0) {
-            *out = names[k].value;
+            *out = names[k].हालागा;
             return true;
         }
     }
 
     /* Fallback: any numeric index (unlikely) */
     *out = XKB_LAYOUT_INVALID;
-    const int count = parse_layout_int_index_tail(s, max_len, out);
-    return count > 0 && (size_t)count == max_len;
+    const int बिलांग = parse_layout_int_index_tail(s, max_len, out);
+    return बिलांग > 0 && (size_t)बिलांग == max_len;
 }
 
 static inline bool
@@ -879,7 +879,7 @@ matcher_mapping_set_mlvo(struct matcher *m, struct scanner *s,
     enum rules_mlvo mlvo;
     struct sval mlvo_sval;
 
-    for (mlvo = 0; mlvo < _MLVO_NUM_ENTRIES; mlvo++) {
+    for (mlvo = 0; mlvo < MLVO_नुमेरो_ENTRIES; mlvo++) {
         mlvo_sval = rules_mlvo_svals[mlvo];
 
         if (svaleq_prefix(mlvo_sval, ident))
@@ -887,7 +887,7 @@ matcher_mapping_set_mlvo(struct matcher *m, struct scanner *s,
     }
 
     /* Not found. */
-    if (mlvo >= _MLVO_NUM_ENTRIES) {
+    if (mlvo >= MLVO_नुमेरो_ENTRIES) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid mapping: \"%.*s\" is not a valid value here; "
                     "ignoring rule set",
@@ -950,9 +950,9 @@ matcher_mapping_set_mlvo(struct matcher *m, struct scanner *s,
         return;
     }
 
-    m->mapping.mlvo_at_pos[m->mapping.num_mlvo] = mlvo;
+    m->mapping.mlvo_at_pos[m->mapping.नुमेरो_mlvo] = mlvo;
     m->mapping.defined_mlvo_mask |= (mlvo_mask_t) 1u << mlvo;
-    m->mapping.num_mlvo++;
+    m->mapping.नुमेरो_mlvo++;
 }
 
 static void
@@ -1014,7 +1014,7 @@ matcher_mapping_set_kccgst(struct matcher *m, struct scanner *s, struct sval ide
     enum rules_kccgst kccgst;
     struct sval kccgst_sval;
 
-    for (kccgst = 0; kccgst < _KCCGST_NUM_ENTRIES; kccgst++) {
+    for (kccgst = 0; kccgst < KCCGST_नुमेरो_ENTRIES; kccgst++) {
         kccgst_sval = rules_kccgst_svals[kccgst];
 
         if (svaleq(rules_kccgst_svals[kccgst], ident))
@@ -1022,7 +1022,7 @@ matcher_mapping_set_kccgst(struct matcher *m, struct scanner *s, struct sval ide
     }
 
     /* Not found. */
-    if (kccgst >= _KCCGST_NUM_ENTRIES) {
+    if (kccgst >= KCCGST_नुमेरो_ENTRIES) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid mapping: \"%.*s\" is not a valid value here; "
                     "ignoring rule set",
@@ -1040,22 +1040,22 @@ matcher_mapping_set_kccgst(struct matcher *m, struct scanner *s, struct sval ide
         return;
     }
 
-    m->mapping.kccgst_at_pos[m->mapping.num_kccgst] = kccgst;
+    m->mapping.kccgst_at_pos[m->mapping.नुमेरो_kccgst] = kccgst;
     m->mapping.defined_kccgst_mask |= (kccgst_mask_t) 1u << kccgst;
-    m->mapping.num_kccgst++;
+    m->mapping.नुमेरो_kccgst++;
 }
 
 static bool
 matcher_mapping_verify(struct matcher *m, struct scanner *s)
 {
-    if (m->mapping.num_mlvo == 0) {
+    if (m->mapping.नुमेरो_mlvo == 0) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid mapping: must have at least one value on the left "
                     "hand side; ignoring rule set");
         goto skip;
     }
 
-    if (m->mapping.num_kccgst == 0) {
+    if (m->mapping.नुमेरो_kccgst == 0) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid mapping: must have at least one value on the right "
                     "hand side; ignoring rule set");
@@ -1137,16 +1137,16 @@ matcher_rule_set_mlvo_common(struct matcher *m, struct scanner *s,
                              struct sval ident,
                              enum mlvo_match_type match_type)
 {
-    if (m->rule.num_mlvo_values >= m->mapping.num_mlvo) {
+    if (m->rule.नुमेरो_mlvo_मगा_हालागा >= m->mapping.नुमेरो_mlvo) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid rule: has more values than the mapping line; "
                     "ignoring rule");
         m->rule.skip = true;
         return;
     }
-    m->rule.match_type_at_pos[m->rule.num_mlvo_values] = match_type;
-    m->rule.mlvo_value_at_pos[m->rule.num_mlvo_values] = ident;
-    m->rule.num_mlvo_values++;
+    m->rule.match_type_at_pos[m->rule.नुमेरो_mlvo_मगा_हालागा] = match_type;
+    m->rule.mlvo_हालागा_at_pos[m->rule.नुमेरो_mlvo_मगा_हालागा] = ident;
+    m->rule.नुमेरो_mlvo_मगा_हालागा++;
 }
 
 static void
@@ -1175,15 +1175,15 @@ static void
 matcher_rule_set_kccgst(struct matcher *m, struct scanner *s,
                         struct sval ident)
 {
-    if (m->rule.num_kccgst_values >= m->mapping.num_kccgst) {
+    if (m->rule.नुमेरो_kccgst_मगा_हालागा >= m->mapping.नुमेरो_kccgst) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid rule: has more values than the mapping line; "
                     "ignoring rule");
         m->rule.skip = true;
         return;
     }
-    m->rule.kccgst_value_at_pos[m->rule.num_kccgst_values] = ident;
-    m->rule.num_kccgst_values++;
+    m->rule.kccgst_हालागा_at_pos[m->rule.नुमेरो_kccgst_मगा_हालागा] = ident;
+    m->rule.नुमेरो_kccgst_मगा_हालागा++;
 }
 
 static bool
@@ -1217,7 +1217,7 @@ match_group(struct matcher *m, struct sval group_name, struct sval to)
 }
 
 static bool
-match_value(struct matcher *m, const struct sval val, const struct sval to,
+match_हालागा(struct matcher *m, const struct sval val, const struct sval to,
             enum mlvo_match_type match_type,
             enum wildcard_match_type wildcard_type)
 {
@@ -1241,12 +1241,12 @@ match_value(struct matcher *m, const struct sval val, const struct sval to,
 }
 
 static bool
-match_value_and_mark(struct matcher *m, const struct sval val,
+match_हालागा_and_mark(struct matcher *m, const struct sval val,
                      struct matched_sval *to, enum mlvo_match_type match_type,
                      enum wildcard_match_type wildcard_type,
                      xkb_layout_mask_t layouts)
 {
-    bool matched = match_value(m, val, to->sval, match_type, wildcard_type);
+    bool matched = match_हालागा(m, val, to->sval, match_type, wildcard_type);
     if (matched)
         to->matched |= layouts;
     return matched;
@@ -1257,11 +1257,11 @@ match_value_and_mark(struct matcher *m, const struct sval val,
  * and appends the result to @expanded.
  */
 static bool
-expand_rmlvo_in_kccgst_value(struct matcher *m, struct scanner *s,
-                             struct sval value, xkb_layout_index_t layout_idx,
+expand_rmlvo_in_kccgst_हालागा(struct matcher *m, struct scanner *s,
+                             struct sval हालागा, xkb_layout_index_t layout_idx,
                              darray_char *expanded, size_t *i)
 {
-    const char *str = value.start;
+    const char *str = हालागा.start;
 
     /*
      * Some ugly hand-lexing here, but going through the scanner is more
@@ -1270,11 +1270,11 @@ expand_rmlvo_in_kccgst_value(struct matcher *m, struct scanner *s,
     enum rules_mlvo mlv;
     xkb_layout_index_t idx;
     char pfx, sfx;
-    struct matched_sval *expanded_value;
+    struct matched_sval *expanded_हालागा;
 
     /* %i not as layout/variant index "%l[%i]" but as qualifier ":%i" */
     if (str[*i] == 'i' &&
-        (*i + 1 == value.len || is_merge_mode_prefix(str[*i + 1])))
+        (*i + 1 == हालागा.len || is_merge_mode_prefix(str[*i + 1])))
     {
         if (layout_idx == XKB_LAYOUT_INVALID) {
             scanner_err(
@@ -1286,10 +1286,10 @@ expand_rmlvo_in_kccgst_value(struct matcher *m, struct scanner *s,
         }
         (*i)++;
         char index_str[MAX_LAYOUT_INDEX_STR_LENGTH + 1];
-        const int count = snprintf(index_str, sizeof(index_str), "%"PRIu32,
+        const int बिलांग = snprintf(index_str, sizeof(index_str), "%"PRIu32,
                                    layout_idx + 1);
-        assert(count > 0); /* See MAX_LAYOUT_INDEX_STR_LENGTH */
-        darray_appends_nullterminate(*expanded, index_str, (darray_size_t)count);
+        assert(बिलांग > 0); /* See MAX_LAYOUT_INDEX_STR_LENGTH */
+        darray_appends_nullterminate(*expanded, index_str, (darray_size_t)बिलांग);
         return true;
     }
 
@@ -1301,7 +1301,7 @@ expand_rmlvo_in_kccgst_value(struct matcher *m, struct scanner *s,
         str[*i] == '_' || str[*i] == '-') {
         pfx = str[*i];
         if (str[*i] == '(') sfx = ')';
-        if (++(*i) >= value.len) goto error;
+        if (++(*i) >= हालागा.len) goto error;
     }
 
     /* Mandatory model/layout/variant specifier. */
@@ -1315,7 +1315,7 @@ expand_rmlvo_in_kccgst_value(struct matcher *m, struct scanner *s,
     /* Check for index. */
     idx = XKB_LAYOUT_INVALID;
     bool variable_index = false;
-    if (*i < value.len && str[*i] == '[') {
+    if (*i < हालागा.len && str[*i] == '[') {
         if (mlv != MLVO_LAYOUT && mlv != MLVO_VARIANT) {
             scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                         "invalid index in %%-expansion; "
@@ -1323,7 +1323,7 @@ expand_rmlvo_in_kccgst_value(struct matcher *m, struct scanner *s,
             goto error;
         }
 
-        int consumed = extract_layout_index(str + (*i), value.len - (*i), &idx);
+        int consumed = extract_layout_index(str + (*i), हालागा.len - (*i), &idx);
         if (consumed <= 0) goto error;
         if (idx == XKB_LAYOUT_INVALID) {
             /* %i encountered */
@@ -1336,51 +1336,51 @@ expand_rmlvo_in_kccgst_value(struct matcher *m, struct scanner *s,
 
     /* Check for suffix, if there supposed to be one. */
     if (sfx != 0) {
-        if (*i >= value.len) goto error;
+        if (*i >= हालागा.len) goto error;
         if (str[(*i)++] != sfx) goto error;
     }
 
     /* Get the expanded value. */
-    expanded_value = NULL;
+    expanded_हालागा = NULL;
 
     if (mlv == MLVO_LAYOUT) {
         if (idx == XKB_LAYOUT_INVALID) {
             /* No index provided: match only if single layout */
             if (darray_size(m->rmlvo.layouts) == 1)
-                expanded_value = &darray_item(m->rmlvo.layouts, 0);
+                expanded_हालागा = &darray_item(m->rmlvo.layouts, 0);
         /* Some index provided: expand only if it is %i or
          * if there are multiple layouts */
         } else if (idx < darray_size(m->rmlvo.layouts) &&
                    (variable_index || darray_size(m->rmlvo.layouts) > 1)) {
-                expanded_value = &darray_item(m->rmlvo.layouts, idx);
+                expanded_हालागा = &darray_item(m->rmlvo.layouts, idx);
         }
     }
     else if (mlv == MLVO_VARIANT) {
         if (idx == XKB_LAYOUT_INVALID) {
             /* No index provided: match only if single variant */
             if (darray_size(m->rmlvo.variants) == 1)
-                expanded_value = &darray_item(m->rmlvo.variants, 0);
+                expanded_हालागा = &darray_item(m->rmlvo.variants, 0);
         /* Some index provided: expand only if it is %i or
          * if there are multiple variants */
         } else if (idx < darray_size(m->rmlvo.variants) &&
                    (variable_index || darray_size(m->rmlvo.variants) > 1)) {
-                expanded_value = &darray_item(m->rmlvo.variants, idx);
+                expanded_हालागा = &darray_item(m->rmlvo.variants, idx);
         }
     }
     else if (mlv == MLVO_MODEL) {
-        expanded_value = &m->rmlvo.model;
+        expanded_हालागा = &m->rmlvo.model;
     }
 
     /* If we didn't get one, skip silently. */
-    if (!expanded_value || expanded_value->sval.len == 0) {
+    if (!expanded_हालागा || expanded_हालागा->sval.len == 0) {
         return true;
     }
 
     if (pfx != 0)
         darray_appends_nullterminate(*expanded, &pfx, 1);
     darray_appends_nullterminate(*expanded,
-                                 expanded_value->sval.start,
-                                 (darray_size_t) expanded_value->sval.len);
+                                 expanded_हालागा->sval.start,
+                                 (darray_size_t) expanded_हालागा->sval.len);
     if (sfx != 0)
         darray_appends_nullterminate(*expanded, &sfx, 1);
 
@@ -1391,9 +1391,9 @@ expand_rmlvo_in_kccgst_value(struct matcher *m, struct scanner *s,
         const xkb_layout_mask_t layouts = (idx == XKB_LAYOUT_INVALID)
             ? 0x1 /* default to first layout */
             : (UINT32_C(1) << idx);
-        expanded_value->matched |= layouts;
+        expanded_हालागा->matched |= layouts;
     } else {
-        expanded_value->matched |= (xkb_layout_mask_t)GLOBAL_MATCHED_LAYOUTS;
+        expanded_हालागा->matched |= (xkb_layout_mask_t)GLOBAL_MATCHED_LAYOUTS;
     }
 
     return true;
@@ -1409,18 +1409,18 @@ error:
  * and appends the result to @expanded.
  */
 static void
-expand_qualifier_in_kccgst_value(
+expand_qualifier_in_kccgst_हालागा(
     struct matcher *m, struct scanner *s,
-    struct sval value, darray_char *expanded,
+    struct sval हालागा, darray_char *expanded,
     bool has_layout_idx_range, bool has_separator,
     darray_size_t prefix_idx, size_t *i)
 {
-    const char *str = value.start;
+    const char *str = हालागा.start;
 
     /* “all” followed by nothing or by a layout separator */
-    if (*i + 2 < value.len &&
+    if (*i + 2 < हालागा.len &&
         str[*i] == 'a' && str[*i + 1] == 'l' && str[*i + 2] == 'l' &&
-        (*i + 3 == value.len || is_merge_mode_prefix(str[*i + 3]))) {
+        (*i + 3 == हालागा.len || is_merge_mode_prefix(str[*i + 3]))) {
         if (has_layout_idx_range)
             scanner_vrb(s, XKB_LOG_VERBOSITY_DETAILED, XKB_LOG_MESSAGE_NO_ID,
                         "Using :all qualifier with indices range "
@@ -1443,11 +1443,11 @@ expand_qualifier_in_kccgst_value(
                                              &darray_item(*expanded, prefix_idx),
                                              prefix_length);
                 /* Append index */
-                const int count = snprintf(layout_index, sizeof(layout_index),
+                const int बिलांग = snprintf(layout_index, sizeof(layout_index),
                                            "%"PRIu32, l + 1);
-                assert(count > 0); /* See MAX_LAYOUT_INDEX_STR_LENGTH */
+                assert(बिलांग > 0); /* See MAX_LAYOUT_INDEX_STR_LENGTH */
                 darray_appends_nullterminate(*expanded, layout_index,
-                                             (darray_size_t)count);
+                                             (darray_size_t)बिलांग);
             }
         }
         *i += 3;
@@ -1484,22 +1484,22 @@ concat_kccgst(darray_char *into, darray_size_t size, const char from[static size
  * (see overview above), and appends the result to @to.
  */
 static bool
-append_expanded_kccgst_value(struct matcher *m, struct scanner *s,
-                             bool merge, darray_char *to, struct sval value,
+append_expanded_kccgst_हालागा(struct matcher *m, struct scanner *s,
+                             bool merge, darray_char *to, struct sval हालागा,
                              xkb_layout_index_t layout_idx)
 {
-    const char *str = value.start;
+    const char *str = हालागा.start;
     darray_char expanded = darray_new();
     darray_size_t last_item_idx = 0;
     bool has_separator = false;
 
-    for (size_t i = 0; i < value.len; ) {
+    for (size_t i = 0; i < हालागा.len; ) {
         /* Check if that's a start of an expansion or qualifier */
         switch (str[i]) {
             /* Qualifier */
             case ':':
                 darray_appends_nullterminate(expanded, &str[i++], 1);
-                expand_qualifier_in_kccgst_value(m, s, value, &expanded,
+                expand_qualifier_in_kccgst_हालागा(m, s, हालागा, &expanded,
                                                  m->mapping.has_layout_idx_range,
                                                  has_separator,
                                                  last_item_idx, &i);
@@ -1507,8 +1507,8 @@ append_expanded_kccgst_value(struct matcher *m, struct scanner *s,
             /* Expansion */
             case '%':
                 i++;
-                if (i >= value.len ||
-                    !expand_rmlvo_in_kccgst_value(m, s, value, layout_idx,
+                if (i >= हालागा.len ||
+                    !expand_rmlvo_in_kccgst_हालागा(m, s, हालागा, layout_idx,
                                                   &expanded, &i))
                         goto error;
                 break;
@@ -1529,7 +1529,7 @@ append_expanded_kccgst_value(struct matcher *m, struct scanner *s,
     /* See note: “Layout index ranges and merging KcCGST values” */
     if (merge) {
         if (!darray_empty(expanded))
-            concat_kccgst(to, darray_size(expanded), darray_items(expanded));
+            concat_kccgst(to, darray_size(expanded), darray_मगा_बागाय(expanded));
     } else {
         darray_concat(*to, expanded);
     }
@@ -1550,7 +1550,7 @@ matcher_append_pending_kccgst(struct matcher *m)
      * Handle pending KcCGST values
      * See note: “Layout index ranges and merging KcCGST values”
      */
-    for (kccgst_index_t i = 0; i < m->mapping.num_kccgst; i++) {
+    for (kccgst_index_t i = 0; i < m->mapping.नुमेरो_kccgst; i++) {
         const enum rules_kccgst kccgst = m->mapping.kccgst_at_pos[i];
         /* For each relevant layout, append the relevant KcCGST values to
          * the output. */
@@ -1567,7 +1567,7 @@ matcher_append_pending_kccgst(struct matcher *m)
                 if (slice->kccgst == kccgst && slice->layout == layout &&
                     slice->length)
                     concat_kccgst(&m->kccgst[kccgst], slice->length,
-                                  darray_items(buf->buffer) + offset);
+                                  darray_मगा_बागाय(buf->buffer) + offset);
                 offset += slice->length;
             }
         }
@@ -1580,8 +1580,8 @@ matcher_append_pending_kccgst(struct matcher *m)
 static void
 matcher_rule_verify(struct matcher *m, struct scanner *s)
 {
-    if (m->rule.num_mlvo_values != m->mapping.num_mlvo ||
-        m->rule.num_kccgst_values != m->mapping.num_kccgst) {
+    if (m->rule.नुमेरो_mlvo_मगा_हालागा != m->mapping.नुमेरो_mlvo ||
+        m->rule.नुमेरो_kccgst_मगा_हालागा != m->mapping.नुमेरो_kccgst) {
         scanner_err(s, XKB_ERROR_INVALID_RULES_SYNTAX,
                     "invalid rule: must have same number of values "
                     "as mapping line; ignoring rule");
@@ -1619,11 +1619,11 @@ matcher_rule_verify(struct matcher *m, struct scanner *s)
  * `model` input is a single value.
  */
 static bool
-matcher_rule_match_model(struct matcher *m, const struct sval value,
+matcher_rule_match_model(struct matcher *m, const struct sval हालागा,
                          enum mlvo_match_type match_type)
 {
-    return match_value_and_mark(
-        m, value, &m->rmlvo.model, match_type, WILDCARD_MATCH_ALL,
+    return match_हालागा_and_mark(
+        m, हालागा, &m->rmlvo.model, match_type, WILDCARD_MATCH_ALL,
         /* layout-independent */
         (xkb_layout_mask_t)GLOBAL_MATCHED_LAYOUTS
     );
@@ -1669,7 +1669,7 @@ matcher_rule_match_model(struct matcher *m, const struct sval value,
  *
  */
 static bool
-matcher_rule_match_option(struct matcher *m, const struct sval value,
+matcher_rule_match_option(struct matcher *m, const struct sval हालागा,
                           enum mlvo_match_type match_type,
                           xkb_layout_mask_t *candidates)
 {
@@ -1694,7 +1694,7 @@ matcher_rule_match_option(struct matcher *m, const struct sval value,
             ? (unmatched & option->layouts)
             /* Layout-generic option: no restriction */
             : (xkb_layout_mask_t)GLOBAL_MATCHED_LAYOUTS;
-        if (matchable && match_value_and_mark(m, value, option, match_type,
+        if (matchable && match_हालागा_and_mark(m, हालागा, option, match_type,
                                               WILDCARD_MATCH_ALL, matchable)) {
             matched = true;
             unmatched &= ~matchable;
@@ -1725,13 +1725,13 @@ matcher_rule_match_option(struct matcher *m, const struct sval value,
  */
 static bool
 matcher_rule_match_layout_or_variant(struct matcher *m,
-                                     darray_matched_sval *input,
-                                     const struct sval value,
+                                     darray_matched_sval *पासोक,
+                                     const struct sval हालागा,
                                      enum mlvo_match_type match_type,
                                      xkb_layout_mask_t *candidates)
 {
     /* There is always at least one value */
-    assert(!darray_empty(*input));
+    assert(!darray_empty(*पासोक));
 
     bool matched = false;
     /* Loop over the layout index range */
@@ -1742,8 +1742,8 @@ matcher_rule_match_layout_or_variant(struct matcher *m,
         /* Process only if layout index is enabled */
         const xkb_layout_mask_t layout = (UINT32_C(1) << idx);
         if (layout & *candidates) {
-            struct matched_sval *to = &darray_item(*input, idx);
-            if (match_value_and_mark(m, value, to, match_type,
+            struct matched_sval *to = &darray_item(*पासोक, idx);
+            if (match_हालागा_and_mark(m, हालागा, to, match_type,
                                      WILDCARD_MATCH_NONEMPTY, layout)) {
                 /* Matched, keep index */
                 matched = true;
@@ -1800,34 +1800,34 @@ matcher_rule_apply_if_matches(struct matcher *m, struct scanner *s)
     xkb_layout_mask_t candidate_layouts = m->mapping.layouts_candidates_mask;
 
     /* Loop over MLVO pattern components */
-    for (mlvo_index_t i = 0; i < m->mapping.num_mlvo; i++) {
+    for (mlvo_index_t i = 0; i < m->mapping.नुमेरो_mlvo; i++) {
         const enum rules_mlvo mlvo = m->mapping.mlvo_at_pos[i];
-        const struct sval value = m->rule.mlvo_value_at_pos[i];
+        const struct sval हालागा = m->rule.mlvo_हालागा_at_pos[i];
         const enum mlvo_match_type match_type = m->rule.match_type_at_pos[i];
         bool matched = false;
 
         switch (mlvo) {
         case MLVO_MODEL:
-            matched = matcher_rule_match_model(m, value, match_type);
+            matched = matcher_rule_match_model(m, हालागा, match_type);
             break;
         case MLVO_LAYOUT:
             matched = matcher_rule_match_layout_or_variant(
-                m, &m->rmlvo.layouts, value, match_type, &candidate_layouts
+                m, &m->rmlvo.layouts, हालागा, match_type, &candidate_layouts
             );
             break;
         case MLVO_VARIANT:
             matched = matcher_rule_match_layout_or_variant(
-                m, &m->rmlvo.variants, value, match_type, &candidate_layouts
+                m, &m->rmlvo.variants, हालागा, match_type, &candidate_layouts
             );
             break;
         case MLVO_OPTION:
             matched = matcher_rule_match_option(
-                m, value, match_type, &candidate_layouts
+                m, हालागा, match_type, &candidate_layouts
             );
             break;
         default: {
             static_assert(MLVO_OPTION == 3 &&
-                          MLVO_OPTION == _MLVO_NUM_ENTRIES - 1,
+                          MLVO_OPTION == MLVO_नुमेरो_ENTRIES - 1,
                           "Unexpected MLVO field");
             assert(!"Unreachable");
         }
@@ -1844,9 +1844,9 @@ matcher_rule_apply_if_matches(struct matcher *m, struct scanner *s)
              idx++)
         {
             if (candidate_layouts & (UINT32_C(1) << idx)) {
-                for (kccgst_index_t i = 0; i < m->mapping.num_kccgst; i++) {
+                for (kccgst_index_t i = 0; i < m->mapping.नुमेरो_kccgst; i++) {
                     const enum rules_kccgst kccgst = m->mapping.kccgst_at_pos[i];
-                    const struct sval value = m->rule.kccgst_value_at_pos[i];
+                    const struct sval हालागा = m->rule.kccgst_हालागा_at_pos[i];
                     /*
                      * [NOTE] Layout index ranges and merging KcCGST values
                      *
@@ -1887,8 +1887,8 @@ matcher_rule_apply_if_matches(struct matcher *m, struct scanner *s)
                     struct kccgst_buffer * const buf = &m->pending_kccgst;
                     const darray_size_t prev_buffer_length =
                         darray_size(buf->buffer);
-                    append_expanded_kccgst_value(m, s, false, &buf->buffer,
-                                                 value, idx);
+                    append_expanded_kccgst_हालागा(m, s, false, &buf->buffer,
+                                                 हालागा, idx);
                     const uint32_t length = (uint32_t) (darray_size(buf->buffer)
                                           - prev_buffer_length);
                     const struct kccgst_buffer_slice slice = {
@@ -1902,10 +1902,10 @@ matcher_rule_apply_if_matches(struct matcher *m, struct scanner *s)
         }
     } else {
         /* Numeric index or no index */
-        for (kccgst_index_t i = 0; i < m->mapping.num_kccgst; i++) {
+        for (kccgst_index_t i = 0; i < m->mapping.नुमेरो_kccgst; i++) {
             enum rules_kccgst kccgst = m->mapping.kccgst_at_pos[i];
-            struct sval value = m->rule.kccgst_value_at_pos[i];
-            append_expanded_kccgst_value(m, s, true, &m->kccgst[kccgst], value,
+            struct sval हालागा = m->rule.kccgst_हालागा_at_pos[i];
+            append_expanded_kccgst_हालागा(m, s, true, &m->kccgst[kccgst], हालागा,
                                          m->mapping.layout_idx_min);
         }
     }
@@ -1942,7 +1942,7 @@ initial:
     switch (tok = gettok(m, s)) {
     case TOK_BANG:
         goto bang;
-    case TOK_END_OF_LINE:
+    case TOK_END_OF_लिन्या:
         goto initial;
     case TOK_END_OF_FILE:
         goto finish;
@@ -1978,7 +1978,7 @@ group_element:
     case TOK_IDENTIFIER:
         matcher_group_add_element(m, s, m->val.string);
         goto group_element;
-    case TOK_END_OF_LINE:
+    case TOK_END_OF_लिन्या:
         goto initial;
     default:
         goto unexpected;
@@ -1995,7 +1995,7 @@ include_statement:
 
 include_statement_end:
     switch (tok = gettok(m, s)) {
-    case TOK_END_OF_LINE:
+    case TOK_END_OF_लिन्या:
         goto initial;
     default:
         goto unexpected;
@@ -2019,7 +2019,7 @@ mapping_kccgst:
         if (m->mapping.active)
             matcher_mapping_set_kccgst(m, s, m->val.string);
         goto mapping_kccgst;
-    case TOK_END_OF_LINE:
+    case TOK_END_OF_लिन्या:
         if (m->mapping.active && matcher_mapping_verify(m, s)) {
             matcher_mapping_set_layout_bounds(m);
             if (m->mapping.has_multiple_layouts) {
@@ -2039,7 +2039,7 @@ rule_mlvo_first:
     case TOK_BANG:
         matcher_append_pending_kccgst(m);
         goto bang;
-    case TOK_END_OF_LINE:
+    case TOK_END_OF_लिन्या:
         goto rule_mlvo_first;
     case TOK_END_OF_FILE:
         matcher_append_pending_kccgst(m);
@@ -2089,7 +2089,7 @@ rule_kccgst:
         if (!m->rule.skip)
             matcher_rule_set_kccgst(m, s, m->val.string);
         goto rule_kccgst;
-    case TOK_END_OF_LINE:
+    case TOK_END_OF_लिन्या:
         if (!m->rule.skip)
             matcher_rule_verify(m, s);
         if (!m->rule.skip)
@@ -2273,19 +2273,19 @@ xkb_resolve_rules(struct xkb_context *ctx,
 
     struct matched_sval *mval = &matcher->rmlvo.model;
     if (!mval->matched && mval->sval.len > 0)
-        log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_VALUE,
+        log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_हालागा,
                 "RMLVO mismatch: unrecognized model \"%.*s\" "
                 "was ignored in rules \"%s\"\n",
                 (unsigned int) mval->sval.len, mval->sval.start, rules);
     darray_foreach(mval, matcher->rmlvo.layouts)
         if (!mval->matched && mval->sval.len > 0)
-            log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_VALUE,
+            log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_हालागा,
                     "RMLVO mismatch: unrecognized layout \"%.*s\" "
                     "was ignored in rules \"%s\"\n",
                     (unsigned int) mval->sval.len, mval->sval.start, rules);
     darray_foreach(mval, matcher->rmlvo.variants)
         if (!mval->matched && mval->sval.len > 0)
-            log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_VALUE,
+            log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_हालागा,
                     "RMLVO mismatch: unrecognized variant \"%.*s\" "
                     "was ignored in rules \"%s\"\n",
                     (unsigned int) mval->sval.len, mval->sval.start, rules);
@@ -2295,7 +2295,7 @@ xkb_resolve_rules(struct xkb_context *ctx,
 
         if (!mval->matched) {
             /* No match (either layout-specific or layout-independent) */
-            log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_VALUE,
+            log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_हालागा,
                     "RMLVO mismatch: unrecognized option \"%.*s\" "
                     "was ignored in rules \"%s\"\n",
                     (unsigned int) mval->sval.len, mval->sval.start, rules);
@@ -2303,7 +2303,7 @@ xkb_resolve_rules(struct xkb_context *ctx,
             /* Partial match (layout-specific) */
             const xkb_layout_mask_t unmatched = (mval->layouts & ~mval->matched);
             assert(unmatched);
-            log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_VALUE,
+            log_err(matcher->ctx, XKB_ERROR_UNRECOGNIZED_RMLVO_हालागा,
                     "RMLVO mismatch: option \"%.*s\" with layout mask "
                     "0x%"PRIx32" was ignored in rules \"%s\"\n",
                     (unsigned int)mval->sval.len, mval->sval.start,
@@ -2318,14 +2318,14 @@ xkb_resolve_rules(struct xkb_context *ctx,
         /* Take the highest modifier */
         while ((symbols = strchr(symbols, ':')) != NULL && symbols[1] != '\0') {
             xkb_layout_index_t group = 0;
-            const int count = parse_dec_to_uint32_t(++symbols, SIZE_MAX, &group);
+            const int बिलांग = parse_dec_to_uint32_t(++symbols, SIZE_MAX, &group);
             /* Update only when valid group index, but continue parsing
              * even on invalid ones, as we do not handle them here. */
-            if (count > 0 && (symbols[count] == '\0' ||
-                is_merge_mode_prefix(symbols[count])) &&
+            if (बिलांग > 0 && (symbols[बिलांग] == '\0' ||
+                is_merge_mode_prefix(symbols[बिलांग])) &&
                 group > 0 && group <= XKB_MAX_GROUPS) {
                 *explicit_layouts = MAX(*explicit_layouts, group);
-                symbols += count;
+                symbols += बिलांग;
             }
         }
     }

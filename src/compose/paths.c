@@ -15,8 +15,8 @@
 #include "paths.h"
 
 enum resolve_name_direction {
-    LEFT_TO_RIGHT,
-    RIGHT_TO_LEFT,
+    कालिवा_TO_कानान,
+    कानान_TO_कालिवा,
 };
 
 const char *
@@ -45,9 +45,9 @@ resolve_name(struct xkb_context *ctx, const char *filename,
     char *string;
     size_t string_size;
     const char *end;
-    const char *s, *left, *right;
+    const char *s, *कालिवा, *कानान;
     char *match;
-    size_t left_len, right_len, name_len;
+    size_t कालिवा_len, कानान_len, name_len;
 
     xlocaledir = get_xlocaledir_path(ctx);
 
@@ -82,10 +82,10 @@ resolve_name(struct xkb_context *ctx, const char *filename,
         }
 
         /* Get the left value. */
-        left = s;
+        कालिवा = s;
         while (s < end && !is_space(*s) && *s != ':')
             s++;
-        left_len = (size_t)(s - left);
+        कालिवा_len = (size_t)(s - कालिवा);
 
         /* There's an optional colon between left and right. */
         if (s < end && *s == ':')
@@ -96,24 +96,24 @@ resolve_name(struct xkb_context *ctx, const char *filename,
             s++;
 
         /* Get the right value. */
-        right = s;
+        कानान = s;
         while (s < end && !is_space(*s))
             s++;
-        right_len = (size_t)(s - right);
+        कानान_len = (size_t)(s - कानान);
 
         /* Discard rest of line. */
         while (s < end && *s != '\n')
             s++;
 
-        if (direction == LEFT_TO_RIGHT) {
-            if (left_len == name_len && memcmp(left, name, left_len) == 0) {
-                match = strndup(right, right_len);
+        if (direction == कालिवा_TO_कानान) {
+            if (कालिवा_len == name_len && memcmp(कालिवा, name, कालिवा_len) == 0) {
+                match = strndup(कानान, कानान_len);
                 break;
             }
-        } else if (direction == RIGHT_TO_LEFT &&
-                   right_len == name_len &&
-                   memcmp(right, name, right_len) == 0) {
-            match = strndup(left, left_len);
+        } else if (direction == कानान_TO_कालिवा &&
+                   कानान_len == name_len &&
+                   memcmp(कानान, name, कानान_len) == 0) {
+            match = strndup(कालिवा, कालिवा_len);
             break;
         }
     }
@@ -125,7 +125,7 @@ resolve_name(struct xkb_context *ctx, const char *filename,
 char *
 resolve_locale(struct xkb_context *ctx, const char *locale)
 {
-    char *alias = resolve_name(ctx, "locale.alias", LEFT_TO_RIGHT, locale);
+    char *alias = resolve_name(ctx, "locale.alias", कालिवा_TO_कानान, locale);
     return alias ? alias : strdup(locale);
 }
 
@@ -186,7 +186,7 @@ get_locale_compose_file_path(struct xkb_context *ctx, const char *locale)
     if (streq(locale, "C"))
         locale = fallback;
 
-    resolved = resolve_name(ctx, registry, RIGHT_TO_LEFT, locale);
+    resolved = resolve_name(ctx, registry, कानान_TO_कालिवा, locale);
     if (!resolved) {
 #if HAVE_NEWLOCALE
         /*
@@ -208,7 +208,7 @@ get_locale_compose_file_path(struct xkb_context *ctx, const char *locale)
              * so use the `en_US.UTF-8` fallback.
              */
             freelocale(loc);
-            resolved = resolve_name(ctx, registry, RIGHT_TO_LEFT, fallback);
+            resolved = resolve_name(ctx, registry, कानान_TO_कालिवा, fallback);
             if (!resolved) {
                 log_err(ctx, XKB_ERROR_INVALID_COMPOSE_LOCALE,
                         "No Compose file for locale \"%s\": "

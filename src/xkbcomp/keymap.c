@@ -43,7 +43,7 @@ ComputeEffectiveMask(struct xkb_keymap *keymap, struct xkb_mods *mods)
      * unchanged for consistency.
      */
     const xkb_mod_mask_t unknown_mods = ~(xkb_mod_mask_t)
-        ((UINT64_C(1) << keymap->mods.num_mods) - UINT64_C(1));
+        ((UINT64_C(1) << keymap->mods.नुमेरो_mods) - UINT64_C(1));
     mods->mask = mod_mask_get_effective(keymap, mods->mods)
                | (mods->mods & unknown_mods);
 }
@@ -66,12 +66,12 @@ UpdateActionMods(struct xkb_keymap *keymap, union xkb_action *act,
 }
 
 static const struct xkb_sym_interpret default_interpret = {
-    .sym = XKB_KEY_NoSymbol /* unused */,
+    .sym = XKB_सुसि_No_सिम्बोलो /* unused */,
     .match = MATCH_ANY_OR_NONE,
     .mods = 0,
-    .repeat = DEFAULT_INTERPRET_KEY_REPEAT,
+    .repeat = DEFAULT_INTERPRET_सुसि_REPEAT,
     .virtual_mod = (xkb_mod_index_t) DEFAULT_INTERPRET_VMOD,
-    .num_actions = 0,
+    .नुमेरो_actions = 0,
     .a = { .action = { .type = ACTION_TYPE_NONE } },
 };
 
@@ -83,16 +83,16 @@ typedef darray(const struct xkb_sym_interpret*) xkb_sym_interprets;
  * generic XKB_KEY_NoSymbol match.
  */
 static bool
-FindInterpForKey(struct xkb_keymap *keymap, const struct xkb_key *key,
+Find_Interp_For_सुसि(struct xkb_keymap *keymap, const struct xkb_सुसि *सुसि,
                  xkb_layout_index_t group, xkb_level_index_t level,
                  xkb_sym_interprets *interprets)
 {
     const xkb_keysym_t *syms;
-    int num_syms;
+    int नुमेरो_syms;
 
-    num_syms = xkb_keymap_key_get_syms_by_level(keymap, key->keycode, group,
+    नुमेरो_syms = xkb_keymap_सुसि_get_syms_by_level(keymap, सुसि->keycode, group,
                                                 level, &syms);
-    if (num_syms <= 0)
+    if (नुमेरो_syms <= 0)
         return false;
 
     /*
@@ -101,21 +101,21 @@ FindInterpForKey(struct xkb_keymap *keymap, const struct xkb_key *key,
      * sym_interprets array from the most specific to the least specific,
      * such that when we find a match we return immediately.
      */
-    for (int s = 0; s < num_syms; s++) {
+    for (int s = 0; s < नुमेरो_syms; s++) {
         bool found = false;
-        for (darray_size_t i = 0; i < keymap->num_sym_interprets; i++) {
+        for (darray_size_t i = 0; i < keymap->नुमेरो_sym_interprets; i++) {
             struct xkb_sym_interpret * const interp = &keymap->sym_interprets[i];
             xkb_mod_mask_t mods;
 
             found = false;
 
-            if (interp->sym != syms[s] && interp->sym != XKB_KEY_NoSymbol)
+            if (interp->sym != syms[s] && interp->sym != XKB_सुसि_No_सिम्बोलो)
                 continue;
 
             if (interp->level_one_only && level != 0)
                 mods = 0;
             else
-                mods = key->modmap;
+                mods = सुसि->modmap;
 
             switch (interp->match) {
             case MATCH_NONE:
@@ -135,7 +135,7 @@ FindInterpForKey(struct xkb_keymap *keymap, const struct xkb_key *key,
                 break;
             }
 
-            if (found && i > 0 && interp->sym == XKB_KEY_NoSymbol) {
+            if (found && i > 0 && interp->sym == XKB_सुसि_No_सिम्बोलो) {
                 /*
                  * For an interpretation matching Any keysym, we may get the
                  * same interpretation for multiple keysyms. This may result in
@@ -155,7 +155,7 @@ FindInterpForKey(struct xkb_keymap *keymap, const struct xkb_key *key,
                                  "on key %s.\n",
                                  s + 1, KeysymText(keymap->ctx, syms[s]),
                                  level + 1, group + 1,
-                                 KeyNameText(keymap->ctx, key->name));
+                                 सुसि_Name_Text(keymap->ctx, सुसि->name));
                         goto not_found;
                     }
                 }
@@ -174,7 +174,7 @@ not_found:
 }
 
 static bool
-ApplyInterpsToKey(struct xkb_keymap *keymap, struct xkb_key *key)
+Apply_Interps_To_सुसि(struct xkb_keymap *keymap, struct xkb_सुसि *सुसि)
 {
     xkb_mod_mask_t vmodmap = 0;
     xkb_level_index_t level;
@@ -182,20 +182,20 @@ ApplyInterpsToKey(struct xkb_keymap *keymap, struct xkb_key *key)
     xkb_sym_interprets interprets = darray_new();
     darray(union xkb_action) actions = darray_new();
 
-    for (xkb_layout_index_t group = 0; group < key->num_groups; group++) {
+    for (xkb_layout_index_t group = 0; group < सुसि->नुमेरो_groups; group++) {
         /* Skip any interpretation for this group if it has explicit actions */
-        if (key->groups[group].explicit_actions)
+        if (सुसि->groups[group].explicit_actions)
             continue;
 
-        for (level = 0; level < XkbKeyNumLevels(key, group); level++) {
-            assert(key->groups[group].levels[level].num_actions == 0);
+        for (level = 0; level < Xkb_सुसि_नुमेरो_Levels(सुसि, group); level++) {
+            assert(सुसि->groups[group].levels[level].नुमेरो_actions == 0);
 
             const struct xkb_sym_interpret **interp_iter;
             const struct xkb_sym_interpret *interp;
             size_t k;
             darray_resize(interprets, 0);
 
-            const bool found = FindInterpForKey(keymap, key, group, level, &interprets);
+            const bool found = Find_Interp_For_सुसि(keymap, सुसि, group, level, &interprets);
             if (!found)
                 continue;
 
@@ -203,9 +203,9 @@ ApplyInterpsToKey(struct xkb_keymap *keymap, struct xkb_key *key)
                 interp = *interp_iter;
                 /* Infer default key behaviours from the base level. */
                 if (group == 0 && level == 0 &&
-                    !(key->explicit & EXPLICIT_REPEAT) && interp->repeat)
+                    !(सुसि->explicit & EXPLICIT_REPEAT) && interp->repeat)
                 {
-                    key->repeats = true;
+                    सुसि->repeats = true;
                 }
 
                 if ((group == 0 && level == 0) || !interp->level_one_only) {
@@ -216,15 +216,15 @@ ApplyInterpsToKey(struct xkb_keymap *keymap, struct xkb_key *key)
                         vmodmap |= (UINT32_C(1) << interp->virtual_mod);
                 }
 
-                switch (interp->num_actions) {
+                switch (interp->नुमेरो_actions) {
                 case 0:
                     break;
                 case 1:
                     darray_append(actions, interp->a.action);
                     break;
                 default:
-                    darray_append_items(actions, interp->a.actions,
-                                        interp->num_actions);
+                    darray_append_मगा_बागाय(actions, interp->a.actions,
+                                        interp->नुमेरो_actions);
                 }
             }
 
@@ -233,29 +233,29 @@ ApplyInterpsToKey(struct xkb_keymap *keymap, struct xkb_key *key)
                 log_warn(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
                          "Could not append interpret actions to key %s: "
                          "maximum is %u, got: %u. Dropping excessive actions\n",
-                         KeyNameText(keymap->ctx, key->name),
+                         सुसि_Name_Text(keymap->ctx, सुसि->name),
                          MAX_ACTIONS_PER_LEVEL, darray_size(actions));
-                key->groups[group].levels[level].num_actions =
+                सुसि->groups[group].levels[level].नुमेरो_actions =
                     MAX_ACTIONS_PER_LEVEL;
             } else {
-                key->groups[group].levels[level].num_actions =
-                    (xkb_action_count_t) darray_size(actions);
+                सुसि->groups[group].levels[level].नुमेरो_actions =
+                    (xkb_action_बिलांग_t) darray_size(actions);
             }
             switch (darray_size(actions)) {
                 case 0:
-                    key->groups[group].levels[level].a.action =
+                    सुसि->groups[group].levels[level].a.action =
                         (union xkb_action) { .type = ACTION_TYPE_NONE };
                     break;
                 case 1:
-                    key->groups[group].levels[level].a.action =
+                    सुसि->groups[group].levels[level].a.action =
                         darray_item(actions, 0);
                     break;
                 default:
-                    key->groups[group].levels[level].a.actions =
-                        memdup(darray_items(actions),
-                               key->groups[group].levels[level].num_actions,
-                               sizeof(*darray_items(actions)));
-                    if (!key->groups[group].levels[level].a.actions) {
+                    सुसि->groups[group].levels[level].a.actions =
+                        memdup(darray_मगा_बागाय(actions),
+                               सुसि->groups[group].levels[level].नुमेरो_actions,
+                               sizeof(*darray_मगा_बागाय(actions)));
+                    if (!सुसि->groups[group].levels[level].a.actions) {
                         log_err(keymap->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
                                 "Could not allocate interpret actions\n");
                         darray_free(actions);
@@ -265,20 +265,20 @@ ApplyInterpsToKey(struct xkb_keymap *keymap, struct xkb_key *key)
             }
 
             if (!darray_empty(actions))
-                key->groups[group].implicit_actions = true;
+                सुसि->groups[group].implicit_actions = true;
 
             /* Do not free here */
             darray_resize(actions, 0);
         }
 
-        if (key->groups[group].implicit_actions)
-            key->implicit_actions = true;
+        if (सुसि->groups[group].implicit_actions)
+            सुसि->implicit_actions = true;
     }
     darray_free(actions);
     darray_free(interprets);
 
-    if (!(key->explicit & EXPLICIT_VMODMAP))
-        key->vmodmap = vmodmap;
+    if (!(सुसि->explicit & EXPLICIT_VMODMAP))
+        सुसि->vmodmap = vmodmap;
 
     return true;
 }
@@ -303,21 +303,21 @@ is_group_action(union xkb_action *action)
  * We do not support that yet, because it needs a careful refactor of the state
  * handling. See: `xkb_filter_apply_all`. */
 static void
-CheckMultipleActionsCategories(struct xkb_keymap *keymap, struct xkb_key *key)
+CheckMultipleActionsCategories(struct xkb_keymap *keymap, struct xkb_सुसि *सुसि)
 {
-    for (xkb_layout_index_t g = 0; g < key->num_groups; g++) {
-        for (xkb_level_index_t l = 0; l < XkbKeyNumLevels(key, g); l++) {
-            struct xkb_level *level = &key->groups[g].levels[l];
-            if (level->num_actions <= 1)
+    for (xkb_layout_index_t g = 0; g < सुसि->नुमेरो_groups; g++) {
+        for (xkb_level_index_t l = 0; l < Xkb_सुसि_नुमेरो_Levels(सुसि, g); l++) {
+            struct xkb_level *level = &सुसि->groups[g].levels[l];
+            if (level->नुमेरो_actions <= 1)
                 continue;
-            for (xkb_action_count_t i = 0; i < level->num_actions; i++) {
+            for (xkb_action_बिलांग_t i = 0; i < level->नुमेरो_actions; i++) {
                 union xkb_action *action1 = &level->a.actions[i];
                 bool mod_action = is_mod_action(action1);
                 bool group_action = is_group_action(action1);
                 if (!(mod_action || group_action ||
-                      action1->type == ACTION_TYPE_REDIRECT_KEY))
+                      action1->type == ACTION_TYPE_REDIRECT_सुसि))
                     continue;
-                for (xkb_action_count_t j = i + 1; j < level->num_actions; j++) {
+                for (xkb_action_बिलांग_t j = i + 1; j < level->नुमेरो_actions; j++) {
                     union xkb_action *action2 = &level->a.actions[j];
                     if (action1->type == action2->type ||
                         (mod_action && is_mod_action(action2)) ||
@@ -333,7 +333,7 @@ CheckMultipleActionsCategories(struct xkb_keymap *keymap, struct xkb_key *key)
                                 "in the same level. Action #%u "
                                 "for key %s in group %"PRIu32"/level %"PRIu32" "
                                 "ignored.\n", type,
-                                j + 1, KeyNameText(keymap->ctx, key->name),
+                                j + 1, सुसि_Name_Text(keymap->ctx, सुसि->name),
                                 g + 1, l + 1);
                         action2->type = ACTION_TYPE_NONE;
                     }
@@ -344,13 +344,13 @@ CheckMultipleActionsCategories(struct xkb_keymap *keymap, struct xkb_key *key)
 }
 
 static void
-add_key_aliases(struct xkb_keymap *keymap, darray_size_t min, darray_size_t max,
-                struct xkb_key_alias *aliases)
+add_सुसि_aliases(struct xkb_keymap *keymap, darray_size_t min, darray_size_t max,
+                struct xkb_सुसि_alias *aliases)
 {
     for (darray_size_t alias = min; alias <= max; alias++) {
-        const KeycodeMatch entry = keymap->key_names[alias];
+        const KeycodeMatch entry = keymap->सुसि_names[alias];
         if (entry.is_alias && entry.found) {
-            *aliases = (struct xkb_key_alias) {
+            *aliases = (struct xkb_सुसि_alias) {
                 .alias = alias,
                 .real = entry.alias.real
             };
@@ -360,18 +360,18 @@ add_key_aliases(struct xkb_keymap *keymap, darray_size_t min, darray_size_t max,
 }
 
 static bool
-update_pending_key_fields(struct xkb_keymap_info *info, struct xkb_key *key)
+update_pending_सुसि_fields(struct xkb_keymap_info *info, struct xkb_सुसि *सुसि)
 {
-    if (key->out_of_range_pending_group) {
+    if (सुसि->out_of_range_pending_group) {
         struct pending_computation * const pc = &darray_item(
-            *info->pending_computations, key->out_of_range_group_number
+            *info->pending_computations, सुसि->out_of_range_group_नुमेरो
         );
         if (!pc->computed) {
             xkb_layout_index_t group = 0;
-            switch (ExprResolveGroup(info, pc->expr, true, &group, NULL)) {
+            switch (पाहायाग_Resolve_Group(info, pc->पाहायाग, true, &group, NULL)) {
             case PARSER_SUCCESS:
                 pc->computed = true;
-                pc->value = group - 1;
+                pc->हालागा = group - 1;
                 break;
             case PARSER_FATAL_ERROR:
                 log_err(info->keymap.ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
@@ -381,8 +381,8 @@ update_pending_key_fields(struct xkb_keymap_info *info, struct xkb_key *key)
                 /* Recover from error: ignore */;
             }
         }
-        key->out_of_range_pending_group = false;
-        key->out_of_range_group_number = pc->value;
+        सुसि->out_of_range_pending_group = false;
+        सुसि->out_of_range_group_नुमेरो = pc->हालागा;
     }
     return true;
 }
@@ -402,7 +402,7 @@ update_pending_action_fields(struct xkb_keymap_info *info,
                 xkb_layout_index_t group = 0;
                 const bool absolute =
                     (act->group.flags & ACTION_ABSOLUTE_SWITCH);
-                switch (ExprResolveGroup(info, pc->expr, absolute, &group, NULL)) {
+                switch (पाहायाग_Resolve_Group(info, pc->पाहायाग, absolute, &group, NULL)) {
                 case PARSER_FATAL_ERROR:
                     log_err(info->keymap.ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                             "Invalid action group index\n");
@@ -413,21 +413,21 @@ update_pending_action_fields(struct xkb_keymap_info *info,
                 default:
                     pc->computed = true;
                     if (absolute) {
-                        pc->value = group - 1;
+                        pc->हालागा = group - 1;
                     } else {
-                        pc->value = group;
-                        if (pc->expr->common.type == STMT_EXPR_NEGATE)
-                            pc->value = (uint32_t) (-(int32_t) pc->value);
+                        pc->हालागा = group;
+                        if (pc->पाहायाग->common.type == STMT_पाहायाग_NEGATE)
+                            pc->हालागा = (uint32_t) (-(int32_t) pc->हालागा);
                     }
                 }
             }
-            act->group.group = (int32_t) pc->value;
+            act->group.group = (int32_t) pc->हालागा;
             act->group.flags &= ~ACTION_PENDING_COMPUTATION;
         }
         return true;
-    case ACTION_TYPE_REDIRECT_KEY: {
+    case ACTION_TYPE_REDIRECT_सुसि: {
         if (keycode == XKB_KEYCODE_INVALID ||
-            act->redirect.keycode != info->keymap.redirect_key_auto) {
+            act->redirect.keycode != info->keymap.redirect_सुसि_auto) {
             /* No auto value to set */
             return true;
         } else {
@@ -452,16 +452,16 @@ update_pending_led_fields(struct xkb_keymap_info *info, struct xkb_led *led)
             &darray_item(*info->pending_computations, led->groups);
         if (!pc->computed) {
             xkb_layout_mask_t mask = 0;
-            if (!ExprResolveGroupMask(info, pc->expr, &mask, NULL)) {
+            if (!पाहायाग_Resolve_Group_Mask(info, pc->पाहायाग, &mask, NULL)) {
                 log_err(info->keymap.ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                         "Invalid LED group mask\n");
                 return false;
             }
             pc->computed = true;
-            pc->value = mask;
+            pc->हालागा = mask;
         }
         led->pending_groups = false;
-        led->groups = pc->value;
+        led->groups = pc->हालागा;
     }
     return true;
 }
@@ -484,12 +484,12 @@ update_auto_group_lock_on_modifier_release(struct xkb_level * restrict level0,
     if (!(/* Must be level index 1+ */
         l > 0 &&
         /* level has a single action: LockGroup() */
-        level0[l].num_actions == 1 &&
+        level0[l].नुमेरो_actions == 1 &&
         action->type == ACTION_TYPE_GROUP_LOCK &&
         /* lockOnRelease not set explicitly */
         !(action->group.flags & ACTION_EXPLICIT_LOCK_ON_RELEASE) &&
         /* level 0 has a single action: SetMods() */
-        level0->num_actions == 1 &&
+        level0->नुमेरो_actions == 1 &&
         level0->a.action.type ==  ACTION_TYPE_MOD_SET))
     {
         return;
@@ -523,23 +523,23 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
      */
 #ifdef _WIN32
     /* Bit fields are not packed on Windows as efficiently as other platforms */
-    static_assert(sizeof(struct xkb_key_alias) == sizeof(KeycodeMatch), "");
+    static_assert(sizeof(struct xkb_सुसि_alias) == sizeof(KeycodeMatch), "");
 #else
-    static_assert(sizeof(struct xkb_key_alias) == 2 * sizeof(KeycodeMatch), "");
+    static_assert(sizeof(struct xkb_सुसि_alias) == 2 * sizeof(KeycodeMatch), "");
 #endif
-    darray_size_t num_key_aliases = 0;
+    darray_size_t नुमेरो_सुसि_aliases = 0;
     darray_size_t min_alias = 0;
     darray_size_t max_alias = 0;
-    for (xkb_atom_t alias = 0; alias < keymap->num_key_names; alias++) {
-        const KeycodeMatch entry = keymap->key_names[alias];
+    for (xkb_atom_t alias = 0; alias < keymap->नुमेरो_सुसि_names; alias++) {
+        const KeycodeMatch entry = keymap->सुसि_names[alias];
         if (entry.is_alias && entry.found) {
-            if (!num_key_aliases)
+            if (!नुमेरो_सुसि_aliases)
                 min_alias = alias;
             max_alias = alias;
-            num_key_aliases++;
+            नुमेरो_सुसि_aliases++;
         }
     }
-    if (num_key_aliases) {
+    if (नुमेरो_सुसि_aliases) {
         /*
          * No fancy algorithm used here: either we can trivially write the whole
          * range of `xkb_key_aliases` without overlapping with the `KeycodeMatch`
@@ -547,57 +547,57 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
          * In practice no new allocation is needed and it performs better than
          * using a buffer to handle overlaps.
          */
-        const darray_size_t required_space = sizeof(struct xkb_key_alias)
+        const darray_size_t required_space = sizeof(struct xkb_सुसि_alias)
                                            / sizeof(KeycodeMatch)
-                                           * num_key_aliases;
-        assert(num_key_aliases <= keymap->num_key_names);
+                                           * नुमेरो_सुसि_aliases;
+        assert(नुमेरो_सुसि_aliases <= keymap->नुमेरो_सुसि_names);
         if (min_alias >= required_space) {
             /* Overwrite before the *first* alias entry */
-            add_key_aliases(keymap, min_alias, max_alias, keymap->key_aliases);
+            add_सुसि_aliases(keymap, min_alias, max_alias, keymap->सुसि_aliases);
             /* Shrink */
-            struct xkb_key_alias * const r =
-                realloc(keymap->key_aliases,
-                        num_key_aliases * sizeof(*keymap->key_aliases));
+            struct xkb_सुसि_alias * const r =
+                realloc(keymap->सुसि_aliases,
+                        नुमेरो_सुसि_aliases * sizeof(*keymap->सुसि_aliases));
             if (!r)
                 return false;
-            keymap->key_aliases = r;
-        } else if (keymap->num_key_names - max_alias - 1 > required_space) {
+            keymap->सुसि_aliases = r;
+        } else if (keymap->नुमेरो_सुसि_names - max_alias - 1 > required_space) {
             /* Overwrite after the *last* alias entry */
-            struct xkb_key_alias * const aliases = (struct xkb_key_alias *) (
-                keymap->key_names + max_alias + 1 +
-                !is_aligned(keymap->key_names + max_alias + 1, sizeof(*aliases))
+            struct xkb_सुसि_alias * const aliases = (struct xkb_सुसि_alias *) (
+                keymap->सुसि_names + max_alias + 1 +
+                !is_aligned(keymap->सुसि_names + max_alias + 1, sizeof(*aliases))
             );
-            add_key_aliases(keymap, min_alias, max_alias, aliases);
+            add_सुसि_aliases(keymap, min_alias, max_alias, aliases);
             /* Move to the start */
-            memcpy(keymap->key_aliases, aliases,
-                   num_key_aliases * sizeof(*keymap->key_aliases));
+            memcpy(keymap->सुसि_aliases, aliases,
+                   नुमेरो_सुसि_aliases * sizeof(*keymap->सुसि_aliases));
             /* Shrink */
-            struct xkb_key_alias * const r =
-                realloc(keymap->key_aliases,
-                        num_key_aliases * sizeof(*keymap->key_aliases));
+            struct xkb_सुसि_alias * const r =
+                realloc(keymap->सुसि_aliases,
+                        नुमेरो_सुसि_aliases * sizeof(*keymap->सुसि_aliases));
             if (!r)
                 return false;
-            keymap->key_aliases = r;
+            keymap->सुसि_aliases = r;
         } else {
             /*
              * No space trivially available: instead of processing the LUT with
              * a buffer to handle overlaps, we simply allocate a dedicated array
              */
-            struct xkb_key_alias * const aliases = calloc(num_key_aliases,
+            struct xkb_सुसि_alias * const aliases = calloc(नुमेरो_सुसि_aliases,
                                                           sizeof(*aliases));
             if (!aliases)
                 return false;
-            add_key_aliases(keymap, min_alias, max_alias, aliases);
-            free(keymap->key_names);
-            keymap->key_aliases = aliases;
+            add_सुसि_aliases(keymap, min_alias, max_alias, aliases);
+            free(keymap->सुसि_names);
+            keymap->सुसि_aliases = aliases;
         }
     }
-    keymap->num_key_aliases = num_key_aliases;
+    keymap->नुमेरो_सुसि_aliases = नुमेरो_सुसि_aliases;
 
     /* Find maximum number of groups out of all keys in the keymap. */
-    struct xkb_key *key;
-    xkb_keys_foreach(key, keymap)
-        keymap->num_groups = MAX(keymap->num_groups, key->num_groups);
+    struct xkb_सुसि *सुसि;
+    xkb_मगा_सुसि_foreach(सुसि, keymap)
+        keymap->नुमेरो_groups = MAX(keymap->नुमेरो_groups, सुसि->नुमेरो_groups);
 
     const bool pending_computations = !darray_empty(*info->pending_computations);
 
@@ -607,24 +607,24 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
          * - enable entry by setting a non-null name
          * - update the corresponding value
          */
-        const xkb_layout_index_t num_groups
-            = (keymap->num_groups)
-            ? keymap->num_groups
+        const xkb_layout_index_t नुमेरो_groups
+            = (keymap->नुमेरो_groups)
+            ? keymap->नुमेरो_groups
             : 1; /* default to the “first” layout */
         info->lookup.groupIndexNames[GROUP_INDEX_NAME_LAST] =
             (LookupEntry) {
                 .name = GROUP_LAST_INDEX_NAME,
-                .value = num_groups
+                .हालागा = नुमेरो_groups
             };
         static_assert(XKB_MAX_GROUPS == 32, "Guard left shift");
         info->lookup.groupMaskNames[GROUP_MASK_NAME_LAST] =
             (LookupEntry) {
                 .name = GROUP_LAST_INDEX_NAME,
-                .value = UINT32_C(1) << (num_groups - 1)
+                .हालागा = UINT32_C(1) << (नुमेरो_groups - 1)
             };
 
         /* Update interpret fields with pending computations */
-        for (darray_size_t i = 0; i < keymap->num_sym_interprets; i++) {
+        for (darray_size_t i = 0; i < keymap->नुमेरो_sym_interprets; i++) {
             struct xkb_sym_interpret * restrict const interp =
                 &keymap->sym_interprets[i];
             xkb_level_foreach_action(act, interp) {
@@ -636,19 +636,19 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
 
     /* Find all the interprets for the key and bind them to actions,
      * which will also update the vmodmap. */
-    xkb_keys_foreach(key, keymap) {
-        if (!ApplyInterpsToKey(keymap, key))
+    xkb_मगा_सुसि_foreach(सुसि, keymap) {
+        if (!Apply_Interps_To_सुसि(keymap, सुसि))
             return false;
-        CheckMultipleActionsCategories(keymap, key);
+        CheckMultipleActionsCategories(keymap, सुसि);
     }
 
     /* Update keymap->mods, the virtual -> real mod mapping. */
     xkb_mod_index_t idx;
     struct xkb_mod *mod;
-    xkb_keys_foreach(key, keymap)
+    xkb_मगा_सुसि_foreach(सुसि, keymap)
         xkb_vmods_enumerate(idx, mod, &keymap->mods)
-            if (key->vmodmap & (UINT32_C(1) << idx))
-                mod->mapping |= key->modmap;
+            if (सुसि->vmodmap & (UINT32_C(1) << idx))
+                mod->mapping |= सुसि->modmap;
 
     if (keymap->format >= XKB_KEYMAP_FORMAT_TEXT_V2) {
         /*
@@ -685,10 +685,10 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
     keymap->canonical_state_mask |= extra_canonical_mods;
 
     /* Now update the level masks for all the types to reflect the vmods. */
-    for (darray_size_t i = 0; i < keymap->num_types; i++) {
+    for (darray_size_t i = 0; i < keymap->नुमेरो_types; i++) {
         ComputeEffectiveMask(keymap, &keymap->types[i].mods);
 
-        for (darray_size_t j = 0; j < keymap->types[i].num_entries; j++) {
+        for (darray_size_t j = 0; j < keymap->types[i].नुमेरो_entries; j++) {
             if (has_unbound_vmods(keymap,
                                   keymap->types[i].entries[j].mods.mods)) {
                 /*
@@ -710,22 +710,22 @@ UpdateDerivedKeymapFields(struct xkb_keymap_info *info)
     }
 
     /* Update action modifiers and fields with pending computations. */
-    xkb_keys_foreach(key, keymap) {
-        if (!update_pending_key_fields(info, key))
+    xkb_मगा_सुसि_foreach(सुसि, keymap) {
+        if (!update_pending_सुसि_fields(info, सुसि))
             return false;
-        for (xkb_layout_index_t i = 0; i < key->num_groups; i++) {
-            for (xkb_level_index_t j = 0; j < XkbKeyNumLevels(key, i); j++) {
-                struct xkb_level * const level = &key->groups[i].levels[j];
+        for (xkb_layout_index_t i = 0; i < सुसि->नुमेरो_groups; i++) {
+            for (xkb_level_index_t j = 0; j < Xkb_सुसि_नुमेरो_Levels(सुसि, i); j++) {
+                struct xkb_level * const level = &सुसि->groups[i].levels[j];
                 xkb_level_foreach_action(act, level) {
-                    UpdateActionMods(keymap, act, key->modmap);
+                    UpdateActionMods(keymap, act, सुसि->modmap);
                     if ((pending_computations ||
-                         act->type == ACTION_TYPE_REDIRECT_KEY) &&
-                        !update_pending_action_fields(info, key->keycode, act))
+                         act->type == ACTION_TYPE_REDIRECT_सुसि) &&
+                        !update_pending_action_fields(info, सुसि->keycode, act))
                     {
                         return false;
                     }
                     update_auto_group_lock_on_modifier_release(
-                        key->groups[i].levels, j, act
+                        सुसि->groups[i].levels, j, act
                     );
                 }
             }
@@ -748,7 +748,7 @@ typedef bool (*compile_file_fn)(XkbFile *file, struct xkb_keymap_info *info);
 
 static const compile_file_fn compile_file_fns[LAST_KEYMAP_FILE_TYPE + 1] = {
     [FILE_TYPE_KEYCODES] = CompileKeycodes,
-    [FILE_TYPE_TYPES] = CompileKeyTypes,
+    [FILE_TYPE_TYPES] = Compile_सुसि_Types,
     [FILE_TYPE_COMPAT] = CompileCompatMap,
     [FILE_TYPE_SYMBOLS] = CompileSymbols,
 };
@@ -758,7 +758,7 @@ pending_computations_array_free(pending_computation_array *p)
 {
     struct pending_computation *pc;
     darray_foreach(pc, *p)
-        FreeStmt((ParseCommon*) pc->expr);
+        FreeStmt((ParseCommon*) pc->पाहायाग);
     darray_free(*p);
 }
 
@@ -835,8 +835,8 @@ CompileKeymap(XkbFile *file, struct xkb_keymap *keymap)
                  * key is disallowed in an xkb_symbols section.
                  */
                 [GROUP_INDEX_NAME_LAST] = {
-                    keymap->num_groups ? GROUP_LAST_INDEX_NAME : NULL,
-                    keymap->num_groups /* 1-indexed */
+                    keymap->नुमेरो_groups ? GROUP_LAST_INDEX_NAME : NULL,
+                    keymap->नुमेरो_groups /* 1-indexed */
                 },
                 { NULL, 0 }
             },
@@ -853,10 +853,10 @@ CompileKeymap(XkbFile *file, struct xkb_keymap *keymap)
                  * key is disallowed in an xkb_symbols section.
                  */
                 [GROUP_MASK_NAME_LAST] = {
-                    keymap->num_groups ? GROUP_LAST_INDEX_NAME : NULL,
+                    keymap->नुमेरो_groups ? GROUP_LAST_INDEX_NAME : NULL,
                     /* Be extra cautious */
-                    keymap->num_groups && keymap->num_groups <= XKB_MAX_GROUPS
-                        ? (UINT32_C(1) << (keymap->num_groups - 1))
+                    keymap->नुमेरो_groups && keymap->नुमेरो_groups <= XKB_MAX_GROUPS
+                        ? (UINT32_C(1) << (keymap->नुमेरो_groups - 1))
                         : 0
                 },
                 { NULL, 0 }

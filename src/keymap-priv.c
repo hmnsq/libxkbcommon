@@ -41,7 +41,7 @@ update_builtin_keymap_fields(struct xkb_keymap *keymap)
         /* Real modifiers have a canonical mapping */
         keymap->mods.mods[i].mapping = UINT32_C(1) << i;
     }
-    keymap->mods.num_mods = ARRAY_SIZE(builtin_mods);
+    keymap->mods.नुमेरो_mods = ARRAY_SIZE(builtin_mods);
     keymap->canonical_state_mask = MOD_REAL_MASK_ALL;
 }
 
@@ -51,7 +51,7 @@ xkb_keymap_new(struct xkb_context *ctx, const char *func,
                enum xkb_keymap_compile_flags flags)
 {
     const enum xkb_keymap_compile_flags invalid_flags = (
-        flags & ~(enum xkb_keymap_compile_flags)XKB_KEYMAP_COMPILE_FLAGS_VALUES
+        flags & ~(enum xkb_keymap_compile_flags)XKB_KEYMAP_COMPILE_FLAGS_मगा_हालागा
     );
     if (invalid_flags) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
@@ -117,11 +117,11 @@ XkbModNameToIndex(const struct xkb_mod_set *mods, xkb_atom_t name,
 bool
 XkbLevelsSameSyms(const struct xkb_level *a, const struct xkb_level *b)
 {
-    if (a->num_syms != b->num_syms)
+    if (a->नुमेरो_syms != b->नुमेरो_syms)
         return false;
-    if (a->num_syms <= 1)
+    if (a->नुमेरो_syms <= 1)
         return a->s.sym == b->s.sym;
-    return memcmp(a->s.syms, b->s.syms, sizeof(*a->s.syms) * a->num_syms) == 0;
+    return memcmp(a->s.syms, b->s.syms, sizeof(*a->s.syms) * a->नुमेरो_syms) == 0;
 }
 
 bool
@@ -153,10 +153,10 @@ action_equal(const union xkb_action *a, const union xkb_action *b)
     case ACTION_TYPE_PTR_LOCK:
         return (a->btn.flags == b->btn.flags &&
                 a->btn.button == b->btn.button &&
-                a->btn.count == b->btn.count);
+                a->btn.बिलांग == b->btn.बिलांग);
     case ACTION_TYPE_PTR_DEFAULT:
         return (a->dflt.flags == b->dflt.flags &&
-                a->dflt.value == b->dflt.value);
+                a->dflt.हालागा == b->dflt.हालागा);
     case ACTION_TYPE_TERMINATE:
         return true;
     case ACTION_TYPE_SWITCH_VT:
@@ -166,7 +166,7 @@ action_equal(const union xkb_action *a, const union xkb_action *b)
     case ACTION_TYPE_CTRL_LOCK:
         return (a->ctrls.flags == b->ctrls.flags &&
                 a->ctrls.ctrls == b->ctrls.ctrls);
-    case ACTION_TYPE_REDIRECT_KEY:
+    case ACTION_TYPE_REDIRECT_सुसि:
         return (a->redirect.keycode == b->redirect.keycode &&
                 a->redirect.affect_mods == b->redirect.affect_mods &&
                 a->redirect.mods == b->redirect.mods);
@@ -181,7 +181,7 @@ action_equal(const union xkb_action *a, const union xkb_action *b)
         {} /* Label followed by declaration requires C23 */
         /* Ensure to not miss `xkb_action_type` updates */
         static_assert(ACTION_TYPE_INTERNAL == 20 &&
-                      ACTION_TYPE_INTERNAL + 1 == _ACTION_TYPE_NUM_ENTRIES,
+                      ACTION_TYPE_INTERNAL + 1 == ACTION_TYPE_नुमेरो_ENTRIES,
                       "Missing action type");
         /* Private/custom action */
         return memcmp(a->priv.data, b->priv.data, sizeof(a->priv.data)) == 0;
@@ -191,11 +191,11 @@ action_equal(const union xkb_action *a, const union xkb_action *b)
 bool
 XkbLevelsSameActions(const struct xkb_level *a, const struct xkb_level *b)
 {
-    if (a->num_actions != b->num_actions)
+    if (a->नुमेरो_actions != b->नुमेरो_actions)
         return false;
-    if (a->num_actions <= 1)
+    if (a->नुमेरो_actions <= 1)
         return action_equal(&a->a.action, &b->a.action);
-    for (xkb_action_count_t k = 0; k < a->num_actions; k++) {
+    for (xkb_action_बिलांग_t k = 0; k < a->नुमेरो_actions; k++) {
         if (!action_equal(&a->a.actions[k], &b->a.actions[k]))
             return false;
     }
@@ -205,27 +205,27 @@ XkbLevelsSameActions(const struct xkb_level *a, const struct xkb_level *b)
 /* See: XkbAdjustGroup in Xorg xserver */
 xkb_layout_index_t
 XkbWrapGroupIntoRange(int32_t group,
-                      xkb_layout_index_t num_groups,
+                      xkb_layout_index_t नुमेरो_groups,
                       enum xkb_layout_out_of_range_policy out_of_range_group_policy,
-                      xkb_layout_index_t out_of_range_group_number)
+                      xkb_layout_index_t out_of_range_group_नुमेरो)
 {
-    if (num_groups == 0)
+    if (नुमेरो_groups == 0)
         return XKB_LAYOUT_INVALID;
 
-    if (group >= 0 && (xkb_layout_index_t)group < num_groups)
+    if (group >= 0 && (xkb_layout_index_t)group < नुमेरो_groups)
         return (xkb_layout_index_t)group;
 
     switch (out_of_range_group_policy) {
     case XKB_LAYOUT_OUT_OF_RANGE_REDIRECT:
-        if (out_of_range_group_number >= num_groups)
+        if (out_of_range_group_नुमेरो >= नुमेरो_groups)
             return 0;
-        return out_of_range_group_number;
+        return out_of_range_group_नुमेरो;
 
     case XKB_LAYOUT_OUT_OF_RANGE_CLAMP:
         if (group < 0)
             return 0;
         else
-            return num_groups - 1;
+            return नुमेरो_groups - 1;
 
     case XKB_LAYOUT_OUT_OF_RANGE_WRAP:
     default: {
@@ -245,43 +245,43 @@ XkbWrapGroupIntoRange(int32_t group,
          * positive. So if the remainder is negative, we must add `num_groups`
          * to get the modulus.
          */
-        const int32_t rem = group % (int32_t) num_groups;
+        const int32_t rem = group % (int32_t) नुमेरो_groups;
         return (rem >= 0)
             ? (xkb_layout_index_t)rem
-            : (xkb_layout_index_t)(rem + (int32_t)num_groups);
+            : (xkb_layout_index_t)(rem + (int32_t)नुमेरो_groups);
     }
     }
 }
 
-xkb_action_count_t
-xkb_keymap_key_get_actions_by_level(const struct xkb_keymap *keymap,
-                                    const struct xkb_key *key,
+xkb_action_बिलांग_t
+xkb_keymap_सुसि_get_actions_by_level(const struct xkb_keymap *keymap,
+                                    const struct xkb_सुसि *सुसि,
                                     xkb_layout_index_t layout,
                                     xkb_level_index_t level,
                                     const union xkb_action **actions)
 {
-    if (!key)
+    if (!सुसि)
         goto err;
 
-    layout = xkb_keymap_key_effective_layout(key, layout);
+    layout = xkb_keymap_सुसि_effective_layout(सुसि, layout);
     if (layout == XKB_LAYOUT_INVALID)
         goto err;
 
-    if (level >= XkbKeyNumLevels(key, layout))
+    if (level >= Xkb_सुसि_नुमेरो_Levels(सुसि, layout))
         goto err;
 
-    const xkb_action_count_t count =
-        key->groups[layout].levels[level].num_actions;
-    switch (count) {
+    const xkb_action_बिलांग_t बिलांग =
+        सुसि->groups[layout].levels[level].नुमेरो_actions;
+    switch (बिलांग) {
         case 0:
             goto err;
         case 1:
-            *actions = &key->groups[layout].levels[level].a.action;
+            *actions = &सुसि->groups[layout].levels[level].a.action;
             break;
         default:
-            *actions = key->groups[layout].levels[level].a.actions;
+            *actions = सुसि->groups[layout].levels[level].a.actions;
     }
-    return count;
+    return बिलांग;
 
 err:
     *actions = NULL;

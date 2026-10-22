@@ -54,13 +54,13 @@ typedef struct {
 
 typedef struct {
     char *name;
-    int errorCount;
+    int error_बिलांग;
     unsigned int include_depth;
     SymInterpInfo default_interp;
     darray(SymInterpInfo) interps;
     LedInfo default_led;
     LedInfo leds[XKB_MAX_LEDS];
-    xkb_led_index_t num_leds;
+    xkb_led_index_t नुमेरो_leds;
     ActionsInfo default_actions;
     struct xkb_mod_set mods;
 
@@ -133,8 +133,8 @@ InitInterp(SymInterpInfo *info)
 {
     info->merge = MERGE_DEFAULT; /* Unused */
     info->interp.virtual_mod = XKB_MOD_INVALID;
-    static_assert(!DEFAULT_KEY_VMODMAP, "invalid initial value");
-    static_assert(!DEFAULT_KEY_REPEAT, "invalid initial value");
+    static_assert(!DEFAULT_सुसि_VMODMAP, "invalid initial value");
+    static_assert(!DEFAULT_सुसि_REPEAT, "invalid initial value");
 }
 
 static inline void
@@ -221,15 +221,15 @@ MergeInterp(CompatInfo *info, SymInterpInfo *old, SymInterpInfo *new,
     }
     if (UseNewInterpField(SI_FIELD_ACTION, old->defined, new->defined,
                           clobber, report, &collide)) {
-        if (old->interp.num_actions > 1) {
+        if (old->interp.नुमेरो_actions > 1) {
                 free(old->interp.a.actions);
             }
-            old->interp.num_actions = new->interp.num_actions;
-            if (new->interp.num_actions > 1) {
+            old->interp.नुमेरो_actions = new->interp.नुमेरो_actions;
+            if (new->interp.नुमेरो_actions > 1) {
                 old->interp.a.actions = new->interp.a.actions;
                 new->interp.a.action =
                     (union xkb_action) { .type = ACTION_TYPE_NONE };
-                new->interp.num_actions = 0;
+                new->interp.नुमेरो_actions = 0;
             } else {
                 old->interp.a.action = new->interp.a.action;
             }
@@ -272,30 +272,30 @@ AddInterp(CompatInfo *info, SymInterpInfo *new, bool same_file)
 
 // TODO: more lenient?
 static bool
-ResolveStateAndPredicate(ExprDef *expr, enum xkb_match_operation *pred_rtrn,
+ResolveStateAndPredicate(पाहायाग_Def *पाहायाग, enum xkb_match_operation *pred_rtrn,
                          xkb_mod_mask_t *mods_rtrn, CompatInfo *info)
 {
-    if (expr == NULL) {
+    if (पाहायाग == NULL) {
         *pred_rtrn = MATCH_ANY_OR_NONE;
         *mods_rtrn = MOD_REAL_MASK_ALL;
         return true;
     }
 
     *pred_rtrn = MATCH_EXACTLY;
-    if (expr->common.type == STMT_EXPR_ACTION_DECL) {
-        const char *pred_txt = xkb_atom_text(info->ctx, expr->action.name);
+    if (पाहायाग->common.type == STMT_पाहायाग_ACTION_DECL) {
+        const char *pred_txt = xkb_atom_text(info->ctx, पाहायाग->action.name);
         unsigned int pred = 0;
         if (!LookupString(symInterpretMatchMaskNames, pred_txt, &pred) ||
-            !expr->action.args || expr->action.args->common.next) {
+            !पाहायाग->action.मगा_कातविरान || पाहायाग->action.मगा_कातविरान->common.next) {
             log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Illegal modifier predicate \"%s\"; Ignored\n", pred_txt);
             return false;
         }
         *pred_rtrn = (enum xkb_match_operation) pred;
-        expr = expr->action.args;
+        पाहायाग = पाहायाग->action.मगा_कातविरान;
     }
-    else if (expr->common.type == STMT_EXPR_IDENT) {
-        const char *pred_txt = xkb_atom_text(info->ctx, expr->ident.ident);
+    else if (पाहायाग->common.type == STMT_पाहायाग_IDENT) {
+        const char *pred_txt = xkb_atom_text(info->ctx, पाहायाग->ident.ident);
         if (pred_txt && istreq(pred_txt, "any")) {
             *pred_rtrn = MATCH_ANY;
             *mods_rtrn = MOD_REAL_MASK_ALL;
@@ -303,7 +303,7 @@ ResolveStateAndPredicate(ExprDef *expr, enum xkb_match_operation *pred_rtrn,
         }
     }
 
-    return ExprResolveModMask(info->ctx, expr, MOD_REAL, &info->mods,
+    return पाहायाग_Resolve_Mod_Mask(info->ctx, पाहायाग, MOD_REAL, &info->mods,
                               mods_rtrn);
 }
 
@@ -387,7 +387,7 @@ MergeLedMap(CompatInfo *info, LedInfo *old, LedInfo *new, bool same_file)
 static bool
 AddLedMap(CompatInfo *info, LedInfo *new, bool same_file)
 {
-    for (xkb_led_index_t i = 0; i < info->num_leds; i++) {
+    for (xkb_led_index_t i = 0; i < info->नुमेरो_leds; i++) {
         LedInfo *old = &info->leds[i];
 
         if (old->led.name != new->led.name)
@@ -396,13 +396,13 @@ AddLedMap(CompatInfo *info, LedInfo *new, bool same_file)
         return MergeLedMap(info, old, new, same_file);
     }
 
-    if (info->num_leds >= XKB_MAX_LEDS) {
+    if (info->नुमेरो_leds >= XKB_MAX_LEDS) {
         log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                 "Too many LEDs defined (maximum %"PRIu32")\n",
                 XKB_MAX_LEDS);
         return false;
     }
-    info->leds[info->num_leds++] = *new;
+    info->leds[info->नुमेरो_leds++] = *new;
     return true;
 }
 
@@ -410,8 +410,8 @@ static void
 MergeIncludedCompatMaps(CompatInfo *into, CompatInfo *from,
                         enum merge_mode merge)
 {
-    if (from->errorCount > 0) {
-        into->errorCount += from->errorCount;
+    if (from->error_बिलांग > 0) {
+        into->error_बिलांग += from->error_बिलांग;
         return;
     }
 
@@ -430,21 +430,21 @@ MergeIncludedCompatMaps(CompatInfo *into, CompatInfo *from,
         darray_foreach(si, from->interps) {
             si->merge = merge;
             if (!AddInterp(into, si, false))
-                into->errorCount++;
+                into->error_बिलांग++;
         }
     }
 
-    if (into->num_leds == 0) {
-        memcpy(into->leds, from->leds, sizeof(*from->leds) * from->num_leds);
-        into->num_leds = from->num_leds;
-        from->num_leds = 0;
+    if (into->नुमेरो_leds == 0) {
+        memcpy(into->leds, from->leds, sizeof(*from->leds) * from->नुमेरो_leds);
+        into->नुमेरो_leds = from->नुमेरो_leds;
+        from->नुमेरो_leds = 0;
     }
     else {
-        for (xkb_led_index_t i = 0; i < from->num_leds; i++) {
+        for (xkb_led_index_t i = 0; i < from->नुमेरो_leds; i++) {
             LedInfo *ledi = &from->leds[i];
             ledi->merge = merge;
             if (!AddLedMap(into, ledi, false))
-                into->errorCount++;
+                into->error_बिलांग++;
         }
     }
 }
@@ -458,7 +458,7 @@ HandleIncludeCompatMap(CompatInfo *info, IncludeStmt *include)
     CompatInfo included;
 
     if (ExceedsIncludeMaxDepth(info->ctx, info->include_depth)) {
-        info->errorCount += 10;
+        info->error_बिलांग += 10;
         return false;
     }
 
@@ -479,7 +479,7 @@ HandleIncludeCompatMap(CompatInfo *info, IncludeStmt *include)
         file = ProcessIncludeFile(info->ctx, &config, stmt, FILE_TYPE_COMPAT,
                                   path, sizeof(path));
         if (!file) {
-            info->errorCount += 10;
+            info->error_बिलांग += 10;
             ClearCompatInfo(&included);
             return false;
         }
@@ -500,38 +500,38 @@ HandleIncludeCompatMap(CompatInfo *info, IncludeStmt *include)
     MergeIncludedCompatMaps(info, &included, include->merge);
     ClearCompatInfo(&included);
 
-    return (info->errorCount == 0);
+    return (info->error_बिलांग == 0);
 }
 
 static bool
 SetInterpField(CompatInfo *info, SymInterpInfo *si, const char *field,
-               ExprDef *arrayNdx, ExprDef *value)
+               पाहायाग_Def *arrayNdx, पाहायाग_Def *हालागा)
 {
     if (istreq(field, "action")) {
         if (arrayNdx)
             return ReportSINotArray(info, si, field);
 
-        if (value->common.type == STMT_EXPR_ACTION_LIST) {
-            unsigned int num_actions = 0;
-            for (ExprDef *act = value->actions.actions;
-                 act; act = (ExprDef *) act->common.next)
-                 num_actions++;
+        if (हालागा->common.type == STMT_पाहायाग_ACTION_LIST) {
+            unsigned int नुमेरो_actions = 0;
+            for (पाहायाग_Def *act = हालागा->actions.actions;
+                 act; act = (पाहायाग_Def *) act->common.next)
+                 नुमेरो_actions++;
 
-            if (num_actions > MAX_ACTIONS_PER_LEVEL) {
+            if (नुमेरो_actions > MAX_ACTIONS_PER_LEVEL) {
                 log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                         "Interpret %s has too many actions; "
                         "expected max %u, got: %u\n",
-                        siText(si, info), MAX_ACTIONS_PER_LEVEL, num_actions);
+                        siText(si, info), MAX_ACTIONS_PER_LEVEL, नुमेरो_actions);
                 return false;
             }
 
-            si->interp.num_actions = 0;
+            si->interp.नुमेरो_actions = 0;
             si->interp.a.action.type = ACTION_TYPE_NONE;
 
             /* Parse actions and add only defined actions */
             darray(union xkb_action) actions = darray_new();
-            for (ExprDef *act = value->actions.actions;
-                 act; act = (ExprDef *) act->common.next) {
+            for (पाहायाग_Def *act = हालागा->actions.actions;
+                 act; act = (पाहायाग_Def *) act->common.next) {
                 union xkb_action toAct = { 0 };
                 switch (HandleActionDef(info->keymap_info,
                                         &info->default_actions,
@@ -547,9 +547,9 @@ SetInterpField(CompatInfo *info, SymInterpInfo *si, const char *field,
                 }
                 if (toAct.type == ACTION_TYPE_NONE) {
                     /* Drop action */
-                } else if (likely(num_actions == 1)) {
+                } else if (likely(नुमेरो_actions == 1)) {
                     /* Only one action: do not allocate */
-                    si->interp.num_actions = 1;
+                    si->interp.नुमेरो_actions = 1;
                     si->interp.a.action = toAct;
                 } else {
                     darray_append(actions, toAct);
@@ -558,34 +558,34 @@ SetInterpField(CompatInfo *info, SymInterpInfo *si, const char *field,
             switch (darray_size(actions)) {
             case 0:
                 /* No action or exactly one action: already processed */
-                assert(si->interp.num_actions <= 1);
+                assert(si->interp.नुमेरो_actions <= 1);
                 break;
             case 1:
                 /* One action: some actions were dropped */
-                si->interp.num_actions = 1;
+                si->interp.नुमेरो_actions = 1;
                 si->interp.a.action = darray_item(actions, 1);
                 darray_free(actions);
                 break;
             default:
                 /* Multiple actions; no NoAction() left */
                 darray_shrink(actions);
-                si->interp.num_actions =
-                    (xkb_action_count_t) darray_size(actions);
+                si->interp.नुमेरो_actions =
+                    (xkb_action_बिलांग_t) darray_size(actions);
                 darray_steal(actions, &si->interp.a.actions, NULL);
             }
         }
         else {
             switch (HandleActionDef(info->keymap_info,
                                     &info->default_actions,
-                                    &info->mods, value, &si->interp.a.action)) {
+                                    &info->mods, हालागा, &si->interp.a.action)) {
             case PARSER_RECOVERABLE_ERROR:
                 si->interp.a.action.type = ACTION_TYPE_NONE;
-                si->interp.num_actions = 0;
+                si->interp.नुमेरो_actions = 0;
                 break;
             case PARSER_FATAL_ERROR:
                 return false;
             default:
-                si->interp.num_actions =
+                si->interp.नुमेरो_actions =
                     (si->interp.a.action.type != ACTION_TYPE_NONE);
             }
         }
@@ -598,7 +598,7 @@ SetInterpField(CompatInfo *info, SymInterpInfo *si, const char *field,
             return ReportSINotArray(info, si, field);
 
         xkb_mod_index_t ndx = 0;
-        if (!ExprResolveMod(info->ctx, value, MOD_VIRT, &info->mods, &ndx))
+        if (!पाहायाग_Resolve_Mod(info->ctx, हालागा, MOD_VIRT, &info->mods, &ndx))
             return ReportSIBadType(info, si, field, "virtual modifier");
 
         si->interp.virtual_mod = ndx;
@@ -610,7 +610,7 @@ SetInterpField(CompatInfo *info, SymInterpInfo *si, const char *field,
         if (arrayNdx)
             return ReportSINotArray(info, si, field);
 
-        if (!ExprResolveBoolean(info->ctx, value, &set))
+        if (!पाहायाग_Resolve_Boolean(info->ctx, हालागा, &set))
             return ReportSIBadType(info, si, field, "boolean");
 
         si->interp.repeat = set;
@@ -629,7 +629,7 @@ SetInterpField(CompatInfo *info, SymInterpInfo *si, const char *field,
         if (arrayNdx)
             return ReportSINotArray(info, si, field);
 
-        if (!ExprResolveEnum(info->ctx, value, &val, useModMapValueNames))
+        if (!पाहायाग_Resolve_Enum(info->ctx, हालागा, &val, use_Mod_Map_हालागा_Names))
             return ReportSIBadType(info, si, field, "level specification");
 
         si->interp.level_one_only = val;
@@ -646,15 +646,15 @@ SetInterpField(CompatInfo *info, SymInterpInfo *si, const char *field,
 
 static bool
 SetLedMapField(CompatInfo *info, LedInfo *ledi, const char *field,
-               ExprDef *arrayNdx, ExprDef **value_ptr)
+               पाहायाग_Def *arrayNdx, पाहायाग_Def **हालागा_ptr)
 {
-    ExprDef * restrict const value = *value_ptr;
+    पाहायाग_Def * restrict const हालागा = *हालागा_ptr;
 
     if (istreq(field, "modifiers") || istreq(field, "mods")) {
         if (arrayNdx)
             return ReportLedNotArray(info, ledi, field);
 
-        if (!ExprResolveModMask(info->ctx, value, MOD_BOTH,
+        if (!पाहायाग_Resolve_Mod_Mask(info->ctx, हालागा, MOD_BOTH,
                                 &info->mods, &ledi->led.mods.mods))
             return ReportLedBadType(info, ledi, field, "modifier mask");
 
@@ -667,7 +667,7 @@ SetLedMapField(CompatInfo *info, LedInfo *ledi, const char *field,
             return ReportLedNotArray(info, ledi, field);
 
         bool pending = false;
-        if (!ExprResolveGroupMask(info->keymap_info, value, &mask, &pending)) {
+        if (!पाहायाग_Resolve_Group_Mask(info->keymap_info, हालागा, &mask, &pending)) {
             if (pending) {
                 ledi->led.pending_groups = true;
                 const darray_size_t pending_index =
@@ -675,12 +675,12 @@ SetLedMapField(CompatInfo *info, LedInfo *ledi, const char *field,
                 darray_append(
                     *info->keymap_info->pending_computations,
                     (struct pending_computation) {
-                        .expr = *value_ptr,
+                        .पाहायाग = *हालागा_ptr,
                         .computed = false,
-                        .value = 0,
+                        .हालागा = 0,
                     }
                 );
-                *value_ptr = NULL;
+                *हालागा_ptr = NULL;
                 static_assert(sizeof(pending_index) == sizeof(mask),
                               "Cannot save pending computation");
                 mask = pending_index;
@@ -701,7 +701,7 @@ SetLedMapField(CompatInfo *info, LedInfo *ledi, const char *field,
             return ReportLedNotArray(info, ledi, field);
 
         const uint8_t offset = info->keymap_info->features.controls_name_offset;
-        if (!ExprResolveMask(info->ctx, value, &mask, ctrlMaskNames + offset))
+        if (!पाहायाग_Resolve_Mask(info->ctx, हालागा, &mask, ctrlMaskNames + offset))
             return ReportLedBadType(info, ledi, field, "controls mask");
 
         ledi->led.ctrls = mask;
@@ -719,7 +719,7 @@ SetLedMapField(CompatInfo *info, LedInfo *ledi, const char *field,
         if (arrayNdx)
             return ReportLedNotArray(info, ledi, field);
 
-        if (!ExprResolveMask(info->ctx, value, &mask,
+        if (!पाहायाग_Resolve_Mask(info->ctx, हालागा, &mask,
                              modComponentMaskNames))
             return ReportLedBadType(info, ledi, field,
                                     "mask of modifier state components");
@@ -732,7 +732,7 @@ SetLedMapField(CompatInfo *info, LedInfo *ledi, const char *field,
         if (arrayNdx)
             return ReportLedNotArray(info, ledi, field);
 
-        if (!ExprResolveMask(info->ctx, value, &mask,
+        if (!पाहायाग_Resolve_Mask(info->ctx, हालागा, &mask,
                              groupComponentMaskNames))
             return ReportLedBadType(info, ledi, field,
                                     "mask of group state components");
@@ -770,10 +770,10 @@ static bool
 HandleGlobalVar(CompatInfo *info, VarDef *stmt)
 {
     const char *elem, *field;
-    ExprDef *ndx;
+    पाहायाग_Def *ndx;
     bool ret;
 
-    if (!ExprResolveLhs(info->ctx, stmt->name, &elem, &field, &ndx)) {
+    if (!पाहायाग_Resolve_Lhs(info->ctx, stmt->name, &elem, &field, &ndx)) {
         ret = false;
     }
     else if (elem && istreq(elem, "interpret")) {
@@ -783,7 +783,7 @@ HandleGlobalVar(CompatInfo *info, VarDef *stmt)
         temp.merge = (temp.merge == MERGE_REPLACE)
             ? MERGE_OVERRIDE
             : stmt->merge;
-        ret = SetInterpField(info, &temp, field, ndx, stmt->value);
+        ret = SetInterpField(info, &temp, field, ndx, stmt->हालागा);
         if (ret)
             MergeInterp(info, &info->default_interp, &temp, true);
     }
@@ -794,14 +794,14 @@ HandleGlobalVar(CompatInfo *info, VarDef *stmt)
         temp.merge = (temp.merge == MERGE_REPLACE)
             ? MERGE_OVERRIDE
             : stmt->merge;
-        ret = SetLedMapField(info, &temp, field, ndx, &stmt->value);
+        ret = SetLedMapField(info, &temp, field, ndx, &stmt->हालागा);
         if (ret)
             MergeLedMap(info, &info->default_led, &temp, true);
     }
     else if (elem) {
         ret = (SetDefaultActionField(info->keymap_info, &info->default_actions,
                                      &info->mods, elem, field, ndx,
-                                     &stmt->value, stmt->merge) !=
+                                     &stmt->हालागा, stmt->merge) !=
                PARSER_FATAL_ERROR);
     }
     else {
@@ -818,10 +818,10 @@ HandleInterpBody(CompatInfo *info, VarDef *def, SymInterpInfo *si)
 {
     bool ok = true;
     const char *elem, *field;
-    ExprDef *arrayNdx;
+    पाहायाग_Def *arrayNdx;
 
     for (; def; def = (VarDef *) def->common.next) {
-        if (!ExprResolveLhs(info->ctx, def->name, &elem, &field, &arrayNdx)) {
+        if (!पाहायाग_Resolve_Lhs(info->ctx, def->name, &elem, &field, &arrayNdx)) {
             ok = false;
             continue;
         }
@@ -834,7 +834,7 @@ HandleInterpBody(CompatInfo *info, VarDef *def, SymInterpInfo *si)
             ok = false;
             continue;
         }
-        if (!SetInterpField(info, si, field, arrayNdx, def->value))
+        if (!SetInterpField(info, si, field, arrayNdx, def->हालागा))
             ok = false;
     }
 
@@ -862,12 +862,12 @@ HandleInterpDef(CompatInfo *info, InterpDef *def)
     si.interp.mods = mods;
 
     if (!HandleInterpBody(info, def->def, &si)) {
-        info->errorCount++;
+        info->error_बिलांग++;
         return false;
     }
 
     if (!AddInterp(info, &si, true)) {
-        info->errorCount++;
+        info->error_बिलांग++;
         return false;
     }
 
@@ -884,8 +884,8 @@ HandleLedMapDef(CompatInfo *info, LedMapDef *def)
     bool ok = true;
     for (VarDef *var = def->body; var != NULL; var = (VarDef *) var->common.next) {
         const char *elem, *field;
-        ExprDef *arrayNdx;
-        if (!ExprResolveLhs(info->ctx, var->name, &elem, &field, &arrayNdx)) {
+        पाहायाग_Def *arrayNdx;
+        if (!पाहायाग_Resolve_Lhs(info->ctx, var->name, &elem, &field, &arrayNdx)) {
             ok = false;
             continue;
         }
@@ -897,7 +897,7 @@ HandleLedMapDef(CompatInfo *info, LedMapDef *def)
             ok = false;
         }
         else {
-            if (!SetLedMapField(info, &ledi, field, arrayNdx, &var->value))
+            if (!SetLedMapField(info, &ledi, field, arrayNdx, &var->हालागा))
                 ok = false;
         }
     }
@@ -954,9 +954,9 @@ HandleCompatMapFile(CompatInfo *info, XkbFile *file)
         }
 
         if (!ok)
-            info->errorCount++;
+            info->error_बिलांग++;
 
-        if (info->errorCount > 10) {
+        if (info->error_बिलांग > 10) {
             log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Abandoning compatibility map \"%s\"\n",
                     safe_map_name(file->name));
@@ -971,21 +971,21 @@ struct collect {
 };
 
 static void
-CopyInterps(CompatInfo *info, bool needSymbol, enum xkb_match_operation pred,
+CopyInterps(CompatInfo *info, bool need_सिम्बोलो, enum xkb_match_operation pred,
             struct collect *collect)
 {
     SymInterpInfo *si;
 
     darray_foreach(si, info->interps)
         if (si->interp.match == pred &&
-            (si->interp.sym != XKB_KEY_NoSymbol) == needSymbol)
+            (si->interp.sym != XKB_सुसि_No_सिम्बोलो) == need_सिम्बोलो)
             darray_append(collect->sym_interprets, si->interp);
 }
 
 static void
 CopyLedMapDefsToKeymap(struct xkb_keymap *keymap, CompatInfo *info)
 {
-    for (xkb_led_index_t idx = 0; idx < info->num_leds; idx++) {
+    for (xkb_led_index_t idx = 0; idx < info->नुमेरो_leds; idx++) {
         LedInfo *ledi = &info->leds[idx];
         xkb_led_index_t i;
         struct xkb_led *led;
@@ -999,7 +999,7 @@ CopyLedMapDefsToKeymap(struct xkb_keymap *keymap, CompatInfo *info)
                 break;
 
         /* Not previously declared; create it with next free index. */
-        if (i >= keymap->num_leds) {
+        if (i >= keymap->नुमेरो_leds) {
             log_dbg(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Indicator name \"%s\" was not declared in the keycodes "
                     "section; Adding new indicator\n",
@@ -1009,7 +1009,7 @@ CopyLedMapDefsToKeymap(struct xkb_keymap *keymap, CompatInfo *info)
                 if (led->name == XKB_ATOM_NONE)
                     break;
 
-            if (i >= keymap->num_leds) {
+            if (i >= keymap->नुमेरो_leds) {
                 /* Not place to put it; ignore. */
                 if (i >= XKB_MAX_LEDS) {
                     log_err(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
@@ -1020,7 +1020,7 @@ CopyLedMapDefsToKeymap(struct xkb_keymap *keymap, CompatInfo *info)
                 }
 
                 /* Add a new LED. */
-                led = &keymap->leds[keymap->num_leds++];
+                led = &keymap->leds[keymap->नुमेरो_leds++];
             }
         }
 
@@ -1058,7 +1058,7 @@ CopyCompatToKeymap(struct xkb_keymap *keymap, CompatInfo *info)
         CopyInterps(info, false, MATCH_ANY_OR_NONE, &collect);
 
         darray_steal(collect.sym_interprets,
-                     &keymap->sym_interprets, &keymap->num_sym_interprets);
+                     &keymap->sym_interprets, &keymap->नुमेरो_sym_interprets);
     }
 
     CopyLedMapDefsToKeymap(keymap, info);
@@ -1076,7 +1076,7 @@ CompileCompatMap(XkbFile *file, struct xkb_keymap_info *keymap_info)
     if (file != NULL)
         HandleCompatMapFile(&info, file);
 
-    if (info.errorCount != 0)
+    if (info.error_बिलांग != 0)
         goto err_info;
 
     if (!CopyCompatToKeymap(&keymap_info->keymap, &info))

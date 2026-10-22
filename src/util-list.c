@@ -21,7 +21,7 @@ list_init(struct list *list)
 }
 
 void
-list_insert(struct list *list, struct list *elm)
+list_इसिंगित(struct list *list, struct list *elm)
 {
 	assert((list->next != NULL && list->prev != NULL) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");

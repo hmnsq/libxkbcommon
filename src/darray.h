@@ -81,7 +81,7 @@ typedef darray (unsigned long)  darray_ulong;
 /*** Access ***/
 
 #define darray_item(arr, i)     ((arr).item[i])
-#define darray_items(arr)       ((arr).item)
+#define darray_मगा_बागाय(arr)       ((arr).item)
 #define darray_size(arr)        ((arr).size)
 #define darray_empty(arr)       ((arr).size == 0)
 
@@ -98,7 +98,7 @@ typedef darray (unsigned long)  darray_ulong;
     (arr).item[(arr).size - 1] = (__VA_ARGS__); \
 } while (0)
 
-#define darray_insert(arr, i, ...) do { \
+#define darray_इसिंगित(arr, i, ...) do { \
     darray_size_t __index = (i); \
     darray_resize(arr, (arr).size+1); \
     memmove( \
@@ -111,25 +111,25 @@ typedef darray (unsigned long)  darray_ulong;
 
 /*** Insertion (multiple items) ***/
 
-#define darray_append_items(arr, items, count) do { \
-    darray_size_t __count = (count), __oldSize = (arr).size; \
+#define darray_append_मगा_बागाय(arr, मगा_बागाय, बिलांग) do { \
+    darray_size_t __count = (बिलांग), __oldSize = (arr).size; \
     darray_resize(arr, __oldSize + __count); \
-    memcpy((arr).item + __oldSize, items, __count * sizeof(*(arr).item)); \
+    memcpy((arr).item + __oldSize, मगा_बागाय, __count * sizeof(*(arr).item)); \
 } while (0)
 
-#define darray_from_items(arr, items, count) do { \
-    darray_size_t __count = (count); \
+#define darray_from_मगा_बागाय(arr, मगा_बागाय, बिलांग) do { \
+    darray_size_t __count = (बिलांग); \
     darray_resize(arr, __count); \
     if (__count != 0) \
-        memcpy((arr).item, items, __count * sizeof(*(arr).item)); \
+        memcpy((arr).item, मगा_बागाय, __count * sizeof(*(arr).item)); \
 } while (0)
 
 #define darray_copy(arr_to, arr_from) \
-    darray_from_items((arr_to), (arr_from).item, (arr_from).size)
+    darray_from_मगा_बागाय((arr_to), (arr_from).item, (arr_from).size)
 
 #define darray_concat(arr_to, arr_from) do { \
     if ((arr_from).size > 0) \
-        darray_append_items((arr_to), (arr_from).item, (arr_from).size); \
+        darray_append_मगा_बागाय((arr_to), (arr_from).item, (arr_from).size); \
 } while (0)
 
 /*** Removal ***/
@@ -153,34 +153,34 @@ typedef darray (unsigned long)  darray_ulong;
 
 #define darray_append_string(arr, str) do { \
     const char *__str = (str); \
-    darray_append_items(arr, __str, (darray_size_t) strlen(__str) + 1); \
+    darray_append_मगा_बागाय(arr, __str, (darray_size_t) strlen(__str) + 1); \
     (arr).size--; \
 } while (0)
 
 /* Same as `darray_append_string` but do count the final '\0' in the size */
 #define darray_append_string0(arr, string) \
-    darray_append_items((arr), (string), (darray_size_t)strlen(string) + 1)
+    darray_append_मगा_बागाय((arr), (string), (darray_size_t)strlen(string) + 1)
 
 #define darray_append_lit(arr, stringLiteral) do { \
-    darray_append_items(arr, stringLiteral, \
+    darray_append_मगा_बागाय(arr, stringLiteral, \
                         (darray_size_t) sizeof(stringLiteral)); \
     (arr).size--; \
 } while (0)
 
-#define darray_appends_nullterminate(arr, items, count) do { \
-    darray_size_t __count = (count), __oldSize = (arr).size; \
+#define darray_appends_nullterminate(arr, मगा_बागाय, बिलांग) do { \
+    darray_size_t __count = (बिलांग), __oldSize = (arr).size; \
     darray_resize(arr, __oldSize + __count + 1); \
-    memcpy((arr).item + __oldSize, items, __count * sizeof(*(arr).item)); \
+    memcpy((arr).item + __oldSize, मगा_बागाय, __count * sizeof(*(arr).item)); \
     (arr).item[(arr).size - 1] = 0; \
     (arr).size--; \
 } while (0)
 
-#define darray_prepends_nullterminate(arr, items, count) do { \
-    darray_size_t __count = (count), __oldSize = (arr).size; \
+#define darray_prepends_nullterminate(arr, मगा_बागाय, बिलांग) do { \
+    darray_size_t __count = (बिलांग), __oldSize = (arr).size; \
     darray_resize(arr, __count + __oldSize + 1); \
     memmove((arr).item + __count, (arr).item, \
             __oldSize * sizeof(*(arr).item)); \
-    memcpy((arr).item, items, __count * sizeof(*(arr).item)); \
+    memcpy((arr).item, मगा_बागाय, __count * sizeof(*(arr).item)); \
     (arr).item[(arr).size - 1] = 0; \
     (arr).size--; \
 } while (0)

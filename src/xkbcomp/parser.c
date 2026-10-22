@@ -98,8 +98,8 @@ struct parser_param {
     bool more_maps;
 };
 
-#define parser_log_with_code(param, level, verbosity, log_msg_id, fmt, ...)   \
-    scanner_log_with_code((param)->scanner, level, verbosity, log_msg_id, fmt,\
+#define parser_log_with_code(param, level, verbosity, log_मेनसाहे_id, fmt, ...)   \
+    scanner_log_with_code((param)->scanner, level, verbosity, log_मेनसाहे_id, fmt,\
                           ##__VA_ARGS__)
 
 #define parser_err(param, error_id, fmt, ...) \
@@ -112,9 +112,9 @@ struct parser_param {
     scanner_vrb((param)->scanner, verbosity, warning_id, fmt, ##__VA_ARGS__)
 
 static void
-_xkbcommon_error(struct parser_param *param, const char *msg)
+_xkbcommon_error(struct parser_param *param, const char *मेनसाहे)
 {
-    parser_err(param, XKB_ERROR_INVALID_XKB_SYNTAX, "%s", msg);
+    parser_err(param, XKB_ERROR_INVALID_XKB_SYNTAX, "%s", मेनसाहे);
 }
 
 static bool
@@ -123,12 +123,12 @@ resolve_keysym(struct parser_param *param, struct sval name, xkb_keysym_t *sym_r
     xkb_keysym_t sym;
 
     if (isvaleq(name, SVAL_LIT("any")) || isvaleq(name, SVAL_LIT("nosymbol"))) {
-        *sym_rtrn = XKB_KEY_NoSymbol;
+        *sym_rtrn = XKB_सुसि_No_सिम्बोलो;
         return true;
     }
 
     if (isvaleq(name, SVAL_LIT("none")) || isvaleq(name, SVAL_LIT("voidsymbol"))) {
-        *sym_rtrn = XKB_KEY_VoidSymbol;
+        *sym_rtrn = XKB_सुसि_Void_सिम्बोलो;
         return true;
     }
 
@@ -141,7 +141,7 @@ resolve_keysym(struct parser_param *param, struct sval name, xkb_keysym_t *sym_r
     buf[name.len] = '\0';
 
     sym = xkb_keysym_from_name(buf, XKB_KEYSYM_NO_FLAGS);
-    if (sym != XKB_KEY_NoSymbol) {
+    if (sym != XKB_सुसि_No_सिम्बोलो) {
         *sym_rtrn = sym;
         check_deprecated_keysyms(parser_warn, param, param->ctx,
                                  sym, buf, buf, "%s", "");
@@ -202,13 +202,13 @@ enum yysymbol_kind_t
   YYSYMBOL_TYPE = 18,                      /* "type"  */
   YYSYMBOL_INTERPRET = 19,                 /* "interpret"  */
   YYSYMBOL_ACTION_TOK = 20,                /* "action"  */
-  YYSYMBOL_KEY = 21,                       /* "key"  */
+  YYSYMBOL_सुसि = 21,                       /* "key"  */
   YYSYMBOL_ALIAS = 22,                     /* "alias"  */
   YYSYMBOL_GROUP = 23,                     /* "group"  */
   YYSYMBOL_MODIFIER_MAP = 24,              /* "modifier_map"  */
   YYSYMBOL_INDICATOR = 25,                 /* "indicator"  */
   YYSYMBOL_SHAPE = 26,                     /* "shape"  */
-  YYSYMBOL_KEYS = 27,                      /* "keys"  */
+  YYSYMBOL_मगा_सुसि = 27,                      /* "keys"  */
   YYSYMBOL_ROW = 28,                       /* "row"  */
   YYSYMBOL_SECTION = 29,                   /* "section"  */
   YYSYMBOL_OVERLAY = 30,                   /* "overlay"  */
@@ -242,10 +242,10 @@ enum yysymbol_kind_t
   YYSYMBOL_PARTIAL = 58,                   /* "partial"  */
   YYSYMBOL_DEFAULT = 59,                   /* "default"  */
   YYSYMBOL_HIDDEN = 60,                    /* "hidden"  */
-  YYSYMBOL_ALPHANUMERIC_KEYS = 61,         /* "alphanumeric_keys"  */
-  YYSYMBOL_MODIFIER_KEYS = 62,             /* "modifier_keys"  */
-  YYSYMBOL_KEYPAD_KEYS = 63,               /* "keypad_keys"  */
-  YYSYMBOL_FUNCTION_KEYS = 64,             /* "function_keys"  */
+  YYSYMBOL_ALPHANUMERIC_मगा_सुसि = 61,         /* "alphanumeric_keys"  */
+  YYSYMBOL_MODIFIER_मगा_सुसि = 62,             /* "modifier_keys"  */
+  YYSYMBOL_KEYPAD_मगा_सुसि = 63,               /* "keypad_keys"  */
+  YYSYMBOL_FUNCTION_मगा_सुसि = 64,             /* "function_keys"  */
   YYSYMBOL_ALTERNATE_GROUP = 65,           /* "alternate_group"  */
   YYSYMBOL_DEPRECATED = 66,                /* "deprecated"  */
   YYSYMBOL_YYACCEPT = 67,                  /* $accept  */
@@ -261,25 +261,25 @@ enum yysymbol_kind_t
   YYSYMBOL_DeclList = 77,                  /* DeclList  */
   YYSYMBOL_Decl = 78,                      /* Decl  */
   YYSYMBOL_VarDecl = 79,                   /* VarDecl  */
-  YYSYMBOL_KeyNameDecl = 80,               /* KeyNameDecl  */
-  YYSYMBOL_KeyAliasDecl = 81,              /* KeyAliasDecl  */
+  YYSYMBOL_सुसि_Name_Decl = 80,               /* KeyNameDecl  */
+  YYSYMBOL_सुसि_Alias_Decl = 81,              /* KeyAliasDecl  */
   YYSYMBOL_VModDecl = 82,                  /* VModDecl  */
   YYSYMBOL_VModDefList = 83,               /* VModDefList  */
   YYSYMBOL_VModDef = 84,                   /* VModDef  */
   YYSYMBOL_InterpretDecl = 85,             /* InterpretDecl  */
   YYSYMBOL_InterpretMatch = 86,            /* InterpretMatch  */
   YYSYMBOL_VarDeclList = 87,               /* VarDeclList  */
-  YYSYMBOL_KeyTypeDecl = 88,               /* KeyTypeDecl  */
+  YYSYMBOL_सुसि_Type_Decl = 88,               /* KeyTypeDecl  */
   YYSYMBOL_SymbolsDecl = 89,               /* SymbolsDecl  */
   YYSYMBOL_OptSymbolsBody = 90,            /* OptSymbolsBody  */
   YYSYMBOL_SymbolsBody = 91,               /* SymbolsBody  */
   YYSYMBOL_SymbolsVarDecl = 92,            /* SymbolsVarDecl  */
-  YYSYMBOL_MultiKeySymOrActionList = 93,   /* MultiKeySymOrActionList  */
-  YYSYMBOL_NoSymbolOrActionList = 94,      /* NoSymbolOrActionList  */
+  YYSYMBOL_Multi_सुसि_Sym_Or_Action_List = 93,   /* MultiKeySymOrActionList  */
+  YYSYMBOL_No_सिम्बोलो_Or_Action_List = 94,      /* NoSymbolOrActionList  */
   YYSYMBOL_GroupCompatDecl = 95,           /* GroupCompatDecl  */
   YYSYMBOL_ModMapDecl = 96,                /* ModMapDecl  */
-  YYSYMBOL_KeyOrKeySymList = 97,           /* KeyOrKeySymList  */
-  YYSYMBOL_KeyOrKeySym = 98,               /* KeyOrKeySym  */
+  YYSYMBOL_सुसि_Or_सुसि_Sym_List = 97,           /* KeyOrKeySymList  */
+  YYSYMBOL_सुसि_Or_सुसि_Sym = 98,               /* KeyOrKeySym  */
   YYSYMBOL_LedMapDecl = 99,                /* LedMapDecl  */
   YYSYMBOL_LedNameDecl = 100,              /* LedNameDecl  */
   YYSYMBOL_UnknownDecl = 101,              /* UnknownDecl  */
@@ -290,11 +290,11 @@ enum yysymbol_kind_t
   YYSYMBOL_SectionBodyItem = 106,          /* SectionBodyItem  */
   YYSYMBOL_RowBody = 107,                  /* RowBody  */
   YYSYMBOL_RowBodyItem = 108,              /* RowBodyItem  */
-  YYSYMBOL_Keys = 109,                     /* Keys  */
-  YYSYMBOL_Key = 110,                      /* Key  */
+  YYSYMBOL_मगा_सुसि_2 = 109,                     /*मगा_सुसि*/
+  YYSYMBOL_सुसि_2 = 110,                      /*सुसि*/
   YYSYMBOL_OverlayDecl = 111,              /* OverlayDecl  */
-  YYSYMBOL_OverlayKeyList = 112,           /* OverlayKeyList  */
-  YYSYMBOL_OverlayKey = 113,               /* OverlayKey  */
+  YYSYMBOL_Overlay_सुसि_List = 112,           /* OverlayKeyList  */
+  YYSYMBOL_Overlay_सुसि = 113,               /* OverlayKey  */
   YYSYMBOL_OutlineList = 114,              /* OutlineList  */
   YYSYMBOL_OutlineInList = 115,            /* OutlineInList  */
   YYSYMBOL_CoordList = 116,                /* CoordList  */
@@ -305,8 +305,8 @@ enum yysymbol_kind_t
   YYSYMBOL_Element = 121,                  /* Element  */
   YYSYMBOL_OptMergeMode = 122,             /* OptMergeMode  */
   YYSYMBOL_MergeMode = 123,                /* MergeMode  */
-  YYSYMBOL_ExprList = 124,                 /* ExprList  */
-  YYSYMBOL_Expr = 125,                     /* Expr  */
+  YYSYMBOL_पाहायाग_List = 124,                 /* ExprList  */
+  YYSYMBOL_पाहायाग = 125,                     /*पाहायाग*/
   YYSYMBOL_Term = 126,                     /* Term  */
   YYSYMBOL_MultiActionList = 127,          /* MultiActionList  */
   YYSYMBOL_ActionList = 128,               /* ActionList  */
@@ -316,17 +316,17 @@ enum yysymbol_kind_t
   YYSYMBOL_Lhs = 132,                      /* Lhs  */
   YYSYMBOL_OptTerminal = 133,              /* OptTerminal  */
   YYSYMBOL_Terminal = 134,                 /* Terminal  */
-  YYSYMBOL_MultiKeySymList = 135,          /* MultiKeySymList  */
-  YYSYMBOL_KeySymList = 136,               /* KeySymList  */
-  YYSYMBOL_NonEmptyKeySyms = 137,          /* NonEmptyKeySyms  */
-  YYSYMBOL_KeySyms = 138,                  /* KeySyms  */
-  YYSYMBOL_KeySym = 139,                   /* KeySym  */
-  YYSYMBOL_KeySymLit = 140,                /* KeySymLit  */
-  YYSYMBOL_SignedNumber = 141,             /* SignedNumber  */
-  YYSYMBOL_Number = 142,                   /* Number  */
+  YYSYMBOL_Multi_सुसि_Sym_List = 135,          /* MultiKeySymList  */
+  YYSYMBOL_सुसि_Sym_List = 136,               /* KeySymList  */
+  YYSYMBOL_Non_Empty_सुसि_Syms = 137,          /* NonEmptyKeySyms  */
+  YYSYMBOL_सुसि_Syms = 138,                  /* KeySyms  */
+  YYSYMBOL_सुसि_Sym = 139,                   /* KeySym  */
+  YYSYMBOL_सुसि_Sym_Lit = 140,                /* KeySymLit  */
+  YYSYMBOL_Signed_नुमेरो = 141,             /* SignedNumber  */
+  YYSYMBOL_नुमेरो = 142,                   /*नुमेरो*/
   YYSYMBOL_Float = 143,                    /* Float  */
   YYSYMBOL_Integer = 144,                  /* Integer  */
-  YYSYMBOL_KeyCode = 145,                  /* KeyCode  */
+  YYSYMBOL_सुसि_Code = 145,                  /* KeyCode  */
   YYSYMBOL_Ident = 146,                    /* Ident  */
   YYSYMBOL_String = 147,                   /* String  */
   YYSYMBOL_OptMapName = 148,               /* OptMapName  */
@@ -503,14 +503,14 @@ typedef int yy_state_fast_t;
 # define YY_IGNORE_MAYBE_UNINITIALIZED_END      \
     _Pragma ("GCC diagnostic pop")
 #else
-# define YY_INITIAL_VALUE(Value) Value
+# define YY_INITIAL_हालागा(हालागा_2) हालागा_2
 #endif
 #ifndef YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
 # define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
 # define YY_IGNORE_MAYBE_UNINITIALIZED_END
 #endif
-#ifndef YY_INITIAL_VALUE
-# define YY_INITIAL_VALUE(Value) /* Nothing. */
+#ifndef YY_INITIAL_हालागा
+# define YY_INITIAL_हालागा(हालागा_2) /* Nothing. */
 #endif
 
 #if defined __cplusplus && defined __GNUC__ && ! defined __ICC && 6 <= __GNUC__
@@ -622,13 +622,13 @@ union yyalloc
    elements in the stack, and YYPTR gives the new location of the
    stack.  Advance YYPTR to a properly aligned location for the next
    stack.  */
-# define YYSTACK_RELOCATE(Stack_alloc, Stack)                           \
+# define YYSTACK_RELOCATE(सालानसान_alloc, सालानसान_2)                           \
     do                                                                  \
       {                                                                 \
         YYPTRDIFF_T yynewbytes;                                         \
-        YYCOPY (&yyptr->Stack_alloc, Stack, yysize);                    \
-        Stack = &yyptr->Stack_alloc;                                    \
-        yynewbytes = yystacksize * YYSIZEOF (*Stack) + YYSTACK_GAP_MAXIMUM; \
+        YYCOPY (&yyptr->सालानसान_alloc, सालानसान_2, yysize);                    \
+        सालानसान_2 = &yyptr->सालानसान_alloc;                                    \
+        yynewbytes = yystacksize * YYSIZEOF (*सालानसान_2) + YYSTACK_GAP_MAXIMUM; \
         yyptr += yynewbytes / YYSIZEOF (*yyptr);                        \
       }                                                                 \
     while (0)
@@ -640,14 +640,14 @@ union yyalloc
    not overlap.  */
 # ifndef YYCOPY
 #  if defined __GNUC__ && 1 < __GNUC__
-#   define YYCOPY(Dst, Src, Count) \
-      __builtin_memcpy (Dst, Src, YY_CAST (YYSIZE_T, (Count)) * sizeof (*(Src)))
+#   define YYCOPY(Dst, Src, बिलांग_2) \
+      __builtin_memcpy (Dst, Src, YY_CAST (YYSIZE_T, (बिलांग_2)) * sizeof (*(Src)))
 #  else
-#   define YYCOPY(Dst, Src, Count)              \
+#   define YYCOPY(Dst, Src, बिलांग_2)              \
       do                                        \
         {                                       \
           YYPTRDIFF_T yyi;                      \
-          for (yyi = 0; yyi < (Count); yyi++)   \
+          for (yyi = 0; yyi < (बिलांग_2); yyi++)   \
             (Dst)[yyi] = (Src)[yyi];            \
         }                                       \
       while (0)
@@ -743,7 +743,7 @@ static const yytype_int16 yyrline[] =
 #endif
 
 /** Accessing symbol of state STATE.  */
-#define YY_ACCESSING_SYMBOL(State) YY_CAST (yysymbol_kind_t, yystos[State])
+#define YY_ACCESSING_सिम्बोलो(State) YY_CAST (yysymbol_kind_t, yystos[State])
 
 #if 1
 /* The user-facing name of the symbol whose (internal) number is
@@ -791,12 +791,12 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 
 #define YYPACT_NINF (-225)
 
-#define yypact_value_is_default(Yyn) \
+#define yypact_हालागा_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
 
 #define YYTABLE_NINF (-217)
 
-#define yytable_value_is_error(Yyn) \
+#define yytable_हालागा_is_error(Yyn) \
   0
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
@@ -1234,12 +1234,12 @@ enum { YYENOMEM = -2 };
 
 #define YYRECOVERING()  (!!yyerrstatus)
 
-#define YYBACKUP(Token, Value)                                    \
+#define YYBACKUP(Token, हालागा_2)                                    \
   do                                                              \
     if (yychar == YYEMPTY)                                        \
       {                                                           \
         yychar = (Token);                                         \
-        yylval = (Value);                                         \
+        yylval = (हालागा_2);                                         \
         YYPOPSTACK (yylen);                                       \
         yystate = *yyssp;                                         \
         goto yybackup;                                            \
@@ -1264,22 +1264,22 @@ enum { YYENOMEM = -2 };
 #  define YYFPRINTF fprintf
 # endif
 
-# define YYDPRINTF(Args)                        \
+# define YYDPRINTF(मगा_कातविरान_2)                        \
 do {                                            \
   if (yydebug)                                  \
-    YYFPRINTF Args;                             \
+    YYFPRINTF मगा_कातविरान_2;                             \
 } while (0)
 
 
 
 
-# define YY_SYMBOL_PRINT(Title, Kind, Value, Location)                    \
+# define YY_सिम्बोलो_इलिम्बाग(Title, Kind, हालागा_2, Location)                    \
 do {                                                                      \
   if (yydebug)                                                            \
     {                                                                     \
       YYFPRINTF (stderr, "%s ", Title);                                   \
-      yy_symbol_print (stderr,                                            \
-                  Kind, Value, param); \
+      yy_सिम्बोलो_इलिम्बाग (stderr,                                            \
+                  Kind, हालागा_2, param); \
       YYFPRINTF (stderr, "\n");                                           \
     }                                                                     \
 } while (0)
@@ -1290,7 +1290,7 @@ do {                                                                      \
 `-----------------------------------*/
 
 static void
-yy_symbol_value_print (FILE *yyo,
+yy_सिम्बोलो_हालागा_इलिम्बाग (FILE *yyo,
                        yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep, struct parser_param *param)
 {
   FILE *yyoutput = yyo;
@@ -1309,13 +1309,13 @@ yy_symbol_value_print (FILE *yyo,
 `---------------------------*/
 
 static void
-yy_symbol_print (FILE *yyo,
+yy_सिम्बोलो_इलिम्बाग (FILE *yyo,
                  yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep, struct parser_param *param)
 {
   YYFPRINTF (yyo, "%s %s (",
              yykind < YYNTOKENS ? "token" : "nterm", yysymbol_name (yykind));
 
-  yy_symbol_value_print (yyo, yykind, yyvaluep, param);
+  yy_सिम्बोलो_हालागा_इलिम्बाग (yyo, yykind, yyvaluep, param);
   YYFPRINTF (yyo, ")");
 }
 
@@ -1325,7 +1325,7 @@ yy_symbol_print (FILE *yyo,
 `------------------------------------------------------------------*/
 
 static void
-yy_stack_print (yy_state_t *yybottom, yy_state_t *yytop)
+yy_सालानसान_इलिम्बाग (yy_state_t *yybottom, yy_state_t *yytop)
 {
   YYFPRINTF (stderr, "Stack now");
   for (; yybottom <= yytop; yybottom++)
@@ -1336,10 +1336,10 @@ yy_stack_print (yy_state_t *yybottom, yy_state_t *yytop)
   YYFPRINTF (stderr, "\n");
 }
 
-# define YY_STACK_PRINT(Bottom, Top)                            \
+# define YY_सालानसान_इलिम्बाग(Bottom, इताअस)                            \
 do {                                                            \
   if (yydebug)                                                  \
-    yy_stack_print ((Bottom), (Top));                           \
+    yy_सालानसान_इलिम्बाग ((Bottom), (इताअस));                           \
 } while (0)
 
 
@@ -1348,7 +1348,7 @@ do {                                                            \
 `------------------------------------------------*/
 
 static void
-yy_reduce_print (yy_state_t *yyssp, YYSTYPE *yyvsp,
+yy_reduce_इलिम्बाग (yy_state_t *yyssp, YYSTYPE *yyvsp,
                  int yyrule, struct parser_param *param)
 {
   int yylno = yyrline[yyrule];
@@ -1360,27 +1360,27 @@ yy_reduce_print (yy_state_t *yyssp, YYSTYPE *yyvsp,
   for (yyi = 0; yyi < yynrhs; yyi++)
     {
       YYFPRINTF (stderr, "   $%d = ", yyi + 1);
-      yy_symbol_print (stderr,
-                       YY_ACCESSING_SYMBOL (+yyssp[yyi + 1 - yynrhs]),
+      yy_सिम्बोलो_इलिम्बाग (stderr,
+                       YY_ACCESSING_सिम्बोलो (+yyssp[yyi + 1 - yynrhs]),
                        &yyvsp[(yyi + 1) - (yynrhs)], param);
       YYFPRINTF (stderr, "\n");
     }
 }
 
-# define YY_REDUCE_PRINT(Rule)          \
+# define YY_REDUCE_इलिम्बाग(Rule)          \
 do {                                    \
   if (yydebug)                          \
-    yy_reduce_print (yyssp, yyvsp, Rule, param); \
+    yy_reduce_इलिम्बाग (yyssp, yyvsp, Rule, param); \
 } while (0)
 
 /* Nonzero means print parse trace.  It is left uninitialized so that
    multiple parsers can coexist.  */
 int yydebug;
 #else /* !YYDEBUG */
-# define YYDPRINTF(Args) ((void) 0)
-# define YY_SYMBOL_PRINT(Title, Kind, Value, Location)
-# define YY_STACK_PRINT(Bottom, Top)
-# define YY_REDUCE_PRINT(Rule)
+# define YYDPRINTF(मगा_कातविरान_2) ((void) 0)
+# define YY_सिम्बोलो_इलिम्बाग(Title, Kind, हालागा_2, Location)
+# define YY_सालानसान_इलिम्बाग(Bottom, इताअस)
+# define YY_REDUCE_इलिम्बाग(Rule)
 #endif /* !YYDEBUG */
 
 
@@ -1421,7 +1421,7 @@ yypcontext_expected_tokens (const yypcontext_t *yyctx,
   /* Actual size of YYARG. */
   int yycount = 0;
   int yyn = yypact[+*yyctx->yyssp];
-  if (!yypact_value_is_default (yyn))
+  if (!yypact_हालागा_is_default (yyn))
     {
       /* Start YYX at -YYN if negative to avoid negative indexes in
          YYCHECK.  In other words, skip the first -YYN actions for
@@ -1433,7 +1433,7 @@ yypcontext_expected_tokens (const yypcontext_t *yyctx,
       int yyx;
       for (yyx = yyxbegin; yyx < yyxend; ++yyx)
         if (yycheck[yyx + yyn] == yyx && yyx != YYSYMBOL_YYerror
-            && !yytable_value_is_error (yytable[yyx + yyn]))
+            && !yytable_हालागा_is_error (yytable[yyx + yyn]))
           {
             if (!yyarg)
               ++yycount;
@@ -1635,7 +1635,7 @@ yydestruct (const char *yymsg,
   YY_USE (param);
   if (!yymsg)
     yymsg = "Deleting";
-  YY_SYMBOL_PRINT (yymsg, yykind, yyvaluep, yylocationp);
+  YY_सिम्बोलो_इलिम्बाग (yymsg, yykind, yyvaluep, yylocationp);
 
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
   switch (yykind)
@@ -1688,15 +1688,15 @@ yydestruct (const char *yymsg,
 #line 1682 "src/xkbcomp/parser.c"
         break;
 
-    case YYSYMBOL_KeyNameDecl: /* KeyNameDecl  */
+    case YYSYMBOL_सुसि_Name_Decl: /* KeyNameDecl  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).keyCode)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).सुसि_Code)); }
 #line 1688 "src/xkbcomp/parser.c"
         break;
 
-    case YYSYMBOL_KeyAliasDecl: /* KeyAliasDecl  */
+    case YYSYMBOL_सुसि_Alias_Decl: /* KeyAliasDecl  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).keyAlias)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).सुसि_Alias)); }
 #line 1694 "src/xkbcomp/parser.c"
         break;
 
@@ -1736,9 +1736,9 @@ yydestruct (const char *yymsg,
 #line 1730 "src/xkbcomp/parser.c"
         break;
 
-    case YYSYMBOL_KeyTypeDecl: /* KeyTypeDecl  */
+    case YYSYMBOL_सुसि_Type_Decl: /* KeyTypeDecl  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).keyType)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).सुसि_Type)); }
 #line 1736 "src/xkbcomp/parser.c"
         break;
 
@@ -1766,9 +1766,9 @@ yydestruct (const char *yymsg,
 #line 1760 "src/xkbcomp/parser.c"
         break;
 
-    case YYSYMBOL_MultiKeySymOrActionList: /* MultiKeySymOrActionList  */
+    case YYSYMBOL_Multi_सुसि_Sym_Or_Action_List: /* MultiKeySymOrActionList  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).पाहायाग)); }
 #line 1766 "src/xkbcomp/parser.c"
         break;
 
@@ -1784,15 +1784,15 @@ yydestruct (const char *yymsg,
 #line 1778 "src/xkbcomp/parser.c"
         break;
 
-    case YYSYMBOL_KeyOrKeySymList: /* KeyOrKeySymList  */
+    case YYSYMBOL_सुसि_Or_सुसि_Sym_List: /* KeyOrKeySymList  */
 #line 253 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).exprList).head); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).पाहायाग_List).head); }
 #line 1784 "src/xkbcomp/parser.c"
         break;
 
-    case YYSYMBOL_KeyOrKeySym: /* KeyOrKeySym  */
+    case YYSYMBOL_सुसि_Or_सुसि_Sym: /* KeyOrKeySym  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).पाहायाग)); }
 #line 1790 "src/xkbcomp/parser.c"
         break;
 
@@ -1810,103 +1810,103 @@ yydestruct (const char *yymsg,
 
     case YYSYMBOL_CoordList: /* CoordList  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).पाहायाग)); }
 #line 1808 "src/xkbcomp/parser.c"
         break;
 
     case YYSYMBOL_Coord: /* Coord  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).पाहायाग)); }
 #line 1814 "src/xkbcomp/parser.c"
         break;
 
-    case YYSYMBOL_ExprList: /* ExprList  */
+    case YYSYMBOL_पाहायाग_List: /* ExprList  */
 #line 253 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).exprList).head); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).पाहायाग_List).head); }
 #line 1820 "src/xkbcomp/parser.c"
         break;
 
-    case YYSYMBOL_Expr: /* Expr  */
+    case YYSYMBOL_पाहायाग: /*पाहायाग*/
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).पाहायाग)); }
 #line 1826 "src/xkbcomp/parser.c"
         break;
 
     case YYSYMBOL_Term: /* Term  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).पाहायाग)); }
 #line 1832 "src/xkbcomp/parser.c"
         break;
 
     case YYSYMBOL_MultiActionList: /* MultiActionList  */
 #line 253 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).exprList).head); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).पाहायाग_List).head); }
 #line 1838 "src/xkbcomp/parser.c"
         break;
 
     case YYSYMBOL_ActionList: /* ActionList  */
 #line 253 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).exprList).head); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).पाहायाग_List).head); }
 #line 1844 "src/xkbcomp/parser.c"
         break;
 
     case YYSYMBOL_NonEmptyActions: /* NonEmptyActions  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).पाहायाग)); }
 #line 1850 "src/xkbcomp/parser.c"
         break;
 
     case YYSYMBOL_Actions: /* Actions  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).पाहायाग)); }
 #line 1856 "src/xkbcomp/parser.c"
         break;
 
     case YYSYMBOL_Action: /* Action  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).पाहायाग)); }
 #line 1862 "src/xkbcomp/parser.c"
         break;
 
     case YYSYMBOL_Lhs: /* Lhs  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).पाहायाग)); }
 #line 1868 "src/xkbcomp/parser.c"
         break;
 
     case YYSYMBOL_OptTerminal: /* OptTerminal  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).पाहायाग)); }
 #line 1874 "src/xkbcomp/parser.c"
         break;
 
     case YYSYMBOL_Terminal: /* Terminal  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).पाहायाग)); }
 #line 1880 "src/xkbcomp/parser.c"
         break;
 
-    case YYSYMBOL_MultiKeySymList: /* MultiKeySymList  */
+    case YYSYMBOL_Multi_सुसि_Sym_List: /* MultiKeySymList  */
 #line 253 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).exprList).head); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).पाहायाग_List).head); }
 #line 1886 "src/xkbcomp/parser.c"
         break;
 
-    case YYSYMBOL_KeySymList: /* KeySymList  */
+    case YYSYMBOL_सुसि_Sym_List: /* KeySymList  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).पाहायाग)); }
 #line 1892 "src/xkbcomp/parser.c"
         break;
 
-    case YYSYMBOL_NonEmptyKeySyms: /* NonEmptyKeySyms  */
+    case YYSYMBOL_Non_Empty_सुसि_Syms: /* NonEmptyKeySyms  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).पाहायाग)); }
 #line 1898 "src/xkbcomp/parser.c"
         break;
 
-    case YYSYMBOL_KeySyms: /* KeySyms  */
+    case YYSYMBOL_सुसि_Syms: /* KeySyms  */
 #line 250 "src/xkbcomp/parser.y"
-            { FreeStmt((ParseCommon *) ((*yyvaluep).expr)); }
+            { FreeStmt((ParseCommon *) ((*yyvaluep).पाहायाग)); }
 #line 1904 "src/xkbcomp/parser.c"
         break;
 
@@ -1947,8 +1947,8 @@ int yychar;
 /* The semantic value of the lookahead symbol.  */
 /* Default value used for initialization, for pacifying older GCCs
    or non-GCC compilers.  */
-YY_INITIAL_VALUE (static YYSTYPE yyval_default;)
-YYSTYPE yylval YY_INITIAL_VALUE (= yyval_default);
+YY_INITIAL_हालागा (static YYSTYPE yyval_default;)
+YYSTYPE yylval YY_INITIAL_हालागा (= yyval_default);
 
     /* Number of syntax errors so far.  */
     int yynerrs = 0;
@@ -2018,7 +2018,7 @@ yysetstate:
   YY_IGNORE_USELESS_CAST_BEGIN
   *yyssp = YY_CAST (yy_state_t, yystate);
   YY_IGNORE_USELESS_CAST_END
-  YY_STACK_PRINT (yyss, yyssp);
+  YY_सालानसान_इलिम्बाग (yyss, yyssp);
 
   if (yyss + yystacksize - 1 <= yyssp)
 #if !defined yyoverflow && !defined YYSTACK_RELOCATE
@@ -2099,7 +2099,7 @@ yybackup:
 
   /* First try to decide what to do without reference to lookahead token.  */
   yyn = yypact[yystate];
-  if (yypact_value_is_default (yyn))
+  if (yypact_हालागा_is_default (yyn))
     goto yydefault;
 
   /* Not known => get a lookahead token if don't already have one.  */
@@ -2130,7 +2130,7 @@ yybackup:
   else
     {
       yytoken = YYTRANSLATE (yychar);
-      YY_SYMBOL_PRINT ("Next token is", yytoken, &yylval, &yylloc);
+      YY_सिम्बोलो_इलिम्बाग ("Next token is", yytoken, &yylval, &yylloc);
     }
 
   /* If the proper action on seeing token YYTOKEN is to reduce or to
@@ -2141,7 +2141,7 @@ yybackup:
   yyn = yytable[yyn];
   if (yyn <= 0)
     {
-      if (yytable_value_is_error (yyn))
+      if (yytable_हालागा_is_error (yyn))
         goto yyerrlab;
       yyn = -yyn;
       goto yyreduce;
@@ -2153,7 +2153,7 @@ yybackup:
     yyerrstatus--;
 
   /* Shift the lookahead token.  */
-  YY_SYMBOL_PRINT ("Shifting", yytoken, &yylval, &yylloc);
+  YY_सिम्बोलो_इलिम्बाग ("Shifting", yytoken, &yylval, &yylloc);
   yystate = yyn;
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
   *++yyvsp = yylval;
@@ -2192,7 +2192,7 @@ yyreduce:
   yyval = yyvsp[1-yylen];
 
 
-  YY_REDUCE_PRINT (yyn);
+  YY_REDUCE_इलिम्बाग (yyn);
   switch (yyn)
     {
   case 2: /* XkbFile: XkbCompositeMap  */
@@ -2454,8 +2454,8 @@ yyreduce:
   case 36: /* Decl: OptMergeMode KeyNameDecl  */
 #line 406 "src/xkbcomp/parser.y"
                         {
-                            (yyvsp[0].keyCode)->merge = (yyvsp[-1].merge);
-                            (yyval.any) = (ParseCommon *) (yyvsp[0].keyCode);
+                            (yyvsp[0].सुसि_Code)->merge = (yyvsp[-1].merge);
+                            (yyval.any) = (ParseCommon *) (yyvsp[0].सुसि_Code);
                         }
 #line 2454 "src/xkbcomp/parser.c"
     break;
@@ -2463,8 +2463,8 @@ yyreduce:
   case 37: /* Decl: OptMergeMode KeyAliasDecl  */
 #line 411 "src/xkbcomp/parser.y"
                         {
-                            (yyvsp[0].keyAlias)->merge = (yyvsp[-1].merge);
-                            (yyval.any) = (ParseCommon *) (yyvsp[0].keyAlias);
+                            (yyvsp[0].सुसि_Alias)->merge = (yyvsp[-1].merge);
+                            (yyval.any) = (ParseCommon *) (yyvsp[0].सुसि_Alias);
                         }
 #line 2463 "src/xkbcomp/parser.c"
     break;
@@ -2472,8 +2472,8 @@ yyreduce:
   case 38: /* Decl: OptMergeMode KeyTypeDecl  */
 #line 416 "src/xkbcomp/parser.y"
                         {
-                            (yyvsp[0].keyType)->merge = (yyvsp[-1].merge);
-                            (yyval.any) = (ParseCommon *) (yyvsp[0].keyType);
+                            (yyvsp[0].सुसि_Type)->merge = (yyvsp[-1].merge);
+                            (yyval.any) = (ParseCommon *) (yyvsp[0].सुसि_Type);
                         }
 #line 2472 "src/xkbcomp/parser.c"
     break;
@@ -2564,7 +2564,7 @@ yyreduce:
 
   case 50: /* VarDecl: Lhs "=" Expr ";"  */
 #line 460 "src/xkbcomp/parser.y"
-                        { (yyval.var) = VarCreate((yyvsp[-3].expr), (yyvsp[-1].expr)); }
+                        { (yyval.var) = VarCreate((yyvsp[-3].पाहायाग), (yyvsp[-1].पाहायाग)); }
 #line 2562 "src/xkbcomp/parser.c"
     break;
 
@@ -2582,13 +2582,13 @@ yyreduce:
 
   case 53: /* KeyNameDecl: "key name" "=" KeyCode ";"  */
 #line 468 "src/xkbcomp/parser.y"
-                        { (yyval.keyCode) = KeycodeCreate((yyvsp[-3].atom), (yyvsp[-1].num)); }
+                        { (yyval.सुसि_Code) = KeycodeCreate((yyvsp[-3].atom), (yyvsp[-1].नुमेरो)); }
 #line 2580 "src/xkbcomp/parser.c"
     break;
 
   case 54: /* KeyAliasDecl: "alias" "key name" "=" "key name" ";"  */
 #line 472 "src/xkbcomp/parser.y"
-                        { (yyval.keyAlias) = KeyAliasCreate((yyvsp[-3].atom), (yyvsp[-1].atom)); }
+                        { (yyval.सुसि_Alias) = सुसि_Alias_Create((yyvsp[-3].atom), (yyvsp[-1].atom)); }
 #line 2586 "src/xkbcomp/parser.c"
     break;
 
@@ -2618,7 +2618,7 @@ yyreduce:
 
   case 59: /* VModDef: Ident "=" Expr  */
 #line 488 "src/xkbcomp/parser.y"
-                        { (yyval.vmod) = VModCreate((yyvsp[-2].atom), (yyvsp[0].expr)); }
+                        { (yyval.vmod) = VModCreate((yyvsp[-2].atom), (yyvsp[0].पाहायाग)); }
 #line 2616 "src/xkbcomp/parser.c"
     break;
 
@@ -2630,7 +2630,7 @@ yyreduce:
 
   case 61: /* InterpretMatch: KeySym "+" Expr  */
 #line 498 "src/xkbcomp/parser.y"
-                        { (yyval.interp) = InterpCreate((yyvsp[-2].keysym), (yyvsp[0].expr)); }
+                        { (yyval.interp) = InterpCreate((yyvsp[-2].keysym), (yyvsp[0].पाहायाग)); }
 #line 2628 "src/xkbcomp/parser.c"
     break;
 
@@ -2664,7 +2664,7 @@ yyreduce:
 
   case 65: /* KeyTypeDecl: "type" String "{" VarDeclList "}" ";"  */
 #line 521 "src/xkbcomp/parser.y"
-                        { (yyval.keyType) = KeyTypeCreate((yyvsp[-4].atom), (yyvsp[-2].varList).head); }
+                        { (yyval.सुसि_Type) = सुसि_Type_Create((yyvsp[-4].atom), (yyvsp[-2].varList).head); }
 #line 2662 "src/xkbcomp/parser.c"
     break;
 
@@ -2700,13 +2700,13 @@ yyreduce:
 
   case 71: /* SymbolsVarDecl: Lhs "=" Expr  */
 #line 540 "src/xkbcomp/parser.y"
-                                                { (yyval.var) = VarCreate((yyvsp[-2].expr), (yyvsp[0].expr)); }
+                                                { (yyval.var) = VarCreate((yyvsp[-2].पाहायाग), (yyvsp[0].पाहायाग)); }
 #line 2698 "src/xkbcomp/parser.c"
     break;
 
   case 72: /* SymbolsVarDecl: Lhs "=" MultiKeySymOrActionList  */
 #line 541 "src/xkbcomp/parser.y"
-                                                           { (yyval.var) = VarCreate((yyvsp[-2].expr), (yyvsp[0].expr)); }
+                                                           { (yyval.var) = VarCreate((yyvsp[-2].पाहायाग), (yyvsp[0].पाहायाग)); }
 #line 2704 "src/xkbcomp/parser.c"
     break;
 
@@ -2724,13 +2724,13 @@ yyreduce:
 
   case 75: /* SymbolsVarDecl: MultiKeySymOrActionList  */
 #line 544 "src/xkbcomp/parser.y"
-                                                { (yyval.var) = VarCreate(NULL, (yyvsp[0].expr)); }
+                                                { (yyval.var) = VarCreate(NULL, (yyvsp[0].पाहायाग)); }
 #line 2722 "src/xkbcomp/parser.c"
     break;
 
   case 76: /* MultiKeySymOrActionList: "[" MultiKeySymList "]"  */
 #line 560 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[-1].exprList).head; }
+                        { (yyval.पाहायाग) = (yyvsp[-1].पाहायाग_List).head; }
 #line 2728 "src/xkbcomp/parser.c"
     break;
 
@@ -2738,12 +2738,12 @@ yyreduce:
 #line 562 "src/xkbcomp/parser.y"
                         {
                             /* Prepend n times NoSymbol */
-                            struct {ExprDef *head; ExprDef *last;} list = {
-                                .head = (yyvsp[-1].exprList).head, .last = (yyvsp[-1].exprList).last
+                            struct {पाहायाग_Def *head; पाहायाग_Def *last;} list = {
+                                .head = (yyvsp[-1].पाहायाग_List).head, .last = (yyvsp[-1].पाहायाग_List).last
                             };
-                            for (uint32_t k = 0; k < (yyvsp[-3].noSymbolOrActionList); k++) {
-                                ExprDef* const syms =
-                                    ExprCreateKeySymList(XKB_KEY_NoSymbol);
+                            for (uint32_t k = 0; k < (yyvsp[-3].no_सिम्बोलो_Or_Action_List); k++) {
+                                पाहायाग_Def* const syms =
+                                    पाहायाग_Create_सुसि_Sym_List(XKB_सुसि_No_सिम्बोलो);
                                 if (!syms) {
                                     /* TODO: Use Bison’s more appropriate YYNOMEM */
                                     YYABORT;
@@ -2751,14 +2751,14 @@ yyreduce:
                                 syms->common.next = &list.head->common;
                                 list.head = syms;
                             }
-                            (yyval.expr) = list.head;
+                            (yyval.पाहायाग) = list.head;
                         }
 #line 2750 "src/xkbcomp/parser.c"
     break;
 
   case 78: /* MultiKeySymOrActionList: "[" MultiActionList "]"  */
 #line 580 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[-1].exprList).head; }
+                        { (yyval.पाहायाग) = (yyvsp[-1].पाहायाग_List).head; }
 #line 2756 "src/xkbcomp/parser.c"
     break;
 
@@ -2766,11 +2766,11 @@ yyreduce:
 #line 582 "src/xkbcomp/parser.y"
                         {
                             /* Prepend n times NoAction() */
-                            struct {ExprDef *head; ExprDef *last;} list = {
-                                .head = (yyvsp[-1].exprList).head, .last = (yyvsp[-1].exprList).last
+                            struct {पाहायाग_Def *head; पाहायाग_Def *last;} list = {
+                                .head = (yyvsp[-1].पाहायाग_List).head, .last = (yyvsp[-1].पाहायाग_List).last
                             };
-                            for (uint32_t k = 0; k < (yyvsp[-3].noSymbolOrActionList); k++) {
-                                ExprDef* const acts = ExprCreateActionList(NULL);
+                            for (uint32_t k = 0; k < (yyvsp[-3].no_सिम्बोलो_Or_Action_List); k++) {
+                                पाहायाग_Def* const acts = पाहायाग_Create_Action_List(NULL);
                                 if (!acts) {
                                     /* TODO: Use Bison’s more appropriate YYNOMEM */
                                     YYABORT;
@@ -2778,38 +2778,38 @@ yyreduce:
                                 acts->common.next = &list.head->common;
                                 list.head = acts;
                             }
-                            (yyval.expr) = list.head;
+                            (yyval.पाहायाग) = list.head;
                         }
 #line 2777 "src/xkbcomp/parser.c"
     break;
 
   case 80: /* MultiKeySymOrActionList: "[" NoSymbolOrActionList "]"  */
 #line 604 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprEmptyList(); }
+                        { (yyval.पाहायाग) = पाहायाग_Empty_List(); }
 #line 2783 "src/xkbcomp/parser.c"
     break;
 
   case 81: /* NoSymbolOrActionList: NoSymbolOrActionList "," "{" "}"  */
 #line 610 "src/xkbcomp/parser.y"
-                        { (yyval.noSymbolOrActionList) = (yyvsp[-3].noSymbolOrActionList) + 1; }
+                        { (yyval.no_सिम्बोलो_Or_Action_List) = (yyvsp[-3].no_सिम्बोलो_Or_Action_List) + 1; }
 #line 2789 "src/xkbcomp/parser.c"
     break;
 
   case 82: /* NoSymbolOrActionList: "{" "}"  */
 #line 612 "src/xkbcomp/parser.y"
-                        { (yyval.noSymbolOrActionList) = 1; }
+                        { (yyval.no_सिम्बोलो_Or_Action_List) = 1; }
 #line 2795 "src/xkbcomp/parser.c"
     break;
 
   case 83: /* NoSymbolOrActionList: %empty  */
 #line 613 "src/xkbcomp/parser.y"
-                        { (yyval.noSymbolOrActionList) = 0; }
+                        { (yyval.no_सिम्बोलो_Or_Action_List) = 0; }
 #line 2801 "src/xkbcomp/parser.c"
     break;
 
   case 84: /* GroupCompatDecl: "group" Integer "=" Expr ";"  */
 #line 617 "src/xkbcomp/parser.y"
-                        { (yyval.groupCompat) = GroupCompatCreate((yyvsp[-3].num), (yyvsp[-1].expr)); }
+                        { (yyval.groupCompat) = GroupCompatCreate((yyvsp[-3].नुमेरो), (yyvsp[-1].पाहायाग)); }
 #line 2807 "src/xkbcomp/parser.c"
     break;
 
@@ -2817,42 +2817,42 @@ yyreduce:
 #line 621 "src/xkbcomp/parser.y"
                         {
                             if (param->config.format == XKB_KEYMAP_FORMAT_TEXT_V1 &&
-                                (yyvsp[-4].expr)->common.type != STMT_EXPR_IDENT) {
+                                (yyvsp[-4].पाहायाग)->common.type != STMT_पाहायाग_IDENT) {
                                     parser_err(
                                         param, XKB_ERROR_INVALID_MODIFIER_MAP_MASK,
                                         "Invalid real modifier mask in modifier "
                                         "map definition: expected identifier"
                                     );
-                                    FreeStmt((ParseCommon *) (yyvsp[-4].expr));
-                                    FreeStmt((ParseCommon *) (yyvsp[-2].exprList).head);
+                                    FreeStmt((ParseCommon *) (yyvsp[-4].पाहायाग));
+                                    FreeStmt((ParseCommon *) (yyvsp[-2].पाहायाग_List).head);
                                     YYERROR;
                             }
-                            (yyval.modMask) = ModMapCreate((yyvsp[-4].expr), (yyvsp[-2].exprList).head);
+                            (yyval.modMask) = ModMapCreate((yyvsp[-4].पाहायाग), (yyvsp[-2].पाहायाग_List).head);
                         }
 #line 2826 "src/xkbcomp/parser.c"
     break;
 
   case 86: /* KeyOrKeySymList: KeyOrKeySymList "," KeyOrKeySym  */
 #line 638 "src/xkbcomp/parser.y"
-                        { (yyval.exprList).head = (yyvsp[-2].exprList).head; (yyval.exprList).last->common.next = &(yyvsp[0].expr)->common; (yyval.exprList).last = (yyvsp[0].expr); }
+                        { (yyval.पाहायाग_List).head = (yyvsp[-2].पाहायाग_List).head; (yyval.पाहायाग_List).last->common.next = &(yyvsp[0].पाहायाग)->common; (yyval.पाहायाग_List).last = (yyvsp[0].पाहायाग); }
 #line 2832 "src/xkbcomp/parser.c"
     break;
 
   case 87: /* KeyOrKeySymList: KeyOrKeySym  */
 #line 640 "src/xkbcomp/parser.y"
-                        { (yyval.exprList).head = (yyval.exprList).last = (yyvsp[0].expr); }
+                        { (yyval.पाहायाग_List).head = (yyval.पाहायाग_List).last = (yyvsp[0].पाहायाग); }
 #line 2838 "src/xkbcomp/parser.c"
     break;
 
   case 88: /* KeyOrKeySym: "key name"  */
 #line 644 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateKeyName((yyvsp[0].atom)); }
+                        { (yyval.पाहायाग) = पाहायाग_Create_सुसि_Name((yyvsp[0].atom)); }
 #line 2844 "src/xkbcomp/parser.c"
     break;
 
   case 89: /* KeyOrKeySym: KeySym  */
 #line 646 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateKeySym((yyvsp[0].keysym)); }
+                        { (yyval.पाहायाग) = पाहायाग_Create_सुसि_Sym((yyvsp[0].keysym)); }
 #line 2850 "src/xkbcomp/parser.c"
     break;
 
@@ -2864,21 +2864,21 @@ yyreduce:
 
   case 91: /* LedNameDecl: "indicator" Integer "=" Expr ";"  */
 #line 654 "src/xkbcomp/parser.y"
-                        { (yyval.ledName) = LedNameCreate((yyvsp[-3].num), (yyvsp[-1].expr), false); }
+                        { (yyval.ledName) = LedNameCreate((yyvsp[-3].नुमेरो), (yyvsp[-1].पाहायाग), false); }
 #line 2862 "src/xkbcomp/parser.c"
     break;
 
   case 92: /* LedNameDecl: "virtual" "indicator" Integer "=" Expr ";"  */
 #line 656 "src/xkbcomp/parser.y"
-                        { (yyval.ledName) = LedNameCreate((yyvsp[-3].num), (yyvsp[-1].expr), true); }
+                        { (yyval.ledName) = LedNameCreate((yyvsp[-3].नुमेरो), (yyvsp[-1].पाहायाग), true); }
 #line 2868 "src/xkbcomp/parser.c"
     break;
 
   case 93: /* UnknownDecl: "identifier" Terminal "=" Expr ";"  */
 #line 660 "src/xkbcomp/parser.y"
                         {
-                            FreeStmt((ParseCommon *) (yyvsp[-3].expr));
-                            FreeStmt((ParseCommon *) (yyvsp[-1].expr));
+                            FreeStmt((ParseCommon *) (yyvsp[-3].पाहायाग));
+                            FreeStmt((ParseCommon *) (yyvsp[-1].पाहायाग));
                             (yyval.unknown) = UnknownStatementCreate(STMT_UNKNOWN_DECLARATION, (yyvsp[-4].sval));
                         }
 #line 2878 "src/xkbcomp/parser.c"
@@ -2887,7 +2887,7 @@ yyreduce:
   case 94: /* UnknownCompoundStatementDecl: "identifier" OptTerminal "{" VarDeclList "}" ";"  */
 #line 669 "src/xkbcomp/parser.y"
                         {
-                            FreeStmt((ParseCommon *) (yyvsp[-4].expr));
+                            FreeStmt((ParseCommon *) (yyvsp[-4].पाहायाग));
                             FreeStmt((ParseCommon *) (yyvsp[-2].varList).head);
                             (yyval.unknown) = UnknownStatementCreate(STMT_UNKNOWN_COMPOUND, (yyvsp[-5].sval));
                         }
@@ -2902,7 +2902,7 @@ yyreduce:
 
   case 96: /* ShapeDecl: "shape" String "{" CoordList "}" ";"  */
 #line 679 "src/xkbcomp/parser.y"
-                        { (void) (yyvsp[-2].expr); (yyval.geom) = NULL; }
+                        { (void) (yyvsp[-2].पाहायाग); (yyval.geom) = NULL; }
 #line 2900 "src/xkbcomp/parser.c"
     break;
 
@@ -2998,7 +2998,7 @@ yyreduce:
 
   case 112: /* Key: "{" ExprList "}"  */
 #line 718 "src/xkbcomp/parser.y"
-                        { FreeStmt((ParseCommon *) (yyvsp[-1].exprList).head); (yyval.geom) = NULL; }
+                        { FreeStmt((ParseCommon *) (yyvsp[-1].पाहायाग_List).head); (yyval.geom) = NULL; }
 #line 2996 "src/xkbcomp/parser.c"
     break;
 
@@ -3040,37 +3040,37 @@ yyreduce:
 
   case 119: /* OutlineInList: "{" CoordList "}"  */
 #line 739 "src/xkbcomp/parser.y"
-                        { (void) (yyvsp[-1].expr); (yyval.geom) = NULL; }
+                        { (void) (yyvsp[-1].पाहायाग); (yyval.geom) = NULL; }
 #line 3038 "src/xkbcomp/parser.c"
     break;
 
   case 120: /* OutlineInList: Ident "=" "{" CoordList "}"  */
 #line 741 "src/xkbcomp/parser.y"
-                        { (void) (yyvsp[-1].expr); (yyval.geom) = NULL; }
+                        { (void) (yyvsp[-1].पाहायाग); (yyval.geom) = NULL; }
 #line 3044 "src/xkbcomp/parser.c"
     break;
 
   case 121: /* OutlineInList: Ident "=" Expr  */
 #line 743 "src/xkbcomp/parser.y"
-                        { FreeStmt((ParseCommon *) (yyvsp[0].expr)); (yyval.geom) = NULL; }
+                        { FreeStmt((ParseCommon *) (yyvsp[0].पाहायाग)); (yyval.geom) = NULL; }
 #line 3050 "src/xkbcomp/parser.c"
     break;
 
   case 122: /* CoordList: CoordList "," Coord  */
 #line 747 "src/xkbcomp/parser.y"
-                        { (void) (yyvsp[-2].expr); (void) (yyvsp[0].expr); (yyval.expr) = NULL; }
+                        { (void) (yyvsp[-2].पाहायाग); (void) (yyvsp[0].पाहायाग); (yyval.पाहायाग) = NULL; }
 #line 3056 "src/xkbcomp/parser.c"
     break;
 
   case 123: /* CoordList: Coord  */
 #line 749 "src/xkbcomp/parser.y"
-                        { (void) (yyvsp[0].expr); (yyval.expr) = NULL; }
+                        { (void) (yyvsp[0].पाहायाग); (yyval.पाहायाग) = NULL; }
 #line 3062 "src/xkbcomp/parser.c"
     break;
 
   case 124: /* Coord: "[" SignedNumber "," SignedNumber "]"  */
 #line 753 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = NULL; }
+                        { (yyval.पाहायाग) = NULL; }
 #line 3068 "src/xkbcomp/parser.c"
     break;
 
@@ -3082,25 +3082,25 @@ yyreduce:
 
   case 126: /* DoodadType: "text"  */
 #line 760 "src/xkbcomp/parser.y"
-                                { (yyval.num) = 0; }
+                                { (yyval.नुमेरो) = 0; }
 #line 3080 "src/xkbcomp/parser.c"
     break;
 
   case 127: /* DoodadType: "outline"  */
 #line 761 "src/xkbcomp/parser.y"
-                                { (yyval.num) = 0; }
+                                { (yyval.नुमेरो) = 0; }
 #line 3086 "src/xkbcomp/parser.c"
     break;
 
   case 128: /* DoodadType: "solid"  */
 #line 762 "src/xkbcomp/parser.y"
-                                { (yyval.num) = 0; }
+                                { (yyval.नुमेरो) = 0; }
 #line 3092 "src/xkbcomp/parser.c"
     break;
 
   case 129: /* DoodadType: "logo"  */
 #line 763 "src/xkbcomp/parser.y"
-                                { (yyval.num) = 0; }
+                                { (yyval.नुमेरो) = 0; }
 #line 3098 "src/xkbcomp/parser.c"
     break;
 
@@ -3235,13 +3235,13 @@ yyreduce:
   case 150: /* ExprList: ExprList "," Expr  */
 #line 815 "src/xkbcomp/parser.y"
                         {
-                            if ((yyvsp[0].expr)) {
-                                if ((yyvsp[-2].exprList).head) {
-                                    (yyval.exprList).head = (yyvsp[-2].exprList).head;
-                                    (yyval.exprList).last->common.next = &(yyvsp[0].expr)->common;
-                                    (yyval.exprList).last = (yyvsp[0].expr);
+                            if ((yyvsp[0].पाहायाग)) {
+                                if ((yyvsp[-2].पाहायाग_List).head) {
+                                    (yyval.पाहायाग_List).head = (yyvsp[-2].पाहायाग_List).head;
+                                    (yyval.पाहायाग_List).last->common.next = &(yyvsp[0].पाहायाग)->common;
+                                    (yyval.पाहायाग_List).last = (yyvsp[0].पाहायाग);
                                 } else {
-                                    (yyval.exprList).head = (yyval.exprList).last = (yyvsp[0].expr);
+                                    (yyval.पाहायाग_List).head = (yyval.पाहायाग_List).last = (yyvsp[0].पाहायाग);
                                 }
                             }
                         }
@@ -3250,270 +3250,270 @@ yyreduce:
 
   case 151: /* ExprList: Expr  */
 #line 827 "src/xkbcomp/parser.y"
-                        { (yyval.exprList).head = (yyval.exprList).last = (yyvsp[0].expr); }
+                        { (yyval.पाहायाग_List).head = (yyval.पाहायाग_List).last = (yyvsp[0].पाहायाग); }
 #line 3248 "src/xkbcomp/parser.c"
     break;
 
   case 152: /* ExprList: %empty  */
 #line 828 "src/xkbcomp/parser.y"
-                        { (yyval.exprList).head = (yyval.exprList).last = NULL; }
+                        { (yyval.पाहायाग_List).head = (yyval.पाहायाग_List).last = NULL; }
 #line 3254 "src/xkbcomp/parser.c"
     break;
 
   case 153: /* Expr: Expr "/" Expr  */
 #line 832 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateBinary(STMT_EXPR_DIVIDE, (yyvsp[-2].expr), (yyvsp[0].expr)); }
+                        { (yyval.पाहायाग) = पाहायाग_Create_दालावाहान(STMT_पाहायाग_DIVIDE, (yyvsp[-2].पाहायाग), (yyvsp[0].पाहायाग)); }
 #line 3260 "src/xkbcomp/parser.c"
     break;
 
   case 154: /* Expr: Expr "+" Expr  */
 #line 834 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateBinary(STMT_EXPR_ADD, (yyvsp[-2].expr), (yyvsp[0].expr)); }
+                        { (yyval.पाहायाग) = पाहायाग_Create_दालावाहान(STMT_पाहायाग_ADD, (yyvsp[-2].पाहायाग), (yyvsp[0].पाहायाग)); }
 #line 3266 "src/xkbcomp/parser.c"
     break;
 
   case 155: /* Expr: Expr "-" Expr  */
 #line 836 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateBinary(STMT_EXPR_SUBTRACT, (yyvsp[-2].expr), (yyvsp[0].expr)); }
+                        { (yyval.पाहायाग) = पाहायाग_Create_दालावाहान(STMT_पाहायाग_SUBTRACT, (yyvsp[-2].पाहायाग), (yyvsp[0].पाहायाग)); }
 #line 3272 "src/xkbcomp/parser.c"
     break;
 
   case 156: /* Expr: Expr "*" Expr  */
 #line 838 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateBinary(STMT_EXPR_MULTIPLY, (yyvsp[-2].expr), (yyvsp[0].expr)); }
+                        { (yyval.पाहायाग) = पाहायाग_Create_दालावाहान(STMT_पाहायाग_MULTIPLY, (yyvsp[-2].पाहायाग), (yyvsp[0].पाहायाग)); }
 #line 3278 "src/xkbcomp/parser.c"
     break;
 
   case 157: /* Expr: Lhs "=" Expr  */
 #line 840 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateBinary(STMT_EXPR_ASSIGN, (yyvsp[-2].expr), (yyvsp[0].expr)); }
+                        { (yyval.पाहायाग) = पाहायाग_Create_दालावाहान(STMT_पाहायाग_ASSIGN, (yyvsp[-2].पाहायाग), (yyvsp[0].पाहायाग)); }
 #line 3284 "src/xkbcomp/parser.c"
     break;
 
   case 158: /* Expr: Term  */
 #line 842 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[0].expr); }
+                        { (yyval.पाहायाग) = (yyvsp[0].पाहायाग); }
 #line 3290 "src/xkbcomp/parser.c"
     break;
 
   case 159: /* Term: "-" Term  */
 #line 846 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateUnary(STMT_EXPR_NEGATE, (yyvsp[0].expr)); }
+                        { (yyval.पाहायाग) = पाहायाग_Create_Unary(STMT_पाहायाग_NEGATE, (yyvsp[0].पाहायाग)); }
 #line 3296 "src/xkbcomp/parser.c"
     break;
 
   case 160: /* Term: "+" Term  */
 #line 848 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateUnary(STMT_EXPR_UNARY_PLUS, (yyvsp[0].expr)); }
+                        { (yyval.पाहायाग) = पाहायाग_Create_Unary(STMT_पाहायाग_UNARY_PLUS, (yyvsp[0].पाहायाग)); }
 #line 3302 "src/xkbcomp/parser.c"
     break;
 
   case 161: /* Term: "!" Term  */
 #line 850 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateUnary(STMT_EXPR_NOT, (yyvsp[0].expr)); }
+                        { (yyval.पाहायाग) = पाहायाग_Create_Unary(STMT_पाहायाग_NOT, (yyvsp[0].पाहायाग)); }
 #line 3308 "src/xkbcomp/parser.c"
     break;
 
   case 162: /* Term: "~" Term  */
 #line 852 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateUnary(STMT_EXPR_INVERT, (yyvsp[0].expr)); }
+                        { (yyval.पाहायाग) = पाहायाग_Create_Unary(STMT_पाहायाग_INVERT, (yyvsp[0].पाहायाग)); }
 #line 3314 "src/xkbcomp/parser.c"
     break;
 
   case 163: /* Term: Lhs  */
 #line 854 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[0].expr); }
+                        { (yyval.पाहायाग) = (yyvsp[0].पाहायाग); }
 #line 3320 "src/xkbcomp/parser.c"
     break;
 
   case 164: /* Term: FieldSpec "(" ExprList ")"  */
 #line 856 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateAction((yyvsp[-3].atom), (yyvsp[-1].exprList).head); }
+                        { (yyval.पाहायाग) = पाहायाग_Create_Action((yyvsp[-3].atom), (yyvsp[-1].पाहायाग_List).head); }
 #line 3326 "src/xkbcomp/parser.c"
     break;
 
   case 165: /* Term: Actions  */
 #line 858 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[0].expr); }
+                        { (yyval.पाहायाग) = (yyvsp[0].पाहायाग); }
 #line 3332 "src/xkbcomp/parser.c"
     break;
 
   case 166: /* Term: Terminal  */
 #line 860 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[0].expr); }
+                        { (yyval.पाहायाग) = (yyvsp[0].पाहायाग); }
 #line 3338 "src/xkbcomp/parser.c"
     break;
 
   case 167: /* Term: "(" Expr ")"  */
 #line 862 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[-1].expr); }
+                        { (yyval.पाहायाग) = (yyvsp[-1].पाहायाग); }
 #line 3344 "src/xkbcomp/parser.c"
     break;
 
   case 168: /* MultiActionList: MultiActionList "," Action  */
 #line 866 "src/xkbcomp/parser.y"
                         {
-                            ExprDef *expr = ExprCreateActionList((yyvsp[0].expr));
-                            (yyval.exprList) = (yyvsp[-2].exprList);
-                            (yyval.exprList).last->common.next = &expr->common; (yyval.exprList).last = expr;
+                            पाहायाग_Def *पाहायाग = पाहायाग_Create_Action_List((yyvsp[0].पाहायाग));
+                            (yyval.पाहायाग_List) = (yyvsp[-2].पाहायाग_List);
+                            (yyval.पाहायाग_List).last->common.next = &पाहायाग->common; (yyval.पाहायाग_List).last = पाहायाग;
                         }
 #line 3354 "src/xkbcomp/parser.c"
     break;
 
   case 169: /* MultiActionList: MultiActionList "," Actions  */
 #line 872 "src/xkbcomp/parser.y"
-                        { (yyval.exprList) = (yyvsp[-2].exprList); (yyval.exprList).last->common.next = &(yyvsp[0].expr)->common; (yyval.exprList).last = (yyvsp[0].expr); }
+                        { (yyval.पाहायाग_List) = (yyvsp[-2].पाहायाग_List); (yyval.पाहायाग_List).last->common.next = &(yyvsp[0].पाहायाग)->common; (yyval.पाहायाग_List).last = (yyvsp[0].पाहायाग); }
 #line 3360 "src/xkbcomp/parser.c"
     break;
 
   case 170: /* MultiActionList: Action  */
 #line 874 "src/xkbcomp/parser.y"
-                        { (yyval.exprList).head = (yyval.exprList).last = ExprCreateActionList((yyvsp[0].expr)); }
+                        { (yyval.पाहायाग_List).head = (yyval.पाहायाग_List).last = पाहायाग_Create_Action_List((yyvsp[0].पाहायाग)); }
 #line 3366 "src/xkbcomp/parser.c"
     break;
 
   case 171: /* MultiActionList: NonEmptyActions  */
 #line 876 "src/xkbcomp/parser.y"
-                        { (yyval.exprList).head = (yyval.exprList).last = (yyvsp[0].expr); }
+                        { (yyval.पाहायाग_List).head = (yyval.पाहायाग_List).last = (yyvsp[0].पाहायाग); }
 #line 3372 "src/xkbcomp/parser.c"
     break;
 
   case 172: /* ActionList: ActionList "," Action  */
 #line 880 "src/xkbcomp/parser.y"
-                        { (yyval.exprList) = (yyvsp[-2].exprList); (yyval.exprList).last->common.next = &(yyvsp[0].expr)->common; (yyval.exprList).last = (yyvsp[0].expr); }
+                        { (yyval.पाहायाग_List) = (yyvsp[-2].पाहायाग_List); (yyval.पाहायाग_List).last->common.next = &(yyvsp[0].पाहायाग)->common; (yyval.पाहायाग_List).last = (yyvsp[0].पाहायाग); }
 #line 3378 "src/xkbcomp/parser.c"
     break;
 
   case 173: /* ActionList: Action  */
 #line 882 "src/xkbcomp/parser.y"
-                        { (yyval.exprList).head = (yyval.exprList).last = (yyvsp[0].expr); }
+                        { (yyval.पाहायाग_List).head = (yyval.पाहायाग_List).last = (yyvsp[0].पाहायाग); }
 #line 3384 "src/xkbcomp/parser.c"
     break;
 
   case 174: /* NonEmptyActions: "{" ActionList "}"  */
 #line 886 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateActionList((yyvsp[-1].exprList).head); }
+                        { (yyval.पाहायाग) = पाहायाग_Create_Action_List((yyvsp[-1].पाहायाग_List).head); }
 #line 3390 "src/xkbcomp/parser.c"
     break;
 
   case 175: /* Actions: NonEmptyActions  */
 #line 890 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[0].expr); }
+                        { (yyval.पाहायाग) = (yyvsp[0].पाहायाग); }
 #line 3396 "src/xkbcomp/parser.c"
     break;
 
   case 176: /* Actions: "{" "}"  */
 #line 892 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateActionList(NULL); }
+                        { (yyval.पाहायाग) = पाहायाग_Create_Action_List(NULL); }
 #line 3402 "src/xkbcomp/parser.c"
     break;
 
   case 177: /* Action: FieldSpec "(" ExprList ")"  */
 #line 896 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateAction((yyvsp[-3].atom), (yyvsp[-1].exprList).head); }
+                        { (yyval.पाहायाग) = पाहायाग_Create_Action((yyvsp[-3].atom), (yyvsp[-1].पाहायाग_List).head); }
 #line 3408 "src/xkbcomp/parser.c"
     break;
 
   case 178: /* Lhs: FieldSpec  */
 #line 900 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateIdent((yyvsp[0].atom)); }
+                        { (yyval.पाहायाग) = पाहायाग_Create_Ident((yyvsp[0].atom)); }
 #line 3414 "src/xkbcomp/parser.c"
     break;
 
   case 179: /* Lhs: FieldSpec "." FieldSpec  */
 #line 902 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateFieldRef((yyvsp[-2].atom), (yyvsp[0].atom)); }
+                        { (yyval.पाहायाग) = पाहायाग_Create_Field_Ref((yyvsp[-2].atom), (yyvsp[0].atom)); }
 #line 3420 "src/xkbcomp/parser.c"
     break;
 
   case 180: /* Lhs: FieldSpec "[" Expr "]"  */
 #line 904 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateArrayRef(XKB_ATOM_NONE, (yyvsp[-3].atom), (yyvsp[-1].expr)); }
+                        { (yyval.पाहायाग) = पाहायाग_Create_Array_Ref(XKB_ATOM_NONE, (yyvsp[-3].atom), (yyvsp[-1].पाहायाग)); }
 #line 3426 "src/xkbcomp/parser.c"
     break;
 
   case 181: /* Lhs: FieldSpec "." FieldSpec "[" Expr "]"  */
 #line 906 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateArrayRef((yyvsp[-5].atom), (yyvsp[-3].atom), (yyvsp[-1].expr)); }
+                        { (yyval.पाहायाग) = पाहायाग_Create_Array_Ref((yyvsp[-5].atom), (yyvsp[-3].atom), (yyvsp[-1].पाहायाग)); }
 #line 3432 "src/xkbcomp/parser.c"
     break;
 
   case 182: /* OptTerminal: Terminal  */
 #line 910 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[0].expr); }
+                        { (yyval.पाहायाग) = (yyvsp[0].पाहायाग); }
 #line 3438 "src/xkbcomp/parser.c"
     break;
 
   case 183: /* OptTerminal: %empty  */
 #line 911 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = NULL; }
+                        { (yyval.पाहायाग) = NULL; }
 #line 3444 "src/xkbcomp/parser.c"
     break;
 
   case 184: /* Terminal: String  */
 #line 915 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateString((yyvsp[0].atom)); }
+                        { (yyval.पाहायाग) = पाहायाग_Create_String((yyvsp[0].atom)); }
 #line 3450 "src/xkbcomp/parser.c"
     break;
 
   case 185: /* Terminal: Integer  */
 #line 917 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateInteger((yyvsp[0].num)); }
+                        { (yyval.पाहायाग) = पाहायाग_Create_Integer((yyvsp[0].नुमेरो)); }
 #line 3456 "src/xkbcomp/parser.c"
     break;
 
   case 186: /* Terminal: Float  */
 #line 919 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateFloat(/* Discard $1 */); }
+                        { (yyval.पाहायाग) = पाहायाग_Create_Float(/* Discard $1 */); }
 #line 3462 "src/xkbcomp/parser.c"
     break;
 
   case 187: /* Terminal: "key name"  */
 #line 921 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateKeyName((yyvsp[0].atom)); }
+                        { (yyval.पाहायाग) = पाहायाग_Create_सुसि_Name((yyvsp[0].atom)); }
 #line 3468 "src/xkbcomp/parser.c"
     break;
 
   case 188: /* MultiKeySymList: MultiKeySymList "," KeySymLit  */
 #line 925 "src/xkbcomp/parser.y"
                         {
-                            ExprDef *expr = ExprCreateKeySymList((yyvsp[0].keysym));
-                            (yyval.exprList) = (yyvsp[-2].exprList);
-                            (yyval.exprList).last->common.next = &expr->common; (yyval.exprList).last = expr;
+                            पाहायाग_Def *पाहायाग = पाहायाग_Create_सुसि_Sym_List((yyvsp[0].keysym));
+                            (yyval.पाहायाग_List) = (yyvsp[-2].पाहायाग_List);
+                            (yyval.पाहायाग_List).last->common.next = &पाहायाग->common; (yyval.पाहायाग_List).last = पाहायाग;
                         }
 #line 3478 "src/xkbcomp/parser.c"
     break;
 
   case 189: /* MultiKeySymList: MultiKeySymList "," KeySyms  */
 #line 931 "src/xkbcomp/parser.y"
-                        { (yyval.exprList) = (yyvsp[-2].exprList); (yyval.exprList).last->common.next = &(yyvsp[0].expr)->common; (yyval.exprList).last = (yyvsp[0].expr); }
+                        { (yyval.पाहायाग_List) = (yyvsp[-2].पाहायाग_List); (yyval.पाहायाग_List).last->common.next = &(yyvsp[0].पाहायाग)->common; (yyval.पाहायाग_List).last = (yyvsp[0].पाहायाग); }
 #line 3484 "src/xkbcomp/parser.c"
     break;
 
   case 190: /* MultiKeySymList: KeySymLit  */
 #line 933 "src/xkbcomp/parser.y"
-                        { (yyval.exprList).head = (yyval.exprList).last = ExprCreateKeySymList((yyvsp[0].keysym)); }
+                        { (yyval.पाहायाग_List).head = (yyval.पाहायाग_List).last = पाहायाग_Create_सुसि_Sym_List((yyvsp[0].keysym)); }
 #line 3490 "src/xkbcomp/parser.c"
     break;
 
   case 191: /* MultiKeySymList: NonEmptyKeySyms  */
 #line 935 "src/xkbcomp/parser.y"
-                        { (yyval.exprList).head = (yyval.exprList).last = (yyvsp[0].expr); }
+                        { (yyval.पाहायाग_List).head = (yyval.पाहायाग_List).last = (yyvsp[0].पाहायाग); }
 #line 3496 "src/xkbcomp/parser.c"
     break;
 
   case 192: /* KeySymList: KeySymList "," KeySymLit  */
 #line 939 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprAppendKeySymList((yyvsp[-2].expr), (yyvsp[0].keysym)); }
+                        { (yyval.पाहायाग) = पाहायाग_Append_सुसि_Sym_List((yyvsp[-2].पाहायाग), (yyvsp[0].keysym)); }
 #line 3502 "src/xkbcomp/parser.c"
     break;
 
   case 193: /* KeySymList: KeySymList "," "string literal"  */
 #line 941 "src/xkbcomp/parser.y"
                         {
-                            (yyval.expr) = ExprKeySymListAppendString(param->scanner, (yyvsp[-2].expr), (yyvsp[0].str));
+                            (yyval.पाहायाग) = पाहायाग_सुसि_Sym_List_Append_String(param->scanner, (yyvsp[-2].पाहायाग), (yyvsp[0].str));
                             free((yyvsp[0].str));
-                            if (!(yyval.expr))
+                            if (!(yyval.पाहायाग))
                                 YYERROR;
                         }
 #line 3513 "src/xkbcomp/parser.c"
@@ -3522,8 +3522,8 @@ yyreduce:
   case 194: /* KeySymList: KeySymLit  */
 #line 948 "src/xkbcomp/parser.y"
                         {
-                            (yyval.expr) = ExprCreateKeySymList((yyvsp[0].keysym));
-                            if (!(yyval.expr))
+                            (yyval.पाहायाग) = पाहायाग_Create_सुसि_Sym_List((yyvsp[0].keysym));
+                            if (!(yyval.पाहायाग))
                                 YYERROR;
                         }
 #line 3523 "src/xkbcomp/parser.c"
@@ -3532,12 +3532,12 @@ yyreduce:
   case 195: /* KeySymList: "string literal"  */
 #line 954 "src/xkbcomp/parser.y"
                         {
-                            (yyval.expr) = ExprCreateKeySymList(XKB_KEY_NoSymbol);
-                            if (!(yyval.expr))
+                            (yyval.पाहायाग) = पाहायाग_Create_सुसि_Sym_List(XKB_सुसि_No_सिम्बोलो);
+                            if (!(yyval.पाहायाग))
                                 YYERROR;
-                            (yyval.expr) = ExprKeySymListAppendString(param->scanner, (yyval.expr), (yyvsp[0].str));
+                            (yyval.पाहायाग) = पाहायाग_सुसि_Sym_List_Append_String(param->scanner, (yyval.पाहायाग), (yyvsp[0].str));
                             free((yyvsp[0].str));
-                            if (!(yyval.expr))
+                            if (!(yyval.पाहायाग))
                                 YYERROR;
                         }
 #line 3537 "src/xkbcomp/parser.c"
@@ -3545,19 +3545,19 @@ yyreduce:
 
   case 196: /* NonEmptyKeySyms: "{" KeySymList "}"  */
 #line 966 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[-1].expr); }
+                        { (yyval.पाहायाग) = (yyvsp[-1].पाहायाग); }
 #line 3543 "src/xkbcomp/parser.c"
     break;
 
   case 197: /* NonEmptyKeySyms: "string literal"  */
 #line 968 "src/xkbcomp/parser.y"
                         {
-                            (yyval.expr) = ExprCreateKeySymList(XKB_KEY_NoSymbol);
-                            if (!(yyval.expr))
+                            (yyval.पाहायाग) = पाहायाग_Create_सुसि_Sym_List(XKB_सुसि_No_सिम्बोलो);
+                            if (!(yyval.पाहायाग))
                                 YYERROR;
-                            (yyval.expr) = ExprKeySymListAppendString(param->scanner, (yyval.expr), (yyvsp[0].str));
+                            (yyval.पाहायाग) = पाहायाग_सुसि_Sym_List_Append_String(param->scanner, (yyval.पाहायाग), (yyvsp[0].str));
                             free((yyvsp[0].str));
-                            if (!(yyval.expr))
+                            if (!(yyval.पाहायाग))
                                 YYERROR;
                         }
 #line 3557 "src/xkbcomp/parser.c"
@@ -3565,13 +3565,13 @@ yyreduce:
 
   case 198: /* KeySyms: NonEmptyKeySyms  */
 #line 980 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = (yyvsp[0].expr); }
+                        { (yyval.पाहायाग) = (yyvsp[0].पाहायाग); }
 #line 3563 "src/xkbcomp/parser.c"
     break;
 
   case 199: /* KeySyms: "{" "}"  */
 #line 982 "src/xkbcomp/parser.y"
-                        { (yyval.expr) = ExprCreateKeySymList(XKB_KEY_NoSymbol); }
+                        { (yyval.पाहायाग) = पाहायाग_Create_सुसि_Sym_List(XKB_सुसि_No_सिम्बोलो); }
 #line 3569 "src/xkbcomp/parser.c"
     break;
 
@@ -3586,7 +3586,7 @@ yyreduce:
                         {
                             (yyval.keysym) = KeysymParseString(param->scanner, (yyvsp[0].str));
                             free((yyvsp[0].str));
-                            if ((yyval.keysym) == XKB_KEY_NoSymbol)
+                            if ((yyval.keysym) == XKB_सुसि_No_सिम्बोलो)
                                 YYERROR;
                         }
 #line 3586 "src/xkbcomp/parser.c"
@@ -3602,7 +3602,7 @@ yyreduce:
                                     "unrecognized keysym \"%.*s\"",
                                     (unsigned int) (yyvsp[0].sval).len, (yyvsp[0].sval).start
                                 );
-                                (yyval.keysym) = XKB_KEY_NoSymbol;
+                                (yyval.keysym) = XKB_सुसि_No_सिम्बोलो;
                             }
                         }
 #line 3602 "src/xkbcomp/parser.c"
@@ -3610,7 +3610,7 @@ yyreduce:
 
   case 203: /* KeySymLit: "section"  */
 #line 1009 "src/xkbcomp/parser.y"
-                                { (yyval.keysym) = XKB_KEY_section; }
+                                { (yyval.keysym) = XKB_सुसि_section; }
 #line 3608 "src/xkbcomp/parser.c"
     break;
 
@@ -3622,7 +3622,7 @@ yyreduce:
                              * map to XKB_KEY_0 .. XKB_KEY_9, consistent with
                              * other keysym names: <name> → XKB_KEY_<name>.
                              */
-                            (yyval.keysym) = XKB_KEY_0 + (xkb_keysym_t) (yyvsp[0].num);
+                            (yyval.keysym) = XKB_सुसि_0 + (xkb_keysym_t) (yyvsp[0].नुमेरो);
                         }
 #line 3621 "src/xkbcomp/parser.c"
     break;
@@ -3630,7 +3630,7 @@ yyreduce:
   case 205: /* KeySymLit: "integer literal"  */
 #line 1020 "src/xkbcomp/parser.y"
                         {
-                            if ((yyvsp[0].num) < XKB_KEYSYM_MIN) {
+                            if ((yyvsp[0].नुमेरो) < XKB_KEYSYM_MIN) {
                                 /* Negative value */
                                 static_assert(XKB_KEYSYM_MIN == 0,
                                               "Keysyms are positive");
@@ -3639,9 +3639,9 @@ yyreduce:
                                     XKB_ERROR_INVALID_NUMERIC_KEYSYM,
                                     "unrecognized keysym \"-%#06"PRIx64"\""
                                     " (%"PRId64")",
-                                    -(yyvsp[0].num), (yyvsp[0].num)
+                                    -(yyvsp[0].नुमेरो), (yyvsp[0].नुमेरो)
                                 );
-                                (yyval.keysym) = XKB_KEY_NoSymbol;
+                                (yyval.keysym) = XKB_सुसि_No_सिम्बोलो;
                             }
                             /*
                              * Integers 0..9 are handled with DECIMAL_DIGIT if
@@ -3653,13 +3653,13 @@ yyreduce:
                              */
                             else {
                                 /* Any other numeric value */
-                                if ((yyvsp[0].num) <= XKB_KEYSYM_MAX) {
+                                if ((yyvsp[0].नुमेरो) <= XKB_KEYSYM_MAX) {
                                     /*
                                      * Valid keysym
                                      * No normalization is performed and value
                                      * is used as is.
                                      */
-                                    (yyval.keysym) = (xkb_keysym_t) (yyvsp[0].num);
+                                    (yyval.keysym) = (xkb_keysym_t) (yyvsp[0].नुमेरो);
                                     check_deprecated_keysyms(
                                         parser_warn, param, param->ctx,
                                         (yyval.keysym), NULL, (yyval.keysym), "%#06"PRIx32, "");
@@ -3668,9 +3668,9 @@ yyreduce:
                                     parser_warn(
                                         param, XKB_ERROR_INVALID_NUMERIC_KEYSYM,
                                         "unrecognized keysym \"%#06"PRIx64"\" "
-                                        "(%"PRId64")", (yyvsp[0].num), (yyvsp[0].num)
+                                        "(%"PRId64")", (yyvsp[0].नुमेरो), (yyvsp[0].नुमेरो)
                                     );
-                                    (yyval.keysym) = XKB_KEY_NoSymbol;
+                                    (yyval.keysym) = XKB_सुसि_No_सिम्बोलो;
                                 }
                                 parser_vrb(
                                     /*
@@ -3682,7 +3682,7 @@ yyreduce:
                                     param, XKB_LOG_VERBOSITY_COMPREHENSIVE,
                                     XKB_WARNING_NUMERIC_KEYSYM,
                                     "numeric keysym \"%#06"PRIx64"\" (%"PRId64")",
-                                    (yyvsp[0].num), (yyvsp[0].num)
+                                    (yyvsp[0].नुमेरो), (yyvsp[0].नुमेरो)
                                 );
                             }
                         }
@@ -3691,61 +3691,61 @@ yyreduce:
 
   case 206: /* SignedNumber: "-" Number  */
 #line 1079 "src/xkbcomp/parser.y"
-                                        { (yyval.num) = -(yyvsp[0].num); }
+                                        { (yyval.नुमेरो) = -(yyvsp[0].नुमेरो); }
 #line 3689 "src/xkbcomp/parser.c"
     break;
 
   case 207: /* SignedNumber: Number  */
 #line 1080 "src/xkbcomp/parser.y"
-                                        { (yyval.num) = (yyvsp[0].num); }
+                                        { (yyval.नुमेरो) = (yyvsp[0].नुमेरो); }
 #line 3695 "src/xkbcomp/parser.c"
     break;
 
   case 208: /* Number: "float literal"  */
 #line 1083 "src/xkbcomp/parser.y"
-                                      { (yyval.num) = (yyvsp[0].num); }
+                                      { (yyval.नुमेरो) = (yyvsp[0].नुमेरो); }
 #line 3701 "src/xkbcomp/parser.c"
     break;
 
   case 209: /* Number: "decimal digit"  */
 #line 1084 "src/xkbcomp/parser.y"
-                                      { (yyval.num) = (yyvsp[0].num); }
+                                      { (yyval.नुमेरो) = (yyvsp[0].नुमेरो); }
 #line 3707 "src/xkbcomp/parser.c"
     break;
 
   case 210: /* Number: "integer literal"  */
 #line 1085 "src/xkbcomp/parser.y"
-                                      { (yyval.num) = (yyvsp[0].num); }
+                                      { (yyval.नुमेरो) = (yyvsp[0].नुमेरो); }
 #line 3713 "src/xkbcomp/parser.c"
     break;
 
   case 211: /* Float: "float literal"  */
 #line 1088 "src/xkbcomp/parser.y"
-                                { (yyval.num) = 0; }
+                                { (yyval.नुमेरो) = 0; }
 #line 3719 "src/xkbcomp/parser.c"
     break;
 
   case 212: /* Integer: "integer literal"  */
 #line 1091 "src/xkbcomp/parser.y"
-                                      { (yyval.num) = (yyvsp[0].num); }
+                                      { (yyval.नुमेरो) = (yyvsp[0].नुमेरो); }
 #line 3725 "src/xkbcomp/parser.c"
     break;
 
   case 213: /* Integer: "decimal digit"  */
 #line 1092 "src/xkbcomp/parser.y"
-                                      { (yyval.num) = (yyvsp[0].num); }
+                                      { (yyval.नुमेरो) = (yyvsp[0].नुमेरो); }
 #line 3731 "src/xkbcomp/parser.c"
     break;
 
   case 214: /* KeyCode: "integer literal"  */
 #line 1095 "src/xkbcomp/parser.y"
-                                      { (yyval.num) = (yyvsp[0].num); }
+                                      { (yyval.नुमेरो) = (yyvsp[0].नुमेरो); }
 #line 3737 "src/xkbcomp/parser.c"
     break;
 
   case 215: /* KeyCode: "decimal digit"  */
 #line 1096 "src/xkbcomp/parser.y"
-                                      { (yyval.num) = (yyvsp[0].num); }
+                                      { (yyval.नुमेरो) = (yyvsp[0].नुमेरो); }
 #line 3743 "src/xkbcomp/parser.c"
     break;
 
@@ -3801,7 +3801,7 @@ yyreduce:
      case of YYERROR or YYBACKUP, subsequent parser actions might lead
      to an incorrect destructor call or verbose syntax error message
      before the lookahead is translated.  */
-  YY_SYMBOL_PRINT ("-> $$ =", YY_CAST (yysymbol_kind_t, yyr1[yyn]), &yyval, &yyloc);
+  YY_सिम्बोलो_इलिम्बाग ("-> $$ =", YY_CAST (yysymbol_kind_t, yyr1[yyn]), &yyval, &yyloc);
 
   YYPOPSTACK (yylen);
   yylen = 0;
@@ -3904,7 +3904,7 @@ yyerrorlab:
      this YYERROR.  */
   YYPOPSTACK (yylen);
   yylen = 0;
-  YY_STACK_PRINT (yyss, yyssp);
+  YY_सालानसान_इलिम्बाग (yyss, yyssp);
   yystate = *yyssp;
   goto yyerrlab1;
 
@@ -3919,7 +3919,7 @@ yyerrlab1:
   for (;;)
     {
       yyn = yypact[yystate];
-      if (!yypact_value_is_default (yyn))
+      if (!yypact_हालागा_is_default (yyn))
         {
           yyn += YYSYMBOL_YYerror;
           if (0 <= yyn && yyn <= YYLAST && yycheck[yyn] == YYSYMBOL_YYerror)
@@ -3936,10 +3936,10 @@ yyerrlab1:
 
 
       yydestruct ("Error: popping",
-                  YY_ACCESSING_SYMBOL (yystate), yyvsp, param);
+                  YY_ACCESSING_सिम्बोलो (yystate), yyvsp, param);
       YYPOPSTACK (1);
       yystate = *yyssp;
-      YY_STACK_PRINT (yyss, yyssp);
+      YY_सालानसान_इलिम्बाग (yyss, yyssp);
     }
 
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
@@ -3948,7 +3948,7 @@ yyerrlab1:
 
 
   /* Shift the error token.  */
-  YY_SYMBOL_PRINT ("Shifting", YY_ACCESSING_SYMBOL (yyn), yyvsp, yylsp);
+  YY_सिम्बोलो_इलिम्बाग ("Shifting", YY_ACCESSING_सिम्बोलो (yyn), yyvsp, yylsp);
 
   yystate = yyn;
   goto yynewstate;
@@ -3994,11 +3994,11 @@ yyreturnlab:
   /* Do not reclaim the symbols of the rule whose action triggered
      this YYABORT or YYACCEPT.  */
   YYPOPSTACK (yylen);
-  YY_STACK_PRINT (yyss, yyssp);
+  YY_सालानसान_इलिम्बाग (yyss, yyssp);
   while (yyssp != yyss)
     {
       yydestruct ("Cleanup: popping",
-                  YY_ACCESSING_SYMBOL (+*yyssp), yyvsp, param);
+                  YY_ACCESSING_सिम्बोलो (+*yyssp), yyvsp, param);
       YYPOPSTACK (1);
     }
 #ifndef yyoverflow

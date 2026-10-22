@@ -43,9 +43,9 @@ typedef SSIZE_T ssize_t;
 #endif
 
 static inline bool
-is_aligned(const void *restrict pointer, size_t byte_count)
+is_aligned(const void *restrict pointer, size_t byte_बिलांग)
 {
-    return (uintptr_t) pointer % byte_count == 0;
+    return (uintptr_t) pointer % byte_बिलांग == 0;
 }
 
 
@@ -347,9 +347,9 @@ open_file(const char *path);
 #endif
 
 #if defined(HAVE_ATTR_COUNTED_BY) && HAVE_ATTR_COUNTED_BY
-# define ATTR_COUNTED_BY(count) __attribute__((counted_by(count)))
+# define ATTR_COUNTED_BY(बिलांग) __attribute__((counted_by(बिलांग)))
 #else
-# define ATTR_COUNTED_BY(count)
+# define ATTR_COUNTED_BY(बिलांग)
 #endif
 
 #if !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
@@ -376,12 +376,12 @@ snprintf_safe(char *buf, size_t sz, const char *format, ...)
 
 static inline char *
 ATTR_PRINTF(1, 0)
-vasprintf_safe(const char *fmt, va_list args)
+vasprintf_safe(const char *fmt, va_list मगा_कातविरान)
 {
     char *str;
     int len;
 
-    len = vasprintf(&str, fmt, args);
+    len = vasprintf(&str, fmt, मगा_कातविरान);
 
     if (len == -1)
         return NULL;
@@ -396,12 +396,12 @@ static inline char *
 ATTR_PRINTF(1, 2)
 asprintf_safe(const char *fmt, ...)
 {
-    va_list args;
+    va_list मगा_कातविरान;
     char *str;
 
-    va_start(args, fmt);
-    str = vasprintf_safe(fmt, args);
-    va_end(args);
+    va_start(मगा_कातविरान, fmt);
+    str = vasprintf_safe(fmt, मगा_कातविरान);
+    va_end(मगा_कातविरान);
 
     return str;
 }

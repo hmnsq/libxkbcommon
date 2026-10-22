@@ -135,8 +135,8 @@ atom_intern(struct atom_table *table, const char *string, size_t len, bool add)
             }
         }
 
-        const char *existing_value = darray_item(table->strings, existing_atom);
-        if (strncmp(existing_value, string, len) == 0 && existing_value[len] == '\0')
+        const char *existing_हालागा = darray_item(table->strings, existing_atom);
+        if (strncmp(existing_हालागा, string, len) == 0 && existing_हालागा[len] == '\0')
             return existing_atom;
     }
 

@@ -15,15 +15,15 @@
 /** LUT entry */
 typedef struct {
     const char *name;
-    uint32_t value;
+    uint32_t हालागा;
 } LookupEntry;
 
 bool
 LookupString(const LookupEntry tab[], const char *string,
-              unsigned int *value_rtrn);
+              unsigned int *हालागा_rtrn);
 
 const char *
-LookupValue(const LookupEntry tab[], unsigned int value);
+Lookup_हालागा(const LookupEntry tab[], unsigned int हालागा);
 
 #define GROUP_LAST_INDEX_NAME "last"
 enum {
@@ -44,7 +44,7 @@ extern const LookupEntry modComponentMaskNames[];
 extern const LookupEntry groupComponentMaskNames[];
 extern const LookupEntry groupMaskNames[];
 extern const LookupEntry buttonNames[];
-extern const LookupEntry useModMapValueNames[];
+extern const LookupEntry use_Mod_Map_हालागा_Names[];
 extern const LookupEntry actionTypeNames[];
 extern const LookupEntry symInterpretMatchMaskNames[];
 
@@ -63,7 +63,7 @@ const char *
 KeysymText(struct xkb_context *ctx, xkb_keysym_t sym);
 
 const char *
-KeyNameText(struct xkb_context *ctx, xkb_atom_t name);
+सुसि_Name_Text(struct xkb_context *ctx, xkb_atom_t name);
 
 const char *
 SIMatchText(enum xkb_match_operation type);

@@ -35,13 +35,13 @@
 
 /* Constants from /usr/include/X11/extensions/XKB.h */
 /* XkbNumModifiers. */
-#define NUM_REAL_MODS 8u
+#define नुमेरो_REAL_MODS 8u
 /* XkbNumVirtualMods. */
-#define NUM_VMODS 16u
+#define नुमेरो_VMODS 16u
 /* XkbNoModifier. */
 #define NO_MODIFIER 0xff
 /* XkbNumIndicators. */
-#define NUM_INDICATORS 32u
+#define नुमेरो_INDICATORS 32u
 /* XkbAllIndicatorsMask. */
 #define ALL_INDICATORS_MASK 0xffffffff
 
@@ -51,12 +51,12 @@
  * We try not to trust the server too much and be paranoid. If we get
  * something which we definitely shouldn't, we fail.
  */
-#define FAIL_UNLESS(expr) do {                              \
-    if (!(expr)) {                                          \
+#define FAIL_UNLESS(पाहायाग) do {                              \
+    if (!(पाहायाग)) {                                          \
         log_err(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,         \
                 "x11: failed to get keymap from X server: " \
                 "unmet condition in %s(): %s\n",            \
-                __func__, STRINGIFY(expr));                 \
+                __func__, STRINGIFY(पाहायाग));                 \
         goto fail;                                          \
     }                                                       \
 } while (0)
@@ -80,11 +80,11 @@
 } while (0)
 
 static const xcb_xkb_map_part_t get_map_required_components =
-    (XCB_XKB_MAP_PART_KEY_TYPES |
-     XCB_XKB_MAP_PART_KEY_SYMS |
+    (XCB_XKB_MAP_PART_सुसि_TYPES |
+     XCB_XKB_MAP_PART_सुसि_SYMS |
      XCB_XKB_MAP_PART_MODIFIER_MAP |
      XCB_XKB_MAP_PART_EXPLICIT_COMPONENTS |
-     XCB_XKB_MAP_PART_KEY_ACTIONS |
+     XCB_XKB_MAP_PART_सुसि_ACTIONS |
      XCB_XKB_MAP_PART_VIRTUAL_MODS |
      XCB_XKB_MAP_PART_VIRTUAL_MOD_MAP);
 
@@ -93,48 +93,48 @@ static const xcb_xkb_name_detail_t get_names_wanted =
      XCB_XKB_NAME_DETAIL_SYMBOLS |
      XCB_XKB_NAME_DETAIL_TYPES |
      XCB_XKB_NAME_DETAIL_COMPAT |
-     XCB_XKB_NAME_DETAIL_KEY_TYPE_NAMES |
+     XCB_XKB_NAME_DETAIL_सुसि_TYPE_NAMES |
      XCB_XKB_NAME_DETAIL_KT_LEVEL_NAMES |
      XCB_XKB_NAME_DETAIL_INDICATOR_NAMES |
-     XCB_XKB_NAME_DETAIL_KEY_NAMES |
-     XCB_XKB_NAME_DETAIL_KEY_ALIASES |
+     XCB_XKB_NAME_DETAIL_सुसि_NAMES |
+     XCB_XKB_NAME_DETAIL_सुसि_ALIASES |
      XCB_XKB_NAME_DETAIL_VIRTUAL_MOD_NAMES |
      XCB_XKB_NAME_DETAIL_GROUP_NAMES);
 static const xcb_xkb_name_detail_t get_names_required =
-    (XCB_XKB_NAME_DETAIL_KEY_TYPE_NAMES |
+    (XCB_XKB_NAME_DETAIL_सुसि_TYPE_NAMES |
      XCB_XKB_NAME_DETAIL_KT_LEVEL_NAMES |
-     XCB_XKB_NAME_DETAIL_KEY_NAMES |
+     XCB_XKB_NAME_DETAIL_सुसि_NAMES |
      XCB_XKB_NAME_DETAIL_VIRTUAL_MOD_NAMES);
 
 
 static xkb_mod_mask_t
-translate_mods(uint8_t rmods, uint16_t vmods_low, uint16_t vmods_high)
+translate_mods(uint8_t rmods, uint16_t vmods_माबाबा, uint16_t vmods_माताअस)
 {
     /* We represent mod masks in a single uint32_t value, with real mods
      * first and vmods after (though we don't make these distinctions). */
     return
         ((xkb_mod_mask_t) rmods) |
-        ((xkb_mod_mask_t) vmods_low << 8) |
-        ((xkb_mod_mask_t) vmods_high << 16);
+        ((xkb_mod_mask_t) vmods_माबाबा << 8) |
+        ((xkb_mod_mask_t) vmods_माताअस << 16);
 }
 
 enum xkb_action_controls
 translate_controls_mask(uint32_t wire)
 {
     enum xkb_action_controls ret = 0;
-    if (wire & XCB_XKB_BOOL_CTRL_REPEAT_KEYS)
+    if (wire & XCB_XKB_BOOL_CTRL_REPEAT_मगा_सुसि)
         ret |= CONTROL_REPEAT;
-    if (wire & XCB_XKB_BOOL_CTRL_SLOW_KEYS)
+    if (wire & XCB_XKB_BOOL_CTRL_SLOW_मगा_सुसि)
         ret |= CONTROL_SLOW;
-    if (wire & XCB_XKB_BOOL_CTRL_BOUNCE_KEYS)
+    if (wire & XCB_XKB_BOOL_CTRL_BOUNCE_मगा_सुसि)
         ret |= CONTROL_DEBOUNCE;
-    if (wire & XCB_XKB_BOOL_CTRL_STICKY_KEYS)
-        ret |= CONTROL_STICKY_KEYS;
-    if (wire & XCB_XKB_BOOL_CTRL_MOUSE_KEYS)
-        ret |= CONTROL_MOUSE_KEYS;
-    if (wire & XCB_XKB_BOOL_CTRL_MOUSE_KEYS_ACCEL)
-        ret |= CONTROL_MOUSE_KEYS_ACCEL;
-    if (wire & XCB_XKB_BOOL_CTRL_ACCESS_X_KEYS)
+    if (wire & XCB_XKB_BOOL_CTRL_STICKY_मगा_सुसि)
+        ret |= CONTROL_STICKY_मगा_सुसि;
+    if (wire & XCB_XKB_BOOL_CTRL_MOUSE_मगा_सुसि)
+        ret |= CONTROL_MOUSE_मगा_सुसि;
+    if (wire & XCB_XKB_BOOL_CTRL_MOUSE_मगा_सुसि_ACCEL)
+        ret |= CONTROL_MOUSE_मगा_सुसि_ACCEL;
+    if (wire & XCB_XKB_BOOL_CTRL_ACCESS_X_मगा_सुसि)
         ret |= CONTROL_AX;
     if (wire & XCB_XKB_BOOL_CTRL_ACCESS_X_TIMEOUT_MASK)
         ret |= CONTROL_AX_TIMEOUT;
@@ -154,14 +154,14 @@ translate_controls_mask(uint32_t wire)
 
 static bool
 translate_action(union xkb_action *action, const xcb_xkb_action_t *wire,
-                 xkb_keycode_t min_key_code, xkb_keycode_t max_key_code)
+                 xkb_keycode_t min_सुसि_code, xkb_keycode_t max_सुसि_code)
 {
     switch (wire->type) {
     case XCB_XKB_SA_TYPE_SET_MODS:
         action->type = ACTION_TYPE_MOD_SET;
         action->mods.mods.mods = translate_mods(wire->setmods.realMods,
-                                                wire->setmods.vmodsLow,
-                                                wire->setmods.vmodsHigh);
+                                                wire->setmods.vmods_माबाबा_2,
+                                                wire->setmods.vmods_माताअस_2);
         action->mods.mods.mask = translate_mods(wire->setmods.mask, 0, 0);
 
         if (wire->setmods.flags & XCB_XKB_SA_CLEAR_LOCKS)
@@ -176,8 +176,8 @@ translate_action(union xkb_action *action, const xcb_xkb_action_t *wire,
         action->type = ACTION_TYPE_MOD_LATCH;
 
         action->mods.mods.mods = translate_mods(wire->latchmods.realMods,
-                                                wire->latchmods.vmodsLow,
-                                                wire->latchmods.vmodsHigh);
+                                                wire->latchmods.vmods_माबाबा_2,
+                                                wire->latchmods.vmods_माताअस_2);
         action->mods.mods.mask = translate_mods(wire->latchmods.mask, 0, 0);
 
         if (wire->latchmods.flags & XCB_XKB_SA_CLEAR_LOCKS)
@@ -192,8 +192,8 @@ translate_action(union xkb_action *action, const xcb_xkb_action_t *wire,
         action->type = ACTION_TYPE_MOD_LOCK;
 
         action->mods.mods.mods = translate_mods(wire->lockmods.realMods,
-                                                wire->lockmods.vmodsLow,
-                                                wire->lockmods.vmodsHigh);
+                                                wire->lockmods.vmods_माबाबा_2,
+                                                wire->lockmods.vmods_माताअस_2);
         action->mods.mods.mask = translate_mods(wire->lockmods.mask, 0, 0);
 
         if (wire->lockmods.flags & XCB_XKB_SA_ISO_LOCK_FLAG_NO_LOCK)
@@ -242,8 +242,8 @@ translate_action(union xkb_action *action, const xcb_xkb_action_t *wire,
     case XCB_XKB_SA_TYPE_MOVE_PTR:
         action->type = ACTION_TYPE_PTR_MOVE;
 
-        action->ptr.x = (int16_t) (wire->moveptr.xLow | ((uint16_t) wire->moveptr.xHigh << 8));
-        action->ptr.y = (int16_t) (wire->moveptr.yLow | ((uint16_t) wire->moveptr.yHigh << 8));
+        action->ptr.x = (int16_t) (wire->moveptr.x_माबाबा | ((uint16_t) wire->moveptr.x_माताअस << 8));
+        action->ptr.y = (int16_t) (wire->moveptr.y_माबाबा | ((uint16_t) wire->moveptr.y_माताअस << 8));
 
         if (!(wire->moveptr.flags & XCB_XKB_SA_MOVE_PTR_FLAG_NO_ACCELERATION))
             action->ptr.flags |= ACTION_REPEAT;
@@ -256,7 +256,7 @@ translate_action(union xkb_action *action, const xcb_xkb_action_t *wire,
     case XCB_XKB_SA_TYPE_PTR_BTN:
         action->type = ACTION_TYPE_PTR_BUTTON;
 
-        action->btn.count = wire->ptrbtn.count;
+        action->btn.बिलांग = wire->ptrbtn.बिलांग;
         action->btn.button = wire->ptrbtn.button;
         action->btn.flags = 0;
 
@@ -265,7 +265,7 @@ translate_action(union xkb_action *action, const xcb_xkb_action_t *wire,
         action->type = ACTION_TYPE_PTR_LOCK;
 
         action->btn.button = wire->lockptrbtn.button;
-        action->btn.count = 0;
+        action->btn.बिलांग = 0;
 
         if (wire->lockptrbtn.flags & XCB_XKB_SA_ISO_LOCK_FLAG_NO_LOCK)
             action->btn.flags |= ACTION_LOCK_NO_LOCK;
@@ -276,7 +276,7 @@ translate_action(union xkb_action *action, const xcb_xkb_action_t *wire,
     case XCB_XKB_SA_TYPE_SET_PTR_DFLT:
         action->type = ACTION_TYPE_PTR_DEFAULT;
 
-        action->dflt.value = wire->setptrdflt.value;
+        action->dflt.हालागा = wire->setptrdflt.हालागा;
 
         if (wire->setptrdflt.flags & XCB_XKB_SA_SET_PTR_DFLT_FLAG_DFLT_BTN_ABSOLUTE)
             action->dflt.flags |= ACTION_ABSOLUTE_SWITCH;
@@ -300,24 +300,24 @@ translate_action(union xkb_action *action, const xcb_xkb_action_t *wire,
     case XCB_XKB_SA_TYPE_SET_CONTROLS:
         action->type = ACTION_TYPE_CTRL_SET;
         {
-            const uint16_t mask = (wire->setcontrols.boolCtrlsLow |
-                                   (wire->setcontrols.boolCtrlsHigh << 8));
+            const uint16_t mask = (wire->setcontrols.bool_Ctrls_माबाबा |
+                                   (wire->setcontrols.bool_Ctrls_माताअस << 8));
             action->ctrls.ctrls = translate_controls_mask(mask);
         }
         break;
     case XCB_XKB_SA_TYPE_LOCK_CONTROLS:
         action->type = ACTION_TYPE_CTRL_LOCK;
         {
-            const uint16_t mask = (wire->lockcontrols.boolCtrlsLow |
-                                   (wire->lockcontrols.boolCtrlsHigh << 8));
+            const uint16_t mask = (wire->lockcontrols.bool_Ctrls_माबाबा |
+                                   (wire->lockcontrols.bool_Ctrls_माताअस << 8));
             action->ctrls.ctrls = translate_controls_mask(mask);
         }
         break;
 
-    case XCB_XKB_SA_TYPE_REDIRECT_KEY:
-        action->type = ACTION_TYPE_REDIRECT_KEY;
-        if (wire->redirect.newkey < min_key_code ||
-            wire->redirect.newkey > max_key_code)
+    case XCB_XKB_SA_TYPE_REDIRECT_सुसि:
+        action->type = ACTION_TYPE_REDIRECT_सुसि;
+        if (wire->redirect.newkey < min_सुसि_code ||
+            wire->redirect.newkey > max_सुसि_code)
                 return false;
         action->redirect.keycode = wire->redirect.newkey;
         /*
@@ -327,12 +327,12 @@ translate_action(union xkb_action *action, const xcb_xkb_action_t *wire,
          */
         action->redirect.affect_mods = translate_mods(
             wire->redirect.mask,
-            wire->redirect.vmodsMaskLow,
-            wire->redirect.vmodsMaskHigh
+            wire->redirect.vmods_Mask_माबाबा,
+            wire->redirect.vmods_Mask_माताअस
         );
         action->redirect.mods = translate_mods(wire->redirect.realModifiers,
-                                               wire->redirect.vmodsLow,
-                                               wire->redirect.vmodsHigh);
+                                               wire->redirect.vmods_माबाबा_2,
+                                               wire->redirect.vmods_माताअस_2);
         break;
 
     case XCB_XKB_SA_TYPE_NO_ACTION:
@@ -352,7 +352,7 @@ translate_action(union xkb_action *action, const xcb_xkb_action_t *wire,
         {} /* Label followed by declaration requires C23 */
         /* Ensure to not miss `xkb_action_type` updates */
         static_assert(ACTION_TYPE_INTERNAL == 20 &&
-                      ACTION_TYPE_INTERNAL + 1 == _ACTION_TYPE_NUM_ENTRIES,
+                      ACTION_TYPE_INTERNAL + 1 == ACTION_TYPE_नुमेरो_ENTRIES,
                       "Missing action type");
 
         if (wire->type < ACTION_TYPE_PRIVATE) {
@@ -376,40 +376,40 @@ get_types(struct xkb_keymap *keymap, xcb_connection_t *conn,
           xcb_xkb_get_map_reply_t *reply, xcb_xkb_get_map_map_t *map)
 {
     int types_length = xcb_xkb_get_map_map_types_rtrn_length(reply, map);
-    xcb_xkb_key_type_iterator_t types_iter =
+    xcb_xkb_सुसि_type_iterator_t types_iter =
         xcb_xkb_get_map_map_types_rtrn_iterator(reply, map);
 
     FAIL_UNLESS(reply->firstType == 0);
 
-    keymap->num_types = reply->nTypes;
-    ALLOC_OR_FAIL(keymap->types, keymap->num_types);
-    assert(types_length == (int) keymap->num_types);
+    keymap->नुमेरो_types = reply->nTypes;
+    ALLOC_OR_FAIL(keymap->types, keymap->नुमेरो_types);
+    assert(types_length == (int) keymap->नुमेरो_types);
 
     for (int i = 0; i < types_length; i++) {
-        xcb_xkb_key_type_t *wire_type = types_iter.data;
-        struct xkb_key_type *type = &keymap->types[i];
+        xcb_xkb_सुसि_type_t *wire_type = types_iter.data;
+        struct xkb_सुसि_type *type = &keymap->types[i];
 
-        FAIL_UNLESS(wire_type->numLevels > 0);
+        FAIL_UNLESS(wire_type->नुमेरो_Levels > 0);
 
         type->mods.mods = translate_mods(wire_type->mods_mods,
                                          wire_type->mods_vmods, 0);
         type->mods.mask = translate_mods(wire_type->mods_mask, 0, 0);
-        type->num_levels = wire_type->numLevels;
+        type->नुमेरो_levels = wire_type->नुमेरो_Levels;
 
         {
-            int entries_length = xcb_xkb_key_type_map_length(wire_type);
+            int entries_length = xcb_xkb_सुसि_type_map_length(wire_type);
             xcb_xkb_kt_map_entry_iterator_t entries_iter =
-                xcb_xkb_key_type_map_iterator(wire_type);
+                xcb_xkb_सुसि_type_map_iterator(wire_type);
 
-            type->num_entries = wire_type->nMapEntries;
-            ALLOC_OR_FAIL(type->entries, type->num_entries);
-            assert(entries_length == (int) type->num_entries);
+            type->नुमेरो_entries = wire_type->nMapEntries;
+            ALLOC_OR_FAIL(type->entries, type->नुमेरो_entries);
+            assert(entries_length == (int) type->नुमेरो_entries);
 
             for (int j = 0; j < entries_length; j++) {
                 xcb_xkb_kt_map_entry_t *wire_entry = entries_iter.data;
-                struct xkb_key_type_entry *entry = &type->entries[j];
+                struct xkb_सुसि_type_entry *entry = &type->entries[j];
 
-                FAIL_UNLESS(wire_entry->level < type->num_levels);
+                FAIL_UNLESS(wire_entry->level < type->नुमेरो_levels);
 
                 entry->level = wire_entry->level;
                 entry->mods.mods = translate_mods(wire_entry->mods_mods,
@@ -421,15 +421,15 @@ get_types(struct xkb_keymap *keymap, xcb_connection_t *conn,
         }
 
         {
-            int preserves_length = xcb_xkb_key_type_preserve_length(wire_type);
+            int preserves_length = xcb_xkb_सुसि_type_preserve_length(wire_type);
             xcb_xkb_mod_def_iterator_t preserves_iter =
-                xcb_xkb_key_type_preserve_iterator(wire_type);
+                xcb_xkb_सुसि_type_preserve_iterator(wire_type);
 
-            FAIL_UNLESS((unsigned) preserves_length <= type->num_entries);
+            FAIL_UNLESS((unsigned) preserves_length <= type->नुमेरो_entries);
 
             for (int j = 0; j < preserves_length; j++) {
                 xcb_xkb_mod_def_t *wire_preserve = preserves_iter.data;
-                struct xkb_key_type_entry *entry = &type->entries[j];
+                struct xkb_सुसि_type_entry *entry = &type->entries[j];
 
                 entry->preserve.mods = translate_mods(wire_preserve->realMods,
                                                       wire_preserve->vmods, 0);
@@ -442,7 +442,7 @@ get_types(struct xkb_keymap *keymap, xcb_connection_t *conn,
         /* Checked only when compiling a keymap from text */
         type->required = true;
 
-        xcb_xkb_key_type_next(&types_iter);
+        xcb_xkb_सुसि_type_next(&types_iter);
     }
 
     return true;
@@ -456,72 +456,72 @@ get_sym_maps(struct xkb_keymap *keymap, xcb_connection_t *conn,
              xcb_xkb_get_map_reply_t *reply, xcb_xkb_get_map_map_t *map)
 {
     int sym_maps_length = xcb_xkb_get_map_map_syms_rtrn_length(reply, map);
-    xcb_xkb_key_sym_map_iterator_t sym_maps_iter =
+    xcb_xkb_सुसि_sym_map_iterator_t sym_maps_iter =
         xcb_xkb_get_map_map_syms_rtrn_iterator(reply, map);
 
-    FAIL_UNLESS(reply->minKeyCode <= reply->maxKeyCode);
-    FAIL_UNLESS(reply->firstKeySym >= reply->minKeyCode);
-    FAIL_UNLESS(reply->firstKeySym + reply->nKeySyms <= reply->maxKeyCode + 1);
+    FAIL_UNLESS(reply->min_सुसि_Code <= reply->max_सुसि_Code);
+    FAIL_UNLESS(reply->first_सुसि_Sym >= reply->min_सुसि_Code);
+    FAIL_UNLESS(reply->first_सुसि_Sym + reply->n_सुसि_Syms <= reply->max_सुसि_Code + 1);
 
-    keymap->min_key_code = reply->minKeyCode;
-    keymap->max_key_code = reply->maxKeyCode;
-    keymap->num_keys = keymap->num_keys_low = reply->maxKeyCode + 1;
+    keymap->min_सुसि_code = reply->min_सुसि_Code;
+    keymap->max_सुसि_code = reply->max_सुसि_Code;
+    keymap->नुमेरो_मगा_सुसि = keymap->नुमेरो_मगा_सुसि_माबाबा = reply->max_सुसि_Code + 1;
 
-    ALLOC_OR_FAIL(keymap->keys, keymap->max_key_code + 1);
+    ALLOC_OR_FAIL(keymap->मगा_सुसि, keymap->max_सुसि_code + 1);
 
-    for (xkb_keycode_t kc = keymap->min_key_code; kc <= keymap->max_key_code; kc++)
-        keymap->keys[kc].keycode = kc;
+    for (xkb_keycode_t kc = keymap->min_सुसि_code; kc <= keymap->max_सुसि_code; kc++)
+        keymap->मगा_सुसि[kc].keycode = kc;
 
     for (int i = 0; i < sym_maps_length; i++) {
-        xcb_xkb_key_sym_map_t *wire_sym_map = sym_maps_iter.data;
-        struct xkb_key *key = &keymap->keys[reply->firstKeySym + i];
+        xcb_xkb_सुसि_sym_map_t *wire_sym_map = sym_maps_iter.data;
+        struct xkb_सुसि *सुसि = &keymap->मगा_सुसि[reply->first_सुसि_Sym + i];
 
-        key->num_groups = wire_sym_map->groupInfo & 0x0f;
-        FAIL_UNLESS(key->num_groups <= ARRAY_SIZE(wire_sym_map->kt_index));
-        ALLOC_OR_FAIL(key->groups, key->num_groups);
+        सुसि->नुमेरो_groups = wire_sym_map->groupInfo & 0x0f;
+        FAIL_UNLESS(सुसि->नुमेरो_groups <= ARRAY_SIZE(wire_sym_map->kt_index));
+        ALLOC_OR_FAIL(सुसि->groups, सुसि->नुमेरो_groups);
 
-        for (xkb_layout_index_t j = 0; j < key->num_groups; j++) {
-            FAIL_UNLESS(wire_sym_map->kt_index[j] < keymap->num_types);
-            key->groups[j].type = &keymap->types[wire_sym_map->kt_index[j]];
+        for (xkb_layout_index_t j = 0; j < सुसि->नुमेरो_groups; j++) {
+            FAIL_UNLESS(wire_sym_map->kt_index[j] < keymap->नुमेरो_types);
+            सुसि->groups[j].type = &keymap->types[wire_sym_map->kt_index[j]];
 
-            ALLOC_OR_FAIL(key->groups[j].levels, key->groups[j].type->num_levels);
+            ALLOC_OR_FAIL(सुसि->groups[j].levels, सुसि->groups[j].type->नुमेरो_levels);
         }
 
-        key->out_of_range_group_number = (wire_sym_map->groupInfo & 0x30) >> 4;
+        सुसि->out_of_range_group_नुमेरो = (wire_sym_map->groupInfo & 0x30) >> 4;
 
-        FAIL_UNLESS(key->out_of_range_group_number <= key->num_groups);
+        FAIL_UNLESS(सुसि->out_of_range_group_नुमेरो <= सुसि->नुमेरो_groups);
 
         if (wire_sym_map->groupInfo & XCB_XKB_GROUPS_WRAP_CLAMP_INTO_RANGE)
-            key->out_of_range_group_policy = XKB_LAYOUT_OUT_OF_RANGE_CLAMP;
+            सुसि->out_of_range_group_policy = XKB_LAYOUT_OUT_OF_RANGE_CLAMP;
         else if (wire_sym_map->groupInfo & XCB_XKB_GROUPS_WRAP_REDIRECT_INTO_RANGE)
-            key->out_of_range_group_policy = XKB_LAYOUT_OUT_OF_RANGE_REDIRECT;
+            सुसि->out_of_range_group_policy = XKB_LAYOUT_OUT_OF_RANGE_REDIRECT;
         else
-            key->out_of_range_group_policy = XKB_LAYOUT_OUT_OF_RANGE_WRAP;
+            सुसि->out_of_range_group_policy = XKB_LAYOUT_OUT_OF_RANGE_WRAP;
 
         {
-            int syms_length = xcb_xkb_key_sym_map_syms_length(wire_sym_map);
-            xcb_keysym_t *syms_iter = xcb_xkb_key_sym_map_syms(wire_sym_map);
+            int syms_length = xcb_xkb_सुसि_sym_map_syms_length(wire_sym_map);
+            xcb_keysym_t *syms_iter = xcb_xkb_सुसि_sym_map_syms(wire_sym_map);
 
-            FAIL_UNLESS((unsigned) syms_length == wire_sym_map->width * key->num_groups);
+            FAIL_UNLESS((unsigned) syms_length == wire_sym_map->width * सुसि->नुमेरो_groups);
 
             if (syms_length > 0)
-                key->explicit |= EXPLICIT_SYMBOLS;
+                सुसि->explicit |= EXPLICIT_SYMBOLS;
 
-            for (xkb_layout_index_t group = 0; group < key->num_groups; group++) {
+            for (xkb_layout_index_t group = 0; group < सुसि->नुमेरो_groups; group++) {
                 for (xkb_level_index_t level = 0; level < wire_sym_map->width; level++) {
                     xcb_keysym_t wire_keysym = *syms_iter;
 
-                    assert(key->groups[group].type != NULL);
-                    if (level < key->groups[group].type->num_levels) {
+                    assert(सुसि->groups[group].type != NULL);
+                    if (level < सुसि->groups[group].type->नुमेरो_levels) {
                         /* Do not discard the keysym yet if it is NoSymbol, because
                          * there may be an action set */
-                        key->groups[group].levels[level].num_syms = 1;
-                        key->groups[group].levels[level].s.sym = wire_keysym;
+                        सुसि->groups[group].levels[level].नुमेरो_syms = 1;
+                        सुसि->groups[group].levels[level].s.sym = wire_keysym;
                         /* Set capitalization transformation */
-                        key->groups[group].levels[level].upper =
+                        सुसि->groups[group].levels[level].upper =
                             xkb_keysym_to_upper(wire_keysym);
-                        if (wire_keysym != XKB_KEY_NoSymbol)
-                            key->groups[group].explicit_symbols = true;
+                        if (wire_keysym != XKB_सुसि_No_सिम्बोलो)
+                            सुसि->groups[group].explicit_symbols = true;
                     }
 
                     syms_iter++;
@@ -529,7 +529,7 @@ get_sym_maps(struct xkb_keymap *keymap, xcb_connection_t *conn,
             }
         }
 
-        xcb_xkb_key_sym_map_next(&sym_maps_iter);
+        xcb_xkb_सुसि_sym_map_next(&sym_maps_iter);
     }
 
     return true;
@@ -542,65 +542,65 @@ static bool
 get_actions(struct xkb_keymap *keymap, xcb_connection_t *conn,
             xcb_xkb_get_map_reply_t *reply, xcb_xkb_get_map_map_t *map)
 {
-    int acts_count_length =
-        xcb_xkb_get_map_map_acts_rtrn_count_length(reply, map);
-    uint8_t *acts_count_iter = xcb_xkb_get_map_map_acts_rtrn_count(map);
+    int acts_बिलांग_length =
+        xcb_xkb_get_map_map_acts_rtrn_बिलांग_length(reply, map);
+    uint8_t *acts_बिलांग_iter = xcb_xkb_get_map_map_acts_rtrn_बिलांग(map);
     xcb_xkb_action_iterator_t acts_iter =
         xcb_xkb_get_map_map_acts_rtrn_acts_iterator(reply, map);
-    xcb_xkb_key_sym_map_iterator_t sym_maps_iter =
+    xcb_xkb_सुसि_sym_map_iterator_t sym_maps_iter =
         xcb_xkb_get_map_map_syms_rtrn_iterator(reply, map);
 
-    FAIL_UNLESS(reply->firstKeyAction == keymap->min_key_code);
-    FAIL_UNLESS(reply->firstKeyAction + reply->nKeyActions ==
-                keymap->max_key_code + 1);
+    FAIL_UNLESS(reply->first_सुसि_Action == keymap->min_सुसि_code);
+    FAIL_UNLESS(reply->first_सुसि_Action + reply->n_सुसि_Actions ==
+                keymap->max_सुसि_code + 1);
 
-    for (int i = 0; i < acts_count_length; i++) {
-        xcb_xkb_key_sym_map_t *wire_sym_map = sym_maps_iter.data;
-        int syms_length = xcb_xkb_key_sym_map_syms_length(wire_sym_map);
-        uint8_t wire_count = *acts_count_iter;
-        struct xkb_key *key = &keymap->keys[reply->firstKeyAction + i];
+    for (int i = 0; i < acts_बिलांग_length; i++) {
+        xcb_xkb_सुसि_sym_map_t *wire_sym_map = sym_maps_iter.data;
+        int syms_length = xcb_xkb_सुसि_sym_map_syms_length(wire_sym_map);
+        uint8_t wire_बिलांग = *acts_बिलांग_iter;
+        struct xkb_सुसि *सुसि = &keymap->मगा_सुसि[reply->first_सुसि_Action + i];
 
-        FAIL_UNLESS((unsigned) syms_length == wire_sym_map->width * key->num_groups);
-        FAIL_UNLESS(wire_count == 0 || wire_count == syms_length);
+        FAIL_UNLESS((unsigned) syms_length == wire_sym_map->width * सुसि->नुमेरो_groups);
+        FAIL_UNLESS(wire_बिलांग == 0 || wire_बिलांग == syms_length);
 
-        const xkb_keycode_t min_key_code = keymap->min_key_code;
-        const xkb_keycode_t max_key_code = keymap->max_key_code;
+        const xkb_keycode_t min_सुसि_code = keymap->min_सुसि_code;
+        const xkb_keycode_t max_सुसि_code = keymap->max_सुसि_code;
 
-        if (wire_count != 0) {
-            for (xkb_layout_index_t group = 0; group < key->num_groups; group++) {
+        if (wire_बिलांग != 0) {
+            for (xkb_layout_index_t group = 0; group < सुसि->नुमेरो_groups; group++) {
                 for (xkb_level_index_t level = 0; level < wire_sym_map->width; level++) {
                     xcb_xkb_action_t *wire_action = acts_iter.data;
 
-                    if (level < key->groups[group].type->num_levels) {
-                        key->groups[group].levels[level].num_actions = 1;
+                    if (level < सुसि->groups[group].type->नुमेरो_levels) {
+                        सुसि->groups[group].levels[level].नुमेरो_actions = 1;
                         union xkb_action *action =
-                            &key->groups[group].levels[level].a.action;
+                            &सुसि->groups[group].levels[level].a.action;
 
                         FAIL_UNLESS(translate_action(action, wire_action,
-                                                     min_key_code, max_key_code));
+                                                     min_सुसि_code, max_सुसि_code));
 
                         if (action->type != ACTION_TYPE_NONE) {
-                            key->groups[group].implicit_actions =
-                                !(key->explicit & EXPLICIT_INTERP);
-                        } else if (key->groups[group].levels[level].s.sym ==
-                                   XKB_KEY_NoSymbol) {
+                            सुसि->groups[group].implicit_actions =
+                                !(सुसि->explicit & EXPLICIT_INTERP);
+                        } else if (सुसि->groups[group].levels[level].s.sym ==
+                                   XKB_सुसि_No_सिम्बोलो) {
                             /* If the action and the keysym are both undefined,
                              * discard them */
-                            key->groups[group].levels[level].num_syms = 0;
-                            key->groups[group].levels[level].num_actions = 0;
+                            सुसि->groups[group].levels[level].नुमेरो_syms = 0;
+                            सुसि->groups[group].levels[level].नुमेरो_actions = 0;
                         }
                     }
 
                     xcb_xkb_action_next(&acts_iter);
                 }
 
-                if (key->groups[group].implicit_actions)
-                    key->implicit_actions = true;
+                if (सुसि->groups[group].implicit_actions)
+                    सुसि->implicit_actions = true;
             }
         }
 
-        acts_count_iter++;
-        xcb_xkb_key_sym_map_next(&sym_maps_iter);
+        acts_बिलांग_iter++;
+        xcb_xkb_सुसि_sym_map_next(&sym_maps_iter);
     }
 
     return true;
@@ -615,15 +615,15 @@ get_vmods(struct xkb_keymap *keymap, xcb_connection_t *conn,
 {
     uint8_t *iter = xcb_xkb_get_map_map_vmods_rtrn(map);
 
-    keymap->mods.num_mods =
-        NUM_REAL_MODS + MIN(msb_pos(reply->virtualMods), NUM_VMODS);
-    FAIL_UNLESS(keymap->mods.num_mods <= XKB_MAX_MODS);
+    keymap->mods.नुमेरो_mods =
+        नुमेरो_REAL_MODS + MIN(msb_pos(reply->virtualMods), नुमेरो_VMODS);
+    FAIL_UNLESS(keymap->mods.नुमेरो_mods <= XKB_MAX_MODS);
 
-    static_assert(NUM_REAL_MODS + NUM_VMODS <= XKB_MAX_MODS, "");
-    for (unsigned i = 0; i < NUM_VMODS; i++) {
+    static_assert(नुमेरो_REAL_MODS + नुमेरो_VMODS <= XKB_MAX_MODS, "");
+    for (unsigned i = 0; i < नुमेरो_VMODS; i++) {
         if (reply->virtualMods & (1u << i)) {
             uint8_t wire = *iter;
-            struct xkb_mod *mod = &keymap->mods.mods[NUM_REAL_MODS + i];
+            struct xkb_mod *mod = &keymap->mods.mods[नुमेरो_REAL_MODS + i];
 
             mod->type = MOD_VIRT;
             mod->mapping = translate_mods(wire, 0, 0);
@@ -648,47 +648,47 @@ get_explicits(struct xkb_keymap *keymap, xcb_connection_t *conn,
 
     for (int i = 0; i < length; i++) {
         xcb_xkb_set_explicit_t *wire = iter.data;
-        struct xkb_key *key;
+        struct xkb_सुसि *सुसि;
 
-        FAIL_UNLESS(wire->keycode >= keymap->min_key_code &&
-                    wire->keycode <= keymap->max_key_code);
+        FAIL_UNLESS(wire->keycode >= keymap->min_सुसि_code &&
+                    wire->keycode <= keymap->max_सुसि_code);
 
-        key = &keymap->keys[wire->keycode];
+        सुसि = &keymap->मगा_सुसि[wire->keycode];
 
-        if ((wire->explicit & XCB_XKB_EXPLICIT_KEY_TYPE_1) &&
-            key->num_groups > 0) {
-            key->groups[0].explicit_type = true;
-            key->explicit |= EXPLICIT_TYPES;
+        if ((wire->explicit & XCB_XKB_EXPLICIT_सुसि_TYPE_1) &&
+            सुसि->नुमेरो_groups > 0) {
+            सुसि->groups[0].explicit_type = true;
+            सुसि->explicit |= EXPLICIT_TYPES;
         }
-        if ((wire->explicit & XCB_XKB_EXPLICIT_KEY_TYPE_2) &&
-            key->num_groups > 1) {
-            key->groups[1].explicit_type = true;
-            key->explicit |= EXPLICIT_TYPES;
+        if ((wire->explicit & XCB_XKB_EXPLICIT_सुसि_TYPE_2) &&
+            सुसि->नुमेरो_groups > 1) {
+            सुसि->groups[1].explicit_type = true;
+            सुसि->explicit |= EXPLICIT_TYPES;
         }
-        if ((wire->explicit & XCB_XKB_EXPLICIT_KEY_TYPE_3) &&
-            key->num_groups > 2) {
-            key->groups[2].explicit_type = true;
-            key->explicit |= EXPLICIT_TYPES;
+        if ((wire->explicit & XCB_XKB_EXPLICIT_सुसि_TYPE_3) &&
+            सुसि->नुमेरो_groups > 2) {
+            सुसि->groups[2].explicit_type = true;
+            सुसि->explicit |= EXPLICIT_TYPES;
         }
-        if ((wire->explicit & XCB_XKB_EXPLICIT_KEY_TYPE_4) &&
-            key->num_groups > 3) {
-            key->groups[3].explicit_type = true;
-            key->explicit |= EXPLICIT_TYPES;
+        if ((wire->explicit & XCB_XKB_EXPLICIT_सुसि_TYPE_4) &&
+            सुसि->नुमेरो_groups > 3) {
+            सुसि->groups[3].explicit_type = true;
+            सुसि->explicit |= EXPLICIT_TYPES;
         }
         if (wire->explicit & XCB_XKB_EXPLICIT_INTERPRET) {
-            key->explicit |= EXPLICIT_INTERP;
+            सुसि->explicit |= EXPLICIT_INTERP;
             /*
              * Make all key groups have explicit actions too, because we have
              * no way to know which one is implicit.
              */
-            for (xkb_layout_index_t l = 0; l < key->num_groups; l++) {
-                key->groups[l].explicit_actions = true;
+            for (xkb_layout_index_t l = 0; l < सुसि->नुमेरो_groups; l++) {
+                सुसि->groups[l].explicit_actions = true;
             }
         }
         if (wire->explicit & XCB_XKB_EXPLICIT_AUTO_REPEAT)
-            key->explicit |= EXPLICIT_REPEAT;
+            सुसि->explicit |= EXPLICIT_REPEAT;
         if (wire->explicit & XCB_XKB_EXPLICIT_V_MOD_MAP)
-            key->explicit |= EXPLICIT_VMODMAP;
+            सुसि->explicit |= EXPLICIT_VMODMAP;
 
         xcb_xkb_set_explicit_next(&iter);
     }
@@ -704,32 +704,32 @@ get_modmaps(struct xkb_keymap *keymap, xcb_connection_t *conn,
             xcb_xkb_get_map_reply_t *reply, xcb_xkb_get_map_map_t *map)
 {
     int length = xcb_xkb_get_map_map_modmap_rtrn_length(reply, map);
-    xcb_xkb_key_mod_map_iterator_t iter =
+    xcb_xkb_सुसि_mod_map_iterator_t iter =
         xcb_xkb_get_map_map_modmap_rtrn_iterator(reply, map);
 
     darray(ModMapEntry) modmaps = darray_new();
 
     for (int i = 0; i < length; i++) {
-        xcb_xkb_key_mod_map_t *wire = iter.data;
-        struct xkb_key *key;
+        xcb_xkb_सुसि_mod_map_t *wire = iter.data;
+        struct xkb_सुसि *सुसि;
 
-        FAIL_UNLESS(wire->keycode >= keymap->min_key_code &&
-                    wire->keycode <= keymap->max_key_code);
+        FAIL_UNLESS(wire->keycode >= keymap->min_सुसि_code &&
+                    wire->keycode <= keymap->max_सुसि_code);
 
-        key = &keymap->keys[wire->keycode];
-        key->modmap = wire->mods;
+        सुसि = &keymap->मगा_सुसि[wire->keycode];
+        सुसि->modmap = wire->mods;
 
         darray_append(modmaps, (ModMapEntry) {
-            .keyCode = key->keycode,
-            .mods = key->modmap,
-            .haveSymbol = false,
-            .u.keyName = key->name
+            .सुसि_Code = सुसि->keycode,
+            .mods = सुसि->modmap,
+            .have_सिम्बोलो = false,
+            .u.सुसि_Name = सुसि->name
         });
 
-        xcb_xkb_key_mod_map_next(&iter);
+        xcb_xkb_सुसि_mod_map_next(&iter);
     }
 
-    darray_steal(modmaps, &keymap->modmaps, &keymap->num_modmaps);
+    darray_steal(modmaps, &keymap->modmaps, &keymap->नुमेरो_modmaps);
     return true;
 
 fail:
@@ -742,20 +742,20 @@ get_vmodmaps(struct xkb_keymap *keymap, xcb_connection_t *conn,
              xcb_xkb_get_map_reply_t *reply, xcb_xkb_get_map_map_t *map)
 {
     int length = xcb_xkb_get_map_map_vmodmap_rtrn_length(reply, map);
-    xcb_xkb_key_v_mod_map_iterator_t iter =
+    xcb_xkb_सुसि_v_mod_map_iterator_t iter =
         xcb_xkb_get_map_map_vmodmap_rtrn_iterator(reply, map);
 
     for (int i = 0; i < length; i++) {
-        xcb_xkb_key_v_mod_map_t *wire = iter.data;
-        struct xkb_key *key;
+        xcb_xkb_सुसि_v_mod_map_t *wire = iter.data;
+        struct xkb_सुसि *सुसि;
 
-        FAIL_UNLESS(wire->keycode >= keymap->min_key_code &&
-                    wire->keycode <= keymap->max_key_code);
+        FAIL_UNLESS(wire->keycode >= keymap->min_सुसि_code &&
+                    wire->keycode <= keymap->max_सुसि_code);
 
-        key = &keymap->keys[wire->keycode];
-        key->vmodmap = translate_mods(0, wire->vmods, 0);
+        सुसि = &keymap->मगा_सुसि[wire->keycode];
+        सुसि->vmodmap = translate_mods(0, wire->vmods, 0);
 
-        xcb_xkb_key_v_mod_map_next(&iter);
+        xcb_xkb_सुसि_v_mod_map_next(&iter);
     }
 
     return true;
@@ -778,14 +778,14 @@ get_map(struct xkb_keymap *keymap, xcb_connection_t *conn,
 
     xcb_xkb_get_map_map_unpack(xcb_xkb_get_map_map(reply),
                                reply->nTypes,
-                               reply->nKeySyms,
-                               reply->nKeyActions,
+                               reply->n_सुसि_Syms,
+                               reply->n_सुसि_Actions,
                                reply->totalActions,
-                               reply->totalKeyBehaviors,
+                               reply->total_सुसि_Behaviors,
                                reply->virtualMods,
-                               reply->totalKeyExplicit,
-                               reply->totalModMapKeys,
-                               reply->totalVModMapKeys,
+                               reply->total_सुसि_Explicit,
+                               reply->total_Mod_Map_मगा_सुसि,
+                               reply->total_VMod_Map_मगा_सुसि,
                                reply->present,
                                &map);
 
@@ -813,11 +813,11 @@ get_indicators(struct xkb_keymap *keymap, xcb_connection_t *conn,
     xcb_xkb_indicator_map_iterator_t iter =
         xcb_xkb_get_indicator_map_maps_iterator(reply);
 
-    keymap->num_leds = msb_pos(reply->which);
-    FAIL_UNLESS(keymap->num_leds <= XKB_MAX_LEDS);
+    keymap->नुमेरो_leds = msb_pos(reply->which);
+    FAIL_UNLESS(keymap->नुमेरो_leds <= XKB_MAX_LEDS);
 
-    static_assert(XKB_MAX_LEDS == NUM_INDICATORS, "");
-    for (unsigned i = 0; i < NUM_INDICATORS; i++) {
+    static_assert(XKB_MAX_LEDS == नुमेरो_INDICATORS, "");
+    for (unsigned i = 0; i < नुमेरो_INDICATORS; i++) {
         if (reply->which & (UINT32_C(1) << i)) {
             xcb_xkb_indicator_map_t *wire = iter.data;
             struct xkb_led *led = &keymap->leds[i];
@@ -892,11 +892,11 @@ get_sym_interprets(struct xkb_keymap *keymap, xcb_connection_t *conn,
     FAIL_UNLESS(reply->firstSIRtrn == 0);
     FAIL_UNLESS(reply->nSIRtrn == reply->nTotalSI);
 
-    keymap->num_sym_interprets = reply->nSIRtrn;
-    ALLOC_OR_FAIL(keymap->sym_interprets, keymap->num_sym_interprets);
+    keymap->नुमेरो_sym_interprets = reply->nSIRtrn;
+    ALLOC_OR_FAIL(keymap->sym_interprets, keymap->नुमेरो_sym_interprets);
 
-    const xkb_keycode_t min_key_code = keymap->min_key_code;
-    const xkb_keycode_t max_key_code = keymap->max_key_code;
+    const xkb_keycode_t min_सुसि_code = keymap->min_सुसि_code;
+    const xkb_keycode_t max_सुसि_code = keymap->max_सुसि_code;
 
     for (int i = 0; i < length; i++) {
         xcb_xkb_sym_interpret_t *wire = iter.data;
@@ -934,13 +934,13 @@ get_sym_interprets(struct xkb_keymap *keymap, xcb_connection_t *conn,
         if (wire->virtualMod == NO_MODIFIER)
             sym_interpret->virtual_mod = XKB_MOD_INVALID;
         else
-            sym_interpret->virtual_mod = NUM_REAL_MODS + wire->virtualMod;
+            sym_interpret->virtual_mod = नुमेरो_REAL_MODS + wire->virtualMod;
 
         sym_interpret->repeat = (wire->flags & 0x01);
         FAIL_UNLESS(translate_action(&sym_interpret->a.action,
                                      (xcb_xkb_action_t *) &wire->action,
-                                     min_key_code, max_key_code));
-        sym_interpret->num_actions =
+                                     min_सुसि_code, max_सुसि_code));
+        sym_interpret->नुमेरो_actions =
             (sym_interpret->a.action.type != ACTION_TYPE_NONE);
 
         /* Checked only when compiling a keymap from text */
@@ -978,46 +978,46 @@ fail:
 static bool
 get_type_names(struct xkb_keymap *keymap, struct x11_atom_interner *interner,
                xcb_xkb_get_names_reply_t *reply,
-               xcb_xkb_get_names_value_list_t *list)
+               xcb_xkb_get_names_हालागा_list_t *list)
 {
-    int key_type_names_length =
-        xcb_xkb_get_names_value_list_type_names_length(reply, list);
-    xcb_atom_t *key_type_names_iter =
-        xcb_xkb_get_names_value_list_type_names(list);
+    int सुसि_type_names_length =
+        xcb_xkb_get_names_हालागा_list_type_names_length(reply, list);
+    xcb_atom_t *सुसि_type_names_iter =
+        xcb_xkb_get_names_हालागा_list_type_names(list);
     int n_levels_per_type_length =
-        xcb_xkb_get_names_value_list_n_levels_per_type_length(reply, list);
+        xcb_xkb_get_names_हालागा_list_n_levels_per_type_length(reply, list);
     uint8_t *n_levels_per_type_iter =
-        xcb_xkb_get_names_value_list_n_levels_per_type(list);
+        xcb_xkb_get_names_हालागा_list_n_levels_per_type(list);
     xcb_atom_t *kt_level_names_iter =
-        xcb_xkb_get_names_value_list_kt_level_names(list);
+        xcb_xkb_get_names_हालागा_list_kt_level_names(list);
 
-    FAIL_UNLESS(reply->nTypes == keymap->num_types);
-    FAIL_UNLESS(key_type_names_length == n_levels_per_type_length);
+    FAIL_UNLESS(reply->nTypes == keymap->नुमेरो_types);
+    FAIL_UNLESS(सुसि_type_names_length == n_levels_per_type_length);
 
-    for (int i = 0; i < key_type_names_length; i++) {
-        xcb_atom_t wire_type_name = *key_type_names_iter;
-        uint8_t wire_num_levels = *n_levels_per_type_iter;
-        struct xkb_key_type *type = &keymap->types[i];
+    for (int i = 0; i < सुसि_type_names_length; i++) {
+        xcb_atom_t wire_type_name = *सुसि_type_names_iter;
+        uint8_t wire_नुमेरो_levels = *n_levels_per_type_iter;
+        struct xkb_सुसि_type *type = &keymap->types[i];
 
         /* Levels names are optional, but the maximum is the level count */
-        FAIL_UNLESS(type->num_levels >= wire_num_levels);
+        FAIL_UNLESS(type->नुमेरो_levels >= wire_नुमेरो_levels);
 
         /* Allocate names for all levels, even if some names are missing */
-        ALLOC_OR_FAIL(type->level_names, type->num_levels);
-        type->num_level_names = type->num_levels;
+        ALLOC_OR_FAIL(type->level_names, type->नुमेरो_levels);
+        type->नुमेरो_level_names = type->नुमेरो_levels;
 
         x11_atom_interner_adopt_atom(interner, wire_type_name, &type->name);
-        for (size_t j = 0; j < wire_num_levels; j++) {
+        for (size_t j = 0; j < wire_नुमेरो_levels; j++) {
             x11_atom_interner_adopt_atom(interner, kt_level_names_iter[j],
                                          &type->level_names[j]);
         }
         /* We may have received less names than there are levels: ensure
          * missing names have a fallback. */
-        for (size_t j = wire_num_levels; j < type->num_levels; j++)
+        for (size_t j = wire_नुमेरो_levels; j < type->नुमेरो_levels; j++)
             type->level_names[j] = XKB_ATOM_NONE;
 
-        kt_level_names_iter += wire_num_levels;
-        key_type_names_iter++;
+        kt_level_names_iter += wire_नुमेरो_levels;
+        सुसि_type_names_iter++;
         n_levels_per_type_iter++;
     }
 
@@ -1031,13 +1031,13 @@ static bool
 get_indicator_names(struct xkb_keymap *keymap,
                     struct x11_atom_interner *interner,
                     xcb_xkb_get_names_reply_t *reply,
-                    xcb_xkb_get_names_value_list_t *list)
+                    xcb_xkb_get_names_हालागा_list_t *list)
 {
-    xcb_atom_t *iter = xcb_xkb_get_names_value_list_indicator_names(list);
+    xcb_atom_t *iter = xcb_xkb_get_names_हालागा_list_indicator_names(list);
 
-    FAIL_UNLESS(msb_pos(reply->indicators) <= keymap->num_leds);
+    FAIL_UNLESS(msb_pos(reply->indicators) <= keymap->नुमेरो_leds);
 
-    for (unsigned i = 0; i < NUM_INDICATORS; i++) {
+    for (unsigned i = 0; i < नुमेरो_INDICATORS; i++) {
         if (reply->indicators & (UINT32_C(1) << i)) {
             xcb_atom_t wire = *iter;
             struct xkb_led *led = &keymap->leds[i];
@@ -1057,24 +1057,24 @@ fail:
 static bool
 get_vmod_names(struct xkb_keymap *keymap, struct x11_atom_interner *interner,
                xcb_xkb_get_names_reply_t *reply,
-               xcb_xkb_get_names_value_list_t *list)
+               xcb_xkb_get_names_हालागा_list_t *list)
 {
-    xcb_atom_t *iter = xcb_xkb_get_names_value_list_virtual_mod_names(list);
+    xcb_atom_t *iter = xcb_xkb_get_names_हालागा_list_virtual_mod_names(list);
 
     /*
      * GetMap's reply->virtualMods is always 0xffff. This one really
      * tells us which vmods exist (a vmod must have a name), so we fix
      * up the size here.
      */
-    keymap->mods.num_mods =
-        NUM_REAL_MODS + MIN(msb_pos(reply->virtualMods), NUM_VMODS);
-    FAIL_UNLESS(keymap->mods.num_mods <= XKB_MAX_MODS);
+    keymap->mods.नुमेरो_mods =
+        नुमेरो_REAL_MODS + MIN(msb_pos(reply->virtualMods), नुमेरो_VMODS);
+    FAIL_UNLESS(keymap->mods.नुमेरो_mods <= XKB_MAX_MODS);
 
-    static_assert(NUM_REAL_MODS + NUM_VMODS <= XKB_MAX_MODS, "");
-    for (unsigned i = 0; i < NUM_VMODS; i++) {
+    static_assert(नुमेरो_REAL_MODS + नुमेरो_VMODS <= XKB_MAX_MODS, "");
+    for (unsigned i = 0; i < नुमेरो_VMODS; i++) {
         if (reply->virtualMods & (1u << i)) {
             xcb_atom_t wire = *iter;
-            struct xkb_mod *mod = &keymap->mods.mods[NUM_REAL_MODS + i];
+            struct xkb_mod *mod = &keymap->mods.mods[नुमेरो_REAL_MODS + i];
 
             x11_atom_interner_adopt_atom(interner, wire, &mod->name);
 
@@ -1091,13 +1091,13 @@ fail:
 static bool
 get_group_names(struct xkb_keymap *keymap, struct x11_atom_interner *interner,
                 xcb_xkb_get_names_reply_t *reply,
-                xcb_xkb_get_names_value_list_t *list)
+                xcb_xkb_get_names_हालागा_list_t *list)
 {
-    int length = xcb_xkb_get_names_value_list_groups_length(reply, list);
-    xcb_atom_t *iter = xcb_xkb_get_names_value_list_groups(list);
+    int length = xcb_xkb_get_names_हालागा_list_groups_length(reply, list);
+    xcb_atom_t *iter = xcb_xkb_get_names_हालागा_list_groups(list);
 
-    keymap->num_group_names = msb_pos(reply->groupNames);
-    ALLOC_OR_FAIL(keymap->group_names, keymap->num_group_names);
+    keymap->नुमेरो_group_names = msb_pos(reply->groupNames);
+    ALLOC_OR_FAIL(keymap->group_names, keymap->नुमेरो_group_names);
 
     for (int i = 0; i < length; i++) {
         x11_atom_interner_adopt_atom(interner, iter[i],
@@ -1111,35 +1111,35 @@ fail:
 }
 
 static bool
-get_key_names(struct xkb_keymap *keymap, xcb_connection_t *conn,
+get_सुसि_names(struct xkb_keymap *keymap, xcb_connection_t *conn,
               xcb_xkb_get_names_reply_t *reply,
-              xcb_xkb_get_names_value_list_t *list)
+              xcb_xkb_get_names_हालागा_list_t *list)
 {
-    int length = xcb_xkb_get_names_value_list_key_names_length(reply, list);
-    xcb_xkb_key_name_iterator_t iter =
-        xcb_xkb_get_names_value_list_key_names_iterator(reply, list);
+    int length = xcb_xkb_get_names_हालागा_list_सुसि_names_length(reply, list);
+    xcb_xkb_सुसि_name_iterator_t iter =
+        xcb_xkb_get_names_हालागा_list_सुसि_names_iterator(reply, list);
 
-    FAIL_UNLESS(reply->minKeyCode == keymap->min_key_code);
-    FAIL_UNLESS(reply->maxKeyCode == keymap->max_key_code);
-    FAIL_UNLESS(reply->firstKey == keymap->min_key_code);
-    FAIL_UNLESS(reply->firstKey + reply->nKeys - 1U == keymap->max_key_code);
+    FAIL_UNLESS(reply->min_सुसि_Code == keymap->min_सुसि_code);
+    FAIL_UNLESS(reply->max_सुसि_Code == keymap->max_सुसि_code);
+    FAIL_UNLESS(reply->first_सुसि == keymap->min_सुसि_code);
+    FAIL_UNLESS(reply->first_सुसि + reply->n_मगा_सुसि - 1U == keymap->max_सुसि_code);
 
     for (int i = 0; i < length; i++) {
-        xcb_xkb_key_name_t *wire = iter.data;
-        xkb_atom_t *key_name = &keymap->keys[reply->firstKey + i].name;
+        xcb_xkb_सुसि_name_t *wire = iter.data;
+        xkb_atom_t *सुसि_name = &keymap->मगा_सुसि[reply->first_सुसि + i].name;
 
         if (wire->name[0] == '\0') {
-            *key_name = XKB_ATOM_NONE;
+            *सुसि_name = XKB_ATOM_NONE;
         }
         else {
-            *key_name = xkb_atom_intern(keymap->ctx, wire->name,
+            *सुसि_name = xkb_atom_intern(keymap->ctx, wire->name,
                                         strnlen(wire->name,
-                                                XCB_XKB_CONST_KEY_NAME_LENGTH));
-            if (!*key_name)
+                                                XCB_XKB_CONST_सुसि_NAME_LENGTH));
+            if (!*सुसि_name)
                 return false;
         }
 
-        xcb_xkb_key_name_next(&iter);
+        xcb_xkb_सुसि_name_next(&iter);
     }
 
     return true;
@@ -1151,29 +1151,29 @@ fail:
 static bool
 get_aliases(struct xkb_keymap *keymap, xcb_connection_t *conn,
             xcb_xkb_get_names_reply_t *reply,
-            xcb_xkb_get_names_value_list_t *list)
+            xcb_xkb_get_names_हालागा_list_t *list)
 {
-    int length = xcb_xkb_get_names_value_list_key_aliases_length(reply, list);
-    xcb_xkb_key_alias_iterator_t iter =
-        xcb_xkb_get_names_value_list_key_aliases_iterator(reply, list);
+    int length = xcb_xkb_get_names_हालागा_list_सुसि_aliases_length(reply, list);
+    xcb_xkb_सुसि_alias_iterator_t iter =
+        xcb_xkb_get_names_हालागा_list_सुसि_aliases_iterator(reply, list);
 
-    keymap->num_key_aliases = reply->nKeyAliases;
-    ALLOC_OR_FAIL(keymap->key_aliases, keymap->num_key_aliases);
+    keymap->नुमेरो_सुसि_aliases = reply->n_सुसि_Aliases;
+    ALLOC_OR_FAIL(keymap->सुसि_aliases, keymap->नुमेरो_सुसि_aliases);
 
     for (int i = 0; i < length; i++) {
-        xcb_xkb_key_alias_t *wire = iter.data;
-        struct xkb_key_alias *alias = &keymap->key_aliases[i];
+        xcb_xkb_सुसि_alias_t *wire = iter.data;
+        struct xkb_सुसि_alias *alias = &keymap->सुसि_aliases[i];
 
         alias->real =
             xkb_atom_intern(keymap->ctx, wire->real,
-                            strnlen(wire->real, XCB_XKB_CONST_KEY_NAME_LENGTH));
+                            strnlen(wire->real, XCB_XKB_CONST_सुसि_NAME_LENGTH));
         alias->alias =
             xkb_atom_intern(keymap->ctx, wire->alias,
-                            strnlen(wire->alias, XCB_XKB_CONST_KEY_NAME_LENGTH));
+                            strnlen(wire->alias, XCB_XKB_CONST_सुसि_NAME_LENGTH));
         if (!alias->real || !alias->alias)
             goto fail;
 
-        xcb_xkb_key_alias_next(&iter);
+        xcb_xkb_सुसि_alias_next(&iter);
     }
 
     return true;
@@ -1189,19 +1189,19 @@ get_names(struct xkb_keymap *keymap, struct x11_atom_interner *interner,
     xcb_connection_t *conn = interner->conn;
     xcb_xkb_get_names_reply_t *reply =
         xcb_xkb_get_names_reply(conn, cookie, NULL);
-    xcb_xkb_get_names_value_list_t list;
+    xcb_xkb_get_names_हालागा_list_t list;
 
     FAIL_IF_BAD_REPLY(reply, "XkbGetNames");
 
     FAIL_UNLESS((reply->which & get_names_required) == get_names_required);
 
-    xcb_xkb_get_names_value_list_unpack(xcb_xkb_get_names_value_list(reply),
+    xcb_xkb_get_names_हालागा_list_unpack(xcb_xkb_get_names_हालागा_list(reply),
                                         reply->nTypes,
                                         reply->indicators,
                                         reply->virtualMods,
                                         reply->groupNames,
-                                        reply->nKeys,
-                                        reply->nKeyAliases,
+                                        reply->n_मगा_सुसि,
+                                        reply->n_सुसि_Aliases,
                                         reply->nRadioGroups,
                                         reply->which,
                                         &list);
@@ -1218,7 +1218,7 @@ get_names(struct xkb_keymap *keymap, struct x11_atom_interner *interner,
         !get_indicator_names(keymap, interner, reply, &list) ||
         !get_vmod_names(keymap, interner, reply, &list) ||
         !get_group_names(keymap, interner, reply, &list) ||
-        !get_key_names(keymap, conn, reply, &list) ||
+        !get_सुसि_names(keymap, conn, reply, &list) ||
         !get_aliases(keymap, conn, reply, &list))
         goto fail;
 
@@ -1238,14 +1238,14 @@ get_controls(struct xkb_keymap *keymap, xcb_connection_t *conn,
         xcb_xkb_get_controls_reply(conn, cookie, NULL);
 
     FAIL_IF_BAD_REPLY(reply, "XkbGetControls");
-    FAIL_UNLESS(reply->numGroups > 0 && reply->numGroups <= 4);
+    FAIL_UNLESS(reply->नुमेरो_Groups > 0 && reply->नुमेरो_Groups <= 4);
 
-    keymap->num_groups = reply->numGroups;
+    keymap->नुमेरो_groups = reply->नुमेरो_Groups;
 
-    FAIL_UNLESS(keymap->max_key_code < XCB_XKB_CONST_PER_KEY_BIT_ARRAY_SIZE * 8);
+    FAIL_UNLESS(keymap->max_सुसि_code < XCB_XKB_CONST_PER_सुसि_BIT_ARRAY_SIZE * 8);
 
-    for (xkb_keycode_t i = keymap->min_key_code; i <= keymap->max_key_code; i++)
-        keymap->keys[i].repeats = (reply->perKeyRepeat[i / 8] & (1u << (i % 8)));
+    for (xkb_keycode_t i = keymap->min_सुसि_code; i <= keymap->max_सुसि_code; i++)
+        keymap->मगा_सुसि[i].repeats = (reply->per_सुसि_Repeat[i / 8] & (1u << (i % 8)));
 
     free(reply);
     return true;
@@ -1273,7 +1273,7 @@ xkb_x11_keymap_new_from_device(struct xkb_context *ctx,
     if (!keymap)
         return NULL;
 
-    keymap->redirect_key_auto = XKB_KEYCODE_MAX; /* Invalid X11 keycode */
+    keymap->redirect_सुसि_auto = XKB_KEYCODE_MAX; /* Invalid X11 keycode */
 
     struct x11_atom_interner interner;
     x11_atom_interner_init(&interner, ctx, conn);

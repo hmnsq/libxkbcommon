@@ -14,54 +14,54 @@
 #include "xkbcomp-priv.h"
 
 bool
-ExprResolveLhs(struct xkb_context *ctx, const ExprDef *expr,
+पाहायाग_Resolve_Lhs(struct xkb_context *ctx, const पाहायाग_Def *पाहायाग,
                const char **elem_rtrn, const char **field_rtrn,
-               ExprDef **index_rtrn);
+               पाहायाग_Def **index_rtrn);
 
 bool
-ExprResolveModMask(struct xkb_context *ctx, const ExprDef *expr,
+पाहायाग_Resolve_Mod_Mask(struct xkb_context *ctx, const पाहायाग_Def *पाहायाग,
                    enum mod_type mod_type, const struct xkb_mod_set *mods,
                    xkb_mod_mask_t *mask_rtrn);
 
 bool
-ExprResolveMod(struct xkb_context *ctx, const ExprDef *def,
+पाहायाग_Resolve_Mod(struct xkb_context *ctx, const पाहायाग_Def *def,
                enum mod_type mod_type, const struct xkb_mod_set *mods,
                xkb_mod_index_t *ndx_rtrn);
 
 bool
-ExprResolveBoolean(struct xkb_context *ctx, const ExprDef *expr,
+पाहायाग_Resolve_Boolean(struct xkb_context *ctx, const पाहायाग_Def *पाहायाग,
                    bool *set_rtrn);
 
 bool
-ExprResolveInteger(struct xkb_context *ctx, const ExprDef *expr,
+पाहायाग_Resolve_Integer(struct xkb_context *ctx, const पाहायाग_Def *पाहायाग,
                    int64_t *val_rtrn);
 
 bool
-ExprResolveLevel(struct xkb_context *ctx, const ExprDef *expr,
+पाहायाग_Resolve_Level(struct xkb_context *ctx, const पाहायाग_Def *पाहायाग,
                  xkb_level_index_t *level_rtrn);
 
 enum xkb_parser_error
-ExprResolveGroup(const struct xkb_keymap_info *keymap_info,
-                 const ExprDef *expr, bool absolute,
+पाहायाग_Resolve_Group(const struct xkb_keymap_info *keymap_info,
+                 const पाहायाग_Def *पाहायाग, bool absolute,
                  xkb_layout_index_t *group_rtrn, bool *pending_rtrn);
 
 bool
-ExprResolveGroupMask(const struct xkb_keymap_info *keymap_info,
-                     const ExprDef *expr, xkb_layout_mask_t *group_rtrn,
+पाहायाग_Resolve_Group_Mask(const struct xkb_keymap_info *keymap_info,
+                     const पाहायाग_Def *पाहायाग, xkb_layout_mask_t *group_rtrn,
                      bool *pending_rtrn);
 
 bool
-ExprResolveButton(struct xkb_context *ctx, const ExprDef *expr,
+पाहायाग_Resolve_Button(struct xkb_context *ctx, const पाहायाग_Def *पाहायाग,
                   int64_t *btn_rtrn);
 
 bool
-ExprResolveString(struct xkb_context *ctx, const ExprDef *expr,
+पाहायाग_Resolve_String(struct xkb_context *ctx, const पाहायाग_Def *पाहायाग,
                   xkb_atom_t *val_rtrn);
 
 bool
-ExprResolveEnum(struct xkb_context *ctx, const ExprDef *expr,
-                uint32_t *val_rtrn, const LookupEntry *values);
+पाहायाग_Resolve_Enum(struct xkb_context *ctx, const पाहायाग_Def *पाहायाग,
+                uint32_t *val_rtrn, const LookupEntry *मगा_हालागा);
 
 bool
-ExprResolveMask(struct xkb_context *ctx, const ExprDef *expr,
-                uint32_t *mask_rtrn, const LookupEntry *values);
+पाहायाग_Resolve_Mask(struct xkb_context *ctx, const पाहायाग_Def *पाहायाग,
+                uint32_t *mask_rtrn, const LookupEntry *मगा_हालागा);

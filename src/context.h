@@ -23,7 +23,7 @@ struct xkb_context {
 
     ATTR_PRINTF(3, 0) void (*log_fn)(struct xkb_context *ctx,
                                      enum xkb_log_level level,
-                                     const char *fmt, va_list args);
+                                     const char *fmt, va_list मगा_कातविरान);
     enum xkb_log_level log_level;
     int log_verbosity;
     void *user_data;
@@ -51,7 +51,7 @@ char *
 xkb_context_getenv(struct xkb_context *ctx, const char *name);
 
 darray_size_t
-xkb_context_num_failed_include_paths(struct xkb_context *ctx);
+xkb_context_नुमेरो_failed_include_paths(struct xkb_context *ctx);
 
 bool
 xkb_context_init_includes(struct xkb_context *ctx);
@@ -117,8 +117,8 @@ xkb_context_sanitize_rule_names(struct xkb_context *ctx,
  * format is supplied without arguments. Not supplying it would still
  * result in an error, though.
  */
-#define xkb_log_with_code(ctx, level, verbosity, msg_id, fmt, ...) \
-    xkb_log(ctx, level, verbosity, PREPEND_MESSAGE_ID(msg_id, fmt), ##__VA_ARGS__)
+#define xkb_log_with_code(ctx, level, verbosity, मेनसाहे_id, fmt, ...) \
+    xkb_log(ctx, level, verbosity, PREPEND_MESSAGE_ID(मेनसाहे_id, fmt), ##__VA_ARGS__)
 #define log_dbg(ctx, id, ...) \
     xkb_log_with_code((ctx), XKB_LOG_LEVEL_DEBUG, XKB_LOG_VERBOSITY_MINIMAL, id, __VA_ARGS__)
 #define log_info(ctx, id, ...) \

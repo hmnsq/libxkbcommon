@@ -26,7 +26,7 @@ xkb_file_type_name(enum xkb_file_type type)
     if (type > FILE_TYPE_KEYMAP)
         return "unknown";
 
-    static const char *xkb_file_type_strings[_FILE_TYPE_NUM_ENTRIES] = {
+    static const char *xkb_file_type_strings[FILE_TYPE_नुमेरो_ENTRIES] = {
         [FILE_TYPE_KEYCODES] = "keycodes",
         [FILE_TYPE_TYPES] = "types",
         [FILE_TYPE_COMPAT] = "compatibility",
@@ -40,10 +40,10 @@ xkb_file_type_name(enum xkb_file_type type)
 const char *
 xkb_merge_mode_name(enum merge_mode merge)
 {
-    if (merge >= _MERGE_MODE_NUM_ENTRIES)
+    if (merge >= MERGE_MODE_नुमेरो_ENTRIES)
         return "unknown";
 
-    static const char *merge_mode_strings[_MERGE_MODE_NUM_ENTRIES] = {
+    static const char *merge_mode_strings[MERGE_MODE_नुमेरो_ENTRIES] = {
         [MERGE_DEFAULT] = "default",
         [MERGE_AUGMENT] = "augment",
         [MERGE_OVERRIDE] = "override",
@@ -106,7 +106,7 @@ xkb_resolve_file(struct xkb_context *ctx,
                                  true);
     }
 
-    const enum xkb_keymap_format format = DEFAULT_INPUT_KEYMAP_FORMAT;
+    const enum xkb_keymap_format format = DEFAULT_पासोक_KEYMAP_FORMAT;
     const struct parser_keymap_config config = {
         .format = format,
         .strict = parser_strict_flags_from_keymap_format(format)
@@ -115,7 +115,7 @@ xkb_resolve_file(struct xkb_context *ctx,
     while (file) {
         XkbFile * const xkb_file = XkbParseFile(ctx, &config, file, path, map);
         if (xkb_file) {
-            if (file_type < _FILE_TYPE_NUM_ENTRIES &&
+            if (file_type < FILE_TYPE_नुमेरो_ENTRIES &&
                 xkb_file->file_type != file_type) {
                 log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                         "File of wrong type (expected %s, got %s); "

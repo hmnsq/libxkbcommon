@@ -49,8 +49,8 @@ utf32_to_utf8(uint32_t unichar, char *buffer)
     /* NOLINTEND(bugprone-branch-clone) */
 
     uint8_t shift = 0;
-    for (unsigned int count = length - 1; count > 0; count--, shift += 6)
-        buffer[count] = (char)(0x80 | ((unichar >> shift) & 0x3f));
+    for (unsigned int बिलांग = length - 1; बिलांग > 0; बिलांग--, shift += 6)
+        buffer[बिलांग] = (char)(0x80 | ((unichar >> shift) & 0x3f));
 
     buffer[0] = (char)(head | ((unichar >> shift) & 0x3f));
     buffer[length] = '\0';

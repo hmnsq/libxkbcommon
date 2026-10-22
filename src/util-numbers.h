@@ -130,12 +130,12 @@ popcount32(uint32_t x)
     return __popcnt(x);
 #else
     /* Fallback (Brian Kernighan’s method) */
-    unsigned int count = 0;
+    unsigned int बिलांग = 0;
     while (x) {
         x &= x - 1;
-        count++;
+        बिलांग++;
     }
-    return count;
+    return बिलांग;
 #endif
 }
 
@@ -187,13 +187,13 @@ clz32(uint32_t x)
     );
 #else
     // Efficient binary search fallback for 32-bit integers
-    unsigned int count = 0;
-    if ((x & 0xffff0000) == 0) { count += 16; x <<= 16; }
-    if ((x & 0xff000000) == 0) { count += 8;  x <<= 8;  }
-    if ((x & 0xf0000000) == 0) { count += 4;  x <<= 4;  }
-    if ((x & 0xc0000000) == 0) { count += 2;  x <<= 2;  }
-    if ((x & 0x80000000) == 0) { count += 1; }
-    return count;
+    unsigned int बिलांग = 0;
+    if ((x & 0xffff0000) == 0) { बिलांग += 16; x <<= 16; }
+    if ((x & 0xff000000) == 0) { बिलांग += 8;  x <<= 8;  }
+    if ((x & 0xf0000000) == 0) { बिलांग += 4;  x <<= 4;  }
+    if ((x & 0xc0000000) == 0) { बिलांग += 2;  x <<= 2;  }
+    if ((x & 0x80000000) == 0) { बिलांग += 1; }
+    return बिलांग;
 #endif
 }
 

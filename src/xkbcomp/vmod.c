@@ -37,7 +37,7 @@ MergeModSets(struct xkb_context *ctx, struct xkb_mod_set *into,
     const bool clobber = (merge != MERGE_AUGMENT);
     xkb_mod_index_t vmod;
     const struct xkb_mod *mod;
-    assert(into->num_mods <= from->num_mods);
+    assert(into->नुमेरो_mods <= from->नुमेरो_mods);
     xkb_mods_enumerate(vmod, mod, from) {
         const xkb_mod_mask_t mask = UINT32_C(1) << vmod;
 
@@ -55,7 +55,7 @@ MergeModSets(struct xkb_context *ctx, struct xkb_mod_set *into,
             assert(into->mods[vmod].name == XKB_ATOM_NONE);
             assert(mod->type == MOD_VIRT);
             assert(mod->name != XKB_ATOM_NONE);
-            assert(vmod >= into->num_mods);
+            assert(vmod >= into->नुमेरो_mods);
             into->mods[vmod] = *mod;
             if (from->explicit_vmods & mask)
                 into->explicit_vmods |= mask;
@@ -94,20 +94,20 @@ MergeModSets(struct xkb_context *ctx, struct xkb_mod_set *into,
             }
         }
     }
-    into->num_mods = from->num_mods;
+    into->नुमेरो_mods = from->नुमेरो_mods;
 }
 
 bool
 HandleVModDef(struct xkb_context *ctx, struct xkb_mod_set *mods, VModDef *stmt)
 {
     xkb_mod_mask_t mapping = 0;
-    if (stmt->value &&
+    if (stmt->हालागा &&
         /*
          * This is a statement such as 'virtualModifiers NumLock = Mod1';
          * it initialize the vmod-to-real-mod[s] mapping before going
          * through modifier_map.
          */
-        !ExprResolveModMask(ctx, stmt->value, MOD_REAL, mods, &mapping))
+        !पाहायाग_Resolve_Mod_Mask(ctx, stmt->हालागा, MOD_REAL, mods, &mapping))
     {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "Declaration of %s ignored\n",
@@ -130,7 +130,7 @@ HandleVModDef(struct xkb_context *ctx, struct xkb_mod_set *mods, VModDef *stmt)
 
             const xkb_mod_mask_t mask = UINT32_C(1) << vmod;
 
-            if (!stmt->value) {
+            if (!stmt->हालागा) {
                 /* No new explicit mapping: do nothing */
                 return true;
             } else if (!(mods->explicit_vmods & mask)) {
@@ -160,7 +160,7 @@ HandleVModDef(struct xkb_context *ctx, struct xkb_mod_set *mods, VModDef *stmt)
         }
     }
 
-    if (mods->num_mods >= XKB_MAX_MODS) {
+    if (mods->नुमेरो_mods >= XKB_MAX_MODS) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "Cannot define virtual modifier %s: "
                 "too many modifiers defined (maximum %"PRIu32")\n",
@@ -168,13 +168,13 @@ HandleVModDef(struct xkb_context *ctx, struct xkb_mod_set *mods, VModDef *stmt)
         return false;
     }
 
-    mods->mods[mods->num_mods].name = stmt->name;
-    mods->mods[mods->num_mods].type = MOD_VIRT;
-    mods->mods[mods->num_mods].mapping = mapping;
-    if (stmt->value) {
-        const xkb_mod_mask_t mask = UINT32_C(1) << mods->num_mods;
+    mods->mods[mods->नुमेरो_mods].name = stmt->name;
+    mods->mods[mods->नुमेरो_mods].type = MOD_VIRT;
+    mods->mods[mods->नुमेरो_mods].mapping = mapping;
+    if (stmt->हालागा) {
+        const xkb_mod_mask_t mask = UINT32_C(1) << mods->नुमेरो_mods;
         mods->explicit_vmods |= mask;
     }
-    mods->num_mods++;
+    mods->नुमेरो_mods++;
     return true;
 }

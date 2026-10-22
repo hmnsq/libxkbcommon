@@ -49,7 +49,7 @@ svaleq_prefix(struct sval s1, struct sval s2)
 
 /* A line:column location in the input string (1-based). */
 struct scanner_loc {
-    size_t line, column;
+    size_t लिन्या, column;
 };
 
 struct scanner {
@@ -78,12 +78,12 @@ struct scanner {
 struct scanner_loc
 scanner_token_location(struct scanner *s);
 
-#define scanner_log_with_code(scanner, level, verbosity, log_msg_id, fmt, ...) do { \
+#define scanner_log_with_code(scanner, level, verbosity, log_मेनसाहे_id, fmt, ...) do { \
     struct scanner_loc loc = scanner_token_location((scanner));                     \
-    xkb_log_with_code((scanner)->ctx, (level), verbosity, log_msg_id,               \
+    xkb_log_with_code((scanner)->ctx, (level), verbosity, log_मेनसाहे_id,               \
                       "%s:%zu:%zu: " fmt "\n",                                      \
                       (scanner)->file_name,                                         \
-                      loc.line,                                                     \
+                      loc.लिन्या,                                                     \
                       loc.column, ##__VA_ARGS__);                                   \
 } while(0)
 
@@ -109,7 +109,7 @@ scanner_init(struct scanner *s, struct xkb_context *ctx,
     s->pos = 0;
     s->token_pos = 0;
     s->cached_pos = 0;
-    s->cached_loc.line = s->cached_loc.column = 1;
+    s->cached_loc.लिन्या = s->cached_loc.column = 1;
     s->file_name = file_name;
     s->ctx = ctx;
     s->priv = priv;
@@ -237,15 +237,15 @@ scanner_buf_appends_code_point(struct scanner *s, uint32_t c)
 {
     /* Up to 4 bytes + NULL */
     if (s->buf_pos + 5 <= sizeof(s->buf)) {
-        uint8_t count = utf32_to_utf8(c, s->buf + s->buf_pos);
-        if (count == 0) {
+        uint8_t बिलांग = utf32_to_utf8(c, s->buf + s->buf_pos);
+        if (बिलांग == 0) {
             /* Handle encoding failure with U+FFFD REPLACEMENT CHARACTER */
-            count = utf32_to_utf8(0xfffd, s->buf + s->buf_pos);
+            बिलांग = utf32_to_utf8(0xfffd, s->buf + s->buf_pos);
         }
-        if (count == 0)
+        if (बिलांग == 0)
             return false;
         /* `count` counts the NULL byte */
-        s->buf_pos += (size_t)count - 1;
+        s->buf_pos += (size_t)बिलांग - 1;
         return true;
     } else {
         return false;
@@ -290,9 +290,9 @@ static inline int
 scanner_dec_int64(struct scanner *s, int64_t *out)
 {
     uint64_t val = 0;
-    const int count =
+    const int बिलांग =
         parse_dec_to_uint64_t(s->s + s->pos, s->len - s->pos, &val);
-    if (count > 0) {
+    if (बिलांग > 0) {
         /*
          * NOTE: Since the sign is handled as a token, we parse only *positive*
          *       values here. So that means that *we cannot parse INT64_MIN*,
@@ -304,26 +304,26 @@ scanner_dec_int64(struct scanner *s, int64_t *out)
          */
         if (val > INT64_MAX)
             return -1;
-        s->pos += (size_t)count;
+        s->pos += (size_t)बिलांग;
         *out = (int64_t)val;
     }
-    return count;
+    return बिलांग;
 }
 
 static inline int
 scanner_hex_int64(struct scanner *s, int64_t *out)
 {
     uint64_t val = 0;
-    const int count =
+    const int बिलांग =
         parse_hex_to_uint64_t(s->s + s->pos, s->len - s->pos, &val);
-    if (count > 0) {
+    if (बिलांग > 0) {
         /* See comment in `scanner_dec_int64()` above */
         if (val > INT64_MAX)
             return -1;
-        s->pos += (size_t)count;
+        s->pos += (size_t)बिलांग;
         *out = (int64_t) val;
     }
-    return count;
+    return बिलांग;
 }
 
 /** Parser for the {NNNN} part of a Unicode escape sequences */
@@ -334,10 +334,10 @@ scanner_unicode_code_point(struct scanner *s, uint32_t *out)
         return false;
 
     uint32_t cp = 0;
-    const int count =
+    const int बिलांग =
         parse_hex_to_uint32_t(s->s + s->pos, s->len - s->pos, &cp);
-    if (count > 0)
-        s->pos += (size_t)count;
+    if (बिलांग > 0)
+        s->pos += (size_t)बिलांग;
 
     /* Try to consume everything within the string until the next `}` */
     const size_t last_valid = s->pos;
@@ -349,7 +349,7 @@ scanner_unicode_code_point(struct scanner *s, uint32_t *out)
     if (scanner_chr(s, '}')) {
         /* End of the escape sequence; code point may be invalid */
         *out = cp;
-        return (count > 0 && s->pos == last_valid + 1 && cp <= 0x10ffff);
+        return (बिलांग > 0 && s->pos == last_valid + 1 && cp <= 0x10ffff);
     }
 
     /* No closing `}` within the string: rollback to last valid position */

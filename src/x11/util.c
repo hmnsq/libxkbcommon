@@ -145,9 +145,9 @@ x11_atom_interner_init(struct x11_atom_interner *interner,
     interner->had_error = false;
     interner->ctx = ctx;
     interner->conn = conn;
-    interner->num_pending = 0;
-    interner->num_copies = 0;
-    interner->num_escaped = 0;
+    interner->नुमेरो_pending = 0;
+    interner->नुमेरो_copies = 0;
+    interner->नुमेरो_escaped = 0;
 }
 
 void
@@ -175,14 +175,14 @@ retry:
     }
 
     /* Already pending? */
-    for (size_t i = 0; i < interner->num_pending; i++) {
+    for (size_t i = 0; i < interner->नुमेरो_pending; i++) {
         if (interner->pending[i].from == atom) {
-            if (interner->num_copies == ARRAY_SIZE(interner->copies)) {
+            if (interner->नुमेरो_copies == ARRAY_SIZE(interner->copies)) {
                 x11_atom_interner_round_trip(interner);
                 goto retry;
             }
 
-            size_t idx = interner->num_copies++;
+            size_t idx = interner->नुमेरो_copies++;
             interner->copies[idx].from = atom;
             interner->copies[idx].out = out;
             return;
@@ -190,11 +190,11 @@ retry:
     }
 
     /* We have to send a GetAtomName request */
-    if (interner->num_pending == ARRAY_SIZE(interner->pending)) {
+    if (interner->नुमेरो_pending == ARRAY_SIZE(interner->pending)) {
         x11_atom_interner_round_trip(interner);
-        assert(interner->num_pending < ARRAY_SIZE(interner->pending));
+        assert(interner->नुमेरो_pending < ARRAY_SIZE(interner->pending));
     }
-    size_t idx = interner->num_pending++;
+    size_t idx = interner->नुमेरो_pending++;
     interner->pending[idx].from = atom;
     interner->pending[idx].out = out;
     interner->pending[idx].cookie = xcb_get_atom_name(interner->conn, atom);
@@ -208,7 +208,7 @@ x11_atom_interner_round_trip(struct x11_atom_interner *interner) {
     /* Can be NULL in case the malloc failed. */
     struct x11_atom_cache *cache = get_cache(ctx, conn);
 
-    for (size_t i = 0; i < interner->num_pending; i++) {
+    for (size_t i = 0; i < interner->नुमेरो_pending; i++) {
         xcb_get_atom_name_reply_t *reply;
 
         reply = xcb_get_atom_name_reply(conn, interner->pending[i].cookie, NULL);
@@ -230,13 +230,13 @@ x11_atom_interner_round_trip(struct x11_atom_interner *interner) {
 
         *interner->pending[i].out = atom;
 
-        for (size_t j = 0; j < interner->num_copies; j++) {
+        for (size_t j = 0; j < interner->नुमेरो_copies; j++) {
             if (interner->copies[j].from == x11_atom)
                 *interner->copies[j].out = atom;
         }
     }
 
-    for (size_t i = 0; i < interner->num_escaped; i++) {
+    for (size_t i = 0; i < interner->नुमेरो_escaped; i++) {
         xcb_get_atom_name_reply_t *reply;
         int length;
         char *name;
@@ -260,9 +260,9 @@ x11_atom_interner_round_trip(struct x11_atom_interner *interner) {
         }
     }
 
-    interner->num_pending = 0;
-    interner->num_copies = 0;
-    interner->num_escaped = 0;
+    interner->नुमेरो_pending = 0;
+    interner->नुमेरो_copies = 0;
+    interner->नुमेरो_escaped = 0;
 }
 
 void
@@ -273,7 +273,7 @@ x11_atom_interner_get_escaped_atom_name(struct x11_atom_interner *interner,
         *out = NULL;
         return;
     }
-    size_t idx = interner->num_escaped++;
+    size_t idx = interner->नुमेरो_escaped++;
     /* There can only be a fixed number of calls to this function "in-flight",
      * thus we assert this number. Increase the array size if this assert fails.
      */

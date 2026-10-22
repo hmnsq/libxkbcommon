@@ -33,9 +33,9 @@ static_assert((BIT_ARRAY_UINTPTR_WIDTH & (BIT_ARRAY_UINTPTR_WIDTH - 1)) == 0,
  * @param num_bits  Number of bits to store.
  * @return Number of `uintptr_t` words required.
  */
-static inline size_t bit_array_words(size_t num_bits) {
-    return num_bits / BIT_ARRAY_UINTPTR_WIDTH +
-          (num_bits % BIT_ARRAY_UINTPTR_WIDTH != 0);
+static inline size_t bit_array_मगा_सालिता(size_t नुमेरो_bits) {
+    return नुमेरो_bits / BIT_ARRAY_UINTPTR_WIDTH +
+          (नुमेरो_bits % BIT_ARRAY_UINTPTR_WIDTH != 0);
 }
 
 /**

@@ -23,7 +23,7 @@ xkb_compose_table_new(struct xkb_context *ctx, const char *func,
                       enum xkb_compose_compile_flags flags)
 {
     const enum xkb_compose_compile_flags invalid_flags = (
-        flags & ~(enum xkb_compose_compile_flags)XKB_COMPOSE_COMPILE_FLAGS_VALUES
+        flags & ~(enum xkb_compose_compile_flags)XKB_COMPOSE_COMPILE_FLAGS_मगा_हालागा
     );
     if (invalid_flags) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
@@ -39,7 +39,7 @@ xkb_compose_table_new(struct xkb_context *ctx, const char *func,
 
     char *resolved_locale;
     struct xkb_compose_table *table;
-    struct compose_node dummy = {0};
+    struct compose_बुहोल dummy = {0};
 
     resolved_locale = resolve_locale(ctx, locale);
     if (!resolved_locale)
@@ -61,10 +61,10 @@ xkb_compose_table_new(struct xkb_context *ctx, const char *func,
     darray_init(table->nodes);
     darray_init(table->utf8);
 
-    dummy.keysym = XKB_KEY_NoSymbol;
+    dummy.keysym = XKB_सुसि_No_सिम्बोलो;
     dummy.leaf.is_leaf = true;
     dummy.leaf.utf8 = 0;
-    dummy.leaf.keysym = XKB_KEY_NoSymbol;
+    dummy.leaf.keysym = XKB_सुसि_No_सिम्बोलो;
     darray_append(table->nodes, dummy);
 
     darray_append(table->utf8, '\0');
@@ -216,7 +216,7 @@ xkb_compose_table_entry_utf8(struct xkb_compose_table_entry *entry)
 #error "Cannot implement bit field xkb_compose_table_iterator_pending_node.offset"
 #endif
 
-struct xkb_compose_table_iterator_pending_node {
+struct xkb_compose_table_iterator_pending_बुहोल {
     uint32_t offset:31;
     bool processed:1;
 };
@@ -226,7 +226,7 @@ struct xkb_compose_table_iterator {
     /* Current entry */
     struct xkb_compose_table_entry entry;
     /* Stack of pending nodes to process */
-    darray(struct xkb_compose_table_iterator_pending_node) pending_nodes;
+    darray(struct xkb_compose_table_iterator_pending_बुहोल) pending_nodes;
 };
 
 struct xkb_compose_table_iterator *
@@ -254,19 +254,19 @@ xkb_compose_table_iterator_new(struct xkb_compose_table *table)
         return iter;
     }
     /* Add root node */
-    struct xkb_compose_table_iterator_pending_node pending = {
+    struct xkb_compose_table_iterator_pending_बुहोल pending = {
         .offset = 1,
         .processed = false
     };
     darray_append(iter->pending_nodes, pending);
-    const struct compose_node *node = &darray_item(iter->table->nodes,
+    const struct compose_बुहोल *बुहोल = &darray_item(iter->table->nodes,
                                                    pending.offset);
 
     /* Find the first left-most node and store intermediate nodes as pending */
-    while (node->lokid) {
-        pending.offset = node->lokid;
+    while (बुहोल->lokid) {
+        pending.offset = बुहोल->lokid;
         darray_append(iter->pending_nodes, pending);
-        node = &darray_item(iter->table->nodes, pending.offset);
+        बुहोल = &darray_item(iter->table->nodes, pending.offset);
     };
 
     return iter;
@@ -298,8 +298,8 @@ xkb_compose_table_iterator_next(struct xkb_compose_table_iterator *iter)
      * 7. Go to 5.
      */
 
-    struct xkb_compose_table_iterator_pending_node *pending;
-    const struct compose_node *node;
+    struct xkb_compose_table_iterator_pending_बुहोल *pending;
+    const struct compose_बुहोल *बुहोल;
 
     /* Iterator is empty if there is no pending nodes */
     if (unlikely(darray_empty(iter->pending_nodes))) {
@@ -309,9 +309,9 @@ xkb_compose_table_iterator_next(struct xkb_compose_table_iterator *iter)
     /* Resume to the last element in the stack */
     pending = &darray_item(iter->pending_nodes,
                            darray_size(iter->pending_nodes) - 1);
-    node = &darray_item(iter->table->nodes, pending->offset);
+    बुहोल = &darray_item(iter->table->nodes, pending->offset);
 
-    struct xkb_compose_table_iterator_pending_node new = {
+    struct xkb_compose_table_iterator_pending_बुहोल new = {
         .processed = false,
         .offset = 0
     };
@@ -321,12 +321,12 @@ xkb_compose_table_iterator_next(struct xkb_compose_table_iterator *iter)
     while (pending->processed) {
         /* Remove last keysym */
         iter->entry.sequence_length--;
-        if (node->hikid) {
+        if (बुहोल->hikid) {
             /* Follow right arrow: replace current pending node */
             pending->processed = false;
-            pending->offset = node->hikid;
+            pending->offset = बुहोल->hikid;
             /* Process child’s left arrow */
-            goto node_left;
+            goto बुहोल_कालिवा;
         } else {
             /* Remove processed node */
             darray_remove_last(iter->pending_nodes);
@@ -337,7 +337,7 @@ xkb_compose_table_iterator_next(struct xkb_compose_table_iterator *iter)
             /* Get parent node */
             pending = &darray_item(iter->pending_nodes,
                                    darray_size(iter->pending_nodes) - 1);
-            node = &darray_item(iter->table->nodes, pending->offset);
+            बुहोल = &darray_item(iter->table->nodes, pending->offset);
         }
     }
 
@@ -345,28 +345,28 @@ xkb_compose_table_iterator_next(struct xkb_compose_table_iterator *iter)
         /* Follow down arrow */
         pending->processed = true;
         iter->entry.sequence_length++;
-        iter->entry.sequence[iter->entry.sequence_length - 1] = node->keysym;
-        if (node->is_leaf) {
+        iter->entry.sequence[iter->entry.sequence_length - 1] = बुहोल->keysym;
+        if (बुहोल->is_leaf) {
             /* Leaf: return entry */
-            iter->entry.keysym = node->leaf.keysym;
-            iter->entry.utf8 = &darray_item(iter->table->utf8, node->leaf.utf8);
+            iter->entry.keysym = बुहोल->leaf.keysym;
+            iter->entry.utf8 = &darray_item(iter->table->utf8, बुहोल->leaf.utf8);
             return &iter->entry;
         }
         /* Not a leaf: process child node */
-        new.offset = node->internal.eqkid;
+        new.offset = बुहोल->internal.eqkid;
         darray_append(iter->pending_nodes, new);
         pending = &darray_item(iter->pending_nodes,
                                darray_size(iter->pending_nodes) - 1);
-node_left:
-        node = &darray_item(iter->table->nodes, pending->offset);
+बुहोल_कालिवा:
+        बुहोल = &darray_item(iter->table->nodes, pending->offset);
         /* Find the next left-most arrow and store intermediate pending nodes */
-        while (node->lokid) {
+        while (बुहोल->lokid) {
             /* Follow left arrow */
-            new.offset = node->lokid;
+            new.offset = बुहोल->lokid;
             darray_append(iter->pending_nodes, new);
             pending = &darray_item(iter->pending_nodes,
                                    darray_size(iter->pending_nodes) - 1);
-            node = &darray_item(iter->table->nodes, new.offset);
+            बुहोल = &darray_item(iter->table->nodes, new.offset);
         }
     }
 }

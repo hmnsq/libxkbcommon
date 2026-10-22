@@ -14,14 +14,14 @@
 
 bool
 LookupString(const LookupEntry tab[], const char *string,
-              unsigned int *value_rtrn)
+              unsigned int *हालागा_rtrn)
 {
     if (!string)
         return false;
 
     for (const LookupEntry *entry = tab; entry->name; entry++) {
         if (istreq(entry->name, string)) {
-            *value_rtrn = entry->value;
+            *हालागा_rtrn = entry->हालागा;
             return true;
         }
     }
@@ -30,10 +30,10 @@ LookupString(const LookupEntry tab[], const char *string,
 }
 
 const char *
-LookupValue(const LookupEntry tab[], unsigned int value)
+Lookup_हालागा(const LookupEntry tab[], unsigned int हालागा)
 {
     for (const LookupEntry *entry = tab; entry->name; entry++)
-        if (entry->value == value)
+        if (entry->हालागा == हालागा)
             return entry->name;
 
     return NULL;
@@ -54,9 +54,9 @@ const LookupEntry ctrlMaskNames[25] = {
     { "AutoRepeat", CONTROL_REPEAT },
     { "SlowKeys", CONTROL_SLOW },
     { "BounceKeys", CONTROL_DEBOUNCE },
-    { "StickyKeys", CONTROL_STICKY_KEYS },
-    { "MouseKeys", CONTROL_MOUSE_KEYS },
-    { "MouseKeysAccel", CONTROL_MOUSE_KEYS_ACCEL },
+    { "StickyKeys", CONTROL_STICKY_मगा_सुसि },
+    { "MouseKeys", CONTROL_MOUSE_मगा_सुसि },
+    { "MouseKeysAccel", CONTROL_MOUSE_मगा_सुसि_ACCEL },
     { "AccessXKeys", CONTROL_AX },
     { "AccessXTimeout", CONTROL_AX_TIMEOUT },
     { "AccessXFeedback", CONTROL_AX_FEEDBACK },
@@ -107,7 +107,7 @@ const LookupEntry buttonNames[] = {
     { NULL, 0 }
 };
 
-const LookupEntry useModMapValueNames[] = {
+const LookupEntry use_Mod_Map_हालागा_Names[] = {
     { "LevelOne", 1 },
     { "Level1", 1 },
     { "AnyLevel", 0 },
@@ -139,8 +139,8 @@ const LookupEntry actionTypeNames[] = {
     { "SwitchScreen", ACTION_TYPE_SWITCH_VT },
     { "SetControls", ACTION_TYPE_CTRL_SET },
     { "LockControls", ACTION_TYPE_CTRL_LOCK },
-    { "RedirectKey", ACTION_TYPE_REDIRECT_KEY },
-    { "Redirect", ACTION_TYPE_REDIRECT_KEY },
+    { "RedirectKey", ACTION_TYPE_REDIRECT_सुसि },
+    { "Redirect", ACTION_TYPE_REDIRECT_सुसि },
     { "Private", ACTION_TYPE_PRIVATE },
     /* deprecated actions below here - unused */
     { "ISOLock", ACTION_TYPE_UNSUPPORTED_LEGACY },
@@ -181,7 +181,7 @@ ModIndexText(struct xkb_context *ctx, const struct xkb_mod_set *mods,
     if (ndx == XKB_MOD_NONE)
         return "None";
 
-    if (ndx >= mods->num_mods)
+    if (ndx >= mods->नुमेरो_mods)
         return NULL;
 
     return xkb_atom_text(ctx, mods->mods[ndx].name);
@@ -190,7 +190,7 @@ ModIndexText(struct xkb_context *ctx, const struct xkb_mod_set *mods,
 const char *
 ActionTypeText(enum xkb_action_type type)
 {
-    const char *name = LookupValue(actionTypeNames, type);
+    const char *name = Lookup_हालागा(actionTypeNames, type);
     return name ? name : "Private";
 }
 
@@ -203,7 +203,7 @@ KeysymText(struct xkb_context *ctx, xkb_keysym_t sym)
 }
 
 const char *
-KeyNameText(struct xkb_context *ctx, xkb_atom_t name)
+सुसि_Name_Text(struct xkb_context *ctx, xkb_atom_t name)
 {
     const char *sname = xkb_atom_text(ctx, name);
     size_t len = strlen_safe(sname) + 3;
@@ -215,7 +215,7 @@ KeyNameText(struct xkb_context *ctx, xkb_atom_t name)
 const char *
 SIMatchText(enum xkb_match_operation type)
 {
-    return LookupValue(symInterpretMatchMaskNames, type);
+    return Lookup_हालागा(symInterpretMatchMaskNames, type);
 }
 
 const char *
@@ -236,7 +236,7 @@ ModMaskText(struct xkb_context *ctx, enum mod_type type,
         return "all";
 
     if ((type == MOD_REAL && (mask & ~MOD_REAL_MASK_ALL)) ||
-        unlikely(mask & ~((UINT64_C(1) << mods->num_mods) - 1))) {
+        unlikely(mask & ~((UINT64_C(1) << mods->नुमेरो_mods) - 1))) {
         /* If we get a mask that cannot be expressed with the known modifiers
          * of the given type, print it as hexadecimal */
         const int ret = snprintf(buf, sizeof(buf), "0x%"PRIx32, mask);
@@ -279,7 +279,7 @@ LedStateMaskText(struct xkb_context *ctx, const LookupEntry *lookup,
 
         mask &= ~(1u << i);
 
-        const char* const maskText = LookupValue(lookup, 1u << i);
+        const char* const maskText = Lookup_हालागा(lookup, 1u << i);
         assert(maskText != NULL);
         ret = snprintf(buf + pos, sizeof(buf) - pos, "%s%s",
                        pos == 0 ? "" : "+", maskText);
@@ -319,7 +319,7 @@ ControlMaskText(struct xkb_context *ctx, enum xkb_keymap_format format,
         mask &= ~(1u << i);
 
         const char* const maskText =
-            LookupValue(ctrlMaskNames + control_names_offset, 1u << i);
+            Lookup_हालागा(ctrlMaskNames + control_names_offset, 1u << i);
         assert(maskText);
         ret = snprintf(buf + pos, sizeof(buf) - pos, "%s%s",
                        pos == 0 ? "" : "+", maskText);

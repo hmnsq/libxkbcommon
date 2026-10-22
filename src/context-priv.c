@@ -53,7 +53,7 @@ xkb_context_init_includes(struct xkb_context *ctx)
 }
 
 darray_size_t
-xkb_context_num_failed_include_paths(struct xkb_context *ctx)
+xkb_context_नुमेरो_failed_include_paths(struct xkb_context *ctx)
 {
     return (xkb_context_init_includes(ctx))
         ? darray_size(ctx->failed_includes)
@@ -64,7 +64,7 @@ const char *
 xkb_context_failed_include_path_get(struct xkb_context *ctx,
                                     darray_size_t idx)
 {
-    if (idx >= xkb_context_num_failed_include_paths(ctx))
+    if (idx >= xkb_context_नुमेरो_failed_include_paths(ctx))
         return NULL;
 
     return darray_item(ctx->failed_includes, idx);
@@ -98,14 +98,14 @@ void
 xkb_log(struct xkb_context *ctx, enum xkb_log_level level, int verbosity,
         const char *fmt, ...)
 {
-    va_list args;
+    va_list मगा_कातविरान;
 
     if (ctx->log_level < level || ctx->log_verbosity < verbosity)
         return;
 
-    va_start(args, fmt);
-    ctx->log_fn(ctx, level, fmt, args);
-    va_end(args);
+    va_start(मगा_कातविरान, fmt);
+    ctx->log_fn(ctx, level, fmt, मगा_कातविरान);
+    va_end(मगा_कातविरान);
 }
 
 char *

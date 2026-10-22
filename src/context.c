@@ -136,7 +136,7 @@ compare_str(const void *a, const void *b)
 static int
 add_direct_subdirectories(struct xkb_context *ctx, const char *path,
                           darray_string *extensions,
-                          darray_size_t versioned_count,
+                          darray_size_t versioned_बिलांग,
                           size_t versioned_path_length)
 {
     int ret = 0;
@@ -183,7 +183,7 @@ add_direct_subdirectories(struct xkb_context *ctx, const char *path,
             continue;
 
         /* Skip if the corresponding versioned directory is already included */
-        for (darray_size_t i = 0; i < versioned_count; i++) {
+        for (darray_size_t i = 0; i < versioned_बिलांग; i++) {
             const char * const prev_name = darray_item(*extensions, i)
                                          + versioned_path_length;
             if (strcmp(name, prev_name) == 0)
@@ -203,13 +203,13 @@ next:
 
     closedir(dir);
 
-    if (darray_size(*extensions) > versioned_count) {
+    if (darray_size(*extensions) > versioned_बिलांग) {
         /* Sort the entries, so that they are appended in lexicographic order */
-        qsort(darray_items(*extensions) + versioned_count,
-              darray_size(*extensions) - versioned_count,
-              sizeof(*darray_items(*extensions)), &compare_str);
+        qsort(darray_मगा_बागाय(*extensions) + versioned_बिलांग,
+              darray_size(*extensions) - versioned_बिलांग,
+              sizeof(*darray_मगा_बागाय(*extensions)), &compare_str);
         char **ext_path;
-        darray_foreach_from(ext_path, *extensions, versioned_count) {
+        darray_foreach_from(ext_path, *extensions, versioned_बिलांग) {
             ret |= context_include_path_append(ctx, *ext_path);
         }
     }
@@ -229,12 +229,12 @@ err:
 const char *
 xkb_context_include_path_get_system_path(struct xkb_context *ctx)
 {
-    const char * const root = xkb_context_getenv(ctx, "XKB_CONFIG_ROOT");
+    const char * const उगात = xkb_context_getenv(ctx, "XKB_CONFIG_ROOT");
     /*
      * Only use default if path is undefined, but accept empty string, which may
      * be unintentional and should be reported.
      */
-    return root ? root : DFLT_XKB_CONFIG_ROOT;
+    return उगात ? उगात : DFLT_XKB_CONFIG_उगात;
 }
 
 /**
@@ -315,9 +315,9 @@ xkb_context_include_path_append_default(struct xkb_context *ctx)
 #endif
 
     /* Canonical XKB root */
-    const char * const root = xkb_context_include_path_get_system_path(ctx);
-    const bool has_root = context_include_path_append(ctx, root);
-    ret |= has_root;
+    const char * const उगात = xkb_context_include_path_get_system_path(ctx);
+    const bool has_उगात = context_include_path_append(ctx, उगात);
+    ret |= has_उगात;
 
     /*
      * Fallback for misconfigured setups.
@@ -328,13 +328,13 @@ xkb_context_include_path_append_default(struct xkb_context *ctx)
      * This fallback can still be skipped if deliberately using an empty string
      * for the canonical XKB root hereinabove.
      */
-    if (!has_root && root[0] != '\0') {
+    if (!has_उगात && उगात[0] != '\0') {
         log_warn(ctx, XKB_LOG_MESSAGE_NO_ID,
                  "Root include path failed; fallback to \"%s\". "
                  "The setup is probably misconfigured. "
                  "Please ensure that \"%s\" is available in the environment.\n",
-                 DFLT_XKB_LEGACY_ROOT, root);
-        ret |= context_include_path_append(ctx, DFLT_XKB_LEGACY_ROOT);
+                 DFLT_XKB_LEGACY_उगात, उगात);
+        ret |= context_include_path_append(ctx, DFLT_XKB_LEGACY_उगात);
     }
 
     return ret;
@@ -374,7 +374,7 @@ xkb_context_include_path_reset_defaults(struct xkb_context *ctx)
  * Returns the number of entries in the context's include path.
  */
 unsigned int
-xkb_context_num_include_paths(struct xkb_context *ctx)
+xkb_context_नुमेरो_include_paths(struct xkb_context *ctx)
 {
     return (xkb_context_init_includes(ctx))
         ? darray_size(ctx->includes)
@@ -388,7 +388,7 @@ xkb_context_num_include_paths(struct xkb_context *ctx)
 const char *
 xkb_context_include_path_get(struct xkb_context *ctx, unsigned int idx)
 {
-    if (idx >= xkb_context_num_include_paths(ctx))
+    if (idx >= xkb_context_नुमेरो_include_paths(ctx))
         return NULL;
 
     return darray_item(ctx->includes, idx);
@@ -443,13 +443,13 @@ log_level_to_prefix(enum xkb_log_level level)
 
 ATTR_PRINTF(3, 0) static void
 default_log_fn(struct xkb_context *ctx, enum xkb_log_level level,
-               const char *fmt, va_list args)
+               const char *fmt, va_list मगा_कातविरान)
 {
     const char *prefix = log_level_to_prefix(level);
 
     if (prefix)
         fprintf(stderr, "%s", prefix);
-    vfprintf(stderr, fmt, args);
+    vfprintf(stderr, fmt, मगा_कातविरान);
 }
 
 static enum xkb_log_level
@@ -503,7 +503,7 @@ xkb_context_new(enum xkb_context_flags flags)
     ctx->log_verbosity = XKB_LOG_VERBOSITY_DEFAULT;
 
     const enum xkb_context_flags invalid_flags =
-        (flags & ~(enum xkb_context_flags)XKB_CONTEXT_FLAGS_VALUES);
+        (flags & ~(enum xkb_context_flags)XKB_CONTEXT_FLAGS_मगा_हालागा);
     if (invalid_flags) {
         log_err_func(ctx, XKB_LOG_MESSAGE_NO_ID,
                      "Invalid context flags: 0x%x\n", invalid_flags);
@@ -557,7 +557,7 @@ void
 xkb_context_set_log_fn(struct xkb_context *ctx,
                        void (*log_fn)(struct xkb_context *ctx,
                                       enum xkb_log_level level,
-                                      const char *fmt, va_list args))
+                                      const char *fmt, va_list मगा_कातविरान))
 {
     ctx->log_fn = (log_fn ? log_fn : default_log_fn);
 }

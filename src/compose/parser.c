@@ -63,7 +63,7 @@
 
 enum rules_token {
     TOK_END_OF_FILE = 0,
-    TOK_END_OF_LINE,
+    TOK_END_OF_लिन्या,
     TOK_INCLUDE,
     TOK_INCLUDE_STRING,
     TOK_LHS_KEYSYM,
@@ -91,7 +91,7 @@ skip_more_whitespace_and_comments:
     /* Skip spaces. */
     while (is_space(scanner_peek(s)))
         if (scanner_next(s) == '\n')
-            return TOK_END_OF_LINE;
+            return TOK_END_OF_लिन्या;
 
     /* Skip comments. */
     if (scanner_chr(s, '#')) {
@@ -230,7 +230,7 @@ lex_include_string(struct scanner *s, struct xkb_compose_table *table,
 {
     while (is_space(scanner_peek(s)))
         if (scanner_next(s) == '\n')
-            return TOK_END_OF_LINE;
+            return TOK_END_OF_लिन्या;
 
     s->token_pos = s->pos;
     s->buf_pos = 0;
@@ -328,7 +328,7 @@ add_production(struct xkb_compose_table *table, struct scanner *s,
     unsigned int lhs_pos = 0;
     uint32_t curr = darray_size(table->nodes) == 1 ? 0 : 1;
     uint32_t *pptr = NULL;
-    struct compose_node *node = NULL;
+    struct compose_बुहोल *बुहोल = NULL;
 
     /* Warn before potentially going over the limit, discard silently after. */
     if (darray_size(table->nodes) + production->len + COMPOSE_MAX_LHS_LEN >
@@ -356,7 +356,7 @@ add_production(struct xkb_compose_table *table, struct scanner *s,
              * Create a new node and update the parent pointer to it.
              * Update the pointer first because the append invalidates it.
              */
-            struct compose_node new = {
+            struct compose_बुहोल new = {
                 .keysym = keysym,
                 .lokid = 0,
                 .hikid = 0,
@@ -373,39 +373,39 @@ add_production(struct xkb_compose_table *table, struct scanner *s,
             darray_append(table->nodes, new);
         }
 
-        node = &darray_item(table->nodes, curr);
+        बुहोल = &darray_item(table->nodes, curr);
 
-        if (keysym < node->keysym) {
-            pptr = &node->lokid;
-            curr = node->lokid;
-        } else if (keysym > node->keysym) {
-            pptr = &node->hikid;
-            curr = node->hikid;
+        if (keysym < बुहोल->keysym) {
+            pptr = &बुहोल->lokid;
+            curr = बुहोल->lokid;
+        } else if (keysym > बुहोल->keysym) {
+            pptr = &बुहोल->hikid;
+            curr = बुहोल->hikid;
         } else if (!last) {
-            if (node->is_leaf) {
+            if (बुहोल->is_leaf) {
                 scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
                              "a sequence already exists which is a prefix of "
                              "this sequence; overriding");
-                node->internal.eqkid = 0;
-                node->internal.is_leaf = false;
+                बुहोल->internal.eqkid = 0;
+                बुहोल->internal.is_leaf = false;
             }
             lhs_pos++;
-            pptr = &node->internal.eqkid;
-            curr = node->internal.eqkid;
+            pptr = &बुहोल->internal.eqkid;
+            curr = बुहोल->internal.eqkid;
         } else {
-            if (node->is_leaf) {
+            if (बुहोल->is_leaf) {
                 bool same_string =
-                    (node->leaf.utf8 == 0 && !production->has_string) ||
+                    (बुहोल->leaf.utf8 == 0 && !production->has_string) ||
                     (
-                        node->leaf.utf8 != 0 && production->has_string &&
-                        streq(&darray_item(table->utf8, node->leaf.utf8),
+                        बुहोल->leaf.utf8 != 0 && production->has_string &&
+                        streq(&darray_item(table->utf8, बुहोल->leaf.utf8),
                               production->string)
                     );
                 bool same_keysym =
-                    (node->leaf.keysym == XKB_KEY_NoSymbol && !production->has_keysym) ||
+                    (बुहोल->leaf.keysym == XKB_सुसि_No_सिम्बोलो && !production->has_keysym) ||
                     (
-                        node->leaf.keysym != XKB_KEY_NoSymbol && production->has_keysym &&
-                        node->leaf.keysym == production->keysym
+                        बुहोल->leaf.keysym != XKB_सुसि_No_सिम्बोलो && production->has_keysym &&
+                        बुहोल->leaf.keysym == production->keysym
                     );
                 if (same_string && same_keysym) {
                     scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
@@ -416,11 +416,11 @@ add_production(struct xkb_compose_table *table, struct scanner *s,
                     scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
                                  "this compose sequence already exists; overriding");
                 }
-            } else if (node->internal.eqkid != 0) {
+            } else if (बुहोल->internal.eqkid != 0) {
                 scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
                              "this compose sequence is a prefix of another; "
                              "overriding");
-                node->internal.eqkid = 0;
+                बुहोल->internal.eqkid = 0;
             }
 
             /* NOTE: If there was a previous entry, its string may *not* be
@@ -428,30 +428,30 @@ add_production(struct xkb_compose_table *table, struct scanner *s,
              * wasted! */
             if (production->has_string) {
                 const size_t len = strlen(production->string);
-                if (node->is_leaf && node->leaf.utf8 &&
-                    len <= strlen(&darray_item(table->utf8, node->leaf.utf8))) {
+                if (बुहोल->is_leaf && बुहोल->leaf.utf8 &&
+                    len <= strlen(&darray_item(table->utf8, बुहोल->leaf.utf8))) {
                     /* There is a previous entry with an overwritable string */
-                    memcpy(&darray_item(table->utf8, node->leaf.utf8),
+                    memcpy(&darray_item(table->utf8, बुहोल->leaf.utf8),
                            production->string, len + 1);
                 } else {
                     /* Cannot reuse string: allocate new one */
-                    node->leaf.utf8 = darray_size(table->utf8);
-                    darray_append_items(table->utf8, production->string,
+                    बुहोल->leaf.utf8 = darray_size(table->utf8);
+                    darray_append_मगा_बागाय(table->utf8, production->string,
                                         (darray_size_t)strlen(production->string) + 1);
                 }
             } else {
                 /* Ensure we reset possible previous entry */
-                node->leaf.utf8 = 0;
+                बुहोल->leaf.utf8 = 0;
             }
 
             if (production->has_keysym) {
-                node->leaf.keysym = production->keysym;
+                बुहोल->leaf.keysym = production->keysym;
             } else {
                 /* Ensure we reset possible previous entry */
-                node->leaf.keysym = XKB_KEY_NoSymbol;
+                बुहोल->leaf.keysym = XKB_सुसि_No_सिम्बोलो;
             }
 
-            node->is_leaf = true;
+            बुहोल->is_leaf = true;
             return;
         }
     }
@@ -559,7 +559,7 @@ parse(struct xkb_compose_table *table, struct scanner *s,
     xkb_keysym_t keysym;
     struct production production;
     enum { MAX_ERRORS = 10 };
-    int num_errors = 0;
+    int नुमेरो_errors = 0;
 
     /* Basic detection of wrong character encoding.
        The first character relevant to the grammar must be ASCII:
@@ -582,7 +582,7 @@ initial:
 
 initial_eol:
     switch (tok = lex(s, &val)) {
-    case TOK_END_OF_LINE:
+    case TOK_END_OF_लिन्या:
         goto initial_eol;
     case TOK_END_OF_FILE:
         goto finished;
@@ -602,7 +602,7 @@ include:
 
 include_eol:
     switch (tok = lex(s, &val)) {
-    case TOK_END_OF_LINE:
+    case TOK_END_OF_लिन्या:
         if (!do_include(table, s, val.string.str, include_depth))
             goto fail;
         goto initial;
@@ -644,7 +644,7 @@ lhs_keysym_tok:
     switch (tok) {
     case TOK_LHS_KEYSYM:
         keysym = xkb_keysym_from_name(val.string.str, XKB_KEYSYM_NO_FLAGS);
-        if (keysym == XKB_KEY_NoSymbol) {
+        if (keysym == XKB_सुसि_No_सिम्बोलो) {
             scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
                         "unrecognized keysym \"%s\" on left-hand side",
                         val.string.str);
@@ -728,7 +728,7 @@ rhs:
         goto rhs;
     case TOK_IDENT:
         keysym = xkb_keysym_from_name(val.string.str, XKB_KEYSYM_NO_FLAGS);
-        if (keysym == XKB_KEY_NoSymbol) {
+        if (keysym == XKB_सुसि_No_सिम्बोलो) {
             scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
                         "unrecognized keysym \"%s\" on right-hand side",
                         val.string.str);
@@ -745,7 +745,7 @@ rhs:
         production.keysym = keysym;
         production.has_keysym = true;
         /* fallthrough */
-    case TOK_END_OF_LINE:
+    case TOK_END_OF_लिन्या:
         if (!production.has_string && !production.has_keysym) {
             scanner_warn(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                          "right-hand side must have at least one of string "
@@ -763,8 +763,8 @@ unexpected:
         scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                     "unexpected token");
 error:
-    num_errors++;
-    if (num_errors <= MAX_ERRORS)
+    नुमेरो_errors++;
+    if (नुमेरो_errors <= MAX_ERRORS)
         goto skip;
 
     scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
@@ -777,7 +777,7 @@ fail:
     return false;
 
 skip:
-    while (tok != TOK_END_OF_LINE && tok != TOK_END_OF_FILE)
+    while (tok != TOK_END_OF_लिन्या && tok != TOK_END_OF_FILE)
         tok = lex(s, &val);
     goto initial;
 

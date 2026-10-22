@@ -26,198 +26,198 @@
 #include "keysym.h"
 #include "utf8-decoding.h"
 
-static ExprDef *
-ExprCreate(enum stmt_type op)
+static पाहायाग_Def *
+पाहायाग_Create(enum stmt_type op)
 {
-    ExprDef *expr = malloc(sizeof(*expr));
-    if (!expr)
+    पाहायाग_Def *पाहायाग = malloc(sizeof(*पाहायाग));
+    if (!पाहायाग)
         return NULL;
 
-    expr->common.type = op;
-    expr->common.next = NULL;
+    पाहायाग->common.type = op;
+    पाहायाग->common.next = NULL;
 
-    return expr;
+    return पाहायाग;
 }
 
-ExprDef *
-ExprCreateString(xkb_atom_t str)
+पाहायाग_Def *
+पाहायाग_Create_String(xkb_atom_t str)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_STRING_LITERAL);
-    if (!expr)
+    पाहायाग_Def *पाहायाग = पाहायाग_Create(STMT_पाहायाग_STRING_LITERAL);
+    if (!पाहायाग)
         return NULL;
-    expr->string.str = str;
-    return expr;
+    पाहायाग->string.str = str;
+    return पाहायाग;
 }
 
-ExprDef *
-ExprCreateInteger(int64_t ival)
+पाहायाग_Def *
+पाहायाग_Create_Integer(int64_t ival)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_INTEGER_LITERAL);
-    if (!expr)
+    पाहायाग_Def *पाहायाग = पाहायाग_Create(STMT_पाहायाग_INTEGER_LITERAL);
+    if (!पाहायाग)
         return NULL;
-    expr->integer.ival = ival;
-    return expr;
+    पाहायाग->integer.ival = ival;
+    return पाहायाग;
 }
 
-ExprDef *
-ExprCreateFloat(void)
+पाहायाग_Def *
+पाहायाग_Create_Float(void)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_FLOAT_LITERAL);
-    if (!expr)
+    पाहायाग_Def *पाहायाग = पाहायाग_Create(STMT_पाहायाग_FLOAT_LITERAL);
+    if (!पाहायाग)
         return NULL;
-    return expr;
+    return पाहायाग;
 }
 
-ExprDef *
-ExprCreateBoolean(bool set)
+पाहायाग_Def *
+पाहायाग_Create_Boolean(bool set)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_BOOLEAN_LITERAL);
-    if (!expr)
+    पाहायाग_Def *पाहायाग = पाहायाग_Create(STMT_पाहायाग_BOOLEAN_LITERAL);
+    if (!पाहायाग)
         return NULL;
-    expr->boolean.set = set;
-    return expr;
+    पाहायाग->boolean.set = set;
+    return पाहायाग;
 }
 
-ExprDef *
-ExprCreateKeyName(xkb_atom_t key_name)
+पाहायाग_Def *
+पाहायाग_Create_सुसि_Name(xkb_atom_t सुसि_name)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_KEYNAME_LITERAL);
-    if (!expr)
+    पाहायाग_Def *पाहायाग = पाहायाग_Create(STMT_पाहायाग_KEYNAME_LITERAL);
+    if (!पाहायाग)
         return NULL;
-    expr->key_name.key_name = key_name;
-    return expr;
+    पाहायाग->सुसि_name.सुसि_name = सुसि_name;
+    return पाहायाग;
 }
 
-ExprDef *
-ExprCreateKeySym(xkb_keysym_t keysym)
+पाहायाग_Def *
+पाहायाग_Create_सुसि_Sym(xkb_keysym_t keysym)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_KEYSYM_LITERAL);
-    if (!expr)
+    पाहायाग_Def *पाहायाग = पाहायाग_Create(STMT_पाहायाग_KEYSYM_LITERAL);
+    if (!पाहायाग)
         return NULL;
-    expr->keysym.keysym = keysym;
-    return expr;
+    पाहायाग->keysym.keysym = keysym;
+    return पाहायाग;
 }
 
-ExprDef *
-ExprCreateIdent(xkb_atom_t ident)
+पाहायाग_Def *
+पाहायाग_Create_Ident(xkb_atom_t ident)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_IDENT);
-    if (!expr)
+    पाहायाग_Def *पाहायाग = पाहायाग_Create(STMT_पाहायाग_IDENT);
+    if (!पाहायाग)
         return NULL;
-    expr->ident.ident = ident;
-    return expr;
+    पाहायाग->ident.ident = ident;
+    return पाहायाग;
 }
 
-ExprDef *
-ExprCreateUnary(enum stmt_type op, ExprDef *child)
+पाहायाग_Def *
+पाहायाग_Create_Unary(enum stmt_type op, पाहायाग_Def *child)
 {
-    ExprDef *expr = ExprCreate(op);
-    if (!expr)
+    पाहायाग_Def *पाहायाग = पाहायाग_Create(op);
+    if (!पाहायाग)
         return NULL;
-    expr->unary.child = child;
-    return expr;
+    पाहायाग->unary.child = child;
+    return पाहायाग;
 }
 
-ExprDef *
-ExprCreateBinary(enum stmt_type op, ExprDef *left, ExprDef *right)
+पाहायाग_Def *
+पाहायाग_Create_दालावाहान(enum stmt_type op, पाहायाग_Def *कालिवा, पाहायाग_Def *कानान)
 {
-    ExprDef *expr = ExprCreate(op);
-    if (!expr)
+    पाहायाग_Def *पाहायाग = पाहायाग_Create(op);
+    if (!पाहायाग)
         return NULL;
 
-    expr->binary.left = left;
-    expr->binary.right = right;
+    पाहायाग->दालावाहान.कालिवा = कालिवा;
+    पाहायाग->दालावाहान.कानान = कानान;
 
-    return expr;
+    return पाहायाग;
 }
 
-ExprDef *
-ExprCreateFieldRef(xkb_atom_t element, xkb_atom_t field)
+पाहायाग_Def *
+पाहायाग_Create_Field_Ref(xkb_atom_t element, xkb_atom_t field)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_FIELD_REF);
-    if (!expr)
+    पाहायाग_Def *पाहायाग = पाहायाग_Create(STMT_पाहायाग_FIELD_REF);
+    if (!पाहायाग)
         return NULL;
-    expr->field_ref.element = element;
-    expr->field_ref.field = field;
-    return expr;
+    पाहायाग->field_ref.element = element;
+    पाहायाग->field_ref.field = field;
+    return पाहायाग;
 }
 
-ExprDef *
-ExprCreateArrayRef(xkb_atom_t element, xkb_atom_t field, ExprDef *entry)
+पाहायाग_Def *
+पाहायाग_Create_Array_Ref(xkb_atom_t element, xkb_atom_t field, पाहायाग_Def *entry)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_ARRAY_REF);
-    if (!expr)
+    पाहायाग_Def *पाहायाग = पाहायाग_Create(STMT_पाहायाग_ARRAY_REF);
+    if (!पाहायाग)
         return NULL;
-    expr->array_ref.element = element;
-    expr->array_ref.field = field;
-    expr->array_ref.entry = entry;
-    return expr;
+    पाहायाग->array_ref.element = element;
+    पाहायाग->array_ref.field = field;
+    पाहायाग->array_ref.entry = entry;
+    return पाहायाग;
 }
 
-ExprDef *
-ExprEmptyList(void)
+पाहायाग_Def *
+पाहायाग_Empty_List(void)
 {
-    return ExprCreate(STMT_EXPR_EMPTY_LIST);
+    return पाहायाग_Create(STMT_पाहायाग_EMPTY_LIST);
 }
 
-ExprDef *
-ExprCreateAction(xkb_atom_t name, ExprDef *args)
+पाहायाग_Def *
+पाहायाग_Create_Action(xkb_atom_t name, पाहायाग_Def *मगा_कातविरान)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_ACTION_DECL);
-    if (!expr)
+    पाहायाग_Def *पाहायाग = पाहायाग_Create(STMT_पाहायाग_ACTION_DECL);
+    if (!पाहायाग)
         return NULL;
-    expr->action.name = name;
-    expr->action.args = args;
-    return expr;
+    पाहायाग->action.name = name;
+    पाहायाग->action.मगा_कातविरान = मगा_कातविरान;
+    return पाहायाग;
 }
 
-ExprDef *
-ExprCreateActionList(ExprDef *actions)
+पाहायाग_Def *
+पाहायाग_Create_Action_List(पाहायाग_Def *actions)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_ACTION_LIST);
-    if (!expr)
+    पाहायाग_Def *पाहायाग = पाहायाग_Create(STMT_पाहायाग_ACTION_LIST);
+    if (!पाहायाग)
         return NULL;
-    expr->actions.actions = actions;
-    return expr;
+    पाहायाग->actions.actions = actions;
+    return पाहायाग;
 }
 
-ExprDef *
-ExprCreateKeySymList(xkb_keysym_t sym)
+पाहायाग_Def *
+पाहायाग_Create_सुसि_Sym_List(xkb_keysym_t sym)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_KEYSYM_LIST);
-    if (!expr)
+    पाहायाग_Def *पाहायाग = पाहायाग_Create(STMT_पाहायाग_KEYSYM_LIST);
+    if (!पाहायाग)
         return NULL;
-    darray_init(expr->keysym_list.syms);
-    if (sym == XKB_KEY_NoSymbol) {
+    darray_init(पाहायाग->keysym_list.syms);
+    if (sym == XKB_सुसि_No_सिम्बोलो) {
         /* Discard NoSymbol */
     } else {
-        darray_append(expr->keysym_list.syms, sym);
+        darray_append(पाहायाग->keysym_list.syms, sym);
     }
-    return expr;
+    return पाहायाग;
 }
 
-ExprDef *
-ExprAppendKeySymList(ExprDef *expr, xkb_keysym_t sym)
+पाहायाग_Def *
+पाहायाग_Append_सुसि_Sym_List(पाहायाग_Def *पाहायाग, xkb_keysym_t sym)
 {
-    if (sym == XKB_KEY_NoSymbol) {
+    if (sym == XKB_सुसि_No_सिम्बोलो) {
         /* Discard NoSymbol */
     } else {
-        darray_append(expr->keysym_list.syms, sym);
+        darray_append(पाहायाग->keysym_list.syms, sym);
     }
-    return expr;
+    return पाहायाग;
 }
 
-ExprDef *
-ExprKeySymListAppendString(struct scanner *scanner,
-                           ExprDef *expr, const char *string)
+पाहायाग_Def *
+पाहायाग_सुसि_Sym_List_Append_String(struct scanner *scanner,
+                           पाहायाग_Def *पाहायाग, const char *string)
 {
     /* TODO: use strnlen with max len = 4 * MAX_KEYSYMS_LIST_LENGTH */
     const size_t len = strlen(string);
     size_t idx = 0;
     size_t idx_cp = 1;
     while (idx < len) {
-        size_t count = 0;
-        uint32_t cp = utf8_next_code_point(string + idx, len - idx, &count);
+        size_t बिलांग = 0;
+        uint32_t cp = utf8_next_code_point(string + idx, len - idx, &बिलांग);
         if (cp == INVALID_UTF8_CODE_POINT) {
             scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                         "Cannot convert string to keysyms: "
@@ -227,7 +227,7 @@ ExprKeySymListAppendString(struct scanner *scanner,
             goto error;
         }
         const xkb_keysym_t sym = xkb_utf32_to_keysym(cp);
-        if (sym == XKB_KEY_NoSymbol) {
+        if (sym == XKB_सुसि_No_सिम्बोलो) {
             scanner_err(scanner, XKB_LOG_MESSAGE_NO_ID,
                         "Cannot convert string to keysyms: Unicode code point "
                         "U+04%"PRIX32" has no keysym equivalent"
@@ -235,14 +235,14 @@ ExprKeySymListAppendString(struct scanner *scanner,
                         cp, idx + 1, idx_cp);
             goto error;
         }
-        darray_append(expr->keysym_list.syms, sym);
-        idx += count;
+        darray_append(पाहायाग->keysym_list.syms, sym);
+        idx += बिलांग;
         idx_cp++;
     }
     assert(string[idx] == '\0');
-    return expr;
+    return पाहायाग;
 error:
-    FreeStmt((ParseCommon*) expr);
+    FreeStmt((ParseCommon*) पाहायाग);
     return NULL;
 }
 
@@ -253,24 +253,24 @@ KeysymParseString(struct scanner *scanner, const char *string)
     if (len == 0) {
         scanner_err(scanner, XKB_LOG_MESSAGE_NO_ID,
                     "Cannot convert string to single keysym: empty string.");
-        return XKB_KEY_NoSymbol;
+        return XKB_सुसि_No_सिम्बोलो;
     }
-    size_t count = 0;
-    const uint32_t cp = utf8_next_code_point(string, len, &count);
+    size_t बिलांग = 0;
+    const uint32_t cp = utf8_next_code_point(string, len, &बिलांग);
     if (cp == INVALID_UTF8_CODE_POINT) {
         scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                     "Cannot convert string to single keysym: "
                     "Invalid UTF-8 encoding.");
-        return XKB_KEY_NoSymbol;
-    } else if (count != len) {
+        return XKB_सुसि_No_सिम्बोलो;
+    } else if (बिलांग != len) {
         scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                     "Cannot convert string to single keysym: "
                     "Expected a single Unicode code point, got: \"%s\".",
                     string);
-        return XKB_KEY_NoSymbol;
+        return XKB_सुसि_No_सिम्बोलो;
     }
     const xkb_keysym_t sym = xkb_utf32_to_keysym(cp);
-    if (sym == XKB_KEY_NoSymbol) {
+    if (sym == XKB_सुसि_No_सिम्बोलो) {
         scanner_err(scanner, XKB_LOG_MESSAGE_NO_ID,
                     "Cannot convert string to single keysym: Unicode "
                     "code point U+%04"PRIX32" has no keysym equivalent.",
@@ -280,7 +280,7 @@ KeysymParseString(struct scanner *scanner, const char *string)
 }
 
 KeycodeDef *
-KeycodeCreate(xkb_atom_t name, int64_t value)
+KeycodeCreate(xkb_atom_t name, int64_t हालागा)
 {
     KeycodeDef *def = malloc(sizeof(*def));
     if (!def)
@@ -289,15 +289,15 @@ KeycodeCreate(xkb_atom_t name, int64_t value)
     def->common.type = STMT_KEYCODE;
     def->common.next = NULL;
     def->name = name;
-    def->value = value;
+    def->हालागा = हालागा;
 
     return def;
 }
 
-KeyAliasDef *
-KeyAliasCreate(xkb_atom_t alias, xkb_atom_t real)
+सुसि_Alias_Def *
+सुसि_Alias_Create(xkb_atom_t alias, xkb_atom_t real)
 {
-    KeyAliasDef *def = malloc(sizeof(*def));
+    सुसि_Alias_Def *def = malloc(sizeof(*def));
     if (!def)
         return NULL;
 
@@ -310,7 +310,7 @@ KeyAliasCreate(xkb_atom_t alias, xkb_atom_t real)
 }
 
 VModDef *
-VModCreate(xkb_atom_t name, ExprDef *value)
+VModCreate(xkb_atom_t name, पाहायाग_Def *हालागा)
 {
     VModDef *def = malloc(sizeof(*def));
     if (!def)
@@ -319,13 +319,13 @@ VModCreate(xkb_atom_t name, ExprDef *value)
     def->common.type = STMT_VMOD;
     def->common.next = NULL;
     def->name = name;
-    def->value = value;
+    def->हालागा = हालागा;
 
     return def;
 }
 
 VarDef *
-VarCreate(ExprDef *name, ExprDef *value)
+VarCreate(पाहायाग_Def *name, पाहायाग_Def *हालागा)
 {
     VarDef *def = malloc(sizeof(*def));
     if (!def)
@@ -334,7 +334,7 @@ VarCreate(ExprDef *name, ExprDef *value)
     def->common.type = STMT_VAR;
     def->common.next = NULL;
     def->name = name;
-    def->value = value;
+    def->हालागा = हालागा;
 
     return def;
 }
@@ -342,25 +342,25 @@ VarCreate(ExprDef *name, ExprDef *value)
 VarDef *
 BoolVarCreate(xkb_atom_t ident, bool set)
 {
-    ExprDef *name, *value;
+    पाहायाग_Def *name, *हालागा;
     VarDef *def;
-    if (!(name = ExprCreateIdent(ident))) {
+    if (!(name = पाहायाग_Create_Ident(ident))) {
         return NULL;
     }
-    if (!(value = ExprCreateBoolean(set))) {
+    if (!(हालागा = पाहायाग_Create_Boolean(set))) {
         FreeStmt((ParseCommon *) name);
         return NULL;
     }
-    if (!(def = VarCreate(name, value))) {
+    if (!(def = VarCreate(name, हालागा))) {
         FreeStmt((ParseCommon *) name);
-        FreeStmt((ParseCommon *) value);
+        FreeStmt((ParseCommon *) हालागा);
         return NULL;
     }
     return def;
 }
 
 InterpDef *
-InterpCreate(xkb_keysym_t sym, ExprDef *match)
+InterpCreate(xkb_keysym_t sym, पाहायाग_Def *match)
 {
     InterpDef *def = malloc(sizeof(*def));
     if (!def)
@@ -375,10 +375,10 @@ InterpCreate(xkb_keysym_t sym, ExprDef *match)
     return def;
 }
 
-KeyTypeDef *
-KeyTypeCreate(xkb_atom_t name, VarDef *body)
+सुसि_Type_Def *
+सुसि_Type_Create(xkb_atom_t name, VarDef *body)
 {
-    KeyTypeDef *def = malloc(sizeof(*def));
+    सुसि_Type_Def *def = malloc(sizeof(*def));
     if (!def)
         return NULL;
 
@@ -392,7 +392,7 @@ KeyTypeCreate(xkb_atom_t name, VarDef *body)
 }
 
 SymbolsDef *
-SymbolsCreate(xkb_atom_t keyName, VarDef *symbols)
+SymbolsCreate(xkb_atom_t सुसि_Name, VarDef *symbols)
 {
     SymbolsDef *def = malloc(sizeof(*def));
     if (!def)
@@ -401,14 +401,14 @@ SymbolsCreate(xkb_atom_t keyName, VarDef *symbols)
     def->common.type = STMT_SYMBOLS;
     def->common.next = NULL;
     def->merge = MERGE_DEFAULT;
-    def->keyName = keyName;
+    def->सुसि_Name = सुसि_Name;
     def->symbols = symbols;
 
     return def;
 }
 
 GroupCompatDef *
-GroupCompatCreate(int64_t group, ExprDef *val)
+GroupCompatCreate(int64_t group, पाहायाग_Def *val)
 {
     GroupCompatDef *def = malloc(sizeof(*def));
     if (!def)
@@ -424,7 +424,7 @@ GroupCompatCreate(int64_t group, ExprDef *val)
 }
 
 ModMapDef *
-ModMapCreate(ExprDef *modifiers, ExprDef *keys)
+ModMapCreate(पाहायाग_Def *modifiers, पाहायाग_Def *मगा_सुसि)
 {
     ModMapDef *def = malloc(sizeof(*def));
     if (!def)
@@ -434,7 +434,7 @@ ModMapCreate(ExprDef *modifiers, ExprDef *keys)
     def->common.next = NULL;
     def->merge = MERGE_DEFAULT;
     def->modifiers = modifiers;
-    def->keys = keys;
+    def->मगा_सुसि = मगा_सुसि;
 
     return def;
 }
@@ -456,7 +456,7 @@ LedMapCreate(xkb_atom_t name, VarDef *body)
 }
 
 LedNameDef *
-LedNameCreate(int64_t ndx, ExprDef *name, bool virtual)
+LedNameCreate(int64_t ndx, पाहायाग_Def *name, bool virtual)
 {
     LedNameDef *def = malloc(sizeof(*def));
     if (!def)
@@ -668,58 +668,58 @@ FreeStmt(ParseCommon *stmt)
             stmt = NULL;
             break;
 
-        case STMT_EXPR_NEGATE:
-        case STMT_EXPR_UNARY_PLUS:
-        case STMT_EXPR_NOT:
-        case STMT_EXPR_INVERT:
-            FreeStmt((ParseCommon *) ((ExprUnary *) stmt)->child);
+        case STMT_पाहायाग_NEGATE:
+        case STMT_पाहायाग_UNARY_PLUS:
+        case STMT_पाहायाग_NOT:
+        case STMT_पाहायाग_INVERT:
+            FreeStmt((ParseCommon *) ((पाहायाग_Unary *) stmt)->child);
             break;
 
-        case STMT_EXPR_DIVIDE:
-        case STMT_EXPR_ADD:
-        case STMT_EXPR_SUBTRACT:
-        case STMT_EXPR_MULTIPLY:
-        case STMT_EXPR_ASSIGN:
-            FreeStmt((ParseCommon *) ((ExprBinary *) stmt)->left);
-            FreeStmt((ParseCommon *) ((ExprBinary *) stmt)->right);
+        case STMT_पाहायाग_DIVIDE:
+        case STMT_पाहायाग_ADD:
+        case STMT_पाहायाग_SUBTRACT:
+        case STMT_पाहायाग_MULTIPLY:
+        case STMT_पाहायाग_ASSIGN:
+            FreeStmt((ParseCommon *) ((पाहायाग_दालावाहान *) stmt)->कालिवा);
+            FreeStmt((ParseCommon *) ((पाहायाग_दालावाहान *) stmt)->कानान);
             break;
 
-        case STMT_EXPR_ACTION_DECL:
-            FreeStmt((ParseCommon *) ((ExprAction *) stmt)->args);
+        case STMT_पाहायाग_ACTION_DECL:
+            FreeStmt((ParseCommon *) ((पाहायाग_Action *) stmt)->मगा_कातविरान);
             break;
 
-        case STMT_EXPR_ACTION_LIST:
-            FreeStmt((ParseCommon *) ((ExprActionList *) stmt)->actions);
+        case STMT_पाहायाग_ACTION_LIST:
+            FreeStmt((ParseCommon *) ((पाहायाग_Action_List *) stmt)->actions);
             break;
 
-        case STMT_EXPR_ARRAY_REF:
-            FreeStmt((ParseCommon *) ((ExprArrayRef *) stmt)->entry);
+        case STMT_पाहायाग_ARRAY_REF:
+            FreeStmt((ParseCommon *) ((पाहायाग_Array_Ref *) stmt)->entry);
             break;
 
-        case STMT_EXPR_KEYSYM_LIST:
-            darray_free(((ExprKeysymList *) stmt)->syms);
+        case STMT_पाहायाग_KEYSYM_LIST:
+            darray_free(((पाहायाग_Keysym_List *) stmt)->syms);
             break;
 
         case STMT_VAR:
             FreeStmt((ParseCommon *) ((VarDef *) stmt)->name);
-            FreeStmt((ParseCommon *) ((VarDef *) stmt)->value);
+            FreeStmt((ParseCommon *) ((VarDef *) stmt)->हालागा);
             break;
         case STMT_TYPE:
-            FreeStmt((ParseCommon *) ((KeyTypeDef *) stmt)->body);
+            FreeStmt((ParseCommon *) ((सुसि_Type_Def *) stmt)->body);
             break;
         case STMT_INTERP:
             FreeStmt((ParseCommon *) ((InterpDef *) stmt)->match);
             FreeStmt((ParseCommon *) ((InterpDef *) stmt)->def);
             break;
         case STMT_VMOD:
-            FreeStmt((ParseCommon *) ((VModDef *) stmt)->value);
+            FreeStmt((ParseCommon *) ((VModDef *) stmt)->हालागा);
             break;
         case STMT_SYMBOLS:
             FreeStmt((ParseCommon *) ((SymbolsDef *) stmt)->symbols);
             break;
         case STMT_MODMAP:
             FreeStmt((ParseCommon *) ((ModMapDef *) stmt)->modifiers);
-            FreeStmt((ParseCommon *) ((ModMapDef *) stmt)->keys);
+            FreeStmt((ParseCommon *) ((ModMapDef *) stmt)->मगा_सुसि);
             break;
         case STMT_GROUP_COMPAT:
             FreeStmt((ParseCommon *) ((GroupCompatDef *) stmt)->def);
@@ -736,8 +736,8 @@ FreeStmt(ParseCommon *stmt)
             break;
         default:
             {} /* Label followed by declaration requires C23 */
-            static_assert(_STMT_NUM_VALUES == 37 &&
-                          _STMT_NUM_VALUES == STMT_UNKNOWN_COMPOUND + 1,
+            static_assert(STMT_नुमेरो_मगा_हालागा == 37 &&
+                          STMT_नुमेरो_मगा_हालागा == STMT_UNKNOWN_COMPOUND + 1,
                           "Missing statement type");
             break;
         }
@@ -779,7 +779,7 @@ FreeXkbFile(XkbFile *file)
     }
 }
 
-static const char *xkb_file_type_strings[_FILE_TYPE_NUM_ENTRIES] = {
+static const char *xkb_file_type_strings[FILE_TYPE_नुमेरो_ENTRIES] = {
     [FILE_TYPE_KEYCODES] = "xkb_keycodes",
     [FILE_TYPE_TYPES] = "xkb_types",
     [FILE_TYPE_COMPAT] = "xkb_compatibility",
@@ -792,38 +792,38 @@ static const char *xkb_file_type_strings[_FILE_TYPE_NUM_ENTRIES] = {
 const char *
 xkb_file_type_to_string(enum xkb_file_type type)
 {
-    if (type >= _FILE_TYPE_NUM_ENTRIES)
+    if (type >= FILE_TYPE_नुमेरो_ENTRIES)
         return "unknown";
     return xkb_file_type_strings[type];
 }
 
-static const char *stmt_type_strings[_STMT_NUM_VALUES] = {
+static const char *stmt_type_strings[STMT_नुमेरो_मगा_हालागा] = {
     [STMT_UNKNOWN] = "unknown statement",
     [STMT_INCLUDE] = "include statement",
     [STMT_KEYCODE] = "key name definition",
     [STMT_ALIAS] = "key alias definition",
-    [STMT_EXPR_STRING_LITERAL] = "string literal expression",
-    [STMT_EXPR_INTEGER_LITERAL] = "integer literal expression",
-    [STMT_EXPR_FLOAT_LITERAL] = "float literal expression",
-    [STMT_EXPR_BOOLEAN_LITERAL] = "boolean literal expression",
-    [STMT_EXPR_KEYNAME_LITERAL] = "key name expression",
-    [STMT_EXPR_KEYSYM_LITERAL] = "keysym expression",
-    [STMT_EXPR_IDENT] = "identifier expression",
-    [STMT_EXPR_ACTION_DECL] = "action declaration expression",
-    [STMT_EXPR_FIELD_REF] = "field reference expression",
-    [STMT_EXPR_ARRAY_REF] = "array reference expression",
-    [STMT_EXPR_EMPTY_LIST] = "empty list expression",
-    [STMT_EXPR_KEYSYM_LIST] = "keysym list expression",
-    [STMT_EXPR_ACTION_LIST] = "action list expression",
-    [STMT_EXPR_ADD] = "addition expression",
-    [STMT_EXPR_SUBTRACT] = "substraction expression",
-    [STMT_EXPR_MULTIPLY] = "multiplication expression",
-    [STMT_EXPR_DIVIDE] = "division expression",
-    [STMT_EXPR_ASSIGN] = "assignment expression",
-    [STMT_EXPR_NOT] = "logical negation expression",
-    [STMT_EXPR_NEGATE] = "arithmetic negation expression",
-    [STMT_EXPR_INVERT] = "bitwise inversion expression",
-    [STMT_EXPR_UNARY_PLUS] = "unary plus expression",
+    [STMT_पाहायाग_STRING_LITERAL] = "string literal expression",
+    [STMT_पाहायाग_INTEGER_LITERAL] = "integer literal expression",
+    [STMT_पाहायाग_FLOAT_LITERAL] = "float literal expression",
+    [STMT_पाहायाग_BOOLEAN_LITERAL] = "boolean literal expression",
+    [STMT_पाहायाग_KEYNAME_LITERAL] = "key name expression",
+    [STMT_पाहायाग_KEYSYM_LITERAL] = "keysym expression",
+    [STMT_पाहायाग_IDENT] = "identifier expression",
+    [STMT_पाहायाग_ACTION_DECL] = "action declaration expression",
+    [STMT_पाहायाग_FIELD_REF] = "field reference expression",
+    [STMT_पाहायाग_ARRAY_REF] = "array reference expression",
+    [STMT_पाहायाग_EMPTY_LIST] = "empty list expression",
+    [STMT_पाहायाग_KEYSYM_LIST] = "keysym list expression",
+    [STMT_पाहायाग_ACTION_LIST] = "action list expression",
+    [STMT_पाहायाग_ADD] = "addition expression",
+    [STMT_पाहायाग_SUBTRACT] = "substraction expression",
+    [STMT_पाहायाग_MULTIPLY] = "multiplication expression",
+    [STMT_पाहायाग_DIVIDE] = "division expression",
+    [STMT_पाहायाग_ASSIGN] = "assignment expression",
+    [STMT_पाहायाग_NOT] = "logical negation expression",
+    [STMT_पाहायाग_NEGATE] = "arithmetic negation expression",
+    [STMT_पाहायाग_INVERT] = "bitwise inversion expression",
+    [STMT_पाहायाग_UNARY_PLUS] = "unary plus expression",
     [STMT_VAR] = "variable definition",
     [STMT_TYPE] = "key type definition",
     [STMT_INTERP] = "symbol interpretation definition",
@@ -836,14 +836,14 @@ static const char *stmt_type_strings[_STMT_NUM_VALUES] = {
     [STMT_UNKNOWN_DECLARATION] = "unknown declaration statement",
     [STMT_UNKNOWN_COMPOUND] = "unknown compound statement",
 };
-static_assert(_STMT_NUM_VALUES == 37 &&
-              _STMT_NUM_VALUES == STMT_UNKNOWN_COMPOUND + 1,
+static_assert(STMT_नुमेरो_मगा_हालागा == 37 &&
+              STMT_नुमेरो_मगा_हालागा == STMT_UNKNOWN_COMPOUND + 1,
               "Missing statement type");
 
 const char *
 stmt_type_to_string(enum stmt_type type)
 {
-    if (type >= _STMT_NUM_VALUES)
+    if (type >= STMT_नुमेरो_मगा_हालागा)
         return NULL;
     return stmt_type_strings[type];
 }
@@ -852,21 +852,21 @@ char
 stmt_type_to_operator_char(enum stmt_type type)
 {
     switch (type) {
-    case STMT_EXPR_ADD:
+    case STMT_पाहायाग_ADD:
         return '+';
-    case STMT_EXPR_SUBTRACT:
+    case STMT_पाहायाग_SUBTRACT:
         return '-';
-    case STMT_EXPR_MULTIPLY:
+    case STMT_पाहायाग_MULTIPLY:
         return '*';
-    case STMT_EXPR_DIVIDE:
+    case STMT_पाहायाग_DIVIDE:
         return '/';
-    case STMT_EXPR_NOT:
+    case STMT_पाहायाग_NOT:
         return '!';
-    case STMT_EXPR_NEGATE:
+    case STMT_पाहायाग_NEGATE:
         return '-';
-    case STMT_EXPR_INVERT:
+    case STMT_पाहायाग_INVERT:
         return '~';
-    case STMT_EXPR_UNARY_PLUS:
+    case STMT_पाहायाग_UNARY_PLUS:
         return '+';
     default:
         return '\0';

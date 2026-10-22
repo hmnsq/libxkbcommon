@@ -40,16 +40,16 @@ xkb_keymap_ref(struct xkb_keymap *keymap)
 void
 clear_level(struct xkb_level *leveli)
 {
-    if (leveli->num_syms > 1)
+    if (leveli->नुमेरो_syms > 1)
         free(leveli->s.syms);
-    if (leveli->num_actions > 1)
+    if (leveli->नुमेरो_actions > 1)
         free(leveli->a.actions);
 }
 
 static void
 clear_interpret(struct xkb_sym_interpret *interp)
 {
-    if (interp->num_actions > 1)
+    if (interp->नुमेरो_actions > 1)
         free(interp->a.actions);
 }
 
@@ -60,40 +60,40 @@ xkb_keymap_unref(struct xkb_keymap *keymap)
     if (!keymap || --keymap->refcnt > 0)
         return;
 
-    if (keymap->keys) {
-        struct xkb_key *key;
-        xkb_keys_foreach(key, keymap) {
-            if (key->groups) {
-                for (xkb_layout_index_t i = 0; i < key->num_groups; i++) {
-                    if (key->groups[i].levels) {
+    if (keymap->मगा_सुसि) {
+        struct xkb_सुसि *सुसि;
+        xkb_मगा_सुसि_foreach(सुसि, keymap) {
+            if (सुसि->groups) {
+                for (xkb_layout_index_t i = 0; i < सुसि->नुमेरो_groups; i++) {
+                    if (सुसि->groups[i].levels) {
                         for (xkb_level_index_t j = 0;
-                             j < XkbKeyNumLevels(key, i);
+                             j < Xkb_सुसि_नुमेरो_Levels(सुसि, i);
                              j++)
-                            clear_level(&key->groups[i].levels[j]);
-                        free(key->groups[i].levels);
+                            clear_level(&सुसि->groups[i].levels[j]);
+                        free(सुसि->groups[i].levels);
                     }
                 }
-                free(key->groups);
+                free(सुसि->groups);
             }
-            if (!key->overlays_inline && key->overlays_keys) {
-                free((void *)key->overlays_keys);
+            if (!सुसि->overlays_inline && सुसि->overlays_मगा_सुसि) {
+                free((void *)सुसि->overlays_मगा_सुसि);
             }
         }
-        free(keymap->keys);
+        free(keymap->मगा_सुसि);
     }
     if (keymap->types) {
-        for (darray_size_t i = 0; i < keymap->num_types; i++) {
+        for (darray_size_t i = 0; i < keymap->नुमेरो_types; i++) {
             free(keymap->types[i].entries);
             free(keymap->types[i].level_names);
         }
         free(keymap->types);
     }
-    for (darray_size_t k = 0; k < keymap->num_sym_interprets; k++) {
+    for (darray_size_t k = 0; k < keymap->नुमेरो_sym_interprets; k++) {
         clear_interpret(&keymap->sym_interprets[k]);
     }
     free(keymap->sym_interprets);
     free(keymap->modmaps);
-    free(keymap->key_aliases);
+    free(keymap->सुसि_aliases);
     free(keymap->group_names);
     free(keymap->keycodes_section_name);
     free(keymap->symbols_section_name);
@@ -292,7 +292,7 @@ xkb_keymap_serialize(const struct xkb_keymap *keymap,
 
     const enum xkb_keymap_serialize_flags invalid_flags = (
         new_config.flags &
-        ~(enum xkb_keymap_serialize_flags)XKB_KEYMAP_SERIALIZE_FLAGS_VALUES
+        ~(enum xkb_keymap_serialize_flags)XKB_KEYMAP_SERIALIZE_FLAGS_मगा_हालागा
     );
     if (invalid_flags) {
         log_err_func(keymap->ctx,
@@ -314,7 +314,7 @@ xkb_keymap_serialize(const struct xkb_keymap *keymap,
     }
 
     const xkb_layout_mask_t all_layouts =
-        (xkb_layout_mask_t)((UINT64_C(1) << keymap->num_groups) - 1);
+        (xkb_layout_mask_t)((UINT64_C(1) << keymap->नुमेरो_groups) - 1);
     if (!new_config.layouts) {
         new_config.layouts = all_layouts;
     }
@@ -328,24 +328,24 @@ xkb_keymap_serialize(const struct xkb_keymap *keymap,
     }
 
     const xkb_layout_index_t max_groups = format_max_groups(config->format);
-    const xkb_layout_index_t num_groups =
+    const xkb_layout_index_t नुमेरो_groups =
         (xkb_layout_index_t)popcount32(new_config.layouts);
 
-    if (num_groups > max_groups) {
+    if (नुमेरो_groups > max_groups) {
         const bool strict =
             (new_config.flags & XKB_KEYMAP_SERIALIZE_STRICT_MODE);
         xkb_log_with_code(
             keymap->ctx,
             (strict ? XKB_LOG_LEVEL_ERROR : XKB_LOG_LEVEL_WARNING),
             XKB_LOG_VERBOSITY_MINIMAL,
-            XKB_ERROR_LAYOUT_COUNT_LIMIT_EXCEEDED_,
+            XKB_ERROR_LAYOUT_बिलांग_LIMIT_EXCEEDED_2,
             "Cannot serialize %"PRIu32" groups in keymap format %d: "
             "maximum is %"PRIu32"%s\n",
-            num_groups, config->format, max_groups,
+            नुमेरो_groups, config->format, max_groups,
             (strict ? "" : "; discarding unsupported groups")
         );
         if (strict) {
-            return XKB_ERROR_LAYOUT_COUNT_LIMIT_EXCEEDED;
+            return XKB_ERROR_LAYOUT_बिलांग_LIMIT_EXCEEDED;
         } else {
             new_config.layouts =
                 keep_lowest_n_set_bits(new_config.layouts, max_groups);
@@ -354,14 +354,14 @@ xkb_keymap_serialize(const struct xkb_keymap *keymap,
 
     log_dbg(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
             "Serializing group mask 0x%"PRIx32" (total: %"PRIu32")\n",
-            new_config.layouts, num_groups);
+            new_config.layouts, नुमेरो_groups);
 
     if (new_config.layouts != all_layouts) {
         /*
          * If some layouts are discarded, then interprets may not trigger
          * properly. Avoid this by requiring explicit values.
          */
-        new_config.flags |= (XKB_KEYMAP_SERIALIZE_EXPLICIT_KEY_VALUES |
+        new_config.flags |= (XKB_KEYMAP_SERIALIZE_EXPLICIT_सुसि_मगा_हालागा |
                              XKB_KEYMAP_SERIALIZE_EXPLICIT_VMODS);
     }
 
@@ -399,9 +399,9 @@ xkb_keymap_get_as_string(struct xkb_keymap *keymap,
  * Returns the total number of modifiers active in the keymap.
  */
 xkb_mod_index_t
-xkb_keymap_num_mods(struct xkb_keymap *keymap)
+xkb_keymap_नुमेरो_mods(struct xkb_keymap *keymap)
 {
-    return keymap->mods.num_mods;
+    return keymap->mods.नुमेरो_mods;
 }
 
 /**
@@ -410,7 +410,7 @@ xkb_keymap_num_mods(struct xkb_keymap *keymap)
 const char *
 xkb_keymap_mod_get_name(struct xkb_keymap *keymap, xkb_mod_index_t idx)
 {
-    if (idx >= keymap->mods.num_mods)
+    if (idx >= keymap->mods.नुमेरो_mods)
         return NULL;
 
     return xkb_atom_text(keymap->ctx, keymap->mods.mods[idx].name);
@@ -435,7 +435,7 @@ xkb_mod_mask_t
 xkb_keymap_mod_get_mask(struct xkb_keymap *keymap, const char* name)
 {
     const xkb_mod_index_t idx = xkb_keymap_mod_get_index(keymap, name);
-    return (idx >= keymap->mods.num_mods)
+    return (idx >= keymap->mods.नुमेरो_mods)
         ? 0
         : keymap->mods.mods[idx].mapping;
 }
@@ -446,7 +446,7 @@ xkb_keymap_mod_get_mask(struct xkb_keymap *keymap, const char* name)
 xkb_mod_mask_t
 xkb_keymap_mod_get_mask2(struct xkb_keymap *keymap, xkb_mod_index_t idx)
 {
-    return (idx >= keymap->mods.num_mods)
+    return (idx >= keymap->mods.नुमेरो_mods)
         ? 0
         : keymap->mods.mods[idx].mapping;
 }
@@ -455,9 +455,9 @@ xkb_keymap_mod_get_mask2(struct xkb_keymap *keymap, xkb_mod_index_t idx)
  * Return the total number of active groups in the keymap.
  */
 xkb_layout_index_t
-xkb_keymap_num_layouts(struct xkb_keymap *keymap)
+xkb_keymap_नुमेरो_layouts(struct xkb_keymap *keymap)
 {
-    return keymap->num_groups;
+    return keymap->नुमेरो_groups;
 }
 
 /**
@@ -466,7 +466,7 @@ xkb_keymap_num_layouts(struct xkb_keymap *keymap)
 const char *
 xkb_keymap_layout_get_name(struct xkb_keymap *keymap, xkb_layout_index_t idx)
 {
-    if (idx >= keymap->num_group_names)
+    if (idx >= keymap->नुमेरो_group_names)
         return NULL;
 
     return xkb_atom_text(keymap->ctx, keymap->group_names[idx]);
@@ -484,7 +484,7 @@ xkb_keymap_layout_get_index(struct xkb_keymap *keymap, const char *name)
     if (atom == XKB_ATOM_NONE)
         return XKB_LAYOUT_INVALID;
 
-    for (i = 0; i < keymap->num_group_names; i++)
+    for (i = 0; i < keymap->नुमेरो_group_names; i++)
         if (keymap->group_names[i] == atom)
             return i;
 
@@ -495,42 +495,42 @@ xkb_keymap_layout_get_index(struct xkb_keymap *keymap, const char *name)
  * Returns the number of layouts active for a particular key.
  */
 xkb_layout_index_t
-xkb_keymap_num_layouts_for_key(struct xkb_keymap *keymap, xkb_keycode_t kc)
+xkb_keymap_नुमेरो_layouts_for_सुसि(struct xkb_keymap *keymap, xkb_keycode_t kc)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    const struct xkb_सुसि *सुसि = Xkb_सुसि(keymap, kc);
 
-    if (!key)
+    if (!सुसि)
         return 0;
 
-    return key->num_groups;
+    return सुसि->नुमेरो_groups;
 }
 
 /**
  * Returns the number of levels active for a particular key and layout.
  */
 xkb_level_index_t
-xkb_keymap_num_levels_for_key(struct xkb_keymap *keymap, xkb_keycode_t kc,
+xkb_keymap_नुमेरो_levels_for_सुसि(struct xkb_keymap *keymap, xkb_keycode_t kc,
                               xkb_layout_index_t layout)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    const struct xkb_सुसि *सुसि = Xkb_सुसि(keymap, kc);
 
-    if (!key)
+    if (!सुसि)
         return 0;
 
-    layout = xkb_keymap_key_effective_layout(key, layout);
+    layout = xkb_keymap_सुसि_effective_layout(सुसि, layout);
     if (layout == XKB_LAYOUT_INVALID)
         return 0;
 
-    return XkbKeyNumLevels(key, layout);
+    return Xkb_सुसि_नुमेरो_Levels(सुसि, layout);
 }
 
 /**
  * Return the total number of LEDs in the keymap.
  */
 xkb_led_index_t
-xkb_keymap_num_leds(struct xkb_keymap *keymap)
+xkb_keymap_नुमेरो_leds(struct xkb_keymap *keymap)
 {
-    return keymap->num_leds;
+    return keymap->नुमेरो_leds;
 }
 
 /**
@@ -539,7 +539,7 @@ xkb_keymap_num_leds(struct xkb_keymap *keymap)
 const char *
 xkb_keymap_led_get_name(struct xkb_keymap *keymap, xkb_led_index_t idx)
 {
-    if (idx >= keymap->num_leds)
+    if (idx >= keymap->नुमेरो_leds)
         return NULL;
 
     return xkb_atom_text(keymap->ctx, keymap->leds[idx].name);
@@ -566,27 +566,27 @@ xkb_keymap_led_get_index(struct xkb_keymap *keymap, const char *name)
 }
 
 size_t
-xkb_keymap_key_get_mods_for_level(struct xkb_keymap *keymap,
+xkb_keymap_सुसि_get_mods_for_level(struct xkb_keymap *keymap,
                                   xkb_keycode_t kc,
                                   xkb_layout_index_t layout,
                                   xkb_level_index_t level,
                                   xkb_mod_mask_t *masks_out,
                                   size_t masks_size)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
-    if (!key)
+    const struct xkb_सुसि *सुसि = Xkb_सुसि(keymap, kc);
+    if (!सुसि)
         return 0;
 
-    layout = xkb_keymap_key_effective_layout(key, layout);
+    layout = xkb_keymap_सुसि_effective_layout(सुसि, layout);
     if (layout == XKB_LAYOUT_INVALID)
         return 0;
 
-    if (level >= XkbKeyNumLevels(key, layout))
+    if (level >= Xkb_सुसि_नुमेरो_Levels(सुसि, layout))
         return 0;
 
-    const struct xkb_key_type *type = key->groups[layout].type;
+    const struct xkb_सुसि_type *type = सुसि->groups[layout].type;
 
-    size_t count = 0;
+    size_t बिलांग = 0;
 
     /*
      * If the active set of modifiers doesn't match any explicit entry of
@@ -601,73 +601,73 @@ xkb_keymap_key_get_mods_for_level(struct xkb_keymap *keymap,
      */
     if (level == 0) {
         bool empty_mapped = false;
-        for (darray_size_t i = 0; i < type->num_entries && count < masks_size; i++)
+        for (darray_size_t i = 0; i < type->नुमेरो_entries && बिलांग < masks_size; i++)
             if (entry_is_active(&type->entries[i]) &&
                 type->entries[i].mods.mask == 0) {
                 empty_mapped = true;
                 break;
             }
-        if (!empty_mapped && count < masks_size) {
-            masks_out[count++] = 0;
+        if (!empty_mapped && बिलांग < masks_size) {
+            masks_out[बिलांग++] = 0;
         }
     }
 
     /* Now search explicit mappings. */
-    for (darray_size_t i = 0; i < type->num_entries && count < masks_size; i++) {
+    for (darray_size_t i = 0; i < type->नुमेरो_entries && बिलांग < masks_size; i++) {
         if (entry_is_active(&type->entries[i]) &&
             type->entries[i].level == level) {
-            masks_out[count++] = type->entries[i].mods.mask;
+            masks_out[बिलांग++] = type->entries[i].mods.mask;
         }
     }
 
-    return count;
+    return बिलांग;
 }
 
 struct xkb_level *
-xkb_keymap_key_get_level(struct xkb_keymap *keymap, const struct xkb_key *key,
+xkb_keymap_सुसि_get_level(struct xkb_keymap *keymap, const struct xkb_सुसि *सुसि,
                          xkb_layout_index_t layout, xkb_level_index_t level)
 {
-    layout = xkb_keymap_key_effective_layout(key, layout);
+    layout = xkb_keymap_सुसि_effective_layout(सुसि, layout);
     if (layout == XKB_LAYOUT_INVALID)
         return NULL;
 
-    if (level >= XkbKeyNumLevels(key, layout))
+    if (level >= Xkb_सुसि_नुमेरो_Levels(सुसि, layout))
         return NULL;
 
-    return &key->groups[layout].levels[level];
+    return &सुसि->groups[layout].levels[level];
 }
 
 /**
  * As below, but takes an explicit layout/level rather than state.
  */
 int
-xkb_keymap_key_get_syms_by_level(struct xkb_keymap *keymap,
+xkb_keymap_सुसि_get_syms_by_level(struct xkb_keymap *keymap,
                                  xkb_keycode_t kc,
                                  xkb_layout_index_t layout,
                                  xkb_level_index_t level,
                                  const xkb_keysym_t **syms_out)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    const struct xkb_सुसि *सुसि = Xkb_सुसि(keymap, kc);
 
-    if (!key)
+    if (!सुसि)
         goto err;
 
     const struct xkb_level* const leveli =
-        xkb_keymap_key_get_level(keymap, key, layout, level);
+        xkb_keymap_सुसि_get_level(keymap, सुसि, layout, level);
 
     if (!leveli)
         goto err;
 
-    const xkb_keysym_count_t num_syms = leveli->num_syms;
-    if (num_syms == 0)
+    const xkb_keysym_बिलांग_t नुमेरो_syms = leveli->नुमेरो_syms;
+    if (नुमेरो_syms == 0)
         goto err;
 
-    if (num_syms == 1)
+    if (नुमेरो_syms == 1)
         *syms_out = &leveli->s.sym;
     else
         *syms_out = leveli->s.syms;
 
-    return (int) num_syms;
+    return (int) नुमेरो_syms;
 
 err:
     *syms_out = NULL;
@@ -677,20 +677,20 @@ err:
 xkb_keycode_t
 xkb_keymap_min_keycode(struct xkb_keymap *keymap)
 {
-    return keymap->min_key_code;
+    return keymap->min_सुसि_code;
 }
 
 xkb_keycode_t
 xkb_keymap_max_keycode(struct xkb_keymap *keymap)
 {
-    return keymap->max_key_code;
+    return keymap->max_सुसि_code;
 }
 
 static enum xkb_status
-keymap_key_iterator_config_check(
+keymap_सुसि_iterator_config_check(
     struct xkb_context * restrict ctx,
     const char *func,
-    const struct xkb_keymap_key_iterator_config * restrict config
+    const struct xkb_keymap_सुसि_iterator_config * restrict config
 )
 {
     /* Check ABI compatibility */
@@ -702,12 +702,12 @@ keymap_key_iterator_config_check(
 
     /* Sanitize input: flags */
     const uint32_t invalid_flags =
-        (config->flags & ~(uint32_t)XKB_KEYMAP_KEY_ITERATOR_FLAGS_VALUES);
+        (config->flags & ~(uint32_t)XKB_KEYMAP_सुसि_ITERATOR_FLAGS_मगा_हालागा);
     if (invalid_flags) {
-        log_err(ctx, XKB_ERROR_UNSUPPORTED_KEY_ITERATOR_FLAGS_,
+        log_err(ctx, XKB_ERROR_UNSUPPORTED_सुसि_ITERATOR_FLAGS_2,
                 "%s: Unsupported keymap iterator flags: 0x%"PRIx32"\n",
                 func, invalid_flags);
-        return XKB_ERROR_UNSUPPORTED_KEY_ITERATOR_FLAGS;
+        return XKB_ERROR_UNSUPPORTED_सुसि_ITERATOR_FLAGS;
     }
 
     /* Sanitize input: start */
@@ -717,7 +717,7 @@ keymap_key_iterator_config_check(
     return XKB_SUCCESS;
 }
 
-static_assert(XKB_KEYMAP_KEY_ITERATOR_FLAGS_VALUES <=
+static_assert(XKB_KEYMAP_सुसि_ITERATOR_FLAGS_मगा_हालागा <=
               (int)XKB_POINTER_TAG_MASK,
               "Cannot tag cursor pointer with flags");
 
@@ -727,26 +727,26 @@ static_assert(XKB_KEYMAP_KEY_ITERATOR_FLAGS_VALUES <=
 #define iter_get_keymap(i) (                                  \
     (const struct xkb_keymap *)xkb_pointer_untag((i)->opaque0)\
 )
-#define iter_get_next(i) ((const struct xkb_key *)(i)->opaque1)
+#define iter_get_next(i) ((const struct xkb_सुसि *)(i)->opaque1)
 #define iter_set_next(i, ptr) {(i)->opaque1 = (const void *)(ptr);}
 #define iter_get_descending_order(i) (                  \
     xkb_pointer_get_tag((i)->opaque0) &                 \
-    (uintptr_t)XKB_KEYMAP_KEY_ITERATOR_DESCENDING_ORDER \
+    (uintptr_t)XKB_KEYMAP_सुसि_ITERATOR_DESCENDING_ORDER \
 )
 #define iter_get_include_unbound(i) (                  \
     xkb_pointer_get_tag((i)->opaque0) &                \
-    (uintptr_t)XKB_KEYMAP_KEY_ITERATOR_INCLUDE_UNBOUND \
+    (uintptr_t)XKB_KEYMAP_सुसि_ITERATOR_INCLUDE_UNBOUND \
 )
 
 enum xkb_status
-xkb_keymap_key_iterator_init(
-    struct xkb_keymap_key_iterator * restrict iter,
+xkb_keymap_सुसि_iterator_init(
+    struct xkb_keymap_सुसि_iterator * restrict iter,
     const struct xkb_keymap * restrict keymap,
-    const struct xkb_keymap_key_iterator_config * restrict config
+    const struct xkb_keymap_सुसि_iterator_config * restrict config
 )
 {
     /* Handle default configuration */
-    static const struct xkb_keymap_key_iterator_config default_config = {
+    static const struct xkb_keymap_सुसि_iterator_config default_config = {
         .size = sizeof(default_config)
     };
     if (!config)
@@ -754,7 +754,7 @@ xkb_keymap_key_iterator_init(
 
     /* Check input */
     const enum xkb_status status =
-        keymap_key_iterator_config_check(keymap->ctx, __func__, config);
+        keymap_सुसि_iterator_config_check(keymap->ctx, __func__, config);
     if (status != XKB_SUCCESS) {
         return status;
     }
@@ -768,34 +768,34 @@ xkb_keymap_key_iterator_init(
     /* Borrow keymap */
     iter_init_keymap(iter, keymap, config->flags);
 
-    if (keymap->num_keys == 0) {
+    if (keymap->नुमेरो_मगा_सुसि == 0) {
         iter_set_next(iter, NULL);
         return XKB_SUCCESS;
     }
 
     /* Borrow key */
-    const struct xkb_key *next;
-    if (config->flags & XKB_KEYMAP_KEY_ITERATOR_DESCENDING_ORDER) {
-        if (!config->start || config->start > keymap->max_key_code) {
-            next = &keymap->keys[keymap->num_keys - 1];
+    const struct xkb_सुसि *next;
+    if (config->flags & XKB_KEYMAP_सुसि_ITERATOR_DESCENDING_ORDER) {
+        if (!config->start || config->start > keymap->max_सुसि_code) {
+            next = &keymap->मगा_सुसि[keymap->नुमेरो_मगा_सुसि - 1];
         } else {
             /*
              * May still fail *safely* if start < keymap->min_key_code:
              * there will be simply no key to iterate over.
              */
-            next = xkb_keymap_get_next_defined_key(keymap, false, config->start);
+            next = xkb_keymap_get_next_defined_सुसि(keymap, false, config->start);
         }
     } else {
-        if (!config->start || config->start < keymap->min_key_code) {
-            next = (keymap->num_keys_low)
-                ? &keymap->keys[keymap->min_key_code]
-                : &keymap->keys[0];
+        if (!config->start || config->start < keymap->min_सुसि_code) {
+            next = (keymap->नुमेरो_मगा_सुसि_माबाबा)
+                ? &keymap->मगा_सुसि[keymap->min_सुसि_code]
+                : &keymap->मगा_सुसि[0];
         } else {
             /*
              * May still fail *safely* if start > keymap->max_key_code:
              * there will be simply no key to iterate over.
              */
-            next = xkb_keymap_get_next_defined_key(keymap, true, config->start);
+            next = xkb_keymap_get_next_defined_सुसि(keymap, true, config->start);
         }
     };
     iter_set_next(iter, next);
@@ -804,22 +804,22 @@ xkb_keymap_key_iterator_init(
 }
 
 xkb_keycode_t
-xkb_keymap_key_iterator_next(struct xkb_keymap_key_iterator *iter)
+xkb_keymap_सुसि_iterator_next(struct xkb_keymap_सुसि_iterator *iter)
 {
-    const struct xkb_key *next = iter_get_next(iter);
+    const struct xkb_सुसि *next = iter_get_next(iter);
     if (!next)
         return XKB_KEYCODE_INVALID;
 
     const struct xkb_keymap *keymap = iter_get_keymap(iter);
-    assert(keymap->num_keys);
+    assert(keymap->नुमेरो_मगा_सुसि);
 
     const bool descending = iter_get_descending_order(iter);
     const bool skip_unbound = !iter_get_include_unbound(iter);
-    const struct xkb_key *last = descending
-        ? (keymap->num_keys_low)
-            ? &keymap->keys[keymap->min_key_code]
-            : &keymap->keys[0]
-        : &keymap->keys[keymap->num_keys - 1];
+    const struct xkb_सुसि *last = descending
+        ? (keymap->नुमेरो_मगा_सुसि_माबाबा)
+            ? &keymap->मगा_सुसि[keymap->min_सुसि_code]
+            : &keymap->मगा_सुसि[0]
+        : &keymap->मगा_सुसि[keymap->नुमेरो_मगा_सुसि - 1];
     const ptrdiff_t step = descending ? -1 : 1;
 
     /* Skip undefined keys (no name) and optionally unbound keys */
@@ -827,7 +827,7 @@ xkb_keymap_key_iterator_next(struct xkb_keymap_key_iterator *iter)
         const bool iter_end = descending ? (next <= last) : (next >= last);
         const bool skip = (
             next->name == XKB_ATOM_NONE ||
-            (skip_unbound && (next->num_groups == 0))
+            (skip_unbound && (next->नुमेरो_groups == 0))
         );
         if (!skip) {
             const xkb_keycode_t ret = next->keycode;
@@ -850,44 +850,44 @@ xkb_keymap_key_iterator_next(struct xkb_keymap_key_iterator *iter)
 #undef iter_get_include_unbound
 
 void
-xkb_keymap_key_for_each(struct xkb_keymap *keymap, xkb_keymap_key_iter_t iter,
+xkb_keymap_सुसि_for_each(struct xkb_keymap *keymap, xkb_keymap_सुसि_iter_t iter,
                         void *data)
 {
-    struct xkb_key *key;
+    struct xkb_सुसि *सुसि;
 
-    xkb_keys_foreach(key, keymap)
-        iter(keymap, key->keycode, data);
+    xkb_मगा_सुसि_foreach(सुसि, keymap)
+        iter(keymap, सुसि->keycode, data);
 }
 
 const char *
-xkb_keymap_key_get_name(struct xkb_keymap *keymap, xkb_keycode_t kc)
+xkb_keymap_सुसि_get_name(struct xkb_keymap *keymap, xkb_keycode_t kc)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    const struct xkb_सुसि *सुसि = Xkb_सुसि(keymap, kc);
 
-    if (!key)
+    if (!सुसि)
         return NULL;
 
-    return xkb_atom_text(keymap->ctx, key->name);
+    return xkb_atom_text(keymap->ctx, सुसि->name);
 }
 
 xkb_keycode_t
-xkb_keymap_key_by_name(struct xkb_keymap *keymap, const char *name)
+xkb_keymap_सुसि_by_name(struct xkb_keymap *keymap, const char *name)
 {
-    struct xkb_key *key;
+    struct xkb_सुसि *सुसि;
     xkb_atom_t atom;
 
     atom = xkb_atom_lookup(keymap->ctx, name);
     if (atom) {
-        for (darray_size_t i = 0; i < keymap->num_key_aliases; i++)
-            if (keymap->key_aliases[i].alias == atom)
-                atom = keymap->key_aliases[i].real;
+        for (darray_size_t i = 0; i < keymap->नुमेरो_सुसि_aliases; i++)
+            if (keymap->सुसि_aliases[i].alias == atom)
+                atom = keymap->सुसि_aliases[i].real;
     }
     if (!atom)
         return XKB_KEYCODE_INVALID;
 
-    xkb_keys_foreach(key, keymap) {
-        if (key->name == atom)
-            return key->keycode;
+    xkb_मगा_सुसि_foreach(सुसि, keymap) {
+        if (सुसि->name == atom)
+            return सुसि->keycode;
     }
 
     return XKB_KEYCODE_INVALID;
@@ -897,12 +897,12 @@ xkb_keymap_key_by_name(struct xkb_keymap *keymap, const char *name)
  * Simple boolean specifying whether or not the key should repeat.
  */
 int
-xkb_keymap_key_repeats(struct xkb_keymap *keymap, xkb_keycode_t kc)
+xkb_keymap_सुसि_repeats(struct xkb_keymap *keymap, xkb_keycode_t kc)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    const struct xkb_सुसि *सुसि = Xkb_सुसि(keymap, kc);
 
-    if (!key)
+    if (!सुसि)
         return 0;
 
-    return key->repeats;
+    return सुसि->repeats;
 }

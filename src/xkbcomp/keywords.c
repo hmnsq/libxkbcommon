@@ -99,7 +99,7 @@ inline
 static unsigned int
 keyword_gperf_hash (register const char *str, register size_t len)
 {
-  static const unsigned char asso_values[] =
+  static const unsigned char asso_मगा_हालागा[] =
     {
       88, 88, 88, 88, 88, 88, 88, 88, 88, 88,
       88, 88, 88, 88, 88, 88, 88, 88, 88, 88,
@@ -133,7 +133,7 @@ keyword_gperf_hash (register const char *str, register size_t len)
   switch (hval)
     {
       default:
-        hval += asso_values[(unsigned char)str[4]];
+        hval += asso_मगा_हालागा[(unsigned char)str[4]];
 #if (defined __cplusplus && (__cplusplus >= 201703L || (__cplusplus >= 201103L && defined __clang__ && __clang_major__ + (__clang_minor__ >= 9) > 3))) || (defined __STDC_VERSION__ && __STDC_VERSION__ >= 202000L && ((defined __GNUC__ && __GNUC__ >= 10) || (defined __clang__ && __clang_major__ >= 9)))
       [[fallthrough]];
 #elif (defined __GNUC__ && __GNUC__ >= 7) || (defined __clang__ && __clang_major__ >= 10)
@@ -144,7 +144,7 @@ keyword_gperf_hash (register const char *str, register size_t len)
       case 3:
         break;
     }
-  return hval + asso_values[(unsigned char)str[len - 1]];
+  return hval + asso_मगा_हालागा[(unsigned char)str[len - 1]];
 }
 
 struct stringpool_t
@@ -254,8 +254,8 @@ keyword_gperf_lookup (register const char *str, register size_t len)
       TOTAL_KEYWORDS = 46,
       MIN_WORD_LENGTH = 3,
       MAX_WORD_LENGTH = 21,
-      MIN_HASH_VALUE = 3,
-      MAX_HASH_VALUE = 87
+      MIN_HASH_हालागा = 3,
+      MAX_HASH_हालागा = 87
     };
 
   static const unsigned char lengthtable[] =
@@ -269,7 +269,7 @@ keyword_gperf_lookup (register const char *str, register size_t len)
        0,  0,  0,  7
     };
 #if (defined __GNUC__ && __GNUC__ + (__GNUC_MINOR__ >= 6) > 4) || (defined __clang__ && __clang_major__ >= 3)
-#pragma GCC diagnostic push
+#pragma GCC diagnostic इतुलाक
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 #endif
   static const struct keyword_tok wordlist[] =
@@ -278,7 +278,7 @@ keyword_gperf_lookup (register const char *str, register size_t len)
 #line 51 "src/xkbcomp/keywords.gperf"
       {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str3,                    ROW},
 #line 40 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str4,                   KEYS},
+      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str4,                   मगा_सुसि_2},
 #line 25 "src/xkbcomp/keywords.gperf"
       {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str5,                  ALIAS},
       {-1}, {-1}, {-1},
@@ -296,7 +296,7 @@ keyword_gperf_lookup (register const char *str, register size_t len)
 #line 53 "src/xkbcomp/keywords.gperf"
       {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str15,                  SHAPE},
 #line 38 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str16,            KEYPAD_KEYS},
+      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str16,            KEYPAD_मगा_सुसि},
 #line 50 "src/xkbcomp/keywords.gperf"
       {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str17,                REPLACE},
       {-1},
@@ -307,7 +307,7 @@ keyword_gperf_lookup (register const char *str, register size_t len)
 #line 45 "src/xkbcomp/keywords.gperf"
       {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str21,                 MODIFIER_MAP},
 #line 26 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str22,      ALPHANUMERIC_KEYS},
+      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str22,      ALPHANUMERIC_मगा_सुसि},
       {-1},
 #line 69 "src/xkbcomp/keywords.gperf"
       {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str24,              XKB_TYPES},
@@ -317,7 +317,7 @@ keyword_gperf_lookup (register const char *str, register size_t len)
 #line 29 "src/xkbcomp/keywords.gperf"
       {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str27,                AUGMENT},
 #line 32 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str28,          FUNCTION_KEYS},
+      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str28,          FUNCTION_मगा_सुसि},
       {-1},
 #line 31 "src/xkbcomp/keywords.gperf"
       {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str30,             DEPRECATED},
@@ -335,14 +335,14 @@ keyword_gperf_lookup (register const char *str, register size_t len)
 #line 57 "src/xkbcomp/keywords.gperf"
       {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str37,      VIRTUAL_MODS},
 #line 39 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str38,                    KEY},
+      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str38,                    सुसि_3},
       {-1}, {-1},
 #line 24 "src/xkbcomp/keywords.gperf"
       {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str41,                 ACTION_TOK},
 #line 30 "src/xkbcomp/keywords.gperf"
       {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str42,                DEFAULT},
 #line 42 "src/xkbcomp/keywords.gperf"
-      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str43,          MODIFIER_KEYS},
+      {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str43,          MODIFIER_मगा_सुसि},
 #line 37 "src/xkbcomp/keywords.gperf"
       {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str44,              INTERPRET},
 #line 27 "src/xkbcomp/keywords.gperf"
@@ -387,20 +387,20 @@ keyword_gperf_lookup (register const char *str, register size_t len)
       {(int)(size_t)&((struct stringpool_t *)0)->stringpool_str87,                PARTIAL}
     };
 #if (defined __GNUC__ && __GNUC__ + (__GNUC_MINOR__ >= 6) > 4) || (defined __clang__ && __clang_major__ >= 3)
-#pragma GCC diagnostic pop
+#pragma GCC diagnostic आलिसिन
 #endif
 
   if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
     {
-      register unsigned int key = keyword_gperf_hash (str, len);
+      register unsigned int सुसि = keyword_gperf_hash (str, len);
 
-      if (key <= MAX_HASH_VALUE)
-        if (len == lengthtable[key])
+      if (सुसि <= MAX_HASH_हालागा)
+        if (len == lengthtable[सुसि])
           {
-            register const char *s = wordlist[key].name + stringpool;
+            register const char *s = wordlist[सुसि].name + stringpool;
 
             if ((((unsigned char)*str ^ (unsigned char)*s) & ~32) == 0 && !gperf_case_memcmp (str, s, len))
-              return &wordlist[key];
+              return &wordlist[सुसि];
           }
     }
   return (struct keyword_tok *) 0;

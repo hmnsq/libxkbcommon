@@ -27,20 +27,20 @@
 #include "xkbcomp/ast.h"
 #include "action.h"
 
-static const ExprBoolean constTrue = {
-    .common = { .type = STMT_EXPR_BOOLEAN_LITERAL, .next = NULL },
+static const पाहायाग_Boolean constTrue = {
+    .common = { .type = STMT_पाहायाग_BOOLEAN_LITERAL, .next = NULL },
     .set = true,
 };
 
-static const ExprBoolean constFalse = {
-    .common = { .type = STMT_EXPR_BOOLEAN_LITERAL, .next = NULL },
+static const पाहायाग_Boolean constFalse = {
+    .common = { .type = STMT_पाहायाग_BOOLEAN_LITERAL, .next = NULL },
     .set = false,
 };
 
 enum action_field {
     ACTION_FIELD_CLEAR_LOCKS,
     ACTION_FIELD_LATCH_TO_LOCK,
-    ACTION_FIELD_GEN_KEY_EVENT,
+    ACTION_FIELD_GEN_सुसि_EVENT,
     ACTION_FIELD_REPORT,
     ACTION_FIELD_DEFAULT,
     ACTION_FIELD_AFFECT,
@@ -51,10 +51,10 @@ enum action_field {
     ACTION_FIELD_Y,
     ACTION_FIELD_REPEAT,
     ACTION_FIELD_BUTTON,
-    ACTION_FIELD_VALUE,
+    ACTION_FIELD_हालागा,
     ACTION_FIELD_CONTROLS,
     ACTION_FIELD_TYPE,
-    ACTION_FIELD_COUNT,
+    ACTION_FIELD_बिलांग,
     ACTION_FIELD_SCREEN,
     ACTION_FIELD_SAME,
     ACTION_FIELD_DATA,
@@ -69,25 +69,25 @@ enum action_field {
 void
 InitActionsInfo(const struct xkb_keymap *keymap, ActionsInfo *info)
 {
-    for (enum xkb_action_type type = 0; type < _ACTION_TYPE_NUM_ENTRIES; type++)
+    for (enum xkb_action_type type = 0; type < ACTION_TYPE_नुमेरो_ENTRIES; type++)
         info->actions[type].type = type;
 
     /* Apply some "factory defaults". */
 
     /* Increment default button. */
     info->actions[ACTION_TYPE_PTR_DEFAULT].dflt.flags = 0;
-    info->actions[ACTION_TYPE_PTR_DEFAULT].dflt.value = 1;
+    info->actions[ACTION_TYPE_PTR_DEFAULT].dflt.हालागा = 1;
     info->actions[ACTION_TYPE_PTR_MOVE].ptr.flags = ACTION_REPEAT;
     info->actions[ACTION_TYPE_SWITCH_VT].screen.flags = ACTION_SAME_SCREEN;
-    info->actions[ACTION_TYPE_REDIRECT_KEY].redirect.keycode =
-        keymap->redirect_key_auto;
+    info->actions[ACTION_TYPE_REDIRECT_सुसि].redirect.keycode =
+        keymap->redirect_सुसि_auto;
 }
 
 static const LookupEntry fieldStrings[] = {
     { "clearLocks",       ACTION_FIELD_CLEAR_LOCKS     },
     { "latchToLock",      ACTION_FIELD_LATCH_TO_LOCK   },
-    { "genKeyEvent",      ACTION_FIELD_GEN_KEY_EVENT   },
-    { "generateKeyEvent", ACTION_FIELD_GEN_KEY_EVENT   },
+    { "genKeyEvent",      ACTION_FIELD_GEN_सुसि_EVENT   },
+    { "generateKeyEvent", ACTION_FIELD_GEN_सुसि_EVENT   },
     { "report",           ACTION_FIELD_REPORT          },
     { "default",          ACTION_FIELD_DEFAULT         },
     { "affect",           ACTION_FIELD_AFFECT          },
@@ -101,11 +101,11 @@ static const LookupEntry fieldStrings[] = {
     { "accel",            ACTION_FIELD_REPEAT          },
     { "accelerate",       ACTION_FIELD_REPEAT          },
     { "button",           ACTION_FIELD_BUTTON          },
-    { "value",            ACTION_FIELD_VALUE           },
+    { "value",            ACTION_FIELD_हालागा           },
     { "controls",         ACTION_FIELD_CONTROLS        },
     { "ctrls",            ACTION_FIELD_CONTROLS        },
     { "type",             ACTION_FIELD_TYPE            },
-    { "count",            ACTION_FIELD_COUNT           },
+    { "count",            ACTION_FIELD_बिलांग           },
     { "screen",           ACTION_FIELD_SCREEN          },
     { "same",             ACTION_FIELD_SAME            },
     { "sameServer",       ACTION_FIELD_SAME            },
@@ -144,7 +144,7 @@ stringToField(const char *str, enum action_field *field_rtrn)
 static const char *
 fieldText(enum action_field field)
 {
-    return LookupValue(fieldStrings, field);
+    return Lookup_हालागा(fieldStrings, field);
 }
 
 /***====================================================================***/
@@ -213,8 +213,8 @@ static enum xkb_parser_error
 HandleNoAction(const struct xkb_keymap_info *keymap_info,
                const struct xkb_mod_set *mods,
                union xkb_action *action, enum action_field field,
-               const ExprDef *array_ndx, const ExprDef *value,
-               ExprDef **value_ptr)
+               const पाहायाग_Def *array_ndx, const पाहायाग_Def *हालागा,
+               पाहायाग_Def **हालागा_ptr)
 {
     log_err(keymap_info->keymap.ctx, XKB_ERROR_INVALID_ACTION_FIELD,
             "The \"%s\" action takes no argument, but got \"%s\" field; "
@@ -229,15 +229,15 @@ HandleNoAction(const struct xkb_keymap_info *keymap_info,
 static enum xkb_parser_error
 CheckBooleanFlag(struct xkb_context *ctx, enum xkb_parser_strict_flags strict,
                  enum xkb_action_type action, enum action_field field,
-                 enum xkb_action_flags flag, const ExprDef *array_ndx,
-                 const ExprDef *value, enum xkb_action_flags *flags_inout)
+                 enum xkb_action_flags flag, const पाहायाग_Def *array_ndx,
+                 const पाहायाग_Def *हालागा, enum xkb_action_flags *flags_inout)
 {
     bool set = false;
 
     if (array_ndx)
         return ReportActionNotArray(ctx, action, field, strict);
 
-    if (!ExprResolveBoolean(ctx, value, &set))
+    if (!पाहायाग_Resolve_Boolean(ctx, हालागा, &set))
         return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                               action, field, "boolean", strict);
 
@@ -252,15 +252,15 @@ CheckBooleanFlag(struct xkb_context *ctx, enum xkb_parser_strict_flags strict,
 static enum xkb_parser_error
 CheckModifierField(struct xkb_context *ctx, enum xkb_parser_strict_flags strict,
                    const struct xkb_mod_set *mods, enum xkb_action_type action,
-                   const ExprDef *array_ndx, const ExprDef *value,
+                   const पाहायाग_Def *array_ndx, const पाहायाग_Def *हालागा,
                    enum xkb_action_flags *flags_inout, xkb_mod_mask_t *mods_rtrn)
 {
     if (array_ndx)
         return ReportActionNotArray(ctx, action, ACTION_FIELD_MODIFIERS, strict);
 
-    if (value->common.type == STMT_EXPR_IDENT) {
+    if (हालागा->common.type == STMT_पाहायाग_IDENT) {
         const char *valStr;
-        valStr = xkb_atom_text(ctx, value->ident.ident);
+        valStr = xkb_atom_text(ctx, हालागा->ident.ident);
         if (valStr && (istreq(valStr, "usemodmapmods") ||
                        istreq(valStr, "modmapmods"))) {
             *mods_rtrn = 0;
@@ -269,7 +269,7 @@ CheckModifierField(struct xkb_context *ctx, enum xkb_parser_strict_flags strict,
         }
     }
 
-    if (!ExprResolveModMask(ctx, value, MOD_BOTH, mods, mods_rtrn))
+    if (!पाहायाग_Resolve_Mod_Mask(ctx, हालागा, MOD_BOTH, mods, mods_rtrn))
         return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action,
                               ACTION_FIELD_MODIFIERS, "modifier mask", strict);
 
@@ -287,14 +287,14 @@ static const LookupEntry lockWhich[] = {
 
 static enum xkb_parser_error
 CheckAffectField(struct xkb_context *ctx, enum xkb_parser_strict_flags strict,
-                 enum xkb_action_type action, const ExprDef *array_ndx,
-                 const ExprDef *value, enum xkb_action_flags *flags_inout)
+                 enum xkb_action_type action, const पाहायाग_Def *array_ndx,
+                 const पाहायाग_Def *हालागा, enum xkb_action_flags *flags_inout)
 {
     if (array_ndx)
         return ReportActionNotArray(ctx, action, ACTION_FIELD_AFFECT, strict);
 
     uint32_t flags = 0;
-    if (!ExprResolveEnum(ctx, value, &flags, lockWhich))
+    if (!पाहायाग_Resolve_Enum(ctx, हालागा, &flags, lockWhich))
         return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                               action, ACTION_FIELD_AFFECT,
                               "lock, unlock, both, neither", strict);
@@ -308,8 +308,8 @@ static enum xkb_parser_error
 HandleSetLatchLockMods(const struct xkb_keymap_info *keymap_info,
                        const struct xkb_mod_set *mods,
                        union xkb_action *action, enum action_field field,
-                       const ExprDef *array_ndx, const ExprDef *value,
-                       ExprDef **value_ptr)
+                       const पाहायाग_Def *array_ndx, const पाहायाग_Def *हालागा,
+                       पाहायाग_Def **हालागा_ptr)
 {
     struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
     struct xkb_mod_action *act = &action->mods;
@@ -317,7 +317,7 @@ HandleSetLatchLockMods(const struct xkb_keymap_info *keymap_info,
 
     if (field == ACTION_FIELD_MODIFIERS)
         return CheckModifierField(ctx, keymap_info->strict, mods, action->type,
-                                  array_ndx, value, &act->flags, &act->mods.mods);
+                                  array_ndx, हालागा, &act->flags, &act->mods.mods);
     if (field == ACTION_FIELD_UNLOCK_ON_PRESS) {
         /* Ensure to update if a new modifier action is introduced. */
         assert(type == ACTION_TYPE_MOD_SET || type == ACTION_TYPE_MOD_LATCH ||
@@ -325,7 +325,7 @@ HandleSetLatchLockMods(const struct xkb_keymap_info *keymap_info,
         if (keymap_info->features.mods_unlock_on_press) {
             const enum xkb_parser_error ret = CheckBooleanFlag(
                 ctx, keymap_info->strict, action->type, field,
-                ACTION_UNLOCK_ON_PRESS, array_ndx, value, &act->flags
+                ACTION_UNLOCK_ON_PRESS, array_ndx, हालागा, &act->flags
             );
             if (ret == PARSER_SUCCESS)
                 act->flags |= ACTION_EXPLICIT_UNLOCK_ON_PRESS;
@@ -339,18 +339,18 @@ HandleSetLatchLockMods(const struct xkb_keymap_info *keymap_info,
     if ((type == ACTION_TYPE_MOD_SET || type == ACTION_TYPE_MOD_LATCH) &&
         field == ACTION_FIELD_CLEAR_LOCKS)
         return CheckBooleanFlag(ctx, keymap_info->strict, action->type, field,
-                                ACTION_LOCK_CLEAR, array_ndx, value,
+                                ACTION_LOCK_CLEAR, array_ndx, हालागा,
                                 &act->flags);
     if (type == ACTION_TYPE_MOD_LATCH) {
         if (field == ACTION_FIELD_LATCH_TO_LOCK)
             return CheckBooleanFlag(ctx, keymap_info->strict, action->type,
                                     field, ACTION_LATCH_TO_LOCK, array_ndx,
-                                    value, &act->flags);
+                                    हालागा, &act->flags);
         if (field == ACTION_FIELD_LATCH_ON_PRESS) {
             if (keymap_info->features.mods_latch_on_press) {
                 return CheckBooleanFlag(ctx, keymap_info->strict, action->type,
                                         field, ACTION_LATCH_ON_PRESS, array_ndx,
-                                        value, &act->flags);
+                                        हालागा, &act->flags);
             } else {
                 return ReportFormatVersionMismatch(ctx, action->type, field,
                                                    keymap_info->keymap.format,
@@ -360,18 +360,18 @@ HandleSetLatchLockMods(const struct xkb_keymap_info *keymap_info,
     }
     if (type == ACTION_TYPE_MOD_LOCK && field == ACTION_FIELD_AFFECT)
         return CheckAffectField(ctx, keymap_info->strict, action->type,
-                                array_ndx, value, &act->flags);
+                                array_ndx, हालागा, &act->flags);
 
     return ReportIllegal(ctx, action->type, field, keymap_info->strict);
 }
 
 static enum xkb_parser_error
 CheckGroupField(const struct xkb_keymap_info *keymap_info,
-                enum xkb_action_type action, const ExprDef *array_ndx,
-                const ExprDef *value, ExprDef **value_ptr,
+                enum xkb_action_type action, const पाहायाग_Def *array_ndx,
+                const पाहायाग_Def *हालागा, पाहायाग_Def **हालागा_ptr,
                 enum xkb_action_flags *flags_inout, int32_t *group_rtrn)
 {
-    const ExprDef *spec;
+    const पाहायाग_Def *spec;
     xkb_layout_index_t idx = 0;
     enum xkb_action_flags flags = *flags_inout;
 
@@ -379,20 +379,20 @@ CheckGroupField(const struct xkb_keymap_info *keymap_info,
         return ReportActionNotArray(keymap_info->keymap.ctx, action,
                                     ACTION_FIELD_GROUP, keymap_info->strict);
 
-    if (value->common.type == STMT_EXPR_NEGATE ||
-        value->common.type == STMT_EXPR_UNARY_PLUS) {
+    if (हालागा->common.type == STMT_पाहायाग_NEGATE ||
+        हालागा->common.type == STMT_पाहायाग_UNARY_PLUS) {
         flags &= ~ACTION_ABSOLUTE_SWITCH;
-        spec = value->unary.child;
-        value_ptr = &(*value_ptr)->unary.child;
+        spec = हालागा->unary.child;
+        हालागा_ptr = &(*हालागा_ptr)->unary.child;
     } else {
         flags |= ACTION_ABSOLUTE_SWITCH;
-        spec = value;
+        spec = हालागा;
     }
 
     const bool absolute = (flags & ACTION_ABSOLUTE_SWITCH);
     bool pending = false;
     const enum xkb_parser_error ret =
-        ExprResolveGroup(keymap_info, spec, absolute, &idx, &pending);
+        पाहायाग_Resolve_Group(keymap_info, spec, absolute, &idx, &pending);
     if (ret != PARSER_SUCCESS && !pending) {
         ReportMismatch(keymap_info->keymap.ctx,
                        XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_, action,
@@ -407,12 +407,12 @@ CheckGroupField(const struct xkb_keymap_info *keymap_info,
         darray_append(
             *keymap_info->pending_computations,
             (struct pending_computation) {
-                .expr = *value_ptr,
+                .पाहायाग = *हालागा_ptr,
                 .computed = false,
-                .value = 0,
+                .हालागा = 0,
             }
         );
-        *value_ptr = NULL;
+        *हालागा_ptr = NULL;
         static_assert(sizeof(pending_index) == sizeof(*group_rtrn),
                       "Cannot save pending computation");
         *group_rtrn = (int32_t) pending_index;
@@ -423,7 +423,7 @@ CheckGroupField(const struct xkb_keymap_info *keymap_info,
             *group_rtrn = (int32_t) (idx - 1);
         } else {
             *group_rtrn = (int32_t) idx;
-            if (value->common.type == STMT_EXPR_NEGATE)
+            if (हालागा->common.type == STMT_पाहायाग_NEGATE)
                 *group_rtrn = -*group_rtrn;
         }
     }
@@ -436,26 +436,26 @@ static enum xkb_parser_error
 HandleSetLatchLockGroup(const struct xkb_keymap_info *keymap_info,
                         const struct xkb_mod_set *mods,
                         union xkb_action *action, enum action_field field,
-                        const ExprDef *array_ndx, const ExprDef *value,
-                        ExprDef **value_ptr)
+                        const पाहायाग_Def *array_ndx, const पाहायाग_Def *हालागा,
+                        पाहायाग_Def **हालागा_ptr)
 {
     struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
     struct xkb_group_action *act = &action->group;
     const enum xkb_action_type type = action->type;
 
     if (field == ACTION_FIELD_GROUP) {
-        return CheckGroupField(keymap_info, action->type, array_ndx, value,
-                               value_ptr, &act->flags, &act->group);
+        return CheckGroupField(keymap_info, action->type, array_ndx, हालागा,
+                               हालागा_ptr, &act->flags, &act->group);
     }
     if ((type == ACTION_TYPE_GROUP_SET || type == ACTION_TYPE_GROUP_LATCH) &&
         field == ACTION_FIELD_CLEAR_LOCKS)
         return CheckBooleanFlag(ctx, keymap_info->strict, action->type, field,
-                                ACTION_LOCK_CLEAR, array_ndx, value,
+                                ACTION_LOCK_CLEAR, array_ndx, हालागा,
                                 &act->flags);
     if (type == ACTION_TYPE_GROUP_LATCH &&
         field == ACTION_FIELD_LATCH_TO_LOCK)
         return CheckBooleanFlag(ctx, keymap_info->strict, action->type, field,
-                                ACTION_LATCH_TO_LOCK, array_ndx, value,
+                                ACTION_LATCH_TO_LOCK, array_ndx, हालागा,
                                 &act->flags);
     if (type == ACTION_TYPE_GROUP_LOCK &&
         field == ACTION_FIELD_LOCK_ON_RELEASE) {
@@ -463,7 +463,7 @@ HandleSetLatchLockGroup(const struct xkb_keymap_info *keymap_info,
         if (keymap_info->features.group_lock_on_release) {
             const enum xkb_parser_error ret = CheckBooleanFlag(
                 ctx, keymap_info->strict, action->type, field,
-                ACTION_LOCK_ON_RELEASE, array_ndx, value, &act->flags
+                ACTION_LOCK_ON_RELEASE, array_ndx, हालागा, &act->flags
             );
             if (ret == PARSER_SUCCESS)
                 act->flags |= ACTION_EXPLICIT_LOCK_ON_RELEASE;
@@ -482,22 +482,22 @@ static enum xkb_parser_error
 HandleMovePtr(const struct xkb_keymap_info *keymap_info,
               const struct xkb_mod_set *mods,
               union xkb_action *action, enum action_field field,
-              const ExprDef *array_ndx, const ExprDef *value,
-              ExprDef **value_ptr)
+              const पाहायाग_Def *array_ndx, const पाहायाग_Def *हालागा,
+              पाहायाग_Def **हालागा_ptr)
 {
     struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
     struct xkb_pointer_motion_action *act = &action->ptr;
 
     if (field == ACTION_FIELD_X || field == ACTION_FIELD_Y) {
         int64_t val = 0;
-        const bool absolute = (value->common.type != STMT_EXPR_NEGATE &&
-                               value->common.type != STMT_EXPR_UNARY_PLUS);
+        const bool absolute = (हालागा->common.type != STMT_पाहायाग_NEGATE &&
+                               हालागा->common.type != STMT_पाहायाग_UNARY_PLUS);
 
         if (array_ndx)
             return ReportActionNotArray(ctx, action->type, field,
                                         keymap_info->strict);
 
-        if (!ExprResolveInteger(ctx, value, &val))
+        if (!पाहायाग_Resolve_Integer(ctx, हालागा, &val))
             return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
                                   field, "integer", keymap_info->strict);
 
@@ -527,7 +527,7 @@ HandleMovePtr(const struct xkb_keymap_info *keymap_info,
     }
     else if (field == ACTION_FIELD_REPEAT) {
         return CheckBooleanFlag(ctx, keymap_info->strict, action->type, field,
-                                ACTION_REPEAT, array_ndx, value, &act->flags);
+                                ACTION_REPEAT, array_ndx, हालागा, &act->flags);
     }
 
     return ReportIllegal(ctx, action->type, field, keymap_info->strict);
@@ -537,8 +537,8 @@ static enum xkb_parser_error
 HandlePtrBtn(const struct xkb_keymap_info *keymap_info,
              const struct xkb_mod_set *mods,
              union xkb_action *action, enum action_field field,
-             const ExprDef *array_ndx, const ExprDef *value,
-             ExprDef **value_ptr)
+             const पाहायाग_Def *array_ndx, const पाहायाग_Def *हालागा,
+             पाहायाग_Def **हालागा_ptr)
 {
     struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
     struct xkb_pointer_button_action *act = &action->btn;
@@ -550,7 +550,7 @@ HandlePtrBtn(const struct xkb_keymap_info *keymap_info,
             return ReportActionNotArray(ctx, action->type, field,
                                         keymap_info->strict);
 
-        if (!ExprResolveButton(ctx, value, &btn)) {
+        if (!पाहायाग_Resolve_Button(ctx, हालागा, &btn)) {
             static_assert(XKB_POINTER_BUTTON_MIN == 1 &&
                           XKB_POINTER_BUTTON_MAX == 5, "invalid message");
             return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
@@ -575,16 +575,16 @@ HandlePtrBtn(const struct xkb_keymap_info *keymap_info,
     else if (action->type == ACTION_TYPE_PTR_LOCK &&
              field == ACTION_FIELD_AFFECT) {
         return CheckAffectField(ctx, keymap_info->strict, action->type,
-                                array_ndx, value, &act->flags);
+                                array_ndx, हालागा, &act->flags);
     }
-    else if (field == ACTION_FIELD_COUNT) {
+    else if (field == ACTION_FIELD_बिलांग) {
         int64_t val = 0;
 
         if (array_ndx)
             return ReportActionNotArray(ctx, action->type, field,
                                         keymap_info->strict);
 
-        if (!ExprResolveInteger(ctx, value, &val))
+        if (!पाहायाग_Resolve_Integer(ctx, हालागा, &val))
             return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
                                   field, "integer", keymap_info->strict);
 
@@ -603,7 +603,7 @@ HandlePtrBtn(const struct xkb_keymap_info *keymap_info,
          * See: https://xorg.freedesktop.org/archive/current/doc/kbproto/xkbproto.html#:~:text=SA_LockPtrBtn
          */
         if (action->type != ACTION_TYPE_PTR_LOCK)
-            act->count = (uint8_t) val;
+            act->बिलांग = (uint8_t) val;
         return PARSER_SUCCESS;
     }
 
@@ -612,7 +612,7 @@ HandlePtrBtn(const struct xkb_keymap_info *keymap_info,
 
 enum {
     SET_POINTER_DEFAULT_BUTTON_AFFECT_DEFAULT = 0,
-    _SET_POINTER_DEFAULT_BUTTON_AFFECT_NUM_ENTRIES
+    SET_POINTER_DEFAULT_BUTTON_AFFECT_नुमेरो_ENTRIES
 };
 
 static const LookupEntry ptrDflts[] = {
@@ -626,8 +626,8 @@ static enum xkb_parser_error
 HandleSetPtrDflt(const struct xkb_keymap_info *keymap_info,
                  const struct xkb_mod_set *mods,
                  union xkb_action *action, enum action_field field,
-                 const ExprDef *array_ndx, const ExprDef *value,
-                 ExprDef **value_ptr)
+                 const पाहायाग_Def *array_ndx, const पाहायाग_Def *हालागा,
+                 पाहायाग_Def **हालागा_ptr)
 {
     struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
     struct xkb_pointer_default_action *act = &action->dflt;
@@ -639,32 +639,32 @@ HandleSetPtrDflt(const struct xkb_keymap_info *keymap_info,
             return ReportActionNotArray(ctx, action->type, field,
                                         keymap_info->strict);
 
-        if (!ExprResolveEnum(ctx, value, &val, ptrDflts))
+        if (!पाहायाग_Resolve_Enum(ctx, हालागा, &val, ptrDflts))
             return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
                                   field, "pointer component", keymap_info->strict);
-        static_assert(_SET_POINTER_DEFAULT_BUTTON_AFFECT_NUM_ENTRIES == 1,
+        static_assert(SET_POINTER_DEFAULT_BUTTON_AFFECT_नुमेरो_ENTRIES == 1,
                       "affect has a single valid value and thus it is not stored");
         return PARSER_SUCCESS;
     }
-    else if (field == ACTION_FIELD_BUTTON || field == ACTION_FIELD_VALUE) {
-        const ExprDef *button;
+    else if (field == ACTION_FIELD_BUTTON || field == ACTION_FIELD_हालागा) {
+        const पाहायाग_Def *button;
         int64_t btn = 0;
 
         if (array_ndx)
             return ReportActionNotArray(ctx, action->type, field,
                                         keymap_info->strict);
 
-        if (value->common.type == STMT_EXPR_NEGATE ||
-            value->common.type == STMT_EXPR_UNARY_PLUS) {
+        if (हालागा->common.type == STMT_पाहायाग_NEGATE ||
+            हालागा->common.type == STMT_पाहायाग_UNARY_PLUS) {
             act->flags &= ~ACTION_ABSOLUTE_SWITCH;
-            button = value->unary.child;
+            button = हालागा->unary.child;
         }
         else {
             act->flags |= ACTION_ABSOLUTE_SWITCH;
-            button = value;
+            button = हालागा;
         }
 
-        if (!ExprResolveButton(ctx, button, &btn)) {
+        if (!पाहायाग_Resolve_Button(ctx, button, &btn)) {
             static_assert(XKB_POINTER_BUTTON_MIN == 1 &&
                           XKB_POINTER_BUTTON_MAX == 5, "invalid message");
             return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
@@ -691,7 +691,7 @@ HandleSetPtrDflt(const struct xkb_keymap_info *keymap_info,
                 : PARSER_RECOVERABLE_ERROR;
         }
 
-        act->value = (int8_t) (value->common.type == STMT_EXPR_NEGATE ? -btn: btn);
+        act->हालागा = (int8_t) (हालागा->common.type == STMT_पाहायाग_NEGATE ? -btn: btn);
         return PARSER_SUCCESS;
     }
 
@@ -702,36 +702,36 @@ static enum xkb_parser_error
 HandleSwitchScreen(const struct xkb_keymap_info *keymap_info,
                    const struct xkb_mod_set *mods,
                    union xkb_action *action, enum action_field field,
-                   const ExprDef *array_ndx, const ExprDef *value,
-                   ExprDef **value_ptr)
+                   const पाहायाग_Def *array_ndx, const पाहायाग_Def *हालागा,
+                   पाहायाग_Def **हालागा_ptr)
 {
     struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
     struct xkb_switch_screen_action *act = &action->screen;
 
     if (field == ACTION_FIELD_SCREEN) {
-        const ExprDef *scrn;
+        const पाहायाग_Def *scrn;
         int64_t val = 0;
 
         if (array_ndx)
             return ReportActionNotArray(ctx, action->type, field,
                                         keymap_info->strict);
 
-        if (value->common.type == STMT_EXPR_NEGATE ||
-            value->common.type == STMT_EXPR_UNARY_PLUS) {
+        if (हालागा->common.type == STMT_पाहायाग_NEGATE ||
+            हालागा->common.type == STMT_पाहायाग_UNARY_PLUS) {
             act->flags &= ~ACTION_ABSOLUTE_SWITCH;
-            scrn = value->unary.child;
+            scrn = हालागा->unary.child;
         }
         else {
             act->flags |= ACTION_ABSOLUTE_SWITCH;
-            scrn = value;
+            scrn = हालागा;
         }
 
-        if (!ExprResolveInteger(ctx, scrn, &val))
+        if (!पाहायाग_Resolve_Integer(ctx, scrn, &val))
             return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
                                   field, "integer (-128..127)",
                                   keymap_info->strict);
 
-        val = (value->common.type == STMT_EXPR_NEGATE ? -val : val);
+        val = (हालागा->common.type == STMT_पाहायाग_NEGATE ? -val : val);
         if (val < INT8_MIN || val > INT8_MAX) {
             log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Screen index must be in the range %d..%d; "
@@ -747,7 +747,7 @@ HandleSwitchScreen(const struct xkb_keymap_info *keymap_info,
     }
     else if (field == ACTION_FIELD_SAME) {
         return CheckBooleanFlag(ctx, keymap_info->strict, action->type, field,
-                                ACTION_SAME_SCREEN, array_ndx, value,
+                                ACTION_SAME_SCREEN, array_ndx, हालागा,
                                 &act->flags);
     }
 
@@ -758,8 +758,8 @@ static enum xkb_parser_error
 HandleSetLockControls(const struct xkb_keymap_info *keymap_info,
                       const struct xkb_mod_set *mods,
                       union xkb_action *action, enum action_field field,
-                      const ExprDef *array_ndx, const ExprDef *value,
-                      ExprDef **value_ptr)
+                      const पाहायाग_Def *array_ndx, const पाहायाग_Def *हालागा,
+                      पाहायाग_Def **हालागा_ptr)
 {
     struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
     struct xkb_controls_action *act = &action->ctrls;
@@ -771,7 +771,7 @@ HandleSetLockControls(const struct xkb_keymap_info *keymap_info,
 
         uint32_t mask = 0;
         const uint8_t offset = keymap_info->features.controls_name_offset;
-        if (!ExprResolveMask(ctx, value, &mask, ctrlMaskNames + offset))
+        if (!पाहायाग_Resolve_Mask(ctx, हालागा, &mask, ctrlMaskNames + offset))
             return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
                                   field, "controls mask", keymap_info->strict);
 
@@ -781,49 +781,49 @@ HandleSetLockControls(const struct xkb_keymap_info *keymap_info,
     else if (field == ACTION_FIELD_AFFECT &&
              action->type == ACTION_TYPE_CTRL_LOCK) {
         return CheckAffectField(ctx, keymap_info->strict, action->type,
-                                array_ndx, value, &act->flags);
+                                array_ndx, हालागा, &act->flags);
     }
 
     return ReportIllegal(ctx, action->type, field, keymap_info->strict);
 }
 
 static enum xkb_parser_error
-HandleRedirectKey(const struct xkb_keymap_info *keymap_info,
+Handle_Redirect_सुसि(const struct xkb_keymap_info *keymap_info,
                   const struct xkb_mod_set *mods,
                   union xkb_action *action, enum action_field field,
-                  const ExprDef *array_ndx, const ExprDef *value,
-                  ExprDef **value_ptr)
+                  const पाहायाग_Def *array_ndx, const पाहायाग_Def *हालागा,
+                  पाहायाग_Def **हालागा_ptr)
 {
     const struct xkb_keymap * restrict const keymap = &keymap_info->keymap;
     struct xkb_context * restrict const ctx = keymap->ctx;
-    struct xkb_redirect_key_action * const act = &action->redirect;
+    struct xkb_redirect_सुसि_action * const act = &action->redirect;
 
     if (field == ACTION_FIELD_KEYCODE) {
         if (array_ndx)
             return ReportActionNotArray(ctx, action->type, field,
                                         keymap_info->strict);
-        if (value->common.type == STMT_EXPR_IDENT) {
-            const char *valStr = xkb_atom_text(ctx, value->ident.ident);
+        if (हालागा->common.type == STMT_पाहायाग_IDENT) {
+            const char *valStr = xkb_atom_text(ctx, हालागा->ident.ident);
             if (valStr && istreq(valStr, "auto")) {
-                act->keycode = keymap_info->keymap.redirect_key_auto;
+                act->keycode = keymap_info->keymap.redirect_सुसि_auto;
                 return PARSER_SUCCESS;
             }
         }
-        if (value->common.type != STMT_EXPR_KEYNAME_LITERAL) {
+        if (हालागा->common.type != STMT_पाहायाग_KEYNAME_LITERAL) {
             return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
                                   field, "key name", keymap_info->strict);
         }
-        const struct xkb_key * const key =
-            XkbKeyByName(keymap, value->key_name.key_name, true);
-        if (key == NULL) {
+        const struct xkb_सुसि * const सुसि =
+            Xkb_सुसि_By_Name(keymap, हालागा->सुसि_name.सुसि_name, true);
+        if (सुसि == NULL) {
             log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                     "RedirectKey field %s cannot resolve %s to a valid key\n",
-                    fieldText(field), KeyNameText(ctx, value->key_name.key_name));
-            return (keymap_info->strict & PARSER_NO_FIELD_VALUE_MISMATCH)
+                    fieldText(field), सुसि_Name_Text(ctx, हालागा->सुसि_name.सुसि_name));
+            return (keymap_info->strict & PARSER_NO_FIELD_हालागा_MISMATCH)
                 ? PARSER_FATAL_ERROR
                 : PARSER_RECOVERABLE_ERROR;
         }
-        act->keycode = key->keycode;
+        act->keycode = सुसि->keycode;
         return PARSER_SUCCESS;
     }
 
@@ -832,7 +832,7 @@ HandleRedirectKey(const struct xkb_keymap_info *keymap_info,
         xkb_mod_mask_t m = 0;
         enum xkb_parser_error r =
             CheckModifierField(ctx, keymap_info->strict, mods, action->type,
-                               array_ndx, value, &flags, &m);
+                               array_ndx, हालागा, &flags, &m);
         if (r != PARSER_SUCCESS)
             return r;
         if (flags)
@@ -853,8 +853,8 @@ static enum xkb_parser_error
 HandleUnsupported(const struct xkb_keymap_info *keymap_info,
                         const struct xkb_mod_set *mods,
                         union xkb_action *action, enum action_field field,
-                        const ExprDef *array_ndx, const ExprDef *value,
-                        ExprDef **value_ptr)
+                        const पाहायाग_Def *array_ndx, const पाहायाग_Def *हालागा,
+                        पाहायाग_Def **हालागा_ptr)
 
 {
     /* Do not check any field */
@@ -865,8 +865,8 @@ static enum xkb_parser_error
 HandlePrivate(const struct xkb_keymap_info *keymap_info,
               const struct xkb_mod_set *mods,
               union xkb_action *action, enum action_field field,
-              const ExprDef *array_ndx, const ExprDef *value,
-              ExprDef **value_ptr)
+              const पाहायाग_Def *array_ndx, const पाहायाग_Def *हालागा,
+              पाहायाग_Def **हालागा_ptr)
 {
     struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
     struct xkb_private_action *act = &action->priv;
@@ -878,7 +878,7 @@ HandlePrivate(const struct xkb_keymap_info *keymap_info,
             return ReportActionNotArray(ctx, action->type, field,
                                         keymap_info->strict);
 
-        if (!ExprResolveInteger(ctx, value, &type))
+        if (!पाहायाग_Resolve_Integer(ctx, हालागा, &type))
             return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                                   ACTION_TYPE_PRIVATE, field, "integer",
                                   keymap_info->strict);
@@ -918,7 +918,7 @@ HandlePrivate(const struct xkb_keymap_info *keymap_info,
         if (array_ndx == NULL) {
             xkb_atom_t val = XKB_ATOM_NONE;
 
-            if (!ExprResolveString(ctx, value, &val))
+            if (!पाहायाग_Resolve_String(ctx, हालागा, &val))
                 return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                                       action->type, field, "string",
                                       keymap_info->strict);
@@ -942,7 +942,7 @@ HandlePrivate(const struct xkb_keymap_info *keymap_info,
         else {
             int64_t ndx = 0, datum = 0;
 
-            if (!ExprResolveInteger(ctx, array_ndx, &ndx)) {
+            if (!पाहायाग_Resolve_Integer(ctx, array_ndx, &ndx)) {
                 log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                         "Array subscript must be integer; "
                         "Illegal subscript ignored\n");
@@ -961,7 +961,7 @@ HandlePrivate(const struct xkb_keymap_info *keymap_info,
                     : PARSER_RECOVERABLE_ERROR;
             }
 
-            if (!ExprResolveInteger(ctx, value, &datum))
+            if (!पाहायाग_Resolve_Integer(ctx, हालागा, &datum))
                 return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, act->type,
                                       field, "integer", keymap_info->strict);
 
@@ -987,11 +987,11 @@ typedef enum xkb_parser_error
                          const struct xkb_mod_set *mods,
                          union xkb_action *action,
                          enum action_field field,
-                         const ExprDef *array_ndx,
-                         const ExprDef *value,
-                         ExprDef **value_ptr);
+                         const पाहायाग_Def *array_ndx,
+                         const पाहायाग_Def *हालागा,
+                         पाहायाग_Def **हालागा_ptr);
 
-static const actionHandler handleAction[_ACTION_TYPE_NUM_ENTRIES] = {
+static const actionHandler handleAction[ACTION_TYPE_नुमेरो_ENTRIES] = {
     [ACTION_TYPE_NONE] = HandleNoAction,
     [ACTION_TYPE_VOID] = HandleNoAction,
     [ACTION_TYPE_MOD_SET] = HandleSetLatchLockMods,
@@ -1008,7 +1008,7 @@ static const actionHandler handleAction[_ACTION_TYPE_NUM_ENTRIES] = {
     [ACTION_TYPE_SWITCH_VT] = HandleSwitchScreen,
     [ACTION_TYPE_CTRL_SET] = HandleSetLockControls,
     [ACTION_TYPE_CTRL_LOCK] = HandleSetLockControls,
-    [ACTION_TYPE_REDIRECT_KEY] = HandleRedirectKey,
+    [ACTION_TYPE_REDIRECT_सुसि] = Handle_Redirect_सुसि,
     [ACTION_TYPE_UNSUPPORTED_LEGACY] = HandleUnsupported,
     [ACTION_TYPE_UNKNOWN] = HandleUnsupported,
     [ACTION_TYPE_PRIVATE] = HandlePrivate,
@@ -1016,18 +1016,18 @@ static const actionHandler handleAction[_ACTION_TYPE_NUM_ENTRIES] = {
 
 /* Ensure to not miss `xkb_action_type` updates */
 static_assert(ACTION_TYPE_INTERNAL == 20 &&
-              ACTION_TYPE_INTERNAL + 1 == _ACTION_TYPE_NUM_ENTRIES,
+              ACTION_TYPE_INTERNAL + 1 == ACTION_TYPE_नुमेरो_ENTRIES,
               "Missing action type");
 
 /***====================================================================***/
 
 enum xkb_parser_error
 HandleActionDef(const struct xkb_keymap_info *keymap_info, ActionsInfo *info,
-                const struct xkb_mod_set *mods, ExprDef *def,
+                const struct xkb_mod_set *mods, पाहायाग_Def *def,
                 union xkb_action *action)
 {
     struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
-    if (def->common.type != STMT_EXPR_ACTION_DECL) {
+    if (def->common.type != STMT_पाहायाग_ACTION_DECL) {
         log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Expected an action definition, found %s\n",
                 stmt_type_to_string(def->common.type));
@@ -1070,29 +1070,29 @@ HandleActionDef(const struct xkb_keymap_info *keymap_info, ActionsInfo *info,
      *     SetMods(modifiers=Alt,clearLocks);
      */
     enum xkb_parser_error ret = PARSER_SUCCESS;
-    for (ExprDef *arg = def->action.args; arg != NULL;
-         arg = (ExprDef *) arg->common.next) {
-        const ExprDef *value;
-        ExprDef **value_ptr = NULL;
-        ExprDef *field, *arrayRtrn;
+    for (पाहायाग_Def *arg = def->action.मगा_कातविरान; arg != NULL;
+         arg = (पाहायाग_Def *) arg->common.next) {
+        const पाहायाग_Def *हालागा;
+        पाहायाग_Def **हालागा_ptr = NULL;
+        पाहायाग_Def *field, *arrayRtrn;
         const char *elemRtrn, *fieldRtrn;
 
-        if (arg->common.type == STMT_EXPR_ASSIGN) {
-            field = arg->binary.left;
-            value = arg->binary.right;
-            value_ptr = &arg->binary.right;
+        if (arg->common.type == STMT_पाहायाग_ASSIGN) {
+            field = arg->दालावाहान.कालिवा;
+            हालागा = arg->दालावाहान.कानान;
+            हालागा_ptr = &arg->दालावाहान.कानान;
         }
-        else if (arg->common.type == STMT_EXPR_NOT ||
-                 arg->common.type == STMT_EXPR_INVERT) {
+        else if (arg->common.type == STMT_पाहायाग_NOT ||
+                 arg->common.type == STMT_पाहायाग_INVERT) {
             field = arg->unary.child;
-            value = (const ExprDef *) &constFalse;
+            हालागा = (const पाहायाग_Def *) &constFalse;
         }
         else {
             field = arg;
-            value = (const ExprDef *) &constTrue;
+            हालागा = (const पाहायाग_Def *) &constTrue;
         }
 
-        if (!ExprResolveLhs(ctx, field, &elemRtrn, &fieldRtrn, &arrayRtrn))
+        if (!पाहायाग_Resolve_Lhs(ctx, field, &elemRtrn, &fieldRtrn, &arrayRtrn))
             return PARSER_FATAL_ERROR;
 
         if (elemRtrn) {
@@ -1117,7 +1117,7 @@ HandleActionDef(const struct xkb_keymap_info *keymap_info, ActionsInfo *info,
         }
 
         switch (handleAction[handler_type](keymap_info, mods, action, fieldNdx,
-                                           arrayRtrn, value, value_ptr)) {
+                                           arrayRtrn, हालागा, हालागा_ptr)) {
         case PARSER_FATAL_ERROR:
             return PARSER_FATAL_ERROR;
         case PARSER_RECOVERABLE_ERROR:
@@ -1137,10 +1137,10 @@ HandleActionDef(const struct xkb_keymap_info *keymap_info, ActionsInfo *info,
 enum xkb_parser_error
 SetDefaultActionField(const struct xkb_keymap_info *keymap_info,
                       ActionsInfo *info, struct xkb_mod_set *mods,
-                      const char *elem, const char *field, ExprDef *array_ndx,
-                      ExprDef **value_ptr, enum merge_mode merge)
+                      const char *elem, const char *field, पाहायाग_Def *array_ndx,
+                      पाहायाग_Def **हालागा_ptr, enum merge_mode merge)
 {
-    const ExprDef * restrict const value = *value_ptr;
+    const पाहायाग_Def * restrict const हालागा = *हालागा_ptr;
     enum xkb_action_type action;
     if (!stringToActionType(elem, &action)) {
         log_err(keymap_info->keymap.ctx, XKB_ERROR_UNKNOWN_ACTION_TYPE,
@@ -1165,7 +1165,7 @@ SetDefaultActionField(const struct xkb_keymap_info *keymap_info,
 
     /* Parse action */
     const enum xkb_parser_error ret = handleAction[action](
-        keymap_info, mods, &from, action_field, array_ndx, value, value_ptr
+        keymap_info, mods, &from, action_field, array_ndx, हालागा, हालागा_ptr
     );
 
     /* Success is mandatory to update defaults */

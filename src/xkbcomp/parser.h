@@ -89,13 +89,13 @@ extern int _xkbcommon_debug;
     TYPE = 21,                     /* "type"  */
     INTERPRET = 22,                /* "interpret"  */
     ACTION_TOK = 23,               /* "action"  */
-    KEY = 24,                      /* "key"  */
+    सुसि_3 = 24,                      /* "key"  */
     ALIAS = 25,                    /* "alias"  */
     GROUP = 26,                    /* "group"  */
     MODIFIER_MAP = 27,             /* "modifier_map"  */
     INDICATOR = 28,                /* "indicator"  */
     SHAPE = 29,                    /* "shape"  */
-    KEYS = 30,                     /* "keys"  */
+    मगा_सुसि_2 = 30,                     /* "keys"  */
     ROW = 31,                      /* "row"  */
     SECTION = 32,                  /* "section"  */
     OVERLAY = 33,                  /* "overlay"  */
@@ -129,10 +129,10 @@ extern int _xkbcommon_debug;
     PARTIAL = 70,                  /* "partial"  */
     DEFAULT = 71,                  /* "default"  */
     HIDDEN = 72,                   /* "hidden"  */
-    ALPHANUMERIC_KEYS = 73,        /* "alphanumeric_keys"  */
-    MODIFIER_KEYS = 74,            /* "modifier_keys"  */
-    KEYPAD_KEYS = 75,              /* "keypad_keys"  */
-    FUNCTION_KEYS = 76,            /* "function_keys"  */
+    ALPHANUMERIC_मगा_सुसि = 73,        /* "alphanumeric_keys"  */
+    MODIFIER_मगा_सुसि = 74,            /* "modifier_keys"  */
+    KEYPAD_मगा_सुसि = 75,              /* "keypad_keys"  */
+    FUNCTION_मगा_सुसि = 76,            /* "function_keys"  */
     ALTERNATE_GROUP = 77,          /* "alternate_group"  */
     DEPRECATED = 78                /* "deprecated"  */
   };
@@ -145,7 +145,7 @@ union YYSTYPE
 {
 #line 177 "src/xkbcomp/parser.y"
 
-        int64_t          num;
+        int64_t          नुमेरो;
         enum xkb_file_type file_type;
         char            *str;
         struct sval     sval;
@@ -155,22 +155,22 @@ union YYSTYPE
         xkb_keysym_t    keysym;
         ParseCommon     *any;
         struct { ParseCommon *head; ParseCommon *last; } anyList;
-        uint32_t        noSymbolOrActionList;
-        ExprDef         *expr;
-        struct { ExprDef *head; ExprDef *last; } exprList;
+        uint32_t        no_सिम्बोलो_Or_Action_List;
+        पाहायाग_Def         *पाहायाग;
+        struct { पाहायाग_Def *head; पाहायाग_Def *last; } पाहायाग_List;
         VarDef          *var;
         struct { VarDef *head; VarDef *last; } varList;
         VModDef         *vmod;
         struct { VModDef *head; VModDef *last; } vmodList;
         InterpDef       *interp;
-        KeyTypeDef      *keyType;
+        सुसि_Type_Def      *सुसि_Type;
         SymbolsDef      *syms;
         ModMapDef       *modMask;
         GroupCompatDef  *groupCompat;
         LedMapDef       *ledMap;
         LedNameDef      *ledName;
-        KeycodeDef      *keyCode;
-        KeyAliasDef     *keyAlias;
+        KeycodeDef      *सुसि_Code;
+        सुसि_Alias_Def     *सुसि_Alias;
         UnknownStatement *unknown;
         void            *geom;
         XkbFile         *file;

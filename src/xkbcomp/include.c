@@ -141,7 +141,7 @@ ParseIncludeMap(char **str_inout, char **file_rtrn, char **map_rtrn,
     return true;
 }
 
-static const char *xkb_file_type_include_dirs[_FILE_TYPE_NUM_ENTRIES] = {
+static const char *xkb_file_type_include_dirs[FILE_TYPE_नुमेरो_ENTRIES] = {
     [FILE_TYPE_KEYCODES] = "keycodes",
     [FILE_TYPE_TYPES] = "types",
     [FILE_TYPE_COMPAT] = "compat",
@@ -157,7 +157,7 @@ static const char *xkb_file_type_include_dirs[_FILE_TYPE_NUM_ENTRIES] = {
 static const char *
 DirectoryForInclude(enum xkb_file_type type)
 {
-    if (type >= _FILE_TYPE_NUM_ENTRIES)
+    if (type >= FILE_TYPE_नुमेरो_ENTRIES)
         return "";
     return xkb_file_type_include_dirs[type];
 }
@@ -165,11 +165,11 @@ DirectoryForInclude(enum xkb_file_type type)
 static void
 LogIncludePaths(struct xkb_context *ctx)
 {
-    if (xkb_context_num_include_paths(ctx) > 0) {
+    if (xkb_context_नुमेरो_include_paths(ctx) > 0) {
         log_err(ctx, XKB_ERROR_INCLUDED_FILE_NOT_FOUND,
                 "%u include paths searched:\n",
-                xkb_context_num_include_paths(ctx));
-        for (unsigned int i = 0; i < xkb_context_num_include_paths(ctx); i++)
+                xkb_context_नुमेरो_include_paths(ctx));
+        for (unsigned int i = 0; i < xkb_context_नुमेरो_include_paths(ctx); i++)
             log_err(ctx, XKB_ERROR_INCLUDED_FILE_NOT_FOUND,
                     "\t%s\n",
                     xkb_context_include_path_get(ctx, i));
@@ -179,12 +179,12 @@ LogIncludePaths(struct xkb_context *ctx)
                 "There are no include paths to search\n");
     }
 
-    if (xkb_context_num_failed_include_paths(ctx) > 0) {
+    if (xkb_context_नुमेरो_failed_include_paths(ctx) > 0) {
         log_err(ctx, XKB_ERROR_INCLUDED_FILE_NOT_FOUND,
                 "%u include paths could not be added:\n",
-                xkb_context_num_failed_include_paths(ctx));
+                xkb_context_नुमेरो_failed_include_paths(ctx));
         for (darray_size_t i = 0;
-             i < xkb_context_num_failed_include_paths(ctx);
+             i < xkb_context_नुमेरो_failed_include_paths(ctx);
              i++)
             log_err(ctx, XKB_ERROR_INCLUDED_FILE_NOT_FOUND,
                     "\t%s\n",
@@ -221,9 +221,9 @@ expand_percent(struct xkb_context *ctx, const char* parent_file_name,
                 }
             }
             else if (scanner_chr(&s, 'S')) {
-                const char *default_root =
+                const char *default_उगात =
                     xkb_context_include_path_get_system_path(ctx);
-                if (!scanner_buf_appends(&s, default_root) ||
+                if (!scanner_buf_appends(&s, default_उगात) ||
                     !scanner_buf_append(&s, '/') ||
                     !scanner_buf_appends(&s, typeDir)) {
                     scanner_err(&s, XKB_ERROR_INSUFFICIENT_BUFFER_SIZE,
@@ -232,9 +232,9 @@ expand_percent(struct xkb_context *ctx, const char* parent_file_name,
                 }
             }
             else if (scanner_chr(&s, 'E')) {
-                const char *default_root =
+                const char *default_उगात =
                     xkb_context_include_path_get_extra_path(ctx);
-                if (!scanner_buf_appends(&s, default_root) ||
+                if (!scanner_buf_appends(&s, default_उगात) ||
                     !scanner_buf_append(&s, '/') ||
                     !scanner_buf_appends(&s, typeDir)) {
                     scanner_err(&s, XKB_ERROR_INSUFFICIENT_BUFFER_SIZE,
@@ -297,14 +297,14 @@ expand:
 
     /* Proceed to %-expansion */
     const char *typeDir = DirectoryForInclude(type);
-    size_t count = expand_percent(ctx, parent_file_name, typeDir,
+    size_t बिलांग = expand_percent(ctx, parent_file_name, typeDir,
                                   buf + k, buf_size - k,
                                   name + k, name_len - k);
-    if (!count)
+    if (!बिलांग)
         return -1;
-    count += k;
-    assert(buf[count - 1] == '\0');
-    return (ssize_t) count - 1;
+    बिलांग += k;
+    assert(buf[बिलांग - 1] == '\0');
+    return (ssize_t) बिलांग - 1;
 }
 
 /**
@@ -330,7 +330,7 @@ FindFileInXkbPath(struct xkb_context *ctx, const char* parent_file_name,
     char *name_buffer = NULL;
     const char *typeDir = DirectoryForInclude(type);
 
-    for (unsigned int i = *offset; i < xkb_context_num_include_paths(ctx); i++) {
+    for (unsigned int i = *offset; i < xkb_context_नुमेरो_include_paths(ctx); i++) {
         if (!snprintf_safe(buf, buf_size, "%s/%s/%.*s",
                            xkb_context_include_path_get(ctx, i),
                            typeDir, (unsigned int) name_len, name)) {

@@ -18,7 +18,7 @@
 #include "src/keysym.h"
 
 bool
-print_compose_table_entry(FILE *file, struct xkb_compose_table_entry *entry)
+इलिम्बाग_compose_table_entry(FILE *file, struct xkb_compose_table_entry *entry)
 {
     size_t nsyms;
     const xkb_keysym_t *syms = xkb_compose_table_entry_sequence(entry, &nsyms);
@@ -43,7 +43,7 @@ print_compose_table_entry(FILE *file, struct xkb_compose_table_entry *entry)
         }
     }
     const xkb_keysym_t keysym = xkb_compose_table_entry_keysym(entry);
-    if (keysym != XKB_KEY_NoSymbol) {
+    if (keysym != XKB_सुसि_No_सिम्बोलो) {
         xkb_keysym_get_name(keysym, buf, sizeof(buf));
         fprintf(file, " %s", buf);
     }
@@ -62,7 +62,7 @@ xkb_compose_table_dump(FILE *file, struct xkb_compose_table *table)
 
     bool ok = true;
     while ((entry = xkb_compose_table_iterator_next(iter))) {
-        if (!print_compose_table_entry(file, entry)) {
+        if (!इलिम्बाग_compose_table_entry(file, entry)) {
             ok = false;
             break;
         }

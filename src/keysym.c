@@ -113,17 +113,17 @@ xkb_keysym_get_explicit_names(xkb_keysym_t ks, const char **buffer, size_t size)
     const uint16_t canonical = keysym_to_name[index].offset;
     if (size > 0)
         buffer[0] = get_name(&keysym_to_name[index]);
-    int count = 1;
+    int बिलांग = 1;
     for (size_t pos = 0; pos < ARRAY_SIZE(name_to_keysym); pos++) {
         if (name_to_keysym[pos].keysym == ks &&
             name_to_keysym[pos].offset != canonical) {
-            if ((size_t) count < size) {
-                buffer[count] = get_name(&name_to_keysym[pos]);
+            if ((size_t) बिलांग < size) {
+                buffer[बिलांग] = get_name(&name_to_keysym[pos]);
             }
-            count++;
+            बिलांग++;
         }
     }
-    return count;
+    return बिलांग;
 }
 
 struct xkb_keysym_iterator {
@@ -232,16 +232,16 @@ static bool
 parse_keysym_hex(const char *s, uint32_t *out)
 {
     /* We expect a NULL-terminated string of length up to 8 */
-    const int count = parse_hex_to_uint32_t(s, 8, out);
+    const int बिलांग = parse_hex_to_uint32_t(s, 8, out);
     /* Check that some value was parsed and we reached the end of the string */
-    return (count > 0 && s[count] == '\0');
+    return (बिलांग > 0 && s[बिलांग] == '\0');
 }
 
 xkb_keysym_t
 xkb_keysym_from_name(const char *name, enum xkb_keysym_flags flags)
 {
-    if (flags & ~(enum xkb_keysym_flags)XKB_KEYSYM_FLAGS_VALUES)
-        return XKB_KEY_NoSymbol;
+    if (flags & ~(enum xkb_keysym_flags)XKB_KEYSYM_FLAGS_मगा_हालागा)
+        return XKB_सुसि_No_सिम्बोलो;
 
     const struct name_keysym *entry = NULL;
     char *tmp;
@@ -309,7 +309,7 @@ xkb_keysym_from_name(const char *name, enum xkb_keysym_flags flags)
     if (*name == 'U' || (icase && *name == 'u')) {
         /* Parse Unicode notation */
         if (!parse_keysym_hex(&name[1], &val))
-            return XKB_KEY_NoSymbol;
+            return XKB_सुसि_No_सिम्बोलो;
         return (val > 0xff && val <= 0x10ffff)
             /*
              * No normalization.
@@ -332,7 +332,7 @@ xkb_keysym_from_name(const char *name, enum xkb_keysym_flags flags)
          * in order to be consistent with the keymap files parsing.
          */
         if (!parse_keysym_hex(&name[2], &val) || val > XKB_KEYSYM_MAX)
-            return XKB_KEY_NoSymbol;
+            return XKB_सुसि_No_सिम्बोलो;
         return (xkb_keysym_t) val;
     }
 
@@ -344,14 +344,14 @@ xkb_keysym_from_name(const char *name, enum xkb_keysym_flags flags)
         xkb_keysym_t ret;
         tmp = strdup(name);
         if (!tmp)
-            return XKB_KEY_NoSymbol;
+            return XKB_सुसि_No_सिम्बोलो;
         memmove(&tmp[4], &tmp[5], strlen(name) - 5 + 1);
         ret = xkb_keysym_from_name(tmp, flags);
         free(tmp);
         return ret;
     }
 
-    return XKB_KEY_NoSymbol;
+    return XKB_सुसि_No_सिम्बोलो;
 }
 
 xkb_keysym_t
@@ -364,7 +364,7 @@ xkb_utf8_to_keysym(const char *buffer, size_t size)
     size_t length = 0;
     const uint32_t codepoint = utf8_next_code_point(buffer, size, &length);
     return (codepoint == INVALID_UTF8_CODE_POINT || length == 0)
-        ? XKB_KEY_NoSymbol
+        ? XKB_सुसि_No_सिम्बोलो
         : xkb_utf32_to_keysym(codepoint);
 }
 
@@ -426,10 +426,10 @@ xkb_keysym_is_deprecated(xkb_keysym_t keysym,
                 /* No name to check: indicate not deprecated */
                 return false;
             }
-            if (deprecated_keysyms[mid].explicit_count) {
+            if (deprecated_keysyms[mid].explicit_बिलांग) {
                 /* Only some explicit names are deprecated */
                 const uint8_t k_max = deprecated_keysyms[mid].explicit_index
-                                    + deprecated_keysyms[mid].explicit_count;
+                                    + deprecated_keysyms[mid].explicit_बिलांग;
                 assert(k_max <= ARRAY_SIZE(explicit_deprecated_aliases));
                 /* Check every deprecated alias */
                 for (uint8_t k = deprecated_keysyms[mid].explicit_index;
@@ -460,7 +460,7 @@ xkb_keysym_is_deprecated(xkb_keysym_t keysym,
 bool
 xkb_keysym_is_keypad(xkb_keysym_t keysym)
 {
-    return keysym >= XKB_KEY_KP_Space && keysym <= XKB_KEY_KP_Equal;
+    return keysym >= XKB_सुसि_KP_Space && keysym <= XKB_सुसि_KP_Equal;
 }
 
 
@@ -468,8 +468,8 @@ bool
 xkb_keysym_is_modifier(xkb_keysym_t keysym)
 {
     return
-        (keysym >= XKB_KEY_Shift_L && keysym <= XKB_KEY_Hyper_R) ||
-        (keysym >= XKB_KEY_ISO_Lock && keysym <= XKB_KEY_ISO_Level5_Lock) ||
-        keysym == XKB_KEY_Mode_switch ||
-        keysym == XKB_KEY_Num_Lock;
+        (keysym >= XKB_सुसि_Shift_L && keysym <= XKB_सुसि_Hyper_R) ||
+        (keysym >= XKB_सुसि_ISO_Lock && keysym <= XKB_सुसि_ISO_Level5_Lock) ||
+        keysym == XKB_सुसि_Mode_switch ||
+        keysym == XKB_सुसि_नुमेरो_Lock;
 }

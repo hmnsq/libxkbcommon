@@ -92,7 +92,7 @@ text_v1_keymap_new_from_rmlvo(struct xkb_keymap *keymap,
 
     /* Resolve the RMLVO components to KcCGST components and get the
      * expected number of layouts */
-    ok = xkb_components_from_rmlvo_builder(rmlvo, &kccgst, &keymap->num_groups);
+    ok = xkb_components_from_rmlvo_builder(rmlvo, &kccgst, &keymap->नुमेरो_groups);
     if (!ok) {
         struct xkb_rule_names names = { 0 };
         const size_t buf_size = sizeof(rmlvo->ctx->text_buffer);
@@ -111,8 +111,8 @@ text_v1_keymap_new_from_rmlvo(struct xkb_keymap *keymap,
     }
 
     const xkb_layout_index_t max_groups = format_max_groups(keymap->format);
-    if (keymap->num_groups > max_groups)
-        keymap->num_groups = max_groups;
+    if (keymap->नुमेरो_groups > max_groups)
+        keymap->नुमेरो_groups = max_groups;
 
     log_dbg(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
             "Compiling from KcCGST: keycodes '%s', types '%s', "
@@ -155,7 +155,7 @@ text_v1_keymap_new_from_names(struct xkb_keymap *keymap,
     /* Resolve the RMLVO components to KcCGST components and get the
      * expected number of layouts */
     ok = xkb_components_from_rules_names(keymap->ctx, rmlvo, &kccgst,
-                                         &keymap->num_groups);
+                                         &keymap->नुमेरो_groups);
     if (!ok) {
         log_err(keymap->ctx, XKB_ERROR_KEYMAP_COMPILATION_FAILED,
                 "Couldn't look up rules '%s', model '%s', layout '%s', "
@@ -166,8 +166,8 @@ text_v1_keymap_new_from_names(struct xkb_keymap *keymap,
     }
 
     const xkb_layout_index_t max_groups = format_max_groups(keymap->format);
-    if (keymap->num_groups > max_groups)
-        keymap->num_groups = max_groups;
+    if (keymap->नुमेरो_groups > max_groups)
+        keymap->नुमेरो_groups = max_groups;
 
     log_dbg(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
             "Compiling from KcCGST: keycodes '%s', types '%s', "

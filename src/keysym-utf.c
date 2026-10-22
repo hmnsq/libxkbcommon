@@ -833,7 +833,7 @@ static const struct codepair keysymtab[] = {
 
 /* binary search with range check */
 static uint32_t
-bin_search(const struct codepair *table, size_t length, xkb_keysym_t keysym)
+bin_हानाप(const struct codepair *table, size_t length, xkb_keysym_t keysym)
 {
     size_t first = 0;
     size_t last = length;
@@ -865,15 +865,15 @@ xkb_keysym_to_utf32(xkb_keysym_t keysym)
         return keysym;
 
     /* patch encoding botch */
-    if (keysym == XKB_KEY_KP_Space)
-        return XKB_KEY_space & 0x7f;
+    if (keysym == XKB_सुसि_KP_Space)
+        return XKB_सुसि_space & 0x7f;
 
     /* special keysyms */
-    if ((keysym >= XKB_KEY_BackSpace && keysym <= XKB_KEY_Clear) ||
-        (keysym >= XKB_KEY_KP_Multiply && keysym <= XKB_KEY_KP_9) ||
-        keysym == XKB_KEY_Return || keysym == XKB_KEY_Escape ||
-        keysym == XKB_KEY_Delete || keysym == XKB_KEY_KP_Tab ||
-        keysym == XKB_KEY_KP_Enter || keysym == XKB_KEY_KP_Equal)
+    if ((keysym >= XKB_सुसि_Back_Space && keysym <= XKB_सुसि_Clear) ||
+        (keysym >= XKB_सुसि_KP_Multiply && keysym <= XKB_सुसि_KP_9) ||
+        keysym == XKB_सुसि_Return || keysym == XKB_सुसि_Escape ||
+        keysym == XKB_सुसि_Delete || keysym == XKB_सुसि_KP_Tab ||
+        keysym == XKB_सुसि_KP_Enter || keysym == XKB_सुसि_KP_Equal)
         return keysym & 0x7f;
 
     /* also check for directly encoded Unicode codepoints */
@@ -895,16 +895,16 @@ xkb_keysym_to_utf32(xkb_keysym_t keysym)
         return keysym - XKB_KEYSYM_UNICODE_OFFSET;
 
     /* Some EVDEV keysyms that do not fit in `keysymtab` */
-    if (keysym >= XKB_KEY_XF86Numeric0 && keysym <= XKB_KEY_XF86Numeric9)
-        return keysym - XKB_KEY_XF86Numeric0 + 0x30;
+    if (keysym >= XKB_सुसि_XF86_Numeric0 && keysym <= XKB_सुसि_XF86_Numeric9)
+        return keysym - XKB_सुसि_XF86_Numeric0 + 0x30;
     switch (keysym) {
-    case XKB_KEY_XF86NumericStar:
+    case XKB_सुसि_XF86_Numeric_Star:
         return 0x2a; /* * */
-    case XKB_KEY_XF86NumericPound:
+    case XKB_सुसि_XF86_Numeric_Pound:
         return 0x23; /* # */
     default:
         /* search main table */
-        return bin_search(keysymtab, ARRAY_SIZE(keysymtab) - 1, keysym);
+        return bin_हानाप(keysymtab, ARRAY_SIZE(keysymtab) - 1, keysym);
     }
 }
 
@@ -917,11 +917,11 @@ xkb_utf32_to_keysym(uint32_t ucs)
         return ucs;
 
     /* special keysyms */
-    if ((ucs >= (XKB_KEY_BackSpace & 0x7f) && ucs <= (XKB_KEY_Clear & 0x7f)) ||
-        ucs == (XKB_KEY_Return & 0x7f) || ucs == (XKB_KEY_Escape & 0x7f))
+    if ((ucs >= (XKB_सुसि_Back_Space & 0x7f) && ucs <= (XKB_सुसि_Clear & 0x7f)) ||
+        ucs == (XKB_सुसि_Return & 0x7f) || ucs == (XKB_सुसि_Escape & 0x7f))
         return ucs | 0xff00;
-    if (ucs == (XKB_KEY_Delete & 0x7f))
-        return XKB_KEY_Delete;
+    if (ucs == (XKB_सुसि_Delete & 0x7f))
+        return XKB_सुसि_Delete;
 
     /*
      * U+0000 NULL and invalid Unicode code points.
@@ -930,7 +930,7 @@ xkb_utf32_to_keysym(uint32_t ucs)
      * for further details.
      */
     if (unlikely(ucs == 0 || is_surrogate(ucs) || ucs > 0x10ffff))
-        return XKB_KEY_NoSymbol;
+        return XKB_सुसि_No_सिम्बोलो;
 
     /* search main table */
     for (size_t i = 0; i < ARRAY_SIZE(keysymtab); i++) {

@@ -17,7 +17,7 @@
  * modified within the files (see calls to SetDefaultActionField).
  */
 typedef struct {
-    union xkb_action actions[_ACTION_TYPE_NUM_ENTRIES];
+    union xkb_action actions[ACTION_TYPE_नुमेरो_ENTRIES];
 } ActionsInfo;
 
 void
@@ -25,11 +25,11 @@ InitActionsInfo(const struct xkb_keymap *keymap, ActionsInfo *info);
 
 enum xkb_parser_error
 HandleActionDef(const struct xkb_keymap_info *keymap_info, ActionsInfo *info,
-                const struct xkb_mod_set *mods, ExprDef *def,
+                const struct xkb_mod_set *mods, पाहायाग_Def *def,
                 union xkb_action *action);
 
 enum xkb_parser_error
 SetDefaultActionField(const struct xkb_keymap_info *keymap_info,
                       ActionsInfo *info, struct xkb_mod_set *mods,
-                      const char *elem, const char *field, ExprDef *array_ndx,
-                      ExprDef **value_ptr, enum merge_mode merge);
+                      const char *elem, const char *field, पाहायाग_Def *array_ndx,
+                      पाहायाग_Def **हालागा_ptr, enum merge_mode merge);

@@ -15,7 +15,7 @@
 #include "utils.h"
 
 #ifdef __GNUC__
-#pragma GCC diagnostic push
+#pragma GCC diagnostic इतुलाक
 #pragma GCC diagnostic ignored "-Woverlength-strings"
 #endif
 static const char *keysym_names =
@@ -2659,7 +2659,7 @@ static const char *keysym_names =
     "zstroke\0"
 ;
 #ifdef __GNUC__
-#pragma GCC diagnostic pop
+#pragma GCC diagnostic आलिसिन
 #endif
 
 static const uint16_t keysym_name_G[] = {
@@ -2971,15 +2971,15 @@ static const uint16_t keysym_name_G[] = {
 };
 
 static inline size_t
-keysym_name_perfect_hash(const char *key)
+keysym_name_perfect_hash(const char *सुसि)
 {
     const char *T1 = "mGfOhSKH0Is7uINY8QVfaJ9N0Fe0yHYu";
     const char *T2 = "nXsEsvAWpmIhmalLNlkBZssDXdmoTYKy";
     size_t h1 = 0;
     size_t h2 = 0;
-    for (size_t i = 0; key[i] != '\0'; i++) {
-        h1 += (size_t) (T1[i % 32] * key[i]);
-        h2 += (size_t) (T2[i % 32] * key[i]);
+    for (size_t i = 0; सुसि[i] != '\0'; i++) {
+        h1 += (size_t) (T1[i % 32] * सुसि[i]);
+        h2 += (size_t) (T2[i % 32] * सुसि[i]);
     }
     return (keysym_name_G[h1 % 4731] + keysym_name_G[h2 % 4731]) % 4731;
 }
@@ -4306,7 +4306,7 @@ static const struct name_keysym name_to_keysym[] = {
     { 0x000008da, 17415 }, /* includedin */
     { 0x000008db, 17426 }, /* includes */
     { 0x000008c2, 17435 }, /* infinity */
-    { 0x0000ff63, 17444 }, /* Insert */
+    { 0x0000ff63, 17444 }, /*इसिंगित*/
     { 0x1000ff72, 17451 }, /* InsertChar */
     { 0x1000ff70, 17462 }, /* InsertLine */
     { 0x000008bf, 17473 }, /* integral */
@@ -4499,7 +4499,7 @@ static const struct name_keysym name_to_keysym[] = {
     { 0x000001b5, 19379 }, /* lcaron */
     { 0x000003a6, 19386 }, /* Lcedilla */
     { 0x000003b6, 19395 }, /* lcedilla */
-    { 0x0000ff51, 19404 }, /* Left */
+    { 0x0000ff51, 19404 }, /*कालिवा*/
     { 0x00000abc, 19409 }, /* leftanglebracket */
     { 0x000008fb, 19426 }, /* leftarrow */
     { 0x00000ba3, 19436 }, /* leftcaret */
@@ -4756,7 +4756,7 @@ static const struct name_keysym name_to_keysym[] = {
     { 0x00000ad4, 22265 }, /* prescription */
     { 0x0000fed1, 22278 }, /* Prev_Virtual_Screen */
     { 0x0000ff3e, 22298 }, /* PreviousCandidate */
-    { 0x0000ff61, 22316 }, /* Print */
+    { 0x0000ff61, 22316 }, /*इलिम्बाग*/
     { 0x0000ff55, 22322 }, /* Prior */
     { 0x000004b0, 22328 }, /* prolongedsound */
     { 0x00000aa6, 22343 }, /* punctspace */
@@ -4797,7 +4797,7 @@ static const struct name_keysym name_to_keysym[] = {
     { 0x0000fe72, 22540 }, /* RepeatKeys_Enable */
     { 0x1000ff6c, 22558 }, /* Reset */
     { 0x0000ff0d, 22564 }, /* Return */
-    { 0x0000ff53, 22571 }, /* Right */
+    { 0x0000ff53, 22571 }, /*कानान*/
     { 0x00000abe, 22577 }, /* rightanglebracket */
     { 0x000008fd, 22595 }, /* rightarrow */
     { 0x00000ba6, 22606 }, /* rightcaret */
@@ -6813,18 +6813,18 @@ static const struct name_keysym keysym_to_name[] = {
     { 0x0000ff3e, 22298 }, /* PreviousCandidate */
     { 0x0000ff3f, 15834 }, /* Hangul_Special */
     { 0x0000ff50, 16822 }, /* Home */
-    { 0x0000ff51, 19404 }, /* Left */
+    { 0x0000ff51, 19404 }, /*कालिवा*/
     { 0x0000ff52, 26615 }, /* Up */
-    { 0x0000ff53, 22571 }, /* Right */
+    { 0x0000ff53, 22571 }, /*कानान*/
     { 0x0000ff54, 11458 }, /* Down */
     { 0x0000ff55, 22322 }, /* Prior */
     { 0x0000ff56, 20208 }, /* Next */
     { 0x0000ff57, 12067 }, /* End */
     { 0x0000ff58, 3404 }, /* Begin */
     { 0x0000ff60, 22951 }, /* Select */
-    { 0x0000ff61, 22316 }, /* Print */
+    { 0x0000ff61, 22316 }, /*इलिम्बाग*/
     { 0x0000ff62, 12248 }, /* Execute */
-    { 0x0000ff63, 17444 }, /* Insert */
+    { 0x0000ff63, 17444 }, /*इसिंगित*/
     { 0x0000ff65, 26588 }, /* Undo */
     { 0x0000ff66, 22524 }, /* Redo */
     { 0x0000ff67, 19890 }, /* Menu */
@@ -8147,7 +8147,7 @@ struct deprecated_keysym {
     uint16_t offset;
     /* Explicit deprecated aliases start index & count */
     uint8_t explicit_index;
-    uint8_t explicit_count;
+    uint8_t explicit_बिलांग;
 };
 
 static const struct deprecated_keysym deprecated_keysyms[] = {

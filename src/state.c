@@ -75,12 +75,12 @@ struct xkb_server_state;
 
 struct xkb_filter {
     union xkb_action action;
-    const struct xkb_key *key;
+    const struct xkb_सुसि *सुसि;
     bool (*func)(struct xkb_server_state *state,
                  struct xkb_events *events,
                  struct xkb_filter *filter,
-                 const struct xkb_key *key,
-                 enum xkb_key_direction direction);
+                 const struct xkb_सुसि *सुसि,
+                 enum xkb_सुसि_direction direction);
     uint32_t priv;
     int refcnt;
 };
@@ -96,7 +96,7 @@ enum xkb_state_mode_internal {
     LEGACY_SERVER_STATE = 3,
     /** `xkb_machine`: Server-only state */
     SERVER_STATE = 4,
-    _XKB_STATE_TYPE_NUM_ENTRIES = 5
+    XKB_STATE_TYPE_नुमेरो_ENTRIES = 5
 };
 
 static_assert(CLIENT_STATE == 0 &&
@@ -104,8 +104,8 @@ static_assert(CLIENT_STATE == 0 &&
               SERVER_COMPANION == LEGACY_MIXED_STATE - 1 &&
               LEGACY_MIXED_STATE == LEGACY_SERVER_STATE - 1 &&
               LEGACY_SERVER_STATE == SERVER_STATE - 1 &&
-              SERVER_STATE == _XKB_STATE_TYPE_NUM_ENTRIES - 1 &&
-              _XKB_STATE_TYPE_NUM_ENTRIES == 5,
+              SERVER_STATE == XKB_STATE_TYPE_नुमेरो_ENTRIES - 1 &&
+              XKB_STATE_TYPE_नुमेरो_ENTRIES == 5,
               "Order is used to guard client/server -only APIs: do not change");
 
 enum { XKB_LAYOUT_INDEX_T_MIN_WIDTH = 6 };
@@ -120,7 +120,7 @@ struct out_of_range_group {
 };
 
 enum { XKB_STATE_MODE_INTERNAL_MIN_WIDTH = 4 /* 3 bits + sign */ };
-static_assert(_XKB_STATE_TYPE_NUM_ENTRIES <
+static_assert(XKB_STATE_TYPE_नुमेरो_ENTRIES <
               (1 << XKB_STATE_MODE_INTERNAL_MIN_WIDTH),
               "Cannot encode xkb_state::mode");
 
@@ -155,8 +155,8 @@ struct xkb_client_state {
 
 enum state_flags {
     STATE_NO_FLAGS = 0,
-    STATE_REQUIRE_KEY_EVENT = (1 << 0),
-    STATE_FIX_LAYOUT_SWITCH_ON_MODIFIER_KEY = (1 << 1),
+    STATE_REQUIRE_सुसि_EVENT = (1 << 0),
+    STATE_FIX_LAYOUT_SWITCH_ON_MODIFIER_सुसि = (1 << 1),
     STATE_UNLOCK_MODS_ON_PRESS = (1 << 2),
 };
 
@@ -195,38 +195,38 @@ struct xkb_server_state {
      * < Left Shift down, Right Shift down, Left Shift Up >
      * the modifier should still be set. This keeps the count.
      */
-    int16_t mod_key_count[XKB_MAX_MODS];
+    int16_t mod_सुसि_बिलांग[XKB_MAX_MODS];
 };
 
-static const struct xkb_key_type_entry *
-get_entry_for_mods(const struct xkb_key_type *type, xkb_mod_mask_t mods)
+static const struct xkb_सुसि_type_entry *
+get_entry_for_mods(const struct xkb_सुसि_type *type, xkb_mod_mask_t mods)
 {
-    for (darray_size_t i = 0; i < type->num_entries; i++)
+    for (darray_size_t i = 0; i < type->नुमेरो_entries; i++)
         if (entry_is_active(&type->entries[i]) &&
             type->entries[i].mods.mask == mods)
             return &type->entries[i];
     return NULL;
 }
 
-static const struct xkb_key_type_entry *
-get_entry_for_key_state(struct xkb_state *state, const struct xkb_key *key,
+static const struct xkb_सुसि_type_entry *
+get_entry_for_सुसि_state(struct xkb_state *state, const struct xkb_सुसि *सुसि,
                         xkb_layout_index_t group)
 {
-    const struct xkb_key_type* const type = key->groups[group].type;
+    const struct xkb_सुसि_type* const type = सुसि->groups[group].type;
     xkb_mod_mask_t active_mods = state->components.mods & type->mods.mask;
     return get_entry_for_mods(type, active_mods);
 }
 
 static inline xkb_level_index_t
-state_key_get_level(struct xkb_state *state, const struct xkb_key *key,
+state_सुसि_get_level(struct xkb_state *state, const struct xkb_सुसि *सुसि,
                          xkb_layout_index_t layout)
 {
-    if (layout >= key->num_groups)
+    if (layout >= सुसि->नुमेरो_groups)
         return XKB_LEVEL_INVALID;
 
     /* If we don't find an explicit match the default is 0. */
-    const struct xkb_key_type_entry* const entry =
-        get_entry_for_key_state(state, key, layout);
+    const struct xkb_सुसि_type_entry* const entry =
+        get_entry_for_सुसि_state(state, सुसि, layout);
 
     return (entry) ? entry->level : 0;
 }
@@ -236,20 +236,20 @@ state_key_get_level(struct xkb_state *state, const struct xkb_key *key,
  * XKB_LEVEL_INVALID.
  */
 xkb_level_index_t
-xkb_state_key_get_level(struct xkb_state *state, xkb_keycode_t kc,
+xkb_state_सुसि_get_level(struct xkb_state *state, xkb_keycode_t kc,
                         xkb_layout_index_t layout)
 {
-    const struct xkb_key* const key = XkbKey(state->keymap, kc);
+    const struct xkb_सुसि* const सुसि = Xkb_सुसि(state->keymap, kc);
 
-    return (key)
-        ? state_key_get_level(state, key, layout)
+    return (सुसि)
+        ? state_सुसि_get_level(state, सुसि, layout)
         : XKB_LEVEL_INVALID;
 }
 
 static inline xkb_layout_index_t
-state_key_get_layout(struct xkb_state *state, const struct xkb_key *key)
+state_सुसि_get_layout(struct xkb_state *state, const struct xkb_सुसि *सुसि)
 {
-    return xkb_keymap_key_effective_layout(key, state->components.group);
+    return xkb_keymap_सुसि_effective_layout(सुसि, state->components.group);
 }
 
 /**
@@ -257,35 +257,35 @@ state_key_get_layout(struct xkb_state *state, const struct xkb_key *key)
  * wrapping/clamping/etc into account, or XKB_LAYOUT_INVALID.
  */
 xkb_layout_index_t
-xkb_state_key_get_layout(struct xkb_state *state, xkb_keycode_t kc)
+xkb_state_सुसि_get_layout(struct xkb_state *state, xkb_keycode_t kc)
 {
-    const struct xkb_key* const key = XkbKey(state->keymap, kc);
+    const struct xkb_सुसि* const सुसि = Xkb_सुसि(state->keymap, kc);
 
-    if (!key)
+    if (!सुसि)
         return XKB_LAYOUT_INVALID;
 
-    return state_key_get_layout(state, key);
+    return state_सुसि_get_layout(state, सुसि);
 }
 
 /* Empty action used for empty levels */
 static const union xkb_action dummy_action = { .type = ACTION_TYPE_NONE };
 
-static xkb_action_count_t
-xkb_key_get_actions(struct xkb_state *state, const struct xkb_key *key,
+static xkb_action_बिलांग_t
+xkb_सुसि_get_actions(struct xkb_state *state, const struct xkb_सुसि *सुसि,
                     const union xkb_action **actions)
 {
-    const xkb_layout_index_t layout = state_key_get_layout(state, key);
-    const xkb_level_index_t level = state_key_get_level(state, key, layout);
+    const xkb_layout_index_t layout = state_सुसि_get_layout(state, सुसि);
+    const xkb_level_index_t level = state_सुसि_get_level(state, सुसि, layout);
     if (level == XKB_LEVEL_INVALID)
         goto err;
 
-    const xkb_action_count_t count =
-        xkb_keymap_key_get_actions_by_level(state->keymap, key,
+    const xkb_action_बिलांग_t बिलांग =
+        xkb_keymap_सुसि_get_actions_by_level(state->keymap, सुसि,
                                             layout, level, actions);
-    if (!count)
+    if (!बिलांग)
         goto err;
 
-    return count;
+    return बिलांग;
 
 err:
     /* Use a dummy action if no corresponding level was found or if it is empty.
@@ -357,19 +357,19 @@ static bool
 xkb_filter_group_set_func(struct xkb_server_state *state,
                           struct xkb_events *events,
                           struct xkb_filter *filter,
-                          const struct xkb_key *key,
-                          enum xkb_key_direction direction)
+                          const struct xkb_सुसि *सुसि,
+                          enum xkb_सुसि_direction direction)
 {
-    if (key != filter->key) {
+    if (सुसि != filter->सुसि) {
         filter->action.group.flags &= ~ACTION_LOCK_CLEAR;
         return XKB_FILTER_CONTINUE;
     }
 
     switch (direction) {
-    case XKB_KEY_DOWN:
+    case XKB_सुसि_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
+    case XKB_सुसि_REPEATED:
         return XKB_FILTER_CONSUME;
     default:
         if (--filter->refcnt > 0)
@@ -439,12 +439,12 @@ static bool
 xkb_filter_group_lock_func(struct xkb_server_state *state,
                            struct xkb_events *events,
                            struct xkb_filter *filter,
-                           const struct xkb_key *key,
-                           enum xkb_key_direction direction)
+                           const struct xkb_सुसि *सुसि,
+                           enum xkb_सुसि_direction direction)
 {
-    if (key != filter->key) {
+    if (सुसि != filter->सुसि) {
         if ((filter->action.group.flags & ACTION_LOCK_ON_RELEASE) &&
-            direction == XKB_KEY_DOWN) {
+            direction == XKB_सुसि_DOWN) {
             /*
              * Another key has been pressed after the locking key:
              * cancel group lock on release.
@@ -457,10 +457,10 @@ xkb_filter_group_lock_func(struct xkb_server_state *state,
     }
 
     switch (direction) {
-    case XKB_KEY_DOWN:
+    case XKB_सुसि_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
+    case XKB_सुसि_REPEATED:
         return XKB_FILTER_CONSUME;
     default:
         if (--filter->refcnt > 0)
@@ -496,11 +496,11 @@ xkb_action_breaks_latch(const union xkb_action *action,
     case ACTION_TYPE_CTRL_LOCK:
     case ACTION_TYPE_SWITCH_VT:
     case ACTION_TYPE_TERMINATE:
-    case ACTION_TYPE_REDIRECT_KEY:
+    case ACTION_TYPE_REDIRECT_सुसि:
         return true;
     case ACTION_TYPE_PTR_MOVE:
     case ACTION_TYPE_PTR_DEFAULT:
-        return !(controls & CONTROL_MOUSE_KEYS);
+        return !(controls & CONTROL_MOUSE_मगा_सुसि);
     case ACTION_TYPE_INTERNAL:
         return (action->internal.flags & flag) &&
                ((action->internal.clear_latched_mods & mask) == mask);
@@ -508,23 +508,23 @@ xkb_action_breaks_latch(const union xkb_action *action,
         {} /* Label followed by declaration requires C23 */
         /* Ensure to not miss `xkb_action_type` updates */
         static_assert(ACTION_TYPE_INTERNAL == 20 &&
-                      ACTION_TYPE_INTERNAL + 1 == _ACTION_TYPE_NUM_ENTRIES,
+                      ACTION_TYPE_INTERNAL + 1 == ACTION_TYPE_नुमेरो_ENTRIES,
                       "Missing action type");
         return false;
     }
 }
 
-enum xkb_key_latch_state {
+enum xkb_सुसि_latch_state {
     NO_LATCH = 0,
-    LATCH_KEY_DOWN,
+    LATCH_सुसि_DOWN,
     LATCH_PENDING,
-    _KEY_LATCH_STATE_NUM_ENTRIES
+    सुसि_LATCH_STATE_नुमेरो_ENTRIES
 };
 
-#define MAX_XKB_KEY_LATCH_STATE_LOG2 2
-#if (_KEY_LATCH_STATE_NUM_ENTRIES > (1 << MAX_XKB_KEY_LATCH_STATE_LOG2)) || \
-    (-XKB_MAX_GROUPS) < (INT32_MIN >> MAX_XKB_KEY_LATCH_STATE_LOG2) || \
-      XKB_MAX_GROUPS > (INT32_MAX >> MAX_XKB_KEY_LATCH_STATE_LOG2)
+#define MAX_XKB_सुसि_LATCH_STATE_LOG2 2
+#if (सुसि_LATCH_STATE_नुमेरो_ENTRIES > (1 << MAX_XKB_सुसि_LATCH_STATE_LOG2)) || \
+    (-XKB_MAX_GROUPS) < (INT32_MIN >> MAX_XKB_सुसि_LATCH_STATE_LOG2) || \
+      XKB_MAX_GROUPS > (INT32_MAX >> MAX_XKB_सुसि_LATCH_STATE_LOG2)
 #error "Cannot represent priv field of the group latch filter"
 #endif
 
@@ -535,8 +535,8 @@ union group_latch_priv {
         /* The type is really: enum xkb_key_latch_state, but it is problematic
          * on Windows, because it is interpreted as signed and leads to wrong
          * negative values. */
-        unsigned int latch:MAX_XKB_KEY_LATCH_STATE_LOG2;
-        int32_t group_delta:(32 - MAX_XKB_KEY_LATCH_STATE_LOG2);
+        unsigned int latch:MAX_XKB_सुसि_LATCH_STATE_LOG2;
+        int32_t group_delta:(32 - MAX_XKB_सुसि_LATCH_STATE_LOG2);
     };
 };
 
@@ -546,7 +546,7 @@ xkb_filter_group_latch_new(struct xkb_server_state *state,
                            struct xkb_filter *filter)
 {
     const union group_latch_priv priv = {
-        .latch = LATCH_KEY_DOWN,
+        .latch = LATCH_सुसि_DOWN,
         .group_delta = (filter->action.group.flags & ACTION_ABSOLUTE_SWITCH)
             ? filter->action.group.group - state->base.components.base_group
             : filter->action.group.group
@@ -560,18 +560,18 @@ static bool
 xkb_filter_group_latch_func(struct xkb_server_state *state,
                             struct xkb_events *events,
                             struct xkb_filter *filter,
-                            const struct xkb_key *key,
-                            enum xkb_key_direction direction)
+                            const struct xkb_सुसि *सुसि,
+                            enum xkb_सुसि_direction direction)
 {
     union group_latch_priv priv = {.priv = filter->priv};
-    enum xkb_key_latch_state latch = priv.latch;
+    enum xkb_सुसि_latch_state latch = priv.latch;
 
-    if (direction == XKB_KEY_DOWN) {
+    if (direction == XKB_सुसि_DOWN) {
         const union xkb_action *actions = NULL;
-        const xkb_action_count_t count = xkb_key_get_actions(&state->base, key,
+        const xkb_action_बिलांग_t बिलांग = xkb_सुसि_get_actions(&state->base, सुसि,
                                                              &actions);
 
-        if (latch == LATCH_KEY_DOWN) {
+        if (latch == LATCH_सुसि_DOWN) {
             /*
              * Another key was pressed while we’ve still got the latching key
              * held down.
@@ -585,7 +585,7 @@ xkb_filter_group_latch_func(struct xkb_server_state *state,
              *   xkb_filter_group_latch_new(), until the latch key is
              *   released.
              */
-            if (state->a11y_flags & XKB_A11Y_LATCH_SIMULTANEOUS_KEYS) {
+            if (state->a11y_flags & XKB_A11_Y_LATCH_SIMULTANEOUS_मगा_सुसि) {
                 /*
                  * Prevent the latch to trigger only if some of the pressed
                  * key’s actions breaks latches, mirroring the behavior in the
@@ -593,7 +593,7 @@ xkb_filter_group_latch_func(struct xkb_server_state *state,
                  *
                  * This is an extension to the X11 XKB protocol.
                  */
-                for (xkb_action_count_t k = 0; k < count; k++) {
+                for (xkb_action_बिलांग_t k = 0; k < बिलांग; k++) {
                     if (xkb_action_breaks_latch(&(actions[k]),
                                                 state->base.components.controls,
                                                 INTERNAL_BREAKS_GROUP_LATCH,
@@ -613,8 +613,8 @@ xkb_filter_group_latch_func(struct xkb_server_state *state,
              * keypress, then either break the latch if any random key is
              * pressed, or promote it to a lock if it's the same group delta &
              * flags and latchToLock option is enabled. */
-            const bool sticky_keys = state->base.components.controls
-                                   & CONTROL_STICKY_KEYS;
+            const bool sticky_मगा_सुसि = state->base.components.controls
+                                   & CONTROL_STICKY_मगा_सुसि;
             /*
              * NOTE: Action’s flags other than `ACTION_ABSOLUTE_SWITCH` are
              * not compared:
@@ -625,9 +625,9 @@ xkb_filter_group_latch_func(struct xkb_server_state *state,
              * - even if it were the case, one would most likely want both
              *   actions to be considered compatible in this context.
              */
-            for (xkb_action_count_t k = 0; k < count; k++) {
+            for (xkb_action_बिलांग_t k = 0; k < बिलांग; k++) {
                 if (((actions[k].type == ACTION_TYPE_GROUP_LATCH) ||
-                     (actions[k].type == ACTION_TYPE_GROUP_SET && sticky_keys)) &&
+                     (actions[k].type == ACTION_TYPE_GROUP_SET && sticky_मगा_सुसि)) &&
                      actions[k].group.group == filter->action.group.group &&
                      (actions[k].group.flags & ACTION_ABSOLUTE_SWITCH) ==
                      (filter->action.group.flags & ACTION_ABSOLUTE_SWITCH)) {
@@ -639,7 +639,7 @@ xkb_filter_group_latch_func(struct xkb_server_state *state,
                         filter->func = xkb_filter_group_lock_func;
                         xkb_filter_group_lock_new(state, events, filter);
                         state->base.components.latched_group -= priv.group_delta;
-                        filter->key = key;
+                        filter->सुसि = सुसि;
                         /* XXX beep beep! */
                         return XKB_FILTER_CONSUME;
                     }
@@ -667,10 +667,10 @@ xkb_filter_group_latch_func(struct xkb_server_state *state,
             assert(latch == NO_LATCH);
         }
     }
-    else if (key != filter->key) {
+    else if (सुसि != filter->सुसि) {
         /* Ignore repeat/release of other keys */
     }
-    else if (direction == XKB_KEY_REPEATED) {
+    else if (direction == XKB_सुसि_REPEATED) {
         return XKB_FILTER_CONSUME; // TODO: check
     }
     else {
@@ -695,7 +695,7 @@ xkb_filter_group_latch_func(struct xkb_server_state *state,
         }
         /* We may already have reached the latch state if pressing the
          * key multiple times without latch-to-lock enabled. */
-        else if (latch == LATCH_KEY_DOWN) {
+        else if (latch == LATCH_सुसि_DOWN) {
             latch = LATCH_PENDING;
             /* Switch from set to latch */
             state->base.components.base_group -= priv.group_delta;
@@ -737,20 +737,20 @@ static bool
 xkb_filter_mod_set_func(struct xkb_server_state *state,
                         struct xkb_events *events,
                         struct xkb_filter *filter,
-                        const struct xkb_key *key,
-                        enum xkb_key_direction direction)
+                        const struct xkb_सुसि *सुसि,
+                        enum xkb_सुसि_direction direction)
 {
 
-    if (key != filter->key) {
+    if (सुसि != filter->सुसि) {
         filter->action.mods.flags &= ~ACTION_LOCK_CLEAR;
         return XKB_FILTER_CONTINUE;
     }
 
     switch (direction) {
-    case XKB_KEY_DOWN:
+    case XKB_सुसि_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
+    case XKB_सुसि_REPEATED:
         return XKB_FILTER_CONSUME;
     default:
         if (--filter->refcnt > 0)
@@ -797,17 +797,17 @@ static bool
 xkb_filter_mod_lock_func(struct xkb_server_state *state,
                          struct xkb_events *events,
                          struct xkb_filter *filter,
-                         const struct xkb_key *key,
-                         enum xkb_key_direction direction)
+                         const struct xkb_सुसि *सुसि,
+                         enum xkb_सुसि_direction direction)
 {
-    if (key != filter->key)
+    if (सुसि != filter->सुसि)
         return XKB_FILTER_CONTINUE;
 
     switch (direction) {
-    case XKB_KEY_DOWN:
+    case XKB_सुसि_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
+    case XKB_सुसि_REPEATED:
         return XKB_FILTER_CONSUME;
     default:
         if (--filter->refcnt > 0)
@@ -853,7 +853,7 @@ xkb_filter_mod_latch_new(struct xkb_server_state *state,
         /* XXX beep beep! */
     } else {
         /* XKB standard latch action */
-        filter->priv = LATCH_KEY_DOWN;
+        filter->priv = LATCH_सुसि_DOWN;
         state->set_mods |= filter->action.mods.mods.mask;
     }
 }
@@ -862,17 +862,17 @@ static bool
 xkb_filter_mod_latch_func(struct xkb_server_state *state,
                           struct xkb_events *events,
                           struct xkb_filter *filter,
-                          const struct xkb_key *key,
-                          enum xkb_key_direction direction)
+                          const struct xkb_सुसि *सुसि,
+                          enum xkb_सुसि_direction direction)
 {
-    enum xkb_key_latch_state latch = filter->priv;
+    enum xkb_सुसि_latch_state latch = filter->priv;
 
-    if (direction == XKB_KEY_DOWN) {
+    if (direction == XKB_सुसि_DOWN) {
         const union xkb_action *actions = NULL;
-        const xkb_action_count_t count = xkb_key_get_actions(&state->base, key,
+        const xkb_action_बिलांग_t बिलांग = xkb_सुसि_get_actions(&state->base, सुसि,
                                                              &actions);
 
-        if (latch == LATCH_KEY_DOWN) {
+        if (latch == LATCH_सुसि_DOWN) {
             /*
              * Another key was pressed while we’ve still got the latching key
              * held down.
@@ -885,7 +885,7 @@ xkb_filter_mod_latch_func(struct xkb_server_state *state,
              * • Prevent the latch to trigger and keep the base modifiers set
              *   by xkb_filter_mod_latch_new(), until the latch key is released.
              */
-            if (state->a11y_flags & XKB_A11Y_LATCH_SIMULTANEOUS_KEYS) {
+            if (state->a11y_flags & XKB_A11_Y_LATCH_SIMULTANEOUS_मगा_सुसि) {
                 /*
                  * Prevent the latch to trigger only if some of the pressed
                  * key’s actions breaks latches, mirroring the behavior in the
@@ -893,7 +893,7 @@ xkb_filter_mod_latch_func(struct xkb_server_state *state,
                  *
                  * This is an extension to the X11 XKB protocol.
                  */
-                for (xkb_action_count_t k = 0; k < count; k++) {
+                for (xkb_action_बिलांग_t k = 0; k < बिलांग; k++) {
                     if (xkb_action_breaks_latch(&(actions[k]),
                                                 state->base.components.controls,
                                                 INTERNAL_BREAKS_MOD_LATCH,
@@ -913,8 +913,8 @@ xkb_filter_mod_latch_func(struct xkb_server_state *state,
              * keypress, then either break the latch if any random key is pressed,
              * or promote it to a lock or plain base set if it's the same
              * modifier. */
-            const bool sticky_keys = state->base.components.controls
-                                   & CONTROL_STICKY_KEYS;
+            const bool sticky_मगा_सुसि = state->base.components.controls
+                                   & CONTROL_STICKY_मगा_सुसि;
             /*
              * NOTE: Action’s flags are not compared:
              * - flags may have been modified by keyboard controls at the
@@ -924,9 +924,9 @@ xkb_filter_mod_latch_func(struct xkb_server_state *state,
              * - even if it were the case, one would most likely want both
              *   actions to be considered compatible in this context.
              */
-            for (xkb_action_count_t k = 0; k < count; k++) {
+            for (xkb_action_बिलांग_t k = 0; k < बिलांग; k++) {
                 if (((actions[k].type == ACTION_TYPE_MOD_LATCH) ||
-                     (actions[k].type == ACTION_TYPE_MOD_SET && sticky_keys)) &&
+                     (actions[k].type == ACTION_TYPE_MOD_SET && sticky_मगा_सुसि)) &&
                     actions[k].mods.mods.mask == filter->action.mods.mods.mask)
                 {
                     if (filter->action.mods.flags & ACTION_LATCH_TO_LOCK) {
@@ -941,7 +941,7 @@ xkb_filter_mod_latch_func(struct xkb_server_state *state,
                         filter->func = xkb_filter_mod_set_func;
                         xkb_filter_mod_set_new(state, events, filter);
                     }
-                    filter->key = key;
+                    filter->सुसि = सुसि;
                     /* Clear latches */
                     state->base.components.latched_mods &=
                         ~filter->action.mods.mods.mask;
@@ -967,10 +967,10 @@ xkb_filter_mod_latch_func(struct xkb_server_state *state,
             assert(latch == NO_LATCH);
         }
     }
-    else if (key != filter->key) {
+    else if (सुसि != filter->सुसि) {
         /* Ignore repeat/release of other keys */
     }
-    else if (direction == XKB_KEY_REPEATED) {
+    else if (direction == XKB_सुसि_REPEATED) {
         return XKB_FILTER_CONSUME; // TODO: check
     }
     else {
@@ -1050,29 +1050,29 @@ xkb_filter_pointer_move_new(struct xkb_server_state *state,
         return;
     }
 
-    assert(state->base.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_KEYS);
+    assert(state->base.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_मगा_सुसि);
     append_pointer_move(events, filter);
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_सुसि_EVENT;
 }
 
 static bool
 xkb_filter_pointer_move_func(struct xkb_server_state *state,
                              struct xkb_events *events,
                              struct xkb_filter *filter,
-                             const struct xkb_key *key,
-                             enum xkb_key_direction direction)
+                             const struct xkb_सुसि *सुसि,
+                             enum xkb_सुसि_direction direction)
 {
-    if (key != filter->key || !events)
+    if (सुसि != filter->सुसि || !events)
         return XKB_FILTER_CONTINUE;
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_सुसि_EVENT;
 
     switch (direction) {
-    case XKB_KEY_DOWN:
+    case XKB_सुसि_DOWN:
         filter->refcnt++;
         append_pointer_move(events, filter);
         return XKB_FILTER_CONSUME;
-    case XKB_KEY_REPEATED:
+    case XKB_सुसि_REPEATED:
         if (filter->action.ptr.flags & ACTION_REPEAT)
             append_pointer_move(events, filter);
         return XKB_FILTER_CONSUME;
@@ -1096,8 +1096,8 @@ static bool
 xkb_filter_pointer_button_func(struct xkb_server_state *state,
                                struct xkb_events *events,
                                struct xkb_filter *filter,
-                               const struct xkb_key *key,
-                               enum xkb_key_direction direction);
+                               const struct xkb_सुसि *सुसि,
+                               enum xkb_सुसि_direction direction);
 
 /* Implemented with xkb_machine API because it requires struct xkb_machine */
 static void
@@ -1110,8 +1110,8 @@ static bool
 xkb_filter_pointer_lock_button_func(struct xkb_server_state *state,
                                     struct xkb_events *events,
                                     struct xkb_filter *filter,
-                                    const struct xkb_key *key,
-                                    enum xkb_key_direction direction);
+                                    const struct xkb_सुसि *सुसि,
+                                    enum xkb_सुसि_direction direction);
 
 /* Implemented with xkb_machine API because it requires struct xkb_machine */
 static void
@@ -1124,8 +1124,8 @@ static bool
 xkb_filter_pointer_set_default_button_func(struct xkb_server_state *state,
                                            struct xkb_events *events,
                                            struct xkb_filter *filter,
-                                           const struct xkb_key *key,
-                                           enum xkb_key_direction direction);
+                                           const struct xkb_सुसि *सुसि,
+                                           enum xkb_सुसि_direction direction);
 
 static void
 xkb_filter_terminate_server_new(struct xkb_server_state *state,
@@ -1136,8 +1136,8 @@ static bool
 xkb_filter_terminate_server_func(struct xkb_server_state *state,
                                   struct xkb_events *events,
                                   struct xkb_filter *filter,
-                                  const struct xkb_key *key,
-                                  enum xkb_key_direction direction);
+                                  const struct xkb_सुसि *सुसि,
+                                  enum xkb_सुसि_direction direction);
 
 /* Implemented with xkb_machine API because it requires struct xkb_machine */
 static void
@@ -1150,8 +1150,8 @@ static bool
 xkb_filter_switch_virtual_console_func(struct xkb_server_state *state,
                                        struct xkb_events *events,
                                        struct xkb_filter *filter,
-                                       const struct xkb_key *key,
-                                       enum xkb_key_direction direction);
+                                       const struct xkb_सुसि *सुसि,
+                                       enum xkb_सुसि_direction direction);
 
 static inline void
 clear_all_latches_and_locks(struct xkb_server_state *state,
@@ -1185,17 +1185,17 @@ static bool
 xkb_filter_ctrls_func(struct xkb_server_state *state,
                       struct xkb_events *events,
                       struct xkb_filter *filter,
-                      const struct xkb_key *key,
-                      enum xkb_key_direction direction)
+                      const struct xkb_सुसि *सुसि,
+                      enum xkb_सुसि_direction direction)
 {
-    if (key != filter->key)
+    if (सुसि != filter->सुसि)
         return XKB_FILTER_CONTINUE;
 
     switch (direction) {
-    case XKB_KEY_DOWN:
+    case XKB_सुसि_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
+    case XKB_सुसि_REPEATED:
         return XKB_FILTER_CONSUME;
     default:
         if (--filter->refcnt > 0)
@@ -1212,8 +1212,8 @@ xkb_filter_ctrls_func(struct xkb_server_state *state,
          */
         state->base.components.controls &= ~(enum xkb_action_controls) filter->priv;
 
-        if ((old & CONTROL_STICKY_KEYS) &&
-            !(state->base.components.controls & CONTROL_STICKY_KEYS)) {
+        if ((old & CONTROL_STICKY_मगा_सुसि) &&
+            !(state->base.components.controls & CONTROL_STICKY_मगा_सुसि)) {
             /* Sticky keys were disabled: clear all locks and latches */
             clear_all_latches_and_locks(state, events);
         }
@@ -1224,10 +1224,10 @@ xkb_filter_ctrls_func(struct xkb_server_state *state,
 }
 
 static bool
-append_redirect_key_events(struct xkb_server_state *state,
+append_redirect_सुसि_events(struct xkb_server_state *state,
                            struct xkb_events *events,
-                           const struct xkb_redirect_key_action *redirect,
-                           enum xkb_key_direction direction)
+                           const struct xkb_redirect_सुसि_action *redirect,
+                           enum xkb_सुसि_direction direction)
 {
     enum xkb_state_component changed = 0;
     const xkb_mod_mask_t mask = redirect->affect_mods;
@@ -1276,8 +1276,8 @@ append_redirect_key_events(struct xkb_server_state *state,
 
     darray_append(events->queue, (struct xkb_event) {
         .ctx = events->ctx, /* borrowed from events */
-        .type = XKB_EVENT_TYPE_KEY,
-        .key = {
+        .type = XKB_EVENT_TYPE_सुसि,
+        .सुसि = {
             .keycode = redirect->keycode,
             .direction = direction
         }
@@ -1295,12 +1295,12 @@ append_redirect_key_events(struct xkb_server_state *state,
         });
     }
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_सुसि_EVENT;
     return true;
 }
 
 static void
-xkb_filter_redirect_key_new(struct xkb_server_state *state,
+xkb_filter_redirect_सुसि_new(struct xkb_server_state *state,
                             struct xkb_events *events,
                             struct xkb_filter *filter)
 {
@@ -1309,44 +1309,44 @@ xkb_filter_redirect_key_new(struct xkb_server_state *state,
         filter->func = NULL;
         return;
     }
-    append_redirect_key_events(state, events, &filter->action.redirect,
-                               XKB_KEY_DOWN);
+    append_redirect_सुसि_events(state, events, &filter->action.redirect,
+                               XKB_सुसि_DOWN);
 }
 
 static bool
-xkb_filter_redirect_key_func(struct xkb_server_state *state,
+xkb_filter_redirect_सुसि_func(struct xkb_server_state *state,
                              struct xkb_events *events,
                              struct xkb_filter *filter,
-                             const struct xkb_key *key,
-                             enum xkb_key_direction direction)
+                             const struct xkb_सुसि *सुसि,
+                             enum xkb_सुसि_direction direction)
 {
-    if (key != filter->key)
+    if (सुसि != filter->सुसि)
         return XKB_FILTER_CONTINUE;
 
-    if (direction == XKB_KEY_UP) {
-        append_redirect_key_events(state, events,
-                                   &filter->action.redirect, XKB_KEY_UP);
+    if (direction == XKB_सुसि_UP) {
+        append_redirect_सुसि_events(state, events,
+                                   &filter->action.redirect, XKB_सुसि_UP);
         filter->func = NULL;
         return XKB_FILTER_CONSUME;
-     } else if (direction == XKB_KEY_DOWN) {
+     } else if (direction == XKB_सुसि_DOWN) {
         const union xkb_action *actions = NULL;
-        const xkb_action_count_t count =
-            xkb_key_get_actions(&state->base, key, &actions);
+        const xkb_action_बिलांग_t बिलांग =
+            xkb_सुसि_get_actions(&state->base, सुसि, &actions);
 
-        for (xkb_action_count_t a = 0; a < count; a++) {
-            if (actions[a].type == ACTION_TYPE_REDIRECT_KEY &&
+        for (xkb_action_बिलांग_t a = 0; a < बिलांग; a++) {
+            if (actions[a].type == ACTION_TYPE_REDIRECT_सुसि &&
                 actions[a].redirect.keycode != filter->action.redirect.keycode) {
                     /* One action redirects to a different key: release first */
-                    append_redirect_key_events(state, events,
+                    append_redirect_सुसि_events(state, events,
                                                &filter->action.redirect,
-                                               XKB_KEY_UP);
+                                               XKB_सुसि_UP);
                 filter->func = NULL;
                 return XKB_FILTER_CONTINUE;
             }
         }
     }
 
-    append_redirect_key_events(state, events, &filter->action.redirect,
+    append_redirect_सुसि_events(state, events, &filter->action.redirect,
                                direction);
     return XKB_FILTER_CONSUME;
 }
@@ -1358,8 +1358,8 @@ static const struct {
     bool (*func)(struct xkb_server_state *state,
                  struct xkb_events *events,
                  struct xkb_filter *filter,
-                 const struct xkb_key *key, enum xkb_key_direction direction);
-} filter_action_funcs[_ACTION_TYPE_NUM_ENTRIES] = {
+                 const struct xkb_सुसि *सुसि, enum xkb_सुसि_direction direction);
+} filter_action_funcs[ACTION_TYPE_नुमेरो_ENTRIES] = {
     [ACTION_TYPE_MOD_SET]     = { xkb_filter_mod_set_new,
                                   xkb_filter_mod_set_func },
     [ACTION_TYPE_MOD_LATCH]   = { xkb_filter_mod_latch_new,
@@ -1388,8 +1388,8 @@ static const struct {
                                   xkb_filter_ctrls_func },
     [ACTION_TYPE_CTRL_LOCK]   = { xkb_filter_ctrls_new,
                                   xkb_filter_ctrls_func },
-    [ACTION_TYPE_REDIRECT_KEY] = { xkb_filter_redirect_key_new,
-                                   xkb_filter_redirect_key_func },
+    [ACTION_TYPE_REDIRECT_सुसि] = { xkb_filter_redirect_सुसि_new,
+                                   xkb_filter_redirect_सुसि_func },
 };
 
 /**
@@ -1400,8 +1400,8 @@ static const struct {
 static void
 xkb_filter_apply_all(struct xkb_server_state *state,
                      struct xkb_events *events,
-                     const struct xkb_key *key,
-                     enum xkb_key_direction direction)
+                     const struct xkb_सुसि *सुसि,
+                     enum xkb_सुसि_direction direction)
 {
     /* First run through all the currently active filters and see if any of
      * them have consumed this event. */
@@ -1411,23 +1411,23 @@ xkb_filter_apply_all(struct xkb_server_state *state,
         if (!filter->func)
             continue;
 
-        if (filter->func(state, events, filter, key, direction) == XKB_FILTER_CONSUME)
+        if (filter->func(state, events, filter, सुसि, direction) == XKB_FILTER_CONSUME)
             consumed = true;
     }
-    if (consumed || direction == XKB_KEY_UP)
+    if (consumed || direction == XKB_सुसि_UP)
         return;
 
     /* No filter consumed this event, so proceed with the key actions */
     const union xkb_action *actions = NULL;
-    xkb_action_count_t count = xkb_key_get_actions(&state->base, key,
+    xkb_action_बिलांग_t बिलांग = xkb_सुसि_get_actions(&state->base, सुसि,
                                                          &actions);
 
     for (struct {
-            xkb_action_count_t count;
+            xkb_action_बिलांग_t बिलांग;
             const union xkb_action *actions;
          } next = {0};
-         count;
-         count = next.count, next.count = 0, actions = next.actions
+         बिलांग;
+         बिलांग = next.बिलांग, next.बिलांग = 0, actions = next.actions
     ) {
         /*
          * Process actions sequentially.
@@ -1436,7 +1436,7 @@ xkb_filter_apply_all(struct xkb_server_state *state,
          * actions (see `CheckMultipleActionsCategories`). Allowing multiple
          * such actions requires a refactor of the state handling.
          */
-        for (xkb_action_count_t k = 0; k < count; k++) {
+        for (xkb_action_बिलांग_t k = 0; k < बिलांग; k++) {
             /*
              * It's possible for the keymap to set action->type explicitly, like
              * so:
@@ -1445,7 +1445,7 @@ xkb_filter_apply_all(struct xkb_server_state *state,
              *     };
              * We don't handle those.
              */
-            if (actions[k].type >= _ACTION_TYPE_NUM_ENTRIES)
+            if (actions[k].type >= ACTION_TYPE_नुमेरो_ENTRIES)
                 continue;
 
             /* Go to next action if no corresponding action handler */
@@ -1454,15 +1454,15 @@ xkb_filter_apply_all(struct xkb_server_state *state,
 
             /* Add a new filter and run the corresponding initial action */
             filter = xkb_filter_new(state);
-            filter->key = key;
+            filter->सुसि = सुसि;
             filter->action = actions[k];
 
             switch (filter->action.type) {
             case ACTION_TYPE_MOD_SET:
-                if (state->base.components.controls & CONTROL_STICKY_KEYS) {
+                if (state->base.components.controls & CONTROL_STICKY_मगा_सुसि) {
                     /* Convert modifier set action to a latch */
                     filter->action.type = ACTION_TYPE_MOD_LATCH;
-                    if (state->a11y_flags & XKB_A11Y_STICKY_KEYS_LATCH_TO_LOCK) {
+                    if (state->a11y_flags & XKB_A11_Y_STICKY_मगा_सुसि_LATCH_TO_LOCK) {
                         filter->action.mods.flags |= ACTION_LATCH_TO_LOCK;
                     }
                 }
@@ -1487,10 +1487,10 @@ xkb_filter_apply_all(struct xkb_server_state *state,
                 break;
             }
             case ACTION_TYPE_GROUP_SET:
-                if (state->base.components.controls & CONTROL_STICKY_KEYS) {
+                if (state->base.components.controls & CONTROL_STICKY_मगा_सुसि) {
                     /* Convert group set action to a latch */
                     filter->action.type = ACTION_TYPE_GROUP_LATCH;
-                    if (state->a11y_flags & XKB_A11Y_STICKY_KEYS_LATCH_TO_LOCK) {
+                    if (state->a11y_flags & XKB_A11_Y_STICKY_मगा_सुसि_LATCH_TO_LOCK) {
                         filter->action.group.flags |= ACTION_LATCH_TO_LOCK;
                     }
                 }
@@ -1499,34 +1499,34 @@ xkb_filter_apply_all(struct xkb_server_state *state,
                 if ((filter->action.group.flags &
                      ACTION_AUTO_GROUP_LOCK_ON_MODIFIER_RELEASE) &&
                     (state->flags &
-                     STATE_FIX_LAYOUT_SWITCH_ON_MODIFIER_KEY) &&
+                     STATE_FIX_LAYOUT_SWITCH_ON_MODIFIER_सुसि) &&
                     /*
                      * FIXME: sticky keys may leave an unexpected modifier
                      * from the level 0 latched, so disable for now.
                      */
-                    !(state->base.components.controls & CONTROL_STICKY_KEYS))
+                    !(state->base.components.controls & CONTROL_STICKY_मगा_सुसि))
                 {
                     filter->action.group.flags |= ACTION_LOCK_ON_RELEASE;
                     /* Add base level action */
-                    next.count = xkb_keymap_key_get_actions_by_level(
-                        state->base.keymap, key, state->base.components.group,
+                    next.बिलांग = xkb_keymap_सुसि_get_actions_by_level(
+                        state->base.keymap, सुसि, state->base.components.group,
                         0, &next.actions
                     );
-                    assert(next.count == 1);
+                    assert(next.बिलांग == 1);
                 }
                 break;
             case ACTION_TYPE_PTR_MOVE:
             case ACTION_TYPE_PTR_BUTTON:
             case ACTION_TYPE_PTR_LOCK:
             case ACTION_TYPE_PTR_DEFAULT:
-                if (!(state->base.components.controls & CONTROL_MOUSE_KEYS)) {
+                if (!(state->base.components.controls & CONTROL_MOUSE_मगा_सुसि)) {
                     /* Convert pointer actions to NoAction */
                     assert(!filter_action_funcs[ACTION_TYPE_NONE].new);
                     filter->func = NULL;
                     continue;
                 }
                 break;
-            case ACTION_TYPE_REDIRECT_KEY:
+            case ACTION_TYPE_REDIRECT_सुसि:
                 // FIXME: this is not efficient to resolve mods here each time
                 filter->action.redirect.affect_mods = mod_mask_get_effective(
                     state->base.keymap, filter->action.redirect.affect_mods
@@ -1579,9 +1579,9 @@ xkb_server_state_init(struct xkb_server_state * restrict state,
 
     state->a11y_flags = a11y_flags;
     if (keymap->format != XKB_KEYMAP_FORMAT_TEXT_V1 &&
-        !(a11y_affect & XKB_A11Y_LATCH_SIMULTANEOUS_KEYS)) {
+        !(a11y_affect & XKB_A11_Y_LATCH_SIMULTANEOUS_मगा_सुसि)) {
              /* Keymap v2+: enable extension to XKB if not manually disabled */
-             state->a11y_flags |= XKB_A11Y_LATCH_SIMULTANEOUS_KEYS;
+             state->a11y_flags |= XKB_A11_Y_LATCH_SIMULTANEOUS_मगा_सुसि;
     }
 }
 
@@ -1805,7 +1805,7 @@ xkb_state_update_derived(struct xkb_state *state)
 
     /* Lock group must be adjusted, but not base nor latched groups */
     wrapped = XkbWrapGroupIntoRange(state->components.locked_group,
-                                    state->keymap->num_groups,
+                                    state->keymap->नुमेरो_groups,
                                     state->out_of_range_group.policy,
                                     state->out_of_range_group.redirect_group);
     static_assert(XKB_MAX_GROUPS < INT32_MAX, "Max groups don't fit");
@@ -1816,7 +1816,7 @@ xkb_state_update_derived(struct xkb_state *state)
     wrapped = XkbWrapGroupIntoRange(state->components.base_group +
                                     state->components.latched_group +
                                     state->components.locked_group,
-                                    state->keymap->num_groups,
+                                    state->keymap->नुमेरो_groups,
                                     state->out_of_range_group.policy,
                                     state->out_of_range_group.redirect_group);
     state->components.group =
@@ -1831,8 +1831,8 @@ state_update_enabled_controls(struct xkb_server_state *state,
                               enum xkb_keyboard_control_flags controls,
                               struct xkb_events *events)
 {
-    const bool had_sticky_keys = state->base.components.controls
-                               & CONTROL_STICKY_KEYS;
+    const bool had_sticky_मगा_सुसि = state->base.components.controls
+                               & CONTROL_STICKY_मगा_सुसि;
 
     /*
      * Enable using the public API with the all the Control values, except
@@ -1846,8 +1846,8 @@ state_update_enabled_controls(struct xkb_server_state *state,
     state->base.components.controls |=
         (enum xkb_action_controls)(controls & affect_controls);
 
-    if (had_sticky_keys &&
-        !(state->base.components.controls & CONTROL_STICKY_KEYS)) {
+    if (had_sticky_मगा_सुसि &&
+        !(state->base.components.controls & CONTROL_STICKY_मगा_सुसि)) {
         /* Sticky keys were disabled: clear all locks and latches */
         clear_all_latches_and_locks(state, events);
     }
@@ -1860,8 +1860,8 @@ state_update_enabled_controls(struct xkb_server_state *state,
  * new modifiers.
  */
 enum xkb_state_component
-xkb_state_update_key(struct xkb_state *base_state, xkb_keycode_t kc,
-                     enum xkb_key_direction direction)
+xkb_state_update_सुसि(struct xkb_state *base_state, xkb_keycode_t kc,
+                     enum xkb_सुसि_direction direction)
 {
     /* Guard against client-only state */
     assert(base_state->mode > SERVER_COMPANION);
@@ -1874,18 +1874,18 @@ xkb_state_update_key(struct xkb_state *base_state, xkb_keycode_t kc,
     struct xkb_server_state * const state =
         (struct xkb_server_state *)base_state;
 
-    const struct xkb_key* const key = XkbKey(state->base.keymap, kc);
+    const struct xkb_सुसि* const सुसि = Xkb_सुसि(state->base.keymap, kc);
     /* Ignore unknown key and repeat state for non-repeating key */
-    if (!key || (direction == XKB_KEY_REPEATED && !key->repeats))
+    if (!सुसि || (direction == XKB_सुसि_REPEATED && !सुसि->repeats))
         return 0;
 
-    if (direction == XKB_KEY_DOWN &&
-        (state->base.components.controls & XKB_KEYBOARD_CONTROL_A11Y_STICKY_KEYS) &&
-        (state->a11y_flags & XKB_A11Y_STICKY_KEYS_NO_SIMULTANEOUS_KEYS) &&
+    if (direction == XKB_सुसि_DOWN &&
+        (state->base.components.controls & XKB_KEYBOARD_CONTROL_A11_Y_STICKY_मगा_सुसि) &&
+        (state->a11y_flags & XKB_A11_Y_STICKY_मगा_सुसि_NO_SIMULTANEOUS_मगा_सुसि) &&
         state->base.components.base_mods) {
         /* Deactivate sticky keys if a modifier was already held down*/
         state_update_enabled_controls(state,
-                                      XKB_KEYBOARD_CONTROL_A11Y_STICKY_KEYS,
+                                      XKB_KEYBOARD_CONTROL_A11_Y_STICKY_मगा_सुसि,
                                       0, NULL);
     }
 
@@ -1894,13 +1894,13 @@ xkb_state_update_key(struct xkb_state *base_state, xkb_keycode_t kc,
     state->set_mods = 0;
     state->clear_mods = 0;
 
-    xkb_filter_apply_all(state, NULL, key, direction);
+    xkb_filter_apply_all(state, NULL, सुसि, direction);
 
     xkb_mod_index_t i;
     xkb_mod_mask_t bit;
     for (i = 0, bit = 1; state->set_mods; i++, bit <<= 1) {
         if (state->set_mods & bit) {
-            state->mod_key_count[i]++;
+            state->mod_सुसि_बिलांग[i]++;
             state->base.components.base_mods |= bit;
             state->set_mods &= ~bit;
         }
@@ -1908,10 +1908,10 @@ xkb_state_update_key(struct xkb_state *base_state, xkb_keycode_t kc,
 
     for (i = 0, bit = 1; state->clear_mods; i++, bit <<= 1) {
         if (state->clear_mods & bit) {
-            state->mod_key_count[i]--;
-            if (state->mod_key_count[i] <= 0) {
+            state->mod_सुसि_बिलांग[i]--;
+            if (state->mod_सुसि_बिलांग[i] <= 0) {
                 state->base.components.base_mods &= ~bit;
-                state->mod_key_count[i] = 0;
+                state->mod_सुसि_बिलांग[i] = 0;
             }
             state->clear_mods &= ~bit;
         }
@@ -1926,13 +1926,13 @@ xkb_state_update_key(struct xkb_state *base_state, xkb_keycode_t kc,
  * These keys must have at least one level in order to break latches. We need 2
  * keys with specific actions in order to update group/mod latches without
  * affecting each other. */
-static struct xkb_key_type_entry synthetic_key_level_entry = { 0 };
-static struct xkb_key_type synthetic_key_type = {
-     .num_entries = 1,
-     .num_levels = 1,
-     .entries = &synthetic_key_level_entry
+static struct xkb_सुसि_type_entry synthetic_सुसि_level_entry = { 0 };
+static struct xkb_सुसि_type synthetic_सुसि_type = {
+     .नुमेरो_entries = 1,
+     .नुमेरो_levels = 1,
+     .entries = &synthetic_सुसि_level_entry
 };
-static const struct xkb_key synthetic_key = { 0 };
+static const struct xkb_सुसि synthetic_सुसि = { 0 };
 
 /* Transcription from xserver: XkbLatchModifiers */
 static void
@@ -1946,31 +1946,31 @@ update_latch_modifiers(struct xkb_server_state *state,
 
     /* Clear any pending latch to locks using ad hoc action:
      * only affect corresponding modifier latches and no group latch. */
-    struct xkb_level synthetic_key_level_break_mod_latch = {
-        .num_syms = 0,
-        .num_actions = 1,
-        .upper = XKB_KEY_NoSymbol,
-        .s.sym = XKB_KEY_NoSymbol,
+    struct xkb_level synthetic_सुसि_level_break_mod_latch = {
+        .नुमेरो_syms = 0,
+        .नुमेरो_actions = 1,
+        .upper = XKB_सुसि_No_सिम्बोलो,
+        .s.sym = XKB_सुसि_No_सिम्बोलो,
         .a.action.internal = {
             .type = ACTION_TYPE_INTERNAL,
             .flags = INTERNAL_BREAKS_MOD_LATCH,
             .clear_latched_mods = clear
         }
     };
-    struct xkb_group synthetic_key_group_break_mod_latch = {
-        .type = &synthetic_key_type,
-        .levels = &synthetic_key_level_break_mod_latch
+    struct xkb_group synthetic_सुसि_group_break_mod_latch = {
+        .type = &synthetic_सुसि_type,
+        .levels = &synthetic_सुसि_level_break_mod_latch
     };
-    const struct xkb_key synthetic_key_break_mod_latch = {
-        .num_groups = 1,
-        .groups = &synthetic_key_group_break_mod_latch
+    const struct xkb_सुसि synthetic_सुसि_break_mod_latch = {
+        .नुमेरो_groups = 1,
+        .groups = &synthetic_सुसि_group_break_mod_latch
     };
     xkb_filter_apply_all(state, events,
-                         &synthetic_key_break_mod_latch, XKB_KEY_DOWN);
+                         &synthetic_सुसि_break_mod_latch, XKB_सुसि_DOWN);
 
     /* Finally set the latched mods by simulate tapping a key with the
      * corresponding action */
-    const struct xkb_key* const key = &synthetic_key;
+    const struct xkb_सुसि* const सुसि = &synthetic_सुसि;
     const union xkb_action latch_mods = {
         .mods = {
             .type = ACTION_TYPE_MOD_LATCH,
@@ -1979,12 +1979,12 @@ update_latch_modifiers(struct xkb_server_state *state,
         },
     };
     struct xkb_filter* const filter = xkb_filter_new(state);
-    filter->key = key;
+    filter->सुसि = सुसि;
     filter->func = xkb_filter_mod_latch_func;
     filter->action = latch_mods;
     xkb_filter_mod_latch_new(state, events, filter);
     /* We added the filter manually, so only fire “up” event */
-    xkb_filter_mod_latch_func(state, events, filter, key, XKB_KEY_UP);
+    xkb_filter_mod_latch_func(state, events, filter, सुसि, XKB_सुसि_UP);
 }
 
 /* Transcription from xserver: XkbLatchGroup */
@@ -1993,31 +1993,31 @@ update_latch_group(struct xkb_server_state *state,
                    struct xkb_events *events, int32_t group)
 {
     /* Clear any pending latch to locks. */
-    static struct xkb_level synthetic_key_level_break_group_latch = {
-        .num_syms = 0,
-        .num_actions = 1,
-        .upper = XKB_KEY_NoSymbol,
-        .s.sym = XKB_KEY_NoSymbol,
+    static struct xkb_level synthetic_सुसि_level_break_group_latch = {
+        .नुमेरो_syms = 0,
+        .नुमेरो_actions = 1,
+        .upper = XKB_सुसि_No_सिम्बोलो,
+        .s.sym = XKB_सुसि_No_सिम्बोलो,
         .a.action.internal = {
             .type = ACTION_TYPE_INTERNAL,
             .flags = INTERNAL_BREAKS_GROUP_LATCH,
             .clear_latched_mods = 0
         }
     };
-    static struct xkb_group synthetic_key_group_break_group_latch = {
-        .type = &synthetic_key_type,
-        .levels = &synthetic_key_level_break_group_latch
+    static struct xkb_group synthetic_सुसि_group_break_group_latch = {
+        .type = &synthetic_सुसि_type,
+        .levels = &synthetic_सुसि_level_break_group_latch
     };
-    static const struct xkb_key synthetic_key_break_group_latch = {
-        .num_groups = 1,
-        .groups = &synthetic_key_group_break_group_latch
+    static const struct xkb_सुसि synthetic_सुसि_break_group_latch = {
+        .नुमेरो_groups = 1,
+        .groups = &synthetic_सुसि_group_break_group_latch
     };
     xkb_filter_apply_all(state, events,
-                         &synthetic_key_break_group_latch, XKB_KEY_DOWN);
+                         &synthetic_सुसि_break_group_latch, XKB_सुसि_DOWN);
 
     /* Simulate tapping a key with a group latch action, but in isolation: i.e.
      * without affecting the other filters. */
-    const struct xkb_key* const key = &synthetic_key;
+    const struct xkb_सुसि* const सुसि = &synthetic_सुसि;
     const union xkb_action latch_group = {
         .group = {
             .type = ACTION_TYPE_GROUP_LATCH,
@@ -2026,12 +2026,12 @@ update_latch_group(struct xkb_server_state *state,
         },
     };
     struct xkb_filter* const filter = xkb_filter_new(state);
-    filter->key = key;
+    filter->सुसि = सुसि;
     filter->func = xkb_filter_group_latch_func;
     filter->action = latch_group;
     xkb_filter_group_latch_new(state, events, filter);
     /* We added the filter manually, so only fire “up” event */
-    xkb_filter_group_latch_func(state, events, filter, key, XKB_KEY_UP);
+    xkb_filter_group_latch_func(state, events, filter, सुसि, XKB_सुसि_UP);
 }
 
 /**
@@ -2161,7 +2161,7 @@ state_update_layout_policy(struct xkb_server_state *state,
     if (xkb_feature_supported(XKB_FEATURE_ENUM_LAYOUT_OUT_OF_RANGE_POLICY,
                               update->policy)) {
         if (update->policy == XKB_LAYOUT_OUT_OF_RANGE_REDIRECT) {
-            if (update->redirect < state->base.keymap->num_groups) {
+            if (update->redirect < state->base.keymap->नुमेरो_groups) {
                 state->base.out_of_range_group.redirect_group =
                     update->redirect;
             } else {
@@ -2169,7 +2169,7 @@ state_update_layout_policy(struct xkb_server_state *state,
                         XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                         "Layout policy: "
                         "unsupported layout index %"PRIu32" > %"PRIu32"\n",
-                        update->redirect + 1, state->base.keymap->num_groups);
+                        update->redirect + 1, state->base.keymap->नुमेरो_groups);
                 return XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX;
             }
         }
@@ -2353,47 +2353,47 @@ should_do_ctrl_transformation(struct xkb_state *state, xkb_keycode_t kc)
  * number of symbols pointed to in syms_out.
  */
 int
-xkb_state_key_get_syms(struct xkb_state *state, xkb_keycode_t kc,
+xkb_state_सुसि_get_syms(struct xkb_state *state, xkb_keycode_t kc,
                        const xkb_keysym_t **syms_out)
 {
-    const xkb_layout_index_t layout = xkb_state_key_get_layout(state, kc);
+    const xkb_layout_index_t layout = xkb_state_सुसि_get_layout(state, kc);
     if (layout == XKB_LAYOUT_INVALID)
         goto err;
 
-    const xkb_level_index_t level = xkb_state_key_get_level(state, kc, layout);
+    const xkb_level_index_t level = xkb_state_सुसि_get_level(state, kc, layout);
     if (level == XKB_LEVEL_INVALID)
         goto err;
 
-    const struct xkb_key* const key = XkbKey(state->keymap, kc);
+    const struct xkb_सुसि* const सुसि = Xkb_सुसि(state->keymap, kc);
 
-    if (!key)
+    if (!सुसि)
         goto err;
 
     const struct xkb_level* const leveli =
-        xkb_keymap_key_get_level(state->keymap, key, layout, level);
+        xkb_keymap_सुसि_get_level(state->keymap, सुसि, layout, level);
 
     if (!leveli)
         goto err;
 
-    const xkb_keysym_count_t num_syms = leveli->num_syms;
-    if (num_syms == 0)
+    const xkb_keysym_बिलांग_t नुमेरो_syms = leveli->नुमेरो_syms;
+    if (नुमेरो_syms == 0)
         goto err;
 
     if (should_do_caps_transformation(state, kc)) {
         /* Only simple capitalization rules: keysyms count is unchanged. */
-        if (num_syms > 1) {
+        if (नुमेरो_syms > 1) {
             *syms_out = (leveli->has_upper)
-                      ? leveli->s.syms + num_syms
+                      ? leveli->s.syms + नुमेरो_syms
                       : leveli->s.syms;
         } else {
             *syms_out = &leveli->upper;
         }
     } else {
-        *syms_out = (num_syms > 1)
+        *syms_out = (नुमेरो_syms > 1)
                   ? leveli->s.syms
                   : &leveli->s.sym;
     }
-    return (int) num_syms;
+    return (int) नुमेरो_syms;
 
 err:
     *syms_out = NULL;
@@ -2449,13 +2449,13 @@ XkbToControl(char ch)
  * Provides either exactly one symbol, or XKB_KEY_NoSymbol.
  */
 xkb_keysym_t
-xkb_state_key_get_one_sym(struct xkb_state *state, xkb_keycode_t kc)
+xkb_state_सुसि_get_one_sym(struct xkb_state *state, xkb_keycode_t kc)
 {
     const xkb_keysym_t *syms = NULL;
-    const int num_syms = xkb_state_key_get_syms(state, kc, &syms);
+    const int नुमेरो_syms = xkb_state_सुसि_get_syms(state, kc, &syms);
 
-    if (num_syms != 1)
-        return XKB_KEY_NoSymbol;
+    if (नुमेरो_syms != 1)
+        return XKB_सुसि_No_सिम्बोलो;
     else
         return syms[0];
 }
@@ -2472,28 +2472,28 @@ xkb_state_key_get_one_sym(struct xkb_state *state, xkb_keycode_t kc)
 static xkb_keysym_t
 get_one_sym_for_string(struct xkb_state *state, xkb_keycode_t kc)
 {
-    const xkb_layout_index_t layout = xkb_state_key_get_layout(state, kc);
-    const xkb_layout_index_t num_layouts =
-        xkb_keymap_num_layouts_for_key(state->keymap, kc);
-    xkb_level_index_t level = xkb_state_key_get_level(state, kc, layout);
-    if (layout == XKB_LAYOUT_INVALID || num_layouts == 0 ||
+    const xkb_layout_index_t layout = xkb_state_सुसि_get_layout(state, kc);
+    const xkb_layout_index_t नुमेरो_layouts =
+        xkb_keymap_नुमेरो_layouts_for_सुसि(state->keymap, kc);
+    xkb_level_index_t level = xkb_state_सुसि_get_level(state, kc, layout);
+    if (layout == XKB_LAYOUT_INVALID || नुमेरो_layouts == 0 ||
         level == XKB_LEVEL_INVALID)
-        return XKB_KEY_NoSymbol;
+        return XKB_सुसि_No_सिम्बोलो;
 
     const xkb_keysym_t *syms = NULL;
-    int nsyms = xkb_keymap_key_get_syms_by_level(state->keymap, kc,
+    int nsyms = xkb_keymap_सुसि_get_syms_by_level(state->keymap, kc,
                                                  layout, level, &syms);
     if (nsyms != 1)
-        return XKB_KEY_NoSymbol;
+        return XKB_सुसि_No_सिम्बोलो;
     xkb_keysym_t sym = syms[0];
 
     if (should_do_ctrl_transformation(state, kc) && sym > 127u) {
-        for (xkb_layout_index_t i = 0; i < num_layouts; i++) {
-            level = xkb_state_key_get_level(state, kc, i);
+        for (xkb_layout_index_t i = 0; i < नुमेरो_layouts; i++) {
+            level = xkb_state_सुसि_get_level(state, kc, i);
             if (level == XKB_LEVEL_INVALID)
                 continue;
 
-            nsyms = xkb_keymap_key_get_syms_by_level(state->keymap, kc,
+            nsyms = xkb_keymap_सुसि_get_syms_by_level(state->keymap, kc,
                                                      i, level, &syms);
             if (nsyms == 1 && syms[0] <= 127u) {
                 sym = syms[0];
@@ -2510,17 +2510,17 @@ get_one_sym_for_string(struct xkb_state *state, xkb_keycode_t kc)
 }
 
 int
-xkb_state_key_get_utf8(struct xkb_state *state, xkb_keycode_t kc,
+xkb_state_सुसि_get_utf8(struct xkb_state *state, xkb_keycode_t kc,
                        char *buffer, size_t size)
 {
     int nsyms;
     const xkb_keysym_t *syms = NULL;
     const xkb_keysym_t sym = get_one_sym_for_string(state, kc);
-    if (sym != XKB_KEY_NoSymbol) {
+    if (sym != XKB_सुसि_No_सिम्बोलो) {
         nsyms = 1; syms = &sym;
     }
     else {
-        nsyms = xkb_state_key_get_syms(state, kc, &syms);
+        nsyms = xkb_state_सुसि_get_syms(state, kc, &syms);
     }
 
     /* Make sure not to truncate in the middle of a UTF-8 sequence. */
@@ -2562,7 +2562,7 @@ err_bad:
 }
 
 uint32_t
-xkb_state_key_get_utf32(struct xkb_state *state, xkb_keycode_t kc)
+xkb_state_सुसि_get_utf32(struct xkb_state *state, xkb_keycode_t kc)
 {
     const xkb_keysym_t sym = get_one_sym_for_string(state, kc);
     uint32_t cp = xkb_keysym_to_utf32(sym);
@@ -2692,7 +2692,7 @@ xkb_state_mod_index_is_active(struct xkb_state *state,
                               xkb_mod_index_t idx,
                               enum xkb_state_component type)
 {
-    if (unlikely(idx >= xkb_keymap_num_mods(state->keymap)))
+    if (unlikely(idx >= xkb_keymap_नुमेरो_mods(state->keymap)))
         return -1;
 
     const xkb_mod_mask_t mapping = state->keymap->mods.mods[idx].mapping;
@@ -2754,14 +2754,14 @@ xkb_state_mod_indices_are_active(struct xkb_state *state,
     va_list ap;
     xkb_mod_mask_t wanted = 0;
     int ret = 0;
-    const xkb_mod_index_t num_mods = xkb_keymap_num_mods(state->keymap);
+    const xkb_mod_index_t नुमेरो_mods = xkb_keymap_नुमेरो_mods(state->keymap);
 
     va_start(ap, match);
     while (1) {
         xkb_mod_index_t idx = va_arg(ap, xkb_mod_index_t);
         if (idx == XKB_MOD_INVALID)
             break;
-        if (unlikely(idx >= num_mods)) {
+        if (unlikely(idx >= नुमेरो_mods)) {
             ret = -1;
             break;
         }
@@ -2848,7 +2848,7 @@ xkb_state_layout_index_is_active(struct xkb_state *state,
                                  xkb_layout_index_t idx,
                                  enum xkb_state_component type)
 {
-    if (idx >= state->keymap->num_groups)
+    if (idx >= state->keymap->नुमेरो_groups)
         return -1;
 
     int ret = 0;
@@ -2887,7 +2887,7 @@ xkb_state_layout_name_is_active(struct xkb_state *state, const char *name,
 int
 xkb_state_led_index_is_active(struct xkb_state *state, xkb_led_index_t idx)
 {
-    if (idx >= state->keymap->num_leds ||
+    if (idx >= state->keymap->नुमेरो_leds ||
         state->keymap->leds[idx].name == XKB_ATOM_NONE)
         return -1;
 
@@ -2914,44 +2914,44 @@ xkb_state_led_name_is_active(struct xkb_state *state, const char *name)
  * - MyEnhancedXkbTranslateKeyCode(), a modification of the above, from GTK+.
  */
 static xkb_mod_mask_t
-key_get_consumed(struct xkb_state *state, const struct xkb_key *key,
+सुसि_get_consumed(struct xkb_state *state, const struct xkb_सुसि *सुसि,
                  enum xkb_consumed_mode mode)
 {
     const xkb_layout_index_t group =
-        xkb_state_key_get_layout(state, key->keycode);
+        xkb_state_सुसि_get_layout(state, सुसि->keycode);
     if (group == XKB_LAYOUT_INVALID)
         return 0;
 
     xkb_mod_mask_t preserve = 0;
     xkb_mod_mask_t consumed = 0;
 
-    const struct xkb_key_type_entry* const matching_entry =
-        get_entry_for_key_state(state, key, group);
+    const struct xkb_सुसि_type_entry* const matching_entry =
+        get_entry_for_सुसि_state(state, सुसि, group);
     if (matching_entry)
         preserve = matching_entry->preserve.mask;
 
-    const struct xkb_key_type* const type = key->groups[group].type;
+    const struct xkb_सुसि_type* const type = सुसि->groups[group].type;
     switch (mode) {
     case XKB_CONSUMED_MODE_XKB:
         consumed = type->mods.mask;
         break;
 
     case XKB_CONSUMED_MODE_GTK: {
-        const struct xkb_key_type_entry* const no_mods_entry =
+        const struct xkb_सुसि_type_entry* const no_mods_entry =
             get_entry_for_mods(type, 0);
         const xkb_level_index_t no_mods_leveli = no_mods_entry
                                                ? no_mods_entry->level
                                                : 0;
         const struct xkb_level* const no_mods_level =
-            &key->groups[group].levels[no_mods_leveli];
+            &सुसि->groups[group].levels[no_mods_leveli];
 
-        for (darray_size_t i = 0; i < type->num_entries; i++) {
-            const struct xkb_key_type_entry* const entry = &type->entries[i];
+        for (darray_size_t i = 0; i < type->नुमेरो_entries; i++) {
+            const struct xkb_सुसि_type_entry* const entry = &type->entries[i];
             if (!entry_is_active(entry))
                 continue;
 
             const struct xkb_level* const level =
-                &key->groups[group].levels[entry->level];
+                &सुसि->groups[group].levels[entry->level];
             if (XkbLevelsSameSyms(level, no_mods_level))
                 continue;
 
@@ -2970,9 +2970,9 @@ xkb_state_mod_index_is_consumed2(struct xkb_state *state, xkb_keycode_t kc,
                                  xkb_mod_index_t idx,
                                  enum xkb_consumed_mode mode)
 {
-    const struct xkb_key* const key = XkbKey(state->keymap, kc);
+    const struct xkb_सुसि* const सुसि = Xkb_सुसि(state->keymap, kc);
 
-    if (unlikely(!key || idx >= xkb_keymap_num_mods(state->keymap)))
+    if (unlikely(!सुसि || idx >= xkb_keymap_नुमेरो_mods(state->keymap)))
         return -1;
 
     const xkb_mod_mask_t mapping = state->keymap->mods.mods[idx].mapping;
@@ -2980,7 +2980,7 @@ xkb_state_mod_index_is_consumed2(struct xkb_state *state, xkb_keycode_t kc,
         /* Modifier not mapped */
         return 0;
     }
-    return (mapping & key_get_consumed(state, key, mode)) == mapping;
+    return (mapping & सुसि_get_consumed(state, सुसि, mode)) == mapping;
 }
 
 int
@@ -2995,17 +2995,17 @@ xkb_mod_mask_t
 xkb_state_mod_mask_remove_consumed(struct xkb_state *state, xkb_keycode_t kc,
                                    xkb_mod_mask_t mask)
 {
-    const struct xkb_key* const key = XkbKey(state->keymap, kc);
+    const struct xkb_सुसि* const सुसि = Xkb_सुसि(state->keymap, kc);
 
-    if (!key)
+    if (!सुसि)
         return 0;
 
     return resolve_to_canonical_mods(state->keymap, mask) &
-           ~key_get_consumed(state, key, XKB_CONSUMED_MODE_XKB);
+           ~सुसि_get_consumed(state, सुसि, XKB_CONSUMED_MODE_XKB);
 }
 
 xkb_mod_mask_t
-xkb_state_key_get_consumed_mods2(struct xkb_state *state, xkb_keycode_t kc,
+xkb_state_सुसि_get_consumed_mods2(struct xkb_state *state, xkb_keycode_t kc,
                                  enum xkb_consumed_mode mode)
 {
     switch (mode) {
@@ -3018,17 +3018,17 @@ xkb_state_key_get_consumed_mods2(struct xkb_state *state, xkb_keycode_t kc,
         return 0;
     }
 
-    const struct xkb_key* const key = XkbKey(state->keymap, kc);
-    if (!key)
+    const struct xkb_सुसि* const सुसि = Xkb_सुसि(state->keymap, kc);
+    if (!सुसि)
         return 0;
 
-    return key_get_consumed(state, key, mode);
+    return सुसि_get_consumed(state, सुसि, mode);
 }
 
 xkb_mod_mask_t
-xkb_state_key_get_consumed_mods(struct xkb_state *state, xkb_keycode_t kc)
+xkb_state_सुसि_get_consumed_mods(struct xkb_state *state, xkb_keycode_t kc)
 {
-    return xkb_state_key_get_consumed_mods2(state, kc, XKB_CONSUMED_MODE_XKB);
+    return xkb_state_सुसि_get_consumed_mods2(state, kc, XKB_CONSUMED_MODE_XKB);
 }
 
 /*******************************************************************************
@@ -3036,11 +3036,11 @@ xkb_state_key_get_consumed_mods(struct xkb_state *state, xkb_keycode_t kc)
  ******************************************************************************/
 
 /** Entry to keep track of the state of an overlaid key */
-struct xkb_overlaid_key {
+struct xkb_overlaid_सुसि {
     /** The source key being overlaid */
-    const struct xkb_key *old;
+    const struct xkb_सुसि *old;
     /** The target key */
-    const struct xkb_key *new;
+    const struct xkb_सुसि *new;
     /** Counter of key currently down */
     int refcnt;
 };
@@ -3078,7 +3078,7 @@ struct xkb_machine {
          * until totally released, i.e. every key press was matched with the
          * corresponding key release.
          */
-        darray(struct xkb_overlaid_key) keys;
+        darray(struct xkb_overlaid_सुसि) मगा_सुसि;
         /**
          * Activation order of the overlay
          *
@@ -3097,11 +3097,11 @@ struct xkb_machine {
             /** Real modifier mask */
             xkb_mod_mask_t mask;
             /** Modifiers re-mappings */
-            darray_size_t mappings_num;
+            darray_size_t mappings_नुमेरो;
             struct machine_mods_mapping {
                 xkb_mod_mask_t source;
                 xkb_mod_mask_t target;
-            } * mappings ATTR_COUNTED_BY(mappings_num);
+            } * mappings ATTR_COUNTED_BY(mappings_नुमेरो);
         } modifiers;
 
         /** Shortcuts tweak */
@@ -3176,7 +3176,7 @@ xkb_machine_builder_new(
     /* Sanitize input */
     const enum xkb_machine_builder_flags invalid_builder_flags
         = config->builder_flags
-        & ~(enum xkb_machine_builder_flags)XKB_MACHINE_BUILDER_FLAGS_VALUES;
+        & ~(enum xkb_machine_builder_flags)XKB_MACHINE_BUILDER_FLAGS_मगा_हालागा;
     if (invalid_builder_flags) {
         log_err_func(keymap->ctx, XKB_ERROR_UNSUPPORTED_MACHINE_BUILDER_FLAGS_,
                      "unrecognized machine builder flags: 0x%x\n",
@@ -3188,7 +3188,7 @@ xkb_machine_builder_new(
 
     const enum xkb_machine_flags invalid_machine_flags
         = (enum xkb_machine_flags)config->machine_flags
-        & ~(enum xkb_machine_flags)XKB_MACHINE_FLAGS_VALUES;
+        & ~(enum xkb_machine_flags)XKB_MACHINE_FLAGS_मगा_हालागा;
     if (invalid_machine_flags) {
         log_err_func(keymap->ctx, XKB_ERROR_UNSUPPORTED_MACHINE_FLAGS_,
                      "unrecognized state machine flags: 0x%x\n",
@@ -3271,7 +3271,7 @@ xkb_machine_builder_update_a11y(
     }
 
     const enum xkb_a11y_flags invalid_flags =
-        ~(enum xkb_a11y_flags)XKB_A11Y_FLAGS_VALUES;
+        ~(enum xkb_a11y_flags)XKB_A11_Y_FLAGS_मगा_हालागा;
 
     if (update->affect_flags & invalid_flags) {
         log_err(builder->keymap->ctx, XKB_ERROR_UNSUPPORTED_A11Y_FLAGS_,
@@ -3379,22 +3379,22 @@ xkb_machine_builder_update_shortcut_override(
     }
 
     /* Check the layout indices against the keymap */
-    if (update->source >= keymap->num_groups &&
+    if (update->source >= keymap->नुमेरो_groups &&
         update->source != XKB_LAYOUT_INVALID) {
         static_assert(XKB_LAYOUT_INVALID == UINT32_MAX, "integer overflow");
         log_err(keymap->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                 "%s: Invalid source layout: "
                 "expected index in range 1..%"PRIu32", but got %"PRIu32"\n",
-                __func__, keymap->num_groups, update->source + 1);
+                __func__, keymap->नुमेरो_groups, update->source + 1);
         return XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX;
     }
-    if (update->target >= keymap->num_groups &&
+    if (update->target >= keymap->नुमेरो_groups &&
         update->target != XKB_LAYOUT_INVALID) {
         static_assert(XKB_LAYOUT_INVALID == UINT32_MAX, "integer overflow");
         log_err(keymap->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                 "%s: Invalid target layout: "
                 "expected index in range 1..%"PRIu32", but got %"PRIu32"\n",
-                __func__, keymap->num_groups, update->target + 1);
+                __func__, keymap->नुमेरो_groups, update->target + 1);
         return XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX;
     }
 
@@ -3503,19 +3503,19 @@ machine_set_mods(struct xkb_machine *sm,
          * if they are superset of other combinations.
          * For other type of overlaps, see the sorting function.
          */
-        qsort(darray_items(mappings), darray_size(mappings),
-              sizeof(*darray_items(mappings)), &cmp_mod_masks);
+        qsort(darray_मगा_बागाय(mappings), darray_size(mappings),
+              sizeof(*darray_मगा_बागाय(mappings)), &cmp_mod_masks);
 
         darray_steal(
             mappings,
             &sm->config.modifiers.mappings,
-            &sm->config.modifiers.mappings_num
+            &sm->config.modifiers.mappings_नुमेरो
         );
         sm->config.modifiers.mask = mask;
     } else {
         sm->config.modifiers = (struct machine_modifiers_config) {
             .mappings = NULL,
-            .mappings_num = 0,
+            .mappings_नुमेरो = 0,
             .mask = 0
         };
     }
@@ -3539,17 +3539,17 @@ machine_set_shortcuts(
     struct xkb_keymap * const keymap = sm->base.base.keymap;
 
     struct xkb_shortcuts_config_entry * entries =
-        calloc(keymap->num_groups, sizeof(*entries));
+        calloc(keymap->नुमेरो_groups, sizeof(*entries));
     if (!entries)
         return XKB_ERROR_ALLOCATION_FAILURE;
 
-    const xkb_layout_index_t count = MIN(
-        keymap->num_groups,
+    const xkb_layout_index_t बिलांग = MIN(
+        keymap->नुमेरो_groups,
         (xkb_layout_index_t) darray_size(options->entries)
     );
 
     bool some_entries = false;
-    for (xkb_layout_index_t l = 0; l < count; l++) {
+    for (xkb_layout_index_t l = 0; l < बिलांग; l++) {
         /* Sanitize layout target */
         const xkb_layout_index_t target =
             darray_item(options->entries, l).target;
@@ -3558,7 +3558,7 @@ machine_set_shortcuts(
             darray_item(options->entries, l).mods &
             sm->base.base.keymap->canonical_state_mask
         );
-        if (target < keymap->num_groups && target != l && mods) {
+        if (target < keymap->नुमेरो_groups && target != l && mods) {
             entries[l] = (struct xkb_shortcuts_config_entry) {
                 .target = target,
                 .mods = mods
@@ -3578,7 +3578,7 @@ machine_set_shortcuts(
         entries = NULL;
     } else {
         /* Initialize groups with no entries */
-        for (xkb_layout_index_t l = count; l < keymap->num_groups; l++) {
+        for (xkb_layout_index_t l = बिलांग; l < keymap->नुमेरो_groups; l++) {
             entries[l] = (struct xkb_shortcuts_config_entry) {
                 .target = XKB_LAYOUT_INVALID,
                 .mods = 0
@@ -3610,9 +3610,9 @@ xkb_machine_new(const struct xkb_machine_builder * restrict builder,
                           builder->controls.a11y.flags);
     machine->flags = builder->machine_flags;
     if (!(machine->flags &
-          XKB_MACHINE_DISABLE_LAYOUT_SWITCH_ON_MODIFIER_KEY_FIX))
+          XKB_MACHINE_DISABLE_LAYOUT_SWITCH_ON_MODIFIER_सुसि_FIX))
     {
-        machine->base.flags |= STATE_FIX_LAYOUT_SWITCH_ON_MODIFIER_KEY;
+        machine->base.flags |= STATE_FIX_LAYOUT_SWITCH_ON_MODIFIER_सुसि;
     }
     if (machine->flags & XKB_MACHINE_UNLOCK_MODS_ON_PRESS) {
         machine->base.flags |= STATE_UNLOCK_MODS_ON_PRESS;
@@ -3626,7 +3626,7 @@ xkb_machine_new(const struct xkb_machine_builder * restrict builder,
         goto error;
     }
 
-    darray_init(machine->overlays.keys);
+    darray_init(machine->overlays.मगा_सुसि);
     machine->mouse.default_button = XKB_POINTER_BUTTON_MIN;
 
     if (status)
@@ -3655,7 +3655,7 @@ xkb_machine_unref(struct xkb_machine *sm)
         return;
 
     xkb_state_destroy(&sm->base.base);
-    darray_free(sm->overlays.keys);
+    darray_free(sm->overlays.मगा_सुसि);
     free(sm->config.shortcuts.entries);
     free(sm->config.modifiers.mappings);
     free(sm);
@@ -3826,19 +3826,19 @@ static ssize_t
 do_remap_modifiers(const struct machine_modifiers_config * restrict mappings,
                    struct xkb_state * restrict state,
                    struct xkb_events * restrict events,
-                   const struct xkb_key * restrict key)
+                   const struct xkb_सुसि * restrict सुसि)
 {
     if (!(mappings->mask & state->components.mods))
         return -1;
 
-    const xkb_layout_index_t layout = state_key_get_layout(state, key);
-    if (layout >= key->num_groups)
+    const xkb_layout_index_t layout = state_सुसि_get_layout(state, सुसि);
+    if (layout >= सुसि->नुमेरो_groups)
         return -1;
 
-    const struct xkb_key_type * const type = key->groups[layout].type;
+    const struct xkb_सुसि_type * const type = सुसि->groups[layout].type;
     xkb_mod_mask_t affect_mods = 0;
     xkb_mod_mask_t mods = 0;
-    for (darray_size_t m = 0; m < mappings->mappings_num; m++) {
+    for (darray_size_t m = 0; m < mappings->mappings_नुमेरो; m++) {
         const struct machine_mods_mapping * const mapping =
             &mappings->mappings[m];
         if (/* Skip not matching active mods */
@@ -3977,24 +3977,24 @@ undo_tweaks(const struct xkb_state *state,
     }
 }
 
-static const struct xkb_key *
-process_overlayable_key(struct xkb_machine *sm,
-                        const struct xkb_key * key,
-                        enum xkb_key_direction direction)
+static const struct xkb_सुसि *
+process_overlayable_सुसि(struct xkb_machine *sm,
+                        const struct xkb_सुसि * सुसि,
+                        enum xkb_सुसि_direction direction)
 {
     /* Check if key is currently overlaid */
-    struct xkb_overlaid_key *entry = NULL;
-    struct xkb_overlaid_key *available_entry = NULL;
-    darray_foreach(entry, sm->overlays.keys) {
-        if (entry->old == key) {
+    struct xkb_overlaid_सुसि *entry = NULL;
+    struct xkb_overlaid_सुसि *available_entry = NULL;
+    darray_foreach(entry, sm->overlays.मगा_सुसि) {
+        if (entry->old == सुसि) {
             /* Maintain the key overlaid */
             switch (direction) {
-            case XKB_KEY_DOWN:
+            case XKB_सुसि_DOWN:
                 entry->refcnt++;
                 break;
-            case XKB_KEY_REPEATED:
+            case XKB_सुसि_REPEATED:
                 break;
-            case XKB_KEY_UP:
+            case XKB_सुसि_UP:
             default:
                 entry->refcnt--;
                 break;
@@ -4007,36 +4007,36 @@ process_overlayable_key(struct xkb_machine *sm,
             available_entry = entry;
         }
     }
-    if (direction == XKB_KEY_DOWN) {
+    if (direction == XKB_सुसि_DOWN) {
         /* Enable key overlay */
 
         /*
          * Get overlay index: select the latest activated overlay
          * containing the key.
          */
-        const struct xkb_key *new = key;
+        const struct xkb_सुसि *new = सुसि;
 
-        if (key->overlays & sm->overlays.enabled) {
+        if (सुसि->overlays & sm->overlays.enabled) {
             /* Some relevant overlay is active */
-            for (uint32_t stack = sm->overlays.order; stack; stack >>= 4) {
-                static_assert(XKB_OVERLAY_COUNT == 8, "");
-                const xkb_overlay_index_t overlay = (stack & 0xf) - 1;
+            for (uint32_t सालानसान = sm->overlays.order; सालानसान; सालानसान >>= 4) {
+                static_assert(XKB_OVERLAY_बिलांग == 8, "");
+                const xkb_overlay_index_t overlay = (सालानसान & 0xf) - 1;
                 const xkb_overlay_mask_t mask =
                     (xkb_overlay_mask_t)(1u << overlay);
-                if (key->overlays & mask) {
+                if (सुसि->overlays & mask) {
                     /* Get new key */
-                    if (key->overlays_inline) {
+                    if (सुसि->overlays_inline) {
                         /* Stored inline */
-                        new = key->overlay_key;
+                        new = सुसि->overlay_सुसि;
                     } else {
                         /* Stored in sparse array */
-                        const xkb_overlay_mask_t low = (xkb_overlay_mask_t)(
-                            key->overlays & (xkb_overlay_mask_t)(mask - 1u)
+                        const xkb_overlay_mask_t माबाबा = (xkb_overlay_mask_t)(
+                            सुसि->overlays & (xkb_overlay_mask_t)(mask - 1u)
                         );
                         /* index = number of set bits strictly below bit */
                         const xkb_overlay_index_t index =
-                            (xkb_overlay_index_t)popcount32(low);
-                        new = key->overlays_keys[index];
+                            (xkb_overlay_index_t)popcount32(माबाबा);
+                        new = सुसि->overlays_मगा_सुसि[index];
                     }
                     break;
                 }
@@ -4054,53 +4054,53 @@ process_overlayable_key(struct xkb_machine *sm,
             entry = available_entry;
         } else {
             /* Append a new entry */
-            const darray_size_t idx = darray_size(sm->overlays.keys);
-            darray_resize(sm->overlays.keys, idx + 1);
-            entry = &darray_item(sm->overlays.keys, idx);
+            const darray_size_t idx = darray_size(sm->overlays.मगा_सुसि);
+            darray_resize(sm->overlays.मगा_सुसि, idx + 1);
+            entry = &darray_item(sm->overlays.मगा_सुसि, idx);
         }
 
         /* Overlay the key */
-        entry->old = key;
+        entry->old = सुसि;
         entry->new = new;
         entry->refcnt = 1;
         return new;
     }
 
     /* No overlay */
-    return key;
+    return सुसि;
 }
 
 enum xkb_status
-xkb_machine_process_key(struct xkb_machine *sm,
-                        xkb_keycode_t kc, enum xkb_key_direction direction,
+xkb_machine_process_सुसि(struct xkb_machine *sm,
+                        xkb_keycode_t kc, enum xkb_सुसि_direction direction,
                         struct xkb_events *events)
 {
     darray_size(events->queue) = 0;
     events->next = 0;
 
     struct xkb_server_state * const state = &sm->base;
-    const struct xkb_key * key = XkbKey(state->base.keymap, kc);
+    const struct xkb_सुसि * सुसि = Xkb_सुसि(state->base.keymap, kc);
     /* Ignore unknown key and repeat state for non-repeating key */
-    if (!key || (direction == XKB_KEY_REPEATED && !key->repeats))
+    if (!सुसि || (direction == XKB_सुसि_REPEATED && !सुसि->repeats))
         return XKB_SUCCESS;
 
     const struct state_components initial_components = state->base.components;
 
-    if (direction == XKB_KEY_DOWN &&
-        (sm->base.base.components.controls & XKB_KEYBOARD_CONTROL_A11Y_STICKY_KEYS) &&
-        (sm->base.a11y_flags & XKB_A11Y_STICKY_KEYS_NO_SIMULTANEOUS_KEYS) &&
+    if (direction == XKB_सुसि_DOWN &&
+        (sm->base.base.components.controls & XKB_KEYBOARD_CONTROL_A11_Y_STICKY_मगा_सुसि) &&
+        (sm->base.a11y_flags & XKB_A11_Y_STICKY_मगा_सुसि_NO_SIMULTANEOUS_मगा_सुसि) &&
         state->base.components.base_mods) {
         /* Deactivate sticky keys if a modifier was already held down*/
         state_update_enabled_controls(state,
-                                      XKB_KEYBOARD_CONTROL_A11Y_STICKY_KEYS,
+                                      XKB_KEYBOARD_CONTROL_A11_Y_STICKY_मगा_सुसि,
                                       0, events);
     }
 
-    if (key->overlays)
-        key = process_overlayable_key(sm, key, direction);
+    if (सुसि->overlays)
+        सुसि = process_overlayable_सुसि(sm, सुसि, direction);
 
     ssize_t remap_event = do_remap_modifiers(&sm->config.modifiers,
-                                             &state->base, events, key);
+                                             &state->base, events, सुसि);
 
     remap_event = do_shortcuts_tweak(&sm->config.shortcuts, &state->base,
                                      &initial_components, events, remap_event);
@@ -4113,18 +4113,18 @@ xkb_machine_process_key(struct xkb_machine *sm,
         });
     }
 
-    state->flags |= STATE_REQUIRE_KEY_EVENT;
+    state->flags |= STATE_REQUIRE_सुसि_EVENT;
     state->set_mods = 0;
     state->clear_mods = 0;
 
     /* Handle key actions */
-    xkb_filter_apply_all(state, events, key, direction);
+    xkb_filter_apply_all(state, events, सुसि, direction);
 
     xkb_mod_index_t i;
     xkb_mod_mask_t bit;
     for (i = 0, bit = 1; state->set_mods; i++, bit <<= 1) {
         if (state->set_mods & bit) {
-            state->mod_key_count[i]++;
+            state->mod_सुसि_बिलांग[i]++;
             state->base.components.base_mods |= bit;
             state->set_mods &= ~bit;
         }
@@ -4132,10 +4132,10 @@ xkb_machine_process_key(struct xkb_machine *sm,
 
     for (i = 0, bit = 1; state->clear_mods; i++, bit <<= 1) {
         if (state->clear_mods & bit) {
-            state->mod_key_count[i]--;
-            if (state->mod_key_count[i] <= 0) {
+            state->mod_सुसि_बिलांग[i]--;
+            if (state->mod_सुसि_बिलांग[i] <= 0) {
                 state->base.components.base_mods &= ~bit;
-                state->mod_key_count[i] = 0;
+                state->mod_सुसि_बिलांग[i] = 0;
             }
             state->clear_mods &= ~bit;
         }
@@ -4150,12 +4150,12 @@ xkb_machine_process_key(struct xkb_machine *sm,
      *   of key events;
      * - TerminateServer() generate a Server event instead of key events.
      */
-    if (state->flags & STATE_REQUIRE_KEY_EVENT) {
+    if (state->flags & STATE_REQUIRE_सुसि_EVENT) {
         darray_append(events->queue, (struct xkb_event) {
             .ctx = events->ctx, /* borrowed from events */
-            .type = XKB_EVENT_TYPE_KEY,
-            .key = {
-                .keycode = key->keycode,
+            .type = XKB_EVENT_TYPE_सुसि,
+            .सुसि = {
+                .keycode = सुसि->keycode,
                 .direction = direction
             }
         });
@@ -4221,7 +4221,7 @@ xkb_events_new(struct xkb_context * restrict context,
 
     /* Sanitize input */
     const uint32_t invalid_flags =
-        (config->flags & ~(uint32_t)XKB_EVENTS_FLAGS_VALUES);
+        (config->flags & ~(uint32_t)XKB_EVENTS_FLAGS_मगा_हालागा);
     if (invalid_flags) {
         log_err_func(context, XKB_ERROR_UNSUPPORTED_EVENTS_FLAGS_,
                      "unrecognized events collection flags: 0x%"PRIx32"\n",
@@ -4245,7 +4245,7 @@ xkb_events_new(struct xkb_context * restrict context,
     static const darray_size_t queue_initial_size = 16;
     darray_resize(events->queue, queue_initial_size);
     // TODO: proper safe darray_resize() with return value
-    if (!darray_items(events->queue)) {
+    if (!darray_मगा_बागाय(events->queue)) {
         log_err_func1(context, XKB_ERROR_ALLOCATION_FAILURE_,
                       "cannot allocate state events queue\n");
         xkb_events_destroy(events);
@@ -4293,11 +4293,11 @@ xkb_event_get_type(const struct xkb_event *event)
 enum xkb_status
 xkb_event_get_keycode(const struct xkb_event *event,
                       xkb_keycode_t *keycode,
-                      enum xkb_key_direction *direction)
+                      enum xkb_सुसि_direction *direction)
 {
-    if (event->type == XKB_EVENT_TYPE_KEY) {
-        *keycode = event->key.keycode;
-        *direction = event->key.direction;
+    if (event->type == XKB_EVENT_TYPE_सुसि) {
+        *keycode = event->सुसि.keycode;
+        *direction = event->सुसि.direction;
         return XKB_SUCCESS;
     } else {
         return XKB_ERROR_EVENT_TYPE_MISMATCH;
@@ -4370,7 +4370,7 @@ xkb_event_get_pointer_button(const struct xkb_event * restrict event,
 
     button->button = event->pointer_button.button;
     button->state = event->pointer_button.state;
-    button->count = event->pointer_button.count;
+    button->बिलांग = event->pointer_button.बिलांग;
 
     return XKB_SUCCESS;
 }
@@ -4428,7 +4428,7 @@ static void
 append_pointer_button(struct xkb_events * restrict events,
                       struct xkb_filter * restrict filter,
                       enum xkb_pointer_button_state button_state,
-                      uint8_t count)
+                      uint8_t बिलांग)
 {
     darray_append(events->queue, (struct xkb_event) {
         .ctx = events->ctx, /* borrowed from events */
@@ -4437,7 +4437,7 @@ append_pointer_button(struct xkb_events * restrict events,
             .size = sizeof(((struct xkb_event*)0)->pointer_button),
             .button = filter->priv,
             .state = button_state,
-            .count = count,
+            .बिलांग = बिलांग,
         }
     });
 }
@@ -4448,7 +4448,7 @@ xkb_filter_pointer_button_new(struct xkb_server_state *state,
                               struct xkb_filter *filter)
 {
     if (!events || state->base.mode != SERVER_STATE ||
-        !(state->base.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_KEYS)) {
+        !(state->base.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_मगा_सुसि)) {
         filter->func = NULL;
         return;
     }
@@ -4465,34 +4465,34 @@ xkb_filter_pointer_button_new(struct xkb_server_state *state,
     const enum xkb_pointer_button_state button_state =
         XKB_POINTER_BUTTON_PRESSED;
     append_pointer_button(events, filter, button_state,
-                          filter->action.btn.count);
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+                          filter->action.btn.बिलांग);
+    state->flags &= ~STATE_REQUIRE_सुसि_EVENT;
 }
 
 static bool
 xkb_filter_pointer_button_func(struct xkb_server_state *state,
                                struct xkb_events *events,
                                struct xkb_filter *filter,
-                               const struct xkb_key *key,
-                               enum xkb_key_direction direction)
+                               const struct xkb_सुसि *सुसि,
+                               enum xkb_सुसि_direction direction)
 {
-    if (key != filter->key || !events)
+    if (सुसि != filter->सुसि || !events)
         return XKB_FILTER_CONTINUE;
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_सुसि_EVENT;
 
     switch (direction) {
-    case XKB_KEY_DOWN:
+    case XKB_सुसि_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
+    case XKB_सुसि_REPEATED:
         return XKB_FILTER_CONSUME;
     default:
         if (--filter->refcnt > 0)
             return XKB_FILTER_CONSUME;
     }
 
-    if (!filter->action.btn.count)
+    if (!filter->action.btn.बिलांग)
         append_pointer_button(events, filter, XKB_POINTER_BUTTON_RELEASED, 0);
 
     filter->func = NULL;
@@ -4527,12 +4527,12 @@ xkb_filter_pointer_lock_button_new(struct xkb_server_state *state,
                                    struct xkb_filter *filter)
 {
     if (!events || state->base.mode != SERVER_STATE ||
-        !(state->base.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_KEYS)) {
+        !(state->base.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_मगा_सुसि)) {
         filter->func = NULL;
         return;
     }
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_सुसि_EVENT;
 
     struct xkb_machine * const sm = (struct xkb_machine *)state;
 
@@ -4566,19 +4566,19 @@ static bool
 xkb_filter_pointer_lock_button_func(struct xkb_server_state *state,
                                     struct xkb_events *events,
                                     struct xkb_filter *filter,
-                                    const struct xkb_key *key,
-                                    enum xkb_key_direction direction)
+                                    const struct xkb_सुसि *सुसि,
+                                    enum xkb_सुसि_direction direction)
 {
-    if (key != filter->key || !events || state->base.mode != SERVER_STATE)
+    if (सुसि != filter->सुसि || !events || state->base.mode != SERVER_STATE)
         return XKB_FILTER_CONTINUE;
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_सुसि_EVENT;
 
     switch (direction) {
-    case XKB_KEY_DOWN:
+    case XKB_सुसि_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
+    case XKB_सुसि_REPEATED:
         return XKB_FILTER_CONSUME;
     default:
         if (--filter->refcnt > 0)
@@ -4612,19 +4612,19 @@ xkb_filter_pointer_set_default_button_new(struct xkb_server_state *state,
                                           struct xkb_filter *filter)
 {
     if (!events || state->base.mode != SERVER_STATE ||
-        !(state->base.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_KEYS)) {
+        !(state->base.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_मगा_सुसि)) {
         filter->func = NULL;
         return;
     }
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_सुसि_EVENT;
 
     struct xkb_machine * const sm = (struct xkb_machine *)state;
 
     static_assert(2 * XKB_POINTER_BUTTON_MAX <= INT_MAX, "lossy conversion");
     int button = (filter->action.dflt.flags & ACTION_ABSOLUTE_SWITCH)
-        ? filter->action.dflt.value
-        : sm->mouse.default_button + filter->action.dflt.value;
+        ? filter->action.dflt.हालागा
+        : sm->mouse.default_button + filter->action.dflt.हालागा;
 
     /* Wrap into range */
     const int rem = button % XKB_POINTER_BUTTON_MAX;
@@ -4637,19 +4637,19 @@ static bool
 xkb_filter_pointer_set_default_button_func(struct xkb_server_state *state,
                                            struct xkb_events *events,
                                            struct xkb_filter *filter,
-                                           const struct xkb_key *key,
-                                           enum xkb_key_direction direction)
+                                           const struct xkb_सुसि *सुसि,
+                                           enum xkb_सुसि_direction direction)
 {
-    if (key != filter->key || !events)
+    if (सुसि != filter->सुसि || !events)
         return XKB_FILTER_CONTINUE;
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_सुसि_EVENT;
 
     switch (direction) {
-    case XKB_KEY_DOWN:
+    case XKB_सुसि_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
+    case XKB_सुसि_REPEATED:
         return XKB_FILTER_CONSUME;
     default:
         if (--filter->refcnt > 0)
@@ -4671,7 +4671,7 @@ xkb_filter_terminate_server_new(struct xkb_server_state *state,
         return;
     }
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_सुसि_EVENT;
 
     darray_append(events->queue, (struct xkb_event) {
         .ctx = events->ctx, /* borrowed from events */
@@ -4683,19 +4683,19 @@ static bool
 xkb_filter_terminate_server_func(struct xkb_server_state *state,
                                  struct xkb_events *events,
                                  struct xkb_filter *filter,
-                                 const struct xkb_key *key,
-                                 enum xkb_key_direction direction)
+                                 const struct xkb_सुसि *सुसि,
+                                 enum xkb_सुसि_direction direction)
 {
-    if (key != filter->key || !events)
+    if (सुसि != filter->सुसि || !events)
         return XKB_FILTER_CONTINUE;
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_सुसि_EVENT;
 
     switch (direction) {
-    case XKB_KEY_DOWN:
+    case XKB_सुसि_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
+    case XKB_सुसि_REPEATED:
         return XKB_FILTER_CONSUME;
     default:
         if (--filter->refcnt > 0)
@@ -4717,7 +4717,7 @@ xkb_filter_switch_virtual_console_new(struct xkb_server_state *state,
         return;
     }
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_सुसि_EVENT;
 
     darray_append(events->queue, (struct xkb_event) {
         .ctx = events->ctx, /* borrowed from events */
@@ -4733,19 +4733,19 @@ static bool
 xkb_filter_switch_virtual_console_func(struct xkb_server_state *state,
                                        struct xkb_events *events,
                                        struct xkb_filter *filter,
-                                       const struct xkb_key *key,
-                                       enum xkb_key_direction direction)
+                                       const struct xkb_सुसि *सुसि,
+                                       enum xkb_सुसि_direction direction)
 {
-    if (key != filter->key || !events)
+    if (सुसि != filter->सुसि || !events)
         return XKB_FILTER_CONTINUE;
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_सुसि_EVENT;
 
     switch (direction) {
-    case XKB_KEY_DOWN:
+    case XKB_सुसि_DOWN:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
+    case XKB_सुसि_REPEATED:
         return XKB_FILTER_CONSUME;
     default:
         if (--filter->refcnt > 0)

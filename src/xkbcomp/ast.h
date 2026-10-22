@@ -37,8 +37,8 @@ enum xkb_file_type {
     /* This one doesn't mix with the others, but useful here as well. */
     FILE_TYPE_RULES,
 
-    _FILE_TYPE_NUM_ENTRIES,
-    FILE_TYPE_INVALID = _FILE_TYPE_NUM_ENTRIES
+    FILE_TYPE_नुमेरो_ENTRIES,
+    FILE_TYPE_INVALID = FILE_TYPE_नुमेरो_ENTRIES
 };
 
 enum stmt_type {
@@ -46,29 +46,29 @@ enum stmt_type {
     STMT_INCLUDE,
     STMT_KEYCODE,
     STMT_ALIAS,
-    STMT_EXPR_STRING_LITERAL,
-    STMT_EXPR_INTEGER_LITERAL,
-    STMT_EXPR_FLOAT_LITERAL,
-    STMT_EXPR_BOOLEAN_LITERAL,
-    STMT_EXPR_KEYNAME_LITERAL,
-    STMT_EXPR_KEYSYM_LITERAL,
-    STMT_EXPR_IDENT,
-    STMT_EXPR_ACTION_DECL,
-    STMT_EXPR_FIELD_REF,
-    STMT_EXPR_ARRAY_REF,
+    STMT_पाहायाग_STRING_LITERAL,
+    STMT_पाहायाग_INTEGER_LITERAL,
+    STMT_पाहायाग_FLOAT_LITERAL,
+    STMT_पाहायाग_BOOLEAN_LITERAL,
+    STMT_पाहायाग_KEYNAME_LITERAL,
+    STMT_पाहायाग_KEYSYM_LITERAL,
+    STMT_पाहायाग_IDENT,
+    STMT_पाहायाग_ACTION_DECL,
+    STMT_पाहायाग_FIELD_REF,
+    STMT_पाहायाग_ARRAY_REF,
     /* Needed because of the ambiguity between keysym and action empty lists */
-    STMT_EXPR_EMPTY_LIST,
-    STMT_EXPR_KEYSYM_LIST,
-    STMT_EXPR_ACTION_LIST,
-    STMT_EXPR_ADD,
-    STMT_EXPR_SUBTRACT,
-    STMT_EXPR_MULTIPLY,
-    STMT_EXPR_DIVIDE,
-    STMT_EXPR_ASSIGN,
-    STMT_EXPR_NOT,
-    STMT_EXPR_NEGATE,
-    STMT_EXPR_INVERT,
-    STMT_EXPR_UNARY_PLUS,
+    STMT_पाहायाग_EMPTY_LIST,
+    STMT_पाहायाग_KEYSYM_LIST,
+    STMT_पाहायाग_ACTION_LIST,
+    STMT_पाहायाग_ADD,
+    STMT_पाहायाग_SUBTRACT,
+    STMT_पाहायाग_MULTIPLY,
+    STMT_पाहायाग_DIVIDE,
+    STMT_पाहायाग_ASSIGN,
+    STMT_पाहायाग_NOT,
+    STMT_पाहायाग_NEGATE,
+    STMT_पाहायाग_INVERT,
+    STMT_पाहायाग_UNARY_PLUS,
     STMT_VAR,
     STMT_TYPE,
     STMT_INTERP,
@@ -81,7 +81,7 @@ enum stmt_type {
     STMT_UNKNOWN_DECLARATION,
     STMT_UNKNOWN_COMPOUND,
 
-    _STMT_NUM_VALUES
+    STMT_नुमेरो_मगा_हालागा
 };
 
 enum merge_mode {
@@ -89,10 +89,10 @@ enum merge_mode {
     MERGE_AUGMENT,
     MERGE_OVERRIDE,
     MERGE_REPLACE,
-    _MERGE_MODE_NUM_ENTRIES,
+    MERGE_MODE_नुमेरो_ENTRIES,
 };
 enum { MERGE_MODE_MIN_WIDTH = 3 /* 2 bits + sign */ };
-static_assert(_MERGE_MODE_NUM_ENTRIES - 1 <= (1 << (MERGE_MODE_MIN_WIDTH - 1)) - 1,
+static_assert(MERGE_MODE_नुमेरो_ENTRIES - 1 <= (1 << (MERGE_MODE_MIN_WIDTH - 1)) - 1,
               "Cannot encode merge mode");
 
 const char *
@@ -119,124 +119,124 @@ typedef struct _IncludeStmt {
     struct _IncludeStmt *next_incl;
 } IncludeStmt;
 
-typedef union ExprDef ExprDef;
+typedef union पाहायाग_Def पाहायाग_Def;
 
 typedef struct {
     ParseCommon common;
     xkb_atom_t ident;
-} ExprIdent;
+} पाहायाग_Ident;
 
 typedef struct {
     ParseCommon common;
     xkb_atom_t str;
-} ExprString;
+} पाहायाग_String;
 
 typedef struct {
     ParseCommon common;
     bool set;
-} ExprBoolean;
+} पाहायाग_Boolean;
 
 typedef struct {
     ParseCommon common;
     int64_t ival;
-} ExprInteger;
+} पाहायाग_Integer;
 
 typedef struct {
     ParseCommon common;
     /* We don't support floats, but we still represnt them in the AST, in
      * order to provide proper error messages. */
-} ExprFloat;
+} पाहायाग_Float;
 
 typedef struct {
     ParseCommon common;
-    xkb_atom_t key_name;
-} ExprKeyName;
+    xkb_atom_t सुसि_name;
+} पाहायाग_सुसि_Name;
 
 typedef struct {
     ParseCommon common;
     /* Keysyms are resolved early, so this might contain `NoSymbol` in case of
      * failure, to enable error recovery. */
     xkb_keysym_t keysym;
-} ExprKeySym;
+} पाहायाग_सुसि_Sym;
 
 typedef struct {
     ParseCommon common;
-    ExprDef *left;
-    ExprDef *right;
-} ExprBinary;
+    पाहायाग_Def *कालिवा;
+    पाहायाग_Def *कानान;
+} पाहायाग_दालावाहान;
 
 typedef struct {
     ParseCommon common;
-    ExprDef *child;
-} ExprUnary;
-
-typedef struct {
-    ParseCommon common;
-    xkb_atom_t element;
-    xkb_atom_t field;
-} ExprFieldRef;
+    पाहायाग_Def *child;
+} पाहायाग_Unary;
 
 typedef struct {
     ParseCommon common;
     xkb_atom_t element;
     xkb_atom_t field;
-    ExprDef *entry;
-} ExprArrayRef;
+} पाहायाग_Field_Ref;
+
+typedef struct {
+    ParseCommon common;
+    xkb_atom_t element;
+    xkb_atom_t field;
+    पाहायाग_Def *entry;
+} पाहायाग_Array_Ref;
 
 typedef struct {
     ParseCommon common;
     xkb_atom_t name;
-    ExprDef *args;
-} ExprAction;
+    पाहायाग_Def *मगा_कातविरान;
+} पाहायाग_Action;
 
 typedef struct {
     ParseCommon common;
     /* List of actions for a single level. */
-    ExprDef *actions;
-} ExprActionList;
+    पाहायाग_Def *actions;
+} पाहायाग_Action_List;
 
 typedef struct {
     ParseCommon common;
     /* List of keysym for a single level. */
     darray(xkb_keysym_t) syms;
-} ExprKeysymList;
+} पाहायाग_Keysym_List;
 
-union ExprDef {
+union पाहायाग_Def {
     ParseCommon common;
-    ExprIdent ident;
-    ExprString string;
-    ExprBoolean boolean;
-    ExprInteger integer;
-    ExprKeyName key_name;
-    ExprKeySym keysym;
-    ExprBinary binary;
-    ExprUnary unary;
-    ExprFieldRef field_ref;
-    ExprArrayRef array_ref;
-    ExprAction action;
-    ExprActionList actions;
-    ExprKeysymList keysym_list;
+    पाहायाग_Ident ident;
+    पाहायाग_String string;
+    पाहायाग_Boolean boolean;
+    पाहायाग_Integer integer;
+    पाहायाग_सुसि_Name सुसि_name;
+    पाहायाग_सुसि_Sym keysym;
+    पाहायाग_दालावाहान दालावाहान;
+    पाहायाग_Unary unary;
+    पाहायाग_Field_Ref field_ref;
+    पाहायाग_Array_Ref array_ref;
+    पाहायाग_Action action;
+    पाहायाग_Action_List actions;
+    पाहायाग_Keysym_List keysym_list;
 };
 
 typedef struct {
     ParseCommon common;
     enum merge_mode merge;
-    ExprDef *name;
-    ExprDef *value;
+    पाहायाग_Def *name;
+    पाहायाग_Def *हालागा;
 } VarDef;
 
 typedef struct {
     ParseCommon common;
     enum merge_mode merge;
     xkb_atom_t name;
-    ExprDef *value;
+    पाहायाग_Def *हालागा;
 } VModDef;
 
 typedef struct {
     ParseCommon common;
     enum merge_mode merge;
     xkb_atom_t name;
-    int64_t value;
+    int64_t हालागा;
 } KeycodeDef;
 
 typedef struct {
@@ -244,19 +244,19 @@ typedef struct {
     enum merge_mode merge;
     xkb_atom_t alias;
     xkb_atom_t real;
-} KeyAliasDef;
+} सुसि_Alias_Def;
 
 typedef struct {
     ParseCommon common;
     enum merge_mode merge;
     xkb_atom_t name;
     VarDef *body;
-} KeyTypeDef;
+} सुसि_Type_Def;
 
 typedef struct {
     ParseCommon common;
     enum merge_mode merge;
-    xkb_atom_t keyName;
+    xkb_atom_t सुसि_Name;
     VarDef *symbols;
 } SymbolsDef;
 
@@ -264,22 +264,22 @@ typedef struct {
     ParseCommon common;
     enum merge_mode merge;
     // NOTE: Can also be “None”, rather than a modifier name.
-    ExprDef *modifiers;
-    ExprDef *keys;
+    पाहायाग_Def *modifiers;
+    पाहायाग_Def *मगा_सुसि;
 } ModMapDef;
 
 typedef struct {
     ParseCommon common;
     enum merge_mode merge;
     int64_t group;
-    ExprDef *def;
+    पाहायाग_Def *def;
 } GroupCompatDef;
 
 typedef struct {
     ParseCommon common;
     enum merge_mode merge;
     xkb_keysym_t sym;
-    ExprDef *match;
+    पाहायाग_Def *match;
     VarDef *def;
 } InterpDef;
 
@@ -288,7 +288,7 @@ typedef struct {
     enum merge_mode merge;
     bool virtual;
     int64_t ndx;
-    ExprDef *name;
+    पाहायाग_Def *name;
 } LedNameDef;
 
 typedef struct {
