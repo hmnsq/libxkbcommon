@@ -4,19 +4,19 @@
  */
 #pragma once
 
-#include "config.h"
+#অন্তর্ভাব "config.h"
 
-#include <assert.h>
-#include <errno.h>
-#include <inttypes.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#if HAVE_UNISTD_H
+#অন্তর্ভাব <assert.h>
+#অন্তর্ভাব <errno.h>
+#অন্তর্ভাব <inttypes.h>
+#অন্তর্ভাব <stdarg.h>
+#অন্তর্ভাব <stdbool.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
+#যদি HAVE_UNISTD_H
 # include <unistd.h>
-#else
+#অন্যথা
 /* Required on Windows where unistd.h doesn't exist */
 # define R_OK    4               /* Test for read permission.  */
 # define W_OK    2               /* Test for write permission.  */
@@ -38,18 +38,18 @@
 #  define STDIN_FILENO 0
 # endif
 #ifdef _MSC_VER
-typedef SSIZE_T ssize_t;
+প্রকারনির্দেশ SSIZE_T ssize_t;
 #endif
 #endif
 
-static inline bool
-is_aligned(const void *restrict pointer, size_t byte_count)
+স্থির অন্তঃস্থ bool
+is_aligned(ধ্রুব শূন্য *restrict pointer, size_t byte_গুনতি)
 {
-    return (uintptr_t) pointer % byte_count == 0;
+    প্রত্যাগম (uintptr_t) pointer % byte_গুনতি == 0;
 }
 
 
-#define ARRAY_SIZE(arr) ((sizeof(arr) / sizeof(*(arr))))
+#define ARRAY_SIZE(arr) ((পরিমাণ(arr) / পরিমাণ(*(arr))))
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
@@ -63,179 +63,179 @@ is_aligned(const void *restrict pointer, size_t byte_count)
 #define CONCAT2(x,y) CONCAT(x,y)
 
 /* Check if a Unicode code point is valid in a string literal */
-static inline bool
+স্থির অন্তঃস্থ bool
 is_valid_char(uint32_t cp)
 {
     /* Currently we only check for NULL character, but this could be extended
      * in the future to further ASCII control characters. */
-    return cp != 0;
+    প্রত্যাগম cp != 0;
 }
 
 /* Check if a Unicode code point is a surrogate.
  * Those code points are used only in UTF-16 encodings. */
-static inline bool
+স্থির অন্তঃস্থ bool
 is_surrogate(uint32_t cp)
 {
-    return (cp >= 0xd800 && cp <= 0xdfff);
+    প্রত্যাগম (cp >= 0xd800 && cp <= 0xdfff);
 }
 
-char
-to_lower(char c);
+বর্ণ
+to_lower(বর্ণ c);
 
-int
-istrcmp(const char *a, const char *b);
+পূর্ণাঙ্ক
+istrcmp(ধ্রুব বর্ণ *a, ধ্রুব বর্ণ *b);
 
-int
-istrncmp(const char *a, const char *b, size_t n);
+পূর্ণাঙ্ক
+istrncmp(ধ্রুব বর্ণ *a, ধ্রুব বর্ণ *b, size_t n);
 
-static inline bool
-streq(const char *s1, const char *s2)
+স্থির অন্তঃস্থ bool
+streq(ধ্রুব বর্ণ *s1, ধ্রুব বর্ণ *s2)
 {
-    assert(s1 && s2);
-    return strcmp(s1, s2) == 0;
+    প্রতিজ্ঞা(s1 && s2);
+    প্রত্যাগম strcmp(s1, s2) == 0;
 }
 
-static inline bool
-streq_null(const char *s1, const char *s2)
+স্থির অন্তঃস্থ bool
+streq_null(ধ্রুব বর্ণ *s1, ধ্রুব বর্ণ *s2)
 {
-    if (s1 == NULL || s2 == NULL)
-        return s1 == s2;
-    return streq(s1, s2);
+    যদি (s1 == রিক্ত || s2 == রিক্ত)
+        প্রত্যাগম s1 == s2;
+    প্রত্যাগম streq(s1, s2);
 }
 
-static inline bool
-streq_not_null(const char *s1, const char *s2)
+স্থির অন্তঃস্থ bool
+streq_not_null(ধ্রুব বর্ণ *s1, ধ্রুব বর্ণ *s2)
 {
-    if (!s1 || !s2)
-        return false;
-    return streq(s1, s2);
+    যদি (!s1 || !s2)
+        প্রত্যাগম false;
+    প্রত্যাগম streq(s1, s2);
 }
 
-static inline bool
-istreq(const char *s1, const char *s2)
+স্থির অন্তঃস্থ bool
+istreq(ধ্রুব বর্ণ *s1, ধ্রুব বর্ণ *s2)
 {
-    return istrcmp(s1, s2) == 0;
+    প্রত্যাগম istrcmp(s1, s2) == 0;
 }
 
-static inline bool
-istrneq(const char *s1, const char *s2, size_t len)
+স্থির অন্তঃস্থ bool
+istrneq(ধ্রুব বর্ণ *s1, ধ্রুব বর্ণ *s2, size_t len)
 {
-    return istrncmp(s1, s2, len) == 0;
+    প্রত্যাগম istrncmp(s1, s2, len) == 0;
 }
 
-#define istreq_prefix(s1, s2) istrneq(s1, s2, sizeof(s1) - 1)
+#define istreq_prefix(s1, s2) istrneq(s1, s2, পরিমাণ(s1) - 1)
 
-static inline char *
-strcpy_safe(char *dest, size_t size, const char *src) {
-    if (!dest || !size || !src)
-        return NULL;
-    const char * const limit = dest + size - 1;
-    while (dest < limit && *src) {
+স্থির অন্তঃস্থ বর্ণ *
+strcpy_safe(বর্ণ *dest, size_t size, ধ্রুব বর্ণ *src) {
+    যদি (!dest || !size || !src)
+        প্রত্যাগম রিক্ত;
+    ধ্রুব বর্ণ * ধ্রুব limit = dest + size - 1;
+    যাবত্ (dest < limit && *src) {
         *dest++ = *src++;
     }
     *dest = '\0';
-    return *src ? NULL : dest;
+    প্রত্যাগম *src ? রিক্ত : dest;
 }
 
-static inline char *
-strdup_safe(const char *s)
+স্থির অন্তঃস্থ বর্ণ *
+strdup_safe(ধ্রুব বর্ণ *s)
 {
-    return s ? strdup(s) : NULL;
+    প্রত্যাগম s ? strdup(s) : রিক্ত;
 }
 
-static inline size_t
-strlen_safe(const char *s)
+স্থির অন্তঃস্থ size_t
+strlen_safe(ধ্রুব বর্ণ *s)
 {
-    return s ? strlen(s) : 0;
+    প্রত্যাগম s ? strlen(s) : 0;
 }
 
-static inline bool
-isempty(const char *s)
+স্থির অন্তঃস্থ bool
+isempty(ধ্রুব বর্ণ *s)
 {
-    return s == NULL || s[0] == '\0';
+    প্রত্যাগম s == রিক্ত || s[0] == '\0';
 }
 
-static inline const char *
-strnull(const char *s)
+স্থির অন্তঃস্থ ধ্রুব বর্ণ *
+strnull(ধ্রুব বর্ণ *s)
 {
-    return s ? s : "(null)";
+    প্রত্যাগম s ? s : "(null)";
 }
 
-static inline const char *
-strempty(const char *s)
+স্থির অন্তঃস্থ ধ্রুব বর্ণ *
+strempty(ধ্রুব বর্ণ *s)
 {
-    return s ? s : "";
+    প্রত্যাগম s ? s : "";
 }
 
-static inline void *
-memdup(const void *mem, size_t nmemb, size_t size)
+স্থির অন্তঃস্থ শূন্য *
+memdup(ধ্রুব শূন্য *mem, size_t nmemb, size_t size)
 {
-    void *p = calloc(nmemb, size);
-    if (p)
+    শূন্য *p = calloc(nmemb, size);
+    যদি (p)
         memcpy(p, mem, nmemb * size);
-    return p;
+    প্রত্যাগম p;
 }
 
-#if !(defined(HAVE_STRNDUP) && HAVE_STRNDUP)
-static inline char *
-strndup(const char *s, size_t n)
+#যদি !(defined(HAVE_STRNDUP) && HAVE_STRNDUP)
+স্থির অন্তঃস্থ বর্ণ *
+strndup(ধ্রুব বর্ণ *s, size_t n)
 {
     size_t slen = strlen(s);
     size_t len = MIN(slen, n);
-    char *p = malloc(len + 1);
-    if (!p)
-        return NULL;
+    বর্ণ *p = malloc(len + 1);
+    যদি (!p)
+        প্রত্যাগম রিক্ত;
     memcpy(p, s, len);
     p[len] = '\0';
-    return p;
+    প্রত্যাগম p;
 }
 #endif
 
 /* ctype.h is locale-dependent and has other oddities. */
-static inline bool
-is_ascii(char ch)
+স্থির অন্তঃস্থ bool
+is_ascii(বর্ণ ch)
 {
-    return (ch & ~0x7f) == 0;
+    প্রত্যাগম (ch & ~0x7f) == 0;
 }
 
-static inline bool
-is_space(char ch)
+স্থির অন্তঃস্থ bool
+is_space(বর্ণ ch)
 {
-    return ch == ' ' || (ch >= '\t' && ch <= '\r');
+    প্রত্যাগম ch == ' ' || (ch >= '\t' && ch <= '\r');
 }
 
-static inline bool
-is_alpha(char ch)
+স্থির অন্তঃস্থ bool
+is_alpha(বর্ণ ch)
 {
-    return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
+    প্রত্যাগম (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
 }
 
-static inline bool
-is_digit(char ch)
+স্থির অন্তঃস্থ bool
+is_digit(বর্ণ ch)
 {
-    return ch >= '0' && ch <= '9';
+    প্রত্যাগম ch >= '0' && ch <= '9';
 }
 
-static inline bool
-is_alnum(char ch)
+স্থির অন্তঃস্থ bool
+is_alnum(বর্ণ ch)
 {
-    return is_alpha(ch) || is_digit(ch);
+    প্রত্যাগম is_alpha(ch) || is_digit(ch);
 }
 
-static inline bool
-is_xdigit(char ch)
+স্থির অন্তঃস্থ bool
+is_xdigit(বর্ণ ch)
 {
-    return
+    প্রত্যাগম
         (ch >= '0' && ch <= '9') ||
         (ch >= 'a' && ch <= 'f') ||
         (ch >= 'A' && ch <= 'F');
 }
 
-static inline bool
-is_graph(char ch)
+স্থির অন্তঃস্থ bool
+is_graph(বর্ণ ch)
 {
     /* See table in ascii(7). */
-    return ch >= '!' && ch <= '~';
+    প্রত্যাগম ch >= '!' && ch <= '~';
 }
 
 /*
@@ -243,58 +243,58 @@ is_graph(char ch)
  * Note: this is 1-based! It's more useful this way, and returns 0 when
  * mask is all 0s.
  */
-static inline unsigned int
+স্থির অন্তঃস্থ unsigned পূর্ণাঙ্ক
 msb_pos(uint32_t mask)
 {
-    unsigned int pos = 0;
-    while (mask) {
+    unsigned পূর্ণাঙ্ক pos = 0;
+    যাবত্ (mask) {
         pos++;
         mask >>= 1u;
     }
-    return pos;
+    প্রত্যাগম pos;
 }
 
-static inline int
+স্থির অন্তঃস্থ পূর্ণাঙ্ক
 one_bit_set(uint32_t x)
 {
-    return x && (x & (x - 1)) == 0;
+    প্রত্যাগম x && (x & (x - 1)) == 0;
 }
 
 bool
-map_file(FILE *file, char **string_out, size_t *size_out);
+map_file(FILE *file, বর্ণ **string_out, size_t *size_out);
 
-void
-unmap_file(char *string, size_t size);
+শূন্য
+unmap_file(বর্ণ *string, size_t size);
 
-static inline bool
-check_eaccess(const char *path, int mode)
+স্থির অন্তঃস্থ bool
+check_eaccess(ধ্রুব বর্ণ *path, পূর্ণাঙ্ক mode)
 {
-#if defined(HAVE_EACCESS)
-    if (eaccess(path, mode) != 0)
-        return false;
-#elif defined(HAVE_EUIDACCESS)
-    if (euidaccess(path, mode) != 0)
-        return false;
+#যদি defined(HAVE_EACCESS)
+    যদি (eaccess(path, mode) != 0)
+        প্রত্যাগম false;
+#নোচেদ্যদি defined(HAVE_EUIDACCESS)
+    যদি (euidaccess(path, mode) != 0)
+        প্রত্যাগম false;
 #endif
 
-    return true;
+    প্রত্যাগম true;
 }
 
 FILE*
-open_file(const char *path);
+open_file(ধ্রুব বর্ণ *path);
 
-#if defined(HAVE_SECURE_GETENV)
+#যদি defined(HAVE_SECURE_GETENV)
 # define secure_getenv secure_getenv
-#elif defined(HAVE___SECURE_GETENV)
+#নোচেদ্যদি defined(HAVE___SECURE_GETENV)
 # define secure_getenv __secure_getenv
-#else
+#অন্যথা
 # define secure_getenv getenv
 #endif
 
-#if defined(HAVE___BUILTIN_EXPECT)
+#যদি defined(HAVE___BUILTIN_EXPECT)
 # define likely(x)   __builtin_expect(!!(x), 1)
 # define unlikely(x) __builtin_expect(!!(x), 0)
-#else
+#অন্যথা
 # define likely(x)   (x)
 # define unlikely(x) (x)
 #endif
@@ -303,131 +303,131 @@ open_file(const char *path);
 
 /* Private functions only exposed in tests. */
 #ifdef ENABLE_PRIVATE_APIS
-# if defined(__GNUC__) && !defined(__CYGWIN__)
+# যদি defined(__GNUC__) && !defined(__CYGWIN__)
 #  define XKB_EXPORT_PRIVATE __attribute__((visibility("default")))
 # elif defined(_WIN32)
 #  define XKB_EXPORT_PRIVATE __declspec(dllexport)
-# else
+# অন্যথা
 #  define XKB_EXPORT_PRIVATE
 # endif
-#else
+#অন্যথা
 # define XKB_EXPORT_PRIVATE
 #endif
 
-#if defined(__MINGW32__)
+#যদি defined(__MINGW32__)
 # define ATTR_PRINTF(x,y) __attribute__((__format__(__MINGW_PRINTF_FORMAT, x, y)))
-#elif defined(__GNUC__)
+#নোচেদ্যদি defined(__GNUC__)
 # define ATTR_PRINTF(x,y) __attribute__((__format__(__printf__, x, y)))
-#else
+#অন্যথা
 # define ATTR_PRINTF(x,y)
 #endif
 
-#if defined(__GNUC__)
+#যদি defined(__GNUC__)
 # define ATTR_NORETURN __attribute__((__noreturn__))
-#else
+#অন্যথা
 # define ATTR_NORETURN
 #endif /* GNUC  */
 
-#if defined(__GNUC__)
+#যদি defined(__GNUC__)
 #define ATTR_MALLOC  __attribute__((__malloc__))
-#else
+#অন্যথা
 #define ATTR_MALLOC
 #endif
 
-#if defined(__GNUC__)
+#যদি defined(__GNUC__)
 # define ATTR_NULL_SENTINEL __attribute__((__sentinel__))
-#else
+#অন্যথা
 # define ATTR_NULL_SENTINEL
 #endif
 
-#if defined(__GNUC__)
+#যদি defined(__GNUC__)
 #define ATTR_PACKED  __attribute__((__packed__))
-#else
+#অন্যথা
 #define ATTR_PACKED
 #endif
 
-#if defined(HAVE_ATTR_COUNTED_BY) && HAVE_ATTR_COUNTED_BY
-# define ATTR_COUNTED_BY(count) __attribute__((counted_by(count)))
-#else
-# define ATTR_COUNTED_BY(count)
+#যদি defined(HAVE_ATTR_COUNTED_BY) && HAVE_ATTR_COUNTED_BY
+# define ATTR_COUNTED_BY(গুনতি) __attribute__((counted_by(গুনতি)))
+#অন্যথা
+# define ATTR_COUNTED_BY(গুনতি)
 #endif
 
-#if !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
-XKB_EXPORT_PRIVATE int asprintf(char **strp, const char *fmt, ...) ATTR_PRINTF(2, 3);
-# if !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
+#যদি !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
+XKB_EXPORT_PRIVATE পূর্ণাঙ্ক asprintf(বর্ণ **strp, ধ্রুব বর্ণ *fmt, ...) ATTR_PRINTF(2, 3);
+# যদি !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
 #  include <stdarg.h>
-XKB_EXPORT_PRIVATE int vasprintf(char **strp, const char *fmt, va_list ap);
+XKB_EXPORT_PRIVATE পূর্ণাঙ্ক vasprintf(বর্ণ **strp, ধ্রুব বর্ণ *fmt, va_list ap);
 # endif /* !HAVE_VASPRINTF */
 #endif /* !HAVE_ASPRINTF */
 
-static inline bool
+স্থির অন্তঃস্থ bool
 ATTR_PRINTF(3, 4)
-snprintf_safe(char *buf, size_t sz, const char *format, ...)
+snprintf_safe(বর্ণ *buf, size_t sz, ধ্রুব বর্ণ *format, ...)
 {
     va_list ap;
-    int rc;
+    পূর্ণাঙ্ক rc;
 
     va_start(ap, format);
     rc = vsnprintf(buf, sz, format, ap);
     va_end(ap);
 
-    return rc >= 0 && (size_t)rc < sz;
+    প্রত্যাগম rc >= 0 && (size_t)rc < sz;
 }
 
-static inline char *
+স্থির অন্তঃস্থ বর্ণ *
 ATTR_PRINTF(1, 0)
-vasprintf_safe(const char *fmt, va_list args)
+vasprintf_safe(ধ্রুব বর্ণ *fmt, va_list args)
 {
-    char *str;
-    int len;
+    বর্ণ *str;
+    পূর্ণাঙ্ক len;
 
     len = vasprintf(&str, fmt, args);
 
-    if (len == -1)
-        return NULL;
+    যদি (len == -1)
+        প্রত্যাগম রিক্ত;
 
-    return str;
+    প্রত্যাগম str;
 }
 
 /**
  * A version of asprintf that returns the allocated string or NULL on error.
  */
-static inline char *
+স্থির অন্তঃস্থ বর্ণ *
 ATTR_PRINTF(1, 2)
-asprintf_safe(const char *fmt, ...)
+asprintf_safe(ধ্রুব বর্ণ *fmt, ...)
 {
     va_list args;
-    char *str;
+    বর্ণ *str;
 
     va_start(args, fmt);
     str = vasprintf_safe(fmt, args);
     va_end(args);
 
-    return str;
+    প্রত্যাগম str;
 }
 
 #ifdef NDEBUG
-    #if defined(__GNUC__) || defined(__clang__)
+    #যদি defined(__GNUC__) || defined(__clang__)
         #define PANIC_UNREACHABLE() __builtin_unreachable()
-    #elif defined(_MSC_VER)
+    #নোচেদ্যদি defined(_MSC_VER)
         #define PANIC_UNREACHABLE() __assume(0)
-    #else
+    #অন্যথা
         #define PANIC_UNREACHABLE() abort()
     #endif
-#else
+#অন্যথা
     #define PANIC_UNREACHABLE() \
-        do { \
+        কুরু { \
             fprintf(stderr, "Critical Error: Reached unreachable line in %s at %d\n", __FILE__, __LINE__); \
             abort(); \
-        } while (0)
+        } যাবত্ (0)
 #endif
 
-#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
+#যদি defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
 #  define NOINLINE [[noinline]]
-#elif defined(__GNUC__) || defined(__clang__)
+#নোচেদ্যদি defined(__GNUC__) || defined(__clang__)
 #  define NOINLINE __attribute__((noinline))
-#elif defined(_MSC_VER)
+#নোচেদ্যদি defined(_MSC_VER)
 #  define NOINLINE __declspec(noinline)
-#else
+#অন্যথা
 #  define NOINLINE
 #endif

@@ -4,64 +4,64 @@
  */
 #pragma once
 
-#include "config.h"
+#অন্তর্ভাব "config.h"
 
-#include "xkbcommon/xkbcommon.h"
+#অন্তর্ভাব "xkbcommon/xkbcommon.h"
 
-#include "ast.h"
-#include "keymap.h"
-#include "text.h"
-#include "xkbcomp-priv.h"
-
-bool
-ExprResolveLhs(struct xkb_context *ctx, const ExprDef *expr,
-               const char **elem_rtrn, const char **field_rtrn,
-               ExprDef **index_rtrn);
+#অন্তর্ভাব "ast.h"
+#অন্তর্ভাব "keymap.h"
+#অন্তর্ভাব "text.h"
+#অন্তর্ভাব "xkbcomp-priv.h"
 
 bool
-ExprResolveModMask(struct xkb_context *ctx, const ExprDef *expr,
-                   enum mod_type mod_type, const struct xkb_mod_set *mods,
+রাশিমালা_Resolve_Lhs(সংরচনা xkb_context *ctx, ধ্রুব রাশিমালা_Def *রাশিমালা,
+               ধ্রুব বর্ণ **elem_rtrn, ধ্রুব বর্ণ **field_rtrn,
+               রাশিমালা_Def **index_rtrn);
+
+bool
+রাশিমালা_Resolve_Mod_Mask(সংরচনা xkb_context *ctx, ধ্রুব রাশিমালা_Def *রাশিমালা,
+                   গণনা mod_type mod_type, ধ্রুব সংরচনা xkb_mod_set *mods,
                    xkb_mod_mask_t *mask_rtrn);
 
 bool
-ExprResolveMod(struct xkb_context *ctx, const ExprDef *def,
-               enum mod_type mod_type, const struct xkb_mod_set *mods,
+রাশিমালা_Resolve_Mod(সংরচনা xkb_context *ctx, ধ্রুব রাশিমালা_Def *def,
+               গণনা mod_type mod_type, ধ্রুব সংরচনা xkb_mod_set *mods,
                xkb_mod_index_t *ndx_rtrn);
 
 bool
-ExprResolveBoolean(struct xkb_context *ctx, const ExprDef *expr,
+রাশিমালা_Resolve_Boolean(সংরচনা xkb_context *ctx, ধ্রুব রাশিমালা_Def *রাশিমালা,
                    bool *set_rtrn);
 
 bool
-ExprResolveInteger(struct xkb_context *ctx, const ExprDef *expr,
+রাশিমালা_Resolve_Integer(সংরচনা xkb_context *ctx, ধ্রুব রাশিমালা_Def *রাশিমালা,
                    int64_t *val_rtrn);
 
 bool
-ExprResolveLevel(struct xkb_context *ctx, const ExprDef *expr,
+রাশিমালা_Resolve_Level(সংরচনা xkb_context *ctx, ধ্রুব রাশিমালা_Def *রাশিমালা,
                  xkb_level_index_t *level_rtrn);
 
-enum xkb_parser_error
-ExprResolveGroup(const struct xkb_keymap_info *keymap_info,
-                 const ExprDef *expr, bool absolute,
+গণনা xkb_parser_error
+রাশিমালা_Resolve_Group(ধ্রুব সংরচনা xkb_keymap_info *keymap_info,
+                 ধ্রুব রাশিমালা_Def *রাশিমালা, bool absolute,
                  xkb_layout_index_t *group_rtrn, bool *pending_rtrn);
 
 bool
-ExprResolveGroupMask(const struct xkb_keymap_info *keymap_info,
-                     const ExprDef *expr, xkb_layout_mask_t *group_rtrn,
+রাশিমালা_Resolve_Group_Mask(ধ্রুব সংরচনা xkb_keymap_info *keymap_info,
+                     ধ্রুব রাশিমালা_Def *রাশিমালা, xkb_layout_mask_t *group_rtrn,
                      bool *pending_rtrn);
 
 bool
-ExprResolveButton(struct xkb_context *ctx, const ExprDef *expr,
+রাশিমালা_Resolve_Button(সংরচনা xkb_context *ctx, ধ্রুব রাশিমালা_Def *রাশিমালা,
                   int64_t *btn_rtrn);
 
 bool
-ExprResolveString(struct xkb_context *ctx, const ExprDef *expr,
+রাশিমালা_Resolve_String(সংরচনা xkb_context *ctx, ধ্রুব রাশিমালা_Def *রাশিমালা,
                   xkb_atom_t *val_rtrn);
 
 bool
-ExprResolveEnum(struct xkb_context *ctx, const ExprDef *expr,
-                uint32_t *val_rtrn, const LookupEntry *values);
+রাশিমালা_Resolve_Enum(সংরচনা xkb_context *ctx, ধ্রুব রাশিমালা_Def *রাশিমালা,
+                uint32_t *val_rtrn, ধ্রুব LookupEntry *মানসমূহ);
 
 bool
-ExprResolveMask(struct xkb_context *ctx, const ExprDef *expr,
-                uint32_t *mask_rtrn, const LookupEntry *values);
+রাশিমালা_Resolve_Mask(সংরচনা xkb_context *ctx, ধ্রুব রাশিমালা_Def *রাশিমালা,
+                uint32_t *mask_rtrn, ধ্রুব LookupEntry *মানসমূহ);

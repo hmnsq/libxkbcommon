@@ -6,23 +6,23 @@
  * Author: Daniel Stone <daniel@fooishbar.org>
  */
 
-#include "config.h"
+#অন্তর্ভাব "config.h"
 
-#include <assert.h>
-#include <stdint.h>
-#include <string.h>
+#অন্তর্ভাব <assert.h>
+#অন্তর্ভাব <stdint.h>
+#অন্তর্ভাব <string.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-names.h"
-#include "features/enums.h"
-#include "keymap.h"
-#include "messages-codes.h"
+#অন্তর্ভাব "xkbcommon/xkbcommon.h"
+#অন্তর্ভাব "xkbcommon/xkbcommon-names.h"
+#অন্তর্ভাব "features/enums.h"
+#অন্তর্ভাব "keymap.h"
+#অন্তর্ভাব "messages-codes.h"
 
-static void
-update_builtin_keymap_fields(struct xkb_keymap *keymap)
+স্থির শূন্য
+update_builtin_keymap_fields(সংরচনা xkb_keymap *keymap)
 {
     /* Predefined (AKA real, core, X11) modifiers. The order is important! */
-    static const char *const builtin_mods[] = {
+    স্থির ধ্রুব বর্ণ *ধ্রুব builtin_mods[] = {
         [XKB_MOD_INDEX_SHIFT] = XKB_MOD_NAME_SHIFT,
         [XKB_MOD_INDEX_CAPS]  = XKB_MOD_NAME_CAPS,
         [XKB_MOD_INDEX_CTRL]  = XKB_MOD_NAME_CTRL,
@@ -33,7 +33,7 @@ update_builtin_keymap_fields(struct xkb_keymap *keymap)
         [XKB_MOD_INDEX_MOD5]  = XKB_MOD_NAME_MOD5
     };
 
-    for (xkb_mod_index_t i = 0; i < ARRAY_SIZE(builtin_mods); i++) {
+    প্রতি (xkb_mod_index_t i = 0; i < ARRAY_SIZE(builtin_mods); i++) {
         keymap->mods.mods[i].name = xkb_atom_intern(keymap->ctx,
                                                     builtin_mods[i],
                                                     strlen(builtin_mods[i]));
@@ -41,28 +41,28 @@ update_builtin_keymap_fields(struct xkb_keymap *keymap)
         /* Real modifiers have a canonical mapping */
         keymap->mods.mods[i].mapping = UINT32_C(1) << i;
     }
-    keymap->mods.num_mods = ARRAY_SIZE(builtin_mods);
+    keymap->mods.অঙ্ক_mods = ARRAY_SIZE(builtin_mods);
     keymap->canonical_state_mask = MOD_REAL_MASK_ALL;
 }
 
-struct xkb_keymap *
-xkb_keymap_new(struct xkb_context *ctx, const char *func,
-               enum xkb_keymap_format format,
-               enum xkb_keymap_compile_flags flags)
+সংরচনা xkb_keymap *
+xkb_keymap_new(সংরচনা xkb_context *ctx, ধ্রুব বর্ণ *func,
+               গণনা xkb_keymap_format format,
+               গণনা xkb_keymap_compile_flags flags)
 {
-    const enum xkb_keymap_compile_flags invalid_flags = (
-        flags & ~(enum xkb_keymap_compile_flags)XKB_KEYMAP_COMPILE_FLAGS_VALUES
+    ধ্রুব গণনা xkb_keymap_compile_flags invalid_flags = (
+        flags & ~(গণনা xkb_keymap_compile_flags)XKB_KEYMAP_COMPILE_FLAGS_মানসমূহ
     );
-    if (invalid_flags) {
+    যদি (invalid_flags) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "%s: unrecognized keymap compilation flags: 0x%x\n",
                 func, invalid_flags);
-        return NULL;
+        প্রত্যাগম রিক্ত;
     }
 
-    struct xkb_keymap * const keymap = calloc(1, sizeof(*keymap));
-    if (!keymap)
-        return NULL;
+    সংরচনা xkb_keymap * ধ্রুব keymap = calloc(1, পরিমাণ(*keymap));
+    যদি (!keymap)
+        প্রত্যাগম রিক্ত;
 
     keymap->refcnt = 1;
     keymap->ctx = xkb_context_ref(ctx);
@@ -72,163 +72,163 @@ xkb_keymap_new(struct xkb_context *ctx, const char *func,
 
     update_builtin_keymap_fields(keymap);
 
-    return keymap;
+    প্রত্যাগম keymap;
 }
 
-void
-XkbEscapeMapName(char *name)
+শূন্য
+XkbEscapeMapName(বর্ণ *name)
 {
     /*
      * All latin-1 alphanumerics, plus parens, slash, minus, underscore and
      * wildcards.
      */
-    static const unsigned char legal[] = {
+    স্থির ধ্রুব unsigned বর্ণ legal[] = {
         0x00, 0x00, 0x00, 0x00, 0x00, 0xa7, 0xff, 0x83,
         0xfe, 0xff, 0xff, 0x87, 0xfe, 0xff, 0xff, 0x07,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0xff, 0xff, 0x7f, 0xff, 0xff, 0xff, 0x7f, 0xff
     };
 
-    if (!name)
-        return;
+    যদি (!name)
+        প্রত্যাগম;
 
-    while (*name) {
-        unsigned char c = (unsigned char)*name;
-        if (!(legal[c / 8] & (1u << (c % 8))))
+    যাবত্ (*name) {
+        unsigned বর্ণ c = (unsigned বর্ণ)*name;
+        যদি (!(legal[c / 8] & (1u << (c % 8))))
             *name = '_';
         name++;
     }
 }
 
 xkb_mod_index_t
-XkbModNameToIndex(const struct xkb_mod_set *mods, xkb_atom_t name,
-                  enum mod_type type)
+XkbModNameToIndex(ধ্রুব সংরচনা xkb_mod_set *mods, xkb_atom_t name,
+                  গণনা mod_type type)
 {
     xkb_mod_index_t i;
-    const struct xkb_mod *mod;
+    ধ্রুব সংরচনা xkb_mod *mod;
 
     xkb_mods_enumerate(i, mod, mods)
-        if ((mod->type & type) && name == mod->name)
-            return i;
+        যদি ((mod->type & type) && name == mod->name)
+            প্রত্যাগম i;
 
-    return XKB_MOD_INVALID;
+    প্রত্যাগম XKB_MOD_INVALID;
 }
 
 bool
-XkbLevelsSameSyms(const struct xkb_level *a, const struct xkb_level *b)
+XkbLevelsSameSyms(ধ্রুব সংরচনা xkb_level *a, ধ্রুব সংরচনা xkb_level *b)
 {
-    if (a->num_syms != b->num_syms)
-        return false;
-    if (a->num_syms <= 1)
-        return a->s.sym == b->s.sym;
-    return memcmp(a->s.syms, b->s.syms, sizeof(*a->s.syms) * a->num_syms) == 0;
+    যদি (a->অঙ্ক_syms != b->অঙ্ক_syms)
+        প্রত্যাগম false;
+    যদি (a->অঙ্ক_syms <= 1)
+        প্রত্যাগম a->s.sym == b->s.sym;
+    প্রত্যাগম memcmp(a->s.syms, b->s.syms, পরিমাণ(*a->s.syms) * a->অঙ্ক_syms) == 0;
 }
 
 bool
-action_equal(const union xkb_action *a, const union xkb_action *b)
+action_equal(ধ্রুব সঙ্ঘ xkb_action *a, ধ্রুব সঙ্ঘ xkb_action *b)
 {
-    if (a->type != b->type)
-        return false;
+    যদি (a->type != b->type)
+        প্রত্যাগম false;
 
-    switch (a->type) {
-    case ACTION_TYPE_NONE:
-    case ACTION_TYPE_VOID:
-        return true;
-    case ACTION_TYPE_MOD_SET:
-    case ACTION_TYPE_MOD_LATCH:
-    case ACTION_TYPE_MOD_LOCK:
-        return (a->mods.flags == b->mods.flags &&
+    বিকল্প (a->type) {
+    পক্ষ ACTION_TYPE_NONE:
+    পক্ষ ACTION_TYPE_VOID:
+        প্রত্যাগম true;
+    পক্ষ ACTION_TYPE_MOD_SET:
+    পক্ষ ACTION_TYPE_MOD_LATCH:
+    পক্ষ ACTION_TYPE_MOD_LOCK:
+        প্রত্যাগম (a->mods.flags == b->mods.flags &&
                 a->mods.mods.mask == b->mods.mods.mask &&
                 a->mods.mods.mods == b->mods.mods.mods);
-    case ACTION_TYPE_GROUP_SET:
-    case ACTION_TYPE_GROUP_LATCH:
-    case ACTION_TYPE_GROUP_LOCK:
-        return (a->group.flags == b->group.flags &&
+    পক্ষ ACTION_TYPE_GROUP_SET:
+    পক্ষ ACTION_TYPE_GROUP_LATCH:
+    পক্ষ ACTION_TYPE_GROUP_LOCK:
+        প্রত্যাগম (a->group.flags == b->group.flags &&
                 a->group.group == b->group.group);
-    case ACTION_TYPE_PTR_MOVE:
-        return (a->ptr.flags == b->ptr.flags &&
+    পক্ষ ACTION_TYPE_PTR_MOVE:
+        প্রত্যাগম (a->ptr.flags == b->ptr.flags &&
                 a->ptr.x == b->ptr.x &&
                 a->ptr.y == b->ptr.y);
-    case ACTION_TYPE_PTR_BUTTON:
-    case ACTION_TYPE_PTR_LOCK:
-        return (a->btn.flags == b->btn.flags &&
+    পক্ষ ACTION_TYPE_PTR_BUTTON:
+    পক্ষ ACTION_TYPE_PTR_LOCK:
+        প্রত্যাগম (a->btn.flags == b->btn.flags &&
                 a->btn.button == b->btn.button &&
-                a->btn.count == b->btn.count);
-    case ACTION_TYPE_PTR_DEFAULT:
-        return (a->dflt.flags == b->dflt.flags &&
-                a->dflt.value == b->dflt.value);
-    case ACTION_TYPE_TERMINATE:
-        return true;
-    case ACTION_TYPE_SWITCH_VT:
-        return (a->screen.flags == b->screen.flags &&
+                a->btn.গুনতি == b->btn.গুনতি);
+    পক্ষ ACTION_TYPE_PTR_DEFAULT:
+        প্রত্যাগম (a->dflt.flags == b->dflt.flags &&
+                a->dflt.মান == b->dflt.মান);
+    পক্ষ ACTION_TYPE_TERMINATE:
+        প্রত্যাগম true;
+    পক্ষ ACTION_TYPE_SWITCH_VT:
+        প্রত্যাগম (a->screen.flags == b->screen.flags &&
                 a->screen.screen == b->screen.screen);
-    case ACTION_TYPE_CTRL_SET:
-    case ACTION_TYPE_CTRL_LOCK:
-        return (a->ctrls.flags == b->ctrls.flags &&
+    পক্ষ ACTION_TYPE_CTRL_SET:
+    পক্ষ ACTION_TYPE_CTRL_LOCK:
+        প্রত্যাগম (a->ctrls.flags == b->ctrls.flags &&
                 a->ctrls.ctrls == b->ctrls.ctrls);
-    case ACTION_TYPE_REDIRECT_KEY:
-        return (a->redirect.keycode == b->redirect.keycode &&
+    পক্ষ ACTION_TYPE_REDIRECT_চাবি:
+        প্রত্যাগম (a->redirect.keycode == b->redirect.keycode &&
                 a->redirect.affect_mods == b->redirect.affect_mods &&
                 a->redirect.mods == b->redirect.mods);
-    case ACTION_TYPE_UNSUPPORTED_LEGACY:
-    case ACTION_TYPE_UNKNOWN:
-        return true;
+    পক্ষ ACTION_TYPE_UNSUPPORTED_LEGACY:
+    পক্ষ ACTION_TYPE_UNKNOWN:
+        প্রত্যাগম true;
     /* ACTION_TYPE_PRIVATE processed in the default case */
-    case ACTION_TYPE_INTERNAL:
-        return (a->internal.flags == b->internal.flags) &&
+    পক্ষ ACTION_TYPE_INTERNAL:
+        প্রত্যাগম (a->internal.flags == b->internal.flags) &&
                (a->internal.clear_latched_mods == b->internal.clear_latched_mods);
-    default:
+    স্বভাব:
         {} /* Label followed by declaration requires C23 */
         /* Ensure to not miss `xkb_action_type` updates */
         static_assert(ACTION_TYPE_INTERNAL == 20 &&
-                      ACTION_TYPE_INTERNAL + 1 == _ACTION_TYPE_NUM_ENTRIES,
+                      ACTION_TYPE_INTERNAL + 1 == ACTION_TYPE_অঙ্ক_ENTRIES,
                       "Missing action type");
         /* Private/custom action */
-        return memcmp(a->priv.data, b->priv.data, sizeof(a->priv.data)) == 0;
+        প্রত্যাগম memcmp(a->priv.data, b->priv.data, পরিমাণ(a->priv.data)) == 0;
     }
 }
 
 bool
-XkbLevelsSameActions(const struct xkb_level *a, const struct xkb_level *b)
+XkbLevelsSameActions(ধ্রুব সংরচনা xkb_level *a, ধ্রুব সংরচনা xkb_level *b)
 {
-    if (a->num_actions != b->num_actions)
-        return false;
-    if (a->num_actions <= 1)
-        return action_equal(&a->a.action, &b->a.action);
-    for (xkb_action_count_t k = 0; k < a->num_actions; k++) {
-        if (!action_equal(&a->a.actions[k], &b->a.actions[k]))
-            return false;
+    যদি (a->অঙ্ক_actions != b->অঙ্ক_actions)
+        প্রত্যাগম false;
+    যদি (a->অঙ্ক_actions <= 1)
+        প্রত্যাগম action_equal(&a->a.action, &b->a.action);
+    প্রতি (xkb_action_গুনতি_t k = 0; k < a->অঙ্ক_actions; k++) {
+        যদি (!action_equal(&a->a.actions[k], &b->a.actions[k]))
+            প্রত্যাগম false;
     }
-    return true;
+    প্রত্যাগম true;
 }
 
 /* See: XkbAdjustGroup in Xorg xserver */
 xkb_layout_index_t
 XkbWrapGroupIntoRange(int32_t group,
-                      xkb_layout_index_t num_groups,
-                      enum xkb_layout_out_of_range_policy out_of_range_group_policy,
-                      xkb_layout_index_t out_of_range_group_number)
+                      xkb_layout_index_t অঙ্ক_groups,
+                      গণনা xkb_layout_out_of_range_policy out_of_range_group_policy,
+                      xkb_layout_index_t out_of_range_group_সংখ্যা)
 {
-    if (num_groups == 0)
-        return XKB_LAYOUT_INVALID;
+    যদি (অঙ্ক_groups == 0)
+        প্রত্যাগম XKB_LAYOUT_INVALID;
 
-    if (group >= 0 && (xkb_layout_index_t)group < num_groups)
-        return (xkb_layout_index_t)group;
+    যদি (group >= 0 && (xkb_layout_index_t)group < অঙ্ক_groups)
+        প্রত্যাগম (xkb_layout_index_t)group;
 
-    switch (out_of_range_group_policy) {
-    case XKB_LAYOUT_OUT_OF_RANGE_REDIRECT:
-        if (out_of_range_group_number >= num_groups)
-            return 0;
-        return out_of_range_group_number;
+    বিকল্প (out_of_range_group_policy) {
+    পক্ষ XKB_LAYOUT_OUT_OF_RANGE_REDIRECT:
+        যদি (out_of_range_group_সংখ্যা >= অঙ্ক_groups)
+            প্রত্যাগম 0;
+        প্রত্যাগম out_of_range_group_সংখ্যা;
 
-    case XKB_LAYOUT_OUT_OF_RANGE_CLAMP:
-        if (group < 0)
-            return 0;
-        else
-            return num_groups - 1;
+    পক্ষ XKB_LAYOUT_OUT_OF_RANGE_CLAMP:
+        যদি (group < 0)
+            প্রত্যাগম 0;
+        অন্যথা
+            প্রত্যাগম অঙ্ক_groups - 1;
 
-    case XKB_LAYOUT_OUT_OF_RANGE_WRAP:
-    default: {
+    পক্ষ XKB_LAYOUT_OUT_OF_RANGE_WRAP:
+    স্বভাব: {
         /*
          * Ensure conversion xkb_layout_index_t → int32_t is lossless.
          *
@@ -245,45 +245,45 @@ XkbWrapGroupIntoRange(int32_t group,
          * positive. So if the remainder is negative, we must add `num_groups`
          * to get the modulus.
          */
-        const int32_t rem = group % (int32_t) num_groups;
-        return (rem >= 0)
+        ধ্রুব int32_t rem = group % (int32_t) অঙ্ক_groups;
+        প্রত্যাগম (rem >= 0)
             ? (xkb_layout_index_t)rem
-            : (xkb_layout_index_t)(rem + (int32_t)num_groups);
+            : (xkb_layout_index_t)(rem + (int32_t)অঙ্ক_groups);
     }
     }
 }
 
-xkb_action_count_t
-xkb_keymap_key_get_actions_by_level(const struct xkb_keymap *keymap,
-                                    const struct xkb_key *key,
+xkb_action_গুনতি_t
+xkb_keymap_চাবি_get_actions_by_level(ধ্রুব সংরচনা xkb_keymap *keymap,
+                                    ধ্রুব সংরচনা xkb_চাবি *চাবি,
                                     xkb_layout_index_t layout,
                                     xkb_level_index_t level,
-                                    const union xkb_action **actions)
+                                    ধ্রুব সঙ্ঘ xkb_action **actions)
 {
-    if (!key)
-        goto err;
+    যদি (!চাবি)
+        গচ্ছ err;
 
-    layout = xkb_keymap_key_effective_layout(key, layout);
-    if (layout == XKB_LAYOUT_INVALID)
-        goto err;
+    layout = xkb_keymap_চাবি_effective_layout(চাবি, layout);
+    যদি (layout == XKB_LAYOUT_INVALID)
+        গচ্ছ err;
 
-    if (level >= XkbKeyNumLevels(key, layout))
-        goto err;
+    যদি (level >= Xkb_চাবি_অঙ্ক_Levels(চাবি, layout))
+        গচ্ছ err;
 
-    const xkb_action_count_t count =
-        key->groups[layout].levels[level].num_actions;
-    switch (count) {
-        case 0:
-            goto err;
-        case 1:
-            *actions = &key->groups[layout].levels[level].a.action;
-            break;
-        default:
-            *actions = key->groups[layout].levels[level].a.actions;
+    ধ্রুব xkb_action_গুনতি_t গুনতি =
+        চাবি->groups[layout].levels[level].অঙ্ক_actions;
+    বিকল্প (গুনতি) {
+        পক্ষ 0:
+            গচ্ছ err;
+        পক্ষ 1:
+            *actions = &চাবি->groups[layout].levels[level].a.action;
+            ভঙ্গ;
+        স্বভাব:
+            *actions = চাবি->groups[layout].levels[level].a.actions;
     }
-    return count;
+    প্রত্যাগম গুনতি;
 
 err:
-    *actions = NULL;
-    return 0;
+    *actions = রিক্ত;
+    প্রত্যাগম 0;
 }

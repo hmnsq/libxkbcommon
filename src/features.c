@@ -9,140 +9,140 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#অন্তর্ভাব "config.h"
 
-#include <stdint.h>
+#অন্তর্ভাব <stdint.h>
 
-#include "xkbcommon/xkbcommon-features.h"
-#include "features/enums.h"
-#include "utils.h"
+#অন্তর্ভাব "xkbcommon/xkbcommon-features.h"
+#অন্তর্ভাব "features/enums.h"
+#অন্তর্ভাব "utils.h"
 
-static bool
-is_supported_enum_value_mask(enum xkb_enumerations_values values, uint32_t value)
+স্থির bool
+is_supported_enum_মান_mask(গণনা xkb_enumerations_মানসমূহ মানসমূহ, uint32_t মান)
 {
-    return (value < UINT32_WIDTH && (values & (UINT32_C(1) << value)));
+    প্রত্যাগম (মান < UINT32_WIDTH && (মানসমূহ & (UINT32_C(1) << মান)));
 }
 
-static bool
-is_supported_enum_value_array(const uint32_t *values, size_t size, uint32_t value)
+স্থির bool
+is_supported_enum_মান_array(ধ্রুব uint32_t *মানসমূহ, size_t size, uint32_t মান)
 {
-    for (size_t v = 0; v < size; v++) {
-        if (values[v] == value) {
-            return true;
+    প্রতি (size_t v = 0; v < size; v++) {
+        যদি (মানসমূহ[v] == মান) {
+            প্রত্যাগম true;
         }
     }
-    return false;
+    প্রত্যাগম false;
 }
 
-static inline bool
-is_supported_flag_value(enum xkb_enumerations_values values,
-                        bool accept_zero, uint32_t value)
+স্থির অন্তঃস্থ bool
+is_supported_flag_মান(গণনা xkb_enumerations_মানসমূহ মানসমূহ,
+                        bool accept_zero, uint32_t মান)
 {
-    return (accept_zero || value) && ((uint32_t) values & value) == value;
+    প্রত্যাগম (accept_zero || মান) && ((uint32_t) মানসমূহ & মান) == মান;
 }
 
 bool
-xkb_feature_supported(enum xkb_feature feature, uint32_t value)
+xkb_feature_supported(গণনা xkb_feature feature, uint32_t মান)
 {
-    switch (feature) {
-    case XKB_FEATURE_ENUM_FEATURE:
-        return is_supported_enum_value_array(
-            xkb_feature_values, ARRAY_SIZE(xkb_feature_values), value
+    বিকল্প (feature) {
+    পক্ষ XKB_FEATURE_ENUM_FEATURE:
+        প্রত্যাগম is_supported_enum_মান_array(
+            xkb_feature_মানসমূহ, ARRAY_SIZE(xkb_feature_মানসমূহ), মান
         );
-    case XKB_FEATURE_ENUM_STATUS:
-        return is_supported_enum_value_array(
-            xkb_status_values, ARRAY_SIZE(xkb_status_values), value
+    পক্ষ XKB_FEATURE_ENUM_STATUS:
+        প্রত্যাগম is_supported_enum_মান_array(
+            xkb_status_মানসমূহ, ARRAY_SIZE(xkb_status_মানসমূহ), মান
         );
-    case XKB_FEATURE_ENUM_CONTEXT_FLAGS:
-        return is_supported_flag_value(
-            XKB_CONTEXT_FLAGS_VALUES, true, value
+    পক্ষ XKB_FEATURE_ENUM_CONTEXT_FLAGS:
+        প্রত্যাগম is_supported_flag_মান(
+            XKB_CONTEXT_FLAGS_মানসমূহ, true, মান
         );
-    case XKB_FEATURE_ENUM_LOG_LEVEL:
-        return is_supported_enum_value_array(
-            xkb_log_level_values, ARRAY_SIZE(xkb_log_level_values), value
+    পক্ষ XKB_FEATURE_ENUM_LOG_LEVEL:
+        প্রত্যাগম is_supported_enum_মান_array(
+            xkb_log_level_মানসমূহ, ARRAY_SIZE(xkb_log_level_মানসমূহ), মান
         );
-    case XKB_FEATURE_ENUM_KEYSYM_FLAGS:
-        return is_supported_flag_value(
-            XKB_KEYSYM_FLAGS_VALUES, true, value
+    পক্ষ XKB_FEATURE_ENUM_KEYSYM_FLAGS:
+        প্রত্যাগম is_supported_flag_মান(
+            XKB_KEYSYM_FLAGS_মানসমূহ, true, মান
         );
-    case XKB_FEATURE_ENUM_RMLVO_BUILDER_FLAGS:
-        return is_supported_flag_value(
-            XKB_RMLVO_BUILDER_FLAGS_VALUES, true, value
+    পক্ষ XKB_FEATURE_ENUM_RMLVO_BUILDER_FLAGS:
+        প্রত্যাগম is_supported_flag_মান(
+            XKB_RMLVO_BUILDER_FLAGS_মানসমূহ, true, মান
         );
-    case XKB_FEATURE_ENUM_KEYMAP_FORMAT:
-        return is_supported_enum_value_mask(XKB_KEYMAP_FORMAT_VALUES, value);
-    case XKB_FEATURE_ENUM_KEYMAP_COMPILE_FLAGS:
-        return is_supported_flag_value(
-            XKB_KEYMAP_COMPILE_FLAGS_VALUES, true, value
+    পক্ষ XKB_FEATURE_ENUM_KEYMAP_FORMAT:
+        প্রত্যাগম is_supported_enum_মান_mask(XKB_KEYMAP_FORMAT_মানসমূহ, মান);
+    পক্ষ XKB_FEATURE_ENUM_KEYMAP_COMPILE_FLAGS:
+        প্রত্যাগম is_supported_flag_মান(
+            XKB_KEYMAP_COMPILE_FLAGS_মানসমূহ, true, মান
         );
-    case XKB_FEATURE_ENUM_KEYMAP_SERIALIZE_FLAGS:
-        return is_supported_flag_value(
-            XKB_KEYMAP_SERIALIZE_FLAGS_VALUES, true, value
+    পক্ষ XKB_FEATURE_ENUM_KEYMAP_SERIALIZE_FLAGS:
+        প্রত্যাগম is_supported_flag_মান(
+            XKB_KEYMAP_SERIALIZE_FLAGS_মানসমূহ, true, মান
         );
-    case XKB_FEATURE_ENUM_KEYMAP_KEY_ITERATOR_FLAGS:
-        return is_supported_flag_value(
-            XKB_KEYMAP_KEY_ITERATOR_FLAGS_VALUES, true, value
+    পক্ষ XKB_FEATURE_ENUM_KEYMAP_চাবি_ITERATOR_FLAGS:
+        প্রত্যাগম is_supported_flag_মান(
+            XKB_KEYMAP_চাবি_ITERATOR_FLAGS_মানসমূহ, true, মান
         );
-    case XKB_FEATURE_ENUM_STATE_COMPONENT:
-        return is_supported_flag_value(
-            XKB_STATE_COMPONENT_VALUES, true, value
+    পক্ষ XKB_FEATURE_ENUM_STATE_COMPONENT:
+        প্রত্যাগম is_supported_flag_মান(
+            XKB_STATE_COMPONENT_মানসমূহ, true, মান
         );
-    case XKB_FEATURE_ENUM_LAYOUT_OUT_OF_RANGE_POLICY:
-        return is_supported_enum_value_mask(XKB_LAYOUT_OUT_OF_RANGE_POLICY_VALUES, value);
-    case XKB_FEATURE_ENUM_A11Y_FLAGS:
-        return is_supported_flag_value(
-            XKB_A11Y_FLAGS_VALUES, true, value
+    পক্ষ XKB_FEATURE_ENUM_LAYOUT_OUT_OF_RANGE_POLICY:
+        প্রত্যাগম is_supported_enum_মান_mask(XKB_LAYOUT_OUT_OF_RANGE_POLICY_মানসমূহ, মান);
+    পক্ষ XKB_FEATURE_ENUM_A11Y_FLAGS:
+        প্রত্যাগম is_supported_flag_মান(
+            XKB_A11_Y_FLAGS_মানসমূহ, true, মান
         );
-    case XKB_FEATURE_ENUM_KEYBOARD_CONTROL_FLAGS:
-        return is_supported_flag_value(
-            XKB_KEYBOARD_CONTROL_FLAGS_VALUES, true, value
+    পক্ষ XKB_FEATURE_ENUM_KEYBOARD_CONTROL_FLAGS:
+        প্রত্যাগম is_supported_flag_মান(
+            XKB_KEYBOARD_CONTROL_FLAGS_মানসমূহ, true, মান
         );
-    case XKB_FEATURE_ENUM_STATE_MODE:
-        return is_supported_enum_value_mask(XKB_STATE_MODE_VALUES, value);
-    case XKB_FEATURE_ENUM_STATE_MATCH:
-        return is_supported_flag_value(
-            XKB_STATE_MATCH_VALUES, false, value
+    পক্ষ XKB_FEATURE_ENUM_STATE_MODE:
+        প্রত্যাগম is_supported_enum_মান_mask(XKB_STATE_MODE_মানসমূহ, মান);
+    পক্ষ XKB_FEATURE_ENUM_STATE_MATCH:
+        প্রত্যাগম is_supported_flag_মান(
+            XKB_STATE_MATCH_মানসমূহ, false, মান
         );
-    case XKB_FEATURE_ENUM_CONSUMED_MODE:
-        return is_supported_enum_value_mask(XKB_CONSUMED_MODE_VALUES, value);
-    case XKB_FEATURE_ENUM_MACHINE_BUILDER_FLAGS:
-        return is_supported_flag_value(
-            XKB_MACHINE_BUILDER_FLAGS_VALUES, true, value
+    পক্ষ XKB_FEATURE_ENUM_CONSUMED_MODE:
+        প্রত্যাগম is_supported_enum_মান_mask(XKB_CONSUMED_MODE_মানসমূহ, মান);
+    পক্ষ XKB_FEATURE_ENUM_MACHINE_BUILDER_FLAGS:
+        প্রত্যাগম is_supported_flag_মান(
+            XKB_MACHINE_BUILDER_FLAGS_মানসমূহ, true, মান
         );
-    case XKB_FEATURE_ENUM_MACHINE_FLAGS:
-        return is_supported_flag_value(
-            XKB_MACHINE_FLAGS_VALUES, true, value
+    পক্ষ XKB_FEATURE_ENUM_MACHINE_FLAGS:
+        প্রত্যাগম is_supported_flag_মান(
+            XKB_MACHINE_FLAGS_মানসমূহ, true, মান
         );
-    case XKB_FEATURE_ENUM_EVENT_TYPE:
-        return is_supported_enum_value_mask(XKB_EVENT_TYPE_VALUES, value);
-    case XKB_FEATURE_ENUM_KEY_DIRECTION:
-        return is_supported_enum_value_mask(XKB_KEY_DIRECTION_VALUES, value);
-    case XKB_FEATURE_ENUM_POINTER_MOTION_FLAGS:
-        return is_supported_flag_value(
-            XKB_POINTER_MOTION_FLAGS_VALUES, true, value
+    পক্ষ XKB_FEATURE_ENUM_EVENT_TYPE:
+        প্রত্যাগম is_supported_enum_মান_mask(XKB_EVENT_TYPE_মানসমূহ, মান);
+    পক্ষ XKB_FEATURE_ENUM_চাবি_DIRECTION:
+        প্রত্যাগম is_supported_enum_মান_mask(XKB_চাবি_DIRECTION_মানসমূহ, মান);
+    পক্ষ XKB_FEATURE_ENUM_POINTER_MOTION_FLAGS:
+        প্রত্যাগম is_supported_flag_মান(
+            XKB_POINTER_MOTION_FLAGS_মানসমূহ, true, মান
         );
-    case XKB_FEATURE_ENUM_POINTER_BUTTON_STATE:
-        return is_supported_enum_value_mask(XKB_POINTER_BUTTON_STATE_VALUES, value);
-    case XKB_FEATURE_ENUM_EVENTS_FLAGS:
-        return is_supported_flag_value(
-            XKB_EVENTS_FLAGS_VALUES, true, value
+    পক্ষ XKB_FEATURE_ENUM_POINTER_BUTTON_STATE:
+        প্রত্যাগম is_supported_enum_মান_mask(XKB_POINTER_BUTTON_STATE_মানসমূহ, মান);
+    পক্ষ XKB_FEATURE_ENUM_EVENTS_FLAGS:
+        প্রত্যাগম is_supported_flag_মান(
+            XKB_EVENTS_FLAGS_মানসমূহ, true, মান
         );
-    case XKB_FEATURE_ENUM_COMPOSE_FORMAT:
-        return is_supported_enum_value_mask(XKB_COMPOSE_FORMAT_VALUES, value);
-    case XKB_FEATURE_ENUM_COMPOSE_COMPILE_FLAGS:
-        return is_supported_flag_value(
-            XKB_COMPOSE_COMPILE_FLAGS_VALUES, true, value
+    পক্ষ XKB_FEATURE_ENUM_COMPOSE_FORMAT:
+        প্রত্যাগম is_supported_enum_মান_mask(XKB_COMPOSE_FORMAT_মানসমূহ, মান);
+    পক্ষ XKB_FEATURE_ENUM_COMPOSE_COMPILE_FLAGS:
+        প্রত্যাগম is_supported_flag_মান(
+            XKB_COMPOSE_COMPILE_FLAGS_মানসমূহ, true, মান
         );
-    case XKB_FEATURE_ENUM_COMPOSE_STATUS:
-        return is_supported_enum_value_mask(XKB_COMPOSE_STATUS_VALUES, value);
-    case XKB_FEATURE_ENUM_COMPOSE_STATE_FLAGS:
-        return is_supported_flag_value(
-            XKB_COMPOSE_STATE_FLAGS_VALUES, true, value
+    পক্ষ XKB_FEATURE_ENUM_COMPOSE_STATUS:
+        প্রত্যাগম is_supported_enum_মান_mask(XKB_COMPOSE_STATUS_মানসমূহ, মান);
+    পক্ষ XKB_FEATURE_ENUM_COMPOSE_STATE_FLAGS:
+        প্রত্যাগম is_supported_flag_মান(
+            XKB_COMPOSE_STATE_FLAGS_মানসমূহ, true, মান
         );
-    case XKB_FEATURE_ENUM_COMPOSE_FEED_RESULT:
-        return is_supported_enum_value_mask(XKB_COMPOSE_FEED_RESULT_VALUES, value);
-    default:
+    পক্ষ XKB_FEATURE_ENUM_COMPOSE_FEED_RESULT:
+        প্রত্যাগম is_supported_enum_মান_mask(XKB_COMPOSE_FEED_RESULT_মানসমূহ, মান);
+    স্বভাব:
         /* Invalid feature */
-        return false;
+        প্রত্যাগম false;
     }
 }

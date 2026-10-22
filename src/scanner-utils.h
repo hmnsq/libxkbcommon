@@ -4,88 +4,88 @@
  */
 #pragma once
 
-#include "config.h"
+#অন্তর্ভাব "config.h"
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <string.h>
+#অন্তর্ভাব <stdbool.h>
+#অন্তর্ভাব <stddef.h>
+#অন্তর্ভাব <stdint.h>
+#অন্তর্ভাব <string.h>
 
-#include "context.h"
-#include "darray.h"
-#include "messages-codes.h"
-#include "utils.h"
-#include "util-numbers.h"
-#include "utf8.h"
+#অন্তর্ভাব "context.h"
+#অন্তর্ভাব "darray.h"
+#অন্তর্ভাব "messages-codes.h"
+#অন্তর্ভাব "utils.h"
+#অন্তর্ভাব "util-numbers.h"
+#অন্তর্ভাব "utf8.h"
 
 /* Point to some substring in the file; used to avoid copying. */
-struct sval {
+সংরচনা sval {
     size_t len;
-    const char *start ATTR_COUNTED_BY(len);
+    ধ্রুব বর্ণ *start ATTR_COUNTED_BY(len);
 };
-typedef darray(struct sval) darray_sval;
+প্রকারনির্দেশ darray(সংরচনা sval) darray_sval;
 
-static inline bool
-svaleq(struct sval s1, struct sval s2)
+স্থির অন্তঃস্থ bool
+svaleq(সংরচনা sval s1, সংরচনা sval s2)
 {
-    return s1.len == s2.len && memcmp(s1.start, s2.start, s1.len) == 0;
+    প্রত্যাগম s1.len == s2.len && memcmp(s1.start, s2.start, s1.len) == 0;
 }
 
-static inline bool
-isvaleq(struct sval s1, struct sval s2)
+স্থির অন্তঃস্থ bool
+isvaleq(সংরচনা sval s1, সংরচনা sval s2)
 {
-    return s1.len == s2.len && istrncmp(s1.start, s2.start, s1.len) == 0;
+    প্রত্যাগম s1.len == s2.len && istrncmp(s1.start, s2.start, s1.len) == 0;
 }
 
-static inline bool
-svaleq_prefix(struct sval s1, struct sval s2)
+স্থির অন্তঃস্থ bool
+svaleq_prefix(সংরচনা sval s1, সংরচনা sval s2)
 {
-    return s1.len <= s2.len && memcmp(s1.start, s2.start, s1.len) == 0;
+    প্রত্যাগম s1.len <= s2.len && memcmp(s1.start, s2.start, s1.len) == 0;
 }
 
-#define SVAL(__start, __len) (struct sval){ .start = (__start), .len = (__len) }
-#define SVAL_LIT(literal) SVAL(literal, sizeof(literal) - 1)
-#define SVAL_INIT(literal) { .start = (literal), .len = sizeof(literal) - 1 }
+#define SVAL(__start, __len) (সংরচনা sval){ .start = (__start), .len = (__len) }
+#define SVAL_LIT(literal) SVAL(literal, পরিমাণ(literal) - 1)
+#define SVAL_INIT(literal) { .start = (literal), .len = পরিমাণ(literal) - 1 }
 
 /* A line:column location in the input string (1-based). */
-struct scanner_loc {
-    size_t line, column;
+সংরচনা scanner_loc {
+    size_t সারি, column;
 };
 
-struct scanner {
+সংরচনা scanner {
     size_t pos;
     size_t len;
-    const char *s ATTR_COUNTED_BY(len);
+    ধ্রুব বর্ণ *s ATTR_COUNTED_BY(len);
     /*
      * Internal buffer.
      * Since this is used to handle paths that are possibly absolute, in theory
      * we should size it to PATH_MAX. However it is very unlikely to reach such
      * long paths in our context.
      */
-    char buf[1024];
+    বর্ণ buf[1024];
     size_t buf_pos;
     /* The position of the start of the current token. */
     size_t token_pos;
     /* Cached values used by scanner_token_location. */
     size_t cached_pos;
-    struct scanner_loc cached_loc;
-    const char *file_name;
-    struct xkb_context *ctx;
-    void *priv;
+    সংরচনা scanner_loc cached_loc;
+    ধ্রুব বর্ণ *file_name;
+    সংরচনা xkb_context *ctx;
+    শূন্য *priv;
 };
 
 /* Compute the line:column location for the current token (slow). */
-struct scanner_loc
-scanner_token_location(struct scanner *s);
+সংরচনা scanner_loc
+scanner_token_location(সংরচনা scanner *s);
 
-#define scanner_log_with_code(scanner, level, verbosity, log_msg_id, fmt, ...) do { \
-    struct scanner_loc loc = scanner_token_location((scanner));                     \
-    xkb_log_with_code((scanner)->ctx, (level), verbosity, log_msg_id,               \
+#define scanner_log_with_code(scanner, level, verbosity, log_বার্তা_id, fmt, ...) কুরু { \
+    সংরচনা scanner_loc loc = scanner_token_location((scanner));                     \
+    xkb_log_with_code((scanner)->ctx, (level), verbosity, log_বার্তা_id,               \
                       "%s:%zu:%zu: " fmt "\n",                                      \
                       (scanner)->file_name,                                         \
-                      loc.line,                                                     \
+                      loc.সারি,                                                     \
                       loc.column, ##__VA_ARGS__);                                   \
-} while(0)
+} যাবত্(0)
 
 #define scanner_err(scanner, id, fmt, ...)              \
     scanner_log_with_code(scanner, XKB_LOG_LEVEL_ERROR, \
@@ -99,200 +99,200 @@ scanner_token_location(struct scanner *s);
     scanner_log_with_code(scanner, XKB_LOG_LEVEL_WARNING, verbosity, id, \
                           fmt, ##__VA_ARGS__)
 
-static inline void
-scanner_init(struct scanner *s, struct xkb_context *ctx,
-             const char *string, size_t len, const char *file_name,
-             void *priv)
+স্থির অন্তঃস্থ শূন্য
+scanner_init(সংরচনা scanner *s, সংরচনা xkb_context *ctx,
+             ধ্রুব বর্ণ *string, size_t len, ধ্রুব বর্ণ *file_name,
+             শূন্য *priv)
 {
     s->s = string;
     s->len = len;
     s->pos = 0;
     s->token_pos = 0;
     s->cached_pos = 0;
-    s->cached_loc.line = s->cached_loc.column = 1;
+    s->cached_loc.সারি = s->cached_loc.column = 1;
     s->file_name = file_name;
     s->ctx = ctx;
     s->priv = priv;
 }
 
-static inline char
-scanner_peek(struct scanner *s)
+স্থির অন্তঃস্থ বর্ণ
+scanner_peek(সংরচনা scanner *s)
 {
-    if (unlikely(s->pos >= s->len))
-        return '\0';
-    return s->s[s->pos];
+    যদি (unlikely(s->pos >= s->len))
+        প্রত্যাগম '\0';
+    প্রত্যাগম s->s[s->pos];
 }
 
-static inline bool
-scanner_eof(struct scanner *s)
+স্থির অন্তঃস্থ bool
+scanner_eof(সংরচনা scanner *s)
 {
-    return s->pos >= s->len;
+    প্রত্যাগম s->pos >= s->len;
 }
 
-static inline bool
-scanner_eol(struct scanner *s)
+স্থির অন্তঃস্থ bool
+scanner_eol(সংরচনা scanner *s)
 {
-    return scanner_peek(s) == '\n';
+    প্রত্যাগম scanner_peek(s) == '\n';
 }
 
-static inline void
-scanner_skip_to_eol(struct scanner *s)
+স্থির অন্তঃস্থ শূন্য
+scanner_skip_to_eol(সংরচনা scanner *s)
 {
-    const char *nl = memchr(s->s + s->pos, '\n', s->len - s->pos);
-    const size_t new_pos = nl ? (size_t) (nl - s->s) : s->len;
+    ধ্রুব বর্ণ *nl = memchr(s->s + s->pos, '\n', s->len - s->pos);
+    ধ্রুব size_t new_pos = nl ? (size_t) (nl - s->s) : s->len;
     s->pos = new_pos;
 }
 
-static inline char
-scanner_next(struct scanner *s)
+স্থির অন্তঃস্থ বর্ণ
+scanner_next(সংরচনা scanner *s)
 {
-    if (unlikely(scanner_eof(s)))
-        return '\0';
-    return s->s[s->pos++];
+    যদি (unlikely(scanner_eof(s)))
+        প্রত্যাগম '\0';
+    প্রত্যাগম s->s[s->pos++];
 }
 
-static inline bool
-scanner_chr(struct scanner *s, char ch)
+স্থির অন্তঃস্থ bool
+scanner_chr(সংরচনা scanner *s, বর্ণ ch)
 {
-    if (likely(scanner_peek(s) != ch))
-        return false;
+    যদি (likely(scanner_peek(s) != ch))
+        প্রত্যাগম false;
     s->pos++;
-    return true;
+    প্রত্যাগম true;
 }
 
-static inline bool
-scanner_str(struct scanner *s, const char *string, size_t len)
+স্থির অন্তঃস্থ bool
+scanner_str(সংরচনা scanner *s, ধ্রুব বর্ণ *string, size_t len)
 {
-    if (s->len - s->pos < len)
-        return false;
-    if (memcmp(s->s + s->pos, string, len) != 0)
-        return false;
+    যদি (s->len - s->pos < len)
+        প্রত্যাগম false;
+    যদি (memcmp(s->s + s->pos, string, len) != 0)
+        প্রত্যাগম false;
     s->pos += len;
-    return true;
+    প্রত্যাগম true;
 }
 
-#define scanner_lit(s, literal) scanner_str(s, literal, sizeof(literal) - 1)
+#define scanner_lit(s, literal) scanner_str(s, literal, পরিমাণ(literal) - 1)
 
-static inline bool
-scanner_rules_is_ident(char ch)
+স্থির অন্তঃস্থ bool
+scanner_rules_is_ident(বর্ণ ch)
 {
-    return is_graph(ch) && ch != '\\';
+    প্রত্যাগম is_graph(ch) && ch != '\\';
 }
 
 /*
  * A keyword/operator is only valid when it is followed by a character
  * which cannot continue the token.
  */
-static inline bool
-scanner_rules_str_token(struct scanner *s, const char *string, size_t len)
+স্থির অন্তঃস্থ bool
+scanner_rules_str_token(সংরচনা scanner *s, ধ্রুব বর্ণ *string, size_t len)
 {
-    if (!scanner_str(s, string, len)) {
-        return false;
+    যদি (!scanner_str(s, string, len)) {
+        প্রত্যাগম false;
     }
-    if (scanner_rules_is_ident(scanner_peek(s))) {
+    যদি (scanner_rules_is_ident(scanner_peek(s))) {
         /* Backtrack */
         s->pos -= len;
-        return false;
+        প্রত্যাগম false;
     }
-    return true;
+    প্রত্যাগম true;
 }
 
 #define scanner_rules_lit_token(s, literal) \
-    scanner_rules_str_token((s), (literal), sizeof(literal) - 1)
+    scanner_rules_str_token((s), (literal), পরিমাণ(literal) - 1)
 
-static inline size_t
-scanner_rules_ident_token(struct scanner *s)
+স্থির অন্তঃস্থ size_t
+scanner_rules_ident_token(সংরচনা scanner *s)
 {
     size_t len = 0;
-    while (!scanner_eof(s) && scanner_rules_is_ident(s->s[s->pos])) {
+    যাবত্ (!scanner_eof(s) && scanner_rules_is_ident(s->s[s->pos])) {
         s->pos++;
         len++;
     }
-    return len;
+    প্রত্যাগম len;
 }
 
-static inline bool
-scanner_buf_append(struct scanner *s, char ch)
+স্থির অন্তঃস্থ bool
+scanner_buf_append(সংরচনা scanner *s, বর্ণ ch)
 {
-    if (s->buf_pos + 1 >= sizeof(s->buf))
-        return false;
+    যদি (s->buf_pos + 1 >= পরিমাণ(s->buf))
+        প্রত্যাগম false;
     s->buf[s->buf_pos++] = ch;
-    return true;
+    প্রত্যাগম true;
 }
 
-static inline bool
-scanner_buf_appends(struct scanner *s, const char *str)
+স্থির অন্তঃস্থ bool
+scanner_buf_appends(সংরচনা scanner *s, ধ্রুব বর্ণ *str)
 {
-    const int ret = snprintf(s->buf + s->buf_pos,
-                             sizeof(s->buf) - s->buf_pos,
+    ধ্রুব পূর্ণাঙ্ক ret = snprintf(s->buf + s->buf_pos,
+                             পরিমাণ(s->buf) - s->buf_pos,
                              "%s", str);
-    if (ret < 0 || (size_t)ret >= sizeof(s->buf) - s->buf_pos)
-        return false;
+    যদি (ret < 0 || (size_t)ret >= পরিমাণ(s->buf) - s->buf_pos)
+        প্রত্যাগম false;
     s->buf_pos += (size_t)ret;
-    return true;
+    প্রত্যাগম true;
 }
 
-static inline bool
-scanner_buf_appends_code_point(struct scanner *s, uint32_t c)
+স্থির অন্তঃস্থ bool
+scanner_buf_appends_code_point(সংরচনা scanner *s, uint32_t c)
 {
     /* Up to 4 bytes + NULL */
-    if (s->buf_pos + 5 <= sizeof(s->buf)) {
-        uint8_t count = utf32_to_utf8(c, s->buf + s->buf_pos);
-        if (count == 0) {
+    যদি (s->buf_pos + 5 <= পরিমাণ(s->buf)) {
+        uint8_t গুনতি = utf32_to_utf8(c, s->buf + s->buf_pos);
+        যদি (গুনতি == 0) {
             /* Handle encoding failure with U+FFFD REPLACEMENT CHARACTER */
-            count = utf32_to_utf8(0xfffd, s->buf + s->buf_pos);
+            গুনতি = utf32_to_utf8(0xfffd, s->buf + s->buf_pos);
         }
-        if (count == 0)
-            return false;
+        যদি (গুনতি == 0)
+            প্রত্যাগম false;
         /* `count` counts the NULL byte */
-        s->buf_pos += (size_t)count - 1;
-        return true;
-    } else {
-        return false;
+        s->buf_pos += (size_t)গুনতি - 1;
+        প্রত্যাগম true;
+    } অন্যথা {
+        প্রত্যাগম false;
     }
 }
 
-static inline bool
-scanner_oct(struct scanner *s, uint8_t *out)
+স্থির অন্তঃস্থ bool
+scanner_oct(সংরচনা scanner *s, uint8_t *out)
 {
     uint8_t i = 0;
     uint8_t c = 0;
-    for (; scanner_peek(s) >= '0' && scanner_peek(s) <= '7' && i < 4; i++) {
+    প্রতি (; scanner_peek(s) >= '0' && scanner_peek(s) <= '7' && i < 4; i++) {
         /* Test overflow */
-        if (c < 040) {
+        যদি (c < 040) {
             c = c * 8 + (uint8_t)(scanner_next(s) - '0');
-        } else {
+        } অন্যথা {
             /* Consume valid digit, but mark result as invalid */
             scanner_next(s);
             *out = c;
-            return false;
+            প্রত্যাগম false;
         }
     }
     *out = c;
-    return i > 0;
+    প্রত্যাগম i > 0;
 }
 
-static inline bool
-scanner_hex(struct scanner *s, uint8_t *out)
+স্থির অন্তঃস্থ bool
+scanner_hex(সংরচনা scanner *s, uint8_t *out)
 {
     uint8_t i;
-    for (i = 0, *out = 0; is_xdigit(scanner_peek(s)) && i < 2; i++) {
-        const char c = scanner_next(s);
-        const char offset = (char) (c >= '0' && c <= '9' ? '0' :
+    প্রতি (i = 0, *out = 0; is_xdigit(scanner_peek(s)) && i < 2; i++) {
+        ধ্রুব বর্ণ c = scanner_next(s);
+        ধ্রুব বর্ণ offset = (বর্ণ) (c >= '0' && c <= '9' ? '0' :
                                     c >= 'a' && c <= 'f' ? 'a' - 10
                                                          : 'A' - 10);
         *out = *out * 16 + (uint8_t)(c - offset);
     }
-    return i > 0;
+    প্রত্যাগম i > 0;
 }
 
-static inline int
-scanner_dec_int64(struct scanner *s, int64_t *out)
+স্থির অন্তঃস্থ পূর্ণাঙ্ক
+scanner_dec_int64(সংরচনা scanner *s, int64_t *out)
 {
     uint64_t val = 0;
-    const int count =
+    ধ্রুব পূর্ণাঙ্ক গুনতি =
         parse_dec_to_uint64_t(s->s + s->pos, s->len - s->pos, &val);
-    if (count > 0) {
+    যদি (গুনতি > 0) {
         /*
          * NOTE: Since the sign is handled as a token, we parse only *positive*
          *       values here. So that means that *we cannot parse INT64_MIN*,
@@ -302,86 +302,86 @@ scanner_dec_int64(struct scanner *s, int64_t *out)
          *       to parse only 32 bits integers in realistic keymap files and
          *       the limitation should not be an issue.
          */
-        if (val > INT64_MAX)
-            return -1;
-        s->pos += (size_t)count;
+        যদি (val > INT64_MAX)
+            প্রত্যাগম -1;
+        s->pos += (size_t)গুনতি;
         *out = (int64_t)val;
     }
-    return count;
+    প্রত্যাগম গুনতি;
 }
 
-static inline int
-scanner_hex_int64(struct scanner *s, int64_t *out)
+স্থির অন্তঃস্থ পূর্ণাঙ্ক
+scanner_hex_int64(সংরচনা scanner *s, int64_t *out)
 {
     uint64_t val = 0;
-    const int count =
+    ধ্রুব পূর্ণাঙ্ক গুনতি =
         parse_hex_to_uint64_t(s->s + s->pos, s->len - s->pos, &val);
-    if (count > 0) {
+    যদি (গুনতি > 0) {
         /* See comment in `scanner_dec_int64()` above */
-        if (val > INT64_MAX)
-            return -1;
-        s->pos += (size_t)count;
+        যদি (val > INT64_MAX)
+            প্রত্যাগম -1;
+        s->pos += (size_t)গুনতি;
         *out = (int64_t) val;
     }
-    return count;
+    প্রত্যাগম গুনতি;
 }
 
 /** Parser for the {NNNN} part of a Unicode escape sequences */
-static inline bool
-scanner_unicode_code_point(struct scanner *s, uint32_t *out)
+স্থির অন্তঃস্থ bool
+scanner_unicode_code_point(সংরচনা scanner *s, uint32_t *out)
 {
-    if (!scanner_chr(s, '{'))
-        return false;
+    যদি (!scanner_chr(s, '{'))
+        প্রত্যাগম false;
 
     uint32_t cp = 0;
-    const int count =
+    ধ্রুব পূর্ণাঙ্ক গুনতি =
         parse_hex_to_uint32_t(s->s + s->pos, s->len - s->pos, &cp);
-    if (count > 0)
-        s->pos += (size_t)count;
+    যদি (গুনতি > 0)
+        s->pos += (size_t)গুনতি;
 
     /* Try to consume everything within the string until the next `}` */
-    const size_t last_valid = s->pos;
-    while (!scanner_eof(s) && !scanner_eol(s) && scanner_peek(s) != '"' &&
+    ধ্রুব size_t last_valid = s->pos;
+    যাবত্ (!scanner_eof(s) && !scanner_eol(s) && scanner_peek(s) != '"' &&
            scanner_peek(s) != '}') {
         scanner_next(s);
     }
 
-    if (scanner_chr(s, '}')) {
+    যদি (scanner_chr(s, '}')) {
         /* End of the escape sequence; code point may be invalid */
         *out = cp;
-        return (count > 0 && s->pos == last_valid + 1 && cp <= 0x10ffff);
+        প্রত্যাগম (গুনতি > 0 && s->pos == last_valid + 1 && cp <= 0x10ffff);
     }
 
     /* No closing `}` within the string: rollback to last valid position */
     s->pos = last_valid;
-    return false;
+    প্রত্যাগম false;
 }
 
 /* Basic detection of wrong character encoding based on the first bytes */
-static inline bool
-scanner_check_supported_char_encoding(struct scanner *scanner)
+স্থির অন্তঃস্থ bool
+scanner_check_supported_char_encoding(সংরচনা scanner *scanner)
 {
     /* Skip UTF-8 encoded BOM (U+FEFF)
      * See: https://www.unicode.org/faq/utf_bom.html#bom5 */
-    if (scanner_str(scanner, "\xef\xbb\xbf", 3) || scanner->len < 2) {
+    যদি (scanner_str(scanner, "\xef\xbb\xbf", 3) || scanner->len < 2) {
         /* Assume UTF-8 encoding or trivial short input */
-        return true;
+        প্রত্যাগম true;
     }
 
     /* Early detection of wrong file encoding, e.g. UTF-16 or UTF-32 */
-    if (scanner->s[0] == '\0' || scanner->s[1] == '\0') {
+    যদি (scanner->s[0] == '\0' || scanner->s[1] == '\0') {
         scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                     "unexpected NULL character.");
-        return false;
+        প্রত্যাগম false;
     }
     /* Enforce the first character to be ASCII.
        See the note before the use of this function, that explains the relevant
        parts of the grammars of rules, keymap components and Compose. */
-    if (!is_ascii(scanner->s[0])) {
+    যদি (!is_ascii(scanner->s[0])) {
         scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                     "unexpected non-ASCII character.");
-        return false;
+        প্রত্যাগম false;
     }
 
-    return true;
+    প্রত্যাগম true;
 }
