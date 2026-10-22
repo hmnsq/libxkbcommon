@@ -4,33 +4,33 @@
  */
 #pragma once
 
-#include "config.h"
+#ଅନ୍ତର୍ଭାଵ "config.h"
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
+#ଅନ୍ତର୍ଭାଵ <stddef.h>
+#ଅନ୍ତର୍ଭାଵ <stdint.h>
+#ଅନ୍ତର୍ଭାଵ <stdbool.h>
 
-#include "darray.h"
-#include "utils.h"
+#ଅନ୍ତର୍ଭାଵ "darray.h"
+#ଅନ୍ତର୍ଭାଵ "utils.h"
 
 /** Atoms are indexes into a `darray` */
-typedef darray_size_t xkb_atom_t;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା darray_size_t xkb_atom_t;
 
 #define XKB_ATOM_NONE 0
 
-struct atom_table;
+ସଂରଚନା atom_table;
 
-XKB_EXPORT_PRIVATE struct atom_table *
-atom_table_new(void);
+XKB_EXPORT_PRIVATE ସଂରଚନା atom_table *
+atom_table_new(ଶୂନ୍ୟ);
 
-XKB_EXPORT_PRIVATE void
-atom_table_free(struct atom_table *table);
+XKB_EXPORT_PRIVATE ଶୂନ୍ୟ
+atom_table_free(ସଂରଚନା atom_table *table);
 
 XKB_EXPORT_PRIVATE darray_size_t
-atom_table_size(struct atom_table *table);
+atom_table_size(ସଂରଚନା atom_table *table);
 
 XKB_EXPORT_PRIVATE xkb_atom_t
-atom_intern(struct atom_table *table, const char *string, size_t len, bool add);
+atom_intern(ସଂରଚନା atom_table *table, ଅଚଳ ଅକ୍ଷର *string, size_t len, bool add);
 
-XKB_EXPORT_PRIVATE const char *
-atom_text(struct atom_table *table, xkb_atom_t atom);
+XKB_EXPORT_PRIVATE ଅଚଳ ଅକ୍ଷର *
+atom_text(ସଂରଚନା atom_table *table, xkb_atom_t atom);

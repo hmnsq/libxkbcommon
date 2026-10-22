@@ -11,19 +11,19 @@
 
 #pragma once
 
-#include "config.h"
+#ଅନ୍ତର୍ଭାଵ "config.h"
 
-#include <assert.h>
-#include <limits.h>
-#include <stdint.h>
+#ଅନ୍ତର୍ଭାଵ <assert.h>
+#ଅନ୍ତର୍ଭାଵ <limits.h>
+#ଅନ୍ତର୍ଭାଵ <stdint.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-compose.h"
-#include "xkbcommon/xkbcommon-status.h"
-#include "xkbcommon/xkbcommon-features.h"
+#ଅନ୍ତର୍ଭାଵ "xkbcommon/xkbcommon.h"
+#ଅନ୍ତର୍ଭାଵ "xkbcommon/xkbcommon-compose.h"
+#ଅନ୍ତର୍ଭାଵ "xkbcommon/xkbcommon-status.h"
+#ଅନ୍ତର୍ଭାଵ "xkbcommon/xkbcommon-features.h"
 
 #ifndef UINT32_WIDTH
-#define UINT32_WIDTH (sizeof(uint32_t) * CHAR_BIT)
+#define UINT32_WIDTH (ଆକାର(uint32_t) * CHAR_BIT)
 #endif
 
 /*
@@ -34,18 +34,18 @@ static_assert(XKB_KEYMAP_FORMAT_TEXT_V1 >= 0 &&
               XKB_KEYMAP_FORMAT_TEXT_V1 < UINT32_WIDTH, "");
 static_assert(XKB_KEYMAP_FORMAT_TEXT_V2 >= 0 &&
               XKB_KEYMAP_FORMAT_TEXT_V2 < UINT32_WIDTH, "");
-static_assert(XKB_KEY_UP >= 0 &&
-              XKB_KEY_UP < UINT32_WIDTH, "");
-static_assert(XKB_KEY_DOWN >= 0 &&
-              XKB_KEY_DOWN < UINT32_WIDTH, "");
-static_assert(XKB_KEY_REPEATED >= 0 &&
-              XKB_KEY_REPEATED < UINT32_WIDTH, "");
+static_assert(XKB_ଚାବି_UP >= 0 &&
+              XKB_ଚାବି_UP < UINT32_WIDTH, "");
+static_assert(XKB_ଚାବି_DOWN >= 0 &&
+              XKB_ଚାବି_DOWN < UINT32_WIDTH, "");
+static_assert(XKB_ଚାବି_REPEATED >= 0 &&
+              XKB_ଚାବି_REPEATED < UINT32_WIDTH, "");
 static_assert(XKB_EVENT_TYPE_INVALID >= 0 &&
               XKB_EVENT_TYPE_INVALID < UINT32_WIDTH, "");
 static_assert(XKB_EVENT_TYPE_FRAME >= 0 &&
               XKB_EVENT_TYPE_FRAME < UINT32_WIDTH, "");
-static_assert(XKB_EVENT_TYPE_KEY >= 0 &&
-              XKB_EVENT_TYPE_KEY < UINT32_WIDTH, "");
+static_assert(XKB_EVENT_TYPE_ଚାବି >= 0 &&
+              XKB_EVENT_TYPE_ଚାବି < UINT32_WIDTH, "");
 static_assert(XKB_EVENT_TYPE_STATE_COMPONENTS >= 0 &&
               XKB_EVENT_TYPE_STATE_COMPONENTS < UINT32_WIDTH, "");
 static_assert(XKB_EVENT_TYPE_POINTER_MOTION >= 0 &&
@@ -91,48 +91,48 @@ static_assert(XKB_COMPOSE_FEED_IGNORED >= 0 &&
 static_assert(XKB_COMPOSE_FEED_ACCEPTED >= 0 &&
               XKB_COMPOSE_FEED_ACCEPTED < UINT32_WIDTH, "");
 
-enum xkb_enumerations_values {
-    XKB_RMLVO_BUILDER_FLAGS_VALUES
+ଗଣନା xkb_enumerations_ମୂଲ୍ୟଗୁଡ଼ିକ {
+    XKB_RMLVO_BUILDER_FLAGS_ମୂଲ୍ୟଗୁଡ଼ିକ
         = XKB_RMLVO_BUILDER_NO_FLAGS
     ,
-    XKB_KEYSYM_FLAGS_VALUES
+    XKB_KEYSYM_FLAGS_ମୂଲ୍ୟଗୁଡ଼ିକ
         = XKB_KEYSYM_NO_FLAGS
         | XKB_KEYSYM_CASE_INSENSITIVE
     ,
-    XKB_CONTEXT_FLAGS_VALUES
+    XKB_CONTEXT_FLAGS_ମୂଲ୍ୟଗୁଡ଼ିକ
         = XKB_CONTEXT_NO_FLAGS
         | XKB_CONTEXT_NO_DEFAULT_INCLUDES
         | XKB_CONTEXT_NO_ENVIRONMENT_NAMES
         | XKB_CONTEXT_NO_SECURE_GETENV
     ,
-    XKB_KEYMAP_COMPILE_FLAGS_VALUES
+    XKB_KEYMAP_COMPILE_FLAGS_ମୂଲ୍ୟଗୁଡ଼ିକ
         = XKB_KEYMAP_COMPILE_NO_FLAGS
         | XKB_KEYMAP_COMPILE_STRICT_MODE
     ,
-    XKB_KEYMAP_FORMAT_VALUES
+    XKB_KEYMAP_FORMAT_ମୂଲ୍ୟଗୁଡ଼ିକ
         = (1u << XKB_KEYMAP_FORMAT_TEXT_V1)
         | (1u << XKB_KEYMAP_FORMAT_TEXT_V2)
     ,
-    XKB_KEYMAP_SERIALIZE_FLAGS_VALUES
+    XKB_KEYMAP_SERIALIZE_FLAGS_ମୂଲ୍ୟଗୁଡ଼ିକ
         = XKB_KEYMAP_SERIALIZE_NO_FLAGS
         | XKB_KEYMAP_SERIALIZE_PRETTY
         | XKB_KEYMAP_SERIALIZE_KEEP_UNUSED
         | XKB_KEYMAP_SERIALIZE_STRICT_MODE
-        | XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_VALUES
+        | XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_ମୂଲ୍ୟଗୁଡ଼ିକ
         | XKB_KEYMAP_SERIALIZE_EXPLICIT_VMODS
-        | XKB_KEYMAP_SERIALIZE_EXPLICIT_KEY_VALUES
+        | XKB_KEYMAP_SERIALIZE_EXPLICIT_ଚାବି_ମୂଲ୍ୟଗୁଡ଼ିକ
     ,
-    XKB_KEYMAP_KEY_ITERATOR_FLAGS_VALUES
-        = XKB_KEYMAP_KEY_ITERATOR_NO_FLAGS
-        | XKB_KEYMAP_KEY_ITERATOR_DESCENDING_ORDER
-        | XKB_KEYMAP_KEY_ITERATOR_INCLUDE_UNBOUND
+    XKB_KEYMAP_ଚାବି_ITERATOR_FLAGS_ମୂଲ୍ୟଗୁଡ଼ିକ
+        = XKB_KEYMAP_ଚାବି_ITERATOR_NO_FLAGS
+        | XKB_KEYMAP_ଚାବି_ITERATOR_DESCENDING_ORDER
+        | XKB_KEYMAP_ଚାବି_ITERATOR_INCLUDE_UNBOUND
     ,
-    XKB_KEY_DIRECTION_VALUES
-        = (1u << XKB_KEY_UP)
-        | (1u << XKB_KEY_DOWN)
-        | (1u << XKB_KEY_REPEATED)
+    XKB_ଚାବି_DIRECTION_ମୂଲ୍ୟଗୁଡ଼ିକ
+        = (1u << XKB_ଚାବି_UP)
+        | (1u << XKB_ଚାବି_DOWN)
+        | (1u << XKB_ଚାବି_REPEATED)
     ,
-    XKB_STATE_COMPONENT_VALUES
+    XKB_STATE_COMPONENT_ମୂଲ୍ୟଗୁଡ଼ିକ
         = XKB_STATE_NO_COMPONENT
         | XKB_STATE_MODS_DEPRESSED
         | XKB_STATE_MODS_LATCHED
@@ -145,91 +145,91 @@ enum xkb_enumerations_values {
         | XKB_STATE_LEDS
         | XKB_STATE_CONTROLS_EFFECTIVE
     ,
-    XKB_KEYBOARD_CONTROL_FLAGS_VALUES
+    XKB_KEYBOARD_CONTROL_FLAGS_ମୂଲ୍ୟଗୁଡ଼ିକ
         = XKB_KEYBOARD_CONTROL_NO_FLAGS
-        | XKB_KEYBOARD_CONTROL_A11Y_STICKY_KEYS
-        | XKB_KEYBOARD_CONTROL_MOUSE_KEYS
+        | XKB_KEYBOARD_CONTROL_A11_Y_STICKY_ଚାବିଗୁଡ଼ିକ
+        | XKB_KEYBOARD_CONTROL_MOUSE_ଚାବିଗୁଡ଼ିକ
     ,
-    XKB_EVENT_TYPE_VALUES
+    XKB_EVENT_TYPE_ମୂଲ୍ୟଗୁଡ଼ିକ
         = (1u << XKB_EVENT_TYPE_INVALID)
         | (1u << XKB_EVENT_TYPE_FRAME)
-        | (1u << XKB_EVENT_TYPE_KEY)
+        | (1u << XKB_EVENT_TYPE_ଚାବି)
         | (1u << XKB_EVENT_TYPE_STATE_COMPONENTS)
         | (1u << XKB_EVENT_TYPE_POINTER_MOTION)
         | (1u << XKB_EVENT_TYPE_POINTER_BUTTON)
         | (1u << XKB_EVENT_TYPE_TERMINATE_DISPLAY_SERVER)
         | (1u << XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE)
     ,
-    XKB_POINTER_MOTION_FLAGS_VALUES
+    XKB_POINTER_MOTION_FLAGS_ମୂଲ୍ୟଗୁଡ଼ିକ
         = XKB_POINTER_MOTION_NO_FLAGS
         | XKB_POINTER_MOTION_REPEATS
         | XKB_POINTER_MOTION_ABSOLUTE_X
         | XKB_POINTER_MOTION_ABSOLUTE_Y
     ,
-    XKB_POINTER_BUTTON_STATE_VALUES
+    XKB_POINTER_BUTTON_STATE_ମୂଲ୍ୟଗୁଡ଼ିକ
         = (1u << XKB_POINTER_BUTTON_RELEASED)
         | (1u << XKB_POINTER_BUTTON_PRESSED)
     ,
-    XKB_EVENTS_FLAGS_VALUES
+    XKB_EVENTS_FLAGS_ମୂଲ୍ୟଗୁଡ଼ିକ
         = XKB_EVENTS_NO_FLAGS
     ,
-    XKB_MACHINE_BUILDER_FLAGS_VALUES
+    XKB_MACHINE_BUILDER_FLAGS_ମୂଲ୍ୟଗୁଡ଼ିକ
         = XKB_MACHINE_BUILDER_NO_FLAGS
     ,
-    XKB_MACHINE_FLAGS_VALUES
+    XKB_MACHINE_FLAGS_ମୂଲ୍ୟଗୁଡ଼ିକ
         = XKB_MACHINE_NO_FLAGS
         | XKB_MACHINE_SERVER_ACTIONS
-        | XKB_MACHINE_DISABLE_LAYOUT_SWITCH_ON_MODIFIER_KEY_FIX
+        | XKB_MACHINE_DISABLE_LAYOUT_SWITCH_ON_MODIFIER_ଚାବି_FIX
         | XKB_MACHINE_UNLOCK_MODS_ON_PRESS
     ,
-    XKB_A11Y_FLAGS_VALUES
+    XKB_A11_Y_FLAGS_ମୂଲ୍ୟଗୁଡ଼ିକ
         = XKB_A11Y_NO_FLAGS
-        | XKB_A11Y_STICKY_KEYS_NO_SIMULTANEOUS_KEYS
-        | XKB_A11Y_STICKY_KEYS_LATCH_TO_LOCK
-        | XKB_A11Y_LATCH_SIMULTANEOUS_KEYS
+        | XKB_A11_Y_STICKY_ଚାବିଗୁଡ଼ିକ_NO_SIMULTANEOUS_ଚାବିଗୁଡ଼ିକ
+        | XKB_A11_Y_STICKY_ଚାବିଗୁଡ଼ିକ_LATCH_TO_LOCK
+        | XKB_A11_Y_LATCH_SIMULTANEOUS_ଚାବିଗୁଡ଼ିକ
     ,
-    XKB_LAYOUT_OUT_OF_RANGE_POLICY_VALUES
+    XKB_LAYOUT_OUT_OF_RANGE_POLICY_ମୂଲ୍ୟଗୁଡ଼ିକ
         = (1u << XKB_LAYOUT_OUT_OF_RANGE_WRAP)
         | (1u << XKB_LAYOUT_OUT_OF_RANGE_CLAMP)
         | (1u << XKB_LAYOUT_OUT_OF_RANGE_REDIRECT)
     ,
-    XKB_STATE_MODE_VALUES
+    XKB_STATE_MODE_ମୂଲ୍ୟଗୁଡ଼ିକ
         = (1u << XKB_STATE_MODE_CLIENT)
         | (1u << XKB_STATE_MODE_SERVER_QUERY)
         | (1u << XKB_STATE_MODE_SERVER)
     ,
-    XKB_STATE_MATCH_VALUES
+    XKB_STATE_MATCH_ମୂଲ୍ୟଗୁଡ଼ିକ
         = XKB_STATE_MATCH_ANY
         | XKB_STATE_MATCH_ALL
         | XKB_STATE_MATCH_NON_EXCLUSIVE
     ,
-    XKB_CONSUMED_MODE_VALUES
+    XKB_CONSUMED_MODE_ମୂଲ୍ୟଗୁଡ଼ିକ
         = (1u << XKB_CONSUMED_MODE_XKB)
         | (1u << XKB_CONSUMED_MODE_GTK)
     ,
-    XKB_COMPOSE_COMPILE_FLAGS_VALUES
+    XKB_COMPOSE_COMPILE_FLAGS_ମୂଲ୍ୟଗୁଡ଼ିକ
         = XKB_COMPOSE_COMPILE_NO_FLAGS
     ,
-    XKB_COMPOSE_FORMAT_VALUES
+    XKB_COMPOSE_FORMAT_ମୂଲ୍ୟଗୁଡ଼ିକ
         = (1u << XKB_COMPOSE_FORMAT_TEXT_V1)
     ,
-    XKB_COMPOSE_STATE_FLAGS_VALUES
+    XKB_COMPOSE_STATE_FLAGS_ମୂଲ୍ୟଗୁଡ଼ିକ
         = XKB_COMPOSE_STATE_NO_FLAGS
     ,
-    XKB_COMPOSE_STATUS_VALUES
+    XKB_COMPOSE_STATUS_ମୂଲ୍ୟଗୁଡ଼ିକ
         = (1u << XKB_COMPOSE_NOTHING)
         | (1u << XKB_COMPOSE_COMPOSING)
         | (1u << XKB_COMPOSE_COMPOSED)
         | (1u << XKB_COMPOSE_CANCELLED)
     ,
-    XKB_COMPOSE_FEED_RESULT_VALUES
+    XKB_COMPOSE_FEED_RESULT_ମୂଲ୍ୟଗୁଡ଼ିକ
         = (1u << XKB_COMPOSE_FEED_IGNORED)
         | (1u << XKB_COMPOSE_FEED_ACCEPTED)
     ,
-    ENUM_LOWEST_VALUE = XKB_ERROR_INVALID,
-    ENUM_LOWEST_FLAG_VALUE = XKB_RMLVO_BUILDER_NO_FLAGS,
-    ENUM_HIGHEST_VALUE = XKB_STATE_MATCH_NON_EXCLUSIVE,
-    ENUM_HIGHEST_FLAG_VALUE = XKB_STATE_MATCH_NON_EXCLUSIVE,
+    ENUM_LOWEST_ମୂଲ୍ୟ = XKB_ERROR_INVALID,
+    ENUM_LOWEST_FLAG_ମୂଲ୍ୟ = XKB_RMLVO_BUILDER_NO_FLAGS,
+    ENUM_HIGHEST_ମୂଲ୍ୟ = XKB_STATE_MATCH_NON_EXCLUSIVE,
+    ENUM_HIGHEST_FLAG_ମୂଲ୍ୟ = XKB_STATE_MATCH_NON_EXCLUSIVE,
 };
 
 /*
@@ -237,30 +237,30 @@ enum xkb_enumerations_values {
  */
 
 #ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_rmlvo_builder_flags_values[] = {
+ସ୍ଥିର ଅଚଳ uint32_t xkb_rmlvo_builder_flags_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
     XKB_RMLVO_BUILDER_NO_FLAGS,
 };
 #endif
 
-enum xkb_rmlvo_builder_flags_bounds {
+ଗଣନା xkb_rmlvo_builder_flags_bounds {
     _XKB_RMLVO_BUILDER_FLAGS_MIN = XKB_RMLVO_BUILDER_NO_FLAGS,
     _XKB_RMLVO_BUILDER_FLAGS_MAX = XKB_RMLVO_BUILDER_NO_FLAGS,
 };
 
 #ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_keysym_flags_values[] = {
+ସ୍ଥିର ଅଚଳ uint32_t xkb_keysym_flags_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
     XKB_KEYSYM_NO_FLAGS,
     XKB_KEYSYM_CASE_INSENSITIVE,
 };
 #endif
 
-enum xkb_keysym_flags_bounds {
+ଗଣନା xkb_keysym_flags_bounds {
     _XKB_KEYSYM_FLAGS_MIN = XKB_KEYSYM_NO_FLAGS,
     _XKB_KEYSYM_FLAGS_MAX = XKB_KEYSYM_CASE_INSENSITIVE,
 };
 
 #ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_context_flags_values[] = {
+ସ୍ଥିର ଅଚଳ uint32_t xkb_context_flags_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
     XKB_CONTEXT_NO_FLAGS,
     XKB_CONTEXT_NO_DEFAULT_INCLUDES,
     XKB_CONTEXT_NO_ENVIRONMENT_NAMES,
@@ -268,11 +268,11 @@ static const uint32_t xkb_context_flags_values[] = {
 };
 #endif
 
-enum xkb_context_flags_bounds {
+ଗଣନା xkb_context_flags_bounds {
     _XKB_CONTEXT_FLAGS_MIN = XKB_CONTEXT_NO_FLAGS,
     _XKB_CONTEXT_FLAGS_MAX = XKB_CONTEXT_NO_SECURE_GETENV,
 };
-static const uint32_t xkb_log_level_values[] = {
+ସ୍ଥିର ଅଚଳ uint32_t xkb_log_level_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
     XKB_LOG_LEVEL_CRITICAL,
     XKB_LOG_LEVEL_ERROR,
     XKB_LOG_LEVEL_WARNING,
@@ -280,83 +280,83 @@ static const uint32_t xkb_log_level_values[] = {
     XKB_LOG_LEVEL_DEBUG,
 };
 
-enum xkb_log_level_bounds {
+ଗଣନା xkb_log_level_bounds {
     _XKB_LOG_LEVEL_MIN = XKB_LOG_LEVEL_CRITICAL,
     _XKB_LOG_LEVEL_MAX = XKB_LOG_LEVEL_DEBUG,
-    _XKB_LOG_LEVEL_NUM = 5,
+    XKB_LOG_LEVEL_ଅଙ୍କ = 5,
 };
 
 #ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_keymap_compile_flags_values[] = {
+ସ୍ଥିର ଅଚଳ uint32_t xkb_keymap_compile_flags_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
     XKB_KEYMAP_COMPILE_NO_FLAGS,
     XKB_KEYMAP_COMPILE_STRICT_MODE,
 };
 #endif
 
-enum xkb_keymap_compile_flags_bounds {
+ଗଣନା xkb_keymap_compile_flags_bounds {
     _XKB_KEYMAP_COMPILE_FLAGS_MIN = XKB_KEYMAP_COMPILE_NO_FLAGS,
     _XKB_KEYMAP_COMPILE_FLAGS_MAX = XKB_KEYMAP_COMPILE_STRICT_MODE,
 };
 
 #ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_keymap_format_values[] = {
+ସ୍ଥିର ଅଚଳ uint32_t xkb_keymap_format_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
     XKB_KEYMAP_FORMAT_TEXT_V1,
     XKB_KEYMAP_FORMAT_TEXT_V2,
 };
 #endif
 
-enum xkb_keymap_format_bounds {
+ଗଣନା xkb_keymap_format_bounds {
     _XKB_KEYMAP_FORMAT_MIN = XKB_KEYMAP_FORMAT_TEXT_V1,
     _XKB_KEYMAP_FORMAT_MAX = XKB_KEYMAP_FORMAT_TEXT_V2,
-    _XKB_KEYMAP_FORMAT_NUM = 2,
+    XKB_KEYMAP_FORMAT_ଅଙ୍କ = 2,
 };
 
 #ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_keymap_serialize_flags_values[] = {
+ସ୍ଥିର ଅଚଳ uint32_t xkb_keymap_serialize_flags_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
     XKB_KEYMAP_SERIALIZE_NO_FLAGS,
     XKB_KEYMAP_SERIALIZE_PRETTY,
     XKB_KEYMAP_SERIALIZE_KEEP_UNUSED,
     XKB_KEYMAP_SERIALIZE_STRICT_MODE,
-    XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_VALUES,
+    XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_ମୂଲ୍ୟଗୁଡ଼ିକ,
     XKB_KEYMAP_SERIALIZE_EXPLICIT_VMODS,
-    XKB_KEYMAP_SERIALIZE_EXPLICIT_KEY_VALUES,
+    XKB_KEYMAP_SERIALIZE_EXPLICIT_ଚାବି_ମୂଲ୍ୟଗୁଡ଼ିକ,
 };
 #endif
 
-enum xkb_keymap_serialize_flags_bounds {
+ଗଣନା xkb_keymap_serialize_flags_bounds {
     _XKB_KEYMAP_SERIALIZE_FLAGS_MIN = XKB_KEYMAP_SERIALIZE_NO_FLAGS,
-    _XKB_KEYMAP_SERIALIZE_FLAGS_MAX = XKB_KEYMAP_SERIALIZE_EXPLICIT_KEY_VALUES,
+    _XKB_KEYMAP_SERIALIZE_FLAGS_MAX = XKB_KEYMAP_SERIALIZE_EXPLICIT_ଚାବି_ମୂଲ୍ୟଗୁଡ଼ିକ,
 };
 
 #ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_keymap_key_iterator_flags_values[] = {
-    XKB_KEYMAP_KEY_ITERATOR_NO_FLAGS,
-    XKB_KEYMAP_KEY_ITERATOR_DESCENDING_ORDER,
-    XKB_KEYMAP_KEY_ITERATOR_INCLUDE_UNBOUND,
+ସ୍ଥିର ଅଚଳ uint32_t xkb_keymap_ଚାବି_iterator_flags_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
+    XKB_KEYMAP_ଚାବି_ITERATOR_NO_FLAGS,
+    XKB_KEYMAP_ଚାବି_ITERATOR_DESCENDING_ORDER,
+    XKB_KEYMAP_ଚାବି_ITERATOR_INCLUDE_UNBOUND,
 };
 #endif
 
-enum xkb_keymap_key_iterator_flags_bounds {
-    _XKB_KEYMAP_KEY_ITERATOR_FLAGS_MIN = XKB_KEYMAP_KEY_ITERATOR_NO_FLAGS,
-    _XKB_KEYMAP_KEY_ITERATOR_FLAGS_MAX = XKB_KEYMAP_KEY_ITERATOR_INCLUDE_UNBOUND,
+ଗଣନା xkb_keymap_ଚାବି_iterator_flags_bounds {
+    XKB_KEYMAP_ଚାବି_ITERATOR_FLAGS_MIN = XKB_KEYMAP_ଚାବି_ITERATOR_NO_FLAGS,
+    XKB_KEYMAP_ଚାବି_ITERATOR_FLAGS_MAX = XKB_KEYMAP_ଚାବି_ITERATOR_INCLUDE_UNBOUND,
 };
 
 #ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_key_direction_values[] = {
-    XKB_KEY_UP,
-    XKB_KEY_DOWN,
-    XKB_KEY_REPEATED,
+ସ୍ଥିର ଅଚଳ uint32_t xkb_ଚାବି_direction_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
+    XKB_ଚାବି_UP,
+    XKB_ଚାବି_DOWN,
+    XKB_ଚାବି_REPEATED,
 };
 #endif
 
-enum xkb_key_direction_bounds {
-    _XKB_KEY_DIRECTION_MIN = XKB_KEY_UP,
-    _XKB_KEY_DIRECTION_MAX = XKB_KEY_REPEATED,
-    _XKB_KEY_DIRECTION_NUM = 3,
+ଗଣନା xkb_ଚାବି_direction_bounds {
+    XKB_ଚାବି_DIRECTION_MIN = XKB_ଚାବି_UP,
+    XKB_ଚାବି_DIRECTION_MAX = XKB_ଚାବି_REPEATED,
+    XKB_ଚାବି_DIRECTION_ଅଙ୍କ = 3,
 };
 
 #ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_state_component_values[] = {
+ସ୍ଥିର ଅଚଳ uint32_t xkb_state_component_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
     XKB_STATE_NO_COMPONENT,
     XKB_STATE_MODS_DEPRESSED,
     XKB_STATE_MODS_LATCHED,
@@ -371,29 +371,29 @@ static const uint32_t xkb_state_component_values[] = {
 };
 #endif
 
-enum xkb_state_component_bounds {
+ଗଣନା xkb_state_component_bounds {
     _XKB_STATE_COMPONENT_MIN = 0 /* implicit minimum */,
     _XKB_STATE_COMPONENT_MAX = XKB_STATE_CONTROLS_EFFECTIVE,
 };
 
 #ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_keyboard_control_flags_values[] = {
+ସ୍ଥିର ଅଚଳ uint32_t xkb_keyboard_control_flags_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
     XKB_KEYBOARD_CONTROL_NO_FLAGS,
-    XKB_KEYBOARD_CONTROL_A11Y_STICKY_KEYS,
-    XKB_KEYBOARD_CONTROL_MOUSE_KEYS,
+    XKB_KEYBOARD_CONTROL_A11_Y_STICKY_ଚାବିଗୁଡ଼ିକ,
+    XKB_KEYBOARD_CONTROL_MOUSE_ଚାବିଗୁଡ଼ିକ,
 };
 #endif
 
-enum xkb_keyboard_control_flags_bounds {
+ଗଣନା xkb_keyboard_control_flags_bounds {
     _XKB_KEYBOARD_CONTROL_FLAGS_MIN = XKB_KEYBOARD_CONTROL_NO_FLAGS,
-    _XKB_KEYBOARD_CONTROL_FLAGS_MAX = XKB_KEYBOARD_CONTROL_MOUSE_KEYS,
+    _XKB_KEYBOARD_CONTROL_FLAGS_MAX = XKB_KEYBOARD_CONTROL_MOUSE_ଚାବିଗୁଡ଼ିକ,
 };
 
 #ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_event_type_values[] = {
+ସ୍ଥିର ଅଚଳ uint32_t xkb_event_type_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
     XKB_EVENT_TYPE_INVALID,
     XKB_EVENT_TYPE_FRAME,
-    XKB_EVENT_TYPE_KEY,
+    XKB_EVENT_TYPE_ଚାବି,
     XKB_EVENT_TYPE_STATE_COMPONENTS,
     XKB_EVENT_TYPE_POINTER_MOTION,
     XKB_EVENT_TYPE_POINTER_BUTTON,
@@ -402,14 +402,14 @@ static const uint32_t xkb_event_type_values[] = {
 };
 #endif
 
-enum xkb_event_type_bounds {
+ଗଣନା xkb_event_type_bounds {
     _XKB_EVENT_TYPE_MIN = XKB_EVENT_TYPE_INVALID,
     _XKB_EVENT_TYPE_MAX = XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE,
-    _XKB_EVENT_TYPE_NUM = 8,
+    XKB_EVENT_TYPE_ଅଙ୍କ = 8,
 };
 
 #ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_pointer_motion_flags_values[] = {
+ସ୍ଥିର ଅଚଳ uint32_t xkb_pointer_motion_flags_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
     XKB_POINTER_MOTION_NO_FLAGS,
     XKB_POINTER_MOTION_REPEATS,
     XKB_POINTER_MOTION_ABSOLUTE_X,
@@ -417,164 +417,164 @@ static const uint32_t xkb_pointer_motion_flags_values[] = {
 };
 #endif
 
-enum xkb_pointer_motion_flags_bounds {
+ଗଣନା xkb_pointer_motion_flags_bounds {
     _XKB_POINTER_MOTION_FLAGS_MIN = XKB_POINTER_MOTION_NO_FLAGS,
     _XKB_POINTER_MOTION_FLAGS_MAX = XKB_POINTER_MOTION_ABSOLUTE_Y,
 };
 
 #ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_pointer_button_state_values[] = {
+ସ୍ଥିର ଅଚଳ uint32_t xkb_pointer_button_state_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
     XKB_POINTER_BUTTON_RELEASED,
     XKB_POINTER_BUTTON_PRESSED,
 };
 #endif
 
-enum xkb_pointer_button_state_bounds {
+ଗଣନା xkb_pointer_button_state_bounds {
     _XKB_POINTER_BUTTON_STATE_MIN = XKB_POINTER_BUTTON_RELEASED,
     _XKB_POINTER_BUTTON_STATE_MAX = XKB_POINTER_BUTTON_PRESSED,
-    _XKB_POINTER_BUTTON_STATE_NUM = 2,
+    XKB_POINTER_BUTTON_STATE_ଅଙ୍କ = 2,
 };
 
 #ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_events_flags_values[] = {
+ସ୍ଥିର ଅଚଳ uint32_t xkb_events_flags_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
     XKB_EVENTS_NO_FLAGS,
 };
 #endif
 
-enum xkb_events_flags_bounds {
+ଗଣନା xkb_events_flags_bounds {
     _XKB_EVENTS_FLAGS_MIN = XKB_EVENTS_NO_FLAGS,
     _XKB_EVENTS_FLAGS_MAX = XKB_EVENTS_NO_FLAGS,
 };
 
 #ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_machine_builder_flags_values[] = {
+ସ୍ଥିର ଅଚଳ uint32_t xkb_machine_builder_flags_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
     XKB_MACHINE_BUILDER_NO_FLAGS,
 };
 #endif
 
-enum xkb_machine_builder_flags_bounds {
+ଗଣନା xkb_machine_builder_flags_bounds {
     _XKB_MACHINE_BUILDER_FLAGS_MIN = XKB_MACHINE_BUILDER_NO_FLAGS,
     _XKB_MACHINE_BUILDER_FLAGS_MAX = XKB_MACHINE_BUILDER_NO_FLAGS,
 };
 
 #ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_machine_flags_values[] = {
+ସ୍ଥିର ଅଚଳ uint32_t xkb_machine_flags_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
     XKB_MACHINE_NO_FLAGS,
     XKB_MACHINE_SERVER_ACTIONS,
-    XKB_MACHINE_DISABLE_LAYOUT_SWITCH_ON_MODIFIER_KEY_FIX,
+    XKB_MACHINE_DISABLE_LAYOUT_SWITCH_ON_MODIFIER_ଚାବି_FIX,
     XKB_MACHINE_UNLOCK_MODS_ON_PRESS,
 };
 #endif
 
-enum xkb_machine_flags_bounds {
+ଗଣନା xkb_machine_flags_bounds {
     _XKB_MACHINE_FLAGS_MIN = XKB_MACHINE_NO_FLAGS,
     _XKB_MACHINE_FLAGS_MAX = XKB_MACHINE_UNLOCK_MODS_ON_PRESS,
 };
 
 #ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_a11y_flags_values[] = {
+ସ୍ଥିର ଅଚଳ uint32_t xkb_a11y_flags_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
     XKB_A11Y_NO_FLAGS,
-    XKB_A11Y_STICKY_KEYS_NO_SIMULTANEOUS_KEYS,
-    XKB_A11Y_STICKY_KEYS_LATCH_TO_LOCK,
-    XKB_A11Y_LATCH_SIMULTANEOUS_KEYS,
+    XKB_A11_Y_STICKY_ଚାବିଗୁଡ଼ିକ_NO_SIMULTANEOUS_ଚାବିଗୁଡ଼ିକ,
+    XKB_A11_Y_STICKY_ଚାବିଗୁଡ଼ିକ_LATCH_TO_LOCK,
+    XKB_A11_Y_LATCH_SIMULTANEOUS_ଚାବିଗୁଡ଼ିକ,
 };
 #endif
 
-enum xkb_a11y_flags_bounds {
+ଗଣନା xkb_a11y_flags_bounds {
     _XKB_A11Y_FLAGS_MIN = XKB_A11Y_NO_FLAGS,
-    _XKB_A11Y_FLAGS_MAX = XKB_A11Y_LATCH_SIMULTANEOUS_KEYS,
+    _XKB_A11Y_FLAGS_MAX = XKB_A11_Y_LATCH_SIMULTANEOUS_ଚାବିଗୁଡ଼ିକ,
 };
 
 #ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_layout_out_of_range_policy_values[] = {
+ସ୍ଥିର ଅଚଳ uint32_t xkb_layout_out_of_range_policy_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
     XKB_LAYOUT_OUT_OF_RANGE_WRAP,
     XKB_LAYOUT_OUT_OF_RANGE_CLAMP,
     XKB_LAYOUT_OUT_OF_RANGE_REDIRECT,
 };
 #endif
 
-enum xkb_layout_out_of_range_policy_bounds {
+ଗଣନା xkb_layout_out_of_range_policy_bounds {
     _XKB_LAYOUT_OUT_OF_RANGE_POLICY_MIN = XKB_LAYOUT_OUT_OF_RANGE_WRAP,
     _XKB_LAYOUT_OUT_OF_RANGE_POLICY_MAX = XKB_LAYOUT_OUT_OF_RANGE_REDIRECT,
-    _XKB_LAYOUT_OUT_OF_RANGE_POLICY_NUM = 3,
+    XKB_LAYOUT_OUT_OF_RANGE_POLICY_ଅଙ୍କ = 3,
 };
 
 #ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_state_mode_values[] = {
+ସ୍ଥିର ଅଚଳ uint32_t xkb_state_mode_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
     XKB_STATE_MODE_CLIENT,
     XKB_STATE_MODE_SERVER_QUERY,
     XKB_STATE_MODE_SERVER,
 };
 #endif
 
-enum xkb_state_mode_bounds {
+ଗଣନା xkb_state_mode_bounds {
     _XKB_STATE_MODE_MIN = XKB_STATE_MODE_CLIENT,
     _XKB_STATE_MODE_MAX = XKB_STATE_MODE_SERVER,
-    _XKB_STATE_MODE_NUM = 3,
+    XKB_STATE_MODE_ଅଙ୍କ = 3,
 };
 
 #ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_state_match_values[] = {
+ସ୍ଥିର ଅଚଳ uint32_t xkb_state_match_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
     XKB_STATE_MATCH_ANY,
     XKB_STATE_MATCH_ALL,
     XKB_STATE_MATCH_NON_EXCLUSIVE,
 };
 #endif
 
-enum xkb_state_match_bounds {
+ଗଣନା xkb_state_match_bounds {
     _XKB_STATE_MATCH_MIN = 0 /* implicit minimum */,
     _XKB_STATE_MATCH_MAX = XKB_STATE_MATCH_NON_EXCLUSIVE,
 };
 
 #ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_consumed_mode_values[] = {
+ସ୍ଥିର ଅଚଳ uint32_t xkb_consumed_mode_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
     XKB_CONSUMED_MODE_XKB,
     XKB_CONSUMED_MODE_GTK,
 };
 #endif
 
-enum xkb_consumed_mode_bounds {
+ଗଣନା xkb_consumed_mode_bounds {
     _XKB_CONSUMED_MODE_MIN = XKB_CONSUMED_MODE_XKB,
     _XKB_CONSUMED_MODE_MAX = XKB_CONSUMED_MODE_GTK,
-    _XKB_CONSUMED_MODE_NUM = 2,
+    XKB_CONSUMED_MODE_ଅଙ୍କ = 2,
 };
 
 #ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_compose_compile_flags_values[] = {
+ସ୍ଥିର ଅଚଳ uint32_t xkb_compose_compile_flags_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
     XKB_COMPOSE_COMPILE_NO_FLAGS,
 };
 #endif
 
-enum xkb_compose_compile_flags_bounds {
+ଗଣନା xkb_compose_compile_flags_bounds {
     _XKB_COMPOSE_COMPILE_FLAGS_MIN = XKB_COMPOSE_COMPILE_NO_FLAGS,
     _XKB_COMPOSE_COMPILE_FLAGS_MAX = XKB_COMPOSE_COMPILE_NO_FLAGS,
 };
 
 #ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_compose_format_values[] = {
+ସ୍ଥିର ଅଚଳ uint32_t xkb_compose_format_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
     XKB_COMPOSE_FORMAT_TEXT_V1,
 };
 #endif
 
-enum xkb_compose_format_bounds {
+ଗଣନା xkb_compose_format_bounds {
     _XKB_COMPOSE_FORMAT_MIN = XKB_COMPOSE_FORMAT_TEXT_V1,
     _XKB_COMPOSE_FORMAT_MAX = XKB_COMPOSE_FORMAT_TEXT_V1,
-    _XKB_COMPOSE_FORMAT_NUM = 1,
+    XKB_COMPOSE_FORMAT_ଅଙ୍କ = 1,
 };
 
 #ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_compose_state_flags_values[] = {
+ସ୍ଥିର ଅଚଳ uint32_t xkb_compose_state_flags_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
     XKB_COMPOSE_STATE_NO_FLAGS,
 };
 #endif
 
-enum xkb_compose_state_flags_bounds {
+ଗଣନା xkb_compose_state_flags_bounds {
     _XKB_COMPOSE_STATE_FLAGS_MIN = XKB_COMPOSE_STATE_NO_FLAGS,
     _XKB_COMPOSE_STATE_FLAGS_MAX = XKB_COMPOSE_STATE_NO_FLAGS,
 };
 
 #ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_compose_status_values[] = {
+ସ୍ଥିର ଅଚଳ uint32_t xkb_compose_status_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
     XKB_COMPOSE_NOTHING,
     XKB_COMPOSE_COMPOSING,
     XKB_COMPOSE_COMPOSED,
@@ -582,35 +582,35 @@ static const uint32_t xkb_compose_status_values[] = {
 };
 #endif
 
-enum xkb_compose_status_bounds {
+ଗଣନା xkb_compose_status_bounds {
     _XKB_COMPOSE_STATUS_MIN = XKB_COMPOSE_NOTHING,
     _XKB_COMPOSE_STATUS_MAX = XKB_COMPOSE_CANCELLED,
-    _XKB_COMPOSE_STATUS_NUM = 4,
+    XKB_COMPOSE_STATUS_ଅଙ୍କ = 4,
 };
 
 #ifdef ENABLE_PRIVATE_APIS
-static const uint32_t xkb_compose_feed_result_values[] = {
+ସ୍ଥିର ଅଚଳ uint32_t xkb_compose_feed_result_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
     XKB_COMPOSE_FEED_IGNORED,
     XKB_COMPOSE_FEED_ACCEPTED,
 };
 #endif
 
-enum xkb_compose_feed_result_bounds {
+ଗଣନା xkb_compose_feed_result_bounds {
     _XKB_COMPOSE_FEED_RESULT_MIN = XKB_COMPOSE_FEED_IGNORED,
     _XKB_COMPOSE_FEED_RESULT_MAX = XKB_COMPOSE_FEED_ACCEPTED,
-    _XKB_COMPOSE_FEED_RESULT_NUM = 2,
+    XKB_COMPOSE_FEED_RESULT_ଅଙ୍କ = 2,
 };
-static const uint32_t xkb_status_values[] = {
+ସ୍ଥିର ଅଚଳ uint32_t xkb_status_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
     (uint32_t)XKB_ERROR_INVALID,
     XKB_SUCCESS,
     XKB_ERROR_UNSUPPORTED_MODIFIER_MASK,
     XKB_ERROR_UNSUPPORTED_STATE_MODE,
     XKB_ERROR_EVENT_TYPE_MISMATCH,
-    XKB_ERROR_UNSUPPORTED_KEY_ITERATOR_FLAGS,
+    XKB_ERROR_UNSUPPORTED_ଚାବି_ITERATOR_FLAGS,
     XKB_ERROR_UNSUPPORTED_LAYOUT_OUT_OF_RANGE_POLICY,
     XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX,
     XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT,
-    XKB_ERROR_LAYOUT_COUNT_LIMIT_EXCEEDED,
+    XKB_ERROR_LAYOUT_ଗଣନା_LIMIT_EXCEEDED,
     XKB_ERROR_UNSUPPORTED_A11Y_FLAGS,
     XKB_ERROR_UNEXPECTED_STATE_MODE,
     XKB_ERROR_ABI_INVALID_STRUCT_SIZE,
@@ -624,12 +624,12 @@ static const uint32_t xkb_status_values[] = {
     XKB_ERROR_ABI_BACKWARD_COMPAT,
 };
 
-enum xkb_status_bounds {
+ଗଣନା xkb_status_bounds {
     _XKB_STATUS_MIN = XKB_ERROR_INVALID,
     _XKB_STATUS_MAX = XKB_ERROR_ABI_BACKWARD_COMPAT,
-    _XKB_STATUS_NUM = 21,
+    XKB_STATUS_ଅଙ୍କ = 21,
 };
-static const uint32_t xkb_feature_values[] = {
+ସ୍ଥିର ଅଚଳ uint32_t xkb_feature_ମୂଲ୍ୟଗୁଡ଼ିକ[] = {
     XKB_FEATURE_ENUM_FEATURE,
     XKB_FEATURE_ENUM_STATUS,
     XKB_FEATURE_ENUM_CONTEXT_FLAGS,
@@ -639,7 +639,7 @@ static const uint32_t xkb_feature_values[] = {
     XKB_FEATURE_ENUM_KEYMAP_FORMAT,
     XKB_FEATURE_ENUM_KEYMAP_COMPILE_FLAGS,
     XKB_FEATURE_ENUM_KEYMAP_SERIALIZE_FLAGS,
-    XKB_FEATURE_ENUM_KEYMAP_KEY_ITERATOR_FLAGS,
+    XKB_FEATURE_ENUM_KEYMAP_ଚାବି_ITERATOR_FLAGS,
     XKB_FEATURE_ENUM_STATE_COMPONENT,
     XKB_FEATURE_ENUM_LAYOUT_OUT_OF_RANGE_POLICY,
     XKB_FEATURE_ENUM_A11Y_FLAGS,
@@ -650,7 +650,7 @@ static const uint32_t xkb_feature_values[] = {
     XKB_FEATURE_ENUM_MACHINE_BUILDER_FLAGS,
     XKB_FEATURE_ENUM_MACHINE_FLAGS,
     XKB_FEATURE_ENUM_EVENT_TYPE,
-    XKB_FEATURE_ENUM_KEY_DIRECTION,
+    XKB_FEATURE_ENUM_ଚାବି_DIRECTION,
     XKB_FEATURE_ENUM_POINTER_MOTION_FLAGS,
     XKB_FEATURE_ENUM_POINTER_BUTTON_STATE,
     XKB_FEATURE_ENUM_EVENTS_FLAGS,
@@ -661,8 +661,8 @@ static const uint32_t xkb_feature_values[] = {
     XKB_FEATURE_ENUM_COMPOSE_FEED_RESULT,
 };
 
-enum xkb_feature_bounds {
+ଗଣନା xkb_feature_bounds {
     _XKB_FEATURE_MIN = XKB_FEATURE_ENUM_FEATURE,
     _XKB_FEATURE_MAX = XKB_FEATURE_ENUM_COMPOSE_FEED_RESULT,
-    _XKB_FEATURE_NUM = 29,
+    XKB_FEATURE_ଅଙ୍କ = 29,
 };

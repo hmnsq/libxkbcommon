@@ -4,111 +4,111 @@
  */
 #pragma once
 
-#include "config.h"
+#ଅନ୍ତର୍ଭାଵ "config.h"
 
-#include "ast.h"
-#include "scanner-utils.h"
+#ଅନ୍ତର୍ଭାଵ "ast.h"
+#ଅନ୍ତର୍ଭାଵ "scanner-utils.h"
 
-ExprDef *
-ExprCreateString(xkb_atom_t str);
+ପଦସମଷ୍ଟି_Def *
+ପଦସମଷ୍ଟି_Create_String(xkb_atom_t str);
 
-ExprDef *
-ExprCreateInteger(int64_t ival);
+ପଦସମଷ୍ଟି_Def *
+ପଦସମଷ୍ଟି_Create_Integer(int64_t ival);
 
-ExprDef *
-ExprCreateFloat(void);
+ପଦସମଷ୍ଟି_Def *
+ପଦସମଷ୍ଟି_Create_Float(ଶୂନ୍ୟ);
 
-ExprDef *
-ExprCreateBoolean(bool set);
+ପଦସମଷ୍ଟି_Def *
+ପଦସମଷ୍ଟି_Create_Boolean(bool set);
 
-ExprDef *
-ExprCreateKeyName(xkb_atom_t key_name);
+ପଦସମଷ୍ଟି_Def *
+ପଦସମଷ୍ଟି_Create_ଚାବି_Name(xkb_atom_t ଚାବି_name);
 
-ExprDef *
-ExprCreateKeySym(xkb_keysym_t keysym);
+ପଦସମଷ୍ଟି_Def *
+ପଦସମଷ୍ଟି_Create_ଚାବି_Sym(xkb_keysym_t keysym);
 
-ExprDef *
-ExprCreateIdent(xkb_atom_t ident);
+ପଦସମଷ୍ଟି_Def *
+ପଦସମଷ୍ଟି_Create_Ident(xkb_atom_t ident);
 
-ExprDef *
-ExprCreateUnary(enum stmt_type op, ExprDef *child);
+ପଦସମଷ୍ଟି_Def *
+ପଦସମଷ୍ଟି_Create_Unary(ଗଣନା stmt_type op, ପଦସମଷ୍ଟି_Def *child);
 
-ExprDef *
-ExprCreateBinary(enum stmt_type op, ExprDef *left, ExprDef *right);
+ପଦସମଷ୍ଟି_Def *
+ପଦସମଷ୍ଟି_Create_ଦ୍ୱିମିକ(ଗଣନା stmt_type op, ପଦସମଷ୍ଟି_Def *ବାମ, ପଦସମଷ୍ଟି_Def *ଡାହାଣ);
 
-ExprDef *
-ExprCreateFieldRef(xkb_atom_t element, xkb_atom_t field);
+ପଦସମଷ୍ଟି_Def *
+ପଦସମଷ୍ଟି_Create_Field_Ref(xkb_atom_t element, xkb_atom_t field);
 
-ExprDef *
-ExprCreateArrayRef(xkb_atom_t element, xkb_atom_t field, ExprDef *entry);
+ପଦସମଷ୍ଟି_Def *
+ପଦସମଷ୍ଟି_Create_Array_Ref(xkb_atom_t element, xkb_atom_t field, ପଦସମଷ୍ଟି_Def *entry);
 
-ExprDef *
-ExprEmptyList(void);
+ପଦସମଷ୍ଟି_Def *
+ପଦସମଷ୍ଟି_Empty_List(ଶୂନ୍ୟ);
 
-ExprDef *
-ExprCreateAction(xkb_atom_t name, ExprDef *args);
+ପଦସମଷ୍ଟି_Def *
+ପଦସମଷ୍ଟି_Create_Action(xkb_atom_t name, ପଦସମଷ୍ଟି_Def *args);
 
-ExprDef *
-ExprCreateActionList(ExprDef *actions);
+ପଦସମଷ୍ଟି_Def *
+ପଦସମଷ୍ଟି_Create_Action_List(ପଦସମଷ୍ଟି_Def *actions);
 
-ExprDef *
-ExprCreateKeySymList(xkb_keysym_t sym);
+ପଦସମଷ୍ଟି_Def *
+ପଦସମଷ୍ଟି_Create_ଚାବି_Sym_List(xkb_keysym_t sym);
 
-ExprDef *
-ExprAppendKeySymList(ExprDef *list, xkb_keysym_t sym);
+ପଦସମଷ୍ଟି_Def *
+ପଦସମଷ୍ଟି_Append_ଚାବି_Sym_List(ପଦସମଷ୍ଟି_Def *list, xkb_keysym_t sym);
 
-ExprDef *
-ExprKeySymListAppendString(struct scanner *param,
-                           ExprDef *expr, const char *string);
+ପଦସମଷ୍ଟି_Def *
+ପଦସମଷ୍ଟି_ଚାବି_Sym_List_Append_String(ସଂରଚନା scanner *param,
+                           ପଦସମଷ୍ଟି_Def *ପଦସମଷ୍ଟି, ଅଚଳ ଅକ୍ଷର *string);
 
 xkb_keysym_t
-KeysymParseString(struct scanner *scanner, const char *string);
+KeysymParseString(ସଂରଚନା scanner *scanner, ଅଚଳ ଅକ୍ଷର *string);
 
 KeycodeDef *
-KeycodeCreate(xkb_atom_t name, int64_t value);
+KeycodeCreate(xkb_atom_t name, int64_t ମୂଲ୍ୟ);
 
-KeyAliasDef *
-KeyAliasCreate(xkb_atom_t alias, xkb_atom_t real);
+ଚାବି_Alias_Def *
+ଚାବି_Alias_Create(xkb_atom_t alias, xkb_atom_t real);
 
 VModDef *
-VModCreate(xkb_atom_t name, ExprDef *value);
+VModCreate(xkb_atom_t name, ପଦସମଷ୍ଟି_Def *ମୂଲ୍ୟ);
 
 VarDef *
-VarCreate(ExprDef *name, ExprDef *value);
+VarCreate(ପଦସମଷ୍ଟି_Def *name, ପଦସମଷ୍ଟି_Def *ମୂଲ୍ୟ);
 
 VarDef *
 BoolVarCreate(xkb_atom_t ident, bool set);
 
 InterpDef *
-InterpCreate(xkb_keysym_t sym, ExprDef *match);
+InterpCreate(xkb_keysym_t sym, ପଦସମଷ୍ଟି_Def *match);
 
-KeyTypeDef *
-KeyTypeCreate(xkb_atom_t name, VarDef *body);
+ଚାବି_Type_Def *
+ଚାବି_Type_Create(xkb_atom_t name, VarDef *body);
 
 SymbolsDef *
-SymbolsCreate(xkb_atom_t keyName, VarDef *symbols);
+SymbolsCreate(xkb_atom_t ଚାବି_Name, VarDef *symbols);
 
 GroupCompatDef *
-GroupCompatCreate(int64_t group, ExprDef *def);
+GroupCompatCreate(int64_t group, ପଦସମଷ୍ଟି_Def *def);
 
 ModMapDef *
-ModMapCreate(ExprDef *modifiers, ExprDef *keys);
+ModMapCreate(ପଦସମଷ୍ଟି_Def *modifiers, ପଦସମଷ୍ଟି_Def *ଚାବିଗୁଡ଼ିକ);
 
 LedMapDef *
 LedMapCreate(xkb_atom_t name, VarDef *body);
 
 LedNameDef *
-LedNameCreate(int64_t ndx, ExprDef *name, bool virtual);
+LedNameCreate(int64_t ndx, ପଦସମଷ୍ଟି_Def *name, bool ଆଭାସୀ);
 
 UnknownStatement *
-UnknownStatementCreate(enum stmt_type, struct sval name);
+UnknownStatementCreate(ଗଣନା stmt_type, ସଂରଚନା sval name);
 
 IncludeStmt *
-IncludeCreate(struct xkb_context *ctx, char *str, enum merge_mode merge);
+IncludeCreate(ସଂରଚନା xkb_context *ctx, ଅକ୍ଷର *str, ଗଣନା merge_mode merge);
 
 XkbFile *
-XkbFileCreate(enum xkb_file_type type, char *name, ParseCommon *defs,
-              enum xkb_map_flags flags);
+XkbFileCreate(ଗଣନା xkb_file_type type, ଅକ୍ଷର *name, ParseCommon *defs,
+              ଗଣନା xkb_map_flags flags);
 
-void
+ଶୂନ୍ୟ
 FreeStmt(ParseCommon *stmt);

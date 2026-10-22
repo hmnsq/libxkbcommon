@@ -5,29 +5,29 @@
 
 #pragma once
 
-#include "config.h"
+#ଅନ୍ତର୍ଭାଵ "config.h"
 
-#include <assert.h>
-#include <stdalign.h>
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
+#ଅନ୍ତର୍ଭାଵ <assert.h>
+#ଅନ୍ତର୍ଭାଵ <stdalign.h>
+#ଅନ୍ତର୍ଭାଵ <stdbool.h>
+#ଅନ୍ତର୍ଭାଵ <stddef.h>
+#ଅନ୍ତର୍ଭାଵ <stdint.h>
+#ଅନ୍ତର୍ଭାଵ <stdlib.h>
 
-#if !HAVE_MAX_ALIGN_T
+#ଯଦି !HAVE_MAX_ALIGN_T
 /* Fallback for legacy compilers or older C modes on MSVC */
-typedef struct {
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା {
     long long __max_align_ll;
-    long double __max_align_ld;
+    long ଦ୍ୱିଗୁଣ __max_align_ld;
 } max_align_t;
 #endif
 
-static inline void*
-_steal(void *ptr) {
-    void **original = (void**)ptr;
-    void *swapped = *original;
-    *original = NULL;
-    return swapped;
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ*
+_steal(ଶୂନ୍ୟ *ptr) {
+    ଶୂନ୍ୟ **original = (ଶୂନ୍ୟ**)ptr;
+    ଶୂନ୍ୟ *swapped = *original;
+    *original = ଖାଲି;
+    ଫେରନ୍ତୁ swapped;
 }
 
 /**
@@ -36,7 +36,7 @@ _steal(void *ptr) {
 #ifdef _WIN32
 #define steal(ptr_) \
     _steal(ptr_)
-#else
+#ଅନ୍ୟଥା
 #define steal(ptr_) \
     (__typeof__(*(ptr_)))_steal(ptr_)
 #endif
@@ -48,29 +48,29 @@ static_assert(alignof(max_align_t) >= 4,
               "Pointer alignment insufficient for tagging");
 
 /** Pack @p ptr and a 0-3 @p tag. */
-static inline const void *
-xkb_pointer_tag(const void *ptr, uintptr_t tag)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଅଚଳ ଶୂନ୍ୟ *
+xkb_pointer_tag(ଅଚଳ ଶୂନ୍ୟ *ptr, uintptr_t tag)
 {
     uintptr_t addr = (uintptr_t)ptr;
-    assert(tag <= XKB_POINTER_TAG_MASK &&
+    ପ୍ରତିଜ୍ଞା(tag <= XKB_POINTER_TAG_MASK &&
            "tag exceeds available bits");
-    assert((addr & XKB_POINTER_TAG_MASK) == 0 &&
+    ପ୍ରତିଜ୍ଞା((addr & XKB_POINTER_TAG_MASK) == 0 &&
            "pointer not sufficiently aligned for tagging");
     /* NOLINTNEXTLINE(performance-no-int-to-ptr) */
-    return (const void *)(addr | tag);
+    ଫେରନ୍ତୁ (ଅଚଳ ଶୂନ୍ୟ *)(addr | tag);
 }
 
 /** Recover the original pointer from a tagged pointer. */
-static inline const void *
-xkb_pointer_untag(const void *ptr)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଅଚଳ ଶୂନ୍ୟ *
+xkb_pointer_untag(ଅଚଳ ଶୂନ୍ୟ *ptr)
 {
     /* NOLINTNEXTLINE(performance-no-int-to-ptr) */
-    return (const void *)((uintptr_t)ptr & ~XKB_POINTER_TAG_MASK);
+    ଫେରନ୍ତୁ (ଅଚଳ ଶୂନ୍ୟ *)((uintptr_t)ptr & ~XKB_POINTER_TAG_MASK);
 }
 
 /* Recover just the tag bits from a tagged pointer. */
-static inline uintptr_t
-xkb_pointer_get_tag(const void *ptr)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uintptr_t
+xkb_pointer_get_tag(ଅଚଳ ଶୂନ୍ୟ *ptr)
 {
-    return ((uintptr_t)ptr & XKB_POINTER_TAG_MASK);
+    ଫେରନ୍ତୁ ((uintptr_t)ptr & XKB_POINTER_TAG_MASK);
 }

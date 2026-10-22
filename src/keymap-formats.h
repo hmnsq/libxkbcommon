@@ -6,11 +6,11 @@
 
 #pragma once
 
-#include "config.h"
+#ଅନ୍ତର୍ଭାଵ "config.h"
 
-#include "xkbcommon/xkbcommon.h"
+#ଅନ୍ତର୍ଭାଵ "xkbcommon/xkbcommon.h"
 
-#define DEFAULT_INPUT_KEYMAP_FORMAT  XKB_KEYMAP_FORMAT_TEXT_V2
+#define DEFAULT_ନିବେଶ_KEYMAP_FORMAT  XKB_KEYMAP_FORMAT_TEXT_V2
 #define DEFAULT_OUTPUT_KEYMAP_FORMAT XKB_KEYMAP_USE_ORIGINAL_FORMAT
 
 /**
@@ -24,7 +24,7 @@
  * @memberof xkb_keymap
  */
 size_t
-xkb_keymap_supported_formats(const enum xkb_keymap_format **formats);
+xkb_keymap_supported_formats(ଅଚଳ ଗଣନା xkb_keymap_format **formats);
 
 /**
  * Check if the given keymap format is supported.
@@ -34,7 +34,7 @@ xkb_keymap_supported_formats(const enum xkb_keymap_format **formats);
  * @memberof xkb_keymap
  */
 bool
-xkb_keymap_is_supported_format(enum xkb_keymap_format format);
+xkb_keymap_is_supported_format(ଗଣନା xkb_keymap_format format);
 
 /**
  * Parse a keymap version.
@@ -44,8 +44,8 @@ xkb_keymap_is_supported_format(enum xkb_keymap_format format);
  *
  * @return The corresponding format or 0 on error.
  */
-enum xkb_keymap_format
-xkb_keymap_parse_format(const char *raw);
+ଗଣନା xkb_keymap_format
+xkb_keymap_parse_format(ଅଚଳ ଅକ୍ଷର *raw);
 
 /**
  * Return a human-friendly label for the keymap format.
@@ -54,5 +54,5 @@ xkb_keymap_parse_format(const char *raw);
  *
  * @return The label corresponding to the format, or `NULL` if not supported.
  */
-const char *
-xkb_keymap_get_format_label(enum xkb_keymap_format format);
+ଅଚଳ ଅକ୍ଷର *
+xkb_keymap_get_format_label(ଗଣନା xkb_keymap_format format);

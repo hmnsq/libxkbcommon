@@ -4,21 +4,21 @@
  */
 #pragma once
 
-#include "config.h"
+#ଅନ୍ତର୍ଭାଵ "config.h"
 
-#include <stdbool.h>
+#ଅନ୍ତର୍ଭାଵ <stdbool.h>
 
-#include "utils.h"
+#ଅନ୍ତର୍ଭାଵ "utils.h"
 
 #ifdef _WIN32
 #define PATH_SEPARATOR '\\'
 #define ALT_PATH_SEPARATOR '/'
 #define is_path_separator(s) \
     ((s) == PATH_SEPARATOR || (s) == ALT_PATH_SEPARATOR)
-#else
+#ଅନ୍ୟଥା
 #define PATH_SEPARATOR '/'
 #define is_path_separator(s) ((s) == PATH_SEPARATOR)
 #endif
 
 XKB_EXPORT_PRIVATE bool
-is_absolute_path(const char *path);
+is_absolute_path(ଅଚଳ ଅକ୍ଷର *path);

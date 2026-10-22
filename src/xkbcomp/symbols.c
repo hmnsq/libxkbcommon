@@ -12,70 +12,70 @@
  * Author: Ran Benita <ran234@gmail.com>
  */
 
-#include "config.h"
+#ଅନ୍ତର୍ଭାଵ "config.h"
 
-#include <limits.h>
-#include <stdint.h>
-#include <string.h>
+#ଅନ୍ତର୍ଭାଵ <limits.h>
+#ଅନ୍ତର୍ଭାଵ <stdint.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-status.h"
-#include "xkbcommon/xkbcommon-keysyms.h"
+#ଅନ୍ତର୍ଭାଵ "xkbcommon/xkbcommon.h"
+#ଅନ୍ତର୍ଭାଵ "xkbcommon/xkbcommon-status.h"
+#ଅନ୍ତର୍ଭାଵ "xkbcommon/xkbcommon-keysyms.h"
 
-#include "action.h"
-#include "context.h"
-#include "darray.h"
-#include "expr.h"
-#include "include.h"
-#include "keymap.h"
-#include "keysym.h"
-#include "messages-codes.h"
-#include "text.h"
-#include "utils.h"
-#include "util-numbers.h"
-#include "util-mem.h"
-#include "vmod.h"
-#include "xkbcomp-priv.h"
-#include "xkbcomp/ast.h"
+#ଅନ୍ତର୍ଭାଵ "action.h"
+#ଅନ୍ତର୍ଭାଵ "context.h"
+#ଅନ୍ତର୍ଭାଵ "darray.h"
+#ଅନ୍ତର୍ଭାଵ "expr.h"
+#ଅନ୍ତର୍ଭାଵ "include.h"
+#ଅନ୍ତର୍ଭାଵ "keymap.h"
+#ଅନ୍ତର୍ଭାଵ "keysym.h"
+#ଅନ୍ତର୍ଭାଵ "messages-codes.h"
+#ଅନ୍ତର୍ଭାଵ "text.h"
+#ଅନ୍ତର୍ଭାଵ "utils.h"
+#ଅନ୍ତର୍ଭାଵ "util-numbers.h"
+#ଅନ୍ତର୍ଭାଵ "util-mem.h"
+#ଅନ୍ତର୍ଭାଵ "vmod.h"
+#ଅନ୍ତର୍ଭାଵ "xkbcomp-priv.h"
+#ଅନ୍ତର୍ଭାଵ "xkbcomp/ast.h"
 
-enum key_repeat {
-    KEY_REPEAT_UNDEFINED = 0,
-    KEY_REPEAT_YES,
-    KEY_REPEAT_NO,
-    _KEY_REPEAT_NUM_ENTRIES,
+ଗଣନା ଚାବି_repeat {
+    ଚାବି_REPEAT_UNDEFINED = 0,
+    ଚାବି_REPEAT_YES,
+    ଚାବି_REPEAT_NO,
+    ଚାବି_REPEAT_ଅଙ୍କ_ENTRIES,
 };
-enum { KEY_REPEAT_MIN_WIDTH = 3 /* 2 bits + sign */ };
-static_assert(_KEY_REPEAT_NUM_ENTRIES - 1 <=
-              (1 << (KEY_REPEAT_MIN_WIDTH - 1)) - 1,
+ଗଣନା { ଚାବି_REPEAT_MIN_WIDTH = 3 /* 2 bits + sign */ };
+static_assert(ଚାବି_REPEAT_ଅଙ୍କ_ENTRIES - 1 <=
+              (1 << (ଚାବି_REPEAT_MIN_WIDTH - 1)) - 1,
               "Cannot encode key repeat");
 
-enum group_field {
+ଗଣନା group_field {
     GROUP_FIELD_SYMS = (1 << 0),
     GROUP_FIELD_ACTS = (1 << 1),
     GROUP_FIELD_TYPE = (1 << 2),
 };
 
-enum key_field {
-    KEY_FIELD_NONE = 0,
-    KEY_FIELD_REPEAT = (1 << 0),
-    KEY_FIELD_DEFAULT_TYPE = (1 << 1),
-    KEY_FIELD_GROUPINFO = (1 << 2),
-    KEY_FIELD_VMODMAP = (1 << 3),
-    KEY_FIELD_OVERLAY = (1 << 4),
-    KEY_FIELD_ALL = KEY_FIELD_REPEAT | KEY_FIELD_DEFAULT_TYPE
-                  | KEY_FIELD_GROUPINFO | KEY_FIELD_VMODMAP | KEY_FIELD_OVERLAY,
+ଗଣନା ଚାବି_field {
+    ଚାବି_FIELD_NONE = 0,
+    ଚାବି_FIELD_REPEAT = (1 << 0),
+    ଚାବି_FIELD_DEFAULT_TYPE = (1 << 1),
+    ଚାବି_FIELD_GROUPINFO = (1 << 2),
+    ଚାବି_FIELD_VMODMAP = (1 << 3),
+    ଚାବି_FIELD_OVERLAY = (1 << 4),
+    ଚାବି_FIELD_ALL = ଚାବି_FIELD_REPEAT | ଚାବି_FIELD_DEFAULT_TYPE
+                  | ଚାବି_FIELD_GROUPINFO | ଚାବି_FIELD_VMODMAP | ଚାବି_FIELD_OVERLAY,
 };
-enum { KEY_FIELD_MIN_WIDTH = 6 /* 5 bits + sign */ };
-static_assert(KEY_FIELD_ALL <= (1 << (KEY_FIELD_MIN_WIDTH - 1)) - 1,
+ଗଣନା { ଚାବି_FIELD_MIN_WIDTH = 6 /* 5 bits + sign */ };
+static_assert(ଚାବି_FIELD_ALL <= (1 << (ଚାବି_FIELD_MIN_WIDTH - 1)) - 1,
               "Cannot encode key field");
 
-typedef struct {
-    darray(struct xkb_level) levels;
-    enum group_field defined;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା {
+    darray(ସଂରଚନା xkb_level) levels;
+    ଗଣନା group_field defined;
     xkb_atom_t type;
 } GroupInfo;
 
-enum {
+ଗଣନା {
     XKB_LAYOUT_OUT_OF_RANGE_POLICY_MIN_WIDTH = 4 /* 3 bits + sign */,
     KEYINFO_OUT_OF_RANGE_GROUP_POLICY_BIT_FIELD = 8,
     KEYINFO_DEFINED_BIT_FIELD = 16,
@@ -93,27 +93,27 @@ static_assert(XKB_LAYOUT_OUT_OF_RANGE_REDIRECT <=
 static_assert(KEYINFO_OUT_OF_RANGE_GROUP_POLICY_BIT_FIELD >=
               XKB_LAYOUT_OUT_OF_RANGE_POLICY_MIN_WIDTH, "");
 static_assert((unsigned)KEYINFO_DEFINED_BIT_FIELD >=
-              (unsigned)KEY_FIELD_MIN_WIDTH, "Cannot encode KeyInfo field");
+              (unsigned)ଚାବି_FIELD_MIN_WIDTH, "Cannot encode KeyInfo field");
 static_assert((unsigned)KEYINFO_MERGE_BIT_FIELD >=
               (unsigned)MERGE_MODE_MIN_WIDTH, "Cannot encode KeyInfo field");
 static_assert((unsigned)KEYINFO_REPEAT_BIT_FIELD >=
-              (unsigned)KEY_REPEAT_MIN_WIDTH, "Cannot encode KeyInfo field");
+              (unsigned)ଚାବି_REPEAT_MIN_WIDTH, "Cannot encode KeyInfo field");
 
-typedef struct {
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା {
     xkb_atom_t name;
 
     xkb_mod_mask_t vmodmap;
     xkb_atom_t default_type;
 
-    xkb_layout_index_t out_of_range_group_number;
+    xkb_layout_index_t out_of_range_group_ସଂଖ୍ୟା;
     darray(GroupInfo) groups;
-    enum xkb_layout_out_of_range_policy
+    ଗଣନା xkb_layout_out_of_range_policy
         out_of_range_group_policy:KEYINFO_OUT_OF_RANGE_GROUP_POLICY_BIT_FIELD;
 
     /* NOTE: this bitfield could be reduce to 1 byte, should we need it */
-    enum key_field defined:KEYINFO_DEFINED_BIT_FIELD;
-    enum merge_mode merge:KEYINFO_MERGE_BIT_FIELD;
-    enum key_repeat repeat:KEYINFO_REPEAT_BIT_FIELD;
+    ଗଣନା ଚାବି_field defined:KEYINFO_DEFINED_BIT_FIELD;
+    ଗଣନା merge_mode merge:KEYINFO_MERGE_BIT_FIELD;
+    ଗଣନା ଚାବି_repeat repeat:KEYINFO_REPEAT_BIT_FIELD;
 
     bool out_of_range_pending_group:1;
 
@@ -129,9 +129,9 @@ typedef struct {
      * For 0 or 1 elements storage is inline in the struct; for 2 or more a
      * heap sparse array is used.
      */
-    union {
+    ସଂଘ {
         /** Inlined if at most one overlay is defined (overlays_alloc = 0) */
-        const struct xkb_key *overlay_key;
+        ଅଚଳ ସଂରଚନା xkb_ଚାବି *overlay_ଚାବି;
         /**
          * Allocated if 2 or more overlays are defined (overlays_alloc > 0).
          *
@@ -140,168 +140,168 @@ typedef struct {
          * ascending overlay order, and a value’s position in storage equals the
          * popcount of all mask bits strictly below its overlay — its rank.
          */
-        const struct xkb_key **overlays_keys;
+        ଅଚଳ ସଂରଚନା xkb_ଚାବି **overlays_ଚାବିଗୁଡ଼ିକ;
     };
-} KeyInfo;
+} ଚାବି_Info;
 
-static void
-StealLevelInfo(struct xkb_level *into, struct xkb_level *from)
+ସ୍ଥିର ଶୂନ୍ୟ
+StealLevelInfo(ସଂରଚନା xkb_level *into, ସଂରଚନା xkb_level *from)
 {
     clear_level(into);
-    if (from->num_syms > 1) {
+    ଯଦି (from->ଅଙ୍କ_syms > 1) {
         /* Steal */
         into->s.syms = steal(&from->s.syms);
-    } else {
+    } ଅନ୍ୟଥା {
         into->s.sym = from->s.sym;
     }
-    into->num_syms = from->num_syms;
-    from->num_syms = 0;
+    into->ଅଙ୍କ_syms = from->ଅଙ୍କ_syms;
+    from->ଅଙ୍କ_syms = 0;
 
-    if (from->num_actions > 1) {
+    ଯଦି (from->ଅଙ୍କ_actions > 1) {
         into->a.actions = steal(&from->a.actions);
-    } else {
+    } ଅନ୍ୟଥା {
         into->a.action = from->a.action;
     }
-    into->num_actions = from->num_actions;
-    from->num_actions = 0;
+    into->ଅଙ୍କ_actions = from->ଅଙ୍କ_actions;
+    from->ଅଙ୍କ_actions = 0;
 }
 
-static void
+ସ୍ଥିର ଶୂନ୍ୟ
 InitGroupInfo(GroupInfo *groupi)
 {
-    memset(groupi, 0, sizeof(*groupi));
+    memset(groupi, 0, ଆକାର(*groupi));
 }
 
-static void
+ସ୍ଥିର ଶୂନ୍ୟ
 ClearGroupInfo(GroupInfo *groupi)
 {
-    struct xkb_level *leveli;
+    ସଂରଚନା xkb_level *leveli;
     darray_foreach(leveli, groupi->levels)
         clear_level(leveli);
     darray_free(groupi->levels);
 }
 
-static void
-CopyGroupInfo(GroupInfo *to, const GroupInfo *from)
+ସ୍ଥିର ଶୂନ୍ୟ
+CopyGroupInfo(GroupInfo *to, ଅଚଳ GroupInfo *from)
 {
     to->defined = from->defined;
     to->type = from->type;
     darray_init(to->levels);
     darray_copy(to->levels, from->levels);
-    for (xkb_level_index_t j = 0; j < darray_size(to->levels); j++) {
-        if (darray_item(from->levels, j).num_syms > 1) {
+    ପାଇଁ (xkb_level_index_t j = 0; j < darray_size(to->levels); j++) {
+        ଯଦି (darray_item(from->levels, j).ଅଙ୍କ_syms > 1) {
             darray_item(to->levels, j).s.syms =
                 memdup(darray_item(from->levels, j).s.syms,
-                       darray_item(from->levels, j).num_syms,
-                       sizeof(xkb_keysym_t));
+                       darray_item(from->levels, j).ଅଙ୍କ_syms,
+                       ଆକାର(xkb_keysym_t));
         }
-        if (darray_item(from->levels, j).num_actions > 1) {
+        ଯଦି (darray_item(from->levels, j).ଅଙ୍କ_actions > 1) {
             darray_item(to->levels, j).a.actions =
                 memdup(darray_item(from->levels, j).a.actions,
-                       darray_item(from->levels, j).num_actions,
-                       sizeof(union xkb_action));
+                       darray_item(from->levels, j).ଅଙ୍କ_actions,
+                       ଆକାର(ସଂଘ xkb_action));
         }
     }
 }
 
-static void
-InitKeyInfo(struct xkb_context *ctx, KeyInfo *keyi)
+ସ୍ଥିର ଶୂନ୍ୟ
+Init_ଚାବି_Info(ସଂରଚନା xkb_context *ctx, ଚାବି_Info *keyi)
 {
-    memset(keyi, 0, sizeof(*keyi));
-    static_assert(!DEFAULT_KEY_REPEAT, "key repeat not initialized properly");
-    static_assert(!DEFAULT_KEY_VMODMAP, "key vmodmap not initialized properly");
+    memset(keyi, 0, ଆକାର(*keyi));
+    static_assert(!DEFAULT_ଚାବି_REPEAT, "key repeat not initialized properly");
+    static_assert(!DEFAULT_ଚାବି_VMODMAP, "key vmodmap not initialized properly");
     keyi->name = xkb_atom_intern_literal(ctx, "*");
     keyi->out_of_range_group_policy = XKB_LAYOUT_OUT_OF_RANGE_WRAP;
     darray_init(keyi->groups);
-    keyi->overlay_key = NULL;
+    keyi->overlay_ଚାବି = ଖାଲି;
 }
 
-static void
-ClearKeyInfo(KeyInfo *keyi)
+ସ୍ଥିର ଶୂନ୍ୟ
+Clear_ଚାବି_Info(ଚାବି_Info *keyi)
 {
     GroupInfo *groupi;
     darray_foreach(groupi, keyi->groups)
         ClearGroupInfo(groupi);
     darray_free(keyi->groups);
-    if (keyi->overlays_alloc)
-        free(keyi->overlays_keys);
+    ଯଦି (keyi->overlays_alloc)
+        ମୁକ୍ତ(keyi->overlays_ଚାବିଗୁଡ଼ିକ);
 }
 
 /***====================================================================***/
 
-typedef struct {
-    char *name;         /* e.g. pc+us+inet(evdev) */
-    int errorCount;
-    unsigned int include_depth;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା {
+    ଅକ୍ଷର *name;         /* e.g. pc+us+inet(evdev) */
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା error_ଗଣନା;
+    unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା include_depth;
     xkb_layout_index_t explicit_group;
     xkb_layout_index_t max_groups;
-    darray(KeyInfo) keys;
-    KeyInfo default_key;
+    darray(ଚାବି_Info) ଚାବିଗୁଡ଼ିକ;
+    ଚାବି_Info default_ଚାବି;
     ActionsInfo default_actions;
     darray(xkb_atom_t) group_names;
     darray(ModMapEntry) modmaps;
-    struct xkb_mod_set mods;
+    ସଂରଚନା xkb_mod_set mods;
 
-    struct xkb_context *ctx;
+    ସଂରଚନା xkb_context *ctx;
     /* Needed for AddKeySymbols and parsing actions */
-    const struct xkb_keymap_info *keymap_info;
+    ଅଚଳ ସଂରଚନା xkb_keymap_info *keymap_info;
 } SymbolsInfo;
 
-static void
-InitSymbolsInfo(SymbolsInfo *info, const struct xkb_keymap_info *keymap_info,
-                unsigned int include_depth, const struct xkb_mod_set *mods)
+ସ୍ଥିର ଶୂନ୍ୟ
+InitSymbolsInfo(SymbolsInfo *info, ଅଚଳ ସଂରଚନା xkb_keymap_info *keymap_info,
+                unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା include_depth, ଅଚଳ ସଂରଚନା xkb_mod_set *mods)
 {
-    memset(info, 0, sizeof(*info));
+    memset(info, 0, ଆକାର(*info));
     info->ctx = keymap_info->keymap.ctx;
     info->include_depth = include_depth;
     info->keymap_info = keymap_info;
     info->max_groups = keymap_info->features.max_groups;
-    InitKeyInfo(keymap_info->keymap.ctx, &info->default_key);
+    Init_ଚାବି_Info(keymap_info->keymap.ctx, &info->default_ଚାବି);
     InitActionsInfo(&keymap_info->keymap, &info->default_actions);
     InitVMods(&info->mods, mods, include_depth > 0);
     info->explicit_group = XKB_LAYOUT_INVALID;
 }
 
-static void
+ସ୍ଥିର ଶୂନ୍ୟ
 ClearSymbolsInfo(SymbolsInfo *info)
 {
-    KeyInfo *keyi;
-    free(info->name);
-    darray_foreach(keyi, info->keys)
-        ClearKeyInfo(keyi);
-    darray_free(info->keys);
+    ଚାବି_Info *keyi;
+    ମୁକ୍ତ(info->name);
+    darray_foreach(keyi, info->ଚାବିଗୁଡ଼ିକ)
+        Clear_ଚାବି_Info(keyi);
+    darray_free(info->ଚାବିଗୁଡ଼ିକ);
     darray_free(info->group_names);
     darray_free(info->modmaps);
-    ClearKeyInfo(&info->default_key);
+    Clear_ଚାବି_Info(&info->default_ଚାବି);
 }
 
-static const char *
-KeyInfoText(SymbolsInfo *info, KeyInfo *keyi)
+ସ୍ଥିର ଅଚଳ ଅକ୍ଷର *
+ଚାବି_Info_Text(SymbolsInfo *info, ଚାବି_Info *keyi)
 {
-    return KeyNameText(info->ctx, keyi->name);
+    ଫେରନ୍ତୁ ଚାବି_Name_Text(info->ctx, keyi->name);
 }
 
-static bool
+ସ୍ଥିର bool
 MergeGroups(SymbolsInfo *info, GroupInfo *into, GroupInfo *from, bool clobber,
-            bool report, xkb_layout_index_t group, xkb_atom_t key_name)
+            bool report, xkb_layout_index_t group, xkb_atom_t ଚାବି_name)
 {
     /* First find the type of the merged group. */
-    if (into->type != from->type) {
-        if (from->type == XKB_ATOM_NONE) {
+    ଯଦି (into->type != from->type) {
+        ଯଦି (from->type == XKB_ATOM_NONE) {
             /* it's empty for consistency with other comparisons */
         }
-        else if (into->type == XKB_ATOM_NONE) {
+        ଅନ୍ୟଥା ଯଦି (into->type == XKB_ATOM_NONE) {
             into->type = from->type;
         }
-        else {
+        ଅନ୍ୟଥା {
             xkb_atom_t use = (clobber ? from->type : into->type);
             xkb_atom_t ignore = (clobber ? into->type : from->type);
 
-            if (report) {
-                log_warn(info->ctx, XKB_WARNING_CONFLICTING_KEY_TYPE_MERGING_GROUPS,
+            ଯଦି (report) {
+                log_warn(info->ctx, XKB_WARNING_CONFLICTING_ଚାବି_TYPE_MERGING_GROUPS,
                          "Multiple definitions for group %"PRIu32" type of key %s; "
                          "Using %s, ignoring %s\n",
-                         group + 1, KeyNameText(info->ctx, key_name),
+                         group + 1, ଚାବି_Name_Text(info->ctx, ଚାବି_name),
                          xkb_atom_text(info->ctx, use),
                          xkb_atom_text(info->ctx, ignore));
             }
@@ -313,115 +313,115 @@ MergeGroups(SymbolsInfo *info, GroupInfo *into, GroupInfo *from, bool clobber,
 
     /* Now look at the levels. */
 
-    if (darray_empty(from->levels)) {
+    ଯଦି (darray_empty(from->levels)) {
         InitGroupInfo(from);
-        return true;
+        ଫେରନ୍ତୁ true;
     }
 
-    if (darray_empty(into->levels)) {
+    ଯଦି (darray_empty(into->levels)) {
         from->type = into->type;
         *into = *from;
         InitGroupInfo(from);
-        return true;
+        ଫେରନ୍ତୁ true;
     }
 
     /* Merge the actions and syms. */
-    const darray_size_t levels_in_both =
+    ଅଚଳ darray_size_t levels_in_both =
         MIN(darray_size(into->levels), darray_size(from->levels));
-    darray_size_t fromKeysymsCount = 0;
-    darray_size_t fromActionsCount = 0;
-    for (darray_size_t i = 0; i < levels_in_both; i++) {
-        struct xkb_level* const intoLevel = &darray_item(into->levels, i);
-        struct xkb_level* const fromLevel = &darray_item(from->levels, i);
+    darray_size_t from_Keysyms_ଗଣନା = 0;
+    darray_size_t from_Actions_ଗଣନା = 0;
+    ପାଇଁ (darray_size_t i = 0; i < levels_in_both; i++) {
+        ସଂରଚନା xkb_level* ଅଚଳ intoLevel = &darray_item(into->levels, i);
+        ସଂରଚନା xkb_level* ଅଚଳ fromLevel = &darray_item(from->levels, i);
 
-        const bool fromHasNoKeysym = fromLevel->num_syms == 0;
-        const bool fromHasNoAction = fromLevel->num_actions == 0;
-        if (fromHasNoKeysym && fromHasNoAction) {
+        ଅଚଳ bool fromHasNoKeysym = fromLevel->ଅଙ୍କ_syms == 0;
+        ଅଚଳ bool fromHasNoAction = fromLevel->ଅଙ୍କ_actions == 0;
+        ଯଦି (fromHasNoKeysym && fromHasNoAction) {
             /* Empty `from`: do nothing */
-            continue;
+            ଜାରି;
         }
 
-        const bool intoHasNoKeysym = intoLevel->num_syms == 0;
-        const bool intoHasNoAction = intoLevel->num_actions == 0;
-        if (intoHasNoKeysym && intoHasNoAction) {
+        ଅଚଳ bool intoHasNoKeysym = intoLevel->ଅଙ୍କ_syms == 0;
+        ଅଚଳ bool intoHasNoAction = intoLevel->ଅଙ୍କ_actions == 0;
+        ଯଦି (intoHasNoKeysym && intoHasNoAction) {
             /* Empty `into`: use `from` keysyms and actions */
             StealLevelInfo(intoLevel, fromLevel);
-            fromKeysymsCount++;
-            fromActionsCount++;
-            continue;
+            from_Keysyms_ଗଣନା++;
+            from_Actions_ଗଣନା++;
+            ଜାରି;
         }
 
         /* Possible level conflict */
-        assert(intoLevel->num_syms > 0 || intoLevel->num_actions > 0);
-        assert(fromLevel->num_syms > 0 || fromLevel->num_actions > 0);
+        ପ୍ରତିଜ୍ଞା(intoLevel->ଅଙ୍କ_syms > 0 || intoLevel->ଅଙ୍କ_actions > 0);
+        ପ୍ରତିଜ୍ଞା(fromLevel->ଅଙ୍କ_syms > 0 || fromLevel->ଅଙ୍କ_actions > 0);
 
         /* Handle keysyms */
-        if (!XkbLevelsSameSyms(fromLevel, intoLevel)) {
+        ଯଦି (!XkbLevelsSameSyms(fromLevel, intoLevel)) {
             /* Incompatible keysyms */
-            if (report && !(intoHasNoKeysym || fromHasNoKeysym)) {
-                log_warn(info->ctx, XKB_WARNING_CONFLICTING_KEY_SYMBOL,
+            ଯଦି (report && !(intoHasNoKeysym || fromHasNoKeysym)) {
+                log_warn(info->ctx, XKB_WARNING_CONFLICTING_ଚାବି_ପ୍ରତୀକ,
                             "Multiple symbols for level %u/group "
                             "%"PRIu32" on key %s; Using %s, ignoring %s\n",
-                            i + 1, group + 1, KeyNameText(info->ctx, key_name),
+                            i + 1, group + 1, ଚାବି_Name_Text(info->ctx, ଚାବି_name),
                             (clobber ? "from" : "to"),
                             (clobber ? "to" : "from"));
             }
-            if (fromHasNoKeysym) {
+            ଯଦି (fromHasNoKeysym) {
                 /* No keysym to copy */
-            } else if (clobber) {
+            } ଅନ୍ୟଥା ଯଦି (clobber) {
                 /* Override: copy any defined keysym from `from` */
-                if (unlikely(fromLevel->num_syms > 1)) {
+                ଯଦି (unlikely(fromLevel->ଅଙ୍କ_syms > 1)) {
                     /* Multiple keysyms: always replace, all syms are defined */
-                    if (unlikely(intoLevel->num_syms > 1))
-                        free(intoLevel->s.syms);
+                    ଯଦି (unlikely(intoLevel->ଅଙ୍କ_syms > 1))
+                        ମୁକ୍ତ(intoLevel->s.syms);
                     /* Steal */
                     intoLevel->s.syms = fromLevel->s.syms;
-                    intoLevel->num_syms = fromLevel->num_syms;
-                    fromLevel->num_syms = 0;
-                    fromKeysymsCount++;
-                } else if (fromLevel->s.sym != XKB_KEY_NoSymbol) {
+                    intoLevel->ଅଙ୍କ_syms = fromLevel->ଅଙ୍କ_syms;
+                    fromLevel->ଅଙ୍କ_syms = 0;
+                    from_Keysyms_ଗଣନା++;
+                } ଅନ୍ୟଥା ଯଦି (fromLevel->s.sym != XKB_ଚାବି_No_ପ୍ରତୀକ) {
                     /* Single defined keysym */
-                    if (unlikely(intoLevel->num_syms > 1))
-                        free(intoLevel->s.syms);
+                    ଯଦି (unlikely(intoLevel->ଅଙ୍କ_syms > 1))
+                        ମୁକ୍ତ(intoLevel->s.syms);
                     intoLevel->s.sym = fromLevel->s.sym;
-                    intoLevel->num_syms = 1;
-                    fromKeysymsCount++;
+                    intoLevel->ଅଙ୍କ_syms = 1;
+                    from_Keysyms_ଗଣନା++;
                 }
-            } else {
+            } ଅନ୍ୟଥା {
                 /* Augment: copy only the keysyms from `from` that are
                  * undefined in `into` */
-                if (unlikely(intoLevel->num_syms > 1)) {
+                ଯଦି (unlikely(intoLevel->ଅଙ୍କ_syms > 1)) {
                     /* Multiple keysyms: always ignore, all syms are defined */
-                } else if (intoLevel->s.sym == XKB_KEY_NoSymbol) {
+                } ଅନ୍ୟଥା ଯଦି (intoLevel->s.sym == XKB_ଚାବି_No_ପ୍ରତୀକ) {
                     /* Single undefined keysym */
-                    if (unlikely(fromLevel->num_syms > 1)) {
+                    ଯଦି (unlikely(fromLevel->ଅଙ୍କ_syms > 1)) {
                         /* Steal */
                         intoLevel->s.syms = fromLevel->s.syms;
-                        intoLevel->num_syms = fromLevel->num_syms;
-                        fromLevel->num_syms = 0;
-                    } else {
+                        intoLevel->ଅଙ୍କ_syms = fromLevel->ଅଙ୍କ_syms;
+                        fromLevel->ଅଙ୍କ_syms = 0;
+                    } ଅନ୍ୟଥା {
                         intoLevel->s.sym = fromLevel->s.sym;
-                        intoLevel->num_syms = 1;
+                        intoLevel->ଅଙ୍କ_syms = 1;
                     }
-                    fromKeysymsCount++;
+                    from_Keysyms_ଗଣନା++;
                 }
             }
         }
 
         /* Handle actions */
-        if (!XkbLevelsSameActions(intoLevel, fromLevel)) {
+        ଯଦି (!XkbLevelsSameActions(intoLevel, fromLevel)) {
             /* Incompatible actions */
-            if (report && !(intoHasNoAction || fromHasNoAction)) {
-                if (unlikely(intoLevel->num_actions > 1)) {
+            ଯଦି (report && !(intoHasNoAction || fromHasNoAction)) {
+                ଯଦି (unlikely(intoLevel->ଅଙ୍କ_actions > 1)) {
                     log_warn(
-                        info->ctx, XKB_WARNING_CONFLICTING_KEY_ACTION,
+                        info->ctx, XKB_WARNING_CONFLICTING_ଚାବି_ACTION,
                         "Multiple actions for level %u/group %"PRIu32" "
                         "on key %s; %s\n",
-                        i + 1, group + 1, KeyNameText(info->ctx, key_name),
+                        i + 1, group + 1, ଚାବି_Name_Text(info->ctx, ଚାବି_name),
                         clobber ? "Using from, ignoring to"
                                 : "Using to, ignoring from");
-                } else {
-                    union xkb_action *use, *ignore;
+                } ଅନ୍ୟଥା {
+                    ସଂଘ xkb_action *use, *ignore;
                     use = clobber
                         ? &fromLevel->a.action
                         : &intoLevel->a.action;
@@ -429,259 +429,259 @@ MergeGroups(SymbolsInfo *info, GroupInfo *into, GroupInfo *from, bool clobber,
                         ? &intoLevel->a.action
                         : &fromLevel->a.action;
 
-                    log_warn(info->ctx, XKB_WARNING_CONFLICTING_KEY_ACTION,
+                    log_warn(info->ctx, XKB_WARNING_CONFLICTING_ଚାବି_ACTION,
                                 "Multiple actions for level %u/group "
                                 "%"PRIu32" on key %s; Using %s, ignoring %s\n",
                                 i + 1, group + 1,
-                                KeyNameText(info->ctx, key_name),
+                                ଚାବି_Name_Text(info->ctx, ଚାବି_name),
                                 ActionTypeText(use->type),
                                 ActionTypeText(ignore->type));
                 }
             }
-            if (fromHasNoAction) {
+            ଯଦି (fromHasNoAction) {
                 /* No action to copy */
-            } else if (clobber) {
+            } ଅନ୍ୟଥା ଯଦି (clobber) {
                 /* Override: copy any defined action from `from` */
-                if (unlikely(fromLevel->num_actions > 1)) {
+                ଯଦି (unlikely(fromLevel->ଅଙ୍କ_actions > 1)) {
                     /* Multiple actions: always replace, all syms are defined */
-                    if (unlikely(intoLevel->num_actions > 1))
-                        free(intoLevel->a.actions);
+                    ଯଦି (unlikely(intoLevel->ଅଙ୍କ_actions > 1))
+                        ମୁକ୍ତ(intoLevel->a.actions);
                     /* Steal */
                     intoLevel->a.actions = fromLevel->a.actions;
-                    intoLevel->num_actions = fromLevel->num_actions;
-                    fromLevel->num_actions = 0;
-                    fromActionsCount++;
-                } else if (fromLevel->a.action.type != ACTION_TYPE_NONE) {
+                    intoLevel->ଅଙ୍କ_actions = fromLevel->ଅଙ୍କ_actions;
+                    fromLevel->ଅଙ୍କ_actions = 0;
+                    from_Actions_ଗଣନା++;
+                } ଅନ୍ୟଥା ଯଦି (fromLevel->a.action.type != ACTION_TYPE_NONE) {
                     /* Single defined action */
-                    if (unlikely(intoLevel->num_actions > 1))
-                        free(intoLevel->a.actions);
+                    ଯଦି (unlikely(intoLevel->ଅଙ୍କ_actions > 1))
+                        ମୁକ୍ତ(intoLevel->a.actions);
                     intoLevel->a.action = fromLevel->a.action;
-                    intoLevel->num_actions = 1;
-                    fromActionsCount++;
+                    intoLevel->ଅଙ୍କ_actions = 1;
+                    from_Actions_ଗଣନା++;
                 }
-            } else {
+            } ଅନ୍ୟଥା {
                 /* Augment: copy only the actions from `from` that are
                  * undefined in `into` */
-                if (unlikely(intoLevel->num_actions > 1)) {
+                ଯଦି (unlikely(intoLevel->ଅଙ୍କ_actions > 1)) {
                     /* Multiple keysyms: always ignore, all syms are defined */
-                } else if (intoLevel->a.action.type == ACTION_TYPE_NONE) {
+                } ଅନ୍ୟଥା ଯଦି (intoLevel->a.action.type == ACTION_TYPE_NONE) {
                     /* Single undefined keysym */
-                    if (unlikely(fromLevel->num_actions > 1)) {
+                    ଯଦି (unlikely(fromLevel->ଅଙ୍କ_actions > 1)) {
                         /* Steal */
                         intoLevel->a.actions = fromLevel->a.actions;
-                        intoLevel->num_actions = fromLevel->num_actions;
-                        fromLevel->num_actions = 0;
-                    } else {
+                        intoLevel->ଅଙ୍କ_actions = fromLevel->ଅଙ୍କ_actions;
+                        fromLevel->ଅଙ୍କ_actions = 0;
+                    } ଅନ୍ୟଥା {
                         intoLevel->a.action = fromLevel->a.action;
-                        intoLevel->num_actions = 1;
+                        intoLevel->ଅଙ୍କ_actions = 1;
                     }
-                    fromActionsCount++;
+                    from_Actions_ଗଣନା++;
                 }
             }
         }
     }
     /* If @from has extra levels, get them as well. */
-    struct xkb_level *level;
+    ସଂରଚନା xkb_level *level;
     darray_foreach_from(level, from->levels, levels_in_both) {
         darray_append(into->levels, *level);
         /* We may have stolen keysyms or actions arrays:
          * do not free them when clearing `from` */
-        level->num_syms = 0;
-        level->num_actions = 0;
-        fromKeysymsCount++;
-        fromActionsCount++;
+        level->ଅଙ୍କ_syms = 0;
+        level->ଅଙ୍କ_actions = 0;
+        from_Keysyms_ଗଣନା++;
+        from_Actions_ଗଣନା++;
     }
-    if (fromKeysymsCount) {
+    ଯଦି (from_Keysyms_ଗଣନା) {
         /* Reset defined keysyms field if we used no keysym from `into` */
-        if (fromKeysymsCount == darray_size(into->levels))
+        ଯଦି (from_Keysyms_ଗଣନା == darray_size(into->levels))
             into->defined &= ~GROUP_FIELD_SYMS;
         into->defined |= (from->defined & GROUP_FIELD_SYMS);
     }
-    if (fromActionsCount) {
+    ଯଦି (from_Actions_ଗଣନା) {
         /* Reset defined actions field if we used no action from `into` */
-        if (fromActionsCount == darray_size(into->levels))
+        ଯଦି (from_Actions_ଗଣନା == darray_size(into->levels))
             into->defined &= ~GROUP_FIELD_ACTS;
         into->defined |= (from->defined & GROUP_FIELD_ACTS);
     }
 
-    return true;
+    ଫେରନ୍ତୁ true;
 }
 
-static bool
-UseNewKeyField(enum key_field field, enum key_field old, enum key_field new,
-               bool clobber, bool report, enum key_field *collide)
+ସ୍ଥିର bool
+Use_New_ଚାବି_Field(ଗଣନା ଚାବି_field field, ଗଣନା ଚାବି_field old, ଗଣନା ଚାବି_field new,
+               bool clobber, bool report, ଗଣନା ଚାବି_field *collide)
 {
-    if (!(old & field))
-        return (new & field);
+    ଯଦି (!(old & field))
+        ଫେରନ୍ତୁ (new & field);
 
-    if (new & field) {
-        if (report)
+    ଯଦି (new & field) {
+        ଯଦି (report)
             *collide |= field;
 
-        return clobber;
+        ଫେରନ୍ତୁ clobber;
     }
 
-    return false;
+    ଫେରନ୍ତୁ false;
 }
 
-static bool
-overlays_get(const KeyInfo *info, xkb_overlay_index_t bit,
-             const struct xkb_key **key_out)
+ସ୍ଥିର bool
+overlays_get(ଅଚଳ ଚାବି_Info *info, xkb_overlay_index_t bit,
+             ଅଚଳ ସଂରଚନା xkb_ଚାବି **ଚାବି_out)
 {
-    if (bit >= (xkb_overlay_index_t)(sizeof(xkb_overlay_mask_t) * CHAR_BIT))
-        return false;
-    const xkb_overlay_mask_t mask = (xkb_overlay_mask_t)(1u << bit);
-    if (!(info->overlays & mask)) return false;
-    if (key_out) {
-        if (!info->overlays_alloc) {
+    ଯଦି (bit >= (xkb_overlay_index_t)(ଆକାର(xkb_overlay_mask_t) * CHAR_BIT))
+        ଫେରନ୍ତୁ false;
+    ଅଚଳ xkb_overlay_mask_t mask = (xkb_overlay_mask_t)(1u << bit);
+    ଯଦି (!(info->overlays & mask)) ଫେରନ୍ତୁ false;
+    ଯଦି (ଚାବି_out) {
+        ଯଦି (!info->overlays_alloc) {
             /* Stored inline */
-            *key_out = info->overlay_key;
-        } else {
+            *ଚାବି_out = info->overlay_ଚାବି;
+        } ଅନ୍ୟଥା {
             /* Stored in sparse array */
-            const xkb_overlay_mask_t low = (xkb_overlay_mask_t)(
+            ଅଚଳ xkb_overlay_mask_t ତଳ = (xkb_overlay_mask_t)(
                 info->overlays & (mask - 1u)
             );
-            const xkb_overlay_index_t index = (xkb_overlay_index_t)popcount32(low);
-            *key_out = info->overlays_keys[index];
+            ଅଚଳ xkb_overlay_index_t index = (xkb_overlay_index_t)popcount32(ତଳ);
+            *ଚାବି_out = info->overlays_ଚାବିଗୁଡ଼ିକ[index];
         }
     }
-    return true;
+    ଫେରନ୍ତୁ true;
 }
 
-static bool
-overlays_insert(KeyInfo *keyi, xkb_overlay_index_t bit,
-                const struct xkb_key *key)
+ସ୍ଥିର bool
+overlays_ଭର୍ତ୍ତି(ଚାବି_Info *keyi, xkb_overlay_index_t bit,
+                ଅଚଳ ସଂରଚନା xkb_ଚାବି *ଚାବି)
 {
-    if (bit >= (xkb_overlay_index_t)(sizeof(xkb_overlay_mask_t) * CHAR_BIT))
-        return false;
+    ଯଦି (bit >= (xkb_overlay_index_t)(ଆକାର(xkb_overlay_mask_t) * CHAR_BIT))
+        ଫେରନ୍ତୁ false;
 
-    const xkb_overlay_mask_t mask = (xkb_overlay_mask_t)(1u << bit);
+    ଅଚଳ xkb_overlay_mask_t mask = (xkb_overlay_mask_t)(1u << bit);
 
-    if ((keyi->overlays & mask) && !keyi->overlays_clear) {
+    ଯଦି ((keyi->overlays & mask) && !keyi->overlays_clear) {
         /* Overwrite existing slot */
-        if (!keyi->overlays_alloc) {
+        ଯଦି (!keyi->overlays_alloc) {
             /* Stored inline */
-            keyi->overlay_key = key;
-            if (!key)
+            keyi->overlay_ଚାବି = ଚାବି;
+            ଯଦି (!ଚାବି)
                 keyi->overlays_clear = true;
-        } else {
+        } ଅନ୍ୟଥା {
             /* Stored in sparse array */
-            const xkb_overlay_mask_t low = (xkb_overlay_mask_t)(
+            ଅଚଳ xkb_overlay_mask_t ତଳ = (xkb_overlay_mask_t)(
                 keyi->overlays & (xkb_overlay_mask_t)(mask - 1u)
             );
             /* index = number of set bits strictly below bit */
-            const xkb_overlay_index_t index =
-                (xkb_overlay_index_t)popcount32(low);
-            keyi->overlays_keys[index] = key;
+            ଅଚଳ xkb_overlay_index_t index =
+                (xkb_overlay_index_t)popcount32(ତଳ);
+            keyi->overlays_ଚାବିଗୁଡ଼ିକ[index] = ଚାବି;
         }
-        return true;
+        ଫେରନ୍ତୁ true;
     }
 
     /* Insert new element */
-    if (!keyi->overlays || (keyi->overlays_clear && !key)) {
+    ଯଦି (!keyi->overlays || (keyi->overlays_clear && !ଚାବି)) {
         /* No previous overlay or only cleared overlays: use inline storage */
-        keyi->overlay_key = key;
+        keyi->overlay_ଚାବି = ଚାବି;
         keyi->overlays |= mask;
-        keyi->overlays_clear = !key;
-    } else if (!keyi->overlays_alloc) {
+        keyi->overlays_clear = !ଚାବି;
+    } ଅନ୍ୟଥା ଯଦି (!keyi->overlays_alloc) {
         /* Promote inline element to heap */
-        const xkb_overlay_mask_t overlays = keyi->overlays | mask;
-        const xkb_overlay_index_t alloc =
+        ଅଚଳ xkb_overlay_mask_t overlays = keyi->overlays | mask;
+        ଅଚଳ xkb_overlay_index_t alloc =
             (xkb_overlay_index_t)popcount32(overlays);
 
         /* Alloc sparse array */
-        const struct xkb_key ** const tmp = calloc(alloc, sizeof(*tmp));
-        if (!tmp) return false;
+        ଅଚଳ ସଂରଚନା xkb_ଚାବି ** ଅଚଳ tmp = calloc(alloc, ଆକାର(*tmp));
+        ଯଦି (!tmp) ଫେରନ୍ତୁ false;
 
         /* Copy previous entries to the buffer */
-        if (!keyi->overlays_clear) {
+        ଯଦି (!keyi->overlays_clear) {
             /* A previous single overlay was set */
-            const xkb_overlay_mask_t low = (xkb_overlay_mask_t)(
+            ଅଚଳ xkb_overlay_mask_t ତଳ = (xkb_overlay_mask_t)(
                 overlays & (xkb_overlay_mask_t)(keyi->overlays - 1u)
             );
-            const xkb_overlay_index_t idx = (xkb_overlay_index_t)popcount32(low);
-            tmp[idx] = keyi->overlay_key;
-        } else {
+            ଅଚଳ xkb_overlay_index_t idx = (xkb_overlay_index_t)popcount32(ତଳ);
+            tmp[idx] = keyi->overlay_ଚାବି;
+        } ଅନ୍ୟଥା {
             /* All previous overlays were set to none: set thanks to calloc */
         }
 
         /* Insert new entry into the buffer */
-        const xkb_overlay_mask_t low = (xkb_overlay_mask_t)(
+        ଅଚଳ xkb_overlay_mask_t ତଳ = (xkb_overlay_mask_t)(
             overlays & (xkb_overlay_mask_t)(mask - 1u)
         );
-        const xkb_overlay_index_t idx = (xkb_overlay_index_t)popcount32(low);
-        tmp[idx] = key;
+        ଅଚଳ xkb_overlay_index_t idx = (xkb_overlay_index_t)popcount32(ତଳ);
+        tmp[idx] = ଚାବି;
 
-        keyi->overlays_keys = tmp;
+        keyi->overlays_ଚାବିଗୁଡ଼ିକ = tmp;
         keyi->overlays_alloc = alloc;
         keyi->overlays = overlays;
         keyi->overlays_clear = false;
-    } else {
+    } ଅନ୍ୟଥା {
         /* Allocated items: grow heap and shift if relevant */
-        const xkb_overlay_mask_t overlays =
+        ଅଚଳ xkb_overlay_mask_t overlays =
             (xkb_overlay_mask_t)(keyi->overlays | mask);
-        const xkb_overlay_index_t count =
+        ଅଚଳ xkb_overlay_index_t ଗଣନା_2 =
             (xkb_overlay_index_t)popcount32(overlays);
-        if (count > keyi->overlays_alloc) {
-            const xkb_overlay_index_t alloc =
-                (xkb_overlay_index_t)next_pow2(count);
-            assert(alloc >= count);
-            const struct xkb_key ** const tmp = realloc(
-                keyi->overlays_keys,
-                (size_t)alloc * sizeof(*keyi->overlays_keys)
+        ଯଦି (ଗଣନା_2 > keyi->overlays_alloc) {
+            ଅଚଳ xkb_overlay_index_t alloc =
+                (xkb_overlay_index_t)next_pow2(ଗଣନା_2);
+            ପ୍ରତିଜ୍ଞା(alloc >= ଗଣନା_2);
+            ଅଚଳ ସଂରଚନା xkb_ଚାବି ** ଅଚଳ tmp = realloc(
+                keyi->overlays_ଚାବିଗୁଡ଼ିକ,
+                (size_t)alloc * ଆକାର(*keyi->overlays_ଚାବିଗୁଡ଼ିକ)
             );
-            if (!tmp) return false;
-            keyi->overlays_keys = tmp;
+            ଯଦି (!tmp) ଫେରନ୍ତୁ false;
+            keyi->overlays_ଚାବିଗୁଡ଼ିକ = tmp;
             keyi->overlays_alloc = alloc;
         }
         /* Get new entry index in sparse array */
-        const xkb_overlay_mask_t low = (xkb_overlay_mask_t)(
+        ଅଚଳ xkb_overlay_mask_t ତଳ = (xkb_overlay_mask_t)(
             overlays & (xkb_overlay_mask_t)(mask - 1u)
         );
-        const xkb_overlay_index_t index = (xkb_overlay_index_t)popcount32(low);
-        if (index >= keyi->overlays_alloc)
+        ଅଚଳ xkb_overlay_index_t index = (xkb_overlay_index_t)popcount32(ତଳ);
+        ଯଦି (index >= keyi->overlays_alloc)
             PANIC_UNREACHABLE();
-        if (index < count - 1u /* previous count */) {
+        ଯଦି (index < ଗଣନା_2 - 1u /* previous count */) {
             /* insert between 2 previous items: move items from greater bits */
-            assert(index + 1 < keyi->overlays_alloc);
-            memmove(keyi->overlays_keys + index + 1, keyi->overlays_keys + index,
-                    (size_t)(count - 1u - index) * sizeof(const struct xkb_key *));
+            ପ୍ରତିଜ୍ଞା(index + 1 < keyi->overlays_alloc);
+            memmove(keyi->overlays_ଚାବିଗୁଡ଼ିକ + index + 1, keyi->overlays_ଚାବିଗୁଡ଼ିକ + index,
+                    (size_t)(ଗଣନା_2 - 1u - index) * ଆକାର(ଅଚଳ ସଂରଚନା xkb_ଚାବି *));
         }
-        keyi->overlays_keys[index] = key;
+        keyi->overlays_ଚାବିଗୁଡ଼ିକ[index] = ଚାବି;
         keyi->overlays = overlays;
     }
 
-    return true;
+    ଫେରନ୍ତୁ true;
 }
 
 /** Merge keyboard overlays. At most one can be defined (X11 limitation) */
-static bool
-merge_overlays(SymbolsInfo *info, KeyInfo *into, KeyInfo *from,
-               bool clobber, bool report, enum key_field *collide)
+ସ୍ଥିର bool
+merge_overlays(SymbolsInfo *info, ଚାବି_Info *into, ଚାବି_Info *from,
+               bool clobber, bool report, ଗଣନା ଚାବି_field *collide)
 {
-    if (!(from->defined & KEY_FIELD_OVERLAY)) {
+    ଯଦି (!(from->defined & ଚାବି_FIELD_OVERLAY)) {
         /* `from` is empty: do nothing */
-    } else if (!(into->defined & KEY_FIELD_OVERLAY)) {
+    } ଅନ୍ୟଥା ଯଦି (!(into->defined & ଚାବି_FIELD_OVERLAY)) {
         /* `into` is empty: steal `from` */
         into->overlays = from->overlays;
-        into->overlays_keys = from->overlays_keys;
-        from->overlays_keys = NULL;
+        into->overlays_ଚାବିଗୁଡ଼ିକ = from->overlays_ଚାବିଗୁଡ଼ିକ;
+        from->overlays_ଚାବିଗୁଡ଼ିକ = ଖାଲି;
         into->overlays_alloc = from->overlays_alloc;
         from->overlays_alloc = 0;
-        into->defined |= KEY_FIELD_OVERLAY;
-    } else if (into->overlays_clear && from->overlays_clear) {
+        into->defined |= ଚାବି_FIELD_OVERLAY;
+    } ଅନ୍ୟଥା ଯଦି (into->overlays_clear && from->overlays_clear) {
         /* Only cleared overlays: combine them */
         into->overlays |= from->overlays;
-    } else {
-        if (info->keymap_info->features.overlapping_overlays) {
+    } ଅନ୍ୟଥା {
+        ଯଦି (info->keymap_info->features.overlapping_overlays) {
             /* Overlapping overlays */
 
-            const xkb_overlay_mask_t result_mask =
+            ଅଚଳ xkb_overlay_mask_t result_mask =
                 (into->overlays | from->overlays);
-            const xkb_overlay_index_t count =
+            ଅଚଳ xkb_overlay_index_t ଗଣନା_2 =
                 (xkb_overlay_index_t)popcount32(result_mask);
 
-            if (count == 0)
+            ଯଦି (ଗଣନା_2 == 0)
                 PANIC_UNREACHABLE();
 
             /*
@@ -690,215 +690,215 @@ merge_overlays(SymbolsInfo *info, KeyInfo *into, KeyInfo *from,
              * buffer may be freed.
              */
 
-            KeyInfo *dest = into;
-            KeyInfo *src = from;
-            if (into->overlays_alloc >= count &&
+            ଚାବି_Info *dest = into;
+            ଚାବି_Info *src = from;
+            ଯଦି (into->overlays_alloc >= ଗଣନା_2 &&
                 into->overlays_alloc >= from->overlays_alloc) {
                 /* Do nothing */
-            } else if (from->overlays_alloc >= count) {
+            } ଅନ୍ୟଥା ଯଦି (from->overlays_alloc >= ଗଣନା_2) {
                 dest = from;
                 src = into;
                 clobber = !clobber;
-            } else if (count > 1) {
+            } ଅନ୍ୟଥା ଯଦି (ଗଣନା_2 > 1) {
                 /* Neither is sufficient: realloc the larger one if possible */
-                if (into->overlays_alloc < from->overlays_alloc) {
+                ଯଦି (into->overlays_alloc < from->overlays_alloc) {
                     dest = from;
                     src = into;
                     clobber = !clobber;
                 }
 
-                if (!dest->overlays_alloc) {
-                    const struct xkb_key **tmp = calloc(count, sizeof(*tmp));
-                    if (!tmp)
-                        return false;
-                    if (dest->overlay_key)
-                        tmp[0] = dest->overlay_key;
-                    dest->overlays_keys = tmp;
-                    dest->overlays_alloc = count;
-                } else {
-                    const struct xkb_key **tmp =
-                        realloc(dest->overlays_keys,
-                                count * sizeof(*dest->overlays_keys));
-                    if (!tmp)
-                        return false;
-                    dest->overlays_keys = tmp;
-                    dest->overlays_alloc = count;
+                ଯଦି (!dest->overlays_alloc) {
+                    ଅଚଳ ସଂରଚନା xkb_ଚାବି **tmp = calloc(ଗଣନା_2, ଆକାର(*tmp));
+                    ଯଦି (!tmp)
+                        ଫେରନ୍ତୁ false;
+                    ଯଦି (dest->overlay_ଚାବି)
+                        tmp[0] = dest->overlay_ଚାବି;
+                    dest->overlays_ଚାବିଗୁଡ଼ିକ = tmp;
+                    dest->overlays_alloc = ଗଣନା_2;
+                } ଅନ୍ୟଥା {
+                    ଅଚଳ ସଂରଚନା xkb_ଚାବି **tmp =
+                        realloc(dest->overlays_ଚାବିଗୁଡ଼ିକ,
+                                ଗଣନା_2 * ଆକାର(*dest->overlays_ଚାବିଗୁଡ଼ିକ));
+                    ଯଦି (!tmp)
+                        ଫେରନ୍ତୁ false;
+                    dest->overlays_ଚାବିଗୁଡ଼ିକ = tmp;
+                    dest->overlays_alloc = ଗଣନା_2;
                 }
             }
 
             xkb_overlay_mask_t remaining = src->overlays;
-            const struct xkb_key **src_keys = (src->overlays_clear)
-                ? NULL
+            ଅଚଳ ସଂରଚନା xkb_ଚାବି **src_ଚାବିଗୁଡ଼ିକ = (src->overlays_clear)
+                ? ଖାଲି
                 : (src->overlays_alloc)
-                    ? src->overlays_keys
-                    : &src->overlay_key;
-            while (remaining) {
+                    ? src->overlays_ଚାବିଗୁଡ଼ିକ
+                    : &src->overlay_ଚାବି;
+            ଯେତେବେଳେ (remaining) {
                 /* isolate lowest set bit */
-                const xkb_overlay_mask_t lsb = (xkb_overlay_mask_t)(
+                ଅଚଳ xkb_overlay_mask_t lsb = (xkb_overlay_mask_t)(
                     remaining &
                     (xkb_overlay_mask_t)((unsigned)~remaining + 1u)
                 );
                 /* get its index */
-                const xkb_overlay_index_t bit =
+                ଅଚଳ xkb_overlay_index_t bit =
                     (xkb_overlay_index_t)popcount32(lsb - 1u);
                 remaining = (remaining & ~lsb);
 
                 /* pop current value */
-                if (!src->overlays_clear && !src->overlays_alloc && remaining)
+                ଯଦି (!src->overlays_clear && !src->overlays_alloc && remaining)
                     PANIC_UNREACHABLE();
-                const struct xkb_key *src_key = (src_keys)
-                    ? *(src_keys++)
-                    : NULL;
+                ଅଚଳ ସଂରଚନା xkb_ଚାବି *src_ଚାବି = (src_ଚାବିଗୁଡ଼ିକ)
+                    ? *(src_ଚାବିଗୁଡ଼ିକ++)
+                    : ଖାଲି;
 
                 /* check dest */
-                const struct xkb_key *dest_key = NULL;
-                const bool conflict = overlays_get(dest, bit, &dest_key);
-                if (conflict) {
-                    if (dest_key == src_key)
-                       continue;
-                    else if (report)
-                        *collide |= KEY_FIELD_OVERLAY;
+                ଅଚଳ ସଂରଚନା xkb_ଚାବି *dest_ଚାବି = ଖାଲି;
+                ଅଚଳ bool conflict = overlays_get(dest, bit, &dest_ଚାବି);
+                ଯଦି (conflict) {
+                    ଯଦି (dest_ଚାବି == src_ଚାବି)
+                       ଜାରି;
+                    ଅନ୍ୟଥା ଯଦି (report)
+                        *collide |= ଚାବି_FIELD_OVERLAY;
                 }
 
-                if ((!conflict || clobber) && !overlays_insert(dest, bit, src_key))
-                    return false;
+                ଯଦି ((!conflict || clobber) && !overlays_ଭର୍ତ୍ତି(dest, bit, src_ଚାବି))
+                    ଫେରନ୍ତୁ false;
             }
 
-            if (dest == from) {
+            ଯଦି (dest == from) {
                 /* `from` buffer was used; clone it into `into` then clear it */
-                if (into->overlays_alloc)
-                    free(into->overlays_keys);
+                ଯଦି (into->overlays_alloc)
+                    ମୁକ୍ତ(into->overlays_ଚାବିଗୁଡ଼ିକ);
                 into->overlays = from->overlays;
                 into->overlays_clear = from->overlays_clear;
                 into->overlays_alloc = from->overlays_alloc;
-                if (from->overlays_alloc) {
+                ଯଦି (from->overlays_alloc) {
                     /* Steal */
-                    into->overlays_keys = from->overlays_keys;
-                    from->overlays_keys = NULL;
+                    into->overlays_ଚାବିଗୁଡ଼ିକ = from->overlays_ଚାବିଗୁଡ଼ିକ;
+                    from->overlays_ଚାବିଗୁଡ଼ିକ = ଖାଲି;
                     from->overlays_alloc = 0;
-                } else {
-                    into->overlay_key = from->overlay_key;
+                } ଅନ୍ୟଥା {
+                    into->overlay_ଚାବି = from->overlay_ଚାବି;
                 }
             }
-        } else {
+        } ଅନ୍ୟଥା {
             /* Disjoint overlays */
 
-            if (into->overlays == from->overlays &&
+            ଯଦି (into->overlays == from->overlays &&
                 into->overlays_clear == from->overlays_clear &&
-                into->overlay_key == from->overlay_key) {
+                into->overlay_ଚାବି == from->overlay_ଚାବି) {
                 /* Indentical: do nothing */
-                return true;
+                ଫେରନ୍ତୁ true;
             }
-            if (!(into->overlays & from->overlays)) {
-                if (into->overlays_clear) {
+            ଯଦି (!(into->overlays & from->overlays)) {
+                ଯଦି (into->overlays_clear) {
                     /* `into` clears and `from` sets distinct overlays: use `from` */
                     into->overlays = from->overlays;
                     into->overlays_clear = from->overlays_clear;
                     into->overlays_alloc = from->overlays_alloc;
-                    into->overlay_key = from->overlay_key;
-                    return true;
-                } else if (from->overlays_clear) {
+                    into->overlay_ଚାବି = from->overlay_ଚାବି;
+                    ଫେରନ୍ତୁ true;
+                } ଅନ୍ୟଥା ଯଦି (from->overlays_clear) {
                     /* `into` sets and `from` clears distinct overlays: use `into` */
-                    return true;
+                    ଫେରନ୍ତୁ true;
                 }
             }
             /* Conflict */
-            if (report)
-                *collide |= KEY_FIELD_OVERLAY;
-            if (clobber) {
+            ଯଦି (report)
+                *collide |= ଚାବି_FIELD_OVERLAY;
+            ଯଦି (clobber) {
                 into->overlays = from->overlays;
                 into->overlays_clear = from->overlays_clear;
                 into->overlays_alloc = from->overlays_alloc;
-                into->overlay_key = from->overlay_key;
+                into->overlay_ଚାବି = from->overlay_ଚାବି;
             }
         }
     }
-    return true;
+    ଫେରନ୍ତୁ true;
 }
 
-static bool
-MergeKeys(SymbolsInfo *info, KeyInfo *into, KeyInfo *from, bool same_file)
+ସ୍ଥିର bool
+Merge_ଚାବିଗୁଡ଼ିକ(SymbolsInfo *info, ଚାବି_Info *into, ଚାବି_Info *from, bool same_file)
 {
     xkb_layout_index_t i;
     xkb_layout_index_t groups_in_both;
-    enum key_field collide = 0;
-    const int verbosity = xkb_context_get_log_verbosity(info->ctx);
-    const bool clobber = (from->merge != MERGE_AUGMENT);
-    const bool report = (same_file && verbosity > 0) || verbosity > 9;
+    ଗଣନା ଚାବି_field collide = 0;
+    ଅଚଳ ପୂର୍ଣ୍ଣସଂଖ୍ୟା verbosity = xkb_context_get_log_verbosity(info->ctx);
+    ଅଚଳ bool clobber = (from->merge != MERGE_AUGMENT);
+    ଅଚଳ bool report = (same_file && verbosity > 0) || verbosity > 9;
 
-    if (from->merge == MERGE_REPLACE) {
-        ClearKeyInfo(into);
+    ଯଦି (from->merge == MERGE_REPLACE) {
+        Clear_ଚାବି_Info(into);
         *into = *from;
-        InitKeyInfo(info->ctx, from);
-        return true;
+        Init_ଚାବି_Info(info->ctx, from);
+        ଫେରନ୍ତୁ true;
     }
 
     groups_in_both = MIN(darray_size(into->groups), darray_size(from->groups));
-    for (i = 0; i < groups_in_both; i++)
+    ପାଇଁ (i = 0; i < groups_in_both; i++)
         MergeGroups(info,
                     &darray_item(into->groups, i),
                     &darray_item(from->groups, i),
                     clobber, report, i, into->name);
     /* If @from has extra groups, just move them to @into. */
-    for (i = groups_in_both; i < darray_size(from->groups); i++) {
+    ପାଇଁ (i = groups_in_both; i < darray_size(from->groups); i++) {
         darray_append(into->groups, darray_item(from->groups, i));
         InitGroupInfo(&darray_item(from->groups, i));
     }
 
-    if (UseNewKeyField(KEY_FIELD_VMODMAP, into->defined, from->defined,
+    ଯଦି (Use_New_ଚାବି_Field(ଚାବି_FIELD_VMODMAP, into->defined, from->defined,
                        clobber, report, &collide)) {
         into->vmodmap = from->vmodmap;
-        into->defined |= KEY_FIELD_VMODMAP;
+        into->defined |= ଚାବି_FIELD_VMODMAP;
     }
-    if (UseNewKeyField(KEY_FIELD_REPEAT, into->defined, from->defined,
+    ଯଦି (Use_New_ଚାବି_Field(ଚାବି_FIELD_REPEAT, into->defined, from->defined,
                        clobber, report, &collide)) {
         into->repeat = from->repeat;
-        into->defined |= KEY_FIELD_REPEAT;
+        into->defined |= ଚାବି_FIELD_REPEAT;
     }
-    if (UseNewKeyField(KEY_FIELD_DEFAULT_TYPE, into->defined, from->defined,
+    ଯଦି (Use_New_ଚାବି_Field(ଚାବି_FIELD_DEFAULT_TYPE, into->defined, from->defined,
                        clobber, report, &collide)) {
         into->default_type = from->default_type;
-        into->defined |= KEY_FIELD_DEFAULT_TYPE;
+        into->defined |= ଚାବି_FIELD_DEFAULT_TYPE;
     }
-    if (UseNewKeyField(KEY_FIELD_GROUPINFO, into->defined, from->defined,
+    ଯଦି (Use_New_ଚାବି_Field(ଚାବି_FIELD_GROUPINFO, into->defined, from->defined,
                        clobber, report, &collide)) {
         into->out_of_range_pending_group = from->out_of_range_pending_group;
         into->out_of_range_group_policy = from->out_of_range_group_policy;
-        into->out_of_range_group_number = from->out_of_range_group_number;
-        into->defined |= KEY_FIELD_GROUPINFO;
+        into->out_of_range_group_ସଂଖ୍ୟା = from->out_of_range_group_ସଂଖ୍ୟା;
+        into->defined |= ଚାବି_FIELD_GROUPINFO;
     }
 
-    if (!merge_overlays(info, into, from, clobber, report, &collide))
-        return false;
+    ଯଦି (!merge_overlays(info, into, from, clobber, report, &collide))
+        ଫେରନ୍ତୁ false;
 
-    if (collide) {
-        log_warn(info->ctx, XKB_WARNING_CONFLICTING_KEY_FIELDS,
+    ଯଦି (collide) {
+        log_warn(info->ctx, XKB_WARNING_CONFLICTING_ଚାବି_FIELDS,
                  "Symbol map for key %s redefined; "
                  "Using %s definition for conflicting fields\n",
-                 KeyNameText(info->ctx, into->name),
+                 ଚାବି_Name_Text(info->ctx, into->name),
                  (clobber ? "first" : "last"));
     }
 
-    ClearKeyInfo(from);
-    InitKeyInfo(info->ctx, from);
-    return true;
+    Clear_ଚାବି_Info(from);
+    Init_ଚାବି_Info(info->ctx, from);
+    ଫେରନ୍ତୁ true;
 }
 
-static xkb_atom_t
-XkbResolveKeyAlias(const struct xkb_keymap *keymap, xkb_atom_t name)
+ସ୍ଥିର xkb_atom_t
+Xkb_Resolve_ଚାବି_Alias(ଅଚଳ ସଂରଚନା xkb_keymap *keymap, xkb_atom_t name)
 {
-    if (name < keymap->num_key_names) {
-        const KeycodeMatch match = keymap->key_names[name];
-        if (match.found && match.is_alias) {
-            return match.alias.real;
+    ଯଦି (name < keymap->ଅଙ୍କ_ଚାବି_names) {
+        ଅଚଳ KeycodeMatch match = keymap->ଚାବି_names[name];
+        ଯଦି (match.found && match.is_alias) {
+            ଫେରନ୍ତୁ match.alias.real;
         }
     }
-    return name;
+    ଫେରନ୍ତୁ name;
 }
 
 /* TODO: Make it so this function doesn't need the entire keymap. */
-static bool
-AddKeySymbols(SymbolsInfo *info, KeyInfo *keyi, bool same_file)
+ସ୍ଥିର bool
+Add_ଚାବି_Symbols(SymbolsInfo *info, ଚାବି_Info *keyi, bool same_file)
 {
     /*
      * Don't keep aliases in the keys array; this guarantees that
@@ -906,88 +906,88 @@ AddKeySymbols(SymbolsInfo *info, KeyInfo *keyi, bool same_file)
      * following loop) is enough, and we won't get multiple KeyInfo's
      * for the same key because of aliases.
      */
-    keyi->name = XkbResolveKeyAlias(&info->keymap_info->keymap, keyi->name);
+    keyi->name = Xkb_Resolve_ଚାବି_Alias(&info->keymap_info->keymap, keyi->name);
 
-    KeyInfo *iter;
-    darray_foreach(iter, info->keys)
-        if (iter->name == keyi->name)
-            return MergeKeys(info, iter, keyi, same_file);
+    ଚାବି_Info *iter;
+    darray_foreach(iter, info->ଚାବିଗୁଡ଼ିକ)
+        ଯଦି (iter->name == keyi->name)
+            ଫେରନ୍ତୁ Merge_ଚାବିଗୁଡ଼ିକ(info, iter, keyi, same_file);
 
-    darray_append(info->keys, *keyi);
-    InitKeyInfo(info->ctx, keyi);
-    return true;
+    darray_append(info->ଚାବିଗୁଡ଼ିକ, *keyi);
+    Init_ଚାବି_Info(info->ctx, keyi);
+    ଫେରନ୍ତୁ true;
 }
 
-static bool
-AddModMapEntry(SymbolsInfo *info, const ModMapEntry *new)
+ସ୍ଥିର bool
+AddModMapEntry(SymbolsInfo *info, ଅଚଳ ModMapEntry *new)
 {
-    const bool clobber = (new->merge != MERGE_AUGMENT);
+    ଅଚଳ bool clobber = (new->merge != MERGE_AUGMENT);
 
     ModMapEntry *old;
     darray_foreach(old, info->modmaps) {
-        if ((new->haveSymbol != old->haveSymbol) ||
-            (new->haveSymbol && new->u.keySym != old->u.keySym) ||
-            (!new->haveSymbol && new->u.keyName != old->u.keyName))
-            continue;
+        ଯଦି ((new->have_ପ୍ରତୀକ != old->have_ପ୍ରତୀକ) ||
+            (new->have_ପ୍ରତୀକ && new->u.ଚାବି_Sym != old->u.ଚାବି_Sym) ||
+            (!new->have_ପ୍ରତୀକ && new->u.ଚାବି_Name != old->u.ଚାବି_Name))
+            ଜାରି;
 
-        if (new->mods == old->mods)
-            return true;
+        ଯଦି (new->mods == old->mods)
+            ଫେରନ୍ତୁ true;
 
-        const xkb_mod_mask_t use = (clobber ? new->mods : old->mods);
-        const xkb_mod_mask_t ignore = (clobber ? old->mods : new->mods);
+        ଅଚଳ xkb_mod_mask_t use = (clobber ? new->mods : old->mods);
+        ଅଚଳ xkb_mod_mask_t ignore = (clobber ? old->mods : new->mods);
 
-        if (new->haveSymbol) {
+        ଯଦି (new->have_ପ୍ରତୀକ) {
             log_warn(info->ctx, XKB_WARNING_CONFLICTING_MODMAP,
                     "Symbol \"%s\" added to modifier map "
                     "for distinct modifiers mask; Using %s, ignoring %s\n",
-                    KeysymText(info->ctx, new->u.keySym),
+                    KeysymText(info->ctx, new->u.ଚାବି_Sym),
                     ModMaskText(info->ctx, MOD_REAL, &info->mods, use),
                     ModMaskText(info->ctx, MOD_REAL, &info->mods, ignore));
-        } else {
+        } ଅନ୍ୟଥା {
             log_warn(info->ctx, XKB_WARNING_CONFLICTING_MODMAP,
                     "Key \"%s\" added to modifier map "
                     "for distinct modifiers mask; Using %s, ignoring %s\n",
-                    KeyNameText(info->ctx, new->u.keyName),
+                    ଚାବି_Name_Text(info->ctx, new->u.ଚାବି_Name),
                     ModMaskText(info->ctx, MOD_REAL, &info->mods, use),
                     ModMaskText(info->ctx, MOD_REAL, &info->mods, ignore));
         }
         old->mods = use;
-        return true;
+        ଫେରନ୍ତୁ true;
     }
 
     darray_append(info->modmaps, *new);
 
-    return true;
+    ଫେରନ୍ତୁ true;
 }
 
 /***====================================================================***/
 
-static void
+ସ୍ଥିର ଶୂନ୍ୟ
 MergeIncludedSymbols(SymbolsInfo *into, SymbolsInfo *from,
-                     enum merge_mode merge)
+                     ଗଣନା merge_mode merge)
 {
     xkb_atom_t *group_name;
     xkb_layout_index_t group_names_in_both;
 
-    if (from->errorCount > 0) {
-        into->errorCount += from->errorCount;
-        return;
+    ଯଦି (from->error_ଗଣନା > 0) {
+        into->error_ଗଣନା += from->error_ଗଣନା;
+        ଫେରନ୍ତୁ;
     }
 
     MergeModSets(into->ctx, &into->mods, &from->mods, merge);
 
-    if (into->name == NULL) {
+    ଯଦି (into->name == ଖାଲି) {
         into->name = steal(&from->name);
     }
 
     group_names_in_both = MIN(darray_size(into->group_names),
                               darray_size(from->group_names));
-    for (xkb_layout_index_t i = 0; i < group_names_in_both; i++) {
-        if (!darray_item(from->group_names, i))
-            continue;
+    ପାଇଁ (xkb_layout_index_t i = 0; i < group_names_in_both; i++) {
+        ଯଦି (!darray_item(from->group_names, i))
+            ଜାରି;
 
-        if (merge == MERGE_AUGMENT && darray_item(into->group_names, i))
-            continue;
+        ଯଦି (merge == MERGE_AUGMENT && darray_item(into->group_names, i))
+            ଜାରି;
 
         darray_item(into->group_names, i) = darray_item(from->group_names, i);
     }
@@ -995,74 +995,74 @@ MergeIncludedSymbols(SymbolsInfo *into, SymbolsInfo *from,
     darray_foreach_from(group_name, from->group_names, group_names_in_both)
         darray_append(into->group_names, *group_name);
 
-    if (darray_empty(into->keys)) {
-        into->keys = from->keys;
-        darray_init(from->keys);
+    ଯଦି (darray_empty(into->ଚାବିଗୁଡ଼ିକ)) {
+        into->ଚାବିଗୁଡ଼ିକ = from->ଚାବିଗୁଡ଼ିକ;
+        darray_init(from->ଚାବିଗୁଡ଼ିକ);
     }
-    else {
-        KeyInfo *keyi;
-        darray_foreach(keyi, from->keys) {
+    ଅନ୍ୟଥା {
+        ଚାବି_Info *keyi;
+        darray_foreach(keyi, from->ଚାବିଗୁଡ଼ିକ) {
             keyi->merge = merge;
-            if (!AddKeySymbols(into, keyi, false))
-                into->errorCount++;
+            ଯଦି (!Add_ଚାବି_Symbols(into, keyi, false))
+                into->error_ଗଣନା++;
         }
     }
 
-    if (darray_empty(into->modmaps)) {
+    ଯଦି (darray_empty(into->modmaps)) {
         into->modmaps = from->modmaps;
         darray_init(from->modmaps);
     }
-    else {
+    ଅନ୍ୟଥା {
         ModMapEntry *mm;
         darray_foreach(mm, from->modmaps) {
             mm->merge = merge;
-            if (!AddModMapEntry(into, mm))
-                into->errorCount++;
+            ଯଦି (!AddModMapEntry(into, mm))
+                into->error_ଗଣନା++;
         }
     }
 }
 
-static void
+ସ୍ଥିର ଶୂନ୍ୟ
 HandleSymbolsFile(SymbolsInfo *info, XkbFile *file);
 
-static bool
+ସ୍ଥିର bool
 HandleIncludeSymbols(SymbolsInfo *info, IncludeStmt *include)
 {
     SymbolsInfo included;
 
-    if (ExceedsIncludeMaxDepth(info->ctx, info->include_depth)) {
-        info->errorCount += 10;
-        return false;
+    ଯଦି (ExceedsIncludeMaxDepth(info->ctx, info->include_depth)) {
+        info->error_ଗଣନା += 10;
+        ଫେରନ୍ତୁ false;
     }
 
     InitSymbolsInfo(&included, info->keymap_info, info->include_depth + 1,
                     &info->mods);
     included.name = steal(&include->stmt);
 
-    const struct parser_keymap_config config = {
+    ଅଚଳ ସଂରଚନା parser_keymap_config config = {
         .format = info->keymap_info->keymap.format,
         .strict = info->keymap_info->strict
     };
 
-    for (IncludeStmt *stmt = include; stmt; stmt = stmt->next_incl) {
+    ପାଇଁ (IncludeStmt *stmt = include; stmt; stmt = stmt->next_incl) {
         SymbolsInfo next_incl;
         XkbFile *file;
 
-        char path[PATH_MAX];
+        ଅକ୍ଷର path[PATH_MAX];
         file = ProcessIncludeFile(info->ctx, &config, stmt, FILE_TYPE_SYMBOLS,
-                                  path, sizeof(path));
-        if (!file) {
-            info->errorCount += 10;
+                                  path, ଆକାର(path));
+        ଯଦି (!file) {
+            info->error_ଗଣନା += 10;
             ClearSymbolsInfo(&included);
-            return false;
+            ଫେରନ୍ତୁ false;
         }
 
         InitSymbolsInfo(&next_incl, info->keymap_info, info->include_depth + 1,
                         &included.mods);
-        if (stmt->modifier) {
-            const int count = parse_dec_to_uint32_t(stmt->modifier, SIZE_MAX,
+        ଯଦି (stmt->modifier) {
+            ଅଚଳ ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଗଣନା_2 = parse_dec_to_uint32_t(stmt->modifier, SIZE_MAX,
                                                     &next_incl.explicit_group);
-            if (count <= 0 || *(stmt->modifier + count) != '\0' ||
+            ଯଦି (ଗଣନା_2 <= 0 || *(stmt->modifier + ଗଣନା_2) != '\0' ||
                 next_incl.explicit_group == 0 ||
                 next_incl.explicit_group > info->max_groups) {
                 log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
@@ -1070,11 +1070,11 @@ HandleIncludeSymbols(SymbolsInfo *info, IncludeStmt *include)
                         "must be between 1..%"PRIu32"; Ignoring group number\n",
                         stmt->modifier, info->max_groups);
                 next_incl.explicit_group = info->explicit_group;
-            } else {
+            } ଅନ୍ୟଥା {
                 next_incl.explicit_group--;
             }
         }
-        else if (info->keymap_info->keymap.num_groups != 0 &&
+        ଅନ୍ୟଥା ଯଦି (info->keymap_info->keymap.ଅଙ୍କ_groups != 0 &&
                  next_incl.include_depth == 1) {
             /*
              * If keymap is the result of RMLVO resolution and we are at the
@@ -1089,7 +1089,7 @@ HandleIncludeSymbols(SymbolsInfo *info, IncludeStmt *include)
              */
             next_incl.explicit_group = 0;
         }
-        else {
+        ଅନ୍ୟଥା {
             /* The keymap was not generated from rules or this is not the first
              * level of include: take the parent’s explicit group. */
             next_incl.explicit_group = info->explicit_group;
@@ -1106,260 +1106,260 @@ HandleIncludeSymbols(SymbolsInfo *info, IncludeStmt *include)
     MergeIncludedSymbols(info, &included, include->merge);
     ClearSymbolsInfo(&included);
 
-    return (info->errorCount == 0);
+    ଫେରନ୍ତୁ (info->error_ଗଣନା == 0);
 }
 
-static bool
-GetGroupIndex(SymbolsInfo *info, KeyInfo *keyi, ExprDef *arrayNdx,
-              enum group_field field, xkb_layout_index_t *ndx_rtrn)
+ସ୍ଥିର bool
+GetGroupIndex(SymbolsInfo *info, ଚାବି_Info *keyi, ପଦସମଷ୍ଟି_Def *arrayNdx,
+              ଗଣନା group_field field, xkb_layout_index_t *ndx_rtrn)
 {
-    assert (field == GROUP_FIELD_SYMS || field == GROUP_FIELD_ACTS);
-    const char *name = (field == GROUP_FIELD_SYMS ? "symbols" : "actions");
+    ପ୍ରତିଜ୍ଞା (field == GROUP_FIELD_SYMS || field == GROUP_FIELD_ACTS);
+    ଅଚଳ ଅକ୍ଷର *name = (field == GROUP_FIELD_SYMS ? "symbols" : "actions");
 
-    if (arrayNdx == NULL) {
+    ଯଦି (arrayNdx == ଖାଲି) {
         xkb_layout_index_t i = 0;
         GroupInfo *groupi;
 
         darray_enumerate(i, groupi, keyi->groups) {
-            if (!(groupi->defined & field)) {
+            ଯଦି (!(groupi->defined & field)) {
                 *ndx_rtrn = i;
-                return true;
+                ଫେରନ୍ତୁ true;
             }
         }
 
-        if (i >= info->max_groups) {
+        ଯଦି (i >= info->max_groups) {
             log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                     "Too many groups of %s for key %s (max %"PRIu32"); "
                     "Ignoring %s defined for extra groups\n",
-                    name, KeyInfoText(info, keyi), info->max_groups, name);
-            return false;
+                    name, ଚାବି_Info_Text(info, keyi), info->max_groups, name);
+            ଫେରନ୍ତୁ false;
         }
 
         darray_resize0(keyi->groups, darray_size(keyi->groups) + 1);
         *ndx_rtrn = darray_size(keyi->groups) - 1;
-        return true;
+        ଫେରନ୍ତୁ true;
     }
 
-    if (ExprResolveGroup(info->keymap_info, arrayNdx, false, ndx_rtrn, NULL) !=
+    ଯଦି (ପଦସମଷ୍ଟି_Resolve_Group(info->keymap_info, arrayNdx, false, ndx_rtrn, ଖାଲି) !=
         PARSER_SUCCESS) {
         log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                 "Illegal group index for %s of key %s\n"
                 "Definition with non-integer array index ignored\n",
-                name, KeyInfoText(info, keyi));
-        return false;
+                name, ଚାବି_Info_Text(info, keyi));
+        ଫେରନ୍ତୁ false;
     }
 
     (*ndx_rtrn)--;
-    if (*ndx_rtrn >= darray_size(keyi->groups))
+    ଯଦି (*ndx_rtrn >= darray_size(keyi->groups))
         darray_resize0(keyi->groups, *ndx_rtrn + 1);
 
-    return true;
+    ଫେରନ୍ତୁ true;
 }
 
-static bool
-AddSymbolsToKey(SymbolsInfo *info, KeyInfo *keyi, ExprDef *arrayNdx,
-                ExprDef *value)
+ସ୍ଥିର bool
+Add_Symbols_To_ଚାବି(SymbolsInfo *info, ଚାବି_Info *keyi, ପଦସମଷ୍ଟି_Def *arrayNdx,
+                ପଦସମଷ୍ଟି_Def *ମୂଲ୍ୟ)
 {
     xkb_layout_index_t ndx = 0;
 
-    if (!GetGroupIndex(info, keyi, arrayNdx, GROUP_FIELD_SYMS, &ndx))
-        return false;
+    ଯଦି (!GetGroupIndex(info, keyi, arrayNdx, GROUP_FIELD_SYMS, &ndx))
+        ଫେରନ୍ତୁ false;
 
     GroupInfo *groupi = &darray_item(keyi->groups, ndx);
 
-    if (value->common.type == STMT_EXPR_EMPTY_LIST) {
+    ଯଦି (ମୂଲ୍ୟ->common.type == STMT_ପଦସମଷ୍ଟି_EMPTY_LIST) {
         groupi->defined |= GROUP_FIELD_SYMS;
-        return true;
+        ଫେରନ୍ତୁ true;
     }
 
-    if (value->common.type != STMT_EXPR_KEYSYM_LIST) {
+    ଯଦି (ମୂଲ୍ୟ->common.type != STMT_ପଦସମଷ୍ଟି_KEYSYM_LIST) {
         log_err(info->ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Expected a list of symbols, found %s; "
                 "Ignoring symbols for group %"PRIu32" of %s\n",
-                stmt_type_to_string(value->common.type), ndx + 1,
-                KeyInfoText(info, keyi));
-        return false;
+                stmt_type_to_string(ମୂଲ୍ୟ->common.type), ndx + 1,
+                ଚାବି_Info_Text(info, keyi));
+        ଫେରନ୍ତୁ false;
     }
 
-    if (groupi->defined & GROUP_FIELD_SYMS) {
-        log_err(info->ctx, XKB_ERROR_CONFLICTING_KEY_SYMBOLS_ENTRY,
+    ଯଦି (groupi->defined & GROUP_FIELD_SYMS) {
+        log_err(info->ctx, XKB_ERROR_CONFLICTING_ଚାବି_SYMBOLS_ENTRY,
                 "Symbols for key %s, group %"PRIu32" already defined; "
                 "Ignoring duplicate definition\n",
-                KeyInfoText(info, keyi), ndx + 1);
-        return false;
+                ଚାବି_Info_Text(info, keyi), ndx + 1);
+        ଫେରନ୍ତୁ false;
     }
 
     xkb_level_index_t nLevels = 0;
     xkb_level_index_t nonEmptyLevels = 0;
     /* Contrary to actions, keysyms are already parsed at this point so we drop
      * trailing symbols by not adding them in the first place. */
-    for (ExprKeysymList *keysymList = (ExprKeysymList *) value;
+    ପାଇଁ (ପଦସମଷ୍ଟି_Keysym_List *keysymList = (ପଦସମଷ୍ଟି_Keysym_List *) ମୂଲ୍ୟ;
          keysymList;
-         keysymList = (ExprKeysymList *) keysymList->common.next) {
+         keysymList = (ପଦସମଷ୍ଟି_Keysym_List *) keysymList->common.next) {
         nLevels++;
         /* Drop trailing NoSymbol */
-        if (darray_size(keysymList->syms) > 0)
+        ଯଦି (darray_size(keysymList->syms) > 0)
             nonEmptyLevels = nLevels;
     }
-    if (nonEmptyLevels < nLevels)
+    ଯଦି (nonEmptyLevels < nLevels)
         nLevels = nonEmptyLevels;
-    if (darray_size(groupi->levels) < nLevels)
+    ଯଦି (darray_size(groupi->levels) < nLevels)
         darray_resize0(groupi->levels, nLevels);
 
     groupi->defined |= GROUP_FIELD_SYMS;
 
     xkb_level_index_t level = 0;
-    for (ExprKeysymList *keysymList = (ExprKeysymList *) value;
+    ପାଇଁ (ପଦସମଷ୍ଟି_Keysym_List *keysymList = (ପଦସମଷ୍ଟି_Keysym_List *) ମୂଲ୍ୟ;
          keysymList && level < nLevels;
-         keysymList = (ExprKeysymList *) keysymList->common.next, level++) {
-        struct xkb_level *leveli = &darray_item(groupi->levels, level);
-        assert(leveli->num_syms == 0);
+         keysymList = (ପଦସମଷ୍ଟି_Keysym_List *) keysymList->common.next, level++) {
+        ସଂରଚନା xkb_level *leveli = &darray_item(groupi->levels, level);
+        ପ୍ରତିଜ୍ଞା(leveli->ଅଙ୍କ_syms == 0);
 
-        if (unlikely(darray_size(keysymList->syms) > MAX_KEYSYMS_PER_LEVEL)) {
+        ଯଦି (unlikely(darray_size(keysymList->syms) > MAX_KEYSYMS_PER_LEVEL)) {
             log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Key %s has too many keysyms for group %"PRIu32", "
                     "level %"PRIu32"; expected max %u, got: %u\n",
-                    KeyInfoText(info, keyi), ndx + 1, level + 1,
+                    ଚାବି_Info_Text(info, keyi), ndx + 1, level + 1,
                     MAX_KEYSYMS_PER_LEVEL, darray_size(keysymList->syms));
-            return false;
+            ଫେରନ୍ତୁ false;
         }
 
-        leveli->num_syms = (xkb_keysym_count_t) darray_size(keysymList->syms);
-        switch (leveli->num_syms) {
-        case 0:
-            leveli->s.sym = XKB_KEY_NoSymbol;
-            break;
-        case 1:
+        leveli->ଅଙ୍କ_syms = (xkb_keysym_ଗଣନା_t) darray_size(keysymList->syms);
+        ବାଛ (leveli->ଅଙ୍କ_syms) {
+        ସ୍ଥିତି 0:
+            leveli->s.sym = XKB_ଚାବି_No_ପ୍ରତୀକ;
+            ଭାଙ୍ଗ;
+        ସ୍ଥିତି 1:
             leveli->s.sym = darray_item(keysymList->syms, 0);
-            assert(leveli->s.sym != XKB_KEY_NoSymbol);
-            break;
-        default:
+            ପ୍ରତିଜ୍ଞା(leveli->s.sym != XKB_ଚାବି_No_ପ୍ରତୀକ);
+            ଭାଙ୍ଗ;
+        ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
             darray_shrink(keysymList->syms);
-            darray_steal(keysymList->syms, &leveli->s.syms, NULL);
+            darray_steal(keysymList->syms, &leveli->s.syms, ଖାଲି);
 #ifndef NDEBUG
             /* Canonical list: all NoSymbol were dropped */
-            for (xkb_keysym_count_t k = 0; k < leveli->num_syms; k++)
-                assert(leveli->s.syms[k] != XKB_KEY_NoSymbol);
+            ପାଇଁ (xkb_keysym_ଗଣନା_t k = 0; k < leveli->ଅଙ୍କ_syms; k++)
+                ପ୍ରତିଜ୍ଞା(leveli->s.syms[k] != XKB_ଚାବି_No_ପ୍ରତୀକ);
 #endif
         }
     }
 
-    return true;
+    ଫେରନ୍ତୁ true;
 }
 
-static bool
-AddActionsToKey(SymbolsInfo *info, KeyInfo *keyi, ExprDef *arrayNdx,
-                ExprDef *value)
+ସ୍ଥିର bool
+Add_Actions_To_ଚାବି(SymbolsInfo *info, ଚାବି_Info *keyi, ପଦସମଷ୍ଟି_Def *arrayNdx,
+                ପଦସମଷ୍ଟି_Def *ମୂଲ୍ୟ)
 {
     xkb_layout_index_t ndx = 0;
 
-    if (!GetGroupIndex(info, keyi, arrayNdx, GROUP_FIELD_ACTS, &ndx))
-        return false;
+    ଯଦି (!GetGroupIndex(info, keyi, arrayNdx, GROUP_FIELD_ACTS, &ndx))
+        ଫେରନ୍ତୁ false;
 
     GroupInfo *groupi = &darray_item(keyi->groups, ndx);
 
-    if (value->common.type == STMT_EXPR_EMPTY_LIST) {
+    ଯଦି (ମୂଲ୍ୟ->common.type == STMT_ପଦସମଷ୍ଟି_EMPTY_LIST) {
         groupi->defined |= GROUP_FIELD_ACTS;
-        return true;
+        ଫେରନ୍ତୁ true;
     }
 
-    if (value->common.type != STMT_EXPR_ACTION_LIST) {
+    ଯଦି (ମୂଲ୍ୟ->common.type != STMT_ପଦସମଷ୍ଟି_ACTION_LIST) {
         log_wsgo(info->ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
                  "Bad expression type (%d) for action list value; "
                  "Ignoring actions for group %"PRIu32" of %s\n",
-                 value->common.type, ndx, KeyInfoText(info, keyi));
-        return false;
+                 ମୂଲ୍ୟ->common.type, ndx, ଚାବି_Info_Text(info, keyi));
+        ଫେରନ୍ତୁ false;
     }
 
-    if (groupi->defined & GROUP_FIELD_ACTS) {
-        log_wsgo(info->ctx, XKB_WARNING_CONFLICTING_KEY_ACTION,
+    ଯଦି (groupi->defined & GROUP_FIELD_ACTS) {
+        log_wsgo(info->ctx, XKB_WARNING_CONFLICTING_ଚାବି_ACTION,
                  "Actions for key %s, group %"PRIu32" already defined\n",
-                 KeyInfoText(info, keyi), ndx);
-        return false;
+                 ଚାବି_Info_Text(info, keyi), ndx);
+        ଫେରନ୍ତୁ false;
     }
 
     xkb_level_index_t nLevels = 0;
     /* Contrary to keysyms with trailing `NoSymbol`, we cannot detect trailing
      * `NoAction()` now, because we need to parse the actions first. Jusr count
      * explicit actions for now. */
-    for (ParseCommon *p = &value->common; p; p = p->next)
+    ପାଇଁ (ParseCommon *p = &ମୂଲ୍ୟ->common; p; p = p->next)
         nLevels++;
-    if (darray_size(groupi->levels) < nLevels)
+    ଯଦି (darray_size(groupi->levels) < nLevels)
         darray_resize0(groupi->levels, nLevels);
 
     groupi->defined |= GROUP_FIELD_ACTS;
 
     xkb_level_index_t level = 0;
     xkb_level_index_t nonEmptyLevels = 0;
-    for (ExprActionList *actionList = (ExprActionList *) value;
+    ପାଇଁ (ପଦସମଷ୍ଟି_Action_List *actionList = (ପଦସମଷ୍ଟି_Action_List *) ମୂଲ୍ୟ;
          actionList;
-         actionList = (ExprActionList *) actionList->common.next, level++) {
-        struct xkb_level *leveli = &darray_item(groupi->levels, level);
-        assert(leveli->num_actions == 0);
+         actionList = (ପଦସମଷ୍ଟି_Action_List *) actionList->common.next, level++) {
+        ସଂରଚନା xkb_level *leveli = &darray_item(groupi->levels, level);
+        ପ୍ରତିଜ୍ଞା(leveli->ଅଙ୍କ_actions == 0);
 
-        unsigned int num_actions = 0;
-        for (ExprDef *act = actionList->actions;
-             act; act = (ExprDef *) act->common.next)
-            num_actions++;
+        unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଅଙ୍କ_actions = 0;
+        ପାଇଁ (ପଦସମଷ୍ଟି_Def *act = actionList->actions;
+             act; act = (ପଦସମଷ୍ଟି_Def *) act->common.next)
+            ଅଙ୍କ_actions++;
 
-        if (unlikely(num_actions > MAX_ACTIONS_PER_LEVEL)) {
+        ଯଦି (unlikely(ଅଙ୍କ_actions > MAX_ACTIONS_PER_LEVEL)) {
             log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Key %s has too many actions for group %"PRIu32", "
                     "level %"PRIu32"; expected max %u, got: %u\n",
-                    KeyInfoText(info, keyi), ndx + 1, level + 1,
-                    MAX_ACTIONS_PER_LEVEL, num_actions);
-            return false;
+                    ଚାବି_Info_Text(info, keyi), ndx + 1, level + 1,
+                    MAX_ACTIONS_PER_LEVEL, ଅଙ୍କ_actions);
+            ଫେରନ୍ତୁ false;
         }
 
         /* Parse actions and add only defined actions */
-        darray(union xkb_action) actions = darray_new();
-        for (ExprDef *act = actionList->actions;
-             act; act = (ExprDef *) act->common.next) {
-            union xkb_action toAct = { 0 };
-            const enum xkb_parser_error r =
+        darray(ସଂଘ xkb_action) actions = darray_new();
+        ପାଇଁ (ପଦସମଷ୍ଟି_Def *act = actionList->actions;
+             act; act = (ପଦସମଷ୍ଟି_Def *) act->common.next) {
+            ସଂଘ xkb_action toAct = { 0 };
+            ଅଚଳ ଗଣନା xkb_parser_error r =
                 HandleActionDef(info->keymap_info, &info->default_actions,
                                 &info->mods, act, &toAct);
-            if (r != PARSER_SUCCESS) {
-                log_err(info->ctx, XKB_ERROR_INVALID_VALUE,
+            ଯଦି (r != PARSER_SUCCESS) {
+                log_err(info->ctx, XKB_ERROR_INVALID_ମୂଲ୍ୟ,
                         "Illegal action definition for %s; "
                         "Action for group %"PRIu32"/level %"PRIu32" ignored\n",
-                        KeyInfoText(info, keyi), ndx + 1, level + 1);
-                if (r == PARSER_FATAL_ERROR) {
+                        ଚାବି_Info_Text(info, keyi), ndx + 1, level + 1);
+                ଯଦି (r == PARSER_FATAL_ERROR) {
                     darray_free(actions);
-                    return false;
-                } else {
+                    ଫେରନ୍ତୁ false;
+                } ଅନ୍ୟଥା {
                     /* Ensure action type is reset */
                     toAct.type = ACTION_TYPE_NONE;
                 }
             }
-            if (toAct.type == ACTION_TYPE_NONE) {
+            ଯଦି (toAct.type == ACTION_TYPE_NONE) {
                 /* Drop action */
-            } else if (likely(num_actions == 1)) {
+            } ଅନ୍ୟଥା ଯଦି (likely(ଅଙ୍କ_actions == 1)) {
                 /* Only one action: do not allocate */
-                leveli->num_actions = 1;
+                leveli->ଅଙ୍କ_actions = 1;
                 leveli->a.action = toAct;
-                goto next_level;
-            } else {
+                ଯାଅ next_level;
+            } ଅନ୍ୟଥା {
                 darray_append(actions, toAct);
             }
         }
-        if (darray_empty(actions)) {
-            leveli->num_actions = 0;
-        } else if (likely(darray_size(actions) > 1)) {
-            leveli->num_actions = (xkb_action_count_t) darray_size(actions);
+        ଯଦି (darray_empty(actions)) {
+            leveli->ଅଙ୍କ_actions = 0;
+        } ଅନ୍ୟଥା ଯଦି (likely(darray_size(actions) > 1)) {
+            leveli->ଅଙ୍କ_actions = (xkb_action_ଗଣନା_t) darray_size(actions);
             darray_shrink(actions);
-            darray_steal(actions, &leveli->a.actions, NULL);
+            darray_steal(actions, &leveli->a.actions, ଖାଲି);
 #ifndef NDEBUG
             /* Canonical list: all NoAction() were dropped */
-            for (xkb_action_count_t k = 0; k < leveli->num_actions; k++)
-                assert(leveli->a.actions[k].type != ACTION_TYPE_NONE);
+            ପାଇଁ (xkb_action_ଗଣନା_t k = 0; k < leveli->ଅଙ୍କ_actions; k++)
+                ପ୍ରତିଜ୍ଞା(leveli->a.actions[k].type != ACTION_TYPE_NONE);
 #endif
-        } else {
+        } ଅନ୍ୟଥା {
             /* Unlikely: some actions were dropped and only one remains */
-            assert(num_actions > darray_size(actions));
-            leveli->num_actions = 1;
+            ପ୍ରତିଜ୍ଞା(ଅଙ୍କ_actions > darray_size(actions));
+            leveli->ଅଙ୍କ_actions = 1;
             leveli->a.action = darray_item(actions, 0);
-            assert(leveli->a.action.type != ACTION_TYPE_NONE);
+            ପ୍ରତିଜ୍ଞା(leveli->a.action.type != ACTION_TYPE_NONE);
             darray_free(actions);
         }
 next_level:
@@ -1367,189 +1367,189 @@ next_level:
          * Check trailing `NoAction()`, but count as empty level only if there
          * is no corresponding keysym.
          */
-        if (leveli->num_actions > 0 || leveli->num_syms > 0)
+        ଯଦି (leveli->ଅଙ୍କ_actions > 0 || leveli->ଅଙ୍କ_syms > 0)
             nonEmptyLevels = level + 1;
     }
 
-    if (nonEmptyLevels < nLevels) {
+    ଯଦି (nonEmptyLevels < nLevels) {
         /* Drop trailing `NoAction()`.
          * No need to clear dropped levels: there are no keysyms nor actions */
         darray_size(groupi->levels) = nonEmptyLevels;
-        if (nonEmptyLevels > 0)
+        ଯଦି (nonEmptyLevels > 0)
             darray_shrink(groupi->levels);
-        else
+        ଅନ୍ୟଥା
             darray_free(groupi->levels);
     }
 
-    return true;
+    ଫେରନ୍ତୁ true;
 }
 
-static const LookupEntry repeatEntries[] = {
-    { "true", KEY_REPEAT_YES },
-    { "yes", KEY_REPEAT_YES },
-    { "on", KEY_REPEAT_YES },
-    { "false", KEY_REPEAT_NO },
-    { "no", KEY_REPEAT_NO },
-    { "off", KEY_REPEAT_NO },
-    { "default", KEY_REPEAT_UNDEFINED },
-    { NULL, 0 }
+ସ୍ଥିର ଅଚଳ LookupEntry repeatEntries[] = {
+    { "true", ଚାବି_REPEAT_YES },
+    { "yes", ଚାବି_REPEAT_YES },
+    { "on", ଚାବି_REPEAT_YES },
+    { "false", ଚାବି_REPEAT_NO },
+    { "no", ଚାବି_REPEAT_NO },
+    { "off", ଚାବି_REPEAT_NO },
+    { "default", ଚାବି_REPEAT_UNDEFINED },
+    { ଖାଲି, 0 }
 };
 
 /** Handle overlay<N> = <key> entry */
-static bool
-ExprResolveOverlayEntry(const struct xkb_keymap_info *keymap_info,
-                        const char *field, const ExprDef *arrayNdx,
-                        const ExprDef *expr, KeyInfo *keyi,
+ସ୍ଥିର bool
+ପଦସମଷ୍ଟି_Resolve_Overlay_Entry(ଅଚଳ ସଂରଚନା xkb_keymap_info *keymap_info,
+                        ଅଚଳ ଅକ୍ଷର *field, ଅଚଳ ପଦସମଷ୍ଟି_Def *arrayNdx,
+                        ଅଚଳ ପଦସମଷ୍ଟି_Def *ପଦସମଷ୍ଟି, ଚାବି_Info *keyi,
                         xkb_overlay_index_t *overlay_rtrn,
-                        const struct xkb_key **key_rtrn)
+                        ଅଚଳ ସଂରଚନା xkb_ଚାବି **ଚାବି_rtrn)
 {
     /* Overlay index */
-    if (arrayNdx) {
+    ଯଦି (arrayNdx) {
         log_err(keymap_info->keymap.ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Overlay field \"%s\" in %s does not support array index; "
                 "ignored\n",
-                field, KeyNameText(keymap_info->keymap.ctx, keyi->name));
-        return false;
+                field, ଚାବି_Name_Text(keymap_info->keymap.ctx, keyi->name));
+        ଫେରନ୍ତୁ false;
     }
-    static_assert(sizeof(xkb_overlay_index_t) == sizeof(uint8_t), "");
-    const size_t prefix = sizeof("overlay") - 1;
-    const size_t len = strlen(field + prefix);
+    static_assert(ଆକାର(xkb_overlay_index_t) == ଆକାର(uint8_t), "");
+    ଅଚଳ size_t prefix = ଆକାର("overlay") - 1;
+    ଅଚଳ size_t len = strlen(field + prefix);
     int64_t raw_overlay = XKB_OVERLAY_INVALID;
-    if (parse_dec_to_uint64_t(field + prefix, len, (uint64_t *)&raw_overlay)
-        != (int)len || raw_overlay < 1 ||
+    ଯଦି (parse_dec_to_uint64_t(field + prefix, len, (uint64_t *)&raw_overlay)
+        != (ପୂର୍ଣ୍ଣସଂଖ୍ୟା)len || raw_overlay < 1 ||
         raw_overlay > (int64_t)keymap_info->features.max_overlays) {
         log_err(keymap_info->keymap.ctx, XKB_ERROR_UNSUPPORTED_OVERLAY_INDEX,
                 "Unsupported overlay index \"%s\" field for %s: "
                 "expected 1..%u, got: %"PRId64"; ignored\n",
-                field, KeyNameText(keymap_info->keymap.ctx, keyi->name),
+                field, ଚାବି_Name_Text(keymap_info->keymap.ctx, keyi->name),
                 keymap_info->features.max_overlays, raw_overlay);
-        return false;
+        ଫେରନ୍ତୁ false;
     }
     *overlay_rtrn = (xkb_overlay_index_t)raw_overlay - 1;
 
     /* Overlay key */
-    switch (expr->common.type) {
-    case STMT_EXPR_KEYNAME_LITERAL:
-        *key_rtrn = XkbKeyByName(&keymap_info->keymap, expr->key_name.key_name,
+    ବାଛ (ପଦସମଷ୍ଟି->common.type) {
+    ସ୍ଥିତି STMT_ପଦସମଷ୍ଟି_KEYNAME_LITERAL:
+        *ଚାବି_rtrn = Xkb_ଚାବି_By_Name(&keymap_info->keymap, ପଦସମଷ୍ଟି->ଚାବି_name.ଚାବି_name,
                                  false);
-        if (!*key_rtrn) {
+        ଯଦି (!*ଚାବି_rtrn) {
             log_err(keymap_info->keymap.ctx, XKB_WARNING_UNDEFINED_KEYCODE,
                     "Unknown key \"%s\" for field %s in %s\n",
-                    xkb_atom_text(keymap_info->keymap.ctx, expr->key_name.key_name),
-                    field, KeyNameText(keymap_info->keymap.ctx, keyi->name));
-            return false;
+                    xkb_atom_text(keymap_info->keymap.ctx, ପଦସମଷ୍ଟି->ଚାବି_name.ଚାବି_name),
+                    field, ଚାବି_Name_Text(keymap_info->keymap.ctx, keyi->name));
+            ଫେରନ୍ତୁ false;
         }
-        return true;
-    case STMT_EXPR_IDENT: {
-        const char * const id =
-            xkb_atom_text(keymap_info->keymap.ctx, expr->ident.ident);
-        if (id && istreq(id, "none")) {
+        ଫେରନ୍ତୁ true;
+    ସ୍ଥିତି STMT_ପଦସମଷ୍ଟି_IDENT: {
+        ଅଚଳ ଅକ୍ଷର * ଅଚଳ id =
+            xkb_atom_text(keymap_info->keymap.ctx, ପଦସମଷ୍ଟି->ident.ident);
+        ଯଦି (id && istreq(id, "none")) {
             /* Explicitly no overlay (clear) */
-            *key_rtrn = NULL;
-            return true;
-        } else if (id && istreq(id, "any")) {
+            *ଚାବି_rtrn = ଖାଲି;
+            ଫେରନ୍ତୁ true;
+        } ଅନ୍ୟଥା ଯଦି (id && istreq(id, "any")) {
             /* Implicitly no overlay */
-            *key_rtrn = NULL;
+            *ଚାବି_rtrn = ଖାଲି;
             *overlay_rtrn = XKB_OVERLAY_INVALID;
-            return true;
+            ଫେରନ୍ତୁ true;
         }
-        log_err(keymap_info->keymap.ctx, XKB_ERROR_INVALID_VALUE,
+        log_err(keymap_info->keymap.ctx, XKB_ERROR_INVALID_ମୂଲ୍ୟ,
                 "Unsupported overlay value \"%s\" for field %s in %s\n",
-                id, field, KeyNameText(keymap_info->keymap.ctx, keyi->name));
-        return false;
+                id, field, ଚାବି_Name_Text(keymap_info->keymap.ctx, keyi->name));
+        ଫେରନ୍ତୁ false;
     }
-    default:
-        log_err(keymap_info->keymap.ctx, XKB_ERROR_INVALID_VALUE,
+    ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
+        log_err(keymap_info->keymap.ctx, XKB_ERROR_INVALID_ମୂଲ୍ୟ,
                 "Expected %s for field \"%s\" in %s, got: %s\n",
-                stmt_type_to_string(STMT_EXPR_KEYNAME_LITERAL),
-                field, KeyNameText(keymap_info->keymap.ctx, keyi->name),
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_to_string(STMT_ପଦସମଷ୍ଟି_KEYNAME_LITERAL),
+                field, ଚାବି_Name_Text(keymap_info->keymap.ctx, keyi->name),
+                stmt_type_to_string(ପଦସମଷ୍ଟି->common.type));
+        ଫେରନ୍ତୁ false;
     }
 }
 
-static bool
-SetSymbolsField(SymbolsInfo *info, KeyInfo *keyi, const char *field,
-                ExprDef *arrayNdx, ExprDef **value_ptr)
+ସ୍ଥିର bool
+SetSymbolsField(SymbolsInfo *info, ଚାବି_Info *keyi, ଅଚଳ ଅକ୍ଷର *field,
+                ପଦସମଷ୍ଟି_Def *arrayNdx, ପଦସମଷ୍ଟି_Def **ମୂଲ୍ୟ_ptr)
 {
-    ExprDef * restrict const value = *value_ptr;
-    if (istreq(field, "type")) {
+    ପଦସମଷ୍ଟି_Def * restrict ଅଚଳ ମୂଲ୍ୟ = *ମୂଲ୍ୟ_ptr;
+    ଯଦି (istreq(field, "type")) {
         xkb_layout_index_t ndx = 0;
         xkb_atom_t val = XKB_ATOM_NONE;
 
-        if (!ExprResolveString(info->ctx, value, &val)) {
+        ଯଦି (!ପଦସମଷ୍ଟି_Resolve_String(info->ctx, ମୂଲ୍ୟ, &val)) {
             log_err(info->ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                     "The type field of a key symbol map must be a string; "
                     "Ignoring illegal type definition\n");
-            return false;
+            ଫେରନ୍ତୁ false;
         }
 
-        if (!arrayNdx) {
+        ଯଦି (!arrayNdx) {
             keyi->default_type = val;
-            keyi->defined |= KEY_FIELD_DEFAULT_TYPE;
+            keyi->defined |= ଚାବି_FIELD_DEFAULT_TYPE;
         }
-        else if (ExprResolveGroup(info->keymap_info, arrayNdx, false,
-                                  &ndx, NULL) != PARSER_SUCCESS) {
+        ଅନ୍ୟଥା ଯଦି (ପଦସମଷ୍ଟି_Resolve_Group(info->keymap_info, arrayNdx, false,
+                                  &ndx, ଖାଲି) != PARSER_SUCCESS) {
             log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                     "Illegal group index for type of key %s; "
                     "Definition with non-integer array index ignored\n",
-                    KeyInfoText(info, keyi));
-            return false;
+                    ଚାବି_Info_Text(info, keyi));
+            ଫେରନ୍ତୁ false;
         }
-        else {
+        ଅନ୍ୟଥା {
             ndx--;
-            if (ndx >= darray_size(keyi->groups)) {
+            ଯଦି (ndx >= darray_size(keyi->groups)) {
                 /* Avoid clang-tidy false positive */
-                assert(darray_size(keyi->groups) < ndx + 1);
+                ପ୍ରତିଜ୍ଞା(darray_size(keyi->groups) < ndx + 1);
                 darray_resize0(keyi->groups, ndx + 1);
             }
             darray_item(keyi->groups, ndx).type = val;
             darray_item(keyi->groups, ndx).defined |= GROUP_FIELD_TYPE;
         }
     }
-    else if (istreq(field, "symbols")) {
-        return AddSymbolsToKey(info, keyi, arrayNdx, value);
+    ଅନ୍ୟଥା ଯଦି (istreq(field, "symbols")) {
+        ଫେରନ୍ତୁ Add_Symbols_To_ଚାବି(info, keyi, arrayNdx, ମୂଲ୍ୟ);
     }
-    else if (istreq(field, "actions")) {
-        return AddActionsToKey(info, keyi, arrayNdx, value);
+    ଅନ୍ୟଥା ଯଦି (istreq(field, "actions")) {
+        ଫେରନ୍ତୁ Add_Actions_To_ଚାବି(info, keyi, arrayNdx, ମୂଲ୍ୟ);
     }
-    else if (istreq(field, "vmods") ||
+    ଅନ୍ୟଥା ଯଦି (istreq(field, "vmods") ||
              istreq(field, "virtualmods") ||
              istreq(field, "virtualmodifiers")) {
         xkb_mod_mask_t mask = 0;
 
-        if (!ExprResolveModMask(info->ctx, value, MOD_VIRT, &info->mods,
+        ଯଦି (!ପଦସମଷ୍ଟି_Resolve_Mod_Mask(info->ctx, ମୂଲ୍ୟ, MOD_VIRT, &info->mods,
                                 &mask)) {
             log_err(info->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK,
                     "Expected a virtual modifier mask, found %s; "
                     "Ignoring virtual modifiers definition for key %s\n",
-                    stmt_type_to_string(value->common.type),
-                    KeyInfoText(info, keyi));
-            return false;
+                    stmt_type_to_string(ମୂଲ୍ୟ->common.type),
+                    ଚାବି_Info_Text(info, keyi));
+            ଫେରନ୍ତୁ false;
         }
 
         keyi->vmodmap = mask;
-        keyi->defined |= KEY_FIELD_VMODMAP;
+        keyi->defined |= ଚାବି_FIELD_VMODMAP;
     }
-    else if (istreq(field, "locking") ||
+    ଅନ୍ୟଥା ଯଦି (istreq(field, "locking") ||
              istreq(field, "lock") ||
              istreq(field, "locks")) {
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
                 XKB_WARNING_UNSUPPORTED_SYMBOLS_FIELD,
                 "Key behaviors not supported; "
                 "Ignoring locking specification for key %s\n",
-                KeyInfoText(info, keyi));
+                ଚାବି_Info_Text(info, keyi));
     }
-    else if (istreq(field, "radiogroup") ||
+    ଅନ୍ୟଥା ଯଦି (istreq(field, "radiogroup") ||
              istreq(field, "permanentradiogroup") ||
              istreq(field, "allownone")) {
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
                 XKB_WARNING_UNSUPPORTED_SYMBOLS_FIELD,
                 "Radio groups not supported; "
                 "Ignoring radio group specification for key %s\n",
-                KeyInfoText(info, keyi));
+                ଚାବି_Info_Text(info, keyi));
     }
-    else if (istreq_prefix("permanentoverlay", field)) {
+    ଅନ୍ୟଥା ଯଦି (istreq_prefix("permanentoverlay", field)) {
         /*
          * Permanent overlay is ineffectual and serves as documentation of the
          * hardware, so skip it entirely.
@@ -1558,236 +1558,236 @@ SetSymbolsField(SymbolsInfo *info, KeyInfo *keyi, const char *field,
                 XKB_WARNING_UNSUPPORTED_SYMBOLS_FIELD,
                 "Permanent overlays not supported; "
                 "Ignoring overlay specification for key %s\n",
-                KeyInfoText(info, keyi));
+                ଚାବି_Info_Text(info, keyi));
     }
-    else if (istreq_prefix("overlay", field)) {
+    ଅନ୍ୟଥା ଯଦି (istreq_prefix("overlay", field)) {
         xkb_overlay_index_t overlay = XKB_OVERLAY_INVALID;
-        const struct xkb_key *key = NULL;
-        if (!ExprResolveOverlayEntry(info->keymap_info, field, arrayNdx,
-                                     *value_ptr, keyi, &overlay, &key))
-            return false;
-        if (overlay == XKB_OVERLAY_INVALID) {
+        ଅଚଳ ସଂରଚନା xkb_ଚାବି *ଚାବି = ଖାଲି;
+        ଯଦି (!ପଦସମଷ୍ଟି_Resolve_Overlay_Entry(info->keymap_info, field, arrayNdx,
+                                     *ମୂଲ୍ୟ_ptr, keyi, &overlay, &ଚାବି))
+            ଫେରନ୍ତୁ false;
+        ଯଦି (overlay == XKB_OVERLAY_INVALID) {
             /* Overlay has not explicit value: skip */
-            return true;
-        } else if (key && key->name == keyi->name) {
+            ଫେରନ୍ତୁ true;
+        } ଅନ୍ୟଥା ଯଦି (ଚାବି && ଚାବି->name == keyi->name) {
             /* Do not overlay to the same key! */
             log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
                     XKB_LOG_MESSAGE_NO_ID,
                     "Cannot overlay a key to itself; "
                     "Ignoring overlay %u specification for key %s\n",
-                    overlay + 1, KeyInfoText(info, keyi));
-        } else {
-            const struct xkb_key *prev;
-            if (overlays_get(keyi, overlay, &prev)) {
+                    overlay + 1, ଚାବି_Info_Text(info, keyi));
+        } ଅନ୍ୟଥା {
+            ଅଚଳ ସଂରଚନା xkb_ଚାବି *prev;
+            ଯଦି (overlays_get(keyi, overlay, &prev)) {
                 /* Duplicate entry */
-                if (key != prev) {
+                ଯଦି (ଚାବି != prev) {
                     /* Conflicting fields */
-                    log_warn(info->ctx, XKB_WARNING_CONFLICTING_KEY_FIELDS,
+                    log_warn(info->ctx, XKB_WARNING_CONFLICTING_ଚାବି_FIELDS,
                              "Conflicting overlays defined in key %s; "
                              "use overlay%d=%s, ignore overlay%u=%s\n",
-                             KeyInfoText(info, keyi), overlay + 1,
+                             ଚାବି_Info_Text(info, keyi), overlay + 1,
                              (prev
-                                 ? KeyNameText(info->ctx, prev->name)
+                                 ? ଚାବି_Name_Text(info->ctx, prev->name)
                                  : "none"),
                              overlay + 1,
-                             (key
-                                 ? KeyNameText(info->ctx, key->name)
+                             (ଚାବି
+                                 ? ଚାବି_Name_Text(info->ctx, ଚାବି->name)
                                  : "none"));
                 }
-            } else if (info->keymap_info->features.overlapping_overlays) {
+            } ଅନ୍ୟଥା ଯଦି (info->keymap_info->features.overlapping_overlays) {
                 /* Handle overlapping overlays mode */
-                if (!overlays_insert(keyi, overlay, key))
-                    return false;
-                keyi->defined |= KEY_FIELD_OVERLAY;
-            } else {
+                ଯଦି (!overlays_ଭର୍ତ୍ତି(keyi, overlay, ଚାବି))
+                    ଫେରନ୍ତୁ false;
+                keyi->defined |= ଚାବି_FIELD_OVERLAY;
+            } ଅନ୍ୟଥା {
                 /* Handle disjoint overlays mode */
-                const xkb_overlay_mask_t mask = (xkb_overlay_mask_t)(1u << overlay);
-                if (!keyi->overlays || keyi->overlays_clear) {
+                ଅଚଳ xkb_overlay_mask_t mask = (xkb_overlay_mask_t)(1u << overlay);
+                ଯଦି (!keyi->overlays || keyi->overlays_clear) {
                     /* No overlay previously defined or different overlay cleared */
-                    if (key) {
+                    ଯଦି (ଚାବି) {
                         /* Replace any explicitly cleared overlay */
                         keyi->overlays = mask;
                         keyi->overlays_clear = false;
-                        keyi->overlay_key = key;
-                    } else {
+                        keyi->overlay_ଚାବି = ଚାବି;
+                    } ଅନ୍ୟଥା {
                         /* Explicitly no overlay (clear) */
                         keyi->overlays |= mask;
                         keyi->overlays_clear = true;
                     }
-                    keyi->defined |= KEY_FIELD_OVERLAY;
-                } else if (keyi->overlays) {
-                    if (key) {
+                    keyi->defined |= ଚାବି_FIELD_OVERLAY;
+                } ଅନ୍ୟଥା ଯଦି (keyi->overlays) {
+                    ଯଦି (ଚାବି) {
                         log_err(info->ctx, XKB_ERROR_OVERLAPPING_OVERLAY,
                                 "Overlapping overlays are not allowed in %s; "
                                 "use overlay%d=%s, ignore overlay%u=%s\n",
-                                KeyInfoText(info, keyi), keyi->overlays,
-                                KeyNameText(info->ctx, keyi->overlay_key->name),
-                                overlay + 1, KeyNameText(info->ctx, key->name));
-                        return !(info->keymap_info->strict &
-                                 PARSER_NO_FIELD_VALUE_MISMATCH);
-                    } else {
+                                ଚାବି_Info_Text(info, keyi), keyi->overlays,
+                                ଚାବି_Name_Text(info->ctx, keyi->overlay_ଚାବି->name),
+                                overlay + 1, ଚାବି_Name_Text(info->ctx, ଚାବି->name));
+                        ଫେରନ୍ତୁ !(info->keymap_info->strict &
+                                 PARSER_NO_FIELD_ମୂଲ୍ୟ_MISMATCH);
+                    } ଅନ୍ୟଥା {
                         /* Ignore: the previous overlay is explicitly defined */
                     }
                 }
             }
         }
     }
-    else if (istreq(field, "repeating") ||
+    ଅନ୍ୟଥା ଯଦି (istreq(field, "repeating") ||
              istreq(field, "repeats") ||
              istreq(field, "repeat")) {
         uint32_t val = 0;
 
-        if (!ExprResolveEnum(info->ctx, value, &val, repeatEntries)) {
-            log_err(info->ctx, XKB_ERROR_INVALID_VALUE,
+        ଯଦି (!ପଦସମଷ୍ଟି_Resolve_Enum(info->ctx, ମୂଲ୍ୟ, &val, repeatEntries)) {
+            log_err(info->ctx, XKB_ERROR_INVALID_ମୂଲ୍ୟ,
                     "Illegal repeat setting for %s; "
                     "Non-boolean repeat setting ignored\n",
-                    KeyInfoText(info, keyi));
-            return false;
+                    ଚାବି_Info_Text(info, keyi));
+            ଫେରନ୍ତୁ false;
         }
 
-        keyi->repeat = (enum key_repeat) val;
-        keyi->defined |= KEY_FIELD_REPEAT;
+        keyi->repeat = (ଗଣନା ଚାବି_repeat) val;
+        keyi->defined |= ଚାବି_FIELD_REPEAT;
     }
-    else if (istreq(field, "groupswrap") ||
+    ଅନ୍ୟଥା ଯଦି (istreq(field, "groupswrap") ||
              istreq(field, "wrapgroups")) {
         bool set = false;
 
-        if (!ExprResolveBoolean(info->ctx, value, &set)) {
-            log_err(info->ctx, XKB_ERROR_INVALID_VALUE,
+        ଯଦି (!ପଦସମଷ୍ଟି_Resolve_Boolean(info->ctx, ମୂଲ୍ୟ, &set)) {
+            log_err(info->ctx, XKB_ERROR_INVALID_ମୂଲ୍ୟ,
                     "Illegal groupsWrap setting for %s; "
                     "Non-boolean value ignored\n",
-                    KeyInfoText(info, keyi));
-            return false;
+                    ଚାବି_Info_Text(info, keyi));
+            ଫେରନ୍ତୁ false;
         }
 
         keyi->out_of_range_group_policy = (set)
             ? XKB_LAYOUT_OUT_OF_RANGE_WRAP
             : XKB_LAYOUT_OUT_OF_RANGE_CLAMP;
-        keyi->defined |= KEY_FIELD_GROUPINFO;
+        keyi->defined |= ଚାବି_FIELD_GROUPINFO;
     }
-    else if (istreq(field, "groupsclamp") ||
+    ଅନ୍ୟଥା ଯଦି (istreq(field, "groupsclamp") ||
              istreq(field, "clampgroups")) {
         bool set = false;
 
-        if (!ExprResolveBoolean(info->ctx, value, &set)) {
-            log_err(info->ctx, XKB_ERROR_INVALID_VALUE,
+        ଯଦି (!ପଦସମଷ୍ଟି_Resolve_Boolean(info->ctx, ମୂଲ୍ୟ, &set)) {
+            log_err(info->ctx, XKB_ERROR_INVALID_ମୂଲ୍ୟ,
                     "Illegal groupsClamp setting for %s; "
                     "Non-boolean value ignored\n",
-                    KeyInfoText(info, keyi));
-            return false;
+                    ଚାବି_Info_Text(info, keyi));
+            ଫେରନ୍ତୁ false;
         }
 
         keyi->out_of_range_group_policy = (set)
             ? XKB_LAYOUT_OUT_OF_RANGE_CLAMP
             : XKB_LAYOUT_OUT_OF_RANGE_WRAP;
-        keyi->defined |= KEY_FIELD_GROUPINFO;
+        keyi->defined |= ଚାବି_FIELD_GROUPINFO;
     }
-    else if (istreq(field, "groupsredirect") ||
+    ଅନ୍ୟଥା ଯଦି (istreq(field, "groupsredirect") ||
              istreq(field, "redirectgroups")) {
         xkb_layout_index_t grp = 0;
         bool pending = false;
 
         // TODO: recover?
-        if (ExprResolveGroup(info->keymap_info, value, false, &grp, &pending) !=
+        ଯଦି (ପଦସମଷ୍ଟି_Resolve_Group(info->keymap_info, ମୂଲ୍ୟ, false, &grp, &pending) !=
             PARSER_SUCCESS && !pending) {
             log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                     "Illegal group index for redirect of key %s; "
                     "Definition with non-integer group ignored\n",
-                    KeyInfoText(info, keyi));
-            return false;
+                    ଚାବି_Info_Text(info, keyi));
+            ଫେରନ୍ତୁ false;
         }
 
-        if (pending) {
+        ଯଦି (pending) {
             keyi->out_of_range_pending_group = true;
-            const darray_size_t pending_index =
+            ଅଚଳ darray_size_t pending_index =
                 darray_size(*info->keymap_info->pending_computations);
             darray_append(
                 *info->keymap_info->pending_computations,
-                (struct pending_computation) {
-                    .expr = *value_ptr,
+                (ସଂରଚନା pending_computation) {
+                    .ପଦସମଷ୍ଟି = *ମୂଲ୍ୟ_ptr,
                     .computed = false,
-                    .value = 0,
+                    .ମୂଲ୍ୟ = 0,
                 }
             );
-            *value_ptr = NULL;
-            static_assert(sizeof(keyi->out_of_range_group_number) ==
-                          sizeof(pending_index),
+            *ମୂଲ୍ୟ_ptr = ଖାଲି;
+            static_assert(ଆକାର(keyi->out_of_range_group_ସଂଖ୍ୟା) ==
+                          ଆକାର(pending_index),
                           "Cannot save pending computation");
-            keyi->out_of_range_group_number = pending_index;
-        } else {
+            keyi->out_of_range_group_ସଂଖ୍ୟା = pending_index;
+        } ଅନ୍ୟଥା {
             keyi->out_of_range_pending_group = false;
-            keyi->out_of_range_group_number = grp - 1;
+            keyi->out_of_range_group_ସଂଖ୍ୟା = grp - 1;
         }
 
         keyi->out_of_range_group_policy = XKB_LAYOUT_OUT_OF_RANGE_REDIRECT;
-        keyi->defined |= KEY_FIELD_GROUPINFO;
+        keyi->defined |= ଚାବି_FIELD_GROUPINFO;
     }
-    else {
+    ଅନ୍ୟଥା {
         log_err(info->ctx, XKB_ERROR_UNKNOWN_FIELD,
                 "Unknown field \"%s\" in a key; definition ignored\n",
                 field);
-        return !(info->keymap_info->strict & PARSER_NO_UNKNOWN_KEY_FIELDS);
+        ଫେରନ୍ତୁ !(info->keymap_info->strict & PARSER_NO_UNKNOWN_ଚାବି_FIELDS);
     }
 
-    return true;
+    ଫେରନ୍ତୁ true;
 }
 
-static bool
-SetGroupName(SymbolsInfo *info, ExprDef *arrayNdx, ExprDef *value,
-             enum merge_mode merge)
+ସ୍ଥିର bool
+SetGroupName(SymbolsInfo *info, ପଦସମଷ୍ଟି_Def *arrayNdx, ପଦସମଷ୍ଟି_Def *ମୂଲ୍ୟ,
+             ଗଣନା merge_mode merge)
 {
-    if (!arrayNdx) {
+    ଯଦି (!arrayNdx) {
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
                 XKB_WARNING_MISSING_SYMBOLS_GROUP_NAME_INDEX,
                 "You must specify an index when specifying a group name; "
                 "Group name definition without array subscript ignored\n");
-        return false;
+        ଫେରନ୍ତୁ false;
     }
 
     xkb_layout_index_t group = 0;
-    if (ExprResolveGroup(info->keymap_info, arrayNdx, false, &group, NULL) !=
+    ଯଦି (ପଦସମଷ୍ଟି_Resolve_Group(info->keymap_info, arrayNdx, false, &group, ଖାଲି) !=
         PARSER_SUCCESS) {
         log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                 "Illegal index in group name definition; "
                 "Definition with non-integer array index ignored\n");
-        return false;
+        ଫେରନ୍ତୁ false;
     }
 
     xkb_atom_t name = XKB_ATOM_NONE;
-    if (!ExprResolveString(info->ctx, value, &name)) {
+    ଯଦି (!ପଦସମଷ୍ଟି_Resolve_String(info->ctx, ମୂଲ୍ୟ, &name)) {
         log_err(info->ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                 "Group name must be a string; "
                 "Illegal name for group %"PRIu32" ignored\n", group);
-        return false;
+        ଫେରନ୍ତୁ false;
     }
 
     xkb_layout_index_t group_to_use;
-    if (info->explicit_group == XKB_LAYOUT_INVALID) {
+    ଯଦି (info->explicit_group == XKB_LAYOUT_INVALID) {
         group_to_use = group - 1;
     }
-    else if (group - 1 == 0) {
+    ଅନ୍ୟଥା ଯଦି (group - 1 == 0) {
         group_to_use = info->explicit_group;
     }
-    else {
+    ଅନ୍ୟଥା {
         log_warn(info->ctx, XKB_WARNING_NON_BASE_GROUP_NAME,
                  "An explicit group was specified for the '%s' map, "
                  "but it provides a name for a group other than Group1 "
                  "(%"PRIu32"); Ignoring group name '%s'\n",
                  info->name, group,
                  xkb_atom_text(info->ctx, name));
-        return false;
+        ଫେରନ୍ତୁ false;
     }
 
-    if (group_to_use >= darray_size(info->group_names)) {
+    ଯଦି (group_to_use >= darray_size(info->group_names)) {
         /* Avoid clang-tidy false positive */
-        assert(darray_size(info->group_names) < group_to_use + 1);
+        ପ୍ରତିଜ୍ଞା(darray_size(info->group_names) < group_to_use + 1);
         darray_resize0(info->group_names, group_to_use + 1);
-    } else {
-        const xkb_atom_t old_name = darray_item(info->group_names, group_to_use);
-        if (old_name != XKB_ATOM_NONE && old_name != name) {
-            const bool replace = (merge != MERGE_AUGMENT);
-            const xkb_atom_t use    = (replace ? name : old_name);
-            const xkb_atom_t ignore = (replace ? old_name : name);
+    } ଅନ୍ୟଥା {
+        ଅଚଳ xkb_atom_t old_name = darray_item(info->group_names, group_to_use);
+        ଯଦି (old_name != XKB_ATOM_NONE && old_name != name) {
+            ଅଚଳ bool replace = (merge != MERGE_AUGMENT);
+            ଅଚଳ xkb_atom_t use    = (replace ? name : old_name);
+            ଅଚଳ xkb_atom_t ignore = (replace ? old_name : name);
             log_warn(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                      "Multiple definitions of group %"PRIu32" name "
                      "in map '%s'; Using '%s', ignoring '%s'\n",
@@ -1799,95 +1799,95 @@ SetGroupName(SymbolsInfo *info, ExprDef *arrayNdx, ExprDef *value,
     }
     darray_item(info->group_names, group_to_use) = name;
 
-    return true;
+    ଫେରନ୍ତୁ true;
 }
 
-static bool
+ସ୍ଥିର bool
 HandleGlobalVar(SymbolsInfo *info, VarDef *stmt)
 {
-    const char *elem, *field;
-    ExprDef *arrayNdx;
+    ଅଚଳ ଅକ୍ଷର *elem, *field;
+    ପଦସମଷ୍ଟି_Def *arrayNdx;
     bool ret;
 
-    if (!ExprResolveLhs(info->ctx, stmt->name, &elem, &field, &arrayNdx))
-        return false;
+    ଯଦି (!ପଦସମଷ୍ଟି_Resolve_Lhs(info->ctx, stmt->name, &elem, &field, &arrayNdx))
+        ଫେରନ୍ତୁ false;
 
-    if (elem && istreq(elem, "key")) {
-        KeyInfo temp = {0};
-        InitKeyInfo(info->ctx, &temp);
+    ଯଦି (elem && istreq(elem, "key")) {
+        ଚାବି_Info temp = {0};
+        Init_ଚାବି_Info(info->ctx, &temp);
         /* Do not replace the whole key, only the current field */
         temp.merge = (temp.merge == MERGE_REPLACE)
             ? MERGE_OVERRIDE
             : stmt->merge;
-        ret = SetSymbolsField(info, &temp, field, arrayNdx, &stmt->value) &&
-              MergeKeys(info, &info->default_key, &temp, true);
-        ClearKeyInfo(&temp);
+        ret = SetSymbolsField(info, &temp, field, arrayNdx, &stmt->ମୂଲ୍ୟ) &&
+              Merge_ଚାବିଗୁଡ଼ିକ(info, &info->default_ଚାବି, &temp, true);
+        Clear_ଚାବି_Info(&temp);
     }
-    else if (!elem && (istreq(field, "name") ||
+    ଅନ୍ୟଥା ଯଦି (!elem && (istreq(field, "name") ||
                        istreq(field, "groupname"))) {
-        ret = SetGroupName(info, arrayNdx, stmt->value, stmt->merge);
+        ret = SetGroupName(info, arrayNdx, stmt->ମୂଲ୍ୟ, stmt->merge);
     }
-    else if (!elem && (istreq(field, "groupswrap") ||
+    ଅନ୍ୟଥା ଯଦି (!elem && (istreq(field, "groupswrap") ||
                        istreq(field, "wrapgroups"))) {
         log_err(info->ctx, XKB_WARNING_UNSUPPORTED_SYMBOLS_FIELD,
                 "Global \"groupswrap\" not supported; Ignored\n");
         ret = true;
     }
-    else if (!elem && (istreq(field, "groupsclamp") ||
+    ଅନ୍ୟଥା ଯଦି (!elem && (istreq(field, "groupsclamp") ||
                        istreq(field, "clampgroups"))) {
         log_err(info->ctx, XKB_WARNING_UNSUPPORTED_SYMBOLS_FIELD,
                 "Global \"groupsclamp\" not supported; Ignored\n");
         ret = true;
     }
-    else if (!elem && (istreq(field, "groupsredirect") ||
+    ଅନ୍ୟଥା ଯଦି (!elem && (istreq(field, "groupsredirect") ||
                        istreq(field, "redirectgroups"))) {
         log_err(info->ctx, XKB_WARNING_UNSUPPORTED_SYMBOLS_FIELD,
                 "Global \"groupsredirect\" not supported; Ignored\n");
         ret = true;
     }
-    else if (!elem && istreq(field, "allownone")) {
+    ଅନ୍ୟଥା ଯଦି (!elem && istreq(field, "allownone")) {
         log_err(info->ctx, XKB_WARNING_UNSUPPORTED_SYMBOLS_FIELD,
                 "Radio groups not supported; "
                 "Ignoring \"allownone\" specification\n");
         ret = true;
     }
-    else if (elem) {
+    ଅନ୍ୟଥା ଯଦି (elem) {
         ret = (SetDefaultActionField(info->keymap_info, &info->default_actions,
                                      &info->mods, elem, field, arrayNdx,
-                                     &stmt->value, stmt->merge) !=
+                                     &stmt->ମୂଲ୍ୟ, stmt->merge) !=
                PARSER_FATAL_ERROR);
-    } else {
+    } ଅନ୍ୟଥା {
         log_err(info->ctx, XKB_ERROR_UNKNOWN_DEFAULT_FIELD,
                 "Default defined for unknown field \"%s\"; Ignored\n", field);
-        return !(info->keymap_info->strict &
+        ଫେରନ୍ତୁ !(info->keymap_info->strict &
                  PARSER_NO_UNKNOWN_SYMBOLS_GLOBAL_FIELDS);
     }
 
-    return ret;
+    ଫେରନ୍ତୁ ret;
 }
 
-static bool
-HandleSymbolsBody(SymbolsInfo *info, VarDef *def, KeyInfo *keyi)
+ସ୍ଥିର bool
+HandleSymbolsBody(SymbolsInfo *info, VarDef *def, ଚାବି_Info *keyi)
 {
     bool all_valid_entries = true;
 
-    for (; def; def = (VarDef *) def->common.next) {
-        const char *field;
-        ExprDef *arrayNdx;
+    ପାଇଁ (; def; def = (VarDef *) def->common.next) {
+        ଅଚଳ ଅକ୍ଷର *field;
+        ପଦସମଷ୍ଟି_Def *arrayNdx;
         bool ok = true;
 
-        if (!def->name) {
-            if (unlikely(!def->value) || def->value->common.type != STMT_EXPR_ACTION_LIST)
+        ଯଦି (!def->name) {
+            ଯଦି (unlikely(!def->ମୂଲ୍ୟ) || def->ମୂଲ୍ୟ->common.type != STMT_ପଦସମଷ୍ଟି_ACTION_LIST)
                 field = "symbols"; /* Default to symbols field */
-            else
+            ଅନ୍ୟଥା
                 field = "actions";
-            arrayNdx = NULL;
+            arrayNdx = ଖାଲି;
         }
-        else {
-            const char *elem;
-            ok = ExprResolveLhs(info->ctx, def->name, &elem, &field,
+        ଅନ୍ୟଥା {
+            ଅଚଳ ଅକ୍ଷର *elem;
+            ok = ପଦସମଷ୍ଟି_Resolve_Lhs(info->ctx, def->name, &elem, &field,
                                 &arrayNdx);
-            if (ok && elem) {
+            ଯଦି (ok && elem) {
                 log_err(info->ctx, XKB_ERROR_GLOBAL_DEFAULTS_WRONG_SCOPE,
                         "Cannot set global defaults for \"%s\" element within "
                         "a key statement: move statements to the global file "
@@ -1897,180 +1897,180 @@ HandleSymbolsBody(SymbolsInfo *info, VarDef *def, KeyInfo *keyi)
             }
         }
 
-        if (unlikely(!def->value)) {
+        ଯଦି (unlikely(!def->ମୂଲ୍ୟ)) {
             log_err(info->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
                     "Could not allocate the value of field \"%s\". "
                     "Statement ignored.\n", field);
             ok = false;
         }
 
-        if (!ok || !SetSymbolsField(info, keyi, field, arrayNdx, &def->value))
+        ଯଦି (!ok || !SetSymbolsField(info, keyi, field, arrayNdx, &def->ମୂଲ୍ୟ))
             all_valid_entries = false;
     }
 
-    return all_valid_entries;
+    ଫେରନ୍ତୁ all_valid_entries;
 }
 
-static bool
-SetExplicitGroup(SymbolsInfo *info, KeyInfo *keyi)
+ସ୍ଥିର bool
+SetExplicitGroup(SymbolsInfo *info, ଚାବି_Info *keyi)
 {
     xkb_layout_index_t i;
     GroupInfo *groupi;
     bool warn = false;
 
-    if (info->explicit_group == XKB_LAYOUT_INVALID)
-        return true;
+    ଯଦି (info->explicit_group == XKB_LAYOUT_INVALID)
+        ଫେରନ୍ତୁ true;
 
     darray_enumerate_from(i, groupi, keyi->groups, 1) {
-        if (groupi->defined) {
+        ଯଦି (groupi->defined) {
             warn = true;
             ClearGroupInfo(groupi);
             InitGroupInfo(groupi);
         }
     }
 
-    if (warn) {
+    ଯଦି (warn) {
         log_warn(info->ctx, XKB_WARNING_MULTIPLE_GROUPS_AT_ONCE,
                  "For the map %s the explicit group %"PRIu32" is specified, "
                  "but key %s has more than one group defined; "
                  "All groups except first one will be ignored\n",
-                 info->name, info->explicit_group + 1, KeyInfoText(info, keyi));
+                 info->name, info->explicit_group + 1, ଚାବି_Info_Text(info, keyi));
     }
 
     darray_resize0(keyi->groups, info->explicit_group + 1);
-    if (info->explicit_group > 0) {
+    ଯଦି (info->explicit_group > 0) {
         darray_item(keyi->groups, info->explicit_group) =
             darray_item(keyi->groups, 0);
         InitGroupInfo(&darray_item(keyi->groups, 0));
     }
 
-    return true;
+    ଫେରନ୍ତୁ true;
 }
 
-static bool
+ସ୍ଥିର bool
 HandleSymbolsDef(SymbolsInfo *info, SymbolsDef *stmt)
 {
-    KeyInfo keyi;
+    ଚାବି_Info keyi;
 
-    keyi = info->default_key;
+    keyi = info->default_ଚାବି;
     darray_init(keyi.groups);
-    darray_copy(keyi.groups, info->default_key.groups);
-    for (xkb_layout_index_t i = 0; i < darray_size(keyi.groups); i++)
+    darray_copy(keyi.groups, info->default_ଚାବି.groups);
+    ପାଇଁ (xkb_layout_index_t i = 0; i < darray_size(keyi.groups); i++)
         CopyGroupInfo(&darray_item(keyi.groups, i),
-                      &darray_item(info->default_key.groups, i));
+                      &darray_item(info->default_ଚାବି.groups, i));
     keyi.merge = stmt->merge;
-    keyi.name = stmt->keyName;
+    keyi.name = stmt->ଚାବି_Name;
 
-    if (HandleSymbolsBody(info, stmt->symbols, &keyi) &&
+    ଯଦି (HandleSymbolsBody(info, stmt->symbols, &keyi) &&
         SetExplicitGroup(info, &keyi) &&
-        AddKeySymbols(info, &keyi, true)) {
-        return true;
+        Add_ଚାବି_Symbols(info, &keyi, true)) {
+        ଫେରନ୍ତୁ true;
     }
 
-    ClearKeyInfo(&keyi);
-    info->errorCount++;
-    return false;
+    Clear_ଚାବି_Info(&keyi);
+    info->error_ଗଣନା++;
+    ଫେରନ୍ତୁ false;
 }
 
-static bool
+ସ୍ଥିର bool
 HandleModMapDef(SymbolsInfo *info, ModMapDef *def)
 {
     ModMapEntry tmp;
-    struct xkb_context *ctx = info->ctx;
+    ସଂରଚନା xkb_context *ctx = info->ctx;
 
-    if (!ExprResolveModMask(ctx, def->modifiers, MOD_REAL, &info->mods, &tmp.mods)) {
+    ଯଦି (!ପଦସମଷ୍ଟି_Resolve_Mod_Mask(ctx, def->modifiers, MOD_REAL, &info->mods, &tmp.mods)) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "Illegal modifier map definition: invalid modifier mask\n");
-        return false;
+        ଫେରନ୍ତୁ false;
     }
 
     /*
      * NOTE: parser.y accepts only identifiers for v1 keymap format,
      * so no further check is needed (e.g. no operation nor numeric values).
      */
-    assert(info->keymap_info->keymap.format != XKB_KEYMAP_FORMAT_TEXT_V1 ||
-           def->modifiers->common.type == STMT_EXPR_IDENT);
+    ପ୍ରତିଜ୍ଞା(info->keymap_info->keymap.format != XKB_KEYMAP_FORMAT_TEXT_V1 ||
+           def->modifiers->common.type == STMT_ପଦସମଷ୍ଟି_IDENT);
 
     bool ok = true;
     tmp.merge = def->merge;
 
-    for (ExprDef *key = def->keys; key; key = (ExprDef *) key->common.next) {
-        if (key->common.type == STMT_EXPR_KEYNAME_LITERAL) {
-            tmp.haveSymbol = false;
-            tmp.u.keyName = key->key_name.key_name;
+    ପାଇଁ (ପଦସମଷ୍ଟି_Def *ଚାବି = def->ଚାବିଗୁଡ଼ିକ; ଚାବି; ଚାବି = (ପଦସମଷ୍ଟି_Def *) ଚାବି->common.next) {
+        ଯଦି (ଚାବି->common.type == STMT_ପଦସମଷ୍ଟି_KEYNAME_LITERAL) {
+            tmp.have_ପ୍ରତୀକ = false;
+            tmp.u.ଚାବି_Name = ଚାବି->ଚାବି_name.ଚାବି_name;
         }
-        else if (key->common.type == STMT_EXPR_KEYSYM_LITERAL) {
-            if (key->keysym.keysym == XKB_KEY_NoSymbol) {
+        ଅନ୍ୟଥା ଯଦି (ଚାବି->common.type == STMT_ପଦସମଷ୍ଟି_KEYSYM_LITERAL) {
+            ଯଦି (ଚାବି->keysym.keysym == XKB_ଚାବି_No_ପ୍ରତୀକ) {
                 /* Invalid keysym: ignore. Error message already printed */
-                continue;
-            } else {
-                tmp.haveSymbol = true;
-                tmp.u.keySym = key->keysym.keysym;
+                ଜାରି;
+            } ଅନ୍ୟଥା {
+                tmp.have_ପ୍ରତୀକ = true;
+                tmp.u.ଚାବି_Sym = ଚାବି->keysym.keysym;
             }
         }
-        else {
+        ଅନ୍ୟଥା {
             log_err(info->ctx, XKB_ERROR_INVALID_MODMAP_ENTRY,
                     "Modmap entries may contain only key names or keysyms; "
                     "Illegal definition for %s modifier mask ignored\n",
                     ModMaskText(info->ctx, MOD_REAL, &info->mods, tmp.mods));
-            continue;
+            ଜାରି;
         }
 
         ok = AddModMapEntry(info, &tmp) && ok;
     }
-    return ok;
+    ଫେରନ୍ତୁ ok;
 }
 
-static void
+ସ୍ଥିର ଶୂନ୍ୟ
 HandleSymbolsFile(SymbolsInfo *info, XkbFile *file)
 {
     bool ok;
 
-    free(info->name);
+    ମୁକ୍ତ(info->name);
     info->name = strdup_safe(file->name);
 
-    for (ParseCommon *stmt = file->defs; stmt; stmt = stmt->next) {
-        switch (stmt->type) {
-        case STMT_INCLUDE:
+    ପାଇଁ (ParseCommon *stmt = file->defs; stmt; stmt = stmt->next) {
+        ବାଛ (stmt->type) {
+        ସ୍ଥିତି STMT_INCLUDE:
             ok = HandleIncludeSymbols(info, (IncludeStmt *) stmt);
-            break;
-        case STMT_SYMBOLS:
+            ଭାଙ୍ଗ;
+        ସ୍ଥିତି STMT_SYMBOLS:
             ok = HandleSymbolsDef(info, (SymbolsDef *) stmt);
-            break;
-        case STMT_VAR:
+            ଭାଙ୍ଗ;
+        ସ୍ଥିତି STMT_VAR:
             ok = HandleGlobalVar(info, (VarDef *) stmt);
-            break;
-        case STMT_VMOD:
+            ଭାଙ୍ଗ;
+        ସ୍ଥିତି STMT_VMOD:
             ok = HandleVModDef(info->ctx, &info->mods, (VModDef *) stmt);
-            break;
-        case STMT_MODMAP:
+            ଭାଙ୍ଗ;
+        ସ୍ଥିତି STMT_MODMAP:
             ok = HandleModMapDef(info, (ModMapDef *) stmt);
-            break;
-        case STMT_UNKNOWN_DECLARATION:
-        case STMT_UNKNOWN_COMPOUND:
+            ଭାଙ୍ଗ;
+        ସ୍ଥିତି STMT_UNKNOWN_DECLARATION:
+        ସ୍ଥିତି STMT_UNKNOWN_COMPOUND:
             log_err(info->ctx, XKB_ERROR_UNKNOWN_STATEMENT,
                     "Unsupported symbols %s statement \"%s\"; Ignoring\n",
                     (stmt->type == STMT_UNKNOWN_COMPOUND
                         ? "compound" : "declaration"),
                     ((UnknownStatement *)stmt)->name);
             ok = !(info->keymap_info->strict & PARSER_NO_UNKNOWN_STATEMENTS);
-            break;
-        default:
+            ଭାଙ୍ଗ;
+        ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
             log_err(info->ctx, XKB_ERROR_WRONG_STATEMENT_TYPE,
                     "Symbols files may not include other types; "
                     "Ignoring %s\n", stmt_type_to_string(stmt->type));
             ok = false;
-            break;
+            ଭାଙ୍ଗ;
         }
 
-        if (!ok)
-            info->errorCount++;
+        ଯଦି (!ok)
+            info->error_ଗଣନା++;
 
-        if (info->errorCount > 10) {
+        ଯଦି (info->error_ଗଣନା > 10) {
             log_err(info->ctx, XKB_ERROR_INVALID_XKB_SYNTAX,
                     "Abandoning symbols file \"%s\"\n",
                     safe_map_name(file->name));
-            break;
+            ଭାଙ୍ଗ;
         }
     }
 }
@@ -2085,41 +2085,41 @@ HandleSymbolsFile(SymbolsInfo *info, XkbFile *file)
  * is chosen first by lowest group in which the keysym appears, than
  * by lowest level and than by lowest key code.
  */
-static struct xkb_key *
-FindKeyForSymbol(struct xkb_keymap *keymap, xkb_keysym_t sym)
+ସ୍ଥିର ସଂରଚନା xkb_ଚାବି *
+Find_ଚାବି_For_ପ୍ରତୀକ(ସଂରଚନା xkb_keymap *keymap, xkb_keysym_t sym)
 {
     bool got_one_group;
     xkb_layout_index_t group = 0;
-    do {
+    କର {
         xkb_level_index_t level = 0;
         got_one_group = false;
         bool got_one_level;
-        do {
+        କର {
             got_one_level = false;
-            struct xkb_key *key;
-            xkb_keys_foreach(key, keymap) {
-                if (group < key->num_groups &&
-                    level < XkbKeyNumLevels(key, group)) {
+            ସଂରଚନା xkb_ଚାବି *ଚାବି;
+            xkb_ଚାବିଗୁଡ଼ିକ_foreach(ଚାବି, keymap) {
+                ଯଦି (group < ଚାବି->ଅଙ୍କ_groups &&
+                    level < Xkb_ଚାବି_ଅଙ୍କ_Levels(ଚାବି, group)) {
                     got_one_group = got_one_level = true;
-                    const xkb_keysym_count_t num_syms =
-                        key->groups[group].levels[level].num_syms;
-                    if (num_syms > 1) {
-                        for (xkb_keysym_count_t k = 0; k < num_syms; k++) {
-                            if (key->groups[group].levels[level].s.syms[k] == sym)
-                                return key;
+                    ଅଚଳ xkb_keysym_ଗଣନା_t ଅଙ୍କ_syms =
+                        ଚାବି->groups[group].levels[level].ଅଙ୍କ_syms;
+                    ଯଦି (ଅଙ୍କ_syms > 1) {
+                        ପାଇଁ (xkb_keysym_ଗଣନା_t k = 0; k < ଅଙ୍କ_syms; k++) {
+                            ଯଦି (ଚାବି->groups[group].levels[level].s.syms[k] == sym)
+                                ଫେରନ୍ତୁ ଚାବି;
                         }
-                    } else if (num_syms &&
-                               key->groups[group].levels[level].s.sym == sym) {
-                        return key;
+                    } ଅନ୍ୟଥା ଯଦି (ଅଙ୍କ_syms &&
+                               ଚାବି->groups[group].levels[level].s.sym == sym) {
+                        ଫେରନ୍ତୁ ଚାବି;
                     }
                 }
             }
             level++;
-        } while (got_one_level);
+        } ଯେତେବେଳେ (got_one_level);
         group++;
-    } while (got_one_group);
+    } ଯେତେବେଳେ (got_one_group);
 
-    return NULL;
+    ଫେରନ୍ତୁ ଖାଲି;
 }
 
 /*
@@ -2134,61 +2134,61 @@ FindKeyForSymbol(struct xkb_keymap *keymap, xkb_keysym_t sym)
  *
  * FIXME: Decide how to handle multiple-syms-per-level, and do it.
  */
-static xkb_atom_t
-FindAutomaticType(struct xkb_context *ctx, GroupInfo *groupi)
+ସ୍ଥିର xkb_atom_t
+FindAutomaticType(ସଂରଚନା xkb_context *ctx, GroupInfo *groupi)
 {
     xkb_keysym_t sym0, sym1;
-    const xkb_level_index_t width = darray_size(groupi->levels);
+    ଅଚଳ xkb_level_index_t width = darray_size(groupi->levels);
 
 #define GET_SYM(level) \
-    (darray_item(groupi->levels, level).num_syms == 0 ? \
-        XKB_KEY_NoSymbol : \
-     darray_item(groupi->levels, level).num_syms == 1 ? \
+    (darray_item(groupi->levels, level).ଅଙ୍କ_syms == 0 ? \
+        XKB_ଚାବି_No_ପ୍ରତୀକ : \
+     darray_item(groupi->levels, level).ଅଙ୍କ_syms == 1 ? \
         darray_item(groupi->levels, level).s.sym : \
      /* num_syms > 1 */ \
         darray_item(groupi->levels, level).s.syms[0])
 
-    if (width == 1 || width <= 0)
-        return xkb_atom_intern_literal(ctx, "ONE_LEVEL");
+    ଯଦି (width == 1 || width <= 0)
+        ଫେରନ୍ତୁ xkb_atom_intern_literal(ctx, "ONE_LEVEL");
 
     sym0 = GET_SYM(0);
     sym1 = GET_SYM(1);
 
-    if (width == 2) {
-        if (xkb_keysym_is_lower(sym0) && xkb_keysym_is_upper_or_title(sym1))
-            return xkb_atom_intern_literal(ctx, "ALPHABETIC");
+    ଯଦି (width == 2) {
+        ଯଦି (xkb_keysym_is_lower(sym0) && xkb_keysym_is_upper_or_title(sym1))
+            ଫେରନ୍ତୁ xkb_atom_intern_literal(ctx, "ALPHABETIC");
 
-        if (xkb_keysym_is_keypad(sym0) || xkb_keysym_is_keypad(sym1))
-            return xkb_atom_intern_literal(ctx, "KEYPAD");
+        ଯଦି (xkb_keysym_is_keypad(sym0) || xkb_keysym_is_keypad(sym1))
+            ଫେରନ୍ତୁ xkb_atom_intern_literal(ctx, "KEYPAD");
 
-        return xkb_atom_intern_literal(ctx, "TWO_LEVEL");
+        ଫେରନ୍ତୁ xkb_atom_intern_literal(ctx, "TWO_LEVEL");
     }
 
-    if (width <= 4) {
-        if (xkb_keysym_is_lower(sym0) && xkb_keysym_is_upper_or_title(sym1)) {
+    ଯଦି (width <= 4) {
+        ଯଦି (xkb_keysym_is_lower(sym0) && xkb_keysym_is_upper_or_title(sym1)) {
             xkb_keysym_t sym2, sym3;
             sym2 = GET_SYM(2);
-            sym3 = (width == 4 ? GET_SYM(3) : XKB_KEY_NoSymbol);
+            sym3 = (width == 4 ? GET_SYM(3) : XKB_ଚାବି_No_ପ୍ରତୀକ);
 
-            if (xkb_keysym_is_lower(sym2) && xkb_keysym_is_upper_or_title(sym3))
-                return xkb_atom_intern_literal(ctx, "FOUR_LEVEL_ALPHABETIC");
+            ଯଦି (xkb_keysym_is_lower(sym2) && xkb_keysym_is_upper_or_title(sym3))
+                ଫେରନ୍ତୁ xkb_atom_intern_literal(ctx, "FOUR_LEVEL_ALPHABETIC");
 
-            return xkb_atom_intern_literal(ctx, "FOUR_LEVEL_SEMIALPHABETIC");
+            ଫେରନ୍ତୁ xkb_atom_intern_literal(ctx, "FOUR_LEVEL_SEMIALPHABETIC");
         }
 
-        if (xkb_keysym_is_keypad(sym0) || xkb_keysym_is_keypad(sym1))
-            return xkb_atom_intern_literal(ctx, "FOUR_LEVEL_KEYPAD");
+        ଯଦି (xkb_keysym_is_keypad(sym0) || xkb_keysym_is_keypad(sym1))
+            ଫେରନ୍ତୁ xkb_atom_intern_literal(ctx, "FOUR_LEVEL_KEYPAD");
 
-        return xkb_atom_intern_literal(ctx, "FOUR_LEVEL");
+        ଫେରନ୍ତୁ xkb_atom_intern_literal(ctx, "FOUR_LEVEL");
     }
 
-    return XKB_ATOM_NONE;
+    ଫେରନ୍ତୁ XKB_ATOM_NONE;
 
 #undef GET_SYM
 }
 
-static const struct xkb_key_type *
-FindTypeForGroup(struct xkb_keymap *keymap, KeyInfo *keyi,
+ସ୍ଥିର ଅଚଳ ସଂରଚନା xkb_ଚାବି_type *
+FindTypeForGroup(ସଂରଚନା xkb_keymap *keymap, ଚାବି_Info *keyi,
                  xkb_layout_index_t group, bool *explicit_type)
 {
     GroupInfo *groupi = &darray_item(keyi->groups, group);
@@ -2196,42 +2196,42 @@ FindTypeForGroup(struct xkb_keymap *keymap, KeyInfo *keyi,
 
     *explicit_type = true;
 
-    if (type_name == XKB_ATOM_NONE) {
-        if (keyi->default_type != XKB_ATOM_NONE) {
+    ଯଦି (type_name == XKB_ATOM_NONE) {
+        ଯଦି (keyi->default_type != XKB_ATOM_NONE) {
             type_name = keyi->default_type;
         }
-        else {
+        ଅନ୍ୟଥା {
             type_name = FindAutomaticType(keymap->ctx, groupi);
-            if (type_name != XKB_ATOM_NONE)
+            ଯଦି (type_name != XKB_ATOM_NONE)
                 *explicit_type = false;
         }
     }
 
-    if (type_name == XKB_ATOM_NONE) {
-        log_warn(keymap->ctx, XKB_WARNING_CANNOT_INFER_KEY_TYPE,
+    ଯଦି (type_name == XKB_ATOM_NONE) {
+        log_warn(keymap->ctx, XKB_WARNING_CANNOT_INFER_ଚାବି_TYPE,
                  "Couldn't find an automatic type for key '%s' "
                  "group %"PRIu32" with %u levels; Using the default type\n",
-                 KeyNameText(keymap->ctx, keyi->name), group + 1,
+                 ଚାବି_Name_Text(keymap->ctx, keyi->name), group + 1,
                  darray_size(groupi->levels));
-        goto use_default;
+        ଯାଅ use_default;
     }
 
     darray_size_t i;
-    for (i = 0; i < keymap->num_types; i++)
-        if (keymap->types[i].name == type_name)
-            break;
+    ପାଇଁ (i = 0; i < keymap->ଅଙ୍କ_types; i++)
+        ଯଦି (keymap->types[i].name == type_name)
+            ଭାଙ୍ଗ;
 
-    if (i >= keymap->num_types) {
-        log_warn(keymap->ctx, XKB_WARNING_UNDEFINED_KEY_TYPE,
+    ଯଦି (i >= keymap->ଅଙ୍କ_types) {
+        log_warn(keymap->ctx, XKB_WARNING_UNDEFINED_ଚାବି_TYPE,
                  "The type \"%s\" for key '%s' group %"PRIu32" "
                  "was not previously defined; Using the default type\n",
                  xkb_atom_text(keymap->ctx, type_name),
-                 KeyNameText(keymap->ctx, keyi->name), group + 1);
-        goto use_default;
+                 ଚାବି_Name_Text(keymap->ctx, keyi->name), group + 1);
+        ଯାଅ use_default;
     }
 
     keymap->types[i].required = true;
-    return &keymap->types[i];
+    ଫେରନ୍ତୁ &keymap->types[i];
 
 use_default:
     /*
@@ -2239,53 +2239,53 @@ use_default:
      * ONE_LEVEL or at least some default one-level type.
      */
     keymap->types[0].required = true;
-    return &keymap->types[0];
+    ଫେରନ୍ତୁ &keymap->types[0];
 }
 
-static bool
-CopySymbolsDefToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info,
-                       KeyInfo *keyi)
+ସ୍ଥିର bool
+CopySymbolsDefToKeymap(ସଂରଚନା xkb_keymap *keymap, SymbolsInfo *info,
+                       ଚାବି_Info *keyi)
 {
-    struct xkb_key *key;
+    ସଂରଚନା xkb_ଚାବି *ଚାବି;
     GroupInfo *groupi;
-    const GroupInfo *group0;
+    ଅଚଳ GroupInfo *group0;
     xkb_layout_index_t i;
 
     /*
      * The name is guaranteed to be real and not an alias (see
      * AddKeySymbols), so 'false' is safe here.
      */
-    key = XkbKeyByName(keymap, keyi->name, false);
-    if (!key) {
+    ଚାବି = Xkb_ଚାବି_By_Name(keymap, keyi->name, false);
+    ଯଦି (!ଚାବି) {
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_DETAILED,
                 XKB_WARNING_UNDEFINED_KEYCODE,
                 "Key %s not found in keycodes; Symbols ignored\n",
-                KeyInfoText(info, keyi));
-        return false;
+                ଚାବି_Info_Text(info, keyi));
+        ଫେରନ୍ତୁ false;
     }
 
     /* Find the range of groups we need. */
-    key->num_groups = 0;
+    ଚାବି->ଅଙ୍କ_groups = 0;
     darray_enumerate(i, groupi, keyi->groups) {
         /* Skip groups that have no levels and no explicit type.
          * Such group would be filled with `NoSymbol` anyway. */
-        const bool has_explicit_type = (keyi->defined & KEY_FIELD_DEFAULT_TYPE)
+        ଅଚଳ bool has_explicit_type = (keyi->defined & ଚାବି_FIELD_DEFAULT_TYPE)
                                     || (groupi->defined & GROUP_FIELD_TYPE);
-        if (darray_size(groupi->levels) > 0 || has_explicit_type)
-            key->num_groups = i + 1;
-        if (has_explicit_type)
-            key->explicit |= EXPLICIT_TYPES;
+        ଯଦି (darray_size(groupi->levels) > 0 || has_explicit_type)
+            ଚାବି->ଅଙ୍କ_groups = i + 1;
+        ଯଦି (has_explicit_type)
+            ଚାବି->explicit |= EXPLICIT_TYPES;
     }
 
-    if (key->num_groups <= 0) {
+    ଯଦି (ଚାବି->ଅଙ୍କ_groups <= 0) {
         /* A key with no group may still have other fields defined */
-        if (keyi->defined)
-            goto key_fields;
-        else
-            return false;
+        ଯଦି (keyi->defined)
+            ଯାଅ ଚାବି_fields;
+        ଅନ୍ୟଥା
+            ଫେରନ୍ତୁ false;
     }
 
-    darray_resize(keyi->groups, key->num_groups);
+    darray_resize(keyi->groups, ଚାବି->ଅଙ୍କ_groups);
 
     /*
      * If there are empty groups between non-empty ones, fill them with data
@@ -2294,44 +2294,44 @@ CopySymbolsDefToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info,
      */
     group0 = &darray_item(keyi->groups, 0);
     darray_foreach_from(groupi, keyi->groups, 1) {
-        if (groupi->defined)
-            continue;
+        ଯଦି (groupi->defined)
+            ଜାରି;
 
         CopyGroupInfo(groupi, group0);
     }
 
-    key->groups = calloc(key->num_groups, sizeof(*key->groups));
-    assert(darray_size(keyi->groups) == key->num_groups);
+    ଚାବି->groups = calloc(ଚାବି->ଅଙ୍କ_groups, ଆକାର(*ଚାବି->groups));
+    ପ୍ରତିଜ୍ଞା(darray_size(keyi->groups) == ଚାବି->ଅଙ୍କ_groups);
 
     /* Find and assign the groups' types in the keymap. */
     darray_enumerate(i, groupi, keyi->groups) {
         #ifdef __clang__
         /* Make clang-tidy happy */
-        __builtin_assume(i < key->num_groups);
+        __builtin_assume(i < ଚାବି->ଅଙ୍କ_groups);
         #endif
         bool explicit_type = false;
-        const struct xkb_key_type * const type =
+        ଅଚଳ ସଂରଚନା xkb_ଚାବି_type * ଅଚଳ type =
             FindTypeForGroup(keymap, keyi, i, &explicit_type);
 
         /* Always have as many levels as the type specifies. */
-        if (type->num_levels < darray_size(groupi->levels)) {
-            struct xkb_level *leveli;
+        ଯଦି (type->ଅଙ୍କ_levels < darray_size(groupi->levels)) {
+            ସଂରଚନା xkb_level *leveli;
 
             log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
                     XKB_WARNING_EXTRA_SYMBOLS_IGNORED,
                     "Type \"%s\" has %"PRIu32" levels, but %s has %u levels; "
                     "Ignoring extra symbols\n",
-                    xkb_atom_text(keymap->ctx, type->name), type->num_levels,
-                    KeyInfoText(info, keyi),
+                    xkb_atom_text(keymap->ctx, type->name), type->ଅଙ୍କ_levels,
+                    ଚାବି_Info_Text(info, keyi),
                     darray_size(groupi->levels));
 
-            darray_foreach_from(leveli, groupi->levels, type->num_levels)
+            darray_foreach_from(leveli, groupi->levels, type->ଅଙ୍କ_levels)
                 clear_level(leveli);
         }
-        darray_resize0(groupi->levels, type->num_levels);
+        darray_resize0(groupi->levels, type->ଅଙ୍କ_levels);
 
-        key->groups[i].explicit_type = explicit_type;
-        key->groups[i].type = type;
+        ଚାବି->groups[i].explicit_type = explicit_type;
+        ଚାବି->groups[i].type = type;
     }
 
     /* Copy levels. */
@@ -2343,38 +2343,38 @@ CopySymbolsDefToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info,
          * We apply only simple capitalization rules, so the keysyms count is
          * unchanged.
          */
-        struct xkb_level *leveli;
+        ସଂରଚନା xkb_level *leveli;
         darray_foreach(leveli, groupi->levels) {
-            switch (leveli->num_syms) {
-            case 0:
-                leveli->upper = XKB_KEY_NoSymbol;
-                break;
-            case 1:
+            ବାଛ (leveli->ଅଙ୍କ_syms) {
+            ସ୍ଥିତି 0:
+                leveli->upper = XKB_ଚାବି_No_ପ୍ରତୀକ;
+                ଭାଙ୍ଗ;
+            ସ୍ଥିତି 1:
                 leveli->upper = xkb_keysym_to_upper(leveli->s.sym);
-                break;
-            default:
+                ଭାଙ୍ଗ;
+            ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
                 /* Multiple keysyms: check if there is any cased keysym */
                 leveli->has_upper = false;
-                for (xkb_keysym_count_t k = 0; k < leveli->num_syms; k++) {
-                    const xkb_keysym_t upper =
+                ପାଇଁ (xkb_keysym_ଗଣନା_t k = 0; k < leveli->ଅଙ୍କ_syms; k++) {
+                    ଅଚଳ xkb_keysym_t upper =
                         xkb_keysym_to_upper(leveli->s.syms[k]);
-                    if (upper != leveli->s.syms[k]) {
+                    ଯଦି (upper != leveli->s.syms[k]) {
                         leveli->has_upper = true;
-                        break;
+                        ଭାଙ୍ଗ;
                     }
                 }
-                if (leveli->has_upper) {
+                ଯଦି (leveli->has_upper) {
                     /*
                      * Some cased keysyms: store the transformation result in
                      * the same array, right after the original keysyms.
                      */
                     leveli->s.syms = realloc(leveli->s.syms,
-                                             (size_t) 2 * leveli->num_syms *
-                                             sizeof(*leveli->s.syms));
-                    if (!leveli->s.syms)
-                        return false; /* FIXME: better handling? */
-                    for (xkb_keysym_count_t k = 0; k < leveli->num_syms; k++) {
-                        leveli->s.syms[leveli->num_syms + k] =
+                                             (size_t) 2 * leveli->ଅଙ୍କ_syms *
+                                             ଆକାର(*leveli->s.syms));
+                    ଯଦି (!leveli->s.syms)
+                        ଫେରନ୍ତୁ false; /* FIXME: better handling? */
+                    ପାଇଁ (xkb_keysym_ଗଣନା_t k = 0; k < leveli->ଅଙ୍କ_syms; k++) {
+                        leveli->s.syms[leveli->ଅଙ୍କ_syms + k] =
                             xkb_keysym_to_upper(leveli->s.syms[k]);
                     }
                 }
@@ -2382,183 +2382,183 @@ CopySymbolsDefToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info,
         }
 
         /* Copy the level */
-        darray_steal(groupi->levels, &key->groups[i].levels, NULL);
-        if (key->groups[i].type->num_levels > 1 ||
-            key->groups[i].levels[0].num_syms > 0) {
-            key->groups[i].explicit_symbols = true;
-            key->explicit |= EXPLICIT_SYMBOLS;
+        darray_steal(groupi->levels, &ଚାବି->groups[i].levels, ଖାଲି);
+        ଯଦି (ଚାବି->groups[i].type->ଅଙ୍କ_levels > 1 ||
+            ଚାବି->groups[i].levels[0].ଅଙ୍କ_syms > 0) {
+            ଚାବି->groups[i].explicit_symbols = true;
+            ଚାବି->explicit |= EXPLICIT_SYMBOLS;
         }
-        if (groupi->defined & GROUP_FIELD_ACTS) { // FIXME
-            key->groups[i].explicit_actions = true;
-            key->explicit |= EXPLICIT_INTERP;
+        ଯଦି (groupi->defined & GROUP_FIELD_ACTS) { // FIXME
+            ଚାବି->groups[i].explicit_actions = true;
+            ଚାବି->explicit |= EXPLICIT_INTERP;
         }
-        if (key->groups[i].explicit_type)
-            key->explicit |= EXPLICIT_TYPES;
+        ଯଦି (ଚାବି->groups[i].explicit_type)
+            ଚାବି->explicit |= EXPLICIT_TYPES;
     }
 
-    key->out_of_range_pending_group = keyi->out_of_range_pending_group;
-    key->out_of_range_group_number = keyi->out_of_range_group_number;
-    key->out_of_range_group_policy = keyi->out_of_range_group_policy;
+    ଚାବି->out_of_range_pending_group = keyi->out_of_range_pending_group;
+    ଚାବି->out_of_range_group_ସଂଖ୍ୟା = keyi->out_of_range_group_ସଂଖ୍ୟା;
+    ଚାବି->out_of_range_group_policy = keyi->out_of_range_group_policy;
 
-key_fields:
-    if (keyi->defined & KEY_FIELD_VMODMAP) {
-        key->vmodmap = keyi->vmodmap;
-        key->explicit |= EXPLICIT_VMODMAP;
+ଚାବି_fields:
+    ଯଦି (keyi->defined & ଚାବି_FIELD_VMODMAP) {
+        ଚାବି->vmodmap = keyi->vmodmap;
+        ଚାବି->explicit |= EXPLICIT_VMODMAP;
     }
 
-    if (keyi->repeat != KEY_REPEAT_UNDEFINED) {
-        key->repeats = (keyi->repeat == KEY_REPEAT_YES);
-        key->explicit |= EXPLICIT_REPEAT;
+    ଯଦି (keyi->repeat != ଚାବି_REPEAT_UNDEFINED) {
+        ଚାବି->repeats = (keyi->repeat == ଚାବି_REPEAT_YES);
+        ଚାବି->explicit |= EXPLICIT_REPEAT;
     }
 
-    if ((keyi->defined & KEY_FIELD_OVERLAY) &&
+    ଯଦି ((keyi->defined & ଚାବି_FIELD_OVERLAY) &&
         keyi->overlays && !keyi->overlays_clear) {
-        key->overlays = keyi->overlays;
-        if (keyi->overlays_alloc) {
+        ଚାବି->overlays = keyi->overlays;
+        ଯଦି (keyi->overlays_alloc) {
             /* Remove empty entries */
 
-            xkb_overlay_mask_t remaining = key->overlays;
-            const struct xkb_key **overlays_keys = keyi->overlays_keys;
-            while (remaining) {
+            xkb_overlay_mask_t remaining = ଚାବି->overlays;
+            ଅଚଳ ସଂରଚନା xkb_ଚାବି **overlays_ଚାବିଗୁଡ଼ିକ = keyi->overlays_ଚାବିଗୁଡ଼ିକ;
+            ଯେତେବେଳେ (remaining) {
                 /* isolate lowest set bit */
-                const xkb_overlay_mask_t lsb = (xkb_overlay_mask_t)(
+                ଅଚଳ xkb_overlay_mask_t lsb = (xkb_overlay_mask_t)(
                     remaining &
                     (xkb_overlay_mask_t)((unsigned)~remaining + 1u)
                 );
                 remaining = (remaining & ~lsb);
-                if (*overlays_keys) {
-                    overlays_keys++;
-                } else {
+                ଯଦି (*overlays_ଚାବିଗୁଡ଼ିକ) {
+                    overlays_ଚାବିଗୁଡ଼ିକ++;
+                } ଅନ୍ୟଥା {
                     /* drop current null value (overlayN=none) */
-                    key->overlays &= ~lsb;
+                    ଚାବି->overlays &= ~lsb;
                 }
             }
 
-            if (key->overlays) {
+            ଯଦି (ଚାବି->overlays) {
                 /* Steal */
-                key->overlays_keys = keyi->overlays_keys;
-                keyi->overlays_keys = NULL;
+                ଚାବି->overlays_ଚାବିଗୁଡ଼ିକ = keyi->overlays_ଚାବିଗୁଡ଼ିକ;
+                keyi->overlays_ଚାବିଗୁଡ଼ିକ = ଖାଲି;
                 keyi->overlays_alloc = 0;
 
-                key->overlays_inline = false;
-                key->explicit |= EXPLICIT_OVERLAY;
+                ଚାବି->overlays_inline = false;
+                ଚାବି->explicit |= EXPLICIT_OVERLAY;
             }
-        } else {
-            key->overlay_key = keyi->overlay_key;
-            key->overlays_inline = true;
-            key->explicit |= EXPLICIT_OVERLAY;
+        } ଅନ୍ୟଥା {
+            ଚାବି->overlay_ଚାବି = keyi->overlay_ଚାବି;
+            ଚାବି->overlays_inline = true;
+            ଚାବି->explicit |= EXPLICIT_OVERLAY;
         }
     }
 
-    return true;
+    ଫେରନ୍ତୁ true;
 }
 
-static bool
-CopyModMapDefToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info,
+ସ୍ଥିର bool
+CopyModMapDefToKeymap(ସଂରଚନା xkb_keymap *keymap, SymbolsInfo *info,
                       ModMapEntry *entry)
 {
-    struct xkb_key *key;
+    ସଂରଚନା xkb_ଚାବି *ଚାବି;
 
-    if (!entry->haveSymbol) {
-        key = XkbKeyByName(keymap, entry->u.keyName, true);
-        if (!key) {
+    ଯଦି (!entry->have_ପ୍ରତୀକ) {
+        ଚାବି = Xkb_ଚାବି_By_Name(keymap, entry->u.ଚାବି_Name, true);
+        ଯଦି (!ଚାବି) {
             log_vrb(info->ctx, XKB_LOG_VERBOSITY_DETAILED,
                     XKB_WARNING_UNDEFINED_KEYCODE,
                     "Key %s not found in keycodes; "
                     "Modifier map entry for %s not updated\n",
-                    KeyNameText(info->ctx, entry->u.keyName),
+                    ଚାବି_Name_Text(info->ctx, entry->u.ଚାବି_Name),
                     ModMaskText(info->ctx, MOD_REAL, &info->mods, entry->mods));
             entry->mods = 0; /* disable */
-            return false;
+            ଫେରନ୍ତୁ false;
         }
     }
-    else {
-        key = FindKeyForSymbol(keymap, entry->u.keySym);
-        if (!key) {
+    ଅନ୍ୟଥା {
+        ଚାବି = Find_ଚାବି_For_ପ୍ରତୀକ(keymap, entry->u.ଚାବି_Sym);
+        ଯଦି (!ଚାବି) {
             log_vrb(info->ctx, XKB_LOG_VERBOSITY_DETAILED,
-                    XKB_WARNING_UNRESOLVED_KEYMAP_SYMBOL,
+                    XKB_WARNING_UNRESOLVED_KEYMAP_ପ୍ରତୀକ,
                     "Key \"%s\" not found in symbol map; "
                     "Modifier map entry for %s not updated\n",
-                    KeysymText(info->ctx, entry->u.keySym),
+                    KeysymText(info->ctx, entry->u.ଚାବି_Sym),
                     ModMaskText(info->ctx, MOD_REAL, &info->mods, entry->mods));
             entry->mods = 0; /* disable */
-            return false;
+            ଫେରନ୍ତୁ false;
         }
     }
 
     /* Skip modMap None */
-    if (entry->mods) {
-        key->modmap |= entry->mods;
-        entry->keyCode = key->keycode;
+    ଯଦି (entry->mods) {
+        ଚାବି->modmap |= entry->mods;
+        entry->ଚାବି_Code = ଚାବି->keycode;
     }
 
-    return true;
+    ଫେରନ୍ତୁ true;
 }
 
-static bool
-CopySymbolsToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info)
+ସ୍ଥିର bool
+CopySymbolsToKeymap(ସଂରଚନା xkb_keymap *keymap, SymbolsInfo *info)
 {
-    KeyInfo *keyi;
+    ଚାବି_Info *keyi;
 
     keymap->symbols_section_name = strdup_safe(info->name);
     XkbEscapeMapName(keymap->symbols_section_name);
 
     keymap->mods = info->mods;
 
-    keymap->num_group_names = (xkb_layout_index_t)darray_size(info->group_names);
-    darray_steal(info->group_names, &keymap->group_names, NULL);
+    keymap->ଅଙ୍କ_group_names = (xkb_layout_index_t)darray_size(info->group_names);
+    darray_steal(info->group_names, &keymap->group_names, ଖାଲି);
 
-    darray_foreach(keyi, info->keys)
-        if (!CopySymbolsDefToKeymap(keymap, info, keyi))
-            info->errorCount++;
+    darray_foreach(keyi, info->ଚାବିଗୁଡ଼ିକ)
+        ଯଦି (!CopySymbolsDefToKeymap(keymap, info, keyi))
+            info->error_ଗଣନା++;
 
-    if (xkb_context_get_log_verbosity(keymap->ctx) > 3) {
-        struct xkb_key *key;
+    ଯଦି (xkb_context_get_log_verbosity(keymap->ctx) > 3) {
+        ସଂରଚନା xkb_ଚାବି *ଚାବି;
 
-        xkb_keys_foreach(key, keymap) {
-            if (key->name == XKB_ATOM_NONE)
-                continue;
+        xkb_ଚାବିଗୁଡ଼ିକ_foreach(ଚାବି, keymap) {
+            ଯଦି (ଚାବି->name == XKB_ATOM_NONE)
+                ଜାରି;
 
-            if (key->num_groups < 1)
+            ଯଦି (ଚାବି->ଅଙ୍କ_groups < 1)
                 log_info(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                          "No symbols defined for %s\n",
-                         KeyNameText(info->ctx, key->name));
+                         ଚାବି_Name_Text(info->ctx, ଚାବି->name));
         }
     }
 
     /* Resolve modmaps */
     ModMapEntry *mm;
     darray_foreach(mm, info->modmaps)
-        if (!CopyModMapDefToKeymap(keymap, info, mm))
-            info->errorCount++;
+        ଯଦି (!CopyModMapDefToKeymap(keymap, info, mm))
+            info->error_ଗଣନା++;
 
     /* Copy detailed modmap */
-    darray_steal(info->modmaps, &keymap->modmaps, &keymap->num_modmaps);
+    darray_steal(info->modmaps, &keymap->modmaps, &keymap->ଅଙ୍କ_modmaps);
 
     /* XXX: If we don't ignore errorCount, things break. */
-    return true;
+    ଫେରନ୍ତୁ true;
 }
 
 bool
-CompileSymbols(XkbFile *file, struct xkb_keymap_info *keymap_info)
+CompileSymbols(XkbFile *file, ସଂରଚନା xkb_keymap_info *keymap_info)
 {
     SymbolsInfo info;
 
     InitSymbolsInfo(&info, keymap_info, 0, &keymap_info->keymap.mods);
 
-    if (file !=NULL)
+    ଯଦି (file !=ଖାଲି)
         HandleSymbolsFile(&info, file);
 
-    if (info.errorCount != 0)
-        goto err_info;
+    ଯଦି (info.error_ଗଣନା != 0)
+        ଯାଅ err_info;
 
-    if (!CopySymbolsToKeymap(&keymap_info->keymap, &info))
-        goto err_info;
+    ଯଦି (!CopySymbolsToKeymap(&keymap_info->keymap, &info))
+        ଯାଅ err_info;
 
     ClearSymbolsInfo(&info);
-    return true;
+    ଫେରନ୍ତୁ true;
 
 err_info:
     ClearSymbolsInfo(&info);
-    return false;
+    ଫେରନ୍ତୁ false;
 }

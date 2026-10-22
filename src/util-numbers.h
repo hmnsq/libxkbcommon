@@ -4,17 +4,17 @@
  */
 #pragma once
 
-#include "config.h"
+#ଅନ୍ତର୍ଭାଵ "config.h"
 
-#include <limits.h>
-#include <stdbool.h>
-#include <stdint.h>
+#ଅନ୍ତର୍ଭାଵ <limits.h>
+#ଅନ୍ତର୍ଭାଵ <stdbool.h>
+#ଅନ୍ତର୍ଭାଵ <stdint.h>
 
-#if defined(_MSC_VER)
+#ଯଦି defined(_MSC_VER)
 # include <intrin.h>
 #endif
 
-#include "utils.h"
+#ଅନ୍ତର୍ଭାଵ "utils.h"
 
 /*
  * Define various parsers to avoid the use of strto* -- it’s slower and accepts
@@ -27,23 +27,23 @@
  */
 
 #define MAKE_PARSE_DEC_TO(type, max)                         \
-static inline int                                            \
-parse_dec_to_##type(const char *s, size_t len, type (*out))  \
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ପୂର୍ଣ୍ଣସଂଖ୍ୟା                                            \
+parse_dec_to_##type(ଅଚଳ ଅକ୍ଷର *s, size_t len, type (*out))  \
 {                                                            \
     type result = 0;                                         \
     size_t i;                                                \
-    for (i = 0;                                              \
-         i < len && (unsigned char)(s[i] - '0') < 10U &&     \
+    ପାଇଁ (i = 0;                                              \
+         i < len && (unsigned ଅକ୍ଷର)(s[i] - '0') < 10U &&     \
          result <= (max) / 10 &&                             \
-         result * 10 <= (max) - (unsigned char) (s[i] - '0');\
+         result * 10 <= (max) - (unsigned ଅକ୍ଷର) (s[i] - '0');\
          i++) {                                              \
         result = result * 10 + (type)(s[i] - '0');           \
     }                                                        \
     *out = result;                                           \
     /* Check if there is more to parse */                    \
     /* We can safely convert the length to int on success */ \
-    return (i >= len || (unsigned char)(s[i] - '0') >= 10U)  \
-           ? (int) i                                         \
+    ଫେରନ୍ତୁ (i >= len || (unsigned ଅକ୍ଷର)(s[i] - '0') >= 10U)  \
+           ? (ପୂର୍ଣ୍ଣସଂଖ୍ୟା) i                                         \
            : -1;                                             \
 }
 
@@ -63,7 +63,7 @@ MAKE_PARSE_DEC_TO(uint64_t, UINT64_MAX)
 
 #undef MAKE_PARSE_DEC_TO
 
-static const unsigned char digits__[] = {
+ସ୍ଥିର ଅଚଳ unsigned ଅକ୍ଷର digits__[] = {
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
@@ -89,20 +89,20 @@ static const unsigned char digits__[] = {
 };
 
 #define MAKE_PARSE_HEX_TO(type, max)                           \
-static inline int                                              \
-parse_hex_to_##type(const char *s, size_t len, type (*out))    \
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ପୂର୍ଣ୍ଣସଂଖ୍ୟା                                              \
+parse_hex_to_##type(ଅଚଳ ଅକ୍ଷର *s, size_t len, type (*out))    \
 {                                                              \
     type result = 0;                                           \
     size_t i = 0;                                              \
-    for (; i < len && digits__[(unsigned char) s[i]] < 16u &&  \
+    ପାଇଁ (; i < len && digits__[(unsigned ଅକ୍ଷର) s[i]] < 16u &&  \
          result <= (max) >> 4;                                 \
          i++) {                                                \
-        result = result * 16 + digits__[(unsigned char) s[i]]; \
+        result = result * 16 + digits__[(unsigned ଅକ୍ଷର) s[i]]; \
     }                                                          \
     *out = result;                                             \
     /* Check if there is more to parse */                      \
     /* We can safely convert the length to int on success */   \
-    return (i >= len || !is_xdigit(s[i])) ? (int) i : -1;      \
+    ଫେରନ୍ତୁ (i >= len || !is_xdigit(s[i])) ? (ପୂର୍ଣ୍ଣସଂଖ୍ୟା) i : -1;      \
 }
 
 /**
@@ -121,104 +121,104 @@ MAKE_PARSE_HEX_TO(uint64_t, UINT64_MAX)
 
 #undef MAKE_PARSE_HEX_TO
 
-static inline unsigned int
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା
 popcount32(uint32_t x)
 {
-#if defined(__GNUC__) || defined(__clang__)
-    return (unsigned int)__builtin_popcountl(x);
-#elif defined(_MSC_VER)
-    return __popcnt(x);
-#else
+#ଯଦି defined(__GNUC__) || defined(__clang__)
+    ଫେରନ୍ତୁ (unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା)__builtin_popcountl(x);
+#ନଚେତଯଦି defined(_MSC_VER)
+    ଫେରନ୍ତୁ __popcnt(x);
+#ଅନ୍ୟଥା
     /* Fallback (Brian Kernighan’s method) */
-    unsigned int count = 0;
-    while (x) {
+    unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଗଣନା_2 = 0;
+    ଯେତେବେଳେ (x) {
         x &= x - 1;
-        count++;
+        ଗଣନା_2++;
     }
-    return count;
+    ଫେରନ୍ତୁ ଗଣନା_2;
 #endif
 }
 
-static inline unsigned int
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା
 ctz32(uint32_t x)
 {
-    if (x == 0)
-        return 32;
+    ଯଦି (x == 0)
+        ଫେରନ୍ତୁ 32;
 
-#if defined(__GNUC__) || defined(__clang__)
-    return _Generic(
+#ଯଦି defined(__GNUC__) || defined(__clang__)
+    ଫେରନ୍ତୁ _Generic(
         x,
-        unsigned int: (unsigned int)__builtin_ctz(x),
-        unsigned long: (unsigned int)__builtin_ctzl(x),
-        unsigned long long: (unsigned int)__builtin_ctzll(x)
+        unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା: (unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା)__builtin_ctz(x),
+        unsigned long: (unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା)__builtin_ctzl(x),
+        unsigned long long: (unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା)__builtin_ctzll(x)
     );
-#elif defined(_MSC_VER)
+#ନଚେତଯଦି defined(_MSC_VER)
     unsigned long index;
     _BitScanForward(&index, x);
-    return (unsigned int)index;
-#else
+    ଫେରନ୍ତୁ (unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା)index;
+#ଅନ୍ୟଥା
     /* Fallback: De Bruijn sequence algorithm for 32-bit integers */
-    static const unsigned int debruijn32[32] = {
+    ସ୍ଥିର ଅଚଳ unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା debruijn32[32] = {
         0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8,
         31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9
     };
-    return debruijn32[((x & -x) * UINT32_C(0x077cb531)) >> 27];
+    ଫେରନ୍ତୁ debruijn32[((x & -x) * UINT32_C(0x077cb531)) >> 27];
 #endif
 }
 
-static inline unsigned int
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା
 clz32(uint32_t x)
 {
-    if (x == 0)
-        return 32;
+    ଯଦି (x == 0)
+        ଫେରନ୍ତୁ 32;
 
-#if defined(__GNUC__) || defined(__clang__)
-    return _Generic(
+#ଯଦି defined(__GNUC__) || defined(__clang__)
+    ଫେରନ୍ତୁ _Generic(
         x,
-        unsigned int:
-            (unsigned int)__builtin_clz(x) -
-            (unsigned int)((sizeof(unsigned int) * CHAR_BIT) - 32),
+        unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା:
+            (unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା)__builtin_clz(x) -
+            (unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା)((ଆକାର(unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା) * CHAR_BIT) - 32),
         unsigned long:
-            (unsigned int)__builtin_clzl(x) -
-            (unsigned int)((sizeof(unsigned long) * CHAR_BIT) - 32),
+            (unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା)__builtin_clzl(x) -
+            (unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା)((ଆକାର(unsigned long) * CHAR_BIT) - 32),
         unsigned long long:
-            (unsigned int)__builtin_clzll(x) -
-            (unsigned int)((sizeof(unsigned long long) * CHAR_BIT) - 32)
+            (unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା)__builtin_clzll(x) -
+            (unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା)((ଆକାର(unsigned long long) * CHAR_BIT) - 32)
     );
-#else
+#ଅନ୍ୟଥା
     // Efficient binary search fallback for 32-bit integers
-    unsigned int count = 0;
-    if ((x & 0xffff0000) == 0) { count += 16; x <<= 16; }
-    if ((x & 0xff000000) == 0) { count += 8;  x <<= 8;  }
-    if ((x & 0xf0000000) == 0) { count += 4;  x <<= 4;  }
-    if ((x & 0xc0000000) == 0) { count += 2;  x <<= 2;  }
-    if ((x & 0x80000000) == 0) { count += 1; }
-    return count;
+    unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଗଣନା_2 = 0;
+    ଯଦି ((x & 0xffff0000) == 0) { ଗଣନା_2 += 16; x <<= 16; }
+    ଯଦି ((x & 0xff000000) == 0) { ଗଣନା_2 += 8;  x <<= 8;  }
+    ଯଦି ((x & 0xf0000000) == 0) { ଗଣନା_2 += 4;  x <<= 4;  }
+    ଯଦି ((x & 0xc0000000) == 0) { ଗଣନା_2 += 2;  x <<= 2;  }
+    ଯଦି ((x & 0x80000000) == 0) { ଗଣନା_2 += 1; }
+    ଫେରନ୍ତୁ ଗଣନା_2;
 #endif
 }
 
-static inline unsigned int
-next_pow2(unsigned int x)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+next_pow2(unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା x)
 {
-#if defined(__GNUC__) || defined(__clang__)
-    if (x <= 1) return 1u;
-    return 1u << ((int)sizeof(unsigned) * CHAR_BIT - __builtin_clz(x - 1));
-#else
-    if (x <= 1u) return 1u;
+#ଯଦି defined(__GNUC__) || defined(__clang__)
+    ଯଦି (x <= 1) ଫେରନ୍ତୁ 1u;
+    ଫେରନ୍ତୁ 1u << ((ପୂର୍ଣ୍ଣସଂଖ୍ୟା)ଆକାର(unsigned) * CHAR_BIT - __builtin_clz(x - 1));
+#ଅନ୍ୟଥା
+    ଯଦି (x <= 1u) ଫେରନ୍ତୁ 1u;
     x--;
-    for (unsigned s = 1; s < (unsigned)sizeof(x)*CHAR_BIT; s <<= 1)
+    ପାଇଁ (unsigned s = 1; s < (unsigned)ଆକାର(x)*CHAR_BIT; s <<= 1)
         x |= x >> s;
-    return x + 1u;
+    ଫେରନ୍ତୁ x + 1u;
 #endif
 }
 
-static inline uint32_t
-keep_lowest_n_set_bits(uint32_t mask, unsigned int n) {
-    const uint32_t original = mask;
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint32_t
+keep_lowest_n_set_bits(uint32_t mask, unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା n) {
+    ଅଚଳ uint32_t original = mask;
 
     /* Clear the lowest set bit n times */
-    while (n-- && mask)
+    ଯେତେବେଳେ (n-- && mask)
         mask &= (mask - 1);
 
-    return original ^ mask;
+    ଫେରନ୍ତୁ original ^ mask;
 }

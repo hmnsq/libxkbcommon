@@ -6,23 +6,23 @@
  * Author: Daniel Stone <daniel@fooishbar.org>
  */
 
-#include "config.h"
+#ଅନ୍ତର୍ଭାଵ "config.h"
 
-#include <assert.h>
-#include <stdint.h>
-#include <string.h>
+#ଅନ୍ତର୍ଭାଵ <assert.h>
+#ଅନ୍ତର୍ଭାଵ <stdint.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-names.h"
-#include "features/enums.h"
-#include "keymap.h"
-#include "messages-codes.h"
+#ଅନ୍ତର୍ଭାଵ "xkbcommon/xkbcommon.h"
+#ଅନ୍ତର୍ଭାଵ "xkbcommon/xkbcommon-names.h"
+#ଅନ୍ତର୍ଭାଵ "features/enums.h"
+#ଅନ୍ତର୍ଭାଵ "keymap.h"
+#ଅନ୍ତର୍ଭାଵ "messages-codes.h"
 
-static void
-update_builtin_keymap_fields(struct xkb_keymap *keymap)
+ସ୍ଥିର ଶୂନ୍ୟ
+update_builtin_keymap_fields(ସଂରଚନା xkb_keymap *keymap)
 {
     /* Predefined (AKA real, core, X11) modifiers. The order is important! */
-    static const char *const builtin_mods[] = {
+    ସ୍ଥିର ଅଚଳ ଅକ୍ଷର *ଅଚଳ builtin_mods[] = {
         [XKB_MOD_INDEX_SHIFT] = XKB_MOD_NAME_SHIFT,
         [XKB_MOD_INDEX_CAPS]  = XKB_MOD_NAME_CAPS,
         [XKB_MOD_INDEX_CTRL]  = XKB_MOD_NAME_CTRL,
@@ -33,7 +33,7 @@ update_builtin_keymap_fields(struct xkb_keymap *keymap)
         [XKB_MOD_INDEX_MOD5]  = XKB_MOD_NAME_MOD5
     };
 
-    for (xkb_mod_index_t i = 0; i < ARRAY_SIZE(builtin_mods); i++) {
+    ପାଇଁ (xkb_mod_index_t i = 0; i < ARRAY_SIZE(builtin_mods); i++) {
         keymap->mods.mods[i].name = xkb_atom_intern(keymap->ctx,
                                                     builtin_mods[i],
                                                     strlen(builtin_mods[i]));
@@ -41,28 +41,28 @@ update_builtin_keymap_fields(struct xkb_keymap *keymap)
         /* Real modifiers have a canonical mapping */
         keymap->mods.mods[i].mapping = UINT32_C(1) << i;
     }
-    keymap->mods.num_mods = ARRAY_SIZE(builtin_mods);
+    keymap->mods.ଅଙ୍କ_mods = ARRAY_SIZE(builtin_mods);
     keymap->canonical_state_mask = MOD_REAL_MASK_ALL;
 }
 
-struct xkb_keymap *
-xkb_keymap_new(struct xkb_context *ctx, const char *func,
-               enum xkb_keymap_format format,
-               enum xkb_keymap_compile_flags flags)
+ସଂରଚନା xkb_keymap *
+xkb_keymap_new(ସଂରଚନା xkb_context *ctx, ଅଚଳ ଅକ୍ଷର *func,
+               ଗଣନା xkb_keymap_format format,
+               ଗଣନା xkb_keymap_compile_flags flags)
 {
-    const enum xkb_keymap_compile_flags invalid_flags = (
-        flags & ~(enum xkb_keymap_compile_flags)XKB_KEYMAP_COMPILE_FLAGS_VALUES
+    ଅଚଳ ଗଣନା xkb_keymap_compile_flags invalid_flags = (
+        flags & ~(ଗଣନା xkb_keymap_compile_flags)XKB_KEYMAP_COMPILE_FLAGS_ମୂଲ୍ୟଗୁଡ଼ିକ
     );
-    if (invalid_flags) {
+    ଯଦି (invalid_flags) {
         log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
                 "%s: unrecognized keymap compilation flags: 0x%x\n",
                 func, invalid_flags);
-        return NULL;
+        ଫେରନ୍ତୁ ଖାଲି;
     }
 
-    struct xkb_keymap * const keymap = calloc(1, sizeof(*keymap));
-    if (!keymap)
-        return NULL;
+    ସଂରଚନା xkb_keymap * ଅଚଳ keymap = calloc(1, ଆକାର(*keymap));
+    ଯଦି (!keymap)
+        ଫେରନ୍ତୁ ଖାଲି;
 
     keymap->refcnt = 1;
     keymap->ctx = xkb_context_ref(ctx);
@@ -72,163 +72,163 @@ xkb_keymap_new(struct xkb_context *ctx, const char *func,
 
     update_builtin_keymap_fields(keymap);
 
-    return keymap;
+    ଫେରନ୍ତୁ keymap;
 }
 
-void
-XkbEscapeMapName(char *name)
+ଶୂନ୍ୟ
+XkbEscapeMapName(ଅକ୍ଷର *name)
 {
     /*
      * All latin-1 alphanumerics, plus parens, slash, minus, underscore and
      * wildcards.
      */
-    static const unsigned char legal[] = {
+    ସ୍ଥିର ଅଚଳ unsigned ଅକ୍ଷର legal[] = {
         0x00, 0x00, 0x00, 0x00, 0x00, 0xa7, 0xff, 0x83,
         0xfe, 0xff, 0xff, 0x87, 0xfe, 0xff, 0xff, 0x07,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0xff, 0xff, 0x7f, 0xff, 0xff, 0xff, 0x7f, 0xff
     };
 
-    if (!name)
-        return;
+    ଯଦି (!name)
+        ଫେରନ୍ତୁ;
 
-    while (*name) {
-        unsigned char c = (unsigned char)*name;
-        if (!(legal[c / 8] & (1u << (c % 8))))
+    ଯେତେବେଳେ (*name) {
+        unsigned ଅକ୍ଷର c = (unsigned ଅକ୍ଷର)*name;
+        ଯଦି (!(legal[c / 8] & (1u << (c % 8))))
             *name = '_';
         name++;
     }
 }
 
 xkb_mod_index_t
-XkbModNameToIndex(const struct xkb_mod_set *mods, xkb_atom_t name,
-                  enum mod_type type)
+XkbModNameToIndex(ଅଚଳ ସଂରଚନା xkb_mod_set *mods, xkb_atom_t name,
+                  ଗଣନା mod_type type)
 {
     xkb_mod_index_t i;
-    const struct xkb_mod *mod;
+    ଅଚଳ ସଂରଚନା xkb_mod *mod;
 
     xkb_mods_enumerate(i, mod, mods)
-        if ((mod->type & type) && name == mod->name)
-            return i;
+        ଯଦି ((mod->type & type) && name == mod->name)
+            ଫେରନ୍ତୁ i;
 
-    return XKB_MOD_INVALID;
+    ଫେରନ୍ତୁ XKB_MOD_INVALID;
 }
 
 bool
-XkbLevelsSameSyms(const struct xkb_level *a, const struct xkb_level *b)
+XkbLevelsSameSyms(ଅଚଳ ସଂରଚନା xkb_level *a, ଅଚଳ ସଂରଚନା xkb_level *b)
 {
-    if (a->num_syms != b->num_syms)
-        return false;
-    if (a->num_syms <= 1)
-        return a->s.sym == b->s.sym;
-    return memcmp(a->s.syms, b->s.syms, sizeof(*a->s.syms) * a->num_syms) == 0;
+    ଯଦି (a->ଅଙ୍କ_syms != b->ଅଙ୍କ_syms)
+        ଫେରନ୍ତୁ false;
+    ଯଦି (a->ଅଙ୍କ_syms <= 1)
+        ଫେରନ୍ତୁ a->s.sym == b->s.sym;
+    ଫେରନ୍ତୁ memcmp(a->s.syms, b->s.syms, ଆକାର(*a->s.syms) * a->ଅଙ୍କ_syms) == 0;
 }
 
 bool
-action_equal(const union xkb_action *a, const union xkb_action *b)
+action_equal(ଅଚଳ ସଂଘ xkb_action *a, ଅଚଳ ସଂଘ xkb_action *b)
 {
-    if (a->type != b->type)
-        return false;
+    ଯଦି (a->type != b->type)
+        ଫେରନ୍ତୁ false;
 
-    switch (a->type) {
-    case ACTION_TYPE_NONE:
-    case ACTION_TYPE_VOID:
-        return true;
-    case ACTION_TYPE_MOD_SET:
-    case ACTION_TYPE_MOD_LATCH:
-    case ACTION_TYPE_MOD_LOCK:
-        return (a->mods.flags == b->mods.flags &&
+    ବାଛ (a->type) {
+    ସ୍ଥିତି ACTION_TYPE_NONE:
+    ସ୍ଥିତି ACTION_TYPE_VOID:
+        ଫେରନ୍ତୁ true;
+    ସ୍ଥିତି ACTION_TYPE_MOD_SET:
+    ସ୍ଥିତି ACTION_TYPE_MOD_LATCH:
+    ସ୍ଥିତି ACTION_TYPE_MOD_LOCK:
+        ଫେରନ୍ତୁ (a->mods.flags == b->mods.flags &&
                 a->mods.mods.mask == b->mods.mods.mask &&
                 a->mods.mods.mods == b->mods.mods.mods);
-    case ACTION_TYPE_GROUP_SET:
-    case ACTION_TYPE_GROUP_LATCH:
-    case ACTION_TYPE_GROUP_LOCK:
-        return (a->group.flags == b->group.flags &&
+    ସ୍ଥିତି ACTION_TYPE_GROUP_SET:
+    ସ୍ଥିତି ACTION_TYPE_GROUP_LATCH:
+    ସ୍ଥିତି ACTION_TYPE_GROUP_LOCK:
+        ଫେରନ୍ତୁ (a->group.flags == b->group.flags &&
                 a->group.group == b->group.group);
-    case ACTION_TYPE_PTR_MOVE:
-        return (a->ptr.flags == b->ptr.flags &&
+    ସ୍ଥିତି ACTION_TYPE_PTR_MOVE:
+        ଫେରନ୍ତୁ (a->ptr.flags == b->ptr.flags &&
                 a->ptr.x == b->ptr.x &&
                 a->ptr.y == b->ptr.y);
-    case ACTION_TYPE_PTR_BUTTON:
-    case ACTION_TYPE_PTR_LOCK:
-        return (a->btn.flags == b->btn.flags &&
+    ସ୍ଥିତି ACTION_TYPE_PTR_BUTTON:
+    ସ୍ଥିତି ACTION_TYPE_PTR_LOCK:
+        ଫେରନ୍ତୁ (a->btn.flags == b->btn.flags &&
                 a->btn.button == b->btn.button &&
-                a->btn.count == b->btn.count);
-    case ACTION_TYPE_PTR_DEFAULT:
-        return (a->dflt.flags == b->dflt.flags &&
-                a->dflt.value == b->dflt.value);
-    case ACTION_TYPE_TERMINATE:
-        return true;
-    case ACTION_TYPE_SWITCH_VT:
-        return (a->screen.flags == b->screen.flags &&
+                a->btn.ଗଣନା_2 == b->btn.ଗଣନା_2);
+    ସ୍ଥିତି ACTION_TYPE_PTR_DEFAULT:
+        ଫେରନ୍ତୁ (a->dflt.flags == b->dflt.flags &&
+                a->dflt.ମୂଲ୍ୟ == b->dflt.ମୂଲ୍ୟ);
+    ସ୍ଥିତି ACTION_TYPE_TERMINATE:
+        ଫେରନ୍ତୁ true;
+    ସ୍ଥିତି ACTION_TYPE_SWITCH_VT:
+        ଫେରନ୍ତୁ (a->screen.flags == b->screen.flags &&
                 a->screen.screen == b->screen.screen);
-    case ACTION_TYPE_CTRL_SET:
-    case ACTION_TYPE_CTRL_LOCK:
-        return (a->ctrls.flags == b->ctrls.flags &&
+    ସ୍ଥିତି ACTION_TYPE_CTRL_SET:
+    ସ୍ଥିତି ACTION_TYPE_CTRL_LOCK:
+        ଫେରନ୍ତୁ (a->ctrls.flags == b->ctrls.flags &&
                 a->ctrls.ctrls == b->ctrls.ctrls);
-    case ACTION_TYPE_REDIRECT_KEY:
-        return (a->redirect.keycode == b->redirect.keycode &&
+    ସ୍ଥିତି ACTION_TYPE_REDIRECT_ଚାବି:
+        ଫେରନ୍ତୁ (a->redirect.keycode == b->redirect.keycode &&
                 a->redirect.affect_mods == b->redirect.affect_mods &&
                 a->redirect.mods == b->redirect.mods);
-    case ACTION_TYPE_UNSUPPORTED_LEGACY:
-    case ACTION_TYPE_UNKNOWN:
-        return true;
+    ସ୍ଥିତି ACTION_TYPE_UNSUPPORTED_LEGACY:
+    ସ୍ଥିତି ACTION_TYPE_UNKNOWN:
+        ଫେରନ୍ତୁ true;
     /* ACTION_TYPE_PRIVATE processed in the default case */
-    case ACTION_TYPE_INTERNAL:
-        return (a->internal.flags == b->internal.flags) &&
+    ସ୍ଥିତି ACTION_TYPE_INTERNAL:
+        ଫେରନ୍ତୁ (a->internal.flags == b->internal.flags) &&
                (a->internal.clear_latched_mods == b->internal.clear_latched_mods);
-    default:
+    ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
         {} /* Label followed by declaration requires C23 */
         /* Ensure to not miss `xkb_action_type` updates */
         static_assert(ACTION_TYPE_INTERNAL == 20 &&
-                      ACTION_TYPE_INTERNAL + 1 == _ACTION_TYPE_NUM_ENTRIES,
+                      ACTION_TYPE_INTERNAL + 1 == ACTION_TYPE_ଅଙ୍କ_ENTRIES,
                       "Missing action type");
         /* Private/custom action */
-        return memcmp(a->priv.data, b->priv.data, sizeof(a->priv.data)) == 0;
+        ଫେରନ୍ତୁ memcmp(a->priv.data, b->priv.data, ଆକାର(a->priv.data)) == 0;
     }
 }
 
 bool
-XkbLevelsSameActions(const struct xkb_level *a, const struct xkb_level *b)
+XkbLevelsSameActions(ଅଚଳ ସଂରଚନା xkb_level *a, ଅଚଳ ସଂରଚନା xkb_level *b)
 {
-    if (a->num_actions != b->num_actions)
-        return false;
-    if (a->num_actions <= 1)
-        return action_equal(&a->a.action, &b->a.action);
-    for (xkb_action_count_t k = 0; k < a->num_actions; k++) {
-        if (!action_equal(&a->a.actions[k], &b->a.actions[k]))
-            return false;
+    ଯଦି (a->ଅଙ୍କ_actions != b->ଅଙ୍କ_actions)
+        ଫେରନ୍ତୁ false;
+    ଯଦି (a->ଅଙ୍କ_actions <= 1)
+        ଫେରନ୍ତୁ action_equal(&a->a.action, &b->a.action);
+    ପାଇଁ (xkb_action_ଗଣନା_t k = 0; k < a->ଅଙ୍କ_actions; k++) {
+        ଯଦି (!action_equal(&a->a.actions[k], &b->a.actions[k]))
+            ଫେରନ୍ତୁ false;
     }
-    return true;
+    ଫେରନ୍ତୁ true;
 }
 
 /* See: XkbAdjustGroup in Xorg xserver */
 xkb_layout_index_t
 XkbWrapGroupIntoRange(int32_t group,
-                      xkb_layout_index_t num_groups,
-                      enum xkb_layout_out_of_range_policy out_of_range_group_policy,
-                      xkb_layout_index_t out_of_range_group_number)
+                      xkb_layout_index_t ଅଙ୍କ_groups,
+                      ଗଣନା xkb_layout_out_of_range_policy out_of_range_group_policy,
+                      xkb_layout_index_t out_of_range_group_ସଂଖ୍ୟା)
 {
-    if (num_groups == 0)
-        return XKB_LAYOUT_INVALID;
+    ଯଦି (ଅଙ୍କ_groups == 0)
+        ଫେରନ୍ତୁ XKB_LAYOUT_INVALID;
 
-    if (group >= 0 && (xkb_layout_index_t)group < num_groups)
-        return (xkb_layout_index_t)group;
+    ଯଦି (group >= 0 && (xkb_layout_index_t)group < ଅଙ୍କ_groups)
+        ଫେରନ୍ତୁ (xkb_layout_index_t)group;
 
-    switch (out_of_range_group_policy) {
-    case XKB_LAYOUT_OUT_OF_RANGE_REDIRECT:
-        if (out_of_range_group_number >= num_groups)
-            return 0;
-        return out_of_range_group_number;
+    ବାଛ (out_of_range_group_policy) {
+    ସ୍ଥିତି XKB_LAYOUT_OUT_OF_RANGE_REDIRECT:
+        ଯଦି (out_of_range_group_ସଂଖ୍ୟା >= ଅଙ୍କ_groups)
+            ଫେରନ୍ତୁ 0;
+        ଫେରନ୍ତୁ out_of_range_group_ସଂଖ୍ୟା;
 
-    case XKB_LAYOUT_OUT_OF_RANGE_CLAMP:
-        if (group < 0)
-            return 0;
-        else
-            return num_groups - 1;
+    ସ୍ଥିତି XKB_LAYOUT_OUT_OF_RANGE_CLAMP:
+        ଯଦି (group < 0)
+            ଫେରନ୍ତୁ 0;
+        ଅନ୍ୟଥା
+            ଫେରନ୍ତୁ ଅଙ୍କ_groups - 1;
 
-    case XKB_LAYOUT_OUT_OF_RANGE_WRAP:
-    default: {
+    ସ୍ଥିତି XKB_LAYOUT_OUT_OF_RANGE_WRAP:
+    ପୂର୍ବନିର୍ଦ୍ଧାରିତ: {
         /*
          * Ensure conversion xkb_layout_index_t → int32_t is lossless.
          *
@@ -245,45 +245,45 @@ XkbWrapGroupIntoRange(int32_t group,
          * positive. So if the remainder is negative, we must add `num_groups`
          * to get the modulus.
          */
-        const int32_t rem = group % (int32_t) num_groups;
-        return (rem >= 0)
+        ଅଚଳ int32_t rem = group % (int32_t) ଅଙ୍କ_groups;
+        ଫେରନ୍ତୁ (rem >= 0)
             ? (xkb_layout_index_t)rem
-            : (xkb_layout_index_t)(rem + (int32_t)num_groups);
+            : (xkb_layout_index_t)(rem + (int32_t)ଅଙ୍କ_groups);
     }
     }
 }
 
-xkb_action_count_t
-xkb_keymap_key_get_actions_by_level(const struct xkb_keymap *keymap,
-                                    const struct xkb_key *key,
+xkb_action_ଗଣନା_t
+xkb_keymap_ଚାବି_get_actions_by_level(ଅଚଳ ସଂରଚନା xkb_keymap *keymap,
+                                    ଅଚଳ ସଂରଚନା xkb_ଚାବି *ଚାବି,
                                     xkb_layout_index_t layout,
                                     xkb_level_index_t level,
-                                    const union xkb_action **actions)
+                                    ଅଚଳ ସଂଘ xkb_action **actions)
 {
-    if (!key)
-        goto err;
+    ଯଦି (!ଚାବି)
+        ଯାଅ err;
 
-    layout = xkb_keymap_key_effective_layout(key, layout);
-    if (layout == XKB_LAYOUT_INVALID)
-        goto err;
+    layout = xkb_keymap_ଚାବି_effective_layout(ଚାବି, layout);
+    ଯଦି (layout == XKB_LAYOUT_INVALID)
+        ଯାଅ err;
 
-    if (level >= XkbKeyNumLevels(key, layout))
-        goto err;
+    ଯଦି (level >= Xkb_ଚାବି_ଅଙ୍କ_Levels(ଚାବି, layout))
+        ଯାଅ err;
 
-    const xkb_action_count_t count =
-        key->groups[layout].levels[level].num_actions;
-    switch (count) {
-        case 0:
-            goto err;
-        case 1:
-            *actions = &key->groups[layout].levels[level].a.action;
-            break;
-        default:
-            *actions = key->groups[layout].levels[level].a.actions;
+    ଅଚଳ xkb_action_ଗଣନା_t ଗଣନା_2 =
+        ଚାବି->groups[layout].levels[level].ଅଙ୍କ_actions;
+    ବାଛ (ଗଣନା_2) {
+        ସ୍ଥିତି 0:
+            ଯାଅ err;
+        ସ୍ଥିତି 1:
+            *actions = &ଚାବି->groups[layout].levels[level].a.action;
+            ଭାଙ୍ଗ;
+        ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
+            *actions = ଚାବି->groups[layout].levels[level].a.actions;
     }
-    return count;
+    ଫେରନ୍ତୁ ଗଣନା_2;
 
 err:
-    *actions = NULL;
-    return 0;
+    *actions = ଖାଲି;
+    ଫେରନ୍ତୁ 0;
 }
