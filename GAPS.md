@@ -1,0 +1,561 @@
+# What is still missing
+
+76 languages. Each line says in how many languages it is missing.
+
+## Files in languages BURP cannot read yet
+
+
+## Keywords with no word in a language's table
+
+- wyaaka:yyparse: 75
+- guru:__FILE__: 75
+- guru:size_t: 71
+- guru:FILE: 71
+- guru:stderr: 71
+- guru:CHAR_BIT: 71
+- guru:va_list: 71
+- guru:errno: 71
+- guru:fprintf: 71
+- guru:fclose: 71
+- guru:va_end: 71
+- guru:realloc: 71
+- guru:va_start: 71
+- guru:strerror: 71
+- guru:memcmp: 71
+- guru:EXIT_SUCCESS: 71
+- guru:fopen: 71
+- guru:offsetof: 71
+- guru:memmove: 71
+- guru:NDEBUG: 71
+- guru:closedir: 71
+- guru:strchr: 71
+- guru:getenv: 71
+- guru:strtol: 71
+- guru:ptrdiff_t: 71
+- guru:DIR: 71
+- guru:opendir: 71
+- guru:readdir: 71
+- guru:vfprintf: 71
+- guru:UINT_MAX: 71
+- guru:memchr: 71
+- guru:va_arg: 71
+- guru:fstat: 71
+- guru:fseek: 71
+- guru:close: 71
+- guru:abort: 71
+- guru:isprint: 71
+- guru:SEEK_END: 71
+- guru:ftell: 71
+- guru:SEEK_SET: 71
+- guru:fread: 71
+- guru:labs: 71
+- guru:UCHAR_MAX: 71
+- guru:USHRT_MAX: 71
+- guru:LONG_MAX: 71
+- guru:memset: 70
+- guru:strcmp: 70
+- guru:qsort: 70
+- guru:rand: 70
+- guru:srand: 70
+- guru:open: 70
+- guru:restrict: 67
+- guru:#line: 66
+- guru:#define: 66
+- guru:#endif: 66
+- guru:#ifdef: 66
+- guru:#pragma: 66
+- guru:#ifndef: 66
+- guru:#undef: 66
+- wyaaka:#define: 66
+- guru:#error: 66
+- guru:unsigned: 62
+- guru:long: 62
+- guru:calloc: 62
+- guru:signed: 62
+- guru:strlen: 62
+- guru:short: 62
+- guru:memcpy: 62
+- guru:malloc: 62
+- guru:INT_MAX: 62
+- guru:strncmp: 62
+- guru:exit: 62
+- wyaaka:unsigned: 62
+- guru:abs: 62
+- wyaaka:memcpy: 62
+- wyaaka:strlen: 62
+- guru:virtual: 40
+- wyaaka:type: 26
+- guru:const: 25
+- guru:static: 25
+- guru:NULL: 25
+- guru:void: 25
+- guru:goto: 25
+- guru:free: 25
+- guru:assert: 25
+- guru:typedef: 25
+- guru:switch: 25
+- guru:default: 25
+- guru:continue: 25
+- wyaaka:NULL: 25
+- guru:do: 25
+- guru:#elif: 25
+- guru:extern: 25
+- wyaaka:void: 25
+- wyaaka:const: 25
+- wyaaka:free: 25
+- wyaaka:static: 25
+- guru:for: 9
+- wyaaka:for: 9
+- guru:struct: 9
+- guru:char: 9
+- guru:case: 9
+- guru:enum: 9
+- guru:break: 9
+- guru:sizeof: 9
+- guru:inline: 9
+- guru:union: 9
+- wyaaka:struct: 9
+- guru:register: 9
+- wyaaka:char: 9
+- wyaaka:enum: 9
+- guru:double: 9
+- wyaaka:sizeof: 9
+- guru:if: 1
+- guru:return: 1
+- guru:else: 1
+- guru:int: 1
+- guru:while: 1
+- guru:#if: 1
+- guru:#else: 1
+- wyaaka:if: 1
+- wyaaka:else: 1
+- wyaaka:return: 1
+- wyaaka:int: 1
+- wyaaka:while: 1
+
+## Names with no dictionary entry (the most common first)
+
+- `ctx`: 76
+- `keymap`: 76
+- `info`: 76
+- `s`: 76
+- `type`: 76
+- `mods`: 76
+- `state`: 76
+- `name`: 76
+- `i`: 76
+- `action`: 76
+- `buf`: 76
+- `m`: 76
+- `flags`: 76
+- `log_err`: 76
+- `filter`: 76
+- `yyvsp`: 76
+- `yyval`: 76
+- `components`: 76
+- `file`: 76
+- `iter`: 76
+- `keymap_info`: 76
+- `xkb_context`: 76
+- `idx`: 76
+- `len`: 76
+- `config`: 76
+- `from`: 76
+- `level`: 76
+- `common`: 76
+- `keyi`: 76
+- `defined`: 76
+- `format`: 76
+- `def`: 76
+- `a`: 76
+- `ret`: 76
+- `stmt`: 76
+- `events`: 76
+- `uint32_t`: 76
+- `rmlvo`: 76
+- `k`: 76
+- `into`: 76
+- `mapping`: 76
+- `string`: 76
+- `keysym`: 76
+- `xkb_keymap`: 76
+- `ParseCommon`: 76
+- `param`: 76
+- `val`: 76
+- `xkb_atom_t`: 76
+- `arr`: 76
+- `scanner`: 76
+- `groups`: 76
+- `str`: 76
+- `kc`: 76
+- `layout`: 76
+- `wire`: 76
+- `led`: 76
+- `ok`: 76
+- `x`: 76
+- `actions`: 76
+- `PRIu32`: 76
+- `strict`: 76
+- `layouts`: 76
+- `keycode`: 76
+- `xkb_keysym_t`: 76
+- `pos`: 76
+- `define`: 76
+- `sval`: 76
+- `old`: 76
+- `list`: 76
+- `update`: 76
+- `l`: 76
+- `write_buf`: 76
+- `xkb_keycode_t`: 76
+- `syms`: 76
+- `act`: 76
+- `interp`: 76
+- `pending`: 76
+- `sym`: 76
+- `FreeStmt`: 76
+- `b`: 76
+- `atom`: 76
+- `store`: 76
+- `priv`: 76
+- `XkbFile`: 76
+- `err`: 76
+- `map`: 76
+- `xkb_file`: 76
+- `conn`: 76
+- `interner`: 76
+- `mod`: 76
+- `istreq`: 76
+- `darray_append`: 76
+- `alias`: 76
+- `refcnt`: 76
+- `matcher`: 76
+- `clobber`: 76
+- `tmp`: 76
+- `direction`: 76
+- `uint8_t`: 76
+- `si`: 76
+- `fmt`: 76
+- `identical`: 76
+- `overlays`: 76
+- `scanner_err`: 76
+- `ks`: 76
+- `j`: 76
+- `leveli`: 76
+- `xkb_state`: 76
+- `xkb_server_state`: 76
+- `XKB_SUCCESS`: 76
+- `arrayNdx`: 76
+- `ident`: 76
+- `assert_no_padding`: 76
+- `scanner_chr`: 76
+- `error`: 76
+- `entries`: 76
+- `controls`: 76
+- `builder`: 76
+- `sm`: 76
+- `section`: 76
+- `xkb_action`: 76
+- `_v1`: 76
+- `darray_free`: 76
+- `keymap1`: 76
+- `keycodes`: 76
+- `T`: 76
+- `XKB_ATOM_NONE`: 76
+- `xkb_events`: 76
+- `event`: 76
+- `report`: 76
+- `PRIx32`: 76
+- `groupi`: 76
+- `func`: 76
+- `keymap2`: 76
+- `redirect`: 76
+- `ndx`: 76
+- `elem`: 76
+- `file_type`: 76
+- `kccgst`: 76
+- `darray`: 76
+- `ledi`: 76
+- `yyvaluep`: 76
+- `mid`: 76
+- `darray_foreach`: 76
+- `XKB_LAYOUT_INVALID`: 76
+- `variant`: 76
+- `types`: 76
+- `int32_t`: 76
+- `xkb_filter`: 76
+- `production`: 76
+- `log_warn`: 76
+- `ptr`: 76
+- `xkb_keymap_format`: 76
+- `popularity`: 76
+- `array_ndx`: 76
+- `stringpool_t`: 76
+- `btn`: 76
+- `rtrn`: 76
+- `DEPRECATED_KEYSYM`: 76
+- `locked_mods`: 76
+- `xkb_keymap_info`: 76
+- `vmod`: 76
+- `id`: 76
+- `ctrls`: 76
+- `c`: 76
+- `button`: 76
+- `val_rtrn`: 76
+- `tok`: 76
+- `v`: 76
+- `FreeXkbFile`: 76
+- `yyn`: 76
+- `once`: 76
+- `unlikely`: 76
+- `real`: 76
+- `ch`: 76
+- `options`: 76
+- `int64_t`: 76
+- `endif`: 76
+- `VarDef`: 76
+- `y`: 76
+- `max_groups`: 76
+- `fail`: 76
+- `xkb_atom_intern_literal`: 76
+- `g`: 76
+- `intoLevel`: 76
+- `rxkb_context`: 76
+- `darray_init`: 76
+- `xkb_level`: 76
+- `modmaps`: 76
+- `xkb_state_component`: 76
+- `link`: 76
+- `latched_mods`: 76
+- `xkb_state_components_update`: 76
+- `FAIL_UNLESS`: 76
+- `PARSER_SUCCESS`: 76
+- `substitutions`: 76
+- `o`: 76
+- `verbosity`: 76
+- `leds`: 76
+- `XKB_FILTER_CONSUME`: 76
+- `PARSER_FATAL_ERROR`: 76
+- `expanded`: 76
+- `utf8`: 76
+- `model`: 76
+- `u`: 76
+- `option`: 76
+- `xkb_event_components`: 76
+- `overlays_alloc`: 76
+- `s1`: 76
+- `cp`: 76
+- `xkb_parser_error`: 76
+- `skip`: 76
+- `e`: 76
+- `MOD_BOTH`: 76
+- `elm`: 76
+- `geom`: 76
+- `scanner_peek`: 76
+- `CompatInfo`: 76
+- `buf2`: 76
+- `varList`: 76
+- `fromLevel`: 76
+- `scanner_buf_append`: 76
+- `env`: 76
+- `ACTION_TYPE_NONE`: 76
+- `xkb_action_type`: 76
+- `n`: 76
+- `xkb_event`: 76
+- `r`: 76
+- `PRId64`: 76
+- `included`: 76
+- `var`: 76
+- `context`: 76
+- `name1`: 76
+- `s2`: 76
+- `m1`: 76
+- `use`: 76
+- `SymbolsInfo`: 76
+- `locale`: 76
+- `invalid_flags`: 76
+- `m2`: 76
+- `parser_keymap_config`: 76
+- `matched`: 76
+- `file_name`: 76
+- `extensions`: 76
+- `which_groups`: 76
+- `affect_mods`: 76
+- `xkb_keymap_serialize_config`: 76
+- `min`: 76
+- `xcb_connection_t`: 76
+- `collide`: 76
+- `SEMI`: 76
+- `screen`: 76
+- `XKB_MAX_GROUPS`: 76
+- `ACTION_ABSOLUTE_SWITCH`: 76
+- `yyssp`: 76
+- `OBRACE`: 76
+- `CBRACE`: 76
+- `mval`: 76
+- `f`: 76
+- `alloc`: 76
+- `which_mods`: 76
+- `xkb_action_controls`: 76
+- `description`: 76
+- `steal`: 76
+- `xkb_machine`: 76
+- `modifiers`: 76
+- `IncludeStmt`: 76
+- `xkb_file_type`: 76
+- `yyi`: 76
+- `buf_pos`: 76
+- `nodes`: 76
+- `include`: 76
+- `uintptr_t`: 76
+- `type_`: 76
+- `latch`: 76
+- `PARSER_RECOVERABLE_ERROR`: 76
+- `incl`: 76
+- `pc`: 76
+- `any`: 76
+- `variants`: 76
+- `overlays_clear`: 76
+- `t`: 76
+- `home`: 76
+- `snprintf`: 76
+- `log_vrb`: 76
+- `uint16_t`: 76
+- `is_alias`: 76
+- `XKB_FILTER_CONTINUE`: 76
+- `cookie`: 76
+- `cache`: 76
+- `VModDef`: 76
+- `ignore`: 76
+- `mapFlags`: 76
+- `suffix`: 76
+- `scanner_warn`: 76
+- `xkb_context_getenv`: 76
+- `stat_buf`: 76
+- `MIN`: 76
+- `key1`: 76
+- `preserve`: 76
+
+## Comments with no translation
+
+- borrowed from events: 76
+- fallthrough: 76
+- Ensure there is no implicit padding: 76
+- Current version is 1: 76
+- Ensure reasonable margin to the upper size limit: 76
+- INFRINGES ON USER NAME SPACE: 76
+- Check ABI compatibility: 76
+- Implemented with xkb_machine API because it requires struct xkb_machine: 76
+- assume valid index: 76
+- NOTE: cannot compare atoms: keymaps may use different contexts: 76
+- Steal: 76
+- Label followed by declaration requires C23: 76
+- Ensure to not miss `xkb_action_type` updates: 76
+- Ignore.: 76
+- Low keycodes: 76
+- XXX beep beep!: 76
+- Skip spaces.: 76
+- * Only use default if path is undefined, but accept empty string, which may
+     * be unintentional : 76
+- Actions: 76
+- Short-circuit because array is sorted: 76
+- Lax bound: 76
+- *****************************************************************************
+ * xkb_machine_builder: 76
+- Explicit sign to avoid setting ACTION_ABSOLUTE_SWITCH: 76
+- isolate lowest set bit: 76
+- "invalid token": 76
+- TODO: Use Bison’s more appropriate YYNOMEM: 76
+- Skip comments.: 76
+- Basic detection of wrong character encoding.
+       The first character relevant to the grammar must: 76
+- Offset into xkb_compose_table::nodes or 0.: 76
+- NOLINTBEGIN(bugprone-sizeof-expression): 76
+- NOLINTEND(bugprone-sizeof-expression): 76
+- Handle default configuration: 76
+- High keycodes: use binary search: 76
+- Invalid keysym: 76
+- Backtrack: 76
+- *< effective: 76
+- Guard against client-only state: 76
+- *
+ * Returns 1 if the given modifier is active with the specified type(s), 0 if
+ * not, or -1 if the: 76
+- Reference count is not updated. See API doc.: 76
+- Stored inline: 76
+- Stored in sparse array: 76
+- Can be NULL in case the malloc failed.: 76
+- No error reported: field is just ignored: 76
+- Prefix is title-cased, because it is also used in error messages: 76
+- Absolute path: no need for lookup in XKB paths: 76
+- Relative path: lookup the first XKB path: 76
+- get its index: 76
+- "string literal": 76
+- Actual size of YYARG.: 76
+- Identifier: 76
+- Values returned with some tokens, like yylval.: 76
+- See if we're done.: 76
+- New token.: 76
+- String literal.: 76
+- Discard rest of line.: 76
+- Ensure we reset possible previous entry: 76
+- NOLINTBEGIN(readability-trivial-switch): 76
+- NOLINTEND(readability-trivial-switch): 76
+- Label followed by a declaration is a C23 extension: 76
+- *
+ * Append one directory to the context’s include path.: 76
+- Use “info” log level to facilitate bug reporting.: 76
+- * This error is not fatal because some valid paths may still be defined.
+     * Use “info” log level: 76
+- Check extensions parent directory: 76
+- Additional final ‘/’: 76
+- Skip special entries: 76
+- Skip if the corresponding versioned directory is already included: 76
+- Label at end of compound statement is a C23 extension: 76
+- Sort the entries, so that they are appended in lexicographic order: 76
+- Accept empty string, which may be unintentional and should be reported: 76
+- XDG_CONFIG_HOME fallback is $HOME/.config/: 76
+- Versioned extensions directory: 76
+- Add direct subdirectories: 76
+- Unversioned extensions directory: 76
+- * Add direct subdirectories, except those already added from the
+         * *versioned* extensions p: 76
+- Canonical XKB root: 76
+- * Fallback for misconfigured setups.
+     * Some setups use the assumption that the canonical XKB ro: 76
+- Environment overwrites defaults.: 76
+- * The format is not part of the argument list in order to avoid the
+ * "ISO C99 requires rest argume: 76
+- * NOTE: This file has been generated automatically by “scripts/export-enums.py”.
+ *       Do not edi: 76
+- implicit minimum: 76
+- It does not make sense to compare further properties: 76
+- No point to check further properties: 76
+- *****************************************************************************
+ * xkb_keymap_serializ: 76
+- *****************************************************************************
+ * Utils
+ ************: 76
+- * Size of the *first version* of the struct: 76
+- * Minimal *current* valid size of the struct: 76
+- * Offset of the last meaningful field of the current struct: 76
+- V1 is the smallest struct version: 76
+- Minimal size is lower or equal to the current size: 76
+- * Check ABI compatibility: 76
+- NOLINTBEGIN(bugprone-assignment-in-selection-statement): 76
+- NOLINTEND(bugprone-assignment-in-selection-statement): 76
+- Action specific and internal to xkbcommon: 76
+- *
+     * Indicate that the action has an explicit `unlockOnPress` value.
+     *
+     * Used *during*: 76
+- num_actions >  1: 76
+- num_syms > 1: 76
+- *
+     * Target overlays keys, if any.
+     *
+     * For 0 or 1 elements storage is inline in the st: 76
+- Do not edit manually!: 76
+- This predicate matches keysyms with their corresponding Unicode code point
+     * having the Unicode: 76
+- 3270_AltCursor: 76
