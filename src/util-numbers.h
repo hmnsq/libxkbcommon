@@ -10,7 +10,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#if defined(_MSC_VER)
+#အကယ်၍ defined(_MSC_VER)
 # include <intrin.h>
 #endif
 
@@ -27,23 +27,23 @@
  */
 
 #define MAKE_PARSE_DEC_TO(type, max)                         \
-static inline int                                            \
-parse_dec_to_##type(const char *s, size_t len, type (*out))  \
+static anta_hstha ကိန်းပြည့်                                            \
+parse_dec_to_##type(const var_na *s, size_t len, type (*out))  \
 {                                                            \
     type result = 0;                                         \
     size_t i;                                                \
-    for (i = 0;                                              \
-         i < len && (unsigned char)(s[i] - '0') < 10U &&     \
+    အတွက် (i = 0;                                              \
+         i < len && (unsigned var_na)(s[i] - '0') < 10U &&     \
          result <= (max) / 10 &&                             \
-         result * 10 <= (max) - (unsigned char) (s[i] - '0');\
+         result * 10 <= (max) - (unsigned var_na) (s[i] - '0');\
          i++) {                                              \
         result = result * 10 + (type)(s[i] - '0');           \
     }                                                        \
     *out = result;                                           \
     /* Check if there is more to parse */                    \
     /* We can safely convert the length to int on success */ \
-    return (i >= len || (unsigned char)(s[i] - '0') >= 10U)  \
-           ? (int) i                                         \
+    ပြန်ပေး (i >= len || (unsigned var_na)(s[i] - '0') >= 10U)  \
+           ? (ကိန်းပြည့်) i                                         \
            : -1;                                             \
 }
 
@@ -63,7 +63,7 @@ MAKE_PARSE_DEC_TO(uint64_t, UINT64_MAX)
 
 #undef MAKE_PARSE_DEC_TO
 
-static const unsigned char digits__[] = {
+static const unsigned var_na digits__[] = {
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
@@ -89,20 +89,20 @@ static const unsigned char digits__[] = {
 };
 
 #define MAKE_PARSE_HEX_TO(type, max)                           \
-static inline int                                              \
-parse_hex_to_##type(const char *s, size_t len, type (*out))    \
+static anta_hstha ကိန်းပြည့်                                              \
+parse_hex_to_##type(const var_na *s, size_t len, type (*out))    \
 {                                                              \
     type result = 0;                                           \
     size_t i = 0;                                              \
-    for (; i < len && digits__[(unsigned char) s[i]] < 16u &&  \
+    အတွက် (; i < len && digits__[(unsigned var_na) s[i]] < 16u &&  \
          result <= (max) >> 4;                                 \
          i++) {                                                \
-        result = result * 16 + digits__[(unsigned char) s[i]]; \
+        result = result * 16 + digits__[(unsigned var_na) s[i]]; \
     }                                                          \
     *out = result;                                             \
     /* Check if there is more to parse */                      \
     /* We can safely convert the length to int on success */   \
-    return (i >= len || !is_xdigit(s[i])) ? (int) i : -1;      \
+    ပြန်ပေး (i >= len || !is_xdigit(s[i])) ? (ကိန်းပြည့်) i : -1;      \
 }
 
 /**
@@ -121,104 +121,104 @@ MAKE_PARSE_HEX_TO(uint64_t, UINT64_MAX)
 
 #undef MAKE_PARSE_HEX_TO
 
-static inline unsigned int
+static anta_hstha unsigned ကိန်းပြည့်
 popcount32(uint32_t x)
 {
-#if defined(__GNUC__) || defined(__clang__)
-    return (unsigned int)__builtin_popcountl(x);
+#အကယ်၍ defined(__GNUC__) || defined(__clang__)
+    ပြန်ပေး (unsigned ကိန်းပြည့်)__builtin_popcountl(x);
 #elif defined(_MSC_VER)
-    return __popcnt(x);
-#else
+    ပြန်ပေး __popcnt(x);
+#မဟုတ်ပါက
     /* Fallback (Brian Kernighan’s method) */
-    unsigned int count = 0;
-    while (x) {
+    unsigned ကိန်းပြည့် count = 0;
+    နေစဉ် (x) {
         x &= x - 1;
         count++;
     }
-    return count;
+    ပြန်ပေး count;
 #endif
 }
 
-static inline unsigned int
+static anta_hstha unsigned ကိန်းပြည့်
 ctz32(uint32_t x)
 {
-    if (x == 0)
-        return 32;
+    အကယ်၍ (x == 0)
+        ပြန်ပေး 32;
 
-#if defined(__GNUC__) || defined(__clang__)
-    return _Generic(
+#အကယ်၍ defined(__GNUC__) || defined(__clang__)
+    ပြန်ပေး _Generic(
         x,
-        unsigned int: (unsigned int)__builtin_ctz(x),
-        unsigned long: (unsigned int)__builtin_ctzl(x),
-        unsigned long long: (unsigned int)__builtin_ctzll(x)
+        unsigned ကိန်းပြည့်: (unsigned ကိန်းပြည့်)__builtin_ctz(x),
+        unsigned long: (unsigned ကိန်းပြည့်)__builtin_ctzl(x),
+        unsigned long long: (unsigned ကိန်းပြည့်)__builtin_ctzll(x)
     );
 #elif defined(_MSC_VER)
     unsigned long index;
     _BitScanForward(&index, x);
-    return (unsigned int)index;
-#else
+    ပြန်ပေး (unsigned ကိန်းပြည့်)index;
+#မဟုတ်ပါက
     /* Fallback: De Bruijn sequence algorithm for 32-bit integers */
-    static const unsigned int debruijn32[32] = {
+    static const unsigned ကိန်းပြည့် debruijn32[32] = {
         0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8,
         31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9
     };
-    return debruijn32[((x & -x) * UINT32_C(0x077cb531)) >> 27];
+    ပြန်ပေး debruijn32[((x & -x) * UINT32_C(0x077cb531)) >> 27];
 #endif
 }
 
-static inline unsigned int
+static anta_hstha unsigned ကိန်းပြည့်
 clz32(uint32_t x)
 {
-    if (x == 0)
-        return 32;
+    အကယ်၍ (x == 0)
+        ပြန်ပေး 32;
 
-#if defined(__GNUC__) || defined(__clang__)
-    return _Generic(
+#အကယ်၍ defined(__GNUC__) || defined(__clang__)
+    ပြန်ပေး _Generic(
         x,
-        unsigned int:
-            (unsigned int)__builtin_clz(x) -
-            (unsigned int)((sizeof(unsigned int) * CHAR_BIT) - 32),
+        unsigned ကိန်းပြည့်:
+            (unsigned ကိန်းပြည့်)__builtin_clz(x) -
+            (unsigned ကိန်းပြည့်)((parimaa_na(unsigned ကိန်းပြည့်) * CHAR_BIT) - 32),
         unsigned long:
-            (unsigned int)__builtin_clzl(x) -
-            (unsigned int)((sizeof(unsigned long) * CHAR_BIT) - 32),
+            (unsigned ကိန်းပြည့်)__builtin_clzl(x) -
+            (unsigned ကိန်းပြည့်)((parimaa_na(unsigned long) * CHAR_BIT) - 32),
         unsigned long long:
-            (unsigned int)__builtin_clzll(x) -
-            (unsigned int)((sizeof(unsigned long long) * CHAR_BIT) - 32)
+            (unsigned ကိန်းပြည့်)__builtin_clzll(x) -
+            (unsigned ကိန်းပြည့်)((parimaa_na(unsigned long long) * CHAR_BIT) - 32)
     );
-#else
+#မဟုတ်ပါက
     // Efficient binary search fallback for 32-bit integers
-    unsigned int count = 0;
-    if ((x & 0xffff0000) == 0) { count += 16; x <<= 16; }
-    if ((x & 0xff000000) == 0) { count += 8;  x <<= 8;  }
-    if ((x & 0xf0000000) == 0) { count += 4;  x <<= 4;  }
-    if ((x & 0xc0000000) == 0) { count += 2;  x <<= 2;  }
-    if ((x & 0x80000000) == 0) { count += 1; }
-    return count;
+    unsigned ကိန်းပြည့် count = 0;
+    အကယ်၍ ((x & 0xffff0000) == 0) { count += 16; x <<= 16; }
+    အကယ်၍ ((x & 0xff000000) == 0) { count += 8;  x <<= 8;  }
+    အကယ်၍ ((x & 0xf0000000) == 0) { count += 4;  x <<= 4;  }
+    အကယ်၍ ((x & 0xc0000000) == 0) { count += 2;  x <<= 2;  }
+    အကယ်၍ ((x & 0x80000000) == 0) { count += 1; }
+    ပြန်ပေး count;
 #endif
 }
 
-static inline unsigned int
-next_pow2(unsigned int x)
+static anta_hstha unsigned ကိန်းပြည့်
+next_pow2(unsigned ကိန်းပြည့် x)
 {
-#if defined(__GNUC__) || defined(__clang__)
-    if (x <= 1) return 1u;
-    return 1u << ((int)sizeof(unsigned) * CHAR_BIT - __builtin_clz(x - 1));
-#else
-    if (x <= 1u) return 1u;
+#အကယ်၍ defined(__GNUC__) || defined(__clang__)
+    အကယ်၍ (x <= 1) ပြန်ပေး 1u;
+    ပြန်ပေး 1u << ((ကိန်းပြည့်)parimaa_na(unsigned) * CHAR_BIT - __builtin_clz(x - 1));
+#မဟုတ်ပါက
+    အကယ်၍ (x <= 1u) ပြန်ပေး 1u;
     x--;
-    for (unsigned s = 1; s < (unsigned)sizeof(x)*CHAR_BIT; s <<= 1)
+    အတွက် (unsigned s = 1; s < (unsigned)parimaa_na(x)*CHAR_BIT; s <<= 1)
         x |= x >> s;
-    return x + 1u;
+    ပြန်ပေး x + 1u;
 #endif
 }
 
-static inline uint32_t
-keep_lowest_n_set_bits(uint32_t mask, unsigned int n) {
+static anta_hstha uint32_t
+keep_lowest_n_set_bits(uint32_t mask, unsigned ကိန်းပြည့် n) {
     const uint32_t original = mask;
 
     /* Clear the lowest set bit n times */
-    while (n-- && mask)
+    နေစဉ် (n-- && mask)
         mask &= (mask - 1);
 
-    return original ^ mask;
+    ပြန်ပေး original ^ mask;
 }

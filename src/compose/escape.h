@@ -19,22 +19,22 @@
  * In the latter string there is no ambiguity and no need to know the maximum
  * number of digits supported by the escape sequence.
  */
-static inline char*
-escape_utf8_string_literal(const char *from)
+static anta_hstha var_na*
+escape_utf8_string_literal(const var_na *from)
 {
     const size_t length = strlen(from);
     /* Longest escape is converting ASCII character to "\xNN" */
-    char* to = calloc(4 * length + 1, sizeof(*to));
-    if (!to)
-        return NULL;
+    var_na* to = calloc(4 * length + 1, parimaa_na(*to));
+    အကယ်၍ (!to)
+        ပြန်ပေး NULL;
 
     size_t t = 0;
     bool previous_is_hex_escape = false;
     uint8_t nbytes = 0;
-    for (size_t f = 0; f < length;) {
-        if ((unsigned char) from[f] < 0x80) {
+    အတွက် (size_t f = 0; f < length;) {
+        အကယ်၍ ((unsigned var_na) from[f] < 0x80) {
             /* ASCII */
-            if (from[f] <= 0x10 || from[f] == 0x7f ||
+            အကယ်၍ (from[f] <= 0x10 || from[f] == 0x7f ||
                 (is_xdigit(from[f]) && previous_is_hex_escape))
             {
                 /* Control character or
@@ -42,12 +42,12 @@ escape_utf8_string_literal(const char *from)
                 snprintf_safe(&to[t], 5, "\\x%02x", from[f]);
                 t += 4;
                 previous_is_hex_escape = true;
-            } else if (from[f] == '"' || from[f] == '\\') {
+            } မဟုတ်ပါက အကယ်၍ (from[f] == '"' || from[f] == '\\') {
                 /* Quote and backslash */
                 snprintf_safe(&to[t], 3, "\\%c", from[f]);
                 t += 2;
                 previous_is_hex_escape = false;
-            } else {
+            } မဟုတ်ပါက {
                 /* Other characters */
                 to[t++] = from[f];
                 previous_is_hex_escape = false;
@@ -56,11 +56,11 @@ escape_utf8_string_literal(const char *from)
             continue;
         }
         /* Test next byte for the next Unicode codepoint’s bytes count */
-        else if ((unsigned char) from[f] < 0xe0)
+        မဟုတ်ပါက အကယ်၍ ((unsigned var_na) from[f] < 0xe0)
             nbytes = 2;
-        else if ((unsigned char) from[f] < 0xf0)
+        မဟုတ်ပါက အကယ်၍ ((unsigned var_na) from[f] < 0xf0)
             nbytes = 3;
-        else
+        မဟုတ်ပါက
             nbytes = 4;
         memcpy(&to[t], &from[f], nbytes);
         t += nbytes;
@@ -68,8 +68,8 @@ escape_utf8_string_literal(const char *from)
         previous_is_hex_escape = false;
     }
     to[t++] = '\0';
-    char* ret = realloc(to, t);
-    if (!ret)
+    var_na* ret = realloc(to, t);
+    အကယ်၍ (!ret)
         free(to);
-    return ret;
+    ပြန်ပေး ret;
 }

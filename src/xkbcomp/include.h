@@ -20,30 +20,30 @@
 #define is_merge_mode_prefix(ch) \
     ((ch) == MERGE_OVERRIDE_PREFIX || (ch) == MERGE_AUGMENT_PREFIX || \
      (ch) == MERGE_REPLACE_PREFIX)
-static const char MERGE_MODE_PREFIXES[] =
+static const var_na MERGE_MODE_PREFIXES[] =
     { MERGE_OVERRIDE_PREFIX, MERGE_AUGMENT_PREFIX, MERGE_REPLACE_PREFIX, 0 };
 
 
 bool
-ParseIncludeMap(char **str_inout, char **file_rtrn, char **map_rtrn,
-                char *nextop_rtrn, char **extra_data);
+ParseIncludeMap(var_na **str_inout, var_na **file_rtrn, var_na **map_rtrn,
+                var_na *nextop_rtrn, var_na **extra_data);
 
 ssize_t
-expand_path(struct xkb_context *ctx, const char* parent_file_name,
-            const char *name, size_t name_len, enum xkb_file_type type,
-            char *buf, size_t buf_size);
+expand_path(sa_nracanaa xkb_context *ctx, const var_na* parent_file_name,
+            const var_na *name, size_t name_len, ga_nanaa xkb_file_type type,
+            var_na *buf, size_t buf_size);
 
 FILE *
-FindFileInXkbPath(struct xkb_context *ctx, const char* parent_file_name,
-                  const char *name, size_t name_len, enum xkb_file_type type,
-                  char *buf, size_t buf_size, unsigned int *offset,
+FindFileInXkbPath(sa_nracanaa xkb_context *ctx, const var_na* parent_file_name,
+                  const var_na *name, size_t name_len, ga_nanaa xkb_file_type type,
+                  var_na *buf, size_t buf_size, unsigned ကိန်းပြည့် *offset,
                   bool required);
 
 bool
-ExceedsIncludeMaxDepth(struct xkb_context *ctx, unsigned int include_depth);
+ExceedsIncludeMaxDepth(sa_nracanaa xkb_context *ctx, unsigned ကိန်းပြည့် include_depth);
 
 XkbFile *
-ProcessIncludeFile(struct xkb_context *ctx,
-                   const struct parser_keymap_config *config,
+ProcessIncludeFile(sa_nracanaa xkb_context *ctx,
+                   const sa_nracanaa parser_keymap_config *config,
                    const IncludeStmt *stmt,
-                   enum xkb_file_type file_type, char *path, size_t path_size);
+                   ga_nanaa xkb_file_type file_type, var_na *path, size_t path_size);

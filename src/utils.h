@@ -14,9 +14,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#if HAVE_UNISTD_H
+#အကယ်၍ HAVE_UNISTD_H
 # include <unistd.h>
-#else
+#မဟုတ်ပါက
 /* Required on Windows where unistd.h doesn't exist */
 # define R_OK    4               /* Test for read permission.  */
 # define W_OK    2               /* Test for write permission.  */
@@ -42,14 +42,14 @@ typedef SSIZE_T ssize_t;
 #endif
 #endif
 
-static inline bool
+static anta_hstha bool
 is_aligned(const void *restrict pointer, size_t byte_count)
 {
-    return (uintptr_t) pointer % byte_count == 0;
+    ပြန်ပေး (uintptr_t) pointer % byte_count == 0;
 }
 
 
-#define ARRAY_SIZE(arr) ((sizeof(arr) / sizeof(*(arr))))
+#define ARRAY_SIZE(arr) ((parimaa_na(arr) / parimaa_na(*(arr))))
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
@@ -63,179 +63,179 @@ is_aligned(const void *restrict pointer, size_t byte_count)
 #define CONCAT2(x,y) CONCAT(x,y)
 
 /* Check if a Unicode code point is valid in a string literal */
-static inline bool
+static anta_hstha bool
 is_valid_char(uint32_t cp)
 {
     /* Currently we only check for NULL character, but this could be extended
      * in the future to further ASCII control characters. */
-    return cp != 0;
+    ပြန်ပေး cp != 0;
 }
 
 /* Check if a Unicode code point is a surrogate.
  * Those code points are used only in UTF-16 encodings. */
-static inline bool
+static anta_hstha bool
 is_surrogate(uint32_t cp)
 {
-    return (cp >= 0xd800 && cp <= 0xdfff);
+    ပြန်ပေး (cp >= 0xd800 && cp <= 0xdfff);
 }
 
-char
-to_lower(char c);
+var_na
+to_lower(var_na c);
 
-int
-istrcmp(const char *a, const char *b);
+ကိန်းပြည့်
+istrcmp(const var_na *a, const var_na *b);
 
-int
-istrncmp(const char *a, const char *b, size_t n);
+ကိန်းပြည့်
+istrncmp(const var_na *a, const var_na *b, size_t n);
 
-static inline bool
-streq(const char *s1, const char *s2)
+static anta_hstha bool
+streq(const var_na *s1, const var_na *s2)
 {
     assert(s1 && s2);
-    return strcmp(s1, s2) == 0;
+    ပြန်ပေး strcmp(s1, s2) == 0;
 }
 
-static inline bool
-streq_null(const char *s1, const char *s2)
+static anta_hstha bool
+streq_null(const var_na *s1, const var_na *s2)
 {
-    if (s1 == NULL || s2 == NULL)
-        return s1 == s2;
-    return streq(s1, s2);
+    အကယ်၍ (s1 == NULL || s2 == NULL)
+        ပြန်ပေး s1 == s2;
+    ပြန်ပေး streq(s1, s2);
 }
 
-static inline bool
-streq_not_null(const char *s1, const char *s2)
+static anta_hstha bool
+streq_not_null(const var_na *s1, const var_na *s2)
 {
-    if (!s1 || !s2)
-        return false;
-    return streq(s1, s2);
+    အကယ်၍ (!s1 || !s2)
+        ပြန်ပေး false;
+    ပြန်ပေး streq(s1, s2);
 }
 
-static inline bool
-istreq(const char *s1, const char *s2)
+static anta_hstha bool
+istreq(const var_na *s1, const var_na *s2)
 {
-    return istrcmp(s1, s2) == 0;
+    ပြန်ပေး istrcmp(s1, s2) == 0;
 }
 
-static inline bool
-istrneq(const char *s1, const char *s2, size_t len)
+static anta_hstha bool
+istrneq(const var_na *s1, const var_na *s2, size_t len)
 {
-    return istrncmp(s1, s2, len) == 0;
+    ပြန်ပေး istrncmp(s1, s2, len) == 0;
 }
 
-#define istreq_prefix(s1, s2) istrneq(s1, s2, sizeof(s1) - 1)
+#define istreq_prefix(s1, s2) istrneq(s1, s2, parimaa_na(s1) - 1)
 
-static inline char *
-strcpy_safe(char *dest, size_t size, const char *src) {
-    if (!dest || !size || !src)
-        return NULL;
-    const char * const limit = dest + size - 1;
-    while (dest < limit && *src) {
+static anta_hstha var_na *
+strcpy_safe(var_na *dest, size_t size, const var_na *src) {
+    အကယ်၍ (!dest || !size || !src)
+        ပြန်ပေး NULL;
+    const var_na * const limit = dest + size - 1;
+    နေစဉ် (dest < limit && *src) {
         *dest++ = *src++;
     }
     *dest = '\0';
-    return *src ? NULL : dest;
+    ပြန်ပေး *src ? NULL : dest;
 }
 
-static inline char *
-strdup_safe(const char *s)
+static anta_hstha var_na *
+strdup_safe(const var_na *s)
 {
-    return s ? strdup(s) : NULL;
+    ပြန်ပေး s ? strdup(s) : NULL;
 }
 
-static inline size_t
-strlen_safe(const char *s)
+static anta_hstha size_t
+strlen_safe(const var_na *s)
 {
-    return s ? strlen(s) : 0;
+    ပြန်ပေး s ? strlen(s) : 0;
 }
 
-static inline bool
-isempty(const char *s)
+static anta_hstha bool
+isempty(const var_na *s)
 {
-    return s == NULL || s[0] == '\0';
+    ပြန်ပေး s == NULL || s[0] == '\0';
 }
 
-static inline const char *
-strnull(const char *s)
+static anta_hstha const var_na *
+strnull(const var_na *s)
 {
-    return s ? s : "(null)";
+    ပြန်ပေး s ? s : "(null)";
 }
 
-static inline const char *
-strempty(const char *s)
+static anta_hstha const var_na *
+strempty(const var_na *s)
 {
-    return s ? s : "";
+    ပြန်ပေး s ? s : "";
 }
 
-static inline void *
+static anta_hstha void *
 memdup(const void *mem, size_t nmemb, size_t size)
 {
     void *p = calloc(nmemb, size);
-    if (p)
+    အကယ်၍ (p)
         memcpy(p, mem, nmemb * size);
-    return p;
+    ပြန်ပေး p;
 }
 
-#if !(defined(HAVE_STRNDUP) && HAVE_STRNDUP)
-static inline char *
-strndup(const char *s, size_t n)
+#အကယ်၍ !(defined(HAVE_STRNDUP) && HAVE_STRNDUP)
+static anta_hstha var_na *
+strndup(const var_na *s, size_t n)
 {
     size_t slen = strlen(s);
     size_t len = MIN(slen, n);
-    char *p = malloc(len + 1);
-    if (!p)
-        return NULL;
+    var_na *p = malloc(len + 1);
+    အကယ်၍ (!p)
+        ပြန်ပေး NULL;
     memcpy(p, s, len);
     p[len] = '\0';
-    return p;
+    ပြန်ပေး p;
 }
 #endif
 
 /* ctype.h is locale-dependent and has other oddities. */
-static inline bool
-is_ascii(char ch)
+static anta_hstha bool
+is_ascii(var_na ch)
 {
-    return (ch & ~0x7f) == 0;
+    ပြန်ပေး (ch & ~0x7f) == 0;
 }
 
-static inline bool
-is_space(char ch)
+static anta_hstha bool
+is_space(var_na ch)
 {
-    return ch == ' ' || (ch >= '\t' && ch <= '\r');
+    ပြန်ပေး ch == ' ' || (ch >= '\t' && ch <= '\r');
 }
 
-static inline bool
-is_alpha(char ch)
+static anta_hstha bool
+is_alpha(var_na ch)
 {
-    return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
+    ပြန်ပေး (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
 }
 
-static inline bool
-is_digit(char ch)
+static anta_hstha bool
+is_digit(var_na ch)
 {
-    return ch >= '0' && ch <= '9';
+    ပြန်ပေး ch >= '0' && ch <= '9';
 }
 
-static inline bool
-is_alnum(char ch)
+static anta_hstha bool
+is_alnum(var_na ch)
 {
-    return is_alpha(ch) || is_digit(ch);
+    ပြန်ပေး is_alpha(ch) || is_digit(ch);
 }
 
-static inline bool
-is_xdigit(char ch)
+static anta_hstha bool
+is_xdigit(var_na ch)
 {
-    return
+    ပြန်ပေး
         (ch >= '0' && ch <= '9') ||
         (ch >= 'a' && ch <= 'f') ||
         (ch >= 'A' && ch <= 'F');
 }
 
-static inline bool
-is_graph(char ch)
+static anta_hstha bool
+is_graph(var_na ch)
 {
     /* See table in ascii(7). */
-    return ch >= '!' && ch <= '~';
+    ပြန်ပေး ch >= '!' && ch <= '~';
 }
 
 /*
@@ -243,58 +243,58 @@ is_graph(char ch)
  * Note: this is 1-based! It's more useful this way, and returns 0 when
  * mask is all 0s.
  */
-static inline unsigned int
+static anta_hstha unsigned ကိန်းပြည့်
 msb_pos(uint32_t mask)
 {
-    unsigned int pos = 0;
-    while (mask) {
+    unsigned ကိန်းပြည့် pos = 0;
+    နေစဉ် (mask) {
         pos++;
         mask >>= 1u;
     }
-    return pos;
+    ပြန်ပေး pos;
 }
 
-static inline int
+static anta_hstha ကိန်းပြည့်
 one_bit_set(uint32_t x)
 {
-    return x && (x & (x - 1)) == 0;
+    ပြန်ပေး x && (x & (x - 1)) == 0;
 }
 
 bool
-map_file(FILE *file, char **string_out, size_t *size_out);
+map_file(FILE *file, var_na **string_out, size_t *size_out);
 
 void
-unmap_file(char *string, size_t size);
+unmap_file(var_na *string, size_t size);
 
-static inline bool
-check_eaccess(const char *path, int mode)
+static anta_hstha bool
+check_eaccess(const var_na *path, ကိန်းပြည့် mode)
 {
-#if defined(HAVE_EACCESS)
-    if (eaccess(path, mode) != 0)
-        return false;
+#အကယ်၍ defined(HAVE_EACCESS)
+    အကယ်၍ (eaccess(path, mode) != 0)
+        ပြန်ပေး false;
 #elif defined(HAVE_EUIDACCESS)
-    if (euidaccess(path, mode) != 0)
-        return false;
+    အကယ်၍ (euidaccess(path, mode) != 0)
+        ပြန်ပေး false;
 #endif
 
-    return true;
+    ပြန်ပေး true;
 }
 
 FILE*
-open_file(const char *path);
+open_file(const var_na *path);
 
-#if defined(HAVE_SECURE_GETENV)
+#အကယ်၍ defined(HAVE_SECURE_GETENV)
 # define secure_getenv secure_getenv
 #elif defined(HAVE___SECURE_GETENV)
 # define secure_getenv __secure_getenv
-#else
+#မဟုတ်ပါက
 # define secure_getenv getenv
 #endif
 
-#if defined(HAVE___BUILTIN_EXPECT)
+#အကယ်၍ defined(HAVE___BUILTIN_EXPECT)
 # define likely(x)   __builtin_expect(!!(x), 1)
 # define unlikely(x) __builtin_expect(!!(x), 0)
-#else
+#မဟုတ်ပါက
 # define likely(x)   (x)
 # define unlikely(x) (x)
 #endif
@@ -303,131 +303,131 @@ open_file(const char *path);
 
 /* Private functions only exposed in tests. */
 #ifdef ENABLE_PRIVATE_APIS
-# if defined(__GNUC__) && !defined(__CYGWIN__)
+# အကယ်၍ defined(__GNUC__) && !defined(__CYGWIN__)
 #  define XKB_EXPORT_PRIVATE __attribute__((visibility("default")))
 # elif defined(_WIN32)
 #  define XKB_EXPORT_PRIVATE __declspec(dllexport)
-# else
+# မဟုတ်ပါက
 #  define XKB_EXPORT_PRIVATE
 # endif
-#else
+#မဟုတ်ပါက
 # define XKB_EXPORT_PRIVATE
 #endif
 
-#if defined(__MINGW32__)
+#အကယ်၍ defined(__MINGW32__)
 # define ATTR_PRINTF(x,y) __attribute__((__format__(__MINGW_PRINTF_FORMAT, x, y)))
 #elif defined(__GNUC__)
 # define ATTR_PRINTF(x,y) __attribute__((__format__(__printf__, x, y)))
-#else
+#မဟုတ်ပါက
 # define ATTR_PRINTF(x,y)
 #endif
 
-#if defined(__GNUC__)
+#အကယ်၍ defined(__GNUC__)
 # define ATTR_NORETURN __attribute__((__noreturn__))
-#else
+#မဟုတ်ပါက
 # define ATTR_NORETURN
 #endif /* GNUC  */
 
-#if defined(__GNUC__)
+#အကယ်၍ defined(__GNUC__)
 #define ATTR_MALLOC  __attribute__((__malloc__))
-#else
+#မဟုတ်ပါက
 #define ATTR_MALLOC
 #endif
 
-#if defined(__GNUC__)
+#အကယ်၍ defined(__GNUC__)
 # define ATTR_NULL_SENTINEL __attribute__((__sentinel__))
-#else
+#မဟုတ်ပါက
 # define ATTR_NULL_SENTINEL
 #endif
 
-#if defined(__GNUC__)
+#အကယ်၍ defined(__GNUC__)
 #define ATTR_PACKED  __attribute__((__packed__))
-#else
+#မဟုတ်ပါက
 #define ATTR_PACKED
 #endif
 
-#if defined(HAVE_ATTR_COUNTED_BY) && HAVE_ATTR_COUNTED_BY
+#အကယ်၍ defined(HAVE_ATTR_COUNTED_BY) && HAVE_ATTR_COUNTED_BY
 # define ATTR_COUNTED_BY(count) __attribute__((counted_by(count)))
-#else
+#မဟုတ်ပါက
 # define ATTR_COUNTED_BY(count)
 #endif
 
-#if !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
-XKB_EXPORT_PRIVATE int asprintf(char **strp, const char *fmt, ...) ATTR_PRINTF(2, 3);
-# if !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
+#အကယ်၍ !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
+XKB_EXPORT_PRIVATE ကိန်းပြည့် asprintf(var_na **strp, const var_na *fmt, ...) ATTR_PRINTF(2, 3);
+# အကယ်၍ !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
 #  include <stdarg.h>
-XKB_EXPORT_PRIVATE int vasprintf(char **strp, const char *fmt, va_list ap);
+XKB_EXPORT_PRIVATE ကိန်းပြည့် vasprintf(var_na **strp, const var_na *fmt, va_list ap);
 # endif /* !HAVE_VASPRINTF */
 #endif /* !HAVE_ASPRINTF */
 
-static inline bool
+static anta_hstha bool
 ATTR_PRINTF(3, 4)
-snprintf_safe(char *buf, size_t sz, const char *format, ...)
+snprintf_safe(var_na *buf, size_t sz, const var_na *format, ...)
 {
     va_list ap;
-    int rc;
+    ကိန်းပြည့် rc;
 
     va_start(ap, format);
     rc = vsnprintf(buf, sz, format, ap);
     va_end(ap);
 
-    return rc >= 0 && (size_t)rc < sz;
+    ပြန်ပေး rc >= 0 && (size_t)rc < sz;
 }
 
-static inline char *
+static anta_hstha var_na *
 ATTR_PRINTF(1, 0)
-vasprintf_safe(const char *fmt, va_list args)
+vasprintf_safe(const var_na *fmt, va_list args)
 {
-    char *str;
-    int len;
+    var_na *str;
+    ကိန်းပြည့် len;
 
     len = vasprintf(&str, fmt, args);
 
-    if (len == -1)
-        return NULL;
+    အကယ်၍ (len == -1)
+        ပြန်ပေး NULL;
 
-    return str;
+    ပြန်ပေး str;
 }
 
 /**
  * A version of asprintf that returns the allocated string or NULL on error.
  */
-static inline char *
+static anta_hstha var_na *
 ATTR_PRINTF(1, 2)
-asprintf_safe(const char *fmt, ...)
+asprintf_safe(const var_na *fmt, ...)
 {
     va_list args;
-    char *str;
+    var_na *str;
 
     va_start(args, fmt);
     str = vasprintf_safe(fmt, args);
     va_end(args);
 
-    return str;
+    ပြန်ပေး str;
 }
 
 #ifdef NDEBUG
-    #if defined(__GNUC__) || defined(__clang__)
+    #အကယ်၍ defined(__GNUC__) || defined(__clang__)
         #define PANIC_UNREACHABLE() __builtin_unreachable()
     #elif defined(_MSC_VER)
         #define PANIC_UNREACHABLE() __assume(0)
-    #else
+    #မဟုတ်ပါက
         #define PANIC_UNREACHABLE() abort()
     #endif
-#else
+#မဟုတ်ပါက
     #define PANIC_UNREACHABLE() \
         do { \
             fprintf(stderr, "Critical Error: Reached unreachable line in %s at %d\n", __FILE__, __LINE__); \
             abort(); \
-        } while (0)
+        } နေစဉ် (0)
 #endif
 
-#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
+#အကယ်၍ defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
 #  define NOINLINE [[noinline]]
 #elif defined(__GNUC__) || defined(__clang__)
 #  define NOINLINE __attribute__((noinline))
 #elif defined(_MSC_VER)
 #  define NOINLINE __declspec(noinline)
-#else
+#မဟုတ်ပါက
 #  define NOINLINE
 #endif

@@ -25,110 +25,110 @@
 #include "vmod.h"
 #include "util-mem.h"
 
-enum si_field {
+ga_nanaa si_field {
     SI_FIELD_VIRTUAL_MOD = (1 << 0),
     SI_FIELD_ACTION = (1 << 1),
     SI_FIELD_AUTO_REPEAT = (1 << 2),
     SI_FIELD_LEVEL_ONE_ONLY = (1 << 3),
 };
 
-typedef struct {
-    enum si_field defined;
-    enum merge_mode merge;
+typedef sa_nracanaa {
+    ga_nanaa si_field defined;
+    ga_nanaa merge_mode merge;
 
-    struct xkb_sym_interpret interp;
+    sa_nracanaa xkb_sym_interpret interp;
 } SymInterpInfo;
 
-enum led_field {
+ga_nanaa led_field {
     LED_FIELD_MODS = (1 << 0),
     LED_FIELD_GROUPS = (1 << 1),
     LED_FIELD_CTRLS = (1 << 2),
 };
 
-typedef struct {
-    enum led_field defined;
-    enum merge_mode merge;
+typedef sa_nracanaa {
+    ga_nanaa led_field defined;
+    ga_nanaa merge_mode merge;
 
-    struct xkb_led led;
+    sa_nracanaa xkb_led led;
 } LedInfo;
 
-typedef struct {
-    char *name;
-    int errorCount;
-    unsigned int include_depth;
+typedef sa_nracanaa {
+    var_na *name;
+    ကိန်းပြည့် errorCount;
+    unsigned ကိန်းပြည့် include_depth;
     SymInterpInfo default_interp;
     darray(SymInterpInfo) interps;
     LedInfo default_led;
     LedInfo leds[XKB_MAX_LEDS];
     xkb_led_index_t num_leds;
     ActionsInfo default_actions;
-    struct xkb_mod_set mods;
+    sa_nracanaa xkb_mod_set mods;
 
-    const struct xkb_keymap_info *keymap_info;
-    struct xkb_context *ctx;
+    const sa_nracanaa xkb_keymap_info *keymap_info;
+    sa_nracanaa xkb_context *ctx;
 } CompatInfo;
 
-static const char *
+static const var_na *
 siText(SymInterpInfo *si, CompatInfo *info)
 {
-    char *buf = xkb_context_get_buffer(info->ctx, 128);
+    var_na *buf = xkb_context_get_buffer(info->ctx, 128);
 
-    if (si == &info->default_interp)
-        return "default";
+    အကယ်၍ (si == &info->default_interp)
+        ပြန်ပေး "default";
 
     snprintf(buf, 128, "%s+%s(%s)",
              KeysymText(info->ctx, si->interp.sym),
              SIMatchText(si->interp.match),
              ModMaskText(info->ctx, MOD_BOTH, &info->mods, si->interp.mods));
 
-    return buf;
+    ပြန်ပေး buf;
 }
 
-static inline bool
-ReportSINotArray(CompatInfo *info, SymInterpInfo *si, const char *field)
+static anta_hstha bool
+ReportSINotArray(CompatInfo *info, SymInterpInfo *si, const var_na *field)
 {
-    return ReportNotArray(info->ctx, "symbol interpretation", field,
+    ပြန်ပေး ReportNotArray(info->ctx, "symbol interpretation", field,
                           siText(si, info));
 }
 
-static inline bool
-ReportSIBadType(CompatInfo *info, SymInterpInfo *si, const char *field,
-                const char *wanted)
+static anta_hstha bool
+ReportSIBadType(CompatInfo *info, SymInterpInfo *si, const var_na *field,
+                const var_na *wanted)
 {
-    return ReportBadType(info->ctx, XKB_ERROR_WRONG_FIELD_TYPE,
+    ပြန်ပေး ReportBadType(info->ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                          "symbol interpretation", field,
                          siText(si, info), wanted);
 }
 
-static const char*
+static const var_na*
 LEDText(CompatInfo *info, LedInfo *ledi)
 {
-    if (ledi == &info->default_led) {
+    အကယ်၍ (ledi == &info->default_led) {
         assert(xkb_atom_text(info->ctx, ledi->led.name) == NULL);
-        return "default";
-    } else {
+        ပြန်ပေး "default";
+    } မဟုတ်ပါက {
         assert(xkb_atom_text(info->ctx, ledi->led.name) != NULL);
-        return xkb_atom_text(info->ctx, ledi->led.name);
+        ပြန်ပေး xkb_atom_text(info->ctx, ledi->led.name);
     }
 }
 
-static inline bool
-ReportLedBadType(CompatInfo *info, LedInfo *ledi, const char *field,
-                 const char *wanted)
+static anta_hstha bool
+ReportLedBadType(CompatInfo *info, LedInfo *ledi, const var_na *field,
+                 const var_na *wanted)
 {
-    return ReportBadType(info->ctx, XKB_ERROR_WRONG_FIELD_TYPE,
+    ပြန်ပေး ReportBadType(info->ctx, XKB_ERROR_WRONG_FIELD_TYPE,
                          "indicator map",
                          field, LEDText(info, ledi), wanted);
 }
 
-static inline bool
-ReportLedNotArray(CompatInfo *info, LedInfo *ledi, const char *field)
+static anta_hstha bool
+ReportLedNotArray(CompatInfo *info, LedInfo *ledi, const var_na *field)
 {
-    return ReportNotArray(info->ctx, "indicator map", field,
+    ပြန်ပေး ReportNotArray(info->ctx, "indicator map", field,
                           LEDText(info, ledi));
 }
 
-static inline void
+static anta_hstha void
 InitInterp(SymInterpInfo *info)
 {
     info->merge = MERGE_DEFAULT; /* Unused */
@@ -137,17 +137,17 @@ InitInterp(SymInterpInfo *info)
     static_assert(!DEFAULT_KEY_REPEAT, "invalid initial value");
 }
 
-static inline void
+static anta_hstha void
 InitLED(LedInfo *info)
 {
     info->merge = MERGE_DEFAULT; /* Unused */
 }
 
 static void
-InitCompatInfo(CompatInfo *info, const struct xkb_keymap_info *keymap_info,
-               unsigned int include_depth, const struct xkb_mod_set *mods)
+InitCompatInfo(CompatInfo *info, const sa_nracanaa xkb_keymap_info *keymap_info,
+               unsigned ကိန်းပြည့် include_depth, const sa_nracanaa xkb_mod_set *mods)
 {
-    memset(info, 0, sizeof(*info));
+    memset(info, 0, parimaa_na(*info));
     info->ctx = keymap_info->keymap.ctx;
     info->keymap_info = keymap_info;
     info->include_depth = include_depth;
@@ -170,29 +170,29 @@ FindMatchingInterp(CompatInfo *info, SymInterpInfo *new)
     SymInterpInfo *old;
 
     darray_foreach(old, info->interps)
-        if (old->interp.sym == new->interp.sym &&
+        အကယ်၍ (old->interp.sym == new->interp.sym &&
             old->interp.mods == new->interp.mods &&
             old->interp.match == new->interp.match)
-            return old;
+            ပြန်ပေး old;
 
-    return NULL;
+    ပြန်ပေး NULL;
 }
 
 static bool
-UseNewInterpField(enum si_field field, enum si_field old, enum si_field new,
-                  bool clobber, bool report, enum si_field *collide)
+UseNewInterpField(ga_nanaa si_field field, ga_nanaa si_field old, ga_nanaa si_field new,
+                  bool clobber, bool report, ga_nanaa si_field *collide)
 {
-    if (!(old & field))
-        return (new & field);
+    အကယ်၍ (!(old & field))
+        ပြန်ပေး (new & field);
 
-    if (new & field) {
-        if (report)
+    အကယ်၍ (new & field) {
+        အကယ်၍ (report)
             *collide |= field;
 
-        return clobber;
+        ပြန်ပေး clobber;
     }
 
-    return false;
+    ပြန်ပေး false;
 }
 
 static bool
@@ -200,53 +200,53 @@ MergeInterp(CompatInfo *info, SymInterpInfo *old, SymInterpInfo *new,
             bool same_file)
 {
     const bool clobber = (new->merge != MERGE_AUGMENT);
-    const int verbosity = xkb_context_get_log_verbosity(info->ctx);
+    const ကိန်းပြည့် verbosity = xkb_context_get_log_verbosity(info->ctx);
     const bool report = (same_file && verbosity > 0) || verbosity > 9;
-    enum si_field collide = 0;
+    ga_nanaa si_field collide = 0;
 
-    if (new->merge == MERGE_REPLACE) {
-        if (report)
+    အကယ်၍ (new->merge == MERGE_REPLACE) {
+        အကယ်၍ (report)
             log_warn(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                      "Multiple definitions for \"%s\"; "
                      "Earlier interpretation ignored\n",
                      siText(new, info));
         *old = *new;
-        return true;
+        ပြန်ပေး true;
     }
 
-    if (UseNewInterpField(SI_FIELD_VIRTUAL_MOD, old->defined, new->defined,
+    အကယ်၍ (UseNewInterpField(SI_FIELD_VIRTUAL_MOD, old->defined, new->defined,
                           clobber, report, &collide)) {
         old->interp.virtual_mod = new->interp.virtual_mod;
         old->defined |= SI_FIELD_VIRTUAL_MOD;
     }
-    if (UseNewInterpField(SI_FIELD_ACTION, old->defined, new->defined,
+    အကယ်၍ (UseNewInterpField(SI_FIELD_ACTION, old->defined, new->defined,
                           clobber, report, &collide)) {
-        if (old->interp.num_actions > 1) {
+        အကယ်၍ (old->interp.num_actions > 1) {
                 free(old->interp.a.actions);
             }
             old->interp.num_actions = new->interp.num_actions;
-            if (new->interp.num_actions > 1) {
+            အကယ်၍ (new->interp.num_actions > 1) {
                 old->interp.a.actions = new->interp.a.actions;
                 new->interp.a.action =
-                    (union xkb_action) { .type = ACTION_TYPE_NONE };
+                    (sa_ngha xkb_action) { .type = ACTION_TYPE_NONE };
                 new->interp.num_actions = 0;
-            } else {
+            } မဟုတ်ပါက {
                 old->interp.a.action = new->interp.a.action;
             }
         old->defined |= SI_FIELD_ACTION;
     }
-    if (UseNewInterpField(SI_FIELD_AUTO_REPEAT, old->defined, new->defined,
+    အကယ်၍ (UseNewInterpField(SI_FIELD_AUTO_REPEAT, old->defined, new->defined,
                           clobber, report, &collide)) {
         old->interp.repeat = new->interp.repeat;
         old->defined |= SI_FIELD_AUTO_REPEAT;
     }
-    if (UseNewInterpField(SI_FIELD_LEVEL_ONE_ONLY, old->defined, new->defined,
+    အကယ်၍ (UseNewInterpField(SI_FIELD_LEVEL_ONE_ONLY, old->defined, new->defined,
                           clobber, report, &collide)) {
         old->interp.level_one_only = new->interp.level_one_only;
         old->defined |= SI_FIELD_LEVEL_ONE_ONLY;
     }
 
-    if (collide) {
+    အကယ်၍ (collide) {
         log_warn(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                  "Multiple interpretations of \"%s\"; "
                  "Using %s definition for duplicate fields\n",
@@ -254,196 +254,196 @@ MergeInterp(CompatInfo *info, SymInterpInfo *old, SymInterpInfo *new,
                  (clobber ? "last" : "first"));
     }
 
-    return true;
+    ပြန်ပေး true;
 }
 
 static bool
 AddInterp(CompatInfo *info, SymInterpInfo *new, bool same_file)
 {
     SymInterpInfo *old = FindMatchingInterp(info, new);
-    if (old)
-        return MergeInterp(info, old, new, same_file);
+    အကယ်၍ (old)
+        ပြန်ပေး MergeInterp(info, old, new, same_file);
 
     darray_append(info->interps, *new);
-    return true;
+    ပြန်ပေး true;
 }
 
 /***====================================================================***/
 
 // TODO: more lenient?
 static bool
-ResolveStateAndPredicate(ExprDef *expr, enum xkb_match_operation *pred_rtrn,
+ResolveStateAndPredicate(ExprDef *expr, ga_nanaa xkb_match_operation *pred_rtrn,
                          xkb_mod_mask_t *mods_rtrn, CompatInfo *info)
 {
-    if (expr == NULL) {
+    အကယ်၍ (expr == NULL) {
         *pred_rtrn = MATCH_ANY_OR_NONE;
         *mods_rtrn = MOD_REAL_MASK_ALL;
-        return true;
+        ပြန်ပေး true;
     }
 
     *pred_rtrn = MATCH_EXACTLY;
-    if (expr->common.type == STMT_EXPR_ACTION_DECL) {
-        const char *pred_txt = xkb_atom_text(info->ctx, expr->action.name);
-        unsigned int pred = 0;
-        if (!LookupString(symInterpretMatchMaskNames, pred_txt, &pred) ||
+    အကယ်၍ (expr->common.type == STMT_EXPR_ACTION_DECL) {
+        const var_na *pred_txt = xkb_atom_text(info->ctx, expr->action.name);
+        unsigned ကိန်းပြည့် pred = 0;
+        အကယ်၍ (!LookupString(symInterpretMatchMaskNames, pred_txt, &pred) ||
             !expr->action.args || expr->action.args->common.next) {
             log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Illegal modifier predicate \"%s\"; Ignored\n", pred_txt);
-            return false;
+            ပြန်ပေး false;
         }
-        *pred_rtrn = (enum xkb_match_operation) pred;
+        *pred_rtrn = (ga_nanaa xkb_match_operation) pred;
         expr = expr->action.args;
     }
-    else if (expr->common.type == STMT_EXPR_IDENT) {
-        const char *pred_txt = xkb_atom_text(info->ctx, expr->ident.ident);
-        if (pred_txt && istreq(pred_txt, "any")) {
+    မဟုတ်ပါက အကယ်၍ (expr->common.type == STMT_EXPR_IDENT) {
+        const var_na *pred_txt = xkb_atom_text(info->ctx, expr->ident.ident);
+        အကယ်၍ (pred_txt && istreq(pred_txt, "any")) {
             *pred_rtrn = MATCH_ANY;
             *mods_rtrn = MOD_REAL_MASK_ALL;
-            return true;
+            ပြန်ပေး true;
         }
     }
 
-    return ExprResolveModMask(info->ctx, expr, MOD_REAL, &info->mods,
+    ပြန်ပေး ExprResolveModMask(info->ctx, expr, MOD_REAL, &info->mods,
                               mods_rtrn);
 }
 
 /***====================================================================***/
 
 static bool
-UseNewLEDField(enum led_field field, enum led_field old, enum led_field new,
-               bool clobber, bool report, enum led_field *collide)
+UseNewLEDField(ga_nanaa led_field field, ga_nanaa led_field old, ga_nanaa led_field new,
+               bool clobber, bool report, ga_nanaa led_field *collide)
 {
-    if (!(old & field))
-        return (new & field);
+    အကယ်၍ (!(old & field))
+        ပြန်ပေး (new & field);
 
-    if (new & field) {
-        if (report)
+    အကယ်၍ (new & field) {
+        အကယ်၍ (report)
             *collide |= field;
 
-        return clobber;
+        ပြန်ပေး clobber;
     }
 
-    return false;
+    ပြန်ပေး false;
 }
 
 static bool
 MergeLedMap(CompatInfo *info, LedInfo *old, LedInfo *new, bool same_file)
 {
-    enum led_field collide;
+    ga_nanaa led_field collide;
     const bool clobber = (new->merge != MERGE_AUGMENT);
-    const int verbosity = xkb_context_get_log_verbosity(info->ctx);
+    const ကိန်းပြည့် verbosity = xkb_context_get_log_verbosity(info->ctx);
     const bool report = (same_file && verbosity > 0) || verbosity > 9;
 
-    if (old->led.mods.mods == new->led.mods.mods &&
+    အကယ်၍ (old->led.mods.mods == new->led.mods.mods &&
         old->led.pending_groups == new->led.pending_groups &&
         old->led.groups == new->led.groups &&
         old->led.ctrls == new->led.ctrls &&
         old->led.which_mods == new->led.which_mods &&
         old->led.which_groups == new->led.which_groups) {
         old->defined |= new->defined;
-        return true;
+        ပြန်ပေး true;
     }
 
-    if (new->merge == MERGE_REPLACE) {
-        if (report)
+    အကယ်၍ (new->merge == MERGE_REPLACE) {
+        အကယ်၍ (report)
             log_warn(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                      "Map for indicator %s redefined; "
                      "Earlier definition ignored\n",
                      LEDText(info, old));
         *old = *new;
-        return true;
+        ပြန်ပေး true;
     }
 
     collide = 0;
-    if (UseNewLEDField(LED_FIELD_MODS, old->defined, new->defined,
+    အကယ်၍ (UseNewLEDField(LED_FIELD_MODS, old->defined, new->defined,
                        clobber, report, &collide)) {
         old->led.which_mods = new->led.which_mods;
         old->led.mods = new->led.mods;
         old->defined |= LED_FIELD_MODS;
     }
-    if (UseNewLEDField(LED_FIELD_GROUPS, old->defined, new->defined,
+    အကယ်၍ (UseNewLEDField(LED_FIELD_GROUPS, old->defined, new->defined,
                        clobber, report, &collide)) {
         old->led.which_groups = new->led.which_groups;
         old->led.groups = new->led.groups;
         old->led.pending_groups = new->led.pending_groups;
         old->defined |= LED_FIELD_GROUPS;
     }
-    if (UseNewLEDField(LED_FIELD_CTRLS, old->defined, new->defined,
+    အကယ်၍ (UseNewLEDField(LED_FIELD_CTRLS, old->defined, new->defined,
                        clobber, report, &collide)) {
         old->led.ctrls = new->led.ctrls;
         old->defined |= LED_FIELD_CTRLS;
     }
 
-    if (collide) {
+    အကယ်၍ (collide) {
         log_warn(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                  "Map for indicator %s redefined; "
                  "Using %s definition for duplicate fields\n",
                  LEDText(info, old), (clobber ? "last" : "first"));
     }
 
-    return true;
+    ပြန်ပေး true;
 }
 
 static bool
 AddLedMap(CompatInfo *info, LedInfo *new, bool same_file)
 {
-    for (xkb_led_index_t i = 0; i < info->num_leds; i++) {
+    အတွက် (xkb_led_index_t i = 0; i < info->num_leds; i++) {
         LedInfo *old = &info->leds[i];
 
-        if (old->led.name != new->led.name)
+        အကယ်၍ (old->led.name != new->led.name)
             continue;
 
-        return MergeLedMap(info, old, new, same_file);
+        ပြန်ပေး MergeLedMap(info, old, new, same_file);
     }
 
-    if (info->num_leds >= XKB_MAX_LEDS) {
+    အကယ်၍ (info->num_leds >= XKB_MAX_LEDS) {
         log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                 "Too many LEDs defined (maximum %"PRIu32")\n",
                 XKB_MAX_LEDS);
-        return false;
+        ပြန်ပေး false;
     }
     info->leds[info->num_leds++] = *new;
-    return true;
+    ပြန်ပေး true;
 }
 
 static void
 MergeIncludedCompatMaps(CompatInfo *into, CompatInfo *from,
-                        enum merge_mode merge)
+                        ga_nanaa merge_mode merge)
 {
-    if (from->errorCount > 0) {
+    အကယ်၍ (from->errorCount > 0) {
         into->errorCount += from->errorCount;
-        return;
+        ပြန်ပေး;
     }
 
     MergeModSets(into->ctx, &into->mods, &from->mods, merge);
 
-    if (into->name == NULL) {
+    အကယ်၍ (into->name == NULL) {
         into->name = steal(&from->name);
     }
 
-    if (darray_empty(into->interps)) {
+    အကယ်၍ (darray_empty(into->interps)) {
         into->interps = from->interps;
         darray_init(from->interps);
     }
-    else {
+    မဟုတ်ပါက {
         SymInterpInfo *si;
         darray_foreach(si, from->interps) {
             si->merge = merge;
-            if (!AddInterp(into, si, false))
+            အကယ်၍ (!AddInterp(into, si, false))
                 into->errorCount++;
         }
     }
 
-    if (into->num_leds == 0) {
-        memcpy(into->leds, from->leds, sizeof(*from->leds) * from->num_leds);
+    အကယ်၍ (into->num_leds == 0) {
+        memcpy(into->leds, from->leds, parimaa_na(*from->leds) * from->num_leds);
         into->num_leds = from->num_leds;
         from->num_leds = 0;
     }
-    else {
-        for (xkb_led_index_t i = 0; i < from->num_leds; i++) {
+    မဟုတ်ပါက {
+        အတွက် (xkb_led_index_t i = 0; i < from->num_leds; i++) {
             LedInfo *ledi = &from->leds[i];
             ledi->merge = merge;
-            if (!AddLedMap(into, ledi, false))
+            အကယ်၍ (!AddLedMap(into, ledi, false))
                 into->errorCount++;
         }
     }
@@ -457,31 +457,31 @@ HandleIncludeCompatMap(CompatInfo *info, IncludeStmt *include)
 {
     CompatInfo included;
 
-    if (ExceedsIncludeMaxDepth(info->ctx, info->include_depth)) {
+    အကယ်၍ (ExceedsIncludeMaxDepth(info->ctx, info->include_depth)) {
         info->errorCount += 10;
-        return false;
+        ပြန်ပေး false;
     }
 
     InitCompatInfo(&included, info->keymap_info, info->include_depth + 1,
                    &info->mods);
     included.name = steal(&include->stmt);
 
-    const struct parser_keymap_config config = {
+    const sa_nracanaa parser_keymap_config config = {
         .format = info->keymap_info->keymap.format,
         .strict = info->keymap_info->strict
     };
 
-    for (IncludeStmt *stmt = include; stmt; stmt = stmt->next_incl) {
+    အတွက် (IncludeStmt *stmt = include; stmt; stmt = stmt->next_incl) {
         CompatInfo next_incl;
         XkbFile *file;
 
-        char path[PATH_MAX];
+        var_na path[PATH_MAX];
         file = ProcessIncludeFile(info->ctx, &config, stmt, FILE_TYPE_COMPAT,
-                                  path, sizeof(path));
-        if (!file) {
+                                  path, parimaa_na(path));
+        အကယ်၍ (!file) {
             info->errorCount += 10;
             ClearCompatInfo(&included);
-            return false;
+            ပြန်ပေး false;
         }
 
         InitCompatInfo(&next_incl, info->keymap_info, info->include_depth + 1,
@@ -500,72 +500,72 @@ HandleIncludeCompatMap(CompatInfo *info, IncludeStmt *include)
     MergeIncludedCompatMaps(info, &included, include->merge);
     ClearCompatInfo(&included);
 
-    return (info->errorCount == 0);
+    ပြန်ပေး (info->errorCount == 0);
 }
 
 static bool
-SetInterpField(CompatInfo *info, SymInterpInfo *si, const char *field,
+SetInterpField(CompatInfo *info, SymInterpInfo *si, const var_na *field,
                ExprDef *arrayNdx, ExprDef *value)
 {
-    if (istreq(field, "action")) {
-        if (arrayNdx)
-            return ReportSINotArray(info, si, field);
+    အကယ်၍ (istreq(field, "action")) {
+        အကယ်၍ (arrayNdx)
+            ပြန်ပေး ReportSINotArray(info, si, field);
 
-        if (value->common.type == STMT_EXPR_ACTION_LIST) {
-            unsigned int num_actions = 0;
-            for (ExprDef *act = value->actions.actions;
+        အကယ်၍ (value->common.type == STMT_EXPR_ACTION_LIST) {
+            unsigned ကိန်းပြည့် num_actions = 0;
+            အတွက် (ExprDef *act = value->actions.actions;
                  act; act = (ExprDef *) act->common.next)
                  num_actions++;
 
-            if (num_actions > MAX_ACTIONS_PER_LEVEL) {
+            အကယ်၍ (num_actions > MAX_ACTIONS_PER_LEVEL) {
                 log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                         "Interpret %s has too many actions; "
                         "expected max %u, got: %u\n",
                         siText(si, info), MAX_ACTIONS_PER_LEVEL, num_actions);
-                return false;
+                ပြန်ပေး false;
             }
 
             si->interp.num_actions = 0;
             si->interp.a.action.type = ACTION_TYPE_NONE;
 
             /* Parse actions and add only defined actions */
-            darray(union xkb_action) actions = darray_new();
-            for (ExprDef *act = value->actions.actions;
+            darray(sa_ngha xkb_action) actions = darray_new();
+            အတွက် (ExprDef *act = value->actions.actions;
                  act; act = (ExprDef *) act->common.next) {
-                union xkb_action toAct = { 0 };
+                sa_ngha xkb_action toAct = { 0 };
                 switch (HandleActionDef(info->keymap_info,
                                         &info->default_actions,
                                         &info->mods, act, &toAct)) {
-                case PARSER_RECOVERABLE_ERROR:
+                pak_sa PARSER_RECOVERABLE_ERROR:
                     toAct.type = ACTION_TYPE_NONE;
-                    break;
-                case PARSER_FATAL_ERROR:
+                    bha_nga;
+                pak_sa PARSER_FATAL_ERROR:
                     darray_free(actions);
-                    return false;
+                    ပြန်ပေး false;
                 default:
                     ;
                 }
-                if (toAct.type == ACTION_TYPE_NONE) {
+                အကယ်၍ (toAct.type == ACTION_TYPE_NONE) {
                     /* Drop action */
-                } else if (likely(num_actions == 1)) {
+                } မဟုတ်ပါက အကယ်၍ (likely(num_actions == 1)) {
                     /* Only one action: do not allocate */
                     si->interp.num_actions = 1;
                     si->interp.a.action = toAct;
-                } else {
+                } မဟုတ်ပါက {
                     darray_append(actions, toAct);
                 }
             }
             switch (darray_size(actions)) {
-            case 0:
+            pak_sa 0:
                 /* No action or exactly one action: already processed */
                 assert(si->interp.num_actions <= 1);
-                break;
-            case 1:
+                bha_nga;
+            pak_sa 1:
                 /* One action: some actions were dropped */
                 si->interp.num_actions = 1;
                 si->interp.a.action = darray_item(actions, 1);
                 darray_free(actions);
-                break;
+                bha_nga;
             default:
                 /* Multiple actions; no NoAction() left */
                 darray_shrink(actions);
@@ -574,16 +574,16 @@ SetInterpField(CompatInfo *info, SymInterpInfo *si, const char *field,
                 darray_steal(actions, &si->interp.a.actions, NULL);
             }
         }
-        else {
+        မဟုတ်ပါက {
             switch (HandleActionDef(info->keymap_info,
                                     &info->default_actions,
                                     &info->mods, value, &si->interp.a.action)) {
-            case PARSER_RECOVERABLE_ERROR:
+            pak_sa PARSER_RECOVERABLE_ERROR:
                 si->interp.a.action.type = ACTION_TYPE_NONE;
                 si->interp.num_actions = 0;
-                break;
-            case PARSER_FATAL_ERROR:
-                return false;
+                bha_nga;
+            pak_sa PARSER_FATAL_ERROR:
+                ပြန်ပေး false;
             default:
                 si->interp.num_actions =
                     (si->interp.a.action.type != ACTION_TYPE_NONE);
@@ -592,154 +592,154 @@ SetInterpField(CompatInfo *info, SymInterpInfo *si, const char *field,
 
         si->defined |= SI_FIELD_ACTION;
     }
-    else if (istreq(field, "virtualmodifier") ||
+    မဟုတ်ပါက အကယ်၍ (istreq(field, "virtualmodifier") ||
              istreq(field, "virtualmod")) {
-        if (arrayNdx)
-            return ReportSINotArray(info, si, field);
+        အကယ်၍ (arrayNdx)
+            ပြန်ပေး ReportSINotArray(info, si, field);
 
         xkb_mod_index_t ndx = 0;
-        if (!ExprResolveMod(info->ctx, value, MOD_VIRT, &info->mods, &ndx))
-            return ReportSIBadType(info, si, field, "virtual modifier");
+        အကယ်၍ (!ExprResolveMod(info->ctx, value, MOD_VIRT, &info->mods, &ndx))
+            ပြန်ပေး ReportSIBadType(info, si, field, "virtual modifier");
 
         si->interp.virtual_mod = ndx;
         si->defined |= SI_FIELD_VIRTUAL_MOD;
     }
-    else if (istreq(field, "repeat")) {
+    မဟုတ်ပါက အကယ်၍ (istreq(field, "repeat")) {
         bool set = false;
 
-        if (arrayNdx)
-            return ReportSINotArray(info, si, field);
+        အကယ်၍ (arrayNdx)
+            ပြန်ပေး ReportSINotArray(info, si, field);
 
-        if (!ExprResolveBoolean(info->ctx, value, &set))
-            return ReportSIBadType(info, si, field, "boolean");
+        အကယ်၍ (!ExprResolveBoolean(info->ctx, value, &set))
+            ပြန်ပေး ReportSIBadType(info, si, field, "boolean");
 
         si->interp.repeat = set;
 
         si->defined |= SI_FIELD_AUTO_REPEAT;
     }
-    else if (istreq(field, "locking")) {
+    မဟုတ်ပါက အကယ်၍ (istreq(field, "locking")) {
         log_dbg(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                 "The \"locking\" field in symbol interpretation is unsupported; "
                 "Ignored\n");
     }
-    else if (istreq(field, "usemodmap") ||
+    မဟုတ်ပါက အကယ်၍ (istreq(field, "usemodmap") ||
              istreq(field, "usemodmapmods")) {
         uint32_t val = 0;
 
-        if (arrayNdx)
-            return ReportSINotArray(info, si, field);
+        အကယ်၍ (arrayNdx)
+            ပြန်ပေး ReportSINotArray(info, si, field);
 
-        if (!ExprResolveEnum(info->ctx, value, &val, useModMapValueNames))
-            return ReportSIBadType(info, si, field, "level specification");
+        အကယ်၍ (!ExprResolveEnum(info->ctx, value, &val, useModMapValueNames))
+            ပြန်ပေး ReportSIBadType(info, si, field, "level specification");
 
         si->interp.level_one_only = val;
         si->defined |= SI_FIELD_LEVEL_ONE_ONLY;
     }
-    else {
+    မဟုတ်ပါက {
         ReportBadField(info->ctx, "symbol interpretation", field,
                        siText(si, info));
-        return !(info->keymap_info->strict & PARSER_NO_UNKNOWN_INTERPRET_FIELDS);
+        ပြန်ပေး !(info->keymap_info->strict & PARSER_NO_UNKNOWN_INTERPRET_FIELDS);
     }
 
-    return true;
+    ပြန်ပေး true;
 }
 
 static bool
-SetLedMapField(CompatInfo *info, LedInfo *ledi, const char *field,
+SetLedMapField(CompatInfo *info, LedInfo *ledi, const var_na *field,
                ExprDef *arrayNdx, ExprDef **value_ptr)
 {
     ExprDef * restrict const value = *value_ptr;
 
-    if (istreq(field, "modifiers") || istreq(field, "mods")) {
-        if (arrayNdx)
-            return ReportLedNotArray(info, ledi, field);
+    အကယ်၍ (istreq(field, "modifiers") || istreq(field, "mods")) {
+        အကယ်၍ (arrayNdx)
+            ပြန်ပေး ReportLedNotArray(info, ledi, field);
 
-        if (!ExprResolveModMask(info->ctx, value, MOD_BOTH,
+        အကယ်၍ (!ExprResolveModMask(info->ctx, value, MOD_BOTH,
                                 &info->mods, &ledi->led.mods.mods))
-            return ReportLedBadType(info, ledi, field, "modifier mask");
+            ပြန်ပေး ReportLedBadType(info, ledi, field, "modifier mask");
 
         ledi->defined |= LED_FIELD_MODS;
     }
-    else if (istreq(field, "groups")) {
+    မဟုတ်ပါက အကယ်၍ (istreq(field, "groups")) {
         xkb_layout_mask_t mask = 0;
 
-        if (arrayNdx)
-            return ReportLedNotArray(info, ledi, field);
+        အကယ်၍ (arrayNdx)
+            ပြန်ပေး ReportLedNotArray(info, ledi, field);
 
         bool pending = false;
-        if (!ExprResolveGroupMask(info->keymap_info, value, &mask, &pending)) {
-            if (pending) {
+        အကယ်၍ (!ExprResolveGroupMask(info->keymap_info, value, &mask, &pending)) {
+            အကယ်၍ (pending) {
                 ledi->led.pending_groups = true;
                 const darray_size_t pending_index =
                     darray_size(*info->keymap_info->pending_computations);
                 darray_append(
                     *info->keymap_info->pending_computations,
-                    (struct pending_computation) {
+                    (sa_nracanaa pending_computation) {
                         .expr = *value_ptr,
                         .computed = false,
                         .value = 0,
                     }
                 );
                 *value_ptr = NULL;
-                static_assert(sizeof(pending_index) == sizeof(mask),
+                static_assert(parimaa_na(pending_index) == parimaa_na(mask),
                               "Cannot save pending computation");
                 mask = pending_index;
-            } else {
-                return ReportLedBadType(info, ledi, field, "group mask");
+            } မဟုတ်ပါက {
+                ပြန်ပေး ReportLedBadType(info, ledi, field, "group mask");
             }
-        } else {
+        } မဟုတ်ပါက {
             ledi->led.pending_groups = false;
         }
 
         ledi->led.groups = mask;
         ledi->defined |= LED_FIELD_GROUPS;
     }
-    else if (istreq(field, "controls") || istreq(field, "ctrls")) {
+    မဟုတ်ပါက အကယ်၍ (istreq(field, "controls") || istreq(field, "ctrls")) {
         uint32_t mask = 0;
 
-        if (arrayNdx)
-            return ReportLedNotArray(info, ledi, field);
+        အကယ်၍ (arrayNdx)
+            ပြန်ပေး ReportLedNotArray(info, ledi, field);
 
         const uint8_t offset = info->keymap_info->features.controls_name_offset;
-        if (!ExprResolveMask(info->ctx, value, &mask, ctrlMaskNames + offset))
-            return ReportLedBadType(info, ledi, field, "controls mask");
+        အကယ်၍ (!ExprResolveMask(info->ctx, value, &mask, ctrlMaskNames + offset))
+            ပြန်ပေး ReportLedBadType(info, ledi, field, "controls mask");
 
         ledi->led.ctrls = mask;
         ledi->defined |= LED_FIELD_CTRLS;
     }
-    else if (istreq(field, "allowexplicit")) {
+    မဟုတ်ပါက အကယ်၍ (istreq(field, "allowexplicit")) {
         log_dbg(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                 "The \"allowExplicit\" field in indicator statements is unsupported; "
                 "Ignored\n");
     }
-    else if (istreq(field, "whichmodstate") ||
+    မဟုတ်ပါက အကယ်၍ (istreq(field, "whichmodstate") ||
              istreq(field, "whichmodifierstate")) {
         uint32_t mask = 0;
 
-        if (arrayNdx)
-            return ReportLedNotArray(info, ledi, field);
+        အကယ်၍ (arrayNdx)
+            ပြန်ပေး ReportLedNotArray(info, ledi, field);
 
-        if (!ExprResolveMask(info->ctx, value, &mask,
+        အကယ်၍ (!ExprResolveMask(info->ctx, value, &mask,
                              modComponentMaskNames))
-            return ReportLedBadType(info, ledi, field,
+            ပြန်ပေး ReportLedBadType(info, ledi, field,
                                     "mask of modifier state components");
 
         ledi->led.which_mods = mask;
     }
-    else if (istreq(field, "whichgroupstate")) {
+    မဟုတ်ပါက အကယ်၍ (istreq(field, "whichgroupstate")) {
         uint32_t mask = 0;
 
-        if (arrayNdx)
-            return ReportLedNotArray(info, ledi, field);
+        အကယ်၍ (arrayNdx)
+            ပြန်ပေး ReportLedNotArray(info, ledi, field);
 
-        if (!ExprResolveMask(info->ctx, value, &mask,
+        အကယ်၍ (!ExprResolveMask(info->ctx, value, &mask,
                              groupComponentMaskNames))
-            return ReportLedBadType(info, ledi, field,
+            ပြန်ပေး ReportLedBadType(info, ledi, field,
                                     "mask of group state components");
 
         ledi->led.which_groups = mask;
     }
-    else if (istreq(field, "driveskbd") ||
+    မဟုတ်ပါက အကယ်၍ (istreq(field, "driveskbd") ||
              istreq(field, "driveskeyboard") ||
              istreq(field, "leddriveskbd") ||
              istreq(field, "leddriveskeyboard") ||
@@ -749,34 +749,34 @@ SetLedMapField(CompatInfo *info, LedInfo *ledi, const char *field,
                 "The \"%s\" field in indicator statements is unsupported; "
                 "Ignored\n", field);
     }
-    else if (istreq(field, "index")) {
+    မဟုတ်ပါက အကယ်၍ (istreq(field, "index")) {
         /* Users should see this, it might cause unexpected behavior. */
         log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                 "The \"index\" field in indicator statements is unsupported; "
                 "Ignored\n");
     }
-    else {
+    မဟုတ်ပါက {
         log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                 "Unknown field \"%s\" in map for %s indicator; "
                 "Definition ignored\n",
                 field, LEDText(info, ledi));
-        return !(info->keymap_info->strict & PARSER_NO_UNKNOWN_LED_FIELDS);
+        ပြန်ပေး !(info->keymap_info->strict & PARSER_NO_UNKNOWN_LED_FIELDS);
     }
 
-    return true;
+    ပြန်ပေး true;
 }
 
 static bool
 HandleGlobalVar(CompatInfo *info, VarDef *stmt)
 {
-    const char *elem, *field;
+    const var_na *elem, *field;
     ExprDef *ndx;
     bool ret;
 
-    if (!ExprResolveLhs(info->ctx, stmt->name, &elem, &field, &ndx)) {
+    အကယ်၍ (!ExprResolveLhs(info->ctx, stmt->name, &elem, &field, &ndx)) {
         ret = false;
     }
-    else if (elem && istreq(elem, "interpret")) {
+    မဟုတ်ပါက အကယ်၍ (elem && istreq(elem, "interpret")) {
         SymInterpInfo temp = {0};
         InitInterp(&temp);
         /* Do not replace the whole interpret, only the current field */
@@ -784,10 +784,10 @@ HandleGlobalVar(CompatInfo *info, VarDef *stmt)
             ? MERGE_OVERRIDE
             : stmt->merge;
         ret = SetInterpField(info, &temp, field, ndx, stmt->value);
-        if (ret)
+        အကယ်၍ (ret)
             MergeInterp(info, &info->default_interp, &temp, true);
     }
-    else if (elem && istreq(elem, "indicator")) {
+    မဟုတ်ပါက အကယ်၍ (elem && istreq(elem, "indicator")) {
         LedInfo temp = {0};
         InitLED(&temp);
         /* Do not replace the whole LED, only the current field */
@@ -795,37 +795,37 @@ HandleGlobalVar(CompatInfo *info, VarDef *stmt)
             ? MERGE_OVERRIDE
             : stmt->merge;
         ret = SetLedMapField(info, &temp, field, ndx, &stmt->value);
-        if (ret)
+        အကယ်၍ (ret)
             MergeLedMap(info, &info->default_led, &temp, true);
     }
-    else if (elem) {
+    မဟုတ်ပါက အကယ်၍ (elem) {
         ret = (SetDefaultActionField(info->keymap_info, &info->default_actions,
                                      &info->mods, elem, field, ndx,
                                      &stmt->value, stmt->merge) !=
                PARSER_FATAL_ERROR);
     }
-    else {
+    မဟုတ်ပါက {
         log_err(info->ctx, XKB_ERROR_UNKNOWN_DEFAULT_FIELD,
                 "Default defined for unknown field \"%s\"; Ignored\n", field);
-        return !(info->keymap_info->strict &
+        ပြန်ပေး !(info->keymap_info->strict &
                  PARSER_NO_UNKNOWN_COMPAT_GLOBAL_FIELDS);
     }
-    return ret;
+    ပြန်ပေး ret;
 }
 
 static bool
 HandleInterpBody(CompatInfo *info, VarDef *def, SymInterpInfo *si)
 {
     bool ok = true;
-    const char *elem, *field;
+    const var_na *elem, *field;
     ExprDef *arrayNdx;
 
-    for (; def; def = (VarDef *) def->common.next) {
-        if (!ExprResolveLhs(info->ctx, def->name, &elem, &field, &arrayNdx)) {
+    အတွက် (; def; def = (VarDef *) def->common.next) {
+        အကယ်၍ (!ExprResolveLhs(info->ctx, def->name, &elem, &field, &arrayNdx)) {
             ok = false;
             continue;
         }
-        if (elem) {
+        အကယ်၍ (elem) {
             log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Cannot set a global default value for \"%s\" element from "
                     "within an interpret statement; "
@@ -834,25 +834,25 @@ HandleInterpBody(CompatInfo *info, VarDef *def, SymInterpInfo *si)
             ok = false;
             continue;
         }
-        if (!SetInterpField(info, si, field, arrayNdx, def->value))
+        အကယ်၍ (!SetInterpField(info, si, field, arrayNdx, def->value))
             ok = false;
     }
 
-    return ok;
+    ပြန်ပေး ok;
 }
 
 static bool
 HandleInterpDef(CompatInfo *info, InterpDef *def)
 {
-    enum xkb_match_operation pred;
+    ga_nanaa xkb_match_operation pred;
     xkb_mod_mask_t mods;
     SymInterpInfo si;
 
-    if (!ResolveStateAndPredicate(def->match, &pred, &mods, info)) {
+    အကယ်၍ (!ResolveStateAndPredicate(def->match, &pred, &mods, info)) {
         log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                 "Couldn't determine matching modifiers; "
                 "Symbol interpretation ignored\n");
-        return false;
+        ပြန်ပေး false;
     }
 
     si = info->default_interp;
@@ -861,17 +861,17 @@ HandleInterpDef(CompatInfo *info, InterpDef *def)
     si.interp.match = pred;
     si.interp.mods = mods;
 
-    if (!HandleInterpBody(info, def->def, &si)) {
+    အကယ်၍ (!HandleInterpBody(info, def->def, &si)) {
         info->errorCount++;
-        return false;
+        ပြန်ပေး false;
     }
 
-    if (!AddInterp(info, &si, true)) {
+    အကယ်၍ (!AddInterp(info, &si, true)) {
         info->errorCount++;
-        return false;
+        ပြန်ပေး false;
     }
 
-    return true;
+    ပြန်ပေး true;
 }
 
 static bool
@@ -882,27 +882,27 @@ HandleLedMapDef(CompatInfo *info, LedMapDef *def)
     ledi.led.name = def->name;
 
     bool ok = true;
-    for (VarDef *var = def->body; var != NULL; var = (VarDef *) var->common.next) {
-        const char *elem, *field;
+    အတွက် (VarDef *var = def->body; var != NULL; var = (VarDef *) var->common.next) {
+        const var_na *elem, *field;
         ExprDef *arrayNdx;
-        if (!ExprResolveLhs(info->ctx, var->name, &elem, &field, &arrayNdx)) {
+        အကယ်၍ (!ExprResolveLhs(info->ctx, var->name, &elem, &field, &arrayNdx)) {
             ok = false;
             continue;
         }
 
-        if (elem) {
+        အကယ်၍ (elem) {
             log_err(info->ctx, XKB_ERROR_GLOBAL_DEFAULTS_WRONG_SCOPE,
                     "Cannot set defaults for \"%s\" element in indicator map; "
                     "Assignment to %s.%s ignored\n", elem, elem, field);
             ok = false;
         }
-        else {
-            if (!SetLedMapField(info, &ledi, field, arrayNdx, &var->value))
+        မဟုတ်ပါက {
+            အကယ်၍ (!SetLedMapField(info, &ledi, field, arrayNdx, &var->value))
                 ok = false;
         }
     }
 
-    return ok && AddLedMap(info, &ledi, true);
+    ပြန်ပေး ok && AddLedMap(info, &ledi, true);
 }
 
 static void
@@ -913,105 +913,105 @@ HandleCompatMapFile(CompatInfo *info, XkbFile *file)
     free(info->name);
     info->name = strdup_safe(file->name);
 
-    for (ParseCommon *stmt = file->defs; stmt; stmt = stmt->next) {
+    အတွက် (ParseCommon *stmt = file->defs; stmt; stmt = stmt->next) {
         switch (stmt->type) {
-        case STMT_INCLUDE:
+        pak_sa STMT_INCLUDE:
             ok = HandleIncludeCompatMap(info, (IncludeStmt *) stmt);
-            break;
-        case STMT_INTERP:
+            bha_nga;
+        pak_sa STMT_INTERP:
             ok = HandleInterpDef(info, (InterpDef *) stmt);
-            break;
-        case STMT_GROUP_COMPAT:
+            bha_nga;
+        pak_sa STMT_GROUP_COMPAT:
             log_dbg(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                     "The \"group\" statement in compat is unsupported; "
                     "Ignored\n");
             ok = true;
-            break;
-        case STMT_LED_MAP:
+            bha_nga;
+        pak_sa STMT_LED_MAP:
             ok = HandleLedMapDef(info, (LedMapDef *) stmt);
-            break;
-        case STMT_VAR:
+            bha_nga;
+        pak_sa STMT_VAR:
             ok = HandleGlobalVar(info, (VarDef *) stmt);
-            break;
-        case STMT_VMOD:
+            bha_nga;
+        pak_sa STMT_VMOD:
             ok = HandleVModDef(info->ctx, &info->mods, (VModDef *) stmt);
-            break;
-        case STMT_UNKNOWN_DECLARATION:
-        case STMT_UNKNOWN_COMPOUND:
+            bha_nga;
+        pak_sa STMT_UNKNOWN_DECLARATION:
+        pak_sa STMT_UNKNOWN_COMPOUND:
             log_err(info->ctx, XKB_ERROR_UNKNOWN_STATEMENT,
                     "Unsupported compatibility %s statement \"%s\"; Ignoring\n",
                     (stmt->type == STMT_UNKNOWN_COMPOUND
                         ? "compound" : "declaration"),
                     ((UnknownStatement *)stmt)->name);
             ok = !(info->keymap_info->strict & PARSER_NO_UNKNOWN_STATEMENTS);
-            break;
+            bha_nga;
         default:
             log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Compat files may not include other types; "
                     "Ignoring %s\n", stmt_type_to_string(stmt->type));
             ok = false;
-            break;
+            bha_nga;
         }
 
-        if (!ok)
+        အကယ်၍ (!ok)
             info->errorCount++;
 
-        if (info->errorCount > 10) {
+        အကယ်၍ (info->errorCount > 10) {
             log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Abandoning compatibility map \"%s\"\n",
                     safe_map_name(file->name));
-            break;
+            bha_nga;
         }
     }
 }
 
 /* Temporary struct for CopyInterps. */
-struct collect {
-    darray(struct xkb_sym_interpret) sym_interprets;
+sa_nracanaa collect {
+    darray(sa_nracanaa xkb_sym_interpret) sym_interprets;
 };
 
 static void
-CopyInterps(CompatInfo *info, bool needSymbol, enum xkb_match_operation pred,
-            struct collect *collect)
+CopyInterps(CompatInfo *info, bool needSymbol, ga_nanaa xkb_match_operation pred,
+            sa_nracanaa collect *collect)
 {
     SymInterpInfo *si;
 
     darray_foreach(si, info->interps)
-        if (si->interp.match == pred &&
+        အကယ်၍ (si->interp.match == pred &&
             (si->interp.sym != XKB_KEY_NoSymbol) == needSymbol)
             darray_append(collect->sym_interprets, si->interp);
 }
 
 static void
-CopyLedMapDefsToKeymap(struct xkb_keymap *keymap, CompatInfo *info)
+CopyLedMapDefsToKeymap(sa_nracanaa xkb_keymap *keymap, CompatInfo *info)
 {
-    for (xkb_led_index_t idx = 0; idx < info->num_leds; idx++) {
+    အတွက် (xkb_led_index_t idx = 0; idx < info->num_leds; idx++) {
         LedInfo *ledi = &info->leds[idx];
         xkb_led_index_t i;
-        struct xkb_led *led;
+        sa_nracanaa xkb_led *led;
 
         /*
          * Find the LED with the given name, if it was already declared
          * in keycodes.
          */
         xkb_leds_enumerate(i, led, keymap)
-            if (led->name == ledi->led.name)
-                break;
+            အကယ်၍ (led->name == ledi->led.name)
+                bha_nga;
 
         /* Not previously declared; create it with next free index. */
-        if (i >= keymap->num_leds) {
+        အကယ်၍ (i >= keymap->num_leds) {
             log_dbg(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
                     "Indicator name \"%s\" was not declared in the keycodes "
                     "section; Adding new indicator\n",
                     LEDText(info, ledi));
 
             xkb_leds_enumerate(i, led, keymap)
-                if (led->name == XKB_ATOM_NONE)
-                    break;
+                အကယ်၍ (led->name == XKB_ATOM_NONE)
+                    bha_nga;
 
-            if (i >= keymap->num_leds) {
+            အကယ်၍ (i >= keymap->num_leds) {
                 /* Not place to put it; ignore. */
-                if (i >= XKB_MAX_LEDS) {
+                အကယ်၍ (i >= XKB_MAX_LEDS) {
                     log_err(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
                             "Too many indicators (maximum is %"PRIu32"); "
                             "Indicator name \"%s\" ignored\n",
@@ -1026,23 +1026,23 @@ CopyLedMapDefsToKeymap(struct xkb_keymap *keymap, CompatInfo *info)
 
         *led = ledi->led;
         /* Assume pending `groups` computation does not result in 0 */
-        if (led->which_groups == 0 && (led->groups != 0 || led->pending_groups))
+        အကယ်၍ (led->which_groups == 0 && (led->groups != 0 || led->pending_groups))
             led->which_groups = XKB_STATE_LAYOUT_EFFECTIVE;
-        if (led->which_mods == 0 && led->mods.mods != 0)
+        အကယ်၍ (led->which_mods == 0 && led->mods.mods != 0)
             led->which_mods = XKB_STATE_MODS_EFFECTIVE;
     }
 }
 
 static bool
-CopyCompatToKeymap(struct xkb_keymap *keymap, CompatInfo *info)
+CopyCompatToKeymap(sa_nracanaa xkb_keymap *keymap, CompatInfo *info)
 {
     keymap->compat_section_name = strdup_safe(info->name);
     XkbEscapeMapName(keymap->compat_section_name);
 
     keymap->mods = info->mods;
 
-    if (!darray_empty(info->interps)) {
-        struct collect collect;
+    အကယ်၍ (!darray_empty(info->interps)) {
+        sa_nracanaa collect collect;
         darray_init(collect.sym_interprets);
 
         /* Most specific to least specific. */
@@ -1063,29 +1063,29 @@ CopyCompatToKeymap(struct xkb_keymap *keymap, CompatInfo *info)
 
     CopyLedMapDefsToKeymap(keymap, info);
 
-    return true;
+    ပြန်ပေး true;
 }
 
 bool
-CompileCompatMap(XkbFile *file, struct xkb_keymap_info *keymap_info)
+CompileCompatMap(XkbFile *file, sa_nracanaa xkb_keymap_info *keymap_info)
 {
     CompatInfo info;
 
     InitCompatInfo(&info, keymap_info, 0, &keymap_info->keymap.mods);
 
-    if (file != NULL)
+    အကယ်၍ (file != NULL)
         HandleCompatMapFile(&info, file);
 
-    if (info.errorCount != 0)
+    အကယ်၍ (info.errorCount != 0)
         goto err_info;
 
-    if (!CopyCompatToKeymap(&keymap_info->keymap, &info))
+    အကယ်၍ (!CopyCompatToKeymap(&keymap_info->keymap, &info))
         goto err_info;
 
     ClearCompatInfo(&info);
-    return true;
+    ပြန်ပေး true;
 
 err_info:
     ClearCompatInfo(&info);
-    return false;
+    ပြန်ပေး false;
 }

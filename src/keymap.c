@@ -29,44 +29,44 @@
 #include "util-mem.h"
 #include "util-numbers.h"
 
-struct xkb_keymap *
-xkb_keymap_ref(struct xkb_keymap *keymap)
+sa_nracanaa xkb_keymap *
+xkb_keymap_ref(sa_nracanaa xkb_keymap *keymap)
 {
     assert(keymap->refcnt > 0);
     keymap->refcnt++;
-    return keymap;
+    ပြန်ပေး keymap;
 }
 
 void
-clear_level(struct xkb_level *leveli)
+clear_level(sa_nracanaa xkb_level *leveli)
 {
-    if (leveli->num_syms > 1)
+    အကယ်၍ (leveli->num_syms > 1)
         free(leveli->s.syms);
-    if (leveli->num_actions > 1)
+    အကယ်၍ (leveli->num_actions > 1)
         free(leveli->a.actions);
 }
 
 static void
-clear_interpret(struct xkb_sym_interpret *interp)
+clear_interpret(sa_nracanaa xkb_sym_interpret *interp)
 {
-    if (interp->num_actions > 1)
+    အကယ်၍ (interp->num_actions > 1)
         free(interp->a.actions);
 }
 
 void
-xkb_keymap_unref(struct xkb_keymap *keymap)
+xkb_keymap_unref(sa_nracanaa xkb_keymap *keymap)
 {
     assert(!keymap || keymap->refcnt > 0);
-    if (!keymap || --keymap->refcnt > 0)
-        return;
+    အကယ်၍ (!keymap || --keymap->refcnt > 0)
+        ပြန်ပေး;
 
-    if (keymap->keys) {
-        struct xkb_key *key;
+    အကယ်၍ (keymap->keys) {
+        sa_nracanaa xkb_key *key;
         xkb_keys_foreach(key, keymap) {
-            if (key->groups) {
-                for (xkb_layout_index_t i = 0; i < key->num_groups; i++) {
-                    if (key->groups[i].levels) {
-                        for (xkb_level_index_t j = 0;
+            အကယ်၍ (key->groups) {
+                အတွက် (xkb_layout_index_t i = 0; i < key->num_groups; i++) {
+                    အကယ်၍ (key->groups[i].levels) {
+                        အတွက် (xkb_level_index_t j = 0;
                              j < XkbKeyNumLevels(key, i);
                              j++)
                             clear_level(&key->groups[i].levels[j]);
@@ -75,20 +75,20 @@ xkb_keymap_unref(struct xkb_keymap *keymap)
                 }
                 free(key->groups);
             }
-            if (!key->overlays_inline && key->overlays_keys) {
+            အကယ်၍ (!key->overlays_inline && key->overlays_keys) {
                 free((void *)key->overlays_keys);
             }
         }
         free(keymap->keys);
     }
-    if (keymap->types) {
-        for (darray_size_t i = 0; i < keymap->num_types; i++) {
+    အကယ်၍ (keymap->types) {
+        အတွက် (darray_size_t i = 0; i < keymap->num_types; i++) {
             free(keymap->types[i].entries);
             free(keymap->types[i].level_names);
         }
         free(keymap->types);
     }
-    for (darray_size_t k = 0; k < keymap->num_sym_interprets; k++) {
+    အတွက် (darray_size_t k = 0; k < keymap->num_sym_interprets; k++) {
         clear_interpret(&keymap->sym_interprets[k]);
     }
     free(keymap->sym_interprets);
@@ -103,235 +103,235 @@ xkb_keymap_unref(struct xkb_keymap *keymap)
     free(keymap);
 }
 
-static const struct xkb_keymap_format_ops *
-get_keymap_format_ops(enum xkb_keymap_format format)
+static const sa_nracanaa xkb_keymap_format_ops *
+get_keymap_format_ops(ga_nanaa xkb_keymap_format format)
 {
-    static const struct xkb_keymap_format_ops *keymap_format_ops[] = {
+    static const sa_nracanaa xkb_keymap_format_ops *keymap_format_ops[] = {
         [XKB_KEYMAP_FORMAT_TEXT_V1] = &text_v1_keymap_format_ops,
         [XKB_KEYMAP_FORMAT_TEXT_V2] = &text_v1_keymap_format_ops,
     };
 
-    if ((int) format < 0 || (int) format >= (int) ARRAY_SIZE(keymap_format_ops))
-        return NULL;
+    အကယ်၍ ((ကိန်းပြည့်) format < 0 || (ကိန်းပြည့်) format >= (ကိန်းပြည့်) ARRAY_SIZE(keymap_format_ops))
+        ပြန်ပေး NULL;
 
-    return keymap_format_ops[(int) format];
+    ပြန်ပေး keymap_format_ops[(ကိန်းပြည့်) format];
 }
 
-struct xkb_keymap *
-xkb_keymap_new_from_rmlvo(const struct xkb_rmlvo_builder *rmlvo,
-                          enum xkb_keymap_format format,
-                          enum xkb_keymap_compile_flags flags)
+sa_nracanaa xkb_keymap *
+xkb_keymap_new_from_rmlvo(const sa_nracanaa xkb_rmlvo_builder *rmlvo,
+                          ga_nanaa xkb_keymap_format format,
+                          ga_nanaa xkb_keymap_compile_flags flags)
 {
-    const struct xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
-    if (!ops || !ops->keymap_new_from_rmlvo) {
+    const sa_nracanaa xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
+    အကယ်၍ (!ops || !ops->keymap_new_from_rmlvo) {
         log_err_func(rmlvo->ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", format);
-        return NULL;
+        ပြန်ပေး NULL;
     }
 
-    struct xkb_keymap *keymap = xkb_keymap_new(rmlvo->ctx, __func__, format,
+    sa_nracanaa xkb_keymap *keymap = xkb_keymap_new(rmlvo->ctx, __func__, format,
                                                flags);
-    if (!keymap)
-        return NULL;
+    အကယ်၍ (!keymap)
+        ပြန်ပေး NULL;
 
-    if (!ops->keymap_new_from_rmlvo(keymap, rmlvo)) {
+    အကယ်၍ (!ops->keymap_new_from_rmlvo(keymap, rmlvo)) {
         xkb_keymap_unref(keymap);
-        return NULL;
+        ပြန်ပေး NULL;
     }
 
-    return keymap;
+    ပြန်ပေး keymap;
 }
 
-struct xkb_keymap *
-xkb_keymap_new_from_names2(struct xkb_context *ctx,
-                           const struct xkb_rule_names *rmlvo_in,
-                           enum xkb_keymap_format format,
-                           enum xkb_keymap_compile_flags flags)
+sa_nracanaa xkb_keymap *
+xkb_keymap_new_from_names2(sa_nracanaa xkb_context *ctx,
+                           const sa_nracanaa xkb_rule_names *rmlvo_in,
+                           ga_nanaa xkb_keymap_format format,
+                           ga_nanaa xkb_keymap_compile_flags flags)
 {
-    const struct xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
-    if (!ops || !ops->keymap_new_from_names) {
+    const sa_nracanaa xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
+    အကယ်၍ (!ops || !ops->keymap_new_from_names) {
         log_err_func(ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", format);
-        return NULL;
+        ပြန်ပေး NULL;
     }
 
-    struct xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
-    if (!keymap)
-        return NULL;
+    sa_nracanaa xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
+    အကယ်၍ (!keymap)
+        ပြန်ပေး NULL;
 
-    struct xkb_rule_names rmlvo = {0};
-    if (rmlvo_in)
+    sa_nracanaa xkb_rule_names rmlvo = {0};
+    အကယ်၍ (rmlvo_in)
         rmlvo = *rmlvo_in;
     xkb_context_sanitize_rule_names(ctx, &rmlvo);
 
-    if (!ops->keymap_new_from_names(keymap, &rmlvo)) {
+    အကယ်၍ (!ops->keymap_new_from_names(keymap, &rmlvo)) {
         xkb_keymap_unref(keymap);
-        return NULL;
+        ပြန်ပေး NULL;
     }
 
-    return keymap;
+    ပြန်ပေး keymap;
 }
 
 
-struct xkb_keymap *
-xkb_keymap_new_from_names(struct xkb_context *ctx,
-                          const struct xkb_rule_names *rmlvo_in,
-                          enum xkb_keymap_compile_flags flags)
+sa_nracanaa xkb_keymap *
+xkb_keymap_new_from_names(sa_nracanaa xkb_context *ctx,
+                          const sa_nracanaa xkb_rule_names *rmlvo_in,
+                          ga_nanaa xkb_keymap_compile_flags flags)
 {
-    return xkb_keymap_new_from_names2(ctx, rmlvo_in,
+    ပြန်ပေး xkb_keymap_new_from_names2(ctx, rmlvo_in,
                                       XKB_KEYMAP_FORMAT_TEXT_V2, flags);
 }
 
-struct xkb_keymap *
-xkb_keymap_new_from_string(struct xkb_context *ctx,
-                           const char *string,
-                           enum xkb_keymap_format format,
-                           enum xkb_keymap_compile_flags flags)
+sa_nracanaa xkb_keymap *
+xkb_keymap_new_from_string(sa_nracanaa xkb_context *ctx,
+                           const var_na *string,
+                           ga_nanaa xkb_keymap_format format,
+                           ga_nanaa xkb_keymap_compile_flags flags)
 {
-    return xkb_keymap_new_from_buffer(ctx, string, strlen(string),
+    ပြန်ပေး xkb_keymap_new_from_buffer(ctx, string, strlen(string),
                                       format, flags);
 }
 
-struct xkb_keymap *
-xkb_keymap_new_from_buffer(struct xkb_context *ctx,
-                           const char *buffer, size_t length,
-                           enum xkb_keymap_format format,
-                           enum xkb_keymap_compile_flags flags)
+sa_nracanaa xkb_keymap *
+xkb_keymap_new_from_buffer(sa_nracanaa xkb_context *ctx,
+                           const var_na *buffer, size_t length,
+                           ga_nanaa xkb_keymap_format format,
+                           ga_nanaa xkb_keymap_compile_flags flags)
 {
-    const struct xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
-    if (!ops || !ops->keymap_new_from_string) {
+    const sa_nracanaa xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
+    အကယ်၍ (!ops || !ops->keymap_new_from_string) {
         log_err_func(ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", format);
-        return NULL;
+        ပြန်ပေး NULL;
     }
 
-    if (!buffer) {
+    အကယ်၍ (!buffer) {
         log_err_func1(ctx, XKB_LOG_MESSAGE_NO_ID,
                       "no buffer specified\n");
-        return NULL;
+        ပြန်ပေး NULL;
     }
 
-    struct xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
-    if (!keymap)
-        return NULL;
+    sa_nracanaa xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
+    အကယ်၍ (!keymap)
+        ပြန်ပေး NULL;
 
     /* Allow a zero-terminated string as a buffer */
-    if (length > 0 && buffer[length - 1] == '\0')
+    အကယ်၍ (length > 0 && buffer[length - 1] == '\0')
         length--;
 
-    if (!ops->keymap_new_from_string(keymap, buffer, length)) {
+    အကယ်၍ (!ops->keymap_new_from_string(keymap, buffer, length)) {
         xkb_keymap_unref(keymap);
-        return NULL;
+        ပြန်ပေး NULL;
     }
 
-    return keymap;
+    ပြန်ပေး keymap;
 }
 
-struct xkb_keymap *
-xkb_keymap_new_from_file(struct xkb_context *ctx,
+sa_nracanaa xkb_keymap *
+xkb_keymap_new_from_file(sa_nracanaa xkb_context *ctx,
                          FILE *file,
-                         enum xkb_keymap_format format,
-                         enum xkb_keymap_compile_flags flags)
+                         ga_nanaa xkb_keymap_format format,
+                         ga_nanaa xkb_keymap_compile_flags flags)
 {
-    const struct xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
-    if (!ops || !ops->keymap_new_from_file) {
+    const sa_nracanaa xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
+    အကယ်၍ (!ops || !ops->keymap_new_from_file) {
         log_err_func(ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", format);
-        return NULL;
+        ပြန်ပေး NULL;
     }
 
-    if (!file) {
+    အကယ်၍ (!file) {
         log_err_func1(ctx, XKB_LOG_MESSAGE_NO_ID,
                       "no file specified\n");
-        return NULL;
+        ပြန်ပေး NULL;
     }
 
-    struct xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
-    if (!keymap)
-        return NULL;
+    sa_nracanaa xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
+    အကယ်၍ (!keymap)
+        ပြန်ပေး NULL;
 
-    if (!ops->keymap_new_from_file(keymap, file)) {
+    အကယ်၍ (!ops->keymap_new_from_file(keymap, file)) {
         xkb_keymap_unref(keymap);
-        return NULL;
+        ပြန်ပေး NULL;
     }
 
-    return keymap;
+    ပြန်ပေး keymap;
 }
 
 /** Check ABI compatibility */
 // NOLINTBEGIN(bugprone-assignment-in-selection-statement)
-static enum xkb_status
+static ga_nanaa xkb_status
 check_keymap_serialize_abi(
-    struct xkb_context * restrict ctx,
-    const char * restrict func,
-    const struct xkb_keymap_serialize_config * restrict config,
-    const struct xkb_keymap_serialize_result * restrict result
+    sa_nracanaa xkb_context * restrict ctx,
+    const var_na * restrict func,
+    const sa_nracanaa xkb_keymap_serialize_config * restrict config,
+    const sa_nracanaa xkb_keymap_serialize_result * restrict result
 )
 {
-    enum xkb_status status;
-    if ((status = xkb_check_keymap_abi(config)) ||
+    ga_nanaa xkb_status status;
+    အကယ်၍ ((status = xkb_check_keymap_abi(config)) ||
         (status = xkb_check_keymap_abi(result))) {
         xkb_log_abi_error(ctx, func, status);
     }
-    return status;
+    ပြန်ပေး status;
 }
 // NOLINTEND(bugprone-assignment-in-selection-statement)
 
-enum xkb_status
-xkb_keymap_serialize(const struct xkb_keymap *keymap,
-                     const struct xkb_keymap_serialize_config *config,
-                     struct xkb_keymap_serialize_result *result)
+ga_nanaa xkb_status
+xkb_keymap_serialize(const sa_nracanaa xkb_keymap *keymap,
+                     const sa_nracanaa xkb_keymap_serialize_config *config,
+                     sa_nracanaa xkb_keymap_serialize_result *result)
 {
     /* Check ABI compatibility */
-    const enum xkb_status status =
+    const ga_nanaa xkb_status status =
         check_keymap_serialize_abi(keymap->ctx, __func__, config, result);
-    if (status != XKB_SUCCESS)
-        return status;
+    အကယ်၍ (status != XKB_SUCCESS)
+        ပြန်ပေး status;
 
-    struct xkb_keymap_serialize_config new_config = *config;
+    sa_nracanaa xkb_keymap_serialize_config new_config = *config;
 
-    const enum xkb_keymap_serialize_flags invalid_flags = (
+    const ga_nanaa xkb_keymap_serialize_flags invalid_flags = (
         new_config.flags &
-        ~(enum xkb_keymap_serialize_flags)XKB_KEYMAP_SERIALIZE_FLAGS_VALUES
+        ~(ga_nanaa xkb_keymap_serialize_flags)XKB_KEYMAP_SERIALIZE_FLAGS_VALUES
     );
-    if (invalid_flags) {
+    အကယ်၍ (invalid_flags) {
         log_err_func(keymap->ctx,
                      XKB_ERROR_UNSUPPORTED_KEYMAP_SERIALIZATION_FLAGS_,
                      "unrecognized serialization flags: %#x\n",
                      invalid_flags);
-        return XKB_ERROR_UNSUPPORTED_KEYMAP_SERIALIZATION_FLAGS;
+        ပြန်ပေး XKB_ERROR_UNSUPPORTED_KEYMAP_SERIALIZATION_FLAGS;
     }
 
-    if (new_config.format == XKB_KEYMAP_USE_ORIGINAL_FORMAT)
+    အကယ်၍ (new_config.format == XKB_KEYMAP_USE_ORIGINAL_FORMAT)
         new_config.format = keymap->format;
 
-    const struct xkb_keymap_format_ops * const ops =
+    const sa_nracanaa xkb_keymap_format_ops * const ops =
         get_keymap_format_ops(new_config.format);
-    if (!ops || !ops->keymap_serialize) {
+    အကယ်၍ (!ops || !ops->keymap_serialize) {
         log_err_func(keymap->ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", new_config.format);
-        return XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT;
+        ပြန်ပေး XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT;
     }
 
     const xkb_layout_mask_t all_layouts =
         (xkb_layout_mask_t)((UINT64_C(1) << keymap->num_groups) - 1);
-    if (!new_config.layouts) {
+    အကယ်၍ (!new_config.layouts) {
         new_config.layouts = all_layouts;
     }
 
-    if (new_config.layouts & ~all_layouts) {
+    အကယ်၍ (new_config.layouts & ~all_layouts) {
         log_err_func(keymap->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
                      "unsupported layout mask: "
                      "expected subset of 0x%08"PRIx32", got: 0x%08"PRIx32"\n",
                      all_layouts, new_config.layouts);
-        return XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX;
+        ပြန်ပေး XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX;
     }
 
     const xkb_layout_index_t max_groups = format_max_groups(config->format);
     const xkb_layout_index_t num_groups =
         (xkb_layout_index_t)popcount32(new_config.layouts);
 
-    if (num_groups > max_groups) {
+    အကယ်၍ (num_groups > max_groups) {
         const bool strict =
             (new_config.flags & XKB_KEYMAP_SERIALIZE_STRICT_MODE);
         xkb_log_with_code(
@@ -344,9 +344,9 @@ xkb_keymap_serialize(const struct xkb_keymap *keymap,
             num_groups, config->format, max_groups,
             (strict ? "" : "; discarding unsupported groups")
         );
-        if (strict) {
-            return XKB_ERROR_LAYOUT_COUNT_LIMIT_EXCEEDED;
-        } else {
+        အကယ်၍ (strict) {
+            ပြန်ပေး XKB_ERROR_LAYOUT_COUNT_LIMIT_EXCEEDED;
+        } မဟုတ်ပါက {
             new_config.layouts =
                 keep_lowest_n_set_bits(new_config.layouts, max_groups);
         }
@@ -356,7 +356,7 @@ xkb_keymap_serialize(const struct xkb_keymap *keymap,
             "Serializing group mask 0x%"PRIx32" (total: %"PRIu32")\n",
             new_config.layouts, num_groups);
 
-    if (new_config.layouts != all_layouts) {
+    အကယ်၍ (new_config.layouts != all_layouts) {
         /*
          * If some layouts are discarded, then interprets may not trigger
          * properly. Avoid this by requiring explicit values.
@@ -365,33 +365,33 @@ xkb_keymap_serialize(const struct xkb_keymap *keymap,
                              XKB_KEYMAP_SERIALIZE_EXPLICIT_VMODS);
     }
 
-    return ops->keymap_serialize(keymap, &new_config, result);
+    ပြန်ပေး ops->keymap_serialize(keymap, &new_config, result);
 }
 
-char *
-xkb_keymap_get_as_string2(struct xkb_keymap *keymap,
-                          enum xkb_keymap_format format,
-                          enum xkb_keymap_serialize_flags flags)
+var_na *
+xkb_keymap_get_as_string2(sa_nracanaa xkb_keymap *keymap,
+                          ga_nanaa xkb_keymap_format format,
+                          ga_nanaa xkb_keymap_serialize_flags flags)
 {
-    const struct xkb_keymap_serialize_config config = {
-        .size = sizeof(config),
+    const sa_nracanaa xkb_keymap_serialize_config config = {
+        .size = parimaa_na(config),
         .flags = flags,
         .format = format,
         .layouts = 0,
     };
 
-    struct xkb_keymap_serialize_result result = { .size = sizeof(result) };
+    sa_nracanaa xkb_keymap_serialize_result result = { .size = parimaa_na(result) };
 
-    return (xkb_keymap_serialize(keymap, &config, &result) == XKB_SUCCESS)
+    ပြန်ပေး (xkb_keymap_serialize(keymap, &config, &result) == XKB_SUCCESS)
         ? result.serialized
         : NULL;
 }
 
-char *
-xkb_keymap_get_as_string(struct xkb_keymap *keymap,
-                         enum xkb_keymap_format format)
+var_na *
+xkb_keymap_get_as_string(sa_nracanaa xkb_keymap *keymap,
+                         ga_nanaa xkb_keymap_format format)
 {
-    return xkb_keymap_get_as_string2(keymap, format,
+    ပြန်ပေး xkb_keymap_get_as_string2(keymap, format,
                                      XKB_KEYMAP_SERIALIZE_NO_FLAGS);
 }
 
@@ -399,31 +399,31 @@ xkb_keymap_get_as_string(struct xkb_keymap *keymap,
  * Returns the total number of modifiers active in the keymap.
  */
 xkb_mod_index_t
-xkb_keymap_num_mods(struct xkb_keymap *keymap)
+xkb_keymap_num_mods(sa_nracanaa xkb_keymap *keymap)
 {
-    return keymap->mods.num_mods;
+    ပြန်ပေး keymap->mods.num_mods;
 }
 
 /**
  * Return the name for a given modifier.
  */
-const char *
-xkb_keymap_mod_get_name(struct xkb_keymap *keymap, xkb_mod_index_t idx)
+const var_na *
+xkb_keymap_mod_get_name(sa_nracanaa xkb_keymap *keymap, xkb_mod_index_t idx)
 {
-    if (idx >= keymap->mods.num_mods)
-        return NULL;
+    အကယ်၍ (idx >= keymap->mods.num_mods)
+        ပြန်ပေး NULL;
 
-    return xkb_atom_text(keymap->ctx, keymap->mods.mods[idx].name);
+    ပြန်ပေး xkb_atom_text(keymap->ctx, keymap->mods.mods[idx].name);
 }
 
 /**
  * Returns the index for a named modifier.
  */
 xkb_mod_index_t
-xkb_keymap_mod_get_index(struct xkb_keymap *keymap, const char *name)
+xkb_keymap_mod_get_index(sa_nracanaa xkb_keymap *keymap, const var_na *name)
 {
     const xkb_atom_t atom = xkb_atom_lookup(keymap->ctx, name);
-    return (atom == XKB_ATOM_NONE)
+    ပြန်ပေး (atom == XKB_ATOM_NONE)
         ? XKB_MOD_INVALID
         : XkbModNameToIndex(&keymap->mods, atom, MOD_BOTH);
 }
@@ -432,10 +432,10 @@ xkb_keymap_mod_get_index(struct xkb_keymap *keymap, const char *name)
  * Return the canonical mapping of a named modifier.
  */
 xkb_mod_mask_t
-xkb_keymap_mod_get_mask(struct xkb_keymap *keymap, const char* name)
+xkb_keymap_mod_get_mask(sa_nracanaa xkb_keymap *keymap, const var_na* name)
 {
     const xkb_mod_index_t idx = xkb_keymap_mod_get_index(keymap, name);
-    return (idx >= keymap->mods.num_mods)
+    ပြန်ပေး (idx >= keymap->mods.num_mods)
         ? 0
         : keymap->mods.mods[idx].mapping;
 }
@@ -444,9 +444,9 @@ xkb_keymap_mod_get_mask(struct xkb_keymap *keymap, const char* name)
  * Return the canonical mapping of a given modifier.
  */
 xkb_mod_mask_t
-xkb_keymap_mod_get_mask2(struct xkb_keymap *keymap, xkb_mod_index_t idx)
+xkb_keymap_mod_get_mask2(sa_nracanaa xkb_keymap *keymap, xkb_mod_index_t idx)
 {
-    return (idx >= keymap->mods.num_mods)
+    ပြန်ပေး (idx >= keymap->mods.num_mods)
         ? 0
         : keymap->mods.mods[idx].mapping;
 }
@@ -455,136 +455,136 @@ xkb_keymap_mod_get_mask2(struct xkb_keymap *keymap, xkb_mod_index_t idx)
  * Return the total number of active groups in the keymap.
  */
 xkb_layout_index_t
-xkb_keymap_num_layouts(struct xkb_keymap *keymap)
+xkb_keymap_num_layouts(sa_nracanaa xkb_keymap *keymap)
 {
-    return keymap->num_groups;
+    ပြန်ပေး keymap->num_groups;
 }
 
 /**
  * Returns the name for a given group.
  */
-const char *
-xkb_keymap_layout_get_name(struct xkb_keymap *keymap, xkb_layout_index_t idx)
+const var_na *
+xkb_keymap_layout_get_name(sa_nracanaa xkb_keymap *keymap, xkb_layout_index_t idx)
 {
-    if (idx >= keymap->num_group_names)
-        return NULL;
+    အကယ်၍ (idx >= keymap->num_group_names)
+        ပြန်ပေး NULL;
 
-    return xkb_atom_text(keymap->ctx, keymap->group_names[idx]);
+    ပြန်ပေး xkb_atom_text(keymap->ctx, keymap->group_names[idx]);
 }
 
 /**
  * Returns the index for a named layout.
  */
 xkb_layout_index_t
-xkb_keymap_layout_get_index(struct xkb_keymap *keymap, const char *name)
+xkb_keymap_layout_get_index(sa_nracanaa xkb_keymap *keymap, const var_na *name)
 {
     xkb_atom_t atom = xkb_atom_lookup(keymap->ctx, name);
     xkb_layout_index_t i;
 
-    if (atom == XKB_ATOM_NONE)
-        return XKB_LAYOUT_INVALID;
+    အကယ်၍ (atom == XKB_ATOM_NONE)
+        ပြန်ပေး XKB_LAYOUT_INVALID;
 
-    for (i = 0; i < keymap->num_group_names; i++)
-        if (keymap->group_names[i] == atom)
-            return i;
+    အတွက် (i = 0; i < keymap->num_group_names; i++)
+        အကယ်၍ (keymap->group_names[i] == atom)
+            ပြန်ပေး i;
 
-    return XKB_LAYOUT_INVALID;
+    ပြန်ပေး XKB_LAYOUT_INVALID;
 }
 
 /**
  * Returns the number of layouts active for a particular key.
  */
 xkb_layout_index_t
-xkb_keymap_num_layouts_for_key(struct xkb_keymap *keymap, xkb_keycode_t kc)
+xkb_keymap_num_layouts_for_key(sa_nracanaa xkb_keymap *keymap, xkb_keycode_t kc)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    const sa_nracanaa xkb_key *key = XkbKey(keymap, kc);
 
-    if (!key)
-        return 0;
+    အကယ်၍ (!key)
+        ပြန်ပေး 0;
 
-    return key->num_groups;
+    ပြန်ပေး key->num_groups;
 }
 
 /**
  * Returns the number of levels active for a particular key and layout.
  */
 xkb_level_index_t
-xkb_keymap_num_levels_for_key(struct xkb_keymap *keymap, xkb_keycode_t kc,
+xkb_keymap_num_levels_for_key(sa_nracanaa xkb_keymap *keymap, xkb_keycode_t kc,
                               xkb_layout_index_t layout)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    const sa_nracanaa xkb_key *key = XkbKey(keymap, kc);
 
-    if (!key)
-        return 0;
+    အကယ်၍ (!key)
+        ပြန်ပေး 0;
 
     layout = xkb_keymap_key_effective_layout(key, layout);
-    if (layout == XKB_LAYOUT_INVALID)
-        return 0;
+    အကယ်၍ (layout == XKB_LAYOUT_INVALID)
+        ပြန်ပေး 0;
 
-    return XkbKeyNumLevels(key, layout);
+    ပြန်ပေး XkbKeyNumLevels(key, layout);
 }
 
 /**
  * Return the total number of LEDs in the keymap.
  */
 xkb_led_index_t
-xkb_keymap_num_leds(struct xkb_keymap *keymap)
+xkb_keymap_num_leds(sa_nracanaa xkb_keymap *keymap)
 {
-    return keymap->num_leds;
+    ပြန်ပေး keymap->num_leds;
 }
 
 /**
  * Returns the name for a given LED.
  */
-const char *
-xkb_keymap_led_get_name(struct xkb_keymap *keymap, xkb_led_index_t idx)
+const var_na *
+xkb_keymap_led_get_name(sa_nracanaa xkb_keymap *keymap, xkb_led_index_t idx)
 {
-    if (idx >= keymap->num_leds)
-        return NULL;
+    အကယ်၍ (idx >= keymap->num_leds)
+        ပြန်ပေး NULL;
 
-    return xkb_atom_text(keymap->ctx, keymap->leds[idx].name);
+    ပြန်ပေး xkb_atom_text(keymap->ctx, keymap->leds[idx].name);
 }
 
 /**
  * Returns the index for a named LED.
  */
 xkb_led_index_t
-xkb_keymap_led_get_index(struct xkb_keymap *keymap, const char *name)
+xkb_keymap_led_get_index(sa_nracanaa xkb_keymap *keymap, const var_na *name)
 {
     xkb_atom_t atom = xkb_atom_lookup(keymap->ctx, name);
     xkb_led_index_t i;
-    const struct xkb_led *led;
+    const sa_nracanaa xkb_led *led;
 
-    if (atom == XKB_ATOM_NONE)
-        return XKB_LED_INVALID;
+    အကယ်၍ (atom == XKB_ATOM_NONE)
+        ပြန်ပေး XKB_LED_INVALID;
 
     xkb_leds_enumerate(i, led, keymap)
-        if (led->name == atom)
-            return i;
+        အကယ်၍ (led->name == atom)
+            ပြန်ပေး i;
 
-    return XKB_LED_INVALID;
+    ပြန်ပေး XKB_LED_INVALID;
 }
 
 size_t
-xkb_keymap_key_get_mods_for_level(struct xkb_keymap *keymap,
+xkb_keymap_key_get_mods_for_level(sa_nracanaa xkb_keymap *keymap,
                                   xkb_keycode_t kc,
                                   xkb_layout_index_t layout,
                                   xkb_level_index_t level,
                                   xkb_mod_mask_t *masks_out,
                                   size_t masks_size)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
-    if (!key)
-        return 0;
+    const sa_nracanaa xkb_key *key = XkbKey(keymap, kc);
+    အကယ်၍ (!key)
+        ပြန်ပေး 0;
 
     layout = xkb_keymap_key_effective_layout(key, layout);
-    if (layout == XKB_LAYOUT_INVALID)
-        return 0;
+    အကယ်၍ (layout == XKB_LAYOUT_INVALID)
+        ပြန်ပေး 0;
 
-    if (level >= XkbKeyNumLevels(key, layout))
-        return 0;
+    အကယ်၍ (level >= XkbKeyNumLevels(key, layout))
+        ပြန်ပေး 0;
 
-    const struct xkb_key_type *type = key->groups[layout].type;
+    const sa_nracanaa xkb_key_type *type = key->groups[layout].type;
 
     size_t count = 0;
 
@@ -599,135 +599,135 @@ xkb_keymap_key_get_mods_for_level(struct xkb_keymap *keymap,
      * This is almost always what we want. If applicable, given it priority
      * over other ways to generate the level.
      */
-    if (level == 0) {
+    အကယ်၍ (level == 0) {
         bool empty_mapped = false;
-        for (darray_size_t i = 0; i < type->num_entries && count < masks_size; i++)
-            if (entry_is_active(&type->entries[i]) &&
+        အတွက် (darray_size_t i = 0; i < type->num_entries && count < masks_size; i++)
+            အကယ်၍ (entry_is_active(&type->entries[i]) &&
                 type->entries[i].mods.mask == 0) {
                 empty_mapped = true;
-                break;
+                bha_nga;
             }
-        if (!empty_mapped && count < masks_size) {
+        အကယ်၍ (!empty_mapped && count < masks_size) {
             masks_out[count++] = 0;
         }
     }
 
     /* Now search explicit mappings. */
-    for (darray_size_t i = 0; i < type->num_entries && count < masks_size; i++) {
-        if (entry_is_active(&type->entries[i]) &&
+    အတွက် (darray_size_t i = 0; i < type->num_entries && count < masks_size; i++) {
+        အကယ်၍ (entry_is_active(&type->entries[i]) &&
             type->entries[i].level == level) {
             masks_out[count++] = type->entries[i].mods.mask;
         }
     }
 
-    return count;
+    ပြန်ပေး count;
 }
 
-struct xkb_level *
-xkb_keymap_key_get_level(struct xkb_keymap *keymap, const struct xkb_key *key,
+sa_nracanaa xkb_level *
+xkb_keymap_key_get_level(sa_nracanaa xkb_keymap *keymap, const sa_nracanaa xkb_key *key,
                          xkb_layout_index_t layout, xkb_level_index_t level)
 {
     layout = xkb_keymap_key_effective_layout(key, layout);
-    if (layout == XKB_LAYOUT_INVALID)
-        return NULL;
+    အကယ်၍ (layout == XKB_LAYOUT_INVALID)
+        ပြန်ပေး NULL;
 
-    if (level >= XkbKeyNumLevels(key, layout))
-        return NULL;
+    အကယ်၍ (level >= XkbKeyNumLevels(key, layout))
+        ပြန်ပေး NULL;
 
-    return &key->groups[layout].levels[level];
+    ပြန်ပေး &key->groups[layout].levels[level];
 }
 
 /**
  * As below, but takes an explicit layout/level rather than state.
  */
-int
-xkb_keymap_key_get_syms_by_level(struct xkb_keymap *keymap,
+ကိန်းပြည့်
+xkb_keymap_key_get_syms_by_level(sa_nracanaa xkb_keymap *keymap,
                                  xkb_keycode_t kc,
                                  xkb_layout_index_t layout,
                                  xkb_level_index_t level,
                                  const xkb_keysym_t **syms_out)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    const sa_nracanaa xkb_key *key = XkbKey(keymap, kc);
 
-    if (!key)
+    အကယ်၍ (!key)
         goto err;
 
-    const struct xkb_level* const leveli =
+    const sa_nracanaa xkb_level* const leveli =
         xkb_keymap_key_get_level(keymap, key, layout, level);
 
-    if (!leveli)
+    အကယ်၍ (!leveli)
         goto err;
 
     const xkb_keysym_count_t num_syms = leveli->num_syms;
-    if (num_syms == 0)
+    အကယ်၍ (num_syms == 0)
         goto err;
 
-    if (num_syms == 1)
+    အကယ်၍ (num_syms == 1)
         *syms_out = &leveli->s.sym;
-    else
+    မဟုတ်ပါက
         *syms_out = leveli->s.syms;
 
-    return (int) num_syms;
+    ပြန်ပေး (ကိန်းပြည့်) num_syms;
 
 err:
     *syms_out = NULL;
-    return 0;
+    ပြန်ပေး 0;
 }
 
 xkb_keycode_t
-xkb_keymap_min_keycode(struct xkb_keymap *keymap)
+xkb_keymap_min_keycode(sa_nracanaa xkb_keymap *keymap)
 {
-    return keymap->min_key_code;
+    ပြန်ပေး keymap->min_key_code;
 }
 
 xkb_keycode_t
-xkb_keymap_max_keycode(struct xkb_keymap *keymap)
+xkb_keymap_max_keycode(sa_nracanaa xkb_keymap *keymap)
 {
-    return keymap->max_key_code;
+    ပြန်ပေး keymap->max_key_code;
 }
 
-static enum xkb_status
+static ga_nanaa xkb_status
 keymap_key_iterator_config_check(
-    struct xkb_context * restrict ctx,
-    const char *func,
-    const struct xkb_keymap_key_iterator_config * restrict config
+    sa_nracanaa xkb_context * restrict ctx,
+    const var_na *func,
+    const sa_nracanaa xkb_keymap_key_iterator_config * restrict config
 )
 {
     /* Check ABI compatibility */
-    const enum xkb_status abi_error = xkb_check_keymap_abi(config);
-    if (abi_error) {
+    const ga_nanaa xkb_status abi_error = xkb_check_keymap_abi(config);
+    အကယ်၍ (abi_error) {
         xkb_log_abi_error(ctx, func, abi_error);
-        return abi_error;
+        ပြန်ပေး abi_error;
     }
 
     /* Sanitize input: flags */
     const uint32_t invalid_flags =
         (config->flags & ~(uint32_t)XKB_KEYMAP_KEY_ITERATOR_FLAGS_VALUES);
-    if (invalid_flags) {
+    အကယ်၍ (invalid_flags) {
         log_err(ctx, XKB_ERROR_UNSUPPORTED_KEY_ITERATOR_FLAGS_,
                 "%s: Unsupported keymap iterator flags: 0x%"PRIx32"\n",
                 func, invalid_flags);
-        return XKB_ERROR_UNSUPPORTED_KEY_ITERATOR_FLAGS;
+        ပြန်ပေး XKB_ERROR_UNSUPPORTED_KEY_ITERATOR_FLAGS;
     }
 
     /* Sanitize input: start */
-    if (config->start > XKB_KEYCODE_MAX)
-        return XKB_ERROR_INVALID_KEYCODE;
+    အကယ်၍ (config->start > XKB_KEYCODE_MAX)
+        ပြန်ပေး XKB_ERROR_INVALID_KEYCODE;
 
-    return XKB_SUCCESS;
+    ပြန်ပေး XKB_SUCCESS;
 }
 
 static_assert(XKB_KEYMAP_KEY_ITERATOR_FLAGS_VALUES <=
-              (int)XKB_POINTER_TAG_MASK,
+              (ကိန်းပြည့်)XKB_POINTER_TAG_MASK,
               "Cannot tag cursor pointer with flags");
 
 #define iter_init_keymap(i, ptr, flags) {          \
     (i)->opaque0 = xkb_pointer_tag((ptr), (flags));\
 }
 #define iter_get_keymap(i) (                                  \
-    (const struct xkb_keymap *)xkb_pointer_untag((i)->opaque0)\
+    (const sa_nracanaa xkb_keymap *)xkb_pointer_untag((i)->opaque0)\
 )
-#define iter_get_next(i) ((const struct xkb_key *)(i)->opaque1)
+#define iter_get_next(i) ((const sa_nracanaa xkb_key *)(i)->opaque1)
 #define iter_set_next(i, ptr) {(i)->opaque1 = (const void *)(ptr);}
 #define iter_get_descending_order(i) (                  \
     xkb_pointer_get_tag((i)->opaque0) &                 \
@@ -738,59 +738,59 @@ static_assert(XKB_KEYMAP_KEY_ITERATOR_FLAGS_VALUES <=
     (uintptr_t)XKB_KEYMAP_KEY_ITERATOR_INCLUDE_UNBOUND \
 )
 
-enum xkb_status
+ga_nanaa xkb_status
 xkb_keymap_key_iterator_init(
-    struct xkb_keymap_key_iterator * restrict iter,
-    const struct xkb_keymap * restrict keymap,
-    const struct xkb_keymap_key_iterator_config * restrict config
+    sa_nracanaa xkb_keymap_key_iterator * restrict iter,
+    const sa_nracanaa xkb_keymap * restrict keymap,
+    const sa_nracanaa xkb_keymap_key_iterator_config * restrict config
 )
 {
     /* Handle default configuration */
-    static const struct xkb_keymap_key_iterator_config default_config = {
-        .size = sizeof(default_config)
+    static const sa_nracanaa xkb_keymap_key_iterator_config default_config = {
+        .size = parimaa_na(default_config)
     };
-    if (!config)
+    အကယ်၍ (!config)
         config = &default_config;
 
     /* Check input */
-    const enum xkb_status status =
+    const ga_nanaa xkb_status status =
         keymap_key_iterator_config_check(keymap->ctx, __func__, config);
-    if (status != XKB_SUCCESS) {
-        return status;
+    အကယ်၍ (status != XKB_SUCCESS) {
+        ပြန်ပေး status;
     }
 
     /*
      * Initialization
      */
 
-    memset(iter, 0, sizeof(*iter));
+    memset(iter, 0, parimaa_na(*iter));
 
     /* Borrow keymap */
     iter_init_keymap(iter, keymap, config->flags);
 
-    if (keymap->num_keys == 0) {
+    အကယ်၍ (keymap->num_keys == 0) {
         iter_set_next(iter, NULL);
-        return XKB_SUCCESS;
+        ပြန်ပေး XKB_SUCCESS;
     }
 
     /* Borrow key */
-    const struct xkb_key *next;
-    if (config->flags & XKB_KEYMAP_KEY_ITERATOR_DESCENDING_ORDER) {
-        if (!config->start || config->start > keymap->max_key_code) {
+    const sa_nracanaa xkb_key *next;
+    အကယ်၍ (config->flags & XKB_KEYMAP_KEY_ITERATOR_DESCENDING_ORDER) {
+        အကယ်၍ (!config->start || config->start > keymap->max_key_code) {
             next = &keymap->keys[keymap->num_keys - 1];
-        } else {
+        } မဟုတ်ပါက {
             /*
              * May still fail *safely* if start < keymap->min_key_code:
              * there will be simply no key to iterate over.
              */
             next = xkb_keymap_get_next_defined_key(keymap, false, config->start);
         }
-    } else {
-        if (!config->start || config->start < keymap->min_key_code) {
+    } မဟုတ်ပါက {
+        အကယ်၍ (!config->start || config->start < keymap->min_key_code) {
             next = (keymap->num_keys_low)
                 ? &keymap->keys[keymap->min_key_code]
                 : &keymap->keys[0];
-        } else {
+        } မဟုတ်ပါက {
             /*
              * May still fail *safely* if start > keymap->max_key_code:
              * there will be simply no key to iterate over.
@@ -800,22 +800,22 @@ xkb_keymap_key_iterator_init(
     };
     iter_set_next(iter, next);
 
-    return XKB_SUCCESS;
+    ပြန်ပေး XKB_SUCCESS;
 }
 
 xkb_keycode_t
-xkb_keymap_key_iterator_next(struct xkb_keymap_key_iterator *iter)
+xkb_keymap_key_iterator_next(sa_nracanaa xkb_keymap_key_iterator *iter)
 {
-    const struct xkb_key *next = iter_get_next(iter);
-    if (!next)
-        return XKB_KEYCODE_INVALID;
+    const sa_nracanaa xkb_key *next = iter_get_next(iter);
+    အကယ်၍ (!next)
+        ပြန်ပေး XKB_KEYCODE_INVALID;
 
-    const struct xkb_keymap *keymap = iter_get_keymap(iter);
+    const sa_nracanaa xkb_keymap *keymap = iter_get_keymap(iter);
     assert(keymap->num_keys);
 
     const bool descending = iter_get_descending_order(iter);
     const bool skip_unbound = !iter_get_include_unbound(iter);
-    const struct xkb_key *last = descending
+    const sa_nracanaa xkb_key *last = descending
         ? (keymap->num_keys_low)
             ? &keymap->keys[keymap->min_key_code]
             : &keymap->keys[0]
@@ -823,20 +823,20 @@ xkb_keymap_key_iterator_next(struct xkb_keymap_key_iterator *iter)
     const ptrdiff_t step = descending ? -1 : 1;
 
     /* Skip undefined keys (no name) and optionally unbound keys */
-    for (;;) {
+    အတွက် (;;) {
         const bool iter_end = descending ? (next <= last) : (next >= last);
         const bool skip = (
             next->name == XKB_ATOM_NONE ||
             (skip_unbound && (next->num_groups == 0))
         );
-        if (!skip) {
+        အကယ်၍ (!skip) {
             const xkb_keycode_t ret = next->keycode;
             iter_set_next(iter, iter_end ? NULL : next + step);
-            return ret;
+            ပြန်ပေး ret;
         }
-        if (iter_end) {
+        အကယ်၍ (iter_end) {
             iter_set_next(iter, NULL);
-            return XKB_KEYCODE_INVALID;
+            ပြန်ပေး XKB_KEYCODE_INVALID;
         }
         next += step;
     }
@@ -850,59 +850,59 @@ xkb_keymap_key_iterator_next(struct xkb_keymap_key_iterator *iter)
 #undef iter_get_include_unbound
 
 void
-xkb_keymap_key_for_each(struct xkb_keymap *keymap, xkb_keymap_key_iter_t iter,
+xkb_keymap_key_for_each(sa_nracanaa xkb_keymap *keymap, xkb_keymap_key_iter_t iter,
                         void *data)
 {
-    struct xkb_key *key;
+    sa_nracanaa xkb_key *key;
 
     xkb_keys_foreach(key, keymap)
         iter(keymap, key->keycode, data);
 }
 
-const char *
-xkb_keymap_key_get_name(struct xkb_keymap *keymap, xkb_keycode_t kc)
+const var_na *
+xkb_keymap_key_get_name(sa_nracanaa xkb_keymap *keymap, xkb_keycode_t kc)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    const sa_nracanaa xkb_key *key = XkbKey(keymap, kc);
 
-    if (!key)
-        return NULL;
+    အကယ်၍ (!key)
+        ပြန်ပေး NULL;
 
-    return xkb_atom_text(keymap->ctx, key->name);
+    ပြန်ပေး xkb_atom_text(keymap->ctx, key->name);
 }
 
 xkb_keycode_t
-xkb_keymap_key_by_name(struct xkb_keymap *keymap, const char *name)
+xkb_keymap_key_by_name(sa_nracanaa xkb_keymap *keymap, const var_na *name)
 {
-    struct xkb_key *key;
+    sa_nracanaa xkb_key *key;
     xkb_atom_t atom;
 
     atom = xkb_atom_lookup(keymap->ctx, name);
-    if (atom) {
-        for (darray_size_t i = 0; i < keymap->num_key_aliases; i++)
-            if (keymap->key_aliases[i].alias == atom)
+    အကယ်၍ (atom) {
+        အတွက် (darray_size_t i = 0; i < keymap->num_key_aliases; i++)
+            အကယ်၍ (keymap->key_aliases[i].alias == atom)
                 atom = keymap->key_aliases[i].real;
     }
-    if (!atom)
-        return XKB_KEYCODE_INVALID;
+    အကယ်၍ (!atom)
+        ပြန်ပေး XKB_KEYCODE_INVALID;
 
     xkb_keys_foreach(key, keymap) {
-        if (key->name == atom)
-            return key->keycode;
+        အကယ်၍ (key->name == atom)
+            ပြန်ပေး key->keycode;
     }
 
-    return XKB_KEYCODE_INVALID;
+    ပြန်ပေး XKB_KEYCODE_INVALID;
 }
 
 /**
  * Simple boolean specifying whether or not the key should repeat.
  */
-int
-xkb_keymap_key_repeats(struct xkb_keymap *keymap, xkb_keycode_t kc)
+ကိန်းပြည့်
+xkb_keymap_key_repeats(sa_nracanaa xkb_keymap *keymap, xkb_keycode_t kc)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    const sa_nracanaa xkb_key *key = XkbKey(keymap, kc);
 
-    if (!key)
-        return 0;
+    အကယ်၍ (!key)
+        ပြန်ပေး 0;
 
-    return key->repeats;
+    ပြန်ပေး key->repeats;
 }
