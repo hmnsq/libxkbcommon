@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include <assert.h>
-#include <xcb/xkb.h>
+#अन्तर्भाव <assert.h>
+#अन्तर्भाव <xcb/xkb.h>
 
-#include "darray.h"
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-keysyms.h"
-#include "atom.h"
-#include "keymap.h"
-#include "x11-priv.h"
+#अन्तर्भाव "darray.h"
+#अन्तर्भाव "xkbcommon/xkbcommon.h"
+#अन्तर्भाव "xkbcommon/xkbcommon-keysyms.h"
+#अन्तर्भाव "atom.h"
+#अन्तर्भाव "keymap.h"
+#अन्तर्भाव "x11-priv.h"
 
 /*
  * References for the lonesome traveler:
@@ -35,13 +35,13 @@
 
 /* Constants from /usr/include/X11/extensions/XKB.h */
 /* XkbNumModifiers. */
-#define NUM_REAL_MODS 8u
+#define अङ्कः_REAL_MODS 8u
 /* XkbNumVirtualMods. */
-#define NUM_VMODS 16u
+#define अङ्कः_VMODS 16u
 /* XkbNoModifier. */
 #define NO_MODIFIER 0xff
 /* XkbNumIndicators. */
-#define NUM_INDICATORS 32u
+#define अङ्कः_INDICATORS 32u
 /* XkbAllIndicatorsMask. */
 #define ALL_INDICATORS_MASK 0xffffffff
 
@@ -51,274 +51,274 @@
  * We try not to trust the server too much and be paranoid. If we get
  * something which we definitely shouldn't, we fail.
  */
-#define FAIL_UNLESS(expr) do {                              \
-    if (!(expr)) {                                          \
+#define FAIL_UNLESS(व्यञ्जकम्) करेहि {                              \
+    जइ (!(व्यञ्जकम्)) {                                          \
         log_err(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,         \
                 "x11: failed to get keymap from X server: " \
                 "unmet condition in %s(): %s\n",            \
-                __func__, STRINGIFY(expr));                 \
-        goto fail;                                          \
+                __func__, STRINGIFY(व्यञ्जकम्));                 \
+        गच्छ fail;                                          \
     }                                                       \
-} while (0)
+} जाव (0)
 
-#define FAIL_IF_BAD_REPLY(reply, request_name) do {         \
-    if (!(reply)) {                                           \
+#define FAIL_IF_BAD_REPLY(reply, request_name) करेहि {         \
+    जइ (!(reply)) {                                           \
         log_err(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,         \
                 "x11: failed to get keymap from X server: " \
                 "%s request failed\n",                      \
                 (request_name));                            \
-        goto fail;                                          \
+        गच्छ fail;                                          \
     }                                                       \
-} while (0)
+} जाव (0)
 
-#define ALLOC_OR_FAIL(arr, nmemb) do {                      \
-    if ((nmemb) > 0) {                                      \
-        (arr) = calloc((nmemb), sizeof(*(arr)));            \
-        if (!(arr))                                         \
-            goto fail;                                      \
+#define ALLOC_OR_FAIL(arr, nmemb) करेहि {                      \
+    जइ ((nmemb) > 0) {                                      \
+        (arr) = calloc((nmemb), परिमाण(*(arr)));            \
+        जइ (!(arr))                                         \
+            गच्छ fail;                                      \
     }                                                       \
-} while (0)
+} जाव (0)
 
-static const xcb_xkb_map_part_t get_map_required_components =
-    (XCB_XKB_MAP_PART_KEY_TYPES |
-     XCB_XKB_MAP_PART_KEY_SYMS |
+स्थिर ध्रुव xcb_xkb_map_part_t get_map_required_components =
+    (XCB_XKB_MAP_PART_कुञ्चिका_TYPES |
+     XCB_XKB_MAP_PART_कुञ्चिका_SYMS |
      XCB_XKB_MAP_PART_MODIFIER_MAP |
      XCB_XKB_MAP_PART_EXPLICIT_COMPONENTS |
-     XCB_XKB_MAP_PART_KEY_ACTIONS |
+     XCB_XKB_MAP_PART_कुञ्चिका_ACTIONS |
      XCB_XKB_MAP_PART_VIRTUAL_MODS |
      XCB_XKB_MAP_PART_VIRTUAL_MOD_MAP);
 
-static const xcb_xkb_name_detail_t get_names_wanted =
+स्थिर ध्रुव xcb_xkb_name_detail_t get_names_wanted =
     (XCB_XKB_NAME_DETAIL_KEYCODES |
      XCB_XKB_NAME_DETAIL_SYMBOLS |
      XCB_XKB_NAME_DETAIL_TYPES |
      XCB_XKB_NAME_DETAIL_COMPAT |
-     XCB_XKB_NAME_DETAIL_KEY_TYPE_NAMES |
+     XCB_XKB_NAME_DETAIL_कुञ्चिका_TYPE_NAMES |
      XCB_XKB_NAME_DETAIL_KT_LEVEL_NAMES |
      XCB_XKB_NAME_DETAIL_INDICATOR_NAMES |
-     XCB_XKB_NAME_DETAIL_KEY_NAMES |
-     XCB_XKB_NAME_DETAIL_KEY_ALIASES |
+     XCB_XKB_NAME_DETAIL_कुञ्चिका_NAMES |
+     XCB_XKB_NAME_DETAIL_कुञ्चिका_ALIASES |
      XCB_XKB_NAME_DETAIL_VIRTUAL_MOD_NAMES |
      XCB_XKB_NAME_DETAIL_GROUP_NAMES);
-static const xcb_xkb_name_detail_t get_names_required =
-    (XCB_XKB_NAME_DETAIL_KEY_TYPE_NAMES |
+स्थिर ध्रुव xcb_xkb_name_detail_t get_names_required =
+    (XCB_XKB_NAME_DETAIL_कुञ्चिका_TYPE_NAMES |
      XCB_XKB_NAME_DETAIL_KT_LEVEL_NAMES |
-     XCB_XKB_NAME_DETAIL_KEY_NAMES |
+     XCB_XKB_NAME_DETAIL_कुञ्चिका_NAMES |
      XCB_XKB_NAME_DETAIL_VIRTUAL_MOD_NAMES);
 
 
-static xkb_mod_mask_t
-translate_mods(uint8_t rmods, uint16_t vmods_low, uint16_t vmods_high)
+स्थिर xkb_mod_mask_t
+translate_mods(uint8_t rmods, uint16_t vmods_नीचः, uint16_t vmods_उच्चः)
 {
     /* We represent mod masks in a single uint32_t value, with real mods
      * first and vmods after (though we don't make these distinctions). */
-    return
+    प्रत्यागम
         ((xkb_mod_mask_t) rmods) |
-        ((xkb_mod_mask_t) vmods_low << 8) |
-        ((xkb_mod_mask_t) vmods_high << 16);
+        ((xkb_mod_mask_t) vmods_नीचः << 8) |
+        ((xkb_mod_mask_t) vmods_उच्चः << 16);
 }
 
-enum xkb_action_controls
+गणना xkb_action_controls
 translate_controls_mask(uint32_t wire)
 {
-    enum xkb_action_controls ret = 0;
-    if (wire & XCB_XKB_BOOL_CTRL_REPEAT_KEYS)
+    गणना xkb_action_controls ret = 0;
+    जइ (wire & XCB_XKB_BOOL_CTRL_REPEAT_कुञ्चिकाः)
         ret |= CONTROL_REPEAT;
-    if (wire & XCB_XKB_BOOL_CTRL_SLOW_KEYS)
+    जइ (wire & XCB_XKB_BOOL_CTRL_SLOW_कुञ्चिकाः)
         ret |= CONTROL_SLOW;
-    if (wire & XCB_XKB_BOOL_CTRL_BOUNCE_KEYS)
+    जइ (wire & XCB_XKB_BOOL_CTRL_BOUNCE_कुञ्चिकाः)
         ret |= CONTROL_DEBOUNCE;
-    if (wire & XCB_XKB_BOOL_CTRL_STICKY_KEYS)
-        ret |= CONTROL_STICKY_KEYS;
-    if (wire & XCB_XKB_BOOL_CTRL_MOUSE_KEYS)
-        ret |= CONTROL_MOUSE_KEYS;
-    if (wire & XCB_XKB_BOOL_CTRL_MOUSE_KEYS_ACCEL)
-        ret |= CONTROL_MOUSE_KEYS_ACCEL;
-    if (wire & XCB_XKB_BOOL_CTRL_ACCESS_X_KEYS)
+    जइ (wire & XCB_XKB_BOOL_CTRL_STICKY_कुञ्चिकाः)
+        ret |= CONTROL_STICKY_कुञ्चिकाः;
+    जइ (wire & XCB_XKB_BOOL_CTRL_MOUSE_कुञ्चिकाः)
+        ret |= CONTROL_MOUSE_कुञ्चिकाः;
+    जइ (wire & XCB_XKB_BOOL_CTRL_MOUSE_कुञ्चिकाः_ACCEL)
+        ret |= CONTROL_MOUSE_कुञ्चिकाः_ACCEL;
+    जइ (wire & XCB_XKB_BOOL_CTRL_ACCESS_X_कुञ्चिकाः)
         ret |= CONTROL_AX;
-    if (wire & XCB_XKB_BOOL_CTRL_ACCESS_X_TIMEOUT_MASK)
+    जइ (wire & XCB_XKB_BOOL_CTRL_ACCESS_X_TIMEOUT_MASK)
         ret |= CONTROL_AX_TIMEOUT;
-    if (wire & XCB_XKB_BOOL_CTRL_ACCESS_X_FEEDBACK_MASK)
+    जइ (wire & XCB_XKB_BOOL_CTRL_ACCESS_X_FEEDBACK_MASK)
         ret |= CONTROL_AX_FEEDBACK;
-    if (wire & XCB_XKB_BOOL_CTRL_AUDIBLE_BELL_MASK)
+    जइ (wire & XCB_XKB_BOOL_CTRL_AUDIBLE_BELL_MASK)
         ret |= CONTROL_BELL;
-    if (wire & XCB_XKB_BOOL_CTRL_OVERLAY_1_MASK)
+    जइ (wire & XCB_XKB_BOOL_CTRL_OVERLAY_1_MASK)
         ret |= CONTROL_OVERLAY1;
-    if (wire & XCB_XKB_BOOL_CTRL_OVERLAY_2_MASK)
+    जइ (wire & XCB_XKB_BOOL_CTRL_OVERLAY_2_MASK)
         ret |= CONTROL_OVERLAY2;
-    if (wire & XCB_XKB_BOOL_CTRL_IGNORE_GROUP_LOCK_MASK)
+    जइ (wire & XCB_XKB_BOOL_CTRL_IGNORE_GROUP_LOCK_MASK)
         ret |= CONTROL_IGNORE_GROUP_LOCK;
     /* Some controls are not supported and don't appear here. */
-    return ret;
+    प्रत्यागम ret;
 }
 
-static bool
-translate_action(union xkb_action *action, const xcb_xkb_action_t *wire,
-                 xkb_keycode_t min_key_code, xkb_keycode_t max_key_code)
+स्थिर bool
+translate_action(सङ्घ xkb_action *action, ध्रुव xcb_xkb_action_t *wire,
+                 xkb_keycode_t min_कुञ्चिका_code, xkb_keycode_t max_कुञ्चिका_code)
 {
-    switch (wire->type) {
-    case XCB_XKB_SA_TYPE_SET_MODS:
+    विकल्प (wire->type) {
+    पक्ष XCB_XKB_SA_TYPE_SET_MODS:
         action->type = ACTION_TYPE_MOD_SET;
         action->mods.mods.mods = translate_mods(wire->setmods.realMods,
-                                                wire->setmods.vmodsLow,
-                                                wire->setmods.vmodsHigh);
+                                                wire->setmods.vmods_नीचः_2,
+                                                wire->setmods.vmods_उच्चः_2);
         action->mods.mods.mask = translate_mods(wire->setmods.mask, 0, 0);
 
-        if (wire->setmods.flags & XCB_XKB_SA_CLEAR_LOCKS)
+        जइ (wire->setmods.flags & XCB_XKB_SA_CLEAR_LOCKS)
             action->mods.flags |= ACTION_LOCK_CLEAR;
-        if (wire->setmods.flags & XCB_XKB_SA_LATCH_TO_LOCK)
+        जइ (wire->setmods.flags & XCB_XKB_SA_LATCH_TO_LOCK)
             action->mods.flags |= ACTION_LATCH_TO_LOCK;
-        if (wire->setmods.flags & XCB_XKB_SA_USE_MOD_MAP_MODS)
+        जइ (wire->setmods.flags & XCB_XKB_SA_USE_MOD_MAP_MODS)
             action->mods.flags |= ACTION_MODS_LOOKUP_MODMAP;
 
-        break;
-    case XCB_XKB_SA_TYPE_LATCH_MODS:
+        भङ्ग;
+    पक्ष XCB_XKB_SA_TYPE_LATCH_MODS:
         action->type = ACTION_TYPE_MOD_LATCH;
 
         action->mods.mods.mods = translate_mods(wire->latchmods.realMods,
-                                                wire->latchmods.vmodsLow,
-                                                wire->latchmods.vmodsHigh);
+                                                wire->latchmods.vmods_नीचः_2,
+                                                wire->latchmods.vmods_उच्चः_2);
         action->mods.mods.mask = translate_mods(wire->latchmods.mask, 0, 0);
 
-        if (wire->latchmods.flags & XCB_XKB_SA_CLEAR_LOCKS)
+        जइ (wire->latchmods.flags & XCB_XKB_SA_CLEAR_LOCKS)
             action->mods.flags |= ACTION_LOCK_CLEAR;
-        if (wire->latchmods.flags & XCB_XKB_SA_LATCH_TO_LOCK)
+        जइ (wire->latchmods.flags & XCB_XKB_SA_LATCH_TO_LOCK)
             action->mods.flags |= ACTION_LATCH_TO_LOCK;
-        if (wire->latchmods.flags & XCB_XKB_SA_USE_MOD_MAP_MODS)
+        जइ (wire->latchmods.flags & XCB_XKB_SA_USE_MOD_MAP_MODS)
             action->mods.flags |= ACTION_MODS_LOOKUP_MODMAP;
 
-        break;
-    case XCB_XKB_SA_TYPE_LOCK_MODS:
+        भङ्ग;
+    पक्ष XCB_XKB_SA_TYPE_LOCK_MODS:
         action->type = ACTION_TYPE_MOD_LOCK;
 
         action->mods.mods.mods = translate_mods(wire->lockmods.realMods,
-                                                wire->lockmods.vmodsLow,
-                                                wire->lockmods.vmodsHigh);
+                                                wire->lockmods.vmods_नीचः_2,
+                                                wire->lockmods.vmods_उच्चः_2);
         action->mods.mods.mask = translate_mods(wire->lockmods.mask, 0, 0);
 
-        if (wire->lockmods.flags & XCB_XKB_SA_ISO_LOCK_FLAG_NO_LOCK)
+        जइ (wire->lockmods.flags & XCB_XKB_SA_ISO_LOCK_FLAG_NO_LOCK)
             action->mods.flags |= ACTION_LOCK_NO_LOCK;
-        if (wire->lockmods.flags & XCB_XKB_SA_ISO_LOCK_FLAG_NO_UNLOCK)
+        जइ (wire->lockmods.flags & XCB_XKB_SA_ISO_LOCK_FLAG_NO_UNLOCK)
             action->mods.flags |= ACTION_LOCK_NO_UNLOCK;
-        if (wire->lockmods.flags & XCB_XKB_SA_USE_MOD_MAP_MODS)
+        जइ (wire->lockmods.flags & XCB_XKB_SA_USE_MOD_MAP_MODS)
             action->mods.flags |= ACTION_MODS_LOOKUP_MODMAP;
 
-        break;
-    case XCB_XKB_SA_TYPE_SET_GROUP:
+        भङ्ग;
+    पक्ष XCB_XKB_SA_TYPE_SET_GROUP:
         action->type = ACTION_TYPE_GROUP_SET;
 
         action->group.group = (int32_t)wire->setgroup.group;
 
-        if (wire->setmods.flags & XCB_XKB_SA_CLEAR_LOCKS)
+        जइ (wire->setmods.flags & XCB_XKB_SA_CLEAR_LOCKS)
             action->group.flags |= ACTION_LOCK_CLEAR;
-        if (wire->setmods.flags & XCB_XKB_SA_LATCH_TO_LOCK)
+        जइ (wire->setmods.flags & XCB_XKB_SA_LATCH_TO_LOCK)
             action->group.flags |= ACTION_LATCH_TO_LOCK;
-        if (wire->setmods.flags & XCB_XKB_SA_ISO_LOCK_FLAG_GROUP_ABSOLUTE)
+        जइ (wire->setmods.flags & XCB_XKB_SA_ISO_LOCK_FLAG_GROUP_ABSOLUTE)
             action->group.flags |= ACTION_ABSOLUTE_SWITCH;
 
-        break;
-    case XCB_XKB_SA_TYPE_LATCH_GROUP:
+        भङ्ग;
+    पक्ष XCB_XKB_SA_TYPE_LATCH_GROUP:
         action->type = ACTION_TYPE_GROUP_LATCH;
 
         action->group.group = (int32_t)wire->latchgroup.group;
 
-        if (wire->latchmods.flags & XCB_XKB_SA_CLEAR_LOCKS)
+        जइ (wire->latchmods.flags & XCB_XKB_SA_CLEAR_LOCKS)
             action->group.flags |= ACTION_LOCK_CLEAR;
-        if (wire->latchmods.flags & XCB_XKB_SA_LATCH_TO_LOCK)
+        जइ (wire->latchmods.flags & XCB_XKB_SA_LATCH_TO_LOCK)
             action->group.flags |= ACTION_LATCH_TO_LOCK;
-        if (wire->latchmods.flags & XCB_XKB_SA_ISO_LOCK_FLAG_GROUP_ABSOLUTE)
+        जइ (wire->latchmods.flags & XCB_XKB_SA_ISO_LOCK_FLAG_GROUP_ABSOLUTE)
             action->group.flags |= ACTION_ABSOLUTE_SWITCH;
 
-        break;
-    case XCB_XKB_SA_TYPE_LOCK_GROUP:
+        भङ्ग;
+    पक्ष XCB_XKB_SA_TYPE_LOCK_GROUP:
         action->type = ACTION_TYPE_GROUP_LOCK;
 
         action->group.group = (int32_t)wire->lockgroup.group;
 
-        if (wire->lockgroup.flags & XCB_XKB_SA_ISO_LOCK_FLAG_GROUP_ABSOLUTE)
+        जइ (wire->lockgroup.flags & XCB_XKB_SA_ISO_LOCK_FLAG_GROUP_ABSOLUTE)
             action->group.flags |= ACTION_ABSOLUTE_SWITCH;
 
-        break;
-    case XCB_XKB_SA_TYPE_MOVE_PTR:
+        भङ्ग;
+    पक्ष XCB_XKB_SA_TYPE_MOVE_PTR:
         action->type = ACTION_TYPE_PTR_MOVE;
 
-        action->ptr.x = (int16_t) (wire->moveptr.xLow | ((uint16_t) wire->moveptr.xHigh << 8));
-        action->ptr.y = (int16_t) (wire->moveptr.yLow | ((uint16_t) wire->moveptr.yHigh << 8));
+        action->ptr.x = (int16_t) (wire->moveptr.x_नीचः | ((uint16_t) wire->moveptr.x_उच्चः << 8));
+        action->ptr.y = (int16_t) (wire->moveptr.y_नीचः | ((uint16_t) wire->moveptr.y_उच्चः << 8));
 
-        if (!(wire->moveptr.flags & XCB_XKB_SA_MOVE_PTR_FLAG_NO_ACCELERATION))
+        जइ (!(wire->moveptr.flags & XCB_XKB_SA_MOVE_PTR_FLAG_NO_ACCELERATION))
             action->ptr.flags |= ACTION_REPEAT;
-        if (wire->moveptr.flags & XCB_XKB_SA_MOVE_PTR_FLAG_MOVE_ABSOLUTE_X)
+        जइ (wire->moveptr.flags & XCB_XKB_SA_MOVE_PTR_FLAG_MOVE_ABSOLUTE_X)
             action->ptr.flags |= ACTION_ABSOLUTE_X;
-        if (wire->moveptr.flags & XCB_XKB_SA_MOVE_PTR_FLAG_MOVE_ABSOLUTE_Y)
+        जइ (wire->moveptr.flags & XCB_XKB_SA_MOVE_PTR_FLAG_MOVE_ABSOLUTE_Y)
             action->ptr.flags |= ACTION_ABSOLUTE_Y;
 
-        break;
-    case XCB_XKB_SA_TYPE_PTR_BTN:
+        भङ्ग;
+    पक्ष XCB_XKB_SA_TYPE_PTR_BTN:
         action->type = ACTION_TYPE_PTR_BUTTON;
 
-        action->btn.count = wire->ptrbtn.count;
+        action->btn.गणनम् = wire->ptrbtn.गणनम्;
         action->btn.button = wire->ptrbtn.button;
         action->btn.flags = 0;
 
-        break;
-    case XCB_XKB_SA_TYPE_LOCK_PTR_BTN:
+        भङ्ग;
+    पक्ष XCB_XKB_SA_TYPE_LOCK_PTR_BTN:
         action->type = ACTION_TYPE_PTR_LOCK;
 
         action->btn.button = wire->lockptrbtn.button;
-        action->btn.count = 0;
+        action->btn.गणनम् = 0;
 
-        if (wire->lockptrbtn.flags & XCB_XKB_SA_ISO_LOCK_FLAG_NO_LOCK)
+        जइ (wire->lockptrbtn.flags & XCB_XKB_SA_ISO_LOCK_FLAG_NO_LOCK)
             action->btn.flags |= ACTION_LOCK_NO_LOCK;
-        if (wire->lockptrbtn.flags & XCB_XKB_SA_ISO_LOCK_FLAG_NO_UNLOCK)
+        जइ (wire->lockptrbtn.flags & XCB_XKB_SA_ISO_LOCK_FLAG_NO_UNLOCK)
             action->btn.flags |= ACTION_LOCK_NO_UNLOCK;
 
-        break;
-    case XCB_XKB_SA_TYPE_SET_PTR_DFLT:
+        भङ्ग;
+    पक्ष XCB_XKB_SA_TYPE_SET_PTR_DFLT:
         action->type = ACTION_TYPE_PTR_DEFAULT;
 
-        action->dflt.value = wire->setptrdflt.value;
+        action->dflt.मानम् = wire->setptrdflt.मानम्;
 
-        if (wire->setptrdflt.flags & XCB_XKB_SA_SET_PTR_DFLT_FLAG_DFLT_BTN_ABSOLUTE)
+        जइ (wire->setptrdflt.flags & XCB_XKB_SA_SET_PTR_DFLT_FLAG_DFLT_BTN_ABSOLUTE)
             action->dflt.flags |= ACTION_ABSOLUTE_SWITCH;
 
-        break;
-    case XCB_XKB_SA_TYPE_TERMINATE:
+        भङ्ग;
+    पक्ष XCB_XKB_SA_TYPE_TERMINATE:
         action->type = ACTION_TYPE_TERMINATE;
 
-        break;
-    case XCB_XKB_SA_TYPE_SWITCH_SCREEN:
+        भङ्ग;
+    पक्ष XCB_XKB_SA_TYPE_SWITCH_SCREEN:
         action->type = ACTION_TYPE_SWITCH_VT;
 
         action->screen.screen = wire->switchscreen.newScreen;
 
-        if (!(wire->switchscreen.flags & XCB_XKB_SWITCH_SCREEN_FLAG_APPLICATION))
+        जइ (!(wire->switchscreen.flags & XCB_XKB_SWITCH_SCREEN_FLAG_APPLICATION))
             action->screen.flags |= ACTION_SAME_SCREEN;
-        if (wire->switchscreen.flags & XCB_XKB_SWITCH_SCREEN_FLAG_ABSOLUTE)
+        जइ (wire->switchscreen.flags & XCB_XKB_SWITCH_SCREEN_FLAG_ABSOLUTE)
             action->screen.flags |= ACTION_ABSOLUTE_SWITCH;
 
-        break;
-    case XCB_XKB_SA_TYPE_SET_CONTROLS:
+        भङ्ग;
+    पक्ष XCB_XKB_SA_TYPE_SET_CONTROLS:
         action->type = ACTION_TYPE_CTRL_SET;
         {
-            const uint16_t mask = (wire->setcontrols.boolCtrlsLow |
-                                   (wire->setcontrols.boolCtrlsHigh << 8));
+            ध्रुव uint16_t mask = (wire->setcontrols.bool_Ctrls_नीचः |
+                                   (wire->setcontrols.bool_Ctrls_उच्चः << 8));
             action->ctrls.ctrls = translate_controls_mask(mask);
         }
-        break;
-    case XCB_XKB_SA_TYPE_LOCK_CONTROLS:
+        भङ्ग;
+    पक्ष XCB_XKB_SA_TYPE_LOCK_CONTROLS:
         action->type = ACTION_TYPE_CTRL_LOCK;
         {
-            const uint16_t mask = (wire->lockcontrols.boolCtrlsLow |
-                                   (wire->lockcontrols.boolCtrlsHigh << 8));
+            ध्रुव uint16_t mask = (wire->lockcontrols.bool_Ctrls_नीचः |
+                                   (wire->lockcontrols.bool_Ctrls_उच्चः << 8));
             action->ctrls.ctrls = translate_controls_mask(mask);
         }
-        break;
+        भङ्ग;
 
-    case XCB_XKB_SA_TYPE_REDIRECT_KEY:
-        action->type = ACTION_TYPE_REDIRECT_KEY;
-        if (wire->redirect.newkey < min_key_code ||
-            wire->redirect.newkey > max_key_code)
-                return false;
+    पक्ष XCB_XKB_SA_TYPE_REDIRECT_कुञ्चिका:
+        action->type = ACTION_TYPE_REDIRECT_कुञ्चिका;
+        जइ (wire->redirect.newkey < min_कुञ्चिका_code ||
+            wire->redirect.newkey > max_कुञ्चिका_code)
+                प्रत्यागम false;
         action->redirect.keycode = wire->redirect.newkey;
         /*
          * WARNING: there is a bug in Xorg that swap the low and high
@@ -327,89 +327,89 @@ translate_action(union xkb_action *action, const xcb_xkb_action_t *wire,
          */
         action->redirect.affect_mods = translate_mods(
             wire->redirect.mask,
-            wire->redirect.vmodsMaskLow,
-            wire->redirect.vmodsMaskHigh
+            wire->redirect.vmods_Mask_नीचः,
+            wire->redirect.vmods_Mask_उच्चः
         );
         action->redirect.mods = translate_mods(wire->redirect.realModifiers,
-                                               wire->redirect.vmodsLow,
-                                               wire->redirect.vmodsHigh);
-        break;
+                                               wire->redirect.vmods_नीचः_2,
+                                               wire->redirect.vmods_उच्चः_2);
+        भङ्ग;
 
-    case XCB_XKB_SA_TYPE_NO_ACTION:
+    पक्ष XCB_XKB_SA_TYPE_NO_ACTION:
         action->type = ACTION_TYPE_NONE;
-        break;
+        भङ्ग;
 
     /* We don't support these. */
-    case XCB_XKB_SA_TYPE_ISO_LOCK:
-    case XCB_XKB_SA_TYPE_ACTION_MESSAGE:
-    case XCB_XKB_SA_TYPE_DEVICE_BTN:
-    case XCB_XKB_SA_TYPE_LOCK_DEVICE_BTN:
-    case XCB_XKB_SA_TYPE_DEVICE_VALUATOR:
+    पक्ष XCB_XKB_SA_TYPE_ISO_LOCK:
+    पक्ष XCB_XKB_SA_TYPE_ACTION_MESSAGE:
+    पक्ष XCB_XKB_SA_TYPE_DEVICE_BTN:
+    पक्ष XCB_XKB_SA_TYPE_LOCK_DEVICE_BTN:
+    पक्ष XCB_XKB_SA_TYPE_DEVICE_VALUATOR:
         action->type = ACTION_TYPE_UNSUPPORTED_LEGACY;
-        break;
+        भङ्ग;
 
-    default:
+    स्वभाव:
         {} /* Label followed by declaration requires C23 */
         /* Ensure to not miss `xkb_action_type` updates */
         static_assert(ACTION_TYPE_INTERNAL == 20 &&
-                      ACTION_TYPE_INTERNAL + 1 == _ACTION_TYPE_NUM_ENTRIES,
+                      ACTION_TYPE_INTERNAL + 1 == ACTION_TYPE_अङ्कः_ENTRIES,
                       "Missing action type");
 
-        if (wire->type < ACTION_TYPE_PRIVATE) {
+        जइ (wire->type < ACTION_TYPE_PRIVATE) {
             action->type = ACTION_TYPE_NONE;
-            break;
+            भङ्ग;
         }
 
         /* Treat high unknown actions as Private actions. */
         action->priv.type = wire->noaction.type;
-        static_assert(sizeof(action->priv.data) == 7 &&
-                      sizeof(wire->noaction.pad0) == 7,
+        static_assert(परिमाण(action->priv.data) == 7 &&
+                      परिमाण(wire->noaction.pad0) == 7,
                       "The private action data must be 7 bytes long!");
         memcpy(action->priv.data, wire->noaction.pad0, 7);
-        break;
+        भङ्ग;
     }
-    return true;
+    प्रत्यागम true;
 }
 
-static bool
-get_types(struct xkb_keymap *keymap, xcb_connection_t *conn,
+स्थिर bool
+get_types(संरचना xkb_keymap *keymap, xcb_connection_t *conn,
           xcb_xkb_get_map_reply_t *reply, xcb_xkb_get_map_map_t *map)
 {
-    int types_length = xcb_xkb_get_map_map_types_rtrn_length(reply, map);
-    xcb_xkb_key_type_iterator_t types_iter =
+    पूर्णाङ्क types_length = xcb_xkb_get_map_map_types_rtrn_length(reply, map);
+    xcb_xkb_कुञ्चिका_type_iterator_t types_iter =
         xcb_xkb_get_map_map_types_rtrn_iterator(reply, map);
 
     FAIL_UNLESS(reply->firstType == 0);
 
-    keymap->num_types = reply->nTypes;
-    ALLOC_OR_FAIL(keymap->types, keymap->num_types);
-    assert(types_length == (int) keymap->num_types);
+    keymap->अङ्कः_types = reply->nTypes;
+    ALLOC_OR_FAIL(keymap->types, keymap->अङ्कः_types);
+    प्रतिज्ञा(types_length == (पूर्णाङ्क) keymap->अङ्कः_types);
 
-    for (int i = 0; i < types_length; i++) {
-        xcb_xkb_key_type_t *wire_type = types_iter.data;
-        struct xkb_key_type *type = &keymap->types[i];
+    प्रति (पूर्णाङ्क i = 0; i < types_length; i++) {
+        xcb_xkb_कुञ्चिका_type_t *wire_type = types_iter.data;
+        संरचना xkb_कुञ्चिका_type *type = &keymap->types[i];
 
-        FAIL_UNLESS(wire_type->numLevels > 0);
+        FAIL_UNLESS(wire_type->अङ्कः_Levels > 0);
 
         type->mods.mods = translate_mods(wire_type->mods_mods,
                                          wire_type->mods_vmods, 0);
         type->mods.mask = translate_mods(wire_type->mods_mask, 0, 0);
-        type->num_levels = wire_type->numLevels;
+        type->अङ्कः_levels = wire_type->अङ्कः_Levels;
 
         {
-            int entries_length = xcb_xkb_key_type_map_length(wire_type);
+            पूर्णाङ्क entries_length = xcb_xkb_कुञ्चिका_type_map_length(wire_type);
             xcb_xkb_kt_map_entry_iterator_t entries_iter =
-                xcb_xkb_key_type_map_iterator(wire_type);
+                xcb_xkb_कुञ्चिका_type_map_iterator(wire_type);
 
-            type->num_entries = wire_type->nMapEntries;
-            ALLOC_OR_FAIL(type->entries, type->num_entries);
-            assert(entries_length == (int) type->num_entries);
+            type->अङ्कः_entries = wire_type->nMapEntries;
+            ALLOC_OR_FAIL(type->entries, type->अङ्कः_entries);
+            प्रतिज्ञा(entries_length == (पूर्णाङ्क) type->अङ्कः_entries);
 
-            for (int j = 0; j < entries_length; j++) {
+            प्रति (पूर्णाङ्क j = 0; j < entries_length; j++) {
                 xcb_xkb_kt_map_entry_t *wire_entry = entries_iter.data;
-                struct xkb_key_type_entry *entry = &type->entries[j];
+                संरचना xkb_कुञ्चिका_type_entry *entry = &type->entries[j];
 
-                FAIL_UNLESS(wire_entry->level < type->num_levels);
+                FAIL_UNLESS(wire_entry->level < type->अङ्कः_levels);
 
                 entry->level = wire_entry->level;
                 entry->mods.mods = translate_mods(wire_entry->mods_mods,
@@ -421,15 +421,15 @@ get_types(struct xkb_keymap *keymap, xcb_connection_t *conn,
         }
 
         {
-            int preserves_length = xcb_xkb_key_type_preserve_length(wire_type);
+            पूर्णाङ्क preserves_length = xcb_xkb_कुञ्चिका_type_preserve_length(wire_type);
             xcb_xkb_mod_def_iterator_t preserves_iter =
-                xcb_xkb_key_type_preserve_iterator(wire_type);
+                xcb_xkb_कुञ्चिका_type_preserve_iterator(wire_type);
 
-            FAIL_UNLESS((unsigned) preserves_length <= type->num_entries);
+            FAIL_UNLESS((unsigned) preserves_length <= type->अङ्कः_entries);
 
-            for (int j = 0; j < preserves_length; j++) {
+            प्रति (पूर्णाङ्क j = 0; j < preserves_length; j++) {
                 xcb_xkb_mod_def_t *wire_preserve = preserves_iter.data;
-                struct xkb_key_type_entry *entry = &type->entries[j];
+                संरचना xkb_कुञ्चिका_type_entry *entry = &type->entries[j];
 
                 entry->preserve.mods = translate_mods(wire_preserve->realMods,
                                                       wire_preserve->vmods, 0);
@@ -442,86 +442,86 @@ get_types(struct xkb_keymap *keymap, xcb_connection_t *conn,
         /* Checked only when compiling a keymap from text */
         type->required = true;
 
-        xcb_xkb_key_type_next(&types_iter);
+        xcb_xkb_कुञ्चिका_type_next(&types_iter);
     }
 
-    return true;
+    प्रत्यागम true;
 
 fail:
-    return false;
+    प्रत्यागम false;
 }
 
-static bool
-get_sym_maps(struct xkb_keymap *keymap, xcb_connection_t *conn,
+स्थिर bool
+get_sym_maps(संरचना xkb_keymap *keymap, xcb_connection_t *conn,
              xcb_xkb_get_map_reply_t *reply, xcb_xkb_get_map_map_t *map)
 {
-    int sym_maps_length = xcb_xkb_get_map_map_syms_rtrn_length(reply, map);
-    xcb_xkb_key_sym_map_iterator_t sym_maps_iter =
+    पूर्णाङ्क sym_maps_length = xcb_xkb_get_map_map_syms_rtrn_length(reply, map);
+    xcb_xkb_कुञ्चिका_sym_map_iterator_t sym_maps_iter =
         xcb_xkb_get_map_map_syms_rtrn_iterator(reply, map);
 
-    FAIL_UNLESS(reply->minKeyCode <= reply->maxKeyCode);
-    FAIL_UNLESS(reply->firstKeySym >= reply->minKeyCode);
-    FAIL_UNLESS(reply->firstKeySym + reply->nKeySyms <= reply->maxKeyCode + 1);
+    FAIL_UNLESS(reply->min_कुञ्चिका_Code <= reply->max_कुञ्चिका_Code);
+    FAIL_UNLESS(reply->first_कुञ्चिका_Sym >= reply->min_कुञ्चिका_Code);
+    FAIL_UNLESS(reply->first_कुञ्चिका_Sym + reply->n_कुञ्चिका_Syms <= reply->max_कुञ्चिका_Code + 1);
 
-    keymap->min_key_code = reply->minKeyCode;
-    keymap->max_key_code = reply->maxKeyCode;
-    keymap->num_keys = keymap->num_keys_low = reply->maxKeyCode + 1;
+    keymap->min_कुञ्चिका_code = reply->min_कुञ्चिका_Code;
+    keymap->max_कुञ्चिका_code = reply->max_कुञ्चिका_Code;
+    keymap->अङ्कः_कुञ्चिकाः = keymap->अङ्कः_कुञ्चिकाः_नीचः = reply->max_कुञ्चिका_Code + 1;
 
-    ALLOC_OR_FAIL(keymap->keys, keymap->max_key_code + 1);
+    ALLOC_OR_FAIL(keymap->कुञ्चिकाः, keymap->max_कुञ्चिका_code + 1);
 
-    for (xkb_keycode_t kc = keymap->min_key_code; kc <= keymap->max_key_code; kc++)
-        keymap->keys[kc].keycode = kc;
+    प्रति (xkb_keycode_t kc = keymap->min_कुञ्चिका_code; kc <= keymap->max_कुञ्चिका_code; kc++)
+        keymap->कुञ्चिकाः[kc].keycode = kc;
 
-    for (int i = 0; i < sym_maps_length; i++) {
-        xcb_xkb_key_sym_map_t *wire_sym_map = sym_maps_iter.data;
-        struct xkb_key *key = &keymap->keys[reply->firstKeySym + i];
+    प्रति (पूर्णाङ्क i = 0; i < sym_maps_length; i++) {
+        xcb_xkb_कुञ्चिका_sym_map_t *wire_sym_map = sym_maps_iter.data;
+        संरचना xkb_कुञ्चिका *कुञ्चिका = &keymap->कुञ्चिकाः[reply->first_कुञ्चिका_Sym + i];
 
-        key->num_groups = wire_sym_map->groupInfo & 0x0f;
-        FAIL_UNLESS(key->num_groups <= ARRAY_SIZE(wire_sym_map->kt_index));
-        ALLOC_OR_FAIL(key->groups, key->num_groups);
+        कुञ्चिका->अङ्कः_groups = wire_sym_map->groupInfo & 0x0f;
+        FAIL_UNLESS(कुञ्चिका->अङ्कः_groups <= ARRAY_SIZE(wire_sym_map->kt_index));
+        ALLOC_OR_FAIL(कुञ्चिका->groups, कुञ्चिका->अङ्कः_groups);
 
-        for (xkb_layout_index_t j = 0; j < key->num_groups; j++) {
-            FAIL_UNLESS(wire_sym_map->kt_index[j] < keymap->num_types);
-            key->groups[j].type = &keymap->types[wire_sym_map->kt_index[j]];
+        प्रति (xkb_layout_index_t j = 0; j < कुञ्चिका->अङ्कः_groups; j++) {
+            FAIL_UNLESS(wire_sym_map->kt_index[j] < keymap->अङ्कः_types);
+            कुञ्चिका->groups[j].type = &keymap->types[wire_sym_map->kt_index[j]];
 
-            ALLOC_OR_FAIL(key->groups[j].levels, key->groups[j].type->num_levels);
+            ALLOC_OR_FAIL(कुञ्चिका->groups[j].levels, कुञ्चिका->groups[j].type->अङ्कः_levels);
         }
 
-        key->out_of_range_group_number = (wire_sym_map->groupInfo & 0x30) >> 4;
+        कुञ्चिका->out_of_range_group_सङ्ख्या = (wire_sym_map->groupInfo & 0x30) >> 4;
 
-        FAIL_UNLESS(key->out_of_range_group_number <= key->num_groups);
+        FAIL_UNLESS(कुञ्चिका->out_of_range_group_सङ्ख्या <= कुञ्चिका->अङ्कः_groups);
 
-        if (wire_sym_map->groupInfo & XCB_XKB_GROUPS_WRAP_CLAMP_INTO_RANGE)
-            key->out_of_range_group_policy = XKB_LAYOUT_OUT_OF_RANGE_CLAMP;
-        else if (wire_sym_map->groupInfo & XCB_XKB_GROUPS_WRAP_REDIRECT_INTO_RANGE)
-            key->out_of_range_group_policy = XKB_LAYOUT_OUT_OF_RANGE_REDIRECT;
-        else
-            key->out_of_range_group_policy = XKB_LAYOUT_OUT_OF_RANGE_WRAP;
+        जइ (wire_sym_map->groupInfo & XCB_XKB_GROUPS_WRAP_CLAMP_INTO_RANGE)
+            कुञ्चिका->out_of_range_group_policy = XKB_LAYOUT_OUT_OF_RANGE_CLAMP;
+        अण्णहा जइ (wire_sym_map->groupInfo & XCB_XKB_GROUPS_WRAP_REDIRECT_INTO_RANGE)
+            कुञ्चिका->out_of_range_group_policy = XKB_LAYOUT_OUT_OF_RANGE_REDIRECT;
+        अण्णहा
+            कुञ्चिका->out_of_range_group_policy = XKB_LAYOUT_OUT_OF_RANGE_WRAP;
 
         {
-            int syms_length = xcb_xkb_key_sym_map_syms_length(wire_sym_map);
-            xcb_keysym_t *syms_iter = xcb_xkb_key_sym_map_syms(wire_sym_map);
+            पूर्णाङ्क syms_length = xcb_xkb_कुञ्चिका_sym_map_syms_length(wire_sym_map);
+            xcb_keysym_t *syms_iter = xcb_xkb_कुञ्चिका_sym_map_syms(wire_sym_map);
 
-            FAIL_UNLESS((unsigned) syms_length == wire_sym_map->width * key->num_groups);
+            FAIL_UNLESS((unsigned) syms_length == wire_sym_map->width * कुञ्चिका->अङ्कः_groups);
 
-            if (syms_length > 0)
-                key->explicit |= EXPLICIT_SYMBOLS;
+            जइ (syms_length > 0)
+                कुञ्चिका->explicit |= EXPLICIT_SYMBOLS;
 
-            for (xkb_layout_index_t group = 0; group < key->num_groups; group++) {
-                for (xkb_level_index_t level = 0; level < wire_sym_map->width; level++) {
+            प्रति (xkb_layout_index_t group = 0; group < कुञ्चिका->अङ्कः_groups; group++) {
+                प्रति (xkb_level_index_t level = 0; level < wire_sym_map->width; level++) {
                     xcb_keysym_t wire_keysym = *syms_iter;
 
-                    assert(key->groups[group].type != NULL);
-                    if (level < key->groups[group].type->num_levels) {
+                    प्रतिज्ञा(कुञ्चिका->groups[group].type != रिक्त);
+                    जइ (level < कुञ्चिका->groups[group].type->अङ्कः_levels) {
                         /* Do not discard the keysym yet if it is NoSymbol, because
                          * there may be an action set */
-                        key->groups[group].levels[level].num_syms = 1;
-                        key->groups[group].levels[level].s.sym = wire_keysym;
+                        कुञ्चिका->groups[group].levels[level].अङ्कः_syms = 1;
+                        कुञ्चिका->groups[group].levels[level].s.sym = wire_keysym;
                         /* Set capitalization transformation */
-                        key->groups[group].levels[level].upper =
+                        कुञ्चिका->groups[group].levels[level].upper =
                             xkb_keysym_to_upper(wire_keysym);
-                        if (wire_keysym != XKB_KEY_NoSymbol)
-                            key->groups[group].explicit_symbols = true;
+                        जइ (wire_keysym != XKB_कुञ्चिका_No_चिह्नम्)
+                            कुञ्चिका->groups[group].explicit_symbols = true;
                     }
 
                     syms_iter++;
@@ -529,101 +529,101 @@ get_sym_maps(struct xkb_keymap *keymap, xcb_connection_t *conn,
             }
         }
 
-        xcb_xkb_key_sym_map_next(&sym_maps_iter);
+        xcb_xkb_कुञ्चिका_sym_map_next(&sym_maps_iter);
     }
 
-    return true;
+    प्रत्यागम true;
 
 fail:
-    return false;
+    प्रत्यागम false;
 }
 
-static bool
-get_actions(struct xkb_keymap *keymap, xcb_connection_t *conn,
+स्थिर bool
+get_actions(संरचना xkb_keymap *keymap, xcb_connection_t *conn,
             xcb_xkb_get_map_reply_t *reply, xcb_xkb_get_map_map_t *map)
 {
-    int acts_count_length =
-        xcb_xkb_get_map_map_acts_rtrn_count_length(reply, map);
-    uint8_t *acts_count_iter = xcb_xkb_get_map_map_acts_rtrn_count(map);
+    पूर्णाङ्क acts_गणनम्_length =
+        xcb_xkb_get_map_map_acts_rtrn_गणनम्_length(reply, map);
+    uint8_t *acts_गणनम्_iter = xcb_xkb_get_map_map_acts_rtrn_गणनम्(map);
     xcb_xkb_action_iterator_t acts_iter =
         xcb_xkb_get_map_map_acts_rtrn_acts_iterator(reply, map);
-    xcb_xkb_key_sym_map_iterator_t sym_maps_iter =
+    xcb_xkb_कुञ्चिका_sym_map_iterator_t sym_maps_iter =
         xcb_xkb_get_map_map_syms_rtrn_iterator(reply, map);
 
-    FAIL_UNLESS(reply->firstKeyAction == keymap->min_key_code);
-    FAIL_UNLESS(reply->firstKeyAction + reply->nKeyActions ==
-                keymap->max_key_code + 1);
+    FAIL_UNLESS(reply->first_कुञ्चिका_Action == keymap->min_कुञ्चिका_code);
+    FAIL_UNLESS(reply->first_कुञ्चिका_Action + reply->n_कुञ्चिका_Actions ==
+                keymap->max_कुञ्चिका_code + 1);
 
-    for (int i = 0; i < acts_count_length; i++) {
-        xcb_xkb_key_sym_map_t *wire_sym_map = sym_maps_iter.data;
-        int syms_length = xcb_xkb_key_sym_map_syms_length(wire_sym_map);
-        uint8_t wire_count = *acts_count_iter;
-        struct xkb_key *key = &keymap->keys[reply->firstKeyAction + i];
+    प्रति (पूर्णाङ्क i = 0; i < acts_गणनम्_length; i++) {
+        xcb_xkb_कुञ्चिका_sym_map_t *wire_sym_map = sym_maps_iter.data;
+        पूर्णाङ्क syms_length = xcb_xkb_कुञ्चिका_sym_map_syms_length(wire_sym_map);
+        uint8_t wire_गणनम् = *acts_गणनम्_iter;
+        संरचना xkb_कुञ्चिका *कुञ्चिका = &keymap->कुञ्चिकाः[reply->first_कुञ्चिका_Action + i];
 
-        FAIL_UNLESS((unsigned) syms_length == wire_sym_map->width * key->num_groups);
-        FAIL_UNLESS(wire_count == 0 || wire_count == syms_length);
+        FAIL_UNLESS((unsigned) syms_length == wire_sym_map->width * कुञ्चिका->अङ्कः_groups);
+        FAIL_UNLESS(wire_गणनम् == 0 || wire_गणनम् == syms_length);
 
-        const xkb_keycode_t min_key_code = keymap->min_key_code;
-        const xkb_keycode_t max_key_code = keymap->max_key_code;
+        ध्रुव xkb_keycode_t min_कुञ्चिका_code = keymap->min_कुञ्चिका_code;
+        ध्रुव xkb_keycode_t max_कुञ्चिका_code = keymap->max_कुञ्चिका_code;
 
-        if (wire_count != 0) {
-            for (xkb_layout_index_t group = 0; group < key->num_groups; group++) {
-                for (xkb_level_index_t level = 0; level < wire_sym_map->width; level++) {
+        जइ (wire_गणनम् != 0) {
+            प्रति (xkb_layout_index_t group = 0; group < कुञ्चिका->अङ्कः_groups; group++) {
+                प्रति (xkb_level_index_t level = 0; level < wire_sym_map->width; level++) {
                     xcb_xkb_action_t *wire_action = acts_iter.data;
 
-                    if (level < key->groups[group].type->num_levels) {
-                        key->groups[group].levels[level].num_actions = 1;
-                        union xkb_action *action =
-                            &key->groups[group].levels[level].a.action;
+                    जइ (level < कुञ्चिका->groups[group].type->अङ्कः_levels) {
+                        कुञ्चिका->groups[group].levels[level].अङ्कः_actions = 1;
+                        सङ्घ xkb_action *action =
+                            &कुञ्चिका->groups[group].levels[level].a.action;
 
                         FAIL_UNLESS(translate_action(action, wire_action,
-                                                     min_key_code, max_key_code));
+                                                     min_कुञ्चिका_code, max_कुञ्चिका_code));
 
-                        if (action->type != ACTION_TYPE_NONE) {
-                            key->groups[group].implicit_actions =
-                                !(key->explicit & EXPLICIT_INTERP);
-                        } else if (key->groups[group].levels[level].s.sym ==
-                                   XKB_KEY_NoSymbol) {
+                        जइ (action->type != ACTION_TYPE_NONE) {
+                            कुञ्चिका->groups[group].implicit_actions =
+                                !(कुञ्चिका->explicit & EXPLICIT_INTERP);
+                        } अण्णहा जइ (कुञ्चिका->groups[group].levels[level].s.sym ==
+                                   XKB_कुञ्चिका_No_चिह्नम्) {
                             /* If the action and the keysym are both undefined,
                              * discard them */
-                            key->groups[group].levels[level].num_syms = 0;
-                            key->groups[group].levels[level].num_actions = 0;
+                            कुञ्चिका->groups[group].levels[level].अङ्कः_syms = 0;
+                            कुञ्चिका->groups[group].levels[level].अङ्कः_actions = 0;
                         }
                     }
 
                     xcb_xkb_action_next(&acts_iter);
                 }
 
-                if (key->groups[group].implicit_actions)
-                    key->implicit_actions = true;
+                जइ (कुञ्चिका->groups[group].implicit_actions)
+                    कुञ्चिका->implicit_actions = true;
             }
         }
 
-        acts_count_iter++;
-        xcb_xkb_key_sym_map_next(&sym_maps_iter);
+        acts_गणनम्_iter++;
+        xcb_xkb_कुञ्चिका_sym_map_next(&sym_maps_iter);
     }
 
-    return true;
+    प्रत्यागम true;
 
 fail:
-    return false;
+    प्रत्यागम false;
 }
 
-static bool
-get_vmods(struct xkb_keymap *keymap, xcb_connection_t *conn,
+स्थिर bool
+get_vmods(संरचना xkb_keymap *keymap, xcb_connection_t *conn,
           xcb_xkb_get_map_reply_t *reply, xcb_xkb_get_map_map_t *map)
 {
     uint8_t *iter = xcb_xkb_get_map_map_vmods_rtrn(map);
 
-    keymap->mods.num_mods =
-        NUM_REAL_MODS + MIN(msb_pos(reply->virtualMods), NUM_VMODS);
-    FAIL_UNLESS(keymap->mods.num_mods <= XKB_MAX_MODS);
+    keymap->mods.अङ्कः_mods =
+        अङ्कः_REAL_MODS + MIN(msb_pos(reply->virtualMods), अङ्कः_VMODS);
+    FAIL_UNLESS(keymap->mods.अङ्कः_mods <= XKB_MAX_MODS);
 
-    static_assert(NUM_REAL_MODS + NUM_VMODS <= XKB_MAX_MODS, "");
-    for (unsigned i = 0; i < NUM_VMODS; i++) {
-        if (reply->virtualMods & (1u << i)) {
+    static_assert(अङ्कः_REAL_MODS + अङ्कः_VMODS <= XKB_MAX_MODS, "");
+    प्रति (unsigned i = 0; i < अङ्कः_VMODS; i++) {
+        जइ (reply->virtualMods & (1u << i)) {
             uint8_t wire = *iter;
-            struct xkb_mod *mod = &keymap->mods.mods[NUM_REAL_MODS + i];
+            संरचना xkb_mod *mod = &keymap->mods.mods[अङ्कः_REAL_MODS + i];
 
             mod->type = MOD_VIRT;
             mod->mapping = translate_mods(wire, 0, 0);
@@ -632,218 +632,218 @@ get_vmods(struct xkb_keymap *keymap, xcb_connection_t *conn,
         }
     }
 
-    return true;
+    प्रत्यागम true;
 
 fail:
-    return false;
+    प्रत्यागम false;
 }
 
-static bool
-get_explicits(struct xkb_keymap *keymap, xcb_connection_t *conn,
+स्थिर bool
+get_explicits(संरचना xkb_keymap *keymap, xcb_connection_t *conn,
               xcb_xkb_get_map_reply_t *reply, xcb_xkb_get_map_map_t *map)
 {
-    int length = xcb_xkb_get_map_map_explicit_rtrn_length(reply, map);
+    पूर्णाङ्क length = xcb_xkb_get_map_map_explicit_rtrn_length(reply, map);
     xcb_xkb_set_explicit_iterator_t iter =
         xcb_xkb_get_map_map_explicit_rtrn_iterator(reply, map);
 
-    for (int i = 0; i < length; i++) {
+    प्रति (पूर्णाङ्क i = 0; i < length; i++) {
         xcb_xkb_set_explicit_t *wire = iter.data;
-        struct xkb_key *key;
+        संरचना xkb_कुञ्चिका *कुञ्चिका;
 
-        FAIL_UNLESS(wire->keycode >= keymap->min_key_code &&
-                    wire->keycode <= keymap->max_key_code);
+        FAIL_UNLESS(wire->keycode >= keymap->min_कुञ्चिका_code &&
+                    wire->keycode <= keymap->max_कुञ्चिका_code);
 
-        key = &keymap->keys[wire->keycode];
+        कुञ्चिका = &keymap->कुञ्चिकाः[wire->keycode];
 
-        if ((wire->explicit & XCB_XKB_EXPLICIT_KEY_TYPE_1) &&
-            key->num_groups > 0) {
-            key->groups[0].explicit_type = true;
-            key->explicit |= EXPLICIT_TYPES;
+        जइ ((wire->explicit & XCB_XKB_EXPLICIT_कुञ्चिका_TYPE_1) &&
+            कुञ्चिका->अङ्कः_groups > 0) {
+            कुञ्चिका->groups[0].explicit_type = true;
+            कुञ्चिका->explicit |= EXPLICIT_TYPES;
         }
-        if ((wire->explicit & XCB_XKB_EXPLICIT_KEY_TYPE_2) &&
-            key->num_groups > 1) {
-            key->groups[1].explicit_type = true;
-            key->explicit |= EXPLICIT_TYPES;
+        जइ ((wire->explicit & XCB_XKB_EXPLICIT_कुञ्चिका_TYPE_2) &&
+            कुञ्चिका->अङ्कः_groups > 1) {
+            कुञ्चिका->groups[1].explicit_type = true;
+            कुञ्चिका->explicit |= EXPLICIT_TYPES;
         }
-        if ((wire->explicit & XCB_XKB_EXPLICIT_KEY_TYPE_3) &&
-            key->num_groups > 2) {
-            key->groups[2].explicit_type = true;
-            key->explicit |= EXPLICIT_TYPES;
+        जइ ((wire->explicit & XCB_XKB_EXPLICIT_कुञ्चिका_TYPE_3) &&
+            कुञ्चिका->अङ्कः_groups > 2) {
+            कुञ्चिका->groups[2].explicit_type = true;
+            कुञ्चिका->explicit |= EXPLICIT_TYPES;
         }
-        if ((wire->explicit & XCB_XKB_EXPLICIT_KEY_TYPE_4) &&
-            key->num_groups > 3) {
-            key->groups[3].explicit_type = true;
-            key->explicit |= EXPLICIT_TYPES;
+        जइ ((wire->explicit & XCB_XKB_EXPLICIT_कुञ्चिका_TYPE_4) &&
+            कुञ्चिका->अङ्कः_groups > 3) {
+            कुञ्चिका->groups[3].explicit_type = true;
+            कुञ्चिका->explicit |= EXPLICIT_TYPES;
         }
-        if (wire->explicit & XCB_XKB_EXPLICIT_INTERPRET) {
-            key->explicit |= EXPLICIT_INTERP;
+        जइ (wire->explicit & XCB_XKB_EXPLICIT_INTERPRET) {
+            कुञ्चिका->explicit |= EXPLICIT_INTERP;
             /*
              * Make all key groups have explicit actions too, because we have
              * no way to know which one is implicit.
              */
-            for (xkb_layout_index_t l = 0; l < key->num_groups; l++) {
-                key->groups[l].explicit_actions = true;
+            प्रति (xkb_layout_index_t l = 0; l < कुञ्चिका->अङ्कः_groups; l++) {
+                कुञ्चिका->groups[l].explicit_actions = true;
             }
         }
-        if (wire->explicit & XCB_XKB_EXPLICIT_AUTO_REPEAT)
-            key->explicit |= EXPLICIT_REPEAT;
-        if (wire->explicit & XCB_XKB_EXPLICIT_V_MOD_MAP)
-            key->explicit |= EXPLICIT_VMODMAP;
+        जइ (wire->explicit & XCB_XKB_EXPLICIT_AUTO_REPEAT)
+            कुञ्चिका->explicit |= EXPLICIT_REPEAT;
+        जइ (wire->explicit & XCB_XKB_EXPLICIT_V_MOD_MAP)
+            कुञ्चिका->explicit |= EXPLICIT_VMODMAP;
 
         xcb_xkb_set_explicit_next(&iter);
     }
 
-    return true;
+    प्रत्यागम true;
 
 fail:
-    return false;
+    प्रत्यागम false;
 }
 
-static bool
-get_modmaps(struct xkb_keymap *keymap, xcb_connection_t *conn,
+स्थिर bool
+get_modmaps(संरचना xkb_keymap *keymap, xcb_connection_t *conn,
             xcb_xkb_get_map_reply_t *reply, xcb_xkb_get_map_map_t *map)
 {
-    int length = xcb_xkb_get_map_map_modmap_rtrn_length(reply, map);
-    xcb_xkb_key_mod_map_iterator_t iter =
+    पूर्णाङ्क length = xcb_xkb_get_map_map_modmap_rtrn_length(reply, map);
+    xcb_xkb_कुञ्चिका_mod_map_iterator_t iter =
         xcb_xkb_get_map_map_modmap_rtrn_iterator(reply, map);
 
     darray(ModMapEntry) modmaps = darray_new();
 
-    for (int i = 0; i < length; i++) {
-        xcb_xkb_key_mod_map_t *wire = iter.data;
-        struct xkb_key *key;
+    प्रति (पूर्णाङ्क i = 0; i < length; i++) {
+        xcb_xkb_कुञ्चिका_mod_map_t *wire = iter.data;
+        संरचना xkb_कुञ्चिका *कुञ्चिका;
 
-        FAIL_UNLESS(wire->keycode >= keymap->min_key_code &&
-                    wire->keycode <= keymap->max_key_code);
+        FAIL_UNLESS(wire->keycode >= keymap->min_कुञ्चिका_code &&
+                    wire->keycode <= keymap->max_कुञ्चिका_code);
 
-        key = &keymap->keys[wire->keycode];
-        key->modmap = wire->mods;
+        कुञ्चिका = &keymap->कुञ्चिकाः[wire->keycode];
+        कुञ्चिका->modmap = wire->mods;
 
         darray_append(modmaps, (ModMapEntry) {
-            .keyCode = key->keycode,
-            .mods = key->modmap,
-            .haveSymbol = false,
-            .u.keyName = key->name
+            .कुञ्चिका_Code = कुञ्चिका->keycode,
+            .mods = कुञ्चिका->modmap,
+            .have_चिह्नम् = false,
+            .u.कुञ्चिका_Name = कुञ्चिका->name
         });
 
-        xcb_xkb_key_mod_map_next(&iter);
+        xcb_xkb_कुञ्चिका_mod_map_next(&iter);
     }
 
-    darray_steal(modmaps, &keymap->modmaps, &keymap->num_modmaps);
-    return true;
+    darray_steal(modmaps, &keymap->modmaps, &keymap->अङ्कः_modmaps);
+    प्रत्यागम true;
 
 fail:
     darray_free(modmaps);
-    return false;
+    प्रत्यागम false;
 }
 
-static bool
-get_vmodmaps(struct xkb_keymap *keymap, xcb_connection_t *conn,
+स्थिर bool
+get_vmodmaps(संरचना xkb_keymap *keymap, xcb_connection_t *conn,
              xcb_xkb_get_map_reply_t *reply, xcb_xkb_get_map_map_t *map)
 {
-    int length = xcb_xkb_get_map_map_vmodmap_rtrn_length(reply, map);
-    xcb_xkb_key_v_mod_map_iterator_t iter =
+    पूर्णाङ्क length = xcb_xkb_get_map_map_vmodmap_rtrn_length(reply, map);
+    xcb_xkb_कुञ्चिका_v_mod_map_iterator_t iter =
         xcb_xkb_get_map_map_vmodmap_rtrn_iterator(reply, map);
 
-    for (int i = 0; i < length; i++) {
-        xcb_xkb_key_v_mod_map_t *wire = iter.data;
-        struct xkb_key *key;
+    प्रति (पूर्णाङ्क i = 0; i < length; i++) {
+        xcb_xkb_कुञ्चिका_v_mod_map_t *wire = iter.data;
+        संरचना xkb_कुञ्चिका *कुञ्चिका;
 
-        FAIL_UNLESS(wire->keycode >= keymap->min_key_code &&
-                    wire->keycode <= keymap->max_key_code);
+        FAIL_UNLESS(wire->keycode >= keymap->min_कुञ्चिका_code &&
+                    wire->keycode <= keymap->max_कुञ्चिका_code);
 
-        key = &keymap->keys[wire->keycode];
-        key->vmodmap = translate_mods(0, wire->vmods, 0);
+        कुञ्चिका = &keymap->कुञ्चिकाः[wire->keycode];
+        कुञ्चिका->vmodmap = translate_mods(0, wire->vmods, 0);
 
-        xcb_xkb_key_v_mod_map_next(&iter);
+        xcb_xkb_कुञ्चिका_v_mod_map_next(&iter);
     }
 
-    return true;
+    प्रत्यागम true;
 
 fail:
-    return false;
+    प्रत्यागम false;
 }
 
-static bool
-get_map(struct xkb_keymap *keymap, xcb_connection_t *conn,
+स्थिर bool
+get_map(संरचना xkb_keymap *keymap, xcb_connection_t *conn,
         xcb_xkb_get_map_cookie_t cookie)
 {
-    xcb_xkb_get_map_reply_t *reply = xcb_xkb_get_map_reply(conn, cookie, NULL);
+    xcb_xkb_get_map_reply_t *reply = xcb_xkb_get_map_reply(conn, cookie, रिक्त);
     xcb_xkb_get_map_map_t map;
 
     FAIL_IF_BAD_REPLY(reply, "XkbGetMap");
 
-    if ((reply->present & get_map_required_components) != get_map_required_components)
-        goto fail;
+    जइ ((reply->present & get_map_required_components) != get_map_required_components)
+        गच्छ fail;
 
     xcb_xkb_get_map_map_unpack(xcb_xkb_get_map_map(reply),
                                reply->nTypes,
-                               reply->nKeySyms,
-                               reply->nKeyActions,
+                               reply->n_कुञ्चिका_Syms,
+                               reply->n_कुञ्चिका_Actions,
                                reply->totalActions,
-                               reply->totalKeyBehaviors,
+                               reply->total_कुञ्चिका_Behaviors,
                                reply->virtualMods,
-                               reply->totalKeyExplicit,
-                               reply->totalModMapKeys,
-                               reply->totalVModMapKeys,
+                               reply->total_कुञ्चिका_Explicit,
+                               reply->total_Mod_Map_कुञ्चिकाः,
+                               reply->total_VMod_Map_कुञ्चिकाः,
                                reply->present,
                                &map);
 
-    if (!get_types(keymap, conn, reply, &map) ||
+    जइ (!get_types(keymap, conn, reply, &map) ||
         !get_sym_maps(keymap, conn, reply, &map) ||
         !get_actions(keymap, conn, reply, &map) ||
         !get_vmods(keymap, conn, reply, &map) ||
         !get_explicits(keymap, conn, reply, &map) ||
         !get_modmaps(keymap, conn, reply, &map) ||
         !get_vmodmaps(keymap, conn, reply, &map))
-        goto fail;
+        गच्छ fail;
 
-    free(reply);
-    return true;
+    मुक्त(reply);
+    प्रत्यागम true;
 
 fail:
-    free(reply);
-    return false;
+    मुक्त(reply);
+    प्रत्यागम false;
 }
 
-static bool
-get_indicators(struct xkb_keymap *keymap, xcb_connection_t *conn,
+स्थिर bool
+get_indicators(संरचना xkb_keymap *keymap, xcb_connection_t *conn,
                xcb_xkb_get_indicator_map_reply_t *reply)
 {
     xcb_xkb_indicator_map_iterator_t iter =
         xcb_xkb_get_indicator_map_maps_iterator(reply);
 
-    keymap->num_leds = msb_pos(reply->which);
-    FAIL_UNLESS(keymap->num_leds <= XKB_MAX_LEDS);
+    keymap->अङ्कः_leds = msb_pos(reply->which);
+    FAIL_UNLESS(keymap->अङ्कः_leds <= XKB_MAX_LEDS);
 
-    static_assert(XKB_MAX_LEDS == NUM_INDICATORS, "");
-    for (unsigned i = 0; i < NUM_INDICATORS; i++) {
-        if (reply->which & (UINT32_C(1) << i)) {
+    static_assert(XKB_MAX_LEDS == अङ्कः_INDICATORS, "");
+    प्रति (unsigned i = 0; i < अङ्कः_INDICATORS; i++) {
+        जइ (reply->which & (UINT32_C(1) << i)) {
             xcb_xkb_indicator_map_t *wire = iter.data;
-            struct xkb_led *led = &keymap->leds[i];
+            संरचना xkb_led *led = &keymap->leds[i];
 
-            if (wire->whichGroups & XCB_XKB_IM_GROUPS_WHICH_USE_BASE)
+            जइ (wire->whichGroups & XCB_XKB_IM_GROUPS_WHICH_USE_BASE)
                 led->which_groups |= XKB_STATE_LAYOUT_DEPRESSED;
-            if (wire->whichGroups & XCB_XKB_IM_GROUPS_WHICH_USE_LATCHED)
+            जइ (wire->whichGroups & XCB_XKB_IM_GROUPS_WHICH_USE_LATCHED)
                 led->which_groups |= XKB_STATE_LAYOUT_LATCHED;
-            if (wire->whichGroups & XCB_XKB_IM_GROUPS_WHICH_USE_LOCKED)
+            जइ (wire->whichGroups & XCB_XKB_IM_GROUPS_WHICH_USE_LOCKED)
                 led->which_groups |= XKB_STATE_LAYOUT_LOCKED;
-            if (wire->whichGroups & XCB_XKB_IM_GROUPS_WHICH_USE_EFFECTIVE)
+            जइ (wire->whichGroups & XCB_XKB_IM_GROUPS_WHICH_USE_EFFECTIVE)
                 led->which_groups |= XKB_STATE_LAYOUT_EFFECTIVE;
-            if (wire->whichGroups & XCB_XKB_IM_GROUPS_WHICH_USE_COMPAT)
+            जइ (wire->whichGroups & XCB_XKB_IM_GROUPS_WHICH_USE_COMPAT)
                 led->which_groups |= XKB_STATE_LAYOUT_EFFECTIVE;
 
             led->groups = wire->groups;
 
-            if (wire->whichMods & XCB_XKB_IM_MODS_WHICH_USE_BASE)
+            जइ (wire->whichMods & XCB_XKB_IM_MODS_WHICH_USE_BASE)
                 led->which_mods |= XKB_STATE_MODS_DEPRESSED;
-            if (wire->whichMods & XCB_XKB_IM_MODS_WHICH_USE_LATCHED)
+            जइ (wire->whichMods & XCB_XKB_IM_MODS_WHICH_USE_LATCHED)
                 led->which_mods |= XKB_STATE_MODS_LATCHED;
-            if (wire->whichMods & XCB_XKB_IM_MODS_WHICH_USE_LOCKED)
+            जइ (wire->whichMods & XCB_XKB_IM_MODS_WHICH_USE_LOCKED)
                 led->which_mods |= XKB_STATE_MODS_LOCKED;
-            if (wire->whichMods & XCB_XKB_IM_MODS_WHICH_USE_EFFECTIVE)
+            जइ (wire->whichMods & XCB_XKB_IM_MODS_WHICH_USE_EFFECTIVE)
                 led->which_mods |= XKB_STATE_MODS_EFFECTIVE;
-            if (wire->whichMods & XCB_XKB_IM_MODS_WHICH_USE_COMPAT)
+            जइ (wire->whichMods & XCB_XKB_IM_MODS_WHICH_USE_COMPAT)
                 led->which_mods |= XKB_STATE_MODS_EFFECTIVE;
 
             led->mods.mods = translate_mods(wire->realMods, wire->vmods, 0);
@@ -855,92 +855,92 @@ get_indicators(struct xkb_keymap *keymap, xcb_connection_t *conn,
         }
     }
 
-    return true;
+    प्रत्यागम true;
 
 fail:
-    return false;
+    प्रत्यागम false;
 }
 
-static bool
-get_indicator_map(struct xkb_keymap *keymap, xcb_connection_t *conn,
+स्थिर bool
+get_indicator_map(संरचना xkb_keymap *keymap, xcb_connection_t *conn,
                   xcb_xkb_get_indicator_map_cookie_t cookie)
 {
     xcb_xkb_get_indicator_map_reply_t *reply =
-        xcb_xkb_get_indicator_map_reply(conn, cookie, NULL);
+        xcb_xkb_get_indicator_map_reply(conn, cookie, रिक्त);
 
     FAIL_IF_BAD_REPLY(reply, "XkbGetIndicatorMap");
 
-    if (!get_indicators(keymap, conn, reply))
-        goto fail;
+    जइ (!get_indicators(keymap, conn, reply))
+        गच्छ fail;
 
-    free(reply);
-    return true;
+    मुक्त(reply);
+    प्रत्यागम true;
 
 fail:
-    free(reply);
-    return false;
+    मुक्त(reply);
+    प्रत्यागम false;
 }
 
-static bool
-get_sym_interprets(struct xkb_keymap *keymap, xcb_connection_t *conn,
+स्थिर bool
+get_sym_interprets(संरचना xkb_keymap *keymap, xcb_connection_t *conn,
                    xcb_xkb_get_compat_map_reply_t *reply)
 {
-    int length = xcb_xkb_get_compat_map_si_rtrn_length(reply);
+    पूर्णाङ्क length = xcb_xkb_get_compat_map_si_rtrn_length(reply);
     xcb_xkb_sym_interpret_iterator_t iter =
         xcb_xkb_get_compat_map_si_rtrn_iterator(reply);
 
     FAIL_UNLESS(reply->firstSIRtrn == 0);
     FAIL_UNLESS(reply->nSIRtrn == reply->nTotalSI);
 
-    keymap->num_sym_interprets = reply->nSIRtrn;
-    ALLOC_OR_FAIL(keymap->sym_interprets, keymap->num_sym_interprets);
+    keymap->अङ्कः_sym_interprets = reply->nSIRtrn;
+    ALLOC_OR_FAIL(keymap->sym_interprets, keymap->अङ्कः_sym_interprets);
 
-    const xkb_keycode_t min_key_code = keymap->min_key_code;
-    const xkb_keycode_t max_key_code = keymap->max_key_code;
+    ध्रुव xkb_keycode_t min_कुञ्चिका_code = keymap->min_कुञ्चिका_code;
+    ध्रुव xkb_keycode_t max_कुञ्चिका_code = keymap->max_कुञ्चिका_code;
 
-    for (int i = 0; i < length; i++) {
+    प्रति (पूर्णाङ्क i = 0; i < length; i++) {
         xcb_xkb_sym_interpret_t *wire = iter.data;
-        struct xkb_sym_interpret *sym_interpret = &keymap->sym_interprets[i];
+        संरचना xkb_sym_interpret *sym_interpret = &keymap->sym_interprets[i];
 
         sym_interpret->sym = wire->sym;
 
-        switch (wire->match & XCB_XKB_SYM_INTERP_MATCH_OP_MASK) {
-        case XCB_XKB_SYM_INTERPRET_MATCH_NONE_OF:
+        विकल्प (wire->match & XCB_XKB_SYM_INTERP_MATCH_OP_MASK) {
+        पक्ष XCB_XKB_SYM_INTERPRET_MATCH_NONE_OF:
             sym_interpret->match = MATCH_NONE;
-            break;
-        case XCB_XKB_SYM_INTERPRET_MATCH_ANY_OF_OR_NONE:
+            भङ्ग;
+        पक्ष XCB_XKB_SYM_INTERPRET_MATCH_ANY_OF_OR_NONE:
             sym_interpret->match = MATCH_ANY_OR_NONE;
-            break;
-        case XCB_XKB_SYM_INTERPRET_MATCH_ANY_OF:
+            भङ्ग;
+        पक्ष XCB_XKB_SYM_INTERPRET_MATCH_ANY_OF:
             sym_interpret->match = MATCH_ANY;
-            break;
-        case XCB_XKB_SYM_INTERPRET_MATCH_ALL_OF:
+            भङ्ग;
+        पक्ष XCB_XKB_SYM_INTERPRET_MATCH_ALL_OF:
             sym_interpret->match = MATCH_ALL;
-            break;
-        case XCB_XKB_SYM_INTERPRET_MATCH_EXACTLY:
+            भङ्ग;
+        पक्ष XCB_XKB_SYM_INTERPRET_MATCH_EXACTLY:
             sym_interpret->match = MATCH_EXACTLY;
-            break;
-        default:
+            भङ्ग;
+        स्वभाव:
             log_err_func(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
                          "unrecognized interpret match value: %#x\n",
                          wire->match & XCB_XKB_SYM_INTERP_MATCH_OP_MASK);
-            goto fail;
+            गच्छ fail;
         }
 
         sym_interpret->level_one_only =
             (wire->match & XCB_XKB_SYM_INTERP_MATCH_LEVEL_ONE_ONLY);
         sym_interpret->mods = wire->mods;
 
-        if (wire->virtualMod == NO_MODIFIER)
+        जइ (wire->virtualMod == NO_MODIFIER)
             sym_interpret->virtual_mod = XKB_MOD_INVALID;
-        else
-            sym_interpret->virtual_mod = NUM_REAL_MODS + wire->virtualMod;
+        अण्णहा
+            sym_interpret->virtual_mod = अङ्कः_REAL_MODS + wire->virtualMod;
 
         sym_interpret->repeat = (wire->flags & 0x01);
         FAIL_UNLESS(translate_action(&sym_interpret->a.action,
                                      (xcb_xkb_action_t *) &wire->action,
-                                     min_key_code, max_key_code));
-        sym_interpret->num_actions =
+                                     min_कुञ्चिका_code, max_कुञ्चिका_code));
+        sym_interpret->अङ्कः_actions =
             (sym_interpret->a.action.type != ACTION_TYPE_NONE);
 
         /* Checked only when compiling a keymap from text */
@@ -949,98 +949,98 @@ get_sym_interprets(struct xkb_keymap *keymap, xcb_connection_t *conn,
         xcb_xkb_sym_interpret_next(&iter);
     }
 
-    return true;
+    प्रत्यागम true;
 
 fail:
-    return false;
+    प्रत्यागम false;
 }
 
-static bool
-get_compat_map(struct xkb_keymap *keymap, xcb_connection_t *conn,
+स्थिर bool
+get_compat_map(संरचना xkb_keymap *keymap, xcb_connection_t *conn,
                xcb_xkb_get_compat_map_cookie_t cookie)
 {
     xcb_xkb_get_compat_map_reply_t *reply =
-        xcb_xkb_get_compat_map_reply(conn, cookie, NULL);
+        xcb_xkb_get_compat_map_reply(conn, cookie, रिक्त);
 
     FAIL_IF_BAD_REPLY(reply, "XkbGetCompatMap");
 
-    if (!get_sym_interprets(keymap, conn, reply))
-        goto fail;
+    जइ (!get_sym_interprets(keymap, conn, reply))
+        गच्छ fail;
 
-    free(reply);
-    return true;
+    मुक्त(reply);
+    प्रत्यागम true;
 
 fail:
-    free(reply);
-    return false;
+    मुक्त(reply);
+    प्रत्यागम false;
 }
 
-static bool
-get_type_names(struct xkb_keymap *keymap, struct x11_atom_interner *interner,
+स्थिर bool
+get_type_names(संरचना xkb_keymap *keymap, संरचना x11_atom_interner *interner,
                xcb_xkb_get_names_reply_t *reply,
-               xcb_xkb_get_names_value_list_t *list)
+               xcb_xkb_get_names_मानम्_list_t *list)
 {
-    int key_type_names_length =
-        xcb_xkb_get_names_value_list_type_names_length(reply, list);
-    xcb_atom_t *key_type_names_iter =
-        xcb_xkb_get_names_value_list_type_names(list);
-    int n_levels_per_type_length =
-        xcb_xkb_get_names_value_list_n_levels_per_type_length(reply, list);
+    पूर्णाङ्क कुञ्चिका_type_names_length =
+        xcb_xkb_get_names_मानम्_list_type_names_length(reply, list);
+    xcb_atom_t *कुञ्चिका_type_names_iter =
+        xcb_xkb_get_names_मानम्_list_type_names(list);
+    पूर्णाङ्क n_levels_per_type_length =
+        xcb_xkb_get_names_मानम्_list_n_levels_per_type_length(reply, list);
     uint8_t *n_levels_per_type_iter =
-        xcb_xkb_get_names_value_list_n_levels_per_type(list);
+        xcb_xkb_get_names_मानम्_list_n_levels_per_type(list);
     xcb_atom_t *kt_level_names_iter =
-        xcb_xkb_get_names_value_list_kt_level_names(list);
+        xcb_xkb_get_names_मानम्_list_kt_level_names(list);
 
-    FAIL_UNLESS(reply->nTypes == keymap->num_types);
-    FAIL_UNLESS(key_type_names_length == n_levels_per_type_length);
+    FAIL_UNLESS(reply->nTypes == keymap->अङ्कः_types);
+    FAIL_UNLESS(कुञ्चिका_type_names_length == n_levels_per_type_length);
 
-    for (int i = 0; i < key_type_names_length; i++) {
-        xcb_atom_t wire_type_name = *key_type_names_iter;
-        uint8_t wire_num_levels = *n_levels_per_type_iter;
-        struct xkb_key_type *type = &keymap->types[i];
+    प्रति (पूर्णाङ्क i = 0; i < कुञ्चिका_type_names_length; i++) {
+        xcb_atom_t wire_type_name = *कुञ्चिका_type_names_iter;
+        uint8_t wire_अङ्कः_levels = *n_levels_per_type_iter;
+        संरचना xkb_कुञ्चिका_type *type = &keymap->types[i];
 
         /* Levels names are optional, but the maximum is the level count */
-        FAIL_UNLESS(type->num_levels >= wire_num_levels);
+        FAIL_UNLESS(type->अङ्कः_levels >= wire_अङ्कः_levels);
 
         /* Allocate names for all levels, even if some names are missing */
-        ALLOC_OR_FAIL(type->level_names, type->num_levels);
-        type->num_level_names = type->num_levels;
+        ALLOC_OR_FAIL(type->level_names, type->अङ्कः_levels);
+        type->अङ्कः_level_names = type->अङ्कः_levels;
 
         x11_atom_interner_adopt_atom(interner, wire_type_name, &type->name);
-        for (size_t j = 0; j < wire_num_levels; j++) {
+        प्रति (size_t j = 0; j < wire_अङ्कः_levels; j++) {
             x11_atom_interner_adopt_atom(interner, kt_level_names_iter[j],
                                          &type->level_names[j]);
         }
         /* We may have received less names than there are levels: ensure
          * missing names have a fallback. */
-        for (size_t j = wire_num_levels; j < type->num_levels; j++)
+        प्रति (size_t j = wire_अङ्कः_levels; j < type->अङ्कः_levels; j++)
             type->level_names[j] = XKB_ATOM_NONE;
 
-        kt_level_names_iter += wire_num_levels;
-        key_type_names_iter++;
+        kt_level_names_iter += wire_अङ्कः_levels;
+        कुञ्चिका_type_names_iter++;
         n_levels_per_type_iter++;
     }
 
-    return true;
+    प्रत्यागम true;
 
 fail:
-    return false;
+    प्रत्यागम false;
 }
 
-static bool
-get_indicator_names(struct xkb_keymap *keymap,
-                    struct x11_atom_interner *interner,
+स्थिर bool
+get_indicator_names(संरचना xkb_keymap *keymap,
+                    संरचना x11_atom_interner *interner,
                     xcb_xkb_get_names_reply_t *reply,
-                    xcb_xkb_get_names_value_list_t *list)
+                    xcb_xkb_get_names_मानम्_list_t *list)
 {
-    xcb_atom_t *iter = xcb_xkb_get_names_value_list_indicator_names(list);
+    xcb_atom_t *iter = xcb_xkb_get_names_मानम्_list_indicator_names(list);
 
-    FAIL_UNLESS(msb_pos(reply->indicators) <= keymap->num_leds);
+    FAIL_UNLESS(msb_pos(reply->indicators) <= keymap->अङ्कः_leds);
 
-    for (unsigned i = 0; i < NUM_INDICATORS; i++) {
-        if (reply->indicators & (UINT32_C(1) << i)) {
+    प्रति (unsigned i = 0; i < अङ्कः_INDICATORS; i++) {
+        जइ (reply->indicators & (UINT32_C(1) << i)) {
             xcb_atom_t wire = *iter;
-            struct xkb_led *led = &keymap->leds[i];
+            संरचना xkb_led *led = &keymap->leds[i];
 
             x11_atom_interner_adopt_atom(interner, wire, &led->name);
 
@@ -1048,33 +1048,33 @@ get_indicator_names(struct xkb_keymap *keymap,
         }
     }
 
-    return true;
+    प्रत्यागम true;
 
 fail:
-    return false;
+    प्रत्यागम false;
 }
 
-static bool
-get_vmod_names(struct xkb_keymap *keymap, struct x11_atom_interner *interner,
+स्थिर bool
+get_vmod_names(संरचना xkb_keymap *keymap, संरचना x11_atom_interner *interner,
                xcb_xkb_get_names_reply_t *reply,
-               xcb_xkb_get_names_value_list_t *list)
+               xcb_xkb_get_names_मानम्_list_t *list)
 {
-    xcb_atom_t *iter = xcb_xkb_get_names_value_list_virtual_mod_names(list);
+    xcb_atom_t *iter = xcb_xkb_get_names_मानम्_list_virtual_mod_names(list);
 
     /*
      * GetMap's reply->virtualMods is always 0xffff. This one really
      * tells us which vmods exist (a vmod must have a name), so we fix
      * up the size here.
      */
-    keymap->mods.num_mods =
-        NUM_REAL_MODS + MIN(msb_pos(reply->virtualMods), NUM_VMODS);
-    FAIL_UNLESS(keymap->mods.num_mods <= XKB_MAX_MODS);
+    keymap->mods.अङ्कः_mods =
+        अङ्कः_REAL_MODS + MIN(msb_pos(reply->virtualMods), अङ्कः_VMODS);
+    FAIL_UNLESS(keymap->mods.अङ्कः_mods <= XKB_MAX_MODS);
 
-    static_assert(NUM_REAL_MODS + NUM_VMODS <= XKB_MAX_MODS, "");
-    for (unsigned i = 0; i < NUM_VMODS; i++) {
-        if (reply->virtualMods & (1u << i)) {
+    static_assert(अङ्कः_REAL_MODS + अङ्कः_VMODS <= XKB_MAX_MODS, "");
+    प्रति (unsigned i = 0; i < अङ्कः_VMODS; i++) {
+        जइ (reply->virtualMods & (1u << i)) {
             xcb_atom_t wire = *iter;
-            struct xkb_mod *mod = &keymap->mods.mods[NUM_REAL_MODS + i];
+            संरचना xkb_mod *mod = &keymap->mods.mods[अङ्कः_REAL_MODS + i];
 
             x11_atom_interner_adopt_atom(interner, wire, &mod->name);
 
@@ -1082,126 +1082,126 @@ get_vmod_names(struct xkb_keymap *keymap, struct x11_atom_interner *interner,
         }
     }
 
-    return true;
+    प्रत्यागम true;
 
 fail:
-    return false;
+    प्रत्यागम false;
 }
 
-static bool
-get_group_names(struct xkb_keymap *keymap, struct x11_atom_interner *interner,
+स्थिर bool
+get_group_names(संरचना xkb_keymap *keymap, संरचना x11_atom_interner *interner,
                 xcb_xkb_get_names_reply_t *reply,
-                xcb_xkb_get_names_value_list_t *list)
+                xcb_xkb_get_names_मानम्_list_t *list)
 {
-    int length = xcb_xkb_get_names_value_list_groups_length(reply, list);
-    xcb_atom_t *iter = xcb_xkb_get_names_value_list_groups(list);
+    पूर्णाङ्क length = xcb_xkb_get_names_मानम्_list_groups_length(reply, list);
+    xcb_atom_t *iter = xcb_xkb_get_names_मानम्_list_groups(list);
 
-    keymap->num_group_names = msb_pos(reply->groupNames);
-    ALLOC_OR_FAIL(keymap->group_names, keymap->num_group_names);
+    keymap->अङ्कः_group_names = msb_pos(reply->groupNames);
+    ALLOC_OR_FAIL(keymap->group_names, keymap->अङ्कः_group_names);
 
-    for (int i = 0; i < length; i++) {
+    प्रति (पूर्णाङ्क i = 0; i < length; i++) {
         x11_atom_interner_adopt_atom(interner, iter[i],
                                      &keymap->group_names[i]);
     }
 
-    return true;
+    प्रत्यागम true;
 
 fail:
-    return false;
+    प्रत्यागम false;
 }
 
-static bool
-get_key_names(struct xkb_keymap *keymap, xcb_connection_t *conn,
+स्थिर bool
+get_कुञ्चिका_names(संरचना xkb_keymap *keymap, xcb_connection_t *conn,
               xcb_xkb_get_names_reply_t *reply,
-              xcb_xkb_get_names_value_list_t *list)
+              xcb_xkb_get_names_मानम्_list_t *list)
 {
-    int length = xcb_xkb_get_names_value_list_key_names_length(reply, list);
-    xcb_xkb_key_name_iterator_t iter =
-        xcb_xkb_get_names_value_list_key_names_iterator(reply, list);
+    पूर्णाङ्क length = xcb_xkb_get_names_मानम्_list_कुञ्चिका_names_length(reply, list);
+    xcb_xkb_कुञ्चिका_name_iterator_t iter =
+        xcb_xkb_get_names_मानम्_list_कुञ्चिका_names_iterator(reply, list);
 
-    FAIL_UNLESS(reply->minKeyCode == keymap->min_key_code);
-    FAIL_UNLESS(reply->maxKeyCode == keymap->max_key_code);
-    FAIL_UNLESS(reply->firstKey == keymap->min_key_code);
-    FAIL_UNLESS(reply->firstKey + reply->nKeys - 1U == keymap->max_key_code);
+    FAIL_UNLESS(reply->min_कुञ्चिका_Code == keymap->min_कुञ्चिका_code);
+    FAIL_UNLESS(reply->max_कुञ्चिका_Code == keymap->max_कुञ्चिका_code);
+    FAIL_UNLESS(reply->first_कुञ्चिका == keymap->min_कुञ्चिका_code);
+    FAIL_UNLESS(reply->first_कुञ्चिका + reply->n_कुञ्चिकाः - 1U == keymap->max_कुञ्चिका_code);
 
-    for (int i = 0; i < length; i++) {
-        xcb_xkb_key_name_t *wire = iter.data;
-        xkb_atom_t *key_name = &keymap->keys[reply->firstKey + i].name;
+    प्रति (पूर्णाङ्क i = 0; i < length; i++) {
+        xcb_xkb_कुञ्चिका_name_t *wire = iter.data;
+        xkb_atom_t *कुञ्चिका_name = &keymap->कुञ्चिकाः[reply->first_कुञ्चिका + i].name;
 
-        if (wire->name[0] == '\0') {
-            *key_name = XKB_ATOM_NONE;
+        जइ (wire->name[0] == '\0') {
+            *कुञ्चिका_name = XKB_ATOM_NONE;
         }
-        else {
-            *key_name = xkb_atom_intern(keymap->ctx, wire->name,
+        अण्णहा {
+            *कुञ्चिका_name = xkb_atom_intern(keymap->ctx, wire->name,
                                         strnlen(wire->name,
-                                                XCB_XKB_CONST_KEY_NAME_LENGTH));
-            if (!*key_name)
-                return false;
+                                                XCB_XKB_CONST_कुञ्चिका_NAME_LENGTH));
+            जइ (!*कुञ्चिका_name)
+                प्रत्यागम false;
         }
 
-        xcb_xkb_key_name_next(&iter);
+        xcb_xkb_कुञ्चिका_name_next(&iter);
     }
 
-    return true;
+    प्रत्यागम true;
 
 fail:
-    return false;
+    प्रत्यागम false;
 }
 
-static bool
-get_aliases(struct xkb_keymap *keymap, xcb_connection_t *conn,
+स्थिर bool
+get_aliases(संरचना xkb_keymap *keymap, xcb_connection_t *conn,
             xcb_xkb_get_names_reply_t *reply,
-            xcb_xkb_get_names_value_list_t *list)
+            xcb_xkb_get_names_मानम्_list_t *list)
 {
-    int length = xcb_xkb_get_names_value_list_key_aliases_length(reply, list);
-    xcb_xkb_key_alias_iterator_t iter =
-        xcb_xkb_get_names_value_list_key_aliases_iterator(reply, list);
+    पूर्णाङ्क length = xcb_xkb_get_names_मानम्_list_कुञ्चिका_aliases_length(reply, list);
+    xcb_xkb_कुञ्चिका_alias_iterator_t iter =
+        xcb_xkb_get_names_मानम्_list_कुञ्चिका_aliases_iterator(reply, list);
 
-    keymap->num_key_aliases = reply->nKeyAliases;
-    ALLOC_OR_FAIL(keymap->key_aliases, keymap->num_key_aliases);
+    keymap->अङ्कः_कुञ्चिका_aliases = reply->n_कुञ्चिका_Aliases;
+    ALLOC_OR_FAIL(keymap->कुञ्चिका_aliases, keymap->अङ्कः_कुञ्चिका_aliases);
 
-    for (int i = 0; i < length; i++) {
-        xcb_xkb_key_alias_t *wire = iter.data;
-        struct xkb_key_alias *alias = &keymap->key_aliases[i];
+    प्रति (पूर्णाङ्क i = 0; i < length; i++) {
+        xcb_xkb_कुञ्चिका_alias_t *wire = iter.data;
+        संरचना xkb_कुञ्चिका_alias *alias = &keymap->कुञ्चिका_aliases[i];
 
         alias->real =
             xkb_atom_intern(keymap->ctx, wire->real,
-                            strnlen(wire->real, XCB_XKB_CONST_KEY_NAME_LENGTH));
+                            strnlen(wire->real, XCB_XKB_CONST_कुञ्चिका_NAME_LENGTH));
         alias->alias =
             xkb_atom_intern(keymap->ctx, wire->alias,
-                            strnlen(wire->alias, XCB_XKB_CONST_KEY_NAME_LENGTH));
-        if (!alias->real || !alias->alias)
-            goto fail;
+                            strnlen(wire->alias, XCB_XKB_CONST_कुञ्चिका_NAME_LENGTH));
+        जइ (!alias->real || !alias->alias)
+            गच्छ fail;
 
-        xcb_xkb_key_alias_next(&iter);
+        xcb_xkb_कुञ्चिका_alias_next(&iter);
     }
 
-    return true;
+    प्रत्यागम true;
 
 fail:
-    return false;
+    प्रत्यागम false;
 }
 
-static bool
-get_names(struct xkb_keymap *keymap, struct x11_atom_interner *interner,
+स्थिर bool
+get_names(संरचना xkb_keymap *keymap, संरचना x11_atom_interner *interner,
           xcb_xkb_get_names_cookie_t cookie)
 {
     xcb_connection_t *conn = interner->conn;
     xcb_xkb_get_names_reply_t *reply =
-        xcb_xkb_get_names_reply(conn, cookie, NULL);
-    xcb_xkb_get_names_value_list_t list;
+        xcb_xkb_get_names_reply(conn, cookie, रिक्त);
+    xcb_xkb_get_names_मानम्_list_t list;
 
     FAIL_IF_BAD_REPLY(reply, "XkbGetNames");
 
     FAIL_UNLESS((reply->which & get_names_required) == get_names_required);
 
-    xcb_xkb_get_names_value_list_unpack(xcb_xkb_get_names_value_list(reply),
+    xcb_xkb_get_names_मानम्_list_unpack(xcb_xkb_get_names_मानम्_list(reply),
                                         reply->nTypes,
                                         reply->indicators,
                                         reply->virtualMods,
                                         reply->groupNames,
-                                        reply->nKeys,
-                                        reply->nKeyAliases,
+                                        reply->n_कुञ्चिकाः,
+                                        reply->n_कुञ्चिका_Aliases,
                                         reply->nRadioGroups,
                                         reply->which,
                                         &list);
@@ -1214,68 +1214,68 @@ get_names(struct xkb_keymap *keymap, struct x11_atom_interner *interner,
                                             &keymap->types_section_name);
     x11_atom_interner_get_escaped_atom_name(interner, list.compatName,
                                             &keymap->compat_section_name);
-    if (!get_type_names(keymap, interner, reply, &list) ||
+    जइ (!get_type_names(keymap, interner, reply, &list) ||
         !get_indicator_names(keymap, interner, reply, &list) ||
         !get_vmod_names(keymap, interner, reply, &list) ||
         !get_group_names(keymap, interner, reply, &list) ||
-        !get_key_names(keymap, conn, reply, &list) ||
+        !get_कुञ्चिका_names(keymap, conn, reply, &list) ||
         !get_aliases(keymap, conn, reply, &list))
-        goto fail;
+        गच्छ fail;
 
-    free(reply);
-    return true;
+    मुक्त(reply);
+    प्रत्यागम true;
 
 fail:
-    free(reply);
-    return false;
+    मुक्त(reply);
+    प्रत्यागम false;
 }
 
-static bool
-get_controls(struct xkb_keymap *keymap, xcb_connection_t *conn,
+स्थिर bool
+get_controls(संरचना xkb_keymap *keymap, xcb_connection_t *conn,
              xcb_xkb_get_controls_cookie_t cookie)
 {
     xcb_xkb_get_controls_reply_t *reply =
-        xcb_xkb_get_controls_reply(conn, cookie, NULL);
+        xcb_xkb_get_controls_reply(conn, cookie, रिक्त);
 
     FAIL_IF_BAD_REPLY(reply, "XkbGetControls");
-    FAIL_UNLESS(reply->numGroups > 0 && reply->numGroups <= 4);
+    FAIL_UNLESS(reply->अङ्कः_Groups > 0 && reply->अङ्कः_Groups <= 4);
 
-    keymap->num_groups = reply->numGroups;
+    keymap->अङ्कः_groups = reply->अङ्कः_Groups;
 
-    FAIL_UNLESS(keymap->max_key_code < XCB_XKB_CONST_PER_KEY_BIT_ARRAY_SIZE * 8);
+    FAIL_UNLESS(keymap->max_कुञ्चिका_code < XCB_XKB_CONST_PER_कुञ्चिका_BIT_ARRAY_SIZE * 8);
 
-    for (xkb_keycode_t i = keymap->min_key_code; i <= keymap->max_key_code; i++)
-        keymap->keys[i].repeats = (reply->perKeyRepeat[i / 8] & (1u << (i % 8)));
+    प्रति (xkb_keycode_t i = keymap->min_कुञ्चिका_code; i <= keymap->max_कुञ्चिका_code; i++)
+        keymap->कुञ्चिकाः[i].repeats = (reply->per_कुञ्चिका_Repeat[i / 8] & (1u << (i % 8)));
 
-    free(reply);
-    return true;
+    मुक्त(reply);
+    प्रत्यागम true;
 
 fail:
-    free(reply);
-    return false;
+    मुक्त(reply);
+    प्रत्यागम false;
 }
 
-struct xkb_keymap *
-xkb_x11_keymap_new_from_device(struct xkb_context *ctx,
+संरचना xkb_keymap *
+xkb_x11_keymap_new_from_device(संरचना xkb_context *ctx,
                                xcb_connection_t *conn,
                                int32_t device_id,
-                               enum xkb_keymap_compile_flags flags)
+                               गणना xkb_keymap_compile_flags flags)
 {
-    if (device_id < 0 || device_id > 127) {
+    जइ (device_id < 0 || device_id > 127) {
         log_err_func(ctx, XKB_LOG_MESSAGE_NO_ID,
                      "illegal device ID: %"PRId32"\n", device_id);
-        return NULL;
+        प्रत्यागम रिक्त;
     }
 
-    const enum xkb_keymap_format format = XKB_KEYMAP_FORMAT_TEXT_V1;
-    struct xkb_keymap * const keymap =
+    ध्रुव गणना xkb_keymap_format format = XKB_KEYMAP_FORMAT_TEXT_V1;
+    संरचना xkb_keymap * ध्रुव keymap =
         xkb_keymap_new(ctx, __func__, format, flags);
-    if (!keymap)
-        return NULL;
+    जइ (!keymap)
+        प्रत्यागम रिक्त;
 
-    keymap->redirect_key_auto = XKB_KEYCODE_MAX; /* Invalid X11 keycode */
+    keymap->redirect_कुञ्चिका_auto = XKB_KEYCODE_MAX; /* Invalid X11 keycode */
 
-    struct x11_atom_interner interner;
+    संरचना x11_atom_interner interner;
     x11_atom_interner_init(&interner, ctx, conn);
 
     /*
@@ -1294,21 +1294,21 @@ xkb_x11_keymap_new_from_device(struct xkb_context *ctx,
     xcb_xkb_get_controls_cookie_t controls_cookie =
         xcb_xkb_get_controls(conn, device_id);
 
-    if (!get_map(keymap, conn, map_cookie))
-        goto err_map;
-    if (!get_indicator_map(keymap, conn, indicator_map_cookie))
-        goto err_indicator_map;
-    if (!get_compat_map(keymap, conn, compat_map_cookie))
-        goto err_compat_map;
-    if (!get_names(keymap, &interner, names_cookie))
-        goto err_names;
-    if (!get_controls(keymap, conn, controls_cookie))
-        goto err_controls;
+    जइ (!get_map(keymap, conn, map_cookie))
+        गच्छ err_map;
+    जइ (!get_indicator_map(keymap, conn, indicator_map_cookie))
+        गच्छ err_indicator_map;
+    जइ (!get_compat_map(keymap, conn, compat_map_cookie))
+        गच्छ err_compat_map;
+    जइ (!get_names(keymap, &interner, names_cookie))
+        गच्छ err_names;
+    जइ (!get_controls(keymap, conn, controls_cookie))
+        गच्छ err_controls;
     x11_atom_interner_round_trip(&interner);
-    if (interner.had_error)
-        goto err_interner;
+    जइ (interner.had_error)
+        गच्छ err_interner;
 
-    return keymap;
+    प्रत्यागम keymap;
 
 err_map:
     xcb_discard_reply(conn, indicator_map_cookie.sequence);
@@ -1322,5 +1322,5 @@ err_controls:
     x11_atom_interner_round_trip(&interner);
 err_interner:
     xkb_keymap_unref(keymap);
-    return NULL;
+    प्रत्यागम रिक्त;
 }

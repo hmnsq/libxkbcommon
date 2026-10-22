@@ -3,92 +3,92 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 
-#include <sys/stat.h>
-#include <fcntl.h>
-#include "utils.h"
+#अन्तर्भाव <sys/stat.h>
+#अन्तर्भाव <fcntl.h>
+#अन्तर्भाव "utils.h"
 
-#if HAVE_MMAP
+#जइ HAVE_MMAP
 
-#include <unistd.h>
-#include <sys/mman.h>
-#include <sys/types.h>
+#अन्तर्भाव <unistd.h>
+#अन्तर्भाव <sys/mman.h>
+#अन्तर्भाव <sys/types.h>
 
 bool
-map_file(FILE *file, char **string_out, size_t *size_out)
+map_file(FILE *file, वर्ण **string_out, size_t *size_out)
 {
-    struct stat stat_buf;
-    int fd;
-    char *string;
+    संरचना stat stat_buf;
+    पूर्णाङ्क fd;
+    वर्ण *string;
 
     /* Make sure to keep the errno on failure! */
     fd = fileno(file);
-    if (fd < 0)
-        return false;
+    जइ (fd < 0)
+        प्रत्यागम false;
 
-    if (fstat(fd, &stat_buf) != 0)
-        return false;
+    जइ (fstat(fd, &stat_buf) != 0)
+        प्रत्यागम false;
 
-    string = mmap(NULL, (size_t)stat_buf.st_size, PROT_READ, MAP_SHARED, fd, 0);
-    if (string == MAP_FAILED)
-        return false;
+    string = mmap(रिक्त, (size_t)stat_buf.st_size, PROT_READ, MAP_SHARED, fd, 0);
+    जइ (string == MAP_FAILED)
+        प्रत्यागम false;
 
     *string_out = string;
     *size_out = (size_t)stat_buf.st_size;
-    return true;
+    प्रत्यागम true;
 }
 
-void
-unmap_file(char *str, size_t size)
+शून्य
+unmap_file(वर्ण *str, size_t size)
 {
     munmap(str, size);
 }
 
-#else
+#अण्णहा
 
 bool
-map_file(FILE *file, char **string_out, size_t *size_out)
+map_file(FILE *file, वर्ण **string_out, size_t *size_out)
 {
     long ret;
     size_t ret_s;
-    char *string;
+    वर्ण *string;
     size_t size;
 
     /* Make sure to keep the errno on failure! */
 
     ret = fseek(file, 0, SEEK_END);
-    if (ret != 0)
-        return false;
+    जइ (ret != 0)
+        प्रत्यागम false;
 
     ret = ftell(file);
-    if (ret < 0)
-        return false;
+    जइ (ret < 0)
+        प्रत्यागम false;
     size = (size_t) ret;
 
     ret = fseek(file, 0, SEEK_SET);
-    if (ret < 0)
-        return false;
+    जइ (ret < 0)
+        प्रत्यागम false;
 
     string = malloc(size);
-    if (!string)
-        return false;
+    जइ (!string)
+        प्रत्यागम false;
 
     ret_s = fread(string, 1, size, file);
-    if (ret_s < size) {
-        free(string);
-        return false;
+    जइ (ret_s < size) {
+        मुक्त(string);
+        प्रत्यागम false;
     }
 
     *string_out = string;
     *size_out = size;
-    return true;
+    प्रत्यागम true;
 }
 
-void
-unmap_file(char *str, size_t size)
+शून्य
+unmap_file(वर्ण *str, size_t size)
 {
-    free(str);
+    मुक्त(str);
 }
 
 #endif
@@ -96,21 +96,21 @@ unmap_file(char *str, size_t size)
 /* Open a file and ensure it is a regular file.
  * Returns NULL in case of error. */
 FILE*
-open_file(const char *path)
+open_file(ध्रुव वर्ण *path)
 {
-    if (!path)
-        return NULL;
+    जइ (!path)
+        प्रत्यागम रिक्त;
 
-    int fd = open(path, O_RDONLY);
-    if (fd < 0)
-        return NULL;
+    पूर्णाङ्क fd = open(path, O_RDONLY);
+    जइ (fd < 0)
+        प्रत्यागम रिक्त;
 
-    struct stat stat_buf;
-    int err = fstat(fd, &stat_buf);
+    संरचना stat stat_buf;
+    पूर्णाङ्क err = fstat(fd, &stat_buf);
 
-    if (err != 0 || !S_ISREG(stat_buf.st_mode)) {
+    जइ (err != 0 || !S_ISREG(stat_buf.st_mode)) {
         close(fd);
-        return NULL;
+        प्रत्यागम रिक्त;
     }
 
     /* While unlikely to happen, if `fp` is NULL then we must close the file
@@ -118,15 +118,15 @@ open_file(const char *path)
      * https://www.ibm.com/docs/en/i/7.3?topic=functions-fdopen-associates-stream-file-descriptor)
      * Confirmed by Peter to be necessary in glibc. */
     FILE *fp = fdopen(fd, "rb");
-    if (fp == NULL) {
+    जइ (fp == रिक्त) {
         close(fd);
     }
 
-    return fp;
+    प्रत्यागम fp;
 }
 
 // ASCII lower-case map.
-static const unsigned char lower_map[] = {
+स्थिर ध्रुव unsigned वर्ण lower_map[] = {
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
     21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
     40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58,
@@ -146,56 +146,56 @@ static const unsigned char lower_map[] = {
 };
 
 // ASCII tolower (to avoid locale issues).
-char
-to_lower(char c)
+वर्ण
+to_lower(वर्ण c)
 {
-    return (char) lower_map[(unsigned char) c];
+    प्रत्यागम (वर्ण) lower_map[(unsigned वर्ण) c];
 }
 
 // ASCII strcasecmp (to avoid locale issues).
-int
-istrcmp(const char *a, const char *b)
+पूर्णाङ्क
+istrcmp(ध्रुव वर्ण *a, ध्रुव वर्ण *b)
 {
-    for (size_t i = 0; ; i++) {
-        if (to_lower(a[i]) != to_lower(b[i]))
-            return (int) to_lower(a[i]) - (int) to_lower(b[i]);
-        if (!a[i])
-            break;
+    प्रति (size_t i = 0; ; i++) {
+        जइ (to_lower(a[i]) != to_lower(b[i]))
+            प्रत्यागम (पूर्णाङ्क) to_lower(a[i]) - (पूर्णाङ्क) to_lower(b[i]);
+        जइ (!a[i])
+            भङ्ग;
     }
-    return 0;
+    प्रत्यागम 0;
 }
 
 // ASCII strncasecmp (to avoid locale issues).
-int
-istrncmp(const char *a, const char *b, size_t n)
+पूर्णाङ्क
+istrncmp(ध्रुव वर्ण *a, ध्रुव वर्ण *b, size_t n)
 {
-    for (size_t i = 0; i < n; i++) {
-        if (to_lower(a[i]) != to_lower(b[i]))
-            return (int) to_lower(a[i]) - (int) to_lower(b[i]);
-        if (!a[i])
-            break;
+    प्रति (size_t i = 0; i < n; i++) {
+        जइ (to_lower(a[i]) != to_lower(b[i]))
+            प्रत्यागम (पूर्णाङ्क) to_lower(a[i]) - (पूर्णाङ्क) to_lower(b[i]);
+        जइ (!a[i])
+            भङ्ग;
     }
-    return 0;
+    प्रत्यागम 0;
 }
 
-#if !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
-int
-asprintf(char **strp, const char *fmt, ...)
+#जइ !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
+पूर्णाङ्क
+asprintf(वर्ण **strp, ध्रुव वर्ण *fmt, ...)
 {
-    int ret;
+    पूर्णाङ्क ret;
     va_list ap;
     va_start(ap, fmt);
     ret = vasprintf(strp, fmt, ap);
     va_end(ap);
-    return ret;
+    प्रत्यागम ret;
 }
 
-# if !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
-int
-vasprintf(char **strp, const char *fmt, va_list ap)
+# जइ !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
+पूर्णाङ्क
+vasprintf(वर्ण **strp, ध्रुव वर्ण *fmt, va_list ap)
 {
-    int ret;
-    char *buf;
+    पूर्णाङ्क ret;
+    वर्ण *buf;
     va_list ap_copy;
 
     /*
@@ -203,22 +203,22 @@ vasprintf(char **strp, const char *fmt, va_list ap)
      * vsnprintf() returns: pass a copy to make sure "ap" remains valid.
      */
     va_copy(ap_copy, ap);
-    ret = vsnprintf(NULL, 0, fmt, ap_copy);
+    ret = vsnprintf(रिक्त, 0, fmt, ap_copy);
     va_end(ap_copy);
 
-    if (ret < 0)
-        return ret;
+    जइ (ret < 0)
+        प्रत्यागम ret;
 
-    if (!(buf = malloc(ret + 1)))
-        return -1;
+    जइ (!(buf = malloc(ret + 1)))
+        प्रत्यागम -1;
 
-    if ((ret = vsnprintf(buf, ret + 1, fmt, ap)) < 0) {
-        free(buf);
-        return ret;
+    जइ ((ret = vsnprintf(buf, ret + 1, fmt, ap)) < 0) {
+        मुक्त(buf);
+        प्रत्यागम ret;
     }
 
     *strp = buf;
-    return ret;
+    प्रत्यागम ret;
 }
 # endif /* !HAVE_VASPRINTF */
 #endif /* !HAVE_ASPRINTF */
