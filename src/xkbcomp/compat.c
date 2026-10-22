@@ -8,1084 +8,1084 @@
  * SPDX-License-Identifier: HPND AND MIT
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include <assert.h>
-#include <limits.h>
+#అన్తర్భావ <assert.h>
+#అన్తర్భావ <limits.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "darray.h"
-#include "keymap.h"
-#include "xkbcomp-priv.h"
-#include "ast.h"
-#include "action.h"
-#include "expr.h"
-#include "include.h"
-#include "text.h"
-#include "vmod.h"
-#include "util-mem.h"
+#అన్తర్భావ "xkbcommon/xkbcommon.h"
+#అన్తర్భావ "darray.h"
+#అన్తర్భావ "keymap.h"
+#అన్తర్భావ "xkbcomp-priv.h"
+#అన్తర్భావ "ast.h"
+#అన్తర్భావ "action.h"
+#అన్తర్భావ "expr.h"
+#అన్తర్భావ "include.h"
+#అన్తర్భావ "text.h"
+#అన్తర్భావ "vmod.h"
+#అన్తర్భావ "util-mem.h"
 
-enum si_field {
-    SI_FIELD_VIRTUAL_MOD = (1 << 0),
-    SI_FIELD_ACTION = (1 << 1),
-    SI_FIELD_AUTO_REPEAT = (1 << 2),
-    SI_FIELD_LEVEL_ONE_ONLY = (1 << 3),
+గణన si_క్షేత్రం {
+    SI_క్షేత్రం_VIRTUAL_MOD = (1 << 0),
+    SI_క్షేత్రం_ACTION = (1 << 1),
+    SI_క్షేత్రం_AUTO_REPEAT = (1 << 2),
+    SI_క్షేత్రం_LEVEL_ONE_ONLY = (1 << 3),
 };
 
-typedef struct {
-    enum si_field defined;
-    enum merge_mode merge;
+రకనిర్వచనం నిర్మాణం {
+    గణన si_క్షేత్రం defined;
+    గణన విలీనం_బహుళకం విలీనం;
 
-    struct xkb_sym_interpret interp;
+    నిర్మాణం xkb_sym_interpret interp;
 } SymInterpInfo;
 
-enum led_field {
-    LED_FIELD_MODS = (1 << 0),
-    LED_FIELD_GROUPS = (1 << 1),
-    LED_FIELD_CTRLS = (1 << 2),
+గణన led_క్షేత్రం {
+    LED_క్షేత్రం_MODS = (1 << 0),
+    LED_క్షేత్రం_GROUPS = (1 << 1),
+    LED_క్షేత్రం_CTRLS = (1 << 2),
 };
 
-typedef struct {
-    enum led_field defined;
-    enum merge_mode merge;
+రకనిర్వచనం నిర్మాణం {
+    గణన led_క్షేత్రం defined;
+    గణన విలీనం_బహుళకం విలీనం;
 
-    struct xkb_led led;
+    నిర్మాణం xkb_led led;
 } LedInfo;
 
-typedef struct {
-    char *name;
-    int errorCount;
-    unsigned int include_depth;
+రకనిర్వచనం నిర్మాణం {
+    అక్షరం *name;
+    పూర్ణాంకం error_లెక్క;
+    గుర్తులేని పూర్ణాంకం include_లోతు;
     SymInterpInfo default_interp;
     darray(SymInterpInfo) interps;
     LedInfo default_led;
     LedInfo leds[XKB_MAX_LEDS];
-    xkb_led_index_t num_leds;
+    xkb_led_సూచీ_t అంకె_leds;
     ActionsInfo default_actions;
-    struct xkb_mod_set mods;
+    నిర్మాణం xkb_mod_సమితి mods;
 
-    const struct xkb_keymap_info *keymap_info;
-    struct xkb_context *ctx;
+    స్థిరరాశి నిర్మాణం xkb_keymap_info *keymap_info;
+    నిర్మాణం xkb_context *ctx;
 } CompatInfo;
 
-static const char *
-siText(SymInterpInfo *si, CompatInfo *info)
+స్థిర స్థిరరాశి అక్షరం *
+si_పాఠ్యం(SymInterpInfo *si, CompatInfo *info)
 {
-    char *buf = xkb_context_get_buffer(info->ctx, 128);
+    అక్షరం *buf = xkb_context_get_బఫరు(info->ctx, 128);
 
-    if (si == &info->default_interp)
-        return "default";
+    ఒకవేళ (si == &info->default_interp)
+        తిరిగి "default";
 
     snprintf(buf, 128, "%s+%s(%s)",
-             KeysymText(info->ctx, si->interp.sym),
-             SIMatchText(si->interp.match),
-             ModMaskText(info->ctx, MOD_BOTH, &info->mods, si->interp.mods));
+             Keysym_పాఠ్యం(info->ctx, si->interp.sym),
+             SIMatch_పాఠ్యం(si->interp.సరిపోలిక),
+             Mod_ముసుగు_పాఠ్యం(info->ctx, MOD_BOTH, &info->mods, si->interp.mods));
 
-    return buf;
+    తిరిగి buf;
 }
 
-static inline bool
-ReportSINotArray(CompatInfo *info, SymInterpInfo *si, const char *field)
+స్థిర అంతఃవరుస bool
+ReportSINotArray(CompatInfo *info, SymInterpInfo *si, స్థిరరాశి అక్షరం *క్షేత్రం_2)
 {
-    return ReportNotArray(info->ctx, "symbol interpretation", field,
-                          siText(si, info));
+    తిరిగి ReportNotArray(info->ctx, "symbol interpretation", క్షేత్రం_2,
+                          si_పాఠ్యం(si, info));
 }
 
-static inline bool
-ReportSIBadType(CompatInfo *info, SymInterpInfo *si, const char *field,
-                const char *wanted)
+స్థిర అంతఃవరుస bool
+ReportSIBadType(CompatInfo *info, SymInterpInfo *si, స్థిరరాశి అక్షరం *క్షేత్రం_2,
+                స్థిరరాశి అక్షరం *wanted)
 {
-    return ReportBadType(info->ctx, XKB_ERROR_WRONG_FIELD_TYPE,
-                         "symbol interpretation", field,
-                         siText(si, info), wanted);
+    తిరిగి ReportBadType(info->ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE,
+                         "symbol interpretation", క్షేత్రం_2,
+                         si_పాఠ్యం(si, info), wanted);
 }
 
-static const char*
+స్థిర స్థిరరాశి అక్షరం*
 LEDText(CompatInfo *info, LedInfo *ledi)
 {
-    if (ledi == &info->default_led) {
-        assert(xkb_atom_text(info->ctx, ledi->led.name) == NULL);
-        return "default";
-    } else {
-        assert(xkb_atom_text(info->ctx, ledi->led.name) != NULL);
-        return xkb_atom_text(info->ctx, ledi->led.name);
+    ఒకవేళ (ledi == &info->default_led) {
+        ప్రతిజ్ఞా(xkb_atom_పాఠ్యం(info->ctx, ledi->led.name) == ఖాళీ);
+        తిరిగి "default";
+    } లేకపోతే {
+        ప్రతిజ్ఞా(xkb_atom_పాఠ్యం(info->ctx, ledi->led.name) != ఖాళీ);
+        తిరిగి xkb_atom_పాఠ్యం(info->ctx, ledi->led.name);
     }
 }
 
-static inline bool
-ReportLedBadType(CompatInfo *info, LedInfo *ledi, const char *field,
-                 const char *wanted)
+స్థిర అంతఃవరుస bool
+ReportLedBadType(CompatInfo *info, LedInfo *ledi, స్థిరరాశి అక్షరం *క్షేత్రం_2,
+                 స్థిరరాశి అక్షరం *wanted)
 {
-    return ReportBadType(info->ctx, XKB_ERROR_WRONG_FIELD_TYPE,
+    తిరిగి ReportBadType(info->ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE,
                          "indicator map",
-                         field, LEDText(info, ledi), wanted);
+                         క్షేత్రం_2, LEDText(info, ledi), wanted);
 }
 
-static inline bool
-ReportLedNotArray(CompatInfo *info, LedInfo *ledi, const char *field)
+స్థిర అంతఃవరుస bool
+ReportLedNotArray(CompatInfo *info, LedInfo *ledi, స్థిరరాశి అక్షరం *క్షేత్రం_2)
 {
-    return ReportNotArray(info->ctx, "indicator map", field,
+    తిరిగి ReportNotArray(info->ctx, "indicator map", క్షేత్రం_2,
                           LEDText(info, ledi));
 }
 
-static inline void
+స్థిర అంతఃవరుస శూన్య
 InitInterp(SymInterpInfo *info)
 {
-    info->merge = MERGE_DEFAULT; /* Unused */
+    info->విలీనం = విలీనం_DEFAULT; /*వాడని*/
     info->interp.virtual_mod = XKB_MOD_INVALID;
-    static_assert(!DEFAULT_KEY_VMODMAP, "invalid initial value");
-    static_assert(!DEFAULT_KEY_REPEAT, "invalid initial value");
+    static_assert(!DEFAULT_కీలకం_VMODMAP, "invalid initial value");
+    static_assert(!DEFAULT_కీలకం_REPEAT, "invalid initial value");
 }
 
-static inline void
+స్థిర అంతఃవరుస శూన్య
 InitLED(LedInfo *info)
 {
-    info->merge = MERGE_DEFAULT; /* Unused */
+    info->విలీనం = విలీనం_DEFAULT; /*వాడని*/
 }
 
-static void
-InitCompatInfo(CompatInfo *info, const struct xkb_keymap_info *keymap_info,
-               unsigned int include_depth, const struct xkb_mod_set *mods)
+స్థిర శూన్య
+InitCompatInfo(CompatInfo *info, స్థిరరాశి నిర్మాణం xkb_keymap_info *keymap_info,
+               గుర్తులేని పూర్ణాంకం include_లోతు, స్థిరరాశి నిర్మాణం xkb_mod_సమితి *mods)
 {
-    memset(info, 0, sizeof(*info));
+    memset(info, 0, పరిమాణం(*info));
     info->ctx = keymap_info->keymap.ctx;
     info->keymap_info = keymap_info;
-    info->include_depth = include_depth;
+    info->include_లోతు = include_లోతు;
     InitActionsInfo(&keymap_info->keymap, &info->default_actions);
-    InitVMods(&info->mods, mods, include_depth > 0);
+    InitVMods(&info->mods, mods, include_లోతు > 0);
     InitInterp(&info->default_interp);
     InitLED(&info->default_led);
 }
 
-static void
+స్థిర శూన్య
 ClearCompatInfo(CompatInfo *info)
 {
-    free(info->name);
+    విడుదల(info->name);
     darray_free(info->interps);
 }
 
-static SymInterpInfo *
-FindMatchingInterp(CompatInfo *info, SymInterpInfo *new)
+స్థిర SymInterpInfo *
+కనుగొను_Matching_Interp(CompatInfo *info, SymInterpInfo *new)
 {
     SymInterpInfo *old;
 
     darray_foreach(old, info->interps)
-        if (old->interp.sym == new->interp.sym &&
+        ఒకవేళ (old->interp.sym == new->interp.sym &&
             old->interp.mods == new->interp.mods &&
-            old->interp.match == new->interp.match)
-            return old;
+            old->interp.సరిపోలిక == new->interp.సరిపోలిక)
+            తిరిగి old;
 
-    return NULL;
+    తిరిగి ఖాళీ;
 }
 
-static bool
-UseNewInterpField(enum si_field field, enum si_field old, enum si_field new,
-                  bool clobber, bool report, enum si_field *collide)
+స్థిర bool
+Use_New_Interp_క్షేత్రం(గణన si_క్షేత్రం క్షేత్రం_2, గణన si_క్షేత్రం old, గణన si_క్షేత్రం new,
+                  bool clobber, bool report, గణన si_క్షేత్రం *collide)
 {
-    if (!(old & field))
-        return (new & field);
+    ఒకవేళ (!(old & క్షేత్రం_2))
+        తిరిగి (new & క్షేత్రం_2);
 
-    if (new & field) {
-        if (report)
-            *collide |= field;
+    ఒకవేళ (new & క్షేత్రం_2) {
+        ఒకవేళ (report)
+            *collide |= క్షేత్రం_2;
 
-        return clobber;
+        తిరిగి clobber;
     }
 
-    return false;
+    తిరిగి false;
 }
 
-static bool
-MergeInterp(CompatInfo *info, SymInterpInfo *old, SymInterpInfo *new,
+స్థిర bool
+విలీనం_Interp(CompatInfo *info, SymInterpInfo *old, SymInterpInfo *new,
             bool same_file)
 {
-    const bool clobber = (new->merge != MERGE_AUGMENT);
-    const int verbosity = xkb_context_get_log_verbosity(info->ctx);
-    const bool report = (same_file && verbosity > 0) || verbosity > 9;
-    enum si_field collide = 0;
+    స్థిరరాశి bool clobber = (new->విలీనం != విలీనం_AUGMENT);
+    స్థిరరాశి పూర్ణాంకం verbosity = xkb_context_get_log_verbosity(info->ctx);
+    స్థిరరాశి bool report = (same_file && verbosity > 0) || verbosity > 9;
+    గణన si_క్షేత్రం collide = 0;
 
-    if (new->merge == MERGE_REPLACE) {
-        if (report)
-            log_warn(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+    ఒకవేళ (new->విలీనం == విలీనం_REPLACE) {
+        ఒకవేళ (report)
+            log_warn(info->ctx, XKB_LOG_సందేశం_NO_ID,
                      "Multiple definitions for \"%s\"; "
                      "Earlier interpretation ignored\n",
-                     siText(new, info));
+                     si_పాఠ్యం(new, info));
         *old = *new;
-        return true;
+        తిరిగి true;
     }
 
-    if (UseNewInterpField(SI_FIELD_VIRTUAL_MOD, old->defined, new->defined,
+    ఒకవేళ (Use_New_Interp_క్షేత్రం(SI_క్షేత్రం_VIRTUAL_MOD, old->defined, new->defined,
                           clobber, report, &collide)) {
         old->interp.virtual_mod = new->interp.virtual_mod;
-        old->defined |= SI_FIELD_VIRTUAL_MOD;
+        old->defined |= SI_క్షేత్రం_VIRTUAL_MOD;
     }
-    if (UseNewInterpField(SI_FIELD_ACTION, old->defined, new->defined,
+    ఒకవేళ (Use_New_Interp_క్షేత్రం(SI_క్షేత్రం_ACTION, old->defined, new->defined,
                           clobber, report, &collide)) {
-        if (old->interp.num_actions > 1) {
-                free(old->interp.a.actions);
+        ఒకవేళ (old->interp.అంకె_actions > 1) {
+                విడుదల(old->interp.a.actions);
             }
-            old->interp.num_actions = new->interp.num_actions;
-            if (new->interp.num_actions > 1) {
+            old->interp.అంకె_actions = new->interp.అంకె_actions;
+            ఒకవేళ (new->interp.అంకె_actions > 1) {
                 old->interp.a.actions = new->interp.a.actions;
                 new->interp.a.action =
-                    (union xkb_action) { .type = ACTION_TYPE_NONE };
-                new->interp.num_actions = 0;
-            } else {
+                    (సంఘం xkb_action) { .type = ACTION_TYPE_NONE };
+                new->interp.అంకె_actions = 0;
+            } లేకపోతే {
                 old->interp.a.action = new->interp.a.action;
             }
-        old->defined |= SI_FIELD_ACTION;
+        old->defined |= SI_క్షేత్రం_ACTION;
     }
-    if (UseNewInterpField(SI_FIELD_AUTO_REPEAT, old->defined, new->defined,
+    ఒకవేళ (Use_New_Interp_క్షేత్రం(SI_క్షేత్రం_AUTO_REPEAT, old->defined, new->defined,
                           clobber, report, &collide)) {
         old->interp.repeat = new->interp.repeat;
-        old->defined |= SI_FIELD_AUTO_REPEAT;
+        old->defined |= SI_క్షేత్రం_AUTO_REPEAT;
     }
-    if (UseNewInterpField(SI_FIELD_LEVEL_ONE_ONLY, old->defined, new->defined,
+    ఒకవేళ (Use_New_Interp_క్షేత్రం(SI_క్షేత్రం_LEVEL_ONE_ONLY, old->defined, new->defined,
                           clobber, report, &collide)) {
         old->interp.level_one_only = new->interp.level_one_only;
-        old->defined |= SI_FIELD_LEVEL_ONE_ONLY;
+        old->defined |= SI_క్షేత్రం_LEVEL_ONE_ONLY;
     }
 
-    if (collide) {
-        log_warn(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+    ఒకవేళ (collide) {
+        log_warn(info->ctx, XKB_LOG_సందేశం_NO_ID,
                  "Multiple interpretations of \"%s\"; "
                  "Using %s definition for duplicate fields\n",
-                 siText(old, info),
+                 si_పాఠ్యం(old, info),
                  (clobber ? "last" : "first"));
     }
 
-    return true;
+    తిరిగి true;
 }
 
-static bool
-AddInterp(CompatInfo *info, SymInterpInfo *new, bool same_file)
+స్థిర bool
+కూడు_Interp(CompatInfo *info, SymInterpInfo *new, bool same_file)
 {
-    SymInterpInfo *old = FindMatchingInterp(info, new);
-    if (old)
-        return MergeInterp(info, old, new, same_file);
+    SymInterpInfo *old = కనుగొను_Matching_Interp(info, new);
+    ఒకవేళ (old)
+        తిరిగి విలీనం_Interp(info, old, new, same_file);
 
     darray_append(info->interps, *new);
-    return true;
+    తిరిగి true;
 }
 
 /***====================================================================***/
 
 // TODO: more lenient?
-static bool
-ResolveStateAndPredicate(ExprDef *expr, enum xkb_match_operation *pred_rtrn,
-                         xkb_mod_mask_t *mods_rtrn, CompatInfo *info)
+స్థిర bool
+ResolveStateAndPredicate(సమాసం_Def *సమాసం, గణన xkb_సరిపోలిక_operation *pred_rtrn,
+                         xkb_mod_ముసుగు_t *mods_rtrn, CompatInfo *info)
 {
-    if (expr == NULL) {
-        *pred_rtrn = MATCH_ANY_OR_NONE;
-        *mods_rtrn = MOD_REAL_MASK_ALL;
-        return true;
+    ఒకవేళ (సమాసం == ఖాళీ) {
+        *pred_rtrn = సరిపోలిక_ANY_OR_NONE;
+        *mods_rtrn = MOD_REAL_ముసుగు_ALL;
+        తిరిగి true;
     }
 
-    *pred_rtrn = MATCH_EXACTLY;
-    if (expr->common.type == STMT_EXPR_ACTION_DECL) {
-        const char *pred_txt = xkb_atom_text(info->ctx, expr->action.name);
-        unsigned int pred = 0;
-        if (!LookupString(symInterpretMatchMaskNames, pred_txt, &pred) ||
-            !expr->action.args || expr->action.args->common.next) {
-            log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+    *pred_rtrn = సరిపోలిక_EXACTLY;
+    ఒకవేళ (సమాసం->common.type == STMT_సమాసం_ACTION_DECL) {
+        స్థిరరాశి అక్షరం *pred_txt = xkb_atom_పాఠ్యం(info->ctx, సమాసం->action.name);
+        గుర్తులేని పూర్ణాంకం pred = 0;
+        ఒకవేళ (!LookupString(sym_Interpret_సరిపోలిక_ముసుగు_పేర్లు, pred_txt, &pred) ||
+            !సమాసం->action.వాదనలు || సమాసం->action.వాదనలు->common.తదుపరి) {
+            log_err(info->ctx, XKB_LOG_సందేశం_NO_ID,
                     "Illegal modifier predicate \"%s\"; Ignored\n", pred_txt);
-            return false;
+            తిరిగి false;
         }
-        *pred_rtrn = (enum xkb_match_operation) pred;
-        expr = expr->action.args;
+        *pred_rtrn = (గణన xkb_సరిపోలిక_operation) pred;
+        సమాసం = సమాసం->action.వాదనలు;
     }
-    else if (expr->common.type == STMT_EXPR_IDENT) {
-        const char *pred_txt = xkb_atom_text(info->ctx, expr->ident.ident);
-        if (pred_txt && istreq(pred_txt, "any")) {
-            *pred_rtrn = MATCH_ANY;
-            *mods_rtrn = MOD_REAL_MASK_ALL;
-            return true;
+    లేకపోతే ఒకవేళ (సమాసం->common.type == STMT_సమాసం_IDENT) {
+        స్థిరరాశి అక్షరం *pred_txt = xkb_atom_పాఠ్యం(info->ctx, సమాసం->ident.ident);
+        ఒకవేళ (pred_txt && istreq(pred_txt, "any")) {
+            *pred_rtrn = సరిపోలిక_ANY;
+            *mods_rtrn = MOD_REAL_ముసుగు_ALL;
+            తిరిగి true;
         }
     }
 
-    return ExprResolveModMask(info->ctx, expr, MOD_REAL, &info->mods,
+    తిరిగి సమాసం_Resolve_Mod_ముసుగు(info->ctx, సమాసం, MOD_REAL, &info->mods,
                               mods_rtrn);
 }
 
 /***====================================================================***/
 
-static bool
-UseNewLEDField(enum led_field field, enum led_field old, enum led_field new,
-               bool clobber, bool report, enum led_field *collide)
+స్థిర bool
+UseNewLEDField(గణన led_క్షేత్రం క్షేత్రం_2, గణన led_క్షేత్రం old, గణన led_క్షేత్రం new,
+               bool clobber, bool report, గణన led_క్షేత్రం *collide)
 {
-    if (!(old & field))
-        return (new & field);
+    ఒకవేళ (!(old & క్షేత్రం_2))
+        తిరిగి (new & క్షేత్రం_2);
 
-    if (new & field) {
-        if (report)
-            *collide |= field;
+    ఒకవేళ (new & క్షేత్రం_2) {
+        ఒకవేళ (report)
+            *collide |= క్షేత్రం_2;
 
-        return clobber;
+        తిరిగి clobber;
     }
 
-    return false;
+    తిరిగి false;
 }
 
-static bool
-MergeLedMap(CompatInfo *info, LedInfo *old, LedInfo *new, bool same_file)
+స్థిర bool
+విలీనం_Led_Map(CompatInfo *info, LedInfo *old, LedInfo *new, bool same_file)
 {
-    enum led_field collide;
-    const bool clobber = (new->merge != MERGE_AUGMENT);
-    const int verbosity = xkb_context_get_log_verbosity(info->ctx);
-    const bool report = (same_file && verbosity > 0) || verbosity > 9;
+    గణన led_క్షేత్రం collide;
+    స్థిరరాశి bool clobber = (new->విలీనం != విలీనం_AUGMENT);
+    స్థిరరాశి పూర్ణాంకం verbosity = xkb_context_get_log_verbosity(info->ctx);
+    స్థిరరాశి bool report = (same_file && verbosity > 0) || verbosity > 9;
 
-    if (old->led.mods.mods == new->led.mods.mods &&
+    ఒకవేళ (old->led.mods.mods == new->led.mods.mods &&
         old->led.pending_groups == new->led.pending_groups &&
         old->led.groups == new->led.groups &&
         old->led.ctrls == new->led.ctrls &&
         old->led.which_mods == new->led.which_mods &&
         old->led.which_groups == new->led.which_groups) {
         old->defined |= new->defined;
-        return true;
+        తిరిగి true;
     }
 
-    if (new->merge == MERGE_REPLACE) {
-        if (report)
-            log_warn(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+    ఒకవేళ (new->విలీనం == విలీనం_REPLACE) {
+        ఒకవేళ (report)
+            log_warn(info->ctx, XKB_LOG_సందేశం_NO_ID,
                      "Map for indicator %s redefined; "
                      "Earlier definition ignored\n",
                      LEDText(info, old));
         *old = *new;
-        return true;
+        తిరిగి true;
     }
 
     collide = 0;
-    if (UseNewLEDField(LED_FIELD_MODS, old->defined, new->defined,
+    ఒకవేళ (UseNewLEDField(LED_క్షేత్రం_MODS, old->defined, new->defined,
                        clobber, report, &collide)) {
         old->led.which_mods = new->led.which_mods;
         old->led.mods = new->led.mods;
-        old->defined |= LED_FIELD_MODS;
+        old->defined |= LED_క్షేత్రం_MODS;
     }
-    if (UseNewLEDField(LED_FIELD_GROUPS, old->defined, new->defined,
+    ఒకవేళ (UseNewLEDField(LED_క్షేత్రం_GROUPS, old->defined, new->defined,
                        clobber, report, &collide)) {
         old->led.which_groups = new->led.which_groups;
         old->led.groups = new->led.groups;
         old->led.pending_groups = new->led.pending_groups;
-        old->defined |= LED_FIELD_GROUPS;
+        old->defined |= LED_క్షేత్రం_GROUPS;
     }
-    if (UseNewLEDField(LED_FIELD_CTRLS, old->defined, new->defined,
+    ఒకవేళ (UseNewLEDField(LED_క్షేత్రం_CTRLS, old->defined, new->defined,
                        clobber, report, &collide)) {
         old->led.ctrls = new->led.ctrls;
-        old->defined |= LED_FIELD_CTRLS;
+        old->defined |= LED_క్షేత్రం_CTRLS;
     }
 
-    if (collide) {
-        log_warn(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+    ఒకవేళ (collide) {
+        log_warn(info->ctx, XKB_LOG_సందేశం_NO_ID,
                  "Map for indicator %s redefined; "
                  "Using %s definition for duplicate fields\n",
                  LEDText(info, old), (clobber ? "last" : "first"));
     }
 
-    return true;
+    తిరిగి true;
 }
 
-static bool
-AddLedMap(CompatInfo *info, LedInfo *new, bool same_file)
+స్థిర bool
+కూడు_Led_Map(CompatInfo *info, LedInfo *new, bool same_file)
 {
-    for (xkb_led_index_t i = 0; i < info->num_leds; i++) {
+    కొరకు (xkb_led_సూచీ_t i = 0; i < info->అంకె_leds; i++) {
         LedInfo *old = &info->leds[i];
 
-        if (old->led.name != new->led.name)
-            continue;
+        ఒకవేళ (old->led.name != new->led.name)
+            కొనసాగు;
 
-        return MergeLedMap(info, old, new, same_file);
+        తిరిగి విలీనం_Led_Map(info, old, new, same_file);
     }
 
-    if (info->num_leds >= XKB_MAX_LEDS) {
-        log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+    ఒకవేళ (info->అంకె_leds >= XKB_MAX_LEDS) {
+        log_err(info->ctx, XKB_LOG_సందేశం_NO_ID,
                 "Too many LEDs defined (maximum %"PRIu32")\n",
                 XKB_MAX_LEDS);
-        return false;
+        తిరిగి false;
     }
-    info->leds[info->num_leds++] = *new;
-    return true;
+    info->leds[info->అంకె_leds++] = *new;
+    తిరిగి true;
 }
 
-static void
-MergeIncludedCompatMaps(CompatInfo *into, CompatInfo *from,
-                        enum merge_mode merge)
+స్థిర శూన్య
+విలీనం_Included_Compat_Maps(CompatInfo *into, CompatInfo *from,
+                        గణన విలీనం_బహుళకం విలీనం)
 {
-    if (from->errorCount > 0) {
-        into->errorCount += from->errorCount;
-        return;
+    ఒకవేళ (from->error_లెక్క > 0) {
+        into->error_లెక్క += from->error_లెక్క;
+        తిరిగి;
     }
 
-    MergeModSets(into->ctx, &into->mods, &from->mods, merge);
+    విలీనం_Mod_Sets(into->ctx, &into->mods, &from->mods, విలీనం);
 
-    if (into->name == NULL) {
+    ఒకవేళ (into->name == ఖాళీ) {
         into->name = steal(&from->name);
     }
 
-    if (darray_empty(into->interps)) {
+    ఒకవేళ (darray_ఖాళీలు(into->interps)) {
         into->interps = from->interps;
         darray_init(from->interps);
     }
-    else {
+    లేకపోతే {
         SymInterpInfo *si;
         darray_foreach(si, from->interps) {
-            si->merge = merge;
-            if (!AddInterp(into, si, false))
-                into->errorCount++;
+            si->విలీనం = విలీనం;
+            ఒకవేళ (!కూడు_Interp(into, si, false))
+                into->error_లెక్క++;
         }
     }
 
-    if (into->num_leds == 0) {
-        memcpy(into->leds, from->leds, sizeof(*from->leds) * from->num_leds);
-        into->num_leds = from->num_leds;
-        from->num_leds = 0;
+    ఒకవేళ (into->అంకె_leds == 0) {
+        జ్ఞాపకం_నకలు(into->leds, from->leds, పరిమాణం(*from->leds) * from->అంకె_leds);
+        into->అంకె_leds = from->అంకె_leds;
+        from->అంకె_leds = 0;
     }
-    else {
-        for (xkb_led_index_t i = 0; i < from->num_leds; i++) {
+    లేకపోతే {
+        కొరకు (xkb_led_సూచీ_t i = 0; i < from->అంకె_leds; i++) {
             LedInfo *ledi = &from->leds[i];
-            ledi->merge = merge;
-            if (!AddLedMap(into, ledi, false))
-                into->errorCount++;
+            ledi->విలీనం = విలీనం;
+            ఒకవేళ (!కూడు_Led_Map(into, ledi, false))
+                into->error_లెక్క++;
         }
     }
 }
 
-static void
+స్థిర శూన్య
 HandleCompatMapFile(CompatInfo *info, XkbFile *file);
 
-static bool
+స్థిర bool
 HandleIncludeCompatMap(CompatInfo *info, IncludeStmt *include)
 {
     CompatInfo included;
 
-    if (ExceedsIncludeMaxDepth(info->ctx, info->include_depth)) {
-        info->errorCount += 10;
-        return false;
+    ఒకవేళ (Exceeds_Include_Max_లోతు(info->ctx, info->include_లోతు)) {
+        info->error_లెక్క += 10;
+        తిరిగి false;
     }
 
-    InitCompatInfo(&included, info->keymap_info, info->include_depth + 1,
+    InitCompatInfo(&included, info->keymap_info, info->include_లోతు + 1,
                    &info->mods);
     included.name = steal(&include->stmt);
 
-    const struct parser_keymap_config config = {
+    స్థిరరాశి నిర్మాణం parser_keymap_config config = {
         .format = info->keymap_info->keymap.format,
         .strict = info->keymap_info->strict
     };
 
-    for (IncludeStmt *stmt = include; stmt; stmt = stmt->next_incl) {
-        CompatInfo next_incl;
+    కొరకు (IncludeStmt *stmt = include; stmt; stmt = stmt->తదుపరి_incl) {
+        CompatInfo తదుపరి_incl;
         XkbFile *file;
 
-        char path[PATH_MAX];
+        అక్షరం మార్గం[PATH_MAX];
         file = ProcessIncludeFile(info->ctx, &config, stmt, FILE_TYPE_COMPAT,
-                                  path, sizeof(path));
-        if (!file) {
-            info->errorCount += 10;
+                                  మార్గం, పరిమాణం(మార్గం));
+        ఒకవేళ (!file) {
+            info->error_లెక్క += 10;
             ClearCompatInfo(&included);
-            return false;
+            తిరిగి false;
         }
 
-        InitCompatInfo(&next_incl, info->keymap_info, info->include_depth + 1,
+        InitCompatInfo(&తదుపరి_incl, info->keymap_info, info->include_లోతు + 1,
                        &included.mods);
-        next_incl.default_interp = info->default_interp;
-        next_incl.default_led = info->default_led;
+        తదుపరి_incl.default_interp = info->default_interp;
+        తదుపరి_incl.default_led = info->default_led;
 
-        HandleCompatMapFile(&next_incl, file);
+        HandleCompatMapFile(&తదుపరి_incl, file);
 
-        MergeIncludedCompatMaps(&included, &next_incl, stmt->merge);
+        విలీనం_Included_Compat_Maps(&included, &తదుపరి_incl, stmt->విలీనం);
 
-        ClearCompatInfo(&next_incl);
+        ClearCompatInfo(&తదుపరి_incl);
         FreeXkbFile(file);
     }
 
-    MergeIncludedCompatMaps(info, &included, include->merge);
+    విలీనం_Included_Compat_Maps(info, &included, include->విలీనం);
     ClearCompatInfo(&included);
 
-    return (info->errorCount == 0);
+    తిరిగి (info->error_లెక్క == 0);
 }
 
-static bool
-SetInterpField(CompatInfo *info, SymInterpInfo *si, const char *field,
-               ExprDef *arrayNdx, ExprDef *value)
+స్థిర bool
+సమితి_Interp_క్షేత్రం(CompatInfo *info, SymInterpInfo *si, స్థిరరాశి అక్షరం *క్షేత్రం_2,
+               సమాసం_Def *arrayNdx, సమాసం_Def *విలువ)
 {
-    if (istreq(field, "action")) {
-        if (arrayNdx)
-            return ReportSINotArray(info, si, field);
+    ఒకవేళ (istreq(క్షేత్రం_2, "action")) {
+        ఒకవేళ (arrayNdx)
+            తిరిగి ReportSINotArray(info, si, క్షేత్రం_2);
 
-        if (value->common.type == STMT_EXPR_ACTION_LIST) {
-            unsigned int num_actions = 0;
-            for (ExprDef *act = value->actions.actions;
-                 act; act = (ExprDef *) act->common.next)
-                 num_actions++;
+        ఒకవేళ (విలువ->common.type == STMT_సమాసం_ACTION_LIST) {
+            గుర్తులేని పూర్ణాంకం అంకె_actions = 0;
+            కొరకు (సమాసం_Def *act = విలువ->actions.actions;
+                 act; act = (సమాసం_Def *) act->common.తదుపరి)
+                 అంకె_actions++;
 
-            if (num_actions > MAX_ACTIONS_PER_LEVEL) {
-                log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+            ఒకవేళ (అంకె_actions > MAX_ACTIONS_చొప్పున_LEVEL) {
+                log_err(info->ctx, XKB_LOG_సందేశం_NO_ID,
                         "Interpret %s has too many actions; "
                         "expected max %u, got: %u\n",
-                        siText(si, info), MAX_ACTIONS_PER_LEVEL, num_actions);
-                return false;
+                        si_పాఠ్యం(si, info), MAX_ACTIONS_చొప్పున_LEVEL, అంకె_actions);
+                తిరిగి false;
             }
 
-            si->interp.num_actions = 0;
+            si->interp.అంకె_actions = 0;
             si->interp.a.action.type = ACTION_TYPE_NONE;
 
             /* Parse actions and add only defined actions */
-            darray(union xkb_action) actions = darray_new();
-            for (ExprDef *act = value->actions.actions;
-                 act; act = (ExprDef *) act->common.next) {
-                union xkb_action toAct = { 0 };
-                switch (HandleActionDef(info->keymap_info,
+            darray(సంఘం xkb_action) actions = darray_new();
+            కొరకు (సమాసం_Def *act = విలువ->actions.actions;
+                 act; act = (సమాసం_Def *) act->common.తదుపరి) {
+                సంఘం xkb_action గమ్యం_Act = { 0 };
+                ఎంపిక (HandleActionDef(info->keymap_info,
                                         &info->default_actions,
-                                        &info->mods, act, &toAct)) {
-                case PARSER_RECOVERABLE_ERROR:
-                    toAct.type = ACTION_TYPE_NONE;
-                    break;
-                case PARSER_FATAL_ERROR:
+                                        &info->mods, act, &గమ్యం_Act)) {
+                స్థితి PARSER_RECOVERABLE_ERROR:
+                    గమ్యం_Act.type = ACTION_TYPE_NONE;
+                    ఆపు;
+                స్థితి PARSER_FATAL_ERROR:
                     darray_free(actions);
-                    return false;
-                default:
+                    తిరిగి false;
+                అప్రమేయ:
                     ;
                 }
-                if (toAct.type == ACTION_TYPE_NONE) {
+                ఒకవేళ (గమ్యం_Act.type == ACTION_TYPE_NONE) {
                     /* Drop action */
-                } else if (likely(num_actions == 1)) {
+                } లేకపోతే ఒకవేళ (likely(అంకె_actions == 1)) {
                     /* Only one action: do not allocate */
-                    si->interp.num_actions = 1;
-                    si->interp.a.action = toAct;
-                } else {
-                    darray_append(actions, toAct);
+                    si->interp.అంకె_actions = 1;
+                    si->interp.a.action = గమ్యం_Act;
+                } లేకపోతే {
+                    darray_append(actions, గమ్యం_Act);
                 }
             }
-            switch (darray_size(actions)) {
-            case 0:
+            ఎంపిక (darray_కొలత(actions)) {
+            స్థితి 0:
                 /* No action or exactly one action: already processed */
-                assert(si->interp.num_actions <= 1);
-                break;
-            case 1:
+                ప్రతిజ్ఞా(si->interp.అంకె_actions <= 1);
+                ఆపు;
+            స్థితి 1:
                 /* One action: some actions were dropped */
-                si->interp.num_actions = 1;
-                si->interp.a.action = darray_item(actions, 1);
+                si->interp.అంకె_actions = 1;
+                si->interp.a.action = darray_అంశం(actions, 1);
                 darray_free(actions);
-                break;
-            default:
+                ఆపు;
+            అప్రమేయ:
                 /* Multiple actions; no NoAction() left */
                 darray_shrink(actions);
-                si->interp.num_actions =
-                    (xkb_action_count_t) darray_size(actions);
-                darray_steal(actions, &si->interp.a.actions, NULL);
+                si->interp.అంకె_actions =
+                    (xkb_action_లెక్క_t) darray_కొలత(actions);
+                darray_steal(actions, &si->interp.a.actions, ఖాళీ);
             }
         }
-        else {
-            switch (HandleActionDef(info->keymap_info,
+        లేకపోతే {
+            ఎంపిక (HandleActionDef(info->keymap_info,
                                     &info->default_actions,
-                                    &info->mods, value, &si->interp.a.action)) {
-            case PARSER_RECOVERABLE_ERROR:
+                                    &info->mods, విలువ, &si->interp.a.action)) {
+            స్థితి PARSER_RECOVERABLE_ERROR:
                 si->interp.a.action.type = ACTION_TYPE_NONE;
-                si->interp.num_actions = 0;
-                break;
-            case PARSER_FATAL_ERROR:
-                return false;
-            default:
-                si->interp.num_actions =
+                si->interp.అంకె_actions = 0;
+                ఆపు;
+            స్థితి PARSER_FATAL_ERROR:
+                తిరిగి false;
+            అప్రమేయ:
+                si->interp.అంకె_actions =
                     (si->interp.a.action.type != ACTION_TYPE_NONE);
             }
         }
 
-        si->defined |= SI_FIELD_ACTION;
+        si->defined |= SI_క్షేత్రం_ACTION;
     }
-    else if (istreq(field, "virtualmodifier") ||
-             istreq(field, "virtualmod")) {
-        if (arrayNdx)
-            return ReportSINotArray(info, si, field);
+    లేకపోతే ఒకవేళ (istreq(క్షేత్రం_2, "virtualmodifier") ||
+             istreq(క్షేత్రం_2, "virtualmod")) {
+        ఒకవేళ (arrayNdx)
+            తిరిగి ReportSINotArray(info, si, క్షేత్రం_2);
 
-        xkb_mod_index_t ndx = 0;
-        if (!ExprResolveMod(info->ctx, value, MOD_VIRT, &info->mods, &ndx))
-            return ReportSIBadType(info, si, field, "virtual modifier");
+        xkb_mod_సూచీ_t ndx = 0;
+        ఒకవేళ (!సమాసం_Resolve_Mod(info->ctx, విలువ, MOD_VIRT, &info->mods, &ndx))
+            తిరిగి ReportSIBadType(info, si, క్షేత్రం_2, "virtual modifier");
 
         si->interp.virtual_mod = ndx;
-        si->defined |= SI_FIELD_VIRTUAL_MOD;
+        si->defined |= SI_క్షేత్రం_VIRTUAL_MOD;
     }
-    else if (istreq(field, "repeat")) {
-        bool set = false;
+    లేకపోతే ఒకవేళ (istreq(క్షేత్రం_2, "repeat")) {
+        bool సమితి = false;
 
-        if (arrayNdx)
-            return ReportSINotArray(info, si, field);
+        ఒకవేళ (arrayNdx)
+            తిరిగి ReportSINotArray(info, si, క్షేత్రం_2);
 
-        if (!ExprResolveBoolean(info->ctx, value, &set))
-            return ReportSIBadType(info, si, field, "boolean");
+        ఒకవేళ (!సమాసం_Resolve_Boolean(info->ctx, విలువ, &సమితి))
+            తిరిగి ReportSIBadType(info, si, క్షేత్రం_2, "boolean");
 
-        si->interp.repeat = set;
+        si->interp.repeat = సమితి;
 
-        si->defined |= SI_FIELD_AUTO_REPEAT;
+        si->defined |= SI_క్షేత్రం_AUTO_REPEAT;
     }
-    else if (istreq(field, "locking")) {
-        log_dbg(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+    లేకపోతే ఒకవేళ (istreq(క్షేత్రం_2, "locking")) {
+        log_dbg(info->ctx, XKB_LOG_సందేశం_NO_ID,
                 "The \"locking\" field in symbol interpretation is unsupported; "
                 "Ignored\n");
     }
-    else if (istreq(field, "usemodmap") ||
-             istreq(field, "usemodmapmods")) {
+    లేకపోతే ఒకవేళ (istreq(క్షేత్రం_2, "usemodmap") ||
+             istreq(క్షేత్రం_2, "usemodmapmods")) {
         uint32_t val = 0;
 
-        if (arrayNdx)
-            return ReportSINotArray(info, si, field);
+        ఒకవేళ (arrayNdx)
+            తిరిగి ReportSINotArray(info, si, క్షేత్రం_2);
 
-        if (!ExprResolveEnum(info->ctx, value, &val, useModMapValueNames))
-            return ReportSIBadType(info, si, field, "level specification");
+        ఒకవేళ (!సమాసం_Resolve_Enum(info->ctx, విలువ, &val, use_Mod_Map_విలువ_పేర్లు))
+            తిరిగి ReportSIBadType(info, si, క్షేత్రం_2, "level specification");
 
         si->interp.level_one_only = val;
-        si->defined |= SI_FIELD_LEVEL_ONE_ONLY;
+        si->defined |= SI_క్షేత్రం_LEVEL_ONE_ONLY;
     }
-    else {
-        ReportBadField(info->ctx, "symbol interpretation", field,
-                       siText(si, info));
-        return !(info->keymap_info->strict & PARSER_NO_UNKNOWN_INTERPRET_FIELDS);
+    లేకపోతే {
+        Report_Bad_క్షేత్రం(info->ctx, "symbol interpretation", క్షేత్రం_2,
+                       si_పాఠ్యం(si, info));
+        తిరిగి !(info->keymap_info->strict & PARSER_NO_UNKNOWN_INTERPRET_FIELDS);
     }
 
-    return true;
+    తిరిగి true;
 }
 
-static bool
-SetLedMapField(CompatInfo *info, LedInfo *ledi, const char *field,
-               ExprDef *arrayNdx, ExprDef **value_ptr)
+స్థిర bool
+సమితి_Led_Map_క్షేత్రం(CompatInfo *info, LedInfo *ledi, స్థిరరాశి అక్షరం *క్షేత్రం_2,
+               సమాసం_Def *arrayNdx, సమాసం_Def **విలువ_ptr)
 {
-    ExprDef * restrict const value = *value_ptr;
+    సమాసం_Def * పరిమిత స్థిరరాశి విలువ = *విలువ_ptr;
 
-    if (istreq(field, "modifiers") || istreq(field, "mods")) {
-        if (arrayNdx)
-            return ReportLedNotArray(info, ledi, field);
+    ఒకవేళ (istreq(క్షేత్రం_2, "modifiers") || istreq(క్షేత్రం_2, "mods")) {
+        ఒకవేళ (arrayNdx)
+            తిరిగి ReportLedNotArray(info, ledi, క్షేత్రం_2);
 
-        if (!ExprResolveModMask(info->ctx, value, MOD_BOTH,
+        ఒకవేళ (!సమాసం_Resolve_Mod_ముసుగు(info->ctx, విలువ, MOD_BOTH,
                                 &info->mods, &ledi->led.mods.mods))
-            return ReportLedBadType(info, ledi, field, "modifier mask");
+            తిరిగి ReportLedBadType(info, ledi, క్షేత్రం_2, "modifier mask");
 
-        ledi->defined |= LED_FIELD_MODS;
+        ledi->defined |= LED_క్షేత్రం_MODS;
     }
-    else if (istreq(field, "groups")) {
-        xkb_layout_mask_t mask = 0;
+    లేకపోతే ఒకవేళ (istreq(క్షేత్రం_2, "groups")) {
+        xkb_layout_ముసుగు_t ముసుగు = 0;
 
-        if (arrayNdx)
-            return ReportLedNotArray(info, ledi, field);
+        ఒకవేళ (arrayNdx)
+            తిరిగి ReportLedNotArray(info, ledi, క్షేత్రం_2);
 
         bool pending = false;
-        if (!ExprResolveGroupMask(info->keymap_info, value, &mask, &pending)) {
-            if (pending) {
+        ఒకవేళ (!సమాసం_Resolve_సమూహం_ముసుగు(info->keymap_info, విలువ, &ముసుగు, &pending)) {
+            ఒకవేళ (pending) {
                 ledi->led.pending_groups = true;
-                const darray_size_t pending_index =
-                    darray_size(*info->keymap_info->pending_computations);
+                స్థిరరాశి darray_కొలత_t pending_సూచీ =
+                    darray_కొలత(*info->keymap_info->pending_computations);
                 darray_append(
                     *info->keymap_info->pending_computations,
-                    (struct pending_computation) {
-                        .expr = *value_ptr,
+                    (నిర్మాణం pending_computation) {
+                        .సమాసం = *విలువ_ptr,
                         .computed = false,
-                        .value = 0,
+                        .విలువ = 0,
                     }
                 );
-                *value_ptr = NULL;
-                static_assert(sizeof(pending_index) == sizeof(mask),
+                *విలువ_ptr = ఖాళీ;
+                static_assert(పరిమాణం(pending_సూచీ) == పరిమాణం(ముసుగు),
                               "Cannot save pending computation");
-                mask = pending_index;
-            } else {
-                return ReportLedBadType(info, ledi, field, "group mask");
+                ముసుగు = pending_సూచీ;
+            } లేకపోతే {
+                తిరిగి ReportLedBadType(info, ledi, క్షేత్రం_2, "group mask");
             }
-        } else {
+        } లేకపోతే {
             ledi->led.pending_groups = false;
         }
 
-        ledi->led.groups = mask;
-        ledi->defined |= LED_FIELD_GROUPS;
+        ledi->led.groups = ముసుగు;
+        ledi->defined |= LED_క్షేత్రం_GROUPS;
     }
-    else if (istreq(field, "controls") || istreq(field, "ctrls")) {
-        uint32_t mask = 0;
+    లేకపోతే ఒకవేళ (istreq(క్షేత్రం_2, "controls") || istreq(క్షేత్రం_2, "ctrls")) {
+        uint32_t ముసుగు = 0;
 
-        if (arrayNdx)
-            return ReportLedNotArray(info, ledi, field);
+        ఒకవేళ (arrayNdx)
+            తిరిగి ReportLedNotArray(info, ledi, క్షేత్రం_2);
 
-        const uint8_t offset = info->keymap_info->features.controls_name_offset;
-        if (!ExprResolveMask(info->ctx, value, &mask, ctrlMaskNames + offset))
-            return ReportLedBadType(info, ledi, field, "controls mask");
+        స్థిరరాశి uint8_t స్థానభ్రంశం = info->keymap_info->features.controls_name_స్థానభ్రంశం;
+        ఒకవేళ (!సమాసం_Resolve_ముసుగు(info->ctx, విలువ, &ముసుగు, ctrl_ముసుగు_పేర్లు + స్థానభ్రంశం))
+            తిరిగి ReportLedBadType(info, ledi, క్షేత్రం_2, "controls mask");
 
-        ledi->led.ctrls = mask;
-        ledi->defined |= LED_FIELD_CTRLS;
+        ledi->led.ctrls = ముసుగు;
+        ledi->defined |= LED_క్షేత్రం_CTRLS;
     }
-    else if (istreq(field, "allowexplicit")) {
-        log_dbg(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+    లేకపోతే ఒకవేళ (istreq(క్షేత్రం_2, "allowexplicit")) {
+        log_dbg(info->ctx, XKB_LOG_సందేశం_NO_ID,
                 "The \"allowExplicit\" field in indicator statements is unsupported; "
                 "Ignored\n");
     }
-    else if (istreq(field, "whichmodstate") ||
-             istreq(field, "whichmodifierstate")) {
-        uint32_t mask = 0;
+    లేకపోతే ఒకవేళ (istreq(క్షేత్రం_2, "whichmodstate") ||
+             istreq(క్షేత్రం_2, "whichmodifierstate")) {
+        uint32_t ముసుగు = 0;
 
-        if (arrayNdx)
-            return ReportLedNotArray(info, ledi, field);
+        ఒకవేళ (arrayNdx)
+            తిరిగి ReportLedNotArray(info, ledi, క్షేత్రం_2);
 
-        if (!ExprResolveMask(info->ctx, value, &mask,
-                             modComponentMaskNames))
-            return ReportLedBadType(info, ledi, field,
+        ఒకవేళ (!సమాసం_Resolve_ముసుగు(info->ctx, విలువ, &ముసుగు,
+                             mod_Component_ముసుగు_పేర్లు))
+            తిరిగి ReportLedBadType(info, ledi, క్షేత్రం_2,
                                     "mask of modifier state components");
 
-        ledi->led.which_mods = mask;
+        ledi->led.which_mods = ముసుగు;
     }
-    else if (istreq(field, "whichgroupstate")) {
-        uint32_t mask = 0;
+    లేకపోతే ఒకవేళ (istreq(క్షేత్రం_2, "whichgroupstate")) {
+        uint32_t ముసుగు = 0;
 
-        if (arrayNdx)
-            return ReportLedNotArray(info, ledi, field);
+        ఒకవేళ (arrayNdx)
+            తిరిగి ReportLedNotArray(info, ledi, క్షేత్రం_2);
 
-        if (!ExprResolveMask(info->ctx, value, &mask,
-                             groupComponentMaskNames))
-            return ReportLedBadType(info, ledi, field,
+        ఒకవేళ (!సమాసం_Resolve_ముసుగు(info->ctx, విలువ, &ముసుగు,
+                             సమూహం_Component_ముసుగు_పేర్లు))
+            తిరిగి ReportLedBadType(info, ledi, క్షేత్రం_2,
                                     "mask of group state components");
 
-        ledi->led.which_groups = mask;
+        ledi->led.which_groups = ముసుగు;
     }
-    else if (istreq(field, "driveskbd") ||
-             istreq(field, "driveskeyboard") ||
-             istreq(field, "leddriveskbd") ||
-             istreq(field, "leddriveskeyboard") ||
-             istreq(field, "indicatordriveskbd") ||
-             istreq(field, "indicatordriveskeyboard")) {
-        log_dbg(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+    లేకపోతే ఒకవేళ (istreq(క్షేత్రం_2, "driveskbd") ||
+             istreq(క్షేత్రం_2, "driveskeyboard") ||
+             istreq(క్షేత్రం_2, "leddriveskbd") ||
+             istreq(క్షేత్రం_2, "leddriveskeyboard") ||
+             istreq(క్షేత్రం_2, "indicatordriveskbd") ||
+             istreq(క్షేత్రం_2, "indicatordriveskeyboard")) {
+        log_dbg(info->ctx, XKB_LOG_సందేశం_NO_ID,
                 "The \"%s\" field in indicator statements is unsupported; "
-                "Ignored\n", field);
+                "Ignored\n", క్షేత్రం_2);
     }
-    else if (istreq(field, "index")) {
+    లేకపోతే ఒకవేళ (istreq(క్షేత్రం_2, "index")) {
         /* Users should see this, it might cause unexpected behavior. */
-        log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+        log_err(info->ctx, XKB_LOG_సందేశం_NO_ID,
                 "The \"index\" field in indicator statements is unsupported; "
                 "Ignored\n");
     }
-    else {
-        log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+    లేకపోతే {
+        log_err(info->ctx, XKB_LOG_సందేశం_NO_ID,
                 "Unknown field \"%s\" in map for %s indicator; "
                 "Definition ignored\n",
-                field, LEDText(info, ledi));
-        return !(info->keymap_info->strict & PARSER_NO_UNKNOWN_LED_FIELDS);
+                క్షేత్రం_2, LEDText(info, ledi));
+        తిరిగి !(info->keymap_info->strict & PARSER_NO_UNKNOWN_LED_FIELDS);
     }
 
-    return true;
+    తిరిగి true;
 }
 
-static bool
+స్థిర bool
 HandleGlobalVar(CompatInfo *info, VarDef *stmt)
 {
-    const char *elem, *field;
-    ExprDef *ndx;
+    స్థిరరాశి అక్షరం *elem, *క్షేత్రం_2;
+    సమాసం_Def *ndx;
     bool ret;
 
-    if (!ExprResolveLhs(info->ctx, stmt->name, &elem, &field, &ndx)) {
+    ఒకవేళ (!సమాసం_Resolve_Lhs(info->ctx, stmt->name, &elem, &క్షేత్రం_2, &ndx)) {
         ret = false;
     }
-    else if (elem && istreq(elem, "interpret")) {
-        SymInterpInfo temp = {0};
-        InitInterp(&temp);
+    లేకపోతే ఒకవేళ (elem && istreq(elem, "interpret")) {
+        SymInterpInfo తాత్కాలిక = {0};
+        InitInterp(&తాత్కాలిక);
         /* Do not replace the whole interpret, only the current field */
-        temp.merge = (temp.merge == MERGE_REPLACE)
-            ? MERGE_OVERRIDE
-            : stmt->merge;
-        ret = SetInterpField(info, &temp, field, ndx, stmt->value);
-        if (ret)
-            MergeInterp(info, &info->default_interp, &temp, true);
+        తాత్కాలిక.విలీనం = (తాత్కాలిక.విలీనం == విలీనం_REPLACE)
+            ? విలీనం_OVERRIDE
+            : stmt->విలీనం;
+        ret = సమితి_Interp_క్షేత్రం(info, &తాత్కాలిక, క్షేత్రం_2, ndx, stmt->విలువ);
+        ఒకవేళ (ret)
+            విలీనం_Interp(info, &info->default_interp, &తాత్కాలిక, true);
     }
-    else if (elem && istreq(elem, "indicator")) {
-        LedInfo temp = {0};
-        InitLED(&temp);
+    లేకపోతే ఒకవేళ (elem && istreq(elem, "indicator")) {
+        LedInfo తాత్కాలిక = {0};
+        InitLED(&తాత్కాలిక);
         /* Do not replace the whole LED, only the current field */
-        temp.merge = (temp.merge == MERGE_REPLACE)
-            ? MERGE_OVERRIDE
-            : stmt->merge;
-        ret = SetLedMapField(info, &temp, field, ndx, &stmt->value);
-        if (ret)
-            MergeLedMap(info, &info->default_led, &temp, true);
+        తాత్కాలిక.విలీనం = (తాత్కాలిక.విలీనం == విలీనం_REPLACE)
+            ? విలీనం_OVERRIDE
+            : stmt->విలీనం;
+        ret = సమితి_Led_Map_క్షేత్రం(info, &తాత్కాలిక, క్షేత్రం_2, ndx, &stmt->విలువ);
+        ఒకవేళ (ret)
+            విలీనం_Led_Map(info, &info->default_led, &తాత్కాలిక, true);
     }
-    else if (elem) {
-        ret = (SetDefaultActionField(info->keymap_info, &info->default_actions,
-                                     &info->mods, elem, field, ndx,
-                                     &stmt->value, stmt->merge) !=
+    లేకపోతే ఒకవేళ (elem) {
+        ret = (సమితి_Default_Action_క్షేత్రం(info->keymap_info, &info->default_actions,
+                                     &info->mods, elem, క్షేత్రం_2, ndx,
+                                     &stmt->విలువ, stmt->విలీనం) !=
                PARSER_FATAL_ERROR);
     }
-    else {
-        log_err(info->ctx, XKB_ERROR_UNKNOWN_DEFAULT_FIELD,
-                "Default defined for unknown field \"%s\"; Ignored\n", field);
-        return !(info->keymap_info->strict &
+    లేకపోతే {
+        log_err(info->ctx, XKB_ERROR_UNKNOWN_DEFAULT_క్షేత్రం,
+                "Default defined for unknown field \"%s\"; Ignored\n", క్షేత్రం_2);
+        తిరిగి !(info->keymap_info->strict &
                  PARSER_NO_UNKNOWN_COMPAT_GLOBAL_FIELDS);
     }
-    return ret;
+    తిరిగి ret;
 }
 
-static bool
+స్థిర bool
 HandleInterpBody(CompatInfo *info, VarDef *def, SymInterpInfo *si)
 {
     bool ok = true;
-    const char *elem, *field;
-    ExprDef *arrayNdx;
+    స్థిరరాశి అక్షరం *elem, *క్షేత్రం_2;
+    సమాసం_Def *arrayNdx;
 
-    for (; def; def = (VarDef *) def->common.next) {
-        if (!ExprResolveLhs(info->ctx, def->name, &elem, &field, &arrayNdx)) {
+    కొరకు (; def; def = (VarDef *) def->common.తదుపరి) {
+        ఒకవేళ (!సమాసం_Resolve_Lhs(info->ctx, def->name, &elem, &క్షేత్రం_2, &arrayNdx)) {
             ok = false;
-            continue;
+            కొనసాగు;
         }
-        if (elem) {
-            log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+        ఒకవేళ (elem) {
+            log_err(info->ctx, XKB_LOG_సందేశం_NO_ID,
                     "Cannot set a global default value for \"%s\" element from "
                     "within an interpret statement; "
                     "Move assignment to \"%s.%s\" to the global file scope\n",
-                    elem, elem, field);
+                    elem, elem, క్షేత్రం_2);
             ok = false;
-            continue;
+            కొనసాగు;
         }
-        if (!SetInterpField(info, si, field, arrayNdx, def->value))
+        ఒకవేళ (!సమితి_Interp_క్షేత్రం(info, si, క్షేత్రం_2, arrayNdx, def->విలువ))
             ok = false;
     }
 
-    return ok;
+    తిరిగి ok;
 }
 
-static bool
+స్థిర bool
 HandleInterpDef(CompatInfo *info, InterpDef *def)
 {
-    enum xkb_match_operation pred;
-    xkb_mod_mask_t mods;
+    గణన xkb_సరిపోలిక_operation pred;
+    xkb_mod_ముసుగు_t mods;
     SymInterpInfo si;
 
-    if (!ResolveStateAndPredicate(def->match, &pred, &mods, info)) {
-        log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+    ఒకవేళ (!ResolveStateAndPredicate(def->సరిపోలిక, &pred, &mods, info)) {
+        log_err(info->ctx, XKB_LOG_సందేశం_NO_ID,
                 "Couldn't determine matching modifiers; "
                 "Symbol interpretation ignored\n");
-        return false;
+        తిరిగి false;
     }
 
     si = info->default_interp;
-    si.merge = def->merge;
+    si.విలీనం = def->విలీనం;
     si.interp.sym = def->sym;
-    si.interp.match = pred;
+    si.interp.సరిపోలిక = pred;
     si.interp.mods = mods;
 
-    if (!HandleInterpBody(info, def->def, &si)) {
-        info->errorCount++;
-        return false;
+    ఒకవేళ (!HandleInterpBody(info, def->def, &si)) {
+        info->error_లెక్క++;
+        తిరిగి false;
     }
 
-    if (!AddInterp(info, &si, true)) {
-        info->errorCount++;
-        return false;
+    ఒకవేళ (!కూడు_Interp(info, &si, true)) {
+        info->error_లెక్క++;
+        తిరిగి false;
     }
 
-    return true;
+    తిరిగి true;
 }
 
-static bool
+స్థిర bool
 HandleLedMapDef(CompatInfo *info, LedMapDef *def)
 {
     LedInfo ledi = info->default_led;
-    ledi.merge = def->merge;
+    ledi.విలీనం = def->విలీనం;
     ledi.led.name = def->name;
 
     bool ok = true;
-    for (VarDef *var = def->body; var != NULL; var = (VarDef *) var->common.next) {
-        const char *elem, *field;
-        ExprDef *arrayNdx;
-        if (!ExprResolveLhs(info->ctx, var->name, &elem, &field, &arrayNdx)) {
+    కొరకు (VarDef *var = def->body; var != ఖాళీ; var = (VarDef *) var->common.తదుపరి) {
+        స్థిరరాశి అక్షరం *elem, *క్షేత్రం_2;
+        సమాసం_Def *arrayNdx;
+        ఒకవేళ (!సమాసం_Resolve_Lhs(info->ctx, var->name, &elem, &క్షేత్రం_2, &arrayNdx)) {
             ok = false;
-            continue;
+            కొనసాగు;
         }
 
-        if (elem) {
+        ఒకవేళ (elem) {
             log_err(info->ctx, XKB_ERROR_GLOBAL_DEFAULTS_WRONG_SCOPE,
                     "Cannot set defaults for \"%s\" element in indicator map; "
-                    "Assignment to %s.%s ignored\n", elem, elem, field);
+                    "Assignment to %s.%s ignored\n", elem, elem, క్షేత్రం_2);
             ok = false;
         }
-        else {
-            if (!SetLedMapField(info, &ledi, field, arrayNdx, &var->value))
+        లేకపోతే {
+            ఒకవేళ (!సమితి_Led_Map_క్షేత్రం(info, &ledi, క్షేత్రం_2, arrayNdx, &var->విలువ))
                 ok = false;
         }
     }
 
-    return ok && AddLedMap(info, &ledi, true);
+    తిరిగి ok && కూడు_Led_Map(info, &ledi, true);
 }
 
-static void
+స్థిర శూన్య
 HandleCompatMapFile(CompatInfo *info, XkbFile *file)
 {
     bool ok;
 
-    free(info->name);
-    info->name = strdup_safe(file->name);
+    విడుదల(info->name);
+    info->name = strdup_సురక్షిత(file->name);
 
-    for (ParseCommon *stmt = file->defs; stmt; stmt = stmt->next) {
-        switch (stmt->type) {
-        case STMT_INCLUDE:
+    కొరకు (ParseCommon *stmt = file->defs; stmt; stmt = stmt->తదుపరి) {
+        ఎంపిక (stmt->type) {
+        స్థితి STMT_INCLUDE:
             ok = HandleIncludeCompatMap(info, (IncludeStmt *) stmt);
-            break;
-        case STMT_INTERP:
+            ఆపు;
+        స్థితి STMT_INTERP:
             ok = HandleInterpDef(info, (InterpDef *) stmt);
-            break;
-        case STMT_GROUP_COMPAT:
-            log_dbg(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+            ఆపు;
+        స్థితి STMT_సమూహం_COMPAT:
+            log_dbg(info->ctx, XKB_LOG_సందేశం_NO_ID,
                     "The \"group\" statement in compat is unsupported; "
                     "Ignored\n");
             ok = true;
-            break;
-        case STMT_LED_MAP:
+            ఆపు;
+        స్థితి STMT_LED_MAP:
             ok = HandleLedMapDef(info, (LedMapDef *) stmt);
-            break;
-        case STMT_VAR:
+            ఆపు;
+        స్థితి STMT_VAR:
             ok = HandleGlobalVar(info, (VarDef *) stmt);
-            break;
-        case STMT_VMOD:
+            ఆపు;
+        స్థితి STMT_VMOD:
             ok = HandleVModDef(info->ctx, &info->mods, (VModDef *) stmt);
-            break;
-        case STMT_UNKNOWN_DECLARATION:
-        case STMT_UNKNOWN_COMPOUND:
+            ఆపు;
+        స్థితి STMT_UNKNOWN_DECLARATION:
+        స్థితి STMT_UNKNOWN_COMPOUND:
             log_err(info->ctx, XKB_ERROR_UNKNOWN_STATEMENT,
                     "Unsupported compatibility %s statement \"%s\"; Ignoring\n",
                     (stmt->type == STMT_UNKNOWN_COMPOUND
                         ? "compound" : "declaration"),
                     ((UnknownStatement *)stmt)->name);
             ok = !(info->keymap_info->strict & PARSER_NO_UNKNOWN_STATEMENTS);
-            break;
-        default:
-            log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+            ఆపు;
+        అప్రమేయ:
+            log_err(info->ctx, XKB_LOG_సందేశం_NO_ID,
                     "Compat files may not include other types; "
-                    "Ignoring %s\n", stmt_type_to_string(stmt->type));
+                    "Ignoring %s\n", stmt_type_గమ్యం_string(stmt->type));
             ok = false;
-            break;
+            ఆపు;
         }
 
-        if (!ok)
-            info->errorCount++;
+        ఒకవేళ (!ok)
+            info->error_లెక్క++;
 
-        if (info->errorCount > 10) {
-            log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+        ఒకవేళ (info->error_లెక్క > 10) {
+            log_err(info->ctx, XKB_LOG_సందేశం_NO_ID,
                     "Abandoning compatibility map \"%s\"\n",
-                    safe_map_name(file->name));
-            break;
+                    సురక్షిత_map_name(file->name));
+            ఆపు;
         }
     }
 }
 
 /* Temporary struct for CopyInterps. */
-struct collect {
-    darray(struct xkb_sym_interpret) sym_interprets;
+నిర్మాణం collect {
+    darray(నిర్మాణం xkb_sym_interpret) sym_interprets;
 };
 
-static void
-CopyInterps(CompatInfo *info, bool needSymbol, enum xkb_match_operation pred,
-            struct collect *collect)
+స్థిర శూన్య
+CopyInterps(CompatInfo *info, bool need_చిహ్నం, గణన xkb_సరిపోలిక_operation pred,
+            నిర్మాణం collect *collect)
 {
     SymInterpInfo *si;
 
     darray_foreach(si, info->interps)
-        if (si->interp.match == pred &&
-            (si->interp.sym != XKB_KEY_NoSymbol) == needSymbol)
+        ఒకవేళ (si->interp.సరిపోలిక == pred &&
+            (si->interp.sym != XKB_కీలకం_No_చిహ్నం) == need_చిహ్నం)
             darray_append(collect->sym_interprets, si->interp);
 }
 
-static void
-CopyLedMapDefsToKeymap(struct xkb_keymap *keymap, CompatInfo *info)
+స్థిర శూన్య
+Copy_Led_Map_Defs_గమ్యం_Keymap(నిర్మాణం xkb_keymap *keymap, CompatInfo *info)
 {
-    for (xkb_led_index_t idx = 0; idx < info->num_leds; idx++) {
+    కొరకు (xkb_led_సూచీ_t idx = 0; idx < info->అంకె_leds; idx++) {
         LedInfo *ledi = &info->leds[idx];
-        xkb_led_index_t i;
-        struct xkb_led *led;
+        xkb_led_సూచీ_t i;
+        నిర్మాణం xkb_led *led;
 
         /*
          * Find the LED with the given name, if it was already declared
          * in keycodes.
          */
         xkb_leds_enumerate(i, led, keymap)
-            if (led->name == ledi->led.name)
-                break;
+            ఒకవేళ (led->name == ledi->led.name)
+                ఆపు;
 
         /* Not previously declared; create it with next free index. */
-        if (i >= keymap->num_leds) {
-            log_dbg(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
+        ఒకవేళ (i >= keymap->అంకె_leds) {
+            log_dbg(keymap->ctx, XKB_LOG_సందేశం_NO_ID,
                     "Indicator name \"%s\" was not declared in the keycodes "
                     "section; Adding new indicator\n",
                     LEDText(info, ledi));
 
             xkb_leds_enumerate(i, led, keymap)
-                if (led->name == XKB_ATOM_NONE)
-                    break;
+                ఒకవేళ (led->name == XKB_ATOM_NONE)
+                    ఆపు;
 
-            if (i >= keymap->num_leds) {
+            ఒకవేళ (i >= keymap->అంకె_leds) {
                 /* Not place to put it; ignore. */
-                if (i >= XKB_MAX_LEDS) {
-                    log_err(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
+                ఒకవేళ (i >= XKB_MAX_LEDS) {
+                    log_err(keymap->ctx, XKB_LOG_సందేశం_NO_ID,
                             "Too many indicators (maximum is %"PRIu32"); "
                             "Indicator name \"%s\" ignored\n",
                             XKB_MAX_LEDS, LEDText(info, ledi));
-                    continue;
+                    కొనసాగు;
                 }
 
                 /* Add a new LED. */
-                led = &keymap->leds[keymap->num_leds++];
+                led = &keymap->leds[keymap->అంకె_leds++];
             }
         }
 
         *led = ledi->led;
         /* Assume pending `groups` computation does not result in 0 */
-        if (led->which_groups == 0 && (led->groups != 0 || led->pending_groups))
+        ఒకవేళ (led->which_groups == 0 && (led->groups != 0 || led->pending_groups))
             led->which_groups = XKB_STATE_LAYOUT_EFFECTIVE;
-        if (led->which_mods == 0 && led->mods.mods != 0)
+        ఒకవేళ (led->which_mods == 0 && led->mods.mods != 0)
             led->which_mods = XKB_STATE_MODS_EFFECTIVE;
     }
 }
 
-static bool
-CopyCompatToKeymap(struct xkb_keymap *keymap, CompatInfo *info)
+స్థిర bool
+Copy_Compat_గమ్యం_Keymap(నిర్మాణం xkb_keymap *keymap, CompatInfo *info)
 {
-    keymap->compat_section_name = strdup_safe(info->name);
+    keymap->compat_section_name = strdup_సురక్షిత(info->name);
     XkbEscapeMapName(keymap->compat_section_name);
 
     keymap->mods = info->mods;
 
-    if (!darray_empty(info->interps)) {
-        struct collect collect;
+    ఒకవేళ (!darray_ఖాళీలు(info->interps)) {
+        నిర్మాణం collect collect;
         darray_init(collect.sym_interprets);
 
         /* Most specific to least specific. */
-        CopyInterps(info, true, MATCH_EXACTLY, &collect);
-        CopyInterps(info, true, MATCH_ALL, &collect);
-        CopyInterps(info, true, MATCH_NONE, &collect);
-        CopyInterps(info, true, MATCH_ANY, &collect);
-        CopyInterps(info, true, MATCH_ANY_OR_NONE, &collect);
-        CopyInterps(info, false, MATCH_EXACTLY, &collect);
-        CopyInterps(info, false, MATCH_ALL, &collect);
-        CopyInterps(info, false, MATCH_NONE, &collect);
-        CopyInterps(info, false, MATCH_ANY, &collect);
-        CopyInterps(info, false, MATCH_ANY_OR_NONE, &collect);
+        CopyInterps(info, true, సరిపోలిక_EXACTLY, &collect);
+        CopyInterps(info, true, సరిపోలిక_ALL, &collect);
+        CopyInterps(info, true, సరిపోలిక_NONE, &collect);
+        CopyInterps(info, true, సరిపోలిక_ANY, &collect);
+        CopyInterps(info, true, సరిపోలిక_ANY_OR_NONE, &collect);
+        CopyInterps(info, false, సరిపోలిక_EXACTLY, &collect);
+        CopyInterps(info, false, సరిపోలిక_ALL, &collect);
+        CopyInterps(info, false, సరిపోలిక_NONE, &collect);
+        CopyInterps(info, false, సరిపోలిక_ANY, &collect);
+        CopyInterps(info, false, సరిపోలిక_ANY_OR_NONE, &collect);
 
         darray_steal(collect.sym_interprets,
-                     &keymap->sym_interprets, &keymap->num_sym_interprets);
+                     &keymap->sym_interprets, &keymap->అంకె_sym_interprets);
     }
 
-    CopyLedMapDefsToKeymap(keymap, info);
+    Copy_Led_Map_Defs_గమ్యం_Keymap(keymap, info);
 
-    return true;
+    తిరిగి true;
 }
 
 bool
-CompileCompatMap(XkbFile *file, struct xkb_keymap_info *keymap_info)
+CompileCompatMap(XkbFile *file, నిర్మాణం xkb_keymap_info *keymap_info)
 {
     CompatInfo info;
 
     InitCompatInfo(&info, keymap_info, 0, &keymap_info->keymap.mods);
 
-    if (file != NULL)
+    ఒకవేళ (file != ఖాళీ)
         HandleCompatMapFile(&info, file);
 
-    if (info.errorCount != 0)
-        goto err_info;
+    ఒకవేళ (info.error_లెక్క != 0)
+        వెళ్ళు err_info;
 
-    if (!CopyCompatToKeymap(&keymap_info->keymap, &info))
-        goto err_info;
+    ఒకవేళ (!Copy_Compat_గమ్యం_Keymap(&keymap_info->keymap, &info))
+        వెళ్ళు err_info;
 
     ClearCompatInfo(&info);
-    return true;
+    తిరిగి true;
 
 err_info:
     ClearCompatInfo(&info);
-    return false;
+    తిరిగి false;
 }

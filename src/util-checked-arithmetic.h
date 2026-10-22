@@ -56,99 +56,99 @@
  * @version 1.0 (2024-12-07)
  */
 
-#pragma once
+#సూచన once
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#ifdef __has_include
-#define __ckd_has_include(x) __has_include(x)
-#else
-#define __ckd_has_include(x) 0
-#endif
+#నిర్వచితమైతే __has_include
+#నిర్వచించు __ckd_has_include(x) __has_include(x)
+#లేకపోతే
+#నిర్వచించు __ckd_has_include(x) 0
+#అయితే_ముగింపు
 
-#if __ckd_has_include(<stdckdint.h>)
-#include <stdckdint.h>
-#else
+#ఒకవేళ __ckd_has_include(<stdckdint.h>)
+#అన్తర్భావ <stdckdint.h>
+#లేకపోతే
 
-#define __STDC_VERSION_STDCKDINT_H__ 202311L
+#నిర్వచించు __STDC_VERSION_STDCKDINT_H__ 202311L
 
-#if (!defined(__STRICT_ANSI__) && defined(__SIZEOF_INT128__))
-#define __ckd_have_int128
-#define __ckd_intmax __int128
-#elif (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L)
-#define __ckd_intmax long long
-#else
-#define __ckd_intmax long
-#endif
+#ఒకవేళ (!defined(__STRICT_ANSI__) && defined(__SIZEOF_INT128__))
+#నిర్వచించు __ckd_have_int128
+#నిర్వచించు __ckd_intmax __int128
+#లేదావేళ (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L)
+#నిర్వచించు __ckd_intmax దీర్ఘ దీర్ఘ
+#లేకపోతే
+#నిర్వచించు __ckd_intmax దీర్ఘ
+#అయితే_ముగింపు
 
-typedef signed __ckd_intmax __ckd_intmax_t;
-typedef unsigned __ckd_intmax __ckd_uintmax_t;
+రకనిర్వచనం గుర్తుగల __ckd_intmax __ckd_intmax_t;
+రకనిర్వచనం గుర్తులేని __ckd_intmax __ckd_uintmax_t;
 
-#ifdef __has_builtin
-#define __ckd_has_builtin(x) __has_builtin(x)
-#else
-#define __ckd_has_builtin(x) 0
-#endif
+#నిర్వచితమైతే __has_builtin
+#నిర్వచించు __ckd_has_builtin(x) __has_builtin(x)
+#లేకపోతే
+#నిర్వచించు __ckd_has_builtin(x) 0
+#అయితే_ముగింపు
 
-#if (!defined(__STRICT_ANSI__) &&                                       \
+#ఒకవేళ (!defined(__STRICT_ANSI__) &&                                       \
      ((defined(__GNUC__) && __GNUC__ >= 5 && !defined(__ICC)) ||        \
       (__ckd_has_builtin(__builtin_add_overflow) &&                     \
        __ckd_has_builtin(__builtin_sub_overflow) &&                     \
        __ckd_has_builtin(__builtin_mul_overflow))))
-#define ckd_add(res, x, y) __builtin_add_overflow((x), (y), (res))
-#define ckd_sub(res, x, y) __builtin_sub_overflow((x), (y), (res))
-#define ckd_mul(res, x, y) __builtin_mul_overflow((x), (y), (res))
+#నిర్వచించు ckd_కూడు(res, x, y) __builtin_add_overflow((x), (y), (res))
+#నిర్వచించు ckd_sub(res, x, y) __builtin_sub_overflow((x), (y), (res))
+#నిర్వచించు ckd_mul(res, x, y) __builtin_mul_overflow((x), (y), (res))
 
-#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
+#లేదావేళ defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
 
-#define ckd_add(res, a, b) __ckd_expr(add, (res), (a), (b))
-#define ckd_sub(res, a, b) __ckd_expr(sub, (res), (a), (b))
-#define ckd_mul(res, a, b) __ckd_expr(mul, (res), (a), (b))
+#నిర్వచించు ckd_కూడు(res, a, b) __ckd_expr(కూడు, (res), (a), (b))
+#నిర్వచించు ckd_sub(res, a, b) __ckd_expr(sub, (res), (a), (b))
+#నిర్వచించు ckd_mul(res, a, b) __ckd_expr(mul, (res), (a), (b))
 
-#if defined(__GNUC__) || defined(__llvm__)
-#define __ckd_inline                                    \
-  extern __inline __attribute__((__gnu_inline__,        \
+#ఒకవేళ defined(__GNUC__) || defined(__llvm__)
+#నిర్వచించు __ckd_inline                                    \
+  బాహ్య __inline __attribute__((__gnu_inline__,        \
                                  __always_inline__,     \
                                  __artificial__))
-#else
-#define __ckd_inline static inline
-#endif
+#లేకపోతే
+#నిర్వచించు __ckd_inline స్థిర అంతఃవరుస
+#అయితే_ముగింపు
 
-#ifdef __ckd_have_int128
-#define __ckd_generic_int128(x, y) , signed __int128: x, unsigned __int128: y
-#else
-#define __ckd_generic_int128(x, y)
-#endif
+#నిర్వచితమైతే __ckd_have_int128
+#నిర్వచించు __ckd_generic_int128(x, y) , గుర్తుగల __int128: x, గుర్తులేని __int128: y
+#లేకపోతే
+#నిర్వచించు __ckd_generic_int128(x, y)
+#అయితే_ముగింపు
 
-#define __ckd_sign(T)                           \
-  ((T)1 << (sizeof(T) * 8 - 1))
+#నిర్వచించు __ckd_sign(T)                           \
+  ((T)1 << (పరిమాణం(T) * 8 - 1))
 
-#define __ckd_is_signed(x)                      \
+#నిర్వచించు __ckd_is_signed(x)                      \
   _Generic(x,                                   \
-           signed char: 1,                      \
-           unsigned char: 0,                    \
-           signed short: 1,                     \
-           unsigned short: 0,                   \
-           signed int: 1,                       \
-           unsigned int: 0,                     \
-           signed long: 1,                      \
-           unsigned long: 0,                    \
-           signed long long: 1,                 \
-           unsigned long long: 0                \
+           గుర్తుగల అక్షరం: 1,                      \
+           గుర్తులేని అక్షరం: 0,                    \
+           గుర్తుగల పొట్టి: 1,                     \
+           గుర్తులేని పొట్టి: 0,                   \
+           గుర్తుగల పూర్ణాంకం: 1,                       \
+           గుర్తులేని పూర్ణాంకం: 0,                     \
+           గుర్తుగల దీర్ఘ: 1,                      \
+           గుర్తులేని దీర్ఘ: 0,                    \
+           గుర్తుగల దీర్ఘ దీర్ఘ: 1,                 \
+           గుర్తులేని దీర్ఘ దీర్ఘ: 0                \
            __ckd_generic_int128(1, 0))
 
-#define __ckd_expr(op, res, a, b)                       \
+#నిర్వచించు __ckd_expr(op, res, a, b)                       \
   (_Generic(*res,                                       \
-            signed char: __ckd_##op##_schar,            \
-            unsigned char: __ckd_##op##_uchar,          \
-            signed short: __ckd_##op##_sshort,          \
-            unsigned short: __ckd_##op##_ushort,        \
-            signed int: __ckd_##op##_sint,              \
-            unsigned int: __ckd_##op##_uint,            \
-            signed long: __ckd_##op##_slong,            \
-            unsigned long: __ckd_##op##_ulong,          \
-            signed long long: __ckd_##op##_slonger,     \
-            unsigned long long: __ckd_##op##_ulonger    \
+            గుర్తుగల అక్షరం: __ckd_##op##_schar,            \
+            గుర్తులేని అక్షరం: __ckd_##op##_uchar,          \
+            గుర్తుగల పొట్టి: __ckd_##op##_sshort,          \
+            గుర్తులేని పొట్టి: __ckd_##op##_ushort,        \
+            గుర్తుగల పూర్ణాంకం: __ckd_##op##_sint,              \
+            గుర్తులేని పూర్ణాంకం: __ckd_##op##_uint,            \
+            గుర్తుగల దీర్ఘ: __ckd_##op##_slong,            \
+            గుర్తులేని దీర్ఘ: __ckd_##op##_ulong,          \
+            గుర్తుగల దీర్ఘ దీర్ఘ: __ckd_##op##_slonger,     \
+            గుర్తులేని దీర్ఘ దీర్ఘ: __ckd_##op##_ulonger    \
             __ckd_generic_int128(                       \
                 __ckd_##op##_sint128,                   \
                 __ckd_##op##_uint128))(                 \
@@ -156,255 +156,255 @@ typedef unsigned __ckd_intmax __ckd_uintmax_t;
                     __ckd_is_signed(a),                 \
                     __ckd_is_signed(b)))
 
-#define __ckd_declare_add(S, T)                                         \
-  __ckd_inline char S(void *__res,                                      \
+#నిర్వచించు __ckd_declare_add(S, T)                                         \
+  __ckd_inline అక్షరం S(శూన్య *__res,                                      \
                       __ckd_uintmax_t __x,                              \
                       __ckd_uintmax_t __y,                              \
-                      char __a_signed,                                  \
-                      char __b_signed) {                                \
+                      అక్షరం __a_signed,                                  \
+                      అక్షరం __b_signed) {                                \
     __ckd_uintmax_t __z = __x + __y;                                    \
     *(T *)__res = (T)__z;                                               \
-    char __truncated = 0;                                               \
-    if (sizeof(T) < sizeof(__ckd_intmax_t)) {                           \
+    అక్షరం __truncated = 0;                                               \
+    ఒకవేళ (పరిమాణం(T) < పరిమాణం(__ckd_intmax_t)) {                           \
       __truncated = __z != (__ckd_uintmax_t)(T)__z;                     \
     }                                                                   \
-    switch (__ckd_is_signed((T)0) << 2 |                                \
+    ఎంపిక (__ckd_is_signed((T)0) << 2 |                                \
             __a_signed << 1 | __b_signed) {                             \
-      case 0:  /* u = u + u */                                          \
-        return __truncated | (__z < __x);                               \
-      case 1:  /* u = u + s */                                          \
+      స్థితి 0:  /* u = u + u */                                          \
+        తిరిగి __truncated | (__z < __x);                               \
+      స్థితి 1:  /* u = u + s */                                          \
         __y ^= __ckd_sign(__ckd_uintmax_t);                             \
-        return __truncated |                                            \
+        తిరిగి __truncated |                                            \
             ((__ckd_intmax_t)((__z ^ __x) &                             \
                               (__z ^ __y)) < 0);                        \
-      case 2:  /* u = s + u */                                          \
+      స్థితి 2:  /* u = s + u */                                          \
         __x ^= __ckd_sign(__ckd_uintmax_t);                             \
-        return __truncated |                                            \
+        తిరిగి __truncated |                                            \
             ((__ckd_intmax_t)((__z ^ __x) &                             \
                               (__z ^ __y)) < 0);                        \
-      case 3:  /* u = s + s */                                          \
-        return __truncated |                                            \
+      స్థితి 3:  /* u = s + s */                                          \
+        తిరిగి __truncated |                                            \
             ((__ckd_intmax_t)(((__z | __x) &  __y) |                    \
                               ((__z & __x) & ~__y)) < 0);               \
-      case 4:  /* s = u + u */                                          \
-        return __truncated | (__z < __x) | ((__ckd_intmax_t)__z < 0);   \
-      case 5:  /* s = u + s */                                          \
+      స్థితి 4:  /* s = u + u */                                          \
+        తిరిగి __truncated | (__z < __x) | ((__ckd_intmax_t)__z < 0);   \
+      స్థితి 5:  /* s = u + s */                                          \
         __y ^= __ckd_sign(__ckd_uintmax_t);                             \
-        return __truncated | (__x + __y < __y);                         \
-      case 6:  /* s = s + u */                                          \
+        తిరిగి __truncated | (__x + __y < __y);                         \
+      స్థితి 6:  /* s = s + u */                                          \
         __x ^= __ckd_sign(__ckd_uintmax_t);                             \
-        return __truncated | (__x + __y < __x);                         \
-      case 7:  /* s = s + s */                                          \
-        return __truncated |                                            \
+        తిరిగి __truncated | (__x + __y < __x);                         \
+      స్థితి 7:  /* s = s + s */                                          \
+        తిరిగి __truncated |                                            \
             ((__ckd_intmax_t)((__z ^ __x) &                             \
                               (__z ^ __y)) < 0);                        \
-      default:                                                          \
-        for (;;) (void)0;                                               \
+      అప్రమేయ:                                                          \
+        కొరకు (;;) (శూన్య)0;                                               \
     }                                                                   \
   }
 
-__ckd_declare_add(__ckd_add_schar, signed char)
-__ckd_declare_add(__ckd_add_uchar, unsigned char)
-__ckd_declare_add(__ckd_add_sshort, signed short)
-__ckd_declare_add(__ckd_add_ushort, unsigned short)
-__ckd_declare_add(__ckd_add_sint, signed int)
-__ckd_declare_add(__ckd_add_uint, unsigned int)
-__ckd_declare_add(__ckd_add_slong, signed long)
-__ckd_declare_add(__ckd_add_ulong, unsigned long)
-__ckd_declare_add(__ckd_add_slonger, signed long long)
-__ckd_declare_add(__ckd_add_ulonger, unsigned long long)
-#ifdef __ckd_have_int128
-__ckd_declare_add(__ckd_add_sint128, signed __int128)
-__ckd_declare_add(__ckd_add_uint128, unsigned __int128)
-#endif
+__ckd_declare_add(__ckd_add_schar, గుర్తుగల అక్షరం)
+__ckd_declare_add(__ckd_add_uchar, గుర్తులేని అక్షరం)
+__ckd_declare_add(__ckd_add_sshort, గుర్తుగల పొట్టి)
+__ckd_declare_add(__ckd_add_ushort, గుర్తులేని పొట్టి)
+__ckd_declare_add(__ckd_add_sint, గుర్తుగల పూర్ణాంకం)
+__ckd_declare_add(__ckd_add_uint, గుర్తులేని పూర్ణాంకం)
+__ckd_declare_add(__ckd_add_slong, గుర్తుగల దీర్ఘ)
+__ckd_declare_add(__ckd_add_ulong, గుర్తులేని దీర్ఘ)
+__ckd_declare_add(__ckd_add_slonger, గుర్తుగల దీర్ఘ దీర్ఘ)
+__ckd_declare_add(__ckd_add_ulonger, గుర్తులేని దీర్ఘ దీర్ఘ)
+#నిర్వచితమైతే __ckd_have_int128
+__ckd_declare_add(__ckd_add_sint128, గుర్తుగల __int128)
+__ckd_declare_add(__ckd_add_uint128, గుర్తులేని __int128)
+#అయితే_ముగింపు
 
-#define __ckd_declare_sub(S, T)                                         \
-  __ckd_inline char S(void *__res,                                      \
+#నిర్వచించు __ckd_declare_sub(S, T)                                         \
+  __ckd_inline అక్షరం S(శూన్య *__res,                                      \
                       __ckd_uintmax_t __x,                              \
                       __ckd_uintmax_t __y,                              \
-                      char __a_signed,                                  \
-                      char __b_signed) {                                \
+                      అక్షరం __a_signed,                                  \
+                      అక్షరం __b_signed) {                                \
     __ckd_uintmax_t __z = __x - __y;                                    \
     *(T *)__res = (T)__z;                                               \
-    char __truncated = 0;                                               \
-    if (sizeof(T) < sizeof(__ckd_intmax_t)) {                           \
+    అక్షరం __truncated = 0;                                               \
+    ఒకవేళ (పరిమాణం(T) < పరిమాణం(__ckd_intmax_t)) {                           \
       __truncated = __z != (__ckd_uintmax_t)(T)__z;                     \
     }                                                                   \
-    switch (__ckd_is_signed((T)0) << 2 |                                \
+    ఎంపిక (__ckd_is_signed((T)0) << 2 |                                \
             __a_signed << 1 | __b_signed) {                             \
-      case 0:  /* u = u - u */                                          \
-        return __truncated | (__x < __y);                               \
-      case 1:  /* u = u - s */                                          \
+      స్థితి 0:  /* u = u - u */                                          \
+        తిరిగి __truncated | (__x < __y);                               \
+      స్థితి 1:  /* u = u - s */                                          \
         __y ^= __ckd_sign(__ckd_uintmax_t);                             \
-        return __truncated |                                            \
+        తిరిగి __truncated |                                            \
             ((__ckd_intmax_t)((__x ^ __y) &                             \
                               (__z ^ __x)) < 0);                        \
-      case 2:  /* u = s - u */                                          \
-        return __truncated | (__y > __x) | ((__ckd_intmax_t)__x < 0);   \
-      case 3:  /* u = s - s */                                          \
-        return __truncated |                                            \
+      స్థితి 2:  /* u = s - u */                                          \
+        తిరిగి __truncated | (__y > __x) | ((__ckd_intmax_t)__x < 0);   \
+      స్థితి 3:  /* u = s - s */                                          \
+        తిరిగి __truncated |                                            \
             ((__ckd_intmax_t)(((__z & __x) &  __y) |                    \
                               ((__z | __x) & ~__y)) < 0);               \
-      case 4:  /* s = u - u */                                          \
-        return __truncated | ((__x < __y) ^ ((__ckd_intmax_t)__z < 0)); \
-      case 5:  /* s = u - s */                                          \
+      స్థితి 4:  /* s = u - u */                                          \
+        తిరిగి __truncated | ((__x < __y) ^ ((__ckd_intmax_t)__z < 0)); \
+      స్థితి 5:  /* s = u - s */                                          \
         __y ^= __ckd_sign(__ckd_uintmax_t);                             \
-        return __truncated | (__x >= __y);                              \
-      case 6:  /* s = s - u */                                          \
+        తిరిగి __truncated | (__x >= __y);                              \
+      స్థితి 6:  /* s = s - u */                                          \
         __x ^= __ckd_sign(__ckd_uintmax_t);                             \
-        return __truncated | (__x < __y);                               \
-      case 7:  /* s = s - s */                                          \
-        return __truncated |                                            \
+        తిరిగి __truncated | (__x < __y);                               \
+      స్థితి 7:  /* s = s - s */                                          \
+        తిరిగి __truncated |                                            \
             ((__ckd_intmax_t)((__x ^ __y) &                             \
                               (__z ^ __x)) < 0);                        \
-      default:                                                          \
-        for (;;) (void)0;                                               \
+      అప్రమేయ:                                                          \
+        కొరకు (;;) (శూన్య)0;                                               \
     }                                                                   \
   }
 
-__ckd_declare_sub(__ckd_sub_schar, signed char)
-__ckd_declare_sub(__ckd_sub_uchar, unsigned char)
-__ckd_declare_sub(__ckd_sub_sshort, signed short)
-__ckd_declare_sub(__ckd_sub_ushort, unsigned short)
-__ckd_declare_sub(__ckd_sub_sint, signed int)
-__ckd_declare_sub(__ckd_sub_uint, unsigned int)
-__ckd_declare_sub(__ckd_sub_slong, signed long)
-__ckd_declare_sub(__ckd_sub_ulong, unsigned long)
-__ckd_declare_sub(__ckd_sub_slonger, signed long long)
-__ckd_declare_sub(__ckd_sub_ulonger, unsigned long long)
-#ifdef __ckd_have_int128
-__ckd_declare_sub(__ckd_sub_sint128, signed __int128)
-__ckd_declare_sub(__ckd_sub_uint128, unsigned __int128)
-#endif
+__ckd_declare_sub(__ckd_sub_schar, గుర్తుగల అక్షరం)
+__ckd_declare_sub(__ckd_sub_uchar, గుర్తులేని అక్షరం)
+__ckd_declare_sub(__ckd_sub_sshort, గుర్తుగల పొట్టి)
+__ckd_declare_sub(__ckd_sub_ushort, గుర్తులేని పొట్టి)
+__ckd_declare_sub(__ckd_sub_sint, గుర్తుగల పూర్ణాంకం)
+__ckd_declare_sub(__ckd_sub_uint, గుర్తులేని పూర్ణాంకం)
+__ckd_declare_sub(__ckd_sub_slong, గుర్తుగల దీర్ఘ)
+__ckd_declare_sub(__ckd_sub_ulong, గుర్తులేని దీర్ఘ)
+__ckd_declare_sub(__ckd_sub_slonger, గుర్తుగల దీర్ఘ దీర్ఘ)
+__ckd_declare_sub(__ckd_sub_ulonger, గుర్తులేని దీర్ఘ దీర్ఘ)
+#నిర్వచితమైతే __ckd_have_int128
+__ckd_declare_sub(__ckd_sub_sint128, గుర్తుగల __int128)
+__ckd_declare_sub(__ckd_sub_uint128, గుర్తులేని __int128)
+#అయితే_ముగింపు
 
-#define __ckd_declare_mul(S, T)                                 \
-  __ckd_inline char S(void *__res,                              \
+#నిర్వచించు __ckd_declare_mul(S, T)                                 \
+  __ckd_inline అక్షరం S(శూన్య *__res,                              \
                       __ckd_uintmax_t __x,                      \
                       __ckd_uintmax_t __y,                      \
-                      char __a_signed,                          \
-                      char __b_signed) {                        \
-    switch (__ckd_is_signed((T)0) << 2 |                        \
+                      అక్షరం __a_signed,                          \
+                      అక్షరం __b_signed) {                        \
+    ఎంపిక (__ckd_is_signed((T)0) << 2 |                        \
             __a_signed << 1 | __b_signed) {                     \
-      case 0: {  /* u = u * u */                                \
+      స్థితి 0: {  /* u = u * u */                                \
         __ckd_uintmax_t __z = __x * __y;                        \
-        int __o = __x && __z / __x != __y;                      \
+        పూర్ణాంకం __o = __x && __z / __x != __y;                      \
         *(T *)__res = (T)__z;                                   \
-        return (char)                                           \
-               (__o | (sizeof(T) < sizeof(__z) &&               \
+        తిరిగి (అక్షరం)                                           \
+               (__o | (పరిమాణం(T) < పరిమాణం(__z) &&               \
                        __z != (__ckd_uintmax_t)*(T *)__res));   \
       }                                                         \
-      case 1: {  /* u = u * s */                                \
+      స్థితి 1: {  /* u = u * s */                                \
         __ckd_uintmax_t __z = __x * __y;                        \
-        int __o = __x && __z / __x != __y;                      \
+        పూర్ణాంకం __o = __x && __z / __x != __y;                      \
         *(T *)__res = (T)__z;                                   \
-        return (char)                                           \
+        తిరిగి (అక్షరం)                                           \
                (__o | (((__ckd_intmax_t)__y < 0) & !!__x) |     \
-                (sizeof(T) < sizeof(__z) &&                     \
+                (పరిమాణం(T) < పరిమాణం(__z) &&                     \
                  __z != (__ckd_uintmax_t)*(T *)__res));         \
       }                                                         \
-      case 2: {  /* u = s * u */                                \
+      స్థితి 2: {  /* u = s * u */                                \
         __ckd_uintmax_t __z = __x * __y;                        \
-        int __o = __x && __z / __x != __y;                      \
+        పూర్ణాంకం __o = __x && __z / __x != __y;                      \
         *(T *)__res = (T)__z;                                   \
-        return (char)                                           \
+        తిరిగి (అక్షరం)                                           \
                (__o | (((__ckd_intmax_t)__x < 0) & !!__y) |     \
-                (sizeof(T) < sizeof(__z) &&                     \
+                (పరిమాణం(T) < పరిమాణం(__z) &&                     \
                  __z != (__ckd_uintmax_t)*(T *)__res));         \
       }                                                         \
-      case 3: {  /* u = s * s */                                \
-        int __o = 0;                                            \
-        if ((__ckd_intmax_t)(__x & __y) < 0) {                  \
+      స్థితి 3: {  /* u = s * s */                                \
+        పూర్ణాంకం __o = 0;                                            \
+        ఒకవేళ ((__ckd_intmax_t)(__x & __y) < 0) {                  \
           __x = 0 - __x;                                        \
           __y = 0 - __y;                                        \
-        } else if ((__ckd_intmax_t)(__x ^ __y) < 0) {           \
+        } లేకపోతే ఒకవేళ ((__ckd_intmax_t)(__x ^ __y) < 0) {           \
           __o = __x && __y;                                     \
         }                                                       \
         __ckd_uintmax_t __z = __x * __y;                        \
         __o |= __x && __z / __x != __y;                         \
         *(T *)__res = (T)__z;                                   \
-        return (char)                                           \
-               (__o | (sizeof(T) < sizeof(__z) &&               \
+        తిరిగి (అక్షరం)                                           \
+               (__o | (పరిమాణం(T) < పరిమాణం(__z) &&               \
                        __z != (__ckd_uintmax_t)*(T *)__res));   \
       }                                                         \
-      case 4: {  /* s = u * u */                                \
+      స్థితి 4: {  /* s = u * u */                                \
         __ckd_uintmax_t __z = __x * __y;                        \
-        int __o = __x && __z / __x != __y;                      \
+        పూర్ణాంకం __o = __x && __z / __x != __y;                      \
         *(T *)__res = (T)__z;                                   \
-        return (char)                                           \
+        తిరిగి (అక్షరం)                                           \
                (__o | ((__ckd_intmax_t)(__z) < 0) |             \
-                (sizeof(T) < sizeof(__z) &&                     \
+                (పరిమాణం(T) < పరిమాణం(__z) &&                     \
                  __z != (__ckd_uintmax_t)*(T *)__res));         \
       }                                                         \
-      case 5: {  /* s = u * s */                                \
+      స్థితి 5: {  /* s = u * s */                                \
         __ckd_uintmax_t __t = 0 - __y;                          \
         __t = (__ckd_intmax_t)(__t) < 0 ? __y : __t;            \
         __ckd_uintmax_t __p = __t * __x;                        \
-        int __o = __t && __p / __t != __x;                      \
-        int __n = (__ckd_intmax_t)__y < 0;                      \
+        పూర్ణాంకం __o = __t && __p / __t != __x;                      \
+        పూర్ణాంకం __n = (__ckd_intmax_t)__y < 0;                      \
         __ckd_uintmax_t __z = __n ? 0 - __p : __p;              \
         *(T *)__res = (T)__z;                                   \
         __ckd_uintmax_t __m = __ckd_sign(__ckd_uintmax_t) - 1;  \
-        return (char)                                           \
+        తిరిగి (అక్షరం)                                           \
                (__o | (__p > __m + __n) |                       \
-                (sizeof(T) < sizeof(__z) &&                     \
+                (పరిమాణం(T) < పరిమాణం(__z) &&                     \
                  __z != (__ckd_uintmax_t)*(T *)__res));         \
       }                                                         \
-      case 6: {  /* s = s * u */                                \
+      స్థితి 6: {  /* s = s * u */                                \
         __ckd_uintmax_t __t = 0 - __x;                          \
         __t = (__ckd_intmax_t)(__t) < 0 ? __x : __t;            \
         __ckd_uintmax_t __p = __t * __y;                        \
-        int __o = __t && __p / __t != __y;                      \
-        int __n = (__ckd_intmax_t)__x < 0;                      \
+        పూర్ణాంకం __o = __t && __p / __t != __y;                      \
+        పూర్ణాంకం __n = (__ckd_intmax_t)__x < 0;                      \
         __ckd_uintmax_t __z = __n ? 0 - __p : __p;              \
         *(T *)__res = (T)__z;                                   \
         __ckd_uintmax_t __m = __ckd_sign(__ckd_uintmax_t) - 1;  \
-        return (char)                                           \
+        తిరిగి (అక్షరం)                                           \
                (__o | (__p > __m + __n) |                       \
-                (sizeof(T) < sizeof(__z) &&                     \
+                (పరిమాణం(T) < పరిమాణం(__z) &&                     \
                  __z != (__ckd_uintmax_t)*(T *)__res));         \
       }                                                         \
-      case 7: {  /* s = s * s */                                \
+      స్థితి 7: {  /* s = s * s */                                \
         __ckd_uintmax_t __z = __x * __y;                        \
         *(T *)__res = (T)__z;                                   \
-        return (char)                                           \
+        తిరిగి (అక్షరం)                                           \
                (((((__ckd_intmax_t)__y < 0) &&                  \
                   (__x == __ckd_sign(__ckd_uintmax_t))) ||      \
                  (__y && (((__ckd_intmax_t)__z /                \
                            (__ckd_intmax_t)__y) !=              \
                           (__ckd_intmax_t)__x))) |              \
-                (sizeof(T) < sizeof(__z) &&                     \
+                (పరిమాణం(T) < పరిమాణం(__z) &&                     \
                  __z != (__ckd_uintmax_t)*(T *)__res));         \
       }                                                         \
-      default:                                                  \
-        for (;;) (void)0;                                       \
+      అప్రమేయ:                                                  \
+        కొరకు (;;) (శూన్య)0;                                       \
     }                                                           \
   }
 
-__ckd_declare_mul(__ckd_mul_schar, signed char)
-__ckd_declare_mul(__ckd_mul_uchar, unsigned char)
-__ckd_declare_mul(__ckd_mul_sshort, signed short)
-__ckd_declare_mul(__ckd_mul_ushort, unsigned short)
-__ckd_declare_mul(__ckd_mul_sint, signed int)
-__ckd_declare_mul(__ckd_mul_uint, unsigned int)
-__ckd_declare_mul(__ckd_mul_slong, signed long)
-__ckd_declare_mul(__ckd_mul_ulong, unsigned long)
-__ckd_declare_mul(__ckd_mul_slonger, signed long long)
-__ckd_declare_mul(__ckd_mul_ulonger, unsigned long long)
-#ifdef __ckd_have_int128
-__ckd_declare_mul(__ckd_mul_sint128, signed __int128)
-__ckd_declare_mul(__ckd_mul_uint128, unsigned __int128)
-#endif
+__ckd_declare_mul(__ckd_mul_schar, గుర్తుగల అక్షరం)
+__ckd_declare_mul(__ckd_mul_uchar, గుర్తులేని అక్షరం)
+__ckd_declare_mul(__ckd_mul_sshort, గుర్తుగల పొట్టి)
+__ckd_declare_mul(__ckd_mul_ushort, గుర్తులేని పొట్టి)
+__ckd_declare_mul(__ckd_mul_sint, గుర్తుగల పూర్ణాంకం)
+__ckd_declare_mul(__ckd_mul_uint, గుర్తులేని పూర్ణాంకం)
+__ckd_declare_mul(__ckd_mul_slong, గుర్తుగల దీర్ఘ)
+__ckd_declare_mul(__ckd_mul_ulong, గుర్తులేని దీర్ఘ)
+__ckd_declare_mul(__ckd_mul_slonger, గుర్తుగల దీర్ఘ దీర్ఘ)
+__ckd_declare_mul(__ckd_mul_ulonger, గుర్తులేని దీర్ఘ దీర్ఘ)
+#నిర్వచితమైతే __ckd_have_int128
+__ckd_declare_mul(__ckd_mul_sint128, గుర్తుగల __int128)
+__ckd_declare_mul(__ckd_mul_uint128, గుర్తులేని __int128)
+#అయితే_ముగింపు
 
-#else
-#ifdef _MSC_VER
-#pragma warning("checked integer arithmetic unsupported in this environment")
-#else
-#pragma GCC warning "checked integer arithmetic unsupported in this environment"
-#endif
+#లేకపోతే
+#నిర్వచితమైతే _MSC_VER
+#సూచన warning("checked integer arithmetic unsupported in this environment")
+#లేకపోతే
+#సూచన GCC warning "checked integer arithmetic unsupported in this environment"
+#అయితే_ముగింపు
 
-#define ckd_add(res, x, y) (*(res) = (x) + (y), 0)
-#define ckd_sub(res, x, y) (*(res) = (x) - (y), 0)
-#define ckd_mul(res, x, y) (*(res) = (x) * (y), 0)
+#నిర్వచించు ckd_కూడు(res, x, y) (*(res) = (x) + (y), 0)
+#నిర్వచించు ckd_sub(res, x, y) (*(res) = (x) - (y), 0)
+#నిర్వచించు ckd_mul(res, x, y) (*(res) = (x) * (y), 0)
 
-#endif /* GNU */
-#endif /* stdckdint.h */
+#అయితే_ముగింపు /* GNU */
+#అయితే_ముగింపు /* stdckdint.h */

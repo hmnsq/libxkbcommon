@@ -9,27 +9,27 @@
  * SPDX-License-Identifier: MIT-open-group AND HPND
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include <assert.h>
-#include <string.h>
+#అన్తర్భావ <assert.h>
+#అన్తర్భావ <string.h>
 
-#include "atom.h"
-#include "darray.h"
-#include "utils.h"
+#అన్తర్భావ "atom.h"
+#అన్తర్భావ "darray.h"
+#అన్తర్భావ "utils.h"
 
 /* FNV-1a (http://www.isthe.com/chongo/tech/comp/fnv/). */
-static inline uint32_t
-hash_buf(const char *string, size_t len)
+స్థిర అంతఃవరుస uint32_t
+hash_buf(స్థిరరాశి అక్షరం *string, కొలత_t len)
 {
     uint32_t hash = UINT32_C(2166136261);
-    for (size_t i = 0; i < (len + 1) / 2; i++) {
+    కొరకు (కొలత_t i = 0; i < (len + 1) / 2; i++) {
         hash ^= (uint8_t) string[i];
         hash *= 0x01000193;
         hash ^= (uint8_t) string[len - 1 - i];
         hash *= 0x01000193;
     }
-    return hash;
+    తిరిగి hash;
 }
 
 /*
@@ -37,109 +37,109 @@ hash_buf(const char *string, size_t len)
  * mapping strings to atoms. Another array maps the atoms to
  * strings. The atom value is the position in the strings array.
  */
-struct atom_table {
-    xkb_atom_t *index;
-    size_t index_size;
-    darray(char *) strings;
+నిర్మాణం atom_పట్టిక {
+    xkb_atom_t *సూచీ;
+    కొలత_t సూచీ_కొలత;
+    darray(అక్షరం *) అక్షరశ్రేణులు;
 };
 
-struct atom_table *
-atom_table_new(void)
+నిర్మాణం atom_పట్టిక *
+atom_పట్టిక_new(శూన్య)
 {
-    struct atom_table *table = calloc(1, sizeof(*table));
-    if (!table)
-        return NULL;
+    నిర్మాణం atom_పట్టిక *పట్టిక = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*పట్టిక));
+    ఒకవేళ (!పట్టిక)
+        తిరిగి ఖాళీ;
 
-    darray_init(table->strings);
-    darray_append(table->strings, NULL);
-    table->index_size = 4;
-    table->index = calloc(table->index_size, sizeof(*table->index));
+    darray_init(పట్టిక->అక్షరశ్రేణులు);
+    darray_append(పట్టిక->అక్షరశ్రేణులు, ఖాళీ);
+    పట్టిక->సూచీ_కొలత = 4;
+    పట్టిక->సూచీ = సున్నా_జ్ఞాపకం_ఇవ్వు(పట్టిక->సూచీ_కొలత, పరిమాణం(*పట్టిక->సూచీ));
 
-    return table;
+    తిరిగి పట్టిక;
 }
 
-void
-atom_table_free(struct atom_table *table)
+శూన్య
+atom_పట్టిక_free(నిర్మాణం atom_పట్టిక *పట్టిక)
 {
-    if (!table)
-        return;
+    ఒకవేళ (!పట్టిక)
+        తిరిగి;
 
-    char **string;
-    darray_foreach(string, table->strings)
-        free(*string);
-    darray_free(table->strings);
-    free(table->index);
-    free(table);
+    అక్షరం **string;
+    darray_foreach(string, పట్టిక->అక్షరశ్రేణులు)
+        విడుదల(*string);
+    darray_free(పట్టిక->అక్షరశ్రేణులు);
+    విడుదల(పట్టిక->సూచీ);
+    విడుదల(పట్టిక);
 }
 
-darray_size_t
-atom_table_size(struct atom_table *table)
+darray_కొలత_t
+atom_పట్టిక_కొలత(నిర్మాణం atom_పట్టిక *పట్టిక)
 {
-    return darray_size(table->strings);
+    తిరిగి darray_కొలత(పట్టిక->అక్షరశ్రేణులు);
 }
 
-const char *
-atom_text(struct atom_table *table, xkb_atom_t atom)
+స్థిరరాశి అక్షరం *
+atom_పాఠ్యం(నిర్మాణం atom_పట్టిక *పట్టిక, xkb_atom_t atom)
 {
-    assert(atom < darray_size(table->strings));
-    return darray_item(table->strings, atom);
+    ప్రతిజ్ఞా(atom < darray_కొలత(పట్టిక->అక్షరశ్రేణులు));
+    తిరిగి darray_అంశం(పట్టిక->అక్షరశ్రేణులు, atom);
 }
 
 xkb_atom_t
-atom_intern(struct atom_table *table, const char *string, size_t len, bool add)
+atom_intern(నిర్మాణం atom_పట్టిక *పట్టిక, స్థిరరాశి అక్షరం *string, కొలత_t len, bool కూడు)
 {
     /* len(string) > 0.8 * index_size */
-    if (darray_size(table->strings) > (table->index_size / 5) * 4) {
-        table->index_size *= 2;
-        xkb_atom_t *tmp = realloc(table->index,
-                                  table->index_size * sizeof(*table->index));
-        if (!tmp)
-            return XKB_ATOM_NONE;
-        table->index = tmp;
-        memset(table->index, 0, table->index_size * sizeof(*table->index));
-        for (darray_size_t j = 1; j < darray_size(table->strings); j++) {
-            const char *s = darray_item(table->strings, j);
-            uint32_t hash = hash_buf(s, strlen(s));
-            for (size_t i = 0; i < table->index_size; i++) {
-                size_t index_pos = (hash + i) & (table->index_size - 1);
-                if (index_pos == 0)
-                    continue;
+    ఒకవేళ (darray_కొలత(పట్టిక->అక్షరశ్రేణులు) > (పట్టిక->సూచీ_కొలత / 5) * 4) {
+        పట్టిక->సూచీ_కొలత *= 2;
+        xkb_atom_t *tmp = realloc(పట్టిక->సూచీ,
+                                  పట్టిక->సూచీ_కొలత * పరిమాణం(*పట్టిక->సూచీ));
+        ఒకవేళ (!tmp)
+            తిరిగి XKB_ATOM_NONE;
+        పట్టిక->సూచీ = tmp;
+        memset(పట్టిక->సూచీ, 0, పట్టిక->సూచీ_కొలత * పరిమాణం(*పట్టిక->సూచీ));
+        కొరకు (darray_కొలత_t j = 1; j < darray_కొలత(పట్టిక->అక్షరశ్రేణులు); j++) {
+            స్థిరరాశి అక్షరం *s = darray_అంశం(పట్టిక->అక్షరశ్రేణులు, j);
+            uint32_t hash = hash_buf(s, అక్షరశ్రేణి_పొడవు(s));
+            కొరకు (కొలత_t i = 0; i < పట్టిక->సూచీ_కొలత; i++) {
+                కొలత_t సూచీ_pos = (hash + i) & (పట్టిక->సూచీ_కొలత - 1);
+                ఒకవేళ (సూచీ_pos == 0)
+                    కొనసాగు;
 
-                xkb_atom_t atom = table->index[index_pos];
-                if (atom == XKB_ATOM_NONE) {
-                    table->index[index_pos] = j;
-                    break;
+                xkb_atom_t atom = పట్టిక->సూచీ[సూచీ_pos];
+                ఒకవేళ (atom == XKB_ATOM_NONE) {
+                    పట్టిక->సూచీ[సూచీ_pos] = j;
+                    ఆపు;
                 }
             }
         }
     }
 
     uint32_t hash = hash_buf(string, len);
-    for (size_t i = 0; i < table->index_size; i++) {
-        size_t index_pos = (hash + i) & (table->index_size - 1);
-        if (index_pos == 0)
-            continue;
+    కొరకు (కొలత_t i = 0; i < పట్టిక->సూచీ_కొలత; i++) {
+        కొలత_t సూచీ_pos = (hash + i) & (పట్టిక->సూచీ_కొలత - 1);
+        ఒకవేళ (సూచీ_pos == 0)
+            కొనసాగు;
 
-        xkb_atom_t existing_atom = table->index[index_pos];
-        if (existing_atom == XKB_ATOM_NONE) {
-            if (add) {
-                xkb_atom_t new_atom = darray_size(table->strings);
-                char *s = strndup(string, len);
-                if (!s)
-                    return XKB_ATOM_NONE;
-                darray_append(table->strings, s);
-                table->index[index_pos] = new_atom;
-                return new_atom;
-            } else {
-                return XKB_ATOM_NONE;
+        xkb_atom_t existing_atom = పట్టిక->సూచీ[సూచీ_pos];
+        ఒకవేళ (existing_atom == XKB_ATOM_NONE) {
+            ఒకవేళ (కూడు) {
+                xkb_atom_t new_atom = darray_కొలత(పట్టిక->అక్షరశ్రేణులు);
+                అక్షరం *s = strndup(string, len);
+                ఒకవేళ (!s)
+                    తిరిగి XKB_ATOM_NONE;
+                darray_append(పట్టిక->అక్షరశ్రేణులు, s);
+                పట్టిక->సూచీ[సూచీ_pos] = new_atom;
+                తిరిగి new_atom;
+            } లేకపోతే {
+                తిరిగి XKB_ATOM_NONE;
             }
         }
 
-        const char *existing_value = darray_item(table->strings, existing_atom);
-        if (strncmp(existing_value, string, len) == 0 && existing_value[len] == '\0')
-            return existing_atom;
+        స్థిరరాశి అక్షరం *existing_విలువ = darray_అంశం(పట్టిక->అక్షరశ్రేణులు, existing_atom);
+        ఒకవేళ (అక్షరశ్రేణి_పోలిక(existing_విలువ, string, len) == 0 && existing_విలువ[len] == '\0')
+            తిరిగి existing_atom;
     }
 
-    assert(!"couldn't find an empty slot during probing");
-    return XKB_ATOM_NONE;
+    ప్రతిజ్ఞా(!"couldn't find an empty slot during probing");
+    తిరిగి XKB_ATOM_NONE;
 }

@@ -3,29 +3,29 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include <locale.h>
+#అన్తర్భావ <locale.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "messages-codes.h"
-#include "utils.h"
-#include "util-paths.h"
-#include "context.h"
-#include "paths.h"
+#అన్తర్భావ "xkbcommon/xkbcommon.h"
+#అన్తర్భావ "messages-codes.h"
+#అన్తర్భావ "utils.h"
+#అన్తర్భావ "util-paths.h"
+#అన్తర్భావ "context.h"
+#అన్తర్భావ "paths.h"
 
-enum resolve_name_direction {
-    LEFT_TO_RIGHT,
-    RIGHT_TO_LEFT,
+గణన resolve_name_direction {
+    ఎడమ_గమ్యం_కుడి,
+    కుడి_గమ్యం_ఎడమ,
 };
 
-const char *
-get_xlocaledir_path(struct xkb_context *ctx)
+స్థిరరాశి అక్షరం *
+get_xlocaledir_మార్గం(నిర్మాణం xkb_context *ctx)
 {
-    const char *dir = xkb_context_getenv(ctx, "XLOCALEDIR");
-    if (!dir)
+    స్థిరరాశి అక్షరం *dir = xkb_context_getenv(ctx, "XLOCALEDIR");
+    ఒకవేళ (!dir)
         dir = XLOCALEDIR;
-    return dir;
+    తిరిగి dir;
 }
 
 /*
@@ -33,142 +33,142 @@ get_xlocaledir_path(struct xkb_context *ctx)
  * such a file and return its matching value, according to @direction.
  * @filename is relative to the xlocaledir.
  */
-static char *
-resolve_name(struct xkb_context *ctx, const char *filename,
-             enum resolve_name_direction direction, const char *name)
+స్థిర అక్షరం *
+resolve_name(నిర్మాణం xkb_context *ctx, స్థిరరాశి అక్షరం *filename,
+             గణన resolve_name_direction direction, స్థిరరాశి అక్షరం *name)
 {
-    int ret;
+    పూర్ణాంకం ret;
     bool ok;
-    const char *xlocaledir;
-    char path[512];
+    స్థిరరాశి అక్షరం *xlocaledir;
+    అక్షరం మార్గం[512];
     FILE *file;
-    char *string;
-    size_t string_size;
-    const char *end;
-    const char *s, *left, *right;
-    char *match;
-    size_t left_len, right_len, name_len;
+    అక్షరం *string;
+    కొలత_t string_కొలత;
+    స్థిరరాశి అక్షరం *చివర;
+    స్థిరరాశి అక్షరం *s, *ఎడమ, *కుడి;
+    అక్షరం *సరిపోలిక;
+    కొలత_t ఎడమ_len, కుడి_len, name_len;
 
-    xlocaledir = get_xlocaledir_path(ctx);
+    xlocaledir = get_xlocaledir_మార్గం(ctx);
 
-    ret = snprintf(path, sizeof(path), "%s/%s", xlocaledir, filename);
-    if (ret < 0 || (size_t) ret >= sizeof(path))
-        return NULL;
+    ret = snprintf(మార్గం, పరిమాణం(మార్గం), "%s/%s", xlocaledir, filename);
+    ఒకవేళ (ret < 0 || (కొలత_t) ret >= పరిమాణం(మార్గం))
+        తిరిగి ఖాళీ;
 
-    file = fopen(path, "rb");
-    if (!file)
-        return NULL;
+    file = fopen(మార్గం, "rb");
+    ఒకవేళ (!file)
+        తిరిగి ఖాళీ;
 
-    ok = map_file(file, &string, &string_size);
+    ok = map_file(file, &string, &string_కొలత);
     fclose(file);
-    if (!ok)
-        return NULL;
+    ఒకవేళ (!ok)
+        తిరిగి ఖాళీ;
 
     s = string;
-    end = string + string_size;
-    name_len = strlen(name);
-    match = NULL;
+    చివర = string + string_కొలత;
+    name_len = అక్షరశ్రేణి_పొడవు(name);
+    సరిపోలిక = ఖాళీ;
 
-    while (s < end) {
+    అయితే (s < చివర) {
         /* Skip spaces. */
-        while (s < end && is_space(*s))
+        అయితే (s < చివర && is_space(*s))
             s++;
 
         /* Skip comments. */
-        if (s < end && *s == '#') {
-            while (s < end && *s != '\n')
+        ఒకవేళ (s < చివర && *s == '#') {
+            అయితే (s < చివర && *s != '\n')
                 s++;
-            continue;
+            కొనసాగు;
         }
 
         /* Get the left value. */
-        left = s;
-        while (s < end && !is_space(*s) && *s != ':')
+        ఎడమ = s;
+        అయితే (s < చివర && !is_space(*s) && *s != ':')
             s++;
-        left_len = (size_t)(s - left);
+        ఎడమ_len = (కొలత_t)(s - ఎడమ);
 
         /* There's an optional colon between left and right. */
-        if (s < end && *s == ':')
+        ఒకవేళ (s < చివర && *s == ':')
             s++;
 
         /* Skip spaces. */
-        while (s < end && is_space(*s))
+        అయితే (s < చివర && is_space(*s))
             s++;
 
         /* Get the right value. */
-        right = s;
-        while (s < end && !is_space(*s))
+        కుడి = s;
+        అయితే (s < చివర && !is_space(*s))
             s++;
-        right_len = (size_t)(s - right);
+        కుడి_len = (కొలత_t)(s - కుడి);
 
         /* Discard rest of line. */
-        while (s < end && *s != '\n')
+        అయితే (s < చివర && *s != '\n')
             s++;
 
-        if (direction == LEFT_TO_RIGHT) {
-            if (left_len == name_len && memcmp(left, name, left_len) == 0) {
-                match = strndup(right, right_len);
-                break;
+        ఒకవేళ (direction == ఎడమ_గమ్యం_కుడి) {
+            ఒకవేళ (ఎడమ_len == name_len && memcmp(ఎడమ, name, ఎడమ_len) == 0) {
+                సరిపోలిక = strndup(కుడి, కుడి_len);
+                ఆపు;
             }
-        } else if (direction == RIGHT_TO_LEFT &&
-                   right_len == name_len &&
-                   memcmp(right, name, right_len) == 0) {
-            match = strndup(left, left_len);
-            break;
+        } లేకపోతే ఒకవేళ (direction == కుడి_గమ్యం_ఎడమ &&
+                   కుడి_len == name_len &&
+                   memcmp(కుడి, name, కుడి_len) == 0) {
+            సరిపోలిక = strndup(ఎడమ, ఎడమ_len);
+            ఆపు;
         }
     }
 
-    unmap_file(string, string_size);
-    return match;
+    unmap_file(string, string_కొలత);
+    తిరిగి సరిపోలిక;
 }
 
-char *
-resolve_locale(struct xkb_context *ctx, const char *locale)
+అక్షరం *
+resolve_locale(నిర్మాణం xkb_context *ctx, స్థిరరాశి అక్షరం *locale)
 {
-    char *alias = resolve_name(ctx, "locale.alias", LEFT_TO_RIGHT, locale);
-    return alias ? alias : strdup(locale);
+    అక్షరం *alias = resolve_name(ctx, "locale.alias", ఎడమ_గమ్యం_కుడి, locale);
+    తిరిగి alias ? alias : strdup(locale);
 }
 
-char *
-get_xcomposefile_path(struct xkb_context *ctx)
+అక్షరం *
+get_xcomposefile_మార్గం(నిర్మాణం xkb_context *ctx)
 {
-    return strdup_safe(xkb_context_getenv(ctx, "XCOMPOSEFILE"));
+    తిరిగి strdup_సురక్షిత(xkb_context_getenv(ctx, "XCOMPOSEFILE"));
 }
 
-char *
-get_xdg_xcompose_file_path(struct xkb_context *ctx)
+అక్షరం *
+get_xdg_xcompose_file_మార్గం(నిర్మాణం xkb_context *ctx)
 {
-    const char *xdg_config_home;
-    const char *home;
+    స్థిరరాశి అక్షరం *xdg_config_home;
+    స్థిరరాశి అక్షరం *home;
 
     xdg_config_home = xkb_context_getenv(ctx, "XDG_CONFIG_HOME");
-    if (!xdg_config_home || !is_absolute_path(xdg_config_home)) {
+    ఒకవేళ (!xdg_config_home || !is_absolute_మార్గం(xdg_config_home)) {
         home = xkb_context_getenv(ctx, "HOME");
-        if (!home)
-            return NULL;
-        return asprintf_safe("%s/.config/XCompose", home);
+        ఒకవేళ (!home)
+            తిరిగి ఖాళీ;
+        తిరిగి asprintf_సురక్షిత("%s/.config/XCompose", home);
     }
 
-    return asprintf_safe("%s/XCompose", xdg_config_home);
+    తిరిగి asprintf_సురక్షిత("%s/XCompose", xdg_config_home);
 }
 
-char *
-get_home_xcompose_file_path(struct xkb_context *ctx)
+అక్షరం *
+get_home_xcompose_file_మార్గం(నిర్మాణం xkb_context *ctx)
 {
-    const char *home;
+    స్థిరరాశి అక్షరం *home;
 
     home = xkb_context_getenv(ctx, "HOME");
-    if (!home)
-        return NULL;
+    ఒకవేళ (!home)
+        తిరిగి ఖాళీ;
 
-    return asprintf_safe("%s/.XCompose", home);
+    తిరిగి asprintf_సురక్షిత("%s/.XCompose", home);
 }
 
-char *
-get_locale_compose_file_path(struct xkb_context *ctx, const char *locale)
+అక్షరం *
+get_locale_compose_file_మార్గం(నిర్మాణం xkb_context *ctx, స్థిరరాశి అక్షరం *locale)
 {
-    char *resolved;
-    char *path;
+    అక్షరం *resolved;
+    అక్షరం *మార్గం;
 
     /*
      * WARNING: Random workaround ahead.
@@ -181,14 +181,14 @@ get_locale_compose_file_path(struct xkb_context *ctx, const char *locale)
      * is UTF-8 based, and since 99% of the time a C locale is really just
      * a misconfiguration for UTF-8, let's do the most helpful thing.
      */
-    static const char * const fallback = "en_US.UTF-8";
-    static const char * const registry = "compose.dir";
-    if (streq(locale, "C"))
+    స్థిర స్థిరరాశి అక్షరం * స్థిరరాశి fallback = "en_US.UTF-8";
+    స్థిర స్థిరరాశి అక్షరం * స్థిరరాశి registry = "compose.dir";
+    ఒకవేళ (streq(locale, "C"))
         locale = fallback;
 
-    resolved = resolve_name(ctx, registry, RIGHT_TO_LEFT, locale);
-    if (!resolved) {
-#if HAVE_NEWLOCALE
+    resolved = resolve_name(ctx, registry, కుడి_గమ్యం_ఎడమ, locale);
+    ఒకవేళ (!resolved) {
+#ఒకవేళ HAVE_NEWLOCALE
         /*
          * There is no extension mechanism for X11 Compose locales.
          * Instead of failing, we just use `en_US.UTF-8` as a fallback because
@@ -197,42 +197,42 @@ get_locale_compose_file_path(struct xkb_context *ctx, const char *locale)
          * so that we can catch missing system locales and typos.
          */
         locale_t loc = newlocale(LC_ALL_MASK, locale, (locale_t) 0);
-        if (loc == (locale_t) 0) {
+        ఒకవేళ (loc == (locale_t) 0) {
             log_err(ctx, XKB_ERROR_INVALID_COMPOSE_LOCALE,
                     "No Compose file for locale \"%s\": "
                     "locale is either invalid or not installed\n", locale);
-            return NULL;
-        } else {
+            తిరిగి ఖాళీ;
+        } లేకపోతే {
             /*
              * The locale is legit but have no entry in the X11 Compose registry,
              * so use the `en_US.UTF-8` fallback.
              */
             freelocale(loc);
-            resolved = resolve_name(ctx, registry, RIGHT_TO_LEFT, fallback);
-            if (!resolved) {
+            resolved = resolve_name(ctx, registry, కుడి_గమ్యం_ఎడమ, fallback);
+            ఒకవేళ (!resolved) {
                 log_err(ctx, XKB_ERROR_INVALID_COMPOSE_LOCALE,
                         "No Compose file for locale \"%s\": "
                         "failed to use fallback \"%s\"\n", locale, fallback);
-                return NULL;
-            } else {
+                తిరిగి ఖాళీ;
+            } లేకపోతే {
                 log_warn(ctx, XKB_ERROR_INVALID_COMPOSE_LOCALE,
                          "No Compose file for locale \"%s\": "
                          "using locale fallback \"%s\"\n", locale, fallback);
             }
         }
-#else
-        return NULL;
-#endif
+#లేకపోతే
+        తిరిగి ఖాళీ;
+#అయితే_ముగింపు
     }
 
-    if (is_absolute_path(resolved)) {
-        path = resolved;
+    ఒకవేళ (is_absolute_మార్గం(resolved)) {
+        మార్గం = resolved;
     }
-    else {
-        const char *xlocaledir = get_xlocaledir_path(ctx);
-        path = asprintf_safe("%s/%s", xlocaledir, resolved);
-        free(resolved);
+    లేకపోతే {
+        స్థిరరాశి అక్షరం *xlocaledir = get_xlocaledir_మార్గం(ctx);
+        మార్గం = asprintf_సురక్షిత("%s/%s", xlocaledir, resolved);
+        విడుదల(resolved);
     }
 
-    return path;
+    తిరిగి మార్గం;
 }

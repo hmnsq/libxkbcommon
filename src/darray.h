@@ -2,50 +2,50 @@
  * Copyright (C) 2011 Joseph Adams <joeyadams3.14159@gmail.com>
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#సూచన once
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
 /* Originally taken from: https://ccodearchive.net/info/darray.html
  * But modified for xkbcommon. */
 
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
-#include <limits.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <assert.h>
+#అన్తర్భావ <limits.h>
 
-#include "utils.h"
+#అన్తర్భావ "utils.h"
 
-typedef unsigned int darray_size_t;
-#define DARRAY_SIZE_T_WIDTH (sizeof(darray_size_t) * CHAR_BIT)
-#define DARRAY_SIZE_MAX UINT_MAX
+రకనిర్వచనం గుర్తులేని పూర్ణాంకం darray_కొలత_t;
+#నిర్వచించు DARRAY_కొలత_T_వెడల్పు (పరిమాణం(darray_కొలత_t) * CHAR_BIT)
+#నిర్వచించు DARRAY_కొలత_MAX UINT_MAX
 
-#define darray(type) struct {         \
+#నిర్వచించు darray(type) నిర్మాణం {         \
     /** Current size */               \
-    darray_size_t size;               \
+    darray_కొలత_t కొలత;               \
     /** Count of allocated items */   \
-    darray_size_t alloc;              \
+    darray_కొలత_t alloc;              \
     /** Array of items */             \
-    type *item ATTR_COUNTED_BY(size); \
+    type *అంశం ATTR_COUNTED_BY(కొలత); \
 }
 
-#define darray_new() { 0, 0, 0 }
+#నిర్వచించు darray_new() { 0, 0, 0 }
 
-#define darray_init(arr) do { \
-    (arr).item = 0; (arr).size = 0; (arr).alloc = 0; \
-} while (0)
+#నిర్వచించు darray_init(arr) చేయి { \
+    (arr).అంశం = 0; (arr).కొలత = 0; (arr).alloc = 0; \
+} అయితే (0)
 
-#define darray_free(arr) do { \
-    free((arr).item); \
+#నిర్వచించు darray_free(arr) చేయి { \
+    విడుదల((arr).అంశం); \
     darray_init(arr); \
-} while (0)
+} అయితే (0)
 
-#define darray_steal(arr, to, to_size) do { \
-    *(to) = (arr).item; \
-    if (to_size) \
-        *(darray_size_t *) (to_size) = (arr).size; \
+#నిర్వచించు darray_steal(arr, గమ్యం, గమ్యం_కొలత) చేయి { \
+    *(గమ్యం) = (arr).అంశం; \
+    ఒకవేళ (గమ్యం_కొలత) \
+        *(darray_కొలత_t *) (గమ్యం_కొలత) = (arr).కొలత; \
     darray_init(arr); \
-} while (0)
+} అయితే (0)
 
 /*
  * Typedefs for darrays of common types.  These are useful
@@ -64,204 +64,204 @@ typedef unsigned int darray_size_t;
  *     foo(&arr);
  */
 
-typedef darray (char)           darray_char;
-typedef darray (signed char)    darray_schar;
-typedef darray (unsigned char)  darray_uchar;
+రకనిర్వచనం darray (అక్షరం)           darray_char;
+రకనిర్వచనం darray (గుర్తుగల అక్షరం)    darray_schar;
+రకనిర్వచనం darray (గుర్తులేని అక్షరం)  darray_uchar;
 
-typedef darray (char *)         darray_string;
+రకనిర్వచనం darray (అక్షరం *)         darray_string;
 
-typedef darray (short)          darray_short;
-typedef darray (int)            darray_int;
-typedef darray (long)           darray_long;
+రకనిర్వచనం darray (పొట్టి)          darray_short;
+రకనిర్వచనం darray (పూర్ణాంకం)            darray_int;
+రకనిర్వచనం darray (దీర్ఘ)           darray_long;
 
-typedef darray (unsigned short) darray_ushort;
-typedef darray (unsigned int)   darray_uint;
-typedef darray (unsigned long)  darray_ulong;
+రకనిర్వచనం darray (గుర్తులేని పొట్టి) darray_ushort;
+రకనిర్వచనం darray (గుర్తులేని పూర్ణాంకం)   darray_uint;
+రకనిర్వచనం darray (గుర్తులేని దీర్ఘ)  darray_ulong;
 
 /*** Access ***/
 
-#define darray_item(arr, i)     ((arr).item[i])
-#define darray_items(arr)       ((arr).item)
-#define darray_size(arr)        ((arr).size)
-#define darray_empty(arr)       ((arr).size == 0)
+#నిర్వచించు darray_అంశం(arr, i)     ((arr).అంశం[i])
+#నిర్వచించు darray_వస్తువులు(arr)       ((arr).అంశం)
+#నిర్వచించు darray_కొలత(arr)        ((arr).కొలత)
+#నిర్వచించు darray_ఖాళీలు(arr)       ((arr).కొలత == 0)
 
-#define darray_last(arr, fallback) ( \
-    !(arr).size \
+#నిర్వచించు darray_చివరి(arr, fallback) ( \
+    !(arr).కొలత \
         ? (fallback) \
-        : (arr).item[(arr).size - 1] \
+        : (arr).అంశం[(arr).కొలత - 1] \
 )
 
 /*** Insertion (single item) ***/
 
-#define darray_append(arr, ...)  do { \
-    darray_resize(arr, (arr).size + 1); \
-    (arr).item[(arr).size - 1] = (__VA_ARGS__); \
-} while (0)
+#నిర్వచించు darray_append(arr, ...)  చేయి { \
+    darray_resize(arr, (arr).కొలత + 1); \
+    (arr).అంశం[(arr).కొలత - 1] = (__VA_ARGS__); \
+} అయితే (0)
 
-#define darray_insert(arr, i, ...) do { \
-    darray_size_t __index = (i); \
-    darray_resize(arr, (arr).size+1); \
+#నిర్వచించు darray_చొప్పించు(arr, i, ...) చేయి { \
+    darray_కొలత_t __index = (i); \
+    darray_resize(arr, (arr).కొలత+1); \
     memmove( \
-        (arr).item + __index + 1, \
-        (arr).item + __index, \
-        ((arr).size - __index - 1) * sizeof(*(arr).item) \
+        (arr).అంశం + __index + 1, \
+        (arr).అంశం + __index, \
+        ((arr).కొలత - __index - 1) * పరిమాణం(*(arr).అంశం) \
     ); \
-    (arr).item[__index] = (__VA_ARGS__); \
-} while(0)
+    (arr).అంశం[__index] = (__VA_ARGS__); \
+} అయితే(0)
 
 /*** Insertion (multiple items) ***/
 
-#define darray_append_items(arr, items, count) do { \
-    darray_size_t __count = (count), __oldSize = (arr).size; \
+#నిర్వచించు darray_append_వస్తువులు(arr, వస్తువులు, లెక్క) చేయి { \
+    darray_కొలత_t __count = (లెక్క), __oldSize = (arr).కొలత; \
     darray_resize(arr, __oldSize + __count); \
-    memcpy((arr).item + __oldSize, items, __count * sizeof(*(arr).item)); \
-} while (0)
+    జ్ఞాపకం_నకలు((arr).అంశం + __oldSize, వస్తువులు, __count * పరిమాణం(*(arr).అంశం)); \
+} అయితే (0)
 
-#define darray_from_items(arr, items, count) do { \
-    darray_size_t __count = (count); \
+#నిర్వచించు darray_from_వస్తువులు(arr, వస్తువులు, లెక్క) చేయి { \
+    darray_కొలత_t __count = (లెక్క); \
     darray_resize(arr, __count); \
-    if (__count != 0) \
-        memcpy((arr).item, items, __count * sizeof(*(arr).item)); \
-} while (0)
+    ఒకవేళ (__count != 0) \
+        జ్ఞాపకం_నకలు((arr).అంశం, వస్తువులు, __count * పరిమాణం(*(arr).అంశం)); \
+} అయితే (0)
 
-#define darray_copy(arr_to, arr_from) \
-    darray_from_items((arr_to), (arr_from).item, (arr_from).size)
+#నిర్వచించు darray_copy(arr_గమ్యం, arr_from) \
+    darray_from_వస్తువులు((arr_గమ్యం), (arr_from).అంశం, (arr_from).కొలత)
 
-#define darray_concat(arr_to, arr_from) do { \
-    if ((arr_from).size > 0) \
-        darray_append_items((arr_to), (arr_from).item, (arr_from).size); \
-} while (0)
+#నిర్వచించు darray_concat(arr_గమ్యం, arr_from) చేయి { \
+    ఒకవేళ ((arr_from).కొలత > 0) \
+        darray_append_వస్తువులు((arr_గమ్యం), (arr_from).అంశం, (arr_from).కొలత); \
+} అయితే (0)
 
 /*** Removal ***/
 
 /* Warning: Do not call darray_remove_last on an empty darray. */
-#define darray_remove_last(arr) (--(arr).size)
+#నిర్వచించు darray_remove_చివరి(arr) (--(arr).కొలత)
 
 /* Warning, slow: Requires copying all elements after removed item. */
-#define darray_remove(arr, i) do { \
-    darray_size_t __index = (i); \
-    if (__index < (arr).size-1) \
+#నిర్వచించు darray_remove(arr, i) చేయి { \
+    darray_కొలత_t __index = (i); \
+    ఒకవేళ (__index < (arr).కొలత-1) \
         memmove( \
-            &(arr).item[__index], \
-            &(arr).item[__index + 1], \
-            ((arr).size -1 - __index) * sizeof(*(arr).item) \
+            &(arr).అంశం[__index], \
+            &(arr).అంశం[__index + 1], \
+            ((arr).కొలత -1 - __index) * పరిమాణం(*(arr).అంశం) \
         ); \
-    (arr).size--; \
-} while(0)
+    (arr).కొలత--; \
+} అయితే(0)
 
 /*** String buffer ***/
 
-#define darray_append_string(arr, str) do { \
-    const char *__str = (str); \
-    darray_append_items(arr, __str, (darray_size_t) strlen(__str) + 1); \
-    (arr).size--; \
-} while (0)
+#నిర్వచించు darray_append_string(arr, str) చేయి { \
+    స్థిరరాశి అక్షరం *__str = (str); \
+    darray_append_వస్తువులు(arr, __str, (darray_కొలత_t) అక్షరశ్రేణి_పొడవు(__str) + 1); \
+    (arr).కొలత--; \
+} అయితే (0)
 
 /* Same as `darray_append_string` but do count the final '\0' in the size */
-#define darray_append_string0(arr, string) \
-    darray_append_items((arr), (string), (darray_size_t)strlen(string) + 1)
+#నిర్వచించు darray_append_string0(arr, string) \
+    darray_append_వస్తువులు((arr), (string), (darray_కొలత_t)అక్షరశ్రేణి_పొడవు(string) + 1)
 
-#define darray_append_lit(arr, stringLiteral) do { \
-    darray_append_items(arr, stringLiteral, \
-                        (darray_size_t) sizeof(stringLiteral)); \
-    (arr).size--; \
-} while (0)
+#నిర్వచించు darray_append_lit(arr, stringLiteral) చేయి { \
+    darray_append_వస్తువులు(arr, stringLiteral, \
+                        (darray_కొలత_t) పరిమాణం(stringLiteral)); \
+    (arr).కొలత--; \
+} అయితే (0)
 
-#define darray_appends_nullterminate(arr, items, count) do { \
-    darray_size_t __count = (count), __oldSize = (arr).size; \
+#నిర్వచించు darray_appends_nullterminate(arr, వస్తువులు, లెక్క) చేయి { \
+    darray_కొలత_t __count = (లెక్క), __oldSize = (arr).కొలత; \
     darray_resize(arr, __oldSize + __count + 1); \
-    memcpy((arr).item + __oldSize, items, __count * sizeof(*(arr).item)); \
-    (arr).item[(arr).size - 1] = 0; \
-    (arr).size--; \
-} while (0)
+    జ్ఞాపకం_నకలు((arr).అంశం + __oldSize, వస్తువులు, __count * పరిమాణం(*(arr).అంశం)); \
+    (arr).అంశం[(arr).కొలత - 1] = 0; \
+    (arr).కొలత--; \
+} అయితే (0)
 
-#define darray_prepends_nullterminate(arr, items, count) do { \
-    darray_size_t __count = (count), __oldSize = (arr).size; \
+#నిర్వచించు darray_prepends_nullterminate(arr, వస్తువులు, లెక్క) చేయి { \
+    darray_కొలత_t __count = (లెక్క), __oldSize = (arr).కొలత; \
     darray_resize(arr, __count + __oldSize + 1); \
-    memmove((arr).item + __count, (arr).item, \
-            __oldSize * sizeof(*(arr).item)); \
-    memcpy((arr).item, items, __count * sizeof(*(arr).item)); \
-    (arr).item[(arr).size - 1] = 0; \
-    (arr).size--; \
-} while (0)
+    memmove((arr).అంశం + __count, (arr).అంశం, \
+            __oldSize * పరిమాణం(*(arr).అంశం)); \
+    జ్ఞాపకం_నకలు((arr).అంశం, వస్తువులు, __count * పరిమాణం(*(arr).అంశం)); \
+    (arr).అంశం[(arr).కొలత - 1] = 0; \
+    (arr).కొలత--; \
+} అయితే (0)
 
 /*** Size management ***/
 
-#define darray_resize(arr, newSize) \
-    darray_growalloc(arr, (arr).size = (newSize))
+#నిర్వచించు darray_resize(arr, new_కొలత) \
+    darray_growalloc(arr, (arr).కొలత = (new_కొలత))
 
-#define darray_resize0(arr, newSize) do { \
-    darray_size_t __oldSize = (arr).size, __newSize = (newSize); \
-    (arr).size = __newSize; \
-    if (__newSize > __oldSize) { \
+#నిర్వచించు darray_resize0(arr, new_కొలత) చేయి { \
+    darray_కొలత_t __oldSize = (arr).కొలత, __newSize = (new_కొలత); \
+    (arr).కొలత = __newSize; \
+    ఒకవేళ (__newSize > __oldSize) { \
         darray_growalloc(arr, __newSize); \
-        memset(&(arr).item[__oldSize], 0, \
-               (__newSize - __oldSize) * sizeof(*(arr).item)); \
+        memset(&(arr).అంశం[__oldSize], 0, \
+               (__newSize - __oldSize) * పరిమాణం(*(arr).అంశం)); \
     } \
-} while (0)
+} అయితే (0)
 
-#define darray_realloc(arr, newAlloc) do { \
-    (arr).item = realloc((arr).item, \
-                         ((arr).alloc = (newAlloc)) * sizeof(*(arr).item)); \
-} while (0)
+#నిర్వచించు darray_realloc(arr, newAlloc) చేయి { \
+    (arr).అంశం = realloc((arr).అంశం, \
+                         ((arr).alloc = (newAlloc)) * పరిమాణం(*(arr).అంశం)); \
+} అయితే (0)
 
-#define darray_growalloc(arr, need)   do { \
-    darray_size_t __need = (need); \
-    if (__need > (arr).alloc) \
-        darray_realloc(arr, darray_next_alloc((arr).alloc, __need, \
-                                              sizeof(*(arr).item))); \
-} while (0)
+#నిర్వచించు darray_growalloc(arr, need)   చేయి { \
+    darray_కొలత_t __need = (need); \
+    ఒకవేళ (__need > (arr).alloc) \
+        darray_realloc(arr, darray_తదుపరి_alloc((arr).alloc, __need, \
+                                              పరిమాణం(*(arr).అంశం))); \
+} అయితే (0)
 
-#define darray_shrink(arr) do { \
-    if ((arr).size > 0) \
-        (arr).item = realloc((arr).item, \
-                             ((arr).alloc = (arr).size) * sizeof(*(arr).item)); \
-} while (0)
+#నిర్వచించు darray_shrink(arr) చేయి { \
+    ఒకవేళ ((arr).కొలత > 0) \
+        (arr).అంశం = realloc((arr).అంశం, \
+                             ((arr).alloc = (arr).కొలత) * పరిమాణం(*(arr).అంశం)); \
+} అయితే (0)
 
-#define darray_max_alloc(itemSize) (UINT_MAX / (itemSize))
+#నిర్వచించు darray_max_alloc(అంశం_కొలత) (UINT_MAX / (అంశం_కొలత))
 
-static inline darray_size_t
-darray_next_alloc(darray_size_t alloc, darray_size_t need, size_t itemSize)
+స్థిర అంతఃవరుస darray_కొలత_t
+darray_తదుపరి_alloc(darray_కొలత_t alloc, darray_కొలత_t need, కొలత_t అంశం_కొలత)
 {
-    assert(need < darray_max_alloc(itemSize) / 2); /* Overflow. */
-    if (alloc == 0)
+    ప్రతిజ్ఞా(need < darray_max_alloc(అంశం_కొలత) / 2); /* Overflow. */
+    ఒకవేళ (alloc == 0)
         alloc = 4;
-    while (alloc < need)
+    అయితే (alloc < need)
         alloc *= 2;
-    return alloc;
+    తిరిగి alloc;
 }
 
 /*** Traversal ***/
 
-#define darray_foreach(i, arr) \
-    if ((arr).item) \
-    for ((i) = &(arr).item[0]; (i) < &(arr).item[(arr).size]; (i)++)
+#నిర్వచించు darray_foreach(i, arr) \
+    ఒకవేళ ((arr).అంశం) \
+    కొరకు ((i) = &(arr).అంశం[0]; (i) < &(arr).అంశం[(arr).కొలత]; (i)++)
 
-#define darray_foreach_from(i, arr, from) \
-    if ((arr).item) \
-    for ((i) = &(arr).item[from]; (i) < &(arr).item[(arr).size]; (i)++)
+#నిర్వచించు darray_foreach_from(i, arr, from) \
+    ఒకవేళ ((arr).అంశం) \
+    కొరకు ((i) = &(arr).అంశం[from]; (i) < &(arr).అంశం[(arr).కొలత]; (i)++)
 
 /* Iterate on index and value at the same time, like Python's enumerate. */
-#define darray_enumerate(idx, val, arr) \
-    if ((arr).item) \
-    for ((idx) = 0, (val) = &(arr).item[0]; \
-         (idx) < (arr).size; \
+#నిర్వచించు darray_enumerate(idx, val, arr) \
+    ఒకవేళ ((arr).అంశం) \
+    కొరకు ((idx) = 0, (val) = &(arr).అంశం[0]; \
+         (idx) < (arr).కొలత; \
          (idx)++, (val)++)
 
-#define darray_enumerate_from(idx, val, arr, from) \
-    if ((arr).item) \
-    for ((idx) = (from), (val) = &(arr).item[from]; \
-         (idx) < (arr).size; \
+#నిర్వచించు darray_enumerate_from(idx, val, arr, from) \
+    ఒకవేళ ((arr).అంశం) \
+    కొరకు ((idx) = (from), (val) = &(arr).అంశం[from]; \
+         (idx) < (arr).కొలత; \
          (idx)++, (val)++)
 
-#define darray_foreach_reverse(i, arr) \
-    if ((arr).item && (arr).size) \
-    for ((i) = &(arr).item[(arr).size - 1]; \
-         (i) >= &(arr).item[0]; \
+#నిర్వచించు darray_foreach_తిరగేయి(i, arr) \
+    ఒకవేళ ((arr).అంశం && (arr).కొలత) \
+    కొరకు ((i) = &(arr).అంశం[(arr).కొలత - 1]; \
+         (i) >= &(arr).అంశం[0]; \
          (i)--)
 
-#define darray_enumerate_reverse(idx, val, arr) \
-    if ((arr).item && (arr).size) \
-    for ((idx) = (arr).size - 1, (val) = &(arr).item[(arr).size - 1]; \
-         (val) >= &(arr).item[0]; \
+#నిర్వచించు darray_enumerate_తిరగేయి(idx, val, arr) \
+    ఒకవేళ ((arr).అంశం && (arr).కొలత) \
+    కొరకు ((idx) = (arr).కొలత - 1, (val) = &(arr).అంశం[(arr).కొలత - 1]; \
+         (val) >= &(arr).అంశం[0]; \
          (idx)--, (val)--)

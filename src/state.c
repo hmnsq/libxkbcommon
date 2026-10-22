@@ -20,28 +20,28 @@
  *   - messages (very unlikely)
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include <assert.h>
-#include <limits.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#అన్తర్భావ <assert.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-status.h"
-#include "xkbcommon/xkbcommon-features.h"
-#include "abi-check.h"
-#include "darray.h"
-#include "features/enums.h"
-#include "keymap.h"
-#include "keysym.h"
-#include "messages-codes.h"
-#include "state-priv.h"
-#include "utf8.h"
-#include "utils.h"
-#include "util-mem.h"
-#include "util-numbers.h"
+#అన్తర్భావ "xkbcommon/xkbcommon.h"
+#అన్తర్భావ "xkbcommon/xkbcommon-status.h"
+#అన్తర్భావ "xkbcommon/xkbcommon-features.h"
+#అన్తర్భావ "abi-check.h"
+#అన్తర్భావ "darray.h"
+#అన్తర్భావ "features/enums.h"
+#అన్తర్భావ "keymap.h"
+#అన్తర్భావ "keysym.h"
+#అన్తర్భావ "messages-codes.h"
+#అన్తర్భావ "state-priv.h"
+#అన్తర్భావ "utf8.h"
+#అన్తర్భావ "utils.h"
+#అన్తర్భావ "util-mem.h"
+#అన్తర్భావ "util-numbers.h"
 
 /*
  * @struct xkb_events
@@ -60,43 +60,43 @@
  * @todo For multi-threaded use, we need a future `xkb_event` **queue** to
  * provide a thread-safe implementation (e.g. circular buffer).
  */
-struct xkb_events {
-    struct xkb_context *ctx;
-    darray(struct xkb_event) queue;
+నిర్మాణం xkb_events {
+    నిర్మాణం xkb_context *ctx;
+    darray(నిర్మాణం xkb_event) వరుస;
     /**
      * Read cursor for `xkb_events_next()`.
      *
      * Reset to 0 on each `process_*` call.
      */
-    darray_size_t next;
+    darray_కొలత_t తదుపరి;
 };
 
-struct xkb_server_state;
+నిర్మాణం xkb_server_state;
 
-struct xkb_filter {
-    union xkb_action action;
-    const struct xkb_key *key;
-    bool (*func)(struct xkb_server_state *state,
-                 struct xkb_events *events,
-                 struct xkb_filter *filter,
-                 const struct xkb_key *key,
-                 enum xkb_key_direction direction);
+నిర్మాణం xkb_filter {
+    సంఘం xkb_action action;
+    స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం;
+    bool (*func)(నిర్మాణం xkb_server_state *state,
+                 నిర్మాణం xkb_events *events,
+                 నిర్మాణం xkb_filter *filter,
+                 స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం,
+                 గణన xkb_కీలకం_direction direction);
     uint32_t priv;
-    int refcnt;
+    పూర్ణాంకం refcnt;
 };
 
-enum xkb_state_mode_internal {
+గణన xkb_state_బహుళకం_అంతర్గత {
     /** `xkb_state`: Client-only state (server API raises errors) */
-    CLIENT_STATE = XKB_STATE_MODE_CLIENT,
+    CLIENT_STATE = XKB_STATE_బహుళకం_CLIENT,
     /** `xkb_state`: Server query companion */
-    SERVER_COMPANION = XKB_STATE_MODE_SERVER_QUERY,
+    SERVER_COMPANION = XKB_STATE_బహుళకం_SERVER_QUERY,
     /** `xkb_state`: Legacy unsafe client + server state */
     LEGACY_MIXED_STATE = 2,
     /** `xkb_state`: Legacy server-only state (client-only API raises errors) */
     LEGACY_SERVER_STATE = 3,
     /** `xkb_machine`: Server-only state */
     SERVER_STATE = 4,
-    _XKB_STATE_TYPE_NUM_ENTRIES = 5
+    XKB_STATE_TYPE_అంకె_ENTRIES = 5
 };
 
 static_assert(CLIENT_STATE == 0 &&
@@ -104,24 +104,24 @@ static_assert(CLIENT_STATE == 0 &&
               SERVER_COMPANION == LEGACY_MIXED_STATE - 1 &&
               LEGACY_MIXED_STATE == LEGACY_SERVER_STATE - 1 &&
               LEGACY_SERVER_STATE == SERVER_STATE - 1 &&
-              SERVER_STATE == _XKB_STATE_TYPE_NUM_ENTRIES - 1 &&
-              _XKB_STATE_TYPE_NUM_ENTRIES == 5,
+              SERVER_STATE == XKB_STATE_TYPE_అంకె_ENTRIES - 1 &&
+              XKB_STATE_TYPE_అంకె_ENTRIES == 5,
               "Order is used to guard client/server -only APIs: do not change");
 
-enum { XKB_LAYOUT_INDEX_T_MIN_WIDTH = 6 };
-static_assert(XKB_MAX_GROUPS < (1 << XKB_LAYOUT_INDEX_T_MIN_WIDTH),
+గణన { XKB_LAYOUT_సూచీ_T_MIN_వెడల్పు = 6 };
+static_assert(XKB_MAX_GROUPS < (1 << XKB_LAYOUT_సూచీ_T_MIN_వెడల్పు),
               "Cannot encode out_of_range_group::redirect_group");
 
-struct out_of_range_group {
-    enum xkb_layout_out_of_range_policy policy :
-        (sizeof(enum xkb_layout_out_of_range_policy) * CHAR_BIT -
-         XKB_LAYOUT_INDEX_T_MIN_WIDTH);
-    xkb_layout_index_t redirect_group : XKB_LAYOUT_INDEX_T_MIN_WIDTH;
+నిర్మాణం బహిర్గతం_యొక్క_range_సమూహం {
+    గణన xkb_layout_బహిర్గతం_యొక్క_range_policy policy :
+        (పరిమాణం(గణన xkb_layout_బహిర్గతం_యొక్క_range_policy) * CHAR_BIT -
+         XKB_LAYOUT_సూచీ_T_MIN_వెడల్పు);
+    xkb_layout_సూచీ_t redirect_సమూహం : XKB_LAYOUT_సూచీ_T_MIN_వెడల్పు;
 };
 
-enum { XKB_STATE_MODE_INTERNAL_MIN_WIDTH = 4 /* 3 bits + sign */ };
-static_assert(_XKB_STATE_TYPE_NUM_ENTRIES <
-              (1 << XKB_STATE_MODE_INTERNAL_MIN_WIDTH),
+గణన { XKB_STATE_బహుళకం_అంతర్గత_MIN_వెడల్పు = 4 /* 3 bits + sign */ };
+static_assert(XKB_STATE_TYPE_అంకె_ENTRIES <
+              (1 << XKB_STATE_బహుళకం_అంతర్గత_MIN_వెడల్పు),
               "Cannot encode xkb_state::mode");
 
 /**
@@ -130,17 +130,17 @@ static_assert(_XKB_STATE_TYPE_NUM_ENTRIES <
  * `mode` indicates whether the object is casted from a `xkb_server_state` or a
  * `xkb_client_state` struct.
  */
-struct xkb_state {
-    struct xkb_keymap *keymap;
+నిర్మాణం xkb_state {
+    నిర్మాణం xkb_keymap *keymap;
     /*
      * Before updating the state, we keep a copy of just this struct. This
      * allows us to report which components of the state have changed.
      */
-    struct state_components components;
-    struct out_of_range_group out_of_range_group;
+    నిర్మాణం state_components components;
+    నిర్మాణం బహిర్గతం_యొక్క_range_సమూహం బహిర్గతం_యొక్క_range_సమూహం;
 
-    enum xkb_state_mode_internal mode : XKB_STATE_MODE_INTERNAL_MIN_WIDTH;
-    int refcnt : (sizeof(int) * CHAR_BIT - XKB_STATE_MODE_INTERNAL_MIN_WIDTH);
+    గణన xkb_state_బహుళకం_అంతర్గత బహుళకం : XKB_STATE_బహుళకం_అంతర్గత_MIN_వెడల్పు;
+    పూర్ణాంకం refcnt : (పరిమాణం(పూర్ణాంకం) * CHAR_BIT - XKB_STATE_బహుళకం_అంతర్గత_MIN_వెడల్పు);
 };
 
 /**
@@ -148,15 +148,15 @@ struct xkb_state {
  *
  * Wrapper for strong typing
  */
-struct xkb_client_state {
+నిర్మాణం xkb_client_state {
     /** Inherits from `xkb_state` */
-    struct xkb_state base;
+    నిర్మాణం xkb_state పునాది;
 };
 
-enum state_flags {
+గణన state_flags {
     STATE_NO_FLAGS = 0,
-    STATE_REQUIRE_KEY_EVENT = (1 << 0),
-    STATE_FIX_LAYOUT_SWITCH_ON_MODIFIER_KEY = (1 << 1),
+    STATE_REQUIRE_కీలకం_EVENT = (1 << 0),
+    STATE_FIX_LAYOUT_SWITCH_ON_MODIFIER_కీలకం = (1 << 1),
     STATE_UNLOCK_MODS_ON_PRESS = (1 << 2),
 };
 
@@ -166,28 +166,28 @@ enum state_flags {
  *
  * Casted as `xkb_state` in the public API. See `xkb_state::mode`.
  */
-struct xkb_server_state {
+నిర్మాణం xkb_server_state {
     /** Inherits from `xkb_state` */
-    struct xkb_state base;
+    నిర్మాణం xkb_state పునాది;
 
     /* Server-specific state data */
 
-    darray(struct xkb_filter) filters;
+    darray(నిర్మాణం xkb_filter) filters;
 
     /**
      * Mix of constant configuration flags and
      * variable state-processing flags.
      */
-    enum state_flags flags;
+    గణన state_flags flags;
 
-    enum xkb_a11y_flags a11y_flags;
+    గణన xkb_a11y_flags a11y_flags;
 
     /*
      * At each event, we accumulate all the needed modifications to the base
      * modifiers, and apply them at the end. These keep track of this state.
      */
-    xkb_mod_mask_t set_mods;
-    xkb_mod_mask_t clear_mods;
+    xkb_mod_ముసుగు_t సమితి_mods;
+    xkb_mod_ముసుగు_t clear_mods;
 
     /*
      * We mustn't clear a base modifier if there's another depressed key
@@ -195,131 +195,131 @@ struct xkb_server_state {
      * < Left Shift down, Right Shift down, Left Shift Up >
      * the modifier should still be set. This keeps the count.
      */
-    int16_t mod_key_count[XKB_MAX_MODS];
+    int16_t mod_కీలకం_లెక్క[XKB_MAX_MODS];
 };
 
-static const struct xkb_key_type_entry *
-get_entry_for_mods(const struct xkb_key_type *type, xkb_mod_mask_t mods)
+స్థిర స్థిరరాశి నిర్మాణం xkb_కీలకం_type_నమోదు *
+get_నమోదు_for_mods(స్థిరరాశి నిర్మాణం xkb_కీలకం_type *type, xkb_mod_ముసుగు_t mods)
 {
-    for (darray_size_t i = 0; i < type->num_entries; i++)
-        if (entry_is_active(&type->entries[i]) &&
-            type->entries[i].mods.mask == mods)
-            return &type->entries[i];
-    return NULL;
+    కొరకు (darray_కొలత_t i = 0; i < type->అంకె_entries; i++)
+        ఒకవేళ (నమోదు_is_చురుకైన(&type->entries[i]) &&
+            type->entries[i].mods.ముసుగు == mods)
+            తిరిగి &type->entries[i];
+    తిరిగి ఖాళీ;
 }
 
-static const struct xkb_key_type_entry *
-get_entry_for_key_state(struct xkb_state *state, const struct xkb_key *key,
-                        xkb_layout_index_t group)
+స్థిర స్థిరరాశి నిర్మాణం xkb_కీలకం_type_నమోదు *
+get_నమోదు_for_కీలకం_state(నిర్మాణం xkb_state *state, స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం,
+                        xkb_layout_సూచీ_t సమూహం)
 {
-    const struct xkb_key_type* const type = key->groups[group].type;
-    xkb_mod_mask_t active_mods = state->components.mods & type->mods.mask;
-    return get_entry_for_mods(type, active_mods);
+    స్థిరరాశి నిర్మాణం xkb_కీలకం_type* స్థిరరాశి type = కీలకం->groups[సమూహం].type;
+    xkb_mod_ముసుగు_t చురుకైన_mods = state->components.mods & type->mods.ముసుగు;
+    తిరిగి get_నమోదు_for_mods(type, చురుకైన_mods);
 }
 
-static inline xkb_level_index_t
-state_key_get_level(struct xkb_state *state, const struct xkb_key *key,
-                         xkb_layout_index_t layout)
+స్థిర అంతఃవరుస xkb_level_సూచీ_t
+state_కీలకం_get_level(నిర్మాణం xkb_state *state, స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం,
+                         xkb_layout_సూచీ_t layout)
 {
-    if (layout >= key->num_groups)
-        return XKB_LEVEL_INVALID;
+    ఒకవేళ (layout >= కీలకం->అంకె_groups)
+        తిరిగి XKB_LEVEL_INVALID;
 
     /* If we don't find an explicit match the default is 0. */
-    const struct xkb_key_type_entry* const entry =
-        get_entry_for_key_state(state, key, layout);
+    స్థిరరాశి నిర్మాణం xkb_కీలకం_type_నమోదు* స్థిరరాశి నమోదు_2 =
+        get_నమోదు_for_కీలకం_state(state, కీలకం, layout);
 
-    return (entry) ? entry->level : 0;
+    తిరిగి (నమోదు_2) ? నమోదు_2->level : 0;
 }
 
 /**
  * Returns the level to use for the given key and state, or
  * XKB_LEVEL_INVALID.
  */
-xkb_level_index_t
-xkb_state_key_get_level(struct xkb_state *state, xkb_keycode_t kc,
-                        xkb_layout_index_t layout)
+xkb_level_సూచీ_t
+xkb_state_కీలకం_get_level(నిర్మాణం xkb_state *state, xkb_keycode_t kc,
+                        xkb_layout_సూచీ_t layout)
 {
-    const struct xkb_key* const key = XkbKey(state->keymap, kc);
+    స్థిరరాశి నిర్మాణం xkb_కీలకం* స్థిరరాశి కీలకం = Xkb_కీలకం(state->keymap, kc);
 
-    return (key)
-        ? state_key_get_level(state, key, layout)
+    తిరిగి (కీలకం)
+        ? state_కీలకం_get_level(state, కీలకం, layout)
         : XKB_LEVEL_INVALID;
 }
 
-static inline xkb_layout_index_t
-state_key_get_layout(struct xkb_state *state, const struct xkb_key *key)
+స్థిర అంతఃవరుస xkb_layout_సూచీ_t
+state_కీలకం_get_layout(నిర్మాణం xkb_state *state, స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం)
 {
-    return xkb_keymap_key_effective_layout(key, state->components.group);
+    తిరిగి xkb_keymap_కీలకం_effective_layout(కీలకం, state->components.సమూహం);
 }
 
 /**
  * Returns the layout to use for the given key and state, taking
  * wrapping/clamping/etc into account, or XKB_LAYOUT_INVALID.
  */
-xkb_layout_index_t
-xkb_state_key_get_layout(struct xkb_state *state, xkb_keycode_t kc)
+xkb_layout_సూచీ_t
+xkb_state_కీలకం_get_layout(నిర్మాణం xkb_state *state, xkb_keycode_t kc)
 {
-    const struct xkb_key* const key = XkbKey(state->keymap, kc);
+    స్థిరరాశి నిర్మాణం xkb_కీలకం* స్థిరరాశి కీలకం = Xkb_కీలకం(state->keymap, kc);
 
-    if (!key)
-        return XKB_LAYOUT_INVALID;
+    ఒకవేళ (!కీలకం)
+        తిరిగి XKB_LAYOUT_INVALID;
 
-    return state_key_get_layout(state, key);
+    తిరిగి state_కీలకం_get_layout(state, కీలకం);
 }
 
 /* Empty action used for empty levels */
-static const union xkb_action dummy_action = { .type = ACTION_TYPE_NONE };
+స్థిర స్థిరరాశి సంఘం xkb_action dummy_action = { .type = ACTION_TYPE_NONE };
 
-static xkb_action_count_t
-xkb_key_get_actions(struct xkb_state *state, const struct xkb_key *key,
-                    const union xkb_action **actions)
+స్థిర xkb_action_లెక్క_t
+xkb_కీలకం_get_actions(నిర్మాణం xkb_state *state, స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం,
+                    స్థిరరాశి సంఘం xkb_action **actions)
 {
-    const xkb_layout_index_t layout = state_key_get_layout(state, key);
-    const xkb_level_index_t level = state_key_get_level(state, key, layout);
-    if (level == XKB_LEVEL_INVALID)
-        goto err;
+    స్థిరరాశి xkb_layout_సూచీ_t layout = state_కీలకం_get_layout(state, కీలకం);
+    స్థిరరాశి xkb_level_సూచీ_t level = state_కీలకం_get_level(state, కీలకం, layout);
+    ఒకవేళ (level == XKB_LEVEL_INVALID)
+        వెళ్ళు err;
 
-    const xkb_action_count_t count =
-        xkb_keymap_key_get_actions_by_level(state->keymap, key,
+    స్థిరరాశి xkb_action_లెక్క_t లెక్క =
+        xkb_keymap_కీలకం_get_actions_by_level(state->keymap, కీలకం,
                                             layout, level, actions);
-    if (!count)
-        goto err;
+    ఒకవేళ (!లెక్క)
+        వెళ్ళు err;
 
-    return count;
+    తిరిగి లెక్క;
 
 err:
     /* Use a dummy action if no corresponding level was found or if it is empty.
      * This is required e.g. to handle latches properly. */
     *actions = &dummy_action;
-    return 1;
+    తిరిగి 1;
 }
 
-static struct xkb_filter *
-xkb_filter_new(struct xkb_server_state *state)
+స్థిర నిర్మాణం xkb_filter *
+xkb_filter_new(నిర్మాణం xkb_server_state *state)
 {
-    struct xkb_filter *filter = NULL, *iter;
+    నిర్మాణం xkb_filter *filter = ఖాళీ, *iter;
 
     darray_foreach(iter, state->filters) {
-        if (iter->func)
-            continue;
+        ఒకవేళ (iter->func)
+            కొనసాగు;
         /* Use available slot */
         filter = iter;
-        break;
+        ఆపు;
     }
 
-    if (!filter) {
+    ఒకవేళ (!filter) {
         /* No available slot: resize the filters array */
-        darray_resize0(state->filters, darray_size(state->filters) + 1);
-        filter = &darray_item(state->filters, darray_size(state->filters) -1);
+        darray_resize0(state->filters, darray_కొలత(state->filters) + 1);
+        filter = &darray_అంశం(state->filters, darray_కొలత(state->filters) -1);
     }
 
     filter->refcnt = 1;
-    return filter;
+    తిరిగి filter;
 }
 
 /***====================================================================***/
 
-enum xkb_filter_result {
+గణన xkb_filter_ఫలితం {
     /*
      * The event is consumed by the filters.
      *
@@ -335,243 +335,243 @@ enum xkb_filter_result {
 };
 
 /* Modify a group component, depending on the ACTION_ABSOLUTE_SWITCH flag */
-#define apply_group_delta(filter_, state_, component_)                   \
-    if ((filter_)->action.group.flags & ACTION_ABSOLUTE_SWITCH)          \
-        (state_)->components.component_ = (filter_)->action.group.group; \
-    else                                                                 \
-        (state_)->components.component_ += (filter_)->action.group.group
+#నిర్వచించు apply_సమూహం_delta(filter_, state_, component_)                   \
+    ఒకవేళ ((filter_)->action.సమూహం.flags & ACTION_ABSOLUTE_SWITCH)          \
+        (state_)->components.component_ = (filter_)->action.సమూహం.సమూహం; \
+    లేకపోతే                                                                 \
+        (state_)->components.component_ += (filter_)->action.సమూహం.సమూహం
 
-static void
-xkb_filter_group_set_new(struct xkb_server_state *state,
-                         struct xkb_events *events,
-                         struct xkb_filter *filter)
+స్థిర శూన్య
+xkb_filter_సమూహం_సమితి_new(నిర్మాణం xkb_server_state *state,
+                         నిర్మాణం xkb_events *events,
+                         నిర్మాణం xkb_filter *filter)
 {
-    static_assert(sizeof(state->base.components.base_group) ==
-                  sizeof(filter->priv),
+    static_assert(పరిమాణం(state->పునాది.components.పునాది_సమూహం) ==
+                  పరిమాణం(filter->priv),
                   "Max groups don't fit");
-    filter->priv = (uint32_t)state->base.components.base_group;
-    apply_group_delta(filter, &state->base, base_group);
+    filter->priv = (uint32_t)state->పునాది.components.పునాది_సమూహం;
+    apply_సమూహం_delta(filter, &state->పునాది, పునాది_సమూహం);
 }
 
-static bool
-xkb_filter_group_set_func(struct xkb_server_state *state,
-                          struct xkb_events *events,
-                          struct xkb_filter *filter,
-                          const struct xkb_key *key,
-                          enum xkb_key_direction direction)
+స్థిర bool
+xkb_filter_సమూహం_సమితి_func(నిర్మాణం xkb_server_state *state,
+                          నిర్మాణం xkb_events *events,
+                          నిర్మాణం xkb_filter *filter,
+                          స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం,
+                          గణన xkb_కీలకం_direction direction)
 {
-    if (key != filter->key) {
-        filter->action.group.flags &= ~ACTION_LOCK_CLEAR;
-        return XKB_FILTER_CONTINUE;
+    ఒకవేళ (కీలకం != filter->కీలకం) {
+        filter->action.సమూహం.flags &= ~ACTION_తాళం_CLEAR;
+        తిరిగి XKB_FILTER_CONTINUE;
     }
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    ఎంపిక (direction) {
+    స్థితి XKB_కీలకం_కిందికి:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    స్థితి XKB_కీలకం_REPEATED:
+        తిరిగి XKB_FILTER_CONSUME;
+    అప్రమేయ:
+        ఒకవేళ (--filter->refcnt > 0)
+            తిరిగి XKB_FILTER_CONSUME;
     }
 
-    static_assert(sizeof(state->base.components.base_group) == sizeof(filter->priv),
+    static_assert(పరిమాణం(state->పునాది.components.పునాది_సమూహం) == పరిమాణం(filter->priv),
                   "Max groups don't fit");
-    state->base.components.base_group = (int32_t) filter->priv;
+    state->పునాది.components.పునాది_సమూహం = (int32_t) filter->priv;
 
-    if (filter->action.group.flags & ACTION_LOCK_CLEAR)
-        state->base.components.locked_group = 0;
+    ఒకవేళ (filter->action.సమూహం.flags & ACTION_తాళం_CLEAR)
+        state->పునాది.components.locked_సమూహం = 0;
 
-    filter->func = NULL;
-    return XKB_FILTER_CONTINUE;
+    filter->func = ఖాళీ;
+    తిరిగి XKB_FILTER_CONTINUE;
 }
 
-static enum xkb_state_component
-get_state_component_changes(const struct state_components *a,
-                            const struct state_components *b)
+స్థిర గణన xkb_state_component
+get_state_component_changes(స్థిరరాశి నిర్మాణం state_components *a,
+                            స్థిరరాశి నిర్మాణం state_components *b)
 {
-    enum xkb_state_component mask = 0;
+    గణన xkb_state_component ముసుగు = 0;
 
-    if (a->group != b->group)
-        mask |= XKB_STATE_LAYOUT_EFFECTIVE;
-    if (a->base_group != b->base_group)
-        mask |= XKB_STATE_LAYOUT_DEPRESSED;
-    if (a->latched_group != b->latched_group)
-        mask |= XKB_STATE_LAYOUT_LATCHED;
-    if (a->locked_group != b->locked_group)
-        mask |= XKB_STATE_LAYOUT_LOCKED;
-    if (a->mods != b->mods)
-        mask |= XKB_STATE_MODS_EFFECTIVE;
-    if (a->base_mods != b->base_mods)
-        mask |= XKB_STATE_MODS_DEPRESSED;
-    if (a->latched_mods != b->latched_mods)
-        mask |= XKB_STATE_MODS_LATCHED;
-    if (a->locked_mods != b->locked_mods)
-        mask |= XKB_STATE_MODS_LOCKED;
-    if (a->leds != b->leds)
-        mask |= XKB_STATE_LEDS;
-    if (a->controls != b->controls)
-        mask |= XKB_STATE_CONTROLS_EFFECTIVE;
+    ఒకవేళ (a->సమూహం != b->సమూహం)
+        ముసుగు |= XKB_STATE_LAYOUT_EFFECTIVE;
+    ఒకవేళ (a->పునాది_సమూహం != b->పునాది_సమూహం)
+        ముసుగు |= XKB_STATE_LAYOUT_DEPRESSED;
+    ఒకవేళ (a->latched_సమూహం != b->latched_సమూహం)
+        ముసుగు |= XKB_STATE_LAYOUT_LATCHED;
+    ఒకవేళ (a->locked_సమూహం != b->locked_సమూహం)
+        ముసుగు |= XKB_STATE_LAYOUT_LOCKED;
+    ఒకవేళ (a->mods != b->mods)
+        ముసుగు |= XKB_STATE_MODS_EFFECTIVE;
+    ఒకవేళ (a->పునాది_mods != b->పునాది_mods)
+        ముసుగు |= XKB_STATE_MODS_DEPRESSED;
+    ఒకవేళ (a->latched_mods != b->latched_mods)
+        ముసుగు |= XKB_STATE_MODS_LATCHED;
+    ఒకవేళ (a->locked_mods != b->locked_mods)
+        ముసుగు |= XKB_STATE_MODS_LOCKED;
+    ఒకవేళ (a->leds != b->leds)
+        ముసుగు |= XKB_STATE_LEDS;
+    ఒకవేళ (a->controls != b->controls)
+        ముసుగు |= XKB_STATE_CONTROLS_EFFECTIVE;
 
-    return mask;
+    తిరిగి ముసుగు;
 }
 
-static void
-xkb_filter_group_lock_new(struct xkb_server_state *state,
-                          struct xkb_events *events,
-                          struct xkb_filter *filter)
+స్థిర శూన్య
+xkb_filter_సమూహం_తాళం_new(నిర్మాణం xkb_server_state *state,
+                          నిర్మాణం xkb_events *events,
+                          నిర్మాణం xkb_filter *filter)
 {
-    if (filter->action.group.flags & ACTION_LOCK_ON_RELEASE) {
+    ఒకవేళ (filter->action.సమూహం.flags & ACTION_తాళం_ON_RELEASE) {
         /*
          * Lock on key release: do nothing on key press.
          *
          * This is a keymap format v2 extension.
          */
-        return;
-    } else {
+        తిరిగి;
+    } లేకపోతే {
         /* Lock on key press */
-        apply_group_delta(filter, &state->base, locked_group);
+        apply_సమూహం_delta(filter, &state->పునాది, locked_సమూహం);
     }
 }
 
-static bool
-xkb_filter_group_lock_func(struct xkb_server_state *state,
-                           struct xkb_events *events,
-                           struct xkb_filter *filter,
-                           const struct xkb_key *key,
-                           enum xkb_key_direction direction)
+స్థిర bool
+xkb_filter_సమూహం_తాళం_func(నిర్మాణం xkb_server_state *state,
+                           నిర్మాణం xkb_events *events,
+                           నిర్మాణం xkb_filter *filter,
+                           స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం,
+                           గణన xkb_కీలకం_direction direction)
 {
-    if (key != filter->key) {
-        if ((filter->action.group.flags & ACTION_LOCK_ON_RELEASE) &&
-            direction == XKB_KEY_DOWN) {
+    ఒకవేళ (కీలకం != filter->కీలకం) {
+        ఒకవేళ ((filter->action.సమూహం.flags & ACTION_తాళం_ON_RELEASE) &&
+            direction == XKB_కీలకం_కిందికి) {
             /*
              * Another key has been pressed after the locking key:
              * cancel group lock on release.
              *
              * This is a keymap v2 extension.
              */
-            filter->action.group.flags &= ~ACTION_LOCK_ON_RELEASE;
+            filter->action.సమూహం.flags &= ~ACTION_తాళం_ON_RELEASE;
         }
-        return XKB_FILTER_CONTINUE;
+        తిరిగి XKB_FILTER_CONTINUE;
     }
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    ఎంపిక (direction) {
+    స్థితి XKB_కీలకం_కిందికి:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    స్థితి XKB_కీలకం_REPEATED:
+        తిరిగి XKB_FILTER_CONSUME;
+    అప్రమేయ:
+        ఒకవేళ (--filter->refcnt > 0)
+            తిరిగి XKB_FILTER_CONSUME;
     }
 
-    if (filter->action.group.flags & ACTION_LOCK_ON_RELEASE) {
+    ఒకవేళ (filter->action.సమూహం.flags & ACTION_తాళం_ON_RELEASE) {
         /*
          * Lock on key release
          *
          * This is a keymap v2 extension.
          */
-        apply_group_delta(filter, &state->base, locked_group);
-    } else {
+        apply_సమూహం_delta(filter, &state->పునాది, locked_సమూహం);
+    } లేకపోతే {
         /* Lock on key press: do nothing on key release. */
     }
-    filter->func = NULL;
-    return XKB_FILTER_CONTINUE;
+    filter->func = ఖాళీ;
+    తిరిగి XKB_FILTER_CONTINUE;
 }
 
-static bool
-xkb_action_breaks_latch(const union xkb_action *action,
-                        enum xkb_action_controls controls,
-                        enum xkb_internal_action_flags flag,
-                        xkb_mod_mask_t mask)
+స్థిర bool
+xkb_action_breaks_latch(స్థిరరాశి సంఘం xkb_action *action,
+                        గణన xkb_action_controls controls,
+                        గణన xkb_అంతర్గత_action_flags flag,
+                        xkb_mod_ముసుగు_t ముసుగు)
 {
-    switch (action->type) {
-    case ACTION_TYPE_NONE:
-    case ACTION_TYPE_VOID:
-    case ACTION_TYPE_PTR_BUTTON:
-    case ACTION_TYPE_PTR_LOCK:
-    case ACTION_TYPE_CTRL_SET:
-    case ACTION_TYPE_CTRL_LOCK:
-    case ACTION_TYPE_SWITCH_VT:
-    case ACTION_TYPE_TERMINATE:
-    case ACTION_TYPE_REDIRECT_KEY:
-        return true;
-    case ACTION_TYPE_PTR_MOVE:
-    case ACTION_TYPE_PTR_DEFAULT:
-        return !(controls & CONTROL_MOUSE_KEYS);
-    case ACTION_TYPE_INTERNAL:
-        return (action->internal.flags & flag) &&
-               ((action->internal.clear_latched_mods & mask) == mask);
-    default:
+    ఎంపిక (action->type) {
+    స్థితి ACTION_TYPE_NONE:
+    స్థితి ACTION_TYPE_VOID:
+    స్థితి ACTION_TYPE_PTR_BUTTON:
+    స్థితి ACTION_TYPE_PTR_తాళం:
+    స్థితి ACTION_TYPE_CTRL_సమితి:
+    స్థితి ACTION_TYPE_CTRL_తాళం:
+    స్థితి ACTION_TYPE_SWITCH_VT:
+    స్థితి ACTION_TYPE_TERMINATE:
+    స్థితి ACTION_TYPE_REDIRECT_కీలకం:
+        తిరిగి true;
+    స్థితి ACTION_TYPE_PTR_MOVE:
+    స్థితి ACTION_TYPE_PTR_DEFAULT:
+        తిరిగి !(controls & CONTROL_MOUSE_కీలకాలు);
+    స్థితి ACTION_TYPE_అంతర్గత:
+        తిరిగి (action->అంతర్గత.flags & flag) &&
+               ((action->అంతర్గత.clear_latched_mods & ముసుగు) == ముసుగు);
+    అప్రమేయ:
         {} /* Label followed by declaration requires C23 */
         /* Ensure to not miss `xkb_action_type` updates */
-        static_assert(ACTION_TYPE_INTERNAL == 20 &&
-                      ACTION_TYPE_INTERNAL + 1 == _ACTION_TYPE_NUM_ENTRIES,
+        static_assert(ACTION_TYPE_అంతర్గత == 20 &&
+                      ACTION_TYPE_అంతర్గత + 1 == ACTION_TYPE_అంకె_ENTRIES,
                       "Missing action type");
-        return false;
+        తిరిగి false;
     }
 }
 
-enum xkb_key_latch_state {
+గణన xkb_కీలకం_latch_state {
     NO_LATCH = 0,
-    LATCH_KEY_DOWN,
+    LATCH_కీలకం_కిందికి,
     LATCH_PENDING,
-    _KEY_LATCH_STATE_NUM_ENTRIES
+    కీలకం_LATCH_STATE_అంకె_ENTRIES
 };
 
-#define MAX_XKB_KEY_LATCH_STATE_LOG2 2
-#if (_KEY_LATCH_STATE_NUM_ENTRIES > (1 << MAX_XKB_KEY_LATCH_STATE_LOG2)) || \
-    (-XKB_MAX_GROUPS) < (INT32_MIN >> MAX_XKB_KEY_LATCH_STATE_LOG2) || \
-      XKB_MAX_GROUPS > (INT32_MAX >> MAX_XKB_KEY_LATCH_STATE_LOG2)
-#error "Cannot represent priv field of the group latch filter"
-#endif
+#నిర్వచించు MAX_XKB_కీలకం_LATCH_STATE_LOG2 2
+#ఒకవేళ (కీలకం_LATCH_STATE_అంకె_ENTRIES > (1 << MAX_XKB_కీలకం_LATCH_STATE_LOG2)) || \
+    (-XKB_MAX_GROUPS) < (INT32_MIN >> MAX_XKB_కీలకం_LATCH_STATE_LOG2) || \
+      XKB_MAX_GROUPS > (INT32_MAX >> MAX_XKB_కీలకం_LATCH_STATE_LOG2)
+#దోషం "Cannot represent priv field of the group latch filter"
+#అయితే_ముగింపు
 
 /* Hold the latch state *and* the group delta */
-union group_latch_priv {
+సంఘం సమూహం_latch_priv {
     uint32_t priv;
-    struct {
+    నిర్మాణం {
         /* The type is really: enum xkb_key_latch_state, but it is problematic
          * on Windows, because it is interpreted as signed and leads to wrong
          * negative values. */
-        unsigned int latch:MAX_XKB_KEY_LATCH_STATE_LOG2;
-        int32_t group_delta:(32 - MAX_XKB_KEY_LATCH_STATE_LOG2);
+        గుర్తులేని పూర్ణాంకం latch:MAX_XKB_కీలకం_LATCH_STATE_LOG2;
+        int32_t సమూహం_delta:(32 - MAX_XKB_కీలకం_LATCH_STATE_LOG2);
     };
 };
 
-static void
-xkb_filter_group_latch_new(struct xkb_server_state *state,
-                           struct xkb_events *events,
-                           struct xkb_filter *filter)
+స్థిర శూన్య
+xkb_filter_సమూహం_latch_new(నిర్మాణం xkb_server_state *state,
+                           నిర్మాణం xkb_events *events,
+                           నిర్మాణం xkb_filter *filter)
 {
-    const union group_latch_priv priv = {
-        .latch = LATCH_KEY_DOWN,
-        .group_delta = (filter->action.group.flags & ACTION_ABSOLUTE_SWITCH)
-            ? filter->action.group.group - state->base.components.base_group
-            : filter->action.group.group
+    స్థిరరాశి సంఘం సమూహం_latch_priv priv = {
+        .latch = LATCH_కీలకం_కిందికి,
+        .సమూహం_delta = (filter->action.సమూహం.flags & ACTION_ABSOLUTE_SWITCH)
+            ? filter->action.సమూహం.సమూహం - state->పునాది.components.పునాది_సమూహం
+            : filter->action.సమూహం.సమూహం
     };
     filter->priv = priv.priv;
     /* Like group set */
-    apply_group_delta(filter, &state->base, base_group);
+    apply_సమూహం_delta(filter, &state->పునాది, పునాది_సమూహం);
 }
 
-static bool
-xkb_filter_group_latch_func(struct xkb_server_state *state,
-                            struct xkb_events *events,
-                            struct xkb_filter *filter,
-                            const struct xkb_key *key,
-                            enum xkb_key_direction direction)
+స్థిర bool
+xkb_filter_సమూహం_latch_func(నిర్మాణం xkb_server_state *state,
+                            నిర్మాణం xkb_events *events,
+                            నిర్మాణం xkb_filter *filter,
+                            స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం,
+                            గణన xkb_కీలకం_direction direction)
 {
-    union group_latch_priv priv = {.priv = filter->priv};
-    enum xkb_key_latch_state latch = priv.latch;
+    సంఘం సమూహం_latch_priv priv = {.priv = filter->priv};
+    గణన xkb_కీలకం_latch_state latch = priv.latch;
 
-    if (direction == XKB_KEY_DOWN) {
-        const union xkb_action *actions = NULL;
-        const xkb_action_count_t count = xkb_key_get_actions(&state->base, key,
+    ఒకవేళ (direction == XKB_కీలకం_కిందికి) {
+        స్థిరరాశి సంఘం xkb_action *actions = ఖాళీ;
+        స్థిరరాశి xkb_action_లెక్క_t లెక్క = xkb_కీలకం_get_actions(&state->పునాది, కీలకం,
                                                              &actions);
 
-        if (latch == LATCH_KEY_DOWN) {
+        ఒకవేళ (latch == LATCH_కీలకం_కిందికి) {
             /*
              * Another key was pressed while we’ve still got the latching key
              * held down.
@@ -585,7 +585,7 @@ xkb_filter_group_latch_func(struct xkb_server_state *state,
              *   xkb_filter_group_latch_new(), until the latch key is
              *   released.
              */
-            if (state->a11y_flags & XKB_A11Y_LATCH_SIMULTANEOUS_KEYS) {
+            ఒకవేళ (state->a11y_flags & XKB_A11_Y_LATCH_ఏకకాల_కీలకాలు) {
                 /*
                  * Prevent the latch to trigger only if some of the pressed
                  * key’s actions breaks latches, mirroring the behavior in the
@@ -593,28 +593,28 @@ xkb_filter_group_latch_func(struct xkb_server_state *state,
                  *
                  * This is an extension to the X11 XKB protocol.
                  */
-                for (xkb_action_count_t k = 0; k < count; k++) {
-                    if (xkb_action_breaks_latch(&(actions[k]),
-                                                state->base.components.controls,
-                                                INTERNAL_BREAKS_GROUP_LATCH,
+                కొరకు (xkb_action_లెక్క_t k = 0; k < లెక్క; k++) {
+                    ఒకవేళ (xkb_action_breaks_latch(&(actions[k]),
+                                                state->పునాది.components.controls,
+                                                అంతర్గత_BREAKS_సమూహం_LATCH,
                                                 0))
                     {
                         latch = NO_LATCH;
-                        break;
+                        ఆపు;
                     }
                 }
-            } else {
+            } లేకపోతే {
                 /* Unconditionally prevent the latch to trigger. */
                 latch = NO_LATCH;
             }
         }
-        else if (latch == LATCH_PENDING) {
+        లేకపోతే ఒకవేళ (latch == LATCH_PENDING) {
             /* If this is a new keypress and we're awaiting our single latched
              * keypress, then either break the latch if any random key is
              * pressed, or promote it to a lock if it's the same group delta &
              * flags and latchToLock option is enabled. */
-            const bool sticky_keys = state->base.components.controls
-                                   & CONTROL_STICKY_KEYS;
+            స్థిరరాశి bool sticky_కీలకాలు = state->పునాది.components.controls
+                                   & CONTROL_STICKY_కీలకాలు;
             /*
              * NOTE: Action’s flags other than `ACTION_ABSOLUTE_SWITCH` are
              * not compared:
@@ -625,81 +625,81 @@ xkb_filter_group_latch_func(struct xkb_server_state *state,
              * - even if it were the case, one would most likely want both
              *   actions to be considered compatible in this context.
              */
-            for (xkb_action_count_t k = 0; k < count; k++) {
-                if (((actions[k].type == ACTION_TYPE_GROUP_LATCH) ||
-                     (actions[k].type == ACTION_TYPE_GROUP_SET && sticky_keys)) &&
-                     actions[k].group.group == filter->action.group.group &&
-                     (actions[k].group.flags & ACTION_ABSOLUTE_SWITCH) ==
-                     (filter->action.group.flags & ACTION_ABSOLUTE_SWITCH)) {
-                    if (filter->action.group.flags & ACTION_LATCH_TO_LOCK &&
-                        filter->action.group.group != 0)
+            కొరకు (xkb_action_లెక్క_t k = 0; k < లెక్క; k++) {
+                ఒకవేళ (((actions[k].type == ACTION_TYPE_సమూహం_LATCH) ||
+                     (actions[k].type == ACTION_TYPE_సమూహం_సమితి && sticky_కీలకాలు)) &&
+                     actions[k].సమూహం.సమూహం == filter->action.సమూహం.సమూహం &&
+                     (actions[k].సమూహం.flags & ACTION_ABSOLUTE_SWITCH) ==
+                     (filter->action.సమూహం.flags & ACTION_ABSOLUTE_SWITCH)) {
+                    ఒకవేళ (filter->action.సమూహం.flags & ACTION_LATCH_గమ్యం_తాళం &&
+                        filter->action.సమూహం.సమూహం != 0)
                     {
                         /* Promote to lock */
-                        filter->action.type = ACTION_TYPE_GROUP_LOCK;
-                        filter->func = xkb_filter_group_lock_func;
-                        xkb_filter_group_lock_new(state, events, filter);
-                        state->base.components.latched_group -= priv.group_delta;
-                        filter->key = key;
+                        filter->action.type = ACTION_TYPE_సమూహం_తాళం;
+                        filter->func = xkb_filter_సమూహం_తాళం_func;
+                        xkb_filter_సమూహం_తాళం_new(state, events, filter);
+                        state->పునాది.components.latched_సమూహం -= priv.సమూహం_delta;
+                        filter->కీలకం = కీలకం;
                         /* XXX beep beep! */
-                        return XKB_FILTER_CONSUME;
+                        తిరిగి XKB_FILTER_CONSUME;
                     }
                     /* Do nothing if `latchToLock` option is not activated; if
                      * the latch is not broken by the following actions and the
                      * key is not consumed, then another latch filter will be
                      * created.
                      */
-                    continue;
+                    కొనసాగు;
                 }
-                else if (xkb_action_breaks_latch(&(actions[k]),
-                                                 state->base.components.controls,
-                                                 INTERNAL_BREAKS_GROUP_LATCH,
+                లేకపోతే ఒకవేళ (xkb_action_breaks_latch(&(actions[k]),
+                                                 state->పునాది.components.controls,
+                                                 అంతర్గత_BREAKS_సమూహం_LATCH,
                                                  0))
                 {
                     /* Breaks the latch */
-                    state->base.components.latched_group -= priv.group_delta;
-                    filter->func = NULL;
-                    return XKB_FILTER_CONTINUE;
+                    state->పునాది.components.latched_సమూహం -= priv.సమూహం_delta;
+                    filter->func = ఖాళీ;
+                    తిరిగి XKB_FILTER_CONTINUE;
                 }
             }
         }
-        else {
+        లేకపోతే {
             /* Ignore press in NO_LATCH state */
-            assert(latch == NO_LATCH);
+            ప్రతిజ్ఞా(latch == NO_LATCH);
         }
     }
-    else if (key != filter->key) {
+    లేకపోతే ఒకవేళ (కీలకం != filter->కీలకం) {
         /* Ignore repeat/release of other keys */
     }
-    else if (direction == XKB_KEY_REPEATED) {
-        return XKB_FILTER_CONSUME; // TODO: check
+    లేకపోతే ఒకవేళ (direction == XKB_కీలకం_REPEATED) {
+        తిరిగి XKB_FILTER_CONSUME; // TODO: check
     }
-    else {
+    లేకపోతే {
         /* Our key got released.  If we've set it to clear locks, and we
          * currently have a group locked, then release it and
          * don't actually latch.  Else we've actually hit the latching
          * stage, so set PENDING and move our group from base to
          * latched. */
-        if ((filter->action.group.flags & ACTION_LOCK_CLEAR) &&
-             state->base.components.locked_group) {
-            if (latch == LATCH_PENDING)
-                state->base.components.latched_group -= priv.group_delta;
-            else
-                state->base.components.base_group -= priv.group_delta;
-            state->base.components.locked_group = 0;
-            filter->func = NULL;
+        ఒకవేళ ((filter->action.సమూహం.flags & ACTION_తాళం_CLEAR) &&
+             state->పునాది.components.locked_సమూహం) {
+            ఒకవేళ (latch == LATCH_PENDING)
+                state->పునాది.components.latched_సమూహం -= priv.సమూహం_delta;
+            లేకపోతే
+                state->పునాది.components.పునాది_సమూహం -= priv.సమూహం_delta;
+            state->పునాది.components.locked_సమూహం = 0;
+            filter->func = ఖాళీ;
         }
         /* Broken latch */
-        else if (latch == NO_LATCH) {
-            state->base.components.base_group -= priv.group_delta;
-            filter->func = NULL;
+        లేకపోతే ఒకవేళ (latch == NO_LATCH) {
+            state->పునాది.components.పునాది_సమూహం -= priv.సమూహం_delta;
+            filter->func = ఖాళీ;
         }
         /* We may already have reached the latch state if pressing the
          * key multiple times without latch-to-lock enabled. */
-        else if (latch == LATCH_KEY_DOWN) {
+        లేకపోతే ఒకవేళ (latch == LATCH_కీలకం_కిందికి) {
             latch = LATCH_PENDING;
             /* Switch from set to latch */
-            state->base.components.base_group -= priv.group_delta;
-            state->base.components.latched_group += priv.group_delta;
+            state->పునాది.components.పునాది_సమూహం -= priv.సమూహం_delta;
+            state->పునాది.components.latched_సమూహం += priv.సమూహం_delta;
             /* XXX beep beep! */
         }
     }
@@ -707,172 +707,172 @@ xkb_filter_group_latch_func(struct xkb_server_state *state,
     priv.latch = latch;
     filter->priv = priv.priv;
 
-    return XKB_FILTER_CONTINUE;
+    తిరిగి XKB_FILTER_CONTINUE;
 }
 
-static void
-xkb_filter_mod_set_new(struct xkb_server_state *state,
-                       struct xkb_events *events,
-                       struct xkb_filter *filter)
+స్థిర శూన్య
+xkb_filter_mod_సమితి_new(నిర్మాణం xkb_server_state *state,
+                       నిర్మాణం xkb_events *events,
+                       నిర్మాణం xkb_filter *filter)
 {
-    const enum xkb_action_flags unlock = ACTION_UNLOCK_ON_PRESS
-                                       | ACTION_LOCK_CLEAR;
-    if ((filter->action.mods.flags & unlock) == unlock) {
+    స్థిరరాశి గణన xkb_action_flags unlock = ACTION_UNLOCK_ON_PRESS
+                                       | ACTION_తాళం_CLEAR;
+    ఒకవేళ ((filter->action.mods.flags & unlock) == unlock) {
         /*
          * Unlock on press
          *
          * This is a keymap v2 extension.
          */
-        filter->priv = filter->action.mods.mods.mask
-                     & ~state->base.components.locked_mods;
-        state->base.components.locked_mods &= ~filter->action.mods.mods.mask;
-    } else {
-        filter->priv = filter->action.mods.mods.mask;
+        filter->priv = filter->action.mods.mods.ముసుగు
+                     & ~state->పునాది.components.locked_mods;
+        state->పునాది.components.locked_mods &= ~filter->action.mods.mods.ముసుగు;
+    } లేకపోతే {
+        filter->priv = filter->action.mods.mods.ముసుగు;
     }
 
-    state->set_mods |= (xkb_mod_mask_t) filter->priv;
+    state->సమితి_mods |= (xkb_mod_ముసుగు_t) filter->priv;
 }
 
-static bool
-xkb_filter_mod_set_func(struct xkb_server_state *state,
-                        struct xkb_events *events,
-                        struct xkb_filter *filter,
-                        const struct xkb_key *key,
-                        enum xkb_key_direction direction)
+స్థిర bool
+xkb_filter_mod_సమితి_func(నిర్మాణం xkb_server_state *state,
+                        నిర్మాణం xkb_events *events,
+                        నిర్మాణం xkb_filter *filter,
+                        స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం,
+                        గణన xkb_కీలకం_direction direction)
 {
 
-    if (key != filter->key) {
-        filter->action.mods.flags &= ~ACTION_LOCK_CLEAR;
-        return XKB_FILTER_CONTINUE;
+    ఒకవేళ (కీలకం != filter->కీలకం) {
+        filter->action.mods.flags &= ~ACTION_తాళం_CLEAR;
+        తిరిగి XKB_FILTER_CONTINUE;
     }
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    ఎంపిక (direction) {
+    స్థితి XKB_కీలకం_కిందికి:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    స్థితి XKB_కీలకం_REPEATED:
+        తిరిగి XKB_FILTER_CONSUME;
+    అప్రమేయ:
+        ఒకవేళ (--filter->refcnt > 0)
+            తిరిగి XKB_FILTER_CONSUME;
     }
 
-    state->clear_mods |= (xkb_mod_mask_t) filter->priv;
-    const enum xkb_action_flags unlock = ACTION_UNLOCK_ON_PRESS
-                                       | ACTION_LOCK_CLEAR;
-    if ((filter->action.mods.flags & unlock) == ACTION_LOCK_CLEAR)
-        state->base.components.locked_mods &= ~filter->action.mods.mods.mask;
+    state->clear_mods |= (xkb_mod_ముసుగు_t) filter->priv;
+    స్థిరరాశి గణన xkb_action_flags unlock = ACTION_UNLOCK_ON_PRESS
+                                       | ACTION_తాళం_CLEAR;
+    ఒకవేళ ((filter->action.mods.flags & unlock) == ACTION_తాళం_CLEAR)
+        state->పునాది.components.locked_mods &= ~filter->action.mods.mods.ముసుగు;
 
-    filter->func = NULL;
-    return XKB_FILTER_CONTINUE;
+    filter->func = ఖాళీ;
+    తిరిగి XKB_FILTER_CONTINUE;
 }
 
-static void
-xkb_filter_mod_lock_new(struct xkb_server_state *state,
-                        struct xkb_events *events,
-                        struct xkb_filter *filter)
+స్థిర శూన్య
+xkb_filter_mod_తాళం_new(నిర్మాణం xkb_server_state *state,
+                        నిర్మాణం xkb_events *events,
+                        నిర్మాణం xkb_filter *filter)
 {
-    filter->priv = (state->base.components.locked_mods &
-                    filter->action.mods.mods.mask);
+    filter->priv = (state->పునాది.components.locked_mods &
+                    filter->action.mods.mods.ముసుగు);
 
-    if (filter->priv && (filter->action.mods.flags & ACTION_UNLOCK_ON_PRESS)) {
+    ఒకవేళ (filter->priv && (filter->action.mods.flags & ACTION_UNLOCK_ON_PRESS)) {
         /*
          * Some of the target modifiers were locked before key press: unlock.
          *
          * This is a keymap v2 extension: unlock-on-press.
          */
-        if (!(filter->action.mods.flags & ACTION_LOCK_NO_UNLOCK))
-            state->base.components.locked_mods &= ~filter->priv;
+        ఒకవేళ (!(filter->action.mods.flags & ACTION_తాళం_NO_UNLOCK))
+            state->పునాది.components.locked_mods &= ~filter->priv;
         /* No further action: cancel filter */
-        filter->func = NULL;
-    } else {
+        filter->func = ఖాళీ;
+    } లేకపోతే {
         /* Set base mods; lock mods if relevant (XKB 1.0 spec) */
-        state->set_mods |= filter->action.mods.mods.mask;
-        if (!(filter->action.mods.flags & ACTION_LOCK_NO_LOCK))
-            state->base.components.locked_mods |= filter->action.mods.mods.mask;
+        state->సమితి_mods |= filter->action.mods.mods.ముసుగు;
+        ఒకవేళ (!(filter->action.mods.flags & ACTION_తాళం_NO_తాళం))
+            state->పునాది.components.locked_mods |= filter->action.mods.mods.ముసుగు;
     }
 }
 
-static bool
-xkb_filter_mod_lock_func(struct xkb_server_state *state,
-                         struct xkb_events *events,
-                         struct xkb_filter *filter,
-                         const struct xkb_key *key,
-                         enum xkb_key_direction direction)
+స్థిర bool
+xkb_filter_mod_తాళం_func(నిర్మాణం xkb_server_state *state,
+                         నిర్మాణం xkb_events *events,
+                         నిర్మాణం xkb_filter *filter,
+                         స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం,
+                         గణన xkb_కీలకం_direction direction)
 {
-    if (key != filter->key)
-        return XKB_FILTER_CONTINUE;
+    ఒకవేళ (కీలకం != filter->కీలకం)
+        తిరిగి XKB_FILTER_CONTINUE;
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    ఎంపిక (direction) {
+    స్థితి XKB_కీలకం_కిందికి:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    స్థితి XKB_కీలకం_REPEATED:
+        తిరిగి XKB_FILTER_CONSUME;
+    అప్రమేయ:
+        ఒకవేళ (--filter->refcnt > 0)
+            తిరిగి XKB_FILTER_CONSUME;
     }
 
-    state->clear_mods |= filter->action.mods.mods.mask;
-    if (!(filter->action.mods.flags & ACTION_LOCK_NO_UNLOCK))
-        state->base.components.locked_mods &= ~filter->priv;
+    state->clear_mods |= filter->action.mods.mods.ముసుగు;
+    ఒకవేళ (!(filter->action.mods.flags & ACTION_తాళం_NO_UNLOCK))
+        state->పునాది.components.locked_mods &= ~filter->priv;
 
-    filter->func = NULL;
-    return XKB_FILTER_CONTINUE;
+    filter->func = ఖాళీ;
+    తిరిగి XKB_FILTER_CONTINUE;
 }
 
-static void
-xkb_filter_mod_latch_new(struct xkb_server_state *state,
-                         struct xkb_events *events,
-                         struct xkb_filter *filter)
+స్థిర శూన్య
+xkb_filter_mod_latch_new(నిర్మాణం xkb_server_state *state,
+                         నిర్మాణం xkb_events *events,
+                         నిర్మాణం xkb_filter *filter)
 {
     /* Latch-on-press + clear-locks imply unlock-on-press */
-    const enum xkb_action_flags unlockOnPress = ACTION_UNLOCK_ON_PRESS
+    స్థిరరాశి గణన xkb_action_flags unlockOnPress = ACTION_UNLOCK_ON_PRESS
                                               | ACTION_LATCH_ON_PRESS;
 
-    if ((filter->action.mods.flags & ACTION_LOCK_CLEAR) &&
+    ఒకవేళ ((filter->action.mods.flags & ACTION_తాళం_CLEAR) &&
         (filter->action.mods.flags & unlockOnPress) &&
-        (state->base.components.locked_mods & filter->action.mods.mods.mask) ==
-         filter->action.mods.mods.mask) {
+        (state->పునాది.components.locked_mods & filter->action.mods.mods.ముసుగు) ==
+         filter->action.mods.mods.ముసుగు) {
         /*
          * Unlock on press
          *
          * This is a keymap v2 extension: clear locks and do not latch.
          */
-        state->base.components.locked_mods &= ~filter->action.mods.mods.mask;
-        filter->func = NULL;
-    } else if (filter->action.mods.flags & ACTION_LATCH_ON_PRESS) {
+        state->పునాది.components.locked_mods &= ~filter->action.mods.mods.ముసుగు;
+        filter->func = ఖాళీ;
+    } లేకపోతే ఒకవేళ (filter->action.mods.flags & ACTION_LATCH_ON_PRESS) {
         /*
          * Latch on key press
          *
          * This is a keymap format v2 extension.
          */
         filter->priv = LATCH_PENDING;
-        state->base.components.latched_mods |= filter->action.mods.mods.mask;
+        state->పునాది.components.latched_mods |= filter->action.mods.mods.ముసుగు;
         /* XXX beep beep! */
-    } else {
+    } లేకపోతే {
         /* XKB standard latch action */
-        filter->priv = LATCH_KEY_DOWN;
-        state->set_mods |= filter->action.mods.mods.mask;
+        filter->priv = LATCH_కీలకం_కిందికి;
+        state->సమితి_mods |= filter->action.mods.mods.ముసుగు;
     }
 }
 
-static bool
-xkb_filter_mod_latch_func(struct xkb_server_state *state,
-                          struct xkb_events *events,
-                          struct xkb_filter *filter,
-                          const struct xkb_key *key,
-                          enum xkb_key_direction direction)
+స్థిర bool
+xkb_filter_mod_latch_func(నిర్మాణం xkb_server_state *state,
+                          నిర్మాణం xkb_events *events,
+                          నిర్మాణం xkb_filter *filter,
+                          స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం,
+                          గణన xkb_కీలకం_direction direction)
 {
-    enum xkb_key_latch_state latch = filter->priv;
+    గణన xkb_కీలకం_latch_state latch = filter->priv;
 
-    if (direction == XKB_KEY_DOWN) {
-        const union xkb_action *actions = NULL;
-        const xkb_action_count_t count = xkb_key_get_actions(&state->base, key,
+    ఒకవేళ (direction == XKB_కీలకం_కిందికి) {
+        స్థిరరాశి సంఘం xkb_action *actions = ఖాళీ;
+        స్థిరరాశి xkb_action_లెక్క_t లెక్క = xkb_కీలకం_get_actions(&state->పునాది, కీలకం,
                                                              &actions);
 
-        if (latch == LATCH_KEY_DOWN) {
+        ఒకవేళ (latch == LATCH_కీలకం_కిందికి) {
             /*
              * Another key was pressed while we’ve still got the latching key
              * held down.
@@ -885,7 +885,7 @@ xkb_filter_mod_latch_func(struct xkb_server_state *state,
              * • Prevent the latch to trigger and keep the base modifiers set
              *   by xkb_filter_mod_latch_new(), until the latch key is released.
              */
-            if (state->a11y_flags & XKB_A11Y_LATCH_SIMULTANEOUS_KEYS) {
+            ఒకవేళ (state->a11y_flags & XKB_A11_Y_LATCH_ఏకకాల_కీలకాలు) {
                 /*
                  * Prevent the latch to trigger only if some of the pressed
                  * key’s actions breaks latches, mirroring the behavior in the
@@ -893,28 +893,28 @@ xkb_filter_mod_latch_func(struct xkb_server_state *state,
                  *
                  * This is an extension to the X11 XKB protocol.
                  */
-                for (xkb_action_count_t k = 0; k < count; k++) {
-                    if (xkb_action_breaks_latch(&(actions[k]),
-                                                state->base.components.controls,
-                                                INTERNAL_BREAKS_MOD_LATCH,
-                                                filter->action.mods.mods.mask))
+                కొరకు (xkb_action_లెక్క_t k = 0; k < లెక్క; k++) {
+                    ఒకవేళ (xkb_action_breaks_latch(&(actions[k]),
+                                                state->పునాది.components.controls,
+                                                అంతర్గత_BREAKS_MOD_LATCH,
+                                                filter->action.mods.mods.ముసుగు))
                     {
                         latch = NO_LATCH;
-                        break;
+                        ఆపు;
                     }
                 }
-            } else {
+            } లేకపోతే {
                 /* Unconditionally prevent the latch to trigger. */
                 latch = NO_LATCH;
             }
         }
-        else if (latch == LATCH_PENDING) {
+        లేకపోతే ఒకవేళ (latch == LATCH_PENDING) {
             /* If this is a new keypress and we're awaiting our single latched
              * keypress, then either break the latch if any random key is pressed,
              * or promote it to a lock or plain base set if it's the same
              * modifier. */
-            const bool sticky_keys = state->base.components.controls
-                                   & CONTROL_STICKY_KEYS;
+            స్థిరరాశి bool sticky_కీలకాలు = state->పునాది.components.controls
+                                   & CONTROL_STICKY_కీలకాలు;
             /*
              * NOTE: Action’s flags are not compared:
              * - flags may have been modified by keyboard controls at the
@@ -924,56 +924,56 @@ xkb_filter_mod_latch_func(struct xkb_server_state *state,
              * - even if it were the case, one would most likely want both
              *   actions to be considered compatible in this context.
              */
-            for (xkb_action_count_t k = 0; k < count; k++) {
-                if (((actions[k].type == ACTION_TYPE_MOD_LATCH) ||
-                     (actions[k].type == ACTION_TYPE_MOD_SET && sticky_keys)) &&
-                    actions[k].mods.mods.mask == filter->action.mods.mods.mask)
+            కొరకు (xkb_action_లెక్క_t k = 0; k < లెక్క; k++) {
+                ఒకవేళ (((actions[k].type == ACTION_TYPE_MOD_LATCH) ||
+                     (actions[k].type == ACTION_TYPE_MOD_సమితి && sticky_కీలకాలు)) &&
+                    actions[k].mods.mods.ముసుగు == filter->action.mods.mods.ముసుగు)
                 {
-                    if (filter->action.mods.flags & ACTION_LATCH_TO_LOCK) {
+                    ఒకవేళ (filter->action.mods.flags & ACTION_LATCH_గమ్యం_తాళం) {
                         /* Mutate the action to LockMods() */
-                        filter->action.type = ACTION_TYPE_MOD_LOCK;
-                        filter->func = xkb_filter_mod_lock_func;
-                        xkb_filter_mod_lock_new(state, events, filter);
+                        filter->action.type = ACTION_TYPE_MOD_తాళం;
+                        filter->func = xkb_filter_mod_తాళం_func;
+                        xkb_filter_mod_తాళం_new(state, events, filter);
                     }
-                    else {
+                    లేకపోతే {
                         /* Mutate the action to SetMods() */
-                        filter->action.type = ACTION_TYPE_MOD_SET;
-                        filter->func = xkb_filter_mod_set_func;
-                        xkb_filter_mod_set_new(state, events, filter);
+                        filter->action.type = ACTION_TYPE_MOD_సమితి;
+                        filter->func = xkb_filter_mod_సమితి_func;
+                        xkb_filter_mod_సమితి_new(state, events, filter);
                     }
-                    filter->key = key;
+                    filter->కీలకం = కీలకం;
                     /* Clear latches */
-                    state->base.components.latched_mods &=
-                        ~filter->action.mods.mods.mask;
+                    state->పునాది.components.latched_mods &=
+                        ~filter->action.mods.mods.ముసుగు;
                     /* XXX beep beep! */
-                    return XKB_FILTER_CONSUME;
+                    తిరిగి XKB_FILTER_CONSUME;
                 }
-                else if (xkb_action_breaks_latch(&(actions[k]),
-                                                 state->base.components.controls,
-                                                 INTERNAL_BREAKS_MOD_LATCH,
-                                                 filter->action.mods.mods.mask))
+                లేకపోతే ఒకవేళ (xkb_action_breaks_latch(&(actions[k]),
+                                                 state->పునాది.components.controls,
+                                                 అంతర్గత_BREAKS_MOD_LATCH,
+                                                 filter->action.mods.mods.ముసుగు))
                 {
                     /* XXX: This may be totally broken, we might need to break the
                      *      latch in the next run after this press? */
-                    state->base.components.latched_mods &=
-                        ~filter->action.mods.mods.mask;
-                    filter->func = NULL;
-                    return XKB_FILTER_CONTINUE;
+                    state->పునాది.components.latched_mods &=
+                        ~filter->action.mods.mods.ముసుగు;
+                    filter->func = ఖాళీ;
+                    తిరిగి XKB_FILTER_CONTINUE;
                 }
             }
         }
-        else {
+        లేకపోతే {
             /* Ignore press in NO_LATCH state */
-            assert(latch == NO_LATCH);
+            ప్రతిజ్ఞా(latch == NO_LATCH);
         }
     }
-    else if (key != filter->key) {
+    లేకపోతే ఒకవేళ (కీలకం != filter->కీలకం) {
         /* Ignore repeat/release of other keys */
     }
-    else if (direction == XKB_KEY_REPEATED) {
-        return XKB_FILTER_CONSUME; // TODO: check
+    లేకపోతే ఒకవేళ (direction == XKB_కీలకం_REPEATED) {
+        తిరిగి XKB_FILTER_CONSUME; // TODO: check
     }
-    else {
+    లేకపోతే {
         /* Our key got released.  If we’ve set it to clear locks, and we
          * currently have the same modifiers locked, then release them and
          * don't actually latch.  Else we’ve actually hit the latching
@@ -981,58 +981,58 @@ xkb_filter_mod_latch_func(struct xkb_server_state *state,
          * latched. */
 
         /* Latch-on-press + clear-locks imply unlock-on-press */
-        const enum xkb_action_flags unlockOnPress = ACTION_UNLOCK_ON_PRESS
+        స్థిరరాశి గణన xkb_action_flags unlockOnPress = ACTION_UNLOCK_ON_PRESS
                                                   | ACTION_LATCH_ON_PRESS;
 
-        if ((filter->action.mods.flags & ACTION_LOCK_CLEAR) &&
+        ఒకవేళ ((filter->action.mods.flags & ACTION_తాళం_CLEAR) &&
             !(filter->action.mods.flags & unlockOnPress) &&
-            (state->base.components.locked_mods &
-             filter->action.mods.mods.mask) == filter->action.mods.mods.mask)
+            (state->పునాది.components.locked_mods &
+             filter->action.mods.mods.ముసుగు) == filter->action.mods.mods.ముసుగు)
         {
             /* XXX: We might be a bit overenthusiastic about clearing
              *      mods other filters have set here? */
-            if (latch == LATCH_PENDING)
-                state->base.components.latched_mods &=
-                    ~filter->action.mods.mods.mask;
-            else
-                state->clear_mods |= filter->action.mods.mods.mask;
-            state->base.components.locked_mods &= ~filter->action.mods.mods.mask;
-            filter->func = NULL;
+            ఒకవేళ (latch == LATCH_PENDING)
+                state->పునాది.components.latched_mods &=
+                    ~filter->action.mods.mods.ముసుగు;
+            లేకపోతే
+                state->clear_mods |= filter->action.mods.mods.ముసుగు;
+            state->పునాది.components.locked_mods &= ~filter->action.mods.mods.ముసుగు;
+            filter->func = ఖాళీ;
         }
-        else if (latch == NO_LATCH) {
+        లేకపోతే ఒకవేళ (latch == NO_LATCH) {
             /* Broken latch */
-            state->clear_mods |= filter->action.mods.mods.mask;
-            filter->func = NULL;
+            state->clear_mods |= filter->action.mods.mods.ముసుగు;
+            filter->func = ఖాళీ;
         }
-        else if (!(filter->action.mods.flags & ACTION_LATCH_ON_PRESS)) {
+        లేకపోతే ఒకవేళ (!(filter->action.mods.flags & ACTION_LATCH_ON_PRESS)) {
             latch = LATCH_PENDING;
-            state->clear_mods |= filter->action.mods.mods.mask;
-            state->base.components.latched_mods |= filter->action.mods.mods.mask;
+            state->clear_mods |= filter->action.mods.mods.ముసుగు;
+            state->పునాది.components.latched_mods |= filter->action.mods.mods.ముసుగు;
             /* XXX beep beep! */
         }
     }
 
     filter->priv = latch;
 
-    return XKB_FILTER_CONTINUE;
+    తిరిగి XKB_FILTER_CONTINUE;
 }
 
-static void
-append_pointer_move(struct xkb_events *events,
-                    struct xkb_filter *filter)
+స్థిర శూన్య
+append_సూచిక_move(నిర్మాణం xkb_events *events,
+                    నిర్మాణం xkb_filter *filter)
 {
-    enum xkb_pointer_motion_flags flags = 0;
-    if (filter->action.ptr.flags & ACTION_ABSOLUTE_X)
-        flags |= XKB_POINTER_MOTION_ABSOLUTE_X;
-    if (filter->action.ptr.flags & ACTION_ABSOLUTE_Y)
-        flags |= XKB_POINTER_MOTION_ABSOLUTE_Y;
-    if (filter->action.ptr.flags & ACTION_REPEAT)
-        flags |= XKB_POINTER_MOTION_REPEATS;
-    darray_append(events->queue, (struct xkb_event) {
+    గణన xkb_సూచిక_motion_flags flags = 0;
+    ఒకవేళ (filter->action.ptr.flags & ACTION_ABSOLUTE_X)
+        flags |= XKB_సూచిక_MOTION_ABSOLUTE_X;
+    ఒకవేళ (filter->action.ptr.flags & ACTION_ABSOLUTE_Y)
+        flags |= XKB_సూచిక_MOTION_ABSOLUTE_Y;
+    ఒకవేళ (filter->action.ptr.flags & ACTION_REPEAT)
+        flags |= XKB_సూచిక_MOTION_REPEATS;
+    darray_append(events->వరుస, (నిర్మాణం xkb_event) {
         .ctx = events->ctx, /* borrowed from events */
-        .type = XKB_EVENT_TYPE_POINTER_MOTION,
-        .pointer_motion = {
-            .size = sizeof(((struct xkb_event*)0)->pointer_motion),
+        .type = XKB_EVENT_TYPE_సూచిక_MOTION,
+        .సూచిక_motion = {
+            .కొలత = పరిమాణం(((నిర్మాణం xkb_event*)0)->సూచిక_motion),
             .flags = flags,
             .x = filter->action.ptr.x,
             .y = filter->action.ptr.y,
@@ -1040,226 +1040,226 @@ append_pointer_move(struct xkb_events *events,
     });
 }
 
-static void
-xkb_filter_pointer_move_new(struct xkb_server_state *state,
-                            struct xkb_events *events,
-                            struct xkb_filter *filter)
+స్థిర శూన్య
+xkb_filter_సూచిక_move_new(నిర్మాణం xkb_server_state *state,
+                            నిర్మాణం xkb_events *events,
+                            నిర్మాణం xkb_filter *filter)
 {
-    if (!events) {
-        filter->func = NULL;
-        return;
+    ఒకవేళ (!events) {
+        filter->func = ఖాళీ;
+        తిరిగి;
     }
 
-    assert(state->base.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_KEYS);
-    append_pointer_move(events, filter);
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    ప్రతిజ్ఞా(state->పునాది.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_కీలకాలు);
+    append_సూచిక_move(events, filter);
+    state->flags &= ~STATE_REQUIRE_కీలకం_EVENT;
 }
 
-static bool
-xkb_filter_pointer_move_func(struct xkb_server_state *state,
-                             struct xkb_events *events,
-                             struct xkb_filter *filter,
-                             const struct xkb_key *key,
-                             enum xkb_key_direction direction)
+స్థిర bool
+xkb_filter_సూచిక_move_func(నిర్మాణం xkb_server_state *state,
+                             నిర్మాణం xkb_events *events,
+                             నిర్మాణం xkb_filter *filter,
+                             స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం,
+                             గణన xkb_కీలకం_direction direction)
 {
-    if (key != filter->key || !events)
-        return XKB_FILTER_CONTINUE;
+    ఒకవేళ (కీలకం != filter->కీలకం || !events)
+        తిరిగి XKB_FILTER_CONTINUE;
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_కీలకం_EVENT;
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    ఎంపిక (direction) {
+    స్థితి XKB_కీలకం_కిందికి:
         filter->refcnt++;
-        append_pointer_move(events, filter);
-        return XKB_FILTER_CONSUME;
-    case XKB_KEY_REPEATED:
-        if (filter->action.ptr.flags & ACTION_REPEAT)
-            append_pointer_move(events, filter);
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+        append_సూచిక_move(events, filter);
+        తిరిగి XKB_FILTER_CONSUME;
+    స్థితి XKB_కీలకం_REPEATED:
+        ఒకవేళ (filter->action.ptr.flags & ACTION_REPEAT)
+            append_సూచిక_move(events, filter);
+        తిరిగి XKB_FILTER_CONSUME;
+    అప్రమేయ:
+        ఒకవేళ (--filter->refcnt > 0)
+            తిరిగి XKB_FILTER_CONSUME;
     }
 
-    filter->func = NULL;
-    return XKB_FILTER_CONSUME;
+    filter->func = ఖాళీ;
+    తిరిగి XKB_FILTER_CONSUME;
 }
 
 /* Implemented with xkb_machine API because it requires struct xkb_machine */
-static void
-xkb_filter_pointer_button_new(struct xkb_server_state *state,
-                              struct xkb_events *events,
-                              struct xkb_filter *filter);
+స్థిర శూన్య
+xkb_filter_సూచిక_button_new(నిర్మాణం xkb_server_state *state,
+                              నిర్మాణం xkb_events *events,
+                              నిర్మాణం xkb_filter *filter);
 
 /* Implemented with xkb_machine API because it requires struct xkb_machine */
-static bool
-xkb_filter_pointer_button_func(struct xkb_server_state *state,
-                               struct xkb_events *events,
-                               struct xkb_filter *filter,
-                               const struct xkb_key *key,
-                               enum xkb_key_direction direction);
+స్థిర bool
+xkb_filter_సూచిక_button_func(నిర్మాణం xkb_server_state *state,
+                               నిర్మాణం xkb_events *events,
+                               నిర్మాణం xkb_filter *filter,
+                               స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం,
+                               గణన xkb_కీలకం_direction direction);
 
 /* Implemented with xkb_machine API because it requires struct xkb_machine */
-static void
-xkb_filter_pointer_lock_button_new(struct xkb_server_state *state,
-                                   struct xkb_events *events,
-                                   struct xkb_filter *filter);
+స్థిర శూన్య
+xkb_filter_సూచిక_తాళం_button_new(నిర్మాణం xkb_server_state *state,
+                                   నిర్మాణం xkb_events *events,
+                                   నిర్మాణం xkb_filter *filter);
 
 /* Implemented with xkb_machine API because it requires struct xkb_machine */
-static bool
-xkb_filter_pointer_lock_button_func(struct xkb_server_state *state,
-                                    struct xkb_events *events,
-                                    struct xkb_filter *filter,
-                                    const struct xkb_key *key,
-                                    enum xkb_key_direction direction);
+స్థిర bool
+xkb_filter_సూచిక_తాళం_button_func(నిర్మాణం xkb_server_state *state,
+                                    నిర్మాణం xkb_events *events,
+                                    నిర్మాణం xkb_filter *filter,
+                                    స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం,
+                                    గణన xkb_కీలకం_direction direction);
 
 /* Implemented with xkb_machine API because it requires struct xkb_machine */
-static void
-xkb_filter_pointer_set_default_button_new(struct xkb_server_state *state,
-                                          struct xkb_events *events,
-                                          struct xkb_filter *filter);
+స్థిర శూన్య
+xkb_filter_సూచిక_సమితి_default_button_new(నిర్మాణం xkb_server_state *state,
+                                          నిర్మాణం xkb_events *events,
+                                          నిర్మాణం xkb_filter *filter);
 
 /* Implemented with xkb_machine API because it requires struct xkb_machine */
-static bool
-xkb_filter_pointer_set_default_button_func(struct xkb_server_state *state,
-                                           struct xkb_events *events,
-                                           struct xkb_filter *filter,
-                                           const struct xkb_key *key,
-                                           enum xkb_key_direction direction);
+స్థిర bool
+xkb_filter_సూచిక_సమితి_default_button_func(నిర్మాణం xkb_server_state *state,
+                                           నిర్మాణం xkb_events *events,
+                                           నిర్మాణం xkb_filter *filter,
+                                           స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం,
+                                           గణన xkb_కీలకం_direction direction);
 
-static void
-xkb_filter_terminate_server_new(struct xkb_server_state *state,
-                                 struct xkb_events *events,
-                                 struct xkb_filter *filter);
+స్థిర శూన్య
+xkb_filter_terminate_server_new(నిర్మాణం xkb_server_state *state,
+                                 నిర్మాణం xkb_events *events,
+                                 నిర్మాణం xkb_filter *filter);
 
-static bool
-xkb_filter_terminate_server_func(struct xkb_server_state *state,
-                                  struct xkb_events *events,
-                                  struct xkb_filter *filter,
-                                  const struct xkb_key *key,
-                                  enum xkb_key_direction direction);
-
-/* Implemented with xkb_machine API because it requires struct xkb_machine */
-static void
-xkb_filter_switch_virtual_console_new(struct xkb_server_state *state,
-                                      struct xkb_events *events,
-                                      struct xkb_filter *filter);
+స్థిర bool
+xkb_filter_terminate_server_func(నిర్మాణం xkb_server_state *state,
+                                  నిర్మాణం xkb_events *events,
+                                  నిర్మాణం xkb_filter *filter,
+                                  స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం,
+                                  గణన xkb_కీలకం_direction direction);
 
 /* Implemented with xkb_machine API because it requires struct xkb_machine */
-static bool
-xkb_filter_switch_virtual_console_func(struct xkb_server_state *state,
-                                       struct xkb_events *events,
-                                       struct xkb_filter *filter,
-                                       const struct xkb_key *key,
-                                       enum xkb_key_direction direction);
+స్థిర శూన్య
+xkb_filter_switch_virtual_console_new(నిర్మాణం xkb_server_state *state,
+                                      నిర్మాణం xkb_events *events,
+                                      నిర్మాణం xkb_filter *filter);
 
-static inline void
-clear_all_latches_and_locks(struct xkb_server_state *state,
-                            struct xkb_events *events);
+/* Implemented with xkb_machine API because it requires struct xkb_machine */
+స్థిర bool
+xkb_filter_switch_virtual_console_func(నిర్మాణం xkb_server_state *state,
+                                       నిర్మాణం xkb_events *events,
+                                       నిర్మాణం xkb_filter *filter,
+                                       స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం,
+                                       గణన xkb_కీలకం_direction direction);
 
-static void
-xkb_filter_ctrls_new(struct xkb_server_state *state,
-                     struct xkb_events *events,
-                     struct xkb_filter *filter)
+స్థిర అంతఃవరుస శూన్య
+clear_all_latches_and_locks(నిర్మాణం xkb_server_state *state,
+                            నిర్మాణం xkb_events *events);
+
+స్థిర శూన్య
+xkb_filter_ctrls_new(నిర్మాణం xkb_server_state *state,
+                     నిర్మాణం xkb_events *events,
+                     నిర్మాణం xkb_filter *filter)
 {
-    if (filter->action.type == ACTION_TYPE_CTRL_SET) {
+    ఒకవేళ (filter->action.type == ACTION_TYPE_CTRL_సమితి) {
         /* Set: save the specified controls that are *not* already enabled */
         filter->priv = (uint32_t) (
-            (~state->base.components.controls) & filter->action.ctrls.ctrls
+            (~state->పునాది.components.controls) & filter->action.ctrls.ctrls
         );
-    } else {
+    } లేకపోతే {
         /* Lock: save the specified controls that *are* already enabled */
         filter->priv = (uint32_t) (
-            state->base.components.controls & filter->action.ctrls.ctrls
+            state->పునాది.components.controls & filter->action.ctrls.ctrls
         );
     }
 
-    if (filter->action.type == ACTION_TYPE_CTRL_SET ||
-        !(filter->action.ctrls.flags & ACTION_LOCK_NO_LOCK)) {
+    ఒకవేళ (filter->action.type == ACTION_TYPE_CTRL_సమితి ||
+        !(filter->action.ctrls.flags & ACTION_తాళం_NO_తాళం)) {
         /* Enable the specified controls that are not already enabled */
-        state->base.components.controls |= filter->action.ctrls.ctrls;
+        state->పునాది.components.controls |= filter->action.ctrls.ctrls;
     }
 }
 
-static bool
-xkb_filter_ctrls_func(struct xkb_server_state *state,
-                      struct xkb_events *events,
-                      struct xkb_filter *filter,
-                      const struct xkb_key *key,
-                      enum xkb_key_direction direction)
+స్థిర bool
+xkb_filter_ctrls_func(నిర్మాణం xkb_server_state *state,
+                      నిర్మాణం xkb_events *events,
+                      నిర్మాణం xkb_filter *filter,
+                      స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం,
+                      గణన xkb_కీలకం_direction direction)
 {
-    if (key != filter->key)
-        return XKB_FILTER_CONTINUE;
+    ఒకవేళ (కీలకం != filter->కీలకం)
+        తిరిగి XKB_FILTER_CONTINUE;
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    ఎంపిక (direction) {
+    స్థితి XKB_కీలకం_కిందికి:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    స్థితి XKB_కీలకం_REPEATED:
+        తిరిగి XKB_FILTER_CONSUME;
+    అప్రమేయ:
+        ఒకవేళ (--filter->refcnt > 0)
+            తిరిగి XKB_FILTER_CONSUME;
     }
 
-    if (filter->action.type == ACTION_TYPE_CTRL_SET ||
-        !(filter->action.ctrls.flags & ACTION_LOCK_NO_UNLOCK)) {
-        const enum xkb_action_controls old = state->base.components.controls;
+    ఒకవేళ (filter->action.type == ACTION_TYPE_CTRL_సమితి ||
+        !(filter->action.ctrls.flags & ACTION_తాళం_NO_UNLOCK)) {
+        స్థిరరాశి గణన xkb_action_controls old = state->పునాది.components.controls;
 
         /*
          * Set: Disable specified controls that were *not* enabled at key press.
          * Lock: Disable specified controls that *were* enabled at key press.
          */
-        state->base.components.controls &= ~(enum xkb_action_controls) filter->priv;
+        state->పునాది.components.controls &= ~(గణన xkb_action_controls) filter->priv;
 
-        if ((old & CONTROL_STICKY_KEYS) &&
-            !(state->base.components.controls & CONTROL_STICKY_KEYS)) {
+        ఒకవేళ ((old & CONTROL_STICKY_కీలకాలు) &&
+            !(state->పునాది.components.controls & CONTROL_STICKY_కీలకాలు)) {
             /* Sticky keys were disabled: clear all locks and latches */
             clear_all_latches_and_locks(state, events);
         }
     }
 
-    filter->func = NULL;
-    return XKB_FILTER_CONTINUE;
+    filter->func = ఖాళీ;
+    తిరిగి XKB_FILTER_CONTINUE;
 }
 
-static bool
-append_redirect_key_events(struct xkb_server_state *state,
-                           struct xkb_events *events,
-                           const struct xkb_redirect_key_action *redirect,
-                           enum xkb_key_direction direction)
+స్థిర bool
+append_redirect_కీలకం_events(నిర్మాణం xkb_server_state *state,
+                           నిర్మాణం xkb_events *events,
+                           స్థిరరాశి నిర్మాణం xkb_redirect_కీలకం_action *redirect,
+                           గణన xkb_కీలకం_direction direction)
 {
-    enum xkb_state_component changed = 0;
-    const xkb_mod_mask_t mask = redirect->affect_mods;
+    గణన xkb_state_component మారింది = 0;
+    స్థిరరాశి xkb_mod_ముసుగు_t ముసుగు = redirect->affect_mods;
 
     /*
      * Reference state: find the last state update in the queue, otherwise
      * use the current state.
      */
-    struct xkb_event *event;
-    struct state_components last_components = state->base.components;
-    darray_foreach_reverse(event, events->queue) {
-        if (event->type == XKB_EVENT_TYPE_STATE_COMPONENTS) {
-            last_components = event->components.components;
-            break;
+    నిర్మాణం xkb_event *event;
+    నిర్మాణం state_components చివరి_components = state->పునాది.components;
+    darray_foreach_తిరగేయి(event, events->వరుస) {
+        ఒకవేళ (event->type == XKB_EVENT_TYPE_STATE_COMPONENTS) {
+            చివరి_components = event->components.components;
+            ఆపు;
         }
     }
 
-    if (mask) {
-        struct state_components new = last_components;
-        new.base_mods = (new.base_mods & ~mask) | redirect->mods;
-        new.latched_mods = (new.latched_mods & ~mask) | redirect->mods;
-        new.locked_mods = (new.locked_mods & ~mask) | redirect->mods;
-        new.mods = (new.mods & ~mask) | redirect->mods;
+    ఒకవేళ (ముసుగు) {
+        నిర్మాణం state_components new = చివరి_components;
+        new.పునాది_mods = (new.పునాది_mods & ~ముసుగు) | redirect->mods;
+        new.latched_mods = (new.latched_mods & ~ముసుగు) | redirect->mods;
+        new.locked_mods = (new.locked_mods & ~ముసుగు) | redirect->mods;
+        new.mods = (new.mods & ~ముసుగు) | redirect->mods;
 
-        changed = get_state_component_changes(&last_components, &new);
-        if (changed) {
-            darray_append(events->queue, (struct xkb_event) {
+        మారింది = get_state_component_changes(&చివరి_components, &new);
+        ఒకవేళ (మారింది) {
+            darray_append(events->వరుస, (నిర్మాణం xkb_event) {
                 .ctx = events->ctx, /* borrowed from events */
                 .type = XKB_EVENT_TYPE_STATE_COMPONENTS,
                 .components = {
                     .components = new,
-                    .changed = changed
+                    .మారింది = మారింది
                 }
             });
             /*
@@ -1267,129 +1267,129 @@ append_redirect_key_events(struct xkb_server_state *state,
              * it was computed for: consumers must observe the key event
              * under the *redirected* modifiers.
              */
-            darray_append(events->queue, (struct xkb_event) {
+            darray_append(events->వరుస, (నిర్మాణం xkb_event) {
                 .ctx = events->ctx, /* borrowed from events */
-                .type = XKB_EVENT_TYPE_FRAME,
+                .type = XKB_EVENT_TYPE_చట్రం,
             });
         }
     }
 
-    darray_append(events->queue, (struct xkb_event) {
+    darray_append(events->వరుస, (నిర్మాణం xkb_event) {
         .ctx = events->ctx, /* borrowed from events */
-        .type = XKB_EVENT_TYPE_KEY,
-        .key = {
+        .type = XKB_EVENT_TYPE_కీలకం,
+        .కీలకం = {
             .keycode = redirect->keycode,
             .direction = direction
         }
     });
 
-    if (mask && changed) {
+    ఒకవేళ (ముసుగు && మారింది) {
         /* Restore state */
-        darray_append(events->queue, (struct xkb_event) {
+        darray_append(events->వరుస, (నిర్మాణం xkb_event) {
             .ctx = events->ctx, /* borrowed from events */
             .type = XKB_EVENT_TYPE_STATE_COMPONENTS,
             .components = {
-                .components = last_components,
-                .changed = changed
+                .components = చివరి_components,
+                .మారింది = మారింది
             }
         });
     }
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
-    return true;
+    state->flags &= ~STATE_REQUIRE_కీలకం_EVENT;
+    తిరిగి true;
 }
 
-static void
-xkb_filter_redirect_key_new(struct xkb_server_state *state,
-                            struct xkb_events *events,
-                            struct xkb_filter *filter)
+స్థిర శూన్య
+xkb_filter_redirect_కీలకం_new(నిర్మాణం xkb_server_state *state,
+                            నిర్మాణం xkb_events *events,
+                            నిర్మాణం xkb_filter *filter)
 {
     /* Action effectual only with the xkb_machine API and a valid keycode */
-    if (!events || filter->action.redirect.keycode == XKB_KEYCODE_INVALID) {
-        filter->func = NULL;
-        return;
+    ఒకవేళ (!events || filter->action.redirect.keycode == XKB_KEYCODE_INVALID) {
+        filter->func = ఖాళీ;
+        తిరిగి;
     }
-    append_redirect_key_events(state, events, &filter->action.redirect,
-                               XKB_KEY_DOWN);
+    append_redirect_కీలకం_events(state, events, &filter->action.redirect,
+                               XKB_కీలకం_కిందికి);
 }
 
-static bool
-xkb_filter_redirect_key_func(struct xkb_server_state *state,
-                             struct xkb_events *events,
-                             struct xkb_filter *filter,
-                             const struct xkb_key *key,
-                             enum xkb_key_direction direction)
+స్థిర bool
+xkb_filter_redirect_కీలకం_func(నిర్మాణం xkb_server_state *state,
+                             నిర్మాణం xkb_events *events,
+                             నిర్మాణం xkb_filter *filter,
+                             స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం,
+                             గణన xkb_కీలకం_direction direction)
 {
-    if (key != filter->key)
-        return XKB_FILTER_CONTINUE;
+    ఒకవేళ (కీలకం != filter->కీలకం)
+        తిరిగి XKB_FILTER_CONTINUE;
 
-    if (direction == XKB_KEY_UP) {
-        append_redirect_key_events(state, events,
-                                   &filter->action.redirect, XKB_KEY_UP);
-        filter->func = NULL;
-        return XKB_FILTER_CONSUME;
-     } else if (direction == XKB_KEY_DOWN) {
-        const union xkb_action *actions = NULL;
-        const xkb_action_count_t count =
-            xkb_key_get_actions(&state->base, key, &actions);
+    ఒకవేళ (direction == XKB_కీలకం_పైకి) {
+        append_redirect_కీలకం_events(state, events,
+                                   &filter->action.redirect, XKB_కీలకం_పైకి);
+        filter->func = ఖాళీ;
+        తిరిగి XKB_FILTER_CONSUME;
+     } లేకపోతే ఒకవేళ (direction == XKB_కీలకం_కిందికి) {
+        స్థిరరాశి సంఘం xkb_action *actions = ఖాళీ;
+        స్థిరరాశి xkb_action_లెక్క_t లెక్క =
+            xkb_కీలకం_get_actions(&state->పునాది, కీలకం, &actions);
 
-        for (xkb_action_count_t a = 0; a < count; a++) {
-            if (actions[a].type == ACTION_TYPE_REDIRECT_KEY &&
+        కొరకు (xkb_action_లెక్క_t a = 0; a < లెక్క; a++) {
+            ఒకవేళ (actions[a].type == ACTION_TYPE_REDIRECT_కీలకం &&
                 actions[a].redirect.keycode != filter->action.redirect.keycode) {
                     /* One action redirects to a different key: release first */
-                    append_redirect_key_events(state, events,
+                    append_redirect_కీలకం_events(state, events,
                                                &filter->action.redirect,
-                                               XKB_KEY_UP);
-                filter->func = NULL;
-                return XKB_FILTER_CONTINUE;
+                                               XKB_కీలకం_పైకి);
+                filter->func = ఖాళీ;
+                తిరిగి XKB_FILTER_CONTINUE;
             }
         }
     }
 
-    append_redirect_key_events(state, events, &filter->action.redirect,
+    append_redirect_కీలకం_events(state, events, &filter->action.redirect,
                                direction);
-    return XKB_FILTER_CONSUME;
+    తిరిగి XKB_FILTER_CONSUME;
 }
 
-static const struct {
-    void (*new)(struct xkb_server_state *state,
-                struct xkb_events *events,
-                struct xkb_filter *filter);
-    bool (*func)(struct xkb_server_state *state,
-                 struct xkb_events *events,
-                 struct xkb_filter *filter,
-                 const struct xkb_key *key, enum xkb_key_direction direction);
-} filter_action_funcs[_ACTION_TYPE_NUM_ENTRIES] = {
-    [ACTION_TYPE_MOD_SET]     = { xkb_filter_mod_set_new,
-                                  xkb_filter_mod_set_func },
+స్థిర స్థిరరాశి నిర్మాణం {
+    శూన్య (*new)(నిర్మాణం xkb_server_state *state,
+                నిర్మాణం xkb_events *events,
+                నిర్మాణం xkb_filter *filter);
+    bool (*func)(నిర్మాణం xkb_server_state *state,
+                 నిర్మాణం xkb_events *events,
+                 నిర్మాణం xkb_filter *filter,
+                 స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం, గణన xkb_కీలకం_direction direction);
+} filter_action_funcs[ACTION_TYPE_అంకె_ENTRIES] = {
+    [ACTION_TYPE_MOD_సమితి]     = { xkb_filter_mod_సమితి_new,
+                                  xkb_filter_mod_సమితి_func },
     [ACTION_TYPE_MOD_LATCH]   = { xkb_filter_mod_latch_new,
                                   xkb_filter_mod_latch_func },
-    [ACTION_TYPE_MOD_LOCK]    = { xkb_filter_mod_lock_new,
-                                  xkb_filter_mod_lock_func },
-    [ACTION_TYPE_GROUP_SET]   = { xkb_filter_group_set_new,
-                                  xkb_filter_group_set_func },
-    [ACTION_TYPE_GROUP_LATCH] = { xkb_filter_group_latch_new,
-                                  xkb_filter_group_latch_func },
-    [ACTION_TYPE_GROUP_LOCK]  = { xkb_filter_group_lock_new,
-                                  xkb_filter_group_lock_func },
-    [ACTION_TYPE_PTR_MOVE]    = { xkb_filter_pointer_move_new,
-                                  xkb_filter_pointer_move_func },
-    [ACTION_TYPE_PTR_BUTTON]  = { xkb_filter_pointer_button_new,
-                                  xkb_filter_pointer_button_func },
-    [ACTION_TYPE_PTR_LOCK]    = { xkb_filter_pointer_lock_button_new,
-                                  xkb_filter_pointer_lock_button_func },
-    [ACTION_TYPE_PTR_DEFAULT] = { xkb_filter_pointer_set_default_button_new,
-                                  xkb_filter_pointer_set_default_button_func },
+    [ACTION_TYPE_MOD_తాళం]    = { xkb_filter_mod_తాళం_new,
+                                  xkb_filter_mod_తాళం_func },
+    [ACTION_TYPE_సమూహం_సమితి]   = { xkb_filter_సమూహం_సమితి_new,
+                                  xkb_filter_సమూహం_సమితి_func },
+    [ACTION_TYPE_సమూహం_LATCH] = { xkb_filter_సమూహం_latch_new,
+                                  xkb_filter_సమూహం_latch_func },
+    [ACTION_TYPE_సమూహం_తాళం]  = { xkb_filter_సమూహం_తాళం_new,
+                                  xkb_filter_సమూహం_తాళం_func },
+    [ACTION_TYPE_PTR_MOVE]    = { xkb_filter_సూచిక_move_new,
+                                  xkb_filter_సూచిక_move_func },
+    [ACTION_TYPE_PTR_BUTTON]  = { xkb_filter_సూచిక_button_new,
+                                  xkb_filter_సూచిక_button_func },
+    [ACTION_TYPE_PTR_తాళం]    = { xkb_filter_సూచిక_తాళం_button_new,
+                                  xkb_filter_సూచిక_తాళం_button_func },
+    [ACTION_TYPE_PTR_DEFAULT] = { xkb_filter_సూచిక_సమితి_default_button_new,
+                                  xkb_filter_సూచిక_సమితి_default_button_func },
     [ACTION_TYPE_TERMINATE]   = { xkb_filter_terminate_server_new,
                                   xkb_filter_terminate_server_func },
     [ACTION_TYPE_SWITCH_VT]   = { xkb_filter_switch_virtual_console_new,
                                   xkb_filter_switch_virtual_console_func },
-    [ACTION_TYPE_CTRL_SET]    = { xkb_filter_ctrls_new,
+    [ACTION_TYPE_CTRL_సమితి]    = { xkb_filter_ctrls_new,
                                   xkb_filter_ctrls_func },
-    [ACTION_TYPE_CTRL_LOCK]   = { xkb_filter_ctrls_new,
+    [ACTION_TYPE_CTRL_తాళం]   = { xkb_filter_ctrls_new,
                                   xkb_filter_ctrls_func },
-    [ACTION_TYPE_REDIRECT_KEY] = { xkb_filter_redirect_key_new,
-                                   xkb_filter_redirect_key_func },
+    [ACTION_TYPE_REDIRECT_కీలకం] = { xkb_filter_redirect_కీలకం_new,
+                                   xkb_filter_redirect_కీలకం_func },
 };
 
 /**
@@ -1397,37 +1397,37 @@ static const struct {
  * that are currently active, then if no filter has claimed the key, possibly
  * apply a new filter from the key action.
  */
-static void
-xkb_filter_apply_all(struct xkb_server_state *state,
-                     struct xkb_events *events,
-                     const struct xkb_key *key,
-                     enum xkb_key_direction direction)
+స్థిర శూన్య
+xkb_filter_apply_all(నిర్మాణం xkb_server_state *state,
+                     నిర్మాణం xkb_events *events,
+                     స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం,
+                     గణన xkb_కీలకం_direction direction)
 {
     /* First run through all the currently active filters and see if any of
      * them have consumed this event. */
     bool consumed = false;
-    struct xkb_filter *filter;
+    నిర్మాణం xkb_filter *filter;
     darray_foreach(filter, state->filters) {
-        if (!filter->func)
-            continue;
+        ఒకవేళ (!filter->func)
+            కొనసాగు;
 
-        if (filter->func(state, events, filter, key, direction) == XKB_FILTER_CONSUME)
+        ఒకవేళ (filter->func(state, events, filter, కీలకం, direction) == XKB_FILTER_CONSUME)
             consumed = true;
     }
-    if (consumed || direction == XKB_KEY_UP)
-        return;
+    ఒకవేళ (consumed || direction == XKB_కీలకం_పైకి)
+        తిరిగి;
 
     /* No filter consumed this event, so proceed with the key actions */
-    const union xkb_action *actions = NULL;
-    xkb_action_count_t count = xkb_key_get_actions(&state->base, key,
+    స్థిరరాశి సంఘం xkb_action *actions = ఖాళీ;
+    xkb_action_లెక్క_t లెక్క = xkb_కీలకం_get_actions(&state->పునాది, కీలకం,
                                                          &actions);
 
-    for (struct {
-            xkb_action_count_t count;
-            const union xkb_action *actions;
-         } next = {0};
-         count;
-         count = next.count, next.count = 0, actions = next.actions
+    కొరకు (నిర్మాణం {
+            xkb_action_లెక్క_t లెక్క;
+            స్థిరరాశి సంఘం xkb_action *actions;
+         } తదుపరి = {0};
+         లెక్క;
+         లెక్క = తదుపరి.లెక్క, తదుపరి.లెక్క = 0, actions = తదుపరి.actions
     ) {
         /*
          * Process actions sequentially.
@@ -1436,7 +1436,7 @@ xkb_filter_apply_all(struct xkb_server_state *state,
          * actions (see `CheckMultipleActionsCategories`). Allowing multiple
          * such actions requires a refactor of the state handling.
          */
-        for (xkb_action_count_t k = 0; k < count; k++) {
+        కొరకు (xkb_action_లెక్క_t k = 0; k < లెక్క; k++) {
             /*
              * It's possible for the keymap to set action->type explicitly, like
              * so:
@@ -1445,97 +1445,97 @@ xkb_filter_apply_all(struct xkb_server_state *state,
              *     };
              * We don't handle those.
              */
-            if (actions[k].type >= _ACTION_TYPE_NUM_ENTRIES)
-                continue;
+            ఒకవేళ (actions[k].type >= ACTION_TYPE_అంకె_ENTRIES)
+                కొనసాగు;
 
             /* Go to next action if no corresponding action handler */
-            if (!filter_action_funcs[actions[k].type].new)
-                continue;
+            ఒకవేళ (!filter_action_funcs[actions[k].type].new)
+                కొనసాగు;
 
             /* Add a new filter and run the corresponding initial action */
             filter = xkb_filter_new(state);
-            filter->key = key;
+            filter->కీలకం = కీలకం;
             filter->action = actions[k];
 
-            switch (filter->action.type) {
-            case ACTION_TYPE_MOD_SET:
-                if (state->base.components.controls & CONTROL_STICKY_KEYS) {
+            ఎంపిక (filter->action.type) {
+            స్థితి ACTION_TYPE_MOD_సమితి:
+                ఒకవేళ (state->పునాది.components.controls & CONTROL_STICKY_కీలకాలు) {
                     /* Convert modifier set action to a latch */
                     filter->action.type = ACTION_TYPE_MOD_LATCH;
-                    if (state->a11y_flags & XKB_A11Y_STICKY_KEYS_LATCH_TO_LOCK) {
-                        filter->action.mods.flags |= ACTION_LATCH_TO_LOCK;
+                    ఒకవేళ (state->a11y_flags & XKB_A11_Y_STICKY_కీలకాలు_LATCH_గమ్యం_తాళం) {
+                        filter->action.mods.flags |= ACTION_LATCH_గమ్యం_తాళం;
                     }
                 }
                 /* fallthrough */
-            case ACTION_TYPE_MOD_LATCH:
-            case ACTION_TYPE_MOD_LOCK: {
-                static const enum xkb_action_flags unlock_mods_on_press
-                    = ACTION_LOCK_CLEAR     /* SetMods & LatchMods: can unlock */
-                    | ACTION_LOCK_NO_UNLOCK /* LockMods: cannot unlock */
+            స్థితి ACTION_TYPE_MOD_LATCH:
+            స్థితి ACTION_TYPE_MOD_తాళం: {
+                స్థిర స్థిరరాశి గణన xkb_action_flags unlock_mods_on_press
+                    = ACTION_తాళం_CLEAR     /* SetMods & LatchMods: can unlock */
+                    | ACTION_తాళం_NO_UNLOCK /* LockMods: cannot unlock */
                     | ACTION_EXPLICIT_UNLOCK_ON_PRESS;
-                if ((state->flags & STATE_UNLOCK_MODS_ON_PRESS) &&
+                ఒకవేళ ((state->flags & STATE_UNLOCK_MODS_ON_PRESS) &&
                     /*
                      * Ensure that the action can actually unlock and has
                      * no *explicit* `unlockOnPress` parameter.
                      */
                     (filter->action.mods.flags & unlock_mods_on_press) ==
-                    (filter->action.type == ACTION_TYPE_MOD_LOCK
-                        ? 0 : ACTION_LOCK_CLEAR))
+                    (filter->action.type == ACTION_TYPE_MOD_తాళం
+                        ? 0 : ACTION_తాళం_CLEAR))
                 {
                     filter->action.mods.flags |= ACTION_UNLOCK_ON_PRESS;
                 }
-                break;
+                ఆపు;
             }
-            case ACTION_TYPE_GROUP_SET:
-                if (state->base.components.controls & CONTROL_STICKY_KEYS) {
+            స్థితి ACTION_TYPE_సమూహం_సమితి:
+                ఒకవేళ (state->పునాది.components.controls & CONTROL_STICKY_కీలకాలు) {
                     /* Convert group set action to a latch */
-                    filter->action.type = ACTION_TYPE_GROUP_LATCH;
-                    if (state->a11y_flags & XKB_A11Y_STICKY_KEYS_LATCH_TO_LOCK) {
-                        filter->action.group.flags |= ACTION_LATCH_TO_LOCK;
+                    filter->action.type = ACTION_TYPE_సమూహం_LATCH;
+                    ఒకవేళ (state->a11y_flags & XKB_A11_Y_STICKY_కీలకాలు_LATCH_గమ్యం_తాళం) {
+                        filter->action.సమూహం.flags |= ACTION_LATCH_గమ్యం_తాళం;
                     }
                 }
-                break;
-            case ACTION_TYPE_GROUP_LOCK:
-                if ((filter->action.group.flags &
-                     ACTION_AUTO_GROUP_LOCK_ON_MODIFIER_RELEASE) &&
+                ఆపు;
+            స్థితి ACTION_TYPE_సమూహం_తాళం:
+                ఒకవేళ ((filter->action.సమూహం.flags &
+                     ACTION_AUTO_సమూహం_తాళం_ON_MODIFIER_RELEASE) &&
                     (state->flags &
-                     STATE_FIX_LAYOUT_SWITCH_ON_MODIFIER_KEY) &&
+                     STATE_FIX_LAYOUT_SWITCH_ON_MODIFIER_కీలకం) &&
                     /*
                      * FIXME: sticky keys may leave an unexpected modifier
                      * from the level 0 latched, so disable for now.
                      */
-                    !(state->base.components.controls & CONTROL_STICKY_KEYS))
+                    !(state->పునాది.components.controls & CONTROL_STICKY_కీలకాలు))
                 {
-                    filter->action.group.flags |= ACTION_LOCK_ON_RELEASE;
+                    filter->action.సమూహం.flags |= ACTION_తాళం_ON_RELEASE;
                     /* Add base level action */
-                    next.count = xkb_keymap_key_get_actions_by_level(
-                        state->base.keymap, key, state->base.components.group,
-                        0, &next.actions
+                    తదుపరి.లెక్క = xkb_keymap_కీలకం_get_actions_by_level(
+                        state->పునాది.keymap, కీలకం, state->పునాది.components.సమూహం,
+                        0, &తదుపరి.actions
                     );
-                    assert(next.count == 1);
+                    ప్రతిజ్ఞా(తదుపరి.లెక్క == 1);
                 }
-                break;
-            case ACTION_TYPE_PTR_MOVE:
-            case ACTION_TYPE_PTR_BUTTON:
-            case ACTION_TYPE_PTR_LOCK:
-            case ACTION_TYPE_PTR_DEFAULT:
-                if (!(state->base.components.controls & CONTROL_MOUSE_KEYS)) {
+                ఆపు;
+            స్థితి ACTION_TYPE_PTR_MOVE:
+            స్థితి ACTION_TYPE_PTR_BUTTON:
+            స్థితి ACTION_TYPE_PTR_తాళం:
+            స్థితి ACTION_TYPE_PTR_DEFAULT:
+                ఒకవేళ (!(state->పునాది.components.controls & CONTROL_MOUSE_కీలకాలు)) {
                     /* Convert pointer actions to NoAction */
-                    assert(!filter_action_funcs[ACTION_TYPE_NONE].new);
-                    filter->func = NULL;
-                    continue;
+                    ప్రతిజ్ఞా(!filter_action_funcs[ACTION_TYPE_NONE].new);
+                    filter->func = ఖాళీ;
+                    కొనసాగు;
                 }
-                break;
-            case ACTION_TYPE_REDIRECT_KEY:
+                ఆపు;
+            స్థితి ACTION_TYPE_REDIRECT_కీలకం:
                 // FIXME: this is not efficient to resolve mods here each time
-                filter->action.redirect.affect_mods = mod_mask_get_effective(
-                    state->base.keymap, filter->action.redirect.affect_mods
+                filter->action.redirect.affect_mods = mod_ముసుగు_get_effective(
+                    state->పునాది.keymap, filter->action.redirect.affect_mods
                 );
-                filter->action.redirect.mods = mod_mask_get_effective(
-                    state->base.keymap, filter->action.redirect.mods
+                filter->action.redirect.mods = mod_ముసుగు_get_effective(
+                    state->పునాది.keymap, filter->action.redirect.mods
                 );
-                break;
-            default: ;
+                ఆపు;
+            అప్రమేయ: ;
             }
             filter->func = filter_action_funcs[filter->action.type].func;
             filter_action_funcs[filter->action.type].new(state, events, filter);
@@ -1543,249 +1543,249 @@ xkb_filter_apply_all(struct xkb_server_state *state,
     }
 }
 
-static void
-xkb_state_update_derived(struct xkb_state *state);
+స్థిర శూన్య
+xkb_state_update_derived(నిర్మాణం xkb_state *state);
 
-static inline void
-xkb_state_init(struct xkb_state * restrict state,
-               struct xkb_keymap * restrict keymap,
-               enum xkb_state_mode_internal mode)
+స్థిర అంతఃవరుస శూన్య
+xkb_state_init(నిర్మాణం xkb_state * పరిమిత state,
+               నిర్మాణం xkb_keymap * పరిమిత keymap,
+               గణన xkb_state_బహుళకం_అంతర్గత బహుళకం)
 {
-    state->mode = mode;
+    state->బహుళకం = బహుళకం;
     state->refcnt = 1;
     state->keymap = xkb_keymap_ref(keymap);
-    state->out_of_range_group.policy = XKB_LAYOUT_OUT_OF_RANGE_WRAP;
+    state->బహిర్గతం_యొక్క_range_సమూహం.policy = XKB_LAYOUT_బహిర్గతం_యొక్క_RANGE_WRAP;
 
     /* Ensure that derived state is correctly initialized */
     xkb_state_update_derived(state);
 }
 
-static inline void
-xkb_client_state_init(struct xkb_client_state * restrict state,
-                      struct xkb_keymap * restrict keymap,
-                      enum xkb_state_mode_internal mode)
+స్థిర అంతఃవరుస శూన్య
+xkb_client_state_init(నిర్మాణం xkb_client_state * పరిమిత state,
+                      నిర్మాణం xkb_keymap * పరిమిత keymap,
+                      గణన xkb_state_బహుళకం_అంతర్గత బహుళకం)
 {
-    xkb_state_init(&state->base, keymap, mode);
+    xkb_state_init(&state->పునాది, keymap, బహుళకం);
 }
 
-static inline void
-xkb_server_state_init(struct xkb_server_state * restrict state,
-                      struct xkb_keymap * restrict keymap,
-                      enum xkb_state_mode_internal mode,
-                      enum xkb_a11y_flags a11y_affect,
-                      enum xkb_a11y_flags a11y_flags)
+స్థిర అంతఃవరుస శూన్య
+xkb_server_state_init(నిర్మాణం xkb_server_state * పరిమిత state,
+                      నిర్మాణం xkb_keymap * పరిమిత keymap,
+                      గణన xkb_state_బహుళకం_అంతర్గత బహుళకం,
+                      గణన xkb_a11y_flags a11y_affect,
+                      గణన xkb_a11y_flags a11y_flags)
 {
-    xkb_state_init(&state->base, keymap, mode);
+    xkb_state_init(&state->పునాది, keymap, బహుళకం);
 
     state->a11y_flags = a11y_flags;
-    if (keymap->format != XKB_KEYMAP_FORMAT_TEXT_V1 &&
-        !(a11y_affect & XKB_A11Y_LATCH_SIMULTANEOUS_KEYS)) {
+    ఒకవేళ (keymap->format != XKB_KEYMAP_FORMAT_పాఠ్యం_V1 &&
+        !(a11y_affect & XKB_A11_Y_LATCH_ఏకకాల_కీలకాలు)) {
              /* Keymap v2+: enable extension to XKB if not manually disabled */
-             state->a11y_flags |= XKB_A11Y_LATCH_SIMULTANEOUS_KEYS;
+             state->a11y_flags |= XKB_A11_Y_LATCH_ఏకకాల_కీలకాలు;
     }
 }
 
-struct xkb_state *
-xkb_state_new(struct xkb_keymap *keymap)
+నిర్మాణం xkb_state *
+xkb_state_new(నిర్మాణం xkb_keymap *keymap)
 {
-    struct xkb_server_state * const state = calloc(1, sizeof(*state));
-    if (!state) {
-        log_err_func1(keymap->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
+    నిర్మాణం xkb_server_state * స్థిరరాశి state = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*state));
+    ఒకవేళ (!state) {
+        log_err_func1(keymap->ctx, XKB_ERROR_కేటాయింపు_FAILURE_2,
                       "Could not allocate a state object.\n");
-        return NULL;
+        తిరిగి ఖాళీ;
     }
 
     xkb_server_state_init(state, keymap, LEGACY_MIXED_STATE, 0, 0);
 
-    return (struct xkb_state *)state;
+    తిరిగి (నిర్మాణం xkb_state *)state;
 }
 
-struct xkb_state *
-xkb_state_new_with_mode(struct xkb_keymap * restrict keymap,
-                        enum xkb_state_mode mode,
-                        enum xkb_status * restrict status)
+నిర్మాణం xkb_state *
+xkb_state_new_with_బహుళకం(నిర్మాణం xkb_keymap * పరిమిత keymap,
+                        గణన xkb_state_బహుళకం బహుళకం,
+                        గణన xkb_స్థితి * పరిమిత స్థితి_2)
 {
-    switch (mode) {
-    case XKB_STATE_MODE_CLIENT:
-    case XKB_STATE_MODE_SERVER_QUERY: {
-        struct xkb_client_state * const state = calloc(1, sizeof(*state));
-        if (!state)
-            break;
+    ఎంపిక (బహుళకం) {
+    స్థితి XKB_STATE_బహుళకం_CLIENT:
+    స్థితి XKB_STATE_బహుళకం_SERVER_QUERY: {
+        నిర్మాణం xkb_client_state * స్థిరరాశి state = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*state));
+        ఒకవేళ (!state)
+            ఆపు;
 
-        static_assert((unsigned)XKB_STATE_MODE_CLIENT ==
-                      (unsigned)CLIENT_STATE, "");
-        static_assert((unsigned)XKB_STATE_MODE_SERVER_QUERY ==
-                      (unsigned)SERVER_COMPANION, "");
-        xkb_client_state_init(state, keymap, (enum xkb_state_mode_internal)mode);
+        static_assert((గుర్తులేని)XKB_STATE_బహుళకం_CLIENT ==
+                      (గుర్తులేని)CLIENT_STATE, "");
+        static_assert((గుర్తులేని)XKB_STATE_బహుళకం_SERVER_QUERY ==
+                      (గుర్తులేని)SERVER_COMPANION, "");
+        xkb_client_state_init(state, keymap, (గణన xkb_state_బహుళకం_అంతర్గత)బహుళకం);
 
-        if (status)
-            *status = XKB_SUCCESS;
+        ఒకవేళ (స్థితి_2)
+            *స్థితి_2 = XKB_SUCCESS;
 
-        return (struct xkb_state *)state;
+        తిరిగి (నిర్మాణం xkb_state *)state;
     }
-    case XKB_STATE_MODE_SERVER: {
-        struct xkb_server_state * const state = calloc(1, sizeof(*state));
-        if (!state)
-            break;
+    స్థితి XKB_STATE_బహుళకం_SERVER: {
+        నిర్మాణం xkb_server_state * స్థిరరాశి state = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*state));
+        ఒకవేళ (!state)
+            ఆపు;
 
         xkb_server_state_init(state, keymap, LEGACY_SERVER_STATE, 0, 0);
 
-        if (status)
-            *status = XKB_SUCCESS;
+        ఒకవేళ (స్థితి_2)
+            *స్థితి_2 = XKB_SUCCESS;
 
-        return (struct xkb_state *)state;
+        తిరిగి (నిర్మాణం xkb_state *)state;
     }
-    default:
-        log_err_func(keymap->ctx, XKB_ERROR_UNSUPPORTED_STATE_MODE_,
-                     "Unsupported state mode: %u\n", mode);
-        if (status)
-            *status = XKB_ERROR_UNSUPPORTED_STATE_MODE;
-        return NULL;
+    అప్రమేయ:
+        log_err_func(keymap->ctx, XKB_ERROR_UNSUPPORTED_STATE_బహుళకం_2,
+                     "Unsupported state mode: %u\n", బహుళకం);
+        ఒకవేళ (స్థితి_2)
+            *స్థితి_2 = XKB_ERROR_UNSUPPORTED_STATE_బహుళకం;
+        తిరిగి ఖాళీ;
     }
 
-    log_err_func1(keymap->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
+    log_err_func1(keymap->ctx, XKB_ERROR_కేటాయింపు_FAILURE_2,
                   "Could not allocate a state object.\n");
-    if (status)
-        *status = XKB_ERROR_ALLOCATION_FAILURE;
-    return NULL;
+    ఒకవేళ (స్థితి_2)
+        *స్థితి_2 = XKB_ERROR_కేటాయింపు_FAILURE;
+    తిరిగి ఖాళీ;
 }
 
-struct xkb_state *
-xkb_state_ref(struct xkb_state *state)
+నిర్మాణం xkb_state *
+xkb_state_ref(నిర్మాణం xkb_state *state)
 {
-    assert(state->refcnt > 0);
+    ప్రతిజ్ఞా(state->refcnt > 0);
     state->refcnt++;
-    return state;
+    తిరిగి state;
 }
 
-void
-xkb_state_reset(struct xkb_state *state)
+శూన్య
+xkb_state_reset(నిర్మాణం xkb_state *state)
 {
-    memset(&state->components, 0, sizeof(state->components));
+    memset(&state->components, 0, పరిమాణం(state->components));
 
-    if (state->mode < LEGACY_MIXED_STATE) {
-        static_assert(sizeof(*state) == sizeof(struct xkb_client_state),
+    ఒకవేళ (state->బహుళకం < LEGACY_MIXED_STATE) {
+        static_assert(పరిమాణం(*state) == పరిమాణం(నిర్మాణం xkb_client_state),
                       "Not a mere wrapper");
         /* Nothing else to reset */
-    } else {
-        struct xkb_server_state *state_ = (struct xkb_server_state *)state;
-        const struct xkb_server_state prev = *state_;
-        memset(state_, 0, sizeof(*state_));
+    } లేకపోతే {
+        నిర్మాణం xkb_server_state *state_ = (నిర్మాణం xkb_server_state *)state;
+        స్థిరరాశి నిర్మాణం xkb_server_state prev = *state_;
+        memset(state_, 0, పరిమాణం(*state_));
 
-        state_->base = prev.base;
+        state_->పునాది = prev.పునాది;
         state_->a11y_flags = prev.a11y_flags;
         state_->filters = prev.filters;
-        darray_size(state_->filters) = 0;
+        darray_కొలత(state_->filters) = 0;
     }
 }
 
-static inline void
-xkb_state_destroy(struct xkb_state *state)
+స్థిర అంతఃవరుస శూన్య
+xkb_state_destroy(నిర్మాణం xkb_state *state)
 {
     xkb_keymap_unref(state->keymap);
-    if (state->mode > SERVER_COMPANION)
-        darray_free(((struct xkb_server_state *)state)->filters);
+    ఒకవేళ (state->బహుళకం > SERVER_COMPANION)
+        darray_free(((నిర్మాణం xkb_server_state *)state)->filters);
 }
 
-void
-xkb_state_unref(struct xkb_state *state)
+శూన్య
+xkb_state_unref(నిర్మాణం xkb_state *state)
 {
-    assert(!state || state->refcnt > 0);
-    if (!state || --state->refcnt > 0)
-        return;
+    ప్రతిజ్ఞా(!state || state->refcnt > 0);
+    ఒకవేళ (!state || --state->refcnt > 0)
+        తిరిగి;
 
     xkb_state_destroy(state);
 
-    switch (state->mode) {
-    case CLIENT_STATE:
-    case SERVER_COMPANION:
-        free((struct xkb_client_state *)state);
-        break;
-    case LEGACY_MIXED_STATE:
-    case LEGACY_SERVER_STATE:
-        free((struct xkb_server_state *)state);
-        break;
-    case SERVER_STATE: /* handled by xkb_machine_unref() */
-    default:
+    ఎంపిక (state->బహుళకం) {
+    స్థితి CLIENT_STATE:
+    స్థితి SERVER_COMPANION:
+        విడుదల((నిర్మాణం xkb_client_state *)state);
+        ఆపు;
+    స్థితి LEGACY_MIXED_STATE:
+    స్థితి LEGACY_SERVER_STATE:
+        విడుదల((నిర్మాణం xkb_server_state *)state);
+        ఆపు;
+    స్థితి SERVER_STATE: /* handled by xkb_machine_unref() */
+    అప్రమేయ:
         PANIC_UNREACHABLE();
     }
 }
 
-struct xkb_keymap *
-xkb_state_get_keymap(struct xkb_state *state)
+నిర్మాణం xkb_keymap *
+xkb_state_get_keymap(నిర్మాణం xkb_state *state)
 {
-    return state->keymap;
+    తిరిగి state->keymap;
 }
 
 /**
  * Update the LED state to match the rest of the xkb_state.
  */
-static void
-xkb_state_led_update_all(struct xkb_state *state)
+స్థిర శూన్య
+xkb_state_led_update_all(నిర్మాణం xkb_state *state)
 {
-    xkb_led_index_t idx;
-    const struct xkb_led *led;
+    xkb_led_సూచీ_t idx;
+    స్థిరరాశి నిర్మాణం xkb_led *led;
 
     state->components.leds = 0;
 
     xkb_leds_enumerate(idx, led, state->keymap) {
 
-        if (led->which_mods != 0 && led->mods.mask != 0) {
-            xkb_mod_mask_t mod_mask = 0;
-            if (led->which_mods & XKB_STATE_MODS_EFFECTIVE)
-                mod_mask |= state->components.mods;
-            if (led->which_mods & XKB_STATE_MODS_DEPRESSED)
-                mod_mask |= state->components.base_mods;
-            if (led->which_mods & XKB_STATE_MODS_LATCHED)
-                mod_mask |= state->components.latched_mods;
-            if (led->which_mods & XKB_STATE_MODS_LOCKED)
-                mod_mask |= state->components.locked_mods;
+        ఒకవేళ (led->which_mods != 0 && led->mods.ముసుగు != 0) {
+            xkb_mod_ముసుగు_t mod_ముసుగు = 0;
+            ఒకవేళ (led->which_mods & XKB_STATE_MODS_EFFECTIVE)
+                mod_ముసుగు |= state->components.mods;
+            ఒకవేళ (led->which_mods & XKB_STATE_MODS_DEPRESSED)
+                mod_ముసుగు |= state->components.పునాది_mods;
+            ఒకవేళ (led->which_mods & XKB_STATE_MODS_LATCHED)
+                mod_ముసుగు |= state->components.latched_mods;
+            ఒకవేళ (led->which_mods & XKB_STATE_MODS_LOCKED)
+                mod_ముసుగు |= state->components.locked_mods;
 
-            if (led->mods.mask & mod_mask) {
+            ఒకవేళ (led->mods.ముసుగు & mod_ముసుగు) {
                 state->components.leds |= (UINT32_C(1) << idx);
-                continue;
+                కొనసాగు;
             }
         }
 
-        if (led->which_groups != 0) {
-            if (likely(led->groups) != 0) {
-                xkb_layout_mask_t group_mask = 0;
+        ఒకవేళ (led->which_groups != 0) {
+            ఒకవేళ (likely(led->groups) != 0) {
+                xkb_layout_ముసుగు_t సమూహం_ముసుగు = 0;
                 /* Effective and locked groups have been brought into range */
-                assert(state->components.group < XKB_MAX_GROUPS);
-                assert(state->components.locked_group >= 0 &&
-                       state->components.locked_group < XKB_MAX_GROUPS);
+                ప్రతిజ్ఞా(state->components.సమూహం < XKB_MAX_GROUPS);
+                ప్రతిజ్ఞా(state->components.locked_సమూహం >= 0 &&
+                       state->components.locked_సమూహం < XKB_MAX_GROUPS);
                 /* Effective and locked groups are used as mask */
-                if (led->which_groups & XKB_STATE_LAYOUT_EFFECTIVE)
-                    group_mask |= (UINT32_C(1) << state->components.group);
-                if (led->which_groups & XKB_STATE_LAYOUT_LOCKED)
-                    group_mask |= (UINT32_C(1) << state->components.locked_group);
+                ఒకవేళ (led->which_groups & XKB_STATE_LAYOUT_EFFECTIVE)
+                    సమూహం_ముసుగు |= (UINT32_C(1) << state->components.సమూహం);
+                ఒకవేళ (led->which_groups & XKB_STATE_LAYOUT_LOCKED)
+                    సమూహం_ముసుగు |= (UINT32_C(1) << state->components.locked_సమూహం);
                 /* Base and latched groups only have to be non-zero */
-                if ((led->which_groups & XKB_STATE_LAYOUT_DEPRESSED) &&
-                    state->components.base_group != 0)
-                    group_mask |= led->groups;
-                if ((led->which_groups & XKB_STATE_LAYOUT_LATCHED) &&
-                    state->components.latched_group != 0)
-                    group_mask |= led->groups;
+                ఒకవేళ ((led->which_groups & XKB_STATE_LAYOUT_DEPRESSED) &&
+                    state->components.పునాది_సమూహం != 0)
+                    సమూహం_ముసుగు |= led->groups;
+                ఒకవేళ ((led->which_groups & XKB_STATE_LAYOUT_LATCHED) &&
+                    state->components.latched_సమూహం != 0)
+                    సమూహం_ముసుగు |= led->groups;
 
-                if (led->groups & group_mask) {
+                ఒకవేళ (led->groups & సమూహం_ముసుగు) {
                     state->components.leds |= (UINT32_C(1) << idx);
-                    continue;
+                    కొనసాగు;
                 }
-            } else {
+            } లేకపోతే {
                 /* Special case for Base and latched groups */
-                if (((led->which_groups & XKB_STATE_LAYOUT_DEPRESSED) &&
-                     state->components.base_group == 0) ||
+                ఒకవేళ (((led->which_groups & XKB_STATE_LAYOUT_DEPRESSED) &&
+                     state->components.పునాది_సమూహం == 0) ||
                     ((led->which_groups & XKB_STATE_LAYOUT_LATCHED) &&
-                     state->components.latched_group == 0)) {
+                     state->components.latched_సమూహం == 0)) {
                     state->components.leds |= (UINT32_C(1) << idx);
-                    continue;
+                    కొనసాగు;
                 }
             }
         }
 
-        if (led->ctrls & state->components.controls) {
+        ఒకవేళ (led->ctrls & state->components.controls) {
             state->components.leds |= (UINT32_C(1) << idx);
-            continue;
+            కొనసాగు;
         }
     }
 }
@@ -1794,45 +1794,45 @@ xkb_state_led_update_all(struct xkb_state *state)
  * Calculates the derived state (effective mods/group and LEDs) from an
  * up-to-date xkb_state.
  */
-static void
-xkb_state_update_derived(struct xkb_state *state)
+స్థిర శూన్య
+xkb_state_update_derived(నిర్మాణం xkb_state *state)
 {
-    xkb_layout_index_t wrapped;
+    xkb_layout_సూచీ_t wrapped;
 
-    state->components.mods = (state->components.base_mods |
+    state->components.mods = (state->components.పునాది_mods |
                               state->components.latched_mods |
                               state->components.locked_mods);
 
     /* Lock group must be adjusted, but not base nor latched groups */
-    wrapped = XkbWrapGroupIntoRange(state->components.locked_group,
-                                    state->keymap->num_groups,
-                                    state->out_of_range_group.policy,
-                                    state->out_of_range_group.redirect_group);
+    wrapped = Xkb_Wrap_సమూహం_Into_Range(state->components.locked_సమూహం,
+                                    state->keymap->అంకె_groups,
+                                    state->బహిర్గతం_యొక్క_range_సమూహం.policy,
+                                    state->బహిర్గతం_యొక్క_range_సమూహం.redirect_సమూహం);
     static_assert(XKB_MAX_GROUPS < INT32_MAX, "Max groups don't fit");
-    state->components.locked_group =
+    state->components.locked_సమూహం =
         (int32_t) (wrapped == XKB_LAYOUT_INVALID ? 0 : wrapped);
 
     /* Effective group must be adjusted */
-    wrapped = XkbWrapGroupIntoRange(state->components.base_group +
-                                    state->components.latched_group +
-                                    state->components.locked_group,
-                                    state->keymap->num_groups,
-                                    state->out_of_range_group.policy,
-                                    state->out_of_range_group.redirect_group);
-    state->components.group =
+    wrapped = Xkb_Wrap_సమూహం_Into_Range(state->components.పునాది_సమూహం +
+                                    state->components.latched_సమూహం +
+                                    state->components.locked_సమూహం,
+                                    state->keymap->అంకె_groups,
+                                    state->బహిర్గతం_యొక్క_range_సమూహం.policy,
+                                    state->బహిర్గతం_యొక్క_range_సమూహం.redirect_సమూహం);
+    state->components.సమూహం =
         (wrapped == XKB_LAYOUT_INVALID ? 0 : wrapped);
 
     xkb_state_led_update_all(state);
 }
 
-static void
-state_update_enabled_controls(struct xkb_server_state *state,
-                              enum xkb_keyboard_control_flags affect_controls,
-                              enum xkb_keyboard_control_flags controls,
-                              struct xkb_events *events)
+స్థిర శూన్య
+state_update_enabled_controls(నిర్మాణం xkb_server_state *state,
+                              గణన xkb_keyboard_control_flags affect_controls,
+                              గణన xkb_keyboard_control_flags controls,
+                              నిర్మాణం xkb_events *events)
 {
-    const bool had_sticky_keys = state->base.components.controls
-                               & CONTROL_STICKY_KEYS;
+    స్థిరరాశి bool had_sticky_కీలకాలు = state->పునాది.components.controls
+                               & CONTROL_STICKY_కీలకాలు;
 
     /*
      * Enable using the public API with the all the Control values, except
@@ -1840,198 +1840,198 @@ state_update_enabled_controls(struct xkb_server_state *state,
      */
     affect_controls =
         ( affect_controls
-        & (enum xkb_keyboard_control_flags)CONTROL_ALL_BOOLEAN );
-    state->base.components.controls &=
-        (enum xkb_action_controls)~affect_controls;
-    state->base.components.controls |=
-        (enum xkb_action_controls)(controls & affect_controls);
+        & (గణన xkb_keyboard_control_flags)CONTROL_ALL_BOOLEAN );
+    state->పునాది.components.controls &=
+        (గణన xkb_action_controls)~affect_controls;
+    state->పునాది.components.controls |=
+        (గణన xkb_action_controls)(controls & affect_controls);
 
-    if (had_sticky_keys &&
-        !(state->base.components.controls & CONTROL_STICKY_KEYS)) {
+    ఒకవేళ (had_sticky_కీలకాలు &&
+        !(state->పునాది.components.controls & CONTROL_STICKY_కీలకాలు)) {
         /* Sticky keys were disabled: clear all locks and latches */
         clear_all_latches_and_locks(state, events);
     }
 
-    xkb_state_update_derived(&state->base);
+    xkb_state_update_derived(&state->పునాది);
 }
 
 /**
  * Given a particular key event, updates the state structure to reflect the
  * new modifiers.
  */
-enum xkb_state_component
-xkb_state_update_key(struct xkb_state *base_state, xkb_keycode_t kc,
-                     enum xkb_key_direction direction)
+గణన xkb_state_component
+xkb_state_update_కీలకం(నిర్మాణం xkb_state *పునాది_state, xkb_keycode_t kc,
+                     గణన xkb_కీలకం_direction direction)
 {
     /* Guard against client-only state */
-    assert(base_state->mode > SERVER_COMPANION);
-    if (base_state->mode <= SERVER_COMPANION) {
-        log_err(base_state->keymap->ctx, XKB_ERROR_UNEXPECTED_STATE_MODE,
-                "%s: Unexpected state type %d\n", __func__, base_state->mode);
-        return 0;
+    ప్రతిజ్ఞా(పునాది_state->బహుళకం > SERVER_COMPANION);
+    ఒకవేళ (పునాది_state->బహుళకం <= SERVER_COMPANION) {
+        log_err(పునాది_state->keymap->ctx, XKB_ERROR_UNEXPECTED_STATE_బహుళకం,
+                "%s: Unexpected state type %d\n", __func__, పునాది_state->బహుళకం);
+        తిరిగి 0;
     }
 
-    struct xkb_server_state * const state =
-        (struct xkb_server_state *)base_state;
+    నిర్మాణం xkb_server_state * స్థిరరాశి state =
+        (నిర్మాణం xkb_server_state *)పునాది_state;
 
-    const struct xkb_key* const key = XkbKey(state->base.keymap, kc);
+    స్థిరరాశి నిర్మాణం xkb_కీలకం* స్థిరరాశి కీలకం = Xkb_కీలకం(state->పునాది.keymap, kc);
     /* Ignore unknown key and repeat state for non-repeating key */
-    if (!key || (direction == XKB_KEY_REPEATED && !key->repeats))
-        return 0;
+    ఒకవేళ (!కీలకం || (direction == XKB_కీలకం_REPEATED && !కీలకం->repeats))
+        తిరిగి 0;
 
-    if (direction == XKB_KEY_DOWN &&
-        (state->base.components.controls & XKB_KEYBOARD_CONTROL_A11Y_STICKY_KEYS) &&
-        (state->a11y_flags & XKB_A11Y_STICKY_KEYS_NO_SIMULTANEOUS_KEYS) &&
-        state->base.components.base_mods) {
+    ఒకవేళ (direction == XKB_కీలకం_కిందికి &&
+        (state->పునాది.components.controls & XKB_KEYBOARD_CONTROL_A11_Y_STICKY_కీలకాలు) &&
+        (state->a11y_flags & XKB_A11_Y_STICKY_కీలకాలు_NO_ఏకకాల_కీలకాలు) &&
+        state->పునాది.components.పునాది_mods) {
         /* Deactivate sticky keys if a modifier was already held down*/
         state_update_enabled_controls(state,
-                                      XKB_KEYBOARD_CONTROL_A11Y_STICKY_KEYS,
-                                      0, NULL);
+                                      XKB_KEYBOARD_CONTROL_A11_Y_STICKY_కీలకాలు,
+                                      0, ఖాళీ);
     }
 
-    const struct state_components prev_components = state->base.components;
+    స్థిరరాశి నిర్మాణం state_components prev_components = state->పునాది.components;
 
-    state->set_mods = 0;
+    state->సమితి_mods = 0;
     state->clear_mods = 0;
 
-    xkb_filter_apply_all(state, NULL, key, direction);
+    xkb_filter_apply_all(state, ఖాళీ, కీలకం, direction);
 
-    xkb_mod_index_t i;
-    xkb_mod_mask_t bit;
-    for (i = 0, bit = 1; state->set_mods; i++, bit <<= 1) {
-        if (state->set_mods & bit) {
-            state->mod_key_count[i]++;
-            state->base.components.base_mods |= bit;
-            state->set_mods &= ~bit;
+    xkb_mod_సూచీ_t i;
+    xkb_mod_ముసుగు_t బిట్టు;
+    కొరకు (i = 0, బిట్టు = 1; state->సమితి_mods; i++, బిట్టు <<= 1) {
+        ఒకవేళ (state->సమితి_mods & బిట్టు) {
+            state->mod_కీలకం_లెక్క[i]++;
+            state->పునాది.components.పునాది_mods |= బిట్టు;
+            state->సమితి_mods &= ~బిట్టు;
         }
     }
 
-    for (i = 0, bit = 1; state->clear_mods; i++, bit <<= 1) {
-        if (state->clear_mods & bit) {
-            state->mod_key_count[i]--;
-            if (state->mod_key_count[i] <= 0) {
-                state->base.components.base_mods &= ~bit;
-                state->mod_key_count[i] = 0;
+    కొరకు (i = 0, బిట్టు = 1; state->clear_mods; i++, బిట్టు <<= 1) {
+        ఒకవేళ (state->clear_mods & బిట్టు) {
+            state->mod_కీలకం_లెక్క[i]--;
+            ఒకవేళ (state->mod_కీలకం_లెక్క[i] <= 0) {
+                state->పునాది.components.పునాది_mods &= ~బిట్టు;
+                state->mod_కీలకం_లెక్క[i] = 0;
             }
-            state->clear_mods &= ~bit;
+            state->clear_mods &= ~బిట్టు;
         }
     }
 
-    xkb_state_update_derived(&state->base);
+    xkb_state_update_derived(&state->పునాది);
 
-    return get_state_component_changes(&prev_components, &state->base.components);
+    తిరిగి get_state_component_changes(&prev_components, &state->పునాది.components);
 }
 
 /* We need fake keys for `update_latch_modifiers` and `update_latch_group`.
  * These keys must have at least one level in order to break latches. We need 2
  * keys with specific actions in order to update group/mod latches without
  * affecting each other. */
-static struct xkb_key_type_entry synthetic_key_level_entry = { 0 };
-static struct xkb_key_type synthetic_key_type = {
-     .num_entries = 1,
-     .num_levels = 1,
-     .entries = &synthetic_key_level_entry
+స్థిర నిర్మాణం xkb_కీలకం_type_నమోదు synthetic_కీలకం_level_నమోదు = { 0 };
+స్థిర నిర్మాణం xkb_కీలకం_type synthetic_కీలకం_type = {
+     .అంకె_entries = 1,
+     .అంకె_స్థాయిలు = 1,
+     .entries = &synthetic_కీలకం_level_నమోదు
 };
-static const struct xkb_key synthetic_key = { 0 };
+స్థిర స్థిరరాశి నిర్మాణం xkb_కీలకం synthetic_కీలకం = { 0 };
 
 /* Transcription from xserver: XkbLatchModifiers */
-static void
-update_latch_modifiers(struct xkb_server_state *state,
-                       struct xkb_events *events,
-                       xkb_mod_mask_t mask, xkb_mod_mask_t latches)
+స్థిర శూన్య
+update_latch_modifiers(నిర్మాణం xkb_server_state *state,
+                       నిర్మాణం xkb_events *events,
+                       xkb_mod_ముసుగు_t ముసుగు, xkb_mod_ముసుగు_t latches)
 {
     /* Clear affected latched modifiers */
-    const xkb_mod_mask_t clear = mask & ~latches;
-    state->base.components.latched_mods &= ~clear;
+    స్థిరరాశి xkb_mod_ముసుగు_t clear = ముసుగు & ~latches;
+    state->పునాది.components.latched_mods &= ~clear;
 
     /* Clear any pending latch to locks using ad hoc action:
      * only affect corresponding modifier latches and no group latch. */
-    struct xkb_level synthetic_key_level_break_mod_latch = {
-        .num_syms = 0,
-        .num_actions = 1,
-        .upper = XKB_KEY_NoSymbol,
-        .s.sym = XKB_KEY_NoSymbol,
-        .a.action.internal = {
-            .type = ACTION_TYPE_INTERNAL,
-            .flags = INTERNAL_BREAKS_MOD_LATCH,
+    నిర్మాణం xkb_level synthetic_కీలకం_level_break_mod_latch = {
+        .అంకె_syms = 0,
+        .అంకె_actions = 1,
+        .పై = XKB_కీలకం_No_చిహ్నం,
+        .s.sym = XKB_కీలకం_No_చిహ్నం,
+        .a.action.అంతర్గత = {
+            .type = ACTION_TYPE_అంతర్గత,
+            .flags = అంతర్గత_BREAKS_MOD_LATCH,
             .clear_latched_mods = clear
         }
     };
-    struct xkb_group synthetic_key_group_break_mod_latch = {
-        .type = &synthetic_key_type,
-        .levels = &synthetic_key_level_break_mod_latch
+    నిర్మాణం xkb_సమూహం synthetic_కీలకం_సమూహం_break_mod_latch = {
+        .type = &synthetic_కీలకం_type,
+        .స్థాయిలు = &synthetic_కీలకం_level_break_mod_latch
     };
-    const struct xkb_key synthetic_key_break_mod_latch = {
-        .num_groups = 1,
-        .groups = &synthetic_key_group_break_mod_latch
+    స్థిరరాశి నిర్మాణం xkb_కీలకం synthetic_కీలకం_break_mod_latch = {
+        .అంకె_groups = 1,
+        .groups = &synthetic_కీలకం_సమూహం_break_mod_latch
     };
     xkb_filter_apply_all(state, events,
-                         &synthetic_key_break_mod_latch, XKB_KEY_DOWN);
+                         &synthetic_కీలకం_break_mod_latch, XKB_కీలకం_కిందికి);
 
     /* Finally set the latched mods by simulate tapping a key with the
      * corresponding action */
-    const struct xkb_key* const key = &synthetic_key;
-    const union xkb_action latch_mods = {
+    స్థిరరాశి నిర్మాణం xkb_కీలకం* స్థిరరాశి కీలకం = &synthetic_కీలకం;
+    స్థిరరాశి సంఘం xkb_action latch_mods = {
         .mods = {
             .type = ACTION_TYPE_MOD_LATCH,
-            .mods = { .mask = mask & latches },
+            .mods = { .ముసుగు = ముసుగు & latches },
             .flags = 0,
         },
     };
-    struct xkb_filter* const filter = xkb_filter_new(state);
-    filter->key = key;
+    నిర్మాణం xkb_filter* స్థిరరాశి filter = xkb_filter_new(state);
+    filter->కీలకం = కీలకం;
     filter->func = xkb_filter_mod_latch_func;
     filter->action = latch_mods;
     xkb_filter_mod_latch_new(state, events, filter);
     /* We added the filter manually, so only fire “up” event */
-    xkb_filter_mod_latch_func(state, events, filter, key, XKB_KEY_UP);
+    xkb_filter_mod_latch_func(state, events, filter, కీలకం, XKB_కీలకం_పైకి);
 }
 
 /* Transcription from xserver: XkbLatchGroup */
-static void
-update_latch_group(struct xkb_server_state *state,
-                   struct xkb_events *events, int32_t group)
+స్థిర శూన్య
+update_latch_సమూహం(నిర్మాణం xkb_server_state *state,
+                   నిర్మాణం xkb_events *events, int32_t సమూహం)
 {
     /* Clear any pending latch to locks. */
-    static struct xkb_level synthetic_key_level_break_group_latch = {
-        .num_syms = 0,
-        .num_actions = 1,
-        .upper = XKB_KEY_NoSymbol,
-        .s.sym = XKB_KEY_NoSymbol,
-        .a.action.internal = {
-            .type = ACTION_TYPE_INTERNAL,
-            .flags = INTERNAL_BREAKS_GROUP_LATCH,
+    స్థిర నిర్మాణం xkb_level synthetic_కీలకం_level_break_సమూహం_latch = {
+        .అంకె_syms = 0,
+        .అంకె_actions = 1,
+        .పై = XKB_కీలకం_No_చిహ్నం,
+        .s.sym = XKB_కీలకం_No_చిహ్నం,
+        .a.action.అంతర్గత = {
+            .type = ACTION_TYPE_అంతర్గత,
+            .flags = అంతర్గత_BREAKS_సమూహం_LATCH,
             .clear_latched_mods = 0
         }
     };
-    static struct xkb_group synthetic_key_group_break_group_latch = {
-        .type = &synthetic_key_type,
-        .levels = &synthetic_key_level_break_group_latch
+    స్థిర నిర్మాణం xkb_సమూహం synthetic_కీలకం_సమూహం_break_సమూహం_latch = {
+        .type = &synthetic_కీలకం_type,
+        .స్థాయిలు = &synthetic_కీలకం_level_break_సమూహం_latch
     };
-    static const struct xkb_key synthetic_key_break_group_latch = {
-        .num_groups = 1,
-        .groups = &synthetic_key_group_break_group_latch
+    స్థిర స్థిరరాశి నిర్మాణం xkb_కీలకం synthetic_కీలకం_break_సమూహం_latch = {
+        .అంకె_groups = 1,
+        .groups = &synthetic_కీలకం_సమూహం_break_సమూహం_latch
     };
     xkb_filter_apply_all(state, events,
-                         &synthetic_key_break_group_latch, XKB_KEY_DOWN);
+                         &synthetic_కీలకం_break_సమూహం_latch, XKB_కీలకం_కిందికి);
 
     /* Simulate tapping a key with a group latch action, but in isolation: i.e.
      * without affecting the other filters. */
-    const struct xkb_key* const key = &synthetic_key;
-    const union xkb_action latch_group = {
-        .group = {
-            .type = ACTION_TYPE_GROUP_LATCH,
+    స్థిరరాశి నిర్మాణం xkb_కీలకం* స్థిరరాశి కీలకం = &synthetic_కీలకం;
+    స్థిరరాశి సంఘం xkb_action latch_సమూహం = {
+        .సమూహం = {
+            .type = ACTION_TYPE_సమూహం_LATCH,
             .flags = ACTION_ABSOLUTE_SWITCH,
-            .group = group,
+            .సమూహం = సమూహం,
         },
     };
-    struct xkb_filter* const filter = xkb_filter_new(state);
-    filter->key = key;
-    filter->func = xkb_filter_group_latch_func;
-    filter->action = latch_group;
-    xkb_filter_group_latch_new(state, events, filter);
+    నిర్మాణం xkb_filter* స్థిరరాశి filter = xkb_filter_new(state);
+    filter->కీలకం = కీలకం;
+    filter->func = xkb_filter_సమూహం_latch_func;
+    filter->action = latch_సమూహం;
+    xkb_filter_సమూహం_latch_new(state, events, filter);
     /* We added the filter manually, so only fire “up” event */
-    xkb_filter_group_latch_func(state, events, filter, key, XKB_KEY_UP);
+    xkb_filter_సమూహం_latch_func(state, events, filter, కీలకం, XKB_కీలకం_పైకి);
 }
 
 /**
@@ -2041,85 +2041,85 @@ update_latch_group(struct xkb_server_state *state,
  * in the canonical mask, so that it enables `xkb_state_serialize_mods` to
  * round trip via `xkb_state_update_mask`.
  */
-static inline xkb_mod_mask_t
-resolve_to_canonical_mods(struct xkb_keymap *keymap, xkb_mod_mask_t mods)
+స్థిర అంతఃవరుస xkb_mod_ముసుగు_t
+resolve_గమ్యం_canonical_mods(నిర్మాణం xkb_keymap *keymap, xkb_mod_ముసుగు_t mods)
 {
-    return
+    తిరిగి
         /*
          * Keep canonical modifier mask.
          * It contains either real modifiers or canonical virtual modifiers.
          */
-        (mods & keymap->canonical_state_mask) |
+        (mods & keymap->canonical_state_ముసుగు) |
         /* Resolve other modifiers */
-        mod_mask_get_effective(keymap,
-                               mods & ~keymap->canonical_state_mask);
+        mod_ముసుగు_get_effective(keymap,
+                               mods & ~keymap->canonical_state_ముసుగు);
 }
 
-static void
+స్థిర శూన్య
 state_update_latched_locked(
-    struct xkb_server_state * restrict state,
-    const struct xkb_state_components_update * restrict update,
-    struct xkb_events * restrict events
+    నిర్మాణం xkb_server_state * పరిమిత state,
+    స్థిరరాశి నిర్మాణం xkb_state_components_update * పరిమిత update,
+    నిర్మాణం xkb_events * పరిమిత events
 )
 {
     /* Update locks */
-    const xkb_mod_mask_t affect_locked_mods =
-        resolve_to_canonical_mods(state->base.keymap, update->affect_locked_mods);
-    if ((update->components & XKB_STATE_MODS_LOCKED) &&
+    స్థిరరాశి xkb_mod_ముసుగు_t affect_locked_mods =
+        resolve_గమ్యం_canonical_mods(state->పునాది.keymap, update->affect_locked_mods);
+    ఒకవేళ ((update->components & XKB_STATE_MODS_LOCKED) &&
         affect_locked_mods) {
-        const xkb_mod_mask_t locked_mods =
-            resolve_to_canonical_mods(state->base.keymap, update->locked_mods);
-        state->base.components.locked_mods &= ~affect_locked_mods;
-        state->base.components.locked_mods |= locked_mods & affect_locked_mods;
+        స్థిరరాశి xkb_mod_ముసుగు_t locked_mods =
+            resolve_గమ్యం_canonical_mods(state->పునాది.keymap, update->locked_mods);
+        state->పునాది.components.locked_mods &= ~affect_locked_mods;
+        state->పునాది.components.locked_mods |= locked_mods & affect_locked_mods;
     }
-    if (update->components & XKB_STATE_LAYOUT_LOCKED) {
-        state->base.components.locked_group = update->locked_layout;
+    ఒకవేళ (update->components & XKB_STATE_LAYOUT_LOCKED) {
+        state->పునాది.components.locked_సమూహం = update->locked_layout;
     }
 
     /* Update latches */
-    const xkb_mod_mask_t affect_latched_mods =
-        resolve_to_canonical_mods(state->base.keymap, update->affect_latched_mods);
-    if ((update->components & XKB_STATE_MODS_LATCHED) &&
+    స్థిరరాశి xkb_mod_ముసుగు_t affect_latched_mods =
+        resolve_గమ్యం_canonical_mods(state->పునాది.keymap, update->affect_latched_mods);
+    ఒకవేళ ((update->components & XKB_STATE_MODS_LATCHED) &&
         affect_latched_mods) {
-        const xkb_mod_mask_t latched_mods =
-            resolve_to_canonical_mods(state->base.keymap, update->latched_mods);
+        స్థిరరాశి xkb_mod_ముసుగు_t latched_mods =
+            resolve_గమ్యం_canonical_mods(state->పునాది.keymap, update->latched_mods);
         update_latch_modifiers(state, events, affect_latched_mods, latched_mods);
     }
-    if (update->components & XKB_STATE_LAYOUT_LATCHED) {
-        update_latch_group(state, events, update->latched_layout);
+    ఒకవేళ (update->components & XKB_STATE_LAYOUT_LATCHED) {
+        update_latch_సమూహం(state, events, update->latched_layout);
     }
 }
 
-enum xkb_state_component
-xkb_state_update_latched_locked(struct xkb_state *base_state,
-                                xkb_mod_mask_t affect_latched_mods,
-                                xkb_mod_mask_t latched_mods,
+గణన xkb_state_component
+xkb_state_update_latched_locked(నిర్మాణం xkb_state *పునాది_state,
+                                xkb_mod_ముసుగు_t affect_latched_mods,
+                                xkb_mod_ముసుగు_t latched_mods,
                                 bool affect_latched_layout,
                                 int32_t latched_layout,
-                                xkb_mod_mask_t affect_locked_mods,
-                                xkb_mod_mask_t locked_mods,
+                                xkb_mod_ముసుగు_t affect_locked_mods,
+                                xkb_mod_ముసుగు_t locked_mods,
                                 bool affect_locked_layout,
                                 int32_t locked_layout)
 {
     /* Guard against client-only state */
-    assert(base_state->mode > SERVER_COMPANION);
-    if (base_state->mode <= SERVER_COMPANION) {
-        log_err(base_state->keymap->ctx, XKB_ERROR_UNEXPECTED_STATE_MODE,
-                "%s: Unexpected state type %d\n", __func__, base_state->mode);
-        return 0;
+    ప్రతిజ్ఞా(పునాది_state->బహుళకం > SERVER_COMPANION);
+    ఒకవేళ (పునాది_state->బహుళకం <= SERVER_COMPANION) {
+        log_err(పునాది_state->keymap->ctx, XKB_ERROR_UNEXPECTED_STATE_బహుళకం,
+                "%s: Unexpected state type %d\n", __func__, పునాది_state->బహుళకం);
+        తిరిగి 0;
     }
 
-    struct xkb_server_state * const state =
-        (struct xkb_server_state *)base_state;
+    నిర్మాణం xkb_server_state * స్థిరరాశి state =
+        (నిర్మాణం xkb_server_state *)పునాది_state;
 
-    const struct state_components previous_components = state->base.components;
-    const enum xkb_state_component components
+    స్థిరరాశి నిర్మాణం state_components మునుపటి_components = state->పునాది.components;
+    స్థిరరాశి గణన xkb_state_component components
         = ((affect_latched_mods || latched_mods) ? XKB_STATE_MODS_LATCHED : 0)
         | ((affect_locked_mods || locked_mods) ? XKB_STATE_MODS_LOCKED : 0)
         | (affect_latched_layout ? XKB_STATE_LAYOUT_LATCHED : 0)
         | (affect_locked_layout ? XKB_STATE_LAYOUT_LOCKED : 0);
-    const struct xkb_state_components_update update = {
-        .size = sizeof(update),
+    స్థిరరాశి నిర్మాణం xkb_state_components_update update = {
+        .కొలత = పరిమాణం(update),
         .components = components,
         .affect_latched_mods = affect_latched_mods,
         .latched_mods = latched_mods,
@@ -2128,138 +2128,138 @@ xkb_state_update_latched_locked(struct xkb_state *base_state,
         .locked_mods = locked_mods,
         .locked_layout = locked_layout
     };
-    state_update_latched_locked(state, &update, NULL);
-    xkb_state_update_derived(&state->base);
-    return get_state_component_changes(&previous_components,
-                                       &state->base.components);
+    state_update_latched_locked(state, &update, ఖాళీ);
+    xkb_state_update_derived(&state->పునాది);
+    తిరిగి get_state_component_changes(&మునుపటి_components,
+                                       &state->పునాది.components);
 }
 
-static inline void
-clear_all_latches_and_locks(struct xkb_server_state *state,
-                            struct xkb_events *events)
+స్థిర అంతఃవరుస శూన్య
+clear_all_latches_and_locks(నిర్మాణం xkb_server_state *state,
+                            నిర్మాణం xkb_events *events)
 {
-    static const enum xkb_state_component components
+    స్థిర స్థిరరాశి గణన xkb_state_component components
         = XKB_STATE_MODS_LATCHED | XKB_STATE_MODS_LOCKED
         | XKB_STATE_LAYOUT_LATCHED | XKB_STATE_LAYOUT_LOCKED;
-    const struct xkb_state_components_update update = {
-        .size = sizeof(update),
+    స్థిరరాశి నిర్మాణం xkb_state_components_update update = {
+        .కొలత = పరిమాణం(update),
         .components = components,
-        .affect_latched_mods = (xkb_mod_mask_t)XKB_MOD_ALL,
+        .affect_latched_mods = (xkb_mod_ముసుగు_t)XKB_MOD_ALL,
         .latched_mods = 0,
         .latched_layout = 0,
-        .affect_locked_mods = (xkb_mod_mask_t)XKB_MOD_ALL,
+        .affect_locked_mods = (xkb_mod_ముసుగు_t)XKB_MOD_ALL,
         .locked_mods = 0,
         .locked_layout = 0
     };
     state_update_latched_locked(state, &update, events);
 }
 
-static enum xkb_status
-state_update_layout_policy(struct xkb_server_state *state,
-                           const struct xkb_layout_policy_update *update)
+స్థిర గణన xkb_స్థితి
+state_update_layout_policy(నిర్మాణం xkb_server_state *state,
+                           స్థిరరాశి నిర్మాణం xkb_layout_policy_update *update)
 {
-    if (xkb_feature_supported(XKB_FEATURE_ENUM_LAYOUT_OUT_OF_RANGE_POLICY,
+    ఒకవేళ (xkb_feature_supported(XKB_FEATURE_ENUM_LAYOUT_బహిర్గతం_యొక్క_RANGE_POLICY,
                               update->policy)) {
-        if (update->policy == XKB_LAYOUT_OUT_OF_RANGE_REDIRECT) {
-            if (update->redirect < state->base.keymap->num_groups) {
-                state->base.out_of_range_group.redirect_group =
+        ఒకవేళ (update->policy == XKB_LAYOUT_బహిర్గతం_యొక్క_RANGE_REDIRECT) {
+            ఒకవేళ (update->redirect < state->పునాది.keymap->అంకె_groups) {
+                state->పునాది.బహిర్గతం_యొక్క_range_సమూహం.redirect_సమూహం =
                     update->redirect;
-            } else {
-                log_err(state->base.keymap->ctx,
-                        XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
+            } లేకపోతే {
+                log_err(state->పునాది.keymap->ctx,
+                        XKB_ERROR_UNSUPPORTED_LAYOUT_సూచీ_2,
                         "Layout policy: "
                         "unsupported layout index %"PRIu32" > %"PRIu32"\n",
-                        update->redirect + 1, state->base.keymap->num_groups);
-                return XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX;
+                        update->redirect + 1, state->పునాది.keymap->అంకె_groups);
+                తిరిగి XKB_ERROR_UNSUPPORTED_LAYOUT_సూచీ;
             }
         }
-        state->base.out_of_range_group.policy = update->policy;
-        return XKB_SUCCESS;
-    } else {
-        log_err(state->base.keymap->ctx,
-                XKB_ERROR_UNSUPPORTED_LAYOUT_OUT_OF_RANGE_POLICY_,
+        state->పునాది.బహిర్గతం_యొక్క_range_సమూహం.policy = update->policy;
+        తిరిగి XKB_SUCCESS;
+    } లేకపోతే {
+        log_err(state->పునాది.keymap->ctx,
+                XKB_ERROR_UNSUPPORTED_LAYOUT_బహిర్గతం_యొక్క_RANGE_POLICY_2,
                 "Unsupported layout policy: %d\n", update->policy);
-        return XKB_ERROR_UNSUPPORTED_LAYOUT_OUT_OF_RANGE_POLICY;
+        తిరిగి XKB_ERROR_UNSUPPORTED_LAYOUT_బహిర్గతం_యొక్క_RANGE_POLICY;
     }
 }
 
 /** Check ABI compatibility */
 // NOLINTBEGIN(bugprone-assignment-in-selection-statement)
-static enum xkb_status
-check_state_update_abi_(struct xkb_context * restrict ctx,
-                        const char * restrict func,
-                        const struct xkb_synthetic_update * restrict update)
+స్థిర గణన xkb_స్థితి
+check_state_update_abi_(నిర్మాణం xkb_context * పరిమిత ctx,
+                        స్థిరరాశి అక్షరం * పరిమిత func,
+                        స్థిరరాశి నిర్మాణం xkb_synthetic_update * పరిమిత update)
 {
-    enum xkb_status status = XKB_SUCCESS;
-    if ((status = xkb_check_state_abi(update)) ||
+    గణన xkb_స్థితి స్థితి_2 = XKB_SUCCESS;
+    ఒకవేళ ((స్థితి_2 = xkb_check_state_abi(update)) ||
         (update->reserved0 != 0 &&
-         (status = XKB_ERROR_ABI_FORWARD_COMPAT)) ||
+         (స్థితి_2 = XKB_ERROR_ABI_FORWARD_COMPAT)) ||
         (update->components &&
-         (status = xkb_check_state_abi(update->components))) ||
+         (స్థితి_2 = xkb_check_state_abi(update->components))) ||
         (update->layout_policy &&
-         (status = xkb_check_state_abi(update->layout_policy)))) {
-        xkb_log_abi_error(ctx, func, status);
+         (స్థితి_2 = xkb_check_state_abi(update->layout_policy)))) {
+        xkb_log_abi_error(ctx, func, స్థితి_2);
     }
-    return status;
+    తిరిగి స్థితి_2;
 }
 // NOLINTEND(bugprone-assignment-in-selection-statement)
 
-#define check_state_update_abi(ctx, update) \
+#నిర్వచించు check_state_update_abi(ctx, update) \
     check_state_update_abi_(ctx, __func__, update)
 
-enum xkb_status
-xkb_state_update_synthetic(struct xkb_state * base_state,
-                           const struct xkb_synthetic_update * update,
-                           enum xkb_state_component *changed)
+గణన xkb_స్థితి
+xkb_state_update_synthetic(నిర్మాణం xkb_state * పునాది_state,
+                           స్థిరరాశి నిర్మాణం xkb_synthetic_update * update,
+                           గణన xkb_state_component *మారింది)
 {
     /* Guard against client-only state */
-    if (base_state->mode <= SERVER_COMPANION) {
-        log_err(base_state->keymap->ctx, XKB_ERROR_UNEXPECTED_STATE_MODE,
-                "%s: Unexpected state type %d\n", __func__, base_state->mode);
-        return XKB_ERROR_UNEXPECTED_STATE_MODE;
+    ఒకవేళ (పునాది_state->బహుళకం <= SERVER_COMPANION) {
+        log_err(పునాది_state->keymap->ctx, XKB_ERROR_UNEXPECTED_STATE_బహుళకం,
+                "%s: Unexpected state type %d\n", __func__, పునాది_state->బహుళకం);
+        తిరిగి XKB_ERROR_UNEXPECTED_STATE_బహుళకం;
     }
 
-    struct xkb_server_state * const state =
-        (struct xkb_server_state *)base_state;
+    నిర్మాణం xkb_server_state * స్థిరరాశి state =
+        (నిర్మాణం xkb_server_state *)పునాది_state;
 
     /* Check ABI compatibility */
-    enum xkb_status status = check_state_update_abi(state->base.keymap->ctx,
+    గణన xkb_స్థితి స్థితి_2 = check_state_update_abi(state->పునాది.keymap->ctx,
                                                     update);
-    if (status != XKB_SUCCESS)
-        return status;
+    ఒకవేళ (స్థితి_2 != XKB_SUCCESS)
+        తిరిగి స్థితి_2;
 
-    const struct state_components previous_components = state->base.components;
+    స్థిరరాశి నిర్మాణం state_components మునుపటి_components = state->పునాది.components;
 
     // TODO: use a *transaction* mechanism: either the whole update succeeds
     //       or rollback
 
     /* Update parametrized controls first */
-    if (update->layout_policy) {
-        status = state_update_layout_policy(state, update->layout_policy);
-        if (status != XKB_SUCCESS)
-            return status;
+    ఒకవేళ (update->layout_policy) {
+        స్థితి_2 = state_update_layout_policy(state, update->layout_policy);
+        ఒకవేళ (స్థితి_2 != XKB_SUCCESS)
+            తిరిగి స్థితి_2;
     }
 
-    if (update->components) {
-        const struct xkb_state_components_update * const components =
+    ఒకవేళ (update->components) {
+        స్థిరరాశి నిర్మాణం xkb_state_components_update * స్థిరరాశి components =
             update->components;
         /* Update boolean controls first */
-        if (components->components & XKB_STATE_CONTROLS_EFFECTIVE) {
+        ఒకవేళ (components->components & XKB_STATE_CONTROLS_EFFECTIVE) {
             state_update_enabled_controls(state,
                                           components->affect_controls,
-                                          components->controls, NULL);
+                                          components->controls, ఖాళీ);
         }
 
-        state_update_latched_locked(state, components, NULL);
+        state_update_latched_locked(state, components, ఖాళీ);
     }
 
-    xkb_state_update_derived(&state->base);
+    xkb_state_update_derived(&state->పునాది);
 
-    if (changed) {
-        *changed = get_state_component_changes(&previous_components,
-                                               &state->base.components);
+    ఒకవేళ (మారింది) {
+        *మారింది = get_state_component_changes(&మునుపటి_components,
+                                               &state->పునాది.components);
     }
-    return XKB_SUCCESS;
+    తిరిగి XKB_SUCCESS;
 }
 
 /**
@@ -2269,29 +2269,29 @@ xkb_state_update_synthetic(struct xkb_state * base_state,
  * lossy, and should only be used to update a slave state mirroring the
  * master, e.g. in a client/server window system.
  */
-enum xkb_state_component
-xkb_state_update_mask(struct xkb_state *base_state,
-                      xkb_mod_mask_t base_mods,
-                      xkb_mod_mask_t latched_mods,
-                      xkb_mod_mask_t locked_mods,
-                      xkb_layout_index_t base_group,
-                      xkb_layout_index_t latched_group,
-                      xkb_layout_index_t locked_group)
+గణన xkb_state_component
+xkb_state_update_ముసుగు(నిర్మాణం xkb_state *పునాది_state,
+                      xkb_mod_ముసుగు_t పునాది_mods,
+                      xkb_mod_ముసుగు_t latched_mods,
+                      xkb_mod_ముసుగు_t locked_mods,
+                      xkb_layout_సూచీ_t పునాది_సమూహం,
+                      xkb_layout_సూచీ_t latched_సమూహం,
+                      xkb_layout_సూచీ_t locked_సమూహం)
 {
     /* Guard against server-only and server companion state */
-    assert(base_state->mode == CLIENT_STATE ||
-           base_state->mode == LEGACY_MIXED_STATE);
-    if (base_state->mode != CLIENT_STATE &&
-        base_state->mode != LEGACY_MIXED_STATE) {
-        log_err(base_state->keymap->ctx, XKB_ERROR_UNEXPECTED_STATE_MODE,
-                "%s: Unexpected state type %d\n", __func__, base_state->mode);
-        return 0;
+    ప్రతిజ్ఞా(పునాది_state->బహుళకం == CLIENT_STATE ||
+           పునాది_state->బహుళకం == LEGACY_MIXED_STATE);
+    ఒకవేళ (పునాది_state->బహుళకం != CLIENT_STATE &&
+        పునాది_state->బహుళకం != LEGACY_MIXED_STATE) {
+        log_err(పునాది_state->keymap->ctx, XKB_ERROR_UNEXPECTED_STATE_బహుళకం,
+                "%s: Unexpected state type %d\n", __func__, పునాది_state->బహుళకం);
+        తిరిగి 0;
     }
 
-    struct xkb_client_state * const state =
-        (struct xkb_client_state *)base_state;
+    నిర్మాణం xkb_client_state * స్థిరరాశి state =
+        (నిర్మాణం xkb_client_state *)పునాది_state;
 
-    const struct state_components prev_components = state->base.components;
+    స్థిరరాశి నిర్మాణం state_components prev_components = state->పునాది.components;
 
     /*
      * Make sure the mods are fully resolved - since we get arbitrary
@@ -2307,97 +2307,97 @@ xkb_state_update_mask(struct xkb_state *base_state,
      * expected to do the same here.  Also, LEDs (usually) look if a real
      * mod is locked, not just effective; otherwise it won't be lit.
      */
-    state->base.components.base_mods =
-        resolve_to_canonical_mods(state->base.keymap, base_mods);
-    state->base.components.latched_mods =
-        resolve_to_canonical_mods(state->base.keymap, latched_mods);
-    state->base.components.locked_mods =
-        resolve_to_canonical_mods(state->base.keymap, locked_mods);
+    state->పునాది.components.పునాది_mods =
+        resolve_గమ్యం_canonical_mods(state->పునాది.keymap, పునాది_mods);
+    state->పునాది.components.latched_mods =
+        resolve_గమ్యం_canonical_mods(state->పునాది.keymap, latched_mods);
+    state->పునాది.components.locked_mods =
+        resolve_గమ్యం_canonical_mods(state->పునాది.keymap, locked_mods);
 
     static_assert(XKB_MAX_GROUPS < INT32_MAX, "Max groups don't fit");
-    state->base.components.base_group = (int32_t) base_group;
-    state->base.components.latched_group = (int32_t) latched_group;
-    state->base.components.locked_group = (int32_t) locked_group;
+    state->పునాది.components.పునాది_సమూహం = (int32_t) పునాది_సమూహం;
+    state->పునాది.components.latched_సమూహం = (int32_t) latched_సమూహం;
+    state->పునాది.components.locked_సమూహం = (int32_t) locked_సమూహం;
 
-    xkb_state_update_derived(&state->base);
+    xkb_state_update_derived(&state->పునాది);
 
-    return get_state_component_changes(&prev_components, &state->base.components);
+    తిరిగి get_state_component_changes(&prev_components, &state->పునాది.components);
 }
 
 /*
  * https://www.x.org/releases/current/doc/kbproto/xkbproto.html#Interpreting_the_Lock_Modifier
  */
-static bool
-should_do_caps_transformation(struct xkb_state *state, xkb_keycode_t kc)
+స్థిర bool
+should_do_caps_transformation(నిర్మాణం xkb_state *state, xkb_keycode_t kc)
 {
-    return
-        xkb_state_mod_index_is_active(state, XKB_MOD_INDEX_CAPS,
+    తిరిగి
+        xkb_state_mod_సూచీ_is_చురుకైన(state, XKB_MOD_సూచీ_CAPS,
                                       XKB_STATE_MODS_EFFECTIVE) > 0 &&
-        xkb_state_mod_index_is_consumed(state, kc, XKB_MOD_INDEX_CAPS) == 0;
+        xkb_state_mod_సూచీ_is_consumed(state, kc, XKB_MOD_సూచీ_CAPS) == 0;
 }
 
 /*
  * https://www.x.org/releases/current/doc/kbproto/xkbproto.html#Interpreting_the_Control_Modifier
  */
-static bool
-should_do_ctrl_transformation(struct xkb_state *state, xkb_keycode_t kc)
+స్థిర bool
+should_do_ctrl_transformation(నిర్మాణం xkb_state *state, xkb_keycode_t kc)
 {
-    return
-        xkb_state_mod_index_is_active(state, XKB_MOD_INDEX_CTRL,
+    తిరిగి
+        xkb_state_mod_సూచీ_is_చురుకైన(state, XKB_MOD_సూచీ_CTRL,
                                       XKB_STATE_MODS_EFFECTIVE) > 0 &&
-        xkb_state_mod_index_is_consumed(state, kc, XKB_MOD_INDEX_CTRL) == 0;
+        xkb_state_mod_సూచీ_is_consumed(state, kc, XKB_MOD_సూచీ_CTRL) == 0;
 }
 
 /**
  * Provides the symbols to use for the given key and state.  Returns the
  * number of symbols pointed to in syms_out.
  */
-int
-xkb_state_key_get_syms(struct xkb_state *state, xkb_keycode_t kc,
-                       const xkb_keysym_t **syms_out)
+పూర్ణాంకం
+xkb_state_కీలకం_get_syms(నిర్మాణం xkb_state *state, xkb_keycode_t kc,
+                       స్థిరరాశి xkb_keysym_t **syms_బహిర్గతం)
 {
-    const xkb_layout_index_t layout = xkb_state_key_get_layout(state, kc);
-    if (layout == XKB_LAYOUT_INVALID)
-        goto err;
+    స్థిరరాశి xkb_layout_సూచీ_t layout = xkb_state_కీలకం_get_layout(state, kc);
+    ఒకవేళ (layout == XKB_LAYOUT_INVALID)
+        వెళ్ళు err;
 
-    const xkb_level_index_t level = xkb_state_key_get_level(state, kc, layout);
-    if (level == XKB_LEVEL_INVALID)
-        goto err;
+    స్థిరరాశి xkb_level_సూచీ_t level = xkb_state_కీలకం_get_level(state, kc, layout);
+    ఒకవేళ (level == XKB_LEVEL_INVALID)
+        వెళ్ళు err;
 
-    const struct xkb_key* const key = XkbKey(state->keymap, kc);
+    స్థిరరాశి నిర్మాణం xkb_కీలకం* స్థిరరాశి కీలకం = Xkb_కీలకం(state->keymap, kc);
 
-    if (!key)
-        goto err;
+    ఒకవేళ (!కీలకం)
+        వెళ్ళు err;
 
-    const struct xkb_level* const leveli =
-        xkb_keymap_key_get_level(state->keymap, key, layout, level);
+    స్థిరరాశి నిర్మాణం xkb_level* స్థిరరాశి leveli =
+        xkb_keymap_కీలకం_get_level(state->keymap, కీలకం, layout, level);
 
-    if (!leveli)
-        goto err;
+    ఒకవేళ (!leveli)
+        వెళ్ళు err;
 
-    const xkb_keysym_count_t num_syms = leveli->num_syms;
-    if (num_syms == 0)
-        goto err;
+    స్థిరరాశి xkb_keysym_లెక్క_t అంకె_syms = leveli->అంకె_syms;
+    ఒకవేళ (అంకె_syms == 0)
+        వెళ్ళు err;
 
-    if (should_do_caps_transformation(state, kc)) {
+    ఒకవేళ (should_do_caps_transformation(state, kc)) {
         /* Only simple capitalization rules: keysyms count is unchanged. */
-        if (num_syms > 1) {
-            *syms_out = (leveli->has_upper)
-                      ? leveli->s.syms + num_syms
+        ఒకవేళ (అంకె_syms > 1) {
+            *syms_బహిర్గతం = (leveli->has_పై)
+                      ? leveli->s.syms + అంకె_syms
                       : leveli->s.syms;
-        } else {
-            *syms_out = &leveli->upper;
+        } లేకపోతే {
+            *syms_బహిర్గతం = &leveli->పై;
         }
-    } else {
-        *syms_out = (num_syms > 1)
+    } లేకపోతే {
+        *syms_బహిర్గతం = (అంకె_syms > 1)
                   ? leveli->s.syms
                   : &leveli->s.sym;
     }
-    return (int) num_syms;
+    తిరిగి (పూర్ణాంకం) అంకె_syms;
 
 err:
-    *syms_out = NULL;
-    return 0;
+    *syms_బహిర్గతం = ఖాళీ;
+    తిరిగి 0;
 }
 
 /*
@@ -2427,37 +2427,37 @@ err:
  * [caret notation]: https://en.wikipedia.org/wiki/Caret_notation
  * [VT220 terminal]: https://vt100.net/docs/vt220-rm/chapter3.html#T3-5
  */
-static char
-XkbToControl(char ch)
+స్థిర అక్షరం
+Xkb_గమ్యం_Control(అక్షరం ch)
 {
-    char c = ch;
+    అక్షరం c = ch;
 
-    if ((c >= '@' && c < '\177') || c == ' ')
+    ఒకవేళ ((c >= '@' && c < '\177') || c == ' ')
         c &= 0x1F;
-    else if (c == '2')
+    లేకపోతే ఒకవేళ (c == '2')
         c = '\000';
-    else if (c >= '3' && c <= '7')
+    లేకపోతే ఒకవేళ (c >= '3' && c <= '7')
         c -= ('3' - '\033');
-    else if (c == '8')
+    లేకపోతే ఒకవేళ (c == '8')
         c = '\177';
-    else if (c == '/')
+    లేకపోతే ఒకవేళ (c == '/')
         c = '_' & 0x1F;
-    return c;
+    తిరిగి c;
 }
 
 /**
  * Provides either exactly one symbol, or XKB_KEY_NoSymbol.
  */
 xkb_keysym_t
-xkb_state_key_get_one_sym(struct xkb_state *state, xkb_keycode_t kc)
+xkb_state_కీలకం_get_one_sym(నిర్మాణం xkb_state *state, xkb_keycode_t kc)
 {
-    const xkb_keysym_t *syms = NULL;
-    const int num_syms = xkb_state_key_get_syms(state, kc, &syms);
+    స్థిరరాశి xkb_keysym_t *syms = ఖాళీ;
+    స్థిరరాశి పూర్ణాంకం అంకె_syms = xkb_state_కీలకం_get_syms(state, kc, &syms);
 
-    if (num_syms != 1)
-        return XKB_KEY_NoSymbol;
-    else
-        return syms[0];
+    ఒకవేళ (అంకె_syms != 1)
+        తిరిగి XKB_కీలకం_No_చిహ్నం;
+    లేకపోతే
+        తిరిగి syms[0];
 }
 
 /*
@@ -2469,197 +2469,197 @@ xkb_state_key_get_one_sym(struct xkb_state *state, xkb_keycode_t kc)
  * behavior with the XkbLC_ControlFallback (see XkbSetXlibControls(3)),
  * but it is enabled by default, yippee.
  */
-static xkb_keysym_t
-get_one_sym_for_string(struct xkb_state *state, xkb_keycode_t kc)
+స్థిర xkb_keysym_t
+get_one_sym_for_string(నిర్మాణం xkb_state *state, xkb_keycode_t kc)
 {
-    const xkb_layout_index_t layout = xkb_state_key_get_layout(state, kc);
-    const xkb_layout_index_t num_layouts =
-        xkb_keymap_num_layouts_for_key(state->keymap, kc);
-    xkb_level_index_t level = xkb_state_key_get_level(state, kc, layout);
-    if (layout == XKB_LAYOUT_INVALID || num_layouts == 0 ||
+    స్థిరరాశి xkb_layout_సూచీ_t layout = xkb_state_కీలకం_get_layout(state, kc);
+    స్థిరరాశి xkb_layout_సూచీ_t అంకె_layouts =
+        xkb_keymap_అంకె_layouts_for_కీలకం(state->keymap, kc);
+    xkb_level_సూచీ_t level = xkb_state_కీలకం_get_level(state, kc, layout);
+    ఒకవేళ (layout == XKB_LAYOUT_INVALID || అంకె_layouts == 0 ||
         level == XKB_LEVEL_INVALID)
-        return XKB_KEY_NoSymbol;
+        తిరిగి XKB_కీలకం_No_చిహ్నం;
 
-    const xkb_keysym_t *syms = NULL;
-    int nsyms = xkb_keymap_key_get_syms_by_level(state->keymap, kc,
+    స్థిరరాశి xkb_keysym_t *syms = ఖాళీ;
+    పూర్ణాంకం nsyms = xkb_keymap_కీలకం_get_syms_by_level(state->keymap, kc,
                                                  layout, level, &syms);
-    if (nsyms != 1)
-        return XKB_KEY_NoSymbol;
+    ఒకవేళ (nsyms != 1)
+        తిరిగి XKB_కీలకం_No_చిహ్నం;
     xkb_keysym_t sym = syms[0];
 
-    if (should_do_ctrl_transformation(state, kc) && sym > 127u) {
-        for (xkb_layout_index_t i = 0; i < num_layouts; i++) {
-            level = xkb_state_key_get_level(state, kc, i);
-            if (level == XKB_LEVEL_INVALID)
-                continue;
+    ఒకవేళ (should_do_ctrl_transformation(state, kc) && sym > 127u) {
+        కొరకు (xkb_layout_సూచీ_t i = 0; i < అంకె_layouts; i++) {
+            level = xkb_state_కీలకం_get_level(state, kc, i);
+            ఒకవేళ (level == XKB_LEVEL_INVALID)
+                కొనసాగు;
 
-            nsyms = xkb_keymap_key_get_syms_by_level(state->keymap, kc,
+            nsyms = xkb_keymap_కీలకం_get_syms_by_level(state->keymap, kc,
                                                      i, level, &syms);
-            if (nsyms == 1 && syms[0] <= 127u) {
+            ఒకవేళ (nsyms == 1 && syms[0] <= 127u) {
                 sym = syms[0];
-                break;
+                ఆపు;
             }
         }
     }
 
-    if (should_do_caps_transformation(state, kc)) {
-        sym = xkb_keysym_to_upper(sym);
+    ఒకవేళ (should_do_caps_transformation(state, kc)) {
+        sym = xkb_keysym_గమ్యం_పై(sym);
     }
 
-    return sym;
+    తిరిగి sym;
 }
 
-int
-xkb_state_key_get_utf8(struct xkb_state *state, xkb_keycode_t kc,
-                       char *buffer, size_t size)
+పూర్ణాంకం
+xkb_state_కీలకం_get_utf8(నిర్మాణం xkb_state *state, xkb_keycode_t kc,
+                       అక్షరం *బఫరు, కొలత_t కొలత)
 {
-    int nsyms;
-    const xkb_keysym_t *syms = NULL;
-    const xkb_keysym_t sym = get_one_sym_for_string(state, kc);
-    if (sym != XKB_KEY_NoSymbol) {
+    పూర్ణాంకం nsyms;
+    స్థిరరాశి xkb_keysym_t *syms = ఖాళీ;
+    స్థిరరాశి xkb_keysym_t sym = get_one_sym_for_string(state, kc);
+    ఒకవేళ (sym != XKB_కీలకం_No_చిహ్నం) {
         nsyms = 1; syms = &sym;
     }
-    else {
-        nsyms = xkb_state_key_get_syms(state, kc, &syms);
+    లేకపోతే {
+        nsyms = xkb_state_కీలకం_get_syms(state, kc, &syms);
     }
 
     /* Make sure not to truncate in the middle of a UTF-8 sequence. */
-    int offset = 0;
-    char tmp[XKB_KEYSYM_UTF8_MAX_SIZE];
-    for (int i = 0; i < nsyms; i++) {
-        int ret = xkb_keysym_to_utf8(syms[i], tmp, sizeof(tmp));
-        if (ret <= 0)
-            goto err_bad;
+    పూర్ణాంకం స్థానభ్రంశం = 0;
+    అక్షరం tmp[XKB_KEYSYM_UTF8_MAX_కొలత];
+    కొరకు (పూర్ణాంకం i = 0; i < nsyms; i++) {
+        పూర్ణాంకం ret = xkb_keysym_గమ్యం_utf8(syms[i], tmp, పరిమాణం(tmp));
+        ఒకవేళ (ret <= 0)
+            వెళ్ళు err_bad;
 
         ret--;
-        if ((size_t)offset + (size_t)ret <= size)
-            memcpy(buffer + offset, tmp, (size_t)ret);
-        offset += ret;
+        ఒకవేళ ((కొలత_t)స్థానభ్రంశం + (కొలత_t)ret <= కొలత)
+            జ్ఞాపకం_నకలు(బఫరు + స్థానభ్రంశం, tmp, (కొలత_t)ret);
+        స్థానభ్రంశం += ret;
     }
 
-    if ((size_t)offset >= size)
-        goto err_trunc;
-    buffer[offset] = '\0';
+    ఒకవేళ ((కొలత_t)స్థానభ్రంశం >= కొలత)
+        వెళ్ళు err_trunc;
+    బఫరు[స్థానభ్రంశం] = '\0';
 
-    if (!is_valid_utf8(buffer, (size_t)offset))
-        goto err_bad;
+    ఒకవేళ (!is_valid_utf8(బఫరు, (కొలత_t)స్థానభ్రంశం))
+        వెళ్ళు err_bad;
 
-    if (offset == 1 && (unsigned int) buffer[0] <= 127u &&
+    ఒకవేళ (స్థానభ్రంశం == 1 && (గుర్తులేని పూర్ణాంకం) బఫరు[0] <= 127u &&
         should_do_ctrl_transformation(state, kc))
-        buffer[0] = XkbToControl(buffer[0]);
+        బఫరు[0] = Xkb_గమ్యం_Control(బఫరు[0]);
 
-    return offset;
+    తిరిగి స్థానభ్రంశం;
 
 err_trunc:
-    if (size > 0)
-        buffer[size - 1] = '\0';
-    return offset;
+    ఒకవేళ (కొలత > 0)
+        బఫరు[కొలత - 1] = '\0';
+    తిరిగి స్థానభ్రంశం;
 
 err_bad:
-    if (size > 0)
-        buffer[0] = '\0';
-    return 0;
+    ఒకవేళ (కొలత > 0)
+        బఫరు[0] = '\0';
+    తిరిగి 0;
 }
 
 uint32_t
-xkb_state_key_get_utf32(struct xkb_state *state, xkb_keycode_t kc)
+xkb_state_కీలకం_get_utf32(నిర్మాణం xkb_state *state, xkb_keycode_t kc)
 {
-    const xkb_keysym_t sym = get_one_sym_for_string(state, kc);
-    uint32_t cp = xkb_keysym_to_utf32(sym);
+    స్థిరరాశి xkb_keysym_t sym = get_one_sym_for_string(state, kc);
+    uint32_t cp = xkb_keysym_గమ్యం_utf32(sym);
 
-    if (cp <= 127u && should_do_ctrl_transformation(state, kc))
-        cp = (uint32_t) XkbToControl((char) cp);
+    ఒకవేళ (cp <= 127u && should_do_ctrl_transformation(state, kc))
+        cp = (uint32_t) Xkb_గమ్యం_Control((అక్షరం) cp);
 
-    return cp;
+    తిరిగి cp;
 }
 
 /**
  * Serializes the requested modifier state into an xkb_mod_mask_t, with all
  * the same disclaimers as in xkb_state_update_mask.
  */
-static inline xkb_mod_mask_t
-serialize_mods(const struct state_components *components,
-               enum xkb_state_component type)
+స్థిర అంతఃవరుస xkb_mod_ముసుగు_t
+serialize_mods(స్థిరరాశి నిర్మాణం state_components *components,
+               గణన xkb_state_component type)
 {
-    xkb_mod_mask_t ret = 0;
+    xkb_mod_ముసుగు_t ret = 0;
 
-    if (type & XKB_STATE_MODS_EFFECTIVE)
-        return components->mods;
+    ఒకవేళ (type & XKB_STATE_MODS_EFFECTIVE)
+        తిరిగి components->mods;
 
-    if (type & XKB_STATE_MODS_DEPRESSED)
-        ret |= components->base_mods;
-    if (type & XKB_STATE_MODS_LATCHED)
+    ఒకవేళ (type & XKB_STATE_MODS_DEPRESSED)
+        ret |= components->పునాది_mods;
+    ఒకవేళ (type & XKB_STATE_MODS_LATCHED)
         ret |= components->latched_mods;
-    if (type & XKB_STATE_MODS_LOCKED)
+    ఒకవేళ (type & XKB_STATE_MODS_LOCKED)
         ret |= components->locked_mods;
 
-    return ret;
+    తిరిగి ret;
 }
 
-xkb_mod_mask_t
-xkb_state_serialize_mods(struct xkb_state *state,
-                         enum xkb_state_component type)
+xkb_mod_ముసుగు_t
+xkb_state_serialize_mods(నిర్మాణం xkb_state *state,
+                         గణన xkb_state_component type)
 {
-    return serialize_mods(&state->components, type);
+    తిరిగి serialize_mods(&state->components, type);
 }
 
 /**
  * Serialises the requested group state, with all the same disclaimers as
  * in xkb_state_update_mask.
  */
-static inline xkb_layout_index_t
-serialize_layout(const struct state_components *components,
-                 enum xkb_state_component type)
+స్థిర అంతఃవరుస xkb_layout_సూచీ_t
+serialize_layout(స్థిరరాశి నిర్మాణం state_components *components,
+                 గణన xkb_state_component type)
 {
-    if (type & XKB_STATE_LAYOUT_EFFECTIVE)
-        return components->group;
+    ఒకవేళ (type & XKB_STATE_LAYOUT_EFFECTIVE)
+        తిరిగి components->సమూహం;
 
     int32_t ret = 0;
-    if (type & XKB_STATE_LAYOUT_DEPRESSED)
-        ret += components->base_group;
-    if (type & XKB_STATE_LAYOUT_LATCHED)
-        ret += components->latched_group;
-    if (type & XKB_STATE_LAYOUT_LOCKED)
-        ret += components->locked_group;
+    ఒకవేళ (type & XKB_STATE_LAYOUT_DEPRESSED)
+        ret += components->పునాది_సమూహం;
+    ఒకవేళ (type & XKB_STATE_LAYOUT_LATCHED)
+        ret += components->latched_సమూహం;
+    ఒకవేళ (type & XKB_STATE_LAYOUT_LOCKED)
+        ret += components->locked_సమూహం;
 
-    return (xkb_layout_index_t)ret;
+    తిరిగి (xkb_layout_సూచీ_t)ret;
 }
 
-xkb_layout_index_t
-xkb_state_serialize_layout(struct xkb_state *state,
-                           enum xkb_state_component type)
+xkb_layout_సూచీ_t
+xkb_state_serialize_layout(నిర్మాణం xkb_state *state,
+                           గణన xkb_state_component type)
 {
-    return serialize_layout(&state->components, type);
+    తిరిగి serialize_layout(&state->components, type);
 }
 
-xkb_led_mask_t
-xkb_state_serialize_leds(const struct xkb_state *state,
-                         enum xkb_state_component type)
+xkb_led_ముసుగు_t
+xkb_state_serialize_leds(స్థిరరాశి నిర్మాణం xkb_state *state,
+                         గణన xkb_state_component type)
 {
-    return (type & XKB_STATE_LEDS)
+    తిరిగి (type & XKB_STATE_LEDS)
         ? state->components.leds
         : 0;
 }
 
-static inline enum xkb_keyboard_control_flags
-serialize_controls(const struct state_components *components,
-                   enum xkb_state_component type)
+స్థిర అంతఃవరుస గణన xkb_keyboard_control_flags
+serialize_controls(స్థిరరాశి నిర్మాణం state_components *components,
+                   గణన xkb_state_component type)
 {
-    return (type & XKB_STATE_CONTROLS_EFFECTIVE)
+    తిరిగి (type & XKB_STATE_CONTROLS_EFFECTIVE)
         /*
          * Enable using the public API with the all the Controls values, except
          * the internal ones, if any.
          */
-        ? (enum xkb_keyboard_control_flags)
+        ? (గణన xkb_keyboard_control_flags)
           (components->controls & CONTROL_ALL_BOOLEAN)
         : 0;
 }
 
-enum xkb_keyboard_control_flags
-xkb_state_serialize_controls(const struct xkb_state *state,
-                             enum xkb_state_component type)
+గణన xkb_keyboard_control_flags
+xkb_state_serialize_controls(స్థిరరాశి నిర్మాణం xkb_state *state,
+                             గణన xkb_state_component type)
 {
-    return serialize_controls(&state->components, type);
+    తిరిగి serialize_controls(&state->components, type);
 }
 
 /**
@@ -2667,74 +2667,74 @@ xkb_state_serialize_controls(const struct xkb_state *state,
  * is needed because some modifiers can also map to other modifiers, e.g.
  * the "NumLock" modifier usually also sets the "Mod2" modifier.
  */
-xkb_mod_mask_t
-mod_mask_get_effective(struct xkb_keymap *keymap, xkb_mod_mask_t mods)
+xkb_mod_ముసుగు_t
+mod_ముసుగు_get_effective(నిర్మాణం xkb_keymap *keymap, xkb_mod_ముసుగు_t mods)
 {
     /* Initialize the effective mask with its corresponding real mods. */
-    xkb_mod_mask_t mask = mods & MOD_REAL_MASK_ALL;
+    xkb_mod_ముసుగు_t ముసుగు = mods & MOD_REAL_ముసుగు_ALL;
 
     /* Resolve the virtual modifiers */
-    const struct xkb_mod *mod;
-    xkb_mod_index_t i;
+    స్థిరరాశి నిర్మాణం xkb_mod *mod;
+    xkb_mod_సూచీ_t i;
     xkb_vmods_enumerate(i, mod, &keymap->mods)
-        if (mods & (UINT32_C(1) << i))
-            mask |= mod->mapping;
+        ఒకవేళ (mods & (UINT32_C(1) << i))
+            ముసుగు |= mod->mapping;
 
-    return mask;
+    తిరిగి ముసుగు;
 }
 
 /**
  * Returns 1 if the given modifier is active with the specified type(s), 0 if
  * not, or -1 if the modifier is invalid.
  */
-int
-xkb_state_mod_index_is_active(struct xkb_state *state,
-                              xkb_mod_index_t idx,
-                              enum xkb_state_component type)
+పూర్ణాంకం
+xkb_state_mod_సూచీ_is_చురుకైన(నిర్మాణం xkb_state *state,
+                              xkb_mod_సూచీ_t idx,
+                              గణన xkb_state_component type)
 {
-    if (unlikely(idx >= xkb_keymap_num_mods(state->keymap)))
-        return -1;
+    ఒకవేళ (unlikely(idx >= xkb_keymap_అంకె_mods(state->keymap)))
+        తిరిగి -1;
 
-    const xkb_mod_mask_t mapping = state->keymap->mods.mods[idx].mapping;
-    if (!mapping) {
+    స్థిరరాశి xkb_mod_ముసుగు_t mapping = state->keymap->mods.mods[idx].mapping;
+    ఒకవేళ (!mapping) {
         /* Modifier not mapped */
-        return 0;
+        తిరిగి 0;
     }
     /* WARNING: this may overmatch for virtual modifiers */
-    return (xkb_state_serialize_mods(state, type) & mapping) == mapping;
+    తిరిగి (xkb_state_serialize_mods(state, type) & mapping) == mapping;
 }
 
-enum {
-    XKB_STATE_MATCH_FLAGS = XKB_STATE_MATCH_ANY
-                          | XKB_STATE_MATCH_ALL
-                          | XKB_STATE_MATCH_NON_EXCLUSIVE
+గణన {
+    XKB_STATE_సరిపోలిక_FLAGS = XKB_STATE_సరిపోలిక_ANY
+                          | XKB_STATE_సరిపోలిక_ALL
+                          | XKB_STATE_సరిపోలిక_NON_EXCLUSIVE
 };
 
 /**
  * Helper function for xkb_state_mod_indices_are_active and
  * xkb_state_mod_names_are_active.
  */
-static bool
-match_mod_masks(struct xkb_state *state,
-                enum xkb_state_component type,
-                enum xkb_state_match match,
-                xkb_mod_mask_t wanted)
+స్థిర bool
+సరిపోలిక_mod_masks(నిర్మాణం xkb_state *state,
+                గణన xkb_state_component type,
+                గణన xkb_state_సరిపోలిక సరిపోలిక,
+                xkb_mod_ముసుగు_t wanted)
 {
-    const xkb_mod_mask_t active = xkb_state_serialize_mods(state, type);
+    స్థిరరాశి xkb_mod_ముసుగు_t చురుకైన = xkb_state_serialize_mods(state, type);
 
-    if (!(match & XKB_STATE_MATCH_NON_EXCLUSIVE) && (active & ~wanted))
-        return false;
+    ఒకవేళ (!(సరిపోలిక & XKB_STATE_సరిపోలిక_NON_EXCLUSIVE) && (చురుకైన & ~wanted))
+        తిరిగి false;
 
-    if (match & XKB_STATE_MATCH_ANY)
-        return active & wanted;
+    ఒకవేళ (సరిపోలిక & XKB_STATE_సరిపోలిక_ANY)
+        తిరిగి చురుకైన & wanted;
 
     /* Ensure all flags but XKB_STATE_MATCH_ALL are processed before */
-    static_assert(XKB_STATE_MATCH_ALL ==
-                  ((enum xkb_state_match) XKB_STATE_MATCH_FLAGS &
-                   ~(XKB_STATE_MATCH_ANY | XKB_STATE_MATCH_NON_EXCLUSIVE)),
+    static_assert(XKB_STATE_సరిపోలిక_ALL ==
+                  ((గణన xkb_state_సరిపోలిక) XKB_STATE_సరిపోలిక_FLAGS &
+                   ~(XKB_STATE_సరిపోలిక_ANY | XKB_STATE_సరిపోలిక_NON_EXCLUSIVE)),
                   "");
 
-    return (active & wanted) == wanted;
+    తిరిగి (చురుకైన & wanted) == wanted;
 }
 
 /**
@@ -2742,58 +2742,58 @@ match_mod_masks(struct xkb_state *state,
  * not, or -1 if any of the modifiers are invalid or -2 if the match flag is
  * invalid.
  */
-int
-xkb_state_mod_indices_are_active(struct xkb_state *state,
-                                 enum xkb_state_component type,
-                                 enum xkb_state_match match,
+పూర్ణాంకం
+xkb_state_mod_indices_are_చురుకైన(నిర్మాణం xkb_state *state,
+                                 గణన xkb_state_component type,
+                                 గణన xkb_state_సరిపోలిక సరిపోలిక,
                                  ...)
 {
-    if (match & ~((enum xkb_state_match) XKB_STATE_MATCH_FLAGS))
-        return -2;
+    ఒకవేళ (సరిపోలిక & ~((గణన xkb_state_సరిపోలిక) XKB_STATE_సరిపోలిక_FLAGS))
+        తిరిగి -2;
 
     va_list ap;
-    xkb_mod_mask_t wanted = 0;
-    int ret = 0;
-    const xkb_mod_index_t num_mods = xkb_keymap_num_mods(state->keymap);
+    xkb_mod_ముసుగు_t wanted = 0;
+    పూర్ణాంకం ret = 0;
+    స్థిరరాశి xkb_mod_సూచీ_t అంకె_mods = xkb_keymap_అంకె_mods(state->keymap);
 
-    va_start(ap, match);
-    while (1) {
-        xkb_mod_index_t idx = va_arg(ap, xkb_mod_index_t);
-        if (idx == XKB_MOD_INVALID)
-            break;
-        if (unlikely(idx >= num_mods)) {
+    va_ప్రారంభం(ap, సరిపోలిక);
+    అయితే (1) {
+        xkb_mod_సూచీ_t idx = va_arg(ap, xkb_mod_సూచీ_t);
+        ఒకవేళ (idx == XKB_MOD_INVALID)
+            ఆపు;
+        ఒకవేళ (unlikely(idx >= అంకె_mods)) {
             ret = -1;
-            break;
+            ఆపు;
         }
         wanted |= state->keymap->mods.mods[idx].mapping;
     }
-    va_end(ap);
+    va_చివర(ap);
 
-    if (ret == -1)
-        return ret;
+    ఒకవేళ (ret == -1)
+        తిరిగి ret;
 
-    if (!wanted) {
+    ఒకవేళ (!wanted) {
         /* Modifiers not mapped */
-        return 0;
+        తిరిగి 0;
     }
 
-    return match_mod_masks(state, type, match, wanted);
+    తిరిగి సరిపోలిక_mod_masks(state, type, సరిపోలిక, wanted);
 }
 
 /**
  * Returns 1 if the given modifier is active with the specified type(s), 0 if
  * not, or -1 if the modifier is invalid.
  */
-int
-xkb_state_mod_name_is_active(struct xkb_state *state, const char *name,
-                             enum xkb_state_component type)
+పూర్ణాంకం
+xkb_state_mod_name_is_చురుకైన(నిర్మాణం xkb_state *state, స్థిరరాశి అక్షరం *name,
+                             గణన xkb_state_component type)
 {
-    const xkb_mod_index_t idx = xkb_keymap_mod_get_index(state->keymap, name);
+    స్థిరరాశి xkb_mod_సూచీ_t idx = xkb_keymap_mod_get_సూచీ(state->keymap, name);
 
-    if (idx == XKB_MOD_INVALID)
-        return -1;
+    ఒకవేళ (idx == XKB_MOD_INVALID)
+        తిరిగి -1;
 
-    return xkb_state_mod_index_is_active(state, idx, type);
+    తిరిగి xkb_state_mod_సూచీ_is_చురుకైన(state, idx, type);
 }
 
 /**
@@ -2801,111 +2801,111 @@ xkb_state_mod_name_is_active(struct xkb_state *state, const char *name,
  * not, -1 if any of the modifiers are invalid or -2 if the match flag is
  * invalid.
  */
-ATTR_NULL_SENTINEL int
-xkb_state_mod_names_are_active(struct xkb_state *state,
-                               enum xkb_state_component type,
-                               enum xkb_state_match match,
+ATTR_NULL_SENTINEL పూర్ణాంకం
+xkb_state_mod_పేర్లు_are_చురుకైన(నిర్మాణం xkb_state *state,
+                               గణన xkb_state_component type,
+                               గణన xkb_state_సరిపోలిక సరిపోలిక,
                                ...)
 {
-    if (match & ~((enum xkb_state_match) XKB_STATE_MATCH_FLAGS))
-        return -2;
+    ఒకవేళ (సరిపోలిక & ~((గణన xkb_state_సరిపోలిక) XKB_STATE_సరిపోలిక_FLAGS))
+        తిరిగి -2;
 
     va_list ap;
-    xkb_mod_mask_t wanted = 0;
-    int ret = 0;
+    xkb_mod_ముసుగు_t wanted = 0;
+    పూర్ణాంకం ret = 0;
 
-    va_start(ap, match);
-    while (1) {
-        const char *str = va_arg(ap, const char *);
-        if (str == NULL)
-            break;
-        const xkb_mod_index_t idx = xkb_keymap_mod_get_index(state->keymap, str);
-        if (idx == XKB_MOD_INVALID) {
+    va_ప్రారంభం(ap, సరిపోలిక);
+    అయితే (1) {
+        స్థిరరాశి అక్షరం *str = va_arg(ap, స్థిరరాశి అక్షరం *);
+        ఒకవేళ (str == ఖాళీ)
+            ఆపు;
+        స్థిరరాశి xkb_mod_సూచీ_t idx = xkb_keymap_mod_get_సూచీ(state->keymap, str);
+        ఒకవేళ (idx == XKB_MOD_INVALID) {
             ret = -1;
-            break;
+            ఆపు;
         }
         wanted |= state->keymap->mods.mods[idx].mapping;
     }
-    va_end(ap);
+    va_చివర(ap);
 
-    if (ret == -1)
-        return ret;
+    ఒకవేళ (ret == -1)
+        తిరిగి ret;
 
-    if (!wanted) {
+    ఒకవేళ (!wanted) {
         /* Modifiers not mapped */
-        return 0;
+        తిరిగి 0;
     }
 
-    return match_mod_masks(state, type, match, wanted);
+    తిరిగి సరిపోలిక_mod_masks(state, type, సరిపోలిక, wanted);
 }
 
 /**
  * Returns 1 if the given group is active with the specified type(s), 0 if
  * not, or -1 if the group is invalid.
  */
-int
-xkb_state_layout_index_is_active(struct xkb_state *state,
-                                 xkb_layout_index_t idx,
-                                 enum xkb_state_component type)
+పూర్ణాంకం
+xkb_state_layout_సూచీ_is_చురుకైన(నిర్మాణం xkb_state *state,
+                                 xkb_layout_సూచీ_t idx,
+                                 గణన xkb_state_component type)
 {
-    if (idx >= state->keymap->num_groups)
-        return -1;
+    ఒకవేళ (idx >= state->keymap->అంకె_groups)
+        తిరిగి -1;
 
-    int ret = 0;
-    if (type & XKB_STATE_LAYOUT_EFFECTIVE)
-        ret |= (state->components.group == idx);
-    if (type & XKB_STATE_LAYOUT_DEPRESSED)
-        ret |= (state->components.base_group == (int32_t) idx);
-    if (type & XKB_STATE_LAYOUT_LATCHED)
-        ret |= (state->components.latched_group == (int32_t) idx);
-    if (type & XKB_STATE_LAYOUT_LOCKED)
-        ret |= (state->components.locked_group == (int32_t) idx);
+    పూర్ణాంకం ret = 0;
+    ఒకవేళ (type & XKB_STATE_LAYOUT_EFFECTIVE)
+        ret |= (state->components.సమూహం == idx);
+    ఒకవేళ (type & XKB_STATE_LAYOUT_DEPRESSED)
+        ret |= (state->components.పునాది_సమూహం == (int32_t) idx);
+    ఒకవేళ (type & XKB_STATE_LAYOUT_LATCHED)
+        ret |= (state->components.latched_సమూహం == (int32_t) idx);
+    ఒకవేళ (type & XKB_STATE_LAYOUT_LOCKED)
+        ret |= (state->components.locked_సమూహం == (int32_t) idx);
 
-    return ret;
+    తిరిగి ret;
 }
 
 /**
  * Returns 1 if the given modifier is active with the specified type(s), 0 if
  * not, or -1 if the modifier is invalid.
  */
-int
-xkb_state_layout_name_is_active(struct xkb_state *state, const char *name,
-                                enum xkb_state_component type)
+పూర్ణాంకం
+xkb_state_layout_name_is_చురుకైన(నిర్మాణం xkb_state *state, స్థిరరాశి అక్షరం *name,
+                                గణన xkb_state_component type)
 {
-    const xkb_layout_index_t idx =
-        xkb_keymap_layout_get_index(state->keymap, name);
+    స్థిరరాశి xkb_layout_సూచీ_t idx =
+        xkb_keymap_layout_get_సూచీ(state->keymap, name);
 
-    if (idx == XKB_LAYOUT_INVALID)
-        return -1;
+    ఒకవేళ (idx == XKB_LAYOUT_INVALID)
+        తిరిగి -1;
 
-    return xkb_state_layout_index_is_active(state, idx, type);
+    తిరిగి xkb_state_layout_సూచీ_is_చురుకైన(state, idx, type);
 }
 
 /**
  * Returns 1 if the given LED is active, 0 if not, or -1 if the LED is invalid.
  */
-int
-xkb_state_led_index_is_active(struct xkb_state *state, xkb_led_index_t idx)
+పూర్ణాంకం
+xkb_state_led_సూచీ_is_చురుకైన(నిర్మాణం xkb_state *state, xkb_led_సూచీ_t idx)
 {
-    if (idx >= state->keymap->num_leds ||
+    ఒకవేళ (idx >= state->keymap->అంకె_leds ||
         state->keymap->leds[idx].name == XKB_ATOM_NONE)
-        return -1;
+        తిరిగి -1;
 
-    return !!(state->components.leds & (UINT32_C(1) << idx));
+    తిరిగి !!(state->components.leds & (UINT32_C(1) << idx));
 }
 
 /**
  * Returns 1 if the given LED is active, 0 if not, or -1 if the LED is invalid.
  */
-int
-xkb_state_led_name_is_active(struct xkb_state *state, const char *name)
+పూర్ణాంకం
+xkb_state_led_name_is_చురుకైన(నిర్మాణం xkb_state *state, స్థిరరాశి అక్షరం *name)
 {
-    const xkb_led_index_t idx = xkb_keymap_led_get_index(state->keymap, name);
+    స్థిరరాశి xkb_led_సూచీ_t idx = xkb_keymap_led_get_సూచీ(state->keymap, name);
 
-    if (idx == XKB_LED_INVALID)
-        return -1;
+    ఒకవేళ (idx == XKB_LED_INVALID)
+        తిరిగి -1;
 
-    return xkb_state_led_index_is_active(state, idx);
+    తిరిగి xkb_state_led_సూచీ_is_చురుకైన(state, idx);
 }
 
 /**
@@ -2913,122 +2913,122 @@ xkb_state_led_name_is_active(struct xkb_state *state, const char *name)
  * - XkbTranslateKeyCode(3), mod_rtrn return value, from libX11.
  * - MyEnhancedXkbTranslateKeyCode(), a modification of the above, from GTK+.
  */
-static xkb_mod_mask_t
-key_get_consumed(struct xkb_state *state, const struct xkb_key *key,
-                 enum xkb_consumed_mode mode)
+స్థిర xkb_mod_ముసుగు_t
+కీలకం_get_consumed(నిర్మాణం xkb_state *state, స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం,
+                 గణన xkb_consumed_బహుళకం బహుళకం)
 {
-    const xkb_layout_index_t group =
-        xkb_state_key_get_layout(state, key->keycode);
-    if (group == XKB_LAYOUT_INVALID)
-        return 0;
+    స్థిరరాశి xkb_layout_సూచీ_t సమూహం =
+        xkb_state_కీలకం_get_layout(state, కీలకం->keycode);
+    ఒకవేళ (సమూహం == XKB_LAYOUT_INVALID)
+        తిరిగి 0;
 
-    xkb_mod_mask_t preserve = 0;
-    xkb_mod_mask_t consumed = 0;
+    xkb_mod_ముసుగు_t preserve = 0;
+    xkb_mod_ముసుగు_t consumed = 0;
 
-    const struct xkb_key_type_entry* const matching_entry =
-        get_entry_for_key_state(state, key, group);
-    if (matching_entry)
-        preserve = matching_entry->preserve.mask;
+    స్థిరరాశి నిర్మాణం xkb_కీలకం_type_నమోదు* స్థిరరాశి matching_నమోదు =
+        get_నమోదు_for_కీలకం_state(state, కీలకం, సమూహం);
+    ఒకవేళ (matching_నమోదు)
+        preserve = matching_నమోదు->preserve.ముసుగు;
 
-    const struct xkb_key_type* const type = key->groups[group].type;
-    switch (mode) {
-    case XKB_CONSUMED_MODE_XKB:
-        consumed = type->mods.mask;
-        break;
+    స్థిరరాశి నిర్మాణం xkb_కీలకం_type* స్థిరరాశి type = కీలకం->groups[సమూహం].type;
+    ఎంపిక (బహుళకం) {
+    స్థితి XKB_CONSUMED_బహుళకం_XKB:
+        consumed = type->mods.ముసుగు;
+        ఆపు;
 
-    case XKB_CONSUMED_MODE_GTK: {
-        const struct xkb_key_type_entry* const no_mods_entry =
-            get_entry_for_mods(type, 0);
-        const xkb_level_index_t no_mods_leveli = no_mods_entry
-                                               ? no_mods_entry->level
+    స్థితి XKB_CONSUMED_బహుళకం_GTK: {
+        స్థిరరాశి నిర్మాణం xkb_కీలకం_type_నమోదు* స్థిరరాశి no_mods_నమోదు =
+            get_నమోదు_for_mods(type, 0);
+        స్థిరరాశి xkb_level_సూచీ_t no_mods_leveli = no_mods_నమోదు
+                                               ? no_mods_నమోదు->level
                                                : 0;
-        const struct xkb_level* const no_mods_level =
-            &key->groups[group].levels[no_mods_leveli];
+        స్థిరరాశి నిర్మాణం xkb_level* స్థిరరాశి no_mods_level =
+            &కీలకం->groups[సమూహం].స్థాయిలు[no_mods_leveli];
 
-        for (darray_size_t i = 0; i < type->num_entries; i++) {
-            const struct xkb_key_type_entry* const entry = &type->entries[i];
-            if (!entry_is_active(entry))
-                continue;
+        కొరకు (darray_కొలత_t i = 0; i < type->అంకె_entries; i++) {
+            స్థిరరాశి నిర్మాణం xkb_కీలకం_type_నమోదు* స్థిరరాశి నమోదు_2 = &type->entries[i];
+            ఒకవేళ (!నమోదు_is_చురుకైన(నమోదు_2))
+                కొనసాగు;
 
-            const struct xkb_level* const level =
-                &key->groups[group].levels[entry->level];
-            if (XkbLevelsSameSyms(level, no_mods_level))
-                continue;
+            స్థిరరాశి నిర్మాణం xkb_level* స్థిరరాశి level =
+                &కీలకం->groups[సమూహం].స్థాయిలు[నమోదు_2->level];
+            ఒకవేళ (Xkb_స్థాయిలు_Same_Syms(level, no_mods_level))
+                కొనసాగు;
 
-            if (entry == matching_entry || one_bit_set(entry->mods.mask))
-                consumed |= entry->mods.mask & ~entry->preserve.mask;
+            ఒకవేళ (నమోదు_2 == matching_నమోదు || one_బిట్టు_సమితి(నమోదు_2->mods.ముసుగు))
+                consumed |= నమోదు_2->mods.ముసుగు & ~నమోదు_2->preserve.ముసుగు;
         }
-        break;
+        ఆపు;
     }
     }
 
-    return consumed & ~preserve;
+    తిరిగి consumed & ~preserve;
 }
 
-int
-xkb_state_mod_index_is_consumed2(struct xkb_state *state, xkb_keycode_t kc,
-                                 xkb_mod_index_t idx,
-                                 enum xkb_consumed_mode mode)
+పూర్ణాంకం
+xkb_state_mod_సూచీ_is_consumed2(నిర్మాణం xkb_state *state, xkb_keycode_t kc,
+                                 xkb_mod_సూచీ_t idx,
+                                 గణన xkb_consumed_బహుళకం బహుళకం)
 {
-    const struct xkb_key* const key = XkbKey(state->keymap, kc);
+    స్థిరరాశి నిర్మాణం xkb_కీలకం* స్థిరరాశి కీలకం = Xkb_కీలకం(state->keymap, kc);
 
-    if (unlikely(!key || idx >= xkb_keymap_num_mods(state->keymap)))
-        return -1;
+    ఒకవేళ (unlikely(!కీలకం || idx >= xkb_keymap_అంకె_mods(state->keymap)))
+        తిరిగి -1;
 
-    const xkb_mod_mask_t mapping = state->keymap->mods.mods[idx].mapping;
-    if (!mapping) {
+    స్థిరరాశి xkb_mod_ముసుగు_t mapping = state->keymap->mods.mods[idx].mapping;
+    ఒకవేళ (!mapping) {
         /* Modifier not mapped */
-        return 0;
+        తిరిగి 0;
     }
-    return (mapping & key_get_consumed(state, key, mode)) == mapping;
+    తిరిగి (mapping & కీలకం_get_consumed(state, కీలకం, బహుళకం)) == mapping;
 }
 
-int
-xkb_state_mod_index_is_consumed(struct xkb_state *state, xkb_keycode_t kc,
-                                xkb_mod_index_t idx)
+పూర్ణాంకం
+xkb_state_mod_సూచీ_is_consumed(నిర్మాణం xkb_state *state, xkb_keycode_t kc,
+                                xkb_mod_సూచీ_t idx)
 {
-    return xkb_state_mod_index_is_consumed2(state, kc, idx,
-                                            XKB_CONSUMED_MODE_XKB);
+    తిరిగి xkb_state_mod_సూచీ_is_consumed2(state, kc, idx,
+                                            XKB_CONSUMED_బహుళకం_XKB);
 }
 
-xkb_mod_mask_t
-xkb_state_mod_mask_remove_consumed(struct xkb_state *state, xkb_keycode_t kc,
-                                   xkb_mod_mask_t mask)
+xkb_mod_ముసుగు_t
+xkb_state_mod_ముసుగు_remove_consumed(నిర్మాణం xkb_state *state, xkb_keycode_t kc,
+                                   xkb_mod_ముసుగు_t ముసుగు)
 {
-    const struct xkb_key* const key = XkbKey(state->keymap, kc);
+    స్థిరరాశి నిర్మాణం xkb_కీలకం* స్థిరరాశి కీలకం = Xkb_కీలకం(state->keymap, kc);
 
-    if (!key)
-        return 0;
+    ఒకవేళ (!కీలకం)
+        తిరిగి 0;
 
-    return resolve_to_canonical_mods(state->keymap, mask) &
-           ~key_get_consumed(state, key, XKB_CONSUMED_MODE_XKB);
+    తిరిగి resolve_గమ్యం_canonical_mods(state->keymap, ముసుగు) &
+           ~కీలకం_get_consumed(state, కీలకం, XKB_CONSUMED_బహుళకం_XKB);
 }
 
-xkb_mod_mask_t
-xkb_state_key_get_consumed_mods2(struct xkb_state *state, xkb_keycode_t kc,
-                                 enum xkb_consumed_mode mode)
+xkb_mod_ముసుగు_t
+xkb_state_కీలకం_get_consumed_mods2(నిర్మాణం xkb_state *state, xkb_keycode_t kc,
+                                 గణన xkb_consumed_బహుళకం బహుళకం)
 {
-    switch (mode) {
-    case XKB_CONSUMED_MODE_XKB:
-    case XKB_CONSUMED_MODE_GTK:
-        break;
-    default:
-        log_err_func(state->keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
-                     "unrecognized consumed modifiers mode: %d\n", mode);
-        return 0;
+    ఎంపిక (బహుళకం) {
+    స్థితి XKB_CONSUMED_బహుళకం_XKB:
+    స్థితి XKB_CONSUMED_బహుళకం_GTK:
+        ఆపు;
+    అప్రమేయ:
+        log_err_func(state->keymap->ctx, XKB_LOG_సందేశం_NO_ID,
+                     "unrecognized consumed modifiers mode: %d\n", బహుళకం);
+        తిరిగి 0;
     }
 
-    const struct xkb_key* const key = XkbKey(state->keymap, kc);
-    if (!key)
-        return 0;
+    స్థిరరాశి నిర్మాణం xkb_కీలకం* స్థిరరాశి కీలకం = Xkb_కీలకం(state->keymap, kc);
+    ఒకవేళ (!కీలకం)
+        తిరిగి 0;
 
-    return key_get_consumed(state, key, mode);
+    తిరిగి కీలకం_get_consumed(state, కీలకం, బహుళకం);
 }
 
-xkb_mod_mask_t
-xkb_state_key_get_consumed_mods(struct xkb_state *state, xkb_keycode_t kc)
+xkb_mod_ముసుగు_t
+xkb_state_కీలకం_get_consumed_mods(నిర్మాణం xkb_state *state, xkb_keycode_t kc)
 {
-    return xkb_state_key_get_consumed_mods2(state, kc, XKB_CONSUMED_MODE_XKB);
+    తిరిగి xkb_state_కీలకం_get_consumed_mods2(state, kc, XKB_CONSUMED_బహుళకం_XKB);
 }
 
 /*******************************************************************************
@@ -3036,20 +3036,20 @@ xkb_state_key_get_consumed_mods(struct xkb_state *state, xkb_keycode_t kc)
  ******************************************************************************/
 
 /** Entry to keep track of the state of an overlaid key */
-struct xkb_overlaid_key {
+నిర్మాణం xkb_overlaid_కీలకం {
     /** The source key being overlaid */
-    const struct xkb_key *old;
+    స్థిరరాశి నిర్మాణం xkb_కీలకం *old;
     /** The target key */
-    const struct xkb_key *new;
+    స్థిరరాశి నిర్మాణం xkb_కీలకం *new;
     /** Counter of key currently down */
-    int refcnt;
+    పూర్ణాంకం refcnt;
 };
 
-struct xkb_shortcuts_config_entry {
+నిర్మాణం xkb_shortcuts_config_నమోదు {
     /** Real modifier mask to trigger shortcuts tweaks */
-    xkb_mod_mask_t mods;
+    xkb_mod_ముసుగు_t mods;
     /** Target layout */
-    xkb_layout_index_t target;
+    xkb_layout_సూచీ_t లక్ష్యం;
 };
 
 /*
@@ -3063,14 +3063,14 @@ struct xkb_shortcuts_config_entry {
  * - Add further features without modifying `xkb_state`, which is already
  *   bloated for *clients* applications.
  */
-struct xkb_machine {
+నిర్మాణం xkb_machine {
     /** Inherits from `xkb_server_state` */
-    struct xkb_server_state base;
+    నిర్మాణం xkb_server_state పునాది;
 
     /* Extra server-specific state data */
 
     /** Keyboard overlays handling */
-    struct {
+    నిర్మాణం {
         /**
          * Current overlaid keys
          *
@@ -3078,61 +3078,61 @@ struct xkb_machine {
          * until totally released, i.e. every key press was matched with the
          * corresponding key release.
          */
-        darray(struct xkb_overlaid_key) keys;
+        darray(నిర్మాణం xkb_overlaid_కీలకం) కీలకాలు;
         /**
          * Activation order of the overlay
          *
          * Overlays indices are stored 1-indexed in nibbles: the lowest
          * nibble corresponds to the latest activated index.
          */
-        uint32_t order;
+        uint32_t క్రమం;
         /** Current enabled overlays mask */
-        xkb_overlay_mask_t enabled;
+        xkb_overlay_ముసుగు_t enabled;
     } overlays;
 
     /** Configuration */
-    struct machine_config {
+    నిర్మాణం machine_config {
         /** Modifiers remapping */
-        struct machine_modifiers_config {
+        నిర్మాణం machine_modifiers_config {
             /** Real modifier mask */
-            xkb_mod_mask_t mask;
+            xkb_mod_ముసుగు_t ముసుగు;
             /** Modifiers re-mappings */
-            darray_size_t mappings_num;
-            struct machine_mods_mapping {
-                xkb_mod_mask_t source;
-                xkb_mod_mask_t target;
-            } * mappings ATTR_COUNTED_BY(mappings_num);
+            darray_కొలత_t mappings_అంకె;
+            నిర్మాణం machine_mods_mapping {
+                xkb_mod_ముసుగు_t ఆధారం;
+                xkb_mod_ముసుగు_t లక్ష్యం;
+            } * mappings ATTR_COUNTED_BY(mappings_అంకె);
         } modifiers;
 
         /** Shortcuts tweak */
-        struct machine_shortcuts_config {
+        నిర్మాణం machine_shortcuts_config {
             /** Substitution entries */
-            struct xkb_shortcuts_config_entry *entries;
+            నిర్మాణం xkb_shortcuts_config_నమోదు *entries;
         } shortcuts;
     } config;
 
     /** Mouse keys handling */
-    struct {
+    నిర్మాణం {
         /** Default pointer button */
-        xkb_pointer_button_index_t default_button;
+        xkb_సూచిక_button_సూచీ_t default_button;
         /** Mask of the locked buttons */
-        xkb_pointer_button_mask_t locked_buttons;
+        xkb_సూచిక_button_ముసుగు_t locked_buttons;
     } mouse;
 
-    enum xkb_machine_flags flags;
+    గణన xkb_machine_flags flags;
 };
 
-typedef darray(struct machine_mods_mapping) machine_mods_mappings;
+రకనిర్వచనం darray(నిర్మాణం machine_mods_mapping) machine_mods_mappings;
 
-struct xkb_machine_builder {
-    struct xkb_keymap *keymap;
+నిర్మాణం xkb_machine_builder {
+    నిర్మాణం xkb_keymap *keymap;
 
     /** Controls */
-    struct {
+    నిర్మాణం {
         /** Accessibility flags */
-        struct {
-            enum xkb_a11y_flags affect_flags;
-            enum xkb_a11y_flags flags;
+        నిర్మాణం {
+            గణన xkb_a11y_flags affect_flags;
+            గణన xkb_a11y_flags flags;
         } a11y;
     } controls;
 
@@ -3140,78 +3140,78 @@ struct xkb_machine_builder {
     machine_mods_mappings mods;
 
     /** Shortcuts tweak */
-    struct xkb_shortcuts_config_options {
+    నిర్మాణం xkb_shortcuts_config_options {
         /** Substitution entries */
-        darray(struct xkb_shortcuts_config_entry) entries;
+        darray(నిర్మాణం xkb_shortcuts_config_నమోదు) entries;
     } shortcuts;
 
-    enum xkb_machine_flags machine_flags;
-    enum xkb_machine_builder_flags builder_flags;
-    int refcnt;
+    గణన xkb_machine_flags machine_flags;
+    గణన xkb_machine_builder_flags builder_flags;
+    పూర్ణాంకం refcnt;
 };
 
-struct xkb_machine_builder *
+నిర్మాణం xkb_machine_builder *
 xkb_machine_builder_new(
-    struct xkb_keymap * restrict keymap,
-    const struct xkb_machine_builder_config * restrict config,
-    enum xkb_status * restrict status
+    నిర్మాణం xkb_keymap * పరిమిత keymap,
+    స్థిరరాశి నిర్మాణం xkb_machine_builder_config * పరిమిత config,
+    గణన xkb_స్థితి * పరిమిత స్థితి_2
 )
 {
     /* Handle default configuration */
-    static const struct xkb_machine_builder_config default_config = {
-        .size = sizeof(default_config)
+    స్థిర స్థిరరాశి నిర్మాణం xkb_machine_builder_config default_config = {
+        .కొలత = పరిమాణం(default_config)
     };
-    if (!config)
+    ఒకవేళ (!config)
         config = &default_config;
 
     /* Check ABI compatibility */
-    const enum xkb_status status_ = xkb_check_state_abi(config);
-    if (status_) {
-        xkb_log_abi_error(keymap->ctx, __func__, status_);
-        if (status)
-            *status = status_;
-        return NULL;
+    స్థిరరాశి గణన xkb_స్థితి స్థితి_3 = xkb_check_state_abi(config);
+    ఒకవేళ (స్థితి_3) {
+        xkb_log_abi_error(keymap->ctx, __func__, స్థితి_3);
+        ఒకవేళ (స్థితి_2)
+            *స్థితి_2 = స్థితి_3;
+        తిరిగి ఖాళీ;
     }
 
     /* Sanitize input */
-    const enum xkb_machine_builder_flags invalid_builder_flags
+    స్థిరరాశి గణన xkb_machine_builder_flags invalid_builder_flags
         = config->builder_flags
-        & ~(enum xkb_machine_builder_flags)XKB_MACHINE_BUILDER_FLAGS_VALUES;
-    if (invalid_builder_flags) {
+        & ~(గణన xkb_machine_builder_flags)XKB_MACHINE_BUILDER_FLAGS_విలువలు;
+    ఒకవేళ (invalid_builder_flags) {
         log_err_func(keymap->ctx, XKB_ERROR_UNSUPPORTED_MACHINE_BUILDER_FLAGS_,
                      "unrecognized machine builder flags: 0x%x\n",
                      invalid_builder_flags);
-        if (status)
-            *status = XKB_ERROR_UNSUPPORTED_MACHINE_BUILDER_FLAGS;
-        return NULL;
+        ఒకవేళ (స్థితి_2)
+            *స్థితి_2 = XKB_ERROR_UNSUPPORTED_MACHINE_BUILDER_FLAGS;
+        తిరిగి ఖాళీ;
     }
 
-    const enum xkb_machine_flags invalid_machine_flags
-        = (enum xkb_machine_flags)config->machine_flags
-        & ~(enum xkb_machine_flags)XKB_MACHINE_FLAGS_VALUES;
-    if (invalid_machine_flags) {
+    స్థిరరాశి గణన xkb_machine_flags invalid_machine_flags
+        = (గణన xkb_machine_flags)config->machine_flags
+        & ~(గణన xkb_machine_flags)XKB_MACHINE_FLAGS_విలువలు;
+    ఒకవేళ (invalid_machine_flags) {
         log_err_func(keymap->ctx, XKB_ERROR_UNSUPPORTED_MACHINE_FLAGS_,
                      "unrecognized state machine flags: 0x%x\n",
                      invalid_machine_flags);
-        if (status)
-            *status = XKB_ERROR_UNSUPPORTED_MACHINE_FLAGS;
-        return NULL;
+        ఒకవేళ (స్థితి_2)
+            *స్థితి_2 = XKB_ERROR_UNSUPPORTED_MACHINE_FLAGS;
+        తిరిగి ఖాళీ;
     }
 
-    struct xkb_machine_builder * const builder = calloc(1, sizeof(*builder));
-    if (!builder) {
-        log_err_func1(keymap->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
+    నిర్మాణం xkb_machine_builder * స్థిరరాశి builder = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*builder));
+    ఒకవేళ (!builder) {
+        log_err_func1(keymap->ctx, XKB_ERROR_కేటాయింపు_FAILURE_2,
                       "cannot allocate machine builder\n");
-        if (status)
-            *status = XKB_ERROR_ALLOCATION_FAILURE;
-        return NULL;
+        ఒకవేళ (స్థితి_2)
+            *స్థితి_2 = XKB_ERROR_కేటాయింపు_FAILURE;
+        తిరిగి ఖాళీ;
     }
 
-    *builder = (struct xkb_machine_builder) {
+    *builder = (నిర్మాణం xkb_machine_builder) {
         .keymap = xkb_keymap_ref(keymap),
         .refcnt = 1,
-        .builder_flags = (enum xkb_machine_builder_flags)config->builder_flags,
-        .machine_flags = (enum xkb_machine_flags)config->machine_flags,
+        .builder_flags = (గణన xkb_machine_builder_flags)config->builder_flags,
+        .machine_flags = (గణన xkb_machine_flags)config->machine_flags,
         .controls = {
             .a11y = {
                 .affect_flags = XKB_A11Y_NO_FLAGS,
@@ -3224,278 +3224,278 @@ xkb_machine_builder_new(
         },
     };
 
-    if (status)
-        *status = XKB_SUCCESS;
+    ఒకవేళ (స్థితి_2)
+        *స్థితి_2 = XKB_SUCCESS;
 
-    return builder;
+    తిరిగి builder;
 }
 
-struct xkb_machine_builder *
-xkb_machine_builder_ref(struct xkb_machine_builder *builder)
+నిర్మాణం xkb_machine_builder *
+xkb_machine_builder_ref(నిర్మాణం xkb_machine_builder *builder)
 {
-    assert(builder->refcnt > 0);
+    ప్రతిజ్ఞా(builder->refcnt > 0);
     builder->refcnt++;
-    return builder;
+    తిరిగి builder;
 }
 
-void
-xkb_machine_builder_unref(struct xkb_machine_builder *builder)
+శూన్య
+xkb_machine_builder_unref(నిర్మాణం xkb_machine_builder *builder)
 {
-    assert(!builder || builder->refcnt > 0);
-    if (!builder || --builder->refcnt > 0)
-        return;
+    ప్రతిజ్ఞా(!builder || builder->refcnt > 0);
+    ఒకవేళ (!builder || --builder->refcnt > 0)
+        తిరిగి;
 
     darray_free(builder->shortcuts.entries);
     darray_free(builder->mods);
     xkb_keymap_unref(builder->keymap);
-    free(builder);
+    విడుదల(builder);
 }
 
-struct xkb_keymap *
-xkb_machine_builder_get_keymap(const struct xkb_machine_builder *builder)
+నిర్మాణం xkb_keymap *
+xkb_machine_builder_get_keymap(స్థిరరాశి నిర్మాణం xkb_machine_builder *builder)
 {
     /* Reference count is not updated. See API doc. */
-    return builder->keymap;
+    తిరిగి builder->keymap;
 }
 
-enum xkb_status
+గణన xkb_స్థితి
 xkb_machine_builder_update_a11y(
-    struct xkb_machine_builder * restrict builder,
-    const struct xkb_machine_builder_a11y_update * restrict update)
+    నిర్మాణం xkb_machine_builder * పరిమిత builder,
+    స్థిరరాశి నిర్మాణం xkb_machine_builder_a11y_update * పరిమిత update)
 {
     /* Check ABI compatibility */
-    enum xkb_status status = xkb_check_state_abi(update);
-    if (status != XKB_SUCCESS) {
-        xkb_log_abi_error(builder->keymap->ctx, __func__, status);
-        return status;
+    గణన xkb_స్థితి స్థితి_2 = xkb_check_state_abi(update);
+    ఒకవేళ (స్థితి_2 != XKB_SUCCESS) {
+        xkb_log_abi_error(builder->keymap->ctx, __func__, స్థితి_2);
+        తిరిగి స్థితి_2;
     }
 
-    const enum xkb_a11y_flags invalid_flags =
-        ~(enum xkb_a11y_flags)XKB_A11Y_FLAGS_VALUES;
+    స్థిరరాశి గణన xkb_a11y_flags invalid_flags =
+        ~(గణన xkb_a11y_flags)XKB_A11_Y_FLAGS_విలువలు;
 
-    if (update->affect_flags & invalid_flags) {
+    ఒకవేళ (update->affect_flags & invalid_flags) {
         log_err(builder->keymap->ctx, XKB_ERROR_UNSUPPORTED_A11Y_FLAGS_,
                 "%s: unrecognized A11Y affected flags: %#x\n",
                 __func__, update->affect_flags & invalid_flags);
-        return XKB_ERROR_UNSUPPORTED_A11Y_FLAGS;
+        తిరిగి XKB_ERROR_UNSUPPORTED_A11Y_FLAGS;
     }
-    if (update->flags & invalid_flags) {
+    ఒకవేళ (update->flags & invalid_flags) {
         log_err(builder->keymap->ctx, XKB_ERROR_UNSUPPORTED_A11Y_FLAGS_,
                 "%s: unrecognized A11Y flags: %#x\n",
                 __func__, update->flags & invalid_flags);
-        return XKB_ERROR_UNSUPPORTED_A11Y_FLAGS;
+        తిరిగి XKB_ERROR_UNSUPPORTED_A11Y_FLAGS;
     }
 
     builder->controls.a11y.affect_flags |= update->affect_flags;
     builder->controls.a11y.flags &= ~update->affect_flags;
     builder->controls.a11y.flags |= (update->flags & update->affect_flags);
 
-    return XKB_SUCCESS;
+    తిరిగి XKB_SUCCESS;
 }
 
-enum xkb_status
+గణన xkb_స్థితి
 xkb_machine_builder_update_mods_remap(
-    struct xkb_machine_builder * restrict builder,
-    const struct xkb_machine_builder_mods_remap_update * restrict update
+    నిర్మాణం xkb_machine_builder * పరిమిత builder,
+    స్థిరరాశి నిర్మాణం xkb_machine_builder_mods_remap_update * పరిమిత update
 )
 {
-    if (!update->source) {
-        if (!update->target) {
+    ఒకవేళ (!update->ఆధారం) {
+        ఒకవేళ (!update->లక్ష్యం) {
             /* Reset mappings */
             darray_resize(builder->mods, 0);
-            return XKB_SUCCESS;
-        } else {
-            return XKB_ERROR_UNSUPPORTED_MODIFIER_MASK;
+            తిరిగి XKB_SUCCESS;
+        } లేకపోతే {
+            తిరిగి XKB_ERROR_UNSUPPORTED_MODIFIER_ముసుగు;
         }
     }
 
     /* Check the modifiers against the keymap */
-    const xkb_mod_mask_t invalid = ~builder->keymap->canonical_state_mask;
-    if ((update->source & invalid)) {
-        log_err(builder->keymap->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK,
+    స్థిరరాశి xkb_mod_ముసుగు_t invalid = ~builder->keymap->canonical_state_ముసుగు;
+    ఒకవేళ ((update->ఆధారం & invalid)) {
+        log_err(builder->keymap->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_ముసుగు,
                 "%s: Invalid source modifiers: 0x%"PRIx32"\n",
-                __func__, update->source);
-        return XKB_ERROR_UNSUPPORTED_MODIFIER_MASK;
+                __func__, update->ఆధారం);
+        తిరిగి XKB_ERROR_UNSUPPORTED_MODIFIER_ముసుగు;
     }
-    if ((update->target & invalid)) {
-        log_err(builder->keymap->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK,
+    ఒకవేళ ((update->లక్ష్యం & invalid)) {
+        log_err(builder->keymap->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_ముసుగు,
                 "%s: Invalid target modifiers: 0x%"PRIx32"\n",
-                __func__, update->target);
-        return XKB_ERROR_UNSUPPORTED_MODIFIER_MASK;
+                __func__, update->లక్ష్యం);
+        తిరిగి XKB_ERROR_UNSUPPORTED_MODIFIER_ముసుగు;
     }
 
-    struct machine_mods_mapping *mapping = NULL;
-    darray_size_t m = 0;
+    నిర్మాణం machine_mods_mapping *mapping = ఖాళీ;
+    darray_కొలత_t m = 0;
     darray_enumerate(m, mapping, builder->mods) {
-        if (mapping->source == update->source) {
-            if (!update->target) {
+        ఒకవేళ (mapping->ఆధారం == update->ఆధారం) {
+            ఒకవేళ (!update->లక్ష్యం) {
                 /* Remove mapping */
                 darray_remove(builder->mods, m);
-            } else {
+            } లేకపోతే {
                 /* Update mapping */
-                mapping->target = update->target;
+                mapping->లక్ష్యం = update->లక్ష్యం;
             }
-            return XKB_SUCCESS;
+            తిరిగి XKB_SUCCESS;
         }
     }
 
-    if (update->target) {
+    ఒకవేళ (update->లక్ష్యం) {
         /* Append new mapping */
         darray_append(
             builder->mods,
-            (struct machine_mods_mapping) {
-                .source = update->source,
-                .target = update->target
+            (నిర్మాణం machine_mods_mapping) {
+                .ఆధారం = update->ఆధారం,
+                .లక్ష్యం = update->లక్ష్యం
             }
         );
-    } else {
+    } లేకపోతే {
         /* Ignore missing mapping */
     }
 
-    return XKB_SUCCESS;
+    తిరిగి XKB_SUCCESS;
 }
 
-enum xkb_status
+గణన xkb_స్థితి
 xkb_machine_builder_update_shortcut_override(
-    struct xkb_machine_builder * restrict builder,
-    const struct xkb_machine_builder_shortcut_override_update * restrict update
+    నిర్మాణం xkb_machine_builder * పరిమిత builder,
+    స్థిరరాశి నిర్మాణం xkb_machine_builder_shortcut_override_update * పరిమిత update
 )
 {
-    struct xkb_keymap *keymap = builder->keymap;
+    నిర్మాణం xkb_keymap *keymap = builder->keymap;
 
     /* Check the modifiers against the keymap */
-    const xkb_mod_mask_t invalid = ~keymap->canonical_state_mask;
-    if ((update->affect_mods & invalid)) {
-        log_err(keymap->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK,
+    స్థిరరాశి xkb_mod_ముసుగు_t invalid = ~keymap->canonical_state_ముసుగు;
+    ఒకవేళ ((update->affect_mods & invalid)) {
+        log_err(keymap->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_ముసుగు,
                 "%s: Invalid affected modifiers: 0x%"PRIx32"\n",
                 __func__, update->affect_mods);
-        return XKB_ERROR_UNSUPPORTED_MODIFIER_MASK;
+        తిరిగి XKB_ERROR_UNSUPPORTED_MODIFIER_ముసుగు;
     }
-    if ((update->mods & invalid)) {
-        log_err(keymap->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK,
+    ఒకవేళ ((update->mods & invalid)) {
+        log_err(keymap->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_ముసుగు,
                 "%s: Invalid modifiers: 0x%"PRIx32"\n",
                 __func__, update->mods);
-        return XKB_ERROR_UNSUPPORTED_MODIFIER_MASK;
+        తిరిగి XKB_ERROR_UNSUPPORTED_MODIFIER_ముసుగు;
     }
 
     /* Check the layout indices against the keymap */
-    if (update->source >= keymap->num_groups &&
-        update->source != XKB_LAYOUT_INVALID) {
+    ఒకవేళ (update->ఆధారం >= keymap->అంకె_groups &&
+        update->ఆధారం != XKB_LAYOUT_INVALID) {
         static_assert(XKB_LAYOUT_INVALID == UINT32_MAX, "integer overflow");
-        log_err(keymap->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
+        log_err(keymap->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_సూచీ_2,
                 "%s: Invalid source layout: "
                 "expected index in range 1..%"PRIu32", but got %"PRIu32"\n",
-                __func__, keymap->num_groups, update->source + 1);
-        return XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX;
+                __func__, keymap->అంకె_groups, update->ఆధారం + 1);
+        తిరిగి XKB_ERROR_UNSUPPORTED_LAYOUT_సూచీ;
     }
-    if (update->target >= keymap->num_groups &&
-        update->target != XKB_LAYOUT_INVALID) {
+    ఒకవేళ (update->లక్ష్యం >= keymap->అంకె_groups &&
+        update->లక్ష్యం != XKB_LAYOUT_INVALID) {
         static_assert(XKB_LAYOUT_INVALID == UINT32_MAX, "integer overflow");
-        log_err(keymap->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
+        log_err(keymap->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_సూచీ_2,
                 "%s: Invalid target layout: "
                 "expected index in range 1..%"PRIu32", but got %"PRIu32"\n",
-                __func__, keymap->num_groups, update->target + 1);
-        return XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX;
+                __func__, keymap->అంకె_groups, update->లక్ష్యం + 1);
+        తిరిగి XKB_ERROR_UNSUPPORTED_LAYOUT_సూచీ;
     }
 
-    struct xkb_shortcuts_config_options * const config = &builder->shortcuts;
+    నిర్మాణం xkb_shortcuts_config_options * స్థిరరాశి config = &builder->shortcuts;
 
     /* Resize array & initialize new entries, if relevant */
-    if (update->source >= darray_size(config->entries) &&
-        update->source != XKB_LAYOUT_INVALID) {
-        if (update->target == update->source) {
+    ఒకవేళ (update->ఆధారం >= darray_కొలత(config->entries) &&
+        update->ఆధారం != XKB_LAYOUT_INVALID) {
+        ఒకవేళ (update->లక్ష్యం == update->ఆధారం) {
             /* Skip default setting */
-            return XKB_SUCCESS;
+            తిరిగి XKB_SUCCESS;
         }
-        xkb_layout_index_t new = darray_size(config->entries);
-        darray_resize(config->entries, update->source + 1);
-        for (; new <= update->source; new++) {
-            darray_item(config->entries, new) =
-                (struct xkb_shortcuts_config_entry) {
-                    .target = XKB_LAYOUT_INVALID,
+        xkb_layout_సూచీ_t new = darray_కొలత(config->entries);
+        darray_resize(config->entries, update->ఆధారం + 1);
+        కొరకు (; new <= update->ఆధారం; new++) {
+            darray_అంశం(config->entries, new) =
+                (నిర్మాణం xkb_shortcuts_config_నమోదు) {
+                    .లక్ష్యం = XKB_LAYOUT_INVALID,
                     .mods = 0
                 };
         }
     }
 
-    struct xkb_shortcuts_config_entry *entry;
-    xkb_layout_index_t source = (update->source == XKB_LAYOUT_INVALID)
+    నిర్మాణం xkb_shortcuts_config_నమోదు *నమోదు_2;
+    xkb_layout_సూచీ_t ఆధారం = (update->ఆధారం == XKB_LAYOUT_INVALID)
         ? 0               /* Loop over all entries */
-        : update->source; /* Single entry */
-    darray_foreach_from(entry, config->entries, source) {
-        if (update->source == XKB_LAYOUT_INVALID &&
-            entry->target == XKB_LAYOUT_INVALID) {
+        : update->ఆధారం; /* Single entry */
+    darray_foreach_from(నమోదు_2, config->entries, ఆధారం) {
+        ఒకవేళ (update->ఆధారం == XKB_LAYOUT_INVALID &&
+            నమోదు_2->లక్ష్యం == XKB_LAYOUT_INVALID) {
             /* Skip previous deactivated entry */
-            source++;
-            continue;
+            ఆధారం++;
+            కొనసాగు;
         }
 
-        if (update->affect_mods) {
-            entry->mods &= ~update->affect_mods;
-            entry->mods |= (update->affect_mods & update->mods);
+        ఒకవేళ (update->affect_mods) {
+            నమోదు_2->mods &= ~update->affect_mods;
+            నమోదు_2->mods |= (update->affect_mods & update->mods);
         }
 
-        if (update->source != XKB_LAYOUT_INVALID) {
-            entry->target = (update->target == source)
+        ఒకవేళ (update->ఆధారం != XKB_LAYOUT_INVALID) {
+            నమోదు_2->లక్ష్యం = (update->లక్ష్యం == ఆధారం)
                 ? XKB_LAYOUT_INVALID
-                : update->target;
+                : update->లక్ష్యం;
             /* Single entry: exit loop */
-            break;
+            ఆపు;
         }
-        source++;
+        ఆధారం++;
     }
 
-    return XKB_SUCCESS;
+    తిరిగి XKB_SUCCESS;
 }
 
 /** Compare 2 modifiers combinations */
-static int
-cmp_mod_masks(const void *a, const void *b)
+స్థిర పూర్ణాంకం
+cmp_mod_masks(స్థిరరాశి శూన్య *a, స్థిరరాశి శూన్య *b)
 {
-    const xkb_mod_mask_t m1 = *((xkb_mod_mask_t *) a);
-    const xkb_mod_mask_t m2 = *((xkb_mod_mask_t *) b);
-    if (m1 == m2)
-        return 0;
+    స్థిరరాశి xkb_mod_ముసుగు_t m1 = *((xkb_mod_ముసుగు_t *) a);
+    స్థిరరాశి xkb_mod_ముసుగు_t m2 = *((xkb_mod_ముసుగు_t *) b);
+    ఒకవేళ (m1 == m2)
+        తిరిగి 0;
 
-    if (!m1)
-        return +1;
-    if (!m2)
-        return -1;
+    ఒకవేళ (!m1)
+        తిరిగి +1;
+    ఒకవేళ (!m2)
+        తిరిగి -1;
 
-    const xkb_mod_mask_t overlap = (m1 & m2);
-    if (overlap == m1)
-        return +1; /* m1 is a subset of m2 */
-    if (overlap == m2)
-        return -1; /* m2 is a subset of m1 */
+    స్థిరరాశి xkb_mod_ముసుగు_t overlap = (m1 & m2);
+    ఒకవేళ (overlap == m1)
+        తిరిగి +1; /* m1 is a subset of m2 */
+    ఒకవేళ (overlap == m2)
+        తిరిగి -1; /* m2 is a subset of m1 */
 
     /* Compare active modifiers numbers */
-    const unsigned int count1 = popcount32(m1);
-    const unsigned int count2 = popcount32(m2);
-    if (count1 > count2)
-        return -1;
-    if (count1 < count2)
-        return +1;
+    స్థిరరాశి గుర్తులేని పూర్ణాంకం count1 = popcount32(m1);
+    స్థిరరాశి గుర్తులేని పూర్ణాంకం count2 = popcount32(m2);
+    ఒకవేళ (count1 > count2)
+        తిరిగి -1;
+    ఒకవేళ (count1 < count2)
+        తిరిగి +1;
 
     /* Give priority to real modifiers */
-    return (m1 < m2) ? -1 : +1;
+    తిరిగి (m1 < m2) ? -1 : +1;
 }
 
-static enum xkb_status
-machine_set_mods(struct xkb_machine *sm,
-                 const machine_mods_mappings *raw_mappings)
+స్థిర గణన xkb_స్థితి
+machine_సమితి_mods(నిర్మాణం xkb_machine *sm,
+                 స్థిరరాశి machine_mods_mappings *raw_mappings)
 {
-    if (!darray_empty(*raw_mappings)) {
+    ఒకవేళ (!darray_ఖాళీలు(*raw_mappings)) {
         machine_mods_mappings mappings = darray_new();
-        xkb_mod_mask_t mask = 0;
-        const struct machine_mods_mapping *mapping;
-        const xkb_mod_mask_t invalid =
-            ~sm->base.base.keymap->canonical_state_mask;
+        xkb_mod_ముసుగు_t ముసుగు = 0;
+        స్థిరరాశి నిర్మాణం machine_mods_mapping *mapping;
+        స్థిరరాశి xkb_mod_ముసుగు_t invalid =
+            ~sm->పునాది.పునాది.keymap->canonical_state_ముసుగు;
         darray_foreach(mapping, *raw_mappings) {
-            if (!mapping->source || !mapping->target ||
-                (mapping->source & invalid) || (mapping->target & invalid))
-                continue;
+            ఒకవేళ (!mapping->ఆధారం || !mapping->లక్ష్యం ||
+                (mapping->ఆధారం & invalid) || (mapping->లక్ష్యం & invalid))
+                కొనసాగు;
             darray_append(mappings, *mapping);
-            mask |= mapping->source;
+            ముసుగు |= mapping->ఆధారం;
         }
 
         /*
@@ -3503,287 +3503,287 @@ machine_set_mods(struct xkb_machine *sm,
          * if they are superset of other combinations.
          * For other type of overlaps, see the sorting function.
          */
-        qsort(darray_items(mappings), darray_size(mappings),
-              sizeof(*darray_items(mappings)), &cmp_mod_masks);
+        qsort(darray_వస్తువులు(mappings), darray_కొలత(mappings),
+              పరిమాణం(*darray_వస్తువులు(mappings)), &cmp_mod_masks);
 
         darray_steal(
             mappings,
             &sm->config.modifiers.mappings,
-            &sm->config.modifiers.mappings_num
+            &sm->config.modifiers.mappings_అంకె
         );
-        sm->config.modifiers.mask = mask;
-    } else {
-        sm->config.modifiers = (struct machine_modifiers_config) {
-            .mappings = NULL,
-            .mappings_num = 0,
-            .mask = 0
+        sm->config.modifiers.ముసుగు = ముసుగు;
+    } లేకపోతే {
+        sm->config.modifiers = (నిర్మాణం machine_modifiers_config) {
+            .mappings = ఖాళీ,
+            .mappings_అంకె = 0,
+            .ముసుగు = 0
         };
     }
 
-    return XKB_SUCCESS;
+    తిరిగి XKB_SUCCESS;
 }
 
-static enum xkb_status
-machine_set_shortcuts(
-    struct xkb_machine * restrict sm,
-    const struct xkb_shortcuts_config_options * restrict options
+స్థిర గణన xkb_స్థితి
+machine_సమితి_shortcuts(
+    నిర్మాణం xkb_machine * పరిమిత sm,
+    స్థిరరాశి నిర్మాణం xkb_shortcuts_config_options * పరిమిత options
 )
 {
-    if (darray_empty(options->entries)) {
-        sm->config.shortcuts = (struct machine_shortcuts_config) {
-            .entries = NULL
+    ఒకవేళ (darray_ఖాళీలు(options->entries)) {
+        sm->config.shortcuts = (నిర్మాణం machine_shortcuts_config) {
+            .entries = ఖాళీ
         };
-        return XKB_SUCCESS;
+        తిరిగి XKB_SUCCESS;
     }
 
-    struct xkb_keymap * const keymap = sm->base.base.keymap;
+    నిర్మాణం xkb_keymap * స్థిరరాశి keymap = sm->పునాది.పునాది.keymap;
 
-    struct xkb_shortcuts_config_entry * entries =
-        calloc(keymap->num_groups, sizeof(*entries));
-    if (!entries)
-        return XKB_ERROR_ALLOCATION_FAILURE;
+    నిర్మాణం xkb_shortcuts_config_నమోదు * entries =
+        సున్నా_జ్ఞాపకం_ఇవ్వు(keymap->అంకె_groups, పరిమాణం(*entries));
+    ఒకవేళ (!entries)
+        తిరిగి XKB_ERROR_కేటాయింపు_FAILURE;
 
-    const xkb_layout_index_t count = MIN(
-        keymap->num_groups,
-        (xkb_layout_index_t) darray_size(options->entries)
+    స్థిరరాశి xkb_layout_సూచీ_t లెక్క = MIN(
+        keymap->అంకె_groups,
+        (xkb_layout_సూచీ_t) darray_కొలత(options->entries)
     );
 
     bool some_entries = false;
-    for (xkb_layout_index_t l = 0; l < count; l++) {
+    కొరకు (xkb_layout_సూచీ_t l = 0; l < లెక్క; l++) {
         /* Sanitize layout target */
-        const xkb_layout_index_t target =
-            darray_item(options->entries, l).target;
+        స్థిరరాశి xkb_layout_సూచీ_t లక్ష్యం =
+            darray_అంశం(options->entries, l).లక్ష్యం;
         /* Sanitize modifier mask */
-        const xkb_mod_mask_t mods = (
-            darray_item(options->entries, l).mods &
-            sm->base.base.keymap->canonical_state_mask
+        స్థిరరాశి xkb_mod_ముసుగు_t mods = (
+            darray_అంశం(options->entries, l).mods &
+            sm->పునాది.పునాది.keymap->canonical_state_ముసుగు
         );
-        if (target < keymap->num_groups && target != l && mods) {
-            entries[l] = (struct xkb_shortcuts_config_entry) {
-                .target = target,
+        ఒకవేళ (లక్ష్యం < keymap->అంకె_groups && లక్ష్యం != l && mods) {
+            entries[l] = (నిర్మాణం xkb_shortcuts_config_నమోదు) {
+                .లక్ష్యం = లక్ష్యం,
                 .mods = mods
             };
             some_entries = true;
-        } else {
-            entries[l] = (struct xkb_shortcuts_config_entry) {
-                .target = XKB_LAYOUT_INVALID,
+        } లేకపోతే {
+            entries[l] = (నిర్మాణం xkb_shortcuts_config_నమోదు) {
+                .లక్ష్యం = XKB_LAYOUT_INVALID,
                 .mods = 0
             };
-            continue;
+            కొనసాగు;
         }
     }
 
-    if (!some_entries) {
-        free(entries);
-        entries = NULL;
-    } else {
+    ఒకవేళ (!some_entries) {
+        విడుదల(entries);
+        entries = ఖాళీ;
+    } లేకపోతే {
         /* Initialize groups with no entries */
-        for (xkb_layout_index_t l = count; l < keymap->num_groups; l++) {
-            entries[l] = (struct xkb_shortcuts_config_entry) {
-                .target = XKB_LAYOUT_INVALID,
+        కొరకు (xkb_layout_సూచీ_t l = లెక్క; l < keymap->అంకె_groups; l++) {
+            entries[l] = (నిర్మాణం xkb_shortcuts_config_నమోదు) {
+                .లక్ష్యం = XKB_LAYOUT_INVALID,
                 .mods = 0
             };
         }
     }
 
-    sm->config.shortcuts = (struct machine_shortcuts_config) {
+    sm->config.shortcuts = (నిర్మాణం machine_shortcuts_config) {
         .entries = entries
     };
-    return XKB_SUCCESS;
+    తిరిగి XKB_SUCCESS;
 }
 
-struct xkb_machine *
-xkb_machine_new(const struct xkb_machine_builder * restrict builder,
-                enum xkb_status * restrict status)
+నిర్మాణం xkb_machine *
+xkb_machine_new(స్థిరరాశి నిర్మాణం xkb_machine_builder * పరిమిత builder,
+                గణన xkb_స్థితి * పరిమిత స్థితి_2)
 {
-    struct xkb_machine * const machine = calloc(1, sizeof(*machine));
-    if (!machine) {
-        log_err_func1(builder->keymap->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
+    నిర్మాణం xkb_machine * స్థిరరాశి machine = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*machine));
+    ఒకవేళ (!machine) {
+        log_err_func1(builder->keymap->ctx, XKB_ERROR_కేటాయింపు_FAILURE_2,
                       "cannot allocate machine\n");
-        if (status)
-            *status = XKB_ERROR_ALLOCATION_FAILURE;
-        return NULL;
+        ఒకవేళ (స్థితి_2)
+            *స్థితి_2 = XKB_ERROR_కేటాయింపు_FAILURE;
+        తిరిగి ఖాళీ;
     }
 
-    xkb_server_state_init(&machine->base, builder->keymap, SERVER_STATE,
+    xkb_server_state_init(&machine->పునాది, builder->keymap, SERVER_STATE,
                           builder->controls.a11y.affect_flags,
                           builder->controls.a11y.flags);
     machine->flags = builder->machine_flags;
-    if (!(machine->flags &
-          XKB_MACHINE_DISABLE_LAYOUT_SWITCH_ON_MODIFIER_KEY_FIX))
+    ఒకవేళ (!(machine->flags &
+          XKB_MACHINE_DISABLE_LAYOUT_SWITCH_ON_MODIFIER_కీలకం_FIX))
     {
-        machine->base.flags |= STATE_FIX_LAYOUT_SWITCH_ON_MODIFIER_KEY;
+        machine->పునాది.flags |= STATE_FIX_LAYOUT_SWITCH_ON_MODIFIER_కీలకం;
     }
-    if (machine->flags & XKB_MACHINE_UNLOCK_MODS_ON_PRESS) {
-        machine->base.flags |= STATE_UNLOCK_MODS_ON_PRESS;
+    ఒకవేళ (machine->flags & XKB_MACHINE_UNLOCK_MODS_ON_PRESS) {
+        machine->పునాది.flags |= STATE_UNLOCK_MODS_ON_PRESS;
     }
 
-    enum xkb_status status_;
-    if ((status_ = machine_set_mods(machine, &builder->mods)) != XKB_SUCCESS ||
-        (status_ = machine_set_shortcuts(machine, &builder->shortcuts)) !=
+    గణన xkb_స్థితి స్థితి_3;
+    ఒకవేళ ((స్థితి_3 = machine_సమితి_mods(machine, &builder->mods)) != XKB_SUCCESS ||
+        (స్థితి_3 = machine_సమితి_shortcuts(machine, &builder->shortcuts)) !=
         XKB_SUCCESS) {
-        *status = status_;
-        goto error;
+        *స్థితి_2 = స్థితి_3;
+        వెళ్ళు error;
     }
 
-    darray_init(machine->overlays.keys);
-    machine->mouse.default_button = XKB_POINTER_BUTTON_MIN;
+    darray_init(machine->overlays.కీలకాలు);
+    machine->mouse.default_button = XKB_సూచిక_BUTTON_MIN;
 
-    if (status)
-        *status = XKB_SUCCESS;
+    ఒకవేళ (స్థితి_2)
+        *స్థితి_2 = XKB_SUCCESS;
 
-    return machine;
+    తిరిగి machine;
 
 error:
     xkb_machine_unref(machine);
-    return NULL;
+    తిరిగి ఖాళీ;
 }
 
-struct xkb_machine *
-xkb_machine_ref(struct xkb_machine *sm)
+నిర్మాణం xkb_machine *
+xkb_machine_ref(నిర్మాణం xkb_machine *sm)
 {
-    assert(sm->base.base.refcnt > 0);
-    sm->base.base.refcnt++;
-    return sm;
+    ప్రతిజ్ఞా(sm->పునాది.పునాది.refcnt > 0);
+    sm->పునాది.పునాది.refcnt++;
+    తిరిగి sm;
 }
 
-void
-xkb_machine_unref(struct xkb_machine *sm)
+శూన్య
+xkb_machine_unref(నిర్మాణం xkb_machine *sm)
 {
-    assert(!sm || sm->base.base.refcnt > 0);
-    if (!sm || --sm->base.base.refcnt > 0)
-        return;
+    ప్రతిజ్ఞా(!sm || sm->పునాది.పునాది.refcnt > 0);
+    ఒకవేళ (!sm || --sm->పునాది.పునాది.refcnt > 0)
+        తిరిగి;
 
-    xkb_state_destroy(&sm->base.base);
-    darray_free(sm->overlays.keys);
-    free(sm->config.shortcuts.entries);
-    free(sm->config.modifiers.mappings);
-    free(sm);
+    xkb_state_destroy(&sm->పునాది.పునాది);
+    darray_free(sm->overlays.కీలకాలు);
+    విడుదల(sm->config.shortcuts.entries);
+    విడుదల(sm->config.modifiers.mappings);
+    విడుదల(sm);
 }
 
-struct xkb_keymap *
-xkb_machine_get_keymap(const struct xkb_machine *sm)
-{
-    /* Reference count is not updated. See API doc. */
-    return sm->base.base.keymap;
-}
-
-struct xkb_state *
-xkb_machine_get_state(struct xkb_machine *sm)
+నిర్మాణం xkb_keymap *
+xkb_machine_get_keymap(స్థిరరాశి నిర్మాణం xkb_machine *sm)
 {
     /* Reference count is not updated. See API doc. */
-    return (struct xkb_state *)sm;
+    తిరిగి sm->పునాది.పునాది.keymap;
 }
 
-struct xkb_state *
-xkb_state_new_from_machine(const struct xkb_machine * restrict machine,
-                           enum xkb_status * restrict status)
+నిర్మాణం xkb_state *
+xkb_machine_get_state(నిర్మాణం xkb_machine *sm)
+{
+    /* Reference count is not updated. See API doc. */
+    తిరిగి (నిర్మాణం xkb_state *)sm;
+}
+
+నిర్మాణం xkb_state *
+xkb_state_new_from_machine(స్థిరరాశి నిర్మాణం xkb_machine * పరిమిత machine,
+                           గణన xkb_స్థితి * పరిమిత స్థితి_2)
 {
     /* Creation */
-    enum xkb_status status_;
-    struct xkb_state * const state = xkb_state_new_with_mode(
-        machine->base.base.keymap,
-        XKB_STATE_MODE_SERVER_QUERY,
-        &status_
+    గణన xkb_స్థితి స్థితి_3;
+    నిర్మాణం xkb_state * స్థిరరాశి state = xkb_state_new_with_బహుళకం(
+        machine->పునాది.పునాది.keymap,
+        XKB_STATE_బహుళకం_SERVER_QUERY,
+        &స్థితి_3
     );
-    if (status_ != XKB_SUCCESS) {
-        if (status)
-            *status = status_;
-        return NULL;
+    ఒకవేళ (స్థితి_3 != XKB_SUCCESS) {
+        ఒకవేళ (స్థితి_2)
+            *స్థితి_2 = స్థితి_3;
+        తిరిగి ఖాళీ;
     }
 
-    assert(state->mode == SERVER_COMPANION);
-    assert(state->refcnt == 1);
+    ప్రతిజ్ఞా(state->బహుళకం == SERVER_COMPANION);
+    ప్రతిజ్ఞా(state->refcnt == 1);
 
     /* Copy machine’s state */
-    *state = machine->base.base;
+    *state = machine->పునాది.పునాది;
 
     /* Restore previous values */
-    state->mode = SERVER_COMPANION;
+    state->బహుళకం = SERVER_COMPANION;
     state->refcnt = 1;
 
-    if (status)
-        *status = XKB_SUCCESS;
-    return state;
+    ఒకవేళ (స్థితి_2)
+        *స్థితి_2 = XKB_SUCCESS;
+    తిరిగి state;
 }
 
-static void
-machine_update_overlays(struct xkb_machine *sm)
+స్థిర శూన్య
+machine_update_overlays(నిర్మాణం xkb_machine *sm)
 {
     /*
      * Overlays indices are stored 1-indexed in nibbles: the lowest
      * nibble corresponds to the latest activated index.
      */
 
-    const xkb_overlay_mask_t mask =
-        overlays_from_controls(sm->base.base.components.controls);
-    xkb_overlay_mask_t added = mask & ~sm->overlays.enabled;
+    స్థిరరాశి xkb_overlay_ముసుగు_t ముసుగు =
+        overlays_from_controls(sm->పునాది.పునాది.components.controls);
+    xkb_overlay_ముసుగు_t added = ముసుగు & ~sm->overlays.enabled;
 
     /* Remove overlays no longer enabled and keep relative order */
-    uint32_t order = sm->overlays.order;
-    const xkb_overlay_index_t overlay_max =
-        format_max_overlays(sm->base.base.keymap->format);
-    for (uint8_t n = 0; n < overlay_max;) {
-        xkb_overlay_index_t overlay_idx = (order >> (n * 4)) & 0xf;
-        if (!overlay_idx)
-            break;
-        const xkb_overlay_mask_t overlay_mask =
-            (xkb_overlay_mask_t)(1u << (overlay_idx - 1u) /* k is 1-indexed */);
-        if (overlay_mask & mask) {
+    uint32_t క్రమం = sm->overlays.క్రమం;
+    స్థిరరాశి xkb_overlay_సూచీ_t overlay_max =
+        format_max_overlays(sm->పునాది.పునాది.keymap->format);
+    కొరకు (uint8_t n = 0; n < overlay_max;) {
+        xkb_overlay_సూచీ_t overlay_idx = (క్రమం >> (n * 4)) & 0xf;
+        ఒకవేళ (!overlay_idx)
+            ఆపు;
+        స్థిరరాశి xkb_overlay_ముసుగు_t overlay_ముసుగు =
+            (xkb_overlay_ముసుగు_t)(1u << (overlay_idx - 1u) /* k is 1-indexed */);
+        ఒకవేళ (overlay_ముసుగు & ముసుగు) {
             /* no duplicates */
-            added &= ~overlay_mask;
+            added &= ~overlay_ముసుగు;
             n++;
-        } else {
+        } లేకపోతే {
             /* remove overlay */
-            const uint32_t head = (UINT32_C(1) << (n * 4)) - 1;
-            order = (order & head) | ((order >> 4) & ~head);
+            స్థిరరాశి uint32_t తల = (UINT32_C(1) << (n * 4)) - 1;
+            క్రమం = (క్రమం & తల) | ((క్రమం >> 4) & ~తల);
         }
     }
 
     /* Add new overlays in ascending order */
-    for (xkb_overlay_index_t k = 0; added; k++, added >>= 1) {
-        if (added & 0x1) {
-            order <<= 4;
-            order |= k + 1u; /* k is 0-indexed */
+    కొరకు (xkb_overlay_సూచీ_t k = 0; added; k++, added >>= 1) {
+        ఒకవేళ (added & 0x1) {
+            క్రమం <<= 4;
+            క్రమం |= k + 1u; /* k is 0-indexed */
         }
     }
 
-    sm->overlays.order = order;
-    sm->overlays.enabled = mask;
+    sm->overlays.క్రమం = క్రమం;
+    sm->overlays.enabled = ముసుగు;
 }
 
-enum xkb_status
-xkb_machine_process_synthetic(struct xkb_machine *sm,
-                              const struct xkb_synthetic_update *update,
-                              struct xkb_events *events)
+గణన xkb_స్థితి
+xkb_machine_process_synthetic(నిర్మాణం xkb_machine *sm,
+                              స్థిరరాశి నిర్మాణం xkb_synthetic_update *update,
+                              నిర్మాణం xkb_events *events)
 {
     /* Check ABI compatibility */
-    enum xkb_status status =
-        check_state_update_abi(sm->base.base.keymap->ctx, update);
-    if (status != XKB_SUCCESS)
-        return status;
+    గణన xkb_స్థితి స్థితి_2 =
+        check_state_update_abi(sm->పునాది.పునాది.keymap->ctx, update);
+    ఒకవేళ (స్థితి_2 != XKB_SUCCESS)
+        తిరిగి స్థితి_2;
 
-    struct xkb_server_state * const state = &sm->base;
-    const struct state_components previous_components = state->base.components;
+    నిర్మాణం xkb_server_state * స్థిరరాశి state = &sm->పునాది;
+    స్థిరరాశి నిర్మాణం state_components మునుపటి_components = state->పునాది.components;
 
     // TODO: use a *transaction* mechanism: either the whole update succeeds
     //       or rollback
 
-    darray_size(events->queue) = 0;
-    events->next = 0;
+    darray_కొలత(events->వరుస) = 0;
+    events->తదుపరి = 0;
 
     /* Update parametrized controls first */
-    if (update->layout_policy) {
-        status = state_update_layout_policy(state, update->layout_policy);
-        if (status != XKB_SUCCESS)
-            return status;
+    ఒకవేళ (update->layout_policy) {
+        స్థితి_2 = state_update_layout_policy(state, update->layout_policy);
+        ఒకవేళ (స్థితి_2 != XKB_SUCCESS)
+            తిరిగి స్థితి_2;
     }
 
-    if (update->components) {
-        const struct xkb_state_components_update * const components =
+    ఒకవేళ (update->components) {
+        స్థిరరాశి నిర్మాణం xkb_state_components_update * స్థిరరాశి components =
             update->components;
         /* Update boolean controls first */
-        if (components->components & XKB_STATE_CONTROLS_EFFECTIVE) {
+        ఒకవేళ (components->components & XKB_STATE_CONTROLS_EFFECTIVE) {
             state_update_enabled_controls(state,
                                           components->affect_controls,
                                           components->controls, events);
@@ -3792,92 +3792,92 @@ xkb_machine_process_synthetic(struct xkb_machine *sm,
         state_update_latched_locked(state, components, events);
     }
 
-    xkb_state_update_derived(&state->base);
+    xkb_state_update_derived(&state->పునాది);
 
-    const enum xkb_state_component changed = get_state_component_changes(
-        &previous_components, &state->base.components
+    స్థిరరాశి గణన xkb_state_component మారింది = get_state_component_changes(
+        &మునుపటి_components, &state->పునాది.components
     );
-    if (changed) {
+    ఒకవేళ (మారింది) {
         // TODO: latch controls
-        if (changed & XKB_STATE_CONTROLS_EFFECTIVE)
+        ఒకవేళ (మారింది & XKB_STATE_CONTROLS_EFFECTIVE)
             machine_update_overlays(sm);
 
         /* Create event only if some component actually changed */
-        darray_append(events->queue, (struct xkb_event) {
+        darray_append(events->వరుస, (నిర్మాణం xkb_event) {
             .ctx = events->ctx, /* borrowed from events */
             .type = XKB_EVENT_TYPE_STATE_COMPONENTS,
             .components = {
-                .changed = changed,
-                .components = state->base.components
+                .మారింది = మారింది,
+                .components = state->పునాది.components
             }
         });
 
         /* Terminate the frame */
-        darray_append(events->queue, (struct xkb_event) {
+        darray_append(events->వరుస, (నిర్మాణం xkb_event) {
             .ctx = events->ctx, /* borrowed from events */
-            .type = XKB_EVENT_TYPE_FRAME,
+            .type = XKB_EVENT_TYPE_చట్రం,
         });
     }
 
-    return XKB_SUCCESS;
+    తిరిగి XKB_SUCCESS;
 }
 
-static ssize_t
-do_remap_modifiers(const struct machine_modifiers_config * restrict mappings,
-                   struct xkb_state * restrict state,
-                   struct xkb_events * restrict events,
-                   const struct xkb_key * restrict key)
+స్థిర ssize_t
+do_remap_modifiers(స్థిరరాశి నిర్మాణం machine_modifiers_config * పరిమిత mappings,
+                   నిర్మాణం xkb_state * పరిమిత state,
+                   నిర్మాణం xkb_events * పరిమిత events,
+                   స్థిరరాశి నిర్మాణం xkb_కీలకం * పరిమిత కీలకం)
 {
-    if (!(mappings->mask & state->components.mods))
-        return -1;
+    ఒకవేళ (!(mappings->ముసుగు & state->components.mods))
+        తిరిగి -1;
 
-    const xkb_layout_index_t layout = state_key_get_layout(state, key);
-    if (layout >= key->num_groups)
-        return -1;
+    స్థిరరాశి xkb_layout_సూచీ_t layout = state_కీలకం_get_layout(state, కీలకం);
+    ఒకవేళ (layout >= కీలకం->అంకె_groups)
+        తిరిగి -1;
 
-    const struct xkb_key_type * const type = key->groups[layout].type;
-    xkb_mod_mask_t affect_mods = 0;
-    xkb_mod_mask_t mods = 0;
-    for (darray_size_t m = 0; m < mappings->mappings_num; m++) {
-        const struct machine_mods_mapping * const mapping =
+    స్థిరరాశి నిర్మాణం xkb_కీలకం_type * స్థిరరాశి type = కీలకం->groups[layout].type;
+    xkb_mod_ముసుగు_t affect_mods = 0;
+    xkb_mod_ముసుగు_t mods = 0;
+    కొరకు (darray_కొలత_t m = 0; m < mappings->mappings_అంకె; m++) {
+        స్థిరరాశి నిర్మాణం machine_mods_mapping * స్థిరరాశి mapping =
             &mappings->mappings[m];
-        if (/* Skip not matching active mods */
-            (mapping->source & state->components.mods) == mapping->source &&
+        ఒకవేళ (/* Skip not matching active mods */
+            (mapping->ఆధారం & state->components.mods) == mapping->ఆధారం &&
             /* Skip overlap with previous active mappings */
-            !(mapping->source & affect_mods) &&
+            !(mapping->ఆధారం & affect_mods) &&
             /* Skip if the key type uses some of the source modifiers */
-            !(mapping->source & type->mods.mask)) {
-            affect_mods |= mappings->mappings[m].source;
-            mods |= mappings->mappings[m].target;
+            !(mapping->ఆధారం & type->mods.ముసుగు)) {
+            affect_mods |= mappings->mappings[m].ఆధారం;
+            mods |= mappings->mappings[m].లక్ష్యం;
         }
     }
 
-    if (!affect_mods)
-        return -1;
+    ఒకవేళ (!affect_mods)
+        తిరిగి -1;
 
-    struct xkb_state new = *state;
-    new.components.base_mods = (new.components.base_mods & ~affect_mods) | mods;
+    నిర్మాణం xkb_state new = *state;
+    new.components.పునాది_mods = (new.components.పునాది_mods & ~affect_mods) | mods;
     new.components.latched_mods = (new.components.latched_mods & ~affect_mods);
     new.components.locked_mods = (new.components.locked_mods & ~affect_mods);
     xkb_state_update_derived(&new);
 
     ssize_t event_idx = -1;
-    const enum xkb_state_component changed =
+    స్థిరరాశి గణన xkb_state_component మారింది =
         get_state_component_changes(&state->components, &new.components);
-    if (changed) {
-        event_idx = (ssize_t) darray_size(events->queue);
-        darray_append(events->queue, (struct xkb_event) {
+    ఒకవేళ (మారింది) {
+        event_idx = (ssize_t) darray_కొలత(events->వరుస);
+        darray_append(events->వరుస, (నిర్మాణం xkb_event) {
             .ctx = events->ctx, /* borrowed from events */
             .type = XKB_EVENT_TYPE_STATE_COMPONENTS,
             .components = {
                 .components = new.components,
-                .changed = changed
+                .మారింది = మారింది
             }
         });
     }
 
     state->components.mods = new.components.mods;
-    return event_idx;
+    తిరిగి event_idx;
 }
 
 /**
@@ -3887,22 +3887,22 @@ do_remap_modifiers(const struct machine_modifiers_config * restrict mappings,
  * The tweak consists of computing a *base* layout such that the *effective*
  * layout is the corresponding target layout.
  */
-static ssize_t
-do_shortcuts_tweak(const struct machine_shortcuts_config *config,
-                   struct xkb_state *state,
-                   const struct state_components *previous_components,
-                   struct xkb_events *events, ssize_t remap_event)
+స్థిర ssize_t
+do_shortcuts_tweak(స్థిరరాశి నిర్మాణం machine_shortcuts_config *config,
+                   నిర్మాణం xkb_state *state,
+                   స్థిరరాశి నిర్మాణం state_components *మునుపటి_components,
+                   నిర్మాణం xkb_events *events, ssize_t remap_event)
 {
-    if (!config->entries) {
+    ఒకవేళ (!config->entries) {
         /* No shortcuts tweak */
-        return remap_event;
+        తిరిగి remap_event;
     }
 
-    const struct xkb_shortcuts_config_entry * const entry =
-        &config->entries[state->components.group];
+    స్థిరరాశి నిర్మాణం xkb_shortcuts_config_నమోదు * స్థిరరాశి నమోదు_2 =
+        &config->entries[state->components.సమూహం];
 
-    if (entry->target != XKB_LAYOUT_INVALID &&
-        (entry->mods & state->components.mods)) {
+    ఒకవేళ (నమోదు_2->లక్ష్యం != XKB_LAYOUT_INVALID &&
+        (నమోదు_2->mods & state->components.mods)) {
         /*
          * Activate shortcuts tweak:
          * 1. The real base group is saved by the caller, to be restored by
@@ -3911,137 +3911,137 @@ do_shortcuts_tweak(const struct machine_shortcuts_config *config,
          *    is the target.
          * 3. Recompute derived state components.
          */
-        struct xkb_state new = *state;
-        if (remap_event < 0) {
+        నిర్మాణం xkb_state new = *state;
+        ఒకవేళ (remap_event < 0) {
             /* Create new event */
-            remap_event = (ssize_t) darray_size(events->queue);
-            darray_append(events->queue, (struct xkb_event) {
+            remap_event = (ssize_t) darray_కొలత(events->వరుస);
+            darray_append(events->వరుస, (నిర్మాణం xkb_event) {
                 .ctx = events->ctx, /* borrowed from events */
                 .type = XKB_EVENT_TYPE_STATE_COMPONENTS,
                 .components = {
                     .components = {0},
-                    .changed = 0
+                    .మారింది = 0
                 }
             });
-        } else {
+        } లేకపోతే {
             /* Merge with last remap event */
             new.components =
-                darray_item(events->queue, remap_event).components.components;
+                darray_అంశం(events->వరుస, remap_event).components.components;
         }
-        new.components.base_group
-            = (int32_t) entry->target
-            - state->components.latched_group
-            - state->components.locked_group;
+        new.components.పునాది_సమూహం
+            = (int32_t) నమోదు_2->లక్ష్యం
+            - state->components.latched_సమూహం
+            - state->components.locked_సమూహం;
         xkb_state_update_derived(&new);
 
-        const enum xkb_state_component changed =
-            get_state_component_changes(previous_components, &new.components);
-        darray_item(events->queue, remap_event).components.changed = changed;
-        darray_item(events->queue, remap_event).components.components =
+        స్థిరరాశి గణన xkb_state_component మారింది =
+            get_state_component_changes(మునుపటి_components, &new.components);
+        darray_అంశం(events->వరుస, remap_event).components.మారింది = మారింది;
+        darray_అంశం(events->వరుస, remap_event).components.components =
             new.components;
 
-        state->components.group = new.components.group;
-    } else {
+        state->components.సమూహం = new.components.సమూహం;
+    } లేకపోతే {
         /* Deactivated entry or modifiers do not match */
     }
-    return remap_event;
+    తిరిగి remap_event;
 }
 
-static void
-undo_tweaks(const struct xkb_state *state,
-            const struct state_components *initial_components,
-            struct xkb_events *events)
+స్థిర శూన్య
+undo_tweaks(స్థిరరాశి నిర్మాణం xkb_state *state,
+            స్థిరరాశి నిర్మాణం state_components *initial_components,
+            నిర్మాణం xkb_events *events)
 {
     /* Get last component event */
-    const struct xkb_event *event = NULL;
-    darray_foreach_reverse(event, events->queue) {
-        if (event->type == XKB_EVENT_TYPE_STATE_COMPONENTS)
-            break;
+    స్థిరరాశి నిర్మాణం xkb_event *event = ఖాళీ;
+    darray_foreach_తిరగేయి(event, events->వరుస) {
+        ఒకవేళ (event->type == XKB_EVENT_TYPE_STATE_COMPONENTS)
+            ఆపు;
     }
-    if (!event)
-        return;
+    ఒకవేళ (!event)
+        తిరిగి;
 
     /* Restore state */
-    const enum xkb_state_component changed =
+    స్థిరరాశి గణన xkb_state_component మారింది =
         get_state_component_changes(initial_components,
                                     &event->components.components);
-    if (changed) {
-        darray_append(events->queue, (struct xkb_event) {
+    ఒకవేళ (మారింది) {
+        darray_append(events->వరుస, (నిర్మాణం xkb_event) {
             .ctx = events->ctx, /* borrowed from events */
             .type = XKB_EVENT_TYPE_STATE_COMPONENTS,
             .components = {
                 .components = *initial_components,
-                .changed = changed
+                .మారింది = మారింది
             }
         });
     }
 }
 
-static const struct xkb_key *
-process_overlayable_key(struct xkb_machine *sm,
-                        const struct xkb_key * key,
-                        enum xkb_key_direction direction)
+స్థిర స్థిరరాశి నిర్మాణం xkb_కీలకం *
+process_overlayable_కీలకం(నిర్మాణం xkb_machine *sm,
+                        స్థిరరాశి నిర్మాణం xkb_కీలకం * కీలకం,
+                        గణన xkb_కీలకం_direction direction)
 {
     /* Check if key is currently overlaid */
-    struct xkb_overlaid_key *entry = NULL;
-    struct xkb_overlaid_key *available_entry = NULL;
-    darray_foreach(entry, sm->overlays.keys) {
-        if (entry->old == key) {
+    నిర్మాణం xkb_overlaid_కీలకం *నమోదు_2 = ఖాళీ;
+    నిర్మాణం xkb_overlaid_కీలకం *అందుబాటు_నమోదు = ఖాళీ;
+    darray_foreach(నమోదు_2, sm->overlays.కీలకాలు) {
+        ఒకవేళ (నమోదు_2->old == కీలకం) {
             /* Maintain the key overlaid */
-            switch (direction) {
-            case XKB_KEY_DOWN:
-                entry->refcnt++;
-                break;
-            case XKB_KEY_REPEATED:
-                break;
-            case XKB_KEY_UP:
-            default:
-                entry->refcnt--;
-                break;
+            ఎంపిక (direction) {
+            స్థితి XKB_కీలకం_కిందికి:
+                నమోదు_2->refcnt++;
+                ఆపు;
+            స్థితి XKB_కీలకం_REPEATED:
+                ఆపు;
+            స్థితి XKB_కీలకం_పైకి:
+            అప్రమేయ:
+                నమోదు_2->refcnt--;
+                ఆపు;
             }
-            if (entry->refcnt <= 0)
-                entry->old = NULL;
-            return entry->new;
-        } else if (!entry->old && !available_entry) {
+            ఒకవేళ (నమోదు_2->refcnt <= 0)
+                నమోదు_2->old = ఖాళీ;
+            తిరిగి నమోదు_2->new;
+        } లేకపోతే ఒకవేళ (!నమోదు_2->old && !అందుబాటు_నమోదు) {
             /* First free spot */
-            available_entry = entry;
+            అందుబాటు_నమోదు = నమోదు_2;
         }
     }
-    if (direction == XKB_KEY_DOWN) {
+    ఒకవేళ (direction == XKB_కీలకం_కిందికి) {
         /* Enable key overlay */
 
         /*
          * Get overlay index: select the latest activated overlay
          * containing the key.
          */
-        const struct xkb_key *new = key;
+        స్థిరరాశి నిర్మాణం xkb_కీలకం *new = కీలకం;
 
-        if (key->overlays & sm->overlays.enabled) {
+        ఒకవేళ (కీలకం->overlays & sm->overlays.enabled) {
             /* Some relevant overlay is active */
-            for (uint32_t stack = sm->overlays.order; stack; stack >>= 4) {
-                static_assert(XKB_OVERLAY_COUNT == 8, "");
-                const xkb_overlay_index_t overlay = (stack & 0xf) - 1;
-                const xkb_overlay_mask_t mask =
-                    (xkb_overlay_mask_t)(1u << overlay);
-                if (key->overlays & mask) {
+            కొరకు (uint32_t దొంతర = sm->overlays.క్రమం; దొంతర; దొంతర >>= 4) {
+                static_assert(XKB_OVERLAY_లెక్క == 8, "");
+                స్థిరరాశి xkb_overlay_సూచీ_t overlay = (దొంతర & 0xf) - 1;
+                స్థిరరాశి xkb_overlay_ముసుగు_t ముసుగు =
+                    (xkb_overlay_ముసుగు_t)(1u << overlay);
+                ఒకవేళ (కీలకం->overlays & ముసుగు) {
                     /* Get new key */
-                    if (key->overlays_inline) {
+                    ఒకవేళ (కీలకం->overlays_inline) {
                         /* Stored inline */
-                        new = key->overlay_key;
-                    } else {
+                        new = కీలకం->overlay_కీలకం;
+                    } లేకపోతే {
                         /* Stored in sparse array */
-                        const xkb_overlay_mask_t low = (xkb_overlay_mask_t)(
-                            key->overlays & (xkb_overlay_mask_t)(mask - 1u)
+                        స్థిరరాశి xkb_overlay_ముసుగు_t దిగువ = (xkb_overlay_ముసుగు_t)(
+                            కీలకం->overlays & (xkb_overlay_ముసుగు_t)(ముసుగు - 1u)
                         );
                         /* index = number of set bits strictly below bit */
-                        const xkb_overlay_index_t index =
-                            (xkb_overlay_index_t)popcount32(low);
-                        new = key->overlays_keys[index];
+                        స్థిరరాశి xkb_overlay_సూచీ_t సూచీ =
+                            (xkb_overlay_సూచీ_t)popcount32(దిగువ);
+                        new = కీలకం->overlays_కీలకాలు[సూచీ];
                     }
-                    break;
+                    ఆపు;
                 }
             }
-        } else {
+        } లేకపోతే {
             /*
              * No relevant overlay is active: block future overlays while
              * the key is pressed.
@@ -4049,99 +4049,99 @@ process_overlayable_key(struct xkb_machine *sm,
         }
 
         /* Get new entry */
-        if (available_entry) {
+        ఒకవేళ (అందుబాటు_నమోదు) {
             /* Re-use a free entry */
-            entry = available_entry;
-        } else {
+            నమోదు_2 = అందుబాటు_నమోదు;
+        } లేకపోతే {
             /* Append a new entry */
-            const darray_size_t idx = darray_size(sm->overlays.keys);
-            darray_resize(sm->overlays.keys, idx + 1);
-            entry = &darray_item(sm->overlays.keys, idx);
+            స్థిరరాశి darray_కొలత_t idx = darray_కొలత(sm->overlays.కీలకాలు);
+            darray_resize(sm->overlays.కీలకాలు, idx + 1);
+            నమోదు_2 = &darray_అంశం(sm->overlays.కీలకాలు, idx);
         }
 
         /* Overlay the key */
-        entry->old = key;
-        entry->new = new;
-        entry->refcnt = 1;
-        return new;
+        నమోదు_2->old = కీలకం;
+        నమోదు_2->new = new;
+        నమోదు_2->refcnt = 1;
+        తిరిగి new;
     }
 
     /* No overlay */
-    return key;
+    తిరిగి కీలకం;
 }
 
-enum xkb_status
-xkb_machine_process_key(struct xkb_machine *sm,
-                        xkb_keycode_t kc, enum xkb_key_direction direction,
-                        struct xkb_events *events)
+గణన xkb_స్థితి
+xkb_machine_process_కీలకం(నిర్మాణం xkb_machine *sm,
+                        xkb_keycode_t kc, గణన xkb_కీలకం_direction direction,
+                        నిర్మాణం xkb_events *events)
 {
-    darray_size(events->queue) = 0;
-    events->next = 0;
+    darray_కొలత(events->వరుస) = 0;
+    events->తదుపరి = 0;
 
-    struct xkb_server_state * const state = &sm->base;
-    const struct xkb_key * key = XkbKey(state->base.keymap, kc);
+    నిర్మాణం xkb_server_state * స్థిరరాశి state = &sm->పునాది;
+    స్థిరరాశి నిర్మాణం xkb_కీలకం * కీలకం = Xkb_కీలకం(state->పునాది.keymap, kc);
     /* Ignore unknown key and repeat state for non-repeating key */
-    if (!key || (direction == XKB_KEY_REPEATED && !key->repeats))
-        return XKB_SUCCESS;
+    ఒకవేళ (!కీలకం || (direction == XKB_కీలకం_REPEATED && !కీలకం->repeats))
+        తిరిగి XKB_SUCCESS;
 
-    const struct state_components initial_components = state->base.components;
+    స్థిరరాశి నిర్మాణం state_components initial_components = state->పునాది.components;
 
-    if (direction == XKB_KEY_DOWN &&
-        (sm->base.base.components.controls & XKB_KEYBOARD_CONTROL_A11Y_STICKY_KEYS) &&
-        (sm->base.a11y_flags & XKB_A11Y_STICKY_KEYS_NO_SIMULTANEOUS_KEYS) &&
-        state->base.components.base_mods) {
+    ఒకవేళ (direction == XKB_కీలకం_కిందికి &&
+        (sm->పునాది.పునాది.components.controls & XKB_KEYBOARD_CONTROL_A11_Y_STICKY_కీలకాలు) &&
+        (sm->పునాది.a11y_flags & XKB_A11_Y_STICKY_కీలకాలు_NO_ఏకకాల_కీలకాలు) &&
+        state->పునాది.components.పునాది_mods) {
         /* Deactivate sticky keys if a modifier was already held down*/
         state_update_enabled_controls(state,
-                                      XKB_KEYBOARD_CONTROL_A11Y_STICKY_KEYS,
+                                      XKB_KEYBOARD_CONTROL_A11_Y_STICKY_కీలకాలు,
                                       0, events);
     }
 
-    if (key->overlays)
-        key = process_overlayable_key(sm, key, direction);
+    ఒకవేళ (కీలకం->overlays)
+        కీలకం = process_overlayable_కీలకం(sm, కీలకం, direction);
 
     ssize_t remap_event = do_remap_modifiers(&sm->config.modifiers,
-                                             &state->base, events, key);
+                                             &state->పునాది, events, కీలకం);
 
-    remap_event = do_shortcuts_tweak(&sm->config.shortcuts, &state->base,
+    remap_event = do_shortcuts_tweak(&sm->config.shortcuts, &state->పునాది,
                                      &initial_components, events, remap_event);
 
-    if (remap_event >= 0) {
+    ఒకవేళ (remap_event >= 0) {
         // TODO: what about merging state event for RedirectKey?
-        darray_append(events->queue, (struct xkb_event) {
+        darray_append(events->వరుస, (నిర్మాణం xkb_event) {
             .ctx = events->ctx, /* borrowed from events */
-            .type = XKB_EVENT_TYPE_FRAME,
+            .type = XKB_EVENT_TYPE_చట్రం,
         });
     }
 
-    state->flags |= STATE_REQUIRE_KEY_EVENT;
-    state->set_mods = 0;
+    state->flags |= STATE_REQUIRE_కీలకం_EVENT;
+    state->సమితి_mods = 0;
     state->clear_mods = 0;
 
     /* Handle key actions */
-    xkb_filter_apply_all(state, events, key, direction);
+    xkb_filter_apply_all(state, events, కీలకం, direction);
 
-    xkb_mod_index_t i;
-    xkb_mod_mask_t bit;
-    for (i = 0, bit = 1; state->set_mods; i++, bit <<= 1) {
-        if (state->set_mods & bit) {
-            state->mod_key_count[i]++;
-            state->base.components.base_mods |= bit;
-            state->set_mods &= ~bit;
+    xkb_mod_సూచీ_t i;
+    xkb_mod_ముసుగు_t బిట్టు;
+    కొరకు (i = 0, బిట్టు = 1; state->సమితి_mods; i++, బిట్టు <<= 1) {
+        ఒకవేళ (state->సమితి_mods & బిట్టు) {
+            state->mod_కీలకం_లెక్క[i]++;
+            state->పునాది.components.పునాది_mods |= బిట్టు;
+            state->సమితి_mods &= ~బిట్టు;
         }
     }
 
-    for (i = 0, bit = 1; state->clear_mods; i++, bit <<= 1) {
-        if (state->clear_mods & bit) {
-            state->mod_key_count[i]--;
-            if (state->mod_key_count[i] <= 0) {
-                state->base.components.base_mods &= ~bit;
-                state->mod_key_count[i] = 0;
+    కొరకు (i = 0, బిట్టు = 1; state->clear_mods; i++, బిట్టు <<= 1) {
+        ఒకవేళ (state->clear_mods & బిట్టు) {
+            state->mod_కీలకం_లెక్క[i]--;
+            ఒకవేళ (state->mod_కీలకం_లెక్క[i] <= 0) {
+                state->పునాది.components.పునాది_mods &= ~బిట్టు;
+                state->mod_కీలకం_లెక్క[i] = 0;
             }
-            state->clear_mods &= ~bit;
+            state->clear_mods &= ~బిట్టు;
         }
     }
 
-    xkb_state_update_derived(&state->base);
+    xkb_state_update_derived(&state->పునాది);
 
     /*
      * Insert key event only if actions did not override it, e.g.:
@@ -4150,608 +4150,608 @@ xkb_machine_process_key(struct xkb_machine *sm,
      *   of key events;
      * - TerminateServer() generate a Server event instead of key events.
      */
-    if (state->flags & STATE_REQUIRE_KEY_EVENT) {
-        darray_append(events->queue, (struct xkb_event) {
+    ఒకవేళ (state->flags & STATE_REQUIRE_కీలకం_EVENT) {
+        darray_append(events->వరుస, (నిర్మాణం xkb_event) {
             .ctx = events->ctx, /* borrowed from events */
-            .type = XKB_EVENT_TYPE_KEY,
-            .key = {
-                .keycode = key->keycode,
+            .type = XKB_EVENT_TYPE_కీలకం,
+            .కీలకం = {
+                .keycode = కీలకం->keycode,
                 .direction = direction
             }
         });
     }
 
-    if (remap_event >= 0) {
+    ఒకవేళ (remap_event >= 0) {
         // FIXME: fragile if last state change does not restore the state to the remap event
-        undo_tweaks(&state->base, &initial_components, events);
+        undo_tweaks(&state->పునాది, &initial_components, events);
     }
 
-    const enum xkb_state_component changed = get_state_component_changes(
-        &initial_components, &state->base.components
+    స్థిరరాశి గణన xkb_state_component మారింది = get_state_component_changes(
+        &initial_components, &state->పునాది.components
     );
-    if (changed) {
-        if (changed & XKB_STATE_CONTROLS_EFFECTIVE)
+    ఒకవేళ (మారింది) {
+        ఒకవేళ (మారింది & XKB_STATE_CONTROLS_EFFECTIVE)
             machine_update_overlays(sm);
 
         // TODO: merge with previous state event, if any
 
-        darray_append(events->queue, (struct xkb_event) {
+        darray_append(events->వరుస, (నిర్మాణం xkb_event) {
             .ctx = events->ctx, /* borrowed from events */
             .type = XKB_EVENT_TYPE_STATE_COMPONENTS,
             .components = {
-                .components = state->base.components,
-                .changed = changed
+                .components = state->పునాది.components,
+                .మారింది = మారింది
             }
         });
     }
 
-    if (!darray_empty(events->queue) &&
-        darray_item(events->queue, darray_size(events->queue) - 1).type !=
-        XKB_EVENT_TYPE_FRAME)
+    ఒకవేళ (!darray_ఖాళీలు(events->వరుస) &&
+        darray_అంశం(events->వరుస, darray_కొలత(events->వరుస) - 1).type !=
+        XKB_EVENT_TYPE_చట్రం)
     {
-        darray_append(events->queue, (struct xkb_event) {
+        darray_append(events->వరుస, (నిర్మాణం xkb_event) {
             .ctx = events->ctx, /* borrowed from events */
-            .type = XKB_EVENT_TYPE_FRAME,
+            .type = XKB_EVENT_TYPE_చట్రం,
         });
     }
 
-    return XKB_SUCCESS;
+    తిరిగి XKB_SUCCESS;
 }
 
-struct xkb_events *
-xkb_events_new(struct xkb_context * restrict context,
-               const struct xkb_events_config * restrict config,
-               enum xkb_status * restrict status)
+నిర్మాణం xkb_events *
+xkb_events_new(నిర్మాణం xkb_context * పరిమిత context,
+               స్థిరరాశి నిర్మాణం xkb_events_config * పరిమిత config,
+               గణన xkb_స్థితి * పరిమిత స్థితి_2)
 {
     /* Handle default configuration */
-    static const struct xkb_events_config default_config = {
-        .size = sizeof(default_config)
+    స్థిర స్థిరరాశి నిర్మాణం xkb_events_config default_config = {
+        .కొలత = పరిమాణం(default_config)
     };
-    if (!config)
+    ఒకవేళ (!config)
         config = &default_config;
 
     /* Check ABI compatibility */
-    const enum xkb_status abi_error = xkb_check_state_abi(config);
-    if (abi_error) {
+    స్థిరరాశి గణన xkb_స్థితి abi_error = xkb_check_state_abi(config);
+    ఒకవేళ (abi_error) {
         xkb_log_abi_error(context, __func__, abi_error);
-        if (status)
-            *status = abi_error;
-        return NULL;
+        ఒకవేళ (స్థితి_2)
+            *స్థితి_2 = abi_error;
+        తిరిగి ఖాళీ;
     }
 
     /* Sanitize input */
-    const uint32_t invalid_flags =
-        (config->flags & ~(uint32_t)XKB_EVENTS_FLAGS_VALUES);
-    if (invalid_flags) {
+    స్థిరరాశి uint32_t invalid_flags =
+        (config->flags & ~(uint32_t)XKB_EVENTS_FLAGS_విలువలు);
+    ఒకవేళ (invalid_flags) {
         log_err_func(context, XKB_ERROR_UNSUPPORTED_EVENTS_FLAGS_,
                      "unrecognized events collection flags: 0x%"PRIx32"\n",
                      invalid_flags);
-        if (status)
-            *status = XKB_ERROR_UNSUPPORTED_EVENTS_FLAGS;
-        return NULL;
+        ఒకవేళ (స్థితి_2)
+            *స్థితి_2 = XKB_ERROR_UNSUPPORTED_EVENTS_FLAGS;
+        తిరిగి ఖాళీ;
     }
 
-    struct xkb_events *events = calloc(1, sizeof(*events));
-    if (!events) {
-        log_err_func1(context, XKB_ERROR_ALLOCATION_FAILURE_,
+    నిర్మాణం xkb_events *events = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*events));
+    ఒకవేళ (!events) {
+        log_err_func1(context, XKB_ERROR_కేటాయింపు_FAILURE_2,
                       "cannot allocate state events collection\n");
-        if (status)
-            *status = XKB_ERROR_ALLOCATION_FAILURE;
-        return NULL;
+        ఒకవేళ (స్థితి_2)
+            *స్థితి_2 = XKB_ERROR_కేటాయింపు_FAILURE;
+        తిరిగి ఖాళీ;
     }
 
     /* Pre-allocate event queue */
-    darray_init(events->queue);
-    static const darray_size_t queue_initial_size = 16;
-    darray_resize(events->queue, queue_initial_size);
+    darray_init(events->వరుస);
+    స్థిర స్థిరరాశి darray_కొలత_t వరుస_initial_కొలత = 16;
+    darray_resize(events->వరుస, వరుస_initial_కొలత);
     // TODO: proper safe darray_resize() with return value
-    if (!darray_items(events->queue)) {
-        log_err_func1(context, XKB_ERROR_ALLOCATION_FAILURE_,
+    ఒకవేళ (!darray_వస్తువులు(events->వరుస)) {
+        log_err_func1(context, XKB_ERROR_కేటాయింపు_FAILURE_2,
                       "cannot allocate state events queue\n");
         xkb_events_destroy(events);
-        if (status)
-            *status = XKB_ERROR_ALLOCATION_FAILURE;
-        return NULL;
+        ఒకవేళ (స్థితి_2)
+            *స్థితి_2 = XKB_ERROR_కేటాయింపు_FAILURE;
+        తిరిగి ఖాళీ;
     }
-    darray_size(events->queue) = 0;
+    darray_కొలత(events->వరుస) = 0;
 
     events->ctx = xkb_context_ref(context);
-    events->next = 0;
+    events->తదుపరి = 0;
 
-    if (status)
-        *status = XKB_SUCCESS;
-    return events;
+    ఒకవేళ (స్థితి_2)
+        *స్థితి_2 = XKB_SUCCESS;
+    తిరిగి events;
 }
 
-void
-xkb_events_destroy(struct xkb_events *events)
+శూన్య
+xkb_events_destroy(నిర్మాణం xkb_events *events)
 {
-    if (!events)
-        return;
-    darray_free(events->queue);
+    ఒకవేళ (!events)
+        తిరిగి;
+    darray_free(events->వరుస);
     xkb_context_unref(events->ctx);
-    free(events);
+    విడుదల(events);
 }
 
-const struct xkb_event *
-xkb_events_next(struct xkb_events *events)
+స్థిరరాశి నిర్మాణం xkb_event *
+xkb_events_తదుపరి(నిర్మాణం xkb_events *events)
 {
-    if (events->next < darray_size(events->queue)) {
-        const darray_size_t index = events->next++;
-        return &darray_item(events->queue, index);
-    } else {
-        return NULL;
+    ఒకవేళ (events->తదుపరి < darray_కొలత(events->వరుస)) {
+        స్థిరరాశి darray_కొలత_t సూచీ = events->తదుపరి++;
+        తిరిగి &darray_అంశం(events->వరుస, సూచీ);
+    } లేకపోతే {
+        తిరిగి ఖాళీ;
     }
 }
 
-enum xkb_event_type
-xkb_event_get_type(const struct xkb_event *event)
+గణన xkb_event_type
+xkb_event_get_type(స్థిరరాశి నిర్మాణం xkb_event *event)
 {
-    return event->type;
+    తిరిగి event->type;
 }
 
-enum xkb_status
-xkb_event_get_keycode(const struct xkb_event *event,
+గణన xkb_స్థితి
+xkb_event_get_keycode(స్థిరరాశి నిర్మాణం xkb_event *event,
                       xkb_keycode_t *keycode,
-                      enum xkb_key_direction *direction)
+                      గణన xkb_కీలకం_direction *direction)
 {
-    if (event->type == XKB_EVENT_TYPE_KEY) {
-        *keycode = event->key.keycode;
-        *direction = event->key.direction;
-        return XKB_SUCCESS;
-    } else {
-        return XKB_ERROR_EVENT_TYPE_MISMATCH;
+    ఒకవేళ (event->type == XKB_EVENT_TYPE_కీలకం) {
+        *keycode = event->కీలకం.keycode;
+        *direction = event->కీలకం.direction;
+        తిరిగి XKB_SUCCESS;
+    } లేకపోతే {
+        తిరిగి XKB_ERROR_EVENT_TYPE_MISMATCH;
     }
 }
 
-enum xkb_status
-xkb_event_get_components(const struct xkb_event * restrict event,
-                         struct xkb_event_components * restrict components)
+గణన xkb_స్థితి
+xkb_event_get_components(స్థిరరాశి నిర్మాణం xkb_event * పరిమిత event,
+                         నిర్మాణం xkb_event_components * పరిమిత components)
 {
-    if (event->type != XKB_EVENT_TYPE_STATE_COMPONENTS)
-        return XKB_ERROR_EVENT_TYPE_MISMATCH;
+    ఒకవేళ (event->type != XKB_EVENT_TYPE_STATE_COMPONENTS)
+        తిరిగి XKB_ERROR_EVENT_TYPE_MISMATCH;
 
     /* Check ABI compatibility */
-    const enum xkb_status status = xkb_check_state_abi(components);
-    if (status != XKB_SUCCESS) {
-        xkb_log_abi_error(event->ctx, __func__, status);
-        return status;
+    స్థిరరాశి గణన xkb_స్థితి స్థితి_2 = xkb_check_state_abi(components);
+    ఒకవేళ (స్థితి_2 != XKB_SUCCESS) {
+        xkb_log_abi_error(event->ctx, __func__, స్థితి_2);
+        తిరిగి స్థితి_2;
     }
 
-    components->changed = (uint32_t)event->components.changed;
-    components->depressed_mods = event->components.components.base_mods;
+    components->మారింది = (uint32_t)event->components.మారింది;
+    components->depressed_mods = event->components.components.పునాది_mods;
     components->latched_mods = event->components.components.latched_mods;
     components->locked_mods = event->components.components.locked_mods;
     components->mods = event->components.components.mods;
-    components->depressed_layout = event->components.components.base_group;
-    components->latched_layout = event->components.components.latched_group;
-    components->locked_layout = event->components.components.locked_group;
-    components->layout = event->components.components.group;
+    components->depressed_layout = event->components.components.పునాది_సమూహం;
+    components->latched_layout = event->components.components.latched_సమూహం;
+    components->locked_layout = event->components.components.locked_సమూహం;
+    components->layout = event->components.components.సమూహం;
     components->leds = event->components.components.leds;
     components->controls = (uint32_t)event->components.components.controls;
 
-    return XKB_SUCCESS;
+    తిరిగి XKB_SUCCESS;
 }
 
-enum xkb_status
-xkb_event_get_pointer_motion(const struct xkb_event * restrict event,
-                             struct xkb_event_pointer_motion * restrict motion)
+గణన xkb_స్థితి
+xkb_event_get_సూచిక_motion(స్థిరరాశి నిర్మాణం xkb_event * పరిమిత event,
+                             నిర్మాణం xkb_event_సూచిక_motion * పరిమిత motion)
 {
-    if (event->type != XKB_EVENT_TYPE_POINTER_MOTION)
-        return XKB_ERROR_EVENT_TYPE_MISMATCH;
+    ఒకవేళ (event->type != XKB_EVENT_TYPE_సూచిక_MOTION)
+        తిరిగి XKB_ERROR_EVENT_TYPE_MISMATCH;
 
     /* Check ABI compatibility */
-    const enum xkb_status status = xkb_check_state_abi(motion);
-    if (status != XKB_SUCCESS) {
-        xkb_log_abi_error(event->ctx, __func__, status);
-        return status;
+    స్థిరరాశి గణన xkb_స్థితి స్థితి_2 = xkb_check_state_abi(motion);
+    ఒకవేళ (స్థితి_2 != XKB_SUCCESS) {
+        xkb_log_abi_error(event->ctx, __func__, స్థితి_2);
+        తిరిగి స్థితి_2;
     }
 
-    motion->flags = event->pointer_motion.flags;
-    motion->x = event->pointer_motion.x;
-    motion->y = event->pointer_motion.y;
+    motion->flags = event->సూచిక_motion.flags;
+    motion->x = event->సూచిక_motion.x;
+    motion->y = event->సూచిక_motion.y;
 
-    return XKB_SUCCESS;
+    తిరిగి XKB_SUCCESS;
 }
 
-enum xkb_status
-xkb_event_get_pointer_button(const struct xkb_event * restrict event,
-                             struct xkb_event_pointer_button * restrict button)
+గణన xkb_స్థితి
+xkb_event_get_సూచిక_button(స్థిరరాశి నిర్మాణం xkb_event * పరిమిత event,
+                             నిర్మాణం xkb_event_సూచిక_button * పరిమిత button)
 {
-    if (event->type != XKB_EVENT_TYPE_POINTER_BUTTON)
-        return XKB_ERROR_EVENT_TYPE_MISMATCH;
+    ఒకవేళ (event->type != XKB_EVENT_TYPE_సూచిక_BUTTON)
+        తిరిగి XKB_ERROR_EVENT_TYPE_MISMATCH;
 
     /* Check ABI compatibility */
-    const enum xkb_status status = xkb_check_state_abi(button);
-    if (status != XKB_SUCCESS) {
-        xkb_log_abi_error(event->ctx, __func__, status);
-        return status;
+    స్థిరరాశి గణన xkb_స్థితి స్థితి_2 = xkb_check_state_abi(button);
+    ఒకవేళ (స్థితి_2 != XKB_SUCCESS) {
+        xkb_log_abi_error(event->ctx, __func__, స్థితి_2);
+        తిరిగి స్థితి_2;
     }
 
-    button->button = event->pointer_button.button;
-    button->state = event->pointer_button.state;
-    button->count = event->pointer_button.count;
+    button->button = event->సూచిక_button.button;
+    button->state = event->సూచిక_button.state;
+    button->లెక్క = event->సూచిక_button.లెక్క;
 
-    return XKB_SUCCESS;
+    తిరిగి XKB_SUCCESS;
 }
 
-enum xkb_status
-xkb_event_get_virtual_console(const struct xkb_event * restrict event,
-                              int8_t * restrict index_or_offset,
-                              bool * restrict is_offset)
+గణన xkb_స్థితి
+xkb_event_get_virtual_console(స్థిరరాశి నిర్మాణం xkb_event * పరిమిత event,
+                              int8_t * పరిమిత సూచీ_or_స్థానభ్రంశం,
+                              bool * పరిమిత is_స్థానభ్రంశం)
 {
-    if (event->type != XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE)
-        return XKB_ERROR_EVENT_TYPE_MISMATCH;
+    ఒకవేళ (event->type != XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE)
+        తిరిగి XKB_ERROR_EVENT_TYPE_MISMATCH;
 
-    *index_or_offset = event->virtual_console.index_or_offset;
-    *is_offset = event->virtual_console.is_offset;
+    *సూచీ_or_స్థానభ్రంశం = event->virtual_console.సూచీ_or_స్థానభ్రంశం;
+    *is_స్థానభ్రంశం = event->virtual_console.is_స్థానభ్రంశం;
 
-    return XKB_SUCCESS;
+    తిరిగి XKB_SUCCESS;
 }
 
-enum xkb_status
-xkb_state_update_event(struct xkb_state * restrict base_state,
-                       const struct xkb_event * restrict event,
-                       enum xkb_state_component * restrict changed)
+గణన xkb_స్థితి
+xkb_state_update_event(నిర్మాణం xkb_state * పరిమిత పునాది_state,
+                       స్థిరరాశి నిర్మాణం xkb_event * పరిమిత event,
+                       గణన xkb_state_component * పరిమిత మారింది)
 {
     /* Guard against server-only state */
-    assert(base_state->mode == SERVER_COMPANION ||
-           base_state->mode == LEGACY_MIXED_STATE);
-    if (base_state->mode != SERVER_COMPANION &&
-        base_state->mode != LEGACY_MIXED_STATE) {
-        log_err(base_state->keymap->ctx, XKB_ERROR_UNEXPECTED_STATE_MODE_,
-                "%s: Unexpected state type %d\n", __func__, base_state->mode);
-        return XKB_ERROR_UNEXPECTED_STATE_MODE;
+    ప్రతిజ్ఞా(పునాది_state->బహుళకం == SERVER_COMPANION ||
+           పునాది_state->బహుళకం == LEGACY_MIXED_STATE);
+    ఒకవేళ (పునాది_state->బహుళకం != SERVER_COMPANION &&
+        పునాది_state->బహుళకం != LEGACY_MIXED_STATE) {
+        log_err(పునాది_state->keymap->ctx, XKB_ERROR_UNEXPECTED_STATE_బహుళకం_2,
+                "%s: Unexpected state type %d\n", __func__, పునాది_state->బహుళకం);
+        తిరిగి XKB_ERROR_UNEXPECTED_STATE_బహుళకం;
     }
 
-    struct xkb_client_state * const state =
-        (struct xkb_client_state *)base_state;
+    నిర్మాణం xkb_client_state * స్థిరరాశి state =
+        (నిర్మాణం xkb_client_state *)పునాది_state;
 
-    if (event->type == XKB_EVENT_TYPE_STATE_COMPONENTS) {
-        const struct state_components prev_components = state->base.components;
-        state->base.components = event->components.components;
+    ఒకవేళ (event->type == XKB_EVENT_TYPE_STATE_COMPONENTS) {
+        స్థిరరాశి నిర్మాణం state_components prev_components = state->పునాది.components;
+        state->పునాది.components = event->components.components;
         /*
          * Recompute the changes instead of using the event value, because we do
          * not know if the event’s queue and the state are synced.
          */
-        if (changed)
-            *changed = get_state_component_changes(&prev_components,
-                                                   &state->base.components);
-    } else {
-        if (changed)
-            *changed = 0;
+        ఒకవేళ (మారింది)
+            *మారింది = get_state_component_changes(&prev_components,
+                                                   &state->పునాది.components);
+    } లేకపోతే {
+        ఒకవేళ (మారింది)
+            *మారింది = 0;
     }
-    return XKB_SUCCESS;
+    తిరిగి XKB_SUCCESS;
 }
 
-static void
-append_pointer_button(struct xkb_events * restrict events,
-                      struct xkb_filter * restrict filter,
-                      enum xkb_pointer_button_state button_state,
-                      uint8_t count)
+స్థిర శూన్య
+append_సూచిక_button(నిర్మాణం xkb_events * పరిమిత events,
+                      నిర్మాణం xkb_filter * పరిమిత filter,
+                      గణన xkb_సూచిక_button_state button_state,
+                      uint8_t లెక్క)
 {
-    darray_append(events->queue, (struct xkb_event) {
+    darray_append(events->వరుస, (నిర్మాణం xkb_event) {
         .ctx = events->ctx, /* borrowed from events */
-        .type = XKB_EVENT_TYPE_POINTER_BUTTON,
-        .pointer_button = {
-            .size = sizeof(((struct xkb_event*)0)->pointer_button),
+        .type = XKB_EVENT_TYPE_సూచిక_BUTTON,
+        .సూచిక_button = {
+            .కొలత = పరిమాణం(((నిర్మాణం xkb_event*)0)->సూచిక_button),
             .button = filter->priv,
             .state = button_state,
-            .count = count,
+            .లెక్క = లెక్క,
         }
     });
 }
 
-static void
-xkb_filter_pointer_button_new(struct xkb_server_state *state,
-                              struct xkb_events *events,
-                              struct xkb_filter *filter)
+స్థిర శూన్య
+xkb_filter_సూచిక_button_new(నిర్మాణం xkb_server_state *state,
+                              నిర్మాణం xkb_events *events,
+                              నిర్మాణం xkb_filter *filter)
 {
-    if (!events || state->base.mode != SERVER_STATE ||
-        !(state->base.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_KEYS)) {
-        filter->func = NULL;
-        return;
+    ఒకవేళ (!events || state->పునాది.బహుళకం != SERVER_STATE ||
+        !(state->పునాది.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_కీలకాలు)) {
+        filter->func = ఖాళీ;
+        తిరిగి;
     }
 
-    struct xkb_machine * const sm = (struct xkb_machine *)state;
+    నిర్మాణం xkb_machine * స్థిరరాశి sm = (నిర్మాణం xkb_machine *)state;
 
     /* Resolve button */
-    const xkb_pointer_button_index_t button =
-        (filter->action.btn.button == XKB_POINTER_BUTTON_DEFAULT)
+    స్థిరరాశి xkb_సూచిక_button_సూచీ_t button =
+        (filter->action.btn.button == XKB_సూచిక_BUTTON_DEFAULT)
             ? sm->mouse.default_button
             : filter->action.btn.button;
     filter->priv = button;
 
-    const enum xkb_pointer_button_state button_state =
-        XKB_POINTER_BUTTON_PRESSED;
-    append_pointer_button(events, filter, button_state,
-                          filter->action.btn.count);
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    స్థిరరాశి గణన xkb_సూచిక_button_state button_state =
+        XKB_సూచిక_BUTTON_PRESSED;
+    append_సూచిక_button(events, filter, button_state,
+                          filter->action.btn.లెక్క);
+    state->flags &= ~STATE_REQUIRE_కీలకం_EVENT;
 }
 
-static bool
-xkb_filter_pointer_button_func(struct xkb_server_state *state,
-                               struct xkb_events *events,
-                               struct xkb_filter *filter,
-                               const struct xkb_key *key,
-                               enum xkb_key_direction direction)
+స్థిర bool
+xkb_filter_సూచిక_button_func(నిర్మాణం xkb_server_state *state,
+                               నిర్మాణం xkb_events *events,
+                               నిర్మాణం xkb_filter *filter,
+                               స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం,
+                               గణన xkb_కీలకం_direction direction)
 {
-    if (key != filter->key || !events)
-        return XKB_FILTER_CONTINUE;
+    ఒకవేళ (కీలకం != filter->కీలకం || !events)
+        తిరిగి XKB_FILTER_CONTINUE;
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_కీలకం_EVENT;
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    ఎంపిక (direction) {
+    స్థితి XKB_కీలకం_కిందికి:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    స్థితి XKB_కీలకం_REPEATED:
+        తిరిగి XKB_FILTER_CONSUME;
+    అప్రమేయ:
+        ఒకవేళ (--filter->refcnt > 0)
+            తిరిగి XKB_FILTER_CONSUME;
     }
 
-    if (!filter->action.btn.count)
-        append_pointer_button(events, filter, XKB_POINTER_BUTTON_RELEASED, 0);
+    ఒకవేళ (!filter->action.btn.లెక్క)
+        append_సూచిక_button(events, filter, XKB_సూచిక_BUTTON_RELEASED, 0);
 
-    filter->func = NULL;
-    return XKB_FILTER_CONSUME;
+    filter->func = ఖాళీ;
+    తిరిగి XKB_FILTER_CONSUME;
 }
 
-struct xkb_filter_pointer_lock_button_priv {
+నిర్మాణం xkb_filter_సూచిక_తాళం_button_priv {
     uint32_t button:31;
-#ifdef _WIN32
+#నిర్వచితమైతే _WIN32
     uint32_t locked:1; // MSVC requires matching types to pack bitfields
-#else
+#లేకపోతే
     bool locked:1;
-#endif
+#అయితే_ముగింపు
 };
 
-enum {
-    XKB_FILTER_POINTER_LOCK_BUTTON_PRIV_WIDTH =
-        sizeof(struct xkb_filter_pointer_lock_button_priv) * CHAR_BIT,
-    XKB_FILTER_POINTER_LOCK_BUTTON_PRIV_MAX =
-        (UINT64_C(1) << XKB_FILTER_POINTER_LOCK_BUTTON_PRIV_WIDTH) - 1
+గణన {
+    XKB_FILTER_సూచిక_తాళం_BUTTON_PRIV_వెడల్పు =
+        పరిమాణం(నిర్మాణం xkb_filter_సూచిక_తాళం_button_priv) * CHAR_BIT,
+    XKB_FILTER_సూచిక_తాళం_BUTTON_PRIV_MAX =
+        (UINT64_C(1) << XKB_FILTER_సూచిక_తాళం_BUTTON_PRIV_వెడల్పు) - 1
 };
 
-static_assert(sizeof(struct xkb_filter_pointer_lock_button_priv) ==
-              sizeof(((struct xkb_filter*)0)->priv),
+static_assert(పరిమాణం(నిర్మాణం xkb_filter_సూచిక_తాళం_button_priv) ==
+              పరిమాణం(((నిర్మాణం xkb_filter*)0)->priv),
               "");
-static_assert((uint32_t)XKB_POINTER_BUTTON_MAX < (uint32_t)XKB_FILTER_POINTER_LOCK_BUTTON_PRIV_MAX,
+static_assert((uint32_t)XKB_సూచిక_BUTTON_MAX < (uint32_t)XKB_FILTER_సూచిక_తాళం_BUTTON_PRIV_MAX,
               "xkb_filter_pointer_lock_button_priv cannot store button");
 
-static void
-xkb_filter_pointer_lock_button_new(struct xkb_server_state *state,
-                                   struct xkb_events *events,
-                                   struct xkb_filter *filter)
+స్థిర శూన్య
+xkb_filter_సూచిక_తాళం_button_new(నిర్మాణం xkb_server_state *state,
+                                   నిర్మాణం xkb_events *events,
+                                   నిర్మాణం xkb_filter *filter)
 {
-    if (!events || state->base.mode != SERVER_STATE ||
-        !(state->base.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_KEYS)) {
-        filter->func = NULL;
-        return;
+    ఒకవేళ (!events || state->పునాది.బహుళకం != SERVER_STATE ||
+        !(state->పునాది.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_కీలకాలు)) {
+        filter->func = ఖాళీ;
+        తిరిగి;
     }
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_కీలకం_EVENT;
 
-    struct xkb_machine * const sm = (struct xkb_machine *)state;
+    నిర్మాణం xkb_machine * స్థిరరాశి sm = (నిర్మాణం xkb_machine *)state;
 
     /* Resolve button */
-    const xkb_pointer_button_index_t button =
-        (filter->action.btn.button == XKB_POINTER_BUTTON_DEFAULT)
+    స్థిరరాశి xkb_సూచిక_button_సూచీ_t button =
+        (filter->action.btn.button == XKB_సూచిక_BUTTON_DEFAULT)
             ? sm->mouse.default_button
             : filter->action.btn.button;
 
-    static_assert(XKB_POINTER_BUTTON_MASK_WIDTH <= 8,
+    static_assert(XKB_సూచిక_BUTTON_ముసుగు_వెడల్పు <= 8,
                   "invalid UINTx_C() macro");
-    static_assert(XKB_POINTER_BUTTON_MAX <= XKB_POINTER_BUTTON_MASK_WIDTH,
+    static_assert(XKB_సూచిక_BUTTON_MAX <= XKB_సూచిక_BUTTON_ముసుగు_వెడల్పు,
                   "invalid left shift");
-    const xkb_pointer_button_mask_t mask = (UINT8_C(1) << button);
+    స్థిరరాశి xkb_సూచిక_button_ముసుగు_t ముసుగు = (UINT8_C(1) << button);
 
-    const bool locked = (sm->mouse.locked_buttons & mask);
+    స్థిరరాశి bool locked = (sm->mouse.locked_buttons & ముసుగు);
 
-    if (!locked && !(filter->action.btn.flags & ACTION_LOCK_NO_LOCK)) {
-        sm->mouse.locked_buttons |= mask;
+    ఒకవేళ (!locked && !(filter->action.btn.flags & ACTION_తాళం_NO_తాళం)) {
+        sm->mouse.locked_buttons |= ముసుగు;
         filter->priv = button;
-        append_pointer_button(events, filter, XKB_POINTER_BUTTON_PRESSED, 0);
+        append_సూచిక_button(events, filter, XKB_సూచిక_BUTTON_PRESSED, 0);
     }
 
-    struct xkb_filter_pointer_lock_button_priv *priv =
-        (struct xkb_filter_pointer_lock_button_priv*)&filter->priv;
+    నిర్మాణం xkb_filter_సూచిక_తాళం_button_priv *priv =
+        (నిర్మాణం xkb_filter_సూచిక_తాళం_button_priv*)&filter->priv;
     priv->button = button,
     priv->locked = locked;
 }
 
-static bool
-xkb_filter_pointer_lock_button_func(struct xkb_server_state *state,
-                                    struct xkb_events *events,
-                                    struct xkb_filter *filter,
-                                    const struct xkb_key *key,
-                                    enum xkb_key_direction direction)
+స్థిర bool
+xkb_filter_సూచిక_తాళం_button_func(నిర్మాణం xkb_server_state *state,
+                                    నిర్మాణం xkb_events *events,
+                                    నిర్మాణం xkb_filter *filter,
+                                    స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం,
+                                    గణన xkb_కీలకం_direction direction)
 {
-    if (key != filter->key || !events || state->base.mode != SERVER_STATE)
-        return XKB_FILTER_CONTINUE;
+    ఒకవేళ (కీలకం != filter->కీలకం || !events || state->పునాది.బహుళకం != SERVER_STATE)
+        తిరిగి XKB_FILTER_CONTINUE;
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_కీలకం_EVENT;
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    ఎంపిక (direction) {
+    స్థితి XKB_కీలకం_కిందికి:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    స్థితి XKB_కీలకం_REPEATED:
+        తిరిగి XKB_FILTER_CONSUME;
+    అప్రమేయ:
+        ఒకవేళ (--filter->refcnt > 0)
+            తిరిగి XKB_FILTER_CONSUME;
     }
 
-    const struct xkb_filter_pointer_lock_button_priv *priv =
-        (struct xkb_filter_pointer_lock_button_priv*)&filter->priv;
+    స్థిరరాశి నిర్మాణం xkb_filter_సూచిక_తాళం_button_priv *priv =
+        (నిర్మాణం xkb_filter_సూచిక_తాళం_button_priv*)&filter->priv;
 
-    if (priv->locked && !(filter->action.btn.flags & ACTION_LOCK_NO_UNLOCK)) {
-        struct xkb_machine * const sm = (struct xkb_machine *)state;
+    ఒకవేళ (priv->locked && !(filter->action.btn.flags & ACTION_తాళం_NO_UNLOCK)) {
+        నిర్మాణం xkb_machine * స్థిరరాశి sm = (నిర్మాణం xkb_machine *)state;
 
-        static_assert(XKB_POINTER_BUTTON_MASK_WIDTH <= 8,
+        static_assert(XKB_సూచిక_BUTTON_ముసుగు_వెడల్పు <= 8,
                     "invalid UINTx_C() macro");
-        static_assert(XKB_POINTER_BUTTON_MAX <= XKB_POINTER_BUTTON_MASK_WIDTH,
+        static_assert(XKB_సూచిక_BUTTON_MAX <= XKB_సూచిక_BUTTON_ముసుగు_వెడల్పు,
                     "invalid left shift");
-        const xkb_pointer_button_mask_t mask = (UINT8_C(1) << priv->button);
+        స్థిరరాశి xkb_సూచిక_button_ముసుగు_t ముసుగు = (UINT8_C(1) << priv->button);
 
-        sm->mouse.locked_buttons &= ~mask;
+        sm->mouse.locked_buttons &= ~ముసుగు;
         filter->priv = priv->button;
-        append_pointer_button(events, filter, XKB_POINTER_BUTTON_RELEASED, 0);
+        append_సూచిక_button(events, filter, XKB_సూచిక_BUTTON_RELEASED, 0);
     }
 
-    filter->func = NULL;
-    return XKB_FILTER_CONSUME;
+    filter->func = ఖాళీ;
+    తిరిగి XKB_FILTER_CONSUME;
 }
 
-static void
-xkb_filter_pointer_set_default_button_new(struct xkb_server_state *state,
-                                          struct xkb_events *events,
-                                          struct xkb_filter *filter)
+స్థిర శూన్య
+xkb_filter_సూచిక_సమితి_default_button_new(నిర్మాణం xkb_server_state *state,
+                                          నిర్మాణం xkb_events *events,
+                                          నిర్మాణం xkb_filter *filter)
 {
-    if (!events || state->base.mode != SERVER_STATE ||
-        !(state->base.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_KEYS)) {
-        filter->func = NULL;
-        return;
+    ఒకవేళ (!events || state->పునాది.బహుళకం != SERVER_STATE ||
+        !(state->పునాది.components.controls & XKB_KEYBOARD_CONTROL_MOUSE_కీలకాలు)) {
+        filter->func = ఖాళీ;
+        తిరిగి;
     }
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_కీలకం_EVENT;
 
-    struct xkb_machine * const sm = (struct xkb_machine *)state;
+    నిర్మాణం xkb_machine * స్థిరరాశి sm = (నిర్మాణం xkb_machine *)state;
 
-    static_assert(2 * XKB_POINTER_BUTTON_MAX <= INT_MAX, "lossy conversion");
-    int button = (filter->action.dflt.flags & ACTION_ABSOLUTE_SWITCH)
-        ? filter->action.dflt.value
-        : sm->mouse.default_button + filter->action.dflt.value;
+    static_assert(2 * XKB_సూచిక_BUTTON_MAX <= గరిష్ఠ_పూర్ణాంకం, "lossy conversion");
+    పూర్ణాంకం button = (filter->action.dflt.flags & ACTION_ABSOLUTE_SWITCH)
+        ? filter->action.dflt.విలువ
+        : sm->mouse.default_button + filter->action.dflt.విలువ;
 
     /* Wrap into range */
-    const int rem = button % XKB_POINTER_BUTTON_MAX;
+    స్థిరరాశి పూర్ణాంకం rem = button % XKB_సూచిక_BUTTON_MAX;
     sm->mouse.default_button = (rem >= 0)
-        ? (xkb_pointer_button_index_t)rem
-        : (xkb_pointer_button_index_t)(rem + XKB_POINTER_BUTTON_MAX);
+        ? (xkb_సూచిక_button_సూచీ_t)rem
+        : (xkb_సూచిక_button_సూచీ_t)(rem + XKB_సూచిక_BUTTON_MAX);
 }
 
-static bool
-xkb_filter_pointer_set_default_button_func(struct xkb_server_state *state,
-                                           struct xkb_events *events,
-                                           struct xkb_filter *filter,
-                                           const struct xkb_key *key,
-                                           enum xkb_key_direction direction)
+స్థిర bool
+xkb_filter_సూచిక_సమితి_default_button_func(నిర్మాణం xkb_server_state *state,
+                                           నిర్మాణం xkb_events *events,
+                                           నిర్మాణం xkb_filter *filter,
+                                           స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం,
+                                           గణన xkb_కీలకం_direction direction)
 {
-    if (key != filter->key || !events)
-        return XKB_FILTER_CONTINUE;
+    ఒకవేళ (కీలకం != filter->కీలకం || !events)
+        తిరిగి XKB_FILTER_CONTINUE;
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_కీలకం_EVENT;
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    ఎంపిక (direction) {
+    స్థితి XKB_కీలకం_కిందికి:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    స్థితి XKB_కీలకం_REPEATED:
+        తిరిగి XKB_FILTER_CONSUME;
+    అప్రమేయ:
+        ఒకవేళ (--filter->refcnt > 0)
+            తిరిగి XKB_FILTER_CONSUME;
     }
 
-    filter->func = NULL;
-    return XKB_FILTER_CONTINUE;
+    filter->func = ఖాళీ;
+    తిరిగి XKB_FILTER_CONTINUE;
 }
 
-static void
-xkb_filter_terminate_server_new(struct xkb_server_state *state,
-                                 struct xkb_events *events,
-                                 struct xkb_filter *filter)
+స్థిర శూన్య
+xkb_filter_terminate_server_new(నిర్మాణం xkb_server_state *state,
+                                 నిర్మాణం xkb_events *events,
+                                 నిర్మాణం xkb_filter *filter)
 {
-    if (!events || state->base.mode != SERVER_STATE ||
-        !(((struct xkb_machine *)state)->flags & XKB_MACHINE_SERVER_ACTIONS)) {
-        filter->func = NULL;
-        return;
+    ఒకవేళ (!events || state->పునాది.బహుళకం != SERVER_STATE ||
+        !(((నిర్మాణం xkb_machine *)state)->flags & XKB_MACHINE_SERVER_ACTIONS)) {
+        filter->func = ఖాళీ;
+        తిరిగి;
     }
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_కీలకం_EVENT;
 
-    darray_append(events->queue, (struct xkb_event) {
+    darray_append(events->వరుస, (నిర్మాణం xkb_event) {
         .ctx = events->ctx, /* borrowed from events */
         .type = XKB_EVENT_TYPE_TERMINATE_DISPLAY_SERVER,
     });
 }
 
-static bool
-xkb_filter_terminate_server_func(struct xkb_server_state *state,
-                                 struct xkb_events *events,
-                                 struct xkb_filter *filter,
-                                 const struct xkb_key *key,
-                                 enum xkb_key_direction direction)
+స్థిర bool
+xkb_filter_terminate_server_func(నిర్మాణం xkb_server_state *state,
+                                 నిర్మాణం xkb_events *events,
+                                 నిర్మాణం xkb_filter *filter,
+                                 స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం,
+                                 గణన xkb_కీలకం_direction direction)
 {
-    if (key != filter->key || !events)
-        return XKB_FILTER_CONTINUE;
+    ఒకవేళ (కీలకం != filter->కీలకం || !events)
+        తిరిగి XKB_FILTER_CONTINUE;
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_కీలకం_EVENT;
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    ఎంపిక (direction) {
+    స్థితి XKB_కీలకం_కిందికి:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    స్థితి XKB_కీలకం_REPEATED:
+        తిరిగి XKB_FILTER_CONSUME;
+    అప్రమేయ:
+        ఒకవేళ (--filter->refcnt > 0)
+            తిరిగి XKB_FILTER_CONSUME;
     }
 
-    filter->func = NULL;
-    return XKB_FILTER_CONSUME;
+    filter->func = ఖాళీ;
+    తిరిగి XKB_FILTER_CONSUME;
 }
 
-static void
-xkb_filter_switch_virtual_console_new(struct xkb_server_state *state,
-                                      struct xkb_events *events,
-                                      struct xkb_filter *filter)
+స్థిర శూన్య
+xkb_filter_switch_virtual_console_new(నిర్మాణం xkb_server_state *state,
+                                      నిర్మాణం xkb_events *events,
+                                      నిర్మాణం xkb_filter *filter)
 {
-    if (!events || state->base.mode != SERVER_STATE ||
-        !(((struct xkb_machine *)state)->flags & XKB_MACHINE_SERVER_ACTIONS)) {
-        filter->func = NULL;
-        return;
+    ఒకవేళ (!events || state->పునాది.బహుళకం != SERVER_STATE ||
+        !(((నిర్మాణం xkb_machine *)state)->flags & XKB_MACHINE_SERVER_ACTIONS)) {
+        filter->func = ఖాళీ;
+        తిరిగి;
     }
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_కీలకం_EVENT;
 
-    darray_append(events->queue, (struct xkb_event) {
+    darray_append(events->వరుస, (నిర్మాణం xkb_event) {
         .ctx = events->ctx, /* borrowed from events */
         .type = XKB_EVENT_TYPE_SWITCH_VIRTUAL_CONSOLE,
         .virtual_console = {
-            .index_or_offset = filter->action.screen.screen,
-            .is_offset = !(filter->action.screen.flags & ACTION_ABSOLUTE_SWITCH)
+            .సూచీ_or_స్థానభ్రంశం = filter->action.screen.screen,
+            .is_స్థానభ్రంశం = !(filter->action.screen.flags & ACTION_ABSOLUTE_SWITCH)
         }
     });
 }
 
-static bool
-xkb_filter_switch_virtual_console_func(struct xkb_server_state *state,
-                                       struct xkb_events *events,
-                                       struct xkb_filter *filter,
-                                       const struct xkb_key *key,
-                                       enum xkb_key_direction direction)
+స్థిర bool
+xkb_filter_switch_virtual_console_func(నిర్మాణం xkb_server_state *state,
+                                       నిర్మాణం xkb_events *events,
+                                       నిర్మాణం xkb_filter *filter,
+                                       స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం,
+                                       గణన xkb_కీలకం_direction direction)
 {
-    if (key != filter->key || !events)
-        return XKB_FILTER_CONTINUE;
+    ఒకవేళ (కీలకం != filter->కీలకం || !events)
+        తిరిగి XKB_FILTER_CONTINUE;
 
-    state->flags &= ~STATE_REQUIRE_KEY_EVENT;
+    state->flags &= ~STATE_REQUIRE_కీలకం_EVENT;
 
-    switch (direction) {
-    case XKB_KEY_DOWN:
+    ఎంపిక (direction) {
+    స్థితి XKB_కీలకం_కిందికి:
         filter->refcnt++;
         /* fallthrough */
-    case XKB_KEY_REPEATED:
-        return XKB_FILTER_CONSUME;
-    default:
-        if (--filter->refcnt > 0)
-            return XKB_FILTER_CONSUME;
+    స్థితి XKB_కీలకం_REPEATED:
+        తిరిగి XKB_FILTER_CONSUME;
+    అప్రమేయ:
+        ఒకవేళ (--filter->refcnt > 0)
+            తిరిగి XKB_FILTER_CONSUME;
     }
 
-    filter->func = NULL;
-    return XKB_FILTER_CONSUME;
+    filter->func = ఖాళీ;
+    తిరిగి XKB_FILTER_CONSUME;
 }

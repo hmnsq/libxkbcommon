@@ -3,114 +3,114 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include <sys/stat.h>
-#include <fcntl.h>
-#include "utils.h"
+#అన్తర్భావ <sys/stat.h>
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ "utils.h"
 
-#if HAVE_MMAP
+#ఒకవేళ HAVE_MMAP
 
-#include <unistd.h>
-#include <sys/mman.h>
-#include <sys/types.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <sys/mman.h>
+#అన్తర్భావ <sys/types.h>
 
 bool
-map_file(FILE *file, char **string_out, size_t *size_out)
+map_file(FILE *file, అక్షరం **string_బహిర్గతం, కొలత_t *కొలత_బహిర్గతం)
 {
-    struct stat stat_buf;
-    int fd;
-    char *string;
+    నిర్మాణం stat stat_buf;
+    పూర్ణాంకం fd;
+    అక్షరం *string;
 
     /* Make sure to keep the errno on failure! */
     fd = fileno(file);
-    if (fd < 0)
-        return false;
+    ఒకవేళ (fd < 0)
+        తిరిగి false;
 
-    if (fstat(fd, &stat_buf) != 0)
-        return false;
+    ఒకవేళ (fstat(fd, &stat_buf) != 0)
+        తిరిగి false;
 
-    string = mmap(NULL, (size_t)stat_buf.st_size, PROT_READ, MAP_SHARED, fd, 0);
-    if (string == MAP_FAILED)
-        return false;
+    string = mmap(ఖాళీ, (కొలత_t)stat_buf.st_కొలత, PROT_READ, MAP_SHARED, fd, 0);
+    ఒకవేళ (string == MAP_FAILED)
+        తిరిగి false;
 
-    *string_out = string;
-    *size_out = (size_t)stat_buf.st_size;
-    return true;
+    *string_బహిర్గతం = string;
+    *కొలత_బహిర్గతం = (కొలత_t)stat_buf.st_కొలత;
+    తిరిగి true;
 }
 
-void
-unmap_file(char *str, size_t size)
+శూన్య
+unmap_file(అక్షరం *str, కొలత_t కొలత)
 {
-    munmap(str, size);
+    munmap(str, కొలత);
 }
 
-#else
+#లేకపోతే
 
 bool
-map_file(FILE *file, char **string_out, size_t *size_out)
+map_file(FILE *file, అక్షరం **string_బహిర్గతం, కొలత_t *కొలత_బహిర్గతం)
 {
-    long ret;
-    size_t ret_s;
-    char *string;
-    size_t size;
+    దీర్ఘ ret;
+    కొలత_t ret_s;
+    అక్షరం *string;
+    కొలత_t కొలత;
 
     /* Make sure to keep the errno on failure! */
 
     ret = fseek(file, 0, SEEK_END);
-    if (ret != 0)
-        return false;
+    ఒకవేళ (ret != 0)
+        తిరిగి false;
 
     ret = ftell(file);
-    if (ret < 0)
-        return false;
-    size = (size_t) ret;
+    ఒకవేళ (ret < 0)
+        తిరిగి false;
+    కొలత = (కొలత_t) ret;
 
     ret = fseek(file, 0, SEEK_SET);
-    if (ret < 0)
-        return false;
+    ఒకవేళ (ret < 0)
+        తిరిగి false;
 
-    string = malloc(size);
-    if (!string)
-        return false;
+    string = జ్ఞాపకం_ఇవ్వు(కొలత);
+    ఒకవేళ (!string)
+        తిరిగి false;
 
-    ret_s = fread(string, 1, size, file);
-    if (ret_s < size) {
-        free(string);
-        return false;
+    ret_s = fread(string, 1, కొలత, file);
+    ఒకవేళ (ret_s < కొలత) {
+        విడుదల(string);
+        తిరిగి false;
     }
 
-    *string_out = string;
-    *size_out = size;
-    return true;
+    *string_బహిర్గతం = string;
+    *కొలత_బహిర్గతం = కొలత;
+    తిరిగి true;
 }
 
-void
-unmap_file(char *str, size_t size)
+శూన్య
+unmap_file(అక్షరం *str, కొలత_t కొలత)
 {
-    free(str);
+    విడుదల(str);
 }
 
-#endif
+#అయితే_ముగింపు
 
 /* Open a file and ensure it is a regular file.
  * Returns NULL in case of error. */
 FILE*
-open_file(const char *path)
+open_file(స్థిరరాశి అక్షరం *మార్గం)
 {
-    if (!path)
-        return NULL;
+    ఒకవేళ (!మార్గం)
+        తిరిగి ఖాళీ;
 
-    int fd = open(path, O_RDONLY);
-    if (fd < 0)
-        return NULL;
+    పూర్ణాంకం fd = open(మార్గం, O_RDONLY);
+    ఒకవేళ (fd < 0)
+        తిరిగి ఖాళీ;
 
-    struct stat stat_buf;
-    int err = fstat(fd, &stat_buf);
+    నిర్మాణం stat stat_buf;
+    పూర్ణాంకం err = fstat(fd, &stat_buf);
 
-    if (err != 0 || !S_ISREG(stat_buf.st_mode)) {
+    ఒకవేళ (err != 0 || !S_ISREG(stat_buf.st_బహుళకం)) {
         close(fd);
-        return NULL;
+        తిరిగి ఖాళీ;
     }
 
     /* While unlikely to happen, if `fp` is NULL then we must close the file
@@ -118,15 +118,15 @@ open_file(const char *path)
      * https://www.ibm.com/docs/en/i/7.3?topic=functions-fdopen-associates-stream-file-descriptor)
      * Confirmed by Peter to be necessary in glibc. */
     FILE *fp = fdopen(fd, "rb");
-    if (fp == NULL) {
+    ఒకవేళ (fp == ఖాళీ) {
         close(fd);
     }
 
-    return fp;
+    తిరిగి fp;
 }
 
 // ASCII lower-case map.
-static const unsigned char lower_map[] = {
+స్థిర స్థిరరాశి గుర్తులేని అక్షరం క్రింది_map[] = {
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
     21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
     40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58,
@@ -146,56 +146,56 @@ static const unsigned char lower_map[] = {
 };
 
 // ASCII tolower (to avoid locale issues).
-char
-to_lower(char c)
+అక్షరం
+గమ్యం_క్రింది(అక్షరం c)
 {
-    return (char) lower_map[(unsigned char) c];
+    తిరిగి (అక్షరం) క్రింది_map[(గుర్తులేని అక్షరం) c];
 }
 
 // ASCII strcasecmp (to avoid locale issues).
-int
-istrcmp(const char *a, const char *b)
+పూర్ణాంకం
+istrcmp(స్థిరరాశి అక్షరం *a, స్థిరరాశి అక్షరం *b)
 {
-    for (size_t i = 0; ; i++) {
-        if (to_lower(a[i]) != to_lower(b[i]))
-            return (int) to_lower(a[i]) - (int) to_lower(b[i]);
-        if (!a[i])
-            break;
+    కొరకు (కొలత_t i = 0; ; i++) {
+        ఒకవేళ (గమ్యం_క్రింది(a[i]) != గమ్యం_క్రింది(b[i]))
+            తిరిగి (పూర్ణాంకం) గమ్యం_క్రింది(a[i]) - (పూర్ణాంకం) గమ్యం_క్రింది(b[i]);
+        ఒకవేళ (!a[i])
+            ఆపు;
     }
-    return 0;
+    తిరిగి 0;
 }
 
 // ASCII strncasecmp (to avoid locale issues).
-int
-istrncmp(const char *a, const char *b, size_t n)
+పూర్ణాంకం
+istrncmp(స్థిరరాశి అక్షరం *a, స్థిరరాశి అక్షరం *b, కొలత_t n)
 {
-    for (size_t i = 0; i < n; i++) {
-        if (to_lower(a[i]) != to_lower(b[i]))
-            return (int) to_lower(a[i]) - (int) to_lower(b[i]);
-        if (!a[i])
-            break;
+    కొరకు (కొలత_t i = 0; i < n; i++) {
+        ఒకవేళ (గమ్యం_క్రింది(a[i]) != గమ్యం_క్రింది(b[i]))
+            తిరిగి (పూర్ణాంకం) గమ్యం_క్రింది(a[i]) - (పూర్ణాంకం) గమ్యం_క్రింది(b[i]);
+        ఒకవేళ (!a[i])
+            ఆపు;
     }
-    return 0;
+    తిరిగి 0;
 }
 
-#if !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
-int
-asprintf(char **strp, const char *fmt, ...)
+#ఒకవేళ !(defined(HAVE_ASPRINTF) && HAVE_ASPRINTF)
+పూర్ణాంకం
+asprintf(అక్షరం **strp, స్థిరరాశి అక్షరం *fmt, ...)
 {
-    int ret;
+    పూర్ణాంకం ret;
     va_list ap;
-    va_start(ap, fmt);
+    va_ప్రారంభం(ap, fmt);
     ret = vasprintf(strp, fmt, ap);
-    va_end(ap);
-    return ret;
+    va_చివర(ap);
+    తిరిగి ret;
 }
 
-# if !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
-int
-vasprintf(char **strp, const char *fmt, va_list ap)
+# ఒకవేళ !(defined(HAVE_VASPRINTF) && HAVE_VASPRINTF)
+పూర్ణాంకం
+vasprintf(అక్షరం **strp, స్థిరరాశి అక్షరం *fmt, va_list ap)
 {
-    int ret;
-    char *buf;
+    పూర్ణాంకం ret;
+    అక్షరం *buf;
     va_list ap_copy;
 
     /*
@@ -203,22 +203,22 @@ vasprintf(char **strp, const char *fmt, va_list ap)
      * vsnprintf() returns: pass a copy to make sure "ap" remains valid.
      */
     va_copy(ap_copy, ap);
-    ret = vsnprintf(NULL, 0, fmt, ap_copy);
-    va_end(ap_copy);
+    ret = vsnprintf(ఖాళీ, 0, fmt, ap_copy);
+    va_చివర(ap_copy);
 
-    if (ret < 0)
-        return ret;
+    ఒకవేళ (ret < 0)
+        తిరిగి ret;
 
-    if (!(buf = malloc(ret + 1)))
-        return -1;
+    ఒకవేళ (!(buf = జ్ఞాపకం_ఇవ్వు(ret + 1)))
+        తిరిగి -1;
 
-    if ((ret = vsnprintf(buf, ret + 1, fmt, ap)) < 0) {
-        free(buf);
-        return ret;
+    ఒకవేళ ((ret = vsnprintf(buf, ret + 1, fmt, ap)) < 0) {
+        విడుదల(buf);
+        తిరిగి ret;
     }
 
     *strp = buf;
-    return ret;
+    తిరిగి ret;
 }
 # endif /* !HAVE_VASPRINTF */
-#endif /* !HAVE_ASPRINTF */
+#అయితే_ముగింపు /* !HAVE_ASPRINTF */

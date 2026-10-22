@@ -6,63 +6,63 @@
  * Author: Daniel Stone <daniel@fooishbar.org>
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include <assert.h>
-#include <stdint.h>
-#include <string.h>
+#అన్తర్భావ <assert.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <string.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-names.h"
-#include "features/enums.h"
-#include "keymap.h"
-#include "messages-codes.h"
+#అన్తర్భావ "xkbcommon/xkbcommon.h"
+#అన్తర్భావ "xkbcommon/xkbcommon-names.h"
+#అన్తర్భావ "features/enums.h"
+#అన్తర్భావ "keymap.h"
+#అన్తర్భావ "messages-codes.h"
 
-static void
-update_builtin_keymap_fields(struct xkb_keymap *keymap)
+స్థిర శూన్య
+update_builtin_keymap_fields(నిర్మాణం xkb_keymap *keymap)
 {
     /* Predefined (AKA real, core, X11) modifiers. The order is important! */
-    static const char *const builtin_mods[] = {
-        [XKB_MOD_INDEX_SHIFT] = XKB_MOD_NAME_SHIFT,
-        [XKB_MOD_INDEX_CAPS]  = XKB_MOD_NAME_CAPS,
-        [XKB_MOD_INDEX_CTRL]  = XKB_MOD_NAME_CTRL,
-        [XKB_MOD_INDEX_MOD1]  = XKB_MOD_NAME_MOD1,
-        [XKB_MOD_INDEX_MOD2]  = XKB_MOD_NAME_MOD2,
-        [XKB_MOD_INDEX_MOD3]  = XKB_MOD_NAME_MOD3,
-        [XKB_MOD_INDEX_MOD4]  = XKB_MOD_NAME_MOD4,
-        [XKB_MOD_INDEX_MOD5]  = XKB_MOD_NAME_MOD5
+    స్థిర స్థిరరాశి అక్షరం *స్థిరరాశి builtin_mods[] = {
+        [XKB_MOD_సూచీ_జరుపు] = XKB_MOD_NAME_జరుపు,
+        [XKB_MOD_సూచీ_CAPS]  = XKB_MOD_NAME_CAPS,
+        [XKB_MOD_సూచీ_CTRL]  = XKB_MOD_NAME_CTRL,
+        [XKB_MOD_సూచీ_MOD1]  = XKB_MOD_NAME_MOD1,
+        [XKB_MOD_సూచీ_MOD2]  = XKB_MOD_NAME_MOD2,
+        [XKB_MOD_సూచీ_MOD3]  = XKB_MOD_NAME_MOD3,
+        [XKB_MOD_సూచీ_MOD4]  = XKB_MOD_NAME_MOD4,
+        [XKB_MOD_సూచీ_MOD5]  = XKB_MOD_NAME_MOD5
     };
 
-    for (xkb_mod_index_t i = 0; i < ARRAY_SIZE(builtin_mods); i++) {
+    కొరకు (xkb_mod_సూచీ_t i = 0; i < ARRAY_కొలత(builtin_mods); i++) {
         keymap->mods.mods[i].name = xkb_atom_intern(keymap->ctx,
                                                     builtin_mods[i],
-                                                    strlen(builtin_mods[i]));
+                                                    అక్షరశ్రేణి_పొడవు(builtin_mods[i]));
         keymap->mods.mods[i].type = MOD_REAL;
         /* Real modifiers have a canonical mapping */
         keymap->mods.mods[i].mapping = UINT32_C(1) << i;
     }
-    keymap->mods.num_mods = ARRAY_SIZE(builtin_mods);
-    keymap->canonical_state_mask = MOD_REAL_MASK_ALL;
+    keymap->mods.అంకె_mods = ARRAY_కొలత(builtin_mods);
+    keymap->canonical_state_ముసుగు = MOD_REAL_ముసుగు_ALL;
 }
 
-struct xkb_keymap *
-xkb_keymap_new(struct xkb_context *ctx, const char *func,
-               enum xkb_keymap_format format,
-               enum xkb_keymap_compile_flags flags)
+నిర్మాణం xkb_keymap *
+xkb_keymap_new(నిర్మాణం xkb_context *ctx, స్థిరరాశి అక్షరం *func,
+               గణన xkb_keymap_format format,
+               గణన xkb_keymap_compile_flags flags)
 {
-    const enum xkb_keymap_compile_flags invalid_flags = (
-        flags & ~(enum xkb_keymap_compile_flags)XKB_KEYMAP_COMPILE_FLAGS_VALUES
+    స్థిరరాశి గణన xkb_keymap_compile_flags invalid_flags = (
+        flags & ~(గణన xkb_keymap_compile_flags)XKB_KEYMAP_COMPILE_FLAGS_విలువలు
     );
-    if (invalid_flags) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    ఒకవేళ (invalid_flags) {
+        log_err(ctx, XKB_LOG_సందేశం_NO_ID,
                 "%s: unrecognized keymap compilation flags: 0x%x\n",
                 func, invalid_flags);
-        return NULL;
+        తిరిగి ఖాళీ;
     }
 
-    struct xkb_keymap * const keymap = calloc(1, sizeof(*keymap));
-    if (!keymap)
-        return NULL;
+    నిర్మాణం xkb_keymap * స్థిరరాశి keymap = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*keymap));
+    ఒకవేళ (!keymap)
+        తిరిగి ఖాళీ;
 
     keymap->refcnt = 1;
     keymap->ctx = xkb_context_ref(ctx);
@@ -72,163 +72,163 @@ xkb_keymap_new(struct xkb_context *ctx, const char *func,
 
     update_builtin_keymap_fields(keymap);
 
-    return keymap;
+    తిరిగి keymap;
 }
 
-void
-XkbEscapeMapName(char *name)
+శూన్య
+XkbEscapeMapName(అక్షరం *name)
 {
     /*
      * All latin-1 alphanumerics, plus parens, slash, minus, underscore and
      * wildcards.
      */
-    static const unsigned char legal[] = {
+    స్థిర స్థిరరాశి గుర్తులేని అక్షరం legal[] = {
         0x00, 0x00, 0x00, 0x00, 0x00, 0xa7, 0xff, 0x83,
         0xfe, 0xff, 0xff, 0x87, 0xfe, 0xff, 0xff, 0x07,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0xff, 0xff, 0x7f, 0xff, 0xff, 0xff, 0x7f, 0xff
     };
 
-    if (!name)
-        return;
+    ఒకవేళ (!name)
+        తిరిగి;
 
-    while (*name) {
-        unsigned char c = (unsigned char)*name;
-        if (!(legal[c / 8] & (1u << (c % 8))))
+    అయితే (*name) {
+        గుర్తులేని అక్షరం c = (గుర్తులేని అక్షరం)*name;
+        ఒకవేళ (!(legal[c / 8] & (1u << (c % 8))))
             *name = '_';
         name++;
     }
 }
 
-xkb_mod_index_t
-XkbModNameToIndex(const struct xkb_mod_set *mods, xkb_atom_t name,
-                  enum mod_type type)
+xkb_mod_సూచీ_t
+Xkb_Mod_Name_గమ్యం_సూచీ(స్థిరరాశి నిర్మాణం xkb_mod_సమితి *mods, xkb_atom_t name,
+                  గణన mod_type type)
 {
-    xkb_mod_index_t i;
-    const struct xkb_mod *mod;
+    xkb_mod_సూచీ_t i;
+    స్థిరరాశి నిర్మాణం xkb_mod *mod;
 
     xkb_mods_enumerate(i, mod, mods)
-        if ((mod->type & type) && name == mod->name)
-            return i;
+        ఒకవేళ ((mod->type & type) && name == mod->name)
+            తిరిగి i;
 
-    return XKB_MOD_INVALID;
+    తిరిగి XKB_MOD_INVALID;
 }
 
 bool
-XkbLevelsSameSyms(const struct xkb_level *a, const struct xkb_level *b)
+Xkb_స్థాయిలు_Same_Syms(స్థిరరాశి నిర్మాణం xkb_level *a, స్థిరరాశి నిర్మాణం xkb_level *b)
 {
-    if (a->num_syms != b->num_syms)
-        return false;
-    if (a->num_syms <= 1)
-        return a->s.sym == b->s.sym;
-    return memcmp(a->s.syms, b->s.syms, sizeof(*a->s.syms) * a->num_syms) == 0;
+    ఒకవేళ (a->అంకె_syms != b->అంకె_syms)
+        తిరిగి false;
+    ఒకవేళ (a->అంకె_syms <= 1)
+        తిరిగి a->s.sym == b->s.sym;
+    తిరిగి memcmp(a->s.syms, b->s.syms, పరిమాణం(*a->s.syms) * a->అంకె_syms) == 0;
 }
 
 bool
-action_equal(const union xkb_action *a, const union xkb_action *b)
+action_equal(స్థిరరాశి సంఘం xkb_action *a, స్థిరరాశి సంఘం xkb_action *b)
 {
-    if (a->type != b->type)
-        return false;
+    ఒకవేళ (a->type != b->type)
+        తిరిగి false;
 
-    switch (a->type) {
-    case ACTION_TYPE_NONE:
-    case ACTION_TYPE_VOID:
-        return true;
-    case ACTION_TYPE_MOD_SET:
-    case ACTION_TYPE_MOD_LATCH:
-    case ACTION_TYPE_MOD_LOCK:
-        return (a->mods.flags == b->mods.flags &&
-                a->mods.mods.mask == b->mods.mods.mask &&
+    ఎంపిక (a->type) {
+    స్థితి ACTION_TYPE_NONE:
+    స్థితి ACTION_TYPE_VOID:
+        తిరిగి true;
+    స్థితి ACTION_TYPE_MOD_సమితి:
+    స్థితి ACTION_TYPE_MOD_LATCH:
+    స్థితి ACTION_TYPE_MOD_తాళం:
+        తిరిగి (a->mods.flags == b->mods.flags &&
+                a->mods.mods.ముసుగు == b->mods.mods.ముసుగు &&
                 a->mods.mods.mods == b->mods.mods.mods);
-    case ACTION_TYPE_GROUP_SET:
-    case ACTION_TYPE_GROUP_LATCH:
-    case ACTION_TYPE_GROUP_LOCK:
-        return (a->group.flags == b->group.flags &&
-                a->group.group == b->group.group);
-    case ACTION_TYPE_PTR_MOVE:
-        return (a->ptr.flags == b->ptr.flags &&
+    స్థితి ACTION_TYPE_సమూహం_సమితి:
+    స్థితి ACTION_TYPE_సమూహం_LATCH:
+    స్థితి ACTION_TYPE_సమూహం_తాళం:
+        తిరిగి (a->సమూహం.flags == b->సమూహం.flags &&
+                a->సమూహం.సమూహం == b->సమూహం.సమూహం);
+    స్థితి ACTION_TYPE_PTR_MOVE:
+        తిరిగి (a->ptr.flags == b->ptr.flags &&
                 a->ptr.x == b->ptr.x &&
                 a->ptr.y == b->ptr.y);
-    case ACTION_TYPE_PTR_BUTTON:
-    case ACTION_TYPE_PTR_LOCK:
-        return (a->btn.flags == b->btn.flags &&
+    స్థితి ACTION_TYPE_PTR_BUTTON:
+    స్థితి ACTION_TYPE_PTR_తాళం:
+        తిరిగి (a->btn.flags == b->btn.flags &&
                 a->btn.button == b->btn.button &&
-                a->btn.count == b->btn.count);
-    case ACTION_TYPE_PTR_DEFAULT:
-        return (a->dflt.flags == b->dflt.flags &&
-                a->dflt.value == b->dflt.value);
-    case ACTION_TYPE_TERMINATE:
-        return true;
-    case ACTION_TYPE_SWITCH_VT:
-        return (a->screen.flags == b->screen.flags &&
+                a->btn.లెక్క == b->btn.లెక్క);
+    స్థితి ACTION_TYPE_PTR_DEFAULT:
+        తిరిగి (a->dflt.flags == b->dflt.flags &&
+                a->dflt.విలువ == b->dflt.విలువ);
+    స్థితి ACTION_TYPE_TERMINATE:
+        తిరిగి true;
+    స్థితి ACTION_TYPE_SWITCH_VT:
+        తిరిగి (a->screen.flags == b->screen.flags &&
                 a->screen.screen == b->screen.screen);
-    case ACTION_TYPE_CTRL_SET:
-    case ACTION_TYPE_CTRL_LOCK:
-        return (a->ctrls.flags == b->ctrls.flags &&
+    స్థితి ACTION_TYPE_CTRL_సమితి:
+    స్థితి ACTION_TYPE_CTRL_తాళం:
+        తిరిగి (a->ctrls.flags == b->ctrls.flags &&
                 a->ctrls.ctrls == b->ctrls.ctrls);
-    case ACTION_TYPE_REDIRECT_KEY:
-        return (a->redirect.keycode == b->redirect.keycode &&
+    స్థితి ACTION_TYPE_REDIRECT_కీలకం:
+        తిరిగి (a->redirect.keycode == b->redirect.keycode &&
                 a->redirect.affect_mods == b->redirect.affect_mods &&
                 a->redirect.mods == b->redirect.mods);
-    case ACTION_TYPE_UNSUPPORTED_LEGACY:
-    case ACTION_TYPE_UNKNOWN:
-        return true;
+    స్థితి ACTION_TYPE_UNSUPPORTED_LEGACY:
+    స్థితి ACTION_TYPE_UNKNOWN:
+        తిరిగి true;
     /* ACTION_TYPE_PRIVATE processed in the default case */
-    case ACTION_TYPE_INTERNAL:
-        return (a->internal.flags == b->internal.flags) &&
-               (a->internal.clear_latched_mods == b->internal.clear_latched_mods);
-    default:
+    స్థితి ACTION_TYPE_అంతర్గత:
+        తిరిగి (a->అంతర్గత.flags == b->అంతర్గత.flags) &&
+               (a->అంతర్గత.clear_latched_mods == b->అంతర్గత.clear_latched_mods);
+    అప్రమేయ:
         {} /* Label followed by declaration requires C23 */
         /* Ensure to not miss `xkb_action_type` updates */
-        static_assert(ACTION_TYPE_INTERNAL == 20 &&
-                      ACTION_TYPE_INTERNAL + 1 == _ACTION_TYPE_NUM_ENTRIES,
+        static_assert(ACTION_TYPE_అంతర్గత == 20 &&
+                      ACTION_TYPE_అంతర్గత + 1 == ACTION_TYPE_అంకె_ENTRIES,
                       "Missing action type");
         /* Private/custom action */
-        return memcmp(a->priv.data, b->priv.data, sizeof(a->priv.data)) == 0;
+        తిరిగి memcmp(a->priv.దత్తాంశం, b->priv.దత్తాంశం, పరిమాణం(a->priv.దత్తాంశం)) == 0;
     }
 }
 
 bool
-XkbLevelsSameActions(const struct xkb_level *a, const struct xkb_level *b)
+Xkb_స్థాయిలు_Same_Actions(స్థిరరాశి నిర్మాణం xkb_level *a, స్థిరరాశి నిర్మాణం xkb_level *b)
 {
-    if (a->num_actions != b->num_actions)
-        return false;
-    if (a->num_actions <= 1)
-        return action_equal(&a->a.action, &b->a.action);
-    for (xkb_action_count_t k = 0; k < a->num_actions; k++) {
-        if (!action_equal(&a->a.actions[k], &b->a.actions[k]))
-            return false;
+    ఒకవేళ (a->అంకె_actions != b->అంకె_actions)
+        తిరిగి false;
+    ఒకవేళ (a->అంకె_actions <= 1)
+        తిరిగి action_equal(&a->a.action, &b->a.action);
+    కొరకు (xkb_action_లెక్క_t k = 0; k < a->అంకె_actions; k++) {
+        ఒకవేళ (!action_equal(&a->a.actions[k], &b->a.actions[k]))
+            తిరిగి false;
     }
-    return true;
+    తిరిగి true;
 }
 
 /* See: XkbAdjustGroup in Xorg xserver */
-xkb_layout_index_t
-XkbWrapGroupIntoRange(int32_t group,
-                      xkb_layout_index_t num_groups,
-                      enum xkb_layout_out_of_range_policy out_of_range_group_policy,
-                      xkb_layout_index_t out_of_range_group_number)
+xkb_layout_సూచీ_t
+Xkb_Wrap_సమూహం_Into_Range(int32_t సమూహం,
+                      xkb_layout_సూచీ_t అంకె_groups,
+                      గణన xkb_layout_బహిర్గతం_యొక్క_range_policy బహిర్గతం_యొక్క_range_సమూహం_policy,
+                      xkb_layout_సూచీ_t బహిర్గతం_యొక్క_range_సమూహం_సంఖ్య)
 {
-    if (num_groups == 0)
-        return XKB_LAYOUT_INVALID;
+    ఒకవేళ (అంకె_groups == 0)
+        తిరిగి XKB_LAYOUT_INVALID;
 
-    if (group >= 0 && (xkb_layout_index_t)group < num_groups)
-        return (xkb_layout_index_t)group;
+    ఒకవేళ (సమూహం >= 0 && (xkb_layout_సూచీ_t)సమూహం < అంకె_groups)
+        తిరిగి (xkb_layout_సూచీ_t)సమూహం;
 
-    switch (out_of_range_group_policy) {
-    case XKB_LAYOUT_OUT_OF_RANGE_REDIRECT:
-        if (out_of_range_group_number >= num_groups)
-            return 0;
-        return out_of_range_group_number;
+    ఎంపిక (బహిర్గతం_యొక్క_range_సమూహం_policy) {
+    స్థితి XKB_LAYOUT_బహిర్గతం_యొక్క_RANGE_REDIRECT:
+        ఒకవేళ (బహిర్గతం_యొక్క_range_సమూహం_సంఖ్య >= అంకె_groups)
+            తిరిగి 0;
+        తిరిగి బహిర్గతం_యొక్క_range_సమూహం_సంఖ్య;
 
-    case XKB_LAYOUT_OUT_OF_RANGE_CLAMP:
-        if (group < 0)
-            return 0;
-        else
-            return num_groups - 1;
+    స్థితి XKB_LAYOUT_బహిర్గతం_యొక్క_RANGE_CLAMP:
+        ఒకవేళ (సమూహం < 0)
+            తిరిగి 0;
+        లేకపోతే
+            తిరిగి అంకె_groups - 1;
 
-    case XKB_LAYOUT_OUT_OF_RANGE_WRAP:
-    default: {
+    స్థితి XKB_LAYOUT_బహిర్గతం_యొక్క_RANGE_WRAP:
+    అప్రమేయ: {
         /*
          * Ensure conversion xkb_layout_index_t → int32_t is lossless.
          *
@@ -245,45 +245,45 @@ XkbWrapGroupIntoRange(int32_t group,
          * positive. So if the remainder is negative, we must add `num_groups`
          * to get the modulus.
          */
-        const int32_t rem = group % (int32_t) num_groups;
-        return (rem >= 0)
-            ? (xkb_layout_index_t)rem
-            : (xkb_layout_index_t)(rem + (int32_t)num_groups);
+        స్థిరరాశి int32_t rem = సమూహం % (int32_t) అంకె_groups;
+        తిరిగి (rem >= 0)
+            ? (xkb_layout_సూచీ_t)rem
+            : (xkb_layout_సూచీ_t)(rem + (int32_t)అంకె_groups);
     }
     }
 }
 
-xkb_action_count_t
-xkb_keymap_key_get_actions_by_level(const struct xkb_keymap *keymap,
-                                    const struct xkb_key *key,
-                                    xkb_layout_index_t layout,
-                                    xkb_level_index_t level,
-                                    const union xkb_action **actions)
+xkb_action_లెక్క_t
+xkb_keymap_కీలకం_get_actions_by_level(స్థిరరాశి నిర్మాణం xkb_keymap *keymap,
+                                    స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం,
+                                    xkb_layout_సూచీ_t layout,
+                                    xkb_level_సూచీ_t level,
+                                    స్థిరరాశి సంఘం xkb_action **actions)
 {
-    if (!key)
-        goto err;
+    ఒకవేళ (!కీలకం)
+        వెళ్ళు err;
 
-    layout = xkb_keymap_key_effective_layout(key, layout);
-    if (layout == XKB_LAYOUT_INVALID)
-        goto err;
+    layout = xkb_keymap_కీలకం_effective_layout(కీలకం, layout);
+    ఒకవేళ (layout == XKB_LAYOUT_INVALID)
+        వెళ్ళు err;
 
-    if (level >= XkbKeyNumLevels(key, layout))
-        goto err;
+    ఒకవేళ (level >= Xkb_కీలకం_అంకె_స్థాయిలు(కీలకం, layout))
+        వెళ్ళు err;
 
-    const xkb_action_count_t count =
-        key->groups[layout].levels[level].num_actions;
-    switch (count) {
-        case 0:
-            goto err;
-        case 1:
-            *actions = &key->groups[layout].levels[level].a.action;
-            break;
-        default:
-            *actions = key->groups[layout].levels[level].a.actions;
+    స్థిరరాశి xkb_action_లెక్క_t లెక్క =
+        కీలకం->groups[layout].స్థాయిలు[level].అంకె_actions;
+    ఎంపిక (లెక్క) {
+        స్థితి 0:
+            వెళ్ళు err;
+        స్థితి 1:
+            *actions = &కీలకం->groups[layout].స్థాయిలు[level].a.action;
+            ఆపు;
+        అప్రమేయ:
+            *actions = కీలకం->groups[layout].స్థాయిలు[level].a.actions;
     }
-    return count;
+    తిరిగి లెక్క;
 
 err:
-    *actions = NULL;
-    return 0;
+    *actions = ఖాళీ;
+    తిరిగి 0;
 }

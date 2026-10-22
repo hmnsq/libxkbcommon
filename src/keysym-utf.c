@@ -35,25 +35,25 @@
  *
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include <stdbool.h>
+#అన్తర్భావ <stdbool.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "utils.h"
-#include "utf8.h"
-#include "keysym.h"
+#అన్తర్భావ "xkbcommon/xkbcommon.h"
+#అన్తర్భావ "utils.h"
+#అన్తర్భావ "utf8.h"
+#అన్తర్భావ "keysym.h"
 
-#define NO_KEYSYM_UNICODE_CONVERSION 0
+#నిర్వచించు NO_KEYSYM_UNICODE_CONVERSION 0
 
 /* We don't use the uint32_t types here, to save some space. */
-struct codepair {
+నిర్మాణం codepair {
     uint16_t keysym:15;
     bool deprecated:1;
     uint16_t ucs;
 };
 
-static const struct codepair keysymtab[] = {
+స్థిర స్థిరరాశి నిర్మాణం codepair keysymtab[] = {
     { 0x01a1, false, 0x0104 }, /*                     Aogonek Ą LATIN CAPITAL LETTER A WITH OGONEK */
     { 0x01a2, false, 0x02d8 }, /*                       breve ˘ BREVE */
     { 0x01a3, false, 0x0141 }, /*                     Lstroke Ł LATIN CAPITAL LETTER L WITH STROKE */
@@ -832,49 +832,49 @@ static const struct codepair keysymtab[] = {
 };
 
 /* binary search with range check */
-static uint32_t
-bin_search(const struct codepair *table, size_t length, xkb_keysym_t keysym)
+స్థిర uint32_t
+bin_శోధన(స్థిరరాశి నిర్మాణం codepair *పట్టిక, కొలత_t నిడివి, xkb_keysym_t keysym)
 {
-    size_t first = 0;
-    size_t last = length;
+    కొలత_t మొదటి = 0;
+    కొలత_t చివరి = నిడివి;
 
-    if (keysym < table[0].keysym  || keysym > table[length].keysym)
-        return 0;
+    ఒకవేళ (keysym < పట్టిక[0].keysym  || keysym > పట్టిక[నిడివి].keysym)
+        తిరిగి 0;
 
     /* binary search in table */
-    while (last >= first) {
-        size_t mid = (first + last) / 2;
-        if (table[mid].keysym < keysym)
-            first = mid + 1;
-        else if (table[mid].keysym > keysym)
-            last = mid - 1;
-        else /* found it */
-            return table[mid].ucs;
+    అయితే (చివరి >= మొదటి) {
+        కొలత_t mid = (మొదటి + చివరి) / 2;
+        ఒకవేళ (పట్టిక[mid].keysym < keysym)
+            మొదటి = mid + 1;
+        లేకపోతే ఒకవేళ (పట్టిక[mid].keysym > keysym)
+            చివరి = mid - 1;
+        లేకపోతే /* found it */
+            తిరిగి పట్టిక[mid].ucs;
     }
 
     /* no matching Unicode value found in table */
-    return NO_KEYSYM_UNICODE_CONVERSION;
+    తిరిగి NO_KEYSYM_UNICODE_CONVERSION;
 }
 
 uint32_t
-xkb_keysym_to_utf32(xkb_keysym_t keysym)
+xkb_keysym_గమ్యం_utf32(xkb_keysym_t keysym)
 {
     /* first check for Latin-1 characters (1:1 mapping) */
-    if ((keysym >= 0x0020 && keysym <= 0x007e) ||
+    ఒకవేళ ((keysym >= 0x0020 && keysym <= 0x007e) ||
         (keysym >= 0x00a0 && keysym <= 0x00ff))
-        return keysym;
+        తిరిగి keysym;
 
     /* patch encoding botch */
-    if (keysym == XKB_KEY_KP_Space)
-        return XKB_KEY_space & 0x7f;
+    ఒకవేళ (keysym == XKB_కీలకం_KP_Space)
+        తిరిగి XKB_కీలకం_space & 0x7f;
 
     /* special keysyms */
-    if ((keysym >= XKB_KEY_BackSpace && keysym <= XKB_KEY_Clear) ||
-        (keysym >= XKB_KEY_KP_Multiply && keysym <= XKB_KEY_KP_9) ||
-        keysym == XKB_KEY_Return || keysym == XKB_KEY_Escape ||
-        keysym == XKB_KEY_Delete || keysym == XKB_KEY_KP_Tab ||
-        keysym == XKB_KEY_KP_Enter || keysym == XKB_KEY_KP_Equal)
-        return keysym & 0x7f;
+    ఒకవేళ ((keysym >= XKB_కీలకం_వెనుక_Space && keysym <= XKB_కీలకం_Clear) ||
+        (keysym >= XKB_కీలకం_KP_Multiply && keysym <= XKB_కీలకం_KP_9) ||
+        keysym == XKB_కీలకం_Return || keysym == XKB_కీలకం_Escape ||
+        keysym == XKB_కీలకం_Delete || keysym == XKB_కీలకం_KP_Tab ||
+        keysym == XKB_కీలకం_KP_Enter || keysym == XKB_కీలకం_KP_Equal)
+        తిరిగి keysym & 0x7f;
 
     /* also check for directly encoded Unicode codepoints */
 
@@ -882,46 +882,46 @@ xkb_keysym_to_utf32(xkb_keysym_t keysym)
      * See https://www.unicode.org/versions/Unicode15.0.0/ch03.pdf#G28875
      * for further details.
      */
-    if (keysym >= XKB_KEYSYM_UNICODE_SURROGATE_MIN &&
+    ఒకవేళ (keysym >= XKB_KEYSYM_UNICODE_SURROGATE_MIN &&
         keysym <= XKB_KEYSYM_UNICODE_SURROGATE_MAX)
-        return NO_KEYSYM_UNICODE_CONVERSION;
+        తిరిగి NO_KEYSYM_UNICODE_CONVERSION;
     /*
      * In theory, this is supposed to start from 0x100100, such that the ASCII
      * range, which is already covered by 0x00-0xff, can't be encoded in two
      * ways. However, changing this after a couple of decades probably won't
      * go well, so it stays as it is.
      */
-    if (XKB_KEYSYM_UNICODE_OFFSET <= keysym && keysym <= XKB_KEYSYM_UNICODE_MAX)
-        return keysym - XKB_KEYSYM_UNICODE_OFFSET;
+    ఒకవేళ (XKB_KEYSYM_UNICODE_స్థానభ్రంశం <= keysym && keysym <= XKB_KEYSYM_UNICODE_MAX)
+        తిరిగి keysym - XKB_KEYSYM_UNICODE_స్థానభ్రంశం;
 
     /* Some EVDEV keysyms that do not fit in `keysymtab` */
-    if (keysym >= XKB_KEY_XF86Numeric0 && keysym <= XKB_KEY_XF86Numeric9)
-        return keysym - XKB_KEY_XF86Numeric0 + 0x30;
-    switch (keysym) {
-    case XKB_KEY_XF86NumericStar:
-        return 0x2a; /* * */
-    case XKB_KEY_XF86NumericPound:
-        return 0x23; /* # */
-    default:
+    ఒకవేళ (keysym >= XKB_కీలకం_XF86_Numeric0 && keysym <= XKB_కీలకం_XF86_Numeric9)
+        తిరిగి keysym - XKB_కీలకం_XF86_Numeric0 + 0x30;
+    ఎంపిక (keysym) {
+    స్థితి XKB_కీలకం_XF86_Numeric_నక్షత్రం:
+        తిరిగి 0x2a; /* * */
+    స్థితి XKB_కీలకం_XF86_Numeric_Pound:
+        తిరిగి 0x23; /* # */
+    అప్రమేయ:
         /* search main table */
-        return bin_search(keysymtab, ARRAY_SIZE(keysymtab) - 1, keysym);
+        తిరిగి bin_శోధన(keysymtab, ARRAY_కొలత(keysymtab) - 1, keysym);
     }
 }
 
 xkb_keysym_t
-xkb_utf32_to_keysym(uint32_t ucs)
+xkb_utf32_గమ్యం_keysym(uint32_t ucs)
 {
     /* first check for Latin-1 characters (1:1 mapping) */
-    if ((ucs >= 0x0020 && ucs <= 0x007e) ||
+    ఒకవేళ ((ucs >= 0x0020 && ucs <= 0x007e) ||
         (ucs >= 0x00a0 && ucs <= 0x00ff))
-        return ucs;
+        తిరిగి ucs;
 
     /* special keysyms */
-    if ((ucs >= (XKB_KEY_BackSpace & 0x7f) && ucs <= (XKB_KEY_Clear & 0x7f)) ||
-        ucs == (XKB_KEY_Return & 0x7f) || ucs == (XKB_KEY_Escape & 0x7f))
-        return ucs | 0xff00;
-    if (ucs == (XKB_KEY_Delete & 0x7f))
-        return XKB_KEY_Delete;
+    ఒకవేళ ((ucs >= (XKB_కీలకం_వెనుక_Space & 0x7f) && ucs <= (XKB_కీలకం_Clear & 0x7f)) ||
+        ucs == (XKB_కీలకం_Return & 0x7f) || ucs == (XKB_కీలకం_Escape & 0x7f))
+        తిరిగి ucs | 0xff00;
+    ఒకవేళ (ucs == (XKB_కీలకం_Delete & 0x7f))
+        తిరిగి XKB_కీలకం_Delete;
 
     /*
      * U+0000 NULL and invalid Unicode code points.
@@ -929,18 +929,18 @@ xkb_utf32_to_keysym(uint32_t ucs)
      * See https://www.unicode.org/versions/Unicode15.0.0/ch03.pdf#G28875
      * for further details.
      */
-    if (unlikely(ucs == 0 || is_surrogate(ucs) || ucs > 0x10ffff))
-        return XKB_KEY_NoSymbol;
+    ఒకవేళ (unlikely(ucs == 0 || is_surrogate(ucs) || ucs > 0x10ffff))
+        తిరిగి XKB_కీలకం_No_చిహ్నం;
 
     /* search main table */
-    for (size_t i = 0; i < ARRAY_SIZE(keysymtab); i++) {
+    కొరకు (కొలత_t i = 0; i < ARRAY_కొలత(keysymtab); i++) {
         /* Do not use deprecated keysyms */
-        if (keysymtab[i].ucs == ucs && !keysymtab[i].deprecated)
-            return keysymtab[i].keysym;
+        ఒకవేళ (keysymtab[i].ucs == ucs && !keysymtab[i].deprecated)
+            తిరిగి keysymtab[i].keysym;
     }
 
     /* Use direct encoding if everything else failed */
-    return ucs | XKB_KEYSYM_UNICODE_OFFSET;
+    తిరిగి ucs | XKB_KEYSYM_UNICODE_స్థానభ్రంశం;
 }
 
 /*
@@ -951,22 +951,22 @@ xkb_utf32_to_keysym(uint32_t ucs)
  * Author: Rob Bradford <rob@linux.intel.com>
  */
 
-int
-xkb_keysym_to_utf8(xkb_keysym_t keysym, char *buffer, size_t size)
+పూర్ణాంకం
+xkb_keysym_గమ్యం_utf8(xkb_keysym_t keysym, అక్షరం *బఫరు, కొలత_t కొలత)
 {
     uint32_t codepoint;
 
     /* Unicode code point takes up to 4 bytes in UTF-8, plus the
      * NULL-terminating byte. */
-    if (size < XKB_KEYSYM_UTF8_MAX_SIZE)
-        return -1;
+    ఒకవేళ (కొలత < XKB_KEYSYM_UTF8_MAX_కొలత)
+        తిరిగి -1;
 
-    codepoint = xkb_keysym_to_utf32(keysym);
+    codepoint = xkb_keysym_గమ్యం_utf32(keysym);
 
-    if (codepoint == NO_KEYSYM_UNICODE_CONVERSION)
-        return 0;
+    ఒకవేళ (codepoint == NO_KEYSYM_UNICODE_CONVERSION)
+        తిరిగి 0;
 
-    return (int)utf32_to_utf8(codepoint, buffer);
+    తిరిగి (పూర్ణాంకం)utf32_గమ్యం_utf8(codepoint, బఫరు);
 }
 
 /* SPDX-SnippetEnd */

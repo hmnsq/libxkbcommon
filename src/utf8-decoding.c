@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include "utils.h"
-#include "utf8-decoding.h"
+#అన్తర్భావ "utils.h"
+#అన్తర్భావ "utf8-decoding.h"
 
 /* Array mapping the leading byte to the length of a UTF-8 sequence.
  * A value of zero indicates that the byte can not begin a UTF-8 sequence. */
-static const uint8_t utf8_sequence_length_by_leading_byte[256] = {
+స్థిర స్థిరరాశి uint8_t utf8_sequence_నిడివి_by_leading_byte[256] = {
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /* 0x00-0x0F */
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /* 0x10-0x1F */
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /* 0x20-0x2F */
@@ -31,52 +31,52 @@ static const uint8_t utf8_sequence_length_by_leading_byte[256] = {
 
 /* Length of next utf-8 sequence */
 uint8_t
-utf8_sequence_length(const char *s)
+utf8_sequence_నిడివి(స్థిరరాశి అక్షరం *s)
 {
-    return utf8_sequence_length_by_leading_byte[(unsigned char)s[0]];
+    తిరిగి utf8_sequence_నిడివి_by_leading_byte[(గుర్తులేని అక్షరం)s[0]];
 }
 
 /* Reads the next UTF-8 sequence in a string */
 uint32_t
-utf8_next_code_point(const char *s, size_t max_size, size_t *size_out)
+utf8_తదుపరి_సంకేతం_బిందువు(స్థిరరాశి అక్షరం *s, కొలత_t max_కొలత, కొలత_t *కొలత_బహిర్గతం)
 {
     uint32_t cp = 0;
-    uint8_t len = utf8_sequence_length(s);
-    *size_out = 0;
+    uint8_t len = utf8_sequence_నిడివి(s);
+    *కొలత_బహిర్గతం = 0;
 
-    if (!max_size || len > max_size)
-        return INVALID_UTF8_CODE_POINT;
+    ఒకవేళ (!max_కొలత || len > max_కొలత)
+        తిరిగి INVALID_UTF8_సంకేతం_బిందువు;
 
     /* Handle leading byte */
-    switch (len) {
-    case 1:
-        *size_out = 1;
-        return (uint32_t)s[0];
-    case 2:
+    ఎంపిక (len) {
+    స్థితి 1:
+        *కొలత_బహిర్గతం = 1;
+        తిరిగి (uint32_t)s[0];
+    స్థితి 2:
         cp = (uint32_t)s[0] & 0x1f;
-        break;
-    case 3:
+        ఆపు;
+    స్థితి 3:
         cp = (uint32_t)s[0] & 0x0f;
-        break;
-    case 4:
+        ఆపు;
+    స్థితి 4:
         cp = (uint32_t)s[0] & 0x07;
-        break;
-    default:
-        return INVALID_UTF8_CODE_POINT;
+        ఆపు;
+    అప్రమేయ:
+        తిరిగి INVALID_UTF8_సంకేతం_బిందువు;
     }
 
     /* Process remaining bytes of the UTF-8 sequence */
-    for (size_t k = 1; k < len; k++) {
-        if (((uint32_t)s[k] & 0xc0) != 0x80)
-            return INVALID_UTF8_CODE_POINT;
+    కొరకు (కొలత_t k = 1; k < len; k++) {
+        ఒకవేళ (((uint32_t)s[k] & 0xc0) != 0x80)
+            తిరిగి INVALID_UTF8_సంకేతం_బిందువు;
         cp <<= 6;
         cp |= (uint32_t)s[k] & 0x3f;
     }
 
     /* Check surrogates */
-    if (is_surrogate(cp))
-        return INVALID_UTF8_CODE_POINT;
+    ఒకవేళ (is_surrogate(cp))
+        తిరిగి INVALID_UTF8_సంకేతం_బిందువు;
 
-    *size_out = len;
-    return cp;
+    *కొలత_బహిర్గతం = len;
+    తిరిగి cp;
 }

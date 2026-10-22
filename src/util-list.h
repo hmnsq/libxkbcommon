@@ -5,49 +5,49 @@
  * SPDX-License-Identifier: MIT
  */
 
-#pragma once
+#సూచన once
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include <stdbool.h>
-#include <stddef.h>
+#అన్తర్భావ <stdbool.h>
+#అన్తర్భావ <stddef.h>
 
 /*
  * This list data structure is a verbatim copy from wayland-util.h from the
  * Wayland project; except that wl_ prefix has been removed.
  */
 
-struct list {
-	struct list *prev;
-	struct list *next;
+నిర్మాణం list {
+	నిర్మాణం list *prev;
+	నిర్మాణం list *తదుపరి;
 };
 
-void list_init(struct list *list);
-void list_insert(struct list *list, struct list *elm);
-void list_append(struct list *list, struct list *elm);
-void list_remove(struct list *elm);
-bool list_empty(const struct list *list);
-bool list_is_last(const struct list *list, const struct list *elm);
+శూన్య list_init(నిర్మాణం list *list);
+శూన్య list_చొప్పించు(నిర్మాణం list *list, నిర్మాణం list *elm);
+శూన్య list_append(నిర్మాణం list *list, నిర్మాణం list *elm);
+శూన్య list_remove(నిర్మాణం list *elm);
+bool list_ఖాళీలు(స్థిరరాశి నిర్మాణం list *list);
+bool list_is_చివరి(స్థిరరాశి నిర్మాణం list *list, స్థిరరాశి నిర్మాణం list *elm);
 
-#define container_of(ptr, type, member)					\
-	(__typeof__(type) *)((char *)(ptr) -				\
+#నిర్వచించు container_యొక్క(ptr, type, member)					\
+	(__typeof__(type) *)((అక్షరం *)(ptr) -				\
 		 offsetof(__typeof__(type), member))
 
-#define list_first_entry(head, pos, member)				\
-	container_of((head)->next, __typeof__(*(pos)), member)
+#నిర్వచించు list_మొదటి_నమోదు(తల, pos, member)				\
+	container_యొక్క((తల)->తదుపరి, __typeof__(*(pos)), member)
 
-#define list_last_entry(head, pos, member)				\
-	container_of((head)->prev, __typeof__(*(pos)), member)
+#నిర్వచించు list_చివరి_నమోదు(తల, pos, member)				\
+	container_యొక్క((తల)->prev, __typeof__(*(pos)), member)
 
-#define list_for_each(pos, head, member)				\
-	for ((pos) = 0, (pos) = list_first_entry(head, pos, member);	\
-	     &(pos)->member != (head);					\
-	     (pos) = list_first_entry(&(pos)->member, pos, member))
+#నిర్వచించు list_for_each(pos, తల, member)				\
+	కొరకు ((pos) = 0, (pos) = list_మొదటి_నమోదు(తల, pos, member);	\
+	     &(pos)->member != (తల);					\
+	     (pos) = list_మొదటి_నమోదు(&(pos)->member, pos, member))
 
-#define list_for_each_safe(pos, tmp, head, member)			\
-	for ((pos) = 0, (tmp) = 0,						\
-	     (pos) = list_first_entry(head, pos, member),			\
-	     (tmp) = list_first_entry(&(pos)->member, tmp, member);		\
-	     &(pos)->member != (head);					\
+#నిర్వచించు list_for_each_సురక్షిత(pos, tmp, తల, member)			\
+	కొరకు ((pos) = 0, (tmp) = 0,						\
+	     (pos) = list_మొదటి_నమోదు(తల, pos, member),			\
+	     (tmp) = list_మొదటి_నమోదు(&(pos)->member, tmp, member);		\
+	     &(pos)->member != (తల);					\
 	     (pos) = (tmp),							\
-	     (tmp) = list_first_entry(&(pos)->member, tmp, member))
+	     (tmp) = list_మొదటి_నమోదు(&(pos)->member, tmp, member))

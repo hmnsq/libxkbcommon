@@ -5,18 +5,18 @@
  *
  * Author: Rob Bradford <rob@linux.intel.com>
  */
-#pragma once
+#సూచన once
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
+#అన్తర్భావ <stdbool.h>
+#అన్తర్భావ <stddef.h>
+#అన్తర్భావ <stdint.h>
 
-#include "utils.h"
+#అన్తర్భావ "utils.h"
 
-XKB_EXPORT_PRIVATE uint8_t
-utf32_to_utf8(uint32_t unichar, char *buffer);
+XKB_EXPORT_వ్యక్తిగత uint8_t
+utf32_గమ్యం_utf8(uint32_t unichar, అక్షరం *బఫరు);
 
-XKB_EXPORT_PRIVATE bool
-is_valid_utf8(const char *ss, size_t len);
+XKB_EXPORT_వ్యక్తిగత bool
+is_valid_utf8(స్థిరరాశి అక్షరం *ss, కొలత_t len);

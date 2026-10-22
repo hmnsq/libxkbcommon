@@ -12,587 +12,587 @@
  * Author: Ran Benita <ran234@gmail.com>
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include <assert.h>
+#అన్తర్భావ <assert.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "context.h"
-#include "darray.h"
-#include "keymap.h"
-#include "messages-codes.h"
-#include "xkbcomp-priv.h"
-#include "text.h"
-#include "expr.h"
-#include "xkbcomp/ast.h"
-#include "action.h"
+#అన్తర్భావ "xkbcommon/xkbcommon.h"
+#అన్తర్భావ "context.h"
+#అన్తర్భావ "darray.h"
+#అన్తర్భావ "keymap.h"
+#అన్తర్భావ "messages-codes.h"
+#అన్తర్భావ "xkbcomp-priv.h"
+#అన్తర్భావ "text.h"
+#అన్తర్భావ "expr.h"
+#అన్తర్భావ "xkbcomp/ast.h"
+#అన్తర్భావ "action.h"
 
-static const ExprBoolean constTrue = {
-    .common = { .type = STMT_EXPR_BOOLEAN_LITERAL, .next = NULL },
-    .set = true,
+స్థిర స్థిరరాశి సమాసం_Boolean constTrue = {
+    .common = { .type = STMT_సమాసం_BOOLEAN_LITERAL, .తదుపరి = ఖాళీ },
+    .సమితి = true,
 };
 
-static const ExprBoolean constFalse = {
-    .common = { .type = STMT_EXPR_BOOLEAN_LITERAL, .next = NULL },
-    .set = false,
+స్థిర స్థిరరాశి సమాసం_Boolean constFalse = {
+    .common = { .type = STMT_సమాసం_BOOLEAN_LITERAL, .తదుపరి = ఖాళీ },
+    .సమితి = false,
 };
 
-enum action_field {
-    ACTION_FIELD_CLEAR_LOCKS,
-    ACTION_FIELD_LATCH_TO_LOCK,
-    ACTION_FIELD_GEN_KEY_EVENT,
-    ACTION_FIELD_REPORT,
-    ACTION_FIELD_DEFAULT,
-    ACTION_FIELD_AFFECT,
-    ACTION_FIELD_INCREMENT,
-    ACTION_FIELD_MODIFIERS,
-    ACTION_FIELD_GROUP,
-    ACTION_FIELD_X,
-    ACTION_FIELD_Y,
-    ACTION_FIELD_REPEAT,
-    ACTION_FIELD_BUTTON,
-    ACTION_FIELD_VALUE,
-    ACTION_FIELD_CONTROLS,
-    ACTION_FIELD_TYPE,
-    ACTION_FIELD_COUNT,
-    ACTION_FIELD_SCREEN,
-    ACTION_FIELD_SAME,
-    ACTION_FIELD_DATA,
-    ACTION_FIELD_DEVICE,
-    ACTION_FIELD_KEYCODE,
-    ACTION_FIELD_MODS_TO_CLEAR,
-    ACTION_FIELD_LOCK_ON_RELEASE,
-    ACTION_FIELD_UNLOCK_ON_PRESS,
-    ACTION_FIELD_LATCH_ON_PRESS,
+గణన action_క్షేత్రం {
+    ACTION_క్షేత్రం_CLEAR_LOCKS,
+    ACTION_క్షేత్రం_LATCH_గమ్యం_తాళం,
+    ACTION_క్షేత్రం_GEN_కీలకం_EVENT,
+    ACTION_క్షేత్రం_REPORT,
+    ACTION_క్షేత్రం_DEFAULT,
+    ACTION_క్షేత్రం_AFFECT,
+    ACTION_క్షేత్రం_INCREMENT,
+    ACTION_క్షేత్రం_MODIFIERS,
+    ACTION_క్షేత్రం_సమూహం,
+    ACTION_క్షేత్రం_X,
+    ACTION_క్షేత్రం_Y,
+    ACTION_క్షేత్రం_REPEAT,
+    ACTION_క్షేత్రం_BUTTON,
+    ACTION_క్షేత్రం_విలువ,
+    ACTION_క్షేత్రం_CONTROLS,
+    ACTION_క్షేత్రం_TYPE,
+    ACTION_క్షేత్రం_లెక్క,
+    ACTION_క్షేత్రం_SCREEN,
+    ACTION_క్షేత్రం_SAME,
+    ACTION_క్షేత్రం_దత్తాంశం,
+    ACTION_క్షేత్రం_DEVICE,
+    ACTION_క్షేత్రం_KEYCODE,
+    ACTION_క్షేత్రం_MODS_గమ్యం_CLEAR,
+    ACTION_క్షేత్రం_తాళం_ON_RELEASE,
+    ACTION_క్షేత్రం_UNLOCK_ON_PRESS,
+    ACTION_క్షేత్రం_LATCH_ON_PRESS,
 };
 
-void
-InitActionsInfo(const struct xkb_keymap *keymap, ActionsInfo *info)
+శూన్య
+InitActionsInfo(స్థిరరాశి నిర్మాణం xkb_keymap *keymap, ActionsInfo *info)
 {
-    for (enum xkb_action_type type = 0; type < _ACTION_TYPE_NUM_ENTRIES; type++)
+    కొరకు (గణన xkb_action_type type = 0; type < ACTION_TYPE_అంకె_ENTRIES; type++)
         info->actions[type].type = type;
 
     /* Apply some "factory defaults". */
 
     /* Increment default button. */
     info->actions[ACTION_TYPE_PTR_DEFAULT].dflt.flags = 0;
-    info->actions[ACTION_TYPE_PTR_DEFAULT].dflt.value = 1;
+    info->actions[ACTION_TYPE_PTR_DEFAULT].dflt.విలువ = 1;
     info->actions[ACTION_TYPE_PTR_MOVE].ptr.flags = ACTION_REPEAT;
     info->actions[ACTION_TYPE_SWITCH_VT].screen.flags = ACTION_SAME_SCREEN;
-    info->actions[ACTION_TYPE_REDIRECT_KEY].redirect.keycode =
-        keymap->redirect_key_auto;
+    info->actions[ACTION_TYPE_REDIRECT_కీలకం].redirect.keycode =
+        keymap->redirect_కీలకం_auto;
 }
 
-static const LookupEntry fieldStrings[] = {
-    { "clearLocks",       ACTION_FIELD_CLEAR_LOCKS     },
-    { "latchToLock",      ACTION_FIELD_LATCH_TO_LOCK   },
-    { "genKeyEvent",      ACTION_FIELD_GEN_KEY_EVENT   },
-    { "generateKeyEvent", ACTION_FIELD_GEN_KEY_EVENT   },
-    { "report",           ACTION_FIELD_REPORT          },
-    { "default",          ACTION_FIELD_DEFAULT         },
-    { "affect",           ACTION_FIELD_AFFECT          },
-    { "increment",        ACTION_FIELD_INCREMENT       },
-    { "modifiers",        ACTION_FIELD_MODIFIERS       },
-    { "mods",             ACTION_FIELD_MODIFIERS       },
-    { "group",            ACTION_FIELD_GROUP           },
-    { "x",                ACTION_FIELD_X               },
-    { "y",                ACTION_FIELD_Y               },
-    { "repeat",           ACTION_FIELD_REPEAT          },
-    { "accel",            ACTION_FIELD_REPEAT          },
-    { "accelerate",       ACTION_FIELD_REPEAT          },
-    { "button",           ACTION_FIELD_BUTTON          },
-    { "value",            ACTION_FIELD_VALUE           },
-    { "controls",         ACTION_FIELD_CONTROLS        },
-    { "ctrls",            ACTION_FIELD_CONTROLS        },
-    { "type",             ACTION_FIELD_TYPE            },
-    { "count",            ACTION_FIELD_COUNT           },
-    { "screen",           ACTION_FIELD_SCREEN          },
-    { "same",             ACTION_FIELD_SAME            },
-    { "sameServer",       ACTION_FIELD_SAME            },
-    { "data",             ACTION_FIELD_DATA            },
-    { "device",           ACTION_FIELD_DEVICE          },
-    { "dev",              ACTION_FIELD_DEVICE          },
-    { "key",              ACTION_FIELD_KEYCODE         },
-    { "keycode",          ACTION_FIELD_KEYCODE         },
-    { "kc",               ACTION_FIELD_KEYCODE         },
-    { "clearmods",        ACTION_FIELD_MODS_TO_CLEAR   },
-    { "clearmodifiers",   ACTION_FIELD_MODS_TO_CLEAR   },
-    { "lockOnRelease",    ACTION_FIELD_LOCK_ON_RELEASE },
-    { "unlockOnPress",    ACTION_FIELD_UNLOCK_ON_PRESS },
-    { "latchOnPress",     ACTION_FIELD_LATCH_ON_PRESS  },
-    { NULL,               0                            }
+స్థిర స్థిరరాశి Lookup_నమోదు క్షేత్రం_అక్షరశ్రేణులు[] = {
+    { "clearLocks",       ACTION_క్షేత్రం_CLEAR_LOCKS     },
+    { "latchToLock",      ACTION_క్షేత్రం_LATCH_గమ్యం_తాళం   },
+    { "genKeyEvent",      ACTION_క్షేత్రం_GEN_కీలకం_EVENT   },
+    { "generateKeyEvent", ACTION_క్షేత్రం_GEN_కీలకం_EVENT   },
+    { "report",           ACTION_క్షేత్రం_REPORT          },
+    { "default",          ACTION_క్షేత్రం_DEFAULT         },
+    { "affect",           ACTION_క్షేత్రం_AFFECT          },
+    { "increment",        ACTION_క్షేత్రం_INCREMENT       },
+    { "modifiers",        ACTION_క్షేత్రం_MODIFIERS       },
+    { "mods",             ACTION_క్షేత్రం_MODIFIERS       },
+    { "group",            ACTION_క్షేత్రం_సమూహం           },
+    { "x",                ACTION_క్షేత్రం_X               },
+    { "y",                ACTION_క్షేత్రం_Y               },
+    { "repeat",           ACTION_క్షేత్రం_REPEAT          },
+    { "accel",            ACTION_క్షేత్రం_REPEAT          },
+    { "accelerate",       ACTION_క్షేత్రం_REPEAT          },
+    { "button",           ACTION_క్షేత్రం_BUTTON          },
+    { "value",            ACTION_క్షేత్రం_విలువ           },
+    { "controls",         ACTION_క్షేత్రం_CONTROLS        },
+    { "ctrls",            ACTION_క్షేత్రం_CONTROLS        },
+    { "type",             ACTION_క్షేత్రం_TYPE            },
+    { "count",            ACTION_క్షేత్రం_లెక్క           },
+    { "screen",           ACTION_క్షేత్రం_SCREEN          },
+    { "same",             ACTION_క్షేత్రం_SAME            },
+    { "sameServer",       ACTION_క్షేత్రం_SAME            },
+    { "data",             ACTION_క్షేత్రం_దత్తాంశం            },
+    { "device",           ACTION_క్షేత్రం_DEVICE          },
+    { "dev",              ACTION_క్షేత్రం_DEVICE          },
+    { "key",              ACTION_క్షేత్రం_KEYCODE         },
+    { "keycode",          ACTION_క్షేత్రం_KEYCODE         },
+    { "kc",               ACTION_క్షేత్రం_KEYCODE         },
+    { "clearmods",        ACTION_క్షేత్రం_MODS_గమ్యం_CLEAR   },
+    { "clearmodifiers",   ACTION_క్షేత్రం_MODS_గమ్యం_CLEAR   },
+    { "lockOnRelease",    ACTION_క్షేత్రం_తాళం_ON_RELEASE },
+    { "unlockOnPress",    ACTION_క్షేత్రం_UNLOCK_ON_PRESS },
+    { "latchOnPress",     ACTION_క్షేత్రం_LATCH_ON_PRESS  },
+    { ఖాళీ,               0                            }
 };
 
-static bool
-stringToActionType(const char *str, enum xkb_action_type *type_rtrn)
+స్థిర bool
+string_గమ్యం_Action_Type(స్థిరరాశి అక్షరం *str, గణన xkb_action_type *type_rtrn)
 {
-    unsigned int type = 0;
-    const bool ret = LookupString(actionTypeNames, str, &type);
-    *type_rtrn = (enum xkb_action_type) type;
-    return ret;
+    గుర్తులేని పూర్ణాంకం type = 0;
+    స్థిరరాశి bool ret = LookupString(action_Type_పేర్లు, str, &type);
+    *type_rtrn = (గణన xkb_action_type) type;
+    తిరిగి ret;
 }
 
-static bool
-stringToField(const char *str, enum action_field *field_rtrn)
+స్థిర bool
+string_గమ్యం_క్షేత్రం(స్థిరరాశి అక్షరం *str, గణన action_క్షేత్రం *క్షేత్రం_rtrn)
 {
-    unsigned int field = 0;
-    const bool ret = LookupString(fieldStrings, str, &field);
-    *field_rtrn = (enum action_field) field;
-    return ret;
+    గుర్తులేని పూర్ణాంకం క్షేత్రం_2 = 0;
+    స్థిరరాశి bool ret = LookupString(క్షేత్రం_అక్షరశ్రేణులు, str, &క్షేత్రం_2);
+    *క్షేత్రం_rtrn = (గణన action_క్షేత్రం) క్షేత్రం_2;
+    తిరిగి ret;
 }
 
-static const char *
-fieldText(enum action_field field)
+స్థిర స్థిరరాశి అక్షరం *
+క్షేత్రం_పాఠ్యం(గణన action_క్షేత్రం క్షేత్రం_2)
 {
-    return LookupValue(fieldStrings, field);
+    తిరిగి Lookup_విలువ(క్షేత్రం_అక్షరశ్రేణులు, క్షేత్రం_2);
 }
 
 /***====================================================================***/
 
-static inline enum xkb_parser_error
-ReportMismatch(struct xkb_context *ctx, enum xkb_message_code code,
-               enum xkb_action_type action, enum action_field field,
-               const char *type, enum xkb_parser_strict_flags strict)
+స్థిర అంతఃవరుస గణన xkb_parser_error
+ReportMismatch(నిర్మాణం xkb_context *ctx, గణన xkb_సందేశం_సంకేతం సంకేతం_2,
+               గణన xkb_action_type action, గణన action_క్షేత్రం క్షేత్రం_2,
+               స్థిరరాశి అక్షరం *type, గణన xkb_parser_strict_flags strict)
 {
-    log_err(ctx, code,
+    log_err(ctx, సంకేతం_2,
             "Value of %s field must be of type %s; "
             "Action %s definition ignored\n",
-            fieldText(field), type, ActionTypeText(action));
-    return (strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+            క్షేత్రం_పాఠ్యం(క్షేత్రం_2), type, Action_Type_పాఠ్యం(action));
+    తిరిగి (strict & PARSER_NO_క్షేత్రం_TYPE_MISMATCH)
         ? PARSER_FATAL_ERROR
         : PARSER_RECOVERABLE_ERROR;
 }
 
-static inline enum xkb_parser_error
-ReportFormatVersionMismatch(struct xkb_context *ctx,
-                            enum xkb_action_type action,
-                            enum action_field field,
-                            enum xkb_keymap_format format,
-                            const char *versions,
-                            enum xkb_parser_strict_flags strict)
+స్థిర అంతఃవరుస గణన xkb_parser_error
+Report_Format_సంస్కరణ_Mismatch(నిర్మాణం xkb_context *ctx,
+                            గణన xkb_action_type action,
+                            గణన action_క్షేత్రం క్షేత్రం_2,
+                            గణన xkb_keymap_format format,
+                            స్థిరరాశి అక్షరం *versions,
+                            గణన xkb_parser_strict_flags strict)
 {
-    log_err(ctx, XKB_ERROR_INCOMPATIBLE_KEYMAP_TEXT_FORMAT,
+    log_err(ctx, XKB_ERROR_INCOMPATIBLE_KEYMAP_పాఠ్యం_FORMAT,
             "Field %s for an action of type %s requires keymap text format %s, "
             " but got: %d; Action definition ignored\n",
-            fieldText(field), ActionTypeText(action), versions, format);
-    return (strict & PARSER_NO_UNKNOWN_ACTION_FIELDS)
+            క్షేత్రం_పాఠ్యం(క్షేత్రం_2), Action_Type_పాఠ్యం(action), versions, format);
+    తిరిగి (strict & PARSER_NO_UNKNOWN_ACTION_FIELDS)
         ? PARSER_FATAL_ERROR
         /* No error reported: field is just ignored */
         : PARSER_SUCCESS;
 }
 
-static inline enum xkb_parser_error
-ReportIllegal(struct xkb_context *ctx, enum xkb_action_type action,
-              enum action_field field, enum xkb_parser_strict_flags strict)
+స్థిర అంతఃవరుస గణన xkb_parser_error
+ReportIllegal(నిర్మాణం xkb_context *ctx, గణన xkb_action_type action,
+              గణన action_క్షేత్రం క్షేత్రం_2, గణన xkb_parser_strict_flags strict)
 {
-    log_err(ctx, XKB_ERROR_INVALID_ACTION_FIELD,
+    log_err(ctx, XKB_ERROR_INVALID_ACTION_క్షేత్రం,
             "Field %s is not defined for an action of type %s; "
             "Action definition ignored\n",
-            fieldText(field), ActionTypeText(action));
-    return (strict & PARSER_NO_ILLEGAL_ACTION_FIELDS)
+            క్షేత్రం_పాఠ్యం(క్షేత్రం_2), Action_Type_పాఠ్యం(action));
+    తిరిగి (strict & PARSER_NO_ILLEGAL_ACTION_FIELDS)
         ? PARSER_FATAL_ERROR
         /* No error reported: field is just ignored */
         : PARSER_SUCCESS;
 }
 
-static inline enum xkb_parser_error
-ReportActionNotArray(struct xkb_context *ctx, enum xkb_action_type action,
-                     enum action_field field,
-                     enum xkb_parser_strict_flags strict)
+స్థిర అంతఃవరుస గణన xkb_parser_error
+ReportActionNotArray(నిర్మాణం xkb_context *ctx, గణన xkb_action_type action,
+                     గణన action_క్షేత్రం క్షేత్రం_2,
+                     గణన xkb_parser_strict_flags strict)
 {
-    log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
+    log_err(ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE,
             "The %s field in the %s action is not an array; "
             "Action definition ignored\n",
-            fieldText(field), ActionTypeText(action));
-    return (strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+            క్షేత్రం_పాఠ్యం(క్షేత్రం_2), Action_Type_పాఠ్యం(action));
+    తిరిగి (strict & PARSER_NO_క్షేత్రం_TYPE_MISMATCH)
         ? PARSER_FATAL_ERROR
         : PARSER_RECOVERABLE_ERROR;
 }
 
-static enum xkb_parser_error
-HandleNoAction(const struct xkb_keymap_info *keymap_info,
-               const struct xkb_mod_set *mods,
-               union xkb_action *action, enum action_field field,
-               const ExprDef *array_ndx, const ExprDef *value,
-               ExprDef **value_ptr)
+స్థిర గణన xkb_parser_error
+HandleNoAction(స్థిరరాశి నిర్మాణం xkb_keymap_info *keymap_info,
+               స్థిరరాశి నిర్మాణం xkb_mod_సమితి *mods,
+               సంఘం xkb_action *action, గణన action_క్షేత్రం క్షేత్రం_2,
+               స్థిరరాశి సమాసం_Def *array_ndx, స్థిరరాశి సమాసం_Def *విలువ,
+               సమాసం_Def **విలువ_ptr)
 {
-    log_err(keymap_info->keymap.ctx, XKB_ERROR_INVALID_ACTION_FIELD,
+    log_err(keymap_info->keymap.ctx, XKB_ERROR_INVALID_ACTION_క్షేత్రం,
             "The \"%s\" action takes no argument, but got \"%s\" field; "
             "Action definition ignored\n",
-            ActionTypeText(action->type), fieldText(field));
-    return (keymap_info->strict & PARSER_NO_ILLEGAL_ACTION_FIELDS)
+            Action_Type_పాఠ్యం(action->type), క్షేత్రం_పాఠ్యం(క్షేత్రం_2));
+    తిరిగి (keymap_info->strict & PARSER_NO_ILLEGAL_ACTION_FIELDS)
         ? PARSER_FATAL_ERROR
         /* No error reported: field is just ignored */
         : PARSER_SUCCESS;
 }
 
-static enum xkb_parser_error
-CheckBooleanFlag(struct xkb_context *ctx, enum xkb_parser_strict_flags strict,
-                 enum xkb_action_type action, enum action_field field,
-                 enum xkb_action_flags flag, const ExprDef *array_ndx,
-                 const ExprDef *value, enum xkb_action_flags *flags_inout)
+స్థిర గణన xkb_parser_error
+CheckBooleanFlag(నిర్మాణం xkb_context *ctx, గణన xkb_parser_strict_flags strict,
+                 గణన xkb_action_type action, గణన action_క్షేత్రం క్షేత్రం_2,
+                 గణన xkb_action_flags flag, స్థిరరాశి సమాసం_Def *array_ndx,
+                 స్థిరరాశి సమాసం_Def *విలువ, గణన xkb_action_flags *flags_inout)
 {
-    bool set = false;
+    bool సమితి = false;
 
-    if (array_ndx)
-        return ReportActionNotArray(ctx, action, field, strict);
+    ఒకవేళ (array_ndx)
+        తిరిగి ReportActionNotArray(ctx, action, క్షేత్రం_2, strict);
 
-    if (!ExprResolveBoolean(ctx, value, &set))
-        return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
-                              action, field, "boolean", strict);
+    ఒకవేళ (!సమాసం_Resolve_Boolean(ctx, విలువ, &సమితి))
+        తిరిగి ReportMismatch(ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE,
+                              action, క్షేత్రం_2, "boolean", strict);
 
-    if (set)
+    ఒకవేళ (సమితి)
         *flags_inout |= flag;
-    else
+    లేకపోతే
         *flags_inout &= ~flag;
 
-    return PARSER_SUCCESS;
+    తిరిగి PARSER_SUCCESS;
 }
 
-static enum xkb_parser_error
-CheckModifierField(struct xkb_context *ctx, enum xkb_parser_strict_flags strict,
-                   const struct xkb_mod_set *mods, enum xkb_action_type action,
-                   const ExprDef *array_ndx, const ExprDef *value,
-                   enum xkb_action_flags *flags_inout, xkb_mod_mask_t *mods_rtrn)
+స్థిర గణన xkb_parser_error
+Check_Modifier_క్షేత్రం(నిర్మాణం xkb_context *ctx, గణన xkb_parser_strict_flags strict,
+                   స్థిరరాశి నిర్మాణం xkb_mod_సమితి *mods, గణన xkb_action_type action,
+                   స్థిరరాశి సమాసం_Def *array_ndx, స్థిరరాశి సమాసం_Def *విలువ,
+                   గణన xkb_action_flags *flags_inout, xkb_mod_ముసుగు_t *mods_rtrn)
 {
-    if (array_ndx)
-        return ReportActionNotArray(ctx, action, ACTION_FIELD_MODIFIERS, strict);
+    ఒకవేళ (array_ndx)
+        తిరిగి ReportActionNotArray(ctx, action, ACTION_క్షేత్రం_MODIFIERS, strict);
 
-    if (value->common.type == STMT_EXPR_IDENT) {
-        const char *valStr;
-        valStr = xkb_atom_text(ctx, value->ident.ident);
-        if (valStr && (istreq(valStr, "usemodmapmods") ||
+    ఒకవేళ (విలువ->common.type == STMT_సమాసం_IDENT) {
+        స్థిరరాశి అక్షరం *valStr;
+        valStr = xkb_atom_పాఠ్యం(ctx, విలువ->ident.ident);
+        ఒకవేళ (valStr && (istreq(valStr, "usemodmapmods") ||
                        istreq(valStr, "modmapmods"))) {
             *mods_rtrn = 0;
             *flags_inout |= ACTION_MODS_LOOKUP_MODMAP;
-            return PARSER_SUCCESS;
+            తిరిగి PARSER_SUCCESS;
         }
     }
 
-    if (!ExprResolveModMask(ctx, value, MOD_BOTH, mods, mods_rtrn))
-        return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action,
-                              ACTION_FIELD_MODIFIERS, "modifier mask", strict);
+    ఒకవేళ (!సమాసం_Resolve_Mod_ముసుగు(ctx, విలువ, MOD_BOTH, mods, mods_rtrn))
+        తిరిగి ReportMismatch(ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE, action,
+                              ACTION_క్షేత్రం_MODIFIERS, "modifier mask", strict);
 
     *flags_inout &= ~ACTION_MODS_LOOKUP_MODMAP;
-    return PARSER_SUCCESS;
+    తిరిగి PARSER_SUCCESS;
 }
 
-static const LookupEntry lockWhich[] = {
+స్థిర స్థిరరాశి Lookup_నమోదు తాళం_Which[] = {
     { "both", 0 },
-    { "lock", ACTION_LOCK_NO_UNLOCK },
-    { "neither", (ACTION_LOCK_NO_LOCK | ACTION_LOCK_NO_UNLOCK) },
-    { "unlock", ACTION_LOCK_NO_LOCK },
-    { NULL, 0 }
+    { "lock", ACTION_తాళం_NO_UNLOCK },
+    { "neither", (ACTION_తాళం_NO_తాళం | ACTION_తాళం_NO_UNLOCK) },
+    { "unlock", ACTION_తాళం_NO_తాళం },
+    { ఖాళీ, 0 }
 };
 
-static enum xkb_parser_error
-CheckAffectField(struct xkb_context *ctx, enum xkb_parser_strict_flags strict,
-                 enum xkb_action_type action, const ExprDef *array_ndx,
-                 const ExprDef *value, enum xkb_action_flags *flags_inout)
+స్థిర గణన xkb_parser_error
+Check_Affect_క్షేత్రం(నిర్మాణం xkb_context *ctx, గణన xkb_parser_strict_flags strict,
+                 గణన xkb_action_type action, స్థిరరాశి సమాసం_Def *array_ndx,
+                 స్థిరరాశి సమాసం_Def *విలువ, గణన xkb_action_flags *flags_inout)
 {
-    if (array_ndx)
-        return ReportActionNotArray(ctx, action, ACTION_FIELD_AFFECT, strict);
+    ఒకవేళ (array_ndx)
+        తిరిగి ReportActionNotArray(ctx, action, ACTION_క్షేత్రం_AFFECT, strict);
 
     uint32_t flags = 0;
-    if (!ExprResolveEnum(ctx, value, &flags, lockWhich))
-        return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
-                              action, ACTION_FIELD_AFFECT,
+    ఒకవేళ (!సమాసం_Resolve_Enum(ctx, విలువ, &flags, తాళం_Which))
+        తిరిగి ReportMismatch(ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE,
+                              action, ACTION_క్షేత్రం_AFFECT,
                               "lock, unlock, both, neither", strict);
 
-    *flags_inout &= ~(ACTION_LOCK_NO_LOCK | ACTION_LOCK_NO_UNLOCK);
-    *flags_inout |= (enum xkb_action_flags) flags;
-    return PARSER_SUCCESS;
+    *flags_inout &= ~(ACTION_తాళం_NO_తాళం | ACTION_తాళం_NO_UNLOCK);
+    *flags_inout |= (గణన xkb_action_flags) flags;
+    తిరిగి PARSER_SUCCESS;
 }
 
-static enum xkb_parser_error
-HandleSetLatchLockMods(const struct xkb_keymap_info *keymap_info,
-                       const struct xkb_mod_set *mods,
-                       union xkb_action *action, enum action_field field,
-                       const ExprDef *array_ndx, const ExprDef *value,
-                       ExprDef **value_ptr)
+స్థిర గణన xkb_parser_error
+Handle_సమితి_Latch_తాళం_Mods(స్థిరరాశి నిర్మాణం xkb_keymap_info *keymap_info,
+                       స్థిరరాశి నిర్మాణం xkb_mod_సమితి *mods,
+                       సంఘం xkb_action *action, గణన action_క్షేత్రం క్షేత్రం_2,
+                       స్థిరరాశి సమాసం_Def *array_ndx, స్థిరరాశి సమాసం_Def *విలువ,
+                       సమాసం_Def **విలువ_ptr)
 {
-    struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
-    struct xkb_mod_action *act = &action->mods;
-    const enum xkb_action_type type = action->type;
+    నిర్మాణం xkb_context * పరిమిత స్థిరరాశి ctx = keymap_info->keymap.ctx;
+    నిర్మాణం xkb_mod_action *act = &action->mods;
+    స్థిరరాశి గణన xkb_action_type type = action->type;
 
-    if (field == ACTION_FIELD_MODIFIERS)
-        return CheckModifierField(ctx, keymap_info->strict, mods, action->type,
-                                  array_ndx, value, &act->flags, &act->mods.mods);
-    if (field == ACTION_FIELD_UNLOCK_ON_PRESS) {
+    ఒకవేళ (క్షేత్రం_2 == ACTION_క్షేత్రం_MODIFIERS)
+        తిరిగి Check_Modifier_క్షేత్రం(ctx, keymap_info->strict, mods, action->type,
+                                  array_ndx, విలువ, &act->flags, &act->mods.mods);
+    ఒకవేళ (క్షేత్రం_2 == ACTION_క్షేత్రం_UNLOCK_ON_PRESS) {
         /* Ensure to update if a new modifier action is introduced. */
-        assert(type == ACTION_TYPE_MOD_SET || type == ACTION_TYPE_MOD_LATCH ||
-               type == ACTION_TYPE_MOD_LOCK);
-        if (keymap_info->features.mods_unlock_on_press) {
-            const enum xkb_parser_error ret = CheckBooleanFlag(
-                ctx, keymap_info->strict, action->type, field,
-                ACTION_UNLOCK_ON_PRESS, array_ndx, value, &act->flags
+        ప్రతిజ్ఞా(type == ACTION_TYPE_MOD_సమితి || type == ACTION_TYPE_MOD_LATCH ||
+               type == ACTION_TYPE_MOD_తాళం);
+        ఒకవేళ (keymap_info->features.mods_unlock_on_press) {
+            స్థిరరాశి గణన xkb_parser_error ret = CheckBooleanFlag(
+                ctx, keymap_info->strict, action->type, క్షేత్రం_2,
+                ACTION_UNLOCK_ON_PRESS, array_ndx, విలువ, &act->flags
             );
-            if (ret == PARSER_SUCCESS)
+            ఒకవేళ (ret == PARSER_SUCCESS)
                 act->flags |= ACTION_EXPLICIT_UNLOCK_ON_PRESS;
-            return ret;
-        } else {
-            return ReportFormatVersionMismatch(ctx, action->type, field,
+            తిరిగి ret;
+        } లేకపోతే {
+            తిరిగి Report_Format_సంస్కరణ_Mismatch(ctx, action->type, క్షేత్రం_2,
                                                keymap_info->keymap.format,
                                                ">= 2", keymap_info->strict);
         }
     }
-    if ((type == ACTION_TYPE_MOD_SET || type == ACTION_TYPE_MOD_LATCH) &&
-        field == ACTION_FIELD_CLEAR_LOCKS)
-        return CheckBooleanFlag(ctx, keymap_info->strict, action->type, field,
-                                ACTION_LOCK_CLEAR, array_ndx, value,
+    ఒకవేళ ((type == ACTION_TYPE_MOD_సమితి || type == ACTION_TYPE_MOD_LATCH) &&
+        క్షేత్రం_2 == ACTION_క్షేత్రం_CLEAR_LOCKS)
+        తిరిగి CheckBooleanFlag(ctx, keymap_info->strict, action->type, క్షేత్రం_2,
+                                ACTION_తాళం_CLEAR, array_ndx, విలువ,
                                 &act->flags);
-    if (type == ACTION_TYPE_MOD_LATCH) {
-        if (field == ACTION_FIELD_LATCH_TO_LOCK)
-            return CheckBooleanFlag(ctx, keymap_info->strict, action->type,
-                                    field, ACTION_LATCH_TO_LOCK, array_ndx,
-                                    value, &act->flags);
-        if (field == ACTION_FIELD_LATCH_ON_PRESS) {
-            if (keymap_info->features.mods_latch_on_press) {
-                return CheckBooleanFlag(ctx, keymap_info->strict, action->type,
-                                        field, ACTION_LATCH_ON_PRESS, array_ndx,
-                                        value, &act->flags);
-            } else {
-                return ReportFormatVersionMismatch(ctx, action->type, field,
+    ఒకవేళ (type == ACTION_TYPE_MOD_LATCH) {
+        ఒకవేళ (క్షేత్రం_2 == ACTION_క్షేత్రం_LATCH_గమ్యం_తాళం)
+            తిరిగి CheckBooleanFlag(ctx, keymap_info->strict, action->type,
+                                    క్షేత్రం_2, ACTION_LATCH_గమ్యం_తాళం, array_ndx,
+                                    విలువ, &act->flags);
+        ఒకవేళ (క్షేత్రం_2 == ACTION_క్షేత్రం_LATCH_ON_PRESS) {
+            ఒకవేళ (keymap_info->features.mods_latch_on_press) {
+                తిరిగి CheckBooleanFlag(ctx, keymap_info->strict, action->type,
+                                        క్షేత్రం_2, ACTION_LATCH_ON_PRESS, array_ndx,
+                                        విలువ, &act->flags);
+            } లేకపోతే {
+                తిరిగి Report_Format_సంస్కరణ_Mismatch(ctx, action->type, క్షేత్రం_2,
                                                    keymap_info->keymap.format,
                                                    ">= 2", keymap_info->strict);
             }
         }
     }
-    if (type == ACTION_TYPE_MOD_LOCK && field == ACTION_FIELD_AFFECT)
-        return CheckAffectField(ctx, keymap_info->strict, action->type,
-                                array_ndx, value, &act->flags);
+    ఒకవేళ (type == ACTION_TYPE_MOD_తాళం && క్షేత్రం_2 == ACTION_క్షేత్రం_AFFECT)
+        తిరిగి Check_Affect_క్షేత్రం(ctx, keymap_info->strict, action->type,
+                                array_ndx, విలువ, &act->flags);
 
-    return ReportIllegal(ctx, action->type, field, keymap_info->strict);
+    తిరిగి ReportIllegal(ctx, action->type, క్షేత్రం_2, keymap_info->strict);
 }
 
-static enum xkb_parser_error
-CheckGroupField(const struct xkb_keymap_info *keymap_info,
-                enum xkb_action_type action, const ExprDef *array_ndx,
-                const ExprDef *value, ExprDef **value_ptr,
-                enum xkb_action_flags *flags_inout, int32_t *group_rtrn)
+స్థిర గణన xkb_parser_error
+Check_సమూహం_క్షేత్రం(స్థిరరాశి నిర్మాణం xkb_keymap_info *keymap_info,
+                గణన xkb_action_type action, స్థిరరాశి సమాసం_Def *array_ndx,
+                స్థిరరాశి సమాసం_Def *విలువ, సమాసం_Def **విలువ_ptr,
+                గణన xkb_action_flags *flags_inout, int32_t *సమూహం_rtrn)
 {
-    const ExprDef *spec;
-    xkb_layout_index_t idx = 0;
-    enum xkb_action_flags flags = *flags_inout;
+    స్థిరరాశి సమాసం_Def *spec;
+    xkb_layout_సూచీ_t idx = 0;
+    గణన xkb_action_flags flags = *flags_inout;
 
-    if (array_ndx)
-        return ReportActionNotArray(keymap_info->keymap.ctx, action,
-                                    ACTION_FIELD_GROUP, keymap_info->strict);
+    ఒకవేళ (array_ndx)
+        తిరిగి ReportActionNotArray(keymap_info->keymap.ctx, action,
+                                    ACTION_క్షేత్రం_సమూహం, keymap_info->strict);
 
-    if (value->common.type == STMT_EXPR_NEGATE ||
-        value->common.type == STMT_EXPR_UNARY_PLUS) {
+    ఒకవేళ (విలువ->common.type == STMT_సమాసం_NEGATE ||
+        విలువ->common.type == STMT_సమాసం_UNARY_PLUS) {
         flags &= ~ACTION_ABSOLUTE_SWITCH;
-        spec = value->unary.child;
-        value_ptr = &(*value_ptr)->unary.child;
-    } else {
+        spec = విలువ->unary.బిడ్డ;
+        విలువ_ptr = &(*విలువ_ptr)->unary.బిడ్డ;
+    } లేకపోతే {
         flags |= ACTION_ABSOLUTE_SWITCH;
-        spec = value;
+        spec = విలువ;
     }
 
-    const bool absolute = (flags & ACTION_ABSOLUTE_SWITCH);
+    స్థిరరాశి bool absolute = (flags & ACTION_ABSOLUTE_SWITCH);
     bool pending = false;
-    const enum xkb_parser_error ret =
-        ExprResolveGroup(keymap_info, spec, absolute, &idx, &pending);
-    if (ret != PARSER_SUCCESS && !pending) {
+    స్థిరరాశి గణన xkb_parser_error ret =
+        సమాసం_Resolve_సమూహం(keymap_info, spec, absolute, &idx, &pending);
+    ఒకవేళ (ret != PARSER_SUCCESS && !pending) {
         ReportMismatch(keymap_info->keymap.ctx,
-                       XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_, action,
-                       ACTION_FIELD_GROUP, "integer", keymap_info->strict);
-        return ret;
+                       XKB_ERROR_UNSUPPORTED_LAYOUT_సూచీ_2, action,
+                       ACTION_క్షేత్రం_సమూహం, "integer", keymap_info->strict);
+        తిరిగి ret;
     }
 
-    if (pending) {
+    ఒకవేళ (pending) {
         flags |= ACTION_PENDING_COMPUTATION;
-        const darray_size_t pending_index =
-            darray_size(*keymap_info->pending_computations);
+        స్థిరరాశి darray_కొలత_t pending_సూచీ =
+            darray_కొలత(*keymap_info->pending_computations);
         darray_append(
             *keymap_info->pending_computations,
-            (struct pending_computation) {
-                .expr = *value_ptr,
+            (నిర్మాణం pending_computation) {
+                .సమాసం = *విలువ_ptr,
                 .computed = false,
-                .value = 0,
+                .విలువ = 0,
             }
         );
-        *value_ptr = NULL;
-        static_assert(sizeof(pending_index) == sizeof(*group_rtrn),
+        *విలువ_ptr = ఖాళీ;
+        static_assert(పరిమాణం(pending_సూచీ) == పరిమాణం(*సమూహం_rtrn),
                       "Cannot save pending computation");
-        *group_rtrn = (int32_t) pending_index;
-    } else {
+        *సమూహం_rtrn = (int32_t) pending_సూచీ;
+    } లేకపోతే {
         flags &= ~ACTION_PENDING_COMPUTATION;
         /* `+n`, `-n` are relative, `n` is absolute. */
-        if (absolute) {
-            *group_rtrn = (int32_t) (idx - 1);
-        } else {
-            *group_rtrn = (int32_t) idx;
-            if (value->common.type == STMT_EXPR_NEGATE)
-                *group_rtrn = -*group_rtrn;
+        ఒకవేళ (absolute) {
+            *సమూహం_rtrn = (int32_t) (idx - 1);
+        } లేకపోతే {
+            *సమూహం_rtrn = (int32_t) idx;
+            ఒకవేళ (విలువ->common.type == STMT_సమాసం_NEGATE)
+                *సమూహం_rtrn = -*సమూహం_rtrn;
         }
     }
 
     *flags_inout = flags;
-    return PARSER_SUCCESS;
+    తిరిగి PARSER_SUCCESS;
 }
 
-static enum xkb_parser_error
-HandleSetLatchLockGroup(const struct xkb_keymap_info *keymap_info,
-                        const struct xkb_mod_set *mods,
-                        union xkb_action *action, enum action_field field,
-                        const ExprDef *array_ndx, const ExprDef *value,
-                        ExprDef **value_ptr)
+స్థిర గణన xkb_parser_error
+Handle_సమితి_Latch_తాళం_సమూహం(స్థిరరాశి నిర్మాణం xkb_keymap_info *keymap_info,
+                        స్థిరరాశి నిర్మాణం xkb_mod_సమితి *mods,
+                        సంఘం xkb_action *action, గణన action_క్షేత్రం క్షేత్రం_2,
+                        స్థిరరాశి సమాసం_Def *array_ndx, స్థిరరాశి సమాసం_Def *విలువ,
+                        సమాసం_Def **విలువ_ptr)
 {
-    struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
-    struct xkb_group_action *act = &action->group;
-    const enum xkb_action_type type = action->type;
+    నిర్మాణం xkb_context * పరిమిత స్థిరరాశి ctx = keymap_info->keymap.ctx;
+    నిర్మాణం xkb_సమూహం_action *act = &action->సమూహం;
+    స్థిరరాశి గణన xkb_action_type type = action->type;
 
-    if (field == ACTION_FIELD_GROUP) {
-        return CheckGroupField(keymap_info, action->type, array_ndx, value,
-                               value_ptr, &act->flags, &act->group);
+    ఒకవేళ (క్షేత్రం_2 == ACTION_క్షేత్రం_సమూహం) {
+        తిరిగి Check_సమూహం_క్షేత్రం(keymap_info, action->type, array_ndx, విలువ,
+                               విలువ_ptr, &act->flags, &act->సమూహం);
     }
-    if ((type == ACTION_TYPE_GROUP_SET || type == ACTION_TYPE_GROUP_LATCH) &&
-        field == ACTION_FIELD_CLEAR_LOCKS)
-        return CheckBooleanFlag(ctx, keymap_info->strict, action->type, field,
-                                ACTION_LOCK_CLEAR, array_ndx, value,
+    ఒకవేళ ((type == ACTION_TYPE_సమూహం_సమితి || type == ACTION_TYPE_సమూహం_LATCH) &&
+        క్షేత్రం_2 == ACTION_క్షేత్రం_CLEAR_LOCKS)
+        తిరిగి CheckBooleanFlag(ctx, keymap_info->strict, action->type, క్షేత్రం_2,
+                                ACTION_తాళం_CLEAR, array_ndx, విలువ,
                                 &act->flags);
-    if (type == ACTION_TYPE_GROUP_LATCH &&
-        field == ACTION_FIELD_LATCH_TO_LOCK)
-        return CheckBooleanFlag(ctx, keymap_info->strict, action->type, field,
-                                ACTION_LATCH_TO_LOCK, array_ndx, value,
+    ఒకవేళ (type == ACTION_TYPE_సమూహం_LATCH &&
+        క్షేత్రం_2 == ACTION_క్షేత్రం_LATCH_గమ్యం_తాళం)
+        తిరిగి CheckBooleanFlag(ctx, keymap_info->strict, action->type, క్షేత్రం_2,
+                                ACTION_LATCH_గమ్యం_తాళం, array_ndx, విలువ,
                                 &act->flags);
-    if (type == ACTION_TYPE_GROUP_LOCK &&
-        field == ACTION_FIELD_LOCK_ON_RELEASE) {
+    ఒకవేళ (type == ACTION_TYPE_సమూహం_తాళం &&
+        క్షేత్రం_2 == ACTION_క్షేత్రం_తాళం_ON_RELEASE) {
         /* TODO: support this for `ACTION_TYPE_MOD_LOCK` too? */
-        if (keymap_info->features.group_lock_on_release) {
-            const enum xkb_parser_error ret = CheckBooleanFlag(
-                ctx, keymap_info->strict, action->type, field,
-                ACTION_LOCK_ON_RELEASE, array_ndx, value, &act->flags
+        ఒకవేళ (keymap_info->features.సమూహం_తాళం_on_release) {
+            స్థిరరాశి గణన xkb_parser_error ret = CheckBooleanFlag(
+                ctx, keymap_info->strict, action->type, క్షేత్రం_2,
+                ACTION_తాళం_ON_RELEASE, array_ndx, విలువ, &act->flags
             );
-            if (ret == PARSER_SUCCESS)
-                act->flags |= ACTION_EXPLICIT_LOCK_ON_RELEASE;
-            return ret;
-        } else {
-            return ReportFormatVersionMismatch(ctx, action->type, field,
+            ఒకవేళ (ret == PARSER_SUCCESS)
+                act->flags |= ACTION_EXPLICIT_తాళం_ON_RELEASE;
+            తిరిగి ret;
+        } లేకపోతే {
+            తిరిగి Report_Format_సంస్కరణ_Mismatch(ctx, action->type, క్షేత్రం_2,
                                                keymap_info->keymap.format,
                                                ">= v2", keymap_info->strict);
         }
     }
 
-    return ReportIllegal(ctx, action->type, field, keymap_info->strict);
+    తిరిగి ReportIllegal(ctx, action->type, క్షేత్రం_2, keymap_info->strict);
 }
 
-static enum xkb_parser_error
-HandleMovePtr(const struct xkb_keymap_info *keymap_info,
-              const struct xkb_mod_set *mods,
-              union xkb_action *action, enum action_field field,
-              const ExprDef *array_ndx, const ExprDef *value,
-              ExprDef **value_ptr)
+స్థిర గణన xkb_parser_error
+HandleMovePtr(స్థిరరాశి నిర్మాణం xkb_keymap_info *keymap_info,
+              స్థిరరాశి నిర్మాణం xkb_mod_సమితి *mods,
+              సంఘం xkb_action *action, గణన action_క్షేత్రం క్షేత్రం_2,
+              స్థిరరాశి సమాసం_Def *array_ndx, స్థిరరాశి సమాసం_Def *విలువ,
+              సమాసం_Def **విలువ_ptr)
 {
-    struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
-    struct xkb_pointer_motion_action *act = &action->ptr;
+    నిర్మాణం xkb_context * పరిమిత స్థిరరాశి ctx = keymap_info->keymap.ctx;
+    నిర్మాణం xkb_సూచిక_motion_action *act = &action->ptr;
 
-    if (field == ACTION_FIELD_X || field == ACTION_FIELD_Y) {
+    ఒకవేళ (క్షేత్రం_2 == ACTION_క్షేత్రం_X || క్షేత్రం_2 == ACTION_క్షేత్రం_Y) {
         int64_t val = 0;
-        const bool absolute = (value->common.type != STMT_EXPR_NEGATE &&
-                               value->common.type != STMT_EXPR_UNARY_PLUS);
+        స్థిరరాశి bool absolute = (విలువ->common.type != STMT_సమాసం_NEGATE &&
+                               విలువ->common.type != STMT_సమాసం_UNARY_PLUS);
 
-        if (array_ndx)
-            return ReportActionNotArray(ctx, action->type, field,
+        ఒకవేళ (array_ndx)
+            తిరిగి ReportActionNotArray(ctx, action->type, క్షేత్రం_2,
                                         keymap_info->strict);
 
-        if (!ExprResolveInteger(ctx, value, &val))
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
-                                  field, "integer", keymap_info->strict);
+        ఒకవేళ (!సమాసం_Resolve_Integer(ctx, విలువ, &val))
+            తిరిగి ReportMismatch(ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE, action->type,
+                                  క్షేత్రం_2, "integer", keymap_info->strict);
 
-        if (val < INT16_MIN || val > INT16_MAX) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        ఒకవేళ (val < INT16_MIN || val > INT16_MAX) {
+            log_err(ctx, XKB_LOG_సందేశం_NO_ID,
                     "The %s field in the %s action must be in range %d..%d, "
                     "but got %"PRId64". Action definition ignored\n",
-                    fieldText(field), ActionTypeText(action->type),
+                    క్షేత్రం_పాఠ్యం(క్షేత్రం_2), Action_Type_పాఠ్యం(action->type),
                     INT16_MIN, INT16_MAX, val);
-            return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+            తిరిగి (keymap_info->strict & PARSER_NO_క్షేత్రం_TYPE_MISMATCH)
                 ? PARSER_FATAL_ERROR
                 : PARSER_RECOVERABLE_ERROR;
         }
 
-        if (field == ACTION_FIELD_X) {
-            if (absolute)
+        ఒకవేళ (క్షేత్రం_2 == ACTION_క్షేత్రం_X) {
+            ఒకవేళ (absolute)
                 act->flags |= ACTION_ABSOLUTE_X;
             act->x = (int16_t) val;
         }
-        else {
-            if (absolute)
+        లేకపోతే {
+            ఒకవేళ (absolute)
                 act->flags |= ACTION_ABSOLUTE_Y;
             act->y = (int16_t) val;
         }
 
-        return PARSER_SUCCESS;
+        తిరిగి PARSER_SUCCESS;
     }
-    else if (field == ACTION_FIELD_REPEAT) {
-        return CheckBooleanFlag(ctx, keymap_info->strict, action->type, field,
-                                ACTION_REPEAT, array_ndx, value, &act->flags);
+    లేకపోతే ఒకవేళ (క్షేత్రం_2 == ACTION_క్షేత్రం_REPEAT) {
+        తిరిగి CheckBooleanFlag(ctx, keymap_info->strict, action->type, క్షేత్రం_2,
+                                ACTION_REPEAT, array_ndx, విలువ, &act->flags);
     }
 
-    return ReportIllegal(ctx, action->type, field, keymap_info->strict);
+    తిరిగి ReportIllegal(ctx, action->type, క్షేత్రం_2, keymap_info->strict);
 }
 
-static enum xkb_parser_error
-HandlePtrBtn(const struct xkb_keymap_info *keymap_info,
-             const struct xkb_mod_set *mods,
-             union xkb_action *action, enum action_field field,
-             const ExprDef *array_ndx, const ExprDef *value,
-             ExprDef **value_ptr)
+స్థిర గణన xkb_parser_error
+HandlePtrBtn(స్థిరరాశి నిర్మాణం xkb_keymap_info *keymap_info,
+             స్థిరరాశి నిర్మాణం xkb_mod_సమితి *mods,
+             సంఘం xkb_action *action, గణన action_క్షేత్రం క్షేత్రం_2,
+             స్థిరరాశి సమాసం_Def *array_ndx, స్థిరరాశి సమాసం_Def *విలువ,
+             సమాసం_Def **విలువ_ptr)
 {
-    struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
-    struct xkb_pointer_button_action *act = &action->btn;
+    నిర్మాణం xkb_context * పరిమిత స్థిరరాశి ctx = keymap_info->keymap.ctx;
+    నిర్మాణం xkb_సూచిక_button_action *act = &action->btn;
 
-    if (field == ACTION_FIELD_BUTTON) {
+    ఒకవేళ (క్షేత్రం_2 == ACTION_క్షేత్రం_BUTTON) {
         int64_t btn = 0;
 
-        if (array_ndx)
-            return ReportActionNotArray(ctx, action->type, field,
+        ఒకవేళ (array_ndx)
+            తిరిగి ReportActionNotArray(ctx, action->type, క్షేత్రం_2,
                                         keymap_info->strict);
 
-        if (!ExprResolveButton(ctx, value, &btn)) {
-            static_assert(XKB_POINTER_BUTTON_MIN == 1 &&
-                          XKB_POINTER_BUTTON_MAX == 5, "invalid message");
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
-                                  field, "integer (range 1..5)",
+        ఒకవేళ (!సమాసం_Resolve_Button(ctx, విలువ, &btn)) {
+            static_assert(XKB_సూచిక_BUTTON_MIN == 1 &&
+                          XKB_సూచిక_BUTTON_MAX == 5, "invalid message");
+            తిరిగి ReportMismatch(ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE, action->type,
+                                  క్షేత్రం_2, "integer (range 1..5)",
                                   keymap_info->strict);
         }
 
-        static_assert(XKB_POINTER_BUTTON_DEFAULT < XKB_POINTER_BUTTON_MIN, "");
-        if (btn < XKB_POINTER_BUTTON_DEFAULT || btn > XKB_POINTER_BUTTON_MAX) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        static_assert(XKB_సూచిక_BUTTON_DEFAULT < XKB_సూచిక_BUTTON_MIN, "");
+        ఒకవేళ (btn < XKB_సూచిక_BUTTON_DEFAULT || btn > XKB_సూచిక_BUTTON_MAX) {
+            log_err(ctx, XKB_LOG_సందేశం_NO_ID,
                     "Button must specify default or be in the range %d..%d; "
                     "Illegal button value %"PRId64" ignored\n",
-                    XKB_POINTER_BUTTON_MIN, XKB_POINTER_BUTTON_MAX, btn);
-            return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+                    XKB_సూచిక_BUTTON_MIN, XKB_సూచిక_BUTTON_MAX, btn);
+            తిరిగి (keymap_info->strict & PARSER_NO_క్షేత్రం_TYPE_MISMATCH)
                 ? PARSER_FATAL_ERROR
                 : PARSER_RECOVERABLE_ERROR;
         }
 
         act->button = (uint8_t) btn;
-        return PARSER_SUCCESS;
+        తిరిగి PARSER_SUCCESS;
     }
-    else if (action->type == ACTION_TYPE_PTR_LOCK &&
-             field == ACTION_FIELD_AFFECT) {
-        return CheckAffectField(ctx, keymap_info->strict, action->type,
-                                array_ndx, value, &act->flags);
+    లేకపోతే ఒకవేళ (action->type == ACTION_TYPE_PTR_తాళం &&
+             క్షేత్రం_2 == ACTION_క్షేత్రం_AFFECT) {
+        తిరిగి Check_Affect_క్షేత్రం(ctx, keymap_info->strict, action->type,
+                                array_ndx, విలువ, &act->flags);
     }
-    else if (field == ACTION_FIELD_COUNT) {
+    లేకపోతే ఒకవేళ (క్షేత్రం_2 == ACTION_క్షేత్రం_లెక్క) {
         int64_t val = 0;
 
-        if (array_ndx)
-            return ReportActionNotArray(ctx, action->type, field,
+        ఒకవేళ (array_ndx)
+            తిరిగి ReportActionNotArray(ctx, action->type, క్షేత్రం_2,
                                         keymap_info->strict);
 
-        if (!ExprResolveInteger(ctx, value, &val))
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
-                                  field, "integer", keymap_info->strict);
+        ఒకవేళ (!సమాసం_Resolve_Integer(ctx, విలువ, &val))
+            తిరిగి ReportMismatch(ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE, action->type,
+                                  క్షేత్రం_2, "integer", keymap_info->strict);
 
-        if (val < 0 || val > 255) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        ఒకవేళ (val < 0 || val > 255) {
+            log_err(ctx, XKB_LOG_సందేశం_NO_ID,
                     "The count field must have a value in the range 0..255; "
                     "Illegal count %"PRId64" ignored\n", val);
-            return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+            తిరిగి (keymap_info->strict & PARSER_NO_క్షేత్రం_TYPE_MISMATCH)
                 ? PARSER_FATAL_ERROR
                 : PARSER_RECOVERABLE_ERROR;
         }
@@ -602,292 +602,292 @@ HandlePtrBtn(const struct xkb_keymap_info *keymap_info,
          * X.Org’s xkbcomp, since `SA_LockPtrBtn` has no `count` parameter.
          * See: https://xorg.freedesktop.org/archive/current/doc/kbproto/xkbproto.html#:~:text=SA_LockPtrBtn
          */
-        if (action->type != ACTION_TYPE_PTR_LOCK)
-            act->count = (uint8_t) val;
-        return PARSER_SUCCESS;
+        ఒకవేళ (action->type != ACTION_TYPE_PTR_తాళం)
+            act->లెక్క = (uint8_t) val;
+        తిరిగి PARSER_SUCCESS;
     }
 
-    return ReportIllegal(ctx, action->type, field, keymap_info->strict);
+    తిరిగి ReportIllegal(ctx, action->type, క్షేత్రం_2, keymap_info->strict);
 }
 
-enum {
-    SET_POINTER_DEFAULT_BUTTON_AFFECT_DEFAULT = 0,
-    _SET_POINTER_DEFAULT_BUTTON_AFFECT_NUM_ENTRIES
+గణన {
+    సమితి_సూచిక_DEFAULT_BUTTON_AFFECT_DEFAULT = 0,
+    సమితి_సూచిక_DEFAULT_BUTTON_AFFECT_అంకె_ENTRIES
 };
 
-static const LookupEntry ptrDflts[] = {
-    { "dfltbtn", SET_POINTER_DEFAULT_BUTTON_AFFECT_DEFAULT },
-    { "defaultbutton", SET_POINTER_DEFAULT_BUTTON_AFFECT_DEFAULT },
-    { "button", SET_POINTER_DEFAULT_BUTTON_AFFECT_DEFAULT },
-    { NULL, 0 }
+స్థిర స్థిరరాశి Lookup_నమోదు ptrDflts[] = {
+    { "dfltbtn", సమితి_సూచిక_DEFAULT_BUTTON_AFFECT_DEFAULT },
+    { "defaultbutton", సమితి_సూచిక_DEFAULT_BUTTON_AFFECT_DEFAULT },
+    { "button", సమితి_సూచిక_DEFAULT_BUTTON_AFFECT_DEFAULT },
+    { ఖాళీ, 0 }
 };
 
-static enum xkb_parser_error
-HandleSetPtrDflt(const struct xkb_keymap_info *keymap_info,
-                 const struct xkb_mod_set *mods,
-                 union xkb_action *action, enum action_field field,
-                 const ExprDef *array_ndx, const ExprDef *value,
-                 ExprDef **value_ptr)
+స్థిర గణన xkb_parser_error
+Handle_సమితి_Ptr_Dflt(స్థిరరాశి నిర్మాణం xkb_keymap_info *keymap_info,
+                 స్థిరరాశి నిర్మాణం xkb_mod_సమితి *mods,
+                 సంఘం xkb_action *action, గణన action_క్షేత్రం క్షేత్రం_2,
+                 స్థిరరాశి సమాసం_Def *array_ndx, స్థిరరాశి సమాసం_Def *విలువ,
+                 సమాసం_Def **విలువ_ptr)
 {
-    struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
-    struct xkb_pointer_default_action *act = &action->dflt;
+    నిర్మాణం xkb_context * పరిమిత స్థిరరాశి ctx = keymap_info->keymap.ctx;
+    నిర్మాణం xkb_సూచిక_default_action *act = &action->dflt;
 
-    if (field == ACTION_FIELD_AFFECT) {
+    ఒకవేళ (క్షేత్రం_2 == ACTION_క్షేత్రం_AFFECT) {
         uint32_t val = 0;
 
-        if (array_ndx)
-            return ReportActionNotArray(ctx, action->type, field,
+        ఒకవేళ (array_ndx)
+            తిరిగి ReportActionNotArray(ctx, action->type, క్షేత్రం_2,
                                         keymap_info->strict);
 
-        if (!ExprResolveEnum(ctx, value, &val, ptrDflts))
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
-                                  field, "pointer component", keymap_info->strict);
-        static_assert(_SET_POINTER_DEFAULT_BUTTON_AFFECT_NUM_ENTRIES == 1,
+        ఒకవేళ (!సమాసం_Resolve_Enum(ctx, విలువ, &val, ptrDflts))
+            తిరిగి ReportMismatch(ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE, action->type,
+                                  క్షేత్రం_2, "pointer component", keymap_info->strict);
+        static_assert(సమితి_సూచిక_DEFAULT_BUTTON_AFFECT_అంకె_ENTRIES == 1,
                       "affect has a single valid value and thus it is not stored");
-        return PARSER_SUCCESS;
+        తిరిగి PARSER_SUCCESS;
     }
-    else if (field == ACTION_FIELD_BUTTON || field == ACTION_FIELD_VALUE) {
-        const ExprDef *button;
+    లేకపోతే ఒకవేళ (క్షేత్రం_2 == ACTION_క్షేత్రం_BUTTON || క్షేత్రం_2 == ACTION_క్షేత్రం_విలువ) {
+        స్థిరరాశి సమాసం_Def *button;
         int64_t btn = 0;
 
-        if (array_ndx)
-            return ReportActionNotArray(ctx, action->type, field,
+        ఒకవేళ (array_ndx)
+            తిరిగి ReportActionNotArray(ctx, action->type, క్షేత్రం_2,
                                         keymap_info->strict);
 
-        if (value->common.type == STMT_EXPR_NEGATE ||
-            value->common.type == STMT_EXPR_UNARY_PLUS) {
+        ఒకవేళ (విలువ->common.type == STMT_సమాసం_NEGATE ||
+            విలువ->common.type == STMT_సమాసం_UNARY_PLUS) {
             act->flags &= ~ACTION_ABSOLUTE_SWITCH;
-            button = value->unary.child;
+            button = విలువ->unary.బిడ్డ;
         }
-        else {
+        లేకపోతే {
             act->flags |= ACTION_ABSOLUTE_SWITCH;
-            button = value;
+            button = విలువ;
         }
 
-        if (!ExprResolveButton(ctx, button, &btn)) {
-            static_assert(XKB_POINTER_BUTTON_MIN == 1 &&
-                          XKB_POINTER_BUTTON_MAX == 5, "invalid message");
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
-                                  field, "integer (range 1..5)",
+        ఒకవేళ (!సమాసం_Resolve_Button(ctx, button, &btn)) {
+            static_assert(XKB_సూచిక_BUTTON_MIN == 1 &&
+                          XKB_సూచిక_BUTTON_MAX == 5, "invalid message");
+            తిరిగి ReportMismatch(ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE, action->type,
+                                  క్షేత్రం_2, "integer (range 1..5)",
                                   keymap_info->strict);
         }
 
-        static_assert(XKB_POINTER_BUTTON_DEFAULT < XKB_POINTER_BUTTON_MIN, "");
-        if (btn < XKB_POINTER_BUTTON_DEFAULT || btn > XKB_POINTER_BUTTON_MAX) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        static_assert(XKB_సూచిక_BUTTON_DEFAULT < XKB_సూచిక_BUTTON_MIN, "");
+        ఒకవేళ (btn < XKB_సూచిక_BUTTON_DEFAULT || btn > XKB_సూచిక_BUTTON_MAX) {
+            log_err(ctx, XKB_LOG_సందేశం_NO_ID,
                     "New default button value must be in the range %d..%d; "
                     "Illegal default button value %"PRId64" ignored\n",
-                    XKB_POINTER_BUTTON_MIN, XKB_POINTER_BUTTON_MAX, btn);
-            return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+                    XKB_సూచిక_BUTTON_MIN, XKB_సూచిక_BUTTON_MAX, btn);
+            తిరిగి (keymap_info->strict & PARSER_NO_క్షేత్రం_TYPE_MISMATCH)
                 ? PARSER_FATAL_ERROR
                 : PARSER_RECOVERABLE_ERROR;
         }
-        if (btn == XKB_POINTER_BUTTON_DEFAULT) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        ఒకవేళ (btn == XKB_సూచిక_BUTTON_DEFAULT) {
+            log_err(ctx, XKB_LOG_సందేశం_NO_ID,
                     "Cannot set default pointer button to \"default\"; "
                     "Illegal default button setting ignored\n");
-            return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+            తిరిగి (keymap_info->strict & PARSER_NO_క్షేత్రం_TYPE_MISMATCH)
                 ? PARSER_FATAL_ERROR
                 : PARSER_RECOVERABLE_ERROR;
         }
 
-        act->value = (int8_t) (value->common.type == STMT_EXPR_NEGATE ? -btn: btn);
-        return PARSER_SUCCESS;
+        act->విలువ = (int8_t) (విలువ->common.type == STMT_సమాసం_NEGATE ? -btn: btn);
+        తిరిగి PARSER_SUCCESS;
     }
 
-    return ReportIllegal(ctx, action->type, field, keymap_info->strict);
+    తిరిగి ReportIllegal(ctx, action->type, క్షేత్రం_2, keymap_info->strict);
 }
 
-static enum xkb_parser_error
-HandleSwitchScreen(const struct xkb_keymap_info *keymap_info,
-                   const struct xkb_mod_set *mods,
-                   union xkb_action *action, enum action_field field,
-                   const ExprDef *array_ndx, const ExprDef *value,
-                   ExprDef **value_ptr)
+స్థిర గణన xkb_parser_error
+HandleSwitchScreen(స్థిరరాశి నిర్మాణం xkb_keymap_info *keymap_info,
+                   స్థిరరాశి నిర్మాణం xkb_mod_సమితి *mods,
+                   సంఘం xkb_action *action, గణన action_క్షేత్రం క్షేత్రం_2,
+                   స్థిరరాశి సమాసం_Def *array_ndx, స్థిరరాశి సమాసం_Def *విలువ,
+                   సమాసం_Def **విలువ_ptr)
 {
-    struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
-    struct xkb_switch_screen_action *act = &action->screen;
+    నిర్మాణం xkb_context * పరిమిత స్థిరరాశి ctx = keymap_info->keymap.ctx;
+    నిర్మాణం xkb_switch_screen_action *act = &action->screen;
 
-    if (field == ACTION_FIELD_SCREEN) {
-        const ExprDef *scrn;
+    ఒకవేళ (క్షేత్రం_2 == ACTION_క్షేత్రం_SCREEN) {
+        స్థిరరాశి సమాసం_Def *scrn;
         int64_t val = 0;
 
-        if (array_ndx)
-            return ReportActionNotArray(ctx, action->type, field,
+        ఒకవేళ (array_ndx)
+            తిరిగి ReportActionNotArray(ctx, action->type, క్షేత్రం_2,
                                         keymap_info->strict);
 
-        if (value->common.type == STMT_EXPR_NEGATE ||
-            value->common.type == STMT_EXPR_UNARY_PLUS) {
+        ఒకవేళ (విలువ->common.type == STMT_సమాసం_NEGATE ||
+            విలువ->common.type == STMT_సమాసం_UNARY_PLUS) {
             act->flags &= ~ACTION_ABSOLUTE_SWITCH;
-            scrn = value->unary.child;
+            scrn = విలువ->unary.బిడ్డ;
         }
-        else {
+        లేకపోతే {
             act->flags |= ACTION_ABSOLUTE_SWITCH;
-            scrn = value;
+            scrn = విలువ;
         }
 
-        if (!ExprResolveInteger(ctx, scrn, &val))
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
-                                  field, "integer (-128..127)",
+        ఒకవేళ (!సమాసం_Resolve_Integer(ctx, scrn, &val))
+            తిరిగి ReportMismatch(ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE, action->type,
+                                  క్షేత్రం_2, "integer (-128..127)",
                                   keymap_info->strict);
 
-        val = (value->common.type == STMT_EXPR_NEGATE ? -val : val);
-        if (val < INT8_MIN || val > INT8_MAX) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        val = (విలువ->common.type == STMT_సమాసం_NEGATE ? -val : val);
+        ఒకవేళ (val < INT8_MIN || val > INT8_MAX) {
+            log_err(ctx, XKB_LOG_సందేశం_NO_ID,
                     "Screen index must be in the range %d..%d; "
                     "Illegal screen value %"PRId64" ignored\n",
                     INT8_MIN, INT8_MAX, val);
-            return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+            తిరిగి (keymap_info->strict & PARSER_NO_క్షేత్రం_TYPE_MISMATCH)
                 ? PARSER_FATAL_ERROR
                 : PARSER_RECOVERABLE_ERROR;
         }
 
         act->screen = (int8_t) val;
-        return PARSER_SUCCESS;
+        తిరిగి PARSER_SUCCESS;
     }
-    else if (field == ACTION_FIELD_SAME) {
-        return CheckBooleanFlag(ctx, keymap_info->strict, action->type, field,
-                                ACTION_SAME_SCREEN, array_ndx, value,
+    లేకపోతే ఒకవేళ (క్షేత్రం_2 == ACTION_క్షేత్రం_SAME) {
+        తిరిగి CheckBooleanFlag(ctx, keymap_info->strict, action->type, క్షేత్రం_2,
+                                ACTION_SAME_SCREEN, array_ndx, విలువ,
                                 &act->flags);
     }
 
-    return ReportIllegal(ctx, action->type, field, keymap_info->strict);
+    తిరిగి ReportIllegal(ctx, action->type, క్షేత్రం_2, keymap_info->strict);
 }
 
-static enum xkb_parser_error
-HandleSetLockControls(const struct xkb_keymap_info *keymap_info,
-                      const struct xkb_mod_set *mods,
-                      union xkb_action *action, enum action_field field,
-                      const ExprDef *array_ndx, const ExprDef *value,
-                      ExprDef **value_ptr)
+స్థిర గణన xkb_parser_error
+Handle_సమితి_తాళం_Controls(స్థిరరాశి నిర్మాణం xkb_keymap_info *keymap_info,
+                      స్థిరరాశి నిర్మాణం xkb_mod_సమితి *mods,
+                      సంఘం xkb_action *action, గణన action_క్షేత్రం క్షేత్రం_2,
+                      స్థిరరాశి సమాసం_Def *array_ndx, స్థిరరాశి సమాసం_Def *విలువ,
+                      సమాసం_Def **విలువ_ptr)
 {
-    struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
-    struct xkb_controls_action *act = &action->ctrls;
+    నిర్మాణం xkb_context * పరిమిత స్థిరరాశి ctx = keymap_info->keymap.ctx;
+    నిర్మాణం xkb_controls_action *act = &action->ctrls;
 
-    if (field == ACTION_FIELD_CONTROLS) {
-        if (array_ndx)
-            return ReportActionNotArray(ctx, action->type, field,
+    ఒకవేళ (క్షేత్రం_2 == ACTION_క్షేత్రం_CONTROLS) {
+        ఒకవేళ (array_ndx)
+            తిరిగి ReportActionNotArray(ctx, action->type, క్షేత్రం_2,
                                         keymap_info->strict);
 
-        uint32_t mask = 0;
-        const uint8_t offset = keymap_info->features.controls_name_offset;
-        if (!ExprResolveMask(ctx, value, &mask, ctrlMaskNames + offset))
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
-                                  field, "controls mask", keymap_info->strict);
+        uint32_t ముసుగు = 0;
+        స్థిరరాశి uint8_t స్థానభ్రంశం = keymap_info->features.controls_name_స్థానభ్రంశం;
+        ఒకవేళ (!సమాసం_Resolve_ముసుగు(ctx, విలువ, &ముసుగు, ctrl_ముసుగు_పేర్లు + స్థానభ్రంశం))
+            తిరిగి ReportMismatch(ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE, action->type,
+                                  క్షేత్రం_2, "controls mask", keymap_info->strict);
 
-        act->ctrls = (enum xkb_action_controls) mask;
-        return PARSER_SUCCESS;
+        act->ctrls = (గణన xkb_action_controls) ముసుగు;
+        తిరిగి PARSER_SUCCESS;
     }
-    else if (field == ACTION_FIELD_AFFECT &&
-             action->type == ACTION_TYPE_CTRL_LOCK) {
-        return CheckAffectField(ctx, keymap_info->strict, action->type,
-                                array_ndx, value, &act->flags);
+    లేకపోతే ఒకవేళ (క్షేత్రం_2 == ACTION_క్షేత్రం_AFFECT &&
+             action->type == ACTION_TYPE_CTRL_తాళం) {
+        తిరిగి Check_Affect_క్షేత్రం(ctx, keymap_info->strict, action->type,
+                                array_ndx, విలువ, &act->flags);
     }
 
-    return ReportIllegal(ctx, action->type, field, keymap_info->strict);
+    తిరిగి ReportIllegal(ctx, action->type, క్షేత్రం_2, keymap_info->strict);
 }
 
-static enum xkb_parser_error
-HandleRedirectKey(const struct xkb_keymap_info *keymap_info,
-                  const struct xkb_mod_set *mods,
-                  union xkb_action *action, enum action_field field,
-                  const ExprDef *array_ndx, const ExprDef *value,
-                  ExprDef **value_ptr)
+స్థిర గణన xkb_parser_error
+Handle_Redirect_కీలకం(స్థిరరాశి నిర్మాణం xkb_keymap_info *keymap_info,
+                  స్థిరరాశి నిర్మాణం xkb_mod_సమితి *mods,
+                  సంఘం xkb_action *action, గణన action_క్షేత్రం క్షేత్రం_2,
+                  స్థిరరాశి సమాసం_Def *array_ndx, స్థిరరాశి సమాసం_Def *విలువ,
+                  సమాసం_Def **విలువ_ptr)
 {
-    const struct xkb_keymap * restrict const keymap = &keymap_info->keymap;
-    struct xkb_context * restrict const ctx = keymap->ctx;
-    struct xkb_redirect_key_action * const act = &action->redirect;
+    స్థిరరాశి నిర్మాణం xkb_keymap * పరిమిత స్థిరరాశి keymap = &keymap_info->keymap;
+    నిర్మాణం xkb_context * పరిమిత స్థిరరాశి ctx = keymap->ctx;
+    నిర్మాణం xkb_redirect_కీలకం_action * స్థిరరాశి act = &action->redirect;
 
-    if (field == ACTION_FIELD_KEYCODE) {
-        if (array_ndx)
-            return ReportActionNotArray(ctx, action->type, field,
+    ఒకవేళ (క్షేత్రం_2 == ACTION_క్షేత్రం_KEYCODE) {
+        ఒకవేళ (array_ndx)
+            తిరిగి ReportActionNotArray(ctx, action->type, క్షేత్రం_2,
                                         keymap_info->strict);
-        if (value->common.type == STMT_EXPR_IDENT) {
-            const char *valStr = xkb_atom_text(ctx, value->ident.ident);
-            if (valStr && istreq(valStr, "auto")) {
-                act->keycode = keymap_info->keymap.redirect_key_auto;
-                return PARSER_SUCCESS;
+        ఒకవేళ (విలువ->common.type == STMT_సమాసం_IDENT) {
+            స్థిరరాశి అక్షరం *valStr = xkb_atom_పాఠ్యం(ctx, విలువ->ident.ident);
+            ఒకవేళ (valStr && istreq(valStr, "auto")) {
+                act->keycode = keymap_info->keymap.redirect_కీలకం_auto;
+                తిరిగి PARSER_SUCCESS;
             }
         }
-        if (value->common.type != STMT_EXPR_KEYNAME_LITERAL) {
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
-                                  field, "key name", keymap_info->strict);
+        ఒకవేళ (విలువ->common.type != STMT_సమాసం_KEYNAME_LITERAL) {
+            తిరిగి ReportMismatch(ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE, action->type,
+                                  క్షేత్రం_2, "key name", keymap_info->strict);
         }
-        const struct xkb_key * const key =
-            XkbKeyByName(keymap, value->key_name.key_name, true);
-        if (key == NULL) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        స్థిరరాశి నిర్మాణం xkb_కీలకం * స్థిరరాశి కీలకం =
+            Xkb_కీలకం_By_Name(keymap, విలువ->కీలకం_name.కీలకం_name, true);
+        ఒకవేళ (కీలకం == ఖాళీ) {
+            log_err(ctx, XKB_LOG_సందేశం_NO_ID,
                     "RedirectKey field %s cannot resolve %s to a valid key\n",
-                    fieldText(field), KeyNameText(ctx, value->key_name.key_name));
-            return (keymap_info->strict & PARSER_NO_FIELD_VALUE_MISMATCH)
+                    క్షేత్రం_పాఠ్యం(క్షేత్రం_2), కీలకం_Name_పాఠ్యం(ctx, విలువ->కీలకం_name.కీలకం_name));
+            తిరిగి (keymap_info->strict & PARSER_NO_క్షేత్రం_విలువ_MISMATCH)
                 ? PARSER_FATAL_ERROR
                 : PARSER_RECOVERABLE_ERROR;
         }
-        act->keycode = key->keycode;
-        return PARSER_SUCCESS;
+        act->keycode = కీలకం->keycode;
+        తిరిగి PARSER_SUCCESS;
     }
 
-    if (field == ACTION_FIELD_MODIFIERS || field == ACTION_FIELD_MODS_TO_CLEAR) {
-        enum xkb_action_flags flags = 0;
-        xkb_mod_mask_t m = 0;
-        enum xkb_parser_error r =
-            CheckModifierField(ctx, keymap_info->strict, mods, action->type,
-                               array_ndx, value, &flags, &m);
-        if (r != PARSER_SUCCESS)
-            return r;
-        if (flags)
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, action->type,
-                                  field, "modifier mask", keymap_info->strict);
+    ఒకవేళ (క్షేత్రం_2 == ACTION_క్షేత్రం_MODIFIERS || క్షేత్రం_2 == ACTION_క్షేత్రం_MODS_గమ్యం_CLEAR) {
+        గణన xkb_action_flags flags = 0;
+        xkb_mod_ముసుగు_t m = 0;
+        గణన xkb_parser_error r =
+            Check_Modifier_క్షేత్రం(ctx, keymap_info->strict, mods, action->type,
+                               array_ndx, విలువ, &flags, &m);
+        ఒకవేళ (r != PARSER_SUCCESS)
+            తిరిగి r;
+        ఒకవేళ (flags)
+            తిరిగి ReportMismatch(ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE, action->type,
+                                  క్షేత్రం_2, "modifier mask", keymap_info->strict);
         act->affect_mods |= m;
-        if (field == ACTION_FIELD_MODIFIERS)
+        ఒకవేళ (క్షేత్రం_2 == ACTION_క్షేత్రం_MODIFIERS)
             act->mods |= m;
-        else
+        లేకపోతే
             act->mods &= ~m;
-        return PARSER_SUCCESS;
+        తిరిగి PARSER_SUCCESS;
     }
 
-    return ReportIllegal(ctx, action->type, field, keymap_info->strict);
+    తిరిగి ReportIllegal(ctx, action->type, క్షేత్రం_2, keymap_info->strict);
 }
 
-static enum xkb_parser_error
-HandleUnsupported(const struct xkb_keymap_info *keymap_info,
-                        const struct xkb_mod_set *mods,
-                        union xkb_action *action, enum action_field field,
-                        const ExprDef *array_ndx, const ExprDef *value,
-                        ExprDef **value_ptr)
+స్థిర గణన xkb_parser_error
+HandleUnsupported(స్థిరరాశి నిర్మాణం xkb_keymap_info *keymap_info,
+                        స్థిరరాశి నిర్మాణం xkb_mod_సమితి *mods,
+                        సంఘం xkb_action *action, గణన action_క్షేత్రం క్షేత్రం_2,
+                        స్థిరరాశి సమాసం_Def *array_ndx, స్థిరరాశి సమాసం_Def *విలువ,
+                        సమాసం_Def **విలువ_ptr)
 
 {
     /* Do not check any field */
-    return PARSER_SUCCESS;
+    తిరిగి PARSER_SUCCESS;
 }
 
-static enum xkb_parser_error
-HandlePrivate(const struct xkb_keymap_info *keymap_info,
-              const struct xkb_mod_set *mods,
-              union xkb_action *action, enum action_field field,
-              const ExprDef *array_ndx, const ExprDef *value,
-              ExprDef **value_ptr)
+స్థిర గణన xkb_parser_error
+Handle_వ్యక్తిగత(స్థిరరాశి నిర్మాణం xkb_keymap_info *keymap_info,
+              స్థిరరాశి నిర్మాణం xkb_mod_సమితి *mods,
+              సంఘం xkb_action *action, గణన action_క్షేత్రం క్షేత్రం_2,
+              స్థిరరాశి సమాసం_Def *array_ndx, స్థిరరాశి సమాసం_Def *విలువ,
+              సమాసం_Def **విలువ_ptr)
 {
-    struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
-    struct xkb_private_action *act = &action->priv;
+    నిర్మాణం xkb_context * పరిమిత స్థిరరాశి ctx = keymap_info->keymap.ctx;
+    నిర్మాణం xkb_వ్యక్తిగత_action *act = &action->priv;
 
-    if (field == ACTION_FIELD_TYPE) {
+    ఒకవేళ (క్షేత్రం_2 == ACTION_క్షేత్రం_TYPE) {
         int64_t type = 0;
 
-        if (array_ndx)
-            return ReportActionNotArray(ctx, action->type, field,
+        ఒకవేళ (array_ndx)
+            తిరిగి ReportActionNotArray(ctx, action->type, క్షేత్రం_2,
                                         keymap_info->strict);
 
-        if (!ExprResolveInteger(ctx, value, &type))
-            return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
-                                  ACTION_TYPE_PRIVATE, field, "integer",
+        ఒకవేళ (!సమాసం_Resolve_Integer(ctx, విలువ, &type))
+            తిరిగి ReportMismatch(ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE,
+                                  ACTION_TYPE_వ్యక్తిగత, క్షేత్రం_2, "integer",
                                   keymap_info->strict);
 
-        if (type < 0 || type > 255) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+        ఒకవేళ (type < 0 || type > 255) {
+            log_err(ctx, XKB_LOG_సందేశం_NO_ID,
                     "Private action type must be in the range 0..255; "
                     "Illegal type %"PRId64" ignored\n", type);
-            return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+            తిరిగి (keymap_info->strict & PARSER_NO_క్షేత్రం_TYPE_MISMATCH)
                 ? PARSER_FATAL_ERROR
                 : PARSER_RECOVERABLE_ERROR;
         }
@@ -902,146 +902,146 @@ HandlePrivate(const struct xkb_keymap_info *keymap_info,
          * assumption is no longer true. Since this is a lousy "feature", we
          * make actions like these no-ops for now.
          */
-        if (type < ACTION_TYPE_PRIVATE) {
-            log_info(ctx, XKB_LOG_MESSAGE_NO_ID,
+        ఒకవేళ (type < ACTION_TYPE_వ్యక్తిగత) {
+            log_info(ctx, XKB_LOG_సందేశం_NO_ID,
                      "Private actions of type %s are not supported; Ignored\n",
-                     ActionTypeText((enum xkb_action_type) type));
+                     Action_Type_పాఠ్యం((గణన xkb_action_type) type));
             act->type = ACTION_TYPE_NONE;
         }
-        else {
-            act->type = (enum xkb_action_type) type;
+        లేకపోతే {
+            act->type = (గణన xkb_action_type) type;
         }
 
-        return PARSER_SUCCESS;
+        తిరిగి PARSER_SUCCESS;
     }
-    else if (field == ACTION_FIELD_DATA) {
-        if (array_ndx == NULL) {
+    లేకపోతే ఒకవేళ (క్షేత్రం_2 == ACTION_క్షేత్రం_దత్తాంశం) {
+        ఒకవేళ (array_ndx == ఖాళీ) {
             xkb_atom_t val = XKB_ATOM_NONE;
 
-            if (!ExprResolveString(ctx, value, &val))
-                return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
-                                      action->type, field, "string",
+            ఒకవేళ (!సమాసం_Resolve_String(ctx, విలువ, &val))
+                తిరిగి ReportMismatch(ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE,
+                                      action->type, క్షేత్రం_2, "string",
                                       keymap_info->strict);
 
-            const char *str = xkb_atom_text(ctx, val);
-            size_t len = strlen(str);
-            if (len < 1 || len > sizeof(act->data)) {
-                log_warn(ctx, XKB_LOG_MESSAGE_NO_ID,
+            స్థిరరాశి అక్షరం *str = xkb_atom_పాఠ్యం(ctx, val);
+            కొలత_t len = అక్షరశ్రేణి_పొడవు(str);
+            ఒకవేళ (len < 1 || len > పరిమాణం(act->దత్తాంశం)) {
+                log_warn(ctx, XKB_LOG_సందేశం_NO_ID,
                          "A private action has %zu data bytes, but got: %zu; "
-                         "Illegal data ignored\n", sizeof(act->data), len);
-                return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+                         "Illegal data ignored\n", పరిమాణం(act->దత్తాంశం), len);
+                తిరిగి (keymap_info->strict & PARSER_NO_క్షేత్రం_TYPE_MISMATCH)
                     ? PARSER_FATAL_ERROR
                     : PARSER_RECOVERABLE_ERROR;
             }
 
             /* act->data may not be null-terminated, this is intentional */
-            memset(act->data, 0, sizeof(act->data));
-            memcpy(act->data, str, len);
-            return PARSER_SUCCESS;
+            memset(act->దత్తాంశం, 0, పరిమాణం(act->దత్తాంశం));
+            జ్ఞాపకం_నకలు(act->దత్తాంశం, str, len);
+            తిరిగి PARSER_SUCCESS;
         }
-        else {
+        లేకపోతే {
             int64_t ndx = 0, datum = 0;
 
-            if (!ExprResolveInteger(ctx, array_ndx, &ndx)) {
-                log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+            ఒకవేళ (!సమాసం_Resolve_Integer(ctx, array_ndx, &ndx)) {
+                log_err(ctx, XKB_LOG_సందేశం_NO_ID,
                         "Array subscript must be integer; "
                         "Illegal subscript ignored\n");
-                return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+                తిరిగి (keymap_info->strict & PARSER_NO_క్షేత్రం_TYPE_MISMATCH)
                     ? PARSER_FATAL_ERROR
                     : PARSER_RECOVERABLE_ERROR;
             }
 
-            if (ndx < 0 || (size_t) ndx >= sizeof(act->data)) {
-                log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+            ఒకవేళ (ndx < 0 || (కొలత_t) ndx >= పరిమాణం(act->దత్తాంశం)) {
+                log_err(ctx, XKB_LOG_సందేశం_NO_ID,
                         "The data for a private action is %zu bytes long; "
                         "Attempt to use data[%"PRId64"] ignored\n",
-                        sizeof(act->data), ndx);
-                return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+                        పరిమాణం(act->దత్తాంశం), ndx);
+                తిరిగి (keymap_info->strict & PARSER_NO_క్షేత్రం_TYPE_MISMATCH)
                     ? PARSER_FATAL_ERROR
                     : PARSER_RECOVERABLE_ERROR;
             }
 
-            if (!ExprResolveInteger(ctx, value, &datum))
-                return ReportMismatch(ctx, XKB_ERROR_WRONG_FIELD_TYPE, act->type,
-                                      field, "integer", keymap_info->strict);
+            ఒకవేళ (!సమాసం_Resolve_Integer(ctx, విలువ, &datum))
+                తిరిగి ReportMismatch(ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE, act->type,
+                                      క్షేత్రం_2, "integer", keymap_info->strict);
 
-            if (datum < 0 || datum > 255) {
-                log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+            ఒకవేళ (datum < 0 || datum > 255) {
+                log_err(ctx, XKB_LOG_సందేశం_NO_ID,
                         "All data for a private action must be 0..255; "
                         "Illegal datum %"PRId64" ignored\n", datum);
-                return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+                తిరిగి (keymap_info->strict & PARSER_NO_క్షేత్రం_TYPE_MISMATCH)
                     ? PARSER_FATAL_ERROR
                     : PARSER_RECOVERABLE_ERROR;
             }
 
-            act->data[ndx] = (uint8_t) datum;
-            return PARSER_SUCCESS;
+            act->దత్తాంశం[ndx] = (uint8_t) datum;
+            తిరిగి PARSER_SUCCESS;
         }
     }
 
-    return ReportIllegal(ctx, action->type, field, keymap_info->strict);
+    తిరిగి ReportIllegal(ctx, action->type, క్షేత్రం_2, keymap_info->strict);
 }
 
-typedef enum xkb_parser_error
-        (*actionHandler)(const struct xkb_keymap_info *keymap_info,
-                         const struct xkb_mod_set *mods,
-                         union xkb_action *action,
-                         enum action_field field,
-                         const ExprDef *array_ndx,
-                         const ExprDef *value,
-                         ExprDef **value_ptr);
+రకనిర్వచనం గణన xkb_parser_error
+        (*actionHandler)(స్థిరరాశి నిర్మాణం xkb_keymap_info *keymap_info,
+                         స్థిరరాశి నిర్మాణం xkb_mod_సమితి *mods,
+                         సంఘం xkb_action *action,
+                         గణన action_క్షేత్రం క్షేత్రం_2,
+                         స్థిరరాశి సమాసం_Def *array_ndx,
+                         స్థిరరాశి సమాసం_Def *విలువ,
+                         సమాసం_Def **విలువ_ptr);
 
-static const actionHandler handleAction[_ACTION_TYPE_NUM_ENTRIES] = {
+స్థిర స్థిరరాశి actionHandler handleAction[ACTION_TYPE_అంకె_ENTRIES] = {
     [ACTION_TYPE_NONE] = HandleNoAction,
     [ACTION_TYPE_VOID] = HandleNoAction,
-    [ACTION_TYPE_MOD_SET] = HandleSetLatchLockMods,
-    [ACTION_TYPE_MOD_LATCH] = HandleSetLatchLockMods,
-    [ACTION_TYPE_MOD_LOCK] = HandleSetLatchLockMods,
-    [ACTION_TYPE_GROUP_SET] = HandleSetLatchLockGroup,
-    [ACTION_TYPE_GROUP_LATCH] = HandleSetLatchLockGroup,
-    [ACTION_TYPE_GROUP_LOCK] = HandleSetLatchLockGroup,
+    [ACTION_TYPE_MOD_సమితి] = Handle_సమితి_Latch_తాళం_Mods,
+    [ACTION_TYPE_MOD_LATCH] = Handle_సమితి_Latch_తాళం_Mods,
+    [ACTION_TYPE_MOD_తాళం] = Handle_సమితి_Latch_తాళం_Mods,
+    [ACTION_TYPE_సమూహం_సమితి] = Handle_సమితి_Latch_తాళం_సమూహం,
+    [ACTION_TYPE_సమూహం_LATCH] = Handle_సమితి_Latch_తాళం_సమూహం,
+    [ACTION_TYPE_సమూహం_తాళం] = Handle_సమితి_Latch_తాళం_సమూహం,
     [ACTION_TYPE_PTR_MOVE] = HandleMovePtr,
     [ACTION_TYPE_PTR_BUTTON] = HandlePtrBtn,
-    [ACTION_TYPE_PTR_LOCK] = HandlePtrBtn,
-    [ACTION_TYPE_PTR_DEFAULT] = HandleSetPtrDflt,
+    [ACTION_TYPE_PTR_తాళం] = HandlePtrBtn,
+    [ACTION_TYPE_PTR_DEFAULT] = Handle_సమితి_Ptr_Dflt,
     [ACTION_TYPE_TERMINATE] = HandleNoAction,
     [ACTION_TYPE_SWITCH_VT] = HandleSwitchScreen,
-    [ACTION_TYPE_CTRL_SET] = HandleSetLockControls,
-    [ACTION_TYPE_CTRL_LOCK] = HandleSetLockControls,
-    [ACTION_TYPE_REDIRECT_KEY] = HandleRedirectKey,
+    [ACTION_TYPE_CTRL_సమితి] = Handle_సమితి_తాళం_Controls,
+    [ACTION_TYPE_CTRL_తాళం] = Handle_సమితి_తాళం_Controls,
+    [ACTION_TYPE_REDIRECT_కీలకం] = Handle_Redirect_కీలకం,
     [ACTION_TYPE_UNSUPPORTED_LEGACY] = HandleUnsupported,
     [ACTION_TYPE_UNKNOWN] = HandleUnsupported,
-    [ACTION_TYPE_PRIVATE] = HandlePrivate,
+    [ACTION_TYPE_వ్యక్తిగత] = Handle_వ్యక్తిగత,
 };
 
 /* Ensure to not miss `xkb_action_type` updates */
-static_assert(ACTION_TYPE_INTERNAL == 20 &&
-              ACTION_TYPE_INTERNAL + 1 == _ACTION_TYPE_NUM_ENTRIES,
+static_assert(ACTION_TYPE_అంతర్గత == 20 &&
+              ACTION_TYPE_అంతర్గత + 1 == ACTION_TYPE_అంకె_ENTRIES,
               "Missing action type");
 
 /***====================================================================***/
 
-enum xkb_parser_error
-HandleActionDef(const struct xkb_keymap_info *keymap_info, ActionsInfo *info,
-                const struct xkb_mod_set *mods, ExprDef *def,
-                union xkb_action *action)
+గణన xkb_parser_error
+HandleActionDef(స్థిరరాశి నిర్మాణం xkb_keymap_info *keymap_info, ActionsInfo *info,
+                స్థిరరాశి నిర్మాణం xkb_mod_సమితి *mods, సమాసం_Def *def,
+                సంఘం xkb_action *action)
 {
-    struct xkb_context * restrict const ctx = keymap_info->keymap.ctx;
-    if (def->common.type != STMT_EXPR_ACTION_DECL) {
-        log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
+    నిర్మాణం xkb_context * పరిమిత స్థిరరాశి ctx = keymap_info->keymap.ctx;
+    ఒకవేళ (def->common.type != STMT_సమాసం_ACTION_DECL) {
+        log_err(ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE,
                 "Expected an action definition, found %s\n",
-                stmt_type_to_string(def->common.type));
-        return PARSER_FATAL_ERROR;
+                stmt_type_గమ్యం_string(def->common.type));
+        తిరిగి PARSER_FATAL_ERROR;
     }
 
-    const char *action_name = xkb_atom_text(ctx, def->action.name);
-    enum xkb_action_type handler_type;
-    if (!stringToActionType(action_name, &handler_type)) {
+    స్థిరరాశి అక్షరం *action_name = xkb_atom_పాఠ్యం(ctx, def->action.name);
+    గణన xkb_action_type handler_type;
+    ఒకవేళ (!string_గమ్యం_Action_Type(action_name, &handler_type)) {
         log_err(ctx, XKB_ERROR_UNKNOWN_ACTION_TYPE,
                 "Unknown action \"%s\"\n", action_name);
         handler_type = ACTION_TYPE_UNKNOWN;
-        if (keymap_info->strict & PARSER_NO_UNKNOWN_ACTION)
-            return PARSER_FATAL_ERROR;
+        ఒకవేళ (keymap_info->strict & PARSER_NO_UNKNOWN_ACTION)
+            తిరిగి PARSER_FATAL_ERROR;
     }
 
     /*
@@ -1051,7 +1051,7 @@ HandleActionDef(const struct xkb_keymap_info *keymap_info, ActionsInfo *info,
      */
     *action = info->actions[handler_type];
 
-    if (handler_type == ACTION_TYPE_UNSUPPORTED_LEGACY) {
+    ఒకవేళ (handler_type == ACTION_TYPE_UNSUPPORTED_LEGACY) {
         log_warn(ctx, XKB_WARNING_UNSUPPORTED_LEGACY_ACTION,
                  "Unsupported legacy action type \"%s\".\n", action_name);
         /*
@@ -1069,108 +1069,108 @@ HandleActionDef(const struct xkb_keymap_info *keymap_info, ActionsInfo *info,
      * particular instance, e.g. "modifiers" and "clearLocks" in:
      *     SetMods(modifiers=Alt,clearLocks);
      */
-    enum xkb_parser_error ret = PARSER_SUCCESS;
-    for (ExprDef *arg = def->action.args; arg != NULL;
-         arg = (ExprDef *) arg->common.next) {
-        const ExprDef *value;
-        ExprDef **value_ptr = NULL;
-        ExprDef *field, *arrayRtrn;
-        const char *elemRtrn, *fieldRtrn;
+    గణన xkb_parser_error ret = PARSER_SUCCESS;
+    కొరకు (సమాసం_Def *arg = def->action.వాదనలు; arg != ఖాళీ;
+         arg = (సమాసం_Def *) arg->common.తదుపరి) {
+        స్థిరరాశి సమాసం_Def *విలువ;
+        సమాసం_Def **విలువ_ptr = ఖాళీ;
+        సమాసం_Def *క్షేత్రం_2, *arrayRtrn;
+        స్థిరరాశి అక్షరం *elemRtrn, *క్షేత్రం_Rtrn;
 
-        if (arg->common.type == STMT_EXPR_ASSIGN) {
-            field = arg->binary.left;
-            value = arg->binary.right;
-            value_ptr = &arg->binary.right;
+        ఒకవేళ (arg->common.type == STMT_సమాసం_కేటాయించు) {
+            క్షేత్రం_2 = arg->ద్విమాన.ఎడమ;
+            విలువ = arg->ద్విమాన.కుడి;
+            విలువ_ptr = &arg->ద్విమాన.కుడి;
         }
-        else if (arg->common.type == STMT_EXPR_NOT ||
-                 arg->common.type == STMT_EXPR_INVERT) {
-            field = arg->unary.child;
-            value = (const ExprDef *) &constFalse;
+        లేకపోతే ఒకవేళ (arg->common.type == STMT_సమాసం_NOT ||
+                 arg->common.type == STMT_సమాసం_INVERT) {
+            క్షేత్రం_2 = arg->unary.బిడ్డ;
+            విలువ = (స్థిరరాశి సమాసం_Def *) &constFalse;
         }
-        else {
-            field = arg;
-            value = (const ExprDef *) &constTrue;
+        లేకపోతే {
+            క్షేత్రం_2 = arg;
+            విలువ = (స్థిరరాశి సమాసం_Def *) &constTrue;
         }
 
-        if (!ExprResolveLhs(ctx, field, &elemRtrn, &fieldRtrn, &arrayRtrn))
-            return PARSER_FATAL_ERROR;
+        ఒకవేళ (!సమాసం_Resolve_Lhs(ctx, క్షేత్రం_2, &elemRtrn, &క్షేత్రం_Rtrn, &arrayRtrn))
+            తిరిగి PARSER_FATAL_ERROR;
 
-        if (elemRtrn) {
+        ఒకవేళ (elemRtrn) {
             log_err(ctx, XKB_ERROR_GLOBAL_DEFAULTS_WRONG_SCOPE,
                     "Cannot change defaults in an action definition; "
                     "Ignoring attempt to change \"%s.%s\".\n",
-                    elemRtrn, fieldRtrn);
-            return PARSER_FATAL_ERROR;
+                    elemRtrn, క్షేత్రం_Rtrn);
+            తిరిగి PARSER_FATAL_ERROR;
         }
 
-        enum action_field fieldNdx;
-        if (!stringToField(fieldRtrn, &fieldNdx)) {
-            log_err(ctx, XKB_ERROR_INVALID_ACTION_FIELD,
+        గణన action_క్షేత్రం క్షేత్రం_Ndx;
+        ఒకవేళ (!string_గమ్యం_క్షేత్రం(క్షేత్రం_Rtrn, &క్షేత్రం_Ndx)) {
+            log_err(ctx, XKB_ERROR_INVALID_ACTION_క్షేత్రం,
                     "Unknown field name %s for action %s discarded\n",
-                    fieldRtrn, ActionTypeText(action->type));
-            if (keymap_info->strict & PARSER_NO_UNKNOWN_ACTION_FIELDS) {
-                return PARSER_FATAL_ERROR;
-            } else {
+                    క్షేత్రం_Rtrn, Action_Type_పాఠ్యం(action->type));
+            ఒకవేళ (keymap_info->strict & PARSER_NO_UNKNOWN_ACTION_FIELDS) {
+                తిరిగి PARSER_FATAL_ERROR;
+            } లేకపోతే {
                 /* Field is just ignored */
-                continue;
+                కొనసాగు;
             }
         }
 
-        switch (handleAction[handler_type](keymap_info, mods, action, fieldNdx,
-                                           arrayRtrn, value, value_ptr)) {
-        case PARSER_FATAL_ERROR:
-            return PARSER_FATAL_ERROR;
-        case PARSER_RECOVERABLE_ERROR:
+        ఎంపిక (handleAction[handler_type](keymap_info, mods, action, క్షేత్రం_Ndx,
+                                           arrayRtrn, విలువ, విలువ_ptr)) {
+        స్థితి PARSER_FATAL_ERROR:
+            తిరిగి PARSER_FATAL_ERROR;
+        స్థితి PARSER_RECOVERABLE_ERROR:
             ret = PARSER_RECOVERABLE_ERROR;
             /* Continue field parsing */
-            break;
-        default:
+            ఆపు;
+        అప్రమేయ:
             ;
         }
     }
 
-    return (action->type == ACTION_TYPE_UNKNOWN)
+    తిరిగి (action->type == ACTION_TYPE_UNKNOWN)
         ? PARSER_RECOVERABLE_ERROR
         : ret;
 }
 
-enum xkb_parser_error
-SetDefaultActionField(const struct xkb_keymap_info *keymap_info,
-                      ActionsInfo *info, struct xkb_mod_set *mods,
-                      const char *elem, const char *field, ExprDef *array_ndx,
-                      ExprDef **value_ptr, enum merge_mode merge)
+గణన xkb_parser_error
+సమితి_Default_Action_క్షేత్రం(స్థిరరాశి నిర్మాణం xkb_keymap_info *keymap_info,
+                      ActionsInfo *info, నిర్మాణం xkb_mod_సమితి *mods,
+                      స్థిరరాశి అక్షరం *elem, స్థిరరాశి అక్షరం *క్షేత్రం_2, సమాసం_Def *array_ndx,
+                      సమాసం_Def **విలువ_ptr, గణన విలీనం_బహుళకం విలీనం)
 {
-    const ExprDef * restrict const value = *value_ptr;
-    enum xkb_action_type action;
-    if (!stringToActionType(elem, &action)) {
+    స్థిరరాశి సమాసం_Def * పరిమిత స్థిరరాశి విలువ = *విలువ_ptr;
+    గణన xkb_action_type action;
+    ఒకవేళ (!string_గమ్యం_Action_Type(elem, &action)) {
         log_err(keymap_info->keymap.ctx, XKB_ERROR_UNKNOWN_ACTION_TYPE,
                 "Unknown action \"%s\"\n", elem);
-        return (keymap_info->strict & PARSER_NO_UNKNOWN_ACTION)
+        తిరిగి (keymap_info->strict & PARSER_NO_UNKNOWN_ACTION)
             ? PARSER_FATAL_ERROR
             : PARSER_RECOVERABLE_ERROR;
     }
 
-    enum action_field action_field;
-    if (!stringToField(field, &action_field)) {
-        log_err(keymap_info->keymap.ctx, XKB_ERROR_INVALID_ACTION_FIELD,
-                "Unknown action field \"%s\"\n", field);
-        return (keymap_info->strict & PARSER_NO_UNKNOWN_ACTION_FIELDS)
+    గణన action_క్షేత్రం action_క్షేత్రం;
+    ఒకవేళ (!string_గమ్యం_క్షేత్రం(క్షేత్రం_2, &action_క్షేత్రం)) {
+        log_err(keymap_info->keymap.ctx, XKB_ERROR_INVALID_ACTION_క్షేత్రం,
+                "Unknown action field \"%s\"\n", క్షేత్రం_2);
+        తిరిగి (keymap_info->strict & PARSER_NO_UNKNOWN_ACTION_FIELDS)
             ? PARSER_FATAL_ERROR
             : PARSER_RECOVERABLE_ERROR;
     }
 
-    union xkb_action* const into = &info->actions[action];
+    సంఘం xkb_action* స్థిరరాశి into = &info->actions[action];
     /* Initialize with current defaults to enable comparison, see afterwards */
-    union xkb_action from = *into;
+    సంఘం xkb_action from = *into;
 
     /* Parse action */
-    const enum xkb_parser_error ret = handleAction[action](
-        keymap_info, mods, &from, action_field, array_ndx, value, value_ptr
+    స్థిరరాశి గణన xkb_parser_error ret = handleAction[action](
+        keymap_info, mods, &from, action_క్షేత్రం, array_ndx, విలువ, విలువ_ptr
     );
 
     /* Success is mandatory to update defaults */
-    if (ret != PARSER_SUCCESS)
-        return ret;
+    ఒకవేళ (ret != PARSER_SUCCESS)
+        తిరిగి ret;
 
     /*
      * Merge action with its corresponding default
@@ -1182,16 +1182,16 @@ SetDefaultActionField(const struct xkb_keymap_info *keymap_info,
      * warning. So we guard the logging with a high verbosity, as best effort
      * mitigation.
      */
-    if (!action_equal(into, &from)) {
-        const bool replace = (merge != MERGE_AUGMENT);
+    ఒకవేళ (!action_equal(into, &from)) {
+        స్థిరరాశి bool replace = (విలీనం != విలీనం_AUGMENT);
         log_vrb(keymap_info->keymap.ctx, XKB_LOG_VERBOSITY_VERBOSE,
-                XKB_LOG_MESSAGE_NO_ID,
+                XKB_LOG_సందేశం_NO_ID,
                 "Conflicting field \"%s\" for default action \"%s\"; "
                 "Using %s, ignore %s\n",
-                fieldText(action_field), ActionTypeText(action),
+                క్షేత్రం_పాఠ్యం(action_క్షేత్రం), Action_Type_పాఠ్యం(action),
                 (replace ? "from" : "into"), (replace ? "into" : "from"));
-        if (replace)
+        ఒకవేళ (replace)
             *into = from;
     }
-    return PARSER_SUCCESS;
+    తిరిగి PARSER_SUCCESS;
 }

@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include "utils.h"
-#include "util-paths.h"
+#అన్తర్భావ "utils.h"
+#అన్తర్భావ "util-paths.h"
 
 
 /* Caller must ensure that the input is not NULL or empty */
 bool
-is_absolute_path(const char *path)
+is_absolute_మార్గం(స్థిరరాశి అక్షరం *మార్గం)
 {
-#ifdef _WIN32
+#నిర్వచితమైతే _WIN32
     /*
      * A file name is relative to the current directory if it does not begin with
      * one of the following:
@@ -22,9 +22,9 @@ is_absolute_path(const char *path)
      * - A single backslash, for example, "\directory" or "\file.txt".
      * See: https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file
      */
-    return is_path_separator(path[0]) ||
-           (strlen_safe(path) >= 3 && path[1] == ':' && is_path_separator(path[2]));
-#else
-    return is_path_separator(path[0]);
-#endif
+    తిరిగి is_మార్గం_separator(మార్గం[0]) ||
+           (strlen_సురక్షిత(మార్గం) >= 3 && మార్గం[1] == ':' && is_మార్గం_separator(మార్గం[2]));
+#లేకపోతే
+    తిరిగి is_మార్గం_separator(మార్గం[0]);
+#అయితే_ముగింపు
 }

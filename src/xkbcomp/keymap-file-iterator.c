@@ -3,30 +3,30 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include <limits.h>
-#include <string.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <string.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "context.h"
-#include "darray.h"
-#include "include.h"
-#include "keymap-formats.h"
-#include "keymap-file-iterator.h"
-#include "messages-codes.h"
-#include "utils.h"
-#include "util-paths.h"
-#include "xkbcomp-priv.h"
-#include "xkbcomp/ast.h"
+#అన్తర్భావ "xkbcommon/xkbcommon.h"
+#అన్తర్భావ "context.h"
+#అన్తర్భావ "darray.h"
+#అన్తర్భావ "include.h"
+#అన్తర్భావ "keymap-formats.h"
+#అన్తర్భావ "keymap-file-iterator.h"
+#అన్తర్భావ "messages-codes.h"
+#అన్తర్భావ "utils.h"
+#అన్తర్భావ "util-paths.h"
+#అన్తర్భావ "xkbcomp-priv.h"
+#అన్తర్భావ "xkbcomp/ast.h"
 
-const char *
-xkb_file_type_name(enum xkb_file_type type)
+స్థిరరాశి అక్షరం *
+xkb_file_type_name(గణన xkb_file_type type)
 {
-    if (type > FILE_TYPE_KEYMAP)
-        return "unknown";
+    ఒకవేళ (type > FILE_TYPE_KEYMAP)
+        తిరిగి "unknown";
 
-    static const char *xkb_file_type_strings[_FILE_TYPE_NUM_ENTRIES] = {
+    స్థిర స్థిరరాశి అక్షరం *xkb_file_type_అక్షరశ్రేణులు[FILE_TYPE_అంకె_ENTRIES] = {
         [FILE_TYPE_KEYCODES] = "keycodes",
         [FILE_TYPE_TYPES] = "types",
         [FILE_TYPE_COMPAT] = "compatibility",
@@ -34,35 +34,35 @@ xkb_file_type_name(enum xkb_file_type type)
         [FILE_TYPE_GEOMETRY] = "geometry",
         [FILE_TYPE_KEYMAP] = "keymap",
     };
-    return xkb_file_type_strings[type];
+    తిరిగి xkb_file_type_అక్షరశ్రేణులు[type];
 }
 
-const char *
-xkb_merge_mode_name(enum merge_mode merge)
+స్థిరరాశి అక్షరం *
+xkb_విలీనం_బహుళకం_name(గణన విలీనం_బహుళకం విలీనం)
 {
-    if (merge >= _MERGE_MODE_NUM_ENTRIES)
-        return "unknown";
+    ఒకవేళ (విలీనం >= విలీనం_బహుళకం_అంకె_ENTRIES)
+        తిరిగి "unknown";
 
-    static const char *merge_mode_strings[_MERGE_MODE_NUM_ENTRIES] = {
-        [MERGE_DEFAULT] = "default",
-        [MERGE_AUGMENT] = "augment",
-        [MERGE_OVERRIDE] = "override",
-        [MERGE_REPLACE] = "replace",
+    స్థిర స్థిరరాశి అక్షరం *విలీనం_బహుళకం_అక్షరశ్రేణులు[విలీనం_బహుళకం_అంకె_ENTRIES] = {
+        [విలీనం_DEFAULT] = "default",
+        [విలీనం_AUGMENT] = "augment",
+        [విలీనం_OVERRIDE] = "override",
+        [విలీనం_REPLACE] = "replace",
     };
-    return merge_mode_strings[merge];
+    తిరిగి విలీనం_బహుళకం_అక్షరశ్రేణులు[విలీనం];
 }
 
 /* Stateful lookup of map flags names */
-const char *
-xkb_map_flags_string_iter(unsigned int *index, enum xkb_map_flags flags)
+స్థిరరాశి అక్షరం *
+xkb_map_flags_string_iter(గుర్తులేని పూర్ణాంకం *సూచీ, గణన xkb_map_flags flags)
 {
-    if (!flags)
-        return NULL;
+    ఒకవేళ (!flags)
+        తిరిగి ఖాళీ;
 
-    static const struct {
-        enum xkb_map_flags flag;
-        const char *name;
-    } names[] = {
+    స్థిర స్థిరరాశి నిర్మాణం {
+        గణన xkb_map_flags flag;
+        స్థిరరాశి అక్షరం *name;
+    } పేర్లు[] = {
         { MAP_IS_DEFAULT, "default" },
         { MAP_IS_PARTIAL, "partial" },
         { MAP_IS_HIDDEN, "hidden" },
@@ -74,412 +74,412 @@ xkb_map_flags_string_iter(unsigned int *index, enum xkb_map_flags flags)
         { MAP_IS_DEPRECATED, "deprecated" },
     };
 
-    while (*index < ARRAY_SIZE(names)) {
-        if (flags & names[*index].flag)
-            return names[(*index)++].name;
-        (*index)++;
+    అయితే (*సూచీ < ARRAY_కొలత(పేర్లు)) {
+        ఒకవేళ (flags & పేర్లు[*సూచీ].flag)
+            తిరిగి పేర్లు[(*సూచీ)++].name;
+        (*సూచీ)++;
     }
 
-    return NULL;
+    తిరిగి ఖాళీ;
 };
 
 FILE *
-xkb_resolve_file(struct xkb_context *ctx,
-                 enum xkb_file_type file_type,
-                 const char *path, const char *map,
-                 char *resolved_path, size_t resolved_path_size,
-                 char *resolved_map, size_t resolved_map_size)
+xkb_resolve_file(నిర్మాణం xkb_context *ctx,
+                 గణన xkb_file_type file_type,
+                 స్థిరరాశి అక్షరం *మార్గం, స్థిరరాశి అక్షరం *map,
+                 అక్షరం *resolved_మార్గం, కొలత_t resolved_మార్గం_కొలత,
+                 అక్షరం *resolved_map, కొలత_t resolved_map_కొలత)
 {
-    unsigned int offset = 0;
-    FILE *file = NULL; /* Exact match */
-    FILE *candidate = NULL; /* Weak match */
-    const size_t path_len = strlen(path);
+    గుర్తులేని పూర్ణాంకం స్థానభ్రంశం = 0;
+    FILE *file = ఖాళీ; /* Exact match */
+    FILE *candidate = ఖాళీ; /* Weak match */
+    స్థిరరాశి కొలత_t మార్గం_len = అక్షరశ్రేణి_పొడవు(మార్గం);
 
-    const bool absolute_path = is_absolute_path(path);
-    if (absolute_path) {
+    స్థిరరాశి bool absolute_మార్గం = is_absolute_మార్గం(మార్గం);
+    ఒకవేళ (absolute_మార్గం) {
         /* Absolute path: no need for lookup in XKB paths */
-        file = fopen(path, "rb");
-    } else {
+        file = fopen(మార్గం, "rb");
+    } లేకపోతే {
         /* Relative path: lookup the first XKB path */
-        file = FindFileInXkbPath(ctx, "(unknown)", path, path_len, file_type,
-                                 resolved_path, resolved_path_size, &offset,
+        file = కనుగొను_File_లోపల_Xkb_మార్గం(ctx, "(unknown)", మార్గం, మార్గం_len, file_type,
+                                 resolved_మార్గం, resolved_మార్గం_కొలత, &స్థానభ్రంశం,
                                  true);
     }
 
-    const enum xkb_keymap_format format = DEFAULT_INPUT_KEYMAP_FORMAT;
-    const struct parser_keymap_config config = {
+    స్థిరరాశి గణన xkb_keymap_format format = DEFAULT_ఆదానం_KEYMAP_FORMAT;
+    స్థిరరాశి నిర్మాణం parser_keymap_config config = {
         .format = format,
         .strict = parser_strict_flags_from_keymap_format(format)
     };
 
-    while (file) {
-        XkbFile * const xkb_file = XkbParseFile(ctx, &config, file, path, map);
-        if (xkb_file) {
-            if (file_type < _FILE_TYPE_NUM_ENTRIES &&
+    అయితే (file) {
+        XkbFile * స్థిరరాశి xkb_file = XkbParseFile(ctx, &config, file, మార్గం, map);
+        ఒకవేళ (xkb_file) {
+            ఒకవేళ (file_type < FILE_TYPE_అంకె_ENTRIES &&
                 xkb_file->file_type != file_type) {
-                log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+                log_err(ctx, XKB_LOG_సందేశం_NO_ID,
                         "File of wrong type (expected %s, got %s); "
                         "file \"%s\" ignored\n",
-                        xkb_file_type_to_string(file_type),
-                        xkb_file_type_to_string(xkb_file->file_type),
-                        (absolute_path ? path : resolved_path));
-                goto invalid_file;
-            } else if (map || (xkb_file->flags && MAP_IS_DEFAULT)) {
+                        xkb_file_type_గమ్యం_string(file_type),
+                        xkb_file_type_గమ్యం_string(xkb_file->file_type),
+                        (absolute_మార్గం ? మార్గం : resolved_మార్గం));
+                వెళ్ళు invalid_file;
+            } లేకపోతే ఒకవేళ (map || (xkb_file->flags && MAP_IS_DEFAULT)) {
                 /*
                  * Exact match: explicit map name or explicit default map.
                  * Lookup stops in this iteration.
                  */
-                if (!strcpy_safe(resolved_map, resolved_map_size,
+                ఒకవేళ (!strcpy_సురక్షిత(resolved_map, resolved_map_కొలత,
                                  (xkb_file->name ? xkb_file->name : ""))) {
                     FreeXkbFile(xkb_file);
-                    goto error;
+                    వెళ్ళు error;
                 }
-            } else if (!candidate) {
+            } లేకపోతే ఒకవేళ (!candidate) {
                 /*
                  * Weak match: looking for an explicit default map, but found
                  * only the first *implicit* default map (e.g. first map of the
                  * file). Use as fallback, but keep looking for an exact match.
                  */
                 candidate = file;
-                if (!strcpy_safe(resolved_map, resolved_map_size,
+                ఒకవేళ (!strcpy_సురక్షిత(resolved_map, resolved_map_కొలత,
                                  (xkb_file->name ? xkb_file->name : ""))) {
                     FreeXkbFile(xkb_file);
-                    goto error;
+                    వెళ్ళు error;
                 }
-            } else {
+            } లేకపోతే {
                 /*
                  * Weak match, but we already have a previous candidate.
                  * Keep looking for an exact match.
                  */
-                goto invalid_file;
+                వెళ్ళు invalid_file;
             }
-        } else {
+        } లేకపోతే {
 invalid_file:
             fclose(file);
-            file = NULL;
+            file = ఖాళీ;
         }
 
         FreeXkbFile(xkb_file);
 
-        if (file != NULL || absolute_path) {
+        ఒకవేళ (file != ఖాళీ || absolute_మార్గం) {
             /* Exact match or absolute path with no further file to search */
-            break;
+            ఆపు;
         }
 
-        offset++;
-        file = FindFileInXkbPath(ctx, "(unknown)",
-                                 path, path_len, file_type,
-                                 resolved_path, resolved_path_size,
-                                 &offset, true);
+        స్థానభ్రంశం++;
+        file = కనుగొను_File_లోపల_Xkb_మార్గం(ctx, "(unknown)",
+                                 మార్గం, మార్గం_len, file_type,
+                                 resolved_మార్గం, resolved_మార్గం_కొలత,
+                                 &స్థానభ్రంశం, true);
     }
 
-    if (!file) {
+    ఒకవేళ (!file) {
         /* No exact match: use weak match, if any */
         file = candidate;
-    } else if (candidate) {
+    } లేకపోతే ఒకవేళ (candidate) {
         /* Found exact match: discard weak match, if any */
         fclose(candidate);
     }
 
-    if (absolute_path && file &&
-        !strcpy_safe(resolved_path, resolved_path_size, path)) {
-        goto error;
+    ఒకవేళ (absolute_మార్గం && file &&
+        !strcpy_సురక్షిత(resolved_మార్గం, resolved_మార్గం_కొలత, మార్గం)) {
+        వెళ్ళు error;
     }
 
-    return file;
+    తిరిగి file;
 
 error:
-    log_err(ctx, XKB_ERROR_INSUFFICIENT_BUFFER_SIZE,
+    log_err(ctx, XKB_ERROR_INSUFFICIENT_బఫరు_కొలత,
             "Cannot copy resolved path or section\n");
     fclose(file);
-    return NULL;
+    తిరిగి ఖాళీ;
 }
 
-void
-xkb_file_section_init(struct xkb_file_section *section)
+శూన్య
+xkb_file_section_init(నిర్మాణం xkb_file_section *section)
 {
     darray_init(section->include_groups);
     darray_init(section->includes);
-    darray_init(section->buffer);
-    darray_append(section->buffer, '\0');
+    darray_init(section->బఫరు);
+    darray_append(section->బఫరు, '\0');
 }
 
-static void
-xkb_file_section_reset(struct xkb_file_section *section)
+స్థిర శూన్య
+xkb_file_section_reset(నిర్మాణం xkb_file_section *section)
 {
-    darray_size(section->include_groups) = 0;
-    darray_size(section->includes) = 0;
-    darray_size(section->buffer) = 1; /* keep the dummy string */
+    darray_కొలత(section->include_groups) = 0;
+    darray_కొలత(section->includes) = 0;
+    darray_కొలత(section->బఫరు) = 1; /* keep the dummy string */
 }
 
-void
-xkb_file_section_free(struct xkb_file_section *section)
+శూన్య
+xkb_file_section_free(నిర్మాణం xkb_file_section *section)
 {
-    if (!section)
-        return;
+    ఒకవేళ (!section)
+        తిరిగి;
 
     darray_free(section->include_groups);
     darray_free(section->includes);
-    darray_free(section->buffer);
+    darray_free(section->బఫరు);
 }
 
-static bool
-xkb_file_section_set_meta_data(struct xkb_context *ctx,
-                               struct xkb_file_section *section,
-                               const XkbFile *xkb_file)
+స్థిర bool
+xkb_file_section_సమితి_meta_దత్తాంశం(నిర్మాణం xkb_context *ctx,
+                               నిర్మాణం xkb_file_section *section,
+                               స్థిరరాశి XkbFile *xkb_file)
 {
     section->file_type = xkb_file->file_type;
     section->flags = xkb_file->flags;
-    if (xkb_file->name) {
-        darray_size_t idx = darray_size(section->buffer);
-        darray_append_string0(section->buffer, xkb_file->name);
+    ఒకవేళ (xkb_file->name) {
+        darray_కొలత_t idx = darray_కొలత(section->బఫరు);
+        darray_append_string0(section->బఫరు, xkb_file->name);
         section->name = idx;
-    } else {
+    } లేకపోతే {
         section->name = 0;
     }
-    return true;
+    తిరిగి true;
 }
 
 /** Process a list of include statements */
-static bool
-xkb_file_section_append_includes(struct xkb_context *ctx,
-                                 enum xkb_file_iterator_flags flags,
-                                 const struct parser_keymap_config *config,
-                                 const char *section_path,
-                                 struct xkb_file_section *section,
-                                 enum xkb_file_type file_type,
+స్థిర bool
+xkb_file_section_append_includes(నిర్మాణం xkb_context *ctx,
+                                 గణన xkb_file_iterator_flags flags,
+                                 స్థిరరాశి నిర్మాణం parser_keymap_config *config,
+                                 స్థిరరాశి అక్షరం *section_మార్గం,
+                                 నిర్మాణం xkb_file_section *section,
+                                 గణన xkb_file_type file_type,
                                  IncludeStmt * include)
 {
-    struct xkb_file_include_group *group = NULL;
+    నిర్మాణం xkb_file_include_సమూహం *సమూహం = ఖాళీ;
     /* Note: this will flatten statements such as `include "pc+de"` */
-    for (IncludeStmt *stmt = include; stmt; stmt = stmt->next_incl) {
-        char buf[PATH_MAX];
+    కొరకు (IncludeStmt *stmt = include; stmt; stmt = stmt->తదుపరి_incl) {
+        అక్షరం buf[PATH_MAX];
         /* Parse the included file to check the include validity */
         XkbFile *xkb_file = ProcessIncludeFile(ctx, config, stmt, file_type,
-                                               buf, sizeof(buf));
-        const bool valid = (xkb_file != NULL);
-        if (valid || !(flags & XKB_FILE_ITERATOR_FAIL_ON_INCLUDE_ERROR)) {
+                                               buf, పరిమాణం(buf));
+        స్థిరరాశి bool valid = (xkb_file != ఖాళీ);
+        ఒకవేళ (valid || !(flags & XKB_FILE_ITERATOR_FAIL_ON_INCLUDE_ERROR)) {
             /* Collect the strings of the statement properties */
 
-            const darray_size_t path = darray_size(section->buffer);
-            darray_append_string0(section->buffer, buf);
+            స్థిరరాశి darray_కొలత_t మార్గం = darray_కొలత(section->బఫరు);
+            darray_append_string0(section->బఫరు, buf);
 
-            const darray_size_t file = darray_size(section->buffer);
-            darray_append_string0(section->buffer, stmt->file);
+            స్థిరరాశి darray_కొలత_t file = darray_కొలత(section->బఫరు);
+            darray_append_string0(section->బఫరు, stmt->file);
 
-            const darray_size_t section_name =
-                (stmt->map != NULL || (valid && xkb_file->name))
-                    ? darray_size(section->buffer)
+            స్థిరరాశి darray_కొలత_t section_name =
+                (stmt->map != ఖాళీ || (valid && xkb_file->name))
+                    ? darray_కొలత(section->బఫరు)
                     : 0;
-            if (section_name) {
-                darray_append_string0(section->buffer,
+            ఒకవేళ (section_name) {
+                darray_append_string0(section->బఫరు,
                                       (stmt->map) ? stmt->map : xkb_file->name);
             }
 
-            const darray_size_t modifier = (stmt->modifier)
-                ? darray_size(section->buffer)
+            స్థిరరాశి darray_కొలత_t modifier = (stmt->modifier)
+                ? darray_కొలత(section->బఫరు)
                 : 0;
-            if (modifier) {
-                darray_append_string0(section->buffer, stmt->modifier);
+            ఒకవేళ (modifier) {
+                darray_append_string0(section->బఫరు, stmt->modifier);
             }
 
-            const enum xkb_map_flags section_flags = (valid)
+            స్థిరరాశి గణన xkb_map_flags section_flags = (valid)
                 ? xkb_file->flags
                 : 0;
 
             /* Create and append the include statement */
-            const struct xkb_file_include inc = {
+            స్థిరరాశి నిర్మాణం xkb_file_include inc = {
                 .valid = valid,
-                .explicit_section = (stmt->map != NULL),
-                .merge = stmt->merge,
-                .path = path,
+                .explicit_section = (stmt->map != ఖాళీ),
+                .విలీనం = stmt->విలీనం,
+                .మార్గం = మార్గం,
                 .file = file,
                 .section = section_name,
                 .modifier = modifier,
                 .flags = section_flags
             };
-            const darray_size_t idx = darray_size(section->includes);
+            స్థిరరాశి darray_కొలత_t idx = darray_కొలత(section->includes);
             darray_append(section->includes, inc);
 
             /* Update include group */
-            if (group == NULL) {
-                const darray_size_t group_idx =
-                    darray_size(section->include_groups);
+            ఒకవేళ (సమూహం == ఖాళీ) {
+                స్థిరరాశి darray_కొలత_t సమూహం_idx =
+                    darray_కొలత(section->include_groups);
                 darray_append(
                     section->include_groups,
-                    (struct xkb_file_include_group) {.start = idx, .end = idx}
+                    (నిర్మాణం xkb_file_include_సమూహం) {.ప్రారంభం = idx, .చివర = idx}
                 );
-                group = &darray_item(section->include_groups, group_idx);
-            } else {
-                group->end = idx;
+                సమూహం = &darray_అంశం(section->include_groups, సమూహం_idx);
+            } లేకపోతే {
+                సమూహం->చివర = idx;
             }
 
             FreeXkbFile(xkb_file);
-        } else {
-            const char * const name =
+        } లేకపోతే {
+            స్థిరరాశి అక్షరం * స్థిరరాశి name =
                 xkb_file_section_get_string(section, section->name);
-            log_err(ctx, XKB_ERROR_INCLUDED_FILE_NOT_FOUND,
+            log_err(ctx, XKB_ERROR_INCLUDED_FILE_NOT_దొరికింది,
                     "%s include failure in: %s%s%s%s\n",
-                    xkb_file_type_name(file_type), section_path,
+                    xkb_file_type_name(file_type), section_మార్గం,
                     (section->name ? " (section: \"": ""), name,
                     (section->name ? "\")": ""));
             FreeXkbFile(xkb_file);
-            return false;
+            తిరిగి false;
         }
     };
-    return true;
+    తిరిగి true;
 }
 
 /* Process the AST of a section */
-static bool
-xkb_file_section_process(struct xkb_context *ctx,
-                         enum xkb_file_iterator_flags flags,
-                         const struct parser_keymap_config *config,
-                         const char *path,
-                         struct xkb_file_section *section,
-                         const XkbFile *xkb_file)
+స్థిర bool
+xkb_file_section_process(నిర్మాణం xkb_context *ctx,
+                         గణన xkb_file_iterator_flags flags,
+                         స్థిరరాశి నిర్మాణం parser_keymap_config *config,
+                         స్థిరరాశి అక్షరం *మార్గం,
+                         నిర్మాణం xkb_file_section *section,
+                         స్థిరరాశి XkbFile *xkb_file)
 {
     bool ok = true;
-    for (ParseCommon *stmt = xkb_file->defs; stmt; stmt = stmt->next) {
-        if (stmt->type == STMT_INCLUDE) {
-            ok = xkb_file_section_append_includes(ctx, flags, config, path,
+    కొరకు (ParseCommon *stmt = xkb_file->defs; stmt; stmt = stmt->తదుపరి) {
+        ఒకవేళ (stmt->type == STMT_INCLUDE) {
+            ok = xkb_file_section_append_includes(ctx, flags, config, మార్గం,
                                                   section, xkb_file->file_type,
                                                   (IncludeStmt *) stmt);
-            if (!ok)
-                break;
+            ఒకవేళ (!ok)
+                ఆపు;
         }
     }
-    return ok;
+    తిరిగి ok;
 }
 
 bool
-xkb_file_section_parse(struct xkb_context *ctx,
-                       enum xkb_file_iterator_flags iterator_flags,
-                       enum xkb_keymap_format format,
-                       enum xkb_keymap_compile_flags compile_flags,
-                       unsigned int include_depth,
-                       const char *path, const char *map,
-                       struct xkb_file_section *section)
+xkb_file_section_parse(నిర్మాణం xkb_context *ctx,
+                       గణన xkb_file_iterator_flags iterator_flags,
+                       గణన xkb_keymap_format format,
+                       గణన xkb_keymap_compile_flags compile_flags,
+                       గుర్తులేని పూర్ణాంకం include_లోతు,
+                       స్థిరరాశి అక్షరం *మార్గం, స్థిరరాశి అక్షరం *map,
+                       నిర్మాణం xkb_file_section *section)
 {
-    if (ExceedsIncludeMaxDepth(ctx, include_depth))
-        return false;
+    ఒకవేళ (Exceeds_Include_Max_లోతు(ctx, include_లోతు))
+        తిరిగి false;
 
-    FILE *file = fopen(path, "rb");
-    if (!file) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
-                "Cannot open file: %s\n", path);
-        return false;
+    FILE *file = fopen(మార్గం, "rb");
+    ఒకవేళ (!file) {
+        log_err(ctx, XKB_LOG_సందేశం_NO_ID,
+                "Cannot open file: %s\n", మార్గం);
+        తిరిగి false;
     }
 
-    const struct parser_keymap_config config = {
+    స్థిరరాశి నిర్మాణం parser_keymap_config config = {
         .format = format,
         .strict = parser_strict_flags_from_keymap_format(format)
     };
 
-    XkbFile *xkb_file = XkbParseFile(ctx, &config, file, path, map);
+    XkbFile *xkb_file = XkbParseFile(ctx, &config, file, మార్గం, map);
     fclose(file);
-    if (!xkb_file) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    ఒకవేళ (!xkb_file) {
+        log_err(ctx, XKB_LOG_సందేశం_NO_ID,
                 "Cannot parse map \"%s\" in file: %s\n",
-                (map ? map : "(no map)"), path);
-        return false;
+                (map ? map : "(no map)"), మార్గం);
+        తిరిగి false;
     }
 
     xkb_file_section_reset(section);
-    const bool no_includes = iterator_flags & XKB_FILE_ITERATOR_NO_INCLUDES;
-    const bool ok = (
-        xkb_file_section_set_meta_data(ctx, section, xkb_file) &&
+    స్థిరరాశి bool no_includes = iterator_flags & XKB_FILE_ITERATOR_NO_INCLUDES;
+    స్థిరరాశి bool ok = (
+        xkb_file_section_సమితి_meta_దత్తాంశం(ctx, section, xkb_file) &&
         (no_includes ||
-         xkb_file_section_process(ctx, iterator_flags, &config, path, section,
+         xkb_file_section_process(ctx, iterator_flags, &config, మార్గం, section,
                                   xkb_file))
     );
     FreeXkbFile(xkb_file);
-    return ok;
+    తిరిగి ok;
 }
 
-struct xkb_file_iterator *
-xkb_file_iterator_new_from_buffer(struct xkb_context *ctx,
-                                  enum xkb_file_iterator_flags iterator_flags,
-                                  enum xkb_keymap_format format,
-                                  enum xkb_keymap_compile_flags compile_flags,
-                                  const char *path, const char *map,
-                                  enum xkb_file_type file_type,
-                                  const char *string, size_t length)
+నిర్మాణం xkb_file_iterator *
+xkb_file_iterator_new_from_బఫరు(నిర్మాణం xkb_context *ctx,
+                                  గణన xkb_file_iterator_flags iterator_flags,
+                                  గణన xkb_keymap_format format,
+                                  గణన xkb_keymap_compile_flags compile_flags,
+                                  స్థిరరాశి అక్షరం *మార్గం, స్థిరరాశి అక్షరం *map,
+                                  గణన xkb_file_type file_type,
+                                  స్థిరరాశి అక్షరం *string, కొలత_t నిడివి)
 {
-    struct xkb_file_iterator * const iter = calloc(1, sizeof(*iter));
-    if (!iter) {
-        log_err(ctx, XKB_ERROR_ALLOCATION_FAILURE_,
+    నిర్మాణం xkb_file_iterator * స్థిరరాశి iter = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*iter));
+    ఒకవేళ (!iter) {
+        log_err(ctx, XKB_ERROR_కేటాయింపు_FAILURE_2,
                 "Cannot allocate file iterator\n");
-        return NULL;
+        తిరిగి ఖాళీ;
     }
 
     iter->flags = iterator_flags;
     iter->ctx = ctx;
-    iter->path = path;
+    iter->మార్గం = మార్గం;
     iter->map = map;
     iter->type = file_type;
-    iter->parser_config = (struct parser_keymap_config) {
+    iter->parser_config = (నిర్మాణం parser_keymap_config) {
         .format = format,
         .strict = parser_strict_flags_from_keymap_format(format)
     };
     xkb_file_section_init(&iter->section);
 
-    if (!XkbParseStringInit(ctx, &iter->scanner, string, length, path, NULL)) {
+    ఒకవేళ (!XkbParseStringInit(ctx, &iter->scanner, string, నిడివి, మార్గం, ఖాళీ)) {
         xkb_file_iterator_free(iter);
-        return NULL;
+        తిరిగి ఖాళీ;
     }
 
-    return iter;
+    తిరిగి iter;
 }
 
-void
-xkb_file_iterator_free(struct xkb_file_iterator *iter)
+శూన్య
+xkb_file_iterator_free(నిర్మాణం xkb_file_iterator *iter)
 {
-    if (!iter)
-        return;
+    ఒకవేళ (!iter)
+        తిరిగి;
 
     xkb_file_section_free(&iter->section);
     FreeXkbFile(iter->pending_xkb_file);
-    free(iter);
+    విడుదల(iter);
 }
 
 bool
-xkb_file_iterator_next(struct xkb_file_iterator *iter,
-                       const struct xkb_file_section **section)
+xkb_file_iterator_తదుపరి(నిర్మాణం xkb_file_iterator *iter,
+                       స్థిరరాశి నిర్మాణం xkb_file_section **section)
 {
-    if (iter->finished) {
-        *section = NULL;
-        return true;
+    ఒకవేళ (iter->ముగిసిన) {
+        *section = ఖాళీ;
+        తిరిగి true;
     }
 
-next:
+తదుపరి:
     { /* C11 compatibility: label cannot be followed by a declaration */ }
     /* Parse next section in the file */
-    XkbFile *xkb_file = NULL;
+    XkbFile *xkb_file = ఖాళీ;
 
-    if (iter->pending_xkb_file) {
+    ఒకవేళ (iter->pending_xkb_file) {
         /* We are parsing the components of a keymap */
-        if (iter->pending_section) {
+        ఒకవేళ (iter->pending_section) {
             /* Parse next component */
             xkb_file = iter->pending_section;
-            goto parse_components;
-        } else {
+            వెళ్ళు parse_components;
+        } లేకపోతే {
             /* No more components, try next keymap */
             FreeXkbFile(iter->pending_xkb_file);
-            iter->pending_xkb_file = NULL;
+            iter->pending_xkb_file = ఖాళీ;
         }
     }
 
-    if (!XkbParseStringNext(iter->ctx, &iter->parser_config, &iter->scanner,
+    ఒకవేళ (!Xkb_Parse_String_తదుపరి(iter->ctx, &iter->parser_config, &iter->scanner,
                             iter->map, &xkb_file)) {
-        log_err(iter->ctx, XKB_LOG_MESSAGE_NO_ID,
-                "Error while parsing section in file: %s\n", iter->path);
-        goto error;
-    } else if (!xkb_file) {
+        log_err(iter->ctx, XKB_LOG_సందేశం_NO_ID,
+                "Error while parsing section in file: %s\n", iter->మార్గం);
+        వెళ్ళు error;
+    } లేకపోతే ఒకవేళ (!xkb_file) {
         /* No more sections */
-        iter->finished = true;
-        *section = NULL;
-        return true;
+        iter->ముగిసిన = true;
+        *section = ఖాళీ;
+        తిరిగి true;
     }
 
 parse_components:
@@ -487,67 +487,67 @@ parse_components:
     xkb_file_section_reset(&iter->section);
 
     /* Meta data */
-    if (!xkb_file_section_set_meta_data(iter->ctx, &iter->section, xkb_file))
-        goto error;
+    ఒకవేళ (!xkb_file_section_సమితి_meta_దత్తాంశం(iter->ctx, &iter->section, xkb_file))
+        వెళ్ళు error;
 
     /* Return current section */
     *section = &iter->section;
 
-    if (xkb_file->file_type == FILE_TYPE_KEYMAP) {
+    ఒకవేళ (xkb_file->file_type == FILE_TYPE_KEYMAP) {
         /*
          * If it’s a keymap, then stop here.
          * Next iteration will process its components.
          */
         iter->pending_xkb_file = xkb_file;
         iter->pending_section = (XkbFile *) xkb_file->defs;
-        iter->map = NULL;
-        return true;
-    } else {
-        if (iter->type != FILE_TYPE_INVALID &&
+        iter->map = ఖాళీ;
+        తిరిగి true;
+    } లేకపోతే {
+        ఒకవేళ (iter->type != FILE_TYPE_INVALID &&
             xkb_file->file_type != iter->type) {
-            if (iter->pending_xkb_file) {
+            ఒకవేళ (iter->pending_xkb_file) {
                 /* Within a keymap: filter out component */
-                iter->pending_section = (XkbFile *) xkb_file->common.next;
-                goto next;
-            } else {
+                iter->pending_section = (XkbFile *) xkb_file->common.తదుపరి;
+                వెళ్ళు తదుపరి;
+            } లేకపోతే {
                 /* Component-specific file: type mismatch */
-                log_err(iter->ctx, XKB_LOG_MESSAGE_NO_ID,
+                log_err(iter->ctx, XKB_LOG_సందేశం_NO_ID,
                         "File type mismatch: %s, section: %s\n",
-                        iter->path,
+                        iter->మార్గం,
                         (xkb_file->name ? xkb_file->name : "(no name)"));
-                goto error;
+                వెళ్ళు error;
             }
         }
-        if (iter->map) {
-            iter->finished = true;
+        ఒకవేళ (iter->map) {
+            iter->ముగిసిన = true;
         }
     }
 
     /* Collect include statements of current section */
-    const bool process_includes = !(iter->flags & XKB_FILE_ITERATOR_NO_INCLUDES);
-    if (process_includes &&
+    స్థిరరాశి bool process_includes = !(iter->flags & XKB_FILE_ITERATOR_NO_INCLUDES);
+    ఒకవేళ (process_includes &&
         !xkb_file_section_process(iter->ctx, iter->flags, &iter->parser_config,
-                                  iter->path, &iter->section, xkb_file)) {
-        goto error;
-    } else if (iter->pending_section) {
+                                  iter->మార్గం, &iter->section, xkb_file)) {
+        వెళ్ళు error;
+    } లేకపోతే ఒకవేళ (iter->pending_section) {
         /* Next component */
-        iter->pending_section = (XkbFile *) xkb_file->common.next;
-    } else {
+        iter->pending_section = (XkbFile *) xkb_file->common.తదుపరి;
+    } లేకపోతే {
         /* No more component, free the file containing the components */
         FreeXkbFile(xkb_file);
     }
 
-    return true;
+    తిరిగి true;
 
 error:
     FreeXkbFile(xkb_file);
-    *section = NULL;
-    return false;
+    *section = ఖాళీ;
+    తిరిగి false;
 }
 
 /* Lookup a string by its index */
-const char *
-xkb_file_section_get_string(const struct xkb_file_section *section, darray_size_t idx)
+స్థిరరాశి అక్షరం *
+xkb_file_section_get_string(స్థిరరాశి నిర్మాణం xkb_file_section *section, darray_కొలత_t idx)
 {
-    return &darray_item(section->buffer, idx);
+    తిరిగి &darray_అంశం(section->బఫరు, idx);
 }

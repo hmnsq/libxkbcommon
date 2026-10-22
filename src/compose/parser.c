@@ -12,22 +12,22 @@
  * Author: Kazunori Nishihara    Fuji Xerox
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include <errno.h>
-#include <string.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <string.h>
 
-#include "xkbcommon/xkbcommon-keysyms.h"
-#include "darray.h"
-#include "messages-codes.h"
-#include "utils.h"
-#include "constants.h"
-#include "table.h"
-#include "scanner-utils.h"
-#include "paths.h"
-#include "utf8.h"
-#include "parser.h"
-#include "keysym.h"
+#అన్తర్భావ "xkbcommon/xkbcommon-keysyms.h"
+#అన్తర్భావ "darray.h"
+#అన్తర్భావ "messages-codes.h"
+#అన్తర్భావ "utils.h"
+#అన్తర్భావ "constants.h"
+#అన్తర్భావ "table.h"
+#అన్తర్భావ "scanner-utils.h"
+#అన్తర్భావ "paths.h"
+#అన్తర్భావ "utf8.h"
+#అన్తర్భావ "parser.h"
+#అన్తర్భావ "keysym.h"
 
 /*
  * Grammar adapted from libX11/modules/im/ximcp/imLcPrs.c.
@@ -61,9 +61,9 @@
  *          "/usr/share/X11/locale").
  */
 
-enum rules_token {
-    TOK_END_OF_FILE = 0,
-    TOK_END_OF_LINE,
+గణన నియమాలు_token {
+    TOK_చివర_యొక్క_FILE = 0,
+    TOK_చివర_యొక్క_పంక్తి,
     TOK_INCLUDE,
     TOK_INCLUDE_STRING,
     TOK_LHS_KEYSYM,
@@ -76,268 +76,268 @@ enum rules_token {
 };
 
 /* Values returned with some tokens, like yylval. */
-union lvalue {
-    struct {
+సంఘం lvalue {
+    నిర్మాణం {
         /* Still \0-terminated. */
-        const char *str;
-        size_t len;
+        స్థిరరాశి అక్షరం *str;
+        కొలత_t len;
     } string;
 };
 
-static enum rules_token
-lex(struct scanner *s, union lvalue *val)
+స్థిర గణన నియమాలు_token
+lex(నిర్మాణం scanner *s, సంఘం lvalue *val)
 {
-skip_more_whitespace_and_comments:
+skip_మరిన్ని_whitespace_and_comments:
     /* Skip spaces. */
-    while (is_space(scanner_peek(s)))
-        if (scanner_next(s) == '\n')
-            return TOK_END_OF_LINE;
+    అయితే (is_space(scanner_peek(s)))
+        ఒకవేళ (scanner_తదుపరి(s) == '\n')
+            తిరిగి TOK_చివర_యొక్క_పంక్తి;
 
     /* Skip comments. */
-    if (scanner_chr(s, '#')) {
-        scanner_skip_to_eol(s);
-        goto skip_more_whitespace_and_comments;
+    ఒకవేళ (scanner_chr(s, '#')) {
+        scanner_skip_గమ్యం_eol(s);
+        వెళ్ళు skip_మరిన్ని_whitespace_and_comments;
     }
 
     /* See if we're done. */
-    if (scanner_eof(s)) return TOK_END_OF_FILE;
+    ఒకవేళ (scanner_eof(s)) తిరిగి TOK_చివర_యొక్క_FILE;
 
     /* New token. */
     s->token_pos = s->pos;
     s->buf_pos = 0;
 
     /* LHS Keysym. */
-    if (scanner_chr(s, '<')) {
-        while (scanner_peek(s) != '>' && !scanner_eol(s) && !scanner_eof(s))
-            scanner_buf_append(s, scanner_next(s));
-        if (!scanner_chr(s, '>')) {
+    ఒకవేళ (scanner_chr(s, '<')) {
+        అయితే (scanner_peek(s) != '>' && !scanner_eol(s) && !scanner_eof(s))
+            scanner_buf_append(s, scanner_తదుపరి(s));
+        ఒకవేళ (!scanner_chr(s, '>')) {
             scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                         "unterminated keysym literal");
-            return TOK_ERROR;
+            తిరిగి TOK_ERROR;
         }
-        if (!scanner_buf_append(s, '\0')) {
+        ఒకవేళ (!scanner_buf_append(s, '\0')) {
             scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                         "keysym literal is too long");
-            return TOK_ERROR;
+            తిరిగి TOK_ERROR;
         }
         val->string.str = s->buf;
         val->string.len = s->buf_pos;
-        return TOK_LHS_KEYSYM;
+        తిరిగి TOK_LHS_KEYSYM;
     }
 
     /* Colon. */
-    if (scanner_chr(s, ':'))
-        return TOK_COLON;
-    if (scanner_chr(s, '!'))
-        return TOK_BANG;
-    if (scanner_chr(s, '~'))
-        return TOK_TILDE;
+    ఒకవేళ (scanner_chr(s, ':'))
+        తిరిగి TOK_COLON;
+    ఒకవేళ (scanner_chr(s, '!'))
+        తిరిగి TOK_BANG;
+    ఒకవేళ (scanner_chr(s, '~'))
+        తిరిగి TOK_TILDE;
 
     /* String literal. */
-    if (scanner_chr(s, '\"')) {
-        while (!scanner_eof(s) && !scanner_eol(s) && scanner_peek(s) != '\"') {
-            if (scanner_chr(s, '\\')) {
+    ఒకవేళ (scanner_chr(s, '\"')) {
+        అయితే (!scanner_eof(s) && !scanner_eol(s) && scanner_peek(s) != '\"') {
+            ఒకవేళ (scanner_chr(s, '\\')) {
                 uint8_t o;
-                size_t start_pos = s->pos;
-                if (scanner_chr(s, '\\')) {
+                కొలత_t ప్రారంభం_pos = s->pos;
+                ఒకవేళ (scanner_chr(s, '\\')) {
                     scanner_buf_append(s, '\\');
                 }
-                else if (scanner_chr(s, '"')) {
+                లేకపోతే ఒకవేళ (scanner_chr(s, '"')) {
                     scanner_buf_append(s, '"');
                 }
-                else if (scanner_chr(s, 'x') || scanner_chr(s, 'X')) {
-                    if (scanner_hex(s, &o) && is_valid_char((uint32_t) o)) {
-                        scanner_buf_append(s, (char) o);
-                    } else {
+                లేకపోతే ఒకవేళ (scanner_chr(s, 'x') || scanner_chr(s, 'X')) {
+                    ఒకవేళ (scanner_hex(s, &o) && is_valid_char((uint32_t) o)) {
+                        scanner_buf_append(s, (అక్షరం) o);
+                    } లేకపోతే {
                         scanner_warn(s, XKB_WARNING_INVALID_ESCAPE_SEQUENCE,
                                      "illegal hexadecimal escape sequence "
                                      "\"%.*s\" in string literal",
-                                     (int) (s->pos - start_pos + 1),
-                                     &s->s[start_pos - 1]);
+                                     (పూర్ణాంకం) (s->pos - ప్రారంభం_pos + 1),
+                                     &s->s[ప్రారంభం_pos - 1]);
                     }
                 }
-                else if (scanner_oct(s, &o) && is_valid_char((uint32_t) o)) {
-                    scanner_buf_append(s, (char) o);
+                లేకపోతే ఒకవేళ (scanner_oct(s, &o) && is_valid_char((uint32_t) o)) {
+                    scanner_buf_append(s, (అక్షరం) o);
                 }
-                else if (s->pos > start_pos) {
+                లేకపోతే ఒకవేళ (s->pos > ప్రారంభం_pos) {
                     scanner_warn(s, XKB_WARNING_INVALID_ESCAPE_SEQUENCE,
                                  "illegal octal escape sequence \"%.*s\" "
                                  "in string literal",
-                                 (int) (s->pos - start_pos + 1),
-                                 &s->s[start_pos - 1]);
+                                 (పూర్ణాంకం) (s->pos - ప్రారంభం_pos + 1),
+                                 &s->s[ప్రారంభం_pos - 1]);
                     /* Ignore. */
                 }
-                else {
+                లేకపోతే {
                     scanner_warn(s, XKB_WARNING_UNKNOWN_CHAR_ESCAPE_SEQUENCE,
                                  "unknown escape sequence \"\\%c\" "
                                  "in string literal",
                                  scanner_peek(s));
                     /* Ignore. */
                 }
-            } else {
-                scanner_buf_append(s, scanner_next(s));
+            } లేకపోతే {
+                scanner_buf_append(s, scanner_తదుపరి(s));
             }
         }
-        if (!scanner_chr(s, '\"')) {
+        ఒకవేళ (!scanner_chr(s, '\"')) {
             scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                         "unterminated string literal");
-            return TOK_ERROR;
+            తిరిగి TOK_ERROR;
         }
-        if (!scanner_buf_append(s, '\0')) {
+        ఒకవేళ (!scanner_buf_append(s, '\0')) {
             scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                         "string literal is too long");
-            return TOK_ERROR;
+            తిరిగి TOK_ERROR;
         }
-        if (!is_valid_utf8(s->buf, s->buf_pos - 1)) {
+        ఒకవేళ (!is_valid_utf8(s->buf, s->buf_pos - 1)) {
             scanner_err(s, XKB_ERROR_INVALID_FILE_ENCODING,
                         "string literal is not a valid UTF-8 string");
-            return TOK_ERROR;
+            తిరిగి TOK_ERROR;
         }
         val->string.str = s->buf;
         val->string.len = s->buf_pos;
-        return TOK_STRING;
+        తిరిగి TOK_STRING;
     }
 
     /* Identifier or include. */
-    if (is_alpha(scanner_peek(s)) || scanner_peek(s) == '_') {
+    ఒకవేళ (is_alpha(scanner_peek(s)) || scanner_peek(s) == '_') {
         s->buf_pos = 0;
-        while (is_alnum(scanner_peek(s)) || scanner_peek(s) == '_')
-            scanner_buf_append(s, scanner_next(s));
-        if (!scanner_buf_append(s, '\0')) {
+        అయితే (is_alnum(scanner_peek(s)) || scanner_peek(s) == '_')
+            scanner_buf_append(s, scanner_తదుపరి(s));
+        ఒకవేళ (!scanner_buf_append(s, '\0')) {
             scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                         "identifier is too long");
-            return TOK_ERROR;
+            తిరిగి TOK_ERROR;
         }
 
-        if (streq(s->buf, "include"))
-            return TOK_INCLUDE;
+        ఒకవేళ (streq(s->buf, "include"))
+            తిరిగి TOK_INCLUDE;
 
         val->string.str = s->buf;
         val->string.len = s->buf_pos;
-        return TOK_IDENT;
+        తిరిగి TOK_IDENT;
     }
 
     scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                 "unrecognized token");
     /* Discard rest of line. */
-    scanner_skip_to_eol(s);
-    return TOK_ERROR;
+    scanner_skip_గమ్యం_eol(s);
+    తిరిగి TOK_ERROR;
 }
 
-static enum rules_token
-lex_include_string(struct scanner *s, struct xkb_compose_table *table,
-                   union lvalue *val_out)
+స్థిర గణన నియమాలు_token
+lex_include_string(నిర్మాణం scanner *s, నిర్మాణం xkb_compose_పట్టిక *పట్టిక,
+                   సంఘం lvalue *val_బహిర్గతం)
 {
-    while (is_space(scanner_peek(s)))
-        if (scanner_next(s) == '\n')
-            return TOK_END_OF_LINE;
+    అయితే (is_space(scanner_peek(s)))
+        ఒకవేళ (scanner_తదుపరి(s) == '\n')
+            తిరిగి TOK_చివర_యొక్క_పంక్తి;
 
     s->token_pos = s->pos;
     s->buf_pos = 0;
 
-    if (!scanner_chr(s, '\"')) {
+    ఒకవేళ (!scanner_chr(s, '\"')) {
         scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                     "include statement must be followed by a path");
-        return TOK_ERROR;
+        తిరిగి TOK_ERROR;
     }
 
-    while (!scanner_eof(s) && !scanner_eol(s) && scanner_peek(s) != '\"') {
-        if (scanner_chr(s, '%')) {
-            if (scanner_chr(s, '%')) {
+    అయితే (!scanner_eof(s) && !scanner_eol(s) && scanner_peek(s) != '\"') {
+        ఒకవేళ (scanner_chr(s, '%')) {
+            ఒకవేళ (scanner_chr(s, '%')) {
                 scanner_buf_append(s, '%');
             }
-            else if (scanner_chr(s, 'H')) {
-                const char *home = xkb_context_getenv(table->ctx, "HOME");
-                if (!home) {
-                    scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
+            లేకపోతే ఒకవేళ (scanner_chr(s, 'H')) {
+                స్థిరరాశి అక్షరం *home = xkb_context_getenv(పట్టిక->ctx, "HOME");
+                ఒకవేళ (!home) {
+                    scanner_err(s, XKB_LOG_సందేశం_NO_ID,
                                 "%%H was used in an include statement, "
                                 "but the HOME environment variable is not set");
-                    return TOK_ERROR;
+                    తిరిగి TOK_ERROR;
                 }
-                if (!scanner_buf_appends(s, home)) {
-                    scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
+                ఒకవేళ (!scanner_buf_appends(s, home)) {
+                    scanner_err(s, XKB_LOG_సందేశం_NO_ID,
                                 "include path after expanding %%H is too long");
-                    return TOK_ERROR;
+                    తిరిగి TOK_ERROR;
                 }
             }
-            else if (scanner_chr(s, 'L')) {
-                char *path = get_locale_compose_file_path(table->ctx, table->locale);
-                if (!path) {
+            లేకపోతే ఒకవేళ (scanner_chr(s, 'L')) {
+                అక్షరం *మార్గం = get_locale_compose_file_మార్గం(పట్టిక->ctx, పట్టిక->locale);
+                ఒకవేళ (!మార్గం) {
                     scanner_err(s, XKB_ERROR_INVALID_COMPOSE_LOCALE,
                                 "failed to expand %%L to the locale Compose file");
-                    return TOK_ERROR;
+                    తిరిగి TOK_ERROR;
                 }
-                if (!scanner_buf_appends(s, path)) {
-                    free(path);
-                    scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
+                ఒకవేళ (!scanner_buf_appends(s, మార్గం)) {
+                    విడుదల(మార్గం);
+                    scanner_err(s, XKB_LOG_సందేశం_NO_ID,
                                 "include path after expanding %%L is too long");
-                    return TOK_ERROR;
+                    తిరిగి TOK_ERROR;
                 }
-                free(path);
+                విడుదల(మార్గం);
             }
-            else if (scanner_chr(s, 'S')) {
-                const char *xlocaledir = get_xlocaledir_path(table->ctx);
-                if (!scanner_buf_appends(s, xlocaledir)) {
-                    scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
+            లేకపోతే ఒకవేళ (scanner_chr(s, 'S')) {
+                స్థిరరాశి అక్షరం *xlocaledir = get_xlocaledir_మార్గం(పట్టిక->ctx);
+                ఒకవేళ (!scanner_buf_appends(s, xlocaledir)) {
+                    scanner_err(s, XKB_LOG_సందేశం_NO_ID,
                                 "include path after expanding %%S is too long");
-                    return TOK_ERROR;
+                    తిరిగి TOK_ERROR;
                 }
             }
-            else {
+            లేకపోతే {
                 scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                             "unknown %% format (%c) in include statement", scanner_peek(s));
-                return TOK_ERROR;
+                తిరిగి TOK_ERROR;
             }
-        } else {
-            scanner_buf_append(s, scanner_next(s));
+        } లేకపోతే {
+            scanner_buf_append(s, scanner_తదుపరి(s));
         }
     }
-    if (!scanner_chr(s, '\"')) {
+    ఒకవేళ (!scanner_chr(s, '\"')) {
         scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                     "unterminated include statement");
-        return TOK_ERROR;
+        తిరిగి TOK_ERROR;
     }
-    if (!scanner_buf_append(s, '\0')) {
-        scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
+    ఒకవేళ (!scanner_buf_append(s, '\0')) {
+        scanner_err(s, XKB_LOG_సందేశం_NO_ID,
                     "include path is too long");
-        return TOK_ERROR;
+        తిరిగి TOK_ERROR;
     }
-    val_out->string.str = s->buf;
-    val_out->string.len = s->buf_pos;
-    return TOK_INCLUDE_STRING;
+    val_బహిర్గతం->string.str = s->buf;
+    val_బహిర్గతం->string.len = s->buf_pos;
+    తిరిగి TOK_INCLUDE_STRING;
 }
 
-struct production {
+నిర్మాణం production {
     xkb_keysym_t lhs[COMPOSE_MAX_LHS_LEN];
-    unsigned int len;
+    గుర్తులేని పూర్ణాంకం len;
     xkb_keysym_t keysym;
-    char string[XKB_COMPOSE_MAX_STRING_SIZE];
+    అక్షరం string[XKB_COMPOSE_MAX_STRING_కొలత];
     /* At least one of these is true. */
     bool has_keysym;
     bool has_string;
 
     /* The matching is as follows: (active_mods & modmask) == mods. */
-    xkb_mod_mask_t modmask;
-    xkb_mod_mask_t mods;
+    xkb_mod_ముసుగు_t modmask;
+    xkb_mod_ముసుగు_t mods;
 };
 
-static void
-add_production(struct xkb_compose_table *table, struct scanner *s,
-               const struct production *production)
+స్థిర శూన్య
+కూడు_production(నిర్మాణం xkb_compose_పట్టిక *పట్టిక, నిర్మాణం scanner *s,
+               స్థిరరాశి నిర్మాణం production *production)
 {
-    unsigned int lhs_pos = 0;
-    uint32_t curr = darray_size(table->nodes) == 1 ? 0 : 1;
-    uint32_t *pptr = NULL;
-    struct compose_node *node = NULL;
+    గుర్తులేని పూర్ణాంకం lhs_pos = 0;
+    uint32_t curr = darray_కొలత(పట్టిక->nodes) == 1 ? 0 : 1;
+    uint32_t *pptr = ఖాళీ;
+    నిర్మాణం compose_కణుపు *కణుపు = ఖాళీ;
 
     /* Warn before potentially going over the limit, discard silently after. */
-    if (darray_size(table->nodes) + production->len + COMPOSE_MAX_LHS_LEN >
+    ఒకవేళ (darray_కొలత(పట్టిక->nodes) + production->len + COMPOSE_MAX_LHS_LEN >
         MAX_COMPOSE_NODES)
-        scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
+        scanner_warn(s, XKB_LOG_సందేశం_NO_ID,
                      "too many sequences for one Compose file; "
                      "will ignore further lines");
-    if (darray_size(table->nodes) + production->len >= MAX_COMPOSE_NODES)
-        return;
+    ఒకవేళ (darray_కొలత(పట్టిక->nodes) + production->len >= MAX_COMPOSE_NODES)
+        తిరిగి;
 
     /*
      * Insert the sequence to the ternary search tree, creating new nodes as
@@ -347,125 +347,125 @@ add_production(struct xkb_compose_table *table, struct scanner *s,
      * long O(n) chains, which results in total O(n^2) parsing time. We should
      * ensure the tree is reasonably balanced somehow.
      */
-    while (true) {
-        const xkb_keysym_t keysym = production->lhs[lhs_pos];
-        const bool last = lhs_pos + 1 == production->len;
+    అయితే (true) {
+        స్థిరరాశి xkb_keysym_t keysym = production->lhs[lhs_pos];
+        స్థిరరాశి bool చివరి = lhs_pos + 1 == production->len;
 
-        if (curr == 0) {
+        ఒకవేళ (curr == 0) {
             /*
              * Create a new node and update the parent pointer to it.
              * Update the pointer first because the append invalidates it.
              */
-            struct compose_node new = {
+            నిర్మాణం compose_కణుపు new = {
                 .keysym = keysym,
                 .lokid = 0,
                 .hikid = 0,
-                .internal = {
+                .అంతర్గత = {
                     .eqkid = 0,
-                    .is_leaf = false,
+                    .is_ఆకు = false,
                 },
             };
-            curr = darray_size(table->nodes);
-            if (pptr != NULL) {
+            curr = darray_కొలత(పట్టిక->nodes);
+            ఒకవేళ (pptr != ఖాళీ) {
                 *pptr = curr;
-                pptr = NULL;
+                pptr = ఖాళీ;
             }
-            darray_append(table->nodes, new);
+            darray_append(పట్టిక->nodes, new);
         }
 
-        node = &darray_item(table->nodes, curr);
+        కణుపు = &darray_అంశం(పట్టిక->nodes, curr);
 
-        if (keysym < node->keysym) {
-            pptr = &node->lokid;
-            curr = node->lokid;
-        } else if (keysym > node->keysym) {
-            pptr = &node->hikid;
-            curr = node->hikid;
-        } else if (!last) {
-            if (node->is_leaf) {
-                scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
+        ఒకవేళ (keysym < కణుపు->keysym) {
+            pptr = &కణుపు->lokid;
+            curr = కణుపు->lokid;
+        } లేకపోతే ఒకవేళ (keysym > కణుపు->keysym) {
+            pptr = &కణుపు->hikid;
+            curr = కణుపు->hikid;
+        } లేకపోతే ఒకవేళ (!చివరి) {
+            ఒకవేళ (కణుపు->is_ఆకు) {
+                scanner_warn(s, XKB_LOG_సందేశం_NO_ID,
                              "a sequence already exists which is a prefix of "
                              "this sequence; overriding");
-                node->internal.eqkid = 0;
-                node->internal.is_leaf = false;
+                కణుపు->అంతర్గత.eqkid = 0;
+                కణుపు->అంతర్గత.is_ఆకు = false;
             }
             lhs_pos++;
-            pptr = &node->internal.eqkid;
-            curr = node->internal.eqkid;
-        } else {
-            if (node->is_leaf) {
+            pptr = &కణుపు->అంతర్గత.eqkid;
+            curr = కణుపు->అంతర్గత.eqkid;
+        } లేకపోతే {
+            ఒకవేళ (కణుపు->is_ఆకు) {
                 bool same_string =
-                    (node->leaf.utf8 == 0 && !production->has_string) ||
+                    (కణుపు->ఆకు.utf8 == 0 && !production->has_string) ||
                     (
-                        node->leaf.utf8 != 0 && production->has_string &&
-                        streq(&darray_item(table->utf8, node->leaf.utf8),
+                        కణుపు->ఆకు.utf8 != 0 && production->has_string &&
+                        streq(&darray_అంశం(పట్టిక->utf8, కణుపు->ఆకు.utf8),
                               production->string)
                     );
                 bool same_keysym =
-                    (node->leaf.keysym == XKB_KEY_NoSymbol && !production->has_keysym) ||
+                    (కణుపు->ఆకు.keysym == XKB_కీలకం_No_చిహ్నం && !production->has_keysym) ||
                     (
-                        node->leaf.keysym != XKB_KEY_NoSymbol && production->has_keysym &&
-                        node->leaf.keysym == production->keysym
+                        కణుపు->ఆకు.keysym != XKB_కీలకం_No_చిహ్నం && production->has_keysym &&
+                        కణుపు->ఆకు.keysym == production->keysym
                     );
-                if (same_string && same_keysym) {
-                    scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
+                ఒకవేళ (same_string && same_keysym) {
+                    scanner_warn(s, XKB_LOG_సందేశం_NO_ID,
                                  "this compose sequence is a duplicate of another; "
                                  "skipping line");
-                    return;
-                } else {
-                    scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
+                    తిరిగి;
+                } లేకపోతే {
+                    scanner_warn(s, XKB_LOG_సందేశం_NO_ID,
                                  "this compose sequence already exists; overriding");
                 }
-            } else if (node->internal.eqkid != 0) {
-                scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
+            } లేకపోతే ఒకవేళ (కణుపు->అంతర్గత.eqkid != 0) {
+                scanner_warn(s, XKB_LOG_సందేశం_NO_ID,
                              "this compose sequence is a prefix of another; "
                              "overriding");
-                node->internal.eqkid = 0;
+                కణుపు->అంతర్గత.eqkid = 0;
             }
 
             /* NOTE: If there was a previous entry, its string may *not* be
              * reused in the UTF8 table and the corresponding memory is then
              * wasted! */
-            if (production->has_string) {
-                const size_t len = strlen(production->string);
-                if (node->is_leaf && node->leaf.utf8 &&
-                    len <= strlen(&darray_item(table->utf8, node->leaf.utf8))) {
+            ఒకవేళ (production->has_string) {
+                స్థిరరాశి కొలత_t len = అక్షరశ్రేణి_పొడవు(production->string);
+                ఒకవేళ (కణుపు->is_ఆకు && కణుపు->ఆకు.utf8 &&
+                    len <= అక్షరశ్రేణి_పొడవు(&darray_అంశం(పట్టిక->utf8, కణుపు->ఆకు.utf8))) {
                     /* There is a previous entry with an overwritable string */
-                    memcpy(&darray_item(table->utf8, node->leaf.utf8),
+                    జ్ఞాపకం_నకలు(&darray_అంశం(పట్టిక->utf8, కణుపు->ఆకు.utf8),
                            production->string, len + 1);
-                } else {
+                } లేకపోతే {
                     /* Cannot reuse string: allocate new one */
-                    node->leaf.utf8 = darray_size(table->utf8);
-                    darray_append_items(table->utf8, production->string,
-                                        (darray_size_t)strlen(production->string) + 1);
+                    కణుపు->ఆకు.utf8 = darray_కొలత(పట్టిక->utf8);
+                    darray_append_వస్తువులు(పట్టిక->utf8, production->string,
+                                        (darray_కొలత_t)అక్షరశ్రేణి_పొడవు(production->string) + 1);
                 }
-            } else {
+            } లేకపోతే {
                 /* Ensure we reset possible previous entry */
-                node->leaf.utf8 = 0;
+                కణుపు->ఆకు.utf8 = 0;
             }
 
-            if (production->has_keysym) {
-                node->leaf.keysym = production->keysym;
-            } else {
+            ఒకవేళ (production->has_keysym) {
+                కణుపు->ఆకు.keysym = production->keysym;
+            } లేకపోతే {
                 /* Ensure we reset possible previous entry */
-                node->leaf.keysym = XKB_KEY_NoSymbol;
+                కణుపు->ఆకు.keysym = XKB_కీలకం_No_చిహ్నం;
             }
 
-            node->is_leaf = true;
-            return;
+            కణుపు->is_ఆకు = true;
+            తిరిగి;
         }
     }
 }
 
 /* Should match resolve_modifier(). */
-#define ALL_MODS_MASK ((1u << 0) | (1u << 1) | (1u << 2) | (1u << 3))
+#నిర్వచించు ALL_MODS_ముసుగు ((1u << 0) | (1u << 1) | (1u << 2) | (1u << 3))
 
-static xkb_mod_index_t
-resolve_modifier(const char *name)
+స్థిర xkb_mod_సూచీ_t
+resolve_modifier(స్థిరరాశి అక్షరం *name)
 {
-    static const struct {
-        const char *name;
-        xkb_mod_index_t mod;
+    స్థిర స్థిరరాశి నిర్మాణం {
+        స్థిరరాశి అక్షరం *name;
+        xkb_mod_సూచీ_t mod;
     } mods[] = {
         { "Shift", 0 },
         { "Ctrl", 2 },
@@ -475,100 +475,100 @@ resolve_modifier(const char *name)
         { "Caps", 1 },
     };
 
-    for (unsigned int i = 0; i < ARRAY_SIZE(mods); i++)
-        if (streq(name, mods[i].name))
-            return mods[i].mod;
+    కొరకు (గుర్తులేని పూర్ణాంకం i = 0; i < ARRAY_కొలత(mods); i++)
+        ఒకవేళ (streq(name, mods[i].name))
+            తిరిగి mods[i].mod;
 
-    return XKB_MOD_INVALID;
+    తిరిగి XKB_MOD_INVALID;
 }
 
 /* Parse a string literal ("...") and return the corresponding unescaped string,
  * or NULL if it fails.
  * This is aimed only for testing (un)escaping characters. */
-char *
-parse_string_literal(struct xkb_context *ctx, const char *string)
+అక్షరం *
+parse_string_literal(నిర్మాణం xkb_context *ctx, స్థిరరాశి అక్షరం *string)
 {
-    struct scanner s;
-    union lvalue val;
-    scanner_init(&s, ctx, string, strlen(string), "(unnamed)", NULL);
-    if (lex(&s, &val) == TOK_STRING) {
-        return strdup(val.string.str);
-    } else {
+    నిర్మాణం scanner s;
+    సంఘం lvalue val;
+    scanner_init(&s, ctx, string, అక్షరశ్రేణి_పొడవు(string), "(unnamed)", ఖాళీ);
+    ఒకవేళ (lex(&s, &val) == TOK_STRING) {
+        తిరిగి strdup(val.string.str);
+    } లేకపోతే {
         fprintf(stderr, "ERROR: %s\n", s.s);
-        return NULL;
+        తిరిగి ఖాళీ;
     }
 }
 
-static bool
-parse(struct xkb_compose_table *table, struct scanner *s,
-      unsigned int include_depth);
+స్థిర bool
+parse(నిర్మాణం xkb_compose_పట్టిక *పట్టిక, నిర్మాణం scanner *s,
+      గుర్తులేని పూర్ణాంకం include_లోతు);
 
-static bool
-do_include(struct xkb_compose_table *table, struct scanner *s,
-           const char *path, unsigned int include_depth)
+స్థిర bool
+do_include(నిర్మాణం xkb_compose_పట్టిక *పట్టిక, నిర్మాణం scanner *s,
+           స్థిరరాశి అక్షరం *మార్గం, గుర్తులేని పూర్ణాంకం include_లోతు)
 {
     FILE *file;
     bool ok;
-    char *string;
-    size_t size;
-    struct scanner new_s;
+    అక్షరం *string;
+    కొలత_t కొలత;
+    నిర్మాణం scanner new_s;
 
-    if (include_depth >= COMPOSE_MAX_INCLUDE_DEPTH) {
-        scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
+    ఒకవేళ (include_లోతు >= COMPOSE_MAX_INCLUDE_లోతు) {
+        scanner_err(s, XKB_LOG_సందేశం_NO_ID,
                     "maximum include depth (%u) exceeded; maybe there is an include loop?",
-                    COMPOSE_MAX_INCLUDE_DEPTH);
-        return false;
+                    COMPOSE_MAX_INCLUDE_లోతు);
+        తిరిగి false;
     }
 
-    file = fopen(path, "rb");
-    if (!file) {
-        scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
+    file = fopen(మార్గం, "rb");
+    ఒకవేళ (!file) {
+        scanner_err(s, XKB_LOG_సందేశం_NO_ID,
                     "failed to open included Compose file \"%s\": %s",
-                    path, strerror(errno));
-        return false;
+                    మార్గం, strerror(errno));
+        తిరిగి false;
     }
 
-    ok = map_file(file, &string, &size);
-    if (!ok) {
-        scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
+    ok = map_file(file, &string, &కొలత);
+    ఒకవేళ (!ok) {
+        scanner_err(s, XKB_LOG_సందేశం_NO_ID,
                     "failed to read included Compose file \"%s\": %s",
-                    path, strerror(errno));
-        goto err_file;
+                    మార్గం, strerror(errno));
+        వెళ్ళు err_file;
     }
 
-    scanner_init(&new_s, table->ctx, string, size, path, s->priv);
+    scanner_init(&new_s, పట్టిక->ctx, string, కొలత, మార్గం, s->priv);
 
-    ok = parse(table, &new_s, include_depth + 1);
-    if (!ok)
-        goto err_unmap;
+    ok = parse(పట్టిక, &new_s, include_లోతు + 1);
+    ఒకవేళ (!ok)
+        వెళ్ళు err_unmap;
 
 err_unmap:
-    unmap_file(string, size);
+    unmap_file(string, కొలత);
 err_file:
     fclose(file);
-    return ok;
+    తిరిగి ok;
 }
 
 // NOLINTBEGIN(readability-trivial-switch)
-static bool
-parse(struct xkb_compose_table *table, struct scanner *s,
-      unsigned int include_depth)
+స్థిర bool
+parse(నిర్మాణం xkb_compose_పట్టిక *పట్టిక, నిర్మాణం scanner *s,
+      గుర్తులేని పూర్ణాంకం include_లోతు)
 {
-    enum rules_token tok;
-    union lvalue val;
+    గణన నియమాలు_token tok;
+    సంఘం lvalue val;
     xkb_keysym_t keysym;
-    struct production production;
-    enum { MAX_ERRORS = 10 };
-    int num_errors = 0;
+    నిర్మాణం production production;
+    గణన { MAX_ERRORS = 10 };
+    పూర్ణాంకం అంకె_errors = 0;
 
     /* Basic detection of wrong character encoding.
        The first character relevant to the grammar must be ASCII:
        whitespace, include, modifier list, keysym, comment */
-    if (!scanner_check_supported_char_encoding(s)) {
+    ఒకవేళ (!scanner_check_supported_char_encoding(s)) {
         scanner_err(s, XKB_ERROR_INVALID_FILE_ENCODING,
                     "This could be a file encoding issue. "
                     "Supported file encodings are ASCII and UTF-8.");
-        goto fail;
+        వెళ్ళు fail;
     }
 
 initial:
@@ -581,241 +581,241 @@ initial:
     /* fallthrough */
 
 initial_eol:
-    switch (tok = lex(s, &val)) {
-    case TOK_END_OF_LINE:
-        goto initial_eol;
-    case TOK_END_OF_FILE:
-        goto finished;
-    case TOK_INCLUDE:
-        goto include;
-    default:
-        goto lhs_tok;
+    ఎంపిక (tok = lex(s, &val)) {
+    స్థితి TOK_చివర_యొక్క_పంక్తి:
+        వెళ్ళు initial_eol;
+    స్థితి TOK_చివర_యొక్క_FILE:
+        వెళ్ళు ముగిసిన;
+    స్థితి TOK_INCLUDE:
+        వెళ్ళు include;
+    అప్రమేయ:
+        వెళ్ళు lhs_tok;
     }
 
 include:
-    switch (tok = lex_include_string(s, table, &val)) {
-    case TOK_INCLUDE_STRING:
-        goto include_eol;
-    default:
-        goto unexpected;
+    ఎంపిక (tok = lex_include_string(s, పట్టిక, &val)) {
+    స్థితి TOK_INCLUDE_STRING:
+        వెళ్ళు include_eol;
+    అప్రమేయ:
+        వెళ్ళు unexpected;
     }
 
 include_eol:
-    switch (tok = lex(s, &val)) {
-    case TOK_END_OF_LINE:
-        if (!do_include(table, s, val.string.str, include_depth))
-            goto fail;
-        goto initial;
-    default:
-        goto unexpected;
+    ఎంపిక (tok = lex(s, &val)) {
+    స్థితి TOK_చివర_యొక్క_పంక్తి:
+        ఒకవేళ (!do_include(పట్టిక, s, val.string.str, include_లోతు))
+            వెళ్ళు fail;
+        వెళ్ళు initial;
+    అప్రమేయ:
+        వెళ్ళు unexpected;
     }
 
 lhs:
     tok = lex(s, &val);
 lhs_tok:
-    switch (tok) {
-    case TOK_COLON:
-        if (production.len <= 0) {
-            scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
+    ఎంపిక (tok) {
+    స్థితి TOK_COLON:
+        ఒకవేళ (production.len <= 0) {
+            scanner_warn(s, XKB_LOG_సందేశం_NO_ID,
                          "expected at least one keysym on left-hand side; "
                          "skipping line");
-            goto skip;
+            వెళ్ళు skip;
         }
-        goto rhs;
-    case TOK_IDENT:
-        if (streq(val.string.str, "None")) {
+        వెళ్ళు rhs;
+    స్థితి TOK_IDENT:
+        ఒకవేళ (streq(val.string.str, "None")) {
             production.mods = 0;
-            production.modmask = ALL_MODS_MASK;
-            goto lhs_keysym;
+            production.modmask = ALL_MODS_ముసుగు;
+            వెళ్ళు lhs_keysym;
         }
-        goto lhs_mod_list_tok;
-    case TOK_TILDE:
-        goto lhs_mod_list_tok;
-    case TOK_BANG:
-        production.modmask = ALL_MODS_MASK;
-        goto lhs_mod_list;
-    default:
-        goto lhs_keysym_tok;
+        వెళ్ళు lhs_mod_list_tok;
+    స్థితి TOK_TILDE:
+        వెళ్ళు lhs_mod_list_tok;
+    స్థితి TOK_BANG:
+        production.modmask = ALL_MODS_ముసుగు;
+        వెళ్ళు lhs_mod_list;
+    అప్రమేయ:
+        వెళ్ళు lhs_keysym_tok;
     }
 
 lhs_keysym:
     tok = lex(s, &val);
 lhs_keysym_tok:
-    switch (tok) {
-    case TOK_LHS_KEYSYM:
+    ఎంపిక (tok) {
+    స్థితి TOK_LHS_KEYSYM:
         keysym = xkb_keysym_from_name(val.string.str, XKB_KEYSYM_NO_FLAGS);
-        if (keysym == XKB_KEY_NoSymbol) {
-            scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
+        ఒకవేళ (keysym == XKB_కీలకం_No_చిహ్నం) {
+            scanner_err(s, XKB_LOG_సందేశం_NO_ID,
                         "unrecognized keysym \"%s\" on left-hand side",
                         val.string.str);
-            goto error;
+            వెళ్ళు error;
         }
         check_deprecated_keysyms(scanner_warn, s, s->ctx,
                                  keysym, val.string.str, val.string.str, "%s", "");
-        if (production.len + 1 > COMPOSE_MAX_LHS_LEN) {
+        ఒకవేళ (production.len + 1 > COMPOSE_MAX_LHS_LEN) {
             scanner_warn(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                          "too many keysyms (%u) on left-hand side; skipping line",
                          COMPOSE_MAX_LHS_LEN + 1);
-            goto skip;
+            వెళ్ళు skip;
         }
         production.lhs[production.len++] = keysym;
         production.mods = 0;
         production.modmask = 0;
-        goto lhs;
-    default:
-        goto unexpected;
+        వెళ్ళు lhs;
+    అప్రమేయ:
+        వెళ్ళు unexpected;
     }
 
 lhs_mod_list:
     tok = lex(s, &val);
 lhs_mod_list_tok: {
         bool tilde = false;
-        xkb_mod_index_t mod;
+        xkb_mod_సూచీ_t mod;
 
-        if (tok != TOK_TILDE && tok != TOK_IDENT)
-            goto lhs_keysym_tok;
+        ఒకవేళ (tok != TOK_TILDE && tok != TOK_IDENT)
+            వెళ్ళు lhs_keysym_tok;
 
-        if (tok == TOK_TILDE) {
+        ఒకవేళ (tok == TOK_TILDE) {
             tilde = true;
             tok = lex(s, &val);
         }
 
-        if (tok != TOK_IDENT)
-            goto unexpected;
+        ఒకవేళ (tok != TOK_IDENT)
+            వెళ్ళు unexpected;
 
         mod = resolve_modifier(val.string.str);
-        if (mod == XKB_MOD_INVALID) {
+        ఒకవేళ (mod == XKB_MOD_INVALID) {
             scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                         "unrecognized modifier \"%s\"",
                         val.string.str);
-            goto error;
+            వెళ్ళు error;
         }
 
         production.modmask |= UINT32_C(1) << mod;
-        if (tilde)
+        ఒకవేళ (tilde)
             production.mods &= ~(UINT32_C(1) << mod);
-        else
+        లేకపోతే
             production.mods |= UINT32_C(1) << mod;
 
-        goto lhs_mod_list;
+        వెళ్ళు lhs_mod_list;
     }
 
 rhs:
-    switch (tok = lex(s, &val)) {
-    case TOK_STRING:
-        if (production.has_string) {
-            scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
+    ఎంపిక (tok = lex(s, &val)) {
+    స్థితి TOK_STRING:
+        ఒకవేళ (production.has_string) {
+            scanner_warn(s, XKB_LOG_సందేశం_NO_ID,
                          "right-hand side can have at most one string; "
                          "skipping line");
-            goto skip;
+            వెళ్ళు skip;
         }
-        if (val.string.len <= 0) {
-            scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
+        ఒకవేళ (val.string.len <= 0) {
+            scanner_warn(s, XKB_LOG_సందేశం_NO_ID,
                          "right-hand side string must not be empty; "
                          "skipping line");
-            goto skip;
+            వెళ్ళు skip;
         }
-        if (val.string.len > sizeof(production.string)) {
-            scanner_warn(s, XKB_LOG_MESSAGE_NO_ID,
+        ఒకవేళ (val.string.len > పరిమాణం(production.string)) {
+            scanner_warn(s, XKB_LOG_సందేశం_NO_ID,
                          "right-hand side string is too long: "
                          "expected max: %zu, got: %zu; skipping line",
-                         sizeof(production.string) - 1,
+                         పరిమాణం(production.string) - 1,
                          val.string.len - 1);
-            goto skip;
+            వెళ్ళు skip;
         }
-        memcpy(production.string, val.string.str, val.string.len);
+        జ్ఞాపకం_నకలు(production.string, val.string.str, val.string.len);
         production.has_string = true;
-        goto rhs;
-    case TOK_IDENT:
+        వెళ్ళు rhs;
+    స్థితి TOK_IDENT:
         keysym = xkb_keysym_from_name(val.string.str, XKB_KEYSYM_NO_FLAGS);
-        if (keysym == XKB_KEY_NoSymbol) {
-            scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
+        ఒకవేళ (keysym == XKB_కీలకం_No_చిహ్నం) {
+            scanner_err(s, XKB_LOG_సందేశం_NO_ID,
                         "unrecognized keysym \"%s\" on right-hand side",
                         val.string.str);
-            goto error;
+            వెళ్ళు error;
         }
         check_deprecated_keysyms(scanner_warn, s, s->ctx,
                                  keysym, val.string.str, val.string.str, "%s", "");
-        if (production.has_keysym) {
+        ఒకవేళ (production.has_keysym) {
             scanner_warn(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                          "right-hand side can have at most one keysym; "
                          "skipping line");
-            goto skip;
+            వెళ్ళు skip;
         }
         production.keysym = keysym;
         production.has_keysym = true;
         /* fallthrough */
-    case TOK_END_OF_LINE:
-        if (!production.has_string && !production.has_keysym) {
+    స్థితి TOK_చివర_యొక్క_పంక్తి:
+        ఒకవేళ (!production.has_string && !production.has_keysym) {
             scanner_warn(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                          "right-hand side must have at least one of string "
                          "or keysym; skipping line");
-            goto skip;
+            వెళ్ళు skip;
         }
-        add_production(table, s, &production);
-        goto initial;
-    default:
-        goto unexpected;
+        కూడు_production(పట్టిక, s, &production);
+        వెళ్ళు initial;
+    అప్రమేయ:
+        వెళ్ళు unexpected;
     }
 
 unexpected:
-    if (tok != TOK_ERROR)
+    ఒకవేళ (tok != TOK_ERROR)
         scanner_err(s, XKB_ERROR_INVALID_COMPOSE_SYNTAX,
                     "unexpected token");
 error:
-    num_errors++;
-    if (num_errors <= MAX_ERRORS)
-        goto skip;
+    అంకె_errors++;
+    ఒకవేళ (అంకె_errors <= MAX_ERRORS)
+        వెళ్ళు skip;
 
-    scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
+    scanner_err(s, XKB_LOG_సందేశం_NO_ID,
                 "too many errors");
-    goto fail;
+    వెళ్ళు fail;
 
 fail:
-    scanner_err(s, XKB_LOG_MESSAGE_NO_ID,
+    scanner_err(s, XKB_LOG_సందేశం_NO_ID,
                 "failed to parse file");
-    return false;
+    తిరిగి false;
 
 skip:
-    while (tok != TOK_END_OF_LINE && tok != TOK_END_OF_FILE)
+    అయితే (tok != TOK_చివర_యొక్క_పంక్తి && tok != TOK_చివర_యొక్క_FILE)
         tok = lex(s, &val);
-    goto initial;
+    వెళ్ళు initial;
 
-finished:
-    return true;
+ముగిసిన:
+    తిరిగి true;
 }
 // NOLINTEND(readability-trivial-switch)
 
 bool
-parse_string(struct xkb_compose_table *table, const char *string, size_t len,
-             const char *file_name)
+parse_string(నిర్మాణం xkb_compose_పట్టిక *పట్టిక, స్థిరరాశి అక్షరం *string, కొలత_t len,
+             స్థిరరాశి అక్షరం *file_name)
 {
-    struct scanner s;
-    scanner_init(&s, table->ctx, string, len, file_name, NULL);
-    if (!parse(table, &s, 0))
-        return false;
+    నిర్మాణం scanner s;
+    scanner_init(&s, పట్టిక->ctx, string, len, file_name, ఖాళీ);
+    ఒకవేళ (!parse(పట్టిక, &s, 0))
+        తిరిగి false;
     /* Maybe the allocator can use the excess space. */
-    darray_shrink(table->nodes);
-    darray_shrink(table->utf8);
-    return true;
+    darray_shrink(పట్టిక->nodes);
+    darray_shrink(పట్టిక->utf8);
+    తిరిగి true;
 }
 
 bool
-parse_file(struct xkb_compose_table *table, FILE *file, const char *file_name)
+parse_file(నిర్మాణం xkb_compose_పట్టిక *పట్టిక, FILE *file, స్థిరరాశి అక్షరం *file_name)
 {
     bool ok;
-    char *string;
-    size_t size;
+    అక్షరం *string;
+    కొలత_t కొలత;
 
-    ok = map_file(file, &string, &size);
-    if (!ok) {
-        log_err(table->ctx, XKB_LOG_MESSAGE_NO_ID,
+    ok = map_file(file, &string, &కొలత);
+    ఒకవేళ (!ok) {
+        log_err(పట్టిక->ctx, XKB_LOG_సందేశం_NO_ID,
                 "Couldn't read Compose file %s: %s\n",
                 file_name, strerror(errno));
-        return false;
+        తిరిగి false;
     }
 
-    ok = parse_string(table, string, size, file_name);
-    unmap_file(string, size);
-    return ok;
+    ok = parse_string(పట్టిక, string, కొలత, file_name);
+    unmap_file(string, కొలత);
+    తిరిగి ok;
 }

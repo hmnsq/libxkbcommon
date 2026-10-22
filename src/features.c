@@ -9,140 +9,140 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include <stdint.h>
+#అన్తర్భావ <stdint.h>
 
-#include "xkbcommon/xkbcommon-features.h"
-#include "features/enums.h"
-#include "utils.h"
+#అన్తర్భావ "xkbcommon/xkbcommon-features.h"
+#అన్తర్భావ "features/enums.h"
+#అన్తర్భావ "utils.h"
 
-static bool
-is_supported_enum_value_mask(enum xkb_enumerations_values values, uint32_t value)
+స్థిర bool
+is_supported_enum_విలువ_ముసుగు(గణన xkb_enumerations_విలువలు విలువలు, uint32_t విలువ)
 {
-    return (value < UINT32_WIDTH && (values & (UINT32_C(1) << value)));
+    తిరిగి (విలువ < UINT32_వెడల్పు && (విలువలు & (UINT32_C(1) << విలువ)));
 }
 
-static bool
-is_supported_enum_value_array(const uint32_t *values, size_t size, uint32_t value)
+స్థిర bool
+is_supported_enum_విలువ_array(స్థిరరాశి uint32_t *విలువలు, కొలత_t కొలత, uint32_t విలువ)
 {
-    for (size_t v = 0; v < size; v++) {
-        if (values[v] == value) {
-            return true;
+    కొరకు (కొలత_t v = 0; v < కొలత; v++) {
+        ఒకవేళ (విలువలు[v] == విలువ) {
+            తిరిగి true;
         }
     }
-    return false;
+    తిరిగి false;
 }
 
-static inline bool
-is_supported_flag_value(enum xkb_enumerations_values values,
-                        bool accept_zero, uint32_t value)
+స్థిర అంతఃవరుస bool
+is_supported_flag_విలువ(గణన xkb_enumerations_విలువలు విలువలు,
+                        bool accept_zero, uint32_t విలువ)
 {
-    return (accept_zero || value) && ((uint32_t) values & value) == value;
+    తిరిగి (accept_zero || విలువ) && ((uint32_t) విలువలు & విలువ) == విలువ;
 }
 
 bool
-xkb_feature_supported(enum xkb_feature feature, uint32_t value)
+xkb_feature_supported(గణన xkb_feature feature, uint32_t విలువ)
 {
-    switch (feature) {
-    case XKB_FEATURE_ENUM_FEATURE:
-        return is_supported_enum_value_array(
-            xkb_feature_values, ARRAY_SIZE(xkb_feature_values), value
+    ఎంపిక (feature) {
+    స్థితి XKB_FEATURE_ENUM_FEATURE:
+        తిరిగి is_supported_enum_విలువ_array(
+            xkb_feature_విలువలు, ARRAY_కొలత(xkb_feature_విలువలు), విలువ
         );
-    case XKB_FEATURE_ENUM_STATUS:
-        return is_supported_enum_value_array(
-            xkb_status_values, ARRAY_SIZE(xkb_status_values), value
+    స్థితి XKB_FEATURE_ENUM_స్థితి:
+        తిరిగి is_supported_enum_విలువ_array(
+            xkb_స్థితి_విలువలు, ARRAY_కొలత(xkb_స్థితి_విలువలు), విలువ
         );
-    case XKB_FEATURE_ENUM_CONTEXT_FLAGS:
-        return is_supported_flag_value(
-            XKB_CONTEXT_FLAGS_VALUES, true, value
+    స్థితి XKB_FEATURE_ENUM_CONTEXT_FLAGS:
+        తిరిగి is_supported_flag_విలువ(
+            XKB_CONTEXT_FLAGS_విలువలు, true, విలువ
         );
-    case XKB_FEATURE_ENUM_LOG_LEVEL:
-        return is_supported_enum_value_array(
-            xkb_log_level_values, ARRAY_SIZE(xkb_log_level_values), value
+    స్థితి XKB_FEATURE_ENUM_LOG_LEVEL:
+        తిరిగి is_supported_enum_విలువ_array(
+            xkb_log_level_విలువలు, ARRAY_కొలత(xkb_log_level_విలువలు), విలువ
         );
-    case XKB_FEATURE_ENUM_KEYSYM_FLAGS:
-        return is_supported_flag_value(
-            XKB_KEYSYM_FLAGS_VALUES, true, value
+    స్థితి XKB_FEATURE_ENUM_KEYSYM_FLAGS:
+        తిరిగి is_supported_flag_విలువ(
+            XKB_KEYSYM_FLAGS_విలువలు, true, విలువ
         );
-    case XKB_FEATURE_ENUM_RMLVO_BUILDER_FLAGS:
-        return is_supported_flag_value(
-            XKB_RMLVO_BUILDER_FLAGS_VALUES, true, value
+    స్థితి XKB_FEATURE_ENUM_RMLVO_BUILDER_FLAGS:
+        తిరిగి is_supported_flag_విలువ(
+            XKB_RMLVO_BUILDER_FLAGS_విలువలు, true, విలువ
         );
-    case XKB_FEATURE_ENUM_KEYMAP_FORMAT:
-        return is_supported_enum_value_mask(XKB_KEYMAP_FORMAT_VALUES, value);
-    case XKB_FEATURE_ENUM_KEYMAP_COMPILE_FLAGS:
-        return is_supported_flag_value(
-            XKB_KEYMAP_COMPILE_FLAGS_VALUES, true, value
+    స్థితి XKB_FEATURE_ENUM_KEYMAP_FORMAT:
+        తిరిగి is_supported_enum_విలువ_ముసుగు(XKB_KEYMAP_FORMAT_విలువలు, విలువ);
+    స్థితి XKB_FEATURE_ENUM_KEYMAP_COMPILE_FLAGS:
+        తిరిగి is_supported_flag_విలువ(
+            XKB_KEYMAP_COMPILE_FLAGS_విలువలు, true, విలువ
         );
-    case XKB_FEATURE_ENUM_KEYMAP_SERIALIZE_FLAGS:
-        return is_supported_flag_value(
-            XKB_KEYMAP_SERIALIZE_FLAGS_VALUES, true, value
+    స్థితి XKB_FEATURE_ENUM_KEYMAP_SERIALIZE_FLAGS:
+        తిరిగి is_supported_flag_విలువ(
+            XKB_KEYMAP_SERIALIZE_FLAGS_విలువలు, true, విలువ
         );
-    case XKB_FEATURE_ENUM_KEYMAP_KEY_ITERATOR_FLAGS:
-        return is_supported_flag_value(
-            XKB_KEYMAP_KEY_ITERATOR_FLAGS_VALUES, true, value
+    స్థితి XKB_FEATURE_ENUM_KEYMAP_కీలకం_ITERATOR_FLAGS:
+        తిరిగి is_supported_flag_విలువ(
+            XKB_KEYMAP_కీలకం_ITERATOR_FLAGS_విలువలు, true, విలువ
         );
-    case XKB_FEATURE_ENUM_STATE_COMPONENT:
-        return is_supported_flag_value(
-            XKB_STATE_COMPONENT_VALUES, true, value
+    స్థితి XKB_FEATURE_ENUM_STATE_COMPONENT:
+        తిరిగి is_supported_flag_విలువ(
+            XKB_STATE_COMPONENT_విలువలు, true, విలువ
         );
-    case XKB_FEATURE_ENUM_LAYOUT_OUT_OF_RANGE_POLICY:
-        return is_supported_enum_value_mask(XKB_LAYOUT_OUT_OF_RANGE_POLICY_VALUES, value);
-    case XKB_FEATURE_ENUM_A11Y_FLAGS:
-        return is_supported_flag_value(
-            XKB_A11Y_FLAGS_VALUES, true, value
+    స్థితి XKB_FEATURE_ENUM_LAYOUT_బహిర్గతం_యొక్క_RANGE_POLICY:
+        తిరిగి is_supported_enum_విలువ_ముసుగు(XKB_LAYOUT_బహిర్గతం_యొక్క_RANGE_POLICY_విలువలు, విలువ);
+    స్థితి XKB_FEATURE_ENUM_A11Y_FLAGS:
+        తిరిగి is_supported_flag_విలువ(
+            XKB_A11_Y_FLAGS_విలువలు, true, విలువ
         );
-    case XKB_FEATURE_ENUM_KEYBOARD_CONTROL_FLAGS:
-        return is_supported_flag_value(
-            XKB_KEYBOARD_CONTROL_FLAGS_VALUES, true, value
+    స్థితి XKB_FEATURE_ENUM_KEYBOARD_CONTROL_FLAGS:
+        తిరిగి is_supported_flag_విలువ(
+            XKB_KEYBOARD_CONTROL_FLAGS_విలువలు, true, విలువ
         );
-    case XKB_FEATURE_ENUM_STATE_MODE:
-        return is_supported_enum_value_mask(XKB_STATE_MODE_VALUES, value);
-    case XKB_FEATURE_ENUM_STATE_MATCH:
-        return is_supported_flag_value(
-            XKB_STATE_MATCH_VALUES, false, value
+    స్థితి XKB_FEATURE_ENUM_STATE_బహుళకం:
+        తిరిగి is_supported_enum_విలువ_ముసుగు(XKB_STATE_బహుళకం_విలువలు, విలువ);
+    స్థితి XKB_FEATURE_ENUM_STATE_సరిపోలిక:
+        తిరిగి is_supported_flag_విలువ(
+            XKB_STATE_సరిపోలిక_విలువలు, false, విలువ
         );
-    case XKB_FEATURE_ENUM_CONSUMED_MODE:
-        return is_supported_enum_value_mask(XKB_CONSUMED_MODE_VALUES, value);
-    case XKB_FEATURE_ENUM_MACHINE_BUILDER_FLAGS:
-        return is_supported_flag_value(
-            XKB_MACHINE_BUILDER_FLAGS_VALUES, true, value
+    స్థితి XKB_FEATURE_ENUM_CONSUMED_బహుళకం:
+        తిరిగి is_supported_enum_విలువ_ముసుగు(XKB_CONSUMED_బహుళకం_విలువలు, విలువ);
+    స్థితి XKB_FEATURE_ENUM_MACHINE_BUILDER_FLAGS:
+        తిరిగి is_supported_flag_విలువ(
+            XKB_MACHINE_BUILDER_FLAGS_విలువలు, true, విలువ
         );
-    case XKB_FEATURE_ENUM_MACHINE_FLAGS:
-        return is_supported_flag_value(
-            XKB_MACHINE_FLAGS_VALUES, true, value
+    స్థితి XKB_FEATURE_ENUM_MACHINE_FLAGS:
+        తిరిగి is_supported_flag_విలువ(
+            XKB_MACHINE_FLAGS_విలువలు, true, విలువ
         );
-    case XKB_FEATURE_ENUM_EVENT_TYPE:
-        return is_supported_enum_value_mask(XKB_EVENT_TYPE_VALUES, value);
-    case XKB_FEATURE_ENUM_KEY_DIRECTION:
-        return is_supported_enum_value_mask(XKB_KEY_DIRECTION_VALUES, value);
-    case XKB_FEATURE_ENUM_POINTER_MOTION_FLAGS:
-        return is_supported_flag_value(
-            XKB_POINTER_MOTION_FLAGS_VALUES, true, value
+    స్థితి XKB_FEATURE_ENUM_EVENT_TYPE:
+        తిరిగి is_supported_enum_విలువ_ముసుగు(XKB_EVENT_TYPE_విలువలు, విలువ);
+    స్థితి XKB_FEATURE_ENUM_కీలకం_DIRECTION:
+        తిరిగి is_supported_enum_విలువ_ముసుగు(XKB_కీలకం_DIRECTION_విలువలు, విలువ);
+    స్థితి XKB_FEATURE_ENUM_సూచిక_MOTION_FLAGS:
+        తిరిగి is_supported_flag_విలువ(
+            XKB_సూచిక_MOTION_FLAGS_విలువలు, true, విలువ
         );
-    case XKB_FEATURE_ENUM_POINTER_BUTTON_STATE:
-        return is_supported_enum_value_mask(XKB_POINTER_BUTTON_STATE_VALUES, value);
-    case XKB_FEATURE_ENUM_EVENTS_FLAGS:
-        return is_supported_flag_value(
-            XKB_EVENTS_FLAGS_VALUES, true, value
+    స్థితి XKB_FEATURE_ENUM_సూచిక_BUTTON_STATE:
+        తిరిగి is_supported_enum_విలువ_ముసుగు(XKB_సూచిక_BUTTON_STATE_విలువలు, విలువ);
+    స్థితి XKB_FEATURE_ENUM_EVENTS_FLAGS:
+        తిరిగి is_supported_flag_విలువ(
+            XKB_EVENTS_FLAGS_విలువలు, true, విలువ
         );
-    case XKB_FEATURE_ENUM_COMPOSE_FORMAT:
-        return is_supported_enum_value_mask(XKB_COMPOSE_FORMAT_VALUES, value);
-    case XKB_FEATURE_ENUM_COMPOSE_COMPILE_FLAGS:
-        return is_supported_flag_value(
-            XKB_COMPOSE_COMPILE_FLAGS_VALUES, true, value
+    స్థితి XKB_FEATURE_ENUM_COMPOSE_FORMAT:
+        తిరిగి is_supported_enum_విలువ_ముసుగు(XKB_COMPOSE_FORMAT_విలువలు, విలువ);
+    స్థితి XKB_FEATURE_ENUM_COMPOSE_COMPILE_FLAGS:
+        తిరిగి is_supported_flag_విలువ(
+            XKB_COMPOSE_COMPILE_FLAGS_విలువలు, true, విలువ
         );
-    case XKB_FEATURE_ENUM_COMPOSE_STATUS:
-        return is_supported_enum_value_mask(XKB_COMPOSE_STATUS_VALUES, value);
-    case XKB_FEATURE_ENUM_COMPOSE_STATE_FLAGS:
-        return is_supported_flag_value(
-            XKB_COMPOSE_STATE_FLAGS_VALUES, true, value
+    స్థితి XKB_FEATURE_ENUM_COMPOSE_స్థితి:
+        తిరిగి is_supported_enum_విలువ_ముసుగు(XKB_COMPOSE_స్థితి_విలువలు, విలువ);
+    స్థితి XKB_FEATURE_ENUM_COMPOSE_STATE_FLAGS:
+        తిరిగి is_supported_flag_విలువ(
+            XKB_COMPOSE_STATE_FLAGS_విలువలు, true, విలువ
         );
-    case XKB_FEATURE_ENUM_COMPOSE_FEED_RESULT:
-        return is_supported_enum_value_mask(XKB_COMPOSE_FEED_RESULT_VALUES, value);
-    default:
+    స్థితి XKB_FEATURE_ENUM_COMPOSE_FEED_ఫలితం:
+        తిరిగి is_supported_enum_విలువ_ముసుగు(XKB_COMPOSE_FEED_ఫలితం_విలువలు, విలువ);
+    అప్రమేయ:
         /* Invalid feature */
-        return false;
+        తిరిగి false;
     }
 }

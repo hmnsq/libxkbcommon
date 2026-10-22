@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include "scanner-utils.h"
+#అన్తర్భావ "scanner-utils.h"
 
-struct scanner_loc
-scanner_token_location(struct scanner *s)
+నిర్మాణం scanner_loc
+scanner_token_location(నిర్మాణం scanner *s)
 {
     /*
      * The following article and accompying code compares some algorithms:
@@ -20,27 +20,27 @@ scanner_token_location(struct scanner *s)
      * and start from that on the next call. This is effective as long as the
      * tokens go forward.
      */
-    size_t line, column;
-    size_t line_pos = 0;
-    if (s->cached_pos > s->token_pos) {
+    కొలత_t పంక్తి, స్తంభం;
+    కొలత_t పంక్తి_pos = 0;
+    ఒకవేళ (s->cached_pos > s->token_pos) {
         s->cached_pos = 0;
-        s->cached_loc.line = s->cached_loc.column = 1;
+        s->cached_loc.పంక్తి = s->cached_loc.స్తంభం = 1;
     }
-    line = s->cached_loc.line;
-    const char *ptr = s->s + s->cached_pos;
-    const char *last = s->s + s->token_pos;
-    while ((ptr = memchr(ptr, '\n', (size_t)(last - ptr)))) {
-        line++;
+    పంక్తి = s->cached_loc.పంక్తి;
+    స్థిరరాశి అక్షరం *ptr = s->s + s->cached_pos;
+    స్థిరరాశి అక్షరం *చివరి = s->s + s->token_pos;
+    అయితే ((ptr = memchr(ptr, '\n', (కొలత_t)(చివరి - ptr)))) {
+        పంక్తి++;
         ptr++;
-        line_pos = (size_t)(ptr - s->s);
+        పంక్తి_pos = (కొలత_t)(ptr - s->s);
     }
-    if (line == s->cached_loc.line) {
-        column = s->cached_loc.column + (s->token_pos - s->cached_pos);
-    } else {
-        column = s->token_pos - line_pos + 1;
+    ఒకవేళ (పంక్తి == s->cached_loc.పంక్తి) {
+        స్తంభం = s->cached_loc.స్తంభం + (s->token_pos - s->cached_pos);
+    } లేకపోతే {
+        స్తంభం = s->token_pos - పంక్తి_pos + 1;
     }
-    struct scanner_loc loc = {.line = line, .column = column};
+    నిర్మాణం scanner_loc loc = {.పంక్తి = పంక్తి, .స్తంభం = స్తంభం};
     s->cached_pos = s->token_pos;
     s->cached_loc = loc;
-    return loc;
+    తిరిగి loc;
 }

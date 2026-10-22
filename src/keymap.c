@@ -11,431 +11,431 @@
  * Author: Daniel Stone <daniel@fooishbar.org>
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include <assert.h>
-#include <stdint.h>
-#include <string.h>
+#అన్తర్భావ <assert.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <string.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "abi-check.h"
-#include "atom.h"
-#include "context.h"
-#include "features/enums.h"
-#include "keymap.h"
-#include "keymap-priv.h"
-#include "messages-codes.h"
-#include "text.h"
-#include "util-mem.h"
-#include "util-numbers.h"
+#అన్తర్భావ "xkbcommon/xkbcommon.h"
+#అన్తర్భావ "abi-check.h"
+#అన్తర్భావ "atom.h"
+#అన్తర్భావ "context.h"
+#అన్తర్భావ "features/enums.h"
+#అన్తర్భావ "keymap.h"
+#అన్తర్భావ "keymap-priv.h"
+#అన్తర్భావ "messages-codes.h"
+#అన్తర్భావ "text.h"
+#అన్తర్భావ "util-mem.h"
+#అన్తర్భావ "util-numbers.h"
 
-struct xkb_keymap *
-xkb_keymap_ref(struct xkb_keymap *keymap)
+నిర్మాణం xkb_keymap *
+xkb_keymap_ref(నిర్మాణం xkb_keymap *keymap)
 {
-    assert(keymap->refcnt > 0);
+    ప్రతిజ్ఞా(keymap->refcnt > 0);
     keymap->refcnt++;
-    return keymap;
+    తిరిగి keymap;
 }
 
-void
-clear_level(struct xkb_level *leveli)
+శూన్య
+clear_level(నిర్మాణం xkb_level *leveli)
 {
-    if (leveli->num_syms > 1)
-        free(leveli->s.syms);
-    if (leveli->num_actions > 1)
-        free(leveli->a.actions);
+    ఒకవేళ (leveli->అంకె_syms > 1)
+        విడుదల(leveli->s.syms);
+    ఒకవేళ (leveli->అంకె_actions > 1)
+        విడుదల(leveli->a.actions);
 }
 
-static void
-clear_interpret(struct xkb_sym_interpret *interp)
+స్థిర శూన్య
+clear_interpret(నిర్మాణం xkb_sym_interpret *interp)
 {
-    if (interp->num_actions > 1)
-        free(interp->a.actions);
+    ఒకవేళ (interp->అంకె_actions > 1)
+        విడుదల(interp->a.actions);
 }
 
-void
-xkb_keymap_unref(struct xkb_keymap *keymap)
+శూన్య
+xkb_keymap_unref(నిర్మాణం xkb_keymap *keymap)
 {
-    assert(!keymap || keymap->refcnt > 0);
-    if (!keymap || --keymap->refcnt > 0)
-        return;
+    ప్రతిజ్ఞా(!keymap || keymap->refcnt > 0);
+    ఒకవేళ (!keymap || --keymap->refcnt > 0)
+        తిరిగి;
 
-    if (keymap->keys) {
-        struct xkb_key *key;
-        xkb_keys_foreach(key, keymap) {
-            if (key->groups) {
-                for (xkb_layout_index_t i = 0; i < key->num_groups; i++) {
-                    if (key->groups[i].levels) {
-                        for (xkb_level_index_t j = 0;
-                             j < XkbKeyNumLevels(key, i);
+    ఒకవేళ (keymap->కీలకాలు) {
+        నిర్మాణం xkb_కీలకం *కీలకం;
+        xkb_కీలకాలు_foreach(కీలకం, keymap) {
+            ఒకవేళ (కీలకం->groups) {
+                కొరకు (xkb_layout_సూచీ_t i = 0; i < కీలకం->అంకె_groups; i++) {
+                    ఒకవేళ (కీలకం->groups[i].స్థాయిలు) {
+                        కొరకు (xkb_level_సూచీ_t j = 0;
+                             j < Xkb_కీలకం_అంకె_స్థాయిలు(కీలకం, i);
                              j++)
-                            clear_level(&key->groups[i].levels[j]);
-                        free(key->groups[i].levels);
+                            clear_level(&కీలకం->groups[i].స్థాయిలు[j]);
+                        విడుదల(కీలకం->groups[i].స్థాయిలు);
                     }
                 }
-                free(key->groups);
+                విడుదల(కీలకం->groups);
             }
-            if (!key->overlays_inline && key->overlays_keys) {
-                free((void *)key->overlays_keys);
+            ఒకవేళ (!కీలకం->overlays_inline && కీలకం->overlays_కీలకాలు) {
+                విడుదల((శూన్య *)కీలకం->overlays_కీలకాలు);
             }
         }
-        free(keymap->keys);
+        విడుదల(keymap->కీలకాలు);
     }
-    if (keymap->types) {
-        for (darray_size_t i = 0; i < keymap->num_types; i++) {
-            free(keymap->types[i].entries);
-            free(keymap->types[i].level_names);
+    ఒకవేళ (keymap->types) {
+        కొరకు (darray_కొలత_t i = 0; i < keymap->అంకె_types; i++) {
+            విడుదల(keymap->types[i].entries);
+            విడుదల(keymap->types[i].level_పేర్లు);
         }
-        free(keymap->types);
+        విడుదల(keymap->types);
     }
-    for (darray_size_t k = 0; k < keymap->num_sym_interprets; k++) {
+    కొరకు (darray_కొలత_t k = 0; k < keymap->అంకె_sym_interprets; k++) {
         clear_interpret(&keymap->sym_interprets[k]);
     }
-    free(keymap->sym_interprets);
-    free(keymap->modmaps);
-    free(keymap->key_aliases);
-    free(keymap->group_names);
-    free(keymap->keycodes_section_name);
-    free(keymap->symbols_section_name);
-    free(keymap->types_section_name);
-    free(keymap->compat_section_name);
+    విడుదల(keymap->sym_interprets);
+    విడుదల(keymap->modmaps);
+    విడుదల(keymap->కీలకం_aliases);
+    విడుదల(keymap->సమూహం_పేర్లు);
+    విడుదల(keymap->keycodes_section_name);
+    విడుదల(keymap->symbols_section_name);
+    విడుదల(keymap->types_section_name);
+    విడుదల(keymap->compat_section_name);
     xkb_context_unref(keymap->ctx);
-    free(keymap);
+    విడుదల(keymap);
 }
 
-static const struct xkb_keymap_format_ops *
-get_keymap_format_ops(enum xkb_keymap_format format)
+స్థిర స్థిరరాశి నిర్మాణం xkb_keymap_format_ops *
+get_keymap_format_ops(గణన xkb_keymap_format format)
 {
-    static const struct xkb_keymap_format_ops *keymap_format_ops[] = {
-        [XKB_KEYMAP_FORMAT_TEXT_V1] = &text_v1_keymap_format_ops,
-        [XKB_KEYMAP_FORMAT_TEXT_V2] = &text_v1_keymap_format_ops,
+    స్థిర స్థిరరాశి నిర్మాణం xkb_keymap_format_ops *keymap_format_ops[] = {
+        [XKB_KEYMAP_FORMAT_పాఠ్యం_V1] = &పాఠ్యం_v1_keymap_format_ops,
+        [XKB_KEYMAP_FORMAT_పాఠ్యం_V2] = &పాఠ్యం_v1_keymap_format_ops,
     };
 
-    if ((int) format < 0 || (int) format >= (int) ARRAY_SIZE(keymap_format_ops))
-        return NULL;
+    ఒకవేళ ((పూర్ణాంకం) format < 0 || (పూర్ణాంకం) format >= (పూర్ణాంకం) ARRAY_కొలత(keymap_format_ops))
+        తిరిగి ఖాళీ;
 
-    return keymap_format_ops[(int) format];
+    తిరిగి keymap_format_ops[(పూర్ణాంకం) format];
 }
 
-struct xkb_keymap *
-xkb_keymap_new_from_rmlvo(const struct xkb_rmlvo_builder *rmlvo,
-                          enum xkb_keymap_format format,
-                          enum xkb_keymap_compile_flags flags)
+నిర్మాణం xkb_keymap *
+xkb_keymap_new_from_rmlvo(స్థిరరాశి నిర్మాణం xkb_rmlvo_builder *rmlvo,
+                          గణన xkb_keymap_format format,
+                          గణన xkb_keymap_compile_flags flags)
 {
-    const struct xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
-    if (!ops || !ops->keymap_new_from_rmlvo) {
+    స్థిరరాశి నిర్మాణం xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
+    ఒకవేళ (!ops || !ops->keymap_new_from_rmlvo) {
         log_err_func(rmlvo->ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", format);
-        return NULL;
+        తిరిగి ఖాళీ;
     }
 
-    struct xkb_keymap *keymap = xkb_keymap_new(rmlvo->ctx, __func__, format,
+    నిర్మాణం xkb_keymap *keymap = xkb_keymap_new(rmlvo->ctx, __func__, format,
                                                flags);
-    if (!keymap)
-        return NULL;
+    ఒకవేళ (!keymap)
+        తిరిగి ఖాళీ;
 
-    if (!ops->keymap_new_from_rmlvo(keymap, rmlvo)) {
+    ఒకవేళ (!ops->keymap_new_from_rmlvo(keymap, rmlvo)) {
         xkb_keymap_unref(keymap);
-        return NULL;
+        తిరిగి ఖాళీ;
     }
 
-    return keymap;
+    తిరిగి keymap;
 }
 
-struct xkb_keymap *
-xkb_keymap_new_from_names2(struct xkb_context *ctx,
-                           const struct xkb_rule_names *rmlvo_in,
-                           enum xkb_keymap_format format,
-                           enum xkb_keymap_compile_flags flags)
+నిర్మాణం xkb_keymap *
+xkb_keymap_new_from_names2(నిర్మాణం xkb_context *ctx,
+                           స్థిరరాశి నిర్మాణం xkb_నియమం_పేర్లు *rmlvo_లోపల,
+                           గణన xkb_keymap_format format,
+                           గణన xkb_keymap_compile_flags flags)
 {
-    const struct xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
-    if (!ops || !ops->keymap_new_from_names) {
+    స్థిరరాశి నిర్మాణం xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
+    ఒకవేళ (!ops || !ops->keymap_new_from_పేర్లు) {
         log_err_func(ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", format);
-        return NULL;
+        తిరిగి ఖాళీ;
     }
 
-    struct xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
-    if (!keymap)
-        return NULL;
+    నిర్మాణం xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
+    ఒకవేళ (!keymap)
+        తిరిగి ఖాళీ;
 
-    struct xkb_rule_names rmlvo = {0};
-    if (rmlvo_in)
-        rmlvo = *rmlvo_in;
-    xkb_context_sanitize_rule_names(ctx, &rmlvo);
+    నిర్మాణం xkb_నియమం_పేర్లు rmlvo = {0};
+    ఒకవేళ (rmlvo_లోపల)
+        rmlvo = *rmlvo_లోపల;
+    xkb_context_sanitize_నియమం_పేర్లు(ctx, &rmlvo);
 
-    if (!ops->keymap_new_from_names(keymap, &rmlvo)) {
+    ఒకవేళ (!ops->keymap_new_from_పేర్లు(keymap, &rmlvo)) {
         xkb_keymap_unref(keymap);
-        return NULL;
+        తిరిగి ఖాళీ;
     }
 
-    return keymap;
+    తిరిగి keymap;
 }
 
 
-struct xkb_keymap *
-xkb_keymap_new_from_names(struct xkb_context *ctx,
-                          const struct xkb_rule_names *rmlvo_in,
-                          enum xkb_keymap_compile_flags flags)
+నిర్మాణం xkb_keymap *
+xkb_keymap_new_from_పేర్లు(నిర్మాణం xkb_context *ctx,
+                          స్థిరరాశి నిర్మాణం xkb_నియమం_పేర్లు *rmlvo_లోపల,
+                          గణన xkb_keymap_compile_flags flags)
 {
-    return xkb_keymap_new_from_names2(ctx, rmlvo_in,
-                                      XKB_KEYMAP_FORMAT_TEXT_V2, flags);
+    తిరిగి xkb_keymap_new_from_names2(ctx, rmlvo_లోపల,
+                                      XKB_KEYMAP_FORMAT_పాఠ్యం_V2, flags);
 }
 
-struct xkb_keymap *
-xkb_keymap_new_from_string(struct xkb_context *ctx,
-                           const char *string,
-                           enum xkb_keymap_format format,
-                           enum xkb_keymap_compile_flags flags)
+నిర్మాణం xkb_keymap *
+xkb_keymap_new_from_string(నిర్మాణం xkb_context *ctx,
+                           స్థిరరాశి అక్షరం *string,
+                           గణన xkb_keymap_format format,
+                           గణన xkb_keymap_compile_flags flags)
 {
-    return xkb_keymap_new_from_buffer(ctx, string, strlen(string),
+    తిరిగి xkb_keymap_new_from_బఫరు(ctx, string, అక్షరశ్రేణి_పొడవు(string),
                                       format, flags);
 }
 
-struct xkb_keymap *
-xkb_keymap_new_from_buffer(struct xkb_context *ctx,
-                           const char *buffer, size_t length,
-                           enum xkb_keymap_format format,
-                           enum xkb_keymap_compile_flags flags)
+నిర్మాణం xkb_keymap *
+xkb_keymap_new_from_బఫరు(నిర్మాణం xkb_context *ctx,
+                           స్థిరరాశి అక్షరం *బఫరు, కొలత_t నిడివి,
+                           గణన xkb_keymap_format format,
+                           గణన xkb_keymap_compile_flags flags)
 {
-    const struct xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
-    if (!ops || !ops->keymap_new_from_string) {
+    స్థిరరాశి నిర్మాణం xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
+    ఒకవేళ (!ops || !ops->keymap_new_from_string) {
         log_err_func(ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", format);
-        return NULL;
+        తిరిగి ఖాళీ;
     }
 
-    if (!buffer) {
-        log_err_func1(ctx, XKB_LOG_MESSAGE_NO_ID,
+    ఒకవేళ (!బఫరు) {
+        log_err_func1(ctx, XKB_LOG_సందేశం_NO_ID,
                       "no buffer specified\n");
-        return NULL;
+        తిరిగి ఖాళీ;
     }
 
-    struct xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
-    if (!keymap)
-        return NULL;
+    నిర్మాణం xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
+    ఒకవేళ (!keymap)
+        తిరిగి ఖాళీ;
 
     /* Allow a zero-terminated string as a buffer */
-    if (length > 0 && buffer[length - 1] == '\0')
-        length--;
+    ఒకవేళ (నిడివి > 0 && బఫరు[నిడివి - 1] == '\0')
+        నిడివి--;
 
-    if (!ops->keymap_new_from_string(keymap, buffer, length)) {
+    ఒకవేళ (!ops->keymap_new_from_string(keymap, బఫరు, నిడివి)) {
         xkb_keymap_unref(keymap);
-        return NULL;
+        తిరిగి ఖాళీ;
     }
 
-    return keymap;
+    తిరిగి keymap;
 }
 
-struct xkb_keymap *
-xkb_keymap_new_from_file(struct xkb_context *ctx,
+నిర్మాణం xkb_keymap *
+xkb_keymap_new_from_file(నిర్మాణం xkb_context *ctx,
                          FILE *file,
-                         enum xkb_keymap_format format,
-                         enum xkb_keymap_compile_flags flags)
+                         గణన xkb_keymap_format format,
+                         గణన xkb_keymap_compile_flags flags)
 {
-    const struct xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
-    if (!ops || !ops->keymap_new_from_file) {
+    స్థిరరాశి నిర్మాణం xkb_keymap_format_ops *ops = get_keymap_format_ops(format);
+    ఒకవేళ (!ops || !ops->keymap_new_from_file) {
         log_err_func(ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", format);
-        return NULL;
+        తిరిగి ఖాళీ;
     }
 
-    if (!file) {
-        log_err_func1(ctx, XKB_LOG_MESSAGE_NO_ID,
+    ఒకవేళ (!file) {
+        log_err_func1(ctx, XKB_LOG_సందేశం_NO_ID,
                       "no file specified\n");
-        return NULL;
+        తిరిగి ఖాళీ;
     }
 
-    struct xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
-    if (!keymap)
-        return NULL;
+    నిర్మాణం xkb_keymap *keymap = xkb_keymap_new(ctx, __func__, format, flags);
+    ఒకవేళ (!keymap)
+        తిరిగి ఖాళీ;
 
-    if (!ops->keymap_new_from_file(keymap, file)) {
+    ఒకవేళ (!ops->keymap_new_from_file(keymap, file)) {
         xkb_keymap_unref(keymap);
-        return NULL;
+        తిరిగి ఖాళీ;
     }
 
-    return keymap;
+    తిరిగి keymap;
 }
 
 /** Check ABI compatibility */
 // NOLINTBEGIN(bugprone-assignment-in-selection-statement)
-static enum xkb_status
+స్థిర గణన xkb_స్థితి
 check_keymap_serialize_abi(
-    struct xkb_context * restrict ctx,
-    const char * restrict func,
-    const struct xkb_keymap_serialize_config * restrict config,
-    const struct xkb_keymap_serialize_result * restrict result
+    నిర్మాణం xkb_context * పరిమిత ctx,
+    స్థిరరాశి అక్షరం * పరిమిత func,
+    స్థిరరాశి నిర్మాణం xkb_keymap_serialize_config * పరిమిత config,
+    స్థిరరాశి నిర్మాణం xkb_keymap_serialize_ఫలితం * పరిమిత ఫలితం
 )
 {
-    enum xkb_status status;
-    if ((status = xkb_check_keymap_abi(config)) ||
-        (status = xkb_check_keymap_abi(result))) {
-        xkb_log_abi_error(ctx, func, status);
+    గణన xkb_స్థితి స్థితి_2;
+    ఒకవేళ ((స్థితి_2 = xkb_check_keymap_abi(config)) ||
+        (స్థితి_2 = xkb_check_keymap_abi(ఫలితం))) {
+        xkb_log_abi_error(ctx, func, స్థితి_2);
     }
-    return status;
+    తిరిగి స్థితి_2;
 }
 // NOLINTEND(bugprone-assignment-in-selection-statement)
 
-enum xkb_status
-xkb_keymap_serialize(const struct xkb_keymap *keymap,
-                     const struct xkb_keymap_serialize_config *config,
-                     struct xkb_keymap_serialize_result *result)
+గణన xkb_స్థితి
+xkb_keymap_serialize(స్థిరరాశి నిర్మాణం xkb_keymap *keymap,
+                     స్థిరరాశి నిర్మాణం xkb_keymap_serialize_config *config,
+                     నిర్మాణం xkb_keymap_serialize_ఫలితం *ఫలితం)
 {
     /* Check ABI compatibility */
-    const enum xkb_status status =
-        check_keymap_serialize_abi(keymap->ctx, __func__, config, result);
-    if (status != XKB_SUCCESS)
-        return status;
+    స్థిరరాశి గణన xkb_స్థితి స్థితి_2 =
+        check_keymap_serialize_abi(keymap->ctx, __func__, config, ఫలితం);
+    ఒకవేళ (స్థితి_2 != XKB_SUCCESS)
+        తిరిగి స్థితి_2;
 
-    struct xkb_keymap_serialize_config new_config = *config;
+    నిర్మాణం xkb_keymap_serialize_config new_config = *config;
 
-    const enum xkb_keymap_serialize_flags invalid_flags = (
+    స్థిరరాశి గణన xkb_keymap_serialize_flags invalid_flags = (
         new_config.flags &
-        ~(enum xkb_keymap_serialize_flags)XKB_KEYMAP_SERIALIZE_FLAGS_VALUES
+        ~(గణన xkb_keymap_serialize_flags)XKB_KEYMAP_SERIALIZE_FLAGS_విలువలు
     );
-    if (invalid_flags) {
+    ఒకవేళ (invalid_flags) {
         log_err_func(keymap->ctx,
                      XKB_ERROR_UNSUPPORTED_KEYMAP_SERIALIZATION_FLAGS_,
                      "unrecognized serialization flags: %#x\n",
                      invalid_flags);
-        return XKB_ERROR_UNSUPPORTED_KEYMAP_SERIALIZATION_FLAGS;
+        తిరిగి XKB_ERROR_UNSUPPORTED_KEYMAP_SERIALIZATION_FLAGS;
     }
 
-    if (new_config.format == XKB_KEYMAP_USE_ORIGINAL_FORMAT)
+    ఒకవేళ (new_config.format == XKB_KEYMAP_USE_ORIGINAL_FORMAT)
         new_config.format = keymap->format;
 
-    const struct xkb_keymap_format_ops * const ops =
+    స్థిరరాశి నిర్మాణం xkb_keymap_format_ops * స్థిరరాశి ops =
         get_keymap_format_ops(new_config.format);
-    if (!ops || !ops->keymap_serialize) {
+    ఒకవేళ (!ops || !ops->keymap_serialize) {
         log_err_func(keymap->ctx, XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT_,
                      "unsupported keymap format: %d\n", new_config.format);
-        return XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT;
+        తిరిగి XKB_ERROR_UNSUPPORTED_KEYMAP_FORMAT;
     }
 
-    const xkb_layout_mask_t all_layouts =
-        (xkb_layout_mask_t)((UINT64_C(1) << keymap->num_groups) - 1);
-    if (!new_config.layouts) {
+    స్థిరరాశి xkb_layout_ముసుగు_t all_layouts =
+        (xkb_layout_ముసుగు_t)((UINT64_C(1) << keymap->అంకె_groups) - 1);
+    ఒకవేళ (!new_config.layouts) {
         new_config.layouts = all_layouts;
     }
 
-    if (new_config.layouts & ~all_layouts) {
-        log_err_func(keymap->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
+    ఒకవేళ (new_config.layouts & ~all_layouts) {
+        log_err_func(keymap->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_సూచీ_2,
                      "unsupported layout mask: "
                      "expected subset of 0x%08"PRIx32", got: 0x%08"PRIx32"\n",
                      all_layouts, new_config.layouts);
-        return XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX;
+        తిరిగి XKB_ERROR_UNSUPPORTED_LAYOUT_సూచీ;
     }
 
-    const xkb_layout_index_t max_groups = format_max_groups(config->format);
-    const xkb_layout_index_t num_groups =
-        (xkb_layout_index_t)popcount32(new_config.layouts);
+    స్థిరరాశి xkb_layout_సూచీ_t max_groups = format_max_groups(config->format);
+    స్థిరరాశి xkb_layout_సూచీ_t అంకె_groups =
+        (xkb_layout_సూచీ_t)popcount32(new_config.layouts);
 
-    if (num_groups > max_groups) {
-        const bool strict =
-            (new_config.flags & XKB_KEYMAP_SERIALIZE_STRICT_MODE);
-        xkb_log_with_code(
+    ఒకవేళ (అంకె_groups > max_groups) {
+        స్థిరరాశి bool strict =
+            (new_config.flags & XKB_KEYMAP_SERIALIZE_STRICT_బహుళకం);
+        xkb_log_with_సంకేతం(
             keymap->ctx,
             (strict ? XKB_LOG_LEVEL_ERROR : XKB_LOG_LEVEL_WARNING),
-            XKB_LOG_VERBOSITY_MINIMAL,
-            XKB_ERROR_LAYOUT_COUNT_LIMIT_EXCEEDED_,
+            XKB_LOG_VERBOSITY_కనీస,
+            XKB_ERROR_LAYOUT_లెక్క_హద్దు_EXCEEDED_2,
             "Cannot serialize %"PRIu32" groups in keymap format %d: "
             "maximum is %"PRIu32"%s\n",
-            num_groups, config->format, max_groups,
+            అంకె_groups, config->format, max_groups,
             (strict ? "" : "; discarding unsupported groups")
         );
-        if (strict) {
-            return XKB_ERROR_LAYOUT_COUNT_LIMIT_EXCEEDED;
-        } else {
+        ఒకవేళ (strict) {
+            తిరిగి XKB_ERROR_LAYOUT_లెక్క_హద్దు_EXCEEDED;
+        } లేకపోతే {
             new_config.layouts =
-                keep_lowest_n_set_bits(new_config.layouts, max_groups);
+                keep_అత్యల్ప_n_సమితి_బిట్లు(new_config.layouts, max_groups);
         }
     }
 
-    log_dbg(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
+    log_dbg(keymap->ctx, XKB_LOG_సందేశం_NO_ID,
             "Serializing group mask 0x%"PRIx32" (total: %"PRIu32")\n",
-            new_config.layouts, num_groups);
+            new_config.layouts, అంకె_groups);
 
-    if (new_config.layouts != all_layouts) {
+    ఒకవేళ (new_config.layouts != all_layouts) {
         /*
          * If some layouts are discarded, then interprets may not trigger
          * properly. Avoid this by requiring explicit values.
          */
-        new_config.flags |= (XKB_KEYMAP_SERIALIZE_EXPLICIT_KEY_VALUES |
+        new_config.flags |= (XKB_KEYMAP_SERIALIZE_EXPLICIT_కీలకం_విలువలు |
                              XKB_KEYMAP_SERIALIZE_EXPLICIT_VMODS);
     }
 
-    return ops->keymap_serialize(keymap, &new_config, result);
+    తిరిగి ops->keymap_serialize(keymap, &new_config, ఫలితం);
 }
 
-char *
-xkb_keymap_get_as_string2(struct xkb_keymap *keymap,
-                          enum xkb_keymap_format format,
-                          enum xkb_keymap_serialize_flags flags)
+అక్షరం *
+xkb_keymap_get_as_string2(నిర్మాణం xkb_keymap *keymap,
+                          గణన xkb_keymap_format format,
+                          గణన xkb_keymap_serialize_flags flags)
 {
-    const struct xkb_keymap_serialize_config config = {
-        .size = sizeof(config),
+    స్థిరరాశి నిర్మాణం xkb_keymap_serialize_config config = {
+        .కొలత = పరిమాణం(config),
         .flags = flags,
         .format = format,
         .layouts = 0,
     };
 
-    struct xkb_keymap_serialize_result result = { .size = sizeof(result) };
+    నిర్మాణం xkb_keymap_serialize_ఫలితం ఫలితం = { .కొలత = పరిమాణం(ఫలితం) };
 
-    return (xkb_keymap_serialize(keymap, &config, &result) == XKB_SUCCESS)
-        ? result.serialized
-        : NULL;
+    తిరిగి (xkb_keymap_serialize(keymap, &config, &ఫలితం) == XKB_SUCCESS)
+        ? ఫలితం.serialized
+        : ఖాళీ;
 }
 
-char *
-xkb_keymap_get_as_string(struct xkb_keymap *keymap,
-                         enum xkb_keymap_format format)
+అక్షరం *
+xkb_keymap_get_as_string(నిర్మాణం xkb_keymap *keymap,
+                         గణన xkb_keymap_format format)
 {
-    return xkb_keymap_get_as_string2(keymap, format,
+    తిరిగి xkb_keymap_get_as_string2(keymap, format,
                                      XKB_KEYMAP_SERIALIZE_NO_FLAGS);
 }
 
 /**
  * Returns the total number of modifiers active in the keymap.
  */
-xkb_mod_index_t
-xkb_keymap_num_mods(struct xkb_keymap *keymap)
+xkb_mod_సూచీ_t
+xkb_keymap_అంకె_mods(నిర్మాణం xkb_keymap *keymap)
 {
-    return keymap->mods.num_mods;
+    తిరిగి keymap->mods.అంకె_mods;
 }
 
 /**
  * Return the name for a given modifier.
  */
-const char *
-xkb_keymap_mod_get_name(struct xkb_keymap *keymap, xkb_mod_index_t idx)
+స్థిరరాశి అక్షరం *
+xkb_keymap_mod_get_name(నిర్మాణం xkb_keymap *keymap, xkb_mod_సూచీ_t idx)
 {
-    if (idx >= keymap->mods.num_mods)
-        return NULL;
+    ఒకవేళ (idx >= keymap->mods.అంకె_mods)
+        తిరిగి ఖాళీ;
 
-    return xkb_atom_text(keymap->ctx, keymap->mods.mods[idx].name);
+    తిరిగి xkb_atom_పాఠ్యం(keymap->ctx, keymap->mods.mods[idx].name);
 }
 
 /**
  * Returns the index for a named modifier.
  */
-xkb_mod_index_t
-xkb_keymap_mod_get_index(struct xkb_keymap *keymap, const char *name)
+xkb_mod_సూచీ_t
+xkb_keymap_mod_get_సూచీ(నిర్మాణం xkb_keymap *keymap, స్థిరరాశి అక్షరం *name)
 {
-    const xkb_atom_t atom = xkb_atom_lookup(keymap->ctx, name);
-    return (atom == XKB_ATOM_NONE)
+    స్థిరరాశి xkb_atom_t atom = xkb_atom_lookup(keymap->ctx, name);
+    తిరిగి (atom == XKB_ATOM_NONE)
         ? XKB_MOD_INVALID
-        : XkbModNameToIndex(&keymap->mods, atom, MOD_BOTH);
+        : Xkb_Mod_Name_గమ్యం_సూచీ(&keymap->mods, atom, MOD_BOTH);
 }
 
 /**
  * Return the canonical mapping of a named modifier.
  */
-xkb_mod_mask_t
-xkb_keymap_mod_get_mask(struct xkb_keymap *keymap, const char* name)
+xkb_mod_ముసుగు_t
+xkb_keymap_mod_get_ముసుగు(నిర్మాణం xkb_keymap *keymap, స్థిరరాశి అక్షరం* name)
 {
-    const xkb_mod_index_t idx = xkb_keymap_mod_get_index(keymap, name);
-    return (idx >= keymap->mods.num_mods)
+    స్థిరరాశి xkb_mod_సూచీ_t idx = xkb_keymap_mod_get_సూచీ(keymap, name);
+    తిరిగి (idx >= keymap->mods.అంకె_mods)
         ? 0
         : keymap->mods.mods[idx].mapping;
 }
@@ -443,10 +443,10 @@ xkb_keymap_mod_get_mask(struct xkb_keymap *keymap, const char* name)
 /**
  * Return the canonical mapping of a given modifier.
  */
-xkb_mod_mask_t
-xkb_keymap_mod_get_mask2(struct xkb_keymap *keymap, xkb_mod_index_t idx)
+xkb_mod_ముసుగు_t
+xkb_keymap_mod_get_mask2(నిర్మాణం xkb_keymap *keymap, xkb_mod_సూచీ_t idx)
 {
-    return (idx >= keymap->mods.num_mods)
+    తిరిగి (idx >= keymap->mods.అంకె_mods)
         ? 0
         : keymap->mods.mods[idx].mapping;
 }
@@ -454,139 +454,139 @@ xkb_keymap_mod_get_mask2(struct xkb_keymap *keymap, xkb_mod_index_t idx)
 /**
  * Return the total number of active groups in the keymap.
  */
-xkb_layout_index_t
-xkb_keymap_num_layouts(struct xkb_keymap *keymap)
+xkb_layout_సూచీ_t
+xkb_keymap_అంకె_layouts(నిర్మాణం xkb_keymap *keymap)
 {
-    return keymap->num_groups;
+    తిరిగి keymap->అంకె_groups;
 }
 
 /**
  * Returns the name for a given group.
  */
-const char *
-xkb_keymap_layout_get_name(struct xkb_keymap *keymap, xkb_layout_index_t idx)
+స్థిరరాశి అక్షరం *
+xkb_keymap_layout_get_name(నిర్మాణం xkb_keymap *keymap, xkb_layout_సూచీ_t idx)
 {
-    if (idx >= keymap->num_group_names)
-        return NULL;
+    ఒకవేళ (idx >= keymap->అంకె_సమూహం_పేర్లు)
+        తిరిగి ఖాళీ;
 
-    return xkb_atom_text(keymap->ctx, keymap->group_names[idx]);
+    తిరిగి xkb_atom_పాఠ్యం(keymap->ctx, keymap->సమూహం_పేర్లు[idx]);
 }
 
 /**
  * Returns the index for a named layout.
  */
-xkb_layout_index_t
-xkb_keymap_layout_get_index(struct xkb_keymap *keymap, const char *name)
+xkb_layout_సూచీ_t
+xkb_keymap_layout_get_సూచీ(నిర్మాణం xkb_keymap *keymap, స్థిరరాశి అక్షరం *name)
 {
     xkb_atom_t atom = xkb_atom_lookup(keymap->ctx, name);
-    xkb_layout_index_t i;
+    xkb_layout_సూచీ_t i;
 
-    if (atom == XKB_ATOM_NONE)
-        return XKB_LAYOUT_INVALID;
+    ఒకవేళ (atom == XKB_ATOM_NONE)
+        తిరిగి XKB_LAYOUT_INVALID;
 
-    for (i = 0; i < keymap->num_group_names; i++)
-        if (keymap->group_names[i] == atom)
-            return i;
+    కొరకు (i = 0; i < keymap->అంకె_సమూహం_పేర్లు; i++)
+        ఒకవేళ (keymap->సమూహం_పేర్లు[i] == atom)
+            తిరిగి i;
 
-    return XKB_LAYOUT_INVALID;
+    తిరిగి XKB_LAYOUT_INVALID;
 }
 
 /**
  * Returns the number of layouts active for a particular key.
  */
-xkb_layout_index_t
-xkb_keymap_num_layouts_for_key(struct xkb_keymap *keymap, xkb_keycode_t kc)
+xkb_layout_సూచీ_t
+xkb_keymap_అంకె_layouts_for_కీలకం(నిర్మాణం xkb_keymap *keymap, xkb_keycode_t kc)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం = Xkb_కీలకం(keymap, kc);
 
-    if (!key)
-        return 0;
+    ఒకవేళ (!కీలకం)
+        తిరిగి 0;
 
-    return key->num_groups;
+    తిరిగి కీలకం->అంకె_groups;
 }
 
 /**
  * Returns the number of levels active for a particular key and layout.
  */
-xkb_level_index_t
-xkb_keymap_num_levels_for_key(struct xkb_keymap *keymap, xkb_keycode_t kc,
-                              xkb_layout_index_t layout)
+xkb_level_సూచీ_t
+xkb_keymap_అంకె_స్థాయిలు_for_కీలకం(నిర్మాణం xkb_keymap *keymap, xkb_keycode_t kc,
+                              xkb_layout_సూచీ_t layout)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం = Xkb_కీలకం(keymap, kc);
 
-    if (!key)
-        return 0;
+    ఒకవేళ (!కీలకం)
+        తిరిగి 0;
 
-    layout = xkb_keymap_key_effective_layout(key, layout);
-    if (layout == XKB_LAYOUT_INVALID)
-        return 0;
+    layout = xkb_keymap_కీలకం_effective_layout(కీలకం, layout);
+    ఒకవేళ (layout == XKB_LAYOUT_INVALID)
+        తిరిగి 0;
 
-    return XkbKeyNumLevels(key, layout);
+    తిరిగి Xkb_కీలకం_అంకె_స్థాయిలు(కీలకం, layout);
 }
 
 /**
  * Return the total number of LEDs in the keymap.
  */
-xkb_led_index_t
-xkb_keymap_num_leds(struct xkb_keymap *keymap)
+xkb_led_సూచీ_t
+xkb_keymap_అంకె_leds(నిర్మాణం xkb_keymap *keymap)
 {
-    return keymap->num_leds;
+    తిరిగి keymap->అంకె_leds;
 }
 
 /**
  * Returns the name for a given LED.
  */
-const char *
-xkb_keymap_led_get_name(struct xkb_keymap *keymap, xkb_led_index_t idx)
+స్థిరరాశి అక్షరం *
+xkb_keymap_led_get_name(నిర్మాణం xkb_keymap *keymap, xkb_led_సూచీ_t idx)
 {
-    if (idx >= keymap->num_leds)
-        return NULL;
+    ఒకవేళ (idx >= keymap->అంకె_leds)
+        తిరిగి ఖాళీ;
 
-    return xkb_atom_text(keymap->ctx, keymap->leds[idx].name);
+    తిరిగి xkb_atom_పాఠ్యం(keymap->ctx, keymap->leds[idx].name);
 }
 
 /**
  * Returns the index for a named LED.
  */
-xkb_led_index_t
-xkb_keymap_led_get_index(struct xkb_keymap *keymap, const char *name)
+xkb_led_సూచీ_t
+xkb_keymap_led_get_సూచీ(నిర్మాణం xkb_keymap *keymap, స్థిరరాశి అక్షరం *name)
 {
     xkb_atom_t atom = xkb_atom_lookup(keymap->ctx, name);
-    xkb_led_index_t i;
-    const struct xkb_led *led;
+    xkb_led_సూచీ_t i;
+    స్థిరరాశి నిర్మాణం xkb_led *led;
 
-    if (atom == XKB_ATOM_NONE)
-        return XKB_LED_INVALID;
+    ఒకవేళ (atom == XKB_ATOM_NONE)
+        తిరిగి XKB_LED_INVALID;
 
     xkb_leds_enumerate(i, led, keymap)
-        if (led->name == atom)
-            return i;
+        ఒకవేళ (led->name == atom)
+            తిరిగి i;
 
-    return XKB_LED_INVALID;
+    తిరిగి XKB_LED_INVALID;
 }
 
-size_t
-xkb_keymap_key_get_mods_for_level(struct xkb_keymap *keymap,
+కొలత_t
+xkb_keymap_కీలకం_get_mods_for_level(నిర్మాణం xkb_keymap *keymap,
                                   xkb_keycode_t kc,
-                                  xkb_layout_index_t layout,
-                                  xkb_level_index_t level,
-                                  xkb_mod_mask_t *masks_out,
-                                  size_t masks_size)
+                                  xkb_layout_సూచీ_t layout,
+                                  xkb_level_సూచీ_t level,
+                                  xkb_mod_ముసుగు_t *masks_బహిర్గతం,
+                                  కొలత_t masks_కొలత)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
-    if (!key)
-        return 0;
+    స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం = Xkb_కీలకం(keymap, kc);
+    ఒకవేళ (!కీలకం)
+        తిరిగి 0;
 
-    layout = xkb_keymap_key_effective_layout(key, layout);
-    if (layout == XKB_LAYOUT_INVALID)
-        return 0;
+    layout = xkb_keymap_కీలకం_effective_layout(కీలకం, layout);
+    ఒకవేళ (layout == XKB_LAYOUT_INVALID)
+        తిరిగి 0;
 
-    if (level >= XkbKeyNumLevels(key, layout))
-        return 0;
+    ఒకవేళ (level >= Xkb_కీలకం_అంకె_స్థాయిలు(కీలకం, layout))
+        తిరిగి 0;
 
-    const struct xkb_key_type *type = key->groups[layout].type;
+    స్థిరరాశి నిర్మాణం xkb_కీలకం_type *type = కీలకం->groups[layout].type;
 
-    size_t count = 0;
+    కొలత_t లెక్క = 0;
 
     /*
      * If the active set of modifiers doesn't match any explicit entry of
@@ -599,310 +599,310 @@ xkb_keymap_key_get_mods_for_level(struct xkb_keymap *keymap,
      * This is almost always what we want. If applicable, given it priority
      * over other ways to generate the level.
      */
-    if (level == 0) {
-        bool empty_mapped = false;
-        for (darray_size_t i = 0; i < type->num_entries && count < masks_size; i++)
-            if (entry_is_active(&type->entries[i]) &&
-                type->entries[i].mods.mask == 0) {
-                empty_mapped = true;
-                break;
+    ఒకవేళ (level == 0) {
+        bool ఖాళీలు_mapped = false;
+        కొరకు (darray_కొలత_t i = 0; i < type->అంకె_entries && లెక్క < masks_కొలత; i++)
+            ఒకవేళ (నమోదు_is_చురుకైన(&type->entries[i]) &&
+                type->entries[i].mods.ముసుగు == 0) {
+                ఖాళీలు_mapped = true;
+                ఆపు;
             }
-        if (!empty_mapped && count < masks_size) {
-            masks_out[count++] = 0;
+        ఒకవేళ (!ఖాళీలు_mapped && లెక్క < masks_కొలత) {
+            masks_బహిర్గతం[లెక్క++] = 0;
         }
     }
 
     /* Now search explicit mappings. */
-    for (darray_size_t i = 0; i < type->num_entries && count < masks_size; i++) {
-        if (entry_is_active(&type->entries[i]) &&
+    కొరకు (darray_కొలత_t i = 0; i < type->అంకె_entries && లెక్క < masks_కొలత; i++) {
+        ఒకవేళ (నమోదు_is_చురుకైన(&type->entries[i]) &&
             type->entries[i].level == level) {
-            masks_out[count++] = type->entries[i].mods.mask;
+            masks_బహిర్గతం[లెక్క++] = type->entries[i].mods.ముసుగు;
         }
     }
 
-    return count;
+    తిరిగి లెక్క;
 }
 
-struct xkb_level *
-xkb_keymap_key_get_level(struct xkb_keymap *keymap, const struct xkb_key *key,
-                         xkb_layout_index_t layout, xkb_level_index_t level)
+నిర్మాణం xkb_level *
+xkb_keymap_కీలకం_get_level(నిర్మాణం xkb_keymap *keymap, స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం,
+                         xkb_layout_సూచీ_t layout, xkb_level_సూచీ_t level)
 {
-    layout = xkb_keymap_key_effective_layout(key, layout);
-    if (layout == XKB_LAYOUT_INVALID)
-        return NULL;
+    layout = xkb_keymap_కీలకం_effective_layout(కీలకం, layout);
+    ఒకవేళ (layout == XKB_LAYOUT_INVALID)
+        తిరిగి ఖాళీ;
 
-    if (level >= XkbKeyNumLevels(key, layout))
-        return NULL;
+    ఒకవేళ (level >= Xkb_కీలకం_అంకె_స్థాయిలు(కీలకం, layout))
+        తిరిగి ఖాళీ;
 
-    return &key->groups[layout].levels[level];
+    తిరిగి &కీలకం->groups[layout].స్థాయిలు[level];
 }
 
 /**
  * As below, but takes an explicit layout/level rather than state.
  */
-int
-xkb_keymap_key_get_syms_by_level(struct xkb_keymap *keymap,
+పూర్ణాంకం
+xkb_keymap_కీలకం_get_syms_by_level(నిర్మాణం xkb_keymap *keymap,
                                  xkb_keycode_t kc,
-                                 xkb_layout_index_t layout,
-                                 xkb_level_index_t level,
-                                 const xkb_keysym_t **syms_out)
+                                 xkb_layout_సూచీ_t layout,
+                                 xkb_level_సూచీ_t level,
+                                 స్థిరరాశి xkb_keysym_t **syms_బహిర్గతం)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం = Xkb_కీలకం(keymap, kc);
 
-    if (!key)
-        goto err;
+    ఒకవేళ (!కీలకం)
+        వెళ్ళు err;
 
-    const struct xkb_level* const leveli =
-        xkb_keymap_key_get_level(keymap, key, layout, level);
+    స్థిరరాశి నిర్మాణం xkb_level* స్థిరరాశి leveli =
+        xkb_keymap_కీలకం_get_level(keymap, కీలకం, layout, level);
 
-    if (!leveli)
-        goto err;
+    ఒకవేళ (!leveli)
+        వెళ్ళు err;
 
-    const xkb_keysym_count_t num_syms = leveli->num_syms;
-    if (num_syms == 0)
-        goto err;
+    స్థిరరాశి xkb_keysym_లెక్క_t అంకె_syms = leveli->అంకె_syms;
+    ఒకవేళ (అంకె_syms == 0)
+        వెళ్ళు err;
 
-    if (num_syms == 1)
-        *syms_out = &leveli->s.sym;
-    else
-        *syms_out = leveli->s.syms;
+    ఒకవేళ (అంకె_syms == 1)
+        *syms_బహిర్గతం = &leveli->s.sym;
+    లేకపోతే
+        *syms_బహిర్గతం = leveli->s.syms;
 
-    return (int) num_syms;
+    తిరిగి (పూర్ణాంకం) అంకె_syms;
 
 err:
-    *syms_out = NULL;
-    return 0;
+    *syms_బహిర్గతం = ఖాళీ;
+    తిరిగి 0;
 }
 
 xkb_keycode_t
-xkb_keymap_min_keycode(struct xkb_keymap *keymap)
+xkb_keymap_min_keycode(నిర్మాణం xkb_keymap *keymap)
 {
-    return keymap->min_key_code;
+    తిరిగి keymap->min_కీలకం_సంకేతం;
 }
 
 xkb_keycode_t
-xkb_keymap_max_keycode(struct xkb_keymap *keymap)
+xkb_keymap_max_keycode(నిర్మాణం xkb_keymap *keymap)
 {
-    return keymap->max_key_code;
+    తిరిగి keymap->max_కీలకం_సంకేతం;
 }
 
-static enum xkb_status
-keymap_key_iterator_config_check(
-    struct xkb_context * restrict ctx,
-    const char *func,
-    const struct xkb_keymap_key_iterator_config * restrict config
+స్థిర గణన xkb_స్థితి
+keymap_కీలకం_iterator_config_check(
+    నిర్మాణం xkb_context * పరిమిత ctx,
+    స్థిరరాశి అక్షరం *func,
+    స్థిరరాశి నిర్మాణం xkb_keymap_కీలకం_iterator_config * పరిమిత config
 )
 {
     /* Check ABI compatibility */
-    const enum xkb_status abi_error = xkb_check_keymap_abi(config);
-    if (abi_error) {
+    స్థిరరాశి గణన xkb_స్థితి abi_error = xkb_check_keymap_abi(config);
+    ఒకవేళ (abi_error) {
         xkb_log_abi_error(ctx, func, abi_error);
-        return abi_error;
+        తిరిగి abi_error;
     }
 
     /* Sanitize input: flags */
-    const uint32_t invalid_flags =
-        (config->flags & ~(uint32_t)XKB_KEYMAP_KEY_ITERATOR_FLAGS_VALUES);
-    if (invalid_flags) {
-        log_err(ctx, XKB_ERROR_UNSUPPORTED_KEY_ITERATOR_FLAGS_,
+    స్థిరరాశి uint32_t invalid_flags =
+        (config->flags & ~(uint32_t)XKB_KEYMAP_కీలకం_ITERATOR_FLAGS_విలువలు);
+    ఒకవేళ (invalid_flags) {
+        log_err(ctx, XKB_ERROR_UNSUPPORTED_కీలకం_ITERATOR_FLAGS_2,
                 "%s: Unsupported keymap iterator flags: 0x%"PRIx32"\n",
                 func, invalid_flags);
-        return XKB_ERROR_UNSUPPORTED_KEY_ITERATOR_FLAGS;
+        తిరిగి XKB_ERROR_UNSUPPORTED_కీలకం_ITERATOR_FLAGS;
     }
 
     /* Sanitize input: start */
-    if (config->start > XKB_KEYCODE_MAX)
-        return XKB_ERROR_INVALID_KEYCODE;
+    ఒకవేళ (config->ప్రారంభం > XKB_KEYCODE_MAX)
+        తిరిగి XKB_ERROR_INVALID_KEYCODE;
 
-    return XKB_SUCCESS;
+    తిరిగి XKB_SUCCESS;
 }
 
-static_assert(XKB_KEYMAP_KEY_ITERATOR_FLAGS_VALUES <=
-              (int)XKB_POINTER_TAG_MASK,
+static_assert(XKB_KEYMAP_కీలకం_ITERATOR_FLAGS_విలువలు <=
+              (పూర్ణాంకం)XKB_సూచిక_ట్యాగ్_ముసుగు,
               "Cannot tag cursor pointer with flags");
 
-#define iter_init_keymap(i, ptr, flags) {          \
-    (i)->opaque0 = xkb_pointer_tag((ptr), (flags));\
+#నిర్వచించు iter_init_keymap(i, ptr, flags) {          \
+    (i)->opaque0 = xkb_సూచిక_ట్యాగ్((ptr), (flags));\
 }
-#define iter_get_keymap(i) (                                  \
-    (const struct xkb_keymap *)xkb_pointer_untag((i)->opaque0)\
+#నిర్వచించు iter_get_keymap(i) (                                  \
+    (స్థిరరాశి నిర్మాణం xkb_keymap *)xkb_సూచిక_untag((i)->opaque0)\
 )
-#define iter_get_next(i) ((const struct xkb_key *)(i)->opaque1)
-#define iter_set_next(i, ptr) {(i)->opaque1 = (const void *)(ptr);}
-#define iter_get_descending_order(i) (                  \
-    xkb_pointer_get_tag((i)->opaque0) &                 \
-    (uintptr_t)XKB_KEYMAP_KEY_ITERATOR_DESCENDING_ORDER \
+#నిర్వచించు iter_get_తదుపరి(i) ((స్థిరరాశి నిర్మాణం xkb_కీలకం *)(i)->opaque1)
+#నిర్వచించు iter_సమితి_తదుపరి(i, ptr) {(i)->opaque1 = (స్థిరరాశి శూన్య *)(ptr);}
+#నిర్వచించు iter_get_descending_క్రమం(i) (                  \
+    xkb_సూచిక_get_ట్యాగ్((i)->opaque0) &                 \
+    (uintptr_t)XKB_KEYMAP_కీలకం_ITERATOR_DESCENDING_క్రమం \
 )
-#define iter_get_include_unbound(i) (                  \
-    xkb_pointer_get_tag((i)->opaque0) &                \
-    (uintptr_t)XKB_KEYMAP_KEY_ITERATOR_INCLUDE_UNBOUND \
+#నిర్వచించు iter_get_include_unbound(i) (                  \
+    xkb_సూచిక_get_ట్యాగ్((i)->opaque0) &                \
+    (uintptr_t)XKB_KEYMAP_కీలకం_ITERATOR_INCLUDE_UNBOUND \
 )
 
-enum xkb_status
-xkb_keymap_key_iterator_init(
-    struct xkb_keymap_key_iterator * restrict iter,
-    const struct xkb_keymap * restrict keymap,
-    const struct xkb_keymap_key_iterator_config * restrict config
+గణన xkb_స్థితి
+xkb_keymap_కీలకం_iterator_init(
+    నిర్మాణం xkb_keymap_కీలకం_iterator * పరిమిత iter,
+    స్థిరరాశి నిర్మాణం xkb_keymap * పరిమిత keymap,
+    స్థిరరాశి నిర్మాణం xkb_keymap_కీలకం_iterator_config * పరిమిత config
 )
 {
     /* Handle default configuration */
-    static const struct xkb_keymap_key_iterator_config default_config = {
-        .size = sizeof(default_config)
+    స్థిర స్థిరరాశి నిర్మాణం xkb_keymap_కీలకం_iterator_config default_config = {
+        .కొలత = పరిమాణం(default_config)
     };
-    if (!config)
+    ఒకవేళ (!config)
         config = &default_config;
 
     /* Check input */
-    const enum xkb_status status =
-        keymap_key_iterator_config_check(keymap->ctx, __func__, config);
-    if (status != XKB_SUCCESS) {
-        return status;
+    స్థిరరాశి గణన xkb_స్థితి స్థితి_2 =
+        keymap_కీలకం_iterator_config_check(keymap->ctx, __func__, config);
+    ఒకవేళ (స్థితి_2 != XKB_SUCCESS) {
+        తిరిగి స్థితి_2;
     }
 
     /*
      * Initialization
      */
 
-    memset(iter, 0, sizeof(*iter));
+    memset(iter, 0, పరిమాణం(*iter));
 
     /* Borrow keymap */
     iter_init_keymap(iter, keymap, config->flags);
 
-    if (keymap->num_keys == 0) {
-        iter_set_next(iter, NULL);
-        return XKB_SUCCESS;
+    ఒకవేళ (keymap->అంకె_కీలకాలు == 0) {
+        iter_సమితి_తదుపరి(iter, ఖాళీ);
+        తిరిగి XKB_SUCCESS;
     }
 
     /* Borrow key */
-    const struct xkb_key *next;
-    if (config->flags & XKB_KEYMAP_KEY_ITERATOR_DESCENDING_ORDER) {
-        if (!config->start || config->start > keymap->max_key_code) {
-            next = &keymap->keys[keymap->num_keys - 1];
-        } else {
+    స్థిరరాశి నిర్మాణం xkb_కీలకం *తదుపరి;
+    ఒకవేళ (config->flags & XKB_KEYMAP_కీలకం_ITERATOR_DESCENDING_క్రమం) {
+        ఒకవేళ (!config->ప్రారంభం || config->ప్రారంభం > keymap->max_కీలకం_సంకేతం) {
+            తదుపరి = &keymap->కీలకాలు[keymap->అంకె_కీలకాలు - 1];
+        } లేకపోతే {
             /*
              * May still fail *safely* if start < keymap->min_key_code:
              * there will be simply no key to iterate over.
              */
-            next = xkb_keymap_get_next_defined_key(keymap, false, config->start);
+            తదుపరి = xkb_keymap_get_తదుపరి_defined_కీలకం(keymap, false, config->ప్రారంభం);
         }
-    } else {
-        if (!config->start || config->start < keymap->min_key_code) {
-            next = (keymap->num_keys_low)
-                ? &keymap->keys[keymap->min_key_code]
-                : &keymap->keys[0];
-        } else {
+    } లేకపోతే {
+        ఒకవేళ (!config->ప్రారంభం || config->ప్రారంభం < keymap->min_కీలకం_సంకేతం) {
+            తదుపరి = (keymap->అంకె_కీలకాలు_దిగువ)
+                ? &keymap->కీలకాలు[keymap->min_కీలకం_సంకేతం]
+                : &keymap->కీలకాలు[0];
+        } లేకపోతే {
             /*
              * May still fail *safely* if start > keymap->max_key_code:
              * there will be simply no key to iterate over.
              */
-            next = xkb_keymap_get_next_defined_key(keymap, true, config->start);
+            తదుపరి = xkb_keymap_get_తదుపరి_defined_కీలకం(keymap, true, config->ప్రారంభం);
         }
     };
-    iter_set_next(iter, next);
+    iter_సమితి_తదుపరి(iter, తదుపరి);
 
-    return XKB_SUCCESS;
+    తిరిగి XKB_SUCCESS;
 }
 
 xkb_keycode_t
-xkb_keymap_key_iterator_next(struct xkb_keymap_key_iterator *iter)
+xkb_keymap_కీలకం_iterator_తదుపరి(నిర్మాణం xkb_keymap_కీలకం_iterator *iter)
 {
-    const struct xkb_key *next = iter_get_next(iter);
-    if (!next)
-        return XKB_KEYCODE_INVALID;
+    స్థిరరాశి నిర్మాణం xkb_కీలకం *తదుపరి = iter_get_తదుపరి(iter);
+    ఒకవేళ (!తదుపరి)
+        తిరిగి XKB_KEYCODE_INVALID;
 
-    const struct xkb_keymap *keymap = iter_get_keymap(iter);
-    assert(keymap->num_keys);
+    స్థిరరాశి నిర్మాణం xkb_keymap *keymap = iter_get_keymap(iter);
+    ప్రతిజ్ఞా(keymap->అంకె_కీలకాలు);
 
-    const bool descending = iter_get_descending_order(iter);
-    const bool skip_unbound = !iter_get_include_unbound(iter);
-    const struct xkb_key *last = descending
-        ? (keymap->num_keys_low)
-            ? &keymap->keys[keymap->min_key_code]
-            : &keymap->keys[0]
-        : &keymap->keys[keymap->num_keys - 1];
-    const ptrdiff_t step = descending ? -1 : 1;
+    స్థిరరాశి bool descending = iter_get_descending_క్రమం(iter);
+    స్థిరరాశి bool skip_unbound = !iter_get_include_unbound(iter);
+    స్థిరరాశి నిర్మాణం xkb_కీలకం *చివరి = descending
+        ? (keymap->అంకె_కీలకాలు_దిగువ)
+            ? &keymap->కీలకాలు[keymap->min_కీలకం_సంకేతం]
+            : &keymap->కీలకాలు[0]
+        : &keymap->కీలకాలు[keymap->అంకె_కీలకాలు - 1];
+    స్థిరరాశి ptrdiff_t అడుగు = descending ? -1 : 1;
 
     /* Skip undefined keys (no name) and optionally unbound keys */
-    for (;;) {
-        const bool iter_end = descending ? (next <= last) : (next >= last);
-        const bool skip = (
-            next->name == XKB_ATOM_NONE ||
-            (skip_unbound && (next->num_groups == 0))
+    కొరకు (;;) {
+        స్థిరరాశి bool iter_చివర = descending ? (తదుపరి <= చివరి) : (తదుపరి >= చివరి);
+        స్థిరరాశి bool skip = (
+            తదుపరి->name == XKB_ATOM_NONE ||
+            (skip_unbound && (తదుపరి->అంకె_groups == 0))
         );
-        if (!skip) {
-            const xkb_keycode_t ret = next->keycode;
-            iter_set_next(iter, iter_end ? NULL : next + step);
-            return ret;
+        ఒకవేళ (!skip) {
+            స్థిరరాశి xkb_keycode_t ret = తదుపరి->keycode;
+            iter_సమితి_తదుపరి(iter, iter_చివర ? ఖాళీ : తదుపరి + అడుగు);
+            తిరిగి ret;
         }
-        if (iter_end) {
-            iter_set_next(iter, NULL);
-            return XKB_KEYCODE_INVALID;
+        ఒకవేళ (iter_చివర) {
+            iter_సమితి_తదుపరి(iter, ఖాళీ);
+            తిరిగి XKB_KEYCODE_INVALID;
         }
-        next += step;
+        తదుపరి += అడుగు;
     }
 }
 
-#undef iter_init_keymap
-#undef iter_get_keymap
-#undef iter_set_next
-#undef iter_get_next
-#undef iter_get_descending_order
-#undef iter_get_include_unbound
+#నిర్వచనం_రద్దు iter_init_keymap
+#నిర్వచనం_రద్దు iter_get_keymap
+#నిర్వచనం_రద్దు iter_సమితి_తదుపరి
+#నిర్వచనం_రద్దు iter_get_తదుపరి
+#నిర్వచనం_రద్దు iter_get_descending_క్రమం
+#నిర్వచనం_రద్దు iter_get_include_unbound
 
-void
-xkb_keymap_key_for_each(struct xkb_keymap *keymap, xkb_keymap_key_iter_t iter,
-                        void *data)
+శూన్య
+xkb_keymap_కీలకం_for_each(నిర్మాణం xkb_keymap *keymap, xkb_keymap_కీలకం_iter_t iter,
+                        శూన్య *దత్తాంశం)
 {
-    struct xkb_key *key;
+    నిర్మాణం xkb_కీలకం *కీలకం;
 
-    xkb_keys_foreach(key, keymap)
-        iter(keymap, key->keycode, data);
+    xkb_కీలకాలు_foreach(కీలకం, keymap)
+        iter(keymap, కీలకం->keycode, దత్తాంశం);
 }
 
-const char *
-xkb_keymap_key_get_name(struct xkb_keymap *keymap, xkb_keycode_t kc)
+స్థిరరాశి అక్షరం *
+xkb_keymap_కీలకం_get_name(నిర్మాణం xkb_keymap *keymap, xkb_keycode_t kc)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం = Xkb_కీలకం(keymap, kc);
 
-    if (!key)
-        return NULL;
+    ఒకవేళ (!కీలకం)
+        తిరిగి ఖాళీ;
 
-    return xkb_atom_text(keymap->ctx, key->name);
+    తిరిగి xkb_atom_పాఠ్యం(keymap->ctx, కీలకం->name);
 }
 
 xkb_keycode_t
-xkb_keymap_key_by_name(struct xkb_keymap *keymap, const char *name)
+xkb_keymap_కీలకం_by_name(నిర్మాణం xkb_keymap *keymap, స్థిరరాశి అక్షరం *name)
 {
-    struct xkb_key *key;
+    నిర్మాణం xkb_కీలకం *కీలకం;
     xkb_atom_t atom;
 
     atom = xkb_atom_lookup(keymap->ctx, name);
-    if (atom) {
-        for (darray_size_t i = 0; i < keymap->num_key_aliases; i++)
-            if (keymap->key_aliases[i].alias == atom)
-                atom = keymap->key_aliases[i].real;
+    ఒకవేళ (atom) {
+        కొరకు (darray_కొలత_t i = 0; i < keymap->అంకె_కీలకం_aliases; i++)
+            ఒకవేళ (keymap->కీలకం_aliases[i].alias == atom)
+                atom = keymap->కీలకం_aliases[i].real;
     }
-    if (!atom)
-        return XKB_KEYCODE_INVALID;
+    ఒకవేళ (!atom)
+        తిరిగి XKB_KEYCODE_INVALID;
 
-    xkb_keys_foreach(key, keymap) {
-        if (key->name == atom)
-            return key->keycode;
+    xkb_కీలకాలు_foreach(కీలకం, keymap) {
+        ఒకవేళ (కీలకం->name == atom)
+            తిరిగి కీలకం->keycode;
     }
 
-    return XKB_KEYCODE_INVALID;
+    తిరిగి XKB_KEYCODE_INVALID;
 }
 
 /**
  * Simple boolean specifying whether or not the key should repeat.
  */
-int
-xkb_keymap_key_repeats(struct xkb_keymap *keymap, xkb_keycode_t kc)
+పూర్ణాంకం
+xkb_keymap_కీలకం_repeats(నిర్మాణం xkb_keymap *keymap, xkb_keycode_t kc)
 {
-    const struct xkb_key *key = XkbKey(keymap, kc);
+    స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం = Xkb_కీలకం(keymap, kc);
 
-    if (!key)
-        return 0;
+    ఒకవేళ (!కీలకం)
+        తిరిగి 0;
 
-    return key->repeats;
+    తిరిగి కీలకం->repeats;
 }

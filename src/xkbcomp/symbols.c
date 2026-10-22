@@ -12,126 +12,126 @@
  * Author: Ran Benita <ran234@gmail.com>
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include <limits.h>
-#include <stdint.h>
-#include <string.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <string.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-status.h"
-#include "xkbcommon/xkbcommon-keysyms.h"
+#అన్తర్భావ "xkbcommon/xkbcommon.h"
+#అన్తర్భావ "xkbcommon/xkbcommon-status.h"
+#అన్తర్భావ "xkbcommon/xkbcommon-keysyms.h"
 
-#include "action.h"
-#include "context.h"
-#include "darray.h"
-#include "expr.h"
-#include "include.h"
-#include "keymap.h"
-#include "keysym.h"
-#include "messages-codes.h"
-#include "text.h"
-#include "utils.h"
-#include "util-numbers.h"
-#include "util-mem.h"
-#include "vmod.h"
-#include "xkbcomp-priv.h"
-#include "xkbcomp/ast.h"
+#అన్తర్భావ "action.h"
+#అన్తర్భావ "context.h"
+#అన్తర్భావ "darray.h"
+#అన్తర్భావ "expr.h"
+#అన్తర్భావ "include.h"
+#అన్తర్భావ "keymap.h"
+#అన్తర్భావ "keysym.h"
+#అన్తర్భావ "messages-codes.h"
+#అన్తర్భావ "text.h"
+#అన్తర్భావ "utils.h"
+#అన్తర్భావ "util-numbers.h"
+#అన్తర్భావ "util-mem.h"
+#అన్తర్భావ "vmod.h"
+#అన్తర్భావ "xkbcomp-priv.h"
+#అన్తర్భావ "xkbcomp/ast.h"
 
-enum key_repeat {
-    KEY_REPEAT_UNDEFINED = 0,
-    KEY_REPEAT_YES,
-    KEY_REPEAT_NO,
-    _KEY_REPEAT_NUM_ENTRIES,
+గణన కీలకం_repeat {
+    కీలకం_REPEAT_UNDEFINED = 0,
+    కీలకం_REPEAT_YES,
+    కీలకం_REPEAT_NO,
+    కీలకం_REPEAT_అంకె_ENTRIES,
 };
-enum { KEY_REPEAT_MIN_WIDTH = 3 /* 2 bits + sign */ };
-static_assert(_KEY_REPEAT_NUM_ENTRIES - 1 <=
-              (1 << (KEY_REPEAT_MIN_WIDTH - 1)) - 1,
+గణన { కీలకం_REPEAT_MIN_వెడల్పు = 3 /* 2 bits + sign */ };
+static_assert(కీలకం_REPEAT_అంకె_ENTRIES - 1 <=
+              (1 << (కీలకం_REPEAT_MIN_వెడల్పు - 1)) - 1,
               "Cannot encode key repeat");
 
-enum group_field {
-    GROUP_FIELD_SYMS = (1 << 0),
-    GROUP_FIELD_ACTS = (1 << 1),
-    GROUP_FIELD_TYPE = (1 << 2),
+గణన సమూహం_క్షేత్రం {
+    సమూహం_క్షేత్రం_SYMS = (1 << 0),
+    సమూహం_క్షేత్రం_ACTS = (1 << 1),
+    సమూహం_క్షేత్రం_TYPE = (1 << 2),
 };
 
-enum key_field {
-    KEY_FIELD_NONE = 0,
-    KEY_FIELD_REPEAT = (1 << 0),
-    KEY_FIELD_DEFAULT_TYPE = (1 << 1),
-    KEY_FIELD_GROUPINFO = (1 << 2),
-    KEY_FIELD_VMODMAP = (1 << 3),
-    KEY_FIELD_OVERLAY = (1 << 4),
-    KEY_FIELD_ALL = KEY_FIELD_REPEAT | KEY_FIELD_DEFAULT_TYPE
-                  | KEY_FIELD_GROUPINFO | KEY_FIELD_VMODMAP | KEY_FIELD_OVERLAY,
+గణన కీలకం_క్షేత్రం {
+    కీలకం_క్షేత్రం_NONE = 0,
+    కీలకం_క్షేత్రం_REPEAT = (1 << 0),
+    కీలకం_క్షేత్రం_DEFAULT_TYPE = (1 << 1),
+    కీలకం_క్షేత్రం_GROUPINFO = (1 << 2),
+    కీలకం_క్షేత్రం_VMODMAP = (1 << 3),
+    కీలకం_క్షేత్రం_OVERLAY = (1 << 4),
+    కీలకం_క్షేత్రం_ALL = కీలకం_క్షేత్రం_REPEAT | కీలకం_క్షేత్రం_DEFAULT_TYPE
+                  | కీలకం_క్షేత్రం_GROUPINFO | కీలకం_క్షేత్రం_VMODMAP | కీలకం_క్షేత్రం_OVERLAY,
 };
-enum { KEY_FIELD_MIN_WIDTH = 6 /* 5 bits + sign */ };
-static_assert(KEY_FIELD_ALL <= (1 << (KEY_FIELD_MIN_WIDTH - 1)) - 1,
+గణన { కీలకం_క్షేత్రం_MIN_వెడల్పు = 6 /* 5 bits + sign */ };
+static_assert(కీలకం_క్షేత్రం_ALL <= (1 << (కీలకం_క్షేత్రం_MIN_వెడల్పు - 1)) - 1,
               "Cannot encode key field");
 
-typedef struct {
-    darray(struct xkb_level) levels;
-    enum group_field defined;
+రకనిర్వచనం నిర్మాణం {
+    darray(నిర్మాణం xkb_level) స్థాయిలు;
+    గణన సమూహం_క్షేత్రం defined;
     xkb_atom_t type;
-} GroupInfo;
+} సమూహం_Info_2;
 
-enum {
-    XKB_LAYOUT_OUT_OF_RANGE_POLICY_MIN_WIDTH = 4 /* 3 bits + sign */,
-    KEYINFO_OUT_OF_RANGE_GROUP_POLICY_BIT_FIELD = 8,
-    KEYINFO_DEFINED_BIT_FIELD = 16,
-    KEYINFO_MERGE_BIT_FIELD = 8,
-    KEYINFO_REPEAT_BIT_FIELD = 8,
+గణన {
+    XKB_LAYOUT_బహిర్గతం_యొక్క_RANGE_POLICY_MIN_వెడల్పు = 4 /* 3 bits + sign */,
+    KEYINFO_బహిర్గతం_యొక్క_RANGE_సమూహం_POLICY_బిట్టు_క్షేత్రం = 8,
+    KEYINFO_DEFINED_బిట్టు_క్షేత్రం = 16,
+    KEYINFO_విలీనం_బిట్టు_క్షేత్రం = 8,
+    KEYINFO_REPEAT_బిట్టు_క్షేత్రం = 8,
 };
 static_assert(
-    XKB_LAYOUT_OUT_OF_RANGE_WRAP < XKB_LAYOUT_OUT_OF_RANGE_CLAMP &&
-    XKB_LAYOUT_OUT_OF_RANGE_CLAMP < XKB_LAYOUT_OUT_OF_RANGE_REDIRECT,
+    XKB_LAYOUT_బహిర్గతం_యొక్క_RANGE_WRAP < XKB_LAYOUT_బహిర్గతం_యొక్క_RANGE_CLAMP &&
+    XKB_LAYOUT_బహిర్గతం_యొక్క_RANGE_CLAMP < XKB_LAYOUT_బహిర్గతం_యొక్క_RANGE_REDIRECT,
     "Enum values were changed!"
 );
-static_assert(XKB_LAYOUT_OUT_OF_RANGE_REDIRECT <=
-              (1 << XKB_LAYOUT_OUT_OF_RANGE_POLICY_MIN_WIDTH) - 1,
+static_assert(XKB_LAYOUT_బహిర్గతం_యొక్క_RANGE_REDIRECT <=
+              (1 << XKB_LAYOUT_బహిర్గతం_యొక్క_RANGE_POLICY_MIN_వెడల్పు) - 1,
               "Cannot encode out of range redirect");
-static_assert(KEYINFO_OUT_OF_RANGE_GROUP_POLICY_BIT_FIELD >=
-              XKB_LAYOUT_OUT_OF_RANGE_POLICY_MIN_WIDTH, "");
-static_assert((unsigned)KEYINFO_DEFINED_BIT_FIELD >=
-              (unsigned)KEY_FIELD_MIN_WIDTH, "Cannot encode KeyInfo field");
-static_assert((unsigned)KEYINFO_MERGE_BIT_FIELD >=
-              (unsigned)MERGE_MODE_MIN_WIDTH, "Cannot encode KeyInfo field");
-static_assert((unsigned)KEYINFO_REPEAT_BIT_FIELD >=
-              (unsigned)KEY_REPEAT_MIN_WIDTH, "Cannot encode KeyInfo field");
+static_assert(KEYINFO_బహిర్గతం_యొక్క_RANGE_సమూహం_POLICY_బిట్టు_క్షేత్రం >=
+              XKB_LAYOUT_బహిర్గతం_యొక్క_RANGE_POLICY_MIN_వెడల్పు, "");
+static_assert((గుర్తులేని)KEYINFO_DEFINED_బిట్టు_క్షేత్రం >=
+              (గుర్తులేని)కీలకం_క్షేత్రం_MIN_వెడల్పు, "Cannot encode KeyInfo field");
+static_assert((గుర్తులేని)KEYINFO_విలీనం_బిట్టు_క్షేత్రం >=
+              (గుర్తులేని)విలీనం_బహుళకం_MIN_వెడల్పు, "Cannot encode KeyInfo field");
+static_assert((గుర్తులేని)KEYINFO_REPEAT_బిట్టు_క్షేత్రం >=
+              (గుర్తులేని)కీలకం_REPEAT_MIN_వెడల్పు, "Cannot encode KeyInfo field");
 
-typedef struct {
+రకనిర్వచనం నిర్మాణం {
     xkb_atom_t name;
 
-    xkb_mod_mask_t vmodmap;
+    xkb_mod_ముసుగు_t vmodmap;
     xkb_atom_t default_type;
 
-    xkb_layout_index_t out_of_range_group_number;
-    darray(GroupInfo) groups;
-    enum xkb_layout_out_of_range_policy
-        out_of_range_group_policy:KEYINFO_OUT_OF_RANGE_GROUP_POLICY_BIT_FIELD;
+    xkb_layout_సూచీ_t బహిర్గతం_యొక్క_range_సమూహం_సంఖ్య;
+    darray(సమూహం_Info_2) groups;
+    గణన xkb_layout_బహిర్గతం_యొక్క_range_policy
+        బహిర్గతం_యొక్క_range_సమూహం_policy:KEYINFO_బహిర్గతం_యొక్క_RANGE_సమూహం_POLICY_బిట్టు_క్షేత్రం;
 
     /* NOTE: this bitfield could be reduce to 1 byte, should we need it */
-    enum key_field defined:KEYINFO_DEFINED_BIT_FIELD;
-    enum merge_mode merge:KEYINFO_MERGE_BIT_FIELD;
-    enum key_repeat repeat:KEYINFO_REPEAT_BIT_FIELD;
+    గణన కీలకం_క్షేత్రం defined:KEYINFO_DEFINED_బిట్టు_క్షేత్రం;
+    గణన విలీనం_బహుళకం విలీనం:KEYINFO_విలీనం_బిట్టు_క్షేత్రం;
+    గణన కీలకం_repeat repeat:KEYINFO_REPEAT_బిట్టు_క్షేత్రం;
 
-    bool out_of_range_pending_group:1;
+    bool బహిర్గతం_యొక్క_range_pending_సమూహం:1;
 
     /** If true, overlays in the mask are explicitly cleared */
     bool overlays_clear:1;
     /** Track the count of allocated slots of overlays_keys */
-    xkb_overlay_index_t overlays_alloc;
+    xkb_overlay_సూచీ_t overlays_alloc;
     /** Overlays indices */
-    xkb_overlay_mask_t overlays;
+    xkb_overlay_ముసుగు_t overlays;
     /**
      * Target overlays keys, if any.
      *
      * For 0 or 1 elements storage is inline in the struct; for 2 or more a
      * heap sparse array is used.
      */
-    union {
+    సంఘం {
         /** Inlined if at most one overlay is defined (overlays_alloc = 0) */
-        const struct xkb_key *overlay_key;
+        స్థిరరాశి నిర్మాణం xkb_కీలకం *overlay_కీలకం;
         /**
          * Allocated if 2 or more overlays are defined (overlays_alloc > 0).
          *
@@ -140,288 +140,288 @@ typedef struct {
          * ascending overlay order, and a value’s position in storage equals the
          * popcount of all mask bits strictly below its overlay — its rank.
          */
-        const struct xkb_key **overlays_keys;
+        స్థిరరాశి నిర్మాణం xkb_కీలకం **overlays_కీలకాలు;
     };
-} KeyInfo;
+} కీలకం_Info;
 
-static void
-StealLevelInfo(struct xkb_level *into, struct xkb_level *from)
+స్థిర శూన్య
+StealLevelInfo(నిర్మాణం xkb_level *into, నిర్మాణం xkb_level *from)
 {
     clear_level(into);
-    if (from->num_syms > 1) {
+    ఒకవేళ (from->అంకె_syms > 1) {
         /* Steal */
         into->s.syms = steal(&from->s.syms);
-    } else {
+    } లేకపోతే {
         into->s.sym = from->s.sym;
     }
-    into->num_syms = from->num_syms;
-    from->num_syms = 0;
+    into->అంకె_syms = from->అంకె_syms;
+    from->అంకె_syms = 0;
 
-    if (from->num_actions > 1) {
+    ఒకవేళ (from->అంకె_actions > 1) {
         into->a.actions = steal(&from->a.actions);
-    } else {
+    } లేకపోతే {
         into->a.action = from->a.action;
     }
-    into->num_actions = from->num_actions;
-    from->num_actions = 0;
+    into->అంకె_actions = from->అంకె_actions;
+    from->అంకె_actions = 0;
 }
 
-static void
-InitGroupInfo(GroupInfo *groupi)
+స్థిర శూన్య
+Init_సమూహం_Info(సమూహం_Info_2 *groupi)
 {
-    memset(groupi, 0, sizeof(*groupi));
+    memset(groupi, 0, పరిమాణం(*groupi));
 }
 
-static void
-ClearGroupInfo(GroupInfo *groupi)
+స్థిర శూన్య
+Clear_సమూహం_Info(సమూహం_Info_2 *groupi)
 {
-    struct xkb_level *leveli;
-    darray_foreach(leveli, groupi->levels)
+    నిర్మాణం xkb_level *leveli;
+    darray_foreach(leveli, groupi->స్థాయిలు)
         clear_level(leveli);
-    darray_free(groupi->levels);
+    darray_free(groupi->స్థాయిలు);
 }
 
-static void
-CopyGroupInfo(GroupInfo *to, const GroupInfo *from)
+స్థిర శూన్య
+Copy_సమూహం_Info(సమూహం_Info_2 *గమ్యం, స్థిరరాశి సమూహం_Info_2 *from)
 {
-    to->defined = from->defined;
-    to->type = from->type;
-    darray_init(to->levels);
-    darray_copy(to->levels, from->levels);
-    for (xkb_level_index_t j = 0; j < darray_size(to->levels); j++) {
-        if (darray_item(from->levels, j).num_syms > 1) {
-            darray_item(to->levels, j).s.syms =
-                memdup(darray_item(from->levels, j).s.syms,
-                       darray_item(from->levels, j).num_syms,
-                       sizeof(xkb_keysym_t));
+    గమ్యం->defined = from->defined;
+    గమ్యం->type = from->type;
+    darray_init(గమ్యం->స్థాయిలు);
+    darray_copy(గమ్యం->స్థాయిలు, from->స్థాయిలు);
+    కొరకు (xkb_level_సూచీ_t j = 0; j < darray_కొలత(గమ్యం->స్థాయిలు); j++) {
+        ఒకవేళ (darray_అంశం(from->స్థాయిలు, j).అంకె_syms > 1) {
+            darray_అంశం(గమ్యం->స్థాయిలు, j).s.syms =
+                memdup(darray_అంశం(from->స్థాయిలు, j).s.syms,
+                       darray_అంశం(from->స్థాయిలు, j).అంకె_syms,
+                       పరిమాణం(xkb_keysym_t));
         }
-        if (darray_item(from->levels, j).num_actions > 1) {
-            darray_item(to->levels, j).a.actions =
-                memdup(darray_item(from->levels, j).a.actions,
-                       darray_item(from->levels, j).num_actions,
-                       sizeof(union xkb_action));
+        ఒకవేళ (darray_అంశం(from->స్థాయిలు, j).అంకె_actions > 1) {
+            darray_అంశం(గమ్యం->స్థాయిలు, j).a.actions =
+                memdup(darray_అంశం(from->స్థాయిలు, j).a.actions,
+                       darray_అంశం(from->స్థాయిలు, j).అంకె_actions,
+                       పరిమాణం(సంఘం xkb_action));
         }
     }
 }
 
-static void
-InitKeyInfo(struct xkb_context *ctx, KeyInfo *keyi)
+స్థిర శూన్య
+Init_కీలకం_Info(నిర్మాణం xkb_context *ctx, కీలకం_Info *keyi)
 {
-    memset(keyi, 0, sizeof(*keyi));
-    static_assert(!DEFAULT_KEY_REPEAT, "key repeat not initialized properly");
-    static_assert(!DEFAULT_KEY_VMODMAP, "key vmodmap not initialized properly");
+    memset(keyi, 0, పరిమాణం(*keyi));
+    static_assert(!DEFAULT_కీలకం_REPEAT, "key repeat not initialized properly");
+    static_assert(!DEFAULT_కీలకం_VMODMAP, "key vmodmap not initialized properly");
     keyi->name = xkb_atom_intern_literal(ctx, "*");
-    keyi->out_of_range_group_policy = XKB_LAYOUT_OUT_OF_RANGE_WRAP;
+    keyi->బహిర్గతం_యొక్క_range_సమూహం_policy = XKB_LAYOUT_బహిర్గతం_యొక్క_RANGE_WRAP;
     darray_init(keyi->groups);
-    keyi->overlay_key = NULL;
+    keyi->overlay_కీలకం = ఖాళీ;
 }
 
-static void
-ClearKeyInfo(KeyInfo *keyi)
+స్థిర శూన్య
+Clear_కీలకం_Info(కీలకం_Info *keyi)
 {
-    GroupInfo *groupi;
+    సమూహం_Info_2 *groupi;
     darray_foreach(groupi, keyi->groups)
-        ClearGroupInfo(groupi);
+        Clear_సమూహం_Info(groupi);
     darray_free(keyi->groups);
-    if (keyi->overlays_alloc)
-        free(keyi->overlays_keys);
+    ఒకవేళ (keyi->overlays_alloc)
+        విడుదల(keyi->overlays_కీలకాలు);
 }
 
 /***====================================================================***/
 
-typedef struct {
-    char *name;         /* e.g. pc+us+inet(evdev) */
-    int errorCount;
-    unsigned int include_depth;
-    xkb_layout_index_t explicit_group;
-    xkb_layout_index_t max_groups;
-    darray(KeyInfo) keys;
-    KeyInfo default_key;
+రకనిర్వచనం నిర్మాణం {
+    అక్షరం *name;         /* e.g. pc+us+inet(evdev) */
+    పూర్ణాంకం error_లెక్క;
+    గుర్తులేని పూర్ణాంకం include_లోతు;
+    xkb_layout_సూచీ_t explicit_సమూహం;
+    xkb_layout_సూచీ_t max_groups;
+    darray(కీలకం_Info) కీలకాలు;
+    కీలకం_Info default_కీలకం;
     ActionsInfo default_actions;
-    darray(xkb_atom_t) group_names;
-    darray(ModMapEntry) modmaps;
-    struct xkb_mod_set mods;
+    darray(xkb_atom_t) సమూహం_పేర్లు;
+    darray(Mod_Map_నమోదు) modmaps;
+    నిర్మాణం xkb_mod_సమితి mods;
 
-    struct xkb_context *ctx;
+    నిర్మాణం xkb_context *ctx;
     /* Needed for AddKeySymbols and parsing actions */
-    const struct xkb_keymap_info *keymap_info;
+    స్థిరరాశి నిర్మాణం xkb_keymap_info *keymap_info;
 } SymbolsInfo;
 
-static void
-InitSymbolsInfo(SymbolsInfo *info, const struct xkb_keymap_info *keymap_info,
-                unsigned int include_depth, const struct xkb_mod_set *mods)
+స్థిర శూన్య
+InitSymbolsInfo(SymbolsInfo *info, స్థిరరాశి నిర్మాణం xkb_keymap_info *keymap_info,
+                గుర్తులేని పూర్ణాంకం include_లోతు, స్థిరరాశి నిర్మాణం xkb_mod_సమితి *mods)
 {
-    memset(info, 0, sizeof(*info));
+    memset(info, 0, పరిమాణం(*info));
     info->ctx = keymap_info->keymap.ctx;
-    info->include_depth = include_depth;
+    info->include_లోతు = include_లోతు;
     info->keymap_info = keymap_info;
     info->max_groups = keymap_info->features.max_groups;
-    InitKeyInfo(keymap_info->keymap.ctx, &info->default_key);
+    Init_కీలకం_Info(keymap_info->keymap.ctx, &info->default_కీలకం);
     InitActionsInfo(&keymap_info->keymap, &info->default_actions);
-    InitVMods(&info->mods, mods, include_depth > 0);
-    info->explicit_group = XKB_LAYOUT_INVALID;
+    InitVMods(&info->mods, mods, include_లోతు > 0);
+    info->explicit_సమూహం = XKB_LAYOUT_INVALID;
 }
 
-static void
+స్థిర శూన్య
 ClearSymbolsInfo(SymbolsInfo *info)
 {
-    KeyInfo *keyi;
-    free(info->name);
-    darray_foreach(keyi, info->keys)
-        ClearKeyInfo(keyi);
-    darray_free(info->keys);
-    darray_free(info->group_names);
+    కీలకం_Info *keyi;
+    విడుదల(info->name);
+    darray_foreach(keyi, info->కీలకాలు)
+        Clear_కీలకం_Info(keyi);
+    darray_free(info->కీలకాలు);
+    darray_free(info->సమూహం_పేర్లు);
     darray_free(info->modmaps);
-    ClearKeyInfo(&info->default_key);
+    Clear_కీలకం_Info(&info->default_కీలకం);
 }
 
-static const char *
-KeyInfoText(SymbolsInfo *info, KeyInfo *keyi)
+స్థిర స్థిరరాశి అక్షరం *
+కీలకం_Info_పాఠ్యం(SymbolsInfo *info, కీలకం_Info *keyi)
 {
-    return KeyNameText(info->ctx, keyi->name);
+    తిరిగి కీలకం_Name_పాఠ్యం(info->ctx, keyi->name);
 }
 
-static bool
-MergeGroups(SymbolsInfo *info, GroupInfo *into, GroupInfo *from, bool clobber,
-            bool report, xkb_layout_index_t group, xkb_atom_t key_name)
+స్థిర bool
+విలీనం_Groups(SymbolsInfo *info, సమూహం_Info_2 *into, సమూహం_Info_2 *from, bool clobber,
+            bool report, xkb_layout_సూచీ_t సమూహం, xkb_atom_t కీలకం_name)
 {
     /* First find the type of the merged group. */
-    if (into->type != from->type) {
-        if (from->type == XKB_ATOM_NONE) {
+    ఒకవేళ (into->type != from->type) {
+        ఒకవేళ (from->type == XKB_ATOM_NONE) {
             /* it's empty for consistency with other comparisons */
         }
-        else if (into->type == XKB_ATOM_NONE) {
+        లేకపోతే ఒకవేళ (into->type == XKB_ATOM_NONE) {
             into->type = from->type;
         }
-        else {
+        లేకపోతే {
             xkb_atom_t use = (clobber ? from->type : into->type);
             xkb_atom_t ignore = (clobber ? into->type : from->type);
 
-            if (report) {
-                log_warn(info->ctx, XKB_WARNING_CONFLICTING_KEY_TYPE_MERGING_GROUPS,
+            ఒకవేళ (report) {
+                log_warn(info->ctx, XKB_WARNING_CONFLICTING_కీలకం_TYPE_MERGING_GROUPS,
                          "Multiple definitions for group %"PRIu32" type of key %s; "
                          "Using %s, ignoring %s\n",
-                         group + 1, KeyNameText(info->ctx, key_name),
-                         xkb_atom_text(info->ctx, use),
-                         xkb_atom_text(info->ctx, ignore));
+                         సమూహం + 1, కీలకం_Name_పాఠ్యం(info->ctx, కీలకం_name),
+                         xkb_atom_పాఠ్యం(info->ctx, use),
+                         xkb_atom_పాఠ్యం(info->ctx, ignore));
             }
 
             into->type = use;
         }
     }
-    into->defined |= (from->defined & GROUP_FIELD_TYPE);
+    into->defined |= (from->defined & సమూహం_క్షేత్రం_TYPE);
 
     /* Now look at the levels. */
 
-    if (darray_empty(from->levels)) {
-        InitGroupInfo(from);
-        return true;
+    ఒకవేళ (darray_ఖాళీలు(from->స్థాయిలు)) {
+        Init_సమూహం_Info(from);
+        తిరిగి true;
     }
 
-    if (darray_empty(into->levels)) {
+    ఒకవేళ (darray_ఖాళీలు(into->స్థాయిలు)) {
         from->type = into->type;
         *into = *from;
-        InitGroupInfo(from);
-        return true;
+        Init_సమూహం_Info(from);
+        తిరిగి true;
     }
 
     /* Merge the actions and syms. */
-    const darray_size_t levels_in_both =
-        MIN(darray_size(into->levels), darray_size(from->levels));
-    darray_size_t fromKeysymsCount = 0;
-    darray_size_t fromActionsCount = 0;
-    for (darray_size_t i = 0; i < levels_in_both; i++) {
-        struct xkb_level* const intoLevel = &darray_item(into->levels, i);
-        struct xkb_level* const fromLevel = &darray_item(from->levels, i);
+    స్థిరరాశి darray_కొలత_t స్థాయిలు_లోపల_both =
+        MIN(darray_కొలత(into->స్థాయిలు), darray_కొలత(from->స్థాయిలు));
+    darray_కొలత_t from_Keysyms_లెక్క = 0;
+    darray_కొలత_t from_Actions_లెక్క = 0;
+    కొరకు (darray_కొలత_t i = 0; i < స్థాయిలు_లోపల_both; i++) {
+        నిర్మాణం xkb_level* స్థిరరాశి intoLevel = &darray_అంశం(into->స్థాయిలు, i);
+        నిర్మాణం xkb_level* స్థిరరాశి fromLevel = &darray_అంశం(from->స్థాయిలు, i);
 
-        const bool fromHasNoKeysym = fromLevel->num_syms == 0;
-        const bool fromHasNoAction = fromLevel->num_actions == 0;
-        if (fromHasNoKeysym && fromHasNoAction) {
+        స్థిరరాశి bool fromHasNoKeysym = fromLevel->అంకె_syms == 0;
+        స్థిరరాశి bool fromHasNoAction = fromLevel->అంకె_actions == 0;
+        ఒకవేళ (fromHasNoKeysym && fromHasNoAction) {
             /* Empty `from`: do nothing */
-            continue;
+            కొనసాగు;
         }
 
-        const bool intoHasNoKeysym = intoLevel->num_syms == 0;
-        const bool intoHasNoAction = intoLevel->num_actions == 0;
-        if (intoHasNoKeysym && intoHasNoAction) {
+        స్థిరరాశి bool intoHasNoKeysym = intoLevel->అంకె_syms == 0;
+        స్థిరరాశి bool intoHasNoAction = intoLevel->అంకె_actions == 0;
+        ఒకవేళ (intoHasNoKeysym && intoHasNoAction) {
             /* Empty `into`: use `from` keysyms and actions */
             StealLevelInfo(intoLevel, fromLevel);
-            fromKeysymsCount++;
-            fromActionsCount++;
-            continue;
+            from_Keysyms_లెక్క++;
+            from_Actions_లెక్క++;
+            కొనసాగు;
         }
 
         /* Possible level conflict */
-        assert(intoLevel->num_syms > 0 || intoLevel->num_actions > 0);
-        assert(fromLevel->num_syms > 0 || fromLevel->num_actions > 0);
+        ప్రతిజ్ఞా(intoLevel->అంకె_syms > 0 || intoLevel->అంకె_actions > 0);
+        ప్రతిజ్ఞా(fromLevel->అంకె_syms > 0 || fromLevel->అంకె_actions > 0);
 
         /* Handle keysyms */
-        if (!XkbLevelsSameSyms(fromLevel, intoLevel)) {
+        ఒకవేళ (!Xkb_స్థాయిలు_Same_Syms(fromLevel, intoLevel)) {
             /* Incompatible keysyms */
-            if (report && !(intoHasNoKeysym || fromHasNoKeysym)) {
-                log_warn(info->ctx, XKB_WARNING_CONFLICTING_KEY_SYMBOL,
+            ఒకవేళ (report && !(intoHasNoKeysym || fromHasNoKeysym)) {
+                log_warn(info->ctx, XKB_WARNING_CONFLICTING_కీలకం_చిహ్నం,
                             "Multiple symbols for level %u/group "
                             "%"PRIu32" on key %s; Using %s, ignoring %s\n",
-                            i + 1, group + 1, KeyNameText(info->ctx, key_name),
+                            i + 1, సమూహం + 1, కీలకం_Name_పాఠ్యం(info->ctx, కీలకం_name),
                             (clobber ? "from" : "to"),
                             (clobber ? "to" : "from"));
             }
-            if (fromHasNoKeysym) {
+            ఒకవేళ (fromHasNoKeysym) {
                 /* No keysym to copy */
-            } else if (clobber) {
+            } లేకపోతే ఒకవేళ (clobber) {
                 /* Override: copy any defined keysym from `from` */
-                if (unlikely(fromLevel->num_syms > 1)) {
+                ఒకవేళ (unlikely(fromLevel->అంకె_syms > 1)) {
                     /* Multiple keysyms: always replace, all syms are defined */
-                    if (unlikely(intoLevel->num_syms > 1))
-                        free(intoLevel->s.syms);
+                    ఒకవేళ (unlikely(intoLevel->అంకె_syms > 1))
+                        విడుదల(intoLevel->s.syms);
                     /* Steal */
                     intoLevel->s.syms = fromLevel->s.syms;
-                    intoLevel->num_syms = fromLevel->num_syms;
-                    fromLevel->num_syms = 0;
-                    fromKeysymsCount++;
-                } else if (fromLevel->s.sym != XKB_KEY_NoSymbol) {
+                    intoLevel->అంకె_syms = fromLevel->అంకె_syms;
+                    fromLevel->అంకె_syms = 0;
+                    from_Keysyms_లెక్క++;
+                } లేకపోతే ఒకవేళ (fromLevel->s.sym != XKB_కీలకం_No_చిహ్నం) {
                     /* Single defined keysym */
-                    if (unlikely(intoLevel->num_syms > 1))
-                        free(intoLevel->s.syms);
+                    ఒకవేళ (unlikely(intoLevel->అంకె_syms > 1))
+                        విడుదల(intoLevel->s.syms);
                     intoLevel->s.sym = fromLevel->s.sym;
-                    intoLevel->num_syms = 1;
-                    fromKeysymsCount++;
+                    intoLevel->అంకె_syms = 1;
+                    from_Keysyms_లెక్క++;
                 }
-            } else {
+            } లేకపోతే {
                 /* Augment: copy only the keysyms from `from` that are
                  * undefined in `into` */
-                if (unlikely(intoLevel->num_syms > 1)) {
+                ఒకవేళ (unlikely(intoLevel->అంకె_syms > 1)) {
                     /* Multiple keysyms: always ignore, all syms are defined */
-                } else if (intoLevel->s.sym == XKB_KEY_NoSymbol) {
+                } లేకపోతే ఒకవేళ (intoLevel->s.sym == XKB_కీలకం_No_చిహ్నం) {
                     /* Single undefined keysym */
-                    if (unlikely(fromLevel->num_syms > 1)) {
+                    ఒకవేళ (unlikely(fromLevel->అంకె_syms > 1)) {
                         /* Steal */
                         intoLevel->s.syms = fromLevel->s.syms;
-                        intoLevel->num_syms = fromLevel->num_syms;
-                        fromLevel->num_syms = 0;
-                    } else {
+                        intoLevel->అంకె_syms = fromLevel->అంకె_syms;
+                        fromLevel->అంకె_syms = 0;
+                    } లేకపోతే {
                         intoLevel->s.sym = fromLevel->s.sym;
-                        intoLevel->num_syms = 1;
+                        intoLevel->అంకె_syms = 1;
                     }
-                    fromKeysymsCount++;
+                    from_Keysyms_లెక్క++;
                 }
             }
         }
 
         /* Handle actions */
-        if (!XkbLevelsSameActions(intoLevel, fromLevel)) {
+        ఒకవేళ (!Xkb_స్థాయిలు_Same_Actions(intoLevel, fromLevel)) {
             /* Incompatible actions */
-            if (report && !(intoHasNoAction || fromHasNoAction)) {
-                if (unlikely(intoLevel->num_actions > 1)) {
+            ఒకవేళ (report && !(intoHasNoAction || fromHasNoAction)) {
+                ఒకవేళ (unlikely(intoLevel->అంకె_actions > 1)) {
                     log_warn(
-                        info->ctx, XKB_WARNING_CONFLICTING_KEY_ACTION,
+                        info->ctx, XKB_WARNING_CONFLICTING_కీలకం_ACTION,
                         "Multiple actions for level %u/group %"PRIu32" "
                         "on key %s; %s\n",
-                        i + 1, group + 1, KeyNameText(info->ctx, key_name),
+                        i + 1, సమూహం + 1, కీలకం_Name_పాఠ్యం(info->ctx, కీలకం_name),
                         clobber ? "Using from, ignoring to"
                                 : "Using to, ignoring from");
-                } else {
-                    union xkb_action *use, *ignore;
+                } లేకపోతే {
+                    సంఘం xkb_action *use, *ignore;
                     use = clobber
                         ? &fromLevel->a.action
                         : &intoLevel->a.action;
@@ -429,259 +429,259 @@ MergeGroups(SymbolsInfo *info, GroupInfo *into, GroupInfo *from, bool clobber,
                         ? &intoLevel->a.action
                         : &fromLevel->a.action;
 
-                    log_warn(info->ctx, XKB_WARNING_CONFLICTING_KEY_ACTION,
+                    log_warn(info->ctx, XKB_WARNING_CONFLICTING_కీలకం_ACTION,
                                 "Multiple actions for level %u/group "
                                 "%"PRIu32" on key %s; Using %s, ignoring %s\n",
-                                i + 1, group + 1,
-                                KeyNameText(info->ctx, key_name),
-                                ActionTypeText(use->type),
-                                ActionTypeText(ignore->type));
+                                i + 1, సమూహం + 1,
+                                కీలకం_Name_పాఠ్యం(info->ctx, కీలకం_name),
+                                Action_Type_పాఠ్యం(use->type),
+                                Action_Type_పాఠ్యం(ignore->type));
                 }
             }
-            if (fromHasNoAction) {
+            ఒకవేళ (fromHasNoAction) {
                 /* No action to copy */
-            } else if (clobber) {
+            } లేకపోతే ఒకవేళ (clobber) {
                 /* Override: copy any defined action from `from` */
-                if (unlikely(fromLevel->num_actions > 1)) {
+                ఒకవేళ (unlikely(fromLevel->అంకె_actions > 1)) {
                     /* Multiple actions: always replace, all syms are defined */
-                    if (unlikely(intoLevel->num_actions > 1))
-                        free(intoLevel->a.actions);
+                    ఒకవేళ (unlikely(intoLevel->అంకె_actions > 1))
+                        విడుదల(intoLevel->a.actions);
                     /* Steal */
                     intoLevel->a.actions = fromLevel->a.actions;
-                    intoLevel->num_actions = fromLevel->num_actions;
-                    fromLevel->num_actions = 0;
-                    fromActionsCount++;
-                } else if (fromLevel->a.action.type != ACTION_TYPE_NONE) {
+                    intoLevel->అంకె_actions = fromLevel->అంకె_actions;
+                    fromLevel->అంకె_actions = 0;
+                    from_Actions_లెక్క++;
+                } లేకపోతే ఒకవేళ (fromLevel->a.action.type != ACTION_TYPE_NONE) {
                     /* Single defined action */
-                    if (unlikely(intoLevel->num_actions > 1))
-                        free(intoLevel->a.actions);
+                    ఒకవేళ (unlikely(intoLevel->అంకె_actions > 1))
+                        విడుదల(intoLevel->a.actions);
                     intoLevel->a.action = fromLevel->a.action;
-                    intoLevel->num_actions = 1;
-                    fromActionsCount++;
+                    intoLevel->అంకె_actions = 1;
+                    from_Actions_లెక్క++;
                 }
-            } else {
+            } లేకపోతే {
                 /* Augment: copy only the actions from `from` that are
                  * undefined in `into` */
-                if (unlikely(intoLevel->num_actions > 1)) {
+                ఒకవేళ (unlikely(intoLevel->అంకె_actions > 1)) {
                     /* Multiple keysyms: always ignore, all syms are defined */
-                } else if (intoLevel->a.action.type == ACTION_TYPE_NONE) {
+                } లేకపోతే ఒకవేళ (intoLevel->a.action.type == ACTION_TYPE_NONE) {
                     /* Single undefined keysym */
-                    if (unlikely(fromLevel->num_actions > 1)) {
+                    ఒకవేళ (unlikely(fromLevel->అంకె_actions > 1)) {
                         /* Steal */
                         intoLevel->a.actions = fromLevel->a.actions;
-                        intoLevel->num_actions = fromLevel->num_actions;
-                        fromLevel->num_actions = 0;
-                    } else {
+                        intoLevel->అంకె_actions = fromLevel->అంకె_actions;
+                        fromLevel->అంకె_actions = 0;
+                    } లేకపోతే {
                         intoLevel->a.action = fromLevel->a.action;
-                        intoLevel->num_actions = 1;
+                        intoLevel->అంకె_actions = 1;
                     }
-                    fromActionsCount++;
+                    from_Actions_లెక్క++;
                 }
             }
         }
     }
     /* If @from has extra levels, get them as well. */
-    struct xkb_level *level;
-    darray_foreach_from(level, from->levels, levels_in_both) {
-        darray_append(into->levels, *level);
+    నిర్మాణం xkb_level *level;
+    darray_foreach_from(level, from->స్థాయిలు, స్థాయిలు_లోపల_both) {
+        darray_append(into->స్థాయిలు, *level);
         /* We may have stolen keysyms or actions arrays:
          * do not free them when clearing `from` */
-        level->num_syms = 0;
-        level->num_actions = 0;
-        fromKeysymsCount++;
-        fromActionsCount++;
+        level->అంకె_syms = 0;
+        level->అంకె_actions = 0;
+        from_Keysyms_లెక్క++;
+        from_Actions_లెక్క++;
     }
-    if (fromKeysymsCount) {
+    ఒకవేళ (from_Keysyms_లెక్క) {
         /* Reset defined keysyms field if we used no keysym from `into` */
-        if (fromKeysymsCount == darray_size(into->levels))
-            into->defined &= ~GROUP_FIELD_SYMS;
-        into->defined |= (from->defined & GROUP_FIELD_SYMS);
+        ఒకవేళ (from_Keysyms_లెక్క == darray_కొలత(into->స్థాయిలు))
+            into->defined &= ~సమూహం_క్షేత్రం_SYMS;
+        into->defined |= (from->defined & సమూహం_క్షేత్రం_SYMS);
     }
-    if (fromActionsCount) {
+    ఒకవేళ (from_Actions_లెక్క) {
         /* Reset defined actions field if we used no action from `into` */
-        if (fromActionsCount == darray_size(into->levels))
-            into->defined &= ~GROUP_FIELD_ACTS;
-        into->defined |= (from->defined & GROUP_FIELD_ACTS);
+        ఒకవేళ (from_Actions_లెక్క == darray_కొలత(into->స్థాయిలు))
+            into->defined &= ~సమూహం_క్షేత్రం_ACTS;
+        into->defined |= (from->defined & సమూహం_క్షేత్రం_ACTS);
     }
 
-    return true;
+    తిరిగి true;
 }
 
-static bool
-UseNewKeyField(enum key_field field, enum key_field old, enum key_field new,
-               bool clobber, bool report, enum key_field *collide)
+స్థిర bool
+Use_New_కీలకం_క్షేత్రం(గణన కీలకం_క్షేత్రం క్షేత్రం_2, గణన కీలకం_క్షేత్రం old, గణన కీలకం_క్షేత్రం new,
+               bool clobber, bool report, గణన కీలకం_క్షేత్రం *collide)
 {
-    if (!(old & field))
-        return (new & field);
+    ఒకవేళ (!(old & క్షేత్రం_2))
+        తిరిగి (new & క్షేత్రం_2);
 
-    if (new & field) {
-        if (report)
-            *collide |= field;
+    ఒకవేళ (new & క్షేత్రం_2) {
+        ఒకవేళ (report)
+            *collide |= క్షేత్రం_2;
 
-        return clobber;
+        తిరిగి clobber;
     }
 
-    return false;
+    తిరిగి false;
 }
 
-static bool
-overlays_get(const KeyInfo *info, xkb_overlay_index_t bit,
-             const struct xkb_key **key_out)
+స్థిర bool
+overlays_get(స్థిరరాశి కీలకం_Info *info, xkb_overlay_సూచీ_t బిట్టు,
+             స్థిరరాశి నిర్మాణం xkb_కీలకం **కీలకం_బహిర్గతం)
 {
-    if (bit >= (xkb_overlay_index_t)(sizeof(xkb_overlay_mask_t) * CHAR_BIT))
-        return false;
-    const xkb_overlay_mask_t mask = (xkb_overlay_mask_t)(1u << bit);
-    if (!(info->overlays & mask)) return false;
-    if (key_out) {
-        if (!info->overlays_alloc) {
+    ఒకవేళ (బిట్టు >= (xkb_overlay_సూచీ_t)(పరిమాణం(xkb_overlay_ముసుగు_t) * CHAR_BIT))
+        తిరిగి false;
+    స్థిరరాశి xkb_overlay_ముసుగు_t ముసుగు = (xkb_overlay_ముసుగు_t)(1u << బిట్టు);
+    ఒకవేళ (!(info->overlays & ముసుగు)) తిరిగి false;
+    ఒకవేళ (కీలకం_బహిర్గతం) {
+        ఒకవేళ (!info->overlays_alloc) {
             /* Stored inline */
-            *key_out = info->overlay_key;
-        } else {
+            *కీలకం_బహిర్గతం = info->overlay_కీలకం;
+        } లేకపోతే {
             /* Stored in sparse array */
-            const xkb_overlay_mask_t low = (xkb_overlay_mask_t)(
-                info->overlays & (mask - 1u)
+            స్థిరరాశి xkb_overlay_ముసుగు_t దిగువ = (xkb_overlay_ముసుగు_t)(
+                info->overlays & (ముసుగు - 1u)
             );
-            const xkb_overlay_index_t index = (xkb_overlay_index_t)popcount32(low);
-            *key_out = info->overlays_keys[index];
+            స్థిరరాశి xkb_overlay_సూచీ_t సూచీ = (xkb_overlay_సూచీ_t)popcount32(దిగువ);
+            *కీలకం_బహిర్గతం = info->overlays_కీలకాలు[సూచీ];
         }
     }
-    return true;
+    తిరిగి true;
 }
 
-static bool
-overlays_insert(KeyInfo *keyi, xkb_overlay_index_t bit,
-                const struct xkb_key *key)
+స్థిర bool
+overlays_చొప్పించు(కీలకం_Info *keyi, xkb_overlay_సూచీ_t బిట్టు,
+                స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం)
 {
-    if (bit >= (xkb_overlay_index_t)(sizeof(xkb_overlay_mask_t) * CHAR_BIT))
-        return false;
+    ఒకవేళ (బిట్టు >= (xkb_overlay_సూచీ_t)(పరిమాణం(xkb_overlay_ముసుగు_t) * CHAR_BIT))
+        తిరిగి false;
 
-    const xkb_overlay_mask_t mask = (xkb_overlay_mask_t)(1u << bit);
+    స్థిరరాశి xkb_overlay_ముసుగు_t ముసుగు = (xkb_overlay_ముసుగు_t)(1u << బిట్టు);
 
-    if ((keyi->overlays & mask) && !keyi->overlays_clear) {
+    ఒకవేళ ((keyi->overlays & ముసుగు) && !keyi->overlays_clear) {
         /* Overwrite existing slot */
-        if (!keyi->overlays_alloc) {
+        ఒకవేళ (!keyi->overlays_alloc) {
             /* Stored inline */
-            keyi->overlay_key = key;
-            if (!key)
+            keyi->overlay_కీలకం = కీలకం;
+            ఒకవేళ (!కీలకం)
                 keyi->overlays_clear = true;
-        } else {
+        } లేకపోతే {
             /* Stored in sparse array */
-            const xkb_overlay_mask_t low = (xkb_overlay_mask_t)(
-                keyi->overlays & (xkb_overlay_mask_t)(mask - 1u)
+            స్థిరరాశి xkb_overlay_ముసుగు_t దిగువ = (xkb_overlay_ముసుగు_t)(
+                keyi->overlays & (xkb_overlay_ముసుగు_t)(ముసుగు - 1u)
             );
             /* index = number of set bits strictly below bit */
-            const xkb_overlay_index_t index =
-                (xkb_overlay_index_t)popcount32(low);
-            keyi->overlays_keys[index] = key;
+            స్థిరరాశి xkb_overlay_సూచీ_t సూచీ =
+                (xkb_overlay_సూచీ_t)popcount32(దిగువ);
+            keyi->overlays_కీలకాలు[సూచీ] = కీలకం;
         }
-        return true;
+        తిరిగి true;
     }
 
     /* Insert new element */
-    if (!keyi->overlays || (keyi->overlays_clear && !key)) {
+    ఒకవేళ (!keyi->overlays || (keyi->overlays_clear && !కీలకం)) {
         /* No previous overlay or only cleared overlays: use inline storage */
-        keyi->overlay_key = key;
-        keyi->overlays |= mask;
-        keyi->overlays_clear = !key;
-    } else if (!keyi->overlays_alloc) {
+        keyi->overlay_కీలకం = కీలకం;
+        keyi->overlays |= ముసుగు;
+        keyi->overlays_clear = !కీలకం;
+    } లేకపోతే ఒకవేళ (!keyi->overlays_alloc) {
         /* Promote inline element to heap */
-        const xkb_overlay_mask_t overlays = keyi->overlays | mask;
-        const xkb_overlay_index_t alloc =
-            (xkb_overlay_index_t)popcount32(overlays);
+        స్థిరరాశి xkb_overlay_ముసుగు_t overlays = keyi->overlays | ముసుగు;
+        స్థిరరాశి xkb_overlay_సూచీ_t alloc =
+            (xkb_overlay_సూచీ_t)popcount32(overlays);
 
         /* Alloc sparse array */
-        const struct xkb_key ** const tmp = calloc(alloc, sizeof(*tmp));
-        if (!tmp) return false;
+        స్థిరరాశి నిర్మాణం xkb_కీలకం ** స్థిరరాశి tmp = సున్నా_జ్ఞాపకం_ఇవ్వు(alloc, పరిమాణం(*tmp));
+        ఒకవేళ (!tmp) తిరిగి false;
 
         /* Copy previous entries to the buffer */
-        if (!keyi->overlays_clear) {
+        ఒకవేళ (!keyi->overlays_clear) {
             /* A previous single overlay was set */
-            const xkb_overlay_mask_t low = (xkb_overlay_mask_t)(
-                overlays & (xkb_overlay_mask_t)(keyi->overlays - 1u)
+            స్థిరరాశి xkb_overlay_ముసుగు_t దిగువ = (xkb_overlay_ముసుగు_t)(
+                overlays & (xkb_overlay_ముసుగు_t)(keyi->overlays - 1u)
             );
-            const xkb_overlay_index_t idx = (xkb_overlay_index_t)popcount32(low);
-            tmp[idx] = keyi->overlay_key;
-        } else {
+            స్థిరరాశి xkb_overlay_సూచీ_t idx = (xkb_overlay_సూచీ_t)popcount32(దిగువ);
+            tmp[idx] = keyi->overlay_కీలకం;
+        } లేకపోతే {
             /* All previous overlays were set to none: set thanks to calloc */
         }
 
         /* Insert new entry into the buffer */
-        const xkb_overlay_mask_t low = (xkb_overlay_mask_t)(
-            overlays & (xkb_overlay_mask_t)(mask - 1u)
+        స్థిరరాశి xkb_overlay_ముసుగు_t దిగువ = (xkb_overlay_ముసుగు_t)(
+            overlays & (xkb_overlay_ముసుగు_t)(ముసుగు - 1u)
         );
-        const xkb_overlay_index_t idx = (xkb_overlay_index_t)popcount32(low);
-        tmp[idx] = key;
+        స్థిరరాశి xkb_overlay_సూచీ_t idx = (xkb_overlay_సూచీ_t)popcount32(దిగువ);
+        tmp[idx] = కీలకం;
 
-        keyi->overlays_keys = tmp;
+        keyi->overlays_కీలకాలు = tmp;
         keyi->overlays_alloc = alloc;
         keyi->overlays = overlays;
         keyi->overlays_clear = false;
-    } else {
+    } లేకపోతే {
         /* Allocated items: grow heap and shift if relevant */
-        const xkb_overlay_mask_t overlays =
-            (xkb_overlay_mask_t)(keyi->overlays | mask);
-        const xkb_overlay_index_t count =
-            (xkb_overlay_index_t)popcount32(overlays);
-        if (count > keyi->overlays_alloc) {
-            const xkb_overlay_index_t alloc =
-                (xkb_overlay_index_t)next_pow2(count);
-            assert(alloc >= count);
-            const struct xkb_key ** const tmp = realloc(
-                keyi->overlays_keys,
-                (size_t)alloc * sizeof(*keyi->overlays_keys)
+        స్థిరరాశి xkb_overlay_ముసుగు_t overlays =
+            (xkb_overlay_ముసుగు_t)(keyi->overlays | ముసుగు);
+        స్థిరరాశి xkb_overlay_సూచీ_t లెక్క =
+            (xkb_overlay_సూచీ_t)popcount32(overlays);
+        ఒకవేళ (లెక్క > keyi->overlays_alloc) {
+            స్థిరరాశి xkb_overlay_సూచీ_t alloc =
+                (xkb_overlay_సూచీ_t)తదుపరి_pow2(లెక్క);
+            ప్రతిజ్ఞా(alloc >= లెక్క);
+            స్థిరరాశి నిర్మాణం xkb_కీలకం ** స్థిరరాశి tmp = realloc(
+                keyi->overlays_కీలకాలు,
+                (కొలత_t)alloc * పరిమాణం(*keyi->overlays_కీలకాలు)
             );
-            if (!tmp) return false;
-            keyi->overlays_keys = tmp;
+            ఒకవేళ (!tmp) తిరిగి false;
+            keyi->overlays_కీలకాలు = tmp;
             keyi->overlays_alloc = alloc;
         }
         /* Get new entry index in sparse array */
-        const xkb_overlay_mask_t low = (xkb_overlay_mask_t)(
-            overlays & (xkb_overlay_mask_t)(mask - 1u)
+        స్థిరరాశి xkb_overlay_ముసుగు_t దిగువ = (xkb_overlay_ముసుగు_t)(
+            overlays & (xkb_overlay_ముసుగు_t)(ముసుగు - 1u)
         );
-        const xkb_overlay_index_t index = (xkb_overlay_index_t)popcount32(low);
-        if (index >= keyi->overlays_alloc)
+        స్థిరరాశి xkb_overlay_సూచీ_t సూచీ = (xkb_overlay_సూచీ_t)popcount32(దిగువ);
+        ఒకవేళ (సూచీ >= keyi->overlays_alloc)
             PANIC_UNREACHABLE();
-        if (index < count - 1u /* previous count */) {
+        ఒకవేళ (సూచీ < లెక్క - 1u /* previous count */) {
             /* insert between 2 previous items: move items from greater bits */
-            assert(index + 1 < keyi->overlays_alloc);
-            memmove(keyi->overlays_keys + index + 1, keyi->overlays_keys + index,
-                    (size_t)(count - 1u - index) * sizeof(const struct xkb_key *));
+            ప్రతిజ్ఞా(సూచీ + 1 < keyi->overlays_alloc);
+            memmove(keyi->overlays_కీలకాలు + సూచీ + 1, keyi->overlays_కీలకాలు + సూచీ,
+                    (కొలత_t)(లెక్క - 1u - సూచీ) * పరిమాణం(స్థిరరాశి నిర్మాణం xkb_కీలకం *));
         }
-        keyi->overlays_keys[index] = key;
+        keyi->overlays_కీలకాలు[సూచీ] = కీలకం;
         keyi->overlays = overlays;
     }
 
-    return true;
+    తిరిగి true;
 }
 
 /** Merge keyboard overlays. At most one can be defined (X11 limitation) */
-static bool
-merge_overlays(SymbolsInfo *info, KeyInfo *into, KeyInfo *from,
-               bool clobber, bool report, enum key_field *collide)
+స్థిర bool
+విలీనం_overlays(SymbolsInfo *info, కీలకం_Info *into, కీలకం_Info *from,
+               bool clobber, bool report, గణన కీలకం_క్షేత్రం *collide)
 {
-    if (!(from->defined & KEY_FIELD_OVERLAY)) {
+    ఒకవేళ (!(from->defined & కీలకం_క్షేత్రం_OVERLAY)) {
         /* `from` is empty: do nothing */
-    } else if (!(into->defined & KEY_FIELD_OVERLAY)) {
+    } లేకపోతే ఒకవేళ (!(into->defined & కీలకం_క్షేత్రం_OVERLAY)) {
         /* `into` is empty: steal `from` */
         into->overlays = from->overlays;
-        into->overlays_keys = from->overlays_keys;
-        from->overlays_keys = NULL;
+        into->overlays_కీలకాలు = from->overlays_కీలకాలు;
+        from->overlays_కీలకాలు = ఖాళీ;
         into->overlays_alloc = from->overlays_alloc;
         from->overlays_alloc = 0;
-        into->defined |= KEY_FIELD_OVERLAY;
-    } else if (into->overlays_clear && from->overlays_clear) {
+        into->defined |= కీలకం_క్షేత్రం_OVERLAY;
+    } లేకపోతే ఒకవేళ (into->overlays_clear && from->overlays_clear) {
         /* Only cleared overlays: combine them */
         into->overlays |= from->overlays;
-    } else {
-        if (info->keymap_info->features.overlapping_overlays) {
+    } లేకపోతే {
+        ఒకవేళ (info->keymap_info->features.overlapping_overlays) {
             /* Overlapping overlays */
 
-            const xkb_overlay_mask_t result_mask =
+            స్థిరరాశి xkb_overlay_ముసుగు_t ఫలితం_ముసుగు =
                 (into->overlays | from->overlays);
-            const xkb_overlay_index_t count =
-                (xkb_overlay_index_t)popcount32(result_mask);
+            స్థిరరాశి xkb_overlay_సూచీ_t లెక్క =
+                (xkb_overlay_సూచీ_t)popcount32(ఫలితం_ముసుగు);
 
-            if (count == 0)
+            ఒకవేళ (లెక్క == 0)
                 PANIC_UNREACHABLE();
 
             /*
@@ -690,215 +690,215 @@ merge_overlays(SymbolsInfo *info, KeyInfo *into, KeyInfo *from,
              * buffer may be freed.
              */
 
-            KeyInfo *dest = into;
-            KeyInfo *src = from;
-            if (into->overlays_alloc >= count &&
+            కీలకం_Info *dest = into;
+            కీలకం_Info *src = from;
+            ఒకవేళ (into->overlays_alloc >= లెక్క &&
                 into->overlays_alloc >= from->overlays_alloc) {
                 /* Do nothing */
-            } else if (from->overlays_alloc >= count) {
+            } లేకపోతే ఒకవేళ (from->overlays_alloc >= లెక్క) {
                 dest = from;
                 src = into;
                 clobber = !clobber;
-            } else if (count > 1) {
+            } లేకపోతే ఒకవేళ (లెక్క > 1) {
                 /* Neither is sufficient: realloc the larger one if possible */
-                if (into->overlays_alloc < from->overlays_alloc) {
+                ఒకవేళ (into->overlays_alloc < from->overlays_alloc) {
                     dest = from;
                     src = into;
                     clobber = !clobber;
                 }
 
-                if (!dest->overlays_alloc) {
-                    const struct xkb_key **tmp = calloc(count, sizeof(*tmp));
-                    if (!tmp)
-                        return false;
-                    if (dest->overlay_key)
-                        tmp[0] = dest->overlay_key;
-                    dest->overlays_keys = tmp;
-                    dest->overlays_alloc = count;
-                } else {
-                    const struct xkb_key **tmp =
-                        realloc(dest->overlays_keys,
-                                count * sizeof(*dest->overlays_keys));
-                    if (!tmp)
-                        return false;
-                    dest->overlays_keys = tmp;
-                    dest->overlays_alloc = count;
+                ఒకవేళ (!dest->overlays_alloc) {
+                    స్థిరరాశి నిర్మాణం xkb_కీలకం **tmp = సున్నా_జ్ఞాపకం_ఇవ్వు(లెక్క, పరిమాణం(*tmp));
+                    ఒకవేళ (!tmp)
+                        తిరిగి false;
+                    ఒకవేళ (dest->overlay_కీలకం)
+                        tmp[0] = dest->overlay_కీలకం;
+                    dest->overlays_కీలకాలు = tmp;
+                    dest->overlays_alloc = లెక్క;
+                } లేకపోతే {
+                    స్థిరరాశి నిర్మాణం xkb_కీలకం **tmp =
+                        realloc(dest->overlays_కీలకాలు,
+                                లెక్క * పరిమాణం(*dest->overlays_కీలకాలు));
+                    ఒకవేళ (!tmp)
+                        తిరిగి false;
+                    dest->overlays_కీలకాలు = tmp;
+                    dest->overlays_alloc = లెక్క;
                 }
             }
 
-            xkb_overlay_mask_t remaining = src->overlays;
-            const struct xkb_key **src_keys = (src->overlays_clear)
-                ? NULL
+            xkb_overlay_ముసుగు_t మిగిలిన = src->overlays;
+            స్థిరరాశి నిర్మాణం xkb_కీలకం **src_కీలకాలు = (src->overlays_clear)
+                ? ఖాళీ
                 : (src->overlays_alloc)
-                    ? src->overlays_keys
-                    : &src->overlay_key;
-            while (remaining) {
+                    ? src->overlays_కీలకాలు
+                    : &src->overlay_కీలకం;
+            అయితే (మిగిలిన) {
                 /* isolate lowest set bit */
-                const xkb_overlay_mask_t lsb = (xkb_overlay_mask_t)(
-                    remaining &
-                    (xkb_overlay_mask_t)((unsigned)~remaining + 1u)
+                స్థిరరాశి xkb_overlay_ముసుగు_t lsb = (xkb_overlay_ముసుగు_t)(
+                    మిగిలిన &
+                    (xkb_overlay_ముసుగు_t)((గుర్తులేని)~మిగిలిన + 1u)
                 );
                 /* get its index */
-                const xkb_overlay_index_t bit =
-                    (xkb_overlay_index_t)popcount32(lsb - 1u);
-                remaining = (remaining & ~lsb);
+                స్థిరరాశి xkb_overlay_సూచీ_t బిట్టు =
+                    (xkb_overlay_సూచీ_t)popcount32(lsb - 1u);
+                మిగిలిన = (మిగిలిన & ~lsb);
 
                 /* pop current value */
-                if (!src->overlays_clear && !src->overlays_alloc && remaining)
+                ఒకవేళ (!src->overlays_clear && !src->overlays_alloc && మిగిలిన)
                     PANIC_UNREACHABLE();
-                const struct xkb_key *src_key = (src_keys)
-                    ? *(src_keys++)
-                    : NULL;
+                స్థిరరాశి నిర్మాణం xkb_కీలకం *src_కీలకం = (src_కీలకాలు)
+                    ? *(src_కీలకాలు++)
+                    : ఖాళీ;
 
                 /* check dest */
-                const struct xkb_key *dest_key = NULL;
-                const bool conflict = overlays_get(dest, bit, &dest_key);
-                if (conflict) {
-                    if (dest_key == src_key)
-                       continue;
-                    else if (report)
-                        *collide |= KEY_FIELD_OVERLAY;
+                స్థిరరాశి నిర్మాణం xkb_కీలకం *dest_కీలకం = ఖాళీ;
+                స్థిరరాశి bool conflict = overlays_get(dest, బిట్టు, &dest_కీలకం);
+                ఒకవేళ (conflict) {
+                    ఒకవేళ (dest_కీలకం == src_కీలకం)
+                       కొనసాగు;
+                    లేకపోతే ఒకవేళ (report)
+                        *collide |= కీలకం_క్షేత్రం_OVERLAY;
                 }
 
-                if ((!conflict || clobber) && !overlays_insert(dest, bit, src_key))
-                    return false;
+                ఒకవేళ ((!conflict || clobber) && !overlays_చొప్పించు(dest, బిట్టు, src_కీలకం))
+                    తిరిగి false;
             }
 
-            if (dest == from) {
+            ఒకవేళ (dest == from) {
                 /* `from` buffer was used; clone it into `into` then clear it */
-                if (into->overlays_alloc)
-                    free(into->overlays_keys);
+                ఒకవేళ (into->overlays_alloc)
+                    విడుదల(into->overlays_కీలకాలు);
                 into->overlays = from->overlays;
                 into->overlays_clear = from->overlays_clear;
                 into->overlays_alloc = from->overlays_alloc;
-                if (from->overlays_alloc) {
+                ఒకవేళ (from->overlays_alloc) {
                     /* Steal */
-                    into->overlays_keys = from->overlays_keys;
-                    from->overlays_keys = NULL;
+                    into->overlays_కీలకాలు = from->overlays_కీలకాలు;
+                    from->overlays_కీలకాలు = ఖాళీ;
                     from->overlays_alloc = 0;
-                } else {
-                    into->overlay_key = from->overlay_key;
+                } లేకపోతే {
+                    into->overlay_కీలకం = from->overlay_కీలకం;
                 }
             }
-        } else {
+        } లేకపోతే {
             /* Disjoint overlays */
 
-            if (into->overlays == from->overlays &&
+            ఒకవేళ (into->overlays == from->overlays &&
                 into->overlays_clear == from->overlays_clear &&
-                into->overlay_key == from->overlay_key) {
+                into->overlay_కీలకం == from->overlay_కీలకం) {
                 /* Indentical: do nothing */
-                return true;
+                తిరిగి true;
             }
-            if (!(into->overlays & from->overlays)) {
-                if (into->overlays_clear) {
+            ఒకవేళ (!(into->overlays & from->overlays)) {
+                ఒకవేళ (into->overlays_clear) {
                     /* `into` clears and `from` sets distinct overlays: use `from` */
                     into->overlays = from->overlays;
                     into->overlays_clear = from->overlays_clear;
                     into->overlays_alloc = from->overlays_alloc;
-                    into->overlay_key = from->overlay_key;
-                    return true;
-                } else if (from->overlays_clear) {
+                    into->overlay_కీలకం = from->overlay_కీలకం;
+                    తిరిగి true;
+                } లేకపోతే ఒకవేళ (from->overlays_clear) {
                     /* `into` sets and `from` clears distinct overlays: use `into` */
-                    return true;
+                    తిరిగి true;
                 }
             }
             /* Conflict */
-            if (report)
-                *collide |= KEY_FIELD_OVERLAY;
-            if (clobber) {
+            ఒకవేళ (report)
+                *collide |= కీలకం_క్షేత్రం_OVERLAY;
+            ఒకవేళ (clobber) {
                 into->overlays = from->overlays;
                 into->overlays_clear = from->overlays_clear;
                 into->overlays_alloc = from->overlays_alloc;
-                into->overlay_key = from->overlay_key;
+                into->overlay_కీలకం = from->overlay_కీలకం;
             }
         }
     }
-    return true;
+    తిరిగి true;
 }
 
-static bool
-MergeKeys(SymbolsInfo *info, KeyInfo *into, KeyInfo *from, bool same_file)
+స్థిర bool
+విలీనం_కీలకాలు(SymbolsInfo *info, కీలకం_Info *into, కీలకం_Info *from, bool same_file)
 {
-    xkb_layout_index_t i;
-    xkb_layout_index_t groups_in_both;
-    enum key_field collide = 0;
-    const int verbosity = xkb_context_get_log_verbosity(info->ctx);
-    const bool clobber = (from->merge != MERGE_AUGMENT);
-    const bool report = (same_file && verbosity > 0) || verbosity > 9;
+    xkb_layout_సూచీ_t i;
+    xkb_layout_సూచీ_t groups_లోపల_both;
+    గణన కీలకం_క్షేత్రం collide = 0;
+    స్థిరరాశి పూర్ణాంకం verbosity = xkb_context_get_log_verbosity(info->ctx);
+    స్థిరరాశి bool clobber = (from->విలీనం != విలీనం_AUGMENT);
+    స్థిరరాశి bool report = (same_file && verbosity > 0) || verbosity > 9;
 
-    if (from->merge == MERGE_REPLACE) {
-        ClearKeyInfo(into);
+    ఒకవేళ (from->విలీనం == విలీనం_REPLACE) {
+        Clear_కీలకం_Info(into);
         *into = *from;
-        InitKeyInfo(info->ctx, from);
-        return true;
+        Init_కీలకం_Info(info->ctx, from);
+        తిరిగి true;
     }
 
-    groups_in_both = MIN(darray_size(into->groups), darray_size(from->groups));
-    for (i = 0; i < groups_in_both; i++)
-        MergeGroups(info,
-                    &darray_item(into->groups, i),
-                    &darray_item(from->groups, i),
+    groups_లోపల_both = MIN(darray_కొలత(into->groups), darray_కొలత(from->groups));
+    కొరకు (i = 0; i < groups_లోపల_both; i++)
+        విలీనం_Groups(info,
+                    &darray_అంశం(into->groups, i),
+                    &darray_అంశం(from->groups, i),
                     clobber, report, i, into->name);
     /* If @from has extra groups, just move them to @into. */
-    for (i = groups_in_both; i < darray_size(from->groups); i++) {
-        darray_append(into->groups, darray_item(from->groups, i));
-        InitGroupInfo(&darray_item(from->groups, i));
+    కొరకు (i = groups_లోపల_both; i < darray_కొలత(from->groups); i++) {
+        darray_append(into->groups, darray_అంశం(from->groups, i));
+        Init_సమూహం_Info(&darray_అంశం(from->groups, i));
     }
 
-    if (UseNewKeyField(KEY_FIELD_VMODMAP, into->defined, from->defined,
+    ఒకవేళ (Use_New_కీలకం_క్షేత్రం(కీలకం_క్షేత్రం_VMODMAP, into->defined, from->defined,
                        clobber, report, &collide)) {
         into->vmodmap = from->vmodmap;
-        into->defined |= KEY_FIELD_VMODMAP;
+        into->defined |= కీలకం_క్షేత్రం_VMODMAP;
     }
-    if (UseNewKeyField(KEY_FIELD_REPEAT, into->defined, from->defined,
+    ఒకవేళ (Use_New_కీలకం_క్షేత్రం(కీలకం_క్షేత్రం_REPEAT, into->defined, from->defined,
                        clobber, report, &collide)) {
         into->repeat = from->repeat;
-        into->defined |= KEY_FIELD_REPEAT;
+        into->defined |= కీలకం_క్షేత్రం_REPEAT;
     }
-    if (UseNewKeyField(KEY_FIELD_DEFAULT_TYPE, into->defined, from->defined,
+    ఒకవేళ (Use_New_కీలకం_క్షేత్రం(కీలకం_క్షేత్రం_DEFAULT_TYPE, into->defined, from->defined,
                        clobber, report, &collide)) {
         into->default_type = from->default_type;
-        into->defined |= KEY_FIELD_DEFAULT_TYPE;
+        into->defined |= కీలకం_క్షేత్రం_DEFAULT_TYPE;
     }
-    if (UseNewKeyField(KEY_FIELD_GROUPINFO, into->defined, from->defined,
+    ఒకవేళ (Use_New_కీలకం_క్షేత్రం(కీలకం_క్షేత్రం_GROUPINFO, into->defined, from->defined,
                        clobber, report, &collide)) {
-        into->out_of_range_pending_group = from->out_of_range_pending_group;
-        into->out_of_range_group_policy = from->out_of_range_group_policy;
-        into->out_of_range_group_number = from->out_of_range_group_number;
-        into->defined |= KEY_FIELD_GROUPINFO;
+        into->బహిర్గతం_యొక్క_range_pending_సమూహం = from->బహిర్గతం_యొక్క_range_pending_సమూహం;
+        into->బహిర్గతం_యొక్క_range_సమూహం_policy = from->బహిర్గతం_యొక్క_range_సమూహం_policy;
+        into->బహిర్గతం_యొక్క_range_సమూహం_సంఖ్య = from->బహిర్గతం_యొక్క_range_సమూహం_సంఖ్య;
+        into->defined |= కీలకం_క్షేత్రం_GROUPINFO;
     }
 
-    if (!merge_overlays(info, into, from, clobber, report, &collide))
-        return false;
+    ఒకవేళ (!విలీనం_overlays(info, into, from, clobber, report, &collide))
+        తిరిగి false;
 
-    if (collide) {
-        log_warn(info->ctx, XKB_WARNING_CONFLICTING_KEY_FIELDS,
+    ఒకవేళ (collide) {
+        log_warn(info->ctx, XKB_WARNING_CONFLICTING_కీలకం_FIELDS,
                  "Symbol map for key %s redefined; "
                  "Using %s definition for conflicting fields\n",
-                 KeyNameText(info->ctx, into->name),
+                 కీలకం_Name_పాఠ్యం(info->ctx, into->name),
                  (clobber ? "first" : "last"));
     }
 
-    ClearKeyInfo(from);
-    InitKeyInfo(info->ctx, from);
-    return true;
+    Clear_కీలకం_Info(from);
+    Init_కీలకం_Info(info->ctx, from);
+    తిరిగి true;
 }
 
-static xkb_atom_t
-XkbResolveKeyAlias(const struct xkb_keymap *keymap, xkb_atom_t name)
+స్థిర xkb_atom_t
+Xkb_Resolve_కీలకం_Alias(స్థిరరాశి నిర్మాణం xkb_keymap *keymap, xkb_atom_t name)
 {
-    if (name < keymap->num_key_names) {
-        const KeycodeMatch match = keymap->key_names[name];
-        if (match.found && match.is_alias) {
-            return match.alias.real;
+    ఒకవేళ (name < keymap->అంకె_కీలకం_పేర్లు) {
+        స్థిరరాశి Keycode_సరిపోలిక సరిపోలిక = keymap->కీలకం_పేర్లు[name];
+        ఒకవేళ (సరిపోలిక.దొరికింది && సరిపోలిక.is_alias) {
+            తిరిగి సరిపోలిక.alias.real;
         }
     }
-    return name;
+    తిరిగి name;
 }
 
 /* TODO: Make it so this function doesn't need the entire keymap. */
-static bool
-AddKeySymbols(SymbolsInfo *info, KeyInfo *keyi, bool same_file)
+స్థిర bool
+కూడు_కీలకం_Symbols(SymbolsInfo *info, కీలకం_Info *keyi, bool same_file)
 {
     /*
      * Don't keep aliases in the keys array; this guarantees that
@@ -906,176 +906,176 @@ AddKeySymbols(SymbolsInfo *info, KeyInfo *keyi, bool same_file)
      * following loop) is enough, and we won't get multiple KeyInfo's
      * for the same key because of aliases.
      */
-    keyi->name = XkbResolveKeyAlias(&info->keymap_info->keymap, keyi->name);
+    keyi->name = Xkb_Resolve_కీలకం_Alias(&info->keymap_info->keymap, keyi->name);
 
-    KeyInfo *iter;
-    darray_foreach(iter, info->keys)
-        if (iter->name == keyi->name)
-            return MergeKeys(info, iter, keyi, same_file);
+    కీలకం_Info *iter;
+    darray_foreach(iter, info->కీలకాలు)
+        ఒకవేళ (iter->name == keyi->name)
+            తిరిగి విలీనం_కీలకాలు(info, iter, keyi, same_file);
 
-    darray_append(info->keys, *keyi);
-    InitKeyInfo(info->ctx, keyi);
-    return true;
+    darray_append(info->కీలకాలు, *keyi);
+    Init_కీలకం_Info(info->ctx, keyi);
+    తిరిగి true;
 }
 
-static bool
-AddModMapEntry(SymbolsInfo *info, const ModMapEntry *new)
+స్థిర bool
+కూడు_Mod_Map_నమోదు(SymbolsInfo *info, స్థిరరాశి Mod_Map_నమోదు *new)
 {
-    const bool clobber = (new->merge != MERGE_AUGMENT);
+    స్థిరరాశి bool clobber = (new->విలీనం != విలీనం_AUGMENT);
 
-    ModMapEntry *old;
+    Mod_Map_నమోదు *old;
     darray_foreach(old, info->modmaps) {
-        if ((new->haveSymbol != old->haveSymbol) ||
-            (new->haveSymbol && new->u.keySym != old->u.keySym) ||
-            (!new->haveSymbol && new->u.keyName != old->u.keyName))
-            continue;
+        ఒకవేళ ((new->have_చిహ్నం != old->have_చిహ్నం) ||
+            (new->have_చిహ్నం && new->u.కీలకం_Sym != old->u.కీలకం_Sym) ||
+            (!new->have_చిహ్నం && new->u.కీలకం_Name != old->u.కీలకం_Name))
+            కొనసాగు;
 
-        if (new->mods == old->mods)
-            return true;
+        ఒకవేళ (new->mods == old->mods)
+            తిరిగి true;
 
-        const xkb_mod_mask_t use = (clobber ? new->mods : old->mods);
-        const xkb_mod_mask_t ignore = (clobber ? old->mods : new->mods);
+        స్థిరరాశి xkb_mod_ముసుగు_t use = (clobber ? new->mods : old->mods);
+        స్థిరరాశి xkb_mod_ముసుగు_t ignore = (clobber ? old->mods : new->mods);
 
-        if (new->haveSymbol) {
+        ఒకవేళ (new->have_చిహ్నం) {
             log_warn(info->ctx, XKB_WARNING_CONFLICTING_MODMAP,
                     "Symbol \"%s\" added to modifier map "
                     "for distinct modifiers mask; Using %s, ignoring %s\n",
-                    KeysymText(info->ctx, new->u.keySym),
-                    ModMaskText(info->ctx, MOD_REAL, &info->mods, use),
-                    ModMaskText(info->ctx, MOD_REAL, &info->mods, ignore));
-        } else {
+                    Keysym_పాఠ్యం(info->ctx, new->u.కీలకం_Sym),
+                    Mod_ముసుగు_పాఠ్యం(info->ctx, MOD_REAL, &info->mods, use),
+                    Mod_ముసుగు_పాఠ్యం(info->ctx, MOD_REAL, &info->mods, ignore));
+        } లేకపోతే {
             log_warn(info->ctx, XKB_WARNING_CONFLICTING_MODMAP,
                     "Key \"%s\" added to modifier map "
                     "for distinct modifiers mask; Using %s, ignoring %s\n",
-                    KeyNameText(info->ctx, new->u.keyName),
-                    ModMaskText(info->ctx, MOD_REAL, &info->mods, use),
-                    ModMaskText(info->ctx, MOD_REAL, &info->mods, ignore));
+                    కీలకం_Name_పాఠ్యం(info->ctx, new->u.కీలకం_Name),
+                    Mod_ముసుగు_పాఠ్యం(info->ctx, MOD_REAL, &info->mods, use),
+                    Mod_ముసుగు_పాఠ్యం(info->ctx, MOD_REAL, &info->mods, ignore));
         }
         old->mods = use;
-        return true;
+        తిరిగి true;
     }
 
     darray_append(info->modmaps, *new);
 
-    return true;
+    తిరిగి true;
 }
 
 /***====================================================================***/
 
-static void
-MergeIncludedSymbols(SymbolsInfo *into, SymbolsInfo *from,
-                     enum merge_mode merge)
+స్థిర శూన్య
+విలీనం_Included_Symbols(SymbolsInfo *into, SymbolsInfo *from,
+                     గణన విలీనం_బహుళకం విలీనం)
 {
-    xkb_atom_t *group_name;
-    xkb_layout_index_t group_names_in_both;
+    xkb_atom_t *సమూహం_name;
+    xkb_layout_సూచీ_t సమూహం_పేర్లు_లోపల_both;
 
-    if (from->errorCount > 0) {
-        into->errorCount += from->errorCount;
-        return;
+    ఒకవేళ (from->error_లెక్క > 0) {
+        into->error_లెక్క += from->error_లెక్క;
+        తిరిగి;
     }
 
-    MergeModSets(into->ctx, &into->mods, &from->mods, merge);
+    విలీనం_Mod_Sets(into->ctx, &into->mods, &from->mods, విలీనం);
 
-    if (into->name == NULL) {
+    ఒకవేళ (into->name == ఖాళీ) {
         into->name = steal(&from->name);
     }
 
-    group_names_in_both = MIN(darray_size(into->group_names),
-                              darray_size(from->group_names));
-    for (xkb_layout_index_t i = 0; i < group_names_in_both; i++) {
-        if (!darray_item(from->group_names, i))
-            continue;
+    సమూహం_పేర్లు_లోపల_both = MIN(darray_కొలత(into->సమూహం_పేర్లు),
+                              darray_కొలత(from->సమూహం_పేర్లు));
+    కొరకు (xkb_layout_సూచీ_t i = 0; i < సమూహం_పేర్లు_లోపల_both; i++) {
+        ఒకవేళ (!darray_అంశం(from->సమూహం_పేర్లు, i))
+            కొనసాగు;
 
-        if (merge == MERGE_AUGMENT && darray_item(into->group_names, i))
-            continue;
+        ఒకవేళ (విలీనం == విలీనం_AUGMENT && darray_అంశం(into->సమూహం_పేర్లు, i))
+            కొనసాగు;
 
-        darray_item(into->group_names, i) = darray_item(from->group_names, i);
+        darray_అంశం(into->సమూహం_పేర్లు, i) = darray_అంశం(from->సమూహం_పేర్లు, i);
     }
     /* If @from has more, get them as well. */
-    darray_foreach_from(group_name, from->group_names, group_names_in_both)
-        darray_append(into->group_names, *group_name);
+    darray_foreach_from(సమూహం_name, from->సమూహం_పేర్లు, సమూహం_పేర్లు_లోపల_both)
+        darray_append(into->సమూహం_పేర్లు, *సమూహం_name);
 
-    if (darray_empty(into->keys)) {
-        into->keys = from->keys;
-        darray_init(from->keys);
+    ఒకవేళ (darray_ఖాళీలు(into->కీలకాలు)) {
+        into->కీలకాలు = from->కీలకాలు;
+        darray_init(from->కీలకాలు);
     }
-    else {
-        KeyInfo *keyi;
-        darray_foreach(keyi, from->keys) {
-            keyi->merge = merge;
-            if (!AddKeySymbols(into, keyi, false))
-                into->errorCount++;
+    లేకపోతే {
+        కీలకం_Info *keyi;
+        darray_foreach(keyi, from->కీలకాలు) {
+            keyi->విలీనం = విలీనం;
+            ఒకవేళ (!కూడు_కీలకం_Symbols(into, keyi, false))
+                into->error_లెక్క++;
         }
     }
 
-    if (darray_empty(into->modmaps)) {
+    ఒకవేళ (darray_ఖాళీలు(into->modmaps)) {
         into->modmaps = from->modmaps;
         darray_init(from->modmaps);
     }
-    else {
-        ModMapEntry *mm;
+    లేకపోతే {
+        Mod_Map_నమోదు *mm;
         darray_foreach(mm, from->modmaps) {
-            mm->merge = merge;
-            if (!AddModMapEntry(into, mm))
-                into->errorCount++;
+            mm->విలీనం = విలీనం;
+            ఒకవేళ (!కూడు_Mod_Map_నమోదు(into, mm))
+                into->error_లెక్క++;
         }
     }
 }
 
-static void
+స్థిర శూన్య
 HandleSymbolsFile(SymbolsInfo *info, XkbFile *file);
 
-static bool
+స్థిర bool
 HandleIncludeSymbols(SymbolsInfo *info, IncludeStmt *include)
 {
     SymbolsInfo included;
 
-    if (ExceedsIncludeMaxDepth(info->ctx, info->include_depth)) {
-        info->errorCount += 10;
-        return false;
+    ఒకవేళ (Exceeds_Include_Max_లోతు(info->ctx, info->include_లోతు)) {
+        info->error_లెక్క += 10;
+        తిరిగి false;
     }
 
-    InitSymbolsInfo(&included, info->keymap_info, info->include_depth + 1,
+    InitSymbolsInfo(&included, info->keymap_info, info->include_లోతు + 1,
                     &info->mods);
     included.name = steal(&include->stmt);
 
-    const struct parser_keymap_config config = {
+    స్థిరరాశి నిర్మాణం parser_keymap_config config = {
         .format = info->keymap_info->keymap.format,
         .strict = info->keymap_info->strict
     };
 
-    for (IncludeStmt *stmt = include; stmt; stmt = stmt->next_incl) {
-        SymbolsInfo next_incl;
+    కొరకు (IncludeStmt *stmt = include; stmt; stmt = stmt->తదుపరి_incl) {
+        SymbolsInfo తదుపరి_incl;
         XkbFile *file;
 
-        char path[PATH_MAX];
+        అక్షరం మార్గం[PATH_MAX];
         file = ProcessIncludeFile(info->ctx, &config, stmt, FILE_TYPE_SYMBOLS,
-                                  path, sizeof(path));
-        if (!file) {
-            info->errorCount += 10;
+                                  మార్గం, పరిమాణం(మార్గం));
+        ఒకవేళ (!file) {
+            info->error_లెక్క += 10;
             ClearSymbolsInfo(&included);
-            return false;
+            తిరిగి false;
         }
 
-        InitSymbolsInfo(&next_incl, info->keymap_info, info->include_depth + 1,
+        InitSymbolsInfo(&తదుపరి_incl, info->keymap_info, info->include_లోతు + 1,
                         &included.mods);
-        if (stmt->modifier) {
-            const int count = parse_dec_to_uint32_t(stmt->modifier, SIZE_MAX,
-                                                    &next_incl.explicit_group);
-            if (count <= 0 || *(stmt->modifier + count) != '\0' ||
-                next_incl.explicit_group == 0 ||
-                next_incl.explicit_group > info->max_groups) {
-                log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
+        ఒకవేళ (stmt->modifier) {
+            స్థిరరాశి పూర్ణాంకం లెక్క = parse_dec_గమ్యం_uint32_t(stmt->modifier, SIZE_MAX,
+                                                    &తదుపరి_incl.explicit_సమూహం);
+            ఒకవేళ (లెక్క <= 0 || *(stmt->modifier + లెక్క) != '\0' ||
+                తదుపరి_incl.explicit_సమూహం == 0 ||
+                తదుపరి_incl.explicit_సమూహం > info->max_groups) {
+                log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_సూచీ_2,
                         "Cannot set explicit group to \"%s\": "
                         "must be between 1..%"PRIu32"; Ignoring group number\n",
                         stmt->modifier, info->max_groups);
-                next_incl.explicit_group = info->explicit_group;
-            } else {
-                next_incl.explicit_group--;
+                తదుపరి_incl.explicit_సమూహం = info->explicit_సమూహం;
+            } లేకపోతే {
+                తదుపరి_incl.explicit_సమూహం--;
             }
         }
-        else if (info->keymap_info->keymap.num_groups != 0 &&
-                 next_incl.include_depth == 1) {
+        లేకపోతే ఒకవేళ (info->keymap_info->keymap.అంకె_groups != 0 &&
+                 తదుపరి_incl.include_లోతు == 1) {
             /*
              * If keymap is the result of RMLVO resolution and we are at the
              * first include depth, transform e.g. `pc` into `pc:1` in order to
@@ -1087,990 +1087,990 @@ HandleIncludeSymbols(SymbolsInfo *info, IncludeStmt *include)
              * the `groupIndexNames` and `groupMaskNames` LUT should initially
              * be inactive.
              */
-            next_incl.explicit_group = 0;
+            తదుపరి_incl.explicit_సమూహం = 0;
         }
-        else {
+        లేకపోతే {
             /* The keymap was not generated from rules or this is not the first
              * level of include: take the parent’s explicit group. */
-            next_incl.explicit_group = info->explicit_group;
+            తదుపరి_incl.explicit_సమూహం = info->explicit_సమూహం;
         }
 
-        HandleSymbolsFile(&next_incl, file);
+        HandleSymbolsFile(&తదుపరి_incl, file);
 
-        MergeIncludedSymbols(&included, &next_incl, stmt->merge);
+        విలీనం_Included_Symbols(&included, &తదుపరి_incl, stmt->విలీనం);
 
-        ClearSymbolsInfo(&next_incl);
+        ClearSymbolsInfo(&తదుపరి_incl);
         FreeXkbFile(file);
     }
 
-    MergeIncludedSymbols(info, &included, include->merge);
+    విలీనం_Included_Symbols(info, &included, include->విలీనం);
     ClearSymbolsInfo(&included);
 
-    return (info->errorCount == 0);
+    తిరిగి (info->error_లెక్క == 0);
 }
 
-static bool
-GetGroupIndex(SymbolsInfo *info, KeyInfo *keyi, ExprDef *arrayNdx,
-              enum group_field field, xkb_layout_index_t *ndx_rtrn)
+స్థిర bool
+Get_సమూహం_సూచీ(SymbolsInfo *info, కీలకం_Info *keyi, సమాసం_Def *arrayNdx,
+              గణన సమూహం_క్షేత్రం క్షేత్రం_2, xkb_layout_సూచీ_t *ndx_rtrn)
 {
-    assert (field == GROUP_FIELD_SYMS || field == GROUP_FIELD_ACTS);
-    const char *name = (field == GROUP_FIELD_SYMS ? "symbols" : "actions");
+    ప్రతిజ్ఞా (క్షేత్రం_2 == సమూహం_క్షేత్రం_SYMS || క్షేత్రం_2 == సమూహం_క్షేత్రం_ACTS);
+    స్థిరరాశి అక్షరం *name = (క్షేత్రం_2 == సమూహం_క్షేత్రం_SYMS ? "symbols" : "actions");
 
-    if (arrayNdx == NULL) {
-        xkb_layout_index_t i = 0;
-        GroupInfo *groupi;
+    ఒకవేళ (arrayNdx == ఖాళీ) {
+        xkb_layout_సూచీ_t i = 0;
+        సమూహం_Info_2 *groupi;
 
         darray_enumerate(i, groupi, keyi->groups) {
-            if (!(groupi->defined & field)) {
+            ఒకవేళ (!(groupi->defined & క్షేత్రం_2)) {
                 *ndx_rtrn = i;
-                return true;
+                తిరిగి true;
             }
         }
 
-        if (i >= info->max_groups) {
-            log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
+        ఒకవేళ (i >= info->max_groups) {
+            log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_సూచీ_2,
                     "Too many groups of %s for key %s (max %"PRIu32"); "
                     "Ignoring %s defined for extra groups\n",
-                    name, KeyInfoText(info, keyi), info->max_groups, name);
-            return false;
+                    name, కీలకం_Info_పాఠ్యం(info, keyi), info->max_groups, name);
+            తిరిగి false;
         }
 
-        darray_resize0(keyi->groups, darray_size(keyi->groups) + 1);
-        *ndx_rtrn = darray_size(keyi->groups) - 1;
-        return true;
+        darray_resize0(keyi->groups, darray_కొలత(keyi->groups) + 1);
+        *ndx_rtrn = darray_కొలత(keyi->groups) - 1;
+        తిరిగి true;
     }
 
-    if (ExprResolveGroup(info->keymap_info, arrayNdx, false, ndx_rtrn, NULL) !=
+    ఒకవేళ (సమాసం_Resolve_సమూహం(info->keymap_info, arrayNdx, false, ndx_rtrn, ఖాళీ) !=
         PARSER_SUCCESS) {
-        log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
+        log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_సూచీ_2,
                 "Illegal group index for %s of key %s\n"
                 "Definition with non-integer array index ignored\n",
-                name, KeyInfoText(info, keyi));
-        return false;
+                name, కీలకం_Info_పాఠ్యం(info, keyi));
+        తిరిగి false;
     }
 
     (*ndx_rtrn)--;
-    if (*ndx_rtrn >= darray_size(keyi->groups))
+    ఒకవేళ (*ndx_rtrn >= darray_కొలత(keyi->groups))
         darray_resize0(keyi->groups, *ndx_rtrn + 1);
 
-    return true;
+    తిరిగి true;
 }
 
-static bool
-AddSymbolsToKey(SymbolsInfo *info, KeyInfo *keyi, ExprDef *arrayNdx,
-                ExprDef *value)
+స్థిర bool
+కూడు_Symbols_గమ్యం_కీలకం(SymbolsInfo *info, కీలకం_Info *keyi, సమాసం_Def *arrayNdx,
+                సమాసం_Def *విలువ)
 {
-    xkb_layout_index_t ndx = 0;
+    xkb_layout_సూచీ_t ndx = 0;
 
-    if (!GetGroupIndex(info, keyi, arrayNdx, GROUP_FIELD_SYMS, &ndx))
-        return false;
+    ఒకవేళ (!Get_సమూహం_సూచీ(info, keyi, arrayNdx, సమూహం_క్షేత్రం_SYMS, &ndx))
+        తిరిగి false;
 
-    GroupInfo *groupi = &darray_item(keyi->groups, ndx);
+    సమూహం_Info_2 *groupi = &darray_అంశం(keyi->groups, ndx);
 
-    if (value->common.type == STMT_EXPR_EMPTY_LIST) {
-        groupi->defined |= GROUP_FIELD_SYMS;
-        return true;
+    ఒకవేళ (విలువ->common.type == STMT_సమాసం_ఖాళీలు_LIST) {
+        groupi->defined |= సమూహం_క్షేత్రం_SYMS;
+        తిరిగి true;
     }
 
-    if (value->common.type != STMT_EXPR_KEYSYM_LIST) {
-        log_err(info->ctx, XKB_ERROR_WRONG_FIELD_TYPE,
+    ఒకవేళ (విలువ->common.type != STMT_సమాసం_KEYSYM_LIST) {
+        log_err(info->ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE,
                 "Expected a list of symbols, found %s; "
                 "Ignoring symbols for group %"PRIu32" of %s\n",
-                stmt_type_to_string(value->common.type), ndx + 1,
-                KeyInfoText(info, keyi));
-        return false;
+                stmt_type_గమ్యం_string(విలువ->common.type), ndx + 1,
+                కీలకం_Info_పాఠ్యం(info, keyi));
+        తిరిగి false;
     }
 
-    if (groupi->defined & GROUP_FIELD_SYMS) {
-        log_err(info->ctx, XKB_ERROR_CONFLICTING_KEY_SYMBOLS_ENTRY,
+    ఒకవేళ (groupi->defined & సమూహం_క్షేత్రం_SYMS) {
+        log_err(info->ctx, XKB_ERROR_CONFLICTING_కీలకం_SYMBOLS_నమోదు,
                 "Symbols for key %s, group %"PRIu32" already defined; "
                 "Ignoring duplicate definition\n",
-                KeyInfoText(info, keyi), ndx + 1);
-        return false;
+                కీలకం_Info_పాఠ్యం(info, keyi), ndx + 1);
+        తిరిగి false;
     }
 
-    xkb_level_index_t nLevels = 0;
-    xkb_level_index_t nonEmptyLevels = 0;
+    xkb_level_సూచీ_t n_స్థాయిలు = 0;
+    xkb_level_సూచీ_t non_ఖాళీలు_స్థాయిలు = 0;
     /* Contrary to actions, keysyms are already parsed at this point so we drop
      * trailing symbols by not adding them in the first place. */
-    for (ExprKeysymList *keysymList = (ExprKeysymList *) value;
+    కొరకు (సమాసం_Keysym_List *keysymList = (సమాసం_Keysym_List *) విలువ;
          keysymList;
-         keysymList = (ExprKeysymList *) keysymList->common.next) {
-        nLevels++;
+         keysymList = (సమాసం_Keysym_List *) keysymList->common.తదుపరి) {
+        n_స్థాయిలు++;
         /* Drop trailing NoSymbol */
-        if (darray_size(keysymList->syms) > 0)
-            nonEmptyLevels = nLevels;
+        ఒకవేళ (darray_కొలత(keysymList->syms) > 0)
+            non_ఖాళీలు_స్థాయిలు = n_స్థాయిలు;
     }
-    if (nonEmptyLevels < nLevels)
-        nLevels = nonEmptyLevels;
-    if (darray_size(groupi->levels) < nLevels)
-        darray_resize0(groupi->levels, nLevels);
+    ఒకవేళ (non_ఖాళీలు_స్థాయిలు < n_స్థాయిలు)
+        n_స్థాయిలు = non_ఖాళీలు_స్థాయిలు;
+    ఒకవేళ (darray_కొలత(groupi->స్థాయిలు) < n_స్థాయిలు)
+        darray_resize0(groupi->స్థాయిలు, n_స్థాయిలు);
 
-    groupi->defined |= GROUP_FIELD_SYMS;
+    groupi->defined |= సమూహం_క్షేత్రం_SYMS;
 
-    xkb_level_index_t level = 0;
-    for (ExprKeysymList *keysymList = (ExprKeysymList *) value;
-         keysymList && level < nLevels;
-         keysymList = (ExprKeysymList *) keysymList->common.next, level++) {
-        struct xkb_level *leveli = &darray_item(groupi->levels, level);
-        assert(leveli->num_syms == 0);
+    xkb_level_సూచీ_t level = 0;
+    కొరకు (సమాసం_Keysym_List *keysymList = (సమాసం_Keysym_List *) విలువ;
+         keysymList && level < n_స్థాయిలు;
+         keysymList = (సమాసం_Keysym_List *) keysymList->common.తదుపరి, level++) {
+        నిర్మాణం xkb_level *leveli = &darray_అంశం(groupi->స్థాయిలు, level);
+        ప్రతిజ్ఞా(leveli->అంకె_syms == 0);
 
-        if (unlikely(darray_size(keysymList->syms) > MAX_KEYSYMS_PER_LEVEL)) {
-            log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+        ఒకవేళ (unlikely(darray_కొలత(keysymList->syms) > MAX_KEYSYMS_చొప్పున_LEVEL)) {
+            log_err(info->ctx, XKB_LOG_సందేశం_NO_ID,
                     "Key %s has too many keysyms for group %"PRIu32", "
                     "level %"PRIu32"; expected max %u, got: %u\n",
-                    KeyInfoText(info, keyi), ndx + 1, level + 1,
-                    MAX_KEYSYMS_PER_LEVEL, darray_size(keysymList->syms));
-            return false;
+                    కీలకం_Info_పాఠ్యం(info, keyi), ndx + 1, level + 1,
+                    MAX_KEYSYMS_చొప్పున_LEVEL, darray_కొలత(keysymList->syms));
+            తిరిగి false;
         }
 
-        leveli->num_syms = (xkb_keysym_count_t) darray_size(keysymList->syms);
-        switch (leveli->num_syms) {
-        case 0:
-            leveli->s.sym = XKB_KEY_NoSymbol;
-            break;
-        case 1:
-            leveli->s.sym = darray_item(keysymList->syms, 0);
-            assert(leveli->s.sym != XKB_KEY_NoSymbol);
-            break;
-        default:
+        leveli->అంకె_syms = (xkb_keysym_లెక్క_t) darray_కొలత(keysymList->syms);
+        ఎంపిక (leveli->అంకె_syms) {
+        స్థితి 0:
+            leveli->s.sym = XKB_కీలకం_No_చిహ్నం;
+            ఆపు;
+        స్థితి 1:
+            leveli->s.sym = darray_అంశం(keysymList->syms, 0);
+            ప్రతిజ్ఞా(leveli->s.sym != XKB_కీలకం_No_చిహ్నం);
+            ఆపు;
+        అప్రమేయ:
             darray_shrink(keysymList->syms);
-            darray_steal(keysymList->syms, &leveli->s.syms, NULL);
-#ifndef NDEBUG
+            darray_steal(keysymList->syms, &leveli->s.syms, ఖాళీ);
+#నిర్వచితం_కాకపోతే NDEBUG
             /* Canonical list: all NoSymbol were dropped */
-            for (xkb_keysym_count_t k = 0; k < leveli->num_syms; k++)
-                assert(leveli->s.syms[k] != XKB_KEY_NoSymbol);
-#endif
+            కొరకు (xkb_keysym_లెక్క_t k = 0; k < leveli->అంకె_syms; k++)
+                ప్రతిజ్ఞా(leveli->s.syms[k] != XKB_కీలకం_No_చిహ్నం);
+#అయితే_ముగింపు
         }
     }
 
-    return true;
+    తిరిగి true;
 }
 
-static bool
-AddActionsToKey(SymbolsInfo *info, KeyInfo *keyi, ExprDef *arrayNdx,
-                ExprDef *value)
+స్థిర bool
+కూడు_Actions_గమ్యం_కీలకం(SymbolsInfo *info, కీలకం_Info *keyi, సమాసం_Def *arrayNdx,
+                సమాసం_Def *విలువ)
 {
-    xkb_layout_index_t ndx = 0;
+    xkb_layout_సూచీ_t ndx = 0;
 
-    if (!GetGroupIndex(info, keyi, arrayNdx, GROUP_FIELD_ACTS, &ndx))
-        return false;
+    ఒకవేళ (!Get_సమూహం_సూచీ(info, keyi, arrayNdx, సమూహం_క్షేత్రం_ACTS, &ndx))
+        తిరిగి false;
 
-    GroupInfo *groupi = &darray_item(keyi->groups, ndx);
+    సమూహం_Info_2 *groupi = &darray_అంశం(keyi->groups, ndx);
 
-    if (value->common.type == STMT_EXPR_EMPTY_LIST) {
-        groupi->defined |= GROUP_FIELD_ACTS;
-        return true;
+    ఒకవేళ (విలువ->common.type == STMT_సమాసం_ఖాళీలు_LIST) {
+        groupi->defined |= సమూహం_క్షేత్రం_ACTS;
+        తిరిగి true;
     }
 
-    if (value->common.type != STMT_EXPR_ACTION_LIST) {
-        log_wsgo(info->ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
+    ఒకవేళ (విలువ->common.type != STMT_సమాసం_ACTION_LIST) {
+        log_wsgo(info->ctx, XKB_ERROR_INVALID_వ్యక్తీకరణ_TYPE,
                  "Bad expression type (%d) for action list value; "
                  "Ignoring actions for group %"PRIu32" of %s\n",
-                 value->common.type, ndx, KeyInfoText(info, keyi));
-        return false;
+                 విలువ->common.type, ndx, కీలకం_Info_పాఠ్యం(info, keyi));
+        తిరిగి false;
     }
 
-    if (groupi->defined & GROUP_FIELD_ACTS) {
-        log_wsgo(info->ctx, XKB_WARNING_CONFLICTING_KEY_ACTION,
+    ఒకవేళ (groupi->defined & సమూహం_క్షేత్రం_ACTS) {
+        log_wsgo(info->ctx, XKB_WARNING_CONFLICTING_కీలకం_ACTION,
                  "Actions for key %s, group %"PRIu32" already defined\n",
-                 KeyInfoText(info, keyi), ndx);
-        return false;
+                 కీలకం_Info_పాఠ్యం(info, keyi), ndx);
+        తిరిగి false;
     }
 
-    xkb_level_index_t nLevels = 0;
+    xkb_level_సూచీ_t n_స్థాయిలు = 0;
     /* Contrary to keysyms with trailing `NoSymbol`, we cannot detect trailing
      * `NoAction()` now, because we need to parse the actions first. Jusr count
      * explicit actions for now. */
-    for (ParseCommon *p = &value->common; p; p = p->next)
-        nLevels++;
-    if (darray_size(groupi->levels) < nLevels)
-        darray_resize0(groupi->levels, nLevels);
+    కొరకు (ParseCommon *p = &విలువ->common; p; p = p->తదుపరి)
+        n_స్థాయిలు++;
+    ఒకవేళ (darray_కొలత(groupi->స్థాయిలు) < n_స్థాయిలు)
+        darray_resize0(groupi->స్థాయిలు, n_స్థాయిలు);
 
-    groupi->defined |= GROUP_FIELD_ACTS;
+    groupi->defined |= సమూహం_క్షేత్రం_ACTS;
 
-    xkb_level_index_t level = 0;
-    xkb_level_index_t nonEmptyLevels = 0;
-    for (ExprActionList *actionList = (ExprActionList *) value;
+    xkb_level_సూచీ_t level = 0;
+    xkb_level_సూచీ_t non_ఖాళీలు_స్థాయిలు = 0;
+    కొరకు (సమాసం_Action_List *actionList = (సమాసం_Action_List *) విలువ;
          actionList;
-         actionList = (ExprActionList *) actionList->common.next, level++) {
-        struct xkb_level *leveli = &darray_item(groupi->levels, level);
-        assert(leveli->num_actions == 0);
+         actionList = (సమాసం_Action_List *) actionList->common.తదుపరి, level++) {
+        నిర్మాణం xkb_level *leveli = &darray_అంశం(groupi->స్థాయిలు, level);
+        ప్రతిజ్ఞా(leveli->అంకె_actions == 0);
 
-        unsigned int num_actions = 0;
-        for (ExprDef *act = actionList->actions;
-             act; act = (ExprDef *) act->common.next)
-            num_actions++;
+        గుర్తులేని పూర్ణాంకం అంకె_actions = 0;
+        కొరకు (సమాసం_Def *act = actionList->actions;
+             act; act = (సమాసం_Def *) act->common.తదుపరి)
+            అంకె_actions++;
 
-        if (unlikely(num_actions > MAX_ACTIONS_PER_LEVEL)) {
-            log_err(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+        ఒకవేళ (unlikely(అంకె_actions > MAX_ACTIONS_చొప్పున_LEVEL)) {
+            log_err(info->ctx, XKB_LOG_సందేశం_NO_ID,
                     "Key %s has too many actions for group %"PRIu32", "
                     "level %"PRIu32"; expected max %u, got: %u\n",
-                    KeyInfoText(info, keyi), ndx + 1, level + 1,
-                    MAX_ACTIONS_PER_LEVEL, num_actions);
-            return false;
+                    కీలకం_Info_పాఠ్యం(info, keyi), ndx + 1, level + 1,
+                    MAX_ACTIONS_చొప్పున_LEVEL, అంకె_actions);
+            తిరిగి false;
         }
 
         /* Parse actions and add only defined actions */
-        darray(union xkb_action) actions = darray_new();
-        for (ExprDef *act = actionList->actions;
-             act; act = (ExprDef *) act->common.next) {
-            union xkb_action toAct = { 0 };
-            const enum xkb_parser_error r =
+        darray(సంఘం xkb_action) actions = darray_new();
+        కొరకు (సమాసం_Def *act = actionList->actions;
+             act; act = (సమాసం_Def *) act->common.తదుపరి) {
+            సంఘం xkb_action గమ్యం_Act = { 0 };
+            స్థిరరాశి గణన xkb_parser_error r =
                 HandleActionDef(info->keymap_info, &info->default_actions,
-                                &info->mods, act, &toAct);
-            if (r != PARSER_SUCCESS) {
-                log_err(info->ctx, XKB_ERROR_INVALID_VALUE,
+                                &info->mods, act, &గమ్యం_Act);
+            ఒకవేళ (r != PARSER_SUCCESS) {
+                log_err(info->ctx, XKB_ERROR_INVALID_విలువ,
                         "Illegal action definition for %s; "
                         "Action for group %"PRIu32"/level %"PRIu32" ignored\n",
-                        KeyInfoText(info, keyi), ndx + 1, level + 1);
-                if (r == PARSER_FATAL_ERROR) {
+                        కీలకం_Info_పాఠ్యం(info, keyi), ndx + 1, level + 1);
+                ఒకవేళ (r == PARSER_FATAL_ERROR) {
                     darray_free(actions);
-                    return false;
-                } else {
+                    తిరిగి false;
+                } లేకపోతే {
                     /* Ensure action type is reset */
-                    toAct.type = ACTION_TYPE_NONE;
+                    గమ్యం_Act.type = ACTION_TYPE_NONE;
                 }
             }
-            if (toAct.type == ACTION_TYPE_NONE) {
+            ఒకవేళ (గమ్యం_Act.type == ACTION_TYPE_NONE) {
                 /* Drop action */
-            } else if (likely(num_actions == 1)) {
+            } లేకపోతే ఒకవేళ (likely(అంకె_actions == 1)) {
                 /* Only one action: do not allocate */
-                leveli->num_actions = 1;
-                leveli->a.action = toAct;
-                goto next_level;
-            } else {
-                darray_append(actions, toAct);
+                leveli->అంకె_actions = 1;
+                leveli->a.action = గమ్యం_Act;
+                వెళ్ళు తదుపరి_level;
+            } లేకపోతే {
+                darray_append(actions, గమ్యం_Act);
             }
         }
-        if (darray_empty(actions)) {
-            leveli->num_actions = 0;
-        } else if (likely(darray_size(actions) > 1)) {
-            leveli->num_actions = (xkb_action_count_t) darray_size(actions);
+        ఒకవేళ (darray_ఖాళీలు(actions)) {
+            leveli->అంకె_actions = 0;
+        } లేకపోతే ఒకవేళ (likely(darray_కొలత(actions) > 1)) {
+            leveli->అంకె_actions = (xkb_action_లెక్క_t) darray_కొలత(actions);
             darray_shrink(actions);
-            darray_steal(actions, &leveli->a.actions, NULL);
-#ifndef NDEBUG
+            darray_steal(actions, &leveli->a.actions, ఖాళీ);
+#నిర్వచితం_కాకపోతే NDEBUG
             /* Canonical list: all NoAction() were dropped */
-            for (xkb_action_count_t k = 0; k < leveli->num_actions; k++)
-                assert(leveli->a.actions[k].type != ACTION_TYPE_NONE);
-#endif
-        } else {
+            కొరకు (xkb_action_లెక్క_t k = 0; k < leveli->అంకె_actions; k++)
+                ప్రతిజ్ఞా(leveli->a.actions[k].type != ACTION_TYPE_NONE);
+#అయితే_ముగింపు
+        } లేకపోతే {
             /* Unlikely: some actions were dropped and only one remains */
-            assert(num_actions > darray_size(actions));
-            leveli->num_actions = 1;
-            leveli->a.action = darray_item(actions, 0);
-            assert(leveli->a.action.type != ACTION_TYPE_NONE);
+            ప్రతిజ్ఞా(అంకె_actions > darray_కొలత(actions));
+            leveli->అంకె_actions = 1;
+            leveli->a.action = darray_అంశం(actions, 0);
+            ప్రతిజ్ఞా(leveli->a.action.type != ACTION_TYPE_NONE);
             darray_free(actions);
         }
-next_level:
+తదుపరి_level:
         /*
          * Check trailing `NoAction()`, but count as empty level only if there
          * is no corresponding keysym.
          */
-        if (leveli->num_actions > 0 || leveli->num_syms > 0)
-            nonEmptyLevels = level + 1;
+        ఒకవేళ (leveli->అంకె_actions > 0 || leveli->అంకె_syms > 0)
+            non_ఖాళీలు_స్థాయిలు = level + 1;
     }
 
-    if (nonEmptyLevels < nLevels) {
+    ఒకవేళ (non_ఖాళీలు_స్థాయిలు < n_స్థాయిలు) {
         /* Drop trailing `NoAction()`.
          * No need to clear dropped levels: there are no keysyms nor actions */
-        darray_size(groupi->levels) = nonEmptyLevels;
-        if (nonEmptyLevels > 0)
-            darray_shrink(groupi->levels);
-        else
-            darray_free(groupi->levels);
+        darray_కొలత(groupi->స్థాయిలు) = non_ఖాళీలు_స్థాయిలు;
+        ఒకవేళ (non_ఖాళీలు_స్థాయిలు > 0)
+            darray_shrink(groupi->స్థాయిలు);
+        లేకపోతే
+            darray_free(groupi->స్థాయిలు);
     }
 
-    return true;
+    తిరిగి true;
 }
 
-static const LookupEntry repeatEntries[] = {
-    { "true", KEY_REPEAT_YES },
-    { "yes", KEY_REPEAT_YES },
-    { "on", KEY_REPEAT_YES },
-    { "false", KEY_REPEAT_NO },
-    { "no", KEY_REPEAT_NO },
-    { "off", KEY_REPEAT_NO },
-    { "default", KEY_REPEAT_UNDEFINED },
-    { NULL, 0 }
+స్థిర స్థిరరాశి Lookup_నమోదు repeatEntries[] = {
+    { "true", కీలకం_REPEAT_YES },
+    { "yes", కీలకం_REPEAT_YES },
+    { "on", కీలకం_REPEAT_YES },
+    { "false", కీలకం_REPEAT_NO },
+    { "no", కీలకం_REPEAT_NO },
+    { "off", కీలకం_REPEAT_NO },
+    { "default", కీలకం_REPEAT_UNDEFINED },
+    { ఖాళీ, 0 }
 };
 
 /** Handle overlay<N> = <key> entry */
-static bool
-ExprResolveOverlayEntry(const struct xkb_keymap_info *keymap_info,
-                        const char *field, const ExprDef *arrayNdx,
-                        const ExprDef *expr, KeyInfo *keyi,
-                        xkb_overlay_index_t *overlay_rtrn,
-                        const struct xkb_key **key_rtrn)
+స్థిర bool
+సమాసం_Resolve_Overlay_నమోదు(స్థిరరాశి నిర్మాణం xkb_keymap_info *keymap_info,
+                        స్థిరరాశి అక్షరం *క్షేత్రం_2, స్థిరరాశి సమాసం_Def *arrayNdx,
+                        స్థిరరాశి సమాసం_Def *సమాసం, కీలకం_Info *keyi,
+                        xkb_overlay_సూచీ_t *overlay_rtrn,
+                        స్థిరరాశి నిర్మాణం xkb_కీలకం **కీలకం_rtrn)
 {
     /* Overlay index */
-    if (arrayNdx) {
-        log_err(keymap_info->keymap.ctx, XKB_ERROR_WRONG_FIELD_TYPE,
+    ఒకవేళ (arrayNdx) {
+        log_err(keymap_info->keymap.ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE,
                 "Overlay field \"%s\" in %s does not support array index; "
                 "ignored\n",
-                field, KeyNameText(keymap_info->keymap.ctx, keyi->name));
-        return false;
+                క్షేత్రం_2, కీలకం_Name_పాఠ్యం(keymap_info->keymap.ctx, keyi->name));
+        తిరిగి false;
     }
-    static_assert(sizeof(xkb_overlay_index_t) == sizeof(uint8_t), "");
-    const size_t prefix = sizeof("overlay") - 1;
-    const size_t len = strlen(field + prefix);
+    static_assert(పరిమాణం(xkb_overlay_సూచీ_t) == పరిమాణం(uint8_t), "");
+    స్థిరరాశి కొలత_t ఉపసర్గ = పరిమాణం("overlay") - 1;
+    స్థిరరాశి కొలత_t len = అక్షరశ్రేణి_పొడవు(క్షేత్రం_2 + ఉపసర్గ);
     int64_t raw_overlay = XKB_OVERLAY_INVALID;
-    if (parse_dec_to_uint64_t(field + prefix, len, (uint64_t *)&raw_overlay)
-        != (int)len || raw_overlay < 1 ||
+    ఒకవేళ (parse_dec_గమ్యం_uint64_t(క్షేత్రం_2 + ఉపసర్గ, len, (uint64_t *)&raw_overlay)
+        != (పూర్ణాంకం)len || raw_overlay < 1 ||
         raw_overlay > (int64_t)keymap_info->features.max_overlays) {
-        log_err(keymap_info->keymap.ctx, XKB_ERROR_UNSUPPORTED_OVERLAY_INDEX,
+        log_err(keymap_info->keymap.ctx, XKB_ERROR_UNSUPPORTED_OVERLAY_సూచీ,
                 "Unsupported overlay index \"%s\" field for %s: "
                 "expected 1..%u, got: %"PRId64"; ignored\n",
-                field, KeyNameText(keymap_info->keymap.ctx, keyi->name),
+                క్షేత్రం_2, కీలకం_Name_పాఠ్యం(keymap_info->keymap.ctx, keyi->name),
                 keymap_info->features.max_overlays, raw_overlay);
-        return false;
+        తిరిగి false;
     }
-    *overlay_rtrn = (xkb_overlay_index_t)raw_overlay - 1;
+    *overlay_rtrn = (xkb_overlay_సూచీ_t)raw_overlay - 1;
 
     /* Overlay key */
-    switch (expr->common.type) {
-    case STMT_EXPR_KEYNAME_LITERAL:
-        *key_rtrn = XkbKeyByName(&keymap_info->keymap, expr->key_name.key_name,
+    ఎంపిక (సమాసం->common.type) {
+    స్థితి STMT_సమాసం_KEYNAME_LITERAL:
+        *కీలకం_rtrn = Xkb_కీలకం_By_Name(&keymap_info->keymap, సమాసం->కీలకం_name.కీలకం_name,
                                  false);
-        if (!*key_rtrn) {
+        ఒకవేళ (!*కీలకం_rtrn) {
             log_err(keymap_info->keymap.ctx, XKB_WARNING_UNDEFINED_KEYCODE,
                     "Unknown key \"%s\" for field %s in %s\n",
-                    xkb_atom_text(keymap_info->keymap.ctx, expr->key_name.key_name),
-                    field, KeyNameText(keymap_info->keymap.ctx, keyi->name));
-            return false;
+                    xkb_atom_పాఠ్యం(keymap_info->keymap.ctx, సమాసం->కీలకం_name.కీలకం_name),
+                    క్షేత్రం_2, కీలకం_Name_పాఠ్యం(keymap_info->keymap.ctx, keyi->name));
+            తిరిగి false;
         }
-        return true;
-    case STMT_EXPR_IDENT: {
-        const char * const id =
-            xkb_atom_text(keymap_info->keymap.ctx, expr->ident.ident);
-        if (id && istreq(id, "none")) {
+        తిరిగి true;
+    స్థితి STMT_సమాసం_IDENT: {
+        స్థిరరాశి అక్షరం * స్థిరరాశి id =
+            xkb_atom_పాఠ్యం(keymap_info->keymap.ctx, సమాసం->ident.ident);
+        ఒకవేళ (id && istreq(id, "none")) {
             /* Explicitly no overlay (clear) */
-            *key_rtrn = NULL;
-            return true;
-        } else if (id && istreq(id, "any")) {
+            *కీలకం_rtrn = ఖాళీ;
+            తిరిగి true;
+        } లేకపోతే ఒకవేళ (id && istreq(id, "any")) {
             /* Implicitly no overlay */
-            *key_rtrn = NULL;
+            *కీలకం_rtrn = ఖాళీ;
             *overlay_rtrn = XKB_OVERLAY_INVALID;
-            return true;
+            తిరిగి true;
         }
-        log_err(keymap_info->keymap.ctx, XKB_ERROR_INVALID_VALUE,
+        log_err(keymap_info->keymap.ctx, XKB_ERROR_INVALID_విలువ,
                 "Unsupported overlay value \"%s\" for field %s in %s\n",
-                id, field, KeyNameText(keymap_info->keymap.ctx, keyi->name));
-        return false;
+                id, క్షేత్రం_2, కీలకం_Name_పాఠ్యం(keymap_info->keymap.ctx, keyi->name));
+        తిరిగి false;
     }
-    default:
-        log_err(keymap_info->keymap.ctx, XKB_ERROR_INVALID_VALUE,
+    అప్రమేయ:
+        log_err(keymap_info->keymap.ctx, XKB_ERROR_INVALID_విలువ,
                 "Expected %s for field \"%s\" in %s, got: %s\n",
-                stmt_type_to_string(STMT_EXPR_KEYNAME_LITERAL),
-                field, KeyNameText(keymap_info->keymap.ctx, keyi->name),
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_గమ్యం_string(STMT_సమాసం_KEYNAME_LITERAL),
+                క్షేత్రం_2, కీలకం_Name_పాఠ్యం(keymap_info->keymap.ctx, keyi->name),
+                stmt_type_గమ్యం_string(సమాసం->common.type));
+        తిరిగి false;
     }
 }
 
-static bool
-SetSymbolsField(SymbolsInfo *info, KeyInfo *keyi, const char *field,
-                ExprDef *arrayNdx, ExprDef **value_ptr)
+స్థిర bool
+సమితి_Symbols_క్షేత్రం(SymbolsInfo *info, కీలకం_Info *keyi, స్థిరరాశి అక్షరం *క్షేత్రం_2,
+                సమాసం_Def *arrayNdx, సమాసం_Def **విలువ_ptr)
 {
-    ExprDef * restrict const value = *value_ptr;
-    if (istreq(field, "type")) {
-        xkb_layout_index_t ndx = 0;
+    సమాసం_Def * పరిమిత స్థిరరాశి విలువ = *విలువ_ptr;
+    ఒకవేళ (istreq(క్షేత్రం_2, "type")) {
+        xkb_layout_సూచీ_t ndx = 0;
         xkb_atom_t val = XKB_ATOM_NONE;
 
-        if (!ExprResolveString(info->ctx, value, &val)) {
-            log_err(info->ctx, XKB_ERROR_WRONG_FIELD_TYPE,
+        ఒకవేళ (!సమాసం_Resolve_String(info->ctx, విలువ, &val)) {
+            log_err(info->ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE,
                     "The type field of a key symbol map must be a string; "
                     "Ignoring illegal type definition\n");
-            return false;
+            తిరిగి false;
         }
 
-        if (!arrayNdx) {
+        ఒకవేళ (!arrayNdx) {
             keyi->default_type = val;
-            keyi->defined |= KEY_FIELD_DEFAULT_TYPE;
+            keyi->defined |= కీలకం_క్షేత్రం_DEFAULT_TYPE;
         }
-        else if (ExprResolveGroup(info->keymap_info, arrayNdx, false,
-                                  &ndx, NULL) != PARSER_SUCCESS) {
-            log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
+        లేకపోతే ఒకవేళ (సమాసం_Resolve_సమూహం(info->keymap_info, arrayNdx, false,
+                                  &ndx, ఖాళీ) != PARSER_SUCCESS) {
+            log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_సూచీ_2,
                     "Illegal group index for type of key %s; "
                     "Definition with non-integer array index ignored\n",
-                    KeyInfoText(info, keyi));
-            return false;
+                    కీలకం_Info_పాఠ్యం(info, keyi));
+            తిరిగి false;
         }
-        else {
+        లేకపోతే {
             ndx--;
-            if (ndx >= darray_size(keyi->groups)) {
+            ఒకవేళ (ndx >= darray_కొలత(keyi->groups)) {
                 /* Avoid clang-tidy false positive */
-                assert(darray_size(keyi->groups) < ndx + 1);
+                ప్రతిజ్ఞా(darray_కొలత(keyi->groups) < ndx + 1);
                 darray_resize0(keyi->groups, ndx + 1);
             }
-            darray_item(keyi->groups, ndx).type = val;
-            darray_item(keyi->groups, ndx).defined |= GROUP_FIELD_TYPE;
+            darray_అంశం(keyi->groups, ndx).type = val;
+            darray_అంశం(keyi->groups, ndx).defined |= సమూహం_క్షేత్రం_TYPE;
         }
     }
-    else if (istreq(field, "symbols")) {
-        return AddSymbolsToKey(info, keyi, arrayNdx, value);
+    లేకపోతే ఒకవేళ (istreq(క్షేత్రం_2, "symbols")) {
+        తిరిగి కూడు_Symbols_గమ్యం_కీలకం(info, keyi, arrayNdx, విలువ);
     }
-    else if (istreq(field, "actions")) {
-        return AddActionsToKey(info, keyi, arrayNdx, value);
+    లేకపోతే ఒకవేళ (istreq(క్షేత్రం_2, "actions")) {
+        తిరిగి కూడు_Actions_గమ్యం_కీలకం(info, keyi, arrayNdx, విలువ);
     }
-    else if (istreq(field, "vmods") ||
-             istreq(field, "virtualmods") ||
-             istreq(field, "virtualmodifiers")) {
-        xkb_mod_mask_t mask = 0;
+    లేకపోతే ఒకవేళ (istreq(క్షేత్రం_2, "vmods") ||
+             istreq(క్షేత్రం_2, "virtualmods") ||
+             istreq(క్షేత్రం_2, "virtualmodifiers")) {
+        xkb_mod_ముసుగు_t ముసుగు = 0;
 
-        if (!ExprResolveModMask(info->ctx, value, MOD_VIRT, &info->mods,
-                                &mask)) {
-            log_err(info->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_MASK,
+        ఒకవేళ (!సమాసం_Resolve_Mod_ముసుగు(info->ctx, విలువ, MOD_VIRT, &info->mods,
+                                &ముసుగు)) {
+            log_err(info->ctx, XKB_ERROR_UNSUPPORTED_MODIFIER_ముసుగు,
                     "Expected a virtual modifier mask, found %s; "
                     "Ignoring virtual modifiers definition for key %s\n",
-                    stmt_type_to_string(value->common.type),
-                    KeyInfoText(info, keyi));
-            return false;
+                    stmt_type_గమ్యం_string(విలువ->common.type),
+                    కీలకం_Info_పాఠ్యం(info, keyi));
+            తిరిగి false;
         }
 
-        keyi->vmodmap = mask;
-        keyi->defined |= KEY_FIELD_VMODMAP;
+        keyi->vmodmap = ముసుగు;
+        keyi->defined |= కీలకం_క్షేత్రం_VMODMAP;
     }
-    else if (istreq(field, "locking") ||
-             istreq(field, "lock") ||
-             istreq(field, "locks")) {
+    లేకపోతే ఒకవేళ (istreq(క్షేత్రం_2, "locking") ||
+             istreq(క్షేత్రం_2, "lock") ||
+             istreq(క్షేత్రం_2, "locks")) {
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
-                XKB_WARNING_UNSUPPORTED_SYMBOLS_FIELD,
+                XKB_WARNING_UNSUPPORTED_SYMBOLS_క్షేత్రం,
                 "Key behaviors not supported; "
                 "Ignoring locking specification for key %s\n",
-                KeyInfoText(info, keyi));
+                కీలకం_Info_పాఠ్యం(info, keyi));
     }
-    else if (istreq(field, "radiogroup") ||
-             istreq(field, "permanentradiogroup") ||
-             istreq(field, "allownone")) {
+    లేకపోతే ఒకవేళ (istreq(క్షేత్రం_2, "radiogroup") ||
+             istreq(క్షేత్రం_2, "permanentradiogroup") ||
+             istreq(క్షేత్రం_2, "allownone")) {
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
-                XKB_WARNING_UNSUPPORTED_SYMBOLS_FIELD,
+                XKB_WARNING_UNSUPPORTED_SYMBOLS_క్షేత్రం,
                 "Radio groups not supported; "
                 "Ignoring radio group specification for key %s\n",
-                KeyInfoText(info, keyi));
+                కీలకం_Info_పాఠ్యం(info, keyi));
     }
-    else if (istreq_prefix("permanentoverlay", field)) {
+    లేకపోతే ఒకవేళ (istreq_ఉపసర్గ("permanentoverlay", క్షేత్రం_2)) {
         /*
          * Permanent overlay is ineffectual and serves as documentation of the
          * hardware, so skip it entirely.
          */
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
-                XKB_WARNING_UNSUPPORTED_SYMBOLS_FIELD,
+                XKB_WARNING_UNSUPPORTED_SYMBOLS_క్షేత్రం,
                 "Permanent overlays not supported; "
                 "Ignoring overlay specification for key %s\n",
-                KeyInfoText(info, keyi));
+                కీలకం_Info_పాఠ్యం(info, keyi));
     }
-    else if (istreq_prefix("overlay", field)) {
-        xkb_overlay_index_t overlay = XKB_OVERLAY_INVALID;
-        const struct xkb_key *key = NULL;
-        if (!ExprResolveOverlayEntry(info->keymap_info, field, arrayNdx,
-                                     *value_ptr, keyi, &overlay, &key))
-            return false;
-        if (overlay == XKB_OVERLAY_INVALID) {
+    లేకపోతే ఒకవేళ (istreq_ఉపసర్గ("overlay", క్షేత్రం_2)) {
+        xkb_overlay_సూచీ_t overlay = XKB_OVERLAY_INVALID;
+        స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం = ఖాళీ;
+        ఒకవేళ (!సమాసం_Resolve_Overlay_నమోదు(info->keymap_info, క్షేత్రం_2, arrayNdx,
+                                     *విలువ_ptr, keyi, &overlay, &కీలకం))
+            తిరిగి false;
+        ఒకవేళ (overlay == XKB_OVERLAY_INVALID) {
             /* Overlay has not explicit value: skip */
-            return true;
-        } else if (key && key->name == keyi->name) {
+            తిరిగి true;
+        } లేకపోతే ఒకవేళ (కీలకం && కీలకం->name == keyi->name) {
             /* Do not overlay to the same key! */
             log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
-                    XKB_LOG_MESSAGE_NO_ID,
+                    XKB_LOG_సందేశం_NO_ID,
                     "Cannot overlay a key to itself; "
                     "Ignoring overlay %u specification for key %s\n",
-                    overlay + 1, KeyInfoText(info, keyi));
-        } else {
-            const struct xkb_key *prev;
-            if (overlays_get(keyi, overlay, &prev)) {
+                    overlay + 1, కీలకం_Info_పాఠ్యం(info, keyi));
+        } లేకపోతే {
+            స్థిరరాశి నిర్మాణం xkb_కీలకం *prev;
+            ఒకవేళ (overlays_get(keyi, overlay, &prev)) {
                 /* Duplicate entry */
-                if (key != prev) {
+                ఒకవేళ (కీలకం != prev) {
                     /* Conflicting fields */
-                    log_warn(info->ctx, XKB_WARNING_CONFLICTING_KEY_FIELDS,
+                    log_warn(info->ctx, XKB_WARNING_CONFLICTING_కీలకం_FIELDS,
                              "Conflicting overlays defined in key %s; "
                              "use overlay%d=%s, ignore overlay%u=%s\n",
-                             KeyInfoText(info, keyi), overlay + 1,
+                             కీలకం_Info_పాఠ్యం(info, keyi), overlay + 1,
                              (prev
-                                 ? KeyNameText(info->ctx, prev->name)
+                                 ? కీలకం_Name_పాఠ్యం(info->ctx, prev->name)
                                  : "none"),
                              overlay + 1,
-                             (key
-                                 ? KeyNameText(info->ctx, key->name)
+                             (కీలకం
+                                 ? కీలకం_Name_పాఠ్యం(info->ctx, కీలకం->name)
                                  : "none"));
                 }
-            } else if (info->keymap_info->features.overlapping_overlays) {
+            } లేకపోతే ఒకవేళ (info->keymap_info->features.overlapping_overlays) {
                 /* Handle overlapping overlays mode */
-                if (!overlays_insert(keyi, overlay, key))
-                    return false;
-                keyi->defined |= KEY_FIELD_OVERLAY;
-            } else {
+                ఒకవేళ (!overlays_చొప్పించు(keyi, overlay, కీలకం))
+                    తిరిగి false;
+                keyi->defined |= కీలకం_క్షేత్రం_OVERLAY;
+            } లేకపోతే {
                 /* Handle disjoint overlays mode */
-                const xkb_overlay_mask_t mask = (xkb_overlay_mask_t)(1u << overlay);
-                if (!keyi->overlays || keyi->overlays_clear) {
+                స్థిరరాశి xkb_overlay_ముసుగు_t ముసుగు = (xkb_overlay_ముసుగు_t)(1u << overlay);
+                ఒకవేళ (!keyi->overlays || keyi->overlays_clear) {
                     /* No overlay previously defined or different overlay cleared */
-                    if (key) {
+                    ఒకవేళ (కీలకం) {
                         /* Replace any explicitly cleared overlay */
-                        keyi->overlays = mask;
+                        keyi->overlays = ముసుగు;
                         keyi->overlays_clear = false;
-                        keyi->overlay_key = key;
-                    } else {
+                        keyi->overlay_కీలకం = కీలకం;
+                    } లేకపోతే {
                         /* Explicitly no overlay (clear) */
-                        keyi->overlays |= mask;
+                        keyi->overlays |= ముసుగు;
                         keyi->overlays_clear = true;
                     }
-                    keyi->defined |= KEY_FIELD_OVERLAY;
-                } else if (keyi->overlays) {
-                    if (key) {
+                    keyi->defined |= కీలకం_క్షేత్రం_OVERLAY;
+                } లేకపోతే ఒకవేళ (keyi->overlays) {
+                    ఒకవేళ (కీలకం) {
                         log_err(info->ctx, XKB_ERROR_OVERLAPPING_OVERLAY,
                                 "Overlapping overlays are not allowed in %s; "
                                 "use overlay%d=%s, ignore overlay%u=%s\n",
-                                KeyInfoText(info, keyi), keyi->overlays,
-                                KeyNameText(info->ctx, keyi->overlay_key->name),
-                                overlay + 1, KeyNameText(info->ctx, key->name));
-                        return !(info->keymap_info->strict &
-                                 PARSER_NO_FIELD_VALUE_MISMATCH);
-                    } else {
+                                కీలకం_Info_పాఠ్యం(info, keyi), keyi->overlays,
+                                కీలకం_Name_పాఠ్యం(info->ctx, keyi->overlay_కీలకం->name),
+                                overlay + 1, కీలకం_Name_పాఠ్యం(info->ctx, కీలకం->name));
+                        తిరిగి !(info->keymap_info->strict &
+                                 PARSER_NO_క్షేత్రం_విలువ_MISMATCH);
+                    } లేకపోతే {
                         /* Ignore: the previous overlay is explicitly defined */
                     }
                 }
             }
         }
     }
-    else if (istreq(field, "repeating") ||
-             istreq(field, "repeats") ||
-             istreq(field, "repeat")) {
+    లేకపోతే ఒకవేళ (istreq(క్షేత్రం_2, "repeating") ||
+             istreq(క్షేత్రం_2, "repeats") ||
+             istreq(క్షేత్రం_2, "repeat")) {
         uint32_t val = 0;
 
-        if (!ExprResolveEnum(info->ctx, value, &val, repeatEntries)) {
-            log_err(info->ctx, XKB_ERROR_INVALID_VALUE,
+        ఒకవేళ (!సమాసం_Resolve_Enum(info->ctx, విలువ, &val, repeatEntries)) {
+            log_err(info->ctx, XKB_ERROR_INVALID_విలువ,
                     "Illegal repeat setting for %s; "
                     "Non-boolean repeat setting ignored\n",
-                    KeyInfoText(info, keyi));
-            return false;
+                    కీలకం_Info_పాఠ్యం(info, keyi));
+            తిరిగి false;
         }
 
-        keyi->repeat = (enum key_repeat) val;
-        keyi->defined |= KEY_FIELD_REPEAT;
+        keyi->repeat = (గణన కీలకం_repeat) val;
+        keyi->defined |= కీలకం_క్షేత్రం_REPEAT;
     }
-    else if (istreq(field, "groupswrap") ||
-             istreq(field, "wrapgroups")) {
-        bool set = false;
+    లేకపోతే ఒకవేళ (istreq(క్షేత్రం_2, "groupswrap") ||
+             istreq(క్షేత్రం_2, "wrapgroups")) {
+        bool సమితి = false;
 
-        if (!ExprResolveBoolean(info->ctx, value, &set)) {
-            log_err(info->ctx, XKB_ERROR_INVALID_VALUE,
+        ఒకవేళ (!సమాసం_Resolve_Boolean(info->ctx, విలువ, &సమితి)) {
+            log_err(info->ctx, XKB_ERROR_INVALID_విలువ,
                     "Illegal groupsWrap setting for %s; "
                     "Non-boolean value ignored\n",
-                    KeyInfoText(info, keyi));
-            return false;
+                    కీలకం_Info_పాఠ్యం(info, keyi));
+            తిరిగి false;
         }
 
-        keyi->out_of_range_group_policy = (set)
-            ? XKB_LAYOUT_OUT_OF_RANGE_WRAP
-            : XKB_LAYOUT_OUT_OF_RANGE_CLAMP;
-        keyi->defined |= KEY_FIELD_GROUPINFO;
+        keyi->బహిర్గతం_యొక్క_range_సమూహం_policy = (సమితి)
+            ? XKB_LAYOUT_బహిర్గతం_యొక్క_RANGE_WRAP
+            : XKB_LAYOUT_బహిర్గతం_యొక్క_RANGE_CLAMP;
+        keyi->defined |= కీలకం_క్షేత్రం_GROUPINFO;
     }
-    else if (istreq(field, "groupsclamp") ||
-             istreq(field, "clampgroups")) {
-        bool set = false;
+    లేకపోతే ఒకవేళ (istreq(క్షేత్రం_2, "groupsclamp") ||
+             istreq(క్షేత్రం_2, "clampgroups")) {
+        bool సమితి = false;
 
-        if (!ExprResolveBoolean(info->ctx, value, &set)) {
-            log_err(info->ctx, XKB_ERROR_INVALID_VALUE,
+        ఒకవేళ (!సమాసం_Resolve_Boolean(info->ctx, విలువ, &సమితి)) {
+            log_err(info->ctx, XKB_ERROR_INVALID_విలువ,
                     "Illegal groupsClamp setting for %s; "
                     "Non-boolean value ignored\n",
-                    KeyInfoText(info, keyi));
-            return false;
+                    కీలకం_Info_పాఠ్యం(info, keyi));
+            తిరిగి false;
         }
 
-        keyi->out_of_range_group_policy = (set)
-            ? XKB_LAYOUT_OUT_OF_RANGE_CLAMP
-            : XKB_LAYOUT_OUT_OF_RANGE_WRAP;
-        keyi->defined |= KEY_FIELD_GROUPINFO;
+        keyi->బహిర్గతం_యొక్క_range_సమూహం_policy = (సమితి)
+            ? XKB_LAYOUT_బహిర్గతం_యొక్క_RANGE_CLAMP
+            : XKB_LAYOUT_బహిర్గతం_యొక్క_RANGE_WRAP;
+        keyi->defined |= కీలకం_క్షేత్రం_GROUPINFO;
     }
-    else if (istreq(field, "groupsredirect") ||
-             istreq(field, "redirectgroups")) {
-        xkb_layout_index_t grp = 0;
+    లేకపోతే ఒకవేళ (istreq(క్షేత్రం_2, "groupsredirect") ||
+             istreq(క్షేత్రం_2, "redirectgroups")) {
+        xkb_layout_సూచీ_t grp = 0;
         bool pending = false;
 
         // TODO: recover?
-        if (ExprResolveGroup(info->keymap_info, value, false, &grp, &pending) !=
+        ఒకవేళ (సమాసం_Resolve_సమూహం(info->keymap_info, విలువ, false, &grp, &pending) !=
             PARSER_SUCCESS && !pending) {
-            log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
+            log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_సూచీ_2,
                     "Illegal group index for redirect of key %s; "
                     "Definition with non-integer group ignored\n",
-                    KeyInfoText(info, keyi));
-            return false;
+                    కీలకం_Info_పాఠ్యం(info, keyi));
+            తిరిగి false;
         }
 
-        if (pending) {
-            keyi->out_of_range_pending_group = true;
-            const darray_size_t pending_index =
-                darray_size(*info->keymap_info->pending_computations);
+        ఒకవేళ (pending) {
+            keyi->బహిర్గతం_యొక్క_range_pending_సమూహం = true;
+            స్థిరరాశి darray_కొలత_t pending_సూచీ =
+                darray_కొలత(*info->keymap_info->pending_computations);
             darray_append(
                 *info->keymap_info->pending_computations,
-                (struct pending_computation) {
-                    .expr = *value_ptr,
+                (నిర్మాణం pending_computation) {
+                    .సమాసం = *విలువ_ptr,
                     .computed = false,
-                    .value = 0,
+                    .విలువ = 0,
                 }
             );
-            *value_ptr = NULL;
-            static_assert(sizeof(keyi->out_of_range_group_number) ==
-                          sizeof(pending_index),
+            *విలువ_ptr = ఖాళీ;
+            static_assert(పరిమాణం(keyi->బహిర్గతం_యొక్క_range_సమూహం_సంఖ్య) ==
+                          పరిమాణం(pending_సూచీ),
                           "Cannot save pending computation");
-            keyi->out_of_range_group_number = pending_index;
-        } else {
-            keyi->out_of_range_pending_group = false;
-            keyi->out_of_range_group_number = grp - 1;
+            keyi->బహిర్గతం_యొక్క_range_సమూహం_సంఖ్య = pending_సూచీ;
+        } లేకపోతే {
+            keyi->బహిర్గతం_యొక్క_range_pending_సమూహం = false;
+            keyi->బహిర్గతం_యొక్క_range_సమూహం_సంఖ్య = grp - 1;
         }
 
-        keyi->out_of_range_group_policy = XKB_LAYOUT_OUT_OF_RANGE_REDIRECT;
-        keyi->defined |= KEY_FIELD_GROUPINFO;
+        keyi->బహిర్గతం_యొక్క_range_సమూహం_policy = XKB_LAYOUT_బహిర్గతం_యొక్క_RANGE_REDIRECT;
+        keyi->defined |= కీలకం_క్షేత్రం_GROUPINFO;
     }
-    else {
-        log_err(info->ctx, XKB_ERROR_UNKNOWN_FIELD,
+    లేకపోతే {
+        log_err(info->ctx, XKB_ERROR_UNKNOWN_క్షేత్రం,
                 "Unknown field \"%s\" in a key; definition ignored\n",
-                field);
-        return !(info->keymap_info->strict & PARSER_NO_UNKNOWN_KEY_FIELDS);
+                క్షేత్రం_2);
+        తిరిగి !(info->keymap_info->strict & PARSER_NO_UNKNOWN_కీలకం_FIELDS);
     }
 
-    return true;
+    తిరిగి true;
 }
 
-static bool
-SetGroupName(SymbolsInfo *info, ExprDef *arrayNdx, ExprDef *value,
-             enum merge_mode merge)
+స్థిర bool
+సమితి_సమూహం_Name(SymbolsInfo *info, సమాసం_Def *arrayNdx, సమాసం_Def *విలువ,
+             గణన విలీనం_బహుళకం విలీనం)
 {
-    if (!arrayNdx) {
+    ఒకవేళ (!arrayNdx) {
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
-                XKB_WARNING_MISSING_SYMBOLS_GROUP_NAME_INDEX,
+                XKB_WARNING_MISSING_SYMBOLS_సమూహం_NAME_సూచీ,
                 "You must specify an index when specifying a group name; "
                 "Group name definition without array subscript ignored\n");
-        return false;
+        తిరిగి false;
     }
 
-    xkb_layout_index_t group = 0;
-    if (ExprResolveGroup(info->keymap_info, arrayNdx, false, &group, NULL) !=
+    xkb_layout_సూచీ_t సమూహం = 0;
+    ఒకవేళ (సమాసం_Resolve_సమూహం(info->keymap_info, arrayNdx, false, &సమూహం, ఖాళీ) !=
         PARSER_SUCCESS) {
-        log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
+        log_err(info->ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_సూచీ_2,
                 "Illegal index in group name definition; "
                 "Definition with non-integer array index ignored\n");
-        return false;
+        తిరిగి false;
     }
 
     xkb_atom_t name = XKB_ATOM_NONE;
-    if (!ExprResolveString(info->ctx, value, &name)) {
-        log_err(info->ctx, XKB_ERROR_WRONG_FIELD_TYPE,
+    ఒకవేళ (!సమాసం_Resolve_String(info->ctx, విలువ, &name)) {
+        log_err(info->ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE,
                 "Group name must be a string; "
-                "Illegal name for group %"PRIu32" ignored\n", group);
-        return false;
+                "Illegal name for group %"PRIu32" ignored\n", సమూహం);
+        తిరిగి false;
     }
 
-    xkb_layout_index_t group_to_use;
-    if (info->explicit_group == XKB_LAYOUT_INVALID) {
-        group_to_use = group - 1;
+    xkb_layout_సూచీ_t సమూహం_గమ్యం_use;
+    ఒకవేళ (info->explicit_సమూహం == XKB_LAYOUT_INVALID) {
+        సమూహం_గమ్యం_use = సమూహం - 1;
     }
-    else if (group - 1 == 0) {
-        group_to_use = info->explicit_group;
+    లేకపోతే ఒకవేళ (సమూహం - 1 == 0) {
+        సమూహం_గమ్యం_use = info->explicit_సమూహం;
     }
-    else {
-        log_warn(info->ctx, XKB_WARNING_NON_BASE_GROUP_NAME,
+    లేకపోతే {
+        log_warn(info->ctx, XKB_WARNING_NON_పునాది_సమూహం_NAME,
                  "An explicit group was specified for the '%s' map, "
                  "but it provides a name for a group other than Group1 "
                  "(%"PRIu32"); Ignoring group name '%s'\n",
-                 info->name, group,
-                 xkb_atom_text(info->ctx, name));
-        return false;
+                 info->name, సమూహం,
+                 xkb_atom_పాఠ్యం(info->ctx, name));
+        తిరిగి false;
     }
 
-    if (group_to_use >= darray_size(info->group_names)) {
+    ఒకవేళ (సమూహం_గమ్యం_use >= darray_కొలత(info->సమూహం_పేర్లు)) {
         /* Avoid clang-tidy false positive */
-        assert(darray_size(info->group_names) < group_to_use + 1);
-        darray_resize0(info->group_names, group_to_use + 1);
-    } else {
-        const xkb_atom_t old_name = darray_item(info->group_names, group_to_use);
-        if (old_name != XKB_ATOM_NONE && old_name != name) {
-            const bool replace = (merge != MERGE_AUGMENT);
-            const xkb_atom_t use    = (replace ? name : old_name);
-            const xkb_atom_t ignore = (replace ? old_name : name);
-            log_warn(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+        ప్రతిజ్ఞా(darray_కొలత(info->సమూహం_పేర్లు) < సమూహం_గమ్యం_use + 1);
+        darray_resize0(info->సమూహం_పేర్లు, సమూహం_గమ్యం_use + 1);
+    } లేకపోతే {
+        స్థిరరాశి xkb_atom_t old_name = darray_అంశం(info->సమూహం_పేర్లు, సమూహం_గమ్యం_use);
+        ఒకవేళ (old_name != XKB_ATOM_NONE && old_name != name) {
+            స్థిరరాశి bool replace = (విలీనం != విలీనం_AUGMENT);
+            స్థిరరాశి xkb_atom_t use    = (replace ? name : old_name);
+            స్థిరరాశి xkb_atom_t ignore = (replace ? old_name : name);
+            log_warn(info->ctx, XKB_LOG_సందేశం_NO_ID,
                      "Multiple definitions of group %"PRIu32" name "
                      "in map '%s'; Using '%s', ignoring '%s'\n",
-                     group_to_use, info->name,
-                     xkb_atom_text(info->ctx, use),
-                     xkb_atom_text(info->ctx, ignore));
+                     సమూహం_గమ్యం_use, info->name,
+                     xkb_atom_పాఠ్యం(info->ctx, use),
+                     xkb_atom_పాఠ్యం(info->ctx, ignore));
             name = use;
         }
     }
-    darray_item(info->group_names, group_to_use) = name;
+    darray_అంశం(info->సమూహం_పేర్లు, సమూహం_గమ్యం_use) = name;
 
-    return true;
+    తిరిగి true;
 }
 
-static bool
+స్థిర bool
 HandleGlobalVar(SymbolsInfo *info, VarDef *stmt)
 {
-    const char *elem, *field;
-    ExprDef *arrayNdx;
+    స్థిరరాశి అక్షరం *elem, *క్షేత్రం_2;
+    సమాసం_Def *arrayNdx;
     bool ret;
 
-    if (!ExprResolveLhs(info->ctx, stmt->name, &elem, &field, &arrayNdx))
-        return false;
+    ఒకవేళ (!సమాసం_Resolve_Lhs(info->ctx, stmt->name, &elem, &క్షేత్రం_2, &arrayNdx))
+        తిరిగి false;
 
-    if (elem && istreq(elem, "key")) {
-        KeyInfo temp = {0};
-        InitKeyInfo(info->ctx, &temp);
+    ఒకవేళ (elem && istreq(elem, "key")) {
+        కీలకం_Info తాత్కాలిక = {0};
+        Init_కీలకం_Info(info->ctx, &తాత్కాలిక);
         /* Do not replace the whole key, only the current field */
-        temp.merge = (temp.merge == MERGE_REPLACE)
-            ? MERGE_OVERRIDE
-            : stmt->merge;
-        ret = SetSymbolsField(info, &temp, field, arrayNdx, &stmt->value) &&
-              MergeKeys(info, &info->default_key, &temp, true);
-        ClearKeyInfo(&temp);
+        తాత్కాలిక.విలీనం = (తాత్కాలిక.విలీనం == విలీనం_REPLACE)
+            ? విలీనం_OVERRIDE
+            : stmt->విలీనం;
+        ret = సమితి_Symbols_క్షేత్రం(info, &తాత్కాలిక, క్షేత్రం_2, arrayNdx, &stmt->విలువ) &&
+              విలీనం_కీలకాలు(info, &info->default_కీలకం, &తాత్కాలిక, true);
+        Clear_కీలకం_Info(&తాత్కాలిక);
     }
-    else if (!elem && (istreq(field, "name") ||
-                       istreq(field, "groupname"))) {
-        ret = SetGroupName(info, arrayNdx, stmt->value, stmt->merge);
+    లేకపోతే ఒకవేళ (!elem && (istreq(క్షేత్రం_2, "name") ||
+                       istreq(క్షేత్రం_2, "groupname"))) {
+        ret = సమితి_సమూహం_Name(info, arrayNdx, stmt->విలువ, stmt->విలీనం);
     }
-    else if (!elem && (istreq(field, "groupswrap") ||
-                       istreq(field, "wrapgroups"))) {
-        log_err(info->ctx, XKB_WARNING_UNSUPPORTED_SYMBOLS_FIELD,
+    లేకపోతే ఒకవేళ (!elem && (istreq(క్షేత్రం_2, "groupswrap") ||
+                       istreq(క్షేత్రం_2, "wrapgroups"))) {
+        log_err(info->ctx, XKB_WARNING_UNSUPPORTED_SYMBOLS_క్షేత్రం,
                 "Global \"groupswrap\" not supported; Ignored\n");
         ret = true;
     }
-    else if (!elem && (istreq(field, "groupsclamp") ||
-                       istreq(field, "clampgroups"))) {
-        log_err(info->ctx, XKB_WARNING_UNSUPPORTED_SYMBOLS_FIELD,
+    లేకపోతే ఒకవేళ (!elem && (istreq(క్షేత్రం_2, "groupsclamp") ||
+                       istreq(క్షేత్రం_2, "clampgroups"))) {
+        log_err(info->ctx, XKB_WARNING_UNSUPPORTED_SYMBOLS_క్షేత్రం,
                 "Global \"groupsclamp\" not supported; Ignored\n");
         ret = true;
     }
-    else if (!elem && (istreq(field, "groupsredirect") ||
-                       istreq(field, "redirectgroups"))) {
-        log_err(info->ctx, XKB_WARNING_UNSUPPORTED_SYMBOLS_FIELD,
+    లేకపోతే ఒకవేళ (!elem && (istreq(క్షేత్రం_2, "groupsredirect") ||
+                       istreq(క్షేత్రం_2, "redirectgroups"))) {
+        log_err(info->ctx, XKB_WARNING_UNSUPPORTED_SYMBOLS_క్షేత్రం,
                 "Global \"groupsredirect\" not supported; Ignored\n");
         ret = true;
     }
-    else if (!elem && istreq(field, "allownone")) {
-        log_err(info->ctx, XKB_WARNING_UNSUPPORTED_SYMBOLS_FIELD,
+    లేకపోతే ఒకవేళ (!elem && istreq(క్షేత్రం_2, "allownone")) {
+        log_err(info->ctx, XKB_WARNING_UNSUPPORTED_SYMBOLS_క్షేత్రం,
                 "Radio groups not supported; "
                 "Ignoring \"allownone\" specification\n");
         ret = true;
     }
-    else if (elem) {
-        ret = (SetDefaultActionField(info->keymap_info, &info->default_actions,
-                                     &info->mods, elem, field, arrayNdx,
-                                     &stmt->value, stmt->merge) !=
+    లేకపోతే ఒకవేళ (elem) {
+        ret = (సమితి_Default_Action_క్షేత్రం(info->keymap_info, &info->default_actions,
+                                     &info->mods, elem, క్షేత్రం_2, arrayNdx,
+                                     &stmt->విలువ, stmt->విలీనం) !=
                PARSER_FATAL_ERROR);
-    } else {
-        log_err(info->ctx, XKB_ERROR_UNKNOWN_DEFAULT_FIELD,
-                "Default defined for unknown field \"%s\"; Ignored\n", field);
-        return !(info->keymap_info->strict &
+    } లేకపోతే {
+        log_err(info->ctx, XKB_ERROR_UNKNOWN_DEFAULT_క్షేత్రం,
+                "Default defined for unknown field \"%s\"; Ignored\n", క్షేత్రం_2);
+        తిరిగి !(info->keymap_info->strict &
                  PARSER_NO_UNKNOWN_SYMBOLS_GLOBAL_FIELDS);
     }
 
-    return ret;
+    తిరిగి ret;
 }
 
-static bool
-HandleSymbolsBody(SymbolsInfo *info, VarDef *def, KeyInfo *keyi)
+స్థిర bool
+HandleSymbolsBody(SymbolsInfo *info, VarDef *def, కీలకం_Info *keyi)
 {
     bool all_valid_entries = true;
 
-    for (; def; def = (VarDef *) def->common.next) {
-        const char *field;
-        ExprDef *arrayNdx;
+    కొరకు (; def; def = (VarDef *) def->common.తదుపరి) {
+        స్థిరరాశి అక్షరం *క్షేత్రం_2;
+        సమాసం_Def *arrayNdx;
         bool ok = true;
 
-        if (!def->name) {
-            if (unlikely(!def->value) || def->value->common.type != STMT_EXPR_ACTION_LIST)
-                field = "symbols"; /* Default to symbols field */
-            else
-                field = "actions";
-            arrayNdx = NULL;
+        ఒకవేళ (!def->name) {
+            ఒకవేళ (unlikely(!def->విలువ) || def->విలువ->common.type != STMT_సమాసం_ACTION_LIST)
+                క్షేత్రం_2 = "symbols"; /* Default to symbols field */
+            లేకపోతే
+                క్షేత్రం_2 = "actions";
+            arrayNdx = ఖాళీ;
         }
-        else {
-            const char *elem;
-            ok = ExprResolveLhs(info->ctx, def->name, &elem, &field,
+        లేకపోతే {
+            స్థిరరాశి అక్షరం *elem;
+            ok = సమాసం_Resolve_Lhs(info->ctx, def->name, &elem, &క్షేత్రం_2,
                                 &arrayNdx);
-            if (ok && elem) {
+            ఒకవేళ (ok && elem) {
                 log_err(info->ctx, XKB_ERROR_GLOBAL_DEFAULTS_WRONG_SCOPE,
                         "Cannot set global defaults for \"%s\" element within "
                         "a key statement: move statements to the global file "
                         "scope. Assignment to \"%s.%s\" ignored.\n",
-                        elem, elem, field);
+                        elem, elem, క్షేత్రం_2);
                 ok = false;
             }
         }
 
-        if (unlikely(!def->value)) {
-            log_err(info->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
+        ఒకవేళ (unlikely(!def->విలువ)) {
+            log_err(info->ctx, XKB_ERROR_కేటాయింపు_FAILURE_2,
                     "Could not allocate the value of field \"%s\". "
-                    "Statement ignored.\n", field);
+                    "Statement ignored.\n", క్షేత్రం_2);
             ok = false;
         }
 
-        if (!ok || !SetSymbolsField(info, keyi, field, arrayNdx, &def->value))
+        ఒకవేళ (!ok || !సమితి_Symbols_క్షేత్రం(info, keyi, క్షేత్రం_2, arrayNdx, &def->విలువ))
             all_valid_entries = false;
     }
 
-    return all_valid_entries;
+    తిరిగి all_valid_entries;
 }
 
-static bool
-SetExplicitGroup(SymbolsInfo *info, KeyInfo *keyi)
+స్థిర bool
+సమితి_Explicit_సమూహం(SymbolsInfo *info, కీలకం_Info *keyi)
 {
-    xkb_layout_index_t i;
-    GroupInfo *groupi;
+    xkb_layout_సూచీ_t i;
+    సమూహం_Info_2 *groupi;
     bool warn = false;
 
-    if (info->explicit_group == XKB_LAYOUT_INVALID)
-        return true;
+    ఒకవేళ (info->explicit_సమూహం == XKB_LAYOUT_INVALID)
+        తిరిగి true;
 
     darray_enumerate_from(i, groupi, keyi->groups, 1) {
-        if (groupi->defined) {
+        ఒకవేళ (groupi->defined) {
             warn = true;
-            ClearGroupInfo(groupi);
-            InitGroupInfo(groupi);
+            Clear_సమూహం_Info(groupi);
+            Init_సమూహం_Info(groupi);
         }
     }
 
-    if (warn) {
-        log_warn(info->ctx, XKB_WARNING_MULTIPLE_GROUPS_AT_ONCE,
+    ఒకవేళ (warn) {
+        log_warn(info->ctx, XKB_WARNING_గుణిజం_GROUPS_AT_ONCE,
                  "For the map %s the explicit group %"PRIu32" is specified, "
                  "but key %s has more than one group defined; "
                  "All groups except first one will be ignored\n",
-                 info->name, info->explicit_group + 1, KeyInfoText(info, keyi));
+                 info->name, info->explicit_సమూహం + 1, కీలకం_Info_పాఠ్యం(info, keyi));
     }
 
-    darray_resize0(keyi->groups, info->explicit_group + 1);
-    if (info->explicit_group > 0) {
-        darray_item(keyi->groups, info->explicit_group) =
-            darray_item(keyi->groups, 0);
-        InitGroupInfo(&darray_item(keyi->groups, 0));
+    darray_resize0(keyi->groups, info->explicit_సమూహం + 1);
+    ఒకవేళ (info->explicit_సమూహం > 0) {
+        darray_అంశం(keyi->groups, info->explicit_సమూహం) =
+            darray_అంశం(keyi->groups, 0);
+        Init_సమూహం_Info(&darray_అంశం(keyi->groups, 0));
     }
 
-    return true;
+    తిరిగి true;
 }
 
-static bool
+స్థిర bool
 HandleSymbolsDef(SymbolsInfo *info, SymbolsDef *stmt)
 {
-    KeyInfo keyi;
+    కీలకం_Info keyi;
 
-    keyi = info->default_key;
+    keyi = info->default_కీలకం;
     darray_init(keyi.groups);
-    darray_copy(keyi.groups, info->default_key.groups);
-    for (xkb_layout_index_t i = 0; i < darray_size(keyi.groups); i++)
-        CopyGroupInfo(&darray_item(keyi.groups, i),
-                      &darray_item(info->default_key.groups, i));
-    keyi.merge = stmt->merge;
-    keyi.name = stmt->keyName;
+    darray_copy(keyi.groups, info->default_కీలకం.groups);
+    కొరకు (xkb_layout_సూచీ_t i = 0; i < darray_కొలత(keyi.groups); i++)
+        Copy_సమూహం_Info(&darray_అంశం(keyi.groups, i),
+                      &darray_అంశం(info->default_కీలకం.groups, i));
+    keyi.విలీనం = stmt->విలీనం;
+    keyi.name = stmt->కీలకం_Name;
 
-    if (HandleSymbolsBody(info, stmt->symbols, &keyi) &&
-        SetExplicitGroup(info, &keyi) &&
-        AddKeySymbols(info, &keyi, true)) {
-        return true;
+    ఒకవేళ (HandleSymbolsBody(info, stmt->symbols, &keyi) &&
+        సమితి_Explicit_సమూహం(info, &keyi) &&
+        కూడు_కీలకం_Symbols(info, &keyi, true)) {
+        తిరిగి true;
     }
 
-    ClearKeyInfo(&keyi);
-    info->errorCount++;
-    return false;
+    Clear_కీలకం_Info(&keyi);
+    info->error_లెక్క++;
+    తిరిగి false;
 }
 
-static bool
+స్థిర bool
 HandleModMapDef(SymbolsInfo *info, ModMapDef *def)
 {
-    ModMapEntry tmp;
-    struct xkb_context *ctx = info->ctx;
+    Mod_Map_నమోదు tmp;
+    నిర్మాణం xkb_context *ctx = info->ctx;
 
-    if (!ExprResolveModMask(ctx, def->modifiers, MOD_REAL, &info->mods, &tmp.mods)) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    ఒకవేళ (!సమాసం_Resolve_Mod_ముసుగు(ctx, def->modifiers, MOD_REAL, &info->mods, &tmp.mods)) {
+        log_err(ctx, XKB_LOG_సందేశం_NO_ID,
                 "Illegal modifier map definition: invalid modifier mask\n");
-        return false;
+        తిరిగి false;
     }
 
     /*
      * NOTE: parser.y accepts only identifiers for v1 keymap format,
      * so no further check is needed (e.g. no operation nor numeric values).
      */
-    assert(info->keymap_info->keymap.format != XKB_KEYMAP_FORMAT_TEXT_V1 ||
-           def->modifiers->common.type == STMT_EXPR_IDENT);
+    ప్రతిజ్ఞా(info->keymap_info->keymap.format != XKB_KEYMAP_FORMAT_పాఠ్యం_V1 ||
+           def->modifiers->common.type == STMT_సమాసం_IDENT);
 
     bool ok = true;
-    tmp.merge = def->merge;
+    tmp.విలీనం = def->విలీనం;
 
-    for (ExprDef *key = def->keys; key; key = (ExprDef *) key->common.next) {
-        if (key->common.type == STMT_EXPR_KEYNAME_LITERAL) {
-            tmp.haveSymbol = false;
-            tmp.u.keyName = key->key_name.key_name;
+    కొరకు (సమాసం_Def *కీలకం = def->కీలకాలు; కీలకం; కీలకం = (సమాసం_Def *) కీలకం->common.తదుపరి) {
+        ఒకవేళ (కీలకం->common.type == STMT_సమాసం_KEYNAME_LITERAL) {
+            tmp.have_చిహ్నం = false;
+            tmp.u.కీలకం_Name = కీలకం->కీలకం_name.కీలకం_name;
         }
-        else if (key->common.type == STMT_EXPR_KEYSYM_LITERAL) {
-            if (key->keysym.keysym == XKB_KEY_NoSymbol) {
+        లేకపోతే ఒకవేళ (కీలకం->common.type == STMT_సమాసం_KEYSYM_LITERAL) {
+            ఒకవేళ (కీలకం->keysym.keysym == XKB_కీలకం_No_చిహ్నం) {
                 /* Invalid keysym: ignore. Error message already printed */
-                continue;
-            } else {
-                tmp.haveSymbol = true;
-                tmp.u.keySym = key->keysym.keysym;
+                కొనసాగు;
+            } లేకపోతే {
+                tmp.have_చిహ్నం = true;
+                tmp.u.కీలకం_Sym = కీలకం->keysym.keysym;
             }
         }
-        else {
-            log_err(info->ctx, XKB_ERROR_INVALID_MODMAP_ENTRY,
+        లేకపోతే {
+            log_err(info->ctx, XKB_ERROR_INVALID_MODMAP_నమోదు,
                     "Modmap entries may contain only key names or keysyms; "
                     "Illegal definition for %s modifier mask ignored\n",
-                    ModMaskText(info->ctx, MOD_REAL, &info->mods, tmp.mods));
-            continue;
+                    Mod_ముసుగు_పాఠ్యం(info->ctx, MOD_REAL, &info->mods, tmp.mods));
+            కొనసాగు;
         }
 
-        ok = AddModMapEntry(info, &tmp) && ok;
+        ok = కూడు_Mod_Map_నమోదు(info, &tmp) && ok;
     }
-    return ok;
+    తిరిగి ok;
 }
 
-static void
+స్థిర శూన్య
 HandleSymbolsFile(SymbolsInfo *info, XkbFile *file)
 {
     bool ok;
 
-    free(info->name);
-    info->name = strdup_safe(file->name);
+    విడుదల(info->name);
+    info->name = strdup_సురక్షిత(file->name);
 
-    for (ParseCommon *stmt = file->defs; stmt; stmt = stmt->next) {
-        switch (stmt->type) {
-        case STMT_INCLUDE:
+    కొరకు (ParseCommon *stmt = file->defs; stmt; stmt = stmt->తదుపరి) {
+        ఎంపిక (stmt->type) {
+        స్థితి STMT_INCLUDE:
             ok = HandleIncludeSymbols(info, (IncludeStmt *) stmt);
-            break;
-        case STMT_SYMBOLS:
+            ఆపు;
+        స్థితి STMT_SYMBOLS:
             ok = HandleSymbolsDef(info, (SymbolsDef *) stmt);
-            break;
-        case STMT_VAR:
+            ఆపు;
+        స్థితి STMT_VAR:
             ok = HandleGlobalVar(info, (VarDef *) stmt);
-            break;
-        case STMT_VMOD:
+            ఆపు;
+        స్థితి STMT_VMOD:
             ok = HandleVModDef(info->ctx, &info->mods, (VModDef *) stmt);
-            break;
-        case STMT_MODMAP:
+            ఆపు;
+        స్థితి STMT_MODMAP:
             ok = HandleModMapDef(info, (ModMapDef *) stmt);
-            break;
-        case STMT_UNKNOWN_DECLARATION:
-        case STMT_UNKNOWN_COMPOUND:
+            ఆపు;
+        స్థితి STMT_UNKNOWN_DECLARATION:
+        స్థితి STMT_UNKNOWN_COMPOUND:
             log_err(info->ctx, XKB_ERROR_UNKNOWN_STATEMENT,
                     "Unsupported symbols %s statement \"%s\"; Ignoring\n",
                     (stmt->type == STMT_UNKNOWN_COMPOUND
                         ? "compound" : "declaration"),
                     ((UnknownStatement *)stmt)->name);
             ok = !(info->keymap_info->strict & PARSER_NO_UNKNOWN_STATEMENTS);
-            break;
-        default:
+            ఆపు;
+        అప్రమేయ:
             log_err(info->ctx, XKB_ERROR_WRONG_STATEMENT_TYPE,
                     "Symbols files may not include other types; "
-                    "Ignoring %s\n", stmt_type_to_string(stmt->type));
+                    "Ignoring %s\n", stmt_type_గమ్యం_string(stmt->type));
             ok = false;
-            break;
+            ఆపు;
         }
 
-        if (!ok)
-            info->errorCount++;
+        ఒకవేళ (!ok)
+            info->error_లెక్క++;
 
-        if (info->errorCount > 10) {
+        ఒకవేళ (info->error_లెక్క > 10) {
             log_err(info->ctx, XKB_ERROR_INVALID_XKB_SYNTAX,
                     "Abandoning symbols file \"%s\"\n",
-                    safe_map_name(file->name));
-            break;
+                    సురక్షిత_map_name(file->name));
+            ఆపు;
         }
     }
 }
@@ -2085,41 +2085,41 @@ HandleSymbolsFile(SymbolsInfo *info, XkbFile *file)
  * is chosen first by lowest group in which the keysym appears, than
  * by lowest level and than by lowest key code.
  */
-static struct xkb_key *
-FindKeyForSymbol(struct xkb_keymap *keymap, xkb_keysym_t sym)
+స్థిర నిర్మాణం xkb_కీలకం *
+కనుగొను_కీలకం_For_చిహ్నం(నిర్మాణం xkb_keymap *keymap, xkb_keysym_t sym)
 {
-    bool got_one_group;
-    xkb_layout_index_t group = 0;
-    do {
-        xkb_level_index_t level = 0;
-        got_one_group = false;
+    bool got_one_సమూహం;
+    xkb_layout_సూచీ_t సమూహం = 0;
+    చేయి {
+        xkb_level_సూచీ_t level = 0;
+        got_one_సమూహం = false;
         bool got_one_level;
-        do {
+        చేయి {
             got_one_level = false;
-            struct xkb_key *key;
-            xkb_keys_foreach(key, keymap) {
-                if (group < key->num_groups &&
-                    level < XkbKeyNumLevels(key, group)) {
-                    got_one_group = got_one_level = true;
-                    const xkb_keysym_count_t num_syms =
-                        key->groups[group].levels[level].num_syms;
-                    if (num_syms > 1) {
-                        for (xkb_keysym_count_t k = 0; k < num_syms; k++) {
-                            if (key->groups[group].levels[level].s.syms[k] == sym)
-                                return key;
+            నిర్మాణం xkb_కీలకం *కీలకం;
+            xkb_కీలకాలు_foreach(కీలకం, keymap) {
+                ఒకవేళ (సమూహం < కీలకం->అంకె_groups &&
+                    level < Xkb_కీలకం_అంకె_స్థాయిలు(కీలకం, సమూహం)) {
+                    got_one_సమూహం = got_one_level = true;
+                    స్థిరరాశి xkb_keysym_లెక్క_t అంకె_syms =
+                        కీలకం->groups[సమూహం].స్థాయిలు[level].అంకె_syms;
+                    ఒకవేళ (అంకె_syms > 1) {
+                        కొరకు (xkb_keysym_లెక్క_t k = 0; k < అంకె_syms; k++) {
+                            ఒకవేళ (కీలకం->groups[సమూహం].స్థాయిలు[level].s.syms[k] == sym)
+                                తిరిగి కీలకం;
                         }
-                    } else if (num_syms &&
-                               key->groups[group].levels[level].s.sym == sym) {
-                        return key;
+                    } లేకపోతే ఒకవేళ (అంకె_syms &&
+                               కీలకం->groups[సమూహం].స్థాయిలు[level].s.sym == sym) {
+                        తిరిగి కీలకం;
                     }
                 }
             }
             level++;
-        } while (got_one_level);
-        group++;
-    } while (got_one_group);
+        } అయితే (got_one_level);
+        సమూహం++;
+    } అయితే (got_one_సమూహం);
 
-    return NULL;
+    తిరిగి ఖాళీ;
 }
 
 /*
@@ -2134,104 +2134,104 @@ FindKeyForSymbol(struct xkb_keymap *keymap, xkb_keysym_t sym)
  *
  * FIXME: Decide how to handle multiple-syms-per-level, and do it.
  */
-static xkb_atom_t
-FindAutomaticType(struct xkb_context *ctx, GroupInfo *groupi)
+స్థిర xkb_atom_t
+కనుగొను_Automatic_Type(నిర్మాణం xkb_context *ctx, సమూహం_Info_2 *groupi)
 {
     xkb_keysym_t sym0, sym1;
-    const xkb_level_index_t width = darray_size(groupi->levels);
+    స్థిరరాశి xkb_level_సూచీ_t వెడల్పు = darray_కొలత(groupi->స్థాయిలు);
 
-#define GET_SYM(level) \
-    (darray_item(groupi->levels, level).num_syms == 0 ? \
-        XKB_KEY_NoSymbol : \
-     darray_item(groupi->levels, level).num_syms == 1 ? \
-        darray_item(groupi->levels, level).s.sym : \
+#నిర్వచించు GET_SYM(level) \
+    (darray_అంశం(groupi->స్థాయిలు, level).అంకె_syms == 0 ? \
+        XKB_కీలకం_No_చిహ్నం : \
+     darray_అంశం(groupi->స్థాయిలు, level).అంకె_syms == 1 ? \
+        darray_అంశం(groupi->స్థాయిలు, level).s.sym : \
      /* num_syms > 1 */ \
-        darray_item(groupi->levels, level).s.syms[0])
+        darray_అంశం(groupi->స్థాయిలు, level).s.syms[0])
 
-    if (width == 1 || width <= 0)
-        return xkb_atom_intern_literal(ctx, "ONE_LEVEL");
+    ఒకవేళ (వెడల్పు == 1 || వెడల్పు <= 0)
+        తిరిగి xkb_atom_intern_literal(ctx, "ONE_LEVEL");
 
     sym0 = GET_SYM(0);
     sym1 = GET_SYM(1);
 
-    if (width == 2) {
-        if (xkb_keysym_is_lower(sym0) && xkb_keysym_is_upper_or_title(sym1))
-            return xkb_atom_intern_literal(ctx, "ALPHABETIC");
+    ఒకవేళ (వెడల్పు == 2) {
+        ఒకవేళ (xkb_keysym_is_క్రింది(sym0) && xkb_keysym_is_పై_or_title(sym1))
+            తిరిగి xkb_atom_intern_literal(ctx, "ALPHABETIC");
 
-        if (xkb_keysym_is_keypad(sym0) || xkb_keysym_is_keypad(sym1))
-            return xkb_atom_intern_literal(ctx, "KEYPAD");
+        ఒకవేళ (xkb_keysym_is_keypad(sym0) || xkb_keysym_is_keypad(sym1))
+            తిరిగి xkb_atom_intern_literal(ctx, "KEYPAD");
 
-        return xkb_atom_intern_literal(ctx, "TWO_LEVEL");
+        తిరిగి xkb_atom_intern_literal(ctx, "TWO_LEVEL");
     }
 
-    if (width <= 4) {
-        if (xkb_keysym_is_lower(sym0) && xkb_keysym_is_upper_or_title(sym1)) {
+    ఒకవేళ (వెడల్పు <= 4) {
+        ఒకవేళ (xkb_keysym_is_క్రింది(sym0) && xkb_keysym_is_పై_or_title(sym1)) {
             xkb_keysym_t sym2, sym3;
             sym2 = GET_SYM(2);
-            sym3 = (width == 4 ? GET_SYM(3) : XKB_KEY_NoSymbol);
+            sym3 = (వెడల్పు == 4 ? GET_SYM(3) : XKB_కీలకం_No_చిహ్నం);
 
-            if (xkb_keysym_is_lower(sym2) && xkb_keysym_is_upper_or_title(sym3))
-                return xkb_atom_intern_literal(ctx, "FOUR_LEVEL_ALPHABETIC");
+            ఒకవేళ (xkb_keysym_is_క్రింది(sym2) && xkb_keysym_is_పై_or_title(sym3))
+                తిరిగి xkb_atom_intern_literal(ctx, "FOUR_LEVEL_ALPHABETIC");
 
-            return xkb_atom_intern_literal(ctx, "FOUR_LEVEL_SEMIALPHABETIC");
+            తిరిగి xkb_atom_intern_literal(ctx, "FOUR_LEVEL_SEMIALPHABETIC");
         }
 
-        if (xkb_keysym_is_keypad(sym0) || xkb_keysym_is_keypad(sym1))
-            return xkb_atom_intern_literal(ctx, "FOUR_LEVEL_KEYPAD");
+        ఒకవేళ (xkb_keysym_is_keypad(sym0) || xkb_keysym_is_keypad(sym1))
+            తిరిగి xkb_atom_intern_literal(ctx, "FOUR_LEVEL_KEYPAD");
 
-        return xkb_atom_intern_literal(ctx, "FOUR_LEVEL");
+        తిరిగి xkb_atom_intern_literal(ctx, "FOUR_LEVEL");
     }
 
-    return XKB_ATOM_NONE;
+    తిరిగి XKB_ATOM_NONE;
 
-#undef GET_SYM
+#నిర్వచనం_రద్దు GET_SYM
 }
 
-static const struct xkb_key_type *
-FindTypeForGroup(struct xkb_keymap *keymap, KeyInfo *keyi,
-                 xkb_layout_index_t group, bool *explicit_type)
+స్థిర స్థిరరాశి నిర్మాణం xkb_కీలకం_type *
+కనుగొను_Type_For_సమూహం(నిర్మాణం xkb_keymap *keymap, కీలకం_Info *keyi,
+                 xkb_layout_సూచీ_t సమూహం, bool *explicit_type)
 {
-    GroupInfo *groupi = &darray_item(keyi->groups, group);
+    సమూహం_Info_2 *groupi = &darray_అంశం(keyi->groups, సమూహం);
     xkb_atom_t type_name = groupi->type;
 
     *explicit_type = true;
 
-    if (type_name == XKB_ATOM_NONE) {
-        if (keyi->default_type != XKB_ATOM_NONE) {
+    ఒకవేళ (type_name == XKB_ATOM_NONE) {
+        ఒకవేళ (keyi->default_type != XKB_ATOM_NONE) {
             type_name = keyi->default_type;
         }
-        else {
-            type_name = FindAutomaticType(keymap->ctx, groupi);
-            if (type_name != XKB_ATOM_NONE)
+        లేకపోతే {
+            type_name = కనుగొను_Automatic_Type(keymap->ctx, groupi);
+            ఒకవేళ (type_name != XKB_ATOM_NONE)
                 *explicit_type = false;
         }
     }
 
-    if (type_name == XKB_ATOM_NONE) {
-        log_warn(keymap->ctx, XKB_WARNING_CANNOT_INFER_KEY_TYPE,
+    ఒకవేళ (type_name == XKB_ATOM_NONE) {
+        log_warn(keymap->ctx, XKB_WARNING_CANNOT_INFER_కీలకం_TYPE,
                  "Couldn't find an automatic type for key '%s' "
                  "group %"PRIu32" with %u levels; Using the default type\n",
-                 KeyNameText(keymap->ctx, keyi->name), group + 1,
-                 darray_size(groupi->levels));
-        goto use_default;
+                 కీలకం_Name_పాఠ్యం(keymap->ctx, keyi->name), సమూహం + 1,
+                 darray_కొలత(groupi->స్థాయిలు));
+        వెళ్ళు use_default;
     }
 
-    darray_size_t i;
-    for (i = 0; i < keymap->num_types; i++)
-        if (keymap->types[i].name == type_name)
-            break;
+    darray_కొలత_t i;
+    కొరకు (i = 0; i < keymap->అంకె_types; i++)
+        ఒకవేళ (keymap->types[i].name == type_name)
+            ఆపు;
 
-    if (i >= keymap->num_types) {
-        log_warn(keymap->ctx, XKB_WARNING_UNDEFINED_KEY_TYPE,
+    ఒకవేళ (i >= keymap->అంకె_types) {
+        log_warn(keymap->ctx, XKB_WARNING_UNDEFINED_కీలకం_TYPE,
                  "The type \"%s\" for key '%s' group %"PRIu32" "
                  "was not previously defined; Using the default type\n",
-                 xkb_atom_text(keymap->ctx, type_name),
-                 KeyNameText(keymap->ctx, keyi->name), group + 1);
-        goto use_default;
+                 xkb_atom_పాఠ్యం(keymap->ctx, type_name),
+                 కీలకం_Name_పాఠ్యం(keymap->ctx, keyi->name), సమూహం + 1);
+        వెళ్ళు use_default;
     }
 
     keymap->types[i].required = true;
-    return &keymap->types[i];
+    తిరిగి &keymap->types[i];
 
 use_default:
     /*
@@ -2239,99 +2239,99 @@ use_default:
      * ONE_LEVEL or at least some default one-level type.
      */
     keymap->types[0].required = true;
-    return &keymap->types[0];
+    తిరిగి &keymap->types[0];
 }
 
-static bool
-CopySymbolsDefToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info,
-                       KeyInfo *keyi)
+స్థిర bool
+Copy_Symbols_Def_గమ్యం_Keymap(నిర్మాణం xkb_keymap *keymap, SymbolsInfo *info,
+                       కీలకం_Info *keyi)
 {
-    struct xkb_key *key;
-    GroupInfo *groupi;
-    const GroupInfo *group0;
-    xkb_layout_index_t i;
+    నిర్మాణం xkb_కీలకం *కీలకం;
+    సమూహం_Info_2 *groupi;
+    స్థిరరాశి సమూహం_Info_2 *group0;
+    xkb_layout_సూచీ_t i;
 
     /*
      * The name is guaranteed to be real and not an alias (see
      * AddKeySymbols), so 'false' is safe here.
      */
-    key = XkbKeyByName(keymap, keyi->name, false);
-    if (!key) {
+    కీలకం = Xkb_కీలకం_By_Name(keymap, keyi->name, false);
+    ఒకవేళ (!కీలకం) {
         log_vrb(info->ctx, XKB_LOG_VERBOSITY_DETAILED,
                 XKB_WARNING_UNDEFINED_KEYCODE,
                 "Key %s not found in keycodes; Symbols ignored\n",
-                KeyInfoText(info, keyi));
-        return false;
+                కీలకం_Info_పాఠ్యం(info, keyi));
+        తిరిగి false;
     }
 
     /* Find the range of groups we need. */
-    key->num_groups = 0;
+    కీలకం->అంకె_groups = 0;
     darray_enumerate(i, groupi, keyi->groups) {
         /* Skip groups that have no levels and no explicit type.
          * Such group would be filled with `NoSymbol` anyway. */
-        const bool has_explicit_type = (keyi->defined & KEY_FIELD_DEFAULT_TYPE)
-                                    || (groupi->defined & GROUP_FIELD_TYPE);
-        if (darray_size(groupi->levels) > 0 || has_explicit_type)
-            key->num_groups = i + 1;
-        if (has_explicit_type)
-            key->explicit |= EXPLICIT_TYPES;
+        స్థిరరాశి bool has_explicit_type = (keyi->defined & కీలకం_క్షేత్రం_DEFAULT_TYPE)
+                                    || (groupi->defined & సమూహం_క్షేత్రం_TYPE);
+        ఒకవేళ (darray_కొలత(groupi->స్థాయిలు) > 0 || has_explicit_type)
+            కీలకం->అంకె_groups = i + 1;
+        ఒకవేళ (has_explicit_type)
+            కీలకం->explicit |= EXPLICIT_TYPES;
     }
 
-    if (key->num_groups <= 0) {
+    ఒకవేళ (కీలకం->అంకె_groups <= 0) {
         /* A key with no group may still have other fields defined */
-        if (keyi->defined)
-            goto key_fields;
-        else
-            return false;
+        ఒకవేళ (keyi->defined)
+            వెళ్ళు కీలకం_fields;
+        లేకపోతే
+            తిరిగి false;
     }
 
-    darray_resize(keyi->groups, key->num_groups);
+    darray_resize(keyi->groups, కీలకం->అంకె_groups);
 
     /*
      * If there are empty groups between non-empty ones, fill them with data
      * from the first group.
      * We can make a wrong assumption here. But leaving gaps is worse.
      */
-    group0 = &darray_item(keyi->groups, 0);
+    group0 = &darray_అంశం(keyi->groups, 0);
     darray_foreach_from(groupi, keyi->groups, 1) {
-        if (groupi->defined)
-            continue;
+        ఒకవేళ (groupi->defined)
+            కొనసాగు;
 
-        CopyGroupInfo(groupi, group0);
+        Copy_సమూహం_Info(groupi, group0);
     }
 
-    key->groups = calloc(key->num_groups, sizeof(*key->groups));
-    assert(darray_size(keyi->groups) == key->num_groups);
+    కీలకం->groups = సున్నా_జ్ఞాపకం_ఇవ్వు(కీలకం->అంకె_groups, పరిమాణం(*కీలకం->groups));
+    ప్రతిజ్ఞా(darray_కొలత(keyi->groups) == కీలకం->అంకె_groups);
 
     /* Find and assign the groups' types in the keymap. */
     darray_enumerate(i, groupi, keyi->groups) {
-        #ifdef __clang__
+        #నిర్వచితమైతే __clang__
         /* Make clang-tidy happy */
-        __builtin_assume(i < key->num_groups);
-        #endif
+        __builtin_assume(i < కీలకం->అంకె_groups);
+        #అయితే_ముగింపు
         bool explicit_type = false;
-        const struct xkb_key_type * const type =
-            FindTypeForGroup(keymap, keyi, i, &explicit_type);
+        స్థిరరాశి నిర్మాణం xkb_కీలకం_type * స్థిరరాశి type =
+            కనుగొను_Type_For_సమూహం(keymap, keyi, i, &explicit_type);
 
         /* Always have as many levels as the type specifies. */
-        if (type->num_levels < darray_size(groupi->levels)) {
-            struct xkb_level *leveli;
+        ఒకవేళ (type->అంకె_స్థాయిలు < darray_కొలత(groupi->స్థాయిలు)) {
+            నిర్మాణం xkb_level *leveli;
 
             log_vrb(info->ctx, XKB_LOG_VERBOSITY_BRIEF,
                     XKB_WARNING_EXTRA_SYMBOLS_IGNORED,
                     "Type \"%s\" has %"PRIu32" levels, but %s has %u levels; "
                     "Ignoring extra symbols\n",
-                    xkb_atom_text(keymap->ctx, type->name), type->num_levels,
-                    KeyInfoText(info, keyi),
-                    darray_size(groupi->levels));
+                    xkb_atom_పాఠ్యం(keymap->ctx, type->name), type->అంకె_స్థాయిలు,
+                    కీలకం_Info_పాఠ్యం(info, keyi),
+                    darray_కొలత(groupi->స్థాయిలు));
 
-            darray_foreach_from(leveli, groupi->levels, type->num_levels)
+            darray_foreach_from(leveli, groupi->స్థాయిలు, type->అంకె_స్థాయిలు)
                 clear_level(leveli);
         }
-        darray_resize0(groupi->levels, type->num_levels);
+        darray_resize0(groupi->స్థాయిలు, type->అంకె_స్థాయిలు);
 
-        key->groups[i].explicit_type = explicit_type;
-        key->groups[i].type = type;
+        కీలకం->groups[i].explicit_type = explicit_type;
+        కీలకం->groups[i].type = type;
     }
 
     /* Copy levels. */
@@ -2343,222 +2343,222 @@ CopySymbolsDefToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info,
          * We apply only simple capitalization rules, so the keysyms count is
          * unchanged.
          */
-        struct xkb_level *leveli;
-        darray_foreach(leveli, groupi->levels) {
-            switch (leveli->num_syms) {
-            case 0:
-                leveli->upper = XKB_KEY_NoSymbol;
-                break;
-            case 1:
-                leveli->upper = xkb_keysym_to_upper(leveli->s.sym);
-                break;
-            default:
+        నిర్మాణం xkb_level *leveli;
+        darray_foreach(leveli, groupi->స్థాయిలు) {
+            ఎంపిక (leveli->అంకె_syms) {
+            స్థితి 0:
+                leveli->పై = XKB_కీలకం_No_చిహ్నం;
+                ఆపు;
+            స్థితి 1:
+                leveli->పై = xkb_keysym_గమ్యం_పై(leveli->s.sym);
+                ఆపు;
+            అప్రమేయ:
                 /* Multiple keysyms: check if there is any cased keysym */
-                leveli->has_upper = false;
-                for (xkb_keysym_count_t k = 0; k < leveli->num_syms; k++) {
-                    const xkb_keysym_t upper =
-                        xkb_keysym_to_upper(leveli->s.syms[k]);
-                    if (upper != leveli->s.syms[k]) {
-                        leveli->has_upper = true;
-                        break;
+                leveli->has_పై = false;
+                కొరకు (xkb_keysym_లెక్క_t k = 0; k < leveli->అంకె_syms; k++) {
+                    స్థిరరాశి xkb_keysym_t పై =
+                        xkb_keysym_గమ్యం_పై(leveli->s.syms[k]);
+                    ఒకవేళ (పై != leveli->s.syms[k]) {
+                        leveli->has_పై = true;
+                        ఆపు;
                     }
                 }
-                if (leveli->has_upper) {
+                ఒకవేళ (leveli->has_పై) {
                     /*
                      * Some cased keysyms: store the transformation result in
                      * the same array, right after the original keysyms.
                      */
                     leveli->s.syms = realloc(leveli->s.syms,
-                                             (size_t) 2 * leveli->num_syms *
-                                             sizeof(*leveli->s.syms));
-                    if (!leveli->s.syms)
-                        return false; /* FIXME: better handling? */
-                    for (xkb_keysym_count_t k = 0; k < leveli->num_syms; k++) {
-                        leveli->s.syms[leveli->num_syms + k] =
-                            xkb_keysym_to_upper(leveli->s.syms[k]);
+                                             (కొలత_t) 2 * leveli->అంకె_syms *
+                                             పరిమాణం(*leveli->s.syms));
+                    ఒకవేళ (!leveli->s.syms)
+                        తిరిగి false; /* FIXME: better handling? */
+                    కొరకు (xkb_keysym_లెక్క_t k = 0; k < leveli->అంకె_syms; k++) {
+                        leveli->s.syms[leveli->అంకె_syms + k] =
+                            xkb_keysym_గమ్యం_పై(leveli->s.syms[k]);
                     }
                 }
             }
         }
 
         /* Copy the level */
-        darray_steal(groupi->levels, &key->groups[i].levels, NULL);
-        if (key->groups[i].type->num_levels > 1 ||
-            key->groups[i].levels[0].num_syms > 0) {
-            key->groups[i].explicit_symbols = true;
-            key->explicit |= EXPLICIT_SYMBOLS;
+        darray_steal(groupi->స్థాయిలు, &కీలకం->groups[i].స్థాయిలు, ఖాళీ);
+        ఒకవేళ (కీలకం->groups[i].type->అంకె_స్థాయిలు > 1 ||
+            కీలకం->groups[i].స్థాయిలు[0].అంకె_syms > 0) {
+            కీలకం->groups[i].explicit_symbols = true;
+            కీలకం->explicit |= EXPLICIT_SYMBOLS;
         }
-        if (groupi->defined & GROUP_FIELD_ACTS) { // FIXME
-            key->groups[i].explicit_actions = true;
-            key->explicit |= EXPLICIT_INTERP;
+        ఒకవేళ (groupi->defined & సమూహం_క్షేత్రం_ACTS) { // FIXME
+            కీలకం->groups[i].explicit_actions = true;
+            కీలకం->explicit |= EXPLICIT_INTERP;
         }
-        if (key->groups[i].explicit_type)
-            key->explicit |= EXPLICIT_TYPES;
+        ఒకవేళ (కీలకం->groups[i].explicit_type)
+            కీలకం->explicit |= EXPLICIT_TYPES;
     }
 
-    key->out_of_range_pending_group = keyi->out_of_range_pending_group;
-    key->out_of_range_group_number = keyi->out_of_range_group_number;
-    key->out_of_range_group_policy = keyi->out_of_range_group_policy;
+    కీలకం->బహిర్గతం_యొక్క_range_pending_సమూహం = keyi->బహిర్గతం_యొక్క_range_pending_సమూహం;
+    కీలకం->బహిర్గతం_యొక్క_range_సమూహం_సంఖ్య = keyi->బహిర్గతం_యొక్క_range_సమూహం_సంఖ్య;
+    కీలకం->బహిర్గతం_యొక్క_range_సమూహం_policy = keyi->బహిర్గతం_యొక్క_range_సమూహం_policy;
 
-key_fields:
-    if (keyi->defined & KEY_FIELD_VMODMAP) {
-        key->vmodmap = keyi->vmodmap;
-        key->explicit |= EXPLICIT_VMODMAP;
+కీలకం_fields:
+    ఒకవేళ (keyi->defined & కీలకం_క్షేత్రం_VMODMAP) {
+        కీలకం->vmodmap = keyi->vmodmap;
+        కీలకం->explicit |= EXPLICIT_VMODMAP;
     }
 
-    if (keyi->repeat != KEY_REPEAT_UNDEFINED) {
-        key->repeats = (keyi->repeat == KEY_REPEAT_YES);
-        key->explicit |= EXPLICIT_REPEAT;
+    ఒకవేళ (keyi->repeat != కీలకం_REPEAT_UNDEFINED) {
+        కీలకం->repeats = (keyi->repeat == కీలకం_REPEAT_YES);
+        కీలకం->explicit |= EXPLICIT_REPEAT;
     }
 
-    if ((keyi->defined & KEY_FIELD_OVERLAY) &&
+    ఒకవేళ ((keyi->defined & కీలకం_క్షేత్రం_OVERLAY) &&
         keyi->overlays && !keyi->overlays_clear) {
-        key->overlays = keyi->overlays;
-        if (keyi->overlays_alloc) {
+        కీలకం->overlays = keyi->overlays;
+        ఒకవేళ (keyi->overlays_alloc) {
             /* Remove empty entries */
 
-            xkb_overlay_mask_t remaining = key->overlays;
-            const struct xkb_key **overlays_keys = keyi->overlays_keys;
-            while (remaining) {
+            xkb_overlay_ముసుగు_t మిగిలిన = కీలకం->overlays;
+            స్థిరరాశి నిర్మాణం xkb_కీలకం **overlays_కీలకాలు = keyi->overlays_కీలకాలు;
+            అయితే (మిగిలిన) {
                 /* isolate lowest set bit */
-                const xkb_overlay_mask_t lsb = (xkb_overlay_mask_t)(
-                    remaining &
-                    (xkb_overlay_mask_t)((unsigned)~remaining + 1u)
+                స్థిరరాశి xkb_overlay_ముసుగు_t lsb = (xkb_overlay_ముసుగు_t)(
+                    మిగిలిన &
+                    (xkb_overlay_ముసుగు_t)((గుర్తులేని)~మిగిలిన + 1u)
                 );
-                remaining = (remaining & ~lsb);
-                if (*overlays_keys) {
-                    overlays_keys++;
-                } else {
+                మిగిలిన = (మిగిలిన & ~lsb);
+                ఒకవేళ (*overlays_కీలకాలు) {
+                    overlays_కీలకాలు++;
+                } లేకపోతే {
                     /* drop current null value (overlayN=none) */
-                    key->overlays &= ~lsb;
+                    కీలకం->overlays &= ~lsb;
                 }
             }
 
-            if (key->overlays) {
+            ఒకవేళ (కీలకం->overlays) {
                 /* Steal */
-                key->overlays_keys = keyi->overlays_keys;
-                keyi->overlays_keys = NULL;
+                కీలకం->overlays_కీలకాలు = keyi->overlays_కీలకాలు;
+                keyi->overlays_కీలకాలు = ఖాళీ;
                 keyi->overlays_alloc = 0;
 
-                key->overlays_inline = false;
-                key->explicit |= EXPLICIT_OVERLAY;
+                కీలకం->overlays_inline = false;
+                కీలకం->explicit |= EXPLICIT_OVERLAY;
             }
-        } else {
-            key->overlay_key = keyi->overlay_key;
-            key->overlays_inline = true;
-            key->explicit |= EXPLICIT_OVERLAY;
+        } లేకపోతే {
+            కీలకం->overlay_కీలకం = keyi->overlay_కీలకం;
+            కీలకం->overlays_inline = true;
+            కీలకం->explicit |= EXPLICIT_OVERLAY;
         }
     }
 
-    return true;
+    తిరిగి true;
 }
 
-static bool
-CopyModMapDefToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info,
-                      ModMapEntry *entry)
+స్థిర bool
+Copy_Mod_Map_Def_గమ్యం_Keymap(నిర్మాణం xkb_keymap *keymap, SymbolsInfo *info,
+                      Mod_Map_నమోదు *నమోదు_2)
 {
-    struct xkb_key *key;
+    నిర్మాణం xkb_కీలకం *కీలకం;
 
-    if (!entry->haveSymbol) {
-        key = XkbKeyByName(keymap, entry->u.keyName, true);
-        if (!key) {
+    ఒకవేళ (!నమోదు_2->have_చిహ్నం) {
+        కీలకం = Xkb_కీలకం_By_Name(keymap, నమోదు_2->u.కీలకం_Name, true);
+        ఒకవేళ (!కీలకం) {
             log_vrb(info->ctx, XKB_LOG_VERBOSITY_DETAILED,
                     XKB_WARNING_UNDEFINED_KEYCODE,
                     "Key %s not found in keycodes; "
                     "Modifier map entry for %s not updated\n",
-                    KeyNameText(info->ctx, entry->u.keyName),
-                    ModMaskText(info->ctx, MOD_REAL, &info->mods, entry->mods));
-            entry->mods = 0; /* disable */
-            return false;
+                    కీలకం_Name_పాఠ్యం(info->ctx, నమోదు_2->u.కీలకం_Name),
+                    Mod_ముసుగు_పాఠ్యం(info->ctx, MOD_REAL, &info->mods, నమోదు_2->mods));
+            నమోదు_2->mods = 0; /* disable */
+            తిరిగి false;
         }
     }
-    else {
-        key = FindKeyForSymbol(keymap, entry->u.keySym);
-        if (!key) {
+    లేకపోతే {
+        కీలకం = కనుగొను_కీలకం_For_చిహ్నం(keymap, నమోదు_2->u.కీలకం_Sym);
+        ఒకవేళ (!కీలకం) {
             log_vrb(info->ctx, XKB_LOG_VERBOSITY_DETAILED,
-                    XKB_WARNING_UNRESOLVED_KEYMAP_SYMBOL,
+                    XKB_WARNING_UNRESOLVED_KEYMAP_చిహ్నం,
                     "Key \"%s\" not found in symbol map; "
                     "Modifier map entry for %s not updated\n",
-                    KeysymText(info->ctx, entry->u.keySym),
-                    ModMaskText(info->ctx, MOD_REAL, &info->mods, entry->mods));
-            entry->mods = 0; /* disable */
-            return false;
+                    Keysym_పాఠ్యం(info->ctx, నమోదు_2->u.కీలకం_Sym),
+                    Mod_ముసుగు_పాఠ్యం(info->ctx, MOD_REAL, &info->mods, నమోదు_2->mods));
+            నమోదు_2->mods = 0; /* disable */
+            తిరిగి false;
         }
     }
 
     /* Skip modMap None */
-    if (entry->mods) {
-        key->modmap |= entry->mods;
-        entry->keyCode = key->keycode;
+    ఒకవేళ (నమోదు_2->mods) {
+        కీలకం->modmap |= నమోదు_2->mods;
+        నమోదు_2->కీలకం_సంకేతం = కీలకం->keycode;
     }
 
-    return true;
+    తిరిగి true;
 }
 
-static bool
-CopySymbolsToKeymap(struct xkb_keymap *keymap, SymbolsInfo *info)
+స్థిర bool
+Copy_Symbols_గమ్యం_Keymap(నిర్మాణం xkb_keymap *keymap, SymbolsInfo *info)
 {
-    KeyInfo *keyi;
+    కీలకం_Info *keyi;
 
-    keymap->symbols_section_name = strdup_safe(info->name);
+    keymap->symbols_section_name = strdup_సురక్షిత(info->name);
     XkbEscapeMapName(keymap->symbols_section_name);
 
     keymap->mods = info->mods;
 
-    keymap->num_group_names = (xkb_layout_index_t)darray_size(info->group_names);
-    darray_steal(info->group_names, &keymap->group_names, NULL);
+    keymap->అంకె_సమూహం_పేర్లు = (xkb_layout_సూచీ_t)darray_కొలత(info->సమూహం_పేర్లు);
+    darray_steal(info->సమూహం_పేర్లు, &keymap->సమూహం_పేర్లు, ఖాళీ);
 
-    darray_foreach(keyi, info->keys)
-        if (!CopySymbolsDefToKeymap(keymap, info, keyi))
-            info->errorCount++;
+    darray_foreach(keyi, info->కీలకాలు)
+        ఒకవేళ (!Copy_Symbols_Def_గమ్యం_Keymap(keymap, info, keyi))
+            info->error_లెక్క++;
 
-    if (xkb_context_get_log_verbosity(keymap->ctx) > 3) {
-        struct xkb_key *key;
+    ఒకవేళ (xkb_context_get_log_verbosity(keymap->ctx) > 3) {
+        నిర్మాణం xkb_కీలకం *కీలకం;
 
-        xkb_keys_foreach(key, keymap) {
-            if (key->name == XKB_ATOM_NONE)
-                continue;
+        xkb_కీలకాలు_foreach(కీలకం, keymap) {
+            ఒకవేళ (కీలకం->name == XKB_ATOM_NONE)
+                కొనసాగు;
 
-            if (key->num_groups < 1)
-                log_info(info->ctx, XKB_LOG_MESSAGE_NO_ID,
+            ఒకవేళ (కీలకం->అంకె_groups < 1)
+                log_info(info->ctx, XKB_LOG_సందేశం_NO_ID,
                          "No symbols defined for %s\n",
-                         KeyNameText(info->ctx, key->name));
+                         కీలకం_Name_పాఠ్యం(info->ctx, కీలకం->name));
         }
     }
 
     /* Resolve modmaps */
-    ModMapEntry *mm;
+    Mod_Map_నమోదు *mm;
     darray_foreach(mm, info->modmaps)
-        if (!CopyModMapDefToKeymap(keymap, info, mm))
-            info->errorCount++;
+        ఒకవేళ (!Copy_Mod_Map_Def_గమ్యం_Keymap(keymap, info, mm))
+            info->error_లెక్క++;
 
     /* Copy detailed modmap */
-    darray_steal(info->modmaps, &keymap->modmaps, &keymap->num_modmaps);
+    darray_steal(info->modmaps, &keymap->modmaps, &keymap->అంకె_modmaps);
 
     /* XXX: If we don't ignore errorCount, things break. */
-    return true;
+    తిరిగి true;
 }
 
 bool
-CompileSymbols(XkbFile *file, struct xkb_keymap_info *keymap_info)
+CompileSymbols(XkbFile *file, నిర్మాణం xkb_keymap_info *keymap_info)
 {
     SymbolsInfo info;
 
     InitSymbolsInfo(&info, keymap_info, 0, &keymap_info->keymap.mods);
 
-    if (file !=NULL)
+    ఒకవేళ (file !=ఖాళీ)
         HandleSymbolsFile(&info, file);
 
-    if (info.errorCount != 0)
-        goto err_info;
+    ఒకవేళ (info.error_లెక్క != 0)
+        వెళ్ళు err_info;
 
-    if (!CopySymbolsToKeymap(&keymap_info->keymap, &info))
-        goto err_info;
+    ఒకవేళ (!Copy_Symbols_గమ్యం_Keymap(&keymap_info->keymap, &info))
+        వెళ్ళు err_info;
 
     ClearSymbolsInfo(&info);
-    return true;
+    తిరిగి true;
 
 err_info:
     ClearSymbolsInfo(&info);
-    return false;
+    తిరిగి false;
 }

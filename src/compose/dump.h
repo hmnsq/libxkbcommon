@@ -3,14 +3,14 @@
  * Copyright © 2023 Pierre Le Marre <dev@wismill.eu>
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#సూచన once
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include "table.h"
-
-bool
-print_compose_table_entry(FILE *file, struct xkb_compose_table_entry *entry);
+#అన్తర్భావ "table.h"
 
 bool
-xkb_compose_table_dump(FILE *file, struct xkb_compose_table *table);
+print_compose_పట్టిక_నమోదు(FILE *file, నిర్మాణం xkb_compose_పట్టిక_నమోదు *నమోదు_2);
+
+bool
+xkb_compose_పట్టిక_dump(FILE *file, నిర్మాణం xkb_compose_పట్టిక *పట్టిక);

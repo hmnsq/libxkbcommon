@@ -6,318 +6,318 @@
  * Author: Daniel Stone <daniel@fooishbar.org>
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include <assert.h>
-#include <errno.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+#అన్తర్భావ <assert.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/stat.h>
 
-#if HAVE_XKB_EXTENSIONS_DIRECTORIES
-    #include <limits.h>
-    #if HAVE_UNISTD_H && HAVE_DIRENT_H
-        #include <dirent.h>
-        #include <unistd.h>
-    #endif
-#endif
+#ఒకవేళ HAVE_XKB_EXTENSIONS_DIRECTORIES
+    #అన్తర్భావ <limits.h>
+    #ఒకవేళ HAVE_UNISTD_H && HAVE_DIRENT_H
+        #అన్తర్భావ <dirent.h>
+        #అన్తర్భావ <unistd.h>
+    #అయితే_ముగింపు
+#అయితే_ముగింపు
 
-#include "xkbcommon/xkbcommon.h"
-#include "context.h"
-#include "darray.h"
-#include "features/enums.h"
-#include "messages-codes.h"
-#include "utils.h"
+#అన్తర్భావ "xkbcommon/xkbcommon.h"
+#అన్తర్భావ "context.h"
+#అన్తర్భావ "darray.h"
+#అన్తర్భావ "features/enums.h"
+#అన్తర్భావ "messages-codes.h"
+#అన్తర్భావ "utils.h"
 
 
 /**
  * Append one directory to the context’s include path.
  */
-static int
-context_include_path_append(struct xkb_context *ctx, const char *path)
+స్థిర పూర్ణాంకం
+context_include_మార్గం_append(నిర్మాణం xkb_context *ctx, స్థిరరాశి అక్షరం *మార్గం)
 {
-    int err = ENOMEM;
+    పూర్ణాంకం err = ENOMEM;
 
-    char *tmp = strdup(path);
-    if (!tmp)
-        goto err;
+    అక్షరం *tmp = strdup(మార్గం);
+    ఒకవేళ (!tmp)
+        వెళ్ళు err;
 
-    struct stat stat_buf;
-    err = stat(path, &stat_buf);
-    if (err != 0) {
+    నిర్మాణం stat stat_buf;
+    err = stat(మార్గం, &stat_buf);
+    ఒకవేళ (err != 0) {
         err = errno;
-        goto err;
+        వెళ్ళు err;
     }
-    if (!S_ISDIR(stat_buf.st_mode)) {
+    ఒకవేళ (!S_ISDIR(stat_buf.st_బహుళకం)) {
         err = ENOTDIR;
-        goto err;
+        వెళ్ళు err;
     }
 
-    if (!check_eaccess(path, R_OK | X_OK)) {
+    ఒకవేళ (!check_eaccess(మార్గం, R_OK | X_OK)) {
         err = EACCES;
-        goto err;
+        వెళ్ళు err;
     }
 
     darray_append(ctx->includes, tmp);
     /* Use “info” log level to facilitate bug reporting. */
-    log_info(ctx, XKB_LOG_MESSAGE_NO_ID, "Include path added: %s\n", tmp);
+    log_info(ctx, XKB_LOG_సందేశం_NO_ID, "Include path added: %s\n", tmp);
 
-    return 1;
+    తిరిగి 1;
 
 err:
-    if (tmp)
+    ఒకవేళ (tmp)
         darray_append(ctx->failed_includes, tmp);
     /*
      * This error is not fatal because some valid paths may still be defined.
      * Use “info” log level to facilitate bug reporting.
      */
-    log_info(ctx, XKB_LOG_MESSAGE_NO_ID,
-             "Include path failed: \"%s\" (%s)\n", path, strerror(err));
-    return 0;
+    log_info(ctx, XKB_LOG_సందేశం_NO_ID,
+             "Include path failed: \"%s\" (%s)\n", మార్గం, strerror(err));
+    తిరిగి 0;
 }
 
 /**
  * Append one directory to the context’s include path.
  */
-int
-xkb_context_include_path_append(struct xkb_context *ctx, const char *path)
+పూర్ణాంకం
+xkb_context_include_మార్గం_append(నిర్మాణం xkb_context *ctx, స్థిరరాశి అక్షరం *మార్గం)
 {
-    return (xkb_context_init_includes(ctx))
-        ? context_include_path_append(ctx, path)
+    తిరిగి (xkb_context_init_includes(ctx))
+        ? context_include_మార్గం_append(ctx, మార్గం)
         : 0;
 }
 
-const char *
-xkb_context_include_path_get_extra_path(struct xkb_context *ctx)
+స్థిరరాశి అక్షరం *
+xkb_context_include_మార్గం_get_extra_మార్గం(నిర్మాణం xkb_context *ctx)
 {
-    const char * const extra = xkb_context_getenv(ctx, "XKB_CONFIG_EXTRA_PATH");
+    స్థిరరాశి అక్షరం * స్థిరరాశి extra = xkb_context_getenv(ctx, "XKB_CONFIG_EXTRA_PATH");
     /*
      * Only use default if path is undefined, but accept empty string, which may
      * be unintentional and should be reported.
      */
-    return extra ? extra : DFLT_XKB_CONFIG_EXTRA_PATH;
+    తిరిగి extra ? extra : DFLT_XKB_CONFIG_EXTRA_మార్గం;
 }
 
-#if HAVE_XKB_EXTENSIONS_DIRECTORIES
-const char *
-xkb_context_include_path_get_unversioned_extensions_path(struct xkb_context *ctx)
+#ఒకవేళ HAVE_XKB_EXTENSIONS_DIRECTORIES
+స్థిరరాశి అక్షరం *
+xkb_context_include_మార్గం_get_unversioned_extensions_మార్గం(నిర్మాణం xkb_context *ctx)
 {
-    const char *ext =
+    స్థిరరాశి అక్షరం *ext =
         xkb_context_getenv(ctx, "XKB_CONFIG_UNVERSIONED_EXTENSIONS_PATH");
-    return ext
+    తిరిగి ext
         ? ext
-#ifdef DFLT_XKB_CONFIG_UNVERSIONED_EXTENSIONS_PATH
-        : DFLT_XKB_CONFIG_UNVERSIONED_EXTENSIONS_PATH;
-#else
-        : NULL;
-#endif
+#నిర్వచితమైతే DFLT_XKB_CONFIG_UNVERSIONED_EXTENSIONS_మార్గం
+        : DFLT_XKB_CONFIG_UNVERSIONED_EXTENSIONS_మార్గం;
+#లేకపోతే
+        : ఖాళీ;
+#అయితే_ముగింపు
 }
 
-const char *
-xkb_context_include_path_get_versioned_extensions_path(struct xkb_context *ctx)
+స్థిరరాశి అక్షరం *
+xkb_context_include_మార్గం_get_versioned_extensions_మార్గం(నిర్మాణం xkb_context *ctx)
 {
-    const char *ext =
+    స్థిరరాశి అక్షరం *ext =
         xkb_context_getenv(ctx, "XKB_CONFIG_VERSIONED_EXTENSIONS_PATH");
-    return ext
+    తిరిగి ext
         ? ext
-#ifdef DFLT_XKB_CONFIG_VERSIONED_EXTENSIONS_PATH
-        : DFLT_XKB_CONFIG_VERSIONED_EXTENSIONS_PATH;
-#else
-        : NULL;
-#endif
+#నిర్వచితమైతే DFLT_XKB_CONFIG_VERSIONED_EXTENSIONS_మార్గం
+        : DFLT_XKB_CONFIG_VERSIONED_EXTENSIONS_మార్గం;
+#లేకపోతే
+        : ఖాళీ;
+#అయితే_ముగింపు
 }
 
-static int
-compare_str(const void *a, const void *b)
+స్థిర పూర్ణాంకం
+compare_str(స్థిరరాశి శూన్య *a, స్థిరరాశి శూన్య *b)
 {
-    return strcmp(*(char **)a, *(char **) b);
+    తిరిగి strcmp(*(అక్షరం **)a, *(అక్షరం **) b);
 }
 
-static int
-add_direct_subdirectories(struct xkb_context *ctx, const char *path,
+స్థిర పూర్ణాంకం
+కూడు_ప్రత్యక్ష_subdirectories(నిర్మాణం xkb_context *ctx, స్థిరరాశి అక్షరం *మార్గం,
                           darray_string *extensions,
-                          darray_size_t versioned_count,
-                          size_t versioned_path_length)
+                          darray_కొలత_t versioned_లెక్క,
+                          కొలత_t versioned_మార్గం_నిడివి)
 {
-    int ret = 0;
-    int err = ENOMEM;
-    DIR *dir = NULL;
+    పూర్ణాంకం ret = 0;
+    పూర్ణాంకం err = ENOMEM;
+    DIR *dir = ఖాళీ;
 
     /* Check extensions parent directory */
-    struct stat stat_buf;
-    err = stat(path, &stat_buf);
-    if (err != 0) {
+    నిర్మాణం stat stat_buf;
+    err = stat(మార్గం, &stat_buf);
+    ఒకవేళ (err != 0) {
         err = errno;
-        goto err;
+        వెళ్ళు err;
     }
-    if (!S_ISDIR(stat_buf.st_mode)) {
+    ఒకవేళ (!S_ISDIR(stat_buf.st_బహుళకం)) {
         err = ENOTDIR;
-        goto err;
+        వెళ్ళు err;
     }
-    if (!check_eaccess(path, R_OK | X_OK)) {
+    ఒకవేళ (!check_eaccess(మార్గం, R_OK | X_OK)) {
         err = EACCES;
-        goto err;
+        వెళ్ళు err;
     }
 
-    dir = opendir(path);
-    if (dir == NULL) {
+    dir = opendir(మార్గం);
+    ఒకవేళ (dir == ఖాళీ) {
         err = EACCES;
-        goto err;
+        వెళ్ళు err;
     }
 
-    struct dirent *entry;
-    char path_buf[PATH_MAX] = "";
-    versioned_path_length++; /* Additional final ‘/’ */
-    while ((entry = readdir(dir)) != NULL) {
-        const char *name = entry->d_name;
+    నిర్మాణం dirent *నమోదు_2;
+    అక్షరం మార్గం_buf[PATH_MAX] = "";
+    versioned_మార్గం_నిడివి++; /* Additional final ‘/’ */
+    అయితే ((నమోదు_2 = readdir(dir)) != ఖాళీ) {
+        స్థిరరాశి అక్షరం *name = నమోదు_2->d_name;
 
         /* Skip special entries */
-        if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
-            continue;
+        ఒకవేళ (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
+            కొనసాగు;
 
-        if (!snprintf_safe(path_buf, sizeof(path_buf), "%s/%s", path, name)) {
+        ఒకవేళ (!snprintf_సురక్షిత(మార్గం_buf, పరిమాణం(మార్గం_buf), "%s/%s", మార్గం, name)) {
             err = ENOMEM;
-            goto err;
+            వెళ్ళు err;
         }
-        if (stat(path_buf, &stat_buf) != 0 || !S_ISDIR(stat_buf.st_mode))
-            continue;
+        ఒకవేళ (stat(మార్గం_buf, &stat_buf) != 0 || !S_ISDIR(stat_buf.st_బహుళకం))
+            కొనసాగు;
 
         /* Skip if the corresponding versioned directory is already included */
-        for (darray_size_t i = 0; i < versioned_count; i++) {
-            const char * const prev_name = darray_item(*extensions, i)
-                                         + versioned_path_length;
-            if (strcmp(name, prev_name) == 0)
-                goto next;
+        కొరకు (darray_కొలత_t i = 0; i < versioned_లెక్క; i++) {
+            స్థిరరాశి అక్షరం * స్థిరరాశి prev_name = darray_అంశం(*extensions, i)
+                                         + versioned_మార్గం_నిడివి;
+            ఒకవేళ (strcmp(name, prev_name) == 0)
+                వెళ్ళు తదుపరి;
         }
 
-        char *ext_path = strdup_safe(path_buf);
-        if (!ext_path) {
+        అక్షరం *ext_మార్గం = strdup_సురక్షిత(మార్గం_buf);
+        ఒకవేళ (!ext_మార్గం) {
             err = ENOMEM;
-            goto err;
+            వెళ్ళు err;
         }
 
-        darray_append(*extensions, ext_path);
-next:
+        darray_append(*extensions, ext_మార్గం);
+తదుపరి:
     {} /* Label at end of compound statement is a C23 extension */
     }
 
     closedir(dir);
 
-    if (darray_size(*extensions) > versioned_count) {
+    ఒకవేళ (darray_కొలత(*extensions) > versioned_లెక్క) {
         /* Sort the entries, so that they are appended in lexicographic order */
-        qsort(darray_items(*extensions) + versioned_count,
-              darray_size(*extensions) - versioned_count,
-              sizeof(*darray_items(*extensions)), &compare_str);
-        char **ext_path;
-        darray_foreach_from(ext_path, *extensions, versioned_count) {
-            ret |= context_include_path_append(ctx, *ext_path);
+        qsort(darray_వస్తువులు(*extensions) + versioned_లెక్క,
+              darray_కొలత(*extensions) - versioned_లెక్క,
+              పరిమాణం(*darray_వస్తువులు(*extensions)), &compare_str);
+        అక్షరం **ext_మార్గం;
+        darray_foreach_from(ext_మార్గం, *extensions, versioned_లెక్క) {
+            ret |= context_include_మార్గం_append(ctx, *ext_మార్గం);
         }
     }
 
-    return ret;
+    తిరిగి ret;
 
 err:
-    log_dbg(ctx, XKB_LOG_MESSAGE_NO_ID,
-            "Include extensions path failed: %s (%s)\n", path, strerror(err));
-    if (dir)
+    log_dbg(ctx, XKB_LOG_సందేశం_NO_ID,
+            "Include extensions path failed: %s (%s)\n", మార్గం, strerror(err));
+    ఒకవేళ (dir)
         closedir(dir);
 
-    return ret;
+    తిరిగి ret;
 }
-#endif
+#అయితే_ముగింపు
 
-const char *
-xkb_context_include_path_get_system_path(struct xkb_context *ctx)
+స్థిరరాశి అక్షరం *
+xkb_context_include_మార్గం_get_system_మార్గం(నిర్మాణం xkb_context *ctx)
 {
-    const char * const root = xkb_context_getenv(ctx, "XKB_CONFIG_ROOT");
+    స్థిరరాశి అక్షరం * స్థిరరాశి మూలం = xkb_context_getenv(ctx, "XKB_CONFIG_ROOT");
     /*
      * Only use default if path is undefined, but accept empty string, which may
      * be unintentional and should be reported.
      */
-    return root ? root : DFLT_XKB_CONFIG_ROOT;
+    తిరిగి మూలం ? మూలం : DFLT_XKB_CONFIG_మూలం;
 }
 
 /**
  * Append the default include directories to the context.
  */
-int
-xkb_context_include_path_append_default(struct xkb_context *ctx)
+పూర్ణాంకం
+xkb_context_include_మార్గం_append_default(నిర్మాణం xkb_context *ctx)
 {
     /*
      * We do not call `xkb_context_init_includes()` here, because either
      * we already initialized the includes paths or we are doing it now.
      */
 
-    char *user_path;
-    int ret = 0;
+    అక్షరం *user_మార్గం;
+    పూర్ణాంకం ret = 0;
 
-    const char * const home = xkb_context_getenv(ctx, "HOME");
-    const char * const xdg = xkb_context_getenv(ctx, "XDG_CONFIG_HOME");
+    స్థిరరాశి అక్షరం * స్థిరరాశి home = xkb_context_getenv(ctx, "HOME");
+    స్థిరరాశి అక్షరం * స్థిరరాశి xdg = xkb_context_getenv(ctx, "XDG_CONFIG_HOME");
     /* Accept empty string, which may be unintentional and should be reported */
-    if (xdg != NULL) {
-        user_path = asprintf_safe("%s/xkb", xdg);
-        if (user_path) {
-            ret |= context_include_path_append(ctx, user_path);
-            free(user_path);
+    ఒకవేళ (xdg != ఖాళీ) {
+        user_మార్గం = asprintf_సురక్షిత("%s/xkb", xdg);
+        ఒకవేళ (user_మార్గం) {
+            ret |= context_include_మార్గం_append(ctx, user_మార్గం);
+            విడుదల(user_మార్గం);
         }
-    } else if (home != NULL) {
+    } లేకపోతే ఒకవేళ (home != ఖాళీ) {
         /* XDG_CONFIG_HOME fallback is $HOME/.config/ */
-        user_path = asprintf_safe("%s/.config/xkb", home);
-        if (user_path) {
-            ret |= context_include_path_append(ctx, user_path);
-            free(user_path);
+        user_మార్గం = asprintf_సురక్షిత("%s/.config/xkb", home);
+        ఒకవేళ (user_మార్గం) {
+            ret |= context_include_మార్గం_append(ctx, user_మార్గం);
+            విడుదల(user_మార్గం);
         }
     }
 
-    if (home != NULL) {
-        user_path = asprintf_safe("%s/.xkb", home);
-        if (user_path) {
-            ret |= context_include_path_append(ctx, user_path);
-            free(user_path);
+    ఒకవేళ (home != ఖాళీ) {
+        user_మార్గం = asprintf_సురక్షిత("%s/.xkb", home);
+        ఒకవేళ (user_మార్గం) {
+            ret |= context_include_మార్గం_append(ctx, user_మార్గం);
+            విడుదల(user_మార్గం);
         }
     }
 
-    const char * const extra = xkb_context_include_path_get_extra_path(ctx);
-    ret |= context_include_path_append(ctx, extra);
+    స్థిరరాశి అక్షరం * స్థిరరాశి extra = xkb_context_include_మార్గం_get_extra_మార్గం(ctx);
+    ret |= context_include_మార్గం_append(ctx, extra);
 
-#if HAVE_XKB_EXTENSIONS_DIRECTORIES
+#ఒకవేళ HAVE_XKB_EXTENSIONS_DIRECTORIES
     darray_string extensions = darray_new();
 
     /* Versioned extensions directory */
-    const char *extensions_path =
-        xkb_context_include_path_get_versioned_extensions_path(ctx);
-    size_t versioned_path_length = 0;
-    if (extensions_path) {
+    స్థిరరాశి అక్షరం *extensions_మార్గం =
+        xkb_context_include_మార్గం_get_versioned_extensions_మార్గం(ctx);
+    కొలత_t versioned_మార్గం_నిడివి = 0;
+    ఒకవేళ (extensions_మార్గం) {
         /* Add direct subdirectories */
-        ret |= add_direct_subdirectories(ctx, extensions_path,
+        ret |= కూడు_ప్రత్యక్ష_subdirectories(ctx, extensions_మార్గం,
                                          &extensions, 0, 0);
-        versioned_path_length = strlen(extensions_path);
+        versioned_మార్గం_నిడివి = అక్షరశ్రేణి_పొడవు(extensions_మార్గం);
     }
 
     /* Unversioned extensions directory */
-    extensions_path =
-        xkb_context_include_path_get_unversioned_extensions_path(ctx);
-    if (extensions_path) {
+    extensions_మార్గం =
+        xkb_context_include_మార్గం_get_unversioned_extensions_మార్గం(ctx);
+    ఒకవేళ (extensions_మార్గం) {
         /*
          * Add direct subdirectories, except those already added from the
          * *versioned* extensions path hereinabove.
          */
-        ret |= add_direct_subdirectories(ctx, extensions_path, &extensions,
-                                         darray_size(extensions),
-                                         versioned_path_length);
+        ret |= కూడు_ప్రత్యక్ష_subdirectories(ctx, extensions_మార్గం, &extensions,
+                                         darray_కొలత(extensions),
+                                         versioned_మార్గం_నిడివి);
     }
 
-    char **ext_path;
-    darray_foreach(ext_path, extensions) {
-        free(*ext_path);
+    అక్షరం **ext_మార్గం;
+    darray_foreach(ext_మార్గం, extensions) {
+        విడుదల(*ext_మార్గం);
     }
     darray_free(extensions);
-#endif
+#అయితే_ముగింపు
 
     /* Canonical XKB root */
-    const char * const root = xkb_context_include_path_get_system_path(ctx);
-    const bool has_root = context_include_path_append(ctx, root);
-    ret |= has_root;
+    స్థిరరాశి అక్షరం * స్థిరరాశి మూలం = xkb_context_include_మార్గం_get_system_మార్గం(ctx);
+    స్థిరరాశి bool has_మూలం = context_include_మార్గం_append(ctx, మూలం);
+    ret |= has_మూలం;
 
     /*
      * Fallback for misconfigured setups.
@@ -328,32 +328,32 @@ xkb_context_include_path_append_default(struct xkb_context *ctx)
      * This fallback can still be skipped if deliberately using an empty string
      * for the canonical XKB root hereinabove.
      */
-    if (!has_root && root[0] != '\0') {
-        log_warn(ctx, XKB_LOG_MESSAGE_NO_ID,
+    ఒకవేళ (!has_మూలం && మూలం[0] != '\0') {
+        log_warn(ctx, XKB_LOG_సందేశం_NO_ID,
                  "Root include path failed; fallback to \"%s\". "
                  "The setup is probably misconfigured. "
                  "Please ensure that \"%s\" is available in the environment.\n",
-                 DFLT_XKB_LEGACY_ROOT, root);
-        ret |= context_include_path_append(ctx, DFLT_XKB_LEGACY_ROOT);
+                 DFLT_XKB_LEGACY_మూలం, మూలం);
+        ret |= context_include_మార్గం_append(ctx, DFLT_XKB_LEGACY_మూలం);
     }
 
-    return ret;
+    తిరిగి ret;
 }
 
 /**
  * Remove all entries in the context's include path.
  */
-void
-xkb_context_include_path_clear(struct xkb_context *ctx)
+శూన్య
+xkb_context_include_మార్గం_clear(నిర్మాణం xkb_context *ctx)
 {
-    char **path;
+    అక్షరం **మార్గం;
 
-    darray_foreach(path, ctx->includes)
-        free(*path);
+    darray_foreach(మార్గం, ctx->includes)
+        విడుదల(*మార్గం);
     darray_free(ctx->includes);
 
-    darray_foreach(path, ctx->failed_includes)
-        free(*path);
+    darray_foreach(మార్గం, ctx->failed_includes)
+        విడుదల(*మార్గం);
     darray_free(ctx->failed_includes);
 
     /* It does not make sense to keep the pending defaults */
@@ -363,21 +363,21 @@ xkb_context_include_path_clear(struct xkb_context *ctx)
 /**
  * xkb_context_include_path_clear() + xkb_context_include_path_append_default()
  */
-int
-xkb_context_include_path_reset_defaults(struct xkb_context *ctx)
+పూర్ణాంకం
+xkb_context_include_మార్గం_reset_defaults(నిర్మాణం xkb_context *ctx)
 {
-    xkb_context_include_path_clear(ctx);
-    return xkb_context_include_path_append_default(ctx);
+    xkb_context_include_మార్గం_clear(ctx);
+    తిరిగి xkb_context_include_మార్గం_append_default(ctx);
 }
 
 /**
  * Returns the number of entries in the context's include path.
  */
-unsigned int
-xkb_context_num_include_paths(struct xkb_context *ctx)
+గుర్తులేని పూర్ణాంకం
+xkb_context_అంకె_include_paths(నిర్మాణం xkb_context *ctx)
 {
-    return (xkb_context_init_includes(ctx))
-        ? darray_size(ctx->includes)
+    తిరిగి (xkb_context_init_includes(ctx))
+        ? darray_కొలత(ctx->includes)
         : 0;
 }
 
@@ -385,133 +385,133 @@ xkb_context_num_include_paths(struct xkb_context *ctx)
  * Returns the given entry in the context's include path, or NULL if an
  * invalid index is passed.
  */
-const char *
-xkb_context_include_path_get(struct xkb_context *ctx, unsigned int idx)
+స్థిరరాశి అక్షరం *
+xkb_context_include_మార్గం_get(నిర్మాణం xkb_context *ctx, గుర్తులేని పూర్ణాంకం idx)
 {
-    if (idx >= xkb_context_num_include_paths(ctx))
-        return NULL;
+    ఒకవేళ (idx >= xkb_context_అంకె_include_paths(ctx))
+        తిరిగి ఖాళీ;
 
-    return darray_item(ctx->includes, idx);
+    తిరిగి darray_అంశం(ctx->includes, idx);
 }
 
 /**
  * Take a new reference on the context.
  */
-struct xkb_context *
-xkb_context_ref(struct xkb_context *ctx)
+నిర్మాణం xkb_context *
+xkb_context_ref(నిర్మాణం xkb_context *ctx)
 {
-    assert(ctx->refcnt > 0);
+    ప్రతిజ్ఞా(ctx->refcnt > 0);
     ctx->refcnt++;
-    return ctx;
+    తిరిగి ctx;
 }
 
 /**
  * Drop an existing reference on the context, and free it if the refcnt is
  * now 0.
  */
-void
-xkb_context_unref(struct xkb_context *ctx)
+శూన్య
+xkb_context_unref(నిర్మాణం xkb_context *ctx)
 {
-    assert(!ctx || ctx->refcnt > 0);
-    if (!ctx || --ctx->refcnt > 0)
-        return;
+    ప్రతిజ్ఞా(!ctx || ctx->refcnt > 0);
+    ఒకవేళ (!ctx || --ctx->refcnt > 0)
+        తిరిగి;
 
-    free(ctx->x11_atom_cache);
-    xkb_context_include_path_clear(ctx);
-    atom_table_free(ctx->atom_table);
-    free(ctx);
+    విడుదల(ctx->x11_atom_cache);
+    xkb_context_include_మార్గం_clear(ctx);
+    atom_పట్టిక_free(ctx->atom_పట్టిక);
+    విడుదల(ctx);
 }
 
-static const char *
-log_level_to_prefix(enum xkb_log_level level)
+స్థిర స్థిరరాశి అక్షరం *
+log_level_గమ్యం_ఉపసర్గ(గణన xkb_log_level level)
 {
-    switch (level) {
-    case XKB_LOG_LEVEL_DEBUG:
-        return "xkbcommon: DEBUG: ";
-    case XKB_LOG_LEVEL_INFO:
-        return "xkbcommon: INFO: ";
-    case XKB_LOG_LEVEL_WARNING:
-        return "xkbcommon: WARNING: ";
-    case XKB_LOG_LEVEL_ERROR:
-        return "xkbcommon: ERROR: ";
-    case XKB_LOG_LEVEL_CRITICAL:
-        return "xkbcommon: CRITICAL: ";
-    default:
-        return NULL;
+    ఎంపిక (level) {
+    స్థితి XKB_LOG_LEVEL_DEBUG:
+        తిరిగి "xkbcommon: DEBUG: ";
+    స్థితి XKB_LOG_LEVEL_INFO:
+        తిరిగి "xkbcommon: INFO: ";
+    స్థితి XKB_LOG_LEVEL_WARNING:
+        తిరిగి "xkbcommon: WARNING: ";
+    స్థితి XKB_LOG_LEVEL_ERROR:
+        తిరిగి "xkbcommon: ERROR: ";
+    స్థితి XKB_LOG_LEVEL_CRITICAL:
+        తిరిగి "xkbcommon: CRITICAL: ";
+    అప్రమేయ:
+        తిరిగి ఖాళీ;
     }
 }
 
-ATTR_PRINTF(3, 0) static void
-default_log_fn(struct xkb_context *ctx, enum xkb_log_level level,
-               const char *fmt, va_list args)
+ATTR_PRINTF(3, 0) స్థిర శూన్య
+default_log_fn(నిర్మాణం xkb_context *ctx, గణన xkb_log_level level,
+               స్థిరరాశి అక్షరం *fmt, va_list వాదనలు)
 {
-    const char *prefix = log_level_to_prefix(level);
+    స్థిరరాశి అక్షరం *ఉపసర్గ = log_level_గమ్యం_ఉపసర్గ(level);
 
-    if (prefix)
-        fprintf(stderr, "%s", prefix);
-    vfprintf(stderr, fmt, args);
+    ఒకవేళ (ఉపసర్గ)
+        fprintf(stderr, "%s", ఉపసర్గ);
+    vfprintf(stderr, fmt, వాదనలు);
 }
 
-static enum xkb_log_level
-log_level(const char *level) {
+స్థిర గణన xkb_log_level
+log_level(స్థిరరాశి అక్షరం *level) {
     errno = 0;
-    char *endptr = NULL;
-    const long lvl = strtol(level, &endptr, 10);
-    if (errno == 0 && (endptr[0] == '\0' || is_space(endptr[0])))
-        return (enum xkb_log_level)lvl;
-    if (istreq_prefix("crit", level))
-        return XKB_LOG_LEVEL_CRITICAL;
-    if (istreq_prefix("err", level))
-        return XKB_LOG_LEVEL_ERROR;
-    if (istreq_prefix("warn", level))
-        return XKB_LOG_LEVEL_WARNING;
-    if (istreq_prefix("info", level))
-        return XKB_LOG_LEVEL_INFO;
-    if (istreq_prefix("debug", level) || istreq_prefix("dbg", level))
-        return XKB_LOG_LEVEL_DEBUG;
+    అక్షరం *endptr = ఖాళీ;
+    స్థిరరాశి దీర్ఘ lvl = strtol(level, &endptr, 10);
+    ఒకవేళ (errno == 0 && (endptr[0] == '\0' || is_space(endptr[0])))
+        తిరిగి (గణన xkb_log_level)lvl;
+    ఒకవేళ (istreq_ఉపసర్గ("crit", level))
+        తిరిగి XKB_LOG_LEVEL_CRITICAL;
+    ఒకవేళ (istreq_ఉపసర్గ("err", level))
+        తిరిగి XKB_LOG_LEVEL_ERROR;
+    ఒకవేళ (istreq_ఉపసర్గ("warn", level))
+        తిరిగి XKB_LOG_LEVEL_WARNING;
+    ఒకవేళ (istreq_ఉపసర్గ("info", level))
+        తిరిగి XKB_LOG_LEVEL_INFO;
+    ఒకవేళ (istreq_ఉపసర్గ("debug", level) || istreq_ఉపసర్గ("dbg", level))
+        తిరిగి XKB_LOG_LEVEL_DEBUG;
 
-    return XKB_LOG_LEVEL_ERROR;
+    తిరిగి XKB_LOG_LEVEL_ERROR;
 }
 
-static int
-log_verbosity(const char *verbosity) {
+స్థిర పూర్ణాంకం
+log_verbosity(స్థిరరాశి అక్షరం *verbosity) {
     errno = 0;
-    const long int v = strtol(verbosity, NULL, 10);
-    if (errno == 0) {
+    స్థిరరాశి దీర్ఘ పూర్ణాంకం v = strtol(verbosity, ఖాళీ, 10);
+    ఒకవేళ (errno == 0) {
         /* Truncate */
-        return (int) v;
+        తిరిగి (పూర్ణాంకం) v;
     }
 
-    return XKB_LOG_VERBOSITY_DEFAULT;
+    తిరిగి XKB_LOG_VERBOSITY_DEFAULT;
 }
 
 /**
  * Create a new context.
  */
-struct xkb_context *
-xkb_context_new(enum xkb_context_flags flags)
+నిర్మాణం xkb_context *
+xkb_context_new(గణన xkb_context_flags flags)
 {
-    const char *env;
-    struct xkb_context *ctx = calloc(1, sizeof(*ctx));
+    స్థిరరాశి అక్షరం *env;
+    నిర్మాణం xkb_context *ctx = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*ctx));
 
-    if (!ctx)
-        return NULL;
+    ఒకవేళ (!ctx)
+        తిరిగి ఖాళీ;
 
     ctx->refcnt = 1;
     ctx->log_fn = default_log_fn;
     ctx->log_level = XKB_LOG_LEVEL_ERROR;
     ctx->log_verbosity = XKB_LOG_VERBOSITY_DEFAULT;
 
-    const enum xkb_context_flags invalid_flags =
-        (flags & ~(enum xkb_context_flags)XKB_CONTEXT_FLAGS_VALUES);
-    if (invalid_flags) {
-        log_err_func(ctx, XKB_LOG_MESSAGE_NO_ID,
+    స్థిరరాశి గణన xkb_context_flags invalid_flags =
+        (flags & ~(గణన xkb_context_flags)XKB_CONTEXT_FLAGS_విలువలు);
+    ఒకవేళ (invalid_flags) {
+        log_err_func(ctx, XKB_LOG_సందేశం_NO_ID,
                      "Invalid context flags: 0x%x\n", invalid_flags);
-        free(ctx);
-        return NULL;
+        విడుదల(ctx);
+        తిరిగి ఖాళీ;
     }
 
-    ctx->use_environment_names = !(flags & XKB_CONTEXT_NO_ENVIRONMENT_NAMES);
+    ctx->use_environment_పేర్లు = !(flags & XKB_CONTEXT_NO_ENVIRONMENT_పేర్లు);
     ctx->use_secure_getenv = !(flags & XKB_CONTEXT_NO_SECURE_GETENV);
 
     /*
@@ -535,67 +535,67 @@ xkb_context_new(enum xkb_context_flags flags)
 
     /* Environment overwrites defaults. */
     env = xkb_context_getenv(ctx, "XKB_LOG_LEVEL");
-    if (env)
-        xkb_context_set_log_level(ctx, log_level(env));
+    ఒకవేళ (env)
+        xkb_context_సమితి_log_level(ctx, log_level(env));
 
     env = xkb_context_getenv(ctx, "XKB_LOG_VERBOSITY");
-    if (env)
-        xkb_context_set_log_verbosity(ctx, log_verbosity(env));
+    ఒకవేళ (env)
+        xkb_context_సమితి_log_verbosity(ctx, log_verbosity(env));
 
-    ctx->atom_table = atom_table_new();
-    if (!ctx->atom_table) {
+    ctx->atom_పట్టిక = atom_పట్టిక_new();
+    ఒకవేళ (!ctx->atom_పట్టిక) {
         xkb_context_unref(ctx);
-        return NULL;
+        తిరిగి ఖాళీ;
     }
 
-    ctx->x11_atom_cache = NULL;
+    ctx->x11_atom_cache = ఖాళీ;
 
-    return ctx;
+    తిరిగి ctx;
 }
 
-void
-xkb_context_set_log_fn(struct xkb_context *ctx,
-                       void (*log_fn)(struct xkb_context *ctx,
-                                      enum xkb_log_level level,
-                                      const char *fmt, va_list args))
+శూన్య
+xkb_context_సమితి_log_fn(నిర్మాణం xkb_context *ctx,
+                       శూన్య (*log_fn)(నిర్మాణం xkb_context *ctx,
+                                      గణన xkb_log_level level,
+                                      స్థిరరాశి అక్షరం *fmt, va_list వాదనలు))
 {
     ctx->log_fn = (log_fn ? log_fn : default_log_fn);
 }
 
-enum xkb_log_level
-xkb_context_get_log_level(struct xkb_context *ctx)
+గణన xkb_log_level
+xkb_context_get_log_level(నిర్మాణం xkb_context *ctx)
 {
-    return ctx->log_level;
+    తిరిగి ctx->log_level;
 }
 
-void
-xkb_context_set_log_level(struct xkb_context *ctx, enum xkb_log_level level)
+శూన్య
+xkb_context_సమితి_log_level(నిర్మాణం xkb_context *ctx, గణన xkb_log_level level)
 {
     ctx->log_level = level;
 }
 
-int
-xkb_context_get_log_verbosity(struct xkb_context *ctx)
+పూర్ణాంకం
+xkb_context_get_log_verbosity(నిర్మాణం xkb_context *ctx)
 {
-    return ctx->log_verbosity;
+    తిరిగి ctx->log_verbosity;
 }
 
-void
-xkb_context_set_log_verbosity(struct xkb_context *ctx, int verbosity)
+శూన్య
+xkb_context_సమితి_log_verbosity(నిర్మాణం xkb_context *ctx, పూర్ణాంకం verbosity)
 {
     ctx->log_verbosity = verbosity;
 }
 
-void *
-xkb_context_get_user_data(struct xkb_context *ctx)
+శూన్య *
+xkb_context_get_user_దత్తాంశం(నిర్మాణం xkb_context *ctx)
 {
-    if (ctx)
-        return ctx->user_data;
-    return NULL;
+    ఒకవేళ (ctx)
+        తిరిగి ctx->user_దత్తాంశం;
+    తిరిగి ఖాళీ;
 }
 
-void
-xkb_context_set_user_data(struct xkb_context *ctx, void *user_data)
+శూన్య
+xkb_context_సమితి_user_దత్తాంశం(నిర్మాణం xkb_context *ctx, శూన్య *user_దత్తాంశం)
 {
-    ctx->user_data = user_data;
+    ctx->user_దత్తాంశం = user_దత్తాంశం;
 }

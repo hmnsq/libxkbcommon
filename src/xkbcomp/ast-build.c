@@ -12,503 +12,503 @@
  * Author: Ran Benita <ran234@gmail.com>
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include <stdint.h>
-#include <string.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <string.h>
 
-#include "xkbcommon/xkbcommon-keysyms.h"
-#include "messages-codes.h"
-#include "xkbcomp-priv.h"
-#include "ast.h"
-#include "ast-build.h"
-#include "include.h"
-#include "keysym.h"
-#include "utf8-decoding.h"
+#అన్తర్భావ "xkbcommon/xkbcommon-keysyms.h"
+#అన్తర్భావ "messages-codes.h"
+#అన్తర్భావ "xkbcomp-priv.h"
+#అన్తర్భావ "ast.h"
+#అన్తర్భావ "ast-build.h"
+#అన్తర్భావ "include.h"
+#అన్తర్భావ "keysym.h"
+#అన్తర్భావ "utf8-decoding.h"
 
-static ExprDef *
-ExprCreate(enum stmt_type op)
+స్థిర సమాసం_Def *
+సమాసం_Create(గణన stmt_type op)
 {
-    ExprDef *expr = malloc(sizeof(*expr));
-    if (!expr)
-        return NULL;
+    సమాసం_Def *సమాసం = జ్ఞాపకం_ఇవ్వు(పరిమాణం(*సమాసం));
+    ఒకవేళ (!సమాసం)
+        తిరిగి ఖాళీ;
 
-    expr->common.type = op;
-    expr->common.next = NULL;
+    సమాసం->common.type = op;
+    సమాసం->common.తదుపరి = ఖాళీ;
 
-    return expr;
+    తిరిగి సమాసం;
 }
 
-ExprDef *
-ExprCreateString(xkb_atom_t str)
+సమాసం_Def *
+సమాసం_Create_String(xkb_atom_t str)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_STRING_LITERAL);
-    if (!expr)
-        return NULL;
-    expr->string.str = str;
-    return expr;
+    సమాసం_Def *సమాసం = సమాసం_Create(STMT_సమాసం_STRING_LITERAL);
+    ఒకవేళ (!సమాసం)
+        తిరిగి ఖాళీ;
+    సమాసం->string.str = str;
+    తిరిగి సమాసం;
 }
 
-ExprDef *
-ExprCreateInteger(int64_t ival)
+సమాసం_Def *
+సమాసం_Create_Integer(int64_t ival)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_INTEGER_LITERAL);
-    if (!expr)
-        return NULL;
-    expr->integer.ival = ival;
-    return expr;
+    సమాసం_Def *సమాసం = సమాసం_Create(STMT_సమాసం_INTEGER_LITERAL);
+    ఒకవేళ (!సమాసం)
+        తిరిగి ఖాళీ;
+    సమాసం->integer.ival = ival;
+    తిరిగి సమాసం;
 }
 
-ExprDef *
-ExprCreateFloat(void)
+సమాసం_Def *
+సమాసం_Create_Float(శూన్య)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_FLOAT_LITERAL);
-    if (!expr)
-        return NULL;
-    return expr;
+    సమాసం_Def *సమాసం = సమాసం_Create(STMT_సమాసం_FLOAT_LITERAL);
+    ఒకవేళ (!సమాసం)
+        తిరిగి ఖాళీ;
+    తిరిగి సమాసం;
 }
 
-ExprDef *
-ExprCreateBoolean(bool set)
+సమాసం_Def *
+సమాసం_Create_Boolean(bool సమితి)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_BOOLEAN_LITERAL);
-    if (!expr)
-        return NULL;
-    expr->boolean.set = set;
-    return expr;
+    సమాసం_Def *సమాసం = సమాసం_Create(STMT_సమాసం_BOOLEAN_LITERAL);
+    ఒకవేళ (!సమాసం)
+        తిరిగి ఖాళీ;
+    సమాసం->boolean.సమితి = సమితి;
+    తిరిగి సమాసం;
 }
 
-ExprDef *
-ExprCreateKeyName(xkb_atom_t key_name)
+సమాసం_Def *
+సమాసం_Create_కీలకం_Name(xkb_atom_t కీలకం_name)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_KEYNAME_LITERAL);
-    if (!expr)
-        return NULL;
-    expr->key_name.key_name = key_name;
-    return expr;
+    సమాసం_Def *సమాసం = సమాసం_Create(STMT_సమాసం_KEYNAME_LITERAL);
+    ఒకవేళ (!సమాసం)
+        తిరిగి ఖాళీ;
+    సమాసం->కీలకం_name.కీలకం_name = కీలకం_name;
+    తిరిగి సమాసం;
 }
 
-ExprDef *
-ExprCreateKeySym(xkb_keysym_t keysym)
+సమాసం_Def *
+సమాసం_Create_కీలకం_Sym(xkb_keysym_t keysym)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_KEYSYM_LITERAL);
-    if (!expr)
-        return NULL;
-    expr->keysym.keysym = keysym;
-    return expr;
+    సమాసం_Def *సమాసం = సమాసం_Create(STMT_సమాసం_KEYSYM_LITERAL);
+    ఒకవేళ (!సమాసం)
+        తిరిగి ఖాళీ;
+    సమాసం->keysym.keysym = keysym;
+    తిరిగి సమాసం;
 }
 
-ExprDef *
-ExprCreateIdent(xkb_atom_t ident)
+సమాసం_Def *
+సమాసం_Create_Ident(xkb_atom_t ident)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_IDENT);
-    if (!expr)
-        return NULL;
-    expr->ident.ident = ident;
-    return expr;
+    సమాసం_Def *సమాసం = సమాసం_Create(STMT_సమాసం_IDENT);
+    ఒకవేళ (!సమాసం)
+        తిరిగి ఖాళీ;
+    సమాసం->ident.ident = ident;
+    తిరిగి సమాసం;
 }
 
-ExprDef *
-ExprCreateUnary(enum stmt_type op, ExprDef *child)
+సమాసం_Def *
+సమాసం_Create_Unary(గణన stmt_type op, సమాసం_Def *బిడ్డ)
 {
-    ExprDef *expr = ExprCreate(op);
-    if (!expr)
-        return NULL;
-    expr->unary.child = child;
-    return expr;
+    సమాసం_Def *సమాసం = సమాసం_Create(op);
+    ఒకవేళ (!సమాసం)
+        తిరిగి ఖాళీ;
+    సమాసం->unary.బిడ్డ = బిడ్డ;
+    తిరిగి సమాసం;
 }
 
-ExprDef *
-ExprCreateBinary(enum stmt_type op, ExprDef *left, ExprDef *right)
+సమాసం_Def *
+సమాసం_Create_ద్విమాన(గణన stmt_type op, సమాసం_Def *ఎడమ, సమాసం_Def *కుడి)
 {
-    ExprDef *expr = ExprCreate(op);
-    if (!expr)
-        return NULL;
+    సమాసం_Def *సమాసం = సమాసం_Create(op);
+    ఒకవేళ (!సమాసం)
+        తిరిగి ఖాళీ;
 
-    expr->binary.left = left;
-    expr->binary.right = right;
+    సమాసం->ద్విమాన.ఎడమ = ఎడమ;
+    సమాసం->ద్విమాన.కుడి = కుడి;
 
-    return expr;
+    తిరిగి సమాసం;
 }
 
-ExprDef *
-ExprCreateFieldRef(xkb_atom_t element, xkb_atom_t field)
+సమాసం_Def *
+సమాసం_Create_క్షేత్రం_Ref(xkb_atom_t element, xkb_atom_t క్షేత్రం_2)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_FIELD_REF);
-    if (!expr)
-        return NULL;
-    expr->field_ref.element = element;
-    expr->field_ref.field = field;
-    return expr;
+    సమాసం_Def *సమాసం = సమాసం_Create(STMT_సమాసం_క్షేత్రం_REF);
+    ఒకవేళ (!సమాసం)
+        తిరిగి ఖాళీ;
+    సమాసం->క్షేత్రం_ref.element = element;
+    సమాసం->క్షేత్రం_ref.క్షేత్రం_2 = క్షేత్రం_2;
+    తిరిగి సమాసం;
 }
 
-ExprDef *
-ExprCreateArrayRef(xkb_atom_t element, xkb_atom_t field, ExprDef *entry)
+సమాసం_Def *
+సమాసం_Create_Array_Ref(xkb_atom_t element, xkb_atom_t క్షేత్రం_2, సమాసం_Def *నమోదు_2)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_ARRAY_REF);
-    if (!expr)
-        return NULL;
-    expr->array_ref.element = element;
-    expr->array_ref.field = field;
-    expr->array_ref.entry = entry;
-    return expr;
+    సమాసం_Def *సమాసం = సమాసం_Create(STMT_సమాసం_ARRAY_REF);
+    ఒకవేళ (!సమాసం)
+        తిరిగి ఖాళీ;
+    సమాసం->array_ref.element = element;
+    సమాసం->array_ref.క్షేత్రం_2 = క్షేత్రం_2;
+    సమాసం->array_ref.నమోదు_2 = నమోదు_2;
+    తిరిగి సమాసం;
 }
 
-ExprDef *
-ExprEmptyList(void)
+సమాసం_Def *
+సమాసం_ఖాళీలు_List(శూన్య)
 {
-    return ExprCreate(STMT_EXPR_EMPTY_LIST);
+    తిరిగి సమాసం_Create(STMT_సమాసం_ఖాళీలు_LIST);
 }
 
-ExprDef *
-ExprCreateAction(xkb_atom_t name, ExprDef *args)
+సమాసం_Def *
+సమాసం_Create_Action(xkb_atom_t name, సమాసం_Def *వాదనలు)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_ACTION_DECL);
-    if (!expr)
-        return NULL;
-    expr->action.name = name;
-    expr->action.args = args;
-    return expr;
+    సమాసం_Def *సమాసం = సమాసం_Create(STMT_సమాసం_ACTION_DECL);
+    ఒకవేళ (!సమాసం)
+        తిరిగి ఖాళీ;
+    సమాసం->action.name = name;
+    సమాసం->action.వాదనలు = వాదనలు;
+    తిరిగి సమాసం;
 }
 
-ExprDef *
-ExprCreateActionList(ExprDef *actions)
+సమాసం_Def *
+సమాసం_Create_Action_List(సమాసం_Def *actions)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_ACTION_LIST);
-    if (!expr)
-        return NULL;
-    expr->actions.actions = actions;
-    return expr;
+    సమాసం_Def *సమాసం = సమాసం_Create(STMT_సమాసం_ACTION_LIST);
+    ఒకవేళ (!సమాసం)
+        తిరిగి ఖాళీ;
+    సమాసం->actions.actions = actions;
+    తిరిగి సమాసం;
 }
 
-ExprDef *
-ExprCreateKeySymList(xkb_keysym_t sym)
+సమాసం_Def *
+సమాసం_Create_కీలకం_Sym_List(xkb_keysym_t sym)
 {
-    ExprDef *expr = ExprCreate(STMT_EXPR_KEYSYM_LIST);
-    if (!expr)
-        return NULL;
-    darray_init(expr->keysym_list.syms);
-    if (sym == XKB_KEY_NoSymbol) {
+    సమాసం_Def *సమాసం = సమాసం_Create(STMT_సమాసం_KEYSYM_LIST);
+    ఒకవేళ (!సమాసం)
+        తిరిగి ఖాళీ;
+    darray_init(సమాసం->keysym_list.syms);
+    ఒకవేళ (sym == XKB_కీలకం_No_చిహ్నం) {
         /* Discard NoSymbol */
-    } else {
-        darray_append(expr->keysym_list.syms, sym);
+    } లేకపోతే {
+        darray_append(సమాసం->keysym_list.syms, sym);
     }
-    return expr;
+    తిరిగి సమాసం;
 }
 
-ExprDef *
-ExprAppendKeySymList(ExprDef *expr, xkb_keysym_t sym)
+సమాసం_Def *
+సమాసం_Append_కీలకం_Sym_List(సమాసం_Def *సమాసం, xkb_keysym_t sym)
 {
-    if (sym == XKB_KEY_NoSymbol) {
+    ఒకవేళ (sym == XKB_కీలకం_No_చిహ్నం) {
         /* Discard NoSymbol */
-    } else {
-        darray_append(expr->keysym_list.syms, sym);
+    } లేకపోతే {
+        darray_append(సమాసం->keysym_list.syms, sym);
     }
-    return expr;
+    తిరిగి సమాసం;
 }
 
-ExprDef *
-ExprKeySymListAppendString(struct scanner *scanner,
-                           ExprDef *expr, const char *string)
+సమాసం_Def *
+సమాసం_కీలకం_Sym_List_Append_String(నిర్మాణం scanner *scanner,
+                           సమాసం_Def *సమాసం, స్థిరరాశి అక్షరం *string)
 {
     /* TODO: use strnlen with max len = 4 * MAX_KEYSYMS_LIST_LENGTH */
-    const size_t len = strlen(string);
-    size_t idx = 0;
-    size_t idx_cp = 1;
-    while (idx < len) {
-        size_t count = 0;
-        uint32_t cp = utf8_next_code_point(string + idx, len - idx, &count);
-        if (cp == INVALID_UTF8_CODE_POINT) {
+    స్థిరరాశి కొలత_t len = అక్షరశ్రేణి_పొడవు(string);
+    కొలత_t idx = 0;
+    కొలత_t idx_cp = 1;
+    అయితే (idx < len) {
+        కొలత_t లెక్క = 0;
+        uint32_t cp = utf8_తదుపరి_సంకేతం_బిందువు(string + idx, len - idx, &లెక్క);
+        ఒకవేళ (cp == INVALID_UTF8_సంకేతం_బిందువు) {
             scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                         "Cannot convert string to keysyms: "
                         "Invalid UTF-8 encoding starting at byte position %zu "
                         "(code point position: %zu).",
                         idx + 1, idx_cp);
-            goto error;
+            వెళ్ళు error;
         }
-        const xkb_keysym_t sym = xkb_utf32_to_keysym(cp);
-        if (sym == XKB_KEY_NoSymbol) {
-            scanner_err(scanner, XKB_LOG_MESSAGE_NO_ID,
+        స్థిరరాశి xkb_keysym_t sym = xkb_utf32_గమ్యం_keysym(cp);
+        ఒకవేళ (sym == XKB_కీలకం_No_చిహ్నం) {
+            scanner_err(scanner, XKB_LOG_సందేశం_NO_ID,
                         "Cannot convert string to keysyms: Unicode code point "
                         "U+04%"PRIX32" has no keysym equivalent"
                         "(byte position: %zu, code point position: %zu).",
                         cp, idx + 1, idx_cp);
-            goto error;
+            వెళ్ళు error;
         }
-        darray_append(expr->keysym_list.syms, sym);
-        idx += count;
+        darray_append(సమాసం->keysym_list.syms, sym);
+        idx += లెక్క;
         idx_cp++;
     }
-    assert(string[idx] == '\0');
-    return expr;
+    ప్రతిజ్ఞా(string[idx] == '\0');
+    తిరిగి సమాసం;
 error:
-    FreeStmt((ParseCommon*) expr);
-    return NULL;
+    FreeStmt((ParseCommon*) సమాసం);
+    తిరిగి ఖాళీ;
 }
 
 xkb_keysym_t
-KeysymParseString(struct scanner *scanner, const char *string)
+KeysymParseString(నిర్మాణం scanner *scanner, స్థిరరాశి అక్షరం *string)
 {
-    const size_t len = strlen(string);
-    if (len == 0) {
-        scanner_err(scanner, XKB_LOG_MESSAGE_NO_ID,
+    స్థిరరాశి కొలత_t len = అక్షరశ్రేణి_పొడవు(string);
+    ఒకవేళ (len == 0) {
+        scanner_err(scanner, XKB_LOG_సందేశం_NO_ID,
                     "Cannot convert string to single keysym: empty string.");
-        return XKB_KEY_NoSymbol;
+        తిరిగి XKB_కీలకం_No_చిహ్నం;
     }
-    size_t count = 0;
-    const uint32_t cp = utf8_next_code_point(string, len, &count);
-    if (cp == INVALID_UTF8_CODE_POINT) {
+    కొలత_t లెక్క = 0;
+    స్థిరరాశి uint32_t cp = utf8_తదుపరి_సంకేతం_బిందువు(string, len, &లెక్క);
+    ఒకవేళ (cp == INVALID_UTF8_సంకేతం_బిందువు) {
         scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                     "Cannot convert string to single keysym: "
                     "Invalid UTF-8 encoding.");
-        return XKB_KEY_NoSymbol;
-    } else if (count != len) {
+        తిరిగి XKB_కీలకం_No_చిహ్నం;
+    } లేకపోతే ఒకవేళ (లెక్క != len) {
         scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                     "Cannot convert string to single keysym: "
                     "Expected a single Unicode code point, got: \"%s\".",
                     string);
-        return XKB_KEY_NoSymbol;
+        తిరిగి XKB_కీలకం_No_చిహ్నం;
     }
-    const xkb_keysym_t sym = xkb_utf32_to_keysym(cp);
-    if (sym == XKB_KEY_NoSymbol) {
-        scanner_err(scanner, XKB_LOG_MESSAGE_NO_ID,
+    స్థిరరాశి xkb_keysym_t sym = xkb_utf32_గమ్యం_keysym(cp);
+    ఒకవేళ (sym == XKB_కీలకం_No_చిహ్నం) {
+        scanner_err(scanner, XKB_LOG_సందేశం_NO_ID,
                     "Cannot convert string to single keysym: Unicode "
                     "code point U+%04"PRIX32" has no keysym equivalent.",
                     cp);
     }
-    return sym;
+    తిరిగి sym;
 }
 
 KeycodeDef *
-KeycodeCreate(xkb_atom_t name, int64_t value)
+KeycodeCreate(xkb_atom_t name, int64_t విలువ)
 {
-    KeycodeDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    KeycodeDef *def = జ్ఞాపకం_ఇవ్వు(పరిమాణం(*def));
+    ఒకవేళ (!def)
+        తిరిగి ఖాళీ;
 
     def->common.type = STMT_KEYCODE;
-    def->common.next = NULL;
+    def->common.తదుపరి = ఖాళీ;
     def->name = name;
-    def->value = value;
+    def->విలువ = విలువ;
 
-    return def;
+    తిరిగి def;
 }
 
-KeyAliasDef *
-KeyAliasCreate(xkb_atom_t alias, xkb_atom_t real)
+కీలకం_Alias_Def *
+కీలకం_Alias_Create(xkb_atom_t alias, xkb_atom_t real)
 {
-    KeyAliasDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    కీలకం_Alias_Def *def = జ్ఞాపకం_ఇవ్వు(పరిమాణం(*def));
+    ఒకవేళ (!def)
+        తిరిగి ఖాళీ;
 
     def->common.type = STMT_ALIAS;
-    def->common.next = NULL;
+    def->common.తదుపరి = ఖాళీ;
     def->alias = alias;
     def->real = real;
 
-    return def;
+    తిరిగి def;
 }
 
 VModDef *
-VModCreate(xkb_atom_t name, ExprDef *value)
+VModCreate(xkb_atom_t name, సమాసం_Def *విలువ)
 {
-    VModDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    VModDef *def = జ్ఞాపకం_ఇవ్వు(పరిమాణం(*def));
+    ఒకవేళ (!def)
+        తిరిగి ఖాళీ;
 
     def->common.type = STMT_VMOD;
-    def->common.next = NULL;
+    def->common.తదుపరి = ఖాళీ;
     def->name = name;
-    def->value = value;
+    def->విలువ = విలువ;
 
-    return def;
+    తిరిగి def;
 }
 
 VarDef *
-VarCreate(ExprDef *name, ExprDef *value)
+VarCreate(సమాసం_Def *name, సమాసం_Def *విలువ)
 {
-    VarDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    VarDef *def = జ్ఞాపకం_ఇవ్వు(పరిమాణం(*def));
+    ఒకవేళ (!def)
+        తిరిగి ఖాళీ;
 
     def->common.type = STMT_VAR;
-    def->common.next = NULL;
+    def->common.తదుపరి = ఖాళీ;
     def->name = name;
-    def->value = value;
+    def->విలువ = విలువ;
 
-    return def;
+    తిరిగి def;
 }
 
 VarDef *
-BoolVarCreate(xkb_atom_t ident, bool set)
+BoolVarCreate(xkb_atom_t ident, bool సమితి)
 {
-    ExprDef *name, *value;
+    సమాసం_Def *name, *విలువ;
     VarDef *def;
-    if (!(name = ExprCreateIdent(ident))) {
-        return NULL;
+    ఒకవేళ (!(name = సమాసం_Create_Ident(ident))) {
+        తిరిగి ఖాళీ;
     }
-    if (!(value = ExprCreateBoolean(set))) {
+    ఒకవేళ (!(విలువ = సమాసం_Create_Boolean(సమితి))) {
         FreeStmt((ParseCommon *) name);
-        return NULL;
+        తిరిగి ఖాళీ;
     }
-    if (!(def = VarCreate(name, value))) {
+    ఒకవేళ (!(def = VarCreate(name, విలువ))) {
         FreeStmt((ParseCommon *) name);
-        FreeStmt((ParseCommon *) value);
-        return NULL;
+        FreeStmt((ParseCommon *) విలువ);
+        తిరిగి ఖాళీ;
     }
-    return def;
+    తిరిగి def;
 }
 
 InterpDef *
-InterpCreate(xkb_keysym_t sym, ExprDef *match)
+InterpCreate(xkb_keysym_t sym, సమాసం_Def *సరిపోలిక)
 {
-    InterpDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    InterpDef *def = జ్ఞాపకం_ఇవ్వు(పరిమాణం(*def));
+    ఒకవేళ (!def)
+        తిరిగి ఖాళీ;
 
     def->common.type = STMT_INTERP;
-    def->common.next = NULL;
+    def->common.తదుపరి = ఖాళీ;
     def->sym = sym;
-    def->match = match;
-    def->def = NULL;
+    def->సరిపోలిక = సరిపోలిక;
+    def->def = ఖాళీ;
 
-    return def;
+    తిరిగి def;
 }
 
-KeyTypeDef *
-KeyTypeCreate(xkb_atom_t name, VarDef *body)
+కీలకం_Type_Def *
+కీలకం_Type_Create(xkb_atom_t name, VarDef *body)
 {
-    KeyTypeDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    కీలకం_Type_Def *def = జ్ఞాపకం_ఇవ్వు(పరిమాణం(*def));
+    ఒకవేళ (!def)
+        తిరిగి ఖాళీ;
 
     def->common.type = STMT_TYPE;
-    def->common.next = NULL;
-    def->merge = MERGE_DEFAULT;
+    def->common.తదుపరి = ఖాళీ;
+    def->విలీనం = విలీనం_DEFAULT;
     def->name = name;
     def->body = body;
 
-    return def;
+    తిరిగి def;
 }
 
 SymbolsDef *
-SymbolsCreate(xkb_atom_t keyName, VarDef *symbols)
+SymbolsCreate(xkb_atom_t కీలకం_Name, VarDef *symbols)
 {
-    SymbolsDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    SymbolsDef *def = జ్ఞాపకం_ఇవ్వు(పరిమాణం(*def));
+    ఒకవేళ (!def)
+        తిరిగి ఖాళీ;
 
     def->common.type = STMT_SYMBOLS;
-    def->common.next = NULL;
-    def->merge = MERGE_DEFAULT;
-    def->keyName = keyName;
+    def->common.తదుపరి = ఖాళీ;
+    def->విలీనం = విలీనం_DEFAULT;
+    def->కీలకం_Name = కీలకం_Name;
     def->symbols = symbols;
 
-    return def;
+    తిరిగి def;
 }
 
-GroupCompatDef *
-GroupCompatCreate(int64_t group, ExprDef *val)
+సమూహం_Compat_Def *
+సమూహం_Compat_Create(int64_t సమూహం, సమాసం_Def *val)
 {
-    GroupCompatDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    సమూహం_Compat_Def *def = జ్ఞాపకం_ఇవ్వు(పరిమాణం(*def));
+    ఒకవేళ (!def)
+        తిరిగి ఖాళీ;
 
-    def->common.type = STMT_GROUP_COMPAT;
-    def->common.next = NULL;
-    def->merge = MERGE_DEFAULT;
-    def->group = group;
+    def->common.type = STMT_సమూహం_COMPAT;
+    def->common.తదుపరి = ఖాళీ;
+    def->విలీనం = విలీనం_DEFAULT;
+    def->సమూహం = సమూహం;
     def->def = val;
 
-    return def;
+    తిరిగి def;
 }
 
 ModMapDef *
-ModMapCreate(ExprDef *modifiers, ExprDef *keys)
+ModMapCreate(సమాసం_Def *modifiers, సమాసం_Def *కీలకాలు)
 {
-    ModMapDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    ModMapDef *def = జ్ఞాపకం_ఇవ్వు(పరిమాణం(*def));
+    ఒకవేళ (!def)
+        తిరిగి ఖాళీ;
 
     def->common.type = STMT_MODMAP;
-    def->common.next = NULL;
-    def->merge = MERGE_DEFAULT;
+    def->common.తదుపరి = ఖాళీ;
+    def->విలీనం = విలీనం_DEFAULT;
     def->modifiers = modifiers;
-    def->keys = keys;
+    def->కీలకాలు = కీలకాలు;
 
-    return def;
+    తిరిగి def;
 }
 
 LedMapDef *
 LedMapCreate(xkb_atom_t name, VarDef *body)
 {
-    LedMapDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    LedMapDef *def = జ్ఞాపకం_ఇవ్వు(పరిమాణం(*def));
+    ఒకవేళ (!def)
+        తిరిగి ఖాళీ;
 
     def->common.type = STMT_LED_MAP;
-    def->common.next = NULL;
-    def->merge = MERGE_DEFAULT;
+    def->common.తదుపరి = ఖాళీ;
+    def->విలీనం = విలీనం_DEFAULT;
     def->name = name;
     def->body = body;
 
-    return def;
+    తిరిగి def;
 }
 
 LedNameDef *
-LedNameCreate(int64_t ndx, ExprDef *name, bool virtual)
+LedNameCreate(int64_t ndx, సమాసం_Def *name, bool మాయా)
 {
-    LedNameDef *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    LedNameDef *def = జ్ఞాపకం_ఇవ్వు(పరిమాణం(*def));
+    ఒకవేళ (!def)
+        తిరిగి ఖాళీ;
 
     def->common.type = STMT_LED_NAME;
-    def->common.next = NULL;
-    def->merge = MERGE_DEFAULT;
+    def->common.తదుపరి = ఖాళీ;
+    def->విలీనం = విలీనం_DEFAULT;
     def->ndx = ndx;
     def->name = name;
-    def->virtual = virtual;
+    def->మాయా = మాయా;
 
-    return def;
+    తిరిగి def;
 }
 
 UnknownStatement *
-UnknownStatementCreate(enum stmt_type type, struct sval name)
+UnknownStatementCreate(గణన stmt_type type, నిర్మాణం sval name)
 {
-    UnknownStatement *def = malloc(sizeof(*def));
-    if (!def)
-        return NULL;
+    UnknownStatement *def = జ్ఞాపకం_ఇవ్వు(పరిమాణం(*def));
+    ఒకవేళ (!def)
+        తిరిగి ఖాళీ;
 
     def->common.type = type;
-    def->common.next = NULL;
-    def->name = strndup(name.start, name.len);
-    if (!def->name) {
-        free(def);
-        return NULL;
+    def->common.తదుపరి = ఖాళీ;
+    def->name = strndup(name.ప్రారంభం, name.len);
+    ఒకవేళ (!def->name) {
+        విడుదల(def);
+        తిరిగి ఖాళీ;
     }
 
-    return def;
+    తిరిగి def;
 }
 
-static void
+స్థిర శూన్య
 FreeInclude(IncludeStmt *incl);
 
 IncludeStmt *
-IncludeCreate(struct xkb_context *ctx, char *str, enum merge_mode merge)
+IncludeCreate(నిర్మాణం xkb_context *ctx, అక్షరం *str, గణన విలీనం_బహుళకం విలీనం)
 {
-    IncludeStmt *incl, *first;
-    char *stmt, *tmp;
-    char nextop;
+    IncludeStmt *incl, *మొదటి;
+    అక్షరం *stmt, *tmp;
+    అక్షరం nextop;
 
-    incl = first = NULL;
+    incl = మొదటి = ఖాళీ;
     tmp = str;
-    stmt = strdup_safe(str);
-    while (tmp && *tmp)
+    stmt = strdup_సురక్షిత(str);
+    అయితే (tmp && *tmp)
     {
-        char *file = NULL, *map = NULL, *extra_data = NULL;
+        అక్షరం *file = ఖాళీ, *map = ఖాళీ, *extra_దత్తాంశం = ఖాళీ;
 
-        if (!ParseIncludeMap(&tmp, &file, &map, &nextop, &extra_data))
-            goto err;
+        ఒకవేళ (!ParseIncludeMap(&tmp, &file, &map, &nextop, &extra_దత్తాంశం))
+            వెళ్ళు err;
 
         /*
          * Given an RMLVO (here layout) like 'us,,fr', the rules parser
@@ -516,72 +516,72 @@ IncludeCreate(struct xkb_context *ctx, char *str, enum merge_mode merge)
          * We should just skip the ':2' in this case and leave it to the
          * appropriate section to deal with the empty group.
          */
-        if (isempty(file)) {
-            free(file);
-            free(map);
-            free(extra_data);
-            continue;
+        ఒకవేళ (isempty(file)) {
+            విడుదల(file);
+            విడుదల(map);
+            విడుదల(extra_దత్తాంశం);
+            కొనసాగు;
         }
 
-        if (first == NULL) {
-            first = incl = malloc(sizeof(*first));
-        } else {
-            incl->next_incl = malloc(sizeof(*first));
-            incl = incl->next_incl;
+        ఒకవేళ (మొదటి == ఖాళీ) {
+            మొదటి = incl = జ్ఞాపకం_ఇవ్వు(పరిమాణం(*మొదటి));
+        } లేకపోతే {
+            incl->తదుపరి_incl = జ్ఞాపకం_ఇవ్వు(పరిమాణం(*మొదటి));
+            incl = incl->తదుపరి_incl;
         }
 
-        if (!incl) {
-            free(file);
-            free(map);
-            free(extra_data);
-            break;
+        ఒకవేళ (!incl) {
+            విడుదల(file);
+            విడుదల(map);
+            విడుదల(extra_దత్తాంశం);
+            ఆపు;
         }
 
         incl->common.type = STMT_INCLUDE;
-        incl->common.next = NULL;
-        incl->merge = merge;
-        incl->stmt = NULL;
+        incl->common.తదుపరి = ఖాళీ;
+        incl->విలీనం = విలీనం;
+        incl->stmt = ఖాళీ;
         incl->file = file;
         incl->map = map;
-        incl->modifier = extra_data;
-        incl->next_incl = NULL;
+        incl->modifier = extra_దత్తాంశం;
+        incl->తదుపరి_incl = ఖాళీ;
 
-        switch (nextop) {
-        case MERGE_AUGMENT_PREFIX:
-            merge = MERGE_AUGMENT;
-            break;
-        case MERGE_REPLACE_PREFIX:
-            merge = MERGE_REPLACE;
-            break;
-        default:
-            merge = MERGE_OVERRIDE;
+        ఎంపిక (nextop) {
+        స్థితి విలీనం_AUGMENT_ఉపసర్గ:
+            విలీనం = విలీనం_AUGMENT;
+            ఆపు;
+        స్థితి విలీనం_REPLACE_ఉపసర్గ:
+            విలీనం = విలీనం_REPLACE;
+            ఆపు;
+        అప్రమేయ:
+            విలీనం = విలీనం_OVERRIDE;
         }
     }
 
-    if (first)
-        first->stmt = stmt;
-    else
-        free(stmt);
+    ఒకవేళ (మొదటి)
+        మొదటి->stmt = stmt;
+    లేకపోతే
+        విడుదల(stmt);
 
-    return first;
+    తిరిగి మొదటి;
 
 err:
     log_err(ctx, XKB_ERROR_INVALID_INCLUDE_STATEMENT,
             "Illegal include statement \"%s\"; Ignored\n", stmt);
-    FreeInclude(first);
-    free(stmt);
-    return NULL;
+    FreeInclude(మొదటి);
+    విడుదల(stmt);
+    తిరిగి ఖాళీ;
 }
 
 XkbFile *
-XkbFileCreate(enum xkb_file_type type, char *name, ParseCommon *defs,
-              enum xkb_map_flags flags)
+XkbFileCreate(గణన xkb_file_type type, అక్షరం *name, ParseCommon *defs,
+              గణన xkb_map_flags flags)
 {
     XkbFile *file;
 
-    file = calloc(1, sizeof(*file));
-    if (!file)
-        return NULL;
+    file = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*file));
+    ఒకవేళ (!file)
+        తిరిగి ఖాళీ;
 
     XkbEscapeMapName(name);
     file->file_type = type;
@@ -589,286 +589,286 @@ XkbFileCreate(enum xkb_file_type type, char *name, ParseCommon *defs,
     file->defs = defs;
     file->flags = flags;
 
-    return file;
+    తిరిగి file;
 }
 
 XkbFile *
-XkbFileFromComponents(struct xkb_context *ctx,
-                      const struct xkb_component_names *kkctgs)
+XkbFileFromComponents(నిర్మాణం xkb_context *ctx,
+                      స్థిరరాశి నిర్మాణం xkb_component_పేర్లు *kkctgs)
 {
-    char *const components[] = {
+    అక్షరం *స్థిరరాశి components[] = {
         kkctgs->keycodes, kkctgs->types,
         kkctgs->compatibility, kkctgs->symbols,
     };
-    enum xkb_file_type type;
-    IncludeStmt *include = NULL;
-    XkbFile *file = NULL;
-    ParseCommon *defs = NULL, *defsLast = NULL;
+    గణన xkb_file_type type;
+    IncludeStmt *include = ఖాళీ;
+    XkbFile *file = ఖాళీ;
+    ParseCommon *defs = ఖాళీ, *defs_చివరి = ఖాళీ;
 
-    for (type = FIRST_KEYMAP_FILE_TYPE; type <= LAST_KEYMAP_FILE_TYPE; type++) {
-        include = IncludeCreate(ctx, components[type], MERGE_DEFAULT);
-        if (!include)
-            goto err;
+    కొరకు (type = మొదటి_KEYMAP_FILE_TYPE; type <= చివరి_KEYMAP_FILE_TYPE; type++) {
+        include = IncludeCreate(ctx, components[type], విలీనం_DEFAULT);
+        ఒకవేళ (!include)
+            వెళ్ళు err;
 
-        file = XkbFileCreate(type, NULL, (ParseCommon *) include, 0);
-        if (!file) {
+        file = XkbFileCreate(type, ఖాళీ, (ParseCommon *) include, 0);
+        ఒకవేళ (!file) {
             FreeInclude(include);
-            goto err;
+            వెళ్ళు err;
         }
 
-        if (!defs)
-            defsLast = defs = &file->common;
-        else
-            defsLast = defsLast->next = &file->common;
+        ఒకవేళ (!defs)
+            defs_చివరి = defs = &file->common;
+        లేకపోతే
+            defs_చివరి = defs_చివరి->తదుపరి = &file->common;
     }
 
-    file = XkbFileCreate(FILE_TYPE_KEYMAP, NULL, defs, 0);
-    if (!file)
-        goto err;
+    file = XkbFileCreate(FILE_TYPE_KEYMAP, ఖాళీ, defs, 0);
+    ఒకవేళ (!file)
+        వెళ్ళు err;
 
-    return file;
+    తిరిగి file;
 
 err:
     FreeXkbFile((XkbFile *) defs);
-    return NULL;
+    తిరిగి ఖాళీ;
 }
 
-static void
+స్థిర శూన్య
 FreeInclude(IncludeStmt *incl)
 {
-    IncludeStmt *next;
+    IncludeStmt *తదుపరి;
 
-    while (incl)
+    అయితే (incl)
     {
-        next = incl->next_incl;
+        తదుపరి = incl->తదుపరి_incl;
 
-        free(incl->file);
-        free(incl->map);
-        free(incl->modifier);
-        free(incl->stmt);
+        విడుదల(incl->file);
+        విడుదల(incl->map);
+        విడుదల(incl->modifier);
+        విడుదల(incl->stmt);
 
-        free(incl);
-        incl = next;
+        విడుదల(incl);
+        incl = తదుపరి;
     }
 }
 
-void
+శూన్య
 FreeStmt(ParseCommon *stmt)
 {
-    ParseCommon *next;
+    ParseCommon *తదుపరి;
 
-    while (stmt)
+    అయితే (stmt)
     {
-        next = stmt->next;
+        తదుపరి = stmt->తదుపరి;
 
-        switch (stmt->type) {
-        case STMT_INCLUDE:
+        ఎంపిక (stmt->type) {
+        స్థితి STMT_INCLUDE:
             FreeInclude((IncludeStmt *) stmt);
             /* stmt is already free'd here. */
-            stmt = NULL;
-            break;
+            stmt = ఖాళీ;
+            ఆపు;
 
-        case STMT_EXPR_NEGATE:
-        case STMT_EXPR_UNARY_PLUS:
-        case STMT_EXPR_NOT:
-        case STMT_EXPR_INVERT:
-            FreeStmt((ParseCommon *) ((ExprUnary *) stmt)->child);
-            break;
+        స్థితి STMT_సమాసం_NEGATE:
+        స్థితి STMT_సమాసం_UNARY_PLUS:
+        స్థితి STMT_సమాసం_NOT:
+        స్థితి STMT_సమాసం_INVERT:
+            FreeStmt((ParseCommon *) ((సమాసం_Unary *) stmt)->బిడ్డ);
+            ఆపు;
 
-        case STMT_EXPR_DIVIDE:
-        case STMT_EXPR_ADD:
-        case STMT_EXPR_SUBTRACT:
-        case STMT_EXPR_MULTIPLY:
-        case STMT_EXPR_ASSIGN:
-            FreeStmt((ParseCommon *) ((ExprBinary *) stmt)->left);
-            FreeStmt((ParseCommon *) ((ExprBinary *) stmt)->right);
-            break;
+        స్థితి STMT_సమాసం_DIVIDE:
+        స్థితి STMT_సమాసం_కూడు:
+        స్థితి STMT_సమాసం_వ్యవకలనం:
+        స్థితి STMT_సమాసం_MULTIPLY:
+        స్థితి STMT_సమాసం_కేటాయించు:
+            FreeStmt((ParseCommon *) ((సమాసం_ద్విమాన *) stmt)->ఎడమ);
+            FreeStmt((ParseCommon *) ((సమాసం_ద్విమాన *) stmt)->కుడి);
+            ఆపు;
 
-        case STMT_EXPR_ACTION_DECL:
-            FreeStmt((ParseCommon *) ((ExprAction *) stmt)->args);
-            break;
+        స్థితి STMT_సమాసం_ACTION_DECL:
+            FreeStmt((ParseCommon *) ((సమాసం_Action *) stmt)->వాదనలు);
+            ఆపు;
 
-        case STMT_EXPR_ACTION_LIST:
-            FreeStmt((ParseCommon *) ((ExprActionList *) stmt)->actions);
-            break;
+        స్థితి STMT_సమాసం_ACTION_LIST:
+            FreeStmt((ParseCommon *) ((సమాసం_Action_List *) stmt)->actions);
+            ఆపు;
 
-        case STMT_EXPR_ARRAY_REF:
-            FreeStmt((ParseCommon *) ((ExprArrayRef *) stmt)->entry);
-            break;
+        స్థితి STMT_సమాసం_ARRAY_REF:
+            FreeStmt((ParseCommon *) ((సమాసం_Array_Ref *) stmt)->నమోదు_2);
+            ఆపు;
 
-        case STMT_EXPR_KEYSYM_LIST:
-            darray_free(((ExprKeysymList *) stmt)->syms);
-            break;
+        స్థితి STMT_సమాసం_KEYSYM_LIST:
+            darray_free(((సమాసం_Keysym_List *) stmt)->syms);
+            ఆపు;
 
-        case STMT_VAR:
+        స్థితి STMT_VAR:
             FreeStmt((ParseCommon *) ((VarDef *) stmt)->name);
-            FreeStmt((ParseCommon *) ((VarDef *) stmt)->value);
-            break;
-        case STMT_TYPE:
-            FreeStmt((ParseCommon *) ((KeyTypeDef *) stmt)->body);
-            break;
-        case STMT_INTERP:
-            FreeStmt((ParseCommon *) ((InterpDef *) stmt)->match);
+            FreeStmt((ParseCommon *) ((VarDef *) stmt)->విలువ);
+            ఆపు;
+        స్థితి STMT_TYPE:
+            FreeStmt((ParseCommon *) ((కీలకం_Type_Def *) stmt)->body);
+            ఆపు;
+        స్థితి STMT_INTERP:
+            FreeStmt((ParseCommon *) ((InterpDef *) stmt)->సరిపోలిక);
             FreeStmt((ParseCommon *) ((InterpDef *) stmt)->def);
-            break;
-        case STMT_VMOD:
-            FreeStmt((ParseCommon *) ((VModDef *) stmt)->value);
-            break;
-        case STMT_SYMBOLS:
+            ఆపు;
+        స్థితి STMT_VMOD:
+            FreeStmt((ParseCommon *) ((VModDef *) stmt)->విలువ);
+            ఆపు;
+        స్థితి STMT_SYMBOLS:
             FreeStmt((ParseCommon *) ((SymbolsDef *) stmt)->symbols);
-            break;
-        case STMT_MODMAP:
+            ఆపు;
+        స్థితి STMT_MODMAP:
             FreeStmt((ParseCommon *) ((ModMapDef *) stmt)->modifiers);
-            FreeStmt((ParseCommon *) ((ModMapDef *) stmt)->keys);
-            break;
-        case STMT_GROUP_COMPAT:
-            FreeStmt((ParseCommon *) ((GroupCompatDef *) stmt)->def);
-            break;
-        case STMT_LED_MAP:
+            FreeStmt((ParseCommon *) ((ModMapDef *) stmt)->కీలకాలు);
+            ఆపు;
+        స్థితి STMT_సమూహం_COMPAT:
+            FreeStmt((ParseCommon *) ((సమూహం_Compat_Def *) stmt)->def);
+            ఆపు;
+        స్థితి STMT_LED_MAP:
             FreeStmt((ParseCommon *) ((LedMapDef *) stmt)->body);
-            break;
-        case STMT_LED_NAME:
+            ఆపు;
+        స్థితి STMT_LED_NAME:
             FreeStmt((ParseCommon *) ((LedNameDef *) stmt)->name);
-            break;
-        case STMT_UNKNOWN_DECLARATION:
-        case STMT_UNKNOWN_COMPOUND:
-            free(((UnknownStatement *) stmt)->name);
-            break;
-        default:
+            ఆపు;
+        స్థితి STMT_UNKNOWN_DECLARATION:
+        స్థితి STMT_UNKNOWN_COMPOUND:
+            విడుదల(((UnknownStatement *) stmt)->name);
+            ఆపు;
+        అప్రమేయ:
             {} /* Label followed by declaration requires C23 */
-            static_assert(_STMT_NUM_VALUES == 37 &&
-                          _STMT_NUM_VALUES == STMT_UNKNOWN_COMPOUND + 1,
+            static_assert(STMT_అంకె_విలువలు == 37 &&
+                          STMT_అంకె_విలువలు == STMT_UNKNOWN_COMPOUND + 1,
                           "Missing statement type");
-            break;
+            ఆపు;
         }
 
-        free(stmt);
-        stmt = next;
+        విడుదల(stmt);
+        stmt = తదుపరి;
     }
 }
 
-void
+శూన్య
 FreeXkbFile(XkbFile *file)
 {
-    XkbFile *next;
+    XkbFile *తదుపరి;
 
-    while (file)
+    అయితే (file)
     {
-        next = (XkbFile *) file->common.next;
+        తదుపరి = (XkbFile *) file->common.తదుపరి;
 
-        switch (file->file_type) {
-        case FILE_TYPE_KEYMAP:
+        ఎంపిక (file->file_type) {
+        స్థితి FILE_TYPE_KEYMAP:
             FreeXkbFile((XkbFile *) file->defs);
-            break;
+            ఆపు;
 
-        case FILE_TYPE_TYPES:
-        case FILE_TYPE_COMPAT:
-        case FILE_TYPE_SYMBOLS:
-        case FILE_TYPE_KEYCODES:
-        case FILE_TYPE_GEOMETRY:
+        స్థితి FILE_TYPE_TYPES:
+        స్థితి FILE_TYPE_COMPAT:
+        స్థితి FILE_TYPE_SYMBOLS:
+        స్థితి FILE_TYPE_KEYCODES:
+        స్థితి FILE_TYPE_GEOMETRY:
             FreeStmt(file->defs);
-            break;
+            ఆపు;
 
-        default:
-            break;
+        అప్రమేయ:
+            ఆపు;
         }
 
-        free(file->name);
-        free(file);
-        file = next;
+        విడుదల(file->name);
+        విడుదల(file);
+        file = తదుపరి;
     }
 }
 
-static const char *xkb_file_type_strings[_FILE_TYPE_NUM_ENTRIES] = {
+స్థిర స్థిరరాశి అక్షరం *xkb_file_type_అక్షరశ్రేణులు[FILE_TYPE_అంకె_ENTRIES] = {
     [FILE_TYPE_KEYCODES] = "xkb_keycodes",
     [FILE_TYPE_TYPES] = "xkb_types",
     [FILE_TYPE_COMPAT] = "xkb_compatibility",
     [FILE_TYPE_SYMBOLS] = "xkb_symbols",
     [FILE_TYPE_GEOMETRY] = "xkb_geometry",
     [FILE_TYPE_KEYMAP] = "xkb_keymap",
-    [FILE_TYPE_RULES] = "rules",
+    [FILE_TYPE_నియమాలు] = "rules",
 };
 
-const char *
-xkb_file_type_to_string(enum xkb_file_type type)
+స్థిరరాశి అక్షరం *
+xkb_file_type_గమ్యం_string(గణన xkb_file_type type)
 {
-    if (type >= _FILE_TYPE_NUM_ENTRIES)
-        return "unknown";
-    return xkb_file_type_strings[type];
+    ఒకవేళ (type >= FILE_TYPE_అంకె_ENTRIES)
+        తిరిగి "unknown";
+    తిరిగి xkb_file_type_అక్షరశ్రేణులు[type];
 }
 
-static const char *stmt_type_strings[_STMT_NUM_VALUES] = {
+స్థిర స్థిరరాశి అక్షరం *stmt_type_అక్షరశ్రేణులు[STMT_అంకె_విలువలు] = {
     [STMT_UNKNOWN] = "unknown statement",
     [STMT_INCLUDE] = "include statement",
     [STMT_KEYCODE] = "key name definition",
     [STMT_ALIAS] = "key alias definition",
-    [STMT_EXPR_STRING_LITERAL] = "string literal expression",
-    [STMT_EXPR_INTEGER_LITERAL] = "integer literal expression",
-    [STMT_EXPR_FLOAT_LITERAL] = "float literal expression",
-    [STMT_EXPR_BOOLEAN_LITERAL] = "boolean literal expression",
-    [STMT_EXPR_KEYNAME_LITERAL] = "key name expression",
-    [STMT_EXPR_KEYSYM_LITERAL] = "keysym expression",
-    [STMT_EXPR_IDENT] = "identifier expression",
-    [STMT_EXPR_ACTION_DECL] = "action declaration expression",
-    [STMT_EXPR_FIELD_REF] = "field reference expression",
-    [STMT_EXPR_ARRAY_REF] = "array reference expression",
-    [STMT_EXPR_EMPTY_LIST] = "empty list expression",
-    [STMT_EXPR_KEYSYM_LIST] = "keysym list expression",
-    [STMT_EXPR_ACTION_LIST] = "action list expression",
-    [STMT_EXPR_ADD] = "addition expression",
-    [STMT_EXPR_SUBTRACT] = "substraction expression",
-    [STMT_EXPR_MULTIPLY] = "multiplication expression",
-    [STMT_EXPR_DIVIDE] = "division expression",
-    [STMT_EXPR_ASSIGN] = "assignment expression",
-    [STMT_EXPR_NOT] = "logical negation expression",
-    [STMT_EXPR_NEGATE] = "arithmetic negation expression",
-    [STMT_EXPR_INVERT] = "bitwise inversion expression",
-    [STMT_EXPR_UNARY_PLUS] = "unary plus expression",
+    [STMT_సమాసం_STRING_LITERAL] = "string literal expression",
+    [STMT_సమాసం_INTEGER_LITERAL] = "integer literal expression",
+    [STMT_సమాసం_FLOAT_LITERAL] = "float literal expression",
+    [STMT_సమాసం_BOOLEAN_LITERAL] = "boolean literal expression",
+    [STMT_సమాసం_KEYNAME_LITERAL] = "key name expression",
+    [STMT_సమాసం_KEYSYM_LITERAL] = "keysym expression",
+    [STMT_సమాసం_IDENT] = "identifier expression",
+    [STMT_సమాసం_ACTION_DECL] = "action declaration expression",
+    [STMT_సమాసం_క్షేత్రం_REF] = "field reference expression",
+    [STMT_సమాసం_ARRAY_REF] = "array reference expression",
+    [STMT_సమాసం_ఖాళీలు_LIST] = "empty list expression",
+    [STMT_సమాసం_KEYSYM_LIST] = "keysym list expression",
+    [STMT_సమాసం_ACTION_LIST] = "action list expression",
+    [STMT_సమాసం_కూడు] = "addition expression",
+    [STMT_సమాసం_వ్యవకలనం] = "substraction expression",
+    [STMT_సమాసం_MULTIPLY] = "multiplication expression",
+    [STMT_సమాసం_DIVIDE] = "division expression",
+    [STMT_సమాసం_కేటాయించు] = "assignment expression",
+    [STMT_సమాసం_NOT] = "logical negation expression",
+    [STMT_సమాసం_NEGATE] = "arithmetic negation expression",
+    [STMT_సమాసం_INVERT] = "bitwise inversion expression",
+    [STMT_సమాసం_UNARY_PLUS] = "unary plus expression",
     [STMT_VAR] = "variable definition",
     [STMT_TYPE] = "key type definition",
     [STMT_INTERP] = "symbol interpretation definition",
     [STMT_VMOD] = "virtual modifiers definition",
     [STMT_SYMBOLS] = "key symbols definition",
     [STMT_MODMAP] = "modifier map declaration",
-    [STMT_GROUP_COMPAT] = "group declaration",
+    [STMT_సమూహం_COMPAT] = "group declaration",
     [STMT_LED_MAP] = "indicator map declaration",
     [STMT_LED_NAME] = "indicator name declaration",
     [STMT_UNKNOWN_DECLARATION] = "unknown declaration statement",
     [STMT_UNKNOWN_COMPOUND] = "unknown compound statement",
 };
-static_assert(_STMT_NUM_VALUES == 37 &&
-              _STMT_NUM_VALUES == STMT_UNKNOWN_COMPOUND + 1,
+static_assert(STMT_అంకె_విలువలు == 37 &&
+              STMT_అంకె_విలువలు == STMT_UNKNOWN_COMPOUND + 1,
               "Missing statement type");
 
-const char *
-stmt_type_to_string(enum stmt_type type)
+స్థిరరాశి అక్షరం *
+stmt_type_గమ్యం_string(గణన stmt_type type)
 {
-    if (type >= _STMT_NUM_VALUES)
-        return NULL;
-    return stmt_type_strings[type];
+    ఒకవేళ (type >= STMT_అంకె_విలువలు)
+        తిరిగి ఖాళీ;
+    తిరిగి stmt_type_అక్షరశ్రేణులు[type];
 }
 
-char
-stmt_type_to_operator_char(enum stmt_type type)
+అక్షరం
+stmt_type_గమ్యం_operator_char(గణన stmt_type type)
 {
-    switch (type) {
-    case STMT_EXPR_ADD:
-        return '+';
-    case STMT_EXPR_SUBTRACT:
-        return '-';
-    case STMT_EXPR_MULTIPLY:
-        return '*';
-    case STMT_EXPR_DIVIDE:
-        return '/';
-    case STMT_EXPR_NOT:
-        return '!';
-    case STMT_EXPR_NEGATE:
-        return '-';
-    case STMT_EXPR_INVERT:
-        return '~';
-    case STMT_EXPR_UNARY_PLUS:
-        return '+';
-    default:
-        return '\0';
+    ఎంపిక (type) {
+    స్థితి STMT_సమాసం_కూడు:
+        తిరిగి '+';
+    స్థితి STMT_సమాసం_వ్యవకలనం:
+        తిరిగి '-';
+    స్థితి STMT_సమాసం_MULTIPLY:
+        తిరిగి '*';
+    స్థితి STMT_సమాసం_DIVIDE:
+        తిరిగి '/';
+    స్థితి STMT_సమాసం_NOT:
+        తిరిగి '!';
+    స్థితి STMT_సమాసం_NEGATE:
+        తిరిగి '-';
+    స్థితి STMT_సమాసం_INVERT:
+        తిరిగి '~';
+    స్థితి STMT_సమాసం_UNARY_PLUS:
+        తిరిగి '+';
+    అప్రమేయ:
+        తిరిగి '\0';
     }
 }

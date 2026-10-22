@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include <assert.h>
-#include <xcb/xkb.h>
+#అన్తర్భావ <assert.h>
+#అన్తర్భావ <xcb/xkb.h>
 
-#include "darray.h"
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcommon/xkbcommon-keysyms.h"
-#include "atom.h"
-#include "keymap.h"
-#include "x11-priv.h"
+#అన్తర్భావ "darray.h"
+#అన్తర్భావ "xkbcommon/xkbcommon.h"
+#అన్తర్భావ "xkbcommon/xkbcommon-keysyms.h"
+#అన్తర్భావ "atom.h"
+#అన్తర్భావ "keymap.h"
+#అన్తర్భావ "x11-priv.h"
 
 /*
  * References for the lonesome traveler:
@@ -35,15 +35,15 @@
 
 /* Constants from /usr/include/X11/extensions/XKB.h */
 /* XkbNumModifiers. */
-#define NUM_REAL_MODS 8u
+#నిర్వచించు అంకె_REAL_MODS 8u
 /* XkbNumVirtualMods. */
-#define NUM_VMODS 16u
+#నిర్వచించు అంకె_VMODS 16u
 /* XkbNoModifier. */
-#define NO_MODIFIER 0xff
+#నిర్వచించు NO_MODIFIER 0xff
 /* XkbNumIndicators. */
-#define NUM_INDICATORS 32u
+#నిర్వచించు అంకె_INDICATORS 32u
 /* XkbAllIndicatorsMask. */
-#define ALL_INDICATORS_MASK 0xffffffff
+#నిర్వచించు ALL_INDICATORS_ముసుగు 0xffffffff
 
 /* Some macros. Not very nice but it'd be worse without them. */
 
@@ -51,274 +51,274 @@
  * We try not to trust the server too much and be paranoid. If we get
  * something which we definitely shouldn't, we fail.
  */
-#define FAIL_UNLESS(expr) do {                              \
-    if (!(expr)) {                                          \
-        log_err(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,         \
+#నిర్వచించు FAIL_UNLESS(సమాసం) చేయి {                              \
+    ఒకవేళ (!(సమాసం)) {                                          \
+        log_err(keymap->ctx, XKB_LOG_సందేశం_NO_ID,         \
                 "x11: failed to get keymap from X server: " \
                 "unmet condition in %s(): %s\n",            \
-                __func__, STRINGIFY(expr));                 \
-        goto fail;                                          \
+                __func__, STRINGIFY(సమాసం));                 \
+        వెళ్ళు fail;                                          \
     }                                                       \
-} while (0)
+} అయితే (0)
 
-#define FAIL_IF_BAD_REPLY(reply, request_name) do {         \
-    if (!(reply)) {                                           \
-        log_err(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,         \
+#నిర్వచించు FAIL_IF_BAD_జవాబు(జవాబు, request_name) చేయి {         \
+    ఒకవేళ (!(జవాబు)) {                                           \
+        log_err(keymap->ctx, XKB_LOG_సందేశం_NO_ID,         \
                 "x11: failed to get keymap from X server: " \
                 "%s request failed\n",                      \
                 (request_name));                            \
-        goto fail;                                          \
+        వెళ్ళు fail;                                          \
     }                                                       \
-} while (0)
+} అయితే (0)
 
-#define ALLOC_OR_FAIL(arr, nmemb) do {                      \
-    if ((nmemb) > 0) {                                      \
-        (arr) = calloc((nmemb), sizeof(*(arr)));            \
-        if (!(arr))                                         \
-            goto fail;                                      \
+#నిర్వచించు ALLOC_OR_FAIL(arr, nmemb) చేయి {                      \
+    ఒకవేళ ((nmemb) > 0) {                                      \
+        (arr) = సున్నా_జ్ఞాపకం_ఇవ్వు((nmemb), పరిమాణం(*(arr)));            \
+        ఒకవేళ (!(arr))                                         \
+            వెళ్ళు fail;                                      \
     }                                                       \
-} while (0)
+} అయితే (0)
 
-static const xcb_xkb_map_part_t get_map_required_components =
-    (XCB_XKB_MAP_PART_KEY_TYPES |
-     XCB_XKB_MAP_PART_KEY_SYMS |
+స్థిర స్థిరరాశి xcb_xkb_map_part_t get_map_required_components =
+    (XCB_XKB_MAP_PART_కీలకం_TYPES |
+     XCB_XKB_MAP_PART_కీలకం_SYMS |
      XCB_XKB_MAP_PART_MODIFIER_MAP |
      XCB_XKB_MAP_PART_EXPLICIT_COMPONENTS |
-     XCB_XKB_MAP_PART_KEY_ACTIONS |
+     XCB_XKB_MAP_PART_కీలకం_ACTIONS |
      XCB_XKB_MAP_PART_VIRTUAL_MODS |
      XCB_XKB_MAP_PART_VIRTUAL_MOD_MAP);
 
-static const xcb_xkb_name_detail_t get_names_wanted =
+స్థిర స్థిరరాశి xcb_xkb_name_detail_t get_పేర్లు_wanted =
     (XCB_XKB_NAME_DETAIL_KEYCODES |
      XCB_XKB_NAME_DETAIL_SYMBOLS |
      XCB_XKB_NAME_DETAIL_TYPES |
      XCB_XKB_NAME_DETAIL_COMPAT |
-     XCB_XKB_NAME_DETAIL_KEY_TYPE_NAMES |
-     XCB_XKB_NAME_DETAIL_KT_LEVEL_NAMES |
-     XCB_XKB_NAME_DETAIL_INDICATOR_NAMES |
-     XCB_XKB_NAME_DETAIL_KEY_NAMES |
-     XCB_XKB_NAME_DETAIL_KEY_ALIASES |
-     XCB_XKB_NAME_DETAIL_VIRTUAL_MOD_NAMES |
-     XCB_XKB_NAME_DETAIL_GROUP_NAMES);
-static const xcb_xkb_name_detail_t get_names_required =
-    (XCB_XKB_NAME_DETAIL_KEY_TYPE_NAMES |
-     XCB_XKB_NAME_DETAIL_KT_LEVEL_NAMES |
-     XCB_XKB_NAME_DETAIL_KEY_NAMES |
-     XCB_XKB_NAME_DETAIL_VIRTUAL_MOD_NAMES);
+     XCB_XKB_NAME_DETAIL_కీలకం_TYPE_పేర్లు |
+     XCB_XKB_NAME_DETAIL_KT_LEVEL_పేర్లు |
+     XCB_XKB_NAME_DETAIL_INDICATOR_పేర్లు |
+     XCB_XKB_NAME_DETAIL_కీలకం_పేర్లు |
+     XCB_XKB_NAME_DETAIL_కీలకం_ALIASES |
+     XCB_XKB_NAME_DETAIL_VIRTUAL_MOD_పేర్లు |
+     XCB_XKB_NAME_DETAIL_సమూహం_పేర్లు);
+స్థిర స్థిరరాశి xcb_xkb_name_detail_t get_పేర్లు_required =
+    (XCB_XKB_NAME_DETAIL_కీలకం_TYPE_పేర్లు |
+     XCB_XKB_NAME_DETAIL_KT_LEVEL_పేర్లు |
+     XCB_XKB_NAME_DETAIL_కీలకం_పేర్లు |
+     XCB_XKB_NAME_DETAIL_VIRTUAL_MOD_పేర్లు);
 
 
-static xkb_mod_mask_t
-translate_mods(uint8_t rmods, uint16_t vmods_low, uint16_t vmods_high)
+స్థిర xkb_mod_ముసుగు_t
+translate_mods(uint8_t rmods, uint16_t vmods_దిగువ, uint16_t vmods_ఎగువ)
 {
     /* We represent mod masks in a single uint32_t value, with real mods
      * first and vmods after (though we don't make these distinctions). */
-    return
-        ((xkb_mod_mask_t) rmods) |
-        ((xkb_mod_mask_t) vmods_low << 8) |
-        ((xkb_mod_mask_t) vmods_high << 16);
+    తిరిగి
+        ((xkb_mod_ముసుగు_t) rmods) |
+        ((xkb_mod_ముసుగు_t) vmods_దిగువ << 8) |
+        ((xkb_mod_ముసుగు_t) vmods_ఎగువ << 16);
 }
 
-enum xkb_action_controls
-translate_controls_mask(uint32_t wire)
+గణన xkb_action_controls
+translate_controls_ముసుగు(uint32_t wire)
 {
-    enum xkb_action_controls ret = 0;
-    if (wire & XCB_XKB_BOOL_CTRL_REPEAT_KEYS)
+    గణన xkb_action_controls ret = 0;
+    ఒకవేళ (wire & XCB_XKB_BOOL_CTRL_REPEAT_కీలకాలు)
         ret |= CONTROL_REPEAT;
-    if (wire & XCB_XKB_BOOL_CTRL_SLOW_KEYS)
+    ఒకవేళ (wire & XCB_XKB_BOOL_CTRL_SLOW_కీలకాలు)
         ret |= CONTROL_SLOW;
-    if (wire & XCB_XKB_BOOL_CTRL_BOUNCE_KEYS)
+    ఒకవేళ (wire & XCB_XKB_BOOL_CTRL_BOUNCE_కీలకాలు)
         ret |= CONTROL_DEBOUNCE;
-    if (wire & XCB_XKB_BOOL_CTRL_STICKY_KEYS)
-        ret |= CONTROL_STICKY_KEYS;
-    if (wire & XCB_XKB_BOOL_CTRL_MOUSE_KEYS)
-        ret |= CONTROL_MOUSE_KEYS;
-    if (wire & XCB_XKB_BOOL_CTRL_MOUSE_KEYS_ACCEL)
-        ret |= CONTROL_MOUSE_KEYS_ACCEL;
-    if (wire & XCB_XKB_BOOL_CTRL_ACCESS_X_KEYS)
+    ఒకవేళ (wire & XCB_XKB_BOOL_CTRL_STICKY_కీలకాలు)
+        ret |= CONTROL_STICKY_కీలకాలు;
+    ఒకవేళ (wire & XCB_XKB_BOOL_CTRL_MOUSE_కీలకాలు)
+        ret |= CONTROL_MOUSE_కీలకాలు;
+    ఒకవేళ (wire & XCB_XKB_BOOL_CTRL_MOUSE_కీలకాలు_ACCEL)
+        ret |= CONTROL_MOUSE_కీలకాలు_ACCEL;
+    ఒకవేళ (wire & XCB_XKB_BOOL_CTRL_ACCESS_X_కీలకాలు)
         ret |= CONTROL_AX;
-    if (wire & XCB_XKB_BOOL_CTRL_ACCESS_X_TIMEOUT_MASK)
+    ఒకవేళ (wire & XCB_XKB_BOOL_CTRL_ACCESS_X_TIMEOUT_ముసుగు)
         ret |= CONTROL_AX_TIMEOUT;
-    if (wire & XCB_XKB_BOOL_CTRL_ACCESS_X_FEEDBACK_MASK)
+    ఒకవేళ (wire & XCB_XKB_BOOL_CTRL_ACCESS_X_FEEDBACK_ముసుగు)
         ret |= CONTROL_AX_FEEDBACK;
-    if (wire & XCB_XKB_BOOL_CTRL_AUDIBLE_BELL_MASK)
+    ఒకవేళ (wire & XCB_XKB_BOOL_CTRL_AUDIBLE_BELL_ముసుగు)
         ret |= CONTROL_BELL;
-    if (wire & XCB_XKB_BOOL_CTRL_OVERLAY_1_MASK)
+    ఒకవేళ (wire & XCB_XKB_BOOL_CTRL_OVERLAY_1_ముసుగు)
         ret |= CONTROL_OVERLAY1;
-    if (wire & XCB_XKB_BOOL_CTRL_OVERLAY_2_MASK)
+    ఒకవేళ (wire & XCB_XKB_BOOL_CTRL_OVERLAY_2_ముసుగు)
         ret |= CONTROL_OVERLAY2;
-    if (wire & XCB_XKB_BOOL_CTRL_IGNORE_GROUP_LOCK_MASK)
-        ret |= CONTROL_IGNORE_GROUP_LOCK;
+    ఒకవేళ (wire & XCB_XKB_BOOL_CTRL_IGNORE_సమూహం_తాళం_ముసుగు)
+        ret |= CONTROL_IGNORE_సమూహం_తాళం;
     /* Some controls are not supported and don't appear here. */
-    return ret;
+    తిరిగి ret;
 }
 
-static bool
-translate_action(union xkb_action *action, const xcb_xkb_action_t *wire,
-                 xkb_keycode_t min_key_code, xkb_keycode_t max_key_code)
+స్థిర bool
+translate_action(సంఘం xkb_action *action, స్థిరరాశి xcb_xkb_action_t *wire,
+                 xkb_keycode_t min_కీలకం_సంకేతం, xkb_keycode_t max_కీలకం_సంకేతం)
 {
-    switch (wire->type) {
-    case XCB_XKB_SA_TYPE_SET_MODS:
-        action->type = ACTION_TYPE_MOD_SET;
+    ఎంపిక (wire->type) {
+    స్థితి XCB_XKB_SA_TYPE_సమితి_MODS:
+        action->type = ACTION_TYPE_MOD_సమితి;
         action->mods.mods.mods = translate_mods(wire->setmods.realMods,
-                                                wire->setmods.vmodsLow,
-                                                wire->setmods.vmodsHigh);
-        action->mods.mods.mask = translate_mods(wire->setmods.mask, 0, 0);
+                                                wire->setmods.vmods_దిగువ_2,
+                                                wire->setmods.vmods_ఎగువ_2);
+        action->mods.mods.ముసుగు = translate_mods(wire->setmods.ముసుగు, 0, 0);
 
-        if (wire->setmods.flags & XCB_XKB_SA_CLEAR_LOCKS)
-            action->mods.flags |= ACTION_LOCK_CLEAR;
-        if (wire->setmods.flags & XCB_XKB_SA_LATCH_TO_LOCK)
-            action->mods.flags |= ACTION_LATCH_TO_LOCK;
-        if (wire->setmods.flags & XCB_XKB_SA_USE_MOD_MAP_MODS)
+        ఒకవేళ (wire->setmods.flags & XCB_XKB_SA_CLEAR_LOCKS)
+            action->mods.flags |= ACTION_తాళం_CLEAR;
+        ఒకవేళ (wire->setmods.flags & XCB_XKB_SA_LATCH_గమ్యం_తాళం)
+            action->mods.flags |= ACTION_LATCH_గమ్యం_తాళం;
+        ఒకవేళ (wire->setmods.flags & XCB_XKB_SA_USE_MOD_MAP_MODS)
             action->mods.flags |= ACTION_MODS_LOOKUP_MODMAP;
 
-        break;
-    case XCB_XKB_SA_TYPE_LATCH_MODS:
+        ఆపు;
+    స్థితి XCB_XKB_SA_TYPE_LATCH_MODS:
         action->type = ACTION_TYPE_MOD_LATCH;
 
         action->mods.mods.mods = translate_mods(wire->latchmods.realMods,
-                                                wire->latchmods.vmodsLow,
-                                                wire->latchmods.vmodsHigh);
-        action->mods.mods.mask = translate_mods(wire->latchmods.mask, 0, 0);
+                                                wire->latchmods.vmods_దిగువ_2,
+                                                wire->latchmods.vmods_ఎగువ_2);
+        action->mods.mods.ముసుగు = translate_mods(wire->latchmods.ముసుగు, 0, 0);
 
-        if (wire->latchmods.flags & XCB_XKB_SA_CLEAR_LOCKS)
-            action->mods.flags |= ACTION_LOCK_CLEAR;
-        if (wire->latchmods.flags & XCB_XKB_SA_LATCH_TO_LOCK)
-            action->mods.flags |= ACTION_LATCH_TO_LOCK;
-        if (wire->latchmods.flags & XCB_XKB_SA_USE_MOD_MAP_MODS)
+        ఒకవేళ (wire->latchmods.flags & XCB_XKB_SA_CLEAR_LOCKS)
+            action->mods.flags |= ACTION_తాళం_CLEAR;
+        ఒకవేళ (wire->latchmods.flags & XCB_XKB_SA_LATCH_గమ్యం_తాళం)
+            action->mods.flags |= ACTION_LATCH_గమ్యం_తాళం;
+        ఒకవేళ (wire->latchmods.flags & XCB_XKB_SA_USE_MOD_MAP_MODS)
             action->mods.flags |= ACTION_MODS_LOOKUP_MODMAP;
 
-        break;
-    case XCB_XKB_SA_TYPE_LOCK_MODS:
-        action->type = ACTION_TYPE_MOD_LOCK;
+        ఆపు;
+    స్థితి XCB_XKB_SA_TYPE_తాళం_MODS:
+        action->type = ACTION_TYPE_MOD_తాళం;
 
         action->mods.mods.mods = translate_mods(wire->lockmods.realMods,
-                                                wire->lockmods.vmodsLow,
-                                                wire->lockmods.vmodsHigh);
-        action->mods.mods.mask = translate_mods(wire->lockmods.mask, 0, 0);
+                                                wire->lockmods.vmods_దిగువ_2,
+                                                wire->lockmods.vmods_ఎగువ_2);
+        action->mods.mods.ముసుగు = translate_mods(wire->lockmods.ముసుగు, 0, 0);
 
-        if (wire->lockmods.flags & XCB_XKB_SA_ISO_LOCK_FLAG_NO_LOCK)
-            action->mods.flags |= ACTION_LOCK_NO_LOCK;
-        if (wire->lockmods.flags & XCB_XKB_SA_ISO_LOCK_FLAG_NO_UNLOCK)
-            action->mods.flags |= ACTION_LOCK_NO_UNLOCK;
-        if (wire->lockmods.flags & XCB_XKB_SA_USE_MOD_MAP_MODS)
+        ఒకవేళ (wire->lockmods.flags & XCB_XKB_SA_ISO_తాళం_FLAG_NO_తాళం)
+            action->mods.flags |= ACTION_తాళం_NO_తాళం;
+        ఒకవేళ (wire->lockmods.flags & XCB_XKB_SA_ISO_తాళం_FLAG_NO_UNLOCK)
+            action->mods.flags |= ACTION_తాళం_NO_UNLOCK;
+        ఒకవేళ (wire->lockmods.flags & XCB_XKB_SA_USE_MOD_MAP_MODS)
             action->mods.flags |= ACTION_MODS_LOOKUP_MODMAP;
 
-        break;
-    case XCB_XKB_SA_TYPE_SET_GROUP:
-        action->type = ACTION_TYPE_GROUP_SET;
+        ఆపు;
+    స్థితి XCB_XKB_SA_TYPE_సమితి_సమూహం:
+        action->type = ACTION_TYPE_సమూహం_సమితి;
 
-        action->group.group = (int32_t)wire->setgroup.group;
+        action->సమూహం.సమూహం = (int32_t)wire->setgroup.సమూహం;
 
-        if (wire->setmods.flags & XCB_XKB_SA_CLEAR_LOCKS)
-            action->group.flags |= ACTION_LOCK_CLEAR;
-        if (wire->setmods.flags & XCB_XKB_SA_LATCH_TO_LOCK)
-            action->group.flags |= ACTION_LATCH_TO_LOCK;
-        if (wire->setmods.flags & XCB_XKB_SA_ISO_LOCK_FLAG_GROUP_ABSOLUTE)
-            action->group.flags |= ACTION_ABSOLUTE_SWITCH;
+        ఒకవేళ (wire->setmods.flags & XCB_XKB_SA_CLEAR_LOCKS)
+            action->సమూహం.flags |= ACTION_తాళం_CLEAR;
+        ఒకవేళ (wire->setmods.flags & XCB_XKB_SA_LATCH_గమ్యం_తాళం)
+            action->సమూహం.flags |= ACTION_LATCH_గమ్యం_తాళం;
+        ఒకవేళ (wire->setmods.flags & XCB_XKB_SA_ISO_తాళం_FLAG_సమూహం_ABSOLUTE)
+            action->సమూహం.flags |= ACTION_ABSOLUTE_SWITCH;
 
-        break;
-    case XCB_XKB_SA_TYPE_LATCH_GROUP:
-        action->type = ACTION_TYPE_GROUP_LATCH;
+        ఆపు;
+    స్థితి XCB_XKB_SA_TYPE_LATCH_సమూహం:
+        action->type = ACTION_TYPE_సమూహం_LATCH;
 
-        action->group.group = (int32_t)wire->latchgroup.group;
+        action->సమూహం.సమూహం = (int32_t)wire->latchgroup.సమూహం;
 
-        if (wire->latchmods.flags & XCB_XKB_SA_CLEAR_LOCKS)
-            action->group.flags |= ACTION_LOCK_CLEAR;
-        if (wire->latchmods.flags & XCB_XKB_SA_LATCH_TO_LOCK)
-            action->group.flags |= ACTION_LATCH_TO_LOCK;
-        if (wire->latchmods.flags & XCB_XKB_SA_ISO_LOCK_FLAG_GROUP_ABSOLUTE)
-            action->group.flags |= ACTION_ABSOLUTE_SWITCH;
+        ఒకవేళ (wire->latchmods.flags & XCB_XKB_SA_CLEAR_LOCKS)
+            action->సమూహం.flags |= ACTION_తాళం_CLEAR;
+        ఒకవేళ (wire->latchmods.flags & XCB_XKB_SA_LATCH_గమ్యం_తాళం)
+            action->సమూహం.flags |= ACTION_LATCH_గమ్యం_తాళం;
+        ఒకవేళ (wire->latchmods.flags & XCB_XKB_SA_ISO_తాళం_FLAG_సమూహం_ABSOLUTE)
+            action->సమూహం.flags |= ACTION_ABSOLUTE_SWITCH;
 
-        break;
-    case XCB_XKB_SA_TYPE_LOCK_GROUP:
-        action->type = ACTION_TYPE_GROUP_LOCK;
+        ఆపు;
+    స్థితి XCB_XKB_SA_TYPE_తాళం_సమూహం:
+        action->type = ACTION_TYPE_సమూహం_తాళం;
 
-        action->group.group = (int32_t)wire->lockgroup.group;
+        action->సమూహం.సమూహం = (int32_t)wire->lockgroup.సమూహం;
 
-        if (wire->lockgroup.flags & XCB_XKB_SA_ISO_LOCK_FLAG_GROUP_ABSOLUTE)
-            action->group.flags |= ACTION_ABSOLUTE_SWITCH;
+        ఒకవేళ (wire->lockgroup.flags & XCB_XKB_SA_ISO_తాళం_FLAG_సమూహం_ABSOLUTE)
+            action->సమూహం.flags |= ACTION_ABSOLUTE_SWITCH;
 
-        break;
-    case XCB_XKB_SA_TYPE_MOVE_PTR:
+        ఆపు;
+    స్థితి XCB_XKB_SA_TYPE_MOVE_PTR:
         action->type = ACTION_TYPE_PTR_MOVE;
 
-        action->ptr.x = (int16_t) (wire->moveptr.xLow | ((uint16_t) wire->moveptr.xHigh << 8));
-        action->ptr.y = (int16_t) (wire->moveptr.yLow | ((uint16_t) wire->moveptr.yHigh << 8));
+        action->ptr.x = (int16_t) (wire->moveptr.x_దిగువ | ((uint16_t) wire->moveptr.x_ఎగువ << 8));
+        action->ptr.y = (int16_t) (wire->moveptr.y_దిగువ | ((uint16_t) wire->moveptr.y_ఎగువ << 8));
 
-        if (!(wire->moveptr.flags & XCB_XKB_SA_MOVE_PTR_FLAG_NO_ACCELERATION))
+        ఒకవేళ (!(wire->moveptr.flags & XCB_XKB_SA_MOVE_PTR_FLAG_NO_ACCELERATION))
             action->ptr.flags |= ACTION_REPEAT;
-        if (wire->moveptr.flags & XCB_XKB_SA_MOVE_PTR_FLAG_MOVE_ABSOLUTE_X)
+        ఒకవేళ (wire->moveptr.flags & XCB_XKB_SA_MOVE_PTR_FLAG_MOVE_ABSOLUTE_X)
             action->ptr.flags |= ACTION_ABSOLUTE_X;
-        if (wire->moveptr.flags & XCB_XKB_SA_MOVE_PTR_FLAG_MOVE_ABSOLUTE_Y)
+        ఒకవేళ (wire->moveptr.flags & XCB_XKB_SA_MOVE_PTR_FLAG_MOVE_ABSOLUTE_Y)
             action->ptr.flags |= ACTION_ABSOLUTE_Y;
 
-        break;
-    case XCB_XKB_SA_TYPE_PTR_BTN:
+        ఆపు;
+    స్థితి XCB_XKB_SA_TYPE_PTR_BTN:
         action->type = ACTION_TYPE_PTR_BUTTON;
 
-        action->btn.count = wire->ptrbtn.count;
+        action->btn.లెక్క = wire->ptrbtn.లెక్క;
         action->btn.button = wire->ptrbtn.button;
         action->btn.flags = 0;
 
-        break;
-    case XCB_XKB_SA_TYPE_LOCK_PTR_BTN:
-        action->type = ACTION_TYPE_PTR_LOCK;
+        ఆపు;
+    స్థితి XCB_XKB_SA_TYPE_తాళం_PTR_BTN:
+        action->type = ACTION_TYPE_PTR_తాళం;
 
         action->btn.button = wire->lockptrbtn.button;
-        action->btn.count = 0;
+        action->btn.లెక్క = 0;
 
-        if (wire->lockptrbtn.flags & XCB_XKB_SA_ISO_LOCK_FLAG_NO_LOCK)
-            action->btn.flags |= ACTION_LOCK_NO_LOCK;
-        if (wire->lockptrbtn.flags & XCB_XKB_SA_ISO_LOCK_FLAG_NO_UNLOCK)
-            action->btn.flags |= ACTION_LOCK_NO_UNLOCK;
+        ఒకవేళ (wire->lockptrbtn.flags & XCB_XKB_SA_ISO_తాళం_FLAG_NO_తాళం)
+            action->btn.flags |= ACTION_తాళం_NO_తాళం;
+        ఒకవేళ (wire->lockptrbtn.flags & XCB_XKB_SA_ISO_తాళం_FLAG_NO_UNLOCK)
+            action->btn.flags |= ACTION_తాళం_NO_UNLOCK;
 
-        break;
-    case XCB_XKB_SA_TYPE_SET_PTR_DFLT:
+        ఆపు;
+    స్థితి XCB_XKB_SA_TYPE_సమితి_PTR_DFLT:
         action->type = ACTION_TYPE_PTR_DEFAULT;
 
-        action->dflt.value = wire->setptrdflt.value;
+        action->dflt.విలువ = wire->setptrdflt.విలువ;
 
-        if (wire->setptrdflt.flags & XCB_XKB_SA_SET_PTR_DFLT_FLAG_DFLT_BTN_ABSOLUTE)
+        ఒకవేళ (wire->setptrdflt.flags & XCB_XKB_SA_సమితి_PTR_DFLT_FLAG_DFLT_BTN_ABSOLUTE)
             action->dflt.flags |= ACTION_ABSOLUTE_SWITCH;
 
-        break;
-    case XCB_XKB_SA_TYPE_TERMINATE:
+        ఆపు;
+    స్థితి XCB_XKB_SA_TYPE_TERMINATE:
         action->type = ACTION_TYPE_TERMINATE;
 
-        break;
-    case XCB_XKB_SA_TYPE_SWITCH_SCREEN:
+        ఆపు;
+    స్థితి XCB_XKB_SA_TYPE_SWITCH_SCREEN:
         action->type = ACTION_TYPE_SWITCH_VT;
 
         action->screen.screen = wire->switchscreen.newScreen;
 
-        if (!(wire->switchscreen.flags & XCB_XKB_SWITCH_SCREEN_FLAG_APPLICATION))
+        ఒకవేళ (!(wire->switchscreen.flags & XCB_XKB_SWITCH_SCREEN_FLAG_APPLICATION))
             action->screen.flags |= ACTION_SAME_SCREEN;
-        if (wire->switchscreen.flags & XCB_XKB_SWITCH_SCREEN_FLAG_ABSOLUTE)
+        ఒకవేళ (wire->switchscreen.flags & XCB_XKB_SWITCH_SCREEN_FLAG_ABSOLUTE)
             action->screen.flags |= ACTION_ABSOLUTE_SWITCH;
 
-        break;
-    case XCB_XKB_SA_TYPE_SET_CONTROLS:
-        action->type = ACTION_TYPE_CTRL_SET;
+        ఆపు;
+    స్థితి XCB_XKB_SA_TYPE_సమితి_CONTROLS:
+        action->type = ACTION_TYPE_CTRL_సమితి;
         {
-            const uint16_t mask = (wire->setcontrols.boolCtrlsLow |
-                                   (wire->setcontrols.boolCtrlsHigh << 8));
-            action->ctrls.ctrls = translate_controls_mask(mask);
+            స్థిరరాశి uint16_t ముసుగు = (wire->setcontrols.bool_Ctrls_దిగువ |
+                                   (wire->setcontrols.bool_Ctrls_ఎగువ << 8));
+            action->ctrls.ctrls = translate_controls_ముసుగు(ముసుగు);
         }
-        break;
-    case XCB_XKB_SA_TYPE_LOCK_CONTROLS:
-        action->type = ACTION_TYPE_CTRL_LOCK;
+        ఆపు;
+    స్థితి XCB_XKB_SA_TYPE_తాళం_CONTROLS:
+        action->type = ACTION_TYPE_CTRL_తాళం;
         {
-            const uint16_t mask = (wire->lockcontrols.boolCtrlsLow |
-                                   (wire->lockcontrols.boolCtrlsHigh << 8));
-            action->ctrls.ctrls = translate_controls_mask(mask);
+            స్థిరరాశి uint16_t ముసుగు = (wire->lockcontrols.bool_Ctrls_దిగువ |
+                                   (wire->lockcontrols.bool_Ctrls_ఎగువ << 8));
+            action->ctrls.ctrls = translate_controls_ముసుగు(ముసుగు);
         }
-        break;
+        ఆపు;
 
-    case XCB_XKB_SA_TYPE_REDIRECT_KEY:
-        action->type = ACTION_TYPE_REDIRECT_KEY;
-        if (wire->redirect.newkey < min_key_code ||
-            wire->redirect.newkey > max_key_code)
-                return false;
+    స్థితి XCB_XKB_SA_TYPE_REDIRECT_కీలకం:
+        action->type = ACTION_TYPE_REDIRECT_కీలకం;
+        ఒకవేళ (wire->redirect.newkey < min_కీలకం_సంకేతం ||
+            wire->redirect.newkey > max_కీలకం_సంకేతం)
+                తిరిగి false;
         action->redirect.keycode = wire->redirect.newkey;
         /*
          * WARNING: there is a bug in Xorg that swap the low and high
@@ -326,202 +326,202 @@ translate_action(union xkb_action *action, const xcb_xkb_action_t *wire,
          * https://gitlab.freedesktop.org/xorg/proto/xorgproto/-/merge_requests/105
          */
         action->redirect.affect_mods = translate_mods(
-            wire->redirect.mask,
-            wire->redirect.vmodsMaskLow,
-            wire->redirect.vmodsMaskHigh
+            wire->redirect.ముసుగు,
+            wire->redirect.vmods_ముసుగు_దిగువ,
+            wire->redirect.vmods_ముసుగు_ఎగువ
         );
         action->redirect.mods = translate_mods(wire->redirect.realModifiers,
-                                               wire->redirect.vmodsLow,
-                                               wire->redirect.vmodsHigh);
-        break;
+                                               wire->redirect.vmods_దిగువ_2,
+                                               wire->redirect.vmods_ఎగువ_2);
+        ఆపు;
 
-    case XCB_XKB_SA_TYPE_NO_ACTION:
+    స్థితి XCB_XKB_SA_TYPE_NO_ACTION:
         action->type = ACTION_TYPE_NONE;
-        break;
+        ఆపు;
 
     /* We don't support these. */
-    case XCB_XKB_SA_TYPE_ISO_LOCK:
-    case XCB_XKB_SA_TYPE_ACTION_MESSAGE:
-    case XCB_XKB_SA_TYPE_DEVICE_BTN:
-    case XCB_XKB_SA_TYPE_LOCK_DEVICE_BTN:
-    case XCB_XKB_SA_TYPE_DEVICE_VALUATOR:
+    స్థితి XCB_XKB_SA_TYPE_ISO_తాళం:
+    స్థితి XCB_XKB_SA_TYPE_ACTION_సందేశం:
+    స్థితి XCB_XKB_SA_TYPE_DEVICE_BTN:
+    స్థితి XCB_XKB_SA_TYPE_తాళం_DEVICE_BTN:
+    స్థితి XCB_XKB_SA_TYPE_DEVICE_VALUATOR:
         action->type = ACTION_TYPE_UNSUPPORTED_LEGACY;
-        break;
+        ఆపు;
 
-    default:
+    అప్రమేయ:
         {} /* Label followed by declaration requires C23 */
         /* Ensure to not miss `xkb_action_type` updates */
-        static_assert(ACTION_TYPE_INTERNAL == 20 &&
-                      ACTION_TYPE_INTERNAL + 1 == _ACTION_TYPE_NUM_ENTRIES,
+        static_assert(ACTION_TYPE_అంతర్గత == 20 &&
+                      ACTION_TYPE_అంతర్గత + 1 == ACTION_TYPE_అంకె_ENTRIES,
                       "Missing action type");
 
-        if (wire->type < ACTION_TYPE_PRIVATE) {
+        ఒకవేళ (wire->type < ACTION_TYPE_వ్యక్తిగత) {
             action->type = ACTION_TYPE_NONE;
-            break;
+            ఆపు;
         }
 
         /* Treat high unknown actions as Private actions. */
         action->priv.type = wire->noaction.type;
-        static_assert(sizeof(action->priv.data) == 7 &&
-                      sizeof(wire->noaction.pad0) == 7,
+        static_assert(పరిమాణం(action->priv.దత్తాంశం) == 7 &&
+                      పరిమాణం(wire->noaction.pad0) == 7,
                       "The private action data must be 7 bytes long!");
-        memcpy(action->priv.data, wire->noaction.pad0, 7);
-        break;
+        జ్ఞాపకం_నకలు(action->priv.దత్తాంశం, wire->noaction.pad0, 7);
+        ఆపు;
     }
-    return true;
+    తిరిగి true;
 }
 
-static bool
-get_types(struct xkb_keymap *keymap, xcb_connection_t *conn,
-          xcb_xkb_get_map_reply_t *reply, xcb_xkb_get_map_map_t *map)
+స్థిర bool
+get_types(నిర్మాణం xkb_keymap *keymap, xcb_connection_t *conn,
+          xcb_xkb_get_map_జవాబు_t *జవాబు, xcb_xkb_get_map_map_t *map)
 {
-    int types_length = xcb_xkb_get_map_map_types_rtrn_length(reply, map);
-    xcb_xkb_key_type_iterator_t types_iter =
-        xcb_xkb_get_map_map_types_rtrn_iterator(reply, map);
+    పూర్ణాంకం types_నిడివి = xcb_xkb_get_map_map_types_rtrn_నిడివి(జవాబు, map);
+    xcb_xkb_కీలకం_type_iterator_t types_iter =
+        xcb_xkb_get_map_map_types_rtrn_iterator(జవాబు, map);
 
-    FAIL_UNLESS(reply->firstType == 0);
+    FAIL_UNLESS(జవాబు->మొదటి_Type == 0);
 
-    keymap->num_types = reply->nTypes;
-    ALLOC_OR_FAIL(keymap->types, keymap->num_types);
-    assert(types_length == (int) keymap->num_types);
+    keymap->అంకె_types = జవాబు->nTypes;
+    ALLOC_OR_FAIL(keymap->types, keymap->అంకె_types);
+    ప్రతిజ్ఞా(types_నిడివి == (పూర్ణాంకం) keymap->అంకె_types);
 
-    for (int i = 0; i < types_length; i++) {
-        xcb_xkb_key_type_t *wire_type = types_iter.data;
-        struct xkb_key_type *type = &keymap->types[i];
+    కొరకు (పూర్ణాంకం i = 0; i < types_నిడివి; i++) {
+        xcb_xkb_కీలకం_type_t *wire_type = types_iter.దత్తాంశం;
+        నిర్మాణం xkb_కీలకం_type *type = &keymap->types[i];
 
-        FAIL_UNLESS(wire_type->numLevels > 0);
+        FAIL_UNLESS(wire_type->అంకె_స్థాయిలు_2 > 0);
 
         type->mods.mods = translate_mods(wire_type->mods_mods,
                                          wire_type->mods_vmods, 0);
-        type->mods.mask = translate_mods(wire_type->mods_mask, 0, 0);
-        type->num_levels = wire_type->numLevels;
+        type->mods.ముసుగు = translate_mods(wire_type->mods_ముసుగు, 0, 0);
+        type->అంకె_స్థాయిలు = wire_type->అంకె_స్థాయిలు_2;
 
         {
-            int entries_length = xcb_xkb_key_type_map_length(wire_type);
-            xcb_xkb_kt_map_entry_iterator_t entries_iter =
-                xcb_xkb_key_type_map_iterator(wire_type);
+            పూర్ణాంకం entries_నిడివి = xcb_xkb_కీలకం_type_map_నిడివి(wire_type);
+            xcb_xkb_kt_map_నమోదు_iterator_t entries_iter =
+                xcb_xkb_కీలకం_type_map_iterator(wire_type);
 
-            type->num_entries = wire_type->nMapEntries;
-            ALLOC_OR_FAIL(type->entries, type->num_entries);
-            assert(entries_length == (int) type->num_entries);
+            type->అంకె_entries = wire_type->nMapEntries;
+            ALLOC_OR_FAIL(type->entries, type->అంకె_entries);
+            ప్రతిజ్ఞా(entries_నిడివి == (పూర్ణాంకం) type->అంకె_entries);
 
-            for (int j = 0; j < entries_length; j++) {
-                xcb_xkb_kt_map_entry_t *wire_entry = entries_iter.data;
-                struct xkb_key_type_entry *entry = &type->entries[j];
+            కొరకు (పూర్ణాంకం j = 0; j < entries_నిడివి; j++) {
+                xcb_xkb_kt_map_నమోదు_t *wire_నమోదు = entries_iter.దత్తాంశం;
+                నిర్మాణం xkb_కీలకం_type_నమోదు *నమోదు_2 = &type->entries[j];
 
-                FAIL_UNLESS(wire_entry->level < type->num_levels);
+                FAIL_UNLESS(wire_నమోదు->level < type->అంకె_స్థాయిలు);
 
-                entry->level = wire_entry->level;
-                entry->mods.mods = translate_mods(wire_entry->mods_mods,
-                                                  wire_entry->mods_vmods, 0);
-                entry->mods.mask = translate_mods(wire_entry->mods_mask, 0, 0);
+                నమోదు_2->level = wire_నమోదు->level;
+                నమోదు_2->mods.mods = translate_mods(wire_నమోదు->mods_mods,
+                                                  wire_నమోదు->mods_vmods, 0);
+                నమోదు_2->mods.ముసుగు = translate_mods(wire_నమోదు->mods_ముసుగు, 0, 0);
 
-                xcb_xkb_kt_map_entry_next(&entries_iter);
+                xcb_xkb_kt_map_నమోదు_తదుపరి(&entries_iter);
             }
         }
 
         {
-            int preserves_length = xcb_xkb_key_type_preserve_length(wire_type);
+            పూర్ణాంకం preserves_నిడివి = xcb_xkb_కీలకం_type_preserve_నిడివి(wire_type);
             xcb_xkb_mod_def_iterator_t preserves_iter =
-                xcb_xkb_key_type_preserve_iterator(wire_type);
+                xcb_xkb_కీలకం_type_preserve_iterator(wire_type);
 
-            FAIL_UNLESS((unsigned) preserves_length <= type->num_entries);
+            FAIL_UNLESS((గుర్తులేని) preserves_నిడివి <= type->అంకె_entries);
 
-            for (int j = 0; j < preserves_length; j++) {
-                xcb_xkb_mod_def_t *wire_preserve = preserves_iter.data;
-                struct xkb_key_type_entry *entry = &type->entries[j];
+            కొరకు (పూర్ణాంకం j = 0; j < preserves_నిడివి; j++) {
+                xcb_xkb_mod_def_t *wire_preserve = preserves_iter.దత్తాంశం;
+                నిర్మాణం xkb_కీలకం_type_నమోదు *నమోదు_2 = &type->entries[j];
 
-                entry->preserve.mods = translate_mods(wire_preserve->realMods,
+                నమోదు_2->preserve.mods = translate_mods(wire_preserve->realMods,
                                                       wire_preserve->vmods, 0);
-                entry->preserve.mask = translate_mods(wire_preserve->mask, 0, 0);
+                నమోదు_2->preserve.ముసుగు = translate_mods(wire_preserve->ముసుగు, 0, 0);
 
-                xcb_xkb_mod_def_next(&preserves_iter);
+                xcb_xkb_mod_def_తదుపరి(&preserves_iter);
             }
         }
 
         /* Checked only when compiling a keymap from text */
         type->required = true;
 
-        xcb_xkb_key_type_next(&types_iter);
+        xcb_xkb_కీలకం_type_తదుపరి(&types_iter);
     }
 
-    return true;
+    తిరిగి true;
 
 fail:
-    return false;
+    తిరిగి false;
 }
 
-static bool
-get_sym_maps(struct xkb_keymap *keymap, xcb_connection_t *conn,
-             xcb_xkb_get_map_reply_t *reply, xcb_xkb_get_map_map_t *map)
+స్థిర bool
+get_sym_maps(నిర్మాణం xkb_keymap *keymap, xcb_connection_t *conn,
+             xcb_xkb_get_map_జవాబు_t *జవాబు, xcb_xkb_get_map_map_t *map)
 {
-    int sym_maps_length = xcb_xkb_get_map_map_syms_rtrn_length(reply, map);
-    xcb_xkb_key_sym_map_iterator_t sym_maps_iter =
-        xcb_xkb_get_map_map_syms_rtrn_iterator(reply, map);
+    పూర్ణాంకం sym_maps_నిడివి = xcb_xkb_get_map_map_syms_rtrn_నిడివి(జవాబు, map);
+    xcb_xkb_కీలకం_sym_map_iterator_t sym_maps_iter =
+        xcb_xkb_get_map_map_syms_rtrn_iterator(జవాబు, map);
 
-    FAIL_UNLESS(reply->minKeyCode <= reply->maxKeyCode);
-    FAIL_UNLESS(reply->firstKeySym >= reply->minKeyCode);
-    FAIL_UNLESS(reply->firstKeySym + reply->nKeySyms <= reply->maxKeyCode + 1);
+    FAIL_UNLESS(జవాబు->min_కీలకం_సంకేతం_2 <= జవాబు->max_కీలకం_సంకేతం_2);
+    FAIL_UNLESS(జవాబు->మొదటి_కీలకం_Sym >= జవాబు->min_కీలకం_సంకేతం_2);
+    FAIL_UNLESS(జవాబు->మొదటి_కీలకం_Sym + జవాబు->n_కీలకం_Syms <= జవాబు->max_కీలకం_సంకేతం_2 + 1);
 
-    keymap->min_key_code = reply->minKeyCode;
-    keymap->max_key_code = reply->maxKeyCode;
-    keymap->num_keys = keymap->num_keys_low = reply->maxKeyCode + 1;
+    keymap->min_కీలకం_సంకేతం = జవాబు->min_కీలకం_సంకేతం_2;
+    keymap->max_కీలకం_సంకేతం = జవాబు->max_కీలకం_సంకేతం_2;
+    keymap->అంకె_కీలకాలు = keymap->అంకె_కీలకాలు_దిగువ = జవాబు->max_కీలకం_సంకేతం_2 + 1;
 
-    ALLOC_OR_FAIL(keymap->keys, keymap->max_key_code + 1);
+    ALLOC_OR_FAIL(keymap->కీలకాలు, keymap->max_కీలకం_సంకేతం + 1);
 
-    for (xkb_keycode_t kc = keymap->min_key_code; kc <= keymap->max_key_code; kc++)
-        keymap->keys[kc].keycode = kc;
+    కొరకు (xkb_keycode_t kc = keymap->min_కీలకం_సంకేతం; kc <= keymap->max_కీలకం_సంకేతం; kc++)
+        keymap->కీలకాలు[kc].keycode = kc;
 
-    for (int i = 0; i < sym_maps_length; i++) {
-        xcb_xkb_key_sym_map_t *wire_sym_map = sym_maps_iter.data;
-        struct xkb_key *key = &keymap->keys[reply->firstKeySym + i];
+    కొరకు (పూర్ణాంకం i = 0; i < sym_maps_నిడివి; i++) {
+        xcb_xkb_కీలకం_sym_map_t *wire_sym_map = sym_maps_iter.దత్తాంశం;
+        నిర్మాణం xkb_కీలకం *కీలకం = &keymap->కీలకాలు[జవాబు->మొదటి_కీలకం_Sym + i];
 
-        key->num_groups = wire_sym_map->groupInfo & 0x0f;
-        FAIL_UNLESS(key->num_groups <= ARRAY_SIZE(wire_sym_map->kt_index));
-        ALLOC_OR_FAIL(key->groups, key->num_groups);
+        కీలకం->అంకె_groups = wire_sym_map->సమూహం_Info & 0x0f;
+        FAIL_UNLESS(కీలకం->అంకె_groups <= ARRAY_కొలత(wire_sym_map->kt_సూచీ));
+        ALLOC_OR_FAIL(కీలకం->groups, కీలకం->అంకె_groups);
 
-        for (xkb_layout_index_t j = 0; j < key->num_groups; j++) {
-            FAIL_UNLESS(wire_sym_map->kt_index[j] < keymap->num_types);
-            key->groups[j].type = &keymap->types[wire_sym_map->kt_index[j]];
+        కొరకు (xkb_layout_సూచీ_t j = 0; j < కీలకం->అంకె_groups; j++) {
+            FAIL_UNLESS(wire_sym_map->kt_సూచీ[j] < keymap->అంకె_types);
+            కీలకం->groups[j].type = &keymap->types[wire_sym_map->kt_సూచీ[j]];
 
-            ALLOC_OR_FAIL(key->groups[j].levels, key->groups[j].type->num_levels);
+            ALLOC_OR_FAIL(కీలకం->groups[j].స్థాయిలు, కీలకం->groups[j].type->అంకె_స్థాయిలు);
         }
 
-        key->out_of_range_group_number = (wire_sym_map->groupInfo & 0x30) >> 4;
+        కీలకం->బహిర్గతం_యొక్క_range_సమూహం_సంఖ్య = (wire_sym_map->సమూహం_Info & 0x30) >> 4;
 
-        FAIL_UNLESS(key->out_of_range_group_number <= key->num_groups);
+        FAIL_UNLESS(కీలకం->బహిర్గతం_యొక్క_range_సమూహం_సంఖ్య <= కీలకం->అంకె_groups);
 
-        if (wire_sym_map->groupInfo & XCB_XKB_GROUPS_WRAP_CLAMP_INTO_RANGE)
-            key->out_of_range_group_policy = XKB_LAYOUT_OUT_OF_RANGE_CLAMP;
-        else if (wire_sym_map->groupInfo & XCB_XKB_GROUPS_WRAP_REDIRECT_INTO_RANGE)
-            key->out_of_range_group_policy = XKB_LAYOUT_OUT_OF_RANGE_REDIRECT;
-        else
-            key->out_of_range_group_policy = XKB_LAYOUT_OUT_OF_RANGE_WRAP;
+        ఒకవేళ (wire_sym_map->సమూహం_Info & XCB_XKB_GROUPS_WRAP_CLAMP_INTO_RANGE)
+            కీలకం->బహిర్గతం_యొక్క_range_సమూహం_policy = XKB_LAYOUT_బహిర్గతం_యొక్క_RANGE_CLAMP;
+        లేకపోతే ఒకవేళ (wire_sym_map->సమూహం_Info & XCB_XKB_GROUPS_WRAP_REDIRECT_INTO_RANGE)
+            కీలకం->బహిర్గతం_యొక్క_range_సమూహం_policy = XKB_LAYOUT_బహిర్గతం_యొక్క_RANGE_REDIRECT;
+        లేకపోతే
+            కీలకం->బహిర్గతం_యొక్క_range_సమూహం_policy = XKB_LAYOUT_బహిర్గతం_యొక్క_RANGE_WRAP;
 
         {
-            int syms_length = xcb_xkb_key_sym_map_syms_length(wire_sym_map);
-            xcb_keysym_t *syms_iter = xcb_xkb_key_sym_map_syms(wire_sym_map);
+            పూర్ణాంకం syms_నిడివి = xcb_xkb_కీలకం_sym_map_syms_నిడివి(wire_sym_map);
+            xcb_keysym_t *syms_iter = xcb_xkb_కీలకం_sym_map_syms(wire_sym_map);
 
-            FAIL_UNLESS((unsigned) syms_length == wire_sym_map->width * key->num_groups);
+            FAIL_UNLESS((గుర్తులేని) syms_నిడివి == wire_sym_map->వెడల్పు * కీలకం->అంకె_groups);
 
-            if (syms_length > 0)
-                key->explicit |= EXPLICIT_SYMBOLS;
+            ఒకవేళ (syms_నిడివి > 0)
+                కీలకం->explicit |= EXPLICIT_SYMBOLS;
 
-            for (xkb_layout_index_t group = 0; group < key->num_groups; group++) {
-                for (xkb_level_index_t level = 0; level < wire_sym_map->width; level++) {
+            కొరకు (xkb_layout_సూచీ_t సమూహం = 0; సమూహం < కీలకం->అంకె_groups; సమూహం++) {
+                కొరకు (xkb_level_సూచీ_t level = 0; level < wire_sym_map->వెడల్పు; level++) {
                     xcb_keysym_t wire_keysym = *syms_iter;
 
-                    assert(key->groups[group].type != NULL);
-                    if (level < key->groups[group].type->num_levels) {
+                    ప్రతిజ్ఞా(కీలకం->groups[సమూహం].type != ఖాళీ);
+                    ఒకవేళ (level < కీలకం->groups[సమూహం].type->అంకె_స్థాయిలు) {
                         /* Do not discard the keysym yet if it is NoSymbol, because
                          * there may be an action set */
-                        key->groups[group].levels[level].num_syms = 1;
-                        key->groups[group].levels[level].s.sym = wire_keysym;
+                        కీలకం->groups[సమూహం].స్థాయిలు[level].అంకె_syms = 1;
+                        కీలకం->groups[సమూహం].స్థాయిలు[level].s.sym = wire_keysym;
                         /* Set capitalization transformation */
-                        key->groups[group].levels[level].upper =
-                            xkb_keysym_to_upper(wire_keysym);
-                        if (wire_keysym != XKB_KEY_NoSymbol)
-                            key->groups[group].explicit_symbols = true;
+                        కీలకం->groups[సమూహం].స్థాయిలు[level].పై =
+                            xkb_keysym_గమ్యం_పై(wire_keysym);
+                        ఒకవేళ (wire_keysym != XKB_కీలకం_No_చిహ్నం)
+                            కీలకం->groups[సమూహం].explicit_symbols = true;
                     }
 
                     syms_iter++;
@@ -529,101 +529,101 @@ get_sym_maps(struct xkb_keymap *keymap, xcb_connection_t *conn,
             }
         }
 
-        xcb_xkb_key_sym_map_next(&sym_maps_iter);
+        xcb_xkb_కీలకం_sym_map_తదుపరి(&sym_maps_iter);
     }
 
-    return true;
+    తిరిగి true;
 
 fail:
-    return false;
+    తిరిగి false;
 }
 
-static bool
-get_actions(struct xkb_keymap *keymap, xcb_connection_t *conn,
-            xcb_xkb_get_map_reply_t *reply, xcb_xkb_get_map_map_t *map)
+స్థిర bool
+get_actions(నిర్మాణం xkb_keymap *keymap, xcb_connection_t *conn,
+            xcb_xkb_get_map_జవాబు_t *జవాబు, xcb_xkb_get_map_map_t *map)
 {
-    int acts_count_length =
-        xcb_xkb_get_map_map_acts_rtrn_count_length(reply, map);
-    uint8_t *acts_count_iter = xcb_xkb_get_map_map_acts_rtrn_count(map);
+    పూర్ణాంకం acts_లెక్క_నిడివి =
+        xcb_xkb_get_map_map_acts_rtrn_లెక్క_నిడివి(జవాబు, map);
+    uint8_t *acts_లెక్క_iter = xcb_xkb_get_map_map_acts_rtrn_లెక్క(map);
     xcb_xkb_action_iterator_t acts_iter =
-        xcb_xkb_get_map_map_acts_rtrn_acts_iterator(reply, map);
-    xcb_xkb_key_sym_map_iterator_t sym_maps_iter =
-        xcb_xkb_get_map_map_syms_rtrn_iterator(reply, map);
+        xcb_xkb_get_map_map_acts_rtrn_acts_iterator(జవాబు, map);
+    xcb_xkb_కీలకం_sym_map_iterator_t sym_maps_iter =
+        xcb_xkb_get_map_map_syms_rtrn_iterator(జవాబు, map);
 
-    FAIL_UNLESS(reply->firstKeyAction == keymap->min_key_code);
-    FAIL_UNLESS(reply->firstKeyAction + reply->nKeyActions ==
-                keymap->max_key_code + 1);
+    FAIL_UNLESS(జవాబు->మొదటి_కీలకం_Action == keymap->min_కీలకం_సంకేతం);
+    FAIL_UNLESS(జవాబు->మొదటి_కీలకం_Action + జవాబు->n_కీలకం_Actions ==
+                keymap->max_కీలకం_సంకేతం + 1);
 
-    for (int i = 0; i < acts_count_length; i++) {
-        xcb_xkb_key_sym_map_t *wire_sym_map = sym_maps_iter.data;
-        int syms_length = xcb_xkb_key_sym_map_syms_length(wire_sym_map);
-        uint8_t wire_count = *acts_count_iter;
-        struct xkb_key *key = &keymap->keys[reply->firstKeyAction + i];
+    కొరకు (పూర్ణాంకం i = 0; i < acts_లెక్క_నిడివి; i++) {
+        xcb_xkb_కీలకం_sym_map_t *wire_sym_map = sym_maps_iter.దత్తాంశం;
+        పూర్ణాంకం syms_నిడివి = xcb_xkb_కీలకం_sym_map_syms_నిడివి(wire_sym_map);
+        uint8_t wire_లెక్క = *acts_లెక్క_iter;
+        నిర్మాణం xkb_కీలకం *కీలకం = &keymap->కీలకాలు[జవాబు->మొదటి_కీలకం_Action + i];
 
-        FAIL_UNLESS((unsigned) syms_length == wire_sym_map->width * key->num_groups);
-        FAIL_UNLESS(wire_count == 0 || wire_count == syms_length);
+        FAIL_UNLESS((గుర్తులేని) syms_నిడివి == wire_sym_map->వెడల్పు * కీలకం->అంకె_groups);
+        FAIL_UNLESS(wire_లెక్క == 0 || wire_లెక్క == syms_నిడివి);
 
-        const xkb_keycode_t min_key_code = keymap->min_key_code;
-        const xkb_keycode_t max_key_code = keymap->max_key_code;
+        స్థిరరాశి xkb_keycode_t min_కీలకం_సంకేతం = keymap->min_కీలకం_సంకేతం;
+        స్థిరరాశి xkb_keycode_t max_కీలకం_సంకేతం = keymap->max_కీలకం_సంకేతం;
 
-        if (wire_count != 0) {
-            for (xkb_layout_index_t group = 0; group < key->num_groups; group++) {
-                for (xkb_level_index_t level = 0; level < wire_sym_map->width; level++) {
-                    xcb_xkb_action_t *wire_action = acts_iter.data;
+        ఒకవేళ (wire_లెక్క != 0) {
+            కొరకు (xkb_layout_సూచీ_t సమూహం = 0; సమూహం < కీలకం->అంకె_groups; సమూహం++) {
+                కొరకు (xkb_level_సూచీ_t level = 0; level < wire_sym_map->వెడల్పు; level++) {
+                    xcb_xkb_action_t *wire_action = acts_iter.దత్తాంశం;
 
-                    if (level < key->groups[group].type->num_levels) {
-                        key->groups[group].levels[level].num_actions = 1;
-                        union xkb_action *action =
-                            &key->groups[group].levels[level].a.action;
+                    ఒకవేళ (level < కీలకం->groups[సమూహం].type->అంకె_స్థాయిలు) {
+                        కీలకం->groups[సమూహం].స్థాయిలు[level].అంకె_actions = 1;
+                        సంఘం xkb_action *action =
+                            &కీలకం->groups[సమూహం].స్థాయిలు[level].a.action;
 
                         FAIL_UNLESS(translate_action(action, wire_action,
-                                                     min_key_code, max_key_code));
+                                                     min_కీలకం_సంకేతం, max_కీలకం_సంకేతం));
 
-                        if (action->type != ACTION_TYPE_NONE) {
-                            key->groups[group].implicit_actions =
-                                !(key->explicit & EXPLICIT_INTERP);
-                        } else if (key->groups[group].levels[level].s.sym ==
-                                   XKB_KEY_NoSymbol) {
+                        ఒకవేళ (action->type != ACTION_TYPE_NONE) {
+                            కీలకం->groups[సమూహం].implicit_actions =
+                                !(కీలకం->explicit & EXPLICIT_INTERP);
+                        } లేకపోతే ఒకవేళ (కీలకం->groups[సమూహం].స్థాయిలు[level].s.sym ==
+                                   XKB_కీలకం_No_చిహ్నం) {
                             /* If the action and the keysym are both undefined,
                              * discard them */
-                            key->groups[group].levels[level].num_syms = 0;
-                            key->groups[group].levels[level].num_actions = 0;
+                            కీలకం->groups[సమూహం].స్థాయిలు[level].అంకె_syms = 0;
+                            కీలకం->groups[సమూహం].స్థాయిలు[level].అంకె_actions = 0;
                         }
                     }
 
-                    xcb_xkb_action_next(&acts_iter);
+                    xcb_xkb_action_తదుపరి(&acts_iter);
                 }
 
-                if (key->groups[group].implicit_actions)
-                    key->implicit_actions = true;
+                ఒకవేళ (కీలకం->groups[సమూహం].implicit_actions)
+                    కీలకం->implicit_actions = true;
             }
         }
 
-        acts_count_iter++;
-        xcb_xkb_key_sym_map_next(&sym_maps_iter);
+        acts_లెక్క_iter++;
+        xcb_xkb_కీలకం_sym_map_తదుపరి(&sym_maps_iter);
     }
 
-    return true;
+    తిరిగి true;
 
 fail:
-    return false;
+    తిరిగి false;
 }
 
-static bool
-get_vmods(struct xkb_keymap *keymap, xcb_connection_t *conn,
-          xcb_xkb_get_map_reply_t *reply, xcb_xkb_get_map_map_t *map)
+స్థిర bool
+get_vmods(నిర్మాణం xkb_keymap *keymap, xcb_connection_t *conn,
+          xcb_xkb_get_map_జవాబు_t *జవాబు, xcb_xkb_get_map_map_t *map)
 {
     uint8_t *iter = xcb_xkb_get_map_map_vmods_rtrn(map);
 
-    keymap->mods.num_mods =
-        NUM_REAL_MODS + MIN(msb_pos(reply->virtualMods), NUM_VMODS);
-    FAIL_UNLESS(keymap->mods.num_mods <= XKB_MAX_MODS);
+    keymap->mods.అంకె_mods =
+        అంకె_REAL_MODS + MIN(msb_pos(జవాబు->virtualMods), అంకె_VMODS);
+    FAIL_UNLESS(keymap->mods.అంకె_mods <= XKB_MAX_MODS);
 
-    static_assert(NUM_REAL_MODS + NUM_VMODS <= XKB_MAX_MODS, "");
-    for (unsigned i = 0; i < NUM_VMODS; i++) {
-        if (reply->virtualMods & (1u << i)) {
+    static_assert(అంకె_REAL_MODS + అంకె_VMODS <= XKB_MAX_MODS, "");
+    కొరకు (గుర్తులేని i = 0; i < అంకె_VMODS; i++) {
+        ఒకవేళ (జవాబు->virtualMods & (1u << i)) {
             uint8_t wire = *iter;
-            struct xkb_mod *mod = &keymap->mods.mods[NUM_REAL_MODS + i];
+            నిర్మాణం xkb_mod *mod = &keymap->mods.mods[అంకె_REAL_MODS + i];
 
             mod->type = MOD_VIRT;
             mod->mapping = translate_mods(wire, 0, 0);
@@ -632,415 +632,415 @@ get_vmods(struct xkb_keymap *keymap, xcb_connection_t *conn,
         }
     }
 
-    return true;
+    తిరిగి true;
 
 fail:
-    return false;
+    తిరిగి false;
 }
 
-static bool
-get_explicits(struct xkb_keymap *keymap, xcb_connection_t *conn,
-              xcb_xkb_get_map_reply_t *reply, xcb_xkb_get_map_map_t *map)
+స్థిర bool
+get_explicits(నిర్మాణం xkb_keymap *keymap, xcb_connection_t *conn,
+              xcb_xkb_get_map_జవాబు_t *జవాబు, xcb_xkb_get_map_map_t *map)
 {
-    int length = xcb_xkb_get_map_map_explicit_rtrn_length(reply, map);
-    xcb_xkb_set_explicit_iterator_t iter =
-        xcb_xkb_get_map_map_explicit_rtrn_iterator(reply, map);
+    పూర్ణాంకం నిడివి = xcb_xkb_get_map_map_explicit_rtrn_నిడివి(జవాబు, map);
+    xcb_xkb_సమితి_explicit_iterator_t iter =
+        xcb_xkb_get_map_map_explicit_rtrn_iterator(జవాబు, map);
 
-    for (int i = 0; i < length; i++) {
-        xcb_xkb_set_explicit_t *wire = iter.data;
-        struct xkb_key *key;
+    కొరకు (పూర్ణాంకం i = 0; i < నిడివి; i++) {
+        xcb_xkb_సమితి_explicit_t *wire = iter.దత్తాంశం;
+        నిర్మాణం xkb_కీలకం *కీలకం;
 
-        FAIL_UNLESS(wire->keycode >= keymap->min_key_code &&
-                    wire->keycode <= keymap->max_key_code);
+        FAIL_UNLESS(wire->keycode >= keymap->min_కీలకం_సంకేతం &&
+                    wire->keycode <= keymap->max_కీలకం_సంకేతం);
 
-        key = &keymap->keys[wire->keycode];
+        కీలకం = &keymap->కీలకాలు[wire->keycode];
 
-        if ((wire->explicit & XCB_XKB_EXPLICIT_KEY_TYPE_1) &&
-            key->num_groups > 0) {
-            key->groups[0].explicit_type = true;
-            key->explicit |= EXPLICIT_TYPES;
+        ఒకవేళ ((wire->explicit & XCB_XKB_EXPLICIT_కీలకం_TYPE_1) &&
+            కీలకం->అంకె_groups > 0) {
+            కీలకం->groups[0].explicit_type = true;
+            కీలకం->explicit |= EXPLICIT_TYPES;
         }
-        if ((wire->explicit & XCB_XKB_EXPLICIT_KEY_TYPE_2) &&
-            key->num_groups > 1) {
-            key->groups[1].explicit_type = true;
-            key->explicit |= EXPLICIT_TYPES;
+        ఒకవేళ ((wire->explicit & XCB_XKB_EXPLICIT_కీలకం_TYPE_2) &&
+            కీలకం->అంకె_groups > 1) {
+            కీలకం->groups[1].explicit_type = true;
+            కీలకం->explicit |= EXPLICIT_TYPES;
         }
-        if ((wire->explicit & XCB_XKB_EXPLICIT_KEY_TYPE_3) &&
-            key->num_groups > 2) {
-            key->groups[2].explicit_type = true;
-            key->explicit |= EXPLICIT_TYPES;
+        ఒకవేళ ((wire->explicit & XCB_XKB_EXPLICIT_కీలకం_TYPE_3) &&
+            కీలకం->అంకె_groups > 2) {
+            కీలకం->groups[2].explicit_type = true;
+            కీలకం->explicit |= EXPLICIT_TYPES;
         }
-        if ((wire->explicit & XCB_XKB_EXPLICIT_KEY_TYPE_4) &&
-            key->num_groups > 3) {
-            key->groups[3].explicit_type = true;
-            key->explicit |= EXPLICIT_TYPES;
+        ఒకవేళ ((wire->explicit & XCB_XKB_EXPLICIT_కీలకం_TYPE_4) &&
+            కీలకం->అంకె_groups > 3) {
+            కీలకం->groups[3].explicit_type = true;
+            కీలకం->explicit |= EXPLICIT_TYPES;
         }
-        if (wire->explicit & XCB_XKB_EXPLICIT_INTERPRET) {
-            key->explicit |= EXPLICIT_INTERP;
+        ఒకవేళ (wire->explicit & XCB_XKB_EXPLICIT_INTERPRET) {
+            కీలకం->explicit |= EXPLICIT_INTERP;
             /*
              * Make all key groups have explicit actions too, because we have
              * no way to know which one is implicit.
              */
-            for (xkb_layout_index_t l = 0; l < key->num_groups; l++) {
-                key->groups[l].explicit_actions = true;
+            కొరకు (xkb_layout_సూచీ_t l = 0; l < కీలకం->అంకె_groups; l++) {
+                కీలకం->groups[l].explicit_actions = true;
             }
         }
-        if (wire->explicit & XCB_XKB_EXPLICIT_AUTO_REPEAT)
-            key->explicit |= EXPLICIT_REPEAT;
-        if (wire->explicit & XCB_XKB_EXPLICIT_V_MOD_MAP)
-            key->explicit |= EXPLICIT_VMODMAP;
+        ఒకవేళ (wire->explicit & XCB_XKB_EXPLICIT_AUTO_REPEAT)
+            కీలకం->explicit |= EXPLICIT_REPEAT;
+        ఒకవేళ (wire->explicit & XCB_XKB_EXPLICIT_V_MOD_MAP)
+            కీలకం->explicit |= EXPLICIT_VMODMAP;
 
-        xcb_xkb_set_explicit_next(&iter);
+        xcb_xkb_సమితి_explicit_తదుపరి(&iter);
     }
 
-    return true;
+    తిరిగి true;
 
 fail:
-    return false;
+    తిరిగి false;
 }
 
-static bool
-get_modmaps(struct xkb_keymap *keymap, xcb_connection_t *conn,
-            xcb_xkb_get_map_reply_t *reply, xcb_xkb_get_map_map_t *map)
+స్థిర bool
+get_modmaps(నిర్మాణం xkb_keymap *keymap, xcb_connection_t *conn,
+            xcb_xkb_get_map_జవాబు_t *జవాబు, xcb_xkb_get_map_map_t *map)
 {
-    int length = xcb_xkb_get_map_map_modmap_rtrn_length(reply, map);
-    xcb_xkb_key_mod_map_iterator_t iter =
-        xcb_xkb_get_map_map_modmap_rtrn_iterator(reply, map);
+    పూర్ణాంకం నిడివి = xcb_xkb_get_map_map_modmap_rtrn_నిడివి(జవాబు, map);
+    xcb_xkb_కీలకం_mod_map_iterator_t iter =
+        xcb_xkb_get_map_map_modmap_rtrn_iterator(జవాబు, map);
 
-    darray(ModMapEntry) modmaps = darray_new();
+    darray(Mod_Map_నమోదు) modmaps = darray_new();
 
-    for (int i = 0; i < length; i++) {
-        xcb_xkb_key_mod_map_t *wire = iter.data;
-        struct xkb_key *key;
+    కొరకు (పూర్ణాంకం i = 0; i < నిడివి; i++) {
+        xcb_xkb_కీలకం_mod_map_t *wire = iter.దత్తాంశం;
+        నిర్మాణం xkb_కీలకం *కీలకం;
 
-        FAIL_UNLESS(wire->keycode >= keymap->min_key_code &&
-                    wire->keycode <= keymap->max_key_code);
+        FAIL_UNLESS(wire->keycode >= keymap->min_కీలకం_సంకేతం &&
+                    wire->keycode <= keymap->max_కీలకం_సంకేతం);
 
-        key = &keymap->keys[wire->keycode];
-        key->modmap = wire->mods;
+        కీలకం = &keymap->కీలకాలు[wire->keycode];
+        కీలకం->modmap = wire->mods;
 
-        darray_append(modmaps, (ModMapEntry) {
-            .keyCode = key->keycode,
-            .mods = key->modmap,
-            .haveSymbol = false,
-            .u.keyName = key->name
+        darray_append(modmaps, (Mod_Map_నమోదు) {
+            .కీలకం_సంకేతం = కీలకం->keycode,
+            .mods = కీలకం->modmap,
+            .have_చిహ్నం = false,
+            .u.కీలకం_Name = కీలకం->name
         });
 
-        xcb_xkb_key_mod_map_next(&iter);
+        xcb_xkb_కీలకం_mod_map_తదుపరి(&iter);
     }
 
-    darray_steal(modmaps, &keymap->modmaps, &keymap->num_modmaps);
-    return true;
+    darray_steal(modmaps, &keymap->modmaps, &keymap->అంకె_modmaps);
+    తిరిగి true;
 
 fail:
     darray_free(modmaps);
-    return false;
+    తిరిగి false;
 }
 
-static bool
-get_vmodmaps(struct xkb_keymap *keymap, xcb_connection_t *conn,
-             xcb_xkb_get_map_reply_t *reply, xcb_xkb_get_map_map_t *map)
+స్థిర bool
+get_vmodmaps(నిర్మాణం xkb_keymap *keymap, xcb_connection_t *conn,
+             xcb_xkb_get_map_జవాబు_t *జవాబు, xcb_xkb_get_map_map_t *map)
 {
-    int length = xcb_xkb_get_map_map_vmodmap_rtrn_length(reply, map);
-    xcb_xkb_key_v_mod_map_iterator_t iter =
-        xcb_xkb_get_map_map_vmodmap_rtrn_iterator(reply, map);
+    పూర్ణాంకం నిడివి = xcb_xkb_get_map_map_vmodmap_rtrn_నిడివి(జవాబు, map);
+    xcb_xkb_కీలకం_v_mod_map_iterator_t iter =
+        xcb_xkb_get_map_map_vmodmap_rtrn_iterator(జవాబు, map);
 
-    for (int i = 0; i < length; i++) {
-        xcb_xkb_key_v_mod_map_t *wire = iter.data;
-        struct xkb_key *key;
+    కొరకు (పూర్ణాంకం i = 0; i < నిడివి; i++) {
+        xcb_xkb_కీలకం_v_mod_map_t *wire = iter.దత్తాంశం;
+        నిర్మాణం xkb_కీలకం *కీలకం;
 
-        FAIL_UNLESS(wire->keycode >= keymap->min_key_code &&
-                    wire->keycode <= keymap->max_key_code);
+        FAIL_UNLESS(wire->keycode >= keymap->min_కీలకం_సంకేతం &&
+                    wire->keycode <= keymap->max_కీలకం_సంకేతం);
 
-        key = &keymap->keys[wire->keycode];
-        key->vmodmap = translate_mods(0, wire->vmods, 0);
+        కీలకం = &keymap->కీలకాలు[wire->keycode];
+        కీలకం->vmodmap = translate_mods(0, wire->vmods, 0);
 
-        xcb_xkb_key_v_mod_map_next(&iter);
+        xcb_xkb_కీలకం_v_mod_map_తదుపరి(&iter);
     }
 
-    return true;
+    తిరిగి true;
 
 fail:
-    return false;
+    తిరిగి false;
 }
 
-static bool
-get_map(struct xkb_keymap *keymap, xcb_connection_t *conn,
+స్థిర bool
+get_map(నిర్మాణం xkb_keymap *keymap, xcb_connection_t *conn,
         xcb_xkb_get_map_cookie_t cookie)
 {
-    xcb_xkb_get_map_reply_t *reply = xcb_xkb_get_map_reply(conn, cookie, NULL);
+    xcb_xkb_get_map_జవాబు_t *జవాబు = xcb_xkb_get_map_జవాబు(conn, cookie, ఖాళీ);
     xcb_xkb_get_map_map_t map;
 
-    FAIL_IF_BAD_REPLY(reply, "XkbGetMap");
+    FAIL_IF_BAD_జవాబు(జవాబు, "XkbGetMap");
 
-    if ((reply->present & get_map_required_components) != get_map_required_components)
-        goto fail;
+    ఒకవేళ ((జవాబు->present & get_map_required_components) != get_map_required_components)
+        వెళ్ళు fail;
 
-    xcb_xkb_get_map_map_unpack(xcb_xkb_get_map_map(reply),
-                               reply->nTypes,
-                               reply->nKeySyms,
-                               reply->nKeyActions,
-                               reply->totalActions,
-                               reply->totalKeyBehaviors,
-                               reply->virtualMods,
-                               reply->totalKeyExplicit,
-                               reply->totalModMapKeys,
-                               reply->totalVModMapKeys,
-                               reply->present,
+    xcb_xkb_get_map_map_unpack(xcb_xkb_get_map_map(జవాబు),
+                               జవాబు->nTypes,
+                               జవాబు->n_కీలకం_Syms,
+                               జవాబు->n_కీలకం_Actions,
+                               జవాబు->మొత్తం_Actions,
+                               జవాబు->మొత్తం_కీలకం_Behaviors,
+                               జవాబు->virtualMods,
+                               జవాబు->మొత్తం_కీలకం_Explicit,
+                               జవాబు->మొత్తం_Mod_Map_కీలకాలు,
+                               జవాబు->మొత్తం_VMod_Map_కీలకాలు,
+                               జవాబు->present,
                                &map);
 
-    if (!get_types(keymap, conn, reply, &map) ||
-        !get_sym_maps(keymap, conn, reply, &map) ||
-        !get_actions(keymap, conn, reply, &map) ||
-        !get_vmods(keymap, conn, reply, &map) ||
-        !get_explicits(keymap, conn, reply, &map) ||
-        !get_modmaps(keymap, conn, reply, &map) ||
-        !get_vmodmaps(keymap, conn, reply, &map))
-        goto fail;
+    ఒకవేళ (!get_types(keymap, conn, జవాబు, &map) ||
+        !get_sym_maps(keymap, conn, జవాబు, &map) ||
+        !get_actions(keymap, conn, జవాబు, &map) ||
+        !get_vmods(keymap, conn, జవాబు, &map) ||
+        !get_explicits(keymap, conn, జవాబు, &map) ||
+        !get_modmaps(keymap, conn, జవాబు, &map) ||
+        !get_vmodmaps(keymap, conn, జవాబు, &map))
+        వెళ్ళు fail;
 
-    free(reply);
-    return true;
+    విడుదల(జవాబు);
+    తిరిగి true;
 
 fail:
-    free(reply);
-    return false;
+    విడుదల(జవాబు);
+    తిరిగి false;
 }
 
-static bool
-get_indicators(struct xkb_keymap *keymap, xcb_connection_t *conn,
-               xcb_xkb_get_indicator_map_reply_t *reply)
+స్థిర bool
+get_indicators(నిర్మాణం xkb_keymap *keymap, xcb_connection_t *conn,
+               xcb_xkb_get_indicator_map_జవాబు_t *జవాబు)
 {
     xcb_xkb_indicator_map_iterator_t iter =
-        xcb_xkb_get_indicator_map_maps_iterator(reply);
+        xcb_xkb_get_indicator_map_maps_iterator(జవాబు);
 
-    keymap->num_leds = msb_pos(reply->which);
-    FAIL_UNLESS(keymap->num_leds <= XKB_MAX_LEDS);
+    keymap->అంకె_leds = msb_pos(జవాబు->which);
+    FAIL_UNLESS(keymap->అంకె_leds <= XKB_MAX_LEDS);
 
-    static_assert(XKB_MAX_LEDS == NUM_INDICATORS, "");
-    for (unsigned i = 0; i < NUM_INDICATORS; i++) {
-        if (reply->which & (UINT32_C(1) << i)) {
-            xcb_xkb_indicator_map_t *wire = iter.data;
-            struct xkb_led *led = &keymap->leds[i];
+    static_assert(XKB_MAX_LEDS == అంకె_INDICATORS, "");
+    కొరకు (గుర్తులేని i = 0; i < అంకె_INDICATORS; i++) {
+        ఒకవేళ (జవాబు->which & (UINT32_C(1) << i)) {
+            xcb_xkb_indicator_map_t *wire = iter.దత్తాంశం;
+            నిర్మాణం xkb_led *led = &keymap->leds[i];
 
-            if (wire->whichGroups & XCB_XKB_IM_GROUPS_WHICH_USE_BASE)
+            ఒకవేళ (wire->whichGroups & XCB_XKB_IM_GROUPS_WHICH_USE_పునాది)
                 led->which_groups |= XKB_STATE_LAYOUT_DEPRESSED;
-            if (wire->whichGroups & XCB_XKB_IM_GROUPS_WHICH_USE_LATCHED)
+            ఒకవేళ (wire->whichGroups & XCB_XKB_IM_GROUPS_WHICH_USE_LATCHED)
                 led->which_groups |= XKB_STATE_LAYOUT_LATCHED;
-            if (wire->whichGroups & XCB_XKB_IM_GROUPS_WHICH_USE_LOCKED)
+            ఒకవేళ (wire->whichGroups & XCB_XKB_IM_GROUPS_WHICH_USE_LOCKED)
                 led->which_groups |= XKB_STATE_LAYOUT_LOCKED;
-            if (wire->whichGroups & XCB_XKB_IM_GROUPS_WHICH_USE_EFFECTIVE)
+            ఒకవేళ (wire->whichGroups & XCB_XKB_IM_GROUPS_WHICH_USE_EFFECTIVE)
                 led->which_groups |= XKB_STATE_LAYOUT_EFFECTIVE;
-            if (wire->whichGroups & XCB_XKB_IM_GROUPS_WHICH_USE_COMPAT)
+            ఒకవేళ (wire->whichGroups & XCB_XKB_IM_GROUPS_WHICH_USE_COMPAT)
                 led->which_groups |= XKB_STATE_LAYOUT_EFFECTIVE;
 
             led->groups = wire->groups;
 
-            if (wire->whichMods & XCB_XKB_IM_MODS_WHICH_USE_BASE)
+            ఒకవేళ (wire->whichMods & XCB_XKB_IM_MODS_WHICH_USE_పునాది)
                 led->which_mods |= XKB_STATE_MODS_DEPRESSED;
-            if (wire->whichMods & XCB_XKB_IM_MODS_WHICH_USE_LATCHED)
+            ఒకవేళ (wire->whichMods & XCB_XKB_IM_MODS_WHICH_USE_LATCHED)
                 led->which_mods |= XKB_STATE_MODS_LATCHED;
-            if (wire->whichMods & XCB_XKB_IM_MODS_WHICH_USE_LOCKED)
+            ఒకవేళ (wire->whichMods & XCB_XKB_IM_MODS_WHICH_USE_LOCKED)
                 led->which_mods |= XKB_STATE_MODS_LOCKED;
-            if (wire->whichMods & XCB_XKB_IM_MODS_WHICH_USE_EFFECTIVE)
+            ఒకవేళ (wire->whichMods & XCB_XKB_IM_MODS_WHICH_USE_EFFECTIVE)
                 led->which_mods |= XKB_STATE_MODS_EFFECTIVE;
-            if (wire->whichMods & XCB_XKB_IM_MODS_WHICH_USE_COMPAT)
+            ఒకవేళ (wire->whichMods & XCB_XKB_IM_MODS_WHICH_USE_COMPAT)
                 led->which_mods |= XKB_STATE_MODS_EFFECTIVE;
 
             led->mods.mods = translate_mods(wire->realMods, wire->vmods, 0);
-            led->mods.mask = translate_mods(wire->mods, 0, 0);
+            led->mods.ముసుగు = translate_mods(wire->mods, 0, 0);
 
-            led->ctrls = translate_controls_mask(wire->ctrls);
+            led->ctrls = translate_controls_ముసుగు(wire->ctrls);
 
-            xcb_xkb_indicator_map_next(&iter);
+            xcb_xkb_indicator_map_తదుపరి(&iter);
         }
     }
 
-    return true;
+    తిరిగి true;
 
 fail:
-    return false;
+    తిరిగి false;
 }
 
-static bool
-get_indicator_map(struct xkb_keymap *keymap, xcb_connection_t *conn,
+స్థిర bool
+get_indicator_map(నిర్మాణం xkb_keymap *keymap, xcb_connection_t *conn,
                   xcb_xkb_get_indicator_map_cookie_t cookie)
 {
-    xcb_xkb_get_indicator_map_reply_t *reply =
-        xcb_xkb_get_indicator_map_reply(conn, cookie, NULL);
+    xcb_xkb_get_indicator_map_జవాబు_t *జవాబు =
+        xcb_xkb_get_indicator_map_జవాబు(conn, cookie, ఖాళీ);
 
-    FAIL_IF_BAD_REPLY(reply, "XkbGetIndicatorMap");
+    FAIL_IF_BAD_జవాబు(జవాబు, "XkbGetIndicatorMap");
 
-    if (!get_indicators(keymap, conn, reply))
-        goto fail;
+    ఒకవేళ (!get_indicators(keymap, conn, జవాబు))
+        వెళ్ళు fail;
 
-    free(reply);
-    return true;
+    విడుదల(జవాబు);
+    తిరిగి true;
 
 fail:
-    free(reply);
-    return false;
+    విడుదల(జవాబు);
+    తిరిగి false;
 }
 
-static bool
-get_sym_interprets(struct xkb_keymap *keymap, xcb_connection_t *conn,
-                   xcb_xkb_get_compat_map_reply_t *reply)
+స్థిర bool
+get_sym_interprets(నిర్మాణం xkb_keymap *keymap, xcb_connection_t *conn,
+                   xcb_xkb_get_compat_map_జవాబు_t *జవాబు)
 {
-    int length = xcb_xkb_get_compat_map_si_rtrn_length(reply);
+    పూర్ణాంకం నిడివి = xcb_xkb_get_compat_map_si_rtrn_నిడివి(జవాబు);
     xcb_xkb_sym_interpret_iterator_t iter =
-        xcb_xkb_get_compat_map_si_rtrn_iterator(reply);
+        xcb_xkb_get_compat_map_si_rtrn_iterator(జవాబు);
 
-    FAIL_UNLESS(reply->firstSIRtrn == 0);
-    FAIL_UNLESS(reply->nSIRtrn == reply->nTotalSI);
+    FAIL_UNLESS(జవాబు->మొదటి_SIRtrn == 0);
+    FAIL_UNLESS(జవాబు->nSIRtrn == జవాబు->n_మొత్తం_SI);
 
-    keymap->num_sym_interprets = reply->nSIRtrn;
-    ALLOC_OR_FAIL(keymap->sym_interprets, keymap->num_sym_interprets);
+    keymap->అంకె_sym_interprets = జవాబు->nSIRtrn;
+    ALLOC_OR_FAIL(keymap->sym_interprets, keymap->అంకె_sym_interprets);
 
-    const xkb_keycode_t min_key_code = keymap->min_key_code;
-    const xkb_keycode_t max_key_code = keymap->max_key_code;
+    స్థిరరాశి xkb_keycode_t min_కీలకం_సంకేతం = keymap->min_కీలకం_సంకేతం;
+    స్థిరరాశి xkb_keycode_t max_కీలకం_సంకేతం = keymap->max_కీలకం_సంకేతం;
 
-    for (int i = 0; i < length; i++) {
-        xcb_xkb_sym_interpret_t *wire = iter.data;
-        struct xkb_sym_interpret *sym_interpret = &keymap->sym_interprets[i];
+    కొరకు (పూర్ణాంకం i = 0; i < నిడివి; i++) {
+        xcb_xkb_sym_interpret_t *wire = iter.దత్తాంశం;
+        నిర్మాణం xkb_sym_interpret *sym_interpret = &keymap->sym_interprets[i];
 
         sym_interpret->sym = wire->sym;
 
-        switch (wire->match & XCB_XKB_SYM_INTERP_MATCH_OP_MASK) {
-        case XCB_XKB_SYM_INTERPRET_MATCH_NONE_OF:
-            sym_interpret->match = MATCH_NONE;
-            break;
-        case XCB_XKB_SYM_INTERPRET_MATCH_ANY_OF_OR_NONE:
-            sym_interpret->match = MATCH_ANY_OR_NONE;
-            break;
-        case XCB_XKB_SYM_INTERPRET_MATCH_ANY_OF:
-            sym_interpret->match = MATCH_ANY;
-            break;
-        case XCB_XKB_SYM_INTERPRET_MATCH_ALL_OF:
-            sym_interpret->match = MATCH_ALL;
-            break;
-        case XCB_XKB_SYM_INTERPRET_MATCH_EXACTLY:
-            sym_interpret->match = MATCH_EXACTLY;
-            break;
-        default:
-            log_err_func(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
+        ఎంపిక (wire->సరిపోలిక & XCB_XKB_SYM_INTERP_సరిపోలిక_OP_ముసుగు) {
+        స్థితి XCB_XKB_SYM_INTERPRET_సరిపోలిక_NONE_యొక్క:
+            sym_interpret->సరిపోలిక = సరిపోలిక_NONE;
+            ఆపు;
+        స్థితి XCB_XKB_SYM_INTERPRET_సరిపోలిక_ANY_యొక్క_OR_NONE:
+            sym_interpret->సరిపోలిక = సరిపోలిక_ANY_OR_NONE;
+            ఆపు;
+        స్థితి XCB_XKB_SYM_INTERPRET_సరిపోలిక_ANY_యొక్క:
+            sym_interpret->సరిపోలిక = సరిపోలిక_ANY;
+            ఆపు;
+        స్థితి XCB_XKB_SYM_INTERPRET_సరిపోలిక_ALL_యొక్క:
+            sym_interpret->సరిపోలిక = సరిపోలిక_ALL;
+            ఆపు;
+        స్థితి XCB_XKB_SYM_INTERPRET_సరిపోలిక_EXACTLY:
+            sym_interpret->సరిపోలిక = సరిపోలిక_EXACTLY;
+            ఆపు;
+        అప్రమేయ:
+            log_err_func(keymap->ctx, XKB_LOG_సందేశం_NO_ID,
                          "unrecognized interpret match value: %#x\n",
-                         wire->match & XCB_XKB_SYM_INTERP_MATCH_OP_MASK);
-            goto fail;
+                         wire->సరిపోలిక & XCB_XKB_SYM_INTERP_సరిపోలిక_OP_ముసుగు);
+            వెళ్ళు fail;
         }
 
         sym_interpret->level_one_only =
-            (wire->match & XCB_XKB_SYM_INTERP_MATCH_LEVEL_ONE_ONLY);
+            (wire->సరిపోలిక & XCB_XKB_SYM_INTERP_సరిపోలిక_LEVEL_ONE_ONLY);
         sym_interpret->mods = wire->mods;
 
-        if (wire->virtualMod == NO_MODIFIER)
+        ఒకవేళ (wire->virtualMod == NO_MODIFIER)
             sym_interpret->virtual_mod = XKB_MOD_INVALID;
-        else
-            sym_interpret->virtual_mod = NUM_REAL_MODS + wire->virtualMod;
+        లేకపోతే
+            sym_interpret->virtual_mod = అంకె_REAL_MODS + wire->virtualMod;
 
         sym_interpret->repeat = (wire->flags & 0x01);
         FAIL_UNLESS(translate_action(&sym_interpret->a.action,
                                      (xcb_xkb_action_t *) &wire->action,
-                                     min_key_code, max_key_code));
-        sym_interpret->num_actions =
+                                     min_కీలకం_సంకేతం, max_కీలకం_సంకేతం));
+        sym_interpret->అంకె_actions =
             (sym_interpret->a.action.type != ACTION_TYPE_NONE);
 
         /* Checked only when compiling a keymap from text */
         sym_interpret->required = true;
 
-        xcb_xkb_sym_interpret_next(&iter);
+        xcb_xkb_sym_interpret_తదుపరి(&iter);
     }
 
-    return true;
+    తిరిగి true;
 
 fail:
-    return false;
+    తిరిగి false;
 }
 
-static bool
-get_compat_map(struct xkb_keymap *keymap, xcb_connection_t *conn,
+స్థిర bool
+get_compat_map(నిర్మాణం xkb_keymap *keymap, xcb_connection_t *conn,
                xcb_xkb_get_compat_map_cookie_t cookie)
 {
-    xcb_xkb_get_compat_map_reply_t *reply =
-        xcb_xkb_get_compat_map_reply(conn, cookie, NULL);
+    xcb_xkb_get_compat_map_జవాబు_t *జవాబు =
+        xcb_xkb_get_compat_map_జవాబు(conn, cookie, ఖాళీ);
 
-    FAIL_IF_BAD_REPLY(reply, "XkbGetCompatMap");
+    FAIL_IF_BAD_జవాబు(జవాబు, "XkbGetCompatMap");
 
-    if (!get_sym_interprets(keymap, conn, reply))
-        goto fail;
+    ఒకవేళ (!get_sym_interprets(keymap, conn, జవాబు))
+        వెళ్ళు fail;
 
-    free(reply);
-    return true;
+    విడుదల(జవాబు);
+    తిరిగి true;
 
 fail:
-    free(reply);
-    return false;
+    విడుదల(జవాబు);
+    తిరిగి false;
 }
 
-static bool
-get_type_names(struct xkb_keymap *keymap, struct x11_atom_interner *interner,
-               xcb_xkb_get_names_reply_t *reply,
-               xcb_xkb_get_names_value_list_t *list)
+స్థిర bool
+get_type_పేర్లు(నిర్మాణం xkb_keymap *keymap, నిర్మాణం x11_atom_interner *interner,
+               xcb_xkb_get_పేర్లు_జవాబు_t *జవాబు,
+               xcb_xkb_get_పేర్లు_విలువ_list_t *list)
 {
-    int key_type_names_length =
-        xcb_xkb_get_names_value_list_type_names_length(reply, list);
-    xcb_atom_t *key_type_names_iter =
-        xcb_xkb_get_names_value_list_type_names(list);
-    int n_levels_per_type_length =
-        xcb_xkb_get_names_value_list_n_levels_per_type_length(reply, list);
-    uint8_t *n_levels_per_type_iter =
-        xcb_xkb_get_names_value_list_n_levels_per_type(list);
-    xcb_atom_t *kt_level_names_iter =
-        xcb_xkb_get_names_value_list_kt_level_names(list);
+    పూర్ణాంకం కీలకం_type_పేర్లు_నిడివి =
+        xcb_xkb_get_పేర్లు_విలువ_list_type_పేర్లు_నిడివి(జవాబు, list);
+    xcb_atom_t *కీలకం_type_పేర్లు_iter =
+        xcb_xkb_get_పేర్లు_విలువ_list_type_పేర్లు(list);
+    పూర్ణాంకం n_స్థాయిలు_చొప్పున_type_నిడివి =
+        xcb_xkb_get_పేర్లు_విలువ_list_n_స్థాయిలు_చొప్పున_type_నిడివి(జవాబు, list);
+    uint8_t *n_స్థాయిలు_చొప్పున_type_iter =
+        xcb_xkb_get_పేర్లు_విలువ_list_n_స్థాయిలు_చొప్పున_type(list);
+    xcb_atom_t *kt_level_పేర్లు_iter =
+        xcb_xkb_get_పేర్లు_విలువ_list_kt_level_పేర్లు(list);
 
-    FAIL_UNLESS(reply->nTypes == keymap->num_types);
-    FAIL_UNLESS(key_type_names_length == n_levels_per_type_length);
+    FAIL_UNLESS(జవాబు->nTypes == keymap->అంకె_types);
+    FAIL_UNLESS(కీలకం_type_పేర్లు_నిడివి == n_స్థాయిలు_చొప్పున_type_నిడివి);
 
-    for (int i = 0; i < key_type_names_length; i++) {
-        xcb_atom_t wire_type_name = *key_type_names_iter;
-        uint8_t wire_num_levels = *n_levels_per_type_iter;
-        struct xkb_key_type *type = &keymap->types[i];
+    కొరకు (పూర్ణాంకం i = 0; i < కీలకం_type_పేర్లు_నిడివి; i++) {
+        xcb_atom_t wire_type_name = *కీలకం_type_పేర్లు_iter;
+        uint8_t wire_అంకె_స్థాయిలు = *n_స్థాయిలు_చొప్పున_type_iter;
+        నిర్మాణం xkb_కీలకం_type *type = &keymap->types[i];
 
         /* Levels names are optional, but the maximum is the level count */
-        FAIL_UNLESS(type->num_levels >= wire_num_levels);
+        FAIL_UNLESS(type->అంకె_స్థాయిలు >= wire_అంకె_స్థాయిలు);
 
         /* Allocate names for all levels, even if some names are missing */
-        ALLOC_OR_FAIL(type->level_names, type->num_levels);
-        type->num_level_names = type->num_levels;
+        ALLOC_OR_FAIL(type->level_పేర్లు, type->అంకె_స్థాయిలు);
+        type->అంకె_level_పేర్లు = type->అంకె_స్థాయిలు;
 
         x11_atom_interner_adopt_atom(interner, wire_type_name, &type->name);
-        for (size_t j = 0; j < wire_num_levels; j++) {
-            x11_atom_interner_adopt_atom(interner, kt_level_names_iter[j],
-                                         &type->level_names[j]);
+        కొరకు (కొలత_t j = 0; j < wire_అంకె_స్థాయిలు; j++) {
+            x11_atom_interner_adopt_atom(interner, kt_level_పేర్లు_iter[j],
+                                         &type->level_పేర్లు[j]);
         }
         /* We may have received less names than there are levels: ensure
          * missing names have a fallback. */
-        for (size_t j = wire_num_levels; j < type->num_levels; j++)
-            type->level_names[j] = XKB_ATOM_NONE;
+        కొరకు (కొలత_t j = wire_అంకె_స్థాయిలు; j < type->అంకె_స్థాయిలు; j++)
+            type->level_పేర్లు[j] = XKB_ATOM_NONE;
 
-        kt_level_names_iter += wire_num_levels;
-        key_type_names_iter++;
-        n_levels_per_type_iter++;
+        kt_level_పేర్లు_iter += wire_అంకె_స్థాయిలు;
+        కీలకం_type_పేర్లు_iter++;
+        n_స్థాయిలు_చొప్పున_type_iter++;
     }
 
-    return true;
+    తిరిగి true;
 
 fail:
-    return false;
+    తిరిగి false;
 }
 
-static bool
-get_indicator_names(struct xkb_keymap *keymap,
-                    struct x11_atom_interner *interner,
-                    xcb_xkb_get_names_reply_t *reply,
-                    xcb_xkb_get_names_value_list_t *list)
+స్థిర bool
+get_indicator_పేర్లు(నిర్మాణం xkb_keymap *keymap,
+                    నిర్మాణం x11_atom_interner *interner,
+                    xcb_xkb_get_పేర్లు_జవాబు_t *జవాబు,
+                    xcb_xkb_get_పేర్లు_విలువ_list_t *list)
 {
-    xcb_atom_t *iter = xcb_xkb_get_names_value_list_indicator_names(list);
+    xcb_atom_t *iter = xcb_xkb_get_పేర్లు_విలువ_list_indicator_పేర్లు(list);
 
-    FAIL_UNLESS(msb_pos(reply->indicators) <= keymap->num_leds);
+    FAIL_UNLESS(msb_pos(జవాబు->indicators) <= keymap->అంకె_leds);
 
-    for (unsigned i = 0; i < NUM_INDICATORS; i++) {
-        if (reply->indicators & (UINT32_C(1) << i)) {
+    కొరకు (గుర్తులేని i = 0; i < అంకె_INDICATORS; i++) {
+        ఒకవేళ (జవాబు->indicators & (UINT32_C(1) << i)) {
             xcb_atom_t wire = *iter;
-            struct xkb_led *led = &keymap->leds[i];
+            నిర్మాణం xkb_led *led = &keymap->leds[i];
 
             x11_atom_interner_adopt_atom(interner, wire, &led->name);
 
@@ -1048,33 +1048,33 @@ get_indicator_names(struct xkb_keymap *keymap,
         }
     }
 
-    return true;
+    తిరిగి true;
 
 fail:
-    return false;
+    తిరిగి false;
 }
 
-static bool
-get_vmod_names(struct xkb_keymap *keymap, struct x11_atom_interner *interner,
-               xcb_xkb_get_names_reply_t *reply,
-               xcb_xkb_get_names_value_list_t *list)
+స్థిర bool
+get_vmod_పేర్లు(నిర్మాణం xkb_keymap *keymap, నిర్మాణం x11_atom_interner *interner,
+               xcb_xkb_get_పేర్లు_జవాబు_t *జవాబు,
+               xcb_xkb_get_పేర్లు_విలువ_list_t *list)
 {
-    xcb_atom_t *iter = xcb_xkb_get_names_value_list_virtual_mod_names(list);
+    xcb_atom_t *iter = xcb_xkb_get_పేర్లు_విలువ_list_virtual_mod_పేర్లు(list);
 
     /*
      * GetMap's reply->virtualMods is always 0xffff. This one really
      * tells us which vmods exist (a vmod must have a name), so we fix
      * up the size here.
      */
-    keymap->mods.num_mods =
-        NUM_REAL_MODS + MIN(msb_pos(reply->virtualMods), NUM_VMODS);
-    FAIL_UNLESS(keymap->mods.num_mods <= XKB_MAX_MODS);
+    keymap->mods.అంకె_mods =
+        అంకె_REAL_MODS + MIN(msb_pos(జవాబు->virtualMods), అంకె_VMODS);
+    FAIL_UNLESS(keymap->mods.అంకె_mods <= XKB_MAX_MODS);
 
-    static_assert(NUM_REAL_MODS + NUM_VMODS <= XKB_MAX_MODS, "");
-    for (unsigned i = 0; i < NUM_VMODS; i++) {
-        if (reply->virtualMods & (1u << i)) {
+    static_assert(అంకె_REAL_MODS + అంకె_VMODS <= XKB_MAX_MODS, "");
+    కొరకు (గుర్తులేని i = 0; i < అంకె_VMODS; i++) {
+        ఒకవేళ (జవాబు->virtualMods & (1u << i)) {
             xcb_atom_t wire = *iter;
-            struct xkb_mod *mod = &keymap->mods.mods[NUM_REAL_MODS + i];
+            నిర్మాణం xkb_mod *mod = &keymap->mods.mods[అంకె_REAL_MODS + i];
 
             x11_atom_interner_adopt_atom(interner, wire, &mod->name);
 
@@ -1082,128 +1082,128 @@ get_vmod_names(struct xkb_keymap *keymap, struct x11_atom_interner *interner,
         }
     }
 
-    return true;
+    తిరిగి true;
 
 fail:
-    return false;
+    తిరిగి false;
 }
 
-static bool
-get_group_names(struct xkb_keymap *keymap, struct x11_atom_interner *interner,
-                xcb_xkb_get_names_reply_t *reply,
-                xcb_xkb_get_names_value_list_t *list)
+స్థిర bool
+get_సమూహం_పేర్లు(నిర్మాణం xkb_keymap *keymap, నిర్మాణం x11_atom_interner *interner,
+                xcb_xkb_get_పేర్లు_జవాబు_t *జవాబు,
+                xcb_xkb_get_పేర్లు_విలువ_list_t *list)
 {
-    int length = xcb_xkb_get_names_value_list_groups_length(reply, list);
-    xcb_atom_t *iter = xcb_xkb_get_names_value_list_groups(list);
+    పూర్ణాంకం నిడివి = xcb_xkb_get_పేర్లు_విలువ_list_groups_నిడివి(జవాబు, list);
+    xcb_atom_t *iter = xcb_xkb_get_పేర్లు_విలువ_list_groups(list);
 
-    keymap->num_group_names = msb_pos(reply->groupNames);
-    ALLOC_OR_FAIL(keymap->group_names, keymap->num_group_names);
+    keymap->అంకె_సమూహం_పేర్లు = msb_pos(జవాబు->సమూహం_పేర్లు_2);
+    ALLOC_OR_FAIL(keymap->సమూహం_పేర్లు, keymap->అంకె_సమూహం_పేర్లు);
 
-    for (int i = 0; i < length; i++) {
+    కొరకు (పూర్ణాంకం i = 0; i < నిడివి; i++) {
         x11_atom_interner_adopt_atom(interner, iter[i],
-                                     &keymap->group_names[i]);
+                                     &keymap->సమూహం_పేర్లు[i]);
     }
 
-    return true;
+    తిరిగి true;
 
 fail:
-    return false;
+    తిరిగి false;
 }
 
-static bool
-get_key_names(struct xkb_keymap *keymap, xcb_connection_t *conn,
-              xcb_xkb_get_names_reply_t *reply,
-              xcb_xkb_get_names_value_list_t *list)
+స్థిర bool
+get_కీలకం_పేర్లు(నిర్మాణం xkb_keymap *keymap, xcb_connection_t *conn,
+              xcb_xkb_get_పేర్లు_జవాబు_t *జవాబు,
+              xcb_xkb_get_పేర్లు_విలువ_list_t *list)
 {
-    int length = xcb_xkb_get_names_value_list_key_names_length(reply, list);
-    xcb_xkb_key_name_iterator_t iter =
-        xcb_xkb_get_names_value_list_key_names_iterator(reply, list);
+    పూర్ణాంకం నిడివి = xcb_xkb_get_పేర్లు_విలువ_list_కీలకం_పేర్లు_నిడివి(జవాబు, list);
+    xcb_xkb_కీలకం_name_iterator_t iter =
+        xcb_xkb_get_పేర్లు_విలువ_list_కీలకం_పేర్లు_iterator(జవాబు, list);
 
-    FAIL_UNLESS(reply->minKeyCode == keymap->min_key_code);
-    FAIL_UNLESS(reply->maxKeyCode == keymap->max_key_code);
-    FAIL_UNLESS(reply->firstKey == keymap->min_key_code);
-    FAIL_UNLESS(reply->firstKey + reply->nKeys - 1U == keymap->max_key_code);
+    FAIL_UNLESS(జవాబు->min_కీలకం_సంకేతం_2 == keymap->min_కీలకం_సంకేతం);
+    FAIL_UNLESS(జవాబు->max_కీలకం_సంకేతం_2 == keymap->max_కీలకం_సంకేతం);
+    FAIL_UNLESS(జవాబు->మొదటి_కీలకం == keymap->min_కీలకం_సంకేతం);
+    FAIL_UNLESS(జవాబు->మొదటి_కీలకం + జవాబు->n_కీలకాలు - 1U == keymap->max_కీలకం_సంకేతం);
 
-    for (int i = 0; i < length; i++) {
-        xcb_xkb_key_name_t *wire = iter.data;
-        xkb_atom_t *key_name = &keymap->keys[reply->firstKey + i].name;
+    కొరకు (పూర్ణాంకం i = 0; i < నిడివి; i++) {
+        xcb_xkb_కీలకం_name_t *wire = iter.దత్తాంశం;
+        xkb_atom_t *కీలకం_name = &keymap->కీలకాలు[జవాబు->మొదటి_కీలకం + i].name;
 
-        if (wire->name[0] == '\0') {
-            *key_name = XKB_ATOM_NONE;
+        ఒకవేళ (wire->name[0] == '\0') {
+            *కీలకం_name = XKB_ATOM_NONE;
         }
-        else {
-            *key_name = xkb_atom_intern(keymap->ctx, wire->name,
+        లేకపోతే {
+            *కీలకం_name = xkb_atom_intern(keymap->ctx, wire->name,
                                         strnlen(wire->name,
-                                                XCB_XKB_CONST_KEY_NAME_LENGTH));
-            if (!*key_name)
-                return false;
+                                                XCB_XKB_CONST_కీలకం_NAME_నిడివి));
+            ఒకవేళ (!*కీలకం_name)
+                తిరిగి false;
         }
 
-        xcb_xkb_key_name_next(&iter);
+        xcb_xkb_కీలకం_name_తదుపరి(&iter);
     }
 
-    return true;
+    తిరిగి true;
 
 fail:
-    return false;
+    తిరిగి false;
 }
 
-static bool
-get_aliases(struct xkb_keymap *keymap, xcb_connection_t *conn,
-            xcb_xkb_get_names_reply_t *reply,
-            xcb_xkb_get_names_value_list_t *list)
+స్థిర bool
+get_aliases(నిర్మాణం xkb_keymap *keymap, xcb_connection_t *conn,
+            xcb_xkb_get_పేర్లు_జవాబు_t *జవాబు,
+            xcb_xkb_get_పేర్లు_విలువ_list_t *list)
 {
-    int length = xcb_xkb_get_names_value_list_key_aliases_length(reply, list);
-    xcb_xkb_key_alias_iterator_t iter =
-        xcb_xkb_get_names_value_list_key_aliases_iterator(reply, list);
+    పూర్ణాంకం నిడివి = xcb_xkb_get_పేర్లు_విలువ_list_కీలకం_aliases_నిడివి(జవాబు, list);
+    xcb_xkb_కీలకం_alias_iterator_t iter =
+        xcb_xkb_get_పేర్లు_విలువ_list_కీలకం_aliases_iterator(జవాబు, list);
 
-    keymap->num_key_aliases = reply->nKeyAliases;
-    ALLOC_OR_FAIL(keymap->key_aliases, keymap->num_key_aliases);
+    keymap->అంకె_కీలకం_aliases = జవాబు->n_కీలకం_Aliases;
+    ALLOC_OR_FAIL(keymap->కీలకం_aliases, keymap->అంకె_కీలకం_aliases);
 
-    for (int i = 0; i < length; i++) {
-        xcb_xkb_key_alias_t *wire = iter.data;
-        struct xkb_key_alias *alias = &keymap->key_aliases[i];
+    కొరకు (పూర్ణాంకం i = 0; i < నిడివి; i++) {
+        xcb_xkb_కీలకం_alias_t *wire = iter.దత్తాంశం;
+        నిర్మాణం xkb_కీలకం_alias *alias = &keymap->కీలకం_aliases[i];
 
         alias->real =
             xkb_atom_intern(keymap->ctx, wire->real,
-                            strnlen(wire->real, XCB_XKB_CONST_KEY_NAME_LENGTH));
+                            strnlen(wire->real, XCB_XKB_CONST_కీలకం_NAME_నిడివి));
         alias->alias =
             xkb_atom_intern(keymap->ctx, wire->alias,
-                            strnlen(wire->alias, XCB_XKB_CONST_KEY_NAME_LENGTH));
-        if (!alias->real || !alias->alias)
-            goto fail;
+                            strnlen(wire->alias, XCB_XKB_CONST_కీలకం_NAME_నిడివి));
+        ఒకవేళ (!alias->real || !alias->alias)
+            వెళ్ళు fail;
 
-        xcb_xkb_key_alias_next(&iter);
+        xcb_xkb_కీలకం_alias_తదుపరి(&iter);
     }
 
-    return true;
+    తిరిగి true;
 
 fail:
-    return false;
+    తిరిగి false;
 }
 
-static bool
-get_names(struct xkb_keymap *keymap, struct x11_atom_interner *interner,
-          xcb_xkb_get_names_cookie_t cookie)
+స్థిర bool
+get_పేర్లు(నిర్మాణం xkb_keymap *keymap, నిర్మాణం x11_atom_interner *interner,
+          xcb_xkb_get_పేర్లు_cookie_t cookie)
 {
     xcb_connection_t *conn = interner->conn;
-    xcb_xkb_get_names_reply_t *reply =
-        xcb_xkb_get_names_reply(conn, cookie, NULL);
-    xcb_xkb_get_names_value_list_t list;
+    xcb_xkb_get_పేర్లు_జవాబు_t *జవాబు =
+        xcb_xkb_get_పేర్లు_జవాబు(conn, cookie, ఖాళీ);
+    xcb_xkb_get_పేర్లు_విలువ_list_t list;
 
-    FAIL_IF_BAD_REPLY(reply, "XkbGetNames");
+    FAIL_IF_BAD_జవాబు(జవాబు, "XkbGetNames");
 
-    FAIL_UNLESS((reply->which & get_names_required) == get_names_required);
+    FAIL_UNLESS((జవాబు->which & get_పేర్లు_required) == get_పేర్లు_required);
 
-    xcb_xkb_get_names_value_list_unpack(xcb_xkb_get_names_value_list(reply),
-                                        reply->nTypes,
-                                        reply->indicators,
-                                        reply->virtualMods,
-                                        reply->groupNames,
-                                        reply->nKeys,
-                                        reply->nKeyAliases,
-                                        reply->nRadioGroups,
-                                        reply->which,
+    xcb_xkb_get_పేర్లు_విలువ_list_unpack(xcb_xkb_get_పేర్లు_విలువ_list(జవాబు),
+                                        జవాబు->nTypes,
+                                        జవాబు->indicators,
+                                        జవాబు->virtualMods,
+                                        జవాబు->సమూహం_పేర్లు_2,
+                                        జవాబు->n_కీలకాలు,
+                                        జవాబు->n_కీలకం_Aliases,
+                                        జవాబు->nRadioGroups,
+                                        జవాబు->which,
                                         &list);
 
     x11_atom_interner_get_escaped_atom_name(interner, list.keycodesName,
@@ -1214,68 +1214,68 @@ get_names(struct xkb_keymap *keymap, struct x11_atom_interner *interner,
                                             &keymap->types_section_name);
     x11_atom_interner_get_escaped_atom_name(interner, list.compatName,
                                             &keymap->compat_section_name);
-    if (!get_type_names(keymap, interner, reply, &list) ||
-        !get_indicator_names(keymap, interner, reply, &list) ||
-        !get_vmod_names(keymap, interner, reply, &list) ||
-        !get_group_names(keymap, interner, reply, &list) ||
-        !get_key_names(keymap, conn, reply, &list) ||
-        !get_aliases(keymap, conn, reply, &list))
-        goto fail;
+    ఒకవేళ (!get_type_పేర్లు(keymap, interner, జవాబు, &list) ||
+        !get_indicator_పేర్లు(keymap, interner, జవాబు, &list) ||
+        !get_vmod_పేర్లు(keymap, interner, జవాబు, &list) ||
+        !get_సమూహం_పేర్లు(keymap, interner, జవాబు, &list) ||
+        !get_కీలకం_పేర్లు(keymap, conn, జవాబు, &list) ||
+        !get_aliases(keymap, conn, జవాబు, &list))
+        వెళ్ళు fail;
 
-    free(reply);
-    return true;
+    విడుదల(జవాబు);
+    తిరిగి true;
 
 fail:
-    free(reply);
-    return false;
+    విడుదల(జవాబు);
+    తిరిగి false;
 }
 
-static bool
-get_controls(struct xkb_keymap *keymap, xcb_connection_t *conn,
+స్థిర bool
+get_controls(నిర్మాణం xkb_keymap *keymap, xcb_connection_t *conn,
              xcb_xkb_get_controls_cookie_t cookie)
 {
-    xcb_xkb_get_controls_reply_t *reply =
-        xcb_xkb_get_controls_reply(conn, cookie, NULL);
+    xcb_xkb_get_controls_జవాబు_t *జవాబు =
+        xcb_xkb_get_controls_జవాబు(conn, cookie, ఖాళీ);
 
-    FAIL_IF_BAD_REPLY(reply, "XkbGetControls");
-    FAIL_UNLESS(reply->numGroups > 0 && reply->numGroups <= 4);
+    FAIL_IF_BAD_జవాబు(జవాబు, "XkbGetControls");
+    FAIL_UNLESS(జవాబు->అంకె_Groups > 0 && జవాబు->అంకె_Groups <= 4);
 
-    keymap->num_groups = reply->numGroups;
+    keymap->అంకె_groups = జవాబు->అంకె_Groups;
 
-    FAIL_UNLESS(keymap->max_key_code < XCB_XKB_CONST_PER_KEY_BIT_ARRAY_SIZE * 8);
+    FAIL_UNLESS(keymap->max_కీలకం_సంకేతం < XCB_XKB_CONST_చొప్పున_కీలకం_బిట్టు_ARRAY_కొలత * 8);
 
-    for (xkb_keycode_t i = keymap->min_key_code; i <= keymap->max_key_code; i++)
-        keymap->keys[i].repeats = (reply->perKeyRepeat[i / 8] & (1u << (i % 8)));
+    కొరకు (xkb_keycode_t i = keymap->min_కీలకం_సంకేతం; i <= keymap->max_కీలకం_సంకేతం; i++)
+        keymap->కీలకాలు[i].repeats = (జవాబు->చొప్పున_కీలకం_Repeat[i / 8] & (1u << (i % 8)));
 
-    free(reply);
-    return true;
+    విడుదల(జవాబు);
+    తిరిగి true;
 
 fail:
-    free(reply);
-    return false;
+    విడుదల(జవాబు);
+    తిరిగి false;
 }
 
-struct xkb_keymap *
-xkb_x11_keymap_new_from_device(struct xkb_context *ctx,
+నిర్మాణం xkb_keymap *
+xkb_x11_keymap_new_from_device(నిర్మాణం xkb_context *ctx,
                                xcb_connection_t *conn,
                                int32_t device_id,
-                               enum xkb_keymap_compile_flags flags)
+                               గణన xkb_keymap_compile_flags flags)
 {
-    if (device_id < 0 || device_id > 127) {
-        log_err_func(ctx, XKB_LOG_MESSAGE_NO_ID,
+    ఒకవేళ (device_id < 0 || device_id > 127) {
+        log_err_func(ctx, XKB_LOG_సందేశం_NO_ID,
                      "illegal device ID: %"PRId32"\n", device_id);
-        return NULL;
+        తిరిగి ఖాళీ;
     }
 
-    const enum xkb_keymap_format format = XKB_KEYMAP_FORMAT_TEXT_V1;
-    struct xkb_keymap * const keymap =
+    స్థిరరాశి గణన xkb_keymap_format format = XKB_KEYMAP_FORMAT_పాఠ్యం_V1;
+    నిర్మాణం xkb_keymap * స్థిరరాశి keymap =
         xkb_keymap_new(ctx, __func__, format, flags);
-    if (!keymap)
-        return NULL;
+    ఒకవేళ (!keymap)
+        తిరిగి ఖాళీ;
 
-    keymap->redirect_key_auto = XKB_KEYCODE_MAX; /* Invalid X11 keycode */
+    keymap->redirect_కీలకం_auto = XKB_KEYCODE_MAX; /* Invalid X11 keycode */
 
-    struct x11_atom_interner interner;
+    నిర్మాణం x11_atom_interner interner;
     x11_atom_interner_init(&interner, ctx, conn);
 
     /*
@@ -1286,41 +1286,41 @@ xkb_x11_keymap_new_from_device(struct xkb_context *ctx,
         xcb_xkb_get_map(conn, device_id, get_map_required_components,
                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     xcb_xkb_get_indicator_map_cookie_t indicator_map_cookie =
-        xcb_xkb_get_indicator_map(conn, device_id, ALL_INDICATORS_MASK);
+        xcb_xkb_get_indicator_map(conn, device_id, ALL_INDICATORS_ముసుగు);
     xcb_xkb_get_compat_map_cookie_t compat_map_cookie =
         xcb_xkb_get_compat_map(conn, device_id, 0, true, 0, 0);
-    xcb_xkb_get_names_cookie_t names_cookie =
-        xcb_xkb_get_names(conn, device_id, get_names_wanted);
+    xcb_xkb_get_పేర్లు_cookie_t పేర్లు_cookie =
+        xcb_xkb_get_పేర్లు(conn, device_id, get_పేర్లు_wanted);
     xcb_xkb_get_controls_cookie_t controls_cookie =
         xcb_xkb_get_controls(conn, device_id);
 
-    if (!get_map(keymap, conn, map_cookie))
-        goto err_map;
-    if (!get_indicator_map(keymap, conn, indicator_map_cookie))
-        goto err_indicator_map;
-    if (!get_compat_map(keymap, conn, compat_map_cookie))
-        goto err_compat_map;
-    if (!get_names(keymap, &interner, names_cookie))
-        goto err_names;
-    if (!get_controls(keymap, conn, controls_cookie))
-        goto err_controls;
-    x11_atom_interner_round_trip(&interner);
-    if (interner.had_error)
-        goto err_interner;
+    ఒకవేళ (!get_map(keymap, conn, map_cookie))
+        వెళ్ళు err_map;
+    ఒకవేళ (!get_indicator_map(keymap, conn, indicator_map_cookie))
+        వెళ్ళు err_indicator_map;
+    ఒకవేళ (!get_compat_map(keymap, conn, compat_map_cookie))
+        వెళ్ళు err_compat_map;
+    ఒకవేళ (!get_పేర్లు(keymap, &interner, పేర్లు_cookie))
+        వెళ్ళు err_పేర్లు;
+    ఒకవేళ (!get_controls(keymap, conn, controls_cookie))
+        వెళ్ళు err_controls;
+    x11_atom_interner_విడత_trip(&interner);
+    ఒకవేళ (interner.had_error)
+        వెళ్ళు err_interner;
 
-    return keymap;
+    తిరిగి keymap;
 
 err_map:
-    xcb_discard_reply(conn, indicator_map_cookie.sequence);
+    xcb_discard_జవాబు(conn, indicator_map_cookie.sequence);
 err_indicator_map:
-    xcb_discard_reply(conn, compat_map_cookie.sequence);
+    xcb_discard_జవాబు(conn, compat_map_cookie.sequence);
 err_compat_map:
-    xcb_discard_reply(conn, names_cookie.sequence);
-err_names:
-    xcb_discard_reply(conn, controls_cookie.sequence);
+    xcb_discard_జవాబు(conn, పేర్లు_cookie.sequence);
+err_పేర్లు:
+    xcb_discard_జవాబు(conn, controls_cookie.sequence);
 err_controls:
-    x11_atom_interner_round_trip(&interner);
+    x11_atom_interner_విడత_trip(&interner);
 err_interner:
     xkb_keymap_unref(keymap);
-    return NULL;
+    తిరిగి ఖాళీ;
 }

@@ -42,33 +42,33 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY__XKBCOMMON_SRC_XKBCOMP_PARSER_H_INCLUDED
+#నిర్వచితం_కాకపోతే YY__XKBCOMMON_SRC_XKBCOMP_PARSER_H_INCLUDED
 # define YY__XKBCOMMON_SRC_XKBCOMP_PARSER_H_INCLUDED
 /* Debug traces.  */
-#ifndef YYDEBUG
+#నిర్వచితం_కాకపోతే YYDEBUG
 # define YYDEBUG 0
-#endif
-#if YYDEBUG
-extern int _xkbcommon_debug;
-#endif
+#అయితే_ముగింపు
+#ఒకవేళ YYDEBUG
+బాహ్య పూర్ణాంకం _xkbcommon_debug;
+#అయితే_ముగింపు
 /* "%code requires" blocks.  */
-#line 14 "src/xkbcomp/parser.y"
+#పంక్తి 14 "src/xkbcomp/parser.y"
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include "scanner-utils.h"
-#include "xkbcomp/ast.h"
-#include "xkbcomp/xkbcomp-priv.h"
+#అన్తర్భావ "scanner-utils.h"
+#అన్తర్భావ "xkbcomp/ast.h"
+#అన్తర్భావ "xkbcomp/xkbcomp-priv.h"
 
-#line 57 "src/xkbcomp/parser.h"
+#పంక్తి 57 "src/xkbcomp/parser.h"
 
 /* Token kinds.  */
-#ifndef YYTOKENTYPE
+#నిర్వచితం_కాకపోతే YYTOKENTYPE
 # define YYTOKENTYPE
-  enum yytokentype
+  గణన yytokentype
   {
     YYEMPTY = -2,
-    END_OF_FILE = 0,               /* "end of file"  */
+    చివర_యొక్క_FILE = 0,               /* "end of file"  */
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
     ERROR_TOK = 255,               /* "invalid token"  */
@@ -89,17 +89,17 @@ extern int _xkbcommon_debug;
     TYPE = 21,                     /* "type"  */
     INTERPRET = 22,                /* "interpret"  */
     ACTION_TOK = 23,               /* "action"  */
-    KEY = 24,                      /* "key"  */
+    కీలకం_3 = 24,                      /* "key"  */
     ALIAS = 25,                    /* "alias"  */
-    GROUP = 26,                    /* "group"  */
+    సమూహం_2 = 26,                    /* "group"  */
     MODIFIER_MAP = 27,             /* "modifier_map"  */
     INDICATOR = 28,                /* "indicator"  */
     SHAPE = 29,                    /* "shape"  */
-    KEYS = 30,                     /* "keys"  */
-    ROW = 31,                      /* "row"  */
+    కీలకాలు_2 = 30,                     /* "keys"  */
+    అడ్డువరుస = 31,                      /* "row"  */
     SECTION = 32,                  /* "section"  */
     OVERLAY = 33,                  /* "overlay"  */
-    TEXT = 34,                     /* "text"  */
+    పాఠ్యం = 34,                     /* "text"  */
     OUTLINE = 35,                  /* "outline"  */
     SOLID = 36,                    /* "solid"  */
     LOGO = 37,                     /* "logo"  */
@@ -129,65 +129,65 @@ extern int _xkbcommon_debug;
     PARTIAL = 70,                  /* "partial"  */
     DEFAULT = 71,                  /* "default"  */
     HIDDEN = 72,                   /* "hidden"  */
-    ALPHANUMERIC_KEYS = 73,        /* "alphanumeric_keys"  */
-    MODIFIER_KEYS = 74,            /* "modifier_keys"  */
-    KEYPAD_KEYS = 75,              /* "keypad_keys"  */
-    FUNCTION_KEYS = 76,            /* "function_keys"  */
-    ALTERNATE_GROUP = 77,          /* "alternate_group"  */
+    ALPHANUMERIC_కీలకాలు = 73,        /* "alphanumeric_keys"  */
+    MODIFIER_కీలకాలు = 74,            /* "modifier_keys"  */
+    KEYPAD_కీలకాలు = 75,              /* "keypad_keys"  */
+    FUNCTION_కీలకాలు = 76,            /* "function_keys"  */
+    ALTERNATE_సమూహం = 77,          /* "alternate_group"  */
     DEPRECATED = 78                /* "deprecated"  */
   };
-  typedef enum yytokentype yytoken_kind_t;
-#endif
+  రకనిర్వచనం గణన yytokentype yytoken_రకం_t;
+#అయితే_ముగింపు
 
 /* Value type.  */
-#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-union YYSTYPE
+#ఒకవేళ ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
+సంఘం YYSTYPE
 {
-#line 177 "src/xkbcomp/parser.y"
+#పంక్తి 177 "src/xkbcomp/parser.y"
 
-        int64_t          num;
-        enum xkb_file_type file_type;
-        char            *str;
-        struct sval     sval;
+        int64_t          అంకె;
+        గణన xkb_file_type file_type;
+        అక్షరం            *str;
+        నిర్మాణం sval     sval;
         xkb_atom_t      atom;
-        enum merge_mode merge;
-        enum xkb_map_flags mapFlags;
+        గణన విలీనం_బహుళకం విలీనం;
+        గణన xkb_map_flags mapFlags;
         xkb_keysym_t    keysym;
         ParseCommon     *any;
-        struct { ParseCommon *head; ParseCommon *last; } anyList;
-        uint32_t        noSymbolOrActionList;
-        ExprDef         *expr;
-        struct { ExprDef *head; ExprDef *last; } exprList;
+        నిర్మాణం { ParseCommon *తల; ParseCommon *చివరి; } anyList;
+        uint32_t        no_చిహ్నం_Or_Action_List;
+        సమాసం_Def         *సమాసం;
+        నిర్మాణం { సమాసం_Def *తల; సమాసం_Def *చివరి; } సమాసం_List;
         VarDef          *var;
-        struct { VarDef *head; VarDef *last; } varList;
+        నిర్మాణం { VarDef *తల; VarDef *చివరి; } varList;
         VModDef         *vmod;
-        struct { VModDef *head; VModDef *last; } vmodList;
+        నిర్మాణం { VModDef *తల; VModDef *చివరి; } vmodList;
         InterpDef       *interp;
-        KeyTypeDef      *keyType;
+        కీలకం_Type_Def      *కీలకం_Type;
         SymbolsDef      *syms;
-        ModMapDef       *modMask;
-        GroupCompatDef  *groupCompat;
+        ModMapDef       *mod_ముసుగు_2;
+        సమూహం_Compat_Def  *సమూహం_Compat;
         LedMapDef       *ledMap;
         LedNameDef      *ledName;
-        KeycodeDef      *keyCode;
-        KeyAliasDef     *keyAlias;
+        KeycodeDef      *కీలకం_సంకేతం;
+        కీలకం_Alias_Def     *కీలకం_Alias;
         UnknownStatement *unknown;
-        void            *geom;
+        శూన్య            *geom;
         XkbFile         *file;
-        struct { XkbFile *head; XkbFile *last; } fileList;
+        నిర్మాణం { XkbFile *తల; XkbFile *చివరి; } fileList;
 
-#line 173 "src/xkbcomp/parser.h"
+#పంక్తి 173 "src/xkbcomp/parser.h"
 
 };
-typedef union YYSTYPE YYSTYPE;
+రకనిర్వచనం సంఘం YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
-#endif
+#అయితే_ముగింపు
 
 
 
 
-int _xkbcommon_parse (struct parser_param *param);
+పూర్ణాంకం _xkbcommon_parse (నిర్మాణం parser_param *param);
 
 
-#endif /* !YY__XKBCOMMON_SRC_XKBCOMP_PARSER_H_INCLUDED  */
+#అయితే_ముగింపు /* !YY__XKBCOMMON_SRC_XKBCOMP_PARSER_H_INCLUDED  */

@@ -10,158 +10,158 @@
  * Author: Daniel Stone <daniel@fooishbar.org>
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include <assert.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
+#అన్తర్భావ <assert.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
 
-#include "xkbcommon/xkbcommon-status.h"
-#include "xkbcommon/xkbcommon-keysyms.h"
-#include "xkbcommon/xkbcommon.h"
-#include "atom.h"
-#include "action.h"
-#include "context.h"
-#include "darray.h"
-#include "keymap.h"
-#include "messages-codes.h"
-#include "text.h"
-#include "util-numbers.h"
-#include "xkbcomp-priv.h"
+#అన్తర్భావ "xkbcommon/xkbcommon-status.h"
+#అన్తర్భావ "xkbcommon/xkbcommon-keysyms.h"
+#అన్తర్భావ "xkbcommon/xkbcommon.h"
+#అన్తర్భావ "atom.h"
+#అన్తర్భావ "action.h"
+#అన్తర్భావ "context.h"
+#అన్తర్భావ "darray.h"
+#అన్తర్భావ "keymap.h"
+#అన్తర్భావ "messages-codes.h"
+#అన్తర్భావ "text.h"
+#అన్తర్భావ "util-numbers.h"
+#అన్తర్భావ "xkbcomp-priv.h"
 
-#define BUF_CHUNK_SIZE 4096
+#నిర్వచించు BUF_CHUNK_కొలత 4096
 
-struct buf {
-    char *buf;
-    size_t size;
-    size_t alloc;
+నిర్మాణం buf {
+    అక్షరం *buf;
+    కొలత_t కొలత;
+    కొలత_t alloc;
 };
 
-#define xkb_abs(n) _Generic((n),                \
-                            int: abs,           \
-                            long int: labs,     \
-                            default: llabs )((n))
+#నిర్వచించు xkb_abs(n) _Generic((n),                \
+                            పూర్ణాంకం: నిరపేక్ష,           \
+                            దీర్ఘ పూర్ణాంకం: labs,     \
+                            అప్రమేయ: llabs )((n))
 
-static bool
-do_realloc(struct buf *buf, size_t at_least)
+స్థిర bool
+do_realloc(నిర్మాణం buf *buf, కొలత_t at_కనిష్ఠ)
 {
-    buf->alloc += BUF_CHUNK_SIZE;
-    if (at_least >= BUF_CHUNK_SIZE)
-        buf->alloc += at_least;
+    buf->alloc += BUF_CHUNK_కొలత;
+    ఒకవేళ (at_కనిష్ఠ >= BUF_CHUNK_కొలత)
+        buf->alloc += at_కనిష్ఠ;
 
-    char *const new = realloc(buf->buf, buf->alloc);
-    if (!new)
-        return false;
+    అక్షరం *స్థిరరాశి new = realloc(buf->buf, buf->alloc);
+    ఒకవేళ (!new)
+        తిరిగి false;
 
     buf->buf = new;
-    return true;
+    తిరిగి true;
 }
 
-ATTR_PRINTF(2, 3) static bool
-check_write_buf(struct buf *buf, const char *fmt, ...)
+ATTR_PRINTF(2, 3) స్థిర bool
+check_write_buf(నిర్మాణం buf *buf, స్థిరరాశి అక్షరం *fmt, ...)
 {
-    va_list args;
-    int printed;
-    size_t available;
+    va_list వాదనలు;
+    పూర్ణాంకం printed;
+    కొలత_t అందుబాటు;
 
-    available = buf->alloc - buf->size;
+    అందుబాటు = buf->alloc - buf->కొలత;
     /* Try to write to the buffer and get the required min size (without the
      * final null byte).
      * C11 states that if `available` is 0, then the pointer may be null. */
-    assert(buf->buf || available == 0);
-    va_start(args, fmt);
-    printed = vsnprintf(buf->buf ? buf->buf + buf->size : buf->buf, available,
-                        fmt, args);
-    va_end(args);
+    ప్రతిజ్ఞా(buf->buf || అందుబాటు == 0);
+    va_ప్రారంభం(వాదనలు, fmt);
+    printed = vsnprintf(buf->buf ? buf->buf + buf->కొలత : buf->buf, అందుబాటు,
+                        fmt, వాదనలు);
+    va_చివర(వాదనలు);
 
-    if (printed < 0) {
+    ఒకవేళ (printed < 0) {
         /* Some error */
-        goto err;
-    } else if ((size_t)printed >= available) {
+        వెళ్ళు err;
+    } లేకపోతే ఒకవేళ ((కొలత_t)printed >= అందుబాటు) {
         /* Not enough space: need to realloc */
-        if (!do_realloc(buf, (size_t)printed + 1))
-            goto err;
+        ఒకవేళ (!do_realloc(buf, (కొలత_t)printed + 1))
+            వెళ్ళు err;
 
         /* The buffer has enough space now. */
-        available = buf->alloc - buf->size;
-        assert(buf->buf && (size_t) printed < available);
-        va_start(args, fmt);
-        printed = vsnprintf(buf->buf + buf->size, available, fmt, args);
-        va_end(args);
+        అందుబాటు = buf->alloc - buf->కొలత;
+        ప్రతిజ్ఞా(buf->buf && (కొలత_t) printed < అందుబాటు);
+        va_ప్రారంభం(వాదనలు, fmt);
+        printed = vsnprintf(buf->buf + buf->కొలత, అందుబాటు, fmt, వాదనలు);
+        va_చివర(వాదనలు);
 
-        if (printed < 0 || (size_t) printed >= available)
-            goto err;
+        ఒకవేళ (printed < 0 || (కొలత_t) printed >= అందుబాటు)
+            వెళ్ళు err;
     }
 
-    buf->size += (size_t)printed;
-    return true;
+    buf->కొలత += (కొలత_t)printed;
+    తిరిగి true;
 
 err:
-    free(buf->buf);
-    buf->buf = NULL;
-    return false;
+    విడుదల(buf->buf);
+    buf->buf = ఖాళీ;
+    తిరిగి false;
 }
 
-#define write_buf(buf, ...) do { \
-    if (!check_write_buf(buf, __VA_ARGS__)) \
-        return false; \
-} while (0)
+#నిర్వచించు write_buf(buf, ...) చేయి { \
+    ఒకవేళ (!check_write_buf(buf, __VA_ARGS__)) \
+        తిరిగి false; \
+} అయితే (0)
 
-static bool
-check_copy_to_buf(struct buf *buf, const char* source, size_t len)
+స్థిర bool
+check_copy_గమ్యం_buf(నిర్మాణం buf *buf, స్థిరరాశి అక్షరం* ఆధారం, కొలత_t len)
 {
-    if (len == 0)
-        return true;
+    ఒకవేళ (len == 0)
+        తిరిగి true;
 
-    const size_t available = buf->alloc - buf->size;
-    if (len >= available &&
+    స్థిరరాశి కొలత_t అందుబాటు = buf->alloc - buf->కొలత;
+    ఒకవేళ (len >= అందుబాటు &&
         /* len + 1 (terminating NULL) */
         !do_realloc(buf, len + 1))
     {
-        free(buf->buf);
-        buf->buf = NULL;
-        return false;
+        విడుదల(buf->buf);
+        buf->buf = ఖాళీ;
+        తిరిగి false;
     }
 
-    memcpy(buf->buf + buf->size, source, len);
-    buf->size += len;
+    జ్ఞాపకం_నకలు(buf->buf + buf->కొలత, ఆధారం, len);
+    buf->కొలత += len;
     /* Append NULL byte */
-    buf->buf[buf->size] = '\0';
-    return true;
+    buf->buf[buf->కొలత] = '\0';
+    తిరిగి true;
 }
 
-#define copy_to_buf_len(buf, source, len) do { \
-    if (!check_copy_to_buf(buf, source, len)) \
-        return false; \
-} while (0)
+#నిర్వచించు copy_గమ్యం_buf_len(buf, ఆధారం, len) చేయి { \
+    ఒకవేళ (!check_copy_గమ్యం_buf(buf, ఆధారం, len)) \
+        తిరిగి false; \
+} అయితే (0)
 
-#define copy_to_buf(buf, source) \
-    copy_to_buf_len(buf, source, sizeof(source) - 1)
+#నిర్వచించు copy_గమ్యం_buf(buf, ఆధారం) \
+    copy_గమ్యం_buf_len(buf, ఆధారం, పరిమాణం(ఆధారం) - 1)
 
-static bool
-check_write_string_literal(struct buf *buf, const char* string)
+స్థిర bool
+check_write_string_literal(నిర్మాణం buf *buf, స్థిరరాశి అక్షరం* string)
 {
-    copy_to_buf(buf, "\"");
+    copy_గమ్యం_buf(buf, "\"");
 
     /* Write chunks, separated by characters requiring escape sequence */
-    size_t pending_start = 0;
-    size_t current = 0;
-    char escape_buffer[] = {'\\', '0', '0', '0', '0'};
-    for (; string[current] != '\0'; current++) {
+    కొలత_t pending_ప్రారంభం = 0;
+    కొలత_t current = 0;
+    అక్షరం escape_బఫరు[] = {'\\', '0', '0', '0', '0'};
+    కొరకు (; string[current] != '\0'; current++) {
         uint8_t escape_len;
-        switch (string[current]) {
-        case '\n':
+        ఎంపిక (string[current]) {
+        స్థితి '\n':
             /* `\n` would break strings */
-            escape_buffer[1] = 'n';
+            escape_బఫరు[1] = 'n';
             escape_len = 2;
-            break;
-        case '\\':
+            ఆపు;
+        స్థితి '\\':
             /* `\` would create escape sequences */
-            escape_buffer[1] = '\\';
+            escape_బఫరు[1] = '\\';
             escape_len = 2;
-            break;
-        default:
+            ఆపు;
+        అప్రమేయ:
             /*
              * Handle `"` (would break strings) and ASCII control characters
              * with an octal escape sequence. Xorg xkbcomp does not parse the
@@ -177,88 +177,88 @@ check_write_string_literal(struct buf *buf, const char* string)
              * although it will not raise an error: e.g. the escape for `"`,
              * `\0042`, would be parsed as `\004` + `2`.
              */
-            if (unlikely((unsigned char)string[current] < 0x20U ||
+            ఒకవేళ (unlikely((గుర్తులేని అక్షరం)string[current] < 0x20U ||
                          string[current] == '"')) {
-                escape_buffer[1] = '0';
-                escape_buffer[2] = '0';
-                escape_buffer[3] = (char)('0' + (string[current] >> 3));
-                escape_buffer[4] = (char)('0' + (string[current] & 0x7));
+                escape_బఫరు[1] = '0';
+                escape_బఫరు[2] = '0';
+                escape_బఫరు[3] = (అక్షరం)('0' + (string[current] >> 3));
+                escape_బఫరు[4] = (అక్షరం)('0' + (string[current] & 0x7));
                 escape_len = 5;
-            } else {
+            } లేకపోతే {
                 /* Expand the chunk */
-                continue;
+                కొనసాగు;
             }
         }
         /* Write pending chunk */
-        assert(current >= pending_start);
-        copy_to_buf_len(buf, string + pending_start, current - pending_start);
+        ప్రతిజ్ఞా(current >= pending_ప్రారంభం);
+        copy_గమ్యం_buf_len(buf, string + pending_ప్రారంభం, current - pending_ప్రారంభం);
         /* Write escape sequence */
-        copy_to_buf_len(buf, escape_buffer, escape_len);
-        pending_start = current + 1;
+        copy_గమ్యం_buf_len(buf, escape_బఫరు, escape_len);
+        pending_ప్రారంభం = current + 1;
     }
     /* Write remaining chunk */
-    assert(current >= pending_start);
-    copy_to_buf_len(buf, string + pending_start, current - pending_start);
+    ప్రతిజ్ఞా(current >= pending_ప్రారంభం);
+    copy_గమ్యం_buf_len(buf, string + pending_ప్రారంభం, current - pending_ప్రారంభం);
 
-    copy_to_buf(buf, "\"");
-    return true;
+    copy_గమ్యం_buf(buf, "\"");
+    తిరిగి true;
 }
 
-#define write_buf_string_literal(buf, string) do { \
-    if (!check_write_string_literal(buf, string)) \
-        return false; \
-} while (0)
+#నిర్వచించు write_buf_string_literal(buf, string) చేయి { \
+    ఒకవేళ (!check_write_string_literal(buf, string)) \
+        తిరిగి false; \
+} అయితే (0)
 
-static void
-delete_last_char(struct buf *buf, char c)
+స్థిర శూన్య
+delete_చివరి_char(నిర్మాణం buf *buf, అక్షరం c)
 {
-    if (buf->size && buf->buf[buf->size - 1] == c)
-        buf->buf[--buf->size] = '\0';
+    ఒకవేళ (buf->కొలత && buf->buf[buf->కొలత - 1] == c)
+        buf->buf[--buf->కొలత] = '\0';
 }
 
 /** Entry for a name substituion LUT */
-struct key_name_substitution {
-    xkb_atom_t source;
-    xkb_atom_t target;
+నిర్మాణం కీలకం_name_substitution {
+    xkb_atom_t ఆధారం;
+    xkb_atom_t లక్ష్యం;
     /** Used for intuitive renaming */
     xkb_keycode_t keycode;
 };
 
 /** Compare 2 key name substitution entries by they original name (atom) */
-static int
-cmp_key_name_substitution(const void *a, const void *b)
+స్థిర పూర్ణాంకం
+cmp_కీలకం_name_substitution(స్థిరరాశి శూన్య *a, స్థిరరాశి శూన్య *b)
 {
-    const xkb_atom_t s1 = ((struct key_name_substitution *) a)->source;
-    const xkb_atom_t s2 = ((struct key_name_substitution *) b)->source;
-    return (s1 < s2) ? -1 : ((s1 > s2) ? 1 : 0);
+    స్థిరరాశి xkb_atom_t s1 = ((నిర్మాణం కీలకం_name_substitution *) a)->ఆధారం;
+    స్థిరరాశి xkb_atom_t s2 = ((నిర్మాణం కీలకం_name_substitution *) b)->ఆధారం;
+    తిరిగి (s1 < s2) ? -1 : ((s1 > s2) ? 1 : 0);
 }
 
-typedef darray(struct key_name_substitution) key_name_substitutions;
+రకనిర్వచనం darray(నిర్మాణం కీలకం_name_substitution) కీలకం_name_substitutions;
 
 /**
  * Rename keys that are not compatible with the original XKB protocol,
  * i.e. more that 4 bytes. The new name will be formed as prefix + 3-digit
  * hexadecimal number.
  */
-static bool
-rename_long_keys(const struct xkb_keymap *keymap,
-                 key_name_substitutions *substitutions)
+స్థిర bool
+rename_long_కీలకాలు(స్థిరరాశి నిర్మాణం xkb_keymap *keymap,
+                 కీలకం_name_substitutions *substitutions)
 {
     /*
      * Prefixes we want to use for the new names: ASCII range `!`..`0`.
      * They are really unlikely to be used in usual keymaps.
      * NULL denotes an unavailable prefix.
      */
-    enum {
-        first = '!',
-        last = '0',
+    గణన {
+        మొదటి = '!',
+        చివరి = '0',
         invalid = '\0'
     };
-    char prefixes[] = {
-        first, invalid /* skip ‘"’, which would look buggy otherwise */,
-        '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.', '/', last
+    అక్షరం prefixes[] = {
+        మొదటి, invalid /* skip ‘"’, which would look buggy otherwise */,
+        '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.', '/', చివరి
     };
-    static_assert(sizeof(prefixes) == last - first + 1, "invalid range");
+    static_assert(పరిమాణం(prefixes) == చివరి - మొదటి + 1, "invalid range");
 
     /*
      * Traverse all the keys and aliases:
@@ -269,47 +269,47 @@ rename_long_keys(const struct xkb_keymap *keymap,
      */
 
     /* Check key names */
-    const struct xkb_key *key;
-    xkb_keys_foreach(key, keymap) {
-        if (key->name == XKB_ATOM_NONE)
-            continue;
+    స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం;
+    xkb_కీలకాలు_foreach(కీలకం, keymap) {
+        ఒకవేళ (కీలకం->name == XKB_ATOM_NONE)
+            కొనసాగు;
 
-        const char * const name = xkb_atom_text(keymap->ctx, key->name);
-        const size_t len = strlen_safe(name);
-        if (len > 4) {
+        స్థిరరాశి అక్షరం * స్థిరరాశి name = xkb_atom_పాఠ్యం(keymap->ctx, కీలకం->name);
+        స్థిరరాశి కొలత_t len = strlen_సురక్షిత(name);
+        ఒకవేళ (len > 4) {
             /* Key name too long: append key, pending for renaming */
-            darray_append(*substitutions, (struct key_name_substitution) {
-                .source = key->name,
-                .keycode = key->keycode,
-                .target = key->name
+            darray_append(*substitutions, (నిర్మాణం కీలకం_name_substitution) {
+                .ఆధారం = కీలకం->name,
+                .keycode = కీలకం->keycode,
+                .లక్ష్యం = కీలకం->name
             });
-        } else if (len == 4 && name[0] >= first && name[0] <= last) {
+        } లేకపోతే ఒకవేళ (len == 4 && name[0] >= మొదటి && name[0] <= చివరి) {
             /* Potential name conflict: deactivate this prefix */
-            prefixes[name[0] - first] = invalid;
+            prefixes[name[0] - మొదటి] = invalid;
         }
     }
 
     /* Check aliases */
-    for (darray_size_t a = 0; a < keymap->num_key_aliases; a++) {
-        const struct xkb_key_alias * const alias = &keymap->key_aliases[a];
-        const char * const name = xkb_atom_text(keymap->ctx, alias->alias);
-        const size_t len = strlen_safe(name);
-        if (len > 4) {
+    కొరకు (darray_కొలత_t a = 0; a < keymap->అంకె_కీలకం_aliases; a++) {
+        స్థిరరాశి నిర్మాణం xkb_కీలకం_alias * స్థిరరాశి alias = &keymap->కీలకం_aliases[a];
+        స్థిరరాశి అక్షరం * స్థిరరాశి name = xkb_atom_పాఠ్యం(keymap->ctx, alias->alias);
+        స్థిరరాశి కొలత_t len = strlen_సురక్షిత(name);
+        ఒకవేళ (len > 4) {
             /* Alias name too long: append alias, pending for renaming */
-            darray_append(*substitutions, (struct key_name_substitution) {
-                .source = alias->alias,
+            darray_append(*substitutions, (నిర్మాణం కీలకం_name_substitution) {
+                .ఆధారం = alias->alias,
                 .keycode = XKB_KEYCODE_INVALID, /* Too expensive to lookup */
-                .target = alias->alias
+                .లక్ష్యం = alias->alias
             });
-        } else if (len == 4 && name[0] >= first && name[0] <= last) {
+        } లేకపోతే ఒకవేళ (len == 4 && name[0] >= మొదటి && name[0] <= చివరి) {
             /* Potential conflict with names substitutes: deactivate prefix */
-            prefixes[name[0] - first] = invalid;
+            prefixes[name[0] - మొదటి] = invalid;
         }
     }
 
-    if darray_empty(*substitutions) {
+    ఒకవేళ darray_ఖాళీలు(*substitutions) {
         /* Nothing to do */
-        return true;
+        తిరిగి true;
     }
 
     /*
@@ -323,131 +323,131 @@ rename_long_keys(const struct xkb_keymap *keymap,
      */
 
     /* Get first available prefix */
-    char *prefix = prefixes;
-    const char *prefix_max = prefixes + sizeof(prefixes) - 1;
-    while (*prefix == invalid && prefix < prefix_max)
-        prefix++;
+    అక్షరం *ఉపసర్గ = prefixes;
+    స్థిరరాశి అక్షరం *ఉపసర్గ_max = prefixes + పరిమాణం(prefixes) - 1;
+    అయితే (*ఉపసర్గ == invalid && ఉపసర్గ < ఉపసర్గ_max)
+        ఉపసర్గ++;
 
     /* Keycode prefix: prefer ‘0’ if available */
-    char keycode_prefix;
-    if (prefixes[last - first] == '0') {
+    అక్షరం keycode_ఉపసర్గ;
+    ఒకవేళ (prefixes[చివరి - మొదటి] == '0') {
         /* ‘0’ is available: use it then mark it unavailable for further use */
-        keycode_prefix = last;
-        prefixes[last - first] = invalid;
-    } else {
+        keycode_ఉపసర్గ = చివరి;
+        prefixes[చివరి - మొదటి] = invalid;
+    } లేకపోతే {
         /* ‘0’ is unavailable: use first available prefix */
-        keycode_prefix = *prefix;
-        if (unlikely(keycode_prefix == invalid)) {
+        keycode_ఉపసర్గ = *ఉపసర్గ;
+        ఒకవేళ (unlikely(keycode_ఉపసర్గ == invalid)) {
             /*
              * Abort: no prefix available (very unlikely).
              * Do not error though: Wayland clients can still parse the keymap.
              */
             darray_free(*substitutions);
-            return true;
+            తిరిగి true;
         }
         /* Update current prefix */
-        *prefix = invalid;
-        while (*prefix == invalid && prefix < prefix_max)
-            prefix++;
+        *ఉపసర్గ = invalid;
+        అయితే (*ఉపసర్గ == invalid && ఉపసర్గ < ఉపసర్గ_max)
+            ఉపసర్గ++;
     }
 
     /* Proceed renaming */
-    uint16_t next_id = 1;
-    struct key_name_substitution *sub;
-    char buf[6] = {0}; /* 5 would suffice, but generates a compiler warning */
+    uint16_t తదుపరి_id = 1;
+    నిర్మాణం కీలకం_name_substitution *sub;
+    అక్షరం buf[6] = {0}; /* 5 would suffice, but generates a compiler warning */
     darray_foreach(sub, *substitutions) {
         static_assert(XKB_KEYCODE_INVALID > 0xfff, "Invalid keys filtered out");
-        if (sub->keycode <= 0xfff) {
+        ఒకవేళ (sub->keycode <= 0xfff) {
             /*
              * Try nice formatting with the hexadecimal keycode.
              * We use lower case to reduce possible conflict because the
              * traditional key names are upper-cased.
              */
-            snprintf(buf, sizeof(buf), "%c%03"PRIx32,
-                     keycode_prefix, sub->keycode);
-            const xkb_atom_t target = xkb_atom_intern(keymap->ctx,
-                                                      buf, sizeof(buf) - 2);
-            if (target == XKB_ATOM_NONE)
-                goto error;
-            sub->target = target;
-        } else if (*prefix != invalid) {
+            snprintf(buf, పరిమాణం(buf), "%c%03"PRIx32,
+                     keycode_ఉపసర్గ, sub->keycode);
+            స్థిరరాశి xkb_atom_t లక్ష్యం = xkb_atom_intern(keymap->ctx,
+                                                      buf, పరిమాణం(buf) - 2);
+            ఒకవేళ (లక్ష్యం == XKB_ATOM_NONE)
+                వెళ్ళు error;
+            sub->లక్ష్యం = లక్ష్యం;
+        } లేకపోతే ఒకవేళ (*ఉపసర్గ != invalid) {
             /* Cannot use keycode for formatting: generate next arbitrary ID */
-            snprintf(buf, sizeof(buf), "%c%03"PRIx16, *prefix, next_id);
-            const xkb_atom_t target = xkb_atom_intern(keymap->ctx,
-                                                      buf, sizeof(buf) - 2);
-            if (target == XKB_ATOM_NONE)
-                goto error;
-            sub->target = target;
-            if (++next_id > 0xfff) {
-                *prefix = invalid;
+            snprintf(buf, పరిమాణం(buf), "%c%03"PRIx16, *ఉపసర్గ, తదుపరి_id);
+            స్థిరరాశి xkb_atom_t లక్ష్యం = xkb_atom_intern(keymap->ctx,
+                                                      buf, పరిమాణం(buf) - 2);
+            ఒకవేళ (లక్ష్యం == XKB_ATOM_NONE)
+                వెళ్ళు error;
+            sub->లక్ష్యం = లక్ష్యం;
+            ఒకవేళ (++తదుపరి_id > 0xfff) {
+                *ఉపసర్గ = invalid;
                 /* Get next available prefix */
-                while (*prefix == invalid && prefix < prefix_max)
-                    prefix++;
+                అయితే (*ఉపసర్గ == invalid && ఉపసర్గ < ఉపసర్గ_max)
+                    ఉపసర్గ++;
                 /* Reset counter */
-                next_id = 1;
+                తదుపరి_id = 1;
             }
-        } else {
+        } లేకపోతే {
             /*
              * No prefix available: skip substitution (very unlikely).
              * Do not error though: Wayland clients can still parse the keymap.
              */
-            sub->target = sub->source;
+            sub->లక్ష్యం = sub->ఆధారం;
         }
     }
 
     /* Now sort by the source names so we can do a binary search */
-    qsort(darray_items(*substitutions), darray_size(*substitutions),
-          sizeof(*darray_items(*substitutions)), &cmp_key_name_substitution);
+    qsort(darray_వస్తువులు(*substitutions), darray_కొలత(*substitutions),
+          పరిమాణం(*darray_వస్తువులు(*substitutions)), &cmp_కీలకం_name_substitution);
 
-    return true;
+    తిరిగి true;
 
 error:
     darray_free(*substitutions);
     /* There was a memory error */
-    log_err(keymap->ctx, XKB_ERROR_ALLOCATION_FAILURE_,
+    log_err(keymap->ctx, XKB_ERROR_కేటాయింపు_FAILURE_2,
             "Cannot allocate key name substitution\n");
-    return false;
+    తిరిగి false;
 }
 
 /** Substitute a key name with a valid X11 key name */
-static xkb_atom_t
-substitute_name(const key_name_substitutions *substitutions, xkb_atom_t name)
+స్థిర xkb_atom_t
+substitute_name(స్థిరరాశి కీలకం_name_substitutions *substitutions, xkb_atom_t name)
 {
-    /* Binary search */
-    darray_size_t first = 0;
-    darray_size_t last = darray_size(*substitutions);
+    /*ద్విమాన శోధన*/
+    darray_కొలత_t మొదటి = 0;
+    darray_కొలత_t చివరి = darray_కొలత(*substitutions);
 
-    while (last > first) {
-        darray_size_t mid = first + (last - 1 - first) / 2;
-        const xkb_atom_t source = darray_item(*substitutions, mid).source;
-        if (source < name)
-            first = mid + 1;
-        else if (source > name)
-            last = mid;
-        else /* found it */
-            return darray_item(*substitutions, mid).target;
+    అయితే (చివరి > మొదటి) {
+        darray_కొలత_t mid = మొదటి + (చివరి - 1 - మొదటి) / 2;
+        స్థిరరాశి xkb_atom_t ఆధారం = darray_అంశం(*substitutions, mid).ఆధారం;
+        ఒకవేళ (ఆధారం < name)
+            మొదటి = mid + 1;
+        లేకపోతే ఒకవేళ (ఆధారం > name)
+            చివరి = mid;
+        లేకపోతే /* found it */
+            తిరిగి darray_అంశం(*substitutions, mid).లక్ష్యం;
     }
 
     /* No name substitution: return original name */
-    return name;
+    తిరిగి name;
 }
 
-static bool
-write_vmods(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
-            bool explicit, struct buf *buf)
+స్థిర bool
+write_vmods(స్థిరరాశి నిర్మాణం xkb_keymap *keymap, గణన xkb_keymap_format format,
+            bool explicit, నిర్మాణం buf *buf)
 {
-    const struct xkb_mod *mod;
-    xkb_mod_index_t vmod = 0;
+    స్థిరరాశి నిర్మాణం xkb_mod *mod;
+    xkb_mod_సూచీ_t vmod = 0;
     bool has_some = false;
 
     xkb_vmods_enumerate(vmod, mod, &keymap->mods) {
-        if (!has_some) {
-            copy_to_buf(buf, "\tvirtual_modifiers ");
+        ఒకవేళ (!has_some) {
+            copy_గమ్యం_buf(buf, "\tvirtual_modifiers ");
             has_some = true;
-        } else {
-            copy_to_buf(buf, ",");
+        } లేకపోతే {
+            copy_గమ్యం_buf(buf, ",");
         }
-        write_buf(buf, "%s", xkb_atom_text(keymap->ctx, mod->name));
+        write_buf(buf, "%s", xkb_atom_పాఠ్యం(keymap->ctx, mod->name));
 
         /*
          * Ensure to always honor explicit mappings when auto canonical vmods
@@ -465,9 +465,9 @@ write_vmods(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
          * mapping to prevent triggering the auto canonical mapping presented
          * above.
          */
-        const bool auto_canonical_mods = (format >= XKB_KEYMAP_FORMAT_TEXT_V2);
+        స్థిరరాశి bool auto_canonical_mods = (format >= XKB_KEYMAP_FORMAT_పాఠ్యం_V2);
 
-        if ((keymap->mods.explicit_vmods & (UINT32_C(1) << vmod) ||
+        ఒకవేళ ((keymap->mods.explicit_vmods & (UINT32_C(1) << vmod) ||
              explicit) &&
             (auto_canonical_mods || mod->mapping != 0)) {
             /*
@@ -475,33 +475,33 @@ write_vmods(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
              * NOTE: we can only pretty-print *real* modifiers in this context.
              */
             write_buf(buf, "=%s",
-                      ModMaskText(keymap->ctx, MOD_REAL, &keymap->mods,
+                      Mod_ముసుగు_పాఠ్యం(keymap->ctx, MOD_REAL, &keymap->mods,
                                   mod->mapping));
         }
     }
 
-    if (has_some)
-        copy_to_buf(buf, ";\n\n");
+    ఒకవేళ (has_some)
+        copy_గమ్యం_buf(buf, ";\n\n");
 
-    return true;
+    తిరిగి true;
 }
 
-static bool
-write_keycodes(const struct xkb_keymap *keymap,
-               const key_name_substitutions *substitutions,
-               enum xkb_keymap_serialize_flags flags, struct buf *buf)
+స్థిర bool
+write_keycodes(స్థిరరాశి నిర్మాణం xkb_keymap *keymap,
+               స్థిరరాశి కీలకం_name_substitutions *substitutions,
+               గణన xkb_keymap_serialize_flags flags, నిర్మాణం buf *buf)
 {
-    const struct xkb_key *key;
-    xkb_led_index_t idx;
-    const struct xkb_led *led;
+    స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం;
+    xkb_led_సూచీ_t idx;
+    స్థిరరాశి నిర్మాణం xkb_led *led;
 
-    const bool pretty = !!(flags & XKB_KEYMAP_SERIALIZE_PRETTY);
+    స్థిరరాశి bool pretty = !!(flags & XKB_KEYMAP_SERIALIZE_PRETTY);
 
-    if (keymap->keycodes_section_name)
+    ఒకవేళ (keymap->keycodes_section_name)
         write_buf(buf, "xkb_keycodes \"%s\" {\n",
                   keymap->keycodes_section_name);
-    else
-        copy_to_buf(buf, "xkb_keycodes {\n");
+    లేకపోతే
+        copy_గమ్యం_buf(buf, "xkb_keycodes {\n");
 
     /* NOTE: there is no support for default values */
 
@@ -509,345 +509,345 @@ write_keycodes(const struct xkb_keymap *keymap,
      * a maximum of at least 255, else XWayland really starts hating life.
      * If this is a problem and people really need strictly bounded keymaps,
      * we should probably control this with a flag. */
-    write_buf(buf, "\tminimum = %"PRIu32";\n", MIN(keymap->min_key_code, 8));
-    write_buf(buf, "\tmaximum = %"PRIu32";\n", MAX(keymap->max_key_code, 255));
+    write_buf(buf, "\tminimum = %"PRIu32";\n", MIN(keymap->min_కీలకం_సంకేతం, 8));
+    write_buf(buf, "\tmaximum = %"PRIu32";\n", MAX(keymap->max_కీలకం_సంకేతం, 255));
 
-    xkb_keys_foreach(key, keymap) {
-        if (key->name == XKB_ATOM_NONE)
-            continue;
+    xkb_కీలకాలు_foreach(కీలకం, keymap) {
+        ఒకవేళ (కీలకం->name == XKB_ATOM_NONE)
+            కొనసాగు;
 
-        const xkb_atom_t name = (substitutions == NULL)
-            ? key->name
-            : substitute_name(substitutions, key->name);
-        if (pretty)
-            write_buf(buf, "\t%-20s", KeyNameText(keymap->ctx, name));
-        else
-            write_buf(buf, "\t%s", KeyNameText(keymap->ctx, name));
-        write_buf(buf, " = %"PRIu32";\n", key->keycode);
+        స్థిరరాశి xkb_atom_t name = (substitutions == ఖాళీ)
+            ? కీలకం->name
+            : substitute_name(substitutions, కీలకం->name);
+        ఒకవేళ (pretty)
+            write_buf(buf, "\t%-20s", కీలకం_Name_పాఠ్యం(keymap->ctx, name));
+        లేకపోతే
+            write_buf(buf, "\t%s", కీలకం_Name_పాఠ్యం(keymap->ctx, name));
+        write_buf(buf, " = %"PRIu32";\n", కీలకం->keycode);
     }
 
     xkb_leds_enumerate(idx, led, keymap)
-        if (led->name != XKB_ATOM_NONE) {
+        ఒకవేళ (led->name != XKB_ATOM_NONE) {
             write_buf(buf, "\tindicator %"PRIu32" = ", idx + 1);
-            write_buf_string_literal(buf, xkb_atom_text(keymap->ctx, led->name));
-            copy_to_buf(buf, ";\n");
+            write_buf_string_literal(buf, xkb_atom_పాఠ్యం(keymap->ctx, led->name));
+            copy_గమ్యం_buf(buf, ";\n");
         }
 
-    for (darray_size_t i = 0; i < keymap->num_key_aliases; i++) {
-        const xkb_atom_t alias = (substitutions == NULL)
-            ? keymap->key_aliases[i].alias
-            : substitute_name(substitutions, keymap->key_aliases[i].alias);
-        const xkb_atom_t real = (substitutions == NULL)
-            ? keymap->key_aliases[i].real
-            : substitute_name(substitutions, keymap->key_aliases[i].real);
+    కొరకు (darray_కొలత_t i = 0; i < keymap->అంకె_కీలకం_aliases; i++) {
+        స్థిరరాశి xkb_atom_t alias = (substitutions == ఖాళీ)
+            ? keymap->కీలకం_aliases[i].alias
+            : substitute_name(substitutions, keymap->కీలకం_aliases[i].alias);
+        స్థిరరాశి xkb_atom_t real = (substitutions == ఖాళీ)
+            ? keymap->కీలకం_aliases[i].real
+            : substitute_name(substitutions, keymap->కీలకం_aliases[i].real);
 
-        if (pretty)
+        ఒకవేళ (pretty)
             write_buf(buf, "\talias %-14s",
-                      KeyNameText(keymap->ctx, alias));
-        else
+                      కీలకం_Name_పాఠ్యం(keymap->ctx, alias));
+        లేకపోతే
             write_buf(buf, "\talias %s",
-                      KeyNameText(keymap->ctx, alias));
+                      కీలకం_Name_పాఠ్యం(keymap->ctx, alias));
         write_buf(buf, " = %s;\n",
-                  KeyNameText(keymap->ctx, real));
+                  కీలకం_Name_పాఠ్యం(keymap->ctx, real));
     }
 
-    copy_to_buf(buf, "};\n\n");
-    return true;
+    copy_గమ్యం_buf(buf, "};\n\n");
+    తిరిగి true;
 }
 
-static bool
-write_types(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
-            enum xkb_keymap_serialize_flags flags, struct buf *buf)
+స్థిర bool
+write_types(స్థిరరాశి నిర్మాణం xkb_keymap *keymap, గణన xkb_keymap_format format,
+            గణన xkb_keymap_serialize_flags flags, నిర్మాణం buf *buf)
 {
-    if (keymap->types_section_name)
+    ఒకవేళ (keymap->types_section_name)
         write_buf(buf, "xkb_types \"%s\" {\n",
                   keymap->types_section_name);
-    else
-        copy_to_buf(buf, "xkb_types {\n");
+    లేకపోతే
+        copy_గమ్యం_buf(buf, "xkb_types {\n");
 
     /* NOTE: support for default values has been removed */
 
-    if (!write_vmods(keymap, format,
+    ఒకవేళ (!write_vmods(keymap, format,
                      (flags & XKB_KEYMAP_SERIALIZE_EXPLICIT_VMODS), buf))
-        return false;
+        తిరిగి false;
 
-    const bool drop_unused = !(flags & XKB_KEYMAP_SERIALIZE_KEEP_UNUSED);
-    for (darray_size_t i = 0; i < keymap->num_types; i++) {
-        const struct xkb_key_type * const type = &keymap->types[i];
-        if (!type->required && drop_unused)
-            continue;
+    స్థిరరాశి bool drop_వాడని = !(flags & XKB_KEYMAP_SERIALIZE_KEEP_వాడని);
+    కొరకు (darray_కొలత_t i = 0; i < keymap->అంకె_types; i++) {
+        స్థిరరాశి నిర్మాణం xkb_కీలకం_type * స్థిరరాశి type = &keymap->types[i];
+        ఒకవేళ (!type->required && drop_వాడని)
+            కొనసాగు;
 
-        copy_to_buf(buf, "\ttype ");
-        write_buf_string_literal(buf, xkb_atom_text(keymap->ctx, type->name));
-        copy_to_buf(buf, " {\n");
+        copy_గమ్యం_buf(buf, "\ttype ");
+        write_buf_string_literal(buf, xkb_atom_పాఠ్యం(keymap->ctx, type->name));
+        copy_గమ్యం_buf(buf, " {\n");
 
         write_buf(buf, "\t\tmodifiers= %s;\n",
-                  ModMaskText(keymap->ctx, MOD_BOTH, &keymap->mods,
+                  Mod_ముసుగు_పాఠ్యం(keymap->ctx, MOD_BOTH, &keymap->mods,
                               type->mods.mods));
 
-        for (darray_size_t j = 0; j < type->num_entries; j++) {
-            const char *str;
-            const struct xkb_key_type_entry *entry = &type->entries[j];
+        కొరకు (darray_కొలత_t j = 0; j < type->అంకె_entries; j++) {
+            స్థిరరాశి అక్షరం *str;
+            స్థిరరాశి నిర్మాణం xkb_కీలకం_type_నమోదు *నమోదు_2 = &type->entries[j];
 
             /*
              * Printing level 1 entries is redundant, it's the default,
              * unless there's preserve info.
              */
-            if (entry->level == 0 && entry->preserve.mods == 0 &&
-                !(flags & XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_VALUES))
-                continue;
+            ఒకవేళ (నమోదు_2->level == 0 && నమోదు_2->preserve.mods == 0 &&
+                !(flags & XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_విలువలు))
+                కొనసాగు;
 
-            str = ModMaskText(keymap->ctx, MOD_BOTH, &keymap->mods,
-                              entry->mods.mods);
+            str = Mod_ముసుగు_పాఠ్యం(keymap->ctx, MOD_BOTH, &keymap->mods,
+                              నమోదు_2->mods.mods);
             write_buf(buf, "\t\tmap[%s]= %"PRIu32";\n",
-                      str, entry->level + 1);
+                      str, నమోదు_2->level + 1);
 
-            if (entry->preserve.mods)
+            ఒకవేళ (నమోదు_2->preserve.mods)
                 write_buf(buf, "\t\tpreserve[%s]= %s;\n",
-                          str, ModMaskText(keymap->ctx, MOD_BOTH, &keymap->mods,
-                                           entry->preserve.mods));
+                          str, Mod_ముసుగు_పాఠ్యం(keymap->ctx, MOD_BOTH, &keymap->mods,
+                                           నమోదు_2->preserve.mods));
         }
 
-        for (xkb_level_index_t n = 0; n < type->num_level_names; n++)
-            if (type->level_names[n]) {
+        కొరకు (xkb_level_సూచీ_t n = 0; n < type->అంకె_level_పేర్లు; n++)
+            ఒకవేళ (type->level_పేర్లు[n]) {
                 write_buf(buf, "\t\tlevel_name[%"PRIu32"]= ", n + 1);
                 write_buf_string_literal(
-                    buf, xkb_atom_text(keymap->ctx, type->level_names[n]));
-                copy_to_buf(buf, ";\n");
+                    buf, xkb_atom_పాఠ్యం(keymap->ctx, type->level_పేర్లు[n]));
+                copy_గమ్యం_buf(buf, ";\n");
             }
 
-        copy_to_buf(buf, "\t};\n");
+        copy_గమ్యం_buf(buf, "\t};\n");
     }
 
-    copy_to_buf(buf, "};\n\n");
-    return true;
+    copy_గమ్యం_buf(buf, "};\n\n");
+    తిరిగి true;
 }
 
-static bool
-write_led_map(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
-              bool defaults, struct buf *buf, const struct xkb_led *led)
+స్థిర bool
+write_led_map(స్థిరరాశి నిర్మాణం xkb_keymap *keymap, గణన xkb_keymap_format format,
+              bool defaults, నిర్మాణం buf *buf, స్థిరరాశి నిర్మాణం xkb_led *led)
 {
-    copy_to_buf(buf, "\tindicator ");
-    write_buf_string_literal(buf, xkb_atom_text(keymap->ctx, led->name));
-    copy_to_buf(buf, " {\n");
+    copy_గమ్యం_buf(buf, "\tindicator ");
+    write_buf_string_literal(buf, xkb_atom_పాఠ్యం(keymap->ctx, led->name));
+    copy_గమ్యం_buf(buf, " {\n");
 
-    if (led->which_groups) {
-        if (led->which_groups != XKB_STATE_LAYOUT_EFFECTIVE || defaults) {
+    ఒకవేళ (led->which_groups) {
+        ఒకవేళ (led->which_groups != XKB_STATE_LAYOUT_EFFECTIVE || defaults) {
             write_buf(buf, "\t\twhichGroupState= %s;\n",
-                      LedStateMaskText(keymap->ctx, groupComponentMaskNames,
+                      Led_State_ముసుగు_పాఠ్యం(keymap->ctx, సమూహం_Component_ముసుగు_పేర్లు,
                                        led->which_groups));
         }
         write_buf(buf, "\t\tgroups= 0x%02"PRIx32";\n",
                   led->groups);
     }
 
-    if (led->which_mods) {
-        if (led->which_mods != XKB_STATE_MODS_EFFECTIVE || defaults) {
+    ఒకవేళ (led->which_mods) {
+        ఒకవేళ (led->which_mods != XKB_STATE_MODS_EFFECTIVE || defaults) {
             write_buf(buf, "\t\twhichModState= %s;\n",
-                      LedStateMaskText(keymap->ctx, modComponentMaskNames,
+                      Led_State_ముసుగు_పాఠ్యం(keymap->ctx, mod_Component_ముసుగు_పేర్లు,
                                        led->which_mods));
         }
         write_buf(buf, "\t\tmodifiers= %s;\n",
-                  ModMaskText(keymap->ctx, MOD_BOTH, &keymap->mods,
+                  Mod_ముసుగు_పాఠ్యం(keymap->ctx, MOD_BOTH, &keymap->mods,
                               led->mods.mods));
     }
 
-    if (led->ctrls) {
+    ఒకవేళ (led->ctrls) {
         write_buf(buf, "\t\tcontrols= %s;\n",
-                  ControlMaskText(keymap->ctx, format, led->ctrls));
+                  Control_ముసుగు_పాఠ్యం(keymap->ctx, format, led->ctrls));
     }
 
-    copy_to_buf(buf, "\t};\n");
-    return true;
+    copy_గమ్యం_buf(buf, "\t};\n");
+    తిరిగి true;
 }
 
-static const char *
-affect_lock_text(enum xkb_action_flags flags, bool show_both)
+స్థిర స్థిరరాశి అక్షరం *
+affect_తాళం_పాఠ్యం(గణన xkb_action_flags flags, bool show_both)
 {
-    switch (flags & (ACTION_LOCK_NO_LOCK | ACTION_LOCK_NO_UNLOCK)) {
-    case 0:
-        return show_both ? ",affect=both" : "";
-    case ACTION_LOCK_NO_UNLOCK:
-        return ",affect=lock";
-    case ACTION_LOCK_NO_LOCK:
-        return ",affect=unlock";
-    case ACTION_LOCK_NO_LOCK | ACTION_LOCK_NO_UNLOCK:
-        return ",affect=neither";
-    default:
-        return "";
+    ఎంపిక (flags & (ACTION_తాళం_NO_తాళం | ACTION_తాళం_NO_UNLOCK)) {
+    స్థితి 0:
+        తిరిగి show_both ? ",affect=both" : "";
+    స్థితి ACTION_తాళం_NO_UNLOCK:
+        తిరిగి ",affect=lock";
+    స్థితి ACTION_తాళం_NO_తాళం:
+        తిరిగి ",affect=unlock";
+    స్థితి ACTION_తాళం_NO_తాళం | ACTION_తాళం_NO_UNLOCK:
+        తిరిగి ",affect=neither";
+    అప్రమేయ:
+        తిరిగి "";
     }
 }
 
-#define SYMBOL_PADDING 15
-#define ACTION_PADDING 30
+#నిర్వచించు చిహ్నం_PADDING 15
+#నిర్వచించు ACTION_PADDING 30
 
-static bool
-write_action(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
-             xkb_layout_index_t max_groups, struct buf *buf,
-             const union xkb_action *action,
-             const char *prefix, const char *suffix)
+స్థిర bool
+write_action(స్థిరరాశి నిర్మాణం xkb_keymap *keymap, గణన xkb_keymap_format format,
+             xkb_layout_సూచీ_t max_groups, నిర్మాణం buf *buf,
+             స్థిరరాశి సంఘం xkb_action *action,
+             స్థిరరాశి అక్షరం *ఉపసర్గ, స్థిరరాశి అక్షరం *suffix)
 {
-    const char *type;
-    const char *args = NULL;
+    స్థిరరాశి అక్షరం *type;
+    స్థిరరాశి అక్షరం *వాదనలు = ఖాళీ;
 
-    if (!prefix)
-        prefix = "";
-    if (!suffix)
+    ఒకవేళ (!ఉపసర్గ)
+        ఉపసర్గ = "";
+    ఒకవేళ (!suffix)
         suffix = "";
 
-    type = ActionTypeText(action->type);
+    type = Action_Type_పాఠ్యం(action->type);
 
-    switch (action->type) {
-    case ACTION_TYPE_MOD_SET:
-    case ACTION_TYPE_MOD_LATCH:
-    case ACTION_TYPE_MOD_LOCK:
-        if (action->mods.flags & ACTION_MODS_LOOKUP_MODMAP)
-            args = "modMapMods";
-        else
-            args = ModMaskText(keymap->ctx, MOD_BOTH, &keymap->mods,
+    ఎంపిక (action->type) {
+    స్థితి ACTION_TYPE_MOD_సమితి:
+    స్థితి ACTION_TYPE_MOD_LATCH:
+    స్థితి ACTION_TYPE_MOD_తాళం:
+        ఒకవేళ (action->mods.flags & ACTION_MODS_LOOKUP_MODMAP)
+            వాదనలు = "modMapMods";
+        లేకపోతే
+            వాదనలు = Mod_ముసుగు_పాఠ్యం(keymap->ctx, MOD_BOTH, &keymap->mods,
                                action->mods.mods.mods);
         bool unlockOnPress = (action->mods.flags & ACTION_UNLOCK_ON_PRESS);
-        if (unlockOnPress && !isModsUnLockOnPressSupported(format)) {
-            log_err(keymap->ctx, XKB_ERROR_INCOMPATIBLE_KEYMAP_TEXT_FORMAT,
+        ఒకవేళ (unlockOnPress && !is_Mods_Un_తాళం_On_Press_Supported(format)) {
+            log_err(keymap->ctx, XKB_ERROR_INCOMPATIBLE_KEYMAP_పాఠ్యం_FORMAT,
                     "Cannot use \"%s(unlockOnPress=true)\" in keymap format %d\n",
-                    ActionTypeText(action->type), format);
+                    Action_Type_పాఠ్యం(action->type), format);
             unlockOnPress = false;
         }
         bool latchOnPress = action->type == ACTION_TYPE_MOD_LATCH &&
-                            (action->group.flags & ACTION_LATCH_ON_PRESS);
-        if (latchOnPress && !isModsLatchOnPressSupported(format)) {
-            log_err(keymap->ctx, XKB_ERROR_INCOMPATIBLE_KEYMAP_TEXT_FORMAT,
+                            (action->సమూహం.flags & ACTION_LATCH_ON_PRESS);
+        ఒకవేళ (latchOnPress && !isModsLatchOnPressSupported(format)) {
+            log_err(keymap->ctx, XKB_ERROR_INCOMPATIBLE_KEYMAP_పాఠ్యం_FORMAT,
                     "Cannot use \"LatchMods(latchOnPress=true)\" "
                     "in keymap format %d\n", format);
             latchOnPress = false;
         }
-        write_buf(buf, "%s%s(modifiers=%s%s%s%s%s%s)%s", prefix, type, args,
-                  (action->type != ACTION_TYPE_MOD_LOCK && (action->mods.flags & ACTION_LOCK_CLEAR)) ? ",clearLocks" : "",
-                  (action->type == ACTION_TYPE_MOD_LATCH && (action->mods.flags & ACTION_LATCH_TO_LOCK)) ? ",latchToLock" : "",
-                  (action->type == ACTION_TYPE_MOD_LOCK) ? affect_lock_text(action->mods.flags, false) : "",
+        write_buf(buf, "%s%s(modifiers=%s%s%s%s%s%s)%s", ఉపసర్గ, type, వాదనలు,
+                  (action->type != ACTION_TYPE_MOD_తాళం && (action->mods.flags & ACTION_తాళం_CLEAR)) ? ",clearLocks" : "",
+                  (action->type == ACTION_TYPE_MOD_LATCH && (action->mods.flags & ACTION_LATCH_గమ్యం_తాళం)) ? ",latchToLock" : "",
+                  (action->type == ACTION_TYPE_MOD_తాళం) ? affect_తాళం_పాఠ్యం(action->mods.flags, false) : "",
                   (unlockOnPress) ? ",unlockOnPress" : "",
                   (latchOnPress) ? ",latchOnPress" : "",
                   suffix);
-        break;
+        ఆపు;
 
-    case ACTION_TYPE_GROUP_SET:
-    case ACTION_TYPE_GROUP_LATCH:
-    case ACTION_TYPE_GROUP_LOCK:
-        if ((uint32_t) xkb_abs(action->group.group) <
-            (max_groups + !(action->group.flags & ACTION_ABSOLUTE_SWITCH))) {
-            bool lockOnRelease = action->type == ACTION_TYPE_GROUP_LOCK &&
-                                 (action->group.flags & ACTION_LOCK_ON_RELEASE);
-            if (lockOnRelease && !isGroupLockOnReleaseSupported(format)) {
-                log_err(keymap->ctx, XKB_ERROR_INCOMPATIBLE_KEYMAP_TEXT_FORMAT,
+    స్థితి ACTION_TYPE_సమూహం_సమితి:
+    స్థితి ACTION_TYPE_సమూహం_LATCH:
+    స్థితి ACTION_TYPE_సమూహం_తాళం:
+        ఒకవేళ ((uint32_t) xkb_abs(action->సమూహం.సమూహం) <
+            (max_groups + !(action->సమూహం.flags & ACTION_ABSOLUTE_SWITCH))) {
+            bool తాళం_On_Release = action->type == ACTION_TYPE_సమూహం_తాళం &&
+                                 (action->సమూహం.flags & ACTION_తాళం_ON_RELEASE);
+            ఒకవేళ (తాళం_On_Release && !is_సమూహం_తాళం_On_Release_Supported(format)) {
+                log_err(keymap->ctx, XKB_ERROR_INCOMPATIBLE_KEYMAP_పాఠ్యం_FORMAT,
                         "Cannot use \"GroupLock(lockOnRelease=true)\" "
                         "in keymap format %d\n", format);
-                lockOnRelease = false;
+                తాళం_On_Release = false;
             }
-            write_buf(buf, "%s%s(group=%s%"PRId32"%s%s%s)%s", prefix, type,
-                      (!(action->group.flags & ACTION_ABSOLUTE_SWITCH) && action->group.group >= 0) ? "+" : "",
-                      (action->group.flags & ACTION_ABSOLUTE_SWITCH) ? action->group.group + 1 : action->group.group,
-                      (action->type != ACTION_TYPE_GROUP_LOCK && (action->group.flags & ACTION_LOCK_CLEAR)) ? ",clearLocks" : "",
-                      (action->type == ACTION_TYPE_GROUP_LATCH && (action->group.flags & ACTION_LATCH_TO_LOCK)) ? ",latchToLock" : "",
-                      (lockOnRelease) ? ",lockOnRelease" : "",
+            write_buf(buf, "%s%s(group=%s%"PRId32"%s%s%s)%s", ఉపసర్గ, type,
+                      (!(action->సమూహం.flags & ACTION_ABSOLUTE_SWITCH) && action->సమూహం.సమూహం >= 0) ? "+" : "",
+                      (action->సమూహం.flags & ACTION_ABSOLUTE_SWITCH) ? action->సమూహం.సమూహం + 1 : action->సమూహం.సమూహం,
+                      (action->type != ACTION_TYPE_సమూహం_తాళం && (action->సమూహం.flags & ACTION_తాళం_CLEAR)) ? ",clearLocks" : "",
+                      (action->type == ACTION_TYPE_సమూహం_LATCH && (action->సమూహం.flags & ACTION_LATCH_గమ్యం_తాళం)) ? ",latchToLock" : "",
+                      (తాళం_On_Release) ? ",lockOnRelease" : "",
                       suffix);
-        } else {
+        } లేకపోతే {
             /* Unsupported group index: degrade to VoidAction() */
-            log_warn(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
+            log_warn(keymap->ctx, XKB_LOG_సందేశం_NO_ID,
                      "Unsupported group index %"PRIu32" for action %s()\n",
-                      (action->group.group +
-                       !!(action->group.flags & ACTION_ABSOLUTE_SWITCH)),
+                      (action->సమూహం.సమూహం +
+                       !!(action->సమూహం.flags & ACTION_ABSOLUTE_SWITCH)),
                      type);
-            goto void_action;
+            వెళ్ళు void_action;
         }
-        break;
+        ఆపు;
 
-    case ACTION_TYPE_TERMINATE:
-        write_buf(buf, "%s%s()%s", prefix, type, suffix);
-        break;
+    స్థితి ACTION_TYPE_TERMINATE:
+        write_buf(buf, "%s%s()%s", ఉపసర్గ, type, suffix);
+        ఆపు;
 
-    case ACTION_TYPE_PTR_MOVE:
-        write_buf(buf, "%s%s(x=%s%d,y=%s%d%s)%s", prefix, type,
+    స్థితి ACTION_TYPE_PTR_MOVE:
+        write_buf(buf, "%s%s(x=%s%d,y=%s%d%s)%s", ఉపసర్గ, type,
                   (!(action->ptr.flags & ACTION_ABSOLUTE_X) && action->ptr.x >= 0) ? "+" : "",
                   action->ptr.x,
                   (!(action->ptr.flags & ACTION_ABSOLUTE_Y) && action->ptr.y >= 0) ? "+" : "",
                   action->ptr.y,
                   (action->ptr.flags & ACTION_REPEAT) ? "" : ",!repeat",
                   suffix);
-        break;
+        ఆపు;
 
-    case ACTION_TYPE_PTR_LOCK:
-        args = affect_lock_text(action->btn.flags, true);
+    స్థితి ACTION_TYPE_PTR_తాళం:
+        వాదనలు = affect_తాళం_పాఠ్యం(action->btn.flags, true);
         /* fallthrough */
-    case ACTION_TYPE_PTR_BUTTON:
-        write_buf(buf, "%s%s(button=", prefix, type);
-        static_assert(XKB_POINTER_BUTTON_DEFAULT < XKB_POINTER_BUTTON_MIN, "");
-        if (action->btn.button > XKB_POINTER_BUTTON_DEFAULT &&
-            action->btn.button <= XKB_POINTER_BUTTON_MAX)
+    స్థితి ACTION_TYPE_PTR_BUTTON:
+        write_buf(buf, "%s%s(button=", ఉపసర్గ, type);
+        static_assert(XKB_సూచిక_BUTTON_DEFAULT < XKB_సూచిక_BUTTON_MIN, "");
+        ఒకవేళ (action->btn.button > XKB_సూచిక_BUTTON_DEFAULT &&
+            action->btn.button <= XKB_సూచిక_BUTTON_MAX)
             write_buf(buf, "%"PRIu8, action->btn.button);
-        else
-            copy_to_buf(buf, "default");
-        if (action->btn.count) {
-            assert(action->type != ACTION_TYPE_PTR_LOCK);
-            write_buf(buf, ",count=%u", action->btn.count);
+        లేకపోతే
+            copy_గమ్యం_buf(buf, "default");
+        ఒకవేళ (action->btn.లెక్క) {
+            ప్రతిజ్ఞా(action->type != ACTION_TYPE_PTR_తాళం);
+            write_buf(buf, ",count=%u", action->btn.లెక్క);
         }
-        if (args)
-            write_buf(buf, "%s", args);
+        ఒకవేళ (వాదనలు)
+            write_buf(buf, "%s", వాదనలు);
         write_buf(buf, ")%s", suffix);
-        break;
+        ఆపు;
 
-    case ACTION_TYPE_PTR_DEFAULT:
-        write_buf(buf, "%s%s(", prefix, type);
+    స్థితి ACTION_TYPE_PTR_DEFAULT:
+        write_buf(buf, "%s%s(", ఉపసర్గ, type);
         write_buf(buf, "affect=button,button=%s%"PRId8,
-                  (!(action->dflt.flags & ACTION_ABSOLUTE_SWITCH) && action->dflt.value >= 0) ? "+" : "",
-                  action->dflt.value);
+                  (!(action->dflt.flags & ACTION_ABSOLUTE_SWITCH) && action->dflt.విలువ >= 0) ? "+" : "",
+                  action->dflt.విలువ);
         write_buf(buf, ")%s", suffix);
-        break;
+        ఆపు;
 
-    case ACTION_TYPE_SWITCH_VT:
-        write_buf(buf, "%s%s(screen=%s%d,%ssame)%s", prefix, type,
+    స్థితి ACTION_TYPE_SWITCH_VT:
+        write_buf(buf, "%s%s(screen=%s%d,%ssame)%s", ఉపసర్గ, type,
                   (!(action->screen.flags & ACTION_ABSOLUTE_SWITCH) && action->screen.screen >= 0) ? "+" : "",
                   action->screen.screen,
                   (action->screen.flags & ACTION_SAME_SCREEN) ? "" : "!",
                   suffix);
-        break;
+        ఆపు;
 
-    case ACTION_TYPE_CTRL_SET:
-    case ACTION_TYPE_CTRL_LOCK:
-        write_buf(buf, "%s%s(controls=%s%s)%s", prefix, type,
-                  ControlMaskText(keymap->ctx, format, action->ctrls.ctrls),
-                  (action->type == ACTION_TYPE_CTRL_LOCK
-                    ? affect_lock_text(action->ctrls.flags, false)
+    స్థితి ACTION_TYPE_CTRL_సమితి:
+    స్థితి ACTION_TYPE_CTRL_తాళం:
+        write_buf(buf, "%s%s(controls=%s%s)%s", ఉపసర్గ, type,
+                  Control_ముసుగు_పాఠ్యం(keymap->ctx, format, action->ctrls.ctrls),
+                  (action->type == ACTION_TYPE_CTRL_తాళం
+                    ? affect_తాళం_పాఠ్యం(action->ctrls.flags, false)
                     : ""),
                   suffix);
-        break;
+        ఆపు;
 
-    case ACTION_TYPE_REDIRECT_KEY: {
-        write_buf(buf, "%s%s(", prefix, type);
-        const struct xkb_key * const key = XkbKey(keymap, action->redirect.keycode);
+    స్థితి ACTION_TYPE_REDIRECT_కీలకం: {
+        write_buf(buf, "%s%s(", ఉపసర్గ, type);
+        స్థిరరాశి నిర్మాణం xkb_కీలకం * స్థిరరాశి కీలకం = Xkb_కీలకం(keymap, action->redirect.keycode);
         /* Can fail if the keycode was not initialized */
-        if (key)
-            write_buf(buf, "keycode=%s", KeyNameText(keymap->ctx, key->name));
-        if (action->redirect.affect_mods) {
-            xkb_mod_mask_t mask;
-            mask = (action->redirect.affect_mods & action->redirect.mods);
-            if (mask)
+        ఒకవేళ (కీలకం)
+            write_buf(buf, "keycode=%s", కీలకం_Name_పాఠ్యం(keymap->ctx, కీలకం->name));
+        ఒకవేళ (action->redirect.affect_mods) {
+            xkb_mod_ముసుగు_t ముసుగు;
+            ముసుగు = (action->redirect.affect_mods & action->redirect.mods);
+            ఒకవేళ (ముసుగు)
                 write_buf(buf, ",modifiers=%s",
-                          ModMaskText(keymap->ctx, MOD_BOTH, &keymap->mods, mask));
-            mask = (action->redirect.affect_mods & ~action->redirect.mods);
-            if (mask)
+                          Mod_ముసుగు_పాఠ్యం(keymap->ctx, MOD_BOTH, &keymap->mods, ముసుగు));
+            ముసుగు = (action->redirect.affect_mods & ~action->redirect.mods);
+            ఒకవేళ (ముసుగు)
                 write_buf(buf, ",clearMods=%s",
-                          ModMaskText(keymap->ctx, MOD_BOTH, &keymap->mods, mask));
+                          Mod_ముసుగు_పాఠ్యం(keymap->ctx, MOD_BOTH, &keymap->mods, ముసుగు));
         }
         write_buf(buf, ")%s", suffix);
-        break;
+        ఆపు;
     }
 
-    case ACTION_TYPE_UNKNOWN:
-    case ACTION_TYPE_NONE:
-        write_buf(buf, "%sNoAction()%s", prefix, suffix);
-        break;
+    స్థితి ACTION_TYPE_UNKNOWN:
+    స్థితి ACTION_TYPE_NONE:
+        write_buf(buf, "%sNoAction()%s", ఉపసర్గ, suffix);
+        ఆపు;
 
-    case ACTION_TYPE_VOID:
+    స్థితి ACTION_TYPE_VOID:
 void_action:
         /*
          * VoidAction() is an xkbcommon extension.
@@ -857,357 +857,357 @@ void_action:
          * We better not use `Private` either, because it could still be
          * interpreted by X11.
          */
-        if (format == XKB_KEYMAP_FORMAT_TEXT_V1)
+        ఒకవేళ (format == XKB_KEYMAP_FORMAT_పాఠ్యం_V1)
             write_buf(buf, "%sLockControls(controls=none,affect=neither)%s",
-                      prefix, suffix);
-        else
-            write_buf(buf, "%sVoidAction()%s", prefix, suffix);
-        break;
+                      ఉపసర్గ, suffix);
+        లేకపోతే
+            write_buf(buf, "%sVoidAction()%s", ఉపసర్గ, suffix);
+        ఆపు;
 
-    default:
+    అప్రమేయ:
         {} /* Label followed by declaration requires C23 */
         /* Ensure to not miss `xkb_action_type` updates */
-        static_assert(ACTION_TYPE_INTERNAL == 20 &&
-                      ACTION_TYPE_INTERNAL + 1 == _ACTION_TYPE_NUM_ENTRIES,
+        static_assert(ACTION_TYPE_అంతర్గత == 20 &&
+                      ACTION_TYPE_అంతర్గత + 1 == ACTION_TYPE_అంకె_ENTRIES,
                       "Missing action type");
         /* Unsupported legacy actions should have degraded to NoAction */
-        assert(action->type != ACTION_TYPE_UNSUPPORTED_LEGACY);
+        ప్రతిజ్ఞా(action->type != ACTION_TYPE_UNSUPPORTED_LEGACY);
         write_buf(buf,
                   "%s%s(type=0x%02x,data[0]=0x%02x,data[1]=0x%02x,data[2]=0x%02x,data[3]=0x%02x,data[4]=0x%02x,data[5]=0x%02x,data[6]=0x%02x)%s",
-                  prefix, type, action->type, action->priv.data[0],
-                  action->priv.data[1], action->priv.data[2],
-                  action->priv.data[3], action->priv.data[4],
-                  action->priv.data[5], action->priv.data[6],
+                  ఉపసర్గ, type, action->type, action->priv.దత్తాంశం[0],
+                  action->priv.దత్తాంశం[1], action->priv.దత్తాంశం[2],
+                  action->priv.దత్తాంశం[3], action->priv.దత్తాంశం[4],
+                  action->priv.దత్తాంశం[5], action->priv.దత్తాంశం[6],
                   suffix);
-        break;
+        ఆపు;
     }
 
-    return true;
+    తిరిగి true;
 }
 
-static const union xkb_action void_actions[] = {
+స్థిర స్థిరరాశి సంఘం xkb_action void_actions[] = {
     { .type = ACTION_TYPE_VOID }
 };
 
-static bool
-write_actions(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
-              xkb_layout_index_t max_groups, struct buf *buf, struct buf *buf2,
-              const struct xkb_key *key, xkb_layout_index_t group)
+స్థిర bool
+write_actions(స్థిరరాశి నిర్మాణం xkb_keymap *keymap, గణన xkb_keymap_format format,
+              xkb_layout_సూచీ_t max_groups, నిర్మాణం buf *buf, నిర్మాణం buf *buf2,
+              స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం, xkb_layout_సూచీ_t సమూహం)
 {
-    static const union xkb_action noAction = { .type = ACTION_TYPE_NONE };
+    స్థిర స్థిరరాశి సంఘం xkb_action noAction = { .type = ACTION_TYPE_NONE };
 
-    for (xkb_level_index_t level = 0; level < XkbKeyNumLevels(key, group);
+    కొరకు (xkb_level_సూచీ_t level = 0; level < Xkb_కీలకం_అంకె_స్థాయిలు(కీలకం, సమూహం);
          level++) {
 
-        if (level != 0)
-            copy_to_buf(buf, ", ");
+        ఒకవేళ (level != 0)
+            copy_గమ్యం_buf(buf, ", ");
 
-        const union xkb_action *actions = NULL;
-        xkb_action_count_t count = xkb_keymap_key_get_actions_by_level(
-            keymap, key, group, level, &actions
+        స్థిరరాశి సంఘం xkb_action *actions = ఖాళీ;
+        xkb_action_లెక్క_t లెక్క = xkb_keymap_కీలకం_get_actions_by_level(
+            keymap, కీలకం, సమూహం, level, &actions
         );
 
-        if (count > 1 && format < XKB_KEYMAP_FORMAT_TEXT_V2) {
+        ఒకవేళ (లెక్క > 1 && format < XKB_KEYMAP_FORMAT_పాఠ్యం_V2) {
             /* V1: Degrade multiple actions to VoidAction() */
             actions = void_actions;
-            count = 1;
-            log_err(keymap->ctx, XKB_ERROR_INCOMPATIBLE_KEYMAP_TEXT_FORMAT,
+            లెక్క = 1;
+            log_err(keymap->ctx, XKB_ERROR_INCOMPATIBLE_KEYMAP_పాఠ్యం_FORMAT,
                     "Cannot serialize multiple actions per level "
                     "in keymap format %d; degrade to VoidAction()\n", format);
         }
 
-        buf2->size = 0;
-        if (count == 0) {
-            if (!write_action(keymap, format, max_groups,
-                              buf2, &noAction, NULL, NULL))
-                return false;
+        buf2->కొలత = 0;
+        ఒకవేళ (లెక్క == 0) {
+            ఒకవేళ (!write_action(keymap, format, max_groups,
+                              buf2, &noAction, ఖాళీ, ఖాళీ))
+                తిరిగి false;
             write_buf(buf, "%*s", ACTION_PADDING, buf2->buf);
         }
-        else if (count == 1) {
-            if (!write_action(keymap, format, max_groups,
-                              buf2, &(actions[0]), NULL, NULL))
-                return false;
+        లేకపోతే ఒకవేళ (లెక్క == 1) {
+            ఒకవేళ (!write_action(keymap, format, max_groups,
+                              buf2, &(actions[0]), ఖాళీ, ఖాళీ))
+                తిరిగి false;
             write_buf(buf, "%*s", ACTION_PADDING, buf2->buf);
         }
-        else {
-            copy_to_buf(buf2, "{ ");
-            for (xkb_action_count_t k = 0; k < count; k++) {
-                if (k != 0)
-                    copy_to_buf(buf2, ", ");
-                size_t old_size = buf2->size;
-                if (!write_action(keymap, format, max_groups,
-                                  buf2, &(actions[k]), NULL, NULL))
-                    return false;
+        లేకపోతే {
+            copy_గమ్యం_buf(buf2, "{ ");
+            కొరకు (xkb_action_లెక్క_t k = 0; k < లెక్క; k++) {
+                ఒకవేళ (k != 0)
+                    copy_గమ్యం_buf(buf2, ", ");
+                కొలత_t old_కొలత = buf2->కొలత;
+                ఒకవేళ (!write_action(keymap, format, max_groups,
+                                  buf2, &(actions[k]), ఖాళీ, ఖాళీ))
+                    తిరిగి false;
                 /* Check if padding is necessary */
-                if (buf2->size >= old_size + ACTION_PADDING)
-                    continue;
+                ఒకవేళ (buf2->కొలత >= old_కొలత + ACTION_PADDING)
+                    కొనసాగు;
                 /* Compute and write padding, then write the action again */
-                const int padding = (int)(old_size + ACTION_PADDING - buf2->size);
-                buf2->size = old_size;
+                స్థిరరాశి పూర్ణాంకం padding = (పూర్ణాంకం)(old_కొలత + ACTION_PADDING - buf2->కొలత);
+                buf2->కొలత = old_కొలత;
                 write_buf(buf2, "%*s", padding, "");
-                if (!write_action(keymap, format, max_groups,
-                                  buf2, &(actions[k]), NULL, NULL))
-                    return false;
+                ఒకవేళ (!write_action(keymap, format, max_groups,
+                                  buf2, &(actions[k]), ఖాళీ, ఖాళీ))
+                    తిరిగి false;
             }
-            copy_to_buf(buf2, " }");
+            copy_గమ్యం_buf(buf2, " }");
             write_buf(buf, "%*s", ACTION_PADDING, buf2->buf);
         }
     }
 
-    return true;
+    తిరిగి true;
 }
 
-static bool
-write_action_defaults(const struct xkb_keymap *keymap,
-                      enum xkb_keymap_format format,
-                      const union xkb_action *action,
-                      struct buf *buf)
+స్థిర bool
+write_action_defaults(స్థిరరాశి నిర్మాణం xkb_keymap *keymap,
+                      గణన xkb_keymap_format format,
+                      స్థిరరాశి సంఘం xkb_action *action,
+                      నిర్మాణం buf *buf)
 {
-    const char *type = ActionTypeText(action->type);
+    స్థిరరాశి అక్షరం *type = Action_Type_పాఠ్యం(action->type);
 
-#define PREFIX "\t"
+#నిర్వచించు ఉపసర్గ_2 "\t"
 
-    switch (action->type) {
-    case ACTION_TYPE_MOD_SET:
-    case ACTION_TYPE_MOD_LATCH:
-    case ACTION_TYPE_MOD_LOCK:
-        assert(action->mods.flags == 0);
-        assert(action->mods.mods.mods == 0);
-        write_buf(buf, PREFIX"%s.modifiers = 0;\n", type);
-        if (action->type != ACTION_TYPE_MOD_LOCK)
-            write_buf(buf, PREFIX"%s.clearLocks = false;\n", type);
-        if (action->type == ACTION_TYPE_MOD_LATCH &&
+    ఎంపిక (action->type) {
+    స్థితి ACTION_TYPE_MOD_సమితి:
+    స్థితి ACTION_TYPE_MOD_LATCH:
+    స్థితి ACTION_TYPE_MOD_తాళం:
+        ప్రతిజ్ఞా(action->mods.flags == 0);
+        ప్రతిజ్ఞా(action->mods.mods.mods == 0);
+        write_buf(buf, ఉపసర్గ_2"%s.modifiers = 0;\n", type);
+        ఒకవేళ (action->type != ACTION_TYPE_MOD_తాళం)
+            write_buf(buf, ఉపసర్గ_2"%s.clearLocks = false;\n", type);
+        ఒకవేళ (action->type == ACTION_TYPE_MOD_LATCH &&
             isModsLatchOnPressSupported(format))
-            write_buf(buf, PREFIX"%s.latchOnPress = false;\n", type);
-        if (action->type == ACTION_TYPE_MOD_LATCH)
-            write_buf(buf, PREFIX"%s.latchToLock = false;\n", type);
-        if (action->type == ACTION_TYPE_MOD_LOCK)
-            write_buf(buf, PREFIX"%s.affect = both;\n", type);
-        if (isModsUnLockOnPressSupported(format))
-            write_buf(buf, PREFIX"%s.unlockOnPress = false;\n", type);
-        break;
+            write_buf(buf, ఉపసర్గ_2"%s.latchOnPress = false;\n", type);
+        ఒకవేళ (action->type == ACTION_TYPE_MOD_LATCH)
+            write_buf(buf, ఉపసర్గ_2"%s.latchToLock = false;\n", type);
+        ఒకవేళ (action->type == ACTION_TYPE_MOD_తాళం)
+            write_buf(buf, ఉపసర్గ_2"%s.affect = both;\n", type);
+        ఒకవేళ (is_Mods_Un_తాళం_On_Press_Supported(format))
+            write_buf(buf, ఉపసర్గ_2"%s.unlockOnPress = false;\n", type);
+        ఆపు;
 
-    case ACTION_TYPE_GROUP_SET:
-    case ACTION_TYPE_GROUP_LATCH:
-    case ACTION_TYPE_GROUP_LOCK:
-        assert(action->group.flags == 0);
-        assert(action->group.group == 0);
+    స్థితి ACTION_TYPE_సమూహం_సమితి:
+    స్థితి ACTION_TYPE_సమూహం_LATCH:
+    స్థితి ACTION_TYPE_సమూహం_తాళం:
+        ప్రతిజ్ఞా(action->సమూహం.flags == 0);
+        ప్రతిజ్ఞా(action->సమూహం.సమూహం == 0);
         /* Explicit sign to avoid setting ACTION_ABSOLUTE_SWITCH */
-        write_buf(buf, PREFIX"%s.group = +0;\n", type);
-        if (action->type != ACTION_TYPE_GROUP_LOCK)
-            write_buf(buf, PREFIX"%s.clearLocks = false;\n", type);
-        if (action->type == ACTION_TYPE_GROUP_LATCH)
-            write_buf(buf, PREFIX"%s.latchToLock = false;\n", type);
-        if (action->type == ACTION_TYPE_GROUP_LOCK &&
-            isGroupLockOnReleaseSupported(format))
-            write_buf(buf, PREFIX"%s.lockOnRelease = false;\n", type);
-        break;
+        write_buf(buf, ఉపసర్గ_2"%s.group = +0;\n", type);
+        ఒకవేళ (action->type != ACTION_TYPE_సమూహం_తాళం)
+            write_buf(buf, ఉపసర్గ_2"%s.clearLocks = false;\n", type);
+        ఒకవేళ (action->type == ACTION_TYPE_సమూహం_LATCH)
+            write_buf(buf, ఉపసర్గ_2"%s.latchToLock = false;\n", type);
+        ఒకవేళ (action->type == ACTION_TYPE_సమూహం_తాళం &&
+            is_సమూహం_తాళం_On_Release_Supported(format))
+            write_buf(buf, ఉపసర్గ_2"%s.lockOnRelease = false;\n", type);
+        ఆపు;
 
 
-    case ACTION_TYPE_PTR_MOVE:
-        assert(action->ptr.x == 0);
-        assert(action->ptr.y == 0);
-        assert(action->ptr.flags == ACTION_REPEAT);
+    స్థితి ACTION_TYPE_PTR_MOVE:
+        ప్రతిజ్ఞా(action->ptr.x == 0);
+        ప్రతిజ్ఞా(action->ptr.y == 0);
+        ప్రతిజ్ఞా(action->ptr.flags == ACTION_REPEAT);
         /* Explicit sign to avoid setting ACTION_ABSOLUTE_SWITCH */
-        write_buf(buf, PREFIX"%s.x = +0;\n", type);
-        write_buf(buf, PREFIX"%s.y = +0;\n", type);
-        write_buf(buf, PREFIX"%s.accel = true;\n", type);
-        break;
+        write_buf(buf, ఉపసర్గ_2"%s.x = +0;\n", type);
+        write_buf(buf, ఉపసర్గ_2"%s.y = +0;\n", type);
+        write_buf(buf, ఉపసర్గ_2"%s.accel = true;\n", type);
+        ఆపు;
 
-    case ACTION_TYPE_PTR_LOCK:
-    case ACTION_TYPE_PTR_BUTTON:
-        assert(action->btn.flags == 0);
-        assert(action->btn.button == 0);
-        assert(action->btn.count == 0);
-        write_buf(buf, PREFIX"%s.button = 0;\n", type);
-        write_buf(buf, PREFIX"%s.count = 0;\n", type);
-        if (action->type == ACTION_TYPE_PTR_LOCK)
-            write_buf(buf, PREFIX"%s.affect = both;\n", type);
-        break;
+    స్థితి ACTION_TYPE_PTR_తాళం:
+    స్థితి ACTION_TYPE_PTR_BUTTON:
+        ప్రతిజ్ఞా(action->btn.flags == 0);
+        ప్రతిజ్ఞా(action->btn.button == 0);
+        ప్రతిజ్ఞా(action->btn.లెక్క == 0);
+        write_buf(buf, ఉపసర్గ_2"%s.button = 0;\n", type);
+        write_buf(buf, ఉపసర్గ_2"%s.count = 0;\n", type);
+        ఒకవేళ (action->type == ACTION_TYPE_PTR_తాళం)
+            write_buf(buf, ఉపసర్గ_2"%s.affect = both;\n", type);
+        ఆపు;
 
-    case ACTION_TYPE_PTR_DEFAULT:
-        assert(action->dflt.flags == 0);
-        assert(action->dflt.value == 1);
+    స్థితి ACTION_TYPE_PTR_DEFAULT:
+        ప్రతిజ్ఞా(action->dflt.flags == 0);
+        ప్రతిజ్ఞా(action->dflt.విలువ == 1);
         /* Explicit sign to avoid setting ACTION_ABSOLUTE_SWITCH */
-        write_buf(buf, PREFIX"%s.button = +1;\n", type);
-        break;
+        write_buf(buf, ఉపసర్గ_2"%s.button = +1;\n", type);
+        ఆపు;
 
-    case ACTION_TYPE_SWITCH_VT:
-        assert(action->screen.flags == ACTION_SAME_SCREEN);
-        assert(action->screen.screen == 0);
+    స్థితి ACTION_TYPE_SWITCH_VT:
+        ప్రతిజ్ఞా(action->screen.flags == ACTION_SAME_SCREEN);
+        ప్రతిజ్ఞా(action->screen.screen == 0);
         /* Explicit sign to avoid setting ACTION_ABSOLUTE_SWITCH */
-        write_buf(buf, PREFIX"%s.screen = +0;\n", type);
-        write_buf(buf, PREFIX"%s.same = true;\n", type);
-        break;
+        write_buf(buf, ఉపసర్గ_2"%s.screen = +0;\n", type);
+        write_buf(buf, ఉపసర్గ_2"%s.same = true;\n", type);
+        ఆపు;
 
-    case ACTION_TYPE_CTRL_SET:
-    case ACTION_TYPE_CTRL_LOCK:
-        assert(action->ctrls.flags == 0);
-        assert(action->ctrls.ctrls == 0);
-        write_buf(buf, PREFIX"%s.controls = 0;\n", type);
-        if (action->type == ACTION_TYPE_CTRL_LOCK)
-            write_buf(buf, PREFIX"%s.affect = both;\n", type);
-        break;
+    స్థితి ACTION_TYPE_CTRL_సమితి:
+    స్థితి ACTION_TYPE_CTRL_తాళం:
+        ప్రతిజ్ఞా(action->ctrls.flags == 0);
+        ప్రతిజ్ఞా(action->ctrls.ctrls == 0);
+        write_buf(buf, ఉపసర్గ_2"%s.controls = 0;\n", type);
+        ఒకవేళ (action->type == ACTION_TYPE_CTRL_తాళం)
+            write_buf(buf, ఉపసర్గ_2"%s.affect = both;\n", type);
+        ఆపు;
 
-    case ACTION_TYPE_REDIRECT_KEY:
-        assert(action->redirect.keycode == keymap->redirect_key_auto);
-        assert(action->redirect.affect_mods == 0);
-        assert(action->redirect.mods == 0);
-        write_buf(buf, PREFIX"%s.keycode = auto;\n", type);
-        write_buf(buf, PREFIX"%s.modifiers = 0;\n", type);
-        write_buf(buf, PREFIX"%s.clearMods = 0;\n", type);
-        break;
+    స్థితి ACTION_TYPE_REDIRECT_కీలకం:
+        ప్రతిజ్ఞా(action->redirect.keycode == keymap->redirect_కీలకం_auto);
+        ప్రతిజ్ఞా(action->redirect.affect_mods == 0);
+        ప్రతిజ్ఞా(action->redirect.mods == 0);
+        write_buf(buf, ఉపసర్గ_2"%s.keycode = auto;\n", type);
+        write_buf(buf, ఉపసర్గ_2"%s.modifiers = 0;\n", type);
+        write_buf(buf, ఉపసర్గ_2"%s.clearMods = 0;\n", type);
+        ఆపు;
 
-    default:
+    అప్రమేయ:
         {} /* Label followed by declaration requires C23 */
         /* Ensure to not miss `xkb_action_type` updates */
-        static_assert(ACTION_TYPE_INTERNAL == 20 &&
-                      ACTION_TYPE_INTERNAL + 1 == _ACTION_TYPE_NUM_ENTRIES,
+        static_assert(ACTION_TYPE_అంతర్గత == 20 &&
+                      ACTION_TYPE_అంతర్గత + 1 == ACTION_TYPE_అంకె_ENTRIES,
                       "Missing action type");
     }
 
-#undef PREFIX
+#నిర్వచనం_రద్దు ఉపసర్గ_2
 
-    return true;
+    తిరిగి true;
 }
 
-static bool
-write_actions_defaults(const struct xkb_keymap *keymap,
-                       enum xkb_keymap_format format, struct buf *buf)
+స్థిర bool
+write_actions_defaults(స్థిరరాశి నిర్మాణం xkb_keymap *keymap,
+                       గణన xkb_keymap_format format, నిర్మాణం buf *buf)
 {
     ActionsInfo defaults = {0};
     InitActionsInfo(keymap, &defaults);
 
-    for (uint8_t a = 0; a < (uint8_t) _ACTION_TYPE_NUM_ENTRIES; a++) {
-        const union xkb_action * restrict const action = &defaults.actions[a];
-        if (!write_action_defaults(keymap, format, action, buf))
-            return false;
+    కొరకు (uint8_t a = 0; a < (uint8_t) ACTION_TYPE_అంకె_ENTRIES; a++) {
+        స్థిరరాశి సంఘం xkb_action * పరిమిత స్థిరరాశి action = &defaults.actions[a];
+        ఒకవేళ (!write_action_defaults(keymap, format, action, buf))
+            తిరిగి false;
     }
-    copy_to_buf(buf, "\n");
+    copy_గమ్యం_buf(buf, "\n");
 
-    return true;
+    తిరిగి true;
 }
 
-static const struct xkb_sym_interpret fallback_interpret = {
-    .sym = XKB_KEY_VoidSymbol,
+స్థిర స్థిరరాశి నిర్మాణం xkb_sym_interpret fallback_interpret = {
+    .sym = XKB_కీలకం_Void_చిహ్నం,
     .required = true,
-    .repeat = FALLBACK_INTERPRET_KEY_REPEAT,
-    .match = MATCH_ANY_OR_NONE,
+    .repeat = FALLBACK_INTERPRET_కీలకం_REPEAT,
+    .సరిపోలిక = సరిపోలిక_ANY_OR_NONE,
     .mods = 0,
-    .virtual_mod = (xkb_mod_index_t) DEFAULT_INTERPRET_VMOD,
-    .num_actions = 0,
+    .virtual_mod = (xkb_mod_సూచీ_t) DEFAULT_INTERPRET_VMOD,
+    .అంకె_actions = 0,
     .a = { .action = { .type = ACTION_TYPE_NONE } },
 };
 
-static bool
-write_compat(const struct xkb_keymap * restrict keymap,
-             enum xkb_keymap_format format, xkb_layout_index_t max_groups,
-             enum xkb_keymap_serialize_flags flags, bool * restrict some_interp,
-             struct buf *buf)
+స్థిర bool
+write_compat(స్థిరరాశి నిర్మాణం xkb_keymap * పరిమిత keymap,
+             గణన xkb_keymap_format format, xkb_layout_సూచీ_t max_groups,
+             గణన xkb_keymap_serialize_flags flags, bool * పరిమిత some_interp,
+             నిర్మాణం buf *buf)
 {
-    const bool pretty = (flags & XKB_KEYMAP_SERIALIZE_PRETTY);
-    const bool defaults = (flags & XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_VALUES);
-    const bool drop_unused = !(flags & XKB_KEYMAP_SERIALIZE_KEEP_UNUSED);
-    const bool drop_interprets =
-        ((flags & XKB_KEYMAP_SERIALIZE_EXPLICIT_KEY_VALUES) && drop_unused);
+    స్థిరరాశి bool pretty = (flags & XKB_KEYMAP_SERIALIZE_PRETTY);
+    స్థిరరాశి bool defaults = (flags & XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_విలువలు);
+    స్థిరరాశి bool drop_వాడని = !(flags & XKB_KEYMAP_SERIALIZE_KEEP_వాడని);
+    స్థిరరాశి bool drop_interprets =
+        ((flags & XKB_KEYMAP_SERIALIZE_EXPLICIT_కీలకం_విలువలు) && drop_వాడని);
     /* TODO: print all default values if the explicit flag is set */
 
-    if (keymap->compat_section_name)
+    ఒకవేళ (keymap->compat_section_name)
         write_buf(buf, "xkb_compatibility \"%s\" {\n",
                   keymap->compat_section_name);
-    else
-        copy_to_buf(buf, "xkb_compatibility {\n");
+    లేకపోతే
+        copy_గమ్యం_buf(buf, "xkb_compatibility {\n");
 
-    if (!write_vmods(keymap, format,
+    ఒకవేళ (!write_vmods(keymap, format,
                      (flags & XKB_KEYMAP_SERIALIZE_EXPLICIT_VMODS), buf))
-        return false;
+        తిరిగి false;
 
-    if (defaults && !write_actions_defaults(keymap, format, buf))
-        return false;
+    ఒకవేళ (defaults && !write_actions_defaults(keymap, format, buf))
+        తిరిగి false;
 
-    copy_to_buf(buf, "\tinterpret.useModMapMods= AnyLevel;\n");
-    copy_to_buf(buf, "\tinterpret.repeat= False;\n");
+    copy_గమ్యం_buf(buf, "\tinterpret.useModMapMods= AnyLevel;\n");
+    copy_గమ్యం_buf(buf, "\tinterpret.repeat= False;\n");
 
     /* xkbcomp requires at least one interpret entry. */
-    const bool use_fallback_interpret =
-        (!keymap->num_sym_interprets || drop_interprets);
-    const darray_size_t num_sym_interprets =
-        (use_fallback_interpret ? 1 : keymap->num_sym_interprets);
-    const struct xkb_sym_interpret* const sym_interprets =
+    స్థిరరాశి bool use_fallback_interpret =
+        (!keymap->అంకె_sym_interprets || drop_interprets);
+    స్థిరరాశి darray_కొలత_t అంకె_sym_interprets =
+        (use_fallback_interpret ? 1 : keymap->అంకె_sym_interprets);
+    స్థిరరాశి నిర్మాణం xkb_sym_interpret* స్థిరరాశి sym_interprets =
         (use_fallback_interpret ? &fallback_interpret : keymap->sym_interprets);
 
-    for (darray_size_t i = 0; i < num_sym_interprets; i++) {
-        const struct xkb_sym_interpret *si = &sym_interprets[i];
-        if (!si->required && drop_unused)
-            continue;
+    కొరకు (darray_కొలత_t i = 0; i < అంకె_sym_interprets; i++) {
+        స్థిరరాశి నిర్మాణం xkb_sym_interpret *si = &sym_interprets[i];
+        ఒకవేళ (!si->required && drop_వాడని)
+            కొనసాగు;
 
         *some_interp = true;
 
-        copy_to_buf(buf, "\tinterpret ");
-        if (!si->sym) {
-            copy_to_buf(buf, "Any");
-        } else if (pretty) {
-            write_buf(buf, "%s", KeysymText(keymap->ctx, si->sym));
-        } else {
+        copy_గమ్యం_buf(buf, "\tinterpret ");
+        ఒకవేళ (!si->sym) {
+            copy_గమ్యం_buf(buf, "Any");
+        } లేకపోతే ఒకవేళ (pretty) {
+            write_buf(buf, "%s", Keysym_పాఠ్యం(keymap->ctx, si->sym));
+        } లేకపోతే {
             write_buf(buf, "0x%"PRIx32, si->sym);
         }
         write_buf(buf, "+%s(%s) {",
-                  SIMatchText(si->match),
-                  ModMaskText(keymap->ctx, MOD_BOTH, &keymap->mods, si->mods));
+                  SIMatch_పాఠ్యం(si->సరిపోలిక),
+                  Mod_ముసుగు_పాఠ్యం(keymap->ctx, MOD_BOTH, &keymap->mods, si->mods));
 
         bool has_explicit_properties = false;
 
-        if (si->virtual_mod != XKB_MOD_INVALID) {
+        ఒకవేళ (si->virtual_mod != XKB_MOD_INVALID) {
             write_buf(buf, "\n\t\tvirtualModifier= %s;",
-                      ModIndexText(keymap->ctx, &keymap->mods,
+                      Mod_సూచీ_పాఠ్యం(keymap->ctx, &keymap->mods,
                                    si->virtual_mod));
             has_explicit_properties = true;
         }
 
-        if (si->level_one_only) {
-            copy_to_buf(buf, "\n\t\tuseModMapMods=level1;");
+        ఒకవేళ (si->level_one_only) {
+            copy_గమ్యం_buf(buf, "\n\t\tuseModMapMods=level1;");
             has_explicit_properties = true;
-        } else if (defaults) {
-            copy_to_buf(buf, "\n\t\tuseModMapMods=AnyLevel;");
-            has_explicit_properties = true;
-        }
-
-        if (si->repeat) {
-            copy_to_buf(buf, "\n\t\trepeat= True;");
-            has_explicit_properties = true;
-        } else if (defaults) {
-            copy_to_buf(buf, "\n\t\trepeat= False;");
+        } లేకపోతే ఒకవేళ (defaults) {
+            copy_గమ్యం_buf(buf, "\n\t\tuseModMapMods=AnyLevel;");
             has_explicit_properties = true;
         }
 
-        const union xkb_action *action = NULL;
-        xkb_action_count_t action_count = si->num_actions;
-        if (action_count <= 1) {
+        ఒకవేళ (si->repeat) {
+            copy_గమ్యం_buf(buf, "\n\t\trepeat= True;");
+            has_explicit_properties = true;
+        } లేకపోతే ఒకవేళ (defaults) {
+            copy_గమ్యం_buf(buf, "\n\t\trepeat= False;");
+            has_explicit_properties = true;
+        }
+
+        స్థిరరాశి సంఘం xkb_action *action = ఖాళీ;
+        xkb_action_లెక్క_t action_లెక్క = si->అంకె_actions;
+        ఒకవేళ (action_లెక్క <= 1) {
             action = &si->a.action;
-        } else if (format < XKB_KEYMAP_FORMAT_TEXT_V2) {
+        } లేకపోతే ఒకవేళ (format < XKB_KEYMAP_FORMAT_పాఠ్యం_V2) {
             /* V1: Degrade multiple actions to VoidAction() */
             action = &void_actions[0];
-            action_count = 1;
-            log_err(keymap->ctx, XKB_ERROR_INCOMPATIBLE_KEYMAP_TEXT_FORMAT,
+            action_లెక్క = 1;
+            log_err(keymap->ctx, XKB_ERROR_INCOMPATIBLE_KEYMAP_పాఠ్యం_FORMAT,
                     "Cannot serialize multiple actions per level "
                     "in keymap format %d; degrade to VoidAction()\n", format);
         }
 
-        if (action_count > 1) {
-            copy_to_buf(buf, "\n\t\taction= {");
-            const char suffix[] = ", ";
-            for (xkb_action_count_t k = 0; k < si->num_actions; k++) {
-                if (!write_action(keymap, format, max_groups,
+        ఒకవేళ (action_లెక్క > 1) {
+            copy_గమ్యం_buf(buf, "\n\t\taction= {");
+            స్థిరరాశి అక్షరం suffix[] = ", ";
+            కొరకు (xkb_action_లెక్క_t k = 0; k < si->అంకె_actions; k++) {
+                ఒకవేళ (!write_action(keymap, format, max_groups,
                                   buf, &si->a.actions[k], "", suffix))
-                    return false;
+                    తిరిగి false;
             }
-            buf->size -= sizeof(suffix) - 1; /* trailing comma */
-            copy_to_buf(buf, "};");
+            buf->కొలత -= పరిమాణం(suffix) - 1; /* trailing comma */
+            copy_గమ్యం_buf(buf, "};");
             has_explicit_properties = true;
-        } else if (action_count == 1) {
-            if (!write_action(keymap, format, max_groups, buf, action,
+        } లేకపోతే ఒకవేళ (action_లెక్క == 1) {
+            ఒకవేళ (!write_action(keymap, format, max_groups, buf, action,
                               "\n\t\taction= ", ";"))
-                return false;
+                తిరిగి false;
             has_explicit_properties = true;
         }
         write_buf(buf, (has_explicit_properties
@@ -1217,62 +1217,62 @@ write_compat(const struct xkb_keymap * restrict keymap,
                         : "\n\t\taction= NoAction();\n\t};\n"));
     }
 
-    if (use_fallback_interpret || (
+    ఒకవేళ (use_fallback_interpret || (
         /* Detect previous interpret fallback */
-        num_sym_interprets == 1 && *some_interp &&
+        అంకె_sym_interprets == 1 && *some_interp &&
         sym_interprets[0].sym == fallback_interpret.sym &&
-        sym_interprets[0].match == fallback_interpret.match &&
+        sym_interprets[0].సరిపోలిక == fallback_interpret.సరిపోలిక &&
         sym_interprets[0].mods == fallback_interpret.mods &&
         sym_interprets[0].repeat == fallback_interpret.repeat &&
         sym_interprets[0].virtual_mod == fallback_interpret.virtual_mod &&
         sym_interprets[0].level_one_only == fallback_interpret.level_one_only &&
-        sym_interprets[0].num_actions == fallback_interpret.num_actions
+        sym_interprets[0].అంకె_actions == fallback_interpret.అంకె_actions
         /* `required` field is not compared */
     ))
         *some_interp = false;
 
-    const struct xkb_led *led;
+    స్థిరరాశి నిర్మాణం xkb_led *led;
     xkb_leds_foreach(led, keymap) {
-        if ((led->which_groups || led->groups ||
+        ఒకవేళ ((led->which_groups || led->groups ||
              led->which_mods || led->mods.mods || led->ctrls) &&
             !write_led_map(keymap, format, defaults, buf, led))
         {
-            return false;
+            తిరిగి false;
         }
     }
 
-    copy_to_buf(buf, "};\n\n");
+    copy_గమ్యం_buf(buf, "};\n\n");
 
-    return true;
+    తిరిగి true;
 }
 
-static bool
-write_keysyms(const struct xkb_keymap *keymap,
-              struct buf *buf, struct buf *buf2,
-              const struct xkb_key *key, xkb_layout_index_t group,
+స్థిర bool
+write_keysyms(స్థిరరాశి నిర్మాణం xkb_keymap *keymap,
+              నిర్మాణం buf *buf, నిర్మాణం buf *buf2,
+              స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం, xkb_layout_సూచీ_t సమూహం,
               bool pretty, bool show_actions)
 {
-    const unsigned int padding = (pretty)
-        ? ((show_actions) ? ACTION_PADDING : SYMBOL_PADDING)
+    స్థిరరాశి గుర్తులేని పూర్ణాంకం padding = (pretty)
+        ? ((show_actions) ? ACTION_PADDING : చిహ్నం_PADDING)
         : 0;
-    for (xkb_level_index_t level = 0; level < XkbKeyNumLevels(key, group);
+    కొరకు (xkb_level_సూచీ_t level = 0; level < Xkb_కీలకం_అంకె_స్థాయిలు(కీలకం, సమూహం);
          level++) {
-        const xkb_keysym_t *syms;
-        int num_syms;
+        స్థిరరాశి xkb_keysym_t *syms;
+        పూర్ణాంకం అంకె_syms;
 
-        if (level != 0)
-            copy_to_buf(buf, ", ");
+        ఒకవేళ (level != 0)
+            copy_గమ్యం_buf(buf, ", ");
 
-        num_syms = xkb_keymap_key_get_syms_by_level(
+        అంకె_syms = xkb_keymap_కీలకం_get_syms_by_level(
             /* remove `const` constraint to use the dated public API */
-            (struct xkb_keymap *)keymap,
-            key->keycode, group, level, &syms
+            (నిర్మాణం xkb_keymap *)keymap,
+            కీలకం->keycode, సమూహం, level, &syms
         );
 
-        const xkb_keysym_t no_symbol = XKB_KEY_NoSymbol;
-        if (num_syms == 0) {
-            num_syms = 1;
-            syms = &no_symbol;
+        స్థిరరాశి xkb_keysym_t no_చిహ్నం = XKB_కీలకం_No_చిహ్నం;
+        ఒకవేళ (అంకె_syms == 0) {
+            అంకె_syms = 1;
+            syms = &no_చిహ్నం;
         }
 
         /*
@@ -1280,120 +1280,120 @@ write_keysyms(const struct xkb_keymap *keymap,
          * with xkbcomp and xkbcommon < 1.12
          */
 
-        if (num_syms == 1) {
-            if (pretty || syms[0] == XKB_KEY_NoSymbol)
-                write_buf(buf, "%*s", padding, KeysymText(keymap->ctx, syms[0]));
-            else
+        ఒకవేళ (అంకె_syms == 1) {
+            ఒకవేళ (pretty || syms[0] == XKB_కీలకం_No_చిహ్నం)
+                write_buf(buf, "%*s", padding, Keysym_పాఠ్యం(keymap->ctx, syms[0]));
+            లేకపోతే
                 write_buf(buf, "0x%"PRIx32, syms[0]);
-        } else {
-            if (pretty) {
-                buf2->size = 0;
-                copy_to_buf(buf2, "{ ");
-                for (int s = 0; s < num_syms; s++) {
-                    if (s != 0)
-                        copy_to_buf(buf2, ", ");
+        } లేకపోతే {
+            ఒకవేళ (pretty) {
+                buf2->కొలత = 0;
+                copy_గమ్యం_buf(buf2, "{ ");
+                కొరకు (పూర్ణాంకం s = 0; s < అంకె_syms; s++) {
+                    ఒకవేళ (s != 0)
+                        copy_గమ్యం_buf(buf2, ", ");
                     write_buf(buf2, "%*s", (show_actions ? padding : 0),
-                              KeysymText(keymap->ctx, syms[s]));
+                              Keysym_పాఠ్యం(keymap->ctx, syms[s]));
                 }
-                copy_to_buf(buf2, " }");
+                copy_గమ్యం_buf(buf2, " }");
                 write_buf(buf, "%*s", padding, buf2->buf);
-            } else {
-                copy_to_buf(buf, "{");
-                for (int s = 0; s < num_syms; s++) {
-                    if (s != 0)
-                        copy_to_buf(buf, ",");
-                    if (syms[s] == XKB_KEY_NoSymbol)
-                        copy_to_buf(buf, "NoSymbol");
-                    else
+            } లేకపోతే {
+                copy_గమ్యం_buf(buf, "{");
+                కొరకు (పూర్ణాంకం s = 0; s < అంకె_syms; s++) {
+                    ఒకవేళ (s != 0)
+                        copy_గమ్యం_buf(buf, ",");
+                    ఒకవేళ (syms[s] == XKB_కీలకం_No_చిహ్నం)
+                        copy_గమ్యం_buf(buf, "NoSymbol");
+                    లేకపోతే
                         write_buf(buf, "0x%"PRIx32, syms[s]);
                 }
-                copy_to_buf(buf, "}");
+                copy_గమ్యం_buf(buf, "}");
             }
         }
     }
 
-    return true;
+    తిరిగి true;
 }
 
-static bool
-write_key(const struct xkb_keymap *keymap,
-          const struct xkb_keymap_serialize_config *config,
-          const key_name_substitutions *substitutions,
-          xkb_layout_index_t max_groups, bool some_interprets,
+స్థిర bool
+write_కీలకం(స్థిరరాశి నిర్మాణం xkb_keymap *keymap,
+          స్థిరరాశి నిర్మాణం xkb_keymap_serialize_config *config,
+          స్థిరరాశి కీలకం_name_substitutions *substitutions,
+          xkb_layout_సూచీ_t max_groups, bool some_interprets,
           bool drop_interprets, bool explicit, bool pretty,
-          struct buf *buf, struct buf *buf2, const struct xkb_key *key)
+          నిర్మాణం buf *buf, నిర్మాణం buf *buf2, స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం)
 {
     bool simple = true;
 
-    xkb_layout_mask_t layouts = config->layouts;
-    if (popcount32(layouts) != keymap->num_groups) {
+    xkb_layout_ముసుగు_t layouts = config->layouts;
+    ఒకవేళ (popcount32(layouts) != keymap->అంకె_groups) {
         /* Subset of layouts: use out-of-range key policy */
-        xkb_layout_index_t l = 0;
-        for (xkb_layout_mask_t ls = layouts; ls; ls >>= 1, l++) {
-            if (ls & 0x1) {
+        xkb_layout_సూచీ_t l = 0;
+        కొరకు (xkb_layout_ముసుగు_t ls = layouts; ls; ls >>= 1, l++) {
+            ఒకవేళ (ls & 0x1) {
                 /* Replace target layout with its effective layout, if valid */
                 layouts &= ~(UINT32_C(1) << l);
-                const xkb_layout_index_t effective =
-                    xkb_keymap_key_effective_layout(key, l);
-                if (effective != XKB_LAYOUT_INVALID)
+                స్థిరరాశి xkb_layout_సూచీ_t effective =
+                    xkb_keymap_కీలకం_effective_layout(కీలకం, l);
+                ఒకవేళ (effective != XKB_LAYOUT_INVALID)
                     layouts |= (UINT32_C(1) << effective);
             }
         }
-    } else {
-        layouts &= ((UINT64_C(1) << key->num_groups) - 1);
+    } లేకపోతే {
+        layouts &= ((UINT64_C(1) << కీలకం->అంకె_groups) - 1);
     }
-    const xkb_layout_index_t groups_count = popcount32(layouts);
+    స్థిరరాశి xkb_layout_సూచీ_t groups_లెక్క = popcount32(layouts);
 
-    const xkb_atom_t name = (substitutions == NULL)
-        ? key->name
-        : substitute_name(substitutions, key->name);
+    స్థిరరాశి xkb_atom_t name = (substitutions == ఖాళీ)
+        ? కీలకం->name
+        : substitute_name(substitutions, కీలకం->name);
 
-    if (pretty)
-        write_buf(buf, "\tkey %-20s {", KeyNameText(keymap->ctx, name));
-    else
-        write_buf(buf, "\tkey %s {", KeyNameText(keymap->ctx, name));
+    ఒకవేళ (pretty)
+        write_buf(buf, "\tkey %-20s {", కీలకం_Name_పాఠ్యం(keymap->ctx, name));
+    లేకపోతే
+        write_buf(buf, "\tkey %s {", కీలకం_Name_పాఠ్యం(keymap->ctx, name));
 
-    if ((key->explicit & EXPLICIT_TYPES) || explicit) {
+    ఒకవేళ ((కీలకం->explicit & EXPLICIT_TYPES) || explicit) {
         simple = false;
 
         bool multi_type = explicit;
         /* Check for distinct key types only if not requiring explicit values */
-        if (!explicit) {
-            for (xkb_layout_index_t group = 1; group < key->num_groups; group++) {
-                if (!((UINT32_C(1) << group) & layouts))
-                    continue;
+        ఒకవేళ (!explicit) {
+            కొరకు (xkb_layout_సూచీ_t సమూహం = 1; సమూహం < కీలకం->అంకె_groups; సమూహం++) {
+                ఒకవేళ (!((UINT32_C(1) << సమూహం) & layouts))
+                    కొనసాగు;
 
-                if (key->groups[group].type != key->groups[0].type) {
+                ఒకవేళ (కీలకం->groups[సమూహం].type != కీలకం->groups[0].type) {
                     multi_type = true;
-                    break;
+                    ఆపు;
                 }
             }
         }
 
-        if (multi_type) {
-            xkb_layout_index_t new_group = (xkb_layout_index_t)-1;
-            for (xkb_layout_index_t group = 0; group < key->num_groups; group++) {
-                if (!((UINT32_C(1) << group) & layouts))
-                    continue;
+        ఒకవేళ (multi_type) {
+            xkb_layout_సూచీ_t new_సమూహం = (xkb_layout_సూచీ_t)-1;
+            కొరకు (xkb_layout_సూచీ_t సమూహం = 0; సమూహం < కీలకం->అంకె_groups; సమూహం++) {
+                ఒకవేళ (!((UINT32_C(1) << సమూహం) & layouts))
+                    కొనసాగు;
 
-                new_group++;
+                new_సమూహం++;
 
-                if (!key->groups[group].explicit_type && !explicit)
-                    continue;
+                ఒకవేళ (!కీలకం->groups[సమూహం].explicit_type && !explicit)
+                    కొనసాగు;
 
-                const struct xkb_key_type * const type = key->groups[group].type;
-                write_buf(buf, "\n\t\ttype[%"PRIu32"]= ", new_group + 1);
+                స్థిరరాశి నిర్మాణం xkb_కీలకం_type * స్థిరరాశి type = కీలకం->groups[సమూహం].type;
+                write_buf(buf, "\n\t\ttype[%"PRIu32"]= ", new_సమూహం + 1);
                 write_buf_string_literal(
-                  buf, xkb_atom_text(keymap->ctx, type->name));
-                copy_to_buf(buf, ",");
+                  buf, xkb_atom_పాఠ్యం(keymap->ctx, type->name));
+                copy_గమ్యం_buf(buf, ",");
             }
         }
-        else {
-            const struct xkb_key_type * const type = key->groups[0].type;
+        లేకపోతే {
+            స్థిరరాశి నిర్మాణం xkb_కీలకం_type * స్థిరరాశి type = కీలకం->groups[0].type;
             write_buf(buf, "\n\t\ttype= ");
             write_buf_string_literal(
-                buf, xkb_atom_text(keymap->ctx, type->name));
-            copy_to_buf(buf, ",");
+                buf, xkb_atom_పాఠ్యం(keymap->ctx, type->name));
+            copy_గమ్యం_buf(buf, ",");
         }
     }
 
@@ -1406,13 +1406,13 @@ write_key(const struct xkb_keymap *keymap,
      * One side effect is that no interpretation will be run on this key anymore,
      * so we may have to set some extra fields explicitly: repeat, virtualMods.
      */
-    const bool explicit_actions = (key->explicit & EXPLICIT_INTERP);
+    స్థిరరాశి bool explicit_actions = (కీలకం->explicit & EXPLICIT_INTERP);
 
     /* Check if an explicit value is required */
-    #define require_explicit(key, prop,                                       \
-                             value, initial_value, default_interpret_value) ( \
+    #నిర్వచించు require_explicit(కీలకం, prop,                                       \
+                             విలువ, initial_విలువ, default_interpret_విలువ) ( \
         /* Explicit value in the source */                                    \
-        ((key)->explicit & (prop)) ||                                         \
+        ((కీలకం)->explicit & (prop)) ||                                         \
         /* Explicit serialization flag */                                     \
         explicit ||                                                           \
         (                                                                     \
@@ -1423,310 +1423,310 @@ write_key(const struct xkb_keymap *keymap,
                  * print the value if it is not the default interpret value,  \
                  * unless it cannot trigger due to implicit actions forcibly  \
                  * made explicit */                                           \
-                ((key)->implicit_actions && !some_interprets)                 \
+                ((కీలకం)->implicit_actions && !some_interprets)                 \
             ) && (                                                            \
                 /* Non-initial value */                                       \
-                (value) != (initial_value) ||                                 \
+                (విలువ) != (initial_విలువ) ||                                 \
                 /* Force initial value for clarity */                         \
-                (initial_value) != (default_interpret_value)                  \
+                (initial_విలువ) != (default_interpret_విలువ)                  \
             )                                                                 \
         )                                                                     \
     )
 
-    if (require_explicit(key, EXPLICIT_REPEAT, key->repeats,
-                         DEFAULT_KEY_REPEAT, DEFAULT_INTERPRET_KEY_REPEAT)) {
-        if (key->repeats)
-            copy_to_buf(buf, "\n\t\trepeat= Yes,");
-        else
-            copy_to_buf(buf, "\n\t\trepeat= No,");
+    ఒకవేళ (require_explicit(కీలకం, EXPLICIT_REPEAT, కీలకం->repeats,
+                         DEFAULT_కీలకం_REPEAT, DEFAULT_INTERPRET_కీలకం_REPEAT)) {
+        ఒకవేళ (కీలకం->repeats)
+            copy_గమ్యం_buf(buf, "\n\t\trepeat= Yes,");
+        లేకపోతే
+            copy_గమ్యం_buf(buf, "\n\t\trepeat= No,");
         simple = false;
     }
 
-    if (require_explicit(key, EXPLICIT_VMODMAP, key->vmodmap,
-                         (xkb_mod_mask_t) DEFAULT_KEY_VMODMAP,
-                         (xkb_mod_mask_t) DEFAULT_INTERPRET_VMODMAP)) {
+    ఒకవేళ (require_explicit(కీలకం, EXPLICIT_VMODMAP, కీలకం->vmodmap,
+                         (xkb_mod_ముసుగు_t) DEFAULT_కీలకం_VMODMAP,
+                         (xkb_mod_ముసుగు_t) DEFAULT_INTERPRET_VMODMAP)) {
         write_buf(buf, "\n\t\tvirtualMods= %s,",
-                  ModMaskText(keymap->ctx, MOD_BOTH, &keymap->mods,
-                              key->vmodmap));
+                  Mod_ముసుగు_పాఠ్యం(keymap->ctx, MOD_BOTH, &keymap->mods,
+                              కీలకం->vmodmap));
         simple = false;
     }
 
-    #undef require_explicit
+    #నిర్వచనం_రద్దు require_explicit
 
-    switch (key->out_of_range_group_policy) {
-    case XKB_LAYOUT_OUT_OF_RANGE_CLAMP:
-        copy_to_buf(buf, "\n\t\tgroupsClamp,");
+    ఎంపిక (కీలకం->బహిర్గతం_యొక్క_range_సమూహం_policy) {
+    స్థితి XKB_LAYOUT_బహిర్గతం_యొక్క_RANGE_CLAMP:
+        copy_గమ్యం_buf(buf, "\n\t\tgroupsClamp,");
         simple = false;
-        break;
+        ఆపు;
 
-    case XKB_LAYOUT_OUT_OF_RANGE_REDIRECT: {
-        if (!groups_count) {
+    స్థితి XKB_LAYOUT_బహిర్గతం_యొక్క_RANGE_REDIRECT: {
+        ఒకవేళ (!groups_లెక్క) {
             /* No layout to redirect to: skip */
-            break;
+            ఆపు;
         }
 
-        xkb_layout_mask_t layout_mask =
-            (UINT32_C(1) << key->out_of_range_group_number);
-        if (!(layouts & layout_mask)) {
+        xkb_layout_ముసుగు_t layout_ముసుగు =
+            (UINT32_C(1) << కీలకం->బహిర్గతం_యొక్క_range_సమూహం_సంఖ్య);
+        ఒకవేళ (!(layouts & layout_ముసుగు)) {
             /*
              * Layout is not included: default to first layout
              * See: XkbWrapGroupIntoRange
              */
-            log_warn(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
+            log_warn(keymap->ctx, XKB_LOG_సందేశం_NO_ID,
                      "key %s: groupsRedirect=%"PRIu32" converted to "
                      "groupsRedirect=1\n",
-                     KeyNameText(keymap->ctx, name),
-                     key->out_of_range_group_number + 1);
-            layout_mask = 0x1;
+                     కీలకం_Name_పాఠ్యం(keymap->ctx, name),
+                     కీలకం->బహిర్గతం_యొక్క_range_సమూహం_సంఖ్య + 1);
+            layout_ముసుగు = 0x1;
         }
 
         /* In case some lower layouts were discarded, update the group index */
-        const xkb_layout_mask_t low = (layouts & (layout_mask - 1));
-        const xkb_layout_index_t new = popcount32(low);
+        స్థిరరాశి xkb_layout_ముసుగు_t దిగువ = (layouts & (layout_ముసుగు - 1));
+        స్థిరరాశి xkb_layout_సూచీ_t new = popcount32(దిగువ);
         write_buf(buf, "\n\t\tgroupsRedirect= %"PRIu32",", new + 1);
         simple = false;
-        break;
+        ఆపు;
     }
 
-    case XKB_LAYOUT_OUT_OF_RANGE_WRAP:
-    default:
-        break;
+    స్థితి XKB_LAYOUT_బహిర్గతం_యొక్క_RANGE_WRAP:
+    అప్రమేయ:
+        ఆపు;
     }
 
-    if (key->overlays) {
-        xkb_overlay_mask_t remaining = key->overlays;
+    ఒకవేళ (కీలకం->overlays) {
+        xkb_overlay_ముసుగు_t మిగిలిన = కీలకం->overlays;
 
-        const xkb_overlay_index_t overlay_max =
+        స్థిరరాశి xkb_overlay_సూచీ_t overlay_max =
             format_max_overlays(config->format);
-        static_assert(XKB_OVERLAY_COUNT == 8, "invalid right shift");
-        const xkb_overlay_mask_t valid =
-            (xkb_overlay_mask_t)((1u << overlay_max) - 1u);
-        remaining &= valid;
-        if (remaining != key->overlays) {
-            log_warn(keymap->ctx, XKB_ERROR_UNSUPPORTED_OVERLAY_INDEX,
+        static_assert(XKB_OVERLAY_లెక్క == 8, "invalid right shift");
+        స్థిరరాశి xkb_overlay_ముసుగు_t valid =
+            (xkb_overlay_ముసుగు_t)((1u << overlay_max) - 1u);
+        మిగిలిన &= valid;
+        ఒకవేళ (మిగిలిన != కీలకం->overlays) {
+            log_warn(keymap->ctx, XKB_ERROR_UNSUPPORTED_OVERLAY_సూచీ,
                      "Overlays indices > %u in %s require using "
                      "keymap format >= v2; "
                      "keep overlays 0x%08x and discard overlays 0x%08x\n",
-                     overlay_max, KeyNameText(keymap->ctx, name),
-                     remaining, key->overlays & ~valid);
+                     overlay_max, కీలకం_Name_పాఠ్యం(keymap->ctx, name),
+                     మిగిలిన, కీలకం->overlays & ~valid);
         }
 
-        if (remaining && !key->overlays_inline &&
+        ఒకవేళ (మిగిలిన && !కీలకం->overlays_inline &&
             !areOverlappingOverlaysSupported(config->format)) {
             /* isolate lowest set bit */
-            const xkb_overlay_mask_t lsb = (xkb_overlay_mask_t)(
-                remaining &
-                (xkb_overlay_mask_t)((unsigned)~remaining + 1u)
+            స్థిరరాశి xkb_overlay_ముసుగు_t lsb = (xkb_overlay_ముసుగు_t)(
+                మిగిలిన &
+                (xkb_overlay_ముసుగు_t)((గుర్తులేని)~మిగిలిన + 1u)
             );
             /* get its index */
-            const xkb_overlay_index_t overlay =
-                (xkb_overlay_index_t)popcount32(lsb - 1u);
+            స్థిరరాశి xkb_overlay_సూచీ_t overlay =
+                (xkb_overlay_సూచీ_t)popcount32(lsb - 1u);
             log_warn(keymap->ctx, XKB_ERROR_OVERLAPPING_OVERLAY,
                      "Overlapping overlays in %s require using "
                      "keymap format >= v2; "
                      "keep overlay %u and discard overlays 0x%x\n",
-                     KeyNameText(keymap->ctx, name), overlay, remaining & ~lsb);
-            remaining = lsb;
+                     కీలకం_Name_పాఠ్యం(keymap->ctx, name), overlay, మిగిలిన & ~lsb);
+            మిగిలిన = lsb;
         }
 
-        if (remaining)
+        ఒకవేళ (మిగిలిన)
             simple = false;
 
-        const struct xkb_key * const *overlays_keys = (key->overlays_inline)
-                                                    ? &key->overlay_key
-                                                    : key->overlays_keys;
-        while (remaining) {
+        స్థిరరాశి నిర్మాణం xkb_కీలకం * స్థిరరాశి *overlays_కీలకాలు = (కీలకం->overlays_inline)
+                                                    ? &కీలకం->overlay_కీలకం
+                                                    : కీలకం->overlays_కీలకాలు;
+        అయితే (మిగిలిన) {
             /* isolate lowest set bit */
-            const xkb_overlay_mask_t lsb = (xkb_overlay_mask_t)(
-                remaining &
-                (xkb_overlay_mask_t)((unsigned)~remaining + 1u)
+            స్థిరరాశి xkb_overlay_ముసుగు_t lsb = (xkb_overlay_ముసుగు_t)(
+                మిగిలిన &
+                (xkb_overlay_ముసుగు_t)((గుర్తులేని)~మిగిలిన + 1u)
             );
             /* get its index */
-            const xkb_overlay_index_t overlay =
-                (xkb_overlay_index_t)popcount32(lsb - 1u);
-            remaining = (remaining & ~lsb);
+            స్థిరరాశి xkb_overlay_సూచీ_t overlay =
+                (xkb_overlay_సూచీ_t)popcount32(lsb - 1u);
+            మిగిలిన = (మిగిలిన & ~lsb);
 
             /* pop current value */
-            if (key->overlays_inline && remaining)
+            ఒకవేళ (కీలకం->overlays_inline && మిగిలిన)
                 PANIC_UNREACHABLE();
-            const struct xkb_key *overlay_key = *(overlays_keys++);
+            స్థిరరాశి నిర్మాణం xkb_కీలకం *overlay_కీలకం = *(overlays_కీలకాలు++);
 
-            const xkb_atom_t overlay_key_name = (substitutions == NULL)
-                ? overlay_key->name
-                : substitute_name(substitutions, overlay_key->name);
+            స్థిరరాశి xkb_atom_t overlay_కీలకం_name = (substitutions == ఖాళీ)
+                ? overlay_కీలకం->name
+                : substitute_name(substitutions, overlay_కీలకం->name);
             write_buf(buf, "\n\t\toverlay%u= %s,",
-                      overlay + 1, KeyNameText(keymap->ctx, overlay_key_name));
+                      overlay + 1, కీలకం_Name_పాఠ్యం(keymap->ctx, overlay_కీలకం_name));
         }
     }
 
-    if (groups_count > 1 || explicit_actions || explicit)
+    ఒకవేళ (groups_లెక్క > 1 || explicit_actions || explicit)
         simple = false;
 
-    if (simple) {
-        if (groups_count == 0) {
+    ఒకవేళ (simple) {
+        ఒకవేళ (groups_లెక్క == 0) {
             /* Remove trailing comma */
-            delete_last_char(buf, ',');
-            if (buf->buf[buf->size - 1] == ',')
-                buf->size--;
-        } else {
-            copy_to_buf(buf, "\t[ ");
+            delete_చివరి_char(buf, ',');
+            ఒకవేళ (buf->buf[buf->కొలత - 1] == ',')
+                buf->కొలత--;
+        } లేకపోతే {
+            copy_గమ్యం_buf(buf, "\t[ ");
             /* Get the single group index */
-            xkb_mod_index_t group = ctz32(layouts);
+            xkb_mod_సూచీ_t సమూహం = ctz32(layouts);
             /* The group may not be defined for this key if it is not the first one */
-            group = xkb_keymap_key_effective_layout(key, group);
-            if (!write_keysyms(keymap, buf, buf2, key, group, pretty, false))
-                return false;
-            copy_to_buf(buf, " ]");
+            సమూహం = xkb_keymap_కీలకం_effective_layout(కీలకం, సమూహం);
+            ఒకవేళ (!write_keysyms(keymap, buf, buf2, కీలకం, సమూహం, pretty, false))
+                తిరిగి false;
+            copy_గమ్యం_buf(buf, " ]");
         }
-        copy_to_buf(buf, " };\n");
+        copy_గమ్యం_buf(buf, " };\n");
     }
-    else {
-        xkb_layout_index_t new_group = (xkb_layout_index_t)-1;
-        for (xkb_layout_index_t group = 0; group < key->num_groups; group++) {
-            if (!((UINT32_C(1) << group) & layouts))
-                continue;
+    లేకపోతే {
+        xkb_layout_సూచీ_t new_సమూహం = (xkb_layout_సూచీ_t)-1;
+        కొరకు (xkb_layout_సూచీ_t సమూహం = 0; సమూహం < కీలకం->అంకె_groups; సమూహం++) {
+            ఒకవేళ (!((UINT32_C(1) << సమూహం) & layouts))
+                కొనసాగు;
 
-            new_group++;
+            new_సమూహం++;
 
-            const bool print_actions =
+            స్థిరరాశి bool print_actions =
                 /* Group has explicit actions */
-                key->groups[group].explicit_actions ||
+                కీలకం->groups[సమూహం].explicit_actions ||
                 /* Explicit values are required */
                 explicit ||
                 /* Group has symbols but no explicit actions and key has explicit
                  * actions in another group: ensure compatibility with xkbcomp
                  * and all xkbcommon versions */
-                (key->groups[group].explicit_symbols &&
+                (కీలకం->groups[సమూహం].explicit_symbols &&
                  explicit_actions && some_interprets) ||
                 /* Group has implicit actions but no interpret can set them, so
                  * the actions must be made explicit */
-                (key->groups[group].implicit_actions && !some_interprets);
+                (కీలకం->groups[సమూహం].implicit_actions && !some_interprets);
 
-            if (new_group != 0)
-                copy_to_buf(buf, ",");
-            write_buf(buf, "\n\t\tsymbols[%"PRIu32"]= [ ", new_group + 1);
+            ఒకవేళ (new_సమూహం != 0)
+                copy_గమ్యం_buf(buf, ",");
+            write_buf(buf, "\n\t\tsymbols[%"PRIu32"]= [ ", new_సమూహం + 1);
 
-            if (!write_keysyms(keymap, buf, buf2, key, group,
+            ఒకవేళ (!write_keysyms(keymap, buf, buf2, కీలకం, సమూహం,
                                pretty, print_actions))
-                return false;
-            copy_to_buf(buf, " ]");
-            if (print_actions) {
-                write_buf(buf, ",\n\t\tactions[%"PRIu32"]= [ ", new_group + 1);
-                if (!write_actions(keymap, config->format, max_groups,
-                                   buf, buf2, key, group))
-                    return false;
-                copy_to_buf(buf, " ]");
+                తిరిగి false;
+            copy_గమ్యం_buf(buf, " ]");
+            ఒకవేళ (print_actions) {
+                write_buf(buf, ",\n\t\tactions[%"PRIu32"]= [ ", new_సమూహం + 1);
+                ఒకవేళ (!write_actions(keymap, config->format, max_groups,
+                                   buf, buf2, కీలకం, సమూహం))
+                    తిరిగి false;
+                copy_గమ్యం_buf(buf, " ]");
             }
         }
-        if (!groups_count)
-            delete_last_char(buf, ',');
-        copy_to_buf(buf, "\n\t};\n");
+        ఒకవేళ (!groups_లెక్క)
+            delete_చివరి_char(buf, ',');
+        copy_గమ్యం_buf(buf, "\n\t};\n");
     }
 
-    return true;
+    తిరిగి true;
 }
 
 
-static int
-cmp_modmap_step_1(const void *a, const void *b)
+స్థిర పూర్ణాంకం
+cmp_modmap_అడుగు_1(స్థిరరాశి శూన్య *a, స్థిరరాశి శూన్య *b)
 {
-    const ModMapEntry *m1 = (const ModMapEntry *)a;
-    const ModMapEntry *m2 = (const ModMapEntry *)b;
+    స్థిరరాశి Mod_Map_నమోదు *m1 = (స్థిరరాశి Mod_Map_నమోదు *)a;
+    స్థిరరాశి Mod_Map_నమోదు *m2 = (స్థిరరాశి Mod_Map_నమోదు *)b;
 
-    if (!m1->mods) {
-        if (!m2->mods) {
+    ఒకవేళ (!m1->mods) {
+        ఒకవేళ (!m2->mods) {
             /* Entry will be dropped: do not care about the other fields */
-            return 0;
+            తిరిగి 0;
         }
-        return +1;
-    } else if (!m2->mods) {
-        return -1;
+        తిరిగి +1;
+    } లేకపోతే ఒకవేళ (!m2->mods) {
+        తిరిగి -1;
     }
 
     /* Valid only on step 1 */
-    if (m1->keyCode < m2->keyCode)
-        return -1;
-    else if (m1->keyCode > m2->keyCode)
-        return +1;
+    ఒకవేళ (m1->కీలకం_సంకేతం < m2->కీలకం_సంకేతం)
+        తిరిగి -1;
+    లేకపోతే ఒకవేళ (m1->కీలకం_సంకేతం > m2->కీలకం_సంకేతం)
+        తిరిగి +1;
 
-    if (m1->mods < m2->mods)
-        return -1;
-    else if (m1->mods > m2->mods)
-        return +1;
+    ఒకవేళ (m1->mods < m2->mods)
+        తిరిగి -1;
+    లేకపోతే ఒకవేళ (m1->mods > m2->mods)
+        తిరిగి +1;
 
-    if (m1->haveSymbol < m2->haveSymbol)
-        return +1;
-    else if (m1->haveSymbol > m2->haveSymbol)
-        return -1;
+    ఒకవేళ (m1->have_చిహ్నం < m2->have_చిహ్నం)
+        తిరిగి +1;
+    లేకపోతే ఒకవేళ (m1->have_చిహ్నం > m2->have_చిహ్నం)
+        తిరిగి -1;
 
-    if (m1->haveSymbol) {
-        if (m1->u.keySym < m2->u.keySym)
-            return -1;
-        if (m1->u.keySym > m2->u.keySym)
-            return +1;
-    } else {
-        if (m1->u.keyName < m2->u.keyName)
-            return -1;
-        if (m1->u.keyName > m2->u.keyName)
-            return +1;
+    ఒకవేళ (m1->have_చిహ్నం) {
+        ఒకవేళ (m1->u.కీలకం_Sym < m2->u.కీలకం_Sym)
+            తిరిగి -1;
+        ఒకవేళ (m1->u.కీలకం_Sym > m2->u.కీలకం_Sym)
+            తిరిగి +1;
+    } లేకపోతే {
+        ఒకవేళ (m1->u.కీలకం_Name < m2->u.కీలకం_Name)
+            తిరిగి -1;
+        ఒకవేళ (m1->u.కీలకం_Name > m2->u.కీలకం_Name)
+            తిరిగి +1;
     }
 
-    return 0;
+    తిరిగి 0;
 }
 
-static int
-cmp_modmap_step_2(const void *a, const void *b)
+స్థిర పూర్ణాంకం
+cmp_modmap_అడుగు_2(స్థిరరాశి శూన్య *a, స్థిరరాశి శూన్య *b)
 {
-    const ModMapEntry *m1 = (const ModMapEntry *)a;
-    const ModMapEntry *m2 = (const ModMapEntry *)b;
+    స్థిరరాశి Mod_Map_నమోదు *m1 = (స్థిరరాశి Mod_Map_నమోదు *)a;
+    స్థిరరాశి Mod_Map_నమోదు *m2 = (స్థిరరాశి Mod_Map_నమోదు *)b;
 
-    if (m1->mods < m2->mods)
-        return -1;
-    if (m1->mods > m2->mods)
-        return +1;
+    ఒకవేళ (m1->mods < m2->mods)
+        తిరిగి -1;
+    ఒకవేళ (m1->mods > m2->mods)
+        తిరిగి +1;
 
-    if (m1->haveSymbol < m2->haveSymbol)
-        return -1;
-    if (m1->haveSymbol > m2->haveSymbol)
-        return +1;
+    ఒకవేళ (m1->have_చిహ్నం < m2->have_చిహ్నం)
+        తిరిగి -1;
+    ఒకవేళ (m1->have_చిహ్నం > m2->have_చిహ్నం)
+        తిరిగి +1;
 
-    if (m1->haveSymbol) {
-        if (m1->u.keySym < m2->u.keySym)
-            return -1;
-        if (m1->u.keySym > m2->u.keySym)
-            return +1;
-    } else {
-        if (m1->keyCode < m2->keyCode)
-            return -1;
-        if (m1->keyCode > m2->keyCode)
-            return +1;
+    ఒకవేళ (m1->have_చిహ్నం) {
+        ఒకవేళ (m1->u.కీలకం_Sym < m2->u.కీలకం_Sym)
+            తిరిగి -1;
+        ఒకవేళ (m1->u.కీలకం_Sym > m2->u.కీలకం_Sym)
+            తిరిగి +1;
+    } లేకపోతే {
+        ఒకవేళ (m1->కీలకం_సంకేతం < m2->కీలకం_సంకేతం)
+            తిరిగి -1;
+        ఒకవేళ (m1->కీలకం_సంకేతం > m2->కీలకం_సంకేతం)
+            తిరిగి +1;
     }
 
-    return 0;
+    తిరిగి 0;
 }
 
-static bool
-write_modmaps(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
-              const key_name_substitutions *substitutions,
-              bool pretty, bool drop_interprets, struct buf *buf)
+స్థిర bool
+write_modmaps(స్థిరరాశి నిర్మాణం xkb_keymap *keymap, గణన xkb_keymap_format format,
+              స్థిరరాశి కీలకం_name_substitutions *substitutions,
+              bool pretty, bool drop_interprets, నిర్మాణం buf *buf)
 {
-    if (!keymap->num_modmaps)
-        return true;
+    ఒకవేళ (!keymap->అంకె_modmaps)
+        తిరిగి true;
 
-    darray(ModMapEntry) modmaps = darray_new();
-    darray_from_items(modmaps, keymap->modmaps, keymap->num_modmaps);
-    if (!darray_items(modmaps))
-        return false;
+    darray(Mod_Map_నమోదు) modmaps = darray_new();
+    darray_from_వస్తువులు(modmaps, keymap->modmaps, keymap->అంకె_modmaps);
+    ఒకవేళ (!darray_వస్తువులు(modmaps))
+        తిరిగి false;
 
     /* Sort entries by key code */
-    qsort(darray_items(modmaps), darray_size(modmaps),
-          sizeof(*darray_items(modmaps)), &cmp_modmap_step_1);
+    qsort(darray_వస్తువులు(modmaps), darray_కొలత(modmaps),
+          పరిమాణం(*darray_వస్తువులు(modmaps)), &cmp_modmap_అడుగు_1);
 
     /* Drop disabled entries at the end */
-    for (darray_size_t m = darray_size(modmaps); m-- > 0;) {
-        if (darray_item(modmaps, m).mods)
-            break;
-        darray_size(modmaps)--;
+    కొరకు (darray_కొలత_t m = darray_కొలత(modmaps); m-- > 0;) {
+        ఒకవేళ (darray_అంశం(modmaps, m).mods)
+            ఆపు;
+        darray_కొలత(modmaps)--;
     }
 
     /*
@@ -1737,192 +1737,192 @@ write_modmaps(const struct xkb_keymap *keymap, enum xkb_keymap_format format,
      * so that we do not iterate the new entries.
      */
     xkb_keycode_t current_keycode = XKB_KEYCODE_INVALID;
-    bool convert_to_v1_compatibility_entry = false;
-    for (darray_size_t m = darray_size(modmaps); m-- > 0;) {
-        ModMapEntry *mm = &darray_item(modmaps, m);
-        assert(mm->mods);
+    bool convert_గమ్యం_v1_compatibility_నమోదు = false;
+    కొరకు (darray_కొలత_t m = darray_కొలత(modmaps); m-- > 0;) {
+        Mod_Map_నమోదు *mm = &darray_అంశం(modmaps, m);
+        ప్రతిజ్ఞా(mm->mods);
 
-        if (mm->keyCode == current_keycode) {
+        ఒకవేళ (mm->కీలకం_సంకేతం == current_keycode) {
             /*
              * Keycode already processed: either drop next key code entries
              * or convert them to keymap format v1
              */
-            const xkb_mod_mask_t core_mods = (mm->mods & MOD_REAL_MASK_ALL);
-            if (convert_to_v1_compatibility_entry && core_mods) {
+            స్థిరరాశి xkb_mod_ముసుగు_t core_mods = (mm->mods & MOD_REAL_ముసుగు_ALL);
+            ఒకవేళ (convert_గమ్యం_v1_compatibility_నమోదు && core_mods) {
                 /*
                  * Convert to keymap format V1-specific entry:
                  * keep only the highest core modifier
                  */
                 mm->mods = UINT32_C(1) << (XKB_MAX_MODS - 1 - clz32(core_mods));
-            } else {
+            } లేకపోతే {
                 /*
                  * Drop if there is a previous entry for all keymap formats or
                  * if the current entry is incompatible with V1 keymap format.
                  */
                 mm->mods = 0;
             }
-            continue;
+            కొనసాగు;
         }
 
-        current_keycode = mm->keyCode;
-        const struct xkb_key *key = XkbKey(keymap, mm->keyCode);
+        current_keycode = mm->కీలకం_సంకేతం;
+        స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం = Xkb_కీలకం(keymap, mm->కీలకం_సంకేతం);
 
-        const xkb_mod_mask_t core_mods = (key->modmap & MOD_REAL_MASK_ALL);
-        if (format == XKB_KEYMAP_FORMAT_TEXT_V1 &&
-            ((key->modmap & (key->modmap - 1)) || key->modmap != core_mods)) {
+        స్థిరరాశి xkb_mod_ముసుగు_t core_mods = (కీలకం->modmap & MOD_REAL_ముసుగు_ALL);
+        ఒకవేళ (format == XKB_KEYMAP_FORMAT_పాఠ్యం_V1 &&
+            ((కీలకం->modmap & (కీలకం->modmap - 1)) || కీలకం->modmap != core_mods)) {
             /* V1 entry with multiple modifiers or non X11 core modifiers */
             m++; /* process in next iteration */
-            convert_to_v1_compatibility_entry = true;
-            log_err(keymap->ctx, XKB_ERROR_INVALID_MODIFIER_MAP_MASK,
+            convert_గమ్యం_v1_compatibility_నమోదు = true;
+            log_err(keymap->ctx, XKB_ERROR_INVALID_MODIFIER_MAP_ముసుగు,
                     "Cannot serialize modifier map of key %s: modifiers mask "
                     "0x%"PRIx32" incompatible with keymap format v1\n",
-                    KeyNameText(keymap->ctx, key->name), key->modmap);
-        } else {
+                    కీలకం_Name_పాఠ్యం(keymap->ctx, కీలకం->name), కీలకం->modmap);
+        } లేకపోతే {
             /* V2 format or V1 format with a single core modifier */
-            assert(key->modmap);
-            mm->mods = key->modmap;
+            ప్రతిజ్ఞా(కీలకం->modmap);
+            mm->mods = కీలకం->modmap;
             /* Force key name */
-            mm->haveSymbol = false;
-            mm->u.keyName = key->name;
-            convert_to_v1_compatibility_entry = false;
+            mm->have_చిహ్నం = false;
+            mm->u.కీలకం_Name = కీలకం->name;
+            convert_గమ్యం_v1_compatibility_నమోదు = false;
         }
     }
 
-    if (darray_empty(modmaps))
-        goto exit;
+    ఒకవేళ (darray_ఖాళీలు(modmaps))
+        వెళ్ళు నిష్క్రమించు;
 
     /* Sort entries by modifier mask */
-    qsort(darray_items(modmaps), darray_size(modmaps),
-          sizeof(*darray_items(modmaps)), &cmp_modmap_step_2);
+    qsort(darray_వస్తువులు(modmaps), darray_కొలత(modmaps),
+          పరిమాణం(*darray_వస్తువులు(modmaps)), &cmp_modmap_అడుగు_2);
 
     /*
      * Serialize modmaps
      */
 
-    xkb_mod_mask_t current_mods = 0;
-    const ModMapEntry *entry;
-    darray_foreach(entry, modmaps) {
-        if (!entry->mods)
-            continue;
+    xkb_mod_ముసుగు_t current_mods = 0;
+    స్థిరరాశి Mod_Map_నమోదు *నమోదు_2;
+    darray_foreach(నమోదు_2, modmaps) {
+        ఒకవేళ (!నమోదు_2->mods)
+            కొనసాగు;
 
-        if (current_mods != entry->mods) {
-            if (current_mods) {
-                copy_to_buf(buf, " };\n");
+        ఒకవేళ (current_mods != నమోదు_2->mods) {
+            ఒకవేళ (current_mods) {
+                copy_గమ్యం_buf(buf, " };\n");
             }
-            current_mods = entry->mods;
+            current_mods = నమోదు_2->mods;
             write_buf(buf, "\tmodifier_map %s { ",
-                      ModMaskText(keymap->ctx, MOD_REAL, &keymap->mods,
+                      Mod_ముసుగు_పాఠ్యం(keymap->ctx, MOD_REAL, &keymap->mods,
                                   current_mods));
-        } else {
-            copy_to_buf(buf, ", ");
+        } లేకపోతే {
+            copy_గమ్యం_buf(buf, ", ");
         }
 
-        if (entry->haveSymbol) {
-            if (pretty || entry->u.keySym == XKB_KEY_NoSymbol)
-                write_buf(buf, "%s", KeysymText(keymap->ctx, entry->u.keySym));
-            else
-                write_buf(buf, "0x%"PRIx32, entry->u.keySym);
-        } else {
-            const xkb_atom_t name = (substitutions == NULL)
-                ? entry->u.keyName
-                : substitute_name(substitutions, entry->u.keyName);
-            write_buf(buf, "%s", KeyNameText(keymap->ctx, name));
+        ఒకవేళ (నమోదు_2->have_చిహ్నం) {
+            ఒకవేళ (pretty || నమోదు_2->u.కీలకం_Sym == XKB_కీలకం_No_చిహ్నం)
+                write_buf(buf, "%s", Keysym_పాఠ్యం(keymap->ctx, నమోదు_2->u.కీలకం_Sym));
+            లేకపోతే
+                write_buf(buf, "0x%"PRIx32, నమోదు_2->u.కీలకం_Sym);
+        } లేకపోతే {
+            స్థిరరాశి xkb_atom_t name = (substitutions == ఖాళీ)
+                ? నమోదు_2->u.కీలకం_Name
+                : substitute_name(substitutions, నమోదు_2->u.కీలకం_Name);
+            write_buf(buf, "%s", కీలకం_Name_పాఠ్యం(keymap->ctx, name));
         }
     }
-    if (current_mods) {
-        copy_to_buf(buf, " };\n");
+    ఒకవేళ (current_mods) {
+        copy_గమ్యం_buf(buf, " };\n");
     }
 
-exit:
+నిష్క్రమించు:
     darray_free(modmaps);
-    return true;
+    తిరిగి true;
 }
 
-static bool
-write_symbols(const struct xkb_keymap *keymap,
-              const struct xkb_keymap_serialize_config *config,
-              const key_name_substitutions *substitutions,
-              xkb_layout_index_t max_groups, bool some_interp,
-              struct buf *buf)
+స్థిర bool
+write_symbols(స్థిరరాశి నిర్మాణం xkb_keymap *keymap,
+              స్థిరరాశి నిర్మాణం xkb_keymap_serialize_config *config,
+              స్థిరరాశి కీలకం_name_substitutions *substitutions,
+              xkb_layout_సూచీ_t max_groups, bool some_interp,
+              నిర్మాణం buf *buf)
 {
-    const bool pretty = (config->flags & XKB_KEYMAP_SERIALIZE_PRETTY);
-    const bool defaults =
-        (config->flags & XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_VALUES);
-    const bool explicit_key_values =
-        (config->flags & XKB_KEYMAP_SERIALIZE_EXPLICIT_KEY_VALUES);
-    const bool drop_unused = !(config->flags & XKB_KEYMAP_SERIALIZE_KEEP_UNUSED);
-    const bool drop_interprets = (explicit_key_values && drop_unused);
+    స్థిరరాశి bool pretty = (config->flags & XKB_KEYMAP_SERIALIZE_PRETTY);
+    స్థిరరాశి bool defaults =
+        (config->flags & XKB_KEYMAP_SERIALIZE_EXPLICIT_DEFAULT_విలువలు);
+    స్థిరరాశి bool explicit_కీలకం_విలువలు =
+        (config->flags & XKB_KEYMAP_SERIALIZE_EXPLICIT_కీలకం_విలువలు);
+    స్థిరరాశి bool drop_వాడని = !(config->flags & XKB_KEYMAP_SERIALIZE_KEEP_వాడని);
+    స్థిరరాశి bool drop_interprets = (explicit_కీలకం_విలువలు && drop_వాడని);
     /* TODO: print all default values if explicit flag is set */
 
-    if (keymap->symbols_section_name)
+    ఒకవేళ (keymap->symbols_section_name)
         write_buf(buf, "xkb_symbols \"%s\" {\n", keymap->symbols_section_name);
-    else
-        copy_to_buf(buf, "xkb_symbols {\n");
+    లేకపోతే
+        copy_గమ్యం_buf(buf, "xkb_symbols {\n");
 
-    bool has_group_names = false;
-    xkb_layout_index_t new_group = (xkb_layout_index_t)-1;
-    for (xkb_layout_index_t group = 0; group < keymap->num_group_names; group++) {
-        if (!((UINT32_C(1) << group) & config->layouts))
-            continue;
+    bool has_సమూహం_పేర్లు = false;
+    xkb_layout_సూచీ_t new_సమూహం = (xkb_layout_సూచీ_t)-1;
+    కొరకు (xkb_layout_సూచీ_t సమూహం = 0; సమూహం < keymap->అంకె_సమూహం_పేర్లు; సమూహం++) {
+        ఒకవేళ (!((UINT32_C(1) << సమూహం) & config->layouts))
+            కొనసాగు;
 
-        new_group++;
+        new_సమూహం++;
 
-        if (keymap->group_names[group]) {
-            write_buf(buf, "\tname[%"PRIu32"]=", new_group + 1);
+        ఒకవేళ (keymap->సమూహం_పేర్లు[సమూహం]) {
+            write_buf(buf, "\tname[%"PRIu32"]=", new_సమూహం + 1);
             write_buf_string_literal(
-                buf, xkb_atom_text(keymap->ctx, keymap->group_names[group]));
-            copy_to_buf(buf, ";\n");
-            has_group_names = true;
+                buf, xkb_atom_పాఠ్యం(keymap->ctx, keymap->సమూహం_పేర్లు[సమూహం]));
+            copy_గమ్యం_buf(buf, ";\n");
+            has_సమూహం_పేర్లు = true;
         }
     }
-    if (has_group_names)
-        copy_to_buf(buf, "\n");
+    ఒకవేళ (has_సమూహం_పేర్లు)
+        copy_గమ్యం_buf(buf, "\n");
 
-    if (defaults && !write_actions_defaults(keymap, config->format, buf))
-        return false;
+    ఒకవేళ (defaults && !write_actions_defaults(keymap, config->format, buf))
+        తిరిగి false;
 
-    struct buf buf2 = { NULL, 0, 0 };
-    const struct xkb_key *key;
-    xkb_keys_foreach(key, keymap) {
+    నిర్మాణం buf buf2 = { ఖాళీ, 0, 0 };
+    స్థిరరాశి నిర్మాణం xkb_కీలకం *కీలకం;
+    xkb_కీలకాలు_foreach(కీలకం, keymap) {
         /* Skip keys with no explicit values */
-        if (key->explicit &&
-            !write_key(keymap, config, substitutions, max_groups, some_interp,
-                       drop_interprets, explicit_key_values, pretty, buf,
-                       &buf2, key))
+        ఒకవేళ (కీలకం->explicit &&
+            !write_కీలకం(keymap, config, substitutions, max_groups, some_interp,
+                       drop_interprets, explicit_కీలకం_విలువలు, pretty, buf,
+                       &buf2, కీలకం))
         {
-            free(buf2.buf);
-            return false;
+            విడుదల(buf2.buf);
+            తిరిగి false;
         }
     }
-    free(buf2.buf);
+    విడుదల(buf2.buf);
 
-    if (!write_modmaps(keymap, config->format, substitutions,
+    ఒకవేళ (!write_modmaps(keymap, config->format, substitutions,
                        pretty, drop_interprets, buf))
-        return false;
+        తిరిగి false;
 
-    copy_to_buf(buf, "};\n\n");
-    return true;
+    copy_గమ్యం_buf(buf, "};\n\n");
+    తిరిగి true;
 }
 
-static enum xkb_status
-write_keymap(const struct xkb_keymap *keymap,
-             const struct xkb_keymap_serialize_config *config,
-             struct buf *buf, struct xkb_keymap_serialize_result *result)
+స్థిర గణన xkb_స్థితి
+write_keymap(స్థిరరాశి నిర్మాణం xkb_keymap *keymap,
+             స్థిరరాశి నిర్మాణం xkb_keymap_serialize_config *config,
+             నిర్మాణం buf *buf, నిర్మాణం xkb_keymap_serialize_ఫలితం *ఫలితం)
 {
-    key_name_substitutions substitutions = darray_new();
-    if (config->format == XKB_KEYMAP_FORMAT_TEXT_V1 &&
-        !rename_long_keys(keymap, &substitutions))
+    కీలకం_name_substitutions substitutions = darray_new();
+    ఒకవేళ (config->format == XKB_KEYMAP_FORMAT_పాఠ్యం_V1 &&
+        !rename_long_కీలకాలు(keymap, &substitutions))
     {
-        return false;
+        తిరిగి false;
     }
 
-    const key_name_substitutions * const substitutions_ptr =
-        (darray_empty(substitutions)) ? NULL : &substitutions;
+    స్థిరరాశి కీలకం_name_substitutions * స్థిరరాశి substitutions_ptr =
+        (darray_ఖాళీలు(substitutions)) ? ఖాళీ : &substitutions;
 
-    const xkb_layout_index_t max_groups = format_max_groups(config->format);
+    స్థిరరాశి xkb_layout_సూచీ_t max_groups = format_max_groups(config->format);
 
     bool some_interp = false;
-    const bool ok = (
+    స్థిరరాశి bool ok = (
         check_write_buf(buf, "xkb_keymap {\n") &&
         write_keycodes(keymap, substitutions_ptr, config->flags, buf) &&
         write_types(keymap, config->format, config->flags, buf) &&
@@ -1934,29 +1934,29 @@ write_keymap(const struct xkb_keymap *keymap,
     );
 
     darray_free(substitutions);
-    return ok ? XKB_SUCCESS : -1;
+    తిరిగి ok ? XKB_SUCCESS : -1;
 }
 
-enum xkb_status
-text_v1_keymap_serialize(
-        const struct xkb_keymap *keymap,
-        const struct xkb_keymap_serialize_config *config,
-        struct xkb_keymap_serialize_result *result
+గణన xkb_స్థితి
+పాఠ్యం_v1_keymap_serialize(
+        స్థిరరాశి నిర్మాణం xkb_keymap *keymap,
+        స్థిరరాశి నిర్మాణం xkb_keymap_serialize_config *config,
+        నిర్మాణం xkb_keymap_serialize_ఫలితం *ఫలితం
 )
 {
-    struct buf buf = { NULL, 0, 0 };
+    నిర్మాణం buf buf = { ఖాళీ, 0, 0 };
 
-    const enum xkb_status status =
-        write_keymap(keymap, config, &buf, result);
-    if (status != XKB_SUCCESS) {
-        free(buf.buf);
-        result->serialized = NULL;
-        return status;
+    స్థిరరాశి గణన xkb_స్థితి స్థితి_2 =
+        write_keymap(keymap, config, &buf, ఫలితం);
+    ఒకవేళ (స్థితి_2 != XKB_SUCCESS) {
+        విడుదల(buf.buf);
+        ఫలితం->serialized = ఖాళీ;
+        తిరిగి స్థితి_2;
     }
 
-    result->serialized = buf.buf;
-    result->length = buf.size + 1;
-    result->layouts = config->layouts;
+    ఫలితం->serialized = buf.buf;
+    ఫలితం->నిడివి = buf.కొలత + 1;
+    ఫలితం->layouts = config->layouts;
 
-    return XKB_SUCCESS;
+    తిరిగి XKB_SUCCESS;
 }

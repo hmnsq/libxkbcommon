@@ -2,297 +2,297 @@
  * Copyright © 2012 Ran Benita <ran234@gmail.com>
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#సూచన once
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <string.h>
+#అన్తర్భావ <stdbool.h>
+#అన్తర్భావ <stddef.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <string.h>
 
-#include "context.h"
-#include "darray.h"
-#include "messages-codes.h"
-#include "utils.h"
-#include "util-numbers.h"
-#include "utf8.h"
+#అన్తర్భావ "context.h"
+#అన్తర్భావ "darray.h"
+#అన్తర్భావ "messages-codes.h"
+#అన్తర్భావ "utils.h"
+#అన్తర్భావ "util-numbers.h"
+#అన్తర్భావ "utf8.h"
 
 /* Point to some substring in the file; used to avoid copying. */
-struct sval {
-    size_t len;
-    const char *start ATTR_COUNTED_BY(len);
+నిర్మాణం sval {
+    కొలత_t len;
+    స్థిరరాశి అక్షరం *ప్రారంభం ATTR_COUNTED_BY(len);
 };
-typedef darray(struct sval) darray_sval;
+రకనిర్వచనం darray(నిర్మాణం sval) darray_sval;
 
-static inline bool
-svaleq(struct sval s1, struct sval s2)
+స్థిర అంతఃవరుస bool
+svaleq(నిర్మాణం sval s1, నిర్మాణం sval s2)
 {
-    return s1.len == s2.len && memcmp(s1.start, s2.start, s1.len) == 0;
+    తిరిగి s1.len == s2.len && memcmp(s1.ప్రారంభం, s2.ప్రారంభం, s1.len) == 0;
 }
 
-static inline bool
-isvaleq(struct sval s1, struct sval s2)
+స్థిర అంతఃవరుస bool
+isvaleq(నిర్మాణం sval s1, నిర్మాణం sval s2)
 {
-    return s1.len == s2.len && istrncmp(s1.start, s2.start, s1.len) == 0;
+    తిరిగి s1.len == s2.len && istrncmp(s1.ప్రారంభం, s2.ప్రారంభం, s1.len) == 0;
 }
 
-static inline bool
-svaleq_prefix(struct sval s1, struct sval s2)
+స్థిర అంతఃవరుస bool
+svaleq_ఉపసర్గ(నిర్మాణం sval s1, నిర్మాణం sval s2)
 {
-    return s1.len <= s2.len && memcmp(s1.start, s2.start, s1.len) == 0;
+    తిరిగి s1.len <= s2.len && memcmp(s1.ప్రారంభం, s2.ప్రారంభం, s1.len) == 0;
 }
 
-#define SVAL(__start, __len) (struct sval){ .start = (__start), .len = (__len) }
-#define SVAL_LIT(literal) SVAL(literal, sizeof(literal) - 1)
-#define SVAL_INIT(literal) { .start = (literal), .len = sizeof(literal) - 1 }
+#నిర్వచించు SVAL(__start, __len) (నిర్మాణం sval){ .ప్రారంభం = (__start), .len = (__len) }
+#నిర్వచించు SVAL_LIT(literal) SVAL(literal, పరిమాణం(literal) - 1)
+#నిర్వచించు SVAL_INIT(literal) { .ప్రారంభం = (literal), .len = పరిమాణం(literal) - 1 }
 
 /* A line:column location in the input string (1-based). */
-struct scanner_loc {
-    size_t line, column;
+నిర్మాణం scanner_loc {
+    కొలత_t పంక్తి, స్తంభం;
 };
 
-struct scanner {
-    size_t pos;
-    size_t len;
-    const char *s ATTR_COUNTED_BY(len);
+నిర్మాణం scanner {
+    కొలత_t pos;
+    కొలత_t len;
+    స్థిరరాశి అక్షరం *s ATTR_COUNTED_BY(len);
     /*
      * Internal buffer.
      * Since this is used to handle paths that are possibly absolute, in theory
      * we should size it to PATH_MAX. However it is very unlikely to reach such
      * long paths in our context.
      */
-    char buf[1024];
-    size_t buf_pos;
+    అక్షరం buf[1024];
+    కొలత_t buf_pos;
     /* The position of the start of the current token. */
-    size_t token_pos;
+    కొలత_t token_pos;
     /* Cached values used by scanner_token_location. */
-    size_t cached_pos;
-    struct scanner_loc cached_loc;
-    const char *file_name;
-    struct xkb_context *ctx;
-    void *priv;
+    కొలత_t cached_pos;
+    నిర్మాణం scanner_loc cached_loc;
+    స్థిరరాశి అక్షరం *file_name;
+    నిర్మాణం xkb_context *ctx;
+    శూన్య *priv;
 };
 
 /* Compute the line:column location for the current token (slow). */
-struct scanner_loc
-scanner_token_location(struct scanner *s);
+నిర్మాణం scanner_loc
+scanner_token_location(నిర్మాణం scanner *s);
 
-#define scanner_log_with_code(scanner, level, verbosity, log_msg_id, fmt, ...) do { \
-    struct scanner_loc loc = scanner_token_location((scanner));                     \
-    xkb_log_with_code((scanner)->ctx, (level), verbosity, log_msg_id,               \
+#నిర్వచించు scanner_log_with_సంకేతం(scanner, level, verbosity, log_సందేశం_id, fmt, ...) చేయి { \
+    నిర్మాణం scanner_loc loc = scanner_token_location((scanner));                     \
+    xkb_log_with_సంకేతం((scanner)->ctx, (level), verbosity, log_సందేశం_id,               \
                       "%s:%zu:%zu: " fmt "\n",                                      \
                       (scanner)->file_name,                                         \
-                      loc.line,                                                     \
-                      loc.column, ##__VA_ARGS__);                                   \
-} while(0)
+                      loc.పంక్తి,                                                     \
+                      loc.స్తంభం, ##__VA_ARGS__);                                   \
+} అయితే(0)
 
-#define scanner_err(scanner, id, fmt, ...)              \
-    scanner_log_with_code(scanner, XKB_LOG_LEVEL_ERROR, \
-                          XKB_LOG_VERBOSITY_MINIMAL, id, fmt, ##__VA_ARGS__)
+#నిర్వచించు scanner_err(scanner, id, fmt, ...)              \
+    scanner_log_with_సంకేతం(scanner, XKB_LOG_LEVEL_ERROR, \
+                          XKB_LOG_VERBOSITY_కనీస, id, fmt, ##__VA_ARGS__)
 
-#define scanner_warn(scanner, id, fmt, ...)               \
-    scanner_log_with_code(scanner, XKB_LOG_LEVEL_WARNING, \
-                          XKB_LOG_VERBOSITY_MINIMAL, id, fmt, ##__VA_ARGS__)
+#నిర్వచించు scanner_warn(scanner, id, fmt, ...)               \
+    scanner_log_with_సంకేతం(scanner, XKB_LOG_LEVEL_WARNING, \
+                          XKB_LOG_VERBOSITY_కనీస, id, fmt, ##__VA_ARGS__)
 
-#define scanner_vrb(scanner, verbosity, id, fmt, ...)                    \
-    scanner_log_with_code(scanner, XKB_LOG_LEVEL_WARNING, verbosity, id, \
+#నిర్వచించు scanner_vrb(scanner, verbosity, id, fmt, ...)                    \
+    scanner_log_with_సంకేతం(scanner, XKB_LOG_LEVEL_WARNING, verbosity, id, \
                           fmt, ##__VA_ARGS__)
 
-static inline void
-scanner_init(struct scanner *s, struct xkb_context *ctx,
-             const char *string, size_t len, const char *file_name,
-             void *priv)
+స్థిర అంతఃవరుస శూన్య
+scanner_init(నిర్మాణం scanner *s, నిర్మాణం xkb_context *ctx,
+             స్థిరరాశి అక్షరం *string, కొలత_t len, స్థిరరాశి అక్షరం *file_name,
+             శూన్య *priv)
 {
     s->s = string;
     s->len = len;
     s->pos = 0;
     s->token_pos = 0;
     s->cached_pos = 0;
-    s->cached_loc.line = s->cached_loc.column = 1;
+    s->cached_loc.పంక్తి = s->cached_loc.స్తంభం = 1;
     s->file_name = file_name;
     s->ctx = ctx;
     s->priv = priv;
 }
 
-static inline char
-scanner_peek(struct scanner *s)
+స్థిర అంతఃవరుస అక్షరం
+scanner_peek(నిర్మాణం scanner *s)
 {
-    if (unlikely(s->pos >= s->len))
-        return '\0';
-    return s->s[s->pos];
+    ఒకవేళ (unlikely(s->pos >= s->len))
+        తిరిగి '\0';
+    తిరిగి s->s[s->pos];
 }
 
-static inline bool
-scanner_eof(struct scanner *s)
+స్థిర అంతఃవరుస bool
+scanner_eof(నిర్మాణం scanner *s)
 {
-    return s->pos >= s->len;
+    తిరిగి s->pos >= s->len;
 }
 
-static inline bool
-scanner_eol(struct scanner *s)
+స్థిర అంతఃవరుస bool
+scanner_eol(నిర్మాణం scanner *s)
 {
-    return scanner_peek(s) == '\n';
+    తిరిగి scanner_peek(s) == '\n';
 }
 
-static inline void
-scanner_skip_to_eol(struct scanner *s)
+స్థిర అంతఃవరుస శూన్య
+scanner_skip_గమ్యం_eol(నిర్మాణం scanner *s)
 {
-    const char *nl = memchr(s->s + s->pos, '\n', s->len - s->pos);
-    const size_t new_pos = nl ? (size_t) (nl - s->s) : s->len;
+    స్థిరరాశి అక్షరం *nl = memchr(s->s + s->pos, '\n', s->len - s->pos);
+    స్థిరరాశి కొలత_t new_pos = nl ? (కొలత_t) (nl - s->s) : s->len;
     s->pos = new_pos;
 }
 
-static inline char
-scanner_next(struct scanner *s)
+స్థిర అంతఃవరుస అక్షరం
+scanner_తదుపరి(నిర్మాణం scanner *s)
 {
-    if (unlikely(scanner_eof(s)))
-        return '\0';
-    return s->s[s->pos++];
+    ఒకవేళ (unlikely(scanner_eof(s)))
+        తిరిగి '\0';
+    తిరిగి s->s[s->pos++];
 }
 
-static inline bool
-scanner_chr(struct scanner *s, char ch)
+స్థిర అంతఃవరుస bool
+scanner_chr(నిర్మాణం scanner *s, అక్షరం ch)
 {
-    if (likely(scanner_peek(s) != ch))
-        return false;
+    ఒకవేళ (likely(scanner_peek(s) != ch))
+        తిరిగి false;
     s->pos++;
-    return true;
+    తిరిగి true;
 }
 
-static inline bool
-scanner_str(struct scanner *s, const char *string, size_t len)
+స్థిర అంతఃవరుస bool
+scanner_str(నిర్మాణం scanner *s, స్థిరరాశి అక్షరం *string, కొలత_t len)
 {
-    if (s->len - s->pos < len)
-        return false;
-    if (memcmp(s->s + s->pos, string, len) != 0)
-        return false;
+    ఒకవేళ (s->len - s->pos < len)
+        తిరిగి false;
+    ఒకవేళ (memcmp(s->s + s->pos, string, len) != 0)
+        తిరిగి false;
     s->pos += len;
-    return true;
+    తిరిగి true;
 }
 
-#define scanner_lit(s, literal) scanner_str(s, literal, sizeof(literal) - 1)
+#నిర్వచించు scanner_lit(s, literal) scanner_str(s, literal, పరిమాణం(literal) - 1)
 
-static inline bool
-scanner_rules_is_ident(char ch)
+స్థిర అంతఃవరుస bool
+scanner_నియమాలు_is_ident(అక్షరం ch)
 {
-    return is_graph(ch) && ch != '\\';
+    తిరిగి is_లేఖాచిత్రం(ch) && ch != '\\';
 }
 
 /*
  * A keyword/operator is only valid when it is followed by a character
  * which cannot continue the token.
  */
-static inline bool
-scanner_rules_str_token(struct scanner *s, const char *string, size_t len)
+స్థిర అంతఃవరుస bool
+scanner_నియమాలు_str_token(నిర్మాణం scanner *s, స్థిరరాశి అక్షరం *string, కొలత_t len)
 {
-    if (!scanner_str(s, string, len)) {
-        return false;
+    ఒకవేళ (!scanner_str(s, string, len)) {
+        తిరిగి false;
     }
-    if (scanner_rules_is_ident(scanner_peek(s))) {
+    ఒకవేళ (scanner_నియమాలు_is_ident(scanner_peek(s))) {
         /* Backtrack */
         s->pos -= len;
-        return false;
+        తిరిగి false;
     }
-    return true;
+    తిరిగి true;
 }
 
-#define scanner_rules_lit_token(s, literal) \
-    scanner_rules_str_token((s), (literal), sizeof(literal) - 1)
+#నిర్వచించు scanner_నియమాలు_lit_token(s, literal) \
+    scanner_నియమాలు_str_token((s), (literal), పరిమాణం(literal) - 1)
 
-static inline size_t
-scanner_rules_ident_token(struct scanner *s)
+స్థిర అంతఃవరుస కొలత_t
+scanner_నియమాలు_ident_token(నిర్మాణం scanner *s)
 {
-    size_t len = 0;
-    while (!scanner_eof(s) && scanner_rules_is_ident(s->s[s->pos])) {
+    కొలత_t len = 0;
+    అయితే (!scanner_eof(s) && scanner_నియమాలు_is_ident(s->s[s->pos])) {
         s->pos++;
         len++;
     }
-    return len;
+    తిరిగి len;
 }
 
-static inline bool
-scanner_buf_append(struct scanner *s, char ch)
+స్థిర అంతఃవరుస bool
+scanner_buf_append(నిర్మాణం scanner *s, అక్షరం ch)
 {
-    if (s->buf_pos + 1 >= sizeof(s->buf))
-        return false;
+    ఒకవేళ (s->buf_pos + 1 >= పరిమాణం(s->buf))
+        తిరిగి false;
     s->buf[s->buf_pos++] = ch;
-    return true;
+    తిరిగి true;
 }
 
-static inline bool
-scanner_buf_appends(struct scanner *s, const char *str)
+స్థిర అంతఃవరుస bool
+scanner_buf_appends(నిర్మాణం scanner *s, స్థిరరాశి అక్షరం *str)
 {
-    const int ret = snprintf(s->buf + s->buf_pos,
-                             sizeof(s->buf) - s->buf_pos,
+    స్థిరరాశి పూర్ణాంకం ret = snprintf(s->buf + s->buf_pos,
+                             పరిమాణం(s->buf) - s->buf_pos,
                              "%s", str);
-    if (ret < 0 || (size_t)ret >= sizeof(s->buf) - s->buf_pos)
-        return false;
-    s->buf_pos += (size_t)ret;
-    return true;
+    ఒకవేళ (ret < 0 || (కొలత_t)ret >= పరిమాణం(s->buf) - s->buf_pos)
+        తిరిగి false;
+    s->buf_pos += (కొలత_t)ret;
+    తిరిగి true;
 }
 
-static inline bool
-scanner_buf_appends_code_point(struct scanner *s, uint32_t c)
+స్థిర అంతఃవరుస bool
+scanner_buf_appends_సంకేతం_బిందువు(నిర్మాణం scanner *s, uint32_t c)
 {
     /* Up to 4 bytes + NULL */
-    if (s->buf_pos + 5 <= sizeof(s->buf)) {
-        uint8_t count = utf32_to_utf8(c, s->buf + s->buf_pos);
-        if (count == 0) {
+    ఒకవేళ (s->buf_pos + 5 <= పరిమాణం(s->buf)) {
+        uint8_t లెక్క = utf32_గమ్యం_utf8(c, s->buf + s->buf_pos);
+        ఒకవేళ (లెక్క == 0) {
             /* Handle encoding failure with U+FFFD REPLACEMENT CHARACTER */
-            count = utf32_to_utf8(0xfffd, s->buf + s->buf_pos);
+            లెక్క = utf32_గమ్యం_utf8(0xfffd, s->buf + s->buf_pos);
         }
-        if (count == 0)
-            return false;
+        ఒకవేళ (లెక్క == 0)
+            తిరిగి false;
         /* `count` counts the NULL byte */
-        s->buf_pos += (size_t)count - 1;
-        return true;
-    } else {
-        return false;
+        s->buf_pos += (కొలత_t)లెక్క - 1;
+        తిరిగి true;
+    } లేకపోతే {
+        తిరిగి false;
     }
 }
 
-static inline bool
-scanner_oct(struct scanner *s, uint8_t *out)
+స్థిర అంతఃవరుస bool
+scanner_oct(నిర్మాణం scanner *s, uint8_t *బహిర్గతం)
 {
     uint8_t i = 0;
     uint8_t c = 0;
-    for (; scanner_peek(s) >= '0' && scanner_peek(s) <= '7' && i < 4; i++) {
+    కొరకు (; scanner_peek(s) >= '0' && scanner_peek(s) <= '7' && i < 4; i++) {
         /* Test overflow */
-        if (c < 040) {
-            c = c * 8 + (uint8_t)(scanner_next(s) - '0');
-        } else {
+        ఒకవేళ (c < 040) {
+            c = c * 8 + (uint8_t)(scanner_తదుపరి(s) - '0');
+        } లేకపోతే {
             /* Consume valid digit, but mark result as invalid */
-            scanner_next(s);
-            *out = c;
-            return false;
+            scanner_తదుపరి(s);
+            *బహిర్గతం = c;
+            తిరిగి false;
         }
     }
-    *out = c;
-    return i > 0;
+    *బహిర్గతం = c;
+    తిరిగి i > 0;
 }
 
-static inline bool
-scanner_hex(struct scanner *s, uint8_t *out)
+స్థిర అంతఃవరుస bool
+scanner_hex(నిర్మాణం scanner *s, uint8_t *బహిర్గతం)
 {
     uint8_t i;
-    for (i = 0, *out = 0; is_xdigit(scanner_peek(s)) && i < 2; i++) {
-        const char c = scanner_next(s);
-        const char offset = (char) (c >= '0' && c <= '9' ? '0' :
+    కొరకు (i = 0, *బహిర్గతం = 0; is_xdigit(scanner_peek(s)) && i < 2; i++) {
+        స్థిరరాశి అక్షరం c = scanner_తదుపరి(s);
+        స్థిరరాశి అక్షరం స్థానభ్రంశం = (అక్షరం) (c >= '0' && c <= '9' ? '0' :
                                     c >= 'a' && c <= 'f' ? 'a' - 10
                                                          : 'A' - 10);
-        *out = *out * 16 + (uint8_t)(c - offset);
+        *బహిర్గతం = *బహిర్గతం * 16 + (uint8_t)(c - స్థానభ్రంశం);
     }
-    return i > 0;
+    తిరిగి i > 0;
 }
 
-static inline int
-scanner_dec_int64(struct scanner *s, int64_t *out)
+స్థిర అంతఃవరుస పూర్ణాంకం
+scanner_dec_int64(నిర్మాణం scanner *s, int64_t *బహిర్గతం)
 {
     uint64_t val = 0;
-    const int count =
-        parse_dec_to_uint64_t(s->s + s->pos, s->len - s->pos, &val);
-    if (count > 0) {
+    స్థిరరాశి పూర్ణాంకం లెక్క =
+        parse_dec_గమ్యం_uint64_t(s->s + s->pos, s->len - s->pos, &val);
+    ఒకవేళ (లెక్క > 0) {
         /*
          * NOTE: Since the sign is handled as a token, we parse only *positive*
          *       values here. So that means that *we cannot parse INT64_MIN*,
@@ -302,86 +302,86 @@ scanner_dec_int64(struct scanner *s, int64_t *out)
          *       to parse only 32 bits integers in realistic keymap files and
          *       the limitation should not be an issue.
          */
-        if (val > INT64_MAX)
-            return -1;
-        s->pos += (size_t)count;
-        *out = (int64_t)val;
+        ఒకవేళ (val > INT64_MAX)
+            తిరిగి -1;
+        s->pos += (కొలత_t)లెక్క;
+        *బహిర్గతం = (int64_t)val;
     }
-    return count;
+    తిరిగి లెక్క;
 }
 
-static inline int
-scanner_hex_int64(struct scanner *s, int64_t *out)
+స్థిర అంతఃవరుస పూర్ణాంకం
+scanner_hex_int64(నిర్మాణం scanner *s, int64_t *బహిర్గతం)
 {
     uint64_t val = 0;
-    const int count =
-        parse_hex_to_uint64_t(s->s + s->pos, s->len - s->pos, &val);
-    if (count > 0) {
+    స్థిరరాశి పూర్ణాంకం లెక్క =
+        parse_hex_గమ్యం_uint64_t(s->s + s->pos, s->len - s->pos, &val);
+    ఒకవేళ (లెక్క > 0) {
         /* See comment in `scanner_dec_int64()` above */
-        if (val > INT64_MAX)
-            return -1;
-        s->pos += (size_t)count;
-        *out = (int64_t) val;
+        ఒకవేళ (val > INT64_MAX)
+            తిరిగి -1;
+        s->pos += (కొలత_t)లెక్క;
+        *బహిర్గతం = (int64_t) val;
     }
-    return count;
+    తిరిగి లెక్క;
 }
 
 /** Parser for the {NNNN} part of a Unicode escape sequences */
-static inline bool
-scanner_unicode_code_point(struct scanner *s, uint32_t *out)
+స్థిర అంతఃవరుస bool
+scanner_unicode_సంకేతం_బిందువు(నిర్మాణం scanner *s, uint32_t *బహిర్గతం)
 {
-    if (!scanner_chr(s, '{'))
-        return false;
+    ఒకవేళ (!scanner_chr(s, '{'))
+        తిరిగి false;
 
     uint32_t cp = 0;
-    const int count =
-        parse_hex_to_uint32_t(s->s + s->pos, s->len - s->pos, &cp);
-    if (count > 0)
-        s->pos += (size_t)count;
+    స్థిరరాశి పూర్ణాంకం లెక్క =
+        parse_hex_గమ్యం_uint32_t(s->s + s->pos, s->len - s->pos, &cp);
+    ఒకవేళ (లెక్క > 0)
+        s->pos += (కొలత_t)లెక్క;
 
     /* Try to consume everything within the string until the next `}` */
-    const size_t last_valid = s->pos;
-    while (!scanner_eof(s) && !scanner_eol(s) && scanner_peek(s) != '"' &&
+    స్థిరరాశి కొలత_t చివరి_valid = s->pos;
+    అయితే (!scanner_eof(s) && !scanner_eol(s) && scanner_peek(s) != '"' &&
            scanner_peek(s) != '}') {
-        scanner_next(s);
+        scanner_తదుపరి(s);
     }
 
-    if (scanner_chr(s, '}')) {
+    ఒకవేళ (scanner_chr(s, '}')) {
         /* End of the escape sequence; code point may be invalid */
-        *out = cp;
-        return (count > 0 && s->pos == last_valid + 1 && cp <= 0x10ffff);
+        *బహిర్గతం = cp;
+        తిరిగి (లెక్క > 0 && s->pos == చివరి_valid + 1 && cp <= 0x10ffff);
     }
 
     /* No closing `}` within the string: rollback to last valid position */
-    s->pos = last_valid;
-    return false;
+    s->pos = చివరి_valid;
+    తిరిగి false;
 }
 
 /* Basic detection of wrong character encoding based on the first bytes */
-static inline bool
-scanner_check_supported_char_encoding(struct scanner *scanner)
+స్థిర అంతఃవరుస bool
+scanner_check_supported_char_encoding(నిర్మాణం scanner *scanner)
 {
     /* Skip UTF-8 encoded BOM (U+FEFF)
      * See: https://www.unicode.org/faq/utf_bom.html#bom5 */
-    if (scanner_str(scanner, "\xef\xbb\xbf", 3) || scanner->len < 2) {
+    ఒకవేళ (scanner_str(scanner, "\xef\xbb\xbf", 3) || scanner->len < 2) {
         /* Assume UTF-8 encoding or trivial short input */
-        return true;
+        తిరిగి true;
     }
 
     /* Early detection of wrong file encoding, e.g. UTF-16 or UTF-32 */
-    if (scanner->s[0] == '\0' || scanner->s[1] == '\0') {
+    ఒకవేళ (scanner->s[0] == '\0' || scanner->s[1] == '\0') {
         scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                     "unexpected NULL character.");
-        return false;
+        తిరిగి false;
     }
     /* Enforce the first character to be ASCII.
        See the note before the use of this function, that explains the relevant
        parts of the grammars of rules, keymap components and Compose. */
-    if (!is_ascii(scanner->s[0])) {
+    ఒకవేళ (!is_ascii(scanner->s[0])) {
         scanner_err(scanner, XKB_ERROR_INVALID_FILE_ENCODING,
                     "unexpected non-ASCII character.");
-        return false;
+        తిరిగి false;
     }
 
-    return true;
+    తిరిగి true;
 }

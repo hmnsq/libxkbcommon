@@ -3,564 +3,564 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include <assert.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <stdint.h>
-#if WCHAR_MAX >= 0x7FFFFFFF
-#include <wctype.h>
-#define USE_ISWPRINT
-#if HAVE_NEWLOCALE && HAVE_ISWPRINT_L
-#define USE_ISWPRINT_L
-#include <locale.h>
-#endif
-#else
-#include <ctype.h>
-#endif
+#అన్తర్భావ <assert.h>
+#అన్తర్భావ <stdbool.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <stdint.h>
+#ఒకవేళ WCHAR_MAX >= 0x7FFFFFFF
+#అన్తర్భావ <wctype.h>
+#నిర్వచించు USE_ISWPRINT
+#ఒకవేళ HAVE_NEWLOCALE && HAVE_ISWPRINT_L
+#నిర్వచించు USE_ISWPRINT_L
+#అన్తర్భావ <locale.h>
+#అయితే_ముగింపు
+#లేకపోతే
+#అన్తర్భావ <ctype.h>
+#అయితే_ముగింపు
 
-#include "xkbcommon/xkbcommon-status.h"
-#include "xkbcommon/xkbcommon.h"
-#include "darray.h"
-#include "state-priv.h"
-#include "typing.h"
-#include "util-bits.h"
-#include "util-mem.h"
-#include "utils.h"
+#అన్తర్భావ "xkbcommon/xkbcommon-status.h"
+#అన్తర్భావ "xkbcommon/xkbcommon.h"
+#అన్తర్భావ "darray.h"
+#అన్తర్భావ "state-priv.h"
+#అన్తర్భావ "typing.h"
+#అన్తర్భావ "util-bits.h"
+#అన్తర్భావ "util-mem.h"
+#అన్తర్భావ "utils.h"
 
-enum xkb_status
-xkb_key_set_init(struct xkb_key_set *set,
-                 struct xkb_keymap *keymap,
-                 const struct xkb_key_set_config *config)
+గణన xkb_స్థితి
+xkb_కీలకం_సమితి_init(నిర్మాణం xkb_కీలకం_సమితి *సమితి,
+                 నిర్మాణం xkb_keymap *keymap,
+                 స్థిరరాశి నిర్మాణం xkb_కీలకం_సమితి_config *config)
 {
-    darray_init(set->printable);
-    darray_init(set->modifiers);
-    darray_init(set->misc);
+    darray_init(సమితి->printable);
+    darray_init(సమితి->modifiers);
+    darray_init(సమితి->misc);
 
-    static const struct xkb_key_set_config default_config = {0};
-    if (!config)
+    స్థిర స్థిరరాశి నిర్మాణం xkb_కీలకం_సమితి_config default_config = {0};
+    ఒకవేళ (!config)
         config = &default_config;
     /* keycode = 0 denotes “default” */
-    const xkb_keycode_t min = MAX(config->min, xkb_keymap_min_keycode(keymap));
-    const xkb_keycode_t max = config->max
+    స్థిరరాశి xkb_keycode_t min = MAX(config->min, xkb_keymap_min_keycode(keymap));
+    స్థిరరాశి xkb_keycode_t max = config->max
         ? MIN(config->max, xkb_keymap_max_keycode(keymap))
         : xkb_keymap_max_keycode(keymap);
 
-    enum xkb_status status;
-    struct xkb_state *state =
-        xkb_state_new_with_mode(keymap, XKB_STATE_MODE_SERVER, &status);
-    if (!state)
-        return status;
+    గణన xkb_స్థితి స్థితి_2;
+    నిర్మాణం xkb_state *state =
+        xkb_state_new_with_బహుళకం(keymap, XKB_STATE_బహుళకం_SERVER, &స్థితి_2);
+    ఒకవేళ (!state)
+        తిరిగి స్థితి_2;
 
-    #ifdef USE_ISWPRINT_L
+    #నిర్వచితమైతే USE_ISWPRINT_L
     locale_t loc = newlocale(LC_ALL_MASK, "C.UTF-8", (locale_t)0);
-    #endif
+    #అయితే_ముగింపు
 
-    struct xkb_keymap_key_iterator iter;
-    const struct xkb_keymap_key_iterator_config iter_config = {
-        .size = sizeof(iter_config),
-        .flags = XKB_KEYMAP_KEY_ITERATOR_NO_FLAGS,
-        .start = min
+    నిర్మాణం xkb_keymap_కీలకం_iterator iter;
+    స్థిరరాశి నిర్మాణం xkb_keymap_కీలకం_iterator_config iter_config = {
+        .కొలత = పరిమాణం(iter_config),
+        .flags = XKB_KEYMAP_కీలకం_ITERATOR_NO_FLAGS,
+        .ప్రారంభం = min
     };
-    status = xkb_keymap_key_iterator_init(&iter, keymap, &iter_config);
-    if (status != XKB_SUCCESS)
-        goto error;
+    స్థితి_2 = xkb_keymap_కీలకం_iterator_init(&iter, keymap, &iter_config);
+    ఒకవేళ (స్థితి_2 != XKB_SUCCESS)
+        వెళ్ళు error;
 
-    const xkb_mod_mask_t numlock =
-        xkb_keymap_mod_get_mask(keymap, XKB_VMOD_NAME_NUM);
+    స్థిరరాశి xkb_mod_ముసుగు_t numlock =
+        xkb_keymap_mod_get_ముసుగు(keymap, XKB_VMOD_NAME_అంకె);
 
-    const struct xkb_state_components_update components_update = {
-        .size = sizeof(components_update),
+    స్థిరరాశి నిర్మాణం xkb_state_components_update components_update = {
+        .కొలత = పరిమాణం(components_update),
         .components = XKB_STATE_MODS_LOCKED,
         .affect_locked_mods = numlock,
         .locked_mods = numlock,
     };
 
-    const struct xkb_synthetic_update update = {
-        .size = sizeof(update),
+    స్థిరరాశి నిర్మాణం xkb_synthetic_update update = {
+        .కొలత = పరిమాణం(update),
         .components = &components_update,
     };
 
     xkb_keycode_t k;
-    while ((k = xkb_keymap_key_iterator_next(&iter)) != XKB_KEYCODE_INVALID) {
-        if (k > max)
-            break;
+    అయితే ((k = xkb_keymap_కీలకం_iterator_తదుపరి(&iter)) != XKB_KEYCODE_INVALID) {
+        ఒకవేళ (k > max)
+            ఆపు;
 
         xkb_state_reset(state);
-        status = xkb_state_update_synthetic(state, &update, NULL);
-        if (status != XKB_SUCCESS)
-            goto error;
+        స్థితి_2 = xkb_state_update_synthetic(state, &update, ఖాళీ);
+        ఒకవేళ (స్థితి_2 != XKB_SUCCESS)
+            వెళ్ళు error;
 
-        const xkb_keysym_t *syms = NULL;
-        const int count = xkb_state_key_get_syms(state, k, &syms);
+        స్థిరరాశి xkb_keysym_t *syms = ఖాళీ;
+        స్థిరరాశి పూర్ణాంకం లెక్క = xkb_state_కీలకం_get_syms(state, k, &syms);
 
-        enum xkb_state_component changed =
-            xkb_state_update_key(state, k, XKB_KEY_DOWN);
-        xkb_mod_mask_t mods =
+        గణన xkb_state_component మారింది =
+            xkb_state_update_కీలకం(state, k, XKB_కీలకం_కిందికి);
+        xkb_mod_ముసుగు_t mods =
             xkb_state_serialize_mods(state, XKB_STATE_MODS_EFFECTIVE);
-        changed |= xkb_state_update_key(state, k, XKB_KEY_UP);
+        మారింది |= xkb_state_update_కీలకం(state, k, XKB_కీలకం_పైకి);
         mods |= xkb_state_serialize_mods(state, XKB_STATE_MODS_EFFECTIVE);
 
-        if (changed & XKB_STATE_MODS_EFFECTIVE) {
+        ఒకవేళ (మారింది & XKB_STATE_MODS_EFFECTIVE) {
             /* Modifier key */
-            enum xkb_modifier_kind kind;
-            if (changed & XKB_STATE_MODS_LOCKED) {
-                kind = XKB_MOD_LOCK;
-            } else if (changed & XKB_STATE_MODS_LATCHED) {
-                kind = XKB_MOD_LATCH;
-            } else {
-                kind = XKB_MOD_SET;
+            గణన xkb_modifier_రకం రకం;
+            ఒకవేళ (మారింది & XKB_STATE_MODS_LOCKED) {
+                రకం = XKB_MOD_తాళం;
+            } లేకపోతే ఒకవేళ (మారింది & XKB_STATE_MODS_LATCHED) {
+                రకం = XKB_MOD_LATCH;
+            } లేకపోతే {
+                రకం = XKB_MOD_సమితి;
             }
             mods &= ~numlock;
-            if (!mods)
+            ఒకవేళ (!mods)
                 mods = numlock;
-            darray_append(set->modifiers, (struct xkb_modifier_key) {
+            darray_append(సమితి->modifiers, (నిర్మాణం xkb_modifier_కీలకం) {
                 .keycode = k,
                 .mods = mods,
-                .kind = kind,
+                .రకం = రకం,
             });
-            continue;
+            కొనసాగు;
         }
 
-        if (count > 0) {
+        ఒకవేళ (లెక్క > 0) {
             uint32_t utf32 = 0;
-            for (int s = 0; s < count; s++) {
-                utf32 = xkb_keysym_to_utf32(syms[s]);
-                const bool is_printable =
-                    #ifdef USE_ISWPRINT_L
+            కొరకు (పూర్ణాంకం s = 0; s < లెక్క; s++) {
+                utf32 = xkb_keysym_గమ్యం_utf32(syms[s]);
+                స్థిరరాశి bool is_printable =
+                    #నిర్వచితమైతే USE_ISWPRINT_L
                     ((loc && iswprint_l((wint_t)utf32, loc)) || iswprint((wint_t)utf32))
-                    #elif defined(USE_ISWPRINT)
+                    #లేదావేళ defined(USE_ISWPRINT)
                     iswprint((wint_t)utf32)
-                    #else
-                    utf32 <= 0x7f && isprint((int)utf32)
-                    #endif
+                    #లేకపోతే
+                    utf32 <= 0x7f && isprint((పూర్ణాంకం)utf32)
+                    #అయితే_ముగింపు
                     ;
-                if (is_printable)
-                    break;
+                ఒకవేళ (is_printable)
+                    ఆపు;
                 utf32 = 0;
             }
-            if (utf32) {
+            ఒకవేళ (utf32) {
                 /* Printable keysyms */
-                darray_append(set->printable, k);
-                continue;
+                darray_append(సమితి->printable, k);
+                కొనసాగు;
             }
         }
 
         /* Miscellaneous key */
-        darray_append(set->misc, k);
+        darray_append(సమితి->misc, k);
     }
 
 error:
-    #ifdef USE_ISWPRINT_L
-    if (loc)
+    #నిర్వచితమైతే USE_ISWPRINT_L
+    ఒకవేళ (loc)
         freelocale(loc);
-    #endif
+    #అయితే_ముగింపు
 
     xkb_state_unref(state);
-    if (status != XKB_SUCCESS)
-        xkb_key_set_destroy(set);
+    ఒకవేళ (స్థితి_2 != XKB_SUCCESS)
+        xkb_కీలకం_సమితి_destroy(సమితి);
 
-    return status;
+    తిరిగి స్థితి_2;
 }
 
-void
-xkb_key_set_destroy(struct xkb_key_set *set)
+శూన్య
+xkb_కీలకం_సమితి_destroy(నిర్మాణం xkb_కీలకం_సమితి *సమితి)
 {
-    if (!set)
-        return;
+    ఒకవేళ (!సమితి)
+        తిరిగి;
 
-    darray_free(set->modifiers);
-    darray_free(set->printable);
-    darray_free(set->misc);
+    darray_free(సమితి->modifiers);
+    darray_free(సమితి->printable);
+    darray_free(సమితి->misc);
 }
 
-static enum xkb_status
-add_pending_events(struct xkb_typing_state * restrict state,
-                   const struct xkb_pending_typing_event * restrict events,
-                   size_t count)
+స్థిర గణన xkb_స్థితి
+కూడు_pending_events(నిర్మాణం xkb_typing_state * పరిమిత state,
+                   స్థిరరాశి నిర్మాణం xkb_pending_typing_event * పరిమిత events,
+                   కొలత_t లెక్క)
 {
-    for (size_t e = 0; e < count; e++) {
+    కొరకు (కొలత_t e = 0; e < లెక్క; e++) {
         /* Look for a free slot */
-        struct xkb_pending_typing_event *pending;
-        darray_size_t idx = 0;
+        నిర్మాణం xkb_pending_typing_event *pending;
+        darray_కొలత_t idx = 0;
         darray_enumerate_from(idx, pending, state->pending, idx) {
-            if (!pending->counter) {
-                darray_item(state->pending, idx) = events[e];
-                goto next;
+            ఒకవేళ (!pending->counter) {
+                darray_అంశం(state->pending, idx) = events[e];
+                వెళ్ళు తదుపరి;
             }
         }
         /* No free slot found: append new one */
-        idx = darray_size(state->pending);
+        idx = darray_కొలత(state->pending);
         darray_append(state->pending, events[e]);
-    next:
+    తదుపరి:
         /* Avoid immediate consumption */
-        darray_item(state->pending, idx).counter++;
+        darray_అంశం(state->pending, idx).counter++;
     }
-    state->num_pending += count;
+    state->అంకె_pending += లెక్క;
 
-    return XKB_SUCCESS;
+    తిరిగి XKB_SUCCESS;
 }
 
-static enum xkb_status
-next_pending_events(struct xkb_typing_state * restrict state,
-                    xkb_typing_events * restrict out)
+స్థిర గణన xkb_స్థితి
+తదుపరి_pending_events(నిర్మాణం xkb_typing_state * పరిమిత state,
+                    xkb_typing_events * పరిమిత బహిర్గతం)
 {
     /* Reset the output */
-    darray_size(*out) = 0;
+    darray_కొలత(*బహిర్గతం) = 0;
 
-    darray_size_t idx;
-    struct xkb_pending_typing_event *pending;
+    darray_కొలత_t idx;
+    నిర్మాణం xkb_pending_typing_event *pending;
     /* Stack: start from the end */
-    darray_enumerate_reverse(idx, pending, state->pending) {
-        if (!pending->counter)
-            continue;
+    darray_enumerate_తిరగేయి(idx, pending, state->pending) {
+        ఒకవేళ (!pending->counter)
+            కొనసాగు;
         pending->counter--;
-        if (pending->counter)
-            continue;
-        darray_append(*out, pending->event);
-        state->num_pending--;
+        ఒకవేళ (pending->counter)
+            కొనసాగు;
+        darray_append(*బహిర్గతం, pending->event);
+        state->అంకె_pending--;
         /* Resize array if it was the last element */
-        if (idx + 1 == darray_size(state->pending))
-            darray_size(state->pending)--;
+        ఒకవేళ (idx + 1 == darray_కొలత(state->pending))
+            darray_కొలత(state->pending)--;
         state->mods &= ~pending->mods;
     }
 
-    return XKB_SUCCESS;
+    తిరిగి XKB_SUCCESS;
 }
 
-enum {
+గణన {
     /** Tries to avoid pressing a key already pressed */
-    KEY_CHOICE_MAX_TRIES = 12,
-    XKB_ERROR_NO_RELEASED_KEY = -1000,
+    కీలకం_CHOICE_MAX_TRIES = 12,
+    XKB_ERROR_NO_RELEASED_కీలకం = -1000,
 };
 
-static enum xkb_status
-add_modifier_key(struct xkb_typing_state * restrict state, size_t * restrict e)
+స్థిర గణన xkb_స్థితి
+కూడు_modifier_కీలకం(నిర్మాణం xkb_typing_state * పరిమిత state, కొలత_t * పరిమిత e)
 {
     /* Choose a random key */
-    long idx = -1;
-    for (int tries = 0; tries < KEY_CHOICE_MAX_TRIES; tries++) {
+    దీర్ఘ idx = -1;
+    కొరకు (పూర్ణాంకం tries = 0; tries < కీలకం_CHOICE_MAX_TRIES; tries++) {
         idx = state->prng(state->prng_state)
-            % darray_size(state->keys->modifiers);
+            % darray_కొలత(state->కీలకాలు->modifiers);
         /*
          * Ensure key is not already down and its modifier mask is not active,
          * i.e. to avoid simultaneous keys with the same modifier.
          */
-        if (!bit_array_get(state->keys_state,
-                           darray_item(state->keys->modifiers, idx).keycode) &&
-            !(state->mods & darray_item(state->keys->modifiers, idx).mods))
+        ఒకవేళ (!బిట్టు_array_get(state->కీలకాలు_state,
+                           darray_అంశం(state->కీలకాలు->modifiers, idx).keycode) &&
+            !(state->mods & darray_అంశం(state->కీలకాలు->modifiers, idx).mods))
         {
-            break;
+            ఆపు;
         }
         idx = -1;
     }
 
-    struct xkb_modifier_key key = {0};
-    if (idx < 0) {
+    నిర్మాణం xkb_modifier_కీలకం కీలకం = {0};
+    ఒకవేళ (idx < 0) {
         /* No released key found: fall back to linear search */
-        const struct xkb_modifier_key *key_;
-        darray_foreach(key_, state->keys->modifiers) {
+        స్థిరరాశి నిర్మాణం xkb_modifier_కీలకం *కీలకం_2;
+        darray_foreach(కీలకం_2, state->కీలకాలు->modifiers) {
             /* See test doc above */
-            if (!bit_array_get(state->keys_state, key_->keycode) &&
-                !(state->mods & key_->mods))
+            ఒకవేళ (!బిట్టు_array_get(state->కీలకాలు_state, కీలకం_2->keycode) &&
+                !(state->mods & కీలకం_2->mods))
             {
-                key = *key_;
+                కీలకం = *కీలకం_2;
                 idx = 0;
-                break;
+                ఆపు;
             }
         }
-        if (idx < 0) {
+        ఒకవేళ (idx < 0) {
             /* No fallback: skip */
-            return (enum xkb_status)XKB_ERROR_NO_RELEASED_KEY;
+            తిరిగి (గణన xkb_స్థితి)XKB_ERROR_NO_RELEASED_కీలకం;
         }
-    } else {
-        key = darray_item(state->keys->modifiers, idx);
+    } లేకపోతే {
+        కీలకం = darray_అంశం(state->కీలకాలు->modifiers, idx);
     }
 
-    const size_t remaining_events =
-        state->num_events - state->num_pending - *e;
-    size_t pending_turns = 0;
+    స్థిరరాశి కొలత_t మిగిలిన_events =
+        state->అంకె_events - state->అంకె_pending - *e;
+    కొలత_t pending_turns = 0;
 
-    if (remaining_events >= 2) {
-        if (key.kind == XKB_MOD_SET ||
-            (key.kind == XKB_MOD_LOCK && remaining_events >= 4))
+    ఒకవేళ (మిగిలిన_events >= 2) {
+        ఒకవేళ (కీలకం.రకం == XKB_MOD_సమితి ||
+            (కీలకం.రకం == XKB_MOD_తాళం && మిగిలిన_events >= 4))
         {
             /* Delay SetMods release or LockMods unlock */
-            const size_t max_turns = MIN(
-                (size_t)(
+            స్థిరరాశి కొలత_t max_turns = MIN(
+                (కొలత_t)(
                     XKB_TYPING_EVENT_MODIFIER_MAX_PENDING_TURNS -
                     XKB_TYPING_EVENT_MODIFIER_MIN_PENDING_TURNS
                  ),
-                remaining_events + state->num_pending
+                మిగిలిన_events + state->అంకె_pending
             );
             pending_turns = XKB_TYPING_EVENT_MODIFIER_MIN_PENDING_TURNS
-                          + (size_t)state->prng(state->prng_state)
+                          + (కొలత_t)state->prng(state->prng_state)
                           % (max_turns + 1);
         }
-    } else {
-        return XKB_ERROR_INVALID;
+    } లేకపోతే {
+        తిరిగి XKB_ERROR_INVALID;
     }
 
-    state->events[(*e)++] = (struct xkb_typing_event) {
-        .keycode = key.keycode,
-        .direction = XKB_KEY_DOWN,
+    state->events[(*e)++] = (నిర్మాణం xkb_typing_event) {
+        .keycode = కీలకం.keycode,
+        .direction = XKB_కీలకం_కిందికి,
     };
 
-    struct xkb_pending_typing_event pending[2] = {
+    నిర్మాణం xkb_pending_typing_event pending[2] = {
         {
             .event = {
-                .keycode = key.keycode,
-                .direction = XKB_KEY_DOWN,
+                .keycode = కీలకం.keycode,
+                .direction = XKB_కీలకం_కిందికి,
             },
             .counter = (uint8_t)pending_turns,
         },
         {
             .event = {
-                .keycode = key.keycode,
-                .direction = XKB_KEY_UP,
+                .keycode = కీలకం.keycode,
+                .direction = XKB_కీలకం_పైకి,
             },
-            .mods = key.mods,
+            .mods = కీలకం.mods,
             .counter = (uint8_t)pending_turns,
         },
     };
 
-    if (pending_turns) {
-        if (key.kind == XKB_MOD_LOCK) {
+    ఒకవేళ (pending_turns) {
+        ఒకవేళ (కీలకం.రకం == XKB_MOD_తాళం) {
             /* Immediate release */
             state->events[(*e)++] = pending[1].event;
             /* Delayed unlock (press + release) */
             pending[1].counter++;
-            const enum xkb_status status =
-                add_pending_events(state, pending, ARRAY_SIZE(pending));
-            if (status != XKB_SUCCESS)
-                return status;
+            స్థిరరాశి గణన xkb_స్థితి స్థితి_2 =
+                కూడు_pending_events(state, pending, ARRAY_కొలత(pending));
+            ఒకవేళ (స్థితి_2 != XKB_SUCCESS)
+                తిరిగి స్థితి_2;
             /*
              * Register “locked” state, to avoid tapping the key before
              * delayed key released
              */
-            bit_array_set(state->keys_state, key.keycode);
-        } else {
+            బిట్టు_array_సమితి(state->కీలకాలు_state, కీలకం.keycode);
+        } లేకపోతే {
             /* Delayed release */
-            const enum xkb_status status =
-                add_pending_events(state, &pending[1], 1);
-            if (status != XKB_SUCCESS)
-                return status;
+            స్థిరరాశి గణన xkb_స్థితి స్థితి_2 =
+                కూడు_pending_events(state, &pending[1], 1);
+            ఒకవేళ (స్థితి_2 != XKB_SUCCESS)
+                తిరిగి స్థితి_2;
             /* Register pressed state */
-            bit_array_set(state->keys_state, key.keycode);
+            బిట్టు_array_సమితి(state->కీలకాలు_state, కీలకం.keycode);
         }
-        state->mods |= key.mods;
-    } else {
+        state->mods |= కీలకం.mods;
+    } లేకపోతే {
         /* Immediate release */
         state->events[(*e)++] = pending[1].event;
         /* TODO: add latched modifier to mask state. */
     }
 
-    return XKB_SUCCESS;
+    తిరిగి XKB_SUCCESS;
 }
 
-static enum xkb_status
-add_other_key(struct xkb_typing_state * restrict state,
-              const xkb_keycodes_t * restrict keycodes, size_t * restrict e,
-              uint8_t immediate_release_prob, uint8_t max_pending_turns)
+స్థిర గణన xkb_స్థితి
+కూడు_other_కీలకం(నిర్మాణం xkb_typing_state * పరిమిత state,
+              స్థిరరాశి xkb_keycodes_t * పరిమిత keycodes, కొలత_t * పరిమిత e,
+              uint8_t తక్షణ_release_prob, uint8_t max_pending_turns)
 {
     /* Choose a random key */
-    long idx = -1;
-    for (int tries = 0; tries < KEY_CHOICE_MAX_TRIES; tries++) {
-        idx = state->prng(state->prng_state) % darray_size(*keycodes);
+    దీర్ఘ idx = -1;
+    కొరకు (పూర్ణాంకం tries = 0; tries < కీలకం_CHOICE_MAX_TRIES; tries++) {
+        idx = state->prng(state->prng_state) % darray_కొలత(*keycodes);
         /* Ensure key is not already down */
-        if (!bit_array_get(state->keys_state,
-                           darray_item(*keycodes, idx)))
+        ఒకవేళ (!బిట్టు_array_get(state->కీలకాలు_state,
+                           darray_అంశం(*keycodes, idx)))
         {
-            break;
+            ఆపు;
         }
         idx = -1;
     }
 
     xkb_keycode_t keycode = XKB_KEYCODE_INVALID;
-    if (idx < 0) {
+    ఒకవేళ (idx < 0) {
         /* No released key found: fall back to linear search */
-        const xkb_keycode_t *keycode_;
+        స్థిరరాశి xkb_keycode_t *keycode_;
         darray_foreach(keycode_, *keycodes) {
-            if (!bit_array_get(state->keys_state, *keycode_)) {
+            ఒకవేళ (!బిట్టు_array_get(state->కీలకాలు_state, *keycode_)) {
                 keycode = *keycode_;
                 idx = 0;
-                break;
+                ఆపు;
             }
         }
-        if (idx < 0) {
+        ఒకవేళ (idx < 0) {
             /* No fallback: skip */
-            return (enum xkb_status)XKB_ERROR_NO_RELEASED_KEY;
+            తిరిగి (గణన xkb_స్థితి)XKB_ERROR_NO_RELEASED_కీలకం;
         }
-    } else {
-        keycode = darray_item(*keycodes, idx);
+    } లేకపోతే {
+        keycode = darray_అంశం(*keycodes, idx);
     }
 
-    const size_t remaining_events =
-        state->num_events - state->num_pending - *e;
-    size_t pending_turns;
+    స్థిరరాశి కొలత_t మిగిలిన_events =
+        state->అంకె_events - state->అంకె_pending - *e;
+    కొలత_t pending_turns;
 
-    if (remaining_events >= 2) {
-        const size_t max_turns = MIN(
-            (size_t)max_pending_turns,
-            remaining_events + state->num_pending
+    ఒకవేళ (మిగిలిన_events >= 2) {
+        స్థిరరాశి కొలత_t max_turns = MIN(
+            (కొలత_t)max_pending_turns,
+            మిగిలిన_events + state->అంకె_pending
         );
-        const bool immediate_release = (
-            (immediate_release_prob >= 100) ||
+        స్థిరరాశి bool తక్షణ_release = (
+            (తక్షణ_release_prob >= 100) ||
             !max_turns ||
-            (state->prng(state->prng_state) % 100) < immediate_release_prob
+            (state->prng(state->prng_state) % 100) < తక్షణ_release_prob
         );
-        if (immediate_release) {
+        ఒకవేళ (తక్షణ_release) {
             pending_turns = 0;
-        } else {
-            pending_turns = 1 + (size_t)state->prng(state->prng_state)
+        } లేకపోతే {
+            pending_turns = 1 + (కొలత_t)state->prng(state->prng_state)
                           % max_turns;
         }
-    } else {
-        return XKB_ERROR_INVALID;
+    } లేకపోతే {
+        తిరిగి XKB_ERROR_INVALID;
     }
 
-    state->events[(*e)++] = (struct xkb_typing_event) {
+    state->events[(*e)++] = (నిర్మాణం xkb_typing_event) {
         .keycode = keycode,
-        .direction = XKB_KEY_DOWN,
+        .direction = XKB_కీలకం_కిందికి,
     };
 
-    const struct xkb_pending_typing_event pending = {
+    స్థిరరాశి నిర్మాణం xkb_pending_typing_event pending = {
         .event = {
             .keycode = keycode,
-            .direction = XKB_KEY_UP,
+            .direction = XKB_కీలకం_పైకి,
         },
         .counter = (uint8_t)pending_turns,
     };
-    if (pending_turns) {
-        const enum xkb_status status = add_pending_events(state, &pending, 1);
-        if (status != XKB_SUCCESS)
-            return status;
+    ఒకవేళ (pending_turns) {
+        స్థిరరాశి గణన xkb_స్థితి స్థితి_2 = కూడు_pending_events(state, &pending, 1);
+        ఒకవేళ (స్థితి_2 != XKB_SUCCESS)
+            తిరిగి స్థితి_2;
         /* Register pressed state */
-        bit_array_set(state->keys_state, keycode);
-    } else {
+        బిట్టు_array_సమితి(state->కీలకాలు_state, keycode);
+    } లేకపోతే {
         state->events[(*e)++] = pending.event;
     }
 
-    return XKB_SUCCESS;
+    తిరిగి XKB_SUCCESS;
 }
 
-static enum xkb_key_kind
-pick_key_kind(xkb_prng_t prng, void *prng_state)
+స్థిర గణన xkb_కీలకం_రకం
+pick_కీలకం_రకం(xkb_prng_t prng, శూన్య *prng_state)
 {
-    static const uint8_t weights[_NUM_XKB_KEY_KIND] = {
-        [XKB_KEY_PRINTABLE] = 60,
-        [XKB_KEY_MODIFIER] = 30,
-        [XKB_KEY_MISC] = 10,
+    స్థిర స్థిరరాశి uint8_t weights[అంకె_XKB_కీలకం_రకం] = {
+        [XKB_కీలకం_PRINTABLE] = 60,
+        [XKB_కీలకం_MODIFIER] = 30,
+        [XKB_కీలకం_MISC] = 10,
     };
-    static_assert(XKB_KEY_MISC == 2 &&
-                  XKB_KEY_MISC == _NUM_XKB_KEY_KIND - 1, "");
-    assert(weights[0] + weights[1] + weights[2] == 100);
+    static_assert(XKB_కీలకం_MISC == 2 &&
+                  XKB_కీలకం_MISC == అంకె_XKB_కీలకం_రకం - 1, "");
+    ప్రతిజ్ఞా(weights[0] + weights[1] + weights[2] == 100);
 
-    long r = prng(prng_state) % 100;
-    for (enum xkb_key_kind k = 0; k < _NUM_XKB_KEY_KIND; k++)
-        if ((r -= weights[k]) < 0)
-            return k;
-    return XKB_KEY_PRINTABLE;
+    దీర్ఘ r = prng(prng_state) % 100;
+    కొరకు (గణన xkb_కీలకం_రకం k = 0; k < అంకె_XKB_కీలకం_రకం; k++)
+        ఒకవేళ ((r -= weights[k]) < 0)
+            తిరిగి k;
+    తిరిగి XKB_కీలకం_PRINTABLE;
 }
 
-static void
-xkb_typing_state_destroy(struct xkb_typing_state *state)
+స్థిర శూన్య
+xkb_typing_state_destroy(నిర్మాణం xkb_typing_state *state)
 {
-    free(state->keys_state);
+    విడుదల(state->కీలకాలు_state);
     darray_free(state->pending);
-    free(state->events);
+    విడుదల(state->events);
 }
 
-enum xkb_status
-xkb_typing_input_init(struct xkb_typing_input * restrict typing,
-                      const struct xkb_key_set * restrict keys,
-                      const struct xkb_typing_input_config * restrict config)
+గణన xkb_స్థితి
+xkb_typing_ఆదానం_init(నిర్మాణం xkb_typing_ఆదానం * పరిమిత typing,
+                      స్థిరరాశి నిర్మాణం xkb_కీలకం_సమితి * పరిమిత కీలకాలు,
+                      స్థిరరాశి నిర్మాణం xkb_typing_ఆదానం_config * పరిమిత config)
 {
-    typing->events = NULL;
-    typing->num_events = 0;
+    typing->events = ఖాళీ;
+    typing->అంకె_events = 0;
 
-    if (!config->input_length)
-        return XKB_ERROR_INVALID;
+    ఒకవేళ (!config->ఆదానం_నిడివి)
+        తిరిగి XKB_ERROR_INVALID;
 
-    if (darray_empty(keys->printable) ||
-        darray_empty(keys->modifiers) ||
-        darray_empty(keys->misc))
+    ఒకవేళ (darray_ఖాళీలు(కీలకాలు->printable) ||
+        darray_ఖాళీలు(కీలకాలు->modifiers) ||
+        darray_ఖాళీలు(కీలకాలు->misc))
     {
-        return XKB_ERROR_INVALID;
+        తిరిగి XKB_ERROR_INVALID;
     }
 
-    enum xkb_status status = XKB_SUCCESS;
+    గణన xkb_స్థితి స్థితి_2 = XKB_SUCCESS;
 
     /* NOTE: arrays are sorted because they were built using the key iterator */
-    xkb_keycode_t keycode_max = darray_last(keys->printable, 0);
+    xkb_keycode_t keycode_max = darray_చివరి(కీలకాలు->printable, 0);
     keycode_max = MAX(
-        darray_last(keys->modifiers, (struct xkb_modifier_key){0}).keycode,
+        darray_చివరి(కీలకాలు->modifiers, (నిర్మాణం xkb_modifier_కీలకం){0}).keycode,
         keycode_max
     );
-    keycode_max = MAX(darray_last(keys->misc, 0), keycode_max);
-    const size_t keys_state_num = bit_array_words((size_t)keycode_max + 1);
-    uintptr_t *keys_state = calloc(keys_state_num, sizeof(*keys_state));
+    keycode_max = MAX(darray_చివరి(కీలకాలు->misc, 0), keycode_max);
+    స్థిరరాశి కొలత_t కీలకాలు_state_అంకె = బిట్టు_array_పదాలు((కొలత_t)keycode_max + 1);
+    uintptr_t *కీలకాలు_state = సున్నా_జ్ఞాపకం_ఇవ్వు(కీలకాలు_state_అంకె, పరిమాణం(*కీలకాలు_state));
 
-    const size_t num_events = config->input_length;
-    struct xkb_typing_event *events = calloc(num_events, sizeof(*events));
+    స్థిరరాశి కొలత_t అంకె_events = config->ఆదానం_నిడివి;
+    నిర్మాణం xkb_typing_event *events = సున్నా_జ్ఞాపకం_ఇవ్వు(అంకె_events, పరిమాణం(*events));
 
-    struct xkb_typing_state state = {
-        .keys = keys,
-        .keys_state = keys_state,
+    నిర్మాణం xkb_typing_state state = {
+        .కీలకాలు = కీలకాలు,
+        .కీలకాలు_state = కీలకాలు_state,
         .prng = config->prng,
         .prng_state = config->prng_state,
         .events = events,
-        .num_events = num_events,
+        .అంకె_events = అంకె_events,
         .pending = darray_new(),
-        .num_pending = 0,
+        .అంకె_pending = 0,
     };
 
     xkb_typing_events pending = darray_new();
 
-    if (!keys_state || !events) {
-        status = XKB_ERROR_ALLOCATION_FAILURE;
-        goto error;
+    ఒకవేళ (!కీలకాలు_state || !events) {
+        స్థితి_2 = XKB_ERROR_కేటాయింపు_FAILURE;
+        వెళ్ళు error;
     }
 
     /*
      * Invariant: e + state.num_pending <= state.num_events
      */
 
-    for (size_t e = 0; e < num_events;) {
+    కొరకు (కొలత_t e = 0; e < అంకె_events;) {
         /*
          * Process pending events
          */
-        status = next_pending_events(&state, &pending);
-        if (status != XKB_SUCCESS) {
-            goto error;
+        స్థితి_2 = తదుపరి_pending_events(&state, &pending);
+        ఒకవేళ (స్థితి_2 != XKB_SUCCESS) {
+            వెళ్ళు error;
         }
-        struct xkb_typing_event *event;
+        నిర్మాణం xkb_typing_event *event;
         darray_foreach(event, pending) {
-            if (e >= num_events) {
+            ఒకవేళ (e >= అంకె_events) {
                 /* invariant violated: should be unreachable */
                 PANIC_UNREACHABLE();
             }
             events[e] = *event;
-            bit_array_assign(keys_state, event->keycode, (bool)event->direction);
+            బిట్టు_array_కేటాయించు(కీలకాలు_state, event->keycode, (bool)event->direction);
             e++;
         }
 
-        if (!state.num_pending && e == num_events - 1) {
+        ఒకవేళ (!state.అంకె_pending && e == అంకె_events - 1) {
             /*
              * Cannot add press/release *pair*, so just use an invalid keycode
              * for the last event.
              */
-            events[e] = (struct xkb_typing_event) {
+            events[e] = (నిర్మాణం xkb_typing_event) {
                 .keycode = XKB_KEYCODE_INVALID,
-                .direction = XKB_KEY_DOWN,
+                .direction = XKB_కీలకం_కిందికి,
             };
-            break;
+            ఆపు;
         }
 
-        if (e + 1 + state.num_pending >= num_events) {
+        ఒకవేళ (e + 1 + state.అంకె_pending >= అంకె_events) {
             /* Cannot add new pair of events: require flushing pending events */
-            continue;
+            కొనసాగు;
         }
 
         /*
@@ -568,60 +568,60 @@ xkb_typing_input_init(struct xkb_typing_input * restrict typing,
          */
 
         /* Choose kind of key */
-        static_assert(XKB_KEY_PRINTABLE == 0, "");
-        const enum xkb_key_kind key_kind =
-            pick_key_kind(config->prng, config->prng_state);
-        switch (key_kind) {
-        case XKB_KEY_PRINTABLE:
-            status = add_other_key(
-                &state, &state.keys->printable, &e,
-                XKB_TYPING_EVENT_PRINTABLE_IMMEDIATE_RELEASE_PERCENT,
+        static_assert(XKB_కీలకం_PRINTABLE == 0, "");
+        స్థిరరాశి గణన xkb_కీలకం_రకం కీలకం_రకం =
+            pick_కీలకం_రకం(config->prng, config->prng_state);
+        ఎంపిక (కీలకం_రకం) {
+        స్థితి XKB_కీలకం_PRINTABLE:
+            స్థితి_2 = కూడు_other_కీలకం(
+                &state, &state.కీలకాలు->printable, &e,
+                XKB_TYPING_EVENT_PRINTABLE_తక్షణ_RELEASE_PERCENT,
                 XKB_TYPING_EVENT_PRINTABLE_MAX_PENDING_TURNS
             );
-            break;
-        case XKB_KEY_MODIFIER:
-            status = add_modifier_key(&state, &e);
-            break;
-        case XKB_KEY_MISC:
-            status = add_other_key(
-                &state, &state.keys->misc, &e,
-                XKB_TYPING_EVENT_MISC_IMMEDIATE_RELEASE_PERCENT,
+            ఆపు;
+        స్థితి XKB_కీలకం_MODIFIER:
+            స్థితి_2 = కూడు_modifier_కీలకం(&state, &e);
+            ఆపు;
+        స్థితి XKB_కీలకం_MISC:
+            స్థితి_2 = కూడు_other_కీలకం(
+                &state, &state.కీలకాలు->misc, &e,
+                XKB_TYPING_EVENT_MISC_తక్షణ_RELEASE_PERCENT,
                 XKB_TYPING_EVENT_MISC_MAX_PENDING_TURNS
             );
-            break;
-        default: {
-            static_assert(XKB_KEY_MISC == 2 &&
-                          XKB_KEY_MISC == _NUM_XKB_KEY_KIND - 1, "");
-            status = XKB_ERROR_INVALID;
+            ఆపు;
+        అప్రమేయ: {
+            static_assert(XKB_కీలకం_MISC == 2 &&
+                          XKB_కీలకం_MISC == అంకె_XKB_కీలకం_రకం - 1, "");
+            స్థితి_2 = XKB_ERROR_INVALID;
         }}
 
-        if (status != XKB_SUCCESS &&
-            status != (enum xkb_status)XKB_ERROR_NO_RELEASED_KEY)
+        ఒకవేళ (స్థితి_2 != XKB_SUCCESS &&
+            స్థితి_2 != (గణన xkb_స్థితి)XKB_ERROR_NO_RELEASED_కీలకం)
         {
-            goto error;
+            వెళ్ళు error;
         }
     }
 
-    assert(!state.num_pending);
+    ప్రతిజ్ఞా(!state.అంకె_pending);
 
     typing->events = steal(&state.events);
-    typing->num_events = num_events;
+    typing->అంకె_events = అంకె_events;
 
-    status = XKB_SUCCESS;
+    స్థితి_2 = XKB_SUCCESS;
 
 error:
     darray_free(pending);
     xkb_typing_state_destroy(&state);
 
-    return status;
+    తిరిగి స్థితి_2;
 }
 
-void
-xkb_typing_input_destroy(struct xkb_typing_input *typing)
+శూన్య
+xkb_typing_ఆదానం_destroy(నిర్మాణం xkb_typing_ఆదానం *typing)
 {
-    if (!typing)
-        return;
+    ఒకవేళ (!typing)
+        తిరిగి;
 
-    free(typing->events);
-    typing->events = NULL;
+    విడుదల(typing->events);
+    typing->events = ఖాళీ;
 }

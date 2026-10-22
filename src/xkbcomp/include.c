@@ -8,19 +8,19 @@
  * SPDX-License-Identifier: HPND AND MIT
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include <errno.h>
-#include <limits.h>
-#include <stdio.h>
-#include <string.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
 
-#include "messages-codes.h"
-#include "utils.h"
-#include "xkbcomp-priv.h"
-#include "include.h"
-#include "scanner-utils.h"
-#include "util-paths.h"
+#అన్తర్భావ "messages-codes.h"
+#అన్తర్భావ "utils.h"
+#అన్తర్భావ "xkbcomp-priv.h"
+#అన్తర్భావ "include.h"
+#అన్తర్భావ "scanner-utils.h"
+#అన్తర్భావ "util-paths.h"
 
 /**
  * Parse an include statement. Each call returns a file name, along with
@@ -66,10 +66,10 @@
  *
  */
 bool
-ParseIncludeMap(char **str_inout, char **file_rtrn, char **map_rtrn,
-                char *nextop_rtrn, char **extra_data)
+ParseIncludeMap(అక్షరం **str_inout, అక్షరం **file_rtrn, అక్షరం **map_rtrn,
+                అక్షరం *nextop_rtrn, అక్షరం **extra_దత్తాంశం)
 {
-    char *tmp, *str, *next;
+    అక్షరం *tmp, *str, *తదుపరి;
 
     str = *str_inout;
 
@@ -77,17 +77,17 @@ ParseIncludeMap(char **str_inout, char **file_rtrn, char **map_rtrn,
      * Find the position in the string where the next file is included,
      * if there is more than one left in the statement.
      */
-    next = strpbrk(str, MERGE_MODE_PREFIXES);
-    if (next) {
+    తదుపరి = strpbrk(str, విలీనం_బహుళకం_PREFIXES);
+    ఒకవేళ (తదుపరి) {
         /* Got more files, this function will be called again. */
-        *nextop_rtrn = *next;
+        *nextop_rtrn = *తదుపరి;
         /* Separate the string, for strchr etc. to work on this file only. */
-        *next++ = '\0';
+        *తదుపరి++ = '\0';
     }
-    else {
+    లేకపోతే {
         /* This is the last file in this statement, won't be called again. */
         *nextop_rtrn = '\0';
-        next = NULL;
+        తదుపరి = ఖాళీ;
     }
 
     /*
@@ -95,216 +95,216 @@ ParseIncludeMap(char **str_inout, char **file_rtrn, char **map_rtrn,
      * it goes after the file name and map.
      */
     tmp = strchr(str, ':');
-    if (tmp != NULL) {
+    ఒకవేళ (tmp != ఖాళీ) {
         *tmp++ = '\0';
-        *extra_data = strdup(tmp);
+        *extra_దత్తాంశం = strdup(tmp);
     }
-    else {
-        *extra_data = NULL;
+    లేకపోతే {
+        *extra_దత్తాంశం = ఖాళీ;
     }
 
     /* Look for a map, if any. */
     tmp = strchr(str, '(');
-    if (tmp == NULL) {
+    ఒకవేళ (tmp == ఖాళీ) {
         /* No map. */
         *file_rtrn = strdup(str);
-        *map_rtrn = NULL;
+        *map_rtrn = ఖాళీ;
     }
-    else if (str[0] == '(') {
+    లేకపోతే ఒకవేళ (str[0] == '(') {
         /* Map without file - invalid. */
-        free(*extra_data);
-        return false;
+        విడుదల(*extra_దత్తాంశం);
+        తిరిగి false;
     }
-    else {
+    లేకపోతే {
         /* Got a map; separate the file and the map for the strdup's. */
         *tmp++ = '\0';
         *file_rtrn = strdup(str);
         str = tmp;
         tmp = strchr(str, ')');
-        if (tmp == NULL || tmp[1] != '\0') {
-            free(*file_rtrn);
-            free(*extra_data);
-            return false;
+        ఒకవేళ (tmp == ఖాళీ || tmp[1] != '\0') {
+            విడుదల(*file_rtrn);
+            విడుదల(*extra_దత్తాంశం);
+            తిరిగి false;
         }
         *tmp++ = '\0';
         *map_rtrn = strdup(str);
     }
 
     /* Set up the next file for the next call, if any. */
-    if (*nextop_rtrn == '\0')
-        *str_inout = NULL;
-    else if (is_merge_mode_prefix(*nextop_rtrn))
-        *str_inout = next;
-    else
-        return false;
+    ఒకవేళ (*nextop_rtrn == '\0')
+        *str_inout = ఖాళీ;
+    లేకపోతే ఒకవేళ (is_విలీనం_బహుళకం_ఉపసర్గ(*nextop_rtrn))
+        *str_inout = తదుపరి;
+    లేకపోతే
+        తిరిగి false;
 
-    return true;
+    తిరిగి true;
 }
 
-static const char *xkb_file_type_include_dirs[_FILE_TYPE_NUM_ENTRIES] = {
+స్థిర స్థిరరాశి అక్షరం *xkb_file_type_include_dirs[FILE_TYPE_అంకె_ENTRIES] = {
     [FILE_TYPE_KEYCODES] = "keycodes",
     [FILE_TYPE_TYPES] = "types",
     [FILE_TYPE_COMPAT] = "compat",
     [FILE_TYPE_SYMBOLS] = "symbols",
     [FILE_TYPE_GEOMETRY] = "geometry",
     [FILE_TYPE_KEYMAP] = "keymap",
-    [FILE_TYPE_RULES] = "rules",
+    [FILE_TYPE_నియమాలు] = "rules",
 };
 
 /**
  * Return the xkb directory based on the type.
  */
-static const char *
-DirectoryForInclude(enum xkb_file_type type)
+స్థిర స్థిరరాశి అక్షరం *
+DirectoryForInclude(గణన xkb_file_type type)
 {
-    if (type >= _FILE_TYPE_NUM_ENTRIES)
-        return "";
-    return xkb_file_type_include_dirs[type];
+    ఒకవేళ (type >= FILE_TYPE_అంకె_ENTRIES)
+        తిరిగి "";
+    తిరిగి xkb_file_type_include_dirs[type];
 }
 
-static void
-LogIncludePaths(struct xkb_context *ctx)
+స్థిర శూన్య
+LogIncludePaths(నిర్మాణం xkb_context *ctx)
 {
-    if (xkb_context_num_include_paths(ctx) > 0) {
-        log_err(ctx, XKB_ERROR_INCLUDED_FILE_NOT_FOUND,
+    ఒకవేళ (xkb_context_అంకె_include_paths(ctx) > 0) {
+        log_err(ctx, XKB_ERROR_INCLUDED_FILE_NOT_దొరికింది,
                 "%u include paths searched:\n",
-                xkb_context_num_include_paths(ctx));
-        for (unsigned int i = 0; i < xkb_context_num_include_paths(ctx); i++)
-            log_err(ctx, XKB_ERROR_INCLUDED_FILE_NOT_FOUND,
+                xkb_context_అంకె_include_paths(ctx));
+        కొరకు (గుర్తులేని పూర్ణాంకం i = 0; i < xkb_context_అంకె_include_paths(ctx); i++)
+            log_err(ctx, XKB_ERROR_INCLUDED_FILE_NOT_దొరికింది,
                     "\t%s\n",
-                    xkb_context_include_path_get(ctx, i));
+                    xkb_context_include_మార్గం_get(ctx, i));
     }
-    else {
-        log_err(ctx, XKB_ERROR_INCLUDED_FILE_NOT_FOUND,
+    లేకపోతే {
+        log_err(ctx, XKB_ERROR_INCLUDED_FILE_NOT_దొరికింది,
                 "There are no include paths to search\n");
     }
 
-    if (xkb_context_num_failed_include_paths(ctx) > 0) {
-        log_err(ctx, XKB_ERROR_INCLUDED_FILE_NOT_FOUND,
+    ఒకవేళ (xkb_context_అంకె_failed_include_paths(ctx) > 0) {
+        log_err(ctx, XKB_ERROR_INCLUDED_FILE_NOT_దొరికింది,
                 "%u include paths could not be added:\n",
-                xkb_context_num_failed_include_paths(ctx));
-        for (darray_size_t i = 0;
-             i < xkb_context_num_failed_include_paths(ctx);
+                xkb_context_అంకె_failed_include_paths(ctx));
+        కొరకు (darray_కొలత_t i = 0;
+             i < xkb_context_అంకె_failed_include_paths(ctx);
              i++)
-            log_err(ctx, XKB_ERROR_INCLUDED_FILE_NOT_FOUND,
+            log_err(ctx, XKB_ERROR_INCLUDED_FILE_NOT_దొరికింది,
                     "\t%s\n",
-                    xkb_context_failed_include_path_get(ctx, i));
+                    xkb_context_failed_include_మార్గం_get(ctx, i));
     }
 }
 
-static size_t
-expand_percent(struct xkb_context *ctx, const char* parent_file_name,
-               const char* typeDir, char *buf, size_t buf_size,
-               const char *name, size_t name_len)
+స్థిర కొలత_t
+expand_percent(నిర్మాణం xkb_context *ctx, స్థిరరాశి అక్షరం* మాతృ_file_name,
+               స్థిరరాశి అక్షరం* typeDir, అక్షరం *buf, కొలత_t buf_కొలత,
+               స్థిరరాశి అక్షరం *name, కొలత_t name_len)
 {
-    struct scanner s;
-    scanner_init(&s, ctx, name, name_len, parent_file_name, NULL);
+    నిర్మాణం scanner s;
+    scanner_init(&s, ctx, name, name_len, మాతృ_file_name, ఖాళీ);
     s.buf_pos = 0;
 
-    while (!scanner_eof(&s) && !scanner_eol(&s)) {
-        if (scanner_chr(&s, '%')) {
-            if (scanner_chr(&s, '%')) {
+    అయితే (!scanner_eof(&s) && !scanner_eol(&s)) {
+        ఒకవేళ (scanner_chr(&s, '%')) {
+            ఒకవేళ (scanner_chr(&s, '%')) {
                 scanner_buf_append(&s, '%');
             }
-            else if (scanner_chr(&s, 'H')) {
-                const char *home = xkb_context_getenv(ctx, "HOME");
-                if (!home) {
-                    scanner_err(&s, XKB_LOG_MESSAGE_NO_ID,
+            లేకపోతే ఒకవేళ (scanner_chr(&s, 'H')) {
+                స్థిరరాశి అక్షరం *home = xkb_context_getenv(ctx, "HOME");
+                ఒకవేళ (!home) {
+                    scanner_err(&s, XKB_LOG_సందేశం_NO_ID,
                                 "%%H was used in an include statement, but the "
                                 "HOME environment variable is not set");
-                    return 0;
+                    తిరిగి 0;
                 }
-                if (!scanner_buf_appends(&s, home)) {
-                    scanner_err(&s, XKB_ERROR_INSUFFICIENT_BUFFER_SIZE,
+                ఒకవేళ (!scanner_buf_appends(&s, home)) {
+                    scanner_err(&s, XKB_ERROR_INSUFFICIENT_బఫరు_కొలత,
                                 "include path after expanding %%H is too long");
-                    return 0;
+                    తిరిగి 0;
                 }
             }
-            else if (scanner_chr(&s, 'S')) {
-                const char *default_root =
-                    xkb_context_include_path_get_system_path(ctx);
-                if (!scanner_buf_appends(&s, default_root) ||
+            లేకపోతే ఒకవేళ (scanner_chr(&s, 'S')) {
+                స్థిరరాశి అక్షరం *default_మూలం =
+                    xkb_context_include_మార్గం_get_system_మార్గం(ctx);
+                ఒకవేళ (!scanner_buf_appends(&s, default_మూలం) ||
                     !scanner_buf_append(&s, '/') ||
                     !scanner_buf_appends(&s, typeDir)) {
-                    scanner_err(&s, XKB_ERROR_INSUFFICIENT_BUFFER_SIZE,
+                    scanner_err(&s, XKB_ERROR_INSUFFICIENT_బఫరు_కొలత,
                                 "include path after expanding %%S is too long");
-                    return 0;
+                    తిరిగి 0;
                 }
             }
-            else if (scanner_chr(&s, 'E')) {
-                const char *default_root =
-                    xkb_context_include_path_get_extra_path(ctx);
-                if (!scanner_buf_appends(&s, default_root) ||
+            లేకపోతే ఒకవేళ (scanner_chr(&s, 'E')) {
+                స్థిరరాశి అక్షరం *default_మూలం =
+                    xkb_context_include_మార్గం_get_extra_మార్గం(ctx);
+                ఒకవేళ (!scanner_buf_appends(&s, default_మూలం) ||
                     !scanner_buf_append(&s, '/') ||
                     !scanner_buf_appends(&s, typeDir)) {
-                    scanner_err(&s, XKB_ERROR_INSUFFICIENT_BUFFER_SIZE,
+                    scanner_err(&s, XKB_ERROR_INSUFFICIENT_బఫరు_కొలత,
                                 "include path after expanding %%E is too long");
-                    return 0;
+                    తిరిగి 0;
                 }
             }
-            else {
-                scanner_err(&s, XKB_ERROR_INSUFFICIENT_BUFFER_SIZE,
+            లేకపోతే {
+                scanner_err(&s, XKB_ERROR_INSUFFICIENT_బఫరు_కొలత,
                             "unknown %% format (%c) in include statement",
                             scanner_peek(&s));
-                return 0;
+                తిరిగి 0;
             }
         }
-        else {
-            scanner_buf_append(&s, scanner_next(&s));
+        లేకపోతే {
+            scanner_buf_append(&s, scanner_తదుపరి(&s));
         }
     }
-    if (!scanner_buf_append(&s, '\0')) {
-        scanner_err(&s, XKB_ERROR_INSUFFICIENT_BUFFER_SIZE,
-                    "include path is too long; max: %zu", sizeof(s.buf));
-        return 0;
+    ఒకవేళ (!scanner_buf_append(&s, '\0')) {
+        scanner_err(&s, XKB_ERROR_INSUFFICIENT_బఫరు_కొలత,
+                    "include path is too long; max: %zu", పరిమాణం(s.buf));
+        తిరిగి 0;
     }
-    if (unlikely(s.buf_pos > buf_size)) {
-        scanner_err(&s, XKB_ERROR_INSUFFICIENT_BUFFER_SIZE,
-                    "include path is too long: %zu > %zu", s.buf_pos, buf_size);
-        return 0;
+    ఒకవేళ (unlikely(s.buf_pos > buf_కొలత)) {
+        scanner_err(&s, XKB_ERROR_INSUFFICIENT_బఫరు_కొలత,
+                    "include path is too long: %zu > %zu", s.buf_pos, buf_కొలత);
+        తిరిగి 0;
     }
-    memcpy(buf, s.buf, s.buf_pos);
-    return s.buf_pos;
+    జ్ఞాపకం_నకలు(buf, s.buf, s.buf_pos);
+    తిరిగి s.buf_pos;
 }
 
 ssize_t
-expand_path(struct xkb_context *ctx, const char* parent_file_name,
-            const char *name, size_t name_len, enum xkb_file_type type,
-            char *buf, size_t buf_size)
+expand_మార్గం(నిర్మాణం xkb_context *ctx, స్థిరరాశి అక్షరం* మాతృ_file_name,
+            స్థిరరాశి అక్షరం *name, కొలత_t name_len, గణన xkb_file_type type,
+            అక్షరం *buf, కొలత_t buf_కొలత)
 {
     /* Detect %-expansion */
-    size_t k;
-    for (k = 0; k < name_len; k++) {
-        if (name[k] == '%') {
-            goto expand;
+    కొలత_t k;
+    కొరకు (k = 0; k < name_len; k++) {
+        ఒకవేళ (name[k] == '%') {
+            వెళ్ళు expand;
         }
     }
 
-    return 0;
+    తిరిగి 0;
 
 expand:
     /* Process %-expansion */
 
     /* Copy prefix (usual case: k == 0) */
-    if (unlikely(k >= buf_size)) {
-        log_err(ctx, XKB_ERROR_INVALID_PATH,
+    ఒకవేళ (unlikely(k >= buf_కొలత)) {
+        log_err(ctx, XKB_ERROR_INVALID_మార్గం,
                 "Path is too long: %zu > %zu, "
                 "got raw path: %.*s\n",
-                k, buf_size, (unsigned int) name_len, name);
-        return -1;
+                k, buf_కొలత, (గుర్తులేని పూర్ణాంకం) name_len, name);
+        తిరిగి -1;
     }
-    memcpy(buf, name, k);
+    జ్ఞాపకం_నకలు(buf, name, k);
 
     /* Proceed to %-expansion */
-    const char *typeDir = DirectoryForInclude(type);
-    size_t count = expand_percent(ctx, parent_file_name, typeDir,
-                                  buf + k, buf_size - k,
+    స్థిరరాశి అక్షరం *typeDir = DirectoryForInclude(type);
+    కొలత_t లెక్క = expand_percent(ctx, మాతృ_file_name, typeDir,
+                                  buf + k, buf_కొలత - k,
                                   name + k, name_len - k);
-    if (!count)
-        return -1;
-    count += k;
-    assert(buf[count - 1] == '\0');
-    return (ssize_t) count - 1;
+    ఒకవేళ (!లెక్క)
+        తిరిగి -1;
+    లెక్క += k;
+    ప్రతిజ్ఞా(buf[లెక్క - 1] == '\0');
+    తిరిగి (ssize_t) లెక్క - 1;
 }
 
 /**
@@ -318,68 +318,68 @@ expand:
  * If this function returns NULL, no more files are available.
  */
 FILE *
-FindFileInXkbPath(struct xkb_context *ctx, const char* parent_file_name,
-                  const char *name, size_t name_len, enum xkb_file_type type,
-                  char *buf, size_t buf_size, unsigned int *offset,
+కనుగొను_File_లోపల_Xkb_మార్గం(నిర్మాణం xkb_context *ctx, స్థిరరాశి అక్షరం* మాతృ_file_name,
+                  స్థిరరాశి అక్షరం *name, కొలత_t name_len, గణన xkb_file_type type,
+                  అక్షరం *buf, కొలత_t buf_కొలత, గుర్తులేని పూర్ణాంకం *స్థానభ్రంశం,
                   bool required)
 {
     /* We do not handle absolute paths here */
-    assert(!is_absolute_path(name));
+    ప్రతిజ్ఞా(!is_absolute_మార్గం(name));
 
-    FILE *file = NULL;
-    char *name_buffer = NULL;
-    const char *typeDir = DirectoryForInclude(type);
+    FILE *file = ఖాళీ;
+    అక్షరం *name_బఫరు = ఖాళీ;
+    స్థిరరాశి అక్షరం *typeDir = DirectoryForInclude(type);
 
-    for (unsigned int i = *offset; i < xkb_context_num_include_paths(ctx); i++) {
-        if (!snprintf_safe(buf, buf_size, "%s/%s/%.*s",
-                           xkb_context_include_path_get(ctx, i),
-                           typeDir, (unsigned int) name_len, name)) {
-            log_err(ctx, XKB_ERROR_INVALID_PATH,
+    కొరకు (గుర్తులేని పూర్ణాంకం i = *స్థానభ్రంశం; i < xkb_context_అంకె_include_paths(ctx); i++) {
+        ఒకవేళ (!snprintf_సురక్షిత(buf, buf_కొలత, "%s/%s/%.*s",
+                           xkb_context_include_మార్గం_get(ctx, i),
+                           typeDir, (గుర్తులేని పూర్ణాంకం) name_len, name)) {
+            log_err(ctx, XKB_ERROR_INVALID_మార్గం,
                     "Path is too long: expected max length of %zu, "
                     "got: %s/%s/%.*s\n",
-                    buf_size, xkb_context_include_path_get(ctx, i),
-                    typeDir, (unsigned int) name_len, name);
-            continue;
+                    buf_కొలత, xkb_context_include_మార్గం_get(ctx, i),
+                    typeDir, (గుర్తులేని పూర్ణాంకం) name_len, name);
+            కొనసాగు;
         }
 
         file = fopen(buf, "rb");
-        if (file) {
-            *offset = i;
-            goto out;
+        ఒకవేళ (file) {
+            *స్థానభ్రంశం = i;
+            వెళ్ళు బహిర్గతం;
         }
     }
 
     /* We only print warnings if we can’t find the file on the first lookup */
-    if (required && *offset == 0) {
-        log_err(ctx, XKB_ERROR_INCLUDED_FILE_NOT_FOUND,
+    ఒకవేళ (required && *స్థానభ్రంశం == 0) {
+        log_err(ctx, XKB_ERROR_INCLUDED_FILE_NOT_దొరికింది,
                 "Couldn't find file \"%s/%.*s\" in include paths\n",
-                typeDir, (unsigned int) name_len, name);
+                typeDir, (గుర్తులేని పూర్ణాంకం) name_len, name);
         LogIncludePaths(ctx);
     }
 
-out:
-    free(name_buffer);
-    return file;
+బహిర్గతం:
+    విడుదల(name_బఫరు);
+    తిరిగి file;
 }
 
 bool
-ExceedsIncludeMaxDepth(struct xkb_context *ctx, unsigned int include_depth)
+Exceeds_Include_Max_లోతు(నిర్మాణం xkb_context *ctx, గుర్తులేని పూర్ణాంకం include_లోతు)
 {
-    if (include_depth >= INCLUDE_MAX_DEPTH) {
+    ఒకవేళ (include_లోతు >= INCLUDE_MAX_లోతు) {
         log_err(ctx, XKB_ERROR_RECURSIVE_INCLUDE,
                 "Exceeded include depth threshold (%u)",
-                INCLUDE_MAX_DEPTH);
-        return true;
-    } else {
-        return false;
+                INCLUDE_MAX_లోతు);
+        తిరిగి true;
+    } లేకపోతే {
+        తిరిగి false;
     }
 }
 
 XkbFile *
-ProcessIncludeFile(struct xkb_context *ctx,
-                   const struct parser_keymap_config *config,
-                   const IncludeStmt *stmt,
-                   enum xkb_file_type file_type, char *path, size_t path_size)
+ProcessIncludeFile(నిర్మాణం xkb_context *ctx,
+                   స్థిరరాశి నిర్మాణం parser_keymap_config *config,
+                   స్థిరరాశి IncludeStmt *stmt,
+                   గణన xkb_file_type file_type, అక్షరం *మార్గం, కొలత_t మార్గం_కొలత)
 {
     /*
      * Resolve include statement:
@@ -388,38 +388,38 @@ ProcessIncludeFile(struct xkb_context *ctx,
      *   `default`: exact match), else fallback to the first *implicit* default
      *   map (weak match).
      */
-    XkbFile *xkb_file = NULL;  /* Exact match */
-    XkbFile *candidate = NULL; /* Weak match */
+    XkbFile *xkb_file = ఖాళీ;  /* Exact match */
+    XkbFile *candidate = ఖాళీ; /* Weak match */
 
-    const char *stmt_file = stmt->file;
-    size_t stmt_file_len = strlen(stmt_file);
+    స్థిరరాశి అక్షరం *stmt_file = stmt->file;
+    కొలత_t stmt_file_len = అక్షరశ్రేణి_పొడవు(stmt_file);
 
     /* Process %-expansion, if any */
     // FIXME: use parent file name instead of “(unknow)”.
-    const ssize_t expanded = expand_path(ctx, "(unknown)",
+    స్థిరరాశి ssize_t expanded = expand_మార్గం(ctx, "(unknown)",
                                          stmt_file, stmt_file_len, file_type,
-                                         path, path_size);
-    if (expanded < 0) {
+                                         మార్గం, మార్గం_కొలత);
+    ఒకవేళ (expanded < 0) {
         /* Error */
-        return NULL;
-    } else if (expanded > 0) {
+        తిరిగి ఖాళీ;
+    } లేకపోతే ఒకవేళ (expanded > 0) {
         /* %-expanded */
-        stmt_file = path;
-        stmt_file_len = (size_t) expanded;
-        assert(stmt_file[stmt_file_len] == '\0');
+        stmt_file = మార్గం;
+        stmt_file_len = (కొలత_t) expanded;
+        ప్రతిజ్ఞా(stmt_file[stmt_file_len] == '\0');
     }
 
     /* Lookup the first candidate */
     FILE* file;
-    unsigned int offset = 0;
-    const bool absolute_path = is_absolute_path(stmt_file);
-    if (absolute_path) {
+    గుర్తులేని పూర్ణాంకం స్థానభ్రంశం = 0;
+    స్థిరరాశి bool absolute_మార్గం = is_absolute_మార్గం(stmt_file);
+    ఒకవేళ (absolute_మార్గం) {
         /* Absolute path: no need for lookup in XKB paths */
-        assert(stmt_file[stmt_file_len] == '\0');
+        ప్రతిజ్ఞా(stmt_file[stmt_file_len] == '\0');
         file = fopen(stmt_file, "rb");
-    } else {
+    } లేకపోతే {
         /* Relative path: lookup the first XKB path */
-        if (unlikely(expanded)) {
+        ఒకవేళ (unlikely(expanded)) {
             /*
              * Relative path after expansion
              *
@@ -432,81 +432,81 @@ ProcessIncludeFile(struct xkb_context *ctx,
              * - this is an edge case;
              * we simply make the lookup fail.
              */
-            file = NULL;
-        } else {
+            file = ఖాళీ;
+        } లేకపోతే {
             // FIXME: use parent file name instead of “(unknow)”.
-            file = FindFileInXkbPath(ctx, "(unknown)",
+            file = కనుగొను_File_లోపల_Xkb_మార్గం(ctx, "(unknown)",
                                      stmt_file, stmt_file_len, file_type,
-                                     path, path_size, &offset, true);
+                                     మార్గం, మార్గం_కొలత, &స్థానభ్రంశం, true);
         }
     }
 
-    while (file) {
+    అయితే (file) {
         xkb_file = XkbParseFile(ctx, config, file, stmt->file, stmt->map);
         fclose(file);
 
-        if (xkb_file) {
-            if (xkb_file->file_type != file_type) {
+        ఒకవేళ (xkb_file) {
+            ఒకవేళ (xkb_file->file_type != file_type) {
                 log_err(ctx, XKB_ERROR_INVALID_INCLUDED_FILE,
                         "Include file of wrong type (expected %s, got %s); "
                         "Include file \"%s\" ignored\n",
-                        xkb_file_type_to_string(file_type),
-                        xkb_file_type_to_string(xkb_file->file_type), stmt->file);
+                        xkb_file_type_గమ్యం_string(file_type),
+                        xkb_file_type_గమ్యం_string(xkb_file->file_type), stmt->file);
                 FreeXkbFile(xkb_file);
-                xkb_file = NULL;
-            } else if (stmt->map || (xkb_file->flags & MAP_IS_DEFAULT)) {
+                xkb_file = ఖాళీ;
+            } లేకపోతే ఒకవేళ (stmt->map || (xkb_file->flags & MAP_IS_DEFAULT)) {
                 /*
                  * Exact match: explicit map name or explicit default map.
                  * Lookup stops here.
                  */
-                break;
-            } else if (!candidate) {
+                ఆపు;
+            } లేకపోతే ఒకవేళ (!candidate) {
                 /*
                  * Weak match: looking for an explicit default map, but found
                  * only the first *implicit* default map (e.g. first map of the
                  * file). Use as fallback, but keep looking for an exact match.
                  */
                 candidate = xkb_file;
-                xkb_file = NULL;
-            } else {
+                xkb_file = ఖాళీ;
+            } లేకపోతే {
                 /*
                  * Weak match, but we already have a previous candidate.
                  * Keep looking for an exact match.
                  */
                 FreeXkbFile(xkb_file);
-                xkb_file = NULL;
+                xkb_file = ఖాళీ;
             }
         }
 
-        if (absolute_path) {
+        ఒకవేళ (absolute_మార్గం) {
             /* There is no point to search further if the path is absolute */
-            break;
+            ఆపు;
         }
 
-        offset++;
-        file = FindFileInXkbPath(ctx, "(unknown)",
+        స్థానభ్రంశం++;
+        file = కనుగొను_File_లోపల_Xkb_మార్గం(ctx, "(unknown)",
                                  stmt_file, stmt_file_len, file_type,
-                                 path, path_size, &offset, true);
+                                 మార్గం, మార్గం_కొలత, &స్థానభ్రంశం, true);
     }
 
-    if (!xkb_file) {
+    ఒకవేళ (!xkb_file) {
         /* No exact match: use weak match, if any */
         xkb_file = candidate;
-    } else {
+    } లేకపోతే {
         /* Found exact match: discard weak match, if any */
         FreeXkbFile(candidate);
     }
 
-    if (!xkb_file) {
-        if (stmt->map)
+    ఒకవేళ (!xkb_file) {
+        ఒకవేళ (stmt->map)
             log_err(ctx, XKB_ERROR_INVALID_INCLUDED_FILE,
                     "Couldn't process include statement for '%s(%s)'\n",
                     stmt->file, stmt->map);
-        else
+        లేకపోతే
             log_err(ctx, XKB_ERROR_INVALID_INCLUDED_FILE,
                     "Couldn't process include statement for '%s'\n",
                     stmt->file);
     }
 
-    return xkb_file;
+    తిరిగి xkb_file;
 }

@@ -3,759 +3,759 @@
  * SPDX-License-Identifier: HPND
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include <stdint.h>
+#అన్తర్భావ <stdint.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "xkbcomp-priv.h"
-#include "expr.h"
-#include "keymap.h"
-#include "keysym.h"
-#include "messages-codes.h"
-#include "text.h"
-#include "xkbcomp/ast.h"
-#include "utils.h"
-#include "util-numbers.h"
-#include "util-checked-arithmetic.h"
+#అన్తర్భావ "xkbcommon/xkbcommon.h"
+#అన్తర్భావ "xkbcomp-priv.h"
+#అన్తర్భావ "expr.h"
+#అన్తర్భావ "keymap.h"
+#అన్తర్భావ "keysym.h"
+#అన్తర్భావ "messages-codes.h"
+#అన్తర్భావ "text.h"
+#అన్తర్భావ "xkbcomp/ast.h"
+#అన్తర్భావ "utils.h"
+#అన్తర్భావ "util-numbers.h"
+#అన్తర్భావ "util-checked-arithmetic.h"
 
-typedef bool (*IdentLookupFunc)(struct xkb_context *ctx, const void *priv,
-                                xkb_atom_t field, uint32_t *val_rtrn,
+రకనిర్వచనం bool (*IdentLookupFunc)(నిర్మాణం xkb_context *ctx, స్థిరరాశి శూన్య *priv,
+                                xkb_atom_t క్షేత్రం_2, uint32_t *val_rtrn,
                                 bool *pending);
 
 bool
-ExprResolveLhs(struct xkb_context *ctx, const ExprDef *expr,
-               const char **elem_rtrn, const char **field_rtrn,
-               ExprDef **index_rtrn)
+సమాసం_Resolve_Lhs(నిర్మాణం xkb_context *ctx, స్థిరరాశి సమాసం_Def *సమాసం,
+               స్థిరరాశి అక్షరం **elem_rtrn, స్థిరరాశి అక్షరం **క్షేత్రం_rtrn,
+               సమాసం_Def **సూచీ_rtrn)
 {
-    switch (expr->common.type) {
-    case STMT_EXPR_IDENT:
-        *elem_rtrn = NULL;
-        *field_rtrn = xkb_atom_text(ctx, expr->ident.ident);
-        *index_rtrn = NULL;
-        return (*field_rtrn != NULL);
-    case STMT_EXPR_FIELD_REF:
-        *elem_rtrn = xkb_atom_text(ctx, expr->field_ref.element);
-        *field_rtrn = xkb_atom_text(ctx, expr->field_ref.field);
-        *index_rtrn = NULL;
-        return (*elem_rtrn != NULL && *field_rtrn != NULL);
-    case STMT_EXPR_ARRAY_REF:
-        *elem_rtrn = xkb_atom_text(ctx, expr->array_ref.element);
-        *field_rtrn = xkb_atom_text(ctx, expr->array_ref.field);
-        *index_rtrn = expr->array_ref.entry;
-        if (expr->array_ref.element != XKB_ATOM_NONE && *elem_rtrn == NULL)
-            return false;
-        if (*field_rtrn == NULL)
-            return false;
-        return true;
-    default:
-        break;
+    ఎంపిక (సమాసం->common.type) {
+    స్థితి STMT_సమాసం_IDENT:
+        *elem_rtrn = ఖాళీ;
+        *క్షేత్రం_rtrn = xkb_atom_పాఠ్యం(ctx, సమాసం->ident.ident);
+        *సూచీ_rtrn = ఖాళీ;
+        తిరిగి (*క్షేత్రం_rtrn != ఖాళీ);
+    స్థితి STMT_సమాసం_క్షేత్రం_REF:
+        *elem_rtrn = xkb_atom_పాఠ్యం(ctx, సమాసం->క్షేత్రం_ref.element);
+        *క్షేత్రం_rtrn = xkb_atom_పాఠ్యం(ctx, సమాసం->క్షేత్రం_ref.క్షేత్రం_2);
+        *సూచీ_rtrn = ఖాళీ;
+        తిరిగి (*elem_rtrn != ఖాళీ && *క్షేత్రం_rtrn != ఖాళీ);
+    స్థితి STMT_సమాసం_ARRAY_REF:
+        *elem_rtrn = xkb_atom_పాఠ్యం(ctx, సమాసం->array_ref.element);
+        *క్షేత్రం_rtrn = xkb_atom_పాఠ్యం(ctx, సమాసం->array_ref.క్షేత్రం_2);
+        *సూచీ_rtrn = సమాసం->array_ref.నమోదు_2;
+        ఒకవేళ (సమాసం->array_ref.element != XKB_ATOM_NONE && *elem_rtrn == ఖాళీ)
+            తిరిగి false;
+        ఒకవేళ (*క్షేత్రం_rtrn == ఖాళీ)
+            తిరిగి false;
+        తిరిగి true;
+    అప్రమేయ:
+        ఆపు;
     }
     log_wsgo(ctx,
              XKB_ERROR_INVALID_XKB_SYNTAX,
-             "Unexpected operator %d in ResolveLhs\n", expr->common.type);
-    return false;
+             "Unexpected operator %d in ResolveLhs\n", సమాసం->common.type);
+    తిరిగి false;
 }
 
-static bool
-SimpleLookup(struct xkb_context *ctx, const void *priv, xkb_atom_t field,
+స్థిర bool
+SimpleLookup(నిర్మాణం xkb_context *ctx, స్థిరరాశి శూన్య *priv, xkb_atom_t క్షేత్రం_2,
              uint32_t *val_rtrn, bool *pending_rtrn)
 {
-    if (!priv || field == XKB_ATOM_NONE)
-        return false;
+    ఒకవేళ (!priv || క్షేత్రం_2 == XKB_ATOM_NONE)
+        తిరిగి false;
 
-    const char *str = xkb_atom_text(ctx, field);
-    for (const LookupEntry *entry = priv; entry && entry->name; entry++) {
-        if (istreq(str, entry->name)) {
-            *val_rtrn = entry->value;
-            return true;
+    స్థిరరాశి అక్షరం *str = xkb_atom_పాఠ్యం(ctx, క్షేత్రం_2);
+    కొరకు (స్థిరరాశి Lookup_నమోదు *నమోదు_2 = priv; నమోదు_2 && నమోదు_2->name; నమోదు_2++) {
+        ఒకవేళ (istreq(str, నమోదు_2->name)) {
+            *val_rtrn = నమోదు_2->విలువ;
+            తిరిగి true;
         }
     }
 
-    return false;
+    తిరిగి false;
 }
 
-struct named_integer_pattern {
-    const char *prefix;
-    size_t prefix_length;
+నిర్మాణం named_integer_నమూనా {
+    స్థిరరాశి అక్షరం *ఉపసర్గ;
+    కొలత_t ఉపసర్గ_నిడివి;
     uint32_t min;
     uint32_t max;
-    const LookupEntry *entries;
-    const LookupEntry *pending_entries;
-    bool is_mask;
-    enum xkb_message_code error_id;
+    స్థిరరాశి Lookup_నమోదు *entries;
+    స్థిరరాశి Lookup_నమోదు *pending_entries;
+    bool is_ముసుగు;
+    గణన xkb_సందేశం_సంకేతం error_id;
 };
 
 /* Parse a number expressed with the pattern `<prefix><decimal number>` */
-static bool
-NamedIntegerPatternLookup(struct xkb_context *ctx, const void *priv,
-                          xkb_atom_t field, uint32_t *val_rtrn,
+స్థిర bool
+Named_Integer_నమూనా_Lookup(నిర్మాణం xkb_context *ctx, స్థిరరాశి శూన్య *priv,
+                          xkb_atom_t క్షేత్రం_2, uint32_t *val_rtrn,
                           bool *pending_rtrn)
 {
-    if (!priv || field == XKB_ATOM_NONE)
-        return false;
+    ఒకవేళ (!priv || క్షేత్రం_2 == XKB_ATOM_NONE)
+        తిరిగి false;
 
-    const char * const str = xkb_atom_text(ctx, field);
-    const struct named_integer_pattern * const pattern = priv;
+    స్థిరరాశి అక్షరం * స్థిరరాశి str = xkb_atom_పాఠ్యం(ctx, క్షేత్రం_2);
+    స్థిరరాశి నిర్మాణం named_integer_నమూనా * స్థిరరాశి నమూనా = priv;
 
-    const int count = (istrneq(str, pattern->prefix, pattern->prefix_length))
-        ? parse_dec_to_uint32_t(str + pattern->prefix_length, SIZE_MAX, val_rtrn)
+    స్థిరరాశి పూర్ణాంకం లెక్క = (istrneq(str, నమూనా->ఉపసర్గ, నమూనా->ఉపసర్గ_నిడివి))
+        ? parse_dec_గమ్యం_uint32_t(str + నమూనా->ఉపసర్గ_నిడివి, SIZE_MAX, val_rtrn)
         : 0;
 
-    if (count > 0 && *(str + pattern->prefix_length + count) == '\0') {
-        if (*val_rtrn < pattern->min || *val_rtrn > pattern->max) {
-            log_err(ctx, pattern->error_id,
+    ఒకవేళ (లెక్క > 0 && *(str + నమూనా->ఉపసర్గ_నిడివి + లెక్క) == '\0') {
+        ఒకవేళ (*val_rtrn < నమూనా->min || *val_rtrn > నమూనా->max) {
+            log_err(ctx, నమూనా->error_id,
                     "%s index %"PRIu32" is out of range (%"PRIu32"..%"PRIu32")\n",
-                    pattern->prefix, *val_rtrn, pattern->min, pattern->max);
-            return false;
+                    నమూనా->ఉపసర్గ, *val_rtrn, నమూనా->min, నమూనా->max);
+            తిరిగి false;
         }
-        if (pattern->is_mask) {
+        ఒకవేళ (నమూనా->is_ముసుగు) {
             /* Compute mask (bit 0 = min index) */
-            assert(*val_rtrn - pattern->min < 32);
-            *val_rtrn = UINT32_C(1) << (*val_rtrn - pattern->min);
+            ప్రతిజ్ఞా(*val_rtrn - నమూనా->min < 32);
+            *val_rtrn = UINT32_C(1) << (*val_rtrn - నమూనా->min);
         }
-        return true;
-    } else {
-        if (pattern->entries &&
-            SimpleLookup(ctx, pattern->entries, field, val_rtrn, NULL)) {
-            return true;
+        తిరిగి true;
+    } లేకపోతే {
+        ఒకవేళ (నమూనా->entries &&
+            SimpleLookup(ctx, నమూనా->entries, క్షేత్రం_2, val_rtrn, ఖాళీ)) {
+            తిరిగి true;
         }
-        if (pattern->pending_entries && pending_rtrn &&
-            SimpleLookup(ctx, pattern->pending_entries, field, val_rtrn, NULL)) {
+        ఒకవేళ (నమూనా->pending_entries && pending_rtrn &&
+            SimpleLookup(ctx, నమూనా->pending_entries, క్షేత్రం_2, val_rtrn, ఖాళీ)) {
             *pending_rtrn = true;
-            return true;
+            తిరిగి true;
         }
-        return false;
+        తిరిగి false;
     }
 }
 
 /* Data passed in the *priv argument for LookupModMask. */
-typedef struct {
-    const struct xkb_mod_set *mods;
-    enum mod_type mod_type;
-} LookupModMaskPriv;
+రకనిర్వచనం నిర్మాణం {
+    స్థిరరాశి నిర్మాణం xkb_mod_సమితి *mods;
+    గణన mod_type mod_type;
+} Lookup_Mod_ముసుగు_Priv;
 
-static bool
-LookupModMask(struct xkb_context *ctx, const void *priv, xkb_atom_t field,
-              xkb_mod_mask_t *val_rtrn, bool *pending_rtrn)
+స్థిర bool
+Lookup_Mod_ముసుగు(నిర్మాణం xkb_context *ctx, స్థిరరాశి శూన్య *priv, xkb_atom_t క్షేత్రం_2,
+              xkb_mod_ముసుగు_t *val_rtrn, bool *pending_rtrn)
 {
-    const char *str = xkb_atom_text(ctx, field);
-    if (!str)
-        return false;
+    స్థిరరాశి అక్షరం *str = xkb_atom_పాఠ్యం(ctx, క్షేత్రం_2);
+    ఒకవేళ (!str)
+        తిరిగి false;
 
-    if (istreq(str, "all")) {
-        *val_rtrn  = MOD_REAL_MASK_ALL;
-        return true;
+    ఒకవేళ (istreq(str, "all")) {
+        *val_rtrn  = MOD_REAL_ముసుగు_ALL;
+        తిరిగి true;
     }
 
-    if (istreq(str, "none")) {
+    ఒకవేళ (istreq(str, "none")) {
         *val_rtrn = 0;
-        return true;
+        తిరిగి true;
     }
 
-    const LookupModMaskPriv *arg = priv;
-    const struct xkb_mod_set *mods = arg->mods;
-    const enum mod_type mod_type = arg->mod_type;
-    const xkb_mod_index_t ndx = XkbModNameToIndex(mods, field, mod_type);
-    if (ndx == XKB_MOD_INVALID)
-        return false;
+    స్థిరరాశి Lookup_Mod_ముసుగు_Priv *arg = priv;
+    స్థిరరాశి నిర్మాణం xkb_mod_సమితి *mods = arg->mods;
+    స్థిరరాశి గణన mod_type mod_type = arg->mod_type;
+    స్థిరరాశి xkb_mod_సూచీ_t ndx = Xkb_Mod_Name_గమ్యం_సూచీ(mods, క్షేత్రం_2, mod_type);
+    ఒకవేళ (ndx == XKB_MOD_INVALID)
+        తిరిగి false;
 
     *val_rtrn = (UINT32_C(1) << ndx);
-    return true;
+    తిరిగి true;
 }
 
 bool
-ExprResolveBoolean(struct xkb_context *ctx, const ExprDef *expr,
-                   bool *set_rtrn)
+సమాసం_Resolve_Boolean(నిర్మాణం xkb_context *ctx, స్థిరరాశి సమాసం_Def *సమాసం,
+                   bool *సమితి_rtrn)
 {
     bool ok = false;
-    const char *ident;
+    స్థిరరాశి అక్షరం *ident;
 
-    switch (expr->common.type) {
-    case STMT_EXPR_BOOLEAN_LITERAL:
-        *set_rtrn = expr->boolean.set;
-        return true;
+    ఎంపిక (సమాసం->common.type) {
+    స్థితి STMT_సమాసం_BOOLEAN_LITERAL:
+        *సమితి_rtrn = సమాసం->boolean.సమితి;
+        తిరిగి true;
 
-    case STMT_EXPR_STRING_LITERAL:
-    case STMT_EXPR_INTEGER_LITERAL:
-    case STMT_EXPR_FLOAT_LITERAL:
-    case STMT_EXPR_KEYNAME_LITERAL:
-    case STMT_EXPR_KEYSYM_LITERAL:
-        log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
+    స్థితి STMT_సమాసం_STRING_LITERAL:
+    స్థితి STMT_సమాసం_INTEGER_LITERAL:
+    స్థితి STMT_సమాసం_FLOAT_LITERAL:
+    స్థితి STMT_సమాసం_KEYNAME_LITERAL:
+    స్థితి STMT_సమాసం_KEYSYM_LITERAL:
+        log_err(ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE,
                 "Found %s where boolean was expected\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_గమ్యం_string(సమాసం->common.type));
+        తిరిగి false;
 
-    case STMT_EXPR_IDENT:
-        ident = xkb_atom_text(ctx, expr->ident.ident);
-        if (ident) {
-            if (istreq(ident, "true") ||
+    స్థితి STMT_సమాసం_IDENT:
+        ident = xkb_atom_పాఠ్యం(ctx, సమాసం->ident.ident);
+        ఒకవేళ (ident) {
+            ఒకవేళ (istreq(ident, "true") ||
                 istreq(ident, "yes") ||
                 istreq(ident, "on")) {
-                *set_rtrn = true;
-                return true;
+                *సమితి_rtrn = true;
+                తిరిగి true;
             }
-            else if (istreq(ident, "false") ||
+            లేకపోతే ఒకవేళ (istreq(ident, "false") ||
                      istreq(ident, "no") ||
                      istreq(ident, "off")) {
-                *set_rtrn = false;
-                return true;
+                *సమితి_rtrn = false;
+                తిరిగి true;
             }
         }
         log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                 "Identifier \"%s\" of type boolean is unknown\n", ident);
-        return false;
+        తిరిగి false;
 
-    case STMT_EXPR_FIELD_REF:
-        log_err(ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
+    స్థితి STMT_సమాసం_క్షేత్రం_REF:
+        log_err(ctx, XKB_ERROR_INVALID_వ్యక్తీకరణ_TYPE,
                 "Default \"%s.%s\" of type boolean is unknown\n",
-                xkb_atom_text(ctx, expr->field_ref.element),
-                xkb_atom_text(ctx, expr->field_ref.field));
-        return false;
+                xkb_atom_పాఠ్యం(ctx, సమాసం->క్షేత్రం_ref.element),
+                xkb_atom_పాఠ్యం(ctx, సమాసం->క్షేత్రం_ref.క్షేత్రం_2));
+        తిరిగి false;
 
-    case STMT_EXPR_INVERT:
-    case STMT_EXPR_NOT:
-        ok = ExprResolveBoolean(ctx, expr->unary.child, set_rtrn);
-        if (ok)
-            *set_rtrn = !*set_rtrn;
-        return ok;
-    case STMT_EXPR_ADD:
-    case STMT_EXPR_SUBTRACT:
-    case STMT_EXPR_MULTIPLY:
-    case STMT_EXPR_DIVIDE:
-    case STMT_EXPR_ASSIGN:
-    case STMT_EXPR_NEGATE:
-    case STMT_EXPR_UNARY_PLUS:
-    case STMT_EXPR_EMPTY_LIST:
-    case STMT_EXPR_ACTION_DECL:
-    case STMT_EXPR_ACTION_LIST:
-    case STMT_EXPR_KEYSYM_LIST:
+    స్థితి STMT_సమాసం_INVERT:
+    స్థితి STMT_సమాసం_NOT:
+        ok = సమాసం_Resolve_Boolean(ctx, సమాసం->unary.బిడ్డ, సమితి_rtrn);
+        ఒకవేళ (ok)
+            *సమితి_rtrn = !*సమితి_rtrn;
+        తిరిగి ok;
+    స్థితి STMT_సమాసం_కూడు:
+    స్థితి STMT_సమాసం_వ్యవకలనం:
+    స్థితి STMT_సమాసం_MULTIPLY:
+    స్థితి STMT_సమాసం_DIVIDE:
+    స్థితి STMT_సమాసం_కేటాయించు:
+    స్థితి STMT_సమాసం_NEGATE:
+    స్థితి STMT_సమాసం_UNARY_PLUS:
+    స్థితి STMT_సమాసం_ఖాళీలు_LIST:
+    స్థితి STMT_సమాసం_ACTION_DECL:
+    స్థితి STMT_సమాసం_ACTION_LIST:
+    స్థితి STMT_సమాసం_KEYSYM_LIST:
         log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                 "%s of boolean values not permitted\n",
-                stmt_type_to_string(expr->common.type));
-        break;
+                stmt_type_గమ్యం_string(సమాసం->common.type));
+        ఆపు;
 
-    default:
+    అప్రమేయ:
         log_wsgo(ctx, XKB_ERROR_UNKNOWN_OPERATOR,
                  "Unknown operator %d in ResolveBoolean\n",
-                 expr->common.type);
-        break;
+                 సమాసం->common.type);
+        ఆపు;
     }
 
-    return false;
+    తిరిగి false;
 }
 
-static bool
-ExprResolveIntegerLookup(struct xkb_context *ctx, const ExprDef *expr,
+స్థిర bool
+సమాసం_Resolve_Integer_Lookup(నిర్మాణం xkb_context *ctx, స్థిరరాశి సమాసం_Def *సమాసం,
                          int64_t *val_rtrn, bool *pending,
-                         IdentLookupFunc lookup, const void *lookupPriv)
+                         IdentLookupFunc lookup, స్థిరరాశి శూన్య *lookupPriv)
 {
     bool ok = false;
     int64_t l = 0, r = 0;
     uint32_t u = 0;
-    ExprDef *left, *right;
+    సమాసం_Def *ఎడమ, *కుడి;
 
-    switch (expr->common.type) {
-    case STMT_EXPR_INTEGER_LITERAL:
-        *val_rtrn = expr->integer.ival;
-        return true;
+    ఎంపిక (సమాసం->common.type) {
+    స్థితి STMT_సమాసం_INTEGER_LITERAL:
+        *val_rtrn = సమాసం->integer.ival;
+        తిరిగి true;
 
-    case STMT_EXPR_STRING_LITERAL:
-    case STMT_EXPR_FLOAT_LITERAL:
-    case STMT_EXPR_BOOLEAN_LITERAL:
-    case STMT_EXPR_KEYNAME_LITERAL:
-    case STMT_EXPR_KEYSYM_LITERAL:
-        log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
+    స్థితి STMT_సమాసం_STRING_LITERAL:
+    స్థితి STMT_సమాసం_FLOAT_LITERAL:
+    స్థితి STMT_సమాసం_BOOLEAN_LITERAL:
+    స్థితి STMT_సమాసం_KEYNAME_LITERAL:
+    స్థితి STMT_సమాసం_KEYSYM_LITERAL:
+        log_err(ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE,
                 "Found %s where an int was expected\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_గమ్యం_string(సమాసం->common.type));
+        తిరిగి false;
 
-    case STMT_EXPR_IDENT:
-        if (lookup)
-            ok = lookup(ctx, lookupPriv, expr->ident.ident, &u, pending);
+    స్థితి STMT_సమాసం_IDENT:
+        ఒకవేళ (lookup)
+            ok = lookup(ctx, lookupPriv, సమాసం->ident.ident, &u, pending);
 
-        if (!ok)
+        ఒకవేళ (!ok)
             log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                     "Identifier \"%s\" of type int is unknown\n",
-                    xkb_atom_text(ctx, expr->ident.ident));
-        else
+                    xkb_atom_పాఠ్యం(ctx, సమాసం->ident.ident));
+        లేకపోతే
             *val_rtrn = (int64_t) u;
 
-        if (pending && *pending) {
+        ఒకవేళ (pending && *pending) {
             /* Postpone computation */
-            return false;
+            తిరిగి false;
         }
 
-        return ok;
+        తిరిగి ok;
 
-    case STMT_EXPR_FIELD_REF:
-        log_err(ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
+    స్థితి STMT_సమాసం_క్షేత్రం_REF:
+        log_err(ctx, XKB_ERROR_INVALID_వ్యక్తీకరణ_TYPE,
                 "Default \"%s.%s\" of type int is unknown\n",
-                xkb_atom_text(ctx, expr->field_ref.element),
-                xkb_atom_text(ctx, expr->field_ref.field));
-        return false;
+                xkb_atom_పాఠ్యం(ctx, సమాసం->క్షేత్రం_ref.element),
+                xkb_atom_పాఠ్యం(ctx, సమాసం->క్షేత్రం_ref.క్షేత్రం_2));
+        తిరిగి false;
 
-    case STMT_EXPR_ADD:
-    case STMT_EXPR_SUBTRACT:
-    case STMT_EXPR_MULTIPLY:
-    case STMT_EXPR_DIVIDE:
-        left = expr->binary.left;
-        right = expr->binary.right;
-        if (!ExprResolveIntegerLookup(ctx, left, &l, pending, lookup, lookupPriv) ||
-            !ExprResolveIntegerLookup(ctx, right, &r, pending, lookup, lookupPriv))
-            return false;
+    స్థితి STMT_సమాసం_కూడు:
+    స్థితి STMT_సమాసం_వ్యవకలనం:
+    స్థితి STMT_సమాసం_MULTIPLY:
+    స్థితి STMT_సమాసం_DIVIDE:
+        ఎడమ = సమాసం->ద్విమాన.ఎడమ;
+        కుడి = సమాసం->ద్విమాన.కుడి;
+        ఒకవేళ (!సమాసం_Resolve_Integer_Lookup(ctx, ఎడమ, &l, pending, lookup, lookupPriv) ||
+            !సమాసం_Resolve_Integer_Lookup(ctx, కుడి, &r, pending, lookup, lookupPriv))
+            తిరిగి false;
 
-        switch (expr->common.type) {
-        case STMT_EXPR_ADD:
-            if (ckd_add(val_rtrn, l, r)) {
-                log_err(ctx, XKB_ERROR_INTEGER_OVERFLOW,
+        ఎంపిక (సమాసం->common.type) {
+        స్థితి STMT_సమాసం_కూడు:
+            ఒకవేళ (ckd_కూడు(val_rtrn, l, r)) {
+                log_err(ctx, XKB_ERROR_INTEGER_అధికప్రవాహం,
                         "Addition %"PRId64" + %"PRId64" has an invalid "
                         "mathematical result: %"PRId64"\n",
                         l, r, *val_rtrn);
-                return false;
+                తిరిగి false;
             }
-            break;
-        case STMT_EXPR_SUBTRACT:
-            if (ckd_sub(val_rtrn, l, r)) {
-                log_err(ctx, XKB_ERROR_INTEGER_OVERFLOW,
+            ఆపు;
+        స్థితి STMT_సమాసం_వ్యవకలనం:
+            ఒకవేళ (ckd_sub(val_rtrn, l, r)) {
+                log_err(ctx, XKB_ERROR_INTEGER_అధికప్రవాహం,
                         "Substraction %"PRId64" - %"PRId64" has an invalid "
                         "mathematical result: %"PRId64"\n",
                         l, r, *val_rtrn);
-                return false;
+                తిరిగి false;
             }
-            break;
-        case STMT_EXPR_MULTIPLY:
-            if (ckd_mul(val_rtrn, l, r)) {
-                log_err(ctx, XKB_ERROR_INTEGER_OVERFLOW,
+            ఆపు;
+        స్థితి STMT_సమాసం_MULTIPLY:
+            ఒకవేళ (ckd_mul(val_rtrn, l, r)) {
+                log_err(ctx, XKB_ERROR_INTEGER_అధికప్రవాహం,
                         "Multiplication %"PRId64" * %"PRId64" has an invalid "
                         "mathematical result: %"PRId64"\n",
                         l, r, *val_rtrn);
-                return false;
+                తిరిగి false;
             }
-            break;
-        case STMT_EXPR_DIVIDE:
-            if (r == 0) {
+            ఆపు;
+        స్థితి STMT_సమాసం_DIVIDE:
+            ఒకవేళ (r == 0) {
                 log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                         "Cannot divide by zero: %"PRId64" / %"PRId64"\n", l, r);
-                return false;
+                తిరిగి false;
             }
             *val_rtrn = l / r;
-            break;
-        default:
+            ఆపు;
+        అప్రమేయ:
             log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                     "%s of integers not permitted\n",
-                    stmt_type_to_string(expr->common.type));
-            return false;
+                    stmt_type_గమ్యం_string(సమాసం->common.type));
+            తిరిగి false;
         }
 
-        return true;
+        తిరిగి true;
 
-    case STMT_EXPR_ASSIGN:
+    స్థితి STMT_సమాసం_కేటాయించు:
         log_wsgo(ctx,
                  XKB_ERROR_INVALID_OPERATION,
                  "Assignment operator not implemented yet\n");
-        break;
+        ఆపు;
 
-    case STMT_EXPR_NOT:
+    స్థితి STMT_సమాసం_NOT:
         log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                 "The ! operator cannot be applied to an integer\n");
-        return false;
+        తిరిగి false;
 
-    case STMT_EXPR_INVERT:
-    case STMT_EXPR_NEGATE:
-        left = expr->unary.child;
-        if (!ExprResolveIntegerLookup(ctx, left, &l, pending, lookup, lookupPriv))
-            return false;
+    స్థితి STMT_సమాసం_INVERT:
+    స్థితి STMT_సమాసం_NEGATE:
+        ఎడమ = సమాసం->unary.బిడ్డ;
+        ఒకవేళ (!సమాసం_Resolve_Integer_Lookup(ctx, ఎడమ, &l, pending, lookup, lookupPriv))
+            తిరిగి false;
 
-        *val_rtrn = (expr->common.type == STMT_EXPR_NEGATE ? -l : ~l);
-        return true;
+        *val_rtrn = (సమాసం->common.type == STMT_సమాసం_NEGATE ? -l : ~l);
+        తిరిగి true;
 
-    case STMT_EXPR_UNARY_PLUS:
-        left = expr->unary.child;
-        return ExprResolveIntegerLookup(ctx, left, val_rtrn, pending, lookup,
+    స్థితి STMT_సమాసం_UNARY_PLUS:
+        ఎడమ = సమాసం->unary.బిడ్డ;
+        తిరిగి సమాసం_Resolve_Integer_Lookup(ctx, ఎడమ, val_rtrn, pending, lookup,
                                         lookupPriv);
 
-    default:
+    అప్రమేయ:
         log_wsgo(ctx, XKB_ERROR_UNKNOWN_OPERATOR,
                  "Unknown operator %d in ResolveInteger\n",
-                 expr->common.type);
-        break;
+                 సమాసం->common.type);
+        ఆపు;
     }
 
-    return false;
+    తిరిగి false;
 }
 
 bool
-ExprResolveInteger(struct xkb_context *ctx, const ExprDef *expr,
+సమాసం_Resolve_Integer(నిర్మాణం xkb_context *ctx, స్థిరరాశి సమాసం_Def *సమాసం,
                    int64_t *val_rtrn)
 {
-    return ExprResolveIntegerLookup(ctx, expr, val_rtrn, NULL, NULL, NULL);
+    తిరిగి సమాసం_Resolve_Integer_Lookup(ctx, సమాసం, val_rtrn, ఖాళీ, ఖాళీ, ఖాళీ);
 }
 
-enum xkb_parser_error
-ExprResolveGroup(const struct xkb_keymap_info *keymap_info,
-                 const ExprDef *expr, bool absolute,
-                 xkb_layout_index_t *group_rtrn, bool *pending)
+గణన xkb_parser_error
+సమాసం_Resolve_సమూహం(స్థిరరాశి నిర్మాణం xkb_keymap_info *keymap_info,
+                 స్థిరరాశి సమాసం_Def *సమాసం, bool absolute,
+                 xkb_layout_సూచీ_t *సమూహం_rtrn, bool *pending)
 {
-    static const LookupEntry pendingGroupIndexNames[] = {
-        { GROUP_LAST_INDEX_NAME, 0 },
-        { NULL, 0 }
+    స్థిర స్థిరరాశి Lookup_నమోదు pending_సమూహం_సూచీ_పేర్లు[] = {
+        { సమూహం_చివరి_సూచీ_NAME, 0 },
+        { ఖాళీ, 0 }
     };
 
-    const struct named_integer_pattern group_name_pattern = {
+    స్థిరరాశి నిర్మాణం named_integer_నమూనా సమూహం_name_నమూనా = {
         /* Prefix is title-cased, because it is also used in error messages */
-        .prefix = "Group",
-        .prefix_length = sizeof("Group") - 1,
+        .ఉపసర్గ = "Group",
+        .ఉపసర్గ_నిడివి = పరిమాణం("Group") - 1,
         .min = 1,
         .max = keymap_info->features.max_groups,
-        .is_mask = false,
-        .entries = keymap_info->lookup.groupIndexNames,
-        .pending_entries = pendingGroupIndexNames,
-        .error_id = XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
+        .is_ముసుగు = false,
+        .entries = keymap_info->lookup.సమూహం_సూచీ_పేర్లు,
+        .pending_entries = pending_సమూహం_సూచీ_పేర్లు,
+        .error_id = XKB_ERROR_UNSUPPORTED_LAYOUT_సూచీ_2,
     };
 
-    int64_t result = 0;
-    if (!ExprResolveIntegerLookup(keymap_info->keymap.ctx, expr, &result, pending,
-                                  NamedIntegerPatternLookup, &group_name_pattern))
-        return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+    int64_t ఫలితం = 0;
+    ఒకవేళ (!సమాసం_Resolve_Integer_Lookup(keymap_info->keymap.ctx, సమాసం, &ఫలితం, pending,
+                                  Named_Integer_నమూనా_Lookup, &సమూహం_name_నమూనా))
+        తిరిగి (keymap_info->strict & PARSER_NO_క్షేత్రం_TYPE_MISMATCH)
             ? PARSER_FATAL_ERROR
             : PARSER_RECOVERABLE_ERROR;
 
-    if (result < (int64_t)absolute || result > keymap_info->features.max_groups) {
-        log_err(keymap_info->keymap.ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_,
+    ఒకవేళ (ఫలితం < (int64_t)absolute || ఫలితం > keymap_info->features.max_groups) {
+        log_err(keymap_info->keymap.ctx, XKB_ERROR_UNSUPPORTED_LAYOUT_సూచీ_2,
                 "Group index %"PRId64" is out of range (%u..%"PRIu32")\n",
-                result, absolute, keymap_info->features.max_groups);
-        return (keymap_info->strict & PARSER_NO_FIELD_TYPE_MISMATCH)
+                ఫలితం, absolute, keymap_info->features.max_groups);
+        తిరిగి (keymap_info->strict & PARSER_NO_క్షేత్రం_TYPE_MISMATCH)
             ? PARSER_FATAL_ERROR
             : PARSER_RECOVERABLE_ERROR;
     }
 
-    *group_rtrn = (xkb_layout_index_t) result;
-    return PARSER_SUCCESS;
+    *సమూహం_rtrn = (xkb_layout_సూచీ_t) ఫలితం;
+    తిరిగి PARSER_SUCCESS;
 }
 
 bool
-ExprResolveLevel(struct xkb_context *ctx, const ExprDef *expr,
-                 xkb_level_index_t *level_rtrn)
+సమాసం_Resolve_Level(నిర్మాణం xkb_context *ctx, స్థిరరాశి సమాసం_Def *సమాసం,
+                 xkb_level_సూచీ_t *level_rtrn)
 {
-    static const struct named_integer_pattern level_name_pattern = {
+    స్థిర స్థిరరాశి నిర్మాణం named_integer_నమూనా level_name_నమూనా = {
         /* Prefix is title-cased, because it is also used in error messages */
-        .prefix = "Level",
-        .prefix_length = sizeof("Level") - 1,
+        .ఉపసర్గ = "Level",
+        .ఉపసర్గ_నిడివి = పరిమాణం("Level") - 1,
         .min = 1,
         .max = XKB_LEVEL_MAX_IMPL,
-        .is_mask = false,
-        .entries = NULL,
-        .error_id = XKB_ERROR_UNSUPPORTED_SHIFT_LEVEL,
+        .is_ముసుగు = false,
+        .entries = ఖాళీ,
+        .error_id = XKB_ERROR_UNSUPPORTED_జరుపు_LEVEL,
     };
-    int64_t result = 0;
-    if (!ExprResolveIntegerLookup(ctx, expr, &result, NULL,
-                                  NamedIntegerPatternLookup,
-                                  &level_name_pattern))
-        return false;
+    int64_t ఫలితం = 0;
+    ఒకవేళ (!సమాసం_Resolve_Integer_Lookup(ctx, సమాసం, &ఫలితం, ఖాళీ,
+                                  Named_Integer_నమూనా_Lookup,
+                                  &level_name_నమూనా))
+        తిరిగి false;
 
-    if (result < 1 || result > XKB_LEVEL_MAX_IMPL) {
-        log_err(ctx, XKB_ERROR_UNSUPPORTED_SHIFT_LEVEL,
+    ఒకవేళ (ఫలితం < 1 || ఫలితం > XKB_LEVEL_MAX_IMPL) {
+        log_err(ctx, XKB_ERROR_UNSUPPORTED_జరుపు_LEVEL,
                 "Shift level %"PRId64" is out of range (1..%u)\n",
-                result, XKB_LEVEL_MAX_IMPL);
-        return false;
+                ఫలితం, XKB_LEVEL_MAX_IMPL);
+        తిరిగి false;
     }
 
     /* Level is zero-indexed from now on. */
-    *level_rtrn = (xkb_level_index_t) (result - 1);
-    return true;
+    *level_rtrn = (xkb_level_సూచీ_t) (ఫలితం - 1);
+    తిరిగి true;
 }
 
 bool
-ExprResolveButton(struct xkb_context *ctx, const ExprDef *expr, int64_t *btn_rtrn)
+సమాసం_Resolve_Button(నిర్మాణం xkb_context *ctx, స్థిరరాశి సమాసం_Def *సమాసం, int64_t *btn_rtrn)
 {
-    return ExprResolveIntegerLookup(ctx, expr, btn_rtrn, NULL, SimpleLookup,
-                                    buttonNames);
+    తిరిగి సమాసం_Resolve_Integer_Lookup(ctx, సమాసం, btn_rtrn, ఖాళీ, SimpleLookup,
+                                    button_పేర్లు);
 }
 
 bool
-ExprResolveString(struct xkb_context *ctx, const ExprDef *expr,
+సమాసం_Resolve_String(నిర్మాణం xkb_context *ctx, స్థిరరాశి సమాసం_Def *సమాసం,
                   xkb_atom_t *val_rtrn)
 {
-    switch (expr->common.type) {
-    case STMT_EXPR_STRING_LITERAL:
-        *val_rtrn = expr->string.str;
-        return true;
+    ఎంపిక (సమాసం->common.type) {
+    స్థితి STMT_సమాసం_STRING_LITERAL:
+        *val_rtrn = సమాసం->string.str;
+        తిరిగి true;
 
-    case STMT_EXPR_INTEGER_LITERAL:
-    case STMT_EXPR_FLOAT_LITERAL:
-    case STMT_EXPR_BOOLEAN_LITERAL:
-    case STMT_EXPR_KEYNAME_LITERAL:
-    case STMT_EXPR_KEYSYM_LITERAL:
-        log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
+    స్థితి STMT_సమాసం_INTEGER_LITERAL:
+    స్థితి STMT_సమాసం_FLOAT_LITERAL:
+    స్థితి STMT_సమాసం_BOOLEAN_LITERAL:
+    స్థితి STMT_సమాసం_KEYNAME_LITERAL:
+    స్థితి STMT_సమాసం_KEYSYM_LITERAL:
+        log_err(ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE,
                 "Found %s, expected a string\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_గమ్యం_string(సమాసం->common.type));
+        తిరిగి false;
 
-    case STMT_EXPR_IDENT:
+    స్థితి STMT_సమాసం_IDENT:
         log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                 "Identifier \"%s\" of type string not found\n",
-                xkb_atom_text(ctx, expr->ident.ident));
-        return false;
+                xkb_atom_పాఠ్యం(ctx, సమాసం->ident.ident));
+        తిరిగి false;
 
-    case STMT_EXPR_FIELD_REF:
-        log_err(ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
+    స్థితి STMT_సమాసం_క్షేత్రం_REF:
+        log_err(ctx, XKB_ERROR_INVALID_వ్యక్తీకరణ_TYPE,
                 "Default \"%s.%s\" of type string not found\n",
-                xkb_atom_text(ctx, expr->field_ref.element),
-                xkb_atom_text(ctx, expr->field_ref.field));
-        return false;
+                xkb_atom_పాఠ్యం(ctx, సమాసం->క్షేత్రం_ref.element),
+                xkb_atom_పాఠ్యం(ctx, సమాసం->క్షేత్రం_ref.క్షేత్రం_2));
+        తిరిగి false;
 
-    case STMT_EXPR_ADD:
-    case STMT_EXPR_SUBTRACT:
-    case STMT_EXPR_MULTIPLY:
-    case STMT_EXPR_DIVIDE:
-    case STMT_EXPR_ASSIGN:
-    case STMT_EXPR_NEGATE:
-    case STMT_EXPR_INVERT:
-    case STMT_EXPR_NOT:
-    case STMT_EXPR_UNARY_PLUS:
-    case STMT_EXPR_EMPTY_LIST:
-    case STMT_EXPR_ACTION_DECL:
-    case STMT_EXPR_ACTION_LIST:
-    case STMT_EXPR_KEYSYM_LIST:
+    స్థితి STMT_సమాసం_కూడు:
+    స్థితి STMT_సమాసం_వ్యవకలనం:
+    స్థితి STMT_సమాసం_MULTIPLY:
+    స్థితి STMT_సమాసం_DIVIDE:
+    స్థితి STMT_సమాసం_కేటాయించు:
+    స్థితి STMT_సమాసం_NEGATE:
+    స్థితి STMT_సమాసం_INVERT:
+    స్థితి STMT_సమాసం_NOT:
+    స్థితి STMT_సమాసం_UNARY_PLUS:
+    స్థితి STMT_సమాసం_ఖాళీలు_LIST:
+    స్థితి STMT_సమాసం_ACTION_DECL:
+    స్థితి STMT_సమాసం_ACTION_LIST:
+    స్థితి STMT_సమాసం_KEYSYM_LIST:
         log_err(ctx, XKB_ERROR_INVALID_XKB_SYNTAX,
                 "%s of strings not permitted\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_గమ్యం_string(సమాసం->common.type));
+        తిరిగి false;
 
-    default:
+    అప్రమేయ:
         log_wsgo(ctx, XKB_ERROR_UNKNOWN_OPERATOR,
                  "Unknown operator %d in ResolveString\n",
-                 expr->common.type);
-        break;
+                 సమాసం->common.type);
+        ఆపు;
     }
-    return false;
+    తిరిగి false;
 }
 
 bool
-ExprResolveEnum(struct xkb_context *ctx, const ExprDef *expr,
-                uint32_t *val_rtrn, const LookupEntry *values)
+సమాసం_Resolve_Enum(నిర్మాణం xkb_context *ctx, స్థిరరాశి సమాసం_Def *సమాసం,
+                uint32_t *val_rtrn, స్థిరరాశి Lookup_నమోదు *విలువలు)
 {
-    if (expr->common.type != STMT_EXPR_IDENT) {
-        log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
+    ఒకవేళ (సమాసం->common.type != STMT_సమాసం_IDENT) {
+        log_err(ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE,
                 "Found a %s where an enumerated value was expected\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_గమ్యం_string(సమాసం->common.type));
+        తిరిగి false;
     }
 
-    if (!SimpleLookup(ctx, values, expr->ident.ident, val_rtrn, NULL)) {
+    ఒకవేళ (!SimpleLookup(ctx, విలువలు, సమాసం->ident.ident, val_rtrn, ఖాళీ)) {
         log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                 "Illegal identifier %s; expected one of:\n",
-                xkb_atom_text(ctx, expr->ident.ident));
-        while (values && values->name)
+                xkb_atom_పాఠ్యం(ctx, సమాసం->ident.ident));
+        అయితే (విలువలు && విలువలు->name)
         {
-            log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER, "\t%s\n", values->name);
-            values++;
+            log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER, "\t%s\n", విలువలు->name);
+            విలువలు++;
         }
-        return false;
+        తిరిగి false;
     }
 
-    return true;
+    తిరిగి true;
 }
 
-static bool
-ExprResolveMaskLookup(struct xkb_context *ctx, const ExprDef *expr,
+స్థిర bool
+సమాసం_Resolve_ముసుగు_Lookup(నిర్మాణం xkb_context *ctx, స్థిరరాశి సమాసం_Def *సమాసం,
                       uint32_t *val_rtrn, bool *pending,
-                      IdentLookupFunc lookup, const void *lookupPriv)
+                      IdentLookupFunc lookup, స్థిరరాశి శూన్య *lookupPriv)
 {
     bool ok = false;
     uint32_t l = 0, r = 0;
     int64_t v = 0;
-    ExprDef *left, *right;
-    const char *bogus = NULL;
+    సమాసం_Def *ఎడమ, *కుడి;
+    స్థిరరాశి అక్షరం *bogus = ఖాళీ;
 
-    switch (expr->common.type) {
-    case STMT_EXPR_INTEGER_LITERAL:
-        if (expr->integer.ival < 0 || expr->integer.ival > UINT32_MAX) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    ఎంపిక (సమాసం->common.type) {
+    స్థితి STMT_సమాసం_INTEGER_LITERAL:
+        ఒకవేళ (సమాసం->integer.ival < 0 || సమాసం->integer.ival > UINT32_MAX) {
+            log_err(ctx, XKB_LOG_సందేశం_NO_ID,
                     "Mask %s%#"PRIxMAX" is out of range (0..%#"PRIx32")\n",
-                    expr->integer.ival < 0 ? "-" : "",
-                    imaxabs(expr->integer.ival),
+                    సమాసం->integer.ival < 0 ? "-" : "",
+                    imaxabs(సమాసం->integer.ival),
                     UINT32_MAX);
-            return false;
+            తిరిగి false;
         }
-        *val_rtrn = (uint32_t) expr->integer.ival;
-        return true;
+        *val_rtrn = (uint32_t) సమాసం->integer.ival;
+        తిరిగి true;
 
-    case STMT_EXPR_STRING_LITERAL:
-    case STMT_EXPR_FLOAT_LITERAL:
-    case STMT_EXPR_BOOLEAN_LITERAL:
-    case STMT_EXPR_KEYNAME_LITERAL:
-    case STMT_EXPR_KEYSYM_LITERAL:
-        log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
+    స్థితి STMT_సమాసం_STRING_LITERAL:
+    స్థితి STMT_సమాసం_FLOAT_LITERAL:
+    స్థితి STMT_సమాసం_BOOLEAN_LITERAL:
+    స్థితి STMT_సమాసం_KEYNAME_LITERAL:
+    స్థితి STMT_సమాసం_KEYSYM_LITERAL:
+        log_err(ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE,
                 "Found %s where a mask was expected\n",
-                stmt_type_to_string(expr->common.type));
-        return false;
+                stmt_type_గమ్యం_string(సమాసం->common.type));
+        తిరిగి false;
 
-    case STMT_EXPR_IDENT:
-        ok = lookup(ctx, lookupPriv, expr->ident.ident, val_rtrn, pending);
-        if (!ok)
+    స్థితి STMT_సమాసం_IDENT:
+        ok = lookup(ctx, lookupPriv, సమాసం->ident.ident, val_rtrn, pending);
+        ఒకవేళ (!ok)
             log_err(ctx, XKB_ERROR_INVALID_IDENTIFIER,
                     "Identifier \"%s\" of type int is unknown\n",
-                    xkb_atom_text(ctx, expr->ident.ident));
-        if (pending && *pending) {
+                    xkb_atom_పాఠ్యం(ctx, సమాసం->ident.ident));
+        ఒకవేళ (pending && *pending) {
             /* Postpone computation */
-            return false;
+            తిరిగి false;
         }
-        return ok;
+        తిరిగి ok;
 
-    case STMT_EXPR_FIELD_REF:
-        log_err(ctx, XKB_ERROR_INVALID_EXPRESSION_TYPE,
+    స్థితి STMT_సమాసం_క్షేత్రం_REF:
+        log_err(ctx, XKB_ERROR_INVALID_వ్యక్తీకరణ_TYPE,
                 "Default \"%s.%s\" of type int is unknown\n",
-                xkb_atom_text(ctx, expr->field_ref.element),
-                xkb_atom_text(ctx, expr->field_ref.field));
-        return false;
+                xkb_atom_పాఠ్యం(ctx, సమాసం->క్షేత్రం_ref.element),
+                xkb_atom_పాఠ్యం(ctx, సమాసం->క్షేత్రం_ref.క్షేత్రం_2));
+        తిరిగి false;
 
-    case STMT_EXPR_ARRAY_REF:
+    స్థితి STMT_సమాసం_ARRAY_REF:
         bogus = "array reference";
         /* fallthrough */
-    case STMT_EXPR_ACTION_DECL:
-        if (bogus == NULL)
+    స్థితి STMT_సమాసం_ACTION_DECL:
+        ఒకవేళ (bogus == ఖాళీ)
             bogus = "function use";
-        log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
+        log_err(ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE,
                 "Unexpected %s in mask expression; Expression Ignored\n",
                 bogus);
-        return false;
+        తిరిగి false;
 
-    case STMT_EXPR_ADD:
-    case STMT_EXPR_SUBTRACT:
-    case STMT_EXPR_MULTIPLY:
-    case STMT_EXPR_DIVIDE:
-        left = expr->binary.left;
-        right = expr->binary.right;
-        if (!ExprResolveMaskLookup(ctx, left, &l, pending, lookup, lookupPriv) ||
-            !ExprResolveMaskLookup(ctx, right, &r, pending, lookup, lookupPriv))
-            return false;
+    స్థితి STMT_సమాసం_కూడు:
+    స్థితి STMT_సమాసం_వ్యవకలనం:
+    స్థితి STMT_సమాసం_MULTIPLY:
+    స్థితి STMT_సమాసం_DIVIDE:
+        ఎడమ = సమాసం->ద్విమాన.ఎడమ;
+        కుడి = సమాసం->ద్విమాన.కుడి;
+        ఒకవేళ (!సమాసం_Resolve_ముసుగు_Lookup(ctx, ఎడమ, &l, pending, lookup, lookupPriv) ||
+            !సమాసం_Resolve_ముసుగు_Lookup(ctx, కుడి, &r, pending, lookup, lookupPriv))
+            తిరిగి false;
 
-        switch (expr->common.type) {
-        case STMT_EXPR_ADD:
+        ఎంపిక (సమాసం->common.type) {
+        స్థితి STMT_సమాసం_కూడు:
             *val_rtrn = l | r;
-            break;
-        case STMT_EXPR_SUBTRACT:
+            ఆపు;
+        స్థితి STMT_సమాసం_వ్యవకలనం:
             *val_rtrn = l & (~r);
-            break;
-        case STMT_EXPR_MULTIPLY:
-        case STMT_EXPR_DIVIDE:
+            ఆపు;
+        స్థితి STMT_సమాసం_MULTIPLY:
+        స్థితి STMT_సమాసం_DIVIDE:
             log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                     "Cannot %s masks; Illegal operation ignored\n",
-                    (expr->common.type == STMT_EXPR_DIVIDE ? "divide" : "multiply"));
-            return false;
-        default:
-            break;
+                    (సమాసం->common.type == STMT_సమాసం_DIVIDE ? "divide" : "multiply"));
+            తిరిగి false;
+        అప్రమేయ:
+            ఆపు;
         }
 
-        return true;
+        తిరిగి true;
 
-    case STMT_EXPR_ASSIGN:
+    స్థితి STMT_సమాసం_కేటాయించు:
         log_wsgo(ctx, XKB_ERROR_INVALID_OPERATION,
                  "Assignment operator not implemented yet\n");
-        break;
+        ఆపు;
 
-    case STMT_EXPR_INVERT:
-        left = expr->unary.child;
-        if (!ExprResolveIntegerLookup(ctx, left, &v, pending, lookup, lookupPriv))
-            return false;
-        if (v < 0 || v > UINT32_MAX) {
-            log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    స్థితి STMT_సమాసం_INVERT:
+        ఎడమ = సమాసం->unary.బిడ్డ;
+        ఒకవేళ (!సమాసం_Resolve_Integer_Lookup(ctx, ఎడమ, &v, pending, lookup, lookupPriv))
+            తిరిగి false;
+        ఒకవేళ (v < 0 || v > UINT32_MAX) {
+            log_err(ctx, XKB_LOG_సందేశం_NO_ID,
                     "Mask %s%#"PRIxMAX" is out of range (0..%#"PRIx32")\n",
                     v < 0 ? "-" : "", imaxabs(v), UINT32_MAX);
-            return false;
+            తిరిగి false;
         }
         *val_rtrn = ~(uint32_t) v;
-        return true;
+        తిరిగి true;
 
-    case STMT_EXPR_UNARY_PLUS:
-    case STMT_EXPR_NEGATE:
-    case STMT_EXPR_NOT:
-        left = expr->unary.child;
-        if (!ExprResolveIntegerLookup(ctx, left, &v, pending, lookup, lookupPriv))
-            return false;
+    స్థితి STMT_సమాసం_UNARY_PLUS:
+    స్థితి STMT_సమాసం_NEGATE:
+    స్థితి STMT_సమాసం_NOT:
+        ఎడమ = సమాసం->unary.బిడ్డ;
+        ఒకవేళ (!సమాసం_Resolve_Integer_Lookup(ctx, ఎడమ, &v, pending, lookup, lookupPriv))
+            తిరిగి false;
         log_err(ctx, XKB_ERROR_INVALID_OPERATION,
                 "The '%c' unary operator cannot be used with a mask\n",
-                stmt_type_to_operator_char(expr->common.type));
-        return false;
+                stmt_type_గమ్యం_operator_char(సమాసం->common.type));
+        తిరిగి false;
 
-    default:
+    అప్రమేయ:
         log_wsgo(ctx, XKB_ERROR_UNKNOWN_OPERATOR,
                  "Unknown operator type %d in ResolveMask\n",
-                 expr->common.type);
-        break;
+                 సమాసం->common.type);
+        ఆపు;
     }
 
-    return false;
+    తిరిగి false;
 }
 
 bool
-ExprResolveMask(struct xkb_context *ctx, const ExprDef *expr,
-                uint32_t *mask_rtrn, const LookupEntry *values)
+సమాసం_Resolve_ముసుగు(నిర్మాణం xkb_context *ctx, స్థిరరాశి సమాసం_Def *సమాసం,
+                uint32_t *ముసుగు_rtrn, స్థిరరాశి Lookup_నమోదు *విలువలు)
 {
-    return ExprResolveMaskLookup(ctx, expr, mask_rtrn, NULL, SimpleLookup, values);
+    తిరిగి సమాసం_Resolve_ముసుగు_Lookup(ctx, సమాసం, ముసుగు_rtrn, ఖాళీ, SimpleLookup, విలువలు);
 }
 
 bool
-ExprResolveModMask(struct xkb_context *ctx, const ExprDef *expr,
-                   enum mod_type mod_type, const struct xkb_mod_set *mods,
-                   xkb_mod_mask_t *mask_rtrn)
+సమాసం_Resolve_Mod_ముసుగు(నిర్మాణం xkb_context *ctx, స్థిరరాశి సమాసం_Def *సమాసం,
+                   గణన mod_type mod_type, స్థిరరాశి నిర్మాణం xkb_mod_సమితి *mods,
+                   xkb_mod_ముసుగు_t *ముసుగు_rtrn)
 {
-    LookupModMaskPriv priv = { .mods = mods, .mod_type = mod_type };
-    return ExprResolveMaskLookup(ctx, expr, mask_rtrn, NULL, LookupModMask, &priv);
+    Lookup_Mod_ముసుగు_Priv priv = { .mods = mods, .mod_type = mod_type };
+    తిరిగి సమాసం_Resolve_ముసుగు_Lookup(ctx, సమాసం, ముసుగు_rtrn, ఖాళీ, Lookup_Mod_ముసుగు, &priv);
 }
 
 bool
-ExprResolveMod(struct xkb_context *ctx, const ExprDef *def,
-               enum mod_type mod_type, const struct xkb_mod_set *mods,
-               xkb_mod_index_t *ndx_rtrn)
+సమాసం_Resolve_Mod(నిర్మాణం xkb_context *ctx, స్థిరరాశి సమాసం_Def *def,
+               గణన mod_type mod_type, స్థిరరాశి నిర్మాణం xkb_mod_సమితి *mods,
+               xkb_mod_సూచీ_t *ndx_rtrn)
 {
-    if (def->common.type != STMT_EXPR_IDENT) {
-        log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
+    ఒకవేళ (def->common.type != STMT_సమాసం_IDENT) {
+        log_err(ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE,
                 "Cannot resolve virtual modifier: "
                 "found %s where a virtual modifier name was expected\n",
-                stmt_type_to_string(def->common.type));
-        return false;
+                stmt_type_గమ్యం_string(def->common.type));
+        తిరిగి false;
     }
 
     xkb_atom_t name = def->ident.ident;
-    xkb_mod_index_t ndx = XkbModNameToIndex(mods, name, mod_type);
-    if (ndx == XKB_MOD_INVALID) {
+    xkb_mod_సూచీ_t ndx = Xkb_Mod_Name_గమ్యం_సూచీ(mods, name, mod_type);
+    ఒకవేళ (ndx == XKB_MOD_INVALID) {
         log_err(ctx, XKB_ERROR_UNDECLARED_VIRTUAL_MODIFIER,
                 "Cannot resolve virtual modifier: "
                 "\"%s\" was not previously declared\n",
-                xkb_atom_text(ctx, name));
-        return false;
+                xkb_atom_పాఠ్యం(ctx, name));
+        తిరిగి false;
     }
 
     *ndx_rtrn = ndx;
-    return true;
+    తిరిగి true;
 }
 
 bool
-ExprResolveGroupMask(const struct xkb_keymap_info *keymap_info,
-                     const ExprDef *expr, xkb_layout_mask_t *group_rtrn,
+సమాసం_Resolve_సమూహం_ముసుగు(స్థిరరాశి నిర్మాణం xkb_keymap_info *keymap_info,
+                     స్థిరరాశి సమాసం_Def *సమాసం, xkb_layout_ముసుగు_t *సమూహం_rtrn,
                      bool *pending_rtrn)
 {
-    static const LookupEntry pendingGroupMaskNames[] = {
-        { GROUP_LAST_INDEX_NAME, 0 },
-        { NULL, 0 }
+    స్థిర స్థిరరాశి Lookup_నమోదు pending_సమూహం_ముసుగు_పేర్లు[] = {
+        { సమూహం_చివరి_సూచీ_NAME, 0 },
+        { ఖాళీ, 0 }
     };
 
-    const struct named_integer_pattern group_name_pattern = {
+    స్థిరరాశి నిర్మాణం named_integer_నమూనా సమూహం_name_నమూనా = {
         /* Prefix is title-cased, because it is also used in error messages */
-        .prefix = "Group",
-        .prefix_length = sizeof("Group") - 1,
+        .ఉపసర్గ = "Group",
+        .ఉపసర్గ_నిడివి = పరిమాణం("Group") - 1,
         .min = 1,
         .max = keymap_info->features.max_groups,
-        .is_mask = true,
-        .entries = keymap_info->lookup.groupMaskNames,
-        .pending_entries = pendingGroupMaskNames,
-        .error_id = XKB_ERROR_UNSUPPORTED_LAYOUT_INDEX_
+        .is_ముసుగు = true,
+        .entries = keymap_info->lookup.సమూహం_ముసుగు_పేర్లు,
+        .pending_entries = pending_సమూహం_ముసుగు_పేర్లు,
+        .error_id = XKB_ERROR_UNSUPPORTED_LAYOUT_సూచీ_2
     };
 
-    return ExprResolveMaskLookup(keymap_info->keymap.ctx, expr, group_rtrn,
-                                 pending_rtrn, NamedIntegerPatternLookup,
-                                 &group_name_pattern);
+    తిరిగి సమాసం_Resolve_ముసుగు_Lookup(keymap_info->keymap.ctx, సమాసం, సమూహం_rtrn,
+                                 pending_rtrn, Named_Integer_నమూనా_Lookup,
+                                 &సమూహం_name_నమూనా);
 }

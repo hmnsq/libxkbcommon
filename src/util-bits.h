@@ -3,28 +3,28 @@
  * SPDX-License-Identifier: MIT
  */
 
-#pragma once
+#సూచన once
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include <assert.h>
-#include <limits.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stddef.h>
+#అన్తర్భావ <assert.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <stdbool.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stddef.h>
 
 /*
  * Bit array using native pointer-width word for optimal performance
  */
 
-#define BIT_ARRAY_UINTPTR_WIDTH (sizeof(uintptr_t) * CHAR_BIT)
+#నిర్వచించు బిట్టు_ARRAY_UINTPTR_వెడల్పు (పరిమాణం(uintptr_t) * CHAR_BIT)
 
 /* Compile-time sanity checks */
-#ifdef UINTPTR_WIDTH
-static_assert(UINTPTR_WIDTH == BIT_ARRAY_UINTPTR_WIDTH,
+#నిర్వచితమైతే UINTPTR_వెడల్పు
+static_assert(UINTPTR_వెడల్పు == బిట్టు_ARRAY_UINTPTR_వెడల్పు,
               "uintptr_t contains padding bits!");
-#endif
-static_assert((BIT_ARRAY_UINTPTR_WIDTH & (BIT_ARRAY_UINTPTR_WIDTH - 1)) == 0,
+#అయితే_ముగింపు
+static_assert((బిట్టు_ARRAY_UINTPTR_వెడల్పు & (బిట్టు_ARRAY_UINTPTR_వెడల్పు - 1)) == 0,
               "BIT_ARRAY_UINTPTR_WIDTH must be a power of 2!");
 
 /**
@@ -33,9 +33,9 @@ static_assert((BIT_ARRAY_UINTPTR_WIDTH & (BIT_ARRAY_UINTPTR_WIDTH - 1)) == 0,
  * @param num_bits  Number of bits to store.
  * @return Number of `uintptr_t` words required.
  */
-static inline size_t bit_array_words(size_t num_bits) {
-    return num_bits / BIT_ARRAY_UINTPTR_WIDTH +
-          (num_bits % BIT_ARRAY_UINTPTR_WIDTH != 0);
+స్థిర అంతఃవరుస కొలత_t బిట్టు_array_పదాలు(కొలత_t అంకె_బిట్లు) {
+    తిరిగి అంకె_బిట్లు / బిట్టు_ARRAY_UINTPTR_వెడల్పు +
+          (అంకె_బిట్లు % బిట్టు_ARRAY_UINTPTR_వెడల్పు != 0);
 }
 
 /**
@@ -43,10 +43,10 @@ static inline size_t bit_array_words(size_t num_bits) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline bool bit_array_get(const uintptr_t *arr, size_t index) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
-    return (arr[word_idx] >> bit_idx) & (uintptr_t)1;
+స్థిర అంతఃవరుస bool బిట్టు_array_get(స్థిరరాశి uintptr_t *arr, కొలత_t సూచీ) {
+    స్థిరరాశి కొలత_t మాట_idx = సూచీ / బిట్టు_ARRAY_UINTPTR_వెడల్పు;
+    స్థిరరాశి కొలత_t బిట్టు_idx  = సూచీ % బిట్టు_ARRAY_UINTPTR_వెడల్పు;
+    తిరిగి (arr[మాట_idx] >> బిట్టు_idx) & (uintptr_t)1;
 }
 
 /**
@@ -54,10 +54,10 @@ static inline bool bit_array_get(const uintptr_t *arr, size_t index) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline void bit_array_set(uintptr_t *arr, size_t index) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
-    arr[word_idx] |= ((uintptr_t)1 << bit_idx);
+స్థిర అంతఃవరుస శూన్య బిట్టు_array_సమితి(uintptr_t *arr, కొలత_t సూచీ) {
+    స్థిరరాశి కొలత_t మాట_idx = సూచీ / బిట్టు_ARRAY_UINTPTR_వెడల్పు;
+    స్థిరరాశి కొలత_t బిట్టు_idx  = సూచీ % బిట్టు_ARRAY_UINTPTR_వెడల్పు;
+    arr[మాట_idx] |= ((uintptr_t)1 << బిట్టు_idx);
 }
 
 /**
@@ -65,10 +65,10 @@ static inline void bit_array_set(uintptr_t *arr, size_t index) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline void bit_array_clear(uintptr_t *arr, size_t index) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
-    arr[word_idx] &= ~((uintptr_t)1 << bit_idx);
+స్థిర అంతఃవరుస శూన్య బిట్టు_array_clear(uintptr_t *arr, కొలత_t సూచీ) {
+    స్థిరరాశి కొలత_t మాట_idx = సూచీ / బిట్టు_ARRAY_UINTPTR_వెడల్పు;
+    స్థిరరాశి కొలత_t బిట్టు_idx  = సూచీ % బిట్టు_ARRAY_UINTPTR_వెడల్పు;
+    arr[మాట_idx] &= ~((uintptr_t)1 << బిట్టు_idx);
 }
 
 /**
@@ -76,10 +76,10 @@ static inline void bit_array_clear(uintptr_t *arr, size_t index) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline void bit_array_toggle(uintptr_t *arr, size_t index) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
-    arr[word_idx] ^= ((uintptr_t)1 << bit_idx);
+స్థిర అంతఃవరుస శూన్య బిట్టు_array_toggle(uintptr_t *arr, కొలత_t సూచీ) {
+    స్థిరరాశి కొలత_t మాట_idx = సూచీ / బిట్టు_ARRAY_UINTPTR_వెడల్పు;
+    స్థిరరాశి కొలత_t బిట్టు_idx  = సూచీ % బిట్టు_ARRAY_UINTPTR_వెడల్పు;
+    arr[మాట_idx] ^= ((uintptr_t)1 << బిట్టు_idx);
 }
 
 /**
@@ -87,12 +87,12 @@ static inline void bit_array_toggle(uintptr_t *arr, size_t index) {
  *
  * @pre @p index must be less than the number of bits represented by arr.
  */
-static inline void bit_array_assign(uintptr_t *arr, size_t index, bool val) {
-    const size_t word_idx = index / BIT_ARRAY_UINTPTR_WIDTH;
-    const size_t bit_idx  = index % BIT_ARRAY_UINTPTR_WIDTH;
-    uintptr_t mask = (uintptr_t)1 << bit_idx;
-    arr[word_idx] = (arr[word_idx] & ~mask)     /* clear bit */
-                  | ((-(uintptr_t)val) & mask); /* set bit */
+స్థిర అంతఃవరుస శూన్య బిట్టు_array_కేటాయించు(uintptr_t *arr, కొలత_t సూచీ, bool val) {
+    స్థిరరాశి కొలత_t మాట_idx = సూచీ / బిట్టు_ARRAY_UINTPTR_వెడల్పు;
+    స్థిరరాశి కొలత_t బిట్టు_idx  = సూచీ % బిట్టు_ARRAY_UINTPTR_వెడల్పు;
+    uintptr_t ముసుగు = (uintptr_t)1 << బిట్టు_idx;
+    arr[మాట_idx] = (arr[మాట_idx] & ~ముసుగు)     /* clear bit */
+                  | ((-(uintptr_t)val) & ముసుగు); /* set bit */
 }
 
-#undef BIT_ARRAY_UINTPTR_WIDTH
+#నిర్వచనం_రద్దు బిట్టు_ARRAY_UINTPTR_వెడల్పు

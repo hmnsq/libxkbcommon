@@ -3,142 +3,142 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include <assert.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdint.h>
-#include <libxml/parser.h>
+#అన్తర్భావ <assert.h>
+#అన్తర్భావ <sys/stat.h>
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <stdbool.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <libxml/parser.h>
 
-#if HAVE_XKB_EXTENSIONS_DIRECTORIES
-    #include <limits.h>
-    #if HAVE_UNISTD_H && HAVE_DIRENT_H
-        #include <dirent.h>
-        #include <unistd.h>
-    #endif
-#endif
+#ఒకవేళ HAVE_XKB_EXTENSIONS_DIRECTORIES
+    #అన్తర్భావ <limits.h>
+    #ఒకవేళ HAVE_UNISTD_H && HAVE_DIRENT_H
+        #అన్తర్భావ <dirent.h>
+        #అన్తర్భావ <unistd.h>
+    #అయితే_ముగింపు
+#అయితే_ముగింపు
 
-#include "xkbcommon/xkbregistry.h"
-#include "messages-codes.h"
-#include "darray.h"
-#include "utils.h"
-#include "util-list.h"
-#include "util-mem.h"
+#అన్తర్భావ "xkbcommon/xkbregistry.h"
+#అన్తర్భావ "messages-codes.h"
+#అన్తర్భావ "darray.h"
+#అన్తర్భావ "utils.h"
+#అన్తర్భావ "util-list.h"
+#అన్తర్భావ "util-mem.h"
 
-struct rxkb_object;
+నిర్మాణం rxkb_object;
 
 /**
  * All our objects are refcounted and are linked to iterate through them.
  * Abstract those bits away into a shared parent class so we can generate
  * most of the functions through macros.
  */
-struct rxkb_object {
-    struct rxkb_object *parent;
+నిర్మాణం rxkb_object {
+    నిర్మాణం rxkb_object *మాతృ;
     uint32_t refcount;
-    struct list link;
+    నిర్మాణం list link;
 };
 
-struct rxkb_iso639_code {
-    struct rxkb_object base;
-    char *code;
+నిర్మాణం rxkb_iso639_సంకేతం {
+    నిర్మాణం rxkb_object పునాది;
+    అక్షరం *సంకేతం_2;
 };
 
-struct rxkb_iso3166_code {
-    struct rxkb_object base;
-    char *code;
+నిర్మాణం rxkb_iso3166_సంకేతం {
+    నిర్మాణం rxkb_object పునాది;
+    అక్షరం *సంకేతం_2;
 };
 
-enum context_state {
+గణన context_state {
     CONTEXT_NEW,
     CONTEXT_PARSED,
     CONTEXT_FAILED,
 };
 
-struct rxkb_context {
-    struct rxkb_object base;
-    enum context_state context_state;
+నిర్మాణం rxkb_context {
+    నిర్మాణం rxkb_object పునాది;
+    గణన context_state context_state;
 
-    bool load_extra_rules_files;
+    bool ఎక్కించు_extra_నియమాలు_files;
     bool use_secure_getenv;
 
-    struct list models;         /* list of struct rxkb_models */
-    struct list layouts;        /* list of struct rxkb_layouts */
-    struct list option_groups;  /* list of struct rxkb_option_group */
+    నిర్మాణం list models;         /* list of struct rxkb_models */
+    నిర్మాణం list layouts;        /* list of struct rxkb_layouts */
+    నిర్మాణం list option_groups;  /* list of struct rxkb_option_group */
 
-    darray(char *) includes;
+    darray(అక్షరం *) includes;
 
 
-    ATTR_PRINTF(3, 0) void (*log_fn)(struct rxkb_context *ctx,
-                                     enum rxkb_log_level level,
-                                     const char *fmt, va_list args);
-    enum rxkb_log_level log_level;
+    ATTR_PRINTF(3, 0) శూన్య (*log_fn)(నిర్మాణం rxkb_context *ctx,
+                                     గణన rxkb_log_level level,
+                                     స్థిరరాశి అక్షరం *fmt, va_list వాదనలు);
+    గణన rxkb_log_level log_level;
 
-    void *userdata;
+    శూన్య *userdata;
 };
 
-struct rxkb_model {
-    struct rxkb_object base;
+నిర్మాణం rxkb_model {
+    నిర్మాణం rxkb_object పునాది;
 
-    char *name;
-    char *vendor;
-    char *description;
-    enum rxkb_popularity popularity;
+    అక్షరం *name;
+    అక్షరం *vendor;
+    అక్షరం *description;
+    గణన rxkb_popularity popularity;
 };
 
-struct rxkb_layout {
-    struct rxkb_object base;
+నిర్మాణం rxkb_layout {
+    నిర్మాణం rxkb_object పునాది;
 
-    char *name;
-    char *brief;
-    char *description;
-    char *variant;
-    enum rxkb_popularity popularity;
+    అక్షరం *name;
+    అక్షరం *brief;
+    అక్షరం *description;
+    అక్షరం *variant;
+    గణన rxkb_popularity popularity;
 
-    struct list iso639s;  /* list of struct rxkb_iso639_code */
-    struct list iso3166s; /* list of struct rxkb_iso3166_code */
+    నిర్మాణం list iso639s;  /* list of struct rxkb_iso639_code */
+    నిర్మాణం list iso3166s; /* list of struct rxkb_iso3166_code */
 };
 
-struct rxkb_option_group {
-    struct rxkb_object base;
+నిర్మాణం rxkb_option_సమూహం {
+    నిర్మాణం rxkb_object పునాది;
 
-    bool allow_multiple;
-    struct list options; /* list of struct rxkb_options */
-    char *name;
-    char *description;
-    enum rxkb_popularity popularity;
+    bool allow_గుణిజం;
+    నిర్మాణం list options; /* list of struct rxkb_options */
+    అక్షరం *name;
+    అక్షరం *description;
+    గణన rxkb_popularity popularity;
 };
 
-struct rxkb_option {
-    struct rxkb_object base;
+నిర్మాణం rxkb_option {
+    నిర్మాణం rxkb_object పునాది;
 
-    char *name;
-    char *brief;
-    char *description;
-    enum rxkb_popularity popularity;
+    అక్షరం *name;
+    అక్షరం *brief;
+    అక్షరం *description;
+    గణన rxkb_popularity popularity;
     bool layout_specific;
 };
 
-static bool
-parse(struct rxkb_context *ctx, const char *path,
-      enum rxkb_popularity popularity);
+స్థిర bool
+parse(నిర్మాణం rxkb_context *ctx, స్థిరరాశి అక్షరం *మార్గం,
+      గణన rxkb_popularity popularity);
 
 ATTR_PRINTF(3, 4)
-static void
-rxkb_log(struct rxkb_context *ctx, enum rxkb_log_level level,
-         const char *fmt, ...)
+స్థిర శూన్య
+rxkb_log(నిర్మాణం rxkb_context *ctx, గణన rxkb_log_level level,
+         స్థిరరాశి అక్షరం *fmt, ...)
 {
-    va_list args;
+    va_list వాదనలు;
 
-    if (ctx->log_level < level)
-        return;
+    ఒకవేళ (ctx->log_level < level)
+        తిరిగి;
 
-    va_start(args, fmt);
-    ctx->log_fn(ctx, level, fmt, args);
-    va_end(args);
+    va_ప్రారంభం(వాదనలు, fmt);
+    ctx->log_fn(ctx, level, fmt, వాదనలు);
+    va_చివర(వాదనలు);
 }
 
 /*
@@ -147,167 +147,167 @@ rxkb_log(struct rxkb_context *ctx, enum rxkb_log_level level,
  * format is supplied without arguments. Not supplying it would still
  * result in an error, though.
  */
-#define rxkb_log_with_code(ctx, level, msg_id, fmt, ...) \
-    rxkb_log(ctx, level, PREPEND_MESSAGE_ID(msg_id, fmt), ##__VA_ARGS__)
-#define log_dbg(ctx, ...) \
+#నిర్వచించు rxkb_log_with_సంకేతం(ctx, level, సందేశం_id, fmt, ...) \
+    rxkb_log(ctx, level, PREPEND_సందేశం_ID(సందేశం_id, fmt), ##__VA_ARGS__)
+#నిర్వచించు log_dbg(ctx, ...) \
     rxkb_log((ctx), RXKB_LOG_LEVEL_DEBUG, __VA_ARGS__)
-#define log_info(ctx, id, ...) \
-    rxkb_log_with_code((ctx), RXKB_LOG_LEVEL_INFO, id, __VA_ARGS__)
-#define log_warn(ctx, id, ...) \
-    rxkb_log_with_code((ctx), RXKB_LOG_LEVEL_WARNING, id, __VA_ARGS__)
-#define log_err(ctx, id, ...) \
-    rxkb_log_with_code((ctx), RXKB_LOG_LEVEL_ERROR, id, __VA_ARGS__)
-#define log_wsgo(ctx, id, ...) \
-    rxkb_log_with_code((ctx), RXKB_LOG_LEVEL_CRITICAL, id, __VA_ARGS__)
+#నిర్వచించు log_info(ctx, id, ...) \
+    rxkb_log_with_సంకేతం((ctx), RXKB_LOG_LEVEL_INFO, id, __VA_ARGS__)
+#నిర్వచించు log_warn(ctx, id, ...) \
+    rxkb_log_with_సంకేతం((ctx), RXKB_LOG_LEVEL_WARNING, id, __VA_ARGS__)
+#నిర్వచించు log_err(ctx, id, ...) \
+    rxkb_log_with_సంకేతం((ctx), RXKB_LOG_LEVEL_ERROR, id, __VA_ARGS__)
+#నిర్వచించు log_wsgo(ctx, id, ...) \
+    rxkb_log_with_సంకేతం((ctx), RXKB_LOG_LEVEL_CRITICAL, id, __VA_ARGS__)
 
 
-#define DECLARE_REF_UNREF_FOR_TYPE(type_) \
-struct type_ * type_##_ref(struct type_ *object) { \
-    rxkb_object_ref(&object->base); \
-    return object; \
+#నిర్వచించు DECLARE_REF_UNREF_FOR_TYPE(type_) \
+నిర్మాణం type_ * type_##_ref(నిర్మాణం type_ *object) { \
+    rxkb_object_ref(&object->పునాది); \
+    తిరిగి object; \
 } \
-struct type_ * type_##_unref(struct type_ *object) { \
-    if (!object) return NULL; \
-    assert(object->base.refcount >= 1); \
-    if (--object->base.refcount == 0) {\
+నిర్మాణం type_ * type_##_unref(నిర్మాణం type_ *object) { \
+    ఒకవేళ (!object) తిరిగి ఖాళీ; \
+    ప్రతిజ్ఞా(object->పునాది.refcount >= 1); \
+    ఒకవేళ (--object->పునాది.refcount == 0) {\
         type_##_destroy(object); \
-        list_remove(&object->base.link);\
-        free(object); \
+        list_remove(&object->పునాది.link);\
+        విడుదల(object); \
     } \
-    return NULL;\
+    తిరిగి ఖాళీ;\
 }
 
-#define DECLARE_CREATE_FOR_TYPE(type_) \
-static inline struct type_ * type_##_create(struct rxkb_object *parent) { \
-    struct type_ *t = calloc(1, sizeof *t); \
-    if (t) \
-        rxkb_object_init(&t->base, parent); \
-    return t; \
+#నిర్వచించు DECLARE_CREATE_FOR_TYPE(type_) \
+స్థిర అంతఃవరుస నిర్మాణం type_ * type_##_create(నిర్మాణం rxkb_object *మాతృ) { \
+    నిర్మాణం type_ *t = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం *t); \
+    ఒకవేళ (t) \
+        rxkb_object_init(&t->పునాది, మాతృ); \
+    తిరిగి t; \
 }
 
-#define DECLARE_TYPED_GETTER_FOR_TYPE(type_, field_, rtype_) \
-rtype_ type_##_get_##field_(struct type_ *object) { \
-    return object->field_; \
+#నిర్వచించు DECLARE_TYPED_GETTER_FOR_TYPE(type_, క్షేత్రం, rtype_) \
+rtype_ type_##_get_##field_(నిర్మాణం type_ *object) { \
+    తిరిగి object->క్షేత్రం; \
 }
 
-#define DECLARE_GETTER_FOR_TYPE(type_, field_) \
-   DECLARE_TYPED_GETTER_FOR_TYPE(type_, field_, const char*)
+#నిర్వచించు DECLARE_GETTER_FOR_TYPE(type_, క్షేత్రం) \
+   DECLARE_TYPED_GETTER_FOR_TYPE(type_, క్షేత్రం, స్థిరరాశి అక్షరం*)
 
-#define DECLARE_FIRST_NEXT_FOR_TYPE(type_, parent_type_, parent_field_) \
-struct type_ * type_##_first(struct parent_type_ *parent) { \
-    struct type_ *o = NULL; \
-    if (!list_empty(&parent->parent_field_)) \
-        o = list_first_entry(&parent->parent_field_, o, base.link); \
-    return o; \
+#నిర్వచించు DECLARE_మొదటి_తదుపరి_FOR_TYPE(type_, మాతృ_type, మాతృ_క్షేత్రం) \
+నిర్మాణం type_ * type_##_first(నిర్మాణం మాతృ_type *మాతృ) { \
+    నిర్మాణం type_ *o = ఖాళీ; \
+    ఒకవేళ (!list_ఖాళీలు(&మాతృ->మాతృ_క్షేత్రం)) \
+        o = list_మొదటి_నమోదు(&మాతృ->మాతృ_క్షేత్రం, o, పునాది.link); \
+    తిరిగి o; \
 } \
-struct type_ * \
-type_##_next(struct type_ *o) \
+నిర్మాణం type_ * \
+type_##_next(నిర్మాణం type_ *o) \
 { \
-    struct parent_type_ *parent; \
-    struct type_ *next; \
-    parent = container_of(o->base.parent, struct parent_type_, base); \
-    next = list_first_entry(&o->base.link, o, base.link); \
-    if (list_is_last(&parent->parent_field_, &o->base.link)) \
-        return NULL; \
-    return next; \
+    నిర్మాణం మాతృ_type *మాతృ; \
+    నిర్మాణం type_ *తదుపరి; \
+    మాతృ = container_యొక్క(o->పునాది.మాతృ, నిర్మాణం మాతృ_type, పునాది); \
+    తదుపరి = list_మొదటి_నమోదు(&o->పునాది.link, o, పునాది.link); \
+    ఒకవేళ (list_is_చివరి(&మాతృ->మాతృ_క్షేత్రం, &o->పునాది.link)) \
+        తిరిగి ఖాళీ; \
+    తిరిగి తదుపరి; \
 }
 
-static void
-rxkb_object_init(struct rxkb_object *object, struct rxkb_object *parent)
+స్థిర శూన్య
+rxkb_object_init(నిర్మాణం rxkb_object *object, నిర్మాణం rxkb_object *మాతృ)
 {
     object->refcount = 1;
-    object->parent = parent;
+    object->మాతృ = మాతృ;
     list_init(&object->link);
 }
 
-static void *
-rxkb_object_ref(struct rxkb_object *object)
+స్థిర శూన్య *
+rxkb_object_ref(నిర్మాణం rxkb_object *object)
 {
-    assert(object->refcount >= 1);
+    ప్రతిజ్ఞా(object->refcount >= 1);
     ++object->refcount;
-    return object;
+    తిరిగి object;
 }
 
-static void
-rxkb_iso639_code_destroy(struct rxkb_iso639_code *code)
+స్థిర శూన్య
+rxkb_iso639_సంకేతం_destroy(నిర్మాణం rxkb_iso639_సంకేతం *సంకేతం_2)
 {
-    free(code->code);
+    విడుదల(సంకేతం_2->సంకేతం_2);
 }
 
-struct rxkb_iso639_code *
-rxkb_layout_get_iso639_first(struct rxkb_layout *layout)
+నిర్మాణం rxkb_iso639_సంకేతం *
+rxkb_layout_get_iso639_మొదటి(నిర్మాణం rxkb_layout *layout)
 {
-    struct rxkb_iso639_code *code = NULL;
+    నిర్మాణం rxkb_iso639_సంకేతం *సంకేతం_2 = ఖాళీ;
 
-    if (!list_empty(&layout->iso639s))
-        code = list_first_entry(&layout->iso639s, code, base.link);
+    ఒకవేళ (!list_ఖాళీలు(&layout->iso639s))
+        సంకేతం_2 = list_మొదటి_నమోదు(&layout->iso639s, సంకేతం_2, పునాది.link);
 
-    return code;
+    తిరిగి సంకేతం_2;
 }
 
-struct rxkb_iso639_code *
-rxkb_iso639_code_next(struct rxkb_iso639_code *code)
+నిర్మాణం rxkb_iso639_సంకేతం *
+rxkb_iso639_సంకేతం_తదుపరి(నిర్మాణం rxkb_iso639_సంకేతం *సంకేతం_2)
 {
-    struct rxkb_iso639_code *next = NULL;
-    struct rxkb_layout *layout;
+    నిర్మాణం rxkb_iso639_సంకేతం *తదుపరి = ఖాళీ;
+    నిర్మాణం rxkb_layout *layout;
 
-    layout = container_of(code->base.parent, struct rxkb_layout, base);
+    layout = container_యొక్క(సంకేతం_2->పునాది.మాతృ, నిర్మాణం rxkb_layout, పునాది);
 
-    if (list_is_last(&layout->iso639s, &code->base.link))
-        return NULL;
+    ఒకవేళ (list_is_చివరి(&layout->iso639s, &సంకేతం_2->పునాది.link))
+        తిరిగి ఖాళీ;
 
-    next = list_first_entry(&code->base.link, code, base.link);
+    తదుపరి = list_మొదటి_నమోదు(&సంకేతం_2->పునాది.link, సంకేతం_2, పునాది.link);
 
-    return next;
+    తిరిగి తదుపరి;
 }
 
-DECLARE_REF_UNREF_FOR_TYPE(rxkb_iso639_code);
-DECLARE_CREATE_FOR_TYPE(rxkb_iso639_code);
-DECLARE_GETTER_FOR_TYPE(rxkb_iso639_code, code);
+DECLARE_REF_UNREF_FOR_TYPE(rxkb_iso639_సంకేతం);
+DECLARE_CREATE_FOR_TYPE(rxkb_iso639_సంకేతం);
+DECLARE_GETTER_FOR_TYPE(rxkb_iso639_సంకేతం, సంకేతం_2);
 
-static void
-rxkb_iso3166_code_destroy(struct rxkb_iso3166_code *code)
+స్థిర శూన్య
+rxkb_iso3166_సంకేతం_destroy(నిర్మాణం rxkb_iso3166_సంకేతం *సంకేతం_2)
 {
-    free(code->code);
+    విడుదల(సంకేతం_2->సంకేతం_2);
 }
 
-struct rxkb_iso3166_code *
-rxkb_layout_get_iso3166_first(struct rxkb_layout *layout)
+నిర్మాణం rxkb_iso3166_సంకేతం *
+rxkb_layout_get_iso3166_మొదటి(నిర్మాణం rxkb_layout *layout)
 {
-    struct rxkb_iso3166_code *code = NULL;
+    నిర్మాణం rxkb_iso3166_సంకేతం *సంకేతం_2 = ఖాళీ;
 
-    if (!list_empty(&layout->iso3166s))
-        code = list_first_entry(&layout->iso3166s, code, base.link);
+    ఒకవేళ (!list_ఖాళీలు(&layout->iso3166s))
+        సంకేతం_2 = list_మొదటి_నమోదు(&layout->iso3166s, సంకేతం_2, పునాది.link);
 
-    return code;
+    తిరిగి సంకేతం_2;
 }
 
-struct rxkb_iso3166_code *
-rxkb_iso3166_code_next(struct rxkb_iso3166_code *code)
+నిర్మాణం rxkb_iso3166_సంకేతం *
+rxkb_iso3166_సంకేతం_తదుపరి(నిర్మాణం rxkb_iso3166_సంకేతం *సంకేతం_2)
 {
-    struct rxkb_iso3166_code *next = NULL;
-    struct rxkb_layout *layout;
+    నిర్మాణం rxkb_iso3166_సంకేతం *తదుపరి = ఖాళీ;
+    నిర్మాణం rxkb_layout *layout;
 
-    layout = container_of(code->base.parent, struct rxkb_layout, base);
+    layout = container_యొక్క(సంకేతం_2->పునాది.మాతృ, నిర్మాణం rxkb_layout, పునాది);
 
-    if (list_is_last(&layout->iso3166s, &code->base.link))
-        return NULL;
+    ఒకవేళ (list_is_చివరి(&layout->iso3166s, &సంకేతం_2->పునాది.link))
+        తిరిగి ఖాళీ;
 
-    next = list_first_entry(&code->base.link, code, base.link);
+    తదుపరి = list_మొదటి_నమోదు(&సంకేతం_2->పునాది.link, సంకేతం_2, పునాది.link);
 
-    return next;
+    తిరిగి తదుపరి;
 }
 
-DECLARE_REF_UNREF_FOR_TYPE(rxkb_iso3166_code);
-DECLARE_CREATE_FOR_TYPE(rxkb_iso3166_code);
-DECLARE_GETTER_FOR_TYPE(rxkb_iso3166_code, code);
+DECLARE_REF_UNREF_FOR_TYPE(rxkb_iso3166_సంకేతం);
+DECLARE_CREATE_FOR_TYPE(rxkb_iso3166_సంకేతం);
+DECLARE_GETTER_FOR_TYPE(rxkb_iso3166_సంకేతం, సంకేతం_2);
 
-static void
-rxkb_option_destroy(struct rxkb_option *o)
+స్థిర శూన్య
+rxkb_option_destroy(నిర్మాణం rxkb_option *o)
 {
-    free(o->name);
-    free(o->brief);
-    free(o->description);
+    విడుదల(o->name);
+    విడుదల(o->brief);
+    విడుదల(o->description);
 }
 
 DECLARE_REF_UNREF_FOR_TYPE(rxkb_option);
@@ -315,28 +315,28 @@ DECLARE_CREATE_FOR_TYPE(rxkb_option);
 DECLARE_GETTER_FOR_TYPE(rxkb_option, name);
 DECLARE_GETTER_FOR_TYPE(rxkb_option, brief);
 DECLARE_GETTER_FOR_TYPE(rxkb_option, description);
-DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_option, popularity, enum rxkb_popularity);
-bool rxkb_option_is_layout_specific(struct rxkb_option *object) {
-    return object->layout_specific;
+DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_option, popularity, గణన rxkb_popularity);
+bool rxkb_option_is_layout_specific(నిర్మాణం rxkb_option *object) {
+    తిరిగి object->layout_specific;
 }
-DECLARE_FIRST_NEXT_FOR_TYPE(rxkb_option, rxkb_option_group, options);
+DECLARE_మొదటి_తదుపరి_FOR_TYPE(rxkb_option, rxkb_option_సమూహం, options);
 
-static void
-rxkb_layout_destroy(struct rxkb_layout *l)
+స్థిర శూన్య
+rxkb_layout_destroy(నిర్మాణం rxkb_layout *l)
 {
-    struct rxkb_iso639_code *iso639, *tmp_639;
-    struct rxkb_iso3166_code *iso3166, *tmp_3166;
+    నిర్మాణం rxkb_iso639_సంకేతం *iso639, *tmp_639;
+    నిర్మాణం rxkb_iso3166_సంకేతం *iso3166, *tmp_3166;
 
-    free(l->name);
-    free(l->brief);
-    free(l->description);
-    free(l->variant);
+    విడుదల(l->name);
+    విడుదల(l->brief);
+    విడుదల(l->description);
+    విడుదల(l->variant);
 
-    list_for_each_safe(iso639, tmp_639, &l->iso639s, base.link) {
-        rxkb_iso639_code_unref(iso639);
+    list_for_each_సురక్షిత(iso639, tmp_639, &l->iso639s, పునాది.link) {
+        rxkb_iso639_సంకేతం_unref(iso639);
     }
-    list_for_each_safe(iso3166, tmp_3166, &l->iso3166s, base.link) {
-        rxkb_iso3166_code_unref(iso3166);
+    list_for_each_సురక్షిత(iso3166, tmp_3166, &l->iso3166s, పునాది.link) {
+        rxkb_iso3166_సంకేతం_unref(iso3166);
     }
 }
 
@@ -346,15 +346,15 @@ DECLARE_GETTER_FOR_TYPE(rxkb_layout, name);
 DECLARE_GETTER_FOR_TYPE(rxkb_layout, brief);
 DECLARE_GETTER_FOR_TYPE(rxkb_layout, description);
 DECLARE_GETTER_FOR_TYPE(rxkb_layout, variant);
-DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_layout, popularity, enum rxkb_popularity);
-DECLARE_FIRST_NEXT_FOR_TYPE(rxkb_layout, rxkb_context, layouts);
+DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_layout, popularity, గణన rxkb_popularity);
+DECLARE_మొదటి_తదుపరి_FOR_TYPE(rxkb_layout, rxkb_context, layouts);
 
-static void
-rxkb_model_destroy(struct rxkb_model *m)
+స్థిర శూన్య
+rxkb_model_destroy(నిర్మాణం rxkb_model *m)
 {
-    free(m->name);
-    free(m->vendor);
-    free(m->description);
+    విడుదల(m->name);
+    విడుదల(m->vendor);
+    విడుదల(m->description);
 }
 
 DECLARE_REF_UNREF_FOR_TYPE(rxkb_model);
@@ -362,220 +362,220 @@ DECLARE_CREATE_FOR_TYPE(rxkb_model);
 DECLARE_GETTER_FOR_TYPE(rxkb_model, name);
 DECLARE_GETTER_FOR_TYPE(rxkb_model, vendor);
 DECLARE_GETTER_FOR_TYPE(rxkb_model, description);
-DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_model, popularity, enum rxkb_popularity);
-DECLARE_FIRST_NEXT_FOR_TYPE(rxkb_model, rxkb_context, models);
+DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_model, popularity, గణన rxkb_popularity);
+DECLARE_మొదటి_తదుపరి_FOR_TYPE(rxkb_model, rxkb_context, models);
 
-static void
-rxkb_option_group_destroy(struct rxkb_option_group *og)
+స్థిర శూన్య
+rxkb_option_సమూహం_destroy(నిర్మాణం rxkb_option_సమూహం *og)
 {
-    struct rxkb_option *o, *otmp;
+    నిర్మాణం rxkb_option *o, *otmp;
 
-    free(og->name);
-    free(og->description);
+    విడుదల(og->name);
+    విడుదల(og->description);
 
-    list_for_each_safe(o, otmp, &og->options, base.link) {
+    list_for_each_సురక్షిత(o, otmp, &og->options, పునాది.link) {
         rxkb_option_unref(o);
     }
 }
 
 bool
-rxkb_option_group_allows_multiple(struct rxkb_option_group *g)
+rxkb_option_సమూహం_allows_గుణిజం(నిర్మాణం rxkb_option_సమూహం *g)
 {
-    return g->allow_multiple;
+    తిరిగి g->allow_గుణిజం;
 }
 
-DECLARE_REF_UNREF_FOR_TYPE(rxkb_option_group);
-DECLARE_CREATE_FOR_TYPE(rxkb_option_group);
-DECLARE_GETTER_FOR_TYPE(rxkb_option_group, name);
-DECLARE_GETTER_FOR_TYPE(rxkb_option_group, description);
-DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_option_group, popularity, enum rxkb_popularity);
-DECLARE_FIRST_NEXT_FOR_TYPE(rxkb_option_group, rxkb_context, option_groups);
+DECLARE_REF_UNREF_FOR_TYPE(rxkb_option_సమూహం);
+DECLARE_CREATE_FOR_TYPE(rxkb_option_సమూహం);
+DECLARE_GETTER_FOR_TYPE(rxkb_option_సమూహం, name);
+DECLARE_GETTER_FOR_TYPE(rxkb_option_సమూహం, description);
+DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_option_సమూహం, popularity, గణన rxkb_popularity);
+DECLARE_మొదటి_తదుపరి_FOR_TYPE(rxkb_option_సమూహం, rxkb_context, option_groups);
 
-static void
-rxkb_context_destroy(struct rxkb_context *ctx)
+స్థిర శూన్య
+rxkb_context_destroy(నిర్మాణం rxkb_context *ctx)
 {
-    struct rxkb_model *m, *mtmp;
-    struct rxkb_layout *l, *ltmp;
-    struct rxkb_option_group *og, *ogtmp;
-    char **path;
+    నిర్మాణం rxkb_model *m, *mtmp;
+    నిర్మాణం rxkb_layout *l, *ltmp;
+    నిర్మాణం rxkb_option_సమూహం *og, *ogtmp;
+    అక్షరం **మార్గం;
 
-    list_for_each_safe(m, mtmp, &ctx->models, base.link)
+    list_for_each_సురక్షిత(m, mtmp, &ctx->models, పునాది.link)
         rxkb_model_unref(m);
-    assert(list_empty(&ctx->models));
+    ప్రతిజ్ఞా(list_ఖాళీలు(&ctx->models));
 
-    list_for_each_safe(l, ltmp, &ctx->layouts, base.link)
+    list_for_each_సురక్షిత(l, ltmp, &ctx->layouts, పునాది.link)
         rxkb_layout_unref(l);
-    assert(list_empty(&ctx->layouts));
+    ప్రతిజ్ఞా(list_ఖాళీలు(&ctx->layouts));
 
-    list_for_each_safe(og, ogtmp, &ctx->option_groups, base.link)
-        rxkb_option_group_unref(og);
-    assert(list_empty(&ctx->option_groups));
+    list_for_each_సురక్షిత(og, ogtmp, &ctx->option_groups, పునాది.link)
+        rxkb_option_సమూహం_unref(og);
+    ప్రతిజ్ఞా(list_ఖాళీలు(&ctx->option_groups));
 
-    darray_foreach(path, ctx->includes)
-        free(*path);
+    darray_foreach(మార్గం, ctx->includes)
+        విడుదల(*మార్గం);
     darray_free(ctx->includes);
 
-    assert(darray_empty(ctx->includes));
+    ప్రతిజ్ఞా(darray_ఖాళీలు(ctx->includes));
 }
 
 DECLARE_REF_UNREF_FOR_TYPE(rxkb_context);
 DECLARE_CREATE_FOR_TYPE(rxkb_context);
-DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_context, log_level, enum rxkb_log_level);
+DECLARE_TYPED_GETTER_FOR_TYPE(rxkb_context, log_level, గణన rxkb_log_level);
 
-static char *
-rxkb_context_getenv(struct rxkb_context *ctx, const char *name)
+స్థిర అక్షరం *
+rxkb_context_getenv(నిర్మాణం rxkb_context *ctx, స్థిరరాశి అక్షరం *name)
 {
-    if (ctx->use_secure_getenv) {
-        return secure_getenv(name);
-    } else {
-        return getenv(name);
+    ఒకవేళ (ctx->use_secure_getenv) {
+        తిరిగి secure_getenv(name);
+    } లేకపోతే {
+        తిరిగి getenv(name);
     }
 }
 
 
-void
-rxkb_context_set_log_level(struct rxkb_context *ctx,
-                           enum rxkb_log_level level)
+శూన్య
+rxkb_context_సమితి_log_level(నిర్మాణం rxkb_context *ctx,
+                           గణన rxkb_log_level level)
 {
     ctx->log_level = level;
 }
 
-static const char *
-log_level_to_prefix(enum rxkb_log_level level)
+స్థిర స్థిరరాశి అక్షరం *
+log_level_గమ్యం_ఉపసర్గ(గణన rxkb_log_level level)
 {
-    switch (level) {
-    case RXKB_LOG_LEVEL_DEBUG:
-        return "xkbregistry: DEBUG: ";
-    case RXKB_LOG_LEVEL_INFO:
-        return "xkbregistry: INFO: ";
-    case RXKB_LOG_LEVEL_WARNING:
-        return "xkbregistry: WARNING: ";
-    case RXKB_LOG_LEVEL_ERROR:
-        return "xkbregistry: ERROR: ";
-    case RXKB_LOG_LEVEL_CRITICAL:
-        return "xkbregistry: CRITICAL: ";
-    default:
-        return NULL;
+    ఎంపిక (level) {
+    స్థితి RXKB_LOG_LEVEL_DEBUG:
+        తిరిగి "xkbregistry: DEBUG: ";
+    స్థితి RXKB_LOG_LEVEL_INFO:
+        తిరిగి "xkbregistry: INFO: ";
+    స్థితి RXKB_LOG_LEVEL_WARNING:
+        తిరిగి "xkbregistry: WARNING: ";
+    స్థితి RXKB_LOG_LEVEL_ERROR:
+        తిరిగి "xkbregistry: ERROR: ";
+    స్థితి RXKB_LOG_LEVEL_CRITICAL:
+        తిరిగి "xkbregistry: CRITICAL: ";
+    అప్రమేయ:
+        తిరిగి ఖాళీ;
     }
 }
 
-ATTR_PRINTF(3, 0) static void
-default_log_fn(struct rxkb_context *ctx, enum rxkb_log_level level,
-               const char *fmt, va_list args)
+ATTR_PRINTF(3, 0) స్థిర శూన్య
+default_log_fn(నిర్మాణం rxkb_context *ctx, గణన rxkb_log_level level,
+               స్థిరరాశి అక్షరం *fmt, va_list వాదనలు)
 {
-    const char *prefix = log_level_to_prefix(level);
+    స్థిరరాశి అక్షరం *ఉపసర్గ = log_level_గమ్యం_ఉపసర్గ(level);
 
-    if (prefix)
-        fprintf(stderr, "%s", prefix);
-    vfprintf(stderr, fmt, args);
+    ఒకవేళ (ఉపసర్గ)
+        fprintf(stderr, "%s", ఉపసర్గ);
+    vfprintf(stderr, fmt, వాదనలు);
 }
 
-static enum rxkb_log_level
-log_level(const char *level) {
+స్థిర గణన rxkb_log_level
+log_level(స్థిరరాశి అక్షరం *level) {
     errno = 0;
-    char *endptr;
-    const long lvl = strtol(level, &endptr, 10);
-    if (errno == 0 && (endptr[0] == '\0' || is_space(endptr[0])))
-        return (enum rxkb_log_level)lvl;
+    అక్షరం *endptr;
+    స్థిరరాశి దీర్ఘ lvl = strtol(level, &endptr, 10);
+    ఒకవేళ (errno == 0 && (endptr[0] == '\0' || is_space(endptr[0])))
+        తిరిగి (గణన rxkb_log_level)lvl;
 
-    if (istreq_prefix("crit", level))
-        return RXKB_LOG_LEVEL_CRITICAL;
-    if (istreq_prefix("err", level))
-        return RXKB_LOG_LEVEL_ERROR;
-    if (istreq_prefix("warn", level))
-        return RXKB_LOG_LEVEL_WARNING;
-    if (istreq_prefix("info", level))
-        return RXKB_LOG_LEVEL_INFO;
-    if (istreq_prefix("debug", level) || istreq_prefix("dbg", level))
-        return RXKB_LOG_LEVEL_DEBUG;
+    ఒకవేళ (istreq_ఉపసర్గ("crit", level))
+        తిరిగి RXKB_LOG_LEVEL_CRITICAL;
+    ఒకవేళ (istreq_ఉపసర్గ("err", level))
+        తిరిగి RXKB_LOG_LEVEL_ERROR;
+    ఒకవేళ (istreq_ఉపసర్గ("warn", level))
+        తిరిగి RXKB_LOG_LEVEL_WARNING;
+    ఒకవేళ (istreq_ఉపసర్గ("info", level))
+        తిరిగి RXKB_LOG_LEVEL_INFO;
+    ఒకవేళ (istreq_ఉపసర్గ("debug", level) || istreq_ఉపసర్గ("dbg", level))
+        తిరిగి RXKB_LOG_LEVEL_DEBUG;
 
-    return RXKB_LOG_LEVEL_ERROR;
+    తిరిగి RXKB_LOG_LEVEL_ERROR;
 }
 
-struct rxkb_context *
-rxkb_context_new(enum rxkb_context_flags flags)
+నిర్మాణం rxkb_context *
+rxkb_context_new(గణన rxkb_context_flags flags)
 {
-    struct rxkb_context *ctx = rxkb_context_create(NULL);
-    const char *env;
+    నిర్మాణం rxkb_context *ctx = rxkb_context_create(ఖాళీ);
+    స్థిరరాశి అక్షరం *env;
 
-    if (!ctx)
-        return NULL;
+    ఒకవేళ (!ctx)
+        తిరిగి ఖాళీ;
 
     ctx->context_state = CONTEXT_NEW;
-    ctx->load_extra_rules_files = flags & RXKB_CONTEXT_LOAD_EXOTIC_RULES;
+    ctx->ఎక్కించు_extra_నియమాలు_files = flags & RXKB_CONTEXT_ఎక్కించు_EXOTIC_నియమాలు;
     ctx->use_secure_getenv = !(flags & RXKB_CONTEXT_NO_SECURE_GETENV);
     ctx->log_fn = default_log_fn;
     ctx->log_level = RXKB_LOG_LEVEL_ERROR;
 
     /* Environment overwrites defaults. */
     env = rxkb_context_getenv(ctx, "RXKB_LOG_LEVEL");
-    if (env)
-        rxkb_context_set_log_level(ctx, log_level(env));
+    ఒకవేళ (env)
+        rxkb_context_సమితి_log_level(ctx, log_level(env));
 
-    static const enum rxkb_context_flags  RXKB_CONTEXT_FLAGS
+    స్థిర స్థిరరాశి గణన rxkb_context_flags  RXKB_CONTEXT_FLAGS
         = RXKB_CONTEXT_NO_DEFAULT_INCLUDES
-        | RXKB_CONTEXT_LOAD_EXOTIC_RULES
+        | RXKB_CONTEXT_ఎక్కించు_EXOTIC_నియమాలు
         | RXKB_CONTEXT_NO_SECURE_GETENV;
 
-    if (flags & ~RXKB_CONTEXT_FLAGS) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    ఒకవేళ (flags & ~RXKB_CONTEXT_FLAGS) {
+        log_err(ctx, XKB_LOG_సందేశం_NO_ID,
                 "%s: Invalid context flags: 0x%x\n", __func__,
                 (flags & ~RXKB_CONTEXT_FLAGS));
-        free(ctx);
-        return NULL;
+        విడుదల(ctx);
+        తిరిగి ఖాళీ;
     }
 
     list_init(&ctx->models);
     list_init(&ctx->layouts);
     list_init(&ctx->option_groups);
 
-    if (!(flags & RXKB_CONTEXT_NO_DEFAULT_INCLUDES) &&
-        !rxkb_context_include_path_append_default(ctx)) {
-        log_err(ctx, XKB_ERROR_NO_VALID_DEFAULT_INCLUDE_PATH,
+    ఒకవేళ (!(flags & RXKB_CONTEXT_NO_DEFAULT_INCLUDES) &&
+        !rxkb_context_include_మార్గం_append_default(ctx)) {
+        log_err(ctx, XKB_ERROR_NO_VALID_DEFAULT_INCLUDE_మార్గం,
                 "Failed to add any default include path "
                 "(default system path: %s)\n",
-                DFLT_XKB_CONFIG_ROOT);
+                DFLT_XKB_CONFIG_మూలం);
         rxkb_context_unref(ctx);
-        return NULL;
+        తిరిగి ఖాళీ;
     }
 
-    return ctx;
+    తిరిగి ctx;
 }
 
-void
-rxkb_context_set_log_fn(struct rxkb_context *ctx,
-                        void (*log_fn)(struct rxkb_context *ctx,
-                                       enum rxkb_log_level level,
-                                       const char *fmt, va_list args))
+శూన్య
+rxkb_context_సమితి_log_fn(నిర్మాణం rxkb_context *ctx,
+                        శూన్య (*log_fn)(నిర్మాణం rxkb_context *ctx,
+                                       గణన rxkb_log_level level,
+                                       స్థిరరాశి అక్షరం *fmt, va_list వాదనలు))
 {
     ctx->log_fn = (log_fn ? log_fn : default_log_fn);
 }
 
 bool
-rxkb_context_include_path_append(struct rxkb_context *ctx, const char *path)
+rxkb_context_include_మార్గం_append(నిర్మాణం rxkb_context *ctx, స్థిరరాశి అక్షరం *మార్గం)
 {
-    int err = 0;
+    పూర్ణాంకం err = 0;
 
-    if (ctx->context_state != CONTEXT_NEW) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    ఒకవేళ (ctx->context_state != CONTEXT_NEW) {
+        log_err(ctx, XKB_LOG_సందేశం_NO_ID,
                 "include paths can only be appended to a new context\n");
-        goto error;
+        వెళ్ళు error;
     }
 
-    struct stat stat_buf;
-    err = stat(path, &stat_buf);
-    if (err != 0) {
+    నిర్మాణం stat stat_buf;
+    err = stat(మార్గం, &stat_buf);
+    ఒకవేళ (err != 0) {
         err = errno;
-        goto error;
+        వెళ్ళు error;
     }
-    if (!S_ISDIR(stat_buf.st_mode)) {
+    ఒకవేళ (!S_ISDIR(stat_buf.st_బహుళకం)) {
         err = ENOTDIR;
-        goto error;
+        వెళ్ళు error;
     }
 
-    if (!check_eaccess(path, R_OK | X_OK)) {
+    ఒకవేళ (!check_eaccess(మార్గం, R_OK | X_OK)) {
         err = EACCES;
-        goto error;
+        వెళ్ళు error;
     }
 
     /*
@@ -583,229 +583,229 @@ rxkb_context_include_path_append(struct rxkb_context *ctx, const char *path)
      * path, complain here instead of during parsing later. The niche cases
      * where this is the wrong behaviour aren’t worth worrying about.
      */
-    char rules[PATH_MAX];
-    if (!snprintf_safe(rules, sizeof(rules), "%s/rules/%s.xml",
-                       path, DEFAULT_XKB_RULES)) {
-        log_err(ctx, XKB_ERROR_INVALID_PATH,
+    అక్షరం నియమాలు[PATH_MAX];
+    ఒకవేళ (!snprintf_సురక్షిత(నియమాలు, పరిమాణం(నియమాలు), "%s/rules/%s.xml",
+                       మార్గం, DEFAULT_XKB_నియమాలు)) {
+        log_err(ctx, XKB_ERROR_INVALID_మార్గం,
                 "Path is too long: expected max length of %zu, "
                 "got: %s/rules/%s.xml\n",
-                sizeof(rules), path, DEFAULT_XKB_RULES);
-        goto error;
+                పరిమాణం(నియమాలు), మార్గం, DEFAULT_XKB_నియమాలు);
+        వెళ్ళు error;
     }
 
-    char * const tmp = strdup(path);
-    if (!tmp) {
+    అక్షరం * స్థిరరాశి tmp = strdup(మార్గం);
+    ఒకవేళ (!tmp) {
         err = ENOMEM;
-        goto error;
+        వెళ్ళు error;
     }
 
     darray_append(ctx->includes, tmp);
     /* Use “info” log level to facilitate bug reporting. */
-    log_info(ctx, XKB_LOG_MESSAGE_NO_ID, "Include path added: %s\n", tmp);
+    log_info(ctx, XKB_LOG_సందేశం_NO_ID, "Include path added: %s\n", tmp);
 
-    return true;
+    తిరిగి true;
 
 error:
     /*
      * This error is not fatal because some valid paths may still be defined.
      * Use “info” log level to facilitate bug reporting.
      */
-    log_info(ctx, XKB_LOG_MESSAGE_NO_ID,
-             "Include path failed: \"%s\" (%s)\n", path, strerror(err));
-    return false;
+    log_info(ctx, XKB_LOG_సందేశం_NO_ID,
+             "Include path failed: \"%s\" (%s)\n", మార్గం, strerror(err));
+    తిరిగి false;
 }
 
-#if HAVE_XKB_EXTENSIONS_DIRECTORIES
+#ఒకవేళ HAVE_XKB_EXTENSIONS_DIRECTORIES
 
-static int
-compare_str(const void *a, const void *b)
+స్థిర పూర్ణాంకం
+compare_str(స్థిరరాశి శూన్య *a, స్థిరరాశి శూన్య *b)
 {
-    return strcmp(*(char **)a, *(char **) b);
+    తిరిగి strcmp(*(అక్షరం **)a, *(అక్షరం **) b);
 }
 
-static int
-add_direct_subdirectories(struct rxkb_context *ctx, const char *path,
+స్థిర పూర్ణాంకం
+కూడు_ప్రత్యక్ష_subdirectories(నిర్మాణం rxkb_context *ctx, స్థిరరాశి అక్షరం *మార్గం,
                           darray_string *extensions,
-                          darray_size_t versioned_count,
-                          size_t versioned_path_length)
+                          darray_కొలత_t versioned_లెక్క,
+                          కొలత_t versioned_మార్గం_నిడివి)
 {
-    int ret = 0;
-    int err = ENOMEM;
-    DIR *dir = NULL;
+    పూర్ణాంకం ret = 0;
+    పూర్ణాంకం err = ENOMEM;
+    DIR *dir = ఖాళీ;
 
     /* Check extensions parent directory */
-    struct stat stat_buf;
-    err = stat(path, &stat_buf);
-    if (err != 0) {
+    నిర్మాణం stat stat_buf;
+    err = stat(మార్గం, &stat_buf);
+    ఒకవేళ (err != 0) {
         err = errno;
-        goto err;
+        వెళ్ళు err;
     }
-    if (!S_ISDIR(stat_buf.st_mode)) {
+    ఒకవేళ (!S_ISDIR(stat_buf.st_బహుళకం)) {
         err = ENOTDIR;
-        goto err;
+        వెళ్ళు err;
     }
-    if (!check_eaccess(path, R_OK | X_OK)) {
+    ఒకవేళ (!check_eaccess(మార్గం, R_OK | X_OK)) {
         err = EACCES;
-        goto err;
+        వెళ్ళు err;
     }
 
-    dir = opendir(path);
-    if (dir == NULL) {
+    dir = opendir(మార్గం);
+    ఒకవేళ (dir == ఖాళీ) {
         err = EACCES;
-        goto err;
+        వెళ్ళు err;
     }
 
-    struct dirent *entry;
-    char path_buf[PATH_MAX] = "";
-    versioned_path_length++; /* Additional final ‘/’ */
-    while ((entry = readdir(dir)) != NULL) {
-        const char *name = entry->d_name;
+    నిర్మాణం dirent *నమోదు_2;
+    అక్షరం మార్గం_buf[PATH_MAX] = "";
+    versioned_మార్గం_నిడివి++; /* Additional final ‘/’ */
+    అయితే ((నమోదు_2 = readdir(dir)) != ఖాళీ) {
+        స్థిరరాశి అక్షరం *name = నమోదు_2->d_name;
 
         /* Skip special entries */
-        if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
-            continue;
+        ఒకవేళ (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
+            కొనసాగు;
 
-        if (!snprintf_safe(path_buf, sizeof(path_buf), "%s/%s", path, name)) {
+        ఒకవేళ (!snprintf_సురక్షిత(మార్గం_buf, పరిమాణం(మార్గం_buf), "%s/%s", మార్గం, name)) {
             err = ENOMEM;
-            goto err;
+            వెళ్ళు err;
         }
-        if (stat(path_buf, &stat_buf) != 0 || !S_ISDIR(stat_buf.st_mode))
-            continue;
+        ఒకవేళ (stat(మార్గం_buf, &stat_buf) != 0 || !S_ISDIR(stat_buf.st_బహుళకం))
+            కొనసాగు;
 
         /* Skip if the corresponding versioned directory is already included */
-        for (darray_size_t i = 0; i < versioned_count; i++) {
-            const char * const prev_name = darray_item(*extensions, i)
-                                         + versioned_path_length;
-            if (strcmp(name, prev_name) == 0)
-                goto next;
+        కొరకు (darray_కొలత_t i = 0; i < versioned_లెక్క; i++) {
+            స్థిరరాశి అక్షరం * స్థిరరాశి prev_name = darray_అంశం(*extensions, i)
+                                         + versioned_మార్గం_నిడివి;
+            ఒకవేళ (strcmp(name, prev_name) == 0)
+                వెళ్ళు తదుపరి;
         }
 
-        char *ext_path = strdup_safe(path_buf);
-        if (!ext_path) {
+        అక్షరం *ext_మార్గం = strdup_సురక్షిత(మార్గం_buf);
+        ఒకవేళ (!ext_మార్గం) {
             err = ENOMEM;
-            goto err;
+            వెళ్ళు err;
         }
 
-        darray_append(*extensions, ext_path);
-next:
+        darray_append(*extensions, ext_మార్గం);
+తదుపరి:
     {} /* Label at end of compound statement is a C23 extension */
     }
 
     closedir(dir);
 
-    if (darray_size(*extensions) > versioned_count) {
+    ఒకవేళ (darray_కొలత(*extensions) > versioned_లెక్క) {
         /* Sort the entries, so that they are appended in lexicographic order */
-        qsort(darray_items(*extensions) + versioned_count,
-              darray_size(*extensions) - versioned_count,
-              sizeof(*darray_items(*extensions)), &compare_str);
-        char **ext_path;
-        darray_foreach_from(ext_path, *extensions, versioned_count) {
-            ret |= rxkb_context_include_path_append(ctx, *ext_path);
+        qsort(darray_వస్తువులు(*extensions) + versioned_లెక్క,
+              darray_కొలత(*extensions) - versioned_లెక్క,
+              పరిమాణం(*darray_వస్తువులు(*extensions)), &compare_str);
+        అక్షరం **ext_మార్గం;
+        darray_foreach_from(ext_మార్గం, *extensions, versioned_లెక్క) {
+            ret |= rxkb_context_include_మార్గం_append(ctx, *ext_మార్గం);
         }
     }
 
-    return ret;
+    తిరిగి ret;
 
 err:
     log_dbg(ctx,
-            "Include extensions path failed: %s (%s)\n", path, strerror(err));
-    if (dir)
+            "Include extensions path failed: %s (%s)\n", మార్గం, strerror(err));
+    ఒకవేళ (dir)
         closedir(dir);
 
-    return ret;
+    తిరిగి ret;
 }
-#endif
+#అయితే_ముగింపు
 
 bool
-rxkb_context_include_path_append_default(struct rxkb_context *ctx)
+rxkb_context_include_మార్గం_append_default(నిర్మాణం rxkb_context *ctx)
 {
-    char user_path[PATH_MAX];
+    అక్షరం user_మార్గం[PATH_MAX];
     bool ret = false;
 
-    if (ctx->context_state != CONTEXT_NEW) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    ఒకవేళ (ctx->context_state != CONTEXT_NEW) {
+        log_err(ctx, XKB_LOG_సందేశం_NO_ID,
                 "include paths can only be appended to a new context\n");
-        return false;
+        తిరిగి false;
     }
 
-    const char * const home = rxkb_context_getenv(ctx, "HOME");
-    const char * const xdg = rxkb_context_getenv(ctx, "XDG_CONFIG_HOME");
+    స్థిరరాశి అక్షరం * స్థిరరాశి home = rxkb_context_getenv(ctx, "HOME");
+    స్థిరరాశి అక్షరం * స్థిరరాశి xdg = rxkb_context_getenv(ctx, "XDG_CONFIG_HOME");
     /* Accept empty string, which may be unintentional and should be reported */
-    if (xdg != NULL) {
-        if (snprintf_safe(user_path, sizeof(user_path), "%s/xkb", xdg))
-            ret |= rxkb_context_include_path_append(ctx, user_path);
-    } else if (home != NULL) {
+    ఒకవేళ (xdg != ఖాళీ) {
+        ఒకవేళ (snprintf_సురక్షిత(user_మార్గం, పరిమాణం(user_మార్గం), "%s/xkb", xdg))
+            ret |= rxkb_context_include_మార్గం_append(ctx, user_మార్గం);
+    } లేకపోతే ఒకవేళ (home != ఖాళీ) {
         /* XDG_CONFIG_HOME fallback is $HOME/.config/ */
-        if (snprintf_safe(user_path, sizeof(user_path), "%s/.config/xkb", home))
-            ret |= rxkb_context_include_path_append(ctx, user_path);
+        ఒకవేళ (snprintf_సురక్షిత(user_మార్గం, పరిమాణం(user_మార్గం), "%s/.config/xkb", home))
+            ret |= rxkb_context_include_మార్గం_append(ctx, user_మార్గం);
     }
 
-    if (home != NULL) {
-        if (snprintf_safe(user_path, sizeof(user_path), "%s/.xkb", home))
-            ret |= rxkb_context_include_path_append(ctx, user_path);
+    ఒకవేళ (home != ఖాళీ) {
+        ఒకవేళ (snprintf_సురక్షిత(user_మార్గం, పరిమాణం(user_మార్గం), "%s/.xkb", home))
+            ret |= rxkb_context_include_మార్గం_append(ctx, user_మార్గం);
     }
 
-    const char * const extra = rxkb_context_getenv(ctx, "XKB_CONFIG_EXTRA_PATH");
+    స్థిరరాశి అక్షరం * స్థిరరాశి extra = rxkb_context_getenv(ctx, "XKB_CONFIG_EXTRA_PATH");
     /*
      * Only use default if path is undefined, but accept empty string, which may
      * be unintentional and should be reported.
      */
-    ret |= rxkb_context_include_path_append(
-        ctx, ((extra != NULL) ? extra : DFLT_XKB_CONFIG_EXTRA_PATH)
+    ret |= rxkb_context_include_మార్గం_append(
+        ctx, ((extra != ఖాళీ) ? extra : DFLT_XKB_CONFIG_EXTRA_మార్గం)
     );
 
-#if HAVE_XKB_EXTENSIONS_DIRECTORIES
+#ఒకవేళ HAVE_XKB_EXTENSIONS_DIRECTORIES
     darray_string extensions = darray_new();
 
     /* Versioned extensions directory */
-    const char *extensions_path =
+    స్థిరరాశి అక్షరం *extensions_మార్గం =
         rxkb_context_getenv(ctx, "XKB_CONFIG_VERSIONED_EXTENSIONS_PATH");
-#ifdef DFLT_XKB_CONFIG_VERSIONED_EXTENSIONS_PATH
-    if (extensions_path == NULL)
-        extensions_path = DFLT_XKB_CONFIG_VERSIONED_EXTENSIONS_PATH;
-#endif
-    size_t versioned_path_length = 0;
-    if (extensions_path != NULL) {
+#నిర్వచితమైతే DFLT_XKB_CONFIG_VERSIONED_EXTENSIONS_మార్గం
+    ఒకవేళ (extensions_మార్గం == ఖాళీ)
+        extensions_మార్గం = DFLT_XKB_CONFIG_VERSIONED_EXTENSIONS_మార్గం;
+#అయితే_ముగింపు
+    కొలత_t versioned_మార్గం_నిడివి = 0;
+    ఒకవేళ (extensions_మార్గం != ఖాళీ) {
         /* Add direct subdirectories */
-        ret |= add_direct_subdirectories(ctx, extensions_path,
+        ret |= కూడు_ప్రత్యక్ష_subdirectories(ctx, extensions_మార్గం,
                                          &extensions, 0, 0);
-        versioned_path_length = strlen(extensions_path);
+        versioned_మార్గం_నిడివి = అక్షరశ్రేణి_పొడవు(extensions_మార్గం);
     }
 
     /* Unversioned extensions directory */
-    extensions_path =
+    extensions_మార్గం =
         rxkb_context_getenv(ctx, "XKB_CONFIG_UNVERSIONED_EXTENSIONS_PATH");
-#ifdef DFLT_XKB_CONFIG_UNVERSIONED_EXTENSIONS_PATH
-    if (extensions_path == NULL)
-        extensions_path = DFLT_XKB_CONFIG_UNVERSIONED_EXTENSIONS_PATH;
-#endif
-    if (extensions_path != NULL) {
+#నిర్వచితమైతే DFLT_XKB_CONFIG_UNVERSIONED_EXTENSIONS_మార్గం
+    ఒకవేళ (extensions_మార్గం == ఖాళీ)
+        extensions_మార్గం = DFLT_XKB_CONFIG_UNVERSIONED_EXTENSIONS_మార్గం;
+#అయితే_ముగింపు
+    ఒకవేళ (extensions_మార్గం != ఖాళీ) {
         /*
          * Add direct subdirectories, except those already added from the
          * *versioned* extensions path hereinabove.
          */
-        ret |= add_direct_subdirectories(ctx, extensions_path, &extensions,
-                                         darray_size(extensions),
-                                         versioned_path_length);
+        ret |= కూడు_ప్రత్యక్ష_subdirectories(ctx, extensions_మార్గం, &extensions,
+                                         darray_కొలత(extensions),
+                                         versioned_మార్గం_నిడివి);
     }
 
-    char **ext_path;
-    darray_foreach(ext_path, extensions) {
-        free(*ext_path);
+    అక్షరం **ext_మార్గం;
+    darray_foreach(ext_మార్గం, extensions) {
+        విడుదల(*ext_మార్గం);
     }
     darray_free(extensions);
-#endif
+#అయితే_ముగింపు
 
     /* Canonical XKB root */
-    const char * const root = rxkb_context_getenv(ctx, "XKB_CONFIG_ROOT");
+    స్థిరరాశి అక్షరం * స్థిరరాశి మూలం = rxkb_context_getenv(ctx, "XKB_CONFIG_ROOT");
     /*
      * Only use default if path is undefined, but accept empty string, which may
      * be unintentional and should be reported.
      */
-    const bool has_root = rxkb_context_include_path_append(
-        ctx, ((root != NULL) ? root: DFLT_XKB_CONFIG_ROOT)
+    స్థిరరాశి bool has_మూలం = rxkb_context_include_మార్గం_append(
+        ctx, ((మూలం != ఖాళీ) ? మూలం: DFLT_XKB_CONFIG_మూలం)
     );
-    ret |= has_root;
+    ret |= has_మూలం;
 
     /*
      * Fallback for misconfigured setups.
@@ -816,569 +816,569 @@ rxkb_context_include_path_append_default(struct rxkb_context *ctx)
      * This fallback can still be skipped if deliberately using an empty string
      * for the canonical XKB root hereinabove.
      */
-    if (!has_root && (root == NULL || root[0] != '\0')) {
-        log_warn(ctx, XKB_LOG_MESSAGE_NO_ID,
+    ఒకవేళ (!has_మూలం && (మూలం == ఖాళీ || మూలం[0] != '\0')) {
+        log_warn(ctx, XKB_LOG_సందేశం_NO_ID,
                  "Root include path failed; fallback to \"%s\". "
                  "The setup is probably misconfigured. "
                  "Please ensure that \"%s\" is available in the environment.\n",
-                 DFLT_XKB_LEGACY_ROOT,
-                 ((root == NULL) ? DFLT_XKB_CONFIG_ROOT : root));
-        ret |= rxkb_context_include_path_append(ctx, DFLT_XKB_LEGACY_ROOT);
+                 DFLT_XKB_LEGACY_మూలం,
+                 ((మూలం == ఖాళీ) ? DFLT_XKB_CONFIG_మూలం : మూలం));
+        ret |= rxkb_context_include_మార్గం_append(ctx, DFLT_XKB_LEGACY_మూలం);
     }
 
-    return ret;
+    తిరిగి ret;
 }
 
 bool
-rxkb_context_parse_default_ruleset(struct rxkb_context *ctx)
+rxkb_context_parse_default_ruleset(నిర్మాణం rxkb_context *ctx)
 {
-    return rxkb_context_parse(ctx, DEFAULT_XKB_RULES);
+    తిరిగి rxkb_context_parse(ctx, DEFAULT_XKB_నియమాలు);
 }
 
 bool
-rxkb_context_parse(struct rxkb_context *ctx, const char *ruleset)
+rxkb_context_parse(నిర్మాణం rxkb_context *ctx, స్థిరరాశి అక్షరం *ruleset)
 {
-    char **path;
+    అక్షరం **మార్గం;
     bool success = false;
 
-    if (ctx->context_state != CONTEXT_NEW) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    ఒకవేళ (ctx->context_state != CONTEXT_NEW) {
+        log_err(ctx, XKB_LOG_సందేశం_NO_ID,
                 "parse must only be called on a new context\n");
-        return false;
+        తిరిగి false;
     }
 
-    darray_foreach_reverse(path, ctx->includes) {
-        char rules[PATH_MAX];
+    darray_foreach_తిరగేయి(మార్గం, ctx->includes) {
+        అక్షరం నియమాలు[PATH_MAX];
 
-        if (snprintf_safe(rules, sizeof(rules), "%s/rules/%s.xml",
-                           *path, ruleset)) {
-            log_dbg(ctx, "Parsing %s\n", rules);
-            if (parse(ctx, rules, RXKB_POPULARITY_STANDARD))
+        ఒకవేళ (snprintf_సురక్షిత(నియమాలు, పరిమాణం(నియమాలు), "%s/rules/%s.xml",
+                           *మార్గం, ruleset)) {
+            log_dbg(ctx, "Parsing %s\n", నియమాలు);
+            ఒకవేళ (parse(ctx, నియమాలు, RXKB_POPULARITY_STANDARD))
                 success = true;
         }
 
-        if (ctx->load_extra_rules_files &&
-            snprintf_safe(rules, sizeof(rules), "%s/rules/%s.extras.xml",
-                          *path, ruleset)) {
-            log_dbg(ctx, "Parsing %s\n", rules);
-            if (parse(ctx, rules, RXKB_POPULARITY_EXOTIC))
+        ఒకవేళ (ctx->ఎక్కించు_extra_నియమాలు_files &&
+            snprintf_సురక్షిత(నియమాలు, పరిమాణం(నియమాలు), "%s/rules/%s.extras.xml",
+                          *మార్గం, ruleset)) {
+            log_dbg(ctx, "Parsing %s\n", నియమాలు);
+            ఒకవేళ (parse(ctx, నియమాలు, RXKB_POPULARITY_EXOTIC))
                 success = true;
         }
     }
 
     ctx->context_state = success ? CONTEXT_PARSED : CONTEXT_FAILED;
 
-    return success;
+    తిరిగి success;
 }
 
 
-void
-rxkb_context_set_user_data(struct rxkb_context *ctx, void *userdata)
+శూన్య
+rxkb_context_సమితి_user_దత్తాంశం(నిర్మాణం rxkb_context *ctx, శూన్య *userdata)
 {
     ctx->userdata = userdata;
 }
 
-void *
-rxkb_context_get_user_data(struct rxkb_context *ctx)
+శూన్య *
+rxkb_context_get_user_దత్తాంశం(నిర్మాణం rxkb_context *ctx)
 {
-    return ctx->userdata;
+    తిరిగి ctx->userdata;
 }
 
-static inline bool
-is_node(xmlNode *node, const char *name)
+స్థిర అంతఃవరుస bool
+is_కణుపు(xml_కణుపు *కణుపు, స్థిరరాశి అక్షరం *name)
 {
-    return node->type == XML_ELEMENT_NODE &&
-        xmlStrEqual(node->name, (const xmlChar*)name);
+    తిరిగి కణుపు->type == XML_ELEMENT_కణుపు &&
+        xmlStrEqual(కణుపు->name, (స్థిరరాశి xmlChar*)name);
 }
 
 /* return a copy of the text content from the first text node of this node */
-static char *
-extract_text(xmlNode *node)
+స్థిర అక్షరం *
+వెలికితీయి_పాఠ్యం(xml_కణుపు *కణుపు)
 {
-    xmlNode *n;
+    xml_కణుపు *n;
 
-    for (n = node->children; n; n = n->next) {
-        if (n->type == XML_TEXT_NODE)
-            return (char *)xmlStrdup(n->content);
+    కొరకు (n = కణుపు->children; n; n = n->తదుపరి) {
+        ఒకవేళ (n->type == XML_పాఠ్యం_కణుపు)
+            తిరిగి (అక్షరం *)xmlStrdup(n->content);
     }
-    return NULL;
+    తిరిగి ఖాళీ;
 }
 
 /* Data from “configItem” node */
-struct config_item {
-    char *name;
-    char *description;
-    char *brief;
-    char *vendor;
-    enum rxkb_popularity popularity;
+నిర్మాణం config_అంశం {
+    అక్షరం *name;
+    అక్షరం *description;
+    అక్షరం *brief;
+    అక్షరం *vendor;
+    గణన rxkb_popularity popularity;
     bool layout_specific;
 };
 
-#define config_item_new(popularity_) { \
-    .name = NULL, \
-    .description = NULL, \
-    .brief = NULL, \
-    .vendor = NULL, \
+#నిర్వచించు config_అంశం_new(popularity_) { \
+    .name = ఖాళీ, \
+    .description = ఖాళీ, \
+    .brief = ఖాళీ, \
+    .vendor = ఖాళీ, \
     .popularity = (popularity_), \
     .layout_specific = false \
 }
 
-static void
-config_item_free(struct config_item *config) {
-    free(config->name);
-    free(config->description);
-    free(config->brief);
-    free(config->vendor);
+స్థిర శూన్య
+config_అంశం_free(నిర్మాణం config_అంశం *config) {
+    విడుదల(config->name);
+    విడుదల(config->description);
+    విడుదల(config->brief);
+    విడుదల(config->vendor);
 }
 
-static bool
-parse_config_item(struct rxkb_context *ctx, xmlNode *parent,
-                  struct config_item *config)
+స్థిర bool
+parse_config_అంశం(నిర్మాణం rxkb_context *ctx, xml_కణుపు *మాతృ,
+                  నిర్మాణం config_అంశం *config)
 {
-    xmlNode *node = NULL;
-    xmlNode *ci = NULL;
+    xml_కణుపు *కణుపు = ఖాళీ;
+    xml_కణుపు *ci = ఖాళీ;
 
-    for (ci = parent->children; ci; ci = ci->next) {
-        if (is_node(ci, "configItem")) {
+    కొరకు (ci = మాతృ->children; ci; ci = ci->తదుపరి) {
+        ఒకవేళ (is_కణుపు(ci, "configItem")) {
             /* Process attributes */
-            xmlChar *raw_popularity = xmlGetProp(ci, (const xmlChar*)"popularity");
-            if (raw_popularity) {
-                if (xmlStrEqual(raw_popularity, (const xmlChar*)"standard"))
+            xmlChar *raw_popularity = xmlGetProp(ci, (స్థిరరాశి xmlChar*)"popularity");
+            ఒకవేళ (raw_popularity) {
+                ఒకవేళ (xmlStrEqual(raw_popularity, (స్థిరరాశి xmlChar*)"standard"))
                     config->popularity = RXKB_POPULARITY_STANDARD;
-                else if (xmlStrEqual(raw_popularity, (const xmlChar*)"exotic"))
+                లేకపోతే ఒకవేళ (xmlStrEqual(raw_popularity, (స్థిరరాశి xmlChar*)"exotic"))
                     config->popularity = RXKB_POPULARITY_EXOTIC;
-                else
-                    log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+                లేకపోతే
+                    log_err(ctx, XKB_LOG_సందేశం_NO_ID,
                             "xml:%u: invalid popularity attribute: expected "
                             "'standard' or 'exotic', got: '%s'\n",
-                            ci->line, raw_popularity);
+                            ci->పంక్తి, raw_popularity);
             }
             xmlFree(raw_popularity);
 
             /* Note: this is only useful for options */
             xmlChar *raw_layout_specific =
-                xmlGetProp(ci, (const xmlChar*)"layout-specific");
-            if (raw_layout_specific &&
-                xmlStrEqual(raw_layout_specific, (const xmlChar*)"true"))
+                xmlGetProp(ci, (స్థిరరాశి xmlChar*)"layout-specific");
+            ఒకవేళ (raw_layout_specific &&
+                xmlStrEqual(raw_layout_specific, (స్థిరరాశి xmlChar*)"true"))
                 config->layout_specific = true;
             xmlFree(raw_layout_specific);
 
             /* Process children */
-            for (node = ci->children; node; node = node->next) {
-                if (is_node(node, "name"))
-                    config->name = extract_text(node);
-                else if (is_node(node, "description"))
-                    config->description = extract_text(node);
-                else if (is_node(node, "shortDescription"))
-                    config->brief = extract_text(node);
-                else if (is_node(node, "vendor"))
-                    config->vendor = extract_text(node);
+            కొరకు (కణుపు = ci->children; కణుపు; కణుపు = కణుపు->తదుపరి) {
+                ఒకవేళ (is_కణుపు(కణుపు, "name"))
+                    config->name = వెలికితీయి_పాఠ్యం(కణుపు);
+                లేకపోతే ఒకవేళ (is_కణుపు(కణుపు, "description"))
+                    config->description = వెలికితీయి_పాఠ్యం(కణుపు);
+                లేకపోతే ఒకవేళ (is_కణుపు(కణుపు, "shortDescription"))
+                    config->brief = వెలికితీయి_పాఠ్యం(కణుపు);
+                లేకపోతే ఒకవేళ (is_కణుపు(కణుపు, "vendor"))
+                    config->vendor = వెలికితీయి_పాఠ్యం(కణుపు);
                 /* Note: the DTD allows for vendor + brief but models only use
                  * vendor and everything else only uses shortDescription */
             }
 
-            if (!config->name || !strlen(config->name))  {
-                log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+            ఒకవేళ (!config->name || !అక్షరశ్రేణి_పొడవు(config->name))  {
+                log_err(ctx, XKB_LOG_సందేశం_NO_ID,
                         "xml:%u: missing required element 'name'\n",
-                        ci->line);
-                config_item_free(config);
-                return false;
+                        ci->పంక్తి);
+                config_అంశం_free(config);
+                తిరిగి false;
             }
 
-            return true; /* only one configItem allowed in the dtd */
+            తిరిగి true; /* only one configItem allowed in the dtd */
         }
     }
 
-    return false;
+    తిరిగి false;
 }
 
-static void
-parse_model(struct rxkb_context *ctx, xmlNode *model,
-            enum rxkb_popularity popularity)
+స్థిర శూన్య
+parse_model(నిర్మాణం rxkb_context *ctx, xml_కణుపు *model,
+            గణన rxkb_popularity popularity)
 {
-    struct config_item config = config_item_new(popularity);
+    నిర్మాణం config_అంశం config = config_అంశం_new(popularity);
 
-    if (parse_config_item(ctx, model, &config)) {
-        struct rxkb_model *m;
+    ఒకవేళ (parse_config_అంశం(ctx, model, &config)) {
+        నిర్మాణం rxkb_model *m;
 
-        list_for_each(m, &ctx->models, base.link) {
-            if (streq(m->name, config.name)) {
-                config_item_free(&config);
-                return;
+        list_for_each(m, &ctx->models, పునాది.link) {
+            ఒకవేళ (streq(m->name, config.name)) {
+                config_అంశం_free(&config);
+                తిరిగి;
             }
         }
 
         /* new model */
-        m = rxkb_model_create(&ctx->base);
+        m = rxkb_model_create(&ctx->పునాది);
         m->name = steal(&config.name);
         m->description = steal(&config.description);
         m->vendor = steal(&config.vendor);
         m->popularity = config.popularity;
-        list_append(&ctx->models, &m->base.link);
+        list_append(&ctx->models, &m->పునాది.link);
     }
 }
 
-static void
-parse_model_list(struct rxkb_context *ctx, xmlNode *model_list,
-                 enum rxkb_popularity popularity)
+స్థిర శూన్య
+parse_model_list(నిర్మాణం rxkb_context *ctx, xml_కణుపు *model_list,
+                 గణన rxkb_popularity popularity)
 {
-    xmlNode *node = NULL;
+    xml_కణుపు *కణుపు = ఖాళీ;
 
-    for (node = model_list->children; node; node = node->next) {
-        if (is_node(node, "model"))
-            parse_model(ctx, node, popularity);
+    కొరకు (కణుపు = model_list->children; కణుపు; కణుపు = కణుపు->తదుపరి) {
+        ఒకవేళ (is_కణుపు(కణుపు, "model"))
+            parse_model(ctx, కణుపు, popularity);
     }
 }
 
-static void
-parse_language_list(xmlNode *language_list, struct rxkb_layout *layout)
+స్థిర శూన్య
+parse_language_list(xml_కణుపు *language_list, నిర్మాణం rxkb_layout *layout)
 {
-    xmlNode *node = NULL;
-    struct rxkb_iso639_code *code;
+    xml_కణుపు *కణుపు = ఖాళీ;
+    నిర్మాణం rxkb_iso639_సంకేతం *సంకేతం_2;
 
-    for (node = language_list->children; node; node = node->next) {
-        if (is_node(node, "iso639Id")) {
-            char *str = extract_text(node);
-            struct rxkb_object *parent;
+    కొరకు (కణుపు = language_list->children; కణుపు; కణుపు = కణుపు->తదుపరి) {
+        ఒకవేళ (is_కణుపు(కణుపు, "iso639Id")) {
+            అక్షరం *str = వెలికితీయి_పాఠ్యం(కణుపు);
+            నిర్మాణం rxkb_object *మాతృ;
 
-            if (!str || strlen(str) != 3) {
-                free(str);
-                continue;
+            ఒకవేళ (!str || అక్షరశ్రేణి_పొడవు(str) != 3) {
+                విడుదల(str);
+                కొనసాగు;
             }
 
-            parent = &layout->base;
-            code = rxkb_iso639_code_create(parent);
-            code->code = str;
-            list_append(&layout->iso639s, &code->base.link);
+            మాతృ = &layout->పునాది;
+            సంకేతం_2 = rxkb_iso639_సంకేతం_create(మాతృ);
+            సంకేతం_2->సంకేతం_2 = str;
+            list_append(&layout->iso639s, &సంకేతం_2->పునాది.link);
         }
     }
 }
 
-static void
-parse_country_list(xmlNode *country_list, struct rxkb_layout *layout)
+స్థిర శూన్య
+parse_country_list(xml_కణుపు *country_list, నిర్మాణం rxkb_layout *layout)
 {
-    xmlNode *node = NULL;
-    struct rxkb_iso3166_code *code;
+    xml_కణుపు *కణుపు = ఖాళీ;
+    నిర్మాణం rxkb_iso3166_సంకేతం *సంకేతం_2;
 
-    for (node = country_list->children; node; node = node->next) {
-        if (is_node(node, "iso3166Id")) {
-            char *str = extract_text(node);
-            struct rxkb_object *parent;
+    కొరకు (కణుపు = country_list->children; కణుపు; కణుపు = కణుపు->తదుపరి) {
+        ఒకవేళ (is_కణుపు(కణుపు, "iso3166Id")) {
+            అక్షరం *str = వెలికితీయి_పాఠ్యం(కణుపు);
+            నిర్మాణం rxkb_object *మాతృ;
 
-            if (!str || strlen(str) != 2) {
-                free(str);
-                continue;
+            ఒకవేళ (!str || అక్షరశ్రేణి_పొడవు(str) != 2) {
+                విడుదల(str);
+                కొనసాగు;
             }
 
-            parent = &layout->base;
-            code = rxkb_iso3166_code_create(parent);
-            code->code = str;
-            list_append(&layout->iso3166s, &code->base.link);
+            మాతృ = &layout->పునాది;
+            సంకేతం_2 = rxkb_iso3166_సంకేతం_create(మాతృ);
+            సంకేతం_2->సంకేతం_2 = str;
+            list_append(&layout->iso3166s, &సంకేతం_2->పునాది.link);
         }
     }
 }
 
-static void
-parse_variant(struct rxkb_context *ctx, struct rxkb_layout *l,
-              xmlNode *variant, enum rxkb_popularity popularity)
+స్థిర శూన్య
+parse_variant(నిర్మాణం rxkb_context *ctx, నిర్మాణం rxkb_layout *l,
+              xml_కణుపు *variant, గణన rxkb_popularity popularity)
 {
-    xmlNode *ci;
-    struct config_item config = config_item_new(popularity);
+    xml_కణుపు *ci;
+    నిర్మాణం config_అంశం config = config_అంశం_new(popularity);
 
-    if (parse_config_item(ctx, variant, &config)) {
-        struct rxkb_layout *v;
+    ఒకవేళ (parse_config_అంశం(ctx, variant, &config)) {
+        నిర్మాణం rxkb_layout *v;
         bool exists = false;
 
-        list_for_each(v, &ctx->layouts, base.link) {
-            if (streq_null(v->variant, config.name) &&
+        list_for_each(v, &ctx->layouts, పునాది.link) {
+            ఒకవేళ (streq_null(v->variant, config.name) &&
                 streq(v->name, l->name)) {
                 exists = true;
-                break;
+                ఆపు;
             }
         }
 
-        if (!exists) {
-            v = rxkb_layout_create(&ctx->base);
+        ఒకవేళ (!exists) {
+            v = rxkb_layout_create(&ctx->పునాది);
             list_init(&v->iso639s);
             list_init(&v->iso3166s);
             v->name = strdup(l->name);
             v->variant = steal(&config.name);
             v->description = steal(&config.description);
             // if variant omits brief, inherit from parent layout.
-            v->brief = config.brief == NULL ? strdup_safe(l->brief) : steal(&config.brief);
+            v->brief = config.brief == ఖాళీ ? strdup_సురక్షిత(l->brief) : steal(&config.brief);
             v->popularity = config.popularity;
-            list_append(&ctx->layouts, &v->base.link);
+            list_append(&ctx->layouts, &v->పునాది.link);
 
-            for (ci = variant->children; ci; ci = ci->next) {
-                xmlNode *node;
+            కొరకు (ci = variant->children; ci; ci = ci->తదుపరి) {
+                xml_కణుపు *కణుపు;
 
-                if (!is_node(ci, "configItem"))
-                    continue;
+                ఒకవేళ (!is_కణుపు(ci, "configItem"))
+                    కొనసాగు;
 
-                bool found_language_list = false;
-                bool found_country_list = false;
-                for (node = ci->children; node; node = node->next) {
-                    if (is_node(node, "languageList")) {
-                        parse_language_list(node, v);
-                        found_language_list = true;
+                bool దొరికింది_language_list = false;
+                bool దొరికింది_country_list = false;
+                కొరకు (కణుపు = ci->children; కణుపు; కణుపు = కణుపు->తదుపరి) {
+                    ఒకవేళ (is_కణుపు(కణుపు, "languageList")) {
+                        parse_language_list(కణుపు, v);
+                        దొరికింది_language_list = true;
                     }
-                    if (is_node(node, "countryList")) {
-                        parse_country_list(node, v);
-                        found_country_list = true;
-                    }
-                }
-                if (!found_language_list) {
-                    // inherit from parent layout
-                    struct rxkb_iso639_code* x;
-                    list_for_each(x, &l->iso639s, base.link) {
-                        struct rxkb_iso639_code* code = rxkb_iso639_code_create(&v->base);
-                        code->code = strdup(x->code);
-                        list_append(&v->iso639s, &code->base.link);
+                    ఒకవేళ (is_కణుపు(కణుపు, "countryList")) {
+                        parse_country_list(కణుపు, v);
+                        దొరికింది_country_list = true;
                     }
                 }
-                if (!found_country_list) {
+                ఒకవేళ (!దొరికింది_language_list) {
                     // inherit from parent layout
-                    struct rxkb_iso3166_code* x;
-                    list_for_each(x, &l->iso3166s, base.link) {
-                        struct rxkb_iso3166_code* code = rxkb_iso3166_code_create(&v->base);
-                        code->code = strdup(x->code);
-                        list_append(&v->iso3166s, &code->base.link);
+                    నిర్మాణం rxkb_iso639_సంకేతం* x;
+                    list_for_each(x, &l->iso639s, పునాది.link) {
+                        నిర్మాణం rxkb_iso639_సంకేతం* సంకేతం_2 = rxkb_iso639_సంకేతం_create(&v->పునాది);
+                        సంకేతం_2->సంకేతం_2 = strdup(x->సంకేతం_2);
+                        list_append(&v->iso639s, &సంకేతం_2->పునాది.link);
+                    }
+                }
+                ఒకవేళ (!దొరికింది_country_list) {
+                    // inherit from parent layout
+                    నిర్మాణం rxkb_iso3166_సంకేతం* x;
+                    list_for_each(x, &l->iso3166s, పునాది.link) {
+                        నిర్మాణం rxkb_iso3166_సంకేతం* సంకేతం_2 = rxkb_iso3166_సంకేతం_create(&v->పునాది);
+                        సంకేతం_2->సంకేతం_2 = strdup(x->సంకేతం_2);
+                        list_append(&v->iso3166s, &సంకేతం_2->పునాది.link);
                     }
                 }
             }
-        } else {
-            config_item_free(&config);
+        } లేకపోతే {
+            config_అంశం_free(&config);
         }
     }
 }
 
-static void
-parse_variant_list(struct rxkb_context *ctx, struct rxkb_layout *l,
-                   xmlNode *variant_list, enum rxkb_popularity popularity)
+స్థిర శూన్య
+parse_variant_list(నిర్మాణం rxkb_context *ctx, నిర్మాణం rxkb_layout *l,
+                   xml_కణుపు *variant_list, గణన rxkb_popularity popularity)
 {
-    xmlNode *node = NULL;
+    xml_కణుపు *కణుపు = ఖాళీ;
 
-    for (node = variant_list->children; node; node = node->next) {
-        if (is_node(node, "variant"))
-            parse_variant(ctx, l, node, popularity);
+    కొరకు (కణుపు = variant_list->children; కణుపు; కణుపు = కణుపు->తదుపరి) {
+        ఒకవేళ (is_కణుపు(కణుపు, "variant"))
+            parse_variant(ctx, l, కణుపు, popularity);
     }
 }
 
-static void
-parse_layout(struct rxkb_context *ctx, xmlNode *layout,
-             enum rxkb_popularity popularity)
+స్థిర శూన్య
+parse_layout(నిర్మాణం rxkb_context *ctx, xml_కణుపు *layout,
+             గణన rxkb_popularity popularity)
 {
-    struct config_item config = config_item_new(popularity);
-    struct rxkb_layout *l;
-    xmlNode *node = NULL;
+    నిర్మాణం config_అంశం config = config_అంశం_new(popularity);
+    నిర్మాణం rxkb_layout *l;
+    xml_కణుపు *కణుపు = ఖాళీ;
     bool exists = false;
 
-    if (!parse_config_item(ctx, layout, &config))
-        return;
+    ఒకవేళ (!parse_config_అంశం(ctx, layout, &config))
+        తిరిగి;
 
-    list_for_each(l, &ctx->layouts, base.link) {
-        if (streq(l->name, config.name) && l->variant == NULL) {
+    list_for_each(l, &ctx->layouts, పునాది.link) {
+        ఒకవేళ (streq(l->name, config.name) && l->variant == ఖాళీ) {
             exists = true;
-            break;
+            ఆపు;
         }
     }
 
-    if (!exists) {
-        l = rxkb_layout_create(&ctx->base);
+    ఒకవేళ (!exists) {
+        l = rxkb_layout_create(&ctx->పునాది);
         list_init(&l->iso639s);
         list_init(&l->iso3166s);
         l->name = steal(&config.name);
-        l->variant = NULL;
+        l->variant = ఖాళీ;
         l->description = steal(&config.description);
         l->brief = steal(&config.brief);
         l->popularity = config.popularity;
-        list_append(&ctx->layouts, &l->base.link);
-    } else {
-        config_item_free(&config);
+        list_append(&ctx->layouts, &l->పునాది.link);
+    } లేకపోతే {
+        config_అంశం_free(&config);
     }
 
-    for (node = layout->children; node; node = node->next) {
-        if (is_node(node, "variantList")) {
-            parse_variant_list(ctx, l, node, popularity);
+    కొరకు (కణుపు = layout->children; కణుపు; కణుపు = కణుపు->తదుపరి) {
+        ఒకవేళ (is_కణుపు(కణుపు, "variantList")) {
+            parse_variant_list(ctx, l, కణుపు, popularity);
         }
-        if (!exists && is_node(node, "configItem")) {
-            xmlNode *ll;
-            for (ll = node->children; ll; ll = ll->next) {
-                if (is_node(ll, "languageList"))
+        ఒకవేళ (!exists && is_కణుపు(కణుపు, "configItem")) {
+            xml_కణుపు *ll;
+            కొరకు (ll = కణుపు->children; ll; ll = ll->తదుపరి) {
+                ఒకవేళ (is_కణుపు(ll, "languageList"))
                     parse_language_list(ll, l);
-                if (is_node(ll, "countryList"))
+                ఒకవేళ (is_కణుపు(ll, "countryList"))
                     parse_country_list(ll, l);
             }
         }
     }
 }
 
-static void
-parse_layout_list(struct rxkb_context *ctx, xmlNode *layout_list,
-                  enum rxkb_popularity popularity)
+స్థిర శూన్య
+parse_layout_list(నిర్మాణం rxkb_context *ctx, xml_కణుపు *layout_list,
+                  గణన rxkb_popularity popularity)
 {
-    xmlNode *node = NULL;
+    xml_కణుపు *కణుపు = ఖాళీ;
 
-    for (node = layout_list->children; node; node = node->next) {
-        if (is_node(node, "layout"))
-            parse_layout(ctx, node, popularity);
+    కొరకు (కణుపు = layout_list->children; కణుపు; కణుపు = కణుపు->తదుపరి) {
+        ఒకవేళ (is_కణుపు(కణుపు, "layout"))
+            parse_layout(ctx, కణుపు, popularity);
     }
 }
 
-static void
-parse_option(struct rxkb_context *ctx, struct rxkb_option_group *group,
-             xmlNode *option, enum rxkb_popularity popularity)
+స్థిర శూన్య
+parse_option(నిర్మాణం rxkb_context *ctx, నిర్మాణం rxkb_option_సమూహం *సమూహం,
+             xml_కణుపు *option, గణన rxkb_popularity popularity)
 {
-    struct config_item config = config_item_new(popularity);
+    నిర్మాణం config_అంశం config = config_అంశం_new(popularity);
 
-    if (parse_config_item(ctx, option, &config)) {
-        struct rxkb_option *o;
+    ఒకవేళ (parse_config_అంశం(ctx, option, &config)) {
+        నిర్మాణం rxkb_option *o;
 
-        list_for_each(o, &group->options, base.link) {
-            if (streq(o->name, config.name)) {
-                config_item_free(&config);
-                return;
+        list_for_each(o, &సమూహం->options, పునాది.link) {
+            ఒకవేళ (streq(o->name, config.name)) {
+                config_అంశం_free(&config);
+                తిరిగి;
             }
         }
 
-        o = rxkb_option_create(&group->base);
+        o = rxkb_option_create(&సమూహం->పునాది);
         o->name = steal(&config.name);
         o->description = steal(&config.description);
         o->popularity = config.popularity;
         o->layout_specific = config.layout_specific;
-        list_append(&group->options, &o->base.link);
+        list_append(&సమూహం->options, &o->పునాది.link);
     }
 }
 
-static void
-parse_group(struct rxkb_context *ctx, xmlNode *group,
-            enum rxkb_popularity popularity)
+స్థిర శూన్య
+parse_సమూహం(నిర్మాణం rxkb_context *ctx, xml_కణుపు *సమూహం,
+            గణన rxkb_popularity popularity)
 {
-    struct config_item config = config_item_new(popularity);
-    struct rxkb_option_group *g;
-    xmlNode *node = NULL;
-    xmlChar *multiple;
+    నిర్మాణం config_అంశం config = config_అంశం_new(popularity);
+    నిర్మాణం rxkb_option_సమూహం *g;
+    xml_కణుపు *కణుపు = ఖాళీ;
+    xmlChar *గుణిజం;
     bool exists = false;
 
-    if (!parse_config_item(ctx, group, &config))
-        return;
+    ఒకవేళ (!parse_config_అంశం(ctx, సమూహం, &config))
+        తిరిగి;
 
-    list_for_each(g, &ctx->option_groups, base.link) {
-        if (streq(g->name, config.name)) {
+    list_for_each(g, &ctx->option_groups, పునాది.link) {
+        ఒకవేళ (streq(g->name, config.name)) {
             exists = true;
-            break;
+            ఆపు;
         }
     }
 
-    if (!exists) {
-        g = rxkb_option_group_create(&ctx->base);
+    ఒకవేళ (!exists) {
+        g = rxkb_option_సమూహం_create(&ctx->పునాది);
         g->name = steal(&config.name);
         g->description = steal(&config.description);
         g->popularity = config.popularity;
 
-        multiple = xmlGetProp(group, (const xmlChar*)"allowMultipleSelection");
-        if (multiple && xmlStrEqual(multiple, (const xmlChar*)"true"))
-            g->allow_multiple = true;
-        xmlFree(multiple);
+        గుణిజం = xmlGetProp(సమూహం, (స్థిరరాశి xmlChar*)"allowMultipleSelection");
+        ఒకవేళ (గుణిజం && xmlStrEqual(గుణిజం, (స్థిరరాశి xmlChar*)"true"))
+            g->allow_గుణిజం = true;
+        xmlFree(గుణిజం);
 
         list_init(&g->options);
-        list_append(&ctx->option_groups, &g->base.link);
-    } else {
-        config_item_free(&config);
+        list_append(&ctx->option_groups, &g->పునాది.link);
+    } లేకపోతే {
+        config_అంశం_free(&config);
     }
 
-    for (node = group->children; node; node = node->next) {
-        if (is_node(node, "option"))
-            parse_option(ctx, g, node, popularity);
+    కొరకు (కణుపు = సమూహం->children; కణుపు; కణుపు = కణుపు->తదుపరి) {
+        ఒకవేళ (is_కణుపు(కణుపు, "option"))
+            parse_option(ctx, g, కణుపు, popularity);
     }
 }
 
-static void
-parse_option_list(struct rxkb_context *ctx, xmlNode *option_list,
-                  enum rxkb_popularity popularity)
+స్థిర శూన్య
+parse_option_list(నిర్మాణం rxkb_context *ctx, xml_కణుపు *option_list,
+                  గణన rxkb_popularity popularity)
 {
-    xmlNode *node = NULL;
+    xml_కణుపు *కణుపు = ఖాళీ;
 
-    for (node = option_list->children; node; node = node->next) {
-        if (is_node(node, "group"))
-            parse_group(ctx, node, popularity);
+    కొరకు (కణుపు = option_list->children; కణుపు; కణుపు = కణుపు->తదుపరి) {
+        ఒకవేళ (is_కణుపు(కణుపు, "group"))
+            parse_సమూహం(ctx, కణుపు, popularity);
     }
 }
 
-static void
-parse_rules_xml(struct rxkb_context *ctx, xmlNode *root,
-                enum rxkb_popularity popularity)
+స్థిర శూన్య
+parse_నియమాలు_xml(నిర్మాణం rxkb_context *ctx, xml_కణుపు *మూలం,
+                గణన rxkb_popularity popularity)
 {
-    xmlNode *node = NULL;
+    xml_కణుపు *కణుపు = ఖాళీ;
 
-    for (node = root->children; node; node = node->next) {
-        if (is_node(node, "modelList"))
-            parse_model_list(ctx, node, popularity);
-        else if (is_node(node, "layoutList"))
-            parse_layout_list(ctx, node, popularity);
-        else if (is_node(node, "optionList"))
-            parse_option_list(ctx, node, popularity);
+    కొరకు (కణుపు = మూలం->children; కణుపు; కణుపు = కణుపు->తదుపరి) {
+        ఒకవేళ (is_కణుపు(కణుపు, "modelList"))
+            parse_model_list(ctx, కణుపు, popularity);
+        లేకపోతే ఒకవేళ (is_కణుపు(కణుపు, "layoutList"))
+            parse_layout_list(ctx, కణుపు, popularity);
+        లేకపోతే ఒకవేళ (is_కణుపు(కణుపు, "optionList"))
+            parse_option_list(ctx, కణుపు, popularity);
     }
 }
 
-static void
+స్థిర శూన్య
 ATTR_PRINTF(2, 0)
-xml_error_func(void *ctx, const char *msg, ...)
+xml_error_func(శూన్య *ctx, స్థిరరాశి అక్షరం *సందేశం, ...)
 {
-    static char buf[PATH_MAX];
-    static size_t slen = 0;
-    va_list args;
-    int rc;
+    స్థిర అక్షరం buf[PATH_MAX];
+    స్థిర కొలత_t slen = 0;
+    va_list వాదనలు;
+    పూర్ణాంకం rc;
 
     /* libxml2 prints IO errors from bad includes paths by
      * calling the error function once per word. So we get to
      * re-assemble the message here and print it when we get
      * the line break. My enthusiasm about this is indescribable.
      */
-    va_start(args, msg);
-    rc = vsnprintf(&buf[slen], sizeof(buf) - slen, msg, args);
-    va_end(args);
+    va_ప్రారంభం(వాదనలు, సందేశం);
+    rc = vsnprintf(&buf[slen], పరిమాణం(buf) - slen, సందేశం, వాదనలు);
+    va_చివర(వాదనలు);
 
     /* This shouldn't really happen */
-    if (rc < 0) {
-        log_err(ctx, XKB_ERROR_INSUFFICIENT_BUFFER_SIZE,
+    ఒకవేళ (rc < 0) {
+        log_err(ctx, XKB_ERROR_INSUFFICIENT_బఫరు_కొలత,
                 "+++ out of cheese error. redo from start +++\n");
         slen = 0;
-        memset(buf, 0, sizeof(buf));
-        return;
+        memset(buf, 0, పరిమాణం(buf));
+        తిరిగి;
     }
 
-    slen += (size_t)rc;
-    if (slen >= sizeof(buf)) {
+    slen += (కొలత_t)rc;
+    ఒకవేళ (slen >= పరిమాణం(buf)) {
         /* truncated, let's flush this */
-        buf[sizeof(buf) - 1] = '\n';
-        slen = sizeof(buf);
+        buf[పరిమాణం(buf) - 1] = '\n';
+        slen = పరిమాణం(buf);
     }
 
     /* We're assuming here that the last character is \n. */
-    if (buf[slen - 1] == '\n') {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID, "%s", buf);
-        memset(buf, 0, sizeof(buf));
+    ఒకవేళ (buf[slen - 1] == '\n') {
+        log_err(ctx, XKB_LOG_సందేశం_NO_ID, "%s", buf);
+        memset(buf, 0, పరిమాణం(buf));
         slen = 0;
     }
 }
 
-#if HAVE_XML_CTXT_SET_ERRORHANDLER
-static void
-xml_structured_error_func(void *userData, const xmlError * error)
+#ఒకవేళ HAVE_XML_CTXT_సమితి_ERRORHANDLER
+స్థిర శూన్య
+xml_structured_error_func(శూన్య *user_దత్తాంశం_2, స్థిరరాశి xmlError * error)
 {
-    xmlFormatError(error, xml_error_func, userData);
+    xmlFormatError(error, xml_error_func, user_దత్తాంశం_2);
 }
-#endif
+#అయితే_ముగింపు
 
-#ifdef XML_PARSE_NO_XXE
-#define _XML_OPTIONS (XML_PARSE_NONET | XML_PARSE_NOENT | XML_PARSE_NO_XXE)
-#else
-#define _XML_OPTIONS (XML_PARSE_NONET)
-#endif
+#నిర్వచితమైతే XML_PARSE_NO_XXE
+#నిర్వచించు _XML_OPTIONS (XML_PARSE_NONET | XML_PARSE_NOENT | XML_PARSE_NO_XXE)
+#లేకపోతే
+#నిర్వచించు _XML_OPTIONS (XML_PARSE_NONET)
+#అయితే_ముగింపు
 
-static bool
-validate(struct rxkb_context *ctx, xmlDoc *doc)
+స్థిర bool
+validate(నిర్మాణం rxkb_context *ctx, xmlDoc *doc)
 {
     bool success = false;
     /* This is a modified version of the xkeyboard-config xkb.dtd:
@@ -1388,7 +1388,7 @@ validate(struct rxkb_context *ctx, xmlDoc *doc)
      *   but we set this value depending if we are currently parsing an
      *   “extras” rule file.
      */
-    const char dtdstr[] =
+    స్థిరరాశి అక్షరం dtdstr[] =
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         "<!ELEMENT xkbConfigRegistry (modelList?, layoutList?, optionList?)>\n"
         "<!ATTLIST xkbConfigRegistry version CDATA \"1.1\">\n"
@@ -1416,118 +1416,118 @@ validate(struct rxkb_context *ctx, xmlDoc *doc)
         "<!ELEMENT hwList (hwId+)>\n"
         "<!ELEMENT hwId (#PCDATA)>\n";
 
-#if HAVE_XML_CTXT_PARSE_DTD
+#ఒకవేళ HAVE_XML_CTXT_PARSE_DTD
     /* Use safer function with context if available, and set
      * the contextual error handler. */
     xmlParserCtxtPtr xmlCtxt = xmlNewParserCtxt();
-    if (!xmlCtxt)
-        return false;
-    static_assert(HAVE_XML_CTXT_SET_ERRORHANDLER,
+    ఒకవేళ (!xmlCtxt)
+        తిరిగి false;
+    static_assert(HAVE_XML_CTXT_సమితి_ERRORHANDLER,
                   "xmlCtxtSetErrorHandler (2.13) introduced before "
                   "xmlCtxtParseDtd (2.14)");
-    xmlCtxtSetErrorHandler(xmlCtxt, xml_structured_error_func, ctx);
-    xmlCtxtSetOptions(xmlCtxt, _XML_OPTIONS | XML_PARSE_DTDLOAD);
+    xml_Ctxt_సమితి_Error_Handler(xmlCtxt, xml_structured_error_func, ctx);
+    xml_Ctxt_సమితి_Options(xmlCtxt, _XML_OPTIONS | XML_PARSE_DTDLOAD);
 
-    xmlParserInputPtr pinput =
-        xmlNewInputFromMemory(NULL, dtdstr, ARRAY_SIZE(dtdstr) - 1,
-                              XML_INPUT_BUF_STATIC);
-    if (!pinput)
-        goto dtd_error;
+    xml_Parser_ఆదానం_Ptr pinput =
+        xml_New_ఆదానం_From_జ్ఞాపకం(ఖాళీ, dtdstr, ARRAY_కొలత(dtdstr) - 1,
+                              XML_ఆదానం_BUF_STATIC);
+    ఒకవేళ (!pinput)
+        వెళ్ళు dtd_error;
 
-    xmlDtd *dtd = xmlCtxtParseDtd(xmlCtxt, pinput, NULL, NULL);
-#else
+    xmlDtd *dtd = xmlCtxtParseDtd(xmlCtxt, pinput, ఖాళీ, ఖాళీ);
+#లేకపోతే
     /* Note: do not use xmlParserInputBufferCreateStatic, it generates random
      * DTD validity errors for unknown reasons */
-    xmlParserInputBufferPtr buf =
-        xmlParserInputBufferCreateMem(dtdstr, ARRAY_SIZE(dtdstr) - 1,
+    xml_Parser_ఆదానం_బఫరు_Ptr buf =
+        xml_Parser_ఆదానం_బఫరు_Create_Mem(dtdstr, ARRAY_కొలత(dtdstr) - 1,
                                       XML_CHAR_ENCODING_NONE);
-    if (!buf)
-        goto dtd_error;
-    xmlDtd *dtd = xmlIOParseDTD(NULL, buf, XML_CHAR_ENCODING_UTF8);
-#endif
+    ఒకవేళ (!buf)
+        వెళ్ళు dtd_error;
+    xmlDtd *dtd = xmlIOParseDTD(ఖాళీ, buf, XML_CHAR_ENCODING_UTF8);
+#అయితే_ముగింపు
 
-    if (!dtd) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID, "Failed to load DTD\n");
-        goto dtd_error;
+    ఒకవేళ (!dtd) {
+        log_err(ctx, XKB_LOG_సందేశం_NO_ID, "Failed to load DTD\n");
+        వెళ్ళు dtd_error;
     }
 
-#if HAVE_XML_CTXT_PARSE_DTD
+#ఒకవేళ HAVE_XML_CTXT_PARSE_DTD
     success = xmlCtxtValidateDtd(xmlCtxt, doc, dtd);
-#else
+#లేకపోతే
     xmlValidCtxt *dtdvalid = xmlNewValidCtxt();
-    if (!dtdvalid) {
+    ఒకవేళ (!dtdvalid) {
         success = false;
-        goto ctx_error;
+        వెళ్ళు ctx_error;
     }
     dtdvalid->error = &xml_error_func;
-    dtdvalid->userData = ctx;
+    dtdvalid->user_దత్తాంశం_2 = ctx;
     success = xmlValidateDtd(dtdvalid, doc, dtd);
     xmlFreeValidCtxt(dtdvalid);
 
 ctx_error:
-#endif
+#అయితే_ముగింపు
     xmlFreeDtd(dtd);
 
 dtd_error:
-#if HAVE_XML_CTXT_PARSE_DTD
+#ఒకవేళ HAVE_XML_CTXT_PARSE_DTD
     xmlFreeParserCtxt(xmlCtxt);
-#endif
-    return success;
+#అయితే_ముగింపు
+    తిరిగి success;
 }
 
-static bool
-parse(struct rxkb_context *ctx, const char *path,
-      enum rxkb_popularity popularity)
+స్థిర bool
+parse(నిర్మాణం rxkb_context *ctx, స్థిరరాశి అక్షరం *మార్గం,
+      గణన rxkb_popularity popularity)
 {
     bool success = false;
-    xmlDoc *doc = NULL;
-    xmlNode *root = NULL;
+    xmlDoc *doc = ఖాళీ;
+    xml_కణుపు *మూలం = ఖాళీ;
 
-    if (!check_eaccess(path, R_OK))
-        return false;
+    ఒకవేళ (!check_eaccess(మార్గం, R_OK))
+        తిరిగి false;
 
-    LIBXML_TEST_VERSION
+    LIBXML_TEST_సంస్కరణ
 
     xmlParserCtxtPtr xmlCtxt = xmlNewParserCtxt();
-    if (!xmlCtxt)
-        return false;
+    ఒకవేళ (!xmlCtxt)
+        తిరిగి false;
 
-#ifdef XML_PARSE_NO_XXE
-#define _XML_OPTIONS (XML_PARSE_NONET | XML_PARSE_NOENT | XML_PARSE_NO_XXE)
-#else
-#define _XML_OPTIONS (XML_PARSE_NONET)
-#endif
+#నిర్వచితమైతే XML_PARSE_NO_XXE
+#నిర్వచించు _XML_OPTIONS (XML_PARSE_NONET | XML_PARSE_NOENT | XML_PARSE_NO_XXE)
+#లేకపోతే
+#నిర్వచించు _XML_OPTIONS (XML_PARSE_NONET)
+#అయితే_ముగింపు
     xmlCtxtUseOptions(xmlCtxt, _XML_OPTIONS);
 
-#if HAVE_XML_CTXT_SET_ERRORHANDLER
+#ఒకవేళ HAVE_XML_CTXT_సమితి_ERRORHANDLER
     /* Prefer contextual handler whenever possible. It takes precedence over
      * the global generic handler. */
-    xmlCtxtSetErrorHandler(xmlCtxt, xml_structured_error_func, ctx);
-#endif
-#if !HAVE_XML_CTXT_PARSE_DTD
+    xml_Ctxt_సమితి_Error_Handler(xmlCtxt, xml_structured_error_func, ctx);
+#అయితే_ముగింపు
+#ఒకవేళ !HAVE_XML_CTXT_PARSE_DTD
     /* This is needed for the DTD validation */
-    xmlSetGenericErrorFunc(ctx, xml_error_func);
-#endif
+    xml_సమితి_Generic_Error_Func(ctx, xml_error_func);
+#అయితే_ముగింపు
 
-    doc = xmlCtxtReadFile(xmlCtxt, path, NULL, 0);
-    if (!doc)
-        goto parse_error;
+    doc = xmlCtxtReadFile(xmlCtxt, మార్గం, ఖాళీ, 0);
+    ఒకవేళ (!doc)
+        వెళ్ళు parse_error;
 
-    if (!validate(ctx, doc)) {
-        log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
-                "XML error: failed to validate document at %s\n", path);
-        goto validate_error;
+    ఒకవేళ (!validate(ctx, doc)) {
+        log_err(ctx, XKB_LOG_సందేశం_NO_ID,
+                "XML error: failed to validate document at %s\n", మార్గం);
+        వెళ్ళు validate_error;
     }
 
-    root = xmlDocGetRootElement(doc);
-    parse_rules_xml(ctx, root, popularity);
+    మూలం = xml_Doc_Get_మూలం_Element(doc);
+    parse_నియమాలు_xml(ctx, మూలం, popularity);
 
     success = true;
 validate_error:
     xmlFreeDoc(doc);
 parse_error:
 
-#if !HAVE_XML_CTXT_PARSE_DTD
+#ఒకవేళ !HAVE_XML_CTXT_PARSE_DTD
     /*
      * Reset the default libxml2 error handler to default, because this handler
      * is global and may be used on an invalid rxkb_context, e.g. *after* the
@@ -1537,12 +1537,12 @@ parse_error:
      *     rxkb_context_parse();
      *     rxkb_context_unref();
      */
-    xmlSetGenericErrorFunc(NULL, NULL);
-#endif
-#if HAVE_XML_CTXT_SET_ERRORHANDLER
-    xmlCtxtSetErrorHandler(xmlCtxt, NULL, NULL);
-#endif
+    xml_సమితి_Generic_Error_Func(ఖాళీ, ఖాళీ);
+#అయితే_ముగింపు
+#ఒకవేళ HAVE_XML_CTXT_సమితి_ERRORHANDLER
+    xml_Ctxt_సమితి_Error_Handler(xmlCtxt, ఖాళీ, ఖాళీ);
+#అయితే_ముగింపు
     xmlFreeParserCtxt(xmlCtxt);
 
-    return success;
+    తిరిగి success;
 }

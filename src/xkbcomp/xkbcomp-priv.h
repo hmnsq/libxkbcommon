@@ -2,18 +2,18 @@
  * Copyright (c) 1994 by Silicon Graphics Computer Systems, Inc.
  * SPDX-License-Identifier: HPND
  */
-#pragma once
+#సూచన once
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include "xkbcommon/xkbcommon.h"
-#include "ast.h"
-#include "darray.h"
-#include "keymap.h"
-#include "scanner-utils.h"
-#include "text.h"
+#అన్తర్భావ "xkbcommon/xkbcommon.h"
+#అన్తర్భావ "ast.h"
+#అన్తర్భావ "darray.h"
+#అన్తర్భావ "keymap.h"
+#అన్తర్భావ "scanner-utils.h"
+#అన్తర్భావ "text.h"
 
-enum xkb_parser_error {
+గణన xkb_parser_error {
     PARSER_SUCCESS = 0,
     PARSER_RECOVERABLE_ERROR,
     PARSER_FATAL_ERROR
@@ -25,11 +25,11 @@ enum xkb_parser_error {
  * This is probably overkill, but it could enable fine grained control
  * depending of the keymap format or other factors.
  */
-enum xkb_parser_strict_flags {
+గణన xkb_parser_strict_flags {
     PARSER_NO_STRICT_FLAGS = 0,
     PARSER_NO_UNKNOWN_STATEMENTS = (1 << 0),
-    PARSER_NO_FIELD_TYPE_MISMATCH = (1 << 1),
-    PARSER_NO_FIELD_VALUE_MISMATCH = (1 << 2),
+    PARSER_NO_క్షేత్రం_TYPE_MISMATCH = (1 << 1),
+    PARSER_NO_క్షేత్రం_విలువ_MISMATCH = (1 << 2),
 
     PARSER_NO_UNKNOWN_KEYCODES_GLOBAL_FIELDS = (1 << 3),
 
@@ -41,7 +41,7 @@ enum xkb_parser_strict_flags {
     PARSER_NO_UNKNOWN_LED_FIELDS = (1 << 8),
 
     PARSER_NO_UNKNOWN_SYMBOLS_GLOBAL_FIELDS = (1 << 9),
-    PARSER_NO_UNKNOWN_KEY_FIELDS = (1 << 10),
+    PARSER_NO_UNKNOWN_కీలకం_FIELDS = (1 << 10),
 
     PARSER_NO_UNKNOWN_ACTION = (1 << 11),
     PARSER_NO_UNKNOWN_ACTION_FIELDS = (1 << 12),
@@ -54,63 +54,63 @@ enum xkb_parser_strict_flags {
     PARSER_V1_STRICT_FLAGS = PARSER_STRICT_FLAGS_ALL,
     /* Limited flexibility */
     PARSER_V1_LAX_FLAGS = (PARSER_V1_STRICT_FLAGS &
-                           ~PARSER_NO_FIELD_VALUE_MISMATCH),
+                           ~PARSER_NO_క్షేత్రం_విలువ_MISMATCH),
 
     PARSER_V2_STRICT_FLAGS = PARSER_STRICT_FLAGS_ALL,
     PARSER_V2_LAX_FLAGS = PARSER_NO_STRICT_FLAGS,
 };
 
-static inline enum xkb_parser_strict_flags
-parser_strict_flags_from_keymap_format(enum xkb_keymap_format format)
+స్థిర అంతఃవరుస గణన xkb_parser_strict_flags
+parser_strict_flags_from_keymap_format(గణన xkb_keymap_format format)
 {
-    return (format == XKB_KEYMAP_FORMAT_TEXT_V1)
+    తిరిగి (format == XKB_KEYMAP_FORMAT_పాఠ్యం_V1)
             ? PARSER_V1_LAX_FLAGS
             : PARSER_V2_LAX_FLAGS;
 }
 
-static inline enum xkb_parser_strict_flags
-parser_strict_flags_from_keymap(const struct xkb_keymap *keymap)
+స్థిర అంతఃవరుస గణన xkb_parser_strict_flags
+parser_strict_flags_from_keymap(స్థిరరాశి నిర్మాణం xkb_keymap *keymap)
 {
-    return (keymap->format == XKB_KEYMAP_FORMAT_TEXT_V1)
-            ? (keymap->flags & XKB_KEYMAP_COMPILE_STRICT_MODE
+    తిరిగి (keymap->format == XKB_KEYMAP_FORMAT_పాఠ్యం_V1)
+            ? (keymap->flags & XKB_KEYMAP_COMPILE_STRICT_బహుళకం
                 ? PARSER_V1_STRICT_FLAGS
                 : PARSER_V1_LAX_FLAGS)
-            : (keymap->flags & XKB_KEYMAP_COMPILE_STRICT_MODE
+            : (keymap->flags & XKB_KEYMAP_COMPILE_STRICT_బహుళకం
                 ? PARSER_V2_STRICT_FLAGS
                 : PARSER_V2_LAX_FLAGS);
 }
 
-struct parser_keymap_config {
-    enum xkb_keymap_format format;
-    enum xkb_parser_strict_flags strict;
+నిర్మాణం parser_keymap_config {
+    గణన xkb_keymap_format format;
+    గణన xkb_parser_strict_flags strict;
 };
 
-typedef union ExprDef ExprDef;
-struct pending_computation {
-    ExprDef * expr;
+రకనిర్వచనం సంఘం సమాసం_Def సమాసం_Def;
+నిర్మాణం pending_computation {
+    సమాసం_Def * సమాసం;
     bool computed;
-    uint32_t value;
+    uint32_t విలువ;
 };
-typedef darray(struct pending_computation) pending_computation_array;
+రకనిర్వచనం darray(నిర్మాణం pending_computation) pending_computation_array;
 
 /** Keymap augmented with miscellaneous data used during compilation */
-struct xkb_keymap_info {
+నిర్మాణం xkb_keymap_info {
     /** The keymap being compiled */
-    struct xkb_keymap keymap;
+    నిర్మాణం xkb_keymap keymap;
 
     /** Flags of the strict mode */
-    enum xkb_parser_strict_flags strict;
+    గణన xkb_parser_strict_flags strict;
 
     /** Features */
-    struct {
+    నిర్మాణం {
         /** Maximum groups for the keymap format */
-        xkb_layout_index_t max_groups;
+        xkb_layout_సూచీ_t max_groups;
         /** Maximum overlays for the keymap format */
-        xkb_overlay_index_t max_overlays;
+        xkb_overlay_సూచీ_t max_overlays;
         /** Offset of the Controls names LUT for the keymap format */
-        uint8_t controls_name_offset;
+        uint8_t controls_name_స్థానభ్రంశం;
         /* Actions */
-        bool group_lock_on_release;
+        bool సమూహం_తాళం_on_release;
         bool mods_unlock_on_press;
         bool mods_latch_on_press;
         /* Overlays */
@@ -118,113 +118,113 @@ struct xkb_keymap_info {
     } features;
 
     /* Non-static LUTs */
-    struct {
-        LookupEntry groupIndexNames[3];
-        LookupEntry groupMaskNames[5];
+    నిర్మాణం {
+        Lookup_నమోదు సమూహం_సూచీ_పేర్లు[3];
+        Lookup_నమోదు సమూహం_ముసుగు_పేర్లు[5];
     } lookup;
 
     /** Pending computations */
     pending_computation_array *pending_computations;
 };
 
-enum xkb_status
-text_v1_keymap_serialize(
-        const struct xkb_keymap *keymap,
-        const struct xkb_keymap_serialize_config *config,
-        struct xkb_keymap_serialize_result *result
+గణన xkb_స్థితి
+పాఠ్యం_v1_keymap_serialize(
+        స్థిరరాశి నిర్మాణం xkb_keymap *keymap,
+        స్థిరరాశి నిర్మాణం xkb_keymap_serialize_config *config,
+        నిర్మాణం xkb_keymap_serialize_ఫలితం *ఫలితం
 );
 
 XkbFile *
-XkbParseFile(struct xkb_context *ctx,
-             const struct parser_keymap_config *config,
-             FILE *file, const char *file_name, const char *map);
+XkbParseFile(నిర్మాణం xkb_context *ctx,
+             స్థిరరాశి నిర్మాణం parser_keymap_config *config,
+             FILE *file, స్థిరరాశి అక్షరం *file_name, స్థిరరాశి అక్షరం *map);
 bool
-XkbParseStringInit(struct xkb_context *ctx, struct scanner *scanner,
-                   const char *string, size_t len,
-                   const char *file_name, const char *map);
+XkbParseStringInit(నిర్మాణం xkb_context *ctx, నిర్మాణం scanner *scanner,
+                   స్థిరరాశి అక్షరం *string, కొలత_t len,
+                   స్థిరరాశి అక్షరం *file_name, స్థిరరాశి అక్షరం *map);
 
 XkbFile *
-XkbParseString(struct xkb_context *ctx,
-               const struct parser_keymap_config *config,
-               const char *string, size_t len,
-               const char *file_name, const char *map);
+XkbParseString(నిర్మాణం xkb_context *ctx,
+               స్థిరరాశి నిర్మాణం parser_keymap_config *config,
+               స్థిరరాశి అక్షరం *string, కొలత_t len,
+               స్థిరరాశి అక్షరం *file_name, స్థిరరాశి అక్షరం *map);
 
 bool
-XkbParseStringNext(struct xkb_context *ctx,
-                   const struct parser_keymap_config *config,
-                   struct scanner *scanner, const char *map, XkbFile **out);
+Xkb_Parse_String_తదుపరి(నిర్మాణం xkb_context *ctx,
+                   స్థిరరాశి నిర్మాణం parser_keymap_config *config,
+                   నిర్మాణం scanner *scanner, స్థిరరాశి అక్షరం *map, XkbFile **బహిర్గతం);
 
-void
+శూన్య
 FreeXkbFile(XkbFile *file);
 
 XkbFile *
-XkbFileFromComponents(struct xkb_context *ctx,
-                      const struct xkb_component_names *kkctgs);
+XkbFileFromComponents(నిర్మాణం xkb_context *ctx,
+                      స్థిరరాశి నిర్మాణం xkb_component_పేర్లు *kkctgs);
 
 bool
-CompileKeycodes(XkbFile *file, struct xkb_keymap_info *keymap_info);
+CompileKeycodes(XkbFile *file, నిర్మాణం xkb_keymap_info *keymap_info);
 
 bool
-CompileKeyTypes(XkbFile *file, struct xkb_keymap_info *keymap_info);
+Compile_కీలకం_Types(XkbFile *file, నిర్మాణం xkb_keymap_info *keymap_info);
 
 bool
-CompileCompatMap(XkbFile *file, struct xkb_keymap_info *keymap_info);
+CompileCompatMap(XkbFile *file, నిర్మాణం xkb_keymap_info *keymap_info);
 
 bool
-CompileSymbols(XkbFile *file, struct xkb_keymap_info *keymap_info);
+CompileSymbols(XkbFile *file, నిర్మాణం xkb_keymap_info *keymap_info);
 
 bool
-CompileKeymap(XkbFile *file, struct xkb_keymap *keymap);
+CompileKeymap(XkbFile *file, నిర్మాణం xkb_keymap *keymap);
 
 /***====================================================================***/
 
-static inline bool
-ReportNotArray(struct xkb_context *ctx, const char *type, const char *field,
-               const char *name)
+స్థిర అంతఃవరుస bool
+ReportNotArray(నిర్మాణం xkb_context *ctx, స్థిరరాశి అక్షరం *type, స్థిరరాశి అక్షరం *క్షేత్రం_2,
+               స్థిరరాశి అక్షరం *name)
 {
-    log_err(ctx, XKB_ERROR_WRONG_FIELD_TYPE,
+    log_err(ctx, XKB_ERROR_WRONG_క్షేత్రం_TYPE,
             "The %s %s field is not an array; "
             "Ignoring illegal assignment in %s\n",
-            type, field, name);
-    return false;
+            type, క్షేత్రం_2, name);
+    తిరిగి false;
 }
 
-static inline bool
-ReportShouldBeArray(struct xkb_context *ctx, const char *type,
-                    const char *field, const char *name)
+స్థిర అంతఃవరుస bool
+ReportShouldBeArray(నిర్మాణం xkb_context *ctx, స్థిరరాశి అక్షరం *type,
+                    స్థిరరాశి అక్షరం *క్షేత్రం_2, స్థిరరాశి అక్షరం *name)
 {
-    log_err(ctx, XKB_ERROR_EXPECTED_ARRAY_ENTRY,
+    log_err(ctx, XKB_ERROR_EXPECTED_ARRAY_నమోదు,
             "Missing subscript for %s %s; "
             "Ignoring illegal assignment in %s\n",
-            type, field, name);
-    return false;
+            type, క్షేత్రం_2, name);
+    తిరిగి false;
 }
 
-static inline bool
-ReportBadType(struct xkb_context *ctx, enum xkb_message_code code,
-              const char *type, const char *field, const char *name,
-              const char *wanted)
+స్థిర అంతఃవరుస bool
+ReportBadType(నిర్మాణం xkb_context *ctx, గణన xkb_సందేశం_సంకేతం సంకేతం_2,
+              స్థిరరాశి అక్షరం *type, స్థిరరాశి అక్షరం *క్షేత్రం_2, స్థిరరాశి అక్షరం *name,
+              స్థిరరాశి అక్షరం *wanted)
 {
-    log_err(ctx, code,
+    log_err(ctx, సంకేతం_2,
             "The %s %s field must be a %s; "
             "Ignoring illegal assignment in %s\n",
-            type, field, wanted, name);
-    return false;
+            type, క్షేత్రం_2, wanted, name);
+    తిరిగి false;
 }
 
-static inline bool
-ReportBadField(struct xkb_context *ctx, const char *type, const char *field,
-               const char *name)
+స్థిర అంతఃవరుస bool
+Report_Bad_క్షేత్రం(నిర్మాణం xkb_context *ctx, స్థిరరాశి అక్షరం *type, స్థిరరాశి అక్షరం *క్షేత్రం_2,
+               స్థిరరాశి అక్షరం *name)
 {
-    log_err(ctx, XKB_LOG_MESSAGE_NO_ID,
+    log_err(ctx, XKB_LOG_సందేశం_NO_ID,
             "Unknown %s field \"%s\" in %s; "
             "Ignoring assignment to unknown field in %s\n",
-            type, field, name, name);
-    return false;
+            type, క్షేత్రం_2, name, name);
+    తిరిగి false;
 }
 
-static inline const char*
-safe_map_name(const char* name)
+స్థిర అంతఃవరుస స్థిరరాశి అక్షరం*
+సురక్షిత_map_name(స్థిరరాశి అక్షరం* name)
 {
-    return name ? name : "(unnamed map)";
+    తిరిగి name ? name : "(unnamed map)";
 }

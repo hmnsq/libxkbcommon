@@ -5,72 +5,72 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include <assert.h>
-#include <stddef.h>
-#include <stdbool.h>
+#అన్తర్భావ <assert.h>
+#అన్తర్భావ <stddef.h>
+#అన్తర్భావ <stdbool.h>
 
-#include "util-list.h"
+#అన్తర్భావ "util-list.h"
 
-void
-list_init(struct list *list)
+శూన్య
+list_init(నిర్మాణం list *list)
 {
 	list->prev = list;
-	list->next = list;
+	list->తదుపరి = list;
 }
 
-void
-list_insert(struct list *list, struct list *elm)
+శూన్య
+list_చొప్పించు(నిర్మాణం list *list, నిర్మాణం list *elm)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	ప్రతిజ్ఞా((list->తదుపరి != ఖాళీ && list->prev != ఖాళీ) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
-	assert(((elm->next == NULL && elm->prev == NULL) || list_empty(elm)) ||
+	ప్రతిజ్ఞా(((elm->తదుపరి == ఖాళీ && elm->prev == ఖాళీ) || list_ఖాళీలు(elm)) ||
 	       !"elm->next|prev is not NULL, list node used twice?");
 
 	elm->prev = list;
-	elm->next = list->next;
-	list->next = elm;
-	elm->next->prev = elm;
+	elm->తదుపరి = list->తదుపరి;
+	list->తదుపరి = elm;
+	elm->తదుపరి->prev = elm;
 }
 
-void
-list_append(struct list *list, struct list *elm)
+శూన్య
+list_append(నిర్మాణం list *list, నిర్మాణం list *elm)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	ప్రతిజ్ఞా((list->తదుపరి != ఖాళీ && list->prev != ఖాళీ) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
-	assert(((elm->next == NULL && elm->prev == NULL) || list_empty(elm)) ||
+	ప్రతిజ్ఞా(((elm->తదుపరి == ఖాళీ && elm->prev == ఖాళీ) || list_ఖాళీలు(elm)) ||
 	       !"elm->next|prev is not NULL, list node used twice?");
 
-	elm->next = list;
+	elm->తదుపరి = list;
 	elm->prev = list->prev;
 	list->prev = elm;
-	elm->prev->next = elm;
+	elm->prev->తదుపరి = elm;
 }
 
-void
-list_remove(struct list *elm)
+శూన్య
+list_remove(నిర్మాణం list *elm)
 {
-	assert((elm->next != NULL && elm->prev != NULL) ||
+	ప్రతిజ్ఞా((elm->తదుపరి != ఖాళీ && elm->prev != ఖాళీ) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
 
-	elm->prev->next = elm->next;
-	elm->next->prev = elm->prev;
-	elm->next = NULL;
-	elm->prev = NULL;
+	elm->prev->తదుపరి = elm->తదుపరి;
+	elm->తదుపరి->prev = elm->prev;
+	elm->తదుపరి = ఖాళీ;
+	elm->prev = ఖాళీ;
 }
 
 bool
-list_empty(const struct list *list)
+list_ఖాళీలు(స్థిరరాశి నిర్మాణం list *list)
 {
-	assert((list->next != NULL && list->prev != NULL) ||
+	ప్రతిజ్ఞా((list->తదుపరి != ఖాళీ && list->prev != ఖాళీ) ||
 	       !"list->next|prev is NULL, possibly missing list_init()");
 
-	return list->next == list;
+	తిరిగి list->తదుపరి == list;
 }
 
 bool
-list_is_last(const struct list *list, const struct list *elm)
+list_is_చివరి(స్థిరరాశి నిర్మాణం list *list, స్థిరరాశి నిర్మాణం list *elm)
 {
-	return elm->next == list;
+	తిరిగి elm->తదుపరి == list;
 }

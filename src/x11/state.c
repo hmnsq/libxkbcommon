@@ -3,124 +3,124 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include "x11-priv.h"
-#include "xkbcommon/xkbcommon.h"
+#అన్తర్భావ "x11-priv.h"
+#అన్తర్భావ "xkbcommon/xkbcommon.h"
 
 /* Some macros. Not very nice but it'd be worse without them. */
 
-#define FAIL_IF_BAD_REPLY(ctx, reply, request_name) do {    \
-    if (!(reply)) {                                         \
-        log_err((ctx), XKB_LOG_MESSAGE_NO_ID,               \
+#నిర్వచించు FAIL_IF_BAD_జవాబు(ctx, జవాబు, request_name) చేయి {    \
+    ఒకవేళ (!(జవాబు)) {                                         \
+        log_err((ctx), XKB_LOG_సందేశం_NO_ID,               \
                 "x11: failed to get keymap from X server: " \
                 "%s request failed\n",                      \
                 (request_name));                            \
-        goto fail;                                          \
+        వెళ్ళు fail;                                          \
     }                                                       \
-} while (0)
+} అయితే (0)
 
-static bool
-update_initial_state(struct xkb_state *state, xcb_connection_t *conn,
-                     uint16_t device_id, enum xkb_action_controls controls)
+స్థిర bool
+update_initial_state(నిర్మాణం xkb_state *state, xcb_connection_t *conn,
+                     uint16_t device_id, గణన xkb_action_controls controls)
 {
     xcb_xkb_get_state_cookie_t cookie =
         xcb_xkb_get_state(conn, device_id);
-    xcb_xkb_get_state_reply_t *reply =
-        xcb_xkb_get_state_reply(conn, cookie, NULL);
+    xcb_xkb_get_state_జవాబు_t *జవాబు =
+        xcb_xkb_get_state_జవాబు(conn, cookie, ఖాళీ);
 
-    if (!reply)
-        return false;
+    ఒకవేళ (!జవాబు)
+        తిరిగి false;
 
     /* NOTE: Use the public API with private enum values */
-    const struct xkb_state_components_update components = {
-        .size = sizeof(components),
+    స్థిరరాశి నిర్మాణం xkb_state_components_update components = {
+        .కొలత = పరిమాణం(components),
         .components = XKB_STATE_CONTROLS_EFFECTIVE,
-        .affect_controls = (enum xkb_keyboard_control_flags) controls,
-        .controls = (enum xkb_keyboard_control_flags) controls,
+        .affect_controls = (గణన xkb_keyboard_control_flags) controls,
+        .controls = (గణన xkb_keyboard_control_flags) controls,
     };
-    const struct xkb_synthetic_update update = {
-        .size = sizeof(update),
+    స్థిరరాశి నిర్మాణం xkb_synthetic_update update = {
+        .కొలత = పరిమాణం(update),
         .components = &components,
     };
-    const enum xkb_status status =
-        xkb_state_update_synthetic(state, &update, NULL);
-    if (status != XKB_SUCCESS)
-        return false;
+    స్థిరరాశి గణన xkb_స్థితి స్థితి_2 =
+        xkb_state_update_synthetic(state, &update, ఖాళీ);
+    ఒకవేళ (స్థితి_2 != XKB_SUCCESS)
+        తిరిగి false;
 
-    xkb_state_update_mask(state,
-                          reply->baseMods,
-                          reply->latchedMods,
-                          reply->lockedMods,
-                          reply->baseGroup,
-                          reply->latchedGroup,
-                          reply->lockedGroup);
+    xkb_state_update_ముసుగు(state,
+                          జవాబు->పునాది_Mods,
+                          జవాబు->latchedMods,
+                          జవాబు->lockedMods,
+                          జవాబు->పునాది_సమూహం_2,
+                          జవాబు->latched_సమూహం_2,
+                          జవాబు->locked_సమూహం_2);
 
-    free(reply);
-    return true;
+    విడుదల(జవాబు);
+    తిరిగి true;
 }
 
 // NOLINTNEXTLINE(readability-avoid-unconditional-preprocessor-if)
-#if 0
+#ఒకవేళ 0
 // TODO: currently unused
-static enum xkb_a11y_flags
-translate_state_accessibility_flags(const xcb_xkb_get_controls_reply_t *reply)
+స్థిర గణన xkb_a11y_flags
+translate_state_accessibility_flags(స్థిరరాశి xcb_xkb_get_controls_జవాబు_t *జవాబు)
 {
-    enum xkb_a11y_flags flags = XKB_A11Y_NO_FLAGS;
-    if (reply->accessXOption & XCB_XKB_AX_OPTION_LATCH_TO_LOCK) {
-        flags |= XKB_A11Y_STICKY_KEYS_LATCH_TO_LOCK;
+    గణన xkb_a11y_flags flags = XKB_A11Y_NO_FLAGS;
+    ఒకవేళ (జవాబు->accessXOption & XCB_XKB_AX_OPTION_LATCH_గమ్యం_తాళం) {
+        flags |= XKB_A11_Y_STICKY_కీలకాలు_LATCH_గమ్యం_తాళం;
     }
-    return flags;
+    తిరిగి flags;
 }
-#endif
+#అయితే_ముగింపు
 
-static bool
-get_controls(struct xkb_context *ctx, xcb_connection_t *conn, int32_t device_id,
-             enum xkb_action_controls *controls)
+స్థిర bool
+get_controls(నిర్మాణం xkb_context *ctx, xcb_connection_t *conn, int32_t device_id,
+             గణన xkb_action_controls *controls)
 {
     xcb_xkb_get_controls_cookie_t cookie = xcb_xkb_get_controls(conn, device_id);
-    xcb_xkb_get_controls_reply_t *reply =
-        xcb_xkb_get_controls_reply(conn, cookie, NULL);
+    xcb_xkb_get_controls_జవాబు_t *జవాబు =
+        xcb_xkb_get_controls_జవాబు(conn, cookie, ఖాళీ);
 
-    FAIL_IF_BAD_REPLY(ctx, reply, "XkbGetControls");
+    FAIL_IF_BAD_జవాబు(ctx, జవాబు, "XkbGetControls");
 
     // TODO: translate_state_accessibility_flags(reply);
-    *controls = translate_controls_mask(reply->enabledControls);
+    *controls = translate_controls_ముసుగు(జవాబు->enabledControls);
 
-    free(reply);
-    return true;
+    విడుదల(జవాబు);
+    తిరిగి true;
 
 fail:
-    free(reply);
-    return false;
+    విడుదల(జవాబు);
+    తిరిగి false;
 }
 
-struct xkb_state *
-xkb_x11_state_new_from_device(struct xkb_keymap *keymap,
+నిర్మాణం xkb_state *
+xkb_x11_state_new_from_device(నిర్మాణం xkb_keymap *keymap,
                               xcb_connection_t *conn, int32_t device_id)
 {
-    if (device_id < 0 || device_id > 255) {
-        log_err_func(keymap->ctx, XKB_LOG_MESSAGE_NO_ID,
+    ఒకవేళ (device_id < 0 || device_id > 255) {
+        log_err_func(keymap->ctx, XKB_LOG_సందేశం_NO_ID,
                      "illegal device ID: %"PRId32, device_id);
-        return NULL;
+        తిరిగి ఖాళీ;
     }
 
-    enum xkb_action_controls controls = 0;
-    if (!get_controls(keymap->ctx, conn, device_id, &controls))
-        return NULL;
+    గణన xkb_action_controls controls = 0;
+    ఒకవేళ (!get_controls(keymap->ctx, conn, device_id, &controls))
+        తిరిగి ఖాళీ;
 
     /*
      * Use the legacy state mode for compatibility, as there is no plan
      * to change the xkbcommon-x11 API.
      */
-    struct xkb_state * const state = xkb_state_new(keymap);
-    if (!state)
-        return NULL;
+    నిర్మాణం xkb_state * స్థిరరాశి state = xkb_state_new(keymap);
+    ఒకవేళ (!state)
+        తిరిగి ఖాళీ;
 
-    if (!update_initial_state(state, conn, device_id, controls)) {
+    ఒకవేళ (!update_initial_state(state, conn, device_id, controls)) {
         xkb_state_unref(state);
-        return NULL;
+        తిరిగి ఖాళీ;
     }
 
-    return state;
+    తిరిగి state;
 }

@@ -2,76 +2,76 @@
  * Copyright © 2009 Dan Nicholson
  * SPDX-License-Identifier: MIT
  */
-#pragma once
+#సూచన once
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include <stdbool.h>
+#అన్తర్భావ <stdbool.h>
 
-#include "xkbcommon/xkbcommon.h"
-#include "atom.h"
-#include "keymap.h"
+#అన్తర్భావ "xkbcommon/xkbcommon.h"
+#అన్తర్భావ "atom.h"
+#అన్తర్భావ "keymap.h"
 
 /** LUT entry */
-typedef struct {
-    const char *name;
-    uint32_t value;
-} LookupEntry;
+రకనిర్వచనం నిర్మాణం {
+    స్థిరరాశి అక్షరం *name;
+    uint32_t విలువ;
+} Lookup_నమోదు;
 
 bool
-LookupString(const LookupEntry tab[], const char *string,
-              unsigned int *value_rtrn);
+LookupString(స్థిరరాశి Lookup_నమోదు tab[], స్థిరరాశి అక్షరం *string,
+              గుర్తులేని పూర్ణాంకం *విలువ_rtrn);
 
-const char *
-LookupValue(const LookupEntry tab[], unsigned int value);
+స్థిరరాశి అక్షరం *
+Lookup_విలువ(స్థిరరాశి Lookup_నమోదు tab[], గుర్తులేని పూర్ణాంకం విలువ);
 
-#define GROUP_LAST_INDEX_NAME "last"
-enum {
-    CONTROL_NAMES_MIN_V1_INDEX = 7,
-    CONTROL_NAMES_MIN_V2_INDEX = 0,
+#నిర్వచించు సమూహం_చివరి_సూచీ_NAME "last"
+గణన {
+    CONTROL_పేర్లు_MIN_V1_సూచీ = 7,
+    CONTROL_పేర్లు_MIN_V2_సూచీ = 0,
 };
 
-static inline uint8_t
-format_control_names_offset(enum xkb_keymap_format format)
+స్థిర అంతఃవరుస uint8_t
+format_control_పేర్లు_స్థానభ్రంశం(గణన xkb_keymap_format format)
 {
-    return (format == XKB_KEYMAP_FORMAT_TEXT_V1)
-        ? CONTROL_NAMES_MIN_V1_INDEX
-        : CONTROL_NAMES_MIN_V2_INDEX;
+    తిరిగి (format == XKB_KEYMAP_FORMAT_పాఠ్యం_V1)
+        ? CONTROL_పేర్లు_MIN_V1_సూచీ
+        : CONTROL_పేర్లు_MIN_V2_సూచీ;
 }
 
-extern const LookupEntry ctrlMaskNames[];
-extern const LookupEntry modComponentMaskNames[];
-extern const LookupEntry groupComponentMaskNames[];
-extern const LookupEntry groupMaskNames[];
-extern const LookupEntry buttonNames[];
-extern const LookupEntry useModMapValueNames[];
-extern const LookupEntry actionTypeNames[];
-extern const LookupEntry symInterpretMatchMaskNames[];
+బాహ్య స్థిరరాశి Lookup_నమోదు ctrl_ముసుగు_పేర్లు[];
+బాహ్య స్థిరరాశి Lookup_నమోదు mod_Component_ముసుగు_పేర్లు[];
+బాహ్య స్థిరరాశి Lookup_నమోదు సమూహం_Component_ముసుగు_పేర్లు[];
+బాహ్య స్థిరరాశి Lookup_నమోదు సమూహం_ముసుగు_పేర్లు[];
+బాహ్య స్థిరరాశి Lookup_నమోదు button_పేర్లు[];
+బాహ్య స్థిరరాశి Lookup_నమోదు use_Mod_Map_విలువ_పేర్లు[];
+బాహ్య స్థిరరాశి Lookup_నమోదు action_Type_పేర్లు[];
+బాహ్య స్థిరరాశి Lookup_నమోదు sym_Interpret_సరిపోలిక_ముసుగు_పేర్లు[];
 
-const char *
-ModMaskText(struct xkb_context *ctx, enum mod_type type,
-            const struct xkb_mod_set *mods, xkb_mod_mask_t mask);
+స్థిరరాశి అక్షరం *
+Mod_ముసుగు_పాఠ్యం(నిర్మాణం xkb_context *ctx, గణన mod_type type,
+            స్థిరరాశి నిర్మాణం xkb_mod_సమితి *mods, xkb_mod_ముసుగు_t ముసుగు);
 
-const char *
-ModIndexText(struct xkb_context *ctx, const struct xkb_mod_set *mods,
-             xkb_mod_index_t ndx);
+స్థిరరాశి అక్షరం *
+Mod_సూచీ_పాఠ్యం(నిర్మాణం xkb_context *ctx, స్థిరరాశి నిర్మాణం xkb_mod_సమితి *mods,
+             xkb_mod_సూచీ_t ndx);
 
-const char *
-ActionTypeText(enum xkb_action_type type);
+స్థిరరాశి అక్షరం *
+Action_Type_పాఠ్యం(గణన xkb_action_type type);
 
-const char *
-KeysymText(struct xkb_context *ctx, xkb_keysym_t sym);
+స్థిరరాశి అక్షరం *
+Keysym_పాఠ్యం(నిర్మాణం xkb_context *ctx, xkb_keysym_t sym);
 
-const char *
-KeyNameText(struct xkb_context *ctx, xkb_atom_t name);
+స్థిరరాశి అక్షరం *
+కీలకం_Name_పాఠ్యం(నిర్మాణం xkb_context *ctx, xkb_atom_t name);
 
-const char *
-SIMatchText(enum xkb_match_operation type);
+స్థిరరాశి అక్షరం *
+SIMatch_పాఠ్యం(గణన xkb_సరిపోలిక_operation type);
 
-const char *
-LedStateMaskText(struct xkb_context *ctx, const LookupEntry *lookup,
-                 enum xkb_state_component mask);
+స్థిరరాశి అక్షరం *
+Led_State_ముసుగు_పాఠ్యం(నిర్మాణం xkb_context *ctx, స్థిరరాశి Lookup_నమోదు *lookup,
+                 గణన xkb_state_component ముసుగు);
 
-const char *
-ControlMaskText(struct xkb_context *ctx, enum xkb_keymap_format format,
-                enum xkb_action_controls mask);
+స్థిరరాశి అక్షరం *
+Control_ముసుగు_పాఠ్యం(నిర్మాణం xkb_context *ctx, గణన xkb_keymap_format format,
+                గణన xkb_action_controls ముసుగు);

@@ -3,20 +3,20 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "config.h"
+#అన్తర్భావ "config.h"
 
-#include <assert.h>
+#అన్తర్భావ <assert.h>
 
-#include "context.h"
-#include "features/enums.h"
-#include "keysym.h"
-#include "table.h"
-#include "utils.h"
+#అన్తర్భావ "context.h"
+#అన్తర్భావ "features/enums.h"
+#అన్తర్భావ "keysym.h"
+#అన్తర్భావ "table.h"
+#అన్తర్భావ "utils.h"
 
-struct xkb_compose_state {
-    int refcnt;
-    enum xkb_compose_state_flags flags;
-    struct xkb_compose_table *table;
+నిర్మాణం xkb_compose_state {
+    పూర్ణాంకం refcnt;
+    గణన xkb_compose_state_flags flags;
+    నిర్మాణం xkb_compose_పట్టిక *పట్టిక;
 
     /*
      * Offsets into xkb_compose_table::nodes.
@@ -31,63 +31,63 @@ struct xkb_compose_state {
     uint32_t context;
 };
 
-struct xkb_compose_state *
-xkb_compose_state_new(struct xkb_compose_table *table,
-                      enum xkb_compose_state_flags flags)
+నిర్మాణం xkb_compose_state *
+xkb_compose_state_new(నిర్మాణం xkb_compose_పట్టిక *పట్టిక,
+                      గణన xkb_compose_state_flags flags)
 {
-    const enum xkb_compose_state_flags invalid_flags =
-        (flags & ~(enum xkb_compose_state_flags)XKB_COMPOSE_STATE_FLAGS_VALUES);
-    if (invalid_flags) {
-        log_err_func(table->ctx, XKB_LOG_MESSAGE_NO_ID,
+    స్థిరరాశి గణన xkb_compose_state_flags invalid_flags =
+        (flags & ~(గణన xkb_compose_state_flags)XKB_COMPOSE_STATE_FLAGS_విలువలు);
+    ఒకవేళ (invalid_flags) {
+        log_err_func(పట్టిక->ctx, XKB_LOG_సందేశం_NO_ID,
                      "Unsupported compose state flags: %#x\n",
                      invalid_flags);
-        return NULL;
+        తిరిగి ఖాళీ;
     }
 
-    struct xkb_compose_state * const state = calloc(1, sizeof(*state));
-    if (!state)
-        return NULL;
+    నిర్మాణం xkb_compose_state * స్థిరరాశి state = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*state));
+    ఒకవేళ (!state)
+        తిరిగి ఖాళీ;
 
     state->refcnt = 1;
-    state->table = xkb_compose_table_ref(table);
+    state->పట్టిక = xkb_compose_పట్టిక_ref(పట్టిక);
 
     state->flags = flags;
     state->prev_context = 0;
     state->context = 0;
 
-    return state;
+    తిరిగి state;
 }
 
-struct xkb_compose_state *
-xkb_compose_state_ref(struct xkb_compose_state *state)
+నిర్మాణం xkb_compose_state *
+xkb_compose_state_ref(నిర్మాణం xkb_compose_state *state)
 {
-    assert(state->refcnt > 0);
+    ప్రతిజ్ఞా(state->refcnt > 0);
     state->refcnt++;
-    return state;
+    తిరిగి state;
 }
 
-void
-xkb_compose_state_unref(struct xkb_compose_state *state)
+శూన్య
+xkb_compose_state_unref(నిర్మాణం xkb_compose_state *state)
 {
-    assert(!state || state->refcnt > 0);
-    if (!state || --state->refcnt > 0)
-        return;
+    ప్రతిజ్ఞా(!state || state->refcnt > 0);
+    ఒకవేళ (!state || --state->refcnt > 0)
+        తిరిగి;
 
-    xkb_compose_table_unref(state->table);
-    free(state);
+    xkb_compose_పట్టిక_unref(state->పట్టిక);
+    విడుదల(state);
 }
 
-struct xkb_compose_table *
-xkb_compose_state_get_compose_table(struct xkb_compose_state *state)
+నిర్మాణం xkb_compose_పట్టిక *
+xkb_compose_state_get_compose_పట్టిక(నిర్మాణం xkb_compose_state *state)
 {
-    return state->table;
+    తిరిగి state->పట్టిక;
 }
 
-enum xkb_compose_feed_result
-xkb_compose_state_feed(struct xkb_compose_state *state, xkb_keysym_t keysym)
+గణన xkb_compose_feed_ఫలితం
+xkb_compose_state_feed(నిర్మాణం xkb_compose_state *state, xkb_keysym_t keysym)
 {
     uint32_t context;
-    const struct compose_node *node;
+    స్థిరరాశి నిర్మాణం compose_కణుపు *కణుపు;
 
     /*
      * Modifiers do not affect the sequence directly.  In particular,
@@ -99,98 +99,98 @@ xkb_compose_state_feed(struct xkb_compose_state *state, xkb_keysym_t keysym)
      * have it here.  However, this is (approximately) what libX11 does
      * as well.
      */
-    if (xkb_keysym_is_modifier(keysym))
-        return XKB_COMPOSE_FEED_IGNORED;
+    ఒకవేళ (xkb_keysym_is_modifier(keysym))
+        తిరిగి XKB_COMPOSE_FEED_IGNORED;
 
-    node = &darray_item(state->table->nodes, state->context);
+    కణుపు = &darray_అంశం(state->పట్టిక->nodes, state->context);
 
-    context = (node->is_leaf ? 1 : node->internal.eqkid);
-    if (context == 1 && darray_size(state->table->nodes) == 1)
+    context = (కణుపు->is_ఆకు ? 1 : కణుపు->అంతర్గత.eqkid);
+    ఒకవేళ (context == 1 && darray_కొలత(state->పట్టిక->nodes) == 1)
         context = 0;
 
-    while (context != 0) {
-        node = &darray_item(state->table->nodes, context);
-        if (keysym < node->keysym)
-            context = node->lokid;
-        else if (keysym > node->keysym)
-            context = node->hikid;
-        else
-            break;
+    అయితే (context != 0) {
+        కణుపు = &darray_అంశం(state->పట్టిక->nodes, context);
+        ఒకవేళ (keysym < కణుపు->keysym)
+            context = కణుపు->lokid;
+        లేకపోతే ఒకవేళ (keysym > కణుపు->keysym)
+            context = కణుపు->hikid;
+        లేకపోతే
+            ఆపు;
     }
 
     state->prev_context = state->context;
     state->context = context;
-    return XKB_COMPOSE_FEED_ACCEPTED;
+    తిరిగి XKB_COMPOSE_FEED_ACCEPTED;
 }
 
-void
-xkb_compose_state_reset(struct xkb_compose_state *state)
+శూన్య
+xkb_compose_state_reset(నిర్మాణం xkb_compose_state *state)
 {
     state->prev_context = 0;
     state->context = 0;
 }
 
-enum xkb_compose_status
-xkb_compose_state_get_status(struct xkb_compose_state *state)
+గణన xkb_compose_స్థితి
+xkb_compose_state_get_స్థితి(నిర్మాణం xkb_compose_state *state)
 {
-    const struct compose_node *prev_node, *node;
+    స్థిరరాశి నిర్మాణం compose_కణుపు *prev_కణుపు, *కణుపు;
 
-    prev_node = &darray_item(state->table->nodes, state->prev_context);
-    node = &darray_item(state->table->nodes, state->context);
+    prev_కణుపు = &darray_అంశం(state->పట్టిక->nodes, state->prev_context);
+    కణుపు = &darray_అంశం(state->పట్టిక->nodes, state->context);
 
-    if (state->context == 0 && !prev_node->is_leaf)
-        return XKB_COMPOSE_CANCELLED;
+    ఒకవేళ (state->context == 0 && !prev_కణుపు->is_ఆకు)
+        తిరిగి XKB_COMPOSE_CANCELLED;
 
-    if (state->context == 0)
-        return XKB_COMPOSE_NOTHING;
+    ఒకవేళ (state->context == 0)
+        తిరిగి XKB_COMPOSE_NOTHING;
 
-    if (!node->is_leaf)
-        return XKB_COMPOSE_COMPOSING;
+    ఒకవేళ (!కణుపు->is_ఆకు)
+        తిరిగి XKB_COMPOSE_COMPOSING;
 
-    return XKB_COMPOSE_COMPOSED;
+    తిరిగి XKB_COMPOSE_COMPOSED;
 }
 
-int
-xkb_compose_state_get_utf8(struct xkb_compose_state *state,
-                           char *buffer, size_t size)
+పూర్ణాంకం
+xkb_compose_state_get_utf8(నిర్మాణం xkb_compose_state *state,
+                           అక్షరం *బఫరు, కొలత_t కొలత)
 {
-    const struct compose_node *node =
-        &darray_item(state->table->nodes, state->context);
+    స్థిరరాశి నిర్మాణం compose_కణుపు *కణుపు =
+        &darray_అంశం(state->పట్టిక->nodes, state->context);
 
-    if (!node->is_leaf)
-        goto fail;
+    ఒకవేళ (!కణుపు->is_ఆకు)
+        వెళ్ళు fail;
 
     /* If there's no string specified, but only a keysym, try to do the
      * most helpful thing. */
-    if (node->leaf.utf8 == 0 && node->leaf.keysym != XKB_KEY_NoSymbol) {
-        char utf8[XKB_KEYSYM_UTF8_MAX_SIZE];
-        int ret;
+    ఒకవేళ (కణుపు->ఆకు.utf8 == 0 && కణుపు->ఆకు.keysym != XKB_కీలకం_No_చిహ్నం) {
+        అక్షరం utf8[XKB_KEYSYM_UTF8_MAX_కొలత];
+        పూర్ణాంకం ret;
 
-        ret = xkb_keysym_to_utf8(node->leaf.keysym, utf8, sizeof(utf8));
-        if (ret < 0 || ret == 0) {
+        ret = xkb_keysym_గమ్యం_utf8(కణుపు->ఆకు.keysym, utf8, పరిమాణం(utf8));
+        ఒకవేళ (ret < 0 || ret == 0) {
             /* ret < 0 is impossible.
              * ret == 0 means the keysym has no string representation. */
-            goto fail;
+            వెళ్ళు fail;
         }
 
-        return snprintf(buffer, size, "%s", utf8);
+        తిరిగి snprintf(బఫరు, కొలత, "%s", utf8);
     }
 
-    return snprintf(buffer, size, "%s",
-                    &darray_item(state->table->utf8, node->leaf.utf8));
+    తిరిగి snprintf(బఫరు, కొలత, "%s",
+                    &darray_అంశం(state->పట్టిక->utf8, కణుపు->ఆకు.utf8));
 
 fail:
-    if (size > 0)
-        buffer[0] = '\0';
-    return 0;
+    ఒకవేళ (కొలత > 0)
+        బఫరు[0] = '\0';
+    తిరిగి 0;
 }
 
 xkb_keysym_t
-xkb_compose_state_get_one_sym(struct xkb_compose_state *state)
+xkb_compose_state_get_one_sym(నిర్మాణం xkb_compose_state *state)
 {
-    const struct compose_node *node =
-        &darray_item(state->table->nodes, state->context);
-    if (!node->is_leaf)
-        return XKB_KEY_NoSymbol;
-    return node->leaf.keysym;
+    స్థిరరాశి నిర్మాణం compose_కణుపు *కణుపు =
+        &darray_అంశం(state->పట్టిక->nodes, state->context);
+    ఒకవేళ (!కణుపు->is_ఆకు)
+        తిరిగి XKB_కీలకం_No_చిహ్నం;
+    తిరిగి కణుపు->ఆకు.keysym;
 }
